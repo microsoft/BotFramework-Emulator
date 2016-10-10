@@ -1,0 +1,11 @@
+* text=auto
+
+*.tsx text eol=lf
+*.ts text eol=lf
+*.css text eol=lf
+*.less text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.json text eol=lf
+*.html text eol=lf
+*.map text eol=lf

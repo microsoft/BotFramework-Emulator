@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Bot Framework Emulator</title>
+        <link href="emulator.css" rel="stylesheet" />
+        <link href="botchat.css" rel="stylesheet" />
+        <script src="system.js"></script>
+    </head>
+    <body>
+        <div id='mainview' />
+    </body>
+
+    <script>
+        System.config({
+            map: {
+                '@reactivex/rxjs': '../node_modules/@reactivex/rxjs/dist/cjs/Rx.js',
+                'react': '../node_modules/react/dist/react.js',
+                'react-dom': '../node_modules/react-dom/dist/react-dom.js',
+                'redux': '../node_modules/redux/lib/index.js',
+                'msbotchat/BotChat': '../node_modules/msbotchat/built/BotChat.js',
+                'marked': '../node_modules/marked/lib/marked.js',
+                'he': '../node_modules/he/he.js',
+                'symbol-observable': '../node_modules/symbol-observable/index.js',
+                'lodash/isPlainObject': '../node_modules/lodash.isplainobject/index.js'
+            },
+            packages: {
+                '.': {
+                    defaultJSExtensions: 'js'
+                }
+            },
+            packageConfigPaths: [
+                '../node_modules/*/package.json',
+                '../node_modules/@reactivex/*/package.json'
+            ]
+        });
+        System.import('index.js').then(null, console.error.bind(console));
+    </script>
+</html>

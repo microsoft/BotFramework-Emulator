@@ -1,0 +1,67 @@
+{
+  "name": "botframework-emulator",
+  "version": "0.0.1",
+  "description": "Emulator for the Microsoft Bot Framework. Allows developers to test and debug their bots on localhost.",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "gulp",
+    "watch": "gulp watch",
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fuselabs/botframework-emulator.git"
+  },
+  "keywords": [
+    "microsoft",
+    "botframework",
+    "emulator",
+    "bot",
+    "chatbot"
+  ],
+  "author": "Microsoft Corp.",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fuselabs/botframework-emulator/issues"
+  },
+  "homepage": "https://github.com/fuselabs/botframework-emulator#readme",
+  "devDependencies": {
+    "del": "^2.2.2",
+    "electron-prebuilt": "^1.4.2",
+    "event-stream": "^3.3.4",
+    "glob": "^7.1.0",
+    "gulp": "^3.9.1",
+    "gulp-atom-electron": "^1.9.0",
+    "gulp-buffer": "0.0.2",
+    "gulp-clean": "^0.3.2",
+    "gulp-concat": "^2.6.0",
+    "gulp-debug": "^2.1.2",
+    "gulp-filter": "^4.0.0",
+    "gulp-flatmap": "^1.0.0",
+    "gulp-inject": "^4.1.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-tsb": "^2.0.1",
+    "gulp-typescript": "^3.0.2",
+    "gulp-util": "^3.0.7",
+    "object-assign": "^4.1.0",
+    "run-sequence": "^1.2.2",
+    "typescript": "^2.0.3",
+    "vinyl": "^2.0.0",
+    "vinyl-fs": "^2.4.3"
+  },
+  "dependencies": {
+    "@types/baconjs": "^0.7.31",
+    "@types/electron": "^1.4.23",
+    "@types/node": "^6.0.43",
+    "@types/react": "^0.14.39",
+    "@types/react-dom": "^0.14.17",
+    "@types/restify": "^2.0.33",
+    "baconjs": "^0.7.87",
+    "mswebchat": "git+https://github.com/eanders-MS/botchat#emulator",
+    "react": "^15.3.2",
+    "react-dom": "^15.3.2",
+    "restify": "^4.1.1",
+    "systemjs": "^0.19.39"
+  }
+}
