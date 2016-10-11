@@ -2,9 +2,9 @@ import { IConversation } from './conversationTypes';
 import { uniqueId } from './utils';
 
 export class ConversationStore {
-    conversations: { [key: string]: IConversation } = {};
+    conversations: { [botId: string]: IConversation } = {};
 
-    newConversation = (streamUrl: string): IConversation => {
+    newConversationForBot = (botId: string, streamUrl: string): IConversation => {
         let conversation: IConversation = {
             eTag: "*",
             conversationId: uniqueId(),
@@ -13,8 +13,12 @@ export class ConversationStore {
             streamUrl: streamUrl
         };
 
-        this.conversations[conversation.conversationId] = conversation;
+        this.conversations[botId] = conversation;
 
         return conversation;
+    }
+
+    getConversationForBot = (botId: string): IConversation => {
+        return this.conversations[botId];
     }
 }

@@ -7,7 +7,7 @@
         overflow: hidden;
     }
 
-    body, button, input, textarea {
+    body, button, input, textarea, select {
         font-family: 'Segoe UI', sans-serif;
         font-size: 15px;
     }
@@ -23,12 +23,13 @@
         top: 0;
         left: 0;
         right: 0;
-        height: 100px;
+        height: 0;
+        padding: 15px 15px 15px 15px;
     }
 
     .botchat-container {
         position: absolute;
-        top: 100px;
+        top: 0;
         bottom: 0;
         left: 0;
         right: 0;

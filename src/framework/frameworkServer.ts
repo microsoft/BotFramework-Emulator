@@ -3,11 +3,9 @@ import * as Restify from 'restify';
 import { ConversationsController } from './conversationsController';
 import { AttachmentsController } from './attachmentsController';
 import { BotStateController } from './botStateController';
+import { IFrameworkState, frameworkDefault } from './frameworkTypes';
 
 
-export interface IFrameworkState {
-    port: number;
-}
 export type FrameworkAction = {
     type: 'Set_FrameworkPort',
     port: number
@@ -23,10 +21,6 @@ export const frameworkSettings: Reducer<IFrameworkState> = (
             return state
     }
 }
-export const frameworkDefault: IFrameworkState = {
-    port: 9002
-}
-
 
 export class FrameworkServer {
 

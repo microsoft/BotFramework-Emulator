@@ -14,11 +14,11 @@ export class ConversationsControllerV1 {
     }
 
     newConversation = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-        let conversation = emulator.conversationStore.newConversation(null);
-        res.json(201, {
-            conversationId: conversation.conversationId,
-            token: conversation.token
-        });
+        //let conversation = emulator.conversationStore.newConversation(null);
+        //res.json(201, {
+        //    conversationId: conversation.conversationId,
+        //    token: conversation.token
+        //});
         return next();
     }
 

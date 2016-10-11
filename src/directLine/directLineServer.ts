@@ -1,11 +1,9 @@
 import { Reducer } from 'redux';
 import * as Restify from 'restify';
-import { ConversationsControllerV1 } from './conversationsControllerV1'
+import { ConversationsControllerV1 } from './conversationsControllerV1';
+import { IDirectLineState, directLineDefault } from './directLineTypes';
 
 
-export interface IDirectLineState {
-    port: number;
-}
 export type DirectLineAction = {
     type: 'Set_DirectLinePort',
     port: number
@@ -21,10 +19,6 @@ export const directLineSettings: Reducer<IDirectLineState> = (
             return state
     }
 }
-export const directLineDefault: IDirectLineState = {
-    port: 9001
-}
-
 
 export class DirectLineServer {
 

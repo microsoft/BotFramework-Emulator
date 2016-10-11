@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Bot Framework Emulator</title>
-        <link href="emulator.css" rel="stylesheet" />
-        <link href="botchat.css" rel="stylesheet" />
-        <script src="system.js"></script>
-    </head>
-    <body>
-        <div id='mainview' />
-    </body>
 
-    <script>
+<head>
+	<meta charset="UTF-8">
+	<title>Bot Framework Emulator</title>
+	<link href="css/emulator.css" rel="stylesheet" />
+	<link href="css/botchat.css" rel="stylesheet" />
+    <link href="css/tachyons.min.css" rel="stylesheet" />
+	<script src="system.js"></script>
+</head>
+
+<body>
+	<main id='mainview' />
+</body>
+
+<script>
         System.config({
+            defaultJSExtensions: true,
             map: {
                 '@reactivex/rxjs': '../node_modules/@reactivex/rxjs/dist/cjs/Rx.js',
                 'react': '../node_modules/react/dist/react.js',
@@ -22,12 +26,18 @@
                 'marked': '../node_modules/marked/lib/marked.js',
                 'he': '../node_modules/he/he.js',
                 'symbol-observable': '../node_modules/symbol-observable/index.js',
-                'lodash/isPlainObject': '../node_modules/lodash.isplainobject/index.js'
+                'lodash/isPlainObject': '../node_modules/lodash.isplainobject/index.js',
+                'object-assign': '../node_modules/object-assign/index.js',
+                'classnames': '../node_modules/classnames/index.js',
+                'electron': '../node_modules/electron-prebuilt/index.js',
+                'electron-debug': '../node_modules/electron-debug/index.js'
+            },
+            meta: {
+                '../node_modules/classnames/index.js': {
+                    format: 'global'
+                }
             },
             packages: {
-                '.': {
-                    defaultJSExtensions: 'js'
-                }
             },
             packageConfigPaths: [
                 '../node_modules/*/package.json',

@@ -1,20 +1,25 @@
 import * as Electron from 'electron';
 import { readFileSync } from 'fs';
-import * as Settings from './settings';
+import * as Settings from './settingsServer';
 
-const app = Electron.app;
+require('electron-debug')();
 
-let mainWindow: Electron.BrowserWindow | null = null;
+export var mainWindow: Electron.BrowserWindow;
 
 const createMainWindow = () => {
     mainWindow = new Electron.BrowserWindow({ width: 1000, height: 600 });
+    mainWindow.setMenu(null);
     const url = `file://${__dirname}/index.html`;
     mainWindow.loadURL(url);
 
     mainWindow.on('closed', function () {
         mainWindow = null;
     });
+
+    Settings.startup();
 }
+
+const app = Electron.app;
 
 app.on('ready', createMainWindow);
 
@@ -29,5 +34,3 @@ app.on('activate', function () {
         createMainWindow();
     }
 });
-
-Settings.startup();

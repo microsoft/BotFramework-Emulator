@@ -6,7 +6,7 @@
   "scripts": {
     "build": "gulp",
     "watch": "gulp watch",
-    "start": "electron .",
+    "start": "electron ./dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -28,7 +28,10 @@
   "homepage": "https://github.com/fuselabs/botframework-emulator#readme",
   "devDependencies": {
     "del": "^2.2.2",
-    "electron-prebuilt": "^1.4.2",
+    "devtron": "^1.4.0",
+    "electron": "^1.4.3",
+    "electron-packager": "^8.1.0",
+    "electron-winstaller": "^2.3.4",
     "event-stream": "^3.3.4",
     "glob": "^7.1.0",
     "gulp": "^3.9.1",
@@ -46,18 +49,18 @@
     "gulp-util": "^3.0.7",
     "object-assign": "^4.1.0",
     "run-sequence": "^1.2.2",
+    "spectron": "^3.4.0",
     "typescript": "^2.0.3",
     "vinyl": "^2.0.0",
     "vinyl-fs": "^2.4.3"
   },
   "dependencies": {
-    "@types/baconjs": "^0.7.31",
     "@types/electron": "^1.4.23",
     "@types/node": "^6.0.43",
     "@types/react": "^0.14.39",
     "@types/react-dom": "^0.14.17",
     "@types/restify": "^2.0.33",
-    "baconjs": "^0.7.87",
+    "electron-debug": "^1.0.1",
     "mswebchat": "git+https://github.com/eanders-MS/botchat#emulator",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
