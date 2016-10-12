@@ -1,28 +1,29 @@
 import { Reducer } from 'redux';
-import { uniqueId } from './utils';
+import { uniqueId } from '../utils';
 import * as SettingsStore from './settingsStore';
-
-
-export interface IBot {
-    botId: string;
-    botUrl: string;
-    msaAppId: string;
-    msaPassword: string;
-}
+import { IBot } from '../bot';
 
 export type BotsAction = {
     type: 'Bots_AddBot',
-    bot: IBot
+    state: {
+        bot: IBot
+    }
 } | {
     type: 'Bots_RemoveBot',
-    botId: string
+    state: {
+        botId: string
+    }
 } | {
     type: 'Bots_EditBot',
-    botId: string
-    bot: IBot
+    state: {
+        botId: string,
+        bot: IBot
+    }
 } | {
     type: 'Bots_SetState',
-    bots: IBot[]
+    state: {
+        bots: IBot[]
+    }
 }
 
 export const botsReducer: Reducer<IBot[]> = (
@@ -34,10 +35,10 @@ export const botsReducer: Reducer<IBot[]> = (
         case 'Bots_AddBot': {
             return [
                 ...state,
-                Object.assign({}, action.bot, { botId: uniqueId(), activities: [] })];
+                Object.assign({}, action.state.bot, { botId: uniqueId() })];
         }
         case 'Bots_RemoveBot': {
-            let index = state.findIndex(value => value.botId == action.botId);
+            let index = state.findIndex(value => value.botId == action.state.botId);
             if (index) {
                 return [
                     ...state.slice(0, index),
@@ -47,18 +48,18 @@ export const botsReducer: Reducer<IBot[]> = (
             }
         }
         case 'Bots_EditBot': {
-            let index = state.findIndex(value => value.botId == action.botId);
+            let index = state.findIndex(value => value.botId == action.state.botId);
             if (index) {
                 return [
                     ...state.slice(0, index),
-                    Object.assign({}, action.bot, { botId: state[index].botId}),
+                    Object.assign({}, action.state.bot, { botId: state[index].botId }),
                     ...state.slice(index + 1)];
             } else {
                 return state;
             }
         }
         case 'Bots_SetState': {
-            return [...(action.bots || []).slice(0)];
+            return [...(action.state.bots || []).slice(0)];
         }
         default:
             return state
@@ -67,10 +68,14 @@ export const botsReducer: Reducer<IBot[]> = (
 
 export type ActiveBotAction = {
     type: 'ActiveBot_Set',
-    botId: string
+    state: {
+        botId: string
+    }
 } | {
     type: 'ActiveBot_SetState',
-    botId: string
+    state: {
+        botId: string
+    }
 }
 
 export const activeBotReducer: Reducer<string> = (
@@ -81,7 +86,7 @@ export const activeBotReducer: Reducer<string> = (
     switch (action.type) {
         case 'ActiveBot_Set':
         case 'ActiveBot_SetState':
-            return action.botId || state;
+            return action.state.botId || state;
         default:
             return state
     }

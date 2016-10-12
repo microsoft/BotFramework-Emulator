@@ -2,16 +2,16 @@ import { Store, createStore, combineReducers, Reducer } from 'redux';
 import * as Fs from 'fs';
 import * as SettingsStore from './settingsStore';
 import * as Electron from 'electron';
-import * as Emulator from './emulator';
-import * as DirectLine from './directLine/directLineServer';
-import * as Framework from './framework/frameworkServer';
-import * as BotStore from './botStore';
+import * as Emulator from '../emulator';
+import * as DirectLine from '../directLine/directLineServer';
+import * as Framework from '../framework/frameworkServer';
+import { IBot } from '../bot';
 
 
 interface IPersistentSettings {
     directLine: DirectLine.IPersistentSettings,
     framework: Framework.IPersistentSettings,
-    bots: BotStore.IBot[],
+    bots: IBot[],
     activeBot: string
 }
 

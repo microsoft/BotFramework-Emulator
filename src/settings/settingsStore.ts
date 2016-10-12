@@ -1,7 +1,8 @@
 import { Store, createStore, combineReducers, Reducer } from 'redux';
-import { IDirectLineState, directLineDefault, directLineReducer } from './directLine/directLineStore';
-import { IFrameworkState, frameworkDefault, frameworkReducer } from './framework/frameworkStore';
-import { IBot, botsReducer, activeBotReducer } from './botStore';
+import { IDirectLineState, directLineDefault, directLineReducer } from './directLineReducer';
+import { IFrameworkState, frameworkDefault, frameworkReducer } from './frameworkReducer';
+import { botsReducer, activeBotReducer } from './botReducer';
+import { IBot } from '../bot';
 
 
 export var store: Store<ISettings>;
@@ -27,4 +28,9 @@ export const startup = (initialSettings = settingsDefault) => {
         bots: botsReducer,
         activeBot: activeBotReducer
     }), initialSettings);
+}
+
+export const getActiveBot = () => {
+    const state = store.getState();
+    return state.bots.find(value => value.botId == state.activeBot);
 }

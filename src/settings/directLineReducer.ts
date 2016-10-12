@@ -8,7 +8,9 @@ export const directLineDefault: IDirectLineState = {
 }
 export type DirectLineAction = {
     type: 'DirectLine_SetPort',
-    port: number
+    state: {
+        port: number
+    }
 } | {
     type: 'DirectLine_SetState',
     state: IDirectLineState
@@ -20,7 +22,7 @@ export const directLineReducer: Reducer<IDirectLineState> = (
     console.log('directLineReducer', JSON.stringify(action), JSON.stringify(state));
     switch (action.type) {
         case 'DirectLine_SetPort':
-            return Object.assign({}, state, { port: action.port });
+            return Object.assign({}, state, { port: action.state.port });
         case 'DirectLine_SetState':
             return Object.assign({}, state, action.state);
         default:

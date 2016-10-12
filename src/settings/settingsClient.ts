@@ -21,14 +21,24 @@ const enableBatching = (reduce) => {
 }
 */
 
+var configuring = false;
+
 export const startup = () => {
     SettingsStore.startup();
 
     SettingsStore.store.subscribe(() => {
-        console.log('settings changed', SettingsStore.store.getState());
+        const state = SettingsStore.store.getState();
+        console.log('settings changed', JSON.stringify(state));
+        // Test: activate a bot
+        if (state.activeBot.length == 0 && state.bots.length > 0) {
+            setTimeout(() => {
+                change('ActiveBot_Set', { botId: state.bots[0].botId });
+            }, 100);
+        }
     });
 
     Electron.ipcRenderer.on('configure', (event, args) => {
+        configuring = true;
         console.log("configure: ", event, args);
         const settings = args[0] as SettingsStore.ISettings;
         // TODO: use a batching reducer here.
@@ -42,21 +52,27 @@ export const startup = () => {
         });
         SettingsStore.store.dispatch({
             type: 'Bots_SetState',
-            bots: settings.bots
+            state: { bots: settings.bots }
         });
         SettingsStore.store.dispatch({
             type: 'ActiveBot_SetState',
-            botId: settings.activeBot
+            state: { botId: settings.activeBot }
         });
+        configuring = false;
     });
 
     Electron.ipcRenderer.send('started');
 
+    // Test: Add a bot
     change('Bots_AddBot', {
         botUrl: 'http://localhost:3978/api/messages'
     });
 }
 
 export const change = (action: string, args) => {
+    if (configuring === true) {
+        console.error('Error: config changes cannot be issued to server while handling config changes from server! This would introduce an infinite change loop.');
+    } else {
+    }
     Electron.ipcRenderer.send('change', action, args);
 }
