@@ -1,35 +1,32 @@
 import * as Electron from 'electron';
 import { readFileSync } from 'fs';
-import * as Settings from './settingsServer';
+import * as Emulator from './emulator';
 
 require('electron-debug')();
+
+Emulator.startup();
 
 export var mainWindow: Electron.BrowserWindow;
 
 const createMainWindow = () => {
-    mainWindow = new Electron.BrowserWindow({ width: 1000, height: 600 });
+    mainWindow = new Electron.BrowserWindow({ width: 1500, height: 1000 });
     mainWindow.setMenu(null);
-    const url = `file://${__dirname}/index.html`;
-    mainWindow.loadURL(url);
+    mainWindow.loadURL(`file://${__dirname}/index.html`);
 
     mainWindow.on('closed', function () {
         mainWindow = null;
     });
-
-    Settings.startup();
 }
 
-const app = Electron.app;
+Electron.app.on('ready', createMainWindow);
 
-app.on('ready', createMainWindow);
-
-app.on('window-all-closed', function () {
+Electron.app.on('window-all-closed', function () {
     if (process.platform !== 'darwin') {
-        app.quit();
+        Electron.app.quit();
     }
 });
 
-app.on('activate', function () {
+Electron.app.on('activate', function () {
     if (mainWindow === null) {
         createMainWindow();
     }

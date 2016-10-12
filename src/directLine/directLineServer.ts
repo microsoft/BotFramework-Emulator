@@ -1,27 +1,14 @@
-import { Reducer } from 'redux';
 import * as Restify from 'restify';
 import { ConversationsControllerV1 } from './conversationsControllerV1';
-import { IDirectLineState, directLineDefault } from './directLineTypes';
+import { ISettings } from '../settingsStore';
 
-
-export type DirectLineAction = {
-    type: 'Set_DirectLinePort',
-    port: number
-}
-export const directLineSettings: Reducer<IDirectLineState> = (
-    state = directLineDefault,
-    action: DirectLineAction
-) => {
-    switch (action.type) {
-        case 'Set_DirectLinePort':
-            return Object.assign({}, state, { port: action.port });
-        default:
-            return state
-    }
+export interface IPersistentSettings {
+    port: number;
 }
 
 export class DirectLineServer {
 
+    port: number;
     server: Restify.Server;
     conversationsControllerV1 = new ConversationsControllerV1();
 
@@ -45,10 +32,12 @@ export class DirectLineServer {
         this.conversationsControllerV1.registerRoutes(this.server);
     }
 
-    public configure = (settings: IDirectLineState) => {
-        if (this.server.localPort !== settings.port) {
+    public configure = (settings: ISettings) => {
+        if (this.port !== settings.directLine.port) {
+            this.port = settings.directLine.port;
+            console.log(`restarting ${this.server.name} because ${this.port} !== ${settings.directLine.port}`);
             this.stop();
-            return this.server.listen(settings.port, () => {
+            return this.server.listen(settings.directLine.port, () => {
                 console.log(`${this.server.name} listening to ${this.server.url}`);
             });
         }

@@ -1,5 +1,4 @@
 import * as Restify from 'restify';
-import { emulator } from '../emulator';
 
 
 export class ConversationsControllerV1 {

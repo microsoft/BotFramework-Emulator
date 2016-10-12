@@ -14,8 +14,6 @@ var debug = require('gulp-debug');
 gulp.task('build-all', function () {
     sequence(
         'clean',
-        'build-system',
-        'build-css',
         'build-app',
         'copy-site'
     );
@@ -24,15 +22,6 @@ gulp.task('build-all', function () {
 gulp.task('clean', function () {
     return gulp.src('./dist/', { read: false })
         .pipe(clean());
-});
-
-gulp.task('build-system', function () {
-    return gulp.src('node_modules/systemjs/dist/system.src.js')
-        .pipe(rename('system.js'))
-        .pipe(gulp.dest('dist'));
-});
-
-gulp.task('build-css', function () {
 });
 
 gulp.task('build-app', function () {

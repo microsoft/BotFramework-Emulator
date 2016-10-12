@@ -64,7 +64,6 @@
     "mswebchat": "git+https://github.com/eanders-MS/botchat#emulator",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
-    "restify": "^4.1.1",
-    "systemjs": "^0.19.39"
+    "restify": "^4.1.1"
   }
 }

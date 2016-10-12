@@ -1,31 +1,46 @@
 import { DirectLineServer } from './directLine/directLineServer';
 import { FrameworkServer } from './framework/frameworkServer';
-import { ConversationStore } from './conversationStore';
-import { ISettings } from './settingsTypes';
+import * as SettingsStore from './settingsStore';
+import * as SettingsServer from './settingsServer';
 import * as Electron from 'electron';
 import { mainWindow } from './main';
 
 
+
 class Emulator {
+    mainWindow: Electron.BrowserWindow;
     directLineServer = new DirectLineServer();
     frameworkServer = new FrameworkServer();
-    conversationStore = new ConversationStore();
+
+    constructor() {
+        Electron.ipcMain.on('started', () => {
+            this.mainWindow = mainWindow;
+            this.send('configure', SettingsStore.store.getState());
+        });
+    }
 
     send = (channel: string, ...args: any[]) => {
-        mainWindow.webContents.send(channel, args);
+        if (this.mainWindow) {
+            this.mainWindow.webContents.send(channel, args);
+        }
+    }
+
+    configure = (settings: SettingsStore.ISettings) => {
+        console.log("configure: ", settings);
+        SettingsServer.saveSettings(settings);
+        this.directLineServer.configure(settings);
+        this.frameworkServer.configure(settings);
+        this.send('configure', settings);
     }
 }
 
-export var emulator: Emulator;
+var emulator: Emulator;
 
-export const configure = (settings: ISettings) => {
-    console.log(`configure: ${settings}`);
-    emulator = emulator || new Emulator();
-    emulator.directLineServer.configure(settings.directLineSettings);
-    emulator.frameworkServer.configure(settings.frameworkSettings);
-    emulator.send('configure', settings);
+export const startup = () => {
+    emulator = new Emulator();
+    SettingsServer.startup();
 }
 
-export const change = (event: Electron.IpcMainEvent, ...args: any[]) => {
-    console.log(`change: ${event}, ${args}`);
+export const configure = (settings: SettingsStore.ISettings) => {
+    emulator.configure(settings);
 }

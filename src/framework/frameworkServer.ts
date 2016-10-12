@@ -1,29 +1,16 @@
-import { Reducer } from 'redux';
 import * as Restify from 'restify';
 import { ConversationsController } from './conversationsController';
 import { AttachmentsController } from './attachmentsController';
 import { BotStateController } from './botStateController';
-import { IFrameworkState, frameworkDefault } from './frameworkTypes';
+import { ISettings } from '../settingsStore';
 
-
-export type FrameworkAction = {
-    type: 'Set_FrameworkPort',
-    port: number
-}
-export const frameworkSettings: Reducer<IFrameworkState> = (
-    state = frameworkDefault,
-    action: FrameworkAction
-) => {
-    switch (action.type) {
-        case 'Set_FrameworkPort':
-            return Object.assign({}, state, { port: action.port });
-        default:
-            return state
-    }
+export interface IPersistentSettings {
+    port: number;
 }
 
 export class FrameworkServer {
 
+    port: number;
     server: Restify.Server;
     conversationsController = new ConversationsController();
     attachmentsController = new AttachmentsController();
@@ -51,10 +38,12 @@ export class FrameworkServer {
         this.botStateController.registerRoutes(this.server);
     }
 
-    public configure = (settings: IFrameworkState) => {
-        if (this.server.localPort !== settings.port) {
+    public configure = (settings: ISettings) => {
+        if (this.port !== settings.framework.port) {
+            this.port = settings.framework.port;
+            console.log(`restarting ${this.server.name} because ${this.port} !== ${settings.framework.port}`);
             this.stop();
-            return this.server.listen(settings.port, () => {
+            return this.server.listen(settings.framework.port, () => {
                 console.log(`${this.server.name} listening to ${this.server.url}`);
             });
         }
