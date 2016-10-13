@@ -1,46 +1,33 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-
 var gulp = require('gulp');
-var sequence = require('run-sequence');
 var clean = require('gulp-clean');
-var rename = require('gulp-rename');
-var typescript = require('gulp-typescript');
-var sourcemaps = require('gulp-sourcemaps');
-var debug = require('gulp-debug');
-
-gulp.task('build-all', function () {
-    sequence(
-        'clean',
-        'build-app',
-        'copy-site'
-    );
-});
+var tsc = require('gulp-tsc');
 
 gulp.task('clean', function () {
     return gulp.src('./dist/', { read: false })
         .pipe(clean());
 });
 
-gulp.task('build-app', function () {
-    var project = typescript.createProject('tsconfig.json');
-
-    var tsResult = project.src()
-        .pipe(sourcemaps.init())
-        .pipe(project());
-
-    return tsResult.js
-        .pipe(sourcemaps.write())
-        .pipe(gulp.dest('dist'));
+gulp.task('build-app', ['clean'], function () {
+    return gulp.src(['src/**/*.ts', 'src/**/*.tsx'])
+        .pipe(tsc({
+            module: "commonjs",
+            moduleResolution: "node",
+            target: "ES5",
+            sourceMap: true,
+            noImplicitAny: false,
+            noImplicitThis: true,
+            noEmitOnError: true,
+            outDir: "dist",
+            additionalTscParameters: ['--jsx', 'react']
+        }))
+        .pipe(gulp.dest('dist/'));
 });
 
-gulp.task('copy-site', function () {
+gulp.task('copy-site', ['build-app'], function () {
     return gulp.src([
         './src/**/*.html',
         './src/**/*.css'])
-        .pipe(gulp.dest('dist'));
+        .pipe(gulp.dest('dist/'));
 });
 
-gulp.task('default', ['build-all']);
+gulp.task('default', ['copy-site']);

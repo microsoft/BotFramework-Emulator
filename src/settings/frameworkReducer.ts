@@ -1,11 +1,14 @@
 import { Reducer } from 'redux';
 
+
 export interface IFrameworkState {
     port: number;
 }
+
 export const frameworkDefault: IFrameworkState = {
     port: 9002
 }
+
 export type FrameworkAction = {
     type: 'Framework_SetPort',
     state: {
@@ -15,6 +18,7 @@ export type FrameworkAction = {
     type: 'Framework_SetState',
     state: IFrameworkState
 }
+
 export const frameworkReducer: Reducer<IFrameworkState> = (
     state = frameworkDefault,
     action: FrameworkAction

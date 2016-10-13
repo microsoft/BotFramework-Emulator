@@ -7,6 +7,9 @@ export interface IPersistentSettings {
     port: number;
 }
 
+/**
+ * Communicates with the BotChat control.
+ */
 export class DirectLineServer extends RestServer {
     conversationsControllerV1 = new ConversationsControllerV1();
 
@@ -15,7 +18,10 @@ export class DirectLineServer extends RestServer {
         this.conversationsControllerV1.registerRoutes(this.server);
     }
 
-    public configure = (settings: ISettings) => {
+    /**
+     * Applies configuration changes.
+     */
+    configure = (settings: ISettings) => {
         if (this.port !== settings.directLine.port) {
             console.log(`restarting ${this.server.name} because ${this.port} !== ${settings.directLine.port}`);
             this.restart(settings.directLine.port);

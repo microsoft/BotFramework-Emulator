@@ -3,7 +3,7 @@ import * as Restify from 'restify';
 
 export class ConversationsController {
 
-    public registerRoutes(server: Restify.Server) {
+    registerRoutes = (server: Restify.Server) => {
         server.post('/v3/conversations', this.newConversation);
         server.post('/v3/conversations/:conversation_id/activities', this.sendToConversation);
         server.post('/v3/conversations/:conversation_id/activities/:activity_id', this.replyToActivity);

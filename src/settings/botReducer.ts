@@ -1,7 +1,7 @@
 import { Reducer } from 'redux';
 import { uniqueId } from '../utils';
 import * as SettingsStore from './settingsStore';
-import { IBot } from '../bot';
+import { IBot } from '../types/botTypes';
 
 export type BotsAction = {
     type: 'Bots_AddBot',

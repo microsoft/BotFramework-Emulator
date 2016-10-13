@@ -44,11 +44,9 @@
     "gulp-flatmap": "^1.0.0",
     "gulp-inject": "^4.1.0",
     "gulp-rename": "^1.2.2",
-    "gulp-tsb": "^2.0.1",
-    "gulp-typescript": "^3.0.2",
+    "gulp-tsc": "^1.2.4",
     "gulp-util": "^3.0.7",
     "object-assign": "^4.1.0",
-    "run-sequence": "^1.2.2",
     "spectron": "^3.4.0",
     "typescript": "^2.0.3",
     "vinyl": "^2.0.0",
@@ -59,11 +57,13 @@
     "@types/node": "^6.0.43",
     "@types/react": "^0.14.39",
     "@types/react-dom": "^0.14.17",
+    "@types/request": "0.0.31",
     "@types/restify": "^2.0.33",
     "electron-debug": "^1.0.1",
     "mswebchat": "git+https://github.com/eanders-MS/botchat#emulator",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
+    "request": "^2.75.0",
     "restify": "^4.1.1"
   }
 }

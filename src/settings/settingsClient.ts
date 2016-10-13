@@ -29,7 +29,8 @@ export const startup = () => {
     SettingsStore.store.subscribe(() => {
         const state = SettingsStore.store.getState();
         console.log('settings changed', JSON.stringify(state));
-        // Test: activate a bot
+
+        // TEST ONLY: activate a bot
         if (state.activeBot.length == 0 && state.bots.length > 0) {
             setTimeout(() => {
                 change('ActiveBot_Set', { botId: state.bots[0].botId });
@@ -63,7 +64,7 @@ export const startup = () => {
 
     Electron.ipcRenderer.send('started');
 
-    // Test: Add a bot
+    // TEST ONLY: Add a bot
     change('Bots_AddBot', {
         botUrl: 'http://localhost:3978/api/messages'
     });

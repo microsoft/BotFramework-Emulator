@@ -10,7 +10,14 @@ export interface IPersistentSettings {
     port: number;
 }
 
+/**
+ * Communicates with the bot.
+ */
 export class FrameworkServer extends RestServer {
+
+    serviceUrl = (): string =>
+        `http://localhost:${this.port}/`;
+
     conversationsController = new ConversationsController();
     attachmentsController = new AttachmentsController();
     botStateController = new BotStateController();
@@ -22,7 +29,10 @@ export class FrameworkServer extends RestServer {
         this.botStateController.registerRoutes(this.server);
     }
 
-    public configure = (settings: ISettings) => {
+    /**
+     * Applies configuration changes.
+     */
+    configure = (settings: ISettings) => {
         if (this.port !== settings.framework.port) {
             console.log(`restarting ${this.server.name} because ${this.port} !== ${settings.framework.port}`);
             this.restart(settings.framework.port);

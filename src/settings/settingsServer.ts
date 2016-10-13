@@ -2,10 +2,10 @@ import { Store, createStore, combineReducers, Reducer } from 'redux';
 import * as Fs from 'fs';
 import * as SettingsStore from './settingsStore';
 import * as Electron from 'electron';
-import * as Emulator from '../emulator';
+import { emulator } from '../emulator';
 import * as DirectLine from '../directLine/directLineServer';
 import * as Framework from '../framework/frameworkServer';
-import { IBot } from '../bot';
+import { IBot } from '../types/botTypes';
 
 
 interface IPersistentSettings {
@@ -50,7 +50,7 @@ export const startup = () => {
     SettingsStore.startup(initialSettings);
     SettingsStore.store.subscribe(() => {
         const newSettings = SettingsStore.store.getState();
-        Emulator.configure(newSettings);
+        emulator.configure(newSettings);
     });
     Electron.ipcMain.on('change', (event, ...args) => {
         console.log('change', JSON.stringify(args));
@@ -59,5 +59,5 @@ export const startup = () => {
             state: args[1]
         });
     });
-    Emulator.configure(initialSettings);
+    emulator.configure(initialSettings);
 }

@@ -2,7 +2,7 @@ import { Store, createStore, combineReducers, Reducer } from 'redux';
 import { IDirectLineState, directLineDefault, directLineReducer } from './directLineReducer';
 import { IFrameworkState, frameworkDefault, frameworkReducer } from './frameworkReducer';
 import { botsReducer, activeBotReducer } from './botReducer';
-import { IBot } from '../bot';
+import { IBot } from '../types/botTypes';
 
 
 export var store: Store<ISettings>;

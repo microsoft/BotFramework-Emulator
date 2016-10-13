@@ -3,7 +3,7 @@ import * as Restify from 'restify';
 
 export class BotStateController {
 
-    public registerRoutes(server: Restify.Server) {
+    registerRoutes = (server: Restify.Server) => {
         server.get('/v3/botstate/:channel_id/users/:user_id', this.getUserData);
         server.get('/v3/botstate/:channel_id/conversations/:conversation_id', this.getConversationData);
         server.get('/v3/botstate/:channel_id/conversations/:conversation_id/users/:user_id', this.getPrivateConversationData);
@@ -51,7 +51,7 @@ export class BotStateController {
 
     deleteStateForUser = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         console.log("framework: deleteStateForUser");
-        res.send(200, {});
+        res.send(204, {});
         return next();
     }
 }

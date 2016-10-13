@@ -1,6 +1,6 @@
 import * as Electron from 'electron';
 import { readFileSync } from 'fs';
-import * as Emulator from './emulator';
+import { Emulator } from './emulator';
 
 require('electron-debug')();
 
