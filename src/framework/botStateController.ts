@@ -9,13 +9,11 @@ export class BotStateController {
 
     getBotData = (channelId: string, conversationId: string, userId: string) => {
         const key = this.botDataKey(channelId, conversationId, userId);
-        console.log('getBotData', key);
         return this.botData[key] || {};
     }
 
     setBotData = (channelId: string, conversationId: string, userId: string, data: any) => {
         const key = this.botDataKey(channelId, conversationId, userId);
-        console.log('setBotData', key, JSON.stringify(data));
         this.botData[key] = data;
     }
 
@@ -30,21 +28,18 @@ export class BotStateController {
     }
 
     getUserData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-        console.log('getUserData');
         const data = this.getBotData(req.params.channelId, req.params.conversationId, req.params.userId);
         res.send(200, data);
         res.end();
     }
 
     getConversationData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-        console.log('getConversationData');
         const data = this.getBotData(req.params.channelId, req.params.conversationId, req.params.userId);
         res.send(200, data);
         res.end();
     }
 
     getPrivateConversationData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-        console.log('getPrivateConversationData');
         const data = this.getBotData(req.params.channelId, req.params.conversationId, req.params.userId);
         res.send(200, data);
         res.end();
@@ -69,7 +64,7 @@ export class BotStateController {
     }
 
     deleteStateForUser = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-        // TODO
+        // TODO @eanders: Implement me.
         res.send(204);
         res.end();
     }

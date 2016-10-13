@@ -23,7 +23,6 @@ interface IV1Message {
     eTag?: string;
 }
 
-
 const messageToActivity = (message: IV1Message): IGenericActivity =>
     ({
         type: "message",
