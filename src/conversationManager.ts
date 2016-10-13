@@ -15,7 +15,7 @@ export class Conversation {
     constructor(public conversationId: string, public botId: string) {
     }
 
-    postToBot = (activity: IActivity) => {
+    postActivityToBot = (activity: IActivity) => {
         activity.id = `${this.messageId++}`;
         this.activities.push(Object.assign({}, activity));
         const bot = SettingsStore.getActiveBot();
@@ -30,12 +30,12 @@ export class Conversation {
         }
     }
 
-    postToUser = (activity: IActivity) => {
+    postActivityToUser = (activity: IActivity) => {
         activity.id = `${this.messageId++}`;
         this.activities.push(Object.assign({}, activity));
     }
 
-    getMessagesSince = (watermark: number): IActivity[] => {
+    getActivitiesSince = (watermark: number): IActivity[] => {
         return this.activities.slice(watermark);
     }
 }

@@ -10,8 +10,7 @@ interface IV1Attachment {
     contentType: string
 }
 
-interface IV1Message
-{
+interface IV1Message {
     id?: string,
     conversationId?: string,
     created?: string,
@@ -24,7 +23,7 @@ interface IV1Message
 }
 
 
-const v1MessageToActivity = (message: IV1Message): IGenericActivity =>
+const messageToActivity = (message: IV1Message): IGenericActivity =>
     ({
         type: "message",
         eTag: message.eTag,
@@ -45,6 +44,16 @@ const v1MessageToActivity = (message: IV1Message): IGenericActivity =>
         })),
     });
 
+const activityToMessage = (activity: IGenericActivity): IV1Message =>
+    ({
+        eTag: activity.eTag,
+        id: activity.id,
+        conversationId: activity.conversation.id,
+        created: activity.timestamp,
+        from: activity.from.id,
+        text: activity.text,
+        channelData: activity.channelData,
+    });
 
 
 export class ConversationsControllerV1 {
@@ -70,14 +79,15 @@ export class ConversationsControllerV1 {
         } else {
             res.send(403, "no active bot");
         }
-        return next();
+        res.end();
     }
 
     getMessages = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         const conversation = emulator.conversations.conversationById(req.params.conversationId);
         if (conversation) {
-            let watermark = Number(req.params.watermark || 0);
-            const messages = conversation.getMessagesSince(req.params.watermark);
+            const watermark = Number(req.params.watermark || 0);
+            const activities = conversation.getActivitiesSince(req.params.watermark);
+            const messages = activities.filter(a => a.type == "message").map(a => activityToMessage(a));
             res.json(200, {
                 messages: messages,
                 watermark: watermark + messages.length
@@ -85,29 +95,29 @@ export class ConversationsControllerV1 {
         } else {
             res.send(404, "conversation not found");
         }
-        return next();
+        res.end();
     }
 
     postMessage = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         const conversation = emulator.conversations.conversationById(req.params.conversationId);
         if (conversation) {
-            const v1Message = req.body as IV1Message;
-            const activity = v1MessageToActivity(v1Message);
-            conversation.postToBot(activity);
+            const message = <IV1Message>req.body;
+            const activity = messageToActivity(message);
+            conversation.postActivityToBot(activity);
             res.send(204);
         } else {
             res.send(404, "conversation not found");
         }
-        return next();
+        res.end();
     }
 
     uploadAttachment = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         res.send(501);
-        return next();
+        res.end();
     }
 
     getAttachment = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         res.send(501);
-        return next();
+        res.end();
     }
 }

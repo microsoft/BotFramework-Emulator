@@ -66,7 +66,9 @@ export const startup = () => {
 
     // TEST ONLY: Add a bot
     change('Bots_AddBot', {
-        botUrl: 'http://localhost:3978/api/messages'
+        bot: {
+            botUrl: 'http://localhost:3978/api/messages'
+        }
     });
 }
 

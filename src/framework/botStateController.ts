@@ -16,42 +16,42 @@ export class BotStateController {
     getUserData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         console.log("framework: getUserData");
         res.send(200, {});
-        return next();
+        res.end();
     }
 
     getConversationData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         console.log("framework: getConversationData");
         res.send(200, {});
-        return next();
+        res.end();
     }
 
     getPrivateConversationData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         console.log("framework: getPrivateConversationData");
         res.send(200, {});
-        return next();
+        res.end();
     }
 
     setUserData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         console.log("framework: setUserData");
         res.send(200, {});
-        return next();
+        res.end();
     }
 
     setConversationData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         console.log("framework: setConversationData");
         res.send(200, {});
-        return next();
+        res.end();
     }
 
     setPrivateConversationData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         console.log("framework: setPrivateConversationData");
         res.send(200, {});
-        return next();
+        res.end();
     }
 
     deleteStateForUser = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         console.log("framework: deleteStateForUser");
         res.send(204, {});
-        return next();
+        res.end();
     }
 }

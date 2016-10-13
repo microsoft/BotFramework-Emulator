@@ -10,14 +10,14 @@ gulp.task('clean', function () {
 gulp.task('build-app', ['clean'], function () {
     return gulp.src(['src/**/*.ts', 'src/**/*.tsx'])
         .pipe(tsc({
-            module: "commonjs",
-            moduleResolution: "node",
-            target: "ES5",
+            module: 'commonjs',
+            moduleResolution: 'node',
+            target: 'ES5',
             sourceMap: true,
             noImplicitAny: false,
             noImplicitThis: true,
             noEmitOnError: true,
-            outDir: "dist",
+            outDir: 'dist',
             additionalTscParameters: ['--jsx', 'react']
         }))
         .pipe(gulp.dest('dist/'));

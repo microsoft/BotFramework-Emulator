@@ -27,7 +27,7 @@ export class Emulator {
     /**
      * Creates the emulator and loads configuration from disk.
      */
-    static startup() {
+    static startup = () => {
         emulator = new Emulator();
         SettingsServer.startup();
     }

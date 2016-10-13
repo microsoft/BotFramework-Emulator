@@ -11,12 +11,12 @@ export class AttachmentsController {
     getAttachmentInfo = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         console.log("framework: getAttachmentInfo");
         res.send(501);
-        return next();
+        res.end();
     }
 
     getAttachment = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         console.log("framework: getAttachment");
         res.send(501);
-        return next();
+        res.end();
     }
 }
