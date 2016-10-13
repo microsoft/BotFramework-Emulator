@@ -2,6 +2,7 @@ import { DirectLineServer } from './directLine/directLineServer';
 import { FrameworkServer } from './framework/frameworkServer';
 import { ConversationManager } from './conversationManager';
 import * as SettingsStore from './settings/settingsStore';
+import { ISettings } from './settings/settingsStore';
 import * as SettingsServer from './settings/settingsServer';
 import * as Electron from 'electron';
 import { mainWindow } from './main';
@@ -42,9 +43,9 @@ export class Emulator {
     }
 
     /**
-     * Applies configuration changes to the system and forwards the new configuration to the client.
+     * Applies configuration changes to the system and sends the new configuration to the client.
      */
-    configure = (settings: SettingsStore.ISettings) => {
+    configure = (settings: ISettings) => {
         console.log("configure: ", settings);
         SettingsServer.saveSettings(settings);
         this.directLine.configure(settings);
