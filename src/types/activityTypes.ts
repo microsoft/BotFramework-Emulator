@@ -3,6 +3,7 @@ import { IAttachment } from './attachmentTypes';
 import { IEntity } from './entityTypes';
 import { IETagObject } from './eTagTypes';
 
+
 export interface IActivity extends IETagObject {
     type?: string,
     id?: string,

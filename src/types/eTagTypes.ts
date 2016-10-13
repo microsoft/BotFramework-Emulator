@@ -1,5 +1,5 @@
 
 
 export interface IETagObject {
-    eTag: string,
+    eTag?: string,
 }

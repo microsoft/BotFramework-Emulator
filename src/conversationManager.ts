@@ -16,7 +16,7 @@ export class Conversation {
     }
 
     /**
-     * Send the activity to the conversation's bot.
+     * Sends the activity to the conversation's bot.
      */
     postActivityToBot = (activity: IActivity) => {
         activity.id = `${this.messageId++}`;
@@ -33,11 +33,17 @@ export class Conversation {
         }
     }
 
+    /**
+     * Queues activity for delivery to user.
+     */
     postActivityToUser = (activity: IActivity) => {
         activity.id = `${this.messageId++}`;
         this.activities.push(Object.assign({}, activity));
     }
 
+    /**
+     * Returns activities since the watermark.
+     */
     getActivitiesSince = (watermark: number): IActivity[] => {
         return this.activities.slice(watermark);
     }

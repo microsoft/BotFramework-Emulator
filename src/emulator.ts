@@ -8,7 +8,7 @@ import { mainWindow } from './main';
 
 
 /**
- * Top-level state container for the process.
+ * Top-level state container for the Node process.
  */
 export class Emulator {
     mainWindow: Electron.BrowserWindow;
@@ -55,4 +55,3 @@ export class Emulator {
 }
 
 export var emulator: Emulator;
-

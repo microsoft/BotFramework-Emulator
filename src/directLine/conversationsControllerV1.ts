@@ -3,6 +3,7 @@ import { emulator } from '../emulator';
 import * as SettingsStore from '../settings/settingsStore';
 import { uniqueId } from '../utils';
 import { IGenericActivity } from '../types/activityTypes';
+import { IAttachment } from '../types/attachmentTypes';
 
 
 interface IV1Attachment {
@@ -38,7 +39,7 @@ const messageToActivity = (message: IV1Message): IGenericActivity =>
         text: message.text,
         textFormat: "markdown",
         attachmentLayout: "list",
-        attachments: message.attachments && message.attachments.map(a => ({
+        attachments: message.attachments && message.attachments.map(a => (<IAttachment>{
             contentType: a.contentType,
             contentUrl: a.url
         })),

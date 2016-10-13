@@ -24,6 +24,8 @@ export class MainView extends React.Component<{}, {}> {
             const activeBot = SettingsStore.getActiveBot();
             if (activeBot) {
                 return <BotChat appSecret='emulator' debug='visible' host={`http://localhost:${state.directLine.port}`} />;
+            } else {
+                // TODO: Show "loading" or something.
             }
         }
     }
