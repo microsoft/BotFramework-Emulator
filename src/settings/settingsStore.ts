@@ -34,3 +34,8 @@ export const getActiveBot = () => {
     const state = store.getState();
     return state.bots.find(value => value.botId == state.activeBot);
 }
+
+export const botById = (botId: string) => {
+    const state = store.getState();
+    return state.bots.find(value => value.botId == botId);
+}

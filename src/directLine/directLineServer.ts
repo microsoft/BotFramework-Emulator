@@ -3,9 +3,6 @@ import { ConversationsControllerV1 } from './conversationsControllerV1';
 import { ISettings } from '../settings/settingsStore';
 import { RestServer } from '../restServer';
 
-export interface IPersistentSettings {
-    port: number;
-}
 
 /**
  * Communicates with the BotChat control.

@@ -3,14 +3,16 @@ import * as Fs from 'fs';
 import * as SettingsStore from './settingsStore';
 import * as Electron from 'electron';
 import { emulator } from '../emulator';
-import * as DirectLine from '../directLine/directLineServer';
-import * as Framework from '../framework/frameworkServer';
 import { IBot } from '../types/botTypes';
 
 
 interface IPersistentSettings {
-    directLine: DirectLine.IPersistentSettings,
-    framework: Framework.IPersistentSettings,
+    directLine: {
+        port: number
+    },
+    framework: {
+        port: number
+    },
     bots: IBot[],
     activeBot: string
 }

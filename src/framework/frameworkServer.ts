@@ -6,10 +6,6 @@ import { ISettings } from '../settings/settingsStore';
 import { RestServer } from '../restServer';
 
 
-export interface IPersistentSettings {
-    port: number;
-}
-
 /**
  * Communicates with the bot.
  */

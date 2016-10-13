@@ -15,10 +15,13 @@ export class Conversation {
     constructor(public conversationId: string, public botId: string) {
     }
 
+    /**
+     * Send the activity to the conversation's bot.
+     */
     postActivityToBot = (activity: IActivity) => {
         activity.id = `${this.messageId++}`;
         this.activities.push(Object.assign({}, activity));
-        const bot = SettingsStore.getActiveBot();
+        const bot = SettingsStore.botById(this.botId);
         if (!bot) {
             console.error("Conversation.postToBot: bot not found! How does this conversation exist?", this.botId);
         } else {
