@@ -1,5 +1,5 @@
 import { Reducer } from 'redux';
-import { IDirectLineState, directLineDefault } from '../types/settingsTypes';
+import { IDirectLineSettings, directLineDefault } from '../types/settingsTypes';
 
 
 export type DirectLineAction = {
@@ -9,7 +9,7 @@ export type DirectLineAction = {
     }
 }
 
-export const directLineReducer: Reducer<IDirectLineState> = (
+export const directLineReducer: Reducer<IDirectLineSettings> = (
     state = directLineDefault,
     action: DirectLineAction
 ) => {

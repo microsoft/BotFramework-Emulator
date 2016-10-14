@@ -1,42 +1,33 @@
 import { IBot } from './botTypes';
 
 
-export interface IDirectLineState {
-    port: number;
+export interface IDirectLineSettings {
+    port: number,
 }
 
-export interface IFrameworkState {
-    port: number;
+export interface IFrameworkSettings {
+    port: number,
 }
 
-export const directLineDefault: IDirectLineState = {
+export const directLineDefault: IDirectLineSettings = {
     port: 9001
 }
 
-export const frameworkDefault: IFrameworkState = {
+export const frameworkDefault: IFrameworkSettings = {
     port: 9002
 }
 
-export const directLineEmpty: IDirectLineState = {
-    port: 0
-}
-
-export const frameworkEmpty: IFrameworkState = {
-    port: 0
-}
-
-
 
 export interface ISettings {
-    directLine?: IDirectLineState,
-    framework?: IFrameworkState,
+    directLine?: IDirectLineSettings,
+    framework?: IFrameworkSettings,
     bots?: IBot[],
-    activeBot?: string
+    activeBot?: string,
 }
 
 export class Settings {
-    directLine: IDirectLineState;
-    framework: IFrameworkState;
+    directLine: IDirectLineSettings;
+    framework: IFrameworkSettings;
     bots: IBot[];
     activeBot: string;
 
@@ -61,11 +52,3 @@ export const settingsDefault: ISettings = {
     bots: [],
     activeBot: ''
 };
-
-export const settingsEmpty: ISettings = {
-    directLine: directLineEmpty,
-    framework: frameworkEmpty,
-    bots: [],
-    activeBot: ''
-};
-

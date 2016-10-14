@@ -11,22 +11,24 @@ import { mainWindow } from './main';
  */
 export class Emulator {
     mainWindow: Electron.BrowserWindow;
-    directLine: DirectLineServer;
-    framework: FrameworkServer;
-    conversations: ConversationManager;
+    directLine = new DirectLineServer();
+    framework = new FrameworkServer();
+    conversations = new ConversationManager();
+
+    constructor() {
+        // When the client notifies us it has started up, send it the configuration.
+        Electron.ipcMain.on('started', () => {
+            this.mainWindow = mainWindow;
+            this.send('configure', SettingsServer.store.getState());
+        });
+    }
 
     /**
-     * Creates the emulator and loads configuration from disk.
+     * Loads settings from disk and then creates the emulator.
      */
     static startup = () => {
-        emulator = new Emulator();
         SettingsServer.startup(() => {
-            emulator.create();
-            // When the client notifies us it has started up, send it the configuration.
-            Electron.ipcMain.on('started', () => {
-                emulator.mainWindow = mainWindow;
-                emulator.send('configure', SettingsServer.store.getState());
-            });
+            emulator = new Emulator();
         });
     }
 
@@ -37,12 +39,6 @@ export class Emulator {
         if (this.mainWindow) {
             this.mainWindow.webContents.send(channel, args);
         }
-    }
-
-    private create = () => {
-        this.directLine = new DirectLineServer();
-        this.framework = new FrameworkServer();
-        this.conversations = new ConversationManager();
     }
 }
 

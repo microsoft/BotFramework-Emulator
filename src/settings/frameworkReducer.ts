@@ -1,5 +1,5 @@
 import { Reducer } from 'redux';
-import { IFrameworkState, frameworkDefault } from '../types/settingsTypes';
+import { IFrameworkSettings, frameworkDefault } from '../types/settingsTypes';
 
 
 export type FrameworkAction = {
@@ -9,7 +9,7 @@ export type FrameworkAction = {
     }
 }
 
-export const frameworkReducer: Reducer<IFrameworkState> = (
+export const frameworkReducer: Reducer<IFrameworkSettings> = (
     state = frameworkDefault,
     action: FrameworkAction
 ) => {
