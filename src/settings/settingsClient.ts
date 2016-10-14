@@ -5,7 +5,7 @@ import { Settings } from '../types/settingsTypes';
 
 export const settingsChange = new events.EventEmitter();
 
-export var settings;
+export var settings: Settings;
 
 export const startup = () => {
     // TEST ONLY: activate a bot
