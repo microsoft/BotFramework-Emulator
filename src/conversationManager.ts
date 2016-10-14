@@ -9,7 +9,6 @@ import * as SettingsServer from './settings/settingsServer';
  * Stores and propagates conversation messages.
  */
 export class Conversation {
-    messageId: number = 0;
     activities: IActivity[] = [];
 
     constructor(public conversationId: string, public botId: string) {
@@ -19,7 +18,7 @@ export class Conversation {
      * Sends the activity to the conversation's bot.
      */
     postActivityToBot = (activity: IActivity) => {
-        activity.id = `${this.messageId++}`;
+        activity.id = uniqueId();
         this.activities.push(Object.assign({}, activity));
         const bot = SettingsServer.settings().botById(this.botId);
         if (!bot) {
@@ -37,7 +36,7 @@ export class Conversation {
      * Queues activity for delivery to user.
      */
     postActivityToUser = (activity: IActivity) => {
-        activity.id = `${this.messageId++}`;
+        activity.id = uniqueId();
         this.activities.push(Object.assign({}, activity));
     }
 
@@ -77,7 +76,7 @@ export class ConversationManager {
      * Creates a new conversation.
      */
     newConversation = (botId: string): Conversation => {
-        let conversation = this.conversations.find(value => value.botId == botId);
+        let conversation = this.conversations.find(value => value.botId === botId);
         if (!conversation) {
             conversation = new Conversation(uniqueId(), botId);
             this.conversations.push(conversation);

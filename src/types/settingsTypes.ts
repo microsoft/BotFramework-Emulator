@@ -42,7 +42,7 @@ export class Settings {
     }
 
     botById = (botId: string) => {
-        return this.bots.find(value => value.botId == botId);
+        return this.bots.find(value => value.botId === botId);
     }
 }
 

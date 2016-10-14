@@ -11,8 +11,7 @@ import * as SettingsServer from '../settings/settingsServer';
  */
 export class FrameworkServer extends RestServer {
 
-    serviceUrl = (): string =>
-        `http://localhost:${this.port}/`;
+    serviceUrl = (): string => `http://localhost:${this.port}/`;
 
     conversationsController = new ConversationsController();
     attachmentsController = new AttachmentsController();

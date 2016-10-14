@@ -38,6 +38,8 @@ const saveSettings = () => {
 }
 
 export const startup = (callback: Function) => {
+
+    // Create the settings store with initial settings from disk.
     const initialSettings = loadSettings();
     store = createStore(combineReducers<ISettings>({
         directLine: directLineReducer,
@@ -46,20 +48,21 @@ export const startup = (callback: Function) => {
         activeBot: activeBotReducer
     }), initialSettings);
 
+    // When changes to settings are made, save to disk and also forward to the client.
     store.subscribe(() => {
         saveSettings();
         emulator.send('configure', store.getState());
     });
 
+    // Listen for settings change requests from the client.
     Electron.ipcMain.on('change', (event, ...args) => {
-        console.log('change', JSON.stringify(args));
+        // Apply change requests to the settings store.
         store.dispatch({
             type: args[0],
             state: args[1]
         });
     });
 
-    if (callback) {
-        callback();
-    }
+    // Done with setup.
+    callback();
 }

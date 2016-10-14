@@ -44,16 +44,30 @@ const messageToActivity = (message: IV1Message): IGenericActivity =>
         })),
     });
 
-const activityToMessage = (activity: IGenericActivity): IV1Message =>
-    ({
-        eTag: activity.eTag,
-        id: activity.id,
-        conversationId: activity.conversation.id,
-        created: activity.timestamp,
-        from: activity.from.id,
-        text: activity.text,
-        channelData: activity.channelData,
-    });
+const activityToMessage = (activity: IGenericActivity): IV1Message => {
+    if (activity.channelData) {
+        let result: IV1Message = {
+            eTag: activity.eTag,
+            id: activity.id,
+            conversationId: activity.conversation.id,
+            created: activity.timestamp,
+            from: activity.from.id,
+            text: activity.text,
+            channelData: activity.channelData,
+        }
+        return result;
+    } else {
+        let result: IV1Message = {
+            eTag: activity.eTag,
+            id: activity.id,
+            conversationId: activity.conversation.id,
+            created: activity.timestamp,
+            from: activity.from.id,
+            channelData: activity
+        }
+        return result;
+    }
+}
 
 
 export class ConversationsControllerV1 {
@@ -87,7 +101,7 @@ export class ConversationsControllerV1 {
         if (conversation) {
             const watermark = Number(req.params.watermark || 0);
             const activities = conversation.getActivitiesSince(req.params.watermark);
-            const messages = activities.filter(a => a.type == "message").map(a => activityToMessage(a));
+            const messages = activities.filter(a => a.type === "message").map(a => activityToMessage(a));
             res.json(200, {
                 messages: messages,
                 watermark: watermark + messages.length

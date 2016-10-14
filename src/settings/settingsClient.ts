@@ -8,31 +8,36 @@ export const settingsChange = new events.EventEmitter();
 export var settings;
 
 export const startup = () => {
+    // TEST ONLY: activate a bot
     settingsChange.addListener('configure', () => {
-        // TEST ONLY: activate a bot
-        if (settings.activeBot.length == 0 && settings.bots.length > 0) {
+        if (settings.activeBot.length === 0 && settings.bots.length > 0) {
             setTimeout(() => {
                 change('ActiveBot_Set', { botId: settings.bots[0].botId });
             }, 100);
         }
     });
 
+    // Listen for new settings from the server.
     Electron.ipcRenderer.on('configure', (event, ...args) => {
         settings = new Settings(args[0][0]);
-        console.log("configure: ", settings);
+        // Let client-side listeners know settings changed.
         settingsChange.emit('configure');
     });
 
+    // Let the server know we're done starting up.
     Electron.ipcRenderer.send('started');
 
     // TEST ONLY: Add a bot
     change('Bots_AddBot', {
         bot: {
-            botUrl: 'http://localhost:3978/api/messages'
+            botUrl: 'http://localhost:8023/api/MessagesV3'
         }
     });
 }
 
-export const change = (action: string, args) => {
-    Electron.ipcRenderer.send('change', action, args);
+/**
+ * Sends settings change requests to the server.
+ */
+export const change = (action: string, state) => {
+    Electron.ipcRenderer.send('change', action, state);
 }

@@ -37,7 +37,7 @@ export const botsReducer: Reducer<IBot[]> = (
                 Object.assign({}, action.state.bot, { botId: uniqueId() })];
         }
         case 'Bots_RemoveBot': {
-            let index = state.findIndex(value => value.botId == action.state.botId);
+            let index = state.findIndex(value => value.botId === action.state.botId);
             if (index) {
                 return [
                     ...state.slice(0, index),
@@ -47,7 +47,7 @@ export const botsReducer: Reducer<IBot[]> = (
             }
         }
         case 'Bots_EditBot': {
-            let index = state.findIndex(value => value.botId == action.state.botId);
+            let index = state.findIndex(value => value.botId === action.state.botId);
             if (index) {
                 return [
                     ...state.slice(0, index),
