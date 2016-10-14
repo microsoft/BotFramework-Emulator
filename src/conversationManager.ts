@@ -1,8 +1,8 @@
 import * as request from 'request';
-import { ISettings } from './settings/settingsStore';
+import { Settings } from './types/settingsTypes';
 import { IActivity } from './types/activityTypes';
 import { uniqueId } from './utils';
-import * as SettingsStore from './settings/settingsStore';
+import * as SettingsServer from './settings/settingsServer';
 
 
 /**
@@ -21,7 +21,7 @@ export class Conversation {
     postActivityToBot = (activity: IActivity) => {
         activity.id = `${this.messageId++}`;
         this.activities.push(Object.assign({}, activity));
-        const bot = SettingsStore.botById(this.botId);
+        const bot = SettingsServer.settings().botById(this.botId);
         if (!bot) {
             console.error("Conversation.postToBot: bot not found! How does this conversation exist?", this.botId);
         } else {
@@ -56,11 +56,19 @@ export class Conversation {
 export class ConversationManager {
     conversations: Conversation[] = [];
 
+    constructor() {
+        SettingsServer.store.subscribe(() => {
+            this.configure();
+        });
+        this.configure();
+    }
+
     /**
      * Applies configuration changes.
      */
-    configure = (settings: ISettings) => {
+    private configure = () => {
         // Remove conversations that reference nonexistent bots.
+        const settings = SettingsServer.settings();
         const deadConversationIds = this.conversations.filter(conversation => !settings.bots.find(bot => bot.botId === conversation.botId)).map(conversation => conversation.conversationId);
         this.conversations = this.conversations.filter(conversation => !deadConversationIds.find(conversationId => conversation.conversationId === conversationId));
     }

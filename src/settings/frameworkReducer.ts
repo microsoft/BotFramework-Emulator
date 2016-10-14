@@ -1,22 +1,12 @@
 import { Reducer } from 'redux';
+import { IFrameworkState, frameworkDefault } from '../types/settingsTypes';
 
-
-export interface IFrameworkState {
-    port: number;
-}
-
-export const frameworkDefault: IFrameworkState = {
-    port: 9002
-}
 
 export type FrameworkAction = {
     type: 'Framework_SetPort',
     state: {
         port: number
     }
-} | {
-    type: 'Framework_SetState',
-    state: IFrameworkState
 }
 
 export const frameworkReducer: Reducer<IFrameworkState> = (
@@ -27,8 +17,6 @@ export const frameworkReducer: Reducer<IFrameworkState> = (
     switch (action.type) {
         case 'Framework_SetPort':
             return Object.assign({}, state, { port: action.state.port });
-        case 'Framework_SetState':
-            return Object.assign({}, state, action.state);
         default:
             return state
     }

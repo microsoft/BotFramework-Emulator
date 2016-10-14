@@ -1,6 +1,5 @@
 import { Reducer } from 'redux';
 import { uniqueId } from '../utils';
-import * as SettingsStore from './settingsStore';
 import { IBot } from '../types/botTypes';
 
 export type BotsAction = {
@@ -71,11 +70,6 @@ export type ActiveBotAction = {
     state: {
         botId: string
     }
-} | {
-    type: 'ActiveBot_SetState',
-    state: {
-        botId: string
-    }
 }
 
 export const activeBotReducer: Reducer<string> = (
@@ -85,13 +79,8 @@ export const activeBotReducer: Reducer<string> = (
     console.log('activeBotReducer', JSON.stringify(action), JSON.stringify(state));
     switch (action.type) {
         case 'ActiveBot_Set':
-        case 'ActiveBot_SetState':
             return action.state.botId || state;
         default:
             return state
     }
-}
-
-export const botForId = (botId: string): IBot => {
-    return SettingsStore.store.getState().bots.find(value => value.botId === botId);
 }

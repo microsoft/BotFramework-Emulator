@@ -1,65 +1,65 @@
 import { Store, createStore, combineReducers, Reducer } from 'redux';
+import { directLineReducer } from './directLineReducer';
+import { frameworkReducer } from './frameworkReducer';
+import { botsReducer, activeBotReducer } from './botReducer';
 import * as Fs from 'fs';
-import * as SettingsStore from './settingsStore';
 import * as Electron from 'electron';
 import { emulator } from '../emulator';
 import { IBot } from '../types/botTypes';
+import { ISettings, Settings, settingsDefault } from '../types/settingsTypes';
 
 
-interface IPersistentSettings {
-    directLine: {
-        port: number
-    },
-    framework: {
-        port: number
-    },
-    bots: IBot[],
-    activeBot: string
-}
+export var store: Store<ISettings>;
 
-const loadSettings = (): SettingsStore.ISettings => {
+export const settings = () => new Settings(store ? store.getState() : settingsDefault);
+
+const loadSettings = (): ISettings => {
     try {
         let savedSettings = JSON.parse(Fs.readFileSync('settings.json', 'utf8'));
-        let settings: SettingsStore.ISettings = {
-            directLine: Object.assign(SettingsStore.settingsDefault.directLine, savedSettings.directLine),
-            framework: Object.assign(SettingsStore.settingsDefault.framework, savedSettings.framework),
-            bots: [...(savedSettings.bots || SettingsStore.settingsDefault.bots)],
-            activeBot: savedSettings.activeBot || SettingsStore.settingsDefault.activeBot
+        let settings = {
+            directLine: Object.assign(settingsDefault.directLine, savedSettings.directLine),
+            framework: Object.assign(settingsDefault.framework, savedSettings.framework),
+            bots: [...(savedSettings.bots || settingsDefault.bots)],
+            activeBot: savedSettings.activeBot || settingsDefault.activeBot
         };
         return settings;
     } catch (e) {
         console.error('Failed to read settings.json', e);
-        return SettingsStore.settingsDefault;
+        return settingsDefault;
     }
 }
 
-export const saveSettings = (settings: SettingsStore.ISettings) => {
+const saveSettings = () => {
     try {
-        let savedSettings: IPersistentSettings = {
-            directLine: Object.assign({}, settings.directLine),
-            framework: Object.assign({}, settings.framework),
-            bots: [...settings.bots],
-            activeBot: settings.activeBot
-        };
-        Fs.writeFileSync('settings.json', JSON.stringify(savedSettings, null, 2), 'utf8');
+        Fs.writeFileSync('settings.json', JSON.stringify(store.getState(), null, 2), 'utf8');
     } catch (e) {
         console.error('Failed to write settings.json', e);
     }
 }
 
-export const startup = () => {
+export const startup = (callback: Function) => {
     const initialSettings = loadSettings();
-    SettingsStore.startup(initialSettings);
-    SettingsStore.store.subscribe(() => {
-        const newSettings = SettingsStore.store.getState();
-        emulator.configure(newSettings);
+    store = createStore(combineReducers<ISettings>({
+        directLine: directLineReducer,
+        framework: frameworkReducer,
+        bots: botsReducer,
+        activeBot: activeBotReducer
+    }), initialSettings);
+
+    store.subscribe(() => {
+        saveSettings();
+        emulator.send('configure', store.getState());
     });
+
     Electron.ipcMain.on('change', (event, ...args) => {
         console.log('change', JSON.stringify(args));
-        SettingsStore.store.dispatch({
+        store.dispatch({
             type: args[0],
             state: args[1]
         });
     });
-    emulator.configure(initialSettings);
+
+    if (callback) {
+        callback();
+    }
 }

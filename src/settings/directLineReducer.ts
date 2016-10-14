@@ -1,22 +1,12 @@
 import { Reducer } from 'redux';
+import { IDirectLineState, directLineDefault } from '../types/settingsTypes';
 
-
-export interface IDirectLineState {
-    port: number;
-}
-
-export const directLineDefault: IDirectLineState = {
-    port: 9001
-}
 
 export type DirectLineAction = {
     type: 'DirectLine_SetPort',
     state: {
         port: number
     }
-} | {
-    type: 'DirectLine_SetState',
-    state: IDirectLineState
 }
 
 export const directLineReducer: Reducer<IDirectLineState> = (
@@ -27,8 +17,6 @@ export const directLineReducer: Reducer<IDirectLineState> = (
     switch (action.type) {
         case 'DirectLine_SetPort':
             return Object.assign({}, state, { port: action.state.port });
-        case 'DirectLine_SetState':
-            return Object.assign({}, state, action.state);
         default:
             return state
     }

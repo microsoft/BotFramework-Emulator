@@ -1,8 +1,6 @@
 import { DirectLineServer } from './directLine/directLineServer';
 import { FrameworkServer } from './framework/frameworkServer';
 import { ConversationManager } from './conversationManager';
-import * as SettingsStore from './settings/settingsStore';
-import { ISettings } from './settings/settingsStore';
 import * as SettingsServer from './settings/settingsServer';
 import * as Electron from 'electron';
 import { mainWindow } from './main';
@@ -13,24 +11,23 @@ import { mainWindow } from './main';
  */
 export class Emulator {
     mainWindow: Electron.BrowserWindow;
-    directLine = new DirectLineServer();
-    framework = new FrameworkServer();
-    conversations = new ConversationManager();
-
-    constructor() {
-        // When the client notifies us it has started up, send it the configuration.
-        Electron.ipcMain.on('started', () => {
-            this.mainWindow = mainWindow;
-            this.send('configure', SettingsStore.store.getState());
-        });
-    }
+    directLine: DirectLineServer;
+    framework: FrameworkServer;
+    conversations: ConversationManager;
 
     /**
      * Creates the emulator and loads configuration from disk.
      */
     static startup = () => {
         emulator = new Emulator();
-        SettingsServer.startup();
+        SettingsServer.startup(() => {
+            emulator.create();
+            // When the client notifies us it has started up, send it the configuration.
+            Electron.ipcMain.on('started', () => {
+                emulator.mainWindow = mainWindow;
+                emulator.send('configure', SettingsServer.store.getState());
+            });
+        });
     }
 
     /**
@@ -42,16 +39,10 @@ export class Emulator {
         }
     }
 
-    /**
-     * Applies configuration changes to the system and sends the new configuration to the client.
-     */
-    configure = (settings: ISettings) => {
-        console.log("configure: ", settings);
-        SettingsServer.saveSettings(settings);
-        this.directLine.configure(settings);
-        this.framework.configure(settings);
-        this.conversations.configure(settings);
-        this.send('configure', settings);
+    private create = () => {
+        this.directLine = new DirectLineServer();
+        this.framework = new FrameworkServer();
+        this.conversations = new ConversationManager();
     }
 }
 

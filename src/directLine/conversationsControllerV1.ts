@@ -1,6 +1,6 @@
 import * as Restify from 'restify';
 import { emulator } from '../emulator';
-import * as SettingsStore from '../settings/settingsStore';
+import * as SettingsServer from '../settings/settingsServer';
 import { uniqueId } from '../utils';
 import { IGenericActivity } from '../types/activityTypes';
 import { IAttachment } from '../types/attachmentTypes';
@@ -68,7 +68,7 @@ export class ConversationsControllerV1 {
     }
 
     newConversation = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-        const activeBot = SettingsStore.getActiveBot();
+        const activeBot = SettingsServer.settings().getActiveBot();
         if (activeBot) {
             const conversation = emulator.conversations.newConversation(activeBot.botId);
             res.json(200, {
