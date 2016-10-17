@@ -1,5 +1,17 @@
 /* reset */
 
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    body, button, input, textarea {
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 15px;
+    }
+
     button {
         background-color: #29a3ed;
         border: none;
@@ -14,8 +26,8 @@
     }
 
     h1, h2, h3, h4, p, ul, ol {
-        margin-bottom: 8px;
-        margin-top: 0;
+        margin: 0;
+        padding: 0;
     }
 
 /* docking */
@@ -69,40 +81,6 @@
         position: absolute;
         right: 0;
         left: 0;
-        top: 0;
-        bottom: 0;
-    }
-
-    .wc-chatview-panel.wc-withdebugview {
-        width: 50%;
-    }
-
-    .wc-toggledebugview {
-        position: absolute;
-        width: 24px;
-        right: 0;
-        top: 0;
-        bottom: 0;
-        cursor: pointer;
-    }
-
-    .wc-toggledebugview svg {
-        position: absolute;
-        top: 12px;
-    }
-
-    .wc-toggledebugview svg path#frame {
-        fill: #fff;
-    }
-
-    .wc-toggledebugview svg rect#panel {
-        fill: #ffa333;
-    }
-
-    .wc-debugview-panel {
-        position: absolute;
-        width: 50%;
-        right: 0;
         top: 0;
         bottom: 0;
     }
@@ -208,7 +186,6 @@
         border: 1px solid #d2dde5;
         font-size: 13px;
         padding: 8px;
-        width: 300px;
     }
 
     .wc-card button {
@@ -326,6 +303,7 @@
     .wc-carousel button.scroll {
         background-color: #d2dde5;
         height: 28px;
+        overflow: hidden;
         padding: 0;
         position: absolute;
         top: 50%;
@@ -370,9 +348,11 @@
 
     .wc-carousel-scroll > ul > li {
         display: inline-block;
+        max-width: 640px;
         padding: 0 4px;
         vertical-align: top;
         white-space: nowrap;
+        width: 85%;
     }
 
     .wc-carousel-scroll > ul > li:last-child {

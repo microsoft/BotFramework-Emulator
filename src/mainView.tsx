@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { UI as BotChat } from '../node_modules/msbotchat/built/BotChat';
+import * as BotChat from 'msbotchat';
 import { SettingsView } from './settingsView';
 import * as SettingsClient from './settings/settingsClient';
 import { uniqueId } from './utils';
@@ -24,8 +24,24 @@ export class MainView extends React.Component<{}, {}> {
         if (settings && settings.directLine.port > 0) {
             const activeBot = SettingsClient.settings.getActiveBot();
             if (activeBot) {
-                return <BotChat appSecret={activeBot.botId} debug='visible' host={`http://localhost:${settings.directLine.port}`} />;
+                const props: BotChat.AppProps = {
+                    uiProps: {
+                        secret: activeBot.botId,
+                        directLineDomain: `http://localhost:${settings.directLine.port}`,
+                        user: {
+                            id: uniqueId(),
+                            name: 'User'
+                        },
+                        historyProps: {
+                            allowSelection: true
+                        }
+                    },
+                    debugProps:{
+                    }
+                };
+                return <BotChat.App {...props} />;
             } else {
+                <div>Create or select a bot configuration to get started.</div>
                 // TODO: Show "loading" or something.
             }
         }

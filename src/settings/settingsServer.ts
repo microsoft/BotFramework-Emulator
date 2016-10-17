@@ -16,7 +16,7 @@ export const settings = () => new Settings(store ? store.getState() : settingsDe
 const loadSettings = (): ISettings => {
     try {
         let savedSettings = JSON.parse(Fs.readFileSync('settings.json', 'utf8'));
-        let settings = {
+        let settings: ISettings = {
             directLine: Object.assign(settingsDefault.directLine, savedSettings.directLine),
             framework: Object.assign(settingsDefault.framework, savedSettings.framework),
             bots: [...(savedSettings.bots || settingsDefault.bots)],
@@ -38,7 +38,6 @@ const saveSettings = () => {
 }
 
 export const startup = (callback: Function) => {
-
     // Create the settings store with initial settings from disk.
     const initialSettings = loadSettings();
     store = createStore(combineReducers<ISettings>({
