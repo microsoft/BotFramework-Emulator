@@ -47,6 +47,10 @@ export interface IActionActivity extends IActivity {
 export interface IEndOfConversationActivity extends IActivity {
 }
 
+export interface ITriggerActivity extends IActivity {
+    value?: any;
+}
+
 export interface IGenericActivity extends
     IActivity,
     ITypingActivity,
@@ -54,5 +58,6 @@ export interface IGenericActivity extends
     IContactRelationUpdateActivity,
     IMessageActivity,
     IActionActivity,
-    IEndOfConversationActivity {
+    IEndOfConversationActivity,
+    ITriggerActivity {
 }

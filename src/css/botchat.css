@@ -36,19 +36,6 @@
         visibility: hidden;
     }
 
-    .wc-header {
-        background-color: #3e92d2;
-        color: #fff;
-        font-weight: 500;
-        height: 35px;   /* height + padding-top = total height */
-        left: 0;
-        letter-spacing: 0.5px;
-        padding: 10px 15px 0 15px;
-        position: absolute;
-        right: 0;
-        top: 0;
-    }
-
     .wc-time {
         color: #999;
         margin-bottom: 10px;
@@ -65,7 +52,7 @@
         top: 45px;  /* from wc-header total height */
     }
 
-    .wc-console {
+    .wc-shell {
         border: 5px solid #dbdee1;
         bottom: 0;
         box-sizing: border-box;
@@ -85,6 +72,45 @@
         bottom: 0;
     }
 
+    .wc-chatview-header {
+        background-color: #3e92d2;
+        color: #fff;
+        font-weight: 500;
+        height: 35px;   /* height + padding-top = total height */
+        left: 0;
+        letter-spacing: 0.5px;
+        padding: 10px 15px 0 15px;
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+
+    .wc-debugview-header {
+        background-color: #3e92d2;
+        color: #fff;
+        font-weight: 500;
+        height: 35px;   /* height + padding-top = total height */
+        left: 0;
+        letter-spacing: 0.5px;
+        padding: 10px 15px 0 15px;
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+
+    .wc-consoleview-header {
+        background-color: #3e92d2;
+        color: #fff;
+        font-weight: 500;
+        height: 35px;   /* height + padding-top = total height */
+        left: 0;
+        letter-spacing: 0.5px;
+        padding: 10px 15px 0 15px;
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+
     .wc-debugview {
         position: absolute;
         left: 0;
@@ -95,19 +121,17 @@
     }
 
     .wc-debugview-json {
-        background-color: #eceff1;
         font-size: 13px;
         font-family: monospace;
         position: absolute;
         top: 0;
         left: 0;
-        max-width: 95%;
+        right: 0;
+        bottom: 0;
         word-wrap: break-word;
         white-space: pre-wrap;
         padding: 5px 5px 5px 5px;
         margin: 5px 5px 5px 5px;
-        border-radius: 2px;
-        box-shadow: 0px 1px 1px 0px #ffa333
     }
 
 /* JSON */
@@ -130,6 +154,41 @@
 
     .json-null {
         color: black;
+    }
+
+/* consoleview */
+
+    .wc-consoleview {
+        overflow-y: scroll;
+        font-size: 13px;
+        font-family: monospace;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+        position: absolute;
+        left: 0;
+        top: 45px;
+        right: 0;
+        bottom: 0;
+    }
+
+    .wc-consoleview-info {
+
+    }
+
+    .wc-consoleview-trace {
+
+    }
+
+    .wc-consoleview-debug {
+
+    }
+
+    .wc-consoleview-warn {
+
+    }
+
+    .wc-consoleview-error {
+
     }
 
 /* messages */
@@ -416,26 +475,26 @@
         left: -12px;
     }
 
-/* console */
+/* shell */
 
-    .wc-console > * {
+    .wc-shell > * {
         position: absolute;
         top: 0;
         vertical-align: middle;
     }
 
-    .wc-console label {
+    .wc-shell label {
         cursor: pointer;
         display: inline-block;
         height: 40px;
     }
 
-    .wc-console svg {
+    .wc-shell svg {
         fill: #8A8A8A;
         margin: 11px;
     }
 
-    .wc-console textarea, .wc-console input[type=text] {
+    .wc-shell textarea, .wc-shell input[type=text] {
         border: none;
         height: 100%;
         outline: none;

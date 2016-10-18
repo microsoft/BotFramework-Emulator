@@ -1,5 +1,6 @@
 import * as Restify from 'restify';
 import { IGenericActivity } from '../types/activityTypes';
+import * as SettingsServer from '../settings/settingsServer';
 import { emulator } from '../emulator';
 import { uniqueId } from '../utils';
 
@@ -22,31 +23,37 @@ export class ConversationsController {
     }
 
     sendToConversation = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-        let activity = <IGenericActivity>req.body;
-        const conversationId = req.params.conversationId;
-        activity.conversation = {
-            id: conversationId
-        };
-        console.log("framework: sendToConversation", JSON.stringify(activity));
-        const conversation = emulator.conversations.conversationById(conversationId);
-        if (conversation) {
-            conversation.postActivityToUser(activity);
+        const activeBot = SettingsServer.settings().getActiveBot();
+        if (activeBot) {
+            let activity = <IGenericActivity>req.body;
+            const conversationId = req.params.conversationId;
+            activity.conversation = {
+                id: conversationId
+            };
+            console.log("framework: sendToConversation", JSON.stringify(activity));
+            const conversation = emulator.conversations.conversationById(activeBot.botId, conversationId);
+            if (conversation) {
+                conversation.postActivityToUser(activity);
+            }
         }
         res.send(200, {});
         res.end();
     }
 
     replyToActivity = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-        let activity = <IGenericActivity>req.body;
-        const conversationId = req.params.conversationId;
-        activity.replyToId = req.params.activityId;
-        activity.conversation = {
-            id: conversationId
-        };
-        console.log("framework: replyToActivity", JSON.stringify(activity));
-        const conversation = emulator.conversations.conversationById(conversationId);
-        if (conversation) {
-            conversation.postActivityToUser(activity);
+        const activeBot = SettingsServer.settings().getActiveBot();
+        if (activeBot) {
+            let activity = <IGenericActivity>req.body;
+            const conversationId = req.params.conversationId;
+            activity.replyToId = req.params.activityId;
+            activity.conversation = {
+                id: conversationId
+            };
+            console.log("framework: replyToActivity", JSON.stringify(activity));
+            const conversation = emulator.conversations.conversationById(activeBot.botId, conversationId);
+            if (conversation) {
+                conversation.postActivityToUser(activity);
+            }
         }
         res.send(200, {});
         res.end();

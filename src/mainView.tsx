@@ -4,8 +4,13 @@ import { SettingsView } from './settingsView';
 import * as SettingsClient from './settings/settingsClient';
 import { uniqueId } from './utils';
 
+export interface IMainViewProps {
+    conversationId: string,
+    username: string,
+    userid: string
+}
 
-export class MainView extends React.Component<{}, {}> {
+export class MainView extends React.Component<IMainViewProps, {}> {
 
     configChangeHandler = () => {
         this.forceUpdate();
@@ -26,17 +31,17 @@ export class MainView extends React.Component<{}, {}> {
             if (activeBot) {
                 const props: BotChat.AppProps = {
                     uiProps: {
-                        secret: activeBot.botId,
+                        secret: this.props.conversationId,
                         directLineDomain: `http://localhost:${settings.directLine.port}`,
                         user: {
-                            id: uniqueId(),
-                            name: 'User'
+                            id: this.props.userid,
+                            name: this.props.username
                         },
                         historyProps: {
                             allowSelection: true
                         }
                     },
-                    debugProps:{
+                    debugProps: {
                     }
                 };
                 return <BotChat.App {...props} />;
@@ -44,13 +49,15 @@ export class MainView extends React.Component<{}, {}> {
                 <div>Create or select a bot configuration to get started.</div>
                 // TODO: Show "loading" or something.
             }
+        } else {
+            <div>Loading...</div>
+            // TODO: Show "loading" or something.
         }
     }
 
     render() {
         return (
             <div className='mainview'>
-                <SettingsView />
                 <div className='botchat-container'>
                     {this.botChatComponent()}
                 </div>

@@ -4,6 +4,7 @@ import * as SettingsServer from '../settings/settingsServer';
 import { uniqueId } from '../utils';
 import { IGenericActivity } from '../types/activityTypes';
 import { IAttachment } from '../types/attachmentTypes';
+import { Conversation } from '../conversationManager';
 
 
 interface IV1Attachment {
@@ -33,7 +34,6 @@ const messageToActivity = (message: IV1Message): IGenericActivity =>
         channelId: "emulator",
         from: { id: message.from },
         conversation: { id: message.conversationId },
-        recipient: { id: "bot" }, // what go here?
         channelData: message.channelData,
         text: message.text,
         textFormat: "markdown",
@@ -84,12 +84,16 @@ export class ConversationsControllerV1 {
     newConversation = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         const activeBot = SettingsServer.settings().getActiveBot();
         if (activeBot) {
-            const conversation = emulator.conversations.newConversation(activeBot.botId);
+            const auth = req.header('Authorization');
+            const tokenMatch = /BotConnector\s+(.+)/.exec(auth);
+            let conversation = emulator.conversations.conversationById(activeBot.botId, tokenMatch[1]);
+            if (!conversation) {
+                conversation = emulator.conversations.newConversation(activeBot.botId);
+                conversation.sendBotAddedToConversation();
+            }
             res.json(200, {
-                conversationId: conversation.conversationId,
-                token: uniqueId()
+                conversationId: conversation.conversationId
             });
-            // TODO: Send bot added to conversation
         } else {
             res.send(403, "no active bot");
         }
@@ -97,30 +101,40 @@ export class ConversationsControllerV1 {
     }
 
     getMessages = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-        const conversation = emulator.conversations.conversationById(req.params.conversationId);
-        if (conversation) {
-            const watermark = Number(req.params.watermark || 0);
-            const activities = conversation.getActivitiesSince(req.params.watermark);
-            const messages = activities.filter(a => a.type === "message").map(a => activityToMessage(a));
-            res.json(200, {
-                messages: messages,
-                watermark: watermark + messages.length
-            });
+        const activeBot = SettingsServer.settings().getActiveBot();
+        if (activeBot) {
+            const conversation = emulator.conversations.conversationById(activeBot.botId, req.params.conversationId);
+            if (conversation) {
+                const watermark = Number(req.params.watermark || 0);
+                const activities = conversation.getActivitiesSince(req.params.watermark);
+                const messages = activities.map(a => activityToMessage(a));
+                res.json(200, {
+                    messages: messages,
+                    watermark: watermark + activities.length
+                });
+            } else {
+                res.send(404, "conversation not found");
+            }
         } else {
-            res.send(404, "conversation not found");
+            res.send(403, "no active bot");
         }
         res.end();
     }
 
     postMessage = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-        const conversation = emulator.conversations.conversationById(req.params.conversationId);
-        if (conversation) {
-            const message = <IV1Message>req.body;
-            const activity = messageToActivity(message);
-            conversation.postActivityToBot(activity);
-            res.send(204);
+        const activeBot = SettingsServer.settings().getActiveBot();
+        if (activeBot) {
+            const conversation = emulator.conversations.conversationById(activeBot.botId, req.params.conversationId);
+            if (conversation) {
+                const message = <IV1Message>req.body;
+                const activity = messageToActivity(message);
+                conversation.postActivityToBot(activity);
+                res.send(204);
+            } else {
+                res.send(404, "conversation not found");
+            }
         } else {
-            res.send(404, "conversation not found");
+            res.send(403, "no active bot");
         }
         res.end();
     }
