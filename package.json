@@ -63,6 +63,7 @@
     "msbotchat": "git+https://github.com/eanders-MS/botchat#emulator",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
+    "redux": "^3.6.0",
     "request": "^2.75.0",
     "restify": "^4.1.1"
   }
