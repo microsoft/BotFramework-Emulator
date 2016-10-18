@@ -1,0 +1,26 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "request": "launch",
+            "name": "Launch main.js",
+            "type": "node",
+            "program": "${workspaceRoot}/dist/main.js",
+            "stopOnEntry": false,
+            "args": [
+                "--debug=5858"
+            ],
+            "port": 5858,
+            "cwd": "${workspaceRoot}/dist",
+            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd",
+            "runtimeArgs": [
+                "--nolazy"
+            ],
+            "env": {
+                "NODE_ENV": "development"
+            },
+            "sourceMaps": true,
+            "outDir": null
+        }
+    ]
+}
