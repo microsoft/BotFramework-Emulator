@@ -26,6 +26,13 @@
   },
   "homepage": "https://github.com/fuselabs/botframework-emulator#readme",
   "devDependencies": {
+    "@types/electron": "^1.4.23",
+    "@types/es6-shim": "^0.31.32",
+    "@types/node": "^6.0.43",
+    "@types/react": "^0.14.39",
+    "@types/react-dom": "^0.14.17",
+    "@types/request": "0.0.31",
+    "@types/restify": "^2.0.33",
     "del": "^2.2.2",
     "devtron": "^1.4.0",
     "electron": "^1.4.3",
@@ -52,12 +59,6 @@
     "vinyl-fs": "^2.4.3"
   },
   "dependencies": {
-    "@types/electron": "^1.4.23",
-    "@types/node": "^6.0.43",
-    "@types/react": "^0.14.39",
-    "@types/react-dom": "^0.14.17",
-    "@types/request": "0.0.31",
-    "@types/restify": "^2.0.33",
     "electron-debug": "^1.0.1",
     "msbotchat": "git+https://github.com/eanders-MS/botchat#emulator",
     "react": "^15.3.2",
