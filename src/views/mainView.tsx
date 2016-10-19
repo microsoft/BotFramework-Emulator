@@ -1,9 +1,8 @@
 import * as React from 'react';
 import * as Splitter from 'react-split-pane';
 import * as BotChat from 'msbotchat';
-import { SettingsView } from './settingsView';
-import * as SettingsClient from './settings/settingsClient';
-import { uniqueId } from './utils';
+import * as SettingsClient from '../settings/settingsClient';
+import { uniqueId } from '../utils';
 
 export interface IMainViewProps {
     conversationId: string,
