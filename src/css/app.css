@@ -7,33 +7,17 @@
     bottom: 0;
 }
 
-.wc-app-left-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 50%;
-    bottom: 0;
-}
-
-.wc-app-right-container {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    right: 0;
-    bottom: 0;
-}
-
 .wc-app-debugview-container {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    bottom: 20%;
+    bottom: 0;
 }
 
 .wc-app-consoleview-container {
     position: absolute;
-    top: 80%;
+    top: 0;
     left: 0;
     right: 0;
     bottom: 0;

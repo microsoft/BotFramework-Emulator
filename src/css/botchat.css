@@ -49,7 +49,7 @@
         padding: 10px;
         position: absolute;
         right: 0;
-        top: 45px;  /* from wc-header total height */
+        top: 42px;  /* from wc-header total height */
     }
 
     .wc-shell {
@@ -76,7 +76,7 @@
         background-color: #3e92d2;
         color: #fff;
         font-weight: 500;
-        height: 35px;   /* height + padding-top = total height */
+        height: 42px;   /* height + padding-top = total height */
         left: 0;
         letter-spacing: 0.5px;
         padding: 10px 15px 0 15px;
@@ -89,7 +89,7 @@
         background-color: #3e92d2;
         color: #fff;
         font-weight: 500;
-        height: 35px;   /* height + padding-top = total height */
+        height: 42px;   /* height + padding-top = total height */
         left: 0;
         letter-spacing: 0.5px;
         padding: 10px 15px 0 15px;
@@ -102,7 +102,7 @@
         background-color: #3e92d2;
         color: #fff;
         font-weight: 500;
-        height: 35px;   /* height + padding-top = total height */
+        height: 42px;   /* height + padding-top = total height */
         left: 0;
         letter-spacing: 0.5px;
         padding: 10px 15px 0 15px;
@@ -115,7 +115,7 @@
         position: absolute;
         left: 0;
         right: 0;
-        top: 45px;
+        top: 42px;
         bottom: 0;
         overflow-y: scroll;
     }
@@ -166,7 +166,7 @@
         white-space: pre-wrap;
         position: absolute;
         left: 0;
-        top: 45px;
+        top: 42px;
         right: 0;
         bottom: 0;
     }

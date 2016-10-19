@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as Splitter from 'react-split-pane';
 import * as BotChat from 'msbotchat';
 import { SettingsView } from './settingsView';
 import * as SettingsClient from './settings/settingsClient';
@@ -31,6 +32,7 @@ export class MainView extends React.Component<IMainViewProps, {}> {
             if (activeBot) {
                 const props: BotChat.AppProps = {
                     uiProps: {
+                        devConsole: new BotChat.ConsoleProvider(),
                         secret: this.props.conversationId,
                         directLineDomain: `http://localhost:${settings.directLine.port}`,
                         user: {
@@ -44,13 +46,42 @@ export class MainView extends React.Component<IMainViewProps, {}> {
                     debugProps: {
                     }
                 };
-                return <BotChat.App {...props} />;
+
+                return (
+                    <div className="wc-app">
+                        <Splitter split="vertical" defaultSize={"33%"} primary="second">
+                            <div className={ "wc-chatview-panel" }>
+                                <div className="wc-chatview-header">
+                                    <span>WebChat</span>
+                                </div>
+                                <BotChat.UI { ...props.uiProps } />
+                            </div>
+                            <div className="wc-app-debugview-container">
+                                <Splitter split="horizontal" defaultSize={"66%"}>
+                                    <div className="wc-chatview-panel">
+                                        <div className="wc-debugview-header">
+                                            <span>JSON</span>
+                                        </div>
+                                        <BotChat.DebugView { ...props.debugProps } />
+                                    </div>
+                                    <div className="wc-app-consoleview-container">
+                                        <div className="wc-consoleview-header">
+                                            <span>Console</span>
+                                        </div>
+                                        <BotChat.ConsoleView />
+                                    </div>
+                                </Splitter>
+                            </div>
+                        </Splitter>
+                    </div>
+                );
+
             } else {
-                <div>Create or select a bot configuration to get started.</div>
+                return <div>Create or select a bot configuration to get started.</div>
                 // TODO: Show "loading" or something.
             }
         } else {
-            <div>Loading...</div>
+            return <div>Loading...</div>
             // TODO: Show "loading" or something.
         }
     }

@@ -31,6 +31,7 @@
     "@types/node": "^6.0.43",
     "@types/react": "^0.14.39",
     "@types/react-dom": "^0.14.17",
+    "@types/react-split-pane": "^0.1.4",
     "@types/request": "0.0.31",
     "@types/restify": "^2.0.33",
     "del": "^2.2.2",
@@ -63,6 +64,7 @@
     "msbotchat": "git+https://github.com/eanders-MS/botchat#emulator",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
+    "react-split-pane": "^0.1.51",
     "redux": "^3.6.0",
     "request": "^2.75.0",
     "restify": "^4.1.1"
