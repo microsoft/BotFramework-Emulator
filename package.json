@@ -60,7 +60,7 @@
   },
   "dependencies": {
     "electron-debug": "^1.0.1",
-    "msbotchat": "git+https://github.com/eanders-MS/botchat#emulator",
+    "msbotchat": "git+https://github.com/fuselabs/botchat#emulator",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
     "react-split-pane": "^0.1.51",

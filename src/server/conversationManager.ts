@@ -43,7 +43,7 @@ export class Conversation {
             })
             .on('response', (resp: http.IncomingMessage) => {
                 statusCode = `${resp.statusCode}`;
-                if (!statusCode.match(/$2\d\d^/)) {
+                if (!statusCode.match(/^2\d\d$/)) {
                     resp.setEncoding('utf8');
                     var body: string;
                     resp.on('data', (chunk: string) => {
@@ -110,7 +110,7 @@ class ConversationSet {
 
 
 /**
- * Container for conversation instances.
+ * Container for conversations.
  */
 export class ConversationManager {
     conversationSets: ConversationSet[] = [];
