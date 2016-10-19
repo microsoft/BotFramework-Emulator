@@ -4,7 +4,7 @@ import { frameworkReducer } from './frameworkReducer';
 import { botsReducer, activeBotReducer } from './botReducer';
 import * as Fs from 'fs';
 import * as Electron from 'electron';
-import { emulator } from '../emulator';
+import { emulator } from '../server/emulator';
 import { IBot } from '../types/botTypes';
 import { ISettings, Settings, settingsDefault } from '../types/settingsTypes';
 

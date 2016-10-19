@@ -11,7 +11,7 @@ const createMainWindow = () => {
     // TODO @eanders: Read client.json settings file for window size, etc.
     mainWindow = new Electron.BrowserWindow({ width: 1500, height: 1000 });
     mainWindow.setMenu(null);
-    mainWindow.loadURL(`file://${__dirname}/index.html`);
+    mainWindow.loadURL(`file://${__dirname}/../client/index.html`);
 
     mainWindow.on('closed', function () {
         mainWindow = null;

@@ -1,8 +1,8 @@
 import * as Restify from 'restify';
-import { IGenericActivity } from '../types/activityTypes';
-import * as SettingsServer from '../settings/settingsServer';
+import { IGenericActivity } from '../../types/activityTypes';
+import * as SettingsServer from '../../settings/settingsServer';
 import { emulator } from '../emulator';
-import { uniqueId } from '../utils';
+import { uniqueId } from '../../utils';
 
 
 export class ConversationsController {

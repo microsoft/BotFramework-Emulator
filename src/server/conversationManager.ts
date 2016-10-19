@@ -1,10 +1,10 @@
 import * as request from 'request';
 import * as http from 'http';
-import { Settings } from './types/settingsTypes';
-import { IChannelAccount, IConversationAccount } from './types/accountTypes';
-import { IActivity, IConversationUpdateActivity } from './types/activityTypes';
-import { uniqueId } from './utils';
-import * as SettingsServer from './settings/settingsServer';
+import { Settings } from '../types/settingsTypes';
+import { IChannelAccount, IConversationAccount } from '../types/accountTypes';
+import { IActivity, IConversationUpdateActivity } from '../types/activityTypes';
+import { uniqueId } from '../utils';
+import * as SettingsServer from '../settings/settingsServer';
 
 
 /**

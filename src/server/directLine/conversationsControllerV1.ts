@@ -1,9 +1,9 @@
 import * as Restify from 'restify';
 import { emulator } from '../emulator';
-import * as SettingsServer from '../settings/settingsServer';
-import { uniqueId } from '../utils';
-import { IGenericActivity } from '../types/activityTypes';
-import { IAttachment } from '../types/attachmentTypes';
+import * as SettingsServer from '../../settings/settingsServer';
+import { uniqueId } from '../../utils';
+import { IGenericActivity } from '../../types/activityTypes';
+import { IAttachment } from '../../types/attachmentTypes';
 import { Conversation } from '../conversationManager';
 
 

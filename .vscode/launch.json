@@ -5,13 +5,13 @@
             "request": "launch",
             "name": "Launch main.js",
             "type": "node",
-            "program": "${workspaceRoot}/dist/main.js",
+            "program": "${workspaceRoot}/dist/server/main.js",
             "stopOnEntry": false,
             "args": [
                 "--debug=5858"
             ],
             "port": 5858,
-            "cwd": "${workspaceRoot}/dist",
+            "cwd": "${workspaceRoot}/dist/client",
             "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd",
             "runtimeArgs": [
                 "--nolazy"

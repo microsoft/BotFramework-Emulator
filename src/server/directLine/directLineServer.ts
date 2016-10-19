@@ -1,7 +1,7 @@
 import * as Restify from 'restify';
 import { ConversationsControllerV1 } from './conversationsControllerV1';
 import { RestServer } from '../restServer';
-import * as SettingsServer from '../settings/settingsServer';
+import * as SettingsServer from '../../settings/settingsServer';
 
 
 /**

@@ -1,7 +1,7 @@
 import { DirectLineServer } from './directLine/directLineServer';
 import { FrameworkServer } from './framework/frameworkServer';
 import { ConversationManager } from './conversationManager';
-import * as SettingsServer from './settings/settingsServer';
+import * as SettingsServer from '../settings/settingsServer';
 import * as Electron from 'electron';
 import { mainWindow } from './main';
 

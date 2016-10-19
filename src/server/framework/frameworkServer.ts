@@ -3,7 +3,7 @@ import { ConversationsController } from './conversationsController';
 import { AttachmentsController } from './attachmentsController';
 import { BotStateController } from './botStateController';
 import { RestServer } from '../restServer';
-import * as SettingsServer from '../settings/settingsServer';
+import * as SettingsServer from '../../settings/settingsServer';
 
 
 /**
