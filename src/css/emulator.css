@@ -19,15 +19,6 @@
     }
     */
 
-    .settingsview {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 0;
-        padding: 15px 15px 15px 15px;
-    }
-
     .botchat-container {
         position: absolute;
         top: 0;
@@ -45,3 +36,47 @@
         background-color: red;
     }
 
+    .addressbar-status {
+        background-color: blue;
+        position: absolute;
+        height: 42px;
+        width: 42px;
+        top: 0;
+        left: 0;
+    }
+
+    .addressbar-textbox {
+        position: absolute;
+        left: 42px;
+        height: 42px;
+        right: 84px;
+        left: 42px;
+    }
+    .addressbar-textbox input[type=text] {
+        background-color: #3e92d2;
+        color: white;
+        border: none;
+        height: 100%;
+        outline: none;
+        padding: 0;
+        resize: none;
+        width: 100%;
+    }
+
+    .addressbar-control {
+        background-color: yellow;
+        position: absolute;
+        width: 42px;
+        height: 42px;
+        right: 42px;
+        top: 0;
+    }
+
+    .addressbar-menu {
+        background-color: orange;
+        width: 42px;
+        position: absolute;
+        height: 42px;
+        right: 0;
+        top: 0;
+    }
