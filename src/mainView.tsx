@@ -1,8 +1,9 @@
 import * as React from 'react';
 import * as Splitter from 'react-split-pane';
 import * as BotChat from 'msbotchat';
-import * as SettingsClient from '../settings/settingsClient';
-import { uniqueId } from '../utils';
+import * as SettingsClient from './settings/settingsClient';
+import { AddressBar } from './addressBar';
+import { uniqueId } from './utils';
 
 export interface IMainViewProps {
     conversationId: string,
@@ -51,7 +52,7 @@ export class MainView extends React.Component<IMainViewProps, {}> {
                         <Splitter split="vertical" defaultSize={"33%"} primary="second">
                             <div className={ "wc-chatview-panel" }>
                                 <div className="wc-chatview-header">
-                                    <span>WebChat</span>
+                                    <AddressBar />
                                 </div>
                                 <BotChat.UI { ...props.uiProps } />
                             </div>

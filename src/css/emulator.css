@@ -36,3 +36,12 @@
         right: 0;
     }
 
+    .addressbar {
+        position: absolute;
+        top: 0;
+        height: 42px;
+        left: 0;
+        right: 0;
+        background-color: red;
+    }
+
