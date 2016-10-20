@@ -1,5 +1,5 @@
 import { Reducer } from 'redux';
-import { IFrameworkSettings, frameworkDefault } from '../types/settingsTypes';
+import { IFrameworkSettings, frameworkDefault } from '../settings';
 
 
 export type FrameworkAction = {
@@ -13,7 +13,6 @@ export const frameworkReducer: Reducer<IFrameworkSettings> = (
     state = frameworkDefault,
     action: FrameworkAction
 ) => {
-    console.log('frameworkReducer', JSON.stringify(action), JSON.stringify(state));
     switch (action.type) {
         case 'Framework_SetPort':
             return Object.assign({}, state, { port: action.state.port });

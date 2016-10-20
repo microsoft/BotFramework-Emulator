@@ -1,7 +1,7 @@
 import { DirectLineServer } from './directLine/directLineServer';
 import { FrameworkServer } from './framework/frameworkServer';
 import { ConversationManager } from './conversationManager';
-import * as SettingsServer from '../settings/settingsServer';
+import * as Settings from './settings';
 import * as Electron from 'electron';
 import { mainWindow } from './main';
 
@@ -17,9 +17,12 @@ export class Emulator {
 
     constructor() {
         // When the client notifies us it has started up, send it the configuration.
-        Electron.ipcMain.on('started', () => {
+        Electron.ipcMain.on('clientStarted', () => {
             this.mainWindow = mainWindow;
-            this.send('configure', SettingsServer.store.getState());
+            this.send('serverSettings', Settings.store.getState());
+        });
+        Settings.store.subscribe(() => {
+            this.send('serverSettings', Settings.store.getState());
         });
     }
 
@@ -27,9 +30,8 @@ export class Emulator {
      * Loads settings from disk and then creates the emulator.
      */
     static startup = () => {
-        SettingsServer.startup(() => {
-            emulator = new Emulator();
-        });
+        Settings.startup();
+        emulator = new Emulator();
     }
 
     /**

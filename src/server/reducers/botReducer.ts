@@ -1,6 +1,6 @@
 import { Reducer } from 'redux';
-import { uniqueId } from '../utils';
-import { IBot } from '../types/botTypes';
+import { uniqueId } from '../../utils';
+import { IBot } from '../../types/botTypes';
 
 export type BotsAction = {
     type: 'Bots_AddBot',
@@ -29,7 +29,6 @@ export const botsReducer: Reducer<IBot[]> = (
     state: IBot[] = [],
     action: BotsAction
 ) => {
-    console.log('botsReducer', JSON.stringify(action), JSON.stringify(state));
     switch (action.type) {
         case 'Bots_AddBot': {
             return [
@@ -76,7 +75,6 @@ export const activeBotReducer: Reducer<string> = (
     state = '',
     action: ActiveBotAction
 ) => {
-    console.log('activeBotReducer', JSON.stringify(action), JSON.stringify(state));
     switch (action.type) {
         case 'ActiveBot_Set':
             return action.state.botId || state;

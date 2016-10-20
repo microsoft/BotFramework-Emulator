@@ -1,6 +1,6 @@
 import * as Restify from 'restify';
 import { emulator } from '../emulator';
-import * as SettingsServer from '../../settings/settingsServer';
+import { getSettings } from '../settings';
 import { uniqueId } from '../../utils';
 import { IGenericActivity } from '../../types/activityTypes';
 import { IAttachment } from '../../types/attachmentTypes';
@@ -82,7 +82,7 @@ export class ConversationsControllerV1 {
     }
 
     newConversation = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-        const activeBot = SettingsServer.settings().getActiveBot();
+        const activeBot = getSettings().getActiveBot();
         if (activeBot) {
             const auth = req.header('Authorization');
             const tokenMatch = /BotConnector\s+(.+)/.exec(auth);
@@ -101,7 +101,7 @@ export class ConversationsControllerV1 {
     }
 
     getMessages = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-        const activeBot = SettingsServer.settings().getActiveBot();
+        const activeBot = getSettings().getActiveBot();
         if (activeBot) {
             const conversation = emulator.conversations.conversationById(activeBot.botId, req.params.conversationId);
             if (conversation) {
@@ -122,13 +122,13 @@ export class ConversationsControllerV1 {
     }
 
     postMessage = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-        const activeBot = SettingsServer.settings().getActiveBot();
+        const activeBot = getSettings().getActiveBot();
         if (activeBot) {
             const conversation = emulator.conversations.conversationById(activeBot.botId, req.params.conversationId);
             if (conversation) {
                 const message = <IV1Message>req.body;
                 const activity = messageToActivity(message);
-                conversation.postActivityToBot(activity);
+                conversation.postActivityToBot(activity, true);
                 res.send(204);
             } else {
                 res.send(404, "conversation not found");

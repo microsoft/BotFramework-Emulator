@@ -3,7 +3,7 @@ import { ConversationsController } from './conversationsController';
 import { AttachmentsController } from './attachmentsController';
 import { BotStateController } from './botStateController';
 import { RestServer } from '../restServer';
-import * as SettingsServer from '../../settings/settingsServer';
+import { store, getSettings } from '../settings';
 
 
 /**
@@ -22,7 +22,7 @@ export class FrameworkServer extends RestServer {
         this.conversationsController.registerRoutes(this.server);
         this.attachmentsController.registerRoutes(this.server);
         this.botStateController.registerRoutes(this.server);
-        SettingsServer.store.subscribe(() => {
+        store.subscribe(() => {
             this.configure();
         });
         this.configure();
@@ -32,7 +32,7 @@ export class FrameworkServer extends RestServer {
      * Applies configuration changes.
      */
     private configure = () => {
-        const settings = SettingsServer.settings();
+        const settings = getSettings();
         if (this.port !== settings.framework.port) {
             console.log(`restarting ${this.server.name} because ${this.port} !== ${settings.framework.port}`);
             this.restart(settings.framework.port);

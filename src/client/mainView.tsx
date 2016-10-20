@@ -1,9 +1,13 @@
 import * as React from 'react';
+import { Subscription } from '@reactivex/rxjs';
 import * as Splitter from 'react-split-pane';
 import * as BotChat from 'msbotchat';
-import * as SettingsClient from '../settings/settingsClient';
+import { store, getSettings, serverSettings$ } from './settings';
+import { SettingsAction } from './reducers/reducers';
+import { ISettings as IServerSettings, Settings as ServerSettings } from '../server/settings';
 import { AddressBar } from './addressBar';
 import { uniqueId } from '../utils';
+
 
 export interface IMainViewProps {
     conversationId: string,
@@ -12,29 +16,53 @@ export interface IMainViewProps {
 }
 
 export class MainView extends React.Component<IMainViewProps, {}> {
-
-    configChangeHandler = () => {
-        this.forceUpdate();
-    }
+    storeUnsubscribe: any;
+    serverSubscription: Subscription;
+    serverSettings: ServerSettings;
 
     componentWillMount() {
-        SettingsClient.settingsChange.on('configure', this.configChangeHandler);
+        this.storeUnsubscribe = store.subscribe(() => {
+            this.forceUpdate();
+        });
+        serverSettings$.subscribe(value => {
+            this.serverSettings = new ServerSettings(value);
+            this.forceUpdate();
+        })
     }
 
     componentWillUnmount() {
-        SettingsClient.settingsChange.removeListener('configure', this.configChangeHandler);
+        this.storeUnsubscribe();
+        this.serverSubscription.unsubscribe();
+    }
+
+    onHorizontalSplitMoved = (size: number) => {
+        store.dispatch<SettingsAction>({
+            type: 'Remember_HorizSplit',
+            state: {
+                size
+            }
+        });
+    }
+
+    onVerticalSplitMoved = (size: number) => {
+        store.dispatch<SettingsAction>({
+            type: 'Remember_VertSplit',
+            state: {
+                size
+            }
+        });
     }
 
     botChatComponent() {
-        const settings = SettingsClient.settings;
-        if (settings && settings.directLine.port > 0) {
-            const activeBot = SettingsClient.settings.getActiveBot();
+        const settings = getSettings();
+        if (this.serverSettings && this.serverSettings.directLine.port > 0) {
+            const activeBot = this.serverSettings.getActiveBot();
             if (activeBot) {
                 const props: BotChat.AppProps = {
                     uiProps: {
                         devConsole: new BotChat.ConsoleProvider(),
                         secret: this.props.conversationId,
-                        directLineDomain: `http://localhost:${settings.directLine.port}`,
+                        directLineDomain: `http://localhost:${this.serverSettings.directLine.port}`,
                         user: {
                             id: this.props.userid,
                             name: this.props.username
@@ -49,7 +77,7 @@ export class MainView extends React.Component<IMainViewProps, {}> {
 
                 return (
                     <div className="wc-app">
-                        <Splitter split="vertical" defaultSize={"33%"} primary="second">
+                        <Splitter split="vertical" defaultSize={settings.vertSplit} primary="second" onChange={(size) => this.onVerticalSplitMoved(size)}>
                             <div className={ "wc-chatview-panel" }>
                                 <div className="wc-chatview-header">
                                     <AddressBar />
@@ -57,7 +85,7 @@ export class MainView extends React.Component<IMainViewProps, {}> {
                                 <BotChat.UI { ...props.uiProps } />
                             </div>
                             <div className="wc-app-debugview-container">
-                                <Splitter split="horizontal" defaultSize={"66%"}>
+                                <Splitter split="horizontal" defaultSize={settings.horizSplit} onChange={(size) => this.onHorizontalSplitMoved(size)}>
                                     <div className="wc-chatview-panel">
                                         <div className="wc-debugview-header">
                                             <span>JSON</span>

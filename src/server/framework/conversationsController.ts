@@ -1,6 +1,6 @@
 import * as Restify from 'restify';
 import { IGenericActivity } from '../../types/activityTypes';
-import * as SettingsServer from '../../settings/settingsServer';
+import { getSettings } from '../settings';
 import { emulator } from '../emulator';
 import { uniqueId } from '../../utils';
 
@@ -23,7 +23,7 @@ export class ConversationsController {
     }
 
     sendToConversation = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-        const activeBot = SettingsServer.settings().getActiveBot();
+        const activeBot = getSettings().getActiveBot();
         if (activeBot) {
             let activity = <IGenericActivity>req.body;
             const conversationId = req.params.conversationId;
@@ -41,7 +41,7 @@ export class ConversationsController {
     }
 
     replyToActivity = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-        const activeBot = SettingsServer.settings().getActiveBot();
+        const activeBot = getSettings().getActiveBot();
         if (activeBot) {
             let activity = <IGenericActivity>req.body;
             const conversationId = req.params.conversationId;

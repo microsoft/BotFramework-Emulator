@@ -1,10 +1,10 @@
 import * as request from 'request';
 import * as http from 'http';
-import { Settings } from '../types/settingsTypes';
+import { Settings } from './settings';
 import { IChannelAccount, IConversationAccount } from '../types/accountTypes';
 import { IActivity, IConversationUpdateActivity } from '../types/activityTypes';
 import { uniqueId } from '../utils';
-import * as SettingsServer from '../settings/settingsServer';
+import { store, getSettings } from './settings';
 
 
 /**
@@ -31,10 +31,12 @@ export class Conversation {
     /**
      * Sends the activity to the conversation's bot.
      */
-    postActivityToBot = (activity: IActivity) => {
+    postActivityToBot = (activity: IActivity, recordInConversation: boolean) => {
         this.postage(this.botId, activity);
-        this.activities.push(Object.assign({}, activity));
-        const bot = SettingsServer.settings().botById(this.botId);
+        if (recordInConversation) {
+            this.activities.push(Object.assign({}, activity));
+        }
+        const bot = getSettings().botById(this.botId);
         if (bot) {
             var statusCode = '';
             request({ url: bot.botUrl, method: "POST", json: activity })
@@ -67,7 +69,7 @@ export class Conversation {
             },
             membersAdded: [{ id: this.botId }]
         }
-        this.postActivityToBot(activity);
+        this.postActivityToBot(activity, false);
     }
 
     /**
@@ -116,7 +118,7 @@ export class ConversationManager {
     conversationSets: ConversationSet[] = [];
 
     constructor() {
-        SettingsServer.store.subscribe(() => {
+        store.subscribe(() => {
             this.configure();
         });
         this.configure();
@@ -127,7 +129,7 @@ export class ConversationManager {
      */
     private configure = () => {
         // Remove conversations that reference nonexistent bots.
-        const settings = SettingsServer.settings();
+        const settings = getSettings();
         const deadBotIds = this.conversationSets.filter(set => !settings.bots.find(bot => bot.botId === set.botId)).map(conversation => conversation.botId);
         this.conversationSets = this.conversationSets.filter(set => !deadBotIds.find(botId => set.botId === botId));
     }

@@ -41,7 +41,7 @@ class AddressBarTextBox extends React.Component<{}, IAddressBarTextBoxState> {
     onKeyPress: (e) => {
     }
 
-    onFocus: (e) => {
+    onFocus: () => {
     }
 
     componentDidUpdate() {
@@ -57,7 +57,7 @@ class AddressBarTextBox extends React.Component<{}, IAddressBarTextBoxState> {
                     autoFocus
                     onChange={ e => this.onChange((e.target as any).value) }
                     onKeyPress={ e => this.onKeyPress(e) }
-                    onFocus={ e => this.onFocus(e) }
+                    onFocus={ () => this.onFocus() }
                     placeholder="Enter your entpoint URL" />
             </div>
         );

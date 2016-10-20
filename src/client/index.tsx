@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { MainView, IMainViewProps } from './mainView';
-import * as SettingsClient from '../settings/settingsClient';
+import * as Settings from './settings';
 import { uniqueId } from '../utils';
 
 
-SettingsClient.startup();
+Settings.startup();
 
 const props: IMainViewProps = {
     conversationId: 'new',

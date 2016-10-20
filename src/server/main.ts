@@ -1,5 +1,7 @@
 import * as Electron from 'electron';
 import { Emulator } from './emulator';
+import { store, getSettings } from './settings';
+import { WindowStateAction } from './reducers/windowStateReducer';
 
 require('electron-debug')();
 
@@ -8,10 +10,42 @@ Emulator.startup();
 export var mainWindow: Electron.BrowserWindow;
 
 const createMainWindow = () => {
-    // TODO @eanders: Read client.json settings file for window size, etc.
-    mainWindow = new Electron.BrowserWindow({ width: 1500, height: 1000 });
+    const settings = getSettings();
+
+    mainWindow = new Electron.BrowserWindow(
+    {
+        width: settings.windowState.width,
+        height: settings.windowState.height,
+        x: settings.windowState.left,
+        y: settings.windowState.top
+    });
     mainWindow.setMenu(null);
     mainWindow.loadURL(`file://${__dirname}/../client/index.html`);
+
+    mainWindow.on('resize', () => {
+        const bounds = mainWindow.getBounds();
+        store.dispatch<WindowStateAction>({
+            type: 'Window_RememberBounds',
+            state: {
+                width: bounds.width,
+                height: bounds.height,
+                left: bounds.x,
+                top: bounds.y
+            }
+        });
+    });
+    mainWindow.on('move', () => {
+        const bounds = mainWindow.getBounds();
+        store.dispatch<WindowStateAction>({
+            type: 'Window_RememberBounds',
+            state: {
+                width: bounds.width,
+                height: bounds.height,
+                left: bounds.x,
+                top: bounds.y
+            }
+        });
+    });
 
     mainWindow.on('closed', function () {
         mainWindow = null;
