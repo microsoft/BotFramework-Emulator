@@ -4,7 +4,7 @@ import { Settings } from './settings';
 import { IChannelAccount, IConversationAccount } from '../types/accountTypes';
 import { IActivity, IConversationUpdateActivity } from '../types/activityTypes';
 import { uniqueId } from '../utils';
-import { store, getSettings } from './settings';
+import { store, getSettings, authenticationSettings } from './settings';
 import * as jwt from 'jsonwebtoken';
 import * as oid from './OpenIdMetadata';
 
@@ -129,16 +129,16 @@ export class Conversation {
 
     public getAccessToken(cb: (err: Error, accessToken: string) => void): void {
         if (!this.accessToken || new Date().getTime() >= this.accessTokenExpires) {
-            const bot = SettingsServer.settings().botById(this.botId);
+            const bot = getSettings().botById(this.botId);
             // Refresh access token
             var opt: request.OptionsWithUrl = {
                 method: 'POST',
-                url: SettingsServer.authenticationSettings.refreshEndpoint,
+                url: authenticationSettings.refreshEndpoint,
                 form: {
                     grant_type: 'client_credentials',
                     client_id: bot.msaAppId,
                     client_secret: bot.msaPassword,
-                    scope: SettingsServer.authenticationSettings.refreshScope
+                    scope: authenticationSettings.refreshScope
                 }
             };
             request(opt, (err, response, body) => {
@@ -163,7 +163,7 @@ export class Conversation {
     }
 
     private addAccessToken(options: request.Options, cb: (err: Error) => void): void {
-        const bot = SettingsServer.settings().botById(this.botId);
+        const bot = getSettings().botById(this.botId);
 
         if (bot.msaAppId && bot.msaPassword) {
             this.getAccessToken((err, token) => {

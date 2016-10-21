@@ -1,5 +1,4 @@
-import * as SettingsClient from '../settings/settingsClient';
-import * as SettingsServer from '../settings/settingsServer';
+import { store, getSettings, authenticationSettings } from './settings';
 import * as jwt from 'jsonwebtoken';
 import * as oid from './OpenIdMetadata';
 import * as Restify from 'restify';
@@ -8,7 +7,7 @@ export class BotFrameworkAuthentication {
     private msaOpenIdMetadata: oid.OpenIdMetadata;
 
     constructor() {
-        this.msaOpenIdMetadata = new oid.OpenIdMetadata(SettingsServer.authenticationSettings.msaOpenIdMetadata);
+        this.msaOpenIdMetadata = new oid.OpenIdMetadata(authenticationSettings.msaOpenIdMetadata);
     }
 
     registerAuth = (server: Restify.Server) => {
@@ -26,7 +25,7 @@ export class BotFrameworkAuthentication {
                 token = auth[1];
             }
         }
-        const activeBot = SettingsServer.settings().getActiveBot();
+        const activeBot = getSettings().getActiveBot();
         // Verify token
         if (token) {
 
@@ -36,8 +35,8 @@ export class BotFrameworkAuthentication {
                     try {
                         var verifyOptions = {
                             jwtId: activeBot.botId,
-                            issuer: SettingsServer.authenticationSettings.msaIssuer,
-                            audience: SettingsServer.authenticationSettings.msaAudience,
+                            issuer: authenticationSettings.msaIssuer,
+                            audience: authenticationSettings.msaAudience,
                             clockTolerance: 300
                         };
                         

@@ -113,3 +113,12 @@ export const startup = () => {
         });
     });
 }
+
+export const authenticationSettings = {
+    refreshEndpoint: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+    refreshScope: 'https://graph.microsoft.com/.default',
+    msaOpenIdMetadata: 'https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration',
+    msaIssuer: 'https://sts.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47/',
+    msaAudience: 'https://graph.microsoft.com',
+    stateEndpoint:  'https://state.botframework.com'
+}
