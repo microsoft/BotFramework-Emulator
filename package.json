@@ -25,8 +25,10 @@
   },
   "homepage": "https://github.com/fuselabs/botframework-emulator#readme",
   "devDependencies": {
+    "@types/async": "^2.0.32",
     "@types/electron": "^1.4.23",
     "@types/es6-shim": "^0.31.32",
+    "@types/jsonwebtoken": "^7.1.33",
     "@types/node": "^6.0.43",
     "@types/react": "^0.14.39",
     "@types/react-dom": "^0.14.17",
@@ -59,13 +61,18 @@
     "vinyl-fs": "^2.4.3"
   },
   "dependencies": {
+    "@reactivex/rxjs": "^5.0.0-rc.1",
+    "async": "^2.1.2",
+    "base64url": "^2.0.0",
     "electron-debug": "^1.0.1",
+    "jsonwebtoken": "^7.1.9",
     "msbotchat": "git+https://github.com/fuselabs/botchat#emulator",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
     "react-split-pane": "^0.1.51",
     "redux": "^3.6.0",
     "request": "^2.75.0",
-    "restify": "^4.1.1"
+    "restify": "^4.1.1",
+    "rsa-pem-from-mod-exp": "^0.8.4"
   }
 }

@@ -3,3 +3,4 @@ Thumbs.db
 .DS_Store
 node_modules/
 dist/
+.vscode/settings.json

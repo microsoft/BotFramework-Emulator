@@ -128,15 +128,23 @@ export class ConversationsControllerV1 {
             if (conversation) {
                 const message = <IV1Message>req.body;
                 const activity = messageToActivity(message);
-                conversation.postActivityToBot(activity, true);
-                res.send(204);
+                conversation.postActivityToBot(activity, true, (err, statusCode) => {
+                    if (err)
+                        res.send(500);
+                    else
+                        res.send(statusCode);
+                    res.end();
+                });
+
             } else {
                 res.send(404, "conversation not found");
+                res.end();
             }
         } else {
             res.send(403, "no active bot");
+            res.end();
         }
-        res.end();
+        
     }
 
     uploadAttachment = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {

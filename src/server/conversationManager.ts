@@ -5,6 +5,8 @@ import { IChannelAccount, IConversationAccount } from '../types/accountTypes';
 import { IActivity, IConversationUpdateActivity } from '../types/activityTypes';
 import { uniqueId } from '../utils';
 import { store, getSettings } from './settings';
+import * as jwt from 'jsonwebtoken';
+import * as oid from './OpenIdMetadata';
 
 
 /**
@@ -14,7 +16,9 @@ export class Conversation {
     botId: string;
     conversationId: string;
     activities: IActivity[] = [];
-
+    private accessToken: string;
+    private accessTokenExpires: number;
+    
     constructor(botId: string, conversationId: string) {
         this.botId = botId;
         this.conversationId = conversationId;
@@ -31,7 +35,7 @@ export class Conversation {
     /**
      * Sends the activity to the conversation's bot.
      */
-    postActivityToBot = (activity: IActivity, recordInConversation: boolean) => {
+    postActivityToBot = (activity: IActivity, recordInConversation: boolean, cb) => {
         this.postage(this.botId, activity);
         if (recordInConversation) {
             this.activities.push(Object.assign({}, activity));
@@ -39,24 +43,24 @@ export class Conversation {
         const bot = getSettings().botById(this.botId);
         if (bot) {
             var statusCode = '';
-            request({ url: bot.botUrl, method: "POST", json: activity })
-            .on('error', (e: Error) => {
-                console.error(e.message);
-            })
-            .on('response', (resp: http.IncomingMessage) => {
-                statusCode = `${resp.statusCode}`;
-                if (!statusCode.match(/^2\d\d$/)) {
-                    resp.setEncoding('utf8');
-                    var body: string;
-                    resp.on('data', (chunk: string) => {
-                        body += chunk;
-                    }).on('end', () => {
-                        console.log(body);
-                    });
-                }
-            });
+            var options : request.OptionsWithUrl = { url: bot.botUrl, method: "POST", json: activity };
+
+            var responseCallback = function(err, resp: http.IncomingMessage, body)
+            {
+                if (err)
+                    cb(err);
+                else
+                    cb(null, resp.statusCode);
+            }
+
+            if (bot.msaAppId && bot.msaPassword) 
+                this.authenticatedRequest(options, responseCallback);
+            else 
+                request(options, responseCallback);
+            
         } else {
             console.error("Conversation.postToBot: bot not found! How does this conversation exist?", this.botId);
+            cb("bot not found");
         }
     }
 
@@ -69,7 +73,7 @@ export class Conversation {
             },
             membersAdded: [{ id: this.botId }]
         }
-        this.postActivityToBot(activity, false);
+        this.postActivityToBot(activity, false, (err, callback) => {});
     }
 
     /**
@@ -85,6 +89,96 @@ export class Conversation {
      */
     getActivitiesSince = (watermark: number): IActivity[] => {
         return this.activities.slice(watermark);
+    }
+
+    private authenticatedRequest(options: request.OptionsWithUrl, callback: (error: any, response: http.IncomingMessage, body: any) => void, refresh = false): void {
+        if (refresh) {
+            this.accessToken = null;
+        }
+        this.addAccessToken(options, (err) => {
+            if (!err) {
+                request(options, (err, response, body) => {
+                    if (!err) {
+                        switch (response.statusCode) {
+                            case 401:
+                            case 403:
+                                if (!refresh) {
+                                    this.authenticatedRequest(options, callback, true);
+                                } else {
+                                    callback(null, response, body);
+                                }
+                                break;
+                            default:
+                                if (response.statusCode < 400) {
+                                    callback(null, response, body);
+                                } else {
+                                    var txt = "Request to '" + options.url + "' failed: [" + response.statusCode + "] " + response.statusMessage;
+                                    callback(new Error(txt), response, null);
+                                }
+                                break;
+                        }
+                    } else {
+                        callback(err, null, null);
+                    }
+                });
+            } else {
+                callback(err, null, null);
+            }
+        });
+    }
+
+    public getAccessToken(cb: (err: Error, accessToken: string) => void): void {
+        if (!this.accessToken || new Date().getTime() >= this.accessTokenExpires) {
+            const bot = SettingsServer.settings().botById(this.botId);
+            // Refresh access token
+            var opt: request.OptionsWithUrl = {
+                method: 'POST',
+                url: SettingsServer.authenticationSettings.refreshEndpoint,
+                form: {
+                    grant_type: 'client_credentials',
+                    client_id: bot.msaAppId,
+                    client_secret: bot.msaPassword,
+                    scope: SettingsServer.authenticationSettings.refreshScope
+                }
+            };
+            request(opt, (err, response, body) => {
+                if (!err) {
+                    if (body && response.statusCode < 300) {
+                        // Subtract 5 minutes from expires_in so they'll we'll get a
+                        // new token before it expires.
+                        var oauthResponse = JSON.parse(body);
+                        this.accessToken = oauthResponse.access_token;
+                        this.accessTokenExpires = new Date().getTime() + ((oauthResponse.expires_in - 300) * 1000); 
+                        cb(null, this.accessToken);
+                    } else {
+                        cb(new Error('Refresh access token failed with status code: ' + response.statusCode), null);
+                    }
+                } else {
+                    cb(err, null);
+                }
+            });
+        } else {
+            cb(null, this.accessToken);
+        }
+    }
+
+    private addAccessToken(options: request.Options, cb: (err: Error) => void): void {
+        const bot = SettingsServer.settings().botById(this.botId);
+
+        if (bot.msaAppId && bot.msaPassword) {
+            this.getAccessToken((err, token) => {
+                if (!err && token) {
+                    options.headers = {
+                        'Authorization': 'Bearer ' + token
+                    };
+                    cb(null);
+                } else {
+                    cb(err);
+                }
+            });
+        } else {
+            cb(null);
+        }
     }
 }
 
