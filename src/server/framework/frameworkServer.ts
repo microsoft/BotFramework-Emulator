@@ -12,8 +12,8 @@ import { store, getSettings } from '../settings';
  */
 export class FrameworkServer extends RestServer {
 
-    //serviceUrl = (): string => `http://localhost:${this.port}/`;
-    serviceUrl = (): string => `https://5d458fad.ngrok.io/`;
+    serviceUrl = (): string => `http://localhost:${this.port}/`;
+    //serviceUrl = (): string => `https://5d458fad.ngrok.io/`;
 
 
     authentication = new BotFrameworkAuthentication();

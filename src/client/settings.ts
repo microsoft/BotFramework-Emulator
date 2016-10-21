@@ -57,7 +57,13 @@ export const startup = () => {
         // TEST ONLY: Add a bot
         if (serverSettings.bots.length == 0) {
             setTimeout(() => {
-                serverChangeSetting('Bots_AddBot', { bot: { botUrl: 'http://localhost:8023/api/MessagesV3' }});
+                serverChangeSetting('Bots_AddBot', { bot: { 
+                    botUrl: 'http://localhost:8023/api/MessagesV3'
+                    /*botUrl: 'https://cjensentestbot.azurewebsites.net/api/messagesv3', 
+                    msaAppId: 'bf4af2fd-4c4e-49eb-ac5d-9976faaa5aa0', 
+                    msaPassword: 'LtPc2heSZyD5iDdmnW7KmBC', 
+                    botId: 'TestBotV3'*/  
+                }});
             }, 100);
         }
 
