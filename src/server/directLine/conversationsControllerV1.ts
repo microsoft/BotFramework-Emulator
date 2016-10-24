@@ -127,7 +127,8 @@ export class ConversationsControllerV1 {
             const conversation = emulator.conversations.conversationById(activeBot.botId, req.params.conversationId);
             if (conversation) {
                 const message = <IV1Message>req.body;
-                const activity = messageToActivity(message);
+                let activity = messageToActivity(message);
+                activity.serviceUrl = activeBot.serviceUrl || activeBot.serviceUrl;
                 conversation.postActivityToBot(activity, true, (err, statusCode) => {
                     if (err)
                         res.send(500);
@@ -144,7 +145,7 @@ export class ConversationsControllerV1 {
             res.send(403, "no active bot");
             res.end();
         }
-        
+
     }
 
     uploadAttachment = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {

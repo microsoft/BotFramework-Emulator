@@ -124,6 +124,12 @@ export const startup = () => {
         // TEST ONLY: Add a bot
         if (!serverSettings.bots.length) {
             setTimeout(() => {
+                ServerSettingsActions.remote_addOrUpdateBot(newBot({
+                    botUrl: 'https://ic-testbot-scratch.azurewebsites.net/api/messagesv3',
+                    msaAppId: 'b9c40e73-f271-4e47-a9e2-37a446d5156c',
+                    msaPassword: 'imqbJjaH24CoNLpaKHD3dJZ',
+                    serviceUrl: 'https://8214da40.ngrok.io'
+                }))
                 ServerSettingsActions.remote_addOrUpdateBot(newBot({ botUrl: 'http://localhost:8023/api/MessagesV3' }));
                 ServerSettingsActions.remote_addOrUpdateBot(newBot({ botUrl: 'http://localhosssst:23/api/MessagesV11' }));
                 ServerSettingsActions.remote_addOrUpdateBot(newBot({ botUrl: 'http://remotehost:4033/api/messages' }));
