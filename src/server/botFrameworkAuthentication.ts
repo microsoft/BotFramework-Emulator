@@ -1,4 +1,4 @@
-import { store, getSettings, authenticationSettings } from './settings';
+import { getStore, getSettings, authenticationSettings } from './settings';
 import * as jwt from 'jsonwebtoken';
 import * as oid from './OpenIdMetadata';
 import * as Restify from 'restify';
@@ -39,14 +39,14 @@ export class BotFrameworkAuthentication {
                             audience: authenticationSettings.msaAudience,
                             clockTolerance: 300
                         };
-                        
+
                         jwt.verify(token, key, verifyOptions);
                     } catch (err) {
                         res.status(401);
                         res.end();
                         return;
                     }
-                    
+
                     next();
                 } else {
                     res.status(500);
