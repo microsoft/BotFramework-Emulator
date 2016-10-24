@@ -20,7 +20,7 @@
                 "NODE_ENV": "development"
             },
             "sourceMaps": true,
-            "outDir": null
+            "outDir": "${workspaceRoot}/dist"
         }
     ]
 }
