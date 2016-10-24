@@ -4,7 +4,7 @@ import { ConversationsController } from './conversationsController';
 import { AttachmentsController } from './attachmentsController';
 import { BotStateController } from './botStateController';
 import { RestServer } from '../restServer';
-import { store, getSettings } from '../settings';
+import { getStore, getSettings } from '../settings';
 
 
 /**
@@ -27,7 +27,7 @@ export class FrameworkServer extends RestServer {
         this.conversationsController.registerRoutes(this.server);
         this.attachmentsController.registerRoutes(this.server);
         this.botStateController.registerRoutes(this.server);
-        store.subscribe(() => {
+        getStore().subscribe(() => {
             this.configure();
         });
         this.configure();

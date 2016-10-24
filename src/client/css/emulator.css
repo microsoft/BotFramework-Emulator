@@ -12,6 +12,28 @@
         font-size: 15px;
     }
 
+    *, *:before, *:after {
+        box-sizing: border-box;
+    }
+
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        -webkit-border-radius: 2px;
+        border-radius: 2px;
+        background: #D5D5D5;
+    }
+    ::-webkit-scrollbar-thumb:window-inactive {
+        background:#EFEFEF;
+    }
+
+
 /* emulator */
 
     /*
@@ -34,23 +56,26 @@
         left: 0;
         right: 0;
         background-color: red;
+        color: white;
     }
 
     .addressbar-status {
-        background-color: blue;
+        background-color: #3e92d2;
         position: absolute;
         height: 42px;
-        width: 42px;
+        width: 32px;
         top: 0;
         left: 0;
+        line-height: 42px;
+        text-align: center;
     }
 
     .addressbar-textbox {
         position: absolute;
-        left: 42px;
+        top: 0;
+        left: 32px;
         height: 42px;
-        right: 84px;
-        left: 42px;
+        right: 64px;
     }
     .addressbar-textbox input[type=text] {
         background-color: #3e92d2;
@@ -61,22 +86,159 @@
         padding: 0;
         resize: none;
         width: 100%;
+        padding-left: 4px;
+    }
+    .addressbar-textbox input[type=text]::-webkit-input-placeholder {
+        color: rgba(255, 255, 255, 0.75);
     }
 
     .addressbar-control {
-        background-color: yellow;
+        background-color: #3e92d2;
         position: absolute;
-        width: 42px;
+        width: 32px;
         height: 42px;
-        right: 42px;
+        right: 32px;
         top: 0;
+        line-height: 42px;
+        text-align: center;
     }
 
     .addressbar-menu {
-        background-color: orange;
-        width: 42px;
+        background-color: #3e92d2;
         position: absolute;
+        width: 32px;
         height: 42px;
         right: 0;
         top: 0;
+        line-height: 42px;
+        text-align: center;
+    }
+
+    .addressbar-search {
+        background-color: #3e92d2;
+        max-height: 500px;
+        overflow-y: auto;
+        position: absolute;
+        right: 0;
+        left: 0;
+        top: 42px;
+        z-index: 1000;
+        padding-bottom: 16px;
+        transition: all .1s cubic-bezier(0, 1, 0.5, 1);
+    }
+    .addressbar-search.closed {
+        max-height: 0;
+        padding-bottom: 0;
+    }
+
+    .addressbar-searchresult {
+        cursor: default;
+        position: relative;
+        height: 32px;
+        margin-left: 32px;
+        margin-right: 32px;
+    }
+
+    .addressbar-searchresult:hover {
+        background-color: #6aafe5;
+    }
+
+    .addressbar-searchresult-title {
+        display: inline-block;
+        position: absolute;
+        line-height: 32px;
+        margin-left: 4px;
+    }
+
+    .addressbar-searchresult-delete {
+        cursor: pointer;
+        display: inline-block;
+        position: absolute;
+        right: 0;
+        line-height: 32px;
+        text-align: center;
+        width: 32px;
+    }
+
+    .addressbar-botcreds {
+        background-color: white;
+        color: black;
+        overflow: hidden;
+        position: absolute;
+        height: 256px;
+        right: 0;
+        left: 0;
+        top: 42px;
+        z-index: 1000;
+        border-bottom: solid 1px #ccc;
+        transition: all .1s cubic-bezier(0, 1, 0.5, 1);
+        white-space: nowrap;
+    }
+    .addressbar-botcreds.closed {
+        max-height: 0;
+        border-width: 0;
+    }
+    .addressbar-botcreds-title {
+        position: absolute;
+        top: 16px;
+        left: 32px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+    .addressbar-botcreds input[type=text] {
+        border-radius: 2px;
+        border-width: 0.1px;
+        border-style: solid;
+        border-color: #ccc;
+        padding-left: 4px;
+        padding-right: 4px;
+    }
+    .addressbar-botcreds-msaappid-input {
+        position: absolute;
+        top: 48px;
+        left: 32px;
+        width: 256px;
+        height: 32px;
+    }
+    .addressbar-botcreds-msapassword-input {
+        position: absolute;
+        top: 48px;
+        left: 304px;
+        width: 256px;
+        height: 32px;
+    }
+    .addressbar-botcreds-serviceurl-input {
+        position: absolute;
+        top: 88px;
+        left: 32px;
+        width: 256px;
+        height: 32px;
+    }
+    .addressbar-botcreds-savecreds {
+        position: absolute;
+        top: 136px;
+        left: 32px;
+        right: 32px;
+        height: 32px;
+        display: inline-block;
+        white-space: nowrap;
+    }
+    .addressbar-botcreds-savecreds input[type=checkbox] {
+        display: inline-block;
+    }
+    .addressbar-botcreds-savecreds-label-big {
+        font-weight: 500;
+        display: inline-block;
+    }
+    .addressbar-botcreds-savecreds-label-small {
+        color: #888;
+    }
+
+    .addressbar-botcreds-connect-button {
+        position: absolute;
+        top: 184px;
+        left: 32px;
+        right: 32px;
+        padding: 12px 32px 12px 32px;
+        border-radius: 2px;
     }

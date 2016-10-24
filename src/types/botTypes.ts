@@ -1,3 +1,4 @@
+import { uniqueId } from '../utils';
 
 
 export interface IBot {
@@ -5,4 +6,23 @@ export interface IBot {
     botUrl?: string,
     msaAppId?: string,
     msaPassword?: string,
+    serviceUrl?: string,
+    saveCreds?: boolean
+}
+
+export const newBot = (bot: IBot): IBot => {
+    return Object.assign(
+        {},
+        {
+            botUrl: '',
+            msaAppId: '',
+            msaPassword: '',
+            saveCreds: true,
+            serviceUrl: 'http://localhost:3978'
+        },
+        bot,
+        {
+            botId: uniqueId()
+        }
+    ) as IBot;
 }

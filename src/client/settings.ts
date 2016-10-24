@@ -1,49 +1,115 @@
 import { Store, createStore, combineReducers, Reducer } from 'redux';
-import { Subject } from '@reactivex/rxjs';
 import * as Electron from 'electron';
 import { ISettings as IServerSettings, Settings as ServerSettings } from '../server/settings';
 import { loadSettings, saveSettings } from '../utils';
-import { settingsReducer } from './reducers/reducers';
+import { layoutReducer, addressBarReducer, conversationReducer, serverSettingsReducer, ServerSettingsActions } from './reducers';
+import { IBot, newBot } from '../types/botTypes';
+import { uniqueId } from '../utils';
 
 
-export interface ISettings {
-    horizSplit?: number | string;
-    vertSplit?: number | string;
+export interface ILayoutState {
+    horizSplit?: number | string,
+    vertSplit?: number | string,
 }
 
-export class Settings implements ISettings {
-    horizSplit: number | string;
-    vertSplit: number | string;
+export interface IPersistentSettings {
+    layout: ILayoutState
+}
 
-    constructor(settings?: ISettings) {
-        if (settings) {
-            Object.assign(this, settings);
-        }
+export class PersistentSettings implements IPersistentSettings {
+    layout: ILayoutState;
+    constructor(settings: ISettings) {
+        Object.assign(this, {
+            layout: {
+                horizSplit: settings.layout.horizSplit,
+                vertSplit: settings.layout.vertSplit
+            }
+        });
     }
 }
 
-export const settingsDefault: ISettings = {
+export interface IAddressBarState {
+    text?: string,
+    matchingBots?: IBot[],
+    selectedBot: IBot
+}
+
+export interface IConversationState {
+    chatEnabled?: boolean,
+    conversationId?: string,
+    userId?: string,
+    userName?: string
+}
+
+export interface ISettings extends IPersistentSettings {
+    addressBar?: IAddressBarState,
+    conversation: IConversationState,
+    serverSettings?: ServerSettings
+}
+
+export class Settings implements ISettings {
+    layout: ILayoutState;
+    addressBar: IAddressBarState;
+    conversation: IConversationState;
+    serverSettings: ServerSettings;
+
+    constructor(settings?: ISettings) {
+        Object.assign(this, settings);
+    }
+}
+
+export const layoutDefault: ILayoutState = {
     horizSplit: '66%',
     vertSplit: '33%'
 }
 
-export var store: Store<ISettings>;
-export const getSettings = () => new Settings(store ? store.getState() : settingsDefault);
-export var serverSettings$ = new Subject<ServerSettings>();
+export const addressBarDefault: IAddressBarState = {
+    text: '',
+    matchingBots: [],
+    selectedBot: null
+}
+
+export const conversationDefault: IConversationState = {
+    chatEnabled: false,
+    conversationId: '',
+    userId: uniqueId(),
+    userName: 'User'
+}
+
+export const settingsDefault: ISettings = {
+    layout: layoutDefault,
+    addressBar: addressBarDefault,
+    conversation: conversationDefault,
+    serverSettings: new ServerSettings()
+}
+
+export const getStore = (): Store<ISettings> => {
+    var global = Function('return this')();
+    if (!global['emulator-client'])
+        global['emulator-client'] = {};
+    if (!global['emulator-client'].store) {
+        // Create the settings store with initial settings from disk.
+        const initialSettings = loadSettings('client.json', settingsDefault);
+        global['emulator-client'].store = createStore(combineReducers<ISettings>({
+            layout: layoutReducer,
+            addressBar: addressBarReducer,
+            conversation: conversationReducer,
+            serverSettings: serverSettingsReducer
+        }), initialSettings);
+    }
+    return global['emulator-client'].store;
+}
+
+export const getSettings = () => new Settings(getStore().getState());
 
 export const startup = () => {
-
-    const initialSettings = loadSettings('client.json', settingsDefault);
-
-    store = createStore(settingsReducer, initialSettings);
-
     // When changes to settings are made, save to disk.
     var saveTimerSet = false;
-    store.subscribe(() => {
+    getStore().subscribe(() => {
         if (!saveTimerSet) {
             saveTimerSet = true;
             setTimeout(() => {
-                saveSettings('client.json', store.getState());
+                saveSettings('client.json', new PersistentSettings(getStore().getState()));
                 saveTimerSet = false;
             }, 1000);
         }
@@ -51,31 +117,23 @@ export const startup = () => {
 
     // Listen for new settings from the server.
     Electron.ipcRenderer.on('serverSettings', (event, ...args) => {
-        let serverSettings = (args[0][0]) as IServerSettings;
-        serverSettings$.next(new ServerSettings(serverSettings));
+        const serverSettings = new ServerSettings((args[0][0]));
+        console.info("Received new server state.", serverSettings);
+        ServerSettingsActions.set(serverSettings);
 
         // TEST ONLY: Add a bot
-        if (serverSettings.bots.length == 0) {
+        if (!serverSettings.bots.length) {
             setTimeout(() => {
-                serverChangeSetting('Bots_AddBot', { bot: { 
-                    botUrl: 'http://localhost:8023/api/MessagesV3'
-                    /*botUrl: 'https://cjensentestbot.azurewebsites.net/api/messagesv3', 
-                    msaAppId: 'bf4af2fd-4c4e-49eb-ac5d-9976faaa5aa0', 
-                    msaPassword: 'LtPc2heSZyD5iDdmnW7KmBC', 
-                    botId: 'TestBotV3'*/  
-                }});
-            }, 100);
-        }
-
-        // TEST ONLY: Select a bot
-        if (!serverSettings.activeBot.length && serverSettings.bots.length > 0) {
-            setTimeout(() => {
-                serverChangeSetting('ActiveBot_Set', { botId: serverSettings.bots[0].botId });
+                ServerSettingsActions.remote_addOrUpdateBot(newBot({ botUrl: 'http://localhost:8023/api/MessagesV3' }));
+                ServerSettingsActions.remote_addOrUpdateBot(newBot({ botUrl: 'http://localhosssst:23/api/MessagesV11' }));
+                ServerSettingsActions.remote_addOrUpdateBot(newBot({ botUrl: 'http://remotehost:4033/api/messages' }));
+                ServerSettingsActions.remote_addOrUpdateBot(newBot({ botUrl: 'http://captionbot.cloudy.net:1010/api/Messages' }));
+                ServerSettingsActions.remote_addOrUpdateBot(newBot({ botUrl: 'http://testbot.foo.com:8080/api/messages' }));
             }, 100);
         }
     });
 
-    // Let the server know we're done starting up.
+    // Let the server know we're done starting up. In response, it will send us it's current settings (bot list and such).
     Electron.ipcRenderer.send('clientStarted');
 }
 

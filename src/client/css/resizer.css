@@ -2,7 +2,6 @@
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
-    /*position: relative;*/
 }
 
 .root {
@@ -15,10 +14,8 @@
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     background: #000;
-    opacity: .2;
+    opacity: .74;
     z-index: 1;
-    -moz-background-clip: padding;
-    -webkit-background-clip: padding;
     background-clip: padding-box;
 }
 
@@ -28,30 +25,30 @@
 }
 
 .Resizer.horizontal {
-    height: 11px;
-    margin: -5px 0;
-    border-top: 5px solid rgba(255, 255, 255, 0);
-    border-bottom: 5px solid rgba(255, 255, 255, 0);
+    height: 5px;
+    margin: -2px 0;
+    border-top: 2px solid rgba(255, 255, 255, 0);
+    border-bottom: 2px solid rgba(255, 255, 255, 0);
     cursor: row-resize;
     width: 100%;
 }
 
 .Resizer.horizontal:hover {
-    border-top: 5px solid rgba(0, 0, 0, 0.5);
-    border-bottom: 5px solid rgba(0, 0, 0, 0.5);
+    border-top: 2px solid rgba(0, 0, 0, 0.5);
+    border-bottom: 2px solid rgba(0, 0, 0, 0.5);
 }
 
 .Resizer.vertical {
-    width: 11px;
-    margin: 0 -5px;
-    border-left: 5px solid rgba(255, 255, 255, 0);
-    border-right: 5px solid rgba(255, 255, 255, 0);
+    width: 5px;
+    margin: 0 -2px;
+    border-left: 2px solid rgba(255, 255, 255, 0);
+    border-right: 2px solid rgba(255, 255, 255, 0);
     cursor: col-resize;
 }
 
 .Resizer.vertical:hover {
-    border-left: 5px solid rgba(0, 0, 0, 0.5);
-    border-right: 5px solid rgba(0, 0, 0, 0.5);
+    border-left: 2px solid rgba(0, 0, 0, 0.5);
+    border-right: 2px solid rgba(0, 0, 0, 0.5);
 }
 
 .vertical section {
@@ -78,17 +75,6 @@
     background: #eee;
 }
 
-#vertically-nested-in-container-example {
-    -webkit-box-flex: 1;
-    -webkit-flex: 1;
-        -ms-flex: 1;
-            flex: 1;
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-}
-
 .horizontal section {
     width: 100vh;
     height: 100vh;
@@ -106,18 +92,10 @@
     background: #eee;
 }
 
-#horizontally-nested-in-container-example {
-    flex: 1;
-    display: flex;
-}
-
 .parent {
     width: 100%;
     height: 100%;
-    -webkit-box-flex: 1;
-    -webkit-flex: 1;
-        -ms-flex: 1;
-            flex: 1;
+    flex: 1;
     display: -webkit-box;
     display: -webkit-flex;
     display: -ms-flexbox;
@@ -136,8 +114,5 @@
 .wrapper {
     background: #ffa;
     margin: 5rem;
-    -webkit-box-flex: 1;
-    -webkit-flex: 1;
-        -ms-flex: 1;
-            flex: 1;
+    flex: 1;
 }

@@ -19,10 +19,10 @@ export class Emulator {
         // When the client notifies us it has started up, send it the configuration.
         Electron.ipcMain.on('clientStarted', () => {
             this.mainWindow = mainWindow;
-            this.send('serverSettings', Settings.store.getState());
+            this.send('serverSettings', Settings.getStore().getState());
         });
-        Settings.store.subscribe(() => {
-            this.send('serverSettings', Settings.store.getState());
+        Settings.getStore().subscribe(() => {
+            this.send('serverSettings', Settings.getStore().getState());
         });
     }
 

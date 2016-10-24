@@ -4,7 +4,7 @@ import { Settings } from './settings';
 import { IChannelAccount, IConversationAccount } from '../types/accountTypes';
 import { IActivity, IConversationUpdateActivity } from '../types/activityTypes';
 import { uniqueId } from '../utils';
-import { store, getSettings, authenticationSettings } from './settings';
+import { getStore, getSettings, authenticationSettings } from './settings';
 import * as jwt from 'jsonwebtoken';
 import * as oid from './OpenIdMetadata';
 
@@ -210,9 +210,8 @@ class ConversationSet {
  */
 export class ConversationManager {
     conversationSets: ConversationSet[] = [];
-
     constructor() {
-        store.subscribe(() => {
+        getStore().subscribe(() => {
             this.configure();
         });
         this.configure();

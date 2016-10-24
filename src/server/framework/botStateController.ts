@@ -64,7 +64,7 @@ export class BotStateController {
     }
 
     deleteStateForUser = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-        // TODO @eanders: Implement me.
+        // TODO: Implement me.
         res.send(204);
         res.end();
     }

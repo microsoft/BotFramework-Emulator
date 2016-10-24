@@ -1,6 +1,6 @@
 import * as Electron from 'electron';
 import { Emulator } from './emulator';
-import { store, getSettings } from './settings';
+import { getStore, getSettings } from './settings';
 import { WindowStateAction } from './reducers/windowStateReducer';
 
 require('electron-debug')();
@@ -19,12 +19,13 @@ const createMainWindow = () => {
         x: settings.windowState.left,
         y: settings.windowState.top
     });
+    mainWindow.setTitle('Bot Framework Emulator /next/');
     mainWindow.setMenu(null);
     mainWindow.loadURL(`file://${__dirname}/../client/index.html`);
 
     mainWindow.on('resize', () => {
         const bounds = mainWindow.getBounds();
-        store.dispatch<WindowStateAction>({
+        getStore().dispatch<WindowStateAction>({
             type: 'Window_RememberBounds',
             state: {
                 width: bounds.width,
@@ -36,7 +37,7 @@ const createMainWindow = () => {
     });
     mainWindow.on('move', () => {
         const bounds = mainWindow.getBounds();
-        store.dispatch<WindowStateAction>({
+        getStore().dispatch<WindowStateAction>({
             type: 'Window_RememberBounds',
             state: {
                 width: bounds.width,
@@ -55,7 +56,7 @@ const createMainWindow = () => {
 Electron.app.on('ready', createMainWindow);
 
 Electron.app.on('window-all-closed', function () {
-    // TODO @eanders: Write client.json settings file for window size, etc.
+    // TODO: Write client.json settings file for window size, etc.
     if (process.platform !== 'darwin') {
         Electron.app.quit();
     }

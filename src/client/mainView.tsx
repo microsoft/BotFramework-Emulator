@@ -1,124 +1,87 @@
 import * as React from 'react';
-import { Subscription } from '@reactivex/rxjs';
 import * as Splitter from 'react-split-pane';
 import * as BotChat from 'msbotchat';
-import { store, getSettings, serverSettings$ } from './settings';
-import { SettingsAction } from './reducers/reducers';
-import { ISettings as IServerSettings, Settings as ServerSettings } from '../server/settings';
+import { getStore, getSettings } from './settings';
+import { LayoutActions } from './reducers';
+import { Settings as ServerSettings } from '../server/settings';
 import { AddressBar } from './addressBar';
 import { uniqueId } from '../utils';
 
 
-export interface IMainViewProps {
-    conversationId: string,
-    username: string,
-    userid: string
-}
-
-export class MainView extends React.Component<IMainViewProps, {}> {
+export class MainView extends React.Component<{}, {}> {
     storeUnsubscribe: any;
-    serverSubscription: Subscription;
-    serverSettings: ServerSettings;
 
     componentWillMount() {
-        this.storeUnsubscribe = store.subscribe(() => {
+        this.storeUnsubscribe = getStore().subscribe(() => {
             this.forceUpdate();
         });
-        serverSettings$.subscribe(value => {
-            this.serverSettings = new ServerSettings(value);
-            this.forceUpdate();
-        })
     }
 
     componentWillUnmount() {
         this.storeUnsubscribe();
-        this.serverSubscription.unsubscribe();
     }
 
-    onHorizontalSplitMoved = (size: number) => {
-        store.dispatch<SettingsAction>({
-            type: 'Remember_HorizSplit',
-            state: {
-                size
-            }
-        });
-    }
-
-    onVerticalSplitMoved = (size: number) => {
-        store.dispatch<SettingsAction>({
-            type: 'Remember_VertSplit',
-            state: {
-                size
-            }
-        });
+    getActiveBot(): string {
+        const settings = getSettings();
+        if (settings.serverSettings.activeBot && settings.serverSettings.activeBot.length)
+            return settings.serverSettings.activeBot;
+        return null;
     }
 
     botChatComponent() {
         const settings = getSettings();
-        if (this.serverSettings && this.serverSettings.directLine.port > 0) {
-            const activeBot = this.serverSettings.getActiveBot();
-            if (activeBot) {
-                const props: BotChat.AppProps = {
-                    uiProps: {
-                        devConsole: new BotChat.ConsoleProvider(),
-                        secret: this.props.conversationId,
-                        directLineDomain: `http://localhost:${this.serverSettings.directLine.port}`,
-                        user: {
-                            id: this.props.userid,
-                            name: this.props.username
-                        },
-                        historyProps: {
-                            allowSelection: true
-                        }
-                    },
-                    debugProps: {
-                    }
-                };
+        const activeBot = this.getActiveBot();
+        if (activeBot) {
+            const props: BotChat.UIProps = {
+                devConsole: new BotChat.ConsoleProvider(),
+                secret: settings.conversation.conversationId,
+                directLineDomain: `http://localhost:${settings.serverSettings.directLine.port}`,
+                user: {
+                    id: settings.conversation.userId,
+                    name: settings.conversation.userName
+                },
+                allowMessageSelection: true
+            }
+            return <BotChat.UI {...props} />
+        }
+        return null;
+    }
 
-                return (
-                    <div className="wc-app">
-                        <Splitter split="vertical" defaultSize={settings.vertSplit} primary="second" onChange={(size) => this.onVerticalSplitMoved(size)}>
-                            <div className={ "wc-chatview-panel" }>
-                                <div className="wc-chatview-header">
-                                    <AddressBar />
+    botChatApp() {
+        const settings = getSettings();
+        return (
+            <div className="wc-app">
+                <Splitter split="vertical" defaultSize={settings.layout.vertSplit} primary="second" onChange={(size) => LayoutActions.rememberVerticalSplitter(size)}>
+                    <div className={"wc-chatview-panel"}>
+                        <AddressBar />
+                        {this.botChatComponent()}
+                    </div>
+                    <div className="wc-app-debugview-container">
+                        <Splitter split="horizontal" defaultSize={settings.layout.horizSplit} onChange={(size) => LayoutActions.rememberHorizontalSplitter(size)}>
+                            <div className="wc-chatview-panel">
+                                <div className="wc-debugview-header">
+                                    <span>JSON</span>
                                 </div>
-                                <BotChat.UI { ...props.uiProps } />
+                                <BotChat.DebugView />
                             </div>
-                            <div className="wc-app-debugview-container">
-                                <Splitter split="horizontal" defaultSize={settings.horizSplit} onChange={(size) => this.onHorizontalSplitMoved(size)}>
-                                    <div className="wc-chatview-panel">
-                                        <div className="wc-debugview-header">
-                                            <span>JSON</span>
-                                        </div>
-                                        <BotChat.DebugView { ...props.debugProps } />
-                                    </div>
-                                    <div className="wc-app-consoleview-container">
-                                        <div className="wc-consoleview-header">
-                                            <span>Console</span>
-                                        </div>
-                                        <BotChat.ConsoleView />
-                                    </div>
-                                </Splitter>
+                            <div className="wc-app-consoleview-container">
+                                <div className="wc-consoleview-header">
+                                    <span>Output</span>
+                                </div>
+                                <BotChat.ConsoleView />
                             </div>
                         </Splitter>
                     </div>
-                );
-
-            } else {
-                return <div>Create or select a bot configuration to get started.</div>
-                // TODO: Show "loading" or something.
-            }
-        } else {
-            return <div>Loading...</div>
-            // TODO: Show "loading" or something.
-        }
+                </Splitter>
+            </div>
+        );
     }
 
     render() {
         return (
             <div className='mainview'>
                 <div className='botchat-container'>
-                    {this.botChatComponent()}
+                    {this.botChatApp()}
                 </div>
             </div>
         );

@@ -1,9 +1,11 @@
 import { Reducer } from 'redux';
 import { uniqueId } from '../../utils';
 import { IBot } from '../../types/botTypes';
+import { getSettings } from './../settings';
+
 
 export type BotsAction = {
-    type: 'Bots_AddBot',
+    type: 'Bots_AddOrUpdateBot',
     state: {
         bot: IBot
     }
@@ -12,17 +14,6 @@ export type BotsAction = {
     state: {
         botId: string
     }
-} | {
-    type: 'Bots_EditBot',
-    state: {
-        botId: string,
-        bot: IBot
-    }
-} | {
-    type: 'Bots_SetState',
-    state: {
-        bots: IBot[]
-    }
 }
 
 export const botsReducer: Reducer<IBot[]> = (
@@ -30,37 +21,29 @@ export const botsReducer: Reducer<IBot[]> = (
     action: BotsAction
 ) => {
     switch (action.type) {
-        case 'Bots_AddBot': {
-            return [
-                ...state,
-                Object.assign({}, action.state.bot, { botId: uniqueId() })];
-        }
-        case 'Bots_RemoveBot': {
-            let index = state.findIndex(value => value.botId === action.state.botId);
-            if (index) {
-                return [
-                    ...state.slice(0, index),
-                    ...state.slice(index + 1)];
-            } else {
-                return state;
+        case 'Bots_AddOrUpdateBot': {
+            let botId = action.state.bot.botId || uniqueId();
+            const settings = getSettings();
+            if (settings.bots.find(value => value.botId === botId)) {
+                botId = uniqueId();
             }
-        }
-        case 'Bots_EditBot': {
-            let index = state.findIndex(value => value.botId === action.state.botId);
-            if (index) {
+            let index = state.findIndex(value => value.botId === action.state.bot.botId);
+            if (index >= 0) {
                 return [
                     ...state.slice(0, index),
                     Object.assign({}, action.state.bot, { botId: state[index].botId }),
                     ...state.slice(index + 1)];
             } else {
-                return state;
+                return [
+                    ...state,
+                    Object.assign({}, action.state.bot, { botId: botId })];
             }
         }
-        case 'Bots_SetState': {
-            return [...(action.state.bots || []).slice(0)];
+        case 'Bots_RemoveBot': {
+            return state.filter(value => value.botId !== action.state.botId);
         }
         default:
-            return state
+            return state;
     }
 }
 
@@ -79,6 +62,6 @@ export const activeBotReducer: Reducer<string> = (
         case 'ActiveBot_Set':
             return action.state.botId || state;
         default:
-            return state
+            return state;
     }
 }

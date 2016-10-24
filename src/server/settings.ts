@@ -10,39 +10,53 @@ import { loadSettings, saveSettings } from '../utils';
 
 
 export interface IDirectLineSettings {
-    port: number,
+    port?: number,
 }
 
 export interface IFrameworkSettings {
-    port: number,
+    port?: number,
 }
 
 export interface IWindowStateSettings {
-    width: number,
-    height: number,
-    left: number,
-    top: number
+    width?: number,
+    height?: number,
+    left?: number,
+    top?: number
 }
 
-export interface ISettings {
+export interface IPersistentSettings {
     directLine?: IDirectLineSettings,
     framework?: IFrameworkSettings,
     bots?: IBot[],
-    activeBot?: string,
     windowState?: IWindowStateSettings
+}
+
+export class PersistentSettings implements IPersistentSettings {
+    directLine: IDirectLineSettings;
+    framework: IFrameworkSettings;
+    bots: IBot[];
+    windowState: IWindowStateSettings;
+    constructor(settings: ISettings) {
+        this.directLine = settings.directLine;
+        this.framework = settings.framework;
+        this.bots = settings.bots;
+        this.windowState = settings.windowState;
+    }
+}
+
+export interface ISettings extends IPersistentSettings {
+    activeBot?: string
 }
 
 export class Settings implements ISettings {
     directLine: IDirectLineSettings;
     framework: IFrameworkSettings;
     bots: IBot[];
-    activeBot: string;
     windowState: IWindowStateSettings;
+    activeBot: string;
 
     constructor(settings?: ISettings) {
-        if (settings) {
-            Object.assign(this, settings);
-        }
+        Object.assign(this, settings);
     }
 
     getActiveBot = () => {
@@ -77,28 +91,34 @@ export const settingsDefault: ISettings = {
     windowState: windowStateDefault
 };
 
-export var store: Store<ISettings>;
+export const getStore = (): Store<ISettings> => {
+    var global = Function('return this')();
+    if (!global['emulator-server'])
+        global['emulator-server'] = {};
+    if (!global['emulator-server'].store) {
+        // Create the settings store with initial settings from disk.
+        const initialSettings = loadSettings('server.json', settingsDefault);
+        global['emulator-server'].store = createStore(combineReducers<ISettings>({
+            directLine: directLineReducer,
+            framework: frameworkReducer,
+            bots: botsReducer,
+            activeBot: activeBotReducer,
+            windowState: windowStateReducer
+        }), initialSettings);
+    }
+    return global['emulator-server'].store;
+}
 
-export const getSettings = () => new Settings(store ? store.getState() : settingsDefault);
+export const getSettings = () => new Settings(getStore().getState());
 
 export const startup = () => {
-    // Create the settings store with initial settings from disk.
-    const initialSettings = loadSettings('server.json', settingsDefault);
-    store = createStore(combineReducers<ISettings>({
-        directLine: directLineReducer,
-        framework: frameworkReducer,
-        bots: botsReducer,
-        activeBot: activeBotReducer,
-        windowState: windowStateReducer
-    }), initialSettings);
-
     // When changes to settings are made, save to disk.
     var saveTimerSet = false;
-    store.subscribe(() => {
+    getStore().subscribe(() => {
         if (!saveTimerSet) {
             saveTimerSet = true;
             setTimeout(() => {
-                saveSettings('server.json', store.getState());
+                saveSettings('server.json', new PersistentSettings(getStore().getState()));
                 saveTimerSet = false;
             }, 1000);
         }
@@ -107,7 +127,7 @@ export const startup = () => {
     // Listen for settings change requests from the client.
     Electron.ipcMain.on('serverChangeSetting', (event, ...args) => {
         // Apply change requests to the settings store.
-        store.dispatch({
+        getStore().dispatch({
             type: args[0],
             state: args[1]
         });

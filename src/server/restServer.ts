@@ -2,7 +2,7 @@ import * as Restify from 'restify';
 
 export class RestServer {
 
-    // REVIEW @eanders: Can we get this from the Restify.server?
+    // REVIEW: Can we get this from the Restify.server?
     port: number;
     server: Restify.Server;
 
@@ -11,7 +11,7 @@ export class RestServer {
             name: name
         });
 
-        // REVIEW @eanders: Which of these do we need?
+        // REVIEW: Which of these do we need?
         this.server.use(Restify.acceptParser(this.server.acceptable));
         this.server.use(Restify.authorizationParser());
         this.server.use(Restify.CORS());

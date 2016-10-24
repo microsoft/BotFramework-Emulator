@@ -1,7 +1,7 @@
 import * as Restify from 'restify';
 import { ConversationsControllerV1 } from './conversationsControllerV1';
 import { RestServer } from '../restServer';
-import { store, getSettings } from '../settings';
+import { getStore, getSettings } from '../settings';
 
 
 /**
@@ -13,7 +13,7 @@ export class DirectLineServer extends RestServer {
     constructor() {
         super("directLine");
         this.conversationsControllerV1.registerRoutes(this.server);
-        store.subscribe(() => {
+        getStore().subscribe(() => {
             this.configure();
         });
         this.configure();

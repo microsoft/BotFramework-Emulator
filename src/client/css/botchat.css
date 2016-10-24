@@ -45,7 +45,7 @@
         bottom: 50px;
         left: 0;
         overflow-x: hidden;
-        overflow-y: scroll;
+        overflow-y: auto;
         padding: 10px;
         position: absolute;
         right: 0;
@@ -75,10 +75,10 @@
     .wc-chatview-header {
         background-color: #3e92d2;
         color: #fff;
-        font-weight: 500;
-        height: 42px;   /* height + padding-top = total height */
+        height: 42px;
         left: 0;
         letter-spacing: 0.5px;
+        font-weight: 100;
         padding: 10px 15px 0 15px;
         position: absolute;
         right: 0;
@@ -86,25 +86,14 @@
     }
 
     .wc-debugview-header {
-        background-color: #3e92d2;
+        background-color: #252526;
         color: #fff;
-        font-weight: 500;
-        height: 42px;   /* height + padding-top = total height */
+        border-bottom: solid 1px #403F3F;
+        height: 42px;
         left: 0;
         letter-spacing: 0.5px;
-        padding: 10px 15px 0 15px;
-        position: absolute;
-        right: 0;
-        top: 0;
-    }
-
-    .wc-consoleview-header {
-        background-color: #3e92d2;
-        color: #fff;
-        font-weight: 500;
-        height: 42px;   /* height + padding-top = total height */
-        left: 0;
-        letter-spacing: 0.5px;
+        font-weight: 100;
+        font-size: 14px;
         padding: 10px 15px 0 15px;
         position: absolute;
         right: 0;
@@ -112,17 +101,20 @@
     }
 
     .wc-debugview {
+        background-color: #1e1e1e;
+        color: white;
         position: absolute;
         left: 0;
         right: 0;
         top: 42px;
         bottom: 0;
-        overflow-y: scroll;
+        overflow-y: auto;
     }
 
     .wc-debugview-json {
         font-size: 13px;
-        font-family: monospace;
+        font-family: Consolas, 'Courier New', monospace;
+        font-weight: 100;
         position: absolute;
         top: 0;
         left: 0;
@@ -130,38 +122,55 @@
         bottom: 0;
         word-wrap: break-word;
         white-space: pre-wrap;
-        padding: 5px 5px 5px 5px;
-        margin: 5px 5px 5px 5px;
+        padding: 10px 10px 10px 10px;
     }
 
 /* JSON */
 
     .json-key {
-        color: rgb(19, 132, 149);
+        color: #9cdcfe;
     }
 
     .json-string {
-        color: #1A1AA6;
+        color: #ce9178;
     }
 
     .json-number {
-        color: rgb(0, 0, 205);
+        color: #b5cea8;
     }
 
     .json-boolean {
-        color: rgb(88, 92, 246);
+        color: #569cd6;
     }
 
     .json-null {
-        color: black;
+        color: #569cd6;
     }
 
 /* consoleview */
 
+    .wc-consoleview-header {
+        background-color: #252526;
+        color: #fff;
+        border-bottom: solid 1px #403F3F;
+        height: 42px;
+        left: 0;
+        letter-spacing: 0.5px;
+        font-weight: 100;
+        font-size: 14px;
+        padding: 10px 15px 0 15px;
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+
     .wc-consoleview {
-        overflow-y: scroll;
+        background-color: #1e1e1e;
+        color: white;
+        overflow-y: auto;
         font-size: 13px;
-        font-family: monospace;
+        font-family: Consolas, 'Courier New', monospace;
+        font-weight: 100;
         word-wrap: break-word;
         white-space: pre-wrap;
         position: absolute;
@@ -169,6 +178,7 @@
         top: 42px;
         right: 0;
         bottom: 0;
+        padding: 10px 10px 10px 10px;
     }
 
     .wc-consoleview-info {
