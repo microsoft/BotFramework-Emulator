@@ -27,7 +27,7 @@ export class ConversationsController {
     // Create conversation API
     public createConversation(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         console.log("framework: newConversation");
-        res.send(200, {});
+        res.send(HttpStatus.OK, ResponseTypes.CreateResourceResponse("123123"));
         res.end();
     }
 
