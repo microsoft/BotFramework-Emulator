@@ -32,10 +32,11 @@ export interface IPersistentSettings {
 }
 
 export class PersistentSettings implements IPersistentSettings {
-    directLine: IDirectLineSettings;
-    framework: IFrameworkSettings;
-    bots: IBot[];
-    windowState: IWindowStateSettings;
+    public directLine: IDirectLineSettings;
+    public framework: IFrameworkSettings;
+    public bots: IBot[];
+    public windowState: IWindowStateSettings;
+    
     constructor(settings: ISettings) {
         this.directLine = settings.directLine;
         this.framework = settings.framework;
@@ -49,21 +50,22 @@ export interface ISettings extends IPersistentSettings {
 }
 
 export class Settings implements ISettings {
-    directLine: IDirectLineSettings;
-    framework: IFrameworkSettings;
-    bots: IBot[];
-    windowState: IWindowStateSettings;
-    activeBot: string;
+    public directLine: IDirectLineSettings;
+    public framework: IFrameworkSettings;
+    public bots: IBot[];
+    public windowState: IWindowStateSettings;
+
+    public activeBot: string;
 
     constructor(settings?: ISettings) {
         Object.assign(this, settings);
     }
 
-    getActiveBot = () => {
+    public getActiveBot(): IBot {
         return this.botById(this.activeBot);
     }
 
-    botById = (botId: string) => {
+    public botById(botId: string): IBot {
         return this.bots.find(value => value.botId === botId);
     }
 }
@@ -140,5 +142,5 @@ export const authenticationSettings = {
     msaOpenIdMetadata: 'https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration',
     msaIssuer: 'https://sts.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47/',
     msaAudience: 'https://graph.microsoft.com',
-    stateEndpoint:  'https://state.botframework.com'
+    stateEndpoint: 'https://state.botframework.com'
 }

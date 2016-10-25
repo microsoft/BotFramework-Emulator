@@ -233,7 +233,7 @@ export class ConversationManager {
     /**
      * Creates a new conversation.
      */
-    newConversation(botId: string): Conversation {
+    public newConversation(botId: string): Conversation {
         let conversationSet = this.conversationSets.find(value => value.botId === botId);
         if (!conversationSet) {
             conversationSet = new ConversationSet(botId);
@@ -246,7 +246,7 @@ export class ConversationManager {
     /**
      * Gets the existing conversation, or returns undefined.
      */
-    conversationById(botId: string, conversationId: string): Conversation {
+    public conversationById(botId: string, conversationId: string): Conversation {
         const set = this.conversationSets.find(set => set.botId === botId);
         if (set) {
             return set.conversationById(conversationId);

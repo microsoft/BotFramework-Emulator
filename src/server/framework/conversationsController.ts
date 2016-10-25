@@ -26,9 +26,24 @@ export class ConversationsController {
 
     // Create conversation API
     public createConversation(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
-        console.log("framework: newConversation");
-        res.send(HttpStatus.OK, ResponseTypes.CreateResourceResponse("123123"));
-        res.end();
+        try {
+            // look up bot
+            const activeBot = getSettings().getActiveBot();
+            if (!activeBot)
+                throw ResponseTypes.CreateAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
+
+            console.log("framework: newConversation");
+            var newConversation = emulator.conversations.newConversation(activeBot.botId);
+            res.send(HttpStatus.OK, ResponseTypes.CreateResourceResponse(newConversation.conversationId));
+            res.end();
+        } catch (err) {
+            var apiException: ResponseTypes.APIException = err;
+            if (apiException.error)
+                res.send(apiException.statusCode, apiException.error);
+            else
+                res.send(HttpStatus.BAD_REQUEST, ResponseTypes.CreateErrorResponse(ErrorCodes.ServiceError, err));
+            res.end();
+        }
     }
 
     // SendToConversation
