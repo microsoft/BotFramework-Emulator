@@ -25,7 +25,7 @@ export class RestServer {
         this.server.use(Restify.bodyParser());
     }
 
-    public restart = (port: number) => {
+    public restart(port: number) {
         this.stop();
         this.port = port;
         return this.server.listen(this.port, () => {
@@ -33,7 +33,7 @@ export class RestServer {
         });
     }
 
-    public stop = () => {
+    public stop() {
         return this.server.close();
     }
 }

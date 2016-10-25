@@ -120,17 +120,6 @@ export const startup = () => {
         const serverSettings = new ServerSettings((args[0][0]));
         console.info("Received new server state.", serverSettings);
         ServerSettingsActions.set(serverSettings);
-
-        // TEST ONLY: Add a bot
-        if (!serverSettings.bots.length) {
-            setTimeout(() => {
-                ServerSettingsActions.remote_addOrUpdateBot(newBot({ botUrl: 'http://localhost:8023/api/MessagesV3' }));
-                ServerSettingsActions.remote_addOrUpdateBot(newBot({ botUrl: 'http://localhosssst:23/api/MessagesV11' }));
-                ServerSettingsActions.remote_addOrUpdateBot(newBot({ botUrl: 'http://remotehost:4033/api/messages' }));
-                ServerSettingsActions.remote_addOrUpdateBot(newBot({ botUrl: 'http://captionbot.cloudy.net:1010/api/Messages' }));
-                ServerSettingsActions.remote_addOrUpdateBot(newBot({ botUrl: 'http://testbot.foo.com:8080/api/messages' }));
-            }, 100);
-        }
     });
 
     // Let the server know we're done starting up. In response, it will send us it's current settings (bot list and such).

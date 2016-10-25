@@ -139,7 +139,6 @@ class AddressBarStatus extends React.Component<{}, {}> {
 }
 
 class AddressBarTextBox extends React.Component<{}, {}> {
-    textInput: HTMLInputElement;
     storeUnsubscribe: any;
 
     onChange(text: string) {
@@ -156,12 +155,20 @@ class AddressBarTextBox extends React.Component<{}, {}> {
                 return;
             if (!settings.addressBar.selectedBot)
                 return;
-            const selectedBot: IBot = settings.addressBar.selectedBot;
             if (settings.addressBar.matchingBots.length > 0) {
                 AddressBarOperators.clearMatchingBots();
             } else {
                 //AddressBarOperators.activateBot(bot);
             }
+        }
+    }
+
+    onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+        if (e.key === 'ArrowDown') {
+
+        }
+        if (e.key === 'ArrowUp') {
+            
         }
     }
 
@@ -196,10 +203,10 @@ class AddressBarTextBox extends React.Component<{}, {}> {
             <div className="addressbar-textbox">
                 <input
                     type="text"
-                    ref={ ref => this.textInput = ref }
                     value={settings.addressBar.text}
                     onChange={e => this.onChange((e.target as any).value)}
                     onKeyPress={e => this.onKeyPress(e)}
+                    onKeyDown={e => this.onKeyDown(e)}
                     onFocus={() => this.onFocus()}
                     placeholder="Enter your entpoint URL" />
             </div>
@@ -210,7 +217,6 @@ class AddressBarTextBox extends React.Component<{}, {}> {
 class AddressBarControl extends React.Component<{}, {}> {
     toggleConnected() {
         const settings = getSettings();
-
     }
 
     render() {
@@ -270,7 +276,7 @@ interface AddressBarSearchResultProps {
 }
 
 class AddressBarSearchResult extends React.Component<AddressBarSearchResultProps, {}> {
-    selectBot(e:React.MouseEvent<HTMLDivElement>) {
+    selectBot(e: React.MouseEvent<HTMLDivElement>) {
         AddressBarOperators.setText(this.props.bot.botUrl);
         AddressBarOperators.selectBot(this.props.bot);
         AddressBarOperators.clearMatchingBots();
@@ -278,7 +284,7 @@ class AddressBarSearchResult extends React.Component<AddressBarSearchResultProps
         e.stopPropagation();
     }
 
-    deleteBot(e:React.MouseEvent<HTMLDivElement>) {
+    deleteBot(e: React.MouseEvent<HTMLDivElement>) {
         const settings = getSettings();
         if (settings.addressBar.selectedBot && settings.addressBar.selectedBot.botId === this.props.bot.botId) {
             AddressBarOperators.setText('');

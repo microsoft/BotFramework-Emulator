@@ -72,16 +72,16 @@ const activityToMessage = (activity: IGenericActivity): IV1Message => {
 
 export class ConversationsControllerV1 {
 
-    registerRoutes = (server: Restify.Server) => {
-        server.post('/api/conversations', this.newConversation);
-        server.get('/api/conversations/:conversationId/messages', this.getMessages);
-        server.post('/api/conversations/:conversationId/messages', this.postMessage);
-        server.post('/api/conversations/:conversationId/upload', this.uploadAttachment);
-        server.post('/api/conversations/:conversationId/users/:userId/upload', this.uploadAttachment);
-        server.get('/api/conversations/:conversationId/messages/:messageId/:kind/:imageIndex', this.getAttachment);
+    static registerRoutes(server: Restify.Server) {
+        server.post('/api/conversations', ConversationsControllerV1.newConversation);
+        server.get('/api/conversations/:conversationId/messages', ConversationsControllerV1.getMessages);
+        server.post('/api/conversations/:conversationId/messages', ConversationsControllerV1.postMessage);
+        server.post('/api/conversations/:conversationId/upload', ConversationsControllerV1.uploadAttachment);
+        server.post('/api/conversations/:conversationId/users/:userId/upload', ConversationsControllerV1.uploadAttachment);
+        server.get('/api/conversations/:conversationId/messages/:messageId/:kind/:imageIndex', ConversationsControllerV1.getAttachment);
     }
 
-    newConversation = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+    static newConversation(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         const activeBot = getSettings().getActiveBot();
         if (activeBot) {
             const auth = req.header('Authorization');
@@ -100,7 +100,7 @@ export class ConversationsControllerV1 {
         res.end();
     }
 
-    getMessages = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+    static getMessages(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         const activeBot = getSettings().getActiveBot();
         if (activeBot) {
             const conversation = emulator.conversations.conversationById(activeBot.botId, req.params.conversationId);
@@ -121,7 +121,7 @@ export class ConversationsControllerV1 {
         res.end();
     }
 
-    postMessage = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+    static postMessage(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         const activeBot = getSettings().getActiveBot();
         if (activeBot) {
             const conversation = emulator.conversations.conversationById(activeBot.botId, req.params.conversationId);
@@ -148,12 +148,12 @@ export class ConversationsControllerV1 {
 
     }
 
-    uploadAttachment = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+    static uploadAttachment(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         res.send(501);
         res.end();
     }
 
-    getAttachment = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+    static getAttachment(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         res.send(501);
         res.end();
     }

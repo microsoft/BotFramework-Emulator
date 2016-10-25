@@ -18,13 +18,13 @@ export class Conversation {
     activities: IActivity[] = [];
     private accessToken: string;
     private accessTokenExpires: number;
-    
+
     constructor(botId: string, conversationId: string) {
         this.botId = botId;
         this.conversationId = conversationId;
     }
 
-    private postage = (recipientId: string, activity: IActivity) => {
+    private postage(recipientId: string, activity: IActivity) {
         activity.id = uniqueId();
         activity.channelId = 'emulator';
         activity.timestamp = (new Date()).toISOString();
@@ -35,7 +35,7 @@ export class Conversation {
     /**
      * Sends the activity to the conversation's bot.
      */
-    postActivityToBot = (activity: IActivity, recordInConversation: boolean, cb) => {
+    postActivityToBot(activity: IActivity, recordInConversation: boolean, cb) {
         this.postage(this.botId, activity);
         if (recordInConversation) {
             this.activities.push(Object.assign({}, activity));
@@ -53,18 +53,18 @@ export class Conversation {
                     cb(null, resp.statusCode);
             }
 
-            if (bot.msaAppId && bot.msaPassword) 
+            if (bot.msaAppId && bot.msaPassword)
                 this.authenticatedRequest(options, responseCallback);
-            else 
+            else
                 request(options, responseCallback);
-            
+
         } else {
             console.error("Conversation.postToBot: bot not found! How does this conversation exist?", this.botId);
             cb("bot not found");
         }
     }
 
-    sendBotAddedToConversation = () => {
+    sendBotAddedToConversation() {
         const activity: IConversationUpdateActivity = {
             type: 'conversationUpdate',
             channelId: 'emulator',
@@ -79,7 +79,7 @@ export class Conversation {
     /**
      * Queues activity for delivery to user.
      */
-    postActivityToUser = (activity: IActivity) => {
+    postActivityToUser(activity: IActivity) {
         this.postage('', activity);
         this.activities.push(Object.assign({}, activity));
     }
@@ -87,7 +87,7 @@ export class Conversation {
     /**
      * Returns activities since the watermark.
      */
-    getActivitiesSince = (watermark: number): IActivity[] => {
+    getActivitiesSince(watermark: number): IActivity[] {
         return this.activities.slice(watermark);
     }
 
@@ -148,7 +148,7 @@ export class Conversation {
                         // new token before it expires.
                         var oauthResponse = JSON.parse(body);
                         this.accessToken = oauthResponse.access_token;
-                        this.accessTokenExpires = new Date().getTime() + ((oauthResponse.expires_in - 300) * 1000); 
+                        this.accessTokenExpires = new Date().getTime() + ((oauthResponse.expires_in - 300) * 1000);
                         cb(null, this.accessToken);
                     } else {
                         cb(new Error('Refresh access token failed with status code: ' + response.statusCode), null);
@@ -193,13 +193,13 @@ class ConversationSet {
         this.botId = botId;
     }
 
-    newConversation = (): Conversation => {
+    newConversation(): Conversation {
         const conversation = new Conversation(this.botId, uniqueId());
         this.conversations.push(conversation);
         return conversation;
     }
 
-    conversationById = (conversationId: string): Conversation => {
+    conversationById(conversationId: string): Conversation {
         return this.conversations.find(value => value.conversationId === conversationId);
     }
 }
@@ -220,7 +220,7 @@ export class ConversationManager {
     /**
      * Applies configuration changes.
      */
-    private configure = () => {
+    private configure() {
         // Remove conversations that reference nonexistent bots.
         const settings = getSettings();
         const deadBotIds = this.conversationSets.filter(set => !settings.bots.find(bot => bot.botId === set.botId)).map(conversation => conversation.botId);
@@ -230,7 +230,7 @@ export class ConversationManager {
     /**
      * Creates a new conversation.
      */
-    newConversation = (botId: string): Conversation => {
+    newConversation(botId: string): Conversation {
         let conversationSet = this.conversationSets.find(value => value.botId === botId);
         if (!conversationSet) {
             conversationSet = new ConversationSet(botId);
@@ -243,7 +243,7 @@ export class ConversationManager {
     /**
      * Gets the existing conversation, or returns undefined.
      */
-    conversationById = (botId: string, conversationId: string): Conversation => {
+    conversationById(botId: string, conversationId: string): Conversation {
         const set = this.conversationSets.find(set => set.botId === botId);
         if (set) {
             return set.conversationById(conversationId);

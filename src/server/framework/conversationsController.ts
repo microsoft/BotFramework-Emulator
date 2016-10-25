@@ -7,22 +7,22 @@ import { uniqueId } from '../../utils';
 
 export class ConversationsController {
 
-    registerRoutes = (server: Restify.Server) => {
-        server.post('/v3/conversations', this.newConversation);
-        server.post('/v3/conversations/:conversationId/activities', this.sendToConversation);
-        server.post('/v3/conversations/:conversationId/activities/:activityId', this.replyToActivity);
-        server.get('/v3/conversations/:conversationId/members', this.getConversationMembers);
-        server.get('/v3/conversations/:conversationId/activities/:activityId/members', this.getActivityMembers);
-        server.post('/v3/:conversation_id/attachments', this.uploadAttachment);
+    static registerRoutes(server: Restify.Server) {
+        server.post('/v3/conversations', ConversationsController.newConversation);
+        server.post('/v3/conversations/:conversationId/activities', ConversationsController.sendToConversation);
+        server.post('/v3/conversations/:conversationId/activities/:activityId', ConversationsController.replyToActivity);
+        server.get('/v3/conversations/:conversationId/members', ConversationsController.getConversationMembers);
+        server.get('/v3/conversations/:conversationId/activities/:activityId/members', ConversationsController.getActivityMembers);
+        server.post('/v3/:conversation_id/attachments', ConversationsController.uploadAttachment);
     }
 
-    newConversation = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+    static newConversation(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         console.log("framework: newConversation");
         res.send(200, {});
         res.end();
     }
 
-    sendToConversation = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+    static sendToConversation(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         const activeBot = getSettings().getActiveBot();
         if (activeBot) {
             let activity = <IGenericActivity>req.body;
@@ -40,7 +40,7 @@ export class ConversationsController {
         res.end();
     }
 
-    replyToActivity = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+    static replyToActivity(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         const activeBot = getSettings().getActiveBot();
         if (activeBot) {
             let activity = <IGenericActivity>req.body;
@@ -59,19 +59,19 @@ export class ConversationsController {
         res.end();
     }
 
-    getConversationMembers = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+    static getConversationMembers(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         console.log("framework: getConversationMembers");
         res.send(200, {});
         res.end();
     }
 
-    getActivityMembers = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+    static getActivityMembers(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         console.log("framework: getActivityMembers");
         res.send(200, {});
         res.end();
     }
 
-    uploadAttachment = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+    static uploadAttachment(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         console.log("framework: uploadAttachment");
         res.send(200, {});
         res.end();

@@ -29,7 +29,7 @@ export class Emulator {
     /**
      * Loads settings from disk and then creates the emulator.
      */
-    static startup = () => {
+    static startup() {
         Settings.startup();
         emulator = new Emulator();
     }
@@ -37,7 +37,7 @@ export class Emulator {
     /**
      * Sends a command to the client.
      */
-    send = (channel: string, ...args: any[]) => {
+    send(channel: string, ...args: any[]) {
         if (this.mainWindow) {
             this.mainWindow.webContents.send(channel, args);
         }
