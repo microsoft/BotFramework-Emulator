@@ -1,71 +1,163 @@
 import * as Restify from 'restify';
+import * as HttpStatus from "http-status-codes";
+import * as ResponseTypes from '../../types/responseTypes';
+import { ErrorCodes, IResourceResponse, IErrorResponse } from '../../types/responseTypes';
 
+
+interface IBotData {
+    eTag: string;
+    data: any;
+}
 
 export class BotStateController {
 
-    static botData: { [key: string]: any } = {};
+    private botDataStore: { [key: string]: IBotData } = {};
 
-    static botDataKey = (channelId: string, conversationId: string, userId: string) => `${channelId || '*'}!${conversationId || '*'}!${userId || '*'}`;
-
-    static getBotData(channelId: string, conversationId: string, userId: string) {
-        const key = BotStateController.botDataKey(channelId, conversationId, userId);
-        return BotStateController.botData[key] || {};
+    private botDataKey(channelId: string, conversationId: string, userId: string) {
+        return `${channelId || '*'}!${conversationId || '*'}!${userId || '*'}`;
     }
 
-    static setBotData(channelId: string, conversationId: string, userId: string, data: any) {
-        const key = BotStateController.botDataKey(channelId, conversationId, userId);
-        BotStateController.botData[key] = data;
+    private getBotData(channelId: string, conversationId: string, userId: string): IBotData {
+        const key = this.botDataKey(channelId, conversationId, userId);
+        return this.botDataStore[key] || {
+            data: null, eTag: 'empty'
+        };
     }
 
-    static registerRoutes(server: Restify.Server) {
-        server.get('/v3/botstate/:channelId/users/:userId', BotStateController.getUserData);
-        server.get('/v3/botstate/:channelId/conversations/:conversationId', BotStateController.getConversationData);
-        server.get('/v3/botstate/:channelId/conversations/:conversationId/users/:userId', BotStateController.getPrivateConversationData);
-        server.post('/v3/botstate/:channelId/users/:userId', BotStateController.setUserData);
-        server.post('/v3/botstate/:channelId/conversations/:conversationId', BotStateController.setConversationData);
-        server.post('/v3/botstate/:channelId/conversations/:conversationId/users/:userId', BotStateController.setPrivateConversationData);
-        server.del('/v3/botstate/:channelId/users/:userId', BotStateController.deleteStateForUser);
+    private setBotData(channelId: string, conversationId: string, userId: string, incomingData: IBotData): IBotData {
+        const key = this.botDataKey(channelId, conversationId, userId);
+        var oldData = this.botDataStore[key];
+        if (oldData && oldData.eTag != incomingData.eTag)
+            throw ResponseTypes.CreateAPIException(HttpStatus.PRECONDITION_FAILED, ErrorCodes.BadArgument, "The data is changed");
+
+        var newData = {} as IBotData;
+        newData.eTag = new Date().getTime().toString();
+        newData.data = incomingData.data;
+        this.botDataStore[key] = newData;
+        return newData;
     }
 
-    static getUserData(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
-        const data = BotStateController.getBotData(req.params.channelId, req.params.conversationId, req.params.userId);
-        res.send(200, data);
-        res.end();
+    public static registerRoutes(server: Restify.Server) {
+        var controller = new BotStateController(); 
+        server.get('/v3/botstate/:channelId/users/:userId', (req, resp, next) =>  controller.getUserData(req, resp, next));
+        server.get('/v3/botstate/:channelId/conversations/:conversationId', (req, resp, next) => controller.getConversationData(req, resp, next));
+        server.get('/v3/botstate/:channelId/conversations/:conversationId/users/:userId', (req, resp, next) => controller.getPrivateConversationData(req, resp, next));
+        server.post('/v3/botstate/:channelId/users/:userId', (req, resp, next) => controller.setUserData(req, resp, next));
+        server.post('/v3/botstate/:channelId/conversations/:conversationId', (req, resp, next) => controller.setConversationData(req, resp, next));
+        server.post('/v3/botstate/:channelId/conversations/:conversationId/users/:userId', (req, resp, next) => controller.setPrivateConversationData(req, resp, next));
+        server.del('/v3/botstate/:channelId/users/:userId', (req, resp, next) => controller.deleteStateForUser(req, resp, next));
     }
 
-    static getConversationData(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
-        const data = BotStateController.getBotData(req.params.channelId, req.params.conversationId, req.params.userId);
-        res.send(200, data);
-        res.end();
+    // Get USER Data
+    public getUserData(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+        try {
+            const botData = this.getBotData(req.params.channelId, req.params.conversationId, req.params.userId);
+            res.send(HttpStatus.OK, botData);
+            res.end();
+        } catch (err) {
+            var apiException: ResponseTypes.APIException = err;
+            if (apiException.error)
+                res.send(apiException.statusCode, apiException.error);
+            else
+                res.send(HttpStatus.BAD_REQUEST, ResponseTypes.CreateErrorResponse(ErrorCodes.ServiceError, err));
+            res.end();
+        }
     }
 
-    static getPrivateConversationData(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
-        const data = BotStateController.getBotData(req.params.channelId, req.params.conversationId, req.params.userId);
-        res.send(200, data);
-        res.end();
+    // Get Conversation Data
+    public getConversationData(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+        try {
+            const botData = this.getBotData(req.params.channelId, req.params.conversationId, req.params.userId);
+            res.send(HttpStatus.OK, botData);
+            res.end();
+        } catch (err) {
+            var apiException: ResponseTypes.APIException = err;
+            if (apiException.error)
+                res.send(apiException.statusCode, apiException.error);
+            else
+                res.send(HttpStatus.BAD_REQUEST, ResponseTypes.CreateErrorResponse(ErrorCodes.ServiceError, err));
+            res.end();
+        }
     }
 
-    static setUserData(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
-        BotStateController.setBotData(req.params.channelId, req.params.conversationId, req.params.userId, req.body);
-        res.send(204);
-        res.end();
+    // Get PrivateConversation Data
+    public getPrivateConversationData(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+        try {
+            const botData = this.getBotData(req.params.channelId, req.params.conversationId, req.params.userId);
+            res.send(HttpStatus.OK, botData);
+            res.end();
+        } catch (err) {
+            var apiException: ResponseTypes.APIException = err;
+            if (apiException.error)
+                res.send(apiException.statusCode, apiException.error);
+            else
+                res.send(HttpStatus.BAD_REQUEST, ResponseTypes.CreateErrorResponse(ErrorCodes.ServiceError, err));
+            res.end();
+        }
     }
 
-    static setConversationData(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
-        BotStateController.setBotData(req.params.channelId, req.params.conversationId, req.params.userId, req.body);
-        res.send(204);
-        res.end();
+    // Set User Data
+    public setUserData(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+        try {
+            var newBotData = this.setBotData(req.params.channelId, req.params.conversationId, req.params.userId, req.body as IBotData);
+            res.send(HttpStatus.OK, newBotData);
+            res.end();
+        } catch (err) {
+            var apiException: ResponseTypes.APIException = err;
+            if (apiException.error)
+                res.send(apiException.statusCode, apiException.error);
+            else
+                res.send(HttpStatus.BAD_REQUEST, ResponseTypes.CreateErrorResponse(ErrorCodes.ServiceError, err));
+            res.end();
+        }
     }
 
-    static setPrivateConversationData(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
-        BotStateController.setBotData(req.params.channelId, req.params.conversationId, req.params.userId, req.body);
-        res.send(204);
-        res.end();
+    // set conversation data
+    public setConversationData(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+        try {
+            var newBotData = this.setBotData(req.params.channelId, req.params.conversationId, req.params.userId, req.body);
+            res.send(HttpStatus.OK, newBotData);
+            res.end();
+        } catch (err) {
+            var apiException: ResponseTypes.APIException = err;
+            if (apiException.error)
+                res.send(apiException.statusCode, apiException.error);
+            else
+                res.send(HttpStatus.BAD_REQUEST, ResponseTypes.CreateErrorResponse(ErrorCodes.ServiceError, err));
+            res.end();
+        }
     }
 
-    static deleteStateForUser(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
-        // TODO: Implement me.
-        res.send(204);
-        res.end();
+    // set private conversation data
+    public setPrivateConversationData(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+        try {
+            var newBotData = this.setBotData(req.params.channelId, req.params.conversationId, req.params.userId, req.body);
+            res.send(HttpStatus.OK, newBotData);
+            res.end();
+        } catch (err) {
+            var apiException: ResponseTypes.APIException = err;
+            if (apiException.error)
+                res.send(apiException.statusCode, apiException.error);
+            else
+                res.send(HttpStatus.BAD_REQUEST, ResponseTypes.CreateErrorResponse(ErrorCodes.ServiceError, err));
+            res.end();
+        }
+    }
+
+    // delete state for user
+    public deleteStateForUser(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+        try {
+            // TODO: Implement me.
+            throw ResponseTypes.CreateAPIException(HttpStatus.NOT_IMPLEMENTED, ErrorCodes.BadArgument, "Delete is not implemnted yet");
+            // res.send(HttpStatus.NO_CONTENT);
+            // res.end();
+        } catch (err) {
+            var apiException: ResponseTypes.APIException = err;
+            if (apiException.error)
+                res.send(apiException.statusCode, apiException.error);
+            else
+                res.send(HttpStatus.BAD_REQUEST, ResponseTypes.CreateErrorResponse(ErrorCodes.ServiceError, err));
+            res.end();
+        }
     }
 }

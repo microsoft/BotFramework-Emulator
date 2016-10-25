@@ -7,6 +7,9 @@ import { uniqueId } from '../utils';
 import { getStore, getSettings, authenticationSettings } from './settings';
 import * as jwt from 'jsonwebtoken';
 import * as oid from './OpenIdMetadata';
+import * as HttpStatus from "http-status-codes";
+import * as ResponseTypes from '../types/responseTypes';
+import { ErrorCodes, IResourceResponse, IErrorResponse } from '../types/responseTypes';
 
 
 /**
@@ -43,10 +46,9 @@ export class Conversation {
         const bot = getSettings().botById(this.botId);
         if (bot) {
             var statusCode = '';
-            var options : request.OptionsWithUrl = { url: bot.botUrl, method: "POST", json: activity };
+            var options: request.OptionsWithUrl = { url: bot.botUrl, method: "POST", json: activity };
 
-            var responseCallback = function(err, resp: http.IncomingMessage, body)
-            {
+            var responseCallback = function (err, resp: http.IncomingMessage, body) {
                 if (err)
                     cb(err);
                 else
@@ -73,15 +75,16 @@ export class Conversation {
             },
             membersAdded: [{ id: this.botId }]
         }
-        this.postActivityToBot(activity, false, (err, callback) => {});
+        this.postActivityToBot(activity, false, (err, callback) => { });
     }
 
     /**
      * Queues activity for delivery to user.
      */
-    postActivityToUser(activity: IActivity) {
+    public postActivityToUser (activity: IActivity) : IResourceResponse  {
         this.postage('', activity);
         this.activities.push(Object.assign({}, activity));
+        return ResponseTypes.CreateResourceResponse(activity.id);
     }
 
     /**

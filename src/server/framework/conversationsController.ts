@@ -3,75 +3,125 @@ import { IGenericActivity } from '../../types/activityTypes';
 import { getSettings } from '../settings';
 import { emulator } from '../emulator';
 import { uniqueId } from '../../utils';
+import * as HttpStatus from "http-status-codes";
+import * as ResponseTypes from '../../types/responseTypes';
+import { ErrorCodes, IResourceResponse, IErrorResponse } from '../../types/responseTypes';
 
+interface IConversationParams {
+    conversationId: string;
+    activityId: string;
+}
 
 export class ConversationsController {
 
-    static registerRoutes(server: Restify.Server) {
-        server.post('/v3/conversations', ConversationsController.newConversation);
-        server.post('/v3/conversations/:conversationId/activities', ConversationsController.sendToConversation);
-        server.post('/v3/conversations/:conversationId/activities/:activityId', ConversationsController.replyToActivity);
-        server.get('/v3/conversations/:conversationId/members', ConversationsController.getConversationMembers);
-        server.get('/v3/conversations/:conversationId/activities/:activityId/members', ConversationsController.getActivityMembers);
-        server.post('/v3/:conversation_id/attachments', ConversationsController.uploadAttachment);
+    public static registerRoutes(server: Restify.Server) {
+        var controller = new ConversationsController();
+        server.post('/v3/conversations', (req, res, next) => controller.createConversation(req, res, next));
+        server.post('/v3/conversations/:conversationId/activities', (req, res, next) => controller.sendToConversation(req, res, next));
+        server.post('/v3/conversations/:conversationId/activities/:activityId', (req, res, next) => controller.replyToActivity(req, res, next));
+        server.get('/v3/conversations/:conversationId/members', (req, res, next) => controller.getConversationMembers(req, res, next));
+        server.get('/v3/conversations/:conversationId/activities/:activityId/members', (req, res, next) => controller.getActivityMembers(req, res, next));
+        server.post('/v3/:conversation_id/attachments', (req, res, next) => controller.uploadAttachment(req, res, next));
     }
 
-    static newConversation(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+    // Create conversation API
+    public createConversation(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         console.log("framework: newConversation");
         res.send(200, {});
         res.end();
     }
 
-    static sendToConversation(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
-        const activeBot = getSettings().getActiveBot();
-        if (activeBot) {
-            let activity = <IGenericActivity>req.body;
-            const conversationId = req.params.conversationId;
-            activity.conversation = {
-                id: conversationId
-            };
-            console.log("framework: sendToConversation", JSON.stringify(activity));
-            const conversation = emulator.conversations.conversationById(activeBot.botId, conversationId);
-            if (conversation) {
-                conversation.postActivityToUser(activity);
-            }
-        }
-        res.send(200, {});
-        res.end();
-    }
+    // SendToConversation
+    public sendToConversation(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+        try {
+            // look up bot
+            const activeBot = getSettings().getActiveBot();
+            if (!activeBot)
+                throw ResponseTypes.CreateAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
 
-    static replyToActivity(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
-        const activeBot = getSettings().getActiveBot();
-        if (activeBot) {
             let activity = <IGenericActivity>req.body;
-            const conversationId = req.params.conversationId;
+            const parms: IConversationParams = req.params;
             activity.replyToId = req.params.activityId;
-            activity.conversation = {
-                id: conversationId
-            };
-            console.log("framework: replyToActivity", JSON.stringify(activity));
-            const conversation = emulator.conversations.conversationById(activeBot.botId, conversationId);
-            if (conversation) {
-                conversation.postActivityToUser(activity);
-            }
+
+            // validate conversation
+            if (activity.conversation.id != parms.conversationId)
+                throw ResponseTypes.CreateAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.BadArgument, "uri conversation id does not match payload");
+
+            console.log("framework: sendToConversation", JSON.stringify(activity));
+            // look up conversation
+            const conversation = emulator.conversations.conversationById(activeBot.botId, parms.conversationId);
+            if (!conversation)
+                throw ResponseTypes.CreateAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "conversation not found");
+
+            // post activity
+            var response: IResourceResponse = conversation.postActivityToUser(activity);
+            res.send(HttpStatus.OK, response);
+            res.end();
+            return;
+        } catch (err) {
+            var apiException: ResponseTypes.APIException = err;
+            if (apiException.error)
+                res.send(apiException.statusCode, apiException.error);
+            else
+                res.send(HttpStatus.BAD_REQUEST, ResponseTypes.CreateErrorResponse(ErrorCodes.ServiceError, err));
+            res.end();
         }
-        res.send(200, {});
-        res.end();
     }
 
-    static getConversationMembers(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+    // replyToActivity
+    public replyToActivity(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+        try {
+            // look up bot
+            const activeBot = getSettings().getActiveBot();
+            if (!activeBot)
+                throw ResponseTypes.CreateAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
+
+            let activity = <IGenericActivity>req.body;
+            const parms: IConversationParams = req.params;
+            activity.replyToId = req.params.activityId;
+
+            // validate conversation
+            if (activity.conversation.id != parms.conversationId)
+                throw ResponseTypes.CreateAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.BadArgument, "uri conversation id does not match payload");
+
+            console.log("framework: replyToActivity", JSON.stringify(activity));
+            // look up conversation
+            const conversation = emulator.conversations.conversationById(activeBot.botId, parms.conversationId);
+            if (!conversation)
+                throw ResponseTypes.CreateAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "conversation not found");
+
+            // if we found the activity to reply to
+            if (!conversation.activities.find((existingActivity, index, obj) => existingActivity.id == activity.replyToId))
+                throw ResponseTypes.CreateAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "replyToId is not a known activity id");
+
+            // post activity
+            var response: IResourceResponse = conversation.postActivityToUser(activity);
+            res.send(HttpStatus.OK, response);
+            res.end();
+            return;
+        } catch (err) {
+            var apiException: ResponseTypes.APIException = err;
+            if (apiException.error)
+                res.send(apiException.statusCode, apiException.error);
+            else
+                res.send(HttpStatus.BAD_REQUEST, ResponseTypes.CreateErrorResponse(ErrorCodes.ServiceError, err));
+            res.end();
+        }
+    }
+
+    public getConversationMembers(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         console.log("framework: getConversationMembers");
-        res.send(200, {});
+        res.send(HttpStatus.OK, {});
         res.end();
     }
 
-    static getActivityMembers(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+    public getActivityMembers(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         console.log("framework: getActivityMembers");
         res.send(200, {});
         res.end();
     }
 
-    static uploadAttachment(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+    public uploadAttachment(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         console.log("framework: uploadAttachment");
         res.send(200, {});
         res.end();
