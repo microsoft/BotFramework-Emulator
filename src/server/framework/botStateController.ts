@@ -28,7 +28,7 @@ export class BotStateController {
         const key = this.botDataKey(channelId, conversationId, userId);
         var oldData = this.botDataStore[key];
         if (oldData && oldData.eTag != incomingData.eTag)
-            throw ResponseTypes.CreateAPIException(HttpStatus.PRECONDITION_FAILED, ErrorCodes.BadArgument, "The data is changed");
+            throw ResponseTypes.createAPIException(HttpStatus.PRECONDITION_FAILED, ErrorCodes.BadArgument, "The data is changed");
 
         var newData = {} as IBotData;
         newData.eTag = new Date().getTime().toString();
@@ -55,12 +55,7 @@ export class BotStateController {
             res.send(HttpStatus.OK, botData);
             res.end();
         } catch (err) {
-            var apiException: ResponseTypes.APIException = err;
-            if (apiException.error)
-                res.send(apiException.statusCode, apiException.error);
-            else
-                res.send(HttpStatus.BAD_REQUEST, ResponseTypes.CreateErrorResponse(ErrorCodes.ServiceError, err));
-            res.end();
+            ResponseTypes.sendErrorResponse(req, res, next, err);
         }
     }
 
@@ -71,12 +66,7 @@ export class BotStateController {
             res.send(HttpStatus.OK, botData);
             res.end();
         } catch (err) {
-            var apiException: ResponseTypes.APIException = err;
-            if (apiException.error)
-                res.send(apiException.statusCode, apiException.error);
-            else
-                res.send(HttpStatus.BAD_REQUEST, ResponseTypes.CreateErrorResponse(ErrorCodes.ServiceError, err));
-            res.end();
+            ResponseTypes.sendErrorResponse(req, res, next, err);
         }
     }
 
@@ -87,12 +77,7 @@ export class BotStateController {
             res.send(HttpStatus.OK, botData);
             res.end();
         } catch (err) {
-            var apiException: ResponseTypes.APIException = err;
-            if (apiException.error)
-                res.send(apiException.statusCode, apiException.error);
-            else
-                res.send(HttpStatus.BAD_REQUEST, ResponseTypes.CreateErrorResponse(ErrorCodes.ServiceError, err));
-            res.end();
+            ResponseTypes.sendErrorResponse(req, res, next, err);
         }
     }
 
@@ -103,12 +88,7 @@ export class BotStateController {
             res.send(HttpStatus.OK, newBotData);
             res.end();
         } catch (err) {
-            var apiException: ResponseTypes.APIException = err;
-            if (apiException.error)
-                res.send(apiException.statusCode, apiException.error);
-            else
-                res.send(HttpStatus.BAD_REQUEST, ResponseTypes.CreateErrorResponse(ErrorCodes.ServiceError, err));
-            res.end();
+            ResponseTypes.sendErrorResponse(req, res, next, err);
         }
     }
 
@@ -119,12 +99,7 @@ export class BotStateController {
             res.send(HttpStatus.OK, newBotData);
             res.end();
         } catch (err) {
-            var apiException: ResponseTypes.APIException = err;
-            if (apiException.error)
-                res.send(apiException.statusCode, apiException.error);
-            else
-                res.send(HttpStatus.BAD_REQUEST, ResponseTypes.CreateErrorResponse(ErrorCodes.ServiceError, err));
-            res.end();
+            ResponseTypes.sendErrorResponse(req, res, next, err);
         }
     }
 
@@ -135,29 +110,25 @@ export class BotStateController {
             res.send(HttpStatus.OK, newBotData);
             res.end();
         } catch (err) {
-            var apiException: ResponseTypes.APIException = err;
-            if (apiException.error)
-                res.send(apiException.statusCode, apiException.error);
-            else
-                res.send(HttpStatus.BAD_REQUEST, ResponseTypes.CreateErrorResponse(ErrorCodes.ServiceError, err));
-            res.end();
+            ResponseTypes.sendErrorResponse(req, res, next, err);
         }
     }
 
     // delete state for user
     public deleteStateForUser(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         try {
-            // TODO: Implement me.
-            throw ResponseTypes.CreateAPIException(HttpStatus.NOT_IMPLEMENTED, ErrorCodes.BadArgument, "Delete is not implemnted yet");
-            // res.send(HttpStatus.NO_CONTENT);
-            // res.end();
-        } catch (err) {
-            var apiException: ResponseTypes.APIException = err;
-            if (apiException.error)
-                res.send(apiException.statusCode, apiException.error);
-            else
-                res.send(HttpStatus.BAD_REQUEST, ResponseTypes.CreateErrorResponse(ErrorCodes.ServiceError, err));
+            var keys = Object.keys(this.botDataStore);
+            var userPostfix = `!${req.params.userId}`;
+            for (var i = 0; i < keys.length; i++) {
+                var key = keys[i];
+                if (key.endsWith(userPostfix)) {
+                    delete this.botDataStore[key];
+                }
+            }
+            res.send(HttpStatus.OK);
             res.end();
+        } catch (err) {
+            ResponseTypes.sendErrorResponse(req, res, next, err);
         }
     }
 }

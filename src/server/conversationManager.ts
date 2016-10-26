@@ -16,16 +16,26 @@ import { ErrorCodes, IResourceResponse, IErrorResponse } from '../types/response
  * Stores and propagates conversation messages.
  */
 export class Conversation {
-    botId: string;
-    conversationId: string;
-    activities: IActivity[] = [];
     private accessToken: string;
     private accessTokenExpires: number;
 
     constructor(botId: string, conversationId: string) {
         this.botId = botId;
         this.conversationId = conversationId;
+        this.members.push({ id: botId });
+        this.members.push({ id: "1", name: "User1" });
     }
+
+    // the botId this conversation is with
+    public botId: string;
+
+    // the id for this conversation
+    public conversationId: string;
+
+    // the list of activities in this conversation
+    public activities: IActivity[] = [];
+
+    public members: IChannelAccount[] = [];
 
     private postage(recipientId: string, activity: IActivity) {
         activity.id = uniqueId();
@@ -84,7 +94,49 @@ export class Conversation {
     public postActivityToUser(activity: IActivity): IResourceResponse {
         this.postage('', activity);
         this.activities.push(Object.assign({}, activity));
-        return ResponseTypes.CreateResourceResponse(activity.id);
+        return ResponseTypes.createResourceResponse(activity.id);
+    }
+
+    // updateActivity with replacement
+    public updateActivity(updatedActivity: IActivity): IResourceResponse {
+        // if we found the activity to reply to
+        var oldActivity = this.activities.find((val) => val.id == updatedActivity.id);
+        if (oldActivity) {
+            Object.assign(oldActivity, updatedActivity);
+            return ResponseTypes.createResourceResponse(updatedActivity.id);
+        }
+
+        throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "not a known activity id");
+    }
+
+    public deleteActivity(id: string) {
+        // if we found the activity to reply to
+        var index = this.activities.findIndex((val) => val.id == id);
+        if (index >= 0) {
+            this.activities.splice(index, 1);
+            return;
+        }
+        throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "The activity id was not found");
+    }
+
+    // add member
+    public addMember(id?: string): IChannelAccount {
+        var nextId = this.members.length;
+        if (!id)
+            id = nextId.toString();
+
+        var user: IChannelAccount = {
+            id: id,
+            name: "user" + nextId
+        };
+        this.members.push(user);
+        return user;
+    }
+
+    public removeMember(id: string) {
+        // remove last member
+        if (this.members.length > 1)
+            this.members.splice(-1, 1);
     }
 
     /**
@@ -103,8 +155,8 @@ export class Conversation {
                 request(options, (err, response, body) => {
                     if (!err) {
                         switch (response.statusCode) {
-                            case 401:
-                            case 403:
+                            case HttpStatus.UNAUTHORIZED:
+                            case HttpStatus.FORBIDDEN:
                                 if (!refresh) {
                                     this.authenticatedRequest(options, callback, true);
                                 } else {
@@ -196,7 +248,7 @@ class ConversationSet {
         this.botId = botId;
     }
 
-    newConversation(): Conversation {
+    newConversation(members?: IChannelAccount[]): Conversation {
         const conversation = new Conversation(this.botId, uniqueId());
         this.conversations.push(conversation);
         return conversation;
@@ -205,6 +257,8 @@ class ConversationSet {
     conversationById(conversationId: string): Conversation {
         return this.conversations.find(value => value.conversationId === conversationId);
     }
+
+
 }
 
 
