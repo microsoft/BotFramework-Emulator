@@ -41,9 +41,9 @@ export class MainView extends React.Component<{}, {}> {
 
     botChatComponent() {
         const settings = getSettings();
-        const activeBot = this.getActiveBot();
+        const bot = this.getActiveBot();
         const user = this.getCurrentUser();
-        if (user && activeBot) {
+        if (user && bot) {
             const props: BotChat.UIProps = {
                 devConsole: new BotChat.ConsoleProvider(),
                 secret: settings.conversation.conversationId,

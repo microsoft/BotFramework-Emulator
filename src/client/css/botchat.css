@@ -42,6 +42,7 @@
     }
 
     .wc-message-groups {
+        background-color: #f7f7f7;
         bottom: 50px;
         left: 0;
         overflow-x: hidden;
@@ -78,7 +79,6 @@
         height: 42px;
         left: 0;
         letter-spacing: 0.5px;
-        font-weight: 100;
         padding: 10px 15px 0 15px;
         position: absolute;
         right: 0;
@@ -92,7 +92,6 @@
         height: 42px;
         left: 0;
         letter-spacing: 0.5px;
-        font-weight: 100;
         font-size: 14px;
         padding: 10px 15px 0 15px;
         position: absolute;
@@ -113,8 +112,7 @@
 
     .wc-debugview-json {
         font-size: 13px;
-        font-family: Consolas, 'Courier New', monospace;
-        font-weight: 100;
+        font-family: 'Consolas', 'Menlo', 'Courier New', monospace;
         position: absolute;
         top: 0;
         left: 0;
@@ -156,7 +154,6 @@
         height: 42px;
         left: 0;
         letter-spacing: 0.5px;
-        font-weight: 100;
         font-size: 14px;
         padding: 10px 15px 0 15px;
         position: absolute;
@@ -170,7 +167,6 @@
         overflow-y: auto;
         font-size: 13px;
         font-family: Consolas, 'Courier New', monospace;
-        font-weight: 100;
         word-wrap: break-word;
         white-space: pre-wrap;
         position: absolute;
