@@ -6,6 +6,7 @@ import { LayoutActions } from './reducers';
 import { Settings as ServerSettings } from '../server/settings';
 import { AddressBar } from './addressBar';
 import { uniqueId } from '../utils';
+import { IUser } from '../types/userTypes';
 
 
 export class MainView extends React.Component<{}, {}> {
@@ -28,18 +29,26 @@ export class MainView extends React.Component<{}, {}> {
         return null;
     }
 
+    getCurrentUser(): IUser {
+        const serverSettings = getSettings().serverSettings;
+        if (serverSettings && serverSettings.users && serverSettings.users.currentUserId) {
+            let user: IUser = serverSettings.users.usersById[serverSettings.users.currentUserId];
+            if (user && user.id && user.id.length)
+                return user;
+        }
+        return null;
+    }
+
     botChatComponent() {
         const settings = getSettings();
         const activeBot = this.getActiveBot();
-        if (activeBot) {
+        const user = this.getCurrentUser();
+        if (user && activeBot) {
             const props: BotChat.UIProps = {
                 devConsole: new BotChat.ConsoleProvider(),
                 secret: settings.conversation.conversationId,
                 directLineDomain: `http://localhost:${settings.serverSettings.directLine.port}`,
-                user: {
-                    id: settings.conversation.userId,
-                    name: settings.conversation.userName
-                },
+                user,
                 allowMessageSelection: true
             }
             return <BotChat.UI {...props} />
