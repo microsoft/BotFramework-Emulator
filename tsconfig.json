@@ -9,7 +9,8 @@
         "noImplicitAny": false,
         "noImplicitThis": true,
         "noEmitOnError": true,
-        "outDir": "dist"
+        "outDir": "dist",
+        "watch": true
     },
     "exclude": [
         "node_modules",

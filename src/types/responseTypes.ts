@@ -1,4 +1,5 @@
-
+import * as Restify from 'restify';
+import * as HttpStatus from "http-status-codes";
 
 export interface IError {
     code?: string,
@@ -39,12 +40,12 @@ export interface APIException {
 //
 // Create IResourceResponse object
 //
-export function CreateResourceResponse(id: string): IResourceResponse {
+export function createResourceResponse(id: string): IResourceResponse {
     return { id: id };
 }
 
 // Create IErrorResponse object
-export function CreateErrorResponse(code: string, message: string): IErrorResponse {
+export function createErrorResponse(code: string, message: string): IErrorResponse {
     return {
         error: {
             code: code,
@@ -54,9 +55,19 @@ export function CreateErrorResponse(code: string, message: string): IErrorRespon
 }
 
 // Create Exception
-export function CreateAPIException(statusCode: number, code: string, message: string): APIException {
+export function createAPIException(statusCode: number, code: string, message: string): APIException {
     return {
         statusCode: statusCode,
-        error: CreateErrorResponse(code, message)
+        error: createErrorResponse(code, message)
     };
+}
+
+// send exception as error response
+export function sendErrorResponse(req: Restify.Request, res: Restify.Response, next: Restify.Next, exception: any): any {
+    var apiException: APIException = exception;
+    if (apiException.error)
+        res.send(apiException.statusCode, apiException.error);
+    else
+        res.send(HttpStatus.BAD_REQUEST, createErrorResponse(ErrorCodes.ServiceError, exception.message));
+    res.end();
 }
