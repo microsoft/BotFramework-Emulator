@@ -36,7 +36,10 @@ export class ConversationsController {
             if (!activeBot)
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
 
-            var newConversation = emulator.conversations.newConversation(activeBot.botId);
+            const users = getSettings().users;
+            const currentUser = users.usersById[users.currentUserId];
+
+            var newConversation = emulator.conversations.newConversation(activeBot.botId, currentUser);
             res.send(HttpStatus.OK, ResponseTypes.createResourceResponse(newConversation.conversationId));
             res.end();
         } catch (err) {

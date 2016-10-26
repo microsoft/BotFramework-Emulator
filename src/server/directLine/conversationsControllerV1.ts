@@ -88,7 +88,9 @@ export class ConversationsControllerV1 {
             const tokenMatch = /BotConnector\s+(.+)/.exec(auth);
             let conversation = emulator.conversations.conversationById(activeBot.botId, tokenMatch[1]);
             if (!conversation) {
-                conversation = emulator.conversations.newConversation(activeBot.botId);
+                const users = getSettings().users;
+                const currentUser = users.usersById[users.currentUserId];
+                conversation = emulator.conversations.newConversation(activeBot.botId, currentUser);
                 conversation.sendBotAddedToConversation();
             }
             res.json(200, {
