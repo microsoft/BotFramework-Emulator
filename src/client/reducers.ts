@@ -1,5 +1,6 @@
 import { Reducer } from 'redux';
 import { IBot } from '../types/botTypes';
+import { IUser } from '../types/userTypes';
 import { uniqueId } from '../utils';
 import {
     ISettings as IServerSettings,
@@ -52,12 +53,6 @@ type ConversationAction = {
     state: {
         conversationId: string
     }
-} | {
-    type: 'Conversation_SetUser',
-    state: {
-        userId: string,
-        userName: string
-    }
 }
 
 type ServerSettingsAction = {
@@ -68,7 +63,7 @@ type ServerSettingsAction = {
 }
 
 export class LayoutActions {
-    static rememberHorizontalSplitter = (size: number) => {
+    static rememberHorizontalSplitter(size: number) {
         getStore().dispatch<LayoutAction>({
             type: 'Splitter_RememberHorizontal',
             state: {
@@ -76,7 +71,7 @@ export class LayoutActions {
             }
         });
     }
-    static rememberVerticalSplitter = (size: number) => {
+    static rememberVerticalSplitter(size: number) {
         getStore().dispatch<LayoutAction>({
             type: 'Splitter_RememberVertical',
             state: {
@@ -87,7 +82,7 @@ export class LayoutActions {
 }
 
 export class AddressBarActions {
-    static setText = (text: string) => {
+    static setText(text: string) {
         getStore().dispatch<AddressBarAction>({
             type: 'AddressBar_SetText',
             state: {
@@ -95,7 +90,7 @@ export class AddressBarActions {
             }
         });
     }
-    static setMatchingBots = (matchingBots: IBot[]) => {
+    static setMatchingBots(matchingBots: IBot[]) {
         getStore().dispatch<AddressBarAction>({
             type: 'AddressBar_SetMatchingBots',
             state: {
@@ -103,7 +98,7 @@ export class AddressBarActions {
             }
         });
     }
-    static selectBot = (bot: IBot) => {
+    static selectBot(bot: IBot) {
         getStore().dispatch<AddressBarAction>({
             type: 'AddressBar_SelectBot',
             state: {
@@ -114,7 +109,7 @@ export class AddressBarActions {
 }
 
 export class ConversationActions {
-    static newConversation = () => {
+    static newConversation() {
         getStore().dispatch<ConversationAction>({
             type: 'Conversation_SetConversationId',
             state: {
@@ -122,7 +117,7 @@ export class ConversationActions {
             }
         });
     }
-    static joinConversation = (conversationId: string) => {
+    static joinConversation(conversationId: string) {
         getStore().dispatch<ConversationAction>({
             type: 'Conversation_SetConversationId',
             state: {
@@ -130,19 +125,10 @@ export class ConversationActions {
             }
         });
     }
-    static setUser = (userId: string, userName: string) => {
-        getStore().dispatch<ConversationAction>({
-            type: 'Conversation_SetUser',
-            state: {
-                userId,
-                userName
-            }
-        });
-    }
 }
 
 export class ServerSettingsActions {
-    static set = (value: ServerSettings) => {
+    static set(value: ServerSettings) {
         getStore().dispatch<ServerSettingsAction>({
             type: 'ServerSettings_Set',
             state: {
@@ -150,14 +136,17 @@ export class ServerSettingsActions {
             }
         });
     }
-    static remote_addOrUpdateBot = (bot: IBot) => {
+    static remote_addOrUpdateBot(bot: IBot) {
         serverChangeSetting('Bots_AddOrUpdateBot', { bot });
     }
-    static remote_deleteBot = (botId: string) => {
+    static remote_deleteBot(botId: string) {
         serverChangeSetting('Bots_RemoveBot', { botId });
     }
-    static remote_setActiveBot = (botId: string) => {
+    static remote_setActiveBot(botId: string) {
         serverChangeSetting('ActiveBot_Set', { botId });
+    }
+    static remote_setCurrentUser(user: IUser) {
+        serverChangeSetting('Users_SetCurrentUser', { user });
     }
 }
 
@@ -198,8 +187,6 @@ export const conversationReducer: Reducer<IConversationState> = (
     switch (action.type) {
         case 'Conversation_SetConversationId':
             return Object.assign({}, state, { conversationId: action.state.conversationId });
-        case 'Conversation_SetUser':
-            return Object.assign({}, state, { userId: action.state.userId, userName: action.state.userName });
         default:
             return state;
     }

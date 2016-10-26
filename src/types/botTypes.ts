@@ -18,7 +18,7 @@ export const newBot = (bot: IBot): IBot => {
             msaAppId: '',
             msaPassword: '',
             saveCreds: true,
-            serviceUrl: 'http://localhost:3978'
+            serviceUrl: 'http://localhost:9002'
         },
         bot,
         {

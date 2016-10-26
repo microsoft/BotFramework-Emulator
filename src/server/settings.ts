@@ -3,9 +3,11 @@ import { directLineReducer } from './reducers/directLineReducer';
 import { frameworkReducer } from './reducers/frameworkReducer';
 import { botsReducer, activeBotReducer } from './reducers/botReducer';
 import { windowStateReducer } from './reducers/windowStateReducer';
+import { usersReducer } from './reducers/usersReducer';
 import * as Electron from 'electron';
 import { emulator } from './emulator';
 import { IBot } from '../types/botTypes';
+import { IUser } from '../types/userTypes';
 import { loadSettings, saveSettings } from '../utils';
 
 
@@ -24,11 +26,17 @@ export interface IWindowStateSettings {
     top?: number
 }
 
+export interface IUserSettings {
+    currentUserId?: string,
+    usersById?: {[id: string]: IUser}
+}
+
 export interface IPersistentSettings {
     directLine?: IDirectLineSettings,
     framework?: IFrameworkSettings,
     bots?: IBot[],
-    windowState?: IWindowStateSettings
+    windowState?: IWindowStateSettings,
+    users: IUserSettings
 }
 
 export class PersistentSettings implements IPersistentSettings {
@@ -36,12 +44,16 @@ export class PersistentSettings implements IPersistentSettings {
     public framework: IFrameworkSettings;
     public bots: IBot[];
     public windowState: IWindowStateSettings;
-    
+    public users: IUserSettings;
+
     constructor(settings: ISettings) {
-        this.directLine = settings.directLine;
-        this.framework = settings.framework;
-        this.bots = settings.bots;
-        this.windowState = settings.windowState;
+        Object.assign(this, {
+            directLine: settings.directLine,
+            framework: settings.framework,
+            bots: settings.bots,
+            windowState: settings.windowState,
+            users: settings.users
+        });
     }
 }
 
@@ -54,6 +66,7 @@ export class Settings implements ISettings {
     public framework: IFrameworkSettings;
     public bots: IBot[];
     public windowState: IWindowStateSettings;
+    public users: IUserSettings;
 
     public activeBot: string;
 
@@ -85,12 +98,23 @@ export const windowStateDefault: IWindowStateSettings = {
     top: 50
 }
 
+export const usersDefault: IUserSettings = {
+    currentUserId: '12345',
+    usersById: {
+        '12345': {
+            id: '12345',
+            name: 'User 1'
+        }
+    }
+}
+
 export const settingsDefault: ISettings = {
     directLine: directLineDefault,
     framework: frameworkDefault,
     bots: [],
     activeBot: '',
-    windowState: windowStateDefault
+    windowState: windowStateDefault,
+    users: usersDefault
 };
 
 export const getStore = (): Store<ISettings> => {
@@ -105,7 +129,8 @@ export const getStore = (): Store<ISettings> => {
             framework: frameworkReducer,
             bots: botsReducer,
             activeBot: activeBotReducer,
-            windowState: windowStateReducer
+            windowState: windowStateReducer,
+            users: usersReducer
         }), initialSettings);
     }
     return global['emulator-server'].store;

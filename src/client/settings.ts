@@ -36,9 +36,7 @@ export interface IAddressBarState {
 
 export interface IConversationState {
     chatEnabled?: boolean,
-    conversationId?: string,
-    userId?: string,
-    userName?: string
+    conversationId?: string
 }
 
 export interface ISettings extends IPersistentSettings {
@@ -71,9 +69,7 @@ export const addressBarDefault: IAddressBarState = {
 
 export const conversationDefault: IConversationState = {
     chatEnabled: false,
-    conversationId: '',
-    userId: uniqueId(),
-    userName: 'User'
+    conversationId: ''
 }
 
 export const settingsDefault: ISettings = {
