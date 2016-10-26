@@ -1,6 +1,7 @@
 import * as request from 'request';
 import * as http from 'http';
 import { Settings } from './settings';
+import { IUser } from '../types/userTypes';
 import { IChannelAccount, IConversationAccount } from '../types/accountTypes';
 import { IActivity, IConversationUpdateActivity } from '../types/activityTypes';
 import { uniqueId } from '../utils';
@@ -19,11 +20,11 @@ export class Conversation {
     private accessToken: string;
     private accessTokenExpires: number;
 
-    constructor(botId: string, conversationId: string) {
+    constructor(botId: string, conversationId: string, user: IUser) {
         this.botId = botId;
         this.conversationId = conversationId;
         this.members.push({ id: botId });
-        this.members.push({ id: "1", name: "User1" });
+        this.members.push({ id: user.id, name: user.name });
     }
 
     // the botId this conversation is with
@@ -120,23 +121,20 @@ export class Conversation {
     }
 
     // add member
-    public addMember(id?: string): IChannelAccount {
-        var nextId = this.members.length;
-        if (!id)
-            id = nextId.toString();
-
+    public addMember(id: string, name: string): IChannelAccount {
         var user: IChannelAccount = {
             id: id,
-            name: "user" + nextId
+            name: name
         };
         this.members.push(user);
         return user;
     }
 
     public removeMember(id: string) {
-        // remove last member
-        if (this.members.length > 1)
-            this.members.splice(-1, 1);
+        var index = this.members.findIndex((val) => val.id == id);
+        if (index >= 0) {
+            this.members.splice(index, 1);
+        }
     }
 
     /**
@@ -248,8 +246,8 @@ class ConversationSet {
         this.botId = botId;
     }
 
-    newConversation(members?: IChannelAccount[]): Conversation {
-        const conversation = new Conversation(this.botId, uniqueId());
+    newConversation(user: IUser): Conversation {
+        const conversation = new Conversation(this.botId, uniqueId(), user);
         this.conversations.push(conversation);
         return conversation;
     }
@@ -287,13 +285,13 @@ export class ConversationManager {
     /**
      * Creates a new conversation.
      */
-    public newConversation(botId: string): Conversation {
+    public newConversation(botId: string, user: IUser): Conversation {
         let conversationSet = this.conversationSets.find(value => value.botId === botId);
         if (!conversationSet) {
             conversationSet = new ConversationSet(botId);
             this.conversationSets.push(conversationSet);
         }
-        let conversation = conversationSet.newConversation();
+        let conversation = conversationSet.newConversation(user);
         return conversation;
     }
 
