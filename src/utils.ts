@@ -18,7 +18,7 @@ const ensureStoragePath = (): string => {
 /**
  * Load JSON object from file.
  */
-export const loadSettings = <T>(filename: string, defaultSettings:T): T => {
+export const loadSettings = <T>(filename: string, defaultSettings: T): T => {
     try {
         filename = `${ensureStoragePath()}/${filename}`;
         const stat = Fs.statSync(filename);

@@ -81,7 +81,7 @@ export class Conversation {
     /**
      * Queues activity for delivery to user.
      */
-    public postActivityToUser (activity: IActivity) : IResourceResponse  {
+    public postActivityToUser(activity: IActivity): IResourceResponse {
         this.postage('', activity);
         this.activities.push(Object.assign({}, activity));
         return ResponseTypes.CreateResourceResponse(activity.id);

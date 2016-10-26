@@ -38,8 +38,8 @@ export class BotStateController {
     }
 
     public static registerRoutes(server: Restify.Server) {
-        var controller = new BotStateController(); 
-        server.get('/v3/botstate/:channelId/users/:userId', (req, resp, next) =>  controller.getUserData(req, resp, next));
+        var controller = new BotStateController();
+        server.get('/v3/botstate/:channelId/users/:userId', (req, resp, next) => controller.getUserData(req, resp, next));
         server.get('/v3/botstate/:channelId/conversations/:conversationId', (req, resp, next) => controller.getConversationData(req, resp, next));
         server.get('/v3/botstate/:channelId/conversations/:conversationId/users/:userId', (req, resp, next) => controller.getPrivateConversationData(req, resp, next));
         server.post('/v3/botstate/:channelId/users/:userId', (req, resp, next) => controller.setUserData(req, resp, next));

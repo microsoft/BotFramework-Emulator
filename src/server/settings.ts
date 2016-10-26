@@ -28,7 +28,7 @@ export interface IWindowStateSettings {
 
 export interface IUserSettings {
     currentUserId?: string,
-    usersById?: {[id: string]: IUser}
+    usersById?: { [id: string]: IUser }
 }
 
 export interface IPersistentSettings {
