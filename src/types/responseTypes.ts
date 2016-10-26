@@ -14,7 +14,7 @@ export interface IResourceResponse {
 }
 
 
-export var ErrorCodes = {
+export const ErrorCodes = {
     /// unknown service error
     ServiceError: "ServiceError",
 
@@ -31,7 +31,7 @@ export var ErrorCodes = {
     MessageSizeTooBig: "MessageSizeTooBig"
 }
 
-export class APIException {
+export interface APIException {
     statusCode: number;
     error: IErrorResponse;
 }
@@ -54,9 +54,9 @@ export function CreateErrorResponse(code: string, message: string): IErrorRespon
 }
 
 // Create Exception
-export function CreateAPIException(statusCode: number, code: string, message: string) : APIException {
+export function CreateAPIException(statusCode: number, code: string, message: string): APIException {
     return {
         statusCode: statusCode,
-            error: CreateErrorResponse(code, message)
+        error: CreateErrorResponse(code, message)
     };
 }

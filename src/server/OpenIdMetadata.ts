@@ -18,7 +18,7 @@ export class OpenIdMetadata {
     public getKey(keyId: string, cb: (key: string) => void): void {
         // If keys are more than 5 days old, refresh them
         var now = new Date().getTime();
-        if (this.lastUpdated < (now - 1000*60*60*24*5)) {
+        if (this.lastUpdated < (now - 1000 * 60 * 60 * 24 * 5)) {
             this.refreshCache((err) => {
                 if (err) {
                     // fall through and return cached key on error
@@ -41,7 +41,7 @@ export class OpenIdMetadata {
             url: this.url,
             json: true
         };
-        
+
         request(options, (err, response, body) => {
             if (!err && (response.statusCode >= 400 || !body)) {
                 err = new Error('Failed to load openID config: ' + response.statusCode);
@@ -50,14 +50,14 @@ export class OpenIdMetadata {
             if (err) {
                 cb(err);
             } else {
-                var openIdConfig = <IOpenIdConfig> body;
+                var openIdConfig = <IOpenIdConfig>body;
 
                 var options: request.Options = {
                     method: 'GET',
                     url: openIdConfig.jwks_uri,
                     json: true
                 };
-                
+
                 request(options, (err, response, body) => {
                     if (!err && (response.statusCode >= 400 || !body)) {
                         err = new Error("Failed to load Keys: " + response.statusCode);
@@ -65,7 +65,7 @@ export class OpenIdMetadata {
 
                     if (!err) {
                         this.lastUpdated = new Date().getTime();
-                        this.keys = <IKey[]> body.keys;
+                        this.keys = <IKey[]>body.keys;
                     }
 
                     cb(err);
