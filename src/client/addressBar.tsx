@@ -3,6 +3,7 @@ import { getStore, getSettings, ISettings } from './settings';
 import { Settings as ServerSettings } from '../server/settings';
 import { AddressBarActions, ConversationActions, ServerSettingsActions } from './reducers';
 import { IBot, newBot } from '../types/botTypes';
+import * as log from './log';
 
 
 class AddressBarOperators {
@@ -20,7 +21,6 @@ class AddressBarOperators {
         const settings = getSettings();
         text = text || settings.addressBar.text;
         bots = bots || settings.serverSettings.bots;
-        console.log('selectBotForUrl', text);
         let bot: IBot = null;
         if (bots && text && text.length) {
             const lower = text.toLowerCase();
@@ -36,17 +36,14 @@ class AddressBarOperators {
     }
 
     static selectBot(bot: IBot) {
-        console.log('selectBot', bot);
         AddressBarActions.selectBot(bot);
     }
 
     static clearMatchingBots() {
-        console.log('clearMatchingBots');
         AddressBarActions.setMatchingBots([]);
     }
 
     static addOrUpdateBot(bot: IBot) {
-        console.log('updateBot', bot);
         const settings = getSettings();
         if (settings.addressBar.selectedBot && settings.addressBar.selectedBot.botId === bot.botId) {
             AddressBarActions.selectBot(bot);
@@ -55,7 +52,6 @@ class AddressBarOperators {
     }
 
     static setMatchingBots(bots: IBot[]) {
-        console.log('setMatchingBots', bots);
         AddressBarActions.setMatchingBots(bots);
     }
 
@@ -63,20 +59,17 @@ class AddressBarOperators {
         const settings = getSettings();
         text = text || settings.addressBar.text;
         bots = bots || settings.serverSettings.bots;
-        console.log('updateMatchingBots', text, bots);
         const matchingBots = AddressBarOperators.getMatchingBots(text, bots);
         AddressBarActions.setMatchingBots(matchingBots);
         return matchingBots;
     }
 
     static setText(text: string) {
-        console.log('setText', text);
         AddressBarActions.setText(text);
     }
 
     static deleteBot(botId: string) {
         const settings = getSettings();
-        console.log('async_deleteBot', botId);
         if (botId === settings.serverSettings.activeBot) {
             ServerSettingsActions.remote_setActiveBot('');
         }
@@ -84,7 +77,6 @@ class AddressBarOperators {
     }
 
     static activateBot(bot: IBot) {
-        console.log('async_activateBot', bot.botId);
         ServerSettingsActions.remote_setActiveBot(bot.botId);
     }
 }
@@ -101,7 +93,7 @@ export class AddressBar extends React.Component<{}, {}> {
             target = target.parentElement;
         }
 
-        // Click was outside the address bar. Close any open subpanels.
+        // Click was outside the address bar. Close open subpanels.
         AddressBarOperators.clearMatchingBots();
         AddressBarOperators.selectBot(null);
     }
@@ -168,7 +160,7 @@ class AddressBarTextBox extends React.Component<{}, {}> {
 
         }
         if (e.key === 'ArrowUp') {
-            
+
         }
     }
 

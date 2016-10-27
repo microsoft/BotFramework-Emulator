@@ -1,18 +1,11 @@
 /* reset */
 
-    html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-    }
-
-    body, button, input, textarea {
+    body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
         font-family: 'Segoe UI', sans-serif;
         font-size: 15px;
     }
 
-    button {
+    .wc-app button {
         background-color: #29a3ed;
         border: none;
         border-radius: 2px;
@@ -21,11 +14,11 @@
         outline: none;
     }
 
-    button:hover {
+    .wc-app button:hover {
         background-color: #3e92d2;
     }
 
-    h1, h2, h3, h4, p, ul, ol {
+    .wc-app h1, .wc-app h2, .wc-app h3, .wc-app h4, .wc-app p, .wc-app ul, .wc-app ol {
         margin: 0;
         padding: 0;
     }
@@ -50,10 +43,10 @@
         padding: 10px;
         position: absolute;
         right: 0;
-        top: 42px;  /* from wc-header total height */
+        top: 42px;
     }
 
-    .wc-shell {
+    .wc-console {
         border: 5px solid #dbdee1;
         bottom: 0;
         box-sizing: border-box;
@@ -71,130 +64,6 @@
         left: 0;
         top: 0;
         bottom: 0;
-    }
-
-    .wc-chatview-header {
-        background-color: #3e92d2;
-        color: #fff;
-        height: 42px;
-        left: 0;
-        letter-spacing: 0.5px;
-        padding: 10px 15px 0 15px;
-        position: absolute;
-        right: 0;
-        top: 0;
-    }
-
-    .wc-debugview-header {
-        background-color: #252526;
-        color: #fff;
-        border-bottom: solid 1px #403F3F;
-        height: 42px;
-        left: 0;
-        letter-spacing: 0.5px;
-        font-size: 14px;
-        padding: 10px 15px 0 15px;
-        position: absolute;
-        right: 0;
-        top: 0;
-    }
-
-    .wc-debugview {
-        background-color: #1e1e1e;
-        color: white;
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 42px;
-        bottom: 0;
-        overflow-y: auto;
-    }
-
-    .wc-debugview-json {
-        font-size: 13px;
-        font-family: 'Consolas', 'Menlo', 'Courier New', monospace;
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        word-wrap: break-word;
-        white-space: pre-wrap;
-        padding: 10px 10px 10px 10px;
-    }
-
-/* JSON */
-
-    .json-key {
-        color: #9cdcfe;
-    }
-
-    .json-string {
-        color: #ce9178;
-    }
-
-    .json-number {
-        color: #b5cea8;
-    }
-
-    .json-boolean {
-        color: #569cd6;
-    }
-
-    .json-null {
-        color: #569cd6;
-    }
-
-/* consoleview */
-
-    .wc-consoleview-header {
-        background-color: #252526;
-        color: #fff;
-        border-bottom: solid 1px #403F3F;
-        height: 42px;
-        left: 0;
-        letter-spacing: 0.5px;
-        font-size: 14px;
-        padding: 10px 15px 0 15px;
-        position: absolute;
-        right: 0;
-        top: 0;
-    }
-
-    .wc-consoleview {
-        background-color: #1e1e1e;
-        color: white;
-        overflow-y: auto;
-        font-size: 13px;
-        font-family: Consolas, 'Courier New', monospace;
-        word-wrap: break-word;
-        white-space: pre-wrap;
-        position: absolute;
-        left: 0;
-        top: 42px;
-        right: 0;
-        bottom: 0;
-        padding: 10px 10px 10px 10px;
-    }
-
-    .wc-consoleview-info {
-
-    }
-
-    .wc-consoleview-trace {
-
-    }
-
-    .wc-consoleview-debug {
-
-    }
-
-    .wc-consoleview-warn {
-
-    }
-
-    .wc-consoleview-error {
-
     }
 
 /* messages */
@@ -481,26 +350,26 @@
         left: -12px;
     }
 
-/* shell */
+/* console */
 
-    .wc-shell > * {
+    .wc-console > * {
         position: absolute;
         top: 0;
         vertical-align: middle;
     }
 
-    .wc-shell label {
+    .wc-console label {
         cursor: pointer;
         display: inline-block;
         height: 40px;
     }
 
-    .wc-shell svg {
+    .wc-console svg {
         fill: #8A8A8A;
         margin: 11px;
     }
 
-    .wc-shell textarea, .wc-shell input[type=text] {
+    .wc-console textarea, .wc-console input[type=text] {
         border: none;
         height: 100%;
         outline: none;

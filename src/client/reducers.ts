@@ -4,19 +4,21 @@ import { IUser } from '../types/userTypes';
 import { uniqueId } from '../utils';
 import {
     ISettings as IServerSettings,
-    Settings as ServerSettings }
-    from '../server/settings';
+    Settings as ServerSettings
+} from '../server/settings';
 import {
     getStore,
     ISettings,
-    conversationDefault,
-    addressBarDefault,
     layoutDefault,
+    addressBarDefault,
+    conversationDefault,
+    logDefault,
     ILayoutState,
     IAddressBarState,
     IConversationState,
-    serverChangeSetting }
-    from './settings';
+    ILogState,
+    serverChangeSetting
+} from './settings';
 
 
 type LayoutAction = {
@@ -52,6 +54,13 @@ type ConversationAction = {
     type: 'Conversation_SetConversationId',
     state: {
         conversationId: string
+    }
+}
+
+type LogAction = {
+    type: 'Log_SetAutoscroll',
+    state: {
+        autoscroll: boolean
     }
 }
 
@@ -127,6 +136,17 @@ export class ConversationActions {
     }
 }
 
+export class LogActions {
+    static setAutoscroll(autoscroll: boolean) {
+        getStore().dispatch<LogAction>({
+            type: 'Log_SetAutoscroll',
+            state: {
+                autoscroll
+            }
+        });
+    }
+}
+
 export class ServerSettingsActions {
     static set(value: ServerSettings) {
         getStore().dispatch<ServerSettingsAction>({
@@ -187,6 +207,18 @@ export const conversationReducer: Reducer<IConversationState> = (
     switch (action.type) {
         case 'Conversation_SetConversationId':
             return Object.assign({}, state, { conversationId: action.state.conversationId });
+        default:
+            return state;
+    }
+}
+
+export const logReducer: Reducer<ILogState> = (
+    state = logDefault,
+    action: LogAction
+) => {
+    switch (action.type) {
+        case 'Log_SetAutoscroll':
+            return Object.assign({}, state, { autoscroll: action.state.autoscroll });
         default:
             return state;
     }

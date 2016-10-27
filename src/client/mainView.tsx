@@ -5,6 +5,7 @@ import { getStore, getSettings } from './settings';
 import { LayoutActions } from './reducers';
 import { Settings as ServerSettings } from '../server/settings';
 import { AddressBar } from './addressBar';
+import { LogView } from './logView';
 import { uniqueId } from '../utils';
 import { IUser } from '../types/userTypes';
 
@@ -44,53 +45,47 @@ export class MainView extends React.Component<{}, {}> {
         const bot = this.getActiveBot();
         const user = this.getCurrentUser();
         if (user && bot) {
-            const props: BotChat.UIProps = {
-                devConsole: new BotChat.ConsoleProvider(),
-                secret: settings.conversation.conversationId,
-                directLineDomain: `http://localhost:${settings.serverSettings.directLine.port}`,
-                user,
-                allowMessageSelection: true
+            const props: BotChat.ChatProps = {
+                botConnection: new BotChat.DirectLine(settings.conversation.conversationId, `http://localhost:${settings.serverSettings.directLine.port}`),
+                locale: 'en-us',
+                formatOptions: {
+                    showHeader: false
+                },
+                allowMessageSelection: true,
+                user
             }
-            return <BotChat.UI {...props} />
+            return <BotChat.Chat {...props} />
         }
         return null;
     }
 
-    botChatApp() {
-        const settings = getSettings();
-        return (
-            <div className="wc-app">
-                <Splitter split="vertical" defaultSize={settings.layout.vertSplit} primary="second" onChange={(size) => LayoutActions.rememberVerticalSplitter(size)}>
-                    <div className={"wc-chatview-panel"}>
-                        <AddressBar />
-                        {this.botChatComponent()}
-                    </div>
-                    <div className="wc-app-debugview-container">
-                        <Splitter split="horizontal" defaultSize={settings.layout.horizSplit} onChange={(size) => LayoutActions.rememberHorizontalSplitter(size)}>
-                            <div className="wc-chatview-panel">
-                                <div className="wc-debugview-header">
-                                    <span>JSON</span>
-                                </div>
-                                <BotChat.DebugView />
-                            </div>
-                            <div className="wc-app-consoleview-container">
-                                <div className="wc-consoleview-header">
-                                    <span>Output</span>
-                                </div>
-                                <BotChat.ConsoleView />
-                            </div>
-                        </Splitter>
-                    </div>
-                </Splitter>
-            </div>
-        );
-    }
-
     render() {
+        const settings = getSettings();
         return (
             <div className='mainview'>
                 <div className='botchat-container'>
-                    {this.botChatApp()}
+                    <Splitter split="vertical" defaultSize={settings.layout.vertSplit} primary="second" onChange={(size) => LayoutActions.rememberVerticalSplitter(size)}>
+                        <div className={"wc-chatview-panel"}>
+                            <AddressBar />
+                            {this.botChatComponent()}
+                        </div>
+                        <div className="wc-app-debugview-container">
+                            <Splitter split="horizontal" defaultSize={settings.layout.horizSplit} onChange={(size) => LayoutActions.rememberHorizontalSplitter(size)}>
+                                <div className="wc-chatview-panel">
+                                    <div className="wc-debugview-header">
+                                        <span>JSON</span>
+                                    </div>
+                                    <BotChat.DebugView />
+                                </div>
+                                <div className="wc-app-logview-container">
+                                    <div className="wc-logview-header">
+                                        <span>Output</span>
+                                    </div>
+                                    <LogView />
+                                </div>
+                            </Splitter>
+                        </div>
+                    </Splitter>
                 </div>
             </div>
         );
