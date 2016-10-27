@@ -15,10 +15,8 @@ export class AttachmentsController {
     private static attachments: { [key: string]: IAttachmentData } = {};
 
     public static registerRoutes(server: Restify.Server) {
-        var controller = new AttachmentsController();
-
-        server.get('/v3/attachments/:attachmentId', AttachmentsController.getAttachmentInfo);
-        server.get('/v3/attachments/:attachmentId/views/:viewId', AttachmentsController.getAttachment);
+        server.get('/v3/attachments/:attachmentId', this.getAttachmentInfo);
+        server.get('/v3/attachments/:attachmentId/views/:viewId', this.getAttachment);
     }
 
     public static uploadAttachment(attachmentData: IAttachmentData): string {
@@ -47,11 +45,11 @@ export class AttachmentsController {
                 }
                 if (attachment.originalBase64)
                     attachmentInfo.views.push({
-                        viewId: 'original', size: attachment.originalBase64.length
+                        viewId: 'original', size: new Buffer(attachment.originalBase64, 'base64').length
                     });
                 if (attachment.thumbnailBase64)
                     attachmentInfo.views.push({
-                        viewId: 'thumbnail', size: attachment.originalBase64.length
+                        viewId: 'thumbnail', size: new Buffer(attachment.thumbnailBase64, 'base64').length
                     });
 
                 res.send(HttpStatus.OK, attachmentInfo);
@@ -74,9 +72,8 @@ export class AttachmentsController {
             if (attachment) {
                 if (parms.viewId == "original") {
                     if (attachment.originalBase64) {
-
                         res.contentType = attachment.type;
-                        res.send(HttpStatus.OK, attachment.originalBase64);
+                        res.send(HttpStatus.OK, new Buffer(attachment.originalBase64, 'base64'));
                     }
                     else {
                         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "There is no original view");
@@ -85,7 +82,7 @@ export class AttachmentsController {
                 else if (parms.viewId == "thumbnail") {
                     if (attachment.thumbnailBase64) {
                         res.contentType = attachment.type;
-                        res.send(HttpStatus.OK, attachment.thumbnailBase64);
+                        res.send(HttpStatus.OK, new Buffer(attachment.thumbnailBase64, 'base64'));
                     }
                     else {
                         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "There is no thumbnail view");

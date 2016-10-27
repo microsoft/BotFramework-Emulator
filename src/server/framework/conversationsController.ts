@@ -25,7 +25,7 @@ export class ConversationsController {
         server.del('/v3/conversations/:conversationId/activities/:activityId', (req, res, next) => controller.deleteActivity(req, res, next));
         server.get('/v3/conversations/:conversationId/members', (req, res, next) => controller.getConversationMembers(req, res, next));
         server.get('/v3/conversations/:conversationId/activities/:activityId/members', (req, res, next) => controller.getActivityMembers(req, res, next));
-        server.post('/v3/:conversation_id/attachments', (req, res, next) => controller.uploadAttachment(req, res, next));
+        server.post('/v3/conversations/:conversationId/attachments', (req, res, next) => controller.uploadAttachment(req, res, next));
     }
 
     // Create conversation API
