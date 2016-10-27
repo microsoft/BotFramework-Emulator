@@ -6,6 +6,8 @@ import { uniqueId } from '../../utils';
 import * as HttpStatus from "http-status-codes";
 import * as ResponseTypes from '../../types/responseTypes';
 import { ErrorCodes, IResourceResponse, IErrorResponse } from '../../types/responseTypes';
+import { IAttachmentData, IAttachmentInfo, IAttachmentView } from '../../types/attachmentTypes';
+import { AttachmentsController } from './attachmentsController';
 
 interface IConversationParams {
     conversationId: string;
@@ -227,9 +229,29 @@ export class ConversationsController {
         }
     }
 
+    // upload attachment
     public uploadAttachment(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         console.log("framework: uploadAttachment");
-        res.send(HttpStatus.OK, {});
-        res.end();
+        try {
+            // look up bot
+            const activeBot = getSettings().getActiveBot();
+            if (!activeBot)
+                throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
+
+            let attachmentData = <IAttachmentData>req.body;
+            const parms: IConversationParams = req.params;
+
+            // look up conversation
+            const conversation = emulator.conversations.conversationById(activeBot.botId, parms.conversationId);
+            if (!conversation)
+                throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "conversation not found");
+
+            var resourceId = AttachmentsController.uploadAttachment(attachmentData);
+            var resourceResponse : IResourceResponse = { id : resourceId };
+            res.send(HttpStatus.OK, resourceResponse);
+            res.end();
+        } catch (err) {
+            ResponseTypes.sendErrorResponse(req, res, next, err);
+        }
     }
 }
