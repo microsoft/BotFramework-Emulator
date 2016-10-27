@@ -17,6 +17,7 @@
     opacity: .74;
     z-index: 1;
     background-clip: padding-box;
+    z-index: 1001;
 }
 
 .Resizer:hover {
