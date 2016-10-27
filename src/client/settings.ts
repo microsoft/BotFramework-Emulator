@@ -2,9 +2,17 @@ import { Store, createStore, combineReducers, Reducer } from 'redux';
 import * as Electron from 'electron';
 import { ISettings as IServerSettings, Settings as ServerSettings } from '../server/settings';
 import { loadSettings, saveSettings } from '../utils';
-import { layoutReducer, addressBarReducer, conversationReducer, serverSettingsReducer, ServerSettingsActions } from './reducers';
+import {
+    layoutReducer,
+    addressBarReducer,
+    conversationReducer,
+    logReducer,
+    serverSettingsReducer,
+    ServerSettingsActions
+} from './reducers';
 import { IBot, newBot } from '../types/botTypes';
 import { uniqueId } from '../utils';
+import * as log from './log';
 
 
 export interface ILayoutState {
@@ -12,8 +20,23 @@ export interface ILayoutState {
     vertSplit?: number | string,
 }
 
+export interface IAddressBarState {
+    text?: string,
+    matchingBots?: IBot[],
+    selectedBot: IBot
+}
+
+export interface IConversationState {
+    chatEnabled?: boolean,
+    conversationId?: string
+}
+
+export interface ILogState {
+    autoscroll: boolean
+}
+
 export interface IPersistentSettings {
-    layout: ILayoutState
+    layout?: ILayoutState
 }
 
 export class PersistentSettings implements IPersistentSettings {
@@ -28,20 +51,10 @@ export class PersistentSettings implements IPersistentSettings {
     }
 }
 
-export interface IAddressBarState {
-    text?: string,
-    matchingBots?: IBot[],
-    selectedBot: IBot
-}
-
-export interface IConversationState {
-    chatEnabled?: boolean,
-    conversationId?: string
-}
-
 export interface ISettings extends IPersistentSettings {
     addressBar?: IAddressBarState,
     conversation: IConversationState,
+    log?: ILogState,
     serverSettings?: ServerSettings
 }
 
@@ -49,6 +62,7 @@ export class Settings implements ISettings {
     layout: ILayoutState;
     addressBar: IAddressBarState;
     conversation: IConversationState;
+    log: ILogState;
     serverSettings: ServerSettings;
 
     constructor(settings?: ISettings) {
@@ -72,10 +86,15 @@ export const conversationDefault: IConversationState = {
     conversationId: ''
 }
 
+export const logDefault: ILogState = {
+    autoscroll: true
+}
+
 export const settingsDefault: ISettings = {
     layout: layoutDefault,
     addressBar: addressBarDefault,
     conversation: conversationDefault,
+    log: logDefault,
     serverSettings: new ServerSettings()
 }
 
@@ -90,6 +109,7 @@ export const getStore = (): Store<ISettings> => {
             layout: layoutReducer,
             addressBar: addressBarReducer,
             conversation: conversationReducer,
+            log: logReducer,
             serverSettings: serverSettingsReducer
         }), initialSettings);
     }
@@ -114,8 +134,27 @@ export const startup = () => {
     // Listen for new settings from the server.
     Electron.ipcRenderer.on('serverSettings', (event, ...args) => {
         const serverSettings = new ServerSettings((args[0][0]));
-        console.info("Received new server state.", serverSettings);
+        //console.info("Received new server state.", serverSettings);
         ServerSettingsActions.set(serverSettings);
+    });
+    // Listen for log messages from the server.
+    Electron.ipcRenderer.on('log-log', (event, args) => {
+        log.log(args[0], ...args.slice(1));
+    });
+    Electron.ipcRenderer.on('log-info', (event, args) => {
+        log.log(args[0], ...args.slice(1));
+    });
+    Electron.ipcRenderer.on('log-trace', (event, args) => {
+        log.log(args[0], ...args.slice(1));
+    });
+    Electron.ipcRenderer.on('log-debug', (event, args) => {
+        log.log(args[0], ...args.slice(1));
+    });
+    Electron.ipcRenderer.on('log-warn', (event, args) => {
+        log.log(args[0], ...args.slice(1));
+    });
+    Electron.ipcRenderer.on('log-error', (event, args) => {
+        log.log(args[0], ...args.slice(1));
     });
 
     // Let the server know we're done starting up. In response, it will send us it's current settings (bot list and such).

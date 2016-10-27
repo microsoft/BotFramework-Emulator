@@ -12,6 +12,15 @@
         font-size: 15px;
     }
 
+    button {
+        background-color: #29a3ed;
+        border: none;
+        border-radius: 2px;
+        color: #fff;
+        cursor: pointer;
+        outline: none;
+    }
+
     *, *:before, *:after {
         box-sizing: border-box;
     }
@@ -57,6 +66,7 @@
         right: 0;
         background-color: red;
         color: white;
+        z-index: 900;
     }
 
     .addressbar-status {
@@ -242,3 +252,130 @@
         padding: 12px 32px 12px 32px;
         border-radius: 2px;
     }
+
+/* debugview */
+
+    .wc-debugview-header {
+        background-color: #252526;
+        color: #fff;
+        border-bottom: solid 1px #403F3F;
+        height: 42px;
+        left: 0;
+        letter-spacing: 0.5px;
+        font-size: 14px;
+        padding: 10px 15px 0 15px;
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+
+    .wc-debugview {
+        background-color: #1e1e1e;
+        color: white;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 42px;
+        bottom: 0;
+        overflow-y: auto;
+    }
+
+    .wc-debugview-json {
+        font-size: 13px;
+        font-family: 'Consolas', 'Menlo', 'Courier New', monospace;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+        padding: 10px 10px 10px 10px;
+    }
+
+/* JSON */
+
+    .json-key {
+        color: #9cdcfe;
+    }
+
+    .json-string {
+        color: #ce9178;
+    }
+
+    .json-number {
+        color: #b5cea8;
+    }
+
+    .json-boolean {
+        color: #569cd6;
+    }
+
+    .json-null {
+        color: #569cd6;
+    }
+
+/* logview */
+
+    .wc-logview-header {
+        background-color: #252526;
+        color: #fff;
+        border-bottom: solid 1px #403F3F;
+        height: 42px;
+        left: 0;
+        letter-spacing: 0.5px;
+        font-size: 14px;
+        padding: 10px 15px 0 15px;
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+
+    .wc-logview {
+        background-color: #1e1e1e;
+        color: white;
+        overflow-y: auto;
+        font-size: 13px;
+        font-family: Consolas, 'Courier New', monospace;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+        position: absolute;
+        left: 0;
+        top: 42px;
+        right: 0;
+        bottom: 0;
+        padding: 10px 10px 10px 10px;
+    }
+
+    .wc-logview-timestamp {
+        color: lightgray;
+    }
+
+    .wc-logview-arg {
+        color: lightgray;
+    }
+
+    .wc-logview-log {
+        color: white;
+    }
+
+    .wc-logview-info {
+        color: white;
+    }
+
+    .wc-logview-trace {
+        color: green;
+    }
+
+    .wc-logview-debug {
+        color: lightgray;
+    }
+
+    .wc-logview-warn {
+        color: orange;
+    }
+
+    .wc-logview-error {
+        color: red;
+    }
+
