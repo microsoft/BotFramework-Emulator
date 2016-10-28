@@ -27,9 +27,9 @@ export class BotStateController {
     private setBotData(channelId: string, conversationId: string, userId: string, incomingData: IBotData): IBotData {
         const key = this.botDataKey(channelId, conversationId, userId);
         var oldData = this.botDataStore[key];
-        if (oldData && oldData.eTag != incomingData.eTag)
+        if ((oldData && incomingData.eTag != "*") && oldData.eTag != incomingData.eTag) {
             throw ResponseTypes.createAPIException(HttpStatus.PRECONDITION_FAILED, ErrorCodes.BadArgument, "The data is changed");
-
+        }
         var newData = {} as IBotData;
         newData.eTag = new Date().getTime().toString();
         newData.data = incomingData.data;
