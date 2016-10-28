@@ -3,7 +3,6 @@ import { Emulator } from './emulator';
 import { getStore, getSettings } from './settings';
 import { WindowStateAction } from './reducers/windowStateReducer';
 
-require('electron-debug')();
 
 Emulator.startup();
 
@@ -67,3 +66,5 @@ Electron.app.on('activate', function () {
         createMainWindow();
     }
 });
+
+require('electron-debug')();

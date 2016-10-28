@@ -1,11 +1,11 @@
 import * as request from 'request';
 import * as http from 'http';
-import { Settings } from './settings';
 import { IUser } from '../types/userTypes';
 import { IChannelAccount, IConversationAccount } from '../types/accountTypes';
 import { IActivity, IConversationUpdateActivity } from '../types/activityTypes';
 import { uniqueId } from '../utils';
 import { getStore, getSettings, authenticationSettings } from './settings';
+import { Settings } from '../types/serverSettingsTypes';
 import * as jwt from 'jsonwebtoken';
 import * as oid from './OpenIdMetadata';
 import * as HttpStatus from "http-status-codes";

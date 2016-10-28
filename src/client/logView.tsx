@@ -100,7 +100,12 @@ export class LogView extends React.Component<{}, ILogViewState> {
             .subscribe(autoscroll => LogActions.setAutoscroll(autoscroll));
         this.logSubscription = LogView.log$.subscribe(
             entry => {
-                this.state = { entries: [...this.state.entries, entry] };
+                // Yep we have to set this.state here because otherwise we lose entries due to batching.
+                if (entry) {
+                    this.state = { entries: [...this.state.entries, entry] };
+                } else {
+                    this.state = { entries: [] };
+                }
                 this.setState(this.state);
             }
         )
@@ -134,5 +139,9 @@ export class LogView extends React.Component<{}, ILogViewState> {
         };
         this.log$.next(entry);
         console[Severity[severity]](message, ...args);
+    }
+
+    public static clear() {
+        this.log$.next(null);
     }
 }

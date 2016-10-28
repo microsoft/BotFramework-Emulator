@@ -1,5 +1,5 @@
 import { Reducer } from 'redux';
-import { IDirectLineSettings, directLineDefault } from '../settings'
+import { IDirectLineSettings, directLineDefault } from '../../types/serverSettingsTypes'
 
 
 export type DirectLineAction = {
