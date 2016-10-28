@@ -40,7 +40,7 @@ export class ConversationsController {
             const users = getSettings().users;
             const currentUser = users.usersById[users.currentUserId];
 
-            var newConversation = emulator.conversations.newConversation(activeBot.botId, currentUser);
+            let newConversation = emulator.conversations.newConversation(activeBot.botId, currentUser);
             res.send(HttpStatus.OK, ResponseTypes.createResourceResponse(newConversation.conversationId));
             res.end();
         } catch (err) {
@@ -72,7 +72,7 @@ export class ConversationsController {
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "conversation not found");
 
             // post activity
-            var response: IResourceResponse = conversation.postActivityToUser(activity);
+            let response: IResourceResponse = conversation.postActivityToUser(activity);
             res.send(HttpStatus.OK, response);
             res.end();
             return;
@@ -109,7 +109,7 @@ export class ConversationsController {
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "replyToId is not a known activity id");
 
             // post activity
-            var response: IResourceResponse = conversation.postActivityToUser(activity);
+            let response: IResourceResponse = conversation.postActivityToUser(activity);
             res.send(HttpStatus.OK, response);
             res.end();
             return;
@@ -145,7 +145,7 @@ export class ConversationsController {
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "conversation not found");
 
             // post activity
-            var response: IResourceResponse = conversation.updateActivity(activity);
+            let response: IResourceResponse = conversation.updateActivity(activity);
             res.send(HttpStatus.OK, response);
             res.end();
             return;
@@ -245,8 +245,8 @@ export class ConversationsController {
             if (!conversation)
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "conversation not found");
 
-            var resourceId = AttachmentsController.uploadAttachment(attachmentData);
-            var resourceResponse : IResourceResponse = { id : resourceId };
+            let resourceId = AttachmentsController.uploadAttachment(attachmentData);
+            let resourceResponse : IResourceResponse = { id : resourceId };
             res.send(HttpStatus.OK, resourceResponse);
             res.end();
         } catch (err) {

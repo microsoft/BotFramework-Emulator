@@ -7,7 +7,7 @@ require('electron-debug')();
 
 Emulator.startup();
 
-export var mainWindow: Electron.BrowserWindow;
+export let mainWindow: Electron.BrowserWindow;
 
 const createMainWindow = () => {
     const settings = getSettings();

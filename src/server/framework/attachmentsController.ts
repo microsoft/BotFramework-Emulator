@@ -26,7 +26,7 @@ export class AttachmentsController {
         if (!attachmentData.originalBase64)
             throw ResponseTypes.createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.MissingProperty, "You must specify originalBase64 byte[] for the attachment");
 
-        var attachment: any = attachmentData;
+        let attachment: any = attachmentData;
         attachment.id = uniqueId();
         AttachmentsController.attachments[attachment.id] = attachment;
         return attachment.id;
@@ -36,9 +36,9 @@ export class AttachmentsController {
         try {
             console.log("framework: getAttachmentInfo");
             const parms: IAttachmentParams = req.params;
-            var attachment: IAttachmentData = AttachmentsController.attachments[parms.attachmentId];
+            let attachment: IAttachmentData = AttachmentsController.attachments[parms.attachmentId];
             if (attachment) {
-                var attachmentInfo: IAttachmentInfo = {
+                let attachmentInfo: IAttachmentInfo = {
                     name: attachment.name,
                     type: attachment.type,
                     views: []
@@ -68,7 +68,7 @@ export class AttachmentsController {
         console.log("framework: getAttachment");
         try {
             const parms: IAttachmentParams = req.params;
-            var attachment: IAttachmentData = AttachmentsController.attachments[parms.attachmentId];
+            let attachment: IAttachmentData = AttachmentsController.attachments[parms.attachmentId];
             if (attachment) {
                 if (parms.viewId == "original") {
                     if (attachment.originalBase64) {

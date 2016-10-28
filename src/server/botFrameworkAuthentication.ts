@@ -18,9 +18,9 @@ export class BotFrameworkAuthentication {
     }
 
     private verifyBotFramework(req: Restify.Request, res: Restify.Response, next: Restify.Next): void {
-        var token: string;
+        let token: string;
         if (req.headers && req.headers.hasOwnProperty('authorization')) {
-            var auth = req.headers['authorization'].trim().split(' ');;
+            let auth = req.headers['authorization'].trim().split(' ');;
             if (auth.length == 2 && auth[0].toLowerCase() == 'bearer') {
                 token = auth[1];
             }
@@ -33,7 +33,7 @@ export class BotFrameworkAuthentication {
             this.msaOpenIdMetadata.getKey(decoded.header.kid, key => {
                 if (key) {
                     try {
-                        var verifyOptions = {
+                        let verifyOptions = {
                             jwtId: activeBot.botId,
                             issuer: authenticationSettings.msaIssuer,
                             audience: authenticationSettings.msaAudience,
