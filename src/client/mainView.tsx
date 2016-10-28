@@ -2,9 +2,10 @@ import * as React from 'react';
 import * as Splitter from 'react-split-pane';
 import * as BotChat from 'msbotchat';
 import { getStore, getSettings } from './settings';
-import { LayoutActions } from './reducers';
+import { LayoutActions, InspectorActions } from './reducers';
 import { Settings as ServerSettings } from '../server/settings';
 import { AddressBar } from './addressBar';
+import { InspectorView } from './inspectorView'
 import { LogView } from './logView';
 import { uniqueId } from '../utils';
 import { IUser } from '../types/userTypes';
@@ -40,18 +41,24 @@ export class MainView extends React.Component<{}, {}> {
         return null;
     }
 
+    onActivitySelected(activity: any) {
+        InspectorActions.setSelectedObject(activity);
+    }
+
     botChatComponent() {
         const settings = getSettings();
         const bot = this.getActiveBot();
         const user = this.getCurrentUser();
         if (user && bot) {
             const props: BotChat.ChatProps = {
-                botConnection: new BotChat.DirectLine(settings.conversation.conversationId, `http://localhost:${settings.serverSettings.directLine.port}`),
+                botConnection: new BotChat.DirectLine(
+                    settings.conversation.conversationId,
+                    `http://localhost:${settings.serverSettings.directLine.port}`),
                 locale: 'en-us',
                 formatOptions: {
                     showHeader: false
                 },
-                allowMessageSelection: true,
+                onActivitySelected: this.onActivitySelected,
                 user
             }
             return <BotChat.Chat {...props} />
@@ -69,13 +76,13 @@ export class MainView extends React.Component<{}, {}> {
                             <AddressBar />
                             {this.botChatComponent()}
                         </div>
-                        <div className="wc-app-debugview-container">
+                        <div className="wc-app-inspectorview-container">
                             <Splitter split="horizontal" defaultSize={settings.layout.horizSplit} onChange={(size) => LayoutActions.rememberHorizontalSplitter(size)}>
                                 <div className="wc-chatview-panel">
-                                    <div className="wc-debugview-header">
+                                    <div className="wc-inspectorview-header">
                                         <span>JSON</span>
                                     </div>
-                                    <BotChat.DebugView />
+                                    <InspectorView />
                                 </div>
                                 <div className="wc-app-logview-container">
                                     <div className="wc-logview-header">

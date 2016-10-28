@@ -70,11 +70,11 @@ const format = (entry: ILogEntry, index: number) => {
 }
 
 
-export interface LogViewState {
+export interface ILogViewState {
     entries: ILogEntry[]
 }
 
-export class LogView extends React.Component<{}, LogViewState> {
+export class LogView extends React.Component<{}, ILogViewState> {
     static log$ = new Subject<ILogEntry>();
     scrollMe: Element;
     autoscrollSubscription: Subscription;
@@ -112,7 +112,7 @@ export class LogView extends React.Component<{}, LogViewState> {
         this.storeUnsubscribe();
     }
 
-    componentDidUpdate(prevProps: {}, prevState: LogViewState) {
+    componentDidUpdate(prevProps: {}, prevState: ILogViewState) {
         if (getSettings().log.autoscroll)
             this.scrollMe.scrollTop = this.scrollMe.scrollHeight;
     }

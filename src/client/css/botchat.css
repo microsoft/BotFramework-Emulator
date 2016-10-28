@@ -1,7 +1,7 @@
 /* reset */
 
-    body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
-        font-family: 'Segoe UI', sans-serif;
+    .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "HelveticaNeue-Light", "Ubuntu", "Droid Sans", sans-serif;
         font-size: 15px;
     }
 
