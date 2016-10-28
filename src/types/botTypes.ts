@@ -5,9 +5,7 @@ export interface IBot {
     botId?: string,
     botUrl?: string,
     msaAppId?: string,
-    msaPassword?: string,
-    serviceUrl?: string,
-    saveCreds?: boolean
+    msaPassword?: string
 }
 
 export const newBot = (bot: IBot): IBot => {
@@ -16,9 +14,7 @@ export const newBot = (bot: IBot): IBot => {
         {
             botUrl: '',
             msaAppId: '',
-            msaPassword: '',
-            saveCreds: true,
-            serviceUrl: 'http://localhost:9002'
+            msaPassword: ''
         },
         bot,
         {

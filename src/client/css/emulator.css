@@ -181,25 +181,21 @@
         color: black;
         overflow: hidden;
         position: absolute;
-        height: 256px;
         right: 0;
         left: 0;
         top: 42px;
         z-index: 1000;
-        border-bottom: solid 1px #ccc;
-        transition: all .2s;
-        white-space: nowrap;
+        background: #fff;
+        padding: 24px 24px 24px 40px;
+        box-shadow: 0 1px 2px rgba(0,0,0,.2);
     }
     .addressbar-botcreds.closed {
         max-height: 0;
         border-width: 0;
+        box-shadow: 0;
     }
     .addressbar-botcreds-title {
-        position: absolute;
-        top: 16px;
-        left: 32px;
         font-weight: 500;
-        white-space: nowrap;
     }
     .addressbar-botcreds input[type=text] {
         border-radius: 2px;
@@ -209,35 +205,18 @@
         padding-left: 4px;
         padding-right: 4px;
     }
-    .addressbar-botcreds-msaappid-input {
-        position: absolute;
-        top: 48px;
-        left: 32px;
-        width: 256px;
-        height: 32px;
+    .addressbar-botcreds-label {
+        display: block;
+        font-size: 13px;
+        margin-bottom: 8px;
     }
-    .addressbar-botcreds-msapassword-input {
-        position: absolute;
-        top: 48px;
-        left: 304px;
-        width: 256px;
-        height: 32px;
-    }
-    .addressbar-botcreds-serviceurl-input {
-        position: absolute;
-        top: 88px;
-        left: 32px;
-        width: 256px;
-        height: 32px;
-    }
-    .addressbar-botcreds-savecreds {
-        position: absolute;
-        top: 136px;
-        left: 32px;
-        right: 32px;
-        height: 32px;
+    .addressbar-botcreds-input {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 2px;
+        font-size: 15px;
+        width: 242px;
         display: inline-block;
-        white-space: nowrap;
     }
     .addressbar-botcreds-savecreds input[type=checkbox] {
         display: inline-block;
@@ -251,12 +230,18 @@
     }
 
     .addressbar-botcreds-connect-button {
-        position: absolute;
-        top: 184px;
-        left: 32px;
-        right: 32px;
-        padding: 12px 32px 12px 32px;
-        border-radius: 2px;
+        display: block;
+        padding: 11px 16px 10px 16px;
+        font-size: 13px;
+        text-transform: uppercase;
+        line-height: 1.3333333;
+        font-weight: 500;
+        margin-top: 24px;
+    }
+
+    .input-group {
+        display: inline-block;
+        margin-right: 16px;
     }
 
     .toolbar-button {
@@ -395,3 +380,15 @@
         color: red;
     }
 
+/* AppSettings */
+
+    .appsettings-dialog {
+        z-index: 99999;
+        background: red;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        border: 1px solid black;
+        transform: translate(-50%, -50%);
+        transition: all .2s;
+    }

@@ -5,31 +5,23 @@ import { AddressBarActions, ConversationActions, ServerSettingsActions } from '.
 import { IBot, newBot } from '../../types/botTypes';
 import * as log from '../log';
 import { AddressBarOperators } from './addressBarOperators';
+import { AppSettingsDialog, IAppSettings } from './appSettingsDialog';
+
 
 const { remote } = require('electron');
 const { Menu, MenuItem } = remote;
 
+interface IAddressBarMenuState {
+    showAppSettings?: boolean
+}
 
-export class AddressBarMenu extends React.Component<{}, {}> {
+export class AddressBarMenu extends React.Component<{}, IAddressBarMenuState> {
+    constructor(props) {
+        super(props);
 
-    menu: Electron.Menu;
-
-    newConversation = () => {
-        ConversationActions.newConversation();
-    }
-
-    endConversation = () => {
-        //ConversationActions.endConversation();
-    }
-
-    sendPingActivity = () => {
-    }
-
-    sendTypingActivity = () => {
-    }
-
-    constructor() {
-        super();
+        this.state = {
+            showAppSettings: false
+        };
 
         const template: Electron.MenuItemOptions[] = [
             {
@@ -69,25 +61,60 @@ export class AddressBarMenu extends React.Component<{}, {}> {
                         enabled: false
                     }
                 ]
+            },
+            {
+                type: 'separator'
+            },
+            {
+                label: 'Settings',
+                click: () => this.showAppSettings()
             }
         ];
 
         this.menu = Menu.buildFromTemplate(template);
     }
 
-    toggleMenu(e: React.MouseEvent<HTMLDivElement>) {
+    menu: Electron.Menu;
+
+    newConversation = () => {
+        ConversationActions.newConversation();
+    }
+
+    endConversation = () => {
+        //ConversationActions.endConversation();
+    }
+
+    sendPingActivity = () => {
+    }
+
+    sendTypingActivity = () => {
+    }
+
+    showAppSettings = () => {
+        //this.setState({ showAppSettings: true });
+    }
+
+    hideAppSettings = () => {
+        this.setState({ showAppSettings: false });
+    }
+
+    toggleMenu = (e) => {
         this.menu.popup();
+    }
+
+    acceptAppSettings = (appSettings: IAppSettings) => {
     }
 
     render() {
         return (
-            <div className="addressbar-menu" onClick={(e) => this.toggleMenu(e)}>
-                <svg className="toolbar-button" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
-                    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+            <div className="addressbar-menu">
+                <svg className="toolbar-button" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" onClick={(e) => this.toggleMenu(e)}>
+                    <g id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
                         <rect id="Rectangle-2" x="0" y="0" width="24" height="24"></rect>
                         <path d="M10,6 C10,7.1045695 10.8954305,8 12,8 C13.1045695,8 14,7.1045695 14,6 C14,4.8954305 13.1045695,4 12,4 C10.8954305,4 10,4.8954305 10,6 Z M10,12 C10,13.1045695 10.8954305,14 12,14 C13.1045695,14 14,13.1045695 14,12 C14,10.8954305 13.1045695,10 12,10 C10.8954305,10 10,10.8954305 10,12 Z M10,18 C10,19.1045695 10.8954305,20 12,20 C13.1045695,20 14,19.1045695 14,18 C14,16.8954305 13.1045695,16 12,16 C10.8954305,16 10,16.8954305 10,18 Z" id="Combined-Shape" fill="#FFFFFF"></path>
                     </g>
                 </svg>
+                <AppSettingsDialog show={this.state.showAppSettings} onAccept={(appSettings: IAppSettings) => this.acceptAppSettings(appSettings)} onClose={() => this.hideAppSettings()} />
             </div>
         );
     }
