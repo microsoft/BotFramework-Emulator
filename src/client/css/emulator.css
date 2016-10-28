@@ -2,23 +2,32 @@
 
     html, body {
         height: 100%;
+        width: 100%;
         margin: 0;
         padding: 0;
         overflow: hidden;
     }
 
     body, button, input, textarea, select {
-        font-family: 'Segoe UI', sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "HelveticaNeue-Light", "Ubuntu", "Droid Sans", sans-serif;
         font-size: 15px;
     }
 
+    a, button {
+        transition: all .2s;
+    }
+
     button {
-        background-color: #29a3ed;
+        border-radius: 2px;
+        background: #3A96DD;
         border: none;
         border-radius: 2px;
         color: #fff;
         cursor: pointer;
         outline: none;
+    }
+    button:hover {
+        background: #0063B1;
     }
 
     *, *:before, *:after {
@@ -85,7 +94,7 @@
         top: 0;
         left: 32px;
         height: 42px;
-        right: 64px;
+        right: 32px;
     }
     .addressbar-textbox input[type=text] {
         background-color: #3e92d2;
@@ -122,6 +131,25 @@
         top: 0;
         line-height: 42px;
         text-align: center;
+    }
+    .addressbar-menu:hover, .addressbar-menu:focus {
+        background: #0063B1;
+    }
+    .addressbar-menu-dropdown {
+        z-index: 1002;
+        display: none;
+        position: absolute;
+        min-width: 160px;
+        overflow: auto;
+        right: 0;
+    }
+    .addressbar-menu-item {
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
+    .show {
+        display: block;
     }
 
     .addressbar-search {
@@ -253,9 +281,9 @@
         border-radius: 2px;
     }
 
-/* debugview */
+/* inspectorview */
 
-    .wc-debugview-header {
+    .wc-inspectorview-header {
         background-color: #252526;
         color: #fff;
         border-bottom: solid 1px #403F3F;
@@ -269,7 +297,7 @@
         top: 0;
     }
 
-    .wc-debugview {
+    .wc-inspectorview {
         background-color: #1e1e1e;
         color: white;
         position: absolute;
@@ -280,7 +308,7 @@
         overflow-y: auto;
     }
 
-    .wc-debugview-json {
+    .wc-inspectorview-json {
         font-size: 13px;
         font-family: 'Consolas', 'Menlo', 'Courier New', monospace;
         position: absolute;
@@ -334,11 +362,10 @@
     .wc-logview {
         background-color: #1e1e1e;
         color: white;
-        overflow-y: auto;
+        overflow: auto;
         font-size: 13px;
         font-family: Consolas, 'Courier New', monospace;
-        word-wrap: break-word;
-        white-space: pre-wrap;
+        white-space: nowrap;
         position: absolute;
         left: 0;
         top: 42px;

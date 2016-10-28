@@ -7,6 +7,7 @@ import {
     addressBarReducer,
     conversationReducer,
     logReducer,
+    inspectorReducer,
     serverSettingsReducer,
     ServerSettingsActions
 } from './reducers';
@@ -32,7 +33,11 @@ export interface IConversationState {
 }
 
 export interface ILogState {
-    autoscroll: boolean
+    autoscroll?: boolean
+}
+
+export interface IInspectorState {
+    selectedObject?: any
 }
 
 export interface IPersistentSettings {
@@ -55,6 +60,7 @@ export interface ISettings extends IPersistentSettings {
     addressBar?: IAddressBarState,
     conversation: IConversationState,
     log?: ILogState,
+    inspector?: IInspectorState,
     serverSettings?: ServerSettings
 }
 
@@ -63,6 +69,7 @@ export class Settings implements ISettings {
     addressBar: IAddressBarState;
     conversation: IConversationState;
     log: ILogState;
+    inspector: IInspectorState;
     serverSettings: ServerSettings;
 
     constructor(settings?: ISettings) {
@@ -90,11 +97,16 @@ export const logDefault: ILogState = {
     autoscroll: true
 }
 
+export const inspectorDefault: IInspectorState = {
+    selectedObject: null
+}
+
 export const settingsDefault: ISettings = {
     layout: layoutDefault,
     addressBar: addressBarDefault,
     conversation: conversationDefault,
     log: logDefault,
+    inspector: inspectorDefault,
     serverSettings: new ServerSettings()
 }
 
@@ -110,6 +122,7 @@ export const getStore = (): Store<ISettings> => {
             addressBar: addressBarReducer,
             conversation: conversationReducer,
             log: logReducer,
+            inspector: inspectorReducer,
             serverSettings: serverSettingsReducer
         }), initialSettings);
     }

@@ -13,10 +13,12 @@ import {
     addressBarDefault,
     conversationDefault,
     logDefault,
+    inspectorDefault,
     ILayoutState,
     IAddressBarState,
     IConversationState,
     ILogState,
+    IInspectorState,
     serverChangeSetting
 } from './settings';
 
@@ -61,6 +63,13 @@ type LogAction = {
     type: 'Log_SetAutoscroll',
     state: {
         autoscroll: boolean
+    }
+}
+
+type InspectorAction = {
+    type: 'Inspector_SetSelectedObject',
+    state: {
+        selectedObject: any
     }
 }
 
@@ -147,6 +156,17 @@ export class LogActions {
     }
 }
 
+export class InspectorActions {
+    static setSelectedObject(selectedObject: any) {
+        getStore().dispatch<InspectorAction>({
+            type: 'Inspector_SetSelectedObject',
+            state: {
+                selectedObject
+            }
+        })
+    }
+}
+
 export class ServerSettingsActions {
     static set(value: ServerSettings) {
         getStore().dispatch<ServerSettingsAction>({
@@ -219,6 +239,18 @@ export const logReducer: Reducer<ILogState> = (
     switch (action.type) {
         case 'Log_SetAutoscroll':
             return Object.assign({}, state, { autoscroll: action.state.autoscroll });
+        default:
+            return state;
+    }
+}
+
+export const inspectorReducer: Reducer<IInspectorState> = (
+    state = inspectorDefault,
+    action: InspectorAction
+) => {
+    switch (action.type) {
+        case 'Inspector_SetSelectedObject':
+            return Object.assign({}, state, { selectedObject: action.state.selectedObject });
         default:
             return state;
     }

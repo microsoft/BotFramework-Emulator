@@ -5,6 +5,9 @@ import { AddressBarActions, ConversationActions, ServerSettingsActions } from '.
 import { IBot, newBot } from '../types/botTypes';
 import * as log from './log';
 
+const { remote } = require('electron');
+const { Menu, MenuItem } = remote;
+
 
 class AddressBarOperators {
     static getMatchingBots(text: string, bots: IBot[]): IBot[] {
@@ -111,7 +114,6 @@ export class AddressBar extends React.Component<{}, {}> {
             <div className="addressbar">
                 <AddressBarStatus />
                 <AddressBarTextBox />
-                <AddressBarControl />
                 <AddressBarMenu />
                 <AddressBarSearch />
                 <AddressBarBotCreds />
@@ -221,9 +223,73 @@ class AddressBarControl extends React.Component<{}, {}> {
 }
 
 class AddressBarMenu extends React.Component<{}, {}> {
+
+    menu: Electron.Menu;
+
+    newConversation = () => {
+        ConversationActions.newConversation();
+    }
+
+    endConversation = () => {
+        //ConversationActions.endConversation();
+    }
+
+    sendPingActivity = () => {
+    }
+
+    sendTypingActivity = () => {
+    }
+
+    constructor() {
+        super();
+
+        const template: Electron.MenuItemOptions[] = [
+            {
+                label: 'New Conversation',
+                click: () => this.newConversation()
+            },
+            {
+                label: 'Load Conversation',
+                type: 'submenu',
+                submenu: [
+                    {
+                        label: 'TODO: Populate'
+                    }
+                ]
+            },
+            {
+                label: 'End Conversation',
+                click: () => this.endConversation()
+            },
+            {
+                type: 'separator'
+            },
+            {
+                label: 'Send System Activity',
+                type: 'submenu',
+                submenu: [
+                    {
+                        label: 'Ping',
+                        click: () => this.sendPingActivity()
+                    },
+                    {
+                        label: 'Typing',
+                        click: () => this.sendTypingActivity()
+                    }
+                ]
+            }
+        ];
+
+        this.menu = Menu.buildFromTemplate(template);
+    }
+
+    toggleMenu(e: React.MouseEvent<HTMLDivElement>) {
+        this.menu.popup();
+    }
+
     render() {
         return (
-            <div className="addressbar-menu">
+            <div className="addressbar-menu" onClick={(e) => this.toggleMenu(e)}>
                 (m)
             </div>
         );
@@ -319,7 +385,7 @@ class AddressBarBotCreds extends React.Component<{}, {}> {
     checkboxLabel() {
         return ([
             <span key={0} className="addressbar-botcreds-savecreds-label-big">Remember these credentials:</span>,
-            <span key={1} className="addressbar-botcreds-savecreds-label-small">&nbsp;We never pass these around. They are encrypted and stored locally.</span>
+            <span key={1} className="addressbar-botcreds-savecreds-label-small">&nbsp;We never pass these around.</span>
         ]);
     }
 
@@ -362,9 +428,9 @@ class AddressBarBotCreds extends React.Component<{}, {}> {
         const settings = getSettings();
         if (settings.addressBar.selectedBot) {
             return [
-                <span
-                    className="addressbar-botcreds-title"
-                    key={0}>Enter your app credentials to connect
+                <span key={0}
+                    className="addressbar-botcreds-title">
+                    Enter your app credentials to connect
                 </span>,
                 <input key={1}
                     type="text"
@@ -384,13 +450,12 @@ class AddressBarBotCreds extends React.Component<{}, {}> {
                     value={settings.addressBar.selectedBot.serviceUrl}
                     onChange={e => this.serviceUrlChanged((e.target as any).value)}
                     placeholder="Service URL" />,
-                <Checkbox
-                    key={4}
+                <Checkbox key={4}
                     className="addressbar-botcreds-savecreds"
                     checked={settings.addressBar.selectedBot.saveCreds}
                     label={this.checkboxLabel()}
                     onChange={(value) => this.saveCredentialsChanged(value)} />,
-                <button
+                <button key={5}
                     className="addressbar-botcreds-connect-button"
                     onClick={() => this.connectToBot()}>
                     Connect
@@ -449,4 +514,8 @@ class Checkbox extends React.Component<ICheckboxProps, ICheckboxState> {
             </div>
         );
     }
+}
+
+class DropdownMenu extends React.Component<{}, {}> {
+
 }
