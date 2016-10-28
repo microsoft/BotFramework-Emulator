@@ -5,7 +5,7 @@ import * as log from './log';
 import { getStore, getSettings, settingsDefault, ISettings } from './settings';
 import { LayoutActions, InspectorActions, LogActions } from './reducers';
 import { Settings as ServerSettings } from '../types/serverSettingsTypes';
-import { AddressBar } from './addressBar';
+import { AddressBar } from './addressBar/addressBar';
 import { InspectorView } from './inspectorView'
 import { LogView } from './logView';
 import { uniqueId } from '../utils';
