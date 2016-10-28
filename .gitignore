@@ -4,3 +4,4 @@ Thumbs.db
 node_modules/
 dist/
 .vscode/settings.json
+install/
