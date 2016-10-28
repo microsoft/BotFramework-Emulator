@@ -17,19 +17,18 @@ interface IConversationParams {
 export class ConversationsController {
 
     public static registerRoutes(server: Restify.Server) {
-        var controller = new ConversationsController();
-        server.post('/v3/conversations', (req, res, next) => controller.createConversation(req, res, next));
-        server.post('/v3/conversations/:conversationId/activities', (req, res, next) => controller.sendToConversation(req, res, next));
-        server.post('/v3/conversations/:conversationId/activities/:activityId', (req, res, next) => controller.replyToActivity(req, res, next));
-        server.put('/v3/conversations/:conversationId/activities/:activityId', (req, res, next) => controller.updateActivity(req, res, next));
-        server.del('/v3/conversations/:conversationId/activities/:activityId', (req, res, next) => controller.deleteActivity(req, res, next));
-        server.get('/v3/conversations/:conversationId/members', (req, res, next) => controller.getConversationMembers(req, res, next));
-        server.get('/v3/conversations/:conversationId/activities/:activityId/members', (req, res, next) => controller.getActivityMembers(req, res, next));
-        server.post('/v3/conversations/:conversationId/attachments', (req, res, next) => controller.uploadAttachment(req, res, next));
+        server.post('/v3/conversations',  ConversationsController.createConversation);
+        server.post('/v3/conversations/:conversationId/activities',  ConversationsController.sendToConversation);
+        server.post('/v3/conversations/:conversationId/activities/:activityId',  ConversationsController.replyToActivity);
+        server.put('/v3/conversations/:conversationId/activities/:activityId',  ConversationsController.updateActivity);
+        server.del('/v3/conversations/:conversationId/activities/:activityId',  ConversationsController.deleteActivity);
+        server.get('/v3/conversations/:conversationId/members',  ConversationsController.getConversationMembers);
+        server.get('/v3/conversations/:conversationId/activities/:activityId/members',  ConversationsController.getActivityMembers);
+        server.post('/v3/conversations/:conversationId/attachments',  ConversationsController.uploadAttachment);
     }
 
     // Create conversation API
-    public createConversation(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+    public static createConversation(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         try {
             console.log("framework: newConversation");
 
@@ -50,7 +49,7 @@ export class ConversationsController {
     }
 
     // SendToConversation
-    public sendToConversation(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+    public static sendToConversation(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         try {
             let activity = <IGenericActivity>req.body;
             const parms: IConversationParams = req.params;
@@ -83,7 +82,7 @@ export class ConversationsController {
     }
 
     // replyToActivity
-    public replyToActivity(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+    public static replyToActivity(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         try {
             let activity = <IGenericActivity>req.body;
             const parms: IConversationParams = req.params;
@@ -120,7 +119,7 @@ export class ConversationsController {
     }
 
     // updateActivity
-    public updateActivity(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+    public static updateActivity(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         try {
             let activity = <IGenericActivity>req.body;
             const parms: IConversationParams = req.params;
@@ -156,7 +155,7 @@ export class ConversationsController {
     }
 
     // deleteActivity
-    public deleteActivity(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+    public static deleteActivity(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         try {
             const parms: IConversationParams = req.params;
             console.log("framework: deleteActivity", JSON.stringify(parms));
@@ -182,7 +181,7 @@ export class ConversationsController {
     }
 
     // get members of a conversation
-    public getConversationMembers(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+    public static getConversationMembers(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         console.log("framework: getConversationMembers");
         try {
             // look up bot
@@ -206,7 +205,7 @@ export class ConversationsController {
     }
 
     // get members of an activity
-    public getActivityMembers(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+    public static getActivityMembers(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         console.log("framework: getActivityMembers");
         try {
             // look up bot
@@ -230,7 +229,7 @@ export class ConversationsController {
     }
 
     // upload attachment
-    public uploadAttachment(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+    public static uploadAttachment(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         console.log("framework: uploadAttachment");
         try {
             // look up bot
