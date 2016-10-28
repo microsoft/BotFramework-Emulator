@@ -111,7 +111,7 @@ export const settingsDefault: ISettings = {
 }
 
 export const getStore = (): Store<ISettings> => {
-    var global = Function('return this')();
+    let global = Function('return this')();
     if (!global['emulator-client'])
         global['emulator-client'] = {};
     if (!global['emulator-client'].store) {
@@ -133,7 +133,7 @@ export const getSettings = () => new Settings(getStore().getState());
 
 export const startup = () => {
     // When changes to settings are made, save to disk.
-    var saveTimerSet = false;
+    let saveTimerSet = false;
     getStore().subscribe(() => {
         if (!saveTimerSet) {
             saveTimerSet = true;

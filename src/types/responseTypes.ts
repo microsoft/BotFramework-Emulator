@@ -64,7 +64,7 @@ export function createAPIException(statusCode: number, code: string, message: st
 
 // send exception as error response
 export function sendErrorResponse(req: Restify.Request, res: Restify.Response, next: Restify.Next, exception: any): any {
-    var apiException: APIException = exception;
+    let apiException: APIException = exception;
     if (apiException.error)
         res.send(apiException.statusCode, apiException.error);
     else

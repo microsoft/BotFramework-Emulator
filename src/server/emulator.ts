@@ -63,4 +63,4 @@ export class Emulator {
     }
 }
 
-export var emulator: Emulator;
+export let emulator: Emulator;

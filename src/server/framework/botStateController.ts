@@ -26,11 +26,11 @@ export class BotStateController {
 
     private setBotData(channelId: string, conversationId: string, userId: string, incomingData: IBotData): IBotData {
         const key = this.botDataKey(channelId, conversationId, userId);
-        var oldData = this.botDataStore[key];
+        let oldData = this.botDataStore[key];
         if ((oldData && incomingData.eTag != "*") && oldData.eTag != incomingData.eTag) {
             throw ResponseTypes.createAPIException(HttpStatus.PRECONDITION_FAILED, ErrorCodes.BadArgument, "The data is changed");
         }
-        var newData = {} as IBotData;
+        let newData = {} as IBotData;
         newData.eTag = new Date().getTime().toString();
         newData.data = incomingData.data;
         this.botDataStore[key] = newData;
@@ -38,7 +38,7 @@ export class BotStateController {
     }
 
     public static registerRoutes(server: Restify.Server) {
-        var controller = new BotStateController();
+        let controller = new BotStateController();
         server.get('/v3/botstate/:channelId/users/:userId', (req, resp, next) => controller.getUserData(req, resp, next));
         server.get('/v3/botstate/:channelId/conversations/:conversationId', (req, resp, next) => controller.getConversationData(req, resp, next));
         server.get('/v3/botstate/:channelId/conversations/:conversationId/users/:userId', (req, resp, next) => controller.getPrivateConversationData(req, resp, next));
@@ -84,7 +84,7 @@ export class BotStateController {
     // Set User Data
     public setUserData(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         try {
-            var newBotData = this.setBotData(req.params.channelId, req.params.conversationId, req.params.userId, req.body as IBotData);
+            let newBotData = this.setBotData(req.params.channelId, req.params.conversationId, req.params.userId, req.body as IBotData);
             res.send(HttpStatus.OK, newBotData);
             res.end();
         } catch (err) {
@@ -95,7 +95,7 @@ export class BotStateController {
     // set conversation data
     public setConversationData(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         try {
-            var newBotData = this.setBotData(req.params.channelId, req.params.conversationId, req.params.userId, req.body);
+            let newBotData = this.setBotData(req.params.channelId, req.params.conversationId, req.params.userId, req.body);
             res.send(HttpStatus.OK, newBotData);
             res.end();
         } catch (err) {
@@ -106,7 +106,7 @@ export class BotStateController {
     // set private conversation data
     public setPrivateConversationData(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         try {
-            var newBotData = this.setBotData(req.params.channelId, req.params.conversationId, req.params.userId, req.body);
+            let newBotData = this.setBotData(req.params.channelId, req.params.conversationId, req.params.userId, req.body);
             res.send(HttpStatus.OK, newBotData);
             res.end();
         } catch (err) {
@@ -117,10 +117,10 @@ export class BotStateController {
     // delete state for user
     public deleteStateForUser(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         try {
-            var keys = Object.keys(this.botDataStore);
-            var userPostfix = `!${req.params.userId}`;
-            for (var i = 0; i < keys.length; i++) {
-                var key = keys[i];
+            let keys = Object.keys(this.botDataStore);
+            let userPostfix = `!${req.params.userId}`;
+            for (let i = 0; i < keys.length; i++) {
+                let key = keys[i];
                 if (key.endsWith(userPostfix)) {
                     delete this.botDataStore[key];
                 }

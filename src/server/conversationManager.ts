@@ -56,10 +56,10 @@ export class Conversation {
         }
         const bot = getSettings().botById(this.botId);
         if (bot) {
-            var statusCode = '';
-            var options: request.OptionsWithUrl = { url: bot.botUrl, method: "POST", json: activity };
+            let statusCode = '';
+            let options: request.OptionsWithUrl = { url: bot.botUrl, method: "POST", json: activity };
 
-            var responseCallback = function (err, resp: http.IncomingMessage, body) {
+            let responseCallback = function (err, resp: http.IncomingMessage, body) {
                 if (err)
                     cb(err);
                 else
@@ -101,7 +101,7 @@ export class Conversation {
     // updateActivity with replacement
     public updateActivity(updatedActivity: IActivity): IResourceResponse {
         // if we found the activity to reply to
-        var oldActivity = this.activities.find((val) => val.id == updatedActivity.id);
+        let oldActivity = this.activities.find((val) => val.id == updatedActivity.id);
         if (oldActivity) {
             Object.assign(oldActivity, updatedActivity);
             return ResponseTypes.createResourceResponse(updatedActivity.id);
@@ -112,7 +112,7 @@ export class Conversation {
 
     public deleteActivity(id: string) {
         // if we found the activity to reply to
-        var index = this.activities.findIndex((val) => val.id == id);
+        let index = this.activities.findIndex((val) => val.id == id);
         if (index >= 0) {
             this.activities.splice(index, 1);
             return;
@@ -122,7 +122,7 @@ export class Conversation {
 
     // add member
     public addMember(id: string, name: string): IChannelAccount {
-        var user: IChannelAccount = {
+        let user: IChannelAccount = {
             id: id,
             name: name
         };
@@ -131,7 +131,7 @@ export class Conversation {
     }
 
     public removeMember(id: string) {
-        var index = this.members.findIndex((val) => val.id == id);
+        let index = this.members.findIndex((val) => val.id == id);
         if (index >= 0) {
             this.members.splice(index, 1);
         }
@@ -165,7 +165,7 @@ export class Conversation {
                                 if (response.statusCode < 400) {
                                     callback(null, response, body);
                                 } else {
-                                    var txt = "Request to '" + options.url + "' failed: [" + response.statusCode + "] " + response.statusMessage;
+                                    let txt = "Request to '" + options.url + "' failed: [" + response.statusCode + "] " + response.statusMessage;
                                     callback(new Error(txt), response, null);
                                 }
                                 break;
@@ -184,7 +184,7 @@ export class Conversation {
         if (!this.accessToken || new Date().getTime() >= this.accessTokenExpires) {
             const bot = getSettings().botById(this.botId);
             // Refresh access token
-            var opt: request.OptionsWithUrl = {
+            let opt: request.OptionsWithUrl = {
                 method: 'POST',
                 url: authenticationSettings.refreshEndpoint,
                 form: {
@@ -199,7 +199,7 @@ export class Conversation {
                     if (body && response.statusCode < 300) {
                         // Subtract 5 minutes from expires_in so they'll we'll get a
                         // new token before it expires.
-                        var oauthResponse = JSON.parse(body);
+                        let oauthResponse = JSON.parse(body);
                         this.accessToken = oauthResponse.access_token;
                         this.accessTokenExpires = new Date().getTime() + ((oauthResponse.expires_in - 300) * 1000);
                         cb(null, this.accessToken);
