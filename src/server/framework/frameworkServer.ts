@@ -5,6 +5,9 @@ import { AttachmentsController } from './attachmentsController';
 import { BotStateController } from './botStateController';
 import { RestServer } from '../restServer';
 import { getStore, getSettings } from '../settings';
+var platform = require('os').platform();
+var ngrok = require('ngrok'); // import * as ngrok from 'ngrok';
+import * as Fs from 'fs';
 
 
 /**
@@ -12,7 +15,7 @@ import { getStore, getSettings } from '../settings';
  */
 export class FrameworkServer extends RestServer {
 
-    serviceUrl = (): string => `http://localhost:${this.port}/`;
+    serviceUrl: string;
 
     authentication = new BotFrameworkAuthentication();
 
@@ -36,6 +39,10 @@ export class FrameworkServer extends RestServer {
         if (this.port !== settings.framework.port) {
             console.log(`restarting ${this.server.name} because ${this.port} !== ${settings.framework.port}`);
             this.restart(settings.framework.port);
+            ngrok.disconnect();
+            ngrok.connect(this.port, (err, url: string) => {
+                this.serviceUrl = url;
+            });
         }
     }
 }

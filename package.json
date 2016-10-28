@@ -71,6 +71,7 @@
     "jsonwebtoken": "^7.1.9",
     "mkdirp": "^0.5.1",
     "msbotchat": "git+https://github.com/fuselabs/botchat#emulator",
+    "ngrok": "^2.2.3",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
     "react-split-pane": "^0.1.51",

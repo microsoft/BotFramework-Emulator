@@ -29,7 +29,7 @@ const messageToActivity = (message: IV1Message): IGenericActivity =>
         type: "message",
         eTag: message.eTag,
         id: message.id,
-        serviceUrl: emulator.framework.serviceUrl(),
+        serviceUrl: emulator.framework.serviceUrl,
         timestamp: message.created,
         channelId: "emulator",
         from: { id: message.from },
@@ -130,7 +130,6 @@ export class ConversationsControllerV1 {
             if (conversation) {
                 const message = <IV1Message>req.body;
                 let activity = messageToActivity(message);
-                activity.serviceUrl = activeBot.serviceUrl || activeBot.serviceUrl;
                 conversation.postActivityToBot(activity, true, (err, statusCode) => {
                     if (err)
                         res.send(500);

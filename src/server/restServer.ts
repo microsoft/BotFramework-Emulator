@@ -4,6 +4,7 @@ export class RestServer {
 
     // REVIEW: Can we get this from the Restify.server?
     port: number;
+    serviceUrl: string;
     server: Restify.Server;
 
     constructor(name: string) {
