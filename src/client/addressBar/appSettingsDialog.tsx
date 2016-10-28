@@ -5,28 +5,44 @@ import { AddressBarActions, ConversationActions, ServerSettingsActions } from '.
 import { IBot, newBot } from '../../types/botTypes';
 import * as log from '../log';
 import { AddressBarOperators } from './addressBarOperators';
-import { AddressBarStatus } from './addressBarStatus';
-import { AddressBarTextBox } from './addressBarTextBox';
-import { AddressBarMenu } from './addressBarMenu';
-import { AddressBarSearch } from './addressBarSearch';
-import { AddressBarBotCreds } from './AddressBarBotCreds';
 
 
-export class AddressBar extends React.Component<{}, {}> {
+export interface IAppSettingsProps {
+    show?: boolean,
+    onAccept?: (appSettings: IAppSettings) => void,
+    onClose?: () => void
+}
+
+export interface IAppSettings {
+    port?: number
+}
+
+export class AppSettingsDialog extends React.Component<IAppSettingsProps, {}> {
 
     pageClicked = (ev: Event) => {
         let target = ev.srcElement;
         while (target) {
-            if (target.className === "addressbar") {
+            if (target.className === "appsettings-dialog") {
                 // Click was inside the address bar.
                 return;
             }
             target = target.parentElement;
         }
 
-        // Click was outside the address bar. Close open subpanels.
-        AddressBarOperators.clearMatchingBots();
-        AddressBarOperators.selectBot(null);
+        // Click was outside the dialog. Close.
+        this.onClose();
+    }
+
+    onAccept = () => {
+        if (this.props.onAccept) {
+            this.props.onAccept(null);
+        }
+    }
+
+    onClose = () => {
+        if (this.props.onClose) {
+            this.props.onClose();
+        }
     }
 
     componentWillMount() {
@@ -38,18 +54,12 @@ export class AddressBar extends React.Component<{}, {}> {
     }
 
     render() {
+        if (!this.props.show) return null;
         return (
-            <div className="addressbar">
-                <AddressBarStatus />
-                <AddressBarTextBox />
-                <AddressBarMenu />
-                <AddressBarSearch />
-                <AddressBarBotCreds />
+            <div className="appsettings-dialog" data-modal={true}>
+                Hey.
+                <a href="#" onClick={() => this.onClose()}>close</a>
             </div>
         );
     }
 }
-
-
-
-

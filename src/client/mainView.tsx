@@ -101,7 +101,7 @@ export class MainView extends React.Component<{}, {}> {
                             {this.botChatComponent()}
                         </div>
                         <div className="wc-app-inspectorview-container">
-                            <Splitter split="horizontal" defaultSize={settings.layout.horizSplit} onChange={(size) => LayoutActions.rememberHorizontalSplitter(size)}>
+                            <Splitter split="horizontal" primary="second" defaultSize={settings.layout.horizSplit} onChange={(size) => LayoutActions.rememberHorizontalSplitter(size)}>
                                 <div className="wc-chatview-panel">
                                     <div className="wc-inspectorview-header">
                                         <span>Inspector</span>
