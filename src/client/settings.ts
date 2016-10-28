@@ -1,6 +1,6 @@
 import { Store, createStore, combineReducers, Reducer } from 'redux';
 import * as Electron from 'electron';
-import { ISettings as IServerSettings, Settings as ServerSettings } from '../server/settings';
+import { ISettings as IServerSettings, Settings as ServerSettings } from '../types/serverSettingsTypes';
 import { loadSettings, saveSettings } from '../utils';
 import {
     layoutReducer,
@@ -115,7 +115,7 @@ export const getStore = (): Store<ISettings> => {
     if (!global['emulator-client'])
         global['emulator-client'] = {};
     if (!global['emulator-client'].store) {
-        // Create the settings store with initial settings from disk.
+       // Create the settings store with initial settings from disk.
         const initialSettings = loadSettings('client.json', settingsDefault);
         global['emulator-client'].store = createStore(combineReducers<ISettings>({
             layout: layoutReducer,
@@ -151,22 +151,22 @@ export const startup = () => {
         ServerSettingsActions.set(serverSettings);
     });
     // Listen for log messages from the server.
-    Electron.ipcRenderer.on('log-log', (event, args) => {
+    Electron.ipcRenderer.on('log-log', (event, ...args) => {
         log.log(args[0], ...args.slice(1));
     });
-    Electron.ipcRenderer.on('log-info', (event, args) => {
+    Electron.ipcRenderer.on('log-info', (event, ...args) => {
         log.log(args[0], ...args.slice(1));
     });
-    Electron.ipcRenderer.on('log-trace', (event, args) => {
+    Electron.ipcRenderer.on('log-trace', (event, ...args) => {
         log.log(args[0], ...args.slice(1));
     });
-    Electron.ipcRenderer.on('log-debug', (event, args) => {
+    Electron.ipcRenderer.on('log-debug', (event, ...args) => {
         log.log(args[0], ...args.slice(1));
     });
-    Electron.ipcRenderer.on('log-warn', (event, args) => {
+    Electron.ipcRenderer.on('log-warn', (event, ...args) => {
         log.log(args[0], ...args.slice(1));
     });
-    Electron.ipcRenderer.on('log-error', (event, args) => {
+    Electron.ipcRenderer.on('log-error', (event, ...args) => {
         log.log(args[0], ...args.slice(1));
     });
 

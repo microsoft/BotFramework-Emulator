@@ -409,7 +409,8 @@
 /* text formats */
 
     .format-markdown>p {
-        margin-bottom: 0px;
+        margin-bottom: 0;
+        margin-top: 0;
     }
 
     .format-markdown code {

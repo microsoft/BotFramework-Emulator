@@ -1,5 +1,5 @@
 import { Reducer } from 'redux';
-import { IWindowStateSettings, windowStateDefault } from '../settings'
+import { IWindowStateSettings, windowStateDefault } from '../../types/serverSettingsTypes';
 
 
 export type WindowStateAction = {

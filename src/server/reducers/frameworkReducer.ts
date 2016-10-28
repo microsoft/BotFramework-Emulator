@@ -1,5 +1,5 @@
 import { Reducer } from 'redux';
-import { IFrameworkSettings, frameworkDefault } from '../settings';
+import { IFrameworkSettings, frameworkDefault } from '../../types/serverSettingsTypes';
 
 
 export type FrameworkAction = {

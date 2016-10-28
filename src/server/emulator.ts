@@ -42,25 +42,6 @@ export class Emulator {
             this.mainWindow.webContents.send(channel, args);
         }
     }
-
-    log(message: any, ...args: any[]) {
-        this.send('log-log', message, ...args);
-    }
-    info(message: any, ...args: any[]) {
-        this.send('log-info', message, ...args);
-    }
-    trace(message: any, ...args: any[]) {
-        this.send('log-trace', message, ...args);
-    }
-    debug(message: any, ...args: any[]) {
-        this.send('log-debug', message, ...args);
-    }
-    warn(message: any, ...args: any[]) {
-        this.send('log-warn', message, ...args);
-    }
-    error(message: any, ...args: any[]) {
-        this.send('log-error', message, ...args);
-    }
 }
 
 export let emulator: Emulator;

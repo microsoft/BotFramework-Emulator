@@ -2,10 +2,11 @@ import { Reducer } from 'redux';
 import { IBot } from '../types/botTypes';
 import { IUser } from '../types/userTypes';
 import { uniqueId } from '../utils';
+import * as log from './log';
 import {
     ISettings as IServerSettings,
     Settings as ServerSettings
-} from '../server/settings';
+} from '../types/serverSettingsTypes';
 import {
     getStore,
     ISettings,
@@ -71,6 +72,8 @@ type InspectorAction = {
     state: {
         selectedObject: any
     }
+} | {
+    type: 'Inspector_Clear'
 }
 
 type ServerSettingsAction = {
@@ -154,6 +157,9 @@ export class LogActions {
             }
         });
     }
+    static clear() {
+        log.clear();
+    }
 }
 
 export class InspectorActions {
@@ -163,7 +169,12 @@ export class InspectorActions {
             state: {
                 selectedObject
             }
-        })
+        });
+    }
+    static clear() {
+        getStore().dispatch<InspectorAction>({
+            type: 'Inspector_Clear'
+        });
     }
 }
 
@@ -251,6 +262,8 @@ export const inspectorReducer: Reducer<IInspectorState> = (
     switch (action.type) {
         case 'Inspector_SetSelectedObject':
             return Object.assign({}, state, { selectedObject: action.state.selectedObject });
+        case 'Inspector_Clear':
+            return Object.assign({}, state, { selectedObject: null });
         default:
             return state;
     }

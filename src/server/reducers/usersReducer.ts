@@ -1,5 +1,5 @@
 import { Reducer } from 'redux';
-import { IUserSettings, usersDefault } from '../settings'
+import { IUserSettings, usersDefault } from '../../types/serverSettingsTypes'
 import { IUser } from '../../types/userTypes';
 
 

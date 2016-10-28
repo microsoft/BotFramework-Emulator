@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { getStore, getSettings, ISettings } from './settings';
-import { Settings as ServerSettings } from '../server/settings';
+import { Settings as ServerSettings } from '../types/serverSettingsTypes';
 import { AddressBarActions, ConversationActions, ServerSettingsActions } from './reducers';
 import { IBot, newBot } from '../types/botTypes';
 import * as log from './log';
@@ -251,6 +251,7 @@ class AddressBarMenu extends React.Component<{}, {}> {
             {
                 label: 'Load Conversation',
                 type: 'submenu',
+                enabled: false,
                 submenu: [
                     {
                         label: 'TODO: Populate'
@@ -259,7 +260,8 @@ class AddressBarMenu extends React.Component<{}, {}> {
             },
             {
                 label: 'End Conversation',
-                click: () => this.endConversation()
+                click: () => this.endConversation(),
+                enabled: false
             },
             {
                 type: 'separator'
@@ -270,11 +272,13 @@ class AddressBarMenu extends React.Component<{}, {}> {
                 submenu: [
                     {
                         label: 'Ping',
-                        click: () => this.sendPingActivity()
+                        click: () => this.sendPingActivity(),
+                        enabled: false
                     },
                     {
                         label: 'Typing',
-                        click: () => this.sendTypingActivity()
+                        click: () => this.sendTypingActivity(),
+                        enabled: false
                     }
                 ]
             }

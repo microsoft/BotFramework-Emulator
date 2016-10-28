@@ -1,6 +1,9 @@
 import { LogView, Severity } from './logView';
 
 
+export function clear() {
+    LogView.clear();
+}
 export function log(message: any, ...args: any[]) {
     LogView.add(Severity.log, message, ...args);
 }
