@@ -7,7 +7,8 @@ import { RestServer } from '../restServer';
 import { getStore, getSettings } from '../settings';
 import * as Fs from 'fs';
 import * as Os from 'os';
-var ngrok = require('ngrok'); // import * as ngrok from 'ngrok';
+import * as path from 'path';
+var ngrok = require('./ngrok');
 
 /**
  * Communicates with the bot.
@@ -15,6 +16,8 @@ var ngrok = require('ngrok'); // import * as ngrok from 'ngrok';
 export class FrameworkServer extends RestServer {
 
     serviceUrl: string;
+
+    inspectUrl: string;
 
     authentication = new BotFrameworkAuthentication();
 
@@ -35,21 +38,30 @@ export class FrameworkServer extends RestServer {
      */
     private configure() {
         const settings = getSettings();
-        // copy ngrok to target path
-        // var targetNgrokPath = __dirname + '/bin/ngrok' + (Os.platform()  === 'win32' ? '.exe' : '');
-        // if (!Fs.existsSync(__dirname + "/bin"))
-        //     Fs.mkdirSync(__dirname + "/bin");
 
-        // if (!Fs.existsSync(targetNgrokPath) && settings.framework.ngrokPath)
-        //     Fs.linkSync(settings.framework.ngrokPath, targetNgrokPath);
+        // TODO REMOVE THIS
+        if (!settings.framework.ngrokPath)
+            settings.framework.ngrokPath = `${process.env['USERPROFILE']}\\AppData\\Roaming\\npm\\node_modules\\ngrok\\bin\\ngrok` + (Os.platform() === 'win32' ? '.exe' : '');
 
         if (this.port !== settings.framework.port) {
             console.log(`restarting ${this.server.name} because ${this.port} !== ${settings.framework.port}`);
             this.restart(settings.framework.port);
-            ngrok.disconnect();
-            ngrok.connect(this.port, (err, url: string) => {
-                this.serviceUrl = url;
-            });
+            // if we have an ngrok path
+            if (settings.framework.ngrokPath) {
+                // then make it so
+                ngrok.disconnect();
+                ngrok.connect({
+                    port: this.port,
+                    path: settings.framework.ngrokPath
+                }, (err, url: string, inspectPort: string) => {
+                    this.serviceUrl = url;
+                    this.inspectUrl = `http://127.0.0.1:${inspectPort}`;
+                });
+            }
+            else {
+                this.serviceUrl = `http://localhost:${this.port}`;
+                this.inspectUrl = null;
+            }
         }
     }
 }
