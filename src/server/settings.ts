@@ -19,35 +19,22 @@ import {
 } from '../types/serverSettingsTypes';
 
 
-<<<<<<< HEAD
-=======
-export interface IDirectLineSettings {
-    port?: number,
-}
+export class PersistentSettings implements IPersistentSettings {
+    public directLine: IDirectLineSettings;
+    public framework: IFrameworkSettings;
+    public bots: IBot[];
+    public windowState: IWindowStateSettings;
+    public users: IUserSettings;
 
-export interface IFrameworkSettings {
-    port?: number,
-    ngrokPath?: string
-}
-
-export interface IWindowStateSettings {
-    width?: number,
-    height?: number,
-    left?: number,
-    top?: number
-}
-
-export interface IUserSettings {
-    currentUserId?: string,
-    usersById?: { [id: string]: IUser }
-}
-
-export interface IPersistentSettings {
-    directLine?: IDirectLineSettings,
-    framework?: IFrameworkSettings,
-    bots?: IBot[],
-    windowState?: IWindowStateSettings,
-    users: IUserSettings
+    constructor(settings: ISettings) {
+        Object.assign(this, {
+            directLine: settings.directLine,
+            framework: settings.framework,
+            bots: settings.bots,
+            windowState: settings.windowState,
+            users: settings.users
+        });
+    }
 }
 
 export const getStore = (): Store<ISettings> => {
