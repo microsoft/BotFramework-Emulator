@@ -1,10 +1,12 @@
 import * as Electron from 'electron';
+import * as Os from 'os';
 import { Store, createStore, combineReducers, Reducer } from 'redux';
 import { directLineReducer } from './reducers/directLineReducer';
 import { frameworkReducer } from './reducers/frameworkReducer';
 import { botsReducer, activeBotReducer } from './reducers/botReducer';
 import { windowStateReducer } from './reducers/windowStateReducer';
 import { usersReducer } from './reducers/usersReducer';
+import { frameworkDefault } from '../types/serverSettingsTypes';
 import { loadSettings, saveSettings } from '../utils';
 import { IBot } from '../types/botTypes';
 import {
@@ -37,7 +39,10 @@ export class PersistentSettings implements IPersistentSettings {
     }
 }
 
+let started = false;
+
 export const getStore = (): Store<ISettings> => {
+    console.assert(started, 'getStore() called before startup!');
     let global = Function('return this')();
     if (!global['emulator-server'])
         global['emulator-server'] = {};
@@ -56,9 +61,23 @@ export const getStore = (): Store<ISettings> => {
     return global['emulator-server'].store;
 }
 
-export const getSettings = () => new Settings(getStore().getState());
+export const getSettings = () => {
+    return new Settings(getStore().getState());
+}
 
 export const startup = () => {
+    // Guard against calling getSettings before startup.
+    started = true;
+
+    // Some defaults must be computed.
+    if (Os.platform() === 'win32') {
+        frameworkDefault.ngrokPath = `${process.env['USERPROFILE']}\\AppData\\Roaming\\npm\\node_modules\\ngrok\\bin\\ngrok.exe`;
+    } else if (Os.platform() === 'macos') {
+        // TODO
+    } else {
+        // TODO
+    }
+
     // When changes to settings are made, save to disk.
     let saveTimerSet = false;
     getStore().subscribe(() => {

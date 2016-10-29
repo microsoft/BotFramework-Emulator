@@ -8,16 +8,26 @@ import { AddressBarOperators } from './addressBarOperators';
 
 
 export interface IAppSettingsProps {
-    show?: boolean,
-    onAccept?: (appSettings: IAppSettings) => void,
-    onClose?: () => void
+    show?: boolean
 }
 
-export interface IAppSettings {
-    port?: number
+interface IAppSettingsState {
+    show?: boolean
 }
 
-export class AppSettingsDialog extends React.Component<IAppSettingsProps, {}> {
+interface IAppSettings {
+    port?: number,
+    ngrokPath?: string
+}
+
+export class AppSettingsDialog extends React.Component<IAppSettingsProps, IAppSettingsState> {
+
+    constructor(props: IAppSettingsProps) {
+        super(props)
+        this.state = { show: props.show };
+    }
+
+    appSettings: IAppSettings = {};
 
     pageClicked = (ev: Event) => {
         let target = ev.srcElement;
@@ -34,15 +44,21 @@ export class AppSettingsDialog extends React.Component<IAppSettingsProps, {}> {
     }
 
     onAccept = () => {
-        if (this.props.onAccept) {
-            this.props.onAccept(null);
-        }
+        ServerSettingsActions.remote_setFrameworkPort(this.appSettings.port);
+        ServerSettingsActions.remote_setNgrokPath(this.appSettings.ngrokPath);
+        this.setState({ show: false });
     }
 
     onClose = () => {
-        if (this.props.onClose) {
-            this.props.onClose();
-        }
+        this.setState({ show: false });
+    }
+
+    frameworkPortChanged = (text: string) => {
+        this.appSettings.port = Number(text);
+    }
+
+    ngrokPathChanged = (text: string) => {
+        this.appSettings.ngrokPath = text;
     }
 
     componentWillMount() {
@@ -53,12 +69,52 @@ export class AppSettingsDialog extends React.Component<IAppSettingsProps, {}> {
         window.removeEventListener('click', (e) => this.pageClicked(e));
     }
 
+    componentWillReceiveProps(nextProps: IAppSettingsProps) {
+        this.setState({show: nextProps.show});
+        if (nextProps.show) {
+            const serverSettings = getSettings().serverSettings;
+
+            this.appSettings.port = serverSettings.framework.port;
+            this.appSettings.ngrokPath = serverSettings.framework.ngrokPath;
+
+            this.appSettings = {
+                port: serverSettings.framework.port,
+                ngrokPath: serverSettings.framework.ngrokPath
+            }
+        }
+    }
+
     render() {
-        if (!this.props.show) return null;
+        if (!this.state.show) return null;
+        const settings = getSettings();
         return (
-            <div className="appsettings-dialog" data-modal={true}>
-                Hey.
-                <a href="#" onClick={() => this.onClose()}>close</a>
+            <div>
+                <div className="dialog-background">
+                </div>
+                <div className="appsettings-dialog">
+                    <div className="input-group">
+                        <label className="form-label">
+                            Framework Port
+                        </label>
+                        <input
+                            type="text"
+                            className="form-input appsettings-port-input"
+                            defaultValue={`${settings.serverSettings.framework.port}`}
+                            onChange={e => this.frameworkPortChanged((e.target as any).value)} />
+                    </div>
+                    <div className="input-group">
+                        <label className="form-label">
+                            Path to Ngrok
+                        </label>
+                        <input
+                            type="text"
+                            className="form-input appsettings-url-input"
+                            defaultValue={`${settings.serverSettings.framework.ngrokPath}`}
+                            onChange={e => this.ngrokPathChanged((e.target as any).value)} />
+                    </div>
+                    <p/><a href="#" onClick={() => this.onAccept()}>accept</a>
+                    <p/><a href="#" onClick={() => this.onClose()}>close</a>
+                </div>
             </div>
         );
     }

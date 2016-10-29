@@ -67,4 +67,5 @@ Electron.app.on('activate', function () {
     }
 });
 
+// Do this last, otherwise startup bugs are harder to diagnose.
 require('electron-debug')();

@@ -53,23 +53,23 @@ export class AddressBarBotCreds extends React.Component<{}, {}> {
             <div className={"addressbar-botcreds" + (visible ? "" : " closed")}>
                 <div key={reuseKey++} className="input-group">
                     <label key={reuseKey++}
-                        className="addressbar-botcreds-label">
+                        className="form-label">
                         Microsoft App ID
                     </label>
                     <input key={reuseKey++}
                         type="text"
-                        className="addressbar-botcreds-input"
+                        className="form-input addressbar-botcreds-input"
                         value={settings.addressBar.selectedBot.msaAppId}
                         onChange={e => this.appIdChanged((e.target as any).value)} />
                 </div>
                 <div key={reuseKey++} className="input-group">
                     <label key={reuseKey++}
-                        className="addressbar-botcreds-label">
+                        className="form-label">
                         Microsoft App Password
                     </label>
                     <input key={reuseKey++}
                         type="text"
-                        className="addressbar-botcreds-input"
+                        className="form-input addressbar-botcreds-input"
                         value={settings.addressBar.selectedBot.msaPassword}
                         onChange={e => this.appPasswordChanged((e.target as any).value)} />
                 </div>
