@@ -15,7 +15,7 @@ var noop = function () { };
 var emitter = new Emitter().on('error', noop);
 var ngrok, api, tunnels = {};
 
-function connect(opts, cb) {
+export function connect(opts, cb) {
 
 	if (typeof opts === 'function') {
 		cb = opts;
@@ -89,7 +89,10 @@ function runNgrok(opts, cb) {
 	ngrok = spawn(
 		filename,
 		['start', '--none', '--log=stdout', '--region=' + opts.region],
-		{ cwd: folder });
+		{ cwd: folder })
+		.on('error', (err) => {
+			cb(err);
+		});
 
 	ngrok.stdout.on('data', function (data) {
 		var addr = data.toString().match(ready);
@@ -162,7 +165,7 @@ function _runTunnel(opts, cb) {
 	retry();
 }
 
-function authtoken(token, cb) {
+export function authtoken(token, cb) {
 	// 	cb = cb || noop;
 	// 	var a = spawn(
 	// 		opts.path || bin,
@@ -177,7 +180,7 @@ function authtoken(token, cb) {
 	// 	}
 }
 
-function disconnect(url, cb) {
+export function disconnect(url, cb) {
 	cb = cb || noop;
 	if (typeof url === 'function') {
 		cb = url;
@@ -212,7 +215,7 @@ function disconnect(url, cb) {
 		});
 }
 
-function kill(cb) {
+export function kill(cb) {
 	cb = cb || noop;
 	if (!ngrok) {
 		return cb();
@@ -225,10 +228,3 @@ function kill(cb) {
 	});
 	return ngrok.kill();
 }
-
-emitter.connect = connect;
-emitter.disconnect = disconnect;
-emitter.authtoken = authtoken;
-emitter.kill = kill;
-
-module.exports = emitter;

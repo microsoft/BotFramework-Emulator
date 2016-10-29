@@ -205,28 +205,9 @@
         padding-left: 4px;
         padding-right: 4px;
     }
-    .addressbar-botcreds-label {
-        display: block;
-        font-size: 13px;
-        margin-bottom: 8px;
-    }
     .addressbar-botcreds-input {
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 2px;
-        font-size: 15px;
         width: 242px;
         display: inline-block;
-    }
-    .addressbar-botcreds-savecreds input[type=checkbox] {
-        display: inline-block;
-    }
-    .addressbar-botcreds-savecreds-label-big {
-        font-weight: 500;
-        display: inline-block;
-    }
-    .addressbar-botcreds-savecreds-label-small {
-        color: #888;
     }
 
     .addressbar-botcreds-connect-button {
@@ -239,9 +220,59 @@
         margin-top: 24px;
     }
 
+/* appsettings-dialog */
+
+    .appsettings-dialog {
+        background: #fff;
+        color: black;
+        overflow: hidden;
+        padding: 24px 24px 24px 40px;
+        box-shadow: 0 1px 2px rgba(0,0,0,.2);
+        z-index: 9999;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        border: thin solid black;
+        transform: translate(-50%, -50%);
+        transition: all .2s;
+        text-align: left;
+        transition: opacity .2s ease;
+    }
+
+/* base classes */
+
+    .dialog-background {
+        background: black;
+        opacity: 0.5;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 9998;
+        transition: opacity .2s ease;
+    }
+
+    .invisible {
+        opacity: 0;
+    }
+
     .input-group {
         display: inline-block;
         margin-right: 16px;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+    .form-input {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 2px;
+        font-size: 15px;
     }
 
     .toolbar-button {
@@ -380,15 +411,3 @@
         color: red;
     }
 
-/* AppSettings */
-
-    .appsettings-dialog {
-        z-index: 99999;
-        background: red;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        border: 1px solid black;
-        transform: translate(-50%, -50%);
-        transition: all .2s;
-    }

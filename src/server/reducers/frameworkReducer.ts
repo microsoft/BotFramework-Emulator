@@ -7,6 +7,11 @@ export type FrameworkAction = {
     state: {
         port: number
     }
+} | {
+    type: 'Framework_SetNgrokPath',
+    state: {
+        path: string
+    }
 }
 
 export const frameworkReducer: Reducer<IFrameworkSettings> = (
@@ -16,6 +21,8 @@ export const frameworkReducer: Reducer<IFrameworkSettings> = (
     switch (action.type) {
         case 'Framework_SetPort':
             return Object.assign({}, state, { port: action.state.port });
+        case 'Framework_SetNgrokPath':
+            return Object.assign({}, state, { ngrokPath: action.state.path });
         default:
             return state
     }

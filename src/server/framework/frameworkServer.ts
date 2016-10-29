@@ -5,10 +5,11 @@ import { AttachmentsController } from './attachmentsController';
 import { BotStateController } from './botStateController';
 import { RestServer } from '../restServer';
 import { getStore, getSettings } from '../settings';
+import * as log from '../log';
 import * as Fs from 'fs';
-import * as Os from 'os';
 import * as path from 'path';
-var ngrok = require('./ngrok');
+import * as ngrok from './ngrok';
+
 
 /**
  * Communicates with the bot.
@@ -16,8 +17,8 @@ var ngrok = require('./ngrok');
 export class FrameworkServer extends RestServer {
 
     serviceUrl: string;
-
     inspectUrl: string;
+    ngrokPath: string;
 
     authentication = new BotFrameworkAuthentication();
 
@@ -38,29 +39,43 @@ export class FrameworkServer extends RestServer {
      */
     private configure() {
         const settings = getSettings();
+        let relaunchNgrok = false;
 
-        // TODO REMOVE THIS
-        if (!settings.framework.ngrokPath)
-            settings.framework.ngrokPath = `${process.env['USERPROFILE']}\\AppData\\Roaming\\npm\\node_modules\\ngrok\\bin\\ngrok` + (Os.platform() === 'win32' ? '.exe' : '');
-
+        // Did port change?
         if (this.port !== settings.framework.port) {
             console.log(`restarting ${this.server.name} because ${this.port} !== ${settings.framework.port}`);
             this.restart(settings.framework.port);
+            // Respawn ngrok when the port changes
+            relaunchNgrok = true;
+        }
+
+        // Did ngrok path change?
+        if (relaunchNgrok || this.ngrokPath !== settings.framework.ngrokPath) {
+            this.serviceUrl = `http://localhost:${this.port}`;
+            this.inspectUrl = null;
+            const prevNgrokPath = this.ngrokPath;
+            this.ngrokPath = settings.framework.ngrokPath;
             // if we have an ngrok path
-            if (settings.framework.ngrokPath) {
+            if (this.ngrokPath) {
                 // then make it so
-                ngrok.disconnect();
-                ngrok.connect({
-                    port: this.port,
-                    path: settings.framework.ngrokPath
-                }, (err, url: string, inspectPort: string) => {
-                    this.serviceUrl = url;
-                    this.inspectUrl = `http://127.0.0.1:${inspectPort}`;
-                });
-            }
-            else {
-                this.serviceUrl = `http://localhost:${this.port}`;
-                this.inspectUrl = null;
+                console.log(`'starting ngrok at ${this.ngrokPath}`);
+                const startNgrok = () => {
+                    ngrok.connect({
+                        port: this.port,
+                        path: this.ngrokPath
+                    }, (err, url: string, inspectPort: string) => {
+                        if (err) {
+                            console.log(`Failed to spawn ngrok: ${err.message || err.msg}`);
+                        } else {
+                            console.log('ngrok started');
+                            this.serviceUrl = url;
+                            this.inspectUrl = `http://127.0.0.1:${inspectPort}`;
+                        }
+                    });
+                    return true;
+                }
+                // Try to kill then respawn ngrok. If that fails, then try to spawn ngrok now (maybe it wasn't running).
+                ngrok.kill(startNgrok) || startNgrok();
             }
         }
     }
