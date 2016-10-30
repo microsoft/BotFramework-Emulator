@@ -1,7 +1,8 @@
 import * as Restify from 'restify';
+import * as log from './log';
+
 
 export class RestServer {
-
     // REVIEW: Can we get this from the Restify.server?
     port: number;
     serviceUrl: string;
@@ -30,7 +31,7 @@ export class RestServer {
         this.stop();
         this.port = port;
         return this.server.listen(this.port, () => {
-            console.log(`${this.server.name} listening on ${this.server.url}`);
+            log.info(`${this.server.name} listening on ${this.server.url}`);
         });
     }
 
