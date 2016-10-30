@@ -59,24 +59,27 @@ export class FrameworkServer extends RestServer {
                 // if we have an ngrok path
                 if (this.ngrokPath) {
                     // then make it so
-                    console.log(`'starting ngrok at ${this.ngrokPath}`);
+                    log.info(`starting ngrok at ${this.ngrokPath}`);
                     ngrok.connect({
                         port: this.port,
                         path: this.ngrokPath
                     }, (err, url: string, inspectPort: string) => {
                         if (err) {
-                            console.log(`Failed to spawn ngrok: ${err.message || err.msg}`);
+                            log.warn(`failed to start ngrok: ${err.message || err.msg}`);
                         } else {
-                            console.log('ngrok started');
+                            log.info('ngrok started');
                             this.serviceUrl = url;
                             this.inspectUrl = `http://127.0.0.1:${inspectPort}`;
                         }
                     });
-                    return true;
                 }
             }
             // Try to kill then respawn ngrok. If that fails, then try to spawn ngrok now (maybe it wasn't running).
-            ngrok.kill(startNgrok) || startNgrok();
+            ngrok.kill(() => {
+                log.info('ngrok stopped');
+                startNgrok();
+                return true;
+            }) || startNgrok();
         }
     }
 }
