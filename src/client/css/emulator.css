@@ -298,9 +298,10 @@
         height: 42px;
         left: 0;
         letter-spacing: 0.5px;
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 300;
-        padding: 10px 15px 0 15px;
+        line-height: 42px;
+        padding-left: 8px;
         position: absolute;
         right: 0;
         top: 0;
@@ -361,9 +362,10 @@
         height: 42px;
         left: 0;
         letter-spacing: 0.5px;
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 300;
-        padding: 10px 15px 0 15px;
+        line-height: 42px;
+        padding-left: 8px;
         position: absolute;
         right: 0;
         top: 0;

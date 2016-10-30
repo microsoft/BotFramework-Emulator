@@ -14,17 +14,21 @@ import { IUser } from '../types/userTypes';
 
 export class MainView extends React.Component<{}, {}> {
     storeUnsubscribe: any;
-    prevSettings = settingsDefault;
+    cache: {
+        activeBot?: string,
+        conversationId?: string,
+        userId?: string
+    } = {};
     reuseKey: number = 0;
 
     shouldUpdate(newSettings: ISettings): boolean {
-        if (newSettings.serverSettings.activeBot != this.prevSettings.serverSettings.activeBot) {
+        if (newSettings.serverSettings.activeBot && newSettings.serverSettings.activeBot.length && newSettings.serverSettings.activeBot != this.cache.activeBot) {
             return true;
         }
-        if (newSettings.conversation.conversationId != this.prevSettings.conversation.conversationId) {
+        if (newSettings.conversation.conversationId && newSettings.conversation.conversationId.length && newSettings.conversation.conversationId != this.cache.conversationId) {
             return true;
         }
-        if (newSettings.serverSettings.users.currentUserId != this.prevSettings.serverSettings.users.currentUserId) {
+        if (newSettings.serverSettings.users.currentUserId && newSettings.serverSettings.users.currentUserId.length && newSettings.serverSettings.users.currentUserId != this.cache.userId) {
             return true;
         }
         return false;
@@ -34,9 +38,15 @@ export class MainView extends React.Component<{}, {}> {
         this.storeUnsubscribe = getStore().subscribe(() => {
             const newSettings = getSettings();
             if (this.shouldUpdate(newSettings)) {
+                console.log(`updating mainview because: ${newSettings.serverSettings.activeBot}, ${newSettings.conversation.conversationId}, ${newSettings.serverSettings.users.currentUserId}`);
+                console.log(`was: ${this.cache.activeBot}, ${this.cache.conversationId}, ${this.cache.userId}`);
                 this.forceUpdate();
             }
-            this.prevSettings = Object.assign({}, newSettings);
+            this.cache = {
+                activeBot: newSettings.serverSettings.activeBot,
+                conversationId: newSettings.conversation.conversationId,
+                userId: newSettings.serverSettings.users.currentUserId
+            }
         });
     }
 
@@ -44,15 +54,13 @@ export class MainView extends React.Component<{}, {}> {
         this.storeUnsubscribe();
     }
 
-    getActiveBot(): string {
-        const settings = getSettings();
+    getActiveBot(settings: ISettings): string {
         if (settings.serverSettings.activeBot && settings.serverSettings.activeBot.length)
             return settings.serverSettings.activeBot;
         return null;
     }
 
-    getCurrentUser(): IUser {
-        const serverSettings = getSettings().serverSettings;
+    getCurrentUser(serverSettings: ServerSettings): IUser {
         if (serverSettings && serverSettings.users && serverSettings.users.currentUserId) {
             let user: IUser = serverSettings.users.usersById[serverSettings.users.currentUserId];
             if (user && user.id && user.id.length)
@@ -66,10 +74,10 @@ export class MainView extends React.Component<{}, {}> {
     }
 
     botChatComponent() {
-        const botId = this.getActiveBot();
-        const user = this.getCurrentUser();
+        const settings = getSettings();
+        const botId = this.getActiveBot(settings);
+        const user = this.getCurrentUser(settings.serverSettings);
         if (user && botId) {
-            const settings = getSettings();
             const props: BotChat.ChatProps = {
                 botConnection: new BotChat.DirectLine(
                     settings.conversation.conversationId,
@@ -104,13 +112,13 @@ export class MainView extends React.Component<{}, {}> {
                             <Splitter split="horizontal" primary="second" defaultSize={settings.layout.horizSplit} onChange={(size) => LayoutActions.rememberHorizontalSplitter(size)}>
                                 <div className="wc-chatview-panel">
                                     <div className="wc-inspectorview-header">
-                                        <span>Inspector</span>
+                                        <span>INSPECTOR</span>
                                     </div>
                                     <InspectorView />
                                 </div>
                                 <div className="wc-app-logview-container">
                                     <div className="wc-logview-header">
-                                        <span>Log</span>
+                                        <span>LOG</span>
                                     </div>
                                     <LogView />
                                 </div>
