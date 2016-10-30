@@ -72,6 +72,7 @@
     "mkdirp": "^0.5.1",
     "msbotchat": "git+https://github.com/fuselabs/botchat#emulator",
     "react": "^15.3.2",
+    "react-formattedtext": "git+https://github.com/fuselabs/react-formattedtext",
     "react-dom": "^15.3.2",
     "react-split-pane": "^0.1.51",
     "redux": "^3.6.0",
