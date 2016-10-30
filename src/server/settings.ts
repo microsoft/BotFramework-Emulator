@@ -9,6 +9,7 @@ import { usersReducer } from './reducers/usersReducer';
 import { frameworkDefault } from '../types/serverSettingsTypes';
 import { loadSettings, saveSettings } from '../utils';
 import { IBot } from '../types/botTypes';
+import { logReady } from './log';
 import {
     IDirectLineSettings,
     IFrameworkSettings,
@@ -66,8 +67,21 @@ export const getSettings = () => {
 }
 
 export const startup = () => {
-    // Guard against calling getSettings before startup.
-    started = true;
+
+    Electron.ipcMain.on('logStarted', (event, ...args) => {
+        logReady(true);
+    });
+    Electron.ipcMain.on('logStopped', (event, ...args) => {
+        logReady(false);
+    });
+    // Listen for settings change requests from the client.
+    Electron.ipcMain.on('serverChangeSetting', (event, ...args) => {
+        // Apply change requests to the settings store.
+        getStore().dispatch({
+            type: args[0],
+            state: args[1]
+        });
+    });
 
     // Some defaults must be computed.
     if (Os.platform() === 'win32') {
@@ -78,6 +92,8 @@ export const startup = () => {
         // TODO
     }
 
+    // Guard against calling getSettings before startup.
+    started = true;
     // When changes to settings are made, save to disk.
     let saveTimerSet = false;
     getStore().subscribe(() => {
@@ -88,15 +104,6 @@ export const startup = () => {
                 saveTimerSet = false;
             }, 1000);
         }
-    });
-
-    // Listen for settings change requests from the client.
-    Electron.ipcMain.on('serverChangeSetting', (event, ...args) => {
-        // Apply change requests to the settings store.
-        getStore().dispatch({
-            type: args[0],
-            state: args[1]
-        });
     });
 }
 

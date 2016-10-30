@@ -97,6 +97,7 @@
     }
     .addressbar-textbox input[type=text] {
         background: #3A96DD;
+        font-weight: 300;
         color: white;
         border: none;
         height: 100%;
@@ -153,6 +154,7 @@
         height: 32px;
         margin-left: 32px;
         margin-right: 32px;
+        font-weight: 300;
     }
 
     .addressbar-searchresult:hover {
@@ -266,6 +268,7 @@
         display: block;
         font-size: 13px;
         margin-bottom: 8px;
+        font-weight: 300;
     }
 
     .form-input {
@@ -296,6 +299,7 @@
         left: 0;
         letter-spacing: 0.5px;
         font-size: 14px;
+        font-weight: 300;
         padding: 10px 15px 0 15px;
         position: absolute;
         right: 0;
@@ -358,6 +362,7 @@
         left: 0;
         letter-spacing: 0.5px;
         font-size: 14px;
+        font-weight: 300;
         padding: 10px 15px 0 15px;
         position: absolute;
         right: 0;

@@ -1,3 +1,4 @@
+import * as Electron from 'electron';
 import * as React from 'react';
 import { Reducer, Unsubscribe } from 'redux';
 import { Subscription, Observable, Subject } from '@reactivex/rxjs';
@@ -108,13 +109,15 @@ export class LogView extends React.Component<{}, ILogViewState> {
                 }
                 this.setState(this.state);
             }
-        )
+        );
+        Electron.ipcRenderer.send('logStarted');
     }
 
     componentWillUnmount() {
         this.autoscrollSubscription.unsubscribe();
         this.logSubscription.unsubscribe();
         this.storeUnsubscribe();
+        Electron.ipcRenderer.send('logStopped');
     }
 
     componentDidUpdate(prevProps: {}, prevState: ILogViewState) {

@@ -1,5 +1,8 @@
 import { mainWindow } from './main';
 
+export const logReady = (isReady: boolean) => _logReady = isReady;
+let _logReady = false;
+
 interface IQueuedMessage {
     method: string,
     message: any,
@@ -9,7 +12,7 @@ interface IQueuedMessage {
 let queuedMessages:IQueuedMessage[] = [];
 let queueTimerSet = false;
 
-const canLogMessages = () => mainWindow && mainWindow.webContents;
+const canLogMessages = () => _logReady;
 
 const setQueueTimer = () => {
     if (!queueTimerSet) {

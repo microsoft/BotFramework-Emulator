@@ -7,27 +7,17 @@ import * as log from '../log';
 import { AddressBarOperators } from './addressBarOperators';
 
 
-export interface IAppSettingsProps {
-    show?: boolean
-}
-
-interface IAppSettingsState {
-    show?: boolean
-}
-
 interface IAppSettings {
     port?: number,
     ngrokPath?: string
 }
 
-export class AppSettingsDialog extends React.Component<IAppSettingsProps, IAppSettingsState> {
+export class AppSettingsDialog extends React.Component<{}, {}> {
+    storeUnsubscribe: any;
+    showing: boolean;
 
-    constructor(props: IAppSettingsProps) {
-        super(props)
-        this.state = { show: props.show };
-    }
-
-    appSettings: IAppSettings = {};
+    portRef: any;
+    ngrokPathRef: any;
 
     pageClicked = (ev: Event) => {
         let target = ev.srcElement;
@@ -44,49 +34,35 @@ export class AppSettingsDialog extends React.Component<IAppSettingsProps, IAppSe
     }
 
     onAccept = () => {
-        ServerSettingsActions.remote_setFrameworkPort(this.appSettings.port);
-        ServerSettingsActions.remote_setNgrokPath(this.appSettings.ngrokPath);
-        this.setState({ show: false });
+        ServerSettingsActions.remote_setFrameworkPort(Number(this.portRef.value));
+        ServerSettingsActions.remote_setNgrokPath(this.ngrokPathRef.value);
+        AddressBarActions.hideAppSettings();
     }
 
     onClose = () => {
-        this.setState({ show: false });
-    }
-
-    frameworkPortChanged = (text: string) => {
-        this.appSettings.port = Number(text);
-    }
-
-    ngrokPathChanged = (text: string) => {
-        this.appSettings.ngrokPath = text;
+        AddressBarActions.hideAppSettings();
     }
 
     componentWillMount() {
         window.addEventListener('click', (e) => this.pageClicked(e));
+        this.storeUnsubscribe = getStore().subscribe(() => {
+            const newSettings = getSettings();
+            if (newSettings.addressBar.showAppSettings != this.showing) {
+                this.showing = newSettings.addressBar.showAppSettings;
+                this.forceUpdate();
+            }
+        });
     }
 
     componentWillUnmount() {
         window.removeEventListener('click', (e) => this.pageClicked(e));
-    }
-
-    componentWillReceiveProps(nextProps: IAppSettingsProps) {
-        this.setState({show: nextProps.show});
-        if (nextProps.show) {
-            const serverSettings = getSettings().serverSettings;
-
-            this.appSettings.port = serverSettings.framework.port;
-            this.appSettings.ngrokPath = serverSettings.framework.ngrokPath;
-
-            this.appSettings = {
-                port: serverSettings.framework.port,
-                ngrokPath: serverSettings.framework.ngrokPath
-            }
-        }
+        this.storeUnsubscribe();
     }
 
     render() {
-        if (!this.state.show) return null;
         const settings = getSettings();
+        if (!settings.addressBar.showAppSettings) return null;
+        const serverSettings = getSettings().serverSettings;
         return (
             <div>
                 <div className="dialog-background">
@@ -98,9 +74,9 @@ export class AppSettingsDialog extends React.Component<IAppSettingsProps, IAppSe
                         </label>
                         <input
                             type="text"
+                            ref={ ref => this.portRef = ref }
                             className="form-input appsettings-port-input"
-                            defaultValue={`${settings.serverSettings.framework.port}`}
-                            onChange={e => this.frameworkPortChanged((e.target as any).value)} />
+                            defaultValue={`${serverSettings.framework.port || 9002}`} />
                     </div>
                     <div className="input-group">
                         <label className="form-label">
@@ -108,9 +84,9 @@ export class AppSettingsDialog extends React.Component<IAppSettingsProps, IAppSe
                         </label>
                         <input
                             type="text"
+                            ref={ ref => this.ngrokPathRef = ref }
                             className="form-input appsettings-url-input"
-                            defaultValue={`${settings.serverSettings.framework.ngrokPath}`}
-                            onChange={e => this.ngrokPathChanged((e.target as any).value)} />
+                            defaultValue={`${serverSettings.framework.ngrokPath || ''}`} />
                     </div>
                     <p/><a href="#" onClick={() => this.onAccept()}>accept</a>
                     <p/><a href="#" onClick={() => this.onClose()}>close</a>
