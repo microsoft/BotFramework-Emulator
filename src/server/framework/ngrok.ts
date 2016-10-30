@@ -15,6 +15,10 @@ var noop = function () { };
 var emitter = new Emitter().on('error', noop);
 var ngrok, api, tunnels = {};
 
+export function running() {
+	return ngrok && ngrok.stdout;
+}
+
 export function connect(opts, cb) {
 
 	if (typeof opts === 'function') {

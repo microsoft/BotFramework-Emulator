@@ -59,7 +59,7 @@ export class FrameworkServer extends RestServer {
                 // if we have an ngrok path
                 if (this.ngrokPath) {
                     // then make it so
-                    log.info(`starting ngrok at ${this.ngrokPath}`);
+                    log.info(`starting ngrok: "${this.ngrokPath}"`);
                     ngrok.connect({
                         port: this.port,
                         path: this.ngrokPath
@@ -75,11 +75,15 @@ export class FrameworkServer extends RestServer {
                 }
             }
             // Try to kill then respawn ngrok. If that fails, then try to spawn ngrok now (maybe it wasn't running).
-            ngrok.kill(() => {
-                log.info('ngrok stopped');
+            if (ngrok.running()) {
+                ngrok.kill(() => {
+                    log.info('ngrok stopped');
+                    startNgrok();
+                    return true;
+                }) || startNgrok();
+            } else {
                 startNgrok();
-                return true;
-            }) || startNgrok();
+            }
         }
     }
 }

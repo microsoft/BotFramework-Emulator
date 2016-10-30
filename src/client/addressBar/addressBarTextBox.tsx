@@ -77,7 +77,7 @@ export class AddressBarTextBox extends React.Component<{}, {}> {
                     onKeyPress={e => this.onKeyPress(e)}
                     onKeyDown={e => this.onKeyDown(e)}
                     onFocus={() => this.onFocus()}
-                    placeholder="Enter your entpoint URL" />
+                    placeholder="Enter your endpoint URL" />
             </div>
         );
     }

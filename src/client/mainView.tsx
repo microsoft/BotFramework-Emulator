@@ -15,6 +15,7 @@ import { IUser } from '../types/userTypes';
 export class MainView extends React.Component<{}, {}> {
     storeUnsubscribe: any;
     prevSettings = settingsDefault;
+    reuseKey: number = 0;
 
     shouldUpdate(newSettings: ISettings): boolean {
         if (newSettings.serverSettings.activeBot != this.prevSettings.serverSettings.activeBot) {
@@ -81,11 +82,10 @@ export class MainView extends React.Component<{}, {}> {
                 user
             }
             InspectorActions.clear();
-            LogActions.clear();
             let srvSettings = new ServerSettings(settings.serverSettings);
             log.info(`Starting conversation with ${srvSettings.botById(srvSettings.activeBot).botUrl}`);
             // We always want a new component instance when these parameters change, so gen a random key each time.
-            return <BotChat.Chat key={Math.random()} {...props} />
+            return <BotChat.Chat key={this.reuseKey++} {...props} />
         }
         return null;
     }
