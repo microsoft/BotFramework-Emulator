@@ -155,19 +155,19 @@ export const startup = () => {
         log.log(args[0], ...args.slice(1));
     });
     Electron.ipcRenderer.on('log-info', (event, ...args) => {
-        log.log(args[0], ...args.slice(1));
+        log.info(args[0], ...args.slice(1));
     });
     Electron.ipcRenderer.on('log-trace', (event, ...args) => {
-        log.log(args[0], ...args.slice(1));
+        log.trace(args[0], ...args.slice(1));
     });
     Electron.ipcRenderer.on('log-debug', (event, ...args) => {
-        log.log(args[0], ...args.slice(1));
+        log.debug(args[0], ...args.slice(1));
     });
     Electron.ipcRenderer.on('log-warn', (event, ...args) => {
-        log.log(args[0], ...args.slice(1));
+        log.warn(args[0], ...args.slice(1));
     });
     Electron.ipcRenderer.on('log-error', (event, ...args) => {
-        log.log(args[0], ...args.slice(1));
+        log.error(args[0], ...args.slice(1));
     });
 
     // Let the server know we're done starting up. In response, it will send us it's current settings (bot list and such).
