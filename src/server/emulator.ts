@@ -17,11 +17,13 @@ export class Emulator {
 
     constructor() {
         // When the client notifies us it has started up, send it the configuration.
+        // Note: We're intentionally sending and ISettings here, not a Settings. This
+        // is why we're getting the value from getStore().getState().
         Electron.ipcMain.on('clientStarted', () => {
             this.mainWindow = mainWindow;
             this.send('serverSettings', Settings.getStore().getState());
         });
-        Settings.getStore().subscribe(() => {
+        Settings.addSettingsListener(() => {
             this.send('serverSettings', Settings.getStore().getState());
         });
     }

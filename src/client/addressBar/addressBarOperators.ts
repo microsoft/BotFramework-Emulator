@@ -1,4 +1,4 @@
-import { getStore, getSettings, ISettings } from '../settings';
+import { getSettings, ISettings, addSettingsListener } from '../settings';
 import { Settings as ServerSettings } from '../../types/serverSettingsTypes';
 import { AddressBarActions, ConversationActions, ServerSettingsActions } from '../reducers';
 import { IBot, newBot } from '../../types/botTypes';

@@ -4,7 +4,7 @@ import { IUser } from '../types/userTypes';
 import { IChannelAccount, IConversationAccount } from '../types/accountTypes';
 import { IActivity, IConversationUpdateActivity } from '../types/activityTypes';
 import { uniqueId } from '../utils';
-import { getStore, getSettings, authenticationSettings } from './settings';
+import { getSettings, authenticationSettings, addSettingsListener } from './settings';
 import { Settings } from '../types/serverSettingsTypes';
 import * as jwt from 'jsonwebtoken';
 import * as oid from './OpenIdMetadata';
@@ -266,18 +266,17 @@ class ConversationSet {
 export class ConversationManager {
     conversationSets: ConversationSet[] = [];
     constructor() {
-        getStore().subscribe(() => {
-            this.configure();
+        addSettingsListener((settings: Settings) => {
+            this.configure(settings);
         });
-        this.configure();
+        this.configure(getSettings());
     }
 
     /**
      * Applies configuration changes.
      */
-    private configure() {
+    private configure(settings: Settings) {
         // Remove conversations that reference nonexistent bots.
-        const settings = getSettings();
         const deadBotIds = this.conversationSets.filter(set => !settings.bots.find(bot => bot.botId === set.botId)).map(conversation => conversation.botId);
         this.conversationSets = this.conversationSets.filter(set => !deadBotIds.find(botId => set.botId === botId));
     }

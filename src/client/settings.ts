@@ -1,4 +1,4 @@
-import { Store, createStore, combineReducers, Reducer } from 'redux';
+import { Store, createStore, combineReducers, Reducer, Action } from 'redux';
 import * as Electron from 'electron';
 import { ISettings as IServerSettings, Settings as ServerSettings } from '../types/serverSettingsTypes';
 import { loadSettings, saveSettings } from '../utils';
@@ -112,14 +112,13 @@ export const settingsDefault: ISettings = {
     serverSettings: new ServerSettings()
 }
 
-export const getStore = (): Store<ISettings> => {
-    let global = Function('return this')();
-    if (!global['emulator-client'])
-        global['emulator-client'] = {};
-    if (!global['emulator-client'].store) {
+let store: Store<ISettings>;
+
+const getStore = (): Store<ISettings> => {
+    if (!store) {
        // Create the settings store with initial settings from disk.
         const initialSettings = loadSettings('client.json', settingsDefault);
-        global['emulator-client'].store = createStore(combineReducers<ISettings>({
+        store = createStore(combineReducers<ISettings>({
             layout: layoutReducer,
             addressBar: addressBarReducer,
             conversation: conversationReducer,
@@ -128,15 +127,40 @@ export const getStore = (): Store<ISettings> => {
             serverSettings: serverSettingsReducer
         }), initialSettings);
     }
-    return global['emulator-client'].store;
+    return store;
 }
 
+export const dispatch = <T extends Action>(obj: any) => getStore().dispatch<T>(obj);
+
 export const getSettings = () => new Settings(getStore().getState());
+
+export type SettingsActor = (settings: Settings) => void;
+
+let acting = false;
+let actors: SettingsActor[] = [];
+
+export const addSettingsListener = (actor: SettingsActor) => {
+    actors.push(actor);
+    var isSubscribed = true;
+    return function unsubscribe() {
+        if (!isSubscribed) {
+            return;
+        }
+        isSubscribed = false;
+        let index = actors.indexOf(actor);
+        actors.splice(index, 1);
+    }
+}
 
 export const startup = () => {
     // When changes to settings are made, save to disk.
     let saveTimerSet = false;
     getStore().subscribe(() => {
+        if (!acting) {
+            acting = true;
+            actors.forEach(actor => actor(getSettings()));
+            acting = false;
+        }
         if (!saveTimerSet) {
             saveTimerSet = true;
             setTimeout(() => {
