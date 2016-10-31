@@ -26,7 +26,8 @@ gulp.task('build-app', ['clean'], function () {
 gulp.task('copy-site', ['build-app'], function () {
     return gulp.src([
         './src/**/*.html',
-        './src/**/*.css'])
+        './src/**/*.css',
+        './src/ThirdPartyLicenses.txt'])
         .pipe(gulp.dest('dist/'));
 });
 

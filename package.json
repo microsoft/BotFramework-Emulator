@@ -60,7 +60,8 @@
     "spectron": "^3.4.0",
     "typescript": "^2.0.3",
     "vinyl": "^2.0.0",
-    "vinyl-fs": "^2.4.3"
+    "vinyl-fs": "^2.4.3",
+    "license-list": "^0.1.3"
   },
   "dependencies": {
     "@reactivex/rxjs": "^5.0.0-rc.1",
