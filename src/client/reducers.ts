@@ -8,7 +8,7 @@ import {
     Settings as ServerSettings
 } from '../types/serverSettingsTypes';
 import {
-    getStore,
+    dispatch,
     ISettings,
     layoutDefault,
     addressBarDefault,
@@ -89,7 +89,7 @@ type ServerSettingsAction = {
 
 export class LayoutActions {
     static rememberHorizontalSplitter(size: number) {
-        getStore().dispatch<LayoutAction>({
+        dispatch<LayoutAction>({
             type: 'Splitter_RememberHorizontal',
             state: {
                 size
@@ -97,7 +97,7 @@ export class LayoutActions {
         });
     }
     static rememberVerticalSplitter(size: number) {
-        getStore().dispatch<LayoutAction>({
+        dispatch<LayoutAction>({
             type: 'Splitter_RememberVertical',
             state: {
                 size
@@ -108,7 +108,7 @@ export class LayoutActions {
 
 export class AddressBarActions {
     static setText(text: string) {
-        getStore().dispatch<AddressBarAction>({
+        dispatch<AddressBarAction>({
             type: 'AddressBar_SetText',
             state: {
                 text
@@ -116,7 +116,7 @@ export class AddressBarActions {
         });
     }
     static setMatchingBots(matchingBots: IBot[]) {
-        getStore().dispatch<AddressBarAction>({
+        dispatch<AddressBarAction>({
             type: 'AddressBar_SetMatchingBots',
             state: {
                 matchingBots
@@ -124,7 +124,7 @@ export class AddressBarActions {
         });
     }
     static selectBot(bot: IBot) {
-        getStore().dispatch<AddressBarAction>({
+        dispatch<AddressBarAction>({
             type: 'AddressBar_SelectBot',
             state: {
                 bot
@@ -132,12 +132,12 @@ export class AddressBarActions {
         });
     }
     static showAppSettings() {
-        getStore().dispatch<AddressBarAction>({
+        dispatch<AddressBarAction>({
             type: 'AddressBar_ShowAppSettings'
         })
     }
     static hideAppSettings() {
-        getStore().dispatch<AddressBarAction>({
+        dispatch<AddressBarAction>({
             type: 'AddressBar_HideAppSettings'
         })
     }
@@ -145,7 +145,7 @@ export class AddressBarActions {
 
 export class ConversationActions {
     static newConversation() {
-        getStore().dispatch<ConversationAction>({
+        dispatch<ConversationAction>({
             type: 'Conversation_SetConversationId',
             state: {
                 conversationId: uniqueId()
@@ -153,7 +153,7 @@ export class ConversationActions {
         });
     }
     static joinConversation(conversationId: string) {
-        getStore().dispatch<ConversationAction>({
+        dispatch<ConversationAction>({
             type: 'Conversation_SetConversationId',
             state: {
                 conversationId
@@ -164,7 +164,7 @@ export class ConversationActions {
 
 export class LogActions {
     static setAutoscroll(autoscroll: boolean) {
-        getStore().dispatch<LogAction>({
+        dispatch<LogAction>({
             type: 'Log_SetAutoscroll',
             state: {
                 autoscroll
@@ -178,7 +178,7 @@ export class LogActions {
 
 export class InspectorActions {
     static setSelectedObject(selectedObject: any) {
-        getStore().dispatch<InspectorAction>({
+        dispatch<InspectorAction>({
             type: 'Inspector_SetSelectedObject',
             state: {
                 selectedObject
@@ -186,7 +186,7 @@ export class InspectorActions {
         });
     }
     static clear() {
-        getStore().dispatch<InspectorAction>({
+        dispatch<InspectorAction>({
             type: 'Inspector_Clear'
         });
     }
@@ -194,7 +194,7 @@ export class InspectorActions {
 
 export class ServerSettingsActions {
     static set(value: ServerSettings) {
-        getStore().dispatch<ServerSettingsAction>({
+        dispatch<ServerSettingsAction>({
             type: 'ServerSettings_Set',
             state: {
                 value
@@ -218,6 +218,12 @@ export class ServerSettingsActions {
     }
     static remote_setNgrokPath(path: string) {
         serverChangeSetting('Framework_SetNgrokPath', { path });
+    }
+    static remote_setFrameworkServerSettings(state: {
+        port: number,
+        ngrokPath: string
+    }) {
+        serverChangeSetting('Framework_Set', state);
     }
 }
 

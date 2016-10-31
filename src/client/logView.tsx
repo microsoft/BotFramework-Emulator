@@ -2,7 +2,7 @@ import * as Electron from 'electron';
 import * as React from 'react';
 import { Reducer, Unsubscribe } from 'redux';
 import { Subscription, Observable, Subject } from '@reactivex/rxjs';
-import { getStore, getSettings } from './settings';
+import { getSettings, addSettingsListener } from './settings';
 import { LogActions } from './reducers';
 
 export enum Severity {
@@ -80,7 +80,7 @@ export class LogView extends React.Component<{}, ILogViewState> {
     scrollMe: Element;
     autoscrollSubscription: Subscription;
     logSubscription: Subscription;
-    storeUnsubscribe: Unsubscribe;
+    settingsUnsubscribe: Unsubscribe;
 
     constructor() {
         super();
@@ -88,7 +88,7 @@ export class LogView extends React.Component<{}, ILogViewState> {
     }
 
     componentWillMount() {
-        this.storeUnsubscribe = getStore().subscribe(() =>
+        this.settingsUnsubscribe = addSettingsListener(() =>
             this.forceUpdate()
         );
     }
@@ -116,7 +116,7 @@ export class LogView extends React.Component<{}, ILogViewState> {
     componentWillUnmount() {
         this.autoscrollSubscription.unsubscribe();
         this.logSubscription.unsubscribe();
-        this.storeUnsubscribe();
+        this.settingsUnsubscribe();
         Electron.ipcRenderer.send('logStopped');
     }
 

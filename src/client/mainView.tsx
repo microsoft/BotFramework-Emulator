@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as Splitter from 'react-split-pane';
 import * as BotChat from 'msbotchat';
 import * as log from './log';
-import { getStore, getSettings, settingsDefault, ISettings } from './settings';
+import { getSettings, settingsDefault, Settings, addSettingsListener } from './settings';
 import { LayoutActions, InspectorActions, LogActions } from './reducers';
 import { Settings as ServerSettings } from '../types/serverSettingsTypes';
 import { AddressBar } from './addressBar/addressBar';
@@ -13,7 +13,7 @@ import { IUser } from '../types/userTypes';
 
 
 export class MainView extends React.Component<{}, {}> {
-    storeUnsubscribe: any;
+    settingsUnsubscribe: any;
     cache: {
         activeBot?: string,
         conversationId?: string,
@@ -21,7 +21,7 @@ export class MainView extends React.Component<{}, {}> {
     } = {};
     reuseKey: number = 0;
 
-    shouldUpdate(newSettings: ISettings): boolean {
+    shouldUpdate(newSettings: Settings): boolean {
         if (newSettings.serverSettings.activeBot && newSettings.serverSettings.activeBot.length && newSettings.serverSettings.activeBot != this.cache.activeBot) {
             return true;
         }
@@ -35,26 +35,26 @@ export class MainView extends React.Component<{}, {}> {
     }
 
     componentWillMount() {
-        this.storeUnsubscribe = getStore().subscribe(() => {
-            const newSettings = getSettings();
-            if (this.shouldUpdate(newSettings)) {
-                console.log(`updating mainview because: ${newSettings.serverSettings.activeBot}, ${newSettings.conversation.conversationId}, ${newSettings.serverSettings.users.currentUserId}`);
+        this.settingsUnsubscribe = addSettingsListener((settings: Settings) => {
+            if (this.shouldUpdate(settings)) {
+                console.log(`updating mainview because: ${settings.serverSettings.activeBot}, ${settings.conversation.conversationId}, ${settings.serverSettings.users.currentUserId}`);
                 console.log(`was: ${this.cache.activeBot}, ${this.cache.conversationId}, ${this.cache.userId}`);
+                this.reuseKey++;
                 this.forceUpdate();
             }
             this.cache = {
-                activeBot: newSettings.serverSettings.activeBot,
-                conversationId: newSettings.conversation.conversationId,
-                userId: newSettings.serverSettings.users.currentUserId
+                activeBot: settings.serverSettings.activeBot,
+                conversationId: settings.conversation.conversationId,
+                userId: settings.serverSettings.users.currentUserId
             }
         });
     }
 
     componentWillUnmount() {
-        this.storeUnsubscribe();
+        this.settingsUnsubscribe();
     }
 
-    getActiveBot(settings: ISettings): string {
+    getActiveBot(settings: Settings): string {
         if (settings.serverSettings.activeBot && settings.serverSettings.activeBot.length)
             return settings.serverSettings.activeBot;
         return null;
@@ -91,9 +91,8 @@ export class MainView extends React.Component<{}, {}> {
             }
             InspectorActions.clear();
             let srvSettings = new ServerSettings(settings.serverSettings);
-            log.info(`Starting conversation with ${srvSettings.botById(srvSettings.activeBot).botUrl}`);
             // We always want a new component instance when these parameters change, so gen a random key each time.
-            return <BotChat.Chat key={this.reuseKey++} {...props} />
+            return <BotChat.Chat key={this.reuseKey} {...props} />
         }
         return null;
     }

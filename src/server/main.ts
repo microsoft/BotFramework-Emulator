@@ -1,6 +1,6 @@
 import * as Electron from 'electron';
 import { Emulator } from './emulator';
-import { getStore, getSettings } from './settings';
+import { getSettings, dispatch } from './settings';
 import { WindowStateAction } from './reducers/windowStateReducer';
 
 
@@ -24,7 +24,7 @@ const createMainWindow = () => {
 
     mainWindow.on('resize', () => {
         const bounds = mainWindow.getBounds();
-        getStore().dispatch<WindowStateAction>({
+        dispatch<WindowStateAction>({
             type: 'Window_RememberBounds',
             state: {
                 width: bounds.width,
@@ -36,7 +36,7 @@ const createMainWindow = () => {
     });
     mainWindow.on('move', () => {
         const bounds = mainWindow.getBounds();
-        getStore().dispatch<WindowStateAction>({
+        dispatch<WindowStateAction>({
             type: 'Window_RememberBounds',
             state: {
                 width: bounds.width,

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { getStore, getSettings, ISettings } from '../settings';
+import { getSettings, ISettings, addSettingsListener } from '../settings';
 import { Settings as ServerSettings } from '../../types/serverSettingsTypes';
 import { AddressBarActions, ConversationActions, ServerSettingsActions } from '../reducers';
 import { IBot, newBot } from '../../types/botTypes';
@@ -8,16 +8,16 @@ import { AddressBarOperators } from './addressBarOperators';
 
 
 export class AddressBarSearch extends React.Component<{}, {}> {
-    storeUnsubscribe: any;
+    settingsUnsubscribe: any;
 
     componentWillMount() {
-        this.storeUnsubscribe = getStore().subscribe(() => {
+        this.settingsUnsubscribe = addSettingsListener(() => {
             this.forceUpdate();
         });
     }
 
     componentWillUnmount() {
-        this.storeUnsubscribe();
+        this.settingsUnsubscribe();
     }
 
     searchResultComponents() {

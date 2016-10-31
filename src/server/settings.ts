@@ -1,6 +1,6 @@
 import * as Electron from 'electron';
 import * as Os from 'os';
-import { Store, createStore, combineReducers, Reducer } from 'redux';
+import { Store, Reducer, Dispatch, createStore, combineReducers, Action } from 'redux';
 import { directLineReducer } from './reducers/directLineReducer';
 import { frameworkReducer } from './reducers/frameworkReducer';
 import { botsReducer, activeBotReducer } from './reducers/botReducer';
@@ -41,16 +41,14 @@ export class PersistentSettings implements IPersistentSettings {
 }
 
 let started = false;
+let store: Store<ISettings>;
 
 export const getStore = (): Store<ISettings> => {
     console.assert(started, 'getStore() called before startup!');
-    let global = Function('return this')();
-    if (!global['emulator-server'])
-        global['emulator-server'] = {};
-    if (!global['emulator-server'].store) {
+    if (!store) {
         // Create the settings store with initial settings from disk.
         const initialSettings = loadSettings('server.json', settingsDefault);
-        global['emulator-server'].store = createStore(combineReducers<ISettings>({
+        store = createStore(combineReducers<ISettings>({
             directLine: directLineReducer,
             framework: frameworkReducer,
             bots: botsReducer,
@@ -59,15 +57,35 @@ export const getStore = (): Store<ISettings> => {
             users: usersReducer
         }), initialSettings);
     }
-    return global['emulator-server'].store;
+    return store;
 }
+
+export const dispatch = <T extends Action>(obj: any) => getStore().dispatch<T>(obj);
 
 export const getSettings = () => {
     return new Settings(getStore().getState());
 }
 
-export const startup = () => {
+export type SettingsActor = (settings: Settings) => void;
 
+let acting = false;
+let actors: SettingsActor[] = [];
+
+export const addSettingsListener = (actor: SettingsActor) => {
+    actors.push(actor);
+    var isSubscribed = true;
+    return function unsubscribe() {
+        if (!isSubscribed) {
+            return;
+        }
+        isSubscribed = false;
+        let index = actors.indexOf(actor);
+        actors.splice(index, 1);
+    }
+}
+
+
+export const startup = () => {
     Electron.ipcMain.on('logStarted', (event, ...args) => {
         logReady(true);
     });
@@ -97,6 +115,11 @@ export const startup = () => {
     // When changes to settings are made, save to disk.
     let saveTimerSet = false;
     getStore().subscribe(() => {
+        if (!acting) {
+            acting = true;
+            actors.forEach(actor => actor(getSettings()));
+            acting = false;
+        }
         if (!saveTimerSet) {
             saveTimerSet = true;
             setTimeout(() => {

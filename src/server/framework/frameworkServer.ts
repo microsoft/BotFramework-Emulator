@@ -4,7 +4,8 @@ import { ConversationsController } from './conversationsController';
 import { AttachmentsController } from './attachmentsController';
 import { BotStateController } from './botStateController';
 import { RestServer } from '../restServer';
-import { getStore, getSettings } from '../settings';
+import { getSettings, addSettingsListener } from '../settings';
+import { Settings } from '../../types/serverSettingsTypes';
 import * as log from '../log';
 import * as Fs from 'fs';
 import * as path from 'path';
@@ -28,17 +29,16 @@ export class FrameworkServer extends RestServer {
         ConversationsController.registerRoutes(this.server);
         AttachmentsController.registerRoutes(this.server);
         BotStateController.registerRoutes(this.server);
-        getStore().subscribe(() => {
-            this.configure();
+        addSettingsListener((settings: Settings) => {
+            this.configure(settings);
         });
-        this.configure();
+        this.configure(getSettings());
     }
 
     /**
      * Applies configuration changes.
      */
-    private configure() {
-        const settings = getSettings();
+    private configure(settings: Settings) {
         let relaunchNgrok = false;
 
         // Did port change?

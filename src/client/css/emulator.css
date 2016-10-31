@@ -320,7 +320,7 @@
 
     .wc-inspectorview-json {
         font-size: 13px;
-        font-family: 'Consolas', 'Menlo', 'Courier New', monospace;
+	    font-family: 'Menlo', 'Monaco', 'Consolas', "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
         position: absolute;
         top: 0;
         left: 0;
@@ -376,7 +376,7 @@
         color: white;
         overflow: auto;
         font-size: 13px;
-        font-family: Consolas, 'Courier New', monospace;
+	    font-family: 'Menlo', 'Monaco', 'Consolas', "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
         white-space: nowrap;
         position: absolute;
         left: 0;
@@ -395,11 +395,11 @@
     }
 
     .wc-logview-log {
-        color: white;
+        color: lightgray;
     }
 
     .wc-logview-info {
-        color: white;
+        color: lightgray;
     }
 
     .wc-logview-trace {
@@ -407,7 +407,7 @@
     }
 
     .wc-logview-debug {
-        color: lightgray;
+        color: gray;
     }
 
     .wc-logview-warn {

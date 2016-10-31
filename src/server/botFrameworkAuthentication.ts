@@ -1,4 +1,4 @@
-import { getStore, getSettings, authenticationSettings } from './settings';
+import { getSettings, authenticationSettings } from './settings';
 import * as jwt from 'jsonwebtoken';
 import * as oid from './OpenIdMetadata';
 import * as Restify from 'restify';

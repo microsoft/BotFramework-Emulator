@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { getStore, getSettings, ISettings } from '../settings';
+import { getSettings, Settings, addSettingsListener } from '../settings';
 import { Settings as ServerSettings } from '../../types/serverSettingsTypes';
 import { AddressBarActions, ConversationActions, ServerSettingsActions } from '../reducers';
 import { IBot, newBot } from '../../types/botTypes';
@@ -13,7 +13,7 @@ interface IAppSettings {
 }
 
 export class AppSettingsDialog extends React.Component<{}, {}> {
-    storeUnsubscribe: any;
+    settingsUnsubscribe: any;
     showing: boolean;
 
     portRef: any;
@@ -34,8 +34,10 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
     }
 
     onAccept = () => {
-        ServerSettingsActions.remote_setFrameworkPort(Number(this.portRef.value));
-        ServerSettingsActions.remote_setNgrokPath(this.ngrokPathRef.value);
+        ServerSettingsActions.remote_setFrameworkServerSettings({
+            port: Number(this.portRef.value),
+            ngrokPath: this.ngrokPathRef.value
+        });
         AddressBarActions.hideAppSettings();
     }
 
@@ -45,10 +47,9 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
 
     componentWillMount() {
         window.addEventListener('click', (e) => this.pageClicked(e));
-        this.storeUnsubscribe = getStore().subscribe(() => {
-            const newSettings = getSettings();
-            if (newSettings.addressBar.showAppSettings != this.showing) {
-                this.showing = newSettings.addressBar.showAppSettings;
+        this.settingsUnsubscribe = addSettingsListener((settings: Settings) => {
+            if (settings.addressBar.showAppSettings != this.showing) {
+                this.showing = settings.addressBar.showAppSettings;
                 this.forceUpdate();
             }
         });
@@ -56,7 +57,7 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
 
     componentWillUnmount() {
         window.removeEventListener('click', (e) => this.pageClicked(e));
-        this.storeUnsubscribe();
+        this.settingsUnsubscribe();
     }
 
     render() {
