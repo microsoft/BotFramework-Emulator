@@ -1,9 +1,12 @@
 import { shell } from 'electron';
 
 export function navigate(url: string) {
-    if (url.startsWith("emulator://")) {
-        // TODO: dispatch internally.
-    } else {
+    const lowcase = url.toLowerCase();
+    if (lowcase.startsWith('http://') || lowcase.startsWith('https://')) {
         shell.openExternal(url, { activate: true });
+    } else if (url.startsWith("emulator://")) {
+        // TODO: dispatch internally
+    } else {
+        // Ignore
     }
 }
