@@ -162,7 +162,7 @@ function _runTunnel(opts, cb) {
 				if (opts.proto === 'http' && opts.bind_tls !== false) {
 					tunnels[url.replace('https', 'http')] = body.uri + ' (http)';
 				}
-				return cb(null, url, this.port as any);
+				return cb(null, url, this.port);
 			});
 	};
 
