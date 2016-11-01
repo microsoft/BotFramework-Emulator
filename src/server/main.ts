@@ -4,6 +4,10 @@ import { getSettings, dispatch } from './settings';
 import { WindowStateAction } from './reducers/windowStateReducer';
 
 
+process.on('uncaughtException', function (error) {
+    console.error(error);
+});
+
 Emulator.startup();
 
 export let mainWindow: Electron.BrowserWindow;

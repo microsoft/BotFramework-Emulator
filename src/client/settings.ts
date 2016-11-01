@@ -154,20 +154,17 @@ export const addSettingsListener = (actor: SettingsActor) => {
 
 export const startup = () => {
     // When changes to settings are made, save to disk.
-    let saveTimerSet = false;
+    let saveTimer;
     getStore().subscribe(() => {
         if (!acting) {
             acting = true;
             actors.forEach(actor => actor(getSettings()));
             acting = false;
         }
-        if (!saveTimerSet) {
-            saveTimerSet = true;
-            setTimeout(() => {
-                saveSettings('client.json', new PersistentSettings(getStore().getState()));
-                saveTimerSet = false;
-            }, 1000);
-        }
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(() => {
+            saveSettings('client.json', new PersistentSettings(getStore().getState()));
+        }, 1000);
     });
 
     // Listen for new settings from the server.

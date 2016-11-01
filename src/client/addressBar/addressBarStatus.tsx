@@ -11,7 +11,7 @@ export class AddressBarStatus extends React.Component<{}, {}> {
     render() {
         return (
             <div className="addressbar-status">
-                (s)
+                &nbsp;
             </div>
         );
     }

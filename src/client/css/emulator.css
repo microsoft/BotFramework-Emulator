@@ -211,7 +211,6 @@
         width: 242px;
         display: inline-block;
     }
-
     .addressbar-botcreds-connect-button {
         display: block;
         padding: 11px 16px 10px 16px;
@@ -220,6 +219,16 @@
         line-height: 1.3333333;
         font-weight: 500;
         margin-top: 24px;
+    }
+    .addressbar-botcreds-callout {
+        width: 0;
+        height: 0;
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-top: 8px solid #3A96DD;
+        position:absolute;
+        top:0;
+        left:40px;
     }
 
 /* appsettings-dialog */

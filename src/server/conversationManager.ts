@@ -50,20 +50,22 @@ export class Conversation {
      * Sends the activity to the conversation's bot.
      */
     postActivityToBot(activity: IActivity, recordInConversation: boolean, cb) {
+        let _this = this;
         this.postage(this.botId, activity);
-        if (recordInConversation) {
-            this.activities.push(Object.assign({}, activity));
-        }
         const bot = getSettings().botById(this.botId);
         if (bot) {
             let statusCode = '';
             let options: request.OptionsWithUrl = { url: bot.botUrl, method: "POST", json: activity };
 
             let responseCallback = function (err, resp: http.IncomingMessage, body) {
-                if (err)
-                    cb(err);
-                else
+                if (err) {
+                    cb(500);
+                } else {
+                    if (recordInConversation) {
+                        _this.activities.push(Object.assign({}, activity));
+                    }
                     cb(null, resp.statusCode);
+                }
             }
 
             if (bot.msaAppId && bot.msaPassword)
