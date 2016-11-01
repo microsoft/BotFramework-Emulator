@@ -9,7 +9,7 @@ import { AddressBarStatus } from './addressBarStatus';
 import { AddressBarTextBox } from './addressBarTextBox';
 import { AddressBarMenu } from './addressBarMenu';
 import { AddressBarSearch } from './addressBarSearch';
-import { AddressBarBotCreds } from './AddressBarBotCreds';
+import { AddressBarBotCreds } from './addressBarBotCreds';
 
 
 export class AddressBar extends React.Component<{}, {}> {
