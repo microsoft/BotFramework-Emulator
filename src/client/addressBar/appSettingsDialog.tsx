@@ -16,8 +16,11 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
     settingsUnsubscribe: any;
     showing: boolean;
 
-    portRef: any;
-    ngrokPathRef: any;
+    emulatorPortInputRef: any;
+    serviceUrlInputRef: any;
+    ngrokPathInputRef: any;
+    serviceUrlTabRef: any;
+    ngrokConfigTabRef: any;
 
     pageClicked = (ev: Event) => {
         let target = ev.srcElement;
@@ -35,14 +38,22 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
 
     onAccept = () => {
         ServerSettingsActions.remote_setFrameworkServerSettings({
-            port: Number(this.portRef.value),
-            ngrokPath: this.ngrokPathRef.value
+            port: Number(this.emulatorPortInputRef.value),
+            ngrokPath: this.ngrokPathInputRef.value
         });
         AddressBarActions.hideAppSettings();
     }
 
     onClose = () => {
         AddressBarActions.hideAppSettings();
+    }
+
+    showServiceUrl = () => {
+
+    }
+
+    showNgrokConfig = () => {
+
     }
 
     componentWillMount() {
@@ -71,26 +82,48 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
                 <div className="appsettings-dialog">
                     <div className="input-group">
                         <label className="form-label">
-                            Framework Port
+                            Emulator Port
                         </label>
                         <input
                             type="text"
-                            ref={ ref => this.portRef = ref }
+                            ref={ ref => this.emulatorPortInputRef = ref }
                             className="form-input appsettings-port-input"
                             defaultValue={`${serverSettings.framework.port || 9002}`} />
                     </div>
-                    <div className="input-group">
-                        <label className="form-label">
-                            Path to Ngrok
-                        </label>
-                        <input
-                            type="text"
-                            ref={ ref => this.ngrokPathRef = ref }
-                            className="form-input appsettings-url-input"
-                            defaultValue={`${serverSettings.framework.ngrokPath || ''}`} />
+                    <div className="appsettings-lowerpane">
+                        <ul className="appsettings-navbar">
+                            <li><a href="javascript:void(0)" className="appsettings-nav" onClick={() => this.showServiceUrl()} /></li>
+                            <li><a href="javascript:void(0)" className="appsettings-nav" onClick={() => this.showNgrokConfig()} /></li>
+                        </ul>
+                        <div className="appsettings-serviceurl-tab" ref={(ref) => this.serviceUrlTabRef = ref}>
+                            <div className="input-group">
+                                <label className="form-label">
+                                    Path to Ngrok
+                                </label>
+                                <input
+                                    type="text"
+                                    ref={ ref => this.serviceUrlInputRef = ref }
+                                    className="form-input appsettings-url-input"
+                                    defaultValue={`${serverSettings.framework.ngrokPath || ''}`} />
+                            </div>
+                        </div>
+                        <div className="appsettings-serviceurl-tab" ref={(ref) => this.ngrokConfigTabRef = ref}>
+                            <div className="input-group">
+                                <label className="form-label">
+                                    Path to Ngrok
+                                </label>
+                                <input
+                                    type="text"
+                                    ref={ ref => this.ngrokPathInputRef = ref }
+                                    className="form-input appsettings-url-input"
+                                    defaultValue={`${serverSettings.framework.ngrokPath || ''}`} />
+                            </div>
+                        </div>
                     </div>
-                    <p/><a href="#" onClick={() => this.onAccept()}>accept</a>
-                    <p/><a href="#" onClick={() => this.onClose()}>close</a>
+                    <div className="appsettings-buttons">
+                        <p/><a href="javascript:void(0)" onClick={() => this.onAccept()}>accept</a>
+                        <p/><a href="javascript:void(0)" onClick={() => this.onClose()}>close</a>
+                    </div>
                 </div>
             </div>
         );

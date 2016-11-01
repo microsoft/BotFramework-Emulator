@@ -92,7 +92,7 @@ export class LayoutActions {
         dispatch<LayoutAction>({
             type: 'Splitter_RememberHorizontal',
             state: {
-                size
+                size: Number(size)
             }
         });
     }
@@ -100,7 +100,7 @@ export class LayoutActions {
         dispatch<LayoutAction>({
             type: 'Splitter_RememberVertical',
             state: {
-                size
+                size: Number(size)
             }
         });
     }
