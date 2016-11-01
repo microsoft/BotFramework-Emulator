@@ -39,6 +39,7 @@ export class AddressBarBotCreds extends React.Component<{}, {}> {
         const bot = settings.addressBar.selectedBot;
         AddressBarOperators.selectBot(null);
         AddressBarOperators.activateBot(bot);
+        ConversationActions.newConversation();
     }
 
     render() {
@@ -80,6 +81,7 @@ export class AddressBarBotCreds extends React.Component<{}, {}> {
                         Connect
                     </button>
                 </div>
+                <div className="addressbar-botcreds-callout" />
             </div>
         );
     }

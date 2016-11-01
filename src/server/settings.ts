@@ -113,20 +113,17 @@ export const startup = () => {
     // Guard against calling getSettings before startup.
     started = true;
     // When changes to settings are made, save to disk.
-    let saveTimerSet = false;
+    let saveTimer;
     getStore().subscribe(() => {
         if (!acting) {
             acting = true;
             actors.forEach(actor => actor(getSettings()));
             acting = false;
         }
-        if (!saveTimerSet) {
-            saveTimerSet = true;
-            setTimeout(() => {
-                saveSettings('server.json', new PersistentSettings(getStore().getState()));
-                saveTimerSet = false;
-            }, 1000);
-        }
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(() => {
+            saveSettings('server.json', new PersistentSettings(getStore().getState()));
+        }, 1000);
     });
 }
 

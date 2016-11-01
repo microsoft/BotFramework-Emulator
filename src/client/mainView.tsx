@@ -14,50 +14,64 @@ import { IUser } from '../types/userTypes';
 
 export class MainView extends React.Component<{}, {}> {
     settingsUnsubscribe: any;
-    cache: {
-        activeBot?: string,
-        conversationId?: string,
-        userId?: string
-    } = {};
     reuseKey: number = 0;
-
-    shouldUpdate(newSettings: Settings): boolean {
-        if (newSettings.serverSettings.activeBot && newSettings.serverSettings.activeBot.length && newSettings.serverSettings.activeBot != this.cache.activeBot) {
-            return true;
-        }
-        if (newSettings.conversation.conversationId && newSettings.conversation.conversationId.length && newSettings.conversation.conversationId != this.cache.conversationId) {
-            return true;
-        }
-        if (newSettings.serverSettings.users.currentUserId && newSettings.serverSettings.users.currentUserId.length && newSettings.serverSettings.users.currentUserId != this.cache.userId) {
-            return true;
-        }
-        return false;
-    }
+    directline: BotChat.DirectLine3;
+    conversationId: string;
+    userId: string;
+    botId: string;
 
     componentWillMount() {
         this.settingsUnsubscribe = addSettingsListener((settings: Settings) => {
-            if (this.shouldUpdate(settings)) {
-                console.log(`updating mainview because: ${settings.serverSettings.activeBot}, ${settings.conversation.conversationId}, ${settings.serverSettings.users.currentUserId}`);
-                console.log(`was: ${this.cache.activeBot}, ${this.cache.conversationId}, ${this.cache.userId}`);
+            let conversationChanged = false;
+            if (this.conversationId !== settings.conversation.conversationId) {
+                this.conversationId = settings.conversation.conversationId;
+                conversationChanged = true;
+            }
+
+            let userChanged = false;
+            if (this.userId !== settings.serverSettings.users.currentUserId) {
+                this.userId = settings.serverSettings.users.currentUserId;
+                userChanged = true;
+            }
+
+            let botChanged = false;
+            if (this.botId !== settings.serverSettings.activeBot) {
+                this.botId = settings.serverSettings.activeBot;
+                botChanged = true;
+            }
+
+            if (conversationChanged || userChanged || botChanged) {
+                if (this.directline) {
+                    this.directline.end();
+                    this.directline = undefined;
+                }
+                if (this.conversationId.length && this.userId.length && this.botId.length) {
+                    this.directline = new BotChat.DirectLine3(
+                        { secret: settings.conversation.conversationId, token: settings.conversation.conversationId },
+                        `http://localhost:${settings.serverSettings.directLine.port}`,
+                        'v3/directline'
+                    );
+                    this.directline.start();
+                    log.info(`started new conversation with ${new ServerSettings(settings.serverSettings).botById(settings.serverSettings.activeBot).botUrl}`);
+                }
                 this.reuseKey++;
                 this.forceUpdate();
-            }
-            this.cache = {
-                activeBot: settings.serverSettings.activeBot,
-                conversationId: settings.conversation.conversationId,
-                userId: settings.serverSettings.users.currentUserId
             }
         });
     }
 
     componentWillUnmount() {
-        this.settingsUnsubscribe();
-    }
-
-    getActiveBot(settings: Settings): string {
-        if (settings.serverSettings.activeBot && settings.serverSettings.activeBot.length)
-            return settings.serverSettings.activeBot;
-        return null;
+        if (this.settingsUnsubscribe) {
+            this.settingsUnsubscribe();
+            this.settingsUnsubscribe = undefined;
+        }
+        if (this.directline) {
+            this.directline.end();
+            this.directline = undefined;
+        }
+        this.conversationId = undefined;
+        this.userId = undefined;
+        this.botId = undefined;
     }
 
     getCurrentUser(serverSettings: ServerSettings): IUser {
@@ -74,24 +88,19 @@ export class MainView extends React.Component<{}, {}> {
     }
 
     botChatComponent() {
-        const settings = getSettings();
-        const botId = this.getActiveBot(settings);
-        const user = this.getCurrentUser(settings.serverSettings);
-        if (user && botId) {
+        if (this.directline) {
+            const settings = getSettings();
             const props: BotChat.ChatProps = {
-                botConnection: new BotChat.DirectLine(
-                    settings.conversation.conversationId,
-                    `http://localhost:${settings.serverSettings.directLine.port}`),
+                botConnection: this.directline,
                 locale: 'en-us',
                 formatOptions: {
                     showHeader: false
                 },
                 onActivitySelected: this.onActivitySelected,
-                user
+                user: this.getCurrentUser(settings.serverSettings)
             }
             InspectorActions.clear();
             let srvSettings = new ServerSettings(settings.serverSettings);
-            // We always want a new component instance when these parameters change, so gen a random key each time.
             return <BotChat.Chat key={this.reuseKey} {...props} />
         }
         return null;
@@ -102,13 +111,13 @@ export class MainView extends React.Component<{}, {}> {
         return (
             <div className='mainview'>
                 <div className='botchat-container'>
-                    <Splitter split="vertical" defaultSize={settings.layout.vertSplit} primary="second" onChange={(size) => LayoutActions.rememberVerticalSplitter(size)}>
+                    <Splitter split="vertical" minSize="200px" defaultSize={`${settings.layout.vertSplit}px`} primary="second" onChange={(size) => LayoutActions.rememberVerticalSplitter(size)}>
                         <div className={"wc-chatview-panel"}>
                             <AddressBar />
                             {this.botChatComponent()}
                         </div>
                         <div className="wc-app-inspectorview-container">
-                            <Splitter split="horizontal" primary="second" defaultSize={settings.layout.horizSplit} onChange={(size) => LayoutActions.rememberHorizontalSplitter(size)}>
+                            <Splitter split="horizontal" primary="second" minSize="42px" defaultSize={`${settings.layout.horizSplit}px`} onChange={(size) => LayoutActions.rememberHorizontalSplitter(size)}>
                                 <div className="wc-chatview-panel">
                                     <div className="wc-inspectorview-header">
                                         <span>INSPECTOR</span>
