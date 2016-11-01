@@ -5,10 +5,10 @@ import { IWindowStateSettings, windowStateDefault } from '../../types/serverSett
 export type WindowStateAction = {
     type: 'Window_RememberBounds',
     state: {
-        width: number,
-        height: number,
+        top: number,
         left: number,
-        top: number
+        width: number,
+        height: number
     }
 }
 
@@ -20,10 +20,10 @@ export const windowStateReducer: Reducer<IWindowStateSettings> = (
     switch (action.type) {
         case 'Window_RememberBounds':
             return Object.assign({}, state, {
-                width: action.state.width,
-                height: action.state.height,
+                top: action.state.top,
                 left: action.state.left,
-                top: action.state.top
+                width: action.state.width,
+                height: action.state.height
             });
         default:
             return state

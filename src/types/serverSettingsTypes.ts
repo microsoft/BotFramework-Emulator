@@ -9,16 +9,16 @@ export interface IDirectLineSettings {
 export interface IFrameworkSettings {
     // port for emulator to listen on
     port?: number,
-    
+
     // path to use for ngrok
     ngrokPath?: string
 }
 
 export interface IWindowStateSettings {
+    top?: number,
+    left?: number,
     width?: number,
     height?: number,
-    left?: number,
-    top?: number
 }
 
 export interface IUserSettings {
