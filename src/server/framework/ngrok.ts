@@ -91,7 +91,7 @@ function runNgrok(opts, cb) {
 	let folder = (opts.path) ? path.dirname(opts.path) : path.join(__dirname, 'bin');
 
 	ngrok = spawn(
-		filename,
+		path.join(folder, filename),
 		['start', '--none', '--log=stdout', '--region=' + opts.region],
 		{ cwd: folder })
 		.on('error', (err) => {
