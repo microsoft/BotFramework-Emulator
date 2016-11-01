@@ -22,7 +22,7 @@ const createMainWindow = () => {
         x: settings.windowState.left,
         y: settings.windowState.top
     });
-    mainWindow.setTitle('Bot Framework Emulator /next/');
+    mainWindow.setTitle('Bot Framework Emulator');
     mainWindow.setMenu(null);
     mainWindow.loadURL(`file://${__dirname}/../client/index.html`);
 

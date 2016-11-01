@@ -48,6 +48,8 @@ export const getStore = (): Store<ISettings> => {
     if (!store) {
         // Create the settings store with initial settings from disk.
         const initialSettings = loadSettings('server.json', settingsDefault);
+        // TODO: Validate the settings still apply.
+
         store = createStore(combineReducers<ISettings>({
             directLine: directLineReducer,
             framework: frameworkReducer,
