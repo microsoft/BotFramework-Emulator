@@ -51,38 +51,38 @@ export class FrameworkServer extends RestServer {
 
         // Did ngrok path change?
         if (relaunchNgrok || this.ngrokPath !== settings.framework.ngrokPath) {
-            this.serviceUrl = `http://localhost:${this.port}`;
-            this.inspectUrl = null;
             const prevNgrokPath = this.ngrokPath;
             this.ngrokPath = settings.framework.ngrokPath;
+            const prevServiceUrl = this.serviceUrl;
+            this.serviceUrl = `http://localhost:${this.port}`;
+            this.inspectUrl = null;
             const startNgrok = () => {
                 // if we have an ngrok path
                 if (this.ngrokPath) {
                     // then make it so
-                    log.info(`starting ngrok: "${this.ngrokPath}"`);
                     ngrok.connect({
                         port: this.port,
                         path: this.ngrokPath
                     }, (err, url: string, inspectPort: string) => {
                         if (err) {
-                            log.warn(`failed to start ngrok: ${err.message || err.msg}`);
+                            log.warn(`failed to configure ngrok at ${this.ngrokPath}: ${err.message || err.msg}`);
                         } else {
-                            log.info('ngrok started');
+                            log.info(`ngrok listening on ${url}`);
                             this.serviceUrl = url;
                             this.inspectUrl = `http://127.0.0.1:${inspectPort}`;
                         }
                     });
                 }
             }
-            // Try to kill then respawn ngrok. If that fails, then try to spawn ngrok now (maybe it wasn't running).
-            if (ngrok.running()) {
+            if (this.ngrokPath !== prevNgrokPath) {
                 ngrok.kill(() => {
-                    log.info('ngrok stopped');
                     startNgrok();
                     return true;
                 }) || startNgrok();
             } else {
-                startNgrok();
+                ngrok.disconnect(prevServiceUrl, () => {
+                    startNgrok();
+                });
             }
         }
     }
