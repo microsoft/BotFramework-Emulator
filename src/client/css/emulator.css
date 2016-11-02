@@ -243,6 +243,7 @@
         position: fixed;
         top: 50%;
         left: 50%;
+        width: 400px;
         border: thin solid black;
         transform: translate(-50%, -50%);
         transition: all .2s;
@@ -296,6 +297,31 @@
     }
     .toolbar-button:hover {
         background: #6AAFE5;
+    }
+
+    .emu-visible {
+        display: block;
+    }
+    .emu-hidden {
+        display: none;
+    }
+    .emu-navbar {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+    .emu-navbar li {
+        float: left;
+    }
+    .emu-navbar, .emu-navitem {
+        color: #aaa;
+        display: block;
+        padding: 8px 16px;
+        text-decoration: none;
+    }
+    .emu-navitem-selected {
+        color: #000;
     }
 
 /* inspectorview */

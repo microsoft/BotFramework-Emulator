@@ -52,7 +52,7 @@ export class MainView extends React.Component<{}, {}> {
                         'v3/directline'
                     );
                     this.directline.start();
-                    log.info(`started new conversation with ${new ServerSettings(settings.serverSettings).botById(settings.serverSettings.activeBot).botUrl}`);
+                    log.info(`started new conversation`);
                 }
                 this.reuseKey++;
                 this.forceUpdate();
@@ -128,13 +128,13 @@ export class MainView extends React.Component<{}, {}> {
                             <Splitter split="horizontal" primary="second" minSize="42px" defaultSize={horizSplit} onChange={(size) => LayoutActions.rememberHorizontalSplitter(size)}>
                                 <div className="wc-chatview-panel">
                                     <div className="wc-inspectorview-header">
-                                        <span>INSPECTOR</span>
+                                        <span>Inspector</span>
                                     </div>
                                     <InspectorView />
                                 </div>
                                 <div className="wc-app-logview-container">
                                     <div className="wc-logview-header">
-                                        <span>LOG</span>
+                                        <span>Log</span>
                                     </div>
                                     <LogView />
                                 </div>

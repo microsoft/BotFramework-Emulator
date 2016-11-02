@@ -11,7 +11,9 @@ export interface IFrameworkSettings {
     port?: number,
 
     // path to use for ngrok
-    ngrokPath?: string
+    ngrokPath?: string,
+
+    serviceUrl?: string
 }
 
 export interface IWindowStateSettings {
@@ -64,7 +66,9 @@ export const directLineDefault: IDirectLineSettings = {
 }
 
 export const frameworkDefault: IFrameworkSettings = {
-    port: 9002
+    port: 9002,
+    ngrokPath: '',
+    serviceUrl: ''
 }
 
 export const windowStateDefault: IWindowStateSettings = {

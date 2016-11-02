@@ -38,6 +38,7 @@ export class AddressBarBotCreds extends React.Component<{}, {}> {
         const settings = getSettings();
         const bot = settings.addressBar.selectedBot;
         AddressBarOperators.selectBot(null);
+        AddressBarOperators.addOrUpdateBot(bot);
         AddressBarOperators.activateBot(bot);
         ConversationActions.newConversation();
     }
