@@ -2,10 +2,11 @@
   "name": "botframework-emulator",
   "version": "0.0.1",
   "description": "Emulator for the Microsoft Bot Framework. Allows developers to test and debug their bots on localhost.",
-  "main": "dist/client/index.js",
+  "main": "./dist/server/main.js",
   "scripts": {
     "build": "gulp",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ."
   },
   "repository": {
     "type": "git",
