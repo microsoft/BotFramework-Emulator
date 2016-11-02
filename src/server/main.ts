@@ -2,6 +2,8 @@ import * as Electron from 'electron';
 import { Emulator } from './emulator';
 import { getSettings, dispatch } from './settings';
 import { WindowStateAction } from './reducers/windowStateReducer';
+import * as url from 'url';
+import * as path from 'path';
 
 
 process.on('uncaughtException', function (error) {
@@ -24,7 +26,12 @@ const createMainWindow = () => {
     });
     mainWindow.setTitle('Bot Framework Emulator');
     mainWindow.setMenu(null);
-    mainWindow.loadURL(`file://${__dirname}/../client/index.html`);
+    let page = url.format({
+        protocol:'file',
+        slashes : true,
+        pathname: path.join(__dirname, '../client/index.html')
+    });
+    mainWindow.loadURL(page);
 
     mainWindow.on('resize', () => {
         const bounds = mainWindow.getBounds();
