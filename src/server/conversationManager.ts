@@ -59,11 +59,13 @@ export class Conversation {
 
             let responseCallback = function (err, resp: http.IncomingMessage, body) {
                 if (err) {
-                    cb(500);
-                } else {
+                    cb(err);
+                } else if (resp.statusCode < 300) {
                     if (recordInConversation) {
                         _this.activities.push(Object.assign({}, activity));
                     }
+                    cb(null, resp.statusCode);
+                } else {
                     cb(null, resp.statusCode);
                 }
             }

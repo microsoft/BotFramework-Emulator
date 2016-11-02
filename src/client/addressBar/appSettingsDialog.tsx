@@ -12,6 +12,11 @@ interface IAppSettings {
     ngrokPath?: string
 }
 
+enum Tabs {
+    ServiceUrl,
+    NgrokConfig
+}
+
 export class AppSettingsDialog extends React.Component<{}, {}> {
     settingsUnsubscribe: any;
     showing: boolean;
@@ -19,8 +24,7 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
     emulatorPortInputRef: any;
     serviceUrlInputRef: any;
     ngrokPathInputRef: any;
-    serviceUrlTabRef: any;
-    ngrokConfigTabRef: any;
+    currentTab: Tabs;
 
     pageClicked = (ev: Event) => {
         let target = ev.srcElement;
@@ -39,6 +43,7 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
     onAccept = () => {
         ServerSettingsActions.remote_setFrameworkServerSettings({
             port: Number(this.emulatorPortInputRef.value),
+            //serviceUrl: this.serviceUrlInputRef.value,
             ngrokPath: this.ngrokPathInputRef.value
         });
         AddressBarActions.hideAppSettings();
@@ -49,14 +54,17 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
     }
 
     showServiceUrl = () => {
-
+        this.currentTab = Tabs.ServiceUrl;
+        this.forceUpdate();
     }
 
     showNgrokConfig = () => {
-
+        this.currentTab = Tabs.NgrokConfig;
+        this.forceUpdate();
     }
 
     componentWillMount() {
+        this.currentTab = Tabs.ServiceUrl;
         window.addEventListener('click', (e) => this.pageClicked(e));
         this.settingsUnsubscribe = addSettingsListener((settings: Settings) => {
             if (settings.addressBar.showAppSettings != this.showing) {
@@ -91,23 +99,23 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
                             defaultValue={`${serverSettings.framework.port || 9002}`} />
                     </div>
                     <div className="appsettings-lowerpane">
-                        <ul className="appsettings-navbar">
-                            <li><a href="javascript:void(0)" className="appsettings-nav" onClick={() => this.showServiceUrl()} /></li>
-                            <li><a href="javascript:void(0)" className="appsettings-nav" onClick={() => this.showNgrokConfig()} /></li>
+                        <ul className="emu-navbar">
+                            <li><a href="javascript:void(0)" className={"emu-navitem" + (this.currentTab === Tabs.ServiceUrl ? " emu-navitem-selected" : "")} onClick={() => this.showServiceUrl()}>Callback URL</a></li>
+                            <li><a href="javascript:void(0)" className={"emu-navitem" + (this.currentTab === Tabs.NgrokConfig ? " emu-navitem-selected" : "")} onClick={() => this.showNgrokConfig()}>Configure Ngrok</a></li>
                         </ul>
-                        <div className="appsettings-serviceurl-tab" ref={(ref) => this.serviceUrlTabRef = ref}>
+                        <div className={"emu-tab" + (this.currentTab === Tabs.ServiceUrl ? " emu-visible" : " emu-hidden")}>
                             <div className="input-group">
                                 <label className="form-label">
-                                    Path to Ngrok
+                                    Callback URL
                                 </label>
                                 <input
                                     type="text"
                                     ref={ ref => this.serviceUrlInputRef = ref }
                                     className="form-input appsettings-url-input"
-                                    defaultValue={`${serverSettings.framework.ngrokPath || ''}`} />
+                                    defaultValue={`${serverSettings.framework.serviceUrl || ''}`} />
                             </div>
                         </div>
-                        <div className="appsettings-serviceurl-tab" ref={(ref) => this.ngrokConfigTabRef = ref}>
+                        <div className={"emu-tab" + (this.currentTab === Tabs.NgrokConfig ? " emu-visible" : " emu-hidden")}>
                             <div className="input-group">
                                 <label className="form-label">
                                     Path to Ngrok
@@ -115,7 +123,7 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
                                 <input
                                     type="text"
                                     ref={ ref => this.ngrokPathInputRef = ref }
-                                    className="form-input appsettings-url-input"
+                                    className="form-input appsettings-path-input"
                                     defaultValue={`${serverSettings.framework.ngrokPath || ''}`} />
                             </div>
                         </div>

@@ -96,8 +96,8 @@ export class ConversationsController {
             activity.replyToId = req.params.activityId;
 
             // validate conversation
-            if (activity.conversation.id != parms.conversationId)
-                throw ResponseTypes.createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.BadArgument, "uri conversation id does not match payload");
+            //if (activity.conversation.id != parms.conversationId)
+            //    throw ResponseTypes.createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.BadArgument, "uri conversation id does not match payload");
 
             // look up conversation
             const conversation = emulator.conversations.conversationById(activeBot.botId, parms.conversationId);
