@@ -12,7 +12,7 @@
             ],
             "port": 5858,
             "cwd": "${workspaceRoot}/dist/client",
-            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd",
+            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
             "runtimeArgs": [
                 "--nolazy"
             ],

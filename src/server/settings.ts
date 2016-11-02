@@ -107,9 +107,9 @@ export const startup = () => {
     if (Os.platform() === 'win32') {
         frameworkDefault.ngrokPath = `${process.env['USERPROFILE']}\\AppData\\Roaming\\npm\\node_modules\\ngrok\\bin\\ngrok.exe`;
     } else if (Os.platform() === 'macos') {
-        // TODO
+        frameworkDefault.ngrokPath = '/Usr/bin/ngrok';
     } else {
-        // TODO
+        frameworkDefault.ngrokPath = '/usr/bin/ngrok';
     }
 
     // Guard against calling getSettings before startup.

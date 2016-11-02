@@ -25,7 +25,7 @@ export const loadSettings = <T>(filename: string, defaultSettings: T): T => {
         if (stat.isFile()) {
             const loaded = JSON.parse(Fs.readFileSync(filename, 'utf8'));
             const settings = defaultSettings;
-            Object.assign(settings, loaded);
+            mergeDeep(settings, loaded);
             return settings;
         }
         return defaultSettings;
@@ -46,3 +46,27 @@ export const saveSettings = <T>(filename: string, settings: T) => {
         console.error(`Failed to write file: ${filename}`, e);
     }
 }
+
+export function isObject(item) {
+  return (item && typeof item === 'object' && !Array.isArray(item) && item !== null);
+}
+
+export function mergeDeep(target, source) {
+  let output = Object.assign({}, target);
+  //if (isObject(target) && isObject(source)) {
+  {
+
+    Object.keys(source).forEach(key => {
+      if (isObject(source[key])) {
+        if (!(key in target))
+          Object.assign(output, { [key]: source[key] });
+        else
+          output[key] = mergeDeep(target[key], source[key]);
+      } else {
+        Object.assign(output, { [key]: source[key] });
+      }
+    });
+  }
+  return output;
+}
+
