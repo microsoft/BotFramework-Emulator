@@ -13,7 +13,10 @@ export class AddressBarTextBox extends React.Component<{}, {}> {
     onChange(text: string) {
         AddressBarActions.setText(text);
         const bots = AddressBarOperators.updateMatchingBots(text, null);
-        const bot = AddressBarOperators.findMatchingBotForUrl(text, bots) || newBot({ botUrl: text });
+        let bot = AddressBarOperators.findMatchingBotForUrl(text, bots);
+        if (text && text.length) {
+            bot = newBot({botUrl: text});
+        }
         AddressBarOperators.selectBot(bot);
     }
 

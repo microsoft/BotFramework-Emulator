@@ -6,6 +6,8 @@ import { IBot, newBot } from '../../types/botTypes';
 import * as log from '../log';
 import { AddressBarOperators } from './addressBarOperators';
 import { AppSettingsDialog } from './appSettingsDialog';
+import { ConversationSettingsDialog } from './conversationSettingsDialog';
+
 
 const { remote } = require('electron');
 const { Menu, MenuItem } = remote;
@@ -35,7 +37,8 @@ export class AddressBarMenu extends React.Component<{}, {}> {
                 enabled: settings.conversation.conversationId.length > 0
             },
             {
-                label: 'Conversation Settings',
+                label: 'Manage Users...',
+                //click: () => AddressBarActions.showConversationSettings()
             },
             /*
             {
@@ -84,6 +87,7 @@ export class AddressBarMenu extends React.Component<{}, {}> {
                     </g>
                 </svg>
                 <AppSettingsDialog />
+                <ConversationSettingsDialog />
             </div>
         );
     }

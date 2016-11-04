@@ -12,6 +12,7 @@ import * as HttpStatus from "http-status-codes";
 import * as ResponseTypes from '../types/responseTypes';
 import { ErrorCodes, IResourceResponse, IErrorResponse } from '../types/responseTypes';
 import { emulator } from './emulator';
+import * as log from './log';
 
 
 /**
@@ -94,9 +95,7 @@ export class Conversation {
         }
         this.postActivityToBot(activity, false, (err) => {
             if (err) {
-                console.log("Failed to send conversationUpdate activity: " + err);
-            } else {
-                console.log("Sent conversationUpdate to bot");
+                log.error("Failed to send conversationUpdate to bot: " + err);
             }
         });
     }
