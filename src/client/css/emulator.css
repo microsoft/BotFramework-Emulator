@@ -148,6 +148,10 @@
         padding-bottom: 0;
     }
 
+    .addressbar-searchresult-a {
+        color: #fff;
+    }
+
     .addressbar-searchresult {
         cursor: default;
         position: relative;
@@ -166,6 +170,8 @@
         position: absolute;
         line-height: 32px;
         margin-left: 4px;
+        right: 32px;
+        left: 0;
     }
 
     .addressbar-searchresult-delete {

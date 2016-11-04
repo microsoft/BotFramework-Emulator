@@ -45,15 +45,13 @@ interface AddressBarSearchResultProps {
 }
 
 class AddressBarSearchResult extends React.Component<AddressBarSearchResultProps, {}> {
-    selectBot(e: React.MouseEvent<HTMLDivElement>) {
+    selectBot() {
         AddressBarOperators.setText(this.props.bot.botUrl);
         AddressBarOperators.selectBot(this.props.bot);
         AddressBarOperators.clearMatchingBots();
-        e.preventDefault();
-        e.stopPropagation();
     }
 
-    deleteBot(e: React.MouseEvent<HTMLDivElement>) {
+    deleteBot() {
         const settings = getSettings();
         if (settings.addressBar.selectedBot && settings.addressBar.selectedBot.botId === this.props.bot.botId) {
             AddressBarOperators.setText('');
@@ -62,19 +60,21 @@ class AddressBarSearchResult extends React.Component<AddressBarSearchResultProps
         const matchingBots = settings.addressBar.matchingBots.filter(bot => bot.botId !== this.props.bot.botId);
         AddressBarOperators.setMatchingBots(matchingBots);
         AddressBarOperators.deleteBot(this.props.bot.botId);
-        e.preventDefault();
-        e.stopPropagation();
     }
 
     render() {
         return (
-            <div className='addressbar-searchresult' onClick={(e) => this.selectBot(e)} >
-                <div className='addressbar-searchresult-title'>
-                    {this.props.bot.botUrl}
-                </div>
-                <div className='addressbar-searchresult-delete' onClick={(e) => this.deleteBot(e)} >
-                    [x]
-                </div>
+            <div className='addressbar-searchresult' >
+                <a className='addressbar-searchresult-a' href='javascript:void(0)' onClick={() => this.selectBot()}>
+                    <div className='addressbar-searchresult-title'>
+                        {this.props.bot.botUrl}
+                    </div>
+                </a>
+                <a className='addressbar-searchresult-a' href='javascript:void(0)' onClick={() => this.deleteBot()}>
+                    <div className='addressbar-searchresult-delete' >
+                        [x]
+                    </div>
+                </a>
             </div>
         );
     }
