@@ -24,9 +24,7 @@ export const loadSettings = <T>(filename: string, defaultSettings: T): T => {
         const stat = Fs.statSync(filename);
         if (stat.isFile()) {
             const loaded = JSON.parse(Fs.readFileSync(filename, 'utf8'));
-            const settings = defaultSettings;
-            mergeDeep(settings, loaded);
-            return settings;
+            return mergeDeep(defaultSettings, loaded);
         }
         return defaultSettings;
     } catch (e) {
