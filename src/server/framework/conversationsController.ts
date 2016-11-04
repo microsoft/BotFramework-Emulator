@@ -105,8 +105,8 @@ export class ConversationsController {
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "conversation not found");
 
             // if we found the activity to reply to
-            if (!conversation.activities.find((existingActivity, index, obj) => existingActivity.id == activity.replyToId))
-                throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "replyToId is not a known activity id");
+            //if (!conversation.activities.find((existingActivity, index, obj) => existingActivity.id == activity.replyToId))
+            //    throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "replyToId is not a known activity id");
 
             // post activity
             let response: IResourceResponse = conversation.postActivityToUser(activity);

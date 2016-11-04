@@ -11,6 +11,7 @@ import * as oid from './OpenIdMetadata';
 import * as HttpStatus from "http-status-codes";
 import * as ResponseTypes from '../types/responseTypes';
 import { ErrorCodes, IResourceResponse, IErrorResponse } from '../types/responseTypes';
+import { emulator } from './emulator';
 
 
 /**
@@ -85,12 +86,19 @@ export class Conversation {
         const activity: IConversationUpdateActivity = {
             type: 'conversationUpdate',
             channelId: 'emulator',
+            serviceUrl: emulator.framework.serviceUrl,
             from: {
                 id: this.conversationId
             },
             membersAdded: [{ id: this.botId }]
         }
-        this.postActivityToBot(activity, false, (err, callback) => { });
+        this.postActivityToBot(activity, false, (err) => {
+            if (err) {
+                console.log("Failed to send conversationUpdate activity: " + err);
+            } else {
+                console.log("Sent conversationUpdate to bot");
+            }
+        });
     }
 
     /**

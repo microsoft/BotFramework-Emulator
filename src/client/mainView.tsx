@@ -51,7 +51,6 @@ export class MainView extends React.Component<{}, {}> {
                         `http://localhost:${settings.serverSettings.directLine.port}`,
                         'v3/directline'
                     );
-                    this.directline.start();
                     log.info(`started new conversation`);
                 }
                 this.reuseKey++;
