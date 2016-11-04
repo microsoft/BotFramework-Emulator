@@ -8,6 +8,8 @@ import * as ResponseTypes from '../../types/responseTypes';
 import { ErrorCodes, IResourceResponse, IErrorResponse } from '../../types/responseTypes';
 import { IAttachmentData, IAttachmentInfo, IAttachmentView } from '../../types/attachmentTypes';
 import { AttachmentsController } from './attachmentsController';
+import * as log from '../log';
+
 
 interface IConversationParams {
     conversationId: string;
@@ -44,6 +46,7 @@ export class ConversationsController {
             res.send(HttpStatus.OK, ResponseTypes.createResourceResponse(newConversation.conversationId));
             res.end();
         } catch (err) {
+            log.error("BotFramework: createConversation failed: " + err);
             ResponseTypes.sendErrorResponse(req, res, next, err);
         }
     }
@@ -77,6 +80,7 @@ export class ConversationsController {
             res.end();
             return;
         } catch (err) {
+            log.error("BotFramework: sendToConversation failed: " + err);
             ResponseTypes.sendErrorResponse(req, res, next, err);
         }
     }
@@ -114,6 +118,7 @@ export class ConversationsController {
             res.end();
             return;
         } catch (err) {
+            log.error("BotFramework: replyToActivity failed: " + err);
             ResponseTypes.sendErrorResponse(req, res, next, err);
         }
     }
@@ -150,6 +155,7 @@ export class ConversationsController {
             res.end();
             return;
         } catch (err) {
+            log.error("BotFramework: updateActivity failed: " + err);
             ResponseTypes.sendErrorResponse(req, res, next, err);
         }
     }
@@ -176,6 +182,7 @@ export class ConversationsController {
             res.end();
             return;
         } catch (err) {
+            log.error("BotFramework: deleteActivity failed: " + err);
             ResponseTypes.sendErrorResponse(req, res, next, err);
         }
     }
@@ -200,6 +207,7 @@ export class ConversationsController {
             res.send(HttpStatus.OK, conversation.members);
             res.end();
         } catch (err) {
+            log.error("BotFramework: getConversationMembers failed: " + err);
             ResponseTypes.sendErrorResponse(req, res, next, err);
         }
     }
@@ -224,6 +232,7 @@ export class ConversationsController {
             res.send(HttpStatus.OK, conversation.members);
             res.end();
         } catch (err) {
+            log.error("BotFramework: getActivityMembers failed: " + err);
             ResponseTypes.sendErrorResponse(req, res, next, err);
         }
     }
@@ -250,6 +259,7 @@ export class ConversationsController {
             res.send(HttpStatus.OK, resourceResponse);
             res.end();
         } catch (err) {
+            log.error("BotFramework: uploadAttachment failed: " + err);
             ResponseTypes.sendErrorResponse(req, res, next, err);
         }
     }

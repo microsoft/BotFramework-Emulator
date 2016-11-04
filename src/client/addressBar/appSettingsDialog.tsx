@@ -64,8 +64,8 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
     }
 
     componentWillMount() {
-        this.currentTab = Tabs.ServiceUrl;
-        window.addEventListener('click', (e) => this.pageClicked(e));
+        this.currentTab = Tabs.NgrokConfig;
+        window.addEventListener('click', this.pageClicked);
         this.settingsUnsubscribe = addSettingsListener((settings: Settings) => {
             if (settings.addressBar.showAppSettings != this.showing) {
                 this.showing = settings.addressBar.showAppSettings;
@@ -75,7 +75,7 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
     }
 
     componentWillUnmount() {
-        window.removeEventListener('click', (e) => this.pageClicked(e));
+        window.removeEventListener('click', this.pageClicked);
         this.settingsUnsubscribe();
     }
 
@@ -112,6 +112,7 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
                                     type="text"
                                     ref={ ref => this.serviceUrlInputRef = ref }
                                     className="form-input appsettings-url-input"
+                                    readOnly={true}
                                     defaultValue={`${serverSettings.framework.serviceUrl || ''}`} />
                             </div>
                         </div>
@@ -129,8 +130,9 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
                         </div>
                     </div>
                     <div className="appsettings-buttons">
-                        <p/><a href="javascript:void(0)" onClick={() => this.onAccept()}>accept</a>
-                        <p/><a href="javascript:void(0)" onClick={() => this.onClose()}>close</a>
+                        <a href="javascript:void(0)" onClick={() => this.onAccept()}>accept</a>
+                        &nbsp;&nbsp;&nbsp;
+                        <a href="javascript:void(0)" onClick={() => this.onClose()}>close</a>
                     </div>
                 </div>
             </div>

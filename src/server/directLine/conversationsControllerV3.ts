@@ -6,10 +6,7 @@ import { uniqueId } from '../../utils';
 import { IGenericActivity } from '../../types/activityTypes';
 import { IAttachment } from '../../types/attachmentTypes';
 import { Conversation } from '../conversationManager';
-
-
-// https://tools.ietf.org/html/rfc2324
-const IM_A_TEAPOT = 418;
+import * as log from '../log';
 
 
 export class ConversationsControllerV3 {
@@ -50,7 +47,8 @@ export class ConversationsControllerV3 {
                 streamUrl: ''
             });
         } else {
-            res.send(IM_A_TEAPOT, "no active bot");
+            res.send(HttpStatus.NOT_FOUND, "no active bot");
+            log.error("DirectLine: Cannot start conversation. No active bot");
         }
         res.end();
     }
@@ -67,10 +65,12 @@ export class ConversationsControllerV3 {
                     streamUrl: ''
                 });
             } else {
-                res.json(HttpStatus.NOT_FOUND, "conversation not found");
+                res.send(HttpStatus.NOT_FOUND, "conversation not found");
+                log.error("DirectLine: Cannot post activity. Conversation not found");
             }
         } else {
-            res.send(IM_A_TEAPOT, "no active bot");
+            res.send(HttpStatus.NOT_FOUND, "no active bot");
+            log.error("DirectLine: Cannot start conversation. No active bot");
         }
         res.end();
     }
@@ -87,10 +87,12 @@ export class ConversationsControllerV3 {
                     watermark: watermark + activities.length
                 });
             } else {
-                res.json(HttpStatus.NOT_FOUND, "conversation not found");
+                res.send(HttpStatus.NOT_FOUND, "conversation not found");
+                log.error("DirectLine: Cannot get activities. Conversation not found");
             }
         } else {
-            res.send(IM_A_TEAPOT, "no active bot");
+            res.send(HttpStatus.NOT_FOUND, "no active bot");
+            log.error("DirectLine: Cannot get activities. No active bot");
         }
         res.end();
     }
@@ -103,29 +105,35 @@ export class ConversationsControllerV3 {
                 const activity = <IGenericActivity>req.body;
                 activity.serviceUrl = emulator.framework.serviceUrl;
                 conversation.postActivityToBot(activity, true, (err, statusCode) => {
-                    if (err)
+                    if (err) {
                         res.send(HttpStatus.INTERNAL_SERVER_ERROR);
-                    else
+                        log.error("Failed to post activity to bot: " + err);
+                    } else {
                         res.send(statusCode);
+                    }
                     res.end();
                 });
             } else {
                 res.send(HttpStatus.NOT_FOUND, "conversation not found");
+                log.error("DirectLine: Cannot post activity. Conversation not found");
                 res.end();
             }
         } else {
-            res.send(IM_A_TEAPOT, "no active bot");
+            res.send(HttpStatus.NOT_FOUND, "no active bot");
+            log.error("DirectLine: Cannot post activity. No active bot");
             res.end();
         }
     }
 
     static upload(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         res.send(HttpStatus.NOT_IMPLEMENTED);
+        log.error("DirectLine: Cannot receive upload. Not implemented.");
         res.end();
     }
 
     static stream(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
         res.send(HttpStatus.NOT_IMPLEMENTED);
+        log.error("DirectLine: Cannot upgrade socket. Not implemented.");
         res.end();
     }
 }

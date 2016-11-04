@@ -55,6 +55,10 @@ type AddressBarAction = {
     type: 'AddressBar_ShowAppSettings'
 } | {
     type: 'AddressBar_HideAppSettings'
+} | {
+    type: 'AddressBar_ShowConversationSettings'
+} | {
+    type: 'AddressBar_HideConversationSettings'
 }
 
 type ConversationAction = {
@@ -139,6 +143,16 @@ export class AddressBarActions {
     static hideAppSettings() {
         dispatch<AddressBarAction>({
             type: 'AddressBar_HideAppSettings'
+        })
+    }
+    static showConversationSettings() {
+        dispatch<AddressBarAction>({
+            type: 'AddressBar_ShowConversationSettings'
+        })
+    }
+    static hideConversationSettings() {
+        dispatch<AddressBarAction>({
+            type: 'AddressBar_HideConversationSettings'
         })
     }
 }
@@ -256,6 +270,10 @@ export const addressBarReducer: Reducer<IAddressBarState> = (
             return Object.assign({}, state, { showAppSettings: true });
         case 'AddressBar_HideAppSettings':
             return Object.assign({}, state, { showAppSettings: false });
+        case 'AddressBar_ShowConversationSettings':
+            return Object.assign({}, state, { showConversationSettings: true });
+        case 'AddressBar_HideConversationSettings':
+            return Object.assign({}, state, { showConversationSettings: false });
         default:
             return state;
     }
