@@ -26,7 +26,7 @@ export class AddressBar extends React.Component<{}, {}> {
 
         // Click was outside the address bar. Close open subpanels.
         AddressBarOperators.clearMatchingBots();
-        AddressBarOperators.selectBot(null);
+        //AddressBarOperators.selectBot(null);
     }
 
     componentWillMount() {

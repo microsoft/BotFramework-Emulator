@@ -50,40 +50,43 @@ export class AddressBarBotCreds extends React.Component<{}, {}> {
         if (settings.addressBar.selectedBot.botUrl.length > 0 && settings.addressBar.matchingBots.length === 0) {
             visible = true;
         }
-        let reuseKey: number = 0;
-        return (
-            <div className={"addressbar-botcreds" + (visible ? "" : " closed")}>
-                <div key={reuseKey++} className="input-group">
-                    <label key={reuseKey++}
-                        className="form-label">
-                        Microsoft App ID
-                    </label>
-                    <input key={reuseKey++}
-                        type="text"
-                        className="form-input addressbar-botcreds-input"
-                        value={settings.addressBar.selectedBot.msaAppId}
-                        onChange={e => this.appIdChanged((e.target as any).value)} />
+        if (visible) {
+            return (
+                <div className={"addressbar-botcreds"}>
+                    <div className="input-group">
+                        <label
+                            className="form-label">
+                            Microsoft App ID
+                        </label>
+                        <input
+                            type="text"
+                            className="form-input addressbar-botcreds-input"
+                            value={settings.addressBar.selectedBot.msaAppId}
+                            onChange={e => this.appIdChanged((e.target as any).value)} />
+                    </div>
+                    <div className="input-group">
+                        <label
+                            className="form-label">
+                            Microsoft App Password
+                        </label>
+                        <input
+                            type="text"
+                            className="form-input addressbar-botcreds-input"
+                            value={settings.addressBar.selectedBot.msaPassword}
+                            onChange={e => this.appPasswordChanged((e.target as any).value)} />
+                    </div>
+                    <div className="input-group">
+                        <button
+                            className="addressbar-botcreds-connect-button"
+                            onClick={() => this.connectToBot()}>
+                            Connect
+                        </button>
+                    </div>
+                    <div className="addressbar-botcreds-callout" />
                 </div>
-                <div key={reuseKey++} className="input-group">
-                    <label key={reuseKey++}
-                        className="form-label">
-                        Microsoft App Password
-                    </label>
-                    <input key={reuseKey++}
-                        type="text"
-                        className="form-input addressbar-botcreds-input"
-                        value={settings.addressBar.selectedBot.msaPassword}
-                        onChange={e => this.appPasswordChanged((e.target as any).value)} />
-                </div>
-                <div key={reuseKey++} className="input-group">
-                    <button key={reuseKey++}
-                        className="addressbar-botcreds-connect-button"
-                        onClick={() => this.connectToBot()}>
-                        Connect
-                    </button>
-                </div>
-                <div className="addressbar-botcreds-callout" />
-            </div>
-        );
+            );
+        } else {
+            return null;
+        }
     }
 }

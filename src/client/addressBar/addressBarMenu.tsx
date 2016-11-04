@@ -38,7 +38,7 @@ export class AddressBarMenu extends React.Component<{}, {}> {
             },
             {
                 label: 'Manage Users...',
-                //click: () => AddressBarActions.showConversationSettings()
+                click: () => AddressBarActions.showConversationSettings()
             },
             /*
             {
