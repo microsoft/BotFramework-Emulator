@@ -84,7 +84,7 @@ export class MainView extends React.Component<{}, {}> {
         return null;
     }
 
-    onActivitySelected(activity: any) {
+    onActivitySelected(e: any, activity: any) {
         InspectorActions.setSelectedObject(activity);
     }
 
