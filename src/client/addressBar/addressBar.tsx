@@ -15,18 +15,24 @@ import { AddressBarBotCreds } from './addressBarBotCreds';
 export class AddressBar extends React.Component<{}, {}> {
 
     pageClicked = (ev: Event) => {
+        const settings = getSettings();
         let target = ev.srcElement;
         while (target) {
-            if (target.className === "addressbar") {
-                // Click was inside the address bar.
+            if (target.className === "addressbar")
                 return;
-            }
+            if (target.className === "addressbar-search")
+                return;
+            if (target.className === "addressbar-botcreds")
+                return;
             target = target.parentElement;
         }
 
         // Click was outside the address bar. Close open subpanels.
         AddressBarOperators.clearMatchingBots();
-        //AddressBarOperators.selectBot(null);
+        if (settings.addressBar.showSearchResults)
+            AddressBarActions.hideSearchResults();
+        if (settings.addressBar.showBotCreds)
+            AddressBarActions.hideBotCreds();
     }
 
     componentWillMount() {

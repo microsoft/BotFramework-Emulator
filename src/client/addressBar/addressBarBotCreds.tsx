@@ -45,48 +45,43 @@ export class AddressBarBotCreds extends React.Component<{}, {}> {
 
     render() {
         const settings = getSettings();
+        if (!settings.addressBar.showBotCreds) return null;
         if (!settings.addressBar.selectedBot) return null;
-        let visible = false;
-        if (settings.addressBar.selectedBot.botUrl.length > 0 && settings.addressBar.matchingBots.length === 0) {
-            visible = true;
-        }
-        if (visible) {
-            return (
-                <div className={"addressbar-botcreds"}>
-                    <div className="input-group">
-                        <label
-                            className="form-label">
-                            Microsoft App ID
-                        </label>
-                        <input
-                            type="text"
-                            className="form-input addressbar-botcreds-input"
-                            value={settings.addressBar.selectedBot.msaAppId}
-                            onChange={e => this.appIdChanged((e.target as any).value)} />
-                    </div>
-                    <div className="input-group">
-                        <label
-                            className="form-label">
-                            Microsoft App Password
-                        </label>
-                        <input
-                            type="text"
-                            className="form-input addressbar-botcreds-input"
-                            value={settings.addressBar.selectedBot.msaPassword}
-                            onChange={e => this.appPasswordChanged((e.target as any).value)} />
-                    </div>
-                    <div className="input-group">
-                        <button
-                            className="addressbar-botcreds-connect-button"
-                            onClick={() => this.connectToBot()}>
-                            Connect
-                        </button>
-                    </div>
-                    <div className="addressbar-botcreds-callout" />
+        if (!settings.addressBar.selectedBot.botUrl.length) return null;
+        if (settings.addressBar.matchingBots.length > 0) return null;
+        return (
+            <div className={"addressbar-botcreds"}>
+                <div className="input-group">
+                    <label
+                        className="form-label">
+                        Microsoft App ID
+                    </label>
+                    <input
+                        type="text"
+                        className="form-input addressbar-botcreds-input"
+                        value={settings.addressBar.selectedBot.msaAppId}
+                        onChange={e => this.appIdChanged((e.target as any).value)} />
                 </div>
-            );
-        } else {
-            return null;
-        }
+                <div className="input-group">
+                    <label
+                        className="form-label">
+                        Microsoft App Password
+                    </label>
+                    <input
+                        type="password"
+                        className="form-input addressbar-botcreds-input"
+                        value={settings.addressBar.selectedBot.msaPassword}
+                        onChange={e => this.appPasswordChanged((e.target as any).value)} />
+                </div>
+                <div className="input-group">
+                    <button
+                        className="addressbar-botcreds-connect-button"
+                        onClick={() => this.connectToBot()}>
+                        Connect
+                    </button>
+                </div>
+                <div className="addressbar-botcreds-callout" />
+            </div>
+        );
     }
 }

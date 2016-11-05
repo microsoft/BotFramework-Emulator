@@ -10,6 +10,7 @@ import { InspectorView } from './inspectorView'
 import { LogView } from './logView';
 import { uniqueId } from '../utils';
 import { IUser } from '../types/userTypes';
+import * as Constants from './constants';
 
 
 export class MainView extends React.Component<{}, {}> {
@@ -101,8 +102,13 @@ export class MainView extends React.Component<{}, {}> {
             InspectorActions.clear();
             let srvSettings = new ServerSettings(settings.serverSettings);
             return <BotChat.Chat key={this.reuseKey} {...props} />
+        } else {
+            return (
+                <div className='emu-chatview-background'>
+                    <div className='box-centered' dangerouslySetInnerHTML={{ __html: Constants.botFrameworkIconEmbossed('', 158) }} />
+                </div>
+            );
         }
-        return null;
     }
 
     render() {
@@ -119,7 +125,7 @@ export class MainView extends React.Component<{}, {}> {
             <div className='mainview'>
                 <div className='botchat-container'>
                     <Splitter split="vertical" minSize="200px" defaultSize={vertSplit} primary="second" onChange={(size) => LayoutActions.rememberVerticalSplitter(size)}>
-                        <div className={"wc-chatview-panel"}>
+                        <div className='fill-parent'>
                             <AddressBar />
                             {this.botChatComponent()}
                         </div>

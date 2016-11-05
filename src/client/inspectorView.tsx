@@ -58,7 +58,7 @@ const formatJSON = (obj: any) => {
             if (cls === 'key') {
                 // Color string content, not the quotes or colon delimiter
                 let exec = /"(.*)":\s*/.exec(match);
-                return `"<span class="json-${cls}">${exec[1]}</span>": `;
+                return `"<span class="json-${cls}">${exec[1]}</span>":`;
             } else if (cls === 'string') {
                 // Color string content, not the quotes
                 let exec = /"(.*)"/.exec(match);

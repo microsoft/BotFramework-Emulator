@@ -53,17 +53,28 @@
 
 /* botchat overrides */
 
-.format-markdown>p {
-    margin-bottom: 0px;
-    margin-top: 0px;
-}
+    .format-markdown>p {
+        margin-bottom: 0px;
+        margin-top: 0px;
+    }
 
 /* emulator */
 
-    /*
-    .mainview {
+    .emu-chatview-background {
+        background: #f7f7f7;
+        position: absolute;
+        right: 0;
+        left: 0;
+        top: 0;
+        bottom: 0;
     }
-    */
+
+    .box-centered {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
 
     .botchat-container {
         position: absolute;
@@ -319,6 +330,14 @@
     }
 
 /* base classes */
+
+    .fill-parent {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+    }
 
     .dialog-background {
         background: black;

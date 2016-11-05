@@ -15,7 +15,9 @@ export class AddressBarTextBox extends React.Component<{}, {}> {
         const bots = AddressBarOperators.updateMatchingBots(text, null);
         let bot = AddressBarOperators.findMatchingBotForUrl(text, bots);
         if (text && text.length) {
-            bot = newBot({botUrl: text});
+            bot = newBot({ botUrl: text });
+        } else if (bots && bots.length) {
+            AddressBarActions.showSearchResults();
         }
         AddressBarOperators.selectBot(bot);
     }
@@ -29,6 +31,7 @@ export class AddressBarTextBox extends React.Component<{}, {}> {
                 return;
             if (settings.addressBar.matchingBots.length > 0) {
                 AddressBarOperators.clearMatchingBots();
+                AddressBarActions.showBotCreds();
             } else {
                 //AddressBarOperators.activateBot(bot);
             }
@@ -44,18 +47,21 @@ export class AddressBarTextBox extends React.Component<{}, {}> {
         }
     }
 
-    onFocus() {
+    onFocus(e: React.FocusEvent<HTMLInputElement>) {
         const settings = getSettings();
         const bots = AddressBarOperators.getMatchingBots(settings.addressBar.text, null);
         if (settings.addressBar.text.length) {
             const bot = AddressBarOperators.findMatchingBotForUrl(settings.addressBar.text, bots) || newBot({ botUrl: settings.addressBar.text });
             if (bot) {
                 AddressBarOperators.selectBot(bot);
+                AddressBarActions.showBotCreds();
             } else {
                 AddressBarOperators.updateMatchingBots(settings.addressBar.text, bots);
+                AddressBarActions.showSearchResults();
             }
         } else {
             AddressBarOperators.updateMatchingBots(settings.addressBar.text, bots);
+            AddressBarActions.showSearchResults();
         }
     }
 
@@ -79,7 +85,7 @@ export class AddressBarTextBox extends React.Component<{}, {}> {
                     onChange={e => this.onChange((e.target as any).value)}
                     onKeyPress={e => this.onKeyPress(e)}
                     onKeyDown={e => this.onKeyDown(e)}
-                    onFocus={() => this.onFocus()}
+                    onFocus={(e) => this.onFocus(e)}
                     placeholder="Enter your endpoint URL" />
             </div>
         );
