@@ -14,7 +14,7 @@ window.onerror = (message: string, filename?: string, lineno?: number, colno?: n
 const interceptClickEvent = (e: any) => {
     let target = e.target;
     while (target) {
-        if (target.tagName === 'A') {
+        if (target.href) {
             navigate(target.href);
             return;
         }
@@ -23,6 +23,11 @@ const interceptClickEvent = (e: any) => {
 }
 
 document.addEventListener('click', interceptClickEvent);
+
+window.open = (url: string): any => {
+    navigate(url);
+}
+
 
 Settings.startup();
 
