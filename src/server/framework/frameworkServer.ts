@@ -24,7 +24,7 @@ export class FrameworkServer extends RestServer {
     authentication = new BotFrameworkAuthentication();
 
     constructor() {
-        super("framework");
+        super("emulator");
         this.authentication.registerAuth(this.server);
         ConversationsController.registerRoutes(this.server);
         AttachmentsController.registerRoutes(this.server);

@@ -105,6 +105,14 @@ export class Conversation {
      */
     public postActivityToUser(activity: IActivity): IResourceResponse {
         this.postage('', activity);
+        const botId = activity.from.id;
+        const settings = getSettings();
+        if (!activity.from.name) {
+            const bot = settings.botById(botId);
+            if (bot) {
+                activity.from.name = bot.botUrl;
+            }
+        }
         this.activities.push(Object.assign({}, activity));
         return ResponseTypes.createResourceResponse(activity.id);
     }
