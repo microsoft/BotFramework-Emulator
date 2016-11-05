@@ -5,6 +5,7 @@ import { AddressBarActions, ConversationActions, ServerSettingsActions } from '.
 import { IBot, newBot } from '../../types/botTypes';
 import * as log from '../log';
 import { AddressBarOperators } from './addressBarOperators';
+import * as Constants from '../constants';
 
 
 export class AddressBarSearch extends React.Component<{}, {}> {
@@ -28,6 +29,7 @@ export class AddressBarSearch extends React.Component<{}, {}> {
     render() {
         const settings = getSettings();
         if (!settings.addressBar.showSearchResults) return null;
+        if (settings.addressBar.showBotCreds) return null;
         if (!settings.addressBar.matchingBots.length) return null;
         return (
             <div className="addressbar-search">
@@ -70,9 +72,7 @@ class AddressBarSearchResult extends React.Component<AddressBarSearchResultProps
                     </div>
                 </a>
                 <a className='addressbar-searchresult-a' href='javascript:void(0)' onClick={() => this.deleteBot()}>
-                    <div className='addressbar-searchresult-delete' >
-                        [x]
-                    </div>
+                    <div className='addressbar-searchresult-delete' dangerouslySetInnerHTML={{__html: Constants.clearCloseIcon('toolbar-button', 24)}} />
                 </a>
             </div>
         );

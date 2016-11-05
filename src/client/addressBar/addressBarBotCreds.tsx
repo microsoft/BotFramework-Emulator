@@ -46,9 +46,8 @@ export class AddressBarBotCreds extends React.Component<{}, {}> {
     render() {
         const settings = getSettings();
         if (!settings.addressBar.showBotCreds) return null;
+        if (settings.addressBar.showSearchResults) return null;
         if (!settings.addressBar.selectedBot) return null;
-        if (!settings.addressBar.selectedBot.botUrl.length) return null;
-        if (settings.addressBar.matchingBots.length > 0) return null;
         return (
             <div className={"addressbar-botcreds"}>
                 <div className="input-group">

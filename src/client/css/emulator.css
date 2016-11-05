@@ -174,12 +174,8 @@
         position: relative;
         height: 32px;
         margin-left: 32px;
-        margin-right: 32px;
+        margin-right: 6px;
         font-weight: 300;
-    }
-
-    .addressbar-searchresult:hover {
-        background: #6AAFE5;
     }
 
     .addressbar-searchresult-title {
@@ -189,6 +185,10 @@
         margin-left: 4px;
         right: 32px;
         left: 0;
+    }
+
+    .addressbar-searchresult-title:hover {
+        background: #6AAFE5;
     }
 
     .addressbar-searchresult-delete {

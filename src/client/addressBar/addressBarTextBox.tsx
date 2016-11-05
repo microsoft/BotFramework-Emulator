@@ -11,15 +11,27 @@ export class AddressBarTextBox extends React.Component<{}, {}> {
     settingsUnsubscribe: any;
 
     onChange(text: string) {
+        text = text || '';
         AddressBarActions.setText(text);
-        const bots = AddressBarOperators.updateMatchingBots(text, null);
-        let bot = AddressBarOperators.findMatchingBotForUrl(text, bots);
-        if (text && text.length) {
-            bot = newBot({ botUrl: text });
-        } else if (bots && bots.length) {
+        const bots = AddressBarOperators.updateMatchingBots(text, null) || [];
+        if (text.length) {
+            if (!bots.length) {
+                AddressBarOperators.selectBot(newBot({ botUrl: text }));
+                AddressBarActions.showBotCreds();
+            } else if (bots.length === 1) {
+                if (bots[0].botUrl.toLowerCase() === text.toLowerCase()) {
+                    AddressBarOperators.selectBot(bots[0]);
+                    AddressBarActions.showBotCreds();
+                } else {
+                    AddressBarActions.showSearchResults();
+                }
+            } else if (bots.length) {
+                AddressBarOperators.selectBot(null);
+                AddressBarActions.showSearchResults();
+            }
+        } else {
             AddressBarActions.showSearchResults();
         }
-        AddressBarOperators.selectBot(bot);
     }
 
     onKeyPress(e: React.KeyboardEvent<HTMLInputElement>) {
