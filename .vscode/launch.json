@@ -13,13 +13,13 @@
             "port": 5858,
             "cwd": "${workspaceRoot}/dist/client",
             "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd",
-            // mac/linux 
+            // mac/linux
             // "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
             "runtimeArgs": [
-                "--nolazy"
             ],
             "env": {
-                "NODE_ENV": "development"
+                "NODE_ENV": "development",
+                "ELECTRON_ENABLE_LOGGING": "true"
             },
             "sourceMaps": true,
             "outDir": "${workspaceRoot}/dist"
