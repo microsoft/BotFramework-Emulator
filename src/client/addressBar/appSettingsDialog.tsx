@@ -94,7 +94,7 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
                         </label>
                         <input
                             type="text"
-                            ref={ ref => this.emulatorPortInputRef = ref }
+                            ref={ref => this.emulatorPortInputRef = ref}
                             className="form-input appsettings-port-input"
                             defaultValue={`${serverSettings.framework.port || 9002}`} />
                     </div>
@@ -110,7 +110,7 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
                                 </label>
                                 <input
                                     type="text"
-                                    ref={ ref => this.serviceUrlInputRef = ref }
+                                    ref={ref => this.serviceUrlInputRef = ref}
                                     className="form-input appsettings-url-input"
                                     readOnly={true}
                                     defaultValue={`${serverSettings.framework.serviceUrl || ''}`} />
@@ -123,7 +123,7 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
                                 </label>
                                 <input
                                     type="text"
-                                    ref={ ref => this.ngrokPathInputRef = ref }
+                                    ref={ref => this.ngrokPathInputRef = ref}
                                     className="form-input appsettings-path-input"
                                     defaultValue={`${serverSettings.framework.ngrokPath || ''}`} />
                             </div>

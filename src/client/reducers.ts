@@ -197,6 +197,14 @@ export class ConversationActions {
             }
         });
     }
+    static endConversation() {
+        dispatch<ConversationAction>({
+            type: 'Conversation_SetConversationId',
+            state: {
+                conversationId: null
+            }
+        })
+    }
     static joinConversation(conversationId: string) {
         dispatch<ConversationAction>({
             type: 'Conversation_SetConversationId',

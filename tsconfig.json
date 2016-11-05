@@ -10,7 +10,10 @@
         "noImplicitThis": true,
         "noEmitOnError": true,
         "outDir": "dist",
-        "watch": true
+        "watch": true,
+        "types": [
+            "es6-shim"
+        ]
     },
     "exclude": [
         "node_modules",

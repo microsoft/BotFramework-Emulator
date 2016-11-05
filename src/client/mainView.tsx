@@ -25,19 +25,19 @@ export class MainView extends React.Component<{}, {}> {
         this.settingsUnsubscribe = addSettingsListener((settings: Settings) => {
             let conversationChanged = false;
             if (this.conversationId !== settings.conversation.conversationId) {
-                this.conversationId = settings.conversation.conversationId;
+                this.conversationId = settings.conversation.conversationId || '';
                 conversationChanged = true;
             }
 
             let userChanged = false;
             if (this.userId !== settings.serverSettings.users.currentUserId) {
-                this.userId = settings.serverSettings.users.currentUserId;
+                this.userId = settings.serverSettings.users.currentUserId || '';
                 userChanged = true;
             }
 
             let botChanged = false;
             if (this.botId !== settings.serverSettings.activeBot) {
-                this.botId = settings.serverSettings.activeBot;
+                this.botId = settings.serverSettings.activeBot || '';
                 botChanged = true;
             }
 
@@ -45,6 +45,7 @@ export class MainView extends React.Component<{}, {}> {
                 if (this.directline) {
                     this.directline.end();
                     this.directline = undefined;
+                    log.info(`ended conversation`);
                 }
                 if (this.conversationId.length && this.userId.length && this.botId.length) {
                     this.directline = new BotChat.DirectLine3(

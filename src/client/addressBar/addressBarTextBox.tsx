@@ -59,7 +59,7 @@ export class AddressBarTextBox extends React.Component<{}, {}> {
         }
     }
 
-    onFocus(e: React.FocusEvent<HTMLInputElement>) {
+    onFocus() {
         const settings = getSettings();
         const bots = AddressBarOperators.getMatchingBots(settings.addressBar.text, null);
         if (settings.addressBar.text.length) {
@@ -77,8 +77,16 @@ export class AddressBarTextBox extends React.Component<{}, {}> {
         }
     }
 
+    onBlur() {
+        const settings = getSettings();
+        const activeBot = (new ServerSettings(settings.serverSettings)).getActiveBot();
+        if (activeBot) {
+            AddressBarActions.setText(activeBot.botUrl);
+        }
+    }
+
     componentWillMount() {
-        this.settingsUnsubscribe = addSettingsListener(() => {
+        this.settingsUnsubscribe = addSettingsListener((settings) => {
             this.forceUpdate();
         });
     }
@@ -97,7 +105,8 @@ export class AddressBarTextBox extends React.Component<{}, {}> {
                     onChange={e => this.onChange((e.target as any).value)}
                     onKeyPress={e => this.onKeyPress(e)}
                     onKeyDown={e => this.onKeyDown(e)}
-                    onFocus={(e) => this.onFocus(e)}
+                    onFocus={() => this.onFocus()}
+                    onBlur={() => this.onBlur()}
                     placeholder="Enter your endpoint URL" />
             </div>
         );
