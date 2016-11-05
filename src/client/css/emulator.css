@@ -68,6 +68,10 @@
         fill: #1e1e1e;
     }
 
+    .wc-card {
+        color: #000;
+    }
+
 /* emulator */
 
     .emu-chatview-background {
