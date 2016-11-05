@@ -26,7 +26,9 @@ export interface IAddressBarState {
     matchingBots?: IBot[],
     selectedBot: IBot,
     showAppSettings: boolean,
-    showConversationSettings: boolean
+    showConversationSettings: boolean,
+    showSearchResults: boolean,
+    showBotCreds: boolean
 }
 
 export interface IConversationState {
@@ -89,7 +91,9 @@ export const addressBarDefault: IAddressBarState = {
     matchingBots: [],
     selectedBot: null,
     showAppSettings: false,
-    showConversationSettings: false
+    showConversationSettings: false,
+    showSearchResults: false,
+    showBotCreds: false
 }
 
 export const conversationDefault: IConversationState = {

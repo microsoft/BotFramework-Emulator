@@ -27,12 +27,10 @@ export class AddressBarSearch extends React.Component<{}, {}> {
 
     render() {
         const settings = getSettings();
-        let visible = false;
-        if (settings.addressBar.matchingBots.length > 0) {
-            visible = true;
-        }
+        if (!settings.addressBar.showSearchResults) return null;
+        if (!settings.addressBar.matchingBots.length) return null;
         return (
-            <div className={"addressbar-search" + (visible ? "" : " closed")}>
+            <div className="addressbar-search">
                 {this.searchResultComponents()}
             </div>
         );
@@ -49,6 +47,7 @@ class AddressBarSearchResult extends React.Component<AddressBarSearchResultProps
         AddressBarOperators.setText(this.props.bot.botUrl);
         AddressBarOperators.selectBot(this.props.bot);
         AddressBarOperators.clearMatchingBots();
+        AddressBarActions.showBotCreds();
     }
 
     deleteBot() {

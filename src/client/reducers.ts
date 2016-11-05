@@ -59,7 +59,16 @@ type AddressBarAction = {
     type: 'AddressBar_ShowConversationSettings'
 } | {
     type: 'AddressBar_HideConversationSettings'
+} | {
+    type: 'AddressBar_ShowSearchResults'
+} | {
+    type: 'AddressBar_HideSearchResults'
+} | {
+    type: 'AddressBar_ShowBotCreds'
+} | {
+    type: 'AddressBar_HideBotCreds'
 }
+
 
 type ConversationAction = {
     type: 'Conversation_SetConversationId',
@@ -153,6 +162,26 @@ export class AddressBarActions {
     static hideConversationSettings() {
         dispatch<AddressBarAction>({
             type: 'AddressBar_HideConversationSettings'
+        })
+    }
+    static showSearchResults() {
+        dispatch<AddressBarAction>({
+            type: 'AddressBar_ShowSearchResults'
+        })
+    }
+    static hideSearchResults() {
+        dispatch<AddressBarAction>({
+            type: 'AddressBar_HideSearchResults'
+        })
+    }
+    static showBotCreds() {
+        dispatch<AddressBarAction>({
+            type: 'AddressBar_ShowBotCreds'
+        })
+    }
+    static hideBotCreds() {
+        dispatch<AddressBarAction>({
+            type: 'AddressBar_HideBotCreds'
         })
     }
 }
@@ -274,6 +303,14 @@ export const addressBarReducer: Reducer<IAddressBarState> = (
             return Object.assign({}, state, { showConversationSettings: true });
         case 'AddressBar_HideConversationSettings':
             return Object.assign({}, state, { showConversationSettings: false });
+        case 'AddressBar_ShowSearchResults':
+            return Object.assign({}, state, { showSearchResults: true });
+        case 'AddressBar_HideSearchResults':
+            return Object.assign({}, state, { showSearchResults: false });
+        case 'AddressBar_ShowBotCreds':
+            return Object.assign({}, state, { showBotCreds: true });
+        case 'AddressBar_HideBotCreds':
+            return Object.assign({}, state, { showBotCreds: false });
         default:
             return state;
     }
