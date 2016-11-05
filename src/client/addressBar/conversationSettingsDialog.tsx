@@ -71,7 +71,7 @@ export class ConversationSettingsDialog extends React.Component<{}, {}> {
                     <UserList
                         className='conversationsettings-userlist'
                         users={[]}
-                        currentUser={{id:uniqueId(), name:'User 1'}}
+                        currentUser={{ id: uniqueId(), name: 'User 1' }}
                         onSave={(users, currentUser) => this.onSaveUserChanges(users, currentUser)}
                         onCancel={() => this.onClose()} />
                 </div>

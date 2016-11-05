@@ -18,11 +18,8 @@ export class AddressBar extends React.Component<{}, {}> {
         const settings = getSettings();
         let target = ev.srcElement;
         while (target) {
-            if (target.className === "addressbar")
-                return;
-            if (target.className === "addressbar-search")
-                return;
-            if (target.className === "addressbar-botcreds")
+            // NOTE: Sometimes target.className is not a string. One time it was an SVGAnimatedString which didn't have an 'includes' function.
+            if (target.className && target.className.toString().includes("addressbar"))
                 return;
             target = target.parentElement;
         }
@@ -55,7 +52,3 @@ export class AddressBar extends React.Component<{}, {}> {
         );
     }
 }
-
-
-
-

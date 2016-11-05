@@ -21,8 +21,9 @@ export class AddressBarMenu extends React.Component<{}, {}> {
             {
                 label: 'New Conversation',
                 click: () => ConversationActions.newConversation(),
-                enabled: settings.conversation.conversationId.length > 0
+                enabled: (settings.serverSettings.activeBot || '').length > 0
             },
+            /*
             {
                 label: 'Load Conversation',
                 type: 'submenu',
@@ -33,10 +34,13 @@ export class AddressBarMenu extends React.Component<{}, {}> {
                     }
                 ]
             },
+            */
             {
                 label: 'End Conversation',
-                enabled: settings.conversation.conversationId.length > 0
+                click: () => ConversationActions.endConversation(),
+                enabled: ((settings.serverSettings.activeBot || '').length > 0 && (settings.conversation.conversationId || '').length > 0)
             },
+            /*
             {
                 label: 'Manage Users...',
                 click: () => {
@@ -45,6 +49,7 @@ export class AddressBarMenu extends React.Component<{}, {}> {
                     AddressBarActions.showConversationSettings();
                 }
             },
+            */
             /*
             {
                 label: 'Send System Activity',
@@ -89,7 +94,7 @@ export class AddressBarMenu extends React.Component<{}, {}> {
     render() {
         return (
             <div className="addressbar-menu">
-                <div dangerouslySetInnerHTML={{__html: Constants.hamburgerIcon('toolbar-button', 24)}} onClick={() => this.showMenu()} />
+                <div dangerouslySetInnerHTML={{ __html: Constants.hamburgerIcon('toolbar-button', 24) }} onClick={() => this.showMenu()} />
                 <AppSettingsDialog />
                 <ConversationSettingsDialog />
             </div>
