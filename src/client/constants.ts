@@ -1,5 +1,23 @@
 
 
+export const clearCloseIcon = (className: string, size: number) => {
+    return `
+<svg class="${className}" width="${size}px" height="${size}px" viewBox="0 0 ${size} ${size}" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="x-large">
+            <g id="refresh">
+                <polygon id="Shape" points="0 0 24 0 24 24 0 24"></polygon>
+                <g id="close" transform="translate(6.000000, 6.000000)" stroke="#FFFFFF" stroke-width="2">
+                    <path d="M0.486851205,0.486851205 L11.8005597,11.8005597" id="Line"></path>
+                    <path d="M0.486851205,0.486851205 L11.8005597,11.8005597" id="Line" transform="translate(6.143705, 6.143705) scale(-1, 1) translate(-6.143705, -6.143705) "></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
+    `;
+}
+
 export const hamburgerIcon = (className: string, size: number) => {
     return `
 <svg class="${className}" width="${size}px" height="${size}px" viewBox="0 0 ${size} ${size}" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">

@@ -165,6 +165,7 @@ export class AddressBarActions {
         })
     }
     static showSearchResults() {
+        this.hideBotCreds();
         dispatch<AddressBarAction>({
             type: 'AddressBar_ShowSearchResults'
         })
@@ -175,6 +176,7 @@ export class AddressBarActions {
         })
     }
     static showBotCreds() {
+        this.hideSearchResults();
         dispatch<AddressBarAction>({
             type: 'AddressBar_ShowBotCreds'
         })
