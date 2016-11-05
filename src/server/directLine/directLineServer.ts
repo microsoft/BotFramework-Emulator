@@ -11,7 +11,7 @@ import { Settings } from '../../types/serverSettingsTypes';
 export class DirectLineServer extends RestServer {
 
     constructor() {
-        super("directLine");
+        super("");
         ConversationsControllerV3.registerRoutes(this.server);
         addSettingsListener((settings: Settings) => {
             this.configure(settings);

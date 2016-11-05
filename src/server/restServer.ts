@@ -31,7 +31,8 @@ export class RestServer {
         this.stop();
         this.port = port;
         return this.server.listen(this.port, () => {
-            log.info(`${this.server.name} listening on ${this.server.url}`);
+            if (this.server.name !== 'restify')
+                log.info(`${this.server.name} listening on ${this.server.url}`);
         });
     }
 
