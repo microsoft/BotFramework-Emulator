@@ -27,7 +27,7 @@
   "homepage": "https://github.com/fuselabs/botframework-emulator#readme",
   "devDependencies": {
     "@types/async": "2.0.32",
-    "@types/electron": "1.4.23",
+    "@types/electron": "1.4.25",
     "@types/es6-shim": "0.31.32",
     "@types/http-status-codes": "1.0.29",
     "@types/jsonwebtoken": "7.1.33",
@@ -40,7 +40,7 @@
     "@types/restify": "2.0.33",
     "del": "2.2.2",
     "devtron": "1.4.0",
-    "electron": "1.4.2",
+    "electron": "1.4.5",
     "electron-packager": "8.1.0",
     "electron-winstaller": "2.3.4",
     "event-stream": "3.3.4",
