@@ -58,18 +58,16 @@
         margin-top: 0px;
     }
 
-    /*
     .wc-message-content.selected {
         color: white;
         background-color: #1e1e1e;
+        box-shadow: 0px 1px 1px 0px rgba(0,0,0,0.2);
     }
 
-    .wc-message-callout.selected {
-        color: white;
-        background-color: #1e1e1e;
+    .wc-message-content.selected>svg.wc-message-callout>path {
+        fill: #1e1e1e;
     }
-    */
-    
+
 /* emulator */
 
     .emu-chatview-background {
