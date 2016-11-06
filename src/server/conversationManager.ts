@@ -72,13 +72,14 @@ export class Conversation {
                 }
             }
 
-            if (bot.msaAppId && bot.msaPassword)
-                this.authenticatedRequest(options, responseCallback);
-            else
-                request(options, responseCallback);
+            log.info(`send: ${JSON.stringify(activity)}`);
 
+            if (bot.msaAppId && bot.msaPassword) {
+                this.authenticatedRequest(options, responseCallback);
+            } else {
+                request(options, responseCallback);
+            }
         } else {
-            console.error("Conversation.postToBot: bot not found! How does this conversation exist?", this.botId);
             cb("bot not found");
         }
     }
@@ -113,6 +114,7 @@ export class Conversation {
                 activity.from.name = bot.botUrl;
             }
         }
+        log.info(`recv: ${JSON.stringify(activity)}`);
         this.activities.push(Object.assign({}, activity));
         return ResponseTypes.createResourceResponse(activity.id);
     }
