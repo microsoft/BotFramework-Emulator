@@ -5,6 +5,7 @@ import { Subscription, Observable, Subject } from '@reactivex/rxjs';
 import { getSettings, addSettingsListener } from './settings';
 import { LogActions } from './reducers';
 
+
 export enum Severity {
     log,
     info,
@@ -44,30 +45,34 @@ const timestamp = (entry: ILogEntry) => {
     const hours = number2(entry.timestamp.getHours());
     const minutes = number2(entry.timestamp.getMinutes());
     const seconds = number2(entry.timestamp.getSeconds());
-    return <span className='wc-logview-timestamp'>{`[${hours}:${minutes}:${seconds}]`}&nbsp;</span>
+    return <div className='wc-logview-timestamp'>{`[${hours}:${minutes}:${seconds}]`}&nbsp;</div>
 }
 
-const message = (entry: ILogEntry) => {
-    return <span className={'wc-logview-' + Severity[entry.severity]}>{safeStringify(entry.message)}</span>
+const message = (entry: ILogEntry, className: string) => {
+    if (entry.message && entry.message.hasOwnProperty('messageType') && entry.message['messageType'] === 'link') {
+        return <div className={className}><a className='wc-logview-link' href={entry.message.link}>{entry.message.text}</a>&nbsp;</div>
+    } else {
+        return <div className={className}>{safeStringify(entry.message)}&nbsp;</div>
+    }
 }
 
 const args = (entry: ILogEntry) => {
     if (entry.args && entry.args.length) {
         return entry.args
             .filter(arg => !!arg)
-            .map((arg, i) => <span key={i}><span>, </span><span className='wc-logview-arg'>{safeStringify(arg)}</span></span>);
+            .map((arg, i) => <div className='wc-logview-arg'>{safeStringify(arg)}&nbsp;</div>);
     }
     return null;
 }
 
 const format = (entry: ILogEntry, index: number) => {
     return (
-        <div key={index}>
-        {timestamp(entry)}
-        {message(entry)}
-        {args(entry)}
+        <div className='emu-log-entry'>
+            {timestamp(entry)}
+            {message(entry, 'wc-logview-' + Severity[entry.severity])}
+            {args(entry)}
         </div>
-    )
+    );
 }
 
 

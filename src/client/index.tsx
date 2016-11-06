@@ -11,8 +11,9 @@ window.onerror = (message: string, filename?: string, lineno?: number, colno?: n
     return true; // prevent default handler
 }
 
-const interceptClickEvent = (e: any) => {
-    let target = e.target;
+const interceptClickEvent = (e: Event) => {
+    e.preventDefault();
+    let target: any = e.target;
     while (target) {
         if (target.href) {
             navigate(target.href);

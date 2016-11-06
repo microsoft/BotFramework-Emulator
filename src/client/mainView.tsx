@@ -13,6 +13,13 @@ import { IUser } from '../types/userTypes';
 import * as Constants from './constants';
 
 
+
+export const deselectActivity = () => {
+    if (global['chatAPI']) {
+        global['chatAPI'].deselectActivity();
+    }
+}
+
 export class MainView extends React.Component<{}, {}> {
     settingsUnsubscribe: any;
     reuseKey: number = 0;
@@ -73,6 +80,7 @@ export class MainView extends React.Component<{}, {}> {
         this.conversationId = undefined;
         this.userId = undefined;
         this.botId = undefined;
+        global['chatAPI'] = undefined;
     }
 
     getCurrentUser(serverSettings: ServerSettings): IUser {
@@ -88,6 +96,10 @@ export class MainView extends React.Component<{}, {}> {
         InspectorActions.setSelectedObject(activity);
     }
 
+    receiveChatAPI(chatAPI: BotChat.ChatAPI) {
+        global['chatAPI'] = chatAPI;
+    }
+
     botChatComponent() {
         if (this.directline) {
             const settings = getSettings();
@@ -98,6 +110,7 @@ export class MainView extends React.Component<{}, {}> {
                     showHeader: false
                 },
                 onActivitySelected: this.onActivitySelected,
+                receiveChatAPI: this.receiveChatAPI,
                 user: this.getCurrentUser(settings.serverSettings)
             }
             InspectorActions.clear();
