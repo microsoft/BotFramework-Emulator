@@ -37,7 +37,9 @@ export class AddressBarMenu extends React.Component<{}, {}> {
             */
             {
                 label: 'End Conversation',
-                click: () => ConversationActions.endConversation(),
+                click: () => {
+                    ConversationActions.endConversation();
+                },
                 enabled: ((settings.serverSettings.activeBot || '').length > 0 && (settings.conversation.conversationId || '').length > 0)
             },
             /*
