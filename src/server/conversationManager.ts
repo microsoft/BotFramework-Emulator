@@ -72,7 +72,8 @@ export class Conversation {
                 }
             }
 
-            log.info(`send: ${JSON.stringify(activity)}`);
+            const stringified = JSON.stringify(activity);
+            log.info(log.makeLinkMessage('send', `emulator://inspect?obj=${new Buffer(stringified, 'utf8').toString('base64')}`), `${stringified}`);
 
             if (bot.msaAppId && bot.msaPassword) {
                 this.authenticatedRequest(options, responseCallback);
@@ -114,7 +115,8 @@ export class Conversation {
                 activity.from.name = bot.botUrl;
             }
         }
-        log.info(`recv: ${JSON.stringify(activity)}`);
+        const stringified = JSON.stringify(activity);
+        log.info(log.makeLinkMessage('recv', `emulator://inspect?obj=${new Buffer(stringified, 'utf8').toString('base64')}`), `${stringified}`);
         this.activities.push(Object.assign({}, activity));
         return ResponseTypes.createResourceResponse(activity.id);
     }
