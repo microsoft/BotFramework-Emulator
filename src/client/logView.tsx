@@ -48,19 +48,24 @@ const timestamp = (entry: ILogEntry) => {
     return <div className='wc-logview-timestamp'>{`[${hours}:${minutes}:${seconds}]`}&nbsp;</div>
 }
 
-const message = (entry: ILogEntry, className: string) => {
-    if (entry.message && entry.message.hasOwnProperty('messageType') && entry.message['messageType'] === 'link') {
-        return <div className={className}><a className='wc-logview-link' href={entry.message.link}>{entry.message.text}</a>&nbsp;</div>
+const emit = (val: any, className: string) => {
+    if (!val) return null;
+    if (val.hasOwnProperty('messageType') && val['messageType'] === 'link') {
+        return <div className={className}><a className='wc-logview-link' href={val.link}>{val.text}</a>&nbsp;</div>
     } else {
-        return <div className={className}>{safeStringify(entry.message)}&nbsp;</div>
+        return <div className={className}>{safeStringify(val)}&nbsp;</div>
     }
+}
+
+const message = (entry: ILogEntry, className: string) => {
+    return emit(entry.message, className);
 }
 
 const args = (entry: ILogEntry) => {
     if (entry.args && entry.args.length) {
         return entry.args
             .filter(arg => !!arg)
-            .map((arg, i) => <div className='wc-logview-arg'>{safeStringify(arg)}&nbsp;</div>);
+            .map((arg, i) => emit(arg, 'wc-logview-arg'));
     }
     return null;
 }
