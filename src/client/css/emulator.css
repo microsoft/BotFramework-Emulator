@@ -32,6 +32,7 @@
 
     *, *:before, *:after {
         box-sizing: border-box;
+        -webkit-user-select: none;
     }
 
     ::-webkit-scrollbar {
@@ -57,6 +58,10 @@
     .format-markdown>p {
         margin-bottom: 0px;
         margin-top: 0px;
+    }
+
+    .wc-message-content * {
+        -webkit-user-select: text;
     }
 
     .wc-message-content.selected {
@@ -458,6 +463,10 @@
         overflow-y: auto;
     }
 
+    .wc-inspectorview * {
+        -webkit-user-select: text;
+    }
+
     .wc-inspectorview-json {
         font-size: 13px;
 	    font-family: 'Menlo', 'Monaco', 'Consolas', "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
@@ -524,6 +533,10 @@
         right: 0;
         bottom: 0;
         padding: 10px 10px 10px 10px;
+    }
+
+    .wc-logview * {
+        -webkit-user-select: text;
     }
 
     .wc-logview-timestamp {
