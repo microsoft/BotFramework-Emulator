@@ -4,9 +4,11 @@ import { MainView } from './mainView';
 import * as Settings from './settings';
 import { uniqueId } from '../utils';
 import { navigate } from './hyperlinkHandler';
+import * as log from './log';
 
 
 window.onerror = (message: string, filename?: string, lineno?: number, colno?: number, error?:Error) => {
+    log.error(message, filename, lineno, colno, error);
     console.error(message, filename, lineno, colno, error);
     return true; // prevent default handler
 }

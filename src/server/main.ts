@@ -4,9 +4,11 @@ import { getSettings, dispatch } from './settings';
 import { WindowStateAction } from './reducers/windowStateReducer';
 import * as url from 'url';
 import * as path from 'path';
+import * as log from './log';
 
 
 process.on('uncaughtException', function (error) {
+    log.error(error.message || error.msg || error);
     console.error(error);
 });
 
