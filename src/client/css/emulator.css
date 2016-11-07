@@ -78,6 +78,10 @@
         color: #000;
     }
 
+    .wc-list ul {
+        padding: 0;
+    }
+
 /* emulator */
 
     .emu-chatview-background {
