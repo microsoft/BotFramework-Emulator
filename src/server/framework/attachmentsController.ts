@@ -4,6 +4,8 @@ import * as ResponseTypes from '../../types/responseTypes';
 import { ErrorCodes, IResourceResponse, IErrorResponse } from '../../types/responseTypes';
 import { IAttachmentData, IAttachmentInfo, IAttachmentView } from '../../types/attachmentTypes';
 import { uniqueId } from '../../utils';
+import { RestServer } from '../restServer';
+
 
 interface IAttachmentParams {
     attachmentId: string;
@@ -14,15 +16,15 @@ export class AttachmentsController {
 
     private static attachments: { [key: string]: IAttachmentData } = {};
 
-    public static registerRoutes(server: Restify.Server) {
-        server.get('/v3/attachments/:attachmentId', this.getAttachmentInfo);
-        server.get('/v3/attachments/:attachmentId/views/:viewId', this.getAttachment);
+    public static registerRoutes(server: RestServer) {
+        server.router.get('/v3/attachments/:attachmentId', this.getAttachmentInfo);
+        server.router.get('/v3/attachments/:attachmentId/views/:viewId', this.getAttachment);
     }
 
     public static uploadAttachment(attachmentData: IAttachmentData): string {
         if (!attachmentData.type)
             throw ResponseTypes.createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.MissingProperty, "You must specify type property for the attachment");
-            
+
         if (!attachmentData.originalBase64)
             throw ResponseTypes.createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.MissingProperty, "You must specify originalBase64 byte[] for the attachment");
 
@@ -32,7 +34,7 @@ export class AttachmentsController {
         return attachment.id;
     }
 
-    public static getAttachmentInfo(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+    public static getAttachmentInfo = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         try {
             console.log("framework: getAttachmentInfo");
             const parms: IAttachmentParams = req.params;
@@ -64,7 +66,7 @@ export class AttachmentsController {
         }
     }
 
-    public static getAttachment(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+    public static getAttachment = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         console.log("framework: getAttachment");
         try {
             const parms: IAttachmentParams = req.params;

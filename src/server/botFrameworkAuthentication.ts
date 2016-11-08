@@ -10,14 +10,7 @@ export class BotFrameworkAuthentication {
         this.msaOpenIdMetadata = new oid.OpenIdMetadata(authenticationSettings.msaOpenIdMetadata);
     }
 
-    registerAuth(server: Restify.Server) {
-        server.use((req: Restify.Request, res: Restify.Response, next: Restify.Next) =>
-        {
-            this.verifyBotFramework(req, res, next);
-        });
-    }
-
-    private verifyBotFramework(req: Restify.Request, res: Restify.Response, next: Restify.Next): void {
+    public verifyBotFramework = (req: Restify.Request, res: Restify.Response, next: Restify.Next): void => {
         let token: string;
         if (req.headers && req.headers.hasOwnProperty('authorization')) {
             let auth = req.headers['authorization'].trim().split(' ');;

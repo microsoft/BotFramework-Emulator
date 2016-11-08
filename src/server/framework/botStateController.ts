@@ -2,6 +2,8 @@ import * as Restify from 'restify';
 import * as HttpStatus from "http-status-codes";
 import * as ResponseTypes from '../../types/responseTypes';
 import { ErrorCodes, IResourceResponse, IErrorResponse } from '../../types/responseTypes';
+import { RestServer } from '../restServer';
+import { BotFrameworkAuthentication } from '../botFrameworkAuthentication';
 
 
 interface IBotData {
@@ -37,19 +39,19 @@ export class BotStateController {
         return newData;
     }
 
-    public static registerRoutes(server: Restify.Server) {
+    public static registerRoutes(server: RestServer, auth: BotFrameworkAuthentication) {
         let controller = new BotStateController();
-        server.get('/v3/botstate/:channelId/users/:userId', (req, resp, next) => controller.getUserData(req, resp, next));
-        server.get('/v3/botstate/:channelId/conversations/:conversationId', (req, resp, next) => controller.getConversationData(req, resp, next));
-        server.get('/v3/botstate/:channelId/conversations/:conversationId/users/:userId', (req, resp, next) => controller.getPrivateConversationData(req, resp, next));
-        server.post('/v3/botstate/:channelId/users/:userId', (req, resp, next) => controller.setUserData(req, resp, next));
-        server.post('/v3/botstate/:channelId/conversations/:conversationId', (req, resp, next) => controller.setConversationData(req, resp, next));
-        server.post('/v3/botstate/:channelId/conversations/:conversationId/users/:userId', (req, resp, next) => controller.setPrivateConversationData(req, resp, next));
-        server.del('/v3/botstate/:channelId/users/:userId', (req, resp, next) => controller.deleteStateForUser(req, resp, next));
+        server.router.get('/v3/botstate/:channelId/users/:userId', auth.verifyBotFramework, controller.getUserData);
+        server.router.get('/v3/botstate/:channelId/conversations/:conversationId', auth.verifyBotFramework, controller.getConversationData);
+        server.router.get('/v3/botstate/:channelId/conversations/:conversationId/users/:userId', auth.verifyBotFramework, controller.getPrivateConversationData);
+        server.router.post('/v3/botstate/:channelId/users/:userId', auth.verifyBotFramework, controller.setUserData);
+        server.router.post('/v3/botstate/:channelId/conversations/:conversationId', auth.verifyBotFramework, controller.setConversationData);
+        server.router.post('/v3/botstate/:channelId/conversations/:conversationId/users/:userId', auth.verifyBotFramework, controller.setPrivateConversationData);
+        server.router.del('/v3/botstate/:channelId/users/:userId', auth.verifyBotFramework, controller.deleteStateForUser);
     }
 
     // Get USER Data
-    public getUserData(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+    public getUserData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         try {
             const botData = this.getBotData(req.params.channelId, req.params.conversationId, req.params.userId);
             res.send(HttpStatus.OK, botData);
@@ -60,7 +62,7 @@ export class BotStateController {
     }
 
     // Get Conversation Data
-    public getConversationData(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+    public getConversationData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         try {
             const botData = this.getBotData(req.params.channelId, req.params.conversationId, req.params.userId);
             res.send(HttpStatus.OK, botData);
@@ -71,7 +73,7 @@ export class BotStateController {
     }
 
     // Get PrivateConversation Data
-    public getPrivateConversationData(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+    public getPrivateConversationData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         try {
             const botData = this.getBotData(req.params.channelId, req.params.conversationId, req.params.userId);
             res.send(HttpStatus.OK, botData);
@@ -82,7 +84,7 @@ export class BotStateController {
     }
 
     // Set User Data
-    public setUserData(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+    public setUserData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         try {
             let newBotData = this.setBotData(req.params.channelId, req.params.conversationId, req.params.userId, req.body as IBotData);
             res.send(HttpStatus.OK, newBotData);
@@ -93,7 +95,7 @@ export class BotStateController {
     }
 
     // set conversation data
-    public setConversationData(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+    public setConversationData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         try {
             let newBotData = this.setBotData(req.params.channelId, req.params.conversationId, req.params.userId, req.body);
             res.send(HttpStatus.OK, newBotData);
@@ -104,7 +106,7 @@ export class BotStateController {
     }
 
     // set private conversation data
-    public setPrivateConversationData(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+    public setPrivateConversationData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         try {
             let newBotData = this.setBotData(req.params.channelId, req.params.conversationId, req.params.userId, req.body);
             res.send(HttpStatus.OK, newBotData);
@@ -115,7 +117,7 @@ export class BotStateController {
     }
 
     // delete state for user
-    public deleteStateForUser(req: Restify.Request, res: Restify.Response, next: Restify.Next): any {
+    public deleteStateForUser = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         try {
             let keys = Object.keys(this.botDataStore);
             let userPostfix = `!${req.params.userId}`;

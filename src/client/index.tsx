@@ -23,10 +23,10 @@ webFrame.setZoomFactor(1);
 webFrame.registerURLSchemeAsPrivileged('emulator');
 
 const interceptClickEvent = (e: Event) => {
-    e.preventDefault();
     let target: any = e.target;
     while (target) {
         if (target.href) {
+            e.preventDefault();
             navigate(target.href);
             return;
         }

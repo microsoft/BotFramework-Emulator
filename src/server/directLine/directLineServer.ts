@@ -12,7 +12,7 @@ export class DirectLineServer extends RestServer {
 
     constructor() {
         super("");
-        ConversationsControllerV3.registerRoutes(this.server);
+        ConversationsControllerV3.registerRoutes(this);
         addSettingsListener((settings: Settings) => {
             this.configure(settings);
         });
@@ -24,7 +24,7 @@ export class DirectLineServer extends RestServer {
      */
     private configure(settings: Settings) {
         if (this.port !== settings.directLine.port) {
-            console.log(`restarting ${this.server.name} because ${this.port} !== ${settings.directLine.port}`);
+            console.log(`restarting ${this.router.name} because ${this.port} !== ${settings.directLine.port}`);
             this.restart(settings.directLine.port);
         }
     }

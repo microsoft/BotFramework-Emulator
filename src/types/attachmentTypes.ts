@@ -19,7 +19,7 @@ export interface IAttachmentData {
     /// original content
     originalBase64: string;
 
-    /// Thumbnail 
+    /// Thumbnail
     thumbnailBase64: string;
 }
 
@@ -31,7 +31,7 @@ export interface IAttachmentInfo {
     /// ContentType of the attachment
     type: string;
 
-    /// attachment views 
+    /// attachment views
     views: IAttachmentView[];
 }
 

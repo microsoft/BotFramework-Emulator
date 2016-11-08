@@ -6,37 +6,37 @@ export class RestServer {
     // REVIEW: Can we get this from the Restify.server?
     port: number;
     serviceUrl: string;
-    server: Restify.Server;
+    router: Restify.Server;
 
     constructor(name: string) {
-        this.server = Restify.createServer({
+        this.router = Restify.createServer({
             name: name
         });
 
         // REVIEW: Which of these do we need?
-        this.server.use(Restify.acceptParser(this.server.acceptable));
-        this.server.use(Restify.authorizationParser());
-        this.server.use(Restify.CORS());
-        this.server.use(Restify.dateParser());
-        this.server.use(Restify.queryParser());
-        this.server.use(Restify.jsonp());
-        this.server.use(Restify.gzipResponse());
-        this.server.use(Restify.requestLogger());
-        this.server.use(Restify.conditionalRequest());
-        this.server.use(Restify.fullResponse());
-        this.server.use(Restify.bodyParser());
+        this.router.use(Restify.acceptParser(this.router.acceptable));
+        this.router.use(Restify.authorizationParser());
+        this.router.use(Restify.CORS());
+        this.router.use(Restify.dateParser());
+        this.router.use(Restify.queryParser());
+        this.router.use(Restify.jsonp());
+        this.router.use(Restify.gzipResponse());
+        this.router.use(Restify.requestLogger());
+        this.router.use(Restify.conditionalRequest());
+        this.router.use(Restify.fullResponse());
+        this.router.use(Restify.bodyParser({ mapParams: true, mapFiles: true}));
     }
 
     public restart(port: number) {
         this.stop();
         this.port = port;
-        return this.server.listen(this.port, () => {
-            if (this.server.name !== 'restify')
-                log.info(`${this.server.name} listening on ${this.server.url}`);
+        return this.router.listen(this.port, () => {
+            if (this.router.name !== 'restify')
+                log.info(`${this.router.name} listening on ${this.router.url}`);
         });
     }
 
     public stop() {
-        return this.server.close();
+        return this.router.close();
     }
 }

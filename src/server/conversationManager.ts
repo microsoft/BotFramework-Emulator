@@ -41,7 +41,7 @@ export class Conversation {
     public members: IChannelAccount[] = [];
 
     private postage(recipientId: string, activity: IActivity) {
-        activity.id = uniqueId();
+        activity.id = activity.id || uniqueId();
         activity.channelId = 'emulator';
         activity.timestamp = (new Date()).toISOString();
         activity.recipient = { id: recipientId };
@@ -51,7 +51,7 @@ export class Conversation {
     /**
      * Sends the activity to the conversation's bot.
      */
-    postActivityToBot(activity: IActivity, recordInConversation: boolean, cb) {
+    postActivityToBot(activity: IActivity, recordInConversation: boolean, cb?) {
         let _this = this;
         this.postage(this.botId, activity);
         const bot = getSettings().botById(this.botId);
@@ -60,15 +60,13 @@ export class Conversation {
             let options: request.OptionsWithUrl = { url: bot.botUrl, method: "POST", json: activity };
 
             let responseCallback = function (err, resp: http.IncomingMessage, body) {
-                if (err) {
-                    cb(err);
-                } else if (resp.statusCode < 300) {
+                if (err || (resp && !/^2\d\d$/.test(`${resp.statusCode}`))) {
+                    cb(err, resp ? resp.statusCode : undefined);
+                } else {
                     if (recordInConversation) {
                         _this.activities.push(Object.assign({}, activity));
                     }
-                    cb(null, resp.statusCode);
-                } else {
-                    cb(null, resp.statusCode);
+                    cb(null, resp.statusCode, activity.id);
                 }
             }
 

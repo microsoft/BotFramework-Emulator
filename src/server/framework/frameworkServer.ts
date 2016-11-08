@@ -25,10 +25,9 @@ export class FrameworkServer extends RestServer {
 
     constructor() {
         super("emulator");
-        this.authentication.registerAuth(this.server);
-        ConversationsController.registerRoutes(this.server);
-        AttachmentsController.registerRoutes(this.server);
-        BotStateController.registerRoutes(this.server);
+        ConversationsController.registerRoutes(this, this.authentication);
+        AttachmentsController.registerRoutes(this);
+        BotStateController.registerRoutes(this, this.authentication);
         addSettingsListener((settings: Settings) => {
             this.configure(settings);
         });
@@ -43,7 +42,7 @@ export class FrameworkServer extends RestServer {
 
         // Did port change?
         if (this.port !== settings.framework.port) {
-            console.log(`restarting ${this.server.name} because ${this.port} !== ${settings.framework.port}`);
+            console.log(`restarting ${this.router.name} because ${this.port} !== ${settings.framework.port}`);
             this.restart(settings.framework.port);
             // Respawn ngrok when the port changes
             relaunchNgrok = true;
