@@ -1,5 +1,4 @@
-import { DirectLineServer } from './directLine/directLineServer';
-import { FrameworkServer } from './framework/frameworkServer';
+import { BotFrameworkService } from './botFrameworkService';
 import { ConversationManager } from './conversationManager';
 import * as Settings from './settings';
 import * as Electron from 'electron';
@@ -11,8 +10,7 @@ import { mainWindow } from './main';
  */
 export class Emulator {
     mainWindow: Electron.BrowserWindow;
-    directLine = new DirectLineServer();
-    framework = new FrameworkServer();
+    framework = new BotFrameworkService();
     conversations = new ConversationManager();
 
     constructor() {

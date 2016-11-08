@@ -1,12 +1,13 @@
 import * as Restify from 'restify';
-import { BotFrameworkAuthentication } from '../botFrameworkAuthentication';
-import { ConversationsController } from './conversationsController';
-import { AttachmentsController } from './attachmentsController';
-import { BotStateController } from './botStateController';
-import { RestServer } from '../restServer';
-import { getSettings, addSettingsListener } from '../settings';
-import { Settings } from '../../types/serverSettingsTypes';
-import * as log from '../log';
+import { BotFrameworkAuthentication } from './botFrameworkAuthentication';
+import { ConversationsController } from './framework/conversationsController';
+import { AttachmentsController } from './framework/attachmentsController';
+import { BotStateController } from './framework/botStateController';
+import { ConversationsControllerV3 as DirectLineConversationsController } from './directLine/conversationsControllerV3';
+import { RestServer } from './restServer';
+import { getSettings, addSettingsListener } from './settings';
+import { Settings } from '../types/serverSettingsTypes';
+import * as log from './log';
 import * as Fs from 'fs';
 import * as path from 'path';
 import * as ngrok from './ngrok';
@@ -15,7 +16,7 @@ import * as ngrok from './ngrok';
 /**
  * Communicates with the bot.
  */
-export class FrameworkServer extends RestServer {
+export class BotFrameworkService extends RestServer {
 
     serviceUrl: string;
     inspectUrl: string;
@@ -28,6 +29,7 @@ export class FrameworkServer extends RestServer {
         ConversationsController.registerRoutes(this, this.authentication);
         AttachmentsController.registerRoutes(this);
         BotStateController.registerRoutes(this, this.authentication);
+        DirectLineConversationsController.registerRoutes(this);
         addSettingsListener((settings: Settings) => {
             this.configure(settings);
         });

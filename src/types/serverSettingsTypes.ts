@@ -2,10 +2,6 @@ import { IBot } from '../types/botTypes';
 import { IUser } from '../types/userTypes';
 
 
-export interface IDirectLineSettings {
-    port?: number,
-}
-
 export interface IFrameworkSettings {
     // port for emulator to listen on
     port?: number,
@@ -29,7 +25,6 @@ export interface IUserSettings {
 }
 
 export interface IPersistentSettings {
-    directLine?: IDirectLineSettings,
     framework?: IFrameworkSettings,
     bots?: IBot[],
     windowState?: IWindowStateSettings,
@@ -41,7 +36,6 @@ export interface ISettings extends IPersistentSettings {
 }
 
 export class Settings implements ISettings {
-    public directLine: IDirectLineSettings;
     public framework: IFrameworkSettings;
     public bots: IBot[];
     public windowState: IWindowStateSettings;
@@ -59,10 +53,6 @@ export class Settings implements ISettings {
     public botById(botId: string): IBot {
         return this.bots.find(value => value.botId === botId);
     }
-}
-
-export const directLineDefault: IDirectLineSettings = {
-    port: 9001
 }
 
 export const frameworkDefault: IFrameworkSettings = {
@@ -89,7 +79,6 @@ export const usersDefault: IUserSettings = {
 }
 
 export const settingsDefault: ISettings = {
-    directLine: directLineDefault,
     framework: frameworkDefault,
     bots: [],
     activeBot: '',

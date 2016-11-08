@@ -1,7 +1,6 @@
 import * as Electron from 'electron';
 import * as Os from 'os';
 import { Store, Reducer, Dispatch, createStore, combineReducers, Action } from 'redux';
-import { directLineReducer } from './reducers/directLineReducer';
 import { frameworkReducer } from './reducers/frameworkReducer';
 import { botsReducer, activeBotReducer } from './reducers/botReducer';
 import { windowStateReducer } from './reducers/windowStateReducer';
@@ -11,7 +10,6 @@ import { loadSettings, saveSettings } from '../utils';
 import { IBot } from '../types/botTypes';
 import { logReady } from './log';
 import {
-    IDirectLineSettings,
     IFrameworkSettings,
     IWindowStateSettings,
     IUserSettings,
@@ -23,7 +21,6 @@ import {
 
 
 export class PersistentSettings implements IPersistentSettings {
-    public directLine: IDirectLineSettings;
     public framework: IFrameworkSettings;
     public bots: IBot[];
     public windowState: IWindowStateSettings;
@@ -31,7 +28,6 @@ export class PersistentSettings implements IPersistentSettings {
 
     constructor(settings: ISettings) {
         Object.assign(this, {
-            directLine: settings.directLine,
             framework: settings.framework,
             bots: settings.bots,
             windowState: settings.windowState,
@@ -51,7 +47,6 @@ export const getStore = (): Store<ISettings> => {
         // TODO: Validate the settings still apply.
 
         store = createStore(combineReducers<ISettings>({
-            directLine: directLineReducer,
             framework: frameworkReducer,
             bots: botsReducer,
             activeBot: activeBotReducer,

@@ -57,7 +57,7 @@ export class MainView extends React.Component<{}, {}> {
                 if (this.conversationId.length && this.userId.length && this.botId.length) {
                     this.directline = new BotChat.DirectLine3(
                         { secret: settings.conversation.conversationId, token: settings.conversation.conversationId },
-                        `http://localhost:${settings.serverSettings.directLine.port}`,
+                        `http://localhost:${settings.serverSettings.framework.port}`,
                         'v3/directline'
                     );
                     log.info(`started new conversation`);
