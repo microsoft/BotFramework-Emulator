@@ -1,10 +1,12 @@
 import * as React from 'react';
+import { remote } from 'electron';
 import { getSettings, Settings, addSettingsListener } from '../settings';
 import { Settings as ServerSettings } from '../../types/serverSettingsTypes';
 import { AddressBarActions, ConversationActions, ServerSettingsActions } from '../reducers';
 import { IBot, newBot } from '../../types/botTypes';
 import * as log from '../log';
 import { AddressBarOperators } from './addressBarOperators';
+import * as path from 'path';
 
 
 interface IAppSettings {
@@ -61,6 +63,17 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
     showNgrokConfig = () => {
         this.currentTab = Tabs.NgrokConfig;
         this.forceUpdate();
+    }
+
+    browseForNgrokPath = () => {
+        const dir = path.dirname(this.ngrokPathInputRef.value);
+        remote.dialog.showOpenDialog({
+            title: 'Browse for Ngrok',
+            defaultPath: dir,
+            properties: ['openFile']
+        }, (filenames: string[]) => {
+            this.ngrokPathInputRef.value = filenames[0];
+        })
     }
 
     componentWillMount() {
@@ -126,13 +139,14 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
                                     ref={ref => this.ngrokPathInputRef = ref}
                                     className="form-input appsettings-path-input"
                                     defaultValue={`${serverSettings.framework.ngrokPath || ''}`} />
+                                <button onClick={() => this.browseForNgrokPath()}>Browse</button>
                             </div>
                         </div>
                     </div>
                     <div className="appsettings-buttons">
-                        <a href="javascript:void(0)" onClick={() => this.onAccept()}>accept</a>
+                        <button onClick={() => this.onAccept()}>Save</button>
                         &nbsp;&nbsp;&nbsp;
-                        <a href="javascript:void(0)" onClick={() => this.onClose()}>close</a>
+                        <button onClick={() => this.onClose()}>Cancel</button>
                     </div>
                 </div>
             </div>
