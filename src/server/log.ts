@@ -24,9 +24,13 @@ const setQueueTimer = () => {
     }
 }
 
+const sendMessage = (method: string, message: any, ...args) => {
+    mainWindow.webContents.send(method, message, ...args);
+}
+
 const trySendQueuedMessages = () => {
     if (canLogMessages()) {
-        queuedMessages.forEach((entry) => {mainWindow.webContents.send(entry.method, entry.message, ...entry.args)});
+        queuedMessages.forEach((entry) => sendMessage(entry.method, entry.message, ...entry.args));
     } else {
         setQueueTimer();
     }
@@ -39,7 +43,7 @@ const queueMessage = (entry) => {
 
 export const log = (message: any, ...args: any[]) => {
     if (canLogMessages()) {
-        mainWindow.webContents.send('log-log', message, ...args);
+        sendMessage('log-log', message, ...args);
     } else {
         queueMessage({
             method: 'log-log',
@@ -50,7 +54,7 @@ export const log = (message: any, ...args: any[]) => {
 }
 export const info = (message: any, ...args: any[]) => {
     if (canLogMessages()) {
-        mainWindow.webContents.send('log-info', message, ...args);
+        sendMessage('log-info', message, ...args);
     } else {
         queueMessage({
             method: 'log-info',
@@ -61,7 +65,7 @@ export const info = (message: any, ...args: any[]) => {
 }
 export const trace = (message: any, ...args: any[]) => {
     if (canLogMessages()) {
-        mainWindow.webContents.send('log-trace', message, ...args);
+        sendMessage('log-trace', message, ...args);
     } else {
         queueMessage({
             method: 'log-trace',
@@ -72,7 +76,7 @@ export const trace = (message: any, ...args: any[]) => {
 }
 export const debug = (message: any, ...args: any[]) => {
     if (canLogMessages()) {
-        mainWindow.webContents.send('log-debug', message, ...args);
+        sendMessage('log-debug', message, ...args);
     } else {
         queueMessage({
             method: 'log-debug',
@@ -83,7 +87,7 @@ export const debug = (message: any, ...args: any[]) => {
 }
 export const warn = (message: any, ...args: any[]) => {
     if (canLogMessages()) {
-        mainWindow.webContents.send('log-warn', message, ...args);
+        sendMessage('log-warn', message, ...args);
     } else {
         queueMessage({
             method: 'log-warn',
@@ -94,7 +98,7 @@ export const warn = (message: any, ...args: any[]) => {
 }
 export const error = (message: any, ...args: any[]) => {
     if (canLogMessages()) {
-        mainWindow.webContents.send('log-error', message, ...args);
+        sendMessage('log-error', message, ...args);
     } else {
         queueMessage({
             method: 'log-error',
