@@ -94,7 +94,14 @@ export class AddressBarMenu extends React.Component<{}, {}> {
             {
                 label: 'Privacy',
                 click: () => window.open('https://go.microsoft.com/fwlink/?LinkId=512132')
-            }
+            },
+            {
+                type: 'separator'
+            },
+            {
+                label: 'Report an issue',
+                click: () => window.open('https://github.com/Microsoft/BotFramework-Emulator/issues')
+            },
         ];
 
         const menu = Menu.buildFromTemplate(template);
