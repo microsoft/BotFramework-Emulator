@@ -86,6 +86,14 @@ export class AddressBarMenu extends React.Component<{}, {}> {
             },
             {
                 label: 'About',
+            },
+            {
+                label: 'Legal',
+                click: () => window.open('https://g.microsoftonline.com/0BX20en/721')
+            },
+            {
+                label: 'Privacy',
+                click: () => window.open('https://go.microsoft.com/fwlink/?LinkId=512132')
             }
         ];
 

@@ -3,6 +3,7 @@ import * as URL from 'url';
 import * as QueryString from 'querystring';
 import { InspectorActions } from './reducers';
 import { deselectActivity } from './mainView';
+import * as log from './log';
 
 
 export function navigate(url: string) {
@@ -12,17 +13,22 @@ export function navigate(url: string) {
             shell.openExternal(url, { activate: true });
         } else if (parsed.protocol === "emulator:") {
             if (parsed.host === 'inspect') {
-                deselectActivity();
-                const args = QueryString.parse(parsed.query);
-                const base64 = args['obj'];
-                const json = new Buffer(base64, 'base64').toString('utf8');
-                const obj = JSON.parse(json);
-                InspectorActions.setSelectedObject(obj);
+                try {
+                    deselectActivity();
+                    const args = QueryString.parse(parsed.query);
+                    const encoded = args['obj'];
+                    const json = decodeURIComponent(encoded);
+                    const obj = JSON.parse(json);
+                    InspectorActions.setSelectedObject(obj);
+                } catch (e) {
+                    log.error(e.message);
+                    throw e;
+                }
             }
         } else {
             // Ignore
         }
     } catch (e) {
-        console.warn(e);
+        console.error(e);
     }
 }

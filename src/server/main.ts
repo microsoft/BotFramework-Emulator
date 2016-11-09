@@ -35,7 +35,10 @@ const createMainWindow = () => {
     //mainWindow.webContents.openDevTools();
 
     mainWindow.setTitle('Microsoft Bot Framework Emulator (alpha)');
-    mainWindow.setMenu(null);
+    // Mac requires a menu for cut/paste to work.
+    if (process.platform !== 'darwin') {
+        mainWindow.setMenu(null);
+    }
 
     mainWindow.on('resize', () => {
         const bounds = mainWindow.getBounds();
