@@ -31,7 +31,7 @@ export class InspectorView extends React.Component<{}, {}> {
 
 const formatJSON = (obj: any) => {
     if (!obj) 
-        return <i>no content</i>;
+        return null;
     let json = JSON.stringify(obj, null, 2);
     // Hide ampersands we don't want replaced
     json = json.replace(/&(amp|apos|copy|gt|lt|nbsp|quot|#x?\d+|[\w\d]+);/g, '\x01');
