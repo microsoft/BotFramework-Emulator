@@ -53,22 +53,22 @@ export class AddressBarBotCreds extends React.Component<{}, {}> {
                 <div className="input-group">
                     <label
                         className="form-label">
-                        Microsoft App ID
+                        Microsoft App ID:
                     </label>
                     <input
                         type="text"
-                        className="form-input addressbar-botcreds-input"
+                        className="form-input addressbar-botcreds-input addressbar-botcreds-appid"
                         value={settings.addressBar.selectedBot.msaAppId}
                         onChange={e => this.appIdChanged((e.target as any).value)} />
                 </div>
                 <div className="input-group">
                     <label
                         className="form-label">
-                        Microsoft App Password
+                        Microsoft App Password:
                     </label>
                     <input
                         type="password"
-                        className="form-input addressbar-botcreds-input"
+                        className="form-input addressbar-botcreds-input addressbar-botcreds-password"
                         value={settings.addressBar.selectedBot.msaPassword}
                         onChange={e => this.appPasswordChanged((e.target as any).value)} />
                 </div>

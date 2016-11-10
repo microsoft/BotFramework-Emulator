@@ -98,6 +98,11 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
         window.addEventListener('click', this.pageClicked);
         this.settingsUnsubscribe = addSettingsListener((settings: Settings) => {
             if (settings.addressBar.showAppSettings != this.showing) {
+                if (settings.serverSettings.framework.ngrokPath.length) {
+                    this.currentTab = Tabs.NgrokConfig;
+                } else {
+                    this.currentTab = Tabs.ServiceUrl;
+                }
                 this.showing = settings.addressBar.showAppSettings;
                 this.forceUpdate();
             }
@@ -119,11 +124,11 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
                 <div className="dialog-background">
                 </div>
                 <div className="appsettings-dialog">
-                    <h2 className="appsettings-header">App Settings</h2>
-                    <div className="appsettings-closex" onClick={() => this.onClose()} dangerouslySetInnerHTML={{ __html: Constants.clearCloseIcon("", 24) }} />
+                    <h2 className="dialog-header">App Settings</h2>
+                    <div className="dialog-closex" onClick={() => this.onClose()} dangerouslySetInnerHTML={{ __html: Constants.clearCloseIcon("", 24) }} />
                     <div className="input-group appsettings-port-group">
                         <label className="form-label">
-                            Emulator Port
+                            Emulator Port:
                         </label>
                         <input
                             type="text"
@@ -153,7 +158,7 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
                         <div className={"emu-tab" + (this.currentTab === Tabs.ServiceUrl ? " emu-visible" : " emu-hidden")}>
                             <div className="input-group">
                                 <label className="form-label">
-                                    Callback URL
+                                    Callback URL:
                                 </label>
                                 <input
                                     type="text"
@@ -167,7 +172,7 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
                         <div className={"emu-tab" + (this.currentTab === Tabs.NgrokConfig ? " emu-visible" : " emu-hidden")}>
                             <div className="input-group">
                                 <label className="form-label">
-                                    Path to ngrok
+                                    Path to ngrok:
                                 </label>
                                 <input
                                     type="text"

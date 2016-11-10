@@ -66,43 +66,47 @@ export class Conversation {
                 if (text && text.length > 50)
                     text = text.substring(0, 50);
 
-                if (err || (resp && !/^2\d\d$/.test(`${resp.statusCode}`))) {
-                    if (log.useTables) {
-                        log.error(
-                            '->',
-                            log.makeInspectorLink("POST", activity, "Click to view request json"),
-                            log.makeInspectorLink(`${resp.statusCode}`, body, `(${resp.statusMessage}) Click to view response json`),
-                            `[${activity.type}]`,
-                            text);
+                if (err) {
+                    log.error(err.message);
+                } else if (resp) {
+                    if (resp && !/^2\d\d$/.test(`${resp.statusCode}`)) {
+                        if (log.useTables) {
+                            log.error(
+                                '->',
+                                log.makeInspectorLink("POST", activity, "Click to view request json"),
+                                log.makeInspectorLink(`${resp.statusCode}`, body, `(${resp.statusMessage}) Click to view response json`),
+                                `[${activity.type}]`,
+                                text);
+                        } else {
+                            log.error(
+                                '->',
+                                log.makeInspectorLink("POST", activity, "Click to view request json"),
+                                log.makeInspectorLink(`${resp.statusCode}`, body, `(${resp.statusMessage}) Click to view response json`),
+                                `[${activity.type}]`,
+                                text);
+                        }
+                        cb(err, resp ? resp.statusCode : undefined);
                     } else {
-                        log.error(
-                            '->',
-                            log.makeInspectorLink("POST", activity, "Click to view request json"),
-                            log.makeInspectorLink(`${resp.statusCode}`, body, `(${resp.statusMessage}) Click to view response json`),
-                            `[${activity.type}]`,
-                            text);
+                        if (log.useTables) {
+                            log.info(
+                                '->',
+                                log.makeInspectorLink("POST", activity, "Click to view request json"),
+                                log.makeInspectorLink(`${resp.statusCode}`, body, `(${resp.statusMessage}) Click to view response json`),
+                                `[${activity.type}]`,
+                                text);
+                        } else {
+                            log.info(
+                                '->',
+                                log.makeInspectorLink("POST", activity, "Click to view request json"),
+                                log.makeInspectorLink(`${resp.statusCode}`, body, `(${resp.statusMessage}) Click to view response json`),
+                                `[${activity.type}]`,
+                                text);
+                        }
+                        if (recordInConversation) {
+                            _this.activities.push(Object.assign({}, activity));
+                        }
+                        cb(null, resp.statusCode, activity.id);
                     }
-                    cb(err, resp ? resp.statusCode : undefined);
-                } else {
-                    if (log.useTables) {
-                        log.info(
-                            '->',
-                            log.makeInspectorLink("POST", activity, "Click to view request json"),
-                            log.makeInspectorLink(`${resp.statusCode}`, body, `(${resp.statusMessage}) Click to view response json`),
-                            `[${activity.type}]`,
-                            text);
-                    } else {
-                        log.trace(
-                            '->',
-                            log.makeInspectorLink("POST", activity, "Click to view request json"),
-                            log.makeInspectorLink(`${resp.statusCode}`, body, `(${resp.statusMessage}) Click to view response json`),
-                            `[${activity.type}]`,
-                            text);
-                    }
-                    if (recordInConversation) {
-                        _this.activities.push(Object.assign({}, activity));
-                    }
-                    cb(null, resp.statusCode, activity.id);
                 }
             }
 

@@ -5,6 +5,7 @@ import { AddressBarActions, ConversationActions, ServerSettingsActions } from '.
 import { IBot, newBot } from '../../types/botTypes';
 import * as log from '../log';
 import { AddressBarOperators } from './addressBarOperators';
+import { AboutDialog } from './aboutDialog';
 import { AppSettingsDialog } from './appSettingsDialog';
 import { ConversationSettingsDialog } from './conversationSettingsDialog';
 import * as Constants from '../constants';
@@ -77,8 +78,14 @@ export class AddressBarMenu extends React.Component<{}, {}> {
                 type: 'separator'
             },
             {
-                label: 'About',
+                label: 'Help...',
+                //click: () => AddressBarActions.showHelp()
             },
+            {
+                label: 'About...',
+                ///click: () => AddressBarActions.showAbout()
+            },
+            /*
             {
                 label: 'Legal',
                 click: () => window.open('https://g.microsoftonline.com/0BX20en/721')
@@ -87,11 +94,12 @@ export class AddressBarMenu extends React.Component<{}, {}> {
                 label: 'Privacy',
                 click: () => window.open('https://go.microsoft.com/fwlink/?LinkId=512132')
             },
+            */
             {
                 type: 'separator'
             },
             {
-                label: 'Report an issue',
+                label: 'Report an issue...',
                 click: () => window.open('https://github.com/Microsoft/BotFramework-Emulator/issues')
             },
         ];
@@ -104,6 +112,7 @@ export class AddressBarMenu extends React.Component<{}, {}> {
         return (
             <div className="addressbar-menu">
                 <div dangerouslySetInnerHTML={{ __html: Constants.hamburgerIcon('toolbar-button', 24) }} onClick={() => this.showMenu()} />
+                <AboutDialog />
                 <AppSettingsDialog />
                 <ConversationSettingsDialog />
             </div>

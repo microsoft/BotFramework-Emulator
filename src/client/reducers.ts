@@ -52,6 +52,10 @@ type AddressBarAction = {
         bot: IBot
     }
 } | {
+    type: 'AddressBar_ShowAbout'
+} | {
+    type: 'AddressBar_HideAbout'
+} | {
     type: 'AddressBar_ShowAppSettings'
 } | {
     type: 'AddressBar_HideAppSettings'
@@ -143,6 +147,16 @@ export class AddressBarActions {
                 bot
             }
         });
+    }
+    static showAbout() {
+        dispatch<AddressBarAction>({
+            type: 'AddressBar_ShowAbout'
+        })
+    }
+    static hideAbout() {
+        dispatch<AddressBarAction>({
+            type: 'AddressBar_HideAbout'
+        })
     }
     static showAppSettings() {
         dispatch<AddressBarAction>({
@@ -300,6 +314,10 @@ export const addressBarReducer: Reducer<IAddressBarState> = (
             return Object.assign({}, state, { matchingBots: action.state.matchingBots });
         case 'AddressBar_SelectBot':
             return Object.assign({}, state, { selectedBot: action.state.bot });
+        case 'AddressBar_ShowAbout':
+            return Object.assign({}, state, { showAbout: true });
+        case 'AddressBar_HideAbout':
+            return Object.assign({}, state, { showAbout: false });
         case 'AddressBar_ShowAppSettings':
             return Object.assign({}, state, { showAppSettings: true });
         case 'AddressBar_HideAppSettings':

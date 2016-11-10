@@ -45,7 +45,6 @@
     }
 
     ::-webkit-scrollbar-thumb {
-        -webkit-border-radius: 2px;
         border-radius: 2px;
         background: #D5D5D5;
     }
@@ -138,7 +137,6 @@
     }
     .addressbar-textbox input[type=text] {
         background: #3A96DD;
-        font-weight: 300;
         color: white;
         border: none;
         height: 100%;
@@ -199,7 +197,6 @@
         height: 32px;
         margin-left: 32px;
         margin-right: 6px;
-        font-weight: 300;
     }
 
     .addressbar-searchresult-title {
@@ -255,8 +252,13 @@
         padding-right: 4px;
     }
     .addressbar-botcreds-input {
-        width: 242px;
         display: inline-block;
+    }
+    .addressbar-botcreds-appid {
+        width: 300px;
+    }
+    .addressbar-botcreds-password {
+        width: 160px;
     }
     .addressbar-botcreds-connect-button {
         display: block;
@@ -296,32 +298,16 @@
         transition: all .2s;
         text-align: left;
         transition: opacity .2s ease;
-        border-radius: 4px;
-    }
-
-    .appsettings-dialog h2 {
-        margin-bottom: 0;
+        border-radius: 2px;
     }
 
     .appsettings-dialog label {
-        font-weight: 500;
+        font-weight: 400;
         margin: 0;
     }
 
     .appsettings-dialog .input-group {
         margin: 0;
-    }
-
-    .appsettings-closex {
-        cursor: pointer;
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        cursor: pointer;
-    }
-
-    .appsettings-closex path {
-        stroke: #CCC;
     }
 
     .appsettings-buttons {
@@ -338,7 +324,7 @@
         font-size: 13px;
         text-transform: uppercase;
         line-height: 1.3333333;
-        font-weight: 500;
+        font-weight: 400;
         width: 96px;
     }
 
@@ -425,7 +411,7 @@
         right: 24px;
         background: lightgray;
         border-width: 1px;
-        border-radius: 4px;
+        border-radius: 2px;
         border-color: black;
         overflow: hidden;
     }
@@ -441,6 +427,27 @@
 
     .log-markdown {
         display: inline-block;
+    }
+
+/* about-dialog */
+
+    .about-dialog {
+        background: #fff;
+        color: black;
+        overflow: hidden;
+        padding: 0 24px 0 24px;
+        box-shadow: 0 1px 2px rgba(0,0,0,.2);
+        z-index: 9999;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 512px;
+        height: 487px;
+        transform: translate(-50%, -50%);
+        transition: all .2s;
+        text-align: left;
+        transition: opacity .2s ease;
+        border-radius: 2px;
     }
 
 /* base classes */
@@ -465,6 +472,22 @@
         transition: opacity .2s ease;
     }
 
+    h2.dialog-header {
+        margin-bottom: 0;
+    }
+
+    .dialog-closex {
+        cursor: pointer;
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        cursor: pointer;
+    }
+
+    .dialog-closex path {
+        stroke: #CCC;
+    }
+
     .invisible {
         opacity: 0;
     }
@@ -478,7 +501,6 @@
         display: block;
         font-size: 13px;
         margin-bottom: 8px;
-        font-weight: 300;
     }
 
     .form-input {
@@ -553,7 +575,6 @@
         left: 0;
         letter-spacing: 0.5px;
         font-size: 13px;
-        font-weight: 300;
         line-height: 42px;
         padding-left: 8px;
         position: absolute;
@@ -622,7 +643,6 @@
         left: 0;
         letter-spacing: 0.5px;
         font-size: 13px;
-        font-weight: 300;
         line-height: 42px;
         padding-left: 8px;
         position: absolute;

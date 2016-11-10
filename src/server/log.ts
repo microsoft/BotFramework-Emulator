@@ -144,14 +144,14 @@ export const api = (operation: string, req: Restify.Request, res: Restify.Respon
         }
     } else {
         if (useTables) {
-            trace(
+            info(
                 '<-',
                 makeInspectorLink(`${req.method}`, request, "Click to view request json"),
                 makeInspectorLink(`${res.statusCode}`, response, `(${res.statusMessage}) Click to view response json`),
                 operation,
                 text);
         } else {
-            trace(
+            info(
                 '<-',
                 makeInspectorLink(`${req.method}`, request, "Click to view request json"),
                 makeInspectorLink(`${res.statusCode}`, response, `(${res.statusMessage}) Click to view response json`),
