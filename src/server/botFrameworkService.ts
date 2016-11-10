@@ -89,7 +89,8 @@ export class BotFrameworkService extends RestServer {
                                 port: this.port,
                                 ngrokPath: this.ngrokPath,
                                 serviceUrl: this._serviceUrl,
-                                ngrokServiceUrl: this.ngrokServiceUrl
+                                ngrokServiceUrl: this.ngrokServiceUrl,
+                                ngrokRunning: ngrok.running()
                             }
                         });
                     });

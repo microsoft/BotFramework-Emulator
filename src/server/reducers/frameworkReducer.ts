@@ -15,7 +15,8 @@ export type FrameworkAction = {
         port: string,
         ngrokPath: string,
         serviceUrl: string,
-        ngrokServiceUrl: string
+        ngrokServiceUrl: string,
+        ngrokRunning: boolean
     }
 }
 
