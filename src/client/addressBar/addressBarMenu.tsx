@@ -45,11 +45,7 @@ export class AddressBarMenu extends React.Component<{}, {}> {
             /*
             {
                 label: 'Manage Users...',
-                click: () => {
-                    AddressBarActions.hideBotCreds();
-                    AddressBarActions.hideSearchResults();
-                    AddressBarActions.showConversationSettings();
-                }
+                click: () => AddressBarActions.showConversationSettings()
             },
             */
             /*
@@ -75,11 +71,7 @@ export class AddressBarMenu extends React.Component<{}, {}> {
             },
             {
                 label: 'App Settings',
-                click: () => {
-                    AddressBarActions.hideBotCreds();
-                    AddressBarActions.hideSearchResults();
-                    AddressBarActions.showAppSettings();
-                }
+                click: () => AddressBarActions.showAppSettings()
             },
             {
                 type: 'separator'

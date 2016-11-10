@@ -7,6 +7,7 @@ import { IBot, newBot } from '../../types/botTypes';
 import * as log from '../log';
 import { AddressBarOperators } from './addressBarOperators';
 import * as path from 'path';
+import * as Constants from '../constants';
 
 
 interface IAppSettings {
@@ -42,6 +43,13 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
         this.onClose();
     }
 
+    portChanged = () => {
+        // Only let decimal digits through
+        let val: string = this.emulatorPortInputRef.value;
+        val = val.replace(/[^0-9]+/g, '');
+        this.emulatorPortInputRef.value = val;
+    }
+
     onAccept = () => {
         ServerSettingsActions.remote_setFrameworkServerSettings({
             port: Number(this.emulatorPortInputRef.value),
@@ -72,7 +80,9 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
             defaultPath: dir,
             properties: ['openFile']
         }, (filenames: string[]) => {
-            this.ngrokPathInputRef.value = filenames[0];
+            if (filenames && filenames.length) {
+                this.ngrokPathInputRef.value = filenames[0];
+            }
         })
     }
 
@@ -101,21 +111,37 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
                 <div className="dialog-background">
                 </div>
                 <div className="appsettings-dialog">
-                    <div className="input-group">
+                    <h2 className="appsettings-header">App Settings</h2>
+                    <div className="appsettings-closex" dangerouslySetInnerHTML={{__html: Constants.clearCloseIcon("", 24)}} />
+                    <div className="input-group appsettings-port-group">
                         <label className="form-label">
                             Emulator Port
                         </label>
                         <input
                             type="text"
                             ref={ref => this.emulatorPortInputRef = ref}
-                            className="form-input appsettings-port-input"
+                            onChange={() => this.portChanged()}
+                            className="form-input appsettings-port"
                             defaultValue={`${serverSettings.framework.port || 9002}`} />
                     </div>
                     <div className="appsettings-lowerpane">
                         <ul className="emu-navbar">
-                            <li><a href="javascript:void(0)" className={"emu-navitem" + (this.currentTab === Tabs.ServiceUrl ? " emu-navitem-selected" : "")} onClick={() => this.showServiceUrl()}>Callback URL</a></li>
-                            <li><a href="javascript:void(0)" className={"emu-navitem" + (this.currentTab === Tabs.NgrokConfig ? " emu-navitem-selected" : "")} onClick={() => this.showNgrokConfig()}>Configure Ngrok</a></li>
+                            <li>
+                                <a href="javascript:void(0)"
+                                    className={"emu-navitem" + (this.currentTab === Tabs.ServiceUrl ? " emu-navitem-selected" : "")}
+                                    onClick={() => this.showServiceUrl()}>
+                                    Callback URL
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)"
+                                    className={"emu-navitem" + (this.currentTab === Tabs.NgrokConfig ? " emu-navitem-selected" : "")}
+                                    onClick={() => this.showNgrokConfig()}>
+                                    Using ngrok?
+                                </a>
+                            </li>
                         </ul>
+                        <hr className='enu-navhdr' />
                         <div className={"emu-tab" + (this.currentTab === Tabs.ServiceUrl ? " emu-visible" : " emu-hidden")}>
                             <div className="input-group">
                                 <label className="form-label">
@@ -124,7 +150,7 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
                                 <input
                                     type="text"
                                     ref={ref => this.serviceUrlInputRef = ref}
-                                    className="form-input appsettings-url-input"
+                                    className="form-input appsettings-url-input appsettings-serviceurl-input"
                                     readOnly={true}
                                     defaultValue={`${serverSettings.framework.serviceUrl || ''}`} />
                             </div>
@@ -132,21 +158,21 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
                         <div className={"emu-tab" + (this.currentTab === Tabs.NgrokConfig ? " emu-visible" : " emu-hidden")}>
                             <div className="input-group">
                                 <label className="form-label">
-                                    Path to Ngrok
+                                    Path to ngrok
                                 </label>
                                 <input
                                     type="text"
                                     ref={ref => this.ngrokPathInputRef = ref}
-                                    className="form-input appsettings-path-input"
+                                    className="form-input appsettings-path-input appsettings-ngrokpath-input"
                                     defaultValue={`${serverSettings.framework.ngrokPath || ''}`} />
-                                <button onClick={() => this.browseForNgrokPath()}>Browse</button>
+                                <button className='appsettings-browsebtn' onClick={() => this.browseForNgrokPath()}>Browse...</button>
                             </div>
                         </div>
                     </div>
                     <div className="appsettings-buttons">
-                        <button onClick={() => this.onAccept()}>Save</button>
+                        <button className="appsettings-savebtn" onClick={() => this.onAccept()}>Save</button>
                         &nbsp;&nbsp;&nbsp;
-                        <button onClick={() => this.onClose()}>Cancel</button>
+                        <button className="appsettings-cancelbtn" onClick={() => this.onClose()}>Cancel</button>
                     </div>
                 </div>
             </div>

@@ -112,9 +112,9 @@ export const error = (message: any, ...args: any[]) => {
 
 export const makeLinkMessage = (text: string, link: string): any => {
     return {
-        'messageType': 'link',
-        'text': text,
-        'link': link
+        messageType: 'link',
+        text,
+        link
     }
 }
 
