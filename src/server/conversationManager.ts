@@ -69,13 +69,13 @@ export class Conversation {
 
                     log.error(log.makeInspectorLink("POST", activity),
                         log.makeInspectorLink(`${resp.statusCode} ${resp.statusMessage}`,body),
-                        log.makeLinkMessage(`Activity(${activity.type})`, bot.botUrl),
+                        log.makeLinkMessage(`type=${activity.type}`, bot.botUrl),
                         text);
                     cb(err, resp ? resp.statusCode : undefined);
                 } else {
                     log.info(log.makeInspectorLink("POST", activity),
                         log.makeInspectorLink(`${resp.statusCode} ${resp.statusMessage}`, body),
-                        log.makeLinkMessage(`Activity(${activity.type})`, bot.botUrl),
+                        log.makeLinkMessage(`type=${activity.type}`, bot.botUrl),
                         text);
                     if (recordInConversation) {
                         _this.activities.push(Object.assign({}, activity));

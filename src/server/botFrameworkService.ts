@@ -71,7 +71,8 @@ export class BotFrameworkService extends RestServer {
                         } else {
                             this.inspectUrl = `http://127.0.0.1:${inspectPort}`;
                             this.serviceUrl = url;
-                            log.debug(`ngrok listening on: ${url} inspector url:`, log.makeLinkMessage(this.inspectUrl, this.inspectUrl) );
+                            log.debug(`ngrok listening on: ${url}`);
+                            log.debug('inspectorUrl:', log.makeLinkMessage(this.inspectUrl, this.inspectUrl));
                         }
                     });
                 }
