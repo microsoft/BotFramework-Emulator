@@ -633,6 +633,21 @@
         overflow: auto;
         font-size: 13px;
 	    font-family: 'Menlo', 'Monaco', 'Consolas', "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+        white-space: nowrap;
+        position: absolute;
+        left: 0;
+        top: 42px;
+        right: 0;
+        bottom: 0;
+        padding: 10px 10px 10px 10px;
+    }
+
+    .wc-logview-tables {
+        background-color: #1e1e1e;
+        color: white;
+        overflow: auto;
+        font-size: 13px;
+	    font-family: 'Menlo', 'Monaco', 'Consolas', "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
         position: absolute;
         left: 0;
         top: 42px;
@@ -652,44 +667,88 @@
         -webkit-user-select: text;
     }
 
-    .wc-logview-timestamp {
+    .wc-logview-timestamp-tables {
         color: lightgray;
         white-space: nowrap;
     }
 
-    .wc-logview-message {
+    .wc-logview-message-tables {
         white-space: nowrap;
+    }
+
+    .wc-logview-tables a {
+        color: #9CDCFE;
+    }
+
+    .wc-logview-timestamp {
+        color: lightgray;
+        display: inline-block;
     }
 
     .wc-logview a {
         color: #9CDCFE;
+        display: inline-block;
     }
 
     .wc-logview-arg {
         color: lightgray;
+        display: inline-block;
     }
 
     .wc-logview-log {
         color: lightgray;
+        display: inline-block;
     }
 
     .wc-logview-info {
         color: lightgray;
+        display: inline-block;
     }
 
     .wc-logview-trace {
         color: lightgreen;
+        display: inline-block;
     }
 
     .wc-logview-debug {
         color: gray;
+        display: inline-block;
     }
 
     .wc-logview-warn {
         color: orange;
+        display: inline-block;
     }
 
     .wc-logview-error {
         color: red;
+        display: inline-block;
     }
 
+    .wc-logview-arg-tables {
+        color: lightgray;
+    }
+
+    .wc-logview-log-tables {
+        color: lightgray;
+    }
+
+    .wc-logview-info-tables {
+        color: lightgray;
+    }
+
+    .wc-logview-trace-tables {
+        color: lightgreen;
+    }
+
+    .wc-logview-debug-tables {
+        color: gray;
+    }
+
+    .wc-logview-warn-tables {
+        color: orange;
+    }
+
+    .wc-logview-error-tables {
+        color: red;
+    }
