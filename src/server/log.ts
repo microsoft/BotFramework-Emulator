@@ -129,7 +129,7 @@ export const api = (apiName: string, req: Restify.Request, res: Restify.Response
         if (useTables) {
             error(makeInspectorLink(req.method, request),
                 makeInspectorLink(`${res.statusCode} ${res.statusMessage}`, response),
-                makeLinkMessage(apiName, req.href()),
+                apiName,
                 text);
         } else {
             error(
@@ -143,7 +143,7 @@ export const api = (apiName: string, req: Restify.Request, res: Restify.Response
         if (useTables) {
             trace(makeInspectorLink(req.method, request),
                 makeInspectorLink(`${res.statusCode} ${res.statusMessage}`, response),
-                makeLinkMessage(apiName, req.href()),
+                apiName,
                 text);
         } else {
             trace(

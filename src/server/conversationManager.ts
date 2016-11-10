@@ -69,7 +69,7 @@ export class Conversation {
                     if (log.useTables) {
                         log.error(log.makeInspectorLink("POST", activity),
                             log.makeInspectorLink(`${resp.statusCode} ${resp.statusMessage}`,body),
-                            log.makeLinkMessage(`type=${activity.type}`, bot.botUrl),
+                            `type=${activity.type}`,
                             text);
                     } else {
                         log.error(
@@ -83,7 +83,7 @@ export class Conversation {
                     if (log.useTables) {
                         log.info(log.makeInspectorLink("POST", activity),
                             log.makeInspectorLink(`${resp.statusCode} ${resp.statusMessage}`, body),
-                            log.makeLinkMessage(`type=${activity.type}`, bot.botUrl),
+                            `type=${activity.type}`,
                             text);
                     } else {
                         log.trace(
