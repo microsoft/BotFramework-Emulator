@@ -633,19 +633,19 @@
         overflow: auto;
         font-size: 13px;
 	    font-family: 'Menlo', 'Monaco', 'Consolas', "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
-        /*white-space: nowrap;*/
         position: absolute;
         left: 0;
         top: 42px;
         right: 0;
         bottom: 0;
         padding: 10px 10px 10px 10px;
-        word-break: break-word;
+        white-space: nowrap;
+        /*word-break: break-word;*/
     }
 
     .wc-logview-table {
         width: 100%;
-        min-width:800px;
+        /*min-width:800px;*/
     }
 
     .wc-logview * {

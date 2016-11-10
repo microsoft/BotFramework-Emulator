@@ -122,14 +122,12 @@ export const api = (apiName: string, req: Restify.Request, res: Restify.Response
     if (res.statusCode >= 400) {
         error(makeInspectorLink(req.method, request),
             makeInspectorLink(`${res.statusCode} ${res.statusMessage}`, response),
-            req.href(),
-            apiName,
+            makeLinkMessage(apiName, req.href()),
             text);
     } else {
         trace(makeInspectorLink(req.method, request),
             makeInspectorLink(`${res.statusCode} ${res.statusMessage}`, response),
-            req.href(),
-            apiName,
+            makeLinkMessage(apiName, req.href()),
             text);
     }
 }

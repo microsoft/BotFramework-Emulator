@@ -54,14 +54,17 @@ const emit = (val: any, className: string, colspan?: number) => {
 
     if (!val) return null;
     if (val.hasOwnProperty('messageType') && val['messageType'] === 'link') {
-        return <td className={className} colSpan={colspan}><a className='wc-logview-link' href={val.link}>{val.text}</a></td>
+        if (val.link.startsWith('emulator'))
+            return <td className={className} colSpan={colspan}><a className='wc-logview-link' href={val.link}>{val.text}</a></td>
+        else
+            return <td className={className} colSpan={colspan}><a className='wc-logview-link' title={val.link} href={val.link}>{val.text}</a></td>
     } else {
         return <td className={className} colSpan={colspan}>{safeStringify(val)}</td>
     }
 }
 
 const message = (entry: ILogEntry, className: string) => {
-    return emit(entry.message, className, 5 - entry.args.length);
+    return emit(entry.message, className, 4 - entry.args.length);
 }
 
 const args = (entry: ILogEntry, className: string) => {
