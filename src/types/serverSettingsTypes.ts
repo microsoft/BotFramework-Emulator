@@ -8,6 +8,8 @@ export interface IFrameworkSettings {
 
     // path to use for ngrok
     ngrokPath?: string,
+    ngrokServiceUrl?: string,
+    ngrokRunning?: boolean,
 
     serviceUrl?: string
 }

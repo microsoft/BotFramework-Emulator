@@ -66,17 +66,32 @@ export class Conversation {
                     text = text.substring(0, 50);
 
                 if (err || (resp && !/^2\d\d$/.test(`${resp.statusCode}`))) {
-
-                    log.error(log.makeInspectorLink("POST", activity),
-                        log.makeInspectorLink(`${resp.statusCode} ${resp.statusMessage}`,body),
-                        `type=${activity.type}`,
-                        text);
+                    if (log.useTables) {
+                        log.error(log.makeInspectorLink("POST", activity),
+                            log.makeInspectorLink(`${resp.statusCode} ${resp.statusMessage}`,body),
+                            log.makeLinkMessage(`type=${activity.type}`, bot.botUrl),
+                            text);
+                    } else {
+                        log.error(
+                            `${activity.type}`,
+                            log.makeInspectorLink("POST", activity),
+                            log.makeInspectorLink(`${resp.statusCode} ${resp.statusMessage}`, body),
+                            text);
+                    }
                     cb(err, resp ? resp.statusCode : undefined);
                 } else {
-                    log.info(log.makeInspectorLink("POST", activity),
-                        log.makeInspectorLink(`${resp.statusCode} ${resp.statusMessage}`, body),
-                        `type=${activity.type}`,
-                        text);
+                    if (log.useTables) {
+                        log.info(log.makeInspectorLink("POST", activity),
+                            log.makeInspectorLink(`${resp.statusCode} ${resp.statusMessage}`, body),
+                            log.makeLinkMessage(`type=${activity.type}`, bot.botUrl),
+                            text);
+                    } else {
+                        log.trace(
+                            `${activity.type}`,
+                            log.makeInspectorLink("POST", activity),
+                            log.makeInspectorLink(`${resp.statusCode} ${resp.statusMessage}`, body),
+                            text);
+                    }
                     if (recordInConversation) {
                         _this.activities.push(Object.assign({}, activity));
                     }

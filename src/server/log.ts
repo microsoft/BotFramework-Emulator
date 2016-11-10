@@ -2,6 +2,12 @@ import { mainWindow } from './main';
 import * as HttpStatus from "http-status-codes";
 import * as Restify from 'restify';
 
+
+// TEMPORARY, for A/B testing logview layout
+// If you change this, also change it in client/logView.tsx
+export const useTables = true;
+
+
 export const logReady = (isReady: boolean) => _logReady = isReady;
 let _logReady = false;
 
@@ -120,15 +126,33 @@ export const makeLinkMessage = (text: string, link: string): any => {
 
 export const api = (apiName: string, req: Restify.Request, res: Restify.Response, request?: Object, response?: Object, text?: string) => {
     if (res.statusCode >= 400) {
-        error(makeInspectorLink(req.method, request),
-            makeInspectorLink(`${res.statusCode} ${res.statusMessage}`, response),
-            apiName,
-            text);
+        if (useTables) {
+            error(makeInspectorLink(req.method, request),
+                makeInspectorLink(`${res.statusCode} ${res.statusMessage}`, response),
+                makeLinkMessage(apiName, req.href()),
+                text);
+        } else {
+            error(
+                apiName,
+                makeInspectorLink(req.method, request),
+                makeInspectorLink(`${res.statusCode} ${res.statusMessage}`, response),
+                text,
+                req.href());
+        }
     } else {
-        trace(makeInspectorLink(req.method, request),
-            makeInspectorLink(`${res.statusCode} ${res.statusMessage}`, response),
-            apiName,
-            text);
+        if (useTables) {
+            trace(makeInspectorLink(req.method, request),
+                makeInspectorLink(`${res.statusCode} ${res.statusMessage}`, response),
+                makeLinkMessage(apiName, req.href()),
+                text);
+        } else {
+            trace(
+                apiName,
+                makeInspectorLink(req.method, request),
+                makeInspectorLink(`${res.statusCode} ${res.statusMessage}`, response),
+                text,
+                req.href());
+        }
     }
 }
 

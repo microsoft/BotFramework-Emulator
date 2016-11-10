@@ -53,7 +53,7 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
     onAccept = () => {
         ServerSettingsActions.remote_setFrameworkServerSettings({
             port: Number(this.emulatorPortInputRef.value),
-            //serviceUrl: this.serviceUrlInputRef.value,
+            serviceUrl: this.serviceUrlInputRef.value,
             ngrokPath: this.ngrokPathInputRef.value
         });
         AddressBarActions.hideAppSettings();
@@ -106,6 +106,7 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
         const settings = getSettings();
         if (!settings.addressBar.showAppSettings) return null;
         const serverSettings = getSettings().serverSettings;
+        const serviceUrl = serverSettings.framework.ngrokRunning ? serverSettings.framework.ngrokServiceUrl : serverSettings.framework.serviceUrl;
         return (
             <div>
                 <div className="dialog-background">
@@ -152,7 +153,7 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
                                     ref={ref => this.serviceUrlInputRef = ref}
                                     className="form-input appsettings-url-input appsettings-serviceurl-input"
                                     readOnly={true}
-                                    defaultValue={`${serverSettings.framework.serviceUrl || ''}`} />
+                                    defaultValue={`${serviceUrl || ''}`} />
                             </div>
                         </div>
                         <div className={"emu-tab" + (this.currentTab === Tabs.NgrokConfig ? " emu-visible" : " emu-hidden")}>

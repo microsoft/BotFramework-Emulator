@@ -16,7 +16,7 @@ var emitter = new Emitter().on('error', noop);
 var ngrok, api, tunnels = {};
 
 export function running() {
-	return ngrok && ngrok.stdout;
+	return ngrok && ngrok.pid;
 }
 
 export function connect(opts, cb) {
