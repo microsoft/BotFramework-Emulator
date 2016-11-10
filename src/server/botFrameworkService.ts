@@ -97,7 +97,9 @@ export class BotFrameworkService extends RestServer {
                 }
             }
             if (this.ngrokPath !== prevNgrokPath) {
-                ngrok.kill(() => {
+                ngrok.kill((wasRunning) => {
+                    if (wasRunning)
+                        log.debug('ngrok stopped');
                     startNgrok();
                     return true;
                 }) || startNgrok();

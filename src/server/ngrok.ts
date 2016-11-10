@@ -222,13 +222,13 @@ export function disconnect(url, cb) {
 export function kill(cb) {
 	cb = cb || noop;
 	if (!ngrok) {
-		return cb();
+		return cb(false);
 	}
 	ngrok.on('exit', function () {
 		api = null;
 		tunnels = {};
 		emitter.emit('disconnect');
-		return cb();
+		return cb(true);
 	});
 	return ngrok.kill();
 }

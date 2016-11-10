@@ -60,7 +60,9 @@ export class Settings implements ISettings {
 export const frameworkDefault: IFrameworkSettings = {
     port: 9002,
     ngrokPath: '',
-    serviceUrl: ''
+    serviceUrl: '',
+    ngrokRunning: false,
+    ngrokServiceUrl: ''
 }
 
 export const windowStateDefault: IWindowStateSettings = {

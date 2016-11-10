@@ -321,7 +321,7 @@
     }
 
     .appsettings-closex path {
-        fill: #CCC;
+        stroke: #CCC;
     }
 
     .appsettings-buttons {
@@ -538,6 +538,9 @@
     }
     .emu-tab {
         margin-top: 16px;
+    }
+    .emu-readonly {
+        background: #EEE;
     }
 
 /* inspectorview */

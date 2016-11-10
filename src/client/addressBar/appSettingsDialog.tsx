@@ -29,6 +29,8 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
     ngrokPathInputRef: any;
     currentTab: Tabs;
 
+    serviceUrlReadOnly: boolean;
+
     pageClicked = (ev: Event) => {
         let target = ev.srcElement;
         while (target) {
@@ -53,7 +55,7 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
     onAccept = () => {
         ServerSettingsActions.remote_setFrameworkServerSettings({
             port: Number(this.emulatorPortInputRef.value),
-            serviceUrl: this.serviceUrlInputRef.value,
+            serviceUrl: this.ngrokPathInputRef.value.length ? undefined : this.serviceUrlInputRef.value,
             ngrokPath: this.ngrokPathInputRef.value
         });
         AddressBarActions.hideAppSettings();
@@ -76,7 +78,7 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
     browseForNgrokPath = () => {
         const dir = path.dirname(this.ngrokPathInputRef.value);
         remote.dialog.showOpenDialog({
-            title: 'Browse for Ngrok',
+            title: 'Browse for ngrok',
             defaultPath: dir,
             properties: ['openFile']
         }, (filenames: string[]) => {
@@ -84,6 +86,11 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
                 this.ngrokPathInputRef.value = filenames[0];
             }
         })
+    }
+
+    ngrokPathChanged = () => {
+        const serverSettings = getSettings().serverSettings;
+        this.serviceUrlReadOnly = (this.ngrokPathInputRef && this.ngrokPathInputRef.value.length) || (!this.ngrokPathInputRef && serverSettings.framework.ngrokPath.length && serverSettings.framework.ngrokRunning);
     }
 
     componentWillMount() {
@@ -106,14 +113,14 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
         const settings = getSettings();
         if (!settings.addressBar.showAppSettings) return null;
         const serverSettings = getSettings().serverSettings;
-        const serviceUrl = serverSettings.framework.ngrokRunning ? serverSettings.framework.ngrokServiceUrl : serverSettings.framework.serviceUrl;
+        this.serviceUrlReadOnly = (this.ngrokPathInputRef && this.ngrokPathInputRef.value.length) || (!this.ngrokPathInputRef && serverSettings.framework.ngrokPath.length && serverSettings.framework.ngrokRunning);
         return (
             <div>
                 <div className="dialog-background">
                 </div>
                 <div className="appsettings-dialog">
                     <h2 className="appsettings-header">App Settings</h2>
-                    <div className="appsettings-closex" dangerouslySetInnerHTML={{__html: Constants.clearCloseIcon("", 24)}} />
+                    <div className="appsettings-closex" onClick={() => this.onClose()} dangerouslySetInnerHTML={{ __html: Constants.clearCloseIcon("", 24) }} />
                     <div className="input-group appsettings-port-group">
                         <label className="form-label">
                             Emulator Port
@@ -151,9 +158,10 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
                                 <input
                                     type="text"
                                     ref={ref => this.serviceUrlInputRef = ref}
-                                    className="form-input appsettings-url-input appsettings-serviceurl-input"
-                                    readOnly={true}
-                                    defaultValue={`${serviceUrl || ''}`} />
+                                    className={"form-input appsettings-url-input appsettings-serviceurl-input" + (this.serviceUrlReadOnly ? " emu-readonly" : "")}
+                                    readOnly={this.serviceUrlReadOnly}
+                                    //key={`${Math.random()}`}
+                                    defaultValue={`${serverSettings.framework.serviceUrl || ''}`} />
                             </div>
                         </div>
                         <div className={"emu-tab" + (this.currentTab === Tabs.NgrokConfig ? " emu-visible" : " emu-hidden")}>
@@ -164,6 +172,7 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
                                 <input
                                     type="text"
                                     ref={ref => this.ngrokPathInputRef = ref}
+                                    onChange={() => this.ngrokPathChanged()}
                                     className="form-input appsettings-path-input appsettings-ngrokpath-input"
                                     defaultValue={`${serverSettings.framework.ngrokPath || ''}`} />
                                 <button className='appsettings-browsebtn' onClick={() => this.browseForNgrokPath()}>Browse...</button>
