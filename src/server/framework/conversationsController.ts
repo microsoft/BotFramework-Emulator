@@ -87,10 +87,10 @@ export class ConversationsController {
             var response = ResponseTypes.createConversationResponse(newConversation.conversationId, activityId);
             res.send(HttpStatus.OK, response);
             res.end();
-            log.api('createConversation', req, res, conversationParameters, response, getActivityText(conversationParameters.activity));
+            log.api('<-createConversation', req, res, conversationParameters, response, getActivityText(conversationParameters.activity));
         } catch (err) {
             var error = ResponseTypes.sendErrorResponse(req, res, next, err);
-            log.api('createConversation', req, res, conversationParameters, error, getActivityText(conversationParameters.activity));
+            log.api('<-createConversation', req, res, conversationParameters, error, getActivityText(conversationParameters.activity));
         }
     }
 
@@ -121,11 +121,11 @@ export class ConversationsController {
             let response: IResourceResponse = conversation.postActivityToUser(activity);
             res.send(HttpStatus.OK, response);
             res.end();
-            log.api('sendToConversation', req, res, activity, response, getActivityText(activity));
+            log.api(`<-Send[${activity.type}]`, req, res, activity, response, getActivityText(activity));
             return;
         } catch (err) {
             let error = ResponseTypes.sendErrorResponse(req, res, next, err);
-            log.api('sendToConversation', req, res, activity, error, getActivityText(activity));
+            log.api(`<-Send[${activity.type}]`, req, res, activity, error, getActivityText(activity));
         }
     }
 
@@ -160,11 +160,11 @@ export class ConversationsController {
             let response: IResourceResponse = conversation.postActivityToUser(activity);
             res.send(HttpStatus.OK, response);
             res.end();
-            log.api('replyToActivity', req, res, activity, response, getActivityText(activity));
+            log.api(`<-Reply[${activity.type}]`, req, res, activity, response, getActivityText(activity));
             return;
         } catch (err) {
             let error = ResponseTypes.sendErrorResponse(req, res, next, err);
-            log.api('replyToActivity', req, res, activity, error, getActivityText(activity));
+            log.api(`<-Reply[${activity.type}]`, req, res, activity, error, getActivityText(activity));
         }
     }
 
@@ -198,18 +198,18 @@ export class ConversationsController {
             let response: IResourceResponse = conversation.updateActivity(activity);
             res.send(HttpStatus.OK, response);
             res.end();
-            log.api('updateActivity', req, res, activity, response, getActivityText(activity));
+            log.api(`<-Update[${activity.id}]`, req, res, activity, response, getActivityText(activity));
             return;
         } catch (err) {
             let error = ResponseTypes.sendErrorResponse(req, res, next, err);
-            log.api('updateActivity', req, res, activity, error, getActivityText(activity));
+            log.api(`<-Update[${activity.id}]`, req, res, activity, error, getActivityText(activity));
         }
     }
 
     // deleteActivity
     public static deleteActivity = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+        const parms: IConversationAPIPathParameters = req.params;
         try {
-            const parms: IConversationAPIPathParameters = req.params;
             console.log("framework: deleteActivity", JSON.stringify(parms));
 
             // look up bot
@@ -226,24 +226,24 @@ export class ConversationsController {
 
             res.send(HttpStatus.OK);
             res.end();
-            log.api('deleteActivity', req, res);
+            log.api(`<-DeleteActivity(${parms.activityId})`, req, res);
             return;
         } catch (err) {
             let error = ResponseTypes.sendErrorResponse(req, res, next, err);
-            log.api('deleteActivity', req, res, null, error);
+            log.api(`<-DeleteActivity(${parms.activityId})`, req, res, null, error);
         }
     }
 
     // get members of a conversation
     public static getConversationMembers = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         console.log("framework: getConversationMembers");
+        const parms: IConversationAPIPathParameters = req.params;
         try {
             // look up bot
             const activeBot = getSettings().getActiveBot();
             if (!activeBot)
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
 
-            const parms: IConversationAPIPathParameters = req.params;
 
             // look up conversation
             const conversation = emulator.conversations.conversationById(activeBot.botId, parms.conversationId);
@@ -252,16 +252,17 @@ export class ConversationsController {
 
             res.send(HttpStatus.OK, conversation.members);
             res.end();
-            log.api('getConversationMembers', req, res, null, conversation.members);
+            log.api(`<-GetConversationMembers(${parms.conversationId})`, req, res, null, conversation.members);
         } catch (err) {
             ResponseTypes.sendErrorResponse(req, res, next, err);
-            log.api('getConversationMembers', req, res, null, error);
+            log.api(`<-GetConversationMembers(${parms.conversationId})`, req, res, null, error);
         }
     }
 
     // get members of an activity
     public static getActivityMembers = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         console.log("framework: getActivityMembers");
+        const parms: IConversationAPIPathParameters = req.params;
         try {
             // look up bot
             const activeBot = getSettings().getActiveBot();
@@ -269,7 +270,6 @@ export class ConversationsController {
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
 
             let activity = <IGenericActivity>req.body;
-            const parms: IConversationAPIPathParameters = req.params;
 
             // look up conversation
             const conversation = emulator.conversations.conversationById(activeBot.botId, parms.conversationId);
@@ -278,10 +278,10 @@ export class ConversationsController {
 
             res.send(HttpStatus.OK, conversation.members);
             res.end();
-            log.api('getActivityMembers', req, res, null, conversation.members);
+            log.api(`GetActivityMembers(${parms.activityId})`, req, res, null, conversation.members);
         } catch (err) {
-            log.error("BotFramework: getActivityMembers failed: " + err);
-            ResponseTypes.sendErrorResponse(req, res, next, err);
+            let error = ResponseTypes.sendErrorResponse(req, res, next, err);
+            log.error(`GetActivityMembers(${parms.activityId})`, req, res, null, error);
         }
     }
 
@@ -306,19 +306,24 @@ export class ConversationsController {
             let resourceResponse: IResourceResponse = { id: resourceId };
             res.send(HttpStatus.OK, resourceResponse);
             res.end();
-            log.api('uploadAttachment', req, res, attachmentData, resourceResponse, attachmentData.name);
+            log.api('UploadAttachment()', req, res, attachmentData, resourceResponse, attachmentData.name);
         } catch (err) {
             let error = ResponseTypes.sendErrorResponse(req, res, next, err);
-            log.api('uploadAttachment', req, res, attachmentData, error, attachmentData.name);
+            log.api('UploadAttachment()', req, res, attachmentData, error, attachmentData.name);
         }
     }
 }
 
 function getActivityText(activity: IGenericActivity): string {
     if (activity) {
-        if (activity.text.length > 50)
-            return activity.text.substring(0, 50) + '...';
-        return activity.text;
+        if (activity.attachments && activity.attachments.length > 0)
+            return activity.attachments[0].contentType;
+        else {
+            if (activity.text.length > 50)
+                return activity.text.substring(0, 50) + '...';
+
+            return activity.text;
+        }
     }
     return '';
 }

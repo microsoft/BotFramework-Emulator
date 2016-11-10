@@ -5,7 +5,7 @@ import * as Restify from 'restify';
 
 // TEMPORARY, for A/B testing logview layout
 // If you change this, also change it in client/logView.tsx
-export const useTables = true;
+export const useTables = false;
 
 
 export const logReady = (isReady: boolean) => _logReady = isReady;
@@ -116,50 +116,55 @@ export const error = (message: any, ...args: any[]) => {
     }
 }
 
-export const makeLinkMessage = (text: string, link: string): any => {
+export const makeLinkMessage = (text: string, link: string, title?: string): any => {
     return {
         messageType: 'link',
         text,
-        link
+        link,
+        title
     }
 }
 
-export const api = (apiName: string, req: Restify.Request, res: Restify.Response, request?: Object, response?: Object, text?: string) => {
+export const api = (operation: string, req: Restify.Request, res: Restify.Response, request?: Object, response?: Object, text?: string) => {
     if (res.statusCode >= 400) {
         if (useTables) {
-            error(makeInspectorLink(req.method, request),
-                makeInspectorLink(`${res.statusCode} ${res.statusMessage}`, response),
-                apiName,
-                text);
+            error(
+                makeInspectorLink(`${req.method}`, request, "Click to view request json"),
+                makeInspectorLink(`${res.statusCode}`, response, `(${res.statusMessage}) Click to view response json`),
+                operation,
+                text,
+                req.href());
         } else {
             error(
-                apiName,
-                makeInspectorLink(req.method, request),
-                makeInspectorLink(`${res.statusCode} ${res.statusMessage}`, response),
+                operation,
+                makeInspectorLink(`${req.method}`, request, "Click to view request json"),
+                makeInspectorLink(`${res.statusCode}`, response, `(${res.statusMessage}) Click to view response json`),
                 text,
                 req.href());
         }
     } else {
         if (useTables) {
-            trace(makeInspectorLink(req.method, request),
-                makeInspectorLink(`${res.statusCode} ${res.statusMessage}`, response),
-                apiName,
-                text);
+            trace(
+                makeInspectorLink(`${req.method}`, request, "Click to view request json"),
+                makeInspectorLink(`${res.statusCode}`, response, `(${res.statusMessage}) Click to view response json`),
+                operation,
+                text,
+                req.href());
         } else {
             trace(
-                apiName,
-                makeInspectorLink(req.method, request),
-                makeInspectorLink(`${res.statusCode} ${res.statusMessage}`, response),
+                operation,
+                makeInspectorLink(`${req.method}`, request, "Click to view request json"),
+                makeInspectorLink(`${res.statusCode}`, response, `(${res.statusMessage}) Click to view response json`),
                 text,
                 req.href());
         }
     }
 }
 
-export const makeInspectorLink = (text: string, obj: any): any => {
-    if (typeof(obj) === 'object' || Array.isArray(obj)) {
+export const makeInspectorLink = (text: string, obj: any, title?: string): any => {
+    if (typeof (obj) === 'object' || Array.isArray(obj)) {
         const json = JSON.stringify(obj);
-        return makeLinkMessage(text, `emulator://inspect?obj=${encodeURIComponent(json)}`);
+        return makeLinkMessage(text, `emulator://inspect?obj=${encodeURIComponent(json)}`, title);
     } else {
         return text;
     }

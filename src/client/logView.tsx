@@ -8,7 +8,7 @@ import { LogActions } from './reducers';
 
 // TEMPORARY, for A/B testing logview layout
 // If you change this, also change it in server/log.ts
-const useTables = true;
+const useTables = false;
 
 
 export enum Severity {
@@ -63,16 +63,13 @@ const emit = (val: any, className: string, colspan?: number) => {
         if (!colspan)
             colspan = 1;
         if (val.hasOwnProperty('messageType') && val['messageType'] === 'link') {
-            if (val.link.startsWith('emulator'))
-                return <td className={className} colSpan={colspan}><a className='wc-logview-link' href={val.link}>{val.text}</a></td>
-            else
-                return <td className={className} colSpan={colspan}><a className='wc-logview-link' title={val.link} href={val.link}>{val.text}</a></td>
+            return <td className={className} colSpan={colspan}><a className='wc-logview-link' title={val.title} href={val.link}>{val.text}</a></td>
         } else {
             return <td className={className} colSpan={colspan}>{safeStringify(val)}</td>
         }
     } else {
         if (val.hasOwnProperty('messageType') && val['messageType'] === 'link') {
-            return <div className={className}><a className='wc-logview-link' href={val.link}>{val.text}</a>&nbsp;</div>
+            return <div className={className}><a className='wc-logview-link' title={val.title} href={val.link}>{val.text}</a>&nbsp;</div>
         } else {
             return <div className={className}>{safeStringify(val)}&nbsp;</div>
         }
@@ -106,7 +103,7 @@ const format = (entry: ILogEntry, index: number, items: any[]) => {
             <div className='emu-log-entry'>
                 {timestamp(entry)}
                 {message(entry, 'wc-logview-' + Severity[entry.severity])}
-                {args(entry)}
+                {args(entry, 'wc-logview-' + Severity[entry.severity])}
             </div>
         );
     }

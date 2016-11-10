@@ -61,35 +61,38 @@ export class Conversation {
 
             let responseCallback = function (err, resp: http.IncomingMessage, body) {
 
-                let text = (<IMessageActivity>activity).text;
+                let messageActivity: IMessageActivity = activity;
+                let text: string = messageActivity.text || '';
                 if (text && text.length > 50)
                     text = text.substring(0, 50);
 
                 if (err || (resp && !/^2\d\d$/.test(`${resp.statusCode}`))) {
                     if (log.useTables) {
-                        log.error(log.makeInspectorLink("POST", activity),
-                            log.makeInspectorLink(`${resp.statusCode} ${resp.statusMessage}`,body),
-                            `type=${activity.type}`,
+                        log.error(
+                            log.makeInspectorLink("POST", activity, "Click to view request json"),
+                            log.makeInspectorLink(`${resp.statusCode}`, body, `(${resp.statusMessage}) Click to view response json`),
+                            `->[${activity.type}]`,
                             text);
                     } else {
                         log.error(
-                            `${activity.type}`,
-                            log.makeInspectorLink("POST", activity),
-                            log.makeInspectorLink(`${resp.statusCode} ${resp.statusMessage}`, body),
+                            `->[${activity.type}]`,
+                            log.makeInspectorLink("POST", activity, "Click to view request json"),
+                            log.makeInspectorLink(`${resp.statusCode}`, body, `(${resp.statusMessage}) Click to view response json`),
                             text);
                     }
                     cb(err, resp ? resp.statusCode : undefined);
                 } else {
                     if (log.useTables) {
-                        log.info(log.makeInspectorLink("POST", activity),
-                            log.makeInspectorLink(`${resp.statusCode} ${resp.statusMessage}`, body),
-                            `type=${activity.type}`,
+                        log.info(
+                            log.makeInspectorLink("POST", activity, "Click to view request json"),
+                            log.makeInspectorLink(`${resp.statusCode}`, body, `(${resp.statusMessage}) Click to view response json`),
+                            `->[${activity.type}]`,
                             text);
                     } else {
                         log.trace(
-                            `${activity.type}`,
-                            log.makeInspectorLink("POST", activity),
-                            log.makeInspectorLink(`${resp.statusCode} ${resp.statusMessage}`, body),
+                            `->[${activity.type}]`,
+                            log.makeInspectorLink("POST", activity, "Click to view request json"),
+                            log.makeInspectorLink(`${resp.statusCode}`, body, `(${resp.statusMessage}) Click to view response json`),
                             text);
                     }
                     if (recordInConversation) {
