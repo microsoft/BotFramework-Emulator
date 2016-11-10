@@ -24,7 +24,11 @@ export class BotFrameworkService extends RestServer {
     ngrokPath: string;
     ngrokServiceUrl: string;
 
-    public get serviceUrl() { return ngrok.running() ? this.ngrokServiceUrl : this._serviceUrl }
+    public get serviceUrl() {
+        return ngrok.running()
+            ? this.ngrokServiceUrl
+            : this._serviceUrl
+    }
 
     authentication = new BotFrameworkAuthentication();
 
@@ -84,7 +88,7 @@ export class BotFrameworkService extends RestServer {
                             state: {
                                 port: this.port,
                                 ngrokPath: this.ngrokPath,
-                                serviceUrl: this.serviceUrl,
+                                serviceUrl: this._serviceUrl,
                                 ngrokServiceUrl: this.ngrokServiceUrl
                             }
                         });
