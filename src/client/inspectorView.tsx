@@ -5,7 +5,7 @@ import { getSettings, addSettingsListener } from './settings';
 
 
 export class InspectorView extends React.Component<{}, {}> {
-    settingsUnsubscribe:any;
+    settingsUnsubscribe: any;
 
     componentWillMount() {
         this.settingsUnsubscribe = addSettingsListener(() =>
@@ -22,7 +22,7 @@ export class InspectorView extends React.Component<{}, {}> {
         return (
             <div className="wc-inspectorview">
                 <div className="wc-inspectorview-json">
-                    { formatJSON(settings.inspector.selectedObject || '') }
+                    {formatJSON(settings.inspector.selectedObject || '')}
                 </div>
             </div>
         );
@@ -30,7 +30,7 @@ export class InspectorView extends React.Component<{}, {}> {
 }
 
 const formatJSON = (obj: any) => {
-    if (!obj) 
+    if (!obj)
         return null;
     let json = JSON.stringify(obj, null, 2);
     // Hide ampersands we don't want replaced
@@ -68,5 +68,5 @@ const formatJSON = (obj: any) => {
                 return `<span class="json-${cls}">${match}</span>`;
             }
         })
-    return <span dangerouslySetInnerHTML={ { __html: json } }/>;
+    return <span dangerouslySetInnerHTML={{ __html: json }} />;
 }

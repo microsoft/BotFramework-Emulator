@@ -90,7 +90,6 @@ export class AttachmentsController {
                         res.contentType = attachment.type;
                         var buffer = new Buffer(attachment.thumbnailBase64, 'base64');
                         res.send(HttpStatus.OK, buffer);
-                        res.send(HttpStatus.OK, buffer);
                         log.api('getAttachment', req, res, null, buffer.length);
                     }
                     else {
