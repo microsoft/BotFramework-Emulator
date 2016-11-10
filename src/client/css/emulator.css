@@ -633,13 +633,14 @@
         overflow: auto;
         font-size: 13px;
 	    font-family: 'Menlo', 'Monaco', 'Consolas', "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
-        white-space: nowrap;
+        /*white-space: nowrap;*/
         position: absolute;
         left: 0;
         top: 42px;
         right: 0;
         bottom: 0;
         padding: 10px 10px 10px 10px;
+        word-break: break-word;
     }
 
     .wc-logview * {
@@ -648,46 +649,42 @@
 
     .wc-logview-timestamp {
         color: lightgray;
-        display: inline-block;
+        white-space: nowrap;
+    }
+
+    .wc-logview-message {
+        white-space: nowrap;
     }
 
     .wc-logview a {
         color: #9CDCFE;
-        display: inline-block;
     }
 
     .wc-logview-arg {
         color: lightgray;
-        display: inline-block;
     }
 
     .wc-logview-log {
         color: lightgray;
-        display: inline-block;
     }
 
     .wc-logview-info {
         color: lightgray;
-        display: inline-block;
     }
 
     .wc-logview-trace {
-        color: green;
-        display: inline-block;
+        color: lightgreen;
     }
 
     .wc-logview-debug {
         color: gray;
-        display: inline-block;
     }
 
     .wc-logview-warn {
         color: orange;
-        display: inline-block;
     }
 
     .wc-logview-error {
         color: red;
-        display: inline-block;
     }
 

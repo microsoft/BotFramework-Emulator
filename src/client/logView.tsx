@@ -45,38 +45,41 @@ const timestamp = (entry: ILogEntry) => {
     const hours = number2(entry.timestamp.getHours());
     const minutes = number2(entry.timestamp.getMinutes());
     const seconds = number2(entry.timestamp.getSeconds());
-    return <div className='wc-logview-timestamp'>{`[${hours}:${minutes}:${seconds}]`}&nbsp;</div>
+    return <td className='wc-logview-timestamp'>{`[${hours}:${minutes}:${seconds}]`}</td>
 }
 
-const emit = (val: any, className: string) => {
+const emit = (val: any, className: string, colspan?: number) => {
+    if (!colspan)
+        colspan = 1;
+
     if (!val) return null;
     if (val.hasOwnProperty('messageType') && val['messageType'] === 'link') {
-        return <div className={className}><a className='wc-logview-link' href={val.link}>{val.text}</a>&nbsp;</div>
+        return <td className={className} colSpan={colspan}><a className='wc-logview-link' href={val.link}>{val.text}</a></td>
     } else {
-        return <div className={className}>{safeStringify(val)}&nbsp;</div>
+        return <td className={className} colSpan={colspan}>{safeStringify(val)}</td>
     }
 }
 
 const message = (entry: ILogEntry, className: string) => {
-    return emit(entry.message, className);
+    return emit(entry.message, className, 5 - entry.args.length);
 }
 
-const args = (entry: ILogEntry) => {
+const args = (entry: ILogEntry, className: string) => {
     if (entry.args && entry.args.length) {
         return entry.args
             .filter(arg => !!arg)
-            .map((arg, i) => emit(arg, 'wc-logview-arg'));
+            .map((arg, i) => emit(arg, className));
     }
     return null;
 }
 
-const format = (entry: ILogEntry, index: number) => {
+const format = (entry: ILogEntry, index: number, items: any[]) => {
     return (
-        <div className='emu-log-entry'>
+        <tr className='emu-log-entry'>
             {timestamp(entry)}
-            {message(entry, 'wc-logview-' + Severity[entry.severity])}
-            {args(entry)}
-        </div>
+            {message(entry, 'wc-logview-' + Severity[entry.severity] + ' wc-logview-message')}
+            {args(entry, 'wc-logview-' + Severity[entry.severity])}
+        </tr>
     );
 }
 
@@ -138,7 +141,9 @@ export class LogView extends React.Component<{}, ILogViewState> {
     render() {
         return (
             <div className="wc-logview" ref={ref => this.scrollMe = ref}>
-                {this.state.entries.map((entry, i) => format(entry, i))}
+                <table style={{ width: "100%" }}>
+                    {this.state.entries.map((entry, i, items) => format(entry, i, items))}
+                </table>
             </div>
         );
     }

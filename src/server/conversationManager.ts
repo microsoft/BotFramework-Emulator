@@ -59,8 +59,6 @@ export class Conversation {
             let statusCode = '';
             let options: request.OptionsWithUrl = { url: bot.botUrl, method: "POST", json: activity };
 
-            const activityJson = JSON.stringify(activity);
-
             let responseCallback = function (err, resp: http.IncomingMessage, body) {
 
                 let text = (<IMessageActivity>activity).text;
@@ -68,17 +66,18 @@ export class Conversation {
                     text = text.substring(0, 50);
 
                 if (err || (resp && !/^2\d\d$/.test(`${resp.statusCode}`))) {
-                    log.error(`ToBot(${activity.type})`,
-                        log.makeInspectorLink("POST", activity),
-                        log.makeInspectorLink(`${resp.statusCode} ${resp.statusMessage}`, body),
-                        `POST ${bot.botUrl}`,
+
+                    log.error(log.makeInspectorLink("POST", activity),
+                        log.makeInspectorLink(`${resp.statusCode} ${resp.statusMessage}`,body),
+                        bot.botUrl,
+                        `Activity(${activity.type})`,
                         text);
                     cb(err, resp ? resp.statusCode : undefined);
                 } else {
-                    log.info(`ToBot(${activity.type})`,
-                        log.makeInspectorLink("POST", activity),
+                    log.info(log.makeInspectorLink("POST", activity),
                         log.makeInspectorLink(`${resp.statusCode} ${resp.statusMessage}`, body),
-                        `POST ${bot.botUrl}`,
+                        bot.botUrl,
+                        `Activity(${activity.type})`,
                         text);
                     if (recordInConversation) {
                         _this.activities.push(Object.assign({}, activity));

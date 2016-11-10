@@ -17,9 +17,13 @@ export function navigate(url: string) {
                     deselectActivity();
                     const args = QueryString.parse(parsed.query);
                     const encoded = args['obj'];
-                    const json = decodeURIComponent(encoded);
-                    const obj = JSON.parse(json);
-                    InspectorActions.setSelectedObject(obj);
+                    if (encoded && encoded != "undefined") {
+                        const json = decodeURIComponent(encoded);
+                        const obj = JSON.parse(json);
+                        InspectorActions.setSelectedObject(obj);
+                    } else {
+                        InspectorActions.setSelectedObject(null);
+                    }
                 } catch (e) {
                     log.error(e.message);
                     throw e;
