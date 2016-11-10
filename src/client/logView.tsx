@@ -141,7 +141,7 @@ export class LogView extends React.Component<{}, ILogViewState> {
     render() {
         return (
             <div className="wc-logview" ref={ref => this.scrollMe = ref}>
-                <table style={{ width: "100%" }}>
+                <table className="wc-logview-table">
                     {this.state.entries.map((entry, i, items) => format(entry, i, items))}
                 </table>
             </div>

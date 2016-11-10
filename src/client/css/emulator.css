@@ -643,6 +643,11 @@
         word-break: break-word;
     }
 
+    .wc-logview-table {
+        width: 100%;
+        min-width:800px;
+    }
+
     .wc-logview * {
         -webkit-user-select: text;
     }
