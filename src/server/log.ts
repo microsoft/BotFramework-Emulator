@@ -119,19 +119,26 @@ export const makeLinkMessage = (text: string, link: string): any => {
 }
 
 export const api = (apiName: string, req: Restify.Request, res: Restify.Response, request?: Object, response?: Object, text?: string) => {
-    let requestJson = JSON.stringify(request);
-    let responseJson = JSON.stringify(response);
     if (res.statusCode >= 400) {
-        error(apiName, 
-            makeLinkMessage(req.method, `emulator://inspect?obj=${encodeURIComponent(requestJson)}`), 
-            makeLinkMessage(`${res.statusCode} ${res.statusMessage}`, `emulator://inspect?obj=${encodeURIComponent(responseJson)}`), 
+        error(apiName,
+            makeInspectorLink(req.method, request),
+            makeInspectorLink(`${res.statusCode} ${res.statusMessage}`, response),
             req.href(),
             text);
     } else {
         trace(apiName,
-            makeLinkMessage(req.method, `emulator://inspect?obj=${encodeURIComponent(requestJson)}`), 
-            makeLinkMessage(`${res.statusCode} ${res.statusMessage}`, `emulator://inspect?obj=${encodeURIComponent(responseJson)}`), 
+            makeInspectorLink(req.method, request),
+            makeInspectorLink(`${res.statusCode} ${res.statusMessage}`, response),
             req.href(),
             text);
+    }
+}
+
+export const makeInspectorLink = (text: string, obj: any): any => {
+    if (typeof(obj) === 'object' || Array.isArray(obj)) {
+        const json = JSON.stringify(obj);
+        return makeLinkMessage(text, `emulator://inspect?obj=${encodeURIComponent(json)}`);
+    } else {
+        return text;
     }
 }

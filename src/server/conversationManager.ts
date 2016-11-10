@@ -67,19 +67,17 @@ export class Conversation {
                 if (text && text.length > 50)
                     text = text.substring(0, 50);
 
-                let responseJson = JSON.stringify(body);
-
                 if (err || (resp && !/^2\d\d$/.test(`${resp.statusCode}`))) {
                     log.error(`ToBot(${activity.type})`,
-                        log.makeLinkMessage("POST", `emulator://inspect?obj=${encodeURIComponent(activityJson)}`),
-                        log.makeLinkMessage(`${resp.statusCode} ${resp.statusMessage}`, `emulator://inspect?obj=${encodeURIComponent(responseJson)}`),
+                        log.makeInspectorLink("POST", activity),
+                        log.makeInspectorLink(`${resp.statusCode} ${resp.statusMessage}`, body),
                         `POST ${bot.botUrl}`,
                         text);
                     cb(err, resp ? resp.statusCode : undefined);
                 } else {
                     log.info(`ToBot(${activity.type})`,
-                        log.makeLinkMessage("POST", `emulator://inspect?obj=${encodeURIComponent(activityJson)}`),
-                        log.makeLinkMessage(`${resp.statusCode} ${resp.statusMessage}`, `emulator://inspect?obj=${encodeURIComponent(responseJson)}`),
+                        log.makeInspectorLink("POST", activity),
+                        log.makeInspectorLink(`${resp.statusCode} ${resp.statusMessage}`, body),
                         `POST ${bot.botUrl}`,
                         text);
                     if (recordInConversation) {
