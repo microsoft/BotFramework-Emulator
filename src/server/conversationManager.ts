@@ -2,7 +2,7 @@ import * as request from 'request';
 import * as http from 'http';
 import { IUser } from '../types/userTypes';
 import { IChannelAccount, IConversationAccount } from '../types/accountTypes';
-import { IActivity, IConversationUpdateActivity } from '../types/activityTypes';
+import { IActivity, IConversationUpdateActivity, IMessageActivity } from '../types/activityTypes';
 import { uniqueId } from '../utils';
 import { getSettings, authenticationSettings, addSettingsListener } from './settings';
 import { Settings } from '../types/serverSettingsTypes';
@@ -59,19 +59,35 @@ export class Conversation {
             let statusCode = '';
             let options: request.OptionsWithUrl = { url: bot.botUrl, method: "POST", json: activity };
 
+            const activityJson = JSON.stringify(activity);
+
             let responseCallback = function (err, resp: http.IncomingMessage, body) {
+
+                let text = (<IMessageActivity>activity).text;
+                if (text && text.length > 50)
+                    text = text.substring(0, 50);
+
+                let responseJson = JSON.stringify(body);
+
                 if (err || (resp && !/^2\d\d$/.test(`${resp.statusCode}`))) {
+                    log.error(`ToBot(${activity.type})`,
+                        log.makeLinkMessage("POST", `emulator://inspect?obj=${encodeURIComponent(activityJson)}`),
+                        log.makeLinkMessage(`${resp.statusCode} ${resp.statusMessage}`, `emulator://inspect?obj=${encodeURIComponent(responseJson)}`),
+                        `POST ${bot.botUrl}`,
+                        text);
                     cb(err, resp ? resp.statusCode : undefined);
                 } else {
+                    log.info(`ToBot(${activity.type})`,
+                        log.makeLinkMessage("POST", `emulator://inspect?obj=${encodeURIComponent(activityJson)}`),
+                        log.makeLinkMessage(`${resp.statusCode} ${resp.statusMessage}`, `emulator://inspect?obj=${encodeURIComponent(responseJson)}`),
+                        `POST ${bot.botUrl}`,
+                        text);
                     if (recordInConversation) {
                         _this.activities.push(Object.assign({}, activity));
                     }
                     cb(null, resp.statusCode, activity.id);
                 }
             }
-
-            const stringified = JSON.stringify(activity);
-            log.info('send', log.makeLinkMessage(activity.type, `emulator://inspect?obj=${encodeURIComponent(stringified)}`));
 
             if (bot.msaAppId && bot.msaPassword) {
                 this.authenticatedRequest(options, responseCallback);
@@ -113,8 +129,6 @@ export class Conversation {
                 activity.from.name = bot.botUrl;
             }
         }
-        const stringified = JSON.stringify(activity);
-        log.info('recv', log.makeLinkMessage(activity.type, `emulator://inspect?obj=${encodeURIComponent(stringified)}`));
         this.activities.push(Object.assign({}, activity));
         return ResponseTypes.createResourceResponse(activity.id);
     }

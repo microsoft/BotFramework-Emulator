@@ -1,10 +1,11 @@
 import * as Restify from 'restify';
 import * as HttpStatus from "http-status-codes";
 import * as ResponseTypes from '../../types/responseTypes';
-import { ErrorCodes, IResourceResponse, IErrorResponse } from '../../types/responseTypes';
+import { ErrorCodes, IResourceResponse, IErrorResponse, APIException } from '../../types/responseTypes';
 import { IAttachmentData, IAttachmentInfo, IAttachmentView } from '../../types/attachmentTypes';
 import { uniqueId } from '../../utils';
 import { RestServer } from '../restServer';
+import * as log from '../log';
 
 
 interface IAttachmentParams {
@@ -31,6 +32,7 @@ export class AttachmentsController {
         let attachment: any = attachmentData;
         attachment.id = uniqueId();
         AttachmentsController.attachments[attachment.id] = attachment;
+
         return attachment.id;
     }
 
@@ -56,13 +58,13 @@ export class AttachmentsController {
 
                 res.send(HttpStatus.OK, attachmentInfo);
                 res.end();
+                log.api('getAttachmentInfo', req, res, null, attachmentInfo);
             }
-            else {
-                res.send(HttpStatus.NOT_FOUND, ResponseTypes.createErrorResponse(ErrorCodes.BadArgument, `attachment[${parms.attachmentId}] not found`));
-                res.end();
-            }
+            else
+                throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, `attachment[${parms.attachmentId}] not found`);
         } catch (err) {
-            ResponseTypes.sendErrorResponse(req, res, next, err);
+            let error = ResponseTypes.sendErrorResponse(req, res, next, err);
+            log.api('getAttachmentInfo', req, res, null, error);
         }
     }
 
@@ -75,7 +77,9 @@ export class AttachmentsController {
                 if (parms.viewId == "original") {
                     if (attachment.originalBase64) {
                         res.contentType = attachment.type;
-                        res.send(HttpStatus.OK, new Buffer(attachment.originalBase64, 'base64'));
+                        var buffer = new Buffer(attachment.originalBase64, 'base64');
+                        res.send(HttpStatus.OK, buffer);
+                        log.api('getAttachment', req, res, null, buffer.length);
                     }
                     else {
                         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "There is no original view");
@@ -84,7 +88,10 @@ export class AttachmentsController {
                 else if (parms.viewId == "thumbnail") {
                     if (attachment.thumbnailBase64) {
                         res.contentType = attachment.type;
-                        res.send(HttpStatus.OK, new Buffer(attachment.thumbnailBase64, 'base64'));
+                        var buffer = new Buffer(attachment.thumbnailBase64, 'base64');
+                        res.send(HttpStatus.OK, buffer);
+                        res.send(HttpStatus.OK, buffer);
+                        log.api('getAttachment', req, res, null, buffer.length);
                     }
                     else {
                         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "There is no thumbnail view");
@@ -96,7 +103,8 @@ export class AttachmentsController {
             }
         }
         catch (err) {
-            ResponseTypes.sendErrorResponse(req, res, next, err);
+            let error = ResponseTypes.sendErrorResponse(req, res, next, err);
+            log.api('getAttachment', req, res, null, error);
         }
     }
 }

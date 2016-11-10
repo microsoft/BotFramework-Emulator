@@ -27,6 +27,17 @@ export interface IConversationUpdateActivity extends IActivity {
     historyDisclosed?: boolean,
 }
 
+export interface IConversationParameters extends IActivity {
+    isGroup: boolean,
+    bot: IChannelAccount,
+    members?: IChannelAccount[],
+    membersRemoved?: IChannelAccount[],
+    topicName?: string,
+    activity?: IActivity,
+    channelData : any
+}
+
+
 export interface IContactRelationUpdateActivity extends IActivity {
     action?: string
 }
@@ -61,3 +72,4 @@ export interface IGenericActivity extends
     IEndOfConversationActivity,
     ITriggerActivity {
 }
+

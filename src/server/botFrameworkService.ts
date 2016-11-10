@@ -11,6 +11,7 @@ import * as log from './log';
 import * as Fs from 'fs';
 import * as path from 'path';
 import * as ngrok from './ngrok';
+import { makeLinkMessage } from './log';
 
 
 /**
@@ -68,9 +69,9 @@ export class BotFrameworkService extends RestServer {
                         if (err) {
                             log.warn(`failed to configure ngrok at ${this.ngrokPath}: ${err.message || err.msg}`);
                         } else {
-                            log.info(`ngrok listening on ${url}`);
-                            this.serviceUrl = url;
                             this.inspectUrl = `http://127.0.0.1:${inspectPort}`;
+                            this.serviceUrl = url;
+                            log.debug(`ngrok listening on: ${url},`, 'inspector url:', log.makeLinkMessage(this.inspectUrl, this.inspectUrl) );
                         }
                     });
                 }

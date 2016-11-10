@@ -52,7 +52,7 @@ export class MainView extends React.Component<{}, {}> {
                 if (this.directline) {
                     this.directline.end();
                     this.directline = undefined;
-                    log.info(`ended conversation`);
+                //    log.debug(`ended conversation`);
                 }
                 if (this.conversationId.length && this.userId.length && this.botId.length) {
                     this.directline = new BotChat.DirectLine3(
@@ -60,7 +60,7 @@ export class MainView extends React.Component<{}, {}> {
                         `http://localhost:${settings.serverSettings.framework.port}`,
                         'v3/directline'
                     );
-                    log.info(`started new conversation`);
+                //    log.debug(`started new conversation`);
                 }
                 this.reuseKey++;
                 this.forceUpdate();

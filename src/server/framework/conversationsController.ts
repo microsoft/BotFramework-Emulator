@@ -1,6 +1,7 @@
 import * as Restify from 'restify';
-import { IGenericActivity } from '../../types/activityTypes';
-import { getSettings } from '../settings';
+import { IGenericActivity, IConversationParameters } from '../../types/activityTypes';
+import { IUser } from '../../types/userTypes';
+import { getSettings, getStore } from '../settings';
 import { emulator } from '../emulator';
 import { uniqueId } from '../../utils';
 import * as HttpStatus from "http-status-codes";
@@ -11,9 +12,10 @@ import { AttachmentsController } from './attachmentsController';
 import * as log from '../log';
 import { RestServer } from '../restServer';
 import { BotFrameworkAuthentication } from '../botFrameworkAuthentication';
+import { error } from '../log';
 
 
-interface IConversationParams {
+interface IConversationAPIPathParameters {
     conversationId: string;
     activityId: string;
 }
@@ -33,6 +35,7 @@ export class ConversationsController {
 
     // Create conversation API
     public static createConversation = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+        let conversationParameters = <IConversationParameters>req.body;
         try {
             console.log("framework: newConversation");
 
@@ -42,22 +45,60 @@ export class ConversationsController {
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
 
             const users = getSettings().users;
-            const currentUser = users.usersById[users.currentUserId];
+            if (conversationParameters.members == null)
+                throw ResponseTypes.createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.MissingProperty, "members missing");
 
-            let newConversation = emulator.conversations.newConversation(activeBot.botId, currentUser);
-            res.send(HttpStatus.OK, ResponseTypes.createResourceResponse(newConversation.conversationId));
+            if (conversationParameters.members.length != 1)
+                throw ResponseTypes.createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.BadSyntax, "Emulator only supports creating conversation with 1 user");
+
+            if (conversationParameters.bot == null)
+                throw ResponseTypes.createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.MissingProperty, "missing Bot property");
+
+            if (conversationParameters.bot.id != activeBot.botId)
+                throw ResponseTypes.createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.BadArgument, "conversationParameters.bot.id doesn't match security bot id");
+
+            let newUsers: IUser[] = [];
+
+            // merge users in
+            for (let key in conversationParameters.members) {
+                newUsers.push({
+                    id: conversationParameters.members[key].id,
+                    name: conversationParameters.members[key].name
+                });
+            }
+            getStore().dispatch({
+                type: "Users_AddUsers",
+                state: { users: newUsers }
+            });
+
+
+            let newConversation = emulator.conversations.newConversation(activeBot.botId, users.usersById[conversationParameters.members[0].id]);
+            let activityId: string = null;
+            if (conversationParameters.activity != null) {
+                // set routing information for new conversation
+                conversationParameters.activity.conversation = { id: newConversation.conversationId };
+                conversationParameters.activity.from = { id: activeBot.botId };
+                conversationParameters.activity.recipient = { id: conversationParameters.members[0].id };
+
+                let response: IResourceResponse = newConversation.postActivityToUser(conversationParameters.activity);
+                activityId = response.id;
+            }
+
+            var response = ResponseTypes.createConversationResponse(newConversation.conversationId, activityId);
+            res.send(HttpStatus.OK, response);
             res.end();
+            log.api('createConversation', req, res, conversationParameters, response, getActivityText(conversationParameters.activity));
         } catch (err) {
-            log.error("BotFramework: createConversation failed: " + err);
-            ResponseTypes.sendErrorResponse(req, res, next, err);
+            var error = ResponseTypes.sendErrorResponse(req, res, next, err);
+            log.api('createConversation', req, res, conversationParameters, error, getActivityText(conversationParameters.activity));
         }
     }
 
     // SendToConversation
     public static sendToConversation = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+        let activity = <IGenericActivity>req.body;
         try {
-            let activity = <IGenericActivity>req.body;
-            const parms: IConversationParams = req.params;
+            const parms: IConversationAPIPathParameters = req.params;
             console.log("framework: sendToConversation", JSON.stringify(activity));
 
             // look up bot
@@ -80,18 +121,19 @@ export class ConversationsController {
             let response: IResourceResponse = conversation.postActivityToUser(activity);
             res.send(HttpStatus.OK, response);
             res.end();
+            log.api('sendToConversation', req, res, activity, response, getActivityText(activity));
             return;
         } catch (err) {
-            log.error("BotFramework: sendToConversation failed: " + err);
-            ResponseTypes.sendErrorResponse(req, res, next, err);
+            let error = ResponseTypes.sendErrorResponse(req, res, next, err);
+            log.api('sendToConversation', req, res, activity, error, getActivityText(activity));
         }
     }
 
     // replyToActivity
     public static replyToActivity = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+        let activity = <IGenericActivity>req.body;
         try {
-            let activity = <IGenericActivity>req.body;
-            const parms: IConversationParams = req.params;
+            const parms: IConversationAPIPathParameters = req.params;
             console.log("framework: replyToActivity", JSON.stringify(activity));
 
             // look up bot
@@ -118,18 +160,19 @@ export class ConversationsController {
             let response: IResourceResponse = conversation.postActivityToUser(activity);
             res.send(HttpStatus.OK, response);
             res.end();
+            log.api('replyToActivity', req, res, activity, response, getActivityText(activity));
             return;
         } catch (err) {
-            log.error("BotFramework: replyToActivity failed: " + err);
-            ResponseTypes.sendErrorResponse(req, res, next, err);
+            let error = ResponseTypes.sendErrorResponse(req, res, next, err);
+            log.api('replyToActivity', req, res, activity, error, getActivityText(activity));
         }
     }
 
     // updateActivity
     public static updateActivity = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+        let activity = <IGenericActivity>req.body;
         try {
-            let activity = <IGenericActivity>req.body;
-            const parms: IConversationParams = req.params;
+            const parms: IConversationAPIPathParameters = req.params;
             console.log("framework: updateActivity", JSON.stringify(activity));
 
             // look up bot
@@ -155,17 +198,18 @@ export class ConversationsController {
             let response: IResourceResponse = conversation.updateActivity(activity);
             res.send(HttpStatus.OK, response);
             res.end();
+            log.api('updateActivity', req, res, activity, response, getActivityText(activity));
             return;
         } catch (err) {
-            log.error("BotFramework: updateActivity failed: " + err);
-            ResponseTypes.sendErrorResponse(req, res, next, err);
+            let error = ResponseTypes.sendErrorResponse(req, res, next, err);
+            log.api('updateActivity', req, res, activity, error, getActivityText(activity));
         }
     }
 
     // deleteActivity
     public static deleteActivity = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         try {
-            const parms: IConversationParams = req.params;
+            const parms: IConversationAPIPathParameters = req.params;
             console.log("framework: deleteActivity", JSON.stringify(parms));
 
             // look up bot
@@ -182,10 +226,11 @@ export class ConversationsController {
 
             res.send(HttpStatus.OK);
             res.end();
+            log.api('deleteActivity', req, res);
             return;
         } catch (err) {
-            log.error("BotFramework: deleteActivity failed: " + err);
-            ResponseTypes.sendErrorResponse(req, res, next, err);
+            let error = ResponseTypes.sendErrorResponse(req, res, next, err);
+            log.api('deleteActivity', req, res, null, error);
         }
     }
 
@@ -198,8 +243,7 @@ export class ConversationsController {
             if (!activeBot)
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
 
-            let activity = <IGenericActivity>req.body;
-            const parms: IConversationParams = req.params;
+            const parms: IConversationAPIPathParameters = req.params;
 
             // look up conversation
             const conversation = emulator.conversations.conversationById(activeBot.botId, parms.conversationId);
@@ -208,9 +252,10 @@ export class ConversationsController {
 
             res.send(HttpStatus.OK, conversation.members);
             res.end();
+            log.api('getConversationMembers', req, res, null, conversation.members);
         } catch (err) {
-            log.error("BotFramework: getConversationMembers failed: " + err);
             ResponseTypes.sendErrorResponse(req, res, next, err);
+            log.api('getConversationMembers', req, res, null, error);
         }
     }
 
@@ -224,7 +269,7 @@ export class ConversationsController {
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
 
             let activity = <IGenericActivity>req.body;
-            const parms: IConversationParams = req.params;
+            const parms: IConversationAPIPathParameters = req.params;
 
             // look up conversation
             const conversation = emulator.conversations.conversationById(activeBot.botId, parms.conversationId);
@@ -233,6 +278,7 @@ export class ConversationsController {
 
             res.send(HttpStatus.OK, conversation.members);
             res.end();
+            log.api('getActivityMembers', req, res, null, conversation.members);
         } catch (err) {
             log.error("BotFramework: getActivityMembers failed: " + err);
             ResponseTypes.sendErrorResponse(req, res, next, err);
@@ -242,14 +288,14 @@ export class ConversationsController {
     // upload attachment
     public static uploadAttachment = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         console.log("framework: uploadAttachment");
+        let attachmentData = <IAttachmentData>req.body;
         try {
             // look up bot
             const activeBot = getSettings().getActiveBot();
             if (!activeBot)
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
 
-            let attachmentData = <IAttachmentData>req.body;
-            const parms: IConversationParams = req.params;
+            const parms: IConversationAPIPathParameters = req.params;
 
             // look up conversation
             const conversation = emulator.conversations.conversationById(activeBot.botId, parms.conversationId);
@@ -257,12 +303,22 @@ export class ConversationsController {
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "conversation not found");
 
             let resourceId = AttachmentsController.uploadAttachment(attachmentData);
-            let resourceResponse : IResourceResponse = { id : resourceId };
+            let resourceResponse: IResourceResponse = { id: resourceId };
             res.send(HttpStatus.OK, resourceResponse);
             res.end();
+            log.api('uploadAttachment', req, res, attachmentData, resourceResponse, attachmentData.name);
         } catch (err) {
-            log.error("BotFramework: uploadAttachment failed: " + err);
-            ResponseTypes.sendErrorResponse(req, res, next, err);
+            let error = ResponseTypes.sendErrorResponse(req, res, next, err);
+            log.api('uploadAttachment', req, res, attachmentData, error, attachmentData.name);
         }
     }
+}
+
+function getActivityText(activity: IGenericActivity): string {
+    if (activity) {
+        if (activity.text.length > 50)
+            return activity.text.substring(0, 50) + '...';
+        return activity.text;
+    }
+    return '';
 }

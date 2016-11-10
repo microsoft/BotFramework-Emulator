@@ -31,7 +31,7 @@ export class RestServer {
         this.stop();
         this.port = port;
         return this.router.listen(this.port, () => {
-            log.info(`${this.router.name} listening on ${this.router.url}`);
+            log.debug(`${this.router.name} listening on ${this.router.url}`);
         });
     }
 

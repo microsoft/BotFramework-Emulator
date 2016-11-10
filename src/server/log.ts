@@ -1,4 +1,6 @@
 import { mainWindow } from './main';
+import * as HttpStatus from "http-status-codes";
+import * as Restify from 'restify';
 
 export const logReady = (isReady: boolean) => _logReady = isReady;
 let _logReady = false;
@@ -9,7 +11,7 @@ interface IQueuedMessage {
     args: any[]
 }
 
-let queuedMessages:IQueuedMessage[] = [];
+let queuedMessages: IQueuedMessage[] = [];
 let queueTimerSet = false;
 
 const canLogMessages = () => _logReady;
@@ -113,5 +115,23 @@ export const makeLinkMessage = (text: string, link: string): any => {
         'messageType': 'link',
         'text': text,
         'link': link
+    }
+}
+
+export const api = (apiName: string, req: Restify.Request, res: Restify.Response, request?: Object, response?: Object, text?: string) => {
+    let requestJson = JSON.stringify(request);
+    let responseJson = JSON.stringify(response);
+    if (res.statusCode >= 400) {
+        error(apiName, 
+            makeLinkMessage(req.method, `emulator://inspect?obj=${encodeURIComponent(requestJson)}`), 
+            makeLinkMessage(`${res.statusCode} ${res.statusMessage}`, `emulator://inspect?obj=${encodeURIComponent(responseJson)}`), 
+            req.href(),
+            text);
+    } else {
+        trace(apiName,
+            makeLinkMessage(req.method, `emulator://inspect?obj=${encodeURIComponent(requestJson)}`), 
+            makeLinkMessage(`${res.statusCode} ${res.statusMessage}`, `emulator://inspect?obj=${encodeURIComponent(responseJson)}`), 
+            req.href(),
+            text);
     }
 }
