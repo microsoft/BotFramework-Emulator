@@ -266,17 +266,12 @@ export class ServerSettingsActions {
     static remote_setCurrentUser(user: IUser) {
         serverChangeSetting('Users_SetCurrentUser', { user });
     }
-    static remote_setFrameworkPort(port: number) {
-        serverChangeSetting('Framework_SetPort', { port });
-    }
-    static remote_setNgrokPath(path: string) {
-        serverChangeSetting('Framework_SetNgrokPath', { path });
-    }
     static remote_setFrameworkServerSettings(state: {
         port: number,
-        ngrokPath: string
+        ngrokPath: string,
+        serviceUrl: string
     }) {
-        serverChangeSetting('Framework_Set', state);
+        serverChangeSetting('Framework_Set1', state);
     }
 }
 

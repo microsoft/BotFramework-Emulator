@@ -83,10 +83,10 @@ export const addSettingsListener = (actor: SettingsActor) => {
 
 
 export const startup = () => {
-    Electron.ipcMain.on('logStarted', (event, ...args) => {
+    Electron.ipcMain.on('logStarted', () => {
         logReady(true);
     });
-    Electron.ipcMain.on('logStopped', (event, ...args) => {
+    Electron.ipcMain.on('logStopped', () => {
         logReady(false);
     });
     // Listen for settings change requests from the client.

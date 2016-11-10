@@ -53,7 +53,7 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
     onAccept = () => {
         ServerSettingsActions.remote_setFrameworkServerSettings({
             port: Number(this.emulatorPortInputRef.value),
-            //serviceUrl: this.serviceUrlInputRef.value,
+            serviceUrl: this.serviceUrlInputRef.value,
             ngrokPath: this.ngrokPathInputRef.value
         });
         AddressBarActions.hideAppSettings();

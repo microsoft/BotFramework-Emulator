@@ -5,7 +5,7 @@ import { AttachmentsController } from './framework/attachmentsController';
 import { BotStateController } from './framework/botStateController';
 import { ConversationsControllerV3 as DirectLineConversationsController } from './directLine/conversationsControllerV3';
 import { RestServer } from './restServer';
-import { getSettings, addSettingsListener } from './settings';
+import { getStore, getSettings, addSettingsListener } from './settings';
 import { Settings } from '../types/serverSettingsTypes';
 import * as log from './log';
 import * as Fs from 'fs';
@@ -19,9 +19,12 @@ import { makeLinkMessage } from './log';
  */
 export class BotFrameworkService extends RestServer {
 
-    serviceUrl: string;
+    private _serviceUrl: string;
     inspectUrl: string;
     ngrokPath: string;
+    ngrokServiceUrl: string;
+
+    public get serviceUrl() { return ngrok.running() ? this.ngrokServiceUrl : this._serviceUrl }
 
     authentication = new BotFrameworkAuthentication();
 
@@ -56,8 +59,9 @@ export class BotFrameworkService extends RestServer {
             const prevNgrokPath = this.ngrokPath;
             this.ngrokPath = settings.framework.ngrokPath;
             const prevServiceUrl = this.serviceUrl;
-            this.serviceUrl = `http://localhost:${this.port}`;
+            this._serviceUrl = `http://localhost:${this.port}`;
             this.inspectUrl = null;
+            this.ngrokServiceUrl = null;
             const startNgrok = () => {
                 // if we have an ngrok path
                 if (this.ngrokPath) {
@@ -70,10 +74,20 @@ export class BotFrameworkService extends RestServer {
                             log.warn(`failed to configure ngrok at ${this.ngrokPath}: ${err.message || err.msg}`);
                         } else {
                             this.inspectUrl = `http://127.0.0.1:${inspectPort}`;
-                            this.serviceUrl = url;
+                            this.ngrokServiceUrl = url;
                             log.debug(`ngrok listening on: ${url}`);
                             log.debug('inspectorUrl:', log.makeLinkMessage(this.inspectUrl, this.inspectUrl));
                         }
+                        // Sync settings to client
+                        getStore().dispatch({
+                            type: 'Framework_Set2',
+                            state: {
+                                port: this.port,
+                                ngrokPath: this.ngrokPath,
+                                serviceUrl: this.serviceUrl,
+                                ngrokServiceUrl: this.ngrokServiceUrl
+                            }
+                        });
                     });
                 }
             }

@@ -5,7 +5,6 @@ import * as log from './log';
 export class RestServer {
     // REVIEW: Can we get this from the Restify.server?
     port: number;
-    serviceUrl: string;
     router: Restify.Server;
 
     constructor(name: string) {
