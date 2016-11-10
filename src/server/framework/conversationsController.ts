@@ -87,10 +87,10 @@ export class ConversationsController {
             var response = ResponseTypes.createConversationResponse(newConversation.conversationId, activityId);
             res.send(HttpStatus.OK, response);
             res.end();
-            log.api('<-createConversation', req, res, conversationParameters, response, getActivityText(conversationParameters.activity));
+            log.api('createConversation', req, res, conversationParameters, response, getActivityText(conversationParameters.activity));
         } catch (err) {
             var error = ResponseTypes.sendErrorResponse(req, res, next, err);
-            log.api('<-createConversation', req, res, conversationParameters, error, getActivityText(conversationParameters.activity));
+            log.api('createConversation', req, res, conversationParameters, error, getActivityText(conversationParameters.activity));
         }
     }
 
@@ -121,11 +121,11 @@ export class ConversationsController {
             let response: IResourceResponse = conversation.postActivityToUser(activity);
             res.send(HttpStatus.OK, response);
             res.end();
-            log.api(`<-Send[${activity.type}]`, req, res, activity, response, getActivityText(activity));
+            log.api(`Send[${activity.type}]`, req, res, activity, response, getActivityText(activity));
             return;
         } catch (err) {
             let error = ResponseTypes.sendErrorResponse(req, res, next, err);
-            log.api(`<-Send[${activity.type}]`, req, res, activity, error, getActivityText(activity));
+            log.api(`Send[${activity.type}]`, req, res, activity, error, getActivityText(activity));
         }
     }
 
@@ -160,11 +160,11 @@ export class ConversationsController {
             let response: IResourceResponse = conversation.postActivityToUser(activity);
             res.send(HttpStatus.OK, response);
             res.end();
-            log.api(`<-Reply[${activity.type}]`, req, res, activity, response, getActivityText(activity));
+            log.api(`Reply[${activity.type}]`, req, res, activity, response, getActivityText(activity));
             return;
         } catch (err) {
             let error = ResponseTypes.sendErrorResponse(req, res, next, err);
-            log.api(`<-Reply[${activity.type}]`, req, res, activity, error, getActivityText(activity));
+            log.api(`Reply[${activity.type}]`, req, res, activity, error, getActivityText(activity));
         }
     }
 
@@ -198,11 +198,11 @@ export class ConversationsController {
             let response: IResourceResponse = conversation.updateActivity(activity);
             res.send(HttpStatus.OK, response);
             res.end();
-            log.api(`<-Update[${activity.id}]`, req, res, activity, response, getActivityText(activity));
+            log.api(`Update[${activity.id}]`, req, res, activity, response, getActivityText(activity));
             return;
         } catch (err) {
             let error = ResponseTypes.sendErrorResponse(req, res, next, err);
-            log.api(`<-Update[${activity.id}]`, req, res, activity, error, getActivityText(activity));
+            log.api(`Update[${activity.id}]`, req, res, activity, error, getActivityText(activity));
         }
     }
 
@@ -226,11 +226,11 @@ export class ConversationsController {
 
             res.send(HttpStatus.OK);
             res.end();
-            log.api(`<-DeleteActivity(${parms.activityId})`, req, res);
+            log.api(`DeleteActivity(${parms.activityId})`, req, res);
             return;
         } catch (err) {
             let error = ResponseTypes.sendErrorResponse(req, res, next, err);
-            log.api(`<-DeleteActivity(${parms.activityId})`, req, res, null, error);
+            log.api(`DeleteActivity(${parms.activityId})`, req, res, null, error);
         }
     }
 
@@ -252,10 +252,10 @@ export class ConversationsController {
 
             res.send(HttpStatus.OK, conversation.members);
             res.end();
-            log.api(`<-GetConversationMembers(${parms.conversationId})`, req, res, null, conversation.members);
+            log.api(`GetConversationMembers(${parms.conversationId})`, req, res, null, conversation.members);
         } catch (err) {
             ResponseTypes.sendErrorResponse(req, res, next, err);
-            log.api(`<-GetConversationMembers(${parms.conversationId})`, req, res, null, error);
+            log.api(`GetConversationMembers(${parms.conversationId})`, req, res, null, error);
         }
     }
 

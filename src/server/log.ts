@@ -129,34 +129,34 @@ export const api = (operation: string, req: Restify.Request, res: Restify.Respon
     if (res.statusCode >= 400) {
         if (useTables) {
             error(
+                '<-',
                 makeInspectorLink(`${req.method}`, request, "Click to view request json"),
                 makeInspectorLink(`${res.statusCode}`, response, `(${res.statusMessage}) Click to view response json`),
                 operation,
-                text,
-                req.href());
+                text);
         } else {
             error(
-                operation,
+                '<-',
                 makeInspectorLink(`${req.method}`, request, "Click to view request json"),
                 makeInspectorLink(`${res.statusCode}`, response, `(${res.statusMessage}) Click to view response json`),
-                text,
-                req.href());
+                operation,
+                text);
         }
     } else {
         if (useTables) {
             trace(
+                '<-',
                 makeInspectorLink(`${req.method}`, request, "Click to view request json"),
                 makeInspectorLink(`${res.statusCode}`, response, `(${res.statusMessage}) Click to view response json`),
                 operation,
-                text,
-                req.href());
+                text);
         } else {
             trace(
-                operation,
+                '<-',
                 makeInspectorLink(`${req.method}`, request, "Click to view request json"),
                 makeInspectorLink(`${res.statusCode}`, response, `(${res.statusMessage}) Click to view response json`),
-                text,
-                req.href());
+                operation,
+                text);
         }
     }
 }

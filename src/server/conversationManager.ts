@@ -69,30 +69,34 @@ export class Conversation {
                 if (err || (resp && !/^2\d\d$/.test(`${resp.statusCode}`))) {
                     if (log.useTables) {
                         log.error(
+                            '->',
                             log.makeInspectorLink("POST", activity, "Click to view request json"),
                             log.makeInspectorLink(`${resp.statusCode}`, body, `(${resp.statusMessage}) Click to view response json`),
-                            `->[${activity.type}]`,
+                            `[${activity.type}]`,
                             text);
                     } else {
                         log.error(
-                            `->[${activity.type}]`,
+                            '->',
                             log.makeInspectorLink("POST", activity, "Click to view request json"),
                             log.makeInspectorLink(`${resp.statusCode}`, body, `(${resp.statusMessage}) Click to view response json`),
+                            `[${activity.type}]`,
                             text);
                     }
                     cb(err, resp ? resp.statusCode : undefined);
                 } else {
                     if (log.useTables) {
                         log.info(
+                            '->',
                             log.makeInspectorLink("POST", activity, "Click to view request json"),
                             log.makeInspectorLink(`${resp.statusCode}`, body, `(${resp.statusMessage}) Click to view response json`),
-                            `->[${activity.type}]`,
+                            `[${activity.type}]`,
                             text);
                     } else {
                         log.trace(
-                            `->[${activity.type}]`,
+                            '->',
                             log.makeInspectorLink("POST", activity, "Click to view request json"),
                             log.makeInspectorLink(`${resp.statusCode}`, body, `(${resp.statusMessage}) Click to view response json`),
+                            `[${activity.type}]`,
                             text);
                     }
                     if (recordInConversation) {
