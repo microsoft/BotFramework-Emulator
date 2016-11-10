@@ -5,7 +5,7 @@ import * as Restify from 'restify';
 
 // TEMPORARY, for A/B testing logview layout
 // If you change this, also change it in client/logView.tsx
-export const useTables = false;
+export const useTables = true;
 
 
 export const logReady = (isReady: boolean) => _logReady = isReady;

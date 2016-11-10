@@ -8,7 +8,7 @@ import { LogActions } from './reducers';
 
 // TEMPORARY, for A/B testing logview layout
 // If you change this, also change it in server/log.ts
-const useTables = false;
+const useTables = true;
 
 
 export enum Severity {
