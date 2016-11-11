@@ -4,6 +4,11 @@ import { IEntity } from './entityTypes';
 import { IETagObject } from './eTagTypes';
 
 
+export type ActivityOrID = {
+    activity?: IGenericActivity
+    id?: string
+}
+
 export interface IActivity extends IETagObject {
     type?: string,
     id?: string,
@@ -36,7 +41,6 @@ export interface IConversationParameters extends IActivity {
     activity?: IActivity,
     channelData : any
 }
-
 
 export interface IContactRelationUpdateActivity extends IActivity {
     action?: string

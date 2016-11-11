@@ -369,7 +369,7 @@ export const inspectorReducer: Reducer<IInspectorState> = (
 ) => {
     switch (action.type) {
         case 'Inspector_SetSelectedObject':
-            return Object.assign({}, state, { selectedObject: action.state.selectedObject });
+            return Object.assign({}, state, { selectedObject: action.state.selectedObject ? action.state.selectedObject.activity : null });
         case 'Inspector_Clear':
             return Object.assign({}, state, { selectedObject: null });
         default:

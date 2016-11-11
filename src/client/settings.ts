@@ -1,6 +1,9 @@
-import { Store, createStore, combineReducers, Reducer, Action } from 'redux';
 import * as Electron from 'electron';
+import { Store, createStore, combineReducers, Reducer, Action } from 'redux';
+import { Subscription, BehaviorSubject } from '@reactivex/rxjs';
+import { ActivityOrID } from '../types/activityTypes';
 import { ISettings as IServerSettings, Settings as ServerSettings } from '../types/serverSettingsTypes';
+import { InspectorActions } from './reducers';
 import { loadSettings, saveSettings } from '../utils';
 import {
     layoutReducer,
@@ -15,6 +18,17 @@ import { IBot, newBot } from '../types/botTypes';
 import { uniqueId } from '../utils';
 import * as log from './log';
 
+
+export const selectedActivity$ = (): BehaviorSubject<ActivityOrID> => {
+    if (!global['selectedActivity$']) {
+        global['selectedActivity$'] = new BehaviorSubject<ActivityOrID>({});
+    }
+    return global['selectedActivity$'];
+}
+
+export const deselectActivity = () => {
+    selectedActivity$().next({});
+}
 
 export interface ILayoutState {
     horizSplit?: number | string,
@@ -124,7 +138,7 @@ let store: Store<ISettings>;
 
 const getStore = (): Store<ISettings> => {
     if (!store) {
-       // Create the settings store with initial settings from disk.
+        // Create the settings store with initial settings from disk.
         const initialSettings = loadSettings('client.json', settingsDefault);
         store = createStore(combineReducers<ISettings>({
             layout: layoutReducer,
@@ -173,6 +187,10 @@ export const startup = () => {
         saveTimer = setTimeout(() => {
             saveSettings('client.json', new PersistentSettings(getStore().getState()));
         }, 1000);
+    });
+
+    selectedActivity$().subscribe((value) => {
+        InspectorActions.setSelectedObject(value);
     });
 
     // Listen for new settings from the server.

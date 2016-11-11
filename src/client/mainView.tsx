@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as Splitter from 'react-split-pane';
 import * as BotChat from 'msbotchat';
 import * as log from './log';
-import { getSettings, settingsDefault, Settings, addSettingsListener } from './settings';
+import { getSettings, settingsDefault, Settings, addSettingsListener, selectedActivity$ } from './settings';
 import { LayoutActions, InspectorActions, LogActions } from './reducers';
 import { Settings as ServerSettings } from '../types/serverSettingsTypes';
 import { AddressBar } from './addressBar/addressBar';
@@ -12,13 +12,6 @@ import { uniqueId } from '../utils';
 import { IUser } from '../types/userTypes';
 import * as Constants from './constants';
 
-
-
-export const deselectActivity = () => {
-    if (global['chatAPI']) {
-        global['chatAPI'].deselectActivity();
-    }
-}
 
 export class MainView extends React.Component<{}, {}> {
     settingsUnsubscribe: any;
@@ -80,7 +73,6 @@ export class MainView extends React.Component<{}, {}> {
         this.conversationId = undefined;
         this.userId = undefined;
         this.botId = undefined;
-        global['chatAPI'] = undefined;
     }
 
     getCurrentUser(serverSettings: ServerSettings): IUser {
@@ -92,14 +84,6 @@ export class MainView extends React.Component<{}, {}> {
         return null;
     }
 
-    onActivitySelected(e: any, activity: any) {
-        InspectorActions.setSelectedObject(activity);
-    }
-
-    receiveChatAPI(chatAPI: BotChat.ChatAPI) {
-        global['chatAPI'] = chatAPI;
-    }
-
     botChatComponent() {
         if (this.directline) {
             const settings = getSettings();
@@ -109,8 +93,7 @@ export class MainView extends React.Component<{}, {}> {
                 formatOptions: {
                     showHeader: false
                 },
-                onActivitySelected: this.onActivitySelected,
-                receiveChatAPI: this.receiveChatAPI,
+                selectedActivity: selectedActivity$(),
                 user: this.getCurrentUser(settings.serverSettings)
             }
             InspectorActions.clear();
