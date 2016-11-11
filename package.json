@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fuselabs/botframework-emulator.git"
+    "url": "git+https://github.com/Microsoft/botframework-emulator.git"
   },
   "keywords": [
     "microsoft",
@@ -22,9 +22,9 @@
   "author": "Microsoft Corp.",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/fuselabs/botframework-emulator/issues"
+    "url": "https://github.com/Microsoft/botframework-emulator/issues"
   },
-  "homepage": "https://github.com/fuselabs/botframework-emulator#readme",
+  "homepage": "https://github.com/Microsoft/botframework-emulator#readme",
   "devDependencies": {
     "@types/async": "2.0.32",
     "@types/electron": "1.4.25",
