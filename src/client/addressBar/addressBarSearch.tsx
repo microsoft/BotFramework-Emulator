@@ -65,14 +65,14 @@ class AddressBarSearchResult extends React.Component<AddressBarSearchResultProps
 
     render() {
         return (
-            <div className='addressbar-searchresult' >
-                <a className='addressbar-searchresult-a' href='javascript:void(0)' onClick={() => this.selectBot()}>
-                    <div className='addressbar-searchresult-title'>
+            <div className='addressbar-searchresult'>
+                <div className='addressbar-searchresult-title' onClick={() => this.selectBot()}>
+                    <a className='addressbar-searchresult-a' href='javascript:void(0)' onClick={() => this.selectBot()}>
                         {this.props.bot.botUrl}
-                    </div>
-                </a>
-                <a className='addressbar-searchresult-a' href='javascript:void(0)' onClick={() => this.deleteBot()}>
-                    <div className='addressbar-searchresult-delete' dangerouslySetInnerHTML={{ __html: Constants.clearCloseIcon('toolbar-button', 24) }} />
+                    </a>
+                </div>
+                <a href='javascript:void(0)' onClick={() => this.deleteBot()} >
+                    <div className='addressbar-searchresult-delete' onClick={() => this.deleteBot()} dangerouslySetInnerHTML={{ __html: Constants.clearCloseIcon('addressbar-searchresult-delete-btn', 16) }} />
                 </a>
             </div>
         );

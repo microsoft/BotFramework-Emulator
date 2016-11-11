@@ -175,51 +175,50 @@
         max-height: 500px;
         overflow-y: auto;
         position: absolute;
-        right: 0;
         left: 0;
+        right: 0;
         top: 42px;
         z-index: 1000;
-        padding-bottom: 16px;
         transition: all .2s;
+        display: block;
+        padding-bottom: 8px;
     }
     .addressbar-search.closed {
         max-height: 0;
-        padding-bottom: 0;
     }
 
     .addressbar-searchresult-a {
         color: #fff;
+        text-decoration: none;
     }
 
     .addressbar-searchresult {
-        cursor: default;
         position: relative;
-        height: 32px;
-        margin-left: 32px;
+        margin-left: 28px;
         margin-right: 6px;
+        display: block;
+    }
+
+    .addressbar-searchresult:hover {
+        background: #6AAFE5;
+        border-radius: 2px;
     }
 
     .addressbar-searchresult-title {
-        display: inline-block;
-        position: absolute;
+        cursor: pointer;
+        display: block;
         line-height: 32px;
-        margin-left: 4px;
-        right: 32px;
-        left: 0;
-    }
-
-    .addressbar-searchresult-title:hover {
-        background: #6AAFE5;
+        padding-left: 8px;
+        padding-right: 24px;
+        overflow-wrap: break-word;
     }
 
     .addressbar-searchresult-delete {
         cursor: pointer;
-        display: inline-block;
         position: absolute;
-        right: 0;
-        line-height: 32px;
-        text-align: center;
-        width: 32px;
+        right: 8px;
+        top: 7px;
+        bottom: 0;
     }
 
     .addressbar-botcreds {

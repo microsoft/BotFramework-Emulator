@@ -56,4 +56,3 @@ export class AboutDialog extends React.Component<{}, {}> {
         );
     }
 }
-
