@@ -71,7 +71,7 @@ export class AddressBarMenu extends React.Component<{}, {}> {
                 type: 'separator'
             },
             {
-                label: 'App Settings',
+                label: 'App Settings...',
                 click: () => AddressBarActions.showAppSettings()
             },
             {
