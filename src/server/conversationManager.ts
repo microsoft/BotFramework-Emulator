@@ -178,10 +178,7 @@ export class Conversation {
         const botId = activity.from.id;
         const settings = getSettings();
         if (!activity.from.name) {
-            const bot = settings.botById(botId);
-            if (bot) {
-                activity.from.name = bot.botUrl;
-            }
+            activity.from.name = "Bot";
         }
         this.activities.push(Object.assign({}, activity));
         return ResponseTypes.createResourceResponse(activity.id);
