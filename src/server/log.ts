@@ -36,11 +36,6 @@ import * as HttpStatus from "http-status-codes";
 import * as Restify from 'restify';
 
 
-// TEMPORARY, for A/B testing logview layout
-// If you change this, also change it in client/logView.tsx
-export const useTables = false;
-
-
 export const logReady = (isReady: boolean) => _logReady = isReady;
 let _logReady = false;
 
@@ -160,37 +155,19 @@ export const makeLinkMessage = (text: string, link: string, title?: string): any
 
 export const api = (operation: string, req: Restify.Request, res: Restify.Response, request?: Object, response?: Object, text?: string) => {
     if (res.statusCode >= 400) {
-        if (useTables) {
-            error(
-                '<-',
-                makeInspectorLink(`${req.method}`, request, "Click to view request json"),
-                makeInspectorLink(`${res.statusCode}`, response, `(${res.statusMessage}) Click to view response json`),
-                operation,
-                text);
-        } else {
-            error(
-                '<-',
-                makeInspectorLink(`${req.method}`, request, "Click to view request json"),
-                makeInspectorLink(`${res.statusCode}`, response, `(${res.statusMessage}) Click to view response json`),
-                operation,
-                text);
-        }
+        error(
+            '<-',
+            makeInspectorLink(`${req.method}`, request),
+            makeInspectorLink(`${res.statusCode}`, response, `(${res.statusMessage})`),
+            operation,
+            text);
     } else {
-        if (useTables) {
-            info(
-                '<-',
-                makeInspectorLink(`${req.method}`, request, "Click to view request json"),
-                makeInspectorLink(`${res.statusCode}`, response, `(${res.statusMessage}) Click to view response json`),
-                operation,
-                text);
-        } else {
-            info(
-                '<-',
-                makeInspectorLink(`${req.method}`, request, "Click to view request json"),
-                makeInspectorLink(`${res.statusCode}`, response, `(${res.statusMessage}) Click to view response json`),
-                operation,
-                text);
-        }
+        info(
+            '<-',
+            makeInspectorLink(`${req.method}`, request),
+            makeInspectorLink(`${res.statusCode}`, response, `(${res.statusMessage})`),
+            operation,
+            text);
     }
 }
 

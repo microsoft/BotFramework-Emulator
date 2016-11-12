@@ -85,15 +85,13 @@ export class Conversation {
      * Sends the activity to the conversation's bot.
      */
     postActivityToBot(activity: IActivity, recordInConversation: boolean, cb?) {
-        let _this = this;
         this.postage(this.botId, activity);
         const bot = getSettings().botById(this.botId);
         if (bot) {
             let statusCode = '';
             let options: request.OptionsWithUrl = { url: bot.botUrl, method: "POST", json: activity };
 
-            let responseCallback = function (err, resp: http.IncomingMessage, body) {
-
+            let responseCallback = (err, resp: http.IncomingMessage, body) => {
                 let messageActivity: IMessageActivity = activity;
                 let text: string = messageActivity.text || '';
                 if (text && text.length > 50)
@@ -103,40 +101,22 @@ export class Conversation {
                     log.error(err.message);
                 } else if (resp) {
                     if (resp && !/^2\d\d$/.test(`${resp.statusCode}`)) {
-                        if (log.useTables) {
-                            log.error(
-                                '->',
-                                log.makeInspectorLink("POST", activity, "Click to view request json"),
-                                log.makeInspectorLink(`${resp.statusCode}`, body, `(${resp.statusMessage}) Click to view response json`),
-                                `[${activity.type}]`,
-                                text);
-                        } else {
-                            log.error(
-                                '->',
-                                log.makeInspectorLink("POST", activity, "Click to view request json"),
-                                log.makeInspectorLink(`${resp.statusCode}`, body, `(${resp.statusMessage}) Click to view response json`),
-                                `[${activity.type}]`,
-                                text);
-                        }
+                        log.error(
+                            '->',
+                            log.makeInspectorLink("POST", activity),
+                            log.makeInspectorLink(`${resp.statusCode}`, body, `(${resp.statusMessage})`),
+                            `[${activity.type}]`,
+                            text);
                         cb(err, resp ? resp.statusCode : undefined);
                     } else {
-                        if (log.useTables) {
-                            log.info(
-                                '->',
-                                log.makeInspectorLink("POST", activity, "Click to view request json"),
-                                log.makeInspectorLink(`${resp.statusCode}`, body, `(${resp.statusMessage}) Click to view response json`),
-                                `[${activity.type}]`,
-                                text);
-                        } else {
-                            log.info(
-                                '->',
-                                log.makeInspectorLink("POST", activity, "Click to view request json"),
-                                log.makeInspectorLink(`${resp.statusCode}`, body, `(${resp.statusMessage}) Click to view response json`),
-                                `[${activity.type}]`,
-                                text);
-                        }
+                        log.info(
+                            '->',
+                            log.makeInspectorLink("POST", activity),
+                            log.makeInspectorLink(`${resp.statusCode}`, body, `(${resp.statusMessage})`),
+                            `[${activity.type}]`,
+                            text);
                         if (recordInConversation) {
-                            _this.activities.push(Object.assign({}, activity));
+                            this.activities.push(Object.assign({}, activity));
                         }
                         cb(null, resp.statusCode, activity.id);
                     }
