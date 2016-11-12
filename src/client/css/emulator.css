@@ -197,6 +197,7 @@
         margin-left: 28px;
         margin-right: 6px;
         display: block;
+        transition: background-color 0.1s;
     }
 
     .addressbar-searchresult:hover {
@@ -204,7 +205,7 @@
         border-radius: 2px;
     }
     .addressbar-searchresult:hover .addressbar-searchresult-delete {
-        display: block;
+        opacity: 1;
     }
 
     .addressbar-searchresult-title {
@@ -217,12 +218,13 @@
     }
 
     .addressbar-searchresult-delete {
-        display: none;
+        opacity: 0;
         cursor: pointer;
         position: absolute;
         right: 8px;
         top: 7px;
         bottom: 0;
+        transition: opacity 0.1s;
     }
 
     .addressbar-botcreds {
