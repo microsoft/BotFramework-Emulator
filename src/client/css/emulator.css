@@ -203,6 +203,9 @@
         background: #6AAFE5;
         border-radius: 2px;
     }
+    .addressbar-searchresult:hover .addressbar-searchresult-delete {
+        display: block;
+    }
 
     .addressbar-searchresult-title {
         cursor: pointer;
@@ -214,6 +217,7 @@
     }
 
     .addressbar-searchresult-delete {
+        display: none;
         cursor: pointer;
         position: absolute;
         right: 8px;

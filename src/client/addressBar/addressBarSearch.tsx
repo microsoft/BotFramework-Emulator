@@ -105,7 +105,7 @@ class AddressBarSearchResult extends React.Component<AddressBarSearchResultProps
                     </a>
                 </div>
                 <a href='javascript:void(0)' onClick={() => this.deleteBot()} >
-                    <div className='addressbar-searchresult-delete' onClick={() => this.deleteBot()} dangerouslySetInnerHTML={{ __html: Constants.clearCloseIcon('addressbar-searchresult-delete-btn', 16) }} />
+                    <div className='addressbar-searchresult-delete' onClick={() => this.deleteBot()} dangerouslySetInnerHTML={{ __html: Constants.clearCloseIcon('', 16) }} />
                 </a>
             </div>
         );
