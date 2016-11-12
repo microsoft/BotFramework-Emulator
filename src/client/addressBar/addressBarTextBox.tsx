@@ -42,6 +42,7 @@ import { AddressBarOperators } from './addressBarOperators';
 
 export class AddressBarTextBox extends React.Component<{}, {}> {
     settingsUnsubscribe: any;
+    textBoxRef: any;
 
     onChange(text: string) {
         text = text || '';
@@ -93,6 +94,7 @@ export class AddressBarTextBox extends React.Component<{}, {}> {
     }
 
     onFocus() {
+        this.textBoxRef.select();
         const settings = getSettings();
         const bots = AddressBarOperators.getMatchingBots(settings.addressBar.text, null);
         if (settings.addressBar.text.length) {
@@ -134,6 +136,7 @@ export class AddressBarTextBox extends React.Component<{}, {}> {
             <div className="addressbar-textbox">
                 <input
                     type="text"
+                    ref={ref => this.textBoxRef = ref}
                     value={settings.addressBar.text}
                     onChange={e => this.onChange((e.target as any).value)}
                     onKeyPress={e => this.onKeyPress(e)}
