@@ -41,13 +41,11 @@ export class RestServer {
     router: Restify.Server;
 
     constructor(name: string) {
-
         this.router = Restify.createServer({
             name: name
         });
 
         // REVIEW: Which of these do we need?
-
         this.router.use(Restify.acceptParser(this.router.acceptable));
         this.router.use(stripEmptyBearerToken);
         this.router.use(Restify.authorizationParser());
