@@ -39,14 +39,19 @@ export class RestServer {
     // REVIEW: Can we get this from the Restify.server?
     port: number;
     router: Restify.Server;
+    enableAuth: boolean;
 
     constructor(name: string) {
+        this.enableAuth = true;
+
         this.router = Restify.createServer({
             name: name
         });
 
         // REVIEW: Which of these do we need?
+
         this.router.use(Restify.acceptParser(this.router.acceptable));
+        this.router.use(stripEmptyBearerToken);
         this.router.use(Restify.authorizationParser());
         this.router.use(Restify.CORS());
         this.router.use(Restify.dateParser());
@@ -56,7 +61,7 @@ export class RestServer {
         this.router.use(Restify.requestLogger());
         this.router.use(Restify.conditionalRequest());
         this.router.use(Restify.fullResponse());
-        this.router.use(Restify.bodyParser({ mapParams: true, mapFiles: true}));
+        this.router.use(Restify.bodyParser({ mapParams: true, mapFiles: true }));
     }
 
     public restart(port: number) {
@@ -70,4 +75,20 @@ export class RestServer {
     public stop() {
         return this.router.close();
     }
+}
+
+// when debugging locally with a bot with appid and password = "" 
+// our csx environment will generate a Authorization token of "Bearer"
+// This confuses the auth system, we either want no auth header for local debug
+// or we want a full bearer token.  This parser strips off the Auth header if it is just "Bearer"
+function stripEmptyBearerToken(req, res, next) {
+    if (!req.headers.authorization) {
+        return (next());
+    }
+
+    var pieces = req.headers.authorization.split(' ', 2);
+    if (pieces.length == 1 && pieces[0] == "Bearer")
+        delete req.headers["authorization"];
+
+    return (next());
 }
