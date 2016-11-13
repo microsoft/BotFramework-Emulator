@@ -42,9 +42,11 @@ export class AboutDialog extends React.Component<{}, {}> {
     showing: boolean;
 
     pageClicked = (ev: Event) => {
+        if (ev.defaultPrevented)
+            return;
         let target = ev.srcElement;
         while (target) {
-            if (target.className === "appsettings-dialog") {
+            if (target.className.toString().includes("about")) {
                 // Click was inside the address bar.
                 return;
             }
@@ -81,7 +83,7 @@ export class AboutDialog extends React.Component<{}, {}> {
             <div>
                 <div className="dialog-background">
                 </div>
-                <div className="about-dialog">
+                <div className="emu-dialog about-dialog">
                     <h2 className="dialog-header">Bot Framework Emulator</h2>
                     <div className="dialog-closex" onClick={() => this.onClose()} dangerouslySetInnerHTML={{ __html: Constants.clearCloseIcon("", 24) }} />
                 </div>

@@ -38,7 +38,6 @@ import { AddressBarActions, ConversationActions, ServerSettingsActions } from '.
 import { IBot, newBot } from '../../types/botTypes';
 import { IUser } from '../../types/userTypes';
 import * as log from '../log';
-import { AddressBarOperators } from './addressBarOperators';
 import { uniqueId } from '../../utils';
 
 
@@ -53,6 +52,8 @@ export class ConversationSettingsDialog extends React.Component<{}, {}> {
     showing: boolean;
 
     pageClicked = (ev: Event) => {
+        if (ev.defaultPrevented)
+            return;
         let target = ev.srcElement;
         while (target) {
             if (target.className === "conversationsettings-dialog") {
@@ -98,7 +99,7 @@ export class ConversationSettingsDialog extends React.Component<{}, {}> {
             <div>
                 <div className="dialog-background">
                 </div>
-                <div className="conversationsettings-dialog">
+                <div className="emu-dialog conversationsettings-dialog">
                     <CloseButton className='conversationsettings-closex' onClick={() => this.onClose()} />
                     <UserList
                         className='conversationsettings-userlist'

@@ -34,7 +34,7 @@
 import { shell } from 'electron';
 import * as URL from 'url';
 import * as QueryString from 'querystring';
-import { InspectorActions } from './reducers';
+import { InspectorActions, AddressBarActions } from './reducers';
 import { selectedActivity$, deselectActivity } from './settings';
 import * as log from './log';
 
@@ -45,32 +45,47 @@ export function navigate(url: string) {
         if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
             shell.openExternal(url, { activate: true });
         } else if (parsed.protocol === "emulator:") {
+            const args = QueryString.parse(parsed.query);
             if (parsed.host === 'inspect') {
-                try {
-                    const args = QueryString.parse(parsed.query);
-                    const encoded = args['obj'];
-                    const json = decodeURIComponent(encoded);
-                    const obj = JSON.parse(json);
-                    if (obj) {
-                        if (obj.id) {
-                            selectedActivity$().next({ id: obj.id });
-                        } else {
-                            selectedActivity$().next({});
-                        }
-                        InspectorActions.setSelectedObject({ activity: obj });
-                    } else {
-                        selectedActivity$().next({});
-                    }
-                } catch (e) {
-                    selectedActivity$().next({});
-                    log.error(e.message);
-                    throw e;
-                }
+                navigateInspectUrl(args);
+            } else if (parsed.host === 'appsettings') {
+                navigateAppSettingsUrl(args);
             }
         } else {
             // Ignore
         }
     } catch (e) {
         console.error(e);
+    }
+}
+
+function navigateInspectUrl(args: string[]) {
+    try {
+        const encoded = args['obj'];
+        const json = decodeURIComponent(encoded);
+        const obj = JSON.parse(json);
+        if (obj) {
+            if (obj.id) {
+                selectedActivity$().next({ id: obj.id });
+            } else {
+                selectedActivity$().next({});
+            }
+            InspectorActions.setSelectedObject({ activity: obj });
+        } else {
+            selectedActivity$().next({});
+        }
+    } catch (e) {
+        selectedActivity$().next({});
+        log.error(e.message);
+        throw e;
+    }
+}
+
+function navigateAppSettingsUrl(args: string[]) {
+    try {
+        AddressBarActions.showAppSettings();
+    } catch (e) {
+        log.error(e.message);
+        throw e;
     }
 }

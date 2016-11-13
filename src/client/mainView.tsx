@@ -43,6 +43,9 @@ import { InspectorView } from './inspectorView'
 import { LogView } from './logView';
 import { uniqueId } from '../utils';
 import { IUser } from '../types/userTypes';
+import { AboutDialog } from './dialogs/aboutDialog';
+import { AppSettingsDialog } from './dialogs/appSettingsDialog';
+import { ConversationSettingsDialog } from './dialogs/conversationSettingsDialog';
 import * as Constants from './constants';
 
 
@@ -159,16 +162,16 @@ export class MainView extends React.Component<{}, {}> {
                             <AddressBar />
                             {this.botChatComponent()}
                         </div>
-                        <div className="wc-app-inspectorview-container">
+                        <div className="fill-parent">
                             <Splitter split="horizontal" primary="second" minSize="42px" defaultSize={horizSplit} onChange={(size) => LayoutActions.rememberHorizontalSplitter(size)}>
                                 <div className="wc-chatview-panel">
-                                    <div className="wc-inspectorview-header">
+                                    <div className="emu-panel-header">
                                         <span>Details</span>
                                     </div>
                                     <InspectorView />
                                 </div>
-                                <div className="wc-app-logview-container">
-                                    <div className="wc-logview-header">
+                                <div className="fill-parent">
+                                    <div className="emu-panel-header">
                                         <span>Log</span>
                                     </div>
                                     <LogView />
@@ -177,6 +180,9 @@ export class MainView extends React.Component<{}, {}> {
                         </div>
                     </Splitter>
                 </div>
+                <AboutDialog />
+                <AppSettingsDialog />
+                <ConversationSettingsDialog />
             </div>
         );
     }

@@ -38,9 +38,6 @@ import { AddressBarActions, ConversationActions, ServerSettingsActions } from '.
 import { IBot, newBot } from '../../types/botTypes';
 import * as log from '../log';
 import { AddressBarOperators } from './addressBarOperators';
-import { AboutDialog } from './aboutDialog';
-import { AppSettingsDialog } from './appSettingsDialog';
-import { ConversationSettingsDialog } from './conversationSettingsDialog';
 import * as Constants from '../constants';
 
 
@@ -145,9 +142,6 @@ export class AddressBarMenu extends React.Component<{}, {}> {
         return (
             <div className="addressbar-menu">
                 <div dangerouslySetInnerHTML={{ __html: Constants.hamburgerIcon('toolbar-button', 24) }} onClick={() => this.showMenu()} />
-                <AboutDialog />
-                <AppSettingsDialog />
-                <ConversationSettingsDialog />
             </div>
         );
     }

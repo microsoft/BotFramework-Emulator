@@ -49,6 +49,8 @@ import { AddressBarBotCreds } from './addressBarBotCreds';
 export class AddressBar extends React.Component<{}, {}> {
 
     pageClicked = (ev: Event) => {
+        if (ev.defaultPrevented)
+            return;
         const settings = getSettings();
         let target = ev.srcElement;
         while (target) {

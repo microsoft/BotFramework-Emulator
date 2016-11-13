@@ -298,27 +298,8 @@
 /* appsettings-dialog */
 
     .appsettings-dialog {
-        background: #fff;
-        color: black;
-        overflow: hidden;
-        padding: 0 24px 0 24px;
-        box-shadow: 0 1px 2px rgba(0,0,0,.2);
-        z-index: 9999;
-        position: fixed;
-        top: 50%;
-        left: 50%;
         width: 512px;
         height: 487px;
-        transform: translate(-50%, -50%);
-        transition: all .2s;
-        text-align: left;
-        transition: opacity .2s ease;
-        border-radius: 2px;
-    }
-
-    .appsettings-dialog label {
-        font-weight: 400;
-        margin: 0;
     }
 
     .appsettings-dialog .input-group {
@@ -374,7 +355,7 @@
     }
 
     .appsettings-port-group {
-        padding-bottom: 30px;
+        padding-bottom: 20px;
     }
 
     .appsettings-ngrokpath-input {
@@ -389,22 +370,10 @@
 /* conversationsettings-dialog */
 
     .conversationsettings-dialog {
-        background: #fff;
-        color: black;
-        overflow: hidden;
-        padding: 24px 24px 24px 24px;
-        box-shadow: 0 1px 2px rgba(0,0,0,.2);
-        z-index: 9999;
-        position: fixed;
-        top: 50%;
-        left: 50%;
+
         width: 500px;
         height: 400px;
-        border: thin solid black;
-        transform: translate(-50%, -50%);
-        transition: all .2s;
-        text-align: left;
-        transition: opacity .2s ease;
+
     }
 
     .conversationsettings-closex {
@@ -447,6 +416,22 @@
 /* about-dialog */
 
     .about-dialog {
+        width: 512px;
+        height: 487px;
+    }
+
+/* base classes */
+
+    .fill-parent {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    .emu-dialog {
+        line-height: initial;
         background: #fff;
         color: black;
         overflow: hidden;
@@ -456,8 +441,6 @@
         position: fixed;
         top: 50%;
         left: 50%;
-        width: 512px;
-        height: 487px;
         transform: translate(-50%, -50%);
         transition: all .2s;
         text-align: left;
@@ -465,14 +448,12 @@
         border-radius: 2px;
     }
 
-/* base classes */
-
-    .fill-parent {
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-        bottom: 0;
+    .emu-dialog-text {
+        margin-bottom: 12px;
+    }
+    .emu-dialog-text a {
+        text-decoration: none;
+        color: #3A96DD;
     }
 
     .dialog-background {
@@ -485,10 +466,6 @@
         bottom: 0;
         z-index: 9998;
         transition: opacity .2s ease;
-    }
-
-    h2.dialog-header {
-        margin-bottom: 0;
     }
 
     .dialog-closex {
@@ -563,7 +540,7 @@
         transition: border 0s;
     }
     .emu-navitem {
-        padding: 0px 16px 0px 16px;
+        padding: 0px 16px 10px 16px;
         margin: 0 26px 0px 0px;
         display: block;
         border-bottom: 3px #CCC solid;
@@ -586,9 +563,7 @@
         background: #EEE;
     }
 
-/* inspectorview */
-
-    .wc-inspectorview-header {
+    .emu-panel-header {
         background-color: #252526;
         color: #fff;
         border-bottom: solid 1px #403F3F;
@@ -604,6 +579,8 @@
         z-index: 1000;
         box-shadow: 0 2px 3px rgba(0,0,0,.5);
     }
+
+/* inspectorview */
 
     .wc-inspectorview {
         background-color: #1e1e1e;
@@ -656,23 +633,6 @@
     }
 
 /* logview */
-
-    .wc-logview-header {
-        background-color: #252526;
-        color: #fff;
-        border-bottom: solid 1px #403F3F;
-        height: 42px;
-        left: 0;
-        letter-spacing: 0.5px;
-        font-size: 13px;
-        line-height: 42px;
-        padding-left: 8px;
-        position: absolute;
-        right: 0;
-        top: 0;
-        z-index: 1000;
-        box-shadow: 0 2px 3px rgba(0,0,0,.5);
-    }
 
     .wc-logview {
         background-color: #1e1e1e;

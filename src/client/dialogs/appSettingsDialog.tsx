@@ -38,7 +38,6 @@ import { Settings as ServerSettings } from '../../types/serverSettingsTypes';
 import { AddressBarActions, ConversationActions, ServerSettingsActions } from '../reducers';
 import { IBot, newBot } from '../../types/botTypes';
 import * as log from '../log';
-import { AddressBarOperators } from './addressBarOperators';
 import * as path from 'path';
 import * as Constants from '../constants';
 
@@ -65,9 +64,11 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
     serviceUrlReadOnly: boolean;
 
     pageClicked = (ev: Event) => {
+        if (ev.defaultPrevented)
+            return;
         let target = ev.srcElement;
         while (target) {
-            if (target.className === "appsettings-dialog") {
+            if (target.className.toString().includes("appsettings")) {
                 // Click was inside the address bar.
                 return;
             }
@@ -116,6 +117,7 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
             properties: ['openFile']
         }, (filenames: string[]) => {
             if (filenames && filenames.length) {
+                // TODO: validate selection
                 this.ngrokPathInputRef.value = filenames[0];
             }
         })
@@ -156,7 +158,7 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
             <div>
                 <div className="dialog-background">
                 </div>
-                <div className="appsettings-dialog">
+                <div className="emu-dialog appsettings-dialog">
                     <h2 className="dialog-header">App Settings</h2>
                     <div className="dialog-closex" onClick={() => this.onClose()} dangerouslySetInnerHTML={{ __html: Constants.clearCloseIcon("", 24) }} />
                     <div className="input-group appsettings-port-group">
@@ -189,6 +191,8 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
                         </ul>
                         <hr className='enu-navhdr' />
                         <div className={"emu-tab" + (this.currentTab === Tabs.ServiceUrl ? " emu-visible" : " emu-hidden")}>
+                            <div className='emu-dialog-text'>The Callback URL is where the bot you're communicating with sends reply messages.</div>
+                            <div className={'emu-dialog-text' + (this.serviceUrlReadOnly ? '' : ' emu-hidden')}>NOTE: ngrok is controlling the value of this field. Clear your ngrok path to regain control of this value.</div>
                             <div className="input-group">
                                 <label className="form-label">
                                     Callback URL:
@@ -203,6 +207,7 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
                             </div>
                         </div>
                         <div className={"emu-tab" + (this.currentTab === Tabs.NgrokConfig ? " emu-visible" : " emu-hidden")}>
+                            <div className='emu-dialog-text'>ngrok is network tunneling software. The Bot Framework Emulator works with ngrok to communicate with bots hosted remotely. To learn about ngrok and download it, visit <a href="https://ngrok.com/">ngrok.com</a>.</div>
                             <div className="input-group">
                                 <label className="form-label">
                                     Path to ngrok:
