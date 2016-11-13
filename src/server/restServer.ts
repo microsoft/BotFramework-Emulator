@@ -39,10 +39,8 @@ export class RestServer {
     // REVIEW: Can we get this from the Restify.server?
     port: number;
     router: Restify.Server;
-    enableAuth: boolean;
 
     constructor(name: string) {
-        this.enableAuth = true;
 
         this.router = Restify.createServer({
             name: name
