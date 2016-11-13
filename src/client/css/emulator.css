@@ -512,8 +512,8 @@
     .toolbar-button:hover {
         background: #6AAFE5;
     }
-    .toolbar-button-disabled path {
-        fill: #CCC;
+    .toolbar-button-disabled {
+        opacity: 0.5
     }
     svg.toolbar-button-disabled:hover {
         background: initial;
@@ -684,16 +684,17 @@
     }
 
     .wc-logview-debug {
-        color: gray;
+        color: #808080;
         display: inline-block;
     }
 
     .wc-logview-warn {
-        color: orange;
+        /*color: #f5a623;*/
+        color: #D7BA7D;
         display: inline-block;
     }
 
     .wc-logview-error {
-        color: red;
+        color: #ec407a;
         display: inline-block;
     }
