@@ -40,6 +40,7 @@ import * as log from '../log';
 import { AddressBarOperators } from './addressBarOperators';
 import { AddressBarStatus } from './addressBarStatus';
 import { AddressBarTextBox } from './addressBarTextBox';
+import { AddressBarRefresh } from './addressBarRefresh';
 import { AddressBarMenu } from './addressBarMenu';
 import { AddressBarSearch } from './addressBarSearch';
 import { AddressBarBotCreds } from './addressBarBotCreds';
@@ -51,7 +52,7 @@ export class AddressBar extends React.Component<{}, {}> {
         const settings = getSettings();
         let target = ev.srcElement;
         while (target) {
-            // NOTE: Sometimes target.className is not a string. One time it was an SVGAnimatedString which didn't have an 'includes' function.
+            // NOTE: Sometimes target.className is not a string. In one observed instance it was an SVGAnimatedString which didn't have an 'includes' function.
             if (target.className && target.className.toString().includes("addressbar"))
                 return;
             target = target.parentElement;
@@ -78,6 +79,7 @@ export class AddressBar extends React.Component<{}, {}> {
             <div className="addressbar">
                 <AddressBarStatus />
                 <AddressBarTextBox />
+                <AddressBarRefresh />
                 <AddressBarMenu />
                 <AddressBarSearch />
                 <AddressBarBotCreds />

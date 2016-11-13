@@ -160,6 +160,16 @@
         text-align: center;
     }
 
+    .addressbar-refresh {
+        position: absolute;
+        width: 42px;
+        height: 42px;
+        right: 42px;
+        top: 0;
+        line-height: 37px;
+        text-align: center;
+    }
+
     .addressbar-menu {
         position: absolute;
         width: 42px;
@@ -525,6 +535,12 @@
     .toolbar-button:hover {
         background: #6AAFE5;
     }
+    .toolbar-button-disabled path {
+        fill: #CCC;
+    }
+    svg.toolbar-button-disabled:hover {
+        background: initial;
+    }
 
     .emu-visible {
         display: block;
@@ -670,42 +686,8 @@
         padding: 10px 10px 10px 10px;
     }
 
-    .wc-logview-tables {
-        background-color: #1e1e1e;
-        color: white;
-        overflow: auto;
-        font-size: 13px;
-	    font-family: 'Menlo', 'Monaco', 'Consolas', "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
-        position: absolute;
-        left: 0;
-        top: 42px;
-        right: 0;
-        bottom: 0;
-        padding: 10px 10px 10px 10px;
-        white-space: nowrap;
-        /*word-break: break-word;*/
-    }
-
-    .wc-logview-table {
-        width: 100%;
-        /*min-width:800px;*/
-    }
-
     .wc-logview * {
         -webkit-user-select: text;
-    }
-
-    .wc-logview-timestamp-tables {
-        color: lightgray;
-        white-space: nowrap;
-    }
-
-    .wc-logview-message-tables {
-        white-space: nowrap;
-    }
-
-    .wc-logview-tables a {
-        color: #9CDCFE;
     }
 
     .wc-logview-timestamp {
@@ -751,32 +733,4 @@
     .wc-logview-error {
         color: red;
         display: inline-block;
-    }
-
-    .wc-logview-arg-tables {
-        color: lightgray;
-    }
-
-    .wc-logview-log-tables {
-        color: lightgray;
-    }
-
-    .wc-logview-info-tables {
-        color: lightgray;
-    }
-
-    .wc-logview-trace-tables {
-        color: lightgreen;
-    }
-
-    .wc-logview-debug-tables {
-        color: gray;
-    }
-
-    .wc-logview-warn-tables {
-        color: orange;
-    }
-
-    .wc-logview-error-tables {
-        color: red;
     }

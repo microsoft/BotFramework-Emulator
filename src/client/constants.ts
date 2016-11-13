@@ -65,6 +65,21 @@ export const hamburgerIcon = (className: string, size: number) => {
     `;
 }
 
+export const reloadIcon = (className: string, size: number) => {
+    return `
+<svg class="${className}" width="${size}px" height="${size}px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="refresh">
+            <g id="Shape">
+                <polygon points="0 0 24 0 24 24 0 24"></polygon>
+                <path d="M11.500938,6 C7.91020633,6 5.01,8.90833016 5.01,12.4990618 C5.01,16.0897934 7.91020633,18.9981236 11.500938,18.9981236 C14.5311255,18.9981236 17.0576358,16.9265476 17.7806564,14.1238272 L16.0909004,14.1238272 C15.4247465,16.016679 13.6212569,17.3733581 11.500938,17.3733581 C8.81195115,17.3733581 6.62664162,15.1880486 6.62664162,12.4990618 C6.62664162,9.81007498 8.81195115,7.62476545 11.500938,7.62476545 C12.8494933,7.62476545 14.0518197,8.18530953 14.9291931,9.0708067 L12.3133207,11.6866791 L17.9999998,11.6866791 L17.9999998,6 L16.0909004,7.9090994 C14.9129454,6.73114445 13.2963038,6 11.500938,6 Z" fill="#FFFFFF"></path>
+            </g>
+        </g>
+    </g>
+</svg>
+    `;
+}
+
 export const botFrameworkIconEmbossed = (className: string, size: number) => {
     return `
 <svg class="${className}" width="${size}px" height="${size}px" viewBox="0 0 158 158" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
