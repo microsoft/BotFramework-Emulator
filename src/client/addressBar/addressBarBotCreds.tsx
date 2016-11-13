@@ -44,12 +44,14 @@ export class AddressBarBotCreds extends React.Component<{}, {}> {
     settingsUnsubscribe: any;
 
     componentWillMount() {
+        window.addEventListener('keypress', (e) => this.onKeyPress(e));
         this.settingsUnsubscribe = addSettingsListener(() => {
             this.forceUpdate();
         });
     }
 
     componentWillUnmount() {
+        window.removeEventListener('keypress', (e) => this.onKeyPress(e));
         this.settingsUnsubscribe();
     }
 
@@ -70,17 +72,30 @@ export class AddressBarBotCreds extends React.Component<{}, {}> {
     connectToBot = () => {
         const settings = getSettings();
         const bot = settings.addressBar.selectedBot;
-        AddressBarOperators.selectBot(null);
-        AddressBarOperators.addOrUpdateBot(bot);
-        AddressBarOperators.activateBot(bot);
-        ConversationActions.newConversation();
+        if (bot) {
+            AddressBarOperators.connectToBot(bot);
+        }
+    }
+
+    onKeyPress = (e: any) => {
+        if (!this.isVisible())
+            return;
+        if(e.key && e.key === 'Enter') {
+            this.connectToBot();
+        }
+    }
+
+    isVisible = (): boolean => {
+        const settings = getSettings();
+        if (!settings.addressBar.showBotCreds) return false;
+        if (settings.addressBar.showSearchResults) return false;
+        if (!settings.addressBar.selectedBot) return false;
+        return true;
     }
 
     render() {
+        if (!this.isVisible()) return null;
         const settings = getSettings();
-        if (!settings.addressBar.showBotCreds) return null;
-        if (settings.addressBar.showSearchResults) return null;
-        if (!settings.addressBar.selectedBot) return null;
         return (
             <div className={"addressbar-botcreds"}>
                 <div className="input-group">

@@ -111,4 +111,13 @@ export class AddressBarOperators {
     static activateBot(bot: IBot) {
         ServerSettingsActions.remote_setActiveBot(bot.botId);
     }
+
+    static connectToBot(bot: IBot) {
+        AddressBarOperators.selectBot(null);
+        AddressBarOperators.addOrUpdateBot(bot);
+        AddressBarOperators.activateBot(bot);
+        ConversationActions.newConversation();
+        AddressBarActions.hideBotCreds();
+        AddressBarActions.hideSearchResults();
+    }
 }

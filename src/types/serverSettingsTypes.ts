@@ -106,18 +106,25 @@ export const windowStateDefault: IWindowStateSettings = {
 }
 
 export const usersDefault: IUserSettings = {
-    currentUserId: '12345',
+    currentUserId: 'default-user',
     usersById: {
-        '12345': {
-            id: '12345',
-            name: 'User 1'
+        'default-user': {
+            id: 'default-user',
+            name: 'User'
         }
     }
 }
 
 export const settingsDefault: ISettings = {
     framework: frameworkDefault,
-    bots: [],
+    bots: [
+        {
+            "botId": "default-bot",
+            "botUrl": "http://localhost:3978/api/messages",
+            "msaAppId": "",
+            "msaPassword": ""
+        }
+    ],
     activeBot: '',
     windowState: windowStateDefault,
     users: usersDefault

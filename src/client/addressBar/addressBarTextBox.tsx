@@ -68,32 +68,7 @@ export class AddressBarTextBox extends React.Component<{}, {}> {
         }
     }
 
-    onKeyPress(e: React.KeyboardEvent<HTMLInputElement>) {
-        if (e.key === 'Enter') {
-            const settings = getSettings();
-            if (settings.addressBar.text.length === 0)
-                return;
-            if (!settings.addressBar.selectedBot)
-                return;
-            if (settings.addressBar.matchingBots.length > 0) {
-                AddressBarOperators.clearMatchingBots();
-                AddressBarActions.showBotCreds();
-            } else {
-                //AddressBarOperators.activateBot(bot);
-            }
-        }
-    }
-
-    onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-        if (e.key === 'ArrowDown') {
-
-        }
-        if (e.key === 'ArrowUp') {
-
-        }
-    }
-
-    onFocus() {
+     onFocus() {
         this.textBoxRef.select();
         const settings = getSettings();
         const bots = AddressBarOperators.getMatchingBots(settings.addressBar.text, null);
@@ -139,8 +114,6 @@ export class AddressBarTextBox extends React.Component<{}, {}> {
                     ref={ref => this.textBoxRef = ref}
                     value={settings.addressBar.text}
                     onChange={e => this.onChange((e.target as any).value)}
-                    onKeyPress={e => this.onKeyPress(e)}
-                    onKeyDown={e => this.onKeyDown(e)}
                     onFocus={() => this.onFocus()}
                     onBlur={() => this.onBlur()}
                     placeholder="Enter your endpoint URL" />
