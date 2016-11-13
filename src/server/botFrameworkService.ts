@@ -109,12 +109,12 @@ export class BotFrameworkService extends RestServer {
                     }, (err, url: string, inspectPort: string) => {
                         if (err) {
                             log.warn(`failed to start ngrok: ${err.message || err.msg}`);
-                            log.debug(`to configure ngrok`, log.makeLinkMessage('click here', 'emulator://appsettings?tab=NgrokConfig'));
+                            log.debug(log.makeLinkMessage('click here', 'emulator://appsettings?tab=NgrokConfig'), 'to configure ngrok');
                         } else {
-                            this.inspectUrl = `http://127.0.0.1:${inspectPort}`;
+                            this.inspectUrl = `http://localhost:${inspectPort}`;
                             this.ngrokServiceUrl = url;
                             log.debug(`ngrok listening on: ${url}`);
-                            log.debug('inspectorUrl:', log.makeLinkMessage(this.inspectUrl, this.inspectUrl));
+                            log.debug('ngrok inspector:', log.makeLinkMessage(this.inspectUrl, this.inspectUrl));
                         }
                         // Sync settings to client
                         getStore().dispatch({
@@ -136,7 +136,7 @@ export class BotFrameworkService extends RestServer {
                         log.debug('ngrok stopped');
                     startNgrok();
                     return true;
-                }) || startNgrok();
+                });
             } else {
                 ngrok.disconnect(prevServiceUrl, () => {
                     startNgrok();

@@ -255,13 +255,22 @@ export function disconnect(url, cb) {
 export function kill(cb) {
 	cb = cb || noop;
 	if (!ngrok) {
-		return cb(false);
+		cb(false);
+		return;
 	}
 	ngrok.on('exit', function () {
 		api = null;
 		tunnels = {};
 		emitter.emit('disconnect');
-		return cb(true);
+		cb(true);
 	});
-	return ngrok.kill();
+	try {
+		if (!ngrok.kill())
+			throw "err-cleanup";
+	} catch (e) {
+		api = null;
+		ngrok = null;
+		tunnels = {};
+		cb(false);
+	}
 }

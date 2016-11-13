@@ -191,8 +191,8 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
                         </ul>
                         <hr className='enu-navhdr' />
                         <div className={"emu-tab" + (this.currentTab === Tabs.ServiceUrl ? " emu-visible" : " emu-hidden")}>
-                            <div className='emu-dialog-text'>The Callback URL is where the bot you're communicating with sends reply messages.</div>
-                            <div className={'emu-dialog-text' + (this.serviceUrlReadOnly ? '' : ' emu-hidden')}>NOTE: ngrok is controlling the value of this field. Clear your ngrok path to regain control of this value.</div>
+                            <div className='emu-dialog-text'>The Callback URL is where the bot sends reply messages.</div>
+                            <div className={'emu-dialog-text' + (this.serviceUrlReadOnly ? '' : ' emu-hidden')}>Note: ngrok is currently in control of this field. Clear your ngrok path to regain control of it.</div>
                             <div className="input-group">
                                 <label className="form-label">
                                     Callback URL:
