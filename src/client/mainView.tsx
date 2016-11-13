@@ -163,7 +163,7 @@ export class MainView extends React.Component<{}, {}> {
                             <Splitter split="horizontal" primary="second" minSize="42px" defaultSize={horizSplit} onChange={(size) => LayoutActions.rememberHorizontalSplitter(size)}>
                                 <div className="wc-chatview-panel">
                                     <div className="wc-inspectorview-header">
-                                        <span>Inspector</span>
+                                        <span>Details</span>
                                     </div>
                                     <InspectorView />
                                 </div>
