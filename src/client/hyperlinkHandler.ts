@@ -50,6 +50,8 @@ export function navigate(url: string) {
                 navigateInspectUrl(args);
             } else if (parsed.host === 'appsettings') {
                 navigateAppSettingsUrl(args);
+            } else if (parsed.host === 'botcreds') {
+                navigateBotCredsUrl(args);
             }
         } else {
             // Ignore
@@ -84,6 +86,15 @@ function navigateInspectUrl(args: string[]) {
 function navigateAppSettingsUrl(args: string[]) {
     try {
         AddressBarActions.showAppSettings();
+    } catch (e) {
+        log.error(e.message);
+        throw e;
+    }
+}
+
+function navigateBotCredsUrl(args: string[]) {
+    try {
+        AddressBarActions.showBotCreds();
     } catch (e) {
         log.error(e.message);
         throw e;

@@ -37,6 +37,10 @@ import { Reducer, Unsubscribe } from 'redux';
 import { Subscription, Observable, Subject } from '@reactivex/rxjs';
 import { getSettings, addSettingsListener } from './settings';
 import { LogActions } from './reducers';
+import * as Constants from './constants';
+
+const { remote } = require('electron');
+const { Menu, MenuItem } = remote;
 
 
 export enum Severity {
@@ -171,10 +175,29 @@ export class LogView extends React.Component<{}, ILogViewState> {
 
     render() {
         return (
-            <div className="wc-logview" ref={ref => this.scrollMe = ref}>
-                {this.state.entries.map((entry, i, items) => format(entry, i, items))}
+            <div>
+                <div className="emu-panel-header">
+                    <span className="logview-header-text">Log</span>
+                    <a className='undecorated-text' href='javascript:void(0)' title='Clear log'>
+                        <div className='logview-clear-output-button' dangerouslySetInnerHTML={{__html: Constants.hamburgerIcon('toolbar-button-dark', 24) }} onClick={() => this.showMenu()} />
+                    </a>
+                </div>
+                <div className="wc-logview" ref={ref => this.scrollMe = ref}>
+                    {this.state.entries.map((entry, i, items) => format(entry, i, items))}
+                </div>
             </div>
         );
+    }
+
+    showMenu() {
+        const template: Electron.MenuItemOptions[] = [
+            {
+                label: 'Clear log',
+                click: () => LogActions.clear()
+            }
+        ];
+        const menu = Menu.buildFromTemplate(template);
+        menu.popup();
     }
 
     public static add(severity: Severity, message: any, ...args: any[]) {

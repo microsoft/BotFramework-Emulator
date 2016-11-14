@@ -45,7 +45,8 @@ import {
     logReducer,
     inspectorReducer,
     serverSettingsReducer,
-    ServerSettingsActions
+    ServerSettingsActions,
+    AddressBarActions
 } from './reducers';
 import { IBot, newBot } from '../types/botTypes';
 import { uniqueId } from '../utils';
@@ -250,6 +251,9 @@ export const startup = () => {
     });
     Electron.ipcRenderer.on('log-error', (event, ...args) => {
         log.error(args[0], ...args.slice(1));
+    });
+    Electron.ipcRenderer.on('show-about', () => {
+        AddressBarActions.showAbout()
     });
 
     // Let the server know we're done starting up. In response, it will send us it's current settings (bot list and such).

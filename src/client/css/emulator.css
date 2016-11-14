@@ -569,6 +569,17 @@
         background: initial;
     }
 
+    .toolbar-button-dark {
+		border-radius: 2px;
+		width: 24px;
+		height: 24px;
+        vertical-align: middle;
+        transition: all .2s;
+    }
+    .toolbar-button-dark:hover {
+        background: #4C4C4C;
+    }
+
     .emu-visible {
         display: block;
     }
@@ -704,6 +715,16 @@
 
     .wc-logview * {
         -webkit-user-select: text;
+    }
+
+    .logview-header-text {
+        float: left;
+    }
+
+    .logview-clear-output-button {
+        position: absolute;
+        right: 16px;
+        height: 100%;
     }
 
     .wc-logview-timestamp {

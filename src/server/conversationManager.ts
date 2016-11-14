@@ -109,6 +109,10 @@ export class Conversation {
                             log.makeInspectorLink(`${resp.statusCode}`, body, `(${resp.statusMessage})`),
                             `[${activity.type}]`,
                             text);
+                        if(Number(statusCode) == 401 || Number(statusCode) == 402) {
+                            log.error("Error: The bot's MSA appId or passsword is incorrect.");
+                            log.error(log.botCredsConfigurationLink('Click here'), "to edit your bot's MSA info.");
+                        }
                         cb(err, resp ? resp.statusCode : undefined);
                     } else {
                         log.info(
@@ -126,9 +130,9 @@ export class Conversation {
             }
 
             if (!utils.isLocalhostUrl(bot.botUrl) && utils.isLocalhostUrl(emulator.framework.serviceUrl)) {
-                log.error('The bot is running remotely, but the callback URL is localhost!');
+                log.error('Error: The bot is running remotely, but the callback URL is localhost!');
                 log.error('Without tunneling software you will not receive replies.');
-                log.error(log.ngrokConfigurationLink('click here'), 'to configure ngrok tunneling software.');
+                log.error(log.ngrokConfigurationLink('Click here'), 'to configure ngrok tunneling software.');
             }
 
             if (bot.msaAppId && bot.msaPassword) {
@@ -151,11 +155,7 @@ export class Conversation {
             },
             membersAdded: [{ id: this.botId }]
         }
-        this.postActivityToBot(activity, false, (err) => {
-            if (err) {
-                log.error("Failed to send conversationUpdate to bot: " + err);
-            }
-        });
+        this.postActivityToBot(activity, false, () => {});
     }
 
     /**

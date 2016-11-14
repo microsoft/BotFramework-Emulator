@@ -53,9 +53,14 @@ export class InspectorView extends React.Component<{}, {}> {
     render() {
         const settings = getSettings();
         return (
-            <div className="wc-inspectorview">
-                <div className="wc-inspectorview-json">
-                    {formatJSON(settings.inspector.selectedObject || '')}
+            <div>
+                <div className="emu-panel-header">
+                    <span>Details</span>
+                </div>
+                <div className="wc-inspectorview">
+                    <div className="wc-inspectorview-json">
+                        {formatJSON(settings.inspector.selectedObject || '')}
+                    </div>
                 </div>
             </div>
         );

@@ -157,6 +157,10 @@ export const ngrokConfigurationLink = (text: string) => {
     return makeLinkMessage(text, 'emulator://appsettings?tab=NgrokConfig');
 }
 
+export const botCredsConfigurationLink = (text: string) => {
+    return makeLinkMessage(text, 'emulator://botcreds');
+}
+
 export const api = (operation: string, req: Restify.Request, res: Restify.Response, request?: Object, response?: Object, text?: string) => {
     if (res.statusCode >= 400) {
         error(

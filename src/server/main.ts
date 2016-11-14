@@ -39,6 +39,7 @@ import { WindowStateAction } from './reducers/windowStateReducer';
 import * as url from 'url';
 import * as path from 'path';
 import * as log from './log';
+import { emulator } from './emulator';
 var pjson = require('../../package.json');
 
 
@@ -70,9 +71,32 @@ const createMainWindow = () => {
     //mainWindow.webContents.openDevTools();
 
     mainWindow.setTitle(`Microsoft Bot Framework Emulator (v${pjson.version})`);
-    // Mac requires a menu for cut/paste to work.
-    if (process.platform !== 'darwin') {
-        mainWindow.setMenu(null);
+
+
+    if (process.platform === 'darwin') {
+        // Create the Application's main menu
+        var template: Electron.MenuItemOptions[] = [
+            {
+                label: "Bot Framework Emulator",
+                submenu: [
+                    { label: "About", click: () => emulator.send('show-about') },
+                    { type: "separator" },
+                    { label: "Quit", accelerator: "Command+Q", click: () => Electron.app.quit() }
+                ]
+            }, {
+            label: "Edit",
+            submenu: [
+                { label: "Undo", accelerator: "CmdOrCtrl+Z", role: "undo" },
+                { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", role: "redo" },
+                { type: "separator" },
+                { label: "Cut", accelerator: "CmdOrCtrl+X", role: "cut" },
+                { label: "Copy", accelerator: "CmdOrCtrl+C", role: "copy" },
+                { label: "Paste", accelerator: "CmdOrCtrl+V", role: "paste" }
+            ]}
+        ];
+        Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+    } else {
+        Menu.setApplicationMenu(null);
     }
 
     mainWindow.on('resize', () => {

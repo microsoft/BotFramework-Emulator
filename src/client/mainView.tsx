@@ -59,40 +59,45 @@ export class MainView extends React.Component<{}, {}> {
 
     componentWillMount() {
         this.settingsUnsubscribe = addSettingsListener((settings: Settings) => {
-            let conversationChanged = false;
-            if (this.conversationId !== settings.conversation.conversationId) {
-                this.conversationId = settings.conversation.conversationId || '';
-                conversationChanged = true;
-            }
-
-            let userChanged = false;
-            if (this.userId !== settings.serverSettings.users.currentUserId) {
-                this.userId = settings.serverSettings.users.currentUserId || '';
-                userChanged = true;
-            }
-
-            let botChanged = false;
-            if (this.botId !== settings.serverSettings.activeBot) {
-                this.botId = settings.serverSettings.activeBot || '';
-                botChanged = true;
-            }
-
-            if (conversationChanged || userChanged || botChanged) {
-                if (this.directline) {
-                    this.directline.end();
-                    this.directline = undefined;
-                //    log.debug(`ended conversation`);
+            try {
+                let conversationChanged = false;
+                if (this.conversationId !== settings.conversation.conversationId) {
+                    this.conversationId = settings.conversation.conversationId || '';
+                    conversationChanged = true;
                 }
-                if (this.conversationId.length && this.userId.length && this.botId.length) {
-                    this.directline = new BotChat.DirectLine3(
-                        { secret: settings.conversation.conversationId, token: settings.conversation.conversationId },
-                        `http://localhost:${settings.serverSettings.framework.port}`,
-                        'v3/directline'
-                    );
-                //    log.debug(`started new conversation`);
+
+                let userChanged = false;
+                let currentUserId = settings.serverSettings.users ? settings.serverSettings.users.currentUserId : 'default-user';
+                if (this.userId !== currentUserId) {
+                    this.userId = currentUserId || '';
+                    userChanged = true;
                 }
-                this.reuseKey++;
-                this.forceUpdate();
+
+                let botChanged = false;
+                if (this.botId !== settings.serverSettings.activeBot) {
+                    this.botId = settings.serverSettings.activeBot || '';
+                    botChanged = true;
+                }
+
+                if (conversationChanged || userChanged || botChanged) {
+                    if (this.directline) {
+                        this.directline.end();
+                        this.directline = undefined;
+                    //    log.debug(`ended conversation`);
+                    }
+                    if (this.conversationId.length && this.userId.length && this.botId.length) {
+                        this.directline = new BotChat.DirectLine3(
+                            { secret: settings.conversation.conversationId, token: settings.conversation.conversationId },
+                            `http://localhost:${settings.serverSettings.framework.port}`,
+                            'v3/directline'
+                        );
+                    //    log.debug(`started new conversation`);
+                    }
+                    this.reuseKey++;
+                    this.forceUpdate();
+                }
+            } catch(e) {
+                //log.error(e.message);
             }
         });
     }
@@ -165,15 +170,9 @@ export class MainView extends React.Component<{}, {}> {
                         <div className="fill-parent">
                             <Splitter split="horizontal" primary="second" minSize="42px" defaultSize={horizSplit} onChange={(size) => LayoutActions.rememberHorizontalSplitter(size)}>
                                 <div className="wc-chatview-panel">
-                                    <div className="emu-panel-header">
-                                        <span>Details</span>
-                                    </div>
                                     <InspectorView />
                                 </div>
                                 <div className="fill-parent">
-                                    <div className="emu-panel-header">
-                                        <span>Log</span>
-                                    </div>
                                     <LogView />
                                 </div>
                             </Splitter>

@@ -144,7 +144,6 @@ export class ConversationsControllerV3 {
                 conversation.postActivityToBot(activity, true, (err, statusCode, activityId) => {
                     if (err || !/^2\d\d$/.test(`${statusCode}`)) {
                         res.send(statusCode || HttpStatus.INTERNAL_SERVER_ERROR);
-                        log.error("Failed to post activity to bot: " + (err || statusCode));
                     } else {
                         res.send(statusCode, { id: activityId });
                     }
@@ -203,7 +202,6 @@ export class ConversationsControllerV3 {
                     conversation.postActivityToBot(activity, true, (err, statusCode, activityId) => {
                         if (err || !/^2\d\d$/.test(`${statusCode}`)) {
                             res.send(statusCode || HttpStatus.INTERNAL_SERVER_ERROR);
-                            log.error("Failed to upload to bot: " + (err || statusCode));
                         } else {
                             res.send(statusCode, { id: activityId });
                         }

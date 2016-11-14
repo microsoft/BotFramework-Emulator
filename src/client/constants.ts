@@ -163,5 +163,5 @@ export const botFrameworkIcon = (className: string, size: number) => {
       </g>
    </g>
 </svg>
-    `
+    `;
 }
