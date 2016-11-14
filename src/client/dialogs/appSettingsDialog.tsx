@@ -222,7 +222,7 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
                             </div>
                         </div>
                     </div>
-                    <div className="appsettings-buttons">
+                    <div className="dialog-buttons">
                         <button className="appsettings-savebtn" onClick={() => this.onAccept()}>Save</button>
                         &nbsp;&nbsp;&nbsp;
                         <button className="appsettings-cancelbtn" onClick={() => this.onClose()}>Cancel</button>

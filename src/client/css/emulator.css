@@ -306,14 +306,6 @@
         margin: 0;
     }
 
-    .appsettings-buttons {
-        position: absolute;
-        padding: 0 0 36px 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-    }
-
     .appsettings-browsebtn {
         padding: 11px 16px 10px 16px;
         margin-left: 8px;
@@ -478,6 +470,14 @@
 
     .dialog-closex path {
         stroke: #CCC;
+    }
+
+    .dialog-buttons {
+        position: absolute;
+        padding: 0 0 52px 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
     }
 
     .invisible {
