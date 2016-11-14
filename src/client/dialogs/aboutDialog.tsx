@@ -32,6 +32,7 @@
 //
 
 import * as React from 'react';
+import { app } from 'electron';
 import * as Constants from '../constants';
 import { AddressBarActions } from '../reducers';
 import { getSettings, Settings, addSettingsListener } from '../settings';
@@ -84,14 +85,12 @@ export class AboutDialog extends React.Component<{}, {}> {
                 <div className="dialog-background">
                 </div>
                 <div className="emu-dialog about-dialog">
-                    <h2 className="dialog-header">Microsoft Bot Framework Emulator</h2>
                     <div className="dialog-closex" onClick={() => this.onClose()} dangerouslySetInnerHTML={{ __html: Constants.clearCloseIcon("", 24) }} />
-                    <div style={{lineHeight: '37px'}}>&nbsp;</div>
-                    <div className="emu-dialog-text">Version: </div>
-                    <div className="emu-dialog-text">Copyright: </div>
-                    <div className="dialog-buttons">
-                    &nbsp;<button className="about-okbtn" onClick={() => this.onClose()}>Ok</button>&nbsp;
-                    </div>
+                    <div className='about-logo' dangerouslySetInnerHTML={{ __html: Constants.botFrameworkIcon('about-logo-fill', 142) }} />
+                    <div className="about-name">Microsoft Bot Framework Emulator</div>
+                    <div className="about-link"><a href='https://aka.ms/bf-emulator'>https://aka.ms/bf-emulator</a></div>
+                    <div className="about-version">{`${(app ? app.getVersion() : undefined) || 'dev build'}`}</div>
+                    <div className="about-copyright">&copy; 2016 Microsoft</div>
                 </div>
             </div>
         );

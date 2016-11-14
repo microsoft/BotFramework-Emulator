@@ -404,8 +404,9 @@
 /* about-dialog */
 
     .about-dialog {
-        width: 512px;
-        height: 487px;
+        width: 320px;
+        height: 360px;
+        padding: 0 !important;
     }
 
     .about-okbtn {
@@ -418,6 +419,46 @@
         line-height: 1.3333333;
         font-weight: 500;
         width: 96px;
+    }
+
+    .about-logo-fill {
+        fill: #3A96DD;
+    }
+    .about-logo {
+        padding-top: 50px;
+        width: 100%;
+        text-align: center;
+    }
+    .about-name {
+        text-align: center;
+        width: 100%;
+        font-weight: 500;
+        font-size: 18px;
+        padding-top: 6px;
+        padding-bottom: 6px;
+        letter-spacing: -0.3px;
+    }
+    .about-link {
+        text-align: center;
+        width: 100%;
+        padding-bottom: 6px;
+    }
+    .about-link a {
+        text-decoration: none;
+        color: #3A96DD;
+    }
+    .about-version {
+        text-align: center;
+        width: 100%;
+        font-size: 15px;
+    }
+    .about-copyright {
+        text-align: center;
+        width: 100%;
+        position: absolute;
+        bottom: 18px;
+        font-size: 12px;
+        color: #999;
     }
 
 /* base classes */
