@@ -9,7 +9,7 @@
         "noImplicitAny": false,
         "noImplicitThis": true,
         "noEmitOnError": true,
-        "outDir": "dist",
+        "outDir": "app",
         "watch": true,
         "removeComments": true,
         "types": [
@@ -18,6 +18,6 @@
     },
     "exclude": [
         "node_modules",
-        "dist"
+        "app"
     ]
 }

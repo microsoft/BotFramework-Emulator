@@ -3,7 +3,7 @@ var clean = require('gulp-clean');
 var tsc = require('gulp-tsc');
 
 gulp.task('clean', function () {
-    return gulp.src('./dist/', { read: false })
+    return gulp.src('./app/', { read: false })
         .pipe(clean());
 });
 
@@ -17,17 +17,17 @@ gulp.task('build-app', ['clean'], function () {
             noImplicitAny: false,
             noImplicitThis: true,
             noEmitOnError: true,
-            outDir: 'dist',
+            outDir: 'app',
             additionalTscParameters: ['--jsx', 'react']
         }))
-        .pipe(gulp.dest('dist/'));
+        .pipe(gulp.dest('app/'));
 });
 
 gulp.task('copy-site', ['build-app'], function () {
     return gulp.src([
         './src/**/*.html',
         './src/**/*.css'])
-        .pipe(gulp.dest('dist/'));
+        .pipe(gulp.dest('app/'));
 });
 
 gulp.task('default', ['copy-site']);

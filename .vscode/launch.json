@@ -5,13 +5,13 @@
             "request": "launch",
             "name": "Launch main.js",
             "type": "node",
-            "program": "${workspaceRoot}/dist/server/main.js",
+            "program": "${workspaceRoot}/app/server/main.js",
             "stopOnEntry": false,
             "args": [
                 "--debug=5858"
             ],
             "port": 5858,
-            "cwd": "${workspaceRoot}/dist/client",
+            "cwd": "${workspaceRoot}/app/client",
             "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd",
             // mac/linux
             // "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
@@ -22,7 +22,7 @@
                 "ELECTRON_ENABLE_LOGGING": "true"
             },
             "sourceMaps": true,
-            "outDir": "${workspaceRoot}/dist"
+            "outDir": "${workspaceRoot}/app"
         }
     ]
 }

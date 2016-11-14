@@ -2,6 +2,6 @@ npm-debug.log
 Thumbs.db
 .DS_Store
 node_modules/
-dist/
+app/
 .vscode/settings.json
 install/
