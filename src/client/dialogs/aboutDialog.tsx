@@ -36,7 +36,7 @@ import { app } from 'electron';
 import * as Constants from '../constants';
 import { AddressBarActions } from '../reducers';
 import { getSettings, Settings, addSettingsListener } from '../settings';
-
+var pjson = require('../../../package.json');
 
 export class AboutDialog extends React.Component<{}, {}> {
     settingsUnsubscribe: any;
@@ -89,7 +89,7 @@ export class AboutDialog extends React.Component<{}, {}> {
                     <div className='about-logo' dangerouslySetInnerHTML={{ __html: Constants.botFrameworkIcon('about-logo-fill', 142) }} />
                     <div className="about-name">Microsoft Bot Framework Emulator</div>
                     <div className="about-link"><a href='https://aka.ms/bf-emulator'>https://aka.ms/bf-emulator</a></div>
-                    <div className="about-version">{`${(app ? app.getVersion() : undefined) || 'dev build'}`}</div>
+                    <div className="about-version">{`v${pjson.version}`}</div>
                     <div className="about-copyright">&copy; 2016 Microsoft</div>
                 </div>
             </div>

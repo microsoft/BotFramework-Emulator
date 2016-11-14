@@ -38,6 +38,7 @@ import { WindowStateAction } from './reducers/windowStateReducer';
 import * as url from 'url';
 import * as path from 'path';
 import * as log from './log';
+var pjson = require('../../package.json');
 
 
 process.on('uncaughtException', (error: Error) => {
@@ -67,7 +68,7 @@ const createMainWindow = () => {
     });
     //mainWindow.webContents.openDevTools();
 
-    mainWindow.setTitle('Microsoft Bot Framework Emulator (alpha)');
+    mainWindow.setTitle(`Microsoft Bot Framework Emulator (v${pjson.version})`);
     // Mac requires a menu for cut/paste to work.
     if (process.platform !== 'darwin') {
         mainWindow.setMenu(null);
