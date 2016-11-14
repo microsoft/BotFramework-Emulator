@@ -126,7 +126,7 @@ export class Conversation {
             }
 
             if (!utils.isLocalhostUrl(bot.botUrl) && utils.isLocalhostUrl(emulator.framework.serviceUrl)) {
-                log.error('This bot is remote but callback URL is localhost!');
+                log.error('The bot is running remotely, but the callback URL is localhost!');
                 log.error('Without tunneling software you will not receive replies.');
                 log.error(log.ngrokConfigurationLink('click here'), 'to configure ngrok tunneling software.');
             }

@@ -141,9 +141,9 @@ export class AddressBarMenu extends React.Component<{}, {}> {
 
     render() {
         return (
-            <div className="addressbar-menu">
-                <div dangerouslySetInnerHTML={{ __html: Constants.hamburgerIcon('toolbar-button', 24) }} onClick={() => this.showMenu()} />
-            </div>
+            <a className='undecorated-text' href='javascript:void(0)' title='Settings'>
+                <div className="addressbar-menu" dangerouslySetInnerHTML={{ __html: Constants.hamburgerIcon('toolbar-button', 24) }} onClick={() => this.showMenu()} />
+            </a>
         );
     }
 }

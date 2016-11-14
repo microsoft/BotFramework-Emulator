@@ -51,7 +51,9 @@ export class AddressBarRefresh extends React.Component<{}, {}> {
         const settings = getSettings();
         let enabled = ((settings.serverSettings.activeBot || '').length > 0 && (settings.conversation.conversationId || '').length > 0);
         return (
-            <div className='addressbar-refresh' dangerouslySetInnerHTML={{ __html: Constants.reloadIcon("toolbar-button" + (enabled ? "" : " toolbar-button-disabled"), 24) }} onClick={() => this.refreshClicked()} />
+            <a className='undecorated-text' href='javascript:void(0)' title='Start new conversation'>
+                <div className='addressbar-refresh' dangerouslySetInnerHTML={{ __html: Constants.reloadIcon("toolbar-button" + (enabled ? "" : " toolbar-button-disabled"), 24) }} onClick={() => this.refreshClicked()} />
+            </a>
         )
     }
 }
