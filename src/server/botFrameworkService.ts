@@ -113,7 +113,7 @@ export class BotFrameworkService extends RestServer {
                         } else {
                             this.inspectUrl = `http://localhost:${inspectPort}`;
                             this.ngrokServiceUrl = url;
-                            log.debug(`ngrok listening on: ${url}`);
+                            log.debug(`ngrok listening on ${url}`);
                             log.debug('ngrok traffic inspector:', log.makeLinkMessage(this.inspectUrl, this.inspectUrl));
                         }
                         // Sync settings to client
