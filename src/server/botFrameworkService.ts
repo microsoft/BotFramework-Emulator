@@ -66,7 +66,7 @@ export class BotFrameworkService extends RestServer {
     authentication = new BotFrameworkAuthentication();
 
     constructor() {
-        super("emulator");
+        super("Emulator");
         ConversationsController.registerRoutes(this, this.authentication);
         AttachmentsController.registerRoutes(this);
         BotStateController.registerRoutes(this, this.authentication);
