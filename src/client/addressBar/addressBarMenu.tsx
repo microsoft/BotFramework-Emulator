@@ -101,21 +101,23 @@ export class AddressBarMenu extends React.Component<{}, {}> {
                 type: 'separator'
             },
             {
-                label: 'App Settings...',
+                label: 'App Settings',
                 click: () => AddressBarActions.showAppSettings()
             },
             {
                 type: 'separator'
             },
             {
-                label: 'Help...',
+                label: 'Help',
                 //click: () => AddressBarActions.showHelp()
             },
             {
-                label: 'About...',
-                ///click: () => AddressBarActions.showAbout()
+                label: 'About',
+                click: () => AddressBarActions.showAbout()
             },
-            /*
+            {
+                type: 'separator'
+            },
             {
                 label: 'Legal',
                 click: () => window.open('https://g.microsoftonline.com/0BX20en/721')
@@ -124,13 +126,12 @@ export class AddressBarMenu extends React.Component<{}, {}> {
                 label: 'Privacy',
                 click: () => window.open('https://go.microsoft.com/fwlink/?LinkId=512132')
             },
-            */
             {
                 type: 'separator'
             },
             {
-                label: 'Report an issue...',
-                click: () => window.open('https://github.com/Microsoft/BotFramework-Emulator/issues')
+                label: 'Report issues',
+                click: () => window.open('https://github.com/Microsoft/BotFramework-Emulator/issues/new')
             },
         ];
 

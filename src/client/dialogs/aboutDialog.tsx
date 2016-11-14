@@ -84,8 +84,14 @@ export class AboutDialog extends React.Component<{}, {}> {
                 <div className="dialog-background">
                 </div>
                 <div className="emu-dialog about-dialog">
-                    <h2 className="dialog-header">Bot Framework Emulator</h2>
+                    <h2 className="dialog-header">Microsoft Bot Framework Emulator</h2>
                     <div className="dialog-closex" onClick={() => this.onClose()} dangerouslySetInnerHTML={{ __html: Constants.clearCloseIcon("", 24) }} />
+                    <div style={{lineHeight: '37px'}}>&nbsp;</div>
+                    <div className="emu-dialog-text">Version: </div>
+                    <div className="emu-dialog-text">Copyright: </div>
+                    <div className="dialog-buttons">
+                    &nbsp;<button className="about-okbtn" onClick={() => this.onClose()}>Ok</button>&nbsp;
+                    </div>
                 </div>
             </div>
         );
