@@ -33,6 +33,7 @@
 
 import * as request from 'request';
 import * as http from 'http';
+import * as ngrok from './ngrok';
 import { IUser } from '../types/userTypes';
 import { IChannelAccount, IConversationAccount } from '../types/accountTypes';
 import { IActivity, IConversationUpdateActivity, IMessageActivity } from '../types/activityTypes';
@@ -46,6 +47,7 @@ import * as ResponseTypes from '../types/responseTypes';
 import { ErrorCodes, IResourceResponse, IErrorResponse } from '../types/responseTypes';
 import { emulator } from './emulator';
 import * as log from './log';
+import * as utils from '../utils';
 
 
 /**
@@ -121,6 +123,12 @@ export class Conversation {
                         cb(null, resp.statusCode, activity.id);
                     }
                 }
+            }
+
+            if (!utils.isLocalhostUrl(bot.botUrl) && utils.isLocalhostUrl(emulator.framework.serviceUrl)) {
+                log.error('This bot is remote but callback URL is localhost!');
+                log.error('Without tunneling software you will not receive replies.');
+                log.error(log.ngrokConfigurationLink('click here'), 'to configure ngrok tunneling software.');
             }
 
             if (bot.msaAppId && bot.msaPassword) {

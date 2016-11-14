@@ -487,6 +487,7 @@
         text-align: left;
         transition: opacity .2s ease;
         border-radius: 2px;
+        cursor: default;
     }
 
     .emu-dialog-text {

@@ -34,6 +34,8 @@
 import * as Electron from 'electron';
 import * as Fs from 'fs';
 import * as Mkdirp from 'mkdirp';
+import * as url from 'url';
+
 
 /**
  * Generates a random id that is unique enough for our purposes.
@@ -101,3 +103,12 @@ export function mergeDeep(target, source) {
   return output;
 }
 
+export const isLocalhostUrl = (urlStr: string) => {
+    const parsedUrl = url.parse(urlStr);
+    return (parsedUrl.hostname === 'localhost' || parsedUrl.hostname === '127.0.0.1');
+}
+
+export const isSecuretUrl = (urlStr: string) => {
+    const parsedUrl = url.parse(urlStr);
+    return (parsedUrl.protocol.startsWith('https'));
+}

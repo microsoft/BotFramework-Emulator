@@ -109,7 +109,7 @@ export class BotFrameworkService extends RestServer {
                     }, (err, url: string, inspectPort: string) => {
                         if (err) {
                             log.warn(`failed to start ngrok: ${err.message || err.msg}`);
-                            log.debug(log.makeLinkMessage('click here', 'emulator://appsettings?tab=NgrokConfig'), 'to configure ngrok');
+                            log.debug(log.ngrokConfigurationLink('click here'), 'to configure ngrok.');
                         } else {
                             this.inspectUrl = `http://localhost:${inspectPort}`;
                             this.ngrokServiceUrl = url;
