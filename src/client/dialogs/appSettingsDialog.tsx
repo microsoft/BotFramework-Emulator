@@ -111,7 +111,8 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
 
     browseForNgrokPath = () => {
         const dir = path.dirname(this.ngrokPathInputRef.value);
-        remote.dialog.showOpenDialog({
+        remote.dialog.showOpenDialog(
+            remote.getCurrentWindow(), {
             title: 'Browse for ngrok',
             defaultPath: dir,
             properties: ['openFile']

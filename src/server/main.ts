@@ -32,6 +32,7 @@
 //
 
 import * as Electron from 'electron';
+import { Menu } from 'electron';
 import { Emulator } from './emulator';
 import { getSettings, dispatch } from './settings';
 import { WindowStateAction } from './reducers/windowStateReducer';
@@ -54,18 +55,18 @@ const createMainWindow = () => {
     // TODO: Make a better/safer window state restoration module
     // (handles change in display dimensions, maximized state, etc)
     const safeLowerBound = (val: any, lowerBound: number) => {
-        if (typeof(val) === 'number') {
+        if (typeof (val) === 'number') {
             return Math.max(lowerBound, val);
         }
     }
     const settings = getSettings();
     mainWindow = new Electron.BrowserWindow(
-    {
-        width: safeLowerBound(settings.windowState.width, 0),
-        height: safeLowerBound(settings.windowState.height, 0),
-        x: safeLowerBound(settings.windowState.left, 0),
-        y: safeLowerBound(settings.windowState.top, 0)
-    });
+        {
+            width: safeLowerBound(settings.windowState.width, 0),
+            height: safeLowerBound(settings.windowState.height, 0),
+            x: safeLowerBound(settings.windowState.left, 0),
+            y: safeLowerBound(settings.windowState.top, 0)
+        });
     //mainWindow.webContents.openDevTools();
 
     mainWindow.setTitle(`Microsoft Bot Framework Emulator (v${pjson.version})`);
@@ -104,15 +105,15 @@ const createMainWindow = () => {
 
     mainWindow.webContents.once('did-finish-load', () => {
         let page = url.format({
-            protocol:'file',
-            slashes : true,
+            protocol: 'file',
+            slashes: true,
             pathname: path.join(__dirname, '../client/index.html')
         });
         mainWindow.loadURL(page);
     });
     let splash = url.format({
-        protocol:'file',
-        slashes : true,
+        protocol: 'file',
+        slashes: true,
         pathname: path.join(__dirname, '../client/splash.html')
     });
     mainWindow.loadURL(splash);
