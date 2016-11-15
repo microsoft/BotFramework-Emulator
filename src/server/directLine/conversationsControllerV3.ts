@@ -43,7 +43,7 @@ import { AttachmentsController } from '../framework/attachmentsController';
 import * as log from '../log';
 import * as Os from 'os';
 import * as Fs from 'fs';
-import { RestServer } from '../RestServer';
+import { RestServer } from '../restServer';
 
 
 export class ConversationsControllerV3 {
