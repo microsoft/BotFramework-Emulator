@@ -107,10 +107,12 @@ export class AddressBarMenu extends React.Component<{}, {}> {
             {
                 type: 'separator'
             },
+            /*
             {
                 label: 'Help',
                 //click: () => AddressBarActions.showHelp()
             },
+            */
             {
                 label: 'About',
                 click: () => AddressBarActions.showAbout()
