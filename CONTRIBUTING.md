@@ -4,7 +4,7 @@ There are many ways to contribute to the Bot Framework Emulator project: reporti
 
 ## Submitting issues
 
-The Bot Framework Emulator project tracks issues and feature requests using [GitHub issue tracker](./issues).
+The Bot Framework Emulator project tracks issues and feature requests using [GitHub issue tracker](https://github.com/BotBuilder-Emulator/issues).
 
 ### Before Submitting an Issue
 
@@ -71,6 +71,6 @@ This is a NodeJS process, and can be debugged directly from VSCode. With the pro
 
 ## Pull Requests
 
-Before we can accept a pull request from you, you must agree to the [Contributor License Agreement (CLA)](./wiki/Contributor-License-Agreement). It is an automated process and you only need to do this once.
+Before we can accept a pull request from you, you must agree to the [Contributor License Agreement (CLA)](https://github.com/BotBuilder-Emulator/wiki/Contributor-License-Agreement). It is an automated process and you only need to do this once.
 
 To enable us to quickly review and accept your pull requests, always create one pull request per issue and link the issue in the pull request. Never merge multiple requests in one unless they have the same root cause. Keep code changes as small as possible. Avoid pure formatting changes to code that has not been modified otherwise.
