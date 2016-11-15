@@ -11,7 +11,11 @@ The Bot Framework Emulator can communicate with your bot wherever it is running;
 * [Connect to a bot hosted remotely](https://github.com/Microsoft/BotFramework-Emulator/wiki/Getting-Started#connect-to-a-bot-hosted-remotely)
 * [Connect to an Azure Bot App](https://github.com/Microsoft/BotFramework-Emulator/wiki/Getting-Started#connect-to-an-azure-bot-app)
 
-Download it from <https://emulator.botframework.com> or from the [releases](https://github.com/Microsoft/BotFramework-Emulator/releases) page. Supported platforms: Windows, MacOS, and Linux.
+Download the Bot Framework Emulator for your platform:
+* <https://emulator.botframework.com>
+* [releases](https://github.com/Microsoft/BotFramework-Emulator/releases) page.
+
+Supported platforms: Windows, MacOS, and Linux.
 
 ## Contributing
 
