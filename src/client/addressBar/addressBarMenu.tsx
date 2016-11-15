@@ -39,9 +39,8 @@ import { IBot, newBot } from '../../types/botTypes';
 import * as log from '../log';
 import { AddressBarOperators } from './addressBarOperators';
 import * as Constants from '../constants';
+import { remote, app, shell } from 'electron';
 
-
-const { remote } = require('electron');
 const { Menu, MenuItem } = remote;
 
 export class AddressBarMenu extends React.Component<{}, {}> {
@@ -118,6 +117,14 @@ export class AddressBarMenu extends React.Component<{}, {}> {
                 click: () => AddressBarActions.showAbout()
             },
             {
+                label: 'Credits',
+                // click: () => AddressBarActions.showCredits()
+                click: () => {
+                    let path = 'https://github.com/Microsoft/BotFramework-Emulator/blob/master/ThirdPartyLicenses.txt';
+                    window.open(path);
+                }
+            },
+            {
                 type: 'separator'
             },
             {
@@ -149,3 +156,4 @@ export class AddressBarMenu extends React.Component<{}, {}> {
         );
     }
 }
+
