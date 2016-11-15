@@ -13,7 +13,7 @@ The Bot Framework Emulator can communicate with your bot wherever it is running;
 
 ### Download the Bot Framework Emulator
 * <https://emulator.botframework.com>
-* [releases](https://github.com/Microsoft/BotFramework-Emulator/releases) page
+* [GitHub releases](https://github.com/Microsoft/BotFramework-Emulator/releases) page
 
 Supported platforms: Windows, MacOS, and Linux.
 
