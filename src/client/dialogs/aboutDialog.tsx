@@ -48,7 +48,7 @@ export class AboutDialog extends React.Component<{}, {}> {
         let target = ev.srcElement;
         while (target) {
             if (target.className.toString().includes("about")) {
-                // Click was inside the address bar.
+                ev.preventDefault();
                 return;
             }
             target = target.parentElement;

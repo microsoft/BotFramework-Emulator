@@ -88,7 +88,8 @@ const timestamp = (entry: ILogEntry) => {
 const emit = (val: any, className: string) => {
     if (!val) return null;
     if (val.hasOwnProperty('messageType') && val['messageType'] === 'link') {
-        return <div className={className}><a className='wc-logview-link' title={val.title} href={val.link}>{val.text}</a>&nbsp;</div>
+        //return <div className={className}><a className={className} title={val.title} href={val.link}>{val.text}</a>&nbsp;</div>
+        return <div className={className}><a title={val.title} href={val.link}>{val.text}</a>&nbsp;</div>
     } else {
         return <div className={className}>{safeStringify(val)}&nbsp;</div>
     }

@@ -69,7 +69,7 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
         let target = ev.srcElement;
         while (target) {
             if (target.className.toString().includes("appsettings")) {
-                // Click was inside the address bar.
+                ev.preventDefault();
                 return;
             }
             target = target.parentElement;

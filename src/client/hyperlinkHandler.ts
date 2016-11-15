@@ -35,7 +35,8 @@ import { shell } from 'electron';
 import * as URL from 'url';
 import * as QueryString from 'querystring';
 import { InspectorActions, AddressBarActions } from './reducers';
-import { selectedActivity$, deselectActivity } from './settings';
+import { getSettings, selectedActivity$, deselectActivity } from './settings';
+import { Settings as ServerSettings } from '../types/serverSettingsTypes';
 import * as log from './log';
 
 
@@ -94,6 +95,17 @@ function navigateAppSettingsUrl(args: string[]) {
 
 function navigateBotCredsUrl(args: string[]) {
     try {
+        args = args || [];
+        if (!args.length) {
+            const settings = getSettings();
+            const activeBotId = settings.serverSettings.activeBot;
+            if (activeBotId) {
+                const activeBot = new ServerSettings(settings.serverSettings).botById(activeBotId);
+                AddressBarActions.selectBot(activeBot);
+            }
+        } else {
+            // todo
+        }
         AddressBarActions.showBotCreds();
     } catch (e) {
         log.error(e.message);

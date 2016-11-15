@@ -182,6 +182,8 @@ export class AddressBarActions {
         });
     }
     static showAbout() {
+        this.hideBotCreds();
+        this.hideSearchResults();
         dispatch<AddressBarAction>({
             type: 'AddressBar_ShowAbout'
         })
@@ -192,6 +194,8 @@ export class AddressBarActions {
         })
     }
     static showAppSettings() {
+        this.hideBotCreds();
+        this.hideSearchResults();
         dispatch<AddressBarAction>({
             type: 'AddressBar_ShowAppSettings'
         })
@@ -202,6 +206,8 @@ export class AddressBarActions {
         })
     }
     static showConversationSettings() {
+        this.hideBotCreds();
+        this.hideSearchResults();
         dispatch<AddressBarAction>({
             type: 'AddressBar_ShowConversationSettings'
         })

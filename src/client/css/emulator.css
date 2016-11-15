@@ -732,9 +732,14 @@
         display: inline-block;
     }
 
+/*
     .wc-logview a {
         color: #9CDCFE;
         display: inline-block;
+    }
+*/
+    .wc-logview a {
+        color: #d1d1d1;
     }
 
     .wc-logview-arg {
@@ -763,12 +768,13 @@
     }
 
     .wc-logview-warn {
-        /*color: #f5a623;*/
-        color: #D7BA7D;
+        color: #f5a623;
+        /*color: #D7BA7D;*/
         display: inline-block;
     }
 
     .wc-logview-error {
-        color: #ec407a;
+        /*color: #ec407a;*/
+        color: #ed4051;
         display: inline-block;
     }

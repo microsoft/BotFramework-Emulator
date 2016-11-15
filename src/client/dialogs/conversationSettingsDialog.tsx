@@ -57,7 +57,7 @@ export class ConversationSettingsDialog extends React.Component<{}, {}> {
         let target = ev.srcElement;
         while (target) {
             if (target.className === "conversationsettings-dialog") {
-                // Click was inside the address bar.
+                ev.preventDefault();
                 return;
             }
             target = target.parentElement;

@@ -90,7 +90,6 @@ export class Conversation {
         this.postage(this.botId, activity);
         const bot = getSettings().botById(this.botId);
         if (bot) {
-            let statusCode = '';
             let options: request.OptionsWithUrl = { url: bot.botUrl, method: "POST", json: activity };
 
             let responseCallback = (err, resp: http.IncomingMessage, body) => {
@@ -102,14 +101,14 @@ export class Conversation {
                 if (err) {
                     log.error(err.message);
                 } else if (resp) {
-                    if (resp && !/^2\d\d$/.test(`${resp.statusCode}`)) {
+                    if (!/^2\d\d$/.test(`${resp.statusCode}`)) {
                         log.error(
                             '->',
                             log.makeInspectorLink("POST", activity),
                             log.makeInspectorLink(`${resp.statusCode}`, body, `(${resp.statusMessage})`),
                             `[${activity.type}]`,
                             text);
-                        if(Number(statusCode) == 401 || Number(statusCode) == 402) {
+                        if(Number(resp.statusCode) == 401 || Number(resp.statusCode) == 402) {
                             log.error("Error: The bot's MSA appId or passsword is incorrect.");
                             log.error(log.botCredsConfigurationLink('Click here'), "to edit your bot's MSA info.");
                         }
@@ -130,7 +129,7 @@ export class Conversation {
             }
 
             if (!utils.isLocalhostUrl(bot.botUrl) && utils.isLocalhostUrl(emulator.framework.serviceUrl)) {
-                log.error('Error: The bot is running remotely, but the callback URL is localhost!');
+                log.error('Error: The bot is running remotely, but the callback URL is localhost.');
                 log.error('Without tunneling software you will not receive replies.');
                 log.error(log.ngrokConfigurationLink('Click here'), 'to configure ngrok tunneling software.');
             }

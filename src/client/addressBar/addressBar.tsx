@@ -55,8 +55,10 @@ export class AddressBar extends React.Component<{}, {}> {
         let target = ev.srcElement;
         while (target) {
             // NOTE: Sometimes target.className is not a string. In one observed instance it was an SVGAnimatedString which didn't have an 'includes' function.
-            if (target.className && target.className.toString().includes("addressbar"))
+            if (target.className && target.className.toString().includes("addressbar")) {
+                ev.preventDefault();
                 return;
+            }
             target = target.parentElement;
         }
 
