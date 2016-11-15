@@ -118,11 +118,7 @@ export class AddressBarMenu extends React.Component<{}, {}> {
             },
             {
                 label: 'Credits',
-                // click: () => AddressBarActions.showCredits()
-                click: () => {
-                    let path = 'https://github.com/Microsoft/BotFramework-Emulator/blob/master/ThirdPartyLicenses.txt';
-                    window.open(path);
-                }
+                click: () => window.open('https://github.com/Microsoft/BotFramework-Emulator/blob/master/ThirdPartyLicenses.txt')
             },
             {
                 type: 'separator'

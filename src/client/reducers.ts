@@ -89,10 +89,6 @@ type AddressBarAction = {
 } | {
     type: 'AddressBar_HideAbout'
 } | {
-    type: 'AddressBar_ShowCredits'
-} | {
-    type: 'AddressBar_HideCredits'
-} | {
     type: 'AddressBar_ShowAppSettings'
 } | {
     type: 'AddressBar_HideAppSettings'
@@ -195,16 +191,6 @@ export class AddressBarActions {
     static hideAbout() {
         dispatch<AddressBarAction>({
             type: 'AddressBar_HideAbout'
-        })
-    }
-    static showCredits() {
-        dispatch<AddressBarAction>({
-            type: 'AddressBar_ShowCredits'
-        })
-    }
-    static hideCredits() {
-        dispatch<AddressBarAction>({
-            type: 'AddressBar_HideCredits'
         })
     }
     static showAppSettings() {
@@ -371,10 +357,6 @@ export const addressBarReducer: Reducer<IAddressBarState> = (
             return Object.assign({}, state, { showAbout: true });
         case 'AddressBar_HideAbout':
             return Object.assign({}, state, { showAbout: false });
-        case 'AddressBar_ShowCredits':
-            return Object.assign({}, state, { showCredits: true });
-        case 'AddressBar_HideCredits':
-            return Object.assign({}, state, { showCredits: false });
         case 'AddressBar_ShowAppSettings':
             return Object.assign({}, state, { showAppSettings: true });
         case 'AddressBar_HideAppSettings':
