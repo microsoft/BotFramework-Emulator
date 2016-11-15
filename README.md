@@ -4,14 +4,14 @@ The [Microsoft Bot Framework](https://botframework.com) is a service and [SDK](h
 
 The Bot Framework Emulator is a desktop application that allows bot developers to test and debug their bots on localhost or running remotely through a tunnel.
 
-Download a build for your platform (Windows, MacOS, or Linux) by visiting <https://emulator.botframework.com> or from the [releases](https://github.com/Microsoft/BotFramework-Emulator/releases) page.
-
 ## Getting Started
 
 The Bot Framework Emulator can communicate with your bot wherever it is running; on localhost, or remotely in the cloud.
-* [Connect to a bot running locally](https://github.com/Microsoft/BotFramework-Emulator/wiki/Getting-Started)
-* [Connect to a bot hosted remotely (Azure Web App or other cloud service)](https://github.com/Microsoft/BotFramework-Emulator/wiki/Getting-Started)
-* [Connect to an Azure Bot App](https://github.com/Microsoft/BotFramework-Emulator/wiki/Getting-Started)
+* [Connect to a bot running locally](https://github.com/Microsoft/BotFramework-Emulator/wiki/Getting-Started#connect-to-a-bot-running-on-localhost)
+* [Connect to a bot hosted remotely (Azure Web App or other cloud service)](https://github.com/Microsoft/BotFramework-Emulator/wiki/Getting-Started#connect-to-a-bot-hosted-remotely)
+* [Connect to an Azure Bot App](https://github.com/Microsoft/BotFramework-Emulator/wiki/Getting-Started#connect-to-an-azure-bot-app)
+
+Download it from <https://emulator.botframework.com> or from the [releases](https://github.com/Microsoft/BotFramework-Emulator/releases) page. Supported platforms: Windows, MacOS, and Linux.
 
 ## Contributing
 
@@ -21,7 +21,7 @@ If you are interested in fixing issues and contributing directly to the code bas
 
 ## Feedback
 
-* Ask a question on [Stack Overflow](https://stackoverflow.com/questions/tagged/botbuilder)
+* Ask a question on [Stack Overflow](https://stackoverflow.com/questions/tagged/botframework)
 * File a bug in [GitHub Issues](https://github.com/Microsoft/BotFramework-Emulator/wiki/Submitting-Bugs-&-Suggestions)
 * Request a new feature on [GitHub](https://github.com/Microsoft/BotFramework-Emulator/wiki/Submitting-Bugs-&-Suggestions)
 
