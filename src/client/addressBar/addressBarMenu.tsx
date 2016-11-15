@@ -117,10 +117,6 @@ export class AddressBarMenu extends React.Component<{}, {}> {
                 click: () => AddressBarActions.showAbout()
             },
             {
-                label: 'Credits',
-                click: () => window.open('https://github.com/Microsoft/BotFramework-Emulator/blob/master/ThirdPartyLicenses.txt')
-            },
-            {
                 type: 'separator'
             },
             {
@@ -130,6 +126,10 @@ export class AddressBarMenu extends React.Component<{}, {}> {
             {
                 label: 'Privacy',
                 click: () => window.open('https://go.microsoft.com/fwlink/?LinkId=512132')
+            },
+            {
+                label: 'Credits',
+                click: () => window.open('https://github.com/Microsoft/BotFramework-Emulator/blob/master/ThirdPartyLicenses.txt')
             },
             {
                 type: 'separator'
