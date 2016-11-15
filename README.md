@@ -33,6 +33,7 @@ If you are interested in fixing issues and contributing directly to the code bas
 
 * [Microsoft Bot Framework](https://botframework.com)
 * [BotBuilder SDK](https://github.com/Microsoft/BotBuilder)
+* [BotFramework-WebChat](https://github.com/Microsoft/BotFramework-WebChat)
 
 ## License
 
