@@ -4,18 +4,21 @@ The [Microsoft Bot Framework](https://botframework.com) is a service and [SDK](h
 
 The Bot Framework Emulator is a desktop application that allows bot developers to test and debug their bots on localhost or running remotely through a tunnel.
 
+## Download
+* From botframework.com: <https://emulator.botframework.com>
+* From the [GitHub releases](https://github.com/Microsoft/BotFramework-Emulator/releases) page
+
+### Supported platforms
+* Windows
+* OS X
+* Linux
+
 ## Getting Started
 
 The Bot Framework Emulator can communicate with your bot wherever it is running; on localhost, or remotely in the cloud.
 * [Connect to a bot running locally](https://github.com/Microsoft/BotFramework-Emulator/wiki/Getting-Started#connect-to-a-bot-running-on-localhost)
 * [Connect to a bot hosted remotely](https://github.com/Microsoft/BotFramework-Emulator/wiki/Getting-Started#connect-to-a-bot-hosted-remotely)
 * [Connect to an Azure Bot Service](https://github.com/Microsoft/BotFramework-Emulator/wiki/Getting-Started#connect-to-an-azure-bot-service)
-
-### Download the Bot Framework Emulator
-* <https://emulator.botframework.com>
-* [GitHub releases](https://github.com/Microsoft/BotFramework-Emulator/releases) page
-
-Supported platforms: Windows, MacOS, and Linux.
 
 ## Contributing
 
