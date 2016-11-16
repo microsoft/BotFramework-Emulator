@@ -90,9 +90,9 @@ export class AddressBarTextBox extends React.Component<{}, {}> {
     onBlur() {
         const settings = getSettings();
         const activeBot = (new ServerSettings(settings.serverSettings)).getActiveBot();
-        if (activeBot) {
-            AddressBarActions.setText(activeBot.botUrl);
-        }
+        //if (activeBot) {
+        //    AddressBarActions.setText(activeBot.botUrl);
+        //}
     }
 
     componentWillMount() {
