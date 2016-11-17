@@ -42,13 +42,10 @@ import * as log from './log';
 import { emulator } from './emulator';
 var pjson = require('../../package.json');
 
-
 process.on('uncaughtException', (error: Error) => {
     console.error(error);
     log.error('[err-server]', error.message.toString(), JSON.stringify(error.stack));
 });
-
-Emulator.startup();
 
 export let mainWindow: Electron.BrowserWindow;
 
@@ -143,20 +140,30 @@ const createMainWindow = () => {
     mainWindow.loadURL(splash);
 }
 
-Electron.app.on('ready', createMainWindow);
-
-Electron.app.on('window-all-closed', function () {
-    // TODO: Write client.json settings file for window size, etc.
-    if (process.platform !== 'darwin') {
-        Electron.app.quit();
+const shouldQuit = Electron.app.makeSingleInstance((commandLine, workingDirectory) => {
+    if (mainWindow) {
+        if (mainWindow.isMinimized())
+            mainWindow.restore();
+        mainWindow.focus();
     }
 });
 
-Electron.app.on('activate', function () {
-    if (mainWindow === null) {
-        createMainWindow();
-    }
-});
+if (shouldQuit) {
+    Electron.app.quit();
+} else {
+    Emulator.startup();
+    Electron.app.on('ready', createMainWindow);
+    Electron.app.on('window-all-closed', function () {
+        if (process.platform !== 'darwin') {
+            Electron.app.quit();
+        }
+    });
+    Electron.app.on('activate', function () {
+        if (mainWindow === null) {
+            createMainWindow();
+        }
+    });
+}
 
 // Do this last, otherwise startup bugs are harder to diagnose.
 require('electron-debug')();
