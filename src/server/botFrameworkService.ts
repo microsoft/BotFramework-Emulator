@@ -59,7 +59,7 @@ export class BotFrameworkService extends RestServer {
 
     public get serviceUrl() {
         return ngrok.running()
-            ? this.ngrokServiceUrl
+            ? this.ngrokServiceUrl || this._serviceUrl
             : this._serviceUrl
     }
 
