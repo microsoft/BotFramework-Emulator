@@ -52,7 +52,7 @@ import * as Constants from './constants';
 export class MainView extends React.Component<{}, {}> {
     settingsUnsubscribe: any;
     reuseKey: number = 0;
-    directline: BotChat.DirectLine3;
+    directline: BotChat.DirectLine;
     conversationId: string;
     userId: string;
     botId: string;
@@ -86,10 +86,9 @@ export class MainView extends React.Component<{}, {}> {
                     //    log.debug(`ended conversation`);
                     }
                     if (this.conversationId.length && this.userId.length && this.botId.length) {
-                        this.directline = new BotChat.DirectLine3(
+                        this.directline = new BotChat.DirectLine(
                             { secret: settings.conversation.conversationId, token: settings.conversation.conversationId },
-                            `http://localhost:${settings.serverSettings.framework.port}`,
-                            'v3/directline'
+                            `http://localhost:${settings.serverSettings.framework.port}/v3/directline`
                         );
                     //    log.debug(`started new conversation`);
                     }
