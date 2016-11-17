@@ -2,7 +2,7 @@
 
 There are many ways to contribute to the Bot Framework Emulator project: reporting issues, submitting pull requests, and creating suggestions.
 
-## Submitting issues
+## Submitting Issues
 
 The Bot Framework Emulator project tracks issues and feature requests using [GitHub issue tracker](https://github.com/BotBuilder-Emulator/issues).
 
