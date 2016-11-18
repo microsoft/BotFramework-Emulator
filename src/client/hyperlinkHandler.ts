@@ -111,5 +111,6 @@ function navigateCommandUrl(params: string[]) {
     const args = JSON.parse(json);
     if (args.cmd === 'app.relaunch') {
         remote.app.relaunch();
+        remote.app.exit(0);
     }
 }
