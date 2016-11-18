@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { shell } from 'electron';
+import { shell, remote } from 'electron';
 import * as URL from 'url';
 import * as QueryString from 'querystring';
 import { InspectorActions, AddressBarActions } from './reducers';
@@ -46,25 +46,27 @@ export function navigate(url: string) {
         if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
             shell.openExternal(url, { activate: true });
         } else if (parsed.protocol === "emulator:") {
-            const args = QueryString.parse(parsed.query);
+            const params = QueryString.parse(parsed.query);
             if (parsed.host === 'inspect') {
-                navigateInspectUrl(args);
+                navigateInspectUrl(params);
             } else if (parsed.host === 'appsettings') {
-                navigateAppSettingsUrl(args);
+                navigateAppSettingsUrl(params);
             } else if (parsed.host === 'botcreds') {
-                navigateBotCredsUrl(args);
+                navigateBotCredsUrl(params);
+            } else if (parsed.host === 'command') {
+                navigateCommandUrl(params);
             }
         } else {
             // Ignore
         }
     } catch (e) {
-        console.error(e);
+        log.error(e);
     }
 }
 
-function navigateInspectUrl(args: string[]) {
+function navigateInspectUrl(params: string[]) {
     try {
-        const encoded = args['obj'];
+        const encoded = params['obj'];
         const json = decodeURIComponent(encoded);
         const obj = JSON.parse(json);
         if (obj) {
@@ -79,36 +81,35 @@ function navigateInspectUrl(args: string[]) {
         }
     } catch (e) {
         selectedActivity$().next({});
-        log.error(e.message);
         throw e;
     }
 }
 
 function navigateAppSettingsUrl(args: string[]) {
-    try {
-        AddressBarActions.showAppSettings();
-    } catch (e) {
-        log.error(e.message);
-        throw e;
-    }
+    AddressBarActions.showAppSettings();
 }
 
 function navigateBotCredsUrl(args: string[]) {
-    try {
-        args = args || [];
-        if (!args.length) {
-            const settings = getSettings();
-            const activeBotId = settings.serverSettings.activeBot;
-            if (activeBotId) {
-                const activeBot = new ServerSettings(settings.serverSettings).botById(activeBotId);
-                AddressBarActions.selectBot(activeBot);
-            }
-        } else {
-            // todo
+    args = args || [];
+    if (!args.length) {
+        const settings = getSettings();
+        const activeBotId = settings.serverSettings.activeBot;
+        if (activeBotId) {
+            const activeBot = new ServerSettings(settings.serverSettings).botById(activeBotId);
+            AddressBarActions.selectBot(activeBot);
         }
-        AddressBarActions.showBotCreds();
-    } catch (e) {
-        log.error(e.message);
-        throw e;
+    } else {
+        // todo
+    }
+    AddressBarActions.showBotCreds();
+}
+
+function navigateCommandUrl(params: string[]) {
+    if (!params || !params['args'])
+        return;
+    const json = decodeURIComponent(params['args']);
+    const args = JSON.parse(json);
+    if (args.cmd === 'app.relaunch') {
+        remote.app.relaunch();
     }
 }

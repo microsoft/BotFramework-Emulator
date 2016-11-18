@@ -187,3 +187,8 @@ export const makeInspectorLink = (text: string, obj: any, title?: string): any =
         return text;
     }
 }
+
+export const makeCommandLink = (text: string, args: any, title?: string): any => {
+    const json = JSON.stringify(args);
+    return makeLinkMessage(text, `emulator://command?args=${encodeURIComponent(json)}`, title);
+}
