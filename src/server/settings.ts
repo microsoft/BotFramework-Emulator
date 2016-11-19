@@ -131,14 +131,6 @@ export const startup = () => {
         });
     });
 
-    // Some defaults must be computed.
-    if (Os.platform() === 'win32') {
-        frameworkDefault.ngrokPath = `${process.env['USERPROFILE']}\\AppData\\Roaming\\npm\\node_modules\\ngrok\\bin\\ngrok.exe`;
-    } else {
-        // mac and linux using: npm install -g ngrok
-        frameworkDefault.ngrokPath = '/usr/local/bin/ngrok';
-    }
-
     // Guard against calling getSettings before startup.
     started = true;
     // When changes to settings are made, save to disk.

@@ -129,9 +129,9 @@ export class Conversation {
             }
 
             if (!utils.isLocalhostUrl(bot.botUrl) && utils.isLocalhostUrl(emulator.framework.serviceUrl)) {
-                log.error('Error: The bot is running remotely, but the callback URL is localhost.');
-                log.error('Without tunneling software you will not receive replies.');
-                log.error(log.ngrokConfigurationLink('Click here'), 'to configure ngrok tunneling software.');
+                log.error('Error: The bot is remote, but the callback URL is localhost. Without tunneling software you will not receive replies.');
+                log.error("Fix it:", log.ngrokConfigurationLink('Configure ngrok'));
+                log.error('Learn more:', log.makeLinkMessage('Connecting to bots hosted remotely', 'https://github.com/Microsoft/BotFramework-Emulator/wiki/Getting-Started#connect-to-a-bot-hosted-remotely'));
             }
 
             if (bot.msaAppId && bot.msaPassword) {

@@ -108,8 +108,9 @@ export class BotFrameworkService extends RestServer {
                         path: this.ngrokPath
                     }, (err, url: string, inspectPort: string) => {
                         if (err) {
-                            log.warn(`failed to start ngrok: ${err.message || err.msg}`);
-                            log.debug(log.ngrokConfigurationLink('Click here'), 'to configure ngrok.');
+                            log.warn(`Failed to start ngrok: ${err.message || err.msg}`);
+                            log.error("Fix it:", log.ngrokConfigurationLink('Configure ngrok'));
+                            log.error("Learn more:", log.makeLinkMessage('Network tunneling (ngrok)', 'https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)'));
                         } else {
                             this.inspectUrl = `http://localhost:${inspectPort}`;
                             this.ngrokServiceUrl = url;
