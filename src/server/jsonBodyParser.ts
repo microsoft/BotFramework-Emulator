@@ -32,50 +32,53 @@
 //
 
 import * as Restify from 'restify';
-import * as log from './log';
 
+var bodyReader = require('../../node_modules/restify/lib/plugins/body_reader');
+var jsonParser = require('../../node_modules/restify/lib/plugins/json_body_parser');
 
-export class RestServer {
-    // REVIEW: Can we get this from the Restify.server?
-    port: number;
-    router: Restify.Server;
+export function jsonBodyParser(options?): Restify.RequestHandler[] {
+    options = options || {};
+    options.bodyReader = true;
 
-    constructor(name: string) {
-        this.router = Restify.createServer({
-            name: name
-        });
+    var read = bodyReader(options);
+    var parseJson = jsonParser(options);
 
-        this.router.use(Restify.acceptParser(this.router.acceptable));
-        this.router.use(stripEmptyBearerToken);
-        this.router.use(Restify.dateParser());
-        this.router.use(Restify.queryParser());
+    function parseBody(req, res, next) {
+        if (req.method === 'HEAD') {
+            next();
+            return;
+        }
+
+        if (req.method === 'GET') {
+            if (!options.requestBodyOnGet) {
+                next();
+                return;
+            }
+        }
+
+        if (req.contentLength() === 0 && !req.isChunked()) {
+            next();
+            return;
+        }
+
+        var parser;
+        var type = req.contentType().toLowerCase();
+
+        switch (type) {
+            case 'application/json':
+                parser = parseJson[0];
+                break;
+
+            default:
+                break;
+        }
+
+        if (parser) {
+            parser(req, res, next);
+        } else {
+            next();
+        }
     }
 
-    public restart(port: number) {
-        this.stop();
-        this.port = port;
-        return this.router.listen(this.port, () => {
-            log.debug(`${this.router.name} listening on ${this.router.url}`);
-        });
-    }
-
-    public stop() {
-        return this.router.close();
-    }
-}
-
-// when debugging locally with a bot with appid and password = ""
-// our csx environment will generate a Authorization token of "Bearer"
-// This confuses the auth system, we either want no auth header for local debug
-// or we want a full bearer token.  This parser strips off the Auth header if it is just "Bearer"
-function stripEmptyBearerToken(req, res, next) {
-    if (!req.headers.authorization) {
-        return (next());
-    }
-
-    var pieces = req.headers.authorization.split(' ', 2);
-    if (pieces.length == 1 && pieces[0] == "Bearer")
-        delete req.headers["authorization"];
-
-    return (next());
+    return ([read, parseBody]);
 }
