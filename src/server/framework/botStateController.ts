@@ -37,6 +37,7 @@ import * as ResponseTypes from '../../types/responseTypes';
 import { ErrorCodes, IResourceResponse, IErrorResponse } from '../../types/responseTypes';
 import { RestServer } from '../restServer';
 import { BotFrameworkAuthentication } from '../botFrameworkAuthentication';
+import { jsonBodyParser } from '../jsonBodyParser';
 
 
 interface IBotData {
@@ -77,9 +78,9 @@ export class BotStateController {
         server.router.get('/v3/botstate/:channelId/users/:userId', auth.verifyBotFramework, controller.getUserData);
         server.router.get('/v3/botstate/:channelId/conversations/:conversationId', auth.verifyBotFramework, controller.getConversationData);
         server.router.get('/v3/botstate/:channelId/conversations/:conversationId/users/:userId', auth.verifyBotFramework, controller.getPrivateConversationData);
-        server.router.post('/v3/botstate/:channelId/users/:userId', auth.verifyBotFramework, controller.setUserData);
-        server.router.post('/v3/botstate/:channelId/conversations/:conversationId', auth.verifyBotFramework, controller.setConversationData);
-        server.router.post('/v3/botstate/:channelId/conversations/:conversationId/users/:userId', auth.verifyBotFramework, controller.setPrivateConversationData);
+        server.router.post('/v3/botstate/:channelId/users/:userId', [auth.verifyBotFramework], jsonBodyParser(), [controller.setUserData]);
+        server.router.post('/v3/botstate/:channelId/conversations/:conversationId', [auth.verifyBotFramework], jsonBodyParser(), [controller.setConversationData]);
+        server.router.post('/v3/botstate/:channelId/conversations/:conversationId/users/:userId', [auth.verifyBotFramework], jsonBodyParser(), [controller.setPrivateConversationData]);
         server.router.del('/v3/botstate/:channelId/users/:userId', auth.verifyBotFramework, controller.deleteStateForUser);
     }
 

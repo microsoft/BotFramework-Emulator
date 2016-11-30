@@ -88,18 +88,22 @@ export class Conversation {
      */
     postActivityToBot(activity: IActivity, recordInConversation: boolean, cb?) {
         this.postage(this.botId, activity);
+        activity.serviceUrl = emulator.framework.serviceUrl;
         const bot = getSettings().botById(this.botId);
         if (bot) {
             let options: request.OptionsWithUrl = { url: bot.botUrl, method: "POST", json: activity };
 
             let responseCallback = (err, resp: http.IncomingMessage, body) => {
                 let messageActivity: IMessageActivity = activity;
-                let text: string = messageActivity.text || '';
+                let text = messageActivity.text || '';
                 if (text && text.length > 50)
                     text = text.substring(0, 50);
 
                 if (err) {
-                    log.error(err.message);
+                    log.error(
+                        '->',
+                        log.makeInspectorLink("POST", activity),
+                        err.message);
                 } else if (resp) {
                     if (!/^2\d\d$/.test(`${resp.statusCode}`)) {
                         log.error(

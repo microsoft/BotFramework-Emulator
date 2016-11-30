@@ -46,6 +46,7 @@ import * as log from '../log';
 import { RestServer } from '../restServer';
 import { BotFrameworkAuthentication } from '../botFrameworkAuthentication';
 import { error } from '../log';
+import { jsonBodyParser } from '../jsonBodyParser';
 
 
 interface IConversationAPIPathParameters {
@@ -56,14 +57,14 @@ interface IConversationAPIPathParameters {
 export class ConversationsController {
 
     public static registerRoutes(server: RestServer, auth: BotFrameworkAuthentication) {
-        server.router.post('/v3/conversations', auth.verifyBotFramework, this.createConversation);
-        server.router.post('/v3/conversations/:conversationId/activities', auth.verifyBotFramework, this.sendToConversation);
-        server.router.post('/v3/conversations/:conversationId/activities/:activityId', auth.verifyBotFramework, this.replyToActivity);
-        server.router.put('/v3/conversations/:conversationId/activities/:activityId', auth.verifyBotFramework, this.updateActivity);
+        server.router.post('/v3/conversations', [auth.verifyBotFramework], jsonBodyParser(), [this.createConversation]);
+        server.router.post('/v3/conversations/:conversationId/activities', [auth.verifyBotFramework], jsonBodyParser(), [this.sendToConversation]);
+        server.router.post('/v3/conversations/:conversationId/activities/:activityId', [auth.verifyBotFramework], jsonBodyParser(), [this.replyToActivity]);
+        server.router.put('/v3/conversations/:conversationId/activities/:activityId', [auth.verifyBotFramework], jsonBodyParser(), [this.updateActivity]);
         server.router.del('/v3/conversations/:conversationId/activities/:activityId', auth.verifyBotFramework, this.deleteActivity);
         server.router.get('/v3/conversations/:conversationId/members', auth.verifyBotFramework, this.getConversationMembers);
         server.router.get('/v3/conversations/:conversationId/activities/:activityId/members', auth.verifyBotFramework, this.getActivityMembers);
-        server.router.post('/v3/conversations/:conversationId/attachments', auth.verifyBotFramework, this.uploadAttachment);
+        server.router.post('/v3/conversations/:conversationId/attachments', [auth.verifyBotFramework], jsonBodyParser(), [this.uploadAttachment]);
     }
 
     // Create conversation API
