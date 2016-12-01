@@ -69,13 +69,6 @@ export class AddressBarMenu extends React.Component<{}, {}> {
             },
             */
             {
-                label: 'End Conversation',
-                click: () => {
-                    ConversationActions.endConversation();
-                },
-                enabled: inConversation
-            },
-            {
                 label: 'Conversation',
                 type: 'submenu',
                 enabled: inConversation,
@@ -92,6 +85,15 @@ export class AddressBarMenu extends React.Component<{}, {}> {
                             ConversationActions.removeRandomUser();
                         }
                     },
+                    {
+                        type: 'separator'
+                    },
+                    {
+                        label: 'End Conversation',
+                        click: () => {
+                            ConversationActions.endConversation();
+                        }
+                    }
                 ]
             },
             /*
