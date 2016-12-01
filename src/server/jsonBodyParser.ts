@@ -37,7 +37,7 @@ var bodyReader = require('../../node_modules/restify/lib/plugins/body_reader');
 var jsonParser = require('../../node_modules/restify/lib/plugins/json_body_parser');
 
 export function jsonBodyParser(options?): Restify.RequestHandler[] {
-    options = options || {};
+    options = options || { mapParams: false };
     options.bodyReader = true;
 
     var read = bodyReader(options);

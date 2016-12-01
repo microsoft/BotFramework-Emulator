@@ -40,6 +40,7 @@ import * as log from '../log';
 import { AddressBarOperators } from './addressBarOperators';
 import * as Constants from '../constants';
 import { remote, app, shell } from 'electron';
+import { uniqueId } from '../../utils';
 
 const { Menu, MenuItem } = remote;
 
@@ -47,11 +48,13 @@ export class AddressBarMenu extends React.Component<{}, {}> {
 
     showMenu() {
         const settings = getSettings();
+        const inConversation = ((settings.serverSettings.activeBot || '').length > 0 && (settings.conversation.conversationId || '').length > 0);
+        const haveActiveBot = (settings.serverSettings.activeBot || '').length > 0;
         const template: Electron.MenuItemOptions[] = [
             {
                 label: 'New Conversation',
                 click: () => ConversationActions.newConversation(),
-                enabled: (settings.serverSettings.activeBot || '').length > 0
+                enabled: haveActiveBot
             },
             /*
             {
@@ -70,7 +73,26 @@ export class AddressBarMenu extends React.Component<{}, {}> {
                 click: () => {
                     ConversationActions.endConversation();
                 },
-                enabled: ((settings.serverSettings.activeBot || '').length > 0 && (settings.conversation.conversationId || '').length > 0)
+                enabled: inConversation
+            },
+            {
+                label: 'Conversation',
+                type: 'submenu',
+                enabled: inConversation,
+                submenu: [
+                    {
+                        label: 'Add User',
+                        click: () => {
+                            ConversationActions.addUser(uniqueId(), uniqueId());
+                        }
+                    },
+                    {
+                        label: 'Remove User',
+                        click: () => {
+                            ConversationActions.removeRandomUser();
+                        }
+                    },
+                ]
             },
             /*
             {

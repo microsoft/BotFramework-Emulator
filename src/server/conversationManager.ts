@@ -149,6 +149,10 @@ export class Conversation {
     }
 
     sendBotAddedToConversation() {
+        this.sendConversationUpdate([{id: this.botId, name: undefined}], undefined);
+    }
+
+    sendConversationUpdate(membersAdded: IUser[], membersRemoved: IUser[]) {
         const activity: IConversationUpdateActivity = {
             type: 'conversationUpdate',
             channelId: 'emulator',
@@ -156,7 +160,8 @@ export class Conversation {
             from: {
                 id: this.conversationId
             },
-            membersAdded: [{ id: this.botId }]
+            membersAdded,
+            membersRemoved
         }
         this.postActivityToBot(activity, false, () => {});
     }
@@ -204,6 +209,7 @@ export class Conversation {
             name: name
         };
         this.members.push(user);
+        this.sendConversationUpdate([{name, id}], undefined);
         return user;
     }
 
@@ -212,6 +218,7 @@ export class Conversation {
         if (index >= 0) {
             this.members.splice(index, 1);
         }
+        this.sendConversationUpdate(undefined, [{id, name: undefined}]);
     }
 
     /**
@@ -323,8 +330,8 @@ class ConversationSet {
         this.botId = botId;
     }
 
-    newConversation(user: IUser): Conversation {
-        const conversation = new Conversation(this.botId, uniqueId(), user);
+    newConversation(user: IUser, conversationId?: string): Conversation {
+        const conversation = new Conversation(this.botId, conversationId || uniqueId(), user);
         this.conversations.push(conversation);
         return conversation;
     }
@@ -332,8 +339,6 @@ class ConversationSet {
     conversationById(conversationId: string): Conversation {
         return this.conversations.find(value => value.conversationId === conversationId);
     }
-
-
 }
 
 
@@ -361,13 +366,13 @@ export class ConversationManager {
     /**
      * Creates a new conversation.
      */
-    public newConversation(botId: string, user: IUser): Conversation {
+    public newConversation(botId: string, user: IUser, conversationId?: string): Conversation {
         let conversationSet = this.conversationSets.find(value => value.botId === botId);
         if (!conversationSet) {
             conversationSet = new ConversationSet(botId);
             this.conversationSets.push(conversationSet);
         }
-        let conversation = conversationSet.newConversation(user);
+        let conversation = conversationSet.newConversation(user, conversationId);
         return conversation;
     }
 

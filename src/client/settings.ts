@@ -262,6 +262,7 @@ export const startup = () => {
 
 /**
  * Sends settings change requests to the server.
+ * TODO: Pass this through the Emulator REST API rather than IPC (for future headless emulator support).
  */
 export const serverChangeSetting = (action: string, state) => {
     Electron.ipcRenderer.send('serverChangeSetting', action, state);

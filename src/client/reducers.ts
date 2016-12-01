@@ -35,12 +35,14 @@ import { Reducer } from 'redux';
 import { IBot } from '../types/botTypes';
 import { IUser } from '../types/userTypes';
 import { uniqueId } from '../utils';
+import { Emulator } from './emulator';
 import * as log from './log';
 import {
     ISettings as IServerSettings,
     Settings as ServerSettings
 } from '../types/serverSettingsTypes';
 import {
+    getSettings,
     dispatch,
     ISettings,
     layoutDefault,
@@ -111,6 +113,17 @@ type ConversationAction = {
     type: 'Conversation_SetConversationId',
     state: {
         conversationId: string
+    }
+} | {
+    type: 'Conversation_AddUser',
+    state: {
+        name: string,
+        id: string
+    }
+} | {
+    type: 'Conversation_RemoveUser',
+    state: {
+        id: string
     }
 }
 
@@ -265,6 +278,15 @@ export class ConversationActions {
                 conversationId
             }
         });
+    }
+    static addUser(name: string, id: string) {
+        Emulator.addUser(name, id);
+    }
+    static removeUser(id: string) {
+        Emulator.removeUser(id);
+    }
+    static removeRandomUser() {
+        Emulator.removeRandomUser();
     }
 }
 

@@ -33,11 +33,11 @@
 
 import * as Restify from 'restify';
 import * as HttpStatus from "http-status-codes";
-import * as ResponseTypes from '../../types/responseTypes';
-import { ErrorCodes, IResourceResponse, IErrorResponse } from '../../types/responseTypes';
-import { RestServer } from '../restServer';
-import { BotFrameworkAuthentication } from '../botFrameworkAuthentication';
-import { jsonBodyParser } from '../jsonBodyParser';
+import * as ResponseTypes from '../../../types/responseTypes';
+import { ErrorCodes, IResourceResponse, IErrorResponse } from '../../../types/responseTypes';
+import { RestServer } from '../../restServer';
+import { BotFrameworkAuthentication } from '../../botFrameworkAuthentication';
+import { jsonBodyParser } from '../../jsonBodyParser';
 
 
 interface IBotData {

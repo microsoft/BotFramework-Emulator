@@ -32,21 +32,21 @@
 //
 
 import * as Restify from 'restify';
-import { IGenericActivity, IConversationParameters } from '../../types/activityTypes';
-import { IUser } from '../../types/userTypes';
-import { getSettings, getStore } from '../settings';
-import { emulator } from '../emulator';
-import { uniqueId } from '../../utils';
+import { IGenericActivity, IConversationParameters } from '../../../types/activityTypes';
+import { IUser } from '../../../types/userTypes';
+import { getSettings, getStore } from '../../settings';
+import { emulator } from '../../emulator';
+import { uniqueId } from '../../../utils';
 import * as HttpStatus from "http-status-codes";
-import * as ResponseTypes from '../../types/responseTypes';
-import { ErrorCodes, IResourceResponse, IErrorResponse } from '../../types/responseTypes';
-import { IAttachmentData, IAttachmentInfo, IAttachmentView } from '../../types/attachmentTypes';
+import * as ResponseTypes from '../../../types/responseTypes';
+import { ErrorCodes, IResourceResponse, IErrorResponse } from '../../../types/responseTypes';
+import { IAttachmentData, IAttachmentInfo, IAttachmentView } from '../../../types/attachmentTypes';
 import { AttachmentsController } from './attachmentsController';
-import * as log from '../log';
-import { RestServer } from '../restServer';
-import { BotFrameworkAuthentication } from '../botFrameworkAuthentication';
-import { error } from '../log';
-import { jsonBodyParser } from '../jsonBodyParser';
+import * as log from '../../log';
+import { RestServer } from '../../restServer';
+import { BotFrameworkAuthentication } from '../../botFrameworkAuthentication';
+import { error } from '../../log';
+import { jsonBodyParser } from '../../jsonBodyParser';
 
 
 interface IConversationAPIPathParameters {
@@ -73,17 +73,21 @@ export class ConversationsController {
         try {
             console.log("framework: newConversation");
 
+            const settings = getSettings();
             // look up bot
-            const activeBot = getSettings().getActiveBot();
+            const activeBot = settings.getActiveBot();
             if (!activeBot)
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
 
-            const users = getSettings().users;
+            const users = settings.users;
             if (conversationParameters.members == null)
                 throw ResponseTypes.createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.MissingProperty, "members missing");
 
             if (conversationParameters.members.length != 1)
                 throw ResponseTypes.createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.BadSyntax, "Emulator only supports creating conversation with 1 user");
+
+            if (conversationParameters.members[0].id !== settings.users.currentUserId)
+                throw ResponseTypes.createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.BadSyntax, "Emulator only supports creating conversation with the current user");
 
             if (conversationParameters.bot == null)
                 throw ResponseTypes.createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.MissingProperty, "missing Bot property");

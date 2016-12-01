@@ -31,49 +31,38 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Reducer } from 'redux';
-import { IUserSettings, usersDefault } from '../../types/serverSettingsTypes'
-import { IUser } from '../../types/userTypes';
+import * as request from 'request';
+import { getSettings } from './settings';
 
 
-export type UsersAction = {
-    type: 'Users_SetCurrentUser',
-    state: {
-       user: IUser
-    }
-} | {
-    type: 'Users_AddUsers',
-    state: {
-        users: IUser[]
-    }
-} | {
-    type: 'Users_RemoveUsers',
-    state: {
-        users: IUser[]
-    }
-}
+export class Emulator {
 
-export const usersReducer: Reducer<IUserSettings> = (
-    state = usersDefault,
-    action: UsersAction
-) => {
-    switch (action.type) {
-        case 'Users_SetCurrentUser':
-            const usersById = Object.assign({}, state.usersById );
-            usersById[action.state.user.id] = action.state.user;
-            return Object.assign({}, { currentUserId: action.state.user.id, usersById });
-        case 'Users_AddUsers': {
-            let newUsersById = {};
-            for(let key in action.state.users) {
-                let user = action.state.users[key];
-                newUsersById[user.id] = user;
-            }
-            return Object.assign({}, state, { usersById: newUsersById });
-        }
-        case 'Users_RemoveUsers': {
-            //Object.assign({}, state, { }
-        }
-        default:
-            return state;
+    public static addUser(name: string, id: string) {
+        const settings = getSettings();
+        let options: request.OptionsWithUrl = {
+            url: `http://localhost:${settings.serverSettings.framework.port}/emulator/${settings.conversation.conversationId}/users`,
+            method: "POST",
+            json: [{ name, id }]
+        };
+        request(options);
+    }
+
+    public static removeUser(id: string) {
+        const settings = getSettings();
+        let options: request.OptionsWithUrl = {
+            url: `http://localhost:${settings.serverSettings.framework.port}/emulator/${settings.conversation.conversationId}/users`,
+            method: "DELETE",
+            json: [{ id }]
+        };
+        request(options);
+    }
+
+    public static removeRandomUser() {
+        const settings = getSettings();
+        let options: request.OptionsWithUrl = {
+            url: `http://localhost:${settings.serverSettings.framework.port}/emulator/${settings.conversation.conversationId}/users`,
+            method: "DELETE"
+        };
+        request(options);
     }
 }
