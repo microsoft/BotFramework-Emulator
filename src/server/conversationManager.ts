@@ -35,7 +35,7 @@ import * as request from 'request';
 import * as http from 'http';
 import * as ngrok from './ngrok';
 import { IUser } from '../types/userTypes';
-import { IChannelAccount, IConversationAccount } from '../types/accountTypes';
+import { IConversationAccount } from '../types/accountTypes';
 import { IActivity, IConversationUpdateActivity, IMessageActivity } from '../types/activityTypes';
 import { uniqueId } from '../utils';
 import { getSettings, authenticationSettings, addSettingsListener } from './settings';
@@ -60,7 +60,7 @@ export class Conversation {
     constructor(botId: string, conversationId: string, user: IUser) {
         this.botId = botId;
         this.conversationId = conversationId;
-        this.members.push({ id: botId });
+        this.members.push({ id: botId, name: "bot" });
         this.members.push({ id: user.id, name: user.name });
     }
 
@@ -73,7 +73,7 @@ export class Conversation {
     // the list of activities in this conversation
     public activities: IActivity[] = [];
 
-    public members: IChannelAccount[] = [];
+    public members: IUser[] = [];
 
     private postage(recipientId: string, activity: IActivity) {
         activity.id = activity.id || uniqueId();
@@ -148,10 +148,6 @@ export class Conversation {
         }
     }
 
-    sendBotAddedToConversation() {
-        this.sendConversationUpdate([{id: this.botId, name: undefined}], undefined);
-    }
-
     sendConversationUpdate(membersAdded: IUser[], membersRemoved: IUser[]) {
         const activity: IConversationUpdateActivity = {
             type: 'conversationUpdate',
@@ -203,13 +199,12 @@ export class Conversation {
     }
 
     // add member
-    public addMember(id: string, name: string): IChannelAccount {
-        let user: IChannelAccount = {
-            id: id,
-            name: name
-        };
+    public addMember(id: string, name: string): IUser {
+        name = name || `user-${uniqueId(4)}`;
+        id = id || uniqueId();
+        let user = {name, id};
         this.members.push(user);
-        this.sendConversationUpdate([{name, id}], undefined);
+        this.sendConversationUpdate([user], undefined);
         return user;
     }
 

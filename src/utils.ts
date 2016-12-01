@@ -40,7 +40,7 @@ import * as url from 'url';
 /**
  * Generates a random id that is unique enough for our purposes.
  */
-export const uniqueId = () => Math.random().toString(24).slice(2);
+export const uniqueId = (length?: number) => Math.random().toString(24).substr(2, length);
 
 const ensureStoragePath = (): string => {
     const app = Electron.app || Electron.remote.app;

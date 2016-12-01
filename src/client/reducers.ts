@@ -279,7 +279,7 @@ export class ConversationActions {
             }
         });
     }
-    static addUser(name: string, id: string) {
+    static addUser(name?: string, id?: string) {
         Emulator.addUser(name, id);
     }
     static removeUser(id: string) {

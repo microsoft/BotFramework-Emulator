@@ -37,7 +37,7 @@ import { getSettings } from './settings';
 
 export class Emulator {
 
-    public static addUser(name: string, id: string) {
+    public static addUser(name?: string, id?: string) {
         const settings = getSettings();
         let options: request.OptionsWithUrl = {
             url: `http://localhost:${settings.serverSettings.framework.port}/emulator/${settings.conversation.conversationId}/users`,

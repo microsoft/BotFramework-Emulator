@@ -76,7 +76,7 @@ export class AddressBarMenu extends React.Component<{}, {}> {
                     {
                         label: 'Add User',
                         click: () => {
-                            ConversationActions.addUser(uniqueId(), uniqueId());
+                            ConversationActions.addUser();
                         }
                     },
                     {
