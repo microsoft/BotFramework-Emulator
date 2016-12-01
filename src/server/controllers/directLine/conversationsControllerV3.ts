@@ -33,19 +33,21 @@
 
 import * as Restify from 'restify';
 import * as HttpStatus from "http-status-codes";
-import { emulator } from '../emulator';
-import { getSettings } from '../settings';
-import { uniqueId } from '../../utils';
-import { IGenericActivity } from '../../types/activityTypes';
-import { IAttachment } from '../../types/attachmentTypes';
-import { IAttachmentData } from '../../types/attachmentTypes';
+import { emulator } from '../../emulator';
+import { getSettings, dispatch } from '../../settings';
+import { uniqueId } from '../../../utils';
+import { IGenericActivity } from '../../../types/activityTypes';
+import { IAttachment } from '../../../types/attachmentTypes';
+import { IAttachmentData } from '../../../types/attachmentTypes';
 import { AttachmentsController } from '../framework/attachmentsController';
-import * as log from '../log';
+import * as log from '../../log';
 import * as Os from 'os';
 import * as Fs from 'fs';
 import * as Formidable from 'formidable';
-import { RestServer } from '../restServer';
-import { jsonBodyParser } from '../jsonBodyParser';
+import { RestServer } from '../../restServer';
+import { jsonBodyParser } from '../../jsonBodyParser';
+import { usersDefault } from '../../../types/serverSettingsTypes';
+
 
 export class ConversationsControllerV3 {
 
@@ -70,11 +72,22 @@ export class ConversationsControllerV3 {
             let created = false;
             const auth = req.header('Authorization');
             const tokenMatch = /Bearer\s+(.+)/.exec(auth);
-            let conversation = emulator.conversations.conversationById(activeBot.botId, tokenMatch[1]);
+            const conversationId = tokenMatch[1];
+            let conversation = emulator.conversations.conversationById(activeBot.botId, conversationId);
             if (!conversation) {
                 const users = getSettings().users;
-                const currentUser = users.usersById[users.currentUserId];
-                conversation = emulator.conversations.newConversation(activeBot.botId, currentUser);
+                let currentUser = users.usersById[users.currentUserId];
+                // TODO: This is a band-aid until state system cleanup
+                if (!currentUser) {
+                    currentUser = usersDefault.usersById['default-user'];
+                    dispatch({
+                        type: 'Users_SetCurrentUser',
+                        state: {
+                            user: currentUser
+                        }
+                    })
+                }
+                conversation = emulator.conversations.newConversation(activeBot.botId, currentUser, conversationId);
                 conversation.sendBotAddedToConversation();
                 created = true;
             }

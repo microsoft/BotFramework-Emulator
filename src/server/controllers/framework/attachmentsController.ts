@@ -33,12 +33,12 @@
 
 import * as Restify from 'restify';
 import * as HttpStatus from "http-status-codes";
-import * as ResponseTypes from '../../types/responseTypes';
-import { ErrorCodes, IResourceResponse, IErrorResponse, APIException } from '../../types/responseTypes';
-import { IAttachmentData, IAttachmentInfo, IAttachmentView } from '../../types/attachmentTypes';
-import { uniqueId } from '../../utils';
-import { RestServer } from '../restServer';
-import * as log from '../log';
+import * as ResponseTypes from '../../../types/responseTypes';
+import { ErrorCodes, IResourceResponse, IErrorResponse, APIException } from '../../../types/responseTypes';
+import { IAttachmentData, IAttachmentInfo, IAttachmentView } from '../../../types/attachmentTypes';
+import { uniqueId } from '../../../utils';
+import { RestServer } from '../../restServer';
+import * as log from '../../log';
 
 
 interface IAttachmentParams {
