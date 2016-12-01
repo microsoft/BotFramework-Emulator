@@ -88,7 +88,8 @@ export class ConversationsControllerV3 {
                     })
                 }
                 conversation = emulator.conversations.newConversation(activeBot.botId, currentUser, conversationId);
-                conversation.sendBotAddedToConversation();
+                // Filter out the user, since DirectLine doesn't include it in this message.
+                conversation.sendConversationUpdate(conversation.members.filter(member => member.id !== currentUser.id), undefined);
                 created = true;
             }
             res.json(created ? HttpStatus.CREATED : HttpStatus.OK, {
