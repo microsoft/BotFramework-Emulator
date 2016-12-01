@@ -87,6 +87,7 @@ export class Conversation {
      * Sends the activity to the conversation's bot.
      */
     postActivityToBot(activity: IActivity, recordInConversation: boolean, cb?) {
+        // Do not make a shallow copy here before modifying
         this.postage(this.botId, activity);
         activity.serviceUrl = emulator.framework.serviceUrl;
         const bot = getSettings().botById(this.botId);
@@ -166,6 +167,8 @@ export class Conversation {
      * Queues activity for delivery to user.
      */
     public postActivityToUser(activity: IActivity): IResourceResponse {
+        // Make a shallow copy before modifying
+        activity = Object.assign({}, activity);
         this.postage('', activity);
         const botId = activity.from.id;
         const settings = getSettings();
