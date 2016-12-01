@@ -167,15 +167,15 @@ export class Conversation {
      * Queues activity for delivery to user.
      */
     public postActivityToUser(activity: IActivity): IResourceResponse {
-        // Make a shallow copy before modifying
-        activity = Object.assign({}, activity);
-        this.postage('', activity);
-        const botId = activity.from.id;
         const settings = getSettings();
+        // Make a shallow copy before modifying & queuing
+        activity = Object.assign({}, activity);
+        this.postage(settings.users.currentUserId, activity);
+        const botId = activity.from.id;
         if (!activity.from.name) {
             activity.from.name = "Bot";
         }
-        this.activities.push(Object.assign({}, activity));
+        this.activities.push(activity);
         return ResponseTypes.createResourceResponse(activity.id);
     }
 
