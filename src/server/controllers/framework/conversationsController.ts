@@ -162,7 +162,6 @@ export class ConversationsController {
             res.send(HttpStatus.OK, response);
             res.end();
             log.api(`Send[${activity.type}]`, req, res, activity, response, getActivityText(activity));
-            return;
         } catch (err) {
             let error = ResponseTypes.sendErrorResponse(req, res, next, err);
             log.api(`Send[${activity.type}]`, req, res, activity, error, getActivityText(activity));
@@ -201,7 +200,6 @@ export class ConversationsController {
             res.send(HttpStatus.OK, response);
             res.end();
             log.api(`Reply[${activity.type}]`, req, res, activity, response, getActivityText(activity));
-            return;
         } catch (err) {
             let error = ResponseTypes.sendErrorResponse(req, res, next, err);
             log.api(`Reply[${activity.type}]`, req, res, activity, error, getActivityText(activity));
@@ -239,7 +237,6 @@ export class ConversationsController {
             res.send(HttpStatus.OK, response);
             res.end();
             log.api(`Update[${activity.id}]`, req, res, activity, response, getActivityText(activity));
-            return;
         } catch (err) {
             let error = ResponseTypes.sendErrorResponse(req, res, next, err);
             log.api(`Update[${activity.id}]`, req, res, activity, error, getActivityText(activity));
@@ -267,7 +264,6 @@ export class ConversationsController {
             res.send(HttpStatus.OK);
             res.end();
             log.api(`DeleteActivity(${parms.activityId})`, req, res);
-            return;
         } catch (err) {
             let error = ResponseTypes.sendErrorResponse(req, res, next, err);
             log.api(`DeleteActivity(${parms.activityId})`, req, res, null, error);
