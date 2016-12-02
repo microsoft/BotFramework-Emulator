@@ -255,11 +255,11 @@ export class AddressBarActions {
 }
 
 export class ConversationActions {
-    static newConversation() {
+    static newConversation(conversationId?: number) {
         dispatch<ConversationAction>({
             type: 'Conversation_SetConversationId',
             state: {
-                conversationId: uniqueId()
+                conversationId: conversationId || uniqueId()
             }
         });
     }

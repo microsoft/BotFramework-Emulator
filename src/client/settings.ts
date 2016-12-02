@@ -36,7 +36,7 @@ import { Store, createStore, combineReducers, Reducer, Action } from 'redux';
 import { Subscription, BehaviorSubject } from '@reactivex/rxjs';
 import { ActivityOrID } from '../types/activityTypes';
 import { ISettings as IServerSettings, Settings as ServerSettings } from '../types/serverSettingsTypes';
-import { InspectorActions } from './reducers';
+import { InspectorActions, ConversationActions } from './reducers';
 import { loadSettings, saveSettings } from '../utils';
 import {
     layoutReducer,
@@ -254,6 +254,9 @@ export const startup = () => {
     });
     Electron.ipcRenderer.on('show-about', () => {
         AddressBarActions.showAbout()
+    });
+    Electron.ipcRenderer.on('new-conversation', (event, ...args) => {
+        ConversationActions.newConversation(args[0]);
     });
 
     // Let the server know we're done starting up. In response, it will send us it's current settings (bot list and such).
