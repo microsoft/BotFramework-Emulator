@@ -109,7 +109,6 @@ export class ConversationsController {
                 state: { users: newUsers }
             });
 
-
             let newConversation = emulator.conversations.newConversation(activeBot.botId, users.usersById[conversationParameters.members[0].id]);
             let activityId: string = null;
             if (conversationParameters.activity != null) {
@@ -126,6 +125,9 @@ export class ConversationsController {
             res.send(HttpStatus.OK, response);
             res.end();
             log.api('createConversation', req, res, conversationParameters, response, getActivityText(conversationParameters.activity));
+
+            // Tell the client side to start a new conversation.
+            emulator.send('new-conversation', newConversation.conversationId);
         } catch (err) {
             var error = ResponseTypes.sendErrorResponse(req, res, next, err);
             log.api('createConversation', req, res, conversationParameters, error, getActivityText(conversationParameters.activity));
