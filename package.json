@@ -76,7 +76,7 @@
     "jsonwebtoken": "7.1.9",
     "lock": "0.1.2",
     "mkdirp": "0.5.1",
-    "msbotchat": "git+https://github.com/fuselabs/botchat#364ce6d153ef4a68f7ee5815d01d16fa534807f2",
+    "msbotchat": "git+https://github.com/fuselabs/botchat#f9c96e00b0ce600865d6ea931d2dd1ff4cd79492",
     "node-uuid": "1.4.3",
     "react": "15.3.2",
     "react-dom": "15.3.2",

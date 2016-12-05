@@ -77,6 +77,19 @@
         color: #000;
     }
 
+    .wc-card button {
+        border: 1px solid #ccc;
+        border-radius: 1px;
+        cursor: pointer;
+        outline: none;
+        transition: color .2s ease, background-color .2s ease;
+        background-color: transparent;
+        color: #3A96DD;
+        min-height: 32px;
+        width: 100%;
+        padding: 0 16px;
+    }
+
     .wc-list ul {
         padding: 0;
     }
