@@ -36,7 +36,6 @@ import { getSettings } from './settings';
 
 
 export class Emulator {
-
     public static addUser(name?: string, id?: string) {
         const settings = getSettings();
         let options: request.OptionsWithUrl = {
@@ -61,6 +60,51 @@ export class Emulator {
         const settings = getSettings();
         let options: request.OptionsWithUrl = {
             url: `http://localhost:${settings.serverSettings.framework.port}/emulator/${settings.conversation.conversationId}/users`,
+            method: "DELETE"
+        };
+        request(options);
+    }
+
+    public static botContactAdded() {
+        const settings = getSettings();
+        let options: request.OptionsWithUrl = {
+            url: `http://localhost:${settings.serverSettings.framework.port}/emulator/${settings.conversation.conversationId}/contacts`,
+            method: "POST"
+        };
+        request(options);
+    }
+
+    public static botContactRemoved() {
+        const settings = getSettings();
+        let options: request.OptionsWithUrl = {
+            url: `http://localhost:${settings.serverSettings.framework.port}/emulator/${settings.conversation.conversationId}/contacts`,
+            method: "DELETE"
+        };
+        request(options);
+    }
+
+    public static typing() {
+        const settings = getSettings();
+        let options: request.OptionsWithUrl = {
+            url: `http://localhost:${settings.serverSettings.framework.port}/emulator/${settings.conversation.conversationId}/typing`,
+            method: "POST"
+        };
+        request(options);
+    }
+
+    public static ping() {
+        const settings = getSettings();
+        let options: request.OptionsWithUrl = {
+            url: `http://localhost:${settings.serverSettings.framework.port}/emulator/${settings.conversation.conversationId}/ping`,
+            method: "POST"
+        };
+        request(options);
+    }
+
+    public static deleteUserData() {
+        const settings = getSettings();
+        let options: request.OptionsWithUrl = {
+            url: `http://localhost:${settings.serverSettings.framework.port}/emulator/${settings.conversation.conversationId}/userdata`,
             method: "DELETE"
         };
         request(options);

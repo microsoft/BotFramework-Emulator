@@ -63,6 +63,11 @@ export class EmulatorController {
         server.router.get('/emulator/:conversationId/users', this.getUsers);
         server.router.post('/emulator/:conversationId/users', jsonBodyParser(), this.addUsers);
         server.router.del('/emulator/:conversationId/users', this.removeUsers);
+        server.router.post('/emulator/:conversationId/contacts', this.contactAdded);
+        server.router.del('/emulator/:conversationId/contacts', this.contactRemoved);
+        server.router.post('/emulator/:conversationId/typing', this.typing);
+        server.router.post('/emulator/:conversationId/ping', this.ping);
+        server.router.del('/emulator/:conversationId/userdata', this.deleteUserData);
     }
 
     static getUsers = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
@@ -82,7 +87,7 @@ export class EmulatorController {
             members.forEach((member) => {
                 conversation.addMember(member.id, member.name);
             });
-            res.json(HttpStatus.OK);
+            res.send(HttpStatus.OK);
             res.end();
         } catch (err) {
             ResponseTypes.sendErrorResponse(req, res, next, err);
@@ -102,7 +107,62 @@ export class EmulatorController {
             members.forEach((member) => {
                 conversation.removeMember(member.id);
             });
-            res.json(HttpStatus.OK);
+            res.send(HttpStatus.OK);
+            res.end();
+        } catch (err) {
+            ResponseTypes.sendErrorResponse(req, res, next, err);
+        }
+    }
+
+    static contactAdded = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+        try {
+            const conversation = getConversation(req.params.conversationId);
+            conversation.sendContactAdded();
+            res.send(HttpStatus.OK);
+            res.end();
+        } catch (err) {
+            ResponseTypes.sendErrorResponse(req, res, next, err);
+        }
+    }
+
+    static contactRemoved = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+        try {
+            const conversation = getConversation(req.params.conversationId);
+            conversation.sendContactRemoved();
+            res.send(HttpStatus.OK);
+            res.end();
+        } catch (err) {
+            ResponseTypes.sendErrorResponse(req, res, next, err);
+        }
+    }
+
+    static typing = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+        try {
+            const conversation = getConversation(req.params.conversationId);
+            conversation.sendTyping();
+            res.send(HttpStatus.OK);
+            res.end();
+        } catch (err) {
+            ResponseTypes.sendErrorResponse(req, res, next, err);
+        }
+    }
+
+    static ping = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+        try {
+            const conversation = getConversation(req.params.conversationId);
+            conversation.sendPing();
+            res.send(HttpStatus.OK);
+            res.end();
+        } catch (err) {
+            ResponseTypes.sendErrorResponse(req, res, next, err);
+        }
+    }
+
+    static deleteUserData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+        try {
+            const conversation = getConversation(req.params.conversationId);
+            conversation.sendDeleteUserData();
+            res.send(HttpStatus.OK);
             res.end();
         } catch (err) {
             ResponseTypes.sendErrorResponse(req, res, next, err);
