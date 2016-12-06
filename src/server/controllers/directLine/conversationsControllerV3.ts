@@ -39,7 +39,7 @@ import { uniqueId } from '../../../utils';
 import { IGenericActivity } from '../../../types/activityTypes';
 import { IAttachment } from '../../../types/attachmentTypes';
 import { IAttachmentData } from '../../../types/attachmentTypes';
-import { AttachmentsController } from '../framework/attachmentsController';
+import { AttachmentsController } from '../connector/attachmentsController';
 import * as log from '../../log';
 import * as Os from 'os';
 import * as Fs from 'fs';

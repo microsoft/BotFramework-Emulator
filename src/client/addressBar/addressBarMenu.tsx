@@ -35,6 +35,7 @@ import * as React from 'react';
 import { getSettings, ISettings, addSettingsListener } from '../settings';
 import { Settings as ServerSettings } from '../../types/serverSettingsTypes';
 import { AddressBarActions, ConversationActions, ServerSettingsActions } from '../reducers';
+import { Emulator } from '../emulator';
 import { IBot, newBot } from '../../types/botTypes';
 import * as log from '../log';
 import { AddressBarOperators } from './addressBarOperators';
@@ -76,13 +77,43 @@ export class AddressBarMenu extends React.Component<{}, {}> {
                     {
                         label: 'Add User',
                         click: () => {
-                            ConversationActions.addUser();
+                            Emulator.addUser();
                         }
                     },
                     {
                         label: 'Remove User',
                         click: () => {
-                            ConversationActions.removeRandomUser();
+                            Emulator.removeRandomUser();
+                        }
+                    },
+                    {
+                        label: 'Bot contact added',
+                        click: () => {
+                            Emulator.botContactAdded();
+                        }
+                    },
+                    {
+                        label: 'Bot contact removed',
+                        click: () => {
+                            Emulator.botContactRemoved();
+                        }
+                    },
+                    {
+                        label: 'Typing',
+                        click: () => {
+                            Emulator.typing();
+                        }
+                    },
+                    {
+                        label: 'Ping',
+                        click: () => {
+                            Emulator.ping();
+                        }
+                    },
+                    {
+                        label: 'Delete User Data',
+                        click: () => {
+                            Emulator.deleteUserData();
                         }
                     },
                     {

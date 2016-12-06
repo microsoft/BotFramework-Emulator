@@ -33,9 +33,9 @@
 
 import * as Restify from 'restify';
 import { BotFrameworkAuthentication } from './botFrameworkAuthentication';
-import { ConversationsController } from './controllers/framework/conversationsController';
-import { AttachmentsController } from './controllers/framework/attachmentsController';
-import { BotStateController } from './controllers/framework/botStateController';
+import { ConversationsController } from './controllers/connector/conversationsController';
+import { AttachmentsController } from './controllers/connector/attachmentsController';
+import { BotStateController } from './controllers/connector/botStateController';
 import { ConversationsControllerV3 as DirectLineConversationsController } from './controllers/directLine/conversationsControllerV3';
 import { EmulatorController } from './controllers/emulator/emulatorController';
 import { RestServer } from './restServer';

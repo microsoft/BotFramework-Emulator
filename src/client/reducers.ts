@@ -279,15 +279,6 @@ export class ConversationActions {
             }
         });
     }
-    static addUser(name?: string, id?: string) {
-        Emulator.addUser(name, id);
-    }
-    static removeUser(id: string) {
-        Emulator.removeUser(id);
-    }
-    static removeRandomUser() {
-        Emulator.removeRandomUser();
-    }
 }
 
 export class LogActions {

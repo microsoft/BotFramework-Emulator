@@ -36,9 +36,9 @@ import * as http from 'http';
 import * as ngrok from './ngrok';
 import { IUser } from '../types/userTypes';
 import { IConversationAccount } from '../types/accountTypes';
-import { IActivity, IConversationUpdateActivity, IMessageActivity } from '../types/activityTypes';
+import { IActivity, IConversationUpdateActivity, IMessageActivity, IContactRelationUpdateActivity, ITypingActivity } from '../types/activityTypes';
 import { uniqueId } from '../utils';
-import { getSettings, authenticationSettings, addSettingsListener } from './settings';
+import { dispatch, getSettings, authenticationSettings, addSettingsListener } from './settings';
 import { Settings } from '../types/serverSettingsTypes';
 import * as jwt from 'jsonwebtoken';
 import * as oid from './OpenIdMetadata';
@@ -48,6 +48,7 @@ import { ErrorCodes, IResourceResponse, IErrorResponse } from '../types/response
 import { emulator } from './emulator';
 import * as log from './log';
 import * as utils from '../utils';
+import { usersDefault } from '../types/serverSettingsTypes';
 
 
 /**
@@ -75,6 +76,22 @@ export class Conversation {
 
     public members: IUser[] = [];
 
+    getCurrentUser() {
+        const users = getSettings().users;
+        let currentUser = users.usersById[users.currentUserId];
+        // TODO: This is a band-aid until state system cleanup
+        if (!currentUser) {
+            currentUser = usersDefault.usersById['default-user'];
+            dispatch({
+                type: 'Users_SetCurrentUser',
+                state: {
+                    user: currentUser
+                }
+            })
+        }
+        return currentUser;
+    }
+
     private postage(recipientId: string, activity: IActivity) {
         activity.id = activity.id || uniqueId();
         activity.channelId = 'emulator';
@@ -90,6 +107,7 @@ export class Conversation {
         // Do not make a shallow copy here before modifying
         this.postage(this.botId, activity);
         activity.serviceUrl = emulator.framework.serviceUrl;
+        activity.from = this.getCurrentUser();
         const bot = getSettings().botById(this.botId);
         if (bot) {
             let options: request.OptionsWithUrl = { url: bot.botUrl, method: "POST", json: activity };
@@ -152,11 +170,6 @@ export class Conversation {
     sendConversationUpdate(membersAdded: IUser[], membersRemoved: IUser[]) {
         const activity: IConversationUpdateActivity = {
             type: 'conversationUpdate',
-            channelId: 'emulator',
-            serviceUrl: emulator.framework.serviceUrl,
-            from: {
-                id: this.conversationId
-            },
             membersAdded,
             membersRemoved
         }
@@ -217,6 +230,43 @@ export class Conversation {
             this.members.splice(index, 1);
         }
         this.sendConversationUpdate(undefined, [{id, name: undefined}]);
+    }
+
+    public sendContactAdded() {
+        const activity: IContactRelationUpdateActivity = {
+            type: 'contactRelationUpdate',
+            action: 'add'
+        }
+        this.postActivityToBot(activity, false, () => {});
+    }
+
+    public sendContactRemoved() {
+        const activity: IContactRelationUpdateActivity = {
+            type: 'contactRelationUpdate',
+            action: 'remove'
+        }
+        this.postActivityToBot(activity, false, () => {});
+    }
+
+    public sendTyping() {
+        const activity: IActivity = {
+            type: 'typing'
+        }
+        this.postActivityToBot(activity, false, () => {});
+    }
+
+    public sendPing() {
+        const activity: IActivity = {
+            type: 'ping'
+        }
+        this.postActivityToBot(activity, false, () => {});
+    }
+
+    public sendDeleteUserData() {
+        const activity: IActivity = {
+            type: 'deleteUserData'
+        }
+        this.postActivityToBot(activity, false, () => {});
     }
 
     /**
