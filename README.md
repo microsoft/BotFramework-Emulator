@@ -35,7 +35,7 @@ If you are interested in fixing issues and contributing directly to the code bas
 
 ## Feedback
 
-* File a bug in [GitHub Issues](https://github.com/Microsoft/BotFramework-Emulator/wiki/Submitting-Bugs-&-Suggestions)
+* File a bug or suggestion in [GitHub Issues](https://github.com/Microsoft/BotFramework-Emulator/wiki/Submitting-Bugs-&-Suggestions)
 * Ask a question on [Stack Overflow](https://stackoverflow.com/questions/tagged/botframework)
 
 ## Related
