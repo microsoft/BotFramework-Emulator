@@ -45,11 +45,8 @@
     }
 
     ::-webkit-scrollbar-thumb {
-        border-radius: 2px;
+        border-radius: 1px;
         background: #D5D5D5;
-    }
-    ::-webkit-scrollbar-thumb:window-inactive {
-        background:#EFEFEF;
     }
 
 /* botchat overrides */
@@ -678,6 +675,10 @@
         -webkit-user-select: text;
     }
 
+    .wc-inspectorview::-webkit-scrollbar-thumb {
+        background: #403F3F;
+    }
+
     .wc-inspectorview-json {
         font-size: 13px;
 	    font-family: 'Menlo', 'Monaco', 'Consolas', "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
@@ -733,6 +734,10 @@
     .wc-logview * {
         -webkit-user-select: text;
         font-size: 12px;
+    }
+
+    .wc-logview::-webkit-scrollbar-thumb {
+        background: #403F3F;
     }
 
     .logview-header-text {
