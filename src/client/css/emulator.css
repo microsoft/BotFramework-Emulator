@@ -342,7 +342,7 @@
     }
 
     .appsettings-cancelbtn {
-        background: #CCC;
+        background: #E6E6E6;
         color: #888;
         position: absolute;
         left: 50%;
@@ -353,6 +353,10 @@
         line-height: 1.3333333;
         font-weight: 500;
         width: 96px;
+    }
+
+    .appsettings-cancelbtn:hover {
+        background: #D9D9D9;
     }
 
     .appsettings-port {

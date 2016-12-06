@@ -159,14 +159,12 @@ export class LogView extends React.Component<{}, ILogViewState> {
                 this.setState(this.state);
             }
         );
-        Electron.ipcRenderer.send('logStarted');
     }
 
     componentWillUnmount() {
         this.autoscrollSubscription.unsubscribe();
         this.logSubscription.unsubscribe();
         this.settingsUnsubscribe();
-        Electron.ipcRenderer.send('logStopped');
     }
 
     componentDidUpdate(prevProps: {}, prevState: ILogViewState) {

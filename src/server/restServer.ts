@@ -36,13 +36,15 @@ import * as log from './log';
 
 
 export class RestServer {
-    // REVIEW: Can we get this from the Restify.server?
-    port: number;
     router: Restify.Server;
 
     constructor(name: string) {
         this.router = Restify.createServer({
             name: name
+        });
+
+        this.router.on('listening', () => {
+            log.debug(`${this.router.name} listening on ${this.router.url}`);
         });
 
         this.router.use(Restify.acceptParser(this.router.acceptable));
@@ -52,12 +54,9 @@ export class RestServer {
         //this.router.use(Restify.bodyParser({ mapParams: true, mapFiles: false }));
     }
 
-    public restart(port: number) {
+    public restart() {
         this.stop();
-        this.port = port;
-        return this.router.listen(this.port, () => {
-            log.debug(`${this.router.name} listening on ${this.router.url}`);
-        });
+        return this.router.listen();
     }
 
     public stop() {

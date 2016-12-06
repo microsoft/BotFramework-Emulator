@@ -36,10 +36,12 @@ import { getSettings } from './settings';
 
 
 export class Emulator {
+    public static serviceUrl: string;
+
     public static addUser(name?: string, id?: string) {
         const settings = getSettings();
         let options: request.OptionsWithUrl = {
-            url: `http://localhost:${settings.serverSettings.framework.port}/emulator/${settings.conversation.conversationId}/users`,
+            url: `${this.serviceUrl}/emulator/${settings.conversation.conversationId}/users`,
             method: "POST",
             json: [{ name, id }]
         };
@@ -49,7 +51,7 @@ export class Emulator {
     public static removeUser(id: string) {
         const settings = getSettings();
         let options: request.OptionsWithUrl = {
-            url: `http://localhost:${settings.serverSettings.framework.port}/emulator/${settings.conversation.conversationId}/users`,
+            url: `${this.serviceUrl}/emulator/${settings.conversation.conversationId}/users`,
             method: "DELETE",
             json: [{ id }]
         };
@@ -59,7 +61,7 @@ export class Emulator {
     public static removeRandomUser() {
         const settings = getSettings();
         let options: request.OptionsWithUrl = {
-            url: `http://localhost:${settings.serverSettings.framework.port}/emulator/${settings.conversation.conversationId}/users`,
+            url: `${this.serviceUrl}/emulator/${settings.conversation.conversationId}/users`,
             method: "DELETE"
         };
         request(options);
@@ -68,7 +70,7 @@ export class Emulator {
     public static botContactAdded() {
         const settings = getSettings();
         let options: request.OptionsWithUrl = {
-            url: `http://localhost:${settings.serverSettings.framework.port}/emulator/${settings.conversation.conversationId}/contacts`,
+            url: `${this.serviceUrl}/emulator/${settings.conversation.conversationId}/contacts`,
             method: "POST"
         };
         request(options);
@@ -77,7 +79,7 @@ export class Emulator {
     public static botContactRemoved() {
         const settings = getSettings();
         let options: request.OptionsWithUrl = {
-            url: `http://localhost:${settings.serverSettings.framework.port}/emulator/${settings.conversation.conversationId}/contacts`,
+            url: `${this.serviceUrl}/emulator/${settings.conversation.conversationId}/contacts`,
             method: "DELETE"
         };
         request(options);
@@ -86,7 +88,7 @@ export class Emulator {
     public static typing() {
         const settings = getSettings();
         let options: request.OptionsWithUrl = {
-            url: `http://localhost:${settings.serverSettings.framework.port}/emulator/${settings.conversation.conversationId}/typing`,
+            url: `${this.serviceUrl}/emulator/${settings.conversation.conversationId}/typing`,
             method: "POST"
         };
         request(options);
@@ -95,7 +97,7 @@ export class Emulator {
     public static ping() {
         const settings = getSettings();
         let options: request.OptionsWithUrl = {
-            url: `http://localhost:${settings.serverSettings.framework.port}/emulator/${settings.conversation.conversationId}/ping`,
+            url: `${this.serviceUrl}/emulator/${settings.conversation.conversationId}/ping`,
             method: "POST"
         };
         request(options);
@@ -104,7 +106,7 @@ export class Emulator {
     public static deleteUserData() {
         const settings = getSettings();
         let options: request.OptionsWithUrl = {
-            url: `http://localhost:${settings.serverSettings.framework.port}/emulator/${settings.conversation.conversationId}/userdata`,
+            url: `${this.serviceUrl}/emulator/${settings.conversation.conversationId}/userdata`,
             method: "DELETE"
         };
         request(options);

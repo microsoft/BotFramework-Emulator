@@ -51,6 +51,7 @@ import {
 import { IBot, newBot } from '../types/botTypes';
 import { uniqueId } from '../utils';
 import * as log from './log';
+import { Emulator } from './emulator';
 
 
 export const selectedActivity$ = (): BehaviorSubject<ActivityOrID> => {
@@ -229,7 +230,7 @@ export const startup = () => {
 
     // Listen for new settings from the server.
     Electron.ipcRenderer.on('serverSettings', (event, ...args) => {
-        const serverSettings = new ServerSettings((args[0][0]));
+        const serverSettings = new ServerSettings(args[0]);
         //console.info("Received new server state.", serverSettings);
         ServerSettingsActions.set(serverSettings);
     });
@@ -257,6 +258,9 @@ export const startup = () => {
     });
     Electron.ipcRenderer.on('new-conversation', (event, ...args) => {
         ConversationActions.newConversation(args[0]);
+    });
+    Electron.ipcRenderer.on('listening', (event, ...args) => {
+        Emulator.serviceUrl = args[0].serviceUrl;
     });
 
     // Let the server know we're done starting up. In response, it will send us it's current settings (bot list and such).

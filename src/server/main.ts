@@ -33,13 +33,12 @@
 
 import * as Electron from 'electron';
 import { Menu } from 'electron';
-import { Emulator } from './emulator';
 import { getSettings, dispatch } from './settings';
 import { WindowStateAction } from './reducers/windowStateReducer';
 import * as url from 'url';
 import * as path from 'path';
 import * as log from './log';
-import { emulator } from './emulator';
+import { Emulator, emulator } from './emulator';
 var pjson = require('../../package.json');
 
 process.on('uncaughtException', (error: Error) => {
@@ -65,9 +64,10 @@ const createMainWindow = () => {
             x: safeLowerBound(settings.windowState.left, 0),
             y: safeLowerBound(settings.windowState.top, 0)
         });
-    //mainWindow.webContents.openDevTools();
-
     mainWindow.setTitle(`Microsoft Bot Framework Emulator (v${pjson.version})`);
+
+
+    //mainWindow.webContents.openDevTools();
 
 
     if (process.platform === 'darwin') {
@@ -76,7 +76,7 @@ const createMainWindow = () => {
             {
                 label: "Bot Framework Emulator",
                 submenu: [
-                    { label: "About", click: () => emulator.send('show-about') },
+                    { label: "About", click: () => Emulator.send('show-about') },
                     { type: "separator" },
                     { label: "Quit", accelerator: "Command+Q", click: () => Electron.app.quit() }
                 ]
