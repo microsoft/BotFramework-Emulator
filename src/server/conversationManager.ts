@@ -61,7 +61,7 @@ export class Conversation {
     constructor(botId: string, conversationId: string, user: IUser) {
         this.botId = botId;
         this.conversationId = conversationId;
-        this.members.push({ id: botId, name: "bot" });
+        this.members.push({ id: botId, name: "Bot" });
         this.members.push({ id: user.id, name: user.name });
     }
 
