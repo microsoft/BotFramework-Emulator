@@ -35,7 +35,7 @@ import * as Restify from 'restify';
 import { IGenericActivity, IConversationParameters } from '../../../types/activityTypes';
 import { IUser } from '../../../types/userTypes';
 import { getSettings, getStore } from '../../settings';
-import { emulator } from '../../emulator';
+import { Emulator, emulator } from '../../emulator';
 import { uniqueId } from '../../../utils';
 import * as HttpStatus from "http-status-codes";
 import * as ResponseTypes from '../../../types/responseTypes';
@@ -127,7 +127,7 @@ export class ConversationsController {
             log.api('createConversation', req, res, conversationParameters, response, getActivityText(conversationParameters.activity));
 
             // Tell the client side to start a new conversation.
-            emulator.send('new-conversation', newConversation.conversationId);
+            Emulator.send('new-conversation', newConversation.conversationId);
         } catch (err) {
             var error = ResponseTypes.sendErrorResponse(req, res, next, err);
             log.api('createConversation', req, res, conversationParameters, error, getActivityText(conversationParameters.activity));

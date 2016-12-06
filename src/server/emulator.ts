@@ -38,6 +38,11 @@ import * as Electron from 'electron';
 import { mainWindow } from './main';
 
 
+interface IQueuedMessage {
+    channel: any,
+    args: any[]
+}
+
 /**
  * Top-level state container for the Node process.
  */
@@ -45,6 +50,7 @@ export class Emulator {
     mainWindow: Electron.BrowserWindow;
     framework = new BotFrameworkService();
     conversations = new ConversationManager();
+    static queuedMessages: IQueuedMessage[] = [];
 
     constructor() {
         // When the client notifies us it has started up, send it the configuration.
@@ -52,10 +58,14 @@ export class Emulator {
         // is why we're getting the value from getStore().getState().
         Electron.ipcMain.on('clientStarted', () => {
             this.mainWindow = mainWindow;
-            this.send('serverSettings', Settings.getStore().getState());
+            Emulator.queuedMessages.forEach((msg) => {
+                Emulator.send(msg.channel, ...msg.args);
+            });
+            Emulator.queuedMessages = [];
+            Emulator.send('serverSettings', Settings.getStore().getState());
         });
         Settings.addSettingsListener(() => {
-            this.send('serverSettings', Settings.getStore().getState());
+            Emulator.send('serverSettings', Settings.getStore().getState());
         });
     }
 
@@ -65,14 +75,17 @@ export class Emulator {
     static startup() {
         Settings.startup();
         emulator = new Emulator();
+        emulator.framework.startup();
     }
 
     /**
      * Sends a command to the client.
      */
-    send(channel: string, ...args: any[]) {
-        if (this.mainWindow) {
-            this.mainWindow.webContents.send(channel, args);
+    static send(channel: string, ...args: any[]) {
+        if (mainWindow) {
+            mainWindow.webContents.send(channel, ...args);
+        } else {
+            Emulator.queuedMessages.push({ channel, args})
         }
     }
 }

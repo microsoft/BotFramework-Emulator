@@ -41,7 +41,6 @@ import { usersReducer } from './reducers/usersReducer';
 import { frameworkDefault } from '../types/serverSettingsTypes';
 import { loadSettings, saveSettings } from '../utils';
 import { IBot } from '../types/botTypes';
-import { logReady } from './log';
 import {
     IFrameworkSettings,
     IWindowStateSettings,
@@ -116,12 +115,6 @@ export const addSettingsListener = (actor: SettingsActor) => {
 
 
 export const startup = () => {
-    Electron.ipcMain.on('logStarted', () => {
-        logReady(true);
-    });
-    Electron.ipcMain.on('logStopped', () => {
-        logReady(false);
-    });
     // Listen for settings change requests from the client.
     Electron.ipcMain.on('serverChangeSetting', (event, ...args) => {
         // Apply change requests to the settings store.

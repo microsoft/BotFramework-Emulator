@@ -46,6 +46,7 @@ import * as Fs from 'fs';
 import * as path from 'path';
 import * as ngrok from './ngrok';
 import { makeLinkMessage } from './log';
+import { Emulator } from './emulator';
 
 
 /**
@@ -76,75 +77,79 @@ export class BotFrameworkService extends RestServer {
         addSettingsListener((settings: Settings) => {
             this.configure(settings);
         });
-        this.configure(getSettings());
+        this.router.on('listening', () => {
+            this.relaunchNgrok();
+            Emulator.send('listening', { serviceUrl: this.serviceUrl });
+        });
+    }
+
+    startup() {
+        this.restart();
+    }
+
+    relaunchNgrok() {
+        let router = this.router;
+        if (!router) return;
+        let address = router.address();
+        if (!address) return;
+        let port = address.port;
+        if (!port) return;
+        const settings = getSettings();
+        const prevNgrokPath = this.ngrokPath;
+        this.ngrokPath = settings.framework.ngrokPath;
+        const prevServiceUrl = this.serviceUrl;
+        this._serviceUrl = `http://localhost:${port}`;
+        this.inspectUrl = null;
+        this.ngrokServiceUrl = null;
+        const startNgrok = () => {
+            // if we have an ngrok path
+            if (this.ngrokPath) {
+                // then make it so
+                ngrok.connect({
+                    port,
+                    path: this.ngrokPath
+                }, (err, url: string, inspectPort: string) => {
+                    if (err) {
+                        log.warn(`Failed to start ngrok: ${err.message || err.msg}`);
+                        log.error("Fix it:", log.ngrokConfigurationLink('Configure ngrok'));
+                        log.error("Learn more:", log.makeLinkMessage('Network tunneling (ngrok)', 'https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)'));
+                    } else {
+                        this.inspectUrl = `http://localhost:${inspectPort}`;
+                        this.ngrokServiceUrl = url;
+                        log.debug(`ngrok listening on ${url}`);
+                        log.debug('ngrok traffic inspector:', log.makeLinkMessage(this.inspectUrl, this.inspectUrl));
+                    }
+                    // Sync settings to client
+                    getStore().dispatch({
+                        type: 'Framework_Set',
+                        state: {
+                            ngrokPath: this.ngrokPath
+                        }
+                    });
+                });
+            }
+        }
+        if (this.ngrokPath !== prevNgrokPath) {
+            ngrok.kill((wasRunning) => {
+                if (wasRunning)
+                    log.debug('ngrok stopped');
+                startNgrok();
+                return true;
+            });
+        } else {
+            ngrok.disconnect(prevServiceUrl, () => {
+                startNgrok();
+            });
+        }
     }
 
     /**
      * Applies configuration changes.
      */
     private configure(settings: Settings) {
-        let relaunchNgrok = false;
-
-        // Did port change?
-        if (this.port !== settings.framework.port) {
-            console.log(`restarting ${this.router.name} because ${this.port} !== ${settings.framework.port}`);
-            this.restart(settings.framework.port);
-            // Respawn ngrok when the port changes
-            relaunchNgrok = true;
-        }
-
         // Did ngrok path change?
-        if (relaunchNgrok || this.ngrokPath !== settings.framework.ngrokPath) {
-            const prevNgrokPath = this.ngrokPath;
-            this.ngrokPath = settings.framework.ngrokPath;
-            const prevServiceUrl = this.serviceUrl;
-            this._serviceUrl = `http://localhost:${this.port}`;
-            this.inspectUrl = null;
-            this.ngrokServiceUrl = null;
-            const startNgrok = () => {
-                // if we have an ngrok path
-                if (this.ngrokPath) {
-                    // then make it so
-                    ngrok.connect({
-                        port: this.port,
-                        path: this.ngrokPath
-                    }, (err, url: string, inspectPort: string) => {
-                        if (err) {
-                            log.warn(`Failed to start ngrok: ${err.message || err.msg}`);
-                            log.error("Fix it:", log.ngrokConfigurationLink('Configure ngrok'));
-                            log.error("Learn more:", log.makeLinkMessage('Network tunneling (ngrok)', 'https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)'));
-                        } else {
-                            this.inspectUrl = `http://localhost:${inspectPort}`;
-                            this.ngrokServiceUrl = url;
-                            log.debug(`ngrok listening on ${url}`);
-                            log.debug('ngrok traffic inspector:', log.makeLinkMessage(this.inspectUrl, this.inspectUrl));
-                        }
-                        // Sync settings to client
-                        getStore().dispatch({
-                            type: 'Framework_Set2',
-                            state: {
-                                port: this.port,
-                                ngrokPath: this.ngrokPath,
-                                serviceUrl: this._serviceUrl,
-                                ngrokServiceUrl: this.ngrokServiceUrl,
-                                ngrokRunning: ngrok.running()
-                            }
-                        });
-                    });
-                }
-            }
-            if (this.ngrokPath !== prevNgrokPath) {
-                ngrok.kill((wasRunning) => {
-                    if (wasRunning)
-                        log.debug('ngrok stopped');
-                    startNgrok();
-                    return true;
-                });
-            } else {
-                ngrok.disconnect(prevServiceUrl, () => {
-                    startNgrok();
-                });
-            }
+        if (this.ngrokPath !== settings.framework.ngrokPath) {
+            this.relaunchNgrok();
         }
     }
 }

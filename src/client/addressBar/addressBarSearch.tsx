@@ -63,7 +63,7 @@ export class AddressBarSearch extends React.Component<{}, {}> {
         const settings = getSettings();
         if (!settings.addressBar.showSearchResults) return null;
         if (settings.addressBar.showBotCreds) return null;
-        if (!settings.addressBar.matchingBots.length) return null;
+        if (!settings.addressBar.matchingBots || !settings.addressBar.matchingBots.length) return null;
         return (
             <div className="addressbar-search">
                 {this.searchResultComponents()}

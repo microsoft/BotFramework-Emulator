@@ -333,11 +333,9 @@ export class ServerSettingsActions {
         serverChangeSetting('Users_SetCurrentUser', { user });
     }
     static remote_setFrameworkServerSettings(state: {
-        port: number,
-        ngrokPath: string,
-        serviceUrl: string
+        ngrokPath: string
     }) {
-        serverChangeSetting('Framework_Set1', state);
+        serverChangeSetting('Framework_Set', state);
     }
 }
 

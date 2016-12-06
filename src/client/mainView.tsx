@@ -47,6 +47,7 @@ import { AboutDialog } from './dialogs/aboutDialog';
 import { AppSettingsDialog } from './dialogs/appSettingsDialog';
 import { ConversationSettingsDialog } from './dialogs/conversationSettingsDialog';
 import * as Constants from './constants';
+import { Emulator } from './emulator';
 
 
 export class MainView extends React.Component<{}, {}> {
@@ -88,7 +89,7 @@ export class MainView extends React.Component<{}, {}> {
                     if (this.conversationId.length && this.userId.length && this.botId.length) {
                         this.directline = new BotChat.DirectLine(
                             { secret: settings.conversation.conversationId, token: settings.conversation.conversationId },
-                            `http://localhost:${settings.serverSettings.framework.port}/v3/directline`
+                            `${Emulator.serviceUrl}/v3/directline`
                         );
                     //    log.debug(`started new conversation`);
                     }

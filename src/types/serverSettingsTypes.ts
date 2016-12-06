@@ -36,15 +36,8 @@ import { IUser } from '../types/userTypes';
 
 
 export interface IFrameworkSettings {
-    // port for emulator to listen on
-    port?: number,
-
     // path to use for ngrok
-    ngrokPath?: string,
-    ngrokServiceUrl?: string,
-    ngrokRunning?: boolean,
-
-    serviceUrl?: string
+    ngrokPath?: string
 }
 
 export interface IWindowStateSettings {
@@ -86,16 +79,12 @@ export class Settings implements ISettings {
     }
 
     public botById(botId: string): IBot {
-        return this.bots.find(value => value.botId === botId);
+        return this.bots ? this.bots.find(value => value.botId === botId) : undefined;
     }
 }
 
 export const frameworkDefault: IFrameworkSettings = {
-    port: 9002,
-    ngrokPath: '',
-    serviceUrl: '',
-    ngrokRunning: false,
-    ngrokServiceUrl: ''
+    ngrokPath: ''
 }
 
 export const windowStateDefault: IWindowStateSettings = {
