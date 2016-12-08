@@ -72,7 +72,8 @@ export interface IConversationParameters extends IActivity {
     membersRemoved?: IChannelAccount[],
     topicName?: string,
     activity?: IActivity,
-    channelData : any
+    channelData?: any,
+    conversationId?: string
 }
 
 export interface IContactRelationUpdateActivity extends IActivity {
