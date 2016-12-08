@@ -109,7 +109,13 @@ export class ConversationsController {
                 state: { users: newUsers }
             });
 
-            let newConversation = emulator.conversations.newConversation(activeBot.botId, users.usersById[conversationParameters.members[0].id]);
+            let newConversation;
+            if (conversationParameters.conversationId) {
+                newConversation = emulator.conversations.conversationById(activeBot.botId, conversationParameters.conversationId);
+            }
+            if (!newConversation) {
+                newConversation = emulator.conversations.newConversation(activeBot.botId, users.usersById[conversationParameters.members[0].id], conversationParameters.conversationId);
+            }
             let activityId: string = null;
             if (conversationParameters.activity != null) {
                 // set routing information for new conversation

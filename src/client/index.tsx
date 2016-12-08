@@ -51,7 +51,6 @@ window.onerror = (message: string, filename?: string, lineno?: number, colno?: n
 }
 
 webFrame.setZoomLevel(1);
-webFrame.setZoomLevelLimits(1, 1);
 webFrame.setZoomFactor(1);
 webFrame.registerURLSchemeAsPrivileged('emulator');
 
