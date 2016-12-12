@@ -109,8 +109,9 @@ function navigateCommandUrl(params: string[]) {
         return;
     const json = decodeURIComponent(params['args']);
     const args = JSON.parse(json);
-    if (args.cmd === 'app.relaunch') {
-        remote.app.relaunch();
-        remote.app.exit(0);
+    if (args.cmd === 'autoUpdater.quitAndInstall') {
+        if (remote.autoUpdater) {
+            remote.autoUpdater.quitAndInstall();
+        }
     }
 }
