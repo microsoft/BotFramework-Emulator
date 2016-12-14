@@ -38,7 +38,7 @@ import { IUser } from '../types/userTypes';
 import { IConversationAccount } from '../types/accountTypes';
 import { IActivity, IConversationUpdateActivity, IMessageActivity, IContactRelationUpdateActivity, ITypingActivity } from '../types/activityTypes';
 import { uniqueId } from '../utils';
-import { dispatch, getSettings, authenticationSettings, addSettingsListener } from './settings';
+import { dispatch, getSettings, authenticationSettings, v30AuthenticationSettings, addSettingsListener } from './settings';
 import { Settings } from '../types/serverSettingsTypes';
 import * as jwt from 'jsonwebtoken';
 import * as oid from './OpenIdMetadata';
@@ -318,14 +318,15 @@ export class Conversation {
             // Refresh access token
             let opt: request.OptionsWithUrl = {
                 method: 'POST',
-                url: authenticationSettings.refreshEndpoint,
+                url: v30AuthenticationSettings.tokenEndpoint,
                 form: {
                     grant_type: 'client_credentials',
                     client_id: bot.msaAppId,
                     client_secret: bot.msaPassword,
-                    scope: authenticationSettings.refreshScope
+                    scope: v30AuthenticationSettings.tokenScope
                 }
             };
+
             request(opt, (err, response, body) => {
                 if (!err) {
                     if (body && response.statusCode < 300) {

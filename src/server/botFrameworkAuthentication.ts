@@ -31,17 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { getSettings, authenticationSettings } from './settings';
+import { getSettings, authenticationSettings, v30AuthenticationSettings } from './settings';
 import * as jwt from 'jsonwebtoken';
 import * as oid from './OpenIdMetadata';
 import * as Restify from 'restify';
 
 
 export class BotFrameworkAuthentication {
-    private msaOpenIdMetadata: oid.OpenIdMetadata;
+    private openIdMetadata: oid.OpenIdMetadata;
 
     constructor() {
-        this.msaOpenIdMetadata = new oid.OpenIdMetadata(authenticationSettings.msaOpenIdMetadata);
+        this.openIdMetadata = new oid.OpenIdMetadata(v30AuthenticationSettings.openIdMetadata);
     }
 
     public verifyBotFramework = (req: Restify.Request, res: Restify.Response, next: Restify.Next): void => {
@@ -57,21 +57,33 @@ export class BotFrameworkAuthentication {
         if (token) {
 
             let decoded = jwt.decode(token, { complete: true });
-            this.msaOpenIdMetadata.getKey(decoded.header.kid, key => {
+            this.openIdMetadata.getKey(decoded.header.kid, key => {
                 if (key) {
                     try {
                         let verifyOptions = {
                             jwtId: activeBot.botId,
-                            issuer: authenticationSettings.msaIssuer,
-                            audience: authenticationSettings.msaAudience,
+                            issuer: authenticationSettings.tokenIssuer,
+                            audience: authenticationSettings.tokenAudience,
                             clockTolerance: 300
                         };
 
                         jwt.verify(token, key, verifyOptions);
                     } catch (err) {
-                        res.status(401);
-                        res.end();
-                        return;
+                        try {
+                            // fall back to v3.0 token characteristics
+                            let verifyOptions = {
+                                jwtId: activeBot.botId,
+                                issuer: v30AuthenticationSettings.tokenIssuer,
+                                audience: v30AuthenticationSettings.tokenAudience,
+                                clockTolerance: 300
+                            };
+
+                            jwt.verify(token, key, verifyOptions);
+                        } catch (err2) {
+                            res.status(401);
+                            res.end();
+                            return;
+                        }
                     }
 
                     next();
@@ -90,6 +102,4 @@ export class BotFrameworkAuthentication {
             res.end();
         }
     }
-
 }
-
