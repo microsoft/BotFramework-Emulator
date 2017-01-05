@@ -60,18 +60,25 @@ export function navigate(url: string) {
             // Ignore
         }
     } catch (e) {
-        log.error(e);
+        log.error(e.message);
     }
 }
 
 function navigateInspectUrl(params: string[]) {
     try {
         const encoded = params['obj'];
-        const json = decodeURIComponent(encoded);
+        let json;
+        try {
+            json = decodeURIComponent(encoded);
+        } catch (e) {
+            json = encoded;
+        }
         const obj = JSON.parse(json);
         if (obj) {
             if (obj.id) {
                 selectedActivity$().next({ id: obj.id });
+            } else if (obj.replyToId) {
+                selectedActivity$().next({ id: obj.replyToId });
             } else {
                 selectedActivity$().next({});
             }

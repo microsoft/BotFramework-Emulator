@@ -154,10 +154,6 @@ export class ConversationsController {
 
             activity.replyToId = req.params.activityId;
 
-            // validate conversation
-            if (activity.conversation.id != parms.conversationId)
-                throw ResponseTypes.createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.BadArgument, "uri conversation id does not match payload");
-
             // look up conversation
             const conversation = emulator.conversations.conversationById(activeBot.botId, parms.conversationId);
             if (!conversation)
@@ -187,10 +183,6 @@ export class ConversationsController {
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
 
             activity.replyToId = req.params.activityId;
-
-            // validate conversation
-            //if (activity.conversation.id != parms.conversationId)
-            //    throw ResponseTypes.createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.BadArgument, "uri conversation id does not match payload");
 
             // look up conversation
             const conversation = emulator.conversations.conversationById(activeBot.botId, parms.conversationId);
@@ -225,10 +217,6 @@ export class ConversationsController {
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
 
             activity.replyToId = req.params.activityId;
-
-            // validate conversation
-            if (activity.conversation.id != parms.conversationId)
-                throw ResponseTypes.createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.BadArgument, "uri conversation id does not match payload conversation id");
 
             if (activity.id != parms.activityId)
                 throw ResponseTypes.createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.BadArgument, "uri activity id does not match payload activity id");
