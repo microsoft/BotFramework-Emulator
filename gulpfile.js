@@ -12,7 +12,7 @@ gulp.task('build-app', ['clean'], function () {
         .pipe(tsc({
             module: 'commonjs',
             moduleResolution: 'node',
-            target: 'es5',
+            target: 'es6',
             sourceMap: true,
             noImplicitAny: false,
             noImplicitThis: true,

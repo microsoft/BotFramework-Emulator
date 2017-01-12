@@ -71,7 +71,7 @@ export class ConversationsController {
     public static createConversation = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         let conversationParameters = <IConversationParameters>req.body;
         try {
-            console.log("framework: newConversation");
+            console.log("connector: newConversation");
 
             const settings = getSettings();
             // look up bot
@@ -145,7 +145,7 @@ export class ConversationsController {
         let activity = <IGenericActivity>req.body;
         try {
             const parms: IConversationAPIPathParameters = req.params;
-            console.log("framework: sendToConversation", JSON.stringify(activity));
+            console.log("connector: sendToConversation", JSON.stringify(activity));
 
             // look up bot
             const activeBot = getSettings().getActiveBot();
@@ -175,7 +175,7 @@ export class ConversationsController {
         let activity = <IGenericActivity>req.body;
         try {
             const parms: IConversationAPIPathParameters = req.params;
-            console.log("framework: replyToActivity", JSON.stringify(activity));
+            console.log("connector: replyToActivity", JSON.stringify(activity));
 
             // look up bot
             const activeBot = getSettings().getActiveBot();
@@ -209,7 +209,7 @@ export class ConversationsController {
         let activity = <IGenericActivity>req.body;
         try {
             const parms: IConversationAPIPathParameters = req.params;
-            console.log("framework: updateActivity", JSON.stringify(activity));
+            console.log("connector: updateActivity", JSON.stringify(activity));
 
             // look up bot
             const activeBot = getSettings().getActiveBot();
@@ -241,7 +241,7 @@ export class ConversationsController {
     public static deleteActivity = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         const parms: IConversationAPIPathParameters = req.params;
         try {
-            console.log("framework: deleteActivity", JSON.stringify(parms));
+            console.log("connector: deleteActivity", JSON.stringify(parms));
 
             // look up bot
             const activeBot = getSettings().getActiveBot();
@@ -266,7 +266,7 @@ export class ConversationsController {
 
     // get members of a conversation
     public static getConversationMembers = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-        console.log("framework: getConversationMembers");
+        console.log("connector: getConversationMembers");
         const parms: IConversationAPIPathParameters = req.params;
         try {
             // look up bot
@@ -291,7 +291,7 @@ export class ConversationsController {
 
     // get members of an activity
     public static getActivityMembers = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-        console.log("framework: getActivityMembers");
+        console.log("connector: getActivityMembers");
         const parms: IConversationAPIPathParameters = req.params;
         try {
             // look up bot
@@ -317,7 +317,7 @@ export class ConversationsController {
 
     // upload attachment
     public static uploadAttachment = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-        console.log("framework: uploadAttachment");
+        console.log("connector: uploadAttachment");
         let attachmentData = <IAttachmentData>req.body;
         try {
             // look up bot
