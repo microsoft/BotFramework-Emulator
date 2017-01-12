@@ -56,7 +56,7 @@ export interface IPersistentSettings {
     framework?: IFrameworkSettings,
     bots?: IBot[],
     windowState?: IWindowStateSettings,
-    users: IUserSettings
+    users?: IUserSettings
 }
 
 export interface ISettings extends IPersistentSettings {

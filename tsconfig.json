@@ -3,7 +3,7 @@
         "module": "commonjs",
         "moduleResolution": "node",
         "preserveConstEnums": true,
-        "target": "es5",
+        "target": "es6",
         "jsx": "react",
         "sourceMap": true,
         "noImplicitAny": false,
@@ -11,10 +11,7 @@
         "noEmitOnError": true,
         "outDir": "app",
         "watch": true,
-        "removeComments": true,
-        "types": [
-            "es6-shim"
-        ]
+        "removeComments": true
     },
     "exclude": [
         "node_modules",

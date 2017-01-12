@@ -33,7 +33,7 @@
 
 import * as React from 'react';
 import * as Splitter from 'react-split-pane';
-import * as BotChat from 'msbotchat';
+import * as BotChat from 'botframework-webchat';
 import * as log from './log';
 import { getSettings, settingsDefault, Settings, addSettingsListener, selectedActivity$ } from './settings';
 import { LayoutActions, InspectorActions, LogActions } from './reducers';
@@ -87,10 +87,12 @@ export class MainView extends React.Component<{}, {}> {
                     //    log.debug(`ended conversation`);
                     }
                     if (this.conversationId.length && this.userId.length && this.botId.length) {
-                        this.directline = new BotChat.DirectLine(
-                            { secret: settings.conversation.conversationId, token: settings.conversation.conversationId },
-                            `${Emulator.serviceUrl}/v3/directline`
-                        );
+                        this.directline = new BotChat.DirectLine({
+                            secret: settings.conversation.conversationId,
+                            token: settings.conversation.conversationId,
+                            domain: `${Emulator.serviceUrl}/v3/directline`,
+                            webSocket: false
+                        });
                     //    log.debug(`started new conversation`);
                     }
                     this.reuseKey++;
