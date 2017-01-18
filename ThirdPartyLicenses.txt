@@ -276,7 +276,7 @@ async@2.1.4 (MIT)
   
 
 
-lodash@4.16.6 (MIT)
+lodash@4.17.4 (MIT)
 
   Copyright JS Foundation and other contributors <https://js.foundation/>
   
@@ -333,7 +333,7 @@ base64url@2.0.0 (MIT)
   LICENSE file is not exist
 
 
-botframework-webchat@0.4.0 (MIT)
+botframework-webchat@0.4.3 (MIT)
 
   The MIT License (MIT)
   
@@ -469,7 +469,7 @@ react@15.4.2 (BSD-3-Clause)
   
 
 
-fbjs@0.8.6 (BSD-3-Clause)
+fbjs@0.8.8 (BSD-3-Clause)
 
   BSD License
   
@@ -603,7 +603,7 @@ encoding@0.1.12 (MIT)
   
 
 
-iconv-lite@0.4.13 (MIT)
+iconv-lite@0.4.15 (MIT)
 
   Copyright (c) 2011 Alexander Shtuchkin
   
@@ -655,7 +655,7 @@ is-stream@1.1.0 (MIT)
   
 
 
-whatwg-fetch@1.0.0 (MIT)
+whatwg-fetch@2.0.1 (MIT)
 
   Copyright (c) 2014-2016 GitHub, Inc.
   
@@ -680,7 +680,7 @@ whatwg-fetch@1.0.0 (MIT)
   
 
 
-loose-envify@1.3.0 (MIT)
+loose-envify@1.3.1 (MIT)
 
   The MIT License (MIT)
   
@@ -706,11 +706,11 @@ loose-envify@1.3.0 (MIT)
   
 
 
-js-tokens@2.0.0 (MIT)
+js-tokens@3.0.0 (MIT)
 
   The MIT License (MIT)
   
-  Copyright (c) 2014, 2015, 2016 Simon Lydell
+  Copyright (c) 2014, 2015, 2016, 2017 Simon Lydell
   
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -808,7 +808,32 @@ asap@2.0.5 (MIT)
   
 
 
-ua-parser-js@0.7.11 ((GPL-2.0 OR MIT))
+setimmediate@1.0.5 (MIT)
+
+  Copyright (c) 2012 Barnesandnoble.com, llc, Donavon West, and Domenic Denicola
+  
+  Permission is hereby granted, free of charge, to any person obtaining
+  a copy of this software and associated documentation files (the
+  "Software"), to deal in the Software without restriction, including
+  without limitation the rights to use, copy, modify, merge, publish,
+  distribute, sublicense, and/or sell copies of the Software, and to
+  permit persons to whom the Software is furnished to do so, subject to
+  the following conditions:
+  
+  The above copyright notice and this permission notice shall be
+  included in all copies or substantial portions of the Software.
+  
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  
+
+
+ua-parser-js@0.7.12 ((GPL-2.0 OR MIT))
 
   LICENSE file is not exist
 
@@ -941,7 +966,7 @@ invariant@2.2.2 (BSD-3-Clause)
   
 
 
-lodash-es@4.16.6 (MIT)
+lodash-es@4.17.4 (MIT)
 
   Copyright JS Foundation and other contributors <https://js.foundation/>
   
@@ -2544,7 +2569,7 @@ asynckit@0.4.0 (MIT)
   
 
 
-mime-types@2.1.13 (MIT)
+mime-types@2.1.14 (MIT)
 
   (The MIT License)
   
@@ -2572,7 +2597,7 @@ mime-types@2.1.13 (MIT)
   
 
 
-mime-db@1.25.0 (MIT)
+mime-db@1.26.0 (MIT)
 
   
   The MIT License (MIT)
@@ -2721,7 +2746,7 @@ has-ansi@2.0.0 (MIT)
   
 
 
-ansi-regex@2.0.0 (MIT)
+ansi-regex@2.1.1 (MIT)
 
   The MIT License (MIT)
   
@@ -3249,7 +3274,7 @@ verror@1.3.6 (undefined)
   
 
 
-sshpk@1.10.1 (MIT)
+sshpk@1.10.2 (MIT)
 
   Copyright Joyent, Inc. All rights reserved.
   Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -4158,7 +4183,7 @@ spdy@3.4.4 (MIT)
   LICENSE file is not exist
 
 
-debug@2.3.2 (MIT)
+debug@2.6.0 (MIT)
 
   (The MIT License)
   
@@ -4233,7 +4258,7 @@ obuf@1.1.1 (MIT)
   LICENSE file is not exist
 
 
-readable-stream@2.0.6 (MIT)
+readable-stream@2.2.2 (MIT)
 
   Copyright Joyent, Inc. and other Node contributors. All rights reserved.
   Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -4253,6 +4278,30 @@ readable-stream@2.0.6 (MIT)
   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
   IN THE SOFTWARE.
+  
+
+
+buffer-shims@1.0.0 (MIT)
+
+  # Copyright (c) 2016 Calvin Metcalf
+  
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  
+  The above copyright notice and this permission notice shall be included in all
+  copies or substantial portions of the Software.
+  
+  **THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  SOFTWARE.**
   
 
 

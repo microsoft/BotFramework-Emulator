@@ -112,7 +112,7 @@ export class Conversation {
         const bot = getSettings().botById(this.botId);
         if (bot) {
             // bypass ngrok url for localhost because ngrok will rate limit 
-            if (bot.botUrl.indexOf('://localhost:') > 0)
+            if (utils.isLocalhostUrl(bot.botUrl))
                 activity.serviceUrl = emulator.framework.localhostServiceUrl;
             else 
                 activity.serviceUrl = emulator.framework.serviceUrl;
