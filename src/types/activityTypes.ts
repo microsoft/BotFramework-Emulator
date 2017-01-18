@@ -47,6 +47,7 @@ export interface IActivity extends IETagObject {
     id?: string,
     serviceUrl?: string,
     timestamp?: string,
+    localTimestamp?: string,
     channelId?: string,
     from?: IChannelAccount,
     conversation?: IConversationAccount,

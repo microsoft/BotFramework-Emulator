@@ -54,15 +54,15 @@ import { Emulator } from './emulator';
  */
 export class BotFrameworkService extends RestServer {
 
-    private _serviceUrl: string;
+    localhostServiceUrl: string;
     inspectUrl: string;
     ngrokPath: string;
     ngrokServiceUrl: string;
 
     public get serviceUrl() {
         return ngrok.running()
-            ? this.ngrokServiceUrl || this._serviceUrl
-            : this._serviceUrl
+            ? this.ngrokServiceUrl || this.localhostServiceUrl
+            : this.localhostServiceUrl
     }
 
     authentication = new BotFrameworkAuthentication();
@@ -98,7 +98,7 @@ export class BotFrameworkService extends RestServer {
         const prevNgrokPath = this.ngrokPath;
         this.ngrokPath = settings.framework.ngrokPath;
         const prevServiceUrl = this.serviceUrl;
-        this._serviceUrl = `http://localhost:${port}`;
+        this.localhostServiceUrl = `http://localhost:${port}`;
         this.inspectUrl = null;
         this.ngrokServiceUrl = null;
         const startNgrok = () => {
