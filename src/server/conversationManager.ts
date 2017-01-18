@@ -95,11 +95,9 @@ export class Conversation {
     private postage(recipientId: string, activity: IActivity) {
         activity.id = activity.id || uniqueId();
         activity.channelId = 'emulator';
-        var ts = new Date();
-        activity.timestamp = ts.toISOString();
+        activity.timestamp = (new Date()).toISOString();
         activity.recipient = { id: recipientId };
         activity.conversation = { id: this.conversationId };
-        var localTs = new Date(ts.getTime() - (ts.getTimezoneOffset() * 60000));
         activity.localTimestamp = moment().format();
     }
 
@@ -113,6 +111,7 @@ export class Conversation {
         activity.from = this.getCurrentUser();
         const bot = getSettings().botById(this.botId);
         if (bot) {
+            // bypass ngrok url for localhost because ngrok will rate limit 
             if (bot.botUrl.indexOf('://localhost:') > 0)
                 activity.serviceUrl = emulator.framework.localhostServiceUrl;
             else 
