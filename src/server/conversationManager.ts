@@ -49,7 +49,7 @@ import { emulator } from './emulator';
 import * as log from './log';
 import * as utils from '../utils';
 import { usersDefault } from '../types/serverSettingsTypes';
-
+import * as moment from 'moment';
 
 /**
  * Stores and propagates conversation messages.
@@ -95,10 +95,14 @@ export class Conversation {
     private postage(recipientId: string, activity: IActivity) {
         activity.id = activity.id || uniqueId();
         activity.channelId = 'emulator';
-        activity.timestamp = (new Date()).toISOString();
+        var ts = new Date();
+        activity.timestamp = ts.toISOString();
         activity.recipient = { id: recipientId };
         activity.conversation = { id: this.conversationId };
+        var localTs = new Date(ts.getTime() - (ts.getTimezoneOffset() * 60000));
+        activity.localTimestamp = moment().format();
     }
+
 
     /**
      * Sends the activity to the conversation's bot.
@@ -106,10 +110,14 @@ export class Conversation {
     postActivityToBot(activity: IActivity, recordInConversation: boolean, cb?) {
         // Do not make a shallow copy here before modifying
         this.postage(this.botId, activity);
-        activity.serviceUrl = emulator.framework.serviceUrl;
         activity.from = this.getCurrentUser();
         const bot = getSettings().botById(this.botId);
         if (bot) {
+            if (bot.botUrl.indexOf('://localhost:') > 0)
+                activity.serviceUrl = emulator.framework.localhostServiceUrl;
+            else 
+                activity.serviceUrl = emulator.framework.serviceUrl;
+                
             let options: request.OptionsWithUrl = { url: bot.botUrl, method: "POST", json: activity };
 
             let responseCallback = (err, resp: http.IncomingMessage, body) => {

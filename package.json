@@ -64,7 +64,7 @@
     "@reactivex/rxjs": "5.0.3",
     "async": "2.1.4",
     "base64url": "2.0.0",
-    "botframework-webchat": "0.4.0",
+    "botframework-webchat": "0.4.3",
     "electron-debug": "1.1.0",
     "es6-shim": "0.35.2",
     "formidable": "1.0.17",
