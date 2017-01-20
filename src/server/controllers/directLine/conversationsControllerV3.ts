@@ -73,23 +73,35 @@ export class ConversationsControllerV3 {
             const auth = req.header('Authorization');
             const tokenMatch = /Bearer\s+(.+)/.exec(auth);
             const conversationId = tokenMatch[1];
+            const users = getSettings().users;
+            let currentUser = users.usersById[users.currentUserId];
+            // TODO: This is a band-aid until state system cleanup
+            if (!currentUser) {
+                currentUser = usersDefault.usersById['default-user'];
+                dispatch({
+                    type: 'Users_SetCurrentUser',
+                    state: {
+                        user: currentUser
+                    }
+                })
+            }
             let conversation = emulator.conversations.conversationById(activeBot.botId, conversationId);
             if (!conversation) {
-                const users = getSettings().users;
-                let currentUser = users.usersById[users.currentUserId];
-                // TODO: This is a band-aid until state system cleanup
-                if (!currentUser) {
-                    currentUser = usersDefault.usersById['default-user'];
-                    dispatch({
-                        type: 'Users_SetCurrentUser',
-                        state: {
-                            user: currentUser
-                        }
-                    })
-                }
                 conversation = emulator.conversations.newConversation(activeBot.botId, currentUser, conversationId);
-                conversation.sendConversationUpdate(conversation.members, undefined);
+                // Send "bot added to conversation"
+                conversation.sendConversationUpdate([{ id: activeBot.botId, name: "Bot" }], undefined);
+                // Send "user added to conversation"
+                conversation.sendConversationUpdate([currentUser], undefined);
                 created = true;
+            } else {
+                if (conversation.members.findIndex((user) => user.id == activeBot.botId) === -1) {
+                    // Sends "bot added to conversation"
+                    conversation.addMember(activeBot.botId, "Bot");
+                }
+                if (conversation.members.findIndex((user) => user.id == currentUser.id) === -1) {
+                    // Sends "user added to conversation"
+                    conversation.addMember(currentUser.id, currentUser.name);
+                }
             }
             res.json(created ? HttpStatus.CREATED : HttpStatus.OK, {
                 conversationId: conversation.conversationId,
