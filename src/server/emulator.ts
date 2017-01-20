@@ -31,6 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+var http = require('http');
+var https = require('https');
+var ElectronProxyAgent = require('electron-proxy-agent');
+
 import { BotFrameworkService } from './botFrameworkService';
 import { ConversationManager } from './conversationManager';
 import * as Settings from './settings';
@@ -57,6 +61,12 @@ export class Emulator {
         // Note: We're intentionally sending and ISettings here, not a Settings. This
         // is why we're getting the value from getStore().getState().
         Electron.ipcMain.on('clientStarted', () => {
+            // Use chrome's proxy settings for all outgoing requests
+            const session = Electron.session.defaultSession;
+            const proxyAgent = new ElectronProxyAgent(session);
+            http.globalAgent = proxyAgent;
+            https.globalAgent = proxyAgent;
+
             this.mainWindow = mainWindow;
             Emulator.queuedMessages.forEach((msg) => {
                 Emulator.send(msg.channel, ...msg.args);
