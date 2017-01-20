@@ -74,7 +74,7 @@ export class AddressBarBotCreds extends React.Component<{}, {}> {
     localeChanged = (text: string) => {
         const settings = getSettings();
         let bot = Object.assign({}, settings.addressBar.selectedBot) as IBot;
-        bot.locale = text;
+        bot.locale = text.trim();
         AddressBarOperators.addOrUpdateBot(bot);
     }
 
