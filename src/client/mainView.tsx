@@ -49,6 +49,8 @@ import { ConversationSettingsDialog } from './dialogs/conversationSettingsDialog
 import * as Constants from './constants';
 import { Emulator } from './emulator';
 
+const remote = require('electron').remote;
+
 
 export class MainView extends React.Component<{}, {}> {
     settingsUnsubscribe: any;
@@ -130,9 +132,11 @@ export class MainView extends React.Component<{}, {}> {
     botChatComponent() {
         if (this.directline) {
             const settings = getSettings();
+            const srvSettings = new ServerSettings(settings.serverSettings);
+            const activeBot = srvSettings.getActiveBot();
             const props: BotChat.ChatProps = {
                 botConnection: this.directline,
-                locale: 'en-us',
+                locale: activeBot.locale || remote.app.getLocale(),
                 formatOptions: {
                     showHeader: false
                 },
@@ -140,7 +144,6 @@ export class MainView extends React.Component<{}, {}> {
                 user: this.getCurrentUser(settings.serverSettings)
             }
             InspectorActions.clear();
-            let srvSettings = new ServerSettings(settings.serverSettings);
             return <BotChat.Chat key={this.reuseKey} {...props} />
         } else {
             return (

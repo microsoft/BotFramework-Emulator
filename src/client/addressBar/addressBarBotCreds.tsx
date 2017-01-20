@@ -39,6 +39,8 @@ import { IBot, newBot } from '../../types/botTypes';
 import * as log from '../log';
 import { AddressBarOperators } from './addressBarOperators';
 
+const remote = require('electron').remote;
+
 
 export class AddressBarBotCreds extends React.Component<{}, {}> {
     settingsUnsubscribe: any;
@@ -66,6 +68,13 @@ export class AddressBarBotCreds extends React.Component<{}, {}> {
         const settings = getSettings();
         let bot = Object.assign({}, settings.addressBar.selectedBot) as IBot;
         bot.msaPassword = text;
+        AddressBarOperators.addOrUpdateBot(bot);
+    }
+
+    localeChanged = (text: string) => {
+        const settings = getSettings();
+        let bot = Object.assign({}, settings.addressBar.selectedBot) as IBot;
+        bot.locale = text;
         AddressBarOperators.addOrUpdateBot(bot);
     }
 
@@ -119,6 +128,17 @@ export class AddressBarBotCreds extends React.Component<{}, {}> {
                         className="form-input addressbar-botcreds-input addressbar-botcreds-password"
                         value={settings.addressBar.selectedBot.msaPassword}
                         onChange={e => this.appPasswordChanged((e.target as any).value)} />
+                </div>
+                <div className="input-group">
+                    <label
+                        className="form-label">
+                        Locale:
+                    </label>
+                    <input
+                        type="text"
+                        className="form-input addressbar-botcreds-input addressbar-botcreds-locale"
+                        value={settings.addressBar.selectedBot.locale || remote.app.getLocale()}
+                        onChange={e => this.localeChanged((e.target as any).value)} />
                 </div>
                 <div className="input-group">
                     <button
