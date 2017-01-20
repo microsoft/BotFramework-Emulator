@@ -118,7 +118,12 @@ export class Conversation {
             else
                 activity.serviceUrl = emulator.framework.serviceUrl;
 
-            let options: request.OptionsWithUrl = { url: bot.botUrl, method: "POST", json: activity };
+            let options: request.OptionsWithUrl = {
+                url: bot.botUrl,
+                method: "POST",
+                json: activity,
+                agent: emulator.proxyAgent
+            };
 
             let responseCallback = (err, resp: http.IncomingMessage, body) => {
                 let messageActivity: IMessageActivity = activity;
@@ -332,7 +337,8 @@ export class Conversation {
                     client_id: bot.msaAppId,
                     client_secret: bot.msaPassword,
                     scope: v30AuthenticationSettings.tokenScope
-                }
+                },
+                agent: emulator.proxyAgent
             };
 
             request(opt, (err, response, body) => {

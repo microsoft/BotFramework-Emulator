@@ -34,8 +34,7 @@
 import events = require('events');
 import request = require('request');
 import async = require('async');
-import url = require('url');
-import http = require('http');
+import { emulator } from './emulator';
 let getPem = require('rsa-pem-from-mod-exp');
 let base64url = require('base64url');
 
@@ -73,7 +72,8 @@ export class OpenIdMetadata {
         let options: request.Options = {
             method: 'GET',
             url: this.url,
-            json: true
+            json: true,
+            agent: emulator.proxyAgent
         };
 
         request(options, (err, response, body) => {
@@ -89,7 +89,8 @@ export class OpenIdMetadata {
                 let options: request.Options = {
                     method: 'GET',
                     url: openIdConfig.jwks_uri,
-                    json: true
+                    json: true,
+                    agent: emulator.proxyAgent
                 };
 
                 request(options, (err, response, body) => {
