@@ -34,6 +34,7 @@
 import * as Restify from 'restify';
 import * as HttpStatus from "http-status-codes";
 import * as ResponseTypes from '../../../types/responseTypes';
+import * as log from '../../log';
 import { ErrorCodes, IResourceResponse, IErrorResponse } from '../../../types/responseTypes';
 import { RestServer } from '../../restServer';
 import { BotFrameworkAuthentication } from '../../botFrameworkAuthentication';
@@ -43,6 +44,20 @@ import { jsonBodyParser } from '../../jsonBodyParser';
 interface IBotData {
     eTag: string;
     data: any;
+}
+
+function textFragment(botData: IBotData): string {
+    /*
+    if (botData) {
+        let s = JSON.stringify(botData);
+        if (s.length > 50) {
+            s = s.substring(0, 50) + '...';
+        }
+        return s;
+    }
+    */
+    return '';
+
 }
 
 export class BotStateController {
@@ -56,20 +71,26 @@ export class BotStateController {
     private getBotData(channelId: string, conversationId: string, userId: string): IBotData {
         const key = this.botDataKey(channelId, conversationId, userId);
         return this.botDataStore[key] || {
-            data: null, eTag: 'empty'
+            data: null, eTag: '*'
         };
     }
 
     private setBotData(channelId: string, conversationId: string, userId: string, incomingData: IBotData): IBotData {
         const key = this.botDataKey(channelId, conversationId, userId);
         let oldData = this.botDataStore[key];
-        if ((oldData && incomingData.eTag != "*") && oldData.eTag != incomingData.eTag) {
+        if (oldData && oldData.eTag && (oldData.eTag.length > 0) && (incomingData.eTag != '*') && (oldData.eTag != incomingData.eTag)) {
             throw ResponseTypes.createAPIException(HttpStatus.PRECONDITION_FAILED, ErrorCodes.BadArgument, "The data is changed");
         }
-        let newData = {} as IBotData;
-        newData.eTag = new Date().getTime().toString();
-        newData.data = incomingData.data;
-        this.botDataStore[key] = newData;
+        let newData: IBotData = {
+            eTag: new Date().getTime().toString(),
+            data: incomingData.data
+        };
+        if (!incomingData.data) {
+            delete this.botDataStore[key];
+            newData.eTag = '*';
+        } else {
+            this.botDataStore[key] = newData;
+        }
         return newData;
     }
 
@@ -86,67 +107,85 @@ export class BotStateController {
 
     // Get USER Data
     public getUserData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+        let botData;
         try {
-            const botData = this.getBotData(req.params.channelId, req.params.conversationId, req.params.userId);
+            botData = this.getBotData(req.params.channelId, req.params.conversationId, req.params.userId);
             res.send(HttpStatus.OK, botData);
             res.end();
+            log.api('getUserData', req, res, botData, req.params, textFragment(botData));
         } catch (err) {
-            ResponseTypes.sendErrorResponse(req, res, next, err);
+            var error = ResponseTypes.sendErrorResponse(req, res, next, err);
+            log.api('getUserData', req, res, botData, error, textFragment(botData));
         }
     }
 
     // Get Conversation Data
     public getConversationData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+        let botData;
         try {
-            const botData = this.getBotData(req.params.channelId, req.params.conversationId, req.params.userId);
+            botData = this.getBotData(req.params.channelId, req.params.conversationId, req.params.userId);
             res.send(HttpStatus.OK, botData);
             res.end();
+            log.api('getConversationData', req, res, botData, req.params, textFragment(botData));
         } catch (err) {
-            ResponseTypes.sendErrorResponse(req, res, next, err);
+            var error = ResponseTypes.sendErrorResponse(req, res, next, err);
+            log.api('getConversationData', req, res, botData, error, textFragment(botData));
         }
     }
 
     // Get PrivateConversation Data
     public getPrivateConversationData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+        let botData;
         try {
-            const botData = this.getBotData(req.params.channelId, req.params.conversationId, req.params.userId);
+            botData = this.getBotData(req.params.channelId, req.params.conversationId, req.params.userId);
             res.send(HttpStatus.OK, botData);
             res.end();
+            log.api('getPrivateConversationData', req, res, botData, req.params, textFragment(botData));
         } catch (err) {
-            ResponseTypes.sendErrorResponse(req, res, next, err);
+            var error = ResponseTypes.sendErrorResponse(req, res, next, err);
+            log.api('getPrivateConversationData', req, res, botData, error, textFragment(botData));
         }
     }
 
     // Set User Data
     public setUserData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+        let botData;
         try {
-            let newBotData = this.setBotData(req.params.channelId, req.params.conversationId, req.params.userId, req.body as IBotData);
-            res.send(HttpStatus.OK, newBotData);
+            botData = this.setBotData(req.params.channelId, req.params.conversationId, req.params.userId, req.body as IBotData);
+            res.send(HttpStatus.OK, botData);
             res.end();
+            log.api('setUserData', req, res, botData, req.params, textFragment(botData));
         } catch (err) {
-            ResponseTypes.sendErrorResponse(req, res, next, err);
+            var error = ResponseTypes.sendErrorResponse(req, res, next, err);
+            log.api('setUserData', req, res, botData, error, textFragment(botData));
         }
     }
 
     // set conversation data
     public setConversationData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+        let botData;
         try {
-            let newBotData = this.setBotData(req.params.channelId, req.params.conversationId, req.params.userId, req.body);
-            res.send(HttpStatus.OK, newBotData);
+            botData = this.setBotData(req.params.channelId, req.params.conversationId, req.params.userId, req.body);
+            res.send(HttpStatus.OK, botData);
             res.end();
+            log.api('setConversationData', req, res, botData, req.params, textFragment(botData));
         } catch (err) {
-            ResponseTypes.sendErrorResponse(req, res, next, err);
+            var error = ResponseTypes.sendErrorResponse(req, res, next, err);
+            log.api('setConversationData', req, res, botData, error, textFragment(botData));
         }
     }
 
     // set private conversation data
     public setPrivateConversationData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+        let botData;
         try {
-            let newBotData = this.setBotData(req.params.channelId, req.params.conversationId, req.params.userId, req.body);
-            res.send(HttpStatus.OK, newBotData);
+            botData = this.setBotData(req.params.channelId, req.params.conversationId, req.params.userId, req.body);
+            res.send(HttpStatus.OK, botData);
             res.end();
+            log.api('setPrivateConversationData', req, res, botData, req.params, textFragment(botData));
         } catch (err) {
-            ResponseTypes.sendErrorResponse(req, res, next, err);
+            var error = ResponseTypes.sendErrorResponse(req, res, next, err);
+            log.api('setPrivateConversationData', req, res, botData, error, textFragment(botData));
         }
     }
 
@@ -163,8 +202,10 @@ export class BotStateController {
             }
             res.send(HttpStatus.OK);
             res.end();
+            log.api('deleteStateForUser', req, res, null, req.params, null);
         } catch (err) {
-            ResponseTypes.sendErrorResponse(req, res, next, err);
+            var error = ResponseTypes.sendErrorResponse(req, res, next, err);
+            log.api('deleteStateForUser', req, res, null, error, null);
         }
     }
 }

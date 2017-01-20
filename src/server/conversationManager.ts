@@ -93,12 +93,13 @@ export class Conversation {
     }
 
     private postage(recipientId: string, activity: IActivity) {
+        const date = moment();
         activity.id = activity.id || uniqueId();
         activity.channelId = 'emulator';
-        activity.timestamp = (new Date()).toISOString();
+        activity.timestamp = date.toISOString();
+        activity.localTimestamp = date.format();
         activity.recipient = { id: recipientId };
         activity.conversation = { id: this.conversationId };
-        activity.localTimestamp = moment().format();
     }
 
 
@@ -111,12 +112,12 @@ export class Conversation {
         activity.from = this.getCurrentUser();
         const bot = getSettings().botById(this.botId);
         if (bot) {
-            // bypass ngrok url for localhost because ngrok will rate limit 
+            // bypass ngrok url for localhost because ngrok will rate limit
             if (utils.isLocalhostUrl(bot.botUrl))
                 activity.serviceUrl = emulator.framework.localhostServiceUrl;
-            else 
+            else
                 activity.serviceUrl = emulator.framework.serviceUrl;
-                
+
             let options: request.OptionsWithUrl = { url: bot.botUrl, method: "POST", json: activity };
 
             let responseCallback = (err, resp: http.IncomingMessage, body) => {
