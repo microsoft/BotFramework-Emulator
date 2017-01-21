@@ -285,6 +285,9 @@
     .addressbar-botcreds-password {
         width: 160px;
     }
+    .addressbar-botcreds-locale {
+        width: 50px;
+    }
     .addressbar-botcreds-connect-button {
         display: block;
         padding: 11px 16px 10px 16px;

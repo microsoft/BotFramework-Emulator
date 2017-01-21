@@ -54,6 +54,7 @@ export class Emulator {
     mainWindow: Electron.BrowserWindow;
     framework = new BotFrameworkService();
     conversations = new ConversationManager();
+    proxyAgent: any;
     static queuedMessages: IQueuedMessage[] = [];
 
     constructor() {
@@ -63,9 +64,9 @@ export class Emulator {
         Electron.ipcMain.on('clientStarted', () => {
             // Use chrome's proxy settings for all outgoing requests
             const session = Electron.session.defaultSession;
-            const proxyAgent = new ElectronProxyAgent(session);
-            http.globalAgent = proxyAgent;
-            https.globalAgent = proxyAgent;
+            this.proxyAgent = new ElectronProxyAgent(session);
+            http.globalAgent = this.proxyAgent;
+            https.globalAgent = this.proxyAgent;
 
             this.mainWindow = mainWindow;
             Emulator.queuedMessages.forEach((msg) => {
