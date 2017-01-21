@@ -49,6 +49,9 @@ process.on('uncaughtException', (error: Error) => {
 export let mainWindow: Electron.BrowserWindow;
 
 const createMainWindow = () => {
+
+    const windowTitle = "Bot Framework Channel Emulator";
+
     // TODO: Make a better/safer window state restoration module
     // (handles change in display dimensions, maximized state, etc)
     const safeLowerBound = (val: any, lowerBound: number) => {
@@ -59,22 +62,25 @@ const createMainWindow = () => {
     const settings = getSettings();
     mainWindow = new Electron.BrowserWindow(
         {
+            show: false,
+            backgroundColor: '#f7f7f7',
             width: safeLowerBound(settings.windowState.width, 0),
             height: safeLowerBound(settings.windowState.height, 0),
             x: safeLowerBound(settings.windowState.left, 0),
-            y: safeLowerBound(settings.windowState.top, 0)
+            y: safeLowerBound(settings.windowState.top, 0),
+            webPreferences: {
+                directWrite: false
+            }
         });
-    mainWindow.setTitle(`Microsoft Bot Framework Emulator (v${pjson.version})`);
-
+    mainWindow.setTitle(windowTitle);
 
     //mainWindow.webContents.openDevTools();
-
 
     if (process.platform === 'darwin') {
         // Create the Application's main menu
         var template: Electron.MenuItemOptions[] = [
             {
-                label: "Bot Framework Emulator",
+                label: windowTitle,
                 submenu: [
                     { label: "About", click: () => Emulator.send('show-about') },
                     { type: "separator" },
@@ -124,20 +130,15 @@ const createMainWindow = () => {
         mainWindow = null;
     });
 
-    mainWindow.webContents.once('did-finish-load', () => {
-        let page = url.format({
-            protocol: 'file',
-            slashes: true,
-            pathname: path.join(__dirname, '../client/index.html')
-        });
-        mainWindow.loadURL(page);
+    mainWindow.once('ready-to-show', () => {
+        mainWindow.show();
     });
-    let splash = url.format({
+    let page = url.format({
         protocol: 'file',
         slashes: true,
-        pathname: path.join(__dirname, '../client/splash.html')
+        pathname: path.join(__dirname, '../client/index.html')
     });
-    mainWindow.loadURL(splash);
+    mainWindow.loadURL(page);
 }
 
 const shouldQuit = Electron.app.makeSingleInstance((commandLine, workingDirectory) => {
