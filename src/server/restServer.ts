@@ -51,7 +51,6 @@ export class RestServer {
         this.router.use(stripEmptyBearerToken);
         this.router.use(Restify.dateParser());
         this.router.use(Restify.queryParser());
-        //this.router.on('NotFound', (req: Restify.Request, res: Restify.Response, cb) => {});
     }
 
     public restart() {
