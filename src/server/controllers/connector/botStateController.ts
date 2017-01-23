@@ -39,6 +39,7 @@ import { ErrorCodes, IResourceResponse, IErrorResponse } from '../../../types/re
 import { RestServer } from '../../restServer';
 import { BotFrameworkAuthentication } from '../../botFrameworkAuthentication';
 import { jsonBodyParser } from '../../jsonBodyParser';
+import { getSettings } from '../../settings';
 
 
 interface IBotData {
@@ -50,19 +51,19 @@ export class BotStateController {
 
     private botDataStore: { [key: string]: IBotData } = {};
 
-    private botDataKey(channelId: string, conversationId: string, userId: string) {
-        return `${channelId || '*'}!${conversationId || '*'}!${userId || '*'}`;
+    private botDataKey(botId: string, channelId: string, conversationId: string, userId: string) {
+        return `${botId || '*'}!${channelId || '*'}!${conversationId || '*'}!${userId || '*'}`;
     }
 
-    private getBotData(channelId: string, conversationId: string, userId: string): IBotData {
-        const key = this.botDataKey(channelId, conversationId, userId);
+    private getBotData(botId: string, channelId: string, conversationId: string, userId: string): IBotData {
+        const key = this.botDataKey(botId, channelId, conversationId, userId);
         return this.botDataStore[key] || {
             data: null, eTag: '*'
         };
     }
 
-    private setBotData(channelId: string, conversationId: string, userId: string, incomingData: IBotData): IBotData {
-        const key = this.botDataKey(channelId, conversationId, userId);
+    private setBotData(botId: string, channelId: string, conversationId: string, userId: string, incomingData: IBotData): IBotData {
+        const key = this.botDataKey(botId, channelId, conversationId, userId);
         let oldData = this.botDataStore[key];
         if (oldData && oldData.eTag && (oldData.eTag.length > 0) && (incomingData.eTag != '*') && (oldData.eTag != incomingData.eTag)) {
             throw ResponseTypes.createAPIException(HttpStatus.PRECONDITION_FAILED, ErrorCodes.BadArgument, "The data is changed");
@@ -94,7 +95,11 @@ export class BotStateController {
     // Get USER Data
     public getUserData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         try {
-            const botData = this.getBotData(req.params.channelId, req.params.conversationId, req.params.userId);
+            const activeBot = getSettings().getActiveBot();
+            if (!activeBot) {
+                throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
+            }
+            const botData = this.getBotData(activeBot.botId, req.params.channelId, req.params.conversationId, req.params.userId);
             res.send(HttpStatus.OK, botData);
             res.end();
             log.api('getUserData', req, res, req.params, botData);
@@ -107,7 +112,11 @@ export class BotStateController {
     // Get Conversation Data
     public getConversationData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         try {
-            const botData = this.getBotData(req.params.channelId, req.params.conversationId, req.params.userId);
+            const activeBot = getSettings().getActiveBot();
+            if (!activeBot) {
+                throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
+            }
+            const botData = this.getBotData(activeBot.botId, req.params.channelId, req.params.conversationId, req.params.userId);
             res.send(HttpStatus.OK, botData);
             res.end();
             log.api('getConversationData', req, res, req.params, botData);
@@ -120,7 +129,11 @@ export class BotStateController {
     // Get PrivateConversation Data
     public getPrivateConversationData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         try {
-            const botData = this.getBotData(req.params.channelId, req.params.conversationId, req.params.userId);
+            const activeBot = getSettings().getActiveBot();
+            if (!activeBot) {
+                throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
+            }
+            const botData = this.getBotData(activeBot.botId, req.params.channelId, req.params.conversationId, req.params.userId);
             res.send(HttpStatus.OK, botData);
             res.end();
             log.api('getPrivateConversationData', req, res, req.params, botData);
@@ -134,7 +147,11 @@ export class BotStateController {
     public setUserData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         let botData;
         try {
-            botData = this.setBotData(req.params.channelId, req.params.conversationId, req.params.userId, req.body as IBotData);
+            const activeBot = getSettings().getActiveBot();
+            if (!activeBot) {
+                throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
+            }
+            botData = this.setBotData(activeBot.botId, req.params.channelId, req.params.conversationId, req.params.userId, req.body as IBotData);
             res.send(HttpStatus.OK, botData);
             res.end();
             log.api('setUserData', req, res, { key: req.params, state: req.body }, botData);
@@ -147,7 +164,11 @@ export class BotStateController {
     // set conversation data
     public setConversationData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         try {
-            const botData = this.setBotData(req.params.channelId, req.params.conversationId, req.params.userId, req.body);
+            const activeBot = getSettings().getActiveBot();
+            if (!activeBot) {
+                throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
+            }
+            const botData = this.setBotData(activeBot.botId, req.params.channelId, req.params.conversationId, req.params.userId, req.body);
             res.send(HttpStatus.OK, botData);
             res.end();
             log.api('setConversationData', req, res, { key: req.params, state: req.body }, botData);
@@ -160,7 +181,11 @@ export class BotStateController {
     // set private conversation data
     public setPrivateConversationData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         try {
-            const botData = this.setBotData(req.params.channelId, req.params.conversationId, req.params.userId, req.body);
+            const activeBot = getSettings().getActiveBot();
+            if (!activeBot) {
+                throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
+            }
+            const botData = this.setBotData(activeBot.botId, req.params.channelId, req.params.conversationId, req.params.userId, req.body);
             res.send(HttpStatus.OK, botData);
             res.end();
             log.api('setPrivateConversationData', req, res, { key: req.params, state: req.body }, botData);
@@ -173,11 +198,16 @@ export class BotStateController {
     // delete state for user
     public deleteStateForUser = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         try {
+            const activeBot = getSettings().getActiveBot();
+            if (!activeBot) {
+                throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
+            }
+
             let keys = Object.keys(this.botDataStore);
             let userPostfix = `!${req.params.userId}`;
             for (let i = 0; i < keys.length; i++) {
                 let key = keys[i];
-                if (key.endsWith(userPostfix)) {
+                if (key.startsWith(`${activeBot.botId}!`) && key.endsWith(`!${req.params.userId}`)) {
                     delete this.botDataStore[key];
                 }
             }

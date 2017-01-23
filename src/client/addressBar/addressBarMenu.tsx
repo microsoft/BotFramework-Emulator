@@ -87,43 +87,50 @@ export class AddressBarMenu extends React.Component<{}, {}> {
                         }
                     },
                     {
-                        label: 'Bot contact added',
-                        click: () => {
-                            Emulator.botContactAdded();
-                        }
-                    },
-                    {
-                        label: 'Bot contact removed',
-                        click: () => {
-                            Emulator.botContactRemoved();
-                        }
-                    },
-                    {
-                        label: 'Typing',
-                        click: () => {
-                            Emulator.typing();
-                        }
-                    },
-                    {
-                        label: 'Ping',
-                        click: () => {
-                            Emulator.ping();
-                        }
-                    },
-                    {
-                        label: 'Delete User Data',
-                        click: () => {
-                            Emulator.deleteUserData();
-                        }
-                    },
-                    {
-                        type: 'separator'
-                    },
-                    {
-                        label: 'End Conversation',
-                        click: () => {
-                            ConversationActions.endConversation();
-                        }
+                        label: 'Send System Activity',
+                        type: 'submenu',
+                        enabled: true,
+                        submenu: [
+                            {
+                                label: 'Bot contact added',
+                                click: () => {
+                                    Emulator.botContactAdded();
+                                }
+                            },
+                            {
+                                label: 'Bot contact removed',
+                                click: () => {
+                                    Emulator.botContactRemoved();
+                                }
+                            },
+                            {
+                                label: 'Typing',
+                                click: () => {
+                                    Emulator.typing();
+                                }
+                            },
+                            {
+                                label: 'Ping',
+                                click: () => {
+                                    Emulator.ping();
+                                }
+                            },
+                            {
+                                label: 'Delete User Data',
+                                click: () => {
+                                    Emulator.deleteUserData();
+                                }
+                            },
+                            {
+                                type: 'separator'
+                            },
+                            {
+                                label: 'End Conversation',
+                                click: () => {
+                                    ConversationActions.endConversation();
+                                }
+                            }
+                        ]
                     }
                 ]
             },

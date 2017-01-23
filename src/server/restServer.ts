@@ -51,7 +51,6 @@ export class RestServer {
         this.router.use(stripEmptyBearerToken);
         this.router.use(Restify.dateParser());
         this.router.use(Restify.queryParser());
-        //this.router.use(Restify.bodyParser({ mapParams: true, mapFiles: false }));
     }
 
     public restart() {
