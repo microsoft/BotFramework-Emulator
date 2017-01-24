@@ -75,62 +75,62 @@ export class AddressBarMenu extends React.Component<{}, {}> {
                 enabled: inConversation,
                 submenu: [
                     {
-                        label: 'Add User',
-                        click: () => {
-                            Emulator.addUser();
-                        }
-                    },
-                    {
-                        label: 'Remove User',
-                        click: () => {
-                            Emulator.removeRandomUser();
-                        }
-                    },
-                    {
                         label: 'Send System Activity',
                         type: 'submenu',
                         enabled: true,
                         submenu: [
                             {
-                                label: 'Bot contact added',
+                                label: 'conversationUpdate (user added)',
+                                click: () => {
+                                    Emulator.addUser();
+                                }
+                            },
+                            {
+                                label: 'conversationUpdate (user removed)',
+                                click: () => {
+                                    Emulator.removeRandomUser();
+                                }
+                            },
+                            {
+                                label: 'contactRelationUpdate (bot added)',
                                 click: () => {
                                     Emulator.botContactAdded();
                                 }
                             },
                             {
-                                label: 'Bot contact removed',
+                                label: 'contactRelationUpdate (bot removed)',
                                 click: () => {
                                     Emulator.botContactRemoved();
                                 }
                             },
                             {
-                                label: 'Typing',
+                                label: 'typing',
                                 click: () => {
                                     Emulator.typing();
                                 }
                             },
                             {
-                                label: 'Ping',
+                                label: 'ping',
                                 click: () => {
                                     Emulator.ping();
                                 }
                             },
                             {
-                                label: 'Delete User Data',
+                                label: 'deleteUserData',
                                 click: () => {
                                     Emulator.deleteUserData();
                                 }
-                            },
-                            {
-                                type: 'separator'
-                            },
-                            {
-                                label: 'End Conversation',
-                                click: () => {
-                                    ConversationActions.endConversation();
-                                }
                             }
                         ]
+                    },
+                    {
+                        type: 'separator'
+                    },
+                    {
+                        label: 'End Conversation',
+                        click: () => {
+                            ConversationActions.endConversation();
+                        }
                     }
                 ]
             },
