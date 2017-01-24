@@ -110,6 +110,9 @@ export class Conversation {
         // Do not make a shallow copy here before modifying
         this.postage(this.botId, activity);
         activity.from = this.getCurrentUser();
+        if (!activity.recipient.name) {
+            activity.recipient.name = "Bot";
+        }
         const bot = getSettings().botById(this.botId);
         if (bot) {
             // bypass ngrok url for localhost because ngrok will rate limit
