@@ -112,8 +112,8 @@ export class BotFrameworkService extends RestServer {
                 }, (err, url: string, inspectPort: string) => {
                     if (err) {
                         log.error(`Failed to start ngrok: ${err.message || err.msg}`);
+                        log.debug(log.makeLinkMessage('Howto: Network tunneling with ngrok', 'https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)'));
                         log.debug(log.ngrokConfigurationLink('Configure ngrok'));
-                        log.debug(log.makeLinkMessage('Docs: Network Tunneling with ngrok', 'https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)'));
                     } else {
                         this.inspectUrl = `http://localhost:${inspectPort}`;
                         this.ngrokServiceUrl = url;
@@ -129,9 +129,9 @@ export class BotFrameworkService extends RestServer {
                     });
                 });
             } else {
-                log.debug("ngrok not configured");
+                log.debug("ngrok not configured (only needed when connecting to remotely hosted bots)");
+                log.debug(log.makeLinkMessage('Howto: Network tunneling with ngrok', 'https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)'));
                 log.debug(log.ngrokConfigurationLink('Configure ngrok'));
-                log.debug(log.makeLinkMessage('Docs: Network Tunneling with ngrok', 'https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)'));
             }
         }
         if (this.ngrokPath !== prevNgrokPath) {
