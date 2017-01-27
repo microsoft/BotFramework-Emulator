@@ -111,4 +111,13 @@ export class Emulator {
         };
         request(options);
     }
+
+    public static quitAndInstall() {
+        const settings = getSettings();
+        let options: request.OptionsWithUrl = {
+            url: `${this.serviceUrl}/emulator/system/quitAndInstall`,
+            method: "POST"
+        };
+        request(options);
+    }
 }
