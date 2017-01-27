@@ -125,7 +125,8 @@ export class Conversation {
                 url: bot.botUrl,
                 method: "POST",
                 json: activity,
-                agent: emulator.proxyAgent
+                agent: emulator.proxyAgent,
+                strictSSL: false
             };
 
             let responseCallback = (err, resp: http.IncomingMessage, body) => {
@@ -341,7 +342,8 @@ export class Conversation {
                     client_secret: bot.msaPassword,
                     scope: v30AuthenticationSettings.tokenScope
                 },
-                agent: emulator.proxyAgent
+                agent: emulator.proxyAgent,
+                strictSSL: false
             };
 
             request(opt, (err, response, body) => {
