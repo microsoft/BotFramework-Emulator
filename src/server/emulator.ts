@@ -63,10 +63,10 @@ export class Emulator {
         // is why we're getting the value from getStore().getState().
         Electron.ipcMain.on('clientStarted', () => {
             // DISABLED: Use chrome's proxy settings for all outgoing requests
-            //const session = Electron.session.defaultSession;
-            //this.proxyAgent = new ElectronProxyAgent(session);
-            //http.globalAgent = this.proxyAgent;
-            //https.globalAgent = this.proxyAgent;
+            const session = Electron.session.defaultSession;
+            this.proxyAgent = new ElectronProxyAgent(session);
+            http.globalAgent = this.proxyAgent;
+            https.globalAgent = this.proxyAgent;
 
             this.mainWindow = mainWindow;
             Emulator.queuedMessages.forEach((msg) => {
