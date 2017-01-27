@@ -33,6 +33,7 @@
 
 import * as Restify from 'restify';
 import * as HttpStatus from "http-status-codes";
+import { autoUpdater } from 'electron';
 import { getSettings, getStore } from '../../settings';
 import { emulator } from '../../emulator';
 import { RestServer } from '../../restServer';
@@ -68,6 +69,7 @@ export class EmulatorController {
         server.router.post('/emulator/:conversationId/typing', this.typing);
         server.router.post('/emulator/:conversationId/ping', this.ping);
         server.router.del('/emulator/:conversationId/userdata', this.deleteUserData);
+        server.router.post('/emulator/system/quitAndInstall', this.quitAndInstall);
     }
 
     static getUsers = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
@@ -162,6 +164,18 @@ export class EmulatorController {
         try {
             const conversation = getConversation(req.params.conversationId);
             conversation.sendDeleteUserData();
+            res.send(HttpStatus.OK);
+            res.end();
+        } catch (err) {
+            ResponseTypes.sendErrorResponse(req, res, next, err);
+        }
+    }
+
+    static quitAndInstall = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+        try {
+            if (autoUpdater) {
+                autoUpdater.quitAndInstall();
+            }
             res.send(HttpStatus.OK);
             res.end();
         } catch (err) {

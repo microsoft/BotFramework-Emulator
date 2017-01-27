@@ -31,12 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { shell, remote } from 'electron';
+import { shell } from 'electron';
 import * as URL from 'url';
 import * as QueryString from 'querystring';
 import { InspectorActions, AddressBarActions } from './reducers';
 import { getSettings, selectedActivity$, deselectActivity } from './settings';
 import { Settings as ServerSettings } from '../types/serverSettingsTypes';
+import { Emulator } from './emulator';
 import * as log from './log';
 
 
@@ -116,9 +117,7 @@ function navigateCommandUrl(params: string[]) {
         return;
     const json = decodeURIComponent(params['args']);
     const args = JSON.parse(json);
-    if (args.cmd === 'autoUpdater.quitAndInstall') {
-        if (remote.autoUpdater) {
-            remote.autoUpdater.quitAndInstall();
-        }
+    if (args === 'autoUpdater.quitAndInstall') {
+        Emulator.quitAndInstall();
     }
 }
