@@ -149,7 +149,7 @@ export class Conversation {
                             `[${activity.type}]`,
                             text);
                         if(Number(resp.statusCode) == 401 || Number(resp.statusCode) == 402) {
-                            log.error("Error: The bot's MSA appId or passsword is incorrect.");
+                            log.error("Error: The bot's MSA appId or password is incorrect.");
                             log.error(log.botCredsConfigurationLink('Click here'), "to edit your bot's MSA info.");
                         }
                         cb(err, resp ? resp.statusCode : undefined);
