@@ -152,6 +152,7 @@ export class ConversationsController {
             if (!activeBot)
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
 
+            activity.id = null;
             activity.replyToId = req.params.activityId;
 
             // look up conversation
@@ -182,6 +183,7 @@ export class ConversationsController {
             if (!activeBot)
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
 
+            activity.id = null;
             activity.replyToId = req.params.activityId;
 
             // look up conversation
