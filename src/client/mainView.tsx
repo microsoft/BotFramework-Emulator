@@ -140,8 +140,9 @@ export class MainView extends React.Component<{}, {}> {
                 formatOptions: {
                     showHeader: false
                 },
-                selectedActivity: selectedActivity$(),
-                user: this.getCurrentUser(settings.serverSettings)
+                selectedActivity: selectedActivity$() as any,
+                user: this.getCurrentUser(settings.serverSettings),
+                bot: { name: "Bot", id: activeBot.botId }
             }
             InspectorActions.clear();
             return <BotChat.Chat key={this.reuseKey} {...props} />
