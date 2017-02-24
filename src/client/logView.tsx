@@ -34,7 +34,7 @@
 import * as Electron from 'electron';
 import * as React from 'react';
 import { Reducer, Unsubscribe } from 'redux';
-import { Subscription, Observable, Subject } from '@reactivex/rxjs';
+import { Subscription, Observable, Subject } from 'rxjs';
 import { getSettings, addSettingsListener } from './settings';
 import { LogActions } from './reducers';
 import * as Constants from './constants';

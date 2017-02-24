@@ -33,7 +33,7 @@
 
 import * as Electron from 'electron';
 import { Store, createStore, combineReducers, Reducer, Action } from 'redux';
-import { Subscription, BehaviorSubject } from '@reactivex/rxjs';
+import { Subscription, BehaviorSubject } from 'rxjs';
 import { ActivityOrID } from '../types/activityTypes';
 import { ISettings as IServerSettings, Settings as ServerSettings } from '../types/serverSettingsTypes';
 import { InspectorActions, ConversationActions } from './reducers';
