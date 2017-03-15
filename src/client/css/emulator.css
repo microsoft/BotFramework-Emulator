@@ -369,12 +369,13 @@
 
     .appsettings-ngrokpath-input {
         width: 357px;
+        margin-bottom: 8px;
     }
 
     .appsettings-serviceurl-input {
         width: 460px;
     }
-
+    
 
 /* conversationsettings-dialog */
 

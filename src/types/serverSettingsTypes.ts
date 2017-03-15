@@ -38,6 +38,8 @@ import { IUser } from '../types/userTypes';
 export interface IFrameworkSettings {
     // path to use for ngrok
     ngrokPath?: string
+    // option for deciding whether to use ngrok for bots on localhost
+    ngrokForLocalhostBot?: boolean
 }
 
 export interface IWindowStateSettings {
@@ -84,7 +86,8 @@ export class Settings implements ISettings {
 }
 
 export const frameworkDefault: IFrameworkSettings = {
-    ngrokPath: ''
+    ngrokPath: '',
+    ngrokForLocalhostBot: false
 }
 
 export const windowStateDefault: IWindowStateSettings = {
