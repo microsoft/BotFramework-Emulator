@@ -40,7 +40,7 @@ import { IBot, newBot } from '../../types/botTypes';
 import * as log from '../log';
 import * as path from 'path';
 import * as Constants from '../constants';
-
+import * as fs from 'fs';
 
 interface IAppSettings {
     ngrokPath?: string
@@ -82,15 +82,16 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
         const dir = path.dirname(this.ngrokPathInputRef.value);
         remote.dialog.showOpenDialog(
             remote.getCurrentWindow(), {
-            title: 'Browse for ngrok',
-            defaultPath: dir,
-            properties: ['openFile']
-        }, (filenames: string[]) => {
-            if (filenames && filenames.length) {
-                // TODO: validate selection
-                this.ngrokPathInputRef.value = filenames[0];
-            }
-        })
+                title: 'Browse for ngrok',
+                defaultPath: dir,
+                properties: ['openFile']
+            }, (filenames: string[]) => {
+                if (filenames && filenames.length && fs.existsSync(filenames[0])) {
+                    // TODO: validate selection
+                    //      done.
+                    this.ngrokPathInputRef.value = filenames[0];
+                }
+            });
     }
 
     componentWillMount() {
@@ -124,7 +125,7 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
                             <li>
                                 <a href="javascript:void(0)"
                                     className={"emu-navitem emu-navitem-selected"}
-                                    >
+                                >
                                     ngrok
                                 </a>
                             </li>
@@ -132,7 +133,7 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
                         <hr className='enu-navhdr' />
                         <div className={"emu-tab emu-visible"}>
                             <div className='emu-dialog-text'>
-                            <a title='https://ngrok.com' href='https://ngrok.com'>ngrok</a> is network tunneling software.
+                                <a title='https://ngrok.com' href='https://ngrok.com'>ngrok</a> is network tunneling software.
                             The Bot Framework Emulator works with ngrok to communicate with bots hosted remotely.
                             Read the <a title='https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)' href='https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)'>wiki page</a> to learn more about using ngrok and to download it.
                             </div>
