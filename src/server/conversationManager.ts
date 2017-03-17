@@ -118,7 +118,7 @@ export class Conversation {
         if (bot) {
             // bypass ngrok url for localhost because ngrok will rate limit
             // (if the user has asked for this behaviour)
-            if (!settings.framework.ngrokForLocalhostBot && utils.isLocalhostUrl(bot.botUrl))
+            if (settings.framework.bypassNgrokLocalhost && utils.isLocalhostUrl(bot.botUrl))
                 activity.serviceUrl = emulator.framework.localhostServiceUrl;
             else
                 activity.serviceUrl = emulator.framework.serviceUrl;

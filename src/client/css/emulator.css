@@ -308,6 +308,10 @@
         left:40px;
     }
 
+    .clickable:hover {
+        cursor: pointer;
+    }
+
 /* appsettings-dialog */
 
     .appsettings-dialog {
@@ -317,6 +321,14 @@
 
     .appsettings-dialog .input-group {
         margin: 0;
+    }
+
+    .appsettings-checkbox-group {
+        width: 100%;
+    }
+
+    .appsettings-checkbox-group .form-label {
+        width: 100%;
     }
 
     .appsettings-browsebtn {

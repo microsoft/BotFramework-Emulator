@@ -58,7 +58,7 @@ export class BotFrameworkService extends RestServer {
     inspectUrl: string;
     ngrokPath: string;
     ngrokServiceUrl: string;
-    ngrokForLocalhostBot: boolean;
+    bypassNgrokLocalhost: boolean;
 
     public get serviceUrl() {
         return ngrok.running()
@@ -98,8 +98,8 @@ export class BotFrameworkService extends RestServer {
         if (!port) return;
         const prevNgrokPath = this.ngrokPath;
         this.ngrokPath = settings.framework.ngrokPath;
-        const prevNgrokForLocalhostBot = this.ngrokForLocalhostBot;
-        this.ngrokForLocalhostBot = settings.framework.ngrokForLocalhostBot;
+        const prevbypassNgrokLocalhost = this.bypassNgrokLocalhost;
+        this.bypassNgrokLocalhost = settings.framework.bypassNgrokLocalhost;
         const prevServiceUrl = this.serviceUrl;
         this.localhostServiceUrl = `http://localhost:${port}`;
         const startNgrok = () => {
@@ -127,7 +127,7 @@ export class BotFrameworkService extends RestServer {
                         type: 'Framework_Set',
                         state: {
                             ngrokPath: this.ngrokPath,
-                            ngrokForLocalhostBot: this.ngrokForLocalhostBot
+                            bypassNgrokLocalhost: this.bypassNgrokLocalhost
                         }
                     });
                 });
@@ -144,13 +144,13 @@ export class BotFrameworkService extends RestServer {
                 startNgrok();
                 return true;
             });
-        } else if (this.ngrokForLocalhostBot === prevNgrokForLocalhostBot) {
+        } else if (this.bypassNgrokLocalhost === prevbypassNgrokLocalhost) {
             ngrok.disconnect(prevServiceUrl, () => {
                 startNgrok();
             });
         }
-        const useNgrok = this.ngrokPath && this.ngrokForLocalhostBot;
-        log.debug(`Using ${useNgrok ? 'ngrok' : 'localhost'} service URL for localhost bots`);
+        const useNgrok = this.ngrokPath && !this.bypassNgrokLocalhost;
+        log.debug(`Using ${useNgrok ? 'ngrok' : 'localhost'} service URL for localhost addresses`);
     }
 
     /**
@@ -159,7 +159,7 @@ export class BotFrameworkService extends RestServer {
     private configure(settings: Settings) {
         // Did ngrok path change?
         if (this.ngrokPath !== settings.framework.ngrokPath ||
-                this.ngrokForLocalhostBot !== settings.framework.ngrokForLocalhostBot) {
+                this.bypassNgrokLocalhost !== settings.framework.bypassNgrokLocalhost) {
             this.relaunchNgrok(settings);
         }
     }

@@ -44,13 +44,13 @@ import * as Constants from '../constants';
 
 interface IAppSettings {
     ngrokPath?: string,
-    ngrokForLocalhostBot?: boolean
+    bypassNgrokLocalhost?: boolean
 }
 
 export class AppSettingsDialog extends React.Component<{}, { ngrokPath: string }> {
     settingsUnsubscribe: any;
     ngrokPathInputRef: any;
-    ngrokForLocalhostBotInputRef: any;
+    bypassNgrokLocalhostInputRef: any;
     showing: boolean;
 
     pageClicked = (ev: Event) => {
@@ -71,7 +71,7 @@ export class AppSettingsDialog extends React.Component<{}, { ngrokPath: string }
     onAccept = () => {
         ServerSettingsActions.remote_setFrameworkServerSettings({
             ngrokPath: this.ngrokPathInputRef.value,
-            ngrokForLocalhostBot: this.ngrokForLocalhostBotInputRef.checked
+            bypassNgrokLocalhost: this.bypassNgrokLocalhostInputRef.checked
         });
         AddressBarActions.hideAppSettings();
     }
@@ -152,14 +152,14 @@ export class AppSettingsDialog extends React.Component<{}, { ngrokPath: string }
                                 <button className='appsettings-browsebtn' onClick={() => this.browseForNgrokPath()}>Browse...</button>
                             </div>
                             <div className="input-group appsettings-checkbox-group">
-                                <label className="form-label">
+                                <label className="form-label clickable">
                                     <input
                                         type="checkbox"
-                                        ref={ref => this.ngrokForLocalhostBotInputRef = ref}
+                                        ref={ref => this.bypassNgrokLocalhostInputRef = ref}
                                         className="form-input"
-                                        defaultChecked={ serverSettings.framework.ngrokForLocalhostBot }
+                                        defaultChecked={ serverSettings.framework.bypassNgrokLocalhost }
                                         disabled={ this.state ? !this.state.ngrokPath : !serverSettings.framework.ngrokPath } />
-                                    Use ngrok for bots served from localhost
+                                    Bypass ngrok for local addresses
                                 </label>
                             </div>
                         </div>

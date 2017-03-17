@@ -334,7 +334,7 @@ export class ServerSettingsActions {
     }
     static remote_setFrameworkServerSettings(state: {
         ngrokPath: string,
-        ngrokForLocalhostBot: boolean
+        bypassNgrokLocalhost: boolean
     }) {
         serverChangeSetting('Framework_Set', state);
     }
