@@ -45,7 +45,7 @@ process.on('uncaughtException', (error) => {
     log.error('[err-client]', error.message, error.stack);
 });
 
-window.onerror = (message: string, filename?: string, lineno?: number, colno?: number, error?:Error) => {
+window.onerror = (message: string, filename?: string, lineno?: number, colno?: number, error?: Error) => {
     log.error('[err-client]', message, filename, lineno, colno, error);
     return true; // prevent default handler
 }
@@ -79,48 +79,48 @@ const remote = require('electron').remote;
 const Menu = remote.Menu;
 
 const ContextMenuRW = Menu.buildFromTemplate([{
-        label: 'Undo',
-        role: 'undo',
-    }, {
-        label: 'Redo',
-        role: 'redo',
-    }, {
-        type: 'separator',
-    }, {
-        label: 'Cut',
-        role: 'cut',
-    }, {
-        label: 'Copy',
-        role: 'copy',
-    }, {
-        label: 'Paste',
-        role: 'paste',
-    }
+    label: 'Undo',
+    role: 'undo',
+}, {
+    label: 'Redo',
+    role: 'redo',
+}, {
+    type: 'separator',
+}, {
+    label: 'Cut',
+    role: 'cut',
+}, {
+    label: 'Copy',
+    role: 'copy',
+}, {
+    label: 'Paste',
+    role: 'paste',
+}
 ]);
 
 const ContextMenuRO = Menu.buildFromTemplate([{
-        label: 'Undo',
-        role: 'undo',
-        enabled: false
-    }, {
-        label: 'Redo',
-        role: 'redo',
-        enabled: false
-    }, {
-        type: 'separator',
-    }, {
-        label: 'Cut',
-        role: 'cut',
-        enabled: false
-    }, {
-        label: 'Copy',
-        role: 'copy',
-        enabled: false
-    }, {
-        label: 'Paste',
-        role: 'paste',
-        enabled: false
-    }
+    label: 'Undo',
+    role: 'undo',
+    enabled: false
+}, {
+    label: 'Redo',
+    role: 'redo',
+    enabled: false
+}, {
+    type: 'separator',
+}, {
+    label: 'Cut',
+    role: 'cut',
+    enabled: false
+}, {
+    label: 'Copy',
+    role: 'copy',
+    enabled: false
+}, {
+    label: 'Paste',
+    role: 'paste',
+    enabled: false
+}
 ]);
 
 document.body.addEventListener('contextmenu', (e) => {
@@ -141,6 +141,18 @@ document.body.addEventListener('contextmenu', (e) => {
         node = node.parentNode;
     }
 });
+
+window.addEventListener("beforeunload", e => {
+    let response = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+        message: "Do you wish to exit the emulator?",
+        type: "question",
+        buttons: ["Yes", "No"]
+    });
+    if (response === 1) {
+        e.returnValue = false;
+        return false;
+    }
+})
 
 // Load settings
 
