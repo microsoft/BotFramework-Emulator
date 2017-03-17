@@ -33,6 +33,8 @@ If you are interested in fixing issues and contributing directly to the code bas
 * [How to build and run from source](https://github.com/Microsoft/BotFramework-Emulator/wiki/How-to-Contribute#clone-and-build)
 * [Submitting pull requests](https://github.com/Microsoft/BotFramework-Emulator/wiki/How-to-Contribute#pull-requests)
 
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
 ## Feedback
 
 * File a bug or suggestion in [GitHub Issues](https://github.com/Microsoft/BotFramework-Emulator/wiki/Submitting-Bugs-&-Suggestions)
