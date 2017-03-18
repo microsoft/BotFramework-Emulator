@@ -42,13 +42,10 @@ import * as path from 'path';
 import * as Constants from '../constants';
 import * as fs from 'fs';
 
-interface IAppSettings {
-    ngrokPath?: string
-}
-
 export class AppSettingsDialog extends React.Component<{}, {}> {
     settingsUnsubscribe: any;
     ngrokPathInputRef: any;
+    promptBeforeCloseCheckRef: any;
     showing: boolean;
 
     pageClicked = (ev: Event) => {
@@ -57,7 +54,7 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
         let target = ev.srcElement;
         while (target) {
             if (target.className.toString().includes("appsettings")) {
-                ev.preventDefault();
+                // ev.preventDefault();
                 return;
             }
             target = target.parentElement;
@@ -69,7 +66,8 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
 
     onAccept = () => {
         ServerSettingsActions.remote_setFrameworkServerSettings({
-            ngrokPath: this.ngrokPathInputRef.value
+            ngrokPath: this.ngrokPathInputRef.value,
+            promptBeforeExit: this.promptBeforeCloseCheckRef.checked
         });
         AddressBarActions.hideAppSettings();
     }
@@ -126,7 +124,7 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
                                 <a href="javascript:void(0)"
                                     className={"emu-navitem emu-navitem-selected"}
                                 >
-                                    ngrok
+                                    General
                                 </a>
                             </li>
                         </ul>
@@ -147,6 +145,16 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
                                     className="form-input appsettings-path-input appsettings-ngrokpath-input"
                                     defaultValue={`${serverSettings.framework.ngrokPath || ''}`} />
                                 <button className='appsettings-browsebtn' onClick={() => this.browseForNgrokPath()}>Browse...</button>
+                            </div>
+                            <hr />
+                            <div className="input-group">
+                                <input
+                                    id="promptBeforeCloseCheck"
+                                    type="checkbox"
+                                    ref={ref => this.promptBeforeCloseCheckRef = ref}
+                                    className="form-input"
+                                    defaultChecked={serverSettings.framework.promptBeforeExit || false} />
+                                <label htmlFor="promptBeforeCloseCheck">Prompt me before exiting the emulator</label>
                             </div>
                         </div>
                     </div>

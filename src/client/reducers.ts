@@ -39,7 +39,8 @@ import { Emulator } from './emulator';
 import * as log from './log';
 import {
     ISettings as IServerSettings,
-    Settings as ServerSettings
+    Settings as ServerSettings,
+    IFrameworkSettings
 } from '../types/serverSettingsTypes';
 import {
     getSettings,
@@ -55,9 +56,8 @@ import {
     IConversationState,
     ILogState,
     IInspectorState,
-    serverChangeSetting
+    serverChangeSetting,
 } from './settings';
-
 
 type LayoutAction = {
     type: 'Splitter_RememberHorizontal',
@@ -332,9 +332,7 @@ export class ServerSettingsActions {
     static remote_setCurrentUser(user: IUser) {
         serverChangeSetting('Users_SetCurrentUser', { user });
     }
-    static remote_setFrameworkServerSettings(state: {
-        ngrokPath: string
-    }) {
+    static remote_setFrameworkServerSettings(state: IFrameworkSettings) {
         serverChangeSetting('Framework_Set', state);
     }
 }

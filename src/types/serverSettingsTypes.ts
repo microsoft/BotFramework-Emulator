@@ -37,7 +37,9 @@ import { IUser } from '../types/userTypes';
 
 export interface IFrameworkSettings {
     // path to use for ngrok
-    ngrokPath?: string
+    ngrokPath?: string,
+    // whether to prompt user before the emulator exits
+    promptBeforeExit?: boolean,
 }
 
 export interface IWindowStateSettings {
