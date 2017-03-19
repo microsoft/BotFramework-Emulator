@@ -37,7 +37,9 @@ import { IUser } from '../types/userTypes';
 
 export interface IFrameworkSettings {
     // path to use for ngrok
-    ngrokPath?: string,
+    ngrokPath?: string
+    // option for deciding whether to bypass ngrok for bots on localhost
+    bypassNgrokLocalhost?: boolean
     // whether to prompt user before the emulator exits
     promptBeforeExit?: boolean,
 }
@@ -88,7 +90,8 @@ export class Settings implements ISettings {
 
 export const frameworkDefault: IFrameworkSettings = {
     ngrokPath: '',
-    promptBeforeExit: false
+    bypassNgrokLocalhost: true,
+    promptBeforeExit: false,
 }
 
 export const windowStateDefault: IWindowStateSettings = {
