@@ -333,7 +333,8 @@ export class ServerSettingsActions {
         serverChangeSetting('Users_SetCurrentUser', { user });
     }
     static remote_setFrameworkServerSettings(state: {
-        ngrokPath: string
+        ngrokPath: string,
+        bypassNgrokLocalhost: boolean
     }) {
         serverChangeSetting('Framework_Set', state);
     }

@@ -43,12 +43,14 @@ import * as Constants from '../constants';
 
 
 interface IAppSettings {
-    ngrokPath?: string
+    ngrokPath?: string,
+    bypassNgrokLocalhost?: boolean
 }
 
-export class AppSettingsDialog extends React.Component<{}, {}> {
+export class AppSettingsDialog extends React.Component<{}, { ngrokPath: string }> {
     settingsUnsubscribe: any;
     ngrokPathInputRef: any;
+    bypassNgrokLocalhostInputRef: any;
     showing: boolean;
 
     pageClicked = (ev: Event) => {
@@ -57,7 +59,6 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
         let target = ev.srcElement;
         while (target) {
             if (target.className.toString().includes("appsettings")) {
-                ev.preventDefault();
                 return;
             }
             target = target.parentElement;
@@ -69,7 +70,8 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
 
     onAccept = () => {
         ServerSettingsActions.remote_setFrameworkServerSettings({
-            ngrokPath: this.ngrokPathInputRef.value
+            ngrokPath: this.ngrokPathInputRef.value,
+            bypassNgrokLocalhost: this.bypassNgrokLocalhostInputRef.checked
         });
         AddressBarActions.hideAppSettings();
     }
@@ -89,6 +91,7 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
             if (filenames && filenames.length) {
                 // TODO: validate selection
                 this.ngrokPathInputRef.value = filenames[0];
+                this.setState({ ngrokPath: filenames[0] });
             }
         })
     }
@@ -144,8 +147,20 @@ export class AppSettingsDialog extends React.Component<{}, {}> {
                                     type="text"
                                     ref={ref => this.ngrokPathInputRef = ref}
                                     className="form-input appsettings-path-input appsettings-ngrokpath-input"
-                                    defaultValue={`${serverSettings.framework.ngrokPath || ''}`} />
+                                    defaultValue={`${serverSettings.framework.ngrokPath || ''}`}
+                                    onChange={(elem) => this.setState({ ngrokPath: elem.currentTarget.value })} />
                                 <button className='appsettings-browsebtn' onClick={() => this.browseForNgrokPath()}>Browse...</button>
+                            </div>
+                            <div className="input-group appsettings-checkbox-group">
+                                <label className="form-label clickable">
+                                    <input
+                                        type="checkbox"
+                                        ref={ref => this.bypassNgrokLocalhostInputRef = ref}
+                                        className="form-input"
+                                        defaultChecked={ serverSettings.framework.bypassNgrokLocalhost }
+                                        disabled={ this.state ? !this.state.ngrokPath : !serverSettings.framework.ngrokPath } />
+                                    Bypass ngrok for local addresses
+                                </label>
                             </div>
                         </div>
                     </div>

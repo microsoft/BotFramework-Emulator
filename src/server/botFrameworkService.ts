@@ -58,6 +58,7 @@ export class BotFrameworkService extends RestServer {
     inspectUrl: string;
     ngrokPath: string;
     ngrokServiceUrl: string;
+    bypassNgrokLocalhost: boolean;
 
     public get serviceUrl() {
         return ngrok.running()
@@ -78,7 +79,7 @@ export class BotFrameworkService extends RestServer {
             this.configure(settings);
         });
         this.router.on('listening', () => {
-            this.relaunchNgrok();
+            this.configure(getSettings());
             Emulator.send('listening', { serviceUrl: this.serviceUrl });
         });
         //this.router.on('NotFound', (req: Restify.Request, res: Restify.Response, cb) => {});
@@ -88,21 +89,22 @@ export class BotFrameworkService extends RestServer {
         this.restart();
     }
 
-    relaunchNgrok() {
+    relaunchNgrok(settings: Settings) {
         let router = this.router;
         if (!router) return;
         let address = router.address();
         if (!address) return;
         let port = address.port;
         if (!port) return;
-        const settings = getSettings();
         const prevNgrokPath = this.ngrokPath;
         this.ngrokPath = settings.framework.ngrokPath;
+        const prevbypassNgrokLocalhost = this.bypassNgrokLocalhost;
+        this.bypassNgrokLocalhost = settings.framework.bypassNgrokLocalhost;
         const prevServiceUrl = this.serviceUrl;
         this.localhostServiceUrl = `http://localhost:${port}`;
-        this.inspectUrl = null;
-        this.ngrokServiceUrl = null;
         const startNgrok = () => {
+            this.inspectUrl = null;
+            this.ngrokServiceUrl = null;
             // if we have an ngrok path
             if (this.ngrokPath) {
                 // then make it so
@@ -124,7 +126,8 @@ export class BotFrameworkService extends RestServer {
                     getStore().dispatch({
                         type: 'Framework_Set',
                         state: {
-                            ngrokPath: this.ngrokPath
+                            ngrokPath: this.ngrokPath,
+                            bypassNgrokLocalhost: this.bypassNgrokLocalhost
                         }
                     });
                 });
@@ -141,11 +144,13 @@ export class BotFrameworkService extends RestServer {
                 startNgrok();
                 return true;
             });
-        } else {
+        } else if (this.bypassNgrokLocalhost === prevbypassNgrokLocalhost) {
             ngrok.disconnect(prevServiceUrl, () => {
                 startNgrok();
             });
         }
+        const useNgrok = this.ngrokPath && !this.bypassNgrokLocalhost;
+        log.debug(`Using ${useNgrok ? 'ngrok' : 'localhost'} service URL for localhost addresses`);
     }
 
     /**
@@ -153,8 +158,9 @@ export class BotFrameworkService extends RestServer {
      */
     private configure(settings: Settings) {
         // Did ngrok path change?
-        if (this.ngrokPath !== settings.framework.ngrokPath) {
-            this.relaunchNgrok();
+        if (this.ngrokPath !== settings.framework.ngrokPath ||
+                this.bypassNgrokLocalhost !== settings.framework.bypassNgrokLocalhost) {
+            this.relaunchNgrok(settings);
         }
     }
 }
