@@ -57,13 +57,15 @@ export class PersistentSettings implements IPersistentSettings {
     public bots: IBot[];
     public windowState: IWindowStateSettings;
     public users: IUserSettings;
+    public activeBot: string;
 
     constructor(settings: ISettings) {
         Object.assign(this, {
             framework: settings.framework,
             bots: settings.bots,
             windowState: settings.windowState,
-            users: settings.users
+            users: settings.users,
+            activeBot: settings.activeBot
         });
     }
 }

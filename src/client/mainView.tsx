@@ -48,6 +48,8 @@ import { AppSettingsDialog } from './dialogs/appSettingsDialog';
 import { ConversationSettingsDialog } from './dialogs/conversationSettingsDialog';
 import * as Constants from './constants';
 import { Emulator } from './emulator';
+import { AddressBarOperators } from './addressBar/addressBarOperators';
+import { AddressBarActions } from './reducers'
 
 const remote = require('electron').remote;
 
@@ -190,5 +192,16 @@ export class MainView extends React.Component<{}, {}> {
                 <ConversationSettingsDialog />
             </div>
         );
+    }
+
+    componentDidUpdate() {
+        const settings = getSettings();
+        if (settings.serverSettings.activeBot) {
+            let bot = settings.serverSettings.bots.find(v => v.botId === settings.serverSettings.activeBot);
+            if (bot) {
+                AddressBarActions.setText(bot.botUrl);
+                AddressBarOperators.selectBot(bot);
+            }
+        }
     }
 }
