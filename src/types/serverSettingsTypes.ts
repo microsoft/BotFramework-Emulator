@@ -86,7 +86,8 @@ export class Settings implements ISettings {
 }
 
 export const frameworkDefault: IFrameworkSettings = {
-    ngrokPath: ''
+    ngrokPath: '',
+    promptBeforeExit: false
 }
 
 export const windowStateDefault: IWindowStateSettings = {
