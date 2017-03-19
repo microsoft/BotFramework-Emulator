@@ -74,8 +74,8 @@ export class AppSettingsDialog extends React.Component<{}, { ngrokPath: string }
     onAccept = () => {
         ServerSettingsActions.remote_setFrameworkServerSettings({
             ngrokPath: this.ngrokPathInputRef.value,
-            bypassNgrokLocalhost: this.bypassNgrokLocalhostInputRef.checked
-            promptBeforeExit: this.promptBeforeCloseCheckRef.checked
+            bypassNgrokLocalhost: this.bypassNgrokLocalhostInputRef.checked,
+            promptBeforeExit: this.promptBeforeCloseCheckRef.checked,
         });
         AddressBarActions.hideAppSettings();
     }
@@ -168,13 +168,15 @@ export class AppSettingsDialog extends React.Component<{}, { ngrokPath: string }
                                 </label>
                             </div>
                             <div className="input-group">
-                                <input
-                                    id="promptBeforeCloseCheck"
-                                    type="checkbox"
-                                    ref={ref => this.promptBeforeCloseCheckRef = ref}
-                                    className="form-input"
-                                    defaultChecked={serverSettings.framework.promptBeforeExit || false} />
-                                <label htmlFor="promptBeforeCloseCheck">Prompt me before exiting the emulator</label>
+                                <label className="form-label clickable">
+                                    <input
+                                        id="promptBeforeCloseCheck"
+                                        type="checkbox"
+                                        ref={ref => this.promptBeforeCloseCheckRef = ref}
+                                        className="form-input"
+                                        defaultChecked={serverSettings.framework.promptBeforeExit || false} />
+                                    Prompt me before exiting the emulator
+                                </label>
                             </div>
                         </div>
                     </div>

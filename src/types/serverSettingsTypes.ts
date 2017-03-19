@@ -37,9 +37,9 @@ import { IUser } from '../types/userTypes';
 
 export interface IFrameworkSettings {
     // path to use for ngrok
-    ngrokPath?: string
+    ngrokPath?: string,
     // option for deciding whether to bypass ngrok for bots on localhost
-    bypassNgrokLocalhost?: boolean
+    bypassNgrokLocalhost?: boolean,
     // whether to prompt user before the emulator exits
     promptBeforeExit?: boolean,
 }
