@@ -201,6 +201,7 @@ export class MainView extends React.Component<{}, {}> {
             if (bot) {
                 AddressBarActions.setText(bot.botUrl);
                 AddressBarOperators.selectBot(bot);
+                AddressBarActions.showBotCreds();
             }
         }
     }
