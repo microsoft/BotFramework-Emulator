@@ -140,24 +140,6 @@ export class AddressBarMenu extends React.Component<{}, {}> {
                 click: () => AddressBarActions.showConversationSettings()
             },
             */
-            /*
-            {
-                label: 'Send System Activity',
-                type: 'submenu',
-                submenu: [
-                    {
-                        label: 'Ping',
-                        click: () => this.sendPingActivity(),
-                        enabled: false
-                    },
-                    {
-                        label: 'Typing',
-                        click: () => this.sendTypingActivity(),
-                        enabled: false
-                    }
-                ]
-            },
-            */
             {
                 type: 'separator'
             },
