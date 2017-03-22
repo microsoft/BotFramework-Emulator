@@ -11,14 +11,21 @@
     body, button, input, textarea, select {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "HelveticaNeue-Light", "Ubuntu", "Droid Sans", sans-serif;
         font-size: 15px;
+        border-radius: 2px;
     }
 
     a, button {
         transition: all .2s;
     }
 
+    input:focus,
+    textarea:focus,
+    select:focus,
+    button:focus {
+        outline-width: 0;
+    }
+
     button {
-        border-radius: 2px;
         background: #3A96DD;
         border: none;
         border-radius: 2px;
@@ -32,7 +39,31 @@
 
     *, *:before, *:after {
         box-sizing: border-box;
+        user-select: none;
         -webkit-user-select: none;
+    }
+
+    input[type=checkbox] {
+        width: 20px;
+        height: 20px;
+        -webkit-appearance: none;
+        background: transparent;
+        color: #fff;
+        padding: 0;
+        text-align: center;
+        vertical-align: middle;
+        margin-left: 0;
+        margin-right: 8px;
+        margin-top: 8px;
+        margin-bottom: 8px;
+    }
+
+    input[type=checkbox]:checked {
+        background: #3A96DD;
+    }
+
+    input[type=checkbox]:checked:before {
+        content: '\2714';
     }
 
     ::-webkit-scrollbar {
@@ -57,6 +88,7 @@
     }
 
     .wc-message-content * {
+        user-select: text;
         -webkit-user-select: text;
     }
 
@@ -269,7 +301,6 @@
         font-weight: 500;
     }
     .addressbar-botcreds input[type=text] {
-        border-radius: 2px;
         border-width: 0.1px;
         border-style: solid;
         border-color: #ccc;
@@ -387,7 +418,7 @@
     .appsettings-serviceurl-input {
         width: 460px;
     }
-    
+
 
 /* conversationsettings-dialog */
 
@@ -578,12 +609,10 @@
     .form-input {
         padding: 8px;
         border: 1px solid #ccc;
-        border-radius: 2px;
         font-size: 15px;
     }
 
     .toolbar-button {
-		border-radius: 2px;
 		width: 24px;
 		height: 24px;
         vertical-align: middle;
@@ -600,7 +629,6 @@
     }
 
     .toolbar-button-dark {
-		border-radius: 2px;
 		width: 24px;
 		height: 24px;
         vertical-align: middle;
@@ -688,6 +716,7 @@
     }
 
     .wc-inspectorview * {
+        user-select: text;
         -webkit-user-select: text;
     }
 
@@ -748,6 +777,7 @@
     }
 
     .wc-logview * {
+        user-select: text;
         -webkit-user-select: text;
         font-size: 12px;
     }
