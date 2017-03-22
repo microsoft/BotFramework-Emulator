@@ -130,7 +130,7 @@ export class AppSettingsDialog extends React.Component<{}, { ngrokPath: string }
                                 <a href="javascript:void(0)"
                                     className={"emu-navitem emu-navitem-selected"}
                                 >
-                                    General
+                                    ngrok
                                 </a>
                             </li>
                         </ul>
