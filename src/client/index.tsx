@@ -142,21 +142,6 @@ document.body.addEventListener('contextmenu', (e) => {
     }
 });
 
-window.addEventListener("beforeunload", e => {
-    let settings = Settings.getSettings().serverSettings;
-    if (settings.framework.promptBeforeExit) {
-        let response = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
-            message: "Do you wish to exit the emulator?",
-            type: "question",
-            buttons: ["Yes", "No"]
-        });
-        if (response === 1) {
-            e.returnValue = false;
-            return false;
-        }
-    }
-})
-
 // Load settings
 
 Settings.startup();

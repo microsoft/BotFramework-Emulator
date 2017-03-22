@@ -40,8 +40,6 @@ export interface IFrameworkSettings {
     ngrokPath?: string,
     // option for deciding whether to bypass ngrok for bots on localhost
     bypassNgrokLocalhost?: boolean,
-    // whether to prompt user before the emulator exits
-    promptBeforeExit?: boolean,
 }
 
 export interface IWindowStateSettings {
@@ -91,7 +89,6 @@ export class Settings implements ISettings {
 export const frameworkDefault: IFrameworkSettings = {
     ngrokPath: '',
     bypassNgrokLocalhost: true,
-    promptBeforeExit: false,
 }
 
 export const windowStateDefault: IWindowStateSettings = {

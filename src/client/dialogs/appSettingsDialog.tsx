@@ -45,14 +45,12 @@ import * as fs from 'fs';
 interface IAppSettings {
     ngrokPath?: string,
     bypassNgrokLocalhost?: boolean
-    promptBeforeCloseCheckRef: any;
 }
 
 export class AppSettingsDialog extends React.Component<{}, { ngrokPath: string }> {
     settingsUnsubscribe: any;
     ngrokPathInputRef: any;
     bypassNgrokLocalhostInputRef: any;
-    promptBeforeCloseCheckRef: any;
 
     showing: boolean;
 
@@ -75,7 +73,6 @@ export class AppSettingsDialog extends React.Component<{}, { ngrokPath: string }
         ServerSettingsActions.remote_setFrameworkServerSettings({
             ngrokPath: this.ngrokPathInputRef.value,
             bypassNgrokLocalhost: this.bypassNgrokLocalhostInputRef.checked,
-            promptBeforeExit: this.promptBeforeCloseCheckRef.checked,
         });
         AddressBarActions.hideAppSettings();
     }
@@ -165,17 +162,6 @@ export class AppSettingsDialog extends React.Component<{}, { ngrokPath: string }
                                         defaultChecked={ serverSettings.framework.bypassNgrokLocalhost }
                                         disabled={ this.state ? !this.state.ngrokPath : !serverSettings.framework.ngrokPath } />
                                     Bypass ngrok for local addresses
-                                </label>
-                            </div>
-                            <div className="input-group">
-                                <label className="form-label clickable">
-                                    <input
-                                        id="promptBeforeCloseCheck"
-                                        type="checkbox"
-                                        ref={ref => this.promptBeforeCloseCheckRef = ref}
-                                        className="form-input"
-                                        defaultChecked={serverSettings.framework.promptBeforeExit || false} />
-                                    Prompt me before exiting the emulator
                                 </label>
                             </div>
                         </div>
