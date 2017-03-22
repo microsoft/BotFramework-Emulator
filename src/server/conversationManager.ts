@@ -152,7 +152,7 @@ export class Conversation {
                             text);
                         if(Number(resp.statusCode) == 401 || Number(resp.statusCode) == 402) {
                             log.error("Error: The bot's MSA appId or password is incorrect.");
-                            log.error(log.botCredsConfigurationLink('Click here'), "to edit your bot's MSA info.");
+                            log.error(log.botCredsConfigurationLink('Edit your bot\'s MSA info'));
                         }
                         cb(err, resp ? resp.statusCode : undefined);
                     } else {
@@ -172,8 +172,8 @@ export class Conversation {
 
             if (!utils.isLocalhostUrl(bot.botUrl) && utils.isLocalhostUrl(emulator.framework.serviceUrl)) {
                 log.error('Error: The bot is remote, but the callback URL is localhost. Without tunneling software you will not receive replies.');
-                log.error("Fix it:", log.ngrokConfigurationLink('Configure ngrok'));
-                log.error('Learn more:', log.makeLinkMessage('Connecting to bots hosted remotely', 'https://github.com/Microsoft/BotFramework-Emulator/wiki/Getting-Started#connect-to-a-bot-hosted-remotely'));
+                log.error(log.makeLinkMessage('Connecting to bots hosted remotely', 'https://aka.ms/cnjvpo'));
+                log.error(log.ngrokConfigurationLink('Edit ngrok settings'));
             }
 
             if (bot.msaAppId && bot.msaPassword) {

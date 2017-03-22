@@ -137,7 +137,7 @@ export class AppSettingsDialog extends React.Component<{}, { ngrokPath: string }
                             <div className='emu-dialog-text'>
                             <a title='https://ngrok.com' href='https://ngrok.com'>ngrok</a> is network tunneling software.
                             The Bot Framework Emulator works with ngrok to communicate with bots hosted remotely.
-                            Read the <a title='https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)' href='https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)'>wiki page</a> to learn more about using ngrok and to download it.
+                            Read the <a title='https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)' href='https://aka.ms/szvi68'>wiki page</a> to learn more about using ngrok and to download it.
                             </div>
                             <div className="input-group">
                                 <label className="form-label">

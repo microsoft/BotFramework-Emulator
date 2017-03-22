@@ -116,7 +116,7 @@ export class BotFrameworkService extends RestServer {
                         log.error(`Failed to start ngrok: ${err.message || err.msg}`);
                         if (err.code && err.code === 'ENOENT') {
                             log.debug("The path to ngrok may be incorrect.");
-                            log.debug(log.ngrokConfigurationLink('Configure ngrok'));
+                            log.error(log.ngrokConfigurationLink('Edit ngrok settings'));
                         } else {
                             log.debug("ngrok may already be running in a different process. ngrok's free tier allows only one instance at a time per host.");
                         }
@@ -125,6 +125,11 @@ export class BotFrameworkService extends RestServer {
                         this.ngrokServiceUrl = url;
                         log.debug(`ngrok listening on ${url}`);
                         log.debug('ngrok traffic inspector:', log.makeLinkMessage(this.inspectUrl, this.inspectUrl));
+                        if (this.bypassNgrokLocalhost) {
+                            log.debug(`Will bypass ngrok for local addresses`);
+                        } else {
+                            log.debug(`Will use ngrok for local addresses`);
+                        }
                     }
                     // Sync settings to client
                     getStore().dispatch({
@@ -137,8 +142,8 @@ export class BotFrameworkService extends RestServer {
                 });
             } else {
                 log.debug("ngrok not configured (only needed when connecting to remotely hosted bots)");
-                log.debug(log.makeLinkMessage('Howto: Network tunneling with ngrok', 'https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)'));
-                log.debug(log.ngrokConfigurationLink('Configure ngrok'));
+                log.error(log.makeLinkMessage('Connecting to bots hosted remotely', 'https://aka.ms/cnjvpo'));
+                log.error(log.ngrokConfigurationLink('Edit ngrok settings'));
             }
         }
         if (this.ngrokPath !== prevNgrokPath) {
@@ -148,13 +153,13 @@ export class BotFrameworkService extends RestServer {
                 startNgrok();
                 return true;
             });
-        } else if (this.bypassNgrokLocalhost === prevbypassNgrokLocalhost) {
-            ngrok.disconnect(prevServiceUrl, () => {
-                startNgrok();
-            });
+        } else if (this.ngrokServiceUrl && this.bypassNgrokLocalhost !== prevbypassNgrokLocalhost) {
+            if (this.bypassNgrokLocalhost) {
+                log.debug(`Will bypass ngrok for local addresses`);
+            } else {
+                log.debug(`Will use ngrok for local addresses`);
+            }
         }
-        const useNgrok = this.ngrokPath && !this.bypassNgrokLocalhost;
-        log.debug(`Using ${useNgrok ? 'ngrok' : 'localhost'} service URL for localhost addresses`);
     }
 
     /**
