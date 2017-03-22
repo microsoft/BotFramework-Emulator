@@ -111,8 +111,7 @@ const args = (entry: ILogEntry, className: string) => {
 const format = (entry: ILogEntry, index: number, items: any[]) => {
     const className = 'wc-logview-' + Severity[entry.severity];
     return (
-        <div className='emu-log-entry'>
-            key={index}
+        <div key={index} className='emu-log-entry'>
             {timestamp(entry)}
             {message(entry, className)}
             {args(entry, className)}
