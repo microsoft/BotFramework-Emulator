@@ -6,6 +6,9 @@
   "scripts": {
     "build": "gulp",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "pack": "build --dir",
+    "dist": "build",
+    "release": "build",
     "start": "./node_modules/.bin/electron ."
   },
   "repository": {
@@ -40,7 +43,10 @@
     "@types/request": "0.0.31",
     "@types/restify": "2.0.38",
     "del": "2.2.2",
-    "electron": "1.4.14",
+    "electron": "1.4.5",
+    "electron-builder": "8.6.0",
+    "electron-packager": "8.1.0",
+    "electron-winstaller": "2.3.4",
     "event-stream": "3.3.4",
     "glob": "7.1.1",
     "gulp": "3.9.1",
@@ -85,5 +91,38 @@
     "rsa-pem-from-mod-exp": "0.8.4",
     "rxjs": "5.0.3",
     "xtend": "4.0.1"
+  },
+  "build": {
+    "asar": false,
+    "nutsServer": "emulator.botframework.com",
+    "appId": "com.electron.botframework-emulator",
+    "copyright": "Copyright © 2016 Microsoft",
+    "mac": {
+      "category": "public.app-category.developer-tools"
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "Microsoft"
+    },
+    "squirrelWindows": {
+      "loadingGif": "build/bf-splash.gif",
+      "remoteReleases": "https://github.com/Microsoft/BotFramework-Emulator"
+    },
+    "files": [
+      "**/*",
+      "!**/node_modules/*/{README.md,README,readme.md,readme,test}",
+      "!**/node_modules/.bin",
+      "!**/*.{o,hprof,orig,pyc,pyo,rbc}",
+      "!**/._*",
+      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,__pycache__,thumbs.db,.gitignore,.gitattributes,.editorconfig,.idea,appveyor.yml,.travis.yml,circle.yml}",
+      "!.vscode${/*}",
+      "!doc${/*}",
+      "!src${/*}",
+      "!**/{tsconfig.json,gulpfile.js,index.tsx,README.md,getlicenses.cmd}",
+      "!**/node_modules/@types"
+    ]
+  },
+  "directories": {
+    "output": "install"
   }
 }

@@ -49,7 +49,6 @@ export const windowStateReducer: Reducer<IWindowStateSettings> = (
     state = windowStateDefault,
     action: WindowStateAction
 ) => {
-    //console.log('windowStateReducer', JSON.stringify(action), JSON.stringify(state));
     switch (action.type) {
         case 'Window_RememberBounds':
             return Object.assign({}, state, {
