@@ -59,6 +59,7 @@ export class MainView extends React.Component<{}, {}> {
     conversationId: string;
     userId: string;
     botId: string;
+    botChatContainer: HTMLElement;
 
     componentWillMount() {
         this.settingsUnsubscribe = addSettingsListener((settings: Settings) => {
@@ -129,7 +130,32 @@ export class MainView extends React.Component<{}, {}> {
         return null;
     }
 
-    botChatComponent() {
+    verticalSplitChange(size: number) {
+        this.updateBotChatContainerCSS(size);
+        LayoutActions.rememberVerticalSplitter(size);
+    }
+
+    updateBotChatContainerCSS(size: number) {
+        if (this.botChatContainer) {
+            let bounds = remote.getCurrentWindow().getBounds();
+            if (bounds.width - size <= 450) {
+                this.botChatContainer.classList.remove('wc-wide');
+                this.botChatContainer.classList.add('wc-narrow');
+            } else if (bounds.width - size >= 768) {
+                this.botChatContainer.classList.remove('wc-narrow');
+                this.botChatContainer.classList.add('wc-wide');
+            } else {
+                this.botChatContainer.classList.remove('wc-wide', 'wc-narrow');
+            }
+        }
+    }
+
+    initBotChatContainerRef(ref, initialWidth) {
+        this.botChatContainer = ref;
+        this.updateBotChatContainerCSS(initialWidth);
+    }
+
+    botChatComponent(initialWidth) {
         if (this.directline) {
             const settings = getSettings();
             const srvSettings = new ServerSettings(settings.serverSettings);
@@ -143,10 +169,10 @@ export class MainView extends React.Component<{}, {}> {
                 selectedActivity: selectedActivity$() as any,
                 user: this.getCurrentUser(settings.serverSettings),
                 bot: { name: "Bot", id: activeBot.botId },
-                resize: 'none'
+                resize: 'detect'
             }
             InspectorActions.clear();
-            return <BotChat.Chat key={this.reuseKey} {...props} />
+            return <div className="wc-app" ref={ref => this.initBotChatContainerRef(ref, initialWidth)}><BotChat.Chat key={this.reuseKey} {...props} /></div>
         } else {
             return (
                 <div className='emu-chatview-background'>
@@ -169,10 +195,10 @@ export class MainView extends React.Component<{}, {}> {
         return (
             <div className='mainview'>
                 <div className='botchat-container'>
-                    <Splitter split="vertical" minSize="200px" defaultSize={vertSplit} primary="second" onChange={(size) => LayoutActions.rememberVerticalSplitter(size)}>
+                    <Splitter split="vertical" minSize="200px" defaultSize={vertSplit} primary="second" onChange={(size) => this.verticalSplitChange(size)}>
                         <div className='fill-parent'>
                             <AddressBar />
-                            {this.botChatComponent()}
+                            {this.botChatComponent(vertSplit)}
                         </div>
                         <div className="fill-parent">
                             <Splitter split="horizontal" primary="second" minSize="42px" defaultSize={horizSplit} onChange={(size) => LayoutActions.rememberHorizontalSplitter(size)}>
