@@ -231,7 +231,6 @@ export const startup = () => {
     // Listen for new settings from the server.
     Electron.ipcRenderer.on('serverSettings', (event, ...args) => {
         const serverSettings = new ServerSettings(args[0]);
-        //console.info("Received new server state.", serverSettings);
         ServerSettingsActions.set(serverSettings);
     });
     // Listen for log messages from the server.
