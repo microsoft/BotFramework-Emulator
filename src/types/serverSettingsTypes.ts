@@ -88,7 +88,7 @@ export class Settings implements ISettings {
 
 export const frameworkDefault: IFrameworkSettings = {
     ngrokPath: '',
-    bypassNgrokLocalhost: true,
+    bypassNgrokLocalhost: true
 }
 
 export const windowStateDefault: IWindowStateSettings = {
