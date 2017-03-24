@@ -56,7 +56,7 @@ import {
     IConversationState,
     ILogState,
     IInspectorState,
-    serverChangeSetting,
+    serverChangeSetting
 } from './settings';
 
 type LayoutAction = {

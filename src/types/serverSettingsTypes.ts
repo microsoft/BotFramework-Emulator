@@ -37,16 +37,16 @@ import { IUser } from '../types/userTypes';
 
 export interface IFrameworkSettings {
     // path to use for ngrok
-    ngrokPath?: string,
+    ngrokPath?: string
     // option for deciding whether to bypass ngrok for bots on localhost
-    bypassNgrokLocalhost?: boolean,
+    bypassNgrokLocalhost?: boolean
 }
 
 export interface IWindowStateSettings {
     top?: number,
     left?: number,
     width?: number,
-    height?: number,
+    height?: number
 }
 
 export interface IUserSettings {
@@ -55,11 +55,11 @@ export interface IUserSettings {
 }
 
 export interface IPersistentSettings {
-    framework?: IFrameworkSettings;
-    bots?: IBot[];
-    windowState?: IWindowStateSettings;
-    users?: IUserSettings;
-    activeBot?: string;
+    framework?: IFrameworkSettings,
+    bots?: IBot[],
+    windowState?: IWindowStateSettings,
+    users?: IUserSettings,
+    activeBot?: string
 }
 
 export interface ISettings extends IPersistentSettings {
