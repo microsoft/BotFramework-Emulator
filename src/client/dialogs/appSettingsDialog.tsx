@@ -51,7 +51,6 @@ export class AppSettingsDialog extends React.Component<{}, { ngrokPath: string }
     settingsUnsubscribe: any;
     ngrokPathInputRef: any;
     bypassNgrokLocalhostInputRef: any;
-
     showing: boolean;
 
     pageClicked = (ev: Event) => {

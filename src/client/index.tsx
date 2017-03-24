@@ -79,48 +79,48 @@ const remote = require('electron').remote;
 const Menu = remote.Menu;
 
 const ContextMenuRW = Menu.buildFromTemplate([{
-    label: 'Undo',
-    role: 'undo',
-}, {
-    label: 'Redo',
-    role: 'redo',
-}, {
-    type: 'separator',
-}, {
-    label: 'Cut',
-    role: 'cut',
-}, {
-    label: 'Copy',
-    role: 'copy',
-}, {
-    label: 'Paste',
-    role: 'paste',
-}
+        label: 'Undo',
+        role: 'undo',
+    }, {
+        label: 'Redo',
+        role: 'redo',
+    }, {
+        type: 'separator',
+    }, {
+        label: 'Cut',
+        role: 'cut',
+    }, {
+        label: 'Copy',
+        role: 'copy',
+    }, {
+        label: 'Paste',
+        role: 'paste',
+    }
 ]);
 
 const ContextMenuRO = Menu.buildFromTemplate([{
-    label: 'Undo',
-    role: 'undo',
-    enabled: false
-}, {
-    label: 'Redo',
-    role: 'redo',
-    enabled: false
-}, {
-    type: 'separator',
-}, {
-    label: 'Cut',
-    role: 'cut',
-    enabled: false
-}, {
-    label: 'Copy',
-    role: 'copy',
-    enabled: false
-}, {
-    label: 'Paste',
-    role: 'paste',
-    enabled: false
-}
+        label: 'Undo',
+        role: 'undo',
+        enabled: false
+    }, {
+        label: 'Redo',
+        role: 'redo',
+        enabled: false
+    }, {
+        type: 'separator',
+    }, {
+        label: 'Cut',
+        role: 'cut',
+        enabled: false
+    }, {
+        label: 'Copy',
+        role: 'copy',
+        enabled: false
+    }, {
+        label: 'Paste',
+        role: 'paste',
+        enabled: false
+    }
 ]);
 
 document.body.addEventListener('contextmenu', (e) => {
