@@ -44,9 +44,7 @@ import * as log from './log';
 export function navigate(url: string) {
     try {
         const parsed = URL.parse(url);
-        if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
-            shell.openExternal(url, { activate: true });
-        } else if (parsed.protocol === "emulator:") {
+        if (parsed.protocol === "emulator:") {
             const params = QueryString.parse(parsed.query);
             if (parsed.host === 'inspect') {
                 navigateInspectUrl(params);
@@ -58,7 +56,7 @@ export function navigate(url: string) {
                 navigateCommandUrl(params);
             }
         } else {
-            // Ignore
+            shell.openExternal(url, { activate: true });
         }
     } catch (e) {
         log.error(e.message);
