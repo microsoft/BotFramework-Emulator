@@ -341,7 +341,7 @@ function getActivityText(activity: IGenericActivity): string {
         if (activity.attachments && activity.attachments.length > 0)
             return activity.attachments[0].contentType;
         else {
-            if (activity.text.length > 50)
+            if (activity.text && activity.text.length > 50)
                 return activity.text.substring(0, 50) + '...';
 
             return activity.text;
