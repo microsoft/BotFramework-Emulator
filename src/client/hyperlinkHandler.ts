@@ -55,7 +55,7 @@ export function navigate(url: string) {
             } else if (parsed.host === 'command') {
                 navigateCommandUrl(params);
             }
-        } else {
+        } else if (parsed.protocol !== 'file:') {
             shell.openExternal(url, { activate: true });
         }
     } catch (e) {
