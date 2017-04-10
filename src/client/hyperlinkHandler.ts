@@ -119,7 +119,7 @@ function navigateCommandUrl(params: string[]) {
         return;
     const json = decodeURIComponent(params['args']);
     const args = JSON.parse(json);
-    if (args === 'autoUpdater.quitAndInstall') {
+    if (typeof args ==='string' && args.includes('autoUpdater.quitAndInstall')) {
         Emulator.quitAndInstall();
     }
 }
