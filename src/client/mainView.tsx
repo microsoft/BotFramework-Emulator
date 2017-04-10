@@ -168,8 +168,8 @@ export class MainView extends React.Component<{}, {}> {
                 },
                 selectedActivity: selectedActivity$() as any,
                 user: this.getCurrentUser(settings.serverSettings),
-                bot: { name: "Bot", id: activeBot.botId },
-                resize: 'detect'
+                //bot: { name: "Bot", id: activeBot.botId },
+                //resize: 'detect'
             }
             InspectorActions.clear();
             return <div className="wc-app" ref={ref => this.initBotChatContainerRef(ref, initialWidth)}><BotChat.Chat key={this.reuseKey} {...props} /></div>

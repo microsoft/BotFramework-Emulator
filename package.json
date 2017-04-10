@@ -1,6 +1,6 @@
 {
   "name": "botframework-emulator",
-  "version": "3.5.25",
+  "version": "3.5.27",
   "description": "Emulator for the Microsoft Bot Framework. Allows developers to test and debug their bots on localhost.",
   "main": "./app/server/main.js",
   "scripts": {
@@ -71,7 +71,7 @@
   "dependencies": {
     "async": "2.1.4",
     "base64url": "2.0.0",
-    "botframework-webchat": "0.10.5",
+    "botframework-webchat": "0.5.1",
     "electron-debug": "1.1.0",
     "electron-proxy-agent": "1.0.2",
     "es6-shim": "0.35.2",
