@@ -55,7 +55,11 @@ export function navigate(url: string) {
             } else if (parsed.host === 'command') {
                 navigateCommandUrl(params);
             }
-        } else if (parsed.protocol !== 'file:') {
+        } else if (parsed.protocol.startsWith('file:')) {
+            // ignore
+        } else if (parsed.protocol.startsWith('javascript:')) {
+            // ignore
+        } else {
             shell.openExternal(url, { activate: true });
         }
     } catch (e) {
@@ -115,7 +119,7 @@ function navigateCommandUrl(params: string[]) {
         return;
     const json = decodeURIComponent(params['args']);
     const args = JSON.parse(json);
-    if (args === 'autoUpdater.quitAndInstall') {
+    if (typeof args ==='string' && args.includes('autoUpdater.quitAndInstall')) {
         Emulator.quitAndInstall();
     }
 }
