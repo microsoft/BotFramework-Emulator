@@ -36,7 +36,7 @@ import * as React from 'react';
 import { Reducer, Unsubscribe } from 'redux';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { getSettings, addSettingsListener } from './settings';
-import { LogActions } from './reducers';
+import { LogActions, WordWrapAction } from './reducers';
 import * as Constants from './constants';
 
 const { remote } = require('electron');
@@ -82,18 +82,20 @@ const timestamp = (entry: ILogEntry) => {
     const hours = number2(entry.timestamp.getHours());
     const minutes = number2(entry.timestamp.getMinutes());
     const seconds = number2(entry.timestamp.getSeconds());
-    return <div className='wc-logview-timestamp'>{`[${hours}:${minutes}:${seconds}]`}&nbsp;</div>
+    return <span className='wc-logview-timestamp'>{`[${hours}:${minutes}:${seconds}]`}&nbsp;</span>
 }
 
 const emit = (val: any, className: string) => {
     if (!val) return null;
     if (val.hasOwnProperty('messageType') && val['messageType'] === 'link') {
         //return <div className={className}><a className={className} title={val.title} href={val.link}>{val.text}</a>&nbsp;</div>
-        return <div className={className}><a title={val.title} href={val.link}>{val.text}</a>&nbsp;</div>
+        return <span className={className}><a title={val.title} href={val.link}>{val.text}</a>&nbsp;</span>
     } else {
-        return <div className={className}>{safeStringify(val)}&nbsp;</div>
+        let str = safeStringify(val);
+        return str.match(/\S+/g).map((s, i) => <span className={className}>{s}&nbsp;</span>);
     }
 }
+
 
 const message = (entry: ILogEntry, className: string) => {
     return emit(entry.message, className);
@@ -108,13 +110,13 @@ const args = (entry: ILogEntry, className: string) => {
     return null;
 }
 
-const format = (entry: ILogEntry, index: number, items: any[]) => {
+const format = (entry: ILogEntry, index: number, items: any[], wrapStyle: any) => {
     const className = 'wc-logview-' + Severity[entry.severity];
     return (
-        <div key={index} className='emu-log-entry'>
+        <div key={index} className='emu-log-entry' style={wrapStyle}>
             {timestamp(entry)}
             {message(entry, className)}
-            {args(entry, className)}
+            {args(entry, className) }
         </div>
     );
 }
@@ -177,12 +179,12 @@ export class LogView extends React.Component<{}, ILogViewState> {
             <div>
                 <div className="emu-panel-header">
                     <span className="logview-header-text">Log</span>
-                    <a className='undecorated-text' href='javascript:void(0)' title='Clear log'>
+                    <a className='undecorated-text' href='javascript:void(0)' title='Log Menu'>
                         <div className='logview-clear-output-button' dangerouslySetInnerHTML={{__html: Constants.hamburgerIcon('toolbar-button-dark', 24) }} onClick={() => this.showMenu()} />
                     </a>
                 </div>
                 <div className="wc-logview" ref={ref => this.scrollMe = ref}>
-                    {this.state.entries.map((entry, i, items) => format(entry, i, items))}
+                    {this.state.entries.map((entry, i, items) => format(entry, i, items, { whiteSpace: (!getSettings().wordwrap.wordwrap ? 'nowrap' : 'normal')}))}
                 </div>
             </div>
         );
@@ -193,6 +195,12 @@ export class LogView extends React.Component<{}, ILogViewState> {
             {
                 label: 'Clear log',
                 click: () => LogActions.clear()
+            },
+            {
+                type : 'checkbox',
+                label: 'Word wrap',
+                click: () => WordWrapAction.setWordWrap(!getSettings().wordwrap.wordwrap),
+                checked: getSettings().wordwrap.wordwrap
             }
         ];
         const menu = Menu.buildFromTemplate(template);
