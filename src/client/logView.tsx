@@ -82,16 +82,17 @@ const timestamp = (entry: ILogEntry) => {
     const hours = number2(entry.timestamp.getHours());
     const minutes = number2(entry.timestamp.getMinutes());
     const seconds = number2(entry.timestamp.getSeconds());
-    return <div className='wc-logview-timestamp'>{`[${hours}:${minutes}:${seconds}]`}&nbsp;</div>
+    return <span className='wc-logview-timestamp'>{`[${hours}:${minutes}:${seconds}]`}&nbsp;</span>
 }
 
 const emit = (val: any, className: string) => {
     if (!val) return null;
     if (val.hasOwnProperty('messageType') && val['messageType'] === 'link') {
         //return <div className={className}><a className={className} title={val.title} href={val.link}>{val.text}</a>&nbsp;</div>
-        return <div className={className}><a title={val.title} href={val.link}>{val.text}</a>&nbsp;</div>
+        return <span className={className}><a title={val.title} href={val.link}>{val.text}</a>&nbsp;</span>
     } else {
-        return <div className={className}>{safeStringify(val)}&nbsp;</div>
+        let str = safeStringify(val);
+        return str.match(/\S+/g).map((s, i) => <span className={className}>{s}&nbsp;</span>);
     }
 }
 
