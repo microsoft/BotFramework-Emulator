@@ -36,7 +36,7 @@ import * as React from 'react';
 import { Reducer, Unsubscribe } from 'redux';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { getSettings, addSettingsListener } from './settings';
-import { LogActions } from './reducers';
+import { LogActions, WordWrapAction } from './reducers';
 import * as Constants from './constants';
 
 const { remote } = require('electron');
@@ -95,6 +95,7 @@ const emit = (val: any, className: string) => {
     }
 }
 
+
 const message = (entry: ILogEntry, className: string) => {
     return emit(entry.message, className);
 }
@@ -108,13 +109,13 @@ const args = (entry: ILogEntry, className: string) => {
     return null;
 }
 
-const format = (entry: ILogEntry, index: number, items: any[]) => {
+const format = (entry: ILogEntry, index: number, items: any[], wrapStyle: any) => {
     const className = 'wc-logview-' + Severity[entry.severity];
     return (
-        <div key={index} className='emu-log-entry'>
+        <div key={index} className='emu-log-entry' style={wrapStyle}>
             {timestamp(entry)}
             {message(entry, className)}
-            {args(entry, className)}
+            {args(entry, className) }
         </div>
     );
 }
@@ -177,12 +178,12 @@ export class LogView extends React.Component<{}, ILogViewState> {
             <div>
                 <div className="emu-panel-header">
                     <span className="logview-header-text">Log</span>
-                    <a className='undecorated-text' href='javascript:void(0)' title='Clear log'>
+                    <a className='undecorated-text' href='javascript:void(0)' title='Log Menu'>
                         <div className='logview-clear-output-button' dangerouslySetInnerHTML={{__html: Constants.hamburgerIcon('toolbar-button-dark', 24) }} onClick={() => this.showMenu()} />
                     </a>
                 </div>
                 <div className="wc-logview" ref={ref => this.scrollMe = ref}>
-                    {this.state.entries.map((entry, i, items) => format(entry, i, items))}
+                    {this.state.entries.map((entry, i, items) => format(entry, i, items, { whiteSpace: (!getSettings().wordwrap.wordwrap ? 'nowrap' : 'normal')}))}
                 </div>
             </div>
         );
@@ -193,6 +194,12 @@ export class LogView extends React.Component<{}, ILogViewState> {
             {
                 label: 'Clear log',
                 click: () => LogActions.clear()
+            },
+            {
+                type : 'checkbox',
+                label: 'Word wrap',
+                click: () => WordWrapAction.setWordWrap(!getSettings().wordwrap.wordwrap),
+                checked: getSettings().wordwrap.wordwrap
             }
         ];
         const menu = Menu.buildFromTemplate(template);

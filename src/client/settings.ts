@@ -43,6 +43,7 @@ import {
     addressBarReducer,
     conversationReducer,
     logReducer,
+    wordWrapReducer,
     inspectorReducer,
     serverSettingsReducer,
     ServerSettingsActions,
@@ -70,6 +71,10 @@ export interface ILayoutState {
     vertSplit?: number | string,
 }
 
+export interface IWordWrapState {
+    wordwrap?: boolean
+}
+
 export interface IAddressBarState {
     text?: string,
     matchingBots?: IBot[],
@@ -95,16 +100,21 @@ export interface IInspectorState {
 }
 
 export interface IPersistentSettings {
-    layout?: ILayoutState
+    layout?: ILayoutState,
+    wordwrap?: IWordWrapState
 }
 
 export class PersistentSettings implements IPersistentSettings {
     layout: ILayoutState;
+    wordwrap: IWordWrapState;
     constructor(settings: ISettings) {
         Object.assign(this, {
             layout: {
                 horizSplit: settings.layout.horizSplit,
                 vertSplit: settings.layout.vertSplit
+            },
+            wordwrap: {
+                wordwrap: settings.wordwrap.wordwrap
             }
         });
     }
@@ -125,6 +135,7 @@ export class Settings implements ISettings {
     log: ILogState;
     inspector: IInspectorState;
     serverSettings: ServerSettings;
+    wordwrap: IWordWrapState;
 
     constructor(settings?: ISettings) {
         Object.assign(this, settings);
@@ -156,6 +167,10 @@ export const logDefault: ILogState = {
     autoscroll: true
 }
 
+export const wordWrapDefault: IWordWrapState = {
+    wordwrap: false
+}
+
 export const inspectorDefault: IInspectorState = {
     selectedObject: null
 }
@@ -165,6 +180,7 @@ export const settingsDefault: ISettings = {
     addressBar: addressBarDefault,
     conversation: conversationDefault,
     log: logDefault,
+    wordwrap: wordWrapDefault,
     inspector: inspectorDefault,
     serverSettings: new ServerSettings()
 }
@@ -180,6 +196,7 @@ const getStore = (): Store<ISettings> => {
             addressBar: addressBarReducer,
             conversation: conversationReducer,
             log: logReducer,
+            wordwrap: wordWrapReducer,
             inspector: inspectorReducer,
             serverSettings: serverSettingsReducer
         }), initialSettings);
