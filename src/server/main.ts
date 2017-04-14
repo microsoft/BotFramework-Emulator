@@ -142,30 +142,18 @@ const createMainWindow = () => {
     mainWindow.loadURL(page);
 }
 
-const shouldQuit = Electron.app.makeSingleInstance((commandLine, workingDirectory) => {
-    if (mainWindow) {
-        if (mainWindow.isMinimized())
-            mainWindow.restore();
-        mainWindow.focus();
+Emulator.startup();
+Electron.app.on('ready', createMainWindow);
+Electron.app.on('window-all-closed', function () {
+    if (process.platform !== 'darwin') {
+        Electron.app.quit();
     }
 });
-
-if (shouldQuit) {
-    Electron.app.quit();
-} else {
-    Emulator.startup();
-    Electron.app.on('ready', createMainWindow);
-    Electron.app.on('window-all-closed', function () {
-        if (process.platform !== 'darwin') {
-            Electron.app.quit();
-        }
-    });
-    Electron.app.on('activate', function () {
-        if (mainWindow === null) {
-            createMainWindow();
-        }
-    });
-}
+Electron.app.on('activate', function () {
+    if (mainWindow === null) {
+        createMainWindow();
+    }
+});
 
 // Do this last, otherwise startup bugs are harder to diagnose.
 require('electron-debug')();

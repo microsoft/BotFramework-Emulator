@@ -140,24 +140,6 @@ export class AddressBarMenu extends React.Component<{}, {}> {
                 click: () => AddressBarActions.showConversationSettings()
             },
             */
-            /*
-            {
-                label: 'Send System Activity',
-                type: 'submenu',
-                submenu: [
-                    {
-                        label: 'Ping',
-                        click: () => this.sendPingActivity(),
-                        enabled: false
-                    },
-                    {
-                        label: 'Typing',
-                        click: () => this.sendTypingActivity(),
-                        enabled: false
-                    }
-                ]
-            },
-            */
             {
                 type: 'separator'
             },
@@ -191,14 +173,14 @@ export class AddressBarMenu extends React.Component<{}, {}> {
             },
             {
                 label: 'Credits',
-                click: () => window.open('https://github.com/Microsoft/BotFramework-Emulator/blob/master/ThirdPartyLicenses.txt')
+                click: () => window.open('https://aka.ms/l7si1g')
             },
             {
                 type: 'separator'
             },
             {
                 label: 'Report issues',
-                click: () => window.open('https://github.com/Microsoft/BotFramework-Emulator/issues/new')
+                click: () => window.open('https://aka.ms/cy106f')
             },
         ];
 

@@ -50,11 +50,13 @@ import {
     addressBarDefault,
     conversationDefault,
     logDefault,
+    wordWrapDefault,
     inspectorDefault,
     ILayoutState,
     IAddressBarState,
     IConversationState,
     ILogState,
+    IWordWrapState,
     IInspectorState,
     serverChangeSetting
 } from './settings';
@@ -68,6 +70,13 @@ type LayoutAction = {
     type: 'Splitter_RememberVertical',
     state: {
         size: number
+    }
+}
+
+type wordWrapAction = {
+    type: 'Log_SetWordWrap',
+    state: {
+        wordwrap: boolean
     }
 }
 
@@ -164,6 +173,17 @@ export class LayoutActions {
             type: 'Splitter_RememberVertical',
             state: {
                 size: Number(size)
+            }
+        });
+    }
+}
+
+export class WordWrapAction {
+    static setWordWrap(wordwrap: boolean) {
+        dispatch<LogAction>({
+            type: 'Log_SetWordWrap',
+            state: {
+                wordwrap:wordwrap
             }
         });
     }
@@ -295,6 +315,8 @@ export class LogActions {
     }
 }
 
+
+
 export class InspectorActions {
     static setSelectedObject(selectedObject: any) {
         dispatch<InspectorAction>({
@@ -346,6 +368,18 @@ export const layoutReducer: Reducer<ILayoutState> = (
             return Object.assign({}, state, { horizSplit: action.state.size });
         case 'Splitter_RememberVertical':
             return Object.assign({}, state, { vertSplit: action.state.size });
+        default:
+            return state;
+    }
+}
+
+export const wordWrapReducer: Reducer<IWordWrapState> = (
+    state = wordWrapDefault,
+    action: wordWrapAction
+) => {
+    switch (action.type) {
+        case 'Log_SetWordWrap':
+            return Object.assign({}, state, { wordwrap: action.state.wordwrap });
         default:
             return state;
     }
@@ -410,6 +444,7 @@ export const logReducer: Reducer<ILogState> = (
             return state;
     }
 }
+
 
 export const inspectorReducer: Reducer<IInspectorState> = (
     state = inspectorDefault,

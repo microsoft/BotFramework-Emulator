@@ -71,7 +71,6 @@ export class AttachmentsController {
 
     public static getAttachmentInfo = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         try {
-            console.log("framework: getAttachmentInfo");
             const parms: IAttachmentParams = req.params;
             let attachment: IAttachmentData = AttachmentsController.attachments[parms.attachmentId];
             if (attachment) {
@@ -102,7 +101,6 @@ export class AttachmentsController {
     }
 
     public static getAttachment = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-        console.log("framework: getAttachment");
         try {
             const parms: IAttachmentParams = req.params;
             let attachment: IAttachmentData = AttachmentsController.attachments[parms.attachmentId];
