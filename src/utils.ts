@@ -112,3 +112,18 @@ export const isSecuretUrl = (urlStr: string) => {
     const parsedUrl = url.parse(urlStr);
     return (parsedUrl.protocol.startsWith('https'));
 }
+
+export const safeStringify = (o: any, space: string | number = undefined): string => {
+    let cache = [];
+    if (typeof o !== 'object')
+        return `${o}`;
+    return JSON.stringify(o, function (key, value) {
+        if (typeof value === 'object' && value !== null) {
+            if (cache.indexOf(value) !== -1) {
+                return;
+            }
+            cache.push(value);
+        }
+        return value;
+    }, space);
+}

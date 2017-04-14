@@ -38,6 +38,7 @@ import { Subscription, Observable, Subject } from 'rxjs';
 import { getSettings, addSettingsListener } from './settings';
 import { LogActions, WordWrapAction } from './reducers';
 import * as Constants from './constants';
+import { safeStringify } from '../utils';
 
 const { remote } = require('electron');
 const { Menu, MenuItem } = remote;
@@ -59,20 +60,6 @@ interface ILogEntry {
     args: any
 }
 
-const safeStringify = (o: any, space: string | number = undefined): string => {
-    let cache = [];
-    if (typeof o !== 'object')
-        return `${o}`;
-    return JSON.stringify(o, function (key, value) {
-        if (typeof value === 'object' && value !== null) {
-            if (cache.indexOf(value) !== -1) {
-                return;
-            }
-            cache.push(value);
-        }
-        return value;
-    }, space);
-}
 
 const number2 = (n: number): string => {
     return ('0' + n).slice(-2);
