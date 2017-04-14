@@ -95,7 +95,7 @@ export const api = (operation: string, req: Restify.Request, res: Restify.Respon
 }
 
 export const makeInspectorLink = (text: string, obj: any, title?: string): any => {
-    if (typeof (obj) === 'object' || Array.isArray(obj)) {
+    if (typeof (obj) === 'object' || Array.isArray(obj) || Number(text) >= 500) {
         const json = JSON.stringify(obj);
         return makeLinkMessage(text, `emulator://inspect?obj=${encodeURIComponent(json)}`, title);
     } else {
