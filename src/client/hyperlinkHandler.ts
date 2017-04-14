@@ -79,7 +79,7 @@ function navigateInspectUrl(params: string[]) {
         }    
         try {
             obj = JSON.parse(json);
-        } catch (e){
+        } catch (e) {
             obj = json;
         }
         if (obj) {
