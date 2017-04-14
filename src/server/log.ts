@@ -34,6 +34,7 @@
 import * as HttpStatus from "http-status-codes";
 import * as Restify from 'restify';
 import { Emulator } from './emulator';
+import { safeStringify } from '../utils';
 
 
 const sendMessage = (method: string, message: any, ...args) => {
@@ -95,8 +96,8 @@ export const api = (operation: string, req: Restify.Request, res: Restify.Respon
 }
 
 export const makeInspectorLink = (text: string, obj: any, title?: string): any => {
-    if (typeof (obj) === 'object' || Array.isArray(obj)) {
-        const json = JSON.stringify(obj);
+    if (obj) {  
+        const json = safeStringify(obj);
         return makeLinkMessage(text, `emulator://inspect?obj=${encodeURIComponent(json)}`, title);
     } else {
         return text;

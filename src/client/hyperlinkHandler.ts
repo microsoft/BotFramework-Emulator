@@ -71,12 +71,17 @@ function navigateInspectUrl(params: string[]) {
     try {
         const encoded = params['obj'];
         let json;
+        let obj;
         try {
             json = decodeURIComponent(encoded);
         } catch (e) {
             json = encoded;
+        }    
+        try {
+            obj = JSON.parse(json);
+        } catch (e) {
+            obj = json;
         }
-        const obj = JSON.parse(json);
         if (obj) {
             if (obj.id) {
                 selectedActivity$().next({ id: obj.id });
