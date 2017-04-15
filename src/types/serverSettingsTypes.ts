@@ -46,7 +46,7 @@ export interface IWindowStateSettings {
     top?: number,
     left?: number,
     width?: number,
-    height?: number,
+    height?: number
 }
 
 export interface IUserSettings {
@@ -58,11 +58,12 @@ export interface IPersistentSettings {
     framework?: IFrameworkSettings,
     bots?: IBot[],
     windowState?: IWindowStateSettings,
-    users?: IUserSettings
+    users?: IUserSettings,
+    activeBot?: string
 }
 
 export interface ISettings extends IPersistentSettings {
-    activeBot?: string
+    //activeBot?: string
 }
 
 export class Settings implements ISettings {

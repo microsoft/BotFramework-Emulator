@@ -30,7 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+import * as Electron from 'electron';
 import * as React from 'react';
 import * as Splitter from 'react-split-pane';
 import * as BotChat from 'botframework-webchat';
@@ -48,6 +48,8 @@ import { AppSettingsDialog } from './dialogs/appSettingsDialog';
 import { ConversationSettingsDialog } from './dialogs/conversationSettingsDialog';
 import * as Constants from './constants';
 import { Emulator } from './emulator';
+import { AddressBarOperators } from './addressBar/addressBarOperators';
+import { AddressBarActions } from './reducers'
 
 const remote = require('electron').remote;
 
@@ -217,5 +219,22 @@ export class MainView extends React.Component<{}, {}> {
                 <ConversationSettingsDialog />
             </div>
         );
+    }
+
+    componentDidMount() {
+        // getSettings() will not contain any server settings at this stage.
+        // We should wait for server to send the settings.
+        Electron.ipcRenderer.once('serverSettings', (event, ...args) => {
+            const settings: ServerSettings = args[0];
+            //log.trace(settings.activeBot);
+            if (settings.activeBot) {
+                let bot = settings.bots.find(v => v.botId === settings.activeBot);
+                if (bot) {
+                    AddressBarActions.setText(bot.botUrl);
+                    AddressBarOperators.selectBot(bot);
+                    AddressBarActions.showBotCreds();
+                }
+            }
+        });
     }
 }

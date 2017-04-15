@@ -40,7 +40,7 @@ import { IBot, newBot } from '../../types/botTypes';
 import * as log from '../log';
 import * as path from 'path';
 import * as Constants from '../constants';
-
+import * as fs from 'fs';
 
 interface IAppSettings {
     ngrokPath?: string,
@@ -88,12 +88,12 @@ export class AppSettingsDialog extends React.Component<{}, { ngrokPath: string }
             defaultPath: dir,
             properties: ['openFile']
         }, (filenames: string[]) => {
-            if (filenames && filenames.length) {
+            if (filenames && filenames.length && fs.existsSync(filenames[0])) {
                 // TODO: validate selection
                 this.ngrokPathInputRef.value = filenames[0];
                 this.setState({ ngrokPath: filenames[0] });
             }
-        })
+        });
     }
 
     componentWillMount() {
