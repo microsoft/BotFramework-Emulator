@@ -101,6 +101,21 @@ export interface ITriggerActivity extends IActivity {
     value?: any;
 }
 
+export interface IConversationReference {
+    activityId: string,
+    bot: IChannelAccount,
+    channelId: string,
+    conversation: IConversationAccount,
+    serviceUrl: string,
+    user: IChannelAccount
+}
+
+export interface IInvokeActivity extends IActivity {
+    name: string,
+    value?: any,
+    relatesTo: IConversationReference
+}
+
 export interface IGenericActivity extends
     IActivity,
     ITypingActivity,
@@ -109,6 +124,7 @@ export interface IGenericActivity extends
     IMessageActivity,
     IActionActivity,
     IEndOfConversationActivity,
-    ITriggerActivity {
+    ITriggerActivity,
+    IInvokeActivity {
 }
 

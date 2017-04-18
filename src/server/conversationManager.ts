@@ -34,9 +34,10 @@
 import * as request from 'request';
 import * as http from 'http';
 import * as ngrok from './ngrok';
+import * as Payment from '../types/paymentTypes';
 import { IUser } from '../types/userTypes';
 import { IConversationAccount } from '../types/accountTypes';
-import { IActivity, IConversationUpdateActivity, IMessageActivity, IContactRelationUpdateActivity, ITypingActivity } from '../types/activityTypes';
+import { IActivity, IConversationUpdateActivity, IMessageActivity, IContactRelationUpdateActivity, ITypingActivity, IInvokeActivity } from '../types/activityTypes';
 import { uniqueId } from '../utils';
 import { dispatch, getSettings, authenticationSettings, v30AuthenticationSettings, addSettingsListener } from './settings';
 import { Settings } from '../types/serverSettingsTypes';
@@ -285,6 +286,22 @@ export class Conversation {
         const activity: IActivity = {
             type: 'deleteUserData'
         }
+        this.postActivityToBot(activity, false, () => {});
+    }
+
+    public sendUpdateShippingAddressOperation(updatedAddress: Payment.IPaymentAddress) {
+        const updateValue: Payment.IPaymentRequestUpdate = {
+            id: undefined,                      // TODO: this is from the item, it's a string
+            shippingAddress: updatedAddress,
+            shippingOption: undefined,
+            details: undefined                  // TODO: IPaymentDetails needed as these are passed along in the bot  
+        };
+        const activity: IInvokeActivity = {
+            type: 'invoke',
+            name: Payment.PaymentOperations.UpdateShippingAddressOperationName,
+            relatesTo: undefined,                   // TODO
+            value: updateValue
+        };
         this.postActivityToBot(activity, false, () => {});
     }
 

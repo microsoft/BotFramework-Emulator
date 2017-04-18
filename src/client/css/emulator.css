@@ -212,6 +212,16 @@
         text-align: center;
     }
 
+    .addressbar-payment {
+        position: absolute;
+        width: 42px;
+        height: 42px;
+        right: 84px;
+        top: 0;
+        line-height: 37px;
+        text-align: center;
+    }
+
     .addressbar-menu {
         position: absolute;
         width: 42px;

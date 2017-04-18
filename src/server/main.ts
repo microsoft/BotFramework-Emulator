@@ -98,7 +98,7 @@ const createMainWindow = () => {
         });
     mainWindow.setTitle(windowTitle);
 
-    //mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
 
     if (process.platform === 'darwin') {
         // Create the Application's main menu
