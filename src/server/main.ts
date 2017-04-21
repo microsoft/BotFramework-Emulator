@@ -175,6 +175,8 @@ const createMainWindow = () => {
         page = page + queryString;
     }
     
+    mainWindow.webContents.openDevTools();
+
     mainWindow.loadURL(page);
 }
 

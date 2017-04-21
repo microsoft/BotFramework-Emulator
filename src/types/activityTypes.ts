@@ -111,9 +111,9 @@ export interface IConversationReference {
 }
 
 export interface IInvokeActivity extends IActivity {
-    name: string,
+    name?: string,
     value?: any,
-    relatesTo: IConversationReference
+    relatesTo?: IConversationReference
 }
 
 export interface IGenericActivity extends
