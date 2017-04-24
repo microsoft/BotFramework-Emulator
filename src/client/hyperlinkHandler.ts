@@ -33,13 +33,16 @@
 
 import { shell } from 'electron';
 import * as URL from 'url';
+import * as path from 'path';
 import * as QueryString from 'querystring';
 import { InspectorActions, AddressBarActions } from './reducers';
 import { getSettings, selectedActivity$, deselectActivity } from './settings';
 import { Settings as ServerSettings } from '../types/serverSettingsTypes';
 import { Emulator } from './emulator';
+import { PaymentEncoder } from '../shared/paymentEncoder';
 import * as log from './log';
 
+const {BrowserWindow} = require('electron').remote
 
 export function navigate(url: string) {
     try {
@@ -55,6 +58,8 @@ export function navigate(url: string) {
             } else if (parsed.host === 'command') {
                 navigateCommandUrl(params);
             }
+        } else if (parsed.protocol.startsWith(PaymentEncoder.PaymentEmulatorUrlProtocol)) {
+            navigatePaymentUrl(parsed.path);
         } else if (parsed.protocol.startsWith('file:')) {
             // ignore
         } else if (parsed.protocol.startsWith('javascript:')) {
@@ -127,4 +132,24 @@ function navigateCommandUrl(params: string[]) {
     if (typeof args ==='string' && args.includes('autoUpdater.quitAndInstall')) {
         Emulator.quitAndInstall();
     }
+}
+
+function navigatePaymentUrl(payload: string) {
+    let page = URL.format({
+        protocol: 'file',
+        slashes: true,
+        pathname: path.join(__dirname, './payments/wallet.html')
+    });
+    page += '?' + payload;
+
+    let paymentWindow = new BrowserWindow({width: 800, height: 600})
+    paymentWindow.on('closed', () => {
+        paymentWindow = null
+    });
+    paymentWindow.setTitle('Bot Emulator Payment');
+
+    paymentWindow.webContents.openDevTools();
+
+    // Load a remote URL
+    paymentWindow.loadURL(page);
 }

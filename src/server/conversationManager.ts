@@ -38,6 +38,7 @@ import * as Payment from '../types/paymentTypes';
 import { IUser } from '../types/userTypes';
 import { IConversationAccount } from '../types/accountTypes';
 import { IActivity, IConversationUpdateActivity, IMessageActivity, IContactRelationUpdateActivity, ITypingActivity, IInvokeActivity } from '../types/activityTypes';
+import { PaymentEncoder } from '../shared/paymentEncoder';
 import { IAttachment, ICardAction } from '../types/attachmentTypes';
 import { uniqueId } from '../utils';
 import { dispatch, getSettings, authenticationSettings, v30AuthenticationSettings, addSettingsListener } from './settings';
@@ -203,7 +204,9 @@ export class Conversation {
     public postActivityToUser(activity: IActivity): IResourceResponse {
         const settings = getSettings();
         // Make a shallow copy before modifying & queuing
-        activity = this.visitActivityForPayments(Object.assign({}, activity));
+        let visitor = new PaymentEncoder();
+        activity = Object.assign({}, activity);
+        visitor.traverseActivity(activity);
         this.postage(settings.users.currentUserId, activity);
         const botId = activity.from.id;
         if (!activity.from.name) {

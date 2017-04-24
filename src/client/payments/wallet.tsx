@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import * as Electron from 'electron';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { webFrame } from 'electron';

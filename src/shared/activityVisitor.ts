@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IActivity, IMessageActivity } from './activityTypes';
-import * as Attachments from './attachmentTypes';
+import { IActivity, IMessageActivity } from '../types/activityTypes';
+import * as Attachments from '../types/attachmentTypes';
 
 export class ActivityVisitor {
 

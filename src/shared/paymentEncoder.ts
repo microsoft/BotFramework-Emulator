@@ -31,25 +31,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import * as Splitter from 'react-split-pane';
-import * as Payment from '../../types/paymentTypes';
+import { IActivity  } from '../types/activityTypes';
+import * as Attachments from '../types/attachmentTypes';
+import { ActivityVisitor } from './activityVisitor';
+import { IPaymentRequest } from '../types/paymentTypes';
 
-const remote = require('electron').remote;
+export class PaymentEncoder extends ActivityVisitor {
+    public static PaymentEmulatorUrlProtocol: string = "payment:";
 
-export class PaymentView extends React.Component<{}, {}> {
-    private request: Payment.IPaymentRequest;
+    protected visitCardAction(cardAction: Attachments.ICardAction) {
+        if (cardAction && cardAction.type === 'payment') {
+            let paymentRequest = cardAction.value as IPaymentRequest;
+            let url = PaymentEncoder.PaymentEmulatorUrlProtocol + '//' + JSON.stringify(paymentRequest);
 
-    render() {
-        let param = location.search.substring(1);
-        let paymentRequest = JSON.parse(param) as Payment.IPaymentRequest;
-
-        return (
-            <div className='paymentView'>
-                This is the Payment view.
-            </div>
-        );
+            // change the card action to a special URL for the emulator
+            cardAction.type = 'openUrl';
+            cardAction.value = url;
+        }
     }
-
-    
 }
+
