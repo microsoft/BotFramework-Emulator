@@ -38,6 +38,7 @@ import * as Payment from '../types/paymentTypes';
 import { IUser } from '../types/userTypes';
 import { IConversationAccount } from '../types/accountTypes';
 import { IActivity, IConversationUpdateActivity, IMessageActivity, IContactRelationUpdateActivity, ITypingActivity, IInvokeActivity } from '../types/activityTypes';
+import { IAttachment, ICardAction } from '../types/attachmentTypes';
 import { uniqueId } from '../utils';
 import { dispatch, getSettings, authenticationSettings, v30AuthenticationSettings, addSettingsListener } from './settings';
 import { Settings } from '../types/serverSettingsTypes';
@@ -202,7 +203,7 @@ export class Conversation {
     public postActivityToUser(activity: IActivity): IResourceResponse {
         const settings = getSettings();
         // Make a shallow copy before modifying & queuing
-        activity = Object.assign({}, activity);
+        activity = this.visitActivityForPayments(Object.assign({}, activity));
         this.postage(settings.users.currentUserId, activity);
         const botId = activity.from.id;
         if (!activity.from.name) {
@@ -402,6 +403,39 @@ export class Conversation {
             });
         } else {
             cb(null);
+        }
+    }
+
+    private visitActivityForPayments(activity: IActivity): IActivity {
+        if (activity.type === 'message') {
+            let messageActivity: IMessageActivity = activity;
+            if (messageActivity.attachments && messageActivity.attachments.length) {
+                messageActivity.attachments.forEach((attachment: IAttachment) => {
+                    this.visitForProperty(attachment.content, 'buttons', (instance: any) => {
+                        let buttons: ICardAction[] = instance;
+                        if (buttons && buttons.length) {
+                            buttons.forEach(button => {
+                                if (button.type === 'payment') {
+                                    log.info('found a payment button!');
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+        }
+        return activity;
+    }
+
+    private visitForProperty(obj: any, propertyName: string, process: (instance: any) => void) {
+        if (obj) {
+            for (let p in obj) {
+                if (p === propertyName) {
+                    process(obj[p]);
+                } else {
+                    this.visitForProperty(obj[p], propertyName, process);
+                }
+            }
         }
     }
 }

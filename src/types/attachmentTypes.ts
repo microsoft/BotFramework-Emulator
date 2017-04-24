@@ -73,3 +73,17 @@ export interface IAttachmentView {
     /// Name of the attachment
     size: number;
 }
+
+export interface ICardAction {
+    /// URL to a picture that will appear on the button, next to text label.
+    image: string;
+
+    /// Text description that appears on the button.
+    title: string;
+    
+    /// Defines the type of action implemented by this button.
+    type: string;
+
+    /// Supplementary parameter for action. Content of this property depends on the ActionType
+    value?: any;
+}
