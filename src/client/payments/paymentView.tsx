@@ -30,7 +30,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 import * as React from 'react';
 import * as Splitter from 'react-split-pane';
 import * as Payment from '../../types/paymentTypes';
@@ -172,6 +171,31 @@ class Selector extends React.Component<{}, {isExpanded: boolean}> {
         };
 
         this.toggle = this.toggle.bind(this);
+        this.onPageClick = this.onPageClick.bind(this);
+    }
+
+    componentDidMount() {
+        window.addEventListener('mousedown', this.onPageClick, false);
+    }
+
+    onPageClick(ev: MouseEvent) {
+        if (this.hasParentWithId(ev.target as Element, 'selector-menu') && this.state.isExpanded) {
+            this.setState((prevState, props) => {
+                return {isExpanded: false };
+            });
+            ev.stopPropagation();
+        }
+    }
+
+    hasParentWithId(el: Element, id: string): boolean {
+        if(el) {
+            if(el.id == id) {
+                return true;
+            } else {
+                return this.hasParentWithId(el.parentElement, id);
+            }
+        }
+        return false;
     }
 
     render() {
@@ -216,14 +240,10 @@ class Selector extends React.Component<{}, {isExpanded: boolean}> {
             contents = (<div className='selector-items grow'>
                 {renderItems}
             </div>);
-        } else {
-            contents = (<div className='selector-items shrink'>
-                {renderItems}
-            </div>);
         }
         
 
-        return (<div className='selector-container'>
+        return (<div id='selector-menu' className='selector-container'>
                     <div className='label' onClick={this.toggle}>This is the menu</div>
                     {contents}
                 </div>);
