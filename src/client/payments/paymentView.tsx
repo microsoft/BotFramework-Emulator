@@ -162,11 +162,14 @@ class AddressItem extends React.Component<{address: IAddress},{}> {
     }
 }
 
-class Selector extends React.Component<{}, {}> {
-    private isExpanded: boolean = false;
-
+class Selector extends React.Component<{}, {isExpanded: boolean}> {
+    
     constructor(props) {
         super(props);
+
+        this.state = {
+            isExpanded: false
+        };
 
         this.toggle = this.toggle.bind(this);
     }
@@ -209,7 +212,7 @@ class Selector extends React.Component<{}, {}> {
             renderItems.push(React.createElement(ri.class, ri.value)));
 
         let contents = undefined;
-        if (this.isExpanded) {
+        if (this.state.isExpanded) {
             contents = (<div className='selector-items grow'>
                 {renderItems}
             </div>);
@@ -227,6 +230,8 @@ class Selector extends React.Component<{}, {}> {
     }
 
     toggle(e) {
-        this.isExpanded = !this.isExpanded;
+        this.setState((prevState, props) => {
+            return {isExpanded: !prevState.isExpanded};
+        });
     }
 }
