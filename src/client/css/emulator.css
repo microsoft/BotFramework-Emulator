@@ -532,6 +532,112 @@
         color: #999;
     }
 
+/* payment window */
+
+    .payment-container {
+        display: flex;
+        flex-direction: column;
+        padding: 10px 20px;
+        border-top-color: darkgray;
+        border-top-style: solid;
+        border-top-width: 1px;
+    }
+
+    .payment-container .title {
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 10px;
+    }
+
+    .payment-container .fixed-right {
+        margin-left: 112px;
+    }
+
+    .payment-container .pay-field {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .payment-container .payment-label {
+        color: #666;
+        font-size: 13px;
+        align-self: center;
+        min-width: 100px;
+        text-align: right;
+        margin-right: 8px;
+    }
+
+    .payment-container .selector {
+        background-color: #EEE;
+        font-size: 14px;
+        margin-top: 4px;
+        margin-bottom: 4px;
+        margin-left: 4px;
+        min-height: 40px;
+        flex-grow: 1;
+        border-width: 0px;
+        border-radius: 0;
+        padding-left: 10px;
+        padding-right: 10px;
+        text-overflow: ellipsis;
+    }
+
+    .payment-container .pay-button {
+        color: white;
+        background: #3A96DD;
+        min-height: 28px;
+        text-align: center;
+        font-size: 14px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    .payment-container .pay-button:hover {
+        background: #0063B1;
+    }
+
+    .payment-container .pay-button:active {
+        background: #4C4C4C;
+    }
+
+    .selector-container label {
+        border-color: black;
+        border-style: solid;
+        border-width: 1px;
+    }
+
+    .selector-container .selector-items {
+        border-color: black;
+        border-style: solid;
+        border-width: 1px;
+        z-index: 10;
+    }
+
+    .selector-container .grow {
+        animation-name: grow;
+        animation-duration: 0.5s;
+        animation-timing-function: ease-out;
+    }
+
+    @keyframes grow {
+        0%   {height:0%;}
+        100% {height: 100%}
+    }
+
+    .selector-container .shrink {
+        animation-name: shrink;
+        animation-duration: 0.5s;
+        animation-timing-function: ease-out;
+    }
+
+    @keyframes shrink {
+        0%   {height:100%;}
+        100% {height: 0%;}
+    }
+
+
 /* base classes */
 
     .fill-parent {

@@ -38,18 +38,195 @@ import * as Payment from '../../types/paymentTypes';
 const remote = require('electron').remote;
 
 export class PaymentView extends React.Component<{}, {}> {
-    private request: Payment.IPaymentRequest;
+    private paymentRequest: Payment.IPaymentRequest;
+
+    private emailAddress: string;
+    private phoneNumber: string;
+
+    componentWillMount() {
+        let param = location.search;
+        if (param) {
+            if(param.startsWith('?')) {
+                param = param.substring(1);
+            }
+            this.paymentRequest = JSON.parse(decodeURI(param)) as Payment.IPaymentRequest;
+        }
+    }
+
+    emailChanged = (text: string) => {
+        this.emailAddress = text.trim();
+    }
+
+    phoneChanged = (text: string) => {
+        this.phoneNumber = text.trim();
+    }
 
     render() {
-        let param = location.search.substring(1);
-        let paymentRequest = JSON.parse(param) as Payment.IPaymentRequest;
-
         return (
-            <div className='paymentView'>
-                This is the Payment view.
+            <div className='payment-container'>
+                <div className='title fixed-right'>Confirm and Pay</div>
+
+                <div className='pay-with pay-field'>
+                    <div className='payment-label'>Pay with</div>
+                    <div className='selector'></div>
+                </div>
+                <div className='ship-to pay-field'>
+                    <div className='payment-label'>Ship to</div>
+                    <div className='selector'></div>
+                </div>
+                <div className='shipping-options pay-field'>
+                    <div className='payment-label'>Shipping options</div>
+                    <div className='selector'></div>
+                </div>
+                <div className='email-receipt-to pay-field'>
+                    <div className='payment-label'>Email receipt to</div>
+                    <input
+                        type="text"
+                        className="selector"
+                        value={this.emailAddress}
+                        onChange={e => this.emailChanged((e.target as any).value)} />
+                </div>
+                <div className='phone pay-field'>
+                    <div className='payment-label'>Phone</div>
+                    <input
+                        type="text"
+                        className="selector"
+                        value={this.phoneNumber}
+                        onChange={e => this.phoneChanged((e.target as any).value)} />
+
+                </div>
+                <div className='total-container fixed-right'>
+                </div>
+                <div className='pay-button fixed-right'>Pay</div>
+                <Selector/>
             </div>
         );
     }
 
     
+}
+
+interface ISelectorItem {
+    label: string;
+    action?: () => void;
+}
+
+class SelectorItem extends React.Component<ISelectorItem, {}> {
+    constructor(props) {
+        super(props);
+    
+        this.select = this.select.bind(this);
+    }
+
+    select(e) {
+        e.preventDefault();
+        if (this.props.action) {
+            this.props.action();
+        }
+    }
+
+    render() {
+        return (
+            <div onClick={this.select}>{this.props.label}</div>
+        );
+    }
+}
+
+interface IAddress {
+    recipient?: string;
+    streetLine1?: string;
+    streetLine2?: string;
+    city?: string;
+    state?: string;
+    zip?: string;
+}
+
+
+class AddressItem extends React.Component<{address: IAddress},{}> {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        let addr2 = this.props.address.streetLine2 ? 
+                <div>{this.props.address.streetLine2}</div> :
+                undefined;
+
+        return (
+            <div>
+                <div>{this.props.address.recipient}</div>
+                <div>{this.props.address.streetLine1}</div>
+                {addr2}
+                <div>{this.props.address.city}, {this.props.address.state} {this.props.address.zip}</div>
+            </div>);
+    }
+}
+
+class Selector extends React.Component<{}, {}> {
+    private isExpanded: boolean = false;
+
+    constructor(props) {
+        super(props);
+
+        this.toggle = this.toggle.bind(this);
+    }
+
+    render() {
+        let items: ISelectorItem[] = [
+            {label: 'One'},
+            {label: 'Two'}
+        ];
+    
+        let addressItems = [{
+            class: AddressItem,
+            value: {
+                address: {
+                    recipient: 'Jeff',
+                    streetLine1: '21514 SE 39th St',
+                    city: 'Sammamish',
+                    state: 'WA',
+                    zip: '98075'
+                }
+            }
+        },
+        {
+            class: AddressItem,
+            value: {
+                address: {
+                    recipient: 'Rob',
+                    streetLine1: '123 Main St',
+                    streetLine2: 'Apr 5',
+                    city: 'Denver',
+                    state: 'CO',
+                    zip: '87612'
+                }
+            }
+        }];
+
+        let renderItems = [];
+
+        addressItems.forEach(ri => 
+            renderItems.push(React.createElement(ri.class, ri.value)));
+
+        let contents = undefined;
+        if (this.isExpanded) {
+            contents = (<div className='selector-items grow'>
+                {renderItems}
+            </div>);
+        } else {
+            contents = (<div className='selector-items shrink'>
+                {renderItems}
+            </div>);
+        }
+        
+
+        return (<div className='selector-container'>
+                    <div className='label' onClick={this.toggle}>This is the menu</div>
+                    {contents}
+                </div>);
+    }
+
+    toggle(e) {
+        this.isExpanded = !this.isExpanded;
+    }
 }

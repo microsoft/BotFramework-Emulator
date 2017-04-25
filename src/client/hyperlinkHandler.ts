@@ -142,7 +142,7 @@ function navigatePaymentUrl(payload: string) {
     });
     page += '?' + payload;
 
-    let paymentWindow = new BrowserWindow({width: 800, height: 600})
+    let paymentWindow = new BrowserWindow({width: 800, height: 380})
     paymentWindow.on('closed', () => {
         paymentWindow = null
     });
