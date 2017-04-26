@@ -143,4 +143,5 @@ document.body.addEventListener('contextmenu', (e) => {
 
 
 // Load main control
-ReactDOM.render(<PaymentView />, document.getElementById('paymentview'));
+window['__myapp_container'] = document.getElementById('paymentview')
+ReactDOM.render(<PaymentView />, window['__myapp_container']);

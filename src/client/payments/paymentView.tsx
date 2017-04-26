@@ -31,16 +31,70 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import * as Splitter from 'react-split-pane';
 import * as Payment from '../../types/paymentTypes';
 
 const remote = require('electron').remote;
 
-export class PaymentView extends React.Component<{}, {}> {
+class PaymentCreditCard {
+    public cardholderName: string;
+    public cardNumber: string;
+    public expiresMonth: number;
+    public expiresYear: number;
+    public cvv: string;
+    public addressLine: string;
+    public city: string;
+    public state: string;
+    public postalCode: string;
+    public countryOrRegion: string;
+}
+
+class PaymentShippingAddress {
+    public recipient: string;
+    public addressLine1: string;
+    public addressLine2: string;
+    public city: string;
+    public state: string;
+    public postalCode: string;
+    public countryOrRegion: string;
+    public phoneNumber: string;
+}
+
+class PaymentViewState {
+    // payment type
+    public selectedCreditCard: PaymentCreditCard;
+    public creditCards: PaymentCreditCard[] = [];
+
+    // shipping destination
+    public selectedShippingAddress: PaymentShippingAddress;
+    public shippingAddresses: PaymentShippingAddress[] = [];
+
+    // contact information
+    public emailAddress: string = '';
+    public phoneNumber: string = '';
+
+    // shipping
+    public shippingOptions: string[];
+    public selectedShippingOption: string;
+
+    // selection state
+    public selectorIsVisible: boolean = false;
+}
+
+export class PaymentView extends React.Component<{}, PaymentViewState> {
     private paymentRequest: Payment.IPaymentRequest;
 
-    private emailAddress: string;
-    private phoneNumber: string;
+    constructor(props) {
+        super(props);
+        this.state = new PaymentViewState();
+
+        this.emailChanged = this.emailChanged.bind(this);
+        this.phoneChanged = this.phoneChanged.bind(this);
+        this.setSelectorIsVisible = this.setSelectorIsVisible.bind(this);
+        this.getSelectorIsVisible = this.getSelectorIsVisible.bind(this);
+        this.onPageMouseDown = this.onPageMouseDown.bind(this);
+    }
 
     componentWillMount() {
         let param = location.search;
@@ -49,20 +103,42 @@ export class PaymentView extends React.Component<{}, {}> {
                 param = param.substring(1);
             }
             this.paymentRequest = JSON.parse(decodeURI(param)) as Payment.IPaymentRequest;
+            
+            // update state:
         }
     }
 
-    emailChanged = (text: string) => {
-        this.emailAddress = text.trim();
+    private emailChanged(text: string): void {
+        this.updateState({ emailAddress: text });
     }
 
-    phoneChanged = (text: string) => {
-        this.phoneNumber = text.trim();
+    private phoneChanged(text: string): void {
+        this.updateState({ phoneNumber: text });
+    }
+
+    private setSelectorIsVisible(isVisible: boolean) {
+        this.updateState({ selectorIsVisible: isVisible});
+    }
+
+    private getSelectorIsVisible(): boolean {
+        return this.state.selectorIsVisible;
+    }
+
+    private onPageMouseDown(evt: any) {
+        const selector = ReactDOM.findDOMNode(this.refs['selector']);
+
+        if (!selector.contains(evt.target as Node) && this.state.selectorIsVisible) {
+            this.setSelectorIsVisible(false);
+        }
+    }
+
+    private updateState(update: any) {
+        this.setState(Object.assign({}, this.state, update));
     }
 
     render() {
         return (
-            <div className='payment-container'>
+            <div className='payment-container' onMouseDown={this.onPageMouseDown}>
                 <div className='title fixed-right'>Confirm and Pay</div>
 
                 <div className='pay-with pay-field'>
@@ -82,7 +158,7 @@ export class PaymentView extends React.Component<{}, {}> {
                     <input
                         type="text"
                         className="selector"
-                        value={this.emailAddress}
+                        value={this.state.emailAddress}
                         onChange={e => this.emailChanged((e.target as any).value)} />
                 </div>
                 <div className='phone pay-field'>
@@ -90,19 +166,20 @@ export class PaymentView extends React.Component<{}, {}> {
                     <input
                         type="text"
                         className="selector"
-                        value={this.phoneNumber}
+                        value={this.state.phoneNumber}
                         onChange={e => this.phoneChanged((e.target as any).value)} />
 
                 </div>
                 <div className='total-container fixed-right'>
                 </div>
                 <div className='pay-button fixed-right'>Pay</div>
-                <Selector/>
+                <Selector 
+                    ref='selector' 
+                    getSelectorIsVisible={this.getSelectorIsVisible}
+                    setSelectorIsVisible={this.setSelectorIsVisible}/>
             </div>
         );
     }
-
-    
 }
 
 interface ISelectorItem {
@@ -161,30 +238,41 @@ class AddressItem extends React.Component<{address: IAddress},{}> {
     }
 }
 
-class Selector extends React.Component<{}, {isExpanded: boolean}> {
+class Selector extends React.Component<{
+    getSelectorIsVisible: () => boolean,
+    setSelectorIsVisible: (isVisible: boolean) => void
+}, {}> {
     
     constructor(props) {
         super(props);
 
-        this.state = {
-            isExpanded: false
-        };
-
         this.toggle = this.toggle.bind(this);
-        this.onPageClick = this.onPageClick.bind(this);
     }
 
-    componentDidMount() {
-        window.addEventListener('mousedown', this.onPageClick, false);
+    componentDidMount () {
+        //window['__myapp_container'].addEventListener('mousedown', this.onPageClick)
     }
+
+    componentWillUnmount () {
+        //window['__myapp_container'].removeEventListener('mousedown', this.onPageClick)
+    }
+
 
     onPageClick(ev: MouseEvent) {
-        if (this.hasParentWithId(ev.target as Element, 'selector-menu') && this.state.isExpanded) {
+        const selector = ReactDOM.findDOMNode(this.refs['selector']);
+
+        if (!selector.contains(ev.target as Node)) {
+            this.setState((prevState, props) => {
+                return {isExpanded: false };
+            });
+        }
+
+        /*if (this.hasParentWithId(ev.target as Element, 'selector-menu') && this.state.isExpanded) {
             this.setState((prevState, props) => {
                 return {isExpanded: false };
             });
             ev.stopPropagation();
-        }
+        }*/
     }
 
     hasParentWithId(el: Element, id: string): boolean {
@@ -236,22 +324,21 @@ class Selector extends React.Component<{}, {isExpanded: boolean}> {
             renderItems.push(React.createElement(ri.class, ri.value)));
 
         let contents = undefined;
-        if (this.state.isExpanded) {
+        if (this.props.getSelectorIsVisible()) {
             contents = (<div className='selector-items grow'>
                 {renderItems}
             </div>);
         }
         
 
-        return (<div id='selector-menu' className='selector-container'>
+        return (<div id='selector-menu' ref='selector' className='selector-container'>
                     <div className='label' onClick={this.toggle}>This is the menu</div>
                     {contents}
                 </div>);
     }
 
     toggle(e) {
-        this.setState((prevState, props) => {
-            return {isExpanded: !prevState.isExpanded};
-        });
+        let currentState = this.props.getSelectorIsVisible();
+        this.props.setSelectorIsVisible(!currentState);
     }
 }
