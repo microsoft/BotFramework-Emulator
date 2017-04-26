@@ -48,18 +48,23 @@ import { AppSettingsDialog } from './dialogs/appSettingsDialog';
 import { ConversationSettingsDialog } from './dialogs/conversationSettingsDialog';
 import * as Constants from './constants';
 import { Emulator } from './emulator';
+import { BotEmulatorContext } from './botEmulatorContext';
+import { AddressBarOperators } from './addressBar/addressBarOperators';
+import { IBot, newBot } from '../types/botTypes';
 
 const remote = require('electron').remote;
-
+const ipcRenderer = require('electron').ipcRenderer;
 
 export class MainView extends React.Component<{}, {}> {
     settingsUnsubscribe: any;
+    settingsLoadUnsubscribe: any;
     reuseKey: number = 0;
     directline: BotChat.DirectLine;
     conversationId: string;
     userId: string;
     botId: string;
     botChatContainer: HTMLElement;
+    shouldWarnOfBotChange: boolean = false;
 
     componentWillMount() {
         this.settingsUnsubscribe = addSettingsListener((settings: Settings) => {
@@ -119,6 +124,83 @@ export class MainView extends React.Component<{}, {}> {
         this.conversationId = undefined;
         this.userId = undefined;
         this.botId = undefined;
+    }
+
+    componentDidMount() {
+        // listen to future protocol handler invocations and update the emulator's active bot when this happens
+        ipcRenderer.on('botemulator', (event: any, message: any) => {
+            console.log('received url: ' + message);
+            this.shouldWarnOfBotChange = true;
+            this.setBot(message);
+        });
+
+        console.log("location.search: " + location.search);
+
+        // on application start, a query string may have some parameters that provide initial context about
+        // the bot to connect to
+        if (location.search) {
+            this.setBot(location.search);
+        }
+
+        // request any urls that may have queued while the app was starting
+        ipcRenderer.send('getUrls');
+    }
+
+    // set the current bot based on an encoded bot emulator URI
+    // based on the setting avialability, this will either immediately or in a deferred way set
+    // the address information to the encoded bot and connect to this bot
+    private setBot(encodedBot: string): void {
+        let botContext = new BotEmulatorContext(encodedBot);
+        if (botContext.isValid()) {
+            // settings may or may not be loaded at this point
+            // if they are, use them directly, if not, wait for them to be loaded
+            if(this.settingsAreLoaded()) {
+                this.verifyAndAssignBot(botContext);
+            } else {
+                this.settingsLoadUnsubscribe = addSettingsListener((settings: Settings) => {
+                    if(botContext && this.settingsAreLoaded()) {
+                        this.verifyAndAssignBot(botContext);
+                        botContext = undefined;
+                        if (this.settingsLoadUnsubscribe) {
+                            this.settingsLoadUnsubscribe();
+                            this.settingsLoadUnsubscribe = undefined;
+                        }
+                    }
+                }); 
+            }
+        }
+    }
+
+    // determines if we need to warn the user that the bot connection will change due to an event
+    // such as a protocol handler invocation, and in this case let the user choose whether to continue or not
+    private verifyAndAssignBot(botContext: BotEmulatorContext): void {
+        let assignBot: boolean = true;
+        if (this.shouldWarnOfBotChange) {
+            const serverSettings = new ServerSettings(getSettings().serverSettings);
+            const activeBot = serverSettings.getActiveBot();
+            if(activeBot && !botContext.matchesBot(activeBot)) {
+                if (remote.dialog.showMessageBox({
+                                type: 'question',
+                                title: 'Connect to Bot', 
+                                message: 'Are you sure you want to update and connect to the bot at \'' + botContext.endpoint + '\'?',
+                                buttons: ['Yes', 'No'],
+                                defaultId: 0,
+                                cancelId: 1}) === 1) {
+                    assignBot = false;
+                }
+            }
+            this.shouldWarnOfBotChange = false;
+        }
+
+        if (assignBot) {
+            AddressBarOperators.assignBot(botContext);
+        }
+    }
+
+    // Determine if the settings are currently loaded and available to use
+    private settingsAreLoaded(): boolean {
+        const settings = getSettings();
+        return (settings && settings.serverSettings && settings.serverSettings.bots) as any as boolean;
     }
 
     getCurrentUser(serverSettings: ServerSettings): IUser {
