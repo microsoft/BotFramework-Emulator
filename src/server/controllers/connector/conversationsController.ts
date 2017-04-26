@@ -47,6 +47,7 @@ import { RestServer } from '../../restServer';
 import { BotFrameworkAuthentication } from '../../botFrameworkAuthentication';
 import { error } from '../../log';
 import { jsonBodyParser } from '../../jsonBodyParser';
+import { VersionManager } from '../../versionManager';
 
 
 interface IConversationAPIPathParameters {
@@ -178,6 +179,8 @@ export class ConversationsController {
             const activeBot = getSettings().getActiveBot();
             if (!activeBot)
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
+
+            VersionManager.checkVersion(req.header("User-agent"));
 
             activity.id = null;
             activity.replyToId = req.params.activityId;
