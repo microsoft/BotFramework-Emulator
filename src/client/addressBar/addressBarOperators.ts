@@ -35,6 +35,7 @@ import { getSettings, ISettings, addSettingsListener } from '../settings';
 import { Settings as ServerSettings } from '../../types/serverSettingsTypes';
 import { AddressBarActions, ConversationActions, ServerSettingsActions } from '../reducers';
 import { IBot, newBot } from '../../types/botTypes';
+import { BotEmulatorContext } from '../botEmulatorContext';
 import * as log from '../log';
 
 
@@ -119,5 +120,18 @@ export class AddressBarOperators {
         ConversationActions.newConversation();
         AddressBarActions.hideBotCreds();
         AddressBarActions.hideSearchResults();
+    }
+
+    static assignBot(botContext: BotEmulatorContext): void {
+        const bot = AddressBarOperators.selectBotForUrl(botContext.endpoint, null) || 
+                    botContext.toBot();
+        
+        // update the bot with the passed in information
+        const updatedBot = botContext.updateBot(bot);
+            
+        AddressBarOperators.setText(botContext.endpoint);
+        AddressBarOperators.selectBot(updatedBot);
+        AddressBarOperators.connectToBot(updatedBot);
+        AddressBarOperators.selectBot(updatedBot);
     }
 }

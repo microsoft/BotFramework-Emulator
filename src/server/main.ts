@@ -48,6 +48,30 @@ process.on('uncaughtException', (error: Error) => {
 
 export let mainWindow: Electron.BrowserWindow;
 
+var openUrls = [];
+var onOpenUrl = function (event, url) {
+    event.preventDefault();
+    if (process.platform === 'darwin') {
+        if (mainWindow && mainWindow.webContents) {
+            // the app is already running, send a message containing the url to the renderer process
+            mainWindow.webContents.send('botemulator', url);
+        } else {
+            // the app is not yet running, so store the url so the UI can request it later
+            openUrls.push(url);
+        }
+    }
+};
+
+Electron.app.on('will-finish-launching', (event, args) => {
+    Electron.ipcMain.on('getUrls', (event, arg) => {
+        openUrls.forEach(url => mainWindow.webContents.send('botemulator', url));
+        openUrls = [];
+    });    
+
+    // On Mac, a protocol handler invocation sends urls via this event
+    Electron.app.on('open-url', onOpenUrl);
+});
+
 const createMainWindow = () => {
 
     const windowTitle = "Bot Framework Channel Emulator";
@@ -134,11 +158,23 @@ const createMainWindow = () => {
     mainWindow.once('ready-to-show', () => {
         mainWindow.show();
     });
+
+    let queryString = '';
+    if (process.argv[1] && process.argv[1].indexOf('botemulator') !== -1) {
+        // add a query string with the botemulator protocol handler content
+        queryString = '?' + process.argv[1];
+    }
+
     let page = url.format({
         protocol: 'file',
         slashes: true,
         pathname: path.join(__dirname, '../client/index.html')
     });
+
+    if (queryString) {
+        page = page + queryString;
+    }
+    
     mainWindow.loadURL(page);
 }
 
