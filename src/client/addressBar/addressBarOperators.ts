@@ -32,6 +32,7 @@
 //
 
 import { getSettings, ISettings, addSettingsListener } from '../settings';
+import { LogActions } from '../reducers';
 import { Settings as ServerSettings } from '../../types/serverSettingsTypes';
 import { AddressBarActions, ConversationActions, ServerSettingsActions } from '../reducers';
 import { IBot, newBot } from '../../types/botTypes';
@@ -113,7 +114,17 @@ export class AddressBarOperators {
         ServerSettingsActions.remote_setActiveBot(bot.botId);
     }
 
+    static isActiveBot(bot: IBot): boolean {
+        const settings = getSettings();
+        return !settings.serverSettings.activeBot ||                // no active bot is set, or
+            settings.serverSettings.activeBot.length === 0 ||       // no active bot is set, or
+            settings.serverSettings.activeBot === bot.botId;        // active bot matches current bot
+    }
+
     static connectToBot(bot: IBot) {
+        if (!AddressBarOperators.isActiveBot(bot)) {
+            LogActions.clear();
+        }
         AddressBarOperators.selectBot(null);
         AddressBarOperators.addOrUpdateBot(bot);
         AddressBarOperators.activateBot(bot);
@@ -128,6 +139,10 @@ export class AddressBarOperators {
         
         // update the bot with the passed in information
         const updatedBot = botContext.updateBot(bot);
+
+        if (!AddressBarOperators.isActiveBot(updatedBot)) {
+            LogActions.clear();
+        }
             
         AddressBarOperators.setText(botContext.endpoint);
         AddressBarOperators.selectBot(updatedBot);
