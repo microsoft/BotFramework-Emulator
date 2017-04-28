@@ -40,7 +40,6 @@ import * as log from '../log';
 import { AddressBarOperators } from './addressBarOperators';
 import { AddressBarStatus } from './addressBarStatus';
 import { AddressBarTextBox } from './addressBarTextBox';
-import { AddressBarPayment } from './addressBarPayment';
 import { AddressBarRefresh } from './addressBarRefresh';
 import { AddressBarMenu } from './addressBarMenu';
 import { AddressBarSearch } from './addressBarSearch';
@@ -84,7 +83,6 @@ export class AddressBar extends React.Component<{}, {}> {
             <div className="addressbar">
                 <AddressBarStatus />
                 <AddressBarTextBox />
-                <AddressBarPayment />
                 <AddressBarRefresh />
                 <AddressBarMenu />
                 <AddressBarSearch />

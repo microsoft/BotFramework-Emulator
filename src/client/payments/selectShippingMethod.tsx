@@ -30,41 +30,24 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 import * as React from 'react';
-import * as Constants from '../constants';
-import { ConversationActions } from '../reducers';
-import { getSettings } from '../settings';
-import * as url from 'url';
-import * as path from 'path';
+import { SelectorComponent } from './selectorComponent'
+import * as Payment from '../../types/paymentTypes';
 
-const {BrowserWindow} = require('electron').remote
-
-
-export class AddressBarPayment extends React.Component<{}, {}> {
-
-    paymentClicked = () => {
-        let page = url.format({
-            protocol: 'file',
-            slashes: true,
-            pathname: path.join(__dirname, '../payments/wallet.html')
-        });
-
-        let win = new BrowserWindow({width: 800, height: 600})
-        win.on('closed', () => {
-            win = null
-        });
-        win.setTitle('Bot Emulator Payment');
-
-        // Load a remote URL
-        win.loadURL(page);
+class ShippingMethodItem extends React.Component<{
+    item: Payment.IPaymentShippingOption
+}, {}> {
+    
+    constructor(props) {
+        super(props);
     }
-
     render() {
-        return (
-            <a className='undecorated-text' href='javascript:void(0)' title='Payments'>
-                <div className='addressbar-payment' dangerouslySetInnerHTML={{ __html: Constants.reloadIcon("toolbar-button", 24) }} onClick={() => this.paymentClicked()} />
-            </a>
-        );
+        return (<div className='shipping-method'>{this.props.item.label} (${this.props.item.amount.value})</div>);
+    }
+}
+
+export class SelectShippingMethod extends SelectorComponent<Payment.IPaymentShippingOption> {
+    constructor(props) {
+        super(props, ShippingMethodItem);
     }
 }

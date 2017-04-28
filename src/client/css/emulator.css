@@ -532,42 +532,59 @@
         color: #999;
     }
 
-/* payment window */
-
-    .payment-container {
+/* wallet window */
+    .wallet-index {
+        height: 100%;
         display: flex;
         flex-direction: column;
-        padding: 10px 20px;
+    }
+
+    .wallet-container {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
         border-top-color: darkgray;
         border-top-style: solid;
         border-top-width: 1px;
     }
 
-    .payment-container .title {
+    .wallet-table {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .wallet-table .title {
         font-size: 16px;
         font-weight: 500;
         margin-bottom: 10px;
     }
 
-    .payment-container .fixed-right {
-        margin-left: 112px;
+    .wallet-table .fixed-right {
+        margin-left: 132px;
     }
 
-    .payment-container .pay-field {
+    .wallet-table .wallet-form {
+        flex-grow: 1;
+    }
+
+    .wallet-table .wallet-field {
         display: flex;
         flex-direction: row;
     }
 
-    .payment-container .payment-label {
+    .wallet-table .wallet-label {
         color: #666;
         font-size: 13px;
         align-self: center;
-        min-width: 100px;
+        min-width: 120px;
         text-align: right;
         margin-right: 8px;
     }
 
-    .payment-container .selector {
+    .wallet-table .wallet-input {
         background-color: #EEE;
         font-size: 14px;
         margin-top: 4px;
@@ -582,7 +599,12 @@
         text-overflow: ellipsis;
     }
 
-    .payment-container .pay-button {
+    .wallet-table .wallet-button-bar {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .wallet-table .button {
         color: white;
         background: #3A96DD;
         min-height: 28px;
@@ -592,33 +614,160 @@
         flex-direction: column;
         justify-content: center;
         margin-top: 10px;
+        flex-grow: 1;
+        cursor: pointer;
     }
 
-    .payment-container .pay-button:hover {
+    .wallet-table .button:hover {
         background: #0063B1;
     }
 
-    .payment-container .pay-button:active {
+    .wallet-table .button:active {
         background: #4C4C4C;
     }
 
-    .selector-container label {
-        border-color: black;
-        border-style: solid;
-        border-width: 1px;
+    .wallet-table .cancel-button {
+        color: black;
+        background: #ababab;
+        margin-right: 20px;
     }
 
-    .selector-container .selector-items {
-        border-color: black;
+    .wallet-table .cancel-button:hover {
+        background: #787878;
+    }
+
+    .wallet-table .cancel-button:active {
+        background: #434343;
+        color: white;
+    }
+
+    .wallet-table .total-line {
+        display: flex;
+        align-items: center;
+    }
+
+    .wallet-table .total-label-container {
+        flex-grow: 1;
+        display: flex;
+    }
+
+    .wallet-table .total-label {
+        font-weight: 600;
+        margin-right: 8px;
+    }
+
+    .wallet-table .total-value {
+        font-size: 20px;
+    }
+
+    .wallet-table .show-details {
+        color: #3A96DD;
+        cursor: pointer;
+    }
+
+    .wallet-table .show-details:hover {
+        color: #0063B1;
+    }
+
+    .wallet-table .show-details:active {
+        color: #4C4C4C;
+    }
+
+    .wallet-table .line-items {
+        border-top-style: solid;
+        border-top-width: 1px;
+        border-top-color: #999;
+        border-bottom-style: solid;
+        border-bottom-width: 1px;
+        border-bottom-color: #999;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    .wallet-table .line-item {
+        display: flex;
+        align-items: center;
+        margin-top: 4px;
+        margin-bottom: 4px;
+        flex-grow: 1;
+    }
+
+    .wallet-table .item-label {
+        flex-grow: 1;
+    }
+
+    .wallet-table .not-final {
+        font-size: 12px;
+    }
+
+    .wallet-table .wallet-selector {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        background-color: #EEE;
+        font-size: 14px;
+        margin-top: 4px;
+        margin-bottom: 4px;
+        margin-left: 4px;
+        min-height: 40px;
+        flex-grow: 1;
+        border-width: 0px;
+        border-radius: 0;
+        text-overflow: ellipsis;
+    }
+
+    .wallet-table .selected-item-label-container {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: row;
+    }
+
+    .wallet-table .placeholder-text {
+        color: #666;
+        margin-left: 10px;
+    }
+
+    .wallet-table .selected-item-label {
+        flex-grow: 1;
+    }
+
+    .wallet-table .down-chevron {
+        margin-right: 10px;
+        width: 20px;
+        align-self: center;
+        color: #666;
+        font-size: 10px;
+    }
+
+    .wallet-table .selector-items {
+        border-color: #BBB;
         border-style: solid;
         border-width: 1px;
         z-index: 10;
-        animation-duration: 0.5s;
+        animation-duration: 0.25s;
         animation-timing-function: ease-out;
         transform-origin: top;
+        position: absolute;
+        background: white;
+        max-height: 300px;
+        overflow-y: auto;
     }
 
-    .selector-container .grow {
+    .wallet-table .selector-item {
+        display: flex;
+        align-items: center;
+        min-height: 40px;
+    }
+
+    .wallet-table .selector-item:hover {
+        background-color: #EEE;
+    }
+
+    .wallet-table .selector-item:active {
+        background-color: #BBB;
+    }
+
+    .wallet-table .grow {
         animation-name: show;
     }
 
@@ -627,15 +776,30 @@
         100% {transform: scaleY(-100%); offset: 1; }
     }
 
-    .selector-container .shrink {
-        animation-name: hide;
+    .wallet-table .add-item {
+        color: #3A96DD;
+        margin-left: 10px;
+        margin-right: 10px;
     }
 
-    @keyframes hide {
-        0%   {transform: scaleY(-100%); offset: 1;}
-        100% {transform: scaleY(0); offset: 0; }
+    .shipping-method {
+        margin-left: 10px;
+        margin-right: 10px;
     }
 
+    .credit-card {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+
+    .shipping-address {
+        margin: 10px;
+    }
+
+    .postal-code-input {
+        width: 140px;
+        flex-grow: 0;
+    }
 
 /* base classes */
 

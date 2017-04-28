@@ -35,7 +35,7 @@ import * as Electron from 'electron';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { webFrame } from 'electron';
-import { PaymentView } from './paymentView';
+import { WalletView } from './walletView';
 import * as Settings from '../settings';
 import { uniqueId } from '../../utils';
 import { navigate } from '../hyperlinkHandler';
@@ -141,7 +141,5 @@ document.body.addEventListener('contextmenu', (e) => {
     }
 });
 
-
 // Load main control
-window['__myapp_container'] = document.getElementById('paymentview')
-ReactDOM.render(<PaymentView />, window['__myapp_container']);
+ReactDOM.render(<WalletView />, document.getElementById('walletView'));

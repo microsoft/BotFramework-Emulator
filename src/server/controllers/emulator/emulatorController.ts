@@ -43,6 +43,7 @@ import { ErrorCodes, IResourceResponse, IErrorResponse } from '../../../types/re
 import { IChannelAccount } from '../../../types/accountTypes';
 import { IBot } from '../../../types/botTypes';
 import { Conversation } from '../../conversationManager';
+import * as Payment from '../../../types/paymentTypes';
 
 
 function getConversation(conversationId: string): Conversation {
@@ -69,6 +70,9 @@ export class EmulatorController {
         server.router.post('/emulator/:conversationId/typing', this.typing);
         server.router.post('/emulator/:conversationId/ping', this.ping);
         server.router.del('/emulator/:conversationId/userdata', this.deleteUserData);
+        server.router.post('/emulator/:conversationId/invoke/updateShippingAddress', jsonBodyParser(), this.updateShippingAddress);
+        server.router.post('/emulator/:conversationId/invoke/updateShippingOption', jsonBodyParser(), this.updateShippingOption);
+        server.router.post('/emulator/:conversationId/invoke/paymentComplete', jsonBodyParser(), this.paymentComplete);
         server.router.post('/emulator/system/quitAndInstall', this.quitAndInstall);
     }
 
@@ -171,9 +175,66 @@ export class EmulatorController {
         }
     }
 
+    static updateShippingAddress = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+        try {
+            const conversation = getConversation(req.params.conversationId);
+            const body: {request: Payment.IPaymentRequest, shippingAddress: Payment.IPaymentAddress, shippingOptionId: string } = req.body[0];
+            conversation.sendUpdateShippingAddressOperation(body.request, body.shippingAddress, body.shippingOptionId, (statusCode, body) => {
+                if (statusCode === HttpStatus.OK) {
+                    res.send(HttpStatus.OK, body);
+                } else {
+                    res.send(statusCode);
+                }
+                res.end();
+            });
+        } catch (err) {
+            ResponseTypes.sendErrorResponse(req, res, next, err);
+        }
+    }
+
+    static updateShippingOption = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+        try {
+            const conversation = getConversation(req.params.conversationId);
+            const body: {request: Payment.IPaymentRequest, shippingAddress: Payment.IPaymentAddress, shippingOptionId: string } = req.body[0];
+            conversation.sendUpdateShippingOptionOperation(body.request, body.shippingAddress, body.shippingOptionId, (statusCode, body) => {
+                if (statusCode === HttpStatus.OK) {
+                    res.send(HttpStatus.OK, body);
+                } else {
+                    res.send(statusCode);
+                }
+                res.end();
+            });
+        } catch (err) {
+            ResponseTypes.sendErrorResponse(req, res, next, err);
+        }
+    }
+
+    static paymentComplete = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+        try {
+            const conversation = getConversation(req.params.conversationId);
+            const body: {
+                request: Payment.IPaymentRequest, 
+                shippingAddress: Payment.IPaymentAddress, 
+                shippingOptionId: string,
+                payerEmail: string,
+                payerPhone: string } = req.body[0];
+            conversation.sendPaymentCompleteOperation(body.request, body.shippingAddress, body.shippingOptionId, body.payerEmail, body.payerPhone, (statusCode, body) => {
+                if (statusCode === HttpStatus.OK) {
+                    res.send(HttpStatus.OK, body);
+                } else {
+                    res.send(statusCode);
+                }
+                res.end();
+            });
+        } catch (err) {
+            ResponseTypes.sendErrorResponse(req, res, next, err);
+        }
+    }
+
     static quitAndInstall = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         try {
             if (autoUpdater) {
+      
                 autoUpdater.quitAndInstall();
             }
             res.send(HttpStatus.OK);

@@ -66,7 +66,8 @@ export interface IPaymentDetailsModifier {
 export interface IPaymentShippingOption {
     id: string,
     label: string,
-    selected?: boolean
+    selected?: boolean,
+    amount: IPaymentCurrencyAmount
 }
 
 export interface IPaymentOptions {
@@ -115,10 +116,18 @@ export interface IPaymentRequestUpdate {
     shippingOption: string 
 }
 
+export interface IPaymentRequestUpdateResult {
+    details: IPaymentDetails
+}
+
 export interface IPaymentRequestComplete {
     id: string,
     paymentRequest: IPaymentRequest,
     paymentResponse: IPaymentResponse
+}
+
+export interface IPaymentRequestCompleteResult {
+    result: string;
 }
 
 export interface IPaymentResponse {

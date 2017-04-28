@@ -168,7 +168,11 @@ export class Conversation {
                         if (recordInConversation) {
                             this.activities.push(Object.assign({}, activity));
                         }
-                        cb(null, resp.statusCode, activity.id);
+                        if(activity.type === 'invoke') {
+                            cb(null, resp.statusCode, activity.id, body);
+                        } else {
+                            cb(null, resp.statusCode, activity.id);
+                        }
                     }
                 }
             }
@@ -293,20 +297,142 @@ export class Conversation {
         this.postActivityToBot(activity, false, () => {});
     }
 
-    public sendUpdateShippingAddressOperation(updatedAddress: Payment.IPaymentAddress) {
+    public sendUpdateShippingAddressOperation(
+            request: Payment.IPaymentRequest, 
+            shippingAddress: Payment.IPaymentAddress,
+            shippingOptionId: string,
+            cb: (errCode, body) => void) {
+        this.sendUpdateShippingOperation(
+            Payment.PaymentOperations.UpdateShippingAddressOperationName,
+            request,
+            shippingAddress,
+            shippingOptionId,
+            cb
+        );
+    }
+
+    public sendUpdateShippingOptionOperation(
+            request: Payment.IPaymentRequest, 
+            shippingAddress: Payment.IPaymentAddress,
+            shippingOptionId: string,
+            cb: (errCode, body) => void) {
+        this.sendUpdateShippingOperation(
+            Payment.PaymentOperations.UpdateShippingOptionOperationName,
+            request,
+            shippingAddress,
+            shippingOptionId,
+            cb
+        );
+    }
+
+    private sendUpdateShippingOperation(
+        operation: string,
+        request: Payment.IPaymentRequest, 
+        shippingAddress: Payment.IPaymentAddress,
+        shippingOptionId: string,
+        cb: (errCode, body) => void) {
+
         const updateValue: Payment.IPaymentRequestUpdate = {
-            id: undefined,                      // TODO: this is from the item, it's a string
-            shippingAddress: updatedAddress,
-            shippingOption: undefined,
-            details: undefined                  // TODO: IPaymentDetails needed as these are passed along in the bot  
+            id: request.id,
+            shippingAddress: shippingAddress,
+            shippingOption: shippingOptionId,
+            details: request.details  
         };
+        const id = uniqueId();
+        let serviceUrl;
+        const settings = getSettings();
+        const bot = settings.botById(this.botId);
+        if (settings.framework.bypassNgrokLocalhost && utils.isLocalhostUrl(bot.botUrl)) {
+            serviceUrl = emulator.framework.localhostServiceUrl;
+        } else {
+            serviceUrl = emulator.framework.serviceUrl;
+        }
+        
         const activity: IInvokeActivity = {
+            id: id,
             type: 'invoke',
-            name: Payment.PaymentOperations.UpdateShippingAddressOperationName,
-            relatesTo: undefined,                   // TODO
+            name: operation,
+            relatesTo: {
+                activityId: id,
+                bot: { id: this.botId },
+                channelId: 'emulator',
+                conversation: { id: this.conversationId },
+                serviceUrl: serviceUrl,
+                user: this.getCurrentUser()
+            },
             value: updateValue
         };
-        this.postActivityToBot(activity, false, () => {});
+        this.postActivityToBot(activity, false, (err, statusCode, activityId, responseBody) => {
+            cb(statusCode, responseBody);
+        });
+    }
+
+    public sendPaymentCompleteOperation(
+        request: Payment.IPaymentRequest, 
+        shippingAddress: Payment.IPaymentAddress,
+        shippingOptionId: string,
+        payerEmail: string,
+        payerPhone: string,
+        cb: (errCode, body) => void) {
+        
+        let paymentTokenHeader = {
+            format: 2,
+            merchantId: request.methodData[0].data.merchantId,
+            paymentRequestId: request.id,
+            amount: request.details.total.amount,
+            expiry: '1/1/2020',
+            timestamp: '4/27/2017',
+        };
+
+        let paymentTokenHeaderStr = JSON.stringify(paymentTokenHeader);
+        let pthBytes = new Buffer(paymentTokenHeaderStr).toString('base64');
+
+        let paymentTokenSource = 'tok_18yWDMKVgMv7trmwyE21VqO';
+        let ptsBytes = new Buffer(paymentTokenSource).toString('base64');
+
+        let ptsigBytes = new Buffer('Emulator').toString('base64');
+
+        const updateValue: Payment.IPaymentRequestComplete = {
+            id: request.id,
+            paymentRequest: request,
+            paymentResponse: {
+                details: {
+                    paymentToken: pthBytes + '.' + ptsBytes + '.' + ptsigBytes
+                },
+                methodName: request.paymentMethods[0].supportedMethods[0],
+                payerEmail: payerEmail,
+                payerPhone: payerPhone,
+                shippingAddress: shippingAddress,
+                shippingOption: shippingOptionId
+            }
+        };
+        const id = uniqueId();
+        let serviceUrl;
+        const settings = getSettings();
+        const bot = settings.botById(this.botId);
+        if (settings.framework.bypassNgrokLocalhost && utils.isLocalhostUrl(bot.botUrl)) {
+            serviceUrl = emulator.framework.localhostServiceUrl;
+        } else {
+            serviceUrl = emulator.framework.serviceUrl;
+        }
+        
+        const activity: IInvokeActivity = {
+            id: id,
+            type: 'invoke',
+            name: Payment.PaymentOperations.PaymentCompleteOperationName,
+            relatesTo: {
+                activityId: id,
+                bot: { id: this.botId },
+                channelId: 'emulator',
+                conversation: { id: this.conversationId },
+                serviceUrl: serviceUrl,
+                user: this.getCurrentUser()
+            },
+            value: updateValue
+        };
+        this.postActivityToBot(activity, false, (err, statusCode, activityId, responseBody) => {
+            cb(statusCode, responseBody);
+        });
     }
 
     /**

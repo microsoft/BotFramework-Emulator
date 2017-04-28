@@ -41,6 +41,7 @@ import { Settings as ServerSettings } from '../types/serverSettingsTypes';
 import { Emulator } from './emulator';
 import { PaymentEncoder } from '../shared/paymentEncoder';
 import * as log from './log';
+import * as Electron from 'electron';
 
 const {BrowserWindow} = require('electron').remote
 
@@ -135,21 +136,10 @@ function navigateCommandUrl(params: string[]) {
 }
 
 function navigatePaymentUrl(payload: string) {
-    let page = URL.format({
-        protocol: 'file',
-        slashes: true,
-        pathname: path.join(__dirname, './payments/wallet.html')
+    const settings = getSettings();
+    Electron.ipcRenderer.send("createWalletWindow", {
+        payload: payload,
+        settings: settings,
+        serviceUrl: Emulator.serviceUrl
     });
-    page += '?' + payload;
-
-    let paymentWindow = new BrowserWindow({width: 800, height: 380})
-    paymentWindow.on('closed', () => {
-        paymentWindow = null
-    });
-    paymentWindow.setTitle('Bot Emulator Payment');
-
-    paymentWindow.webContents.openDevTools();
-
-    // Load a remote URL
-    paymentWindow.loadURL(page);
 }
