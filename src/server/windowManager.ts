@@ -60,6 +60,10 @@ export class WindowManager {
         return this.mainWindow !== undefined;
     }
 
+    public getMainWindow(): Electron.BrowserWindow {
+        return this.mainWindow;
+    }
+
     public add(window: Electron.BrowserWindow) {
         this.windows.push(window);
     }
@@ -67,7 +71,7 @@ export class WindowManager {
     public remove(window: Electron.BrowserWindow) {
         let idx = this.windows.indexOf(window);
         if (idx !== -1) {
-            this.windows = this.windows.splice(idx, 1);
+            this.windows.splice(idx, 1);
         }
     }
 

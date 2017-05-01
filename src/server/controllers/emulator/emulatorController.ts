@@ -234,7 +234,6 @@ export class EmulatorController {
     static quitAndInstall = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         try {
             if (autoUpdater) {
-      
                 autoUpdater.quitAndInstall();
             }
             res.send(HttpStatus.OK);

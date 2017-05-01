@@ -178,8 +178,6 @@ const createMainWindow = () => {
     if (queryString) {
         page = page + queryString;
     }
-    
-    //mainWindow.webContents.openDevTools();
 
     mainWindow.loadURL(page);
 }

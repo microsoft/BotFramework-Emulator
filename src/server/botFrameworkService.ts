@@ -45,10 +45,8 @@ import * as log from './log';
 import * as Fs from 'fs';
 import * as path from 'path';
 import * as ngrok from './ngrok';
-import * as Electron from 'electron';
 import { makeLinkMessage } from './log';
 import { Emulator } from './emulator';
-import { windowManager } from './main';
 
 
 /**

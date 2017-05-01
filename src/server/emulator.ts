@@ -93,7 +93,7 @@ export class Emulator {
      */
     static send(channel: string, ...args: any[]) {
         if (windowManager && windowManager.hasMainWindow()) {
-            mainWindow.webContents.send(channel, ...args);
+            windowManager.getMainWindow().webContents.send(channel, ...args);
         } else {
             Emulator.queuedMessages.push({ channel, args})
         }
