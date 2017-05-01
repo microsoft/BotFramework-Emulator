@@ -32,6 +32,7 @@
 //
 import * as React from 'react';
 import { IWalletShippingAddress } from './walletTypes';
+import { Button } from './button';
 
 export class AddShippingAddressView extends React.Component<{
     onSave: (item: IWalletShippingAddress) => void,
@@ -99,7 +100,7 @@ export class AddShippingAddressView extends React.Component<{
     render() {
         return (
             <div className='add-shipping-address-container wallet-table'>
-                <div className='title fixed-right'>Add a new shipping address</div>
+                <div className='title fixed-right'>Emulating: Add a new shipping address</div>
                 <div className='wallet-form'>
                     <div className='recipient wallet-field'>
                         <div className='wallet-label'>Recipient</div>
@@ -159,8 +160,8 @@ export class AddShippingAddressView extends React.Component<{
                     </div>
                 </div>
                 <div className='wallet-button-bar fixed-right'>
-                    <div className='button cancel-button' onClick={() => this.props.onCancel()}>Cancel</div>
-                    <div className='button save-button'onClick={() => this.props.onSave(this.state)}>Save</div>
+                    <Button classes='secondary-button cancel-button' onClick={() => this.props.onCancel()} label='Cancel'/>
+                    <Button classes='primary-button save-button' onClick={() => this.props.onSave(this.state)} label='Save'/>
                 </div>
             </div>
         );

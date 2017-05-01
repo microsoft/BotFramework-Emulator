@@ -556,10 +556,15 @@
         flex-direction: column;
     }
 
+    .wallet-table .title-container {
+        display: flex;
+    }
+
     .wallet-table .title {
         font-size: 16px;
         font-weight: 500;
         margin-bottom: 10px;
+        flex-grow: 1;
     }
 
     .wallet-table .fixed-right {
@@ -605,8 +610,6 @@
     }
 
     .wallet-table .button {
-        color: white;
-        background: #3A96DD;
         min-height: 28px;
         text-align: center;
         font-size: 14px;
@@ -618,27 +621,34 @@
         cursor: pointer;
     }
 
-    .wallet-table .button:hover {
+    .wallet-table .primary-button {
+        color: white;
+        background: #3A96DD;
+    }
+
+    .wallet-table .primary-button:hover {
         background: #0063B1;
     }
 
-    .wallet-table .button:active {
+    .wallet-table .primary-button:active {
+        background: #4C4C4C;
+    }
+
+    .wallet-table .secondary-button {
+        color: white;
+        background: #ababab;
+    }
+
+    .wallet-table .secondary-button:hover {
+        background: #0063B1;
+    }
+
+    .wallet-table .secondary-button:active {
         background: #4C4C4C;
     }
 
     .wallet-table .cancel-button {
-        color: black;
-        background: #ababab;
         margin-right: 20px;
-    }
-
-    .wallet-table .cancel-button:hover {
-        background: #787878;
-    }
-
-    .wallet-table .cancel-button:active {
-        background: #434343;
-        color: white;
     }
 
     .wallet-table .total-line {
@@ -753,18 +763,30 @@
         overflow-y: auto;
     }
 
+    .wallet-table .selector-item-container {
+        display: flex;
+    }
+
     .wallet-table .selector-item {
         display: flex;
+        flex-grow: 1;
         align-items: center;
         min-height: 40px;
     }
 
-    .wallet-table .selector-item:hover {
+    .wallet-table .selector-item-container:hover {
         background-color: #EEE;
     }
 
-    .wallet-table .selector-item:active {
+    .wallet-table .selector-item-container:active {
         background-color: #BBB;
+    }
+
+    .wallet-table .remove-item {
+        display: flex;
+        align-items: center;
+        stroke: black;
+        margin-right: 10px
     }
 
     .wallet-table .grow {
@@ -780,6 +802,16 @@
         color: #3A96DD;
         margin-left: 10px;
         margin-right: 10px;
+    }
+
+    .wallet-table .validation-error {
+        color: #FF4444;
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+
+    .wallet-table .invalid-input {
+        background-color: pink;
     }
 
     .shipping-method {

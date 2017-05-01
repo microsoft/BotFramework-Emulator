@@ -31,11 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import * as React from 'react';
+import * as Constants from '../constants';
 
 interface ISelectorItemProps {
     class: any;
     item: any;
     select: (item: any) => void;
+    remove?: (item: any) => void;
 }
 
 class SelectorItem extends React.Component<ISelectorItemProps, {}> {
@@ -43,18 +45,33 @@ class SelectorItem extends React.Component<ISelectorItemProps, {}> {
         super(props);
     
         this.select = this.select.bind(this);
+        this.remove = this.remove.bind(this);
     }
 
     select(e) {
-        e.preventDefault();
         this.props.select(this.props.item);
+    }
+
+    remove(e) {
+        e.stopPropagation();
+        if (this.props.remove) {
+            this.props.remove(this.props.item);
+        }
+        console.log('remove');
     }
 
     render() {
         let renderedItem = React.createElement(this.props.class, { item: this.props.item });
+        let removeButton;
+        
+        if (this.props.remove) {
+            removeButton = (<div className='remove-item' onClick={this.remove} dangerouslySetInnerHTML={{ __html: Constants.removeIcon('', 20) }}></div>);
+        }
+
         return (
-            <div className='selector-item' onClick={this.select}>
-                {renderedItem}
+            <div className='selector-item-container'>
+                <div className='selector-item' onClick={this.select}>{renderedItem}</div>
+                {removeButton}
             </div>
         );
     }
@@ -64,11 +81,13 @@ export class SelectorComponent<TItem> extends React.Component<{
     getIsVisible: () => boolean,
     setIsVisible: (isVisible: boolean) => void,
     items: TItem[],
+    placeholder?: string,
     getSelectedItem: () => TItem,
     selectItem: (TItem) => void,
-    placeholder?: string,
+    addItemLabel?: string,
     onClickAddItem?: () => void,
-    addItemLabel?: string
+    onClickRemoveItem?: (TItem) => void,
+    classes?: string
 }, {}> {
     private top: string;
     private left: string;
@@ -83,6 +102,7 @@ export class SelectorComponent<TItem> extends React.Component<{
         this.toggle = this.toggle.bind(this);
         this.select = this.select.bind(this);
         this.addItem = this.addItem.bind(this);
+        this.removeItem = this.removeItem.bind(this);
     }
 
     select(item: TItem) {
@@ -93,6 +113,10 @@ export class SelectorComponent<TItem> extends React.Component<{
     addItem() {
         this.props.setIsVisible(false);
         this.props.onClickAddItem();
+    }
+
+    removeItem(item: TItem) {
+        this.props.onClickRemoveItem(item);
     }
 
     toggle(evt) {
@@ -120,7 +144,8 @@ export class SelectorComponent<TItem> extends React.Component<{
                         key={keyIdx}
                         class={this.itemComponentType}
                         item={ri}
-                        select={(item) => { this.select(item); } }
+                        select={(item) => { this.select(item); }}
+                        remove={(this.props.onClickRemoveItem ? (item) => { this.removeItem(item); } : undefined) }
                         />);
                     keyIdx++;
                 });
@@ -149,7 +174,7 @@ export class SelectorComponent<TItem> extends React.Component<{
             labelElement = (<div className='placeholder-text'>{this.props.placeholder}</div>)
         }
         
-        return (<div className='wallet-selector' onClick={this.toggle}>
+        return (<div className={'wallet-selector ' + (this.props.classes ? this.props.classes : '')} onClick={this.toggle}>
                     <div className='selected-item-label-container'>
                         <div className='selected-item-label'>{labelElement}</div>
                         <div className='down-chevron'>\/</div>

@@ -165,3 +165,20 @@ export const botFrameworkIcon = (className: string, size: number) => {
 </svg>
     `;
 }
+
+export const removeIcon = (className: string, size: number) => {
+    return `
+<svg class="${className}" width="${size}px" height="${size}px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="Page-1">
+        <g id="x-large">
+            <g id="refresh">
+                <g id="close" transform="translate(6.000000, 6.000000)" stroke-width="1">
+                    <path d="M0.486851205,0.486851205 L11.8005597,11.8005597" id="Line"></path>
+                    <path d="M0.486851205,0.486851205 L11.8005597,11.8005597" id="Line" transform="translate(6.143705, 6.143705) scale(-1, 1) translate(-6.143705, -6.143705) "></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
+    `;
+}

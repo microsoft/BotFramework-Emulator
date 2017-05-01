@@ -32,6 +32,7 @@
 //
 import * as React from 'react';
 import { IWalletCreditCard } from './walletTypes';
+import { Button } from './button';
 
 
 export class AddCreditCardView extends React.Component<{
@@ -112,7 +113,7 @@ export class AddCreditCardView extends React.Component<{
     render() {
         return (
             <div className='add-credit-card-container wallet-table'>
-                <div className='title fixed-right'>Add a new credit or debit card</div>
+                <div className='title fixed-right'>Emulating: Add a new credit or debit card</div>
                 <div className='wallet-form'>
                     <div className='cardholder-name wallet-field'>
                         <div className='wallet-label'>Cardholder Name</div>
@@ -185,8 +186,8 @@ export class AddCreditCardView extends React.Component<{
                     </div>
                 </div>
                 <div className='wallet-button-bar fixed-right'>
-                    <div className='button cancel-button' onClick={() => this.props.onCancel()}>Cancel</div>
-                    <div className='button save-button'onClick={() => this.props.onSave(this.state)}>Save</div>
+                    <Button classes='secondary-button cancel-button' onClick={() => this.props.onCancel()} label='Cancel'/>
+                    <Button classes='primary-button save-button' onClick={() => this.props.onSave(this.state)} label='Save'/>
                 </div>
             </div>
         );

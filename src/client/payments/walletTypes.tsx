@@ -81,6 +81,9 @@ export interface IWalletViewState {
     // add panels
     addCreditCardIsVisible: boolean;
     addShippingAddressIsVisible: boolean;
+
+    // validation mode
+    isInValidationMode: boolean;
 }
 
 export class PaymentTypeConverter {

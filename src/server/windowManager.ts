@@ -94,24 +94,17 @@ export class WindowManager {
             this.remove(walletWindow);
         });
 
-        //walletWindow.webContents.openDevTools();
+        // walletWindow.webContents.openDevTools();
 
         // Load a remote URL
         walletWindow.loadURL(page);
     }
 
-    public sendToAll(channel: string, ...args: any[]) {
-        this.sendToMainWindow(channel, ...args);
-        this.sendToWindows(channel, args);
-    }
-
-    public sendToMainWindow(channel: string, ...args: any[]) {
-        if (this.mainWindow) {
-            this.mainWindow.webContents.send(channel, ...args);
-        }
-    }
-
-    public sendToWindows(channel: string, ...args: any[]) {
-        this.windows.forEach(window => window.webContents.send(channel, ...args));
+    public closeAll() {
+        let openWindows = [];
+        this.windows.forEach(win => openWindows.push(win));
+        openWindows.forEach(win => win.close());
+        this.windows = [];
+        this.mainWindow = undefined;
     }
 }
