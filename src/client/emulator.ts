@@ -116,6 +116,7 @@ export class Emulator {
     }
 
     public static updateShippingAddress(
+            walletSession: Payment.IWalletConversationSession,
             paymentRequest: Payment.IPaymentRequest, 
             shippingAddress: Payment.IPaymentAddress,
             shippingOptionId: string,
@@ -124,7 +125,7 @@ export class Emulator {
         let options: request.OptionsWithUrl = {
             url: `${this.serviceUrl}/emulator/${settings.conversation.conversationId}/invoke/updateShippingAddress`,
             method: "POST",
-            json: [{ request: paymentRequest, shippingAddress: shippingAddress, shippingOptionId: shippingOptionId }],
+            json: [{ walletSession: walletSession, request: paymentRequest, shippingAddress: shippingAddress, shippingOptionId: shippingOptionId }],
         };
         let responseCallback = (err, resp: http.IncomingMessage, body) => { 
             cb(err, resp.statusCode, body as Payment.IPaymentRequestUpdateResult);
@@ -133,6 +134,7 @@ export class Emulator {
     }
 
     public static updateShippingOption(
+            walletSession: Payment.IWalletConversationSession,
             paymentRequest: Payment.IPaymentRequest, 
             shippingAddress: Payment.IPaymentAddress,
             shippingOptionId: string,
@@ -141,7 +143,7 @@ export class Emulator {
         let options: request.OptionsWithUrl = {
             url: `${this.serviceUrl}/emulator/${settings.conversation.conversationId}/invoke/updateShippingOption`,
             method: "POST",
-            json: [{ request: paymentRequest, shippingAddress: shippingAddress, shippingOptionId: shippingOptionId }],
+            json: [{ walletSession: walletSession, request: paymentRequest, shippingAddress: shippingAddress, shippingOptionId: shippingOptionId }],
         };
         let responseCallback = (err, resp: http.IncomingMessage, body) => { 
             cb(err, resp.statusCode, body as Payment.IPaymentRequestUpdateResult);
@@ -150,6 +152,7 @@ export class Emulator {
     }
 
     public static paymentComplete(
+            walletSession: Payment.IWalletConversationSession,
             paymentRequest: Payment.IPaymentRequest, 
             shippingAddress: Payment.IPaymentAddress,
             shippingOptionId: string,
@@ -160,7 +163,7 @@ export class Emulator {
         let options: request.OptionsWithUrl = {
             url: `${this.serviceUrl}/emulator/${settings.conversation.conversationId}/invoke/paymentComplete`,
             method: "POST",
-            json: [{ request: paymentRequest, shippingAddress: shippingAddress, shippingOptionId: shippingOptionId, payerEmail: payerEmail, payerPhone: payerPhone }],
+            json: [{ walletSession: walletSession, request: paymentRequest, shippingAddress: shippingAddress, shippingOptionId: shippingOptionId, payerEmail: payerEmail, payerPhone: payerPhone }],
         };
         let responseCallback = (err, resp: http.IncomingMessage, body) => { 
             cb(err, resp.statusCode, body as Payment.IPaymentRequestCompleteResult);

@@ -34,7 +34,7 @@
 import { IActivity, IMessageActivity } from '../types/activityTypes';
 import * as Attachments from '../types/attachmentTypes';
 
-export class ActivityVisitor {
+export abstract class ActivityVisitor {
 
     public traverseActivity(activity: IActivity) {
         let messageActivity = activity as IMessageActivity;
@@ -116,6 +116,5 @@ export class ActivityVisitor {
         }
     }
 
-    protected visitCardAction(cardAction: Attachments.ICardAction) {
-    }
+    protected abstract visitCardAction(cardAction: Attachments.ICardAction);
 }

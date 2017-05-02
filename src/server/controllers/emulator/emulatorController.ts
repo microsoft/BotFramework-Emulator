@@ -178,8 +178,12 @@ export class EmulatorController {
     static updateShippingAddress = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         try {
             const conversation = getConversation(req.params.conversationId);
-            const body: {request: Payment.IPaymentRequest, shippingAddress: Payment.IPaymentAddress, shippingOptionId: string } = req.body[0];
-            conversation.sendUpdateShippingAddressOperation(body.request, body.shippingAddress, body.shippingOptionId, (statusCode, body) => {
+            const body: {
+                walletSession: Payment.IWalletConversationSession,
+                request: Payment.IPaymentRequest,
+                shippingAddress: Payment.IPaymentAddress,
+                shippingOptionId: string } = req.body[0];
+            conversation.sendUpdateShippingAddressOperation(body.walletSession, body.request, body.shippingAddress, body.shippingOptionId, (statusCode, body) => {
                 if (statusCode === HttpStatus.OK) {
                     res.send(HttpStatus.OK, body);
                 } else {
@@ -195,8 +199,12 @@ export class EmulatorController {
     static updateShippingOption = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         try {
             const conversation = getConversation(req.params.conversationId);
-            const body: {request: Payment.IPaymentRequest, shippingAddress: Payment.IPaymentAddress, shippingOptionId: string } = req.body[0];
-            conversation.sendUpdateShippingOptionOperation(body.request, body.shippingAddress, body.shippingOptionId, (statusCode, body) => {
+            const body: {
+                walletSession: Payment.IWalletConversationSession,
+                request: Payment.IPaymentRequest,
+                shippingAddress: Payment.IPaymentAddress,
+                shippingOptionId: string } = req.body[0];
+            conversation.sendUpdateShippingOptionOperation(body.walletSession, body.request, body.shippingAddress, body.shippingOptionId, (statusCode, body) => {
                 if (statusCode === HttpStatus.OK) {
                     res.send(HttpStatus.OK, body);
                 } else {
@@ -213,12 +221,13 @@ export class EmulatorController {
         try {
             const conversation = getConversation(req.params.conversationId);
             const body: {
+                walletSession: Payment.IWalletConversationSession,
                 request: Payment.IPaymentRequest, 
                 shippingAddress: Payment.IPaymentAddress, 
                 shippingOptionId: string,
                 payerEmail: string,
                 payerPhone: string } = req.body[0];
-            conversation.sendPaymentCompleteOperation(body.request, body.shippingAddress, body.shippingOptionId, body.payerEmail, body.payerPhone, (statusCode, body) => {
+            conversation.sendPaymentCompleteOperation(body.walletSession, body.request, body.shippingAddress, body.shippingOptionId, body.payerEmail, body.payerPhone, (statusCode, body) => {
                 if (statusCode === HttpStatus.OK) {
                     res.send(HttpStatus.OK, body);
                 } else {

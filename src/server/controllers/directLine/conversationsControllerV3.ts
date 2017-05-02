@@ -226,7 +226,7 @@ export class ConversationsControllerV3 {
                                 const attachment: IAttachment = {
                                     name,
                                     contentType: type,
-                                    contentUrl: `${emulator.framework.serviceUrl}/v3/attachments/${attachmentId}/views/original`
+                                    contentUrl: `${emulator.framework.getServiceUrl(activeBot.botUrl)}/v3/attachments/${attachmentId}/views/original`
                                 }
                                 activity.attachments.push(attachment);
                             });

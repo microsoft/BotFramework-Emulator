@@ -31,6 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+export interface IWalletConversationSession {
+    paymentActivityId: string;
+    walletConversationId: string;
+    walletFromId: string;
+}
+
 export interface IPaymentMethodData {
     supportedMethods: string[],
     data: any

@@ -102,7 +102,7 @@ export class Conversation {
         activity.timestamp = date.toISOString();
         activity.localTimestamp = date.format();
         activity.recipient = { id: recipientId };
-        activity.conversation = { id: this.conversationId };
+        activity.conversation = activity.conversation || { id: this.conversationId };
     }
 
 
@@ -112,19 +112,14 @@ export class Conversation {
     postActivityToBot(activity: IActivity, recordInConversation: boolean, cb?) {
         // Do not make a shallow copy here before modifying
         this.postage(this.botId, activity);
-        activity.from = this.getCurrentUser();
+        activity.from = activity.from || this.getCurrentUser();
         if (!activity.recipient.name) {
             activity.recipient.name = "Bot";
         }
         const settings = getSettings();
         const bot = settings.botById(this.botId);
         if (bot) {
-            // bypass ngrok url for localhost because ngrok will rate limit
-            // (if the user has asked for this behaviour)
-            if (settings.framework.bypassNgrokLocalhost && utils.isLocalhostUrl(bot.botUrl))
-                activity.serviceUrl = emulator.framework.localhostServiceUrl;
-            else
-                activity.serviceUrl = emulator.framework.serviceUrl;
+            activity.serviceUrl = emulator.framework.getServiceUrl(bot.botUrl);
 
             let options: request.OptionsWithUrl = {
                 url: bot.botUrl,
@@ -177,7 +172,7 @@ export class Conversation {
                 }
             }
 
-            if (!utils.isLocalhostUrl(bot.botUrl) && utils.isLocalhostUrl(emulator.framework.serviceUrl)) {
+            if (!utils.isLocalhostUrl(bot.botUrl) && utils.isLocalhostUrl(emulator.framework.getServiceUrl(bot.botUrl))) {
                 log.error('Error: The bot is remote, but the callback URL is localhost. Without tunneling software you will not receive replies.');
                 log.error(log.makeLinkMessage('Connecting to bots hosted remotely', 'https://aka.ms/cnjvpo'));
                 log.error(log.ngrokConfigurationLink('Edit ngrok settings'));
@@ -298,11 +293,13 @@ export class Conversation {
     }
 
     public sendUpdateShippingAddressOperation(
+            walletSession: Payment.IWalletConversationSession,
             request: Payment.IPaymentRequest, 
             shippingAddress: Payment.IPaymentAddress,
             shippingOptionId: string,
             cb: (errCode, body) => void) {
         this.sendUpdateShippingOperation(
+            walletSession,
             Payment.PaymentOperations.UpdateShippingAddressOperationName,
             request,
             shippingAddress,
@@ -312,11 +309,13 @@ export class Conversation {
     }
 
     public sendUpdateShippingOptionOperation(
+            walletSession: Payment.IWalletConversationSession,
             request: Payment.IPaymentRequest, 
             shippingAddress: Payment.IPaymentAddress,
             shippingOptionId: string,
             cb: (errCode, body) => void) {
         this.sendUpdateShippingOperation(
+            walletSession,
             Payment.PaymentOperations.UpdateShippingOptionOperationName,
             request,
             shippingAddress,
@@ -326,6 +325,7 @@ export class Conversation {
     }
 
     private sendUpdateShippingOperation(
+        walletSession: Payment.IWalletConversationSession,
         operation: string,
         request: Payment.IPaymentRequest, 
         shippingAddress: Payment.IPaymentAddress,
@@ -338,22 +338,18 @@ export class Conversation {
             shippingOption: shippingOptionId,
             details: request.details  
         };
-        const id = uniqueId();
         let serviceUrl;
         const settings = getSettings();
         const bot = settings.botById(this.botId);
-        if (settings.framework.bypassNgrokLocalhost && utils.isLocalhostUrl(bot.botUrl)) {
-            serviceUrl = emulator.framework.localhostServiceUrl;
-        } else {
-            serviceUrl = emulator.framework.serviceUrl;
-        }
+        serviceUrl = emulator.framework.getServiceUrl(bot.botUrl);
         
         const activity: IInvokeActivity = {
-            id: id,
             type: 'invoke',
             name: operation,
+            from: { id: walletSession.walletFromId },
+            conversation: {id: walletSession.walletConversationId },
             relatesTo: {
-                activityId: id,
+                activityId: walletSession.paymentActivityId,
                 bot: { id: this.botId },
                 channelId: 'emulator',
                 conversation: { id: this.conversationId },
@@ -368,6 +364,7 @@ export class Conversation {
     }
 
     public sendPaymentCompleteOperation(
+        walletSession: Payment.IWalletConversationSession,
         request: Payment.IPaymentRequest, 
         shippingAddress: Payment.IPaymentAddress,
         shippingOptionId: string,
@@ -406,22 +403,18 @@ export class Conversation {
                 shippingOption: shippingOptionId
             }
         };
-        const id = uniqueId();
         let serviceUrl;
         const settings = getSettings();
         const bot = settings.botById(this.botId);
-        if (settings.framework.bypassNgrokLocalhost && utils.isLocalhostUrl(bot.botUrl)) {
-            serviceUrl = emulator.framework.localhostServiceUrl;
-        } else {
-            serviceUrl = emulator.framework.serviceUrl;
-        }
+        serviceUrl = emulator.framework.getServiceUrl(bot.botUrl);
         
         const activity: IInvokeActivity = {
-            id: id,
             type: 'invoke',
             name: Payment.PaymentOperations.PaymentCompleteOperationName,
+            from: { id: walletSession.walletFromId },
+            conversation: {id: walletSession.walletConversationId },
             relatesTo: {
-                activityId: id,
+                activityId: walletSession.paymentActivityId,
                 bot: { id: this.botId },
                 channelId: 'emulator',
                 conversation: { id: this.conversationId },
@@ -532,39 +525,6 @@ export class Conversation {
             });
         } else {
             cb(null);
-        }
-    }
-
-    private visitActivityForPayments(activity: IActivity): IActivity {
-        if (activity.type === 'message') {
-            let messageActivity: IMessageActivity = activity;
-            if (messageActivity.attachments && messageActivity.attachments.length) {
-                messageActivity.attachments.forEach((attachment: IAttachment) => {
-                    this.visitForProperty(attachment.content, 'buttons', (instance: any) => {
-                        let buttons: ICardAction[] = instance;
-                        if (buttons && buttons.length) {
-                            buttons.forEach(button => {
-                                if (button.type === 'payment') {
-                                    log.info('found a payment button!');
-                                }
-                            });
-                        }
-                    });
-                });
-            }
-        }
-        return activity;
-    }
-
-    private visitForProperty(obj: any, propertyName: string, process: (instance: any) => void) {
-        if (obj) {
-            for (let p in obj) {
-                if (p === propertyName) {
-                    process(obj[p]);
-                } else {
-                    this.visitForProperty(obj[p], propertyName, process);
-                }
-            }
         }
     }
 }

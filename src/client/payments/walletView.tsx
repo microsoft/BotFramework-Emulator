@@ -47,6 +47,7 @@ import { ISettings } from '../settings';
 import { ConversationActions, ServerSettingsActions } from '../reducers';
 import { Button } from './button';
 import { WalletSettings } from './walletSettings';
+import { uniqueId } from '../../utils';
 
 const remote = require('electron').remote;
 
@@ -54,6 +55,7 @@ export class WalletView extends React.Component<{}, IWalletViewState> {
     private local: IWalletViewState;
     private settings: ISettings;
     private walletSettings: WalletSettings;
+    private walletSession: Payment.IWalletConversationSession;
 
     constructor(props) {
         super(props);
@@ -120,8 +122,14 @@ export class WalletView extends React.Component<{}, IWalletViewState> {
         this.onPageMouseDown = this.onPageMouseDown.bind(this);
 
         let walletState: any = Electron.ipcRenderer.sendSync('getWalletState');
+        this.walletSession = {
+            paymentActivityId: walletState.paymentActivityId,
+            walletConversationId: uniqueId(),
+            walletFromId: uniqueId(),
+        };
         this.settings = walletState.settings;
         Emulator.serviceUrl = walletState.serviceUrl;
+
         ConversationActions.joinConversation(this.settings.conversation.conversationId);
         ServerSettingsActions.set(this.settings.serverSettings);
     }
@@ -156,6 +164,7 @@ export class WalletView extends React.Component<{}, IWalletViewState> {
         this.updateState({ selectedShippingAddress: value});
         let shippingOption = this.getSelectedShippingMethod();
         Emulator.updateShippingAddress(
+            this.walletSession,
             this.state.paymentRequest, 
             PaymentTypeConverter.convertAddress(value),
             shippingOption ? shippingOption.id : undefined,
@@ -232,6 +241,7 @@ export class WalletView extends React.Component<{}, IWalletViewState> {
         this.updatePaymentDetails(this.local.paymentRequest.details);
 
         Emulator.updateShippingOption(
+            this.walletSession,
             this.local.paymentRequest, 
             PaymentTypeConverter.convertAddress(this.local.selectedShippingAddress),
             value.id, 
@@ -295,6 +305,7 @@ export class WalletView extends React.Component<{}, IWalletViewState> {
         if (this.validate()) {
             let shippingOption = this.getSelectedShippingMethod();
             Emulator.paymentComplete(
+                this.walletSession,
                 this.state.paymentRequest,
                 PaymentTypeConverter.convertAddress(this.state.selectedShippingAddress),
                 shippingOption ? shippingOption.id : '',
