@@ -33,7 +33,7 @@
 
 import * as Payment from '../../types/paymentTypes';
 
-export interface IWalletCreditCard {
+export interface ICheckoutCreditCard {
     cardholderName: string;
     cardNumber: string;
     expiresMonth: string;
@@ -46,7 +46,7 @@ export interface IWalletCreditCard {
     countryOrRegion: string;
 }
 
-export interface IWalletShippingAddress {
+export interface ICheckoutShippingAddress {
     recipient: string;
     addressLine1: string;
     addressLine2: string;
@@ -57,17 +57,17 @@ export interface IWalletShippingAddress {
     phoneNumber: string;
 }
 
-export interface IWalletViewState {
+export interface ICheckoutViewState {
     // payment request
     paymentRequest: Payment.IPaymentRequest;
 
     // payment type
-    selectedCreditCard: IWalletCreditCard;
-    creditCards: IWalletCreditCard[];
+    selectedCreditCard: ICheckoutCreditCard;
+    creditCards: ICheckoutCreditCard[];
 
     // shipping destination
-    selectedShippingAddress: IWalletShippingAddress;
-    shippingAddresses: IWalletShippingAddress[];
+    selectedShippingAddress: ICheckoutShippingAddress;
+    shippingAddresses: ICheckoutShippingAddress[];
 
     // contact information
     emailAddress: string;
@@ -87,7 +87,7 @@ export interface IWalletViewState {
 }
 
 export class PaymentTypeConverter {
-    public static convertAddress(address: IWalletShippingAddress): Payment.IPaymentAddress {
+    public static convertAddress(address: ICheckoutShippingAddress): Payment.IPaymentAddress {
         let converted: Payment.IPaymentAddress = {
             addressLine: [],
             city: address.city,

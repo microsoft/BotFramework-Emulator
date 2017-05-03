@@ -123,7 +123,7 @@ export class SelectorComponent<TItem> extends React.Component<{
         let isVisible = this.props.getIsVisible();
         if (isVisible || this.props.addItemLabel || (this.props.items && this.props.items.length > 0)) {
             let target = evt.target as HTMLElement;
-            let selector = target.closest('.wallet-selector') as HTMLElement;
+            let selector = target.closest('.checkout-selector') as HTMLElement;
             evt.stopPropagation();
             this.props.setIsVisible(!isVisible);
 
@@ -174,7 +174,7 @@ export class SelectorComponent<TItem> extends React.Component<{
             labelElement = (<div className='placeholder-text'>{this.props.placeholder}</div>)
         }
         
-        return (<div className={'wallet-selector ' + (this.props.classes ? this.props.classes : '')} onClick={this.toggle}>
+        return (<div className={'checkout-selector ' + (this.props.classes ? this.props.classes : '')} onClick={this.toggle}>
                     <div className='selected-item-label-container'>
                         <div className='selected-item-label'>{labelElement}</div>
                         <div className='down-chevron'>\/</div>

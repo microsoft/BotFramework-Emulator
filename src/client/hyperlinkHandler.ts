@@ -137,7 +137,7 @@ function navigateCommandUrl(params: string[]) {
 
 function navigatePaymentUrl(payload: string) {
     const settings = getSettings();
-    Electron.ipcRenderer.send("createWalletWindow", {
+    Electron.ipcRenderer.send("createCheckoutWindow", {
         payload: payload,
         settings: settings,
         serviceUrl: Emulator.serviceUrl

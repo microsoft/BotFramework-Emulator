@@ -31,13 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import * as React from 'react';
-import { IWalletShippingAddress } from './walletTypes';
+import { ICheckoutShippingAddress } from './checkoutTypes';
 import { Button } from './button';
 
 export class AddShippingAddressView extends React.Component<{
-    onSave: (item: IWalletShippingAddress) => void,
+    onSave: (item: ICheckoutShippingAddress) => void,
     onCancel: () => void
-}, IWalletShippingAddress> {
+}, ICheckoutShippingAddress> {
     constructor(props) {
         super(props);
         this.state = {
@@ -99,67 +99,67 @@ export class AddShippingAddressView extends React.Component<{
 
     render() {
         return (
-            <div className='add-shipping-address-container wallet-table'>
+            <div className='add-shipping-address-container checkout-table'>
                 <div className='title fixed-right'>Emulating: Add a new shipping address</div>
-                <div className='wallet-form'>
-                    <div className='recipient wallet-field'>
-                        <div className='wallet-label'>Recipient</div>
+                <div className='checkout-form'>
+                    <div className='recipient checkout-field'>
+                        <div className='checkout-label'>Recipient</div>
                         <input
                             type="text"
-                            className="wallet-input"
+                            className="checkout-input"
                             onChange={e => this.recipientChanged((e.target as any).value)} />
                     </div>
-                    <div className='street-address wallet-field'>
-                        <div className='wallet-label'>Street address</div>
+                    <div className='street-address checkout-field'>
+                        <div className='checkout-label'>Street address</div>
                         <input
                             type="text"
-                            className="wallet-input"
+                            className="checkout-input"
                             onChange={e => this.addressLine1Changed((e.target as any).value)} />
                     </div>
-                    <div className='street-address wallet-field'>
-                        <div className='wallet-label'>Address line 2</div>
+                    <div className='street-address checkout-field'>
+                        <div className='checkout-label'>Address line 2</div>
                         <input
                             type="text"
-                            className="wallet-input"
+                            className="checkout-input"
                             onChange={e => this.addressLine2Changed((e.target as any).value)} />
                     </div>
-                    <div className='city wallet-field'>
-                        <div className='wallet-label'>City</div>
+                    <div className='city checkout-field'>
+                        <div className='checkout-label'>City</div>
                         <input
                             type="text"
-                            className="wallet-input"
+                            className="checkout-input"
                             onChange={e => this.cityChanged((e.target as any).value)} />
                     </div>
-                    <div className='state wallet-field'>
-                        <div className='wallet-label'>State</div>
+                    <div className='state checkout-field'>
+                        <div className='checkout-label'>State</div>
                         <input
                             type="text"
-                            className="wallet-input"
+                            className="checkout-input"
                             onChange={e => this.stateChanged((e.target as any).value)} />
                     </div>
-                    <div className='postal-code wallet-field'>
-                        <div className='wallet-label'>Postal Code</div>
+                    <div className='postal-code checkout-field'>
+                        <div className='checkout-label'>Postal Code</div>
                         <input
                             type="text"
-                            className="wallet-input postal-code-input"
+                            className="checkout-input postal-code-input"
                             onChange={e => this.postalCodeChanged((e.target as any).value)} />
                     </div>
-                    <div className='country wallet-field'>
-                        <div className='wallet-label'>Country/Region</div>
+                    <div className='country checkout-field'>
+                        <div className='checkout-label'>Country/Region</div>
                         <input
                             type="text"
-                            className="wallet-input"
+                            className="checkout-input"
                             onChange={e => this.countryChanged((e.target as any).value)} />
                     </div>
-                    <div className='phone-number wallet-field'>
-                        <div className='wallet-label'>Phone number</div>
+                    <div className='phone-number checkout-field'>
+                        <div className='checkout-label'>Phone number</div>
                         <input
                             type="text"
-                            className="wallet-input"
+                            className="checkout-input"
                             onChange={e => this.phoneNumberChanged((e.target as any).value)} />
                     </div>
                 </div>
-                <div className='wallet-button-bar fixed-right'>
+                <div className='checkout-button-bar fixed-right'>
                     <Button classes='secondary-button cancel-button' onClick={() => this.props.onCancel()} label='Cancel'/>
                     <Button classes='primary-button save-button' onClick={() => this.props.onSave(this.state)} label='Save'/>
                 </div>

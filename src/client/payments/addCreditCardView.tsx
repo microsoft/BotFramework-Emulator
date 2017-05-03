@@ -31,14 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import * as React from 'react';
-import { IWalletCreditCard } from './walletTypes';
+import { ICheckoutCreditCard } from './checkoutTypes';
 import { Button } from './button';
 
 
 export class AddCreditCardView extends React.Component<{
-    onSave: (item: IWalletCreditCard) => void,
+    onSave: (item: ICheckoutCreditCard) => void,
     onCancel: () => void
-}, IWalletCreditCard> {
+}, ICheckoutCreditCard> {
     constructor(props) {
         super(props);
         this.state = {
@@ -112,80 +112,80 @@ export class AddCreditCardView extends React.Component<{
 
     render() {
         return (
-            <div className='add-credit-card-container wallet-table'>
+            <div className='add-credit-card-container checkout-table'>
                 <div className='title fixed-right'>Emulating: Add a new credit or debit card</div>
-                <div className='wallet-form'>
-                    <div className='cardholder-name wallet-field'>
-                        <div className='wallet-label'>Cardholder Name</div>
+                <div className='checkout-form'>
+                    <div className='cardholder-name checkout-field'>
+                        <div className='checkout-label'>Cardholder Name</div>
                         <input
                             type="text"
-                            className="wallet-input"
+                            className="checkout-input"
                             onChange={e => this.cardholderNameChanged((e.target as any).value)} />
                     </div>
-                    <div className='card-number wallet-field'>
-                        <div className='wallet-label'>Card Number</div>
+                    <div className='card-number checkout-field'>
+                        <div className='checkout-label'>Card Number</div>
                         <input
                             type="text"
-                            className="wallet-input"
+                            className="checkout-input"
                             onChange={e => this.cardNumberChanged((e.target as any).value)} />
                     </div>
-                    <div className='expires-month wallet-field'>
-                        <div className='wallet-label'>Expires</div>
+                    <div className='expires-month checkout-field'>
+                        <div className='checkout-label'>Expires</div>
                         <input
                             type="text"
-                            className="wallet-input"
+                            className="checkout-input"
                             placeholder='MM'
                             onChange={e => this.expiresMonthChanged((e.target as any).value)} />
                         <input
                             type="text"
-                            className="wallet-input"
+                            className="checkout-input"
                             placeholder='YY'
                             onChange={e => this.expiresYearChanged((e.target as any).value)} />
                     </div>
-                    <div className='cvv wallet-field'>
-                        <div className='wallet-label'>CVV</div>
+                    <div className='cvv checkout-field'>
+                        <div className='checkout-label'>CVV</div>
                         <input
                             type="text"
-                            className="wallet-input"
+                            className="checkout-input"
                             onChange={e => this.cvvChanged((e.target as any).value)} />
                     </div>
-                    <div className='address-line-one wallet-field'>
-                        <div className='wallet-label'>Address</div>
+                    <div className='address-line-one checkout-field'>
+                        <div className='checkout-label'>Address</div>
                         <input
                             type="text"
-                            className="wallet-input"
+                            className="checkout-input"
                             onChange={e => this.addressLineChanged((e.target as any).value)} />
                     </div>
-                    <div className='city wallet-field'>
-                        <div className='wallet-label'>City</div>
+                    <div className='city checkout-field'>
+                        <div className='checkout-label'>City</div>
                         <input
                             type="text"
-                            className="wallet-input"
+                            className="checkout-input"
                             onChange={e => this.cityChanged((e.target as any).value)} />
                     </div>
-                    <div className='state wallet-field'>
-                        <div className='wallet-label'>State</div>
+                    <div className='state checkout-field'>
+                        <div className='checkout-label'>State</div>
                         <input
                             type="text"
-                            className="wallet-input"
+                            className="checkout-input"
                             onChange={e => this.stateChanged((e.target as any).value)} />
                     </div>
-                    <div className='postal-code wallet-field'>
-                        <div className='wallet-label'>Postal Code</div>
+                    <div className='postal-code checkout-field'>
+                        <div className='checkout-label'>Postal Code</div>
                         <input
                             type="text"
-                            className="wallet-input postal-code-input"
+                            className="checkout-input postal-code-input"
                             onChange={e => this.postalCodeChanged((e.target as any).value)} />
                     </div>
-                    <div className='country wallet-field'>
-                        <div className='wallet-label'>Country/Region</div>
+                    <div className='country checkout-field'>
+                        <div className='checkout-label'>Country/Region</div>
                         <input
                             type="text"
-                            className="wallet-input"
+                            className="checkout-input"
                             onChange={e => this.countryChanged((e.target as any).value)} />
                     </div>
                 </div>
-                <div className='wallet-button-bar fixed-right'>
+                <div className='checkout-button-bar fixed-right'>
                     <Button classes='secondary-button cancel-button' onClick={() => this.props.onCancel()} label='Cancel'/>
                     <Button classes='primary-button save-button' onClick={() => this.props.onSave(this.state)} label='Save'/>
                 </div>

@@ -32,10 +32,10 @@
 //
 import * as React from 'react';
 import { SelectorComponent } from './selectorComponent';
-import { IWalletCreditCard } from './walletTypes';
+import { ICheckoutCreditCard } from './checkoutTypes';
 
 class CreditCardItem extends React.Component<{
-    item: IWalletCreditCard
+    item: ICheckoutCreditCard
 }, {}> {
     
     constructor(props) {
@@ -47,7 +47,7 @@ class CreditCardItem extends React.Component<{
     }
 }
 
-export class SelectCreditCard extends SelectorComponent<IWalletCreditCard> {
+export class SelectCreditCard extends SelectorComponent<ICheckoutCreditCard> {
     constructor(props) {
         super(props, CreditCardItem);
     }

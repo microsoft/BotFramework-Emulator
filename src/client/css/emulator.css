@@ -532,14 +532,14 @@
         color: #999;
     }
 
-/* wallet window */
-    .wallet-index {
+/* checkout window */
+    .checkout-index {
         height: 100%;
         display: flex;
         flex-direction: column;
     }
 
-    .wallet-container {
+    .checkout-container {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         flex-grow: 1;
         display: flex;
@@ -550,37 +550,37 @@
         border-top-width: 1px;
     }
 
-    .wallet-table {
+    .checkout-table {
         flex-grow: 1;
         display: flex;
         flex-direction: column;
     }
 
-    .wallet-table .title-container {
+    .checkout-table .title-container {
         display: flex;
     }
 
-    .wallet-table .title {
+    .checkout-table .title {
         font-size: 16px;
         font-weight: 500;
         margin-bottom: 10px;
         flex-grow: 1;
     }
 
-    .wallet-table .fixed-right {
+    .checkout-table .fixed-right {
         margin-left: 132px;
     }
 
-    .wallet-table .wallet-form {
+    .checkout-table .checkout-form {
         flex-grow: 1;
     }
 
-    .wallet-table .wallet-field {
+    .checkout-table .checkout-field {
         display: flex;
         flex-direction: row;
     }
 
-    .wallet-table .wallet-label {
+    .checkout-table .checkout-label {
         color: #666;
         font-size: 13px;
         align-self: center;
@@ -589,7 +589,7 @@
         margin-right: 8px;
     }
 
-    .wallet-table .wallet-input {
+    .checkout-table .checkout-input {
         background-color: #EEE;
         font-size: 14px;
         margin-top: 4px;
@@ -604,12 +604,12 @@
         text-overflow: ellipsis;
     }
 
-    .wallet-table .wallet-button-bar {
+    .checkout-table .checkout-button-bar {
         display: flex;
         flex-direction: row;
     }
 
-    .wallet-table .button {
+    .checkout-table .button {
         min-height: 28px;
         text-align: center;
         font-size: 14px;
@@ -621,69 +621,69 @@
         cursor: pointer;
     }
 
-    .wallet-table .primary-button {
+    .checkout-table .primary-button {
         color: white;
         background: #3A96DD;
     }
 
-    .wallet-table .primary-button:hover {
+    .checkout-table .primary-button:hover {
         background: #0063B1;
     }
 
-    .wallet-table .primary-button:active {
+    .checkout-table .primary-button:active {
         background: #4C4C4C;
     }
 
-    .wallet-table .secondary-button {
+    .checkout-table .secondary-button {
         color: white;
         background: #ababab;
     }
 
-    .wallet-table .secondary-button:hover {
+    .checkout-table .secondary-button:hover {
         background: #0063B1;
     }
 
-    .wallet-table .secondary-button:active {
+    .checkout-table .secondary-button:active {
         background: #4C4C4C;
     }
 
-    .wallet-table .cancel-button {
+    .checkout-table .cancel-button {
         margin-right: 20px;
     }
 
-    .wallet-table .total-line {
+    .checkout-table .total-line {
         display: flex;
         align-items: center;
     }
 
-    .wallet-table .total-label-container {
+    .checkout-table .total-label-container {
         flex-grow: 1;
         display: flex;
     }
 
-    .wallet-table .total-label {
+    .checkout-table .total-label {
         font-weight: 600;
         margin-right: 8px;
     }
 
-    .wallet-table .total-value {
+    .checkout-table .total-value {
         font-size: 20px;
     }
 
-    .wallet-table .show-details {
+    .checkout-table .show-details {
         color: #3A96DD;
         cursor: pointer;
     }
 
-    .wallet-table .show-details:hover {
+    .checkout-table .show-details:hover {
         color: #0063B1;
     }
 
-    .wallet-table .show-details:active {
+    .checkout-table .show-details:active {
         color: #4C4C4C;
     }
 
-    .wallet-table .line-items {
+    .checkout-table .line-items {
         border-top-style: solid;
         border-top-width: 1px;
         border-top-color: #999;
@@ -694,7 +694,7 @@
         margin-bottom: 10px;
     }
 
-    .wallet-table .line-item {
+    .checkout-table .line-item {
         display: flex;
         align-items: center;
         margin-top: 4px;
@@ -702,15 +702,15 @@
         flex-grow: 1;
     }
 
-    .wallet-table .item-label {
+    .checkout-table .item-label {
         flex-grow: 1;
     }
 
-    .wallet-table .not-final {
+    .checkout-table .not-final {
         font-size: 12px;
     }
 
-    .wallet-table .wallet-selector {
+    .checkout-table .checkout-selector {
         cursor: pointer;
         display: flex;
         align-items: center;
@@ -726,22 +726,22 @@
         text-overflow: ellipsis;
     }
 
-    .wallet-table .selected-item-label-container {
+    .checkout-table .selected-item-label-container {
         flex-grow: 1;
         display: flex;
         flex-direction: row;
     }
 
-    .wallet-table .placeholder-text {
+    .checkout-table .placeholder-text {
         color: #666;
         margin-left: 10px;
     }
 
-    .wallet-table .selected-item-label {
+    .checkout-table .selected-item-label {
         flex-grow: 1;
     }
 
-    .wallet-table .down-chevron {
+    .checkout-table .down-chevron {
         margin-right: 10px;
         width: 20px;
         align-self: center;
@@ -749,7 +749,7 @@
         font-size: 10px;
     }
 
-    .wallet-table .selector-items {
+    .checkout-table .selector-items {
         border-color: #BBB;
         border-style: solid;
         border-width: 1px;
@@ -763,33 +763,33 @@
         overflow-y: auto;
     }
 
-    .wallet-table .selector-item-container {
+    .checkout-table .selector-item-container {
         display: flex;
     }
 
-    .wallet-table .selector-item {
+    .checkout-table .selector-item {
         display: flex;
         flex-grow: 1;
         align-items: center;
         min-height: 40px;
     }
 
-    .wallet-table .selector-item-container:hover {
+    .checkout-table .selector-item-container:hover {
         background-color: #EEE;
     }
 
-    .wallet-table .selector-item-container:active {
+    .checkout-table .selector-item-container:active {
         background-color: #BBB;
     }
 
-    .wallet-table .remove-item {
+    .checkout-table .remove-item {
         display: flex;
         align-items: center;
         stroke: black;
         margin-right: 10px
     }
 
-    .wallet-table .grow {
+    .checkout-table .grow {
         animation-name: show;
     }
 
@@ -798,19 +798,19 @@
         100% {transform: scaleY(-100%); offset: 1; }
     }
 
-    .wallet-table .add-item {
+    .checkout-table .add-item {
         color: #3A96DD;
         margin-left: 10px;
         margin-right: 10px;
     }
 
-    .wallet-table .validation-error {
+    .checkout-table .validation-error {
         color: #FF4444;
         margin-left: 10px;
         margin-right: 10px;
     }
 
-    .wallet-table .invalid-input {
+    .checkout-table .invalid-input {
         background-color: pink;
     }
 

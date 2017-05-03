@@ -31,24 +31,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IWalletCreditCard, IWalletShippingAddress } from './walletTypes';
+import { ICheckoutCreditCard, ICheckoutShippingAddress } from './checkoutTypes';
 import { loadSettings, saveSettings } from '../../utils';
 
-interface IWalletSettings {
-    creditCards: IWalletCreditCard[];
-    shippingAddresses: IWalletShippingAddress[];
+interface ICheckoutSettings {
+    creditCards: ICheckoutCreditCard[];
+    shippingAddresses: ICheckoutShippingAddress[];
     email: string;
     phoneNumber: string;
 }
 
-export class WalletSettings {
-    private _settings: IWalletSettings = this.getSettings();
+export class CheckoutSettings {
+    private _settings: ICheckoutSettings = this.getSettings();
     private saveTimer;
         
 
-    public getSettings() : IWalletSettings {
+    public getSettings() : ICheckoutSettings {
         if (!this._settings) {
-            this._settings = loadSettings<IWalletSettings>('wallet.json', {
+            this._settings = loadSettings<ICheckoutSettings>('checkout.json', {
                 creditCards: [],
                 shippingAddresses: [],
                 email: '',
@@ -60,48 +60,48 @@ export class WalletSettings {
 
     public updateEmail(email: string) {
         this._settings.email = email;
-        this.saveWalletSettings();
+        this.saveCheckoutSettings();
     }
 
     public updatePhoneNumber(phoneNumber: string) {
         this._settings.phoneNumber = phoneNumber;
-        this.saveWalletSettings();
+        this.saveCheckoutSettings();
     }
 
-    public addCreditCard(creditCard: IWalletCreditCard) {
+    public addCreditCard(creditCard: ICheckoutCreditCard) {
         this._settings.creditCards.push(creditCard);
-        this.saveWalletSettings();
+        this.saveCheckoutSettings();
     }
 
-    public removeCreditCard(creditCard: IWalletCreditCard) {
+    public removeCreditCard(creditCard: ICheckoutCreditCard) {
         let idx = this._settings.creditCards.indexOf(creditCard);
         if (idx !== 1) {
             this._settings.creditCards.splice(idx, 1);
-            this.saveWalletSettings();
+            this.saveCheckoutSettings();
         }
     }
 
-    public addShippingAddress(address: IWalletShippingAddress) {
+    public addShippingAddress(address: ICheckoutShippingAddress) {
         this._settings.shippingAddresses.push(address);
-        this.saveWalletSettings();
+        this.saveCheckoutSettings();
     }
 
-    public removeShippingAddress(address: IWalletShippingAddress) {
+    public removeShippingAddress(address: ICheckoutShippingAddress) {
         let idx = this._settings.shippingAddresses.indexOf(address);
         if (idx !== 1) {
             this._settings.shippingAddresses.splice(idx, 1);
-            this.saveWalletSettings();
+            this.saveCheckoutSettings();
         }
     }
 
-    private saveWalletSettings() {
+    private saveCheckoutSettings() {
         if (this.saveTimer) {
             clearTimeout(this.saveTimer);
             this.saveTimer = undefined;
         }
 
         this.saveTimer = setTimeout(() => {
-            saveSettings('wallet.json', this._settings);
+            saveSettings('checkout.json', this._settings);
         }, 1000);
     }
 }

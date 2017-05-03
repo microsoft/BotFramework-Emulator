@@ -293,13 +293,13 @@ export class Conversation {
     }
 
     public sendUpdateShippingAddressOperation(
-            walletSession: Payment.IWalletConversationSession,
+            checkoutSession: Payment.ICheckoutConversationSession,
             request: Payment.IPaymentRequest, 
             shippingAddress: Payment.IPaymentAddress,
             shippingOptionId: string,
             cb: (errCode, body) => void) {
         this.sendUpdateShippingOperation(
-            walletSession,
+            checkoutSession,
             Payment.PaymentOperations.UpdateShippingAddressOperationName,
             request,
             shippingAddress,
@@ -309,13 +309,13 @@ export class Conversation {
     }
 
     public sendUpdateShippingOptionOperation(
-            walletSession: Payment.IWalletConversationSession,
+            checkoutSession: Payment.ICheckoutConversationSession,
             request: Payment.IPaymentRequest, 
             shippingAddress: Payment.IPaymentAddress,
             shippingOptionId: string,
             cb: (errCode, body) => void) {
         this.sendUpdateShippingOperation(
-            walletSession,
+            checkoutSession,
             Payment.PaymentOperations.UpdateShippingOptionOperationName,
             request,
             shippingAddress,
@@ -325,7 +325,7 @@ export class Conversation {
     }
 
     private sendUpdateShippingOperation(
-        walletSession: Payment.IWalletConversationSession,
+        checkoutSession: Payment.ICheckoutConversationSession,
         operation: string,
         request: Payment.IPaymentRequest, 
         shippingAddress: Payment.IPaymentAddress,
@@ -346,10 +346,10 @@ export class Conversation {
         const activity: IInvokeActivity = {
             type: 'invoke',
             name: operation,
-            from: { id: walletSession.walletFromId },
-            conversation: {id: walletSession.walletConversationId },
+            from: { id: checkoutSession.checkoutFromId },
+            conversation: {id: checkoutSession.checkoutConversationId },
             relatesTo: {
-                activityId: walletSession.paymentActivityId,
+                activityId: checkoutSession.paymentActivityId,
                 bot: { id: this.botId },
                 channelId: 'emulator',
                 conversation: { id: this.conversationId },
@@ -364,7 +364,7 @@ export class Conversation {
     }
 
     public sendPaymentCompleteOperation(
-        walletSession: Payment.IWalletConversationSession,
+        checkoutSession: Payment.ICheckoutConversationSession,
         request: Payment.IPaymentRequest, 
         shippingAddress: Payment.IPaymentAddress,
         shippingOptionId: string,
@@ -396,7 +396,7 @@ export class Conversation {
                 details: {
                     paymentToken: pthBytes + '.' + ptsBytes + '.' + ptsigBytes
                 },
-                methodName: request.paymentMethods[0].supportedMethods[0],
+                methodName: request.methodData[0].supportedMethods[0],
                 payerEmail: payerEmail,
                 payerPhone: payerPhone,
                 shippingAddress: shippingAddress,
@@ -411,10 +411,10 @@ export class Conversation {
         const activity: IInvokeActivity = {
             type: 'invoke',
             name: Payment.PaymentOperations.PaymentCompleteOperationName,
-            from: { id: walletSession.walletFromId },
-            conversation: {id: walletSession.walletConversationId },
+            from: { id: checkoutSession.checkoutFromId },
+            conversation: {id: checkoutSession.checkoutConversationId },
             relatesTo: {
-                activityId: walletSession.paymentActivityId,
+                activityId: checkoutSession.paymentActivityId,
                 bot: { id: this.botId },
                 channelId: 'emulator',
                 conversation: { id: this.conversationId },

@@ -32,10 +32,10 @@
 //
 import * as React from 'react';
 import { SelectorComponent } from './selectorComponent';
-import { IWalletShippingAddress } from './walletTypes';
+import { ICheckoutShippingAddress } from './checkoutTypes';
 
 class ShippingAddressItem extends React.Component<{
-    item: IWalletShippingAddress
+    item: ICheckoutShippingAddress
 }, {}> {
     
     constructor(props) {
@@ -57,7 +57,7 @@ class ShippingAddressItem extends React.Component<{
     }
 }
 
-export class SelectShippingAddress extends SelectorComponent<IWalletShippingAddress> {
+export class SelectShippingAddress extends SelectorComponent<ICheckoutShippingAddress> {
     constructor(props) {
         super(props, ShippingAddressItem);
     }

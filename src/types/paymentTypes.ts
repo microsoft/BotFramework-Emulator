@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export interface IWalletConversationSession {
+export interface ICheckoutConversationSession {
     paymentActivityId: string;
-    walletConversationId: string;
-    walletFromId: string;
+    checkoutConversationId: string;
+    checkoutFromId: string;
 }
 
 export interface IPaymentMethodData {
@@ -89,10 +89,7 @@ export interface IPaymentRequest {
     expires: string,
     id: string,
     methodData: IPaymentMethodData[],
-    options: IPaymentOptions,
-    paymentDetails: IPaymentDetails,
-    paymentMethods: IPaymentMethodData[],
-    paymentOptions: IPaymentOptions
+    options: IPaymentOptions
 }
 
 export const PaymentOperations = {

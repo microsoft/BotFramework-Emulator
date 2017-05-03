@@ -38,16 +38,16 @@ import * as path from 'path';
 export class WindowManager {
     private mainWindow: Electron.BrowserWindow;
     private windows: Electron.BrowserWindow[];
-    private walletState: {};
+    private checkoutState: {};
 
     constructor() {
         this.windows = [];
 
-        Electron.ipcMain.on('createWalletWindow', (event, args) => {
-            this.createWalletWindow(args.payload, args.settings, args.serviceUrl);
+        Electron.ipcMain.on('createCheckoutWindow', (event, args) => {
+            this.createCheckoutWindow(args.payload, args.settings, args.serviceUrl);
         });
-        Electron.ipcMain.on('getWalletState', (event, args) => {
-            let state = event.sender['walletState'];
+        Electron.ipcMain.on('getCheckoutState', (event, args) => {
+            let state = event.sender['checkoutState'];
             event.returnValue = state;
         });
     }
@@ -75,7 +75,7 @@ export class WindowManager {
         }
     }
 
-    public createWalletWindow(payload: string, settings: any, serviceUrl: string) {
+    public createCheckoutWindow(payload: string, settings: any, serviceUrl: string) {
         let page = URL.format({
             protocol: 'file',
             slashes: true,
@@ -83,25 +83,25 @@ export class WindowManager {
         });
         page += '?' + payload;
 
-        let walletWindow = new Electron.BrowserWindow({
+        let checkoutWindow = new Electron.BrowserWindow({
             width: 1000, 
             height: 620, 
-            title: 'Bot Framework Wallet Emulator'});
-        this.add(walletWindow);
+            title: 'Checkout with Microsoft Emulator'});
+        this.add(checkoutWindow);
 
-        walletWindow.webContents['walletState'] = {
+        checkoutWindow.webContents['checkoutState'] = {
             settings: settings,
             serviceUrl: serviceUrl
         };
         
-        walletWindow.on('closed', () => {
-            this.remove(walletWindow);
+        checkoutWindow.on('closed', () => {
+            this.remove(checkoutWindow);
         });
 
-        // walletWindow.webContents.openDevTools();
+        // checkoutWindow.webContents.openDevTools();
 
         // Load a remote URL
-        walletWindow.loadURL(page);
+        checkoutWindow.loadURL(page);
     }
 
     public closeAll() {

@@ -41,21 +41,21 @@ import { SelectCreditCard } from './selectCreditCard';
 import { AddCreditCardView } from './addCreditCardView';
 import { AddShippingAddressView } from './addShippingAddressView';
 import { PaymentDetails } from './paymentDetails';
-import { IWalletViewState, IWalletShippingAddress, IWalletCreditCard, PaymentTypeConverter } from './walletTypes';
+import { ICheckoutViewState, ICheckoutShippingAddress, ICheckoutCreditCard, PaymentTypeConverter } from './checkoutTypes';
 import { Emulator } from '../emulator';
 import { ISettings } from '../settings';
 import { ConversationActions, ServerSettingsActions } from '../reducers';
 import { Button } from './button';
-import { WalletSettings } from './walletSettings';
+import { CheckoutSettings } from './checkoutSettings';
 import { uniqueId } from '../../utils';
 
 const remote = require('electron').remote;
 
-export class WalletView extends React.Component<{}, IWalletViewState> {
-    private local: IWalletViewState;
+export class CheckoutView extends React.Component<{}, ICheckoutViewState> {
+    private local: ICheckoutViewState;
     private settings: ISettings;
-    private walletSettings: WalletSettings;
-    private walletSession: Payment.IWalletConversationSession;
+    private checkoutSettings: CheckoutSettings;
+    private checkoutSession: Payment.ICheckoutConversationSession;
 
     constructor(props) {
         super(props);
@@ -68,8 +68,8 @@ export class WalletView extends React.Component<{}, IWalletViewState> {
             paymentRequest = JSON.parse(decodeURI(param)) as Payment.IPaymentRequest;
         }
 
-        this.walletSettings = new WalletSettings();
-        let cache = this.walletSettings.getSettings();
+        this.checkoutSettings = new CheckoutSettings();
+        let cache = this.checkoutSettings.getSettings();
 
         this.local = {
             paymentRequest: paymentRequest,
@@ -121,14 +121,14 @@ export class WalletView extends React.Component<{}, IWalletViewState> {
 
         this.onPageMouseDown = this.onPageMouseDown.bind(this);
 
-        let walletState: any = Electron.ipcRenderer.sendSync('getWalletState');
-        this.walletSession = {
-            paymentActivityId: walletState.paymentActivityId,
-            walletConversationId: uniqueId(),
-            walletFromId: uniqueId(),
+        let checkoutState: any = Electron.ipcRenderer.sendSync('getCheckoutState');
+        this.checkoutSession = {
+            paymentActivityId: checkoutState.paymentActivityId,
+            checkoutConversationId: uniqueId(),
+            checkoutFromId: uniqueId(),
         };
-        this.settings = walletState.settings;
-        Emulator.serviceUrl = walletState.serviceUrl;
+        this.settings = checkoutState.settings;
+        Emulator.serviceUrl = checkoutState.serviceUrl;
 
         ConversationActions.joinConversation(this.settings.conversation.conversationId);
         ServerSettingsActions.set(this.settings.serverSettings);
@@ -136,12 +136,12 @@ export class WalletView extends React.Component<{}, IWalletViewState> {
 
     private emailChanged(text: string): void {
         this.updateState({ emailAddress: text });
-        this.walletSettings.updateEmail(text);
+        this.checkoutSettings.updateEmail(text);
     }
 
     private phoneChanged(text: string): void {
         this.updateState({ phoneNumber: text });
-        this.walletSettings.updatePhoneNumber(text);
+        this.checkoutSettings.updatePhoneNumber(text);
     }
 
     private setShippingAddressSelectorIsVisible(isVisible: boolean) {
@@ -160,11 +160,11 @@ export class WalletView extends React.Component<{}, IWalletViewState> {
         return this.state.selectedShippingAddress
     }
 
-    private selectShippingAddress(value: IWalletShippingAddress) {
+    private selectShippingAddress(value: ICheckoutShippingAddress) {
         this.updateState({ selectedShippingAddress: value});
         let shippingOption = this.getSelectedShippingMethod();
         Emulator.updateShippingAddress(
-            this.walletSession,
+            this.checkoutSession,
             this.state.paymentRequest, 
             PaymentTypeConverter.convertAddress(value),
             shippingOption ? shippingOption.id : undefined,
@@ -179,7 +179,7 @@ export class WalletView extends React.Component<{}, IWalletViewState> {
         this.updateState({ addShippingAddressIsVisible: true });
     }
 
-    private removeShippingAddress(item: IWalletShippingAddress) {
+    private removeShippingAddress(item: ICheckoutShippingAddress) {
         let idx = this.local.shippingAddresses.indexOf(item);
         if (idx !== -1) {
             if (this.local.selectedShippingAddress === item) {
@@ -187,16 +187,16 @@ export class WalletView extends React.Component<{}, IWalletViewState> {
             }
             this.local.shippingAddresses.splice(idx, 1);
             this.updateState(this.local);
-            this.walletSettings.removeShippingAddress(item);
+            this.checkoutSettings.removeShippingAddress(item);
         }
     }
 
-    private onSaveShippingAddress(item: IWalletShippingAddress) {
+    private onSaveShippingAddress(item: ICheckoutShippingAddress) {
         this.local.shippingAddresses.push(item);
         this.local.selectedShippingAddress = item;
         this.local.addShippingAddressIsVisible = false;
         this.updateState(this.local);
-        this.walletSettings.addShippingAddress(item);
+        this.checkoutSettings.addShippingAddress(item);
         this.selectShippingAddress(item);
     }
 
@@ -241,7 +241,7 @@ export class WalletView extends React.Component<{}, IWalletViewState> {
         this.updatePaymentDetails(this.local.paymentRequest.details);
 
         Emulator.updateShippingOption(
-            this.walletSession,
+            this.checkoutSession,
             this.local.paymentRequest, 
             PaymentTypeConverter.convertAddress(this.local.selectedShippingAddress),
             value.id, 
@@ -268,7 +268,7 @@ export class WalletView extends React.Component<{}, IWalletViewState> {
         return this.state.selectedCreditCard
     }
 
-    private selectCreditCard(value: IWalletCreditCard) {
+    private selectCreditCard(value: ICheckoutCreditCard) {
         this.updateState({ selectedCreditCard: value});
     }
 
@@ -276,7 +276,7 @@ export class WalletView extends React.Component<{}, IWalletViewState> {
         this.updateState({ addCreditCardIsVisible: true });
     }
 
-    private removeCreditCard(item: IWalletCreditCard) {
+    private removeCreditCard(item: ICheckoutCreditCard) {
         let idx = this.local.creditCards.indexOf(item);
         if (idx !== -1) {
             this.local.creditCards.splice(idx, 1);
@@ -284,16 +284,16 @@ export class WalletView extends React.Component<{}, IWalletViewState> {
                 this.local.selectedCreditCard = undefined;
             }
             this.updateState(this.local);
-            this.walletSettings.removeCreditCard(item);
+            this.checkoutSettings.removeCreditCard(item);
         }
     }
 
-    private onSaveCreditCard(item: IWalletCreditCard) {
+    private onSaveCreditCard(item: ICheckoutCreditCard) {
         this.local.creditCards.push(item);
         this.local.selectedCreditCard = item;
         this.local.addCreditCardIsVisible = false;
         this.updateState(this.local);
-        this.walletSettings.addCreditCard(item);
+        this.checkoutSettings.addCreditCard(item);
         this.selectCreditCard(item);
     }
 
@@ -305,7 +305,7 @@ export class WalletView extends React.Component<{}, IWalletViewState> {
         if (this.validate()) {
             let shippingOption = this.getSelectedShippingMethod();
             Emulator.paymentComplete(
-                this.walletSession,
+                this.checkoutSession,
                 this.state.paymentRequest,
                 PaymentTypeConverter.convertAddress(this.state.selectedShippingAddress),
                 shippingOption ? shippingOption.id : '',
@@ -400,14 +400,14 @@ export class WalletView extends React.Component<{}, IWalletViewState> {
     render() {
         if (this.state.addCreditCardIsVisible) {
             return (
-                <div className='wallet-container'>
+                <div className='checkout-container'>
                     <AddCreditCardView
                         onSave={this.onSaveCreditCard}
                         onCancel={this.onCancelAddCreditCard}/>
                 </div>);
         } else if (this.state.addShippingAddressIsVisible) {
             return (
-                <div className='wallet-container'>
+                <div className='checkout-container'>
                     <AddShippingAddressView
                         onSave={this.onSaveShippingAddress}
                         onCancel={this.onCancelAddShippingAddress}/>
@@ -418,15 +418,15 @@ export class WalletView extends React.Component<{}, IWalletViewState> {
                 validationError = (<div className='validation-error'>*Some fields are required</div>);
             }
             return (
-                <div className='wallet-container' onMouseDown={this.onPageMouseDown}>
-                    <div className='wallet-table'>
+                <div className='checkout-container' onMouseDown={this.onPageMouseDown}>
+                    <div className='checkout-table'>
                         <div className='title-container fixed-right'>
                             <div className='title'>Emulating: Confirm and Pay</div>
                             {validationError}
                         </div>
-                        <div className='wallet-form'>
-                            <div className='pay-with wallet-field'>
-                                <div className='wallet-label'>Pay with</div>
+                        <div className='checkout-form'>
+                            <div className='pay-with checkout-field'>
+                                <div className='checkout-label'>Pay with</div>
                                 <SelectCreditCard
                                     ref='select-credit-card'
                                     getIsVisible={this.getCreditCardSelectorIsVisible}
@@ -440,8 +440,8 @@ export class WalletView extends React.Component<{}, IWalletViewState> {
                                     onClickRemoveItem={this.removeCreditCard}
                                     classes={this.showPayerNameValidationState() ? 'invalid-input' : ''} />
                             </div>
-                            <div className='ship-to wallet-field'>
-                                <div className='wallet-label'>Ship to</div>
+                            <div className='ship-to checkout-field'>
+                                <div className='checkout-label'>Ship to</div>
                                 <SelectShippingAddress
                                     ref='select-shipping-address'
                                     getIsVisible={this.getShippingAddressSelectorIsVisible}
@@ -455,8 +455,8 @@ export class WalletView extends React.Component<{}, IWalletViewState> {
                                     onClickRemoveItem={this.removeShippingAddress}
                                     classes={this.showShippingValidationState() ? 'invalid-input' : ''} />
                             </div>
-                            <div className='shipping-options wallet-field'>
-                                <div className='wallet-label'>Shipping options</div>
+                            <div className='shipping-options checkout-field'>
+                                <div className='checkout-label'>Shipping options</div>
                                 <SelectShippingMethod
                                     ref='select-shipping-method'
                                     getIsVisible={this.getShippingMethodSelectorIsVisible}
@@ -466,19 +466,19 @@ export class WalletView extends React.Component<{}, IWalletViewState> {
                                     selectItem={this.selectShippingMethod}
                                     classes={this.showShippingOptionValidationState() ? 'invalid-input' : ''} />
                             </div>
-                            <div className='email-receipt-to wallet-field'>
-                                <div className='wallet-label'>Email receipt to</div>
+                            <div className='email-receipt-to checkout-field'>
+                                <div className='checkout-label'>Email receipt to</div>
                                 <input
                                     type="text"
-                                    className={'wallet-input' + (this.showEmailValidationState() ? ' invalid-input' : '')}
+                                    className={'checkout-input' + (this.showEmailValidationState() ? ' invalid-input' : '')}
                                     value={this.state.emailAddress}
                                     onChange={e => this.emailChanged((e.target as any).value)} />
                             </div>
-                            <div className='phone wallet-field'>
-                                <div className='wallet-label'>Phone</div>
+                            <div className='phone checkout-field'>
+                                <div className='checkout-label'>Phone</div>
                                 <input
                                     type="text"
-                                    className={'wallet-input' + (this.showPhoneNumberValidationState() ? ' invalid-input' : '')}
+                                    className={'checkout-input' + (this.showPhoneNumberValidationState() ? ' invalid-input' : '')}
                                     value={this.state.phoneNumber}
                                     onChange={e => this.phoneChanged((e.target as any).value)} />
 

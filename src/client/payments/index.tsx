@@ -35,7 +35,7 @@ import * as Electron from 'electron';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { webFrame } from 'electron';
-import { WalletView } from './walletView';
+import { CheckoutView } from './checkoutView';
 import * as Settings from '../settings';
 import { uniqueId } from '../../utils';
 import { navigate } from '../hyperlinkHandler';
@@ -142,4 +142,4 @@ document.body.addEventListener('contextmenu', (e) => {
 });
 
 // Load main control
-ReactDOM.render(<WalletView />, document.getElementById('walletView'));
+ReactDOM.render(<CheckoutView />, document.getElementById('checkoutView'));

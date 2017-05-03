@@ -179,11 +179,11 @@ export class EmulatorController {
         try {
             const conversation = getConversation(req.params.conversationId);
             const body: {
-                walletSession: Payment.IWalletConversationSession,
+                checkoutSession: Payment.ICheckoutConversationSession,
                 request: Payment.IPaymentRequest,
                 shippingAddress: Payment.IPaymentAddress,
                 shippingOptionId: string } = req.body[0];
-            conversation.sendUpdateShippingAddressOperation(body.walletSession, body.request, body.shippingAddress, body.shippingOptionId, (statusCode, body) => {
+            conversation.sendUpdateShippingAddressOperation(body.checkoutSession, body.request, body.shippingAddress, body.shippingOptionId, (statusCode, body) => {
                 if (statusCode === HttpStatus.OK) {
                     res.send(HttpStatus.OK, body);
                 } else {
@@ -200,11 +200,11 @@ export class EmulatorController {
         try {
             const conversation = getConversation(req.params.conversationId);
             const body: {
-                walletSession: Payment.IWalletConversationSession,
+                checkoutSession: Payment.ICheckoutConversationSession,
                 request: Payment.IPaymentRequest,
                 shippingAddress: Payment.IPaymentAddress,
                 shippingOptionId: string } = req.body[0];
-            conversation.sendUpdateShippingOptionOperation(body.walletSession, body.request, body.shippingAddress, body.shippingOptionId, (statusCode, body) => {
+            conversation.sendUpdateShippingOptionOperation(body.checkoutSession, body.request, body.shippingAddress, body.shippingOptionId, (statusCode, body) => {
                 if (statusCode === HttpStatus.OK) {
                     res.send(HttpStatus.OK, body);
                 } else {
@@ -221,13 +221,13 @@ export class EmulatorController {
         try {
             const conversation = getConversation(req.params.conversationId);
             const body: {
-                walletSession: Payment.IWalletConversationSession,
+                checkoutSession: Payment.ICheckoutConversationSession,
                 request: Payment.IPaymentRequest, 
                 shippingAddress: Payment.IPaymentAddress, 
                 shippingOptionId: string,
                 payerEmail: string,
                 payerPhone: string } = req.body[0];
-            conversation.sendPaymentCompleteOperation(body.walletSession, body.request, body.shippingAddress, body.shippingOptionId, body.payerEmail, body.payerPhone, (statusCode, body) => {
+            conversation.sendPaymentCompleteOperation(body.checkoutSession, body.request, body.shippingAddress, body.shippingOptionId, body.payerEmail, body.payerPhone, (statusCode, body) => {
                 if (statusCode === HttpStatus.OK) {
                     res.send(HttpStatus.OK, body);
                 } else {
