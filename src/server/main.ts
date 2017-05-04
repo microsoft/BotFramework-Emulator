@@ -39,6 +39,7 @@ import * as url from 'url';
 import * as path from 'path';
 import * as log from './log';
 import { Emulator, emulator } from './emulator';
+import { WindowManager } from './windowManager';
 var pjson = require('../../package.json');
 
 process.on('uncaughtException', (error: Error) => {
@@ -47,6 +48,7 @@ process.on('uncaughtException', (error: Error) => {
 });
 
 export let mainWindow: Electron.BrowserWindow;
+export let windowManager: WindowManager;
 
 var openUrls = [];
 var onOpenUrl = function (event, url) {
@@ -97,6 +99,7 @@ const createMainWindow = () => {
             }
         });
     mainWindow.setTitle(windowTitle);
+    windowManager = new WindowManager();
 
     //mainWindow.webContents.openDevTools();
 
@@ -152,6 +155,7 @@ const createMainWindow = () => {
         });
     });
     mainWindow.on('closed', function () {
+        windowManager.closeAll();
         mainWindow = null;
     });
 
@@ -174,7 +178,7 @@ const createMainWindow = () => {
     if (queryString) {
         page = page + queryString;
     }
-    
+
     mainWindow.loadURL(page);
 }
 

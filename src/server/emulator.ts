@@ -39,7 +39,8 @@ import { BotFrameworkService } from './botFrameworkService';
 import { ConversationManager } from './conversationManager';
 import * as Settings from './settings';
 import * as Electron from 'electron';
-import { mainWindow } from './main';
+import { windowManager, mainWindow } from './main';
+import { WindowManager } from './windowManager';
 
 
 interface IQueuedMessage {
@@ -51,7 +52,6 @@ interface IQueuedMessage {
  * Top-level state container for the Node process.
  */
 export class Emulator {
-    mainWindow: Electron.BrowserWindow;
     framework = new BotFrameworkService();
     conversations = new ConversationManager();
     proxyAgent: any;
@@ -67,8 +67,7 @@ export class Emulator {
             this.proxyAgent = new ElectronProxyAgent(session);
             http.globalAgent = this.proxyAgent;
             https.globalAgent = this.proxyAgent;
-
-            this.mainWindow = mainWindow;
+            windowManager.addMainWindow(mainWindow);
             Emulator.queuedMessages.forEach((msg) => {
                 Emulator.send(msg.channel, ...msg.args);
             });
@@ -93,8 +92,8 @@ export class Emulator {
      * Sends a command to the client.
      */
     static send(channel: string, ...args: any[]) {
-        if (mainWindow) {
-            mainWindow.webContents.send(channel, ...args);
+        if (windowManager && windowManager.hasMainWindow()) {
+            windowManager.getMainWindow().webContents.send(channel, ...args);
         } else {
             Emulator.queuedMessages.push({ channel, args})
         }

@@ -33,13 +33,17 @@
 
 import { shell } from 'electron';
 import * as URL from 'url';
+import * as path from 'path';
 import * as QueryString from 'querystring';
 import { InspectorActions, AddressBarActions } from './reducers';
 import { getSettings, selectedActivity$, deselectActivity } from './settings';
 import { Settings as ServerSettings } from '../types/serverSettingsTypes';
 import { Emulator } from './emulator';
+import { PaymentEncoder } from '../shared/paymentEncoder';
 import * as log from './log';
+import * as Electron from 'electron';
 
+const {BrowserWindow} = require('electron').remote
 
 export function navigate(url: string) {
     try {
@@ -55,6 +59,8 @@ export function navigate(url: string) {
             } else if (parsed.host === 'command') {
                 navigateCommandUrl(params);
             }
+        } else if (parsed.protocol.startsWith(PaymentEncoder.PaymentEmulatorUrlProtocol)) {
+            navigatePaymentUrl(parsed.path);
         } else if (parsed.protocol.startsWith('file:')) {
             // ignore
         } else if (parsed.protocol.startsWith('javascript:')) {
@@ -127,4 +133,13 @@ function navigateCommandUrl(params: string[]) {
     if (typeof args ==='string' && args.includes('autoUpdater.quitAndInstall')) {
         Emulator.quitAndInstall();
     }
+}
+
+function navigatePaymentUrl(payload: string) {
+    const settings = getSettings();
+    Electron.ipcRenderer.send("createCheckoutWindow", {
+        payload: payload,
+        settings: settings,
+        serviceUrl: Emulator.serviceUrl
+    });
 }

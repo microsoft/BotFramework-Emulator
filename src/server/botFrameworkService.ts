@@ -47,7 +47,7 @@ import * as path from 'path';
 import * as ngrok from './ngrok';
 import { makeLinkMessage } from './log';
 import { Emulator } from './emulator';
-
+import * as utils from '../utils';
 
 /**
  * Communicates with the bot.
@@ -60,10 +60,14 @@ export class BotFrameworkService extends RestServer {
     ngrokServiceUrl: string;
     bypassNgrokLocalhost: boolean;
 
-    public get serviceUrl() {
-        return ngrok.running()
-            ? this.ngrokServiceUrl || this.localhostServiceUrl
-            : this.localhostServiceUrl
+    public getServiceUrl(botUrl: string) {
+        if (this.bypassNgrokLocalhost && utils.isLocalhostUrl(botUrl))
+            return this.localhostServiceUrl;
+        else {            
+            return ngrok.running()
+                ? this.ngrokServiceUrl || this.localhostServiceUrl
+                : this.localhostServiceUrl;
+        }
     }
 
     authentication = new BotFrameworkAuthentication();
@@ -80,7 +84,7 @@ export class BotFrameworkService extends RestServer {
         });
         this.router.on('listening', () => {
             this.configure(getSettings());
-            Emulator.send('listening', { serviceUrl: this.serviceUrl });
+            Emulator.send('listening', { serviceUrl: this.localhostServiceUrl });
         });
         //this.router.on('NotFound', (req: Restify.Request, res: Restify.Response, cb) => {});
     }

@@ -34,9 +34,12 @@
 import * as request from 'request';
 import * as http from 'http';
 import * as ngrok from './ngrok';
+import * as Payment from '../types/paymentTypes';
 import { IUser } from '../types/userTypes';
 import { IConversationAccount } from '../types/accountTypes';
-import { IActivity, IConversationUpdateActivity, IMessageActivity, IContactRelationUpdateActivity, ITypingActivity } from '../types/activityTypes';
+import { IActivity, IConversationUpdateActivity, IMessageActivity, IContactRelationUpdateActivity, ITypingActivity, IInvokeActivity } from '../types/activityTypes';
+import { PaymentEncoder } from '../shared/paymentEncoder';
+import { IAttachment, ICardAction } from '../types/attachmentTypes';
 import { uniqueId } from '../utils';
 import { dispatch, getSettings, authenticationSettings, v30AuthenticationSettings, addSettingsListener } from './settings';
 import { Settings } from '../types/serverSettingsTypes';
@@ -99,7 +102,7 @@ export class Conversation {
         activity.timestamp = date.toISOString();
         activity.localTimestamp = date.format();
         activity.recipient = { id: recipientId };
-        activity.conversation = { id: this.conversationId };
+        activity.conversation = activity.conversation || { id: this.conversationId };
     }
 
 
@@ -109,19 +112,14 @@ export class Conversation {
     postActivityToBot(activity: IActivity, recordInConversation: boolean, cb?) {
         // Do not make a shallow copy here before modifying
         this.postage(this.botId, activity);
-        activity.from = this.getCurrentUser();
+        activity.from = activity.from || this.getCurrentUser();
         if (!activity.recipient.name) {
             activity.recipient.name = "Bot";
         }
         const settings = getSettings();
         const bot = settings.botById(this.botId);
         if (bot) {
-            // bypass ngrok url for localhost because ngrok will rate limit
-            // (if the user has asked for this behaviour)
-            if (settings.framework.bypassNgrokLocalhost && utils.isLocalhostUrl(bot.botUrl))
-                activity.serviceUrl = emulator.framework.localhostServiceUrl;
-            else
-                activity.serviceUrl = emulator.framework.serviceUrl;
+            activity.serviceUrl = emulator.framework.getServiceUrl(bot.botUrl);
 
             let options: request.OptionsWithUrl = {
                 url: bot.botUrl,
@@ -165,12 +163,16 @@ export class Conversation {
                         if (recordInConversation) {
                             this.activities.push(Object.assign({}, activity));
                         }
-                        cb(null, resp.statusCode, activity.id);
+                        if(activity.type === 'invoke') {
+                            cb(null, resp.statusCode, activity.id, body);
+                        } else {
+                            cb(null, resp.statusCode, activity.id);
+                        }
                     }
                 }
             }
 
-            if (!utils.isLocalhostUrl(bot.botUrl) && utils.isLocalhostUrl(emulator.framework.serviceUrl)) {
+            if (!utils.isLocalhostUrl(bot.botUrl) && utils.isLocalhostUrl(emulator.framework.getServiceUrl(bot.botUrl))) {
                 log.error('Error: The bot is remote, but the callback URL is localhost. Without tunneling software you will not receive replies.');
                 log.error(log.makeLinkMessage('Connecting to bots hosted remotely', 'https://aka.ms/cnjvpo'));
                 log.error(log.ngrokConfigurationLink('Edit ngrok settings'));
@@ -201,7 +203,9 @@ export class Conversation {
     public postActivityToUser(activity: IActivity): IResourceResponse {
         const settings = getSettings();
         // Make a shallow copy before modifying & queuing
+        let visitor = new PaymentEncoder();
         activity = Object.assign({}, activity);
+        visitor.traverseActivity(activity);
         this.postage(settings.users.currentUserId, activity);
         const botId = activity.from.id;
         if (!activity.from.name) {
@@ -286,6 +290,142 @@ export class Conversation {
             type: 'deleteUserData'
         }
         this.postActivityToBot(activity, false, () => {});
+    }
+
+    public sendUpdateShippingAddressOperation(
+            checkoutSession: Payment.ICheckoutConversationSession,
+            request: Payment.IPaymentRequest, 
+            shippingAddress: Payment.IPaymentAddress,
+            shippingOptionId: string,
+            cb: (errCode, body) => void) {
+        this.sendUpdateShippingOperation(
+            checkoutSession,
+            Payment.PaymentOperations.UpdateShippingAddressOperationName,
+            request,
+            shippingAddress,
+            shippingOptionId,
+            cb
+        );
+    }
+
+    public sendUpdateShippingOptionOperation(
+            checkoutSession: Payment.ICheckoutConversationSession,
+            request: Payment.IPaymentRequest, 
+            shippingAddress: Payment.IPaymentAddress,
+            shippingOptionId: string,
+            cb: (errCode, body) => void) {
+        this.sendUpdateShippingOperation(
+            checkoutSession,
+            Payment.PaymentOperations.UpdateShippingOptionOperationName,
+            request,
+            shippingAddress,
+            shippingOptionId,
+            cb
+        );
+    }
+
+    private sendUpdateShippingOperation(
+        checkoutSession: Payment.ICheckoutConversationSession,
+        operation: string,
+        request: Payment.IPaymentRequest, 
+        shippingAddress: Payment.IPaymentAddress,
+        shippingOptionId: string,
+        cb: (errCode, body) => void) {
+
+        const updateValue: Payment.IPaymentRequestUpdate = {
+            id: request.id,
+            shippingAddress: shippingAddress,
+            shippingOption: shippingOptionId,
+            details: request.details  
+        };
+        let serviceUrl;
+        const settings = getSettings();
+        const bot = settings.botById(this.botId);
+        serviceUrl = emulator.framework.getServiceUrl(bot.botUrl);
+        
+        const activity: IInvokeActivity = {
+            type: 'invoke',
+            name: operation,
+            from: { id: checkoutSession.checkoutFromId },
+            conversation: {id: checkoutSession.checkoutConversationId },
+            relatesTo: {
+                activityId: checkoutSession.paymentActivityId,
+                bot: { id: this.botId },
+                channelId: 'emulator',
+                conversation: { id: this.conversationId },
+                serviceUrl: serviceUrl,
+                user: this.getCurrentUser()
+            },
+            value: updateValue
+        };
+        this.postActivityToBot(activity, false, (err, statusCode, activityId, responseBody) => {
+            cb(statusCode, responseBody);
+        });
+    }
+
+    public sendPaymentCompleteOperation(
+        checkoutSession: Payment.ICheckoutConversationSession,
+        request: Payment.IPaymentRequest, 
+        shippingAddress: Payment.IPaymentAddress,
+        shippingOptionId: string,
+        payerEmail: string,
+        payerPhone: string,
+        cb: (errCode, body) => void) {
+        
+        let paymentTokenHeader = {
+            format: 2,
+            merchantId: request.methodData[0].data.merchantId,
+            paymentRequestId: request.id,
+            amount: request.details.total.amount,
+            expiry: '1/1/2020',
+            timestamp: '4/27/2017',
+        };
+
+        let paymentTokenHeaderStr = JSON.stringify(paymentTokenHeader);
+        let pthBytes = new Buffer(paymentTokenHeaderStr).toString('base64');
+
+        let paymentTokenSource = 'tok_18yWDMKVgMv7trmwyE21VqO';
+        let ptsBytes = new Buffer(paymentTokenSource).toString('base64');
+
+        let ptsigBytes = new Buffer('Emulator').toString('base64');
+
+        const updateValue: Payment.IPaymentRequestComplete = {
+            id: request.id,
+            paymentRequest: request,
+            paymentResponse: {
+                details: {
+                    paymentToken: pthBytes + '.' + ptsBytes + '.' + ptsigBytes
+                },
+                methodName: request.methodData[0].supportedMethods[0],
+                payerEmail: payerEmail,
+                payerPhone: payerPhone,
+                shippingAddress: shippingAddress,
+                shippingOption: shippingOptionId
+            }
+        };
+        let serviceUrl;
+        const settings = getSettings();
+        const bot = settings.botById(this.botId);
+        serviceUrl = emulator.framework.getServiceUrl(bot.botUrl);
+        
+        const activity: IInvokeActivity = {
+            type: 'invoke',
+            name: Payment.PaymentOperations.PaymentCompleteOperationName,
+            from: { id: checkoutSession.checkoutFromId },
+            conversation: {id: checkoutSession.checkoutConversationId },
+            relatesTo: {
+                activityId: checkoutSession.paymentActivityId,
+                bot: { id: this.botId },
+                channelId: 'emulator',
+                conversation: { id: this.conversationId },
+                serviceUrl: serviceUrl,
+                user: this.getCurrentUser()
+            },
+            value: updateValue
+        };
+        this.postActivityToBot(activity, false, (err, statusCode, activityId, responseBody) => {
+            cb(statusCode, responseBody);
+        });
     }
 
     /**
