@@ -40,8 +40,9 @@ import { IConversationAccount } from '../types/accountTypes';
 import { IActivity, IConversationUpdateActivity, IMessageActivity, IContactRelationUpdateActivity, ITypingActivity, IInvokeActivity } from '../types/activityTypes';
 import { PaymentEncoder } from '../shared/paymentEncoder';
 import { IAttachment, ICardAction } from '../types/attachmentTypes';
+import { ISpeechTokenInfo } from '../types/speechTypes';
 import { uniqueId } from '../utils';
-import { dispatch, getSettings, authenticationSettings, v30AuthenticationSettings, addSettingsListener } from './settings';
+import { dispatch, getSettings, authenticationSettings, v30AuthenticationSettings, addSettingsListener, speechSettings } from './settings';
 import { Settings } from '../types/serverSettingsTypes';
 import * as jwt from 'jsonwebtoken';
 import * as oid from './OpenIdMetadata';
@@ -60,6 +61,7 @@ import * as moment from 'moment';
 export class Conversation {
     private accessToken: string;
     private accessTokenExpires: number;
+    private speechToken: ISpeechTokenInfo;
 
     constructor(botId: string, conversationId: string, user: IUser) {
         this.botId = botId;
@@ -426,6 +428,41 @@ export class Conversation {
         this.postActivityToBot(activity, false, (err, statusCode, activityId, responseBody) => {
             cb(statusCode, responseBody);
         });
+    }
+    
+    public getSpeechToken(duration: number, cb: (tokenInfo: ISpeechTokenInfo) => void, refresh: boolean = false) {
+        if (this.speechToken && !refresh) {
+            cb(this.speechToken);
+        } else {
+            // fetch the speech token
+            const settings = getSettings();
+            const bot = settings.botById(this.botId);
+
+            if (bot.msaAppId && bot.msaPassword) {
+                let options: request.OptionsWithUrl = {
+                    url: speechSettings.tokenEndpoint + '?goodForInMinutes=' + duration,
+                    method: 'GET',
+                    agent: emulator.proxyAgent,
+                    strictSSL: false
+                };
+
+                let responseCallback = (err, resp: http.IncomingMessage, body) => {
+                    if (body) {
+                        let speechToken: ISpeechTokenInfo = JSON.parse(body) as ISpeechTokenInfo;
+                        if (speechToken.access_Token) {
+                            this.speechToken = speechToken;
+                        }
+                        cb(speechToken);
+                    } else if(err) {
+                        cb({access_Token: undefined, error: err, error_Description: undefined});
+                    }
+                }
+
+                this.authenticatedRequest(options, responseCallback);
+            } else {
+                cb({access_Token: undefined, error: 'Unauthorized', error_Description: 'To use speech, the bot must be registered and using a valid MS AppId and Password.'});
+            }
+        }
     }
 
     /**
