@@ -57,7 +57,11 @@ export class VersionManager {
                 (version.major === VersionManager.minimumVersion.major && version.minor < VersionManager.minimumVersion.minor) ||
                 (version.major === VersionManager.minimumVersion.major && version.minor === VersionManager.minimumVersion.minor && 
                  version.subminor < VersionManager.minimumVersion.subminor)) {
-                log.warn('Warning: The Bot is using SDK version ' + VersionManager.toString(version) + '.');
+                if (version) {
+                    log.warn('Warning: The Bot is using SDK version ' + VersionManager.toString(version) + '.');
+                } else {
+                    log.warn('Warning: The Bot is using an SDK version earlier than 3.5.0.');
+                }
                 log.warn('Warning: SDK versions earlier than 3.5.0 use an authentication configuration that will no longer work after July 31, 2017.');
                 log.warn('Warning: For your bot to continue working beyond this date, please update your bot to use an SDK version greater than or equal to 3.5.0.');
                 log.warn(log.makeLinkMessage('Read about the Bot Framework authentication change.', 'https://aka.ms/botfxv31authchange'));   
