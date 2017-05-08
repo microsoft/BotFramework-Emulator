@@ -104,7 +104,6 @@ export class BotFrameworkService extends RestServer {
         this.ngrokPath = settings.framework.ngrokPath;
         const prevbypassNgrokLocalhost = this.bypassNgrokLocalhost;
         this.bypassNgrokLocalhost = settings.framework.bypassNgrokLocalhost;
-        const prevServiceUrl = this.serviceUrl;
         this.localhostServiceUrl = `http://127.0.0.1:${port}`;
         const startNgrok = () => {
             this.inspectUrl = null;
