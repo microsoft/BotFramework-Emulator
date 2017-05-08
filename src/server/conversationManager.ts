@@ -453,8 +453,12 @@ export class Conversation {
                             this.speechToken = speechToken;
                         }
                         cb(speechToken);
-                    } else if(err) {
+                    } else if (err) {
                         cb({access_Token: undefined, error: err, error_Description: undefined});
+                    } else if (resp.statusCode === 401) {
+                        cb({access_Token: undefined, error: 'Unauthorized', error_Description: 'This bot is not authorized to use the Cognitive Services Speech API.'});
+                    } else {
+                        cb({access_Token: undefined, error: 'Unable to retrieve speech token', error_Description: 'A speech token could not be retrieved for this bot. Response code: ' + resp.statusCode});
                     }
                 }
 
