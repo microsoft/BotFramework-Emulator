@@ -157,3 +157,7 @@ export const v30AuthenticationSettings = {
     tokenAudience: 'https://graph.microsoft.com',
     stateEndpoint: 'https://state.botframework.com'
 }
+
+export const speechSettings = {
+    tokenEndpoint: 'https://login.botframework.com/v3/speechtoken'
+}

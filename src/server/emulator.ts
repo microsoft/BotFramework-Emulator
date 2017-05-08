@@ -77,6 +77,30 @@ export class Emulator {
         Settings.addSettingsListener(() => {
             Emulator.send('serverSettings', Settings.getStore().getState());
         });
+
+        Electron.ipcMain.on('getSpeechToken', (event, args: string) => {
+            // args is the conversation id
+            this.getSpeechToken(event, args);
+        });
+
+        Electron.ipcMain.on('refreshSpeechToken', (event, args: string) => {
+            // args is the conversation id
+            this.getSpeechToken(event, args, true);
+        });
+    }
+
+    private getSpeechToken(event: Electron.IpcMainEvent, conversationId: string, refresh: boolean = false) {
+        const settings = Settings.getSettings();
+        const activeBot = settings.getActiveBot();
+        let tokenInfo;
+        if (activeBot && activeBot.botId && conversationId) {
+            let conversation = this.conversations.conversationById(activeBot.botId, conversationId);
+            conversation.getSpeechToken(10, (tokenInfo) => {
+                event.returnValue = tokenInfo;
+            }, refresh);
+        } else {
+            event.returnValue = { error: 'No bot', error_Description: 'To use speech, you must connect to a bot and have an active conversation.'};
+        }
     }
 
     /**
