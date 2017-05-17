@@ -46,6 +46,7 @@
     "electron": "1.6.6",
     "electron-builder": "8.7.0",
     "electron-packager": "8.6.0",
+    "electron-react-devtools": "0.4.0",
     "electron-winstaller": "2.5.2",
     "event-stream": "3.3.4",
     "glob": "7.1.1",
