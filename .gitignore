@@ -5,3 +5,4 @@ node_modules/
 app/
 .vscode/settings.json
 install/
+.npmrc
