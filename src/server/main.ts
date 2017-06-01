@@ -74,26 +74,50 @@ Electron.app.on('will-finish-launching', (event, args) => {
     Electron.app.on('open-url', onOpenUrl);
 });
 
+
+var windowIsOffScreen = function(windowBounds: Electron.Rectangle): boolean {
+    const corners = [
+        {x: windowBounds.x, y: windowBounds.y},
+        {x: windowBounds.x + windowBounds.width, y: windowBounds.y},
+        {x: windowBounds.x, y: windowBounds.y + windowBounds.height},
+        {x: windowBounds.x + windowBounds.width, y: windowBounds.y + windowBounds.height}
+    ];
+    // only out of bounds if all corners are off screen
+    return corners.reduce((acc, c) => {
+            let nearestDisplay = Electron.screen.getDisplayNearestPoint(c).workArea;
+            if ((c.x < nearestDisplay.x || c.x > nearestDisplay.x + nearestDisplay.width) ||
+                (c.y < nearestDisplay.y || c.y > nearestDisplay.y + nearestDisplay.height))
+                return true && acc;
+            return false;
+        }, true)
+}
+
 const createMainWindow = () => {
 
     const windowTitle = "Bot Framework Channel Emulator";
 
-    // TODO: Make a better/safer window state restoration module
-    // (handles change in display dimensions, maximized state, etc)
-    const safeLowerBound = (val: any, lowerBound: number) => {
-        if (typeof (val) === 'number') {
-            return Math.max(lowerBound, val);
-        }
-    }
     const settings = getSettings();
+    let initBounds: Electron.Rectangle = {
+        width: settings.windowState.width || 0,
+        height: settings.windowState.height || 0,
+        x: settings.windowState.left || 0,
+        y: settings.windowState.top || 0,
+    }
+    let outOfBounds = windowIsOffScreen(initBounds);
+    if (outOfBounds) {
+        let displaysArr = Electron.screen.getAllDisplays().filter(display => display.id === settings.windowState.displayId);
+        let display = displaysArr.length > 0 ? displaysArr[0] : Electron.screen.getDisplayMatching(initBounds);
+        initBounds.x = display.workArea.x;
+        initBounds.y = display.workArea.y;
+    }
     mainWindow = new Electron.BrowserWindow(
         {
             show: false,
             backgroundColor: '#f7f7f7',
-            width: safeLowerBound(settings.windowState.width, 0),
-            height: safeLowerBound(settings.windowState.height, 0),
-            x: safeLowerBound(settings.windowState.left, 0),
-            y: safeLowerBound(settings.windowState.top, 0),
+            width: initBounds.width,
+            height: initBounds.height,
+            x: initBounds.x,
+            y: initBounds.y,
             webPreferences: {
                 directWrite: false
             }
@@ -130,33 +154,44 @@ const createMainWindow = () => {
         Menu.setApplicationMenu(null);
     }
 
-    mainWindow.on('resize', () => {
-        const bounds = mainWindow.getBounds();
-        dispatch<WindowStateAction>({
-            type: 'Window_RememberBounds',
-            state: {
-                width: bounds.width,
-                height: bounds.height,
-                left: bounds.x,
-                top: bounds.y
-            }
-        });
-    });
-    mainWindow.on('move', () => {
-        const bounds = mainWindow.getBounds();
-        dispatch<WindowStateAction>({
-            type: 'Window_RememberBounds',
-            state: {
-                width: bounds.width,
-                height: bounds.height,
-                left: bounds.x,
-                top: bounds.y
-            }
+    ['resize', 'move'].forEach((e) => {
+        mainWindow.on(e, () => {
+            const bounds = mainWindow.getBounds();
+            dispatch<WindowStateAction>({
+                type: 'Window_RememberBounds',
+                state: {
+                    displayId: Electron.screen.getDisplayMatching(bounds).id,
+                    width: bounds.width,
+                    height: bounds.height,
+                    left: bounds.x,
+                    top: bounds.y
+                }
+            });
         });
     });
     mainWindow.on('closed', function () {
         windowManager.closeAll();
         mainWindow = null;
+    });
+    
+    mainWindow.on('restore', () => {
+        let outOfBounds = windowIsOffScreen(mainWindow.getBounds());
+        if (outOfBounds) {
+            const bounds = mainWindow.getBounds();
+            let displaysArr = Electron.screen.getAllDisplays().filter(display => display.id === settings.windowState.displayId);
+            let display = displaysArr.length > 0 ? displaysArr[0] : Electron.screen.getDisplayMatching(bounds);
+            mainWindow.setPosition(display.workArea.x, display.workArea.y);
+            dispatch<WindowStateAction>({
+                type: 'Window_RememberBounds',
+                state: {
+                    displayId: display.id,
+                    width: bounds.width,
+                    height: bounds.height,
+                    left: display.workArea.x,
+                    top: display.workArea.y
+                }
+            });
+        }
     });
 
     mainWindow.once('ready-to-show', () => {

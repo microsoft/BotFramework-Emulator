@@ -43,6 +43,7 @@ export interface IFrameworkSettings {
 }
 
 export interface IWindowStateSettings {
+    displayId?: number, 
     top?: number,
     left?: number,
     width?: number,
