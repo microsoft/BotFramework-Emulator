@@ -1,28 +1,19 @@
 {
+    // Use IntelliSense to learn about possible Node.js debug attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
-            "request": "launch",
-            "name": "Launch main.js",
             "type": "node",
-            "program": "${workspaceRoot}/app/server/main.js",
-            "stopOnEntry": false,
-            "args": [
-                "--debug=5858"
-            ],
-            "port": 5858,
-            "cwd": "${workspaceRoot}/app/client",
-            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd",
-            // mac/linux
-            // "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
-            "runtimeArgs": [
-            ],
-            "env": {
-                "NODE_ENV": "development",
-                "ELECTRON_ENABLE_LOGGING": "true"
+            "request": "launch",
+            "name": "Electron Main",
+            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+            "windows": {
+                "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
             },
-            "sourceMaps": true,
-            "outDir": "${workspaceRoot}/app"
+            "program": "${workspaceRoot}/app/server/main.js",
+            "protocol": "inspector"
         }
     ]
 }

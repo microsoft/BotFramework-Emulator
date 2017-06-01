@@ -42,7 +42,7 @@ import { Emulator, emulator } from './emulator';
 import { WindowManager } from './windowManager';
 var pjson = require('../../package.json');
 
-process.on('uncaughtException', (error: Error) => {
+(process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
     console.error(error);
     log.error('[err-server]', error.message.toString(), JSON.stringify(error.stack));
 });
@@ -68,7 +68,7 @@ Electron.app.on('will-finish-launching', (event, args) => {
     Electron.ipcMain.on('getUrls', (event, arg) => {
         openUrls.forEach(url => mainWindow.webContents.send('botemulator', url));
         openUrls = [];
-    });    
+    });
 
     // On Mac, a protocol handler invocation sends urls via this event
     Electron.app.on('open-url', onOpenUrl);
@@ -93,10 +93,7 @@ const createMainWindow = () => {
             width: safeLowerBound(settings.windowState.width, 0),
             height: safeLowerBound(settings.windowState.height, 0),
             x: safeLowerBound(settings.windowState.left, 0),
-            y: safeLowerBound(settings.windowState.top, 0),
-            webPreferences: {
-                directWrite: false
-            }
+            y: safeLowerBound(settings.windowState.top, 0)
         });
     mainWindow.setTitle(windowTitle);
     windowManager = new WindowManager();
@@ -105,7 +102,7 @@ const createMainWindow = () => {
 
     if (process.platform === 'darwin') {
         // Create the Application's main menu
-        var template: Electron.MenuItemOptions[] = [
+        var template: Electron.MenuItemConstructorOptions[] = [
             {
                 label: windowTitle,
                 submenu: [

@@ -51,7 +51,7 @@ export class AddressBarMenu extends React.Component<{}, {}> {
         const settings = getSettings();
         const inConversation = ((settings.serverSettings.activeBot || '').length > 0 && (settings.conversation.conversationId || '').length > 0);
         const haveActiveBot = (settings.serverSettings.activeBot || '').length > 0;
-        const template: Electron.MenuItemOptions[] = [
+        const template: Electron.MenuItemConstructorOptions[] = [
             {
                 label: 'New Conversation',
                 click: () => ConversationActions.newConversation(),

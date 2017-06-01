@@ -89,7 +89,7 @@ export class Emulator {
         });
     }
 
-    private getSpeechToken(event: Electron.IpcMainEvent, conversationId: string, refresh: boolean = false) {
+    private getSpeechToken(event: Electron.Event, conversationId: string, refresh: boolean = false) {
         const settings = Settings.getSettings();
         const activeBot = settings.getActiveBot();
         let tokenInfo;

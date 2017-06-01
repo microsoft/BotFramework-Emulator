@@ -31,7 +31,6 @@
   "devDependencies": {
     "@types/async": "2.0.37",
     "@types/bunyan": "0.0.35",
-    "@types/electron": "1.4.31",
     "@types/formidable": "1.0.29",
     "@types/http-status-codes": "1.0.29",
     "@types/jsonwebtoken": "7.2.0",
@@ -43,7 +42,7 @@
     "@types/request": "0.0.31",
     "@types/restify": "2.0.38",
     "del": "2.2.2",
-    "electron": "1.6.6",
+    "electron": "1.7.2",
     "electron-builder": "8.7.0",
     "electron-packager": "8.6.0",
     "electron-react-devtools": "0.4.0",
