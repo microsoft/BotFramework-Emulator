@@ -76,6 +76,7 @@ Electron.app.on('will-finish-launching', (event, args) => {
 
 
 var windowIsOffScreen = function(windowBounds: Electron.Rectangle): boolean {
+<<<<<<< HEAD
     const nearestDisplay = Electron.screen.getDisplayMatching(windowBounds).workArea;
     return (
         windowBounds.x > (nearestDisplay.x + nearestDisplay.width) ||
@@ -83,6 +84,22 @@ var windowIsOffScreen = function(windowBounds: Electron.Rectangle): boolean {
         windowBounds.y > (nearestDisplay.y + nearestDisplay.height) ||
         (windowBounds.y + windowBounds.height) < nearestDisplay.y
     );
+=======
+    const corners = [
+        {x: windowBounds.x, y: windowBounds.y},
+        {x: windowBounds.x + windowBounds.width, y: windowBounds.y},
+        {x: windowBounds.x, y: windowBounds.y + windowBounds.height},
+        {x: windowBounds.x + windowBounds.width, y: windowBounds.y + windowBounds.height}
+    ];
+    // only out of bounds if all corners are off screen
+    return corners.reduce((acc, c) => {
+            let nearestDisplay = Electron.screen.getDisplayNearestPoint(c).workArea;
+            if ((c.x < nearestDisplay.x || c.x > nearestDisplay.x + nearestDisplay.width) ||
+                (c.y < nearestDisplay.y || c.y > nearestDisplay.y + nearestDisplay.height))
+                return true && acc;
+            return false;
+        }, true)
+>>>>>>> Window won't start or restore off screen if monitor setup changes.
 }
 
 const createMainWindow = () => {
@@ -96,9 +113,16 @@ const createMainWindow = () => {
         x: settings.windowState.left || 0,
         y: settings.windowState.top || 0,
     }
+<<<<<<< HEAD
     if (windowIsOffScreen(initBounds)) {
         let display = Electron.screen.getAllDisplays().find(display => display.id === settings.windowState.displayId);
         display = display || Electron.screen.getDisplayMatching(initBounds);
+=======
+    let outOfBounds = windowIsOffScreen(initBounds);
+    if (outOfBounds) {
+        let displaysArr = Electron.screen.getAllDisplays().filter(display => display.id === settings.windowState.displayId);
+        let display = displaysArr.length > 0 ? displaysArr[0] : Electron.screen.getDisplayMatching(initBounds);
+>>>>>>> Window won't start or restore off screen if monitor setup changes.
         initBounds.x = display.workArea.x;
         initBounds.y = display.workArea.y;
     }
@@ -184,7 +208,6 @@ const createMainWindow = () => {
             });
         }
     });
-
     Electron.globalShortcut.register("CommandOrControl+-", () => {
         windowManager.zoomOut();
     });
