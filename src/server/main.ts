@@ -103,10 +103,9 @@ const createMainWindow = () => {
         x: settings.windowState.left || 0,
         y: settings.windowState.top || 0,
     }
-    let outOfBounds = windowIsOffScreen(initBounds);
-    if (outOfBounds) {
-        let displaysArr = Electron.screen.getAllDisplays().filter(display => display.id === settings.windowState.displayId);
-        let display = displaysArr.length > 0 ? displaysArr[0] : Electron.screen.getDisplayMatching(initBounds);
+    if (windowIsOffScreen(initBounds)) {
+        let display = Electron.screen.getAllDisplays().find(display => display.id === settings.windowState.displayId);
+        display = display ? display : Electron.screen.getDisplayMatching(initBounds);
         initBounds.x = display.workArea.x;
         initBounds.y = display.workArea.y;
     }
@@ -175,11 +174,10 @@ const createMainWindow = () => {
     });
     
     mainWindow.on('restore', () => {
-        let outOfBounds = windowIsOffScreen(mainWindow.getBounds());
-        if (outOfBounds) {
+        if (windowIsOffScreen(mainWindow.getBounds())) {
             const bounds = mainWindow.getBounds();
-            let displaysArr = Electron.screen.getAllDisplays().filter(display => display.id === settings.windowState.displayId);
-            let display = displaysArr.length > 0 ? displaysArr[0] : Electron.screen.getDisplayMatching(bounds);
+            let display = Electron.screen.getAllDisplays().find(display => display.id === getSettings().windowState.displayId);
+            display = display ? display : Electron.screen.getDisplayMatching(bounds);
             mainWindow.setPosition(display.workArea.x, display.workArea.y);
             dispatch<WindowStateAction>({
                 type: 'Window_RememberBounds',
@@ -194,7 +192,18 @@ const createMainWindow = () => {
         }
     });
 
+    Electron.globalShortcut.register("CommandOrControl+-", () => {
+        windowManager.zoomOut();
+    });
+    Electron.globalShortcut.register("CommandOrControl+=", () => {
+        windowManager.zoomIn();
+    });
+    Electron.globalShortcut.register("CommandOrControl+0", () => {
+        windowManager.zoomTo(0);
+    });
+
     mainWindow.once('ready-to-show', () => {
+        mainWindow.webContents.setZoomLevel(settings.windowState.zoomLevel);
         mainWindow.show();
     });
 

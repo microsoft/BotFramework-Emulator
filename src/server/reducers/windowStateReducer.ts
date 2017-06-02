@@ -44,6 +44,11 @@ export type WindowStateAction = {
         width: number,
         height: number
     }
+} | {
+    type: 'Window_RememberZoomLevel',
+    state: {
+        zoomLevel: number,
+    }
 }
 
 export const windowStateReducer: Reducer<IWindowStateSettings> = (
@@ -58,6 +63,10 @@ export const windowStateReducer: Reducer<IWindowStateSettings> = (
                 left: action.state.left,
                 width: action.state.width,
                 height: action.state.height
+            });
+        case 'Window_RememberZoomLevel':
+            return Object.assign({}, state, {
+                zoomLevel: action.state.zoomLevel,
             });
         default:
             return state

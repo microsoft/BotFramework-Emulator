@@ -53,9 +53,6 @@ window.onerror = (message: string, filename?: string, lineno?: number, colno?: n
     return true; // prevent default handler
 }
 
-webFrame.setZoomLevel(1);
-webFrame.setZoomFactor(1);
-
 const interceptClickEvent = (e: Event) => {
     let target: any = e.target;
     while (target) {
