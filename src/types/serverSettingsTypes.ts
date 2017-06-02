@@ -43,6 +43,8 @@ export interface IFrameworkSettings {
 }
 
 export interface IWindowStateSettings {
+    displayId?: number,
+    zoomLevel?: number,
     top?: number,
     left?: number,
     width?: number,
@@ -91,6 +93,7 @@ export const frameworkDefault: IFrameworkSettings = {
 }
 
 export const windowStateDefault: IWindowStateSettings = {
+    zoomLevel: 0,
     width: 800,
     height: 600,
     left: 100,
