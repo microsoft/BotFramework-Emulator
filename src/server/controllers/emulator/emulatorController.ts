@@ -41,6 +41,7 @@ import { jsonBodyParser } from '../../jsonBodyParser';
 import * as ResponseTypes from '../../../types/responseTypes';
 import { ErrorCodes, IResourceResponse, IErrorResponse } from '../../../types/responseTypes';
 import { IChannelAccount } from '../../../types/accountTypes';
+import { windowManager } from '../../main';
 import { IBot } from '../../../types/botTypes';
 import { Conversation } from '../../conversationManager';
 import * as Payment from '../../../types/paymentTypes';
@@ -73,6 +74,9 @@ export class EmulatorController {
         server.router.post('/emulator/:conversationId/invoke/updateShippingAddress', jsonBodyParser(), this.updateShippingAddress);
         server.router.post('/emulator/:conversationId/invoke/updateShippingOption', jsonBodyParser(), this.updateShippingOption);
         server.router.post('/emulator/:conversationId/invoke/paymentComplete', jsonBodyParser(), this.paymentComplete);
+        server.router.post('/emulator/window/zoomIn', this.zoomIn);
+        server.router.post('/emulator/window/zoomOut', this.zoomOut);
+        server.router.post('/emulator/window/zoomReset', this.zoomReset);
         server.router.post('/emulator/system/quitAndInstall', this.quitAndInstall);
     }
 
@@ -238,6 +242,16 @@ export class EmulatorController {
         } catch (err) {
             ResponseTypes.sendErrorResponse(req, res, next, err);
         }
+    }
+
+    static zoomIn = () => {
+        windowManager.zoomIn();
+    }
+    static zoomOut = () => {
+        windowManager.zoomIn();
+    }
+    static zoomReset = () => {
+        windowManager.zoomTo(0);
     }
 
     static quitAndInstall = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {

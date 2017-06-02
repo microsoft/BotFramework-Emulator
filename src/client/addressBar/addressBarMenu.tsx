@@ -150,6 +150,37 @@ export class AddressBarMenu extends React.Component<{}, {}> {
             {
                 type: 'separator'
             },
+            {
+                label: 'Zoom',
+                type: 'submenu',
+                enabled: true,
+                submenu: [
+                    {
+                        label: 'Zoom In',
+                        accelerator: 'CommandOrControl+=',
+                        click: () => {
+                            Emulator.zoomIn();
+                        }
+                    },
+                    {
+                        label: 'Zoom Out',
+                        accelerator: 'CommandOrControl+-',
+                        click: () => {
+                            Emulator.zoomOut();
+                        }
+                    },
+                    {
+                        label: 'Reset Zoom',
+                        accelerator: 'CommandOrControl+0',
+                        click: () => {
+                            Emulator.zoomReset();
+                        }
+                    },
+                ]
+            },
+            {
+                type: 'separator'
+            },
             /*
             {
                 label: 'Help',

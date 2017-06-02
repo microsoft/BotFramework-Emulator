@@ -194,11 +194,11 @@ const createMainWindow = () => {
         windowManager.zoomTo(0);
     });
 
-    Electron.globalShortcut.register("CommandOrControl+-", () => {
-        windowManager.zoomOut();
-    });
     Electron.globalShortcut.register("CommandOrControl+=", () => {
         windowManager.zoomIn();
+    });
+    Electron.globalShortcut.register("CommandOrControl+-", () => {
+        windowManager.zoomOut();
     });
     Electron.globalShortcut.register("CommandOrControl+0", () => {
         windowManager.zoomTo(0);
