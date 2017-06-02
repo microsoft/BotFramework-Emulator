@@ -114,6 +114,7 @@ const createMainWindow = () => {
         y: settings.windowState.top || 0,
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
     if (windowIsOffScreen(initBounds)) {
         let display = Electron.screen.getAllDisplays().find(display => display.id === settings.windowState.displayId);
         display = display || Electron.screen.getDisplayMatching(initBounds);
@@ -123,6 +124,11 @@ const createMainWindow = () => {
         let displaysArr = Electron.screen.getAllDisplays().filter(display => display.id === settings.windowState.displayId);
         let display = displaysArr.length > 0 ? displaysArr[0] : Electron.screen.getDisplayMatching(initBounds);
 >>>>>>> Window won't start or restore off screen if monitor setup changes.
+=======
+    if (windowIsOffScreen(initBounds)) {
+        let display = Electron.screen.getAllDisplays().find(display => display.id === settings.windowState.displayId);
+        display = display ? display : Electron.screen.getDisplayMatching(initBounds);
+>>>>>>> Added zoom functionality, some clean up on window position code.
         initBounds.x = display.workArea.x;
         initBounds.y = display.workArea.y;
     }
@@ -194,7 +200,11 @@ const createMainWindow = () => {
         if (windowIsOffScreen(mainWindow.getBounds())) {
             const bounds = mainWindow.getBounds();
             let display = Electron.screen.getAllDisplays().find(display => display.id === getSettings().windowState.displayId);
+<<<<<<< HEAD
             display = display || Electron.screen.getDisplayMatching(bounds);
+=======
+            display = display ? display : Electron.screen.getDisplayMatching(bounds);
+>>>>>>> Added zoom functionality, some clean up on window position code.
             mainWindow.setPosition(display.workArea.x, display.workArea.y);
             dispatch<WindowStateAction>({
                 type: 'Window_RememberBounds',
@@ -208,6 +218,16 @@ const createMainWindow = () => {
             });
         }
     });
+    Electron.globalShortcut.register("CommandOrControl+-", () => {
+        windowManager.zoomOut();
+    });
+    Electron.globalShortcut.register("CommandOrControl+=", () => {
+        windowManager.zoomIn();
+    });
+    Electron.globalShortcut.register("CommandOrControl+0", () => {
+        windowManager.zoomTo(0);
+    });
+
     Electron.globalShortcut.register("CommandOrControl+-", () => {
         windowManager.zoomOut();
     });
