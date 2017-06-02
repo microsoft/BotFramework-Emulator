@@ -76,20 +76,13 @@ Electron.app.on('will-finish-launching', (event, args) => {
 
 
 var windowIsOffScreen = function(windowBounds: Electron.Rectangle): boolean {
-    const corners = [
-        {x: windowBounds.x, y: windowBounds.y},
-        {x: windowBounds.x + windowBounds.width, y: windowBounds.y},
-        {x: windowBounds.x, y: windowBounds.y + windowBounds.height},
-        {x: windowBounds.x + windowBounds.width, y: windowBounds.y + windowBounds.height}
-    ];
-    // only out of bounds if all corners are off screen
-    return corners.reduce((acc, c) => {
-            let nearestDisplay = Electron.screen.getDisplayNearestPoint(c).workArea;
-            if ((c.x < nearestDisplay.x || c.x > nearestDisplay.x + nearestDisplay.width) ||
-                (c.y < nearestDisplay.y || c.y > nearestDisplay.y + nearestDisplay.height))
-                return true && acc;
-            return false;
-        }, true)
+    const nearestDisplay = Electron.screen.getDisplayMatching(windowBounds).workArea;
+    return (
+        windowBounds.x > (nearestDisplay.x + nearestDisplay.width) ||
+        (windowBounds.x + windowBounds.width) < nearestDisplay.x ||
+        windowBounds.y > (nearestDisplay.y + nearestDisplay.height) ||
+        (windowBounds.y + windowBounds.height) < nearestDisplay.y
+    );
 }
 
 const createMainWindow = () => {
@@ -105,7 +98,7 @@ const createMainWindow = () => {
     }
     if (windowIsOffScreen(initBounds)) {
         let display = Electron.screen.getAllDisplays().find(display => display.id === settings.windowState.displayId);
-        display = display ? display : Electron.screen.getDisplayMatching(initBounds);
+        display = display || Electron.screen.getDisplayMatching(initBounds);
         initBounds.x = display.workArea.x;
         initBounds.y = display.workArea.y;
     }
@@ -177,7 +170,7 @@ const createMainWindow = () => {
         if (windowIsOffScreen(mainWindow.getBounds())) {
             const bounds = mainWindow.getBounds();
             let display = Electron.screen.getAllDisplays().find(display => display.id === getSettings().windowState.displayId);
-            display = display ? display : Electron.screen.getDisplayMatching(bounds);
+            display = display || Electron.screen.getDisplayMatching(bounds);
             mainWindow.setPosition(display.workArea.x, display.workArea.y);
             dispatch<WindowStateAction>({
                 type: 'Window_RememberBounds',
