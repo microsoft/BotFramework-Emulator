@@ -171,6 +171,28 @@ export class Emulator {
         request(options, responseCallback);
     }
 
+    public static zoomIn() {
+        let options: request.OptionsWithUrl = {
+            url: `${this.serviceUrl}/emulator/window/zoomIn`,
+            method: "POST"
+        };
+        request(options);
+    }
+    public static zoomOut() {
+        let options: request.OptionsWithUrl = {
+            url: `${this.serviceUrl}/emulator/window/zoomOut`,
+            method: "POST"
+        };
+        request(options);
+    }
+    public static zoomReset() {
+        let options: request.OptionsWithUrl = {
+            url: `${this.serviceUrl}/emulator/window/zoomReset`,
+            method: "POST"
+        };
+        request(options);
+    }
+
     public static quitAndInstall() {
         const settings = getSettings();
         let options: request.OptionsWithUrl = {
