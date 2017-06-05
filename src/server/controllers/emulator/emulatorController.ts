@@ -248,7 +248,7 @@ export class EmulatorController {
         windowManager.zoomIn();
     }
     static zoomOut = () => {
-        windowManager.zoomIn();
+        windowManager.zoomOut();
     }
     static zoomReset = () => {
         windowManager.zoomTo(0);
