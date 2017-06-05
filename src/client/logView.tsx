@@ -76,10 +76,10 @@ const emit = (val: any, className: string) => {
     if (!val) return null;
     if (val.hasOwnProperty('messageType') && val['messageType'] === 'link') {
         //return <div className={className}><a className={className} title={val.title} href={val.link}>{val.text}</a>&nbsp;</div>
-        return <span className={className}><a title={val.title} href={val.link}>{val.text}</a>&nbsp;</span>
+        return <span className={className} key={val.link}><a title={val.title} href={val.link}>{val.text}</a>&nbsp;</span>
     } else {
         let str = safeStringify(val);
-        return str.match(/\S+/g).map((s, i) => <span className={className}>{s}&nbsp;</span>);
+        return str.match(/\S+/g).map((s, i) => <span className={className} key={s + i}>{s}&nbsp;</span>);
     }
 }
 
