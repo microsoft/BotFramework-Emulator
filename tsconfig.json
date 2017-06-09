@@ -10,11 +10,18 @@
         "noImplicitAny": false,
         "noImplicitThis": true,
         "noEmitOnError": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "noUnusedLocals": true,
         "outDir": "app",
-        "removeComments": true
+        "removeComments": true,
+        "strict": true
     },
     "exclude": [
         "node_modules",
-        "app"
-    ]
+        "app",
+        "build",
+        "install"
+    ],
+    "compileOnSave": false
 }
