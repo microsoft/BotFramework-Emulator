@@ -198,12 +198,10 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
                         {this.renderNavTab("state", (<div>
                             <div className='emu-dialog-text'>
                                 Bots use the <a href="https://aka.ms/sw9dcl">Bot State service</a> to store and retrieve application data. The Bot Framework's bot state service has a size limit of 64KB. Custom state services may differ.
-                                <br />
-                                A value of zero means no limit.
                             </div>
                             <div className="input-group">
                                 <label className="form-label">
-                                    Size limit (KB):
+                                    Size limit (KB - zero for no limit):
                                 </label>
                                 <input
                                     type="number"
@@ -211,6 +209,7 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
                                     ref={ref => this.stateSizeLimitInputRef = ref}
                                     className="form-input appsettings-number-input appsettings-space-input"
                                     min={0}
+                                    max={4000000}
                                     defaultValue={String(serverSettings.framework.stateSizeLimit) || '64'} />
                             </div>
                         </div>) )}
