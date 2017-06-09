@@ -105,7 +105,7 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
             if (filenames && filenames.length) {
                 // TODO: validate selection
                 this.ngrokPathInputRef.value = filenames[0];
-                this.setState({ ngrokPath: filenames[0] })
+                this.setState({ ngrokPath: filenames[0] });
             }
         })
     }
