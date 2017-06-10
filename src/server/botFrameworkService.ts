@@ -63,7 +63,7 @@ export class BotFrameworkService extends RestServer {
     public getServiceUrl(botUrl: string) {
         if (this.bypassNgrokLocalhost && utils.isLocalhostUrl(botUrl))
             return this.localhostServiceUrl;
-        else {            
+        else {
             return ngrok.running()
                 ? this.ngrokServiceUrl || this.localhostServiceUrl
                 : this.localhostServiceUrl;
@@ -104,7 +104,7 @@ export class BotFrameworkService extends RestServer {
         this.ngrokPath = settings.framework.ngrokPath;
         const prevbypassNgrokLocalhost = this.bypassNgrokLocalhost;
         this.bypassNgrokLocalhost = settings.framework.bypassNgrokLocalhost;
-        this.localhostServiceUrl = `http://127.0.0.1:${port}`;
+        this.localhostServiceUrl = `http://localhost:${port}`;
         const startNgrok = () => {
             this.inspectUrl = null;
             this.ngrokServiceUrl = null;
@@ -124,7 +124,7 @@ export class BotFrameworkService extends RestServer {
                             log.debug("ngrok may already be running in a different process. ngrok's free tier allows only one instance at a time per host.");
                         }
                     } else {
-                        this.inspectUrl = `http://127.0.0.1:${inspectPort}`;
+                        this.inspectUrl = `http://localhost:${inspectPort}`;
                         this.ngrokServiceUrl = url;
                         log.debug(`ngrok listening on ${url}`);
                         log.debug('ngrok traffic inspector:', log.makeLinkMessage(this.inspectUrl, this.inspectUrl));
