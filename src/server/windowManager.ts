@@ -40,7 +40,6 @@ import { WindowStateAction } from './reducers/windowStateReducer';
 export class WindowManager {
     private mainWindow: Electron.BrowserWindow;
     private windows: Electron.BrowserWindow[];
-    private checkoutState: {};
 
     constructor() {
         this.windows = [];
@@ -110,8 +109,8 @@ export class WindowManager {
         page += '?' + payload;
 
         let checkoutWindow = new Electron.BrowserWindow({
-            width: 1000, 
-            height: 620, 
+            width: 1000,
+            height: 620,
             title: 'Checkout with Microsoft Emulator'
         });
         this.add(checkoutWindow);
@@ -120,7 +119,7 @@ export class WindowManager {
             settings: settings,
             serviceUrl: serviceUrl
         };
-        
+
         checkoutWindow.on('closed', () => {
             this.remove(checkoutWindow);
         });

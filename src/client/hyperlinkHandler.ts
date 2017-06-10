@@ -33,17 +33,15 @@
 
 import { shell } from 'electron';
 import * as URL from 'url';
-import * as path from 'path';
 import * as QueryString from 'querystring';
 import { InspectorActions, AddressBarActions } from './reducers';
-import { getSettings, selectedActivity$, deselectActivity } from './settings';
+import { getSettings, selectedActivity$ } from './settings';
 import { Settings as ServerSettings } from '../types/serverSettingsTypes';
 import { Emulator } from './emulator';
 import { PaymentEncoder } from '../shared/paymentEncoder';
 import * as log from './log';
 import * as Electron from 'electron';
 
-const {BrowserWindow} = require('electron').remote
 
 export function navigate(url: string) {
     try {
@@ -82,7 +80,7 @@ function navigateInspectUrl(params: string[]) {
             json = decodeURIComponent(encoded);
         } catch (e) {
             json = encoded;
-        }    
+        }
         try {
             obj = JSON.parse(json);
         } catch (e) {

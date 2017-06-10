@@ -32,8 +32,6 @@
 //
 
 import * as React from 'react';
-import { Reducer } from 'redux';
-import { IGenericActivity } from '../types/activityTypes';
 import { getSettings, addSettingsListener } from './settings';
 
 

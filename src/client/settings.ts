@@ -32,10 +32,10 @@
 //
 
 import * as Electron from 'electron';
-import { Store, createStore, combineReducers, Reducer, Action } from 'redux';
-import { Subscription, BehaviorSubject } from 'rxjs';
+import { Store, createStore, combineReducers, Action } from 'redux';
+import { BehaviorSubject } from 'rxjs';
 import { ActivityOrID } from '../types/activityTypes';
-import { ISettings as IServerSettings, Settings as ServerSettings } from '../types/serverSettingsTypes';
+import { Settings as ServerSettings } from '../types/serverSettingsTypes';
 import { InspectorActions, ConversationActions } from './reducers';
 import { loadSettings, saveSettings } from '../utils';
 import {
@@ -49,8 +49,7 @@ import {
     ServerSettingsActions,
     AddressBarActions
 } from './reducers';
-import { IBot, newBot } from '../types/botTypes';
-import { uniqueId } from '../utils';
+import { IBot } from '../types/botTypes';
 import * as log from './log';
 import { Emulator } from './emulator';
 

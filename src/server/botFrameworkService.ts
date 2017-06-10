@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Restify from 'restify';
 import { BotFrameworkAuthentication } from './botFrameworkAuthentication';
 import { ConversationsController } from './controllers/connector/conversationsController';
 import { AttachmentsController } from './controllers/connector/attachmentsController';
@@ -42,10 +41,7 @@ import { RestServer } from './restServer';
 import { getStore, getSettings, addSettingsListener } from './settings';
 import { Settings } from '../types/serverSettingsTypes';
 import * as log from './log';
-import * as Fs from 'fs';
-import * as path from 'path';
 import * as ngrok from './ngrok';
-import { makeLinkMessage } from './log';
 import { Emulator } from './emulator';
 import * as utils from '../utils';
 

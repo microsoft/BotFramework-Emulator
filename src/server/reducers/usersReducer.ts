@@ -72,6 +72,7 @@ export const usersReducer: Reducer<IUserSettings> = (
         }
         case 'Users_RemoveUsers': {
             //Object.assign({}, state, { }
+            return state;
         }
         default:
             return state;

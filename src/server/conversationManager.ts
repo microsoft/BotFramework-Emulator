@@ -33,22 +33,17 @@
 
 import * as request from 'request';
 import * as http from 'http';
-import * as ngrok from './ngrok';
 import * as Payment from '../types/paymentTypes';
 import { IUser } from '../types/userTypes';
-import { IConversationAccount } from '../types/accountTypes';
-import { IActivity, IConversationUpdateActivity, IMessageActivity, IContactRelationUpdateActivity, ITypingActivity, IInvokeActivity } from '../types/activityTypes';
+import { IActivity, IConversationUpdateActivity, IMessageActivity, IContactRelationUpdateActivity, IInvokeActivity } from '../types/activityTypes';
 import { PaymentEncoder } from '../shared/paymentEncoder';
-import { IAttachment, ICardAction } from '../types/attachmentTypes';
 import { ISpeechTokenInfo } from '../types/speechTypes';
 import { uniqueId } from '../utils';
-import { dispatch, getSettings, authenticationSettings, v30AuthenticationSettings, addSettingsListener, speechSettings } from './settings';
+import { dispatch, getSettings, v30AuthenticationSettings, addSettingsListener, speechSettings } from './settings';
 import { Settings } from '../types/serverSettingsTypes';
-import * as jwt from 'jsonwebtoken';
-import * as oid from './OpenIdMetadata';
 import * as HttpStatus from "http-status-codes";
 import * as ResponseTypes from '../types/responseTypes';
-import { ErrorCodes, IResourceResponse, IErrorResponse } from '../types/responseTypes';
+import { ErrorCodes, IResourceResponse } from '../types/responseTypes';
 import { emulator } from './emulator';
 import * as log from './log';
 import * as utils from '../utils';
@@ -209,7 +204,6 @@ export class Conversation {
         activity = Object.assign({}, activity);
         visitor.traverseActivity(activity);
         this.postage(settings.users.currentUserId, activity);
-        const botId = activity.from.id;
         if (!activity.from.name) {
             activity.from.name = "Bot";
         }
@@ -296,7 +290,7 @@ export class Conversation {
 
     public sendUpdateShippingAddressOperation(
             checkoutSession: Payment.ICheckoutConversationSession,
-            request: Payment.IPaymentRequest, 
+            request: Payment.IPaymentRequest,
             shippingAddress: Payment.IPaymentAddress,
             shippingOptionId: string,
             cb: (errCode, body) => void) {
@@ -312,7 +306,7 @@ export class Conversation {
 
     public sendUpdateShippingOptionOperation(
             checkoutSession: Payment.ICheckoutConversationSession,
-            request: Payment.IPaymentRequest, 
+            request: Payment.IPaymentRequest,
             shippingAddress: Payment.IPaymentAddress,
             shippingOptionId: string,
             cb: (errCode, body) => void) {
@@ -329,7 +323,7 @@ export class Conversation {
     private sendUpdateShippingOperation(
         checkoutSession: Payment.ICheckoutConversationSession,
         operation: string,
-        request: Payment.IPaymentRequest, 
+        request: Payment.IPaymentRequest,
         shippingAddress: Payment.IPaymentAddress,
         shippingOptionId: string,
         cb: (errCode, body) => void) {
@@ -338,13 +332,13 @@ export class Conversation {
             id: request.id,
             shippingAddress: shippingAddress,
             shippingOption: shippingOptionId,
-            details: request.details  
+            details: request.details
         };
         let serviceUrl;
         const settings = getSettings();
         const bot = settings.botById(this.botId);
         serviceUrl = emulator.framework.getServiceUrl(bot.botUrl);
-        
+
         const activity: IInvokeActivity = {
             type: 'invoke',
             name: operation,
@@ -367,13 +361,13 @@ export class Conversation {
 
     public sendPaymentCompleteOperation(
         checkoutSession: Payment.ICheckoutConversationSession,
-        request: Payment.IPaymentRequest, 
+        request: Payment.IPaymentRequest,
         shippingAddress: Payment.IPaymentAddress,
         shippingOptionId: string,
         payerEmail: string,
         payerPhone: string,
         cb: (errCode, body) => void) {
-        
+
         let paymentTokenHeader = {
             format: 2,
             merchantId: request.methodData[0].data.merchantId,
@@ -409,7 +403,7 @@ export class Conversation {
         const settings = getSettings();
         const bot = settings.botById(this.botId);
         serviceUrl = emulator.framework.getServiceUrl(bot.botUrl);
-        
+
         const activity: IInvokeActivity = {
             type: 'invoke',
             name: Payment.PaymentOperations.PaymentCompleteOperationName,
@@ -429,7 +423,7 @@ export class Conversation {
             cb(statusCode, responseBody);
         });
     }
-    
+
     public getSpeechToken(duration: number, cb: (tokenInfo: ISpeechTokenInfo) => void, refresh: boolean = false) {
         if (this.speechToken && !refresh) {
             cb(this.speechToken);
@@ -634,6 +628,8 @@ export class ConversationManager {
         const set = this.conversationSets.find(set => set.botId === botId);
         if (set) {
             return set.conversationById(conversationId);
+        } else {
+            return null;
         }
     }
 }

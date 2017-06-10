@@ -31,9 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import events = require('events');
 import request = require('request');
-import async = require('async');
 import { emulator } from './emulator';
 let getPem = require('rsa-pem-from-mod-exp');
 let base64url = require('base64url');

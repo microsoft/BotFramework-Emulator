@@ -34,14 +34,12 @@
 import * as React from 'react';
 import * as Splitter from 'react-split-pane';
 import * as BotChat from 'botframework-webchat';
-import * as log from './log';
-import { getSettings, settingsDefault, Settings, addSettingsListener, selectedActivity$ } from './settings';
-import { LayoutActions, InspectorActions, LogActions } from './reducers';
+import { getSettings, Settings, addSettingsListener, selectedActivity$ } from './settings';
+import { LayoutActions, InspectorActions } from './reducers';
 import { Settings as ServerSettings } from '../types/serverSettingsTypes';
 import { AddressBar } from './addressBar/addressBar';
 import { InspectorView } from './inspectorView'
 import { LogView } from './logView';
-import { uniqueId } from '../utils';
 import { IUser } from '../types/userTypes';
 import { AboutDialog } from './dialogs/aboutDialog';
 import { AppSettingsDialog } from './dialogs/appSettingsDialog';
@@ -50,7 +48,6 @@ import * as Constants from './constants';
 import { Emulator } from './emulator';
 import { BotEmulatorContext } from './botEmulatorContext';
 import { AddressBarOperators } from './addressBar/addressBarOperators';
-import { IBot, newBot } from '../types/botTypes';
 
 const remote = require('electron').remote;
 const ipcRenderer = require('electron').ipcRenderer;
@@ -166,7 +163,7 @@ export class MainView extends React.Component<{}, {}> {
                             this.settingsLoadUnsubscribe = undefined;
                         }
                     }
-                }); 
+                });
             }
         }
     }
@@ -181,7 +178,7 @@ export class MainView extends React.Component<{}, {}> {
             if(activeBot && !botContext.matchesBot(activeBot)) {
                 if (remote.dialog.showMessageBox({
                                 type: 'question',
-                                title: 'Connect to Bot', 
+                                title: 'Connect to Bot',
                                 message: 'Are you sure you want to update and connect to the bot at \'' + botContext.endpoint + '\'?',
                                 buttons: ['Yes', 'No'],
                                 defaultId: 0,

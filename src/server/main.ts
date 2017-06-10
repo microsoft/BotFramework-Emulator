@@ -38,9 +38,8 @@ import { WindowStateAction } from './reducers/windowStateReducer';
 import * as url from 'url';
 import * as path from 'path';
 import * as log from './log';
-import { Emulator, emulator } from './emulator';
+import { Emulator } from './emulator';
 import { WindowManager } from './windowManager';
-var pjson = require('../../package.json');
 
 process.on('uncaughtException', (error: Error) => {
     console.error(error);
@@ -68,7 +67,7 @@ Electron.app.on('will-finish-launching', (event, args) => {
     Electron.ipcMain.on('getUrls', (event, arg) => {
         openUrls.forEach(url => mainWindow.webContents.send('botemulator', url));
         openUrls = [];
-    });    
+    });
 
     // On Mac, a protocol handler invocation sends urls via this event
     Electron.app.on('open-url', onOpenUrl);
@@ -165,7 +164,7 @@ const createMainWindow = () => {
         windowManager.closeAll();
         mainWindow = null;
     });
-    
+
     mainWindow.on('restore', () => {
         if (windowIsOffScreen(mainWindow.getBounds())) {
             const bounds = mainWindow.getBounds();

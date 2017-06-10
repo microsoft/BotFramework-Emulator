@@ -32,7 +32,6 @@
 //
 
 import * as React from 'react';
-import { app } from 'electron';
 import * as Constants from '../constants';
 import { AddressBarActions } from '../reducers';
 import { getSettings, Settings, addSettingsListener } from '../settings';

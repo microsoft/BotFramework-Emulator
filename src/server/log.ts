@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as HttpStatus from "http-status-codes";
 import * as Restify from 'restify';
 import { Emulator } from './emulator';
 import { safeStringify } from '../utils';
@@ -96,7 +95,7 @@ export const api = (operation: string, req: Restify.Request, res: Restify.Respon
 }
 
 export const makeInspectorLink = (text: string, obj: any, title?: string): any => {
-    if (obj) {  
+    if (obj) {
         const json = safeStringify(obj);
         return makeLinkMessage(text, `emulator://inspect?obj=${encodeURIComponent(json)}`, title);
     } else {
