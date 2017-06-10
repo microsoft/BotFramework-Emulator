@@ -128,7 +128,7 @@ export const safeStringify = (o: any, space: string | number = undefined): strin
     }, space);
 }
 
-export const approximateObjectSize = (object: any) => {
+export const approximateObjectSize = (object: any, cache:any[] = []) => {
     switch (typeof object) {
         case 'boolean':
             return 4;
@@ -140,7 +140,13 @@ export const approximateObjectSize = (object: any) => {
             let bytes = 0;
             for (let i in object) {
                 let value = object[i];
-                bytes += approximateObjectSize(object[i]);
+                if (typeof value === 'object' && value !== null) {
+                    if (cache.indexOf(value) !== -1) {
+                        return;
+                    }
+                    cache.push(value);
+                }
+                bytes += approximateObjectSize(value, cache);
             }
             return bytes;
         default:
