@@ -117,7 +117,7 @@ export const settingsDefault: ISettings = {
     bots: [
         {
             "botId": "default-bot",
-            "botUrl": "http://127.0.0.1:3978/api/messages",
+            "botUrl": "http://localhost:3978/api/messages",
             "msaAppId": "",
             "msaPassword": ""
         }
