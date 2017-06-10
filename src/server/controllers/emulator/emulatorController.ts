@@ -34,15 +34,14 @@
 import * as Restify from 'restify';
 import * as HttpStatus from "http-status-codes";
 import { autoUpdater } from 'electron';
-import { getSettings, getStore } from '../../settings';
+import { getSettings } from '../../settings';
 import { emulator } from '../../emulator';
 import { RestServer } from '../../restServer';
 import { jsonBodyParser } from '../../jsonBodyParser';
 import * as ResponseTypes from '../../../types/responseTypes';
-import { ErrorCodes, IResourceResponse, IErrorResponse } from '../../../types/responseTypes';
+import { ErrorCodes } from '../../../types/responseTypes';
 import { IChannelAccount } from '../../../types/accountTypes';
 import { windowManager } from '../../main';
-import { IBot } from '../../../types/botTypes';
 import { Conversation } from '../../conversationManager';
 import * as Payment from '../../../types/paymentTypes';
 
@@ -226,8 +225,8 @@ export class EmulatorController {
             const conversation = getConversation(req.params.conversationId);
             const body: {
                 checkoutSession: Payment.ICheckoutConversationSession,
-                request: Payment.IPaymentRequest, 
-                shippingAddress: Payment.IPaymentAddress, 
+                request: Payment.IPaymentRequest,
+                shippingAddress: Payment.IPaymentAddress,
                 shippingOptionId: string,
                 payerEmail: string,
                 payerPhone: string } = req.body[0];

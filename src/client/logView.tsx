@@ -31,9 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Electron from 'electron';
 import * as React from 'react';
-import { Reducer, Unsubscribe } from 'redux';
+import { Unsubscribe } from 'redux';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { getSettings, addSettingsListener } from './settings';
 import { LogActions, WordWrapAction } from './reducers';
@@ -41,7 +40,7 @@ import * as Constants from './constants';
 import { safeStringify } from '../utils';
 
 const { remote } = require('electron');
-const { Menu, MenuItem } = remote;
+const { Menu } = remote;
 
 
 export enum Severity {

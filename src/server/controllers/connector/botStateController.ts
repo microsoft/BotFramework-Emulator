@@ -35,7 +35,7 @@ import * as Restify from 'restify';
 import * as HttpStatus from "http-status-codes";
 import * as ResponseTypes from '../../../types/responseTypes';
 import * as log from '../../log';
-import { ErrorCodes, IResourceResponse, IErrorResponse } from '../../../types/responseTypes';
+import { ErrorCodes } from '../../../types/responseTypes';
 import { RestServer } from '../../restServer';
 import { BotFrameworkAuthentication } from '../../botFrameworkAuthentication';
 import { jsonBodyParser } from '../../jsonBodyParser';
@@ -209,7 +209,6 @@ export class BotStateController {
             }
 
             let keys = Object.keys(this.botDataStore);
-            let userPostfix = `!${req.params.userId}`;
             for (let i = 0; i < keys.length; i++) {
                 let key = keys[i];
                 if (key.startsWith(`${activeBot.botId}!`) && key.endsWith(`!${req.params.userId}`)) {

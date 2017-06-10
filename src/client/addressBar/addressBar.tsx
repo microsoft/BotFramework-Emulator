@@ -32,11 +32,8 @@
 //
 
 import * as React from 'react';
-import { getSettings, ISettings } from '../settings';
-import { Settings as ServerSettings } from '../../types/serverSettingsTypes';
-import { AddressBarActions, ConversationActions, ServerSettingsActions } from '../reducers';
-import { IBot, newBot } from '../../types/botTypes';
-import * as log from '../log';
+import { getSettings } from '../settings';
+import { AddressBarActions } from '../reducers';
 import { AddressBarOperators } from './addressBarOperators';
 import { AddressBarStatus } from './addressBarStatus';
 import { AddressBarTextBox } from './addressBarTextBox';

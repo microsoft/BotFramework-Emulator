@@ -32,13 +32,11 @@
 //
 
 import * as Electron from 'electron';
-import * as Os from 'os';
-import { Store, Reducer, Dispatch, createStore, combineReducers, Action } from 'redux';
+import { Store, createStore, combineReducers, Action } from 'redux';
 import { frameworkReducer } from './reducers/frameworkReducer';
 import { botsReducer, activeBotReducer } from './reducers/botReducer';
 import { windowStateReducer } from './reducers/windowStateReducer';
 import { usersReducer } from './reducers/usersReducer';
-import { frameworkDefault } from '../types/serverSettingsTypes';
 import { loadSettings, saveSettings } from '../utils';
 import { IBot } from '../types/botTypes';
 import {

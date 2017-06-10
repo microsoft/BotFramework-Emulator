@@ -34,10 +34,7 @@
 import * as React from 'react';
 import { remote } from 'electron';
 import { getSettings, Settings, addSettingsListener } from '../settings';
-import { Settings as ServerSettings } from '../../types/serverSettingsTypes';
-import { AddressBarActions, ConversationActions, ServerSettingsActions } from '../reducers';
-import { IBot, newBot } from '../../types/botTypes';
-import * as log from '../log';
+import { AddressBarActions, ServerSettingsActions } from '../reducers';
 import * as path from 'path';
 import * as Constants from '../constants';
 

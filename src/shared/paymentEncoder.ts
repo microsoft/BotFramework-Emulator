@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IActivity  } from '../types/activityTypes';
 import * as Attachments from '../types/attachmentTypes';
 import { ActivityVisitor } from './activityVisitor';
 import { IPaymentRequest } from '../types/paymentTypes';

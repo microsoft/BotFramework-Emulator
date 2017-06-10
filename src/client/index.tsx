@@ -38,7 +38,6 @@ import * as ReactDOM from 'react-dom';
 import { webFrame } from 'electron';
 import { MainView } from './mainView';
 import * as Settings from './settings';
-import { uniqueId } from '../utils';
 import { navigate } from './hyperlinkHandler';
 import * as log from './log';
 

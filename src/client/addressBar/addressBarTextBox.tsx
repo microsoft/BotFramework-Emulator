@@ -32,11 +32,9 @@
 //
 
 import * as React from 'react';
-import { getSettings, ISettings, addSettingsListener } from '../settings';
-import { Settings as ServerSettings } from '../../types/serverSettingsTypes';
-import { AddressBarActions, ConversationActions, ServerSettingsActions } from '../reducers';
-import { IBot, newBot } from '../../types/botTypes';
-import * as log from '../log';
+import { getSettings, addSettingsListener } from '../settings';
+import { AddressBarActions } from '../reducers';
+import { newBot } from '../../types/botTypes';
 import { AddressBarOperators } from './addressBarOperators';
 
 
@@ -88,8 +86,8 @@ export class AddressBarTextBox extends React.Component<{}, {}> {
     }
 
     onBlur() {
-        const settings = getSettings();
-        const activeBot = (new ServerSettings(settings.serverSettings)).getActiveBot();
+        //const settings = getSettings();
+        //const activeBot = (new ServerSettings(settings.serverSettings)).getActiveBot();
         //if (activeBot) {
         //    AddressBarActions.setText(activeBot.botUrl);
         //}

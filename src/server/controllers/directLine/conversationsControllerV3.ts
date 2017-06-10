@@ -35,13 +35,11 @@ import * as Restify from 'restify';
 import * as HttpStatus from "http-status-codes";
 import { emulator } from '../../emulator';
 import { getSettings, dispatch } from '../../settings';
-import { uniqueId } from '../../../utils';
 import { IGenericActivity } from '../../../types/activityTypes';
 import { IAttachment } from '../../../types/attachmentTypes';
 import { IAttachmentData } from '../../../types/attachmentTypes';
 import { AttachmentsController } from '../connector/attachmentsController';
 import * as log from '../../log';
-import * as Os from 'os';
 import * as Fs from 'fs';
 import * as Formidable from 'formidable';
 import { RestServer } from '../../restServer';
@@ -190,7 +188,6 @@ export class ConversationsControllerV3 {
     static upload = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         const settings = getSettings();
         const activeBot = settings.getActiveBot();
-        const currentUser = settings.users.usersById[settings.users.currentUserId];
         if (activeBot) {
             const conversation = emulator.conversations.conversationById(activeBot.botId, req.params.conversationId);
             if (conversation) {

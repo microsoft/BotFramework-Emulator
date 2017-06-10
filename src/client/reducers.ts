@@ -35,16 +35,13 @@ import { Reducer } from 'redux';
 import { IBot } from '../types/botTypes';
 import { IUser } from '../types/userTypes';
 import { uniqueId } from '../utils';
-import { Emulator } from './emulator';
 import * as log from './log';
 import {
     ISettings as IServerSettings,
     Settings as ServerSettings
 } from '../types/serverSettingsTypes';
 import {
-    getSettings,
     dispatch,
-    ISettings,
     layoutDefault,
     addressBarDefault,
     conversationDefault,

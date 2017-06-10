@@ -33,19 +33,10 @@
 
 import * as React from 'react';
 import { getSettings, Settings, addSettingsListener } from '../settings';
-import { Settings as ServerSettings } from '../../types/serverSettingsTypes';
-import { AddressBarActions, ConversationActions, ServerSettingsActions } from '../reducers';
-import { IBot, newBot } from '../../types/botTypes';
+import { AddressBarActions } from '../reducers';
 import { IUser } from '../../types/userTypes';
-import * as log from '../log';
 import { uniqueId } from '../../utils';
 
-
-interface IConversationSettings {
-    conversationId: string,
-    users: IUser[],
-    currentUserId: string
-}
 
 export class ConversationSettingsDialog extends React.Component<{}, {}> {
     settingsUnsubscribe: any;
@@ -93,8 +84,6 @@ export class ConversationSettingsDialog extends React.Component<{}, {}> {
     render() {
         const settings = getSettings();
         if (!settings.addressBar.showConversationSettings) return null;
-        const serverSettings = settings.serverSettings;
-        let users
         return (
             <div>
                 <div className="dialog-background">

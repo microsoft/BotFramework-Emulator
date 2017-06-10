@@ -32,7 +32,6 @@
 //
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import * as Splitter from 'react-split-pane';
 import * as Payment from '../../types/paymentTypes';
 import * as Electron from 'electron';
 import { SelectShippingMethod } from './selectShippingMethod';
@@ -49,7 +48,6 @@ import { Button } from './button';
 import { CheckoutSettings } from './checkoutSettings';
 import { uniqueId } from '../../utils';
 
-const remote = require('electron').remote;
 
 export class CheckoutView extends React.Component<{}, ICheckoutViewState> {
     private local: ICheckoutViewState;
@@ -93,7 +91,7 @@ export class CheckoutView extends React.Component<{}, ICheckoutViewState> {
 
         this.emailChanged = this.emailChanged.bind(this);
         this.phoneChanged = this.phoneChanged.bind(this);
-        
+
         this.setShippingMethodSelectorIsVisible = this.setShippingMethodSelectorIsVisible.bind(this);
         this.getShippingMethodSelectorIsVisible = this.getShippingMethodSelectorIsVisible.bind(this);
         this.getSelectedShippingMethod = this.getSelectedShippingMethod.bind(this);
@@ -165,7 +163,7 @@ export class CheckoutView extends React.Component<{}, ICheckoutViewState> {
         let shippingOption = this.getSelectedShippingMethod();
         Emulator.updateShippingAddress(
             this.checkoutSession,
-            this.state.paymentRequest, 
+            this.state.paymentRequest,
             PaymentTypeConverter.convertAddress(value),
             shippingOption ? shippingOption.id : undefined,
             (err, statusCode: number, result: Payment.IPaymentRequestUpdateResult) => {
@@ -237,14 +235,14 @@ export class CheckoutView extends React.Component<{}, ICheckoutViewState> {
                 }
             });
         }
-        
+
         this.updatePaymentDetails(this.local.paymentRequest.details);
 
         Emulator.updateShippingOption(
             this.checkoutSession,
-            this.local.paymentRequest, 
+            this.local.paymentRequest,
             PaymentTypeConverter.convertAddress(this.local.selectedShippingAddress),
-            value.id, 
+            value.id,
             (err, statusCode: number, result: Payment.IPaymentRequestUpdateResult) => {
                 if (!err && result && result.details) {
                     this.updatePaymentDetails(result.details);
@@ -363,7 +361,7 @@ export class CheckoutView extends React.Component<{}, ICheckoutViewState> {
         this.local.paymentRequest.details = details;
         this.updateState(this.local);
     }
-    
+
     private updateState(update: any) {
         this.local = Object.assign({}, this.local, update);
         this.setState(this.local);
@@ -373,27 +371,27 @@ export class CheckoutView extends React.Component<{}, ICheckoutViewState> {
     }
 
     private showPayerNameValidationState(): boolean {
-        return this.state.isInValidationMode && this.state.paymentRequest.options.requestPayerName && 
+        return this.state.isInValidationMode && this.state.paymentRequest.options.requestPayerName &&
             !(this.state.selectedCreditCard && this.state.selectedCreditCard.cardholderName && this.state.selectedCreditCard.cardholderName.length);
     }
 
     private showShippingValidationState(): boolean {
-        return this.state.isInValidationMode && this.state.paymentRequest.options.requestShipping && 
+        return this.state.isInValidationMode && this.state.paymentRequest.options.requestShipping &&
             !this.state.selectedShippingAddress;
     }
 
     private showShippingOptionValidationState(): boolean {
-        return this.state.isInValidationMode && this.state.paymentRequest.options.requestShipping && 
+        return this.state.isInValidationMode && this.state.paymentRequest.options.requestShipping &&
             !this.getSelectedShippingMethod();
     }
 
     private showEmailValidationState(): boolean {
-        return this.state.isInValidationMode && this.state.paymentRequest.options.requestPayerEmail && 
+        return this.state.isInValidationMode && this.state.paymentRequest.options.requestPayerEmail &&
             !this.hasValue(this.state.emailAddress);
     }
 
     private showPhoneNumberValidationState(): boolean {
-        return this.state.isInValidationMode && this.state.paymentRequest.options.requestPayerPhone && 
+        return this.state.isInValidationMode && this.state.paymentRequest.options.requestPayerPhone &&
             !this.hasValue(this.state.phoneNumber);
     }
 

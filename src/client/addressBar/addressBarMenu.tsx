@@ -32,18 +32,13 @@
 //
 
 import * as React from 'react';
-import { getSettings, ISettings, addSettingsListener } from '../settings';
-import { Settings as ServerSettings } from '../../types/serverSettingsTypes';
-import { AddressBarActions, ConversationActions, ServerSettingsActions } from '../reducers';
+import { getSettings } from '../settings';
+import { AddressBarActions, ConversationActions } from '../reducers';
 import { Emulator } from '../emulator';
-import { IBot, newBot } from '../../types/botTypes';
-import * as log from '../log';
-import { AddressBarOperators } from './addressBarOperators';
 import * as Constants from '../constants';
-import { remote, app, shell } from 'electron';
-import { uniqueId } from '../../utils';
+import { remote } from 'electron';
 
-const { Menu, MenuItem } = remote;
+const { Menu } = remote;
 
 export class AddressBarMenu extends React.Component<{}, {}> {
 

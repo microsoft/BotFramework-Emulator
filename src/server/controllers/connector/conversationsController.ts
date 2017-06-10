@@ -36,11 +36,10 @@ import { IGenericActivity, IConversationParameters } from '../../../types/activi
 import { IUser } from '../../../types/userTypes';
 import { getSettings, getStore } from '../../settings';
 import { Emulator, emulator } from '../../emulator';
-import { uniqueId } from '../../../utils';
 import * as HttpStatus from "http-status-codes";
 import * as ResponseTypes from '../../../types/responseTypes';
-import { ErrorCodes, IResourceResponse, IErrorResponse } from '../../../types/responseTypes';
-import { IAttachmentData, IAttachmentInfo, IAttachmentView } from '../../../types/attachmentTypes';
+import { ErrorCodes, IResourceResponse } from '../../../types/responseTypes';
+import { IAttachmentData } from '../../../types/attachmentTypes';
 import { AttachmentsController } from './attachmentsController';
 import * as log from '../../log';
 import { RestServer } from '../../restServer';
@@ -294,8 +293,6 @@ export class ConversationsController {
             const activeBot = getSettings().getActiveBot();
             if (!activeBot)
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
-
-            let activity = <IGenericActivity>req.body;
 
             // look up conversation
             const conversation = emulator.conversations.conversationById(activeBot.botId, parms.conversationId);
