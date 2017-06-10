@@ -59,6 +59,10 @@
         border: 1px solid #ccc;
     }
 
+    input[type=number] {
+        text-align: right;
+    }
+
     input[type=checkbox]:checked {
         background: #3A96DD;
     }

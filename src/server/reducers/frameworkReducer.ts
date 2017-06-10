@@ -38,7 +38,9 @@ import { IFrameworkSettings, frameworkDefault } from '../../types/serverSettings
 export type FrameworkAction = {
     type: 'Framework_Set',
     state: {
-        ngrokPath: string
+        ngrokPath: string,
+        bypassNgrokLocalhost: boolean,
+        stateSizeLImit: number
     }
 }
 

@@ -14,8 +14,7 @@
         "noFallthroughCasesInSwitch": true,
         "noUnusedLocals": true,
         "outDir": "app",
-        "removeComments": true,
-        "strict": true
+        "removeComments": true
     },
     "exclude": [
         "node_modules",
