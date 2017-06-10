@@ -127,3 +127,30 @@ export const safeStringify = (o: any, space: string | number = undefined): strin
         return value;
     }, space);
 }
+
+export const approximateObjectSize = (object: any, cache:any[] = []) => {
+    switch (typeof object) {
+        case 'boolean':
+            return 4;
+        case 'number':
+            return 8;
+        case 'string':
+            return object.length * 2;
+        case 'object':
+            let bytes = 0;
+            for (let i in object) {
+                let value = object[i];
+                if (typeof value === 'object' && value !== null) {
+                    if (cache.indexOf(value) !== -1) {
+                        return;
+                    }
+                    cache.push(value);
+                }
+                bytes += approximateObjectSize(value, cache);
+            }
+            return bytes;
+        default:
+            //value is null, undefined, or a function
+            return 0;
+    }
+}
