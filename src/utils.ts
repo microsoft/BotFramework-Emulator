@@ -138,11 +138,13 @@ export const approximateObjectSize = (object: any, cache:any[] = []) => {
             return object.length * 2;
         case 'object':
             let bytes = 0;
+            cache.push(object);
             for (let i in object) {
                 let value = object[i];
+                //check for infinite recursion
                 if (typeof value === 'object' && value !== null) {
                     if (cache.indexOf(value) !== -1) {
-                        return;
+                        continue;
                     }
                     cache.push(value);
                 }
