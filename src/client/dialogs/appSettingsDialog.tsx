@@ -198,7 +198,7 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
                             </div>
                             <div className="input-group">
                                 <label className="form-label">
-                                    Size limit (KB - zero for no limit):
+                                    Size limit (zero for no limit):
                                 </label>
                                 <input
                                     type="number"
@@ -207,7 +207,7 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
                                     className="form-input appsettings-number-input appsettings-space-input"
                                     min={0}
                                     max={4000000}
-                                    defaultValue={String(serverSettings.framework.stateSizeLimit) || '64'} />
+                                    defaultValue={String(serverSettings.framework.stateSizeLimit) || '64'} /> KB
                             </div>
                         </div>) )}
                     </div>
