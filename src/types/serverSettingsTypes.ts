@@ -37,12 +37,15 @@ import { IUser } from '../types/userTypes';
 
 export interface IFrameworkSettings {
     // path to use for ngrok
-    ngrokPath?: string
+    ngrokPath?: string,
     // option for deciding whether to bypass ngrok for bots on localhost
-    bypassNgrokLocalhost?: boolean
+    bypassNgrokLocalhost?: boolean,
+    stateSizeLimit?: number,
 }
 
 export interface IWindowStateSettings {
+    displayId?: number,
+    zoomLevel?: number,
     top?: number,
     left?: number,
     width?: number,
@@ -87,10 +90,12 @@ export class Settings implements ISettings {
 
 export const frameworkDefault: IFrameworkSettings = {
     ngrokPath: '',
-    bypassNgrokLocalhost: true
+    bypassNgrokLocalhost: true,
+    stateSizeLimit: 64
 }
 
 export const windowStateDefault: IWindowStateSettings = {
+    zoomLevel: 0,
     width: 800,
     height: 600,
     left: 100,
@@ -112,7 +117,7 @@ export const settingsDefault: ISettings = {
     bots: [
         {
             "botId": "default-bot",
-            "botUrl": "http://127.0.0.1:3978/api/messages",
+            "botUrl": "http://localhost:3978/api/messages",
             "msaAppId": "",
             "msaPassword": ""
         }

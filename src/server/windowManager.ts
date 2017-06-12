@@ -34,11 +34,12 @@
 import * as Electron from 'electron';
 import * as URL from 'url';
 import * as path from 'path';
+import { getSettings, dispatch } from './settings';
+import { WindowStateAction } from './reducers/windowStateReducer';
 
 export class WindowManager {
     private mainWindow: Electron.BrowserWindow;
     private windows: Electron.BrowserWindow[];
-    private checkoutState: {};
 
     constructor() {
         this.windows = [];
@@ -75,6 +76,30 @@ export class WindowManager {
         }
     }
 
+    public zoomIn() {
+        let zoomLevel = getSettings().windowState.zoomLevel;
+        zoomLevel = Math.min(zoomLevel + 1, 8);
+        this.zoomTo(zoomLevel);
+    }
+    public zoomOut() {
+        let zoomLevel = getSettings().windowState.zoomLevel;
+        zoomLevel = Math.max(zoomLevel - 1, -4);
+        this.zoomTo(zoomLevel);
+    }
+    public zoomTo(zoomLevel) {
+        //triggering shortcut is global, check if a window is focused to get expected behavior
+        if (this.mainWindow.isFocused() || this.windows.find(wind => wind.isFocused())) {
+            this.mainWindow.webContents.setZoomLevel(zoomLevel);
+            this.windows.forEach(win => win.webContents.setZoomLevel(zoomLevel));
+            dispatch<WindowStateAction>({
+                type: 'Window_RememberZoomLevel',
+                state: {
+                    zoomLevel: zoomLevel
+                }
+            });
+        }
+    }
+
     public createCheckoutWindow(payload: string, settings: any, serviceUrl: string) {
         let page = URL.format({
             protocol: 'file',
@@ -84,16 +109,17 @@ export class WindowManager {
         page += '?' + payload;
 
         let checkoutWindow = new Electron.BrowserWindow({
-            width: 1000, 
-            height: 620, 
-            title: 'Checkout with Microsoft Emulator'});
+            width: 1000,
+            height: 620,
+            title: 'Checkout with Microsoft Emulator'
+        });
         this.add(checkoutWindow);
 
         checkoutWindow.webContents['checkoutState'] = {
             settings: settings,
             serviceUrl: serviceUrl
         };
-        
+
         checkoutWindow.on('closed', () => {
             this.remove(checkoutWindow);
         });
@@ -102,6 +128,8 @@ export class WindowManager {
 
         // Load a remote URL
         checkoutWindow.loadURL(page);
+
+        checkoutWindow.webContents.setZoomLevel(getSettings().windowState.zoomLevel);
     }
 
     public closeAll() {

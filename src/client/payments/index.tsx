@@ -33,15 +33,10 @@
 
 export = 0;     // this is required to work around a typescript bug in 2.2.1+
 
-import * as Electron from 'electron';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { webFrame } from 'electron';
 import { CheckoutView } from './checkoutView';
-import * as Settings from '../settings';
-import { uniqueId } from '../../utils';
 import { navigate } from '../hyperlinkHandler';
-import * as log from '../log';
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error) => {
     // log.error('[err-client]', error.message, error.stack);
@@ -51,9 +46,6 @@ window.onerror = (message: string, filename?: string, lineno?: number, colno?: n
     // log.error('[err-client]', message, filename, lineno, colno, error);
     return true; // prevent default handler
 }
-
-webFrame.setZoomLevel(1);
-webFrame.setZoomFactor(1);
 
 const interceptClickEvent = (e: Event) => {
     let target: any = e.target;

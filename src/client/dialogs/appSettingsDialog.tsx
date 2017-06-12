@@ -34,24 +34,34 @@
 import * as React from 'react';
 import { remote } from 'electron';
 import { getSettings, Settings, addSettingsListener } from '../settings';
-import { Settings as ServerSettings } from '../../types/serverSettingsTypes';
-import { AddressBarActions, ConversationActions, ServerSettingsActions } from '../reducers';
-import { IBot, newBot } from '../../types/botTypes';
-import * as log from '../log';
+import { AddressBarActions, ServerSettingsActions } from '../reducers';
 import * as path from 'path';
 import * as Constants from '../constants';
 
 
-interface IAppSettings {
+interface AppSettingsDialogState extends React.Props<AppSettingsDialog> {
+    curTab?: string,
     ngrokPath?: string,
-    bypassNgrokLocalhost?: boolean
 }
 
-export class AppSettingsDialog extends React.Component<{}, { ngrokPath: string }> {
+export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogState> {
     settingsUnsubscribe: any;
     ngrokPathInputRef: any;
+    stateSizeLimitInputRef: any;
     bypassNgrokLocalhostInputRef: any;
     showing: boolean;
+
+    constructor(props) {
+        super(props);
+        let serverSettings = getSettings().serverSettings;
+        let ngrokPath = (serverSettings.framework && serverSettings.framework.ngrokPath) ?
+            serverSettings.framework.ngrokPath : null;
+
+        this.state = {
+            curTab: "service",
+            ngrokPath: ngrokPath,
+        };
+    }
 
     pageClicked = (ev: Event) => {
         if (ev.defaultPrevented)
@@ -71,7 +81,8 @@ export class AppSettingsDialog extends React.Component<{}, { ngrokPath: string }
     onAccept = () => {
         ServerSettingsActions.remote_setFrameworkServerSettings({
             ngrokPath: this.ngrokPathInputRef.value,
-            bypassNgrokLocalhost: this.bypassNgrokLocalhostInputRef.checked
+            bypassNgrokLocalhost: this.bypassNgrokLocalhostInputRef.checked,
+            stateSizeLimit: this.stateSizeLimitInputRef.value
         });
         AddressBarActions.hideAppSettings();
     }
@@ -111,6 +122,27 @@ export class AppSettingsDialog extends React.Component<{}, { ngrokPath: string }
         this.settingsUnsubscribe();
     }
 
+    private renderNavItem(name: string, contents: string): JSX.Element {
+        let classStr = "emu-navitem";
+        classStr += this.state.curTab === name ? " emu-navitem-selected" : "";
+        return <li>
+            <a id={name + "-nav"}
+                className={classStr}
+                onClick={() => this.setState({curTab: name})}
+                >
+                {contents}
+            </a>
+        </li>
+    }
+
+    private renderNavTab(name: string, contents: JSX.Element) {
+        let classStr = "emu-tab ";
+        classStr += this.state.curTab === name ? "emu-visible" : "emu-hidden";
+        return (<div className={classStr}>
+            {contents}
+        </div>)
+    }
+
     render() {
         const settings = getSettings();
         if (!settings.addressBar.showAppSettings) return null;
@@ -124,20 +156,15 @@ export class AppSettingsDialog extends React.Component<{}, { ngrokPath: string }
                     <div className="dialog-closex" onClick={() => this.onClose()} dangerouslySetInnerHTML={{ __html: Constants.clearCloseIcon("", 24) }} />
                     <div className="appsettings-lowerpane">
                         <ul className="emu-navbar">
-                            <li>
-                                <a href="javascript:void(0)"
-                                    className={"emu-navitem emu-navitem-selected"}
-                                    >
-                                    ngrok
-                                </a>
-                            </li>
+                            {this.renderNavItem("service", "Service")}
+                            {this.renderNavItem("state", "Bot State")}
                         </ul>
                         <hr className='enu-navhdr' />
-                        <div className={"emu-tab emu-visible"}>
+                        {this.renderNavTab("service", (<div>
                             <div className='emu-dialog-text'>
-                            <a title='https://ngrok.com' href='https://ngrok.com'>ngrok</a> is network tunneling software.
-                            The Bot Framework Emulator works with ngrok to communicate with bots hosted remotely.
-                            Read the <a title='https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)' href='https://aka.ms/szvi68'>wiki page</a> to learn more about using ngrok and to download it.
+                                <a title='https://ngrok.com' href='https://ngrok.com'>ngrok</a> is network tunneling software.
+                                The Bot Framework Emulator works with ngrok to communicate with bots hosted remotely.
+                                Read the <a title='https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)' href='https://aka.ms/szvi68'>wiki page</a> to learn more about using ngrok and to download it.
                             </div>
                             <div className="input-group">
                                 <label className="form-label">
@@ -145,6 +172,7 @@ export class AppSettingsDialog extends React.Component<{}, { ngrokPath: string }
                                 </label>
                                 <input
                                     type="text"
+                                    name="ngrokPath"
                                     ref={ref => this.ngrokPathInputRef = ref}
                                     className="form-input appsettings-path-input appsettings-ngrokpath-input"
                                     defaultValue={`${serverSettings.framework.ngrokPath || ''}`}
@@ -155,14 +183,33 @@ export class AppSettingsDialog extends React.Component<{}, { ngrokPath: string }
                                 <label className="form-label clickable">
                                     <input
                                         type="checkbox"
+                                        name="bypassNgrokLocalhost"
                                         ref={ref => this.bypassNgrokLocalhostInputRef = ref}
                                         className="form-input"
                                         defaultChecked={ serverSettings.framework.bypassNgrokLocalhost }
-                                        disabled={ this.state ? !this.state.ngrokPath : !serverSettings.framework.ngrokPath } />
+                                        disabled={!(this.state.ngrokPath !== null ? this.state.ngrokPath : serverSettings.framework.ngrokPath)} />
                                     Bypass ngrok for local addresses
                                 </label>
                             </div>
-                        </div>
+                        </div>) )}
+                        {this.renderNavTab("state", (<div>
+                            <div className='emu-dialog-text'>
+                                Bots use the <a href="https://aka.ms/sw9dcl">Bot State service</a> to store and retrieve application data. The Bot Framework's bot state service has a size limit of 64KB. Custom state services may differ.
+                            </div>
+                            <div className="input-group">
+                                <label className="form-label">
+                                    Size limit (KB - zero for no limit):
+                                </label>
+                                <input
+                                    type="number"
+                                    name="stateStorage"
+                                    ref={ref => this.stateSizeLimitInputRef = ref}
+                                    className="form-input appsettings-number-input appsettings-space-input"
+                                    min={0}
+                                    max={4000000}
+                                    defaultValue={String(serverSettings.framework.stateSizeLimit) || '64'} />
+                            </div>
+                        </div>) )}
                     </div>
                     <div className="dialog-buttons">
                         <button className="appsettings-savebtn" onClick={() => this.onAccept()}>Save</button>

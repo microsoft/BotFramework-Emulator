@@ -43,7 +43,7 @@ interface ISelectorItemProps {
 class SelectorItem extends React.Component<ISelectorItemProps, {}> {
     constructor(props) {
         super(props);
-    
+
         this.select = this.select.bind(this);
         this.remove = this.remove.bind(this);
     }
@@ -63,7 +63,7 @@ class SelectorItem extends React.Component<ISelectorItemProps, {}> {
     render() {
         let renderedItem = React.createElement(this.props.class, { item: this.props.item });
         let removeButton;
-        
+
         if (this.props.remove) {
             removeButton = (<div className='remove-item' onClick={this.remove} dangerouslySetInnerHTML={{ __html: Constants.removeIcon('', 20) }}></div>);
         }
@@ -93,7 +93,6 @@ export class SelectorComponent<TItem> extends React.Component<{
     private left: string;
     private width: string;
     private itemComponentType: any;
-    private addItemComponentType: any;
 
     constructor(props, itemComponentType?) {
         super(props);
@@ -157,7 +156,7 @@ export class SelectorComponent<TItem> extends React.Component<{
                         <div className='add-item'>{this.props.addItemLabel}</div>
                     </div>);
             }
-            
+
             if (selectorList.length > 0) {
                 contents = (
                     <div className='selector-items grow' style={{top: this.top, width: this.width, left: this.left}}>
@@ -169,11 +168,11 @@ export class SelectorComponent<TItem> extends React.Component<{
         let labelElement = undefined;
         let selectedItem = this.props.getSelectedItem();
         if (selectedItem) {
-            labelElement = React.createElement(this.itemComponentType, { item: selectedItem }); 
+            labelElement = React.createElement(this.itemComponentType, { item: selectedItem });
         } else if (this.props.placeholder) {
             labelElement = (<div className='placeholder-text'>{this.props.placeholder}</div>)
         }
-        
+
         return (<div className={'checkout-selector ' + (this.props.classes ? this.props.classes : '')} onClick={this.toggle}>
                     <div className='selected-item-label-container'>
                         <div className='selected-item-label'>{labelElement}</div>

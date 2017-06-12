@@ -35,16 +35,13 @@ import { Reducer } from 'redux';
 import { IBot } from '../types/botTypes';
 import { IUser } from '../types/userTypes';
 import { uniqueId } from '../utils';
-import { Emulator } from './emulator';
 import * as log from './log';
 import {
     ISettings as IServerSettings,
     Settings as ServerSettings
 } from '../types/serverSettingsTypes';
 import {
-    getSettings,
     dispatch,
-    ISettings,
     layoutDefault,
     addressBarDefault,
     conversationDefault,
@@ -356,7 +353,8 @@ export class ServerSettingsActions {
     }
     static remote_setFrameworkServerSettings(state: {
         ngrokPath: string,
-        bypassNgrokLocalhost: boolean
+        bypassNgrokLocalhost: boolean,
+        stateSizeLimit: number
     }) {
         serverChangeSetting('Framework_Set', state);
     }
