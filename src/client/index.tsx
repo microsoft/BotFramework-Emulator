@@ -41,8 +41,7 @@ import * as Settings from './settings';
 import { navigate } from './hyperlinkHandler';
 import * as log from './log';
 
-
-process.on('uncaughtException', (error) => {
+(process as NodeJS.EventEmitter).on('uncaughtException', (error) => {
     log.error('[err-client]', error.message, error.stack);
 });
 

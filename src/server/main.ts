@@ -41,7 +41,7 @@ import * as log from './log';
 import { Emulator } from './emulator';
 import { WindowManager } from './windowManager';
 
-process.on('uncaughtException', (error: Error) => {
+(process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
     console.error(error);
     log.error('[err-server]', error.message.toString(), JSON.stringify(error.stack));
 });
@@ -109,9 +109,6 @@ const createMainWindow = () => {
             height: initBounds.height,
             x: initBounds.x,
             y: initBounds.y,
-            webPreferences: {
-                directWrite: false
-            }
         });
     mainWindow.setTitle(windowTitle);
     windowManager = new WindowManager();
@@ -120,7 +117,7 @@ const createMainWindow = () => {
 
     if (process.platform === 'darwin') {
         // Create the Application's main menu
-        var template: Electron.MenuItemOptions[] = [
+        var template: Electron.MenuItemConstructorOptions[] = [
             {
                 label: windowTitle,
                 submenu: [
@@ -145,21 +142,28 @@ const createMainWindow = () => {
         Menu.setApplicationMenu(null);
     }
 
-    ['resize', 'move'].forEach((e) => {
-        mainWindow.on(e, () => {
-            const bounds = mainWindow.getBounds();
-            dispatch<WindowStateAction>({
-                type: 'Window_RememberBounds',
-                state: {
-                    displayId: Electron.screen.getDisplayMatching(bounds).id,
-                    width: bounds.width,
-                    height: bounds.height,
-                    left: bounds.x,
-                    top: bounds.y
-                }
-            });
+    const rememberBounds = () => {
+        const bounds = mainWindow.getBounds();
+        dispatch<WindowStateAction>({
+            type: 'Window_RememberBounds',
+            state: {
+                displayId: Electron.screen.getDisplayMatching(bounds).id,
+                width: bounds.width,
+                height: bounds.height,
+                left: bounds.x,
+                top: bounds.y
+            }
         });
+    }
+
+    mainWindow.on('resize', () => {
+        rememberBounds();
     });
+
+    mainWindow.on('move', () => {
+        rememberBounds();
+    });
+
     mainWindow.on('closed', function () {
         windowManager.closeAll();
         mainWindow = null;

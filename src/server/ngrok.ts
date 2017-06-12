@@ -151,7 +151,7 @@ function runNgrok(opts, cb) {
 		return emitter.emit('close');
 	});
 
-	process.on('exit', function () {
+	(process as NodeJS.EventEmitter).on('exit', function () {
 		kill(null);
 	});
 }

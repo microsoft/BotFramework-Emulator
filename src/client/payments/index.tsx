@@ -38,8 +38,7 @@ import * as ReactDOM from 'react-dom';
 import { CheckoutView } from './checkoutView';
 import { navigate } from '../hyperlinkHandler';
 
-
-process.on('uncaughtException', (error) => {
+(process as NodeJS.EventEmitter).on('uncaughtException', (error) => {
     // log.error('[err-client]', error.message, error.stack);
 });
 

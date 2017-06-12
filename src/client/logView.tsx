@@ -177,7 +177,7 @@ export class LogView extends React.Component<{}, ILogViewState> {
     }
 
     showMenu() {
-        const template: Electron.MenuItemOptions[] = [
+        const template: Electron.MenuItemConstructorOptions[] = [
             {
                 label: 'Clear log',
                 click: () => LogActions.clear()
