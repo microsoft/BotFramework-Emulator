@@ -1,36 +1,29 @@
 var gulp = require('gulp');
-var clean = require('gulp-clean');
-var tsc = require('gulp-tsc');
 
 gulp.task('clean', function () {
+    var clean = require('gulp-clean');
     return gulp.src('./app/', { read: false })
         .pipe(clean());
 });
 
-gulp.task('build-app', ['clean'], function () {
+gulp.task('build-app', function () {
+    var tsc = require('gulp-tsc');
+    var tsconfig = require('./tsconfig.json');
     return gulp.src(['src/**/*.ts', 'src/**/*.tsx'])
-        .pipe(tsc({
-            module: 'commonjs',
-            moduleResolution: 'node',
-            target: 'es6',
-            sourceMap: true,
-            noImplicitAny: false,
-            noImplicitThis: true,
-            noEmitOnError: true,
-            noImplicitReturns: true,
-            noFallthroughCasesInSwitch: true,
-            noUnusedLocals: true,
-            outDir: 'app',
-            additionalTscParameters: ['--jsx', 'react']
-        }))
+        .pipe(tsc(tsconfig.compilerOptions))
         .pipe(gulp.dest('app/'));
 });
 
-gulp.task('copy-site', ['build-app'], function () {
+gulp.task('build-site', function () {
     return gulp.src([
         './src/**/*.html',
         './src/**/*.css'])
         .pipe(gulp.dest('app/'));
 });
 
-gulp.task('default', ['copy-site']);
+gulp.task('build', ['clean'], function() {
+    return gulp.start([
+        'build-app',
+        'build-site'
+    ]);
+});
