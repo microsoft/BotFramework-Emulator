@@ -17,6 +17,9 @@ gulp.task('build-app', ['clean'], function () {
             noImplicitAny: false,
             noImplicitThis: true,
             noEmitOnError: true,
+            noImplicitReturns: true,
+            noFallthroughCasesInSwitch: true,
+            noUnusedLocals: true,
             outDir: 'app',
             additionalTscParameters: ['--jsx', 'react']
         }))
