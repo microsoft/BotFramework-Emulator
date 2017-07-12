@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { getSettings, authenticationSettings, v30AuthenticationSettings } from './settings';
+import { getSettings, authenticationSettings, v31AuthenticationSettings } from './settings';
 import * as jwt from 'jsonwebtoken';
 import * as oid from './OpenIdMetadata';
 import * as Restify from 'restify';
@@ -41,7 +41,7 @@ export class BotFrameworkAuthentication {
     private openIdMetadata: oid.OpenIdMetadata;
 
     constructor() {
-        this.openIdMetadata = new oid.OpenIdMetadata(v30AuthenticationSettings.openIdMetadata);
+        this.openIdMetadata = new oid.OpenIdMetadata(v31AuthenticationSettings.openIdMetadata);
     }
 
     public verifyBotFramework = (req: Restify.Request, res: Restify.Response, next: Restify.Next): void => {
@@ -73,8 +73,8 @@ export class BotFrameworkAuthentication {
                             // fall back to v3.0 token characteristics
                             let verifyOptions = {
                                 jwtId: activeBot.botId,
-                                issuer: v30AuthenticationSettings.tokenIssuer,
-                                audience: v30AuthenticationSettings.tokenAudience,
+                                issuer: v31AuthenticationSettings.tokenIssuer,
+                                audience: activeBot.msaAppId, // v31AuthenticationSettings.tokenAudience
                                 clockTolerance: 300
                             };
 
