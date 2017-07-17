@@ -518,7 +518,7 @@ export class Conversation {
                     client_id: bot.msaAppId,
                     client_secret: bot.msaPassword,
                     scope: bot.msaAppId + '/.default', // v31AuthenticationSettings.tokenScope
-                    //atver: 1
+                    atver: 1
                 },
                 agent: emulator.proxyAgent,
                 strictSSL: false
