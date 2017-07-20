@@ -108,7 +108,7 @@ const createMainWindow = () => {
             width: initBounds.width,
             height: initBounds.height,
             x: initBounds.x,
-            y: initBounds.y,
+            y: initBounds.y
         });
     mainWindow.setTitle(windowTitle);
     windowManager = new WindowManager();
@@ -229,6 +229,7 @@ Electron.app.on('window-all-closed', function () {
         Electron.app.quit();
     }
 });
+
 Electron.app.on('activate', function () {
     if (mainWindow === null) {
         createMainWindow();
@@ -237,3 +238,4 @@ Electron.app.on('activate', function () {
 
 // Do this last, otherwise startup bugs are harder to diagnose.
 require('electron-debug')();
+

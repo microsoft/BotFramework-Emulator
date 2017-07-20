@@ -1,4 +1,4 @@
-botframework-emulator@3.5.31-alpha (MIT)
+botframework-emulator@3.5.31 (MIT)
 
   Copyright (c) Microsoft Corporation
   

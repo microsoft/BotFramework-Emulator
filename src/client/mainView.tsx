@@ -48,7 +48,10 @@ import * as Constants from './constants';
 import { Emulator } from './emulator';
 import { BotEmulatorContext } from './botEmulatorContext';
 import { AddressBarOperators } from './addressBar/addressBarOperators';
+import * as log from './log';
+import { ISpeechTokenInfo } from '../types/speechTypes';
 
+const CognitiveServices = require('../../node_modules/botframework-webchat/CognitiveServices');
 const remote = require('electron').remote;
 const ipcRenderer = require('electron').ipcRenderer;
 
@@ -248,7 +251,14 @@ export class MainView extends React.Component<{}, {}> {
                 selectedActivity: selectedActivity$() as any,
                 user: this.getCurrentUser(settings.serverSettings),
                 bot: { name: "Bot", id: activeBot.botId },
-                resize: 'detect'
+                resize: 'detect',
+                speechOptions: {
+                    speechRecognizer: new CognitiveServices.SpeechRecognizer({
+                        fetchCallback: this.fetchSpeechToken.bind(this),
+                        fetchOnExpiryCallback: this.fetchSpeechTokenOnExpiry.bind(this)
+                    }),
+                    speechSynthesizer: new BotChat.Speech.BrowserSpeechSynthesizer()
+                }
             }
             InspectorActions.clear();
             return <div className="wc-app" ref={ref => this.initBotChatContainerRef(ref, initialWidth)}><BotChat.Chat key={this.reuseKey} {...props} /></div>
@@ -259,6 +269,35 @@ export class MainView extends React.Component<{}, {}> {
                 </div>
             );
         }
+    }
+
+    private fetchSpeechToken(authIdEvent: string): Promise<string> {
+        return this.getSpeechToken(authIdEvent, false);
+    }
+
+    private fetchSpeechTokenOnExpiry(authIdEvent: string): Promise<string> {
+        return this.getSpeechToken(authIdEvent, true);
+    }
+
+    private getSpeechToken(authIdEvent: string, refresh: boolean = false): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            let message = refresh ? 'refreshSpeechToken' : 'getSpeechToken';
+            // Electron 1.7.2 @types incorrectly specifies sendSync having a void return type, so cast result to `any`.
+            let speechToken = ipcRenderer.sendSync(message, this.conversationId) as any as ISpeechTokenInfo;
+            if (speechToken) {
+                if (speechToken.access_Token) {
+                    resolve(speechToken.access_Token);
+                    return;
+                } else {
+                    log.warn('Could not retrieve Cognitive Services speech token');
+                    log.warn('Error: ' + speechToken.error);
+                    log.warn('Details: ' + speechToken.error_Description);
+                }
+            } else {
+                log.error('Could not retrieve Cognitive Services speech token.');
+            }
+            resolve();
+        });
     }
 
     render() {
