@@ -70,11 +70,11 @@ export class BotFrameworkAuthentication {
                         jwt.verify(token, key, verifyOptions);
                     } catch (err) {
                         try {
-                            // fall back to v3.0 token characteristics
+                            // fall back to v3.1 token characteristics
                             let verifyOptions = {
                                 jwtId: activeBot.botId,
                                 issuer: v31AuthenticationSettings.tokenIssuer,
-                                audience: activeBot.msaAppId, // v31AuthenticationSettings.tokenAudience
+                                audience: activeBot.msaAppId,
                                 clockTolerance: 300
                             };
 

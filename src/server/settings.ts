@@ -148,11 +148,9 @@ export const authenticationSettings = {
 }
 
 export const v31AuthenticationSettings = {
-    tokenEndpoint: 'https://login.microsoftonline.com/botframework.com/oauth2/v2.0/token', //?dc=prod-dms-first', //?dc=PROD-WST-TEST, //&atver=1,
-    //tokenScope: 'https://api.botframework.com/.default',  //  appid/.default
+    tokenEndpoint: 'https://login.microsoftonline.com/botframework.com/oauth2/v2.0/token',
     openIdMetadata: 'https://login.microsoftonline.com/botframework.com/v2.0/.well-known/openid-configuration',
     tokenIssuer: 'https://sts.windows.net/d6d49420-f39b-4df7-a1dc-d59a935871db/',
-    //tokenAudience: <bots app id>,
     stateEndpoint: 'https://state.botframework.com'
 }
 
