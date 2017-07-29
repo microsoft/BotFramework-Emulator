@@ -44,6 +44,7 @@
     "del": "2.2.2",
     "electron": "1.7.5",
     "electron-builder": "19.17.0",
+    "electron-builder-squirrel-windows": "^19.18.0",
     "electron-packager": "8.6.0",
     "electron-react-devtools": "0.4.0",
     "electron-winstaller": "2.5.2",
@@ -107,7 +108,7 @@
       "remoteReleases": "https://github.com/Microsoft/BotFramework-Emulator"
     },
     "directories": {
-        "output": "install"
+      "output": "install"
     },
     "files": [
       "**/*",
