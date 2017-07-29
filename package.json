@@ -94,7 +94,6 @@
   },
   "build": {
     "asar": false,
-    "nutsServer": "emulator.botframework.com",
     "appId": "com.electron.botframework-emulator",
     "copyright": "Copyright © 2017 Microsoft",
     "mac": {
@@ -107,6 +106,9 @@
     "squirrelWindows": {
       "loadingGif": "build/bf-splash.gif",
       "remoteReleases": "https://github.com/Microsoft/BotFramework-Emulator"
+    },
+    "directories": {
+        "output": "install"
     },
     "files": [
       "**/*",
@@ -121,8 +123,5 @@
       "!**/{tsconfig.json,gulpfile.js,index.tsx,README.md,getlicenses.cmd}",
       "!**/node_modules/@types"
     ]
-  },
-  "directories": {
-    "output": "install"
   }
 }
