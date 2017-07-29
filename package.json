@@ -42,7 +42,7 @@
     "@types/request": "0.0.31",
     "@types/restify": "2.0.38",
     "del": "2.2.2",
-    "electron": "1.7.4",
+    "electron": "1.7.5",
     "electron-builder": "8.7.0",
     "electron-packager": "8.6.0",
     "electron-react-devtools": "0.4.0",
