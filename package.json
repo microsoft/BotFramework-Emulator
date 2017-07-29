@@ -36,7 +36,7 @@
     "@types/jsonwebtoken": "7.2.0",
     "@types/mkdirp": "0.3.29",
     "@types/node": "6.0.60",
-    "@types/react": "15.0.38",
+    "@types/react": "15.6.0",
     "@types/react-dom": "0.14.23",
     "@types/react-split-pane": "0.1.5",
     "@types/request": "0.0.31",
