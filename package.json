@@ -93,7 +93,6 @@
     "xtend": "4.0.1"
   },
   "build": {
-    "asar": false,
     "appId": "com.electron.botframework-emulator",
     "copyright": "Copyright © 2017 Microsoft",
     "mac": {
