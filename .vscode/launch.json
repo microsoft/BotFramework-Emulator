@@ -22,7 +22,7 @@
                 "NODE_ENV": "development"
             },
             "sourceMaps": true,
-            "protocol": "legacy"
+            "protocol": "inspector"
         }
     ]
 }
