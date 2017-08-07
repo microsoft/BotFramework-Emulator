@@ -290,8 +290,10 @@ export class MainView extends React.Component<{}, {}> {
                     return;
                 } else {
                     log.warn('Could not retrieve Cognitive Services speech token');
-                    log.warn('Error: ' + speechToken.error);
-                    log.warn('Details: ' + speechToken.error_Description);
+                    if (typeof speechToken.error === 'string')
+                        log.warn('Error: ' + speechToken.error);
+                    if (typeof speechToken.error_Description === 'string')
+                        log.warn('Details: ' + speechToken.error_Description);
                 }
             } else {
                 log.error('Could not retrieve Cognitive Services speech token.');
