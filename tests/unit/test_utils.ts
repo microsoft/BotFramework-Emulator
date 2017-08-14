@@ -17,9 +17,9 @@ describe("Utils", function() {
         });
 
         it("returns false for other urls", function() {
-            utils.isLocalhostUrl("https://google.com").should.equal(false);
-            utils.isLocalhostUrl("http://google.com/localhost").should.equal(false);
-            utils.isLocalhostUrl("http://google.com").should.equal(false);
+            utils.isLocalhostUrl("https://example.com").should.equal(false);
+            utils.isLocalhostUrl("http://example.com/localhost").should.equal(false);
+            utils.isLocalhostUrl("http://example.com").should.equal(false);
             utils.isLocalhostUrl("http://981.89.1.1").should.equal(false);
         });
 
@@ -32,18 +32,18 @@ describe("Utils", function() {
 
     describe("isSecureUrl", function() {
         it("returns true for https urls", function() {
-            utils.isSecuretUrl("https://google.com").should.equal(true);
+            utils.isSecuretUrl("https://example.com").should.equal(true);
             utils.isSecuretUrl("https://localhost:2728/api/messages").should.equal(true);
         });
 
         it("returns false for http urls", function() {
-            utils.isSecuretUrl("http://google.com").should.equal(false);
+            utils.isSecuretUrl("http://example.com").should.equal(false);
             utils.isSecuretUrl("http://localhost:2728/api/messages").should.equal(false);
         });
 
         it("returns false for non url strings", function() {
             utils.isSecuretUrl("stringstringstring").should.equal(false);
-            utils.isSecuretUrl("http is hypertext transfer protocal").should.equal(false);
+            utils.isSecuretUrl("http is hypertext transfer protocol").should.equal(false);
             utils.isSecuretUrl("localhost").should.equal(false);
         });
     });

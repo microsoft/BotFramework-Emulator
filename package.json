@@ -45,6 +45,8 @@
     "@types/react-split-pane": "0.1.5",
     "@types/request": "0.0.31",
     "@types/restify": "2.0.38",
+    "chai": "4.0.2",
+    "chai-as-promised": "7.1.1",
     "cross-env": "5.0.1",
     "del": "2.2.2",
     "electron": "1.7.5",
