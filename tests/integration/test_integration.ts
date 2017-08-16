@@ -46,8 +46,8 @@ describe("App", function(this: any) {
             .browserWindow.getTitle().should.eventually.equal("Bot Framework Channel Emulator");
     });
 
-    // it("tests initial zoom level", function() {
-    //     return app.client.waitUntilWindowLoaded()
-    //         .webContents.getZoomLevel((level) => {level.should.eventually.equal(0)});
-    // });
+    it("tests initial zoom level", function() {
+        return app.client.waitUntilWindowLoaded()
+            .webContents.getZoomLevel((level) => {return level.should.eventually.equal(0)});
+    });
 })
