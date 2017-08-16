@@ -232,12 +232,12 @@ export class MainView extends React.Component<{}, {}> {
         }
     }
 
-    initBotChatContainerRef(ref, initialWidth) {
+    initBotChatContainerRef(ref, initialWidth:number) {
         this.botChatContainer = ref;
         this.updateBotChatContainerCSS(initialWidth);
     }
 
-    botChatComponent(initialWidth) {
+    botChatComponent(initialWidth:number) {
         if (this.directline) {
             const settings = getSettings();
             const srvSettings = new ServerSettings(settings.serverSettings);
@@ -304,24 +304,18 @@ export class MainView extends React.Component<{}, {}> {
 
     render() {
         const settings = getSettings();
-        let vertSplit = settings.layout.vertSplit;
-        if (typeof settings.layout.vertSplit === typeof Number) {
-            vertSplit = `${settings.layout.vertSplit}px`;
-        }
-        let horizSplit = settings.layout.horizSplit;
-        if (typeof settings.layout.horizSplit === typeof Number) {
-            horizSplit = `${settings.layout.horizSplit}px`;
-        }
+        let vertSplit = Number(settings.layout.vertSplit);
+        let horizSplit = Number(settings.layout.horizSplit);
         return (
             <div className='mainview'>
                 <div className='botchat-container'>
-                    <Splitter split="vertical" minSize="200px" defaultSize={vertSplit} primary="second" onChange={(size) => this.verticalSplitChange(size)}>
+                    <Splitter split="vertical" minSize={200} maxSize={-200} defaultSize={vertSplit} primary="second" onChange={(size) => this.verticalSplitChange(size)}>
                         <div className='fill-parent'>
                             <AddressBar />
                             {this.botChatComponent(vertSplit)}
                         </div>
                         <div className="fill-parent">
-                            <Splitter split="horizontal" primary="second" minSize="42px" defaultSize={horizSplit} onChange={(size) => LayoutActions.rememberHorizontalSplitter(size)}>
+                            <Splitter split="horizontal" primary="second" minSize={42} maxSize={-44} defaultSize={horizSplit} onChange={(size) => LayoutActions.rememberHorizontalSplitter(size)}>
                                 <div className="wc-chatview-panel">
                                     <InspectorView />
                                 </div>
