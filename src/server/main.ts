@@ -38,6 +38,7 @@ import { WindowStateAction } from './reducers/windowStateReducer';
 import * as url from 'url';
 import * as path from 'path';
 import * as log from './log';
+import * as commandLineArgs from 'command-line-args';
 import { Emulator } from './emulator';
 import { WindowManager } from './windowManager';
 
@@ -45,6 +46,12 @@ import { WindowManager } from './windowManager';
     console.error(error);
     log.error('[err-server]', error.message.toString(), JSON.stringify(error.stack));
 });
+
+const optionDefinitions = [
+    { name: 'localstore', type: String },
+];
+
+const options = commandLineArgs(optionDefinitions, { partial: true });
 
 export let mainWindow: Electron.BrowserWindow;
 export let windowManager: WindowManager;
@@ -222,6 +229,7 @@ const createMainWindow = () => {
     mainWindow.loadURL(page);
 }
 
+global["localstore"] = options.localstore || path.join(Electron.app.getPath("userData"), "botframework-emulator");
 Emulator.startup();
 Electron.app.on('ready', createMainWindow);
 Electron.app.on('window-all-closed', function () {

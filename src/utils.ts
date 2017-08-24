@@ -35,6 +35,7 @@ import * as Electron from 'electron';
 import * as Fs from 'fs';
 import * as Mkdirp from 'mkdirp';
 import * as url from 'url';
+import * as path from 'path';
 
 
 /**
@@ -44,10 +45,9 @@ export const uniqueId = (length?: number) => Math.random().toString(24).substr(2
 
 const ensureStoragePath = (): string => {
     const app = Electron.app || Electron.remote.app;
-    const USER_DATA_PATH = app.getPath('userData');
-    const path = `${USER_DATA_PATH}/botframework-emulator`;
-    Mkdirp.sync(path);
-    return path;
+    const p = global["localstore"] || Electron.remote.getGlobal("localstore") || path.join(app.getPath('userData'), "botframework-emulator");
+    Mkdirp.sync(p);
+    return p;
 }
 
 /**
