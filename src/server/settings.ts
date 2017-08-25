@@ -37,7 +37,7 @@ import { frameworkReducer } from './reducers/frameworkReducer';
 import { botsReducer, activeBotReducer } from './reducers/botReducer';
 import { windowStateReducer } from './reducers/windowStateReducer';
 import { usersReducer } from './reducers/usersReducer';
-import { loadSettings, saveSettings } from '../utils';
+import { loadSettings, saveSettings } from '../shared/utils';
 import { IBot } from '../types/botTypes';
 import {
     IFrameworkSettings,

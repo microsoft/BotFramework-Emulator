@@ -33,8 +33,11 @@
 
 import * as chai from 'chai';
 import * as Settings from '../../src/server/settings';
+import * as testHelpers from '../testHelpers';
 
 
+global['commandlineargs'] = {}
+global['commandlineargs'].localstore = testHelpers.tempLocalStore;
 chai.should();
 
 describe("Settings", function() {

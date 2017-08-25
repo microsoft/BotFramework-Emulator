@@ -32,7 +32,7 @@
 //
 
 import { ICheckoutCreditCard, ICheckoutShippingAddress } from './checkoutTypes';
-import { loadSettings, saveSettings } from '../../utils';
+import { loadSettings, saveSettings } from '../../shared/utils';
 
 interface ICheckoutSettings {
     creditCards: ICheckoutCreditCard[];

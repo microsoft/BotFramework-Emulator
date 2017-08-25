@@ -45,9 +45,10 @@ export const uniqueId = (length?: number) => Math.random().toString(24).substr(2
 
 const ensureStoragePath = (): string => {
     const app = Electron.app || Electron.remote.app;
-    const p = global["localstore"] || Electron.remote.getGlobal("localstore") || path.join(app.getPath('userData'), "botframework-emulator");
-    Mkdirp.sync(p);
-    return p;
+    const globals = global['commandlineargs'] || Electron.remote.getGlobal('commandlineargs');
+    const storagePath = globals.localstore || path.join(app.getPath('userData'), 'botframework-emulator');
+    Mkdirp.sync(storagePath);
+    return storagePath;
 }
 
 /**
@@ -74,7 +75,7 @@ export const loadSettings = <T>(filename: string, defaultSettings: T): T => {
 export const saveSettings = <T>(filename: string, settings: T) => {
     try {
         filename = `${ensureStoragePath()}/${filename}`;
-        Fs.writeFileSync(filename, JSON.stringify(settings, null, 2), 'utf8');
+        Fs.writeFileSync(filename, JSON.stringify(settings, null, 2), {encoding: 'utf8'});
     } catch (e) {
         console.error(`Failed to write file: ${filename}`, e);
     }

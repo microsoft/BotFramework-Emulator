@@ -40,7 +40,7 @@ import { RestServer } from '../../restServer';
 import { BotFrameworkAuthentication } from '../../botFrameworkAuthentication';
 import { jsonBodyParser } from '../../jsonBodyParser';
 import { getSettings } from '../../settings';
-import { approximateObjectSize } from '../../../utils';
+import { approximateObjectSize } from '../../../shared/utils';
 
 
 interface IBotData {

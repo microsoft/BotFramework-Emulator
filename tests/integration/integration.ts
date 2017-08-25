@@ -62,10 +62,10 @@ describe("App", function(this: any) {
     });
 
     after(function() {
+        testHelpers.cleanUpLocalStore();
         if (app && app.isRunning()) {
             return app.stop();
         }
-        testHelpers.cleanUpLocalStore();
     });
 
     it("opens a window on launch", function() {

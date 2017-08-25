@@ -15,7 +15,7 @@ export const tempLocalStore = path.join(__dirname, 'testsettings');
 export function cleanUpLocalStore() {
     if (fs.existsSync(tempLocalStore)) {
         fs.readdirSync(tempLocalStore).forEach((f) => {
-            fs.unlinkSync(tempLocalStore + "/" + f);
+            fs.unlinkSync(path.join(tempLocalStore, f));
         });
         fs.rmdirSync(tempLocalStore);
     }

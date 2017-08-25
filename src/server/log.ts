@@ -33,7 +33,7 @@
 
 import * as Restify from 'restify';
 import { Emulator } from './emulator';
-import { safeStringify } from '../utils';
+import { safeStringify } from '../shared/utils';
 
 
 const sendMessage = (method: string, message: any, ...args) => {

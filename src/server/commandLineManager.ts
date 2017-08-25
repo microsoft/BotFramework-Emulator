@@ -31,28 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { uniqueId } from '../shared/utils';
+import * as Electron from 'electron';
+import * as path from 'path';
+import * as commandLineArgs from 'command-line-args';
+import {ICommandLineArgs} from '../types/commandLineArgsTypes';
 
 
-export interface IBot {
-    botId?: string,
-    botUrl?: string,
-    msaAppId?: string,
-    msaPassword?: string,
-    locale?: string
-}
+const optionDefinitions  = [
+    { name: 'localstore', alias: 'l', type: String, defaultValue: path.join(Electron.app.getPath("userData"), "botframework-emulator") },
+];
 
-export const newBot = (bot: IBot): IBot => {
-    return Object.assign(
-        {},
-        {
-            botUrl: '',
-            msaAppId: '',
-            msaPassword: ''
-        },
-        bot,
-        {
-            botId: uniqueId()
-        }
-    ) as IBot;
+export function parseCommandLineArgs() {
+    const parsedCommandLineArgs:ICommandLineArgs = commandLineArgs(optionDefinitions, { partial: true });
+    global['commandlineargs'] = parsedCommandLineArgs;
 }

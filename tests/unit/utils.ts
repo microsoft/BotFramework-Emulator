@@ -32,7 +32,7 @@
 //
 
 import * as chai from 'chai';
-import * as utils from '../../src/utils';
+import * as utils from '../../src/shared/utils';
 
 
 chai.should();

@@ -10,6 +10,7 @@
             "request": "launch",
             "program": "${workspaceRoot}/app/server/main.js",
             "stopOnEntry": false,
+            "args": [],
             "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
             "windows": {
                 "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
