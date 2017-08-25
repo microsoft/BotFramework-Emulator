@@ -102,4 +102,4 @@ describe("App", function(this: any) {
             .waitForVisible(".wc-message-group-content:nth-child(1) p").should.eventually.be.true
             .getText(".wc-message-group-content:nth-child(1) p").should.eventually.equal("Message #1, you said repeat this back");
     });
-})
+});

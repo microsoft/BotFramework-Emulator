@@ -36,11 +36,18 @@ import * as Settings from '../../src/server/settings';
 import * as testHelpers from '../testHelpers';
 
 
-global['commandlineargs'] = {}
-global['commandlineargs'].localstore = testHelpers.tempLocalStore;
 chai.should();
 
 describe("Settings", function() {
+    before(function() {
+        global['commandlineargs'] = {}
+        global['commandlineargs'].localstore = testHelpers.tempLocalStore;
+    });
+
+    after(function() {
+        testHelpers.cleanUpLocalStore();
+    });
+
     it("#getSetting", function() {
         let settings: Settings.PersistentSettings = Settings.getSettings();
         settings.should.haveOwnProperty("windowState");
