@@ -34,23 +34,27 @@
 import * as chai from 'chai';
 import * as Settings from '../../src/server/settings';
 import * as testHelpers from '../testHelpers';
+import { settingsDefault } from '../../src/types/serverSettingsTypes';
 
 
 chai.should();
 
-describe("Settings", function() {
+describe("Server/Settings", function() {
+    let settings: Settings.PersistentSettings;
+
     before(function() {
         global['commandlineargs'] = {}
         global['commandlineargs'].localstore = testHelpers.tempLocalStore;
+        return;
     });
 
     after(function() {
         testHelpers.cleanUpLocalStore();
+        return;
     });
 
-    it("#getSetting", function() {
-        let settings: Settings.PersistentSettings = Settings.getSettings();
-        settings.should.haveOwnProperty("windowState");
-        settings.windowState.zoomLevel.should.equal(0);
+    it("gets default settings if no settings file exists", function() {
+        settings = Settings.getSettings();
+        settings.should.deep.equal(settingsDefault);
     });
 });
