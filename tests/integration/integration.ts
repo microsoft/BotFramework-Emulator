@@ -54,7 +54,7 @@ describe("App", function(this: any) {
             path: electronPath,
             args: [
                 appPath,
-                `--localstore=${testHelpers.tempLocalStore}`
+                `--storagepath=${testHelpers.tempLocalStore}`
             ],
         });
         chaiAsPromised.transferPromiseness = app.transferPromiseness;

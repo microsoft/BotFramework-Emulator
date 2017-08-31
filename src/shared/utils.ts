@@ -31,11 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Electron from 'electron';
 import * as Fs from 'fs';
 import * as Mkdirp from 'mkdirp';
 import * as url from 'url';
-import * as path from 'path';
+import * as globals from './globals';
 
 
 /**
@@ -44,9 +43,7 @@ import * as path from 'path';
 export const uniqueId = (length?: number) => Math.random().toString(24).substr(2, length);
 
 const ensureStoragePath = (): string => {
-    const app = Electron.app || Electron.remote.app;
-    const globals = global['commandlineargs'] || Electron.remote.getGlobal('commandlineargs');
-    const storagePath = globals.localstore || path.join(app.getPath('userData'), 'botframework-emulator');
+    const storagePath = globals.getGlobal('commandlineargs').storagepath;
     Mkdirp.sync(storagePath);
     return storagePath;
 }

@@ -31,32 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as chai from 'chai';
-import * as Settings from '../../src/server/settings';
-import * as testHelpers from '../testHelpers';
-import * as globals from '../../src/shared/globals';
-import { settingsDefault } from '../../src/types/serverSettingsTypes';
+import * as Electron from 'electron';
+import * as path from 'path';
+import * as commandLineArgs from 'command-line-args';
+import {ICommandLineArgs} from '../types/commandLineArgsTypes';
+import * as globals from '../shared/globals';
 
 
-chai.should();
+const optionDefinitions = [
+    { name: 'storagepath', alias: 'p', type: String, defaultValue: path.join(Electron.app.getPath("userData"), "botframework-emulator") },
+];
 
-describe("Server/Settings", function() {
-    let settings: Settings.PersistentSettings;
-
-    before(function() {
-        globals.setGlobal('commandlineargs', {
-            storagepath: testHelpers.tempLocalStore
-        });
-        return;
-    });
-
-    after(function() {
-        testHelpers.cleanUpLocalStore();
-        return;
-    });
-
-    it("gets default settings if no settings file exists", function() {
-        settings = Settings.getSettings();
-        settings.should.deep.equal(settingsDefault);
-    });
-});
+export function parseArgs() {
+    const parsedCommandLineArgs:ICommandLineArgs = commandLineArgs(optionDefinitions, { partial: true });
+    globals.setGlobal('commandlineargs', parsedCommandLineArgs);
+}

@@ -32,16 +32,12 @@
 //
 
 import * as Electron from 'electron';
-import * as path from 'path';
-import * as commandLineArgs from 'command-line-args';
-import {ICommandLineArgs} from '../types/commandLineArgsTypes';
 
 
-const optionDefinitions  = [
-    { name: 'localstore', alias: 'l', type: String, defaultValue: path.join(Electron.app.getPath("userData"), "botframework-emulator") },
-];
+export function getGlobal(attributeName: string) {
+    return global[attributeName] || Electron.remote.getGlobal(attributeName);
+}
 
-export function parseCommandLineArgs() {
-    const parsedCommandLineArgs:ICommandLineArgs = commandLineArgs(optionDefinitions, { partial: true });
-    global['commandlineargs'] = parsedCommandLineArgs;
+export function setGlobal(attributeName: string, value) {
+    global[attributeName] = value;
 }
