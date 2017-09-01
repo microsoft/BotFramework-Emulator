@@ -34,7 +34,7 @@
 import { Reducer } from 'redux';
 import { IBot } from '../types/botTypes';
 import { IUser } from '../types/userTypes';
-import { uniqueId } from '../utils';
+import { uniqueId } from '../shared/utils';
 import * as log from './log';
 import {
     ISettings as IServerSettings,

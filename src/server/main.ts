@@ -40,6 +40,7 @@ import * as path from 'path';
 import * as log from './log';
 import { Emulator } from './emulator';
 import { WindowManager } from './windowManager';
+import * as commandLine from './commandLine'
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
     console.error(error);
@@ -62,6 +63,8 @@ var onOpenUrl = function (event, url) {
         }
     }
 };
+
+commandLine.parseArgs();
 
 Electron.app.on('will-finish-launching', (event, args) => {
     Electron.ipcMain.on('getUrls', (event, arg) => {

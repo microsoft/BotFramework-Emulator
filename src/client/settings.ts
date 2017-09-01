@@ -37,7 +37,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ActivityOrID } from '../types/activityTypes';
 import { Settings as ServerSettings } from '../types/serverSettingsTypes';
 import { InspectorActions, ConversationActions } from './reducers';
-import { loadSettings, saveSettings } from '../utils';
+import { loadSettings, saveSettings } from '../shared/utils';
 import {
     layoutReducer,
     addressBarReducer,

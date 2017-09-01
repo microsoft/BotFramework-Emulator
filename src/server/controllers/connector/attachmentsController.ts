@@ -36,7 +36,7 @@ import * as HttpStatus from "http-status-codes";
 import * as ResponseTypes from '../../../types/responseTypes';
 import { ErrorCodes, } from '../../../types/responseTypes';
 import { IAttachmentData, IAttachmentInfo } from '../../../types/attachmentTypes';
-import { uniqueId } from '../../../utils';
+import { uniqueId } from '../../../shared/utils';
 import { RestServer } from '../../restServer';
 import * as log from '../../log';
 

@@ -38,7 +38,7 @@ import { IUser } from '../types/userTypes';
 import { IActivity, IConversationUpdateActivity, IMessageActivity, IContactRelationUpdateActivity, IInvokeActivity } from '../types/activityTypes';
 import { PaymentEncoder } from '../shared/paymentEncoder';
 import { ISpeechTokenInfo } from '../types/speechTypes';
-import { uniqueId } from '../utils';
+import { uniqueId } from '../shared/utils';
 import { dispatch, getSettings, v31AuthenticationSettings, addSettingsListener, speechSettings } from './settings';
 import { Settings } from '../types/serverSettingsTypes';
 import * as HttpStatus from "http-status-codes";
@@ -46,7 +46,7 @@ import * as ResponseTypes from '../types/responseTypes';
 import { ErrorCodes, IResourceResponse } from '../types/responseTypes';
 import { emulator } from './emulator';
 import * as log from './log';
-import * as utils from '../utils';
+import * as utils from '../shared/utils';
 import { usersDefault } from '../types/serverSettingsTypes';
 import * as moment from 'moment';
 

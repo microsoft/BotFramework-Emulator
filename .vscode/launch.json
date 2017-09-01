@@ -23,6 +23,19 @@
             },
             "sourceMaps": true,
             "protocol": "inspector"
+        },
+        {
+            "name": "Debug integration tests",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+            "runtimeExecutable": "node",
+            "stopOnEntry": false,
+            "args": ["-t", "20000", "--compilers", "ts:ts-node/register", "${workspaceRoot}/tests/integration/integration.ts"],
+            "env": { "NODE_ENV": "test"},
+            "cwd": "${workspaceRoot}",
+            "sourceMaps": false,
+            "protocol": "inspector"
         }
     ]
 }

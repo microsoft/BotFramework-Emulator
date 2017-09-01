@@ -31,28 +31,34 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { uniqueId } from '../shared/utils';
+import * as chai from 'chai';
+import * as Settings from '../../src/server/settings';
+import * as testHelpers from '../testHelpers';
+import * as globals from '../../src/shared/globals';
+import {ICommandLineArgs} from '../../src/types/commandLineArgsTypes';
+import { settingsDefault } from '../../src/types/serverSettingsTypes';
 
 
-export interface IBot {
-    botId?: string,
-    botUrl?: string,
-    msaAppId?: string,
-    msaPassword?: string,
-    locale?: string
-}
+chai.should();
 
-export const newBot = (bot: IBot): IBot => {
-    return Object.assign(
-        {},
-        {
-            botUrl: '',
-            msaAppId: '',
-            msaPassword: ''
-        },
-        bot,
-        {
-            botId: uniqueId()
-        }
-    ) as IBot;
-}
+describe("Server/Settings", function() {
+    let settings: Settings.PersistentSettings;
+
+    before(function() {
+        const commandLineArgs: ICommandLineArgs = {
+            storagepath: testHelpers.tempLocalStore
+        };
+        globals.setGlobal('commandlineargs', commandLineArgs);
+        return;
+    });
+
+    after(function() {
+        testHelpers.cleanUpLocalStore();
+        return;
+    });
+
+    it("gets default settings if no settings file exists", function() {
+        settings = Settings.getSettings();
+        settings.should.deep.equal(settingsDefault);
+    });
+});

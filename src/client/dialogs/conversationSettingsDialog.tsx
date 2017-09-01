@@ -35,7 +35,7 @@ import * as React from 'react';
 import { getSettings, Settings, addSettingsListener } from '../settings';
 import { AddressBarActions } from '../reducers';
 import { IUser } from '../../types/userTypes';
-import { uniqueId } from '../../utils';
+import { uniqueId } from '../../shared/utils';
 
 
 export class ConversationSettingsDialog extends React.Component<{}, {}> {
