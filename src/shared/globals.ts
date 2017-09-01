@@ -34,10 +34,16 @@
 import * as Electron from 'electron';
 
 
-export function getGlobal(attributeName: string) {
-    return global[attributeName] || Electron.remote.getGlobal(attributeName);
+export function getGlobal(attributeName: string, defaultValue?: any): any {
+    if (global[attributeName]) {
+        return global[attributeName];
+    } else if (Electron.remote && Electron.remote.getGlobal(attributeName)) {
+        return Electron.remote.getGlobal(attributeName)
+    } else {
+        return defaultValue;
+    }
 }
 
-export function setGlobal(attributeName: string, value) {
+export function setGlobal(attributeName: string, value: any): void {
     global[attributeName] = value;
 }

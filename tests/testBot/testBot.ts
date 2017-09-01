@@ -52,7 +52,7 @@ server.post('/api/messages', connector.listen());
 //
 // Main methods
 //
-function getCounter(session) {
+function getCounter(session): string {
     if (!session.dialogData.hasOwnProperty('counter')) {
         session.dialogData.counter = 0;
     }

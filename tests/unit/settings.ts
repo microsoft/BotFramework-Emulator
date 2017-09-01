@@ -35,6 +35,7 @@ import * as chai from 'chai';
 import * as Settings from '../../src/server/settings';
 import * as testHelpers from '../testHelpers';
 import * as globals from '../../src/shared/globals';
+import {ICommandLineArgs} from '../../src/types/commandLineArgsTypes';
 import { settingsDefault } from '../../src/types/serverSettingsTypes';
 
 
@@ -44,9 +45,10 @@ describe("Server/Settings", function() {
     let settings: Settings.PersistentSettings;
 
     before(function() {
-        globals.setGlobal('commandlineargs', {
+        const commandLineArgs: ICommandLineArgs = {
             storagepath: testHelpers.tempLocalStore
-        });
+        };
+        globals.setGlobal('commandlineargs', commandLineArgs);
         return;
     });
 

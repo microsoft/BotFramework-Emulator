@@ -31,18 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Electron from 'electron';
-import * as path from 'path';
 import * as commandLineArgs from 'command-line-args';
 import {ICommandLineArgs} from '../types/commandLineArgsTypes';
 import * as globals from '../shared/globals';
 
 
 const optionDefinitions = [
-    { name: 'storagepath', alias: 'p', type: String, defaultValue: path.join(Electron.app.getPath("userData"), "botframework-emulator") },
+    { name: 'storagepath', alias: 'p', type: String },
 ];
 
-export function parseArgs() {
+export function parseArgs(): void {
     const parsedCommandLineArgs:ICommandLineArgs = commandLineArgs(optionDefinitions, { partial: true });
     globals.setGlobal('commandlineargs', parsedCommandLineArgs);
 }

@@ -33,5 +33,5 @@
 
 
 export interface ICommandLineArgs {
-    localstore?: string,
+    storagepath?: string,
 }
