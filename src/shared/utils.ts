@@ -110,7 +110,7 @@ export const isLocalhostUrl = (urlStr: string): boolean => {
 
 export const isSecuretUrl = (urlStr: string): boolean => {
     const parsedUrl = url.parse(urlStr);
-    return (parsedUrl.protocol !== null && parsedUrl.protocol.startsWith('https'));
+    return (!!parsedUrl.protocol && parsedUrl.protocol.startsWith('https'));
 }
 
 export const safeStringify = (o: any, space: string | number = undefined): string => {
