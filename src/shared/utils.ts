@@ -46,7 +46,8 @@ export const uniqueId = (length?: number) => Math.random().toString(24).substr(2
 
 const ensureStoragePath = (): string => {
     const commandLineArgs = globals.getGlobal('commandlineargs');
-    const storagePath = commandLineArgs.storagepath || path.join(Electron.app.getPath("userData"), "botframework-emulator");
+    const app = Electron.app || Electron.remote.app;
+    const storagePath = commandLineArgs.storagepath || path.join(app.getPath("userData"), "botframework-emulator");
     Mkdirp.sync(storagePath);
     return storagePath;
 }
