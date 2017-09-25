@@ -31,28 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { uniqueId } from '../shared/utils';
 
-
-export interface IBot {
-    botId?: string,
-    botUrl?: string,
-    msaAppId?: string,
-    msaPassword?: string,
-    locale?: string
-}
-
-export const newBot = (bot: IBot): IBot => {
-    return Object.assign(
-        {},
-        {
-            botUrl: '',
-            msaAppId: '',
-            msaPassword: ''
-        },
-        bot,
-        {
-            botId: uniqueId()
-        }
-    ) as IBot;
+export interface ICommandLineArgs {
+    storagepath?: string,
 }

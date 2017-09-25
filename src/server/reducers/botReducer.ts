@@ -32,7 +32,7 @@
 //
 
 import { Reducer } from 'redux';
-import { uniqueId } from '../../utils';
+import { uniqueId } from '../../shared/utils';
 import { IBot } from '../../types/botTypes';
 import { getSettings } from '../settings';
 

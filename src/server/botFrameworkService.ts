@@ -43,7 +43,7 @@ import { Settings } from '../types/serverSettingsTypes';
 import * as log from './log';
 import * as ngrok from './ngrok';
 import { Emulator } from './emulator';
-import * as utils from '../utils';
+import * as utils from '../shared/utils';
 
 /**
  * Communicates with the bot.

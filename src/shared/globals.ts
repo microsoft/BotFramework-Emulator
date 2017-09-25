@@ -31,28 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { uniqueId } from '../shared/utils';
+import * as Electron from 'electron';
 
 
-export interface IBot {
-    botId?: string,
-    botUrl?: string,
-    msaAppId?: string,
-    msaPassword?: string,
-    locale?: string
+export function getGlobal(attributeName: string, defaultValue?: any): any {
+    if (global[attributeName]) {
+        return global[attributeName];
+    } else if (Electron.remote && Electron.remote.getGlobal(attributeName)) {
+        return Electron.remote.getGlobal(attributeName)
+    } else {
+        return defaultValue;
+    }
 }
 
-export const newBot = (bot: IBot): IBot => {
-    return Object.assign(
-        {},
-        {
-            botUrl: '',
-            msaAppId: '',
-            msaPassword: ''
-        },
-        bot,
-        {
-            botId: uniqueId()
-        }
-    ) as IBot;
+export function setGlobal(attributeName: string, value: any): void {
+    global[attributeName] = value;
 }

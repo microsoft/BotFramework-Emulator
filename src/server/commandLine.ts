@@ -31,28 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { uniqueId } from '../shared/utils';
+import * as commandLineArgs from 'command-line-args';
+import {ICommandLineArgs} from '../types/commandLineArgsTypes';
+import * as globals from '../shared/globals';
 
 
-export interface IBot {
-    botId?: string,
-    botUrl?: string,
-    msaAppId?: string,
-    msaPassword?: string,
-    locale?: string
-}
+const optionDefinitions = [
+    { name: 'storagepath', alias: 'p', type: String },
+];
 
-export const newBot = (bot: IBot): IBot => {
-    return Object.assign(
-        {},
-        {
-            botUrl: '',
-            msaAppId: '',
-            msaPassword: ''
-        },
-        bot,
-        {
-            botId: uniqueId()
-        }
-    ) as IBot;
+export function parseArgs(): void {
+    const parsedCommandLineArgs:ICommandLineArgs = commandLineArgs(optionDefinitions, { partial: true });
+    globals.setGlobal('commandlineargs', parsedCommandLineArgs);
 }

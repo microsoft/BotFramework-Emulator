@@ -35,6 +35,8 @@ import * as Electron from 'electron';
 import * as Fs from 'fs';
 import * as Mkdirp from 'mkdirp';
 import * as url from 'url';
+import * as path from 'path';
+import * as globals from './globals';
 
 
 /**
@@ -43,11 +45,11 @@ import * as url from 'url';
 export const uniqueId = (length?: number) => Math.random().toString(24).substr(2, length);
 
 const ensureStoragePath = (): string => {
+    const commandLineArgs = globals.getGlobal('commandlineargs');
     const app = Electron.app || Electron.remote.app;
-    const USER_DATA_PATH = app.getPath('userData');
-    const path = `${USER_DATA_PATH}/botframework-emulator`;
-    Mkdirp.sync(path);
-    return path;
+    const storagePath = commandLineArgs.storagepath || path.join(app.getPath("userData"), "botframework-emulator");
+    Mkdirp.sync(storagePath);
+    return storagePath;
 }
 
 /**
@@ -71,46 +73,45 @@ export const loadSettings = <T>(filename: string, defaultSettings: T): T => {
 /**
  * Save JSON object to file.
  */
-export const saveSettings = <T>(filename: string, settings: T) => {
+export const saveSettings = <T>(filename: string, settings: T): void => {
     try {
         filename = `${ensureStoragePath()}/${filename}`;
-        Fs.writeFileSync(filename, JSON.stringify(settings, null, 2), 'utf8');
+        Fs.writeFileSync(filename, JSON.stringify(settings, null, 2), {encoding: 'utf8'});
     } catch (e) {
         console.error(`Failed to write file: ${filename}`, e);
     }
 }
 
-export function isObject(item) {
-  return (item && typeof item === 'object' && !Array.isArray(item) && item !== null);
+export function isObject(item: any): boolean {
+    return (item && typeof item === 'object' && !Array.isArray(item) && item !== null);
 }
 
-export function mergeDeep(target, source) {
-  let output = Object.assign({}, target);
-  //if (isObject(target) && isObject(source)) {
-  {
-
-    Object.keys(source).forEach(key => {
-      if (isObject(source[key])) {
-        if (!(key in target))
-          Object.assign(output, { [key]: source[key] });
-        else
-          output[key] = mergeDeep(target[key], source[key]);
-      } else {
-        Object.assign(output, { [key]: source[key] });
-      }
-    });
-  }
-  return output;
+export function mergeDeep(target: any, source: any): any {
+    let output = Object.assign({}, target);
+    //if (isObject(target) && isObject(source)) {
+    {
+        Object.keys(source).forEach(key => {
+            if (isObject(source[key])) {
+            if (!(key in target))
+                Object.assign(output, { [key]: source[key] });
+            else
+                output[key] = mergeDeep(target[key], source[key]);
+            } else {
+            Object.assign(output, { [key]: source[key] });
+            }
+        });
+    }
+    return output;
 }
 
-export const isLocalhostUrl = (urlStr: string) => {
+export const isLocalhostUrl = (urlStr: string): boolean => {
     const parsedUrl = url.parse(urlStr);
     return (parsedUrl.hostname === 'localhost' || parsedUrl.hostname === '127.0.0.1');
 }
 
-export const isSecuretUrl = (urlStr: string) => {
+export const isSecuretUrl = (urlStr: string): boolean => {
     const parsedUrl = url.parse(urlStr);
-    return (parsedUrl.protocol.startsWith('https'));
+    return (!!parsedUrl.protocol && parsedUrl.protocol.startsWith('https'));
 }
 
 export const safeStringify = (o: any, space: string | number = undefined): string => {
@@ -128,7 +129,7 @@ export const safeStringify = (o: any, space: string | number = undefined): strin
     }, space);
 }
 
-export const approximateObjectSize = (object: any, cache:any[] = []) => {
+export const approximateObjectSize = (object: any, cache:any[] = []): number => {
     switch (typeof object) {
         case 'boolean':
             return 4;

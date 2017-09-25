@@ -46,7 +46,7 @@ import { ISettings } from '../settings';
 import { ConversationActions, ServerSettingsActions } from '../reducers';
 import { Button } from './button';
 import { CheckoutSettings } from './checkoutSettings';
-import { uniqueId } from '../../utils';
+import { uniqueId } from '../../shared/utils';
 
 
 export class CheckoutView extends React.Component<{}, ICheckoutViewState> {

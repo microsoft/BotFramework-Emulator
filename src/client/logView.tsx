@@ -37,7 +37,7 @@ import { Subscription, Observable, Subject } from 'rxjs';
 import { getSettings, addSettingsListener } from './settings';
 import { LogActions, WordWrapAction } from './reducers';
 import * as Constants from './constants';
-import { safeStringify } from '../utils';
+import { safeStringify } from '../shared/utils';
 
 const { remote } = require('electron');
 const { Menu } = remote;
