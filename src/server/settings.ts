@@ -150,7 +150,8 @@ export const v31AuthenticationSettings = {
 }
 
 export const v32AuthenticationSettings = {
-    tokenIssuer: 'https://login.microsoftonline.com/f8cdef31-a31e-4b4a-93e4-5f571e91255a/v2.0'
+    tokenIssuerV1: 'https://sts.windows.net/f8cdef31-a31e-4b4a-93e4-5f571e91255a/',
+    tokenIssuerV2: 'https://login.microsoftonline.com/f8cdef31-a31e-4b4a-93e4-5f571e91255a/v2.0'
 }
 
 export const speechSettings = {

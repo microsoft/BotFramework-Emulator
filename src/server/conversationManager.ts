@@ -518,7 +518,7 @@ export class Conversation {
                     client_id: bot.msaAppId,
                     client_secret: bot.msaPassword,
                     scope: bot.msaAppId + '/.default',
-                    atver: 1                            // flag to request a version 1.0 token
+                    //atver: 1                            // flag to request a version 1.0 token
                 },
                 agent: emulator.proxyAgent,
                 strictSSL: false

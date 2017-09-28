@@ -59,10 +59,21 @@ export class BotFrameworkAuthentication {
             this.openIdMetadata.getKey(decoded.header.kid, key => {
                 if (key) {
                     try {
+                        let issuer = undefined;
+                        if(decoded.payload.ver == '1.0') {
+                            issuer = v32AuthenticationSettings.tokenIssuerV1;
+                        } else if (decoded.payload.ver == '2.0') {
+                            issuer = v32AuthenticationSettings.tokenIssuerV2;
+                        } else {
+                            // unknown token format
+                            res.status(401);
+                            res.end();
+                            return;
+                        }
                         // first try 3.2  token characteristics
                         let verifyOptions = {
                             jwtId: activeBot.botId,
-                            issuer: v32AuthenticationSettings.tokenIssuer,
+                            issuer: issuer,
                             audience: authenticationSettings.botTokenAudience,
                             clockTolerance: 300
                         };
