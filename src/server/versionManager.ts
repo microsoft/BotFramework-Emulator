@@ -34,7 +34,7 @@
 import * as log from './log';
 import * as request from 'request';
 import * as http from 'http';
-const DOMParser = require('xmldom').DOMParser;
+import { DOMParser } from 'xmldom';
 
 interface IVersion {
     type?: string,
@@ -50,8 +50,8 @@ export class VersionManager {
 
     static minimumVersion: IVersion = {
         major: 3,
-        minor: 9,
-        subminor: 1
+        minor: 10,
+        subminor: 5
     };
 
     public static checkVersion(userAgent: string) {

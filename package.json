@@ -106,6 +106,7 @@
     "restify": "4.3.0",
     "rsa-pem-from-mod-exp": "0.8.4",
     "rxjs": "5.4.2",
+    "xmldom": "0.1.27",
     "xtend": "4.0.1"
   },
   "build": {
