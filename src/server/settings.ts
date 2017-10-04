@@ -142,16 +142,16 @@ export const startup = () => {
 export const authenticationSettings = {
     tokenEndpoint: 'https://login.microsoftonline.com/botframework.com/oauth2/v2.0/token',
     openIdMetadata: 'https://login.microsoftonline.com/botframework.com/v2.0/.well-known/openid-configuration',
-    tokenIssuer: 'https://sts.windows.net/d6d49420-f39b-4df7-a1dc-d59a935871db/',
-    tokenAudience: 'https://api.botframework.com',
-    stateEndpoint: 'https://state.botframework.com'
+    botTokenAudience: 'https://api.botframework.com',
 }
 
 export const v31AuthenticationSettings = {
-    tokenEndpoint: 'https://login.microsoftonline.com/botframework.com/oauth2/v2.0/token',
-    openIdMetadata: 'https://login.microsoftonline.com/botframework.com/v2.0/.well-known/openid-configuration',
     tokenIssuer: 'https://sts.windows.net/d6d49420-f39b-4df7-a1dc-d59a935871db/',
-    stateEndpoint: 'https://state.botframework.com'
+}
+
+export const v32AuthenticationSettings = {
+    tokenIssuerV1: 'https://sts.windows.net/f8cdef31-a31e-4b4a-93e4-5f571e91255a/',
+    tokenIssuerV2: 'https://login.microsoftonline.com/f8cdef31-a31e-4b4a-93e4-5f571e91255a/v2.0'
 }
 
 export const speechSettings = {

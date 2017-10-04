@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { getSettings, authenticationSettings, v31AuthenticationSettings } from './settings';
+import { getSettings, authenticationSettings, v31AuthenticationSettings, v32AuthenticationSettings } from './settings';
 import * as jwt from 'jsonwebtoken';
 import * as oid from './OpenIdMetadata';
 import * as Restify from 'restify';
@@ -41,7 +41,7 @@ export class BotFrameworkAuthentication {
     private openIdMetadata: oid.OpenIdMetadata;
 
     constructor() {
-        this.openIdMetadata = new oid.OpenIdMetadata(v31AuthenticationSettings.openIdMetadata);
+        this.openIdMetadata = new oid.OpenIdMetadata(authenticationSettings.openIdMetadata);
     }
 
     public verifyBotFramework = (req: Restify.Request, res: Restify.Response, next: Restify.Next): void => {
@@ -55,31 +55,46 @@ export class BotFrameworkAuthentication {
         const activeBot = getSettings().getActiveBot();
         // Verify token
         if (token) {
-
             let decoded = jwt.decode(token, { complete: true });
             this.openIdMetadata.getKey(decoded.header.kid, key => {
                 if (key) {
                     try {
+                        let issuer = undefined;
+                        if(decoded.payload.ver == '1.0') {
+                            issuer = v32AuthenticationSettings.tokenIssuerV1;
+                        } else if (decoded.payload.ver == '2.0') {
+                            issuer = v32AuthenticationSettings.tokenIssuerV2;
+                        } else {
+                            // unknown token format
+                            res.status(401);
+                            res.end();
+                            return;
+                        }
+                        // first try 3.2  token characteristics
                         let verifyOptions = {
                             jwtId: activeBot.botId,
-                            issuer: authenticationSettings.tokenIssuer,
-                            audience: authenticationSettings.tokenAudience,
+                            issuer: issuer,
+                            audience: authenticationSettings.botTokenAudience,
                             clockTolerance: 300
                         };
 
                         jwt.verify(token, key, verifyOptions);
-                    } catch (err) {
+                    }
+                    catch (err)
+                    {
                         try {
-                            // fall back to v3.1 token characteristics
+                            // then try v3.1 token characteristics
                             let verifyOptions = {
                                 jwtId: activeBot.botId,
                                 issuer: v31AuthenticationSettings.tokenIssuer,
-                                audience: activeBot.msaAppId,
+                                audience: authenticationSettings.botTokenAudience,
                                 clockTolerance: 300
                             };
 
                             jwt.verify(token, key, verifyOptions);
-                        } catch (err2) {
+                        }
+                        catch (err)
+                        {
                             res.status(401);
                             res.end();
                             return;
