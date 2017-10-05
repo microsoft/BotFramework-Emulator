@@ -51,7 +51,7 @@
     "chai-as-promised": "7.1.1",
     "cross-env": "5.0.1",
     "del": "2.2.2",
-    "electron": "1.7.5",
+    "electron": "1.8.1",
     "electron-builder": "19.18.0",
     "electron-builder-squirrel-windows": "19.18.0",
     "electron-mocha": "4.0.0",
@@ -106,6 +106,7 @@
     "restify": "4.3.0",
     "rsa-pem-from-mod-exp": "0.8.4",
     "rxjs": "5.4.2",
+    "xmldom": "0.1.27",
     "xtend": "4.0.1"
   },
   "build": {

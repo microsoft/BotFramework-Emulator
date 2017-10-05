@@ -39,7 +39,7 @@ import { IActivity, IConversationUpdateActivity, IMessageActivity, IContactRelat
 import { PaymentEncoder } from '../shared/paymentEncoder';
 import { ISpeechTokenInfo } from '../types/speechTypes';
 import { uniqueId } from '../shared/utils';
-import { dispatch, getSettings, v31AuthenticationSettings, addSettingsListener, speechSettings } from './settings';
+import { dispatch, getSettings, authenticationSettings, addSettingsListener, speechSettings } from './settings';
 import { Settings } from '../types/serverSettingsTypes';
 import * as HttpStatus from "http-status-codes";
 import * as ResponseTypes from '../types/responseTypes';
@@ -512,13 +512,13 @@ export class Conversation {
             // Refresh access token
             let opt: request.OptionsWithUrl = {
                 method: 'POST',
-                url: v31AuthenticationSettings.tokenEndpoint,
+                url: authenticationSettings.tokenEndpoint,
                 form: {
                     grant_type: 'client_credentials',
                     client_id: bot.msaAppId,
                     client_secret: bot.msaPassword,
                     scope: bot.msaAppId + '/.default',
-                    atver: 1                            // flag to request a version 1.0 token
+                    //atver: 1                            // flag to request a version 1.0 token
                 },
                 agent: emulator.proxyAgent,
                 strictSSL: false
