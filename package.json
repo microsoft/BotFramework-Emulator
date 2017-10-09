@@ -1,6 +1,6 @@
 {
   "name": "botframework-emulator",
-  "version": "3.5.31",
+  "version": "3.5.32",
   "description": "Emulator for the Microsoft Bot Framework. Allows developers to test and debug their bots on localhost.",
   "main": "./app/server/main.js",
   "scripts": {
