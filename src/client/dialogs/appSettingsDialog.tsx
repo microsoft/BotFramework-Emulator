@@ -50,6 +50,7 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
     stateSizeLimitInputRef: any;
     bypassNgrokLocalhostInputRef: any;
     showing: boolean;
+    userId: any;
 
     constructor(props) {
         super(props);
@@ -79,11 +80,16 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
     }
 
     onAccept = () => {
+        const settings = getSettings()
         ServerSettingsActions.remote_setFrameworkServerSettings({
             ngrokPath: this.ngrokPathInputRef.value,
             bypassNgrokLocalhost: this.bypassNgrokLocalhostInputRef.checked,
-            stateSizeLimit: this.stateSizeLimitInputRef.value
+            stateSizeLimit: this.stateSizeLimitInputRef.value,
         });
+        // ServerSettingsActions.remote_setCurrentUser()
+        settings.serverSettings.users.currentUserId = this.userId.value
+        ServerSettingsActions.set(settings.serverSettings)
+        ServerSettingsActions.remote_setCurrentUser({id: settings.serverSettings.users.currentUserId, name:"Custom"})
         AddressBarActions.hideAppSettings();
     }
 
@@ -158,6 +164,7 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
                         <ul className="emu-navbar">
                             {this.renderNavItem("service", "Service")}
                             {this.renderNavItem("state", "Bot State")}
+                            {this.renderNavItem("user", "User data")}
                         </ul>
                         <hr className='enu-navhdr' />
                         {this.renderNavTab("service", (<div>
@@ -208,6 +215,22 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
                                     min={0}
                                     max={4000000}
                                     defaultValue={String(serverSettings.framework.stateSizeLimit) || '64'} /> KB
+                            </div>
+                        </div>) )}
+                        {this.renderNavTab("user", (<div>
+                            <div className='emu-dialog-text'>
+                                You can change the user Id to interact with the bot
+                            </div>
+                            <div className="input-group">
+                                <label className="form-label">
+                                    User id:
+                                </label>
+                                <input
+                                    type="string"
+                                    ref={ref => this.userId = ref}
+                                    name="stateUserId"
+                                    className="form-input appsettings-number-input appsettings-space-input"
+                                    defaultValue={String(serverSettings.users.currentUserId)} />
                             </div>
                         </div>) )}
                     </div>
