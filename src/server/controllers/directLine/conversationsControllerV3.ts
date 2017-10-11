@@ -72,6 +72,7 @@ export class ConversationsControllerV3 {
             const tokenMatch = /Bearer\s+(.+)/.exec(auth);
             const conversationId = tokenMatch[1];
             const users = getSettings().users;
+            
             let currentUser = users.usersById[users.currentUserId];
             // TODO: This is a band-aid until state system cleanup
             if (!currentUser) {
