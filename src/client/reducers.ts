@@ -48,12 +48,14 @@ import {
     logDefault,
     wordWrapDefault,
     inspectorDefault,
+    hotkeyDefault,
     ILayoutState,
     IAddressBarState,
     IConversationState,
     ILogState,
     IWordWrapState,
     IInspectorState,
+    IHotkeyState,
     serverChangeSetting
 } from './settings';
 
@@ -112,6 +114,10 @@ type AddressBarAction = {
     type: 'AddressBar_ShowBotCreds'
 } | {
     type: 'AddressBar_HideBotCreds'
+} | {
+    type: 'AddressBar_GainFocus'
+} | {
+    type: 'AddressBar_LoseFocus'
 }
 
 
@@ -147,6 +153,16 @@ type InspectorAction = {
     }
 } | {
     type: 'Inspector_Clear'
+}
+
+type HotkeyAction = {
+    type: 'Hotkey_OpenMenu'
+} | {
+    type: 'Hotkey_OpenMenu_Clear'
+} | {
+    type: 'Hotkey_ToggleAddressBarFocus'
+} | {
+    type: 'Hotkey_ToggleAddressBarFocus_Clear'
 }
 
 type ServerSettingsAction = {
@@ -269,6 +285,16 @@ export class AddressBarActions {
             type: 'AddressBar_HideBotCreds'
         })
     }
+    static gainFocus() {
+        dispatch<AddressBarAction>({
+            type: 'AddressBar_GainFocus'
+        })
+    }
+    static loseFocus() {
+        dispatch<AddressBarAction>({
+            type: 'AddressBar_LoseFocus'
+        })
+    }
 }
 
 export class ConversationActions {
@@ -327,6 +353,29 @@ export class InspectorActions {
         dispatch<InspectorAction>({
             type: 'Inspector_Clear'
         });
+    }
+}
+
+export class HotkeyActions {
+    static openMenu() {
+        dispatch<HotkeyAction>({
+            type: 'Hotkey_OpenMenu'
+        })
+    }
+    static clearOpenMenu() {
+        dispatch<HotkeyAction>({
+            type: 'Hotkey_OpenMenu_Clear'
+        })
+    }
+    static toggleAddressBarFocus() {
+        dispatch<HotkeyAction>({
+            type: 'Hotkey_ToggleAddressBarFocus'
+        })
+    }
+    static clearToggleAddressBarFocus() {
+        dispatch<HotkeyAction>({
+            type: 'Hotkey_ToggleAddressBarFocus_Clear'
+        })
     }
 }
 
@@ -417,6 +466,10 @@ export const addressBarReducer: Reducer<IAddressBarState> = (
             return Object.assign({}, state, { showBotCreds: true });
         case 'AddressBar_HideBotCreds':
             return Object.assign({}, state, { showBotCreds: false });
+        case 'AddressBar_GainFocus':
+            return Object.assign({}, state, { hasFocus: true });
+        case 'AddressBar_LoseFocus':
+            return Object.assign({}, state, { hasFocus: false });
         default:
             return state;
     }
@@ -456,6 +509,24 @@ export const inspectorReducer: Reducer<IInspectorState> = (
             return Object.assign({}, state, { selectedObject: action.state.selectedObject ? action.state.selectedObject.activity : null });
         case 'Inspector_Clear':
             return Object.assign({}, state, { selectedObject: null });
+        default:
+            return state;
+    }
+}
+
+export const hotkeyReducer: Reducer<IHotkeyState> = (
+    state = hotkeyDefault,
+    action: HotkeyAction
+) => {
+    switch (action.type) {
+        case 'Hotkey_OpenMenu':
+            return Object.assign({}, state, { openMenu: true });
+        case 'Hotkey_OpenMenu_Clear':
+            return Object.assign({}, state, { openMenu: false });
+        case 'Hotkey_ToggleAddressBarFocus':
+            return Object.assign({}, state, { toggleAddressBarFocus: true });
+        case 'Hotkey_ToggleAddressBarFocus_Clear':
+            return Object.assign({}, state, { toggleAddressBarFocus: false });
         default:
             return state;
     }

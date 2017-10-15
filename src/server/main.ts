@@ -41,6 +41,7 @@ import * as log from './log';
 import { Emulator } from './emulator';
 import { WindowManager } from './windowManager';
 import * as commandLine from './commandLine'
+import * as electronLocalShortcut from 'electron-localshortcut';
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
     console.error(error);
@@ -199,6 +200,19 @@ const createMainWindow = () => {
     });
     Electron.globalShortcut.register("CommandOrControl+0", () => {
         windowManager.zoomTo(0);
+    });
+
+    let registerHotkeys = (hotkeys, callback) => hotkeys.forEach(hotkey =>
+        electronLocalShortcut.register(mainWindow, hotkey, callback));
+
+    registerHotkeys(["F10", "Alt+F"],() => {
+        Emulator.send('open-menu');
+    });
+    registerHotkeys(["F5", "CmdOrCtrl+R"],() => {
+        Emulator.send('new-conversation');
+    });
+    registerHotkeys(["F6", "CmdOrCtrl+L"],() => {
+        Emulator.send('toggle-address-bar-focus');
     });
 
     mainWindow.once('ready-to-show', () => {

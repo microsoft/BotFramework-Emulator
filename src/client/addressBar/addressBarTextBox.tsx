@@ -41,6 +41,7 @@ import { AddressBarOperators } from './addressBarOperators';
 export class AddressBarTextBox extends React.Component<{}, {}> {
     settingsUnsubscribe: any;
     textBoxRef: any;
+    hasFocus: boolean;
 
     onChange(text: string) {
         text = text || '';
@@ -66,7 +67,18 @@ export class AddressBarTextBox extends React.Component<{}, {}> {
         }
     }
 
-     onFocus() {
+    onFocus() {
+        this.hasFocus = true;
+        this.focusAddressBarAndSelectText();
+        AddressBarActions.gainFocus();
+    }
+
+    onBlur() {
+        this.hasFocus = false;
+        AddressBarActions.loseFocus();
+    }
+
+    focusAddressBarAndSelectText() {
         this.textBoxRef.select();
         const settings = getSettings();
         const bots = AddressBarOperators.getMatchingBots(settings.addressBar.text, null);
@@ -85,16 +97,17 @@ export class AddressBarTextBox extends React.Component<{}, {}> {
         }
     }
 
-    onBlur() {
-        //const settings = getSettings();
-        //const activeBot = (new ServerSettings(settings.serverSettings)).getActiveBot();
-        //if (activeBot) {
-        //    AddressBarActions.setText(activeBot.botUrl);
-        //}
-    }
-
     componentWillMount() {
         this.settingsUnsubscribe = addSettingsListener((settings) => {
+            let addressBarGainFocus = settings.addressBar.hasFocus && !this.hasFocus;
+            let addressBarLoseFocus = !settings.addressBar.hasFocus && this.hasFocus;
+
+            if (addressBarGainFocus) {
+                this.textBoxRef.focus();
+            }
+            else if (addressBarLoseFocus) {
+                this.textBoxRef.blur();
+            }
             this.forceUpdate();
         });
     }
