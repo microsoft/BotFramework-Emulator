@@ -517,12 +517,16 @@ export class Conversation {
                     grant_type: 'client_credentials',
                     client_id: bot.msaAppId,
                     client_secret: bot.msaPassword,
-                    scope: bot.msaAppId + '/.default',
-                    //atver: 1                            // flag to request a version 1.0 token
+                    scope: bot.msaAppId + '/.default',    
                 },
                 agent: emulator.proxyAgent,
                 strictSSL: false
             };
+
+            if (getSettings().framework.use10Tokens) {
+                // flag to request a version 1.0 token
+                opt.form.atver = 1;
+            }
 
             request(opt, (err, response, body) => {
                 if (!err) {
