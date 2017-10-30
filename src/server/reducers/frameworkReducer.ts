@@ -40,7 +40,8 @@ export type FrameworkAction = {
     state: {
         ngrokPath: string,
         bypassNgrokLocalhost: boolean,
-        stateSizeLImit: number
+        stateSizeLImit: number,
+        use10Tokens: boolean
     }
 }
 

@@ -41,6 +41,8 @@ export interface IFrameworkSettings {
     // option for deciding whether to bypass ngrok for bots on localhost
     bypassNgrokLocalhost?: boolean,
     stateSizeLimit?: number,
+    // option for using 2.0 or 1.0 tokens
+    use10Tokens?: boolean
 }
 
 export interface IWindowStateSettings {
@@ -91,7 +93,8 @@ export class Settings implements ISettings {
 export const frameworkDefault: IFrameworkSettings = {
     ngrokPath: '',
     bypassNgrokLocalhost: true,
-    stateSizeLimit: 64
+    stateSizeLimit: 64,
+    use10Tokens: false
 }
 
 export const windowStateDefault: IWindowStateSettings = {

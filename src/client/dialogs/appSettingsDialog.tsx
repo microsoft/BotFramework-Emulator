@@ -49,6 +49,7 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
     ngrokPathInputRef: any;
     stateSizeLimitInputRef: any;
     bypassNgrokLocalhostInputRef: any;
+    use10TokensInputRef: any;
     showing: boolean;
 
     constructor(props) {
@@ -82,7 +83,8 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
         ServerSettingsActions.remote_setFrameworkServerSettings({
             ngrokPath: this.ngrokPathInputRef.value,
             bypassNgrokLocalhost: this.bypassNgrokLocalhostInputRef.checked,
-            stateSizeLimit: this.stateSizeLimitInputRef.value
+            stateSizeLimit: this.stateSizeLimitInputRef.value,
+            use10Tokens: this.use10TokensInputRef.checked
         });
         AddressBarActions.hideAppSettings();
     }
@@ -189,6 +191,17 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
                                         defaultChecked={ serverSettings.framework.bypassNgrokLocalhost }
                                         disabled={!(this.state.ngrokPath !== null ? this.state.ngrokPath : serverSettings.framework.ngrokPath)} />
                                     Bypass ngrok for local addresses
+                                </label>
+                            </div>
+                            <div className="input-group appsettings-checkbox-group">
+                                <label className="form-label clickable">
+                                    <input
+                                        type="checkbox"
+                                        name="use10Tokens"
+                                        ref={ref => this.use10TokensInputRef = ref}
+                                        className="form-input"
+                                        defaultChecked={ serverSettings.framework.use10Tokens } />
+                                    Use version 1.0 authentication tokens
                                 </label>
                             </div>
                         </div>) )}

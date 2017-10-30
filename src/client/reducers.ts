@@ -354,6 +354,7 @@ export class ServerSettingsActions {
     static remote_setFrameworkServerSettings(state: {
         ngrokPath: string,
         bypassNgrokLocalhost: boolean,
+        use10Tokens: boolean,
         stateSizeLimit: number
     }) {
         serverChangeSetting('Framework_Set', state);
