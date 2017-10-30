@@ -50,8 +50,8 @@ export class VersionManager {
 
     static minimumVersion: IVersion = {
         major: 3,
-        minor: 10,
-        subminor: 5
+        minor: 11,
+        subminor: 0
     };
 
     public static checkVersion(userAgent: string) {
@@ -63,9 +63,9 @@ export class VersionManager {
                 } else {
                     log.warn('Warning: The bot is using an SDK version earlier than ' + VersionManager.toString(VersionManager.minimumVersion) + '.');
                 }
-                log.warn('Warning: SDK versions earlier than ' + VersionManager.toString(VersionManager.minimumVersion) + ' use an authentication configuration that will no longer work with the emulator after September 30, 2017.');
+                log.warn('Warning: SDK versions earlier than ' + VersionManager.toString(VersionManager.minimumVersion) + ' use an authentication configuration that will no longer work with the emulator after November 15, 2017.');
                 log.warn('Warning: For your bot to continue working with the emulator, please update your bot to use an SDK version greater than or equal to ' + VersionManager.toString(VersionManager.minimumVersion) + '.');
-                log.warn(log.makeLinkMessage('Read about the Bot Framework authentication change.', 'https://aka.ms/botfxv31authchange'));   
+                log.warn(log.makeLinkMessage('Read about the Bot Framework authentication change.', 'https://aka.ms/botfxv32authchange'));   
             }
             VersionManager.checkCurrentSdkVersion(version);
             VersionManager.hasChecked = true;
