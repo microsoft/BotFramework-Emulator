@@ -36,7 +36,7 @@ import { Store, createStore, combineReducers, Action } from 'redux';
 import { BehaviorSubject } from 'rxjs';
 import { ActivityOrID } from '../types/activityTypes';
 import { Settings as ServerSettings } from '../types/serverSettingsTypes';
-import { InspectorActions, ConversationActions } from './reducers';
+import { InspectorActions, ConversationActions, HotkeyActions } from './reducers';
 import { loadSettings, saveSettings } from '../shared/utils';
 import {
     layoutReducer,
@@ -45,6 +45,7 @@ import {
     logReducer,
     wordWrapReducer,
     inspectorReducer,
+    hotkeyReducer,
     serverSettingsReducer,
     ServerSettingsActions,
     AddressBarActions
@@ -82,7 +83,8 @@ export interface IAddressBarState {
     showAppSettings: boolean,
     showConversationSettings: boolean,
     showSearchResults: boolean,
-    showBotCreds: boolean
+    showBotCreds: boolean,
+    hasFocus: boolean
 }
 
 export interface IConversationState {
@@ -92,6 +94,11 @@ export interface IConversationState {
 
 export interface ILogState {
     autoscroll?: boolean
+}
+
+export interface IHotkeyState {
+    openMenu: boolean,
+    toggleAddressBarFocus: boolean,
 }
 
 export interface IInspectorState {
@@ -124,7 +131,8 @@ export interface ISettings extends IPersistentSettings {
     conversation: IConversationState,
     log?: ILogState,
     inspector?: IInspectorState,
-    serverSettings?: ServerSettings
+    hotkey?: IHotkeyState,
+    serverSettings?: ServerSettings,
 }
 
 export class Settings implements ISettings {
@@ -135,6 +143,7 @@ export class Settings implements ISettings {
     inspector: IInspectorState;
     serverSettings: ServerSettings;
     wordwrap: IWordWrapState;
+    hotkey: IHotkeyState;
 
     constructor(settings?: ISettings) {
         Object.assign(this, settings);
@@ -154,7 +163,8 @@ export const addressBarDefault: IAddressBarState = {
     showAppSettings: false,
     showConversationSettings: false,
     showSearchResults: false,
-    showBotCreds: false
+    showBotCreds: false,
+    hasFocus: false
 }
 
 export const conversationDefault: IConversationState = {
@@ -172,6 +182,11 @@ export const wordWrapDefault: IWordWrapState = {
 
 export const inspectorDefault: IInspectorState = {
     selectedObject: null
+}
+
+export const hotkeyDefault: IHotkeyState = {
+    openMenu: false,
+    toggleAddressBarFocus: false,
 }
 
 export const settingsDefault: ISettings = {
@@ -197,6 +212,7 @@ const getStore = (): Store<ISettings> => {
             log: logReducer,
             wordwrap: wordWrapReducer,
             inspector: inspectorReducer,
+            hotkey: hotkeyReducer,
             serverSettings: serverSettingsReducer
         }), initialSettings);
     }
@@ -270,6 +286,12 @@ export const startup = () => {
     });
     Electron.ipcRenderer.on('show-about', () => {
         AddressBarActions.showAbout()
+    });
+    Electron.ipcRenderer.on('open-menu', () => {
+        HotkeyActions.openMenu()
+    });
+    Electron.ipcRenderer.on('toggle-address-bar-focus', () => {
+        HotkeyActions.toggleAddressBarFocus()
     });
     Electron.ipcRenderer.on('new-conversation', (event, ...args) => {
         ConversationActions.newConversation(args[0]);

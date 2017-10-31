@@ -32,8 +32,8 @@
 //
 
 import * as React from 'react';
-import { getSettings } from '../settings';
-import { AddressBarActions, ConversationActions } from '../reducers';
+import { getSettings, Settings, addSettingsListener  } from '../settings';
+import { AddressBarActions, ConversationActions, HotkeyActions } from '../reducers';
 import { Emulator } from '../emulator';
 import * as Constants from '../constants';
 import { remote } from 'electron';
@@ -41,8 +41,23 @@ import { remote } from 'electron';
 const { Menu } = remote;
 
 export class AddressBarMenu extends React.Component<{}, {}> {
+    addressBarMenu: any;
+    settingsUnsubscribe: any;
 
-    showMenu() {
+    componentWillMount() {
+        this.settingsUnsubscribe = addSettingsListener((settings: Settings) => {
+            if (settings.hotkey.openMenu) {
+                HotkeyActions.clearOpenMenu();
+                this.showMenuAtCoordinates();
+            }
+        });
+    }
+
+    componentWillUnmount() {
+        this.settingsUnsubscribe();
+    }
+
+    showMenu(options?: any) {
         const settings = getSettings();
         const inConversation = ((settings.serverSettings.activeBot || '').length > 0 && (settings.conversation.conversationId || '').length > 0);
         const haveActiveBot = (settings.serverSettings.activeBot || '').length > 0;
@@ -211,13 +226,37 @@ export class AddressBarMenu extends React.Component<{}, {}> {
         ];
 
         const menu = Menu.buildFromTemplate(template);
-        menu.popup();
+        menu.popup(undefined, options);
+    }
+
+    showMenuAtCoordinates() {
+        this.showMenu(this.getOptionsWithCoordinates());
+    }
+
+    getOptionsWithCoordinates() {
+        let zoomLevel = getSettings().serverSettings.windowState.zoomLevel;
+        let zoomRatio = this.getZoomRatio(zoomLevel);
+
+        return this.calculateCoordinatesAccordingToZoomLevel(zoomRatio);
+    }
+
+    calculateCoordinatesAccordingToZoomLevel(zoomLevelRatio: any) {
+        let rect = this.addressBarMenu.getBoundingClientRect();
+        let left = Math.ceil((rect.left + rect.width / 2) * zoomLevelRatio);
+        let top = Math.ceil((rect.top + rect.height / 2) * zoomLevelRatio);
+        return {x: left, y: top};
+    }
+
+    getZoomRatio(zoomLevel: number): number {
+        return 0.4819 * Math.exp(0.1824 * (zoomLevel + 4));
     }
 
     render() {
         return (
             <a className='undecorated-text' href='javascript:void(0)' title='Settings'>
-                <div className="addressbar-menu" dangerouslySetInnerHTML={{ __html: Constants.hamburgerIcon('toolbar-button', 24) }} onClick={() => this.showMenu()} />
+                <div className="addressbar-menu"
+                     ref={ref => this.addressBarMenu = ref}
+                     dangerouslySetInnerHTML={{ __html: Constants.hamburgerIcon('toolbar-button', 24) }} onClick={() => this.showMenu()} />
             </a>
         );
     }

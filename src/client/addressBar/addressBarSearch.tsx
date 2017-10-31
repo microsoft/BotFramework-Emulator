@@ -81,6 +81,7 @@ class AddressBarSearchResult extends React.Component<AddressBarSearchResultProps
         AddressBarOperators.selectBot(this.props.bot);
         AddressBarOperators.clearMatchingBots();
         AddressBarActions.showBotCreds();
+        AddressBarActions.loseFocus();
     }
 
     deleteBot() {
