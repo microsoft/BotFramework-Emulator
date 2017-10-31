@@ -248,6 +248,7 @@ export class AddressBarMenu extends React.Component<{}, {}> {
     }
 
     getZoomRatio(zoomLevel: number): number {
+        // This is a curve fit to the set of aspect ratios at different zoom levels impirically determined by GitHub user @rinormaloku
         return 0.4819 * Math.exp(0.1824 * (zoomLevel + 4));
     }
 
