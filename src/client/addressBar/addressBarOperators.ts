@@ -46,7 +46,7 @@ export class AddressBarOperators {
         if (text.length === 0)
             return bots;
         const lower = text.toLowerCase();
-        return bots.filter(bot => bot.botUrl.toLowerCase().includes(lower));
+        return bots.filter(bot => bot.botUrl).filter(bot => bot.botUrl.toLowerCase().includes(lower));
     }
 
     static findMatchingBotForUrl(text: string, bots: IBot[]): IBot {
@@ -56,7 +56,7 @@ export class AddressBarOperators {
         let bot: IBot = null;
         if (bots && text && text.length) {
             const lower = text.toLowerCase();
-            bot = bots.find(bot => lower === bot.botUrl.toLowerCase());
+            bot = bots.filter(bot => bot.botUrl).find(bot => lower === bot.botUrl.toLowerCase());
         }
         return bot;
     }
