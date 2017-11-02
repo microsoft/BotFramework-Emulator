@@ -17,11 +17,8 @@
         "removeComments": true
     },
     "exclude": [
-        "node_modules",
-        "app",
         "build",
-        "tests",
-        "install"
+        "node_modules"
     ],
     "compileOnSave": false
 }
