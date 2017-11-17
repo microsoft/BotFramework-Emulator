@@ -61,7 +61,7 @@ export class BotStateController {
     private logBotStateApiDepreciationWarning(botId: string, conversationId: string) {
         const conversation: Conversation = emulator.conversations.conversationById(botId, conversationId);
         if (!conversation.stateApiDepretiationWarningShown) {
-            log.warn('The Bot State API has been depreciated. Please configure your own Bot State API. For more information see: https://blog.botframework.com/2017/07/21/saving-state-azure-nodejs/')
+            log.warn('The Bot State API is being depreciated. Please configure your own Bot State API. For more information: .NET https://aka.ms/bot-stateapi-dotnet | Node.js https://aka.ms/bot-stateapi-nodejsgit ')
         }
     }
 
