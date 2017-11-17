@@ -79,7 +79,7 @@ export class Conversation {
     // flag indicating if the user has been shown the 
     // "please don't use default Bot State API" warning message
     // when they try to write bot state data
-    public stateApiDepretiationWarningShown: boolean = false;
+    public stateApiDepreciationWarningShown: boolean = false;
 
     getCurrentUser() {
         const users = getSettings().users;
