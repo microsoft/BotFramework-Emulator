@@ -60,10 +60,15 @@ export class BotStateController {
 
     private logBotStateApiDeprecationWarning(botId: string, conversationId: string) {
         const conversation: Conversation = emulator.conversations.conversationById(botId, conversationId);
-        if (!conversation.stateApiDeprecationWarningShown) {
-            conversation.stateApiDeprecationWarningShown = true;
-            log.warn('The Bot State API is being depreciated. Please configure your own Bot State API. For more information: .NET https://aka.ms/bot-stateapi-dotnet | Node.js https://aka.ms/bot-stateapi-nodejs')
+        if (!conversation) {
+            log.error('Error loading conversation object');
+        } else {
+            if (!conversation.stateApiDeprecationWarningShown) {
+                conversation.stateApiDeprecationWarningShown = true;
+                log.warn('The Bot State API is being depreciated. Please configure your own Bot State API. For more information: .NET https://aka.ms/bot-stateapi-dotnet | Node.js https://aka.ms/bot-stateapi-nodejs')
+            }
         }
+        
     }
 
     private getBotData(botId: string, channelId: string, conversationId: string, userId: string): IBotData {
