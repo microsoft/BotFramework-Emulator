@@ -58,16 +58,16 @@ export class BotStateController {
         return `${botId || '*'}!${channelId || '*'}!${conversationId || '*'}!${userId || '*'}`;
     }
 
-    private logBotStateApiDepreciationWarning(botId: string, conversationId: string) {
+    private logBotStateApiDeprecationWarning(botId: string, conversationId: string) {
         const conversation: Conversation = emulator.conversations.conversationById(botId, conversationId);
-        if (!conversation.stateApiDepreciationWarningShown) {
-            conversation.stateApiDepreciationWarningShown = true;
+        if (!conversation.stateApiDeprecationWarningShown) {
+            conversation.stateApiDeprecationWarningShown = true;
             log.warn('The Bot State API is being depreciated. Please configure your own Bot State API. For more information: .NET https://aka.ms/bot-stateapi-dotnet | Node.js https://aka.ms/bot-stateapi-nodejs')
         }
     }
 
     private getBotData(botId: string, channelId: string, conversationId: string, userId: string): IBotData {
-        this.logBotStateApiDepreciationWarning(botId, conversationId);
+        this.logBotStateApiDeprecationWarning(botId, conversationId);
         const key = this.botDataKey(botId, channelId, conversationId, userId);
         return this.botDataStore[key] || {
             data: null, eTag: '*'
@@ -75,7 +75,7 @@ export class BotStateController {
     }
 
     private setBotData(botId: string, channelId: string, conversationId: string, userId: string, incomingData: IBotData): IBotData {
-        this.logBotStateApiDepreciationWarning(botId, conversationId);
+        this.logBotStateApiDeprecationWarning(botId, conversationId);
         const key = this.botDataKey(botId, channelId, conversationId, userId);
         let oldData = this.botDataStore[key];
         if (oldData && oldData.eTag && (oldData.eTag.length > 0) && (incomingData.eTag != '*') && (oldData.eTag != incomingData.eTag)) {
