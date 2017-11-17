@@ -61,6 +61,7 @@ export class BotStateController {
     private logBotStateApiDepreciationWarning(botId: string, conversationId: string) {
         const conversation: Conversation = emulator.conversations.conversationById(botId, conversationId);
         if (!conversation.stateApiDepreciationWarningShown) {
+            conversation.stateApiDepreciationWarningShown = true;
             log.warn('The Bot State API is being depreciated. Please configure your own Bot State API. For more information: .NET https://aka.ms/bot-stateapi-dotnet | Node.js https://aka.ms/bot-stateapi-nodejs')
         }
     }
