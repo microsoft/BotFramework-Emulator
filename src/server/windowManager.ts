@@ -87,17 +87,14 @@ export class WindowManager {
         this.zoomTo(zoomLevel);
     }
     public zoomTo(zoomLevel) {
-        //triggering shortcut is global, check if a window is focused to get expected behavior
-        if (this.mainWindow.isFocused() || this.windows.find(wind => wind.isFocused())) {
-            this.mainWindow.webContents.setZoomLevel(zoomLevel);
-            this.windows.forEach(win => win.webContents.setZoomLevel(zoomLevel));
-            dispatch<WindowStateAction>({
-                type: 'Window_RememberZoomLevel',
-                state: {
-                    zoomLevel: zoomLevel
-                }
-            });
-        }
+        this.mainWindow.webContents.setZoomLevel(zoomLevel);
+        this.windows.forEach(win => win.webContents.setZoomLevel(zoomLevel));
+        dispatch<WindowStateAction>({
+            type: 'Window_RememberZoomLevel',
+            state: {
+                zoomLevel: zoomLevel
+            }
+        });
     }
 
     public createCheckoutWindow(payload: string, settings: any, serviceUrl: string) {

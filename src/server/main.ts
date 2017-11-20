@@ -192,26 +192,26 @@ const createMainWindow = () => {
         }
     });
 
-    Electron.globalShortcut.register("CommandOrControl+=", () => {
+    let registerHotkeys = (hotkeys: Array<string>, callback: () => void) => {
+        hotkeys.forEach(hotkey => electronLocalShortcut.register(mainWindow, hotkey, callback))
+    };
+
+    registerHotkeys(["CmdOrCtrl+="], () => {
         windowManager.zoomIn();
     });
-    Electron.globalShortcut.register("CommandOrControl+-", () => {
+    registerHotkeys(["CmdOrCtrl+-"], () => {
         windowManager.zoomOut();
     });
-    Electron.globalShortcut.register("CommandOrControl+0", () => {
+    registerHotkeys(["CmdOrCtrl+0"], () => {
         windowManager.zoomTo(0);
     });
-
-    let registerHotkeys = (hotkeys, callback) => hotkeys.forEach(hotkey =>
-        electronLocalShortcut.register(mainWindow, hotkey, callback));
-
-    registerHotkeys(["F10", "Alt+F"],() => {
+    registerHotkeys(["F10", "Alt+F"], () => {
         Emulator.send('open-menu');
     });
-    registerHotkeys(["F5", "CmdOrCtrl+R"],() => {
+    registerHotkeys(["F5", "CmdOrCtrl+R"], () => {
         Emulator.send('new-conversation');
     });
-    registerHotkeys(["F6", "CmdOrCtrl+L"],() => {
+    registerHotkeys(["F6", "CmdOrCtrl+L"], () => {
         Emulator.send('toggle-address-bar-focus');
     });
 
