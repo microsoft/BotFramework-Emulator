@@ -65,7 +65,10 @@ export class BotStateController {
         } else {
             if (!conversation.stateApiDeprecationWarningShown) {
                 conversation.stateApiDeprecationWarningShown = true;
-                log.warn('The Bot State API is being depreciated. Please configure your own Bot State API. For more information: .NET https://aka.ms/bot-stateapi-dotnet | Node.js https://aka.ms/bot-stateapi-nodejs')
+                log.warn(log.makeLinkMessage(
+                    'The Bot State Service API is being deprecated. Please configure your own Bot State Service. For more information:',
+                    'https://aka.ms/botframework-state-service')
+                );
             }
         }
         
