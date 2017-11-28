@@ -65,7 +65,8 @@ export class BotStateController {
         } else {
             if (!conversation.stateApiDeprecationWarningShown) {
                 conversation.stateApiDeprecationWarningShown = true;
-                log.warn('Warning: The Bot Framework State API is not recommended for production environments, and may be deprecated in a future release.' + log.makeLinkMessage('Learn how to implement your own storage adapter.', 'https://aka.ms/botframework-state-service'));
+                log.warn('Warning: The Bot Framework State API is not recommended for production environments, and may be deprecated in a future release.');
+                log.makeLinkMessage('Learn how to implement your own storage adapter.', 'https://aka.ms/botframework-state-service')
             }
         }
         
