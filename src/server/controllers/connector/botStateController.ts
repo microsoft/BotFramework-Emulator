@@ -60,16 +60,11 @@ export class BotStateController {
 
     private logBotStateApiDeprecationWarning(botId: string, conversationId: string) {
         const conversation: Conversation = emulator.conversations.conversationById(botId, conversationId);
-        if (!conversation) {
-            log.error('Error loading conversation object');
-        } else {
-            if (!conversation.stateApiDeprecationWarningShown) {
-                conversation.stateApiDeprecationWarningShown = true;
-                log.warn('Warning: The Bot Framework State API is not recommended for production environments, and may be deprecated in a future release.');
-                log.makeLinkMessage('Learn how to implement your own storage adapter.', 'https://aka.ms/botframework-state-service')
-            }
-        }
-        
+        if (!conversation.stateApiDeprecationWarningShown) {
+            conversation.stateApiDeprecationWarningShown = true;
+            log.warn('Warning: The Bot Framework State API is not recommended for production environments, and may be deprecated in a future release.',
+            log.makeLinkMessage('Learn how to implement your own storage adapter.', 'https://aka.ms/botframework-state-service'));
+        }   
     }
 
     private getBotData(botId: string, channelId: string, conversationId: string, userId: string): IBotData {
