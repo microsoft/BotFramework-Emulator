@@ -41,6 +41,8 @@ import { BotFrameworkAuthentication } from '../../botFrameworkAuthentication';
 import { jsonBodyParser } from '../../jsonBodyParser';
 import { getSettings } from '../../settings';
 import { approximateObjectSize } from '../../../shared/utils';
+import { emulator } from '../../emulator';
+import { Conversation } from '../../conversationManager';
 
 
 interface IBotData {
@@ -56,7 +58,17 @@ export class BotStateController {
         return `${botId || '*'}!${channelId || '*'}!${conversationId || '*'}!${userId || '*'}`;
     }
 
+    private logBotStateApiDeprecationWarning(botId: string, conversationId: string) {
+        const conversation: Conversation = emulator.conversations.conversationById(botId, conversationId);
+        if (conversation && !conversation.stateApiDeprecationWarningShown) {
+            conversation.stateApiDeprecationWarningShown = true;
+            log.warn('Warning: The Bot Framework State API is not recommended for production environments, and may be deprecated in a future release.',
+            log.makeLinkMessage('Learn how to implement your own storage adapter.', 'https://aka.ms/botframework-state-service'));
+        }   
+    }
+
     private getBotData(botId: string, channelId: string, conversationId: string, userId: string): IBotData {
+        this.logBotStateApiDeprecationWarning(botId, conversationId);
         const key = this.botDataKey(botId, channelId, conversationId, userId);
         return this.botDataStore[key] || {
             data: null, eTag: '*'
@@ -64,6 +76,7 @@ export class BotStateController {
     }
 
     private setBotData(botId: string, channelId: string, conversationId: string, userId: string, incomingData: IBotData): IBotData {
+        this.logBotStateApiDeprecationWarning(botId, conversationId);
         const key = this.botDataKey(botId, channelId, conversationId, userId);
         let oldData = this.botDataStore[key];
         if (oldData && oldData.eTag && (oldData.eTag.length > 0) && (incomingData.eTag != '*') && (oldData.eTag != incomingData.eTag)) {
