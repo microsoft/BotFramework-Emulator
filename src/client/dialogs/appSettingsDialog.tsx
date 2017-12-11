@@ -277,7 +277,6 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
                         </button>
                         <div tabIndex={0} onFocus={() => this.handleFocusTrap(this.firstFocusRef)} />
                     </div>
-                    {/* <!-- end focus trap --> */}
                 </div>
             </div>
         );
