@@ -84,7 +84,7 @@ export class AboutDialog extends React.Component<{}, {}> {
                 <div className="dialog-background">
                 </div>
                 <div className="emu-dialog about-dialog">
-                    <div className="dialog-closex" onClick={() => this.onClose()} dangerouslySetInnerHTML={{ __html: Constants.clearCloseIcon("", 24) }} />
+                    <button className="dialog-closex" onClick={() => this.onClose()} dangerouslySetInnerHTML={{ __html: Constants.clearCloseIcon("", 24) }} />
                     <div className='about-logo' dangerouslySetInnerHTML={{ __html: Constants.botFrameworkIcon('about-logo-fill', 142) }} />
                     <div className="about-name">Microsoft Bot Framework Emulator</div>
                     <div className="about-link"><a href='https://aka.ms/bf-emulator'>https://aka.ms/bf-emulator</a></div>

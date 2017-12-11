@@ -18,15 +18,8 @@
         transition: all .2s;
     }
 
-    input:focus,
-    textarea:focus,
-    select:focus,
-    button:focus {
-        outline-width: 0;
-    }
-
     button {
-        background: #3A96DD;
+        background: #0078D7;
         border: none;
         border-radius: 2px;
         color: #fff;
@@ -35,6 +28,13 @@
     }
     button:hover {
         background: #0063B1;
+    }
+    button:active {
+        background: #004E8C;
+    }
+    button:focus {
+        outline: 1px dotted #2b2b2b;
+        outline-offset: 2px;
     }
 
     *, *:before, *:after {
@@ -64,7 +64,7 @@
     }
 
     input[type=checkbox]:checked {
-        background: #3A96DD;
+        background: #0078D7;
     }
 
     input[type=checkbox]:checked:before {
@@ -118,7 +118,7 @@
         outline: none;
         transition: color .2s ease, background-color .2s ease;
         background-color: transparent;
-        color: #3A96DD;
+        color: #0078D7;
         min-height: 32px;
         width: 100%;
         padding: 0 16px;
@@ -155,7 +155,7 @@
     }
 
     .addressbar {
-        background: #3A96DD;
+        background: #0078D7;
         position: absolute;
         top: 0;
         height: 42px;
@@ -183,7 +183,7 @@
         right: 84px;
     }
     .addressbar-textbox input[type=text] {
-        background: #3A96DD;
+        background: #0078D7;
         color: white;
         border: none;
         height: 100%;
@@ -238,7 +238,7 @@
     }
 
     .addressbar-search {
-        background: #3A96DD;
+        background: #0078D7;
         max-height: 500px;
         overflow-y: auto;
         position: absolute;
@@ -348,7 +348,7 @@
         height: 0;
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
-        border-top: 8px solid #3A96DD;
+        border-top: 8px solid #0078D7;
         position:absolute;
         top:0;
         left:40px;
@@ -498,7 +498,7 @@
     }
 
     .about-logo-fill {
-        fill: #3A96DD;
+        fill: #0078D7;
     }
     .about-logo {
         padding-top: 50px;
@@ -521,7 +521,7 @@
     }
     .about-link a {
         text-decoration: none;
-        color: #3A96DD;
+        color: #0078D7;
     }
     .about-version {
         text-align: center;
@@ -628,7 +628,7 @@
 
     .checkout-table .primary-button {
         color: white;
-        background: #3A96DD;
+        background: #0078D7;
     }
 
     .checkout-table .primary-button:hover {
@@ -676,7 +676,7 @@
     }
 
     .checkout-table .show-details {
-        color: #3A96DD;
+        color: #0078D7;
         cursor: pointer;
     }
 
@@ -804,7 +804,7 @@
     }
 
     .checkout-table .add-item {
-        color: #3A96DD;
+        color: #0078D7;
         margin-left: 10px;
         margin-right: 10px;
     }
@@ -872,7 +872,7 @@
     }
     .emu-dialog-text a {
         text-decoration: none;
-        color: #3A96DD;
+        color: #0078D7;
     }
 
     .dialog-background {
@@ -893,6 +893,24 @@
         top: 8px;
         right: 8px;
         cursor: pointer;
+
+        background-color: transparent;
+    }
+
+    .dialog-closex:hover {
+        background-color: transparent;
+    }
+
+    .dialog-closex:hover path {
+        stroke: #0063B1;
+    }
+
+    .dialog-closex:focus path {
+        stroke: #0078D7;
+    }
+
+    .dialog-closex:active path {
+        stroke: #004E8C;
     }
 
     .dialog-closex path {
@@ -970,7 +988,7 @@
         float: left;
     }
     .emu-navbar, .emu-navitem {
-        color: #3A96DD;
+        color: #0078D7;
         text-decoration: none;
         transition: border 0s;
     }
@@ -982,7 +1000,7 @@
     }
     .emu-navitem-selected {
         color: #000;
-        border-bottom: 3px #3A96DD solid;
+        border-bottom: 3px #0078D7 solid;
         transition: border 0s;
     }
     .enu-navhdr {

@@ -32,6 +32,7 @@
 //
 
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { remote } from 'electron';
 import { getSettings, Settings, addSettingsListener } from '../settings';
 import { AddressBarActions, ServerSettingsActions } from '../reducers';
@@ -51,6 +52,9 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
     bypassNgrokLocalhostInputRef: any;
     use10TokensInputRef: any;
     showing: boolean;
+    firstFocusRef: any;
+    lastFocusRef: any;
+    prevShow: boolean;
 
     constructor(props) {
         super(props);
@@ -119,18 +123,31 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
         });
     }
 
+    componentDidMount() {
+        this.prevShow = this.shouldShow();
+        this.prevShow && this.focusFirstNaturalElement();
+    }
+
     componentWillUnmount() {
         window.removeEventListener('click', this.pageClicked);
         this.settingsUnsubscribe();
+    }
+
+    private onKeyUpEnterNav(event, name) {
+        if (event.key === 'Enter') {
+            this.setState({curTab: name});
+        }
     }
 
     private renderNavItem(name: string, contents: string): JSX.Element {
         let classStr = "emu-navitem";
         classStr += this.state.curTab === name ? " emu-navitem-selected" : "";
         return <li>
-            <a id={name + "-nav"}
+            <a  tabIndex={0}
+                id={name + "-nav"}
                 className={classStr}
                 onClick={() => this.setState({curTab: name})}
+                onKeyUp={(event) => this.onKeyUpEnterNav(event, name)}
                 >
                 {contents}
             </a>
@@ -145,17 +162,45 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
         </div>)
     }
 
+    private handleFocusTrap(ref) {
+        const element = ReactDOM.findDOMNode(ref) as HTMLElement;
+
+        element && element.focus();
+    }
+
+    private shouldShow() {
+        return !!getSettings().addressBar.showAppSettings;
+    }
+
+    componentDidUpdate(prevProps) {
+        const show = this.shouldShow();
+
+        if (!this.prevShow && show) {
+            this.focusFirstNaturalElement();
+        }
+
+        this.prevShow = show;
+    }
+
+    private focusFirstNaturalElement() {
+        const ngrokPathInputDOM = ReactDOM.findDOMNode(this.ngrokPathInputRef) as HTMLElement;
+
+        ngrokPathInputDOM && ngrokPathInputDOM.focus();
+    }
+
     render() {
-        const settings = getSettings();
-        if (!settings.addressBar.showAppSettings) return null;
+        if (!this.shouldShow()) { return null; }
+
         const serverSettings = getSettings().serverSettings;
+
         return (
             <div>
                 <div className="dialog-background">
                 </div>
                 <div className="emu-dialog appsettings-dialog">
+                    <div tabIndex={0} onFocus={() => this.handleFocusTrap(this.lastFocusRef)} />
                     <h2 className="dialog-header">App Settings</h2>
-                    <div className="dialog-closex" onClick={() => this.onClose()} dangerouslySetInnerHTML={{ __html: Constants.clearCloseIcon("", 24) }} />
+                    <button id="AppSettings-top" className="dialog-closex" onClick={() => this.onClose()} dangerouslySetInnerHTML={{ __html: Constants.clearCloseIcon("", 24) }} ref={ref => this.firstFocusRef = ref} />
                     <div className="appsettings-lowerpane">
                         <ul className="emu-navbar">
                             {this.renderNavItem("service", "Service")}
@@ -225,10 +270,14 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
                         </div>) )}
                     </div>
                     <div className="dialog-buttons">
-                        <button className="appsettings-savebtn" onClick={() => this.onAccept()}>Save</button>
+                        <button type="button" className="appsettings-savebtn" onClick={() => this.onAccept()}>Save</button>
                         &nbsp;&nbsp;&nbsp;
-                        <button className="appsettings-cancelbtn" onClick={() => this.onClose()}>Cancel</button>
+                        <button type="button" className="appsettings-cancelbtn" onClick={() => this.onClose()} ref={ref => this.lastFocusRef = ref}>
+                            Cancel
+                        </button>
+                        <div tabIndex={0} onFocus={() => this.handleFocusTrap(this.firstFocusRef)} />
                     </div>
+                    {/* <!-- end focus trap --> */}
                 </div>
             </div>
         );
