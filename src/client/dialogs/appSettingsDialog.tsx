@@ -128,6 +128,16 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
         this.prevShow && this.focusFirstNaturalElement();
     }
 
+    componentDidUpdate(prevProps) {
+        const show = this.shouldShow();
+
+        if (!this.prevShow && show) {
+            this.focusFirstNaturalElement();
+        }
+
+        this.prevShow = show;
+    }
+
     componentWillUnmount() {
         window.removeEventListener('click', this.pageClicked);
         this.settingsUnsubscribe();
@@ -170,16 +180,6 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
 
     private shouldShow() {
         return !!getSettings().addressBar.showAppSettings;
-    }
-
-    componentDidUpdate(prevProps) {
-        const show = this.shouldShow();
-
-        if (!this.prevShow && show) {
-            this.focusFirstNaturalElement();
-        }
-
-        this.prevShow = show;
     }
 
     private focusFirstNaturalElement() {

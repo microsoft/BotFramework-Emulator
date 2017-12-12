@@ -32,37 +32,29 @@
 //
 
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import * as Constants from '../constants';
 import { AddressBarActions } from '../reducers';
 import { getSettings, Settings, addSettingsListener } from '../settings';
+import CommonDialog from './commonDialog';
 var pjson = require('../../../package.json');
 
 export class AboutDialog extends React.Component<{}, {}> {
     settingsUnsubscribe: any;
     showing: boolean;
+    firstFocusRef: any;
+    lastFocusRef: any;
+    naturalFocusRef: any;
 
-    pageClicked = (ev: Event) => {
-        if (ev.defaultPrevented)
-            return;
-        let target = ev.srcElement;
-        while (target) {
-            if (target.className.toString().includes("about")) {
-                ev.preventDefault();
-                return;
-            }
-            target = target.parentElement;
-        }
+    constructor(props, context) {
+        super(props, context);
 
-        // Click was outside the dialog. Close.
-        this.onClose();
-    }
-
-    onClose = () => {
-        AddressBarActions.hideAbout();
+        this.handleClose = this.handleClose.bind(this);
+        this.handleFocusLast = this.handleFocusLast.bind(this);
+        this.handleFocusNatural = this.handleFocusNatural.bind(this);
     }
 
     componentWillMount() {
-        window.addEventListener('click', this.pageClicked);
         this.settingsUnsubscribe = addSettingsListener((settings: Settings) => {
             if (settings.addressBar.showAbout != this.showing) {
                 this.showing = settings.addressBar.showAbout;
@@ -72,26 +64,38 @@ export class AboutDialog extends React.Component<{}, {}> {
     }
 
     componentWillUnmount() {
-        window.removeEventListener('click', this.pageClicked);
         this.settingsUnsubscribe();
+    }
+
+    handleClose() {
+        AddressBarActions.hideAbout();
+    }
+
+    handleFocusLast() {
+        // TODO: Check for null and noop on null
+        (ReactDOM.findDOMNode(this.lastFocusRef) as HTMLElement).focus();
+    }
+
+    handleFocusNatural() {
+        // TODO: Check for null and noop on null
+        (ReactDOM.findDOMNode(this.naturalFocusRef) as HTMLElement).focus();
     }
 
     render() {
         const settings = getSettings();
         if (!settings.addressBar.showAbout) return null;
         return (
-            <div>
-                <div className="dialog-background">
-                </div>
-                <div className="emu-dialog about-dialog">
-                    <button className="dialog-closex" onClick={() => this.onClose()} dangerouslySetInnerHTML={{ __html: Constants.clearCloseIcon("", 24) }} />
-                    <div className='about-logo' dangerouslySetInnerHTML={{ __html: Constants.botFrameworkIcon('about-logo-fill', 142) }} />
-                    <div className="about-name">Microsoft Bot Framework Emulator</div>
-                    <div className="about-link"><a href='https://aka.ms/bf-emulator'>https://aka.ms/bf-emulator</a></div>
-                    <div className="about-version">{`v${pjson.version}`}</div>
-                    <div className="about-copyright">&copy; 2016 Microsoft</div>
-                </div>
-            </div>
+            <CommonDialog
+                onClose={ this.handleClose }
+                onFocusLast={ this.handleFocusLast }
+                onFocusNatural={ this.handleFocusNatural }
+            >
+                <div className='about-logo' dangerouslySetInnerHTML={{ __html: Constants.botFrameworkIcon('about-logo-fill', 142) }} />
+                <div className="about-name">Microsoft Bot Framework Emulator</div>
+                <div className="about-link"><a href='https://aka.ms/bf-emulator' ref={ref => this.naturalFocusRef = this.lastFocusRef = ref}>https://aka.ms/bf-emulator</a></div>
+                <div className="about-version">{`v${pjson.version}`}</div>
+                <div className="about-copyright">&copy; 2016 Microsoft</div>
+            </CommonDialog>
         );
     }
 }
