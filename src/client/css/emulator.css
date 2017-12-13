@@ -26,12 +26,15 @@
         cursor: pointer;
         outline: none;
     }
+
     button:hover {
         background: #0063B1;
     }
+
     button:active {
         background: #004E8C;
     }
+
     button:focus {
         outline: 1px dotted #2b2b2b;
         outline-offset: 2px;
@@ -182,6 +185,7 @@
         height: 42px;
         right: 84px;
     }
+
     .addressbar-textbox input[type=text] {
         background: #0078D7;
         color: white;
@@ -193,6 +197,7 @@
         width: 100%;
         padding-left: 4px;
     }
+
     .addressbar-textbox input[type=text]::-webkit-input-placeholder {
         color: rgba(255, 255, 255, 0.75);
     }
@@ -250,6 +255,7 @@
         display: block;
         padding-bottom: 8px;
     }
+
     .addressbar-search.closed {
         max-height: 0;
     }
@@ -271,6 +277,7 @@
         background: #6AAFE5;
         border-radius: 2px;
     }
+
     .addressbar-searchresult:hover .addressbar-searchresult-delete {
         opacity: 1;
     }
@@ -307,14 +314,17 @@
         padding: 24px 24px 24px 40px;
         box-shadow: 0 1px 2px rgba(0,0,0,.2);
     }
+
     .addressbar-botcreds.closed {
         max-height: 0;
         border-width: 0;
         box-shadow: 0;
     }
+
     .addressbar-botcreds-title {
         font-weight: 500;
     }
+
     .addressbar-botcreds input[type=text] {
         border-width: 0.1px;
         border-style: solid;
@@ -322,18 +332,23 @@
         padding-left: 4px;
         padding-right: 4px;
     }
+
     .addressbar-botcreds-input {
         display: inline-block;
     }
+
     .addressbar-botcreds-appid {
         width: 300px;
     }
+
     .addressbar-botcreds-password {
         width: 160px;
     }
+
     .addressbar-botcreds-locale {
         width: 50px;
     }
+
     .addressbar-botcreds-connect-button {
         display: block;
         padding: 11px 16px 10px 16px;
@@ -343,6 +358,7 @@
         font-weight: 500;
         margin-top: 24px;
     }
+
     .addressbar-botcreds-callout {
         width: 0;
         height: 0;
@@ -378,7 +394,7 @@
     }
 
     .appsettings-browsebtn {
-        padding: 11px 16px 10px 16px;
+        padding: 10.5px 16px 10.5px 16px;
         margin-left: 8px;
         font-size: 13px;
         text-transform: uppercase;
@@ -391,7 +407,7 @@
         position: absolute;
         left: 50%;
         transform: translate(-110%, 0%);
-        padding: 11px 16px 10px 16px;
+        padding: 10.5px 16px 10.5px 16px;
         font-size: 13px;
         text-transform: uppercase;
         line-height: 1.3333333;
@@ -405,7 +421,7 @@
         position: absolute;
         left: 50%;
         transform: translate(10%, 0%);
-        padding: 11px 16px 10px 16px;
+        padding: 10.5px 16px 10.5px 16px;
         font-size: 13px;
         text-transform: uppercase;
         line-height: 1.3333333;
@@ -500,11 +516,13 @@
     .about-logo-fill {
         fill: #0078D7;
     }
+
     .about-logo {
         padding-top: 50px;
         width: 100%;
         text-align: center;
     }
+
     .about-name {
         text-align: center;
         width: 100%;
@@ -514,20 +532,24 @@
         padding-bottom: 6px;
         letter-spacing: -0.3px;
     }
+
     .about-link {
         text-align: center;
         width: 100%;
         padding-bottom: 6px;
     }
+
     .about-link a {
         text-decoration: none;
         color: #0078D7;
     }
+
     .about-version {
         text-align: center;
         width: 100%;
         font-size: 15px;
     }
+
     .about-copyright {
         text-align: center;
         width: 100%;
@@ -870,6 +892,7 @@
     .emu-dialog-text {
         margin-bottom: 12px;
     }
+
     .emu-dialog-text a {
         text-decoration: none;
         color: #0078D7;
@@ -903,6 +926,10 @@
 
     .dialog-closex:hover path {
         stroke: #0063B1;
+    }
+
+    .dialog-closex:focus {
+        outline-width: 0;
     }
 
     .dialog-closex:focus path {
@@ -947,27 +974,31 @@
     }
 
     .toolbar-button {
-		width: 24px;
-		height: 24px;
+        width: 24px;
+        height: 24px;
         vertical-align: middle;
         transition: all .2s;
     }
+
     .toolbar-button:hover {
         background: #6AAFE5;
     }
+
     .toolbar-button-disabled {
         opacity: 0.5
     }
+
     svg.toolbar-button-disabled:hover {
         background: initial;
     }
 
     .toolbar-button-dark {
-		width: 24px;
-		height: 24px;
+        width: 24px;
+        height: 24px;
         vertical-align: middle;
         transition: all .2s;
     }
+
     .toolbar-button-dark:hover {
         background: #4C4C4C;
     }
@@ -975,43 +1006,52 @@
     .emu-visible {
         display: block;
     }
+
     .emu-hidden {
         display: none;
     }
+
     .emu-navbar {
         list-style-type: none;
-        margin: 16px 0 0 0;
+        margin: 8p      x 0 0 0;
         padding: 0;
         overflow: hidden;
     }
+
     .emu-navbar li {
         float: left;
     }
+
     .emu-navbar, .emu-navitem {
         color: #0078D7;
         text-decoration: none;
         transition: border 0s;
     }
+
     .emu-navitem {
-        padding: 0px 16px 10px 16px;
+        padding: 8px 16px 10px 16px;
         margin: 0 26px 0px 0px;
         display: block;
         border-bottom: 3px #CCC solid;
     }
+
     .emu-navitem-selected {
         color: #000;
         border-bottom: 3px #0078D7 solid;
         transition: border 0s;
     }
+
     .enu-navhdr {
         height: 0;
         border: 0;
         border-top: 1px solid #CCC;
         margin: -1px 0 0 0;
     }
+
     .emu-tab {
         margin-top: 16px;
     }
+
     .emu-readonly {
         background: #EEE;
     }
@@ -1032,6 +1072,7 @@
         z-index: 1000;
         box-shadow: 0 2px 3px rgba(0,0,0,.5);
     }
+
     .undecorated-text {
         text-decoration: none;
     }
@@ -1060,7 +1101,7 @@
 
     .wc-inspectorview-json {
         font-size: 13px;
-	    font-family: 'Menlo', 'Monaco', 'Consolas', "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+        font-family: 'Menlo', 'Monaco', 'Consolas', "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
         position: absolute;
         top: 0;
         left: 0;
@@ -1100,7 +1141,7 @@
         color: white;
         overflow: auto;
         font-size: 13px;
-	    font-family: 'Menlo', 'Monaco', 'Consolas', "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+        font-family: 'Menlo', 'Monaco', 'Consolas', "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
         white-space: nowrap;
         position: absolute;
         left: 0;
