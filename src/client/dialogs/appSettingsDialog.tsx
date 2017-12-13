@@ -37,7 +37,7 @@ import { remote } from 'electron';
 import { getSettings, Settings, addSettingsListener } from '../settings';
 import { AddressBarActions, ServerSettingsActions } from '../reducers';
 import * as path from 'path';
-import * as Constants from '../constants';
+import CommonDialog from './commonDialog';
 
 
 interface AppSettingsDialogState extends React.Props<AppSettingsDialog> {
@@ -54,7 +54,6 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
     showing: boolean;
     firstFocusRef: any;
     lastFocusRef: any;
-    prevShow: boolean;
 
     constructor(props) {
         super(props);
@@ -80,7 +79,7 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
         }
 
         // Click was outside the dialog. Close.
-        this.onClose();
+        this.handleClose();
     }
 
     onAccept = () => {
@@ -93,7 +92,7 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
         AddressBarActions.hideAppSettings();
     }
 
-    onClose = () => {
+    handleClose = () => {
         AddressBarActions.hideAppSettings();
     }
 
@@ -121,21 +120,6 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
                 this.forceUpdate();
             }
         });
-    }
-
-    componentDidMount() {
-        this.prevShow = this.shouldShow();
-        this.prevShow && this.focusFirstNaturalElement();
-    }
-
-    componentDidUpdate(prevProps) {
-        const show = this.shouldShow();
-
-        if (!this.prevShow && show) {
-            this.focusFirstNaturalElement();
-        }
-
-        this.prevShow = show;
     }
 
     componentWillUnmount() {
@@ -172,7 +156,7 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
         </div>)
     }
 
-    private handleFocusTrap(ref) {
+    private handleFocusLast(ref) {
         const element = ReactDOM.findDOMNode(ref) as HTMLElement;
 
         element && element.focus();
@@ -182,7 +166,7 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
         return !!getSettings().addressBar.showAppSettings;
     }
 
-    private focusFirstNaturalElement() {
+    private handleFocusNatural() {
         const ngrokPathInputDOM = ReactDOM.findDOMNode(this.ngrokPathInputRef) as HTMLElement;
 
         ngrokPathInputDOM && ngrokPathInputDOM.focus();
@@ -194,91 +178,87 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
         const serverSettings = getSettings().serverSettings;
 
         return (
-            <div>
-                <div className="dialog-background">
-                </div>
-                <div className="emu-dialog appsettings-dialog">
-                    <div tabIndex={0} onFocus={() => this.handleFocusTrap(this.lastFocusRef)} />
-                    <h2 className="dialog-header">App Settings</h2>
-                    <button id="AppSettings-top" className="dialog-closex" onClick={() => this.onClose()} dangerouslySetInnerHTML={{ __html: Constants.clearCloseIcon("", 24) }} ref={ref => this.firstFocusRef = ref} />
-                    <div className="appsettings-lowerpane">
-                        <ul className="emu-navbar">
-                            {this.renderNavItem("service", "Service")}
-                            {this.renderNavItem("state", "Bot State")}
-                        </ul>
-                        <hr className='enu-navhdr' />
-                        {this.renderNavTab("service", (<div>
-                            <div className='emu-dialog-text'>
-                                <a title='https://ngrok.com' href='https://ngrok.com'>ngrok</a> is network tunneling software.
-                                The Bot Framework Emulator works with ngrok to communicate with bots hosted remotely.
-                                Read the <a title='https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)' href='https://aka.ms/szvi68'>wiki page</a> to learn more about using ngrok and to download it.
-                            </div>
-                            <div className="input-group">
-                                <label className="form-label">
-                                    Path to ngrok:
-                                </label>
+            <CommonDialog
+                onClose={ this.handleClose }
+                onFocusLast={ this.handleFocusLast }
+                onFocusNatural={ this.handleFocusNatural }
+            >
+                <div className="appsettings-lowerpane">
+                    <ul className="emu-navbar">
+                        {this.renderNavItem("service", "Service")}
+                        {this.renderNavItem("state", "Bot State")}
+                    </ul>
+                    <hr className='enu-navhdr' />
+                    {this.renderNavTab("service", (<div>
+                        <div className='emu-dialog-text'>
+                            <a title='https://ngrok.com' href='https://ngrok.com'>ngrok</a> is network tunneling software.
+                            The Bot Framework Emulator works with ngrok to communicate with bots hosted remotely.
+                            Read the <a title='https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)' href='https://aka.ms/szvi68'>wiki page</a> to learn more about using ngrok and to download it.
+                        </div>
+                        <div className="input-group">
+                            <label className="form-label">
+                                Path to ngrok:
+                            </label>
+                            <input
+                                type="text"
+                                name="ngrokPath"
+                                ref={ref => this.ngrokPathInputRef = ref}
+                                className="form-input appsettings-path-input appsettings-ngrokpath-input"
+                                defaultValue={`${serverSettings.framework.ngrokPath || ''}`}
+                                onChange={(elem) => this.setState({ ngrokPath: elem.currentTarget.value })} />
+                            <button className='appsettings-browsebtn' onClick={() => this.browseForNgrokPath()}>Browse...</button>
+                        </div>
+                        <div className="input-group appsettings-checkbox-group">
+                            <label className="form-label clickable">
                                 <input
-                                    type="text"
-                                    name="ngrokPath"
-                                    ref={ref => this.ngrokPathInputRef = ref}
-                                    className="form-input appsettings-path-input appsettings-ngrokpath-input"
-                                    defaultValue={`${serverSettings.framework.ngrokPath || ''}`}
-                                    onChange={(elem) => this.setState({ ngrokPath: elem.currentTarget.value })} />
-                                <button className='appsettings-browsebtn' onClick={() => this.browseForNgrokPath()}>Browse...</button>
-                            </div>
-                            <div className="input-group appsettings-checkbox-group">
-                                <label className="form-label clickable">
-                                    <input
-                                        type="checkbox"
-                                        name="bypassNgrokLocalhost"
-                                        ref={ref => this.bypassNgrokLocalhostInputRef = ref}
-                                        className="form-input"
-                                        defaultChecked={ serverSettings.framework.bypassNgrokLocalhost }
-                                        disabled={!(this.state.ngrokPath !== null ? this.state.ngrokPath : serverSettings.framework.ngrokPath)} />
-                                    Bypass ngrok for local addresses
-                                </label>
-                            </div>
-                            <div className="input-group appsettings-checkbox-group">
-                                <label className="form-label clickable">
-                                    <input
-                                        type="checkbox"
-                                        name="use10Tokens"
-                                        ref={ref => this.use10TokensInputRef = ref}
-                                        className="form-input"
-                                        defaultChecked={ serverSettings.framework.use10Tokens } />
-                                    Use version 1.0 authentication tokens
-                                </label>
-                            </div>
-                        </div>) )}
-                        {this.renderNavTab("state", (<div>
-                            <div className='emu-dialog-text'>
-                                Bots use the <a href="https://aka.ms/sw9dcl">Bot State service</a> to store and retrieve application data. The Bot Framework's bot state service has a size limit of 64KB. Custom state services may differ.
-                            </div>
-                            <div className="input-group">
-                                <label className="form-label">
-                                    Size limit (zero for no limit):
-                                </label>
+                                    type="checkbox"
+                                    name="bypassNgrokLocalhost"
+                                    ref={ref => this.bypassNgrokLocalhostInputRef = ref}
+                                    className="form-input"
+                                    defaultChecked={ serverSettings.framework.bypassNgrokLocalhost }
+                                    disabled={!(this.state.ngrokPath !== null ? this.state.ngrokPath : serverSettings.framework.ngrokPath)} />
+                                Bypass ngrok for local addresses
+                            </label>
+                        </div>
+                        <div className="input-group appsettings-checkbox-group">
+                            <label className="form-label clickable">
                                 <input
-                                    type="number"
-                                    name="stateStorage"
-                                    ref={ref => this.stateSizeLimitInputRef = ref}
-                                    className="form-input appsettings-number-input appsettings-space-input"
-                                    min={0}
-                                    max={4000000}
-                                    defaultValue={String(serverSettings.framework.stateSizeLimit) || '64'} /> KB
-                            </div>
-                        </div>) )}
-                    </div>
-                    <div className="dialog-buttons">
-                        <button type="button" className="appsettings-savebtn" onClick={() => this.onAccept()}>Save</button>
-                        &nbsp;&nbsp;&nbsp;
-                        <button type="button" className="appsettings-cancelbtn" onClick={() => this.onClose()} ref={ref => this.lastFocusRef = ref}>
-                            Cancel
-                        </button>
-                        <div tabIndex={0} onFocus={() => this.handleFocusTrap(this.firstFocusRef)} />
-                    </div>
+                                    type="checkbox"
+                                    name="use10Tokens"
+                                    ref={ref => this.use10TokensInputRef = ref}
+                                    className="form-input"
+                                    defaultChecked={ serverSettings.framework.use10Tokens } />
+                                Use version 1.0 authentication tokens
+                            </label>
+                        </div>
+                    </div>) )}
+                    {this.renderNavTab("state", (<div>
+                        <div className='emu-dialog-text'>
+                            Bots use the <a href="https://aka.ms/sw9dcl">Bot State service</a> to store and retrieve application data. The Bot Framework's bot state service has a size limit of 64KB. Custom state services may differ.
+                        </div>
+                        <div className="input-group">
+                            <label className="form-label">
+                                Size limit (zero for no limit):
+                            </label>
+                            <input
+                                type="number"
+                                name="stateStorage"
+                                ref={ref => this.stateSizeLimitInputRef = ref}
+                                className="form-input appsettings-number-input appsettings-space-input"
+                                min={0}
+                                max={4000000}
+                                defaultValue={String(serverSettings.framework.stateSizeLimit) || '64'} /> KB
+                        </div>
+                    </div>) )}
                 </div>
-            </div>
+                <div className="dialog-buttons">
+                    <button type="button" className="appsettings-savebtn" onClick={() => this.onAccept()}>Save</button>
+                    &nbsp;&nbsp;&nbsp;
+                    <button type="button" className="appsettings-cancelbtn" onClick={() => this.handleClose()} ref={ref => this.lastFocusRef = ref}>
+                        Cancel
+                    </button>
+                </div>
+            </CommonDialog>
         );
     }
 }
