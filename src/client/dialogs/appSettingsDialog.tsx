@@ -52,11 +52,15 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
     bypassNgrokLocalhostInputRef: any;
     use10TokensInputRef: any;
     showing: boolean;
-    firstFocusRef: any;
     lastFocusRef: any;
 
     constructor(props) {
         super(props);
+
+        this.handleClose = this.handleClose.bind(this);
+        this.handleFocusLast = this.handleFocusLast.bind(this);
+        this.handleFocusNatural = this.handleFocusNatural.bind(this);
+
         let serverSettings = getSettings().serverSettings;
         let ngrokPath = (serverSettings.framework && serverSettings.framework.ngrokPath) ?
             serverSettings.framework.ngrokPath : null;
@@ -65,21 +69,6 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
             curTab: "service",
             ngrokPath: ngrokPath,
         };
-    }
-
-    pageClicked = (ev: Event) => {
-        if (ev.defaultPrevented)
-            return;
-        let target = ev.srcElement;
-        while (target) {
-            if (target.className.toString().includes("appsettings")) {
-                return;
-            }
-            target = target.parentElement;
-        }
-
-        // Click was outside the dialog. Close.
-        this.handleClose();
     }
 
     onAccept = () => {
@@ -113,7 +102,6 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
     }
 
     componentWillMount() {
-        window.addEventListener('click', this.pageClicked);
         this.settingsUnsubscribe = addSettingsListener((settings: Settings) => {
             if (settings.addressBar.showAppSettings != this.showing) {
                 this.showing = settings.addressBar.showAppSettings;
@@ -123,11 +111,10 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
     }
 
     componentWillUnmount() {
-        window.removeEventListener('click', this.pageClicked);
         this.settingsUnsubscribe();
     }
 
-    private onKeyUpEnterNav(event, name) {
+    onKeyUpEnterNav(event, name) {
         if (event.key === 'Enter') {
             this.setState({curTab: name});
         }
@@ -156,26 +143,21 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
         </div>)
     }
 
-    private handleFocusLast(ref) {
-        const element = ReactDOM.findDOMNode(ref) as HTMLElement;
+    handleFocusLast() {
+        const element = ReactDOM.findDOMNode(this.lastFocusRef) as HTMLElement;
 
         element && element.focus();
     }
 
-    private shouldShow() {
-        return !!getSettings().addressBar.showAppSettings;
-    }
-
-    private handleFocusNatural() {
+    handleFocusNatural() {
         const ngrokPathInputDOM = ReactDOM.findDOMNode(this.ngrokPathInputRef) as HTMLElement;
 
         ngrokPathInputDOM && ngrokPathInputDOM.focus();
     }
 
     render() {
-        if (!this.shouldShow()) { return null; }
-
         const serverSettings = getSettings().serverSettings;
+        if (!!getSettings().addressBar.showAppSettings) { return null; }
 
         return (
             <CommonDialog
