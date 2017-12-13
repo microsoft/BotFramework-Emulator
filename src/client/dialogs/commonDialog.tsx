@@ -29,8 +29,9 @@ export default class CommonDialog extends React.Component<any> {
     }
 
     handleFooterFocusTrap() {
-        // TODO: Null check and noop on it
-        (ReactDOM.findDOMNode(this.closeButtonRef) as HTMLElement).focus();
+        const element = (ReactDOM.findDOMNode(this.closeButtonRef) as HTMLElement);
+
+        element && element.focus();
     }
 
     saveCloseButton(ref) {

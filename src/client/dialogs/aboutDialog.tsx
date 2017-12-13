@@ -72,13 +72,15 @@ export class AboutDialog extends React.Component<{}, {}> {
     }
 
     handleFocusLast() {
-        // TODO: Check for null and noop on null
-        (ReactDOM.findDOMNode(this.lastFocusRef) as HTMLElement).focus();
+        const element = (ReactDOM.findDOMNode(this.lastFocusRef) as HTMLElement);
+
+        element && element.focus();
     }
 
     handleFocusNatural() {
-        // TODO: Check for null and noop on null
-        (ReactDOM.findDOMNode(this.naturalFocusRef) as HTMLElement).focus();
+        const element = (ReactDOM.findDOMNode(this.naturalFocusRef) as HTMLElement);
+
+        element && element.focus();
     }
 
     render() {
