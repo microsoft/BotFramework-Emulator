@@ -376,11 +376,6 @@
 
 /* appsettings-dialog */
 
-    .appsettings-dialog {
-        width: 512px;
-        height: 487px;
-    }
-
     .appsettings-dialog .input-group {
         margin: 0;
     }
@@ -453,13 +448,6 @@
 
 /* conversationsettings-dialog */
 
-    .conversationsettings-dialog {
-
-        width: 500px;
-        height: 400px;
-
-    }
-
     .conversationsettings-closex {
         position: absolute;
         width: 42px;
@@ -494,12 +482,6 @@
     }
 
 /* about-dialog */
-
-    .about-dialog {
-        width: 320px;
-        height: 360px;
-        padding: 0 !important;
-    }
 
     .about-okbtn {
         position: absolute;
@@ -1013,7 +995,7 @@
 
     .emu-navbar {
         list-style-type: none;
-        margin: 8p      x 0 0 0;
+        margin: 8px 0 0 0;
         padding: 0;
         overflow: hidden;
     }
