@@ -157,14 +157,21 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
 
     render() {
         const serverSettings = getSettings().serverSettings;
-        if (!!getSettings().addressBar.showAppSettings) { return null; }
+
+        if (!serverSettings.framework || !getSettings().addressBar.showAppSettings) {
+            return null;
+        }
 
         return (
             <CommonDialog
+                className="appsettings-dialog"
+                width={ 525 }
+                height={ 487 }
                 onClose={ this.handleClose }
                 onFocusLast={ this.handleFocusLast }
                 onFocusNatural={ this.handleFocusNatural }
             >
+                <h2 className="dialog-header">App Settings</h2>
                 <div className="appsettings-lowerpane">
                     <ul className="emu-navbar">
                         {this.renderNavItem("service", "Service")}
@@ -185,7 +192,7 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
                                 type="text"
                                 name="ngrokPath"
                                 ref={ref => this.ngrokPathInputRef = ref}
-                                className="form-input appsettings-path-input appsettings-ngrokpath-input"
+                                className="form-input appsettings-path-nput appsettings-ngrokpath-input"
                                 defaultValue={`${serverSettings.framework.ngrokPath || ''}`}
                                 onChange={(elem) => this.setState({ ngrokPath: elem.currentTarget.value })} />
                             <button className='appsettings-browsebtn' onClick={() => this.browseForNgrokPath()}>Browse...</button>

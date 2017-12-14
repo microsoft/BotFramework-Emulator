@@ -32,15 +32,35 @@
 //
 
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { getSettings, Settings, addSettingsListener } from '../settings';
 import { AddressBarActions } from '../reducers';
 import { IUser } from '../../types/userTypes';
 import { uniqueId } from '../../shared/utils';
+import CommonDialog from './commonDialog';
 
 
 export class ConversationSettingsDialog extends React.Component<{}, {}> {
     settingsUnsubscribe: any;
     showing: boolean;
+    lastFocusRef: any;
+    naturalFocusRef: any;
+
+    constructor(props) {
+        super(props);
+        this.handleFocusLast = this.handleFocusLast.bind(this);
+        this.handleFocusNatural = this.handleFocusNatural.bind(this);
+    }
+
+    handleFocusLast() {
+        const element = ReactDOM.findDOMNode(this.lastFocusRef) as HTMLElement;
+        element && element.focus();
+    }
+
+    handleFocusNatural() {
+        const element = ReactDOM.findDOMNode(this.naturalFocusRef) as HTMLElement;
+        element && element.focus();
+    }
 
     pageClicked = (ev: Event) => {
         if (ev.defaultPrevented)
@@ -85,31 +105,23 @@ export class ConversationSettingsDialog extends React.Component<{}, {}> {
         const settings = getSettings();
         if (!settings.addressBar.showConversationSettings) return null;
         return (
-            <div>
-                <div className="dialog-background">
-                </div>
-                <div className="emu-dialog conversationsettings-dialog">
-                    <CloseButton className='conversationsettings-closex' onClick={() => this.onClose()} />
-                    <UserList
-                        className='conversationsettings-userlist'
-                        users={[]}
-                        currentUser={{ id: uniqueId(), name: 'User 1' }}
-                        onSave={(users, currentUser) => this.onSaveUserChanges(users, currentUser)}
-                        onCancel={() => this.onClose()} />
-                </div>
-            </div>
+            <CommonDialog
+                width={ 500 }
+                height={ 400 }
+                onClose={ this.onClose }
+                onFocusLast={ this.handleFocusLast }
+                onFocusNatural={ this.handleFocusNatural }
+            >
+                <UserList
+                    className='conversationsettings-userlist'
+                    users={[]}
+                    currentUser={{ id: uniqueId(), name: 'User 1' }}
+                    onSave={(users, currentUser) => this.onSaveUserChanges(users, currentUser)}
+                    onCancel={() => this.onClose()}
+                    saveNaturalFocus={ (ref) => this.naturalFocusRef = ref } />
+                <div tabIndex={0} ref={ ref => this.lastFocusRef = ref }/>
+            </CommonDialog>
         );
-    }
-}
-
-interface ICloseButtonProps {
-    className: string;
-    onClick();
-}
-
-class CloseButton extends React.Component<ICloseButtonProps, {}> {
-    render() {
-        return <a className={this.props.className} href="javascript:void(0)" onClick={() => this.props.onClick()}>[x]</a>
     }
 }
 
@@ -120,6 +132,7 @@ interface IUserListProps {
     currentUser: IUser;
     onSave(users: IUser[], currentUser: IUser);
     onCancel();
+    saveNaturalFocus;
 }
 
 interface IUserListState {
@@ -128,6 +141,7 @@ interface IUserListState {
 }
 
 class UserList extends React.Component<IUserListProps, IUserListState> {
+    naturalFocus: any;
     constructor(props) {
         super(props);
         this.state = {
@@ -142,7 +156,7 @@ class UserList extends React.Component<IUserListProps, IUserListState> {
                 <div className='conversationsettings-userlist-area'>
                 </div>
                 <div>
-                    <button className='save-button' onClick={() => this.props.onSave(this.state.users, this.state.currentUser)}>Save</button>
+                    <button type="button" ref={ref => this.props.saveNaturalFocus(ref) } className='save-button' onClick={() => this.props.onSave(this.state.users, this.state.currentUser)}>Save</button>
                     <button className='cancel-button' onClick={() => this.props.onCancel()}>Cancel</button>
                 </div>
             </div>

@@ -88,6 +88,8 @@ export class AboutDialog extends React.Component<{}, {}> {
         if (!settings.addressBar.showAbout) return null;
         return (
             <CommonDialog
+                width={ 320 }
+                height={ 360 }
                 onClose={ this.handleClose }
                 onFocusLast={ this.handleFocusLast }
                 onFocusNatural={ this.handleFocusNatural }
@@ -96,7 +98,7 @@ export class AboutDialog extends React.Component<{}, {}> {
                 <div className="about-name">Microsoft Bot Framework Emulator</div>
                 <div className="about-link"><a href='https://aka.ms/bf-emulator' ref={ref => this.naturalFocusRef = this.lastFocusRef = ref}>https://aka.ms/bf-emulator</a></div>
                 <div className="about-version">{`v${pjson.version}`}</div>
-                <div className="about-copyright">&copy; 2016 Microsoft</div>
+                <div className="about-copyright">&copy; 2018 Microsoft</div>
             </CommonDialog>
         );
     }
