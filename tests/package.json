@@ -5,6 +5,7 @@
   "scripts": {
     "test:startbot": "ts-node testBot/testBot.ts",
     "test:integration": "cross-env TEST_ENV=1 ELECTRON_NO_ATTACH_CONSOLE=1 mocha -t 20000 --compilers ts:ts-node/register integration/*.ts || exit 0",
+    "test:performance": "cross-env TEST_ENV=1 ELECTRON_NO_ATTACH_CONSOLE=1 mocha -t 20000 --compilers ts:ts-node/register performance/*.ts || exit 0",
     "test:unit": "cross-env TEST_ENV=1 ELECTRON_NO_ATTACH_CONSOLE=1 electron-mocha -t 10000 --renderer --compilers ts:ts-node/register unit/*.ts || exit 0",
     "test": "npm run test:unit && npm run test:integration"
   },
