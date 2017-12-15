@@ -33,6 +33,7 @@
 
 import * as Electron from 'electron';
 import { Menu } from 'electron';
+import { Subject} from 'rxjs';
 import { getSettings, dispatch } from './settings';
 import { WindowStateAction } from './reducers/windowStateReducer';
 import * as url from 'url';
@@ -192,8 +193,15 @@ const createMainWindow = () => {
         }
     });
 
-    let registerHotkeys = (hotkeys: Array<string>, callback: () => void) => {
-        hotkeys.forEach(hotkey => electronLocalShortcut.register(mainWindow, hotkey, callback))
+    let registerHotkeys = (hotkeys: Array<string>, callback: () => void, window?: Electron.BrowserWindow) => {
+        const eventStream = new Subject();
+        eventStream.debounceTime(100).subscribe(callback);
+        const addToEventStream = () => eventStream.next("");
+        if (window) {
+            hotkeys.forEach(hotkey => electronLocalShortcut.register(window, hotkey, addToEventStream));
+        } else {
+            hotkeys.forEach(hotkey => electronLocalShortcut.register(hotkey, addToEventStream));
+        }
     };
 
     registerHotkeys(["CmdOrCtrl+="], () => {
@@ -207,13 +215,13 @@ const createMainWindow = () => {
     });
     registerHotkeys(["F10", "Alt+F"], () => {
         Emulator.send('open-menu');
-    });
+    }, mainWindow);
     registerHotkeys(["F5", "CmdOrCtrl+R"], () => {
         Emulator.send('new-conversation');
-    });
+    }, mainWindow);
     registerHotkeys(["F6", "CmdOrCtrl+L"], () => {
         Emulator.send('toggle-address-bar-focus');
-    });
+    }, mainWindow);
 
     mainWindow.once('ready-to-show', () => {
         mainWindow.webContents.setZoomLevel(settings.windowState.zoomLevel);

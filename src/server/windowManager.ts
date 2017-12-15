@@ -86,7 +86,7 @@ export class WindowManager {
         zoomLevel = Math.max(zoomLevel - 1, -4);
         this.zoomTo(zoomLevel);
     }
-    public zoomTo(zoomLevel) {
+    public zoomTo(zoomLevel: number) {
         this.mainWindow.webContents.setZoomLevel(zoomLevel);
         this.windows.forEach(win => win.webContents.setZoomLevel(zoomLevel));
         dispatch<WindowStateAction>({
