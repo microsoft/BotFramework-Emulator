@@ -151,8 +151,8 @@ export class Settings implements ISettings {
 }
 
 export const layoutDefault: ILayoutState = {
-    horizSplit: '33%',
-    vertSplit: '33%'
+    horizSplit: 200,
+    vertSplit: 300
 }
 
 export const addressBarDefault: IAddressBarState = {
