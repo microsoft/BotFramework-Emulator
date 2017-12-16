@@ -59,54 +59,59 @@ interface ILogEntry {
     args: any
 }
 
+interface ILogEntryElement extends ILogEntry {
+    wrapStyle: string
+}
 
 const number2 = (n: number): string => {
     return ('0' + n).slice(-2);
 }
 
-const timestamp = (entry: ILogEntry) => {
-    const hours = number2(entry.timestamp.getHours());
-    const minutes = number2(entry.timestamp.getMinutes());
-    const seconds = number2(entry.timestamp.getSeconds());
-    return <span className='wc-logview-timestamp'>{`[${hours}:${minutes}:${seconds}]`}&nbsp;</span>
-}
-
-const emit = (val: any, className: string) => {
-    if (!val) return null;
-    if (val.hasOwnProperty('messageType') && val['messageType'] === 'link') {
-        //return <div className={className}><a className={className} title={val.title} href={val.link}>{val.text}</a>&nbsp;</div>
-        return <span className={className} key={val.link}><a title={val.title} href={val.link}>{val.text}</a>&nbsp;</span>
-    } else {
-        let str = safeStringify(val);
-        return str.match(/\S+/g).map((s, i) => <span className={className} key={s + i}>{s}&nbsp;</span>);
+export class LogEntry extends React.Component<ILogEntryElement, {}> {
+    shouldComponentUpdate(newProps:ILogEntryElement) {
+        //existing log entries only update with wrapstyle changes. This speeds up rendering considerably.
+        return this.props.wrapStyle !== newProps.wrapStyle;
     }
-}
 
-
-const message = (entry: ILogEntry, className: string) => {
-    return emit(entry.message, className);
-}
-
-const args = (entry: ILogEntry, className: string) => {
-    if (entry.args && entry.args.length) {
-        return entry.args
-            .filter(arg => !!arg)
-            .map((arg, i) => emit(arg, className));
+    private timestamp(entry: ILogEntry) {
+        const hours = number2(entry.timestamp.getHours());
+        const minutes = number2(entry.timestamp.getMinutes());
+        const seconds = number2(entry.timestamp.getSeconds());
+        return <span className='wc-logview-timestamp'>{`[${hours}:${minutes}:${seconds}]`}&nbsp;</span>
     }
-    return null;
-}
+    
+    private emit(val: any, className: string) {
+        if (!val) return null;
+        if (val.hasOwnProperty('messageType') && val['messageType'] === 'link') {
+            return <span className={className} key={val.link}><a title={val.title} href={val.link}>{val.text}</a>&nbsp;</span>
+        } else {
+            let str = safeStringify(val);
+            return str.match(/\S+/g).map((s, i) => <span className={className} key={s + i}>{s}&nbsp;</span>);
+        }
+    }
 
-const format = (entry: ILogEntry, index: number, items: any[], wrapStyle: any) => {
-    const className = 'wc-logview-' + Severity[entry.severity];
-    return (
-        <div key={index} className='emu-log-entry' style={wrapStyle}>
-            {timestamp(entry)}
-            {message(entry, className)}
-            {args(entry, className) }
+    private message(entry: ILogEntry, className: string) {
+        return this.emit(entry.message, className);
+    }
+
+    private args(entry: ILogEntry, className: string) {
+        if (entry.args && entry.args.length) {
+            return entry.args
+                .filter(arg => !!arg)
+                .map((arg, i) => this.emit(arg, className));
+        }
+        return null;
+    }
+
+    render() {
+        const className = 'wc-logview-' + Severity[this.props.severity];
+        return <div className='emu-log-entry' style={{"whiteSpace": this.props.wrapStyle}}>
+            {this.timestamp(this.props)}
+            {this.message(this.props, className)}
+            {this.args(this.props, className)}
         </div>
-    );
+    }
 }
-
 
 export interface ILogViewState {
     entries: ILogEntry[]
@@ -161,6 +166,11 @@ export class LogView extends React.Component<{}, ILogViewState> {
     }
 
     render() {
+        const entries =this.state.entries.map((entry, i, items) => {
+            let wrapStyle = !getSettings().wordwrap.wordwrap ? 'nowrap' : 'normal';
+            return <LogEntry key={i} wrapStyle={wrapStyle} {...entry} />
+        });
+
         return (
             <div>
                 <div className="emu-panel-header">
@@ -170,7 +180,7 @@ export class LogView extends React.Component<{}, ILogViewState> {
                     </a>
                 </div>
                 <div className="wc-logview" ref={ref => this.scrollMe = ref}>
-                    {this.state.entries.map((entry, i, items) => format(entry, i, items, { whiteSpace: (!getSettings().wordwrap.wordwrap ? 'nowrap' : 'normal')}))}
+                    {entries}
                 </div>
             </div>
         );
@@ -201,7 +211,7 @@ export class LogView extends React.Component<{}, ILogViewState> {
             args
         };
         this.log$.next(entry);
-        console[Severity[severity]](message, ...args);
+        // console[Severity[severity]](message, ...args);
     }
 
     public static clear() {
