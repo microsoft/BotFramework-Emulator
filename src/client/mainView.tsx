@@ -304,18 +304,20 @@ export class MainView extends React.Component<{}, {}> {
 
     render() {
         const settings = getSettings();
-        let vertSplit = Number(settings.layout.vertSplit);
-        let horizSplit = Number(settings.layout.horizSplit);
+        const minVertSplit = 200;
+        const minHorizSplit = 70;
+        const vertSplit = Number(settings.layout.vertSplit) > minVertSplit ? Number(settings.layout.vertSplit) : minVertSplit;
+        const horizSplit = Number(settings.layout.horizSplit) > minHorizSplit ? Number(settings.layout.horizSplit) : minHorizSplit;
         return (
             <div className='mainview'>
                 <div className='botchat-container'>
-                    <Splitter split="vertical" minSize={200} maxSize={-200} defaultSize={vertSplit} primary="second" onChange={(size) => this.verticalSplitChange(size)}>
+                    <Splitter split="vertical" minSize={minVertSplit} maxSize={-200} defaultSize={vertSplit} primary="second" onChange={(size) => this.verticalSplitChange(size)}>
                         <div className='fill-parent'>
                             <AddressBar />
                             {this.botChatComponent(vertSplit)}
                         </div>
                         <div className="fill-parent">
-                            <Splitter split="horizontal" primary="second" minSize={42} maxSize={-44} defaultSize={horizSplit} onChange={(size) => LayoutActions.rememberHorizontalSplitter(size)}>
+                            <Splitter split="horizontal" primary="second" minSize={minHorizSplit} maxSize={-44} defaultSize={horizSplit} onChange={(size) => LayoutActions.rememberHorizontalSplitter(size)}>
                                 <div className="wc-chatview-panel">
                                     <InspectorView />
                                 </div>
