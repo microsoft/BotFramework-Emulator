@@ -535,8 +535,8 @@
     .about-copyright {
         text-align: center;
         width: 100%;
-        position: absolute;
-        bottom: 18px;
+        position: relative;
+        bottom: -18px;
         font-size: 12px;
         color: #999;
     }
