@@ -114,7 +114,7 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
         this.settingsUnsubscribe();
     }
 
-    onKeyUpEnterNav(event, name) {
+    handleKeyUp(event, name) {
         if (event.key === 'Enter') {
             this.setState({curTab: name});
         }
@@ -128,7 +128,7 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
                 id={name + "-nav"}
                 className={classStr}
                 onClick={() => this.setState({curTab: name})}
-                onKeyUp={(event) => this.onKeyUpEnterNav(event, name)}
+                onKeyUp={(event) => this.handleKeyUp(event, name)}
                 >
                 {contents}
             </a>

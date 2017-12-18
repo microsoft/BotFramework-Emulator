@@ -13,11 +13,17 @@ export default class CommonDialog extends React.Component<any, any> {
         this.handleClose = this.handleClose.bind(this);
         this.handleHeaderFocusTrap = this.handleHeaderFocusTrap.bind(this);
         this.handleFooterFocusTrap = this.handleFooterFocusTrap.bind(this);
+        this.handleKeyUp = this.handleKeyUp.bind(this);
         this.saveCloseButton = this.saveCloseButton.bind(this);
+        this.componentHandleNaturalFocus = this.componentHandleNaturalFocus.bind(this);
     }
 
     componentDidMount() {
-        this.props.onFocusNatural();
+        if (this.props.onFocusNatural) {
+            this.props.onFocusNatural();
+        } else {
+            this.componentHandleNaturalFocus();
+        }
     }
 
     componentWillMount() {
@@ -37,6 +43,11 @@ export default class CommonDialog extends React.Component<any, any> {
         }
     }
 
+    componentHandleNaturalFocus() {
+        const element = ReactDOM.findDOMNode(this.closeButtonRef) as HTMLElement;
+        element && element.focus();
+    }
+
     createStyle(props) {
         const { height, width} = props;
 
@@ -45,6 +56,12 @@ export default class CommonDialog extends React.Component<any, any> {
 
     handleClose() {
         this.props.onClose();
+    }
+
+    handleKeyUp(event) {
+        if (event.key === 'Escape') {
+            this.handleClose();
+        }
     }
 
     handleHeaderFocusTrap() {
@@ -69,7 +86,7 @@ export default class CommonDialog extends React.Component<any, any> {
         this.props.className && classNames.push(this.props.className);
 
         return (
-            <div>
+            <div onKeyUp={ this.handleKeyUp }>
                 <div className="dialog-background" onClick={ this.handleClose } />
                 <div style={ this.state.style } className={ classNames.join(' ') }>
                     <div tabIndex={ 0 } onFocus={ this.handleHeaderFocusTrap } />

@@ -44,14 +44,12 @@ export class AboutDialog extends React.Component<{}, {}> {
     showing: boolean;
     firstFocusRef: any;
     lastFocusRef: any;
-    naturalFocusRef: any;
 
     constructor(props, context) {
         super(props, context);
 
         this.handleClose = this.handleClose.bind(this);
         this.handleFocusLast = this.handleFocusLast.bind(this);
-        this.handleFocusNatural = this.handleFocusNatural.bind(this);
     }
 
     componentWillMount() {
@@ -77,12 +75,6 @@ export class AboutDialog extends React.Component<{}, {}> {
         element && element.focus();
     }
 
-    handleFocusNatural() {
-        const element = (ReactDOM.findDOMNode(this.naturalFocusRef) as HTMLElement);
-
-        element && element.focus();
-    }
-
     render() {
         const settings = getSettings();
         if (!settings.addressBar.showAbout) return null;
@@ -92,11 +84,10 @@ export class AboutDialog extends React.Component<{}, {}> {
                 height={ 360 }
                 onClose={ this.handleClose }
                 onFocusLast={ this.handleFocusLast }
-                onFocusNatural={ this.handleFocusNatural }
             >
                 <div className='about-logo' dangerouslySetInnerHTML={{ __html: Constants.botFrameworkIcon('about-logo-fill', 142) }} />
                 <div className="about-name">Microsoft Bot Framework Emulator</div>
-                <div className="about-link"><a href='https://aka.ms/bf-emulator' ref={ref => this.naturalFocusRef = this.lastFocusRef = ref}>https://aka.ms/bf-emulator</a></div>
+                <div className="about-link"><a href='https://aka.ms/bf-emulator'>https://aka.ms/bf-emulator</a></div>
                 <div className="about-version">{`v${pjson.version}`}</div>
                 <div className="about-copyright">&copy; 2018 Microsoft</div>
             </CommonDialog>
