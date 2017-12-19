@@ -18,23 +18,26 @@
         transition: all .2s;
     }
 
-    input:focus,
-    textarea:focus,
-    select:focus,
-    button:focus {
-        outline-width: 0;
-    }
-
     button {
-        background: #3A96DD;
+        background: #0078D7;
         border: none;
         border-radius: 2px;
         color: #fff;
         cursor: pointer;
         outline: none;
     }
+
     button:hover {
         background: #0063B1;
+    }
+
+    button:active {
+        background: #004E8C;
+    }
+
+    button:focus {
+        outline: 1px dotted #2b2b2b;
+        outline-offset: 2px;
     }
 
     *, *:before, *:after {
@@ -64,7 +67,7 @@
     }
 
     input[type=checkbox]:checked {
-        background: #3A96DD;
+        background: #0078D7;
     }
 
     input[type=checkbox]:checked:before {
@@ -118,7 +121,7 @@
         outline: none;
         transition: color .2s ease, background-color .2s ease;
         background-color: transparent;
-        color: #3A96DD;
+        color: #0078D7;
         min-height: 32px;
         width: 100%;
         padding: 0 16px;
@@ -155,7 +158,7 @@
     }
 
     .addressbar {
-        background: #3A96DD;
+        background: #0078D7;
         position: absolute;
         top: 0;
         height: 42px;
@@ -182,8 +185,9 @@
         height: 42px;
         right: 84px;
     }
+
     .addressbar-textbox input[type=text] {
-        background: #3A96DD;
+        background: #0078D7;
         color: white;
         border: none;
         height: 100%;
@@ -193,6 +197,7 @@
         width: 100%;
         padding-left: 4px;
     }
+
     .addressbar-textbox input[type=text]::-webkit-input-placeholder {
         color: rgba(255, 255, 255, 0.75);
     }
@@ -238,7 +243,7 @@
     }
 
     .addressbar-search {
-        background: #3A96DD;
+        background: #0078D7;
         max-height: 500px;
         overflow-y: auto;
         position: absolute;
@@ -250,6 +255,7 @@
         display: block;
         padding-bottom: 8px;
     }
+
     .addressbar-search.closed {
         max-height: 0;
     }
@@ -271,6 +277,7 @@
         background: #6AAFE5;
         border-radius: 2px;
     }
+
     .addressbar-searchresult:hover .addressbar-searchresult-delete {
         opacity: 1;
     }
@@ -307,14 +314,17 @@
         padding: 24px 24px 24px 40px;
         box-shadow: 0 1px 2px rgba(0,0,0,.2);
     }
+
     .addressbar-botcreds.closed {
         max-height: 0;
         border-width: 0;
         box-shadow: 0;
     }
+
     .addressbar-botcreds-title {
         font-weight: 500;
     }
+
     .addressbar-botcreds input[type=text] {
         border-width: 0.1px;
         border-style: solid;
@@ -322,18 +332,23 @@
         padding-left: 4px;
         padding-right: 4px;
     }
+
     .addressbar-botcreds-input {
         display: inline-block;
     }
+
     .addressbar-botcreds-appid {
         width: 300px;
     }
+
     .addressbar-botcreds-password {
         width: 160px;
     }
+
     .addressbar-botcreds-locale {
         width: 50px;
     }
+
     .addressbar-botcreds-connect-button {
         display: block;
         padding: 11px 16px 10px 16px;
@@ -343,12 +358,13 @@
         font-weight: 500;
         margin-top: 24px;
     }
+
     .addressbar-botcreds-callout {
         width: 0;
         height: 0;
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
-        border-top: 8px solid #3A96DD;
+        border-top: 8px solid #0078D7;
         position:absolute;
         top:0;
         left:40px;
@@ -359,11 +375,6 @@
     }
 
 /* appsettings-dialog */
-
-    .appsettings-dialog {
-        width: 512px;
-        height: 487px;
-    }
 
     .appsettings-dialog .input-group {
         margin: 0;
@@ -378,7 +389,7 @@
     }
 
     .appsettings-browsebtn {
-        padding: 11px 16px 10px 16px;
+        padding: 10.5px 16px 10.5px 16px;
         margin-left: 8px;
         font-size: 13px;
         text-transform: uppercase;
@@ -391,7 +402,7 @@
         position: absolute;
         left: 50%;
         transform: translate(-110%, 0%);
-        padding: 11px 16px 10px 16px;
+        padding: 10.5px 16px 10.5px 16px;
         font-size: 13px;
         text-transform: uppercase;
         line-height: 1.3333333;
@@ -405,7 +416,7 @@
         position: absolute;
         left: 50%;
         transform: translate(10%, 0%);
-        padding: 11px 16px 10px 16px;
+        padding: 10.5px 16px 10.5px 16px;
         font-size: 13px;
         text-transform: uppercase;
         line-height: 1.3333333;
@@ -436,13 +447,6 @@
 
 
 /* conversationsettings-dialog */
-
-    .conversationsettings-dialog {
-
-        width: 500px;
-        height: 400px;
-
-    }
 
     .conversationsettings-closex {
         position: absolute;
@@ -479,12 +483,6 @@
 
 /* about-dialog */
 
-    .about-dialog {
-        width: 320px;
-        height: 360px;
-        padding: 0 !important;
-    }
-
     .about-okbtn {
         position: absolute;
         left: 50%;
@@ -498,13 +496,15 @@
     }
 
     .about-logo-fill {
-        fill: #3A96DD;
+        fill: #0078D7;
     }
+
     .about-logo {
         padding-top: 50px;
         width: 100%;
         text-align: center;
     }
+
     .about-name {
         text-align: center;
         width: 100%;
@@ -514,25 +514,29 @@
         padding-bottom: 6px;
         letter-spacing: -0.3px;
     }
+
     .about-link {
         text-align: center;
         width: 100%;
         padding-bottom: 6px;
     }
+
     .about-link a {
         text-decoration: none;
-        color: #3A96DD;
+        color: #0078D7;
     }
+
     .about-version {
         text-align: center;
         width: 100%;
         font-size: 15px;
     }
+
     .about-copyright {
         text-align: center;
         width: 100%;
-        position: absolute;
-        bottom: 18px;
+        position: relative;
+        bottom: -18px;
         font-size: 12px;
         color: #999;
     }
@@ -628,7 +632,7 @@
 
     .checkout-table .primary-button {
         color: white;
-        background: #3A96DD;
+        background: #0078D7;
     }
 
     .checkout-table .primary-button:hover {
@@ -676,7 +680,7 @@
     }
 
     .checkout-table .show-details {
-        color: #3A96DD;
+        color: #0078D7;
         cursor: pointer;
     }
 
@@ -804,7 +808,7 @@
     }
 
     .checkout-table .add-item {
-        color: #3A96DD;
+        color: #0078D7;
         margin-left: 10px;
         margin-right: 10px;
     }
@@ -870,9 +874,10 @@
     .emu-dialog-text {
         margin-bottom: 12px;
     }
+
     .emu-dialog-text a {
         text-decoration: none;
-        color: #3A96DD;
+        color: #0078D7;
     }
 
     .dialog-background {
@@ -893,6 +898,28 @@
         top: 8px;
         right: 8px;
         cursor: pointer;
+
+        background-color: transparent;
+    }
+
+    .dialog-closex:hover {
+        background-color: transparent;
+    }
+
+    .dialog-closex:hover path {
+        stroke: #0063B1;
+    }
+
+    .dialog-closex:focus {
+        outline-width: 0;
+    }
+
+    .dialog-closex:focus path {
+        stroke: #0078D7;
+    }
+
+    .dialog-closex:active path {
+        stroke: #004E8C;
     }
 
     .dialog-closex path {
@@ -929,27 +956,31 @@
     }
 
     .toolbar-button {
-		width: 24px;
-		height: 24px;
+        width: 24px;
+        height: 24px;
         vertical-align: middle;
         transition: all .2s;
     }
+
     .toolbar-button:hover {
         background: #6AAFE5;
     }
+
     .toolbar-button-disabled {
         opacity: 0.5
     }
+
     svg.toolbar-button-disabled:hover {
         background: initial;
     }
 
     .toolbar-button-dark {
-		width: 24px;
-		height: 24px;
+        width: 24px;
+        height: 24px;
         vertical-align: middle;
         transition: all .2s;
     }
+
     .toolbar-button-dark:hover {
         background: #4C4C4C;
     }
@@ -957,43 +988,52 @@
     .emu-visible {
         display: block;
     }
+
     .emu-hidden {
         display: none;
     }
+
     .emu-navbar {
         list-style-type: none;
-        margin: 16px 0 0 0;
+        margin: 8px 0 0 0;
         padding: 0;
         overflow: hidden;
     }
+
     .emu-navbar li {
         float: left;
     }
+
     .emu-navbar, .emu-navitem {
-        color: #3A96DD;
+        color: #0078D7;
         text-decoration: none;
         transition: border 0s;
     }
+
     .emu-navitem {
-        padding: 0px 16px 10px 16px;
+        padding: 8px 16px 10px 16px;
         margin: 0 26px 0px 0px;
         display: block;
         border-bottom: 3px #CCC solid;
     }
+
     .emu-navitem-selected {
         color: #000;
-        border-bottom: 3px #3A96DD solid;
+        border-bottom: 3px #0078D7 solid;
         transition: border 0s;
     }
+
     .enu-navhdr {
         height: 0;
         border: 0;
         border-top: 1px solid #CCC;
         margin: -1px 0 0 0;
     }
+
     .emu-tab {
         margin-top: 16px;
     }
+
     .emu-readonly {
         background: #EEE;
     }
@@ -1014,6 +1054,7 @@
         z-index: 1000;
         box-shadow: 0 2px 3px rgba(0,0,0,.5);
     }
+
     .undecorated-text {
         text-decoration: none;
     }
@@ -1042,7 +1083,7 @@
 
     .wc-inspectorview-json {
         font-size: 13px;
-	    font-family: 'Menlo', 'Monaco', 'Consolas', "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+        font-family: 'Menlo', 'Monaco', 'Consolas', "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
         position: absolute;
         top: 0;
         left: 0;
@@ -1082,7 +1123,7 @@
         color: white;
         overflow: auto;
         font-size: 13px;
-	    font-family: 'Menlo', 'Monaco', 'Consolas', "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+        font-family: 'Menlo', 'Monaco', 'Consolas', "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
         white-space: nowrap;
         position: absolute;
         left: 0;
