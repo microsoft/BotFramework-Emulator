@@ -34,7 +34,6 @@
 import { IBot } from '../types/botTypes';
 import { IUser } from '../types/userTypes';
 
-
 export interface IFrameworkSettings {
     // path to use for ngrok
     ngrokPath?: string,
@@ -123,7 +122,7 @@ export const settingsDefault: ISettings = {
             "botUrl": "http://localhost:3978/api/messages",
             "msaAppId": "",
             "msaPassword": "",
-            "locale": "en-US"
+            "locale": ""
         }
     ],
     activeBot: '',
