@@ -122,7 +122,8 @@ export const settingsDefault: ISettings = {
             "botId": "default-bot",
             "botUrl": "http://localhost:3978/api/messages",
             "msaAppId": "",
-            "msaPassword": ""
+            "msaPassword": "",
+            "locale": "en-US"
         }
     ],
     activeBot: '',

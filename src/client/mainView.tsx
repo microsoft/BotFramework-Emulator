@@ -232,12 +232,12 @@ export class MainView extends React.Component<{}, {}> {
         }
     }
 
-    initBotChatContainerRef(ref, initialWidth:number) {
+    initBotChatContainerRef(ref, initialWidth: number) {
         this.botChatContainer = ref;
         this.updateBotChatContainerCSS(initialWidth);
     }
 
-    botChatComponent(initialWidth:number) {
+    botChatComponent(initialWidth: number) {
         if (this.directline) {
             const settings = getSettings();
             const srvSettings = new ServerSettings(settings.serverSettings);
