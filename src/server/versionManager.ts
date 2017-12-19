@@ -48,25 +48,9 @@ export class VersionManager {
     static SDKTypes: string[] = ['(BotBuilder .Net/', '(BotBuilder Node.js/'];
     static currentSdkVersion: IVersion = null;
 
-    static minimumVersion: IVersion = {
-        major: 3,
-        minor: 11,
-        subminor: 0
-    };
-
     public static checkVersion(userAgent: string) {
         if (!VersionManager.hasChecked) {
             let version = VersionManager.parseUserAgentForVersion(userAgent);
-            if (!version || VersionManager.isLess(version, VersionManager.minimumVersion)) {
-                if (version) {
-                    log.warn('Warning: The bot is using SDK version ' + VersionManager.toString(version) + '.');
-                } else {
-                    log.warn('Warning: The bot is using an SDK version earlier than ' + VersionManager.toString(VersionManager.minimumVersion) + '.');
-                }
-                log.warn('Warning: SDK versions earlier than ' + VersionManager.toString(VersionManager.minimumVersion) + ' use an authentication configuration that will no longer work with the emulator after November 15, 2017.');
-                log.warn('Warning: For your bot to continue working with the emulator, please update your bot to use an SDK version greater than or equal to ' + VersionManager.toString(VersionManager.minimumVersion) + '.');
-                log.warn(log.makeLinkMessage('Read about the Bot Framework authentication change.', 'https://aka.ms/botfxv32authchange'));   
-            }
             VersionManager.checkCurrentSdkVersion(version);
             VersionManager.hasChecked = true;
         }
@@ -74,11 +58,11 @@ export class VersionManager {
 
     public static checkCurrentSdkVersion(version: IVersion)
     {
-        if (!version || version.type === 'node') { 
+        if (!version || version.type === 'node') {
             VersionManager.checkNodeSdkVersion(version);
         } else {
             VersionManager.checkDotNetSdkVersion(version);
-        }            
+        }
     }
 
     public static checkNodeSdkVersion(version: IVersion)
@@ -110,9 +94,9 @@ export class VersionManager {
     }
 
     private static warnAboutNewSdkVersion(botVersion: IVersion, latestVersion: IVersion) {
-        log.warn('Warning: The latest bot SDK version is ' + VersionManager.toString(latestVersion) + 
+        log.warn('Warning: The latest bot SDK version is ' + VersionManager.toString(latestVersion) +
                 (botVersion ? ' but the bot is running SDK version ' + VersionManager.toString(botVersion) : '') + '.');
-        log.warn('Warning: Consider upgrading the bot to the latest SDK version.');
+        log.warn('Warning: Consider upgrading the bot to the latest SDK.');
     }
 
     public static checkDotNetSdkVersion(version: IVersion) {
