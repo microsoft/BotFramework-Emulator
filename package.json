@@ -40,7 +40,7 @@
     "@types/react-split-pane": "0.1.5",
     "@types/request": "0.0.31",
     "@types/restify": "2.0.38",
-    "botbuilder": "3.9.0",
+    "botbuilder": "3.13.1",
     "del": "2.2.2",
     "electron": "1.8.1",
     "electron-builder": "19.18.0",

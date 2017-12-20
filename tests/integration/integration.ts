@@ -70,7 +70,7 @@ describe("App", function(this: any) {
 
     it("opens a window on launch", function() {
         return app.client.waitUntilWindowLoaded()
-            .getWindowCount().should.eventually.equal(2)
+            .getWindowCount().should.eventually.equal(1)
             .browserWindow.isMinimized().should.eventually.be.false
             .browserWindow.isDevToolsOpened().should.eventually.be.false
             .browserWindow.isVisible().should.eventually.be.true
@@ -91,15 +91,55 @@ describe("App", function(this: any) {
     //     return app.client.webContents.getZoomLevel().should.eventually.equal(0);
     // });
 
-    it("sends a message to a local bot and gets a response", function() {
+    it("can connect to a local bot", function() {
         return app.client
             .waitForVisible(".addressbar-textbox input").should.eventually.be.true
             .isVisible(".addressbar-botcreds").should.eventually.be.false
+            .isVisible(".wc-shellinput").should.eventually.be.false
             .setValue(".addressbar-textbox input", "http://localhost:3978/api/messages")
             .isVisible(".addressbar-botcreds").should.eventually.be.true
             .click('button[class="addressbar-botcreds-connect-button"]').pause(500)
-            .setValue(".wc-shellinput", "repeat this back\n")
-            .waitForVisible(".wc-message-group-content:nth-child(1) p").should.eventually.be.true
-            .getText(".wc-message-group-content:nth-child(1) p").should.eventually.equal("Message #1, you said repeat this back");
+            .isVisible(".wc-shellinput").should.eventually.be.true
     });
+
+    it("sends a message to a local bot and gets a response", function() {
+        return app.client
+            .setValue(".wc-shellinput", "repeat this back\n")
+            .waitForVisible(".wc-message-wrapper:nth-child(2) p").should.eventually.be.true
+            .getText(".wc-message-wrapper:last-child p").should.eventually.equal("Message #1, you said repeat this back");
+    });
+
+    it("can open a payment window", function() {
+        return app.client
+            .setValue(".wc-shellinput", "payment\n")
+            .waitForVisible(".wc-message-wrapper:nth-child(4) .wc-adaptive-card.hero").should.eventually.be.true
+            .getText(".wc-message-wrapper:last-child .ac-pushButton").should.eventually.equal("Buy")
+            .click(".wc-message-wrapper:last-child .ac-pushButton").pause(500)
+            .getWindowCount().should.eventually.equal(2);
+    });
+
+    it("can use a payment window", function() {
+        return app.client.windowByIndex(1)
+            .waitForVisible(".total-container .pay-button").should.eventually.be.true
+            .getText(".total-container .pay-button").should.eventually.equal("Pay")
+            .click(".total-container .pay-button")
+            .getAttribute(".pay-with .checkout-selector", "class").should.eventually.include("invalid-input")
+            .getAttribute(".ship-to .checkout-selector", "class").should.eventually.include("invalid-input")
+            .getAttribute(".shipping-options .checkout-selector", "class").should.eventually.include("invalid-input")
+            .click(".pay-with .checkout-selector").click(".pay-with .selector-items:last-child")
+                .waitForVisible(".cardholder-name").should.eventually.be.true
+                .setValue(".cardholder-name input", "Card holder name")
+                .click(".checkout-button-bar .save-button") //for now fill out bare minimum
+            .click(".ship-to .checkout-selector").click(".ship-to .selector-items:last-child")
+                .waitForVisible(".recipient").should.eventually.be.true
+                .setValue(".recipient input", "Recipient name")
+                .click(".checkout-button-bar .save-button") //for now fill out bare minimum;
+            .click(".shipping-options .checkout-selector").click(".shipping-options .selector-items:last-child")
+            .setValue(".email-receipt-to input", "asdf@microsoft.com")
+            .setValue(".phone input", "123-456-7890")
+            .click(".total-container .pay-button").pause(500)
+            .getWindowCount().should.eventually.equal(1)
+            .windowByIndex(0).waitForVisible(".wc-message-wrapper:nth-child(5) p").should.eventually.be.true
+            .getText(".wc-message-wrapper:last-child p").should.eventually.equal("Completed payment");
+    })
 });
