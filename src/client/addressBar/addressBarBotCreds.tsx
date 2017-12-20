@@ -36,9 +36,6 @@ import { getSettings, addSettingsListener } from '../settings';
 import { IBot } from '../../types/botTypes';
 import { AddressBarOperators } from './addressBarOperators';
 
-const remote = require('electron').remote;
-
-
 export class AddressBarBotCreds extends React.Component<{}, {}> {
     settingsUnsubscribe: any;
 
@@ -134,7 +131,7 @@ export class AddressBarBotCreds extends React.Component<{}, {}> {
                     <input
                         type="text"
                         className="form-input addressbar-botcreds-input addressbar-botcreds-locale"
-                        value={settings.addressBar.selectedBot.locale || remote.app.getLocale()}
+                        value={settings.addressBar.selectedBot.locale}
                         onChange={e => this.localeChanged((e.target as any).value)} />
                 </div>
                 <div className="input-group">
