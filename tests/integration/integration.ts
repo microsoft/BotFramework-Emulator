@@ -81,10 +81,10 @@ describe("App", function(this: any) {
 
     it("has correct title", function() {
         return app.client
-            .browserWindow.getTitle().should.eventually.equal("Bot Framework Channel Emulator");
+            .browserWindow.getTitle().should.eventually.equal("Bot Framework Emulator");
     });
 
-    // it seems that getZoomLevel doesn't work without a patch to spectron. Raised an 
+    // it seems that getZoomLevel doesn't work without a patch to spectron. Raised an
     // issue on the electron github at https://github.com/electron/spectron/issues/222
     // it("tests initial zoom level", function() {
     //     console.log(app.client);

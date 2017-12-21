@@ -102,12 +102,12 @@
 
     .wc-message-content.selected {
         color: white;
-        background-color: #1e1e1e;
+        background-color: #555;
         box-shadow: 0px 1px 1px 0px rgba(0,0,0,0.2);
     }
 
     .wc-message-content.selected>svg.wc-message-callout>path {
-        fill: #1e1e1e;
+        fill: #555;
     }
 
     .wc-card {
@@ -500,7 +500,7 @@
     }
 
     .about-logo {
-        padding-top: 50px;
+        padding-top: 8px;
         width: 100%;
         text-align: center;
     }
