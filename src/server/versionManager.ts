@@ -95,8 +95,7 @@ export class VersionManager {
 
     private static warnAboutNewSdkVersion(botVersion: IVersion, latestVersion: IVersion) {
         log.warn('Warning: The latest bot SDK version is ' + VersionManager.toString(latestVersion) +
-                (botVersion ? ' but the bot is running SDK version ' + VersionManager.toString(botVersion) : '') + '.');
-        log.warn('Warning: Consider upgrading the bot to the latest SDK.');
+                (botVersion ? ' but the bot is running SDK version ' + VersionManager.toString(botVersion) : '') + '. Consider upgrading the bot to the latest SDK.');
     }
 
     public static checkDotNetSdkVersion(version: IVersion) {

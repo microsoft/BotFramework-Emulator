@@ -33,11 +33,13 @@
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import * as Constants from '../constants';
 import { remote } from 'electron';
 import { getSettings, Settings, addSettingsListener } from '../settings';
 import { AddressBarActions, ServerSettingsActions } from '../reducers';
 import * as path from 'path';
 import CommonDialog from './commonDialog';
+var pjson = require('../../../package.json');
 
 
 interface AppSettingsDialogState extends React.Props<AppSettingsDialog> {
@@ -171,11 +173,12 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
                 onFocusLast={ this.handleFocusLast }
                 onFocusNatural={ this.handleFocusNatural }
             >
-                <h2 className="dialog-header">App Settings</h2>
+                <h2 className="dialog-header">Settings</h2>
                 <div className="appsettings-lowerpane">
                     <ul className="emu-navbar">
                         {this.renderNavItem("service", "Service")}
                         {this.renderNavItem("state", "Bot State")}
+                        {this.renderNavItem("about", "About")}
                     </ul>
                     <hr className='enu-navhdr' />
                     {this.renderNavTab("service", (<div>
@@ -238,6 +241,13 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
                                 max={4000000}
                                 defaultValue={String(serverSettings.framework.stateSizeLimit) || '64'} /> KB
                         </div>
+                    </div>) )}
+                    {this.renderNavTab("about", (<div>
+                        <div className='about-logo' dangerouslySetInnerHTML={{ __html: Constants.botFrameworkIcon('about-logo-fill', 142) }} />
+                        <div className="about-name">Bot Framework Emulator</div>
+                        <div className="about-link"><a href='https://aka.ms/bf-emulator'>https://aka.ms/bf-emulator</a></div>
+                        <div className="about-version">{`v${pjson.version}`}</div>
+                        <div className="about-copyright">&copy; 2016 - 2018 Microsoft</div>
                     </div>) )}
                 </div>
                 <div className="dialog-buttons">

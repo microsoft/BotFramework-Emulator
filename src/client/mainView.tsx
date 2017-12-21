@@ -41,9 +41,7 @@ import { AddressBar } from './addressBar/addressBar';
 import { InspectorView } from './inspectorView'
 import { LogView } from './logView';
 import { IUser } from '../types/userTypes';
-import { AboutDialog } from './dialogs/aboutDialog';
 import { AppSettingsDialog } from './dialogs/appSettingsDialog';
-import { ConversationSettingsDialog } from './dialogs/conversationSettingsDialog';
 import * as Constants from './constants';
 import { Emulator } from './emulator';
 import { BotEmulatorContext } from './botEmulatorContext';
@@ -328,9 +326,7 @@ export class MainView extends React.Component<{}, {}> {
                         </div>
                     </Splitter>
                 </div>
-                <AboutDialog />
                 <AppSettingsDialog />
-                <ConversationSettingsDialog />
             </div>
         );
     }

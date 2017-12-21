@@ -154,7 +154,7 @@ export class AddressBarMenu extends React.Component<{}, {}> {
                 type: 'separator'
             },
             {
-                label: 'App Settings',
+                label: 'Settings',
                 click: () => AddressBarActions.showAppSettings()
             },
             {
@@ -187,19 +187,6 @@ export class AddressBarMenu extends React.Component<{}, {}> {
                         }
                     },
                 ]
-            },
-            {
-                type: 'separator'
-            },
-            /*
-            {
-                label: 'Help',
-                //click: () => AddressBarActions.showHelp()
-            },
-            */
-            {
-                label: 'About',
-                click: () => AddressBarActions.showAbout()
             },
             {
                 type: 'separator'
