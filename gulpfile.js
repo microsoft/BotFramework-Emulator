@@ -23,18 +23,12 @@ gulp.task('build-react', ['build-react:build'], function () {
         .pipe(gulp.dest('app/client/'));
 });
 
-gulp.task('build-react:build', ['build-react:install'], function () {
+gulp.task('build-react:build', function () {
     return gulp
         .src('./client-v2/package.json', { read: false })
         .pipe(shell([
             'npm run build'
         ], { cwd: './client-v2' }));
-});
-
-gulp.task('build-react:install', function () {
-    return gulp
-        .src('./client-v2/package.json', { read: false })
-        .pipe(install({ production: false }));
 });
 
 gulp.task('build-site', function () {

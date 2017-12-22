@@ -32,12 +32,20 @@
 //
 
 // window['require']() is for skipping Webpack bundler, make it exclude these bundles and only load them in runtime
+
+import * as Fs from 'fs';
+
+// eslint-disable-next-line
 const require2 = typeof window === 'undefined' ? require : window['require'];
-const Electron = require2('electron');
-const Fs = require2('fs');
+
+const electronApp: Electron.App = require2('electron').app;
+const electronRemote: Electron.Remote = require2('electron').remote;
+
 const Mkdirp = require2('mkdirp');
-const url = require2('url');
-const path = require2('path');
+
+// const Fs = require('fs');
+const url = require('url');
+const path = require('path');
 
 import * as globals from './globals';
 
@@ -49,7 +57,7 @@ export const uniqueId = (length?: number) => Math.random().toString(24).substr(2
 
 const ensureStoragePath = (): string => {
     const commandLineArgs = globals.getGlobal('commandlineargs');
-    const app = Electron.app || Electron.remote.app;
+    const app = electronApp || electronRemote.app;
     const storagePath = commandLineArgs.storagepath || path.join(app.getPath("userData"), "botframework-emulator");
     Mkdirp.sync(storagePath);
     return storagePath;

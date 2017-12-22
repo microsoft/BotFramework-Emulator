@@ -32,15 +32,17 @@
 //
 
 // window['require']() is for skipping Webpack bundler, make it exclude these bundles and only load them in runtime
+
+// eslint-disable-next-line
 const require2 = typeof window === 'undefined' ? require : window['require'];
-const Electron = require2('electron');
+const remote: Electron.Remote = require2('electron').remote;
 
 
 export function getGlobal(attributeName: string, defaultValue?: any): any {
     if (global[attributeName]) {
         return global[attributeName];
-    } else if (Electron.remote && Electron.remote.getGlobal(attributeName)) {
-        return Electron.remote.getGlobal(attributeName)
+    } else if (remote && remote.getGlobal(attributeName)) {
+        return remote.getGlobal(attributeName)
     } else {
         return defaultValue;
     }

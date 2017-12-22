@@ -6,6 +6,7 @@
   "scripts": {
     "build": "gulp build",
     "pack": "build --dir",
+    "postinstall": "cd client-v2 && npm install",
     "dist": "build",
     "release": "build",
     "start": "./node_modules/.bin/electron ."
@@ -35,9 +36,6 @@
     "@types/jsonwebtoken": "7.2.0",
     "@types/mkdirp": "0.3.29",
     "@types/node": "6.0.60",
-    "@types/react": "15.0.38",
-    "@types/react-dom": "0.14.23",
-    "@types/react-split-pane": "0.1.5",
     "@types/request": "0.0.31",
     "@types/restify": "2.0.38",
     "botbuilder": "3.13.1",
@@ -75,7 +73,6 @@
   "dependencies": {
     "async": "2.1.4",
     "base64url": "2.0.0",
-    "botframework-webchat": "0.11.2",
     "command-line-args": "4.0.7",
     "electron-debug": "1.1.0",
     "electron-localshortcut": "2.0.2",
@@ -88,9 +85,6 @@
     "mkdirp": "0.5.1",
     "moment": "2.17.1",
     "node-uuid": "1.4.7",
-    "react": "15.6.1",
-    "react-dom": "15.6.1",
-    "react-split-pane": "0.1.57",
     "redux": "3.7.1",
     "request": "2.79.0",
     "restify": "4.3.0",

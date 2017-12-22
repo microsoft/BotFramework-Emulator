@@ -39,6 +39,7 @@ import { AddressBarActions, ConversationActions, HotkeyActions } from '../reduce
 import { Emulator } from '../emulator';
 import * as Constants from '../constants';
 
+// window['require']() is for skipping Webpack bundler, make it exclude these bundles and only load them in runtime
 const remote: Electron.Remote = window['require']('electron').remote;
 const { Menu } = remote;
 

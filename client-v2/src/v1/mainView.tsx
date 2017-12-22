@@ -307,12 +307,15 @@ export class MainView extends React.Component<{}, {}> {
         const minHorizSplit = 70;
         const vertSplit = Number(settings.layout.vertSplit) > minVertSplit ? Number(settings.layout.vertSplit) : minVertSplit;
         const horizSplit = Number(settings.layout.horizSplit) > minHorizSplit ? Number(settings.layout.horizSplit) : minHorizSplit;
+
+        // Need some TypeScript fix for Splitter
+
         return (
             <div className='mainview'>
                 <div className='botchat-container'>
                     {
                         React.createElement(
-                            Splitter,
+                            Splitter as any,
                             {
                                 split: 'vertical',
                                 minSize: minVertSplit,
@@ -329,7 +332,7 @@ export class MainView extends React.Component<{}, {}> {
                                 <div className="fill-parent">
                                     {
                                         React.createElement(
-                                            Splitter,
+                                            Splitter as any,
                                             {
                                                 split: 'horizontal',
                                                 primary: 'second',
