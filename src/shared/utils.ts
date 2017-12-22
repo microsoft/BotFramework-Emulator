@@ -31,19 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-// window['require']() is for skipping Webpack bundler, make it exclude these bundles and only load them in runtime
+// We need to skip Webpack bundler on bundling 'electron':
+// 1. We are using react-scripts, thus, we are not able to configure Webpack
+// 2. To skip bundling, we can hack with window['require']
 
-import * as Fs from 'fs';
+if (typeof window !== 'undefined') { require = window['require']; }
 
-// eslint-disable-next-line
-const require2 = typeof window === 'undefined' ? require : window['require'];
+const electron = require('electron'); // use a lowercase name "electron" to prevent clash with "Electron" namespace
+const electronApp: Electron.App = electron.app;
+const electronRemote: Electron.Remote = electron.remote;
 
-const electronApp: Electron.App = require2('electron').app;
-const electronRemote: Electron.Remote = require2('electron').remote;
-
-const Mkdirp = require2('mkdirp');
-
-// const Fs = require('fs');
+const Fs = require('fs');
+const Mkdirp = require('mkdirp');
 const url = require('url');
 const path = require('path');
 
