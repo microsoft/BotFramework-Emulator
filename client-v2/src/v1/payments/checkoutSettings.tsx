@@ -32,7 +32,7 @@
 //
 
 import { ICheckoutCreditCard, ICheckoutShippingAddress } from './checkoutTypes';
-import { loadSettings, saveSettings } from '../../shared/utils';
+import { loadSettings, saveSettings } from '../../external/shared/utils';
 
 interface ICheckoutSettings {
     creditCards: ICheckoutCreditCard[];
@@ -44,7 +44,7 @@ interface ICheckoutSettings {
 export class CheckoutSettings {
     private _settings: ICheckoutSettings = this.getSettings();
     private saveTimer;
-        
+
 
     public getSettings() : ICheckoutSettings {
         if (!this._settings) {

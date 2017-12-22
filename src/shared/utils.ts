@@ -31,11 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Electron from 'electron';
-import * as Fs from 'fs';
-import * as Mkdirp from 'mkdirp';
-import * as url from 'url';
-import * as path from 'path';
+// window['require']() is for skipping Webpack bundler, make it exclude these bundles and only load them in runtime
+const require2 = typeof window === 'undefined' ? require : window['require'];
+const Electron = require2('electron');
+const Fs = require2('fs');
+const Mkdirp = require2('mkdirp');
+const url = require2('url');
+const path = require2('path');
+
 import * as globals from './globals';
 
 

@@ -34,7 +34,7 @@
 import { getSettings } from '../settings';
 import { LogActions } from '../reducers';
 import { AddressBarActions, ConversationActions, ServerSettingsActions } from '../reducers';
-import { IBot } from '../../types/botTypes';
+import { IBot } from '../../external/types/botTypes';
 import { BotEmulatorContext } from '../botEmulatorContext';
 
 

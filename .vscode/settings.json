@@ -1,0 +1,14 @@
+{
+  "editor.tabSize": 4,
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "files.exclude": {
+    "client-v2/build": true,
+    "client-v2/public/external": true,
+    "client-v2/src/external": true
+  },
+  "search.exclude": {
+    "app": true,
+    "client-v2/build": true
+  }
+}

@@ -32,8 +32,7 @@
 //
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import * as Payment from '../../types/paymentTypes';
-import * as Electron from 'electron';
+import * as Payment from '../../external/types/paymentTypes';
 import { SelectShippingMethod } from './selectShippingMethod';
 import { SelectShippingAddress } from './selectShippingAddress';
 import { SelectCreditCard } from './selectCreditCard';
@@ -46,8 +45,10 @@ import { ISettings } from '../settings';
 import { ConversationActions, ServerSettingsActions } from '../reducers';
 import { Button } from './button';
 import { CheckoutSettings } from './checkoutSettings';
-import { uniqueId } from '../../shared/utils';
+import { uniqueId } from '../../external/shared/utils';
 
+// import * as Electron from 'electron';
+const Electron = window['require']('electron');
 
 export class CheckoutView extends React.Component<{}, ICheckoutViewState> {
     private local: ICheckoutViewState;

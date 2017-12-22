@@ -31,7 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Electron from 'electron';
+// window['require']() is for skipping Webpack bundler, make it exclude these bundles and only load them in runtime
+const require2 = typeof window === 'undefined' ? require : window['require'];
+const Electron = require2('electron');
 
 
 export function getGlobal(attributeName: string, defaultValue?: any): any {

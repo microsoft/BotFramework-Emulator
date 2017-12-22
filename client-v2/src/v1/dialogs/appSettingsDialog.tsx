@@ -34,11 +34,14 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as Constants from '../constants';
-import { remote } from 'electron';
 import { getSettings, Settings, addSettingsListener } from '../settings';
 import { AddressBarActions, ServerSettingsActions } from '../reducers';
 import * as path from 'path';
 import CommonDialog from './commonDialog';
+
+// import { remote } from 'electron';
+const { remote } = window['require']('electron');
+
 var pjson = require('../../../package.json');
 
 

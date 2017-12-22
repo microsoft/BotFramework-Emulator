@@ -32,12 +32,12 @@
 //
 import * as React from 'react';
 import { SelectorComponent } from './selectorComponent'
-import * as Payment from '../../types/paymentTypes';
+import * as Payment from '../../external/types/paymentTypes';
 
 class ShippingMethodItem extends React.Component<{
     item: Payment.IPaymentShippingOption
 }, {}> {
-    
+
     constructor(props) {
         super(props);
     }

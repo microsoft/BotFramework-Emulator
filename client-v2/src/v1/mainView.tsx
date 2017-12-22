@@ -36,22 +36,23 @@ import * as Splitter from 'react-split-pane';
 import * as BotChat from 'botframework-webchat';
 import { getSettings, Settings, addSettingsListener, selectedActivity$ } from './settings';
 import { LayoutActions, InspectorActions } from './reducers';
-import { Settings as ServerSettings } from '../types/serverSettingsTypes';
+import { Settings as ServerSettings } from '../external/types/serverSettingsTypes';
 import { AddressBar } from './addressBar/addressBar';
 import { InspectorView } from './inspectorView'
 import { LogView } from './logView';
-import { IUser } from '../types/userTypes';
+import { IUser } from '../external/types/userTypes';
 import { AppSettingsDialog } from './dialogs/appSettingsDialog';
 import * as Constants from './constants';
 import { Emulator } from './emulator';
 import { BotEmulatorContext } from './botEmulatorContext';
 import { AddressBarOperators } from './addressBar/addressBarOperators';
 import * as log from './log';
-import { ISpeechTokenInfo } from '../types/speechTypes';
+import { ISpeechTokenInfo } from '../external/types/speechTypes';
 
-const CognitiveServices = require('../../node_modules/botframework-webchat/CognitiveServices');
-const remote = require('electron').remote;
-const ipcRenderer = require('electron').ipcRenderer;
+// TODO: We should reference CognitiveServices correctly by either a separate NPM package, or expose it under Web Chat
+const CognitiveServices = require('../external/botframework-webchat/CognitiveServices');
+
+const { ipcRenderer, remote } = window['require']('electron');
 
 export class MainView extends React.Component<{}, {}> {
     settingsUnsubscribe: any;
@@ -248,7 +249,7 @@ export class MainView extends React.Component<{}, {}> {
                 },
                 selectedActivity: selectedActivity$() as any,
                 user: this.getCurrentUser(settings.serverSettings),
-                bot: { name: "Bot", id: activeBot.botId },
+                bot: { name: "Bot", id: activeBot.botId || '' },
                 resize: 'detect',
                 speechOptions: {
                     speechRecognizer: new CognitiveServices.SpeechRecognizer({
@@ -309,22 +310,48 @@ export class MainView extends React.Component<{}, {}> {
         return (
             <div className='mainview'>
                 <div className='botchat-container'>
-                    <Splitter split="vertical" minSize={minVertSplit} maxSize={-200} defaultSize={vertSplit} primary="second" onChange={(size) => this.verticalSplitChange(size)}>
-                        <div className='fill-parent'>
-                            <AddressBar />
-                            {this.botChatComponent(vertSplit)}
-                        </div>
-                        <div className="fill-parent">
-                            <Splitter split="horizontal" primary="second" minSize={minHorizSplit} maxSize={-44} defaultSize={horizSplit} onChange={(size) => LayoutActions.rememberHorizontalSplitter(size)}>
-                                <div className="wc-chatview-panel">
-                                    <InspectorView />
-                                </div>
+                    {
+                        React.createElement(
+                            Splitter,
+                            {
+                                split: 'vertical',
+                                minSize: minVertSplit,
+                                maxSize: -200,
+                                defaultSize: vertSplit,
+                                primary: 'second',
+                                onChange: (size: number) => this.verticalSplitChange(size)
+                            },
+                            [
+                                <div className='fill-parent'>
+                                    <AddressBar />
+                                    {this.botChatComponent(vertSplit)}
+                                </div>,
                                 <div className="fill-parent">
-                                    <LogView />
+                                    {
+                                        React.createElement(
+                                            Splitter,
+                                            {
+                                                split: 'horizontal',
+                                                primary: 'second',
+                                                minSize: minHorizSplit,
+                                                maxSize: -44,
+                                                defaultSize: horizSplit,
+                                                onChange: (size: number) => LayoutActions.rememberHorizontalSplitter(size)
+                                            },
+                                            [
+                                                <div className="wc-chatview-panel">
+                                                    <InspectorView />
+                                                </div>,
+                                                <div className="fill-parent">
+                                                    <LogView />
+                                                </div>
+                                            ]
+                                        )
+                                    }
                                 </div>
-                            </Splitter>
-                        </div>
-                    </Splitter>
+                            ]
+                        )
+                    }
                 </div>
                 <AppSettingsDialog />
             </div>

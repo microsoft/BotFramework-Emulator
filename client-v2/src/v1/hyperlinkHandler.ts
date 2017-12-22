@@ -31,23 +31,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { shell } from 'electron';
 import * as URL from 'url';
 import * as QueryString from 'querystring';
 import { InspectorActions, AddressBarActions } from './reducers';
 import { getSettings, selectedActivity$ } from './settings';
-import { Settings as ServerSettings } from '../types/serverSettingsTypes';
+import { Settings as ServerSettings } from '../external/types/serverSettingsTypes';
 import { Emulator } from './emulator';
-import { PaymentEncoder } from '../shared/paymentEncoder';
+import { PaymentEncoder } from '../external/shared/paymentEncoder';
 import * as log from './log';
-import * as Electron from 'electron';
+
+// import * as Electron from 'electron';
+// import { shell } from 'electron';
+
+const Electron = window['require']('electron');
+const { shell } = Electron;
 
 
 export function navigate(url: string) {
     try {
         const parsed = URL.parse(url);
         if (parsed.protocol === "emulator:") {
-            const params = QueryString.parse(parsed.query);
+            const params = ((QueryString.parse(parsed.query as string) as any) as string[]);
             if (parsed.host === 'inspect') {
                 navigateInspectUrl(params);
             } else if (parsed.host === 'appsettings') {
@@ -57,12 +61,14 @@ export function navigate(url: string) {
             } else if (parsed.host === 'command') {
                 navigateCommandUrl(params);
             }
-        } else if (parsed.protocol.startsWith(PaymentEncoder.PaymentEmulatorUrlProtocol)) {
-            navigatePaymentUrl(parsed.path);
-        } else if (parsed.protocol.startsWith('file:')) {
-            // ignore
-        } else if (parsed.protocol.startsWith('javascript:')) {
-            // ignore
+        } else if (parsed.protocol) {
+            if (parsed.protocol.startsWith(PaymentEncoder.PaymentEmulatorUrlProtocol)) {
+                navigatePaymentUrl(parsed.path);
+            } else if (parsed.protocol.startsWith('file:')) {
+                // ignore
+            } else if (parsed.protocol.startsWith('javascript:')) {
+                // ignore
+            }
         } else {
             shell.openExternal(url, { activate: true });
         }
@@ -133,7 +139,7 @@ function navigateCommandUrl(params: string[]) {
     }
 }
 
-function navigatePaymentUrl(payload: string) {
+function navigatePaymentUrl(payload?: string) {
     const settings = getSettings();
     Electron.ipcRenderer.send("createCheckoutWindow", {
         payload: payload,

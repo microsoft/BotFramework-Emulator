@@ -31,21 +31,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export = 0;     // this is required to work around a typescript bug in 2.2.1+
-
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { CheckoutView } from './checkoutView';
-import { navigate } from '../hyperlinkHandler';
+import { MainView } from './mainView';
+import * as Settings from './settings';
+import { navigate } from './hyperlinkHandler';
+import * as log from './log';
+
+// import { webFrame } from 'electron';
+const { webFrame } = window['require']('electron');
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error) => {
-    // log.error('[err-client]', error.message, error.stack);
+    log.error('[err-client]', error.message, error.stack);
 });
 
 window.onerror = (message: string, filename?: string, lineno?: number, colno?: number, error?:Error) => {
-    // log.error('[err-client]', message, filename, lineno, colno, error);
+    log.error('[err-client]', message, filename, lineno, colno, error);
     return true; // prevent default handler
 }
+
+webFrame.setZoomLevel(1);
+webFrame.setZoomFactor(1);
+webFrame.registerURLSchemeAsPrivileged('emulator');
 
 const interceptClickEvent = (e: Event) => {
     let target: any = e.target;
@@ -67,7 +74,10 @@ window.open = (url: string): any => {
 }
 
 // Right-click context menu for edit boxes
-const remote = require('electron').remote;
+
+// const remote = require('electron').remote;
+const { remote } = window['require']('electron');
+
 const Menu = remote.Menu;
 
 const ContextMenuRW = Menu.buildFromTemplate([{
@@ -134,5 +144,12 @@ document.body.addEventListener('contextmenu', (e) => {
     }
 });
 
+// Load settings
+
+Settings.startup();
+
 // Load main control
-ReactDOM.render(<CheckoutView />, document.getElementById('checkoutView'));
+
+export default function main() {
+    ReactDOM.render(<MainView />, document.getElementById('root'));
+}

@@ -33,7 +33,7 @@
 
 import * as React from 'react';
 import { getSettings, addSettingsListener } from '../settings';
-import { IBot } from '../../types/botTypes';
+import { IBot } from '../../external/types/botTypes';
 import { AddressBarOperators } from './addressBarOperators';
 
 export class AddressBarBotCreds extends React.Component<{}, {}> {
