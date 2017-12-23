@@ -10,14 +10,14 @@ gulp.task('copy', [
 // TODO: We should either repackage CognitiveServices.js into a separate package, or expose it in Web Chat
 gulp.task('copy:webchat:cognitiveservices', function () {
     return gulp
-        .src('../node_modules/botframework-webchat/CognitiveServices.js')
+        .src('node_modules/botframework-webchat/CognitiveServices.js')
         .pipe(gulp.dest('./src/external/botframework-webchat'));
 });
 
 // TODO: We should expose CSS programmatically in Web Chat
 gulp.task('copy:webchat:css', function () {
     return gulp
-        .src('../node_modules/botframework-webchat/botchat.css')
+        .src('node_modules/botframework-webchat/botchat.css')
         .pipe(gulp.dest('./public/external/css'));
 });
 
