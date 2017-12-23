@@ -1,17 +1,32 @@
-// import * as React from 'react';
-// import * as ReactDOM from 'react-dom';
-// import App from './App';
-// import registerServiceWorker from './registerServiceWorker';
-// import './index.css';
+import { Provider } from 'react-redux';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 
-// ReactDOM.render(
-//   <App />,
-//   document.getElementById('root') as HTMLElement
-// );
-// registerServiceWorker();
+import Main from './UI/Shell/Main';
+import store from './Data/store';
+import registerServiceWorker from './registerServiceWorker';
 
-export default 0;
+import * as Settings from './v1/settings';
+import interceptError from './interceptError';
+import interceptHyperlink from './interceptHyperlink';
+import setupContextMenu from './setupContextMenu';
 
-import v1EntryPoint from './v1/index';
+interceptError();
+interceptHyperlink();
+setupContextMenu();
+Settings.startup();
 
-v1EntryPoint();
+const { webFrame } = window['require']('electron');
+
+webFrame.setZoomLevel(1);
+webFrame.setZoomFactor(1);
+webFrame.registerURLSchemeAsPrivileged('emulator');
+
+ReactDOM.render(
+    <Provider store={ store }>
+        { React.createElement(Main as any) }
+    </Provider>,
+    document.getElementById('root')
+);
+
+registerServiceWorker();

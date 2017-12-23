@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export = 0;     // this is required to work around a typescript bug in 2.2.1+
+export default 0;     // this is required to work around a typescript bug in 2.2.1+
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
