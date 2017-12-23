@@ -5,13 +5,18 @@
   "homepage": "./",
   "dependencies": {
     "botframework-webchat": "^0.11.4",
+    "classnames": "^2.2.5",
+    "glamor": "^2.20.40",
+    "immutable": "^3.8.2",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "react-scripts-ts": "2.8.0",
+    "react-redux": "^5.0.6",
     "react-split-pane": "^0.1.74",
     "redux": "^3.7.2",
+    "redux-promise-middleware": "^5.0.0",
     "request": "^2.83.0",
-    "rxjs": "^5.5.6"
+    "rxjs": "^5.5.6",
+    "sockjs-client": "^1.1.4"
   },
   "scripts": {
     "copy:external": "gulp copy",
@@ -26,6 +31,8 @@
     "@types/react": "^16.0.31",
     "@types/react-dom": "^16.0.3",
     "@types/request": "^2.0.9",
-    "gulp": "^3.9.1"
+    "gulp": "^3.9.1",
+    "react-dev-utils": "file:packages/react-dev-utils-4.2.1@ed5c48c.tgz",
+    "react-scripts-ts": "file:packages/react-scripts-ts-2.9.0@e404a66.tgz"
   }
 }
