@@ -9,7 +9,9 @@
     "postinstall": "cd client-v2 && npm install",
     "dist": "build",
     "release": "build",
-    "start": "./node_modules/.bin/electron ."
+    "start": "cross-env BROWSER=none cross-env ELECTRON_TARGET_URL=http://localhost:3000/ concurrently --kill-others --names \"electron,react-app\" --success first \"npm run start:electron\" \"npm run start:react-app-start\"",
+    "start:electron": "./node_modules/.bin/electron .",
+    "start:react-app-start": "cd client-v2 && npm start"
   },
   "repository": {
     "type": "git",
@@ -39,6 +41,8 @@
     "@types/request": "0.0.31",
     "@types/restify": "2.0.38",
     "botbuilder": "3.13.1",
+    "concurrently": "^3.5.1",
+    "cross-env": "^5.1.3",
     "del": "2.2.2",
     "electron": "1.8.1",
     "electron-builder": "19.18.0",
