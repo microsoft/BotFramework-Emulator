@@ -1,7 +1,7 @@
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
-import TabBarTab from './TabBarTab';
+import TabBarTab from './tabBarTab';
 
 const CSS = css({
     backgroundColor: 'magenta',

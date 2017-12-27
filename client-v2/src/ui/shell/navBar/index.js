@@ -1,8 +1,8 @@
 import { css } from 'glamor';
 import React from 'react';
 
-import Button from './Button';
-import ConnectivityBadge from '../../Widget/ConnectivityBadge';
+import Button from './button';
+import ConnectivityBadge from '../../widget/connectivityBadge';
 
 const CSS = css({
     backgroundColor: 'Red',

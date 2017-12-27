@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const CSS = css({
     display: 'flex',

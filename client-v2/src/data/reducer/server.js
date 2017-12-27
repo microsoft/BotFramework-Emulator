@@ -1,5 +1,5 @@
 import { fromJS } from 'immutable';
-import * as ServerActions from '../Action/ServerActions';
+import * as ServerActions from '../action/serverActions';
 
 const DEFAULT_STATE = fromJS({
     connected: false

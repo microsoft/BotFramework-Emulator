@@ -2,14 +2,14 @@ import { connect } from 'react-redux';
 import { css } from 'glamor';
 import React from 'react';
 
-import AssetExplorer from './AssetExplorer';
-import BotExplorer from './BotExplorer';
-import Editor from '../Editor';
-import EmulatorEditor from './EmulatorEditor';
-import ExplorerBar from './ExplorerBar';
-import MultiTabs from './MultiTabs';
-import NavBar from './NavBar';
-import Tab from './MultiTabs/Tab';
+import AssetExplorer from './assetExplorer';
+import BotExplorer from './botExplorer';
+import Editor from '../editor';
+import EmulatorEditor from './emulatorEditor';
+import ExplorerBar from './explorerBar';
+import MultiTabs from './multiTabs';
+import NavBar from './navBar';
+import Tab from './multiTabs/tab';
 
 css.global('html, body, #root', {
     height: '100%',

@@ -1,6 +1,7 @@
-import React from 'react';
 import { css } from 'glamor';
-import ExpandCollapse from '../Layout/ExpandCollapse';
+import React from 'react';
+
+import ExpandCollapse from '../layout/expandCollapse';
 
 const CSS = css({
     backgroundColor: 'Pink',

@@ -2,8 +2,8 @@ import { Provider } from 'react-redux';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import Main from './UI/Shell/Main';
-import store from './Data/store';
+import Main from './ui/shell/main';
+import store from './data/store';
 import registerServiceWorker from './registerServiceWorker';
 
 import * as Settings from './v1/settings';

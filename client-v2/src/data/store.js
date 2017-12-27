@@ -5,8 +5,8 @@ import promiseMiddleware from 'redux-promise-middleware';
 // import IPCRendererWebSocket from 'electron-ipcrenderer-websocket';
 // import WebSocketActionBridge from 'redux-websocket-action-bridge';
 
-import editor from './Reducer/editor';
-import server from './Reducer/server';
+import editor from './reducer/editor';
+import server from './reducer/server';
 
 const electron = window.process && window.process.versions.electron;
 

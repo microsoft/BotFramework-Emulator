@@ -3,7 +3,7 @@ import { css } from 'glamor';
 import classNames from 'classnames';
 import React from 'react';
 
-import * as ServerActions from '../../Data/Action/ServerActions';
+import * as ServerActions from '../../data/action/serverActions';
 
 const CSS = css({
 });

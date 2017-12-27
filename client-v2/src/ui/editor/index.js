@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import AdaptiveCardEditor from './AdaptiveCardEditor';
-import BotChatEditor from './BotChatEditor';
+import AdaptiveCardEditor from './adaptiveCardEditor';
+import BotChatEditor from './botChatEditor';
 
 export { AdaptiveCardEditor, BotChatEditor }
 

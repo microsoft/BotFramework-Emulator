@@ -1,9 +1,10 @@
-import React from 'react';
 import { css } from 'glamor';
-import ExpandCollapse from '../Layout/ExpandCollapse';
+import React from 'react';
+
+import ExpandCollapse from '../layout/expandCollapse';
 
 const CSS = css({
-    backgroundColor: 'Pink',
+    backgroundColor: 'skyblue',
     display: 'flex',
     flex: 1,
     flexDirection: 'column',
@@ -26,12 +27,16 @@ export default props =>
         <li>
             <ExpandCollapse
                 initialExpanded={ true }
-                title="Assets"
+                title="Bots"
             >
+                <ExpandCollapseTitle>Bots</ExpandCollapseTitle>
                 <ul className={ BOTS_CSS }>
-                    <li>Adaptive cards</li>
-                    <li>LUIS models</li>
+                    <li>http://localhost:3000/</li>
+                    <li>http://localhost:3001/</li>
+                    <li>http://localhost:3002/</li>
                 </ul>
             </ExpandCollapse>
         </li>
     </ul>
+
+const ExpandCollapseTitle = props => false;

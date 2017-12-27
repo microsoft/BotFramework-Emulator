@@ -1,5 +1,5 @@
-import React from 'react';
 import { css } from 'glamor';
+import React from 'react';
 
 const CSS = css({
     backgroundColor: 'LightGreen',
