@@ -30,24 +30,24 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import * as React from 'react';
+import { SelectorComponent } from './selectorComponent'
+import * as Payment from '../../external/types/paymentTypes';
 
-// We need to skip Webpack bundler on bundling 'electron':
-// 1. We are using react-scripts, thus, we are not able to configure Webpack
-// 2. To skip bundling, we can hack with window['require']
-// 3. We cannot make a helper function to simplify the spaghetti code on require(), because TypeScript would complain it cannot statically extract it
-const remote: Electron.Remote = (typeof window === 'undefined' ? require('electron') : window['require']('electron')).remote;
+class ShippingMethodItem extends React.Component<{
+    item: Payment.IPaymentShippingOption
+}, {}> {
 
-
-export function getGlobal(attributeName: string, defaultValue?: any): any {
-    if (global[attributeName]) {
-        return global[attributeName];
-    } else if (remote && remote.getGlobal(attributeName)) {
-        return remote.getGlobal(attributeName)
-    } else {
-        return defaultValue;
+    constructor(props) {
+        super(props);
+    }
+    render() {
+        return (<div className='shipping-method'>{this.props.item.label} (${this.props.item.amount.value})</div>);
     }
 }
 
-export function setGlobal(attributeName: string, value: any): void {
-    global[attributeName] = value;
+export class SelectShippingMethod extends SelectorComponent<Payment.IPaymentShippingOption> {
+    constructor(props) {
+        super(props, ShippingMethodItem);
+    }
 }

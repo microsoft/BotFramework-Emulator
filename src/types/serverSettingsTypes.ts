@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IBot } from '../types/botTypes';
-import { IUser } from '../types/userTypes';
+import { IBot } from './botTypes';
+import { IUser } from './userTypes';
 
 export interface IFrameworkSettings {
     // path to use for ngrok
