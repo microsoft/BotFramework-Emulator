@@ -32,14 +32,14 @@
 //
 
 import { Reducer } from 'redux';
-import { IBot } from '../types/botTypes';
-import { IUser } from '../types/userTypes';
-import { uniqueId } from '../shared/utils';
+import { IBot } from '../external/types/botTypes';
+import { IUser } from '../external/types/userTypes';
+import { uniqueId } from '../external/shared/utils';
 import * as log from './log';
 import {
     ISettings as IServerSettings,
     Settings as ServerSettings
-} from '../types/serverSettingsTypes';
+} from '../external/types/serverSettingsTypes';
 import {
     dispatch,
     layoutDefault,

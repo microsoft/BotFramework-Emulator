@@ -234,11 +234,15 @@ const createMainWindow = () => {
         queryString = '?' + process.argv[1];
     }
 
-    let page = url.format({
+    let page = process.env.ELECTRON_TARGET_URL || url.format({
         protocol: 'file',
         slashes: true,
         pathname: path.join(__dirname, '../client/index.html')
     });
+
+    if (/^http:\/\//.test(page)) {
+        log.warn(`Loading emulator code from ${ page }`);
+    }
 
     if (queryString) {
         page = page + queryString;

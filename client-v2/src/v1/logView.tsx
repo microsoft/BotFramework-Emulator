@@ -37,9 +37,9 @@ import { Subscription, Observable, Subject } from 'rxjs';
 import { getSettings, addSettingsListener } from './settings';
 import { LogActions, WordWrapAction } from './reducers';
 import * as Constants from './constants';
-import { safeStringify } from '../shared/utils';
+import { safeStringify } from '../external/shared/utils';
 
-const { remote } = require('electron');
+const { remote } = window['require']('electron');
 const { Menu } = remote;
 
 
@@ -79,7 +79,7 @@ export class LogEntry extends React.Component<ILogEntryElement, {}> {
         const seconds = number2(entry.timestamp.getSeconds());
         return <span className='wc-logview-timestamp'>{`[${hours}:${minutes}:${seconds}]`}&nbsp;</span>
     }
-    
+
     private emit(val: any, className: string) {
         if (!val) return null;
         if (val.hasOwnProperty('messageType') && val['messageType'] === 'link') {
@@ -124,8 +124,8 @@ export class LogView extends React.Component<{}, ILogViewState> {
     logSubscription: Subscription;
     settingsUnsubscribe: Unsubscribe;
 
-    constructor() {
-        super();
+    constructor(props: any, context: any) {
+        super(props, context);
         this.state = { entries: [] };
     }
 

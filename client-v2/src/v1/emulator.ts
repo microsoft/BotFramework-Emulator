@@ -34,7 +34,7 @@
 import * as request from 'request';
 import * as http from 'http';
 import { getSettings } from './settings';
-import * as Payment from '../types/paymentTypes';
+import * as Payment from '../external/types/paymentTypes';
 
 export class Emulator {
     public static serviceUrl: string;

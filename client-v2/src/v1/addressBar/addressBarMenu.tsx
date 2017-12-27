@@ -31,13 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+/// <reference path="../../../../node_modules/electron/electron.d.ts" />
+
 import * as React from 'react';
 import { getSettings, Settings, addSettingsListener  } from '../settings';
 import { AddressBarActions, ConversationActions, HotkeyActions } from '../reducers';
 import { Emulator } from '../emulator';
 import * as Constants from '../constants';
-import { remote } from 'electron';
 
+// window['require']() is for skipping Webpack bundler, make it exclude these bundles and only load them in runtime
+const remote: Electron.Remote = window['require']('electron').remote;
 const { Menu } = remote;
 
 export class AddressBarMenu extends React.Component<{}, {}> {

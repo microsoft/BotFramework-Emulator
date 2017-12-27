@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import * as React from 'react';
-import * as Payment from '../../types/paymentTypes';
+import * as Payment from '../../external/types/paymentTypes';
 
 
 export class PaymentDetails extends React.Component<
-    { details: Payment.IPaymentDetails }, 
+    { details: Payment.IPaymentDetails },
     { detailsAreVisible: boolean }> {
 
     constructor(props) {

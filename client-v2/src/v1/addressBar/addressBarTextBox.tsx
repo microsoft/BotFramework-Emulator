@@ -34,7 +34,7 @@
 import * as React from 'react';
 import { getSettings, addSettingsListener } from '../settings';
 import { AddressBarActions } from '../reducers';
-import { newBot } from '../../types/botTypes';
+import { newBot } from '../../external/types/botTypes';
 import { AddressBarOperators } from './addressBarOperators';
 
 

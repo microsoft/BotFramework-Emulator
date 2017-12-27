@@ -34,7 +34,7 @@
 import * as React from 'react';
 import { getSettings, addSettingsListener } from '../settings';
 import { AddressBarActions } from '../reducers';
-import { IBot } from '../../types/botTypes';
+import { IBot } from '../../external/types/botTypes';
 import { AddressBarOperators } from './addressBarOperators';
 import * as Constants from '../constants';
 

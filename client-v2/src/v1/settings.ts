@@ -31,13 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Electron from 'electron';
 import { Store, createStore, combineReducers, Action } from 'redux';
 import { BehaviorSubject } from 'rxjs';
-import { ActivityOrID } from '../types/activityTypes';
-import { Settings as ServerSettings } from '../types/serverSettingsTypes';
+import { ActivityOrID } from '../external/types/activityTypes';
+import { Settings as ServerSettings } from '../external/types/serverSettingsTypes';
 import { InspectorActions, ConversationActions, HotkeyActions } from './reducers';
-import { loadSettings, saveSettings } from '../shared/utils';
+import { loadSettings, saveSettings } from '../external/shared/utils';
 import {
     layoutReducer,
     addressBarReducer,
@@ -50,9 +49,12 @@ import {
     ServerSettingsActions,
     AddressBarActions
 } from './reducers';
-import { IBot } from '../types/botTypes';
+import { IBot } from '../external/types/botTypes';
 import * as log from './log';
 import { Emulator } from './emulator';
+
+// import * as Electron from 'electron';
+const Electron = window['require']('electron');
 
 
 export const selectedActivity$ = (): BehaviorSubject<ActivityOrID> => {
