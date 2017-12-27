@@ -31,34 +31,35 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Provider } from 'react-redux';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { css } from 'glamor';
+import PropTypes from 'prop-types';
+import React from 'react';
+import TabBarTab from './tabBarTab';
 
-import * as Settings from './v1/settings';
-import interceptError from './interceptError';
-import interceptHyperlink from './interceptHyperlink';
-import Main from './ui/shell/main';
-import registerServiceWorker from './registerServiceWorker';
-import setupContextMenu from './setupContextMenu';
-import store from './data/store';
+const CSS = css({
+    backgroundColor: 'magenta',
+    display: 'flex',
+    height: 30,
+    listStyleType: 'none',
+    margin: 0,
+    padding: 0
+});
 
-interceptError();
-interceptHyperlink();
-setupContextMenu();
-Settings.startup();
+export default class TabBar extends React.Component {
+    render() {
+        return (
+            <ul className={ CSS }>
+                {
+                    React.Children.map(this.props.children, child =>
+                        <li>{ child }</li>
+                    )
+                }
+            </ul>
+        );
+    }
+}
 
-const { webFrame } = window['require']('electron');
+TabBar.propTypes = {
+    value: PropTypes.number
+};
 
-webFrame.setZoomLevel(1);
-webFrame.setZoomFactor(1);
-webFrame.registerURLSchemeAsPrivileged('emulator');
-
-ReactDOM.render(
-    <Provider store={ store }>
-        { React.createElement(Main as any) }
-    </Provider>,
-    document.getElementById('root')
-);
-
-registerServiceWorker();

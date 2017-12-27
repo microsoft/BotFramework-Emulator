@@ -31,34 +31,44 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Provider } from 'react-redux';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { css } from 'glamor';
+import React from 'react';
 
-import * as Settings from './v1/settings';
-import interceptError from './interceptError';
-import interceptHyperlink from './interceptHyperlink';
-import Main from './ui/shell/main';
-import registerServiceWorker from './registerServiceWorker';
-import setupContextMenu from './setupContextMenu';
-import store from './data/store';
+import Button from './button';
+import ConnectivityBadge from '../../widget/connectivityBadge';
 
-interceptError();
-interceptHyperlink();
-setupContextMenu();
-Settings.startup();
+const CSS = css({
+    backgroundColor: 'Red',
+    width: 40,
 
-const { webFrame } = window['require']('electron');
+    '& > ul': {
+        display: 'flex',
+        flexDirection: 'column',
+        listStyleType: 'none',
+        margin: 0,
+        padding: 0,
 
-webFrame.setZoomLevel(1);
-webFrame.setZoomFactor(1);
-webFrame.registerURLSchemeAsPrivileged('emulator');
+        '& > li': {
+            height: 40,
+            width: 40
+        }
+    }
+});
 
-ReactDOM.render(
-    <Provider store={ store }>
-        { React.createElement(Main as any) }
-    </Provider>,
-    document.getElementById('root')
-);
-
-registerServiceWorker();
+export default class NavBar extends React.Component {
+    render() {
+        return (
+            <nav className={ CSS }>
+                <ul>
+                    <li>
+                        <Button>Bots</Button>
+                    </li>
+                    <li>
+                        <Button>Assets</Button>
+                    </li>
+                </ul>
+                <ConnectivityBadge />
+            </nav>
+        );
+    }
+}

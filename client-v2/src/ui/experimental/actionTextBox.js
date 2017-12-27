@@ -31,34 +31,37 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Provider } from 'react-redux';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-import * as Settings from './v1/settings';
-import interceptError from './interceptError';
-import interceptHyperlink from './interceptHyperlink';
-import Main from './ui/shell/main';
-import registerServiceWorker from './registerServiceWorker';
-import setupContextMenu from './setupContextMenu';
-import store from './data/store';
+class ActionTextBox extends React.Component {
+    constructor(props, context) {
+        super(props, context);
 
-interceptError();
-interceptHyperlink();
-setupContextMenu();
-Settings.startup();
+        this.handleChange = this.handleChange.bind(this);
+    }
 
-const { webFrame } = window['require']('electron');
+    handleChange(evt) {
+        this.props.dispatch(this.props.actionCreator(evt.target.value));
+    }
 
-webFrame.setZoomLevel(1);
-webFrame.setZoomFactor(1);
-webFrame.registerURLSchemeAsPrivileged('emulator');
+    render() {
+        return (
+            <input
+                onChange={ this.handleChange }
+                placeholder={ this.props.placeholder }
+                type="textbox"
+                value={ this.props.value }
+            />
+        );
+    }
+}
 
-ReactDOM.render(
-    <Provider store={ store }>
-        { React.createElement(Main as any) }
-    </Provider>,
-    document.getElementById('root')
-);
+ActionTextBox.propTypes = {
+    actionCreator: PropTypes.func.isRequired,
+    placeholder: PropTypes.string,
+    value: PropTypes.string
+};
 
-registerServiceWorker();
+export default connect()(ActionTextBox);

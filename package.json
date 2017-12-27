@@ -9,8 +9,9 @@
     "postinstall": "cd client-v2 && npm install",
     "dist": "build",
     "release": "build",
-    "start": "cross-env BROWSER=none cross-env ELECTRON_TARGET_URL=http://localhost:3000/ concurrently --kill-others --names \"electron,react-app\" --success first \"npm run start:electron\" \"npm run start:react-app\"",
+    "start": "concurrently --kill-others --names \"electron,react-app\" --success first \"npm run start:electron:dev\" \"npm run start:react-app\"",
     "start:electron": "./node_modules/.bin/electron .",
+    "start:electron:dev": "cross-env ELECTRON_TARGET_URL=http://localhost:3000/ npm run start:electron",
     "start:react-app": "cd client-v2 && npm start"
   },
   "repository": {

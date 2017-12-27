@@ -31,34 +31,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Provider } from 'react-redux';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+const DEFAULT_STATE = {
+    documents: [{
+        contentType: 'application/vnd.microsoft.botframework.bot',
+        directLineURL: 'http://example.com/',
+        title: 'TestBotV3'
+    }, {
+        contentType: 'application/vnd.microsoft.card.adaptive',
+        title: 'Welcome.card.json'
+    }]
+};
 
-import * as Settings from './v1/settings';
-import interceptError from './interceptError';
-import interceptHyperlink from './interceptHyperlink';
-import Main from './ui/shell/main';
-import registerServiceWorker from './registerServiceWorker';
-import setupContextMenu from './setupContextMenu';
-import store from './data/store';
+export default function documents(state = DEFAULT_STATE, action) {
+    switch (action.type) {
+    default: break;
+    }
 
-interceptError();
-interceptHyperlink();
-setupContextMenu();
-Settings.startup();
-
-const { webFrame } = window['require']('electron');
-
-webFrame.setZoomLevel(1);
-webFrame.setZoomFactor(1);
-webFrame.registerURLSchemeAsPrivileged('emulator');
-
-ReactDOM.render(
-    <Provider store={ store }>
-        { React.createElement(Main as any) }
-    </Provider>,
-    document.getElementById('root')
-);
-
-registerServiceWorker();
+    return state;
+}

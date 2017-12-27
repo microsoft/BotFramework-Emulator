@@ -31,34 +31,34 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Provider } from 'react-redux';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-import * as Settings from './v1/settings';
-import interceptError from './interceptError';
-import interceptHyperlink from './interceptHyperlink';
-import Main from './ui/shell/main';
-import registerServiceWorker from './registerServiceWorker';
-import setupContextMenu from './setupContextMenu';
-import store from './data/store';
+import AdaptiveCardEditor from './adaptiveCardEditor';
+import BotChatEditor from './botChatEditor';
 
-interceptError();
-interceptHyperlink();
-setupContextMenu();
-Settings.startup();
+export { AdaptiveCardEditor, BotChatEditor }
 
-const { webFrame } = window['require']('electron');
+export default class Editor extends React.Component {
+    render() {
+        const { document } = this.props;
+        const { contentType } = document;
 
-webFrame.setZoomLevel(1);
-webFrame.setZoomFactor(1);
-webFrame.registerURLSchemeAsPrivileged('emulator');
+        return (
+            contentType === 'application/vnd.microsoft.card.adaptive' ?
+                <AdaptiveCardEditor />
+            : contentType === 'application/vnd.microsoft.botframework.bot' ?
+                <BotChatEditor
+                    directLineURL={ document.directLineURL }
+                />
+            :
+                false
+        );
+    }
+}
 
-ReactDOM.render(
-    <Provider store={ store }>
-        { React.createElement(Main as any) }
-    </Provider>,
-    document.getElementById('root')
-);
-
-registerServiceWorker();
+Editor.propTypes = {
+    document: PropTypes.shape({
+        contentType: PropTypes.string
+    })
+};

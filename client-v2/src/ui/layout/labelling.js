@@ -31,34 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Provider } from 'react-redux';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { css } from 'glamor';
+import React from 'react';
 
-import * as Settings from './v1/settings';
-import interceptError from './interceptError';
-import interceptHyperlink from './interceptHyperlink';
-import Main from './ui/shell/main';
-import registerServiceWorker from './registerServiceWorker';
-import setupContextMenu from './setupContextMenu';
-import store from './data/store';
+const CSS = css({
+    '& > small': {
+        display: 'block'
+    }
+});
 
-interceptError();
-interceptHyperlink();
-setupContextMenu();
-Settings.startup();
-
-const { webFrame } = window['require']('electron');
-
-webFrame.setZoomLevel(1);
-webFrame.setZoomFactor(1);
-webFrame.registerURLSchemeAsPrivileged('emulator');
-
-ReactDOM.render(
-    <Provider store={ store }>
-        { React.createElement(Main as any) }
-    </Provider>,
-    document.getElementById('root')
-);
-
-registerServiceWorker();
+export default props =>
+    <div className={ CSS }>
+        <small>{ props.title }</small>
+        <div>{ props.children }</div>
+    </div>

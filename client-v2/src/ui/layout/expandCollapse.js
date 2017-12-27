@@ -31,34 +31,53 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Provider } from 'react-redux';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { css } from 'glamor';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-import * as Settings from './v1/settings';
-import interceptError from './interceptError';
-import interceptHyperlink from './interceptHyperlink';
-import Main from './ui/shell/main';
-import registerServiceWorker from './registerServiceWorker';
-import setupContextMenu from './setupContextMenu';
-import store from './data/store';
+const CSS = css({
+    '& > button': {
+        width: '100%'
+    }
+});
 
-interceptError();
-interceptHyperlink();
-setupContextMenu();
-Settings.startup();
+export default class ExpandCollapse extends React.Component {
+    constructor(props, context) {
+        super(props, context);
 
-const { webFrame } = window['require']('electron');
+        this.handleTitleClick = this.handleTitleClick.bind(this);
 
-webFrame.setZoomLevel(1);
-webFrame.setZoomFactor(1);
-webFrame.registerURLSchemeAsPrivileged('emulator');
+        this.state = {
+            expanded: props.initialExpanded
+        };
+    }
 
-ReactDOM.render(
-    <Provider store={ store }>
-        { React.createElement(Main as any) }
-    </Provider>,
-    document.getElementById('root')
-);
+    handleTitleClick() {
+        this.setState(state => ({ expanded: !state.expanded }));
+    }
 
-registerServiceWorker();
+    render() {
+        return (
+            <div className={ CSS }>
+                <button onClick={ this.handleTitleClick }>
+                    { this.state.expanded ? 'v' : '^' }&nbsp;
+                    { this.props.title }
+                </button>
+                {
+                    this.state.expanded &&
+                        <div>
+                            { this.props.children }
+                        </div>
+                }
+            </div>
+        );
+    }
+}
+
+ExpandCollapse.defaultProps = {
+    initialExpanded: false
+};
+
+ExpandCollapse.propTypes = {
+    initialExpanded: PropTypes.bool
+};

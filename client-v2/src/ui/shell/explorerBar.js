@@ -31,34 +31,37 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Provider } from 'react-redux';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { css } from 'glamor';
+import React from 'react';
 
-import * as Settings from './v1/settings';
-import interceptError from './interceptError';
-import interceptHyperlink from './interceptHyperlink';
-import Main from './ui/shell/main';
-import registerServiceWorker from './registerServiceWorker';
-import setupContextMenu from './setupContextMenu';
-import store from './data/store';
+const CSS = css({
+    backgroundColor: 'LightGreen',
+    display: 'flex',
+    flexDirection: 'column',
+    listStyleType: 'none',
+    margin: 0,
+    padding: 0,
 
-interceptError();
-interceptHyperlink();
-setupContextMenu();
-Settings.startup();
+    '& > li': {
+        display: 'flex',
+        flexDirection: 'column'
+    },
 
-const { webFrame } = window['require']('electron');
+    '& > li:last-child': {
+        flex: 1
+    }
+});
 
-webFrame.setZoomLevel(1);
-webFrame.setZoomFactor(1);
-webFrame.registerURLSchemeAsPrivileged('emulator');
-
-ReactDOM.render(
-    <Provider store={ store }>
-        { React.createElement(Main as any) }
-    </Provider>,
-    document.getElementById('root')
-);
-
-registerServiceWorker();
+export default class ExplorerBar extends React.Component {
+    render() {
+        return (
+            <ul className={ CSS }>
+                {
+                    React.Children.map(this.props.children, child =>
+                        <li>{ child }</li>
+                    )
+                }
+            </ul>
+        );
+    }
+}

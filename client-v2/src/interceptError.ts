@@ -31,34 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Provider } from 'react-redux';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import * as log from './v1/log';
 
-import * as Settings from './v1/settings';
-import interceptError from './interceptError';
-import interceptHyperlink from './interceptHyperlink';
-import Main from './ui/shell/main';
-import registerServiceWorker from './registerServiceWorker';
-import setupContextMenu from './setupContextMenu';
-import store from './data/store';
+export default function interceptError() {
+    (process as NodeJS.EventEmitter).on('uncaughtException', error => {
+        log.error('[err-client]', error.message, error.stack);
+    });
 
-interceptError();
-interceptHyperlink();
-setupContextMenu();
-Settings.startup();
+    window.onerror = (message: string, filename?: string, lineno?: number, colno?: number, error?: Error) => {
+        log.error('[err-client]', message, filename, lineno, colno, error);
 
-const { webFrame } = window['require']('electron');
-
-webFrame.setZoomLevel(1);
-webFrame.setZoomFactor(1);
-webFrame.registerURLSchemeAsPrivileged('emulator');
-
-ReactDOM.render(
-    <Provider store={ store }>
-        { React.createElement(Main as any) }
-    </Provider>,
-    document.getElementById('root')
-);
-
-registerServiceWorker();
+        return true; // prevent default handler
+    }
+}

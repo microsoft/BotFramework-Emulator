@@ -1,24 +1,21 @@
 /* reset */
 
-    html, body {
-        height: 100%;
-        width: 100%;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-    }
-
-    body, button, input, textarea, select {
+    .mainview,
+    .mainview button,
+    .mainview input,
+    .mainview textarea,
+    .mainview select {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "HelveticaNeue-Light", "Ubuntu", "Droid Sans", sans-serif;
         font-size: 15px;
         border-radius: 2px;
     }
 
-    a, button {
+    .mainview a,
+    .mainview button {
         transition: all .2s;
     }
 
-    button {
+    .mainview button {
         background: #0078D7;
         border: none;
         border-radius: 2px;
@@ -27,26 +24,28 @@
         outline: none;
     }
 
-    button:hover {
+    .mainview button:hover {
         background: #0063B1;
     }
 
-    button:active {
+    .mainview button:active {
         background: #004E8C;
     }
 
-    button:focus {
+    .mainview button:focus {
         outline: 1px dotted #2b2b2b;
         outline-offset: 2px;
     }
 
-    *, *:before, *:after {
+    .mainview *,
+    .mainview *:before,
+    .mainview *:after {
         box-sizing: border-box;
         user-select: none;
         -webkit-user-select: none;
     }
 
-    input[type=checkbox] {
+    .mainview input[type=checkbox] {
         width: 20px;
         height: 20px;
         -webkit-appearance: none;
@@ -62,59 +61,59 @@
         border: 1px solid #ccc;
     }
 
-    input[type=number] {
+    .mainview input[type=number] {
         text-align: right;
     }
 
-    input[type=checkbox]:checked {
+    .mainview input[type=checkbox]:checked {
         background: #0078D7;
     }
 
-    input[type=checkbox]:checked:before {
+    .mainview input[type=checkbox]:checked:before {
         content: '\2714';
     }
 
-    ::-webkit-scrollbar {
+    .mainview ::-webkit-scrollbar {
         width: 8px;
         height: 8px;
     }
 
-    ::-webkit-scrollbar-track {
+    .mainview ::-webkit-scrollbar-track {
         background: transparent;
     }
 
-    ::-webkit-scrollbar-thumb {
+    .mainview ::-webkit-scrollbar-thumb {
         border-radius: 1px;
         background: #D5D5D5;
     }
 
 /* botchat overrides */
 
-    .format-markdown>p {
+    .mainview .format-markdown>p {
         margin-bottom: 0px;
         margin-top: 0px;
     }
 
-    .wc-message-content * {
+    .mainview .wc-message-content * {
         user-select: text;
         -webkit-user-select: text;
     }
 
-    .wc-message-content.selected {
+    .mainview .wc-message-content.selected {
         color: white;
         background-color: #555;
         box-shadow: 0px 1px 1px 0px rgba(0,0,0,0.2);
     }
 
-    .wc-message-content.selected>svg.wc-message-callout>path {
+    .mainview .wc-message-content.selected>svg.wc-message-callout>path {
         fill: #555;
     }
 
-    .wc-card {
+    .mainview .wc-card {
         color: #000;
     }
 
-    .wc-card button {
+    .mainview .wc-card button {
         border: 1px solid #ccc;
         border-radius: 1px;
         cursor: pointer;
@@ -127,13 +126,13 @@
         padding: 0 16px;
     }
 
-    .wc-list ul {
+    .mainview .wc-list ul {
         padding: 0;
     }
 
 /* emulator */
 
-    .emu-chatview-background {
+    .mainview .emu-chatview-background {
         background: #f7f7f7;
         position: absolute;
         right: 0;
@@ -142,14 +141,14 @@
         bottom: 0;
     }
 
-    .box-centered {
+    .mainview .box-centered {
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
     }
 
-    .botchat-container {
+    .mainview .botchat-container {
         position: absolute;
         top: 0;
         bottom: 0;
@@ -157,7 +156,7 @@
         right: 0;
     }
 
-    .addressbar {
+    .mainview .addressbar {
         background: #0078D7;
         position: absolute;
         top: 0;
@@ -168,7 +167,7 @@
         z-index: 900;
     }
 
-    .addressbar-status {
+    .mainview .addressbar-status {
         position: absolute;
         height: 42px;
         width: 32px;
@@ -178,7 +177,7 @@
         text-align: center;
     }
 
-    .addressbar-textbox {
+    .mainview .addressbar-textbox {
         position: absolute;
         top: 0;
         left: 32px;
@@ -186,7 +185,7 @@
         right: 84px;
     }
 
-    .addressbar-textbox input[type=text] {
+    .mainview .addressbar-textbox input[type=text] {
         background: #0078D7;
         color: white;
         border: none;
@@ -198,11 +197,11 @@
         padding-left: 4px;
     }
 
-    .addressbar-textbox input[type=text]::-webkit-input-placeholder {
+    .mainview .addressbar-textbox input[type=text]::-webkit-input-placeholder {
         color: rgba(255, 255, 255, 0.75);
     }
 
-    .addressbar-control {
+    .mainview .addressbar-control {
         position: absolute;
         width: 32px;
         height: 42px;
@@ -212,7 +211,7 @@
         text-align: center;
     }
 
-    .addressbar-refresh {
+    .mainview .addressbar-refresh {
         position: absolute;
         width: 42px;
         height: 42px;
@@ -222,7 +221,7 @@
         text-align: center;
     }
 
-    .addressbar-payment {
+    .mainview .addressbar-payment {
         position: absolute;
         width: 42px;
         height: 42px;
@@ -232,7 +231,7 @@
         text-align: center;
     }
 
-    .addressbar-menu {
+    .mainview .addressbar-menu {
         position: absolute;
         width: 42px;
         height: 42px;
@@ -242,7 +241,7 @@
         text-align: center;
     }
 
-    .addressbar-search {
+    .mainview .addressbar-search {
         background: #0078D7;
         max-height: 500px;
         overflow-y: auto;
@@ -256,16 +255,16 @@
         padding-bottom: 8px;
     }
 
-    .addressbar-search.closed {
+    .mainview .addressbar-search.closed {
         max-height: 0;
     }
 
-    .addressbar-searchresult-a {
+    .mainview .addressbar-searchresult-a {
         color: #fff;
         text-decoration: none;
     }
 
-    .addressbar-searchresult {
+    .mainview .addressbar-searchresult {
         position: relative;
         margin-left: 28px;
         margin-right: 6px;
@@ -273,16 +272,16 @@
         transition: background-color 0.1s;
     }
 
-    .addressbar-searchresult:hover {
+    .mainview .addressbar-searchresult:hover {
         background: #6AAFE5;
         border-radius: 2px;
     }
 
-    .addressbar-searchresult:hover .addressbar-searchresult-delete {
+    .mainview .addressbar-searchresult:hover .addressbar-searchresult-delete {
         opacity: 1;
     }
 
-    .addressbar-searchresult-title {
+    .mainview .addressbar-searchresult-title {
         cursor: pointer;
         display: block;
         line-height: 32px;
@@ -291,7 +290,7 @@
         overflow-wrap: break-word;
     }
 
-    .addressbar-searchresult-delete {
+    .mainview .addressbar-searchresult-delete {
         opacity: 0;
         cursor: pointer;
         position: absolute;
@@ -301,7 +300,7 @@
         transition: opacity 0.1s;
     }
 
-    .addressbar-botcreds {
+    .mainview .addressbar-botcreds {
         background-color: white;
         color: black;
         overflow: hidden;
@@ -315,17 +314,17 @@
         box-shadow: 0 1px 2px rgba(0,0,0,.2);
     }
 
-    .addressbar-botcreds.closed {
+    .mainview .addressbar-botcreds.closed {
         max-height: 0;
         border-width: 0;
         box-shadow: 0;
     }
 
-    .addressbar-botcreds-title {
+    .mainview .addressbar-botcreds-title {
         font-weight: 500;
     }
 
-    .addressbar-botcreds input[type=text] {
+    .mainview .addressbar-botcreds input[type=text] {
         border-width: 0.1px;
         border-style: solid;
         border-color: #ccc;
@@ -333,23 +332,23 @@
         padding-right: 4px;
     }
 
-    .addressbar-botcreds-input {
+    .mainview .addressbar-botcreds-input {
         display: inline-block;
     }
 
-    .addressbar-botcreds-appid {
+    .mainview .addressbar-botcreds-appid {
         width: 300px;
     }
 
-    .addressbar-botcreds-password {
+    .mainview .addressbar-botcreds-password {
         width: 160px;
     }
 
-    .addressbar-botcreds-locale {
+    .mainview .addressbar-botcreds-locale {
         width: 50px;
     }
 
-    .addressbar-botcreds-connect-button {
+    .mainview .addressbar-botcreds-connect-button {
         display: block;
         padding: 11px 16px 10px 16px;
         font-size: 13px;
@@ -359,7 +358,7 @@
         margin-top: 24px;
     }
 
-    .addressbar-botcreds-callout {
+    .mainview .addressbar-botcreds-callout {
         width: 0;
         height: 0;
         border-left: 8px solid transparent;
@@ -370,25 +369,25 @@
         left:40px;
     }
 
-    .clickable:hover {
+    .mainview .clickable:hover {
         cursor: pointer;
     }
 
 /* appsettings-dialog */
 
-    .appsettings-dialog .input-group {
+    .mainview .appsettings-dialog .input-group {
         margin: 0;
     }
 
-    .appsettings-checkbox-group {
+    .mainview .appsettings-checkbox-group {
         width: 100%;
     }
 
-    .appsettings-checkbox-group .form-label {
+    .mainview .appsettings-checkbox-group .form-label {
         width: 100%;
     }
 
-    .appsettings-browsebtn {
+    .mainview .appsettings-browsebtn {
         padding: 10.5px 16px 10.5px 16px;
         margin-left: 8px;
         font-size: 13px;
@@ -398,7 +397,7 @@
         width: 96px;
     }
 
-    .appsettings-savebtn {
+    .mainview .appsettings-savebtn {
         position: absolute;
         left: 50%;
         transform: translate(-110%, 0%);
@@ -410,7 +409,7 @@
         width: 96px;
     }
 
-    .appsettings-cancelbtn {
+    .mainview .appsettings-cancelbtn {
         background: #E6E6E6;
         color: #888;
         position: absolute;
@@ -424,31 +423,31 @@
         width: 96px;
     }
 
-    .appsettings-cancelbtn:hover {
+    .mainview .appsettings-cancelbtn:hover {
         background: #D9D9D9;
     }
 
-    .appsettings-port {
+    .mainview .appsettings-port {
         width: 155px;
     }
 
-    .appsettings-port-group {
+    .mainview .appsettings-port-group {
         padding-bottom: 20px;
     }
 
-    .appsettings-ngrokpath-input {
+    .mainview .appsettings-ngrokpath-input {
         width: 357px;
         margin-bottom: 8px;
     }
 
-    .appsettings-serviceurl-input {
+    .mainview .appsettings-serviceurl-input {
         width: 460px;
     }
 
 
 /* conversationsettings-dialog */
 
-    .conversationsettings-closex {
+    .mainview .conversationsettings-closex {
         position: absolute;
         width: 42px;
         height: 42px;
@@ -459,7 +458,7 @@
         right: 0;
     }
 
-    .conversationsettings-userlist {
+    .mainview .conversationsettings-userlist {
         position: absolute;
         top: 24px;
         bottom: 100px;
@@ -472,7 +471,7 @@
         overflow: hidden;
     }
 
-    .conversationsettings-userlist-area {
+    .mainview .conversationsettings-userlist-area {
         position: absolute;
         left: 0;
         right: 0;
@@ -483,7 +482,7 @@
 
 /* about-dialog */
 
-    .about-okbtn {
+    .mainview .about-okbtn {
         position: absolute;
         left: 50%;
         transform: translate(-50%, 0%);
@@ -495,17 +494,17 @@
         width: 96px;
     }
 
-    .about-logo-fill {
+    .mainview .about-logo-fill {
         fill: #0078D7;
     }
 
-    .about-logo {
+    .mainview .about-logo {
         padding-top: 8px;
         width: 100%;
         text-align: center;
     }
 
-    .about-name {
+    .mainview .about-name {
         text-align: center;
         width: 100%;
         font-weight: 500;
@@ -515,24 +514,24 @@
         letter-spacing: -0.3px;
     }
 
-    .about-link {
+    .mainview .about-link {
         text-align: center;
         width: 100%;
         padding-bottom: 6px;
     }
 
-    .about-link a {
+    .mainview .about-link a {
         text-decoration: none;
         color: #0078D7;
     }
 
-    .about-version {
+    .mainview .about-version {
         text-align: center;
         width: 100%;
         font-size: 15px;
     }
 
-    .about-copyright {
+    .mainview .about-copyright {
         text-align: center;
         width: 100%;
         position: relative;
@@ -542,13 +541,13 @@
     }
 
 /* checkout window */
-    .checkout-index {
+    .mainview .checkout-index {
         height: 100%;
         display: flex;
         flex-direction: column;
     }
 
-    .checkout-container {
+    .mainview .checkout-container {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         flex-grow: 1;
         display: flex;
@@ -559,37 +558,37 @@
         border-top-width: 1px;
     }
 
-    .checkout-table {
+    .mainview .checkout-table {
         flex-grow: 1;
         display: flex;
         flex-direction: column;
     }
 
-    .checkout-table .title-container {
+    .mainview .checkout-table .title-container {
         display: flex;
     }
 
-    .checkout-table .title {
+    .mainview .checkout-table .title {
         font-size: 16px;
         font-weight: 500;
         margin-bottom: 10px;
         flex-grow: 1;
     }
 
-    .checkout-table .fixed-right {
+    .mainview .checkout-table .fixed-right {
         margin-left: 132px;
     }
 
-    .checkout-table .checkout-form {
+    .mainview .checkout-table .checkout-form {
         flex-grow: 1;
     }
 
-    .checkout-table .checkout-field {
+    .mainview .checkout-table .checkout-field {
         display: flex;
         flex-direction: row;
     }
 
-    .checkout-table .checkout-label {
+    .mainview .checkout-table .checkout-label {
         color: #666;
         font-size: 13px;
         align-self: center;
@@ -598,7 +597,7 @@
         margin-right: 8px;
     }
 
-    .checkout-table .checkout-input {
+    .mainview .checkout-table .checkout-input {
         background-color: #EEE;
         font-size: 14px;
         margin-top: 4px;
@@ -613,12 +612,12 @@
         text-overflow: ellipsis;
     }
 
-    .checkout-table .checkout-button-bar {
+    .mainview .checkout-table .checkout-button-bar {
         display: flex;
         flex-direction: row;
     }
 
-    .checkout-table .button {
+    .mainview .checkout-table .button {
         min-height: 28px;
         text-align: center;
         font-size: 14px;
@@ -630,69 +629,69 @@
         cursor: pointer;
     }
 
-    .checkout-table .primary-button {
+    .mainview .checkout-table .primary-button {
         color: white;
         background: #0078D7;
     }
 
-    .checkout-table .primary-button:hover {
+    .mainview .checkout-table .primary-button:hover {
         background: #0063B1;
     }
 
-    .checkout-table .primary-button:active {
+    .mainview .checkout-table .primary-button:active {
         background: #4C4C4C;
     }
 
-    .checkout-table .secondary-button {
+    .mainview .checkout-table .secondary-button {
         color: white;
         background: #ababab;
     }
 
-    .checkout-table .secondary-button:hover {
+    .mainview .checkout-table .secondary-button:hover {
         background: #0063B1;
     }
 
-    .checkout-table .secondary-button:active {
+    .mainview .checkout-table .secondary-button:active {
         background: #4C4C4C;
     }
 
-    .checkout-table .cancel-button {
+    .mainview .checkout-table .cancel-button {
         margin-right: 20px;
     }
 
-    .checkout-table .total-line {
+    .mainview .checkout-table .total-line {
         display: flex;
         align-items: center;
     }
 
-    .checkout-table .total-label-container {
+    .mainview .checkout-table .total-label-container {
         flex-grow: 1;
         display: flex;
     }
 
-    .checkout-table .total-label {
+    .mainview .checkout-table .total-label {
         font-weight: 600;
         margin-right: 8px;
     }
 
-    .checkout-table .total-value {
+    .mainview .checkout-table .total-value {
         font-size: 20px;
     }
 
-    .checkout-table .show-details {
+    .mainview .checkout-table .show-details {
         color: #0078D7;
         cursor: pointer;
     }
 
-    .checkout-table .show-details:hover {
+    .mainview .checkout-table .show-details:hover {
         color: #0063B1;
     }
 
-    .checkout-table .show-details:active {
+    .mainview .checkout-table .show-details:active {
         color: #4C4C4C;
     }
 
-    .checkout-table .line-items {
+    .mainview .checkout-table .line-items {
         border-top-style: solid;
         border-top-width: 1px;
         border-top-color: #999;
@@ -703,7 +702,7 @@
         margin-bottom: 10px;
     }
 
-    .checkout-table .line-item {
+    .mainview .checkout-table .line-item {
         display: flex;
         align-items: center;
         margin-top: 4px;
@@ -711,15 +710,15 @@
         flex-grow: 1;
     }
 
-    .checkout-table .item-label {
+    .mainview .checkout-table .item-label {
         flex-grow: 1;
     }
 
-    .checkout-table .not-final {
+    .mainview .checkout-table .not-final {
         font-size: 12px;
     }
 
-    .checkout-table .checkout-selector {
+    .mainview .checkout-table .checkout-selector {
         cursor: pointer;
         display: flex;
         align-items: center;
@@ -735,22 +734,22 @@
         text-overflow: ellipsis;
     }
 
-    .checkout-table .selected-item-label-container {
+    .mainview .checkout-table .selected-item-label-container {
         flex-grow: 1;
         display: flex;
         flex-direction: row;
     }
 
-    .checkout-table .placeholder-text {
+    .mainview .checkout-table .placeholder-text {
         color: #666;
         margin-left: 10px;
     }
 
-    .checkout-table .selected-item-label {
+    .mainview .checkout-table .selected-item-label {
         flex-grow: 1;
     }
 
-    .checkout-table .down-chevron {
+    .mainview .checkout-table .down-chevron {
         margin-right: 10px;
         width: 20px;
         align-self: center;
@@ -758,7 +757,7 @@
         font-size: 10px;
     }
 
-    .checkout-table .selector-items {
+    .mainview .checkout-table .selector-items {
         border-color: #BBB;
         border-style: solid;
         border-width: 1px;
@@ -772,33 +771,33 @@
         overflow-y: auto;
     }
 
-    .checkout-table .selector-item-container {
+    .mainview .checkout-table .selector-item-container {
         display: flex;
     }
 
-    .checkout-table .selector-item {
+    .mainview .checkout-table .selector-item {
         display: flex;
         flex-grow: 1;
         align-items: center;
         min-height: 40px;
     }
 
-    .checkout-table .selector-item-container:hover {
+    .mainview .checkout-table .selector-item-container:hover {
         background-color: #EEE;
     }
 
-    .checkout-table .selector-item-container:active {
+    .mainview .checkout-table .selector-item-container:active {
         background-color: #BBB;
     }
 
-    .checkout-table .remove-item {
+    .mainview .checkout-table .remove-item {
         display: flex;
         align-items: center;
         stroke: black;
         margin-right: 10px
     }
 
-    .checkout-table .grow {
+    .mainview .checkout-table .grow {
         animation-name: show;
     }
 
@@ -807,44 +806,44 @@
         100% {transform: scaleY(-100%); offset: 1; }
     }
 
-    .checkout-table .add-item {
+    .mainview .checkout-table .add-item {
         color: #0078D7;
         margin-left: 10px;
         margin-right: 10px;
     }
 
-    .checkout-table .validation-error {
+    .mainview .checkout-table .validation-error {
         color: #FF4444;
         margin-left: 10px;
         margin-right: 10px;
     }
 
-    .checkout-table .invalid-input {
+    .mainview .checkout-table .invalid-input {
         background-color: pink;
     }
 
-    .shipping-method {
+    .mainview .shipping-method {
         margin-left: 10px;
         margin-right: 10px;
     }
 
-    .credit-card {
+    .mainview .credit-card {
         margin-left: 10px;
         margin-right: 10px;
     }
 
-    .shipping-address {
+    .mainview .shipping-address {
         margin: 10px;
     }
 
-    .postal-code-input {
+    .mainview .postal-code-input {
         width: 140px;
         flex-grow: 0;
     }
 
 /* base classes */
 
-    .fill-parent {
+    .mainview .fill-parent {
         position: absolute;
         top: 0;
         left: 0;
@@ -852,7 +851,7 @@
         bottom: 0;
     }
 
-    .emu-dialog {
+    .mainview .emu-dialog {
         line-height: initial;
         background: #fff;
         color: black;
@@ -871,16 +870,16 @@
         cursor: default;
     }
 
-    .emu-dialog-text {
+    .mainview .emu-dialog-text {
         margin-bottom: 12px;
     }
 
-    .emu-dialog-text a {
+    .mainview .emu-dialog-text a {
         text-decoration: none;
         color: #0078D7;
     }
 
-    .dialog-background {
+    .mainview .dialog-background {
         background: black;
         opacity: 0.5;
         position: fixed;
@@ -892,7 +891,7 @@
         transition: opacity .2s ease;
     }
 
-    .dialog-closex {
+    .mainview .dialog-closex {
         cursor: pointer;
         position: absolute;
         top: 8px;
@@ -902,31 +901,31 @@
         background-color: transparent;
     }
 
-    .dialog-closex:hover {
+    .mainview .dialog-closex:hover {
         background-color: transparent;
     }
 
-    .dialog-closex:hover path {
+    .mainview .dialog-closex:hover path {
         stroke: #0063B1;
     }
 
-    .dialog-closex:focus {
+    .mainview .dialog-closex:focus {
         outline-width: 0;
     }
 
-    .dialog-closex:focus path {
+    .mainview .dialog-closex:focus path {
         stroke: #0078D7;
     }
 
-    .dialog-closex:active path {
+    .mainview .dialog-closex:active path {
         stroke: #004E8C;
     }
 
-    .dialog-closex path {
+    .mainview .dialog-closex path {
         stroke: #CCC;
     }
 
-    .dialog-buttons {
+    .mainview .dialog-buttons {
         position: absolute;
         padding: 0 0 52px 0;
         left: 0;
@@ -934,111 +933,112 @@
         bottom: 0;
     }
 
-    .invisible {
+    .mainview .invisible {
         opacity: 0;
     }
 
-    .input-group {
+    .mainview .input-group {
         display: inline-block;
         margin-right: 16px;
     }
 
-    .form-label {
+    .mainview .form-label {
         display: block;
         font-size: 13px;
         margin-bottom: 8px;
     }
 
-    .form-input {
+    .mainview .form-input {
         padding: 8px;
         border: 1px solid #ccc;
         font-size: 15px;
     }
 
-    .toolbar-button {
+    .mainview .toolbar-button {
         width: 24px;
         height: 24px;
         vertical-align: middle;
         transition: all .2s;
     }
 
-    .toolbar-button:hover {
+    .mainview .toolbar-button:hover {
         background: #6AAFE5;
     }
 
-    .toolbar-button-disabled {
+    .mainview .toolbar-button-disabled {
         opacity: 0.5
     }
 
-    svg.toolbar-button-disabled:hover {
+    .mainview svg.toolbar-button-disabled:hover {
         background: initial;
     }
 
-    .toolbar-button-dark {
+    .mainview .toolbar-button-dark {
         width: 24px;
         height: 24px;
         vertical-align: middle;
         transition: all .2s;
     }
 
-    .toolbar-button-dark:hover {
+    .mainview .toolbar-button-dark:hover {
         background: #4C4C4C;
     }
 
-    .emu-visible {
+    .mainview .emu-visible {
         display: block;
     }
 
-    .emu-hidden {
+    .mainview .emu-hidden {
         display: none;
     }
 
-    .emu-navbar {
+    .mainview .emu-navbar {
         list-style-type: none;
         margin: 8px 0 0 0;
         padding: 0;
         overflow: hidden;
     }
 
-    .emu-navbar li {
+    .mainview .emu-navbar li {
         float: left;
     }
 
-    .emu-navbar, .emu-navitem {
+    .mainview .emu-navbar,
+    .mainview .emu-navitem {
         color: #0078D7;
         text-decoration: none;
         transition: border 0s;
     }
 
-    .emu-navitem {
+    .mainview .emu-navitem {
         padding: 8px 16px 10px 16px;
         margin: 0 26px 0px 0px;
         display: block;
         border-bottom: 3px #CCC solid;
     }
 
-    .emu-navitem-selected {
+    .mainview .emu-navitem-selected {
         color: #000;
         border-bottom: 3px #0078D7 solid;
         transition: border 0s;
     }
 
-    .enu-navhdr {
+    .mainview .enu-navhdr {
         height: 0;
         border: 0;
         border-top: 1px solid #CCC;
         margin: -1px 0 0 0;
     }
 
-    .emu-tab {
+    .mainview .emu-tab {
         margin-top: 16px;
     }
 
-    .emu-readonly {
+    .mainview .emu-readonly {
         background: #EEE;
     }
 
-    .emu-panel-header {
+    .mainview .emu-panel-header {
         background-color: #252526;
         color: #fff;
         border-bottom: solid 1px #403F3F;
@@ -1055,13 +1055,13 @@
         box-shadow: 0 2px 3px rgba(0,0,0,.5);
     }
 
-    .undecorated-text {
+    .mainview .undecorated-text {
         text-decoration: none;
     }
 
 /* inspectorview */
 
-    .wc-inspectorview {
+    .mainview .wc-inspectorview {
         background-color: #1e1e1e;
         color: white;
         position: absolute;
@@ -1072,16 +1072,16 @@
         overflow-y: auto;
     }
 
-    .wc-inspectorview * {
+    .mainview .wc-inspectorview * {
         user-select: text;
         -webkit-user-select: text;
     }
 
-    .wc-inspectorview::-webkit-scrollbar-thumb {
+    .mainview .wc-inspectorview::-webkit-scrollbar-thumb {
         background: #403F3F;
     }
 
-    .wc-inspectorview-json {
+    .mainview .wc-inspectorview-json {
         font-size: 13px;
         font-family: 'Menlo', 'Monaco', 'Consolas', "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
         position: absolute;
@@ -1096,29 +1096,29 @@
 
 /* JSON */
 
-    .json-key {
+    .mainview .json-key {
         color: #9cdcfe;
     }
 
-    .json-string {
+    .mainview .json-string {
         color: #ce9178;
     }
 
-    .json-number {
+    .mainview .json-number {
         color: #b5cea8;
     }
 
-    .json-boolean {
+    .mainview .json-boolean {
         color: #569cd6;
     }
 
-    .json-null {
+    .mainview .json-null {
         color: #569cd6;
     }
 
 /* logview */
 
-    .wc-logview {
+    .mainview .wc-logview {
         background-color: #1e1e1e;
         color: white;
         overflow: auto;
@@ -1133,70 +1133,70 @@
         padding: 10px 10px 10px 10px;
     }
 
-    .wc-logview * {
+    .mainview .wc-logview * {
         user-select: text;
         -webkit-user-select: text;
         font-size: 12px;
     }
 
-    .wc-logview::-webkit-scrollbar-thumb {
+    .mainview .wc-logview::-webkit-scrollbar-thumb {
         background: #403F3F;
     }
 
-    .logview-header-text {
+    .mainview .logview-header-text {
         float: left;
     }
 
-    .logview-clear-output-button {
+    .mainview .logview-clear-output-button {
         position: absolute;
         right: 12px;
         height: 100%;
     }
 
-    .wc-logview-timestamp {
+    .mainview .wc-logview-timestamp {
         color: lightgray;
         display: inline-block;
     }
 
-    .wc-logview a {
+    .mainview .wc-logview a {
         color: #9CDCFE;
         display: inline-block;
     }
-/*    .wc-logview a {
+.mainview /*    .wc-logview a {
         color: #d1d1d1;
     }
 */
-    .wc-logview-arg {
+    .mainview .wc-logview-arg {
         color: lightgray;
         display: inline-block;
     }
 
-    .wc-logview-log {
+    .mainview .wc-logview-log {
         color: lightgray;
         display: inline-block;
     }
 
-    .wc-logview-info {
+    .mainview .wc-logview-info {
         color: lightgray;
         display: inline-block;
     }
 
-    .wc-logview-trace {
+    .mainview .wc-logview-trace {
         color: lightgreen;
         display: inline-block;
     }
 
-    .wc-logview-debug {
+    .mainview .wc-logview-debug {
         color: #808080;
         display: inline-block;
     }
 
-    .wc-logview-warn {
+    .mainview .wc-logview-warn {
         color: #f5a623;
         display: inline-block;
     }
 
-    .wc-logview-error {
+    .mainview .wc-logview-error {
         /*color: #ec407a;*/
         color: #ed4556;
         display: inline-block;

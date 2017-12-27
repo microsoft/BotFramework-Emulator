@@ -31,34 +31,48 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Provider } from 'react-redux';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { applyMiddleware, combineReducers, createStore } from 'redux';
+import promiseMiddleware from 'redux-promise-middleware';
+// import SockJS from 'sockjs-client';
 
-import * as Settings from './v1/settings';
-import interceptError from './interceptError';
-import interceptHyperlink from './interceptHyperlink';
-import Main from './ui/shell/main';
-import registerServiceWorker from './registerServiceWorker';
-import setupContextMenu from './setupContextMenu';
-import store from './data/store';
+// import IPCRendererWebSocket from 'electron-ipcrenderer-websocket';
+// import WebSocketActionBridge from 'redux-websocket-action-bridge';
 
-interceptError();
-interceptHyperlink();
-setupContextMenu();
-Settings.startup();
+import editor from './reducer/editor';
+import server from './reducer/server';
 
-const { webFrame } = window['require']('electron');
+const electron = window.process && window.process.versions.electron;
 
-webFrame.setZoomLevel(1);
-webFrame.setZoomFactor(1);
-webFrame.registerURLSchemeAsPrivileged('emulator');
+const createStoreWithMiddleware = applyMiddleware(
+    promiseMiddleware(),
+    // WebSocketActionBridge(
+    //     () => {
+    //         return electron ?
+    //             new IPCRendererWebSocket('@@electron')
+    //         :
+    //             new SockJS('/ws');
+    //     },
+    //     {
+    //         autoUnfold: true
+    //     }
+    // ),
+    // store => next => action => {
+    //     if (action.type === '@@websocket/OPEN') {
+    //         store.dispatch({
+    //             type: '@@websocket/SEND',
+    //             payload: {
+    //                 type: 'SERVER/PING'
+    //             }
+    //         });
+    //     }
 
-ReactDOM.render(
-    <Provider store={ store }>
-        { React.createElement(Main as any) }
-    </Provider>,
-    document.getElementById('root')
-);
+    //     return next(action);
+    // }
+)(createStore);
 
-registerServiceWorker();
+const DEFAULT_STATE = {};
+
+export default createStoreWithMiddleware(combineReducers({
+    editor,
+    server
+}));

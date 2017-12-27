@@ -31,34 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Provider } from 'react-redux';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+export default function fetchJSON(url, options = {}) {
+    const headers = { ...options.headers };
 
-import * as Settings from './v1/settings';
-import interceptError from './interceptError';
-import interceptHyperlink from './interceptHyperlink';
-import Main from './ui/shell/main';
-import registerServiceWorker from './registerServiceWorker';
-import setupContextMenu from './setupContextMenu';
-import store from './data/store';
+    headers['Content-Type'] = 'application/json';
 
-interceptError();
-interceptHyperlink();
-setupContextMenu();
-Settings.startup();
+    return fetch(url, options).then(res => {
+        const statusFamily = ~~(res.status / 100);
 
-const { webFrame } = window['require']('electron');
-
-webFrame.setZoomLevel(1);
-webFrame.setZoomFactor(1);
-webFrame.registerURLSchemeAsPrivileged('emulator');
-
-ReactDOM.render(
-    <Provider store={ store }>
-        { React.createElement(Main as any) }
-    </Provider>,
-    document.getElementById('root')
-);
-
-registerServiceWorker();
+        if (statusFamily === 2) {
+            return res.json();
+        } else {
+            return Promise.reject(new Error(`Server returned ${ res.status }`));
+        }
+    });
+}

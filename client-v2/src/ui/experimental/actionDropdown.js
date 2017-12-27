@@ -31,34 +31,42 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Provider } from 'react-redux';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-import * as Settings from './v1/settings';
-import interceptError from './interceptError';
-import interceptHyperlink from './interceptHyperlink';
-import Main from './ui/shell/main';
-import registerServiceWorker from './registerServiceWorker';
-import setupContextMenu from './setupContextMenu';
-import store from './data/store';
+class ActionDropdown extends React.Component {
+    constructor(props, context) {
+        super(props, context);
 
-interceptError();
-interceptHyperlink();
-setupContextMenu();
-Settings.startup();
+        this.handleChange = this.handleChange.bind(this);
+    }
 
-const { webFrame } = window['require']('electron');
+    handleChange(evt) {
+        const { actionCreator } = this.props;
 
-webFrame.setZoomLevel(1);
-webFrame.setZoomFactor(1);
-webFrame.registerURLSchemeAsPrivileged('emulator');
+        actionCreator && this.props.dispatch(actionCreator(evt.target.value));
+    }
 
-ReactDOM.render(
-    <Provider store={ store }>
-        { React.createElement(Main as any) }
-    </Provider>,
-    document.getElementById('root')
-);
+    render() {
+        return (
+            <select
+                onChange={ this.handleChange }
+                value={ this.props.value }
+            >
+                { this.props.children }
+            </select>
+        );
+    }
+}
 
-registerServiceWorker();
+ActionDropdown.Option = props => {
+    return <option value={ props.value }>{ props.children }</option>;
+};
+
+ActionDropdown.propTypes = {
+    actionCreator: PropTypes.func,
+    value: PropTypes.string
+};
+
+export default connect()(ActionDropdown)

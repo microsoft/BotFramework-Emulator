@@ -31,34 +31,55 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Provider } from 'react-redux';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { css } from 'glamor';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-import * as Settings from './v1/settings';
-import interceptError from './interceptError';
-import interceptHyperlink from './interceptHyperlink';
-import Main from './ui/shell/main';
-import registerServiceWorker from './registerServiceWorker';
-import setupContextMenu from './setupContextMenu';
-import store from './data/store';
+import TabBar from './tabBar';
+import TabBarTab from './tabBarTab';
 
-interceptError();
-interceptHyperlink();
-setupContextMenu();
-Settings.startup();
+const CSS = css({
+    backgroundColor: 'orange',
+    display: 'flex',
+    flex: 1,
+    flexDirection: 'column'
+});
 
-const { webFrame } = window['require']('electron');
+export default class MultiTabs extends React.Component {
+    constructor(props, context) {
+        super(props, context);
 
-webFrame.setZoomLevel(1);
-webFrame.setZoomFactor(1);
-webFrame.registerURLSchemeAsPrivileged('emulator');
+        this.handleTabClick = this.handleTabClick.bind(this);
+    }
 
-ReactDOM.render(
-    <Provider store={ store }>
-        { React.createElement(Main as any) }
-    </Provider>,
-    document.getElementById('root')
-);
+    handleTabClick(nextValue) {
+        this.props.onChange && this.props.onChange(nextValue);
+    }
 
-registerServiceWorker();
+    render() {
+        return (
+            <div className={ CSS }>
+                <TabBar>
+                    {
+                        React.Children.map(this.props.children, (child, index) =>
+                            <TabBarTab
+                                onClick={ this.handleTabClick.bind(this, index) }
+                            >
+                                { child.props.title }
+                            </TabBarTab>
+                        )
+                    }
+                </TabBar>
+                {
+                    React.Children.toArray(this.props.children)[this.props.value]
+                }
+            </div>
+        );
+    }
+}
+
+MultiTabs.propTypes = {
+    onChange: PropTypes.func,
+    value: PropTypes.number
+};
+

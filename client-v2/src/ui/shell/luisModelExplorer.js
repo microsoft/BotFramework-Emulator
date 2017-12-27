@@ -31,34 +31,41 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Provider } from 'react-redux';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { css } from 'glamor';
+import React from 'react';
 
-import * as Settings from './v1/settings';
-import interceptError from './interceptError';
-import interceptHyperlink from './interceptHyperlink';
-import Main from './ui/shell/main';
-import registerServiceWorker from './registerServiceWorker';
-import setupContextMenu from './setupContextMenu';
-import store from './data/store';
+import ExpandCollapse from '../layout/expandCollapse';
 
-interceptError();
-interceptHyperlink();
-setupContextMenu();
-Settings.startup();
+const CSS = css({
+    backgroundColor: 'Pink',
+    display: 'flex',
+    flex: 1,
+    flexDirection: 'column',
+    listStyleType: 'none',
+    margin: 0,
+    padding: 0,
+    width: 200
+});
 
-const { webFrame } = window['require']('electron');
+const BOTS_CSS = css({
+    display: 'flex',
+    flexDirection: 'column',
+    listStyleType: 'none',
+    margin: 0,
+    padding: 0
+});
 
-webFrame.setZoomLevel(1);
-webFrame.setZoomFactor(1);
-webFrame.registerURLSchemeAsPrivileged('emulator');
-
-ReactDOM.render(
-    <Provider store={ store }>
-        { React.createElement(Main as any) }
-    </Provider>,
-    document.getElementById('root')
-);
-
-registerServiceWorker();
+export default props =>
+    <ul className={ CSS }>
+        <li>
+            <ExpandCollapse
+                initialExpanded={ true }
+                title="Adaptive Cards"
+            >
+                <ul className={ BOTS_CSS }>
+                    <li>Greeting</li>
+                    <li>Address input</li>
+                </ul>
+            </ExpandCollapse>
+        </li>
+    </ul>
