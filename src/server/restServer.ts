@@ -32,6 +32,7 @@
 //
 
 import * as Restify from 'restify';
+import * as CORS from 'restify-cors-middleware';
 import * as log from './log';
 
 
@@ -40,13 +41,21 @@ export class RestServer {
 
     constructor(name: string) {
         this.router = Restify.createServer({
-            name: name
+            name
         });
 
         this.router.on('listening', () => {
             log.debug(`${this.router.name} listening on ${this.router.url}`);
         });
 
+        const cors = CORS({
+            origins: ['*'],
+            allowHeaders: ['authorization', 'x-requested-with'],
+            exposeHeaders: []
+        });
+
+        this.router.pre(cors.preflight);
+        this.router.use(cors.actual);
         this.router.use(Restify.acceptParser(this.router.acceptable));
         this.router.use(stripEmptyBearerToken);
         this.router.use(Restify.dateParser());
