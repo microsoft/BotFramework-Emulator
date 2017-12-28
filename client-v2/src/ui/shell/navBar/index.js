@@ -33,9 +33,13 @@
 
 import { css } from 'glamor';
 import React from 'react';
+import { connect } from 'react-redux';
 
 import Button from './button';
 import ConnectivityBadge from '../../widget/connectivityBadge';
+import * as constants from '../../../constants';
+import * as NavBarActions from '../../../data/action/navBarActions';
+
 
 const CSS = css({
     backgroundColor: 'Red',
@@ -55,15 +59,19 @@ const CSS = css({
     }
 });
 
-export default class NavBar extends React.Component {
+class NavBar extends React.Component {
+    handleClick(selection) {
+        this.props.dispatch(NavBarActions.select(selection));
+    }
+
     render() {
         return (
             <nav className={ CSS }>
                 <ul>
-                    <li>
+                    <li onClick={() => this.handleClick(constants.NavBar_Bots) }>
                         <Button>Bots</Button>
                     </li>
-                    <li>
+                    <li onClick={() => this.handleClick(constants.NavBar_Assets) }>
                         <Button>Assets</Button>
                     </li>
                 </ul>
@@ -72,3 +80,5 @@ export default class NavBar extends React.Component {
         );
     }
 }
+
+export default connect(state => ({ navBar: state.navBar }))(NavBar)

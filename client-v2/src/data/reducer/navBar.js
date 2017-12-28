@@ -31,15 +31,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
-import React from 'react';
+import { fromJS } from 'immutable';
+import * as constants from '../../constants';
+import * as NavBarActions from '../action/navBarActions';
 
-export default class EmulatorEditor extends React.Component {
-    render() {
-        return (
-            <div>
-                { this.props.children }
-            </div>
-        );
+
+const DEFAULT_STATE = {
+    selection: constants.NavBar_Bots,
+    expanded: false
+};
+
+export default function navBar(state = DEFAULT_STATE, action) {
+    switch (action.type) {
+        case NavBarActions.SELECT:
+            if (state.selection === action.selection) {
+                state = Object.assign({}, state, { expanded: !state.expanded});
+            } else {
+                state = Object.assign({}, state, { selection: action.selection});
+            }
+            break;
+
+        default: break;
     }
+
+    return state;
 }

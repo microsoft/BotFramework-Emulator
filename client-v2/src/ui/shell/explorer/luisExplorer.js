@@ -34,7 +34,7 @@
 import { css } from 'glamor';
 import React from 'react';
 
-import ExpandCollapse from '../layout/expandCollapse';
+import ExpandCollapse from '../../layout/expandCollapse';
 
 const CSS = css({
     backgroundColor: 'Pink',
@@ -63,8 +63,8 @@ export default props =>
                 title="Cards"
             >
                 <ul className={ BOTS_CSS }>
-                    <li>Greeting</li>
-                    <li>Address input</li>
+                    <li>Pizza Order Model</li>
+                    <li>Shopping Model</li>
                 </ul>
             </ExpandCollapse>
         </li>

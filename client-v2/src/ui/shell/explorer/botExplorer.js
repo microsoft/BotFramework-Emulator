@@ -34,7 +34,7 @@
 import { css } from 'glamor';
 import React from 'react';
 
-import ExpandCollapse from '../layout/expandCollapse';
+import ExpandCollapse from '../../layout/expandCollapse';
 
 const CSS = css({
     backgroundColor: 'skyblue',

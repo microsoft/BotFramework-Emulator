@@ -34,38 +34,34 @@
 import { css } from 'glamor';
 import React from 'react';
 
-import ExpandCollapse from '../layout/expandCollapse';
-
 const CSS = css({
-    backgroundColor: 'Pink',
+    backgroundColor: 'LightGreen',
     display: 'flex',
-    flex: 1,
     flexDirection: 'column',
     listStyleType: 'none',
     margin: 0,
     padding: 0,
-    width: 200
+
+    '& > li': {
+        display: 'flex',
+        flexDirection: 'column'
+    },
+
+    '& > li:last-child': {
+        flex: 1
+    }
 });
 
-const BOTS_CSS = css({
-    display: 'flex',
-    flexDirection: 'column',
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0
-});
-
-export default props =>
-    <ul className={ CSS }>
-        <li>
-            <ExpandCollapse
-                initialExpanded={ true }
-                title="Assets"
-            >
-                <ul className={ BOTS_CSS }>
-                    <li>Cards</li>
-                    <li>LUIS models</li>
-                </ul>
-            </ExpandCollapse>
-        </li>
-    </ul>
+export default class ExplorerSet extends React.Component {
+    render() {
+        return (
+            <ul className= { CSS }>
+                {
+                    React.Children.map(this.props.children, child =>
+                        <li>{ child }</li>
+                    )
+                }
+            </ul>
+        )
+    }
+}
