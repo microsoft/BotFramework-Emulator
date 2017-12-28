@@ -63,7 +63,7 @@ export default props =>
                 title="Assets"
             >
                 <ul className={ BOTS_CSS }>
-                    <li>Adaptive cards</li>
+                    <li>Cards</li>
                     <li>LUIS models</li>
                 </ul>
             </ExpandCollapse>

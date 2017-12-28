@@ -31,22 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as constants from '../../constants';
+import React from 'react';
 
-const DEFAULT_STATE = {
-    documents: [{
-        contentType: constants.ContentType_BotChat,
-        content: {}
-    }, {
-        contentType: constants.ContentType_Card,
-        content: {}
-    }]
-};
-
-export default function documents(state = DEFAULT_STATE, action) {
-    switch (action.type) {
-    default: break;
-    }
-
-    return state;
-}
+export default props =>
+    <div>Card editor</div>
