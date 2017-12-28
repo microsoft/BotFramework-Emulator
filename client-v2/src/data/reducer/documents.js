@@ -31,22 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
-import React from 'react';
+import * as constants from '../../constants';
 
-import { MainView } from '../../v1/mainView';
+const DEFAULT_STATE = {
+    documents: [{
+        contentType: constants.ContentType_BotChat,
+        content: {}
+    }, {
+        contentType: constants.ContentType_Card,
+        content: {}
+    }]
+};
 
-const CSS = css({
-    flex: 1,
-    position: 'relative'
-});
-
-export default class BotChatEditor extends React.Component {
-    render() {
-        return (
-            <div className={ CSS }>
-                <MainView />
-            </div>
-        );
+export default function documents(state = DEFAULT_STATE, action) {
+    switch (action.type) {
+    default: break;
     }
+
+    return state;
 }

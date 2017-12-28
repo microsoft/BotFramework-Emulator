@@ -32,40 +32,28 @@
 //
 
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
 import React from 'react';
 
-import ExpandCollapse from '../layout/expandCollapse';
-
 const CSS = css({
-    backgroundColor: 'Pink',
-    display: 'flex',
     flex: 1,
-    flexDirection: 'column',
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0,
-    width: 200
+    position: 'relative'
 });
 
-const BOTS_CSS = css({
-    display: 'flex',
-    flexDirection: 'column',
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0
-});
+export default class BotChatEditor extends React.Component {
+    render() {
+        const { content } = this.props.document;
 
-export default props =>
-    <ul className={ CSS }>
-        <li>
-            <ExpandCollapse
-                initialExpanded={ true }
-                title="Cards"
-            >
-                <ul className={ BOTS_CSS }>
-                    <li>Greeting</li>
-                    <li>Address input</li>
-                </ul>
-            </ExpandCollapse>
-        </li>
-    </ul>
+        return (
+            <div className={ CSS }>
+                I am BotChatEditor
+            </div>
+        );
+    }
+}
+
+BotChatEditor.propTypes = {
+    document: PropTypes.shape({
+        content: PropTypes.object
+    })
+};

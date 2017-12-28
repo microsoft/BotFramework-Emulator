@@ -29,28 +29,9 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
 
-import { css } from 'glamor';
-import PropTypes from 'prop-types';
-import React from 'react';
 
-const CSS = css({
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column'
-});
-
-export default class Tab extends React.Component {
-    render() {
-        return (
-            <div className={ CSS }>
-                { this.props.children }
-            </div>
-        );
-    }
+export default interface IBotChatDocument {
+    vertSplit: number,
+    horzSplit: number
 }
-
-Tab.propTypes = {
-    title: PropTypes.string
-};

@@ -37,12 +37,10 @@ import React from 'react';
 
 import AssetExplorer from './assetExplorer';
 import BotExplorer from './botExplorer';
-import Editor from '../editor';
 import EmulatorEditor from './emulatorEditor';
 import ExplorerBar from './explorerBar';
-import MultiTabs from './multiTabs';
+import MDI from './mdi';
 import NavBar from './navBar';
-import Tab from './multiTabs/tab';
 
 css.global('html, body, #root', {
     height: '100%',
@@ -80,18 +78,7 @@ class Main extends React.Component {
                     <BotExplorer />
                     <AssetExplorer />
                 </ExplorerBar>
-                <MultiTabs
-                    onChange={ this.handleTabChange }
-                    value={ this.state.tabValue }
-                >
-                    {
-                        this.props.documents.map(document =>
-                            <Tab title={ document.title }>
-                                <Editor document={ document } />
-                            </Tab>
-                        )
-                    }
-                </MultiTabs>
+                <MDI />
             </div>
         );
     }

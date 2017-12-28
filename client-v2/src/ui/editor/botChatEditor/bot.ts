@@ -29,23 +29,12 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
 
-const DEFAULT_STATE = {
-    documents: [{
-        contentType: 'application/vnd.microsoft.botframework.bot',
-        directLineURL: 'http://example.com/',
-        title: 'TestBotV3'
-    }, {
-        contentType: 'application/vnd.microsoft.card.adaptive',
-        title: 'Welcome.card.json'
-    }]
-};
-
-export default function documents(state = DEFAULT_STATE, action) {
-    switch (action.type) {
-    default: break;
-    }
-
-    return state;
+export default interface IBot {
+    botId: string,
+    botName: string,
+    locale: string,
+    endpoint: string,
+    msaAppId: string,
+    msaPassword: string,
 }
