@@ -38,8 +38,8 @@ import promiseMiddleware from 'redux-promise-middleware';
 // import IPCRendererWebSocket from 'electron-ipcrenderer-websocket';
 // import WebSocketActionBridge from 'redux-websocket-action-bridge';
 
-import documents from './reducer/documents';
-import bots from './reducer/bots';
+import editor from './reducer/editor';
+import bot from './reducer/bot';
 import server from './reducer/server';
 
 const electron = window.process && window.process.versions.electron;
@@ -74,7 +74,7 @@ const createStoreWithMiddleware = applyMiddleware(
 const DEFAULT_STATE = {};
 
 export default createStoreWithMiddleware(combineReducers({
-    documents,
-    bots,
+    editor,
+    bot,
     server
 }));

@@ -55,7 +55,7 @@ const CSS = css({
     minHeight: '100%'
 });
 
-class Main extends React.Component {
+export default class Main extends React.Component {
     constructor(props, context) {
         super(props, context);
 
@@ -83,7 +83,3 @@ class Main extends React.Component {
         );
     }
 }
-
-export default connect(state => ({
-    documents: state.editor.documents
-}))(Main)
