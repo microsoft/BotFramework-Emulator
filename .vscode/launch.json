@@ -22,13 +22,20 @@
                 "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
             },
             "runtimeArgs": [
-                "--nolazy"
+                "--nolazy",
+                "--vscode-debugger"
             ],
             "env": {
                 "NODE_ENV": "development"
             },
             "sourceMaps": true,
             "protocol": "inspector"
+        },
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Attach",
+            "port": 7777
         },
         {
             "name": "Debug integration tests",
