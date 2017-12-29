@@ -31,7 +31,31 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import PropTypes from 'prop-types';
 import React from 'react';
+import { css } from 'glamor';
 
-export default props =>
-    <div>Adaptive Card editor</div>
+const CSS = css({
+    " pre": {
+        fontFamily: "Segoe UI",
+        cursor: "pointer",
+
+        ":hover": {
+            backgroundColor: "skyblue"
+        }
+    }
+});
+
+export default class CardOutputMessage extends React.Component {
+    render() {
+        return (
+            <div {...CSS}>
+                <pre>{this.props.message}</pre>
+            </div>
+        );
+    }
+}
+
+CardOutputMessage.propTypes = {
+    message: PropTypes.string
+};

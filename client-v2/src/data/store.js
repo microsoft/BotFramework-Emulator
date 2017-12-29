@@ -40,6 +40,7 @@ import promiseMiddleware from 'redux-promise-middleware';
 
 import editor from './reducer/editor';
 import server from './reducer/server';
+import card from './reducer/card';
 
 const electron = window.process && window.process.versions.electron;
 
@@ -74,5 +75,6 @@ const DEFAULT_STATE = {};
 
 export default createStoreWithMiddleware(combineReducers({
     editor,
-    server
+    server,
+    card
 }));

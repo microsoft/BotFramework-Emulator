@@ -34,10 +34,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import AdaptiveCardEditor from './adaptiveCardEditor';
+import CardEditor from './cardEditor';
 import BotChatEditor from './botChatEditor';
 
-export { AdaptiveCardEditor, BotChatEditor }
+export { CardEditor, BotChatEditor }
 
 export default class Editor extends React.Component {
     render() {
@@ -46,7 +46,7 @@ export default class Editor extends React.Component {
 
         return (
             contentType === 'application/vnd.microsoft.card.adaptive' ?
-                <AdaptiveCardEditor />
+                <CardEditor />
             : contentType === 'application/vnd.microsoft.botframework.bot' ?
                 <BotChatEditor
                     directLineURL={ document.directLineURL }

@@ -31,72 +31,63 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
-import { css } from 'glamor';
-import React from 'react';
-
-import AssetExplorer from './assetExplorer';
-import BotExplorer from './botExplorer';
-import Editor from '../editor';
-import EmulatorEditor from './emulatorEditor';
-import ExplorerBar from './explorerBar';
-import MultiTabs from './multiTabs';
-import NavBar from './navBar';
-import Tab from './multiTabs/tab';
-
-css.global('html, body, #root', {
-    height: '100%',
-    margin: 0,
-    minHeight: '100%',
-    overflow: 'hidden'
-});
+import { connect } from 'react-redux'
+import { css } from 'glamor'
+import React from 'react'
+import AdaptiveCardOutputMessage from '../cardOutputMessage';
 
 const CSS = css({
-    backgroundColor: 'yellow',
-    display: 'flex',
-    minHeight: '100%'
+    width: "100%",
+    height: "100%",
+    margin: "12px 0 24px 0",
+    fontFamily: "Segoe UI",
+    overflow: "auto",
+    position: "relative",
+
+    " .output-header": {
+        position: "absolute",
+        top: "0",
+        left: "0",
+        paddingLeft: "24px",
+        fontFamily: "Segoe UI Semibold",
+        textTransform: "uppercase",
+        backgroundColor: "#F5F5F5",
+        width: "100%",
+        height: "24px",
+        display: "block",
+        color: "#2B2B2B",
+        borderBottom: "1px solid #C6C6C6"
+    },
+
+    " > div": {
+        marginTop: "24px"
+    }
 });
 
-class Main extends React.Component {
+const debug = css({ backgroundColor: "white", border: "1px solid black" });
+
+class CardOutput extends React.Component {
     constructor(props, context) {
         super(props, context);
-
-        this.handleTabChange = this.handleTabChange.bind(this);
-
-        this.state = {
-            tabValue: 0
-        };
-    }
-
-    handleTabChange(nextTabValue) {
-        this.setState(() => ({ tabValue: nextTabValue }));
     }
 
     render() {
         return (
-            <div className={ CSS }>
-                <NavBar />
-                <ExplorerBar>
-                    <BotExplorer />
-                    <AssetExplorer />
-                </ExplorerBar>
-                <MultiTabs
-                    onChange={ this.handleTabChange }
-                    value={ this.state.tabValue }
-                >
+            <div {...CSS} {...debug}>
+                <span className={"output-header"}>Output</span>
+                <div>
                     {
-                        this.props.documents.map(document =>
-                            <Tab key={ document.title } title={ document.title }>
-                                <Editor document={ document } />
-                            </Tab>
-                        )
+                        this.props.messages.length ?
+                        this.props.messages.map(msg => {
+                            return (<AdaptiveCardOutputMessage key={msg} message={msg}></AdaptiveCardOutputMessage>);
+                        }) : <span>Output is empty...</span>
                     }
-                </MultiTabs>
+                </div>
             </div>
         );
     }
 }
 
 export default connect(state => ({
-    documents: state.editor.documents
-}))(Main)
+    messages: state.card.cardOutput || []
+}))(CardOutput);
