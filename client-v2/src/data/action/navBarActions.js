@@ -36,7 +36,7 @@ export const SELECT = 'NAVBAR/SELECT';
 
 export function select(selection) {
     return {
-        type: SELECT,
-        selection
+        type: SELECT_OR_TOGGLE,
+        payload: selection
     }
 }
