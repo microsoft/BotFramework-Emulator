@@ -43,10 +43,10 @@ const DEFAULT_STATE = {
 export default function navBar(state = DEFAULT_STATE, action) {
     switch (action.type) {
         case NavBarActions.SELECT_OR_TOGGLE:
-            if (state.selection === action.selection) {
+            if (state.selection === action.payload.selection) {
                 state = { ...state, expanded: !state.expanded };
             } else {
-                state = { ...state, selection: action.selection };
+                state = { ...state, selection: action.payload.selection };
             }
 
             break;
