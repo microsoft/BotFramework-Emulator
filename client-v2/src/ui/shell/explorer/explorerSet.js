@@ -55,13 +55,13 @@ const CSS = css({
 export default class ExplorerSet extends React.Component {
     render() {
         return (
-            <ul className= { CSS }>
+            <ul className={ CSS }>
                 {
                     React.Children.map(this.props.children, child =>
                         <li>{ child }</li>
                     )
                 }
             </ul>
-        )
+        );
     }
 }
