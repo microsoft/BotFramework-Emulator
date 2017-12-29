@@ -42,12 +42,13 @@ const DEFAULT_STATE = {
 
 export default function navBar(state = DEFAULT_STATE, action) {
     switch (action.type) {
-        case NavBarActions.SELECT:
+        case NavBarActions.SELECT_OR_TOGGLE:
             if (state.selection === action.selection) {
-                state = Object.assign({}, state, { expanded: !state.expanded});
+                state = { ...state, expanded: !state.expanded };
             } else {
-                state = Object.assign({}, state, { selection: action.selection});
+                state = { ...state, selection: action.selection };
             }
+
             break;
 
         default: break;
