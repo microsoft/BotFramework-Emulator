@@ -1,4 +1,4 @@
-;//
+//
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 //
@@ -34,7 +34,7 @@
 export const SELECT_OR_TOGGLE = 'NAVBAR/SELECT_OR_TOGGLE';
 
 
-export function select(selection) {
+export function selectOrToggle(selection) {
     return {
         type: SELECT_OR_TOGGLE,
         payload: selection
