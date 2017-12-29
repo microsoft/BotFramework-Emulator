@@ -1,4 +1,4 @@
-//
+;//
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 //
@@ -31,12 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export const SELECT = 'NAVBAR/SELECT';
+export const SELECT_OR_TOGGLE = 'NAVBAR/SELECT_OR_TOGGLE';
 
 
 export function select(selection) {
     return {
         type: SELECT_OR_TOGGLE,
         payload: selection
-    }
+    };
 }
