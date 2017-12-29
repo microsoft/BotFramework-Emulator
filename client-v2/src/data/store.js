@@ -32,56 +32,35 @@
 //
 
 import { applyMiddleware, combineReducers, createStore } from 'redux';
+import IPCRendererWebSocket from 'electron-ipcrenderer-websocket';
 import promiseMiddleware from 'redux-promise-middleware';
+import WebSocketActionBridge from 'redux-websocket-bridge';
 
-// import SockJS from 'sockjs-client';
-
-// import IPCRendererWebSocket from 'electron-ipcrenderer-websocket';
-// import WebSocketActionBridge from 'redux-websocket-action-bridge';
-
+import assetExplorer from './reducer/assetExplorer';
+import bot from './reducer/bot';
+import card from './reducer/card';
 import editor from './reducer/editor';
 import navBar from './reducer/navBar';
-import bot from './reducer/bot';
-import assetExplorer from './reducer/assetExplorer';
 import server from './reducer/server';
-import card from './reducer/card';
+
+// TODO: Remove this when we no longer need to debug the WebSocket connection
+// import DebugWebSocketConnection from './debugWebSocketConnection';
 
 const electron = window.process && window.process.versions.electron;
 
 const createStoreWithMiddleware = applyMiddleware(
-    promiseMiddleware(),
-    // WebSocketActionBridge(
-    //     () => {
-    //         return electron ?
-    //             new IPCRendererWebSocket('@@electron')
-    //         :
-    //             new SockJS('/ws');
-    //     },
-    //     {
-    //         autoUnfold: true
-    //     }
-    // ),
-    // store => next => action => {
-    //     if (action.type === '@@websocket/OPEN') {
-    //         store.dispatch({
-    //             type: '@@websocket/SEND',
-    //             payload: {
-    //                 type: 'SERVER/PING'
-    //             }
-    //         });
-    //     }
-
-    //     return next(action);
-    // }
+    WebSocketActionBridge(() => new IPCRendererWebSocket()),
+    // WebSocketActionBridge(() => new DebugWebSocketConnection(new IPCRendererWebSocket())),
+    promiseMiddleware()
 )(createStore);
 
 const DEFAULT_STATE = {};
 
 export default createStoreWithMiddleware(combineReducers({
-    editor,
-    navBar,
+    assetExplorer,
     bot,
     card,
-    assetExplorer,
+    editor,
+    navBar,
     server
 }));

@@ -31,10 +31,34 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export const ContentType_Card = 'application/vnd.microsoft.botstudio.document.card';
-export const ContentType_Converation = 'application/vnd.microsoft.botstudio.document.conversation';
-export const ContentType_BotChat = 'application/vnd.microsoft.botstudio.document.botchat';
-export const ContentType_TestBed = 'application/vnd.microsoft.botstudio.testbed';
+import { connect } from 'react-redux';
+import { css } from 'glamor';
+import React from 'react';
 
-export const NavBar_Bots = 'navbar.bots';
-export const NavBar_Assets = 'navbar.assets';
+import ConnectivityBadge from '../widget/connectivityBadge';
+
+const CSS = css({});
+
+class TestBedEditor extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+    }
+
+    render() {
+        return (
+            <div className={ CSS }>
+                <h1>Testbed</h1>
+                <ConnectivityBadge />
+                <header>
+                    <h2>Raw store</h2>
+                </header>
+                <section>
+                    <pre>{ JSON.stringify({ ...this.props, children: undefined }, null, 2) }</pre>
+                </section>
+            </div>
+        );
+    }
+}
+
+
+export default connect(state => state)(TestBedEditor)

@@ -36,9 +36,7 @@ export const PING = 'SERVER/PING';
 
 export function ping() {
     return {
-        type: '@@websocket/SEND',
-        payload: {
-            type: PING
-        }
+        type: PING,
+        meta: { send: true }
     };
 }
