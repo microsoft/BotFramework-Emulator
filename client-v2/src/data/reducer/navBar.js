@@ -31,45 +31,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
-import React from 'react';
+import * as constants from '../../constants';
+import * as NavBarActions from '../action/navBarActions';
 
-import ExpandCollapse from '../layout/expandCollapse';
 
-const CSS = css({
-    backgroundColor: 'skyblue',
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0,
-    width: 200
-});
+const DEFAULT_STATE = {
+    selection: constants.NavBar_Bots,
+    expanded: false
+};
 
-const BOTS_CSS = css({
-    display: 'flex',
-    flexDirection: 'column',
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0
-});
+export default function navBar(state = DEFAULT_STATE, action) {
+    switch (action.type) {
+        case NavBarActions.SELECT_OR_TOGGLE:
+            if (state.selection === action.payload.selection) {
+                state = { ...state, expanded: !state.expanded };
+            } else {
+                state = { ...state, selection: action.payload.selection };
+            }
 
-export default props =>
-    <ul className={ CSS }>
-        <li>
-            <ExpandCollapse
-                initialExpanded={ true }
-                title="Bots"
-            >
-                <ExpandCollapseTitle>Bots</ExpandCollapseTitle>
-                <ul className={ BOTS_CSS }>
-                    <li>http://localhost:3000/</li>
-                    <li>http://localhost:3001/</li>
-                    <li>http://localhost:3002/</li>
-                </ul>
-            </ExpandCollapse>
-        </li>
-    </ul>
+            break;
 
-const ExpandCollapseTitle = props => false;
+        default: break;
+    }
+
+    return state;
+}

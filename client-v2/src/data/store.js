@@ -39,6 +39,7 @@ import promiseMiddleware from 'redux-promise-middleware';
 // import WebSocketActionBridge from 'redux-websocket-action-bridge';
 
 import editor from './reducer/editor';
+import navBar from './reducer/navBar';
 import bot from './reducer/bot';
 import server from './reducer/server';
 
@@ -75,6 +76,7 @@ const DEFAULT_STATE = {};
 
 export default createStoreWithMiddleware(combineReducers({
     editor,
+    navBar,
     bot,
     server
 }));

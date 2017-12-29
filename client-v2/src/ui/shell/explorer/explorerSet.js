@@ -31,49 +31,37 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
 import { css } from 'glamor';
 import React from 'react';
 
-import ExplorerBar from './explorer';
-import MDI from './mdi';
-import NavBar from './navBar';
-
-css.global('html, body, #root', {
-    height: '100%',
-    margin: 0,
-    minHeight: '100%',
-    overflow: 'hidden'
-});
-
 const CSS = css({
-    backgroundColor: 'yellow',
+    backgroundColor: 'LightGreen',
     display: 'flex',
-    minHeight: '100%'
+    flexDirection: 'column',
+    listStyleType: 'none',
+    margin: 0,
+    padding: 0,
+
+    '& > li': {
+        display: 'flex',
+        flexDirection: 'column'
+    },
+
+    '& > li:last-child': {
+        flex: 1
+    }
 });
 
-export default class Main extends React.Component {
-    constructor(props, context) {
-        super(props, context);
-
-        this.handleTabChange = this.handleTabChange.bind(this);
-
-        this.state = {
-            tabValue: 0
-        };
-    }
-
-    handleTabChange(nextTabValue) {
-        this.setState(() => ({ tabValue: nextTabValue }));
-    }
-
+export default class ExplorerSet extends React.Component {
     render() {
         return (
-            <div className={ CSS }>
-                <NavBar />
-                <ExplorerBar />
-                <MDI />
-            </div>
+            <ul className={ CSS }>
+                {
+                    React.Children.map(this.props.children, child =>
+                        <li>{ child }</li>
+                    )
+                }
+            </ul>
         );
     }
 }
