@@ -61,7 +61,7 @@ const CSS = css({
 
 class NavBar extends React.Component {
     handleClick(selection) {
-        this.props.dispatch(NavBarActions.select(selection));
+        this.props.dispatch(NavBarActions.selectOrToggle(selection));
     }
 
     render() {
