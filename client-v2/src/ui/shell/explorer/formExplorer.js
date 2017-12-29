@@ -60,7 +60,7 @@ export default props =>
         <li>
             <ExpandCollapse
                 initialExpanded={ true }
-                title="Cards"
+                title="Forms"
             >
                 <ul className={ BOTS_CSS }>
                     <li>Pizza Order Form</li>

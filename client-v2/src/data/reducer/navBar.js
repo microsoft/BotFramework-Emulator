@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { fromJS } from 'immutable';
 import * as constants from '../../constants';
 import * as NavBarActions from '../action/navBarActions';
 
