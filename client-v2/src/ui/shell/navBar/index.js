@@ -60,6 +60,14 @@ const CSS = css({
 });
 
 class NavBar extends React.Component {
+
+    constructor(props, context) {
+        super(props, context);
+
+        this.handleAssetsClick = this.handleClick.bind(this, constants.NavBar_Assets);
+        this.handleBotsClick = this.handleClick.bind(this, constants.NavBar_Bots);
+    }
+
     handleClick(selection) {
         this.props.dispatch(NavBarActions.selectOrToggle(selection));
     }
@@ -68,10 +76,10 @@ class NavBar extends React.Component {
         return (
             <nav className={ CSS }>
                 <ul>
-                    <li onClick={() => this.handleClick(constants.NavBar_Bots) }>
+                    <li onClick={ this.handleBotsClick }>
                         <Button>Bots</Button>
                     </li>
-                    <li onClick={() => this.handleClick(constants.NavBar_Assets) }>
+                    <li onClick={ this.handleAssetsClick }>
                         <Button>Assets</Button>
                     </li>
                 </ul>
