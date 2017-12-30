@@ -47,7 +47,7 @@ export default class DetailPanel extends React.Component {
         return (
             <div className={ CSS }>
                 <Panel>
-                    <Detail/>
+                    <Detail />
                 </Panel>
             </div>
         );
@@ -56,6 +56,6 @@ export default class DetailPanel extends React.Component {
 
 class Detail extends React.Component {
     render() {
-        return <span>I am Detail</span>
+        return <span>I am Detail</span>;
     }
 }
