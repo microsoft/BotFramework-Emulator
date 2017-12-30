@@ -29,12 +29,32 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
 
-export default interface IBot {
-    botId: string,
-    botName: string,
-    locale: string,
-    endpoint: string,
-    msaAppId: string,
-    msaPassword: string,
+import { css } from 'glamor';
+import PropTypes from 'prop-types';
+import React from 'react';
+
+import Panel from './panel';
+
+const CSS = css({
+    height: '100%'
+});
+
+export default class ChatPanel extends React.Component {
+    render() {
+        return (
+            <div className={ CSS }>
+                <Panel>
+                    <Chat />
+                </Panel>
+            </div>
+        );
+    }
+}
+
+class Chat extends React.Component {
+    render() {
+        return <span>I am Chat</span>;
+    }
 }

@@ -32,30 +32,29 @@
 //
 
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
 import React from 'react';
-import Splitter from '../../layout/splitter';
 
-import ChatPanel from './chatPanel';
-import DetailPanel from './detailPanel';
-import LogPanel from './logPanel';
+import Panel from './panel';
 
 const CSS = css({
-    flex: 1,
-    position: 'relative'
+    height: '100%'
 });
 
-export default class BotChatEditor extends React.Component {
+export default class LogPanel extends React.Component {
     render() {
         return (
             <div className={ CSS }>
-                <Splitter>
-                    <ChatPanel />
-                    <Splitter vertical={ true }>
-                        <DetailPanel />
-                        <LogPanel />
-                    </Splitter>
-                </Splitter>
+                <Panel>
+                    <Log />
+                </Panel>
             </div>
         );
+    }
+}
+
+class Log extends React.Component {
+    render() {
+        return <span>I am Log</span>;
     }
 }

@@ -29,9 +29,41 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
 
+import { css } from 'glamor';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-export default interface IBotChatDocument {
-    vertSplit: number,
-    horzSplit: number
+const CSS = css({
+    display: 'flex',
+    flex: 1,
+    flexDirection: 'column',
+    height: '100%',
+    position: 'relative'
+});
+
+const HEADER_CSS = css({
+    backgroundColor: 'gold',
+    height: 30,
+    minHeight: 30
+});
+
+const BODY_CSS = css({
+    backgroundColor: 'lightgreen',
+    flex: 1
+});
+
+export default class Panel extends React.Component {
+    render() {
+        return (
+            <div className={ CSS }>
+                <div className={ HEADER_CSS }>
+                </div>
+                <div className={ BODY_CSS }>
+                    { this.props.children }
+                </div>
+            </div>
+        );
+    }
 }
