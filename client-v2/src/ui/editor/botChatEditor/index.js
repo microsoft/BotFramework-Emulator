@@ -39,7 +39,6 @@ import ChatPanel from './chatPanel';
 import DetailPanel from './detailPanel';
 import LogPanel from './logPanel';
 
-
 const CSS = css({
     flex: 1,
     position: 'relative'
