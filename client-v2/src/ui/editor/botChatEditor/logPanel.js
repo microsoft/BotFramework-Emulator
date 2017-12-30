@@ -47,7 +47,7 @@ export default class LogPanel extends React.Component {
         return (
             <div className={ CSS }>
                 <Panel>
-                    <Log/>
+                    <Log />
                 </Panel>
             </div>
         );
@@ -56,6 +56,6 @@ export default class LogPanel extends React.Component {
 
 class Log extends React.Component {
     render() {
-        return <span>I am Log</span>
+        return <span>I am Log</span>;
     }
 }
