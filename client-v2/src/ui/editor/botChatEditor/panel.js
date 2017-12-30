@@ -45,7 +45,8 @@ const CSS = css({
 
 const HEADER_CSS = css({
     backgroundColor: 'gold',
-    height: 30
+    height: 30,
+    minHeight: 30
 });
 
 const BODY_CSS = css({
