@@ -51,7 +51,7 @@ export default class BotChatEditor extends React.Component {
             <div className={ CSS }>
                 <Splitter>
                     <ChatPanel />
-                    <Splitter vertical={true}>
+                    <Splitter vertical={ true }>
                         <DetailPanel />
                         <LogPanel />
                     </Splitter>
