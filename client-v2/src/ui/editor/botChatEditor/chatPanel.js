@@ -37,7 +37,6 @@ import React from 'react';
 
 import Panel from './panel';
 
-
 const CSS = css({
     height: '100%'
 });
