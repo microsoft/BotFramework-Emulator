@@ -47,7 +47,7 @@ export default class ChatPanel extends React.Component {
         return (
             <div className={ CSS }>
                 <Panel>
-                    <Chat/>
+                    <Chat />
                 </Panel>
             </div>
         );
@@ -56,6 +56,6 @@ export default class ChatPanel extends React.Component {
 
 class Chat extends React.Component {
     render() {
-        return <span>I am Chat</span>
+        return <span>I am Chat</span>;
     }
 }
