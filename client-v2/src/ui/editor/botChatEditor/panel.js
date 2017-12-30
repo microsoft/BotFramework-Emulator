@@ -36,11 +36,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 const CSS = css({
-    flex: 1,
-    position: 'relative',
     display: 'flex',
+    flex: 1,
     flexDirection: 'column',
-    height: '100%'
+    height: '100%',
+    position: 'relative'
 });
 
 const HEADER_CSS = css({
@@ -50,7 +50,7 @@ const HEADER_CSS = css({
 
 const BODY_CSS = css({
     backgroundColor: 'lightgreen',
-    flex: 1,
+    flex: 1
 });
 
 export default class Panel extends React.Component {
