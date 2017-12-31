@@ -33,8 +33,9 @@
 
 import { css } from 'glamor';
 import React from 'react';
+import { connect } from 'react-redux';
 
-import ExpandCollapse from '../../layout/expandCollapse';
+import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
 
 const CSS = css({
     backgroundColor: 'skyblue',
@@ -55,21 +56,40 @@ const BOTS_CSS = css({
     padding: 0
 });
 
-export default props =>
-    <ul className={ CSS }>
-        <li>
-            <ExpandCollapse
-                initialExpanded={ true }
-                title="Bots"
-            >
-                <ExpandCollapseTitle>Bots</ExpandCollapseTitle>
-                <ul className={ BOTS_CSS }>
-                    <li>http://localhost:3000/</li>
-                    <li>http://localhost:3001/</li>
-                    <li>http://localhost:3002/</li>
-                </ul>
-            </ExpandCollapse>
-        </li>
-    </ul>
+class BotExplorer extends React.Component {
+    constructor(props, context) {
+        super(props, context);
 
-const ExpandCollapseTitle = props => false;
+        this.handleAddClick = this.handleAddClick.bind(this);
+    }
+
+    handleAddClick(e) {
+        e.stopPropagation();
+    }
+
+    render() {
+        return (
+            <ul className={ CSS }>
+                <li>
+                    <ExpandCollapse
+                        initialExpanded={ true }
+                        title="Bots"
+                    >
+                        <ExpandCollapseControls>
+                            <button onClick={ this.handleAddClick }>+</button>
+                        </ExpandCollapseControls>
+                        <ExpandCollapseContent>
+                            <ul className={ BOTS_CSS }>
+                                <li>http://localhost:3000/</li>
+                                <li>http://localhost:3001/</li>
+                                <li>http://localhost:3002/</li>
+                            </ul>
+                        </ExpandCollapseContent>
+                    </ExpandCollapse>
+                </li>
+            </ul>
+        );
+    }
+}
+
+export default connect(state => ({ bots: state.bots }))(BotExplorer)

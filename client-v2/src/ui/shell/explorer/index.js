@@ -48,13 +48,13 @@ class ExplorerBar extends React.Component {
     render() {
         if (this.props.navBar.selection === constants.NavBar_Bots) {
             return (
-                <ExplorerSet>
+                <ExplorerSet title="Bot Explorer">
                     <BotExplorer />
                 </ExplorerSet>
             );
         } else if (this.props.navBar.selection === constants.NavBar_Assets) {
             return (
-                <ExplorerSet>
+                <ExplorerSet title="Asset Explorer">
                     <CardExplorer />
                     <LuisExplorer />
                     <FormExplorer />

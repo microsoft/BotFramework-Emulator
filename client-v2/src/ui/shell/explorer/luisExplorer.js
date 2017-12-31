@@ -34,7 +34,7 @@
 import { css } from 'glamor';
 import React from 'react';
 
-import ExpandCollapse from '../../layout/expandCollapse';
+import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
 
 const CSS = css({
     backgroundColor: 'Pink',
@@ -62,10 +62,12 @@ export default props =>
                 initialExpanded={ true }
                 title="LUIS Models"
             >
-                <ul className={ BOTS_CSS }>
-                    <li>Pizza Order Model</li>
-                    <li>Shopping Model</li>
-                </ul>
+                <ExpandCollapseContent>
+                    <ul className={ BOTS_CSS }>
+                        <li>Pizza Order Model</li>
+                        <li>Shopping Model</li>
+                    </ul>
+                </ExpandCollapseContent>
             </ExpandCollapse>
         </li>
     </ul>

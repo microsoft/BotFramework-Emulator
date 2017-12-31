@@ -38,6 +38,8 @@ import React from 'react';
 import TabBar from './tabBar';
 import TabBarTab from './tabBarTab';
 import TabbedDocument, { Tab as TabbedDocumentTab, Content as TabbedDocumentContent } from './tabbedDocument';
+import { filterChildren } from '../../utils';
+
 
 const CSS = css({
     backgroundColor: 'orange',
@@ -86,6 +88,3 @@ MultiTabs.propTypes = {
     value: PropTypes.number
 };
 
-function filterChildren(children, predicate) {
-    return React.Children.map(children, child => predicate(child) ? child : false);
-}
