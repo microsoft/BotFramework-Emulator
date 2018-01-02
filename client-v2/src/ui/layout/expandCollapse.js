@@ -71,17 +71,13 @@ export default class ExpandCollapse extends React.Component {
                     { this.state.expanded ? '▽' : '▷' }&nbsp;
                     { this.props.title }
                     <div className={ CONTROLS_CSS }>
-                        {
-                            filterChildren(this.props.children, child => child.type === Controls)
-                        }
+                        { filterChildren(this.props.children, child => child.type === Controls) }
                     </div>
                 </div>
                 {
                     this.state.expanded &&
                         <div>
-                            {
-                                filterChildren(this.props.children, child => child.type === Content)
-                            }
+                            { filterChildren(this.props.children, child => child.type === Content) }
                         </div>
                 }
             </div>
