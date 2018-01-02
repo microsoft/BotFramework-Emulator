@@ -47,13 +47,14 @@ const CSS = css({
     width: "100%",
     backgroundColor: "white",
 
+    " *": { boxSizing: "border-box" },
+
     " .card-right-panel": {
         display: "flex",
         flexFlow: "column nowrap",
         height: "100%",
         width: "100%",
-        padding: "0 24px",
-        boxSizing: "border-box"
+        padding: "0 24px"
     },
 
     " .card-horizontal-splitter": {
@@ -66,8 +67,7 @@ const CSS = css({
     " .card-json-editor-container": {
         height: "100%",
         width: "100%",
-        padding: "24px",
-        boxSizing: "border-box"
+        padding: "24px"
     }
 });
 

@@ -42,6 +42,10 @@ const CSS = css({
 
         ":hover": {
             backgroundColor: "skyblue"
+        },
+
+        ":first-of-type": {
+            marginTop: "0"
         }
     }
 });

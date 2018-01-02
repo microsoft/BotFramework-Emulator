@@ -47,10 +47,18 @@ const CSS = css({
         fontFamily: "Segoe UI Semibold",
         textTransform: "uppercase",
         backgroundColor: "#F5F5F5",
+        height: "24px",
         width: "100%",
         display: "block",
         color: "#2B2B2B",
         borderBottom: "1px solid #C6C6C6"
+    },
+
+    " .template-content": {
+        overflow: "auto",
+        height: "calc(100% - 24px)",
+        width: "100%",
+        padding: "16px"
     }
 });
 
@@ -65,11 +73,9 @@ class CardTemplator extends React.Component {
         return (
             <div {...CSS} {...debug}>
                 <span className="template-header">Template Editor</span>
-                {
-                    this.props.entities.map(ent => {
-                        return <CardTemplateRow key={ ent } entityName={ ent } />
-                    })
-                }
+                <div className="template-content">
+                    { this.props.entities.map(ent => <CardTemplateRow key={ ent } entityName={ ent } />) }
+                </div>
             </div>
         );
     }

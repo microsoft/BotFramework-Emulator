@@ -41,13 +41,9 @@ const CSS = css({
     height: "100%",
     margin: "12px 0 24px 0",
     fontFamily: "Segoe UI",
-    overflow: "auto",
-    position: "relative",
+    overflow: "hidden",
 
     " .output-header": {
-        position: "absolute",
-        top: "0",
-        left: "0",
         paddingLeft: "24px",
         fontFamily: "Segoe UI Semibold",
         textTransform: "uppercase",
@@ -59,8 +55,11 @@ const CSS = css({
         borderBottom: "1px solid #C6C6C6"
     },
 
-    " > div": {
-        marginTop: "24px"
+    " .output-content": {
+        overflow: "auto",
+        height: "calc(100% - 24px)",
+        width: "100%",
+        padding: "16px"
     }
 });
 
@@ -75,7 +74,7 @@ class CardOutput extends React.Component {
         return (
             <div {...CSS} {...debug}>
                 <span className="output-header">Output</span>
-                <div>
+                <div className="output-content">
                     {
                         this.props.messages.length ?
                         this.props.messages.map(msg => {

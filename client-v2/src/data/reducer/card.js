@@ -113,8 +113,10 @@ export default function card(state = DEFAULT_STATE, action) {
             break;
         case CARD_ADD_OUTPUT_MSG:
             state = { ...state, cardOutput: [...state.cardOutput, payload.msg] };
+            break;
         case CARD_CLEAR_OUTPUT_WINDOW:
             state = { ...state, cardOutput: [] };
+            break;
         default:
             break;
     }

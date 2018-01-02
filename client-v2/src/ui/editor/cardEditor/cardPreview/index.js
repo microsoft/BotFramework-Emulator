@@ -41,7 +41,7 @@ const CSS = css({
     margin: "24px 0 12px 0",
     width: "100%",
     height: "100%",
-    overflow: "auto",
+    overflow: "hidden",
 
     " .preview-header": {
         paddingLeft: "24px",
@@ -49,9 +49,16 @@ const CSS = css({
         textTransform: "uppercase",
         backgroundColor: "#F5F5F5",
         width: "100%",
+        height: "24px",
         display: "block",
         color: "#2B2B2B",
         borderBottom: "1px solid #C6C6C6"
+    },
+
+    " .preview-content": {
+        overflow: "auto",
+        height: "calc(100% - 24px)",
+        width: "100%"
     }
 });
 
@@ -103,7 +110,7 @@ class CardPreview extends React.Component {
         return(
             <div {...CSS} {...debug}>
                 <span className="preview-header">Preview</span>
-                <div ref={ this.saveCardContainer }></div>
+                <div className="preview-content" ref={ this.saveCardContainer }></div>
             </div>
         );
     }
