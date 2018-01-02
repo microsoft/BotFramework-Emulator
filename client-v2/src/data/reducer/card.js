@@ -1,4 +1,3 @@
-import { fromJS } from 'immutable';
 import { CARD_ADD_OUTPUT_MSG, CARD_UPDATE_JSON } from '../action/cardActions';
 
 //
@@ -113,7 +112,7 @@ export default function card(state = DEFAULT_STATE, action) {
             state = { ...state, cardJson: payload.json };
             break;
         case CARD_ADD_OUTPUT_MSG:
-            state = { ...state, cardOutput: [...state.cardJson, payload.msg] };
+            state = { ...state, cardOutput: [...state.cardOutput, payload.msg] };
         default:
             break;
     }

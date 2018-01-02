@@ -35,6 +35,7 @@ import { connect } from 'react-redux'
 import { css } from 'glamor'
 import React from 'react'
 import * as AdaptiveCards from 'adaptivecards';
+import { addCardOutputMessage } from '../../../../data/action/cardActions';
 
 const CSS = css({
     margin: "24px 0 12px 0",
@@ -56,28 +57,28 @@ const CSS = css({
 
 const debug = css({ backgroundColor: "white", border: "1px solid black" });
 
-// define card render options
-var renderOptions = {
-
-    // a Host Config defines the style and behavior of all cards
-    hostConfig: {
-        "fontFamily": "Segoe UI, Helvetica Nue, sans-serif"
-    },
-
-    // the action handler is invoked when actions are pressed
-    onExecuteAction: processAction
-};
-
 class CardPreview extends React.Component {
     constructor(props, context) {
         super(props, context);
 
         this.saveCardContainer = this.saveCardContainer.bind(this);
+
+        // define card render options
+        this.renderOptions = {
+
+            // a Host Config defines the style and behavior of all cards
+            hostConfig: {
+                "fontFamily": "Segoe UI, Helvetica Nue, sans-serif"
+            },
+
+            // the action handler is invoked when actions (such as card button presses) are triggered
+            onExecuteAction: (action) => processAction(action, this.props.dispatch)
+        };
     }
 
     componentDidMount() {
         // we must wait for the component to mount then render the card and insert it into the DOM
-        var renderedCard = AdaptiveCards.renderCard(JSON.parse(this.props.cardJson), renderOptions);
+        var renderedCard = AdaptiveCards.renderCard(JSON.parse(this.props.cardJson), this.renderOptions);
         this.cardContainer.appendChild(renderedCard);
     }
 
@@ -86,7 +87,7 @@ class CardPreview extends React.Component {
         // which will crash the entire component. We want to catch those errors and throw them away.
         try {
             const newPreRenderedCard = JSON.parse(newProps.cardJson);
-            const renderedCard = AdaptiveCards.renderCard(newPreRenderedCard, renderOptions);
+            const renderedCard = AdaptiveCards.renderCard(newPreRenderedCard, this.renderOptions);
             this.cardContainer.removeChild(this.cardContainer.firstChild);
             this.cardContainer.appendChild(renderedCard);
         } catch(e) {
@@ -108,8 +109,44 @@ class CardPreview extends React.Component {
     }
 }
 
-function processAction() {
-    return null;
+// determines a card action type, formats the message, then saves it to the store
+function processAction(action, dispatch) {
+    console.log("got card action: ", action);
+    let actionType;
+    if (action.url) {
+        actionType = "OpenUrl";
+    } else {
+        actionType = "Submit";
+    }
+
+    const actionMsg = formatActionMessage(action, actionType);
+    dispatch(addCardOutputMessage(actionMsg));
+}
+
+// formats a card action output message based on the action type
+function formatActionMessage(action, actionType) {
+    const timeStamp = new Date().toTimeString().substring(0, 8);
+    const msgPrefix = `${timeStamp} [Card Action] - ${actionType}`;
+
+    let msgBody = "\n\tTitle: " + action.title;
+    switch(actionType) {
+        case "OpenUrl":
+            msgBody += "\n\tUrl: " + action.url;
+            break;
+        case "Submit":
+        default:
+            if (action.data && Object.keys(action.data).length) {
+                msgBody += "\n\tData: {";
+                let keys = Object.keys(action.data);
+                keys.forEach(key => {
+                    msgBody += `\n\t\t${key}: ${action.data[key]}`
+                });
+                msgBody += "\n\t}"
+            }
+            break;
+    }
+
+    return msgPrefix + msgBody;
 }
 
 export default connect(state => ({

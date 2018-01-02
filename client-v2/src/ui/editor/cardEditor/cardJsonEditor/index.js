@@ -139,6 +139,8 @@ class CardJsonEditor extends React.Component {
         this.props.dispatch(CardActions.updateCardJson(newVal));
     }
 
+    // need to call this.editor.layout() on splitter resize
+
     render() {
         return (
             <div {...CSS}>
