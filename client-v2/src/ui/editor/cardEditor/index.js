@@ -105,11 +105,7 @@ export default class CardEditor extends React.Component {
                     <div className="card-right-panel">
                         <CardPreview />
 
-                        <div className="card-horizontal-splitter"></div>
-
                         <CardTemplator />
-
-                        <div className="card-horizontal-splitter"></div>
 
                         <CardOutput />
                     </div>

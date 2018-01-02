@@ -35,6 +35,7 @@ import { connect } from 'react-redux'
 import { css } from 'glamor'
 import React from 'react'
 import AdaptiveCardOutputMessage from '../cardOutputMessage';
+import { clearCardOutputWindow } from '../../../../data/action/cardActions';
 
 const CSS = css({
     width: "100%",
@@ -50,9 +51,16 @@ const CSS = css({
         backgroundColor: "#F5F5F5",
         width: "100%",
         height: "24px",
-        display: "block",
+        display: "flex",
         color: "#2B2B2B",
-        borderBottom: "1px solid #C6C6C6"
+        borderBottom: "1px solid #C6C6C6",
+
+        " > span": {
+            display: "flex",
+            marginLeft: "auto",
+            marginRight: "16px",
+            cursor: "pointer"
+        }
     },
 
     " .output-content": {
@@ -68,12 +76,19 @@ const debug = css({ backgroundColor: "white", border: "1px solid black" });
 class CardOutput extends React.Component {
     constructor(props, context) {
         super(props, context);
+
+        this.clearOutput = this.clearOutput.bind(this);
+    }
+
+    // clears the messages in the output window
+    clearOutput() {
+        this.props.dispatch(clearCardOutputWindow());
     }
 
     render() {
         return (
             <div {...CSS} {...debug}>
-                <span className="output-header">Output</span>
+                <span className="output-header">Output <span onClick={ this.clearOutput }>X</span></span>
                 <div className="output-content">
                     {
                         this.props.messages.length ?
