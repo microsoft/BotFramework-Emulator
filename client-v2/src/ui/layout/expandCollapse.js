@@ -66,7 +66,7 @@ export default class ExpandCollapse extends React.Component {
 
     render() {
         return (
-            <div className={ CSS }>
+            <div aria-expanded={ this.state.expanded } className={ CSS }>
                 <div className={ HEADER_CSS } onClick={ this.handleTitleClick }>
                     { this.state.expanded ? '▽' : '▷' }&nbsp;
                     { this.props.title }
