@@ -41,6 +41,7 @@ const CSS = css({
     height: "100%",
     width: "100%",
     overflow: "hidden",
+
     " > div": {
         height: "100%"
     },
@@ -56,8 +57,6 @@ const CSS = css({
         borderBottom: "1px solid #C6C6C6"
     }
 });
-
-const debug = css({ backgroundColor: "teal" });
 
 class CardJsonEditor extends React.Component {
     constructor(props, context) {

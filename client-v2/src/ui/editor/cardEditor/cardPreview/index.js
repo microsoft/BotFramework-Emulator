@@ -111,7 +111,6 @@ class CardPreview extends React.Component {
 
 // determines a card action type, formats the message, then saves it to the store
 function processAction(action, dispatch) {
-    console.log("got card action: ", action);
     let actionType;
     if (action.url) {
         actionType = "OpenUrl";
@@ -135,6 +134,12 @@ function formatActionMessage(action, actionType) {
             break;
         case "Submit":
         default:
+            // format hidden data as:
+            // Data: {
+            //     key1: val1,
+            //     key2: val2,
+            //     ...
+            // }
             if (action.data && Object.keys(action.data).length) {
                 msgBody += "\n\tData: {";
                 let keys = Object.keys(action.data);

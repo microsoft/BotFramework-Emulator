@@ -1,4 +1,4 @@
-import { CARD_ADD_OUTPUT_MSG, CARD_UPDATE_JSON } from '../action/cardActions';
+import { CARD_ADD_OUTPUT_MSG, CARD_CLEAR_OUTPUT_WINDOW, CARD_UPDATE_JSON } from '../action/cardActions';
 
 //
 // Copyright (c) Microsoft. All rights reserved.
@@ -113,6 +113,8 @@ export default function card(state = DEFAULT_STATE, action) {
             break;
         case CARD_ADD_OUTPUT_MSG:
             state = { ...state, cardOutput: [...state.cardOutput, payload.msg] };
+        case CARD_CLEAR_OUTPUT_WINDOW:
+            state = { ...state, cardOutput: [] };
         default:
             break;
     }

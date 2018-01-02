@@ -82,7 +82,7 @@ export default props =>
             split={"vertical"}
             minSize={900}
             defaultSize={900}
-            onChange={(size) => console.log("change")}
+            onChange={ onChangeVerticalSplit }
         >
             <div className={"card-json-editor-container"}>
                 <CardJsonEditor />
@@ -101,3 +101,7 @@ export default props =>
             </div>
         </Splitter>
     </div>
+
+function onChangeVerticalSplit(splitSize) {
+    console.log("got vertical change: ", splitSize);
+}
