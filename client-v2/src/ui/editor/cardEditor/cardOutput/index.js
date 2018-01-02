@@ -74,12 +74,12 @@ class CardOutput extends React.Component {
     render() {
         return (
             <div {...CSS} {...debug}>
-                <span className={"output-header"}>Output</span>
+                <span className="output-header">Output</span>
                 <div>
                     {
                         this.props.messages.length ?
                         this.props.messages.map(msg => {
-                            return (<AdaptiveCardOutputMessage key={msg} message={msg}></AdaptiveCardOutputMessage>);
+                            return (<AdaptiveCardOutputMessage key={ msg } message={ msg } />);
                         }) : <span>Output is empty...</span>
                     }
                 </div>

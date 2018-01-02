@@ -102,7 +102,7 @@ class CardPreview extends React.Component {
     render() {
         return(
             <div {...CSS} {...debug}>
-                <span className={"preview-header"}>Preview</span>
+                <span className="preview-header">Preview</span>
                 <div ref={ this.saveCardContainer }></div>
             </div>
         );

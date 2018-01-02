@@ -50,7 +50,7 @@ export default class CardOutputMessage extends React.Component {
     render() {
         return (
             <div {...CSS}>
-                <pre>{this.props.message}</pre>
+                <pre>{ this.props.message }</pre>
             </div>
         );
     }

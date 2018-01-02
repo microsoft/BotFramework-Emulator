@@ -42,7 +42,7 @@ export default class CardTemplateRow extends React.Component {
     render() {
         return (
             <div {...CSS}>
-                <div><label>{this.props.entityName}</label></div>
+                <div><label>{ this.props.entityName }</label></div>
                 <input />
             </div>
         );

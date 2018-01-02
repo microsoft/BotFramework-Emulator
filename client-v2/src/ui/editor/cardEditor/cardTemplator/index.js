@@ -64,10 +64,10 @@ class CardTemplator extends React.Component {
     render() {
         return (
             <div {...CSS} {...debug}>
-                <span className={"template-header"}>Template Editor</span>
+                <span className="template-header">Template Editor</span>
                 {
                     this.props.entities.map(ent => {
-                        return <CardTemplateRow key={ent} entityName={ent} />
+                        return <CardTemplateRow key={ ent } entityName={ ent } />
                     })
                 }
             </div>

@@ -37,7 +37,7 @@ import CardJsonEditor from './cardJsonEditor';
 import CardOutput from './cardOutput';
 import CardPreview from './cardPreview';
 import CardTemplator from './cardTemplator';
-import Splitter from 'react-split-pane';
+import Splitter from '../../layout/splitter';
 
 const CSS = css({
     display: "flex",
@@ -52,14 +52,8 @@ const CSS = css({
         flexFlow: "column nowrap",
         height: "100%",
         width: "100%",
-        padding: "0 24px"
-    },
-
-    " .card-vertical-splitter": {
-        height: "100%",
-        width: "24px",
-        cursor: "ew-resize",
-        flexShrink: "0"
+        padding: "0 24px",
+        boxSizing: "border-box"
     },
 
     " .card-horizontal-splitter": {
@@ -72,36 +66,55 @@ const CSS = css({
     " .card-json-editor-container": {
         height: "100%",
         width: "100%",
-        padding: "24px"
+        padding: "24px",
+        boxSizing: "border-box"
     }
 });
 
-export default props =>
-    <div {...CSS}>
-        <Splitter
-            split={"vertical"}
-            minSize={900}
-            defaultSize={900}
-            onChange={ onChangeVerticalSplit }
-        >
-            <div className={"card-json-editor-container"}>
-                <CardJsonEditor />
+export default class CardEditor extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+
+        this.onChangeVerticalSplit = this.onChangeVerticalSplit.bind(this);
+        this.saveJsonEditorContainer = this.saveJsonEditorContainer.bind(this);
+
+        this.state = { containerWidth: null };
+    }
+
+    // called when the vertical splitter is moved
+    onChangeVerticalSplit(newSecondaryPaneSize) {
+        const containerWidth = this.editorContainer.getBoundingClientRect().width;
+        this.setState(() => ({ containerWidth: containerWidth }));
+    }
+
+    saveJsonEditorContainer(element) {
+        this.editorContainer = element;
+    }
+
+    render() {
+        return(
+            <div {...CSS}>
+                <Splitter
+                    vertical={ false }
+                    onSecondaryPaneSizeChange={ this.onChangeVerticalSplit }
+                >
+                    <div className="card-json-editor-container" ref={ this.saveJsonEditorContainer }>
+                        <CardJsonEditor editorWidth={ this.state.containerWidth } />
+                    </div>
+
+                    <div className="card-right-panel">
+                        <CardPreview />
+
+                        <div className="card-horizontal-splitter"></div>
+
+                        <CardTemplator />
+
+                        <div className="card-horizontal-splitter"></div>
+
+                        <CardOutput />
+                    </div>
+                </Splitter>
             </div>
-
-            <div className={"card-right-panel"}>
-                <CardPreview></CardPreview>
-
-                <div className={"card-horizontal-splitter"}></div>
-
-                <CardTemplator></CardTemplator>
-
-                <div className={"card-horizontal-splitter"}></div>
-
-                <CardOutput></CardOutput>
-            </div>
-        </Splitter>
-    </div>
-
-function onChangeVerticalSplit(splitSize) {
-    console.log("got vertical change: ", splitSize);
+        );
+    }
 }

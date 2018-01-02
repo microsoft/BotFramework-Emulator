@@ -36,6 +36,7 @@ import { css } from 'glamor'
 import React from 'react'
 import ReactDOM from 'react-dom';
 import * as CardActions from '../../../../data/action/cardActions';
+import PropTypes from 'prop-types';
 
 const CSS = css({
     height: "100%",
@@ -63,6 +64,8 @@ class CardJsonEditor extends React.Component {
         super(props, context);
 
         this.saveContainer = this.saveContainer.bind(this);
+
+        this.state = { loaderReady: false };
     }
 
     componentDidMount() {
@@ -98,6 +101,11 @@ class CardJsonEditor extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         const { loaderReady: prevLoaderReady } = prevState || {};
+        const { editorWidth: prevEditorWidth } = prevProps || null;
+
+        if (prevEditorWidth && this.editor) {
+            this.editor.layout();
+        }
 
         // if we have the monaco loader loaded, then let's create the editor
         if (!prevLoaderReady && this.state.loaderReady) {
@@ -143,13 +151,17 @@ class CardJsonEditor extends React.Component {
     render() {
         return (
             <div {...CSS}>
-                <span className={"json-header"}>Editor</span>
-                <div ref={this.saveContainer}>
+                <span className="json-header">Editor</span>
+                <div ref={ this.saveContainer }>
                 </div>
             </div>
         );
     }
 }
+
+CardJsonEditor.propTypes = {
+    editorWidth: PropTypes.number
+};
 
 export default connect(state => ({
     cardJson: state.card.cardJson
