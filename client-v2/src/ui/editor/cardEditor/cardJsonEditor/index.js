@@ -59,6 +59,16 @@ const CSS = css({
     }
 });
 
+// It's necessary to store a global copy of the AMD require from
+// Monaco's loader.js. The first time this component is mounted,
+// loading the external/vs/loader.js script causes the global.require
+// to be overwritten with the AMD require, which allows us grab a reference to it.
+// However, on successive loads of external/vs/loader.js
+// (like when navigating to a different tab and then back), the global.require
+// is not overwritten with the AMD require, so we lose the reference and Monaco
+// fails to load because it is not the expected require, but the Node/Electron require.
+var amdRequire;
+
 class CardJsonEditor extends React.Component {
     constructor(props, context) {
         super(props, context);
@@ -69,47 +79,53 @@ class CardJsonEditor extends React.Component {
     }
 
     componentDidMount() {
-        // store electron information so that we can swap it back later
-        const electronModule = global.module;
-        const electronRequire = global.require;
-        const electronProcess = global.process;
-
-        // pretend that we aren't in electron so that the monaco loader
-        // tries to load from the server and not the electron app root
-        global.module = undefined;
-        global.process = undefined;
-
-        // load the monaco loader
-        const scriptTag = document.createElement('script');
-        scriptTag.setAttribute('src', 'external/vs/loader.js');
-        scriptTag.addEventListener('load', () => {
-            // grab the monaco amd loader
-            this._amdRequire = global.require;
-
-            // swap globals back to original electron state
-            global.module = electronModule;
-            global.require = electronRequire;
-            global.process = electronProcess;
-
-            document.body.removeChild(scriptTag);
-
+        if (window.monaco && window.monaco.editor && amdRequire) {
             this.setState(() => ({ loaderReady: true }));
-        });
+        } else {
+            // store electron information so that we can swap it back later
+            const electronModule = global.module;
+            const electronRequire = global.require;
+            const electronProcess = global.process;
 
-        document.body.appendChild(scriptTag);
+            // pretend that we aren't in electron so that the monaco loader
+            // tries to load from the server and not the electron app root
+            global.module = undefined;
+            global.process = undefined;
+
+            // load the monaco loader
+            const scriptTag = document.createElement('script');
+            scriptTag.setAttribute('src', 'external/vs/loader.js');
+            scriptTag.addEventListener('load', () => {
+                // grab the monaco amd loader
+                if (!amdRequire) {
+                    amdRequire = global.require;
+                }
+
+                // swap globals back to original electron state
+                global.module = electronModule;
+                global.require = electronRequire;
+                global.process = electronProcess;
+
+                document.body.removeChild(scriptTag);
+
+                this.setState(() => ({ loaderReady: true }));
+            });
+
+            document.body.appendChild(scriptTag);
+        }
     }
 
     componentDidUpdate(prevProps, prevState) {
         const { loaderReady: prevLoaderReady } = prevState || {};
         const { editorWidth: prevEditorWidth } = prevProps || null;
 
-        if (prevEditorWidth && this.editor) {
-            this.editor.layout();
+        if (prevEditorWidth && this._editor) {
+            this._editor.layout();
         }
 
         // if we have the monaco loader loaded, then let's create the editor
         if (!prevLoaderReady && this.state.loaderReady) {
-            this._amdRequire.config({
+            amdRequire.config({
                 baseUrl: '/external/'
             });
 
@@ -122,18 +138,27 @@ class CardJsonEditor extends React.Component {
             // workaround monaco-typescript not understanding the environment
             global.process.browser = true;
 
-            this._amdRequire(['vs/editor/editor.main'], () => {
-                this.editor = window.monaco.editor.create(this.editorContainer, {
-                    value: this.props.cardJson,
-                    language: 'json',
-                    theme: "vs-dark"
+            if (window.monaco && window.monaco.editor) {
+                this.initMonacoEditor();
+            } else {
+                amdRequire(['vs/editor/editor.main'], () => {
+                    this.initMonacoEditor();
                 });
-
-                this.editor.onDidChangeModelContent(evt => {
-                    this.handleCodeChange(this.editor.getValue());
-                });
-            });
+            }
         }
+    }
+
+    // creates the monaco editor, inserts it into the DOM, and hooks up code change listener
+    initMonacoEditor() {
+        this._editor = window.monaco.editor.create(this.editorContainer, {
+            value: this.props.cardJson,
+            language: 'json',
+            theme: "vs-dark"
+        });
+
+        this._editor.onDidChangeModelContent(evt => {
+            this.handleCodeChange(this._editor.getValue());
+        });
     }
 
     // save a reference of the monaco editor container
@@ -145,8 +170,6 @@ class CardJsonEditor extends React.Component {
     handleCodeChange(newVal) {
         this.props.dispatch(CardActions.updateCardJson(newVal));
     }
-
-    // need to call this.editor.layout() on splitter resize
 
     render() {
         return (
