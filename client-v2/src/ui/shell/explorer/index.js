@@ -39,6 +39,7 @@ import BotExplorer from './botExplorer';
 import CardExplorer from './cardExplorer';
 import LuisExplorer from './luisExplorer';
 import FormExplorer from './formExplorer';
+import ConversationExplorer from './conversationExplorer';
 import ExplorerSet from './explorerSet';
 
 import * as constants from '../../../constants';
@@ -48,16 +49,17 @@ class ExplorerBar extends React.Component {
     render() {
         if (this.props.navBar.selection === constants.NavBar_Bots) {
             return (
-                <ExplorerSet title="Bot Explorer">
+                <ExplorerSet title="Emulator">
                     <BotExplorer />
                 </ExplorerSet>
             );
         } else if (this.props.navBar.selection === constants.NavBar_Assets) {
             return (
-                <ExplorerSet title="Asset Explorer">
+                <ExplorerSet title="Assets">
                     <CardExplorer />
                     <LuisExplorer />
                     <FormExplorer />
+                    <ConversationExplorer />
                 </ExplorerSet>
             );
         }

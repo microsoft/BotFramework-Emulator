@@ -36,6 +36,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
+import * as BotActions from '../../../data/action/botActions';
 
 const CSS = css({
     backgroundColor: 'skyblue',
@@ -65,6 +66,7 @@ class BotExplorer extends React.Component {
 
     handleAddClick(e) {
         e.stopPropagation();
+        this.props.dispatch(BotActions.createBot());
     }
 
     render() {

@@ -31,22 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as BotActions from '../action/botActions';
 
-
-const DEFAULT_STATE = {
-    bots: []
+export function uniqueId(length) {
+    Math.random().toString(24).substr(2, length);
 }
 
-export default function bots(state = DEFAULT_STATE, action) {
-    switch (action.type) {
-        case BotActions.CREATE_BOT:
-            const bots = [...state.bots, action.payload.bot];
-            state = {...state, bots: bots };
-            break;
-
-        default: break;
-    }
-
-    return state;
-}

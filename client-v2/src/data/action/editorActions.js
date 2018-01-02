@@ -31,22 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as BotActions from '../action/botActions';
+export const NEW_DOCUMENT = 'EDITOR/NEW_DOCUMENT';
 
-
-const DEFAULT_STATE = {
-    bots: []
-}
-
-export default function bots(state = DEFAULT_STATE, action) {
-    switch (action.type) {
-        case BotActions.CREATE_BOT:
-            const bots = [...state.bots, action.payload.bot];
-            state = {...state, bots: bots };
-            break;
-
-        default: break;
+export function newDocument(contentType, content) {
+    return {
+        type: NEW_DOCUMENT,
+        payload: {
+            document: {
+                contentType,
+                content
+            }
+        }
     }
-
-    return state;
 }
