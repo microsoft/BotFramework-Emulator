@@ -31,22 +31,31 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as constants from '../../constants';
+import { css } from 'glamor';
+import React from 'react';
+import Splitter from '../../layout/splitter';
 
-const DEFAULT_STATE = {
-    documents: [{
-        contentType: constants.ContentType_BotChat,
-        content: {}
-    }, {
-        contentType: constants.ContentType_Card,
-        content: {}
-    }]
-};
+import ChatPanel from './chatPanel';
+import DetailPanel from './detailPanel';
+import LogPanel from './logPanel';
 
-export default function documents(state = DEFAULT_STATE, action) {
-    switch (action.type) {
-    default: break;
+const CSS = css({
+    flex: 1,
+    position: 'relative'
+});
+
+export default class BotChatEditor extends React.Component {
+    render() {
+        return (
+            <div className={ CSS }>
+                <Splitter>
+                    <ChatPanel />
+                    <Splitter vertical={ true }>
+                        <DetailPanel />
+                        <LogPanel />
+                    </Splitter>
+                </Splitter>
+            </div>
+        );
     }
-
-    return state;
 }

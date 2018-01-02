@@ -33,39 +33,36 @@
 
 import { css } from 'glamor';
 import React from 'react';
+import { connect } from 'react-redux';
 
-import ExpandCollapse from '../layout/expandCollapse';
+import BotExplorer from './botExplorer';
+import CardExplorer from './cardExplorer';
+import LuisExplorer from './luisExplorer';
+import FormExplorer from './formExplorer';
+import ExplorerSet from './explorerSet';
 
-const CSS = css({
-    backgroundColor: 'Pink',
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0,
-    width: 200
-});
+import * as constants from '../../../constants';
 
-const BOTS_CSS = css({
-    display: 'flex',
-    flexDirection: 'column',
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0
-});
 
-export default props =>
-    <ul className={ CSS }>
-        <li>
-            <ExpandCollapse
-                initialExpanded={ true }
-                title="Adaptive Cards"
-            >
-                <ul className={ BOTS_CSS }>
-                    <li>Greeting</li>
-                    <li>Address input</li>
-                </ul>
-            </ExpandCollapse>
-        </li>
-    </ul>
+class ExplorerBar extends React.Component {
+    render() {
+        if (this.props.navBar.selection === constants.NavBar_Bots) {
+            return (
+                <ExplorerSet>
+                    <BotExplorer />
+                </ExplorerSet>
+            );
+        } else if (this.props.navBar.selection === constants.NavBar_Assets) {
+            return (
+                <ExplorerSet>
+                    <CardExplorer />
+                    <LuisExplorer />
+                    <FormExplorer />
+                </ExplorerSet>
+            );
+        }
+        return false;
+    }
+}
+
+export default connect(state => ({ navBar: state.navBar }))(ExplorerBar)

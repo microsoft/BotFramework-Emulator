@@ -35,14 +35,9 @@ import { connect } from 'react-redux';
 import { css } from 'glamor';
 import React from 'react';
 
-import AssetExplorer from './assetExplorer';
-import BotExplorer from './botExplorer';
-import Editor from '../editor';
-import EmulatorEditor from './emulatorEditor';
-import ExplorerBar from './explorerBar';
-import MultiTabs from './multiTabs';
+import ExplorerBar from './explorer';
+import MDI from './mdi';
 import NavBar from './navBar';
-import Tab from './multiTabs/tab';
 
 css.global('html, body, #root', {
     height: '100%',
@@ -57,7 +52,7 @@ const CSS = css({
     minHeight: '100%'
 });
 
-class Main extends React.Component {
+export default class Main extends React.Component {
     constructor(props, context) {
         super(props, context);
 
@@ -76,27 +71,9 @@ class Main extends React.Component {
         return (
             <div className={ CSS }>
                 <NavBar />
-                <ExplorerBar>
-                    <BotExplorer />
-                    <AssetExplorer />
-                </ExplorerBar>
-                <MultiTabs
-                    onChange={ this.handleTabChange }
-                    value={ this.state.tabValue }
-                >
-                    {
-                        this.props.documents.map(document =>
-                            <Tab key={ document.title } title={ document.title }>
-                                <Editor document={ document } />
-                            </Tab>
-                        )
-                    }
-                </MultiTabs>
+                <ExplorerBar />
+                <MDI />
             </div>
         );
     }
 }
-
-export default connect(state => ({
-    documents: state.editor.documents
-}))(Main)

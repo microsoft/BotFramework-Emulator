@@ -31,22 +31,41 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as constants from '../../constants';
+import { css } from 'glamor';
+import React from 'react';
 
-const DEFAULT_STATE = {
-    documents: [{
-        contentType: constants.ContentType_BotChat,
-        content: {}
-    }, {
-        contentType: constants.ContentType_Card,
-        content: {}
-    }]
-};
+import ExpandCollapse from '../../layout/expandCollapse';
 
-export default function documents(state = DEFAULT_STATE, action) {
-    switch (action.type) {
-    default: break;
-    }
+const CSS = css({
+    backgroundColor: 'Pink',
+    display: 'flex',
+    flex: 1,
+    flexDirection: 'column',
+    listStyleType: 'none',
+    margin: 0,
+    padding: 0,
+    width: 200
+});
 
-    return state;
-}
+const BOTS_CSS = css({
+    display: 'flex',
+    flexDirection: 'column',
+    listStyleType: 'none',
+    margin: 0,
+    padding: 0
+});
+
+export default props =>
+    <ul className={ CSS }>
+        <li>
+            <ExpandCollapse
+                initialExpanded={ true }
+                title="Cards"
+            >
+                <ul className={ BOTS_CSS }>
+                    <li>Greeting</li>
+                    <li>Address input</li>
+                </ul>
+            </ExpandCollapse>
+        </li>
+    </ul>

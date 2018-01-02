@@ -32,40 +32,29 @@
 //
 
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
 import React from 'react';
 
-import ExpandCollapse from '../layout/expandCollapse';
+import Panel from './panel';
 
 const CSS = css({
-    backgroundColor: 'Pink',
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0,
-    width: 200
+    height: '100%'
 });
 
-const BOTS_CSS = css({
-    display: 'flex',
-    flexDirection: 'column',
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0
-});
+export default class DetailPanel extends React.Component {
+    render() {
+        return (
+            <div className={ CSS }>
+                <Panel>
+                    <Detail />
+                </Panel>
+            </div>
+        );
+    }
+}
 
-export default props =>
-    <ul className={ CSS }>
-        <li>
-            <ExpandCollapse
-                initialExpanded={ true }
-                title="Assets"
-            >
-                <ul className={ BOTS_CSS }>
-                    <li>Adaptive cards</li>
-                    <li>LUIS models</li>
-                </ul>
-            </ExpandCollapse>
-        </li>
-    </ul>
+class Detail extends React.Component {
+    render() {
+        return <span>I am Detail</span>;
+    }
+}

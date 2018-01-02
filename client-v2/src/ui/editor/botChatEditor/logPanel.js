@@ -31,22 +31,30 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as constants from '../../constants';
+import { css } from 'glamor';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-const DEFAULT_STATE = {
-    documents: [{
-        contentType: constants.ContentType_BotChat,
-        content: {}
-    }, {
-        contentType: constants.ContentType_Card,
-        content: {}
-    }]
-};
+import Panel from './panel';
 
-export default function documents(state = DEFAULT_STATE, action) {
-    switch (action.type) {
-    default: break;
+const CSS = css({
+    height: '100%'
+});
+
+export default class LogPanel extends React.Component {
+    render() {
+        return (
+            <div className={ CSS }>
+                <Panel>
+                    <Log />
+                </Panel>
+            </div>
+        );
     }
+}
 
-    return state;
+class Log extends React.Component {
+    render() {
+        return <span>I am Log</span>;
+    }
 }

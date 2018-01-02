@@ -31,21 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as constants from '../../constants';
-
 const DEFAULT_STATE = {
-    documents: [{
-        contentType: constants.ContentType_BotChat,
-        content: {}
-    }, {
-        contentType: constants.ContentType_Card,
-        content: {}
-    }]
-};
+    bots: []
+}
 
-export default function documents(state = DEFAULT_STATE, action) {
+export default function bots(state = DEFAULT_STATE, action) {
     switch (action.type) {
-    default: break;
+        default: break;
     }
 
     return state;

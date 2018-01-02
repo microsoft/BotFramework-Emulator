@@ -32,36 +32,38 @@
 //
 
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 const CSS = css({
-    backgroundColor: 'LightGreen',
     display: 'flex',
+    flex: 1,
     flexDirection: 'column',
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0,
-
-    '& > li': {
-        display: 'flex',
-        flexDirection: 'column'
-    },
-
-    '& > li:last-child': {
-        flex: 1
-    }
+    height: '100%',
+    position: 'relative'
 });
 
-export default class ExplorerBar extends React.Component {
+const HEADER_CSS = css({
+    backgroundColor: 'gold',
+    height: 30,
+    minHeight: 30
+});
+
+const BODY_CSS = css({
+    backgroundColor: 'lightgreen',
+    flex: 1
+});
+
+export default class Panel extends React.Component {
     render() {
         return (
-            <ul className={ CSS }>
-                {
-                    React.Children.map(this.props.children, child =>
-                        <li>{ child }</li>
-                    )
-                }
-            </ul>
+            <div className={ CSS }>
+                <div className={ HEADER_CSS }>
+                </div>
+                <div className={ BODY_CSS }>
+                    { this.props.children }
+                </div>
+            </div>
         );
     }
 }

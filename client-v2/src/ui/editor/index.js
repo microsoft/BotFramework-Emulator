@@ -36,28 +36,28 @@ import React from 'react';
 
 import CardEditor from './cardEditor';
 import BotChatEditor from './botChatEditor';
+import * as constants from '../../constants';
+
 
 export { CardEditor, BotChatEditor }
 
-export default class Editor extends React.Component {
+export default class EditorFactory extends React.Component {
     render() {
         const { document } = this.props;
         const { contentType } = document;
 
         return (
-            contentType === 'application/vnd.microsoft.card.adaptive' ?
-                <CardEditor />
-            : contentType === 'application/vnd.microsoft.botframework.bot' ?
-                <BotChatEditor
-                    directLineURL={ document.directLineURL }
-                />
+            contentType === constants.ContentType_Card ?
+                <CardEditor document={ document } />
+            : contentType === constants.ContentType_BotChat ?
+                <BotChatEditor document={ document } />
             :
                 false
         );
     }
 }
 
-Editor.propTypes = {
+EditorFactory.propTypes = {
     document: PropTypes.shape({
         contentType: PropTypes.string
     })

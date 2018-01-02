@@ -32,21 +32,29 @@
 //
 
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
 import React from 'react';
 
-import { MainView } from '../../v1/mainView';
+import Panel from './panel';
 
 const CSS = css({
-    flex: 1,
-    position: 'relative'
+    height: '100%'
 });
 
-export default class BotChatEditor extends React.Component {
+export default class ChatPanel extends React.Component {
     render() {
         return (
             <div className={ CSS }>
-                <MainView />
+                <Panel>
+                    <Chat />
+                </Panel>
             </div>
         );
+    }
+}
+
+class Chat extends React.Component {
+    render() {
+        return <span>I am Chat</span>;
     }
 }

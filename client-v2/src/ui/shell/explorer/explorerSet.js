@@ -31,22 +31,37 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as constants from '../../constants';
+import { css } from 'glamor';
+import React from 'react';
 
-const DEFAULT_STATE = {
-    documents: [{
-        contentType: constants.ContentType_BotChat,
-        content: {}
-    }, {
-        contentType: constants.ContentType_Card,
-        content: {}
-    }]
-};
+const CSS = css({
+    backgroundColor: 'LightGreen',
+    display: 'flex',
+    flexDirection: 'column',
+    listStyleType: 'none',
+    margin: 0,
+    padding: 0,
 
-export default function documents(state = DEFAULT_STATE, action) {
-    switch (action.type) {
-    default: break;
+    '& > li': {
+        display: 'flex',
+        flexDirection: 'column'
+    },
+
+    '& > li:last-child': {
+        flex: 1
     }
+});
 
-    return state;
+export default class ExplorerSet extends React.Component {
+    render() {
+        return (
+            <ul className={ CSS }>
+                {
+                    React.Children.map(this.props.children, child =>
+                        <li>{ child }</li>
+                    )
+                }
+            </ul>
+        );
+    }
 }

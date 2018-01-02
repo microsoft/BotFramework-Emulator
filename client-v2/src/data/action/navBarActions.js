@@ -31,15 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
-import React from 'react';
+export const SELECT_OR_TOGGLE = 'NAVBAR/SELECT_OR_TOGGLE';
 
-export default class EmulatorEditor extends React.Component {
-    render() {
-        return (
-            <div>
-                { this.props.children }
-            </div>
-        );
-    }
+
+export function selectOrToggle(selection) {
+    return {
+        type: SELECT_OR_TOGGLE,
+        payload: {
+            selection
+        }
+    };
 }
