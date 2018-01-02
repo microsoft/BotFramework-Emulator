@@ -41,8 +41,8 @@ const CSS = css({
 
 const HEADER_CSS = css({
     backgroundColor: 'hotpink',
-    lineHeight: '30px',
-    display: 'flex'
+    display: 'flex',
+    lineHeight: '30px'
 });
 
 const CONTROLS_CSS = css({
