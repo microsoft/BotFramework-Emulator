@@ -50,7 +50,7 @@ export default class EditorFactory extends React.Component {
                 <BotChatEditor document={ document } />
             : contentType === constants.ContentType_Converation ?
                 <ConversationEditor document={ document } />
-            :   false
+            : false
         );
     }
 }
