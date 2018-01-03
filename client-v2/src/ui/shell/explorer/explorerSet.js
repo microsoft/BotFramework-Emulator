@@ -39,7 +39,8 @@ const CSS = css({
     display: 'flex',
     flexDirection: 'column',
     margin: 0,
-    padding: 0
+    padding: 0,
+    height: '100%'
 });
 
 const HEADER_CSS = css({

@@ -34,21 +34,19 @@
 import { css } from 'glamor';
 import React from 'react';
 import Splitter from '../../layout/splitter';
-
 import ChatPanel from './chatPanel';
 import DetailPanel from './detailPanel';
 import LogPanel from './logPanel';
 
 const CSS = css({
-    flex: 1,
-    position: 'relative'
+    flex: 1
 });
 
 export default class BotChatEditor extends React.Component {
     render() {
         return (
             <div className={ CSS }>
-                <Splitter>
+                <Splitter secondaryInitialSize={ 500 }>
                     <ChatPanel />
                     <Splitter vertical={ true }>
                         <DetailPanel />

@@ -31,59 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
-import { css } from 'glamor';
-import React from 'react';
-import ExplorerBar from './explorer';
-import MDI from './mdi';
-import NavBar from './navBar';
-import Splitter from '../layout/splitter';
+import * as AssetExplorerActions from '../action/assetExplorerActions';
 
-css.global('html, body, #root', {
-    height: '100%',
-    margin: 0,
-    minHeight: '100%',
-    overflow: 'hidden'
-});
+const DEFAULT_STATE = {
+    folder: null
+}
 
-const CSS = css({
-    backgroundColor: 'yellow',
-    display: 'flex',
-    minHeight: '100%'
-});
+export default function assetExplorer(state = DEFAULT_STATE, action) {
+    switch (action.type) {
+        case AssetExplorerActions.OPEN_FOLDER:
+            state = {
+                folder: action.payload.folder
+            };
+            break;
 
-const SECOND_CSS = css({
-    backgroundColor: 'lightgreen',
-    display: 'flex',
-    flex: 1
-})
-
-export default class Main extends React.Component {
-    constructor(props, context) {
-        super(props, context);
-
-        this.handleTabChange = this.handleTabChange.bind(this);
-
-        this.state = {
-            tabValue: 0
-        };
+        default: break;
     }
 
-    handleTabChange(nextTabValue) {
-        this.setState(() => ({ tabValue: nextTabValue }));
-    }
-
-    render() {
-        return (
-            <div className={ CSS }>
-                <NavBar />
-                <div { ...SECOND_CSS }>
-                    <Splitter primaryIndex={ 1 } secondaryInitialSize={ 300 }>
-                        <ExplorerBar />
-                        <MDI />
-                    </Splitter>
-                </div>
-            </div>
-        );
-    }
+    return state;
 }

@@ -31,59 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
-import { css } from 'glamor';
 import React from 'react';
-import ExplorerBar from './explorer';
-import MDI from './mdi';
-import NavBar from './navBar';
-import Splitter from '../layout/splitter';
+import ExplorerSet from './explorerSet';
+import BotExplorer from './botExplorer';
 
-css.global('html, body, #root', {
-    height: '100%',
-    margin: 0,
-    minHeight: '100%',
-    overflow: 'hidden'
-});
-
-const CSS = css({
-    backgroundColor: 'yellow',
-    display: 'flex',
-    minHeight: '100%'
-});
-
-const SECOND_CSS = css({
-    backgroundColor: 'lightgreen',
-    display: 'flex',
-    flex: 1
-})
-
-export default class Main extends React.Component {
-    constructor(props, context) {
-        super(props, context);
-
-        this.handleTabChange = this.handleTabChange.bind(this);
-
-        this.state = {
-            tabValue: 0
-        };
-    }
-
-    handleTabChange(nextTabValue) {
-        this.setState(() => ({ tabValue: nextTabValue }));
-    }
-
-    render() {
-        return (
-            <div className={ CSS }>
-                <NavBar />
-                <div { ...SECOND_CSS }>
-                    <Splitter primaryIndex={ 1 } secondaryInitialSize={ 300 }>
-                        <ExplorerBar />
-                        <MDI />
-                    </Splitter>
-                </div>
-            </div>
-        );
-    }
-}
+export default props =>
+    <ExplorerSet title="Emulator">
+        <BotExplorer />
+    </ExplorerSet>

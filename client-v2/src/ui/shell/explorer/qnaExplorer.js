@@ -31,59 +31,42 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
 import { css } from 'glamor';
 import React from 'react';
-import ExplorerBar from './explorer';
-import MDI from './mdi';
-import NavBar from './navBar';
-import Splitter from '../layout/splitter';
 
-css.global('html, body, #root', {
-    height: '100%',
-    margin: 0,
-    minHeight: '100%',
-    overflow: 'hidden'
-});
+import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
 
 const CSS = css({
-    backgroundColor: 'yellow',
+    backgroundColor: 'Pink',
     display: 'flex',
-    minHeight: '100%'
+    flex: 1,
+    flexDirection: 'column',
+    listStyleType: 'none',
+    margin: 0,
+    padding: 0
 });
 
-const SECOND_CSS = css({
-    backgroundColor: 'lightgreen',
+const BOTS_CSS = css({
     display: 'flex',
-    flex: 1
-})
+    flexDirection: 'column',
+    listStyleType: 'none',
+    margin: 0,
+    padding: 0
+});
 
-export default class Main extends React.Component {
-    constructor(props, context) {
-        super(props, context);
-
-        this.handleTabChange = this.handleTabChange.bind(this);
-
-        this.state = {
-            tabValue: 0
-        };
-    }
-
-    handleTabChange(nextTabValue) {
-        this.setState(() => ({ tabValue: nextTabValue }));
-    }
-
-    render() {
-        return (
-            <div className={ CSS }>
-                <NavBar />
-                <div { ...SECOND_CSS }>
-                    <Splitter primaryIndex={ 1 } secondaryInitialSize={ 300 }>
-                        <ExplorerBar />
-                        <MDI />
-                    </Splitter>
-                </div>
-            </div>
-        );
-    }
-}
+export default props =>
+    <ul className={ CSS }>
+        <li>
+            <ExpandCollapse
+                initialExpanded={ true }
+                title="QnA Models"
+            >
+                <ExpandCollapseContent>
+                    <ul className={ BOTS_CSS }>
+                        <li>FAQ</li>
+                        <li>Small Talk</li>
+                    </ul>
+                </ExpandCollapseContent>
+            </ExpandCollapse>
+        </li>
+    </ul>

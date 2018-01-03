@@ -33,12 +33,16 @@
 
 import { css } from 'glamor';
 import React from 'react';
-import * as constants from '../../../constants';
 import { connect } from 'react-redux';
 import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
+import * as AssetExplorerActions from '../../../data/action/assetExplorerActions';
+
+if (typeof window !== 'undefined') { require = window['require']; }
+
+const { dialog } = require('electron').remote;
 
 const CSS = css({
-    backgroundColor: 'Pink',
+    backgroundColor: 'skyblue',
     display: 'flex',
     flex: 1,
     flexDirection: 'column',
@@ -55,26 +59,37 @@ const BOTS_CSS = css({
     padding: 0
 });
 
-export class CardExplorer extends React.Component {
+class FolderNotOpenExplorer extends React.Component {
     constructor(props, context) {
         super(props, context);
+
+        this.handleOpenFolderClick = this.handleOpenFolderClick.bind(this);
+    }
+
+    handleOpenFolderClick(e) {
+        e.stopPropagation();
+        dialog.showOpenDialog({
+                properties: ['openDirectory']
+            },
+            (filepaths) => {
+                if (filepaths && filepaths[0]) {
+                    this.props.dispatch(AssetExplorerActions.openFolder(filepaths[0]));
+                }
+            }
+        );
     }
 
     render() {
-        return(
+        return (
             <ul className={ CSS }>
                 <li>
                     <ExpandCollapse
                         initialExpanded={ true }
-                        title="Cards"
+                        title="No Folder Opened"
                     >
                         <ExpandCollapseContent>
-                            <ul className={ BOTS_CSS }>
-                                {
-                                     this.props.cards.length ?
-                                     this.props.cards.map(card => <li>{ card.content.title }</li>) : <li>No cards found...</li>
-                                }
-                            </ul>
+                            <div>You have not yet opened a folder.</div>
+                            <button onClick={ this.handleOpenFolderClick }>Open Folder</button>
                         </ExpandCollapseContent>
                     </ExpandCollapse>
                 </li>
@@ -83,6 +98,4 @@ export class CardExplorer extends React.Component {
     }
 }
 
-export default connect(state => ({
-    cards: state.editor.documents.filter(doc => doc.contentType === constants.ContentType_Card)
-}))(CardExplorer);
+export default connect(state => ({}))(FolderNotOpenExplorer)

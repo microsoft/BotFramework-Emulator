@@ -31,59 +31,53 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
 import React from 'react';
-import ExplorerBar from './explorer';
-import MDI from './mdi';
-import NavBar from './navBar';
-import Splitter from '../layout/splitter';
-
-css.global('html, body, #root', {
-    height: '100%',
-    margin: 0,
-    minHeight: '100%',
-    overflow: 'hidden'
-});
+import { filterChildren } from '../utils';
 
 const CSS = css({
-    backgroundColor: 'yellow',
     display: 'flex',
-    minHeight: '100%'
+    flex: 1,
+    flexDirection: 'column',
+    height: '100%',
+    position: 'relative'
 });
 
-const SECOND_CSS = css({
+const HEADER_CSS = css({
+    backgroundColor: 'gold',
+    lineHeight: '30px',
+    minHeight: '30px'
+});
+
+const CONTROLS_CSS = css({
+    margin: '0 0 0 auto'
+});
+
+const CONTENT_CSS = css({
     backgroundColor: 'lightgreen',
-    display: 'flex',
     flex: 1
-})
+});
 
-export default class Main extends React.Component {
-    constructor(props, context) {
-        super(props, context);
-
-        this.handleTabChange = this.handleTabChange.bind(this);
-
-        this.state = {
-            tabValue: 0
-        };
-    }
-
-    handleTabChange(nextTabValue) {
-        this.setState(() => ({ tabValue: nextTabValue }));
-    }
-
+export default class Panel extends React.Component {
     render() {
         return (
             <div className={ CSS }>
-                <NavBar />
-                <div { ...SECOND_CSS }>
-                    <Splitter primaryIndex={ 1 } secondaryInitialSize={ 300 }>
-                        <ExplorerBar />
-                        <MDI />
-                    </Splitter>
+                <div className={ HEADER_CSS }>
+                    { this.props.title }
+                    <div className={ CONTROLS_CSS }>
+                        { filterChildren(this.props.children, child => child.type === Controls) }
+                    </div>
+                </div>
+                <div className={ CONTENT_CSS }>
+                    <div>
+                        { filterChildren(this.props.children, child => child.type === Content) }
+                    </div>
                 </div>
             </div>
         );
     }
 }
+
+export const Controls = props => props.children;
+export const Content = props => props.children;

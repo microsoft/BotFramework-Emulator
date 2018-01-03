@@ -31,59 +31,45 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
-import { css } from 'glamor';
 import React from 'react';
-import ExplorerBar from './explorer';
-import MDI from './mdi';
-import NavBar from './navBar';
-import Splitter from '../layout/splitter';
+import { connect } from 'react-redux';
+import ExplorerSet from './explorerSet';
+import CardExplorer from './cardExplorer';
+import LuisExplorer from './luisExplorer';
+import QnAExplorer from './qnaExplorer';
+import FormExplorer from './formExplorer';
+import ConversationExplorer from './conversationExplorer';
+import FolderNotOpenExplorer from './folderNotOpenExplorer';
 
-css.global('html, body, #root', {
-    height: '100%',
-    margin: 0,
-    minHeight: '100%',
-    overflow: 'hidden'
-});
+if (typeof window !== 'undefined') { require = window['require']; }
 
-const CSS = css({
-    backgroundColor: 'yellow',
-    display: 'flex',
-    minHeight: '100%'
-});
+const fs = require('fs');
 
-const SECOND_CSS = css({
-    backgroundColor: 'lightgreen',
-    display: 'flex',
-    flex: 1
-})
-
-export default class Main extends React.Component {
-    constructor(props, context) {
-        super(props, context);
-
-        this.handleTabChange = this.handleTabChange.bind(this);
-
-        this.state = {
-            tabValue: 0
-        };
-    }
-
-    handleTabChange(nextTabValue) {
-        this.setState(() => ({ tabValue: nextTabValue }));
-    }
-
+class AssetExplorerSet extends React.Component {
     render() {
-        return (
-            <div className={ CSS }>
-                <NavBar />
-                <div { ...SECOND_CSS }>
-                    <Splitter primaryIndex={ 1 } secondaryInitialSize={ 300 }>
-                        <ExplorerBar />
-                        <MDI />
-                    </Splitter>
-                </div>
-            </div>
-        );
+        let stat = null;
+        try {
+            stat = fs.statSync(this.props.folder);
+        } catch (e) { }
+
+        if (!stat || !stat.isDirectory()) {
+            return (
+                <ExplorerSet title="Asset Explorer">
+                    <FolderNotOpenExplorer />
+                </ExplorerSet>
+            );
+        } else {
+            return (
+                <ExplorerSet title="Asset Explorer">
+                    <CardExplorer />
+                    <LuisExplorer />
+                    <QnAExplorer />
+                    <FormExplorer />
+                    <ConversationExplorer />
+                </ExplorerSet>
+            );
+        }
     }
 }
+
+export default connect(state => ({ folder: state.assetExplorer.folder }))(AssetExplorerSet)

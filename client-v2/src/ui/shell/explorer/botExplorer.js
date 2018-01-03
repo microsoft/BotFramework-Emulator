@@ -34,7 +34,6 @@
 import { css } from 'glamor';
 import React from 'react';
 import { connect } from 'react-redux';
-
 import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
 import * as BotActions from '../../../data/action/botActions';
 
@@ -45,8 +44,7 @@ const CSS = css({
     flexDirection: 'column',
     listStyleType: 'none',
     margin: 0,
-    padding: 0,
-    width: 200
+    padding: 0
 });
 
 const BOTS_CSS = css({

@@ -42,6 +42,7 @@ import promiseMiddleware from 'redux-promise-middleware';
 import editor from './reducer/editor';
 import navBar from './reducer/navBar';
 import bot from './reducer/bot';
+import assetExplorer from './reducer/assetExplorer';
 import server from './reducer/server';
 import card from './reducer/card';
 
@@ -80,6 +81,7 @@ export default createStoreWithMiddleware(combineReducers({
     editor,
     navBar,
     bot,
-    server,
-    card
+    card,
+    assetExplorer,
+    server
 }));
