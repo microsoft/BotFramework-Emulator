@@ -40,8 +40,13 @@ const DEFAULT_STATE = {
 export default function bots(state = DEFAULT_STATE, action) {
     switch (action.type) {
         case BotActions.CREATE_BOT:
-            const bots = [...state.bots, action.payload.bot];
-            state = {...state, bots: bots };
+            state = {
+                ...state,
+                bots: [
+                    ...state.bots,
+                    action.payload.bot
+                ]
+            };
             break;
 
         default: break;

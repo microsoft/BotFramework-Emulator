@@ -32,7 +32,7 @@
 //
 
 
-export function uniqueId(length) {
-    Math.random().toString(24).substr(2, length);
+export function uniqueId() {
+    Math.random().toString(36).substr(2);
 }
 
