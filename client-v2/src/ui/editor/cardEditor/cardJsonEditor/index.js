@@ -189,7 +189,7 @@ class CardJsonEditor extends React.Component {
     // saves the card to the file system
     saveCard() {
         if (this.state.saveEnabled) {
-            const filePath = "C:\\Users\\toanzian\\Desktop\\TestAssetsRoot\\cards\\testcard.json";
+            const filePath = "C:\\Users\\Public\\Desktop\\TestAssetsRoot\\cards\\testcard.json";
             fs.writeFile(
                 filePath,
                 this.props.cardJson,
@@ -207,8 +207,12 @@ class CardJsonEditor extends React.Component {
     }
 
     // loads the card from the file system
-    loadCard(filePath = "C:\\Users\\toanzian\\Desktop\\TestAssetsRoot\\cards\\testcard.json") {
-        return fs.readFileSync(filePath, "utf-8");
+    loadCard(filePath = "C:\\Users\\Public\\Desktop\\TestAssetsRoot\\cards\\testcard.json") {
+        try {
+            return fs.readFileSync(filePath, "utf-8");
+        } catch (e) {
+            return false;
+        }
     }
 
     render() {
