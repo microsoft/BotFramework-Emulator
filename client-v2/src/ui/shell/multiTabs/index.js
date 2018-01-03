@@ -38,6 +38,7 @@ import React from 'react';
 import TabBar from './tabBar';
 import TabBarTab from './tabBarTab';
 import TabbedDocument, { Tab as TabbedDocumentTab, Content as TabbedDocumentContent } from './tabbedDocument';
+import { filterChildren } from '../../utils';
 
 const CSS = css({
     backgroundColor: 'orange',
@@ -63,19 +64,13 @@ export default class MultiTabs extends React.Component {
                 <TabBar>
                     {
                         React.Children.map(this.props.children, (tabbedDocument, index) =>
-                            <TabBarTab
-                                onClick={ this.handleTabClick.bind(this, index) }
-                            >
-                                {
-                                    filterChildren(tabbedDocument.props.children, child => child.type === TabbedDocumentTab)
-                                }
+                            <TabBarTab onClick={ this.handleTabClick.bind(this, index) }>
+                                { filterChildren(tabbedDocument.props.children, child => child.type === TabbedDocumentTab) }
                             </TabBarTab>
                         )
                     }
                 </TabBar>
-                {
-                    filterChildren(React.Children.toArray(this.props.children)[this.props.value].props.children, child => child.type === TabbedDocumentContent)
-                }
+                { filterChildren(React.Children.toArray(this.props.children)[this.props.value].props.children, child => child.type === TabbedDocumentContent) }
             </div>
         );
     }
@@ -86,6 +81,3 @@ MultiTabs.propTypes = {
     value: PropTypes.number
 };
 
-function filterChildren(children, predicate) {
-    return React.Children.map(children, child => predicate(child) ? child : false);
-}

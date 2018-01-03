@@ -34,11 +34,19 @@
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { filterChildren } from '../utils';
 
 const CSS = css({
-    '& > button': {
-        width: '100%'
-    }
+});
+
+const HEADER_CSS = css({
+    backgroundColor: 'hotpink',
+    display: 'flex',
+    lineHeight: '30px'
+});
+
+const CONTROLS_CSS = css({
+    margin: '0 0 0 auto'
 });
 
 export default class ExpandCollapse extends React.Component {
@@ -58,15 +66,18 @@ export default class ExpandCollapse extends React.Component {
 
     render() {
         return (
-            <div className={ CSS }>
-                <button onClick={ this.handleTitleClick }>
-                    { this.state.expanded ? 'v' : '^' }&nbsp;
+            <div aria-expanded={ this.state.expanded } className={ CSS }>
+                <div className={ HEADER_CSS } onClick={ this.handleTitleClick }>
+                    { this.state.expanded ? '▽' : '▷' }&nbsp;
                     { this.props.title }
-                </button>
+                    <div className={ CONTROLS_CSS }>
+                        { filterChildren(this.props.children, child => child.type === Controls) }
+                    </div>
+                </div>
                 {
                     this.state.expanded &&
                         <div>
-                            { this.props.children }
+                            { filterChildren(this.props.children, child => child.type === Content) }
                         </div>
                 }
             </div>
@@ -81,3 +92,6 @@ ExpandCollapse.defaultProps = {
 ExpandCollapse.propTypes = {
     initialExpanded: PropTypes.bool
 };
+
+export const Controls = props => props.children;
+export const Content = props => props.children;
