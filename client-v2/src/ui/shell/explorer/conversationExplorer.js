@@ -91,7 +91,7 @@ class ConversationExplorer extends React.Component {
                         <ExpandCollapseContent>
                             <ul className={ BOTS_CSS }>
                             {
-                                this.props.documents.filter(doc => doc.contentType === constants.ContentType_Converation).map(doc => {
+                                this.props.documents.map(doc => {
                                     return <li>Conversation</li>
                                 })
                             }
@@ -106,5 +106,5 @@ class ConversationExplorer extends React.Component {
 
 export default connect(state => ({
     folder: state.assetExplorer.folder,
-    documents: state.editor.documents
+    documents: state.editor.documents.filter(doc => doc.contentType === constants.ContentType_Converation)
 }))(ConversationExplorer)
