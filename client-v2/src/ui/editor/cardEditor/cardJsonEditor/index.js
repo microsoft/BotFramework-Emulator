@@ -101,10 +101,12 @@ class CardJsonEditor extends React.Component {
             const electronRequire = global.require;
             const electronProcess = global.process;
 
-            // pretend that we aren't in electron so that the monaco loader
-            // tries to load from the server and not the electron app root
-            global.module = undefined;
-            global.process = undefined;
+            if (location.protocol === 'http:') {
+                // pretend that we aren't in electron so that the monaco loader
+                // tries to load from the server and not the electron app root
+                global.module = undefined;
+                global.process = undefined;
+            }
 
             // load the monaco loader
             const scriptTag = document.createElement('script');
@@ -139,18 +141,24 @@ class CardJsonEditor extends React.Component {
 
         // if we have the monaco loader loaded, then let's create the editor
         if (!prevLoaderReady && this.state.loaderReady) {
-            amdRequire.config({
-                baseUrl: '/external/'
-            });
+            if (location.protocol === 'http:') {
+                amdRequire.config({
+                    baseUrl: '/external/'
+                });
+            } else {
+                amdRequire.config({
+                    baseUrl: require('url').resolve(location.href, 'external/')
+                });
+            }
 
             // The following two hacks are copied from
             // https://github.com/Microsoft/monaco-editor-samples/blob/master/sample-electron/index.html
 
             // workaround monaco-css not understanding the environment
-            global.module = undefined;
+            self.module = undefined;
 
             // workaround monaco-typescript not understanding the environment
-            global.process.browser = true;
+            self.process.browser = true;
 
             if (window.monaco && window.monaco.editor) {
                 this.initMonacoEditor();
