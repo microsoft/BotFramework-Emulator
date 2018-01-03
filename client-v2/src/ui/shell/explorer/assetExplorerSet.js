@@ -31,42 +31,45 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
 import React from 'react';
+import { connect } from 'react-redux';
+import ExplorerSet from './explorerSet';
+import CardExplorer from './cardExplorer';
+import LuisExplorer from './luisExplorer';
+import QnAExplorer from './qnaExplorer';
+import FormExplorer from './formExplorer';
+import ConversationExplorer from './conversationExplorer';
+import FolderNotOpenExplorer from './folderNotOpenExplorer';
 
-import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
+if (typeof window !== 'undefined') { require = window['require']; }
 
-const CSS = css({
-    backgroundColor: 'Pink',
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0
-});
+const fs = require('fs');
 
-const BOTS_CSS = css({
-    display: 'flex',
-    flexDirection: 'column',
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0
-});
+class AssetExplorerSet extends React.Component {
+    render() {
+        let stat = null;
+        try {
+            stat = fs.statSync(this.props.folder);
+        } catch (e) { }
 
-export default props =>
-    <ul className={ CSS }>
-        <li>
-            <ExpandCollapse
-                initialExpanded={ true }
-                title="Cards"
-            >
-                <ExpandCollapseContent>
-                    <ul className={ BOTS_CSS }>
-                        <li>Greeting</li>
-                        <li>Address input</li>
-                    </ul>
-                </ExpandCollapseContent>
-            </ExpandCollapse>
-        </li>
-    </ul>
+        if (!stat || !stat.isDirectory()) {
+            return (
+                <ExplorerSet title="Asset Explorer">
+                    <FolderNotOpenExplorer />
+                </ExplorerSet>
+            );
+        } else {
+            return (
+                <ExplorerSet title="Asset Explorer">
+                    <CardExplorer />
+                    <LuisExplorer />
+                    <QnAExplorer />
+                    <FormExplorer />
+                    <ConversationExplorer />
+                </ExplorerSet>
+            );
+        }
+    }
+}
+
+export default connect(state => ({ folder: state.assetExplorer.folder }))(AssetExplorerSet)

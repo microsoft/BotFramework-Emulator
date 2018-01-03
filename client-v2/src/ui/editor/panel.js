@@ -32,41 +32,52 @@
 //
 
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
 import React from 'react';
-
-import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
+import { filterChildren } from '../utils';
 
 const CSS = css({
-    backgroundColor: 'Pink',
     display: 'flex',
     flex: 1,
     flexDirection: 'column',
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0
+    height: '100%',
+    position: 'relative'
 });
 
-const BOTS_CSS = css({
-    display: 'flex',
-    flexDirection: 'column',
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0
+const HEADER_CSS = css({
+    backgroundColor: 'gold',
+    lineHeight: '30px',
+    minHeight: '30px'
 });
 
-export default props =>
-    <ul className={ CSS }>
-        <li>
-            <ExpandCollapse
-                initialExpanded={ true }
-                title="Cards"
-            >
-                <ExpandCollapseContent>
-                    <ul className={ BOTS_CSS }>
-                        <li>Greeting</li>
-                        <li>Address input</li>
-                    </ul>
-                </ExpandCollapseContent>
-            </ExpandCollapse>
-        </li>
-    </ul>
+const CONTROLS_CSS = css({
+    margin: '0 0 0 auto'
+});
+
+const CONTENT_CSS = css({
+    backgroundColor: 'lightgreen',
+    flex: 1
+});
+
+export default class Panel extends React.Component {
+    render() {
+        return (
+            <div className={ CSS }>
+                <div className={ HEADER_CSS }>
+                    { this.props.title }
+                    <div className={ CONTROLS_CSS }>
+                        { filterChildren(this.props.children, child => child.type === Controls) }
+                    </div>
+                </div>
+                <div className={ CONTENT_CSS }>
+                    <div>
+                        { filterChildren(this.props.children, child => child.type === Content) }
+                    </div>
+                </div>
+            </div>
+        );
+    }
+}
+
+export const Controls = props => props.children;
+export const Content = props => props.children;

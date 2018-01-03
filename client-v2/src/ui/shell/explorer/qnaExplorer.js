@@ -59,12 +59,12 @@ export default props =>
         <li>
             <ExpandCollapse
                 initialExpanded={ true }
-                title="Cards"
+                title="QnA Models"
             >
                 <ExpandCollapseContent>
                     <ul className={ BOTS_CSS }>
-                        <li>Greeting</li>
-                        <li>Address input</li>
+                        <li>FAQ</li>
+                        <li>Small Talk</li>
                     </ul>
                 </ExpandCollapseContent>
             </ExpandCollapse>

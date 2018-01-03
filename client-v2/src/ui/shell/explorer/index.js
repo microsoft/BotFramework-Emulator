@@ -34,33 +34,19 @@
 import { css } from 'glamor';
 import React from 'react';
 import { connect } from 'react-redux';
-
-import BotExplorer from './botExplorer';
-import CardExplorer from './cardExplorer';
-import LuisExplorer from './luisExplorer';
-import FormExplorer from './formExplorer';
-import ConversationExplorer from './conversationExplorer';
-import ExplorerSet from './explorerSet';
-
+import EmulatorExplorerSet from './emulatorExplorerSet';
+import AssetExplorerSet from './assetExplorerSet';
 import * as constants from '../../../constants';
-
 
 class ExplorerBar extends React.Component {
     render() {
         if (this.props.navBar.selection === constants.NavBar_Bots) {
             return (
-                <ExplorerSet title="Emulator">
-                    <BotExplorer />
-                </ExplorerSet>
+                <EmulatorExplorerSet />
             );
         } else if (this.props.navBar.selection === constants.NavBar_Assets) {
             return (
-                <ExplorerSet title="Assets">
-                    <CardExplorer />
-                    <LuisExplorer />
-                    <FormExplorer />
-                    <ConversationExplorer />
-                </ExplorerSet>
+                <AssetExplorerSet />
             );
         }
         return false;

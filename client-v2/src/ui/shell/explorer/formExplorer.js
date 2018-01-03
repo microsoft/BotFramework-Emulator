@@ -43,8 +43,7 @@ const CSS = css({
     flexDirection: 'column',
     listStyleType: 'none',
     margin: 0,
-    padding: 0,
-    width: 200
+    padding: 0
 });
 
 const BOTS_CSS = css({

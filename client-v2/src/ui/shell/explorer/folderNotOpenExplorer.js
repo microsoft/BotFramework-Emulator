@@ -33,11 +33,16 @@
 
 import { css } from 'glamor';
 import React from 'react';
-
+import { connect } from 'react-redux';
 import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
+import * as AssetExplorerActions from '../../../data/action/assetExplorerActions';
+
+if (typeof window !== 'undefined') { require = window['require']; }
+
+const { dialog } = require('electron').remote;
 
 const CSS = css({
-    backgroundColor: 'Pink',
+    backgroundColor: 'skyblue',
     display: 'flex',
     flex: 1,
     flexDirection: 'column',
@@ -54,19 +59,43 @@ const BOTS_CSS = css({
     padding: 0
 });
 
-export default props =>
-    <ul className={ CSS }>
-        <li>
-            <ExpandCollapse
-                initialExpanded={ true }
-                title="Cards"
-            >
-                <ExpandCollapseContent>
-                    <ul className={ BOTS_CSS }>
-                        <li>Greeting</li>
-                        <li>Address input</li>
-                    </ul>
-                </ExpandCollapseContent>
-            </ExpandCollapse>
-        </li>
-    </ul>
+class FolderNotOpenExplorer extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+
+        this.handleOpenFolderClick = this.handleOpenFolderClick.bind(this);
+    }
+
+    handleOpenFolderClick(e) {
+        e.stopPropagation();
+        dialog.showOpenDialog({
+                properties: ['openDirectory']
+            },
+            (filepaths) => {
+                if (filepaths && filepaths[0]) {
+                    this.props.dispatch(AssetExplorerActions.openFolder(filepaths[0]));
+                }
+            }
+        );
+    }
+
+    render() {
+        return (
+            <ul className={ CSS }>
+                <li>
+                    <ExpandCollapse
+                        initialExpanded={ true }
+                        title="No Folder Opened"
+                    >
+                        <ExpandCollapseContent>
+                            <div>You have not yet opened a folder.</div>
+                            <button onClick={ this.handleOpenFolderClick }>Open Folder</button>
+                        </ExpandCollapseContent>
+                    </ExpandCollapse>
+                </li>
+            </ul>
+        );
+    }
+}
+
+export default connect(state => ({}))(FolderNotOpenExplorer)

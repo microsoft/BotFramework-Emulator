@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import * as EditorActions from '../action/editorActions';
 import * as constants from '../../constants';
 
 const DEFAULT_STATE = {
@@ -45,7 +46,13 @@ const DEFAULT_STATE = {
 
 export default function documents(state = DEFAULT_STATE, action) {
     switch (action.type) {
-    default: break;
+        case EditorActions.NEW_DOCUMENT:
+            state = {
+                documents: [...state.documents, action.payload.document]
+            }
+        break;
+
+        default: break;
     }
 
     return state;
