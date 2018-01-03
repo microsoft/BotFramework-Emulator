@@ -48,7 +48,6 @@ export default function navBar(state = DEFAULT_STATE, action) {
             } else {
                 state = { ...state, selection: action.payload.selection };
             }
-
             break;
 
         default: break;

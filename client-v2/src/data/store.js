@@ -33,6 +33,7 @@
 
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import promiseMiddleware from 'redux-promise-middleware';
+
 // import SockJS from 'sockjs-client';
 
 // import IPCRendererWebSocket from 'electron-ipcrenderer-websocket';

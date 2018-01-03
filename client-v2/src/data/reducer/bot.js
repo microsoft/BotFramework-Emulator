@@ -31,12 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import * as BotActions from '../action/botActions';
+
 const DEFAULT_STATE = {
     bots: []
 }
 
 export default function bots(state = DEFAULT_STATE, action) {
     switch (action.type) {
+        case BotActions.CREATE_BOT:
+            const bots = [...state.bots, action.payload.bot];
+            state = {...state, bots: bots };
+            break;
+
         default: break;
     }
 

@@ -35,7 +35,18 @@ import { css } from 'glamor';
 import React from 'react';
 
 const CSS = css({
-    backgroundColor: 'LightGreen',
+    backgroundColor: 'palegoldenrod',
+    display: 'flex',
+    flexDirection: 'column',
+    margin: 0,
+    padding: 0
+});
+
+const HEADER_CSS = css({
+    lineHeight: '30px'
+})
+
+const EXPLORER_CSS = css({
     display: 'flex',
     flexDirection: 'column',
     listStyleType: 'none',
@@ -55,13 +66,18 @@ const CSS = css({
 export default class ExplorerSet extends React.Component {
     render() {
         return (
-            <ul className={ CSS }>
-                {
-                    React.Children.map(this.props.children, child =>
-                        <li>{ child }</li>
-                    )
-                }
-            </ul>
+            <div className={ CSS }>
+                <div className={ HEADER_CSS }>
+                    { this.props.title }
+                </div>
+                <ul className={ EXPLORER_CSS }>
+                    {
+                        React.Children.map(this.props.children, child =>
+                            <li>{ child }</li>
+                        )
+                    }
+                </ul>
+            </div>
         );
     }
 }
