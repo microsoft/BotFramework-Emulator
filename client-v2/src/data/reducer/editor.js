@@ -36,11 +36,9 @@ import * as constants from '../../constants';
 const DEFAULT_STATE = {
     documents: [{
         contentType: constants.ContentType_BotChat,
-        title: "My bot",
         content: {}
     }, {
         contentType: constants.ContentType_Card,
-        title: "My card",
         content: {}
     }]
 };

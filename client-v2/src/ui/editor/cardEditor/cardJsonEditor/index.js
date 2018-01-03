@@ -39,7 +39,8 @@ import * as CardActions from '../../../../data/action/cardActions';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { updateCardJson } from '../../../../data/action/cardActions';
-const fs = typeof window !== 'undefined' ? window.require('fs') : require('fs');
+if (typeof window !== 'undefined') { require = window['require']; }
+const fs = require('fs');
 
 const CSS = css({
     height: "100%",

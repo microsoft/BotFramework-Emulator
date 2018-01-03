@@ -72,7 +72,7 @@ export class CardExplorer extends React.Component {
                         <ul className={ BOTS_CSS }>
                             {
                                 this.props.cards.length ?
-                                this.props.cards.map(card => <li>{ card.title }</li>) : <li>No cards found...</li>
+                                this.props.cards.map(card => <li>{ card.content.title }</li>) : <li>No cards found...</li>
                             }
                         </ul>
                     </ExpandCollapse>

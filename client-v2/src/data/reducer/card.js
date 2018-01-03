@@ -1,9 +1,3 @@
-import {
-    CARD_ADD_OUTPUT_MSG,
-    CARD_CLEAR_OUTPUT_WINDOW,
-    CARD_UPDATE_JSON
-} from '../action/cardActions';
-
 //
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
@@ -36,6 +30,12 @@ import {
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
+import {
+    CARD_ADD_OUTPUT_MSG,
+    CARD_CLEAR_OUTPUT_WINDOW,
+    CARD_UPDATE_JSON
+} from '../action/cardActions';
 
 const DEFAULT_STATE = {
     title: "My card",
@@ -111,7 +111,7 @@ const DEFAULT_STATE = {
 };
 
 export default function card(state = DEFAULT_STATE, action) {
-    const payload = action.state;
+    const payload = action.payload;
     switch (action.type) {
         case CARD_UPDATE_JSON:
             state = { ...state, cardJson: payload.json };
