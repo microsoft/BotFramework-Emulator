@@ -34,8 +34,8 @@
 import { css } from 'glamor';
 import React from 'react';
 import * as constants from '../../../constants';
-import ExpandCollapse from '../../layout/expandCollapse';
 import { connect } from 'react-redux';
+import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
 
 const CSS = css({
     backgroundColor: 'Pink',
@@ -69,12 +69,14 @@ export class CardExplorer extends React.Component {
                         initialExpanded={ true }
                         title="Cards"
                     >
-                        <ul className={ BOTS_CSS }>
-                            {
-                                this.props.cards.length ?
-                                this.props.cards.map(card => <li>{ card.content.title }</li>) : <li>No cards found...</li>
-                            }
-                        </ul>
+                        <ExpandCollapseContent>
+                            <ul className={ BOTS_CSS }>
+                                {
+                                     this.props.cards.length ?
+                                     this.props.cards.map(card => <li>{ card.content.title }</li>) : <li>No cards found...</li>
+                                }
+                            </ul>
+                        </ExpandCollapseContent>
                     </ExpandCollapse>
                 </li>
             </ul>

@@ -30,3 +30,19 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
+import { uniqueId } from "../../utils";
+
+export const CREATE_BOT = 'BOT/CREATE_BOT';
+
+export function createBot() {
+    return {
+        type: CREATE_BOT,
+        payload: {
+            bot: {
+                id: uniqueId(),
+                state: 'NEW'
+            }
+        }
+    }
+}
