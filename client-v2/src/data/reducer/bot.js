@@ -33,7 +33,6 @@
 
 import * as BotActions from '../action/botActions';
 
-
 const DEFAULT_STATE = {
     bots: []
 }
