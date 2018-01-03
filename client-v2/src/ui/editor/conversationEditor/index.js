@@ -32,37 +32,23 @@
 //
 
 import { css } from 'glamor';
-import PropTypes from 'prop-types';
 import React from 'react';
+import Splitter from '../../layout/splitter';
+import EditorPanel from './editorPanel';
+import PropertiesPanel from './propertiesPanel';
 
 const CSS = css({
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    height: '100%',
-    position: 'relative'
-});
-
-const HEADER_CSS = css({
-    backgroundColor: 'gold',
-    height: 30,
-    minHeight: 30
-});
-
-const BODY_CSS = css({
-    backgroundColor: 'lightgreen',
     flex: 1
 });
 
-export default class Panel extends React.Component {
+export default class ConversationEditor extends React.Component {
     render() {
         return (
             <div className={ CSS }>
-                <div className={ HEADER_CSS }>
-                </div>
-                <div className={ BODY_CSS }>
-                    { this.props.children }
-                </div>
+                <Splitter primaryIndex={ 0 } secondaryInitialSize={ 500 }>
+                    <EditorPanel />
+                    <PropertiesPanel />
+                </Splitter>
             </div>
         );
     }

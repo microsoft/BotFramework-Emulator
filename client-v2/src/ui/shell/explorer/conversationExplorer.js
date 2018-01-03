@@ -33,8 +33,11 @@
 
 import { css } from 'glamor';
 import React from 'react';
-
+import { connect } from 'react-redux';
 import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
+import * as EditorActions from '../../../data/action/editorActions';
+import * as constants from '../../../constants';
+import { uniqueId } from '../../../utils';
 
 const CSS = css({
     backgroundColor: 'Pink',
@@ -43,8 +46,7 @@ const CSS = css({
     flexDirection: 'column',
     listStyleType: 'none',
     margin: 0,
-    padding: 0,
-    width: 200
+    padding: 0
 });
 
 const BOTS_CSS = css({
@@ -55,19 +57,54 @@ const BOTS_CSS = css({
     padding: 0
 });
 
-export default props =>
-    <ul className={ CSS }>
-        <li>
-            <ExpandCollapse
-                initialExpanded={ true }
-                title="Conversations"
-            >
-                <ExpandCollapseContent>
-                    <ul className={ BOTS_CSS }>
-                        <li>Greeting Flow</li>
-                        <li>Product Search</li>
-                    </ul>
-                </ExpandCollapseContent>
-            </ExpandCollapse>
-        </li>
-    </ul>
+class ConversationExplorer extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+
+        this.handleAddClick = this.handleAddClick.bind(this);
+    }
+
+    handleAddClick(e) {
+        e.stopPropagation();
+        const id = uniqueId();
+        this.props.dispatch(
+            EditorActions.newDocument(
+                constants.ContentType_Converation,
+                {
+                    id
+                }
+            )
+        );
+    }
+
+    render() {
+        return (
+            <ul className={ CSS }>
+                <li>
+                    <ExpandCollapse
+                        initialExpanded={ true }
+                        title="Conversations"
+                    >
+                        <ExpandCollapseControls>
+                            <button onClick={ this.handleAddClick }>+</button>
+                        </ExpandCollapseControls>
+                        <ExpandCollapseContent>
+                            <ul className={ BOTS_CSS }>
+                            {
+                                this.props.documents.filter(doc => doc.contentType === constants.ContentType_Converation).map(doc => {
+                                    return <li>Conversation</li>
+                                })
+                            }
+                            </ul>
+                        </ExpandCollapseContent>
+                    </ExpandCollapse>
+                </li>
+            </ul>
+        );
+    }
+}
+
+export default connect(state => ({
+    folder: state.assetExplorer.folder,
+    documents: state.editor.documents
+}))(ConversationExplorer)

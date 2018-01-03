@@ -34,8 +34,7 @@
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-import Panel from './panel';
+import Panel, { Controls as PanelControls, Content as PanelContent } from '../panel';
 
 const CSS = css({
     height: '100%'
@@ -45,8 +44,10 @@ export default class LogPanel extends React.Component {
     render() {
         return (
             <div className={ CSS }>
-                <Panel>
-                    <Log />
+                <Panel title='Log'>
+                    <PanelContent>
+                        <Log />
+                    </PanelContent>
                 </Panel>
             </div>
         );
