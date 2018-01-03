@@ -37,6 +37,9 @@ import React from 'react'
 import ReactDOM from 'react-dom';
 import * as CardActions from '../../../../data/action/cardActions';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import { updateCardJson } from '../../../../data/action/cardActions';
+const fs = typeof window !== 'undefined' ? window.require('fs') : require('fs');
 
 const CSS = css({
     height: "100%",
@@ -53,9 +56,19 @@ const CSS = css({
         textTransform: "uppercase",
         backgroundColor: "#F5F5F5",
         width: "100%",
-        display: "block",
+        display: "flex",
         color: "#2B2B2B",
-        borderBottom: "1px solid #C6C6C6"
+        borderBottom: "1px solid #C6C6C6",
+
+        " > span": {
+            display: "flex",
+            marginLeft: "auto",
+            marginRight: "16px",
+            cursor: "pointer",
+            userSelect: "none"
+        },
+
+        " > .save-disabled": { color: "#CCC" }
     }
 });
 
@@ -74,8 +87,9 @@ class CardJsonEditor extends React.Component {
         super(props, context);
 
         this.saveContainer = this.saveContainer.bind(this);
+        this.saveCard = this.saveCard.bind(this);
 
-        this.state = { loaderReady: false };
+        this.state = { loaderReady: false, saveEnabled: false };
     }
 
     componentDidMount() {
@@ -151,7 +165,7 @@ class CardJsonEditor extends React.Component {
     // creates the monaco editor, inserts it into the DOM, and hooks up code change listener
     initMonacoEditor() {
         this._editor = window.monaco.editor.create(this.editorContainer, {
-            value: this.props.cardJson,
+            value: this.loadCard() || this.props.cardJson,
             language: 'json',
             theme: "vs-dark"
         });
@@ -169,12 +183,39 @@ class CardJsonEditor extends React.Component {
     // handle changes to the monaco model
     handleCodeChange(newVal) {
         this.props.dispatch(CardActions.updateCardJson(newVal));
+        this.setState(() => ({ saveEnabled: true }));
+    }
+
+    // saves the card to the file system
+    saveCard() {
+        if (this.state.saveEnabled) {
+            const filePath = "C:\\Users\\toanzian\\Desktop\\TestAssetsRoot\\cards\\testcard.json";
+            fs.writeFile(
+                filePath,
+                this.props.cardJson,
+                "utf-8",
+                (err) => {
+                    if (err) {
+                        console.log("Error saving adaptive card to file!", err);
+                    } else {
+                        console.log("Saved adaptive card to file!");
+                        this.setState(() => ({ saveEnabled: false }))
+                    }
+                }
+            )
+        }
+    }
+
+    // loads the card from the file system
+    loadCard(filePath = "C:\\Users\\toanzian\\Desktop\\TestAssetsRoot\\cards\\testcard.json") {
+        return fs.readFileSync(filePath, "utf-8");
     }
 
     render() {
+        const saveBtnClass = this.state.saveEnabled ? "" : "save-disabled";
         return (
             <div {...CSS}>
-                <span className="json-header">Editor</span>
+                <span className="json-header">Editor <span onClick={ this.saveCard } className={saveBtnClass}>Save</span></span>
                 <div ref={ this.saveContainer }>
                 </div>
             </div>

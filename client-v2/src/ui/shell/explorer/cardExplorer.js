@@ -33,8 +33,9 @@
 
 import { css } from 'glamor';
 import React from 'react';
-
+import * as constants from '../../../constants';
 import ExpandCollapse from '../../layout/expandCollapse';
+import { connect } from 'react-redux';
 
 const CSS = css({
     backgroundColor: 'Pink',
@@ -55,17 +56,32 @@ const BOTS_CSS = css({
     padding: 0
 });
 
-export default props =>
-    <ul className={ CSS }>
-        <li>
-            <ExpandCollapse
-                initialExpanded={ true }
-                title="Cards"
-            >
-                <ul className={ BOTS_CSS }>
-                    <li>Greeting</li>
-                    <li>Address input</li>
-                </ul>
-            </ExpandCollapse>
-        </li>
-    </ul>
+export class CardExplorer extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+    }
+
+    render() {
+        return(
+            <ul className={ CSS }>
+                <li>
+                    <ExpandCollapse
+                        initialExpanded={ true }
+                        title="Cards"
+                    >
+                        <ul className={ BOTS_CSS }>
+                            {
+                                this.props.cards.length ?
+                                this.props.cards.map(card => <li>{ card.title }</li>) : <li>No cards found...</li>
+                            }
+                        </ul>
+                    </ExpandCollapse>
+                </li>
+            </ul>
+        );
+    }
+}
+
+export default connect(state => ({
+    cards: state.editor.documents.filter(doc => doc.contentType === constants.ContentType_Card)
+}))(CardExplorer);

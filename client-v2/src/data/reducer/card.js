@@ -1,4 +1,8 @@
-import { CARD_ADD_OUTPUT_MSG, CARD_CLEAR_OUTPUT_WINDOW, CARD_UPDATE_JSON } from '../action/cardActions';
+import {
+    CARD_ADD_OUTPUT_MSG,
+    CARD_CLEAR_OUTPUT_WINDOW,
+    CARD_UPDATE_JSON
+} from '../action/cardActions';
 
 //
 // Copyright (c) Microsoft. All rights reserved.
@@ -34,72 +38,8 @@ import { CARD_ADD_OUTPUT_MSG, CARD_CLEAR_OUTPUT_WINDOW, CARD_UPDATE_JSON } from 
 //
 
 const DEFAULT_STATE = {
-    cardJson: JSON.stringify({
-        "type": "AdaptiveCard",
-        "version": "1.0",
-        "body": [
-            {
-                "type": "Image",
-                "url": "http://adaptivecards.io/content/adaptive-card-50.png"
-            },
-            {
-                "type": "TextBlock",
-                "text": "Hello **Adaptive Cards!**"
-            },
-            {
-                "type": "Image",
-                "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/250px-Google_2015_logo.svg.png"
-            },
-            {
-                "type": "TextBlock",
-                "text": "Some other text block :)"
-            }
-        ],
-        "actions": [
-            {
-                "type": "Action.OpenUrl",
-                "title": "Learn more",
-                "url": "http://adaptivecards.io"
-            },
-            {
-                "type": "Action.OpenUrl",
-                "title": "GitHub",
-                "url": "http://github.com/Microsoft/AdaptiveCards"
-            },
-            {
-                "type": "Action.Submit",
-                "title": "Submitting something",
-                "data": {
-                    "foo": 1,
-                    "bar": "test",
-                    "other": false
-                }
-            },
-            {
-                "type": "Action.Submit",
-                "title": "Submitting something else"
-            },
-            {
-                "type": "Action.ShowCard",
-                "title": "Action.ShowCard",
-                "card": {
-                    "type": "AdaptiveCard",
-                    "body": [
-                        {
-                            "type": "TextBlock",
-                            "text":"What do you think?"
-                        }
-                    ],
-                    "actions": [
-                        {
-                            "type":"Action.Submit",
-                            "title":"Neat!"
-                        }
-                    ]
-                }
-            }
-        ]
-    }, null, "\t"),
+    title: "My card",
+    cardJson: "{}",
 
     cardOutput: [],
     entities: ["ent1", "ent2", "ent3"]

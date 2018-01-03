@@ -67,7 +67,8 @@ const CSS = css({
         overflow: "auto",
         height: "calc(100% - 24px)",
         width: "100%",
-        padding: "16px"
+        padding: "16px",
+        userSelect: "none"
     }
 });
 
