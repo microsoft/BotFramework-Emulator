@@ -31,34 +31,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Provider } from 'react-redux';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+export const CARD_UPDATE_JSON = "CARD_UPDATE_JSON";
+export const CARD_ADD_OUTPUT_MSG = "CARD_ADD_OUTPUT_MSG";
+export const CARD_CLEAR_OUTPUT_WINDOW = "CARD_CLEAR_OUTPUT_WINDOW";
 
-import * as Settings from './v1/settings';
-import interceptError from './interceptError';
-import interceptHyperlink from './interceptHyperlink';
-import Main from './ui/shell/main';
-// import registerServiceWorker from './registerServiceWorker';
-import setupContextMenu from './setupContextMenu';
-import store from './data/store';
+export function updateCardJson(json) {
+    return {
+        type: CARD_UPDATE_JSON,
+        payload: { json: json }
+    };
+}
 
-interceptError();
-interceptHyperlink();
-setupContextMenu();
-Settings.startup();
+export function addCardOutputMessage(msg) {
+    return {
+        type: CARD_ADD_OUTPUT_MSG,
+        payload: { msg: msg }
+    };
+}
 
-const { webFrame } = window['require']('electron');
-
-webFrame.setZoomLevel(1);
-webFrame.setZoomFactor(1);
-webFrame.registerURLSchemeAsPrivileged('emulator');
-
-ReactDOM.render(
-    <Provider store={ store }>
-        { React.createElement(Main as any) }
-    </Provider>,
-    document.getElementById('root')
-);
-
-// registerServiceWorker();
+export function clearCardOutputWindow() {
+    return {
+        type: CARD_CLEAR_OUTPUT_WINDOW
+    };
+}

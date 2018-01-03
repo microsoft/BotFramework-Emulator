@@ -44,6 +44,7 @@ import navBar from './reducer/navBar';
 import bot from './reducer/bot';
 import assetExplorer from './reducer/assetExplorer';
 import server from './reducer/server';
+import card from './reducer/card';
 
 const electron = window.process && window.process.versions.electron;
 
@@ -80,6 +81,7 @@ export default createStoreWithMiddleware(combineReducers({
     editor,
     navBar,
     bot,
+    card,
     assetExplorer,
     server
 }));

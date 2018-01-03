@@ -31,34 +31,56 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Provider } from 'react-redux';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { connect } from 'react-redux'
+import { css } from 'glamor'
+import React from 'react'
+import CardTemplateRow from '../cardTemplateRow';
 
-import * as Settings from './v1/settings';
-import interceptError from './interceptError';
-import interceptHyperlink from './interceptHyperlink';
-import Main from './ui/shell/main';
-// import registerServiceWorker from './registerServiceWorker';
-import setupContextMenu from './setupContextMenu';
-import store from './data/store';
+const CSS = css({
+    width: "100%",
+    height: "100%",
+    margin: "12px 0",
+    overflow: "auto",
 
-interceptError();
-interceptHyperlink();
-setupContextMenu();
-Settings.startup();
+    " .template-header": {
+        paddingLeft: "24px",
+        fontFamily: "Segoe UI Semibold",
+        textTransform: "uppercase",
+        backgroundColor: "#F5F5F5",
+        height: "24px",
+        width: "100%",
+        display: "block",
+        color: "#2B2B2B",
+        borderBottom: "1px solid #C6C6C6"
+    },
 
-const { webFrame } = window['require']('electron');
+    " .template-content": {
+        overflow: "auto",
+        height: "calc(100% - 24px)",
+        width: "100%",
+        padding: "16px"
+    }
+});
 
-webFrame.setZoomLevel(1);
-webFrame.setZoomFactor(1);
-webFrame.registerURLSchemeAsPrivileged('emulator');
+const debug = css({ backgroundColor: "white", border: "1px solid black" });
 
-ReactDOM.render(
-    <Provider store={ store }>
-        { React.createElement(Main as any) }
-    </Provider>,
-    document.getElementById('root')
-);
+class CardTemplator extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+    }
 
-// registerServiceWorker();
+    render() {
+        return (
+            <div {...CSS} {...debug}>
+                <span className="template-header">Template Editor</span>
+                <div className="template-content">
+                    { this.props.entities.map(ent => <CardTemplateRow key={ ent } entityName={ ent } />) }
+                </div>
+            </div>
+        );
+    }
+}
+
+export default connect(state => ({
+    entities: ["ent1", "ent2", "ent3"]
+}))(CardTemplator);

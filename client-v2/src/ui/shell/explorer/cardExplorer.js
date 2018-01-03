@@ -33,7 +33,8 @@
 
 import { css } from 'glamor';
 import React from 'react';
-
+import * as constants from '../../../constants';
+import { connect } from 'react-redux';
 import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
 
 const CSS = css({
@@ -54,19 +55,34 @@ const BOTS_CSS = css({
     padding: 0
 });
 
-export default props =>
-    <ul className={ CSS }>
-        <li>
-            <ExpandCollapse
-                initialExpanded={ true }
-                title="Cards"
-            >
-                <ExpandCollapseContent>
-                    <ul className={ BOTS_CSS }>
-                        <li>Greeting</li>
-                        <li>Address input</li>
-                    </ul>
-                </ExpandCollapseContent>
-            </ExpandCollapse>
-        </li>
-    </ul>
+export class CardExplorer extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+    }
+
+    render() {
+        return(
+            <ul className={ CSS }>
+                <li>
+                    <ExpandCollapse
+                        initialExpanded={ true }
+                        title="Cards"
+                    >
+                        <ExpandCollapseContent>
+                            <ul className={ BOTS_CSS }>
+                                {
+                                     this.props.cards.length ?
+                                     this.props.cards.map(card => <li>{ card.content.title }</li>) : <li>No cards found...</li>
+                                }
+                            </ul>
+                        </ExpandCollapseContent>
+                    </ExpandCollapse>
+                </li>
+            </ul>
+        );
+    }
+}
+
+export default connect(state => ({
+    cards: state.editor.documents.filter(doc => doc.contentType === constants.ContentType_Card)
+}))(CardExplorer);

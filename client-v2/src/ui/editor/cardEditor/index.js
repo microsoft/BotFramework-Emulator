@@ -32,6 +32,85 @@
 //
 
 import React from 'react';
+import { css } from 'glamor';
+import CardJsonEditor from './cardJsonEditor';
+import CardOutput from './cardOutput';
+import CardPreview from './cardPreview';
+import CardTemplator from './cardTemplator';
+import Splitter from '../../layout/splitter';
 
-export default props =>
-    <div>Card editor</div>
+const CSS = css({
+    display: "flex",
+    position: "relative",
+    flexFlow: "row nowrap",
+    height: "100%",
+    width: "100%",
+    backgroundColor: "white",
+
+    " *": { boxSizing: "border-box" },
+
+    " .card-right-panel": {
+        display: "flex",
+        flexFlow: "column nowrap",
+        height: "100%",
+        width: "100%",
+        padding: "0 24px"
+    },
+
+    " .card-horizontal-splitter": {
+        width: "100%",
+        height: "32px",
+        flexShrink: "0",
+        cursor: "ns-resize"
+    },
+
+    " .card-json-editor-container": {
+        height: "100%",
+        width: "100%",
+        padding: "24px"
+    }
+});
+
+export default class CardEditor extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+
+        this.onChangeVerticalSplit = this.onChangeVerticalSplit.bind(this);
+        this.saveJsonEditorContainer = this.saveJsonEditorContainer.bind(this);
+
+        this.state = { containerWidth: null };
+    }
+
+    // called when the vertical splitter is moved
+    onChangeVerticalSplit(newSecondaryPaneSize) {
+        const containerWidth = this.editorContainer.getBoundingClientRect().width;
+        this.setState(() => ({ containerWidth: containerWidth }));
+    }
+
+    saveJsonEditorContainer(element) {
+        this.editorContainer = element;
+    }
+
+    render() {
+        return(
+            <div {...CSS}>
+                <Splitter
+                    vertical={ false }
+                    onSecondaryPaneSizeChange={ this.onChangeVerticalSplit }
+                >
+                    <div className="card-json-editor-container" ref={ this.saveJsonEditorContainer }>
+                        <CardJsonEditor editorWidth={ this.state.containerWidth } />
+                    </div>
+
+                    <div className="card-right-panel">
+                        <CardPreview />
+
+                        <CardTemplator />
+
+                        <CardOutput />
+                    </div>
+                </Splitter>
+            </div>
+        );
+    }
+}

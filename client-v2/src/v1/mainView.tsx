@@ -325,11 +325,11 @@ export class MainView extends React.Component<{}, {}> {
                                 onChange: (size: number) => this.verticalSplitChange(size)
                             },
                             [
-                                <div className='fill-parent'>
+                                <div key={ "botchat" } className='fill-parent'>
                                     <AddressBar />
                                     {this.botChatComponent(vertSplit)}
                                 </div>,
-                                <div className="fill-parent">
+                                <div key={ "botchat-sidebar" } className="fill-parent">
                                     {
                                         React.createElement(
                                             Splitter as any,
@@ -342,10 +342,10 @@ export class MainView extends React.Component<{}, {}> {
                                                 onChange: (size: number) => LayoutActions.rememberHorizontalSplitter(size)
                                             },
                                             [
-                                                <div className="wc-chatview-panel">
+                                                <div key={ "inspector" } className="wc-chatview-panel">
                                                     <InspectorView />
                                                 </div>,
-                                                <div className="fill-parent">
+                                                <div key={ "log" } className="fill-parent">
                                                     <LogView />
                                                 </div>
                                             ]

@@ -31,34 +31,35 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Provider } from 'react-redux';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { css } from 'glamor';
 
-import * as Settings from './v1/settings';
-import interceptError from './interceptError';
-import interceptHyperlink from './interceptHyperlink';
-import Main from './ui/shell/main';
-// import registerServiceWorker from './registerServiceWorker';
-import setupContextMenu from './setupContextMenu';
-import store from './data/store';
+const CSS = css({
+    " pre": {
+        fontFamily: "Segoe UI",
+        cursor: "pointer",
 
-interceptError();
-interceptHyperlink();
-setupContextMenu();
-Settings.startup();
+        ":hover": {
+            backgroundColor: "skyblue"
+        },
 
-const { webFrame } = window['require']('electron');
+        ":first-of-type": {
+            marginTop: "0"
+        }
+    }
+});
 
-webFrame.setZoomLevel(1);
-webFrame.setZoomFactor(1);
-webFrame.registerURLSchemeAsPrivileged('emulator');
+export default class CardOutputMessage extends React.Component {
+    render() {
+        return (
+            <div {...CSS}>
+                <pre>{ this.props.message }</pre>
+            </div>
+        );
+    }
+}
 
-ReactDOM.render(
-    <Provider store={ store }>
-        { React.createElement(Main as any) }
-    </Provider>,
-    document.getElementById('root')
-);
-
-// registerServiceWorker();
+CardOutputMessage.propTypes = {
+    message: PropTypes.string
+};
