@@ -31,46 +31,45 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export const UPDATE_JSON = 'CARD/UPDATE_JSON';
-export const ADD_OUTPUT_MSG = 'CARD/ADD_OUTPUT_MSG';
-export const CLEAR_OUTPUT_WINDOW = 'CARD/CLEAR_OUTPUT_WINDOW';
-export const NEW_CARD = 'CARD/NEW_CARD';
+import {
+    ADD_OUTPUT_MSG,
+    CLEAR_OUTPUT_WINDOW,
+    NEW_CARD,
+    UPDATE_JSON
+} from '../action/cardActions';
+import { ContentType_Card } from '../../constants';
 
-export function updateCardJson(id, json) {
-    return {
-        type: UPDATE_JSON,
-        payload: {
-            id,
-            json
-        }
-    };
-}
+const DEFAULT_STATE = {
+    cardId: {
+        title: "My card",
+        cardJson: "{}",
+        cardOutput: [],
+        entities: [],
+        path: "C:\\somecard.json",
+        contentType: ContentType_Card
+    }
+};
 
-export function addCardOutputMessage(id, msg) {
-    return {
-        type: ADD_OUTPUT_MSG,
-        payload: {
-            id,
-            msg
-        }
-    };
-}
+export default function cards(state = DEFAULT_STATE, action) {
+    const payload = action.payload;
+    let newState = Object.assign({}, state);
+    let card = payload ? newState[payload.id] : null;
 
-export function clearCardOutputWindow(id) {
-    return {
-        type: CLEAR_OUTPUT_WINDOW,
-        payload: {
-            id
-        }
-    };
-}
-
-export function newCard(id, card) {
-    return {
-        type: NEW_CARD,
-        payload: {
-            id,
-            card
-        }
-    };
+    switch (action.type) {
+        case UPDATE_JSON:
+            card.cardJson = payload.json;
+            break;
+        case ADD_OUTPUT_MSG:
+            card.cardOutput = [...card.cardOutput, payload.msg];
+            break;
+        case CLEAR_OUTPUT_WINDOW:
+            card.cardOutput = [];
+            break;
+        case NEW_CARD:
+            newState[payload.id] = payload.card;
+            break;
+        default:
+            break;
+    }
+    return newState;
 }

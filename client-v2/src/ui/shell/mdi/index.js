@@ -26,13 +26,13 @@ class MDI extends React.Component {
                 value={ this.state.tabValue }
             >
                 {
-                    this.props.documents.map(document =>
+                    Object.keys(this.props.documents).map(documentId =>
                         <TabbedDocument>
                             <TabbedDocumentTab>
-                                <TabFactory document={ document } />
+                                <TabFactory documentId={ documentId } document={ this.props.documents[documentId] } />
                             </TabbedDocumentTab>
                             <TabbedDocumentContent>
-                                <EditorFactory document={ document } />
+                                <EditorFactory documentId={ documentId } document={ this.props.documents[documentId] } />
                             </TabbedDocumentContent>
                         </TabbedDocument>
                     )
@@ -42,4 +42,4 @@ class MDI extends React.Component {
     }
 }
 
-export default connect(state => ({ documents: state.editor.documents }))(MDI)
+export default connect(state => ({ documents: state.cards }))(MDI)

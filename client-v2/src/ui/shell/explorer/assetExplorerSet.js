@@ -40,6 +40,7 @@ import QnAExplorer from './qnaExplorer';
 import FormExplorer from './formExplorer';
 import ConversationExplorer from './conversationExplorer';
 import FolderNotOpenExplorer from './folderNotOpenExplorer';
+import { directoryExists } from '../../utils';
 
 if (typeof window !== 'undefined') { require = window['require']; }
 
@@ -47,18 +48,7 @@ const fs = require('fs');
 
 class AssetExplorerSet extends React.Component {
     render() {
-        let stat = null;
-        try {
-            stat = fs.statSync(this.props.folder);
-        } catch (e) { }
-
-        if (!stat || !stat.isDirectory()) {
-            return (
-                <ExplorerSet title="Asset Explorer">
-                    <FolderNotOpenExplorer />
-                </ExplorerSet>
-            );
-        } else {
+        if (directoryExists(this.props.folder)) {
             return (
                 <ExplorerSet title="Asset Explorer">
                     <CardExplorer />
@@ -66,6 +56,12 @@ class AssetExplorerSet extends React.Component {
                     <QnAExplorer />
                     <FormExplorer />
                     <ConversationExplorer />
+                </ExplorerSet>
+            );
+        } else {
+            return (
+                <ExplorerSet title="Asset Explorer">
+                    <FolderNotOpenExplorer />
                 </ExplorerSet>
             );
         }

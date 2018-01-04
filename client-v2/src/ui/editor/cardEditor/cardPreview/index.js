@@ -34,8 +34,9 @@
 import { connect } from 'react-redux'
 import { css } from 'glamor'
 import React from 'react'
+import ReactDOM from 'react-dom';
 import * as AdaptiveCards from 'adaptivecards';
-import { addCardOutputMessage } from '../../../../data/action/cardActions';
+import * as CardActions from '../../../../data/action/cardActions';
 
 const CSS = css({
     margin: "24px 0 12px 0",
@@ -69,6 +70,7 @@ class CardPreview extends React.Component {
         super(props, context);
 
         this.saveCardContainer = this.saveCardContainer.bind(this);
+        this.processAction = this.processAction.bind(this);
 
         // define card render options
         this.renderOptions = {
@@ -79,13 +81,13 @@ class CardPreview extends React.Component {
             },
 
             // the action handler is invoked when actions (such as card button presses) are triggered
-            onExecuteAction: (action) => processAction(action, this.props.dispatch)
+            onExecuteAction: (action) => this.processAction(action, this.props.dispatch)
         };
     }
 
     componentDidMount() {
         // we must wait for the component to mount then render the card and insert it into the DOM
-        var renderedCard = AdaptiveCards.renderCard(JSON.parse(this.props.cardJson), this.renderOptions);
+        var renderedCard = AdaptiveCards.renderCard(JSON.parse(this.props.card.cardJson), this.renderOptions);
         this.cardContainer.appendChild(renderedCard);
     }
 
@@ -93,74 +95,76 @@ class CardPreview extends React.Component {
         // During editing, invalid JSON will cause JSON.parse() to throw an error,
         // which will crash the entire component. We want to catch those errors and throw them away.
         try {
-            const newPreRenderedCard = JSON.parse(newProps.cardJson);
+            const newPreRenderedCard = JSON.parse(newProps.card.cardJson);
             const renderedCard = AdaptiveCards.renderCard(newPreRenderedCard, this.renderOptions);
-            this.cardContainer.removeChild(this.cardContainer.firstChild);
-            this.cardContainer.appendChild(renderedCard);
+            if (renderedCard instanceof Node) {
+                this.cardContainer.removeChild(this.cardContainer.firstChild);
+                this.cardContainer.appendChild(renderedCard);
+            }
         } catch(e) {
             // don't do anything
         }
     }
 
     saveCardContainer(element) {
-        this.cardContainer = element;
+        this.cardContainer = ReactDOM.findDOMNode(element);
     }
 
     render() {
         return(
-            <div {...CSS} {...debug}>
+            <div className={ CSS } {...debug}>
                 <span className="preview-header">Preview</span>
                 <div className="preview-content" ref={ this.saveCardContainer }></div>
             </div>
         );
     }
-}
 
-// determines a card action type, formats the message, then saves it to the store
-function processAction(action, dispatch) {
-    let actionType;
-    if (action.url) {
-        actionType = "OpenUrl";
-    } else {
-        actionType = "Submit";
+    // determines a card action type, formats the message, then saves it to the store
+    processAction(action, dispatch) {
+        let actionType;
+        if (action.url) {
+            actionType = "OpenUrl";
+        } else {
+            actionType = "Submit";
+        }
+
+        const actionMsg = this.formatActionMessage(action, actionType);
+        dispatch(CardActions.addCardOutputMessage(this.props.cardId, actionMsg));
     }
 
-    const actionMsg = formatActionMessage(action, actionType);
-    dispatch(addCardOutputMessage(actionMsg));
-}
+    // formats a card action output message based on the action type
+    formatActionMessage(action, actionType) {
+        const timeStamp = new Date().toTimeString().substring(0, 8);
+        const msgPrefix = `${timeStamp} [Card Action] - ${actionType}`;
 
-// formats a card action output message based on the action type
-function formatActionMessage(action, actionType) {
-    const timeStamp = new Date().toTimeString().substring(0, 8);
-    const msgPrefix = `${timeStamp} [Card Action] - ${actionType}`;
+        let msgBody = "\n\tTitle: " + action.title;
+        switch(actionType) {
+            case "OpenUrl":
+                msgBody += "\n\tUrl: " + action.url;
+                break;
+            case "Submit":
+            default:
+                // format hidden data as:
+                // Data: {
+                //     key1: val1,
+                //     key2: val2,
+                //     ...
+                // }
+                if (action.data && Object.keys(action.data).length) {
+                    msgBody += "\n\tData: {";
+                    let keys = Object.keys(action.data);
+                    keys.forEach(key => {
+                        msgBody += `\n\t\t${key}: ${action.data[key]}`
+                    });
+                    msgBody += "\n\t}"
+                }
+                break;
+        }
 
-    let msgBody = "\n\tTitle: " + action.title;
-    switch(actionType) {
-        case "OpenUrl":
-            msgBody += "\n\tUrl: " + action.url;
-            break;
-        case "Submit":
-        default:
-            // format hidden data as:
-            // Data: {
-            //     key1: val1,
-            //     key2: val2,
-            //     ...
-            // }
-            if (action.data && Object.keys(action.data).length) {
-                msgBody += "\n\tData: {";
-                let keys = Object.keys(action.data);
-                keys.forEach(key => {
-                    msgBody += `\n\t\t${key}: ${action.data[key]}`
-                });
-                msgBody += "\n\t}"
-            }
-            break;
+        return msgPrefix + msgBody;
     }
-
-    return msgPrefix + msgBody;
 }
 
-export default connect(state => ({
-    cardJson: state.card.cardJson
+export default connect((state, ownProps) => ({
+    cardJson: state.cards[ownProps.cardId].cardJson
 }))(CardPreview);

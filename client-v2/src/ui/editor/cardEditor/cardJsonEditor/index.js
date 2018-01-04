@@ -87,6 +87,7 @@ class CardJsonEditor extends React.Component {
     constructor(props, context) {
         super(props, context);
 
+        console.log("got props: ", props);
         this.saveContainer = this.saveContainer.bind(this);
         this.saveCard = this.saveCard.bind(this);
 
@@ -134,13 +135,13 @@ class CardJsonEditor extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         const { loaderReady: prevLoaderReady } = prevState || {};
-        const { editorWidth: prevEditorWidth } = prevProps || null;
+        const { editorWidth: prevEditorWidth, cardId: prevCardId, card: prevCard } = prevProps || null;
 
         if (prevEditorWidth && this._editor) {
             this._editor.layout();
         }
 
-        // if we have the monaco loader loaded, then let's create the editor
+        // if we switched to another asset tab and back, then we need to load the loader again
         if (!prevLoaderReady && this.state.loaderReady) {
             if (location.protocol === 'http:') {
                 amdRequire.config({
@@ -169,12 +170,26 @@ class CardJsonEditor extends React.Component {
                 });
             }
         }
+
+        // if we switched between card tabs
+        if (prevCardId && prevCardId !== this.props.cardId) {
+            // sync previous card with store so we don't lose state
+            if (prevCard && prevCard.cardJson) {
+                this.syncStoreWithCardJson(prevCardId, prevCard.cardJson);
+            }
+            if (this._editor) {
+                this._editor.setValue(this.props.card.cardJson);
+            } else {
+                this.initMonacoEditor();
+            }
+        }
     }
 
     // creates the monaco editor, inserts it into the DOM, and hooks up code change listener
     initMonacoEditor() {
+        console.log("loading card with path: ", this.props.card.path);
         this._editor = window.monaco.editor.create(this.editorContainer, {
-            value: this.loadCard() || this.props.cardJson,
+            value: this.props.card.cardJson,
             language: 'json',
             theme: "vs-dark"
         });
@@ -191,17 +206,23 @@ class CardJsonEditor extends React.Component {
 
     // handle changes to the monaco model
     handleCodeChange(newVal) {
-        this.props.dispatch(CardActions.updateCardJson(newVal));
+        this.syncStoreWithCardJson(this.props.cardId, newVal);
         this.setState(() => ({ saveEnabled: true }));
+    }
+
+    // syncs the store version of the card with the supplied json
+    // (used to sync component state's json with the store's json)
+    syncStoreWithCardJson(cardId, json) {
+        this.props.dispatch(CardActions.updateCardJson(cardId, json));
     }
 
     // saves the card to the file system
     saveCard() {
         if (this.state.saveEnabled) {
-            const filePath = "C:\\Users\\Public\\Desktop\\TestAssetsRoot\\cards\\testcard.json";
+            const filePath = this.props.card.path;
             fs.writeFile(
                 filePath,
-                this.props.cardJson,
+                this.props.card.cardJson,
                 "utf-8",
                 (err) => {
                     if (err) {
@@ -215,19 +236,10 @@ class CardJsonEditor extends React.Component {
         }
     }
 
-    // loads the card from the file system
-    loadCard(filePath = "C:\\Users\\Public\\Desktop\\TestAssetsRoot\\cards\\testcard.json") {
-        try {
-            return fs.readFileSync(filePath, "utf-8");
-        } catch (e) {
-            return false;
-        }
-    }
-
     render() {
         const saveBtnClass = this.state.saveEnabled ? "" : "save-disabled";
         return (
-            <div {...CSS}>
+            <div className={ CSS }>
                 <span className="json-header">Editor <span onClick={ this.saveCard } className={saveBtnClass}>Save</span></span>
                 <div ref={ this.saveContainer }>
                 </div>
@@ -236,10 +248,17 @@ class CardJsonEditor extends React.Component {
     }
 }
 
-CardJsonEditor.propTypes = {
-    editorWidth: PropTypes.number
-};
+export default connect(state => ({}))(CardJsonEditor);
 
-export default connect(state => ({
-    cardJson: state.card.cardJson
-}))(CardJsonEditor);
+CardJsonEditor.propTypes = {
+    editorWidth: PropTypes.number,
+    card: PropTypes.shape({
+        id: PropTypes.string,
+        cardJson: PropTypes.string,
+        cardOutput: PropTypes.array,
+        contentType: PropTypes.string,
+        entities: PropTypes.array,
+        path: PropTypes.string,
+        title: PropTypes.string
+    })
+};

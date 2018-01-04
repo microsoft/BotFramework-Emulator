@@ -38,11 +38,12 @@ import CardOutput from './cardOutput';
 import CardPreview from './cardPreview';
 import CardTemplator from './cardTemplator';
 import Splitter from '../../layout/splitter';
+import PropTypes from 'prop-types';
 
 const CSS = css({
     display: "flex",
-    position: "relative",
     flexFlow: "row nowrap",
+    flex: "1",
     height: "100%",
     width: "100%",
     backgroundColor: "white",
@@ -93,24 +94,36 @@ export default class CardEditor extends React.Component {
 
     render() {
         return(
-            <div {...CSS}>
+            <div className={ CSS }>
                 <Splitter
                     vertical={ false }
                     onSecondaryPaneSizeChange={ this.onChangeVerticalSplit }
                 >
                     <div className="card-json-editor-container" ref={ this.saveJsonEditorContainer }>
-                        <CardJsonEditor editorWidth={ this.state.containerWidth } />
+                        <CardJsonEditor card={ this.props.document } cardId={ this.props.documentId } editorWidth={ this.state.containerWidth } />
                     </div>
 
                     <div className="card-right-panel">
-                        <CardPreview />
+                        <CardPreview card={ this.props.document } cardId={ this.props.documentId } />
 
-                        <CardTemplator />
+                        <CardTemplator card={ this.props.document } cardId={ this.props.documentId } />
 
-                        <CardOutput />
+                        <CardOutput messages={ this.props.document.cardOutput } cardId={ this.props.documentId } />
                     </div>
                 </Splitter>
             </div>
         );
     }
 }
+
+CardEditor.propTypes = {
+    document: PropTypes.shape({
+        title: PropTypes.string,
+        cardJson: PropTypes.string,
+        cardOutput: PropTypes.array,
+        entities: PropTypes.array,
+        path: PropTypes.string,
+        contentType: PropTypes.string
+    }),
+    documentId: PropTypes.string
+};

@@ -35,12 +35,14 @@ import { connect } from 'react-redux'
 import { css } from 'glamor'
 import React from 'react'
 import CardTemplateRow from '../cardTemplateRow';
+import PropTypes from 'prop-types';
 
 const CSS = css({
     width: "100%",
     height: "100%",
     margin: "12px 0",
     overflow: "auto",
+    fontFamily: "Segoe UI",
 
     " .template-header": {
         paddingLeft: "24px",
@@ -71,16 +73,25 @@ class CardTemplator extends React.Component {
 
     render() {
         return (
-            <div {...CSS} {...debug}>
+            <div className={ CSS } {...debug}>
                 <span className="template-header">Template Editor</span>
                 <div className="template-content">
-                    { this.props.entities.map(ent => <CardTemplateRow key={ ent } entityName={ ent } />) }
+                    {
+                        this.props.length ?
+                        this.props.entities.map(ent => <CardTemplateRow key={ ent } entityName={ ent } />)
+                        : <span>No template entities...</span>
+                    }
                 </div>
             </div>
         );
     }
 }
 
-export default connect(state => ({
-    entities: ["ent1", "ent2", "ent3"]
+CardTemplator.propTypes = {
+    cardId: PropTypes.string,
+    entities: PropTypes.array
+};
+
+export default connect((state, ownProps) => ({
+    entities: state.cards[ownProps.cardId].entities
 }))(CardTemplator);

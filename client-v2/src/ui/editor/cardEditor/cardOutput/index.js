@@ -74,7 +74,7 @@ const CSS = css({
 
 const debug = css({ backgroundColor: "white", border: "1px solid black" });
 
-class CardOutput extends React.Component {
+export default class CardOutput extends React.Component {
     constructor(props, context) {
         super(props, context);
 
@@ -88,7 +88,7 @@ class CardOutput extends React.Component {
 
     render() {
         return (
-            <div {...CSS} {...debug}>
+            <div className={ CSS } {...debug}>
                 <span className="output-header">Output <span onClick={ this.clearOutput }>X</span></span>
                 <div className="output-content">
                     {
@@ -102,7 +102,3 @@ class CardOutput extends React.Component {
         );
     }
 }
-
-export default connect(state => ({
-    messages: state.card.cardOutput || []
-}))(CardOutput);

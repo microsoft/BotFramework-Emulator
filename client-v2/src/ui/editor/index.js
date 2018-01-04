@@ -45,10 +45,10 @@ export default class EditorFactory extends React.Component {
 
         return (
             contentType === constants.ContentType_Card ?
-                <CardEditor document={ document } />
+                <CardEditor document={ document } documentId={ this.props.documentId } />
             : contentType === constants.ContentType_BotChat ?
                 <BotChatEditor document={ document } />
-            : contentType === constants.ContentType_Converation ?
+            : contentType === constants.ContentType_Conversation ?
                 <ConversationEditor document={ document } />
             : false
         );
@@ -58,5 +58,6 @@ export default class EditorFactory extends React.Component {
 EditorFactory.propTypes = {
     document: PropTypes.shape({
         contentType: PropTypes.string
-    })
+    }),
+    documentId: PropTypes.string
 };

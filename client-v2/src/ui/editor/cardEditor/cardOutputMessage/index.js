@@ -53,7 +53,7 @@ const CSS = css({
 export default class CardOutputMessage extends React.Component {
     render() {
         return (
-            <div {...CSS}>
+            <div className={ CSS }>
                 <pre>{ this.props.message }</pre>
             </div>
         );

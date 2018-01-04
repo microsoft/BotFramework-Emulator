@@ -69,7 +69,7 @@ class ConversationExplorer extends React.Component {
         const id = uniqueId();
         this.props.dispatch(
             EditorActions.newDocument(
-                constants.ContentType_Converation,
+                constants.ContentType_Conversation,
                 {
                     id
                 }
@@ -106,5 +106,5 @@ class ConversationExplorer extends React.Component {
 
 export default connect(state => ({
     folder: state.assetExplorer.folder,
-    documents: state.editor.documents.filter(doc => doc.contentType === constants.ContentType_Converation)
+    documents: state.editor.documents.filter(doc => doc.contentType === constants.ContentType_Conversation)
 }))(ConversationExplorer)

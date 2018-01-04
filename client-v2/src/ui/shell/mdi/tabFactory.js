@@ -9,6 +9,6 @@ export default props =>
         <BotTab document={ props.document } />
     : props.document.contentType === constants.ContentType_Card ?
         <CardTab document={ props.document } />
-    : props.document.contentType === constants.ContentType_Converation ?
+    : props.document.contentType === constants.ContentType_Conversation ?
         <ConversationTab document={ props.document } />
     : false
