@@ -44,7 +44,7 @@ export default class PropertiesPanel extends React.Component {
     render() {
         return (
             <div className={ CSS }>
-                <Panel title='Properties'>
+                <Panel title="Properties">
                     <PanelContent>
                         <Properties />
                     </PanelContent>

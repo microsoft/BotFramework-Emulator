@@ -44,7 +44,7 @@ export default class EditorPanel extends React.Component {
     render() {
         return (
             <div className={ CSS }>
-                <Panel title='Editor'>
+                <Panel title="Editor">
                     <PanelContent>
                         <Editor />
                     </PanelContent>
