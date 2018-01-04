@@ -9,12 +9,11 @@ gulp.task('clean', function () {
 });
 
 gulp.task('build-app', function () {
-    const tsc = require('gulp-tsc');
-    const tsconfig = require('./tsconfig.json');
-
-    return gulp.src(['src/**/*.ts', 'src/**/*.tsx'])
-        .pipe(tsc(tsconfig.compilerOptions))
-        .pipe(gulp.dest('app/'));
+    return gulp
+        .src('./package.json', { read: false })
+        .pipe(shell([
+            'npm run build:electron'
+        ]));
 });
 
 gulp.task('build-react', ['build-react:build'], function () {
