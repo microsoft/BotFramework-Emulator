@@ -34,6 +34,7 @@
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
+
 import Panel, { Controls as PanelControls, Content as PanelContent } from '../panel';
 
 const CSS = css({
@@ -59,3 +60,7 @@ class Editor extends React.Component {
         return <span>I am User Says/Bot Says</span>;
     }
 }
+
+EditorPanel.propTypes = {
+    conversationId: PropTypes.string.isRequired
+};

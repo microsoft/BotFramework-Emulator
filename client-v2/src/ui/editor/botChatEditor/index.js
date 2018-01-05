@@ -32,11 +32,13 @@
 //
 
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
 import React from 'react';
-import Splitter from '../../layout/splitter';
+
 import ChatPanel from './chatPanel';
 import DetailPanel from './detailPanel';
 import LogPanel from './logPanel';
+import Splitter from '../../layout/splitter';
 
 const CSS = css({
     flex: 1
@@ -47,13 +49,17 @@ export default class BotChatEditor extends React.Component {
         return (
             <div className={ CSS }>
                 <Splitter secondaryInitialSize={ 500 }>
-                    <ChatPanel />
+                    <ChatPanel botId={ this.props.botId } />
                     <Splitter vertical={ true }>
-                        <DetailPanel />
-                        <LogPanel />
+                        <DetailPanel botId={ this.props.botId } />
+                        <LogPanel botId={ this.props.botId } />
                     </Splitter>
                 </Splitter>
             </div>
         );
     }
 }
+
+BotChatEditor.propTypes = {
+    botId: PropTypes.string.isRequired
+};

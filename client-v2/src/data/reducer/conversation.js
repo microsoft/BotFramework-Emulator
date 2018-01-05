@@ -31,32 +31,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as BotActions from '../action/botActions';
+import * as ConversationActions from '../action/conversationActions';
 
 const DEFAULT_STATE = {
-    bots: {
-        'bot:1': { url: 'http://localhost:3000/' },
-        'bot:2': { url: 'http://localhost:3001/' },
-        'bot:3': { url: 'http://localhost:3002/' }
-    }
-}
+    conversations: {}
+};
 
-export default function bots(state = DEFAULT_STATE, action) {
-    const { payload } = action;
-
+export default function conversation(state = DEFAULT_STATE, action) {
     switch (action.type) {
-        case BotActions.CONNECT:
+        case ConversationActions.CREATE:
             state = {
                 ...state,
-                bots: {
-                    ...state.bots,
-                    [payload.botId]: payload.connection
+                conversations: {
+                    ...state.conversations,
+                    [action.payload.conversationId]: {
+                        name: `Conversation "${ action.payload.conversationId.substr(0, 5) }"`
+                    }
                 }
             };
 
-            break;
-
-        default: break;
+        break;
     }
 
     return state;

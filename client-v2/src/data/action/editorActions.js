@@ -31,16 +31,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export const NEW_DOCUMENT = 'EDITOR/NEW_DOCUMENT';
+export const OPEN = 'EDITOR/OPEN';
 
-export function newDocument(contentType, content) {
+export function open(contentType, documentId) {
     return {
-        type: NEW_DOCUMENT,
+        type: OPEN,
         payload: {
-            document: {
-                contentType,
-                content
-            }
+            contentType,
+            documentId
         }
-    }
+    };
+}
+
+export const SET_ACTIVE = 'EDITOR/SET_ACTIVE';
+
+export function setActive(documentId) {
+    return {
+        type: SET_ACTIVE,
+        payload: documentId
+    };
 }

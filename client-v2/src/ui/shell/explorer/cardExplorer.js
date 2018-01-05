@@ -56,10 +56,6 @@ const BOTS_CSS = css({
 });
 
 export class CardExplorer extends React.Component {
-    constructor(props, context) {
-        super(props, context);
-    }
-
     render() {
         return(
             <ul className={ CSS }>
@@ -71,8 +67,12 @@ export class CardExplorer extends React.Component {
                         <ExpandCollapseContent>
                             <ul className={ BOTS_CSS }>
                                 {
-                                     this.props.cards.length ?
-                                     this.props.cards.map(card => <li>{ card.content.title }</li>) : <li>No cards found...</li>
+                                    Object.keys(this.props.cards).length ?
+                                        Object.keys(this.props.cards).map(id =>
+                                            <li key={ id }>{ this.props.cards[id].title }</li>
+                                        )
+                                    :
+                                        <li>No cards found...</li>
                                 }
                             </ul>
                         </ExpandCollapseContent>
@@ -84,5 +84,5 @@ export class CardExplorer extends React.Component {
 }
 
 export default connect(state => ({
-    cards: state.editor.documents.filter(doc => doc.contentType === constants.ContentType_Card)
+    cards: state.card.cards
 }))(CardExplorer);

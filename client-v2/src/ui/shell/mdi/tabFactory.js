@@ -8,11 +8,11 @@ import TestBedTab from './testBedTab';
 
 export default props =>
     props.document.contentType === constants.ContentType_BotChat ?
-        <BotTab document={ props.document } />
+        <BotTab botId={ props.document.documentId } />
     : props.document.contentType === constants.ContentType_Card ?
-        <CardTab document={ props.document } />
+        <CardTab cardId={ props.document.documentId } />
     : props.document.contentType === constants.ContentType_Converation ?
-        <ConversationTab document={ props.document } />
+        <ConversationTab conversationId={ props.document.documentId } />
     : props.document.contentType === constants.ContentType_TestBed ?
         <TestBedTab />
     : false
