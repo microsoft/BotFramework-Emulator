@@ -112,17 +112,52 @@ const DEFAULT_STATE = {
 
 export default function card(state = DEFAULT_STATE, action) {
     const payload = action.payload;
+
     switch (action.type) {
         case CardActions.UPDATE_JSON:
-            state = { ...state, cardJson: payload.json };
+            state = {
+                ...state,
+                cards: {
+                    ...state.cards,
+                    [payload.id]: {
+                        ...state.cards[payload.id],
+                        cardJson: payload.json
+                    }
+                }
+            }
             break;
         case CardActions.ADD_OUTPUT_MSG:
-            state = { ...state, cardOutput: [...state.cardOutput, payload.msg] };
+            state = {
+                ...state,
+                cards: {
+                    ...state.cards,
+                    [payload.id]: {
+                        ...state.cards[payload.id],
+                        cardOutput: [...state.cards[payload.id].cardOutput, payload.msg]
+                    }
+                }
+            }
             break;
         case CardActions.CLEAR_OUTPUT_WINDOW:
-            state = { ...state, cardOutput: [] };
+            state = {
+                ...state,
+                cards: {
+                    ...state.cards,
+                    [payload.id]: {
+                        ...state.cards[payload.id],
+                        cardOutput: []
+                    }
+                }
+            }
             break;
         case CardActions.CREATE_CARD:
+            state = {
+                ...state,
+                cards: {
+                    ...state.cards,
+                    [payload.id]: payload.card
+                }
+            }
             break;
         default:
             break;

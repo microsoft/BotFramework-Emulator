@@ -33,12 +33,14 @@
 
 import { css } from 'glamor';
 import React from 'react';
-import * as constants from '../../../constants';
 import { connect } from 'react-redux';
+
+import * as constants from '../../../constants';
 import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
 import { directoryExists, getFilesInDir, fileExists, readFileSync } from '../../utils';
 import * as CardActions from '../../../data/action/cardActions';
 import { ContentType_Card } from '../../../constants';
+import * as EditorActions from '../../../data/action/editorActions';
 
 const CSS = css({
     backgroundColor: 'Pink',
@@ -92,8 +94,8 @@ export class CardExplorer extends React.Component {
         }
     }
 
-    handleCardClick(title) {
-        console.log("Clicked card: ", title);
+    handleCardClick(id) {
+        this.props.dispatch(EditorActions.open(ContentType_Card, id));
     }
 
     render() {
@@ -109,7 +111,7 @@ export class CardExplorer extends React.Component {
                                 {
                                     Object.keys(this.props.cards).length ?
                                         Object.keys(this.props.cards).map(id =>
-                                            <li onClick={ () => this.handleCardClick(card.title) } key={ id }>{ this.props.cards[id].title }</li>
+                                            <li onClick={ () => this.handleCardClick(id) } key={ id }>{ this.props.cards[id].title }</li>
                                         )
                                     :
                                         <li>No cards found...</li>
@@ -124,5 +126,6 @@ export class CardExplorer extends React.Component {
 }
 
 export default connect(state => ({
-    cards: state.card.cards
+    cards: state.card.cards,
+    folder: state.assetExplorer.folder
 }))(CardExplorer);

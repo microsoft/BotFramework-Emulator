@@ -134,7 +134,7 @@ class CardJsonEditor extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         const { loaderReady: prevLoaderReady } = prevState || {};
-        const { editorWidth: prevEditorWidth, cardId: prevCardId, card: prevCard } = prevProps || null;
+        const { editorWidth: prevEditorWidth, cardId: prevCardId, cardJson: prevCardJson } = prevProps || null;
 
         if (prevEditorWidth && this._editor) {
             this._editor.layout();
@@ -173,11 +173,11 @@ class CardJsonEditor extends React.Component {
         // if we switched between card tabs
         if (prevCardId && prevCardId !== this.props.cardId) {
             // sync previous card with store so we don't lose state
-            if (prevCard && prevCard.cardJson) {
-                this.syncStoreWithCardJson(prevCardId, prevCard.cardJson);
+            if (prevCardJson) {
+                this.syncStoreWithCardJson(prevCardId, prevCardJson);
             }
             if (this._editor) {
-                this._editor.setValue(this.props.card.cardJson);
+                this._editor.setValue(this.props.cardJson);
             } else {
                 this.initMonacoEditor();
             }
@@ -217,16 +217,15 @@ class CardJsonEditor extends React.Component {
     // saves the card to the file system
     saveCard() {
         if (this.state.saveEnabled) {
-            const filePath = this.props.card.path;
+            const filePath = this.props.path;
             fs.writeFile(
                 filePath,
-                this.props.card.cardJson,
+                this.props.cardJson,
                 "utf-8",
                 (err) => {
                     if (err) {
                         console.log("Error saving adaptive card to file!", err);
                     } else {
-                        console.log("Saved adaptive card to file!");
                         this.setState(() => ({ saveEnabled: false }))
                     }
                 }
@@ -247,18 +246,13 @@ class CardJsonEditor extends React.Component {
 }
 
 CardJsonEditor.propTypes = {
+    cardId: PropTypes.string,
+    cardJson: PropTypes.string,
     editorWidth: PropTypes.number,
-    card: PropTypes.shape({
-        id: PropTypes.string,
-        cardJson: PropTypes.string,
-        cardOutput: PropTypes.array,
-        contentType: PropTypes.string,
-        entities: PropTypes.array,
-        path: PropTypes.string,
-        title: PropTypes.string
-    })
+    path: PropTypes.string
 };
 
 export default connect((state, { cardId }) => ({
-    cardJson: state.card.cards[cardId].cardJson
+    cardJson: state.card.cards[cardId].cardJson,
+    path: state.card.cards[cardId].path
 }))(CardJsonEditor);

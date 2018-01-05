@@ -97,7 +97,7 @@ class CardPreview extends React.Component {
         // During editing, invalid JSON will cause JSON.parse() to throw an error,
         // which will crash the entire component. We want to catch those errors and throw them away.
         try {
-            const newPreRenderedCard = JSON.parse(newProps.card.cardJson);
+            const newPreRenderedCard = JSON.parse(newProps.cardJson);
             const renderedCard = AdaptiveCards.renderCard(newPreRenderedCard, this.renderOptions);
             if (renderedCard instanceof Node) {
                 this.cardContainer.removeChild(this.cardContainer.firstChild);
@@ -168,6 +168,7 @@ class CardPreview extends React.Component {
 }
 
 CardPreview.propTypes = {
+    cardId: PropTypes.string,
     cardJson: PropTypes.string
 };
 
