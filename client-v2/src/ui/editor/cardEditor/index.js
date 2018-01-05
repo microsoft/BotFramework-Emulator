@@ -43,8 +43,7 @@ import PropTypes from 'prop-types';
 const CSS = css({
     display: "flex",
     flexFlow: "row nowrap",
-    flex: "1",
-    height: "100%",
+    height: "auto",
     width: "100%",
     backgroundColor: "white",
 
@@ -56,13 +55,6 @@ const CSS = css({
         height: "100%",
         width: "100%",
         padding: "0 24px"
-    },
-
-    " .card-horizontal-splitter": {
-        width: "100%",
-        height: "32px",
-        flexShrink: "0",
-        cursor: "ns-resize"
     },
 
     " .card-json-editor-container": {

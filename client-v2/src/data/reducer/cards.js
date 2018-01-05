@@ -39,16 +39,7 @@ import {
 } from '../action/cardActions';
 import { ContentType_Card } from '../../constants';
 
-const DEFAULT_STATE = {
-    cardId: {
-        title: "My card",
-        cardJson: "{}",
-        cardOutput: [],
-        entities: [],
-        path: "C:\\somecard.json",
-        contentType: ContentType_Card
-    }
-};
+const DEFAULT_STATE = {};
 
 export default function cards(state = DEFAULT_STATE, action) {
     const payload = action.payload;

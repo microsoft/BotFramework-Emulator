@@ -70,7 +70,7 @@ export default class MultiTabs extends React.Component {
                         )
                     }
                 </TabBar>
-                { filterChildren(React.Children.toArray(this.props.children)[this.props.value].props.children, child => child.type === TabbedDocumentContent) }
+                { this.props.children.length ? filterChildren(React.Children.toArray(this.props.children)[this.props.value].props.children, child => child.type === TabbedDocumentContent) : false }
             </div>
         );
     }

@@ -87,7 +87,6 @@ class CardJsonEditor extends React.Component {
     constructor(props, context) {
         super(props, context);
 
-        console.log("got props: ", props);
         this.saveContainer = this.saveContainer.bind(this);
         this.saveCard = this.saveCard.bind(this);
 
@@ -187,7 +186,6 @@ class CardJsonEditor extends React.Component {
 
     // creates the monaco editor, inserts it into the DOM, and hooks up code change listener
     initMonacoEditor() {
-        console.log("loading card with path: ", this.props.card.path);
         this._editor = window.monaco.editor.create(this.editorContainer, {
             value: this.props.card.cardJson,
             language: 'json',
