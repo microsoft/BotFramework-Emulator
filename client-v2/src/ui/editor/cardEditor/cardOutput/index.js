@@ -93,10 +93,12 @@ class CardOutput extends React.Component {
                 <span className="output-header">Output <span onClick={ this.clearOutput }>X</span></span>
                 <div className="output-content">
                     {
-                        this.props.messages.length ?
-                        this.props.messages.map(msg => {
-                            return (<AdaptiveCardOutputMessage key={ msg } message={ msg } />);
-                        }) : <span>Output is empty...</span>
+                        this.props.messages && this.props.messages.length ?
+                            this.props.messages.map(msg =>
+                                <AdaptiveCardOutputMessage key={ msg } message={ msg } />
+                            )
+                        :
+                            <span>Output is empty...</span>
                     }
                 </div>
             </div>
@@ -109,4 +111,6 @@ CardOutput.propTypes = {
     messages: PropTypes.array
 };
 
-export default connect(state => ({}))(CardOutput);
+export default connect((state, { cardId }) => ({
+    messages: state.card.cards[cardId].cardOutput
+}))(CardOutput);

@@ -1,5 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
+<<<<<<< HEAD
+=======
+
+import * as constants from '../../../constants';
+import * as EditorActions from '../../../data/action/editorActions';
+>>>>>>> 8eece5dd61a1660ca48287ea111108ede83faad7
 import EditorFactory from '../../editor';
 import MultiTabs from '../multiTabs';
 import TabFactory from './tabFactory';
@@ -10,23 +16,23 @@ class MDI extends React.Component {
         super(props, context);
 
         this.handleTabChange = this.handleTabChange.bind(this);
-
-        this.state = { tabValue: 0 };
     }
 
     handleTabChange(tabValue) {
-        this.setState(() => ({ tabValue }));
+        this.props.dispatch(EditorActions.setActive(this.props.documents[tabValue].documentId));
     }
 
     render() {
+        const activeIndex = this.props.documents.findIndex(document => document.documentId === this.props.activeDocumentId);
+
         return (
             <MultiTabs
                 onChange={ this.handleTabChange }
-                value={ this.state.tabValue }
+                value={ ~activeIndex ? activeIndex : 0 }
             >
                 {
-                    Object.keys(this.props.documents).map(documentId =>
-                        <TabbedDocument>
+                    this.props.documents.map(document =>
+                        <TabbedDocument key={ document.documentId }>
                             <TabbedDocumentTab>
                                 <TabFactory documentId={ documentId } document={ this.props.documents[documentId] } />
                             </TabbedDocumentTab>
@@ -41,4 +47,7 @@ class MDI extends React.Component {
     }
 }
 
-export default connect(state => ({ documents: state.cards }))(MDI)
+export default connect(state => ({
+    activeDocumentId: state.editor.activeDocumentId,
+    documents: state.editor.documents
+}))(MDI)

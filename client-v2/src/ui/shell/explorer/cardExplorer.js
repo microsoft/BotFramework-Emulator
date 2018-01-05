@@ -108,9 +108,12 @@ export class CardExplorer extends React.Component {
                         <ExpandCollapseContent>
                             <ul className={ BOTS_CSS }>
                                 {
-                                    this.props.cards.length ?
-                                    this.props.cards.map(card => <li onClick={ () => this.handleCardClick(card.title) }>{ card.title }</li>)
-                                    : <li>No cards found...</li>
+                                    Object.keys(this.props.cards).length ?
+                                        Object.keys(this.props.cards).map(id =>
+                                            <li onClick={ () => this.handleCardClick(card.title) } key={ id }>{ this.props.cards[id].title }</li>
+                                        )
+                                    :
+                                        <li>No cards found...</li>
                                 }
                             </ul>
                         </ExpandCollapseContent>
@@ -122,6 +125,5 @@ export class CardExplorer extends React.Component {
 }
 
 export default connect(state => ({
-    cards: Object.keys(state.cards).map(cardId => state.cards[cardId]),
-    folder: state.assetExplorer.folder
+    cards: state.card.cards
 }))(CardExplorer);

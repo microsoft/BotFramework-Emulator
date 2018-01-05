@@ -34,6 +34,7 @@
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
+
 import Panel, { Controls as PanelControls, Content as PanelContent } from '../panel';
 
 const CSS = css({
@@ -44,8 +45,9 @@ export default class PropertiesPanel extends React.Component {
     render() {
         return (
             <div className={ CSS }>
-                <Panel title='Properties'>
+                <Panel title="Properties">
                     <PanelContent>
+                        <p>Conversation ID: { this.props.conversationId }</p>
                         <Properties />
                     </PanelContent>
                 </Panel>
@@ -59,3 +61,7 @@ class Properties extends React.Component {
         return <span>I am Properties</span>;
     }
 }
+
+PropertiesPanel.propTypes = {
+    conversationId: PropTypes.string.isRequired
+};

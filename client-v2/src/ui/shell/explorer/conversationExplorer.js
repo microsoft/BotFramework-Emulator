@@ -34,10 +34,13 @@
 import { css } from 'glamor';
 import React from 'react';
 import { connect } from 'react-redux';
-import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
-import * as EditorActions from '../../../data/action/editorActions';
-import * as constants from '../../../constants';
+
 import { uniqueId } from '../../../utils';
+import * as constants from '../../../constants';
+import * as ConversationActions from '../../../data/action/conversationActions';
+import * as EditorActions from '../../../data/action/editorActions';
+import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
+import conversation from '../../../data/reducer/conversation';
 
 const CSS = css({
     backgroundColor: 'Pink',
@@ -66,15 +69,16 @@ class ConversationExplorer extends React.Component {
 
     handleAddClick(e) {
         e.stopPropagation();
-        const id = uniqueId();
-        this.props.dispatch(
-            EditorActions.newDocument(
-                constants.ContentType_Conversation,
-                {
-                    id
-                }
-            )
-        );
+
+        const createAction = ConversationActions.create();
+
+        this.props.dispatch(createAction);
+
+        // TODO: Turn this into a saga, the conversation ID maybe generated from server asynchronously
+        this.props.dispatch(EditorActions.open(
+            constants.ContentType_Converation,
+            createAction.payload.conversationId
+        ));
     }
 
     render() {
@@ -91,9 +95,11 @@ class ConversationExplorer extends React.Component {
                         <ExpandCollapseContent>
                             <ul className={ BOTS_CSS }>
                             {
-                                this.props.documents.map(doc => {
-                                    return <li>Conversation</li>
-                                })
+                                Object.keys(this.props.conversations).map(conversationId =>
+                                    <li key={ conversationId }>
+                                        { this.props.conversations[conversationId].name }
+                                    </li>
+                                )
                             }
                             </ul>
                         </ExpandCollapseContent>
@@ -105,6 +111,5 @@ class ConversationExplorer extends React.Component {
 }
 
 export default connect(state => ({
-    folder: state.assetExplorer.folder,
-    documents: state.editor.documents.filter(doc => doc.contentType === constants.ContentType_Conversation)
+    conversations: state.conversation.conversations
 }))(ConversationExplorer)

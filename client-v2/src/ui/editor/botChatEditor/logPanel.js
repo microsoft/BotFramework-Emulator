@@ -31,21 +31,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { connect } from 'react-redux';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
+
 import Panel, { Controls as PanelControls, Content as PanelContent } from '../panel';
 
 const CSS = css({
     height: '100%'
 });
 
-export default class LogPanel extends React.Component {
+class LogPanel extends React.Component {
     render() {
         return (
             <div className={ CSS }>
-                <Panel title='Log'>
+                <Panel title="Log">
                     <PanelContent>
+                        <p>{ this.props.botId }: Connecting to { this.props.bot.url }</p>
                         <Log />
                     </PanelContent>
                 </Panel>
@@ -59,3 +62,11 @@ class Log extends React.Component {
         return <span>I am Log</span>;
     }
 }
+
+LogPanel.propTypes = {
+    botId: PropTypes.string.isRequired
+};
+
+export default connect((state, { botId }) => ({
+    bot: state.bot.bots[botId]
+}))(LogPanel)

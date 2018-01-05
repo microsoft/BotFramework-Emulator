@@ -31,11 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { connect } from 'react-redux';
 import { css } from 'glamor';
 import React from 'react';
-import { connect } from 'react-redux';
-import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
+
 import * as BotActions from '../../../data/action/botActions';
+import * as constants from '../../../constants';
+import * as EditorActions from '../../../data/action/editorActions';
+import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
 
 const CSS = css({
     backgroundColor: 'skyblue',
@@ -63,8 +66,10 @@ class BotExplorer extends React.Component {
     }
 
     handleAddClick(e) {
-        e.stopPropagation();
-        this.props.dispatch(BotActions.createBot());
+        const connectAction = BotActions.connect(`http://localhost:${ ~~(Math.random() * 1000) + 4000 }/`);
+
+        this.props.dispatch(connectAction);
+        this.props.dispatch(EditorActions.open(constants.ContentType_BotChat, connectAction.payload.botId));
     }
 
     render() {
@@ -80,9 +85,15 @@ class BotExplorer extends React.Component {
                         </ExpandCollapseControls>
                         <ExpandCollapseContent>
                             <ul className={ BOTS_CSS }>
-                                <li>http://localhost:3000/</li>
-                                <li>http://localhost:3001/</li>
-                                <li>http://localhost:3002/</li>
+                                {
+                                    Object.keys(this.props.bots)
+                                        .map(id => ({
+                                            id,
+                                            url: this.props.bots[id].url
+                                        }))
+                                        .sort((x, y) => x.url > y.url ? 1 : x.url < y.url ? -1 : 0)
+                                        .map(bot => <li key={ bot.id }>{ bot.url }</li>)
+                                }
                             </ul>
                         </ExpandCollapseContent>
                     </ExpandCollapse>
@@ -92,4 +103,4 @@ class BotExplorer extends React.Component {
     }
 }
 
-export default connect(state => ({ bots: state.bots }))(BotExplorer)
+export default connect(state => ({ bots: state.bot.bots }))(BotExplorer)

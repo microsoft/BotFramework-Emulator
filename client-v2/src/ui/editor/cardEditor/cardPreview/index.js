@@ -165,6 +165,10 @@ class CardPreview extends React.Component {
     }
 }
 
-export default connect((state, ownProps) => ({
-    cardJson: state.cards[ownProps.cardId].cardJson
+CardPreview.propTypes = {
+    cardJson: PropTypes.string
+};
+
+export default connect((state, { cardId }) => ({
+    cardJson: state.card.cards[cardId].cardJson
 }))(CardPreview);

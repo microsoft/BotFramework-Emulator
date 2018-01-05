@@ -246,8 +246,6 @@ class CardJsonEditor extends React.Component {
     }
 }
 
-export default connect(state => ({}))(CardJsonEditor);
-
 CardJsonEditor.propTypes = {
     editorWidth: PropTypes.number,
     card: PropTypes.shape({
@@ -260,3 +258,7 @@ CardJsonEditor.propTypes = {
         title: PropTypes.string
     })
 };
+
+export default connect((state, { cardId }) => ({
+    cardJson: state.card.cards[cardId].cardJson
+}))(CardJsonEditor);

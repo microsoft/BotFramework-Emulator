@@ -44,6 +44,7 @@ import { directoryExists } from '../../utils';
 
 if (typeof window !== 'undefined') { require = window['require']; }
 
+// TODO: Should move all native calls to main thread
 const fs = require('fs');
 
 class AssetExplorerSet extends React.Component {

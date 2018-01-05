@@ -31,8 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import React from 'react';
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
+import React from 'react';
+
 import CardJsonEditor from './cardJsonEditor';
 import CardOutput from './cardOutput';
 import CardPreview from './cardPreview';
@@ -93,15 +95,13 @@ export default class CardEditor extends React.Component {
                     onSecondaryPaneSizeChange={ this.onChangeVerticalSplit }
                 >
                     <div className="card-json-editor-container" ref={ this.saveJsonEditorContainer }>
-                        <CardJsonEditor card={ this.props.document } cardId={ this.props.documentId } editorWidth={ this.state.containerWidth } />
+                        <CardJsonEditor cardId={ this.props.cardId } editorWidth={ this.state.containerWidth } />
                     </div>
 
                     <div className="card-right-panel">
-                        <CardPreview card={ this.props.document } cardId={ this.props.documentId } />
-
-                        <CardTemplator card={ this.props.document } cardId={ this.props.documentId } />
-
-                        <CardOutput messages={ this.props.document.cardOutput } cardId={ this.props.documentId } />
+                        <CardPreview cardId={ this.props.cardId } />
+                        <CardTemplator cardId={ this.props.cardId } />
+                        <CardOutput cardId={ this.props.cardId } />
                     </div>
                 </Splitter>
             </div>
@@ -110,13 +110,5 @@ export default class CardEditor extends React.Component {
 }
 
 CardEditor.propTypes = {
-    document: PropTypes.shape({
-        title: PropTypes.string,
-        cardJson: PropTypes.string,
-        cardOutput: PropTypes.array,
-        entities: PropTypes.array,
-        path: PropTypes.string,
-        contentType: PropTypes.string
-    }),
-    documentId: PropTypes.string
+    cardId: PropTypes.string.isRequired
 };

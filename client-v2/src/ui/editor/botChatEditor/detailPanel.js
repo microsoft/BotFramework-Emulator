@@ -44,7 +44,7 @@ export default class DetailPanel extends React.Component {
     render() {
         return (
             <div className={ CSS }>
-                <Panel title='Details'>
+                <Panel title="Details">
                     <PanelContent>
                         <Detail />
                     </PanelContent>

@@ -34,6 +34,7 @@
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
+
 import Panel, { Controls as PanelControls, Content as PanelContent } from '../panel';
 
 const CSS = css({
@@ -44,7 +45,7 @@ export default class ChatPanel extends React.Component {
     render() {
         return (
             <div className={ CSS }>
-                <Panel title='Chat'>
+                <Panel title="Chat">
                     <PanelContent>
                         <Chat />
                     </PanelContent>
@@ -59,3 +60,7 @@ class Chat extends React.Component {
         return <span>I am Chat</span>;
     }
 }
+
+ChatPanel.propTypes = {
+    botId: PropTypes.string.isRequired
+};

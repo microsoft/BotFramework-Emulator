@@ -31,33 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as BotActions from '../action/botActions';
+import { uniqueId } from '../../utils';
 
-const DEFAULT_STATE = {
-    bots: {
-        'bot:1': { url: 'http://localhost:3000/' },
-        'bot:2': { url: 'http://localhost:3001/' },
-        'bot:3': { url: 'http://localhost:3002/' }
-    }
-}
+export const CREATE = 'CONVERSATION/CREATE';
 
-export default function bots(state = DEFAULT_STATE, action) {
-    const { payload } = action;
-
-    switch (action.type) {
-        case BotActions.CONNECT:
-            state = {
-                ...state,
-                bots: {
-                    ...state.bots,
-                    [payload.botId]: payload.connection
-                }
-            };
-
-            break;
-
-        default: break;
-    }
-
-    return state;
+export function create() {
+    return {
+        type: CREATE,
+        payload: {
+            conversationId: uniqueId()
+        }
+    };
 }
