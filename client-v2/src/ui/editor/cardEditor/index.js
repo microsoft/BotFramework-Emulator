@@ -36,9 +36,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import CardJsonEditor from './cardJsonEditor';
-import CardOutput from './cardOutput';
-import CardPreview from './cardPreview';
-import CardTemplator from './cardTemplator';
+import CardOutput from './cardOutputWindow';
+import CardPreview from './cardPreviewWindow';
+import CardTemplator from './cardTemplatorWindow';
 import Splitter from '../../layout/splitter';
 
 const CSS = css({

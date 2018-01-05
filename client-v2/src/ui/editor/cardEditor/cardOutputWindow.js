@@ -34,8 +34,8 @@
 import { connect } from 'react-redux'
 import { css } from 'glamor'
 import React from 'react'
-import AdaptiveCardOutputMessage from '../cardOutputMessage';
-import * as CardActions from '../../../../data/action/cardActions';
+import AdaptiveCardOutputMessage from './cardOutputMessage';
+import * as CardActions from '../../../data/action/cardActions';
 import PropTypes from 'prop-types';
 
 const CSS = css({

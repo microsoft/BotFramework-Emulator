@@ -35,12 +35,12 @@ import { connect } from 'react-redux'
 import { css } from 'glamor'
 import React from 'react'
 import ReactDOM from 'react-dom';
-import * as CardActions from '../../../../data/action/cardActions';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { updateCardJson } from '../../../../data/action/cardActions';
 if (typeof window !== 'undefined') { require = window['require']; }
 const fs = require('fs');
+
+import * as CardActions from '../../../data/action/cardActions';
 
 const CSS = css({
     height: "100%",

@@ -34,7 +34,7 @@
 import { connect } from 'react-redux'
 import { css } from 'glamor'
 import React from 'react'
-import CardTemplateRow from '../cardTemplateRow';
+import CardTemplateRow from './cardTemplateRow';
 import PropTypes from 'prop-types';
 
 const CSS = css({

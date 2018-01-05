@@ -38,7 +38,7 @@ import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
 import * as AdaptiveCards from 'adaptivecards';
-import * as CardActions from '../../../../data/action/cardActions';
+import * as CardActions from '../../../data/action/cardActions';
 
 const CSS = css({
     margin: "24px 0 12px 0",
