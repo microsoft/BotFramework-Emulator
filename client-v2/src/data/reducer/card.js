@@ -31,11 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-    CARD_ADD_OUTPUT_MSG,
-    CARD_CLEAR_OUTPUT_WINDOW,
-    CARD_UPDATE_JSON
-} from '../action/cardActions';
+import * as CardActions from '../action/cardActions';
 
 const DEFAULT_STATE = {
     cards: {
@@ -117,14 +113,16 @@ const DEFAULT_STATE = {
 export default function card(state = DEFAULT_STATE, action) {
     const payload = action.payload;
     switch (action.type) {
-        case CARD_UPDATE_JSON:
+        case CardActions.UPDATE_JSON:
             state = { ...state, cardJson: payload.json };
             break;
-        case CARD_ADD_OUTPUT_MSG:
+        case CardActions.ADD_OUTPUT_MSG:
             state = { ...state, cardOutput: [...state.cardOutput, payload.msg] };
             break;
-        case CARD_CLEAR_OUTPUT_WINDOW:
+        case CardActions.CLEAR_OUTPUT_WINDOW:
             state = { ...state, cardOutput: [] };
+            break;
+        case CardActions.CREATE_CARD:
             break;
         default:
             break;

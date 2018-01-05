@@ -87,7 +87,7 @@ export class CardExplorer extends React.Component {
                         contentType: ContentType_Card
                     };
 
-                    this.props.dispatch(CardActions.newCard(uniqueId(), cardContent));
+                    this.props.dispatch(CardActions.createCard(uniqueId(), cardContent));
                 }
             }
         }

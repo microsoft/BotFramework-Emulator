@@ -34,7 +34,7 @@
 export const UPDATE_JSON = 'CARD/UPDATE_JSON';
 export const ADD_OUTPUT_MSG = 'CARD/ADD_OUTPUT_MSG';
 export const CLEAR_OUTPUT_WINDOW = 'CARD/CLEAR_OUTPUT_WINDOW';
-export const NEW_CARD = 'CARD/NEW_CARD';
+export const CREATE_CARD = 'CARD/CREATE_CARD';
 
 export function updateCardJson(id, json) {
     return {
@@ -65,9 +65,9 @@ export function clearCardOutputWindow(id) {
     };
 }
 
-export function newCard(id, card) {
+export function createCard(id, card) {
     return {
-        type: NEW_CARD,
+        type: CREATE_CARD,
         payload: {
             id,
             card

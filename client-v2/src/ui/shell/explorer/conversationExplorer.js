@@ -76,7 +76,7 @@ class ConversationExplorer extends React.Component {
 
         // TODO: Turn this into a saga, the conversation ID maybe generated from server asynchronously
         this.props.dispatch(EditorActions.open(
-            constants.ContentType_Converation,
+            constants.ContentType_Conversation,
             createAction.payload.conversationId
         ));
     }

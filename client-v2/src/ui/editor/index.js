@@ -48,7 +48,7 @@ export default class EditorFactory extends React.Component {
                 <CardEditor cardId={ document.documentId } />
             : contentType === constants.ContentType_BotChat ?
                 <BotChatEditor botId={ document.documentId } />
-            : contentType === constants.ContentType_Converation ?
+            : contentType === constants.ContentType_Conversation ?
                 <ConversationEditor conversationId={ document.documentId } />
             : false
         );

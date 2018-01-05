@@ -1,11 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-<<<<<<< HEAD
-=======
 
 import * as constants from '../../../constants';
 import * as EditorActions from '../../../data/action/editorActions';
->>>>>>> 8eece5dd61a1660ca48287ea111108ede83faad7
 import EditorFactory from '../../editor';
 import MultiTabs from '../multiTabs';
 import TabFactory from './tabFactory';
