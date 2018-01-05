@@ -94,7 +94,8 @@ export class CardExplorer extends React.Component {
         }
     }
 
-    handleCardClick(id) {
+    handleCardClick(e, id) {
+        e.stopPropagation();
         this.props.dispatch(EditorActions.open(ContentType_Card, id));
     }
 
@@ -111,7 +112,7 @@ export class CardExplorer extends React.Component {
                                 {
                                     Object.keys(this.props.cards).length ?
                                         Object.keys(this.props.cards).map(id =>
-                                            <li onClick={ () => this.handleCardClick(id) } key={ id }>{ this.props.cards[id].title }</li>
+                                            <li onClick={ (event) => this.handleCardClick(event, id) } key={ id }>{ this.props.cards[id].title }</li>
                                         )
                                     :
                                         <li>No cards found...</li>

@@ -83,7 +83,8 @@ class CardOutput extends React.Component {
     }
 
     // clears the messages in the output window
-    clearOutput() {
+    clearOutput(e) {
+        e.stopPropagation();
         this.props.dispatch(CardActions.clearCardOutputWindow(this.props.cardId));
     }
 

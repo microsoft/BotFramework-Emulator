@@ -215,7 +215,9 @@ class CardJsonEditor extends React.Component {
     }
 
     // saves the card to the file system
-    saveCard() {
+    saveCard(e) {
+        e.stopPropagation();
+
         if (this.state.saveEnabled) {
             const filePath = this.props.path;
             fs.writeFile(
