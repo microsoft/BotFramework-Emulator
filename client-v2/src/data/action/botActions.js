@@ -33,15 +33,16 @@
 
 import { uniqueId } from "../../utils";
 
-export const CREATE_BOT = 'BOT/CREATE_BOT';
+export const CONNECT = 'BOT/CONNECT';
 
-export function createBot() {
+export function connect(url) {
     return {
-        type: CREATE_BOT,
+        type: CONNECT,
         payload: {
-            bot: {
-                id: uniqueId(),
-                state: 'NEW'
+            botId: uniqueId(),
+            connection: {
+                state: 'NEW',
+                url
             }
         }
     }

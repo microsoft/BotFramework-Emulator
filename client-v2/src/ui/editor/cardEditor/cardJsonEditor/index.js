@@ -240,6 +240,6 @@ CardJsonEditor.propTypes = {
     editorWidth: PropTypes.number
 };
 
-export default connect(state => ({
-    cardJson: state.card.cardJson
+export default connect((state, { cardId }) => ({
+    cardJson: state.card.cards[cardId].cardJson
 }))(CardJsonEditor);

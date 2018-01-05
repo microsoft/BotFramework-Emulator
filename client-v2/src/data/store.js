@@ -39,12 +39,13 @@ import promiseMiddleware from 'redux-promise-middleware';
 // import IPCRendererWebSocket from 'electron-ipcrenderer-websocket';
 // import WebSocketActionBridge from 'redux-websocket-action-bridge';
 
+import assetExplorer from './reducer/assetExplorer';
+import bot from './reducer/bot';
+import card from './reducer/card';
+import conversation from './reducer/conversation';
 import editor from './reducer/editor';
 import navBar from './reducer/navBar';
-import bot from './reducer/bot';
-import assetExplorer from './reducer/assetExplorer';
 import server from './reducer/server';
-import card from './reducer/card';
 
 const electron = window.process && window.process.versions.electron;
 
@@ -78,10 +79,11 @@ const createStoreWithMiddleware = applyMiddleware(
 const DEFAULT_STATE = {};
 
 export default createStoreWithMiddleware(combineReducers({
-    editor,
-    navBar,
+    assetExplorer,
     bot,
     card,
-    assetExplorer,
+    conversation,
+    editor,
+    navBar,
     server
 }));
