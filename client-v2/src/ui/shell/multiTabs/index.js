@@ -44,7 +44,9 @@ const CSS = css({
     backgroundColor: 'orange',
     display: 'flex',
     flex: 1,
-    flexDirection: 'column'
+    flexDirection: 'column',
+    height: "100%",
+    boxSizing: "border-box"
 });
 
 export default class MultiTabs extends React.Component {

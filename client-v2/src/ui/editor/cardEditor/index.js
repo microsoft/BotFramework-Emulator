@@ -43,9 +43,10 @@ import PropTypes from 'prop-types';
 const CSS = css({
     display: "flex",
     flexFlow: "row nowrap",
-    height: "auto",
+    height: "100%",
     width: "100%",
     backgroundColor: "white",
+    boxSizing: "border-box",
 
     " *": { boxSizing: "border-box" },
 
