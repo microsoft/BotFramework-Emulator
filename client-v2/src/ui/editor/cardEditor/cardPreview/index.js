@@ -35,6 +35,8 @@ import { connect } from 'react-redux'
 import { css } from 'glamor'
 import React from 'react'
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
+
 import * as AdaptiveCards from 'adaptivecards';
 import * as CardActions from '../../../../data/action/cardActions';
 
@@ -87,7 +89,7 @@ class CardPreview extends React.Component {
 
     componentDidMount() {
         // we must wait for the component to mount then render the card and insert it into the DOM
-        var renderedCard = AdaptiveCards.renderCard(JSON.parse(this.props.card.cardJson), this.renderOptions);
+        var renderedCard = AdaptiveCards.renderCard(JSON.parse(this.props.cardJson), this.renderOptions);
         this.cardContainer.appendChild(renderedCard);
     }
 

@@ -92,6 +92,6 @@ CardTemplator.propTypes = {
     entities: PropTypes.array
 };
 
-export default connect((state, ownProps) => ({
-    entities: state.cards[ownProps.cardId].entities
+export default connect((state, { cardId }) => ({
+    entities: state.card.cards[cardId].entities
 }))(CardTemplator);

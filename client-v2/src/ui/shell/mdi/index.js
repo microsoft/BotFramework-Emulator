@@ -31,10 +31,10 @@ class MDI extends React.Component {
                     this.props.documents.map(document =>
                         <TabbedDocument key={ document.documentId }>
                             <TabbedDocumentTab>
-                                <TabFactory documentId={ documentId } document={ this.props.documents[documentId] } />
+                                <TabFactory document={ document } />
                             </TabbedDocumentTab>
                             <TabbedDocumentContent>
-                                <EditorFactory documentId={ documentId } document={ this.props.documents[documentId] } />
+                                <EditorFactory document={ document } />
                             </TabbedDocumentContent>
                         </TabbedDocument>
                     )

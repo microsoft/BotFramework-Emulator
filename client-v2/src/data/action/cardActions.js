@@ -31,6 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { uniqueId } from '../../utils';
+
 export const UPDATE_JSON = 'CARD/UPDATE_JSON';
 export const ADD_OUTPUT_MSG = 'CARD/ADD_OUTPUT_MSG';
 export const CLEAR_OUTPUT_WINDOW = 'CARD/CLEAR_OUTPUT_WINDOW';
@@ -65,11 +67,11 @@ export function clearCardOutputWindow(id) {
     };
 }
 
-export function createCard(id, card) {
+export function createCard(card) {
     return {
         type: CREATE_CARD,
         payload: {
-            id,
+            id: uniqueId(),
             card
         }
     };

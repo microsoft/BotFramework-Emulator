@@ -38,7 +38,6 @@ import { connect } from 'react-redux';
 import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
 import { directoryExists, getFilesInDir, fileExists, readFileSync } from '../../utils';
 import * as CardActions from '../../../data/action/cardActions';
-import { uniqueId } from '../../../utils';
 import { ContentType_Card } from '../../../constants';
 
 const CSS = css({
@@ -87,7 +86,7 @@ export class CardExplorer extends React.Component {
                         contentType: ContentType_Card
                     };
 
-                    this.props.dispatch(CardActions.createCard(uniqueId(), cardContent));
+                    this.props.dispatch(CardActions.createCard(cardContent));
                 }
             }
         }

@@ -187,7 +187,7 @@ class CardJsonEditor extends React.Component {
     // creates the monaco editor, inserts it into the DOM, and hooks up code change listener
     initMonacoEditor() {
         this._editor = window.monaco.editor.create(this.editorContainer, {
-            value: this.props.card.cardJson,
+            value: this.props.cardJson,
             language: 'json',
             theme: "vs-dark"
         });
