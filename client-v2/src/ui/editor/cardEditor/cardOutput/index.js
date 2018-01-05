@@ -35,7 +35,8 @@ import { connect } from 'react-redux'
 import { css } from 'glamor'
 import React from 'react'
 import AdaptiveCardOutputMessage from '../cardOutputMessage';
-import { clearCardOutputWindow } from '../../../../data/action/cardActions';
+import * as CardActions from '../../../../data/action/cardActions';
+import PropTypes from 'prop-types';
 
 const CSS = css({
     width: "100%",
@@ -74,7 +75,7 @@ const CSS = css({
 
 const debug = css({ backgroundColor: "white", border: "1px solid black" });
 
-export default class CardOutput extends React.Component {
+class CardOutput extends React.Component {
     constructor(props, context) {
         super(props, context);
 
@@ -83,7 +84,7 @@ export default class CardOutput extends React.Component {
 
     // clears the messages in the output window
     clearOutput() {
-        this.props.dispatch(clearCardOutputWindow());
+        this.props.dispatch(CardActions.clearCardOutputWindow(this.props.cardId));
     }
 
     render() {
@@ -102,3 +103,10 @@ export default class CardOutput extends React.Component {
         );
     }
 }
+
+CardOutput.propTypes = {
+    cardId: PropTypes.string,
+    messages: PropTypes.array
+};
+
+export default connect(state => ({}))(CardOutput);
