@@ -66,6 +66,7 @@ class BotExplorer extends React.Component {
     }
 
     handleAddClick(e) {
+        e.stopPropagation();
         const connectAction = BotActions.connect(`http://localhost:${ ~~(Math.random() * 1000) + 4000 }/`);
 
         this.props.dispatch(connectAction);
