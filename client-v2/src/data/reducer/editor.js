@@ -48,15 +48,21 @@ const DEFAULT_STATE = {
 export default function documents(state = DEFAULT_STATE, action) {
     switch (action.type) {
         case EditorActions.OPEN:
-            state = {
-                ...state,
-                activeDocumentId: action.payload.documentId,
-                documents: [
-                    ...state.documents,
-                    action.payload
-                ]
-            };
-
+            if (!documentExists(action.payload.documentId, state.documents)) {
+                state = {
+                    ...state,
+                    activeDocumentId: action.payload.documentId,
+                    documents: [
+                        ...state.documents,
+                        action.payload
+                    ]
+                };
+            } else {
+                state = {
+                    ...state,
+                    activeDocumentId: action.payload.documentId
+                };
+            }
             break;
 
         case EditorActions.SET_ACTIVE:
@@ -71,4 +77,16 @@ export default function documents(state = DEFAULT_STATE, action) {
     }
 
     return state;
+}
+
+function documentExists(id, documents) {
+    if (documents && documents.length) {
+        for(let i = 0; i < documents.length; i++) {
+            const doc = documents[i];
+            if (doc.documentId === id) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
