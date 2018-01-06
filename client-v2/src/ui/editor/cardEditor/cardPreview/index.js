@@ -161,6 +161,6 @@ function formatActionMessage(action, actionType) {
     return msgPrefix + msgBody;
 }
 
-export default connect(state => ({
-    cardJson: state.card.cardJson
+export default connect((state, { cardId }) => ({
+    cardJson: state.card.cards[cardId].cardJson
 }))(CardPreview);

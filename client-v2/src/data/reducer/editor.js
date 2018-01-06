@@ -35,24 +35,39 @@ import * as EditorActions from '../action/editorActions';
 import * as constants from '../../constants';
 
 const DEFAULT_STATE = {
+    activeDocumentId: 'bot:1',
     documents: [{
         contentType: constants.ContentType_BotChat,
-        content: {}
+        documentId: 'bot:1'
     }, {
         contentType: constants.ContentType_TestBed
     }, {
         contentType: constants.ContentType_Card,
-        content: {}
+        documentId: 'card:1'
     }]
 };
 
 export default function documents(state = DEFAULT_STATE, action) {
     switch (action.type) {
-        case EditorActions.NEW_DOCUMENT:
+        case EditorActions.OPEN:
             state = {
-                documents: [...state.documents, action.payload.document]
-            }
-        break;
+                ...state,
+                activeDocumentId: action.payload.documentId,
+                documents: [
+                    ...state.documents,
+                    action.payload
+                ]
+            };
+
+            break;
+
+        case EditorActions.SET_ACTIVE:
+            state = {
+                ...state,
+                activeDocumentId: action.payload
+            };
+
+            break;
 
         default: break;
     }

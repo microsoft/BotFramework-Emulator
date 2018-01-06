@@ -34,19 +34,23 @@
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
+
 import { filterChildren } from '../utils';
 
 const CSS = css({
-});
+    '> header': {
+        backgroundColor: 'hotpink',
+        display: 'flex',
+        lineHeight: '30px',
 
-const HEADER_CSS = css({
-    backgroundColor: 'hotpink',
-    display: 'flex',
-    lineHeight: '30px'
-});
+        '> .content': {
+            flex: 1
+        },
 
-const CONTROLS_CSS = css({
-    margin: '0 0 0 auto'
+        '> .accessories': {
+            margin: '0 0 0 auto'
+        }
+    }
 });
 
 export default class ExpandCollapse extends React.Component {
@@ -65,20 +69,23 @@ export default class ExpandCollapse extends React.Component {
     }
 
     render() {
+        // TODO: Consider <input type="checkbox"> instead of <div />
         return (
             <div aria-expanded={ this.state.expanded } className={ CSS }>
-                <div className={ HEADER_CSS } onClick={ this.handleTitleClick }>
-                    { this.state.expanded ? '▽' : '▷' }&nbsp;
-                    { this.props.title }
-                    <div className={ CONTROLS_CSS }>
+                <header>
+                    <div className="content" onClick={ this.handleTitleClick }>
+                        { this.state.expanded ? '▽' : '▷' }&nbsp;
+                        { this.props.title }
+                    </div>
+                    <div className="accessories">
                         { filterChildren(this.props.children, child => child.type === Controls) }
                     </div>
-                </div>
+                </header>
                 {
                     this.state.expanded &&
-                        <div>
+                        <section>
                             { filterChildren(this.props.children, child => child.type === Content) }
-                        </div>
+                        </section>
                 }
             </div>
         );

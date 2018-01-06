@@ -32,7 +32,9 @@
 //
 
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
 import React from 'react';
+
 import Splitter from '../../layout/splitter';
 import EditorPanel from './editorPanel';
 import PropertiesPanel from './propertiesPanel';
@@ -46,10 +48,14 @@ export default class ConversationEditor extends React.Component {
         return (
             <div className={ CSS }>
                 <Splitter primaryIndex={ 0 } secondaryInitialSize={ 500 }>
-                    <EditorPanel />
-                    <PropertiesPanel />
+                    <EditorPanel conversationId={ this.props.conversationId } />
+                    <PropertiesPanel conversationId={ this.props.conversationId } />
                 </Splitter>
             </div>
         );
     }
 }
+
+ConversationEditor.propTypes = {
+    conversationId: PropTypes.string.isRequired
+};
