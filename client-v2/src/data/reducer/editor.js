@@ -39,6 +39,8 @@ const DEFAULT_STATE = {
         contentType: constants.ContentType_BotChat,
         content: {}
     }, {
+        contentType: constants.ContentType_TestBed
+    }, {
         contentType: constants.ContentType_Card,
         content: {}
     }]

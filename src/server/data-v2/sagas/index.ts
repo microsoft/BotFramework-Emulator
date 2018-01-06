@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export const ContentType_Card = 'application/vnd.microsoft.botstudio.document.card';
-export const ContentType_Converation = 'application/vnd.microsoft.botstudio.document.conversation';
-export const ContentType_BotChat = 'application/vnd.microsoft.botstudio.document.botchat';
-export const ContentType_TestBed = 'application/vnd.microsoft.botstudio.testbed';
+import assetExplorerPromptOpenFolder from './assetExplorer/promptOpenFolder';
+import ping from './ping';
 
-export const NavBar_Bots = 'navbar.bots';
-export const NavBar_Assets = 'navbar.assets';
+export default function* rootSaga() {
+    yield* assetExplorerPromptOpenFolder();
+    yield* ping();
+}

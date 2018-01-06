@@ -31,10 +31,38 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export const ContentType_Card = 'application/vnd.microsoft.botstudio.document.card';
-export const ContentType_Converation = 'application/vnd.microsoft.botstudio.document.conversation';
-export const ContentType_BotChat = 'application/vnd.microsoft.botstudio.document.botchat';
-export const ContentType_TestBed = 'application/vnd.microsoft.botstudio.testbed';
+import { applyMiddleware, createStore } from 'redux';
+import { WebSocketServer } from 'electron-ipcmain-websocket';
+import createPromiseMiddleware from 'redux-promise-middleware';
+import createSagaMiddleware from 'redux-saga';
+import createWebSocketBridge from 'redux-websocket-bridge';
 
-export const NavBar_Bots = 'navbar.bots';
-export const NavBar_Assets = 'navbar.assets';
+import reducers from './reducer';
+import rootSaga from './sagas';
+
+export default function create(window) {
+    return new Promise((resolve, reject) => {
+        new WebSocketServer(window).on('connection', connection => {
+            const sagaMiddleware = createSagaMiddleware();
+            const store = applyMiddleware(
+                store => next => action => {
+                    console.log(action);
+
+                    return next(action);
+                },
+                createPromiseMiddleware(),
+                createWebSocketBridge(() => connection),
+                sagaMiddleware,
+                store => next => action => {
+                    console.log(action);
+
+                    return next(action);
+                }
+            )(createStore)(reducers);
+
+            sagaMiddleware.run(rootSaga);
+
+            resolve(store);
+        })
+    });
+}

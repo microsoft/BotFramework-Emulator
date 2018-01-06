@@ -31,10 +31,34 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export const ContentType_Card = 'application/vnd.microsoft.botstudio.document.card';
-export const ContentType_Converation = 'application/vnd.microsoft.botstudio.document.conversation';
-export const ContentType_BotChat = 'application/vnd.microsoft.botstudio.document.botchat';
-export const ContentType_TestBed = 'application/vnd.microsoft.botstudio.testbed';
+import { call, put, takeEvery } from 'redux-saga/effects';
+import { dialog, OpenDialogOptions } from 'electron';
 
-export const NavBar_Bots = 'navbar.bots';
-export const NavBar_Assets = 'navbar.assets';
+import * as AssetExplorerActions from '../../action/assetExplorer';
+
+export default function* promptOpenFolder() {
+    yield takeEvery(AssetExplorerActions.PROMPT_OPEN_FOLDER, function* () {
+        try {
+            // TODO: Fix TypeScript error
+            const filePath = yield call(showOpenDialog as any, { properties: ['openDirectory'] });
+
+            // TODO: Instead of adding the folder to the store, we want to create a file watcher
+            //       and automatically update store when there is a file system change
+            yield put(AssetExplorerActions.openFolder(filePath));
+        } catch (err) {
+            if (err.message !== 'user cancelled') {
+                throw err;
+            }
+        }
+    });
+}
+
+function showOpenDialog(options: OpenDialogOptions) {
+    return new Promise((resolve, reject) => {
+        dialog.showOpenDialog(options, filePaths => {
+            const filePath = filePaths && filePaths[0];
+
+            filePath ? resolve(filePath) : reject(new Error('user cancelled'));
+        });
+    });
+}

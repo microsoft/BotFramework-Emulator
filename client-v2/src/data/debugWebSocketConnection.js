@@ -31,10 +31,45 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export const ContentType_Card = 'application/vnd.microsoft.botstudio.document.card';
-export const ContentType_Converation = 'application/vnd.microsoft.botstudio.document.conversation';
-export const ContentType_BotChat = 'application/vnd.microsoft.botstudio.document.botchat';
-export const ContentType_TestBed = 'application/vnd.microsoft.botstudio.testbed';
+import EventEmitter from 'events';
 
-export const NavBar_Bots = 'navbar.bots';
-export const NavBar_Assets = 'navbar.assets';
+class DebugConnection extends EventEmitter {
+    constructor(connection) {
+        super();
+
+        this._connection = connection;
+
+        this._connection.onmessage = event => {
+            console.info(`WS.recv: ${ event.data }`);
+            this.emit('message', event);
+            this.onmessage && this.onmessage(event);
+        };
+
+        this._connection.onopen = () => {
+            console.info(`WS.open`);
+            this.emit('open');
+            this.onopen && this.onopen();
+        };
+
+        this._connection.onclose = () => {
+            console.info(`WS.close`);
+            this.emit('close');
+            this.onclose && this.onclose();
+        };
+    }
+
+    close() {
+        this._connection.close();
+    }
+
+    end() {
+        this._connection.end();
+    }
+
+    send(data) {
+        console.info(`WS.send: ${ data }`);
+        this._connection.send(data);
+    }
+}
+
+export default DebugConnection

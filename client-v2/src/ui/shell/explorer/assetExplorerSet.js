@@ -41,19 +41,9 @@ import FormExplorer from './formExplorer';
 import ConversationExplorer from './conversationExplorer';
 import FolderNotOpenExplorer from './folderNotOpenExplorer';
 
-if (typeof window !== 'undefined') { require = window['require']; }
-
-// TODO: Should move all native calls to main thread
-const fs = require('fs');
-
 class AssetExplorerSet extends React.Component {
     render() {
-        let stat = null;
-        try {
-            stat = fs.statSync(this.props.folder);
-        } catch (e) { }
-
-        if (!stat || !stat.isDirectory()) {
+        if (!this.props.folder) {
             return (
                 <ExplorerSet title="Asset Explorer">
                     <FolderNotOpenExplorer />

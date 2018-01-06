@@ -31,13 +31,35 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+// TODO: create-react-app lockdown on module folder, and we want to refactor
+//       (part of) this action out to be used by server. We could build a new
+//       package for the refactored part. The new package can be npm-link,
+//       npm-install-file, etc. Need to find a good dev story here.
+
+// * 80% of actions, creation is only one side (main or renderer). Only the action name are shared.
+// * 20% of actions maybe created by both side. Out of these actions:
+//   * 80% of actions, their logic is different
+//     * (?) Consider prompt: we call Electron for a native dialog. And in web app mode, we show the dialog in browser
+//     * Think about a capability detection method (and overriding for dev story)
+//   * 20% of actions, their logic is the same
+
 export const OPEN_FOLDER = 'ASSET_EXPLORER/OPEN_FOLDER';
 
 export function openFolder(folder) {
     return {
         type: OPEN_FOLDER,
+        meta: { send: true },
         payload: {
             folder
         }
     }
+}
+
+export const PROMPT_OPEN_FOLDER = 'ASSET_EXPLORER/PROMPT_OPEN_FOLDER';
+
+export function promptOpenFolder() {
+    return {
+        type: PROMPT_OPEN_FOLDER,
+        meta: { send: true }
+    };
 }

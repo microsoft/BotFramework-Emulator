@@ -31,10 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export const ContentType_Card = 'application/vnd.microsoft.botstudio.document.card';
-export const ContentType_Converation = 'application/vnd.microsoft.botstudio.document.conversation';
-export const ContentType_BotChat = 'application/vnd.microsoft.botstudio.document.botchat';
-export const ContentType_TestBed = 'application/vnd.microsoft.botstudio.testbed';
+export const OPEN_FOLDER = 'ASSET_EXPLORER/OPEN_FOLDER';
 
-export const NavBar_Bots = 'navbar.bots';
-export const NavBar_Assets = 'navbar.assets';
+export function openFolder(folder) {
+    return {
+        type: OPEN_FOLDER,
+        meta: { send: true },
+        payload: {
+            folder
+        }
+    }
+}
+
+export const PROMPT_OPEN_FOLDER = 'ASSET_EXPLORER/PROMPT_OPEN_FOLDER';
