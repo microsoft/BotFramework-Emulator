@@ -40,9 +40,8 @@ const DEFAULT_STATE = {
 export default function assetExplorer(state = DEFAULT_STATE, action) {
     switch (action.type) {
         case AssetExplorerActions.OPEN_FOLDER:
-            state = {
-                folder: action.payload.folder
-            };
+            state = { ...state, folder: action.payload.folder };
+
             break;
 
         default: break;

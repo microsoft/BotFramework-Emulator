@@ -31,16 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { connect } from 'react-redux';
 import { css } from 'glamor';
 import React from 'react';
-import { connect } from 'react-redux';
-import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
+
 import * as AssetExplorerActions from '../../../data/action/assetExplorerActions';
-
-if (typeof window !== 'undefined') { require = window['require']; }
-
-// TODO: Should move all native calls to main thread
-const { dialog } = require('electron').remote;
+import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
 
 const CSS = css({
     backgroundColor: 'skyblue',
@@ -68,15 +64,7 @@ class FolderNotOpenExplorer extends React.Component {
     }
 
     handleOpenFolderClick(e) {
-        e.stopPropagation();
-        dialog.showOpenDialog({
-            properties: ['openDirectory']
-        },
-        filepaths => {
-            if (filepaths && filepaths[0]) {
-                this.props.dispatch(AssetExplorerActions.openFolder(filepaths[0]));
-            }
-        });
+        this.props.dispatch(AssetExplorerActions.promptOpenFolder());
     }
 
     render() {

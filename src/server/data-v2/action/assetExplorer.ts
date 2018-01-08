@@ -31,38 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { applyMiddleware, combineReducers, createStore } from 'redux';
-import IPCRendererWebSocket from 'electron-ipcrenderer-websocket';
-import promiseMiddleware from 'redux-promise-middleware';
-import WebSocketActionBridge from 'redux-websocket-bridge';
+export const OPEN_FOLDER = 'ASSET_EXPLORER/OPEN_FOLDER';
 
-import assetExplorer from './reducer/assetExplorer';
-import bot from './reducer/bot';
-import card from './reducer/card';
-import conversation from './reducer/conversation';
-import editor from './reducer/editor';
-import navBar from './reducer/navBar';
-import server from './reducer/server';
+export function openFolder(folder) {
+    return {
+        type: OPEN_FOLDER,
+        meta: { send: true },
+        payload: {
+            folder
+        }
+    }
+}
 
-// TODO: Remove this when we no longer need to debug the WebSocket connection
-// import DebugWebSocketConnection from './debugWebSocketConnection';
-
-const electron = window.process && window.process.versions.electron;
-
-const createStoreWithMiddleware = applyMiddleware(
-    WebSocketActionBridge(() => new IPCRendererWebSocket()),
-    // WebSocketActionBridge(() => new DebugWebSocketConnection(new IPCRendererWebSocket())),
-    promiseMiddleware()
-)(createStore);
-
-const DEFAULT_STATE = {};
-
-export default createStoreWithMiddleware(combineReducers({
-    assetExplorer,
-    bot,
-    card,
-    conversation,
-    editor,
-    navBar,
-    server
-}));
+export const PROMPT_OPEN_FOLDER = 'ASSET_EXPLORER/PROMPT_OPEN_FOLDER';

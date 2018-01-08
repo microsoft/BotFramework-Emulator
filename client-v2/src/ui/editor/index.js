@@ -33,10 +33,12 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import CardEditor from './cardEditor';
-import BotChatEditor from './botChatEditor';
-import ConversationEditor from './conversationEditor';
+
 import * as constants from '../../constants';
+import BotChatEditor from './botChatEditor';
+import CardEditor from './cardEditor';
+import ConversationEditor from './conversationEditor';
+import TestBedEditor from './testBedEditor';
 
 export default class EditorFactory extends React.Component {
     render() {
@@ -50,6 +52,8 @@ export default class EditorFactory extends React.Component {
                 <BotChatEditor botId={ document.documentId } />
             : contentType === constants.ContentType_Conversation ?
                 <ConversationEditor conversationId={ document.documentId } />
+            : contentType === constants.ContentType_TestBed ?
+                <TestBedEditor />
             : false
         );
     }

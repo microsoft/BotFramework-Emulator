@@ -2,6 +2,7 @@
   "editor.tabSize": 4,
   "editor.insertSpaces": true,
   "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
   "files.trimTrailingWhitespace": true,
   "files.exclude": {
     "client-v2/build": true,

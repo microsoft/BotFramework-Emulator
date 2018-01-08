@@ -31,38 +31,45 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { applyMiddleware, combineReducers, createStore } from 'redux';
-import IPCRendererWebSocket from 'electron-ipcrenderer-websocket';
-import promiseMiddleware from 'redux-promise-middleware';
-import WebSocketActionBridge from 'redux-websocket-bridge';
+import EventEmitter from 'events';
 
-import assetExplorer from './reducer/assetExplorer';
-import bot from './reducer/bot';
-import card from './reducer/card';
-import conversation from './reducer/conversation';
-import editor from './reducer/editor';
-import navBar from './reducer/navBar';
-import server from './reducer/server';
+class DebugConnection extends EventEmitter {
+    constructor(connection) {
+        super();
 
-// TODO: Remove this when we no longer need to debug the WebSocket connection
-// import DebugWebSocketConnection from './debugWebSocketConnection';
+        this._connection = connection;
 
-const electron = window.process && window.process.versions.electron;
+        this._connection.onmessage = event => {
+            console.info(`WS.recv: ${ event.data }`);
+            this.emit('message', event);
+            this.onmessage && this.onmessage(event);
+        };
 
-const createStoreWithMiddleware = applyMiddleware(
-    WebSocketActionBridge(() => new IPCRendererWebSocket()),
-    // WebSocketActionBridge(() => new DebugWebSocketConnection(new IPCRendererWebSocket())),
-    promiseMiddleware()
-)(createStore);
+        this._connection.onopen = () => {
+            console.info(`WS.open`);
+            this.emit('open');
+            this.onopen && this.onopen();
+        };
 
-const DEFAULT_STATE = {};
+        this._connection.onclose = () => {
+            console.info(`WS.close`);
+            this.emit('close');
+            this.onclose && this.onclose();
+        };
+    }
 
-export default createStoreWithMiddleware(combineReducers({
-    assetExplorer,
-    bot,
-    card,
-    conversation,
-    editor,
-    navBar,
-    server
-}));
+    close() {
+        this._connection.close();
+    }
+
+    end() {
+        this._connection.end();
+    }
+
+    send(data) {
+        console.info(`WS.send: ${ data }`);
+        this._connection.send(data);
+    }
+}
+
+export default DebugConnection

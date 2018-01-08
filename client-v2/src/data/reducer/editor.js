@@ -40,8 +40,7 @@ const DEFAULT_STATE = {
         contentType: constants.ContentType_BotChat,
         documentId: 'bot:1'
     }, {
-        contentType: constants.ContentType_Card,
-        documentId: 'card:1'
+        contentType: constants.ContentType_TestBed
     }]
 };
 

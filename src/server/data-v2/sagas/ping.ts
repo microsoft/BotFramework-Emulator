@@ -31,38 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { applyMiddleware, combineReducers, createStore } from 'redux';
-import IPCRendererWebSocket from 'electron-ipcrenderer-websocket';
-import promiseMiddleware from 'redux-promise-middleware';
-import WebSocketActionBridge from 'redux-websocket-bridge';
+import { put, takeEvery } from 'redux-saga/effects';
 
-import assetExplorer from './reducer/assetExplorer';
-import bot from './reducer/bot';
-import card from './reducer/card';
-import conversation from './reducer/conversation';
-import editor from './reducer/editor';
-import navBar from './reducer/navBar';
-import server from './reducer/server';
-
-// TODO: Remove this when we no longer need to debug the WebSocket connection
-// import DebugWebSocketConnection from './debugWebSocketConnection';
-
-const electron = window.process && window.process.versions.electron;
-
-const createStoreWithMiddleware = applyMiddleware(
-    WebSocketActionBridge(() => new IPCRendererWebSocket()),
-    // WebSocketActionBridge(() => new DebugWebSocketConnection(new IPCRendererWebSocket())),
-    promiseMiddleware()
-)(createStore);
-
-const DEFAULT_STATE = {};
-
-export default createStoreWithMiddleware(combineReducers({
-    assetExplorer,
-    bot,
-    card,
-    conversation,
-    editor,
-    navBar,
-    server
-}));
+export default function* ping() {
+    yield takeEvery('SERVER/PING', function* () {
+        yield put({
+            type: 'SERVER/ALIVE',
+            meta: { send: true },
+            payload: {
+                host: 'electron:main',
+                now: new Date().toISOString(),
+                version: '0.0.1'
+            }
+        });
+    });
+}

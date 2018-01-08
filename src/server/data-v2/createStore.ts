@@ -31,38 +31,38 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { applyMiddleware, combineReducers, createStore } from 'redux';
-import IPCRendererWebSocket from 'electron-ipcrenderer-websocket';
-import promiseMiddleware from 'redux-promise-middleware';
-import WebSocketActionBridge from 'redux-websocket-bridge';
+import { applyMiddleware, createStore } from 'redux';
+import { WebSocketServer } from 'electron-ipcmain-websocket';
+import createPromiseMiddleware from 'redux-promise-middleware';
+import createSagaMiddleware from 'redux-saga';
+import createWebSocketBridge from 'redux-websocket-bridge';
 
-import assetExplorer from './reducer/assetExplorer';
-import bot from './reducer/bot';
-import card from './reducer/card';
-import conversation from './reducer/conversation';
-import editor from './reducer/editor';
-import navBar from './reducer/navBar';
-import server from './reducer/server';
+import reducers from './reducer';
+import rootSaga from './sagas';
 
-// TODO: Remove this when we no longer need to debug the WebSocket connection
-// import DebugWebSocketConnection from './debugWebSocketConnection';
+export default function create(window) {
+    return new Promise((resolve, reject) => {
+        new WebSocketServer(window).on('connection', connection => {
+            const sagaMiddleware = createSagaMiddleware();
+            const store = applyMiddleware(
+                store => next => action => {
+                    console.log(action);
 
-const electron = window.process && window.process.versions.electron;
+                    return next(action);
+                },
+                createPromiseMiddleware(),
+                createWebSocketBridge(() => connection),
+                sagaMiddleware,
+                store => next => action => {
+                    console.log(action);
 
-const createStoreWithMiddleware = applyMiddleware(
-    WebSocketActionBridge(() => new IPCRendererWebSocket()),
-    // WebSocketActionBridge(() => new DebugWebSocketConnection(new IPCRendererWebSocket())),
-    promiseMiddleware()
-)(createStore);
+                    return next(action);
+                }
+            )(createStore)(reducers);
 
-const DEFAULT_STATE = {};
+            sagaMiddleware.run(rootSaga);
 
-export default createStoreWithMiddleware(combineReducers({
-    assetExplorer,
-    bot,
-    card,
-    conversation,
-    editor,
-    navBar,
-    server
-}));
+            resolve(store);
+        })
+    });
+}

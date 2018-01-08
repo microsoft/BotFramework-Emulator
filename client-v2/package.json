@@ -7,6 +7,7 @@
     "adaptivecards": "^1.0.0-beta9",
     "botframework-webchat": "^0.11.4",
     "classnames": "^2.2.5",
+    "electron-ipcrenderer-websocket": "^0.0.1-0",
     "glamor": "^2.20.40",
     "immutable": "^3.8.2",
     "monaco-editor": "^0.10.1",
@@ -16,6 +17,7 @@
     "react-split-pane": "^0.1.74",
     "redux": "^3.7.2",
     "redux-promise-middleware": "^5.0.0",
+    "redux-websocket-bridge": "^0.1.0-0",
     "request": "^2.83.0",
     "rxjs": "^5.5.6",
     "sockjs-client": "^1.1.4"

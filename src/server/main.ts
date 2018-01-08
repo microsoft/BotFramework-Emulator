@@ -44,6 +44,7 @@ import { WindowManager } from './windowManager';
 import * as commandLine from './commandLine'
 import * as electronLocalShortcut from 'electron-localshortcut';
 import { setTimeout } from 'timers';
+import createStore from './data-v2/createStore';
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
     console.error(error);
@@ -250,6 +251,8 @@ const createMainWindow = () => {
     }
 
     mainWindow.loadURL(page);
+
+    createStore(mainWindow);
 }
 
 Emulator.startup();
@@ -279,4 +282,3 @@ Electron.app.on('activate', function () {
 
 // Do this last, otherwise startup bugs are harder to diagnose.
 require('electron-debug')();
-

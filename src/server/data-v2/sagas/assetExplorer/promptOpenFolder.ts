@@ -31,38 +31,34 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { applyMiddleware, combineReducers, createStore } from 'redux';
-import IPCRendererWebSocket from 'electron-ipcrenderer-websocket';
-import promiseMiddleware from 'redux-promise-middleware';
-import WebSocketActionBridge from 'redux-websocket-bridge';
+import { call, put, takeEvery } from 'redux-saga/effects';
+import { dialog, OpenDialogOptions } from 'electron';
 
-import assetExplorer from './reducer/assetExplorer';
-import bot from './reducer/bot';
-import card from './reducer/card';
-import conversation from './reducer/conversation';
-import editor from './reducer/editor';
-import navBar from './reducer/navBar';
-import server from './reducer/server';
+import * as AssetExplorerActions from '../../action/assetExplorer';
 
-// TODO: Remove this when we no longer need to debug the WebSocket connection
-// import DebugWebSocketConnection from './debugWebSocketConnection';
+export default function* promptOpenFolder() {
+    yield takeEvery(AssetExplorerActions.PROMPT_OPEN_FOLDER, function* () {
+        try {
+            // TODO: Fix TypeScript error
+            const filePath = yield call(showOpenDialog as any, { properties: ['openDirectory'] });
 
-const electron = window.process && window.process.versions.electron;
+            // TODO: Instead of adding the folder to the store, we want to create a file watcher
+            //       and automatically update store when there is a file system change
+            yield put(AssetExplorerActions.openFolder(filePath));
+        } catch (err) {
+            if (err.message !== 'user cancelled') {
+                throw err;
+            }
+        }
+    });
+}
 
-const createStoreWithMiddleware = applyMiddleware(
-    WebSocketActionBridge(() => new IPCRendererWebSocket()),
-    // WebSocketActionBridge(() => new DebugWebSocketConnection(new IPCRendererWebSocket())),
-    promiseMiddleware()
-)(createStore);
+function showOpenDialog(options: OpenDialogOptions) {
+    return new Promise((resolve, reject) => {
+        dialog.showOpenDialog(options, filePaths => {
+            const filePath = filePaths && filePaths[0];
 
-const DEFAULT_STATE = {};
-
-export default createStoreWithMiddleware(combineReducers({
-    assetExplorer,
-    bot,
-    card,
-    conversation,
-    editor,
-    navBar,
-    server
-}));
+            filePath ? resolve(filePath) : reject(new Error('user cancelled'));
+        });
+    });
+}
