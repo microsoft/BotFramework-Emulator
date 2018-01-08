@@ -38,33 +38,33 @@ import CardTemplateRow from './cardTemplateRow';
 import PropTypes from 'prop-types';
 
 const CSS = css({
-    width: "100%",
-    height: "100%",
-    margin: "12px 0",
-    overflow: "auto",
-    fontFamily: "Segoe UI",
+    width: '100%',
+    height: '100%',
+    margin: '12px 0',
+    overflow: 'auto',
+    fontFamily: 'Segoe UI',
 
-    " .template-header": {
-        paddingLeft: "24px",
-        fontFamily: "Segoe UI Semibold",
-        textTransform: "uppercase",
-        backgroundColor: "#F5F5F5",
-        height: "24px",
-        width: "100%",
-        display: "block",
-        color: "#2B2B2B",
-        borderBottom: "1px solid #C6C6C6"
+    ' .template-header': {
+        paddingLeft: '24px',
+        fontFamily: 'Segoe UI Semibold',
+        textTransform: 'uppercase',
+        backgroundColor: '#F5F5F5',
+        height: '24px',
+        width: '100%',
+        display: 'block',
+        color: '#2B2B2B',
+        borderBottom: '1px solid #C6C6C6'
     },
 
-    " .template-content": {
-        overflow: "auto",
-        height: "calc(100% - 24px)",
-        width: "100%",
-        padding: "16px"
+    ' .template-content': {
+        overflow: 'auto',
+        height: 'calc(100% - 24px)',
+        width: '100%',
+        padding: '16px'
     }
 });
 
-const debug = css({ backgroundColor: "white", border: "1px solid black" });
+const debug = css({ backgroundColor: 'white', border: '1px solid black' });
 
 class CardTemplator extends React.Component {
     constructor(props, context) {
@@ -73,13 +73,14 @@ class CardTemplator extends React.Component {
 
     render() {
         return (
-            <div className={ CSS } {...debug}>
-                <span className="template-header">Template Editor</span>
-                <div className="template-content">
+            <div className={ CSS } { ...debug }>
+                <span className='template-header'>Template Editor</span>
+                <div className='template-content'>
                     {
                         this.props.length ?
-                        this.props.entities.map(ent => <CardTemplateRow key={ ent } entityName={ ent } />)
-                        : <span>No template entities...</span>
+                            this.props.entities.map(ent => <CardTemplateRow key={ ent } entityName={ ent } />)
+                        :
+                            <span>No template entities...</span>
                     }
                 </div>
             </div>

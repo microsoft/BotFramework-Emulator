@@ -41,6 +41,7 @@ import { directoryExists, getFilesInDir, fileExists, readFileSync } from '../../
 import * as CardActions from '../../../data/action/cardActions';
 import { ContentType_Card } from '../../../constants';
 import * as EditorActions from '../../../data/action/editorActions';
+import CardExplorerFile from './cardExplorerFile';
 
 const CSS = css({
     backgroundColor: 'Pink',
@@ -63,25 +64,23 @@ const BOTS_CSS = css({
 export class CardExplorer extends React.Component {
     constructor(props, context) {
         super(props, context);
-
-        this.handleCardClick = this.handleCardClick.bind(this);
     }
 
     componentWillMount() {
         // look at the current folder and check for cards under it
-        const cardsPath = this.props.folder + "/cards";
+        const cardsPath = `${this.props.folder}/cards`;
         if (directoryExists(cardsPath)) {
             const files = getFilesInDir(cardsPath);
 
             const jsonFileRegex = /.json$/;
             for(let i = 0; i < files.length; i++) {
                 const file = files[i];
-                const filePath = cardsPath + "/" + file;
+                const filePath = `${cardsPath}/${file}`;
 
                 if (fileExists(filePath) && jsonFileRegex.test(file)) {
                     const cardContent = {
                         title: file,
-                        cardJson: readFileSync(filePath) || "{}",
+                        cardJson: readFileSync(filePath) || '{}',
                         cardOutput: [],
                         entities: [],
                         path: filePath,
@@ -94,25 +93,20 @@ export class CardExplorer extends React.Component {
         }
     }
 
-    handleCardClick(e, id) {
-        e.stopPropagation();
-        this.props.dispatch(EditorActions.open(ContentType_Card, id));
-    }
-
     render() {
         return(
             <ul className={ CSS }>
                 <li>
                     <ExpandCollapse
                         initialExpanded={ true }
-                        title="Cards"
+                        title='Cards'
                     >
                         <ExpandCollapseContent>
                             <ul className={ BOTS_CSS }>
                                 {
                                     Object.keys(this.props.cards).length ?
                                         Object.keys(this.props.cards).map(id =>
-                                            <li onClick={ (event) => this.handleCardClick(event, id) } key={ id }>{ this.props.cards[id].title }</li>
+                                            <CardExplorerFile key={ id } cardId={ id } />
                                         )
                                     :
                                         <li>No cards found...</li>

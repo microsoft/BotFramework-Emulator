@@ -41,31 +41,31 @@ import * as AdaptiveCards from 'adaptivecards';
 import * as CardActions from '../../../data/action/cardActions';
 
 const CSS = css({
-    margin: "24px 0 12px 0",
-    width: "100%",
-    height: "100%",
-    overflow: "hidden",
+    margin: '24px 0 12px 0',
+    width: '100%',
+    height: '100%',
+    overflow: 'hidden',
 
-    " .preview-header": {
-        paddingLeft: "24px",
-        fontFamily: "Segoe UI Semibold",
-        textTransform: "uppercase",
-        backgroundColor: "#F5F5F5",
-        width: "100%",
-        height: "24px",
-        display: "block",
-        color: "#2B2B2B",
-        borderBottom: "1px solid #C6C6C6"
+    ' .preview-header': {
+        paddingLeft: '24px',
+        fontFamily: 'Segoe UI Semibold',
+        textTransform: 'uppercase',
+        backgroundColor: '#F5F5F5',
+        width: '100%',
+        height: '24px',
+        display: 'block',
+        color: '#2B2B2B',
+        borderBottom: '1px solid #C6C6C6'
     },
 
-    " .preview-content": {
-        overflow: "auto",
-        height: "calc(100% - 24px)",
-        width: "100%"
+    ' .preview-content': {
+        overflow: 'auto',
+        height: 'calc(100% - 24px)',
+        width: '100%'
     }
 });
 
-const debug = css({ backgroundColor: "white", border: "1px solid black" });
+const debug = css({ backgroundColor: 'white', border: '1px solid black' });
 
 class CardPreview extends React.Component {
     constructor(props, context) {
@@ -79,7 +79,7 @@ class CardPreview extends React.Component {
 
             // a Host Config defines the style and behavior of all cards
             hostConfig: {
-                "fontFamily": "Segoe UI, Helvetica Nue, sans-serif"
+                'fontFamily': 'Segoe UI, Helvetica Nue, sans-serif'
             },
 
             // the action handler is invoked when actions (such as card button presses) are triggered
@@ -114,21 +114,16 @@ class CardPreview extends React.Component {
 
     render() {
         return(
-            <div className={ CSS } {...debug}>
-                <span className="preview-header">Preview</span>
-                <div className="preview-content" ref={ this.saveCardContainer }></div>
+            <div className={ CSS } { ...debug }>
+                <span className='preview-header'>Preview</span>
+                <div className='preview-content' ref={ this.saveCardContainer }></div>
             </div>
         );
     }
 
     // determines a card action type, formats the message, then saves it to the store
     processAction(action, dispatch) {
-        let actionType;
-        if (action.url) {
-            actionType = "OpenUrl";
-        } else {
-            actionType = "Submit";
-        }
+        const actionType = action.url ? 'OpenUrl' : 'Submit';
 
         const actionMsg = this.formatActionMessage(action, actionType);
         dispatch(CardActions.addCardOutputMessage(this.props.cardId, actionMsg));
@@ -139,26 +134,15 @@ class CardPreview extends React.Component {
         const timeStamp = new Date().toTimeString().substring(0, 8);
         const msgPrefix = `${timeStamp} [Card Action] - ${actionType}`;
 
-        let msgBody = "\n\tTitle: " + action.title;
+        let msgBody = `\n\tTitle: ${action.title}`;
         switch(actionType) {
-            case "OpenUrl":
-                msgBody += "\n\tUrl: " + action.url;
+            case 'OpenUrl':
+                msgBody += `\n\tUrl: ${action.url}`;
                 break;
-            case "Submit":
+            case 'Submit':
             default:
-                // format hidden data as:
-                // Data: {
-                //     key1: val1,
-                //     key2: val2,
-                //     ...
-                // }
-                if (action.data && Object.keys(action.data).length) {
-                    msgBody += "\n\tData: {";
-                    let keys = Object.keys(action.data);
-                    keys.forEach(key => {
-                        msgBody += `\n\t\t${key}: ${action.data[key]}`
-                    });
-                    msgBody += "\n\t}"
+                if (action.data) {
+                    msgBody += `\n\tData: \n${JSON.stringify(action.data, null, 2)}`;
                 }
                 break;
         }

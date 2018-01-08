@@ -31,54 +31,34 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React from 'react'
+import { connect } from 'react-redux';
 
-import TabBar from './tabBar';
-import TabBarTab from './tabBarTab';
-import TabbedDocument, { Tab as TabbedDocumentTab, Content as TabbedDocumentContent } from './tabbedDocument';
-import { filterChildren } from '../../utils';
+import * as EditorActions from '../../../data/action/editorActions';
+import { ContentType_Card } from '../../../constants';
 
-const CSS = css({
-    backgroundColor: 'orange',
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    height: '100%',
-    boxSizing: 'border-box'
-});
-
-export default class MultiTabs extends React.Component {
+class CardExplorerFile extends React.Component {
     constructor(props, context) {
         super(props, context);
 
-        this.handleTabClick = this.handleTabClick.bind(this);
+        this.handleFileClick = this.handleFileClick.bind(this);
     }
 
-    handleTabClick(nextValue) {
-        this.props.onChange && this.props.onChange(nextValue);
+    handleFileClick() {
+        this.props.dispatch(EditorActions.open(ContentType_Card, this.props.cardId));
     }
 
     render() {
-        return (
-            <div className={ CSS }>
-                <TabBar>
-                    {
-                        React.Children.map(this.props.children, (tabbedDocument, index) =>
-                            <TabBarTab onClick={ this.handleTabClick.bind(this, index) }>
-                                { filterChildren(tabbedDocument.props.children, child => child.type === TabbedDocumentTab) }
-                            </TabBarTab>
-                        )
-                    }
-                </TabBar>
-                { !!this.props.children.length && filterChildren(React.Children.toArray(this.props.children)[this.props.value].props.children, child => child.type === TabbedDocumentContent) }
-            </div>
-        );
+        return (<li onClick={ this.handleFileClick }>{ this.props.fileName }</li>);
     }
 }
 
-MultiTabs.propTypes = {
-    onChange: PropTypes.func,
-    value: PropTypes.number
+CardExplorerFile.propTypes = {
+    cardId: PropTypes.string.isRequired,
+    fileName: PropTypes.string.isRequired
 };
+
+export default connect((state, { cardId }) => ({
+    fileName: state.card.cards[cardId].title
+}))(CardExplorerFile);

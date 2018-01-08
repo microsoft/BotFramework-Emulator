@@ -43,33 +43,33 @@ const fs = require('fs');
 import * as CardActions from '../../../data/action/cardActions';
 
 const CSS = css({
-    height: "100%",
-    width: "100%",
-    overflow: "hidden",
+    height: '100%',
+    width: '100%',
+    overflow: 'hidden',
 
-    " > div": {
-        height: "100%"
+    ' > div': {
+        height: '100%'
     },
 
-    " .json-header": {
-        paddingLeft: "24px",
-        fontFamily: "Segoe UI Semibold",
-        textTransform: "uppercase",
-        backgroundColor: "#F5F5F5",
-        width: "100%",
-        display: "flex",
-        color: "#2B2B2B",
-        borderBottom: "1px solid #C6C6C6",
+    ' .json-header': {
+        paddingLeft: '24px',
+        fontFamily: 'Segoe UI Semibold',
+        textTransform: 'uppercase',
+        backgroundColor: '#F5F5F5',
+        width: '100%',
+        display: 'flex',
+        color: '#2B2B2B',
+        borderBottom: '1px solid #C6C6C6',
 
-        " > span": {
-            display: "flex",
-            marginLeft: "auto",
-            marginRight: "16px",
-            cursor: "pointer",
-            userSelect: "none"
+        ' > span': {
+            display: 'flex',
+            marginLeft: 'auto',
+            marginRight: '16px',
+            cursor: 'pointer',
+            userSelect: 'none'
         },
 
-        " > .save-disabled": { color: "#CCC" }
+        ' > .save-disabled': { color: '#CCC' }
     }
 });
 
@@ -189,7 +189,7 @@ class CardJsonEditor extends React.Component {
         this._editor = window.monaco.editor.create(this.editorContainer, {
             value: this.props.cardJson,
             language: 'json',
-            theme: "vs-dark"
+            theme: 'vs-dark'
         });
 
         this._editor.onDidChangeModelContent(evt => {
@@ -215,18 +215,16 @@ class CardJsonEditor extends React.Component {
     }
 
     // saves the card to the file system
-    saveCard(e) {
-        e.stopPropagation();
-
+    saveCard() {
         if (this.state.saveEnabled) {
             const filePath = this.props.path;
             fs.writeFile(
                 filePath,
                 this.props.cardJson,
-                "utf-8",
+                'utf-8',
                 (err) => {
                     if (err) {
-                        console.log("Error saving adaptive card to file!", err);
+                        console.log('Error saving adaptive card to file!', err);
                     } else {
                         this.setState(() => ({ saveEnabled: false }))
                     }
@@ -236,10 +234,10 @@ class CardJsonEditor extends React.Component {
     }
 
     render() {
-        const saveBtnClass = this.state.saveEnabled ? "" : "save-disabled";
+        const saveBtnClass = this.state.saveEnabled ? '' : 'save-disabled';
         return (
             <div className={ CSS }>
-                <span className="json-header">Editor <span onClick={ this.saveCard } className={saveBtnClass}>Save</span></span>
+                <span className='json-header'>Editor <span onClick={ this.saveCard } className={ saveBtnClass }>Save</span></span>
                 <div ref={ this.saveContainer }>
                 </div>
             </div>

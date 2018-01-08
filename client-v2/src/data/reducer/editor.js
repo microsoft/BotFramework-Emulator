@@ -78,14 +78,6 @@ export default function documents(state = DEFAULT_STATE, action) {
     return state;
 }
 
-function documentExists(id, documents) {
-    if (documents && documents.length) {
-        for(let i = 0; i < documents.length; i++) {
-            const doc = documents[i];
-            if (doc.documentId === id) {
-                return true;
-            }
-        }
-    }
-    return false;
+function documentExists(id, documents = []) {
+    return documents.some(doc => doc.documentId === id);
 }

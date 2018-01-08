@@ -36,16 +36,16 @@ import React from 'react';
 import { css } from 'glamor';
 
 const CSS = css({
-    " pre": {
-        fontFamily: "Segoe UI",
-        cursor: "pointer",
+    ' pre': {
+        fontFamily: 'Segoe UI',
+        cursor: 'pointer',
 
-        ":hover": {
-            backgroundColor: "skyblue"
+        ':hover': {
+            backgroundColor: 'skyblue'
         },
 
-        ":first-of-type": {
-            marginTop: "0"
+        ':first-of-type': {
+            marginTop: '0'
         }
     }
 });
