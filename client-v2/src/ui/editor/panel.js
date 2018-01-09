@@ -34,20 +34,26 @@
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
+
 import { filterChildren } from '../utils';
+import * as Colors from '../colors/colors';
 
 const CSS = css({
     display: 'flex',
     flex: 1,
     flexDirection: 'column',
     height: '100%',
-    position: 'relative'
+    position: 'relative',
+    fontFamily: 'Segoe UI'
 });
 
 const HEADER_CSS = css({
-    backgroundColor: 'gold',
+    backgroundColor: Colors.SECTION_HEADER_BACKGROUND_DARK,
+    color: Colors.SECTION_HEADER_FOREGROUND_DARK,
     lineHeight: '30px',
-    minHeight: '30px'
+    minHeight: '30px',
+    textTransform: 'uppercase',
+    paddingLeft: '24px'
 });
 
 const CONTROLS_CSS = css({
@@ -55,7 +61,9 @@ const CONTROLS_CSS = css({
 });
 
 const CONTENT_CSS = css({
-    backgroundColor: 'lightgreen',
+    backgroundColor: Colors.PANEL_BACKGROUND_DARK,
+    color: Colors.PANEL_FOREGROUND_DARK,
+    padding: '16px',
     flex: 1
 });
 

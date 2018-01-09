@@ -35,15 +35,17 @@ import { css } from 'glamor';
 import React from 'react';
 
 import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
+import * as Colors from '../../colors/colors';
 
 const CSS = css({
-    backgroundColor: 'Pink',
     display: 'flex',
     flex: 1,
     flexDirection: 'column',
     listStyleType: 'none',
     margin: 0,
-    padding: 0
+    padding: 0,
+    backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
+    color: Colors.EXPLORER_FOREGROUND_DARK
 });
 
 const BOTS_CSS = css({
@@ -51,7 +53,12 @@ const BOTS_CSS = css({
     flexDirection: 'column',
     listStyleType: 'none',
     margin: 0,
-    padding: 0
+    padding: 0,
+
+    ' > li': {
+        padding: '4px 24px',
+        fontFamily: 'Segoe UI'
+    }
 });
 
 export default props =>

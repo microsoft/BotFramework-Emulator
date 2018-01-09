@@ -46,7 +46,7 @@ const CSS = css({
     flexFlow: "row nowrap",
     height: "100%",
     width: "100%",
-    backgroundColor: "white",
+    backgroundColor: "#2D2D2D",
     boxSizing: "border-box",
 
     " *": { boxSizing: "border-box" },

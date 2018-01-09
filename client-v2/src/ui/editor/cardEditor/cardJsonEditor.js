@@ -55,11 +55,10 @@ const CSS = css({
         paddingLeft: '24px',
         fontFamily: 'Segoe UI Semibold',
         textTransform: 'uppercase',
-        backgroundColor: '#F5F5F5',
+        backgroundColor: '#767676',
         width: '100%',
         display: 'flex',
-        color: '#2B2B2B',
-        borderBottom: '1px solid #C6C6C6',
+        color: '#FFFFFF',
 
         ' > span': {
             display: 'flex',

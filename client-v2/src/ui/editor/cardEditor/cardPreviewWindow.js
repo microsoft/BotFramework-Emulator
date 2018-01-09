@@ -39,6 +39,7 @@ import PropTypes from 'prop-types';
 
 import * as AdaptiveCards from 'adaptivecards';
 import * as CardActions from '../../../data/action/cardActions';
+import * as Colors from '../../colors/colors';
 
 const CSS = css({
     margin: '24px 0 12px 0',
@@ -50,22 +51,25 @@ const CSS = css({
         paddingLeft: '24px',
         fontFamily: 'Segoe UI Semibold',
         textTransform: 'uppercase',
-        backgroundColor: '#F5F5F5',
+        backgroundColor: Colors.SECTION_HEADER_BACKGROUND_DARK,
         width: '100%',
         height: '24px',
         display: 'block',
-        color: '#2B2B2B',
-        borderBottom: '1px solid #C6C6C6'
+        color: Colors.SECTION_HEADER_FOREGROUND_DARK,
     },
 
     ' .preview-content': {
         overflow: 'auto',
         height: 'calc(100% - 24px)',
-        width: '100%'
+        width: '100%',
+        backgroundColor: Colors.PANEL_BACKGROUND_DARK,
+        color: Colors.PANEL_FOREGROUND_DARK
+    },
+
+    ' .ac-container > div': {
+        color: `${Colors.PANEL_FOREGROUND_DARK} !important`
     }
 });
-
-const debug = css({ backgroundColor: 'white', border: '1px solid black' });
 
 class CardPreview extends React.Component {
     constructor(props, context) {
@@ -114,7 +118,7 @@ class CardPreview extends React.Component {
 
     render() {
         return(
-            <div className={ CSS } { ...debug }>
+            <div className={ CSS }>
                 <span className='preview-header'>Preview</span>
                 <div className='preview-content' ref={ this.saveCardContainer }></div>
             </div>

@@ -34,9 +34,11 @@
 import { connect } from 'react-redux'
 import { css } from 'glamor'
 import React from 'react'
+import PropTypes from 'prop-types';
+
 import AdaptiveCardOutputMessage from './cardOutputMessage';
 import * as CardActions from '../../../data/action/cardActions';
-import PropTypes from 'prop-types';
+import * as Colors from '../../colors/colors';
 
 const CSS = css({
     width: '100%',
@@ -49,12 +51,11 @@ const CSS = css({
         paddingLeft: '24px',
         fontFamily: 'Segoe UI Semibold',
         textTransform: 'uppercase',
-        backgroundColor: '#F5F5F5',
+        backgroundColor: Colors.SECTION_HEADER_BACKGROUND_DARK,
         width: '100%',
         height: '24px',
         display: 'flex',
-        color: '#2B2B2B',
-        borderBottom: '1px solid #C6C6C6',
+        color: Colors.SECTION_HEADER_FOREGROUND_DARK,
 
         ' > span': {
             display: 'flex',
@@ -69,11 +70,11 @@ const CSS = css({
         height: 'calc(100% - 24px)',
         width: '100%',
         padding: '16px',
-        userSelect: 'none'
+        userSelect: 'none',
+        backgroundColor: Colors.PANEL_BACKGROUND_DARK,
+        color: Colors.PANEL_FOREGROUND_DARK
     }
 });
-
-const debug = css({ backgroundColor: 'white', border: '1px solid black' });
 
 class CardOutput extends React.Component {
     constructor(props, context) {
@@ -89,7 +90,7 @@ class CardOutput extends React.Component {
 
     render() {
         return (
-            <div className={ CSS } { ...debug }>
+            <div className={ CSS }>
                 <span className='output-header'>Output <span onClick={ this.clearOutput }>X</span></span>
                 <div className='output-content'>
                     {

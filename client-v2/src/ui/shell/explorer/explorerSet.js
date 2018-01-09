@@ -34,8 +34,10 @@
 import { css } from 'glamor';
 import React from 'react';
 
+import * as Colors from '../../colors/colors';
+
 const CSS = css({
-    backgroundColor: 'palegoldenrod',
+    backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
     display: 'flex',
     flexDirection: 'column',
     margin: 0,
@@ -44,7 +46,11 @@ const CSS = css({
 });
 
 const HEADER_CSS = css({
-    lineHeight: '30px'
+    lineHeight: '30px',
+    color: Colors.EXPLORER_FOREGROUND_DARK,
+    paddingLeft: '16px',
+    textTransform: 'uppercase',
+    fontFamily: 'Segoe UI'
 })
 
 const EXPLORER_CSS = css({

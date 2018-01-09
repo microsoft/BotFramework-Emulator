@@ -34,8 +34,10 @@
 import { connect } from 'react-redux'
 import { css } from 'glamor'
 import React from 'react'
-import CardTemplateRow from './cardTemplateRow';
 import PropTypes from 'prop-types';
+
+import CardTemplateRow from './cardTemplateRow';
+import * as Colors from '../../colors/colors';
 
 const CSS = css({
     width: '100%',
@@ -48,23 +50,22 @@ const CSS = css({
         paddingLeft: '24px',
         fontFamily: 'Segoe UI Semibold',
         textTransform: 'uppercase',
-        backgroundColor: '#F5F5F5',
+        backgroundColor: Colors.SECTION_HEADER_BACKGROUND_DARK,
         height: '24px',
         width: '100%',
         display: 'block',
-        color: '#2B2B2B',
-        borderBottom: '1px solid #C6C6C6'
+        color: Colors.SECTION_HEADER_FOREGROUND_DARK,
     },
 
     ' .template-content': {
         overflow: 'auto',
         height: 'calc(100% - 24px)',
         width: '100%',
-        padding: '16px'
+        padding: '16px',
+        backgroundColor: Colors.PANEL_BACKGROUND_DARK,
+        color: Colors.PANEL_FOREGROUND_DARK
     }
 });
-
-const debug = css({ backgroundColor: 'white', border: '1px solid black' });
 
 class CardTemplator extends React.Component {
     constructor(props, context) {
@@ -73,7 +74,7 @@ class CardTemplator extends React.Component {
 
     render() {
         return (
-            <div className={ CSS } { ...debug }>
+            <div className={ CSS }>
                 <span className='template-header'>Template Editor</span>
                 <div className='template-content'>
                     {

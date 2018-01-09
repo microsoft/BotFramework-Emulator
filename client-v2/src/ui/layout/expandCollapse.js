@@ -39,11 +39,15 @@ import { filterChildren } from '../utils';
 
 const CSS = css({
     '> header': {
-        backgroundColor: 'hotpink',
+        backgroundColor: '#767676',
+        color: '#FFFFFF',
+        fontFamily: 'Segoe UI Semibold',
+        textTransform: 'uppercase',
         display: 'flex',
         lineHeight: '30px',
 
         '> .content': {
+            paddingLeft: '8px',
             flex: 1
         },
 
