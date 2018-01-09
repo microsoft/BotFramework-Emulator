@@ -36,9 +36,11 @@ import React from 'react';
 import expandFlatTree from './expandFlatTree';
 import TreeView, { Branch, Content, Leaf } from '../widget/treeView';
 
-const DEFAULT_CONTENT_FACTORY = content => content;
+const DEFAULT_LEAF_FACTORY = content => content;
+const DEFAULT_BRANCH_FACTORY = path => path.split('/').pop();
+const NULL_FUNCTION = () => 0;
 
-export default function treeViewFactory(tree, leafFactory = DEFAULT_CONTENT_FACTORY, branchFactory = DEFAULT_CONTENT_FACTORY) {
+export default function treeViewFactory(tree, handleLeafClick = NULL_FUNCTION, leafFactory = DEFAULT_LEAF_FACTORY, branchFactory = DEFAULT_BRANCH_FACTORY) {
     const expanded = expandFlatTree(Object.keys(tree));
 
     const walk = (expanded, under) => Object.keys(expanded).map(segment => {
@@ -46,12 +48,15 @@ export default function treeViewFactory(tree, leafFactory = DEFAULT_CONTENT_FACT
 
         return (
             typeof subtree === 'string' ?
-                <Leaf key={ segment }>
-                    <Content>{ leafFactory(tree[expanded[segment]], segment, under) }</Content>
+                <Leaf
+                    key={ segment }
+                    onClick={ handleLeafClick.bind(null, subtree) }
+                >
+                    <Content>{ leafFactory(tree[subtree], subtree) }</Content>
                 </Leaf>
             :
                 <Branch key={ segment }>
-                    <Content>{ branchFactory(segment, under) }</Content>
+                    <Content>{ branchFactory([ ...under, segment ].join('/')) }</Content>
                     { walk(subtree, [ ...under, segment ]) }
                 </Branch>
         );
