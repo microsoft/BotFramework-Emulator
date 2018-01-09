@@ -8,7 +8,7 @@
         "jsx": "react",
         "sourceMap": true,
         "noImplicitAny": false,
-        "noImplicitThis": true,
+        "noImplicitThis": false,
         "noEmitOnError": true,
         "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": true,
@@ -16,12 +16,8 @@
         "outDir": "app",
         "removeComments": true
     },
-    "exclude": [
-        "node_modules",
-        "app",
-        "build",
-        "tests",
-        "install"
+    "include": [
+        "src"
     ],
     "compileOnSave": false
 }

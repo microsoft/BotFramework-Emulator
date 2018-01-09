@@ -48,7 +48,7 @@ export abstract class ActivityVisitor {
             if (messageActivity.attachments) {
                 messageActivity.attachments.forEach(attachment =>
                     this.traverseAttachment(attachment));
-            } 
+            }
         }
     }
 
@@ -78,7 +78,7 @@ export abstract class ActivityVisitor {
         if (mediaCard) {
             this.traverseCardImage(mediaCard.image);
             this.traverseButtons(mediaCard.buttons);
-        }        
+        }
     }
 
     public traverseThumbnailCard(thumbnailCard: Attachments.IThumbnailCard) {

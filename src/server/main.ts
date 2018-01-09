@@ -43,6 +43,8 @@ import { Emulator } from './emulator';
 import { WindowManager } from './windowManager';
 import * as commandLine from './commandLine'
 import * as electronLocalShortcut from 'electron-localshortcut';
+import { setTimeout } from 'timers';
+import createStore from './data-v2/createStore';
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
     console.error(error);
@@ -234,21 +236,38 @@ const createMainWindow = () => {
         queryString = '?' + process.argv[1];
     }
 
-    let page = url.format({
+    let page = process.env.ELECTRON_TARGET_URL || url.format({
         protocol: 'file',
         slashes: true,
         pathname: path.join(__dirname, '../client/index.html')
     });
+
+    if (/^http:\/\//.test(page)) {
+        log.warn(`Loading emulator code from ${ page }`);
+    }
 
     if (queryString) {
         page = page + queryString;
     }
 
     mainWindow.loadURL(page);
+
+    createStore(mainWindow);
 }
 
 Emulator.startup();
-Electron.app.on('ready', createMainWindow);
+
+Electron.app.on('ready', function () {
+    if (!mainWindow) {
+        if (process.argv.find(val => val.includes('--vscode-debugger'))) {
+            // workaround for delay in vscode debugger attach
+            setTimeout(createMainWindow, 5000);
+        } else {
+            createMainWindow();
+        }
+    }
+});
+
 Electron.app.on('window-all-closed', function () {
     if (process.platform !== 'darwin') {
         Electron.app.quit();
@@ -256,11 +275,10 @@ Electron.app.on('window-all-closed', function () {
 });
 
 Electron.app.on('activate', function () {
-    if (mainWindow === null) {
+    if (!mainWindow) {
         createMainWindow();
     }
 });
 
 // Do this last, otherwise startup bugs are harder to diagnose.
 require('electron-debug')();
-

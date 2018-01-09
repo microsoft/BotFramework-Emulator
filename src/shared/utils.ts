@@ -31,11 +31,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Electron from 'electron';
-import * as Fs from 'fs';
-import * as Mkdirp from 'mkdirp';
-import * as url from 'url';
-import * as path from 'path';
+// We need to skip Webpack bundler on bundling 'electron':
+// 1. We are using react-scripts, thus, we are not able to configure Webpack
+// 2. To skip bundling, we can hack with window['require']
+
+if (typeof window !== 'undefined') { require = window['require']; }
+
+const electron = require('electron'); // use a lowercase name "electron" to prevent clash with "Electron" namespace
+const electronApp: Electron.App = electron.app;
+const electronRemote: Electron.Remote = electron.remote;
+
+const Fs = require('fs');
+const Mkdirp = require('mkdirp');
+const url = require('url');
+const path = require('path');
+
 import * as globals from './globals';
 
 
@@ -46,7 +56,7 @@ export const uniqueId = (length?: number) => Math.random().toString(24).substr(2
 
 const ensureStoragePath = (): string => {
     const commandLineArgs = globals.getGlobal('commandlineargs');
-    const app = Electron.app || Electron.remote.app;
+    const app = electronApp || electronRemote.app;
     const storagePath = commandLineArgs.storagepath || path.join(app.getPath("userData"), "botframework-emulator");
     Mkdirp.sync(storagePath);
     return storagePath;

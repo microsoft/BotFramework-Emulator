@@ -195,6 +195,9 @@ function _runTunnel(opts, cb) {
 				if (opts.proto === 'http' && opts.bind_tls !== false) {
 					tunnels[url.replace('https', 'http')] = body.uri + ' (http)';
 				}
+
+				// TODO: Need to fix `this.port`, it currently break tsconfig/noImplicitThis.
+				//       error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
 				return cb(null, url, this.port);
 			});
 	};
