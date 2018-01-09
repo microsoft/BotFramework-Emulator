@@ -36,6 +36,7 @@ import { css } from 'glamor';
 import React from 'react';
 
 import ConnectivityBadge from '../widget/connectivityBadge';
+import { expandFlatTree, treeViewFactory } from '../utils';
 
 const CSS = css({});
 
@@ -50,6 +51,22 @@ class TestBedEditor extends React.Component {
                 <h1>Testbed</h1>
                 <ConnectivityBadge />
                 <header>
+                    <h2>Tree view</h2>
+                </header>
+                <section>
+                    {
+                        treeViewFactory(
+                            this.props.assetExplorer.files,
+                            (leafContent, segment, under) =>
+                                <span>
+                                    📝{ segment }
+                                    <br />
+                                    <small>({ leafContent.size } bytes, under /{ under.join('/') })</small>
+                                </span>
+                        )
+                    }
+                </section>
+                <header>
                     <h2>Raw store</h2>
                 </header>
                 <section>
@@ -59,6 +76,5 @@ class TestBedEditor extends React.Component {
         );
     }
 }
-
 
 export default connect(state => state)(TestBedEditor)

@@ -33,6 +33,29 @@
 
 import React from 'react';
 
-export function filterChildren(children, predicate) {
-    return React.Children.map(children, child => predicate(child) ? child : false);
+import expandFlatTree from './expandFlatTree';
+import TreeView, { Branch, Content, Leaf } from '../widget/treeView';
+
+const DEFAULT_CONTENT_FACTORY = content => content;
+
+export default function treeViewFactory(tree, leafFactory = DEFAULT_CONTENT_FACTORY, branchFactory = DEFAULT_CONTENT_FACTORY) {
+    const expanded = expandFlatTree(Object.keys(tree));
+
+    const walk = (expanded, under) => Object.keys(expanded).map(segment => {
+        const subtree = expanded[segment];
+
+        return (
+            typeof subtree === 'string' ?
+                <Leaf key={ segment }>
+                    <Content>{ leafFactory(tree[expanded[segment]], segment, under) }</Content>
+                </Leaf>
+            :
+                <Branch key={ segment }>
+                    <Content>{ branchFactory(segment, under) }</Content>
+                    { walk(subtree, [ ...under, segment ]) }
+                </Branch>
+        );
+    });
+
+    return <TreeView>{ walk(expanded, []) }</TreeView>;
 }
