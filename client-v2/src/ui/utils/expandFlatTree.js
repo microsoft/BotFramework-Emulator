@@ -1,4 +1,4 @@
-export default function expandFlatTree(flattened) {
+export default function expandFlatTree(flattened, delimiter = '/') {
     if (Array.isArray(flattened)) {
         flattened = flattened.reduce((map, path) => {
             map[path] = path;
@@ -8,7 +8,7 @@ export default function expandFlatTree(flattened) {
     }
 
     return Object.keys(flattened).reduce((expanded, path) => {
-        const segments = path.split('/');
+        const segments = path.split(delimiter);
         const filename = segments.pop();
         const parent = segments.reduce((parent, segment) => parent[segment] || (parent[segment] = {}), expanded);
 

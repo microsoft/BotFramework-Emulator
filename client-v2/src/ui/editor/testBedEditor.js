@@ -43,6 +43,16 @@ const CSS = css({});
 class TestBedEditor extends React.Component {
     constructor(props, context) {
         super(props, context);
+
+        this.handleTreeNodeSelected = this.handleTreeNodeSelected.bind(this);
+
+        this.state = {
+            selectedTreeNodePath: null
+        };
+    }
+
+    handleTreeNodeSelected(nextSelectedTreeNodePath) {
+        this.setState(() => ({ selectedTreeNodePath: nextSelectedTreeNodePath }));
     }
 
     render() {
@@ -57,12 +67,14 @@ class TestBedEditor extends React.Component {
                     {
                         treeViewFactory(
                             this.props.assetExplorer.files,
-                            (leafContent, segment, under) =>
+                            this.handleTreeNodeSelected,
+                            (file, path) =>
                                 <span>
-                                    📝{ segment }
+                                    📝{ path.split('/').pop() }&nbsp;{ this.state.selectedTreeNodePath === path ? '✔' : '' }
                                     <br />
-                                    <small>({ leafContent.size } bytes, under /{ under.join('/') })</small>
-                                </span>
+                                    <small>({ file.size } bytes, under /{ path.split('/').slice(0, -1).join('/') })</small>
+                                </span>,
+                            path => path.split('/').pop()
                         )
                     }
                 </section>
