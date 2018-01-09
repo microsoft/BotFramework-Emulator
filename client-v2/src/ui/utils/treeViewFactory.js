@@ -32,43 +32,30 @@
 //
 
 import React from 'react';
-if (typeof window !== 'undefined') { require = window['require']; }
-const fs = require('fs');
 
-export function filterChildren(children, predicate) {
-    return React.Children.map(children, child => predicate(child) ? child : false);
-}
+import expandFlatTree from './expandFlatTree';
+import TreeView, { Branch, Content, Leaf } from '../widget/treeView';
 
-export function directoryExists(path) {
-    let stat = null;
-    try {
-        stat = fs.statSync(path);
-    } catch (e) { }
+const DEFAULT_CONTENT_FACTORY = content => content;
 
-    if (!stat || !stat.isDirectory()) {
-        return false;
-    } else return true;
-}
+export default function treeViewFactory(tree, leafFactory = DEFAULT_CONTENT_FACTORY, branchFactory = DEFAULT_CONTENT_FACTORY) {
+    const expanded = expandFlatTree(Object.keys(tree));
 
-export function fileExists(path) {
-    let stat = null;
-    try {
-        stat = fs.statSync(path);
-    } catch (e) { }
+    const walk = (expanded, under) => Object.keys(expanded).map(segment => {
+        const subtree = expanded[segment];
 
-    if (!stat || !stat.isFile()) {
-        return false;
-    } else return true;
-}
+        return (
+            typeof subtree === 'string' ?
+                <Leaf key={ segment }>
+                    <Content>{ leafFactory(tree[expanded[segment]], segment, under) }</Content>
+                </Leaf>
+            :
+                <Branch key={ segment }>
+                    <Content>{ branchFactory(segment, under) }</Content>
+                    { walk(subtree, [ ...under, segment ]) }
+                </Branch>
+        );
+    });
 
-export function getFilesInDir(path) {
-    return fs.readdirSync(path, "utf-8");
-}
-
-export function readFileSync(path) {
-    try {
-        return fs.readFileSync(path, "utf-8");
-    } catch (e) {
-        return false;
-    }
+    return <TreeView>{ walk(expanded, []) }</TreeView>;
 }
