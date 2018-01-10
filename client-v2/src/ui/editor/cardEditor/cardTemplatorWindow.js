@@ -75,8 +75,8 @@ class CardTemplator extends React.Component {
     render() {
         return (
             <div className={ CSS }>
-                <span className='template-header'>Template Editor</span>
-                <div className='template-content'>
+                <span className="template-header">Template Editor</span>
+                <div className="template-content">
                     {
                         this.props.length ?
                             this.props.entities.map(ent => <CardTemplateRow key={ ent } entityName={ ent } />)

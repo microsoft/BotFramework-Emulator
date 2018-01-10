@@ -91,8 +91,8 @@ class CardOutput extends React.Component {
     render() {
         return (
             <div className={ CSS }>
-                <span className='output-header'>Output <span onClick={ this.clearOutput }>X</span></span>
-                <div className='output-content'>
+                <span className="output-header">Output <span onClick={ this.clearOutput }>X</span></span>
+                <div className="output-content">
                     {
                         this.props.messages && this.props.messages.length ?
                             this.props.messages.map(msg =>

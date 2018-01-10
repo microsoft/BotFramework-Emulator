@@ -236,7 +236,7 @@ class CardJsonEditor extends React.Component {
         const saveBtnClass = this.state.saveEnabled ? '' : 'save-disabled';
         return (
             <div className={ CSS }>
-                <span className='json-header'>Editor <span onClick={ this.saveCard } className={ saveBtnClass }>Save</span></span>
+                <span className="json-header">Editor <span onClick={ this.saveCard } className={ saveBtnClass }>Save</span></span>
                 <div ref={ this.saveContainer }>
                 </div>
             </div>
