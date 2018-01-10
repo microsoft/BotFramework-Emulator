@@ -11,7 +11,7 @@ export default props =>
         <BotTab botId={ props.document.documentId } />
     : props.document.contentType === constants.ContentType_Card ?
         <CardTab cardId={ props.document.documentId } />
-    : props.document.contentType === constants.ContentType_Converation ?
+    : props.document.contentType === constants.ContentType_Conversation ?
         <ConversationTab conversationId={ props.document.documentId } />
     : props.document.contentType === constants.ContentType_TestBed ?
         <TestBedTab />

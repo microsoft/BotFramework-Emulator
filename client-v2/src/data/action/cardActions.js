@@ -31,26 +31,48 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export const CARD_UPDATE_JSON = "CARD_UPDATE_JSON";
-export const CARD_ADD_OUTPUT_MSG = "CARD_ADD_OUTPUT_MSG";
-export const CARD_CLEAR_OUTPUT_WINDOW = "CARD_CLEAR_OUTPUT_WINDOW";
+import { uniqueId } from '../../utils';
 
-export function updateCardJson(json) {
+export const UPDATE_JSON = 'CARD/UPDATE_JSON';
+export const ADD_OUTPUT_MSG = 'CARD/ADD_OUTPUT_MSG';
+export const CLEAR_OUTPUT_WINDOW = 'CARD/CLEAR_OUTPUT_WINDOW';
+export const CREATE_CARD = 'CARD/CREATE_CARD';
+
+export function updateCardJson(id, json) {
     return {
-        type: CARD_UPDATE_JSON,
-        payload: { json: json }
+        type: UPDATE_JSON,
+        payload: {
+            id,
+            json
+        }
     };
 }
 
-export function addCardOutputMessage(msg) {
+export function addCardOutputMessage(id, msg) {
     return {
-        type: CARD_ADD_OUTPUT_MSG,
-        payload: { msg: msg }
+        type: ADD_OUTPUT_MSG,
+        payload: {
+            id,
+            msg
+        }
     };
 }
 
-export function clearCardOutputWindow() {
+export function clearCardOutputWindow(id) {
     return {
-        type: CARD_CLEAR_OUTPUT_WINDOW
+        type: CLEAR_OUTPUT_WINDOW,
+        payload: {
+            id
+        }
+    };
+}
+
+export function createCard(card) {
+    return {
+        type: CREATE_CARD,
+        payload: {
+            id: uniqueId(),
+            card
+        }
     };
 }

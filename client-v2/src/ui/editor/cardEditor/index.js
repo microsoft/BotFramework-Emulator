@@ -36,18 +36,18 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import CardJsonEditor from './cardJsonEditor';
-import CardOutput from './cardOutput';
-import CardPreview from './cardPreview';
-import CardTemplator from './cardTemplator';
+import CardOutput from './cardOutputWindow';
+import CardPreview from './cardPreviewWindow';
+import CardTemplator from './cardTemplatorWindow';
 import Splitter from '../../layout/splitter';
 
 const CSS = css({
     display: "flex",
-    position: "relative",
     flexFlow: "row nowrap",
     height: "100%",
     width: "100%",
     backgroundColor: "white",
+    boxSizing: "border-box",
 
     " *": { boxSizing: "border-box" },
 
@@ -57,13 +57,6 @@ const CSS = css({
         height: "100%",
         width: "100%",
         padding: "0 24px"
-    },
-
-    " .card-horizontal-splitter": {
-        width: "100%",
-        height: "32px",
-        flexShrink: "0",
-        cursor: "ns-resize"
     },
 
     " .card-json-editor-container": {
@@ -95,7 +88,7 @@ export default class CardEditor extends React.Component {
 
     render() {
         return(
-            <div {...CSS}>
+            <div className={ CSS }>
                 <Splitter
                     vertical={ false }
                     onSecondaryPaneSizeChange={ this.onChangeVerticalSplit }

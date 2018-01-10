@@ -31,11 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-    CARD_ADD_OUTPUT_MSG,
-    CARD_CLEAR_OUTPUT_WINDOW,
-    CARD_UPDATE_JSON
-} from '../action/cardActions';
+import * as CardActions from '../action/cardActions';
 
 const DEFAULT_STATE = {
     cards: {
@@ -116,15 +112,52 @@ const DEFAULT_STATE = {
 
 export default function card(state = DEFAULT_STATE, action) {
     const payload = action.payload;
+
     switch (action.type) {
-        case CARD_UPDATE_JSON:
-            state = { ...state, cardJson: payload.json };
+        case CardActions.UPDATE_JSON:
+            state = {
+                ...state,
+                cards: {
+                    ...state.cards,
+                    [payload.id]: {
+                        ...state.cards[payload.id],
+                        cardJson: payload.json
+                    }
+                }
+            }
             break;
-        case CARD_ADD_OUTPUT_MSG:
-            state = { ...state, cardOutput: [...state.cardOutput, payload.msg] };
+        case CardActions.ADD_OUTPUT_MSG:
+            state = {
+                ...state,
+                cards: {
+                    ...state.cards,
+                    [payload.id]: {
+                        ...state.cards[payload.id],
+                        cardOutput: [...state.cards[payload.id].cardOutput, payload.msg]
+                    }
+                }
+            }
             break;
-        case CARD_CLEAR_OUTPUT_WINDOW:
-            state = { ...state, cardOutput: [] };
+        case CardActions.CLEAR_OUTPUT_WINDOW:
+            state = {
+                ...state,
+                cards: {
+                    ...state.cards,
+                    [payload.id]: {
+                        ...state.cards[payload.id],
+                        cardOutput: []
+                    }
+                }
+            }
+            break;
+        case CardActions.CREATE_CARD:
+            state = {
+                ...state,
+                cards: {
+                    ...state.cards,
+                    [payload.id]: payload.card
+                }
+            }
             break;
         default:
             break;

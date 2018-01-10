@@ -41,24 +41,27 @@ const DEFAULT_STATE = {
         documentId: 'bot:1'
     }, {
         contentType: constants.ContentType_TestBed
-    }, {
-        contentType: constants.ContentType_Card,
-        documentId: 'card:1'
     }]
 };
 
 export default function documents(state = DEFAULT_STATE, action) {
     switch (action.type) {
         case EditorActions.OPEN:
-            state = {
-                ...state,
-                activeDocumentId: action.payload.documentId,
-                documents: [
-                    ...state.documents,
-                    action.payload
-                ]
-            };
-
+            if (!documentExists(action.payload.documentId, state.documents)) {
+                state = {
+                    ...state,
+                    activeDocumentId: action.payload.documentId,
+                    documents: [
+                        ...state.documents,
+                        action.payload
+                    ]
+                };
+            } else {
+                state = {
+                    ...state,
+                    activeDocumentId: action.payload.documentId
+                };
+            }
             break;
 
         case EditorActions.SET_ACTIVE:
@@ -73,4 +76,8 @@ export default function documents(state = DEFAULT_STATE, action) {
     }
 
     return state;
+}
+
+function documentExists(id, documents = []) {
+    return documents.some(doc => doc.documentId === id);
 }

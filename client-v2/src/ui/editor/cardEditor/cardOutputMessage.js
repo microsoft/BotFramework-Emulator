@@ -31,54 +31,35 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-import TabBar from './tabBar';
-import TabBarTab from './tabBarTab';
-import TabbedDocument, { Tab as TabbedDocumentTab, Content as TabbedDocumentContent } from './tabbedDocument';
-import { filterChildren } from '../../utils';
+import { css } from 'glamor';
 
 const CSS = css({
-    backgroundColor: 'orange',
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    height: '100%',
-    boxSizing: 'border-box'
+    ' pre': {
+        fontFamily: 'Segoe UI',
+        cursor: 'pointer',
+
+        ':hover': {
+            backgroundColor: 'skyblue'
+        },
+
+        ':first-of-type': {
+            marginTop: '0'
+        }
+    }
 });
 
-export default class MultiTabs extends React.Component {
-    constructor(props, context) {
-        super(props, context);
-
-        this.handleTabClick = this.handleTabClick.bind(this);
-    }
-
-    handleTabClick(nextValue) {
-        this.props.onChange && this.props.onChange(nextValue);
-    }
-
+export default class CardOutputMessage extends React.Component {
     render() {
         return (
             <div className={ CSS }>
-                <TabBar>
-                    {
-                        React.Children.map(this.props.children, (tabbedDocument, index) =>
-                            <TabBarTab onClick={ this.handleTabClick.bind(this, index) }>
-                                { filterChildren(tabbedDocument.props.children, child => child.type === TabbedDocumentTab) }
-                            </TabBarTab>
-                        )
-                    }
-                </TabBar>
-                { !!this.props.children.length && filterChildren(React.Children.toArray(this.props.children)[this.props.value].props.children, child => child.type === TabbedDocumentContent) }
+                <pre>{ this.props.message }</pre>
             </div>
         );
     }
 }
 
-MultiTabs.propTypes = {
-    onChange: PropTypes.func,
-    value: PropTypes.number
+CardOutputMessage.propTypes = {
+    message: PropTypes.string
 };

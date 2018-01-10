@@ -32,34 +32,33 @@
 //
 
 import PropTypes from 'prop-types';
-import React from 'react';
-import { css } from 'glamor';
+import React from 'react'
+import { connect } from 'react-redux';
 
-const CSS = css({
-    " pre": {
-        fontFamily: "Segoe UI",
-        cursor: "pointer",
+import * as EditorActions from '../../../data/action/editorActions';
+import { ContentType_Card } from '../../../constants';
 
-        ":hover": {
-            backgroundColor: "skyblue"
-        },
+class CardExplorerFile extends React.Component {
+    constructor(props, context) {
+        super(props, context);
 
-        ":first-of-type": {
-            marginTop: "0"
-        }
+        this.handleFileClick = this.handleFileClick.bind(this);
     }
-});
 
-export default class CardOutputMessage extends React.Component {
+    handleFileClick() {
+        this.props.dispatch(EditorActions.open(ContentType_Card, this.props.cardId));
+    }
+
     render() {
-        return (
-            <div {...CSS}>
-                <pre>{ this.props.message }</pre>
-            </div>
-        );
+        return (<li onClick={ this.handleFileClick }>{ this.props.fileName }</li>);
     }
 }
 
-CardOutputMessage.propTypes = {
-    message: PropTypes.string
+CardExplorerFile.propTypes = {
+    cardId: PropTypes.string.isRequired,
+    fileName: PropTypes.string.isRequired
 };
+
+export default connect((state, { cardId }) => ({
+    fileName: state.card.cards[cardId].title
+}))(CardExplorerFile);
