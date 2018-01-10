@@ -134,6 +134,7 @@ export class Branch extends React.Component {
     }
 }
 
+// TODO: Consider <Branch> to use "content" props, instead of <Content>
 Branch.defaultProps = {
     depth: 0
 };
@@ -189,6 +190,28 @@ function renderFlatNodes(props, baseDepth) {
         }, {});
     const expanded = expandFlatTree(Object.keys(nodes));
 
+    // TODO: Instead of recursive, consider unpeeling the <FlatNode> one by one
+    //       This might help with rendering performance
+    //
+    // For example,
+    // <FlatNode path="abc/def/ghi">
+    //
+    // would become
+    //
+    // <Branch>
+    //   <Content>abc</Content>
+    //   <FlatNode path="def/ghi" />
+    // </Branch>
+    //
+    // then, become
+    //
+    // <Branch>
+    //   <Content>abc</Content>
+    //   <Branch>
+    //     <Content>def</Content>
+    //     <Leaf>ghi</Leaf>
+    //   </Branch>
+    // </Branch>
     const walk = (expanded, depth) => Object.keys(expanded).map(segment => {
         const subtree = expanded[segment];
 
