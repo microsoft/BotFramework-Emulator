@@ -76,13 +76,25 @@ const LEAF_CSS = css({
 
 const DEPTH_INDENT_PIXEL = 10;
 
+const NodeList = props =>
+    <ul className={ props.collapsed ? BRANCH_COLLAPSED_CSS : BRANCH_CSS }>
+        { React.Children.map(props.children, child => child.type === Branch && React.cloneElement(child, { depth: props.depth })) }
+        { React.Children.map(props.children, child => child.type === Leaf && React.cloneElement(child, { depth: props.depth })) }
+        { renderFlatNodes(props.children, props.depth) }
+    </ul>
+
+NodeList.defaultProps = {
+    depth: 0
+};
+
+NodeList.propTypes = {
+    collapsed: PropTypes.bool,
+    depth: PropTypes.number
+};
+
 export default props =>
     <div className={ TREE_CSS }>
-        <ul className={ BRANCH_CSS }>
-            { React.Children.map(props.children, child => child.type === Branch && child) }
-            { React.Children.map(props.children, child => child.type === Leaf && child) }
-            { renderFlatNodes(props, 0) }
-        </ul>
+        <NodeList depth={ 0 }>{ props.children }</NodeList>
     </div>;
 
 export class Branch extends React.Component {
@@ -114,27 +126,17 @@ export class Branch extends React.Component {
                     { this.state.expanded ? '➖' : '➕' }&nbsp;
                     { React.Children.map(this.props.children, child => child && child.type === Content && child) }
                 </button>
-                <ul className={ this.state.expanded ? BRANCH_CSS : BRANCH_COLLAPSED_CSS }>
-                    {
-                        React.Children.map(
-                            this.props.children,
-                            child => child.type === Branch && React.cloneElement(child, { depth: this.props.depth + 1 })
-                        )
-                    }
-                    {
-                        React.Children.map(
-                            this.props.children,
-                            child => child.type === Leaf && React.cloneElement(child, { depth: this.props.depth + 1 })
-                        )
-                    }
-                    { renderFlatNodes(this.props, this.props.depth + 1) }
-                </ul>
+                <NodeList
+                    collapsed={ !this.state.expanded }
+                    depth={ this.props.depth + 1 }
+                >
+                    { this.props.children }
+                </NodeList>
             </li>
         );
     }
 }
 
-// TODO: Consider <Branch> to use "content" props, instead of <Content>
 Branch.defaultProps = {
     depth: 0
 };
@@ -180,8 +182,8 @@ function branchOrLeaf(instance) {
     return instance.type === Branch || instance.type === Leaf;
 }
 
-function renderFlatNodes(props, baseDepth) {
-    const nodes = React.Children.toArray(props.children)
+function renderFlatNodes(children, baseDepth) {
+    const nodes = React.Children.toArray(children)
         .filter(child => child.type === FlatNode)
         .reduce((map, child) => {
             map[child.props.path] = child;
@@ -189,29 +191,6 @@ function renderFlatNodes(props, baseDepth) {
             return map;
         }, {});
     const expanded = expandFlatTree(Object.keys(nodes));
-
-    // TODO: Instead of recursive, consider unpeeling the <FlatNode> one by one
-    //       This might help with rendering performance
-    //
-    // For example,
-    // <FlatNode path="abc/def/ghi">
-    //
-    // would become
-    //
-    // <Branch>
-    //   <Content>abc</Content>
-    //   <FlatNode path="def/ghi" />
-    // </Branch>
-    //
-    // then, become
-    //
-    // <Branch>
-    //   <Content>abc</Content>
-    //   <Branch>
-    //     <Content>def</Content>
-    //     <Leaf>ghi</Leaf>
-    //   </Branch>
-    // </Branch>
     const walk = (expanded, depth) => Object.keys(expanded).map(segment => {
         const subtree = expanded[segment];
 
