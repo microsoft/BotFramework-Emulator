@@ -38,6 +38,7 @@ import ExplorerBar from './explorer';
 import MDI from './mdi';
 import NavBar from './navBar';
 import Splitter from '../layout/splitter';
+import Splitter2 from '../layout/splitter-v2';
 
 css.global('html, body, #root', {
     height: '100%',
@@ -45,6 +46,12 @@ css.global('html, body, #root', {
     minHeight: '100%',
     overflow: 'hidden'
 });
+
+const CSS1 = css({
+    backgroundColor: 'skyblue',
+    height: '100%',
+    width: '100%'
+})
 
 const CSS = css({
     backgroundColor: 'yellow',
@@ -74,15 +81,23 @@ export default class Main extends React.Component {
     }
 
     render() {
+        const old = (<div className={ CSS }>
+            <NavBar />
+            <div { ...SECOND_CSS }>
+                <Splitter primaryIndex={ 1 } secondaryInitialSize={ 300 }>
+                    <ExplorerBar />
+                    <MDI />
+                </Splitter>
+            </div>
+        </div>);
+
+
         return (
-            <div className={ CSS }>
-                <NavBar />
-                <div { ...SECOND_CSS }>
-                    <Splitter primaryIndex={ 1 } secondaryInitialSize={ 300 }>
-                        <ExplorerBar />
-                        <MDI />
-                    </Splitter>
-                </div>
+            <div className={ CSS1 }>
+                <Splitter2 orientation={ 'horizontal' }>
+                    <div style={{backgroundColor: 'pink', height: '100%', padding: '24px'}}>Div1</div>
+                    <div style={{backgroundColor: 'yellow', height: '100%', padding: '24px'}}>Div2</div>
+                </Splitter2>
             </div>
         );
     }
