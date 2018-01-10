@@ -36,7 +36,7 @@ import { css } from 'glamor';
 import React from 'react';
 
 import ConnectivityBadge from '../widget/connectivityBadge';
-import { expandFlatTree, treeViewFactory } from '../utils';
+import TreeView, { Branch, Content, FlatNode } from '../widget/treeView';
 
 const CSS = css({});
 
@@ -64,19 +64,21 @@ class TestBedEditor extends React.Component {
                     <h2>Tree view</h2>
                 </header>
                 <section>
-                    {
-                        treeViewFactory(
-                            this.props.assetExplorer.files,
-                            this.handleTreeNodeSelected,
-                            (file, path) =>
-                                <span>
-                                    📝{ path.split('/').pop() }&nbsp;{ this.state.selectedTreeNodePath === path ? '✔' : '' }
-                                    <br />
-                                    <small>({ file.size } bytes, under /{ path.split('/').slice(0, -1).join('/') })</small>
-                                </span>,
-                            path => path.split('/').pop()
-                        )
-                    }
+                    <TreeView>
+                        <Branch>
+                            <Content>Rendered by &lt;FlatNode&gt;</Content>
+                            {
+                                Object.keys(this.props.assetExplorer.files).map(path =>
+                                    <FlatNode
+                                        onClick={ this.handleTreeNodeSelected.bind(this, path) }
+                                        path={ path }
+                                    >
+                                        📝 { this.state.selectedTreeNodePath === path ? '✔' : '' } { path.split('/').pop() } <small>({ this.props.assetExplorer.files[path].size } bytes)</small>
+                                    </FlatNode>
+                                )
+                            }
+                        </Branch>
+                    </TreeView>
                 </section>
                 <header>
                     <h2>Raw store</h2>

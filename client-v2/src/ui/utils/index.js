@@ -33,10 +33,8 @@
 
 import expandFlatTree  from './expandFlatTree';
 import filterChildren  from './filterChildren';
-import treeViewFactory from './treeViewFactory';
 
 export {
     expandFlatTree,
-    filterChildren,
-    treeViewFactory
+    filterChildren
 }
