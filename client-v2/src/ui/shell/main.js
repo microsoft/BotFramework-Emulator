@@ -48,7 +48,7 @@ css.global('html, body, #root', {
 });
 
 const CSS1 = css({
-    backgroundColor: 'skyblue',
+    backgroundColor: 'floralwhite',
     height: '100%',
     width: '100%'
 })
@@ -95,8 +95,8 @@ export default class Main extends React.Component {
         return (
             <div className={ CSS1 }>
                 <Splitter2 orientation={ 'horizontal' }>
-                    <div style={{backgroundColor: 'pink', height: '100%', padding: '24px'}}>Div1</div>
-                    <div style={{backgroundColor: 'yellow', height: '100%', padding: '24px'}}>Div2</div>
+                    <div style={{backgroundColor: 'skyblue', height: '100%', padding: '24px'}}>Div1</div>
+                    <div style={{backgroundColor: 'coral', height: '100%', padding: '24px'}}>Div2</div>
                 </Splitter2>
             </div>
         );

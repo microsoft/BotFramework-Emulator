@@ -39,13 +39,15 @@ export default class SplitterV2 extends React.Component {
             css({
                 height: '10px',
                 width: '100%',
-                backgroundColor: 'black'
+                backgroundColor: 'black',
+                cursor: 'ns-resize'
             })
         :
             css({
                 height: '100%',
                 width: '10px',
-                backgroundColor: 'black'
+                backgroundColor: 'black',
+                cursor: 'ew-resize'
             });
     }
 
