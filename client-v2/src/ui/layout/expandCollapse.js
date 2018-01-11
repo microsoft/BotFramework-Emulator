@@ -36,11 +36,12 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { filterChildren } from '../utils';
+import * as Colors from '../colors/colors';
 
 const CSS = css({
     '> header': {
-        backgroundColor: '#767676',
-        color: '#FFFFFF',
+        backgroundColor: Colors.SECTION_HEADER_BACKGROUND_DARK,
+        color: Colors.SECTION_HEADER_FOREGROUND_DARK,
         fontFamily: 'Segoe UI Semibold',
         textTransform: 'uppercase',
         display: 'flex',

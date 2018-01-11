@@ -38,9 +38,10 @@ import { css } from 'glamor';
 
 import * as EditorActions from '../../../data/action/editorActions';
 import { ContentType_Card } from '../../../constants';
+import * as Colors from '../../colors/colors';
 
 const CSS = css({
-    color: '#CCCCCC',
+    color: Colors.EXPLORER_FOREGROUND_DARK,
     padding: '4px 24px',
     fontFamily: 'Segoe UI'
 });
