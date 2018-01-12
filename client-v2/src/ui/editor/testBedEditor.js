@@ -70,6 +70,7 @@ class TestBedEditor extends React.Component {
                             {
                                 Object.keys(this.props.assetExplorer.files).map(path =>
                                     <FlatNode
+                                        key={ path }
                                         onClick={ this.handleTreeNodeSelected.bind(this, path) }
                                         path={ path }
                                     >

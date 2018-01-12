@@ -34,7 +34,50 @@
 import expandFlatTree from './expandFlatTree';
 import filterChildren from './filterChildren';
 
+// TODO: We should move React code away from require('fs')
+if (typeof window !== 'undefined') { require = window['require']; }
+const fs = require('fs');
+
+function directoryExists(path) {
+    let stat = null;
+    try {
+        stat = fs.statSync(path);
+    } catch (e) { }
+
+    if (!stat || !stat.isDirectory()) {
+        return false;
+    } else return true;
+}
+
+function fileExists(path) {
+    let stat = null;
+    try {
+        stat = fs.statSync(path);
+    } catch (e) { }
+
+    if (!stat || !stat.isFile()) {
+        return false;
+    } else return true;
+}
+
+function getFilesInDir(path) {
+    return fs.readdirSync(path, 'utf-8');
+}
+
+function readFileSync(path) {
+    try {
+        return fs.readFileSync(path, 'utf-8');
+    } catch (e) {
+        return false;
+    }
+}
+
 export {
     expandFlatTree,
-    filterChildren
+    filterChildren,
+
+    directoryExists,
+    fileExists,
+    getFilesInDir,
+    readFileSync
 }
