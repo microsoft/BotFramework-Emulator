@@ -97,6 +97,7 @@ export default class Main extends React.Component {
                 <Splitter2 orientation={ 'horizontal' }>
                     <div style={{backgroundColor: 'skyblue', height: '100%', padding: '24px'}}>Div1</div>
                     <div style={{backgroundColor: 'coral', height: '100%', padding: '24px'}}>Div2</div>
+                    <div style={{backgroundColor: 'floralwhite', height: '100%', padding: '24px'}}>Div3</div>
                 </Splitter2>
             </div>
         );
