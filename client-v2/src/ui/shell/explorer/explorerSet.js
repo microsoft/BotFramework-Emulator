@@ -48,9 +48,9 @@ const CSS = css({
 const HEADER_CSS = css({
     lineHeight: '30px',
     color: Colors.EXPLORER_FOREGROUND_DARK,
-    paddingLeft: '16px',
+    paddingLeft: 16,
     textTransform: 'uppercase',
-    fontFamily: 'Segoe UI'
+    fontFamily: '\'Segoe UI\', \'Helvetica Neue\', \'Arial\', \'sans-serif\''
 })
 
 const EXPLORER_CSS = css({

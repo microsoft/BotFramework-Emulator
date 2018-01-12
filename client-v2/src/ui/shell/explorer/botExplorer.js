@@ -49,7 +49,7 @@ const CSS = css({
     listStyleType: 'none',
     margin: 0,
     padding: 0,
-    fontFamily: 'Segoe UI'
+    fontFamily: '\'Segoe UI\', \'Helvetica Neue\', \'Arial\', \'sans-serif\''
 });
 
 const BOTS_CSS = css({

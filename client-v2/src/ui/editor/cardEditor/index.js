@@ -40,29 +40,30 @@ import CardOutput from './cardOutputWindow';
 import CardPreview from './cardPreviewWindow';
 import CardTemplator from './cardTemplatorWindow';
 import Splitter from '../../layout/splitter';
+import * as Colors from '../../colors/colors';
 
 const CSS = css({
-    display: "flex",
-    flexFlow: "row nowrap",
-    height: "100%",
-    width: "100%",
-    backgroundColor: "#2D2D2D",
-    boxSizing: "border-box",
+    display: 'flex',
+    flexFlow: 'row nowrap',
+    height: '100%',
+    width: '100%',
+    backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
+    boxSizing: 'border-box',
 
-    " *": { boxSizing: "border-box" },
+    '& *': { boxSizing: 'border-box' },
 
-    " .card-right-panel": {
-        display: "flex",
-        flexFlow: "column nowrap",
-        height: "100%",
-        width: "100%",
-        padding: "0 24px"
+    '& .card-right-panel': {
+        display: 'flex',
+        flexFlow: 'column nowrap',
+        height: '100%',
+        width: '100%',
+        padding: '0 24px'
     },
 
-    " .card-json-editor-container": {
-        height: "100%",
-        width: "100%",
-        padding: "24px"
+    '& .card-json-editor-container': {
+        height: '100%',
+        width: '100%',
+        padding: 24
     }
 });
 

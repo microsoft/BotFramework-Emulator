@@ -44,7 +44,7 @@ const CSS = css({
     flexDirection: 'column',
     height: '100%',
     position: 'relative',
-    fontFamily: 'Segoe UI'
+    fontFamily: '\'Segoe UI\', \'Helvetica Neue\', \'Arial\', \'sans-serif\''
 });
 
 const HEADER_CSS = css({

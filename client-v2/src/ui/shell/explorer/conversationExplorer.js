@@ -61,9 +61,9 @@ const BOTS_CSS = css({
     margin: 0,
     padding: 0,
 
-    ' > li': {
+    '& > li': {
         padding: '4px 24px',
-        fontFamily: 'Segoe UI'
+        fontFamily: '\'Segoe UI\', \'Helvetica Neue\', \'Arial\', \'sans-serif\''
     }
 });
 

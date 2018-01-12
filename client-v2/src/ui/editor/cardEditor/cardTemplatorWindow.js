@@ -44,14 +44,14 @@ const CSS = css({
     height: '100%',
     margin: '12px 0',
     overflow: 'auto',
-    fontFamily: 'Segoe UI',
+    fontFamily: '\'Segoe UI\', \'Helvetica Neue\', \'Arial\', \'sans-serif\'',
 
     ' .template-header': {
-        paddingLeft: '24px',
-        fontFamily: 'Segoe UI Semibold',
+        paddingLeft: 24,
+        fontFamily: '\'Segoe UI Semibold\', \'Helvetica Neue\', \'Arial\', \'sans-serif\'',
         textTransform: 'uppercase',
         backgroundColor: Colors.SECTION_HEADER_BACKGROUND_DARK,
-        height: '24px',
+        height: 24,
         width: '100%',
         display: 'block',
         color: Colors.SECTION_HEADER_FOREGROUND_DARK,
@@ -61,7 +61,7 @@ const CSS = css({
         overflow: 'auto',
         height: 'calc(100% - 24px)',
         width: '100%',
-        padding: '16px',
+        padding: 16,
         backgroundColor: Colors.PANEL_BACKGROUND_DARK,
         color: Colors.PANEL_FOREGROUND_DARK
     }

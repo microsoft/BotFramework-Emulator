@@ -43,7 +43,7 @@ import * as Colors from '../../colors/colors';
 const CSS = css({
     color: Colors.EXPLORER_FOREGROUND_DARK,
     padding: '4px 24px',
-    fontFamily: 'Segoe UI'
+    fontFamily: '\'Segoe UI\', \'Helvetica Neue\', \'Arial\', \'sans-serif\''
 });
 
 class CardExplorerFile extends React.Component {

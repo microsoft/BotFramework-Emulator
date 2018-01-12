@@ -47,18 +47,18 @@ const CSS = css({
     height: '100%',
     overflow: 'hidden',
 
-    ' .preview-header': {
-        paddingLeft: '24px',
-        fontFamily: 'Segoe UI Semibold',
+    '& .preview-header': {
+        paddingLeft: 24,
+        fontFamily: '\'Segoe UI Semibold\', \'Helvetica Neue\', \'Arial\', \'sans-serif\'',
         textTransform: 'uppercase',
         backgroundColor: Colors.SECTION_HEADER_BACKGROUND_DARK,
         width: '100%',
-        height: '24px',
+        height: 24,
         display: 'block',
         color: Colors.SECTION_HEADER_FOREGROUND_DARK,
     },
 
-    ' .preview-content': {
+    '& .preview-content': {
         overflow: 'auto',
         height: 'calc(100% - 24px)',
         width: '100%',
@@ -66,7 +66,7 @@ const CSS = css({
         color: Colors.PANEL_FOREGROUND_DARK
     },
 
-    ' .ac-container > div': {
+    '& .ac-container > div': {
         color: `${Colors.PANEL_FOREGROUND_DARK} !important`
     }
 });

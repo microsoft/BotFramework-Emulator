@@ -36,39 +36,39 @@ import { css } from 'glamor'
 import React from 'react'
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 if (typeof window !== 'undefined') { require = window['require']; }
 const fs = require('fs');
 
 import * as CardActions from '../../../data/action/cardActions';
+import * as Colors from '../../colors/colors';
 
 const CSS = css({
     height: '100%',
     width: '100%',
     overflow: 'hidden',
 
-    ' > div': {
+    '& > div': {
         height: '100%'
     },
 
-    ' .json-header': {
-        paddingLeft: '24px',
-        fontFamily: 'Segoe UI Semibold',
+    '& .json-header': {
+        paddingLeft: 24,
+        fontFamily: '\'Segoe UI Semibold\', \'Helvetica Neue\', \'Arial\', \'sans-serif\'',
         textTransform: 'uppercase',
-        backgroundColor: '#767676',
+        backgroundColor: Colors.SECTION_HEADER_BACKGROUND_DARK,
         width: '100%',
         display: 'flex',
-        color: '#FFFFFF',
+        color: Colors.SECTION_HEADER_FOREGROUND_DARK,
 
-        ' > span': {
+        '& > span': {
             display: 'flex',
             marginLeft: 'auto',
-            marginRight: '16px',
+            marginRight: 16,
             cursor: 'pointer',
             userSelect: 'none'
         },
 
-        ' > .save-disabled': { color: '#CCC' }
+        '& > .save-disabled': { color: '#CCC' }
     }
 });
 

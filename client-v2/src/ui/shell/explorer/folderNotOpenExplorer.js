@@ -49,9 +49,9 @@ const CSS = css({
     margin: 0,
     padding: 0,
 
-    ' .folder-empty-state': {
+    '& .folder-empty-state': {
         padding: '4px 24px',
-        fontFamily: 'Segoe UI'
+        fontFamily: '\'Segoe UI\', \'Helvetica Neue\', \'Arial\', \'sans-serif\''
     }
 });
 
@@ -83,7 +83,7 @@ class FolderNotOpenExplorer extends React.Component {
                         title="No Folder Opened"
                     >
                         <ExpandCollapseContent>
-                            <div className='folder-empty-state'>
+                            <div className="folder-empty-state">
                                 <div>You have not yet opened a folder.</div>
                                 <button onClick={ this.handleOpenFolderClick }>Open Folder</button>
                             </div>

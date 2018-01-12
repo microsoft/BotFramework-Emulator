@@ -44,32 +44,32 @@ const CSS = css({
     width: '100%',
     height: '100%',
     margin: '12px 0 24px 0',
-    fontFamily: 'Segoe UI',
+    fontFamily: '\'Segoe UI\', \'Helvetica Neue\', \'Arial\', \'sans-serif\'',
     overflow: 'hidden',
 
-    ' .output-header': {
-        paddingLeft: '24px',
-        fontFamily: 'Segoe UI Semibold',
+    '& .output-header': {
+        paddingLeft: 24,
+        fontFamily: '\'Segoe UI Semibold\', \'Helvetica Neue\', \'Arial\', \'sans-serif\'',
         textTransform: 'uppercase',
         backgroundColor: Colors.SECTION_HEADER_BACKGROUND_DARK,
         width: '100%',
-        height: '24px',
+        height: 24,
         display: 'flex',
         color: Colors.SECTION_HEADER_FOREGROUND_DARK,
 
-        ' > span': {
+        '& > span': {
             display: 'flex',
             marginLeft: 'auto',
-            marginRight: '16px',
+            marginRight: 16,
             cursor: 'pointer'
         }
     },
 
-    ' .output-content': {
+    '& .output-content': {
         overflow: 'auto',
         height: 'calc(100% - 24px)',
         width: '100%',
-        padding: '16px',
+        padding: 16,
         userSelect: 'none',
         backgroundColor: Colors.PANEL_BACKGROUND_DARK,
         color: Colors.PANEL_FOREGROUND_DARK

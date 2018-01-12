@@ -39,20 +39,20 @@ import { filterChildren } from '../utils';
 import * as Colors from '../colors/colors';
 
 const CSS = css({
-    '> header': {
+    '& > header': {
         backgroundColor: Colors.SECTION_HEADER_BACKGROUND_DARK,
         color: Colors.SECTION_HEADER_FOREGROUND_DARK,
-        fontFamily: 'Segoe UI Semibold',
+        fontFamily: '\'Segoe UI Semibold\', \'Helvetica Neue\', \'Arial\', \'sans-serif\'',
         textTransform: 'uppercase',
         display: 'flex',
         lineHeight: '30px',
 
-        '> .content': {
-            paddingLeft: '8px',
+        '& > .content': {
+            paddingLeft: 8,
             flex: 1
         },
 
-        '> .accessories': {
+        '& > .accessories': {
             margin: '0 0 0 auto'
         }
     }
