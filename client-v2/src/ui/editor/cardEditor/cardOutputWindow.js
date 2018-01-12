@@ -34,46 +34,47 @@
 import { connect } from 'react-redux'
 import { css } from 'glamor'
 import React from 'react'
+import PropTypes from 'prop-types';
+
 import AdaptiveCardOutputMessage from './cardOutputMessage';
 import * as CardActions from '../../../data/action/cardActions';
-import PropTypes from 'prop-types';
+import * as Colors from '../../colors/colors';
 
 const CSS = css({
     width: '100%',
     height: '100%',
     margin: '12px 0 24px 0',
-    fontFamily: 'Segoe UI',
+    fontFamily: '\'Segoe UI\', \'Helvetica Neue\', \'Arial\', \'sans-serif\'',
     overflow: 'hidden',
 
-    ' .output-header': {
-        paddingLeft: '24px',
-        fontFamily: 'Segoe UI Semibold',
+    '& .output-header': {
+        paddingLeft: 24,
+        fontFamily: '\'Segoe UI Semibold\', \'Helvetica Neue\', \'Arial\', \'sans-serif\'',
         textTransform: 'uppercase',
-        backgroundColor: '#F5F5F5',
+        backgroundColor: Colors.SECTION_HEADER_BACKGROUND_DARK,
         width: '100%',
-        height: '24px',
+        height: 24,
         display: 'flex',
-        color: '#2B2B2B',
-        borderBottom: '1px solid #C6C6C6',
+        color: Colors.SECTION_HEADER_FOREGROUND_DARK,
 
-        ' > span': {
+        '& > span': {
             display: 'flex',
             marginLeft: 'auto',
-            marginRight: '16px',
+            marginRight: 16,
             cursor: 'pointer'
         }
     },
 
-    ' .output-content': {
+    '& .output-content': {
         overflow: 'auto',
         height: 'calc(100% - 24px)',
         width: '100%',
-        padding: '16px',
-        userSelect: 'none'
+        padding: 16,
+        userSelect: 'none',
+        backgroundColor: Colors.PANEL_BACKGROUND_DARK,
+        color: Colors.PANEL_FOREGROUND_DARK
     }
 });
-
-const debug = css({ backgroundColor: 'white', border: '1px solid black' });
 
 class CardOutput extends React.Component {
     constructor(props, context) {
@@ -89,7 +90,7 @@ class CardOutput extends React.Component {
 
     render() {
         return (
-            <div className={ CSS } { ...debug }>
+            <div className={ CSS }>
                 <span className="output-header">Output <span onClick={ this.clearOutput }>X</span></span>
                 <div className="output-content">
                     {

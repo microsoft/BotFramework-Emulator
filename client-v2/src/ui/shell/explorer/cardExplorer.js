@@ -42,15 +42,16 @@ import * as CardActions from '../../../data/action/cardActions';
 import { ContentType_Card } from '../../../constants';
 import * as EditorActions from '../../../data/action/editorActions';
 import CardExplorerFile from './cardExplorerFile';
+import * as Colors from '../../colors/colors';
 
 const CSS = css({
-    backgroundColor: 'Pink',
     display: 'flex',
     flex: 1,
     flexDirection: 'column',
     listStyleType: 'none',
     margin: 0,
-    padding: 0
+    padding: 0,
+    backgroundColor: Colors.EXPLORER_BACKGROUND_DARK
 });
 
 const BOTS_CSS = css({

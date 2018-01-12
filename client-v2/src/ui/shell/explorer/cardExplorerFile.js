@@ -34,9 +34,17 @@
 import PropTypes from 'prop-types';
 import React from 'react'
 import { connect } from 'react-redux';
+import { css } from 'glamor';
 
 import * as EditorActions from '../../../data/action/editorActions';
 import { ContentType_Card } from '../../../constants';
+import * as Colors from '../../colors/colors';
+
+const CSS = css({
+    color: Colors.EXPLORER_FOREGROUND_DARK,
+    padding: '4px 24px',
+    fontFamily: '\'Segoe UI\', \'Helvetica Neue\', \'Arial\', \'sans-serif\''
+});
 
 class CardExplorerFile extends React.Component {
     constructor(props, context) {
@@ -50,7 +58,7 @@ class CardExplorerFile extends React.Component {
     }
 
     render() {
-        return (<li onClick={ this.handleFileClick }>{ this.props.fileName }</li>);
+        return (<li className={ CSS } onClick={ this.handleFileClick }>{ this.props.fileName }</li>);
     }
 }
 

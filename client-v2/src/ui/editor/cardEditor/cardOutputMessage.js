@@ -36,8 +36,8 @@ import React from 'react';
 import { css } from 'glamor';
 
 const CSS = css({
-    ' pre': {
-        fontFamily: 'Segoe UI',
+    '& pre': {
+        fontFamily: '\'Segoe UI\', \'Helvetica Neue\', \'Arial\', \'sans-serif\'',
         cursor: 'pointer',
 
         ':hover': {
@@ -45,7 +45,7 @@ const CSS = css({
         },
 
         ':first-of-type': {
-            marginTop: '0'
+            marginTop: 0
         }
     }
 });
