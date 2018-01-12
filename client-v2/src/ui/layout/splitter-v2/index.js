@@ -141,7 +141,7 @@ export default class SplitterV2 extends React.Component {
         const pane2Dimensions = this.panes[pane2Index]['ref'].getBoundingClientRect();
         const splitterDimensions = this.splitters[splitterIndex]['dimensions'];
 
-        const primarySize = this.panes[pane1Index]['size'] = Math.max((pane1Dimensions.top + e.clientY), 100);
+        const primarySize = this.panes[pane1Index]['size'] = Math.max((e.clientY - pane1Dimensions.top), 100);//Math.max((pane1Dimensions.top + e.clientY), 100);
         const containerSize = pane1Dimensions.height + pane2Dimensions.height + splitterDimensions.height;
         const secondarySize = this.panes[pane2Index]['size'] = Math.max((containerSize - primarySize - splitterDimensions.height), 0);
         let currentPaneSizes = this.state.paneSizes;
@@ -149,7 +149,7 @@ export default class SplitterV2 extends React.Component {
         currentPaneSizes[pane2Index] = secondarySize;
         this.setState(({ paneSizes: currentPaneSizes }));
 
-        console.log({ 'primary': primarySize, 'secondary': secondarySize });
+        //console.log({ 'primary': primarySize, 'secondary': secondarySize });
     }
 
     /*getContainerSize() {
