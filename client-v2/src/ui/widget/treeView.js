@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css }    from 'glamor';
+import { css } from 'glamor';
 import classNames from 'classnames';
-import PropTypes  from 'prop-types';
-import React      from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 import expandFlatTree from '../utils/expandFlatTree';
 

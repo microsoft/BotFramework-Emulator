@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import expandFlatTree  from './expandFlatTree';
-import filterChildren  from './filterChildren';
+import expandFlatTree from './expandFlatTree';
+import filterChildren from './filterChildren';
 
 export {
     expandFlatTree,
