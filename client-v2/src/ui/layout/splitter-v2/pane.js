@@ -28,5 +28,5 @@ SplitterV2Pane.propTypes = {
         'horizontal',
         'vertical'
     ]).isRequired,
-    size: PropTypes.number.isRequired
+    size: PropTypes.number
 }
