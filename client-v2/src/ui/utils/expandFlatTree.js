@@ -31,44 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import React from 'react';
-if (typeof window !== 'undefined') { require = window['require']; }
-const fs = require('fs');
+export default function expandFlatTree(flattened, delimiter = '/') {
+    if (Array.isArray(flattened)) {
+        flattened = flattened.reduce((map, path) => {
+            map[path] = path;
 
-export function filterChildren(children, predicate) {
-    return React.Children.map(children, child => predicate(child) ? child : false);
-}
-
-export function directoryExists(path) {
-    let stat = null;
-    try {
-        stat = fs.statSync(path);
-    } catch (e) { }
-
-    if (!stat || !stat.isDirectory()) {
-        return false;
-    } else return true;
-}
-
-export function fileExists(path) {
-    let stat = null;
-    try {
-        stat = fs.statSync(path);
-    } catch (e) { }
-
-    if (!stat || !stat.isFile()) {
-        return false;
-    } else return true;
-}
-
-export function getFilesInDir(path) {
-    return fs.readdirSync(path, "utf-8");
-}
-
-export function readFileSync(path) {
-    try {
-        return fs.readFileSync(path, "utf-8");
-    } catch (e) {
-        return false;
+            return map;
+        }, {});
     }
+
+    return Object.keys(flattened).reduce((expanded, path) => {
+        const segments = path.split(delimiter);
+        const filename = segments.pop();
+        const parent = segments.reduce((parent, segment) => parent[segment] || (parent[segment] = {}), expanded);
+
+        parent[filename] = flattened[path];
+
+        return expanded;
+    }, {});
 }
