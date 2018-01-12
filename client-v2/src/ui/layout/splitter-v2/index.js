@@ -4,10 +4,10 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 
 import SplitterV2Pane from './pane';
-import SplitterV2Handle from './handle';
 
 const CSS = css({
-    position: 'relative'
+    height: "100%",
+    width: "100%"
 });
 
 const DEFAULT_PANE_SIZE = 200;
@@ -63,6 +63,13 @@ export default class SplitterV2 extends React.Component {
                 backgroundColor: 'black',
                 cursor: 'ew-resize'
             });
+
+        /*const currentPaneSizes = this.state.paneSizes;
+        const defaultPaneSize = (100/this.props.children.length) + '%';
+        for (let i = 0; i < this.props.children.length; i++) {
+            currentPaneSizes[i] = defaultPaneSize;
+        }
+        this.setState(({ paneSizes: currentPaneSizes }));*/
     }
 
     componentWillUnmount() {
@@ -115,18 +122,34 @@ export default class SplitterV2 extends React.Component {
 
         // the primary pane's size will be the difference between the top (horizontal) or left (vertical) of the pane,
         // and the mouse's Y (horizontal) or X (vertical) position
-        const primarySize = this.panes[pane1Index]['size'] = Math.max((e.clientY - pane1Dimensions.top), MIN_PRIMARY_SIZE);
+        let primarySize = this.props.orientation === 'horizontal' ?
+                this.panes[pane1Index]['size'] = Math.max((e.clientY - pane1Dimensions.top), MIN_PRIMARY_SIZE)
+            :
+                this.panes[pane1Index]['size'] = Math.max((e.clientX - pane1Dimensions.left), MIN_PRIMARY_SIZE);
 
         // the container size will be the sum of the heights (horizontal) or widths (vertical) of both panes and the splitter
-        const containerSize = pane1Dimensions.height + pane2Dimensions.height + splitterDimensions.height;
+        const containerSize = this.props.orientation === 'horizontal' ?
+                pane1Dimensions.height + pane2Dimensions.height + splitterDimensions.height
+            :
+                pane1Dimensions.width + pane2Dimensions.width + splitterDimensions.width;
+
+        // bound the bottom / right of the primary pane to the bottom / right of the container
+        const splitterSize = this.props.orientation === 'horizontal' ? splitterDimensions.height : splitterDimensions.width;
+        if ((primarySize + splitterSize) > containerSize) {
+            primarySize = containerSize - splitterSize;
+        }
 
         // the secondary pane's size will be the remaining height (horizontal) or width (vertical)
         // left in the container after subtracting the size of the splitter and primary pane from the total size
-        const secondarySize = this.panes[pane2Index]['size'] = Math.max((containerSize - primarySize - splitterDimensions.height), MIN_SECONDARY_SIZE);
+        const secondarySize = this.props.orientation === 'horizontal' ?
+                this.panes[pane2Index]['size'] = Math.max((containerSize - primarySize - splitterDimensions.height), MIN_SECONDARY_SIZE)
+            :
+                this.panes[pane2Index]['size'] = Math.max((containerSize - primarySize - splitterDimensions.width), MIN_SECONDARY_SIZE);
 
         let currentPaneSizes = this.state.paneSizes;
         currentPaneSizes[pane1Index] = primarySize;
         currentPaneSizes[pane2Index] = secondarySize;
+        console.log('new pane sizes: ', currentPaneSizes)
         this.setState(({ paneSizes: currentPaneSizes }));
     }
 
@@ -150,7 +173,7 @@ export default class SplitterV2 extends React.Component {
             if (!this.panes[splitIndex]) {
                 this.panes[splitIndex] = {};
             }
-            this.panes[splitIndex]['size'] = this.panes[splitIndex]['size'] || DEFAULT_PANE_SIZE;
+            this.panes[splitIndex]['size'] = this.panes[splitIndex]['size'] || DEFAULT_PANE_SIZE //100/this.props.children.length //DEFAULT_PANE_SIZE;
             const pane = <SplitterV2Pane key={ `pane${paneIndex}` } orientation={ this.props.orientation } size={ this.state.paneSizes[paneIndex] } ref={ x => this.savePaneRef(x, paneIndex) }>{ child }</SplitterV2Pane>;
             splitChildren.push(pane);
 
@@ -173,7 +196,7 @@ export default class SplitterV2 extends React.Component {
         });
 
         return (
-            <div className={ CSS }>
+            <div className={ CSS + ' split-container' }>
                 { splitChildren }
             </div>
         );
@@ -187,6 +210,7 @@ SplitterV2.propTypes = {
     ]).isRequired
 }
 
+/** Used to clear any text selected as a side effect of holding down the mouse and dragging */
 function clearSelection() {
     if (window.getSelection) {
         if (window.getSelection().empty) {

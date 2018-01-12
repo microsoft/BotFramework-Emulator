@@ -65,6 +65,30 @@ const SECOND_CSS = css({
     flex: 1
 })
 
+const TEST_CSS = css({
+    height: "100%",
+    width: "100%",
+    padding: "32px",
+    boxSizing: 'border-box',
+
+    " > input": {
+        width: "100%",
+        height: "40px",
+        marginBottom: "16px"
+    },
+
+    " > div": {
+        display: "flex"
+    },
+
+    " > div > button": {
+        height: "40px",
+        marginLeft: "auto",
+        width: "120px"
+    }
+
+})
+
 export default class Main extends React.Component {
     constructor(props, context) {
         super(props, context);
@@ -78,6 +102,21 @@ export default class Main extends React.Component {
 
     handleTabChange(nextTabValue) {
         this.setState(() => ({ tabValue: nextTabValue }));
+    }
+
+    renderTestComponent() {
+        return (
+            <div className={ TEST_CSS }>
+                <h1>Hey i'm some junk</h1>
+                <input />
+                <input />
+                <h2>Blah blah blah</h2>
+                <div>
+                    <button>Button</button>
+                    <button>Button</button>
+                </div>
+            </div>
+        );
     }
 
     render() {
@@ -95,10 +134,18 @@ export default class Main extends React.Component {
         return (
             <div className={ CSS1 }>
                 <Splitter2 orientation={ 'horizontal' }>
-                    <div style={{backgroundColor: 'skyblue', height: '100%', padding: '24px'}}>Div1</div>
-                    <div style={{backgroundColor: 'coral', height: '100%', padding: '24px'}}>Div2</div>
-                    <div style={{backgroundColor: 'floralwhite', height: '100%', padding: '24px'}}>Div3</div>
-                    <div style={{backgroundColor: 'darkgreen', height: '100%', padding: '24px'}}>Div3</div>
+                    <div style={{backgroundColor: 'skyblue', height: '100%', width: '100%'}}>Div1
+                        {this.renderTestComponent()}
+                    </div>
+                    <div style={{backgroundColor: 'coral', height: '100%', width: '100%'}}>Div2
+
+                    </div>
+                    <div style={{backgroundColor: 'floralwhite', height: '100%', width: '100%'}}>Div3
+
+                    </div>
+                    <div style={{backgroundColor: 'darkgreen', height: '100%', width: '100%'}}>Div3
+
+                    </div>
                 </Splitter2>
             </div>
         );
