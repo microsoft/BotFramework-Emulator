@@ -31,49 +31,29 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
-import React from 'react';
+import expandFlatTree from './expandFlatTree';
 
-import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
-import * as Colors from '../../colors/colors';
+// TODO: Should write more tests
+test('expandFlatTree should expand', () => {
+    const actual = expandFlatTree([
+        'abc.txt',
+        'abc/def.txt',
+        'abc/def/ghi.txt',
+        'xyz.txt',
+        'abc/ghi/xyz.txt'
+    ]);
 
-const CSS = css({
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0,
-    backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
-    color: Colors.EXPLORER_FOREGROUND_DARK
+    expect(actual).toEqual({
+        'abc.txt': 'abc.txt',
+        'abc': {
+            'def': {
+                'ghi.txt': 'abc/def/ghi.txt'
+            },
+            'ghi': {
+                'xyz.txt': 'abc/ghi/xyz.txt'
+            },
+            'def.txt': 'abc/def.txt'
+        },
+        'xyz.txt': 'xyz.txt'
+    });
 });
-
-const BOTS_CSS = css({
-    display: 'flex',
-    flexDirection: 'column',
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0,
-
-    '& > li': {
-        padding: '4px 24px',
-        fontFamily: '\'Segoe UI\', \'Helvetica Neue\', \'Arial\', \'sans-serif\''
-    }
-});
-
-export default props =>
-    <ul className={ CSS }>
-        <li>
-            <ExpandCollapse
-                initialExpanded={ true }
-                title="QnA Models"
-            >
-                <ExpandCollapseContent>
-                    <ul className={ BOTS_CSS }>
-                        <li>FAQ</li>
-                        <li>Small Talk</li>
-                    </ul>
-                </ExpandCollapseContent>
-            </ExpandCollapse>
-        </li>
-    </ul>

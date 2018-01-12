@@ -40,16 +40,11 @@ import QnAExplorer from './qnaExplorer';
 import FormExplorer from './formExplorer';
 import ConversationExplorer from './conversationExplorer';
 import FolderNotOpenExplorer from './folderNotOpenExplorer';
+import { directoryExists } from '../../utils';
 
 class AssetExplorerSet extends React.Component {
     render() {
-        if (!this.props.folder) {
-            return (
-                <ExplorerSet title="Asset Explorer">
-                    <FolderNotOpenExplorer />
-                </ExplorerSet>
-            );
-        } else {
+        if (directoryExists(this.props.folder)) {
             return (
                 <ExplorerSet title="Asset Explorer">
                     <CardExplorer />
@@ -57,6 +52,12 @@ class AssetExplorerSet extends React.Component {
                     <QnAExplorer />
                     <FormExplorer />
                     <ConversationExplorer />
+                </ExplorerSet>
+            );
+        } else {
+            return (
+                <ExplorerSet title="Asset Explorer">
+                    <FolderNotOpenExplorer />
                 </ExplorerSet>
             );
         }

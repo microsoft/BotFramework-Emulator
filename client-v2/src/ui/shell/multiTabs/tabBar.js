@@ -34,10 +34,12 @@
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
+
 import TabBarTab from './tabBarTab';
+import * as Colors from '../../colors/colors';
 
 const CSS = css({
-    backgroundColor: 'magenta',
+    backgroundColor: Colors.PANEL_BACKGROUND_DARK,
     display: 'flex',
     height: 30,
     listStyleType: 'none',
@@ -62,4 +64,3 @@ export default class TabBar extends React.Component {
 TabBar.propTypes = {
     value: PropTypes.number
 };
-

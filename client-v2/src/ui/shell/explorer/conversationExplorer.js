@@ -41,15 +41,17 @@ import * as ConversationActions from '../../../data/action/conversationActions';
 import * as EditorActions from '../../../data/action/editorActions';
 import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
 import conversation from '../../../data/reducer/conversation';
+import * as Colors from '../../colors/colors';
 
 const CSS = css({
-    backgroundColor: 'Pink',
     display: 'flex',
     flex: 1,
     flexDirection: 'column',
     listStyleType: 'none',
     margin: 0,
-    padding: 0
+    padding: 0,
+    backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
+    color: Colors.EXPLORER_FOREGROUND_DARK
 });
 
 const BOTS_CSS = css({
@@ -57,7 +59,12 @@ const BOTS_CSS = css({
     flexDirection: 'column',
     listStyleType: 'none',
     margin: 0,
-    padding: 0
+    padding: 0,
+
+    '& > li': {
+        padding: '4px 24px',
+        fontFamily: '\'Segoe UI\', \'Helvetica Neue\', \'Arial\', \'sans-serif\''
+    }
 });
 
 class ConversationExplorer extends React.Component {
@@ -76,7 +83,7 @@ class ConversationExplorer extends React.Component {
 
         // TODO: Turn this into a saga, the conversation ID maybe generated from server asynchronously
         this.props.dispatch(EditorActions.open(
-            constants.ContentType_Converation,
+            constants.ContentType_Conversation,
             createAction.payload.conversationId
         ));
     }

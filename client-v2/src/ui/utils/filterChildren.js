@@ -31,56 +31,44 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux'
-import { css } from 'glamor'
-import React from 'react'
-import CardTemplateRow from '../cardTemplateRow';
+import React from 'react';
+if (typeof window !== 'undefined') { require = window['require']; }
+const fs = require('fs');
 
-const CSS = css({
-    width: "100%",
-    height: "100%",
-    margin: "12px 0",
-    overflow: "auto",
-
-    " .template-header": {
-        paddingLeft: "24px",
-        fontFamily: "Segoe UI Semibold",
-        textTransform: "uppercase",
-        backgroundColor: "#F5F5F5",
-        height: "24px",
-        width: "100%",
-        display: "block",
-        color: "#2B2B2B",
-        borderBottom: "1px solid #C6C6C6"
-    },
-
-    " .template-content": {
-        overflow: "auto",
-        height: "calc(100% - 24px)",
-        width: "100%",
-        padding: "16px"
-    }
-});
-
-const debug = css({ backgroundColor: "white", border: "1px solid black" });
-
-class CardTemplator extends React.Component {
-    constructor(props, context) {
-        super(props, context);
-    }
-
-    render() {
-        return (
-            <div {...CSS} {...debug}>
-                <span className="template-header">Template Editor</span>
-                <div className="template-content">
-                    { this.props.entities.map(ent => <CardTemplateRow key={ ent } entityName={ ent } />) }
-                </div>
-            </div>
-        );
-    }
+export default function filterChildren(children, predicate) {
+    return React.Children.map(children, child => predicate(child) ? child : false);
 }
 
-export default connect(state => ({
-    entities: ["ent1", "ent2", "ent3"]
-}))(CardTemplator);
+export function directoryExists(path) {
+    let stat = null;
+    try {
+        stat = fs.statSync(path);
+    } catch (e) { }
+
+    if (!stat || !stat.isDirectory()) {
+        return false;
+    } else return true;
+}
+
+export function fileExists(path) {
+    let stat = null;
+    try {
+        stat = fs.statSync(path);
+    } catch (e) { }
+
+    if (!stat || !stat.isFile()) {
+        return false;
+    } else return true;
+}
+
+export function getFilesInDir(path) {
+    return fs.readdirSync(path, "utf-8");
+}
+
+export function readFileSync(path) {
+    try {
+        return fs.readFileSync(path, "utf-8");
+    } catch (e) {
+        return false;
+    }
+}

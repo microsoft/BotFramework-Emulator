@@ -34,52 +34,60 @@
 import { connect } from 'react-redux'
 import { css } from 'glamor'
 import React from 'react'
+import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
+
 import * as AdaptiveCards from 'adaptivecards';
-import { addCardOutputMessage } from '../../../../data/action/cardActions';
+import * as CardActions from '../../../data/action/cardActions';
+import * as Colors from '../../colors/colors';
 
 const CSS = css({
-    margin: "24px 0 12px 0",
-    width: "100%",
-    height: "100%",
-    overflow: "hidden",
+    margin: '24px 0 12px 0',
+    width: '100%',
+    height: '100%',
+    overflow: 'hidden',
 
-    " .preview-header": {
-        paddingLeft: "24px",
-        fontFamily: "Segoe UI Semibold",
-        textTransform: "uppercase",
-        backgroundColor: "#F5F5F5",
-        width: "100%",
-        height: "24px",
-        display: "block",
-        color: "#2B2B2B",
-        borderBottom: "1px solid #C6C6C6"
+    '& .preview-header': {
+        paddingLeft: 24,
+        fontFamily: '\'Segoe UI Semibold\', \'Helvetica Neue\', \'Arial\', \'sans-serif\'',
+        textTransform: 'uppercase',
+        backgroundColor: Colors.SECTION_HEADER_BACKGROUND_DARK,
+        width: '100%',
+        height: 24,
+        display: 'block',
+        color: Colors.SECTION_HEADER_FOREGROUND_DARK,
     },
 
-    " .preview-content": {
-        overflow: "auto",
-        height: "calc(100% - 24px)",
-        width: "100%"
+    '& .preview-content': {
+        overflow: 'auto',
+        height: 'calc(100% - 24px)',
+        width: '100%',
+        backgroundColor: Colors.PANEL_BACKGROUND_DARK,
+        color: Colors.PANEL_FOREGROUND_DARK
+    },
+
+    '& .ac-container > div': {
+        color: `${Colors.PANEL_FOREGROUND_DARK} !important`
     }
 });
-
-const debug = css({ backgroundColor: "white", border: "1px solid black" });
 
 class CardPreview extends React.Component {
     constructor(props, context) {
         super(props, context);
 
         this.saveCardContainer = this.saveCardContainer.bind(this);
+        this.processAction = this.processAction.bind(this);
 
         // define card render options
         this.renderOptions = {
 
             // a Host Config defines the style and behavior of all cards
             hostConfig: {
-                "fontFamily": "Segoe UI, Helvetica Nue, sans-serif"
+                'fontFamily': 'Segoe UI, Helvetica Nue, sans-serif'
             },
 
             // the action handler is invoked when actions (such as card button presses) are triggered
-            onExecuteAction: (action) => processAction(action, this.props.dispatch)
+            onExecuteAction: (action) => this.processAction(action, this.props.dispatch)
         };
     }
 
@@ -95,71 +103,62 @@ class CardPreview extends React.Component {
         try {
             const newPreRenderedCard = JSON.parse(newProps.cardJson);
             const renderedCard = AdaptiveCards.renderCard(newPreRenderedCard, this.renderOptions);
-            this.cardContainer.removeChild(this.cardContainer.firstChild);
-            this.cardContainer.appendChild(renderedCard);
+            if (renderedCard instanceof Node) {
+                this.cardContainer.removeChild(this.cardContainer.firstChild);
+                this.cardContainer.appendChild(renderedCard);
+            }
         } catch(e) {
             // don't do anything
         }
     }
 
     saveCardContainer(element) {
-        this.cardContainer = element;
+        this.cardContainer = ReactDOM.findDOMNode(element);
     }
 
     render() {
         return(
-            <div {...CSS} {...debug}>
+            <div className={ CSS }>
                 <span className="preview-header">Preview</span>
                 <div className="preview-content" ref={ this.saveCardContainer }></div>
             </div>
         );
     }
-}
 
-// determines a card action type, formats the message, then saves it to the store
-function processAction(action, dispatch) {
-    let actionType;
-    if (action.url) {
-        actionType = "OpenUrl";
-    } else {
-        actionType = "Submit";
+    // determines a card action type, formats the message, then saves it to the store
+    processAction(action, dispatch) {
+        const actionType = action.url ? 'OpenUrl' : 'Submit';
+
+        const actionMsg = this.formatActionMessage(action, actionType);
+        dispatch(CardActions.addCardOutputMessage(this.props.cardId, actionMsg));
     }
 
-    const actionMsg = formatActionMessage(action, actionType);
-    dispatch(addCardOutputMessage(actionMsg));
-}
+    // formats a card action output message based on the action type
+    formatActionMessage(action, actionType) {
+        const timeStamp = new Date().toTimeString().substring(0, 8);
+        const msgPrefix = `${timeStamp} [Card Action] - ${actionType}`;
 
-// formats a card action output message based on the action type
-function formatActionMessage(action, actionType) {
-    const timeStamp = new Date().toTimeString().substring(0, 8);
-    const msgPrefix = `${timeStamp} [Card Action] - ${actionType}`;
+        let msgBody = `\n\tTitle: ${action.title}`;
+        switch(actionType) {
+            case 'OpenUrl':
+                msgBody += `\n\tUrl: ${action.url}`;
+                break;
+            case 'Submit':
+            default:
+                if (action.data) {
+                    msgBody += `\n\tData: \n${JSON.stringify(action.data, null, 2)}`;
+                }
+                break;
+        }
 
-    let msgBody = "\n\tTitle: " + action.title;
-    switch(actionType) {
-        case "OpenUrl":
-            msgBody += "\n\tUrl: " + action.url;
-            break;
-        case "Submit":
-        default:
-            // format hidden data as:
-            // Data: {
-            //     key1: val1,
-            //     key2: val2,
-            //     ...
-            // }
-            if (action.data && Object.keys(action.data).length) {
-                msgBody += "\n\tData: {";
-                let keys = Object.keys(action.data);
-                keys.forEach(key => {
-                    msgBody += `\n\t\t${key}: ${action.data[key]}`
-                });
-                msgBody += "\n\t}"
-            }
-            break;
+        return msgPrefix + msgBody;
     }
-
-    return msgPrefix + msgBody;
 }
+
+CardPreview.propTypes = {
+    cardId: PropTypes.string,
+    cardJson: PropTypes.string
+};
 
 export default connect((state, { cardId }) => ({
     cardJson: state.card.cards[cardId].cardJson

@@ -31,24 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import PropTypes from 'prop-types';
-import React from 'react';
-import { css } from 'glamor';
+export default function expandFlatTree(flattened, delimiter = '/') {
+    if (Array.isArray(flattened)) {
+        flattened = flattened.reduce((map, path) => {
+            map[path] = path;
 
-const CSS = css({
-});
-
-export default class CardTemplateRow extends React.Component {
-    render() {
-        return (
-            <div {...CSS}>
-                <div><label>{ this.props.entityName }</label></div>
-                <input />
-            </div>
-        );
+            return map;
+        }, {});
     }
-}
 
-CardTemplateRow.propTypes = {
-    entityName: PropTypes.string
-};
+    return Object.keys(flattened).reduce((expanded, path) => {
+        const segments = path.split(delimiter);
+        const filename = segments.pop();
+        const parent = segments.reduce((parent, segment) => parent[segment] || (parent[segment] = {}), expanded);
+
+        parent[filename] = flattened[path];
+
+        return expanded;
+    }, {});
+}

@@ -31,49 +31,53 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
-import React from 'react';
+import expandFlatTree from './expandFlatTree';
+import filterChildren from './filterChildren';
 
-import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
-import * as Colors from '../../colors/colors';
+// TODO: We should move React code away from require('fs')
+if (typeof window !== 'undefined') { require = window['require']; }
+const fs = require('fs');
 
-const CSS = css({
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0,
-    backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
-    color: Colors.EXPLORER_FOREGROUND_DARK
-});
+function directoryExists(path) {
+    let stat = null;
+    try {
+        stat = fs.statSync(path);
+    } catch (e) { }
 
-const BOTS_CSS = css({
-    display: 'flex',
-    flexDirection: 'column',
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0,
+    if (!stat || !stat.isDirectory()) {
+        return false;
+    } else return true;
+}
 
-    '& > li': {
-        padding: '4px 24px',
-        fontFamily: '\'Segoe UI\', \'Helvetica Neue\', \'Arial\', \'sans-serif\''
+function fileExists(path) {
+    let stat = null;
+    try {
+        stat = fs.statSync(path);
+    } catch (e) { }
+
+    if (!stat || !stat.isFile()) {
+        return false;
+    } else return true;
+}
+
+function getFilesInDir(path) {
+    return fs.readdirSync(path, 'utf-8');
+}
+
+function readFileSync(path) {
+    try {
+        return fs.readFileSync(path, 'utf-8');
+    } catch (e) {
+        return false;
     }
-});
+}
 
-export default props =>
-    <ul className={ CSS }>
-        <li>
-            <ExpandCollapse
-                initialExpanded={ true }
-                title="QnA Models"
-            >
-                <ExpandCollapseContent>
-                    <ul className={ BOTS_CSS }>
-                        <li>FAQ</li>
-                        <li>Small Talk</li>
-                    </ul>
-                </ExpandCollapseContent>
-            </ExpandCollapse>
-        </li>
-    </ul>
+export {
+    expandFlatTree,
+    filterChildren,
+
+    directoryExists,
+    fileExists,
+    getFilesInDir,
+    readFileSync
+}

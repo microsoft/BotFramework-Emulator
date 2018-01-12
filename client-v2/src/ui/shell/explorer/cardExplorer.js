@@ -33,18 +33,25 @@
 
 import { css } from 'glamor';
 import React from 'react';
-import * as constants from '../../../constants';
 import { connect } from 'react-redux';
+
+import * as constants from '../../../constants';
 import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
+import { directoryExists, getFilesInDir, fileExists, readFileSync } from '../../utils';
+import * as CardActions from '../../../data/action/cardActions';
+import { ContentType_Card } from '../../../constants';
+import * as EditorActions from '../../../data/action/editorActions';
+import CardExplorerFile from './cardExplorerFile';
+import * as Colors from '../../colors/colors';
 
 const CSS = css({
-    backgroundColor: 'Pink',
     display: 'flex',
     flex: 1,
     flexDirection: 'column',
     listStyleType: 'none',
     margin: 0,
-    padding: 0
+    padding: 0,
+    backgroundColor: Colors.EXPLORER_BACKGROUND_DARK
 });
 
 const BOTS_CSS = css({
@@ -56,20 +63,51 @@ const BOTS_CSS = css({
 });
 
 export class CardExplorer extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+    }
+
+    componentWillMount() {
+        // look at the current folder and check for cards under it
+        const cardsPath = `${this.props.folder}/cards`;
+        if (directoryExists(cardsPath)) {
+            const files = getFilesInDir(cardsPath);
+
+            const jsonFileRegex = /.json$/;
+            for(let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const filePath = `${cardsPath}/${file}`;
+
+                if (fileExists(filePath) && jsonFileRegex.test(file)) {
+                    const cardContent = {
+                        title: file,
+                        cardJson: readFileSync(filePath) || '{}',
+                        cardOutput: [],
+                        entities: [],
+                        path: filePath,
+                        contentType: ContentType_Card
+                    };
+
+                    this.props.dispatch(CardActions.createCard(cardContent));
+                }
+            }
+        }
+    }
+
     render() {
         return(
             <ul className={ CSS }>
                 <li>
                     <ExpandCollapse
                         initialExpanded={ true }
-                        title="Cards"
+                        title='Cards'
                     >
                         <ExpandCollapseContent>
                             <ul className={ BOTS_CSS }>
                                 {
                                     Object.keys(this.props.cards).length ?
                                         Object.keys(this.props.cards).map(id =>
-                                            <li key={ id }>{ this.props.cards[id].title }</li>
+                                            <CardExplorerFile key={ id } cardId={ id } />
                                         )
                                     :
                                         <li>No cards found...</li>
@@ -84,5 +122,6 @@ export class CardExplorer extends React.Component {
 }
 
 export default connect(state => ({
-    cards: state.card.cards
+    cards: state.card.cards,
+    folder: state.assetExplorer.folder
 }))(CardExplorer);

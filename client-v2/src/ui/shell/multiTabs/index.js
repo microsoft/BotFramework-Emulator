@@ -44,7 +44,9 @@ const CSS = css({
     backgroundColor: 'orange',
     display: 'flex',
     flex: 1,
-    flexDirection: 'column'
+    flexDirection: 'column',
+    height: '100%',
+    boxSizing: 'border-box'
 });
 
 export default class MultiTabs extends React.Component {
@@ -70,7 +72,7 @@ export default class MultiTabs extends React.Component {
                         )
                     }
                 </TabBar>
-                { filterChildren(React.Children.toArray(this.props.children)[this.props.value].props.children, child => child.type === TabbedDocumentContent) }
+                { !!this.props.children.length && filterChildren(React.Children.toArray(this.props.children)[this.props.value].props.children, child => child.type === TabbedDocumentContent) }
             </div>
         );
     }
@@ -80,4 +82,3 @@ MultiTabs.propTypes = {
     onChange: PropTypes.func,
     value: PropTypes.number
 };
-

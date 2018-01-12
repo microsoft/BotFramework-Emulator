@@ -39,15 +39,17 @@ import * as BotActions from '../../../data/action/botActions';
 import * as constants from '../../../constants';
 import * as EditorActions from '../../../data/action/editorActions';
 import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
+import * as Colors from '../../colors/colors';
 
 const CSS = css({
-    backgroundColor: 'skyblue',
+    backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
     display: 'flex',
     flex: 1,
     flexDirection: 'column',
     listStyleType: 'none',
     margin: 0,
-    padding: 0
+    padding: 0,
+    fontFamily: '\'Segoe UI\', \'Helvetica Neue\', \'Arial\', \'sans-serif\''
 });
 
 const BOTS_CSS = css({
@@ -55,7 +57,8 @@ const BOTS_CSS = css({
     flexDirection: 'column',
     listStyleType: 'none',
     margin: 0,
-    padding: 0
+    padding: '4px 24px',
+    color: Colors.EXPLORER_FOREGROUND_DARK
 });
 
 class BotExplorer extends React.Component {

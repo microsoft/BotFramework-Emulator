@@ -31,8 +31,35 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import PropTypes from 'prop-types';
 import React from 'react';
+import { css } from 'glamor';
 
-export function filterChildren(children, predicate) {
-    return React.Children.map(children, child => predicate(child) ? child : false);
+const CSS = css({
+    '& pre': {
+        fontFamily: '\'Segoe UI\', \'Helvetica Neue\', \'Arial\', \'sans-serif\'',
+        cursor: 'pointer',
+
+        ':hover': {
+            backgroundColor: 'skyblue'
+        },
+
+        ':first-of-type': {
+            marginTop: 0
+        }
+    }
+});
+
+export default class CardOutputMessage extends React.Component {
+    render() {
+        return (
+            <div className={ CSS }>
+                <pre>{ this.props.message }</pre>
+            </div>
+        );
+    }
 }
+
+CardOutputMessage.propTypes = {
+    message: PropTypes.string
+};

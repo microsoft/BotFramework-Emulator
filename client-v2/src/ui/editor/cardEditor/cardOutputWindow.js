@@ -34,45 +34,47 @@
 import { connect } from 'react-redux'
 import { css } from 'glamor'
 import React from 'react'
-import AdaptiveCardOutputMessage from '../cardOutputMessage';
-import { clearCardOutputWindow } from '../../../../data/action/cardActions';
+import PropTypes from 'prop-types';
+
+import AdaptiveCardOutputMessage from './cardOutputMessage';
+import * as CardActions from '../../../data/action/cardActions';
+import * as Colors from '../../colors/colors';
 
 const CSS = css({
-    width: "100%",
-    height: "100%",
-    margin: "12px 0 24px 0",
-    fontFamily: "Segoe UI",
-    overflow: "hidden",
+    width: '100%',
+    height: '100%',
+    margin: '12px 0 24px 0',
+    fontFamily: '\'Segoe UI\', \'Helvetica Neue\', \'Arial\', \'sans-serif\'',
+    overflow: 'hidden',
 
-    " .output-header": {
-        paddingLeft: "24px",
-        fontFamily: "Segoe UI Semibold",
-        textTransform: "uppercase",
-        backgroundColor: "#F5F5F5",
-        width: "100%",
-        height: "24px",
-        display: "flex",
-        color: "#2B2B2B",
-        borderBottom: "1px solid #C6C6C6",
+    '& .output-header': {
+        paddingLeft: 24,
+        fontFamily: '\'Segoe UI Semibold\', \'Helvetica Neue\', \'Arial\', \'sans-serif\'',
+        textTransform: 'uppercase',
+        backgroundColor: Colors.SECTION_HEADER_BACKGROUND_DARK,
+        width: '100%',
+        height: 24,
+        display: 'flex',
+        color: Colors.SECTION_HEADER_FOREGROUND_DARK,
 
-        " > span": {
-            display: "flex",
-            marginLeft: "auto",
-            marginRight: "16px",
-            cursor: "pointer"
+        '& > span': {
+            display: 'flex',
+            marginLeft: 'auto',
+            marginRight: 16,
+            cursor: 'pointer'
         }
     },
 
-    " .output-content": {
-        overflow: "auto",
-        height: "calc(100% - 24px)",
-        width: "100%",
-        padding: "16px",
-        userSelect: "none"
+    '& .output-content': {
+        overflow: 'auto',
+        height: 'calc(100% - 24px)',
+        width: '100%',
+        padding: 16,
+        userSelect: 'none',
+        backgroundColor: Colors.PANEL_BACKGROUND_DARK,
+        color: Colors.PANEL_FOREGROUND_DARK
     }
 });
-
-const debug = css({ backgroundColor: "white", border: "1px solid black" });
 
 class CardOutput extends React.Component {
     constructor(props, context) {
@@ -83,12 +85,12 @@ class CardOutput extends React.Component {
 
     // clears the messages in the output window
     clearOutput() {
-        this.props.dispatch(clearCardOutputWindow());
+        this.props.dispatch(CardActions.clearCardOutputWindow(this.props.cardId));
     }
 
     render() {
         return (
-            <div {...CSS} {...debug}>
+            <div className={ CSS }>
                 <span className="output-header">Output <span onClick={ this.clearOutput }>X</span></span>
                 <div className="output-content">
                     {
@@ -104,6 +106,11 @@ class CardOutput extends React.Component {
         );
     }
 }
+
+CardOutput.propTypes = {
+    cardId: PropTypes.string,
+    messages: PropTypes.array
+};
 
 export default connect((state, { cardId }) => ({
     messages: state.card.cards[cardId].cardOutput

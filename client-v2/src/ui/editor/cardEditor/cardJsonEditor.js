@@ -35,41 +35,40 @@ import { connect } from 'react-redux'
 import { css } from 'glamor'
 import React from 'react'
 import ReactDOM from 'react-dom';
-import * as CardActions from '../../../../data/action/cardActions';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { updateCardJson } from '../../../../data/action/cardActions';
 if (typeof window !== 'undefined') { require = window['require']; }
 const fs = require('fs');
 
-const CSS = css({
-    height: "100%",
-    width: "100%",
-    overflow: "hidden",
+import * as CardActions from '../../../data/action/cardActions';
+import * as Colors from '../../colors/colors';
 
-    " > div": {
-        height: "100%"
+const CSS = css({
+    height: '100%',
+    width: '100%',
+    overflow: 'hidden',
+
+    '& > div': {
+        height: '100%'
     },
 
-    " .json-header": {
-        paddingLeft: "24px",
-        fontFamily: "Segoe UI Semibold",
-        textTransform: "uppercase",
-        backgroundColor: "#F5F5F5",
-        width: "100%",
-        display: "flex",
-        color: "#2B2B2B",
-        borderBottom: "1px solid #C6C6C6",
+    '& .json-header': {
+        paddingLeft: 24,
+        fontFamily: '\'Segoe UI Semibold\', \'Helvetica Neue\', \'Arial\', \'sans-serif\'',
+        textTransform: 'uppercase',
+        backgroundColor: Colors.SECTION_HEADER_BACKGROUND_DARK,
+        width: '100%',
+        display: 'flex',
+        color: Colors.SECTION_HEADER_FOREGROUND_DARK,
 
-        " > span": {
-            display: "flex",
-            marginLeft: "auto",
-            marginRight: "16px",
-            cursor: "pointer",
-            userSelect: "none"
+        '& > span': {
+            display: 'flex',
+            marginLeft: 'auto',
+            marginRight: 16,
+            cursor: 'pointer',
+            userSelect: 'none'
         },
 
-        " > .save-disabled": { color: "#CCC" }
+        '& > .save-disabled': { color: '#CCC' }
     }
 });
 
@@ -134,13 +133,13 @@ class CardJsonEditor extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         const { loaderReady: prevLoaderReady } = prevState || {};
-        const { editorWidth: prevEditorWidth } = prevProps || null;
+        const { editorWidth: prevEditorWidth, cardId: prevCardId, cardJson: prevCardJson } = prevProps || null;
 
         if (prevEditorWidth && this._editor) {
             this._editor.layout();
         }
 
-        // if we have the monaco loader loaded, then let's create the editor
+        // if we switched to another asset tab and back, then we need to load the loader again
         if (!prevLoaderReady && this.state.loaderReady) {
             if (location.protocol === 'http:') {
                 amdRequire.config({
@@ -169,14 +168,27 @@ class CardJsonEditor extends React.Component {
                 });
             }
         }
+
+        // if we switched between card tabs
+        if (prevCardId && prevCardId !== this.props.cardId) {
+            // sync previous card with store so we don't lose state
+            if (prevCardJson) {
+                this.syncStoreWithCardJson(prevCardId, prevCardJson);
+            }
+            if (this._editor) {
+                this._editor.setValue(this.props.cardJson);
+            } else {
+                this.initMonacoEditor();
+            }
+        }
     }
 
     // creates the monaco editor, inserts it into the DOM, and hooks up code change listener
     initMonacoEditor() {
         this._editor = window.monaco.editor.create(this.editorContainer, {
-            value: this.loadCard() || this.props.cardJson,
+            value: this.props.cardJson,
             language: 'json',
-            theme: "vs-dark"
+            theme: 'vs-dark'
         });
 
         this._editor.onDidChangeModelContent(evt => {
@@ -191,23 +203,28 @@ class CardJsonEditor extends React.Component {
 
     // handle changes to the monaco model
     handleCodeChange(newVal) {
-        this.props.dispatch(CardActions.updateCardJson(newVal));
+        this.syncStoreWithCardJson(this.props.cardId, newVal);
         this.setState(() => ({ saveEnabled: true }));
+    }
+
+    // syncs the store version of the card with the supplied json
+    // (used to sync component state's json with the store's json)
+    syncStoreWithCardJson(cardId, json) {
+        this.props.dispatch(CardActions.updateCardJson(cardId, json));
     }
 
     // saves the card to the file system
     saveCard() {
         if (this.state.saveEnabled) {
-            const filePath = "C:\\Users\\Public\\Desktop\\TestAssetsRoot\\cards\\testcard.json";
+            const filePath = this.props.path;
             fs.writeFile(
                 filePath,
                 this.props.cardJson,
-                "utf-8",
+                'utf-8',
                 (err) => {
                     if (err) {
-                        console.log("Error saving adaptive card to file!", err);
+                        console.log('Error saving adaptive card to file!', err);
                     } else {
-                        console.log("Saved adaptive card to file!");
                         this.setState(() => ({ saveEnabled: false }))
                     }
                 }
@@ -215,20 +232,11 @@ class CardJsonEditor extends React.Component {
         }
     }
 
-    // loads the card from the file system
-    loadCard(filePath = "C:\\Users\\Public\\Desktop\\TestAssetsRoot\\cards\\testcard.json") {
-        try {
-            return fs.readFileSync(filePath, "utf-8");
-        } catch (e) {
-            return false;
-        }
-    }
-
     render() {
-        const saveBtnClass = this.state.saveEnabled ? "" : "save-disabled";
+        const saveBtnClass = this.state.saveEnabled ? '' : 'save-disabled';
         return (
-            <div {...CSS}>
-                <span className="json-header">Editor <span onClick={ this.saveCard } className={saveBtnClass}>Save</span></span>
+            <div className={ CSS }>
+                <span className="json-header">Editor <span onClick={ this.saveCard } className={ saveBtnClass }>Save</span></span>
                 <div ref={ this.saveContainer }>
                 </div>
             </div>
@@ -237,9 +245,13 @@ class CardJsonEditor extends React.Component {
 }
 
 CardJsonEditor.propTypes = {
-    editorWidth: PropTypes.number
+    cardId: PropTypes.string,
+    cardJson: PropTypes.string,
+    editorWidth: PropTypes.number,
+    path: PropTypes.string
 };
 
 export default connect((state, { cardId }) => ({
-    cardJson: state.card.cards[cardId].cardJson
+    cardJson: state.card.cards[cardId].cardJson,
+    path: state.card.cards[cardId].path
 }))(CardJsonEditor);

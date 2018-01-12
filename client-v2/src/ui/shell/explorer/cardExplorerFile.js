@@ -31,49 +31,42 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import PropTypes from 'prop-types';
+import React from 'react'
+import { connect } from 'react-redux';
 import { css } from 'glamor';
-import React from 'react';
 
-import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
+import * as EditorActions from '../../../data/action/editorActions';
+import { ContentType_Card } from '../../../constants';
 import * as Colors from '../../colors/colors';
 
 const CSS = css({
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0,
-    backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
-    color: Colors.EXPLORER_FOREGROUND_DARK
+    color: Colors.EXPLORER_FOREGROUND_DARK,
+    padding: '4px 24px',
+    fontFamily: '\'Segoe UI\', \'Helvetica Neue\', \'Arial\', \'sans-serif\''
 });
 
-const BOTS_CSS = css({
-    display: 'flex',
-    flexDirection: 'column',
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0,
+class CardExplorerFile extends React.Component {
+    constructor(props, context) {
+        super(props, context);
 
-    '& > li': {
-        padding: '4px 24px',
-        fontFamily: '\'Segoe UI\', \'Helvetica Neue\', \'Arial\', \'sans-serif\''
+        this.handleFileClick = this.handleFileClick.bind(this);
     }
-});
 
-export default props =>
-    <ul className={ CSS }>
-        <li>
-            <ExpandCollapse
-                initialExpanded={ true }
-                title="QnA Models"
-            >
-                <ExpandCollapseContent>
-                    <ul className={ BOTS_CSS }>
-                        <li>FAQ</li>
-                        <li>Small Talk</li>
-                    </ul>
-                </ExpandCollapseContent>
-            </ExpandCollapse>
-        </li>
-    </ul>
+    handleFileClick() {
+        this.props.dispatch(EditorActions.open(ContentType_Card, this.props.cardId));
+    }
+
+    render() {
+        return (<li className={ CSS } onClick={ this.handleFileClick }>{ this.props.fileName }</li>);
+    }
+}
+
+CardExplorerFile.propTypes = {
+    cardId: PropTypes.string.isRequired,
+    fileName: PropTypes.string.isRequired
+};
+
+export default connect((state, { cardId }) => ({
+    fileName: state.card.cards[cardId].title
+}))(CardExplorerFile);

@@ -36,30 +36,19 @@ import React from 'react';
 import { css } from 'glamor';
 
 const CSS = css({
-    " pre": {
-        fontFamily: "Segoe UI",
-        cursor: "pointer",
-
-        ":hover": {
-            backgroundColor: "skyblue"
-        },
-
-        ":first-of-type": {
-            marginTop: "0"
-        }
-    }
 });
 
-export default class CardOutputMessage extends React.Component {
+export default class CardTemplateRow extends React.Component {
     render() {
         return (
-            <div {...CSS}>
-                <pre>{ this.props.message }</pre>
+            <div className={ CSS }>
+                <div><label>{ this.props.entityName }</label></div>
+                <input />
             </div>
         );
     }
 }
 
-CardOutputMessage.propTypes = {
-    message: PropTypes.string
+CardTemplateRow.propTypes = {
+    entityName: PropTypes.string
 };

@@ -36,40 +36,34 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import CardJsonEditor from './cardJsonEditor';
-import CardOutput from './cardOutput';
-import CardPreview from './cardPreview';
-import CardTemplator from './cardTemplator';
+import CardOutput from './cardOutputWindow';
+import CardPreview from './cardPreviewWindow';
+import CardTemplator from './cardTemplatorWindow';
 import Splitter from '../../layout/splitter';
+import * as Colors from '../../colors/colors';
 
 const CSS = css({
-    display: "flex",
-    position: "relative",
-    flexFlow: "row nowrap",
-    height: "100%",
-    width: "100%",
-    backgroundColor: "white",
+    display: 'flex',
+    flexFlow: 'row nowrap',
+    height: '100%',
+    width: '100%',
+    backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
+    boxSizing: 'border-box',
 
-    " *": { boxSizing: "border-box" },
+    '& *': { boxSizing: 'border-box' },
 
-    " .card-right-panel": {
-        display: "flex",
-        flexFlow: "column nowrap",
-        height: "100%",
-        width: "100%",
-        padding: "0 24px"
+    '& .card-right-panel': {
+        display: 'flex',
+        flexFlow: 'column nowrap',
+        height: '100%',
+        width: '100%',
+        padding: '0 24px'
     },
 
-    " .card-horizontal-splitter": {
-        width: "100%",
-        height: "32px",
-        flexShrink: "0",
-        cursor: "ns-resize"
-    },
-
-    " .card-json-editor-container": {
-        height: "100%",
-        width: "100%",
-        padding: "24px"
+    '& .card-json-editor-container': {
+        height: '100%',
+        width: '100%',
+        padding: 24
     }
 });
 
@@ -95,7 +89,7 @@ export default class CardEditor extends React.Component {
 
     render() {
         return(
-            <div {...CSS}>
+            <div className={ CSS }>
                 <Splitter
                     vertical={ false }
                     onSecondaryPaneSizeChange={ this.onChangeVerticalSplit }

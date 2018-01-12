@@ -36,12 +36,23 @@ import { css } from 'glamor';
 import React from 'react';
 
 import ConnectivityBadge from '../widget/connectivityBadge';
+import TreeView, { Branch, Content, FlatNode } from '../widget/treeView';
 
 const CSS = css({});
 
 class TestBedEditor extends React.Component {
     constructor(props, context) {
         super(props, context);
+
+        this.handleTreeNodeSelected = this.handleTreeNodeSelected.bind(this);
+
+        this.state = {
+            selectedTreeNodePath: null
+        };
+    }
+
+    handleTreeNodeSelected(nextSelectedTreeNodePath) {
+        this.setState(() => ({ selectedTreeNodePath: nextSelectedTreeNodePath }));
     }
 
     render() {
@@ -49,6 +60,27 @@ class TestBedEditor extends React.Component {
             <div className={ CSS }>
                 <h1>Testbed</h1>
                 <ConnectivityBadge />
+                <header>
+                    <h2>Tree view</h2>
+                </header>
+                <section>
+                    <TreeView>
+                        <Branch>
+                            <Content>Rendered by &lt;FlatNode&gt;</Content>
+                            {
+                                Object.keys(this.props.assetExplorer.files).map(path =>
+                                    <FlatNode
+                                        key={ path }
+                                        onClick={ this.handleTreeNodeSelected.bind(this, path) }
+                                        path={ path }
+                                    >
+                                        📝 { this.state.selectedTreeNodePath === path ? '✔' : '' } { path.split('/').pop() } <small>({ this.props.assetExplorer.files[path].size } bytes)</small>
+                                    </FlatNode>
+                                )
+                            }
+                        </Branch>
+                    </TreeView>
+                </section>
                 <header>
                     <h2>Raw store</h2>
                 </header>
@@ -59,6 +91,5 @@ class TestBedEditor extends React.Component {
         );
     }
 }
-
 
 export default connect(state => state)(TestBedEditor)
