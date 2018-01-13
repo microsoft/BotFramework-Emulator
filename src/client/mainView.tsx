@@ -302,8 +302,8 @@ export class MainView extends React.Component<{}, {}> {
 
     render() {
         const settings = getSettings();
-        const minVertSplit = 200;
-        const minHorizSplit = 70;
+        const minVertSplit = 0;
+        const minHorizSplit = 42;
         const vertSplit = Number(settings.layout.vertSplit) > minVertSplit ? Number(settings.layout.vertSplit) : minVertSplit;
         const horizSplit = Number(settings.layout.horizSplit) > minHorizSplit ? Number(settings.layout.horizSplit) : minHorizSplit;
         return (
