@@ -44,6 +44,13 @@ import { WindowManager } from './windowManager';
 import * as commandLine from './commandLine'
 import * as electronLocalShortcut from 'electron-localshortcut';
 
+// Ensure further options aren't passed to Chromium
+Electron.app.setAsDefaultProtocolClient('botemulator', process.execPath, [
+    '--protocol-launcher',
+    '--'
+]);
+
+// Uncaught exception handler
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
     console.error(error);
     log.error('[err-server]', error.message.toString(), JSON.stringify(error.stack));
