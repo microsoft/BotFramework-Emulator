@@ -1,7 +1,7 @@
 {
   "name": "botframework-emulator",
   "version": "3.5.35",
-  "description": "Emulator for the Microsoft Bot Framework. Allows developers to test and debug their bots on localhost.",
+  "description": "Emulator for the Microsoft Bot Framework. Allows developers to test and debug bots on localhost.",
   "main": "./app/server/main.js",
   "scripts": {
     "build": "gulp build",
@@ -99,9 +99,12 @@
   },
   "build": {
     "appId": "com.electron.botframework-emulator",
-    "copyright": "Copyright © 2017 Microsoft",
+    "copyright": "Copyright © 2016-2018 Microsoft",
     "mac": {
       "category": "public.app-category.developer-tools"
+    },
+    "linux": {
+      "category": "Development"
     },
     "publish": {
       "provider": "github",
