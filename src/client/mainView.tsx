@@ -34,7 +34,7 @@
 import * as React from 'react';
 import * as Splitter from 'react-split-pane';
 import * as BotChat from 'botframework-webchat';
-import { getSettings, Settings, addSettingsListener, selectedActivity$ } from './settings';
+import { getSettings, Settings, addSettingsListener, selectedActivity$, layoutDefault } from './settings';
 import { LayoutActions, InspectorActions } from './reducers';
 import { Settings as ServerSettings } from '../types/serverSettingsTypes';
 import { AddressBar } from './addressBar/addressBar';
@@ -302,10 +302,25 @@ export class MainView extends React.Component<{}, {}> {
 
     render() {
         const settings = getSettings();
+
         const minVertSplit = 0;
         const minHorizSplit = 42;
-        const vertSplit = Number(settings.layout.vertSplit) > minVertSplit ? Number(settings.layout.vertSplit) : minVertSplit;
-        const horizSplit = Number(settings.layout.horizSplit) > minHorizSplit ? Number(settings.layout.horizSplit) : minHorizSplit;
+
+        let vertSplit;
+        if (typeof settings.layout.vertSplit === "number")
+            vertSplit = settings.layout.vertSplit;
+        else
+            vertSplit = Number(settings.layout.vertSplit) || layoutDefault.vertSplit;
+
+        let horizSplit;
+        if (typeof settings.layout.horizSplit === "number")
+            horizSplit = settings.layout.horizSplit;
+        else
+            horizSplit = Number(settings.layout.horizSplit) || layoutDefault.horizSplit;
+
+        vertSplit = vertSplit > minVertSplit ? vertSplit : minVertSplit;
+        horizSplit = horizSplit > minHorizSplit ? horizSplit : minHorizSplit;
+
         return (
             <div className='mainview'>
                 <div className='botchat-container'>
