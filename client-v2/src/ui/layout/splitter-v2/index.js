@@ -141,7 +141,8 @@ export default class SplitterV2 extends React.Component {
     // flex property on each of the panes will expand to fill out the container evenly.
     // As a result, each pane starts off with an incorrect size kept in the state,
     // even though it looks correct in the browser. So this initial size must be
-    // recalculated once to ensure that future resizing doesn't cause any strange splitter shuffling.
+    // recalculated once to ensure that what is seen on screen is correctly reflected
+    // in the state so that future resizing doesn't cause any strange splitter shuffling.
     recalculateInitialPaneSizes() {
         const newPaneSizes = this.panes.map(pane =>
             this.props.orientation === 'horizontal' ? pane['ref'].getBoundingClientRect().height : pane['ref'].getBoundingClientRect().width
