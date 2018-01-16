@@ -7,12 +7,15 @@ import SplitterV2Pane from './pane';
 
 const CSS = css({
     height: "100%",
-    width: "100%"
+    width: "100%",
+    display: 'flex',
+    flexFlow: 'column nowrap'
 });
 
 const DEFAULT_PANE_SIZE = 200;
 const MIN_PRIMARY_SIZE = 0;
 const MIN_SECONDARY_SIZE = 0;
+const SPLITTER_SIZE = 10;
 
 export default class SplitterV2 extends React.Component {
     constructor(props, context) {
@@ -35,9 +38,8 @@ export default class SplitterV2 extends React.Component {
         this.paneNum = 0;
 
         this.state = {
+            recalculatedInitialPaneSizes: false,
             resizing: false,
-            primarySize: 500,
-            secondarySize: 500,
             paneSizes: []
         };
     }
@@ -51,7 +53,7 @@ export default class SplitterV2 extends React.Component {
         this.SPLITTER_CSS = this.props.orientation === 'horizontal' ?
 
             css({
-                height: '10px',
+                height: SPLITTER_SIZE,
                 width: '100%',
                 backgroundColor: 'black',
                 cursor: 'ns-resize'
@@ -59,17 +61,33 @@ export default class SplitterV2 extends React.Component {
         :
             css({
                 height: '100%',
-                width: '10px',
+                width: SPLITTER_SIZE,
                 backgroundColor: 'black',
                 cursor: 'ew-resize'
             });
 
-        /*const currentPaneSizes = this.state.paneSizes;
-        const defaultPaneSize = (100/this.props.children.length) + '%';
-        for (let i = 0; i < this.props.children.length; i++) {
+        const flexDir = this.props.orientation === 'horizontal' ? 'column' : 'row';
+        this.CONTAINER_CSS = css({
+            height: "100%",
+            width: "100%",
+            display: 'flex',
+            flexFlow: `${flexDir} nowrap`
+        });
+    }
+
+    componentDidMount() {
+        // calculate initial pane layout
+        const currentPaneSizes = this.state.paneSizes;
+        const containerDimensions = this.containerRef.getBoundingClientRect();
+        const containerSize = this.props.orientation === 'horizontal' ? containerDimensions.height : containerDimensions.width;
+
+        const numberOfPanes = this.props.children.length;
+        const numberOfSplitters = numberOfPanes - 1;
+        const defaultPaneSize = (containerSize - (numberOfSplitters * SPLITTER_SIZE)) / (numberOfPanes);
+        for (let i = 0; i < numberOfPanes; i++) {
             currentPaneSizes[i] = defaultPaneSize;
         }
-        this.setState(({ paneSizes: currentPaneSizes }));*/
+        this.setState(({ paneSizes: currentPaneSizes }));
     }
 
     componentWillUnmount() {
@@ -98,6 +116,11 @@ export default class SplitterV2 extends React.Component {
     }
 
     onGrabSplitter(e, splitterIndex) {
+        // need to update the state with the actual sizes of the
+        // panes after filling the parent with flexbox (one-time only)
+        if (!this.state.recalculatedInitialPaneSizes) {
+            this.recalculateInitialPaneSizes()
+        }
         clearSelection();
         // cache splitter dimensions
         this.splitters[splitterIndex]['dimensions'] = this.splitters[splitterIndex]['ref'].getBoundingClientRect();
@@ -110,6 +133,20 @@ export default class SplitterV2 extends React.Component {
             this.calculatePaneSizes(this.activeSplitter, e);
             clearSelection();
         }
+    }
+
+    // When the component is rendered (in componentDidMount()), the root div
+    // doesn't know the rendered size of the parent element yet, so it only
+    // expands to fit the content contained in the split panes. However, the
+    // flex property on each of the panes will expand to fill out the container evenly.
+    // As a result, each pane starts off with an incorrect size kept in the state,
+    // even though it looks correct in the browser. So this initial size must be
+    // recalculated once to ensure that future resizing doesn't cause any strange splitter shuffling.
+    recalculateInitialPaneSizes() {
+        const newPaneSizes = this.panes.map(pane =>
+            this.props.orientation === 'horizontal' ? pane['ref'].getBoundingClientRect().height : pane['ref'].getBoundingClientRect().width
+        );
+        this.setState(({ paneSizes: newPaneSizes, recalculatedInitialPaneSizes: true }));
     }
 
     calculatePaneSizes(splitterIndex, e) {
@@ -133,7 +170,7 @@ export default class SplitterV2 extends React.Component {
             :
                 pane1Dimensions.width + pane2Dimensions.width + splitterDimensions.width;
 
-        // bound the bottom / right of the primary pane to the bottom / right of the container
+        // bound the bottom (horizontal) or right (vertical) of the primary pane to the bottom or right of the container
         const splitterSize = this.props.orientation === 'horizontal' ? splitterDimensions.height : splitterDimensions.width;
         if ((primarySize + splitterSize) > containerSize) {
             primarySize = containerSize - splitterSize;
@@ -149,7 +186,6 @@ export default class SplitterV2 extends React.Component {
         let currentPaneSizes = this.state.paneSizes;
         currentPaneSizes[pane1Index] = primarySize;
         currentPaneSizes[pane2Index] = secondarySize;
-        console.log('new pane sizes: ', currentPaneSizes)
         this.setState(({ paneSizes: currentPaneSizes }));
     }
 
@@ -170,10 +206,10 @@ export default class SplitterV2 extends React.Component {
             const splitIndex = this.splitNum;
 
             // add a pane
-            if (!this.panes[splitIndex]) {
-                this.panes[splitIndex] = {};
+            if (!this.panes[paneIndex]) {
+                this.panes[paneIndex] = {};
             }
-            this.panes[splitIndex]['size'] = this.panes[splitIndex]['size'] || DEFAULT_PANE_SIZE //100/this.props.children.length //DEFAULT_PANE_SIZE;
+            this.panes[paneIndex]['size'] = this.state.paneSizes[paneIndex] || DEFAULT_PANE_SIZE;
             const pane = <SplitterV2Pane key={ `pane${paneIndex}` } orientation={ this.props.orientation } size={ this.state.paneSizes[paneIndex] } ref={ x => this.savePaneRef(x, paneIndex) }>{ child }</SplitterV2Pane>;
             splitChildren.push(pane);
 
@@ -196,7 +232,7 @@ export default class SplitterV2 extends React.Component {
         });
 
         return (
-            <div className={ CSS + ' split-container' }>
+            <div ref={ this.saveContainerRef } className={ this.CONTAINER_CSS + ' split-container' }>
                 { splitChildren }
             </div>
         );

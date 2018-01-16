@@ -70,6 +70,7 @@ const TEST_CSS = css({
     width: "100%",
     padding: "32px",
     boxSizing: 'border-box',
+    overflow: 'auto',
 
     " > input": {
         width: "100%",
@@ -133,7 +134,7 @@ export default class Main extends React.Component {
 
         return (
             <div className={ CSS1 }>
-                <Splitter2 orientation={ 'horizontal' }>
+                <Splitter2 orientation={ 'vertical' }>
                     <div style={{backgroundColor: 'skyblue', height: '100%', width: '100%'}}>Div1
                         {this.renderTestComponent()}
                     </div>
