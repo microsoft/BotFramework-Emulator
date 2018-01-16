@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 
 import SplitterV2Pane from './pane';
+import * as Colors from '../../colors/colors';
 
 const CSS = css({
     height: "100%",
@@ -15,7 +16,7 @@ const CSS = css({
 const DEFAULT_PANE_SIZE = 200;
 const MIN_PRIMARY_SIZE = 0;
 const MIN_SECONDARY_SIZE = 0;
-const SPLITTER_SIZE = 10;
+const SPLITTER_SIZE = 4;
 
 export default class SplitterV2 extends React.Component {
     constructor(props, context) {
@@ -30,9 +31,11 @@ export default class SplitterV2 extends React.Component {
         this.onMouseUp = this.onMouseUp.bind(this);
 
         this.activeSplitter = null;
+
         // [ { pane1Index: num, pane2Index: num, ref: splitterRef } ]
         this.splitters = [];
         this.splitNum = 0;
+
         // [ { size: num, ref: paneRef } ]
         this.panes = [];
         this.paneNum = 0;
@@ -55,14 +58,14 @@ export default class SplitterV2 extends React.Component {
             css({
                 height: SPLITTER_SIZE,
                 width: '100%',
-                backgroundColor: 'black',
+                backgroundColor: Colors.BLACK_1,
                 cursor: 'ns-resize'
             })
         :
             css({
                 height: '100%',
                 width: SPLITTER_SIZE,
-                backgroundColor: 'black',
+                backgroundColor: Colors.BLACK_1,
                 cursor: 'ew-resize'
             });
 
@@ -244,7 +247,8 @@ SplitterV2.propTypes = {
     orientation: PropTypes.oneOf([
         'horizontal',
         'vertical'
-    ]).isRequired
+    ]).isRequired,
+    minSizes: PropTypes.array
 }
 
 /** Used to clear any text selected as a side effect of holding down the mouse and dragging */
