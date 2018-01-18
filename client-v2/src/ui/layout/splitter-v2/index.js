@@ -32,11 +32,11 @@ export default class SplitterV2 extends React.Component {
 
         this.activeSplitter = null;
 
-        // [ { pane1Index: num, pane2Index: num, ref: splitterRef } ]
+        // [{ pane1Index: num, pane2Index: num, ref: splitterRef }]
         this.splitters = [];
         this.splitNum = 0;
 
-        // [ { size: num, ref: paneRef } ]
+        // [{ size: num, ref: paneRef }]
         this.panes = [];
         this.paneNum = 0;
 
@@ -48,16 +48,14 @@ export default class SplitterV2 extends React.Component {
 
     componentWillMount() {
         // set up event listeners
-        window.addEventListener('resize', console.log('resized window'));
         document.addEventListener('mousemove', this.onMouseMove);
         document.addEventListener('mouseup', this.onMouseUp);
 
         this.SPLITTER_CSS = this.props.orientation === 'horizontal' ?
-
             css({
                 height: SPLITTER_SIZE,
                 width: '100%',
-                backgroundColor: Colors.BLACK_1,
+                backgroundColor: Colors.GRAY_1,
                 cursor: 'ns-resize',
                 flexShrink: 0
             })
@@ -65,18 +63,19 @@ export default class SplitterV2 extends React.Component {
             css({
                 height: '100%',
                 width: SPLITTER_SIZE,
-                backgroundColor: Colors.BLACK_1,
+                backgroundColor: Colors.GRAY_1,
                 cursor: 'ew-resize',
                 flexShrink: 0
             });
 
-        const flexDir = this.props.orientation === 'horizontal' ? 'column' : 'row';
         this.CONTAINER_CSS = css({
             height: "100%",
             width: "100%",
             position: 'relative'
         });
 
+        // float a canvas within the splitter container to deal with overflow issues
+        const flexDir = this.props.orientation === 'horizontal' ? 'column' : 'row';
         this.FLOATING_CANVAS_CSS = css({
             position: 'absolute',
             top: 0,
@@ -96,16 +95,25 @@ export default class SplitterV2 extends React.Component {
 
         const numberOfPanes = this.props.children.length;
         const numberOfSplitters = numberOfPanes - 1;
-        const defaultPaneSize = (containerSize - (numberOfSplitters * SPLITTER_SIZE)) / (numberOfPanes);
+
+        // if a specific pane is meant to have an initial size, calculate the default pane size based on the remaining space
+        const defaultPaneSize =  (this.props.initialSize && (this.props.initialSizeIndex || this.props.initialSizeIndex === 0)) ?
+                (containerSize - this.props.initialSize - (numberOfSplitters * SPLITTER_SIZE)) / (numberOfPanes - 1)
+            :
+                (containerSize - (numberOfSplitters * SPLITTER_SIZE)) / (numberOfPanes);
+
         for (let i = 0; i < numberOfPanes; i++) {
-            currentPaneSizes[i] = (defaultPaneSize / containerSize * 100) + '%';
+            if (i === this.props.initialSizeIndex) {
+                currentPaneSizes[i] = (this.props.initialSize / containerSize * 100) + '%'
+            } else {
+                currentPaneSizes[i] = (defaultPaneSize / containerSize * 100) + '%';
+            }
         }
         this.setState(({ paneSizes: currentPaneSizes }));
     }
 
     componentWillUnmount() {
         // remove event listeners
-        window.removeEventListener('resize', () => null);
         document.removeEventListener('mousemove', this.onMouseMove);
         document.removeEventListener('mouseup', this.onMouseUp);
     }
@@ -248,8 +256,8 @@ SplitterV2.propTypes = {
         'horizontal',
         'vertical'
     ]).isRequired,
-    minSizes: PropTypes.array,
-    initialSizes: PropTypes.array,
+    initialSize: PropTypes.number,
+    initialSizeIndex: PropTypes.number,
     onSizeChange: PropTypes.func
 }
 

@@ -6,3 +6,4 @@ export const SECTION_HEADER_BACKGROUND_DARK = '#767676';
 export const SECTION_HEADER_FOREGROUND_DARK = '#FFFFFF';
 
 export const BLACK_1 = '#2B2B2B';
+export const GRAY_1 = '#CCCCCC';

@@ -124,95 +124,14 @@ export default class Main extends React.Component {
     }
 
     render() {
-        let old = (<div className={ CSS }>
+        return (<div className={ CSS }>
             <NavBar />
             <div { ...SECOND_CSS }>
-                <Splitter primaryIndex={ 1 } secondaryInitialSize={ 300 }>
-                    <ExplorerBar />
-                    <MDI />
-                </Splitter>
-            </div>
-        </div>);
-
-        old = (<div className={ CSS }>
-            <NavBar />
-            <div { ...SECOND_CSS }>
-                <Splitter2 orientation={ 'vertical' }>
+                <Splitter2 orientation={ 'vertical' } initialSizeIndex={ 0 } initialSize={ 200 }>
                     <ExplorerBar />
                     <MDI />
                 </Splitter2>
             </div>
         </div>);
-
-        const test1 = (<div className={ CSS1 }>
-                <Splitter2 orientation={ 'vertical' } primaryIndex={ 0 } primarySize={ 200 }>
-                    <div style={{backgroundColor: 'skyblue', height: '100%', width: '100%'}}>Div1
-                        {this.renderTestComponent()}
-                    </div>
-                    <div style={{backgroundColor: 'coral', height: '100%', width: '100%'}}>Div2
-
-                    </div>
-                    <div style={{backgroundColor: 'floralwhite', height: '100%', width: '100%'}}>Div3
-
-                    </div>
-                    <div style={{backgroundColor: 'darkgreen', height: '100%', width: '100%'}}>Div3
-
-                    </div>
-                </Splitter2>
-            </div>);
-
-        const test2 = (<div className={ CSS1 }>
-            <Splitter2 orientation={ 'horizontal' } primaryIndex={ 0 } primarySize={ 200 }>
-                <div style={{backgroundColor: 'skyblue', height: '100%', width: '100%'}}>Div1
-                    {this.renderTestComponent()}
-                </div>
-                <div style={{backgroundColor: 'coral', height: '100%', width: '100%'}}>Div2
-
-                </div>
-                <div style={{backgroundColor: 'floralwhite', height: '100%', width: '100%'}}>Div3
-
-                </div>
-                <div style={{backgroundColor: 'darkgreen', height: '100%', width: '100%'}}>Div3
-
-                </div>
-            </Splitter2>
-        </div>);
-
-        const test3 = (<div className={ CSS1 }>
-            <Splitter2 orientation={ 'vertical' } primaryIndex={ 0 } primarySize={ 200 }>
-                <div style={{backgroundColor: 'skyblue', height: '100%', width: '100%', padding: '32px', boxSizing: 'border-box'}}>
-                    {this.renderTestComponent()}
-                </div>
-                <div style={{backgroundColor: 'coral', height: '100%', width: '100%', padding: '32px', boxSizing: 'border-box'}}>
-                    <Splitter2 orientation={ 'horizontal' } primaryIndex={ 0 } primarySize={ 200 }>
-                        {this.renderTestComponent()}
-                        {this.renderTestComponent()}
-                        {this.renderTestComponent()}
-                    </Splitter2>
-                </div>
-            </Splitter2>
-        </div>);
-
-        const test4 = (<div className={ CSS1 }>
-            <Splitter2 orientation={ 'vertical' } primaryIndex={ 0 } primarySize={ 200 }>
-                <div style={{backgroundColor: 'skyblue', height: '100%', width: '100%', padding: '32px', boxSizing: 'border-box'}}>
-                    {this.renderTestComponent()}
-                </div>
-                <div style={{backgroundColor: 'coral', height: '100%', width: '100%', padding: '32px', boxSizing: 'border-box'}}>
-                    <Splitter2 orientation={ 'vertical' } primaryIndex={ 0 } primarySize={ 200 }>
-                        <div style={{backgroundColor: 'darkgreen', height: '100%', width: '100%', padding: '32px', boxSizing: 'border-box'}}>
-                            {this.renderTestComponent()}
-                        </div>
-                        <Splitter2 orientation={ 'horizontal' } primaryIndex={ 0 } primarySize={ 200 }>
-                            {this.renderTestComponent()}
-                            {this.renderTestComponent()}
-                            {this.renderTestComponent()}
-                        </Splitter2>
-                    </Splitter2>
-                </div>
-            </Splitter2>
-        </div>);
-
-        return test4;
     }
 }
