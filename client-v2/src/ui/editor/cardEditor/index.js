@@ -80,7 +80,7 @@ export default class CardEditor extends React.Component {
     }
 
     // called when the vertical splitter is moved
-    onChangeVerticalSplit(newSecondaryPaneSize) {
+    onChangeVerticalSplit(newPaneSizes) {
         const containerWidth = this.editorContainer.getBoundingClientRect().width;
         this.setState(() => ({ containerWidth: containerWidth }));
     }
@@ -90,25 +90,6 @@ export default class CardEditor extends React.Component {
     }
 
     render() {
-        /*return(
-            <div className={ CSS }>
-                <Splitter
-                    vertical={ false }
-                    onSecondaryPaneSizeChange={ this.onChangeVerticalSplit }
-                >
-                    <div className="card-json-editor-container" ref={ this.saveJsonEditorContainer }>
-                        <CardJsonEditor cardId={ this.props.cardId } editorWidth={ this.state.containerWidth } />
-                    </div>
-
-                    <div className="card-right-panel">
-                        <CardPreview cardId={ this.props.cardId } />
-                        <CardTemplator cardId={ this.props.cardId } />
-                        <CardOutput cardId={ this.props.cardId } />
-                    </div>
-                </Splitter>
-            </div>
-        );*/
-
         return(
             <div className={ CSS }>
                 <SplitterV2 orientation={ 'vertical' } onSizeChange={ this.onChangeVerticalSplit }>
@@ -117,9 +98,11 @@ export default class CardEditor extends React.Component {
                     </div>
 
                     <div className="card-right-panel">
-                        <CardPreview cardId={ this.props.cardId } />
-                        <CardTemplator cardId={ this.props.cardId } />
-                        <CardOutput cardId={ this.props.cardId } />
+                        <SplitterV2 orientation={ 'horizontal' }>
+                            <CardPreview cardId={ this.props.cardId } />
+                            <CardTemplator cardId={ this.props.cardId } />
+                            <CardOutput cardId={ this.props.cardId } />
+                        </SplitterV2>
                     </div>
                 </SplitterV2>
             </div>

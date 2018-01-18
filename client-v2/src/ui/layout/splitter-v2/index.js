@@ -41,7 +41,6 @@ export default class SplitterV2 extends React.Component {
         this.paneNum = 0;
 
         this.state = {
-            recalculatedInitialPaneSizes: false,
             resizing: false,
             paneSizes: []
         };
@@ -75,8 +74,17 @@ export default class SplitterV2 extends React.Component {
         this.CONTAINER_CSS = css({
             height: "100%",
             width: "100%",
+            position: 'relative'
+        });
+
+        this.FLOATING_CANVAS_CSS = css({
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            right: 0,
+            left: 0,
             display: 'flex',
-            flexFlow: `${flexDir} nowrap`
+            flexFlow: `${flexDir} nowrap`,
         });
     }
 
@@ -97,9 +105,9 @@ export default class SplitterV2 extends React.Component {
 
     componentWillUnmount() {
         // remove event listeners
-        window.removeEventListener('resize');
-        document.removeEventListener('mousemove');
-        document.removeEventListener('mouseup');
+        window.removeEventListener('resize', () => null);
+        document.removeEventListener('mousemove', this.onMouseMove);
+        document.removeEventListener('mouseup', this.onMouseUp);
     }
 
     saveContainerRef(element) {
@@ -121,11 +129,6 @@ export default class SplitterV2 extends React.Component {
     }
 
     onGrabSplitter(e, splitterIndex) {
-        // need to update the state with the actual sizes of the
-        // panes after filling the parent with flexbox (one-time only)
-        if (!this.state.recalculatedInitialPaneSizes) {
-            this.recalculateInitialPaneSizes()
-        }
         clearSelection();
         // cache splitter dimensions
         this.splitters[splitterIndex]['dimensions'] = this.splitters[splitterIndex]['ref'].getBoundingClientRect();
@@ -140,21 +143,6 @@ export default class SplitterV2 extends React.Component {
             this.calculatePaneSizes(this.activeSplitter, e);
             clearSelection();
         }
-    }
-
-    // When the component is rendered (in componentDidMount()), the root div
-    // doesn't know the rendered size of the parent element yet, so it only
-    // expands to fit the content contained in the split panes. However, the
-    // flex property on each of the panes will expand to fill out the container evenly.
-    // As a result, each pane starts off with an incorrect size kept in the state,
-    // even though it looks correct in the browser. So this initial size must be
-    // recalculated once to ensure that what is seen on screen is correctly reflected
-    // in the state so that future resizing doesn't cause any strange splitter shuffling.
-    recalculateInitialPaneSizes() {
-        const newPaneSizes = this.panes.map(pane =>
-            this.props.orientation === 'horizontal' ? pane['ref'].getBoundingClientRect().height : pane['ref'].getBoundingClientRect().width
-        );
-        this.setState(({ paneSizes: newPaneSizes, recalculatedInitialPaneSizes: true }));
     }
 
     calculatePaneSizes(splitterIndex, e) {
@@ -211,8 +199,8 @@ export default class SplitterV2 extends React.Component {
         this.paneNum = this.splitNum = 0;
 
         this.props.children.forEach((child, index) => {
-            // take a 'snapshot' of the current indices
-            // or else they will all use the same value once they are rendered
+            // take a 'snapshot' of the current indices or else
+            // the elements will all use the same value once they are rendered
             const paneIndex = this.paneNum;
             const splitIndex = this.splitNum;
 
@@ -221,7 +209,8 @@ export default class SplitterV2 extends React.Component {
                 this.panes[paneIndex] = {};
             }
             this.panes[paneIndex]['size'] = this.state.paneSizes[paneIndex] || DEFAULT_PANE_SIZE;
-            const pane = <SplitterV2Pane key={ `pane${paneIndex}` } orientation={ this.props.orientation } size={ this.state.paneSizes[paneIndex] } ref={ x => this.savePaneRef(x, paneIndex) }>{ child }</SplitterV2Pane>;
+            const pane = <SplitterV2Pane key={ `pane${paneIndex}` } orientation={ this.props.orientation }
+                            size={ this.state.paneSizes[paneIndex] } ref={ x => this.savePaneRef(x, paneIndex) }>{ child }</SplitterV2Pane>;
             splitChildren.push(pane);
 
             // add a splitter if there is another child after this one
@@ -234,7 +223,9 @@ export default class SplitterV2 extends React.Component {
                 this.splitters[splitIndex]["pane2Index"] = splitIndex + 1;
 
                 // add a splitter
-                const splitter = <div className={ this.SPLITTER_CSS } key={ `splitter${splitIndex}` } ref={ x => this.saveSplitterRef(x, splitIndex) } orientation={ this.props.orientation } onMouseDown={ (e) => this.onGrabSplitter(e, splitIndex) } />;
+                const splitter = <div className={ this.SPLITTER_CSS } key={ `splitter${splitIndex}` }
+                                    ref={ x => this.saveSplitterRef(x, splitIndex) } orientation={ this.props.orientation }
+                                    onMouseDown={ (e) => this.onGrabSplitter(e, splitIndex) } />;
                 splitChildren.push(splitter);
                 this.splitNum++;
             }
@@ -244,7 +235,9 @@ export default class SplitterV2 extends React.Component {
 
         return (
             <div ref={ this.saveContainerRef } className={ this.CONTAINER_CSS + ' split-container' }>
-                { splitChildren }
+                <div className={ this.FLOATING_CANVAS_CSS }>
+                    { splitChildren }
+                </div>
             </div>
         );
     }
@@ -256,6 +249,7 @@ SplitterV2.propTypes = {
         'vertical'
     ]).isRequired,
     minSizes: PropTypes.array,
+    initialSizes: PropTypes.array,
     onSizeChange: PropTypes.func
 }
 

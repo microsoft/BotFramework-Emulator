@@ -14,8 +14,18 @@ export default class SplitterV2Pane extends React.Component {
         style.flexBasis = this.props.size;
         style.boxSizing = 'border-box';
 
+        if (this.props.orientation === 'horizontal') {
+            style.maxWidth = '100%';
+            style.left = 0;
+            style.right = 0;
+        } else {
+            style.maxHeight = '100%';
+            style.top = 0;
+            style.bottom = 0;
+        }
+
         return (
-            <div style={ style } >
+            <div className={ 'splitter-pane' } style={ style } >
                 { this.props.children }
             </div>
         );
@@ -27,5 +37,5 @@ SplitterV2Pane.propTypes = {
         'horizontal',
         'vertical'
     ]).isRequired,
-    size: PropTypes.number
+    size: PropTypes.string
 }

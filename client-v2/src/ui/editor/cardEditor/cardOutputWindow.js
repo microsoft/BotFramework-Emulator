@@ -43,7 +43,7 @@ import * as Colors from '../../colors/colors';
 const CSS = css({
     width: '100%',
     height: '100%',
-    margin: '12px 0 24px 0',
+    padding: '12px 0 24px 0',
     fontFamily: '\'Segoe UI\', \'Helvetica Neue\', \'Arial\', \'sans-serif\'',
     overflow: 'hidden',
 
