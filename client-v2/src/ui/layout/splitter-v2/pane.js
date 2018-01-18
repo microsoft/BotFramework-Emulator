@@ -9,17 +9,10 @@ export default class SplitterV2Pane extends React.Component {
 
     render() {
         let style = { overflow: 'hidden' };
-        /*if (this.props.orientation === 'horizontal') {
-            style.height = this.props.size + 'px'//(this.props.size.toString().includes('%') ? '' : 'px')
-        } else {
-            style.width = this.props.size + 'px';
-        }*/
-        //style.flex = 'auto';
         style.flexShrink = 0;
         style.flexGrow = 1;
-        style.flexBasis = this.props.size + 'px';
+        style.flexBasis = this.props.size;
         style.boxSizing = 'border-box';
-        //style.position = 'relative';
 
         return (
             <div style={ style } >

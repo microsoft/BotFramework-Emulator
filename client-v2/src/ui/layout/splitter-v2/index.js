@@ -90,7 +90,7 @@ export default class SplitterV2 extends React.Component {
         const numberOfSplitters = numberOfPanes - 1;
         const defaultPaneSize = (containerSize - (numberOfSplitters * SPLITTER_SIZE)) / (numberOfPanes);
         for (let i = 0; i < numberOfPanes; i++) {
-            currentPaneSizes[i] = defaultPaneSize;
+            currentPaneSizes[i] = (defaultPaneSize / containerSize * 100) + '%';
         }
         this.setState(({ paneSizes: currentPaneSizes }));
     }
@@ -130,6 +130,8 @@ export default class SplitterV2 extends React.Component {
         // cache splitter dimensions
         this.splitters[splitterIndex]['dimensions'] = this.splitters[splitterIndex]['ref'].getBoundingClientRect();
         this.activeSplitter = splitterIndex;
+        // cache container size
+        this.containerSize = this.props.orientation === 'horizontal' ? this.containerRef.getBoundingClientRect().height : this.containerRef.getBoundingClientRect().width;
         this.setState(({ resizing: true }));
     }
 
@@ -190,8 +192,8 @@ export default class SplitterV2 extends React.Component {
                 this.panes[pane2Index]['size'] = Math.max((containerSize - primarySize - splitterDimensions.width), MIN_SECONDARY_SIZE);
 
         let currentPaneSizes = this.state.paneSizes;
-        currentPaneSizes[pane1Index] = primarySize;
-        currentPaneSizes[pane2Index] = secondarySize;
+        currentPaneSizes[pane1Index] = (primarySize / this.containerSize * 100) + '%';
+        currentPaneSizes[pane2Index] = (secondarySize / this.containerSize * 100) + '%';
         if (this.props.onSizeChange) {
             this.props.onSizeChange(currentPaneSizes);
         }
