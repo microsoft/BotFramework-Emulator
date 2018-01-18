@@ -59,14 +59,16 @@ export default class SplitterV2 extends React.Component {
                 height: SPLITTER_SIZE,
                 width: '100%',
                 backgroundColor: Colors.BLACK_1,
-                cursor: 'ns-resize'
+                cursor: 'ns-resize',
+                flexShrink: 0
             })
         :
             css({
                 height: '100%',
                 width: SPLITTER_SIZE,
                 backgroundColor: Colors.BLACK_1,
-                cursor: 'ew-resize'
+                cursor: 'ew-resize',
+                flexShrink: 0
             });
 
         const flexDir = this.props.orientation === 'horizontal' ? 'column' : 'row';
@@ -190,6 +192,9 @@ export default class SplitterV2 extends React.Component {
         let currentPaneSizes = this.state.paneSizes;
         currentPaneSizes[pane1Index] = primarySize;
         currentPaneSizes[pane2Index] = secondarySize;
+        if (this.props.onSizeChange) {
+            this.props.onSizeChange(currentPaneSizes);
+        }
         this.setState(({ paneSizes: currentPaneSizes }));
     }
 
@@ -248,7 +253,8 @@ SplitterV2.propTypes = {
         'horizontal',
         'vertical'
     ]).isRequired,
-    minSizes: PropTypes.array
+    minSizes: PropTypes.array,
+    onSizeChange: PropTypes.func
 }
 
 /** Used to clear any text selected as a side effect of holding down the mouse and dragging */

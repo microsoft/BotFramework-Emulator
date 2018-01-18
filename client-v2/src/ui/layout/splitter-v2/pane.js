@@ -14,10 +14,12 @@ export default class SplitterV2Pane extends React.Component {
         } else {
             style.width = this.props.size + 'px';
         }*/
-        style.flex = 'auto';
+        //style.flex = 'auto';
+        style.flexShrink = 0;
+        style.flexGrow = 1;
         style.flexBasis = this.props.size + 'px';
         style.boxSizing = 'border-box';
-        style.position = 'relative';
+        //style.position = 'relative';
 
         return (
             <div style={ style } >

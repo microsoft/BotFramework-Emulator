@@ -41,6 +41,7 @@ import CardPreview from './cardPreviewWindow';
 import CardTemplator from './cardTemplatorWindow';
 import Splitter from '../../layout/splitter';
 import * as Colors from '../../colors/colors';
+import SplitterV2 from '../../layout/splitter-v2';
 
 const CSS = css({
     display: 'flex',
@@ -57,7 +58,8 @@ const CSS = css({
         flexFlow: 'column nowrap',
         height: '100%',
         width: '100%',
-        padding: '0 24px'
+        padding: '0 24px',
+        flexShrink: 0
     },
 
     '& .card-json-editor-container': {
@@ -88,7 +90,7 @@ export default class CardEditor extends React.Component {
     }
 
     render() {
-        return(
+        /*return(
             <div className={ CSS }>
                 <Splitter
                     vertical={ false }
@@ -104,6 +106,22 @@ export default class CardEditor extends React.Component {
                         <CardOutput cardId={ this.props.cardId } />
                     </div>
                 </Splitter>
+            </div>
+        );*/
+
+        return(
+            <div className={ CSS }>
+                <SplitterV2 orientation={ 'vertical' } onSizeChange={ this.onChangeVerticalSplit }>
+                    <div className="card-json-editor-container" ref={ this.saveJsonEditorContainer }>
+                        <CardJsonEditor cardId={ this.props.cardId } editorWidth={ this.state.containerWidth } />
+                    </div>
+
+                    <div className="card-right-panel">
+                        <CardPreview cardId={ this.props.cardId } />
+                        <CardTemplator cardId={ this.props.cardId } />
+                        <CardOutput cardId={ this.props.cardId } />
+                    </div>
+                </SplitterV2>
             </div>
         );
     }
