@@ -39,7 +39,7 @@ import CardJsonEditor from './cardJsonEditor';
 import CardOutput from './cardOutputWindow';
 import CardPreview from './cardPreviewWindow';
 import CardTemplator from './cardTemplatorWindow';
-import Splitter from '../../layout/splitter';
+import Splitter from '../../layout/splitter-v2';
 import * as Colors from '../../colors/colors';
 
 const CSS = css({
@@ -57,7 +57,7 @@ const CSS = css({
         flexFlow: 'column nowrap',
         height: '100%',
         width: '100%',
-        padding: '0 24px'
+        padding: 24
     },
 
     '& .card-json-editor-container': {
@@ -78,7 +78,7 @@ export default class CardEditor extends React.Component {
     }
 
     // called when the vertical splitter is moved
-    onChangeVerticalSplit(newSecondaryPaneSize) {
+    onChangeVerticalSplit(newPaneSizes) {
         const containerWidth = this.editorContainer.getBoundingClientRect().width;
         this.setState(() => ({ containerWidth: containerWidth }));
     }
@@ -90,18 +90,17 @@ export default class CardEditor extends React.Component {
     render() {
         return(
             <div className={ CSS }>
-                <Splitter
-                    vertical={ false }
-                    onSecondaryPaneSizeChange={ this.onChangeVerticalSplit }
-                >
+                <Splitter orientation={ 'vertical' } onSizeChange={ this.onChangeVerticalSplit }>
                     <div className="card-json-editor-container" ref={ this.saveJsonEditorContainer }>
                         <CardJsonEditor cardId={ this.props.cardId } editorWidth={ this.state.containerWidth } />
                     </div>
 
                     <div className="card-right-panel">
-                        <CardPreview cardId={ this.props.cardId } />
-                        <CardTemplator cardId={ this.props.cardId } />
-                        <CardOutput cardId={ this.props.cardId } />
+                        <Splitter orientation={ 'horizontal' }>
+                            <CardPreview cardId={ this.props.cardId } />
+                            <CardTemplator cardId={ this.props.cardId } />
+                            <CardOutput cardId={ this.props.cardId } />
+                        </Splitter>
                     </div>
                 </Splitter>
             </div>

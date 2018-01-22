@@ -35,13 +35,15 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { css } from 'glamor';
 
+import * as Colors from '../../colors/colors';
+
 const CSS = css({
     '& pre': {
         fontFamily: '\'Segoe UI\', \'Helvetica Neue\', \'Arial\', \'sans-serif\'',
         cursor: 'pointer',
 
         ':hover': {
-            backgroundColor: 'skyblue'
+            backgroundColor: Colors.GRAY_2
         },
 
         ':first-of-type': {

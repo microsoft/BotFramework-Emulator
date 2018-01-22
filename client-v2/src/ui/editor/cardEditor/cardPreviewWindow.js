@@ -42,7 +42,8 @@ import * as CardActions from '../../../data/action/cardActions';
 import * as Colors from '../../colors/colors';
 
 const CSS = css({
-    margin: '24px 0 12px 0',
+    padding: 0,
+    paddingBottom: 12,
     width: '100%',
     height: '100%',
     overflow: 'hidden',

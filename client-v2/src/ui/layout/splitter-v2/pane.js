@@ -31,31 +31,46 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
-import PropTypes from 'prop-types';
 import React from 'react';
+import PropTypes from 'prop-types';
+import { css } from 'glamor';
 
-import Splitter from '../../layout/splitter-v2';
-import EditorPanel from './editorPanel';
-import PropertiesPanel from './propertiesPanel';
+export default class SplitterV2Pane extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+    }
 
-const CSS = css({
-    flex: 1
-});
-
-export default class ConversationEditor extends React.Component {
     render() {
+        const style = {
+            overflow: 'hidden',
+            flexShrink: 0,
+            flexGrow: 1,
+            flexBasis: this.props.size,
+            boxSizing: 'border-box'
+        };
+
+        if (this.props.orientation === 'horizontal') {
+            style.maxWidth = '100%';
+            style.left = 0;
+            style.right = 0;
+        } else {
+            style.maxHeight = '100%';
+            style.top = 0;
+            style.bottom = 0;
+        }
+
         return (
-            <div className={ CSS }>
-                <Splitter orientation={ 'vertical' } initialSizeIndex={ 0 } initialSize={ 500 }>
-                    <EditorPanel conversationId={ this.props.conversationId } />
-                    <PropertiesPanel conversationId={ this.props.conversationId } />
-                </Splitter>
+            <div className={ 'splitter-pane' } style={ style } >
+                { this.props.children }
             </div>
         );
     }
 }
 
-ConversationEditor.propTypes = {
-    conversationId: PropTypes.string.isRequired
-};
+SplitterV2Pane.propTypes = {
+    orientation: PropTypes.oneOf([
+        'horizontal',
+        'vertical'
+    ]).isRequired,
+    size: PropTypes.string
+}

@@ -31,6 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+export const BLACK_1 = '#2B2B2B';
+export const GRAY_1 = '#CCCCCC';
+export const GRAY_2 = '#767676';
+
 export const PANEL_BACKGROUND_DARK = '#1E1E1E';
 export const PANEL_FOREGROUND_DARK = '#CCCCCC';
 

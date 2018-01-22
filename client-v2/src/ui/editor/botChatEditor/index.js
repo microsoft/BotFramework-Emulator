@@ -38,7 +38,7 @@ import React from 'react';
 import ChatPanel from './chatPanel';
 import DetailPanel from './detailPanel';
 import LogPanel from './logPanel';
-import Splitter from '../../layout/splitter';
+import Splitter from '../../layout/splitter-v2';
 
 const CSS = css({
     flex: 1
@@ -48,9 +48,9 @@ export default class BotChatEditor extends React.Component {
     render() {
         return (
             <div className={ CSS }>
-                <Splitter secondaryInitialSize={ 500 }>
+                <Splitter orientation={ 'vertical' }>
                     <ChatPanel botId={ this.props.botId } />
-                    <Splitter vertical={ true }>
+                    <Splitter orientation={ 'horizontal' }>
                         <DetailPanel botId={ this.props.botId } />
                         <LogPanel botId={ this.props.botId } />
                     </Splitter>

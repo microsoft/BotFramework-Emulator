@@ -34,10 +34,11 @@
 import { connect } from 'react-redux';
 import { css } from 'glamor';
 import React from 'react';
+
 import ExplorerBar from './explorer';
 import MDI from './mdi';
 import NavBar from './navBar';
-import Splitter from '../layout/splitter';
+import Splitter from '../layout/splitter-v2';
 
 css.global('html, body, #root', {
     height: '100%',
@@ -78,7 +79,7 @@ export default class Main extends React.Component {
             <div className={ CSS }>
                 <NavBar />
                 <div { ...SECOND_CSS }>
-                    <Splitter primaryIndex={ 1 } secondaryInitialSize={ 300 }>
+                    <Splitter orientation={ 'vertical' } initialSizeIndex={ 0 } initialSize={ 200 }>
                         <ExplorerBar />
                         <MDI />
                     </Splitter>
