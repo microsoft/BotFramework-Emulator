@@ -40,6 +40,7 @@ import * as constants from '../../../constants';
 import * as EditorActions from '../../../data/action/editorActions';
 import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
 import * as Colors from '../../colors/colors';
+import ExplorerItem from './explorerItem';
 
 const CSS = css({
     backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
@@ -57,8 +58,7 @@ const BOTS_CSS = css({
     flexDirection: 'column',
     listStyleType: 'none',
     margin: 0,
-    padding: '4px 24px',
-    color: Colors.EXPLORER_FOREGROUND_DARK
+    padding: 0
 });
 
 class BotExplorer extends React.Component {
@@ -95,7 +95,7 @@ class BotExplorer extends React.Component {
                                             url: this.props.bots[id].url
                                         }))
                                         .sort((x, y) => x.url > y.url ? 1 : x.url < y.url ? -1 : 0)
-                                        .map(bot => <li key={ bot.id }>{ bot.url }</li>)
+                                        .map(bot => <ExplorerItem key={ bot.id }>{ bot.url }</ExplorerItem>)
                                 }
                             </ul>
                         </ExpandCollapseContent>

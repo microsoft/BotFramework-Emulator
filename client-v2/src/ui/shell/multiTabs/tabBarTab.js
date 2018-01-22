@@ -34,8 +34,22 @@
 import { css } from 'glamor';
 import React from 'react';
 
+import * as Colors from '../../colors/colors';
+
 const CSS = css({
-    height: '100%'
+    height: '100%',
+    border: 'none',
+    padding: 0,
+
+    '&:active': {
+        border: 0,
+        outline: 0
+    },
+
+    '&:focus': {
+        border: 0,
+        outline: 0
+    }
 });
 
 export default props =>

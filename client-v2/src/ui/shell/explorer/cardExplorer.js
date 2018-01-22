@@ -54,7 +54,7 @@ const CSS = css({
     backgroundColor: Colors.EXPLORER_BACKGROUND_DARK
 });
 
-const BOTS_CSS = css({
+const CARDS_CSS = css({
     display: 'flex',
     flexDirection: 'column',
     listStyleType: 'none',
@@ -103,7 +103,7 @@ export class CardExplorer extends React.Component {
                         title='Cards'
                     >
                         <ExpandCollapseContent>
-                            <ul className={ BOTS_CSS }>
+                            <ul className={ CARDS_CSS }>
                                 {
                                     Object.keys(this.props.cards).length ?
                                         Object.keys(this.props.cards).map(id =>

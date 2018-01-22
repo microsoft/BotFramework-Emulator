@@ -36,6 +36,7 @@ import React from 'react';
 
 import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
 import * as Colors from '../../colors/colors';
+import ExplorerItem from './explorerItem';
 
 const CSS = css({
     display: 'flex',
@@ -48,17 +49,12 @@ const CSS = css({
     color: Colors.EXPLORER_FOREGROUND_DARK
 });
 
-const BOTS_CSS = css({
+const FORMS_CSS = css({
     display: 'flex',
     flexDirection: 'column',
     listStyleType: 'none',
     margin: 0,
-    padding: 0,
-
-    '& > li': {
-        padding: '4px 24px',
-        fontFamily: '\'Segoe UI\', \'Helvetica Neue\', \'Arial\', \'sans-serif\''
-    }
+    padding: 0
 });
 
 export default props =>
@@ -69,9 +65,9 @@ export default props =>
                 title="Forms"
             >
                 <ExpandCollapseContent>
-                    <ul className={ BOTS_CSS }>
-                        <li>Pizza Order Form</li>
-                        <li>Product Search Form</li>
+                    <ul className={ FORMS_CSS }>
+                        <ExplorerItem>Pizza Order Form</ExplorerItem>
+                        <ExplorerItem>Product Search Form</ExplorerItem>
                     </ul>
                 </ExpandCollapseContent>
             </ExpandCollapse>

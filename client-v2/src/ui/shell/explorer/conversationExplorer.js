@@ -42,6 +42,7 @@ import * as EditorActions from '../../../data/action/editorActions';
 import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
 import conversation from '../../../data/reducer/conversation';
 import * as Colors from '../../colors/colors';
+import ExplorerItem from './explorerItem';
 
 const CSS = css({
     display: 'flex',
@@ -54,17 +55,12 @@ const CSS = css({
     color: Colors.EXPLORER_FOREGROUND_DARK
 });
 
-const BOTS_CSS = css({
+const CONVO_CSS = css({
     display: 'flex',
     flexDirection: 'column',
     listStyleType: 'none',
     margin: 0,
-    padding: 0,
-
-    '& > li': {
-        padding: '4px 24px',
-        fontFamily: '\'Segoe UI\', \'Helvetica Neue\', \'Arial\', \'sans-serif\''
-    }
+    padding: 0
 });
 
 class ConversationExplorer extends React.Component {
@@ -100,12 +96,12 @@ class ConversationExplorer extends React.Component {
                             <button onClick={ this.handleAddClick }>+</button>
                         </ExpandCollapseControls>
                         <ExpandCollapseContent>
-                            <ul className={ BOTS_CSS }>
+                            <ul className={ CONVO_CSS }>
                             {
                                 Object.keys(this.props.conversations).map(conversationId =>
-                                    <li key={ conversationId }>
+                                    <ExplorerItem key={ conversationId }>
                                         { this.props.conversations[conversationId].name }
-                                    </li>
+                                    </ExplorerItem>
                                 )
                             }
                             </ul>

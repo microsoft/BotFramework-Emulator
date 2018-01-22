@@ -45,7 +45,10 @@ const CSS = css({
         fontFamily: '\'Segoe UI Semibold\', \'Helvetica Neue\', \'Arial\', \'sans-serif\'',
         textTransform: 'uppercase',
         display: 'flex',
-        lineHeight: '30px',
+        fontSize: '12px',
+        lineHeight: '24px',
+        height: 24,
+        cursor: 'pointer',
 
         '& > .content': {
             paddingLeft: 8,

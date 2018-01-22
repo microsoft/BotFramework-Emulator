@@ -31,45 +31,43 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
 import React from 'react';
-
-import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
+import PropTypes from 'prop-types';
+import { css } from 'glamor';
 import * as Colors from '../../colors/colors';
-import ExplorerItem from './explorerItem';
 
 const CSS = css({
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0,
-    backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
-    color: Colors.EXPLORER_FOREGROUND_DARK
+    color: Colors.EXPLORER_FOREGROUND_DARK,
+    padding: '4px 24px',
+    fontFamily: '\'Segoe UI\', \'Helvetica Neue\', \'Arial\', \'sans-serif\'',
+    cursor: 'pointer',
+    display: 'block',
+
+    '&:hover': {
+        backgroundColor: Colors.EXPLORER_ITEM_HOVER_BACKGROUND_DARK
+    },
+
+    '&.active-explorer-item': {
+        backgroundColor: Colors.EXPLORER_ITEM_ACTIVE_BACKGROUND_DARK
+    }
 });
 
-const QNA_CSS = css({
-    display: 'flex',
-    flexDirection: 'column',
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0
-});
+export default class ExplorerItem extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+    }
 
-export default props =>
-    <ul className={ CSS }>
-        <li>
-            <ExpandCollapse
-                initialExpanded={ true }
-                title="QnA Models"
-            >
-                <ExpandCollapseContent>
-                    <ul className={ QNA_CSS }>
-                        <ExplorerItem>FAQ</ExplorerItem>
-                        <ExplorerItem>Small Talk</ExplorerItem>
-                    </ul>
-                </ExpandCollapseContent>
-            </ExpandCollapse>
-        </li>
-    </ul>
+    render() {
+        return (
+            this.props.active ?
+                <li className={ CSS + ' active-explorer-item' } onClick={ this.props.onClick }>{ this.props.children }</li>
+            :
+                <li className={ CSS } onClick={ this.props.onClick }>{ this.props.children }</li>
+        );
+    }
+}
+
+ExplorerItem.propTypes = {
+    active: PropTypes.bool.isRequired,
+    onClick: PropTypes.func
+}

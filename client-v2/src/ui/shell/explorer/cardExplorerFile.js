@@ -39,12 +39,7 @@ import { css } from 'glamor';
 import * as EditorActions from '../../../data/action/editorActions';
 import { ContentType_Card } from '../../../constants';
 import * as Colors from '../../colors/colors';
-
-const CSS = css({
-    color: Colors.EXPLORER_FOREGROUND_DARK,
-    padding: '4px 24px',
-    fontFamily: '\'Segoe UI\', \'Helvetica Neue\', \'Arial\', \'sans-serif\''
-});
+import ExplorerItem from './explorerItem';
 
 class CardExplorerFile extends React.Component {
     constructor(props, context) {
@@ -58,7 +53,7 @@ class CardExplorerFile extends React.Component {
     }
 
     render() {
-        return (<li className={ CSS } onClick={ this.handleFileClick }>{ this.props.fileName }</li>);
+        return (<ExplorerItem active={ this.props.active } onClick={ this.handleFileClick }>{ this.props.fileName }</ExplorerItem>);
     }
 }
 
@@ -68,5 +63,6 @@ CardExplorerFile.propTypes = {
 };
 
 export default connect((state, { cardId }) => ({
-    fileName: state.card.cards[cardId].title
+    fileName: state.card.cards[cardId].title,
+    active: state.editor.activeDocumentId === cardId
 }))(CardExplorerFile);
