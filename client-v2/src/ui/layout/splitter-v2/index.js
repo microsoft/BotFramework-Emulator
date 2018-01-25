@@ -49,7 +49,8 @@ const CSS = css({
 const DEFAULT_PANE_SIZE = 200;
 const MIN_PRIMARY_SIZE = 0;
 const MIN_SECONDARY_SIZE = 0;
-const SPLITTER_SIZE = 4;
+const SPLITTER_SIZE = 1;
+const SPLITTER_HIT_TARGET = 8;
 
 export default class SplitterV2 extends React.Component {
     constructor(props, context) {
@@ -86,19 +87,42 @@ export default class SplitterV2 extends React.Component {
 
         this.SPLITTER_CSS = this.props.orientation === 'horizontal' ?
             css({
+                position: 'relative',
                 height: SPLITTER_SIZE,
                 width: '100%',
                 backgroundColor: Colors.GRAY_1,
-                cursor: 'ns-resize',
-                flexShrink: 0
+                flexShrink: 0,
+                zIndex: 1,
+
+                // inivisible hit target floating on top of splitter
+                '& > div': {
+                    position: 'absolute',
+                    height: SPLITTER_HIT_TARGET,
+                    width: '100%',
+                    top: SPLITTER_HIT_TARGET / 2 * -1,
+                    left: 0,
+                    backgroundColor: 'transparent',
+                    cursor: 'ns-resize'
+                }
             })
         :
             css({
+                position: 'relative',
                 height: '100%',
                 width: SPLITTER_SIZE,
                 backgroundColor: Colors.GRAY_1,
-                cursor: 'ew-resize',
-                flexShrink: 0
+                flexShrink: 0,
+                zIndex: 1,
+
+                '& > div': {
+                    position: 'absolute',
+                    height: '100%',
+                    width: SPLITTER_HIT_TARGET,
+                    top: 0,
+                    left: SPLITTER_HIT_TARGET / 2 * -1,
+                    backgroundColor: 'transparent',
+                    cursor: 'ew-resize'
+                }
             });
 
         this.CONTAINER_CSS = css({
@@ -264,9 +288,12 @@ export default class SplitterV2 extends React.Component {
                 this.splitters[splitIndex]["pane2Index"] = splitIndex + 1;
 
                 // add a splitter
-                const splitter = <div className={ this.SPLITTER_CSS } key={ `splitter${splitIndex}` }
-                                    ref={ x => this.saveSplitterRef(x, splitIndex) } orientation={ this.props.orientation }
-                                    onMouseDown={ (e) => this.onGrabSplitter(e, splitIndex) } />;
+                const splitter = (
+                    <div className={ this.SPLITTER_CSS } key={ `splitter${splitIndex}` }
+                        ref={ x => this.saveSplitterRef(x, splitIndex) } orientation={ this.props.orientation }>
+                        <div onMouseDown={ (e) => this.onGrabSplitter(e, splitIndex) }/>
+                    </div>
+                );
                 splitChildren.push(splitter);
                 this.splitNum++;
             }

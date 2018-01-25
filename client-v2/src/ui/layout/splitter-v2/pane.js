@@ -46,7 +46,8 @@ export default class SplitterV2Pane extends React.Component {
             flexShrink: 0,
             flexGrow: 1,
             flexBasis: this.props.size,
-            boxSizing: 'border-box'
+            boxSizing: 'border-box',
+            zIndex: 0
         };
 
         if (this.props.orientation === 'horizontal') {
