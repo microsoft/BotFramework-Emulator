@@ -37,7 +37,7 @@ import React from 'react'
 import PropTypes from 'prop-types';
 
 import CardTemplateRow from './cardTemplateRow';
-import * as Colors from '../../colors/colors';
+import * as Colors from '../../styles/colors';
 
 const CSS = css({
     width: '100%',

@@ -31,14 +31,35 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export const ContentType_Card = 'application/vnd.microsoft.botbuilderstudio.document.card';
-export const ContentType_Conversation = 'application/vnd.microsoft.botbuilderstudio.document.conversation';
-export const ContentType_Emulator = 'application/vnd.microsoft.botbuilderstudio.document.emulator';
-export const ContentType_TestBed = 'application/vnd.microsoft.botbuilderstudio.testbed';
+import { css } from 'glamor';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-export const NavBar_App = 'navbar.app';
-export const NavBar_Files = 'navbar.files';
-export const NavBar_Assets = 'navbar.assets';
-export const NavBar_Services = 'navbar.services';
-export const NavBar_Analytics = 'navbar.analytics';
-export const NavBar_Settings = 'navbar.settings';
+import ChatPanel from './chatPanel';
+import DetailPanel from './detailPanel';
+import LogPanel from './logPanel';
+import Splitter from '../../layout/splitter-v2';
+
+const CSS = css({
+    flex: 1
+});
+
+export default class Emulator extends React.Component {
+    render() {
+        return (
+            <div className={ CSS }>
+                <Splitter orientation={ 'horizontal' } initialSizeIndex={ 1 } initialSize={ 300 }>
+                    <Splitter orientation={ 'vertical' }>
+                        <ChatPanel botId={ this.props.botId } />
+                        <DetailPanel botId={ this.props.botId } />
+                    </Splitter>
+                    <LogPanel botId={ this.props.botId } />
+                </Splitter>
+            </div>
+        );
+    }
+}
+
+Emulator.propTypes = {
+    botId: PropTypes.string.isRequired
+};

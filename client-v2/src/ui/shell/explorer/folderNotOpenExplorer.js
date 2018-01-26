@@ -37,7 +37,7 @@ import React from 'react';
 
 import * as AssetExplorerActions from '../../../data/action/assetExplorerActions';
 import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
-import * as Colors from '../../colors/colors';
+import * as Colors from '../../styles/colors';
 
 const CSS = css({
     backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
@@ -50,17 +50,8 @@ const CSS = css({
     padding: 0,
 
     '& .folder-empty-state': {
-        padding: '4px 24px',
-        fontFamily: '\'Segoe UI\', \'Helvetica Neue\', \'Arial\', \'sans-serif\''
+        padding: '0 24px',
     }
-});
-
-const BOTS_CSS = css({
-    display: 'flex',
-    flexDirection: 'column',
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0
 });
 
 class FolderNotOpenExplorer extends React.Component {
@@ -84,8 +75,8 @@ class FolderNotOpenExplorer extends React.Component {
                     >
                         <ExpandCollapseContent>
                             <div className="folder-empty-state">
-                                <div>You have not yet opened a folder.</div>
-                                <button onClick={ this.handleOpenFolderClick }>Open Folder</button>
+                                <p><div>You have not yet opened a folder.</div></p>
+                                <p><button onClick={ this.handleOpenFolderClick }>Open Folder</button></p>
                             </div>
                         </ExpandCollapseContent>
                     </ExpandCollapse>

@@ -34,22 +34,26 @@
 import { css } from 'glamor';
 import React from 'react';
 import { connect } from 'react-redux';
-import EmulatorExplorerSet from './emulatorExplorerSet';
-import AssetExplorerSet from './assetExplorerSet';
+
+import * as Colors from '../../styles/colors';
 import * as constants from '../../../constants';
+import ExplorerBarContent from './explorerBarContent';
+import ExplorerBarTitle from './explorerBarTitle';
+
+const CSS = css({
+    backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
+    boxShadow: 'inset -4px 0px 8px -4px rgba(0,0,0,0.6)',
+    height: '100%'
+});
 
 class ExplorerBar extends React.Component {
     render() {
-        if (this.props.navBar.selection === constants.NavBar_Bots) {
-            return (
-                <EmulatorExplorerSet />
-            );
-        } else if (this.props.navBar.selection === constants.NavBar_Assets) {
-            return (
-                <AssetExplorerSet />
-            );
-        }
-        return false;
+        return (
+            <div className={ CSS }>
+                <ExplorerBarTitle />
+                <ExplorerBarContent />
+            </div>
+        );
     }
 }
 

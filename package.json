@@ -1,7 +1,7 @@
 {
-  "name": "botframework-emulator",
-  "version": "3.5.34",
-  "description": "Emulator for the Microsoft Bot Framework. Allows developers to test and debug their bots on localhost.",
+  "name": "botbuilder-studio",
+  "version": "1.0.0",
+  "description": "Development tool for the Microsoft Bot Framework. Allows developers to test and debug their bots on localhost.",
   "main": "./app/server/main.js",
   "scripts": {
     "build": "gulp build",
@@ -15,23 +15,17 @@
     "start:electron:dev": "cross-env ELECTRON_TARGET_URL=http://localhost:3000/ npm run start:electron",
     "start:react-app": "cd client-v2 && npm start"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Microsoft/botframework-emulator.git"
-  },
   "keywords": [
     "microsoft",
     "botframework",
+    "botbuilder",
+    "studio",
     "emulator",
-    "bot",
+    "bots",
     "chatbot"
   ],
   "author": "Microsoft Corp.",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/Microsoft/botframework-emulator/issues"
-  },
-  "homepage": "https://github.com/Microsoft/botframework-emulator#readme",
   "devDependencies": {
     "@types/async": "2.0.37",
     "@types/bunyan": "0.0.35",
@@ -105,18 +99,14 @@
     "xtend": "4.0.1"
   },
   "build": {
-    "appId": "com.electron.botframework-emulator",
-    "copyright": "Copyright © 2016 - 2018 Microsoft",
+    "appId": "com.microsoft.botbuilder-studio",
+    "copyright": "Copyright © 2018 Microsoft",
     "mac": {
       "category": "public.app-category.developer-tools"
     },
     "publish": {
       "provider": "github",
       "owner": "Microsoft"
-    },
-    "squirrelWindows": {
-      "loadingGif": "build/bf-splash.gif",
-      "remoteReleases": "https://github.com/Microsoft/BotFramework-Emulator"
     },
     "directories": {
       "output": "install"

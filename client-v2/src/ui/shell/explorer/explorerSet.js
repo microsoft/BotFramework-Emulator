@@ -34,31 +34,30 @@
 import { css } from 'glamor';
 import React from 'react';
 
-import * as Colors from '../../colors/colors';
+import * as Colors from '../../styles/colors';
 
 const CSS = css({
     backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
     display: 'flex',
     flexDirection: 'column',
-    margin: 0,
-    padding: 0,
-    height: '100%'
-});
-
-const HEADER_CSS = css({
-    lineHeight: '30px',
-    color: Colors.EXPLORER_FOREGROUND_DARK,
-    paddingLeft: 16,
-    textTransform: 'uppercase',
-    fontFamily: '\'Segoe UI\', \'Helvetica Neue\', \'Arial\', \'sans-serif\''
-})
-
-const EXPLORER_CSS = css({
-    display: 'flex',
-    flexDirection: 'column',
+    height: '100%',
     listStyleType: 'none',
     margin: 0,
     padding: 0,
+
+    '& > header': {
+        fontSize: '13px',
+        lineHeight: '30px',
+        height: '30px',
+        paddingLeft: '16px',
+        textTransform: 'uppercase',
+    },
+
+    '& > ul': {
+        listStyleType: 'none',
+        margin: 0,
+        padding: 0,
+    },
 
     '& > li': {
         display: 'flex',
@@ -74,10 +73,7 @@ export default class ExplorerSet extends React.Component {
     render() {
         return (
             <div className={ CSS }>
-                <div className={ HEADER_CSS }>
-                    { this.props.title }
-                </div>
-                <ul className={ EXPLORER_CSS }>
+                <ul>
                     {
                         React.Children.map(this.props.children, child =>
                             <li>{ child }</li>

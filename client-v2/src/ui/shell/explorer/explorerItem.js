@@ -34,14 +34,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
-import * as Colors from '../../colors/colors';
+import * as Colors from '../../styles/colors';
 
 const CSS = css({
     color: Colors.EXPLORER_FOREGROUND_DARK,
     padding: '4px 24px',
-    fontFamily: '\'Segoe UI\', \'Helvetica Neue\', \'Arial\', \'sans-serif\'',
     cursor: 'pointer',
     display: 'block',
+    whiteSpace: 'nowrap',
 
     '&:hover': {
         backgroundColor: Colors.EXPLORER_ITEM_HOVER_BACKGROUND_DARK

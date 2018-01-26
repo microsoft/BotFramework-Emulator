@@ -38,7 +38,7 @@ import { css } from 'glamor';
 
 import * as EditorActions from '../../../data/action/editorActions';
 import { ContentType_Card } from '../../../constants';
-import * as Colors from '../../colors/colors';
+import * as Colors from '../../styles/colors';
 import ExplorerItem from './explorerItem';
 
 class CardExplorerFile extends React.Component {

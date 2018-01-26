@@ -31,53 +31,59 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { connect } from 'react-redux';
 import { css } from 'glamor';
-import PropTypes from 'prop-types';
-import React from 'react';
+import * as PropTypes from 'prop-types';
+import * as React from 'react';
 
-import TabBar from './tabBar';
-import TabBarTab from './tabBarTab';
-import TabbedDocument, { Tab as TabbedDocumentTab, Content as TabbedDocumentContent } from './tabbedDocument';
-import { filterChildren } from '../../utils';
+import * as Colors from '../../../../ui/styles/colors';
+import * as Fonts from '../../../../ui/styles/fonts';
 
 const CSS = css({
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
     height: '100%',
-    boxSizing: 'border-box'
+    overflow: 'auto',
+    userSelect: 'initial',
+    padding: '0 16px 0 16px',
+
+    '& > .entry': {
+        fontFamily: Fonts.FONT_FAMILY_MONOSPACE,
+
+        '& > .source': {
+            color: Colors.LOG_PANEL_SOURCE_DARK,
+        },
+
+        '& > .info': {
+            color: Colors.LOG_PANEL_INFO_DARK,
+        },
+    },
 });
 
-export default class MultiTabs extends React.Component {
-    constructor(props, context) {
-        super(props, context);
-
-        this.handleTabClick = this.handleTabClick.bind(this);
-    }
-
-    handleTabClick(nextValue) {
-        this.props.onChange && this.props.onChange(nextValue);
-    }
-
+class Log extends React.Component {
     render() {
         return (
             <div className={ CSS }>
-                <TabBar>
-                    {
-                        React.Children.map(this.props.children, (tabbedDocument, index) =>
-                            <TabBarTab onClick={ this.handleTabClick.bind(this, index) }>
-                                { filterChildren(tabbedDocument.props.children, child => child.type === TabbedDocumentTab) }
-                            </TabBarTab>
-                        )
-                    }
-                </TabBar>
-                { !!this.props.children.length && filterChildren(React.Children.toArray(this.props.children)[this.props.value].props.children, child => child.type === TabbedDocumentContent) }
+            {
+                this.props.entries.map(entry =>
+                    <div className="entry">
+                        <span className="source">
+                            { '[' + entry.source + ']' }
+                        </span>
+                        <span>&nbsp;</span>
+                        <span className={ entry.type }>
+                            { entry.text }
+                        </span>
+                    </div>
+                )
+            }
             </div>
         );
     }
 }
 
-MultiTabs.propTypes = {
-    onChange: PropTypes.func,
-    value: PropTypes.number
+Log.propTypes = {
+    entries: PropTypes.array.isRequired
 };
+
+export default connect((state, { botId }) => ({
+    entries: state.emulator.log.entries
+}))(Log);

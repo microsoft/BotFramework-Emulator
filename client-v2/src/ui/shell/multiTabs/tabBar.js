@@ -36,15 +36,17 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import TabBarTab from './tabBarTab';
-import * as Colors from '../../colors/colors';
+import * as Colors from '../../styles/colors';
 
 const CSS = css({
     backgroundColor: Colors.PANEL_BACKGROUND_DARK,
+    boxShadow: '0px 2px 2px 0px rgba(0,0,0,0.2)',
     display: 'flex',
-    height: 30,
+    minHeight: '30px',
     listStyleType: 'none',
     margin: 0,
-    padding: 0
+    padding: 0,
+    zIndex: 1 // So that the box-shadow will fall onto the document area (sibling div)
 });
 
 export default class TabBar extends React.Component {

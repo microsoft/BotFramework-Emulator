@@ -40,7 +40,7 @@ import CardOutput from './cardOutputWindow';
 import CardPreview from './cardPreviewWindow';
 import CardTemplator from './cardTemplatorWindow';
 import Splitter from '../../layout/splitter-v2';
-import * as Colors from '../../colors/colors';
+import * as Colors from '../../styles/colors';
 
 const CSS = css({
     display: 'flex',

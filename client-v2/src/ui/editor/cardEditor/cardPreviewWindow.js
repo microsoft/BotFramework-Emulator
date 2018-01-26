@@ -39,7 +39,7 @@ import PropTypes from 'prop-types';
 
 import * as AdaptiveCards from 'adaptivecards';
 import * as CardActions from '../../../data/action/cardActions';
-import * as Colors from '../../colors/colors';
+import * as Colors from '../../styles/colors';
 
 const CSS = css({
     padding: 0,

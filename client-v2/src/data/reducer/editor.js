@@ -35,12 +35,13 @@ import * as EditorActions from '../action/editorActions';
 import * as constants from '../../constants';
 
 const DEFAULT_STATE = {
-    activeDocumentId: 'bot:1',
+    activeDocumentId: 'emulator:1',
     documents: [{
-        contentType: constants.ContentType_BotChat,
-        documentId: 'bot:1'
+        contentType: constants.ContentType_Emulator,
+        documentId: 'emulator:1'
     }, {
-        contentType: constants.ContentType_TestBed
+        contentType: constants.ContentType_TestBed,
+        documentId: 'testbed:1'
     }]
 };
 

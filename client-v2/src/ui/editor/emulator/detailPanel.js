@@ -31,33 +31,29 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as BotActions from '../action/botActions';
+import { css } from 'glamor';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-const DEFAULT_STATE = {
-    bots: {
-        'bot:1': { url: 'http://localhost:3000/' },
-        'bot:2': { url: 'http://localhost:3001/' },
-        'bot:3': { url: 'http://localhost:3002/' }
+import Detail from './parts/detail';
+import Panel, { Controls as PanelControls, Content as PanelContent } from '../panel';
+
+const CSS = css({
+    height: '100%'
+});
+
+export default class DetailPanel extends React.Component {
+    render() {
+        return (
+            <div className={ CSS }>
+                <Panel title="Inspector">
+                    <PanelContent>
+                        <Detail />
+                    </PanelContent>
+                </Panel>
+            </div>
+        );
     }
 }
 
-export default function bots(state = DEFAULT_STATE, action) {
-    const { payload } = action;
-
-    switch (action.type) {
-        case BotActions.CONNECT:
-            state = {
-                ...state,
-                bots: {
-                    ...state.bots,
-                    [payload.botId]: payload.connection
-                }
-            };
-
-            break;
-
-        default: break;
-    }
-
-    return state;
-}
+const foo = "What would you like on your ${Meat} ${(Bread.length() > 0 ? 'on ' ${Bread}} sandwich ${Toppings.count() > 0 ? 'with ' Toppings.toList()}?"

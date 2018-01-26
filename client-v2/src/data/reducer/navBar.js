@@ -36,7 +36,7 @@ import * as NavBarActions from '../action/navBarActions';
 
 
 const DEFAULT_STATE = {
-    selection: constants.NavBar_Bots,
+    selection: constants.NavBar_Assets,
     expanded: false
 };
 

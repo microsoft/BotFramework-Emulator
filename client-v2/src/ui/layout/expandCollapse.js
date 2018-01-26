@@ -36,28 +36,33 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { filterChildren } from '../utils';
-import * as Colors from '../colors/colors';
+import * as Colors from '../styles/colors';
 
 const CSS = css({
+    boxShadow: 'inset -4px 0px 8px -4px rgba(0,0,0,0.6)',
+
     '& > header': {
-        backgroundColor: Colors.SECTION_HEADER_BACKGROUND_DARK,
-        color: Colors.SECTION_HEADER_FOREGROUND_DARK,
-        fontFamily: '\'Segoe UI Semibold\', \'Helvetica Neue\', \'Arial\', \'sans-serif\'',
-        textTransform: 'uppercase',
-        display: 'flex',
-        fontSize: '12px',
-        lineHeight: '24px',
-        height: 24,
+        backgroundColor: 'rgba(128, 128, 128, 0.2)',
+        boxShadow: '0px 2px 2px 0px rgba(0,0,0,0.2)',
         cursor: 'pointer',
+        display: 'flex',
+        fontSize: '11px',
+        fontWeight: 700,
+        height: '22px',
+        lineHeight: '22px',
+        textTransform: 'uppercase',
+        whiteSpace: 'nowrap',
 
         '& > .content': {
-            paddingLeft: 8,
-            flex: 1
+            flex: 1,
+            paddingLeft: '8px',
         },
 
         '& > .accessories': {
-            margin: '0 0 0 auto'
+            margin: '0 0 0 auto',
         }
+    },
+    '& > .body': {
     }
 });
 
@@ -89,12 +94,14 @@ export default class ExpandCollapse extends React.Component {
                         { filterChildren(this.props.children, child => child.type === Controls) }
                     </div>
                 </header>
+                <div className="body">
                 {
                     this.state.expanded &&
                         <section>
                             { filterChildren(this.props.children, child => child.type === Content) }
                         </section>
                 }
+                </div>
             </div>
         );
     }

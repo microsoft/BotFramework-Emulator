@@ -35,29 +35,49 @@ import { connect } from 'react-redux';
 import { css } from 'glamor';
 import React from 'react';
 
+import * as Colors from '../styles/colors';
 import ExplorerBar from './explorer';
+import * as Fonts from '../styles/fonts';
 import MDI from './mdi';
 import NavBar from './navBar';
 import Splitter from '../layout/splitter-v2';
 
 css.global('html, body, #root', {
+    backgroundColor: Colors.APP_BACKGROUND_DARK,
+    cursor: 'default',
+    fontFamily: Fonts.FONT_FAMILY_DEFAULT,
+    fontSize: '13px',
     height: '100%',
     margin: 0,
     minHeight: '100%',
-    overflow: 'hidden'
+    overflow: 'hidden',
+    userSelect: 'none',
+});
+
+css.global('::-webkit-scrollbar', {
+    width: '10px',
+    height: '10px',
+});
+
+css.global('::-webkit-scrollbar-track', {
+    background: Colors.SCROLLBAR_TRACK_BACKGROUND_DARK,
+});
+
+css.global('::-webkit-scrollbar-thumb', {
+    background: Colors.SCROLLBAR_THUMB_BACKGROUND_DARK,
 });
 
 const CSS = css({
-    backgroundColor: 'yellow',
+    backgroundColor: Colors.APP_BACKGROUND_DARK,
+    color: Colors.APP_FOREGROUND_DARK,
     display: 'flex',
-    minHeight: '100%'
-});
+    minHeight: '100%',
 
-const SECOND_CSS = css({
-    backgroundColor: 'lightgreen',
-    display: 'flex',
-    flex: 1
-})
+    '& > .workbench': {
+        display: 'flex',
+        flex: 1,
+    },
+});
 
 export default class Main extends React.Component {
     constructor(props, context) {
@@ -78,8 +98,8 @@ export default class Main extends React.Component {
         return (
             <div className={ CSS }>
                 <NavBar />
-                <div { ...SECOND_CSS }>
-                    <Splitter orientation={ 'vertical' } initialSizeIndex={ 0 } initialSize={ 200 }>
+                <div className="workbench">
+                    <Splitter orientation={ 'vertical' } initialSizeIndex={ 0 } initialSize={ 300 }>
                         <ExplorerBar />
                         <MDI />
                     </Splitter>

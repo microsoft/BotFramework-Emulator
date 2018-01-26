@@ -37,7 +37,7 @@ import promiseMiddleware from 'redux-promise-middleware';
 import WebSocketActionBridge from 'redux-websocket-bridge';
 
 import assetExplorer from './reducer/assetExplorer';
-import bot from './reducer/bot';
+import emulator from './reducer/emulator';
 import card from './reducer/card';
 import conversation from './reducer/conversation';
 import editor from './reducer/editor';
@@ -59,10 +59,10 @@ const DEFAULT_STATE = {};
 
 export default createStoreWithMiddleware(combineReducers({
     assetExplorer,
-    bot,
     card,
     conversation,
     editor,
+    emulator,
     navBar,
     server
 }));

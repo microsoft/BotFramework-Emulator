@@ -31,36 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
-import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
+import { css } from 'glamor';
 
-import Panel, { Controls as PanelControls, Content as PanelContent } from '../panel';
+import { TAB_CSS } from './tabStyle';
 
-const CSS = css({
-    height: '100%'
-});
-
-export default class ChatPanel extends React.Component {
-    render() {
-        return (
-            <div className={ CSS }>
-                <Panel title="Chat">
-                    <PanelContent>
-                        <Chat />
-                    </PanelContent>
-                </Panel>
-            </div>
-        );
-    }
-}
-
-class Chat extends React.Component {
-    render() {
-        return <span>I am Chat</span>;
-    }
-}
-
-ChatPanel.propTypes = {
-    botId: PropTypes.string.isRequired
-};
+export default connect((state, { documentId }) => ({
+    title: "Emulator",
+    active: state.editor.activeDocumentId === documentId
+}))(props => props.active ?
+        <div className={ TAB_CSS + ' active-editor-tab' }><span>{ props.title }</span></div>
+    :
+        <div className={ TAB_CSS }><span >{ props.title }</span></div>
+);

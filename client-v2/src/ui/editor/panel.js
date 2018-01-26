@@ -36,7 +36,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { filterChildren } from '../utils';
-import * as Colors from '../colors/colors';
+import * as Colors from '../styles/colors';
 
 const CSS = css({
     display: 'flex',
@@ -44,43 +44,41 @@ const CSS = css({
     flexDirection: 'column',
     height: '100%',
     position: 'relative',
-    fontFamily: '\'Segoe UI\', \'Helvetica Neue\', \'Arial\', \'sans-serif\''
-});
 
-const HEADER_CSS = css({
-    backgroundColor: Colors.SECTION_HEADER_BACKGROUND_DARK,
-    color: Colors.SECTION_HEADER_FOREGROUND_DARK,
-    lineHeight: '30px',
-    minHeight: '30px',
-    textTransform: 'uppercase',
-    paddingLeft: '24px'
-});
+    '& > .header': {
+        backgroundColor: Colors.SECTION_HEADER_BACKGROUND_DARK,
+        color: Colors.SECTION_HEADER_FOREGROUND_DARK,
+        lineHeight: '30px',
+        minHeight: '30px',
+        textTransform: 'uppercase',
+        paddingLeft: '16px',
 
-const CONTROLS_CSS = css({
-    margin: '0 0 0 auto'
-});
+        '& > .accessories': {
+            margin: '0 0 0 auto'
+        }
+    },
 
-const CONTENT_CSS = css({
-    backgroundColor: Colors.PANEL_BACKGROUND_DARK,
-    color: Colors.PANEL_FOREGROUND_DARK,
-    padding: '16px',
-    flex: 1
+    '& > .body': {
+        backgroundColor: Colors.PANEL_BACKGROUND_DARK,
+        color: Colors.PANEL_FOREGROUND_DARK,
+        flex: 1,
+        overflow: 'auto',
+        padding: 0,
+    }
 });
 
 export default class Panel extends React.Component {
     render() {
         return (
             <div className={ CSS }>
-                <div className={ HEADER_CSS }>
+                <div className="header">
                     { this.props.title }
-                    <div className={ CONTROLS_CSS }>
+                    <div className="accessories">
                         { filterChildren(this.props.children, child => child.type === Controls) }
                     </div>
                 </div>
-                <div className={ CONTENT_CSS }>
-                    <div>
-                        { filterChildren(this.props.children, child => child.type === Content) }
-                    </div>
+                <div className="body">
+                    { filterChildren(this.props.children, child => child.type === Content) }
                 </div>
             </div>
         );

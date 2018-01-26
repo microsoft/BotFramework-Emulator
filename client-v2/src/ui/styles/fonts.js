@@ -31,14 +31,5 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export const ContentType_Card = 'application/vnd.microsoft.botbuilderstudio.document.card';
-export const ContentType_Conversation = 'application/vnd.microsoft.botbuilderstudio.document.conversation';
-export const ContentType_Emulator = 'application/vnd.microsoft.botbuilderstudio.document.emulator';
-export const ContentType_TestBed = 'application/vnd.microsoft.botbuilderstudio.testbed';
-
-export const NavBar_App = 'navbar.app';
-export const NavBar_Files = 'navbar.files';
-export const NavBar_Assets = 'navbar.assets';
-export const NavBar_Services = 'navbar.services';
-export const NavBar_Analytics = 'navbar.analytics';
-export const NavBar_Settings = 'navbar.settings';
+export const FONT_FAMILY_DEFAULT = '-apple-system,BlinkMacSystemFont,Segoe WPC,Segoe UI,HelveticaNeue-Light,Ubuntu,Droid Sans,sans-serif';
+export const FONT_FAMILY_MONOSPACE = 'Menlo,Monaco,Consolas,Droid Sans Mono,Courier New,monospace,Droid Sans Fallback';

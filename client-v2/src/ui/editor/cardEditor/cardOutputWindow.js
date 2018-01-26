@@ -38,7 +38,7 @@ import PropTypes from 'prop-types';
 
 import AdaptiveCardOutputMessage from './cardOutputMessage';
 import * as CardActions from '../../../data/action/cardActions';
-import * as Colors from '../../colors/colors';
+import * as Colors from '../../styles/colors';
 
 const CSS = css({
     width: '100%',

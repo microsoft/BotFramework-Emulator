@@ -31,14 +31,33 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export const ContentType_Card = 'application/vnd.microsoft.botbuilderstudio.document.card';
-export const ContentType_Conversation = 'application/vnd.microsoft.botbuilderstudio.document.conversation';
-export const ContentType_Emulator = 'application/vnd.microsoft.botbuilderstudio.document.emulator';
-export const ContentType_TestBed = 'application/vnd.microsoft.botbuilderstudio.testbed';
+import { css } from 'glamor';
 
-export const NavBar_App = 'navbar.app';
-export const NavBar_Files = 'navbar.files';
-export const NavBar_Assets = 'navbar.assets';
-export const NavBar_Services = 'navbar.services';
-export const NavBar_Analytics = 'navbar.analytics';
-export const NavBar_Settings = 'navbar.settings';
+import * as Colors from '../../styles/colors';
+
+export const TAB_CSS = css({
+    display: 'flex',
+    alignItems: 'center',
+    height: '100%',
+    border: 'none',
+    borderRight: `1px solid ${Colors.EDITOR_TAB_BORDER}`,
+    backgroundColor: Colors.EDITOR_TAB_INACTIVE_BACKGROUND_DARK,
+    color: Colors.EDITOR_TAB_INACTIVE_FOREGROUND_DARK,
+    cursor: 'pointer',
+    padding: '4px 16px',
+    boxSizing: 'border-box',
+
+    '&.active-editor-tab': {
+        backgroundColor: Colors.EDITOR_TAB_ACTIVE_BACKGROUND_DARK,
+        color: Colors.EDITOR_TAB_ACTIVE_FOREGROUND_DARK
+    },
+
+    '&:hover': {
+        color: Colors.EDITOR_TAB_HOVER_FOREGROUND_DARK
+    },
+
+    '& > span': {
+        display: 'inline-block',
+        height: 'auto'
+    }
+});

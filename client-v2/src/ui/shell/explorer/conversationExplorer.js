@@ -41,7 +41,7 @@ import * as ConversationActions from '../../../data/action/conversationActions';
 import * as EditorActions from '../../../data/action/editorActions';
 import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
 import conversation from '../../../data/reducer/conversation';
-import * as Colors from '../../colors/colors';
+import * as Colors from '../../styles/colors';
 import ExplorerItem from './explorerItem';
 
 const CSS = css({

@@ -31,22 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { connect } from 'react-redux';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
+
+import Log from './parts/log';
 import Panel, { Controls as PanelControls, Content as PanelContent } from '../panel';
 
 const CSS = css({
     height: '100%'
 });
 
-export default class DetailPanel extends React.Component {
+class LogPanel extends React.Component {
     render() {
         return (
             <div className={ CSS }>
-                <Panel title="Details">
+                <Panel title="Log">
                     <PanelContent>
-                        <Detail />
+                        <Log />
                     </PanelContent>
                 </Panel>
             </div>
@@ -54,8 +57,10 @@ export default class DetailPanel extends React.Component {
     }
 }
 
-class Detail extends React.Component {
-    render() {
-        return <span>I am Detail</span>;
-    }
-}
+LogPanel.propTypes = {
+    log: PropTypes.object.isRequired
+};
+
+export default connect((state, { botId }) => ({
+    log: state.emulator.log
+}))(LogPanel)

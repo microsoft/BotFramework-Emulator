@@ -37,7 +37,7 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 
 import SplitterV2Pane from './pane';
-import * as Colors from '../../colors/colors';
+import * as Colors from '../../styles/colors';
 
 const CSS = css({
     height: "100%",
@@ -49,7 +49,7 @@ const CSS = css({
 const DEFAULT_PANE_SIZE = 200;
 const MIN_PRIMARY_SIZE = 0;
 const MIN_SECONDARY_SIZE = 0;
-const SPLITTER_SIZE = 1;
+const SPLITTER_SIZE = 0;
 const SPLITTER_HIT_TARGET = 8;
 
 export default class SplitterV2 extends React.Component {
@@ -90,7 +90,7 @@ export default class SplitterV2 extends React.Component {
                 position: 'relative',
                 height: SPLITTER_SIZE,
                 width: '100%',
-                backgroundColor: Colors.GRAY_1,
+                backgroundColor: Colors.SPLITTER_BACKGROUND_DARK,
                 flexShrink: 0,
                 zIndex: 1,
 
@@ -110,7 +110,7 @@ export default class SplitterV2 extends React.Component {
                 position: 'relative',
                 height: '100%',
                 width: SPLITTER_SIZE,
-                backgroundColor: Colors.GRAY_1,
+                backgroundColor: Colors.SPLITTER_BACKGROUND_DARK,
                 flexShrink: 0,
                 zIndex: 1,
 

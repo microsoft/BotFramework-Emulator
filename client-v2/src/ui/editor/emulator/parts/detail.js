@@ -31,19 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { uniqueId } from "../../utils";
+import { connect } from 'react-redux';
+import { css } from 'glamor';
+import * as PropTypes from 'prop-types';
+import * as React from 'react';
 
-export const CONNECT = 'BOT/CONNECT';
+import * as Colors from '../../../../ui/styles/colors';
 
-export function connect(url) {
-    return {
-        type: CONNECT,
-        payload: {
-            botId: uniqueId(),
-            connection: {
-                state: 'NEW',
-                url
-            }
-        }
+const CSS = css({
+    padding: '0 16px 0 16px',
+});
+
+export default class Detail extends React.Component {
+    render() {
+        return (
+            <div className={ CSS }>
+            </div>
+        );
     }
 }

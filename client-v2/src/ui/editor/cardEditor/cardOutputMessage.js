@@ -35,7 +35,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { css } from 'glamor';
 
-import * as Colors from '../../colors/colors';
+import * as Colors from '../../styles/colors';
 
 const CSS = css({
     '& pre': {

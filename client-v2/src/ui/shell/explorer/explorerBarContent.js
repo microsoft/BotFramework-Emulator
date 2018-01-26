@@ -1,4 +1,3 @@
-//
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 //
@@ -31,14 +30,37 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export const ContentType_Card = 'application/vnd.microsoft.botbuilderstudio.document.card';
-export const ContentType_Conversation = 'application/vnd.microsoft.botbuilderstudio.document.conversation';
-export const ContentType_Emulator = 'application/vnd.microsoft.botbuilderstudio.document.emulator';
-export const ContentType_TestBed = 'application/vnd.microsoft.botbuilderstudio.testbed';
+import { css } from 'glamor';
+import React from 'react';
+import { connect } from 'react-redux';
 
-export const NavBar_App = 'navbar.app';
-export const NavBar_Files = 'navbar.files';
-export const NavBar_Assets = 'navbar.assets';
-export const NavBar_Services = 'navbar.services';
-export const NavBar_Analytics = 'navbar.analytics';
-export const NavBar_Settings = 'navbar.settings';
+import AssetExplorerSet from './assetExplorerSet';
+import { directoryExists } from '../../utils';
+import ExplorerSet from './explorerSet';
+import FolderNotOpenExplorer from './folderNotOpenExplorer';
+
+const CSS = css({
+});
+
+class ExplorerBarContent extends React.Component {
+    render() {
+        if (directoryExists(this.props.folder)) {
+            return (
+                <div className={ CSS }>
+                    <AssetExplorerSet />
+                </div>
+            );
+        } else {
+            return (
+                <ExplorerSet>
+                    <FolderNotOpenExplorer />
+                </ExplorerSet>
+            );
+        }
+    }
+}
+
+export default connect(state => ({
+    navBar: state.navBar,
+    folder: state.assetExplorer.folder
+}))(ExplorerBarContent)

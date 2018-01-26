@@ -42,7 +42,7 @@ import * as CardActions from '../../../data/action/cardActions';
 import { ContentType_Card } from '../../../constants';
 import * as EditorActions from '../../../data/action/editorActions';
 import CardExplorerFile from './cardExplorerFile';
-import * as Colors from '../../colors/colors';
+import * as Colors from '../../styles/colors';
 
 const CSS = css({
     display: 'flex',

@@ -31,35 +31,37 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
-import PropTypes from 'prop-types';
-import React from 'react';
+import { uniqueId } from "../../utils";
 
-import ChatPanel from './chatPanel';
-import DetailPanel from './detailPanel';
-import LogPanel from './logPanel';
-import Splitter from '../../layout/splitter-v2';
+export const CONNECT = 'EMULATOR/CONNECT';
+export const APPEND_TO_LOG = 'EMULATOR/APPEND_TO_LOG';
+export const CLEAR_LOG = 'EMULATOR/CLEAR_LOG';
 
-const CSS = css({
-    flex: 1
-});
-
-export default class BotChatEditor extends React.Component {
-    render() {
-        return (
-            <div className={ CSS }>
-                <Splitter orientation={ 'vertical' }>
-                    <ChatPanel botId={ this.props.botId } />
-                    <Splitter orientation={ 'horizontal' }>
-                        <DetailPanel botId={ this.props.botId } />
-                        <LogPanel botId={ this.props.botId } />
-                    </Splitter>
-                </Splitter>
-            </div>
-        );
+export function connect(url) {
+    return {
+        type: CONNECT,
+        payload: {
+            botId: uniqueId(),
+            connection: {
+                state: 'NEW',
+                url
+            }
+        }
     }
 }
 
-BotChatEditor.propTypes = {
-    botId: PropTypes.string.isRequired
-};
+export function appendToLog(entry) {
+    return {
+        type: APPEND_TO_LOG,
+        payload: {
+            entry
+        }
+    }
+}
+
+export function clearLog() {
+    return {
+        type: CLEAR_LOG,
+        payload: {}
+    }
+}

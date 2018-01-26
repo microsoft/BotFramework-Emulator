@@ -40,7 +40,7 @@ if (typeof window !== 'undefined') { require = window['require']; }
 const fs = require('fs');
 
 import * as CardActions from '../../../data/action/cardActions';
-import * as Colors from '../../colors/colors';
+import * as Colors from '../../styles/colors';
 
 const CSS = css({
     height: '100%',

@@ -31,11 +31,49 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import React from 'react';
-import ExplorerSet from './explorerSet';
-import BotExplorer from './botExplorer';
+import { css } from 'glamor';
+import * as React from 'react';
+import * as WebChat from 'botframework-webchat';
 
-export default props =>
-    <ExplorerSet title="Emulator">
-        <BotExplorer />
-    </ExplorerSet>
+import state from '../state';
+
+const CSS = css({
+    backgroundColor: 'white',
+    height: '100%',
+    display: 'flex',
+
+    '& > .wc-chatview-panel': {
+        flex: 1,
+        position: 'relative',
+
+        '&::-webkit-scrollbar-thumb': {
+            backgroundColor: 'blue',
+            color: 'red',
+        }
+    }
+});
+
+export default class Chat extends React.Component {
+    render() {
+        const props: WebChat.ChatProps = {
+            user: {
+                id: "1234",
+                name: "User"
+            },
+            bot: {
+                id: "WXYZ",
+                name: "Bot"
+            },
+            formatOptions: {
+                showHeader: false
+            },
+            botConnection: state().botConnection,
+        };
+        return (
+            <div { ...CSS }>
+                { /*<WebChat.Chat { ...props } /> */ }
+                <span>Not connected</span>
+            </div>
+        );
+    }
+}
