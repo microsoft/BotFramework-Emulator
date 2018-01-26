@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import request = require('request');
+import * as got from 'got';
 import { emulator } from './emulator';
 let getPem = require('rsa-pem-from-mod-exp');
 let base64url = require('base64url');
@@ -67,7 +67,7 @@ export class OpenIdMetadata {
     }
 
     private refreshCache(cb: (err: Error) => void): void {
-        let options: request.Options = {
+        let options = {
             method: 'GET',
             url: this.url,
             json: true,
@@ -75,17 +75,15 @@ export class OpenIdMetadata {
             strictSSL: false
         };
 
-        request(options, (err, response, body) => {
-            if (!err && (response.statusCode >= 400 || !body)) {
-                err = new Error('Failed to load openID config: ' + response.statusCode);
-            }
+        got(options)
+            .then((resp) => {
+                if (resp.statusCode >= 400 || !resp.body) {
+                    throw new Error('Failed to load openID config: ' + resp.statusCode);
+                }
 
-            if (err) {
-                cb(err);
-            } else {
-                let openIdConfig = <IOpenIdConfig>body;
+                let openIdConfig = <IOpenIdConfig>resp.body;
 
-                let options: request.Options = {
+                let options = {
                     method: 'GET',
                     url: openIdConfig.jwks_uri,
                     json: true,
@@ -93,20 +91,24 @@ export class OpenIdMetadata {
                     strictSSL: false
                 };
 
-                request(options, (err, response, body) => {
-                    if (!err && (response.statusCode >= 400 || !body)) {
-                        err = new Error("Failed to load Keys: " + response.statusCode);
-                    }
+                got(options)
+                    .then((resp) => {
+                        if (resp.statusCode >= 400 || !resp.body) {
+                            throw new Error("Failed to load Keys: " + resp.statusCode);
+                        }
 
-                    if (!err) {
                         this.lastUpdated = new Date().getTime();
-                        this.keys = <IKey[]>body.keys;
-                    }
+                        this.keys = <IKey[]>resp.body.keys;
 
-                    cb(err);
-                });
-            }
-        });
+                        cb(null);
+                    })
+                    .catch((err) => {
+                        cb(err);
+                    });
+            })
+            .catch((err) => {
+                cb(err);
+            });
     }
 
     private findKey(keyId: string): string {

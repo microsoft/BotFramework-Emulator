@@ -32,8 +32,7 @@
 //
 
 import * as log from './log';
-import * as request from 'request';
-import * as http from 'http';
+import * as got from 'got';
 import { DOMParser } from 'xmldom';
 
 interface IVersion {
@@ -67,18 +66,15 @@ export class VersionManager {
 
     public static checkNodeSdkVersion(version: IVersion)
     {
-        let options: request.OptionsWithUrl = {
+        let options = {
             url: 'http://registry.npmjs.org/-/package/botbuilder/dist-tags',
-            method: 'GET',
-            headers: {
-                Accept: 'application/json'
-            }
+            useElectronNet: true
         }
 
-        let responseCallback = (err, resp: http.IncomingMessage, body) => {
-            if(!err && body) {
+        let responseCallback = (resp) => {
+            if (resp.body) {
                 try {
-                    let verObj = JSON.parse(body);
+                    let verObj = JSON.parse(resp.body);
                     if (verObj.latest) {
                         let latestVersion: IVersion = VersionManager.parseVersion(verObj.latest);
                         if(!version || VersionManager.isLess(version, latestVersion)) {
@@ -90,7 +86,11 @@ export class VersionManager {
                 }
             }
         }
-        request(options, responseCallback);
+        got.get(options)
+            .then(responseCallback)
+            .catch((err) => {
+                // do not show the error; relies on 3rd party endpoint
+            });
     }
 
     private static warnAboutNewSdkVersion(botVersion: IVersion, latestVersion: IVersion) {
@@ -99,15 +99,15 @@ export class VersionManager {
     }
 
     public static checkDotNetSdkVersion(version: IVersion) {
-        let options: request.OptionsWithUrl = {
+        let options = {
             url: 'https://www.nuget.org/api/v2/Packages?$filter=IsLatestVersion%20eq%20true%20and%20Id%20eq\'Microsoft.Bot.Builder\'&$select=NormalizedVersion',
-            method: 'GET'
+            'useElectronNet': true
         };
 
-        let responseCallback = (err, resp: http.IncomingMessage, body) => {
-            if(body && !err) {
+        let responseCallback = (resp) => {
+            if (resp.body) {
                 try {
-                    let doc = new DOMParser().parseFromString(body, 'text/xml');
+                    let doc = new DOMParser().parseFromString(resp.body, 'text/xml');
                     let entryElem = doc.documentElement.getElementsByTagName('entry')[0];
                     let properties = entryElem.getElementsByTagName('m:properties')[0];
                     let versionElem = properties.getElementsByTagName('d:NormalizedVersion')[0];
@@ -122,7 +122,11 @@ export class VersionManager {
                 }
             }
         }
-        request(options, responseCallback);
+        got.get(options)
+            .then(responseCallback)
+            .catch(err => {
+                // do not show the error; relies on 3rd party endpoint
+            });
     }
 
     private static parseUserAgentForVersion(userAgent: string): IVersion {
