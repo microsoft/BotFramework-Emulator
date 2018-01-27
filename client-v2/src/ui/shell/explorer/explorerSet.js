@@ -40,7 +40,6 @@ const CSS = css({
     backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
     display: 'flex',
     flexDirection: 'column',
-    height: '100%',
     listStyleType: 'none',
     margin: 0,
     padding: 0,
