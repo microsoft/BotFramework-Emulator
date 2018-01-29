@@ -50,6 +50,8 @@ var emitter = new Emitter().on('error', noop);
 var api:(any) => Promise<any>;
 var ngrok, tunnels = {};
 
+var inspectUrl = "";
+
 export function running() {
 	return ngrok && ngrok.pid;
 }
@@ -136,8 +138,9 @@ function runNgrok(opts, cb) {
 	ngrok.stdout.on('data', function (data) {
 		var addr = data.toString().match(ready);
 		if (addr) {
+			inspectUrl = `http://${addr[1]}`;
 			api = (options) => {
-				const urlCombined = 'http://' + addr[1] + '/' + options.url;
+				const urlCombined = `http://${addr[1]}/${options.url}`;
 				options = Object.assign(options, {json: true, url: urlCombined, });
 				return got(options);
 			}
@@ -199,7 +202,7 @@ function _runTunnel(opts, cb) {
 				if (opts.proto === 'http' && opts.bind_tls !== false) {
 					tunnels[url.replace('https', 'http')] = resp.body.uri + ' (http)';
 				}
-				return cb(null, url, 4041);
+				return cb(null, url, inspectUrl);
 			})
 			.catch((err) => {
 				return cb(err);
