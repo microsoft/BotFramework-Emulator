@@ -99,7 +99,7 @@ export default class Main extends React.Component {
             <div className={ CSS }>
                 <NavBar />
                 <div className="workbench">
-                    <Splitter orientation={ 'vertical' } initialSizeIndex={ 0 } initialSize={ 300 }>
+                    <Splitter orientation={ 'vertical' } initialSizeIndex={ 0 } initialSize={ 300 } primaryPaneIndex={ 0 } minSizes={ [200, null] }>
                         <ExplorerBar />
                         <MDI />
                     </Splitter>

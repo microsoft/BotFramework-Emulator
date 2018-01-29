@@ -110,7 +110,7 @@ class CardOutput extends React.Component {
 
 CardOutput.propTypes = {
     cardId: PropTypes.string,
-    messages: PropTypes.array
+    messages: PropTypes.arrayOf(PropTypes.string)
 };
 
 export default connect((state, { cardId }) => ({

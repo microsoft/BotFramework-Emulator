@@ -91,7 +91,7 @@ class CardTemplator extends React.Component {
 
 CardTemplator.propTypes = {
     cardId: PropTypes.string,
-    entities: PropTypes.array
+    entities: PropTypes.arrayOf(PropTypes.string)
 };
 
 export default connect((state, { cardId }) => ({

@@ -33,7 +33,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'glamor';
 
 export default class SplitterV2Pane extends React.Component {
     constructor(props, context) {
@@ -43,7 +42,7 @@ export default class SplitterV2Pane extends React.Component {
     render() {
         const style = {
             overflow: 'hidden',
-            flexShrink: 0,
+            flexShrink: 1,
             flexGrow: 1,
             flexBasis: this.props.size,
             boxSizing: 'border-box',
@@ -74,4 +73,4 @@ SplitterV2Pane.propTypes = {
         'vertical'
     ]).isRequired,
     size: PropTypes.string
-}
+};
