@@ -42,3 +42,5 @@ export const NavBar_Assets = 'navbar.assets';
 export const NavBar_Services = 'navbar.services';
 export const NavBar_Analytics = 'navbar.analytics';
 export const NavBar_Settings = 'navbar.settings';
+export const NavBar_Notifications = 'navbar.notifications';
+export const NavBar_User = 'navbar.user';
