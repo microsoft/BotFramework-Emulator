@@ -42,12 +42,16 @@ const DEFAULT_STATE = {
     }, {
         contentType: constants.ContentType_TestBed,
         documentId: 'testbed:1'
-    }]
+    }],
+    tabStack: ['emulator:1', 'testbed:1']
 };
 
 export default function documents(state = DEFAULT_STATE, action) {
     switch (action.type) {
         case EditorActions.OPEN:
+            var newTabStack = state.tabStack.filter(tabId => tabId !== action.payload.documentId);
+            newTabStack.unshift(action.payload.documentId);
+
             if (!documentExists(action.payload.documentId, state.documents)) {
                 state = {
                     ...state,
@@ -55,20 +59,26 @@ export default function documents(state = DEFAULT_STATE, action) {
                     documents: [
                         ...state.documents,
                         action.payload
-                    ]
+                    ],
+                    tabStack: newTabStack
                 };
             } else {
                 state = {
                     ...state,
-                    activeDocumentId: action.payload.documentId
+                    activeDocumentId: action.payload.documentId,
+                    tabStack: newTabStack
                 };
             }
             break;
 
         case EditorActions.SET_ACTIVE:
+            var newTabStack = state.tabStack.filter(tabId => tabId !== action.payload);
+            newTabStack.unshift(action.payload);
+
             state = {
                 ...state,
-                activeDocumentId: action.payload
+                activeDocumentId: action.payload,
+                tabStack: newTabStack
             };
 
             break;

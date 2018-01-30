@@ -41,6 +41,7 @@ import * as Fonts from '../styles/fonts';
 import MDI from './mdi';
 import NavBar from './navBar';
 import Splitter from '../layout/splitter-v2';
+import TabManager from '../dialogs/tabManager';
 
 css.global('html, body, #root', {
     backgroundColor: Colors.APP_BACKGROUND_DARK,
@@ -104,6 +105,7 @@ export default class Main extends React.Component {
                         <MDI />
                     </Splitter>
                 </div>
+                <TabManager disabled={ false } />
             </div>
         );
     }

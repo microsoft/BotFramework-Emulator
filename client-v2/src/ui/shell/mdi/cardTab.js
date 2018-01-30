@@ -33,7 +33,6 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { css } from 'glamor';
 
 import * as Colors from '../../styles/colors';
 import { TAB_CSS } from './tabStyle';

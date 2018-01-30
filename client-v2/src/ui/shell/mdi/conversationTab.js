@@ -34,12 +34,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import * as Colors from '../../styles/colors';
 import { TAB_CSS } from './tabStyle';
 
 export default connect((state, { documentId }) => ({
+    title: state.conversation.conversations[documentId].name,
     active: state.editor.activeDocumentId === documentId
 }))(props => props.active ?
-        <div className={ TAB_CSS + ' active-editor-tab' }><span>Testbed</span></div>
+        <div className={ TAB_CSS + ' active-editor-tab' }><span>{ props.title }</span></div>
     :
-        <div className={ TAB_CSS }><span >Testbed</span></div>
+        <div className={ TAB_CSS }><span >{ props.title }</span></div>
 );
