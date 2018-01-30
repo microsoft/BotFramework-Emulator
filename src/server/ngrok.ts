@@ -48,7 +48,6 @@ var noop = function () { };
 var emitter = new Emitter().on('error', noop);
 var api:(any) => Promise<any>;
 var ngrok, tunnels = {};
-
 var inspectUrl = "";
 
 export function running() {

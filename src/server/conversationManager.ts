@@ -519,18 +519,18 @@ export class Conversation {
         if (!this.accessToken || new Date().getTime() >= this.accessTokenExpires) {
             const bot = getSettings().botById(this.botId);
 
-            let form = {
-                grant_type: 'client_credentials',
-                client_id: bot.msaAppId,
-                client_secret: bot.msaPassword,
-                scope: bot.msaAppId + '/.default',
-                atver: getSettings().framework.use10Tokens ? 1 : 0
-            }
             // Refresh access token
             let opt = {
                 method: 'POST',
                 url: authenticationSettings.tokenEndpoint,
-                body: form,
+                body: {
+                    grant_type: 'client_credentials',
+                    client_id: bot.msaAppId,
+                    client_secret: bot.msaPassword,
+                    scope: bot.msaAppId + '/.default',
+                    // flag to request a version 1.0 token
+                    atver: getSettings().framework.use10Tokens ? 1 : null
+                },
                 form: true,
                 agent: emulator.proxyAgent,
                 strictSSL: false,

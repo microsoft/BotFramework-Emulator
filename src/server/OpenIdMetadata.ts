@@ -72,7 +72,8 @@ export class OpenIdMetadata {
             url: this.url,
             json: true,
             agent: emulator.proxyAgent,
-            strictSSL: false
+            strictSSL: false,
+            useElectronNet: true
         };
 
         got(options)
@@ -88,7 +89,8 @@ export class OpenIdMetadata {
                     url: openIdConfig.jwks_uri,
                     json: true,
                     agent: emulator.proxyAgent,
-                    strictSSL: false
+                    strictSSL: false,
+                    useElectronNet: true
                 };
 
                 got(options)
