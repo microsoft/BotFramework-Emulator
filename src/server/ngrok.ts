@@ -32,7 +32,6 @@
 //
 
 import * as path from "path";
-var request = require('request');
 import * as got from 'got';
 var spawn = require('child_process').spawn;
 var Emitter = require('events').EventEmitter;
@@ -140,8 +139,8 @@ function runNgrok(opts, cb) {
 		if (addr) {
 			inspectUrl = `http://${addr[1]}`;
 			api = (options) => {
-				const urlCombined = `http://${addr[1]}/${options.url}`;
-				options = Object.assign(options, {json: true, url: urlCombined, });
+				const urlCombined = `${inspectUrl}/${options.url}`;
+				options = Object.assign(options, {json: true, url: urlCombined, useElectronNet: true});
 				return got(options);
 			}
 
@@ -152,6 +151,12 @@ function runNgrok(opts, cb) {
 	ngrok.stderr.on('data', function (data) {
 		var info = data.toString().substring(0, 10000);
 		return cb(new Error(info));
+	});
+
+	ngrok.on('exit', function () {
+		api = null;
+		tunnels = {};
+		emitter.emit('disconnect');
 	});
 
 	ngrok.on('close', function () {
@@ -185,15 +190,6 @@ function _runTunnel(opts, cb) {
 		}
 		api(options)
 			.then((resp) => {
-				let notReady = resp.statusCode === 500 && /panic/.test(resp.body) ||
-					resp.statusCode === 502 && resp.body.details &&
-					resp.body.details.err === 'tunnel session not ready yet';
-
-				if (notReady) {
-					return retries-- ?
-						setTimeout(retry, 200) :
-						cb(new Error(resp.body));
-				}
 				let url = resp.body && resp.body.public_url;
 				if (!url) {
 					return cb(xtend(new Error(resp.body.msg || 'failed to start tunnel'), resp.body));
@@ -205,6 +201,14 @@ function _runTunnel(opts, cb) {
 				return cb(null, url, inspectUrl);
 			})
 			.catch((err) => {
+				let notReady = err.statusCode === 500 && /panic/.test(err.response.body) ||
+					err.statusCode === 502 && err.response.body.details &&
+					err.response.body.details.err === 'tunnel session not ready yet';
+				if (notReady) {
+					return retries-- ?
+						setTimeout(retry, 200) :
+						cb(new Error(err.response.body));
+				}
 				return cb(err);
 			});
 	};
@@ -275,9 +279,9 @@ export function kill(cb) {
 		return;
 	}
 	ngrok.on('exit', function () {
-		api = null;
-		tunnels = {};
-		emitter.emit('disconnect');
+		// api = null;
+		// tunnels = {};
+		// emitter.emit('disconnect');
 		cb(true);
 	});
 	try {
