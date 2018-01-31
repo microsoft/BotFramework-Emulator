@@ -46,7 +46,20 @@ const CSS = css({
     listStyleType: 'none',
     margin: 0,
     padding: 0,
-    zIndex: 1 // So that the box-shadow will fall onto the document area (sibling div)
+    zIndex: 1, // So that the box-shadow will fall onto the document area (sibling div)
+    overflowX: 'auto',
+
+    '&::-webkit-scrollbar': {
+        height: '2px'
+    },
+
+    '&::-webkit-scrollbar-thumb': {
+        background: Colors.SCROLLBAR_THUMB_BACKGROUND_DARK
+    },
+
+    '&::-webkit-scrollbar-track': {
+        background: Colors.SCROLLBAR_TRACK_BACKGROUND_DARK
+    }
 });
 
 export default class TabBar extends React.Component {

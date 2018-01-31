@@ -48,6 +48,21 @@ const DEFAULT_STATE = {
 
 export default function documents(state = DEFAULT_STATE, action) {
     switch (action.type) {
+        case EditorActions.CLOSE:
+            // TODO: Add logic to check if document has been saved
+            // & prompt user to save document if necessary
+            var newTabStack = state.tabStack.filter(tabId => tabId !== action.payload);
+            let newDocumentList = state.documents.filter(doc => doc.documentId !== action.payload);
+            let newActiveDocumentId = newTabStack[0] || null;
+
+            state = {
+                ...state,
+                documents: newDocumentList,
+                activeDocumentId: newActiveDocumentId,
+                tabStack: newTabStack
+            };
+            break;
+
         case EditorActions.OPEN:
             var newTabStack = state.tabStack.filter(tabId => tabId !== action.payload.documentId);
             newTabStack.unshift(action.payload.documentId);
@@ -80,7 +95,6 @@ export default function documents(state = DEFAULT_STATE, action) {
                 activeDocumentId: action.payload,
                 tabStack: newTabStack
             };
-
             break;
 
         default: break;

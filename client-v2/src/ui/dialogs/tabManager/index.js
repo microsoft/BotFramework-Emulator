@@ -57,7 +57,7 @@ const CSS = css({
         maxHeight: '30%',
         overflowY: 'auto',
         margin: '0',
-        padding: '64px',
+        padding: '24px 64px',
         listStyle: 'none',
         backgroundColor: Colors.EDITOR_TAB_INACTIVE_BACKGROUND_DARK,
         color: Colors.EDITOR_TAB_INACTIVE_FOREGROUND_DARK,

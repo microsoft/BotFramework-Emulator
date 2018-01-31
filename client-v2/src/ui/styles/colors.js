@@ -35,6 +35,7 @@ export const BLACK_1 = '#2B2B2B';
 export const GRAY_1 = '#CCCCCC';
 export const GRAY_2 = '#767676';
 export const WHITE_1 = '#FFFFFF';
+export const YELLOW_1 = '#FFF100';
 
 export const APP_BACKGROUND_DARK = '#1E1E1E';
 export const APP_FOREGROUND_DARK = '#CCCCCC';

@@ -31,45 +31,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
 import React from 'react';
 
-import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
-import * as Colors from '../../styles/colors';
-import ExplorerItem from './explorerItem';
-
-const CSS = css({
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0,
-    backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
-    color: Colors.EXPLORER_FOREGROUND_DARK
-});
-
-const QNA_CSS = css({
-    display: 'flex',
-    flexDirection: 'column',
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0
-});
+import { TAB_CSS } from './tabStyle';
 
 export default props =>
-    <ul className={ CSS }>
-        <li>
-            <ExpandCollapse
-                initialExpanded={ true }
-                title="QnA Models"
-            >
-                <ExpandCollapseContent>
-                    <ul className={ QNA_CSS }>
-                        <ExplorerItem active={ false }>FAQ</ExplorerItem>
-                        <ExplorerItem active={ false }>Small Talk</ExplorerItem>
-                    </ul>
-                </ExpandCollapseContent>
-            </ExpandCollapse>
-        </li>
-    </ul>
+        props.active ?
+            <div className={ TAB_CSS + ' active-editor-tab' }>
+                <span className="editor-tab-icon"></span>
+                <span>{ props.title }</span>
+                <span className="editor-tab-close" onClick={ props.onCloseClick }></span>
+            </div>
+        :
+            <div className={ TAB_CSS }>
+                <span className="editor-tab-icon"></span>
+                <span>{ props.title }</span>
+                <span className="editor-tab-close" onClick={ props.onCloseClick }></span>
+            </div>;

@@ -44,6 +44,7 @@
 //   * 20% of actions, their logic is the same
 
 export const OPEN_FOLDER = 'ASSET_EXPLORER/OPEN_FOLDER';
+export const PROMPT_OPEN_FOLDER = 'ASSET_EXPLORER/PROMPT_OPEN_FOLDER';
 
 export function openFolder(folder) {
     return {
@@ -54,8 +55,6 @@ export function openFolder(folder) {
         }
     }
 }
-
-export const PROMPT_OPEN_FOLDER = 'ASSET_EXPLORER/PROMPT_OPEN_FOLDER';
 
 export function promptOpenFolder() {
     return {

@@ -66,8 +66,8 @@ export default props =>
             >
                 <ExpandCollapseContent>
                     <ul className={ FORMS_CSS }>
-                        <ExplorerItem>Pizza Order Form</ExplorerItem>
-                        <ExplorerItem>Product Search Form</ExplorerItem>
+                        <ExplorerItem active={ false }>Pizza Order Form</ExplorerItem>
+                        <ExplorerItem active={ false }>Product Search Form</ExplorerItem>
                     </ul>
                 </ExpandCollapseContent>
             </ExpandCollapse>

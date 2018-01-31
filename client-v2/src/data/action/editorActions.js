@@ -31,7 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+export const CLOSE = 'EDITOR/CLOSE';
 export const OPEN = 'EDITOR/OPEN';
+export const SET_ACTIVE = 'EDITOR/SET_ACTIVE';
+
+export function close(documentId) {
+    return {
+        type: CLOSE,
+        payload: documentId
+    };
+}
 
 export function open(contentType, documentId) {
     return {
@@ -42,8 +51,6 @@ export function open(contentType, documentId) {
         }
     };
 }
-
-export const SET_ACTIVE = 'EDITOR/SET_ACTIVE';
 
 export function setActive(documentId) {
     return {

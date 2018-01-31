@@ -44,20 +44,52 @@ export const TAB_CSS = css({
     backgroundColor: Colors.EDITOR_TAB_INACTIVE_BACKGROUND_DARK,
     color: Colors.EDITOR_TAB_INACTIVE_FOREGROUND_DARK,
     cursor: 'pointer',
-    padding: '4px 16px',
+    padding: '4px 8px',
     boxSizing: 'border-box',
+    whiteSpace: 'nowrap',
 
     '&.active-editor-tab': {
         backgroundColor: Colors.EDITOR_TAB_ACTIVE_BACKGROUND_DARK,
-        color: Colors.EDITOR_TAB_ACTIVE_FOREGROUND_DARK
+        color: Colors.EDITOR_TAB_ACTIVE_FOREGROUND_DARK,
+
+        '& > span.editor-tab-close': {
+            opacity: 1
+        }
     },
 
     '&:hover': {
-        color: Colors.EDITOR_TAB_HOVER_FOREGROUND_DARK
+        '& > span.editor-tab-close': {
+            opacity: 1
+        }
     },
 
     '& > span': {
         display: 'inline-block',
         height: 'auto'
+    },
+
+    '& > span.editor-tab-icon': {
+        display: 'inline-block',
+        width: '12px',
+        marginRight: '8px',
+
+        '&:after': {
+            content: 'JS',
+            color: Colors.YELLOW_1,
+            fontSize: '10px'
+        }
+    },
+
+    '& > span.editor-tab-close': {
+        display: 'inline-block',
+        width: '8px',
+        marginLeft: '8px',
+        opacity: 0,
+
+        '&:after': {
+            content: 'X',
+            color: Colors.GRAY_1,
+            fontSize: '12px'
+        }
     }
 });

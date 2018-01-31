@@ -66,8 +66,8 @@ export default props =>
             >
                 <ExpandCollapseContent>
                     <ul className={ LUIS_CSS }>
-                        <ExplorerItem>Pizza Order Model</ExplorerItem>
-                        <ExplorerItem>Shopping Model</ExplorerItem>
+                        <ExplorerItem active={ false }>Pizza Order Model</ExplorerItem>
+                        <ExplorerItem active={ false }>Shopping Model</ExplorerItem>
                     </ul>
                 </ExpandCollapseContent>
             </ExpandCollapse>

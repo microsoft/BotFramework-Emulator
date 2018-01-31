@@ -33,15 +33,28 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { css } from 'glamor';
 
-import { TAB_CSS } from './tabStyle';
+import * as EditorActions from '../../../data/action/editorActions';
+import GenericTab from './genericTab';
+
+export class EmulatorTab extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+
+        this.onCloseClick = this.onCloseClick.bind(this);
+    }
+
+    onCloseClick(e) {
+        e.stopPropagation();
+        this.props.dispatch(EditorActions.close(this.props.documentId));
+    }
+
+    render() {
+        return(<GenericTab active={ this.props.active } title={ this.props.title } onCloseClick={ this.onCloseClick } />);
+    }
+}
 
 export default connect((state, { documentId }) => ({
     title: "Emulator",
     active: state.editor.activeDocumentId === documentId
-}))(props => props.active ?
-        <div className={ TAB_CSS + ' active-editor-tab' }><span>{ props.title }</span></div>
-    :
-        <div className={ TAB_CSS }><span >{ props.title }</span></div>
-);
+}))(EmulatorTab);

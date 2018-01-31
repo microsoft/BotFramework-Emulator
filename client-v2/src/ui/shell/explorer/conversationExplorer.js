@@ -99,7 +99,7 @@ class ConversationExplorer extends React.Component {
                             <ul className={ CONVO_CSS }>
                             {
                                 Object.keys(this.props.conversations).map(conversationId =>
-                                    <ExplorerItem key={ conversationId }>
+                                    <ExplorerItem key={ conversationId } active={ this.props.activeDocumentId === conversationId }>
                                         { this.props.conversations[conversationId].name }
                                     </ExplorerItem>
                                 )
@@ -114,5 +114,6 @@ class ConversationExplorer extends React.Component {
 }
 
 export default connect(state => ({
+    activeDocumentId: state.editor.activeDocumentId,
     conversations: state.conversation.conversations
 }))(ConversationExplorer)
