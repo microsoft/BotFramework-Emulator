@@ -77,7 +77,6 @@
     "command-line-args": "4.0.7",
     "electron-debug": "1.1.0",
     "electron-localshortcut": "2.0.2",
-    "electron-proxy-agent": "1.0.2",
     "es6-shim": "0.35.2",
     "formidable": "1.0.17",
     "got": "7.1.0",

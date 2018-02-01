@@ -128,7 +128,6 @@ export class Conversation {
                 method: "POST",
                 body: activity,
                 json: true,
-                agent: emulator.proxyAgent,
                 strictSSL: false,
                 useElectronNet: true
             };
@@ -443,7 +442,6 @@ export class Conversation {
                 let options = {
                     url: speechSettings.tokenEndpoint + '?goodForInMinutes=' + duration,
                     method: 'GET',
-                    agent: emulator.proxyAgent,
                     strictSSL: false,
                     useElectronNet: true
                 };
@@ -532,7 +530,6 @@ export class Conversation {
                     atver: getSettings().framework.use10Tokens ? 1 : null
                 },
                 form: true,
-                agent: emulator.proxyAgent,
                 strictSSL: false,
                 useElectronNet: true
             };
