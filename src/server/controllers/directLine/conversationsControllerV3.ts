@@ -104,7 +104,7 @@ export class ConversationsControllerV3 {
             res.json(created ? HttpStatus.CREATED : HttpStatus.OK, {
                 conversationId: conversation.conversationId,
                 token: conversation.conversationId,
-                expires_in: Number.MAX_VALUE,
+                expires_in: (2^31)-1,
                 streamUrl: ''
             });
         } else {
@@ -122,7 +122,7 @@ export class ConversationsControllerV3 {
                 res.json(HttpStatus.OK, {
                     conversationId: conversation.conversationId,
                     token: conversation.conversationId,
-                    expires_in: Number.MAX_VALUE,
+                    expires_in: (2^31)-1,
                     streamUrl: ''
                 });
             } else {
