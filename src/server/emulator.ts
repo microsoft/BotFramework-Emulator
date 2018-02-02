@@ -50,7 +50,6 @@ interface IQueuedMessage {
 export class Emulator {
     framework = new BotFrameworkService();
     conversations = new ConversationManager();
-    proxyAgent: any;
     static queuedMessages: IQueuedMessage[] = [];
 
     constructor() {
