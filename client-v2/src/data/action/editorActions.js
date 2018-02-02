@@ -33,28 +33,55 @@
 
 export const CLOSE = 'EDITOR/CLOSE';
 export const OPEN = 'EDITOR/OPEN';
-export const SET_ACTIVE = 'EDITOR/SET_ACTIVE';
+export const SET_ACTIVE_TAB = 'EDITOR/SET_ACTIVE_TAB';
+export const SET_ACTIVE_EDITOR = 'EDITOR/SET_ACTIVE_EDITOR';
+export const SPLIT_TAB = 'EDITOR/SPLIT_TAB';
 
-export function close(documentId) {
+export function close(editorKey, documentId) {
     return {
         type: CLOSE,
-        payload: documentId
+        payload: {
+            editorKey,
+            documentId
+        }
     };
 }
 
-export function open(contentType, documentId) {
+export function open(editorKey, contentType, documentId) {
     return {
         type: OPEN,
         payload: {
+            editorKey,
             contentType,
             documentId
         }
     };
 }
 
-export function setActive(documentId) {
+export function setActiveTab(editorKey, documentId) {
     return {
-        type: SET_ACTIVE,
-        payload: documentId
+        type: SET_ACTIVE_TAB,
+        payload: {
+            editorKey,
+            documentId
+        }
+    };
+}
+
+export function setActiveEditor(editorKey) {
+    return {
+        type: SET_ACTIVE_EDITOR,
+        payload: editorKey
+    }
+}
+
+export function splitTab(contentType, documentId, sourceEditorKey) {
+    return {
+        type: SPLIT_TAB,
+        payload: {
+            contentType,
+            documentId,
+            sourceEditorKey
+        }
     };
 }

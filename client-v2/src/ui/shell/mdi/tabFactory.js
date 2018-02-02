@@ -41,11 +41,11 @@ import TestBedTab from './testBedTab';
 
 export default props =>
     props.document.contentType === constants.ContentType_Emulator ?
-        <EmulatorTab documentId={ props.document.documentId } />
+        <EmulatorTab documentId={ props.document.documentId } owningEditor={ props.owningEditor }/>
     : props.document.contentType === constants.ContentType_Card ?
-        <CardTab documentId={ props.document.documentId } />
+        <CardTab documentId={ props.document.documentId } owningEditor={ props.owningEditor }/>
     : props.document.contentType === constants.ContentType_TestBed ?
-        <TestBedTab documentId={ props.document.documentId } />
+        <TestBedTab documentId={ props.document.documentId } owningEditor={ props.owningEditor }/>
     : props.document.contentType === constants.ContentType_Conversation ?
-        <ConversationTab documentId={ props.document.documentId } />
+        <ConversationTab documentId={ props.document.documentId } owningEditor={ props.owningEditor }/>
     : false

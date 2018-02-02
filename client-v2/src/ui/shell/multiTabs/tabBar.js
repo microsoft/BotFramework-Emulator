@@ -34,48 +34,110 @@
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 
 import TabBarTab from './tabBarTab';
 import * as Colors from '../../styles/colors';
+import * as EditorActions from '../../../data/action/editorActions';
 
 const CSS = css({
-    backgroundColor: Colors.PANEL_BACKGROUND_DARK,
-    boxShadow: '0px 2px 2px 0px rgba(0,0,0,0.2)',
     display: 'flex',
-    minHeight: '30px',
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0,
-    zIndex: 1, // So that the box-shadow will fall onto the document area (sibling div)
-    overflowX: 'auto',
+    backgroundColor: Colors.EDITOR_TAB_BACKGROUND_DARK,
+    boxShadow: '0px 2px 2px 0px rgba(0,0,0,0.2)',
+    minHeight: '32px',
 
-    '&::-webkit-scrollbar': {
-        height: '2px'
+    '& > ul': {
+        display: 'flex',
+        backgroundColor: Colors.EDITOR_TAB_BACKGROUND_DARK,
+        listStyleType: 'none',
+        margin: 0,
+        padding: 0,
+        zIndex: 1, // So that the box-shadow will fall onto the document area (sibling div)
+        overflowX: 'auto',
+
+        '&::-webkit-scrollbar': {
+            height: '2px'
+        },
+
+        '&::-webkit-scrollbar-thumb': {
+            background: Colors.SCROLLBAR_THUMB_BACKGROUND_DARK
+        },
+
+        '&::-webkit-scrollbar-track': {
+            background: Colors.SCROLLBAR_TRACK_BACKGROUND_DARK
+        }
     },
 
-    '&::-webkit-scrollbar-thumb': {
-        background: Colors.SCROLLBAR_THUMB_BACKGROUND_DARK
-    },
+    '& > div.tab-bar-widgets': {
+        display: 'flex',
+        alignItems: 'center',
+        width: 'auto',
+        marginLeft: 'auto',
+        flexShrink: 0,
 
-    '&::-webkit-scrollbar-track': {
-        background: Colors.SCROLLBAR_TRACK_BACKGROUND_DARK
+        '& > span': {
+            display: 'inline-block',
+            cursor: 'pointer',
+            height: '16px',
+            marginRight: '16px',
+            fontSize: '12px',
+
+            '&:first-of-type': {
+                marginLeft: '16px'
+            }
+        },
+
+        '& > .split-widget': {
+            '&:after': {
+                content: '[ | ]',
+                color: Colors.EDITOR_TAB_WIDGET_ENABLED_DARK
+            }
+        }
     }
 });
 
-export default class TabBar extends React.Component {
+export class TabBar extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+
+        this.onSplitClick = this.onSplitClick.bind(this);
+    }
+
+    onSplitClick() {
+        const owningEditor = this.props.editors[this.props.owningEditor];
+        const docIdToSplit = owningEditor.activeDocumentId;
+        const docToSplit = owningEditor.documents.find(doc => doc.documentId === docIdToSplit);
+        this.props.dispatch(EditorActions.splitTab(docToSplit.contentType, docToSplit.documentId, this.props.owningEditor));
+    }
+
     render() {
         return (
-            <ul className={ CSS }>
-                {
-                    React.Children.map(this.props.children, child =>
-                        <li>{ child }</li>
-                    )
-                }
-            </ul>
+            <div className={ CSS }>
+                <ul>
+                    {
+                        React.Children.map(this.props.children, child =>
+                            <li>{ child }</li>
+                        )
+                    }
+                </ul>
+                <div className="tab-bar-widgets">
+                    { this.props.splitEnabled ? <span className="split-widget" onClick={ this.onSplitClick }></span> : null }
+                </div>
+            </div>
         );
     }
 }
 
+export default connect((state, { owningEditor }) => ({
+    activeEditor: state.editor.activeEditor,
+    editors: state.editor.editors,
+    splitEnabled: state.editor.editors[owningEditor].documents.length > 1
+}))(TabBar);
+
 TabBar.propTypes = {
-    value: PropTypes.number
+    activeEditor: PropTypes.string,
+    editors: PropTypes.object,
+    value: PropTypes.number,
+    owningEditor: PropTypes.string,
+    splitEnabled: PropTypes.bool
 };

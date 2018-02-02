@@ -62,7 +62,7 @@ export default class MultiTabs extends React.Component {
     render() {
         return (
             <div className={ CSS }>
-                <TabBar>
+                <TabBar owningEditor={ this.props.owningEditor }>
                     {
                         React.Children.map(this.props.children, (tabbedDocument, index) =>
                             <TabBarTab onClick={ this.handleTabClick.bind(this, index) }>
@@ -79,5 +79,6 @@ export default class MultiTabs extends React.Component {
 
 MultiTabs.propTypes = {
     onChange: PropTypes.func,
-    value: PropTypes.number
+    value: PropTypes.number,
+    owningEditor: PropTypes.string
 };

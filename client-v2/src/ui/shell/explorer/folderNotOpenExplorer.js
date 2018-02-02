@@ -75,7 +75,7 @@ class FolderNotOpenExplorer extends React.Component {
                     >
                         <ExpandCollapseContent>
                             <div className="folder-empty-state">
-                                <p><div>You have not yet opened a folder.</div></p>
+                                <p><span>You have not yet opened a folder.</span></p>
                                 <p><button onClick={ this.handleOpenFolderClick }>Open Folder</button></p>
                             </div>
                         </ExpandCollapseContent>

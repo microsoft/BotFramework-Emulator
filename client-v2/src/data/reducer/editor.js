@@ -35,65 +35,145 @@ import * as EditorActions from '../action/editorActions';
 import * as constants from '../../constants';
 
 const DEFAULT_STATE = {
-    activeDocumentId: 'emulator:1',
-    documents: [{
-        contentType: constants.ContentType_Emulator,
-        documentId: 'emulator:1'
-    }, {
-        contentType: constants.ContentType_TestBed,
-        documentId: 'testbed:1'
-    }],
-    tabStack: ['emulator:1', 'testbed:1']
+    activeEditor: 'primary',
+    editors: {
+        'primary': {
+            activeDocumentId: 'emulator:1',
+            documents: [{
+                contentType: constants.ContentType_Emulator,
+                documentId: 'emulator:1'
+            }, {
+                contentType: constants.ContentType_TestBed,
+                documentId: 'testbed:1'
+            }],
+            tabStack: ['emulator:1', 'testbed:1'],
+        },
+        'secondary': null
+    }
 };
 
 export default function documents(state = DEFAULT_STATE, action) {
+    const selectedEditor = action.payload ? action.payload.editorKey : null;
+
     switch (action.type) {
         case EditorActions.CLOSE:
             // TODO: Add logic to check if document has been saved
             // & prompt user to save document if necessary
-            var newTabStack = state.tabStack.filter(tabId => tabId !== action.payload);
-            let newDocumentList = state.documents.filter(doc => doc.documentId !== action.payload);
+
+            var newTabStack = state.editors[selectedEditor].tabStack.filter(tabId => tabId !== action.payload.documentId);
+            let newDocumentList = state.editors[selectedEditor].documents.filter(doc => doc.documentId !== action.payload.documentId);
             let newActiveDocumentId = newTabStack[0] || null;
 
-            state = {
-                ...state,
-                documents: newDocumentList,
-                activeDocumentId: newActiveDocumentId,
-                tabStack: newTabStack
-            };
-            break;
+            state = { ...state };
 
-        case EditorActions.OPEN:
-            var newTabStack = state.tabStack.filter(tabId => tabId !== action.payload.documentId);
-            newTabStack.unshift(action.payload.documentId);
-
-            if (!documentExists(action.payload.documentId, state.documents)) {
-                state = {
-                    ...state,
-                    activeDocumentId: action.payload.documentId,
-                    documents: [
-                        ...state.documents,
-                        action.payload
-                    ],
-                    tabStack: newTabStack
-                };
+            // close empty editor if there is another one able to take its place
+            const newPrimaryEditorKey = selectedEditor === 'primary' ? 'secondary' : 'primary';
+            if (!newDocumentList.length && state.editors[newPrimaryEditorKey]) {
+                // if the editor being closed is the primary editor, have the secondary editor become the primary
+                const tmp = state.editors[newPrimaryEditorKey];
+                state.editors[newPrimaryEditorKey] = null;
+                state.editors[selectedEditor] = null;
+                state.editors['primary'] = tmp;
+                state.activeEditor = 'primary';
             } else {
-                state = {
-                    ...state,
-                    activeDocumentId: action.payload.documentId,
+                state.editors[selectedEditor] = {
+                    ...state.editors[selectedEditor],
+                    documents: newDocumentList,
+                    activeDocumentId: newActiveDocumentId,
                     tabStack: newTabStack
                 };
             }
             break;
 
-        case EditorActions.SET_ACTIVE:
-            var newTabStack = state.tabStack.filter(tabId => tabId !== action.payload);
-            newTabStack.unshift(action.payload);
+        case EditorActions.OPEN:
+            var newTabStack = state.editors[selectedEditor].tabStack.filter(tabId => tabId !== action.payload.documentId);
+            newTabStack.unshift(action.payload.documentId);
+
+            if (!documentExists(action.payload.documentId, state.editors[selectedEditor].documents)) {
+                state = {
+                    ...state,
+                    activeEditor: selectedEditor,
+                    editors: {
+                        ...state.editors,
+                        [selectedEditor]: {
+                            ...state.editors[selectedEditor],
+                            activeDocumentId: action.payload.documentId,
+                            documents: [
+                                ...state.editors[selectedEditor].documents,
+                                {
+                                    documentId: action.payload.documentId,
+                                    contentType: action.payload.contentType
+                                }
+                            ],
+                            tabStack: newTabStack
+                        }
+                    }
+                };
+            } else {
+                state = {
+                    ...state,
+                    activeEditor: selectedEditor,
+                    editors: {
+                        ...state.editors,
+                        [selectedEditor]: {
+                            ...state.editors[selectedEditor],
+                            activeDocumentId: action.payload.documentId,
+                            tabStack: newTabStack
+                        }
+                    }
+                };
+            }
+            break;
+
+        case EditorActions.SET_ACTIVE_TAB:
+            var newTabStack = state.editors[selectedEditor].tabStack.filter(tabId => tabId !== action.payload.documentId);
+            newTabStack.unshift(action.payload.documentId);
 
             state = {
                 ...state,
-                activeDocumentId: action.payload,
-                tabStack: newTabStack
+                activeEditor: selectedEditor,
+                editors: {
+                    ...state.editors,
+                    [selectedEditor]: {
+                        ...state.editors[selectedEditor],
+                        activeDocumentId: action.payload.documentId,
+                        tabStack: newTabStack
+                    }
+                }
+            };
+            break;
+
+        case EditorActions.SET_ACTIVE_EDITOR:
+            state = {
+                ...state,
+                activeEditor: action.payload
+            };
+            break;
+
+        case EditorActions.SPLIT_TAB:
+            // remove tab from source editor
+            let sourceEditor = state.editors[action.payload.sourceEditorKey];
+            sourceEditor.documents = sourceEditor.documents.filter(doc => doc.documentId !== action.payload.documentId);
+            sourceEditor.tabStack = sourceEditor.tabStack.filter(tabId => tabId !== action.payload.documentId);
+            sourceEditor.activeDocumentId = sourceEditor.tabStack[0] || null;
+
+            // check for destination editor or create it if non-existent
+            const destinationEditorKey = action.payload.sourceEditorKey === 'primary' ? 'secondary' : 'primary';
+            let destinationEditor = state.editors[destinationEditorKey] || getNewEditor();
+            destinationEditor.activeDocumentId = action.payload.documentId;
+            destinationEditor.documents.push({
+                documentId: action.payload.documentId,
+                contentType: action.payload.contentType
+            });
+            destinationEditor.tabStack.unshift(action.payload.documentId);
+
+            state = {
+                ...state,
+                activeEditor: destinationEditorKey,
+                editors: {
+                    [action.payload.sourceEditorKey]: sourceEditor,
+                    [destinationEditorKey]: destinationEditor
+                }
             };
             break;
 
@@ -105,4 +185,12 @@ export default function documents(state = DEFAULT_STATE, action) {
 
 function documentExists(id, documents = []) {
     return documents.some(doc => doc.documentId === id);
+}
+
+function getNewEditor() {
+    return {
+        activeDocumentId: null,
+        documents: [],
+        tabStack: []
+    };
 }

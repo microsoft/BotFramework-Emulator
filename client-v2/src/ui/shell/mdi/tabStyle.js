@@ -40,7 +40,7 @@ export const TAB_CSS = css({
     alignItems: 'center',
     height: '100%',
     border: 'none',
-    borderRight: `1px solid ${Colors.EDITOR_TAB_BORDER}`,
+    borderRight: `1px solid ${Colors.EDITOR_TAB_BORDER_DARK}`,
     backgroundColor: Colors.EDITOR_TAB_INACTIVE_BACKGROUND_DARK,
     color: Colors.EDITOR_TAB_INACTIVE_FOREGROUND_DARK,
     cursor: 'pointer',

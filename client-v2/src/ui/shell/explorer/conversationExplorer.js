@@ -79,6 +79,7 @@ class ConversationExplorer extends React.Component {
 
         // TODO: Turn this into a saga, the conversation ID maybe generated from server asynchronously
         this.props.dispatch(EditorActions.open(
+            this.props.activeEditor,
             constants.ContentType_Conversation,
             createAction.payload.conversationId
         ));
@@ -114,6 +115,7 @@ class ConversationExplorer extends React.Component {
 }
 
 export default connect(state => ({
-    activeDocumentId: state.editor.activeDocumentId,
+    activeEditor: state.editor.activeEditor,
+    activeDocumentId: state.editor.editors[state.editor.activeEditor].activeDocumentId,
     conversations: state.conversation.conversations
 }))(ConversationExplorer)

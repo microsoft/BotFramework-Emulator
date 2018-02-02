@@ -148,7 +148,26 @@ export default class SplitterV2 extends React.Component {
     }
 
     componentDidMount() {
-        // calculate initial pane layout
+        this.calculateInitialPaneSizes();
+    }
+
+    componentWillUnmount() {
+        // remove event listeners
+        document.removeEventListener('mousemove', this.onMouseMove);
+        document.removeEventListener('mouseup', this.onMouseUp);
+        document.removeEventListener('splitterResize', this.checkForContainerResize);
+        window.removeEventListener('resize', this.checkForContainerResize);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        // if the number of children changes, recalculate pane sizes
+        if (nextProps.children.length !== this.props.children.length) {
+            this.props.children.length = nextProps.children.length;
+            this.calculateInitialPaneSizes();
+        }
+    }
+
+    calculateInitialPaneSizes() {
         const currentPaneSizes = this.state.paneSizes;
         this.containerSize = this.getContainerSize();
 
@@ -169,14 +188,6 @@ export default class SplitterV2 extends React.Component {
             }
         }
         this.setState(({ paneSizes: currentPaneSizes }));
-    }
-
-    componentWillUnmount() {
-        // remove event listeners
-        document.removeEventListener('mousemove', this.onMouseMove);
-        document.removeEventListener('mouseup', this.onMouseUp);
-        document.removeEventListener('splitterResize', this.checkForContainerResize);
-        window.removeEventListener('resize', this.checkForContainerResize);
     }
 
     getContainerSize() {

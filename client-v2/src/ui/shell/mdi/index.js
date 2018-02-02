@@ -33,6 +33,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 import * as constants from '../../../constants';
 import * as EditorActions from '../../../data/action/editorActions';
@@ -49,7 +50,7 @@ class MDI extends React.Component {
     }
 
     handleTabChange(tabValue) {
-        this.props.dispatch(EditorActions.setActive(this.props.documents[tabValue].documentId));
+        this.props.dispatch(EditorActions.setActiveTab(this.props.owningEditor, this.props.documents[tabValue].documentId));
     }
 
     render() {
@@ -59,12 +60,13 @@ class MDI extends React.Component {
             <MultiTabs
                 onChange={ this.handleTabChange }
                 value={ ~activeIndex ? activeIndex : 0 }
+                owningEditor={ this.props.owningEditor }
             >
                 {
                     this.props.documents.map(document =>
                         <TabbedDocument key={ document.documentId }>
                             <TabbedDocumentTab>
-                                <TabFactory document={ document } />
+                                <TabFactory document={ document } owningEditor={ this.props.owningEditor } />
                             </TabbedDocumentTab>
                             <TabbedDocumentContent>
                                 <EditorFactory document={ document } />
@@ -77,7 +79,20 @@ class MDI extends React.Component {
     }
 }
 
-export default connect(state => ({
-    activeDocumentId: state.editor.activeDocumentId,
-    documents: state.editor.documents
+export default connect((state, { owningEditor }) => ({
+    activeDocumentId: state.editor.editors[owningEditor].activeDocumentId,
+    documents: state.editor.editors[owningEditor].documents,
+    activeEditor: state.editor.activeEditor
 }))(MDI)
+
+MDI.propTypes = {
+    activeDocumentId: PropTypes.string,
+    documents: PropTypes.arrayOf(
+        PropTypes.shape({
+            documentId: PropTypes.string,
+            contentType: PropTypes.string
+        })
+    ),
+    activeEditor: PropTypes.string,
+    owningEditor: PropTypes.string
+};

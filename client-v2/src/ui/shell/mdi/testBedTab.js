@@ -46,7 +46,7 @@ export class TestBedTab extends React.Component {
 
     onCloseClick(e) {
         e.stopPropagation();
-        this.props.dispatch(EditorActions.close(this.props.documentId));
+        this.props.dispatch(EditorActions.close(this.props.owningEditor, this.props.documentId));
     }
 
     render() {
@@ -54,7 +54,7 @@ export class TestBedTab extends React.Component {
     }
 }
 
-export default connect((state, { documentId }) => ({
-    active: state.editor.activeDocumentId === documentId,
+export default connect((state, { documentId, owningEditor }) => ({
+    active: owningEditor === state.editor.activeEditor && state.editor.editors[owningEditor].activeDocumentId === documentId,
     title: "Testbed"
 }))(TestBedTab);

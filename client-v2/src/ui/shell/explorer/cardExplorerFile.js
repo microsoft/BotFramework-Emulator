@@ -49,7 +49,7 @@ class CardExplorerFile extends React.Component {
     }
 
     handleFileClick() {
-        this.props.dispatch(EditorActions.open(ContentType_Card, this.props.cardId));
+        this.props.dispatch(EditorActions.open(this.props.activeEditor, ContentType_Card, this.props.cardId));
     }
 
     render() {
@@ -64,5 +64,6 @@ CardExplorerFile.propTypes = {
 
 export default connect((state, { cardId }) => ({
     fileName: state.card.cards[cardId].title,
-    active: state.editor.activeDocumentId === cardId
+    active: state.editor.editors[state.editor.activeEditor].activeDocumentId === cardId,
+    activeEditor: state.editor.activeEditor
 }))(CardExplorerFile);

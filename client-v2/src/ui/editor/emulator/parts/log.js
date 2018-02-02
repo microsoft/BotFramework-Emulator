@@ -38,6 +38,7 @@ import * as React from 'react';
 
 import * as Colors from '../../../../ui/styles/colors';
 import * as Fonts from '../../../../ui/styles/fonts';
+import { uniqueId } from '../../../../utils';
 
 const CSS = css({
     height: '100%',
@@ -64,7 +65,7 @@ class Log extends React.Component {
             <div className={ CSS }>
             {
                 this.props.entries.map(entry =>
-                    <div className="entry">
+                    <div className="entry" key={ entry + uniqueId() }>
                         <span className="source">
                             { '[' + entry.source + ']' }
                         </span>

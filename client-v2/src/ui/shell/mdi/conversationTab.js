@@ -46,7 +46,7 @@ export class ConversationTab extends React.Component {
 
     onCloseClick(e) {
         e.stopPropagation();
-        this.props.dispatch(EditorActions.close(this.props.documentId));
+        this.props.dispatch(EditorActions.close(this.props.owningEditor, this.props.documentId));
     }
 
     render() {
@@ -54,7 +54,7 @@ export class ConversationTab extends React.Component {
     }
 }
 
-export default connect((state, { documentId }) => ({
+export default connect((state, { documentId, owningEditor }) => ({
     title: state.conversation.conversations[documentId].name,
-    active: state.editor.activeDocumentId === documentId
+    active: owningEditor === state.editor.activeEditor && state.editor.editors[owningEditor].activeDocumentId === documentId
 }))(ConversationTab);

@@ -34,6 +34,7 @@
 import { connect } from 'react-redux';
 import { css } from 'glamor';
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import * as Colors from '../styles/colors';
 import ExplorerBar from './explorer';
@@ -78,9 +79,18 @@ const CSS = css({
         display: 'flex',
         flex: 1,
     },
+
+    '& .mdi-wrapper': {
+        height: '100%',
+        width: '100%'
+    },
+
+    '& .secondary-mdi': {
+        borderLeft: `1px solid ${Colors.GRAY_2}`
+    }
 });
 
-export default class Main extends React.Component {
+export class Main extends React.Component {
     constructor(props, context) {
         super(props, context);
 
@@ -96,13 +106,23 @@ export default class Main extends React.Component {
     }
 
     render() {
+        const primaryEditor = this.props.primaryEditor &&
+            <div className="mdi-wrapper" key={ 'primaryEditor' } ><MDI owningEditor={ 'primary' } /></div>;
+
+        const secondaryEditor = this.props.secondaryEditor && (this.props.secondaryEditor.documents.length) ?
+            <div className="mdi-wrapper secondary-mdi" key={ 'secondaryEditor' } ><MDI owningEditor={ 'secondary' } /></div> : null;
+
         return (
             <div className={ CSS }>
-                <NavBar />
+                <NavBar/>
                 <div className="workbench">
                     <Splitter orientation={ 'vertical' } initialSizeIndex={ 0 } initialSize={ 300 } primaryPaneIndex={ 0 } minSizes={ [200, null] }>
                         <ExplorerBar />
-                        <MDI />
+                        <Splitter orientation={ 'vertical' }>
+                        {
+                            [primaryEditor, secondaryEditor].filter(elem => !!elem)
+                        }
+                        </Splitter>
                     </Splitter>
                 </div>
                 <TabManager disabled={ false } />
@@ -110,3 +130,13 @@ export default class Main extends React.Component {
         );
     }
 }
+
+export default connect((state, ownProps) => ({
+    primaryEditor: state.editor.editors['primary'],
+    secondaryEditor: state.editor.editors['secondary']
+}))(Main);
+
+Main.propTypes = {
+    primaryEditor: PropTypes.object,
+    secondaryEditor: PropTypes.object
+};
