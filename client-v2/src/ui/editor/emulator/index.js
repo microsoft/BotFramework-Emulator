@@ -41,7 +41,8 @@ import LogPanel from './logPanel';
 import Splitter from '../../layout/splitter-v2';
 
 const CSS = css({
-    flex: 1
+    flex: 1,
+    height: '100%'
 });
 
 export default class Emulator extends React.Component {

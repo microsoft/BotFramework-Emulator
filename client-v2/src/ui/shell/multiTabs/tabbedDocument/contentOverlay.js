@@ -33,30 +33,38 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { css } from 'glamor';
 import PropTypes from 'prop-types';
 
-import { TAB_CSS } from './tabStyle';
-import * as EditorActions from './../../../data/action/editorActions';
+import { OVERLAY_CSS } from './overlayStyle';
+import * as EditorActions from '../../../../data/action/editorActions';
 
-export class GenericTab extends React.Component {
+const CSS = css({
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0
+}, OVERLAY_CSS);
+
+export class ContentOverlay extends React.Component {
     constructor(props, context) {
         super(props, context);
 
-        this.onDragStart = this.onDragStart.bind(this);
-        this.onDragOver = this.onDragOver.bind(this);
         this.onDragEnter = this.onDragEnter.bind(this);
         this.onDragLeave = this.onDragLeave.bind(this);
+        this.onDragOver = this.onDragOver.bind(this);
         this.onDrop = this.onDrop.bind(this);
 
         this.state = {};
     }
 
-    onDragStart(e) {
-        const dragData = {
-            tabId: this.props.documentId,
-            editorKey: this.props.owningEditor
-        };
-        e.dataTransfer.setData('application/json', JSON.stringify(dragData));
+    onDragEnter(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    onDragLeave(e) {
+        this.setState(({ draggedOver: false }));
     }
 
     onDragOver(e) {
@@ -65,20 +73,11 @@ export class GenericTab extends React.Component {
         this.setState(({ draggedOver: true }));
     }
 
-    onDragEnter(e) {
-        e.preventDefault();
-    }
-
-    onDragLeave(e) {
-        this.setState(({ draggedOver: false }));
-    }
-
     onDrop(e) {
         const tabData = JSON.parse(e.dataTransfer.getData('application/json'));
-
-        // only swap the tabs if they are different
-        if (tabData.tabId !== this.props.documentId) {
-            this.props.dispatch(EditorActions.swapTabs(tabData.editorKey, this.props.owningEditor, tabData.tabId, this.props.documentId));
+        if (tabData.editorKey !== this.props.owningEditor) {
+            const docToSplit = this.props.editors[tabData.editorKey].documents.find(doc => doc.documentId === tabData.tabId);
+            this.props.dispatch(EditorActions.splitTab(docToSplit.contentType, tabData.tabId, tabData.editorKey));
         }
 
         this.setState(({ draggedOver: false }));
@@ -87,28 +86,22 @@ export class GenericTab extends React.Component {
     }
 
     render() {
-        let tabClassName = '';
-        if (this.props.active) {
-            tabClassName += ' active-editor-tab';
-        } else if (this.state.draggedOver) {
-            tabClassName += ' dragged-over-editor-tab';
-        }
+        const overlayClassName = this.state.draggedOver ? ' dragged-over-overlay' : '';
 
         return (
-            <div className={ TAB_CSS + tabClassName } draggable
-                onDragOver={ this.onDragOver } onDragEnter={ this.onDragEnter } onDragStart={ this.onDragStart }
-                onDrop={ this.onDrop } onDragLeave={ this.onDragLeave } >
-                <span className="editor-tab-icon"></span>
-                <span>{ this.props.title }</span>
-                <span className="editor-tab-close" onClick={ this.props.onCloseClick }></span>
-            </div>
+            <div className={ CSS + overlayClassName }
+                onDragEnterCapture={ this.onDragEnter } onDragLeave={ this.onDragLeave }
+                onDragOverCapture={ this.onDragOver } onDropCapture={ this.onDrop } />
         );
     }
 }
 
-export default connect((state, ownProps) => ({}))(GenericTab);
+export default connect((state, ownProps) => ({
+    editors: state.editor.editors
+}))(ContentOverlay);
 
-GenericTab.propTypes = {
+ContentOverlay.propTypes = {
+    editors: PropTypes.object,
     owningEditor: PropTypes.oneOf([
         'primary',
         'secondary'

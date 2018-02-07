@@ -68,7 +68,7 @@ class MDI extends React.Component {
                             <TabbedDocumentTab>
                                 <TabFactory document={ document } owningEditor={ this.props.owningEditor } />
                             </TabbedDocumentTab>
-                            <TabbedDocumentContent>
+                            <TabbedDocumentContent owningEditor={ this.props.owningEditor }>
                                 <EditorFactory document={ document } />
                             </TabbedDocumentContent>
                         </TabbedDocument>

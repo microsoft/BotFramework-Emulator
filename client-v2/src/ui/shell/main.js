@@ -109,7 +109,7 @@ export class Main extends React.Component {
         const primaryEditor = this.props.primaryEditor &&
             <div className="mdi-wrapper" key={ 'primaryEditor' } ><MDI owningEditor={ 'primary' } /></div>;
 
-        const secondaryEditor = this.props.secondaryEditor && (this.props.secondaryEditor.documents.length) ?
+        const secondaryEditor = this.props.secondaryEditor && this.props.secondaryEditor.documents.length ?
             <div className="mdi-wrapper secondary-mdi" key={ 'secondaryEditor' } ><MDI owningEditor={ 'secondary' } /></div> : null;
 
         return (

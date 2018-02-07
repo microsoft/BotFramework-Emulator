@@ -46,6 +46,10 @@ const CSS = css({
     boxShadow: '0px 2px 2px 0px rgba(0,0,0,0.2)',
     minHeight: '32px',
 
+    '&.dragged-over-tab-bar': {
+        backgroundColor: Colors.EDITOR_TAB_DRAGGED_OVER_BACKGROUND_DARK
+    },
+
     '& > ul': {
         display: 'flex',
         backgroundColor: Colors.EDITOR_TAB_BACKGROUND_DARK,
@@ -101,6 +105,13 @@ export class TabBar extends React.Component {
         super(props, context);
 
         this.onSplitClick = this.onSplitClick.bind(this);
+
+        this.onDragEnter = this.onDragEnter.bind(this);
+        this.onDragOver = this.onDragOver.bind(this);
+        this.onDragLeave = this.onDragLeave.bind(this);
+        this.onDrop = this.onDrop.bind(this);
+
+        this.state = {};
     }
 
     onSplitClick() {
@@ -110,9 +121,36 @@ export class TabBar extends React.Component {
         this.props.dispatch(EditorActions.splitTab(docToSplit.contentType, docToSplit.documentId, this.props.owningEditor));
     }
 
+    onDragEnter(e) {
+        e.preventDefault();
+    }
+
+    onDragOver(e) {
+        this.setState(({ draggedOver: true }));
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    onDragLeave(e) {
+        this.setState(({ draggedOver: false }));
+    }
+
+    onDrop(e) {
+        const tabData = JSON.parse(e.dataTransfer.getData('application/json'));
+        const tabId = tabData.tabId;
+        this.props.dispatch(EditorActions.appendTab(tabData.editorKey, this.props.owningEditor, tabId));
+
+        this.setState(({ draggedOver: false }));
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
     render() {
+        const tabBarClassName = this.state.draggedOver ? ' dragged-over-tab-bar' : '';
+
         return (
-            <div className={ CSS }>
+            <div className={ CSS + tabBarClassName } onDragEnter={ this.onDragEnter } onDragOver={ this.onDragOver }
+                onDragLeave={ this.onDragLeave } onDrop={ this.onDrop } >
                 <ul>
                     {
                         React.Children.map(this.props.children, child =>
@@ -135,9 +173,15 @@ export default connect((state, { owningEditor }) => ({
 }))(TabBar);
 
 TabBar.propTypes = {
-    activeEditor: PropTypes.string,
+    activeEditor: PropTypes.oneOf([
+        'primary',
+        'secondary'
+    ]),
     editors: PropTypes.object,
     value: PropTypes.number,
-    owningEditor: PropTypes.string,
+    owningEditor: PropTypes.oneOf([
+        'primary',
+        'secondary'
+    ]),
     splitEnabled: PropTypes.bool
 };

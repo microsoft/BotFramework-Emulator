@@ -33,31 +33,62 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { css } from 'glamor';
 
-import * as EditorActions from '../../../data/action/editorActions';
-import GenericTab from './genericTab';
+import { OVERLAY_CSS } from './overlayStyle';
 
-export class EmulatorTab extends React.Component {
+const CSS = css({
+    top: 0,
+    left: 0,
+    right: '80%',
+    bottom: 0
+}, OVERLAY_CSS);
+
+export class ContentOverlay extends React.Component {
     constructor(props, context) {
         super(props, context);
 
-        this.onCloseClick = this.onCloseClick.bind(this);
+        this.onDragEnter = this.onDragEnter.bind(this);
+        this.onDragLeave = this.onDragLeave.bind(this);
+        this.onDragOver = this.onDragOver.bind(this);
+        this.onDrop = this.onDrop.bind(this);
+
+        this.state = {};
     }
 
-    onCloseClick(e) {
+    onDragEnter(e) {
+        e.preventDefault();
         e.stopPropagation();
-        this.props.dispatch(EditorActions.close(this.props.owningEditor, this.props.documentId));
+    }
+
+    onDragLeave(e) {
+        this.setState(({ draggedOver: false }));
+    }
+
+    onDragOver(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.setState(({ draggedOver: true }));
+    }
+
+    onDrop(e) {
+        this.setState(({ draggedOver: false }));
+        e.preventDefault();
+        e.stopPropagation();
     }
 
     render() {
-        return(
-            <GenericTab active={ this.props.active } title={ this.props.title } onCloseClick={ this.onCloseClick }
-                documentId={ this.props.documentId } owningEditor={ this.props.owningEditor } />
+        const overlayClassName = this.state.draggedOver ? ' dragged-over-overlay' : '';
+
+        return (
+            <div className={ CSS + overlayClassName }
+                onDragEnterCapture={ this.onDragEnter } onDragLeave={ this.onDragLeave }
+                onDragOverCapture={ this.onDragOver } onDropCapture={ this.onDrop } />
         );
     }
 }
 
-export default connect((state, { documentId, owningEditor }) => ({
-    title: "Emulator",
-    active: owningEditor === state.editor.activeEditor && state.editor.editors[owningEditor].activeDocumentId === documentId
-}))(EmulatorTab);
+export default connect((state, ownProps) => ({
+    primaryEditor: state.editor.editors['primary'],
+    secondaryEditor: state.editor.editors['secondary']
+}))(ContentOverlay);

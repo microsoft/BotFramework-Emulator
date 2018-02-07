@@ -50,7 +50,10 @@ export class TestBedTab extends React.Component {
     }
 
     render() {
-        return(<GenericTab active={ this.props.active } title={ this.props.title } onCloseClick={ this.onCloseClick } />);
+        return(
+            <GenericTab active={ this.props.active } title={ this.props.title } onCloseClick={ this.onCloseClick }
+                documentId={ this.props.documentId } owningEditor={ this.props.owningEditor } />
+        );
     }
 }
 

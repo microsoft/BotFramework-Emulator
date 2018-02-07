@@ -32,24 +32,15 @@
 //
 
 import { css } from 'glamor';
-import PropTypes from 'prop-types';
-import React from 'react';
 
-const CSS = css({
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column'
-});
+import * as Colors from '../../../styles/colors';
 
-export default class TabbedDocument extends React.Component {
-    render() {
-        return false;
+export const OVERLAY_CSS = css({
+    position: 'absolute',
+    transition: 'background-color 0.1s ease-in-out',
+    backgroundColor: Colors.EDITOR_DRAG_OVERLAY_TRANSPARENT_DARK,
+
+    '&.dragged-over-overlay': {
+        backgroundColor: Colors.EDITOR_DRAG_OVERLAY_VISIBLE_DARK
     }
-}
-
-TabbedDocument.propTypes = {
-    title: PropTypes.string
-};
-
-export const Tab = props => props.children;
-export const Content = props => props.children;
+});

@@ -40,7 +40,8 @@ import EditorPanel from './editorPanel';
 import PropertiesPanel from './propertiesPanel';
 
 const CSS = css({
-    flex: 1
+    flex: 1,
+    height: '100%'
 });
 
 export default class ConversationEditor extends React.Component {

@@ -31,11 +31,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+export const APPEND_TAB = 'EDITOR/APPEND_TAB';
 export const CLOSE = 'EDITOR/CLOSE';
 export const OPEN = 'EDITOR/OPEN';
 export const SET_ACTIVE_TAB = 'EDITOR/SET_ACTIVE_TAB';
 export const SET_ACTIVE_EDITOR = 'EDITOR/SET_ACTIVE_EDITOR';
 export const SPLIT_TAB = 'EDITOR/SPLIT_TAB';
+export const SWAP_TABS = 'EDITOR/SWAP_TABS';
+
+export function appendTab(srcEditorKey, destEditorKey, documentId) {
+    return {
+        type: APPEND_TAB,
+        payload: {
+            srcEditorKey,
+            destEditorKey,
+            documentId
+        }
+    };
+}
 
 export function close(editorKey, documentId) {
     return {
@@ -75,13 +88,25 @@ export function setActiveEditor(editorKey) {
     }
 }
 
-export function splitTab(contentType, documentId, sourceEditorKey) {
+export function splitTab(contentType, documentId, srcEditorKey) {
     return {
         type: SPLIT_TAB,
         payload: {
             contentType,
             documentId,
-            sourceEditorKey
+            srcEditorKey
+        }
+    };
+}
+
+export function swapTabs(srcEditorKey, destEditorKey, srcTabId, destTabId) {
+    return {
+        type: SWAP_TABS,
+        payload: {
+            srcEditorKey,
+            destEditorKey,
+            srcTabId,
+            destTabId
         }
     };
 }

@@ -31,33 +31,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { css } from 'glamor';
+import PropTypes from 'prop-types';
 import React from 'react';
-import { connect } from 'react-redux';
 
-import * as EditorActions from '../../../data/action/editorActions';
-import GenericTab from './genericTab';
+import TabbedDocumentContentWrapper from './contentWrapper';
 
-export class EmulatorTab extends React.Component {
-    constructor(props, context) {
-        super(props, context);
+const CSS = css({
+    display: 'flex',
+    flex: 1,
+    flexDirection: 'column'
+});
 
-        this.onCloseClick = this.onCloseClick.bind(this);
-    }
-
-    onCloseClick(e) {
-        e.stopPropagation();
-        this.props.dispatch(EditorActions.close(this.props.owningEditor, this.props.documentId));
-    }
-
+export default class TabbedDocument extends React.Component {
     render() {
-        return(
-            <GenericTab active={ this.props.active } title={ this.props.title } onCloseClick={ this.onCloseClick }
-                documentId={ this.props.documentId } owningEditor={ this.props.owningEditor } />
-        );
+        return false;
     }
 }
 
-export default connect((state, { documentId, owningEditor }) => ({
-    title: "Emulator",
-    active: owningEditor === state.editor.activeEditor && state.editor.editors[owningEditor].activeDocumentId === documentId
-}))(EmulatorTab);
+TabbedDocument.propTypes = {
+    title: PropTypes.string
+};
+
+export const Tab = props => props.children;
+export const Content = props => <TabbedDocumentContentWrapper owningEditor={ props.owningEditor }>{ props.children }</TabbedDocumentContentWrapper>;

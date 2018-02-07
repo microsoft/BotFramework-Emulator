@@ -57,6 +57,10 @@ export const TAB_CSS = css({
         }
     },
 
+    '&.dragged-over-editor-tab': {
+        backgroundColor: Colors.EDITOR_TAB_DRAGGED_OVER_BACKGROUND_DARK
+    },
+
     '&:hover': {
         '& > span.editor-tab-close': {
             opacity: 1
