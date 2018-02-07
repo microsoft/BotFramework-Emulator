@@ -1,0 +1,14 @@
+{
+  "name": "botframework-emulator",
+  "version": "4.0.0",
+  "description": "Emulator for the Microsoft Bot Framework. Allows developers to test and debug their bots on localhost.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Microsoft/BotFramework-Emulator"
+  },
+  "author": "Microsoft Corp.",
+  "license": "MIT"
+}
