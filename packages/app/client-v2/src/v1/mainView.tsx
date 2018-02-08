@@ -32,7 +32,7 @@
 //
 
 import * as React from 'react';
-import * as Splitter from 'react-split-pane';
+const Splitter = require('react-split-pane');
 import * as BotChat from 'botframework-webchat';
 import { getSettings, Settings, addSettingsListener, selectedActivity$ } from './settings';
 import { LayoutActions, InspectorActions } from './reducers';
