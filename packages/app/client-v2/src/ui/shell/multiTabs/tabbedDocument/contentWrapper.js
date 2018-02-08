@@ -52,6 +52,14 @@ const CSS = css({
 export class TabbedDocumentContentWrapper extends React.Component {
     constructor(props, context) {
         super(props, context);
+
+        this.onClick = this.onClick.bind(this);
+    }
+
+    onClick(e) {
+        if (this.props.owningEditor !== this.props.activeEditor) {
+            this.props.dispatch(EditorActions.setActiveEditor(this.props.owningEditor));
+        }
     }
 
     render() {
@@ -59,7 +67,7 @@ export class TabbedDocumentContentWrapper extends React.Component {
         const splittingEnabled = onlyOneEditorActive && this.props.primaryEditor.documents && this.props.primaryEditor.documents.length > 1;
 
         return (
-            <div className={ CSS }>
+            <div className={ CSS } onClickCapture={ this.onClick }>
                 { this.props.children }
                 <ContentOverlay owningEditor={ this.props.owningEditor } />
                 {
@@ -77,11 +85,13 @@ export class TabbedDocumentContentWrapper extends React.Component {
 }
 
 export default connect((state, ownProps) => ({
+    activeEditor: state.editor.activeEditor,
     primaryEditor: state.editor.editors[Constants.EditorKey_Primary],
     secondaryEditor: state.editor.editors[Constants.EditorKey_Secondary]
 }))(TabbedDocumentContentWrapper);
 
 TabbedDocumentContentWrapper.propTypes = {
+    activeEditor: PropTypes.bool,
     owningEditor: PropTypes.oneOf([
         Constants.EditorKey_Primary,
         Constants.EditorKey_Secondary
