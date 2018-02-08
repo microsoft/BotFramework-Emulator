@@ -48,6 +48,7 @@ export class GenericTab extends React.Component {
         this.onDragEnter = this.onDragEnter.bind(this);
         this.onDragLeave = this.onDragLeave.bind(this);
         this.onDrop = this.onDrop.bind(this);
+        this.onDragEnd = this.onDragEnd.bind(this);
 
         this.state = {};
     }
@@ -58,6 +59,11 @@ export class GenericTab extends React.Component {
             editorKey: this.props.owningEditor
         };
         e.dataTransfer.setData('application/json', JSON.stringify(dragData));
+        this.props.dispatch(EditorActions.toggleDraggingTab(true));
+    }
+
+    onDragEnd(e) {
+        this.props.dispatch(EditorActions.toggleDraggingTab(false));
     }
 
     onDragOver(e) {
@@ -98,7 +104,7 @@ export class GenericTab extends React.Component {
         return (
             <div className={ TAB_CSS + tabClassName } draggable
                 onDragOver={ this.onDragOver } onDragEnter={ this.onDragEnter } onDragStart={ this.onDragStart }
-                onDrop={ this.onDrop } onDragLeave={ this.onDragLeave } >
+                onDrop={ this.onDrop } onDragLeave={ this.onDragLeave } onDragEnd={ this.onDragEnd }>
                 <span className="editor-tab-icon"></span>
                 <span>{ this.props.title }</span>
                 <span className="editor-tab-close" onClick={ this.props.onCloseClick }></span>

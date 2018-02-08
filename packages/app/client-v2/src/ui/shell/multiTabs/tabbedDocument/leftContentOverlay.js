@@ -34,6 +34,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
 
 import { OVERLAY_CSS } from './overlayStyle';
 import * as Constants from '../../../../constants';
@@ -79,7 +80,8 @@ export class ContentOverlay extends React.Component {
     }
 
     render() {
-        const overlayClassName = this.state.draggedOver ? ' dragged-over-overlay' : '';
+        let overlayClassName = this.state.draggedOver ? ' dragged-over-overlay' : '';
+        overlayClassName += (this.props.draggingTab ? ' enabled-for-drop' : '');
 
         return (
             <div className={ CSS + overlayClassName }
@@ -90,6 +92,13 @@ export class ContentOverlay extends React.Component {
 }
 
 export default connect((state, ownProps) => ({
-    primaryEditor: state.editor.editors[Constants.EditorKey_Primary],
-    secondaryEditor: state.editor.editors[Constants.EditorKey_Secondary]
+    draggingTab: state.editor.draggingTab
 }))(ContentOverlay);
+
+ContentOverlay.propTypes = {
+    draggingTab: PropTypes.bool,
+    owningEditor: PropTypes.oneOf([
+        Constants.EditorKey_Primary,
+        Constants.EditorKey_Secondary
+    ])
+};

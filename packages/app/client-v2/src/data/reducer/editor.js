@@ -36,6 +36,7 @@ import * as constants from '../../constants';
 
 const DEFAULT_STATE = {
     activeEditor: constants.EditorKey_Primary,
+    draggingTab: false,
     editors: {
         [constants.EditorKey_Primary]: {
             activeDocumentId: 'emulator:1',
@@ -259,6 +260,11 @@ export default function documents(state = DEFAULT_STATE, action) {
             break;
         }
 
+        case EditorActions.TOGGLE_DRAGGING_TAB: {
+            state = setDraggingTab(action.payload, state);
+            break;
+        }
+
         default: break;
     }
 
@@ -272,6 +278,7 @@ function documentExists(id, documents = []) {
 function getNewEditor() {
     return {
         activeDocumentId: null,
+        draggingTab: false,
         documents: [],
         tabStack: []
     };
@@ -298,5 +305,12 @@ function setNewPrimaryEditor(newPrimaryEditor, state) {
     newState.editors[constants.EditorKey_Secondary] = null;
     newState.editors[constants.EditorKey_Primary] = newPrimaryEditor;
     newState.activeEditor = constants.EditorKey_Primary;
+    return newState;
+}
+
+function setDraggingTab(dragging, state) {
+    let newState = Object.assign({}, state);
+
+    newState.draggingTab = dragging;
     return newState;
 }

@@ -39,8 +39,13 @@ export const OVERLAY_CSS = css({
     position: 'absolute',
     transition: 'background-color 0.1s ease-in-out',
     backgroundColor: Colors.EDITOR_DRAG_OVERLAY_TRANSPARENT_DARK,
+    pointerEvents: 'none',
 
     '&.dragged-over-overlay': {
         backgroundColor: Colors.EDITOR_DRAG_OVERLAY_VISIBLE_DARK
+    },
+
+    '&.enabled-for-drop': {
+        pointerEvents: 'auto'
     }
 });

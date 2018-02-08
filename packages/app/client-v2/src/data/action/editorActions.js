@@ -38,6 +38,7 @@ export const SET_ACTIVE_TAB = 'EDITOR/SET_ACTIVE_TAB';
 export const SET_ACTIVE_EDITOR = 'EDITOR/SET_ACTIVE_EDITOR';
 export const SPLIT_TAB = 'EDITOR/SPLIT_TAB';
 export const SWAP_TABS = 'EDITOR/SWAP_TABS';
+export const TOGGLE_DRAGGING_TAB = 'EDITOR/TOGGLE_DRAGGING_TAB';
 
 export function appendTab(srcEditorKey, destEditorKey, documentId) {
     return {
@@ -109,5 +110,12 @@ export function swapTabs(srcEditorKey, destEditorKey, srcTabId, destTabId) {
             srcTabId,
             destTabId
         }
+    };
+}
+
+export function toggleDraggingTab(draggingTab) {
+    return {
+        type: TOGGLE_DRAGGING_TAB,
+        payload: draggingTab
     };
 }

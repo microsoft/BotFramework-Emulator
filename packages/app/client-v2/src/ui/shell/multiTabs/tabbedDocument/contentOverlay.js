@@ -86,7 +86,8 @@ export class ContentOverlay extends React.Component {
     }
 
     render() {
-        const overlayClassName = this.state.draggedOver ? ' dragged-over-overlay' : '';
+        let overlayClassName = this.state.draggedOver ? ' dragged-over-overlay' : '';
+        overlayClassName += (this.props.draggingTab ? ' enabled-for-drop' : '');
 
         return (
             <div className={ CSS + overlayClassName }
@@ -96,9 +97,12 @@ export class ContentOverlay extends React.Component {
     }
 }
 
-export default connect((state, ownProps) => ({}))(ContentOverlay);
+export default connect((state, ownProps) => ({
+    draggingTab: state.editor.draggingTab
+}))(ContentOverlay);
 
 ContentOverlay.propTypes = {
+    draggingTab: PropTypes.bool,
     owningEditor: PropTypes.oneOf([
         Constants.EditorKey_Primary,
         Constants.EditorKey_Secondary
