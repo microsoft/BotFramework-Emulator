@@ -44,3 +44,6 @@ export const NavBar_Analytics = 'navbar.analytics';
 export const NavBar_Settings = 'navbar.settings';
 export const NavBar_Notifications = 'navbar.notifications';
 export const NavBar_User = 'navbar.user';
+
+export const EditorKey_Primary = 'primary';
+export const EditorKey_Secondary = 'secondary';

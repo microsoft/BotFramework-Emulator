@@ -35,9 +35,9 @@ import * as EditorActions from '../action/editorActions';
 import * as constants from '../../constants';
 
 const DEFAULT_STATE = {
-    activeEditor: 'primary',
+    activeEditor: constants.EditorKey_Primary,
     editors: {
-        'primary': {
+        [constants.EditorKey_Primary]: {
             activeDocumentId: 'emulator:1',
             documents: [{
                 contentType: constants.ContentType_Emulator,
@@ -48,165 +48,138 @@ const DEFAULT_STATE = {
             }],
             tabStack: ['emulator:1', 'testbed:1'],
         },
-        'secondary': null
+        [constants.EditorKey_Secondary]: null
     }
 };
 
 export default function documents(state = DEFAULT_STATE, action) {
-    const selectedEditor = action.payload ? action.payload.editorKey : null;
+    const editorKey = action.payload ? action.payload.editorKey : null;
+    const srcEditorKey = action.payload ? action.payload.srcEditorKey : null;
+    const destEditorKey = action.payload ? action.payload.destEditorKey : null;
 
-    // TODO: refactor some of the larger action handlers (add state utility functions?)
     switch (action.type) {
-        case EditorActions.APPEND_TAB:
+        case EditorActions.APPEND_TAB: {
             // if the tab is being appended to the end of its own editor, use one document array
-            if (action.payload.srcEditorKey === action.payload.destEditorKey) {
-                var docs = [...state.editors[action.payload.srcEditorKey].documents];
+            if (srcEditorKey === destEditorKey) {
+                let docs = [...state.editors[srcEditorKey].documents];
 
                 const docToAppend = docs.find(doc => doc.documentId === action.payload.documentId);
                 docs = [...docs.filter(doc => doc.documentId !== action.payload.documentId), docToAppend];
 
-                state = {
-                    ...state,
-                    editors: {
-                        ...state.editors,
-                        [action.payload.srcEditorKey]: {
-                            ...state.editors[action.payload.srcEditorKey],
-                            documents: docs,
-                        }
-                    }
+                let editorState = {
+                    ...state.editors[srcEditorKey],
+                    documents: docs
                 };
+                state = setEditorState(srcEditorKey, editorState, state);
                 break;
             }
 
             // if the tab is being appended to another editor, we need to track both editors' documents and tabstacks
-            var srcDocs = [...state.editors[action.payload.srcEditorKey].documents];
-            var srcTabStack = [...state.editors[action.payload.srcEditorKey].tabStack];
+            let srcDocs = [...state.editors[srcEditorKey].documents];
+            let srcTabStack = [...state.editors[srcEditorKey].tabStack];
 
             const docToAppend = srcDocs.find(doc => doc.documentId === action.payload.documentId);
             srcDocs = srcDocs.filter(doc => doc.documentId !== action.payload.documentId);
             srcTabStack = srcTabStack.filter(tabId => tabId !== action.payload.documentId);
-            var srcEditor = srcDocs.length === 0 ? null : {
-                ...state.editors[action.payload.srcEditorKey],
+            let srcEditor = srcDocs.length === 0 ? null : {
+                ...state.editors[srcEditorKey],
                 documents: srcDocs,
                 tabStack: srcTabStack
             };
 
-            var destDocs = [...state.editors[action.payload.destEditorKey].documents, docToAppend];
-            var destTabStack = [...state.editors[action.payload.destEditorKey].tabStack, action.payload.documentId];
-
-            state = {
-                ...state,
-                activeEditor: !srcEditor ? action.payload.destEditorKey : state.activeEditor,
-                editors: {
-                    ...state.editors,
-                    [action.payload.srcEditorKey]: srcEditor,
-                    [action.payload.destEditorKey]: {
-                        ...state.editors[action.payload.destEditorKey],
-                        documents: destDocs,
-                        tabStack: destTabStack
-                    }
-                }
+            let destDocs = [...state.editors[destEditorKey].documents, docToAppend];
+            let destTabStack = [...state.editors[destEditorKey].tabStack, docToAppend.documentId];
+            let destEditor = {
+                ...state.editors[destEditorKey],
+                documents: destDocs,
+                tabStack: destTabStack
             };
 
+            if (!srcEditor && srcEditorKey === constants.EditorKey_Primary) {
+                state = setNewPrimaryEditor(destEditor, state);
+            } else {
+                state = setActiveEditor(!srcEditor ? destEditorKey : state.activeEditor, state);
+                state = setEditorState(srcEditorKey, srcEditor, state);
+                state = setEditorState(destEditorKey, destEditor, state);
+            }
             break;
+        }
 
-        case EditorActions.CLOSE:
+        case EditorActions.CLOSE: {
             // TODO: Add logic to check if document has been saved
             // & prompt user to save document if necessary
 
-            var newTabStack = state.editors[selectedEditor].tabStack.filter(tabId => tabId !== action.payload.documentId);
-            let newDocumentList = state.editors[selectedEditor].documents.filter(doc => doc.documentId !== action.payload.documentId);
+            let newTabStack = state.editors[editorKey].tabStack.filter(tabId => tabId !== action.payload.documentId);
+            let newDocumentList = state.editors[editorKey].documents.filter(doc => doc.documentId !== action.payload.documentId);
             let newActiveDocumentId = newTabStack[0] || null;
 
-            state = { ...state };
-
             // close empty editor if there is another one able to take its place
-            const newPrimaryEditorKey = selectedEditor === 'primary' ? 'secondary' : 'primary';
+            const newPrimaryEditorKey = editorKey === constants.EditorKey_Primary ? constants.EditorKey_Secondary : constants.EditorKey_Primary;
             if (!newDocumentList.length && state.editors[newPrimaryEditorKey]) {
                 // if the editor being closed is the primary editor, have the secondary editor become the primary
                 const tmp = state.editors[newPrimaryEditorKey];
-                state.editors[newPrimaryEditorKey] = null;
-                state.editors[selectedEditor] = null;
-                state.editors['primary'] = tmp;
-                state.activeEditor = 'primary';
+                state = setNewPrimaryEditor(tmp, state);
             } else {
-                state.editors[selectedEditor] = {
-                    ...state.editors[selectedEditor],
+                let editorState = {
+                    ...state.editors[editorKey],
                     documents: newDocumentList,
                     activeDocumentId: newActiveDocumentId,
                     tabStack: newTabStack
                 };
+                state = setEditorState(editorKey, editorState, state);
             }
             break;
+        }
 
-        case EditorActions.OPEN:
-            var newTabStack = state.editors[selectedEditor].tabStack.filter(tabId => tabId !== action.payload.documentId);
+        case EditorActions.OPEN: {
+            let newTabStack = state.editors[editorKey].tabStack.filter(tabId => tabId !== action.payload.documentId);
             newTabStack.unshift(action.payload.documentId);
 
-            if (!documentExists(action.payload.documentId, state.editors[selectedEditor].documents)) {
-                state = {
-                    ...state,
-                    activeEditor: selectedEditor,
-                    editors: {
-                        ...state.editors,
-                        [selectedEditor]: {
-                            ...state.editors[selectedEditor],
-                            activeDocumentId: action.payload.documentId,
-                            documents: [
-                                ...state.editors[selectedEditor].documents,
-                                {
-                                    documentId: action.payload.documentId,
-                                    contentType: action.payload.contentType
-                                }
-                            ],
-                            tabStack: newTabStack
-                        }
+            // add the document to the docs list if it doesn't exist
+            let editorDocs = documentExists(action.payload.documentId, state.editors[editorKey].documents) ?
+                [...state.editors[editorKey].documents]
+            :
+                [
+                    ...state.editors[editorKey].documents,
+                    {
+                        documentId: action.payload.documentId,
+                        contentType: action.payload.contentType
                     }
-                };
-            } else {
-                state = {
-                    ...state,
-                    activeEditor: selectedEditor,
-                    editors: {
-                        ...state.editors,
-                        [selectedEditor]: {
-                            ...state.editors[selectedEditor],
-                            activeDocumentId: action.payload.documentId,
-                            tabStack: newTabStack
-                        }
-                    }
-                };
-            }
-            break;
+                ];
 
-        case EditorActions.SET_ACTIVE_TAB:
-            var newTabStack = state.editors[selectedEditor].tabStack.filter(tabId => tabId !== action.payload.documentId);
+            let editorState =  {
+                ...state.editors[editorKey],
+                activeDocumentId: action.payload.documentId,
+                documents: editorDocs,
+                tabStack: newTabStack
+            };
+            state = setEditorState(editorKey, editorState, state);
+            state = setActiveEditor(editorKey, state);
+            break;
+        }
+
+        case EditorActions.SET_ACTIVE_TAB: {
+            let newTabStack = state.editors[editorKey].tabStack.filter(tabId => tabId !== action.payload.documentId);
             newTabStack.unshift(action.payload.documentId);
 
-            state = {
-                ...state,
-                activeEditor: selectedEditor,
-                editors: {
-                    ...state.editors,
-                    [selectedEditor]: {
-                        ...state.editors[selectedEditor],
-                        activeDocumentId: action.payload.documentId,
-                        tabStack: newTabStack
-                    }
-                }
+            let editorState =  {
+                ...state.editors[editorKey],
+                activeDocumentId: action.payload.documentId,
+                tabStack: newTabStack
             };
+            state = setEditorState(editorKey, editorState, state);
+            state = setActiveEditor(editorKey, state);
             break;
+        }
 
-        case EditorActions.SET_ACTIVE_EDITOR:
-            state = {
-                ...state,
-                activeEditor: action.payload
-            };
+        case EditorActions.SET_ACTIVE_EDITOR: {
+            state = setActiveEditor(action.payload, state);
             break;
+        }
 
-        case EditorActions.SPLIT_TAB:
+        case EditorActions.SPLIT_TAB: {
             // remove tab from source editor
-            let srcEditor = state.editors[action.payload.srcEditorKey];
+            let srcEditor = state.editors[srcEditorKey];
             srcEditor.documents = srcEditor.documents.filter(doc => doc.documentId !== action.payload.documentId);
             srcEditor.tabStack = srcEditor.tabStack.filter(tabId => tabId !== action.payload.documentId);
             srcEditor.activeDocumentId = srcEditor.tabStack[0] || null;
@@ -215,7 +188,6 @@ export default function documents(state = DEFAULT_STATE, action) {
             }
 
             // check for destination editor or create it if non-existent
-            const destEditorKey = action.payload.srcEditorKey === 'primary' ? 'secondary' : 'primary';
             let destEditor = state.editors[destEditorKey] || getNewEditor();
             destEditor.activeDocumentId = action.payload.documentId;
             destEditor.documents.push({
@@ -224,20 +196,16 @@ export default function documents(state = DEFAULT_STATE, action) {
             });
             destEditor.tabStack.unshift(action.payload.documentId);
 
-            state = {
-                ...state,
-                activeEditor: destEditorKey,
-                editors: {
-                    [action.payload.srcEditorKey]: srcEditor,
-                    [destEditorKey]: destEditor
-                }
-            };
+            state = setActiveEditor(destEditorKey, state);
+            state = setEditorState(srcEditorKey, srcEditor, state);
+            state = setEditorState(destEditorKey, destEditor, state);
             break;
+        }
 
-        case EditorActions.SWAP_TABS:
+        case EditorActions.SWAP_TABS: {
             // swap tabs within the same editor
-            if (action.payload.srcEditorKey === action.payload.destEditorKey) {
-                let docs = [...state.editors[action.payload.srcEditorKey].documents];
+            if (srcEditorKey == destEditorKey) {
+                let docs = [...state.editors[srcEditorKey].documents];
 
                 const srcTabIndex = docs.findIndex(doc => doc.documentId === action.payload.srcTabId);
                 const destTabIndex = docs.findIndex(doc => doc.documentId === action.payload.destTabId);
@@ -246,24 +214,20 @@ export default function documents(state = DEFAULT_STATE, action) {
                 docs[destTabIndex] = docs[srcTabIndex];
                 docs[srcTabIndex] = destTab;
 
-                state = {
-                    ...state,
-                    editors: {
-                        ...state.editors,
-                        [action.payload.srcEditorKey]: {
-                            ...state.editors[action.payload.srcEditorKey],
-                            documents: docs
-                        }
-                    }
+                let editorState = {
+                    ...state.editors[srcEditorKey],
+                    documents: docs
                 };
+
+                state = setEditorState(srcEditorKey, editorState, state);
                 break;
             }
 
             // swap tab into different editor
-            var srcDocs = [...state.editors[action.payload.srcEditorKey].documents];
-            var srcTabStack = [...state.editors[action.payload.srcEditorKey].tabStack];
-            var destDocs = [...state.editors[action.payload.destEditorKey].documents];
-            var destTabStack = [...state.editors[action.payload.destEditorKey].tabStack];
+            let srcDocs = [...state.editors[srcEditorKey].documents];
+            let srcTabStack = [...state.editors[srcEditorKey].tabStack];
+            let destDocs = [...state.editors[destEditorKey].documents];
+            let destTabStack = [...state.editors[destEditorKey].tabStack];
 
             const srcTabIndex = srcDocs.findIndex(doc => doc.documentId === action.payload.srcTabId);
             const destTabIndex = destDocs.findIndex(doc => doc.documentId === action.payload.destTabId);
@@ -274,24 +238,26 @@ export default function documents(state = DEFAULT_STATE, action) {
             srcDocs = srcDocs.filter(doc => doc.documentId !== action.payload.srcTabId);
             srcTabStack = srcTabStack.filter(tabId => tabId !== action.payload.srcTabId);
 
-            var srcEditor = srcDocs.length === 0 ? null : {
-                ...state.editors[action.payload.srcEditorKey],
+            let srcEditor = srcDocs.length === 0 ? null : {
+                ...state.editors[srcEditorKey],
                 documents: srcDocs,
                 tabStack: srcTabStack
             };
-
-            state = {
-                ...state,
-                activeEditor: !srcEditor ? action.payload.destEditorKey : state.activeEditor,
-                editors: {
-                    [action.payload.srcEditorKey]: srcEditor,
-                    [action.payload.destEditorKey]: {
-                        ...state.editors[action.payload.destEditorKey],
-                        documents: destDocs,
-                        tabStack: destTabStack
-                    }
-                }
+            let destEditor = {
+                ...state.editors[destEditorKey],
+                documents: destDocs,
+                tabStack: destTabStack
             };
+
+            if (!srcEditor && srcEditorKey === constants.EditorKey_Primary) {
+                state = setNewPrimaryEditor(destEditor, state);
+            } else {
+                state = setActiveEditor(!srcEditor ? destEditorKey : state.activeEditor, state);
+                state = setEditorState(srcEditorKey, srcEditor, state);
+                state = setEditorState(destEditorKey, destEditor, state);
+            }
+            break;
+        }
 
         default: break;
     }
@@ -309,4 +275,28 @@ function getNewEditor() {
         documents: [],
         tabStack: []
     };
+}
+
+function setEditorState(editorKey, editorState, state) {
+    let newState = Object.assign({}, state);
+
+    newState.editors[editorKey] = editorState;
+    return newState;
+}
+
+function setActiveEditor(editorKey, state) {
+    let newState = Object.assign({}, state);
+
+    newState.activeEditor = editorKey;
+    return newState;
+}
+
+/** Sets a new primary editor, and destroys the secondary editor */
+function setNewPrimaryEditor(newPrimaryEditor, state) {
+    let newState = Object.assign({}, state);
+
+    newState.editors[constants.EditorKey_Secondary] = null;
+    newState.editors[constants.EditorKey_Primary] = newPrimaryEditor;
+    newState.activeEditor = constants.EditorKey_Primary;
+    return newState;
 }

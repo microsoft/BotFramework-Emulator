@@ -38,6 +38,7 @@ import PropTypes from 'prop-types';
 
 import { OVERLAY_CSS } from './overlayStyle';
 import * as EditorActions from '../../../../data/action/editorActions';
+import * as Constants from '../../../../constants';
 
 const CSS = css({
     top: 0,
@@ -76,8 +77,7 @@ export class ContentOverlay extends React.Component {
     onDrop(e) {
         const tabData = JSON.parse(e.dataTransfer.getData('application/json'));
         if (tabData.editorKey !== this.props.owningEditor) {
-            const docToSplit = this.props.editors[tabData.editorKey].documents.find(doc => doc.documentId === tabData.tabId);
-            this.props.dispatch(EditorActions.splitTab(docToSplit.contentType, tabData.tabId, tabData.editorKey));
+            this.props.dispatch(EditorActions.appendTab(tabData.editorKey, this.props.owningEditor, tabData.tabId));
         }
 
         this.setState(({ draggedOver: false }));
@@ -96,14 +96,11 @@ export class ContentOverlay extends React.Component {
     }
 }
 
-export default connect((state, ownProps) => ({
-    editors: state.editor.editors
-}))(ContentOverlay);
+export default connect((state, ownProps) => ({}))(ContentOverlay);
 
 ContentOverlay.propTypes = {
-    editors: PropTypes.object,
     owningEditor: PropTypes.oneOf([
-        'primary',
-        'secondary'
+        Constants.EditorKey_Primary,
+        Constants.EditorKey_Secondary
     ])
 };

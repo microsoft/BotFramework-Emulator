@@ -43,6 +43,7 @@ import MDI from './mdi';
 import NavBar from './navBar';
 import Splitter from '../layout/splitter-v2';
 import TabManager from '../dialogs/tabManager';
+import * as Constants from '../../constants';
 
 css.global('html, body, #root', {
     backgroundColor: Colors.APP_BACKGROUND_DARK,
@@ -107,10 +108,10 @@ export class Main extends React.Component {
 
     render() {
         const primaryEditor = this.props.primaryEditor &&
-            <div className="mdi-wrapper" key={ 'primaryEditor' } ><MDI owningEditor={ 'primary' } /></div>;
+            <div className="mdi-wrapper" key={ 'primaryEditor' } ><MDI owningEditor={ Constants.EditorKey_Primary } /></div>;
 
         const secondaryEditor = this.props.secondaryEditor && this.props.secondaryEditor.documents.length ?
-            <div className="mdi-wrapper secondary-mdi" key={ 'secondaryEditor' } ><MDI owningEditor={ 'secondary' } /></div> : null;
+            <div className="mdi-wrapper secondary-mdi" key={ 'secondaryEditor' } ><MDI owningEditor={ Constants.EditorKey_Secondary } /></div> : null;
 
         return (
             <div className={ CSS }>
@@ -132,8 +133,8 @@ export class Main extends React.Component {
 }
 
 export default connect((state, ownProps) => ({
-    primaryEditor: state.editor.editors['primary'],
-    secondaryEditor: state.editor.editors['secondary']
+    primaryEditor: state.editor.editors[Constants.EditorKey_Primary],
+    secondaryEditor: state.editor.editors[Constants.EditorKey_Secondary]
 }))(Main);
 
 Main.propTypes = {

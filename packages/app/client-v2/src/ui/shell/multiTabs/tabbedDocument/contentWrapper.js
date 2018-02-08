@@ -41,6 +41,7 @@ import * as Colors from '../../../styles/colors';
 import ContentOverlay from './contentOverlay';
 import LeftContentOverlay from './leftContentOverlay';
 import RightContentOverlay from './rightContentOverlay';
+import * as Constants from '../../../../constants';
 
 const CSS = css({
     position: 'relative',
@@ -76,14 +77,14 @@ export class TabbedDocumentContentWrapper extends React.Component {
 }
 
 export default connect((state, ownProps) => ({
-    primaryEditor: state.editor.editors['primary'],
-    secondaryEditor: state.editor.editors['secondary']
+    primaryEditor: state.editor.editors[Constants.EditorKey_Primary],
+    secondaryEditor: state.editor.editors[Constants.EditorKey_Secondary]
 }))(TabbedDocumentContentWrapper);
 
 TabbedDocumentContentWrapper.propTypes = {
     owningEditor: PropTypes.oneOf([
-        'primary',
-        'secondary'
+        Constants.EditorKey_Primary,
+        Constants.EditorKey_Secondary
     ]),
     primaryEditor: PropTypes.object,
     secondaryEditor: PropTypes.object

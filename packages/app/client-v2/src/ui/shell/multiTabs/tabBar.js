@@ -39,6 +39,7 @@ import { connect } from 'react-redux';
 import TabBarTab from './tabBarTab';
 import * as Colors from '../../styles/colors';
 import * as EditorActions from '../../../data/action/editorActions';
+import * as Constants from '../../../constants';
 
 const CSS = css({
     display: 'flex',
@@ -118,7 +119,8 @@ export class TabBar extends React.Component {
         const owningEditor = this.props.editors[this.props.owningEditor];
         const docIdToSplit = owningEditor.activeDocumentId;
         const docToSplit = owningEditor.documents.find(doc => doc.documentId === docIdToSplit);
-        this.props.dispatch(EditorActions.splitTab(docToSplit.contentType, docToSplit.documentId, this.props.owningEditor));
+        const destEditorKey = this.props.owningEditor === Constants.EditorKey_Primary ? Constants.EditorKey_Secondary : Constants.EditorKey_Primary;
+        this.props.dispatch(EditorActions.splitTab(docToSplit.contentType, docToSplit.documentId, this.props.owningEditor, destEditorKey));
     }
 
     onDragEnter(e) {
@@ -174,14 +176,14 @@ export default connect((state, { owningEditor }) => ({
 
 TabBar.propTypes = {
     activeEditor: PropTypes.oneOf([
-        'primary',
-        'secondary'
+        Constants.EditorKey_Primary,
+        Constants.EditorKey_Secondary
     ]),
     editors: PropTypes.object,
     value: PropTypes.number,
     owningEditor: PropTypes.oneOf([
-        'primary',
-        'secondary'
+        Constants.EditorKey_Primary,
+        Constants.EditorKey_Secondary
     ]),
     splitEnabled: PropTypes.bool
 };

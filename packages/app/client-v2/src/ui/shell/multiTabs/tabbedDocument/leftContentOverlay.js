@@ -36,6 +36,7 @@ import { connect } from 'react-redux';
 import { css } from 'glamor';
 
 import { OVERLAY_CSS } from './overlayStyle';
+import * as Constants from '../../../../constants';
 
 const CSS = css({
     top: 0,
@@ -89,6 +90,6 @@ export class ContentOverlay extends React.Component {
 }
 
 export default connect((state, ownProps) => ({
-    primaryEditor: state.editor.editors['primary'],
-    secondaryEditor: state.editor.editors['secondary']
+    primaryEditor: state.editor.editors[Constants.EditorKey_Primary],
+    secondaryEditor: state.editor.editors[Constants.EditorKey_Secondary]
 }))(ContentOverlay);

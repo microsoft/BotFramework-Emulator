@@ -37,6 +37,7 @@ import PropTypes from 'prop-types';
 
 import { TAB_CSS } from './tabStyle';
 import * as EditorActions from './../../../data/action/editorActions';
+import * as Constants from '../../../constants';
 
 export class GenericTab extends React.Component {
     constructor(props, context) {
@@ -110,7 +111,7 @@ export default connect((state, ownProps) => ({}))(GenericTab);
 
 GenericTab.propTypes = {
     owningEditor: PropTypes.oneOf([
-        'primary',
-        'secondary'
+        Constants.EditorKey_Primary,
+        Constants.EditorKey_Secondary
     ])
 };

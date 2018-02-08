@@ -88,13 +88,14 @@ export function setActiveEditor(editorKey) {
     }
 }
 
-export function splitTab(contentType, documentId, srcEditorKey) {
+export function splitTab(contentType, documentId, srcEditorKey, destEditorKey) {
     return {
         type: SPLIT_TAB,
         payload: {
             contentType,
             documentId,
-            srcEditorKey
+            srcEditorKey,
+            destEditorKey
         }
     };
 }
