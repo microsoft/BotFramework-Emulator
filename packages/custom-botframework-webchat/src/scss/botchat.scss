@@ -1,0 +1,794 @@
+@import "includes/colors";
+@import "includes/settings";
+@import "includes/card-size";
+
+/* reset */
+
+    body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
+        font-family: $fontFamily;
+        font-size: $fontSize;
+    }
+
+    .wc-app button {
+        background-color: $c_brand;
+        border: 1px solid $c05;
+        border-radius: 1px;
+        color: $c01;
+        cursor: pointer;
+        transition: color .2s ease, background-color .2s ease;
+    }
+
+    .wc-app h1, .wc-app h2, .wc-app h3, .wc-app h4, .wc-app p, .wc-app ul, .wc-app ol {
+        margin: 0;
+        padding: 0;
+    }
+
+    .wc-app audio, .wc-app video {
+        display: block;
+    }
+
+/* docking */
+
+    .wc-hidden {
+        visibility: hidden;
+    }
+
+    .wc-header {
+        background-color: $c_brand;
+        box-shadow: 0 1px $c_shadow;
+        box-sizing: content-box;
+        color: $c01;
+        font-weight: 500;
+        height: $headerTotalHeight - $headerPaddingTop - $headerPaddingBottom;
+        left: 0;
+        letter-spacing: 0.5px;
+        padding: $headerPaddingTop $headerPaddingRight $headerPaddingBottom $headerPaddingLeft;
+        position: absolute;
+        right: 0;
+        top: 0;
+        z-index: 1;
+    }
+
+    .wc-time {
+        color: $c_textLight;
+        margin-bottom: 10px;
+    }
+
+    .wc-message-groups {
+        bottom: $consoleHeight;
+        left: 0;
+        transform: translateY(0);
+        outline: 0;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        padding: 10px;
+        position: absolute;
+        right: 0;
+        top: $headerTotalHeight;
+        transition: transform $actionTransition;
+
+        &.no-header {
+            top: 0;
+        }
+    }
+
+    .wc-message-group-content {
+        overflow: hidden;
+    }
+
+    .wc-suggested-actions {
+        background-color: #f9f9f9;
+        bottom: $consoleHeight;
+        height: 0;
+        left: 0;
+        overflow: hidden;
+        position: absolute;
+        right: 0;
+        transition: height $actionTransition;
+
+        .wc-hscroll > ul {
+            height: $actionsHeight;
+            padding: 2px 3px;
+
+            > li {
+                display: inline-block;
+                margin: 2px;
+                max-width: 40%;
+
+                button {
+                    background-color: #fff;
+                    color: $c_brand;
+                    min-height: 32px;
+                    overflow: hidden;
+                    padding: 0 16px;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    width: 100%;
+                }
+
+                button:focus,
+                button:hover {
+                    background-color: #fff;
+                    border-color: $c_brand;
+                    color: $c_brand;
+                }
+
+                button:active {
+                    background-color: $c_brand;
+                    border-color: $c_brand;
+                    color: $c01;
+                }
+            }
+        }
+
+        button.scroll {
+            background-color: $c11;
+            height: $actionsHeight;
+            overflow: hidden;
+            padding: 0;
+            position: absolute;
+            top: 0;
+            width: 28px;
+        }
+
+        button.scroll:disabled {
+            display: none;
+        }
+
+        button.scroll:focus,
+        button.scroll:hover {
+            background-color: $c08;
+        }
+
+        button.scroll svg {
+            fill: $c01;
+
+            //TODO: use proper svg coords in the path data
+            path {
+                transform: translateY(6px);
+            }
+        }
+
+        button.scroll.previous {
+            left: 0;
+        }
+
+        button.scroll.next {
+            right: 0;
+        }
+    }
+
+    .wc-message-pane.show-actions {
+        .wc-message-groups {
+            transform: translateY(-$actionsHeight);
+        }
+        .wc-suggested-actions {
+            height: $actionsHeight;
+        }
+    }
+
+/* views */
+
+    .wc-chatview-panel {
+        overflow: hidden;
+        position: absolute;
+        right: 0;
+        left: 0;
+        top: 0;
+        bottom: 0;
+    }
+
+/* messages */
+
+    .wc-message-wrapper {
+        animation: animationFrames 2s;
+        animation-iteration-count: 1;
+        clear: both;
+        margin-bottom: 10px;
+        overflow: hidden;
+        position: relative;
+        /*transition: max-height 2s ease-in-out;*/
+    }
+
+    @keyframes animationFrames{
+        0% {
+            /*max-height: 0;*/
+            opacity: 0;
+        }
+        20% {
+            opacity: 1;
+        }
+        100% {
+            /*max-height: 2000px;*/
+        }
+    }
+
+    .wc-message {
+        position: relative;
+    }
+
+    .wc-message-wrapper.carousel .wc-message {
+        max-width: none;
+        padding-right: 8px;
+    }
+
+    .wc-message svg.wc-message-callout {
+        height: 22px;
+        position: absolute;
+        stroke: none;
+        top: 12px;
+        width: 6px;
+    }
+
+    .wc-message-content {
+        border-radius: 2px;
+        box-shadow: 0px 1px 1px 0px $c_shadow;
+        padding: 8px;
+        word-break: break-word;
+      }
+
+    .wc-message-content.clickable {
+        cursor: pointer;
+    }
+
+    .wc-message-content.selected {
+        box-shadow: 0px 1px 1px 0px $c12;
+    }
+
+    .wc-message-content img {
+        max-height: 320px;
+        max-width: 100%;
+    }
+
+    .wc-message-content .video iframe {
+        border: 0;
+    }
+
+    .wc-message-content audio, .wc-message-content video {
+        max-width: 100%;
+    }
+
+    .wc-message-content audio+h1, .wc-message-content video+h1 {
+        margin-top: 11px;
+    }
+
+    .wc-message-from {
+        clear: both;
+        color: $c_timestamp;
+        font-size: 11px;
+        margin-top: 5px;
+    }
+
+/* cards */
+
+    .wc-card {
+
+        background-color: $c01;
+
+        .non-adaptive-content {
+            margin: $card_padding $card_padding 0 $card_padding;
+        }
+
+        button {
+            background-color: transparent;
+            color: $c_brand;
+            min-height: 32px;
+            width: 100%;
+            padding: 0 16px;
+        }
+
+        button:hover {
+            background-color: transparent;
+            border-color: $c_brand;
+            color: $c_brand;
+        }
+
+        button:active {
+            background-color: $c_brand;
+            border-color: $c_brand;
+            color: $c01;
+        }
+
+        &.receipt table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        &.receipt th, &.receipt td {
+            text-align: right;
+            vertical-align: top;
+        }
+
+        &.receipt th:first-child, &.receipt td:first-child {
+            text-align: left;
+        }
+
+        &.receipt th {
+            color: $c_textHeading;
+            font-size: inherit;
+            font-weight: normal;
+            line-height: 1.75;
+        }
+
+        &.receipt thead tr:last-child th {
+            padding-bottom: 16px;
+        }
+
+        &.receipt th[colspan="2"] {
+            color: inherit;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        &.receipt td {
+            padding: 4px 8px 0 8px;
+        }
+
+        &.receipt td img {
+            float: left;
+            margin: 5px 8px 8px 0;
+            max-height: 50px;
+            max-width: 50px;
+        }
+
+        &.receipt div.title {
+            font-weight: bolder;
+        }
+
+        &.receipt div.subtitle {
+            font-weight: lighter;
+        }
+
+        &.receipt tbody tr, &.receipt tfoot tr {
+            border-top: 1px solid $c11;
+        }
+
+        &.receipt tbody tr:first-child, &.receipt tfoot tr:first-child {
+            border-top-width: 2px;
+        }
+
+        &.receipt tfoot td {
+            line-height: 2.25;
+        }
+
+        &.receipt tfoot .total {
+            font-weight: bold;
+        }
+
+        &.thumbnail img {
+            float: right;
+            margin-bottom: 10px;
+            margin-left: 10px;
+            width: 100px;
+        }
+
+        &.signin h1 {
+            margin: 10px 24px 16px 14px;
+        }
+
+        &.error {
+            text-align: center;
+
+            .error-icon {
+                fill: $c05;
+                height: 56px;
+                margin-bottom: 2px;
+                margin-top: 20px;
+                padding-left: 12px;
+            }
+
+            .error-text {
+                color: $c05;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+                margin-bottom: 20px;
+                text-align: inherit;
+            }
+        }
+    }
+
+/* alternate chat sizes */
+
+    .wc-message {
+        max-width: 91%;
+    }
+
+    @include card-size($card_normal);
+
+    .wc-wide {
+        @include card-size($card_wide);
+    }
+
+    .wc-narrow {
+        @include card-size($card_narrow);
+    }
+
+/* adaptive card adjustments from wc-card */
+    .wc-adaptive-card {
+
+        p {
+            margin-left: 0;
+            margin-right: 0;
+        }
+    }
+
+/* list */
+
+    .wc-list > .wc-card {
+        margin-top: 8px;
+    }
+
+    .wc-list > .wc-card:first-child {
+        margin-top: 0;
+    }
+
+/* horizontal scroll */
+
+    .wc-hscroll-outer {
+        /* allow horizontal scrolling but hide the scrollbar */
+        overflow: hidden;
+    }
+
+    .wc-hscroll {
+        /* allow horizontal scrolling but hide the scrollbar */
+        overflow-x: scroll;
+        overflow-y: hidden;
+    }
+
+    .wc-hscroll > ul {
+        white-space: nowrap;
+    }
+
+    .wc-hscroll > ul > li {
+        display: inline-block;
+        vertical-align: top;
+        white-space: normal;
+    }
+
+/* carousel */
+
+    .wc-carousel {
+        position: relative;
+
+        button.scroll {
+            background-color: $c11;
+            height: 28px;
+            overflow: hidden;
+            padding: 0;
+            position: absolute;
+            top: 50%;
+            width: 28px;
+        }
+
+        button.scroll:disabled {
+            display: none;
+        }
+
+        button.scroll:focus,
+        button.scroll:hover {
+            background-color:  $c08;
+        }
+
+        button.scroll svg {
+            fill: $c01;
+        }
+
+        button.scroll.previous {
+            left: -16px;
+        }
+
+        button.scroll.next {
+            right: -16px;
+        }
+
+        .wc-hscroll > ul {
+            margin-left: -4px;
+        }
+
+        .wc-hscroll > ul > li {
+            padding: 0 4px;
+        }
+
+        .wc-hscroll > ul > li:last-child {
+            padding-right: 0;
+        }
+
+        li {
+
+            p {
+                min-height: 4em;
+                white-space: normal;
+            }
+
+            .wc-adaptive-card p {
+                min-height: initial;
+            }
+
+        }
+    }
+
+/* from me */
+
+    .wc-message-from-me {
+        float: right;
+        margin-right: 6px;
+    }
+
+    .wc-message-from-me.wc-message-from {
+        text-align: right;
+    }
+
+    .wc-message-from-me .wc-message-content {
+        background-color: $c_messageFromMe;
+        color: $c01;
+    }
+
+    .wc-message-from-me svg.wc-message-callout path {
+        fill: $c_messageFromMe;
+    }
+
+    .wc-message-from-me svg.wc-message-callout path.point-left {
+        display: none;
+    }
+
+    .wc-message-from-me svg.wc-message-callout {
+        right: -6px;
+    }
+
+/* from bot */
+
+    .wc-message-from-bot {
+        float: left;
+        margin-left: 8px;
+    }
+
+    .wc-message-from-bot .wc-message-content {
+        background-color: $c_messageFromThem;
+        color: $c00;
+    }
+
+    .wc-message-from-bot svg.wc-message-callout path {
+        fill: $c_messageFromThem;
+    }
+
+    .wc-message-from-bot svg.wc-message-callout path.point-right {
+        display: none;
+    }
+
+    .wc-message-from-bot svg.wc-message-callout {
+        left: -6px;
+    }
+
+/* console */
+
+    .wc-console {
+        border: 5px solid $c_chrome;
+        bottom: 0;
+        box-sizing: border-box;
+        height: $consoleHeight;
+        left: 0;
+        position: absolute;
+        right: 0;
+
+        > .wc-upload,
+        > .wc-textbox,
+        > .wc-send,
+        > .wc-mic {
+            position: absolute;
+            top: 0;
+            vertical-align: middle;
+        }
+
+        label, button {
+            cursor: pointer;
+            display: inline-block;
+            height: 40px;
+        }
+
+        svg {
+            fill: $c03;
+            margin: 11px;
+        }
+
+        input[type=text],
+        textarea {
+            border: none;
+            height: 100%;
+            outline: none;
+            padding: 0;
+            resize: none;
+            width: 100%;
+        }
+
+        &.has-text .wc-send svg {
+            fill: $c07;
+        }
+
+        .wc-upload {
+            cursor: pointer;
+            position: relative;
+
+            svg {
+                height: 18px;
+                width: 26px;
+            }
+        }
+
+        #wc-upload-input {
+            font-size: 0;
+            height: 0;
+            left: 0;
+            opacity: 0;
+            outline: 0;
+            position: absolute;
+            top: 0;
+            width: 0;
+        }
+
+        .wc-send {
+            right: 0;
+        }
+
+        .wc-send.hidden {
+            visibility: hidden
+        }
+
+        .wc-textbox {
+            bottom: 0;
+            left: 48px;
+            right: 49px;
+
+            input {
+                background-color: transparent;
+            }
+        }
+
+        .wc-mic,
+        .wc-send {
+            background-color: transparent;
+            border: 0;
+            padding: 0;
+            right: 0;
+
+            &.hidden {
+                visibility: hidden;
+            }
+        }
+
+        .wc-send {
+            svg {
+                height: 18px;
+                width: 27px;
+            }
+        }
+
+        .wc-mic {
+            &.active path#micFilling {
+                fill:rgb(78, 55, 135)
+            }
+
+            &.inactive path#micFilling {
+                visibility: hidden;
+            }
+        }
+    }
+
+    .wc-console.has-text .wc-send svg {
+        fill: $c07;
+    }
+
+/* animation */
+
+    .wc-typing {
+        background-image: url('data:image/gif;base64,R0lGODlhQAAYAPYBAOzv8evu8Ort7+fq7Ons7ujr7eXo6uTn6ebp6+Xn6ebo6uzu8OPm6OTm6OPm5+Tn6N/i4+Ll59/i5N7h4+Hk5uDj5evu7+Hk5d/h49PV18PFx7/BwsfJysXHyMLExdja3Nfa28vNz72/wL7Awc/S08TGyMDCw9TW2NbY2t3g4trd39bZ2szO0M7Q0dnb3djb3Nvd39ve4Nnc3dze4Nrc3t7g4tzf4dXX2d3f4d7h4tnc3tve383P0MrMzs7Q0sjKzNLU1s/R08jKy9DT1NfZ293g4efp68bIyby+v9bZ27q8vdHT1c7R0uvt78nLzM/R0tjb3ens7bO0tbS2t7GztK+xsrW3uK6vsLe4utfa3L/Awtzf4MnLzamqq5WWl66wsbm7vNrd3uXo6a2ur6yurp2en6KjpKusrZ+goKeoqers7urt7peXmIGBgYSEhHx8fJmamqipqnZ2doqLi8XHyY2NjpGSkpOUlJiYmZOTlI+QkJqbm4eIiJucnIuMjP///yH/C05FVFNDQVBFMi4wAwEAAAAh/wtYTVAgRGF0YVhNUDw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTM4IDc5LjE1OTgyNCwgMjAxNi8wOS8xNC0wMTowOTowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTcgKE1hY2ludG9zaCkiIHhtcE1NOklu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');
+        background-repeat: no-repeat;
+        height: 20px;
+        width: 64px;
+    }
+
+    .wc-animate-scroll {
+        left: 0;
+        position: absolute;
+        transition: left .8s ease;
+    }
+
+    .wc-animate-scroll-rapid {
+        left: 0;
+        position: absolute;
+        transition: left .4s ease;
+    }
+
+    .wc-animate-scroll-near {
+        left: 0;
+        position: absolute;
+        transition: left .3s ease-in-out;
+    }
+
+/* text formats */
+
+    .format-markdown>p {
+        margin-bottom: 0px;
+    }
+
+    .format-markdown code {
+        white-space: pre-wrap;
+    }
+
+    .format-markdown+div {
+        margin-top: 8px;
+    }
+
+    .format-markdown ol {
+        padding-left: 30px;  /* numbers are right-aligned to the period */
+    }
+
+    .format-markdown ul {
+        padding-left: 33px;
+    }
+
+/* browser scrollbar customization */
+
+    .wc-app ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .wc-app ::-webkit-scrollbar * {
+        background-color: transparent;
+    }
+
+    .wc-app ::-webkit-scrollbar-thumb {
+        background-color: $c_chrome;
+    }
+
+/* download button for Unknown media */
+
+    .wc-icon-download {
+        display: inline-block;
+        height: 20px;
+        margin-left: 8px;
+        vertical-align: top;
+        width: 12px;
+    }
+
+    .wc-text-download {
+        display: inline-block;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    @mixin link-and-svg-arrow($color, $opacity) {
+        color: $color;
+        opacity: $opacity;
+        .wc-icon-download {
+            background-image:url('data:image/svg+xml;utf8,<svg width="12" height="20" viewBox="0 0 12 20" xmlns="http://www.w3.org/2000/svg"><path d="M.435 20v-1.25h11.13V20H.435zM12 10.44l-6 6.113-6-6.114.87-.88 4.512 4.59V0h1.236v14.15l4.512-4.59.87.88z" fill="#{$color}" fill-rule="evenodd"/></svg>');
+            background-repeat: no-repeat;
+        }
+    }
+
+    .wc-message-from-bot a.wc-link-download {
+        &:link, &:visited {
+            @include link-and-svg-arrow($c00, 1);
+        }
+
+        &:hover {
+            @include link-and-svg-arrow($c_brand, 1);
+        }
+
+        &:active {
+            @include link-and-svg-arrow($c_brand, 0.8);
+        }
+    }
+
+    .wc-message-from-me a.wc-link-download {
+        &:link, &:visited {
+            @include link-and-svg-arrow($c01, 1);
+        }
+
+        &:hover {
+            @include link-and-svg-arrow($c01, 0.8);
+        }
+
+        &:active {
+            @include link-and-svg-arrow($c01, 0.6);
+        }
+    }

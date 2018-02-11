@@ -134,7 +134,7 @@ const DEFAULT_STATE = {
         'src/data/reducer/editor.js': { size: 2464 },
         'src/data/reducer/navBar.js': { size: 2036 },
         'src/data/reducer/server.js': { size: 1962 },
-        'src/external/botframework-webchat/CognitiveServices.js': { size: 89110 },
+        'src/external/custom-botframework-webchat/CognitiveServices.js': { size: 89110 },
         'src/external/shared/activityVisitor.ts': { size: 4615 },
         'src/external/shared/globals.ts': { size: 2282 },
         'src/external/shared/paymentEncoder.ts': { size: 2160 },

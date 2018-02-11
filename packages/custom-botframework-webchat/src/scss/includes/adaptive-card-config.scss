@@ -1,0 +1,124 @@
+@import "colors";
+@import "settings";
+
+$hostConfig: (
+  supportsInteractivity: true,
+  spacing: (
+    small: ($separation / 2),
+    default: $separation,
+    medium: ($separation * 2),
+    large: ($separation * 3),
+    extraLarge: ($separation * 4),
+    padding: $separation
+  ),
+  separator: (
+    lineThickness: 1px,
+    lineColor: $c_line
+  ),
+  fontFamily: $fontFamily,
+  fontSizes: (
+    small: ($card_fontSize - 1),
+    default: $card_fontSize,
+    medium: ($card_fontSize + 2),
+    large: ($card_fontSize + 4),
+    extraLarge: ($card_fontSize + 6)
+  ),
+  fontWeights: (
+    lighter: 200,
+    default: 400,
+    bolder: 700
+  ),
+  containerStyles: (
+    default: (
+      backgroundColor: "#00000000",   //using 8 digit hex Adaptive Card color format for transparent ("Transparent" will not be recognized)
+      foregroundColors: (
+        default: (
+          default: $c00,
+          subtle: $c08
+        ),
+        accent: (
+          default: rgb(46, 137, 252),
+          subtle: rgba(46, 137, 1, .5)
+        ),
+        attention: (
+          default: rgb(255, 216,0),
+          subtle: rgba(255, 216, 0, .8)
+        ),
+        good: (
+          default: rgb(0, 255, 0),
+          subtle: rgba(0, 255, 0, .8)
+        ),
+        warning: (
+          default: rgb(255, 0, 0),
+          subtle: rgba(255, 0, 0, .8)
+        )
+      )
+    ),
+    emphasis: (
+      backgroundColor: rgba(0,0,0,0.03137254901960784),
+      foregroundColors: (
+        default: (
+          default: rgba(51,51,51,1),
+          subtle: rgba(51,51,51,0.9333333333333333)
+        ),
+        accent: (
+          default: rgba(46,137,252,1),
+          subtle: rgba(46,137,252,0.5333333333333333)
+        ),
+        attention: (
+          default: rgba(204,51,0,1),
+          subtle: rgba(204,51,0,0.8666666666666667)
+        ),
+        good: (
+          default: rgba(84,162,84,1),
+          subtle: rgba(84,162,84,0.8666666666666667)
+        ),
+        warning: (
+          default: rgba(230,149,0,1),
+          subtle: rgba(230,149,0,0.8666666666666667)
+        )
+      )
+    )
+  ),
+  imageSizes: (
+    small: 40px,
+    medium: 80px,
+    large: 160px
+  ),
+  actions: (
+    maxActions: 100,
+    spacing: "default",
+    buttonSpacing: $separation,
+    showCard: (
+      actionMode: "inline",
+      inlineTopMargin: $separation
+    ),
+    actionsOrientation: "vertical",
+    actionAlignment: "stretch"
+  ),
+  adaptiveCard: (
+    allowCustomStyle: false
+  ),
+  imageSet: (
+    imageSize: "medium",
+    maxImageHeight: 100px
+  ),
+  factSet: (
+    title: (
+      color: "default",
+      size: "default",
+      isSubtle: false,
+      weight: "bolder",
+      wrap: true,
+      maxWidth: 150px
+    ),
+    value: (
+      color: "default",
+      size: "default",
+      isSubtle: false,
+      weight: "default",
+      wrap: true
+    ),
+    spacing: $separation
+  )
+);

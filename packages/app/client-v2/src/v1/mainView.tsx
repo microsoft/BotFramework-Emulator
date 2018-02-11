@@ -33,7 +33,7 @@
 
 import * as React from 'react';
 const Splitter = require('react-split-pane');
-import * as BotChat from 'botframework-webchat';
+import * as BotChat from 'custom-botframework-webchat';
 import { getSettings, Settings, addSettingsListener, selectedActivity$ } from './settings';
 import { LayoutActions, InspectorActions } from './reducers';
 import { Settings as ServerSettings } from '../external/types/serverSettingsTypes';
@@ -50,7 +50,7 @@ import * as log from './log';
 import { ISpeechTokenInfo } from '../external/types/speechTypes';
 
 // TODO: We should reference CognitiveServices correctly by either a separate NPM package, or expose it under Web Chat
-const CognitiveServices = require('../external/botframework-webchat/CognitiveServices');
+const CognitiveServices = require('../external/custom-botframework-webchat/CognitiveServices');
 
 const { ipcRenderer, remote } = window['require']('electron');
 
@@ -241,7 +241,7 @@ export class MainView extends React.Component<{}, {}> {
             const settings = getSettings();
             const srvSettings = new ServerSettings(settings.serverSettings);
             const activeBot = srvSettings.getActiveBot();
-            const props: BotChat.ChatProps = {
+            const props: any /*BotChat.ChatProps*/ = {
                 botConnection: this.directline,
                 locale: activeBot.locale || remote.app.getLocale(),
                 formatOptions: {

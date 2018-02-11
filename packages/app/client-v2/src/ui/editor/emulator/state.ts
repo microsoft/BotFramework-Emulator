@@ -1,5 +1,5 @@
 
-import * as WebChat from 'botframework-webchat';
+import * as WebChat from 'custom-botframework-webchat';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 export interface IEmulatorState {
@@ -7,20 +7,20 @@ export interface IEmulatorState {
 }
 
 class NullConnection implements WebChat.IBotConnection {
-    public connectionStatus$: BehaviorSubject<WebChat.ConnectionStatus>;
-    public activity$: Observable<WebChat.Activity>;
+    public connectionStatus$: any; //BehaviorSubject<WebChat.ConnectionStatus>;
+    public activity$: any; //Observable<WebChat.Activity>;
     constructor() {
-        this.connectionStatus$ = new BehaviorSubject<WebChat.ConnectionStatus>(WebChat.ConnectionStatus.Uninitialized);
+        this.connectionStatus$ = <any>(new BehaviorSubject<WebChat.ConnectionStatus>(WebChat.ConnectionStatus.Uninitialized));
         this.activity$ = Observable.empty();
     }
     end() {}
-    postActivity(activity: WebChat.Activity): Observable<string> { return Observable.empty(); }
+    postActivity(activity: WebChat.Activity): any /*Observable<string>*/ { return Observable.empty(); }
 }
 
 export default function state(): IEmulatorState {
     if (!global["emulator"]) {
         global["emulator"] = <IEmulatorState> {
-            botConnection: new NullConnection()
+            botConnection: <any>(new NullConnection())
         };
     }
     return global['emulator'];

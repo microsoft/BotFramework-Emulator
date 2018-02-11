@@ -73,6 +73,7 @@
     "async": "2.1.4",
     "base64url": "2.0.0",
     "command-line-args": "4.0.7",
+    "custom-ngrok": "^2.2.26",
     "electron-debug": "1.1.0",
     "electron-ipcmain-websocket": "0.0.1-1",
     "electron-localshortcut": "2.0.2",

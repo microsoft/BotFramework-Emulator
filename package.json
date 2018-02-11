@@ -10,5 +10,8 @@
     "url": "https://github.com/Microsoft/BotFramework-Emulator"
   },
   "author": "Microsoft Corp.",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "lerna": "^2.8.0"
+  }
 }

@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "declaration": true,
+        "importHelpers": true,
+        "jsx": "react",
+        "lib": [
+            "dom",
+            "es2017"
+        ],
+        "module": "commonjs",
+        "noImplicitAny": true,
+        "outDir": "./built/",
+        "target": "es5",
+        "sourceMap": true
+    },
+    "files": [
+        "src/adaptivecards-hostconfig.d.ts",
+        "src/BotChat.ts"
+    ]
+}

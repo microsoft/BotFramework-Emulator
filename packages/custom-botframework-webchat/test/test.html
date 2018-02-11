@@ -1,0 +1,143 @@
+﻿<!DOCTYPE html>
+<!--
+  This is a sample HTML file which shows how to use Web Chat with React.
+  1. Build the project: "npm run build"
+  2. Start a web server: "npm run start"
+  3. Aim your browser at "http://localhost:8000/samples?[parameters as listed below]"
+
+  For ease of testing, several parameters can be set in the query string:
+    * s = Direct Line secret, or
+    * t = Direct Line token (obtained by calling Direct Line's Generate Token)
+    * domain = optionally, the URL of an alternate Direct Line endpoint
+    * webSocket = set to 'true' to use WebSocket to receive messages (currently defaults to false)
+    * userid, username = id (and optionally name) of bot user
+    * botid, botname = id (and optionally name) of bot
+-->
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Bot Chat</title>
+    <style>
+        html,
+        body {
+          height: 100%;
+          margin: 0;
+          padding: 0;
+          overflow: hidden;
+        }
+
+        #BotChatGoesHere {
+          height: 100%;
+        }
+    </style>
+
+    <link href="botchat.css" rel="stylesheet" />
+    <link href="botchat-fullwindow.css" rel="stylesheet" />
+
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://unpkg.com/react@15/dist/react.min.js"></script>
+    <script src="https://unpkg.com/react-dom@15/dist/react-dom.min.js"></script>
+    <!--
+      Upgrade to React@16
+
+      If version mismatch (React inside HTML and BotChat.js), auto-focus will fail to work because ReactDOM.findDOMNode() will return null on mismatch version
+
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    -->
+  </head>
+  <body>
+    <div id="BotChatGoesHere"></div>
+
+    <script src="botchat.js"></script>
+    <script src="mock_speech.js"></script>
+
+    <script type="text/babel">
+      const params = BotChat.queryParams(location.search);
+
+      window['botchatDebug'] = params['debug'] && params['debug'] === 'true';
+
+      function tryParseJSON(json) {
+        try {
+          return JSON.parse(json);
+        } catch (err) {}
+      }
+
+      class App extends React.Component {
+        constructor(props, context) {
+          super(props, context);
+
+          this.state = {
+            adaptiveCardsHostConfig: null,
+            bot: {
+              id: params['botid'] || 'botid',
+              name: params['botname'] || 'botname'
+            },
+            directLine: {
+              domain: params['domain'],
+              secret: params['s'],
+              token: params['t'],
+              webSocket: false
+            },
+            formatOptions: tryParseJSON(params.formatOptions),
+            locale: params['locale'],
+            resize: 'window',
+            sendTyping: false, //set to true to send 'typing' activities to bot (and other users) when user is typing
+            speechOptions: params['speech'] !== 'enabled/ui' ?
+              null
+            :
+              {
+                speechRecognizer: new MockSpeechRecognizer(),
+                speechSynthesizer: new MockSpeechSynthesizer()
+              },
+            user: {
+              id: params['userid'] || 'userid',
+              name: params['username'] || 'username'
+            }
+          };
+        }
+
+        componentWillMount() {
+          window.WebChatTest = {
+            changeHostConfig: adaptiveCardsHostConfig => {
+              this.setState(() => ({
+                adaptiveCardsHostConfig
+              }));
+            },
+            mockHostConfig: () => {
+              this.setState(() => ({
+                adaptiveCardsHostConfig: {
+                  fontFamily: '"Times New Roman", serif'
+                }
+              }));
+            }
+          };
+        }
+
+        render() {
+          return (
+            <div className="wc-app">
+              <BotChat.Chat
+                adaptiveCardsHostConfig={ this.state.adaptiveCardsHostConfig }
+                bot={ this.state.bot }
+                directLine={ this.state.directLine }
+                formatOptions={ this.state.formatOptions }
+                locale={ this.state.locale }
+                resize={ this.state.resize }
+                sendTyping={ this.state.sendTyping }
+                speechOptions={ this.state.speechOptions }
+                user={ this.state.user }
+              />
+            </div>
+          );
+        }
+      }
+
+      ReactDOM.render(
+        <App />,
+        document.getElementById('BotChatGoesHere')
+      );
+    </script>
+  </body>
+</html>

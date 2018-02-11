@@ -33,47 +33,47 @@
 
 import { css } from 'glamor';
 import * as React from 'react';
-import * as WebChat from 'botframework-webchat';
+import * as WebChat from 'custom-botframework-webchat';
 
 import state from '../state';
 
 const CSS = css({
-    backgroundColor: 'white',
-    height: '100%',
-    display: 'flex',
+  backgroundColor: 'white',
+  height: '100%',
+  display: 'flex',
 
-    '& > .wc-chatview-panel': {
-        flex: 1,
-        position: 'relative',
+  '& > .wc-chatview-panel': {
+    flex: 1,
+    position: 'relative',
 
-        '&::-webkit-scrollbar-thumb': {
-            backgroundColor: 'blue',
-            color: 'red',
-        }
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: 'blue',
+      color: 'red',
     }
+  }
 });
 
 export default class Chat extends React.Component {
-    render() {
-        const props: WebChat.ChatProps = {
-            user: {
-                id: "1234",
-                name: "User"
-            },
-            bot: {
-                id: "WXYZ",
-                name: "Bot"
-            },
-            formatOptions: {
-                showHeader: false
-            },
-            botConnection: state().botConnection,
-        };
-        return (
-            <div { ...CSS }>
-                { /*<WebChat.Chat { ...props } /> */ }
-                <span>Not connected</span>
-            </div>
-        );
-    }
+  render() {
+    const props: WebChat.ChatProps = {
+      adaptiveCardsHostConfig: null,
+      user: {
+        id: "1234",
+        name: "User"
+      },
+      bot: {
+        id: "WXYZ",
+        name: "Bot"
+      },
+      formatOptions: {
+        showHeader: false
+      },
+      botConnection: state().botConnection,
+    };
+    return (
+      <div { ...CSS }>
+        {<WebChat.Chat { ...props } />}
+      </div>
+    );
+  }
 }

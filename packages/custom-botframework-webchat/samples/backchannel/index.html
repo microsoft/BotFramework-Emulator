@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<!--
+  NOTE: This sample requires a bot which can send and receive specific event messages. Follow the instructions on
+  https://github.com/ryanvolum/backChannelBot to deploy such a bot.
+
+  This is a sample HTML file which shows how to embed an instance of Web Chat which listens for event activities. For the sake
+  of demonstration it specifically listens for events of name "changeBackground". Using the backChannelBot sample
+  our page can listen for events of name "changeBackground" and send events of name "buttonClicked". This
+  highlights the ability for a bot to communicate with a page that embeds the bot through Web Chat.
+
+  1. Build the project: "npm run build"
+  2. Start a web server: "npm run start"
+  3. Aim your browser at "http://localhost:8000/samples/backchannel?[parameters as listed below]"
+
+  For ease of testing, several parameters can be set in the query string:
+    * s = Direct Line secret, or
+    * t = Direct Line token (obtained by calling Direct Line's Generate Token)
+    * domain = optionally, the URL of an alternate Direct Line endpoint
+    * webSocket = set to 'true' to use WebSocket to receive messages (currently defaults to false)
+    * userid, username = id (and optionally name) of bot user
+    * botid, botname = id (and optionally name) of bot
+-->
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Bot Chat</title>
+
+    <link href="../../botchat.css" rel="stylesheet" />
+
+    <style>
+      .example {
+        float: left;
+        margin-right: 20px;
+        width: 300px;
+      }
+
+      .example > h2 {
+        font-family: 'Segoe UI';
+      }
+
+      #BotChatGoesHere {
+        border: 1px solid #333;
+        float: left;
+        height: 600px;
+        position: relative;
+        width: 460px;
+      }
+    </style>
+  </head>
+  <body>
+    <section class="example">
+      <h2>Type a color into the Web Chat!</h2>
+      <button onclick="postButtonMessage()" style="height: 60px; margin-left: 80px; margin-top: 20px; padding: 20px; width: 120px;">Click Me!</button>
+    </section>
+
+    <div id="BotChatGoesHere"></div>
+
+    <script src="../../botchat.js"></script>
+
+    <script>
+      const params = BotChat.queryParams(location.search);
+
+      const user = {
+        id: params['userid'] || 'userid',
+        name: params['username'] || 'username'
+      };
+
+      const bot = {
+        id: params['botid'] || 'botid',
+        name: params['botname'] || 'botname'
+      };
+
+      window['botchatDebug'] = params['debug'] && params['debug'] === 'true';
+
+      const botConnection = new BotChat.DirectLine({
+        domain: params['domain'],
+        secret: params['s'],
+        token: params['t'],
+        webSocket: params['webSocket'] && params['webSocket'] === 'true' // defaults to true
+      });
+
+      BotChat.App({
+        bot: bot,
+        botConnection: botConnection,
+        // locale: 'es-es', // override locale to Spanish
+        user: user
+      }, document.getElementById('BotChatGoesHere'));
+
+      botConnection.activity$
+        .filter(function (activity) {
+          return activity.type === 'event' && activity.name === 'changeBackground';
+        })
+        .subscribe(function (activity) {
+          console.log('"changeBackground" received with value: ' + activity.value);
+          changeBackgroundColor(activity.value);
+        });
+
+      function changeBackgroundColor(newColor) {
+        document.body.style.backgroundColor = newColor;
+      }
+
+      function postButtonMessage() {
+        botConnection
+          .postActivity({
+            from: { id: 'me' },
+            name: 'buttonClicked',
+            type: 'event',
+            value: ''
+          })
+          .subscribe(function (id) {
+            console.log('"buttonClicked" sent');
+          });
+      };
+    </script>
+  </body>
+</html>

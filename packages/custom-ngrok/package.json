@@ -1,0 +1,43 @@
+{
+  "name": "custom-ngrok",
+  "version": "2.2.26",
+  "description": "node wrapper for ngrok",
+  "main": "index.js",
+  "types": "ngrok.d.ts",
+  "scripts": {
+    "test": "node ./node_modules/mocha/bin/_mocha"
+  },
+  "files": [
+    "index.js",
+    "ngrok.d.ts"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bubenshchykov/ngrok.git"
+  },
+  "keywords": [
+    "ngrok",
+    "localhost",
+    "tunneling",
+    "localtunnel",
+    "webhook"
+  ],
+  "author": "bubenshchykov",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/bubenshchykov/ngrok/issues"
+  },
+  "devDependencies": {
+    "chai": "~3.5.0",
+    "homedir": "^0.6.0",
+    "mocha": "~3.4.2"
+  },
+  "dependencies": {
+    "@types/node": "^8.0.19",
+    "async": "^2.3.0",
+    "decompress-zip": "^0.3.0",
+    "lock": "^0.1.2",
+    "request": "^2.55.0",
+    "uuid": "^3.0.0"
+  }
+}
