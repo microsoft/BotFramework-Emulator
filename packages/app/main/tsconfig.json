@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "importHelpers": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "preserveConstEnums": true,
+    "target": "es6",
+    "jsx": "react",
+    "rootDir": "src",
+    "sourceMap": true,
+    "noImplicitAny": false,
+    "noImplicitThis": false,
+    "noEmitOnError": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "outDir": "built/server",
+    "removeComments": true
+  },
+  "include": [
+    "./src"
+  ],
+  "exclude": [
+    "./built",
+    "./node_modules",
+    "./dist",
+    "./scripts"
+  ],
+  "compileOnSave": false
+}

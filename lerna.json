@@ -2,7 +2,9 @@
   "lerna": "2.8.0",
   "packages": [
     "packages/*",
-    "packages/app/*"
+    "packages/app/client",
+    "packages/app/main",
+    "packages/app/shared"
   ],
   "version": "independent"
 }

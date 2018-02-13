@@ -14,12 +14,12 @@
             "name": "Launch",
             "type": "node",
             "request": "launch",
-            "program": "${workspaceRoot}/app/server/main.js",
+            "program": "${workspaceRoot}/main/built/server/main.js",
             "stopOnEntry": false,
             "args": [],
-            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+            "runtimeExecutable": "${workspaceRoot}/main/node_modules/.bin/electron",
             "windows": {
-                "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
+                "runtimeExecutable": "${workspaceRoot}/main/node_modules/.bin/electron.cmd"
             },
             "runtimeArgs": [
                 "--nolazy",
@@ -35,12 +35,12 @@
             "name": "Launch with localhost:3000",
             "type": "node",
             "request": "launch",
-            "program": "${workspaceRoot}/app/server/main.js",
+            "program": "${workspaceRoot}/main/built/server/main.js",
             "stopOnEntry": false,
             "args": [],
-            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+            "runtimeExecutable": "${workspaceRoot}/main/node_modules/.bin/electron",
             "windows": {
-                "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
+                "runtimeExecutable": "${workspaceRoot}/main/node_modules/.bin/electron.cmd"
             },
             "runtimeArgs": [
                 ".",
@@ -52,19 +52,6 @@
                 "NODE_ENV": "development"
             },
             "sourceMaps": true,
-            "protocol": "inspector"
-        },
-        {
-            "name": "Debug integration tests",
-            "type": "node",
-            "request": "launch",
-            "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
-            "runtimeExecutable": "node",
-            "stopOnEntry": false,
-            "args": ["-t", "20000", "--compilers", "ts:ts-node/register", "${workspaceRoot}/tests/integration/integration.ts"],
-            "env": { "NODE_ENV": "test"},
-            "cwd": "${workspaceRoot}",
-            "sourceMaps": false,
             "protocol": "inspector"
         }
     ]

@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "importHelpers": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "preserveConstEnums": true,
+    "target": "es5",
+    "lib": ["es6"],
+    "rootDir": "src",
+    "sourceMap": true,
+    "noImplicitAny": false,
+    "noImplicitThis": false,
+    "noEmitOnError": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "outDir": "built",
+    "removeComments": true,
+    "declaration": true
+  },
+  "include": [
+    "./src"
+  ],
+  "exclude": [
+    "./built",
+    "./node_modules",
+    "./dist",
+    "./scripts"
+  ],
+  "compileOnSave": false
+}
