@@ -39,6 +39,7 @@ import BotExplorer from './botExplorer';
 import * as Colors from '../../styles/colors';
 import ExplorerBarContent from './explorerBarContent';
 import ExplorerBarTitle from './explorerBarTitle';
+import * as Constants from '../../../constants';
 
 const CSS = css({
     backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
@@ -50,7 +51,7 @@ const CSS = css({
 
 class ExplorerBar extends React.Component {
     render() {
-        let explorer = this.props.selectedNavTab === constants.NavBar_App ?
+        let explorer = this.props.selectedNavTab === Constants.NavBar_App ?
             <BotExplorer />
         :
             (

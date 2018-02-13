@@ -41,7 +41,6 @@ import bot from './reducer/bot';
 import card from './reducer/card';
 import chat from './reducer/chat';
 import editor from './reducer/editor';
-import emulator from './reducer/emulator';
 import navBar from './reducer/navBar';
 import server from './reducer/server';
 
