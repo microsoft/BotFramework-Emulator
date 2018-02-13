@@ -39,8 +39,8 @@ import { directoryExists } from '../../utils';
 const CSS = css({
     '& > header': {
         fontSize: '13px',
-        lineHeight: '30px',
-        height: '30px',
+        lineHeight: '72px',
+        height: '72px',
         paddingLeft: '16px',
         textTransform: 'uppercase',
     },

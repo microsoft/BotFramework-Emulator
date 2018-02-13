@@ -43,7 +43,7 @@ const CSS = css({
         cursor: 'pointer',
 
         ':hover': {
-            backgroundColor: Colors.GRAY_2
+            backgroundColor: Colors.C3
         },
 
         ':first-of-type': {

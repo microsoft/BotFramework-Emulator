@@ -1,0 +1,11 @@
+{
+  "name": "ui-react",
+  "version": "0.1.0",
+  "description": "Shared UI components for Bot Framework Emulator extensions.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Microsoft Corp.",
+  "license": "MIT"
+}

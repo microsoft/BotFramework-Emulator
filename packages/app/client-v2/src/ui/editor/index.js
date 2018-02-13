@@ -36,32 +36,26 @@ import React from 'react';
 
 import * as constants from '../../constants';
 import Emulator from './emulator';
-import CardEditor from './cardEditor';
-import ConversationEditor from './conversationEditor';
 import TestBedEditor from './testBedEditor';
 
 export default class EditorFactory extends React.Component {
-    render() {
-        const { document } = this.props;
-        const { contentType } = document;
+  render() {
+    const { document } = this.props;
+    const { contentType } = document;
 
-        return (
-            contentType === constants.ContentType_Card ?
-                <CardEditor cardId={ document.documentId } />
-            : contentType === constants.ContentType_Emulator ?
-                <Emulator botId={ document.documentId } />
-            : contentType === constants.ContentType_Conversation ?
-                <ConversationEditor conversationId={ document.documentId } />
-            : contentType === constants.ContentType_TestBed ?
-                <TestBedEditor />
-            : false
-        );
-    }
+    return (
+      contentType === constants.ContentType_LiveChat ?
+        <Emulator botId={document.documentId} />
+        : contentType === constants.ContentType_TestBed ?
+          <TestBedEditor />
+          : false
+    );
+  }
 }
 
 EditorFactory.propTypes = {
-    document: PropTypes.shape({
-        contentType: PropTypes.string,
-        documentId: PropTypes.string
-    })
+  document: PropTypes.shape({
+    contentType: PropTypes.string,
+    documentId: PropTypes.string
+  })
 };

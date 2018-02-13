@@ -34,18 +34,12 @@
 import React from 'react';
 
 import * as constants from '../../../constants';
-import CardTab from './cardTab';
-import ConversationTab from './conversationTab';
 import EmulatorTab from './emulatorTab';
 import TestBedTab from './testBedTab';
 
 export default props =>
-    props.document.contentType === constants.ContentType_Emulator ?
+    props.document.contentType === constants.ContentType_LiveChat ?
         <EmulatorTab documentId={ props.document.documentId } owningEditor={ props.owningEditor }/>
-    : props.document.contentType === constants.ContentType_Card ?
-        <CardTab documentId={ props.document.documentId } owningEditor={ props.owningEditor }/>
     : props.document.contentType === constants.ContentType_TestBed ?
         <TestBedTab documentId={ props.document.documentId } owningEditor={ props.owningEditor }/>
-    : props.document.contentType === constants.ContentType_Conversation ?
-        <ConversationTab documentId={ props.document.documentId } owningEditor={ props.owningEditor }/>
     : false

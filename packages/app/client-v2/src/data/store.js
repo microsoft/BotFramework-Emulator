@@ -37,9 +37,8 @@ import promiseMiddleware from 'redux-promise-middleware';
 import WebSocketActionBridge from 'redux-websocket-bridge';
 
 import assetExplorer from './reducer/assetExplorer';
-import emulator from './reducer/emulator';
 import card from './reducer/card';
-import conversation from './reducer/conversation';
+import chat from './reducer/chat';
 import editor from './reducer/editor';
 import navBar from './reducer/navBar';
 import server from './reducer/server';
@@ -50,19 +49,18 @@ import server from './reducer/server';
 const electron = window.process && window.process.versions.electron;
 
 const createStoreWithMiddleware = applyMiddleware(
-    WebSocketActionBridge(() => new IPCRendererWebSocket()),
-    // WebSocketActionBridge(() => new DebugWebSocketConnection(new IPCRendererWebSocket())),
-    promiseMiddleware()
+  WebSocketActionBridge(() => new IPCRendererWebSocket()),
+  // WebSocketActionBridge(() => new DebugWebSocketConnection(new IPCRendererWebSocket())),
+  promiseMiddleware()
 )(createStore);
 
 const DEFAULT_STATE = {};
 
 export default createStoreWithMiddleware(combineReducers({
-    assetExplorer,
-    card,
-    conversation,
-    editor,
-    emulator,
-    navBar,
-    server
+  assetExplorer,
+  card,
+  editor,
+  chat,
+  navBar,
+  server
 }));

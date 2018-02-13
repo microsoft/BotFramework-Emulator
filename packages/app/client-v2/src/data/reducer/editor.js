@@ -41,7 +41,7 @@ const DEFAULT_STATE = {
         [constants.EditorKey_Primary]: {
             activeDocumentId: 'emulator:1',
             documents: [{
-                contentType: constants.ContentType_Emulator,
+                contentType: constants.ContentType_LiveChat,
                 documentId: 'emulator:1'
             }, {
                 contentType: constants.ContentType_TestBed,

@@ -34,34 +34,27 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import ExplorerSet from './explorerSet';
-import CardExplorer from './cardExplorer';
-import LuisExplorer from './luisExplorer';
-import QnAExplorer from './qnaExplorer';
-import FormExplorer from './formExplorer';
-import ConversationExplorer from './conversationExplorer';
+import LiveChatExplorer from './liveChatExplorer';
+//import TranscriptExplorer from './transcriptExplorer';
 import FolderNotOpenExplorer from './folderNotOpenExplorer';
 import { directoryExists } from '../../utils';
 
 class AssetExplorerSet extends React.Component {
-    render() {
-        if (directoryExists(this.props.folder)) {
-            return (
-                <ExplorerSet title="Asset Explorer">
-                    <CardExplorer />
-                    <LuisExplorer />
-                    <QnAExplorer />
-                    <FormExplorer />
-                    <ConversationExplorer />
-                </ExplorerSet>
-            );
-        } else {
-            return (
-                <ExplorerSet title="Asset Explorer">
-                    <FolderNotOpenExplorer />
-                </ExplorerSet>
-            );
-        }
+  render() {
+    if (directoryExists(this.props.folder)) {
+      return (
+        <ExplorerSet title="Asset Explorer">
+          <LiveChatExplorer />
+        </ExplorerSet>
+      );
+    } else {
+      return (
+        <ExplorerSet title="Asset Explorer">
+          <FolderNotOpenExplorer />
+        </ExplorerSet>
+      );
     }
+  }
 }
 
 export default connect(state => ({ folder: state.assetExplorer.folder }))(AssetExplorerSet)

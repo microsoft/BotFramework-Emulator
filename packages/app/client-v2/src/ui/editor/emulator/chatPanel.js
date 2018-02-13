@@ -36,27 +36,35 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import Chat from './parts/chat';
+import * as Colors from '../../styles/colors';
 import Panel, { Controls as PanelControls, Content as PanelContent } from '../panel';
 
 const CSS = css({
-    height: '100%',
+  height: '100%',
+
+  '& > header': {
+    backgroundColor: Colors.SECTION_HEADER_BACKGROUND_DARK,
+    color: Colors.SECTION_HEADER_FOREGROUND_DARK,
+    lineHeight: '30px',
+    minHeight: '30px',
+    paddingLeft: '16px',
+    textTransform: 'lowercase',
+    userSelect: 'true'
+  }
 });
 
 export default class ChatPanel extends React.Component {
-    render() {
-        return (
-            <div className={ CSS }>
-                <Panel title="Chat">
-                    <PanelContent>
-                        <Chat />
-                    </PanelContent>
-                </Panel>
-            </div>
-        );
-    }
+  render() {
+    return (
+      <div className={ CSS }>
+        <header>http://localhost:3978/api/messages</header>
+        <Chat />
+      </div>
+    );
+  }
 }
 
 
 ChatPanel.propTypes = {
-    botId: PropTypes.string.isRequired
+  botId: PropTypes.string.isRequired
 };

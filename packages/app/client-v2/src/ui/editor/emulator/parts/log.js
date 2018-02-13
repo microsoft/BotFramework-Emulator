@@ -41,50 +41,50 @@ import * as Fonts from '../../../../ui/styles/fonts';
 import { uniqueId } from '../../../../utils';
 
 const CSS = css({
-    height: '100%',
-    overflow: 'auto',
-    userSelect: 'initial',
-    padding: '0 16px 0 16px',
+  height: '100%',
+  overflow: 'auto',
+  userSelect: 'initial',
+  padding: '0 16px 0 16px',
 
-    '& > .entry': {
-        fontFamily: Fonts.FONT_FAMILY_MONOSPACE,
+  '& > .entry': {
+    fontFamily: Fonts.FONT_FAMILY_MONOSPACE,
 
-        '& > .source': {
-            color: Colors.LOG_PANEL_SOURCE_DARK,
-        },
-
-        '& > .info': {
-            color: Colors.LOG_PANEL_INFO_DARK,
-        },
+    '& > .source': {
+      color: Colors.LOG_PANEL_SOURCE_DARK,
     },
+
+    '& > .info': {
+      color: Colors.LOG_PANEL_INFO_DARK,
+    },
+  },
 });
 
 class Log extends React.Component {
-    render() {
-        return (
-            <div className={ CSS }>
-            {
-                this.props.entries.map(entry =>
-                    <div className="entry" key={ entry + uniqueId() }>
-                        <span className="source">
-                            { '[' + entry.source + ']' }
-                        </span>
-                        <span>&nbsp;</span>
-                        <span className={ entry.type }>
-                            { entry.text }
-                        </span>
-                    </div>
-                )
-            }
+  render() {
+    return (
+      <div className={CSS}>
+        {
+          this.props.entries.map(entry =>
+            <div className="entry" key={entry + uniqueId()}>
+              <span className="source">
+                {'[' + entry.source + ']'}
+              </span>
+              <span>&nbsp;</span>
+              <span className={entry.type}>
+                {entry.text}
+              </span>
             </div>
-        );
-    }
+          )
+        }
+      </div>
+    );
+  }
 }
 
 Log.propTypes = {
-    entries: PropTypes.array.isRequired
+  entries: PropTypes.array.isRequired
 };
 
 export default connect((state, { botId }) => ({
-    entries: state.emulator.log.entries
+  entries: state.chat.log.entries
 }))(Log);

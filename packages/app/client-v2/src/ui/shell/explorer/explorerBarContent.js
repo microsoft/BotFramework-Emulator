@@ -43,24 +43,24 @@ const CSS = css({
 });
 
 class ExplorerBarContent extends React.Component {
-    render() {
-        if (directoryExists(this.props.folder)) {
-            return (
-                <div className={ CSS }>
-                    <AssetExplorerSet />
-                </div>
-            );
-        } else {
-            return (
-                <ExplorerSet>
-                    <FolderNotOpenExplorer />
-                </ExplorerSet>
-            );
-        }
+  render() {
+    if (directoryExists(this.props.folder)) {
+      return (
+        <div className={ CSS }>
+          <AssetExplorerSet />
+        </div>
+      );
+    } else {
+      return (
+        <ExplorerSet>
+          <FolderNotOpenExplorer />
+        </ExplorerSet>
+      );
     }
+  }
 }
 
 export default connect(state => ({
-    navBar: state.navBar,
-    folder: state.assetExplorer.folder
+  navBar: state.navBar,
+  folder: state.assetExplorer.folder
 }))(ExplorerBarContent)

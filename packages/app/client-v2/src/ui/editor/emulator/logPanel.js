@@ -40,27 +40,27 @@ import Log from './parts/log';
 import Panel, { Controls as PanelControls, Content as PanelContent } from '../panel';
 
 const CSS = css({
-    height: '100%'
+  height: '100%'
 });
 
 class LogPanel extends React.Component {
-    render() {
-        return (
-            <div className={ CSS }>
-                <Panel title="Log">
-                    <PanelContent>
-                        <Log />
-                    </PanelContent>
-                </Panel>
-            </div>
-        );
-    }
+  render() {
+    return (
+      <div className={CSS}>
+        <Panel title="Log">
+          <PanelContent>
+            <Log />
+          </PanelContent>
+        </Panel>
+      </div>
+    );
+  }
 }
 
 LogPanel.propTypes = {
-    log: PropTypes.object.isRequired
+  log: PropTypes.object.isRequired
 };
 
 export default connect((state, { botId }) => ({
-    log: state.emulator.log
+  log: state.chat.log
 }))(LogPanel)

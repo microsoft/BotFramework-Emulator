@@ -39,7 +39,8 @@ import state from '../state';
 
 const CSS = css({
   backgroundColor: 'white',
-  height: '100%',
+  height: '90%',
+  maxHeight: '100%',
   display: 'flex',
 
   '& > .wc-chatview-panel': {

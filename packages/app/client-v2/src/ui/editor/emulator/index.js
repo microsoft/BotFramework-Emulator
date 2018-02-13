@@ -39,28 +39,57 @@ import ChatPanel from './chatPanel';
 import DetailPanel from './detailPanel';
 import LogPanel from './logPanel';
 import Splitter from '../../layout/splitter-v2';
+import ToolBar, { Button as ToolBarButton, Separator as ToolBarSeparator } from '../toolbar';
 
 const CSS = css({
-    flex: 1,
-    height: '100%'
+  flex: 1,
+  height: '100%',
 });
 
 export default class Emulator extends React.Component {
-    render() {
-        return (
-            <div className={ CSS }>
-                <Splitter orientation={ 'horizontal' } initialSizeIndex={ 1 } initialSize={ 300 }>
-                    <Splitter orientation={ 'vertical' }>
-                        <ChatPanel botId={ this.props.botId } />
-                        <DetailPanel botId={ this.props.botId } />
-                    </Splitter>
-                    <LogPanel botId={ this.props.botId } />
-                </Splitter>
-            </div>
-        );
-    }
+
+  constructor(props, context) {
+    super(props, context)
+    this.onPresentationClick = this.handlePresentationClick.bind(this, "presentation");
+    this.onStartOverClick = this.handleStartOverClick.bind(this, "start over");
+    this.onExportClick = this.handleExportClick.bind(this, "export");
+    this.onImportClick = this.handleImportClick.bind(this, "import");
+  }
+
+  handlePresentationClick() {
+  }
+
+  handleStartOverClick() {
+  }
+
+  handleExportClick() {
+  }
+
+  handleImportClick() {
+  }
+
+  render() {
+    return (
+      <div className={CSS}>
+        <ToolBar>
+          <ToolBarButton title="Presentation" onClick={this.onPresentationClick} />
+          <ToolBarSeparator />
+          <ToolBarButton title="Start Over" onClick={this.onStartOverClick} />
+          <ToolBarButton title="Export" onClick={this.handleExportClick} />
+          <ToolBarButton title="Import" onClick={this.handleImportClick} />
+        </ToolBar>
+        <Splitter orientation={'vertical'} primaryPaneIndex={1} initialSizeIndex={2} initialSize={300} minSizes={[80, 80]}>
+          <ChatPanel botId={this.props.botId} />
+          <Splitter orientation={'horizontal'} primaryPaneIndex={0} initialSizeIndex={1} initialSize={500} minSizes={[80, 80]}>
+            <LogPanel botId={this.props.botId} />
+            <DetailPanel botId={this.props.botId} />
+          </Splitter>
+        </Splitter>
+      </div>
+    );
+  }
 }
 
 Emulator.propTypes = {
-    botId: PropTypes.string.isRequired
+  botId: PropTypes.string.isRequired
 };

@@ -31,9 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export const ContentType_Card = 'application/vnd.microsoft.botbuilderstudio.document.card';
-export const ContentType_Conversation = 'application/vnd.microsoft.botbuilderstudio.document.conversation';
-export const ContentType_Emulator = 'application/vnd.microsoft.botbuilderstudio.document.emulator';
+export const ContentType_Transcript = 'application/vnd.microsoft.botbuilderstudio.document.transcript';
+export const ContentType_LiveChat = 'application/vnd.microsoft.botbuilderstudio.document.livechat';
 export const ContentType_TestBed = 'application/vnd.microsoft.botbuilderstudio.testbed';
 
 export const NavBar_App = 'navbar.app';

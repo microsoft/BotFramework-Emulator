@@ -44,6 +44,7 @@ import NavBar from './navBar';
 import Splitter from '../layout/splitter-v2';
 import TabManager from '../dialogs/tabManager';
 import * as Constants from '../../constants';
+import StatusBar from './statusBar';
 
 css.global('html, body, #root', {
     backgroundColor: Colors.APP_BACKGROUND_DARK,
@@ -74,21 +75,32 @@ const CSS = css({
     backgroundColor: Colors.APP_BACKGROUND_DARK,
     color: Colors.APP_FOREGROUND_DARK,
     display: 'flex',
+    width: '100%',
+    height: '100%',
     minHeight: '100%',
+    flexDirection: 'column',
+  });
 
-    '& > .workbench': {
-        display: 'flex',
-        flex: 1,
-    },
+const NAV_CSS = css({
+  display: 'flex',
+  flexDirection: 'row',
+  width: '100%',
+  height: '100%',
 
-    '& .mdi-wrapper': {
-        height: '100%',
-        width: '100%'
-    },
+  '& > .workbench': {
+    display: 'flex',
+    flex: 1,
+    flexDirection: 'column',
+  },
 
-    '& .secondary-mdi': {
-        borderLeft: `1px solid ${Colors.GRAY_2}`
-    }
+  '& .mdi-wrapper': {
+      height: '100%',
+      width: '100%',
+  },
+
+  '& .secondary-mdi': {
+      borderLeft: `1px solid ${Colors.C3}`
+  }
 });
 
 export class Main extends React.Component {
@@ -115,9 +127,10 @@ export class Main extends React.Component {
 
         return (
             <div className={ CSS }>
+              <div className={ NAV_CSS }>
                 <NavBar/>
                 <div className="workbench">
-                    <Splitter orientation={ 'vertical' } initialSizeIndex={ 0 } initialSize={ 300 } primaryPaneIndex={ 0 } minSizes={ [200, null] }>
+                    <Splitter orientation={ 'vertical' } initialSizeIndex={ 0 } initialSize={ 300 } primaryPaneIndex={ 0 } minSizes={ [200, 80] }>
                         <ExplorerBar />
                         <Splitter orientation={ 'vertical' }>
                         {
@@ -128,6 +141,8 @@ export class Main extends React.Component {
                 </div>
                 <TabManager disabled={ false } />
             </div>
+            <StatusBar />
+          </div>
         );
     }
 }

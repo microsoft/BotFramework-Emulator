@@ -1,0 +1,14 @@
+{
+  "name": "chat-extension",
+  "version": "0.1.0",
+  "description": "Chat extension for the Bot Framework Emulator.",
+  "main": "built/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Microsoft Corp.",
+  "license": "MIT",
+  "dependencies": {
+    "ui-react": "^0.1.0"
+  }
+}

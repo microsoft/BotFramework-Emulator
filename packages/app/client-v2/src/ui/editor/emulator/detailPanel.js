@@ -39,21 +39,21 @@ import Detail from './parts/detail';
 import Panel, { Controls as PanelControls, Content as PanelContent } from '../panel';
 
 const CSS = css({
-    height: '100%'
+  height: '100%'
 });
 
 export default class DetailPanel extends React.Component {
-    render() {
-        return (
-            <div className={ CSS }>
-                <Panel title="Inspector">
-                    <PanelContent>
-                        <Detail />
-                    </PanelContent>
-                </Panel>
-            </div>
-        );
-    }
+  render() {
+    return (
+      <div className={CSS}>
+        <Panel title="Inspect">
+          <PanelContent>
+            <Detail />
+          </PanelContent>
+        </Panel>
+      </div>
+    );
+  }
 }
 
 const foo = "What would you like on your ${Meat} ${(Bread.length() > 0 ? 'on ' ${Bread}} sandwich ${Toppings.count() > 0 ? 'with ' Toppings.toList()}?"

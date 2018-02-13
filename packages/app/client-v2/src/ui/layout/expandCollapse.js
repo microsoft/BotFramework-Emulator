@@ -56,6 +56,11 @@ const CSS = css({
         '& > .content': {
             flex: 1,
             paddingLeft: '8px',
+
+            '& > .toggle': {
+              fontSize: '9px',
+              paddingRight: '8px',
+            }
         },
 
         '& > .accessories': {
@@ -87,7 +92,7 @@ export default class ExpandCollapse extends React.Component {
             <div aria-expanded={ this.state.expanded } className={ CSS }>
                 <header>
                     <div className="content" onClick={ this.handleTitleClick }>
-                        { this.state.expanded ? '▽' : '▷' }&nbsp;
+                        <span className="toggle"> { this.state.expanded ? '◢' : '▷' }</span>
                         { this.props.title }
                     </div>
                     <div className="accessories">

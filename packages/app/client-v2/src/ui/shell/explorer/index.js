@@ -36,25 +36,24 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import * as Colors from '../../styles/colors';
-import * as constants from '../../../constants';
 import ExplorerBarContent from './explorerBarContent';
 import ExplorerBarTitle from './explorerBarTitle';
 
 const CSS = css({
-    backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
-    boxShadow: 'inset -4px 0px 8px -4px rgba(0,0,0,0.6)',
-    height: '100%'
+  backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
+  boxShadow: 'inset -4px 0px 8px -4px rgba(0,0,0,0.6)',
+  height: '100%'
 });
 
 class ExplorerBar extends React.Component {
-    render() {
-        return (
-            <div className={ CSS }>
-                <ExplorerBarTitle />
-                <ExplorerBarContent />
-            </div>
-        );
-    }
+  render() {
+    return (
+      <div className={CSS}>
+        <ExplorerBarTitle />
+        <ExplorerBarContent />
+      </div>
+    );
+  }
 }
 
 export default connect(state => ({ navBar: state.navBar }))(ExplorerBar)

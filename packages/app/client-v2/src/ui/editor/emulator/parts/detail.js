@@ -39,14 +39,14 @@ import * as React from 'react';
 import * as Colors from '../../../../ui/styles/colors';
 
 const CSS = css({
-    padding: '0 16px 0 16px',
+  padding: '0 16px 0 16px',
 });
 
 export default class Detail extends React.Component {
-    render() {
-        return (
-            <div className={ CSS }>
-            </div>
-        );
-    }
+  render() {
+    return (
+      <div className={CSS}>
+      </div>
+    );
+  }
 }

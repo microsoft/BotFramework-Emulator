@@ -16,8 +16,6 @@
     "webpack": "webpack",
     "webpack-watch": "webpack --progress --watch",
     "clean": "rimraf built",
-    "postinstall": "cd test && npm install",
-    "prepublish": "tsc && npm run build-css && webpack --progress --config webpack.production.config.js",
     "start": "http-server -p 8000",
     "test": "concurrently  \"node test/mock_dl/index.js\" \"mocha test\" ",
     "mock": "node test/mock_dl/index.js"

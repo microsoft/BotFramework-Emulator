@@ -39,50 +39,50 @@ import { filterChildren } from '../utils';
 import * as Colors from '../styles/colors';
 
 const CSS = css({
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    height: '100%',
-    position: 'relative',
+  display: 'flex',
+  flex: 1,
+  flexDirection: 'column',
+  height: '100%',
+  position: 'relative',
 
-    '& > .header': {
-        backgroundColor: Colors.SECTION_HEADER_BACKGROUND_DARK,
-        color: Colors.SECTION_HEADER_FOREGROUND_DARK,
-        lineHeight: '30px',
-        minHeight: '30px',
-        textTransform: 'uppercase',
-        paddingLeft: '16px',
+  '& > .header': {
+    backgroundColor: Colors.SECTION_HEADER_BACKGROUND_DARK,
+    color: Colors.SECTION_HEADER_FOREGROUND_DARK,
+    lineHeight: '30px',
+    minHeight: '30px',
+    textTransform: 'uppercase',
+    paddingLeft: '16px',
 
-        '& > .accessories': {
-            margin: '0 0 0 auto'
-        }
-    },
-
-    '& > .body': {
-        backgroundColor: Colors.PANEL_BACKGROUND_DARK,
-        color: Colors.PANEL_FOREGROUND_DARK,
-        flex: 1,
-        overflow: 'auto',
-        padding: 0,
+    '& > .accessories': {
+      margin: '0 0 0 auto'
     }
+  },
+
+  '& > .body': {
+    backgroundColor: Colors.PANEL_BACKGROUND_DARK,
+    color: Colors.PANEL_FOREGROUND_DARK,
+    flex: 1,
+    overflow: 'auto',
+    padding: 0,
+  }
 });
 
 export default class Panel extends React.Component {
-    render() {
-        return (
-            <div className={ CSS }>
-                <div className="header">
-                    { this.props.title }
-                    <div className="accessories">
-                        { filterChildren(this.props.children, child => child.type === Controls) }
-                    </div>
-                </div>
-                <div className="body">
-                    { filterChildren(this.props.children, child => child.type === Content) }
-                </div>
-            </div>
-        );
-    }
+  render() {
+    return (
+      <div className={CSS}>
+        <div className="header">
+          {this.props.title}
+          <div className="accessories">
+            {filterChildren(this.props.children, child => child.type === Controls)}
+          </div>
+        </div>
+        <div className="body">
+          {filterChildren(this.props.children, child => child.type === Content)}
+        </div>
+      </div>
+    );
+  }
 }
 
 export const Controls = props => props.children;
