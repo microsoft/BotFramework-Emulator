@@ -35,25 +35,40 @@ import { css } from 'glamor';
 import React from 'react';
 import { connect } from 'react-redux';
 
+import BotExplorer from './botExplorer';
 import * as Colors from '../../styles/colors';
 import ExplorerBarContent from './explorerBarContent';
 import ExplorerBarTitle from './explorerBarTitle';
 
 const CSS = css({
-  backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
-  boxShadow: 'inset -4px 0px 8px -4px rgba(0,0,0,0.6)',
-  height: '100%'
+    backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
+    boxShadow: 'inset -4px 0px 8px -4px rgba(0,0,0,0.6)',
+    height: '100%',
+    display: 'flex',
+    flexFlow: 'column nowrap'
 });
 
 class ExplorerBar extends React.Component {
-  render() {
-    return (
-      <div className={CSS}>
-        <ExplorerBarTitle />
-        <ExplorerBarContent />
-      </div>
-    );
-  }
+    render() {
+        let explorer = this.props.selectedNavTab === constants.NavBar_App ?
+            <BotExplorer />
+        :
+            (
+                <React.Fragment>
+                    <ExplorerBarTitle />
+                    <ExplorerBarContent />
+                </React.Fragment>
+            );
+
+        return (
+            <div className={ CSS }>
+                { explorer }
+            </div>
+        );
+    }
 }
 
-export default connect(state => ({ navBar: state.navBar }))(ExplorerBar)
+export default connect(state => ({
+    activeBot: state.bot.activeBot,
+    selectedNavTab: state.navBar.selection
+}))(ExplorerBar)

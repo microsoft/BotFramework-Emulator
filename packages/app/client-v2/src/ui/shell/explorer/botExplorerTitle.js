@@ -1,4 +1,3 @@
-//
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 //
@@ -31,39 +30,32 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { applyMiddleware, combineReducers, createStore } from 'redux';
-import IPCRendererWebSocket from 'electron-ipcrenderer-websocket';
-import promiseMiddleware from 'redux-promise-middleware';
-import WebSocketActionBridge from 'redux-websocket-bridge';
+import { css } from 'glamor';
+import React from 'react';
+import { connect } from 'react-redux';
 
-import assetExplorer from './reducer/assetExplorer';
-import bot from './reducer/bot';
-import card from './reducer/card';
-import chat from './reducer/chat';
-import editor from './reducer/editor';
-import emulator from './reducer/emulator';
-import navBar from './reducer/navBar';
-import server from './reducer/server';
+const CSS = css({
+    '& > header': {
+        fontSize: '13px',
+        lineHeight: '30px',
+        height: '30px',
+        paddingLeft: '16px',
+        textTransform: 'uppercase',
+    },
+});
 
-// TODO: Remove this when we no longer need to debug the WebSocket connection
-// import DebugWebSocketConnection from './debugWebSocketConnection';
+class BotExplorerTitle extends React.Component {
+    render() {
+        return (
+            <div className={ CSS }>
+                <header>
+                    { this.props.activeBot }
+                </header>
+            </div>
+        );
+    }
+}
 
-const electron = window.process && window.process.versions.electron;
-
-const createStoreWithMiddleware = applyMiddleware(
-  WebSocketActionBridge(() => new IPCRendererWebSocket()),
-  // WebSocketActionBridge(() => new DebugWebSocketConnection(new IPCRendererWebSocket())),
-  promiseMiddleware()
-)(createStore);
-
-const DEFAULT_STATE = {};
-
-export default createStoreWithMiddleware(combineReducers({
-  assetExplorer,
-  bot,
-  card,
-  editor,
-  chat,
-  navBar,
-  server
-}));
+export default connect(state => ({
+    activeBot: state.bot.activeBot
+}))(BotExplorerTitle)

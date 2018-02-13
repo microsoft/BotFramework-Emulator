@@ -167,3 +167,37 @@ export const approximateObjectSize = (object: any, cache:any[] = []): number => 
             return 0;
     }
 }
+
+export const directoryExists = (path) => {
+    let stat = null;
+    try {
+        stat = Fs.statSync(path);
+    } catch (e) { }
+
+    if (!stat || !stat.isDirectory()) {
+        return false;
+    } else return true;
+}
+
+export const fileExists = (path) => {
+    let stat = null;
+    try {
+        stat = Fs.statSync(path);
+    } catch (e) { }
+
+    if (!stat || !stat.isFile()) {
+        return false;
+    } else return true;
+}
+
+export const getFilesInDir = (path) => {
+    return Fs.readdirSync(path, 'utf-8');
+}
+
+export const readFileSync = (path) => {
+    try {
+        return Fs.readFileSync(path, 'utf-8');
+    } catch (e) {
+        return false;
+    }
+}

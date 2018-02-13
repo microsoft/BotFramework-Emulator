@@ -31,39 +31,31 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { applyMiddleware, combineReducers, createStore } from 'redux';
-import IPCRendererWebSocket from 'electron-ipcrenderer-websocket';
-import promiseMiddleware from 'redux-promise-middleware';
-import WebSocketActionBridge from 'redux-websocket-bridge';
+import { call, put, takeEvery } from 'redux-saga/effects';
 
-import assetExplorer from './reducer/assetExplorer';
-import bot from './reducer/bot';
-import card from './reducer/card';
-import chat from './reducer/chat';
-import editor from './reducer/editor';
-import emulator from './reducer/emulator';
-import navBar from './reducer/navBar';
-import server from './reducer/server';
+import * as BotActions from '../../action/bot';
+import { readFileSync } from '../../../../shared/utils';
 
-// TODO: Remove this when we no longer need to debug the WebSocket connection
-// import DebugWebSocketConnection from './debugWebSocketConnection';
+export default function* loadBotsInit() {
+    yield takeEvery(BotActions.LOAD_BOTS_INIT, function* (action: any) {
+        // TODO: where does the command manager / hub fit into this?
+        const bots = yield call(loadBotsFromDisk as any, action.payload);
+        
+        yield put(BotActions.loadBots(bots));
+    });
+}
 
-const electron = window.process && window.process.versions.electron;
-
-const createStoreWithMiddleware = applyMiddleware(
-  WebSocketActionBridge(() => new IPCRendererWebSocket()),
-  // WebSocketActionBridge(() => new DebugWebSocketConnection(new IPCRendererWebSocket())),
-  promiseMiddleware()
-)(createStore);
-
-const DEFAULT_STATE = {};
-
-export default createStoreWithMiddleware(combineReducers({
-  assetExplorer,
-  bot,
-  card,
-  editor,
-  chat,
-  navBar,
-  server
-}));
+function loadBotsFromDisk(botsFilePath) {
+    const botPaths = readFileSync(botsFilePath);
+    if (botPaths) {
+        const pathsJson = JSON.parse(botPaths);
+        const bots = pathsJson.bots.map(botPath => {
+            const bot = readFileSync(botPath.path);
+            return bot ? JSON.parse(bot) : null;
+        }).filter(bot => !!bot);
+        return bots;
+    } else {
+        console.log('failed loading initial bots');
+        return [];
+    }
+}

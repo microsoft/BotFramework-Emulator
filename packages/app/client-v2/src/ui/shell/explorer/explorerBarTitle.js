@@ -34,8 +34,6 @@ import { css } from 'glamor';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { directoryExists } from '../../utils';
-
 const CSS = css({
     '& > header': {
         fontSize: '13px',
@@ -48,26 +46,17 @@ const CSS = css({
 
 class ExplorerBarTitle extends React.Component {
     render() {
-        if (directoryExists(this.props.folder)) {
-            return (
-                <div className={ CSS }>
-                    <header>
-                        Restaurant Bot
-                    </header>
-                </div>
-            );
-        } else {
-            return (
-                <div className={ CSS }>
-                    <header>
-                    </header>
-                </div>
-            );
-        }
+        return (
+            <div className={ CSS }>
+                <header>
+                    { this.props.activeBot }
+                </header>
+            </div>
+        );
     }
 }
 
 export default connect(state => ({
-    navBar: state.navBar,
-    folder: state.assetExplorer.folder
+    activeBot: state.bot.activeBot,
+    navBar: state.navBar
 }))(ExplorerBarTitle)

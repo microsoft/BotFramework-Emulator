@@ -91,7 +91,10 @@ export default connect((state, ownProps) => ({
 }))(TabbedDocumentContentWrapper);
 
 TabbedDocumentContentWrapper.propTypes = {
-    activeEditor: PropTypes.bool,
+    activeEditor: PropTypes.oneOf([
+        Constants.EditorKey_Primary,
+        Constants.EditorKey_Secondary
+    ]),
     owningEditor: PropTypes.oneOf([
         Constants.EditorKey_Primary,
         Constants.EditorKey_Secondary
