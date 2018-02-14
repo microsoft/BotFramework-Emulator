@@ -1,6 +1,6 @@
 export const ADD = 'BOT/ADD';
-export const LOAD_BOTS = 'BOT/LOAD_BOTS';
-export const LOAD_BOTS_INIT = 'BOT/LOAD_BOTS_INIT';
+export const LOAD_BOTS_REQUEST = 'BOT/LOAD_BOTS_REQUEST';
+export const LOAD_BOTS_RESPONSE = 'BOT/LOAD_BOTS_RESPONSE';
 export const REMOVE = 'BOT/REMOVE';
 export const SET_ACTIVE = 'BOT/SET_ACTIVE';
 
@@ -11,19 +11,19 @@ export function add(handle) {
     };
 }
 
-export function loadBots(bots) {
+// cause main process to read file system for bots
+export function loadBotsRequest(botsFilePath) {
     return {
-        type: LOAD_BOTS,
-        payload: bots
+        type: LOAD_BOTS_REQUEST,
+        meta: { send: true },
+        payload: botsFilePath
     };
 }
 
-// cause main process to read file system for bots
-export function loadBotsInit(botsFilePath) {
+export function loadBotsResponse(bots) {
     return {
-        type: LOAD_BOTS_INIT,
-        meta: { send: true },
-        payload: botsFilePath
+        type: LOAD_BOTS_RESPONSE,
+        payload: bots
     };
 }
 

@@ -36,12 +36,12 @@ import { call, put, takeEvery } from 'redux-saga/effects';
 import * as BotActions from '../../action/bot';
 import { readFileSync } from '../../../utils'
 
-export default function* loadBotsInit() {
-    yield takeEvery(BotActions.LOAD_BOTS_INIT, function* (action: any) {
+export default function* loadBotsRequest() {
+    yield takeEvery(BotActions.LOAD_BOTS_REQUEST, function* (action: any) {
         // TODO: where does the command manager / hub fit into this?
         const bots = yield call(loadBotsFromDisk as any, action.payload);
-
-        yield put(BotActions.loadBots(bots));
+        
+        yield put(BotActions.loadBotsResponse(bots));
     });
 }
 

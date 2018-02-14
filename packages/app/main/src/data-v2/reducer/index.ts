@@ -33,4 +33,8 @@
 
 import { combineReducers } from 'redux';
 
-export default combineReducers({});
+import { bot } from './bot';
+
+export default combineReducers({
+  bot
+});

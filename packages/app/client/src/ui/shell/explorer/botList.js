@@ -33,7 +33,7 @@ import { fuzzysearch } from '../../utils/fuzzySearch';
     }
 
  */
-const BOTS_FILE_PATH = 'C:\\Users\\{your username}\\Desktop\\bots.json';
+const BOTS_FILE_PATH = 'C:\\{ your_custom_path_to }\\bots.json';
 
 const CSS = css({
     overflow: 'auto',
@@ -69,7 +69,7 @@ export class BotList extends React.Component {
 
     componentDidMount() {
         // TODO: move this to a one-time action on app startup (doesn't currently work in main.js)
-        this.props.dispatch(BotActions.loadBotsInit(BOTS_FILE_PATH));
+        this.props.dispatch(BotActions.loadBotsRequest(BOTS_FILE_PATH));
     }
 
     onSelectBot(e, handle) {

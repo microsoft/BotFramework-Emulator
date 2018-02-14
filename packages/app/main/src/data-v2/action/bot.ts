@@ -31,14 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export const LOAD_BOTS = 'BOT/LOAD_BOTS';
+// from client
+export const LOAD_BOTS_REQUEST = 'BOT/LOAD_BOTS_REQUEST';
 
-export function loadBots(bots) {
+// from server
+export const LOAD_BOTS_RESPONSE = 'BOT/LOAD_BOTS_RESPONSE';
+
+export function loadBotsResponse(bots) {
     return {
-        type: LOAD_BOTS,
+        type: LOAD_BOTS_RESPONSE,
         meta: { send: true },
         payload: bots
     };
 }
-
-export const LOAD_BOTS_INIT = 'BOT/LOAD_BOTS_INIT';

@@ -12,7 +12,7 @@ export default function bot(state = DEFAULT_STATE, action) {
         case BotActions.ADD:
             break;
 
-        case BotActions.LOAD_BOTS:
+        case BotActions.LOAD_BOTS_RESPONSE:
             state = setBotsState(payload, state);
             break;
 

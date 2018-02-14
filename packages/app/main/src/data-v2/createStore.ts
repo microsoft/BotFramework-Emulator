@@ -40,6 +40,13 @@ import createWebSocketBridge from 'redux-websocket-bridge';
 import reducers from './reducer';
 import rootSaga from './sagas';
 
+const DEFAULT_STATE = {
+  bot: {
+    activeBot: null,
+    bots: []
+  }
+};
+
 export default function create(window) {
     return new Promise((resolve, reject) => {
         new WebSocketServer(window).on('connection', connection => {
@@ -58,7 +65,7 @@ export default function create(window) {
 
                     return next(action);
                 }
-            )(createStore)(reducers);
+            )(createStore)(reducers, DEFAULT_STATE);
 
             sagaMiddleware.run(rootSaga);
 
