@@ -1,0 +1,13 @@
+@media (max-width: 450px) {
+  .wc-card {
+    border: 1px solid #d2dde5;
+    width: 198px; }
+  .wc-adaptive-card {
+    width: 214px; } }
+
+@media (min-width: 768px) {
+  .wc-card {
+    border: 1px solid #d2dde5;
+    width: 398px; }
+  .wc-adaptive-card {
+    width: 414px; } }
