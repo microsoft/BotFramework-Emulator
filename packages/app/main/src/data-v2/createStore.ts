@@ -31,45 +31,40 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { applyMiddleware, createStore } from 'redux';
+import { applyMiddleware, createStore, Store } from 'redux';
 import { WebSocketServer } from 'electron-ipcmain-websocket';
 import createPromiseMiddleware from 'redux-promise-middleware';
 import createSagaMiddleware from 'redux-saga';
 import createWebSocketBridge from 'redux-websocket-bridge';
-
 import reducers from './reducer';
 import rootSaga from './sagas';
+import { IState, DEFAULT_STATE } from './state';
 
-const DEFAULT_STATE = {
-  bot: {
-    activeBot: null,
-    bots: []
-  }
-};
 
-export default function create(window) {
-    return new Promise((resolve, reject) => {
-        new WebSocketServer(window).on('connection', connection => {
-            const sagaMiddleware = createSagaMiddleware();
-            const store = applyMiddleware(
-                store => next => action => {
-                    console.log(action);
 
-                    return next(action);
-                },
-                createPromiseMiddleware(),
-                createWebSocketBridge(() => connection),
-                sagaMiddleware,
-                store => next => action => {
-                    console.log(action);
+export default function create(window): Promise<Store<IState>> {
+  return new Promise<Store<IState>>((resolve, reject) => {
+    new WebSocketServer(window).on('connection', connection => {
+      const sagaMiddleware = createSagaMiddleware<IState>();
+      const store: Store<IState> = applyMiddleware(
+        store => next => action => {
+          console.log(action);
 
-                    return next(action);
-                }
-            )(createStore)(reducers, DEFAULT_STATE);
+          return next(action);
+        },
+        createPromiseMiddleware(),
+        createWebSocketBridge(() => connection),
+        sagaMiddleware,
+        store => next => action => {
+          console.log(action);
 
-            sagaMiddleware.run(rootSaga);
+          return next(action);
+        }
+      )(createStore)(reducers, DEFAULT_STATE) as Store<IState>;
 
-            resolve(store);
-        })
-    });
+      sagaMiddleware.run(rootSaga);
+
+      resolve(store);
+    })
+  });
 }

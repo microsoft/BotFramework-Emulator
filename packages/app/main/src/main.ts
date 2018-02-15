@@ -44,7 +44,6 @@ import { WindowManager } from './windowManager';
 import * as commandLine from './commandLine'
 import * as electronLocalShortcut from 'electron-localshortcut';
 import { setTimeout } from 'timers';
-import createStore from './data-v2/createStore';
 import { Window } from './platform/window';
 import { CommandRegistry } from 'botframework-emulator-shared/built/platform/commands/commandRegistry';
 
@@ -260,8 +259,6 @@ const createMainWindow = () => {
     }
 
     mainWindow.browserWindow.loadURL(page);
-
-    createStore(mainWindow.browserWindow);
 }
 
 Emulator.startup();
