@@ -16,7 +16,7 @@ export class Window extends Disposable {
   get webContents(): WebContents { return this._browserWindow.webContents; }
   get commandService(): CommandService { return this._commandService; }
   get ipc(): IPC { return this._ipc; }
-  get store(): Store<{}> { return this._store; }
+  get store(): Store<IState> { return this._store; }
 
   constructor(private _browserWindow: BrowserWindow) {
     super();
