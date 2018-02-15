@@ -32,7 +32,7 @@
 //
 
 import * as path from "path";
-var request = require('request');
+import * as got from 'got';
 var spawn = require('child_process').spawn;
 var Emitter = require('events').EventEmitter;
 var platform = require('os').platform();
@@ -46,7 +46,9 @@ var ready = /starting web service.*addr=(\d+\.\d+\.\d+\.\d+:\d+)/;
 
 var noop = function () { };
 var emitter = new Emitter().on('error', noop);
-var ngrok, api, tunnels = {};
+var api:(any) => Promise<any>;
+var ngrok, tunnels = {};
+var inspectUrl = "";
 
 export function running() {
 	return ngrok && ngrok.pid;
@@ -134,10 +136,13 @@ function runNgrok(opts, cb) {
 	ngrok.stdout.on('data', function (data) {
 		var addr = data.toString().match(ready);
 		if (addr) {
-			api = request.defaults({
-				baseUrl: 'http://' + addr[1],
-				json: true
-			});
+			inspectUrl = `http://${addr[1]}`;
+			api = (options) => {
+				const urlCombined = `${inspectUrl}/${options.url}`;
+				options = Object.assign(options, {json: true, url: urlCombined, useElectronNet: true});
+				return got(options);
+			}
+
 			cb();
 		}
 	});
@@ -145,6 +150,12 @@ function runNgrok(opts, cb) {
 	ngrok.stderr.on('data', function (data) {
 		var info = data.toString().substring(0, 10000);
 		return cb(new Error(info));
+	});
+
+	ngrok.on('exit', function () {
+		api = null;
+		tunnels = {};
+		emitter.emit('disconnect');
 	});
 
 	ngrok.on('close', function () {
@@ -171,31 +182,33 @@ function _runTunnel(opts, cb) {
 	var retries = 100;
 	opts.name = String(opts.name || uuid.v4());
 	var retry = function () {
-		api.post(
-			{ url: 'api/tunnels', json: opts },
-			function (err, resp, body) {
-				if (err) {
-					return cb(err);
+		var options = {
+			method: 'POST',
+			url: 'api/tunnels',
+			body: opts 
+		}
+		api(options)
+			.then((resp) => {
+				let url = resp.body && resp.body.public_url;
+				if (!url) {
+					return cb(xtend(new Error(resp.body.msg || 'failed to start tunnel'), resp.body));
 				}
-				var notReady = resp.statusCode === 500 && /panic/.test(body) ||
-					resp.statusCode === 502 && body.details &&
-					body.details.err === 'tunnel session not ready yet';
-
+				tunnels[url] = resp.body.uri;
+				if (opts.proto === 'http' && opts.bind_tls !== false) {
+					tunnels[url.replace('https', 'http')] = resp.body.uri + ' (http)';
+				}
+				return cb(null, url, inspectUrl);
+			})
+			.catch((err) => {
+				let notReady = err.statusCode === 500 && /panic/.test(err.response.body) ||
+					err.statusCode === 502 && err.response.body.details &&
+					err.response.body.details.err === 'tunnel session not ready yet';
 				if (notReady) {
 					return retries-- ?
 						setTimeout(retry, 200) :
-						cb(new Error(body));
+						cb(new Error(err.response.body));
 				}
-				var url = body && body.public_url;
-				if (!url) {
-					var err = xtend(new Error(body.msg || 'failed to start tunnel'), body);
-					return cb(err);
-				}
-				tunnels[url] = body.uri;
-				if (opts.proto === 'http' && opts.bind_tls !== false) {
-					tunnels[url.replace('https', 'http')] = body.uri + ' (http)';
-				}
-				return cb(null, url, this.port);
+				return cb(err);
 			});
 	};
 
@@ -227,15 +240,21 @@ export function disconnect(url, cb) {
 		return cb();
 	}
 	if (url) {
-		return api.del(
-			tunnels[url],
-			function (err, resp, body) {
-				if (err || resp.statusCode !== 204) {
-					return cb(err || new Error(body));
+		const options = {
+			method: "DELETE",
+			url: tunnels[url]
+		};
+		return api(options)
+			.then((resp) => {
+				if (resp.statusCode !== 204) {
+					return cb(new Error(resp.body));
 				}
 				delete tunnels[url];
 				emitter.emit('disconnect', url);
 				return cb();
+			})
+			.catch((err) => {
+				return cb(err);	
 			});
 	}
 
@@ -259,9 +278,9 @@ export function kill(cb) {
 		return;
 	}
 	ngrok.on('exit', function () {
-		api = null;
-		tunnels = {};
-		emitter.emit('disconnect');
+		// api = null;
+		// tunnels = {};
+		// emitter.emit('disconnect');
 		cb(true);
 	});
 	try {
