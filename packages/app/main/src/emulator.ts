@@ -66,7 +66,7 @@ export class Emulator {
             this.proxyAgent = new ElectronProxyAgent(session);
             http.globalAgent = this.proxyAgent;
             https.globalAgent = this.proxyAgent;
-            windowManager.addMainWindow(mainWindow);
+            windowManager.addMainWindow(mainWindow.browserWindow);
             Emulator.queuedMessages.forEach((msg) => {
                 Emulator.send(msg.channel, ...msg.args);
             });

@@ -40,6 +40,7 @@ import DetailPanel from './detailPanel';
 import LogPanel from './logPanel';
 import Splitter from '../../layout/splitter-v2';
 import ToolBar, { Button as ToolBarButton, Separator as ToolBarSeparator } from '../toolbar';
+import { CommandService } from '../../../platform/commands/commandService';
 
 const CSS = css({
   flex: 1,
@@ -57,6 +58,7 @@ export default class Emulator extends React.Component {
   }
 
   handlePresentationClick() {
+    CommandService.executeRemoteCommand('say:hello', { value: "What's up" });
   }
 
   handleStartOverClick() {

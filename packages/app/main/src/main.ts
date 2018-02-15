@@ -45,13 +45,16 @@ import * as commandLine from './commandLine'
 import * as electronLocalShortcut from 'electron-localshortcut';
 import { setTimeout } from 'timers';
 import createStore from './data-v2/createStore';
+import { Window } from './platform/window';
+import { CommandRegistry } from 'botframework-emulator-shared/built/platform/commands/commandRegistry';
+
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
     console.error(error);
     log.error('[err-server]', error.message.toString(), JSON.stringify(error.stack));
 });
 
-export let mainWindow: Electron.BrowserWindow;
+export let mainWindow: Window;
 export let windowManager: WindowManager;
 
 var openUrls = [];
@@ -91,6 +94,10 @@ var windowIsOffScreen = function(windowBounds: Electron.Rectangle): boolean {
     );
 }
 
+CommandRegistry.registerCommand("say:hello", (context: any, ...args: any[]): any => {
+  console.log("Hi!", ...args);
+});
+
 const createMainWindow = () => {
 
     const windowTitle = "Bot Framework Emulator";
@@ -108,7 +115,8 @@ const createMainWindow = () => {
         initBounds.x = display.workArea.x;
         initBounds.y = display.workArea.y;
     }
-    mainWindow = new Electron.BrowserWindow(
+    mainWindow = new Window(
+      new Electron.BrowserWindow(
         {
             show: false,
             backgroundColor: '#f7f7f7',
@@ -116,8 +124,8 @@ const createMainWindow = () => {
             height: initBounds.height,
             x: initBounds.x,
             y: initBounds.y
-        });
-    mainWindow.setTitle(windowTitle);
+        }));
+    mainWindow.browserWindow.setTitle(windowTitle);
     windowManager = new WindowManager();
 
     //mainWindow.webContents.openDevTools();
@@ -150,7 +158,7 @@ const createMainWindow = () => {
     }
 
     const rememberBounds = () => {
-        const bounds = mainWindow.getBounds();
+        const bounds = mainWindow.browserWindow.getBounds();
         dispatch<WindowStateAction>({
             type: 'Window_RememberBounds',
             state: {
@@ -163,25 +171,25 @@ const createMainWindow = () => {
         });
     }
 
-    mainWindow.on('resize', () => {
+    mainWindow.browserWindow.on('resize', () => {
         rememberBounds();
     });
 
-    mainWindow.on('move', () => {
+    mainWindow.browserWindow.on('move', () => {
         rememberBounds();
     });
 
-    mainWindow.on('closed', function () {
+    mainWindow.browserWindow.on('closed', function () {
         windowManager.closeAll();
         mainWindow = null;
     });
 
-    mainWindow.on('restore', () => {
-        if (windowIsOffScreen(mainWindow.getBounds())) {
-            const bounds = mainWindow.getBounds();
+    mainWindow.browserWindow.on('restore', () => {
+        if (windowIsOffScreen(mainWindow.browserWindow.getBounds())) {
+            const bounds = mainWindow.browserWindow.getBounds();
             let display = Electron.screen.getAllDisplays().find(display => display.id === getSettings().windowState.displayId);
             display = display || Electron.screen.getDisplayMatching(bounds);
-            mainWindow.setPosition(display.workArea.x, display.workArea.y);
+            mainWindow.browserWindow.setPosition(display.workArea.x, display.workArea.y);
             dispatch<WindowStateAction>({
                 type: 'Window_RememberBounds',
                 state: {
@@ -217,17 +225,17 @@ const createMainWindow = () => {
     });
     registerHotkeys(["F10", "Alt+F"], () => {
         Emulator.send('open-menu');
-    }, mainWindow);
+    }, mainWindow.browserWindow);
     registerHotkeys(["F5", "CmdOrCtrl+R"], () => {
         Emulator.send('new-conversation');
-    }, mainWindow);
+    }, mainWindow.browserWindow);
     registerHotkeys(["F6", "CmdOrCtrl+L"], () => {
         Emulator.send('toggle-address-bar-focus');
-    }, mainWindow);
+    }, mainWindow.browserWindow);
 
-    mainWindow.once('ready-to-show', () => {
+    mainWindow.browserWindow.once('ready-to-show', () => {
         mainWindow.webContents.setZoomLevel(settings.windowState.zoomLevel);
-        mainWindow.show();
+        mainWindow.browserWindow.show();
     });
 
     let queryString = '';
@@ -250,9 +258,9 @@ const createMainWindow = () => {
         page = page + queryString;
     }
 
-    mainWindow.loadURL(page);
+    mainWindow.browserWindow.loadURL(page);
 
-    createStore(mainWindow);
+    createStore(mainWindow.browserWindow);
 }
 
 Emulator.startup();
