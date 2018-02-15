@@ -110,7 +110,7 @@ export class BotFrameworkService extends RestServer {
                 ngrok.connect({
                     port,
                     path: this.ngrokPath
-                }, (err, url: string, inspectPort: string) => {
+                }, (err, url: string, inspectUrl: string) => {
                     if (err) {
                         log.error(`Failed to start ngrok: ${err.message || err.msg}`);
                         if (err.code && err.code === 'ENOENT') {
@@ -120,10 +120,10 @@ export class BotFrameworkService extends RestServer {
                             log.debug("ngrok may already be running in a different process. ngrok's free tier allows only one instance at a time per host.");
                         }
                     } else {
-                        this.inspectUrl = `http://localhost:${inspectPort}`;
+                        this.inspectUrl = inspectUrl;
                         this.ngrokServiceUrl = url;
                         log.debug(`ngrok listening on ${url}`);
-                        log.debug('ngrok traffic inspector:', log.makeLinkMessage(this.inspectUrl, this.inspectUrl));
+                        log.debug('ngrok traffic inspector:', log.makeLinkMessage(inspectUrl, inspectUrl));
                         if (this.bypassNgrokLocalhost) {
                             log.debug(`Will bypass ngrok for local addresses`);
                         } else {

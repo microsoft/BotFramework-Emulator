@@ -31,8 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import request = require('request');
-import { emulator } from './emulator';
+import * as got from 'got';
 let getPem = require('rsa-pem-from-mod-exp');
 let base64url = require('base64url');
 
@@ -67,46 +66,48 @@ export class OpenIdMetadata {
     }
 
     private refreshCache(cb: (err: Error) => void): void {
-        let options: request.Options = {
+        let options = {
             method: 'GET',
             url: this.url,
             json: true,
-            agent: emulator.proxyAgent,
-            strictSSL: false
+            strictSSL: false,
+            useElectronNet: true
         };
 
-        request(options, (err, response, body) => {
-            if (!err && (response.statusCode >= 400 || !body)) {
-                err = new Error('Failed to load openID config: ' + response.statusCode);
-            }
+        got(options)
+            .then((resp) => {
+                if (resp.statusCode >= 400 || !resp.body) {
+                    throw new Error('Failed to load openID config: ' + resp.statusCode);
+                }
 
-            if (err) {
-                cb(err);
-            } else {
-                let openIdConfig = <IOpenIdConfig>body;
+                let openIdConfig = <IOpenIdConfig>resp.body;
 
-                let options: request.Options = {
+                let options = {
                     method: 'GET',
                     url: openIdConfig.jwks_uri,
                     json: true,
-                    agent: emulator.proxyAgent,
-                    strictSSL: false
+                    strictSSL: false,
+                    useElectronNet: true
                 };
 
-                request(options, (err, response, body) => {
-                    if (!err && (response.statusCode >= 400 || !body)) {
-                        err = new Error("Failed to load Keys: " + response.statusCode);
-                    }
+                got(options)
+                    .then((resp) => {
+                        if (resp.statusCode >= 400 || !resp.body) {
+                            throw new Error("Failed to load Keys: " + resp.statusCode);
+                        }
 
-                    if (!err) {
                         this.lastUpdated = new Date().getTime();
-                        this.keys = <IKey[]>body.keys;
-                    }
+                        this.keys = <IKey[]>resp.body.keys;
 
-                    cb(err);
-                });
-            }
-        });
+                        cb(null);
+                    })
+                    .catch((err) => {
+                        cb(err);
+                    });
+            })
+            .catch((err) => {
+                cb(err);
+            });
     }
 
     private findKey(keyId: string): string {

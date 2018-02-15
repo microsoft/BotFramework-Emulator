@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as request from 'request';
+import * as got from 'got';
 import * as http from 'http';
 import * as Payment from 'botframework-emulator-shared/built/types/paymentTypes';
 import { IUser } from 'botframework-emulator-shared/built/types/userTypes';
@@ -123,55 +123,54 @@ export class Conversation {
         if (bot) {
             activity.serviceUrl = emulator.framework.getServiceUrl(bot.botUrl);
 
-            let options: request.OptionsWithUrl = {
+            let options = {
                 url: bot.botUrl,
                 method: "POST",
-                json: activity,
-                agent: emulator.proxyAgent,
-                strictSSL: false
+                body: activity,
+                json: true,
+                strictSSL: false,
+                useElectronNet: true
             };
 
-            let responseCallback = (err, resp: http.IncomingMessage, body) => {
+            let responseCallback = (resp) => {
                 let messageActivity: IMessageActivity = activity;
                 let text = messageActivity.text || '';
                 if (text && text.length > 50)
                     text = text.substring(0, 50);
 
-                if (err) {
-                    log.error(
-                        '->',
-                        log.makeInspectorLink("POST", activity),
-                        err.message);
-                } else if (resp) {
+                if (resp) {
                     if (!/^2\d\d$/.test(`${resp.statusCode}`)) {
                         log.error(
                             '->',
                             log.makeInspectorLink("POST", activity),
-                            log.makeInspectorLink(`${resp.statusCode}`, body, `(${resp.statusMessage})`),
+                            log.makeInspectorLink(`${resp.statusCode}`, resp.body, `(${resp.statusMessage})`),
                             `[${activity.type}]`,
                             text);
-                        if(Number(resp.statusCode) == 401 || Number(resp.statusCode) == 402) {
+                        if (Number(resp.statusCode) == 401 || Number(resp.statusCode) == 402) {
                             log.error("Error: The bot's MSA appId or password is incorrect.");
                             log.error(log.botCredsConfigurationLink('Edit your bot\'s MSA info'));
                         }
-                        cb(err, resp ? resp.statusCode : undefined);
+                        cb(null, resp ? resp.statusCode : undefined);
                     } else {
                         log.info(
                             '->',
                             log.makeInspectorLink("POST", activity),
-                            log.makeInspectorLink(`${resp.statusCode}`, body, `(${resp.statusMessage})`),
+                            log.makeInspectorLink(`${resp.statusCode}`, resp.body, `(${resp.statusMessage})`),
                             `[${activity.type}]`,
                             text);
                         if (recordInConversation) {
                             this.activities.push(Object.assign({}, activity));
                         }
-                        if(activity.type === 'invoke') {
-                            cb(null, resp.statusCode, activity.id, body);
+                        if (activity.type === 'invoke') {
+                            cb(null, resp.statusCode, activity.id, resp.body);
                         } else {
                             cb(null, resp.statusCode, activity.id);
                         }
                     }
                 }
+            }
+            let handleError = (err) => {
+                log.error('->', log.makeInspectorLink("POST", activity), err.message);
             }
 
             if (!isLocalhostUrl(bot.botUrl) && isLocalhostUrl(emulator.framework.getServiceUrl(bot.botUrl))) {
@@ -181,9 +180,11 @@ export class Conversation {
             }
 
             if (bot.msaAppId && bot.msaPassword) {
-                this.authenticatedRequest(options, responseCallback);
+                this.authenticatedRequest(options, responseCallback, handleError);
             } else {
-                request(options, responseCallback);
+                got(options)
+                    .then(responseCallback)
+                    .catch(handleError);
             }
         } else {
             cb("bot not found");
@@ -438,30 +439,31 @@ export class Conversation {
             const bot = settings.botById(this.botId);
 
             if (bot.msaAppId && bot.msaPassword) {
-                let options: request.OptionsWithUrl = {
+                let options = {
                     url: speechSettings.tokenEndpoint + '?goodForInMinutes=' + duration,
                     method: 'GET',
-                    agent: emulator.proxyAgent,
-                    strictSSL: false
+                    strictSSL: false,
+                    useElectronNet: true
                 };
 
-                let responseCallback = (err, resp: http.IncomingMessage, body) => {
-                    if (body) {
-                        let speechToken: ISpeechTokenInfo = JSON.parse(body) as ISpeechTokenInfo;
+                let responseCallback = (resp) => {
+                    if (resp.body) {
+                        let speechToken: ISpeechTokenInfo = JSON.parse(resp.body) as ISpeechTokenInfo;
                         if (speechToken.access_Token) {
                             this.speechToken = speechToken;
                         }
                         cb(speechToken);
-                    } else if (err) {
-                        cb({access_Token: undefined, error: err, error_Description: undefined});
                     } else if (resp.statusCode === 401) {
                         cb({access_Token: undefined, error: 'Unauthorized', error_Description: 'This bot is not authorized to use the Cognitive Services Speech API.'});
                     } else {
                         cb({access_Token: undefined, error: 'Unable to retrieve speech token', error_Description: 'A speech token could not be retrieved for this bot. Response code: ' + resp.statusCode});
                     }
                 }
+                let handleError = (err) => {
+                    cb({access_Token: undefined, error: err, error_Description: undefined});
+                }
 
-                this.authenticatedRequest(options, responseCallback);
+                this.authenticatedRequest(options, responseCallback, handleError);
             } else {
                 cb({access_Token: undefined, error: 'Unauthorized', error_Description: 'To use speech, the bot must be registered and using a valid MS AppId and Password.'});
             }
@@ -475,38 +477,38 @@ export class Conversation {
         return this.activities.slice(watermark);
     }
 
-    private authenticatedRequest(options: request.OptionsWithUrl, callback: (error: any, response: http.IncomingMessage, body: any) => void, refresh = false): void {
+    private authenticatedRequest(options, callback: (response: http.IncomingMessage) => void, handleError: (error:any) => void, refresh = false): void {
         if (refresh) {
             this.accessToken = null;
         }
         this.addAccessToken(options, (err) => {
             if (!err) {
-                request(options, (err, response, body) => {
-                    if (!err) {
-                        switch (response.statusCode) {
-                            case HttpStatus.UNAUTHORIZED:
-                            case HttpStatus.FORBIDDEN:
-                                if (!refresh) {
-                                    this.authenticatedRequest(options, callback, true);
-                                } else {
-                                    callback(null, response, body);
-                                }
-                                break;
-                            default:
-                                if (response.statusCode < 400) {
-                                    callback(null, response, body);
-                                } else {
-                                    let txt = "Request to '" + options.url + "' failed: [" + response.statusCode + "] " + response.statusMessage;
-                                    callback(new Error(txt), response, null);
-                                }
-                                break;
+                got(options)
+                    .then((response) => {
+                        if (!err) {
+                            switch (response.statusCode) {
+                                case HttpStatus.UNAUTHORIZED:
+                                case HttpStatus.FORBIDDEN:
+                                    if (!refresh) {
+                                        this.authenticatedRequest(options, callback, handleError, true);
+                                    } else {
+                                        callback(response);
+                                    }
+                                    break;
+                                default:
+                                    if (response.statusCode < 400) {
+                                        callback(response);
+                                    } else {
+                                        let txt = "Request to '" + options.url + "' failed: [" + response.statusCode + "] " + response.statusMessage;
+                                        handleError(new Error(txt));
+                                    }
+                                    break;
+                            }
                         }
-                    } else {
-                        callback(err, null, null);
-                    }
-                });
+                    })
+                    .catch(handleError);
             } else {
-                callback(err, null, null);
+                handleError(err);
             }
         });
     }
@@ -515,46 +517,44 @@ export class Conversation {
         if (!this.accessToken || new Date().getTime() >= this.accessTokenExpires) {
             const bot = getSettings().botById(this.botId);
             // Refresh access token
-            let opt: request.OptionsWithUrl = {
+            let opt = {
                 method: 'POST',
                 url: authenticationSettings.tokenEndpoint,
-                form: {
+                body: {
                     grant_type: 'client_credentials',
                     client_id: bot.msaAppId,
                     client_secret: bot.msaPassword,
                     scope: bot.msaAppId + '/.default',
+                    // flag to request a version 1.0 token
+                    atver: getSettings().framework.use10Tokens ? 1 : null
                 },
-                agent: emulator.proxyAgent,
-                strictSSL: false
+                form: true,
+                strictSSL: false,
+                useElectronNet: true
             };
 
-            if (getSettings().framework.use10Tokens) {
-                // flag to request a version 1.0 token
-                opt.form.atver = 1;
-            }
-
-            request(opt, (err, response, body) => {
-                if (!err) {
-                    if (body && response.statusCode < 300) {
+            got(opt)
+                .then((resp) => {
+                    if (resp.body && resp.statusCode < 300) {
                         // Subtract 5 minutes from expires_in so they'll we'll get a
                         // new token before it expires.
-                        let oauthResponse = JSON.parse(body);
+                        let oauthResponse = JSON.parse(resp.body);
                         this.accessToken = oauthResponse.access_token;
                         this.accessTokenExpires = new Date().getTime() + ((oauthResponse.expires_in - 300) * 1000);
                         cb(null, this.accessToken);
                     } else {
-                        cb(new Error('Refresh access token failed with status code: ' + response.statusCode), null);
+                        cb(new Error('Refresh access token failed with status code: ' + resp.statusCode), null);
                     }
-                } else {
-                    cb(err, null);
-                }
-            });
+                })
+                .catch((err) => {
+                    cb(err, null)
+                });
         } else {
             cb(null, this.accessToken);
         }
     }
 
-    private addAccessToken(options: request.Options, cb: (err: Error) => void): void {
+    private addAccessToken(options:any, cb: (err: Error) => void): void {
         const bot = getSettings().botById(this.botId);
 
         if (bot.msaAppId && bot.msaPassword) {
