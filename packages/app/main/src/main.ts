@@ -95,7 +95,8 @@ var windowIsOffScreen = function(windowBounds: Electron.Rectangle): boolean {
 }
 
 CommandRegistry.registerCommand("say:hello", (context: any, ...args: any[]): any => {
-  console.log("Hi!", ...args);
+  console.log("Main: Hi!", ...args);
+  (context as Window).commandService.executeRemoteCommand("say:hello", ...args);
 });
 
 const createMainWindow = () => {

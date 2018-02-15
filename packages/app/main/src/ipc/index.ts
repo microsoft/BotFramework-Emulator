@@ -3,7 +3,6 @@ import { BaseIPC } from "botframework-emulator-shared/built/platform/ipc";
 import { IDisposable } from 'botframework-emulator-shared/built/base/lifecycle/disposable';
 
 export class IPC extends BaseIPC {
-
   get id(): number { return this._webContents.id; }
 
   constructor(private _webContents: WebContents) {
@@ -21,7 +20,7 @@ export class IPC extends BaseIPC {
       const result = channel.onMessage(...args);
       if (result) {
         // Asynchronous response
-        this.send(result);
+        channel.send(result);
         // Synchronous response
         //event.returnValue = result;
       }
@@ -30,23 +29,19 @@ export class IPC extends BaseIPC {
 }
 
 export const IPCServer = new class {
-
-  private _initialized: boolean = false;
   private _ipcs: { [id: number]: IPC } = {};
 
+  constructor() {
+    ipcMain.on('ipc:message', (event: Event, ...args) => {
+      const ipc = this._ipcs[event.sender.id];
+      if (ipc) {
+        ipc.onMessage(event, ...args);
+      }
+    });
+  }
+
   registerIPC(ipc: IPC): IDisposable {
-    if (!this._initialized) {
-      this._initialized = true;
-      ipcMain.on('ipc:message', (event: Event, ...args) => {
-        const ipc = this._ipcs[event.sender.id];
-        if (ipc) {
-          ipc.onMessage(event, ...args);
-        }
-      });
-    }
-
     this._ipcs[ipc.id] = ipc;
-
     return {
       dispose() {
         this._ipcs[ipc.id] = undefined;

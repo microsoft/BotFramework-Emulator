@@ -40,6 +40,11 @@ import interceptHyperlink from './interceptHyperlink';
 import Main from './ui/shell/main';
 //import setupContextMenu from './setupContextMenu';
 import store from './data/store';
+import { CommandRegistry } from 'botframework-emulator-shared/built/platform/commands/commandRegistry';
+
+CommandRegistry.registerCommand('say:hello', (context: any, ...args: any[]): any => {
+  console.log("Client: Hello!", ...args);
+});
 
 interceptError();
 interceptHyperlink();
