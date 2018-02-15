@@ -57,10 +57,14 @@ export class Conversation {
     private accessToken: string;
     private accessTokenExpires: number;
     private speechToken: ISpeechTokenInfo;
+    private currentDialogState: number;
+    private isCurrentDialogStateDefined: boolean;
 
     constructor(botId: string, conversationId: string, user: IUser) {
         this.botId = botId;
         this.conversationId = conversationId;
+        this.currentDialogState = -1;
+        this.isCurrentDialogStateDefined = false;
         this.members.push({ id: botId, name: "Bot" });
         this.members.push({ id: user.id, name: user.name });
     }
@@ -111,7 +115,7 @@ export class Conversation {
     /**
      * Sends the activity to the conversation's bot.
      */
-    postActivityToBot(activity: IActivity, recordInConversation: boolean, cb?) {
+    postActivityToBot(activity: any, recordInConversation: boolean, cb?) {
         // Do not make a shallow copy here before modifying
         this.postage(this.botId, activity);
         activity.from = activity.from || this.getCurrentUser();
@@ -120,6 +124,12 @@ export class Conversation {
         }
         const settings = getSettings();
         const bot = settings.botById(this.botId);
+        if(activity.type == "message" && this.isCurrentDialogStateDefined){
+          if(!activity.entities) {
+                activity.entities = [];
+            }
+            activity.entities.push({"Type" : "CurrentState", "CurState" : this.currentDialogState})
+        }
         if (bot) {
             activity.serviceUrl = emulator.framework.getServiceUrl(bot.botUrl);
 
@@ -203,12 +213,20 @@ export class Conversation {
     /**
      * Queues activity for delivery to user.
      */
-    public postActivityToUser(activity: IActivity): IResourceResponse {
+    public postActivityToUser(activity: any): IResourceResponse {
         const settings = getSettings();
         // Make a shallow copy before modifying & queuing
         let visitor = new PaymentEncoder();
         activity = Object.assign({}, activity);
         visitor.traverseActivity(activity);
+
+        for (var item of activity.entities) {
+            if(item.type === "CurrentState"){
+                this.isCurrentDialogStateDefined = true;
+                this.currentDialogState = item.curState;
+            }
+        }   
+
         this.postage(settings.users.currentUserId, activity);
         if (!activity.from.name) {
             activity.from.name = "Bot";
