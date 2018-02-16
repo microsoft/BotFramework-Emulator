@@ -42,6 +42,20 @@ import * as EditorActions from '../../../../data/action/editorActions';
 import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../../layout/expandCollapse';
 import * as Colors from '../../../styles/colors';
 import ExplorerItem from '../explorerItem';
+import { CommandRegistry } from 'botframework-emulator-shared/built/platform/commands/commandRegistry';
+import { CommandService } from '../../../../platform/commands/commandService';
+import store from '../../../../data/store';
+
+CommandRegistry.registerCommand('livechat:new', (context, activeEditor) => {
+  const createAction = ChatActions.newLiveChatDocument();
+  store.dispatch(createAction);
+  // TODO: Turn this into a saga, the conversation ID maybe generated from server asynchronously
+  store.dispatch(EditorActions.open(
+    activeEditor,
+    constants.ContentType_LiveChat,
+    createAction.payload.conversationId
+  ));
+});
 
 const CSS = css({
   display: 'flex',
@@ -51,7 +65,7 @@ const CSS = css({
   margin: 0,
   padding: 0,
   backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
-  color: Colors.EXPLORER_FOREGROUND_DARK
+  color: Colors.EXPLORER_FOREGROUND_DARK,
 });
 
 const CONVO_CSS = css({
@@ -66,22 +80,17 @@ class LiveChatExplorer extends React.Component {
   constructor(props, context) {
     super(props, context);
 
-    this.handleAddClick = this.handleAddClick.bind(this);
+    this.onAddClick = this.handleAddClick.bind(this);
+    this.onItemClick = this.handleItemClick.bind(this);
   }
 
   handleAddClick(e) {
     e.stopPropagation();
+    CommandService.executeCommand(undefined, 'livechat:new', this.props.activeEditor);
+  }
 
-    const createAction = ChatActions.newLiveChatDocument();
-
-    this.props.dispatch(createAction);
-
-    // TODO: Turn this into a saga, the conversation ID maybe generated from server asynchronously
-    this.props.dispatch(EditorActions.open(
-      this.props.activeEditor,
-      constants.ContentType_LiveChat,
-      createAction.payload.conversationId
-    ));
+  handleItemClick(conversationId) {
+    this.props.dispatch(EditorActions.setActiveTab(null, conversationId));
   }
 
   render() {
@@ -93,14 +102,14 @@ class LiveChatExplorer extends React.Component {
             title="Live Chats"
           >
             <ExpandCollapseControls>
-              <button onClick={this.handleAddClick}>+</button>
+              <button onClick={this.onAddClick}>+</button>
             </ExpandCollapseControls>
-            <ExpandCollapseContent>
+            <ExpandCollapseContent key={this.props.changeKey}>
               <ul className={CONVO_CSS}>
                 {
                   Object.keys(this.props.liveChats).map(conversationId =>
-                    <ExplorerItem key={conversationId} active={this.props.activeDocumentId === conversationId}>
-                      {this.props.liveChats[conversationId].name}
+                    <ExplorerItem key={conversationId} active={this.props.activeDocumentId === conversationId} onClick={() => this.onItemClick(conversationId)}>
+                      <span>{`Emulator : ${conversationId}`}</span>
                     </ExplorerItem>
                   )
                 }
@@ -116,5 +125,6 @@ class LiveChatExplorer extends React.Component {
 export default connect(state => ({
   activeEditor: state.editor.activeEditor,
   activeDocumentId: state.editor.editors[state.editor.activeEditor].activeDocumentId,
-  liveChats: state.chat.liveChats
+  liveChats: state.chat.liveChats,
+  changeKey: state.chat.liveChatChangeKey
 }))(LiveChatExplorer)

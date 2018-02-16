@@ -49,16 +49,17 @@ const CSS = css({
     minHeight: '30px',
     paddingLeft: '16px',
     textTransform: 'lowercase',
-    userSelect: 'true'
+    userSelect: 'text',
+    whiteSpace: 'no-wrap'
   }
 });
 
 export default class ChatPanel extends React.Component {
   render() {
     return (
-      <div className={ CSS }>
+      <div className={CSS}>
         <header>http://localhost:3978/api/messages</header>
-        <Chat />
+        <Chat document={this.props.document} />
       </div>
     );
   }
@@ -66,5 +67,5 @@ export default class ChatPanel extends React.Component {
 
 
 ChatPanel.propTypes = {
-  botId: PropTypes.string.isRequired
+  document: PropTypes.object.isRequired
 };

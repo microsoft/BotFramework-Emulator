@@ -29,7 +29,7 @@ export class Channel {
   }
 
   clearListener(messageName: string) {
-    this._listeners[messageName] = undefined;
+    delete this._listeners[messageName];
   }
 
   onMessage(...args: any[]): any {

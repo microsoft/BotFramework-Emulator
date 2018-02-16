@@ -42,148 +42,149 @@ import * as EditorActions from '../../../data/action/editorActions';
 import * as Constants from '../../../constants';
 
 const CSS = css({
+  display: 'flex',
+  backgroundColor: Colors.EDITOR_TAB_BACKGROUND_DARK,
+  boxShadow: '0px 2px 2px 0px rgba(0,0,0,0.2)',
+  minHeight: '32px',
+
+  '&.dragged-over-tab-bar': {
+    backgroundColor: Colors.EDITOR_TAB_DRAGGED_OVER_BACKGROUND_DARK
+  },
+
+  '& > ul': {
     display: 'flex',
     backgroundColor: Colors.EDITOR_TAB_BACKGROUND_DARK,
-    boxShadow: '0px 2px 2px 0px rgba(0,0,0,0.2)',
-    minHeight: '32px',
+    listStyleType: 'none',
+    margin: 0,
+    padding: 0,
+    zIndex: 1, // So that the box-shadow will fall onto the document area (sibling div)
+    overflowX: 'auto',
 
-    '&.dragged-over-tab-bar': {
-        backgroundColor: Colors.EDITOR_TAB_DRAGGED_OVER_BACKGROUND_DARK
+    '&::-webkit-scrollbar': {
+      height: '2px'
     },
 
-    '& > ul': {
-        display: 'flex',
-        backgroundColor: Colors.EDITOR_TAB_BACKGROUND_DARK,
-        listStyleType: 'none',
-        margin: 0,
-        padding: 0,
-        zIndex: 1, // So that the box-shadow will fall onto the document area (sibling div)
-        overflowX: 'auto',
-
-        '&::-webkit-scrollbar': {
-            height: '2px'
-        },
-
-        '&::-webkit-scrollbar-thumb': {
-            background: Colors.SCROLLBAR_THUMB_BACKGROUND_DARK
-        },
-
-        '&::-webkit-scrollbar-track': {
-            background: Colors.SCROLLBAR_TRACK_BACKGROUND_DARK
-        }
+    '&::-webkit-scrollbar-thumb': {
+      background: Colors.SCROLLBAR_THUMB_BACKGROUND_DARK
     },
 
-    '& > div.tab-bar-widgets': {
-        display: 'flex',
-        alignItems: 'center',
-        width: 'auto',
-        marginLeft: 'auto',
-        flexShrink: 0,
-
-        '& > span': {
-            display: 'inline-block',
-            cursor: 'pointer',
-            height: '16px',
-            marginRight: '16px',
-            fontSize: '12px',
-
-            '&:first-of-type': {
-                marginLeft: '16px'
-            }
-        },
-
-        '& > .split-widget': {
-            '&:after': {
-                content: '[ | ]',
-                color: Colors.EDITOR_TAB_WIDGET_ENABLED_DARK
-            }
-        }
+    '&::-webkit-scrollbar-track': {
+      background: Colors.SCROLLBAR_TRACK_BACKGROUND_DARK
     }
+  },
+
+  '& > div.tab-bar-widgets': {
+    display: 'flex',
+    alignItems: 'center',
+    width: 'auto',
+    marginLeft: 'auto',
+    flexShrink: 0,
+
+    '& > span': {
+      display: 'inline-block',
+      cursor: 'pointer',
+      height: '16px',
+      marginRight: '16px',
+      fontSize: '12px',
+
+      '&:first-of-type': {
+        marginLeft: '16px'
+      }
+    },
+
+    '& > .split-widget': {
+      '&:after': {
+        content: '[ | ]',
+        color: Colors.EDITOR_TAB_WIDGET_ENABLED_DARK
+      }
+    }
+  }
 });
 
 export class TabBar extends React.Component {
-    constructor(props, context) {
-        super(props, context);
+  constructor(props, context) {
+    super(props, context);
 
-        this.onSplitClick = this.onSplitClick.bind(this);
+    this.onSplitClick = this.onSplitClick.bind(this);
 
-        this.onDragEnter = this.onDragEnter.bind(this);
-        this.onDragOver = this.onDragOver.bind(this);
-        this.onDragLeave = this.onDragLeave.bind(this);
-        this.onDrop = this.onDrop.bind(this);
+    this.onDragEnter = this.onDragEnter.bind(this);
+    this.onDragOver = this.onDragOver.bind(this);
+    this.onDragLeave = this.onDragLeave.bind(this);
+    this.onDrop = this.onDrop.bind(this);
 
-        this.state = {};
-    }
+    this.state = {};
+  }
 
-    onSplitClick() {
-        const owningEditor = this.props.editors[this.props.owningEditor];
-        const docIdToSplit = owningEditor.activeDocumentId;
-        const docToSplit = owningEditor.documents.find(doc => doc.documentId === docIdToSplit);
-        const destEditorKey = this.props.owningEditor === Constants.EditorKey_Primary ? Constants.EditorKey_Secondary : Constants.EditorKey_Primary;
-        this.props.dispatch(EditorActions.splitTab(docToSplit.contentType, docToSplit.documentId, this.props.owningEditor, destEditorKey));
-    }
+  onSplitClick() {
+    const owningEditor = this.props.editors[this.props.owningEditor];
+    const docIdToSplit = owningEditor.activeDocumentId;
+    const docToSplit = owningEditor.documents.find(doc => doc.documentId === docIdToSplit);
+    const destEditorKey = this.props.owningEditor === Constants.EditorKey_Primary ? Constants.EditorKey_Secondary : Constants.EditorKey_Primary;
+    this.props.dispatch(EditorActions.splitTab(docToSplit.contentType, docToSplit.documentId, this.props.owningEditor, destEditorKey));
+  }
 
-    onDragEnter(e) {
-        e.preventDefault();
-    }
+  onDragEnter(e) {
+    e.preventDefault();
+  }
 
-    onDragOver(e) {
-        this.setState(({ draggedOver: true }));
-        e.preventDefault();
-        e.stopPropagation();
-    }
+  onDragOver(e) {
+    this.setState(({ draggedOver: true }));
+    e.preventDefault();
+    e.stopPropagation();
+  }
 
-    onDragLeave(e) {
-        this.setState(({ draggedOver: false }));
-    }
+  onDragLeave(e) {
+    this.setState(({ draggedOver: false }));
+  }
 
-    onDrop(e) {
-        const tabData = JSON.parse(e.dataTransfer.getData('application/json'));
-        const tabId = tabData.tabId;
-        this.props.dispatch(EditorActions.appendTab(tabData.editorKey, this.props.owningEditor, tabId));
+  onDrop(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    this.setState(({ draggedOver: false }));
+    try {
+      const tabData = JSON.parse(e.dataTransfer.getData('application/json'));
+      const tabId = tabData.tabId;
+      this.props.dispatch(EditorActions.appendTab(tabData.editorKey, this.props.owningEditor, tabId));
+    } catch (e) { }
+  }
 
-        this.setState(({ draggedOver: false }));
-        e.preventDefault();
-        e.stopPropagation();
-    }
+  render() {
+    const tabBarClassName = this.state.draggedOver ? ' dragged-over-tab-bar' : '';
 
-    render() {
-        const tabBarClassName = this.state.draggedOver ? ' dragged-over-tab-bar' : '';
-
-        return (
-            <div className={ CSS + tabBarClassName } onDragEnter={ this.onDragEnter } onDragOver={ this.onDragOver }
-                onDragLeave={ this.onDragLeave } onDrop={ this.onDrop } >
-                <ul>
-                    {
-                        React.Children.map(this.props.children, child =>
-                            <li>{ child }</li>
-                        )
-                    }
-                </ul>
-                <div className="tab-bar-widgets">
-                    { this.props.splitEnabled ? <span className="split-widget" onClick={ this.onSplitClick }></span> : null }
-                </div>
-            </div>
-        );
-    }
+    return (
+      <div className={CSS + tabBarClassName} onDragEnter={this.onDragEnter} onDragOver={this.onDragOver}
+        onDragLeave={this.onDragLeave} onDrop={this.onDrop} >
+        <ul>
+          {
+            React.Children.map(this.props.children, child =>
+              <li>{child}</li>
+            )
+          }
+        </ul>
+        <div className="tab-bar-widgets">
+          {this.props.splitEnabled ? <span className="split-widget" onClick={this.onSplitClick}></span> : null}
+        </div>
+      </div>
+    );
+  }
 }
 
 export default connect((state, { owningEditor }) => ({
-    activeEditor: state.editor.activeEditor,
-    editors: state.editor.editors,
-    splitEnabled: state.editor.editors[owningEditor].documents.length > 1
+  activeEditor: state.editor.activeEditor,
+  editors: state.editor.editors,
+  splitEnabled: state.editor.editors[owningEditor].documents.length > 1
 }))(TabBar);
 
 TabBar.propTypes = {
-    activeEditor: PropTypes.oneOf([
-        Constants.EditorKey_Primary,
-        Constants.EditorKey_Secondary
-    ]),
-    editors: PropTypes.object,
-    value: PropTypes.number,
-    owningEditor: PropTypes.oneOf([
-        Constants.EditorKey_Primary,
-        Constants.EditorKey_Secondary
-    ]),
-    splitEnabled: PropTypes.bool
+  activeEditor: PropTypes.oneOf([
+    Constants.EditorKey_Primary,
+    Constants.EditorKey_Secondary
+  ]),
+  editors: PropTypes.object,
+  value: PropTypes.number,
+  owningEditor: PropTypes.oneOf([
+    Constants.EditorKey_Primary,
+    Constants.EditorKey_Secondary
+  ]),
+  splitEnabled: PropTypes.bool
 };

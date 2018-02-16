@@ -54,27 +54,47 @@ const CSS = css({
   }
 });
 
-export default class Chat extends React.Component {
+const DISCONNECTED_CSS = css({
+  backgroundColor: 'lightgray',
+  color: 'black',
+  height: '100%'
+});
+
+// TODO: Fill this out
+export interface ChatProps {
+  document: any;
+};
+
+export default class Chat extends React.Component<ChatProps> {
   render() {
-    const props: WebChat.ChatProps = {
-      adaptiveCardsHostConfig: null,
-      user: {
-        id: "1234",
-        name: "User"
-      },
-      bot: {
-        id: "WXYZ",
-        name: "Bot"
-      },
-      formatOptions: {
-        showHeader: false
-      },
-      botConnection: state().botConnection,
-    };
-    return (
-      <div { ...CSS }>
-        {<WebChat.Chat { ...props } />}
-      </div>
-    );
+    if (this.props.document.directLine) {
+      const props: WebChat.ChatProps = {
+        adaptiveCardsHostConfig: null,
+        user: {
+          id: "1234",
+          name: "User"
+        },
+        bot: {
+          id: "WXYZ",
+          name: "Bot"
+        },
+        formatOptions: {
+          showHeader: false
+        },
+        botConnection: this.props.document.directLine,
+        store: this.props.document.webChatStore
+      };
+      return (
+        <div {...CSS}>
+          {<WebChat.Chat {...props} />}
+        </div>
+      );
+    } else {
+      return (
+        <div {...DISCONNECTED_CSS}>
+          <span>Not connected. Press the 'Start Over' button.</span>
+        </div>
+      );
+    }
   }
 }

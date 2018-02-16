@@ -37,39 +37,39 @@ import * as log from './log';
 
 
 export class RestServer {
-    router: Restify.Server;
+  router: Restify.Server;
 
-    constructor(name: string) {
-        this.router = Restify.createServer({
-            name
-        });
+  constructor(name: string) {
+    this.router = Restify.createServer({
+      name
+    });
 
-        this.router.on('listening', () => {
-            log.debug(`${this.router.name} listening on ${this.router.url}`);
-        });
+    this.router.on('listening', () => {
+      log.debug(`${this.router.name} listening on ${this.router.url}`);
+    });
 
-        const cors = CORS({
-            origins: ['*'],
-            allowHeaders: ['authorization', 'x-requested-with'],
-            exposeHeaders: []
-        });
+    const cors = CORS({
+      origins: ['*'],
+      allowHeaders: ['authorization', 'x-requested-with'],
+      exposeHeaders: []
+    });
 
-        this.router.pre(cors.preflight);
-        this.router.use(cors.actual);
-        this.router.use(Restify.acceptParser(this.router.acceptable));
-        this.router.use(stripEmptyBearerToken);
-        this.router.use(Restify.dateParser());
-        this.router.use(Restify.queryParser());
-    }
+    this.router.pre(cors.preflight);
+    this.router.use(cors.actual);
+    this.router.use(Restify.acceptParser(this.router.acceptable));
+    this.router.use(stripEmptyBearerToken);
+    this.router.use(Restify.dateParser());
+    this.router.use(Restify.queryParser());
+  }
 
-    public restart() {
-        this.stop();
-        return this.router.listen();
-    }
+  public restart() {
+    this.stop();
+    return this.router.listen();
+  }
 
-    public stop() {
-        return this.router.close();
-    }
+  public stop() {
+    return this.router.close();
+  }
 }
 
 // when debugging locally with a bot with appid and password = ""
@@ -77,13 +77,13 @@ export class RestServer {
 // This confuses the auth system, we either want no auth header for local debug
 // or we want a full bearer token.  This parser strips off the Auth header if it is just "Bearer"
 function stripEmptyBearerToken(req, res, next) {
-    if (!req.headers.authorization) {
-        return (next());
-    }
-
-    var pieces = req.headers.authorization.split(' ', 2);
-    if (pieces.length == 1 && pieces[0] == "Bearer")
-        delete req.headers["authorization"];
-
+  if (!req.headers.authorization) {
     return (next());
+  }
+
+  var pieces = req.headers.authorization.split(' ', 2);
+  if (pieces.length == 1 && pieces[0] == "Bearer")
+    delete req.headers["authorization"];
+
+  return (next());
 }

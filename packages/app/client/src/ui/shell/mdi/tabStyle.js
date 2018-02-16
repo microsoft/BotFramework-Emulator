@@ -81,7 +81,6 @@ export const TAB_CSS = css({
       content: '🗋',
       color: Colors.C5,
       fontSize: '16px',
-      fontWeight: '400'
     }
   },
 

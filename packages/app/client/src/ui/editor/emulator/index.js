@@ -34,34 +34,55 @@
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 
 import ChatPanel from './chatPanel';
 import DetailPanel from './detailPanel';
 import LogPanel from './logPanel';
 import Splitter from '../../layout/splitter-v2';
 import ToolBar, { Button as ToolBarButton, Separator as ToolBarSeparator } from '../toolbar';
-import { CommandService } from '../../../platform/commands/commandService';
+import * as BotChat from 'custom-botframework-webchat';
+import { SettingsService } from '../../../platform/settings/settingsService';
 
 const CSS = css({
   flex: 1,
   height: '100%',
 });
 
-export default class Emulator extends React.Component {
+class Emulator extends React.Component {
 
   constructor(props, context) {
     super(props, context)
-    this.onPresentationClick = this.handlePresentationClick.bind(this, "presentation");
-    this.onStartOverClick = this.handleStartOverClick.bind(this, "start over");
-    this.onExportClick = this.handleExportClick.bind(this, "export");
-    this.onImportClick = this.handleImportClick.bind(this, "import");
+    this.onPresentationClick = this.handlePresentationClick.bind(this);
+    this.onStartOverClick = this.handleStartOverClick.bind(this);
+    this.onExportClick = this.handleExportClick.bind(this);
+    this.onImportClick = this.handleImportClick.bind(this);
+
+    this.state = {
+      sessionId: 0
+    };
   }
 
   handlePresentationClick() {
-    CommandService.executeRemoteCommand('say:hello', { value: "What's up" });
   }
 
   handleStartOverClick() {
+    this.state.sessionId += 1;
+
+    if (this.props.document.directLine) {
+      this.props.document.directLine.end();
+    }
+
+    this.props.document.webChatStore = BotChat.createStore();
+
+    this.props.document.directLine = new BotChat.DirectLine({
+      secret: this.props.document.documentId,
+      token: this.props.document.documentId,
+      domain: `${SettingsService.emulator.url}/v3/directline`,
+      webSocket: false
+    });
+
+    this.forceUpdate();
   }
 
   handleExportClick() {
@@ -72,19 +93,19 @@ export default class Emulator extends React.Component {
 
   render() {
     return (
-      <div className={CSS}>
+      <div className={CSS} key={`${this.props.documentId}|${this.state.sessionId}`}>
         <ToolBar>
           <ToolBarButton title="Presentation" onClick={this.onPresentationClick} />
           <ToolBarSeparator />
           <ToolBarButton title="Start Over" onClick={this.onStartOverClick} />
-          <ToolBarButton title="Export" onClick={this.handleExportClick} />
-          <ToolBarButton title="Import" onClick={this.handleImportClick} />
+          <ToolBarButton title="Save As..." onClick={this.handleExportClick} />
+          <ToolBarButton title="Load..." onClick={this.handleImportClick} />
         </ToolBar>
         <Splitter orientation={'vertical'} primaryPaneIndex={1} initialSizeIndex={2} initialSize={300} minSizes={[80, 80]}>
-          <ChatPanel botId={this.props.botId} />
+          <ChatPanel document={this.props.document} />
           <Splitter orientation={'horizontal'} primaryPaneIndex={0} initialSizeIndex={1} initialSize={500} minSizes={[80, 80]}>
-            <LogPanel botId={this.props.botId} />
-            <DetailPanel botId={this.props.botId} />
+            <LogPanel document={this.props.document} />
+            <DetailPanel document={this.props.document} />
           </Splitter>
         </Splitter>
       </div>
@@ -92,6 +113,11 @@ export default class Emulator extends React.Component {
   }
 }
 
+export default connect((state, { documentId }) => ({
+  document: state.chat.liveChats[documentId]
+}))(Emulator);
+
+
 Emulator.propTypes = {
-  botId: PropTypes.string.isRequired
+  documentId: PropTypes.string.isRequired
 };

@@ -2878,7 +2878,7 @@ exports.root = _root;
     }
 })();
 //# sourceMappingURL=root.js.map
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(44)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45)))
 
 /***/ }),
 /* 19 */
@@ -3605,7 +3605,7 @@ exports.OuterSubscriber = OuterSubscriber;
 var isArray_1 = __webpack_require__(59);
 var isObject_1 = __webpack_require__(175);
 var isFunction_1 = __webpack_require__(93);
-var tryCatch_1 = __webpack_require__(43);
+var tryCatch_1 = __webpack_require__(44);
 var errorObject_1 = __webpack_require__(31);
 var UnsubscriptionError_1 = __webpack_require__(468);
 /**
@@ -3891,10 +3891,10 @@ var tslib_1 = __webpack_require__(14);
 var React = __webpack_require__(11);
 var react_dom_1 = __webpack_require__(71);
 var botframework_directlinejs_1 = __webpack_require__(61);
-var Store_1 = __webpack_require__(47);
-var react_redux_1 = __webpack_require__(40);
-var SpeechModule_1 = __webpack_require__(45);
-var konsole = __webpack_require__(32);
+var Store_1 = __webpack_require__(32);
+var react_redux_1 = __webpack_require__(41);
+var SpeechModule_1 = __webpack_require__(46);
+var konsole = __webpack_require__(33);
 var getTabIndex_1 = __webpack_require__(201);
 var History_1 = __webpack_require__(197);
 var MessagePane_1 = __webpack_require__(198);
@@ -3903,7 +3903,6 @@ var Chat = (function (_super) {
     tslib_1.__extends(Chat, _super);
     function Chat(props) {
         var _this = _super.call(this, props) || this;
-        _this.store = Store_1.createStore();
         _this.resizeListener = function () { return _this.setSize(); };
         _this._handleCardAction = _this.handleCardAction.bind(_this);
         _this._handleKeyDownCapture = _this.handleKeyDownCapture.bind(_this);
@@ -3911,6 +3910,7 @@ var Chat = (function (_super) {
         _this._saveHistoryRef = _this.saveHistoryRef.bind(_this);
         _this._saveShellRef = _this.saveShellRef.bind(_this);
         konsole.log("BotChat.Chat props", props);
+        _this.store = props.store || Store_1.createStore();
         _this.store.dispatch({
             type: 'Set_Locale',
             locale: props.locale || window.navigator["userLanguage"] || window.navigator.language || 'en'
@@ -4817,1280 +4817,12 @@ exports.errorObject = { e: {} };
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.log = function (message) {
-    var optionalParams = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        optionalParams[_i - 1] = arguments[_i];
-    }
-    if (typeof (window) !== 'undefined' && window["botchatDebug"] && message)
-        console.log.apply(console, [message].concat(optionalParams));
-};
-
-
-/***/ }),
-/* 33 */
-/***/ (function(module, exports) {
-
-// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
-var global = module.exports = typeof window != 'undefined' && window.Math == Math
-  ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
-if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
-
-/***/ }),
-/* 34 */
-/***/ (function(module, exports) {
-
-module.exports = function(it){
-  return typeof it === 'object' ? it !== null : typeof it === 'function';
-};
-
-/***/ }),
-/* 35 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* WEBPACK VAR INJECTION */(function(global) {module.exports = global["AdaptiveCards"] = __webpack_require__(187);
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(44)))
-
-/***/ }),
-/* 36 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- */
-
-
-
-var _prodInvariant = __webpack_require__(5);
-
-var EventPluginRegistry = __webpack_require__(50);
-var EventPluginUtils = __webpack_require__(74);
-var ReactErrorUtils = __webpack_require__(78);
-
-var accumulateInto = __webpack_require__(131);
-var forEachAccumulated = __webpack_require__(132);
-var invariant = __webpack_require__(2);
-
-/**
- * Internal store for event listeners
- */
-var listenerBank = {};
-
-/**
- * Internal queue of events that have accumulated their dispatches and are
- * waiting to have their dispatches executed.
- */
-var eventQueue = null;
-
-/**
- * Dispatches an event and releases it back into the pool, unless persistent.
- *
- * @param {?object} event Synthetic event to be dispatched.
- * @param {boolean} simulated If the event is simulated (changes exn behavior)
- * @private
- */
-var executeDispatchesAndRelease = function (event, simulated) {
-  if (event) {
-    EventPluginUtils.executeDispatchesInOrder(event, simulated);
-
-    if (!event.isPersistent()) {
-      event.constructor.release(event);
-    }
-  }
-};
-var executeDispatchesAndReleaseSimulated = function (e) {
-  return executeDispatchesAndRelease(e, true);
-};
-var executeDispatchesAndReleaseTopLevel = function (e) {
-  return executeDispatchesAndRelease(e, false);
-};
-
-var getDictionaryKey = function (inst) {
-  // Prevents V8 performance issue:
-  // https://github.com/facebook/react/pull/7232
-  return '.' + inst._rootNodeID;
-};
-
-function isInteractive(tag) {
-  return tag === 'button' || tag === 'input' || tag === 'select' || tag === 'textarea';
-}
-
-function shouldPreventMouseEvent(name, type, props) {
-  switch (name) {
-    case 'onClick':
-    case 'onClickCapture':
-    case 'onDoubleClick':
-    case 'onDoubleClickCapture':
-    case 'onMouseDown':
-    case 'onMouseDownCapture':
-    case 'onMouseMove':
-    case 'onMouseMoveCapture':
-    case 'onMouseUp':
-    case 'onMouseUpCapture':
-      return !!(props.disabled && isInteractive(type));
-    default:
-      return false;
-  }
-}
-
-/**
- * This is a unified interface for event plugins to be installed and configured.
- *
- * Event plugins can implement the following properties:
- *
- *   `extractEvents` {function(string, DOMEventTarget, string, object): *}
- *     Required. When a top-level event is fired, this method is expected to
- *     extract synthetic events that will in turn be queued and dispatched.
- *
- *   `eventTypes` {object}
- *     Optional, plugins that fire events must publish a mapping of registration
- *     names that are used to register listeners. Values of this mapping must
- *     be objects that contain `registrationName` or `phasedRegistrationNames`.
- *
- *   `executeDispatch` {function(object, function, string)}
- *     Optional, allows plugins to override how an event gets dispatched. By
- *     default, the listener is simply invoked.
- *
- * Each plugin that is injected into `EventsPluginHub` is immediately operable.
- *
- * @public
- */
-var EventPluginHub = {
-  /**
-   * Methods for injecting dependencies.
-   */
-  injection: {
-    /**
-     * @param {array} InjectedEventPluginOrder
-     * @public
-     */
-    injectEventPluginOrder: EventPluginRegistry.injectEventPluginOrder,
-
-    /**
-     * @param {object} injectedNamesToPlugins Map from names to plugin modules.
-     */
-    injectEventPluginsByName: EventPluginRegistry.injectEventPluginsByName
-  },
-
-  /**
-   * Stores `listener` at `listenerBank[registrationName][key]`. Is idempotent.
-   *
-   * @param {object} inst The instance, which is the source of events.
-   * @param {string} registrationName Name of listener (e.g. `onClick`).
-   * @param {function} listener The callback to store.
-   */
-  putListener: function (inst, registrationName, listener) {
-    !(typeof listener === 'function') ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Expected %s listener to be a function, instead got type %s', registrationName, typeof listener) : _prodInvariant('94', registrationName, typeof listener) : void 0;
-
-    var key = getDictionaryKey(inst);
-    var bankForRegistrationName = listenerBank[registrationName] || (listenerBank[registrationName] = {});
-    bankForRegistrationName[key] = listener;
-
-    var PluginModule = EventPluginRegistry.registrationNameModules[registrationName];
-    if (PluginModule && PluginModule.didPutListener) {
-      PluginModule.didPutListener(inst, registrationName, listener);
-    }
-  },
-
-  /**
-   * @param {object} inst The instance, which is the source of events.
-   * @param {string} registrationName Name of listener (e.g. `onClick`).
-   * @return {?function} The stored callback.
-   */
-  getListener: function (inst, registrationName) {
-    // TODO: shouldPreventMouseEvent is DOM-specific and definitely should not
-    // live here; needs to be moved to a better place soon
-    var bankForRegistrationName = listenerBank[registrationName];
-    if (shouldPreventMouseEvent(registrationName, inst._currentElement.type, inst._currentElement.props)) {
-      return null;
-    }
-    var key = getDictionaryKey(inst);
-    return bankForRegistrationName && bankForRegistrationName[key];
-  },
-
-  /**
-   * Deletes a listener from the registration bank.
-   *
-   * @param {object} inst The instance, which is the source of events.
-   * @param {string} registrationName Name of listener (e.g. `onClick`).
-   */
-  deleteListener: function (inst, registrationName) {
-    var PluginModule = EventPluginRegistry.registrationNameModules[registrationName];
-    if (PluginModule && PluginModule.willDeleteListener) {
-      PluginModule.willDeleteListener(inst, registrationName);
-    }
-
-    var bankForRegistrationName = listenerBank[registrationName];
-    // TODO: This should never be null -- when is it?
-    if (bankForRegistrationName) {
-      var key = getDictionaryKey(inst);
-      delete bankForRegistrationName[key];
-    }
-  },
-
-  /**
-   * Deletes all listeners for the DOM element with the supplied ID.
-   *
-   * @param {object} inst The instance, which is the source of events.
-   */
-  deleteAllListeners: function (inst) {
-    var key = getDictionaryKey(inst);
-    for (var registrationName in listenerBank) {
-      if (!listenerBank.hasOwnProperty(registrationName)) {
-        continue;
-      }
-
-      if (!listenerBank[registrationName][key]) {
-        continue;
-      }
-
-      var PluginModule = EventPluginRegistry.registrationNameModules[registrationName];
-      if (PluginModule && PluginModule.willDeleteListener) {
-        PluginModule.willDeleteListener(inst, registrationName);
-      }
-
-      delete listenerBank[registrationName][key];
-    }
-  },
-
-  /**
-   * Allows registered plugins an opportunity to extract events from top-level
-   * native browser events.
-   *
-   * @return {*} An accumulation of synthetic events.
-   * @internal
-   */
-  extractEvents: function (topLevelType, targetInst, nativeEvent, nativeEventTarget) {
-    var events;
-    var plugins = EventPluginRegistry.plugins;
-    for (var i = 0; i < plugins.length; i++) {
-      // Not every plugin in the ordering may be loaded at runtime.
-      var possiblePlugin = plugins[i];
-      if (possiblePlugin) {
-        var extractedEvents = possiblePlugin.extractEvents(topLevelType, targetInst, nativeEvent, nativeEventTarget);
-        if (extractedEvents) {
-          events = accumulateInto(events, extractedEvents);
-        }
-      }
-    }
-    return events;
-  },
-
-  /**
-   * Enqueues a synthetic event that should be dispatched when
-   * `processEventQueue` is invoked.
-   *
-   * @param {*} events An accumulation of synthetic events.
-   * @internal
-   */
-  enqueueEvents: function (events) {
-    if (events) {
-      eventQueue = accumulateInto(eventQueue, events);
-    }
-  },
-
-  /**
-   * Dispatches all synthetic events on the event queue.
-   *
-   * @internal
-   */
-  processEventQueue: function (simulated) {
-    // Set `eventQueue` to null before processing it so that we can tell if more
-    // events get enqueued while processing.
-    var processingEventQueue = eventQueue;
-    eventQueue = null;
-    if (simulated) {
-      forEachAccumulated(processingEventQueue, executeDispatchesAndReleaseSimulated);
-    } else {
-      forEachAccumulated(processingEventQueue, executeDispatchesAndReleaseTopLevel);
-    }
-    !!eventQueue ? process.env.NODE_ENV !== 'production' ? invariant(false, 'processEventQueue(): Additional events were enqueued while processing an event queue. Support for this has not yet been implemented.') : _prodInvariant('95') : void 0;
-    // This would be a good time to rethrow if any of the event handlers threw.
-    ReactErrorUtils.rethrowCaughtError();
-  },
-
-  /**
-   * These are needed for tests only. Do not use!
-   */
-  __purge: function () {
-    listenerBank = {};
-  },
-
-  __getListenerBank: function () {
-    return listenerBank;
-  }
-};
-
-module.exports = EventPluginHub;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
-
-/***/ }),
-/* 37 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- */
-
-
-
-var EventPluginHub = __webpack_require__(36);
-var EventPluginUtils = __webpack_require__(74);
-
-var accumulateInto = __webpack_require__(131);
-var forEachAccumulated = __webpack_require__(132);
-var warning = __webpack_require__(3);
-
-var getListener = EventPluginHub.getListener;
-
-/**
- * Some event types have a notion of different registration names for different
- * "phases" of propagation. This finds listeners by a given phase.
- */
-function listenerAtPhase(inst, event, propagationPhase) {
-  var registrationName = event.dispatchConfig.phasedRegistrationNames[propagationPhase];
-  return getListener(inst, registrationName);
-}
-
-/**
- * Tags a `SyntheticEvent` with dispatched listeners. Creating this function
- * here, allows us to not have to bind or create functions for each event.
- * Mutating the event's members allows us to not have to create a wrapping
- * "dispatch" object that pairs the event with the listener.
- */
-function accumulateDirectionalDispatches(inst, phase, event) {
-  if (process.env.NODE_ENV !== 'production') {
-    process.env.NODE_ENV !== 'production' ? warning(inst, 'Dispatching inst must not be null') : void 0;
-  }
-  var listener = listenerAtPhase(inst, event, phase);
-  if (listener) {
-    event._dispatchListeners = accumulateInto(event._dispatchListeners, listener);
-    event._dispatchInstances = accumulateInto(event._dispatchInstances, inst);
-  }
-}
-
-/**
- * Collect dispatches (must be entirely collected before dispatching - see unit
- * tests). Lazily allocate the array to conserve memory.  We must loop through
- * each event and perform the traversal for each one. We cannot perform a
- * single traversal for the entire collection of events because each event may
- * have a different target.
- */
-function accumulateTwoPhaseDispatchesSingle(event) {
-  if (event && event.dispatchConfig.phasedRegistrationNames) {
-    EventPluginUtils.traverseTwoPhase(event._targetInst, accumulateDirectionalDispatches, event);
-  }
-}
-
-/**
- * Same as `accumulateTwoPhaseDispatchesSingle`, but skips over the targetID.
- */
-function accumulateTwoPhaseDispatchesSingleSkipTarget(event) {
-  if (event && event.dispatchConfig.phasedRegistrationNames) {
-    var targetInst = event._targetInst;
-    var parentInst = targetInst ? EventPluginUtils.getParentInstance(targetInst) : null;
-    EventPluginUtils.traverseTwoPhase(parentInst, accumulateDirectionalDispatches, event);
-  }
-}
-
-/**
- * Accumulates without regard to direction, does not look for phased
- * registration names. Same as `accumulateDirectDispatchesSingle` but without
- * requiring that the `dispatchMarker` be the same as the dispatched ID.
- */
-function accumulateDispatches(inst, ignoredDirection, event) {
-  if (event && event.dispatchConfig.registrationName) {
-    var registrationName = event.dispatchConfig.registrationName;
-    var listener = getListener(inst, registrationName);
-    if (listener) {
-      event._dispatchListeners = accumulateInto(event._dispatchListeners, listener);
-      event._dispatchInstances = accumulateInto(event._dispatchInstances, inst);
-    }
-  }
-}
-
-/**
- * Accumulates dispatches on an `SyntheticEvent`, but only for the
- * `dispatchMarker`.
- * @param {SyntheticEvent} event
- */
-function accumulateDirectDispatchesSingle(event) {
-  if (event && event.dispatchConfig.registrationName) {
-    accumulateDispatches(event._targetInst, null, event);
-  }
-}
-
-function accumulateTwoPhaseDispatches(events) {
-  forEachAccumulated(events, accumulateTwoPhaseDispatchesSingle);
-}
-
-function accumulateTwoPhaseDispatchesSkipTarget(events) {
-  forEachAccumulated(events, accumulateTwoPhaseDispatchesSingleSkipTarget);
-}
-
-function accumulateEnterLeaveDispatches(leave, enter, from, to) {
-  EventPluginUtils.traverseEnterLeave(from, to, accumulateDispatches, leave, enter);
-}
-
-function accumulateDirectDispatches(events) {
-  forEachAccumulated(events, accumulateDirectDispatchesSingle);
-}
-
-/**
- * A small set of propagation patterns, each of which will accept a small amount
- * of information, and generate a set of "dispatch ready event objects" - which
- * are sets of events that have already been annotated with a set of dispatched
- * listener functions/ids. The API is designed this way to discourage these
- * propagation strategies from actually executing the dispatches, since we
- * always want to collect the entire set of dispatches before executing event a
- * single one.
- *
- * @constructor EventPropagators
- */
-var EventPropagators = {
-  accumulateTwoPhaseDispatches: accumulateTwoPhaseDispatches,
-  accumulateTwoPhaseDispatchesSkipTarget: accumulateTwoPhaseDispatchesSkipTarget,
-  accumulateDirectDispatches: accumulateDirectDispatches,
-  accumulateEnterLeaveDispatches: accumulateEnterLeaveDispatches
-};
-
-module.exports = EventPropagators;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
-
-/***/ }),
-/* 38 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- */
-
-
-
-/**
- * `ReactInstanceMap` maintains a mapping from a public facing stateful
- * instance (key) and the internal representation (value). This allows public
- * methods to accept the user facing instance as an argument and map them back
- * to internal methods.
- */
-
-// TODO: Replace this with ES6: var ReactInstanceMap = new Map();
-
-var ReactInstanceMap = {
-  /**
-   * This API should be called `delete` but we'd have to make sure to always
-   * transform these to strings for IE support. When this transform is fully
-   * supported we can rename it.
-   */
-  remove: function (key) {
-    key._reactInternalInstance = undefined;
-  },
-
-  get: function (key) {
-    return key._reactInternalInstance;
-  },
-
-  has: function (key) {
-    return key._reactInternalInstance !== undefined;
-  },
-
-  set: function (key, value) {
-    key._reactInternalInstance = value;
-  }
-};
-
-module.exports = ReactInstanceMap;
-
-/***/ }),
-/* 39 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- */
-
-
-
-var SyntheticEvent = __webpack_require__(17);
-
-var getEventTarget = __webpack_require__(83);
-
-/**
- * @interface UIEvent
- * @see http://www.w3.org/TR/DOM-Level-3-Events/
- */
-var UIEventInterface = {
-  view: function (event) {
-    if (event.view) {
-      return event.view;
-    }
-
-    var target = getEventTarget(event);
-    if (target.window === target) {
-      // target is a window object
-      return target;
-    }
-
-    var doc = target.ownerDocument;
-    // TODO: Figure out why `ownerDocument` is sometimes undefined in IE8.
-    if (doc) {
-      return doc.defaultView || doc.parentWindow;
-    } else {
-      return window;
-    }
-  },
-  detail: function (event) {
-    return event.detail || 0;
-  }
-};
-
-/**
- * @param {object} dispatchConfig Configuration used to dispatch this event.
- * @param {string} dispatchMarker Marker identifying the event target.
- * @param {object} nativeEvent Native browser event.
- * @extends {SyntheticEvent}
- */
-function SyntheticUIEvent(dispatchConfig, dispatchMarker, nativeEvent, nativeEventTarget) {
-  return SyntheticEvent.call(this, dispatchConfig, dispatchMarker, nativeEvent, nativeEventTarget);
-}
-
-SyntheticEvent.augmentClass(SyntheticUIEvent, UIEventInterface);
-
-module.exports = SyntheticUIEvent;
-
-/***/ }),
-/* 40 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_Provider__ = __webpack_require__(371);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_connectAdvanced__ = __webpack_require__(140);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__connect_connect__ = __webpack_require__(372);
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Provider", function() { return __WEBPACK_IMPORTED_MODULE_0__components_Provider__["a"]; });
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "createProvider", function() { return __WEBPACK_IMPORTED_MODULE_0__components_Provider__["b"]; });
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "connectAdvanced", function() { return __WEBPACK_IMPORTED_MODULE_1__components_connectAdvanced__["a"]; });
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "connect", function() { return __WEBPACK_IMPORTED_MODULE_2__connect_connect__["a"]; });
-
-
-
-
-
-
-/***/ }),
-/* 41 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var Observable_1 = __webpack_require__(1);
-var ArrayObservable_1 = __webpack_require__(57);
-var isScheduler_1 = __webpack_require__(177);
-var mergeAll_1 = __webpack_require__(454);
-/* tslint:enable:max-line-length */
-/**
- * Creates an output Observable which concurrently emits all values from every
- * given input Observable.
- *
- * <span class="informal">Flattens multiple Observables together by blending
- * their values into one Observable.</span>
- *
- * <img src="./img/merge.png" width="100%">
- *
- * `merge` subscribes to each given input Observable (as arguments), and simply
- * forwards (without doing any transformation) all the values from all the input
- * Observables to the output Observable. The output Observable only completes
- * once all input Observables have completed. Any error delivered by an input
- * Observable will be immediately emitted on the output Observable.
- *
- * @example <caption>Merge together two Observables: 1s interval and clicks</caption>
- * var clicks = Rx.Observable.fromEvent(document, 'click');
- * var timer = Rx.Observable.interval(1000);
- * var clicksOrTimer = Rx.Observable.merge(clicks, timer);
- * clicksOrTimer.subscribe(x => console.log(x));
- *
- * // Results in the following:
- * // timer will emit ascending values, one every second(1000ms) to console
- * // clicks logs MouseEvents to console everytime the "document" is clicked
- * // Since the two streams are merged you see these happening
- * // as they occur.
- *
- * @example <caption>Merge together 3 Observables, but only 2 run concurrently</caption>
- * var timer1 = Rx.Observable.interval(1000).take(10);
- * var timer2 = Rx.Observable.interval(2000).take(6);
- * var timer3 = Rx.Observable.interval(500).take(10);
- * var concurrent = 2; // the argument
- * var merged = Rx.Observable.merge(timer1, timer2, timer3, concurrent);
- * merged.subscribe(x => console.log(x));
- *
- * // Results in the following:
- * // - First timer1 and timer2 will run concurrently
- * // - timer1 will emit a value every 1000ms for 10 iterations
- * // - timer2 will emit a value every 2000ms for 6 iterations
- * // - after timer1 hits it's max iteration, timer2 will
- * //   continue, and timer3 will start to run concurrently with timer2
- * // - when timer2 hits it's max iteration it terminates, and
- * //   timer3 will continue to emit a value every 500ms until it is complete
- *
- * @see {@link mergeAll}
- * @see {@link mergeMap}
- * @see {@link mergeMapTo}
- * @see {@link mergeScan}
- *
- * @param {...ObservableInput} observables Input Observables to merge together.
- * @param {number} [concurrent=Number.POSITIVE_INFINITY] Maximum number of input
- * Observables being subscribed to concurrently.
- * @param {Scheduler} [scheduler=null] The IScheduler to use for managing
- * concurrency of input Observables.
- * @return {Observable} an Observable that emits items that are the result of
- * every input Observable.
- * @static true
- * @name merge
- * @owner Observable
- */
-function merge() {
-    var observables = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        observables[_i - 0] = arguments[_i];
-    }
-    var concurrent = Number.POSITIVE_INFINITY;
-    var scheduler = null;
-    var last = observables[observables.length - 1];
-    if (isScheduler_1.isScheduler(last)) {
-        scheduler = observables.pop();
-        if (observables.length > 1 && typeof observables[observables.length - 1] === 'number') {
-            concurrent = observables.pop();
-        }
-    }
-    else if (typeof last === 'number') {
-        concurrent = observables.pop();
-    }
-    if (scheduler === null && observables.length === 1 && observables[0] instanceof Observable_1.Observable) {
-        return observables[0];
-    }
-    return mergeAll_1.mergeAll(concurrent)(new ArrayObservable_1.ArrayObservable(observables, scheduler));
-}
-exports.merge = merge;
-//# sourceMappingURL=merge.js.map
-
-/***/ }),
-/* 42 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var AsyncAction_1 = __webpack_require__(465);
-var AsyncScheduler_1 = __webpack_require__(466);
-/**
- *
- * Async Scheduler
- *
- * <span class="informal">Schedule task as if you used setTimeout(task, duration)</span>
- *
- * `async` scheduler schedules tasks asynchronously, by putting them on the JavaScript
- * event loop queue. It is best used to delay tasks in time or to schedule tasks repeating
- * in intervals.
- *
- * If you just want to "defer" task, that is to perform it right after currently
- * executing synchronous code ends (commonly achieved by `setTimeout(deferredTask, 0)`),
- * better choice will be the {@link asap} scheduler.
- *
- * @example <caption>Use async scheduler to delay task</caption>
- * const task = () => console.log('it works!');
- *
- * Rx.Scheduler.async.schedule(task, 2000);
- *
- * // After 2 seconds logs:
- * // "it works!"
- *
- *
- * @example <caption>Use async scheduler to repeat task in intervals</caption>
- * function task(state) {
- *   console.log(state);
- *   this.schedule(state + 1, 1000); // `this` references currently executing Action,
- *                                   // which we reschedule with new state and delay
- * }
- *
- * Rx.Scheduler.async.schedule(task, 3000, 0);
- *
- * // Logs:
- * // 0 after 3s
- * // 1 after 4s
- * // 2 after 5s
- * // 3 after 6s
- *
- * @static true
- * @name async
- * @owner Scheduler
- */
-exports.async = new AsyncScheduler_1.AsyncScheduler(AsyncAction_1.AsyncAction);
-//# sourceMappingURL=async.js.map
-
-/***/ }),
-/* 43 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var errorObject_1 = __webpack_require__(31);
-var tryCatchTarget;
-function tryCatcher() {
-    try {
-        return tryCatchTarget.apply(this, arguments);
-    }
-    catch (e) {
-        errorObject_1.errorObject.e = e;
-        return errorObject_1.errorObject;
-    }
-}
-function tryCatch(fn) {
-    tryCatchTarget = fn;
-    return tryCatcher;
-}
-exports.tryCatch = tryCatch;
-;
-//# sourceMappingURL=tryCatch.js.map
-
-/***/ }),
-/* 44 */
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1,eval)("this");
-} catch(e) {
-	// This works if the window reference is available
-	if(typeof window === "object")
-		g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-
-/***/ }),
-/* 45 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Speech;
-(function (Speech) {
-    var SpeechRecognizer = (function () {
-        function SpeechRecognizer() {
-        }
-        SpeechRecognizer.setSpeechRecognizer = function (recognizer) {
-            SpeechRecognizer.instance = recognizer;
-        };
-        SpeechRecognizer.startRecognizing = function (locale, onIntermediateResult, onFinalResult, onAudioStreamStarted, onRecognitionFailed) {
-            if (locale === void 0) { locale = 'en-US'; }
-            if (onIntermediateResult === void 0) { onIntermediateResult = null; }
-            if (onFinalResult === void 0) { onFinalResult = null; }
-            if (onAudioStreamStarted === void 0) { onAudioStreamStarted = null; }
-            if (onRecognitionFailed === void 0) { onRecognitionFailed = null; }
-            if (!SpeechRecognizer.speechIsAvailable())
-                return;
-            if (locale && SpeechRecognizer.instance.locale !== locale) {
-                SpeechRecognizer.instance.stopRecognizing();
-                SpeechRecognizer.instance.locale = locale; // to do this could invalidate warmup.
-            }
-            if (SpeechRecognizer.alreadyRecognizing()) {
-                SpeechRecognizer.stopRecognizing();
-            }
-            SpeechRecognizer.instance.onIntermediateResult = onIntermediateResult;
-            SpeechRecognizer.instance.onFinalResult = onFinalResult;
-            SpeechRecognizer.instance.onAudioStreamingToService = onAudioStreamStarted;
-            SpeechRecognizer.instance.onRecognitionFailed = onRecognitionFailed;
-            SpeechRecognizer.instance.startRecognizing();
-        };
-        SpeechRecognizer.stopRecognizing = function () {
-            if (!SpeechRecognizer.speechIsAvailable())
-                return;
-            SpeechRecognizer.instance.stopRecognizing();
-        };
-        SpeechRecognizer.warmup = function () {
-            if (!SpeechRecognizer.speechIsAvailable())
-                return;
-            SpeechRecognizer.instance.warmup();
-        };
-        SpeechRecognizer.speechIsAvailable = function () {
-            return SpeechRecognizer.instance != null && SpeechRecognizer.instance.speechIsAvailable();
-        };
-        SpeechRecognizer.alreadyRecognizing = function () {
-            return SpeechRecognizer.instance ? SpeechRecognizer.instance.isStreamingToService : false;
-        };
-        return SpeechRecognizer;
-    }());
-    SpeechRecognizer.instance = null;
-    Speech.SpeechRecognizer = SpeechRecognizer;
-    var SpeechSynthesizer = (function () {
-        function SpeechSynthesizer() {
-        }
-        SpeechSynthesizer.setSpeechSynthesizer = function (speechSynthesizer) {
-            SpeechSynthesizer.instance = speechSynthesizer;
-        };
-        SpeechSynthesizer.speak = function (text, lang, onSpeakingStarted, onSpeakingFinished) {
-            if (onSpeakingStarted === void 0) { onSpeakingStarted = null; }
-            if (onSpeakingFinished === void 0) { onSpeakingFinished = null; }
-            if (SpeechSynthesizer.instance == null)
-                return;
-            SpeechSynthesizer.instance.speak(text, lang, onSpeakingStarted, onSpeakingFinished);
-        };
-        SpeechSynthesizer.stopSpeaking = function () {
-            if (SpeechSynthesizer.instance == null)
-                return;
-            SpeechSynthesizer.instance.stopSpeaking();
-        };
-        return SpeechSynthesizer;
-    }());
-    SpeechSynthesizer.instance = null;
-    Speech.SpeechSynthesizer = SpeechSynthesizer;
-    var BrowserSpeechRecognizer = (function () {
-        function BrowserSpeechRecognizer() {
-            var _this = this;
-            this.locale = null;
-            this.isStreamingToService = false;
-            this.onIntermediateResult = null;
-            this.onFinalResult = null;
-            this.onAudioStreamingToService = null;
-            this.onRecognitionFailed = null;
-            this.recognizer = null;
-            if (!window.webkitSpeechRecognition) {
-                console.error("This browser does not support speech recognition");
-                return;
-            }
-            this.recognizer = new window.webkitSpeechRecognition();
-            this.recognizer.lang = 'en-US';
-            this.recognizer.interimResults = true;
-            this.recognizer.onaudiostart = function () {
-                if (_this.onAudioStreamingToService) {
-                    _this.onAudioStreamingToService();
-                }
-            };
-            this.recognizer.onresult = function (srevent) {
-                if (srevent.results == null || srevent.length == 0) {
-                    return;
-                }
-                var result = srevent.results[0];
-                if (result.isFinal === true && _this.onFinalResult != null) {
-                    _this.onFinalResult(result[0].transcript);
-                }
-                else if (result.isFinal === false && _this.onIntermediateResult != null) {
-                    var text = "";
-                    for (var i = 0; i < srevent.results.length; ++i) {
-                        text += srevent.results[i][0].transcript;
-                    }
-                    _this.onIntermediateResult(text);
-                }
-            };
-            this.recognizer.onerror = function (err) {
-                if (_this.onRecognitionFailed) {
-                    _this.onRecognitionFailed();
-                }
-                throw err;
-            };
-        }
-        BrowserSpeechRecognizer.prototype.speechIsAvailable = function () {
-            return this.recognizer != null;
-        };
-        BrowserSpeechRecognizer.prototype.warmup = function () {
-        };
-        BrowserSpeechRecognizer.prototype.startRecognizing = function () {
-            this.recognizer.start();
-        };
-        BrowserSpeechRecognizer.prototype.stopRecognizing = function () {
-            this.recognizer.stop();
-        };
-        return BrowserSpeechRecognizer;
-    }());
-    Speech.BrowserSpeechRecognizer = BrowserSpeechRecognizer;
-    var BrowserSpeechSynthesizer = (function () {
-        function BrowserSpeechSynthesizer() {
-            this.lastOperation = null;
-            this.audioElement = null;
-            this.speakRequests = [];
-        }
-        BrowserSpeechSynthesizer.prototype.speak = function (text, lang, onSpeakingStarted, onSpeakingFinished) {
-            var _this = this;
-            if (onSpeakingStarted === void 0) { onSpeakingStarted = null; }
-            if (onSpeakingFinished === void 0) { onSpeakingFinished = null; }
-            if (!('SpeechSynthesisUtterance' in window) || !text)
-                return;
-            if (this.audioElement === null) {
-                var audio = document.createElement('audio');
-                audio.id = 'player';
-                audio.autoplay = true;
-                this.audioElement = audio;
-            }
-            var chunks = new Array();
-            if (text[0] === '<') {
-                if (text.indexOf('<speak') != 0)
-                    text = '<speak>\n' + text + '\n</speak>\n';
-                var parser = new DOMParser();
-                var dom = parser.parseFromString(text, 'text/xml');
-                var nodes = dom.documentElement.childNodes;
-                this.processNodes(nodes, chunks);
-            }
-            else {
-                chunks.push(text);
-            }
-            var onSpeakingFinishedWrapper = function () {
-                if (onSpeakingFinished !== null)
-                    onSpeakingFinished();
-                // remove this from the queue since it's done:
-                if (_this.speakRequests.length) {
-                    _this.speakRequests[0].completed();
-                    _this.speakRequests.splice(0, 1);
-                }
-                // If there are other speak operations in the queue, process them
-                if (_this.speakRequests.length) {
-                    _this.playNextTTS(_this.speakRequests[0], 0);
-                }
-            };
-            var request = new SpeakRequest(chunks, lang, function (speakOp) { _this.lastOperation = speakOp; }, onSpeakingStarted, onSpeakingFinishedWrapper);
-            if (this.speakRequests.length === 0) {
-                this.speakRequests = [request];
-                this.playNextTTS(this.speakRequests[0], 0);
-            }
-            else {
-                this.speakRequests.push(request);
-            }
-        };
-        BrowserSpeechSynthesizer.prototype.stopSpeaking = function () {
-            if (('SpeechSynthesisUtterance' in window) === false)
-                return;
-            if (this.speakRequests.length) {
-                if (this.audioElement)
-                    this.audioElement.pause();
-                this.speakRequests.forEach(function (req) {
-                    req.abandon();
-                });
-                this.speakRequests = [];
-                var ss = window.speechSynthesis;
-                if (ss.speaking || ss.pending) {
-                    if (this.lastOperation)
-                        this.lastOperation.onend = null;
-                    ss.cancel();
-                }
-            }
-        };
-        ;
-        BrowserSpeechSynthesizer.prototype.playNextTTS = function (requestContainer, iCurrent) {
-            // lang : string, onSpeakQueued: Func<SpeechSynthesisUtterance, void>, onSpeakStarted : Action, onFinishedSpeaking : Action
-            var _this = this;
-            var moveToNext = function () {
-                _this.playNextTTS(requestContainer, iCurrent + 1);
-            };
-            if (iCurrent < requestContainer.speakChunks.length) {
-                var current = requestContainer.speakChunks[iCurrent];
-                if (typeof current === 'number') {
-                    setTimeout(moveToNext, current);
-                }
-                else {
-                    if (current.indexOf('http') === 0) {
-                        var audio = this.audioElement; // document.getElementById('player');
-                        audio.src = current;
-                        audio.onended = moveToNext;
-                        audio.onerror = moveToNext;
-                        audio.play();
-                    }
-                    else {
-                        var msg = new SpeechSynthesisUtterance();
-                        // msg.voiceURI = 'native';
-                        // msg.volume = 1; // 0 to 1
-                        // msg.rate = 1; // 0.1 to 10
-                        // msg.pitch = 2; //0 to 2
-                        msg.text = current;
-                        msg.lang = requestContainer.lang;
-                        msg.onstart = iCurrent === 0 ? requestContainer.onSpeakingStarted : null;
-                        msg.onend = moveToNext;
-                        msg.onerror = moveToNext;
-                        if (requestContainer.onSpeakQueued)
-                            requestContainer.onSpeakQueued(msg);
-                        window.speechSynthesis.speak(msg);
-                    }
-                }
-            }
-            else {
-                if (requestContainer.onSpeakingFinished)
-                    requestContainer.onSpeakingFinished();
-            }
-        };
-        // process SSML markup into an array of either 
-        // * utterenance
-        // * number which is delay in msg
-        // * url which is an audio file 
-        BrowserSpeechSynthesizer.prototype.processNodes = function (nodes, output) {
-            for (var i = 0; i < nodes.length; i++) {
-                var node = nodes[i];
-                switch (node.nodeName) {
-                    case 'p':
-                        this.processNodes(node.childNodes, output);
-                        output.push(250);
-                        break;
-                    case 'break':
-                        if (node.attributes.getNamedItem('strength')) {
-                            var strength = node.attributes.getNamedItem('strength').nodeValue;
-                            if (strength === 'weak') {
-                                // output.push(50);
-                            }
-                            else if (strength === 'medium') {
-                                output.push(50);
-                            }
-                            else if (strength === 'strong') {
-                                output.push(100);
-                            }
-                            else if (strength === 'x-strong') {
-                                output.push(250);
-                            }
-                        }
-                        else if (node.attributes.getNamedItem('time')) {
-                            output.push(JSON.parse(node.attributes.getNamedItem('time').value));
-                        }
-                        break;
-                    case 'audio':
-                        if (node.attributes.getNamedItem('src')) {
-                            output.push(node.attributes.getNamedItem('src').value);
-                        }
-                        break;
-                    case 'say-as':
-                    case 'prosody': // ToDo: handle via msg.rate
-                    case 'emphasis': // ToDo: can probably emulate via prosody + pitch 
-                    case 'w':
-                    case 'phoneme': //
-                    case 'voice':
-                        this.processNodes(node.childNodes, output);
-                        break;
-                    default:
-                        // Todo: coalesce consecutive non numeric / non html entries.
-                        output.push(node.nodeValue);
-                        break;
-                }
-            }
-        };
-        return BrowserSpeechSynthesizer;
-    }());
-    Speech.BrowserSpeechSynthesizer = BrowserSpeechSynthesizer;
-    var SpeakRequest = (function () {
-        function SpeakRequest(speakChunks, lang, onSpeakQueued, onSpeakingStarted, onSpeakingFinished) {
-            if (onSpeakQueued === void 0) { onSpeakQueued = null; }
-            if (onSpeakingStarted === void 0) { onSpeakingStarted = null; }
-            if (onSpeakingFinished === void 0) { onSpeakingFinished = null; }
-            this._onSpeakQueued = null;
-            this._onSpeakingStarted = null;
-            this._onSpeakingFinished = null;
-            this._speakChunks = [];
-            this._lang = null;
-            this._onSpeakQueued = onSpeakQueued;
-            this._onSpeakingStarted = onSpeakingStarted;
-            this._onSpeakingFinished = onSpeakingFinished;
-            this._speakChunks = speakChunks;
-            this._lang = lang;
-        }
-        SpeakRequest.prototype.abandon = function () {
-            this._speakChunks = [];
-        };
-        SpeakRequest.prototype.completed = function () {
-            this._speakChunks = [];
-        };
-        Object.defineProperty(SpeakRequest.prototype, "onSpeakQueued", {
-            get: function () { return this._onSpeakQueued; },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(SpeakRequest.prototype, "onSpeakingStarted", {
-            get: function () { return this._onSpeakingStarted; },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(SpeakRequest.prototype, "onSpeakingFinished", {
-            get: function () { return this._onSpeakingFinished; },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(SpeakRequest.prototype, "speakChunks", {
-            get: function () { return this._speakChunks; },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(SpeakRequest.prototype, "lang", {
-            get: function () { return this._lang; },
-            enumerable: true,
-            configurable: true
-        });
-        return SpeakRequest;
-    }());
-})(Speech = exports.Speech || (exports.Speech = {}));
-
-
-/***/ }),
-/* 46 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Size;
-(function (Size) {
-    Size[Size["Auto"] = 0] = "Auto";
-    Size[Size["Stretch"] = 1] = "Stretch";
-    Size[Size["Small"] = 2] = "Small";
-    Size[Size["Medium"] = 3] = "Medium";
-    Size[Size["Large"] = 4] = "Large";
-})(Size = exports.Size || (exports.Size = {}));
-var TextSize;
-(function (TextSize) {
-    TextSize[TextSize["Small"] = 0] = "Small";
-    TextSize[TextSize["Default"] = 1] = "Default";
-    TextSize[TextSize["Medium"] = 2] = "Medium";
-    TextSize[TextSize["Large"] = 3] = "Large";
-    TextSize[TextSize["ExtraLarge"] = 4] = "ExtraLarge";
-})(TextSize = exports.TextSize || (exports.TextSize = {}));
-var Spacing;
-(function (Spacing) {
-    Spacing[Spacing["None"] = 0] = "None";
-    Spacing[Spacing["Small"] = 1] = "Small";
-    Spacing[Spacing["Default"] = 2] = "Default";
-    Spacing[Spacing["Medium"] = 3] = "Medium";
-    Spacing[Spacing["Large"] = 4] = "Large";
-    Spacing[Spacing["ExtraLarge"] = 5] = "ExtraLarge";
-    Spacing[Spacing["Padding"] = 6] = "Padding";
-})(Spacing = exports.Spacing || (exports.Spacing = {}));
-var Padding;
-(function (Padding) {
-    Padding[Padding["None"] = 0] = "None";
-    Padding[Padding["Default"] = 1] = "Default";
-})(Padding = exports.Padding || (exports.Padding = {}));
-var TextWeight;
-(function (TextWeight) {
-    TextWeight[TextWeight["Lighter"] = 0] = "Lighter";
-    TextWeight[TextWeight["Default"] = 1] = "Default";
-    TextWeight[TextWeight["Bolder"] = 2] = "Bolder";
-})(TextWeight = exports.TextWeight || (exports.TextWeight = {}));
-var TextColor;
-(function (TextColor) {
-    TextColor[TextColor["Default"] = 0] = "Default";
-    TextColor[TextColor["Accent"] = 1] = "Accent";
-    TextColor[TextColor["Good"] = 2] = "Good";
-    TextColor[TextColor["Warning"] = 3] = "Warning";
-    TextColor[TextColor["Attention"] = 4] = "Attention";
-})(TextColor = exports.TextColor || (exports.TextColor = {}));
-var HorizontalAlignment;
-(function (HorizontalAlignment) {
-    HorizontalAlignment[HorizontalAlignment["Left"] = 0] = "Left";
-    HorizontalAlignment[HorizontalAlignment["Center"] = 1] = "Center";
-    HorizontalAlignment[HorizontalAlignment["Right"] = 2] = "Right";
-})(HorizontalAlignment = exports.HorizontalAlignment || (exports.HorizontalAlignment = {}));
-var VerticalAlignment;
-(function (VerticalAlignment) {
-    VerticalAlignment[VerticalAlignment["Top"] = 0] = "Top";
-    VerticalAlignment[VerticalAlignment["Center"] = 1] = "Center";
-    VerticalAlignment[VerticalAlignment["Bottom"] = 2] = "Bottom";
-})(VerticalAlignment = exports.VerticalAlignment || (exports.VerticalAlignment = {}));
-var ActionAlignment;
-(function (ActionAlignment) {
-    ActionAlignment[ActionAlignment["Left"] = 0] = "Left";
-    ActionAlignment[ActionAlignment["Center"] = 1] = "Center";
-    ActionAlignment[ActionAlignment["Right"] = 2] = "Right";
-    ActionAlignment[ActionAlignment["Stretch"] = 3] = "Stretch";
-})(ActionAlignment = exports.ActionAlignment || (exports.ActionAlignment = {}));
-var ImageStyle;
-(function (ImageStyle) {
-    ImageStyle[ImageStyle["Default"] = 0] = "Default";
-    ImageStyle[ImageStyle["Person"] = 1] = "Person";
-})(ImageStyle = exports.ImageStyle || (exports.ImageStyle = {}));
-var ShowCardActionMode;
-(function (ShowCardActionMode) {
-    ShowCardActionMode[ShowCardActionMode["Inline"] = 0] = "Inline";
-    ShowCardActionMode[ShowCardActionMode["Popup"] = 1] = "Popup";
-})(ShowCardActionMode = exports.ShowCardActionMode || (exports.ShowCardActionMode = {}));
-var Orientation;
-(function (Orientation) {
-    Orientation[Orientation["Horizontal"] = 0] = "Horizontal";
-    Orientation[Orientation["Vertical"] = 1] = "Vertical";
-})(Orientation = exports.Orientation || (exports.Orientation = {}));
-var BackgroundImageMode;
-(function (BackgroundImageMode) {
-    BackgroundImageMode[BackgroundImageMode["Stretch"] = 0] = "Stretch";
-    BackgroundImageMode[BackgroundImageMode["RepeatHorizontally"] = 1] = "RepeatHorizontally";
-    BackgroundImageMode[BackgroundImageMode["RepeatVertically"] = 2] = "RepeatVertically";
-    BackgroundImageMode[BackgroundImageMode["Repeat"] = 3] = "Repeat";
-})(BackgroundImageMode = exports.BackgroundImageMode || (exports.BackgroundImageMode = {}));
-var ContainerStyle;
-(function (ContainerStyle) {
-    ContainerStyle[ContainerStyle["Default"] = 0] = "Default";
-    ContainerStyle[ContainerStyle["Emphasis"] = 1] = "Emphasis";
-})(ContainerStyle = exports.ContainerStyle || (exports.ContainerStyle = {}));
-var ValidationError;
-(function (ValidationError) {
-    ValidationError[ValidationError["Hint"] = 0] = "Hint";
-    ValidationError[ValidationError["ActionTypeNotAllowed"] = 1] = "ActionTypeNotAllowed";
-    ValidationError[ValidationError["CollectionCantBeEmpty"] = 2] = "CollectionCantBeEmpty";
-    ValidationError[ValidationError["Deprecated"] = 3] = "Deprecated";
-    ValidationError[ValidationError["ElementTypeNotAllowed"] = 4] = "ElementTypeNotAllowed";
-    ValidationError[ValidationError["InteractivityNotAllowed"] = 5] = "InteractivityNotAllowed";
-    ValidationError[ValidationError["InvalidPropertyValue"] = 6] = "InvalidPropertyValue";
-    ValidationError[ValidationError["MissingCardType"] = 7] = "MissingCardType";
-    ValidationError[ValidationError["PropertyCantBeNull"] = 8] = "PropertyCantBeNull";
-    ValidationError[ValidationError["TooManyActions"] = 9] = "TooManyActions";
-    ValidationError[ValidationError["UnknownActionType"] = 10] = "UnknownActionType";
-    ValidationError[ValidationError["UnknownElementType"] = 11] = "UnknownElementType";
-    ValidationError[ValidationError["UnsupportedCardVersion"] = 12] = "UnsupportedCardVersion";
-})(ValidationError = exports.ValidationError || (exports.ValidationError = {}));
-//# sourceMappingURL=enums.js.map
-
-/***/ }),
-/* 47 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(14);
 var botframework_directlinejs_1 = __webpack_require__(61);
 var Strings_1 = __webpack_require__(200);
-var SpeechModule_1 = __webpack_require__(45);
-var adaptivecards_1 = __webpack_require__(35);
-var konsole = __webpack_require__(32);
+var SpeechModule_1 = __webpack_require__(46);
+var adaptivecards_1 = __webpack_require__(36);
+var konsole = __webpack_require__(33);
 exports.sendMessage = function (text, from, locale) { return ({
     type: 'Send_Message',
     activity: {
@@ -6461,12 +5193,1280 @@ exports.createStore = function () {
 
 
 /***/ }),
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.log = function (message) {
+    var optionalParams = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        optionalParams[_i - 1] = arguments[_i];
+    }
+    if (typeof (window) !== 'undefined' && window["botchatDebug"] && message)
+        console.log.apply(console, [message].concat(optionalParams));
+};
+
+
+/***/ }),
+/* 34 */
+/***/ (function(module, exports) {
+
+// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
+var global = module.exports = typeof window != 'undefined' && window.Math == Math
+  ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
+if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
+
+/***/ }),
+/* 35 */
+/***/ (function(module, exports) {
+
+module.exports = function(it){
+  return typeof it === 'object' ? it !== null : typeof it === 'function';
+};
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(global) {module.exports = global["AdaptiveCards"] = __webpack_require__(187);
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45)))
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {/**
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
+
+
+var _prodInvariant = __webpack_require__(5);
+
+var EventPluginRegistry = __webpack_require__(50);
+var EventPluginUtils = __webpack_require__(74);
+var ReactErrorUtils = __webpack_require__(78);
+
+var accumulateInto = __webpack_require__(131);
+var forEachAccumulated = __webpack_require__(132);
+var invariant = __webpack_require__(2);
+
+/**
+ * Internal store for event listeners
+ */
+var listenerBank = {};
+
+/**
+ * Internal queue of events that have accumulated their dispatches and are
+ * waiting to have their dispatches executed.
+ */
+var eventQueue = null;
+
+/**
+ * Dispatches an event and releases it back into the pool, unless persistent.
+ *
+ * @param {?object} event Synthetic event to be dispatched.
+ * @param {boolean} simulated If the event is simulated (changes exn behavior)
+ * @private
+ */
+var executeDispatchesAndRelease = function (event, simulated) {
+  if (event) {
+    EventPluginUtils.executeDispatchesInOrder(event, simulated);
+
+    if (!event.isPersistent()) {
+      event.constructor.release(event);
+    }
+  }
+};
+var executeDispatchesAndReleaseSimulated = function (e) {
+  return executeDispatchesAndRelease(e, true);
+};
+var executeDispatchesAndReleaseTopLevel = function (e) {
+  return executeDispatchesAndRelease(e, false);
+};
+
+var getDictionaryKey = function (inst) {
+  // Prevents V8 performance issue:
+  // https://github.com/facebook/react/pull/7232
+  return '.' + inst._rootNodeID;
+};
+
+function isInteractive(tag) {
+  return tag === 'button' || tag === 'input' || tag === 'select' || tag === 'textarea';
+}
+
+function shouldPreventMouseEvent(name, type, props) {
+  switch (name) {
+    case 'onClick':
+    case 'onClickCapture':
+    case 'onDoubleClick':
+    case 'onDoubleClickCapture':
+    case 'onMouseDown':
+    case 'onMouseDownCapture':
+    case 'onMouseMove':
+    case 'onMouseMoveCapture':
+    case 'onMouseUp':
+    case 'onMouseUpCapture':
+      return !!(props.disabled && isInteractive(type));
+    default:
+      return false;
+  }
+}
+
+/**
+ * This is a unified interface for event plugins to be installed and configured.
+ *
+ * Event plugins can implement the following properties:
+ *
+ *   `extractEvents` {function(string, DOMEventTarget, string, object): *}
+ *     Required. When a top-level event is fired, this method is expected to
+ *     extract synthetic events that will in turn be queued and dispatched.
+ *
+ *   `eventTypes` {object}
+ *     Optional, plugins that fire events must publish a mapping of registration
+ *     names that are used to register listeners. Values of this mapping must
+ *     be objects that contain `registrationName` or `phasedRegistrationNames`.
+ *
+ *   `executeDispatch` {function(object, function, string)}
+ *     Optional, allows plugins to override how an event gets dispatched. By
+ *     default, the listener is simply invoked.
+ *
+ * Each plugin that is injected into `EventsPluginHub` is immediately operable.
+ *
+ * @public
+ */
+var EventPluginHub = {
+  /**
+   * Methods for injecting dependencies.
+   */
+  injection: {
+    /**
+     * @param {array} InjectedEventPluginOrder
+     * @public
+     */
+    injectEventPluginOrder: EventPluginRegistry.injectEventPluginOrder,
+
+    /**
+     * @param {object} injectedNamesToPlugins Map from names to plugin modules.
+     */
+    injectEventPluginsByName: EventPluginRegistry.injectEventPluginsByName
+  },
+
+  /**
+   * Stores `listener` at `listenerBank[registrationName][key]`. Is idempotent.
+   *
+   * @param {object} inst The instance, which is the source of events.
+   * @param {string} registrationName Name of listener (e.g. `onClick`).
+   * @param {function} listener The callback to store.
+   */
+  putListener: function (inst, registrationName, listener) {
+    !(typeof listener === 'function') ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Expected %s listener to be a function, instead got type %s', registrationName, typeof listener) : _prodInvariant('94', registrationName, typeof listener) : void 0;
+
+    var key = getDictionaryKey(inst);
+    var bankForRegistrationName = listenerBank[registrationName] || (listenerBank[registrationName] = {});
+    bankForRegistrationName[key] = listener;
+
+    var PluginModule = EventPluginRegistry.registrationNameModules[registrationName];
+    if (PluginModule && PluginModule.didPutListener) {
+      PluginModule.didPutListener(inst, registrationName, listener);
+    }
+  },
+
+  /**
+   * @param {object} inst The instance, which is the source of events.
+   * @param {string} registrationName Name of listener (e.g. `onClick`).
+   * @return {?function} The stored callback.
+   */
+  getListener: function (inst, registrationName) {
+    // TODO: shouldPreventMouseEvent is DOM-specific and definitely should not
+    // live here; needs to be moved to a better place soon
+    var bankForRegistrationName = listenerBank[registrationName];
+    if (shouldPreventMouseEvent(registrationName, inst._currentElement.type, inst._currentElement.props)) {
+      return null;
+    }
+    var key = getDictionaryKey(inst);
+    return bankForRegistrationName && bankForRegistrationName[key];
+  },
+
+  /**
+   * Deletes a listener from the registration bank.
+   *
+   * @param {object} inst The instance, which is the source of events.
+   * @param {string} registrationName Name of listener (e.g. `onClick`).
+   */
+  deleteListener: function (inst, registrationName) {
+    var PluginModule = EventPluginRegistry.registrationNameModules[registrationName];
+    if (PluginModule && PluginModule.willDeleteListener) {
+      PluginModule.willDeleteListener(inst, registrationName);
+    }
+
+    var bankForRegistrationName = listenerBank[registrationName];
+    // TODO: This should never be null -- when is it?
+    if (bankForRegistrationName) {
+      var key = getDictionaryKey(inst);
+      delete bankForRegistrationName[key];
+    }
+  },
+
+  /**
+   * Deletes all listeners for the DOM element with the supplied ID.
+   *
+   * @param {object} inst The instance, which is the source of events.
+   */
+  deleteAllListeners: function (inst) {
+    var key = getDictionaryKey(inst);
+    for (var registrationName in listenerBank) {
+      if (!listenerBank.hasOwnProperty(registrationName)) {
+        continue;
+      }
+
+      if (!listenerBank[registrationName][key]) {
+        continue;
+      }
+
+      var PluginModule = EventPluginRegistry.registrationNameModules[registrationName];
+      if (PluginModule && PluginModule.willDeleteListener) {
+        PluginModule.willDeleteListener(inst, registrationName);
+      }
+
+      delete listenerBank[registrationName][key];
+    }
+  },
+
+  /**
+   * Allows registered plugins an opportunity to extract events from top-level
+   * native browser events.
+   *
+   * @return {*} An accumulation of synthetic events.
+   * @internal
+   */
+  extractEvents: function (topLevelType, targetInst, nativeEvent, nativeEventTarget) {
+    var events;
+    var plugins = EventPluginRegistry.plugins;
+    for (var i = 0; i < plugins.length; i++) {
+      // Not every plugin in the ordering may be loaded at runtime.
+      var possiblePlugin = plugins[i];
+      if (possiblePlugin) {
+        var extractedEvents = possiblePlugin.extractEvents(topLevelType, targetInst, nativeEvent, nativeEventTarget);
+        if (extractedEvents) {
+          events = accumulateInto(events, extractedEvents);
+        }
+      }
+    }
+    return events;
+  },
+
+  /**
+   * Enqueues a synthetic event that should be dispatched when
+   * `processEventQueue` is invoked.
+   *
+   * @param {*} events An accumulation of synthetic events.
+   * @internal
+   */
+  enqueueEvents: function (events) {
+    if (events) {
+      eventQueue = accumulateInto(eventQueue, events);
+    }
+  },
+
+  /**
+   * Dispatches all synthetic events on the event queue.
+   *
+   * @internal
+   */
+  processEventQueue: function (simulated) {
+    // Set `eventQueue` to null before processing it so that we can tell if more
+    // events get enqueued while processing.
+    var processingEventQueue = eventQueue;
+    eventQueue = null;
+    if (simulated) {
+      forEachAccumulated(processingEventQueue, executeDispatchesAndReleaseSimulated);
+    } else {
+      forEachAccumulated(processingEventQueue, executeDispatchesAndReleaseTopLevel);
+    }
+    !!eventQueue ? process.env.NODE_ENV !== 'production' ? invariant(false, 'processEventQueue(): Additional events were enqueued while processing an event queue. Support for this has not yet been implemented.') : _prodInvariant('95') : void 0;
+    // This would be a good time to rethrow if any of the event handlers threw.
+    ReactErrorUtils.rethrowCaughtError();
+  },
+
+  /**
+   * These are needed for tests only. Do not use!
+   */
+  __purge: function () {
+    listenerBank = {};
+  },
+
+  __getListenerBank: function () {
+    return listenerBank;
+  }
+};
+
+module.exports = EventPluginHub;
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+
+/***/ }),
+/* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {/**
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
+
+
+var EventPluginHub = __webpack_require__(37);
+var EventPluginUtils = __webpack_require__(74);
+
+var accumulateInto = __webpack_require__(131);
+var forEachAccumulated = __webpack_require__(132);
+var warning = __webpack_require__(3);
+
+var getListener = EventPluginHub.getListener;
+
+/**
+ * Some event types have a notion of different registration names for different
+ * "phases" of propagation. This finds listeners by a given phase.
+ */
+function listenerAtPhase(inst, event, propagationPhase) {
+  var registrationName = event.dispatchConfig.phasedRegistrationNames[propagationPhase];
+  return getListener(inst, registrationName);
+}
+
+/**
+ * Tags a `SyntheticEvent` with dispatched listeners. Creating this function
+ * here, allows us to not have to bind or create functions for each event.
+ * Mutating the event's members allows us to not have to create a wrapping
+ * "dispatch" object that pairs the event with the listener.
+ */
+function accumulateDirectionalDispatches(inst, phase, event) {
+  if (process.env.NODE_ENV !== 'production') {
+    process.env.NODE_ENV !== 'production' ? warning(inst, 'Dispatching inst must not be null') : void 0;
+  }
+  var listener = listenerAtPhase(inst, event, phase);
+  if (listener) {
+    event._dispatchListeners = accumulateInto(event._dispatchListeners, listener);
+    event._dispatchInstances = accumulateInto(event._dispatchInstances, inst);
+  }
+}
+
+/**
+ * Collect dispatches (must be entirely collected before dispatching - see unit
+ * tests). Lazily allocate the array to conserve memory.  We must loop through
+ * each event and perform the traversal for each one. We cannot perform a
+ * single traversal for the entire collection of events because each event may
+ * have a different target.
+ */
+function accumulateTwoPhaseDispatchesSingle(event) {
+  if (event && event.dispatchConfig.phasedRegistrationNames) {
+    EventPluginUtils.traverseTwoPhase(event._targetInst, accumulateDirectionalDispatches, event);
+  }
+}
+
+/**
+ * Same as `accumulateTwoPhaseDispatchesSingle`, but skips over the targetID.
+ */
+function accumulateTwoPhaseDispatchesSingleSkipTarget(event) {
+  if (event && event.dispatchConfig.phasedRegistrationNames) {
+    var targetInst = event._targetInst;
+    var parentInst = targetInst ? EventPluginUtils.getParentInstance(targetInst) : null;
+    EventPluginUtils.traverseTwoPhase(parentInst, accumulateDirectionalDispatches, event);
+  }
+}
+
+/**
+ * Accumulates without regard to direction, does not look for phased
+ * registration names. Same as `accumulateDirectDispatchesSingle` but without
+ * requiring that the `dispatchMarker` be the same as the dispatched ID.
+ */
+function accumulateDispatches(inst, ignoredDirection, event) {
+  if (event && event.dispatchConfig.registrationName) {
+    var registrationName = event.dispatchConfig.registrationName;
+    var listener = getListener(inst, registrationName);
+    if (listener) {
+      event._dispatchListeners = accumulateInto(event._dispatchListeners, listener);
+      event._dispatchInstances = accumulateInto(event._dispatchInstances, inst);
+    }
+  }
+}
+
+/**
+ * Accumulates dispatches on an `SyntheticEvent`, but only for the
+ * `dispatchMarker`.
+ * @param {SyntheticEvent} event
+ */
+function accumulateDirectDispatchesSingle(event) {
+  if (event && event.dispatchConfig.registrationName) {
+    accumulateDispatches(event._targetInst, null, event);
+  }
+}
+
+function accumulateTwoPhaseDispatches(events) {
+  forEachAccumulated(events, accumulateTwoPhaseDispatchesSingle);
+}
+
+function accumulateTwoPhaseDispatchesSkipTarget(events) {
+  forEachAccumulated(events, accumulateTwoPhaseDispatchesSingleSkipTarget);
+}
+
+function accumulateEnterLeaveDispatches(leave, enter, from, to) {
+  EventPluginUtils.traverseEnterLeave(from, to, accumulateDispatches, leave, enter);
+}
+
+function accumulateDirectDispatches(events) {
+  forEachAccumulated(events, accumulateDirectDispatchesSingle);
+}
+
+/**
+ * A small set of propagation patterns, each of which will accept a small amount
+ * of information, and generate a set of "dispatch ready event objects" - which
+ * are sets of events that have already been annotated with a set of dispatched
+ * listener functions/ids. The API is designed this way to discourage these
+ * propagation strategies from actually executing the dispatches, since we
+ * always want to collect the entire set of dispatches before executing event a
+ * single one.
+ *
+ * @constructor EventPropagators
+ */
+var EventPropagators = {
+  accumulateTwoPhaseDispatches: accumulateTwoPhaseDispatches,
+  accumulateTwoPhaseDispatchesSkipTarget: accumulateTwoPhaseDispatchesSkipTarget,
+  accumulateDirectDispatches: accumulateDirectDispatches,
+  accumulateEnterLeaveDispatches: accumulateEnterLeaveDispatches
+};
+
+module.exports = EventPropagators;
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+
+/***/ }),
+/* 39 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
+
+
+/**
+ * `ReactInstanceMap` maintains a mapping from a public facing stateful
+ * instance (key) and the internal representation (value). This allows public
+ * methods to accept the user facing instance as an argument and map them back
+ * to internal methods.
+ */
+
+// TODO: Replace this with ES6: var ReactInstanceMap = new Map();
+
+var ReactInstanceMap = {
+  /**
+   * This API should be called `delete` but we'd have to make sure to always
+   * transform these to strings for IE support. When this transform is fully
+   * supported we can rename it.
+   */
+  remove: function (key) {
+    key._reactInternalInstance = undefined;
+  },
+
+  get: function (key) {
+    return key._reactInternalInstance;
+  },
+
+  has: function (key) {
+    return key._reactInternalInstance !== undefined;
+  },
+
+  set: function (key, value) {
+    key._reactInternalInstance = value;
+  }
+};
+
+module.exports = ReactInstanceMap;
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
+
+
+var SyntheticEvent = __webpack_require__(17);
+
+var getEventTarget = __webpack_require__(83);
+
+/**
+ * @interface UIEvent
+ * @see http://www.w3.org/TR/DOM-Level-3-Events/
+ */
+var UIEventInterface = {
+  view: function (event) {
+    if (event.view) {
+      return event.view;
+    }
+
+    var target = getEventTarget(event);
+    if (target.window === target) {
+      // target is a window object
+      return target;
+    }
+
+    var doc = target.ownerDocument;
+    // TODO: Figure out why `ownerDocument` is sometimes undefined in IE8.
+    if (doc) {
+      return doc.defaultView || doc.parentWindow;
+    } else {
+      return window;
+    }
+  },
+  detail: function (event) {
+    return event.detail || 0;
+  }
+};
+
+/**
+ * @param {object} dispatchConfig Configuration used to dispatch this event.
+ * @param {string} dispatchMarker Marker identifying the event target.
+ * @param {object} nativeEvent Native browser event.
+ * @extends {SyntheticEvent}
+ */
+function SyntheticUIEvent(dispatchConfig, dispatchMarker, nativeEvent, nativeEventTarget) {
+  return SyntheticEvent.call(this, dispatchConfig, dispatchMarker, nativeEvent, nativeEventTarget);
+}
+
+SyntheticEvent.augmentClass(SyntheticUIEvent, UIEventInterface);
+
+module.exports = SyntheticUIEvent;
+
+/***/ }),
+/* 41 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_Provider__ = __webpack_require__(371);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_connectAdvanced__ = __webpack_require__(140);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__connect_connect__ = __webpack_require__(372);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Provider", function() { return __WEBPACK_IMPORTED_MODULE_0__components_Provider__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "createProvider", function() { return __WEBPACK_IMPORTED_MODULE_0__components_Provider__["b"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "connectAdvanced", function() { return __WEBPACK_IMPORTED_MODULE_1__components_connectAdvanced__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "connect", function() { return __WEBPACK_IMPORTED_MODULE_2__connect_connect__["a"]; });
+
+
+
+
+
+
+/***/ }),
+/* 42 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__(1);
+var ArrayObservable_1 = __webpack_require__(57);
+var isScheduler_1 = __webpack_require__(177);
+var mergeAll_1 = __webpack_require__(454);
+/* tslint:enable:max-line-length */
+/**
+ * Creates an output Observable which concurrently emits all values from every
+ * given input Observable.
+ *
+ * <span class="informal">Flattens multiple Observables together by blending
+ * their values into one Observable.</span>
+ *
+ * <img src="./img/merge.png" width="100%">
+ *
+ * `merge` subscribes to each given input Observable (as arguments), and simply
+ * forwards (without doing any transformation) all the values from all the input
+ * Observables to the output Observable. The output Observable only completes
+ * once all input Observables have completed. Any error delivered by an input
+ * Observable will be immediately emitted on the output Observable.
+ *
+ * @example <caption>Merge together two Observables: 1s interval and clicks</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var timer = Rx.Observable.interval(1000);
+ * var clicksOrTimer = Rx.Observable.merge(clicks, timer);
+ * clicksOrTimer.subscribe(x => console.log(x));
+ *
+ * // Results in the following:
+ * // timer will emit ascending values, one every second(1000ms) to console
+ * // clicks logs MouseEvents to console everytime the "document" is clicked
+ * // Since the two streams are merged you see these happening
+ * // as they occur.
+ *
+ * @example <caption>Merge together 3 Observables, but only 2 run concurrently</caption>
+ * var timer1 = Rx.Observable.interval(1000).take(10);
+ * var timer2 = Rx.Observable.interval(2000).take(6);
+ * var timer3 = Rx.Observable.interval(500).take(10);
+ * var concurrent = 2; // the argument
+ * var merged = Rx.Observable.merge(timer1, timer2, timer3, concurrent);
+ * merged.subscribe(x => console.log(x));
+ *
+ * // Results in the following:
+ * // - First timer1 and timer2 will run concurrently
+ * // - timer1 will emit a value every 1000ms for 10 iterations
+ * // - timer2 will emit a value every 2000ms for 6 iterations
+ * // - after timer1 hits it's max iteration, timer2 will
+ * //   continue, and timer3 will start to run concurrently with timer2
+ * // - when timer2 hits it's max iteration it terminates, and
+ * //   timer3 will continue to emit a value every 500ms until it is complete
+ *
+ * @see {@link mergeAll}
+ * @see {@link mergeMap}
+ * @see {@link mergeMapTo}
+ * @see {@link mergeScan}
+ *
+ * @param {...ObservableInput} observables Input Observables to merge together.
+ * @param {number} [concurrent=Number.POSITIVE_INFINITY] Maximum number of input
+ * Observables being subscribed to concurrently.
+ * @param {Scheduler} [scheduler=null] The IScheduler to use for managing
+ * concurrency of input Observables.
+ * @return {Observable} an Observable that emits items that are the result of
+ * every input Observable.
+ * @static true
+ * @name merge
+ * @owner Observable
+ */
+function merge() {
+    var observables = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        observables[_i - 0] = arguments[_i];
+    }
+    var concurrent = Number.POSITIVE_INFINITY;
+    var scheduler = null;
+    var last = observables[observables.length - 1];
+    if (isScheduler_1.isScheduler(last)) {
+        scheduler = observables.pop();
+        if (observables.length > 1 && typeof observables[observables.length - 1] === 'number') {
+            concurrent = observables.pop();
+        }
+    }
+    else if (typeof last === 'number') {
+        concurrent = observables.pop();
+    }
+    if (scheduler === null && observables.length === 1 && observables[0] instanceof Observable_1.Observable) {
+        return observables[0];
+    }
+    return mergeAll_1.mergeAll(concurrent)(new ArrayObservable_1.ArrayObservable(observables, scheduler));
+}
+exports.merge = merge;
+//# sourceMappingURL=merge.js.map
+
+/***/ }),
+/* 43 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var AsyncAction_1 = __webpack_require__(465);
+var AsyncScheduler_1 = __webpack_require__(466);
+/**
+ *
+ * Async Scheduler
+ *
+ * <span class="informal">Schedule task as if you used setTimeout(task, duration)</span>
+ *
+ * `async` scheduler schedules tasks asynchronously, by putting them on the JavaScript
+ * event loop queue. It is best used to delay tasks in time or to schedule tasks repeating
+ * in intervals.
+ *
+ * If you just want to "defer" task, that is to perform it right after currently
+ * executing synchronous code ends (commonly achieved by `setTimeout(deferredTask, 0)`),
+ * better choice will be the {@link asap} scheduler.
+ *
+ * @example <caption>Use async scheduler to delay task</caption>
+ * const task = () => console.log('it works!');
+ *
+ * Rx.Scheduler.async.schedule(task, 2000);
+ *
+ * // After 2 seconds logs:
+ * // "it works!"
+ *
+ *
+ * @example <caption>Use async scheduler to repeat task in intervals</caption>
+ * function task(state) {
+ *   console.log(state);
+ *   this.schedule(state + 1, 1000); // `this` references currently executing Action,
+ *                                   // which we reschedule with new state and delay
+ * }
+ *
+ * Rx.Scheduler.async.schedule(task, 3000, 0);
+ *
+ * // Logs:
+ * // 0 after 3s
+ * // 1 after 4s
+ * // 2 after 5s
+ * // 3 after 6s
+ *
+ * @static true
+ * @name async
+ * @owner Scheduler
+ */
+exports.async = new AsyncScheduler_1.AsyncScheduler(AsyncAction_1.AsyncAction);
+//# sourceMappingURL=async.js.map
+
+/***/ }),
+/* 44 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var errorObject_1 = __webpack_require__(31);
+var tryCatchTarget;
+function tryCatcher() {
+    try {
+        return tryCatchTarget.apply(this, arguments);
+    }
+    catch (e) {
+        errorObject_1.errorObject.e = e;
+        return errorObject_1.errorObject;
+    }
+}
+function tryCatch(fn) {
+    tryCatchTarget = fn;
+    return tryCatcher;
+}
+exports.tryCatch = tryCatch;
+;
+//# sourceMappingURL=tryCatch.js.map
+
+/***/ }),
+/* 45 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 46 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Speech;
+(function (Speech) {
+    var SpeechRecognizer = (function () {
+        function SpeechRecognizer() {
+        }
+        SpeechRecognizer.setSpeechRecognizer = function (recognizer) {
+            SpeechRecognizer.instance = recognizer;
+        };
+        SpeechRecognizer.startRecognizing = function (locale, onIntermediateResult, onFinalResult, onAudioStreamStarted, onRecognitionFailed) {
+            if (locale === void 0) { locale = 'en-US'; }
+            if (onIntermediateResult === void 0) { onIntermediateResult = null; }
+            if (onFinalResult === void 0) { onFinalResult = null; }
+            if (onAudioStreamStarted === void 0) { onAudioStreamStarted = null; }
+            if (onRecognitionFailed === void 0) { onRecognitionFailed = null; }
+            if (!SpeechRecognizer.speechIsAvailable())
+                return;
+            if (locale && SpeechRecognizer.instance.locale !== locale) {
+                SpeechRecognizer.instance.stopRecognizing();
+                SpeechRecognizer.instance.locale = locale; // to do this could invalidate warmup.
+            }
+            if (SpeechRecognizer.alreadyRecognizing()) {
+                SpeechRecognizer.stopRecognizing();
+            }
+            SpeechRecognizer.instance.onIntermediateResult = onIntermediateResult;
+            SpeechRecognizer.instance.onFinalResult = onFinalResult;
+            SpeechRecognizer.instance.onAudioStreamingToService = onAudioStreamStarted;
+            SpeechRecognizer.instance.onRecognitionFailed = onRecognitionFailed;
+            SpeechRecognizer.instance.startRecognizing();
+        };
+        SpeechRecognizer.stopRecognizing = function () {
+            if (!SpeechRecognizer.speechIsAvailable())
+                return;
+            SpeechRecognizer.instance.stopRecognizing();
+        };
+        SpeechRecognizer.warmup = function () {
+            if (!SpeechRecognizer.speechIsAvailable())
+                return;
+            SpeechRecognizer.instance.warmup();
+        };
+        SpeechRecognizer.speechIsAvailable = function () {
+            return SpeechRecognizer.instance != null && SpeechRecognizer.instance.speechIsAvailable();
+        };
+        SpeechRecognizer.alreadyRecognizing = function () {
+            return SpeechRecognizer.instance ? SpeechRecognizer.instance.isStreamingToService : false;
+        };
+        return SpeechRecognizer;
+    }());
+    SpeechRecognizer.instance = null;
+    Speech.SpeechRecognizer = SpeechRecognizer;
+    var SpeechSynthesizer = (function () {
+        function SpeechSynthesizer() {
+        }
+        SpeechSynthesizer.setSpeechSynthesizer = function (speechSynthesizer) {
+            SpeechSynthesizer.instance = speechSynthesizer;
+        };
+        SpeechSynthesizer.speak = function (text, lang, onSpeakingStarted, onSpeakingFinished) {
+            if (onSpeakingStarted === void 0) { onSpeakingStarted = null; }
+            if (onSpeakingFinished === void 0) { onSpeakingFinished = null; }
+            if (SpeechSynthesizer.instance == null)
+                return;
+            SpeechSynthesizer.instance.speak(text, lang, onSpeakingStarted, onSpeakingFinished);
+        };
+        SpeechSynthesizer.stopSpeaking = function () {
+            if (SpeechSynthesizer.instance == null)
+                return;
+            SpeechSynthesizer.instance.stopSpeaking();
+        };
+        return SpeechSynthesizer;
+    }());
+    SpeechSynthesizer.instance = null;
+    Speech.SpeechSynthesizer = SpeechSynthesizer;
+    var BrowserSpeechRecognizer = (function () {
+        function BrowserSpeechRecognizer() {
+            var _this = this;
+            this.locale = null;
+            this.isStreamingToService = false;
+            this.onIntermediateResult = null;
+            this.onFinalResult = null;
+            this.onAudioStreamingToService = null;
+            this.onRecognitionFailed = null;
+            this.recognizer = null;
+            if (!window.webkitSpeechRecognition) {
+                console.error("This browser does not support speech recognition");
+                return;
+            }
+            this.recognizer = new window.webkitSpeechRecognition();
+            this.recognizer.lang = 'en-US';
+            this.recognizer.interimResults = true;
+            this.recognizer.onaudiostart = function () {
+                if (_this.onAudioStreamingToService) {
+                    _this.onAudioStreamingToService();
+                }
+            };
+            this.recognizer.onresult = function (srevent) {
+                if (srevent.results == null || srevent.length == 0) {
+                    return;
+                }
+                var result = srevent.results[0];
+                if (result.isFinal === true && _this.onFinalResult != null) {
+                    _this.onFinalResult(result[0].transcript);
+                }
+                else if (result.isFinal === false && _this.onIntermediateResult != null) {
+                    var text = "";
+                    for (var i = 0; i < srevent.results.length; ++i) {
+                        text += srevent.results[i][0].transcript;
+                    }
+                    _this.onIntermediateResult(text);
+                }
+            };
+            this.recognizer.onerror = function (err) {
+                if (_this.onRecognitionFailed) {
+                    _this.onRecognitionFailed();
+                }
+                throw err;
+            };
+        }
+        BrowserSpeechRecognizer.prototype.speechIsAvailable = function () {
+            return this.recognizer != null;
+        };
+        BrowserSpeechRecognizer.prototype.warmup = function () {
+        };
+        BrowserSpeechRecognizer.prototype.startRecognizing = function () {
+            this.recognizer.start();
+        };
+        BrowserSpeechRecognizer.prototype.stopRecognizing = function () {
+            this.recognizer.stop();
+        };
+        return BrowserSpeechRecognizer;
+    }());
+    Speech.BrowserSpeechRecognizer = BrowserSpeechRecognizer;
+    var BrowserSpeechSynthesizer = (function () {
+        function BrowserSpeechSynthesizer() {
+            this.lastOperation = null;
+            this.audioElement = null;
+            this.speakRequests = [];
+        }
+        BrowserSpeechSynthesizer.prototype.speak = function (text, lang, onSpeakingStarted, onSpeakingFinished) {
+            var _this = this;
+            if (onSpeakingStarted === void 0) { onSpeakingStarted = null; }
+            if (onSpeakingFinished === void 0) { onSpeakingFinished = null; }
+            if (!('SpeechSynthesisUtterance' in window) || !text)
+                return;
+            if (this.audioElement === null) {
+                var audio = document.createElement('audio');
+                audio.id = 'player';
+                audio.autoplay = true;
+                this.audioElement = audio;
+            }
+            var chunks = new Array();
+            if (text[0] === '<') {
+                if (text.indexOf('<speak') != 0)
+                    text = '<speak>\n' + text + '\n</speak>\n';
+                var parser = new DOMParser();
+                var dom = parser.parseFromString(text, 'text/xml');
+                var nodes = dom.documentElement.childNodes;
+                this.processNodes(nodes, chunks);
+            }
+            else {
+                chunks.push(text);
+            }
+            var onSpeakingFinishedWrapper = function () {
+                if (onSpeakingFinished !== null)
+                    onSpeakingFinished();
+                // remove this from the queue since it's done:
+                if (_this.speakRequests.length) {
+                    _this.speakRequests[0].completed();
+                    _this.speakRequests.splice(0, 1);
+                }
+                // If there are other speak operations in the queue, process them
+                if (_this.speakRequests.length) {
+                    _this.playNextTTS(_this.speakRequests[0], 0);
+                }
+            };
+            var request = new SpeakRequest(chunks, lang, function (speakOp) { _this.lastOperation = speakOp; }, onSpeakingStarted, onSpeakingFinishedWrapper);
+            if (this.speakRequests.length === 0) {
+                this.speakRequests = [request];
+                this.playNextTTS(this.speakRequests[0], 0);
+            }
+            else {
+                this.speakRequests.push(request);
+            }
+        };
+        BrowserSpeechSynthesizer.prototype.stopSpeaking = function () {
+            if (('SpeechSynthesisUtterance' in window) === false)
+                return;
+            if (this.speakRequests.length) {
+                if (this.audioElement)
+                    this.audioElement.pause();
+                this.speakRequests.forEach(function (req) {
+                    req.abandon();
+                });
+                this.speakRequests = [];
+                var ss = window.speechSynthesis;
+                if (ss.speaking || ss.pending) {
+                    if (this.lastOperation)
+                        this.lastOperation.onend = null;
+                    ss.cancel();
+                }
+            }
+        };
+        ;
+        BrowserSpeechSynthesizer.prototype.playNextTTS = function (requestContainer, iCurrent) {
+            // lang : string, onSpeakQueued: Func<SpeechSynthesisUtterance, void>, onSpeakStarted : Action, onFinishedSpeaking : Action
+            var _this = this;
+            var moveToNext = function () {
+                _this.playNextTTS(requestContainer, iCurrent + 1);
+            };
+            if (iCurrent < requestContainer.speakChunks.length) {
+                var current = requestContainer.speakChunks[iCurrent];
+                if (typeof current === 'number') {
+                    setTimeout(moveToNext, current);
+                }
+                else {
+                    if (current.indexOf('http') === 0) {
+                        var audio = this.audioElement; // document.getElementById('player');
+                        audio.src = current;
+                        audio.onended = moveToNext;
+                        audio.onerror = moveToNext;
+                        audio.play();
+                    }
+                    else {
+                        var msg = new SpeechSynthesisUtterance();
+                        // msg.voiceURI = 'native';
+                        // msg.volume = 1; // 0 to 1
+                        // msg.rate = 1; // 0.1 to 10
+                        // msg.pitch = 2; //0 to 2
+                        msg.text = current;
+                        msg.lang = requestContainer.lang;
+                        msg.onstart = iCurrent === 0 ? requestContainer.onSpeakingStarted : null;
+                        msg.onend = moveToNext;
+                        msg.onerror = moveToNext;
+                        if (requestContainer.onSpeakQueued)
+                            requestContainer.onSpeakQueued(msg);
+                        window.speechSynthesis.speak(msg);
+                    }
+                }
+            }
+            else {
+                if (requestContainer.onSpeakingFinished)
+                    requestContainer.onSpeakingFinished();
+            }
+        };
+        // process SSML markup into an array of either 
+        // * utterenance
+        // * number which is delay in msg
+        // * url which is an audio file 
+        BrowserSpeechSynthesizer.prototype.processNodes = function (nodes, output) {
+            for (var i = 0; i < nodes.length; i++) {
+                var node = nodes[i];
+                switch (node.nodeName) {
+                    case 'p':
+                        this.processNodes(node.childNodes, output);
+                        output.push(250);
+                        break;
+                    case 'break':
+                        if (node.attributes.getNamedItem('strength')) {
+                            var strength = node.attributes.getNamedItem('strength').nodeValue;
+                            if (strength === 'weak') {
+                                // output.push(50);
+                            }
+                            else if (strength === 'medium') {
+                                output.push(50);
+                            }
+                            else if (strength === 'strong') {
+                                output.push(100);
+                            }
+                            else if (strength === 'x-strong') {
+                                output.push(250);
+                            }
+                        }
+                        else if (node.attributes.getNamedItem('time')) {
+                            output.push(JSON.parse(node.attributes.getNamedItem('time').value));
+                        }
+                        break;
+                    case 'audio':
+                        if (node.attributes.getNamedItem('src')) {
+                            output.push(node.attributes.getNamedItem('src').value);
+                        }
+                        break;
+                    case 'say-as':
+                    case 'prosody': // ToDo: handle via msg.rate
+                    case 'emphasis': // ToDo: can probably emulate via prosody + pitch 
+                    case 'w':
+                    case 'phoneme': //
+                    case 'voice':
+                        this.processNodes(node.childNodes, output);
+                        break;
+                    default:
+                        // Todo: coalesce consecutive non numeric / non html entries.
+                        output.push(node.nodeValue);
+                        break;
+                }
+            }
+        };
+        return BrowserSpeechSynthesizer;
+    }());
+    Speech.BrowserSpeechSynthesizer = BrowserSpeechSynthesizer;
+    var SpeakRequest = (function () {
+        function SpeakRequest(speakChunks, lang, onSpeakQueued, onSpeakingStarted, onSpeakingFinished) {
+            if (onSpeakQueued === void 0) { onSpeakQueued = null; }
+            if (onSpeakingStarted === void 0) { onSpeakingStarted = null; }
+            if (onSpeakingFinished === void 0) { onSpeakingFinished = null; }
+            this._onSpeakQueued = null;
+            this._onSpeakingStarted = null;
+            this._onSpeakingFinished = null;
+            this._speakChunks = [];
+            this._lang = null;
+            this._onSpeakQueued = onSpeakQueued;
+            this._onSpeakingStarted = onSpeakingStarted;
+            this._onSpeakingFinished = onSpeakingFinished;
+            this._speakChunks = speakChunks;
+            this._lang = lang;
+        }
+        SpeakRequest.prototype.abandon = function () {
+            this._speakChunks = [];
+        };
+        SpeakRequest.prototype.completed = function () {
+            this._speakChunks = [];
+        };
+        Object.defineProperty(SpeakRequest.prototype, "onSpeakQueued", {
+            get: function () { return this._onSpeakQueued; },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(SpeakRequest.prototype, "onSpeakingStarted", {
+            get: function () { return this._onSpeakingStarted; },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(SpeakRequest.prototype, "onSpeakingFinished", {
+            get: function () { return this._onSpeakingFinished; },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(SpeakRequest.prototype, "speakChunks", {
+            get: function () { return this._speakChunks; },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(SpeakRequest.prototype, "lang", {
+            get: function () { return this._lang; },
+            enumerable: true,
+            configurable: true
+        });
+        return SpeakRequest;
+    }());
+})(Speech = exports.Speech || (exports.Speech = {}));
+
+
+/***/ }),
+/* 47 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Size;
+(function (Size) {
+    Size[Size["Auto"] = 0] = "Auto";
+    Size[Size["Stretch"] = 1] = "Stretch";
+    Size[Size["Small"] = 2] = "Small";
+    Size[Size["Medium"] = 3] = "Medium";
+    Size[Size["Large"] = 4] = "Large";
+})(Size = exports.Size || (exports.Size = {}));
+var TextSize;
+(function (TextSize) {
+    TextSize[TextSize["Small"] = 0] = "Small";
+    TextSize[TextSize["Default"] = 1] = "Default";
+    TextSize[TextSize["Medium"] = 2] = "Medium";
+    TextSize[TextSize["Large"] = 3] = "Large";
+    TextSize[TextSize["ExtraLarge"] = 4] = "ExtraLarge";
+})(TextSize = exports.TextSize || (exports.TextSize = {}));
+var Spacing;
+(function (Spacing) {
+    Spacing[Spacing["None"] = 0] = "None";
+    Spacing[Spacing["Small"] = 1] = "Small";
+    Spacing[Spacing["Default"] = 2] = "Default";
+    Spacing[Spacing["Medium"] = 3] = "Medium";
+    Spacing[Spacing["Large"] = 4] = "Large";
+    Spacing[Spacing["ExtraLarge"] = 5] = "ExtraLarge";
+    Spacing[Spacing["Padding"] = 6] = "Padding";
+})(Spacing = exports.Spacing || (exports.Spacing = {}));
+var Padding;
+(function (Padding) {
+    Padding[Padding["None"] = 0] = "None";
+    Padding[Padding["Default"] = 1] = "Default";
+})(Padding = exports.Padding || (exports.Padding = {}));
+var TextWeight;
+(function (TextWeight) {
+    TextWeight[TextWeight["Lighter"] = 0] = "Lighter";
+    TextWeight[TextWeight["Default"] = 1] = "Default";
+    TextWeight[TextWeight["Bolder"] = 2] = "Bolder";
+})(TextWeight = exports.TextWeight || (exports.TextWeight = {}));
+var TextColor;
+(function (TextColor) {
+    TextColor[TextColor["Default"] = 0] = "Default";
+    TextColor[TextColor["Accent"] = 1] = "Accent";
+    TextColor[TextColor["Good"] = 2] = "Good";
+    TextColor[TextColor["Warning"] = 3] = "Warning";
+    TextColor[TextColor["Attention"] = 4] = "Attention";
+})(TextColor = exports.TextColor || (exports.TextColor = {}));
+var HorizontalAlignment;
+(function (HorizontalAlignment) {
+    HorizontalAlignment[HorizontalAlignment["Left"] = 0] = "Left";
+    HorizontalAlignment[HorizontalAlignment["Center"] = 1] = "Center";
+    HorizontalAlignment[HorizontalAlignment["Right"] = 2] = "Right";
+})(HorizontalAlignment = exports.HorizontalAlignment || (exports.HorizontalAlignment = {}));
+var VerticalAlignment;
+(function (VerticalAlignment) {
+    VerticalAlignment[VerticalAlignment["Top"] = 0] = "Top";
+    VerticalAlignment[VerticalAlignment["Center"] = 1] = "Center";
+    VerticalAlignment[VerticalAlignment["Bottom"] = 2] = "Bottom";
+})(VerticalAlignment = exports.VerticalAlignment || (exports.VerticalAlignment = {}));
+var ActionAlignment;
+(function (ActionAlignment) {
+    ActionAlignment[ActionAlignment["Left"] = 0] = "Left";
+    ActionAlignment[ActionAlignment["Center"] = 1] = "Center";
+    ActionAlignment[ActionAlignment["Right"] = 2] = "Right";
+    ActionAlignment[ActionAlignment["Stretch"] = 3] = "Stretch";
+})(ActionAlignment = exports.ActionAlignment || (exports.ActionAlignment = {}));
+var ImageStyle;
+(function (ImageStyle) {
+    ImageStyle[ImageStyle["Default"] = 0] = "Default";
+    ImageStyle[ImageStyle["Person"] = 1] = "Person";
+})(ImageStyle = exports.ImageStyle || (exports.ImageStyle = {}));
+var ShowCardActionMode;
+(function (ShowCardActionMode) {
+    ShowCardActionMode[ShowCardActionMode["Inline"] = 0] = "Inline";
+    ShowCardActionMode[ShowCardActionMode["Popup"] = 1] = "Popup";
+})(ShowCardActionMode = exports.ShowCardActionMode || (exports.ShowCardActionMode = {}));
+var Orientation;
+(function (Orientation) {
+    Orientation[Orientation["Horizontal"] = 0] = "Horizontal";
+    Orientation[Orientation["Vertical"] = 1] = "Vertical";
+})(Orientation = exports.Orientation || (exports.Orientation = {}));
+var BackgroundImageMode;
+(function (BackgroundImageMode) {
+    BackgroundImageMode[BackgroundImageMode["Stretch"] = 0] = "Stretch";
+    BackgroundImageMode[BackgroundImageMode["RepeatHorizontally"] = 1] = "RepeatHorizontally";
+    BackgroundImageMode[BackgroundImageMode["RepeatVertically"] = 2] = "RepeatVertically";
+    BackgroundImageMode[BackgroundImageMode["Repeat"] = 3] = "Repeat";
+})(BackgroundImageMode = exports.BackgroundImageMode || (exports.BackgroundImageMode = {}));
+var ContainerStyle;
+(function (ContainerStyle) {
+    ContainerStyle[ContainerStyle["Default"] = 0] = "Default";
+    ContainerStyle[ContainerStyle["Emphasis"] = 1] = "Emphasis";
+})(ContainerStyle = exports.ContainerStyle || (exports.ContainerStyle = {}));
+var ValidationError;
+(function (ValidationError) {
+    ValidationError[ValidationError["Hint"] = 0] = "Hint";
+    ValidationError[ValidationError["ActionTypeNotAllowed"] = 1] = "ActionTypeNotAllowed";
+    ValidationError[ValidationError["CollectionCantBeEmpty"] = 2] = "CollectionCantBeEmpty";
+    ValidationError[ValidationError["Deprecated"] = 3] = "Deprecated";
+    ValidationError[ValidationError["ElementTypeNotAllowed"] = 4] = "ElementTypeNotAllowed";
+    ValidationError[ValidationError["InteractivityNotAllowed"] = 5] = "InteractivityNotAllowed";
+    ValidationError[ValidationError["InvalidPropertyValue"] = 6] = "InvalidPropertyValue";
+    ValidationError[ValidationError["MissingCardType"] = 7] = "MissingCardType";
+    ValidationError[ValidationError["PropertyCantBeNull"] = 8] = "PropertyCantBeNull";
+    ValidationError[ValidationError["TooManyActions"] = 9] = "TooManyActions";
+    ValidationError[ValidationError["UnknownActionType"] = 10] = "UnknownActionType";
+    ValidationError[ValidationError["UnknownElementType"] = 11] = "UnknownElementType";
+    ValidationError[ValidationError["UnsupportedCardVersion"] = 12] = "UnsupportedCardVersion";
+})(ValidationError = exports.ValidationError || (exports.ValidationError = {}));
+//# sourceMappingURL=enums.js.map
+
+/***/ }),
 /* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var store      = __webpack_require__(216)('wks')
   , uid        = __webpack_require__(105)
-  , Symbol     = __webpack_require__(33).Symbol
+  , Symbol     = __webpack_require__(34).Symbol
   , USE_SYMBOL = typeof Symbol == 'function';
 
 var $exports = module.exports = function(name){
@@ -7105,7 +7105,7 @@ module.exports = ReactBrowserEventEmitter;
 
 
 
-var SyntheticUIEvent = __webpack_require__(39);
+var SyntheticUIEvent = __webpack_require__(40);
 var ViewportMetrics = __webpack_require__(130);
 
 var getEventModifierState = __webpack_require__(82);
@@ -7895,7 +7895,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(14);
 var React = __webpack_require__(11);
 var CardBuilder = __webpack_require__(194);
-var adaptivecards_1 = __webpack_require__(35);
+var adaptivecards_1 = __webpack_require__(36);
 var AdaptiveCardContainer_1 = __webpack_require__(192);
 var regExpCard = /\^application\/vnd\.microsoft\.card\./i;
 var YOUTUBE_DOMAIN = "youtube.com";
@@ -8553,7 +8553,7 @@ module.exports = !__webpack_require__(103)(function(){
 /* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global    = __webpack_require__(33)
+var global    = __webpack_require__(34)
   , core      = __webpack_require__(100)
   , hide      = __webpack_require__(65)
   , redefine  = __webpack_require__(215)
@@ -10194,7 +10194,7 @@ module.exports = ReactErrorUtils;
 var _prodInvariant = __webpack_require__(5);
 
 var ReactCurrentOwner = __webpack_require__(16);
-var ReactInstanceMap = __webpack_require__(38);
+var ReactInstanceMap = __webpack_require__(39);
 var ReactInstrumentation = __webpack_require__(13);
 var ReactUpdates = __webpack_require__(15);
 
@@ -11194,7 +11194,7 @@ module.exports = lowPriorityWarning;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__applyMiddleware__ = __webpack_require__(396);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__compose__ = __webpack_require__(151);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__utils_warning__ = __webpack_require__(153);
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "createStore", function() { return __WEBPACK_IMPORTED_MODULE_0__createStore__["b"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "createStore", function() { return __WEBPACK_IMPORTED_MODULE_0__createStore__["a"]; });
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "combineReducers", function() { return __WEBPACK_IMPORTED_MODULE_1__combineReducers__["a"]; });
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "bindActionCreators", function() { return __WEBPACK_IMPORTED_MODULE_2__bindActionCreators__["a"]; });
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "applyMiddleware", function() { return __WEBPACK_IMPORTED_MODULE_3__applyMiddleware__["a"]; });
@@ -11346,7 +11346,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var Enums = __webpack_require__(46);
+var Enums = __webpack_require__(47);
 var Utils = __webpack_require__(96);
 var SpacingDefinition = /** @class */ (function () {
     function SpacingDefinition(obj) {
@@ -11708,7 +11708,7 @@ exports.HostConfig = HostConfig;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Enums = __webpack_require__(46);
+var Enums = __webpack_require__(47);
 function getValueOrDefault(obj, defaultValue) {
     return obj ? obj : defaultValue;
 }
@@ -14314,7 +14314,7 @@ var ReactDOMComponentTree = __webpack_require__(7);
 var ReactDOMContainerInfo = __webpack_require__(316);
 var ReactDOMFeatureFlags = __webpack_require__(318);
 var ReactFeatureFlags = __webpack_require__(124);
-var ReactInstanceMap = __webpack_require__(38);
+var ReactInstanceMap = __webpack_require__(39);
 var ReactInstrumentation = __webpack_require__(13);
 var ReactMarkupChecksum = __webpack_require__(338);
 var ReactReconciler = __webpack_require__(27);
@@ -16793,8 +16793,8 @@ function compose() {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash_es_isPlainObject__ = __webpack_require__(67);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_symbol_observable__ = __webpack_require__(475);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ActionTypes; });
-/* harmony export (immutable) */ __webpack_exports__["b"] = createStore;
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return ActionTypes; });
+/* harmony export (immutable) */ __webpack_exports__["a"] = createStore;
 
 
 
@@ -18113,7 +18113,7 @@ var tslib_1 = __webpack_require__(14);
 var React = __webpack_require__(11);
 var ReactDOM = __webpack_require__(71);
 var Chat_1 = __webpack_require__(25);
-var konsole = __webpack_require__(32);
+var konsole = __webpack_require__(33);
 exports.App = function (props, container) {
     konsole.log("BotChat.App props", props);
     ReactDOM.render(React.createElement(AppContainer, props), container);
@@ -18220,7 +18220,7 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(__webpack_require__(188));
-__export(__webpack_require__(46));
+__export(__webpack_require__(47));
 __export(__webpack_require__(95));
 var rendercard_1 = __webpack_require__(189);
 exports.renderCard = rendercard_1.renderCard;
@@ -18243,7 +18243,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var Enums = __webpack_require__(46);
+var Enums = __webpack_require__(47);
 var Utils = __webpack_require__(96);
 var HostConfig = __webpack_require__(95);
 var TextFormatters = __webpack_require__(190);
@@ -21575,7 +21575,7 @@ var defaultHostConfig = new HostConfig.HostConfig({
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var adaptivecards_1 = __webpack_require__(35);
+var adaptivecards_1 = __webpack_require__(36);
 function renderCard(card, options, target) {
     if (typeof card === "string") {
         card = JSON.parse(card);
@@ -21744,8 +21744,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(14);
 var React = __webpack_require__(11);
 var react_dom_1 = __webpack_require__(71);
-var react_redux_1 = __webpack_require__(40);
-var adaptivecards_1 = __webpack_require__(35);
+var react_redux_1 = __webpack_require__(41);
+var adaptivecards_1 = __webpack_require__(36);
 var Chat_1 = __webpack_require__(25);
 var adaptivecardsHostConfig = __webpack_require__(186);
 var defaultHostConfig = new adaptivecards_1.HostConfig(adaptivecardsHostConfig);
@@ -21920,8 +21920,10 @@ var Attachment_1 = __webpack_require__(60);
 exports.queryParams = Attachment_1.queryParams;
 var SpeechOptions_1 = __webpack_require__(182);
 exports.SpeechOptions = SpeechOptions_1.SpeechOptions;
-var SpeechModule_1 = __webpack_require__(45);
+var SpeechModule_1 = __webpack_require__(46);
 exports.Speech = SpeechModule_1.Speech;
+var Store_1 = __webpack_require__(32);
+exports.createStore = Store_1.createStore;
 // below are shims for compatibility with old browsers (IE 10 being the main culprit)
 __webpack_require__(185);
 __webpack_require__(184);
@@ -21936,7 +21938,7 @@ __webpack_require__(183);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(14);
-var adaptivecards_1 = __webpack_require__(35);
+var adaptivecards_1 = __webpack_require__(36);
 var AdaptiveCardBuilder = (function () {
     function AdaptiveCardBuilder() {
         this.card = new adaptivecards_1.AdaptiveCard();
@@ -22033,7 +22035,7 @@ var tslib_1 = __webpack_require__(14);
 var React = __webpack_require__(11);
 var Attachment_1 = __webpack_require__(60);
 var HScroll_1 = __webpack_require__(97);
-var konsole = __webpack_require__(32);
+var konsole = __webpack_require__(33);
 var Carousel = (function (_super) {
     tslib_1.__extends(Carousel, _super);
     function Carousel(props) {
@@ -22157,11 +22159,11 @@ var renderMarkdown = function (text, onImageLoad) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(14);
 var React = __webpack_require__(11);
-var react_redux_1 = __webpack_require__(40);
+var react_redux_1 = __webpack_require__(41);
 var ActivityView_1 = __webpack_require__(191);
 var Chat_1 = __webpack_require__(25);
-var konsole = __webpack_require__(32);
-var Store_1 = __webpack_require__(47);
+var konsole = __webpack_require__(33);
+var Store_1 = __webpack_require__(32);
 var HistoryView = (function (_super) {
     tslib_1.__extends(HistoryView, _super);
     function HistoryView(props) {
@@ -22361,10 +22363,10 @@ exports.WrappedActivity = WrappedActivity;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(14);
 var React = __webpack_require__(11);
-var react_redux_1 = __webpack_require__(40);
+var react_redux_1 = __webpack_require__(41);
 var HScroll_1 = __webpack_require__(97);
 var Chat_1 = __webpack_require__(25);
-var Store_1 = __webpack_require__(47);
+var Store_1 = __webpack_require__(32);
 var MessagePaneView = function (props) {
     return React.createElement("div", { className: Chat_1.classList('wc-message-pane', props.activityWithSuggestedActions && 'show-actions') },
         props.children,
@@ -22442,9 +22444,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(14);
 var React = __webpack_require__(11);
 var Chat_1 = __webpack_require__(25);
-var react_redux_1 = __webpack_require__(40);
-var SpeechModule_1 = __webpack_require__(45);
-var Store_1 = __webpack_require__(47);
+var react_redux_1 = __webpack_require__(41);
+var SpeechModule_1 = __webpack_require__(46);
+var Store_1 = __webpack_require__(32);
 var ShellContainer = (function (_super) {
     tslib_1.__extends(ShellContainer, _super);
     function ShellContainer() {
@@ -23082,7 +23084,7 @@ module.exports = function(it){
 /* 203 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isObject = __webpack_require__(34);
+var isObject = __webpack_require__(35);
 module.exports = function(it){
   if(!isObject(it))throw TypeError(it + ' is not an object!');
   return it;
@@ -23092,7 +23094,7 @@ module.exports = function(it){
 /* 204 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isObject = __webpack_require__(34)
+var isObject = __webpack_require__(35)
   , isArray  = __webpack_require__(211)
   , SPECIES  = __webpack_require__(48)('species');
 
@@ -23124,8 +23126,8 @@ module.exports = function(original, length){
 /* 206 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isObject = __webpack_require__(34)
-  , document = __webpack_require__(33).document
+var isObject = __webpack_require__(35)
+  , document = __webpack_require__(34).document
   // in old IE typeof document.createElement is 'object'
   , is = isObject(document) && isObject(document.createElement);
 module.exports = function(it){
@@ -23191,7 +23193,7 @@ module.exports = Array.isArray || function isArray(arg){
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.2.8 IsRegExp(argument)
-var isObject = __webpack_require__(34)
+var isObject = __webpack_require__(35)
   , cof      = __webpack_require__(62)
   , MATCH    = __webpack_require__(48)('match');
 module.exports = function(it){
@@ -23237,7 +23239,7 @@ module.exports = function(bitmap, value){
 /* 215 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global    = __webpack_require__(33)
+var global    = __webpack_require__(34)
   , hide      = __webpack_require__(65)
   , has       = __webpack_require__(208)
   , SRC       = __webpack_require__(105)('src')
@@ -23274,7 +23276,7 @@ __webpack_require__(100).inspectSource = function(it){
 /* 216 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global = __webpack_require__(33)
+var global = __webpack_require__(34)
   , SHARED = '__core-js_shared__'
   , store  = global[SHARED] || (global[SHARED] = {});
 module.exports = function(key){
@@ -23320,7 +23322,7 @@ module.exports = function(it){
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.1.1 ToPrimitive(input [, PreferredType])
-var isObject = __webpack_require__(34);
+var isObject = __webpack_require__(35);
 // instead of the ES6 spec version, we didn't implement @@toPrimitive case
 // and the second argument - flag - preferred type is a string
 module.exports = function(it, S){
@@ -25975,7 +25977,7 @@ var freeGlobal = typeof global == 'object' && global && global.Object === Object
 
 /* harmony default export */ __webpack_exports__["a"] = (freeGlobal);
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(44)))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(45)))
 
 /***/ }),
 /* 243 */
@@ -32528,7 +32530,7 @@ module.exports = function() {
 
 }(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(480)(module), __webpack_require__(44)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(480)(module), __webpack_require__(45)))
 
 /***/ }),
 /* 301 */
@@ -32655,7 +32657,7 @@ module.exports = AutoFocusUtils;
 
 
 
-var EventPropagators = __webpack_require__(37);
+var EventPropagators = __webpack_require__(38);
 var ExecutionEnvironment = __webpack_require__(8);
 var FallbackCompositionState = __webpack_require__(309);
 var SyntheticCompositionEvent = __webpack_require__(352);
@@ -33265,8 +33267,8 @@ module.exports = CSSPropertyOperations;
 
 
 
-var EventPluginHub = __webpack_require__(36);
-var EventPropagators = __webpack_require__(37);
+var EventPluginHub = __webpack_require__(37);
+var EventPropagators = __webpack_require__(38);
 var ExecutionEnvironment = __webpack_require__(8);
 var ReactDOMComponentTree = __webpack_require__(7);
 var ReactUpdates = __webpack_require__(15);
@@ -33665,7 +33667,7 @@ module.exports = DefaultEventPluginOrder;
 
 
 
-var EventPropagators = __webpack_require__(37);
+var EventPropagators = __webpack_require__(38);
 var ReactDOMComponentTree = __webpack_require__(7);
 var SyntheticMouseEvent = __webpack_require__(52);
 
@@ -34308,7 +34310,7 @@ var React = __webpack_require__(28);
 var ReactComponentEnvironment = __webpack_require__(77);
 var ReactCurrentOwner = __webpack_require__(16);
 var ReactErrorUtils = __webpack_require__(78);
-var ReactInstanceMap = __webpack_require__(38);
+var ReactInstanceMap = __webpack_require__(39);
 var ReactInstrumentation = __webpack_require__(13);
 var ReactNodeTypes = __webpack_require__(128);
 var ReactReconciler = __webpack_require__(27);
@@ -35335,7 +35337,7 @@ var DOMLazyTree = __webpack_require__(26);
 var DOMNamespaces = __webpack_require__(73);
 var DOMProperty = __webpack_require__(19);
 var DOMPropertyOperations = __webpack_require__(120);
-var EventPluginHub = __webpack_require__(36);
+var EventPluginHub = __webpack_require__(37);
 var EventPluginRegistry = __webpack_require__(50);
 var ReactBrowserEventEmitter = __webpack_require__(51);
 var ReactDOMComponentFlags = __webpack_require__(121);
@@ -38442,7 +38444,7 @@ module.exports = REACT_ELEMENT_TYPE;
 
 
 
-var EventPluginHub = __webpack_require__(36);
+var EventPluginHub = __webpack_require__(37);
 
 function runEventQueueInBatch(events) {
   EventPluginHub.enqueueEvents(events);
@@ -38679,7 +38681,7 @@ module.exports = ReactHostOperationHistoryHook;
 
 
 var DOMProperty = __webpack_require__(19);
-var EventPluginHub = __webpack_require__(36);
+var EventPluginHub = __webpack_require__(37);
 var EventPluginUtils = __webpack_require__(74);
 var ReactComponentEnvironment = __webpack_require__(77);
 var ReactEmptyComponent = __webpack_require__(123);
@@ -38818,7 +38820,7 @@ module.exports = ReactMarkupChecksum;
 var _prodInvariant = __webpack_require__(5);
 
 var ReactComponentEnvironment = __webpack_require__(77);
-var ReactInstanceMap = __webpack_require__(38);
+var ReactInstanceMap = __webpack_require__(39);
 var ReactInstrumentation = __webpack_require__(13);
 
 var ReactCurrentOwner = __webpack_require__(16);
@@ -40242,7 +40244,7 @@ module.exports = SVGDOMPropertyConfig;
 
 
 
-var EventPropagators = __webpack_require__(37);
+var EventPropagators = __webpack_require__(38);
 var ExecutionEnvironment = __webpack_require__(8);
 var ReactDOMComponentTree = __webpack_require__(7);
 var ReactInputSelection = __webpack_require__(126);
@@ -40439,7 +40441,7 @@ module.exports = SelectEventPlugin;
 var _prodInvariant = __webpack_require__(5);
 
 var EventListener = __webpack_require__(106);
-var EventPropagators = __webpack_require__(37);
+var EventPropagators = __webpack_require__(38);
 var ReactDOMComponentTree = __webpack_require__(7);
 var SyntheticAnimationEvent = __webpack_require__(350);
 var SyntheticClipboardEvent = __webpack_require__(351);
@@ -40450,7 +40452,7 @@ var SyntheticMouseEvent = __webpack_require__(52);
 var SyntheticDragEvent = __webpack_require__(353);
 var SyntheticTouchEvent = __webpack_require__(357);
 var SyntheticTransitionEvent = __webpack_require__(358);
-var SyntheticUIEvent = __webpack_require__(39);
+var SyntheticUIEvent = __webpack_require__(40);
 var SyntheticWheelEvent = __webpack_require__(359);
 
 var emptyFunction = __webpack_require__(12);
@@ -40836,7 +40838,7 @@ module.exports = SyntheticDragEvent;
 
 
 
-var SyntheticUIEvent = __webpack_require__(39);
+var SyntheticUIEvent = __webpack_require__(40);
 
 /**
  * @interface FocusEvent
@@ -40919,7 +40921,7 @@ module.exports = SyntheticInputEvent;
 
 
 
-var SyntheticUIEvent = __webpack_require__(39);
+var SyntheticUIEvent = __webpack_require__(40);
 
 var getEventCharCode = __webpack_require__(81);
 var getEventKey = __webpack_require__(365);
@@ -41008,7 +41010,7 @@ module.exports = SyntheticKeyboardEvent;
 
 
 
-var SyntheticUIEvent = __webpack_require__(39);
+var SyntheticUIEvent = __webpack_require__(40);
 
 var getEventModifierState = __webpack_require__(82);
 
@@ -41389,7 +41391,7 @@ var _prodInvariant = __webpack_require__(5);
 
 var ReactCurrentOwner = __webpack_require__(16);
 var ReactDOMComponentTree = __webpack_require__(7);
-var ReactInstanceMap = __webpack_require__(38);
+var ReactInstanceMap = __webpack_require__(39);
 
 var getHostComponentFromComposite = __webpack_require__(133);
 var invariant = __webpack_require__(2);
@@ -43534,7 +43536,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.combineEpics = undefined;
 
-var _merge = __webpack_require__(41);
+var _merge = __webpack_require__(42);
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
@@ -43828,7 +43830,7 @@ function getUndefinedStateErrorMessage(key, action) {
 
 function getUnexpectedStateShapeWarningMessage(inputState, reducers, action, unexpectedKeyCache) {
   var reducerKeys = Object.keys(reducers);
-  var argumentName = action && action.type === __WEBPACK_IMPORTED_MODULE_0__createStore__["a" /* ActionTypes */].INIT ? 'preloadedState argument passed to createStore' : 'previous state received by the reducer';
+  var argumentName = action && action.type === __WEBPACK_IMPORTED_MODULE_0__createStore__["b" /* ActionTypes */].INIT ? 'preloadedState argument passed to createStore' : 'previous state received by the reducer';
 
   if (reducerKeys.length === 0) {
     return 'Store does not have a valid reducer. Make sure the argument passed ' + 'to combineReducers is an object whose values are reducers.';
@@ -43854,7 +43856,7 @@ function getUnexpectedStateShapeWarningMessage(inputState, reducers, action, une
 function assertReducerShape(reducers) {
   Object.keys(reducers).forEach(function (key) {
     var reducer = reducers[key];
-    var initialState = reducer(undefined, { type: __WEBPACK_IMPORTED_MODULE_0__createStore__["a" /* ActionTypes */].INIT });
+    var initialState = reducer(undefined, { type: __WEBPACK_IMPORTED_MODULE_0__createStore__["b" /* ActionTypes */].INIT });
 
     if (typeof initialState === 'undefined') {
       throw new Error('Reducer "' + key + '" returned undefined during initialization. ' + 'If the state passed to the reducer is undefined, you must ' + 'explicitly return the initial state. The initial state may ' + 'not be undefined. If you don\'t want to set a value for this reducer, ' + 'you can use null instead of undefined.');
@@ -43862,7 +43864,7 @@ function assertReducerShape(reducers) {
 
     var type = '@@redux/PROBE_UNKNOWN_ACTION_' + Math.random().toString(36).substring(7).split('').join('.');
     if (typeof reducer(undefined, { type: type }) === 'undefined') {
-      throw new Error('Reducer "' + key + '" returned undefined when probed with a random type. ' + ('Don\'t try to handle ' + __WEBPACK_IMPORTED_MODULE_0__createStore__["a" /* ActionTypes */].INIT + ' or other actions in "redux/*" ') + 'namespace. They are considered private. Instead, you must return the ' + 'current state for any unknown actions, unless it is undefined, ' + 'in which case you must return the initial state, regardless of the ' + 'action type. The initial state may not be undefined, but can be null.');
+      throw new Error('Reducer "' + key + '" returned undefined when probed with a random type. ' + ('Don\'t try to handle ' + __WEBPACK_IMPORTED_MODULE_0__createStore__["b" /* ActionTypes */].INIT + ' or other actions in "redux/*" ') + 'namespace. They are considered private. Instead, you must return the ' + 'current state for any unknown actions, unless it is undefined, ' + 'in which case you must return the initial state, regardless of the ' + 'action type. The initial state may not be undefined, but can be null.');
     }
   });
 }
@@ -44266,7 +44268,7 @@ Observable_1.Observable.interval = interval_1.interval;
 "use strict";
 
 var Observable_1 = __webpack_require__(1);
-var merge_1 = __webpack_require__(41);
+var merge_1 = __webpack_require__(42);
 Observable_1.Observable.merge = merge_1.merge;
 //# sourceMappingURL=merge.js.map
 
@@ -44457,7 +44459,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var Observable_1 = __webpack_require__(1);
-var tryCatch_1 = __webpack_require__(43);
+var tryCatch_1 = __webpack_require__(44);
 var errorObject_1 = __webpack_require__(31);
 var AsyncSubject_1 = __webpack_require__(399);
 /**
@@ -44992,7 +44994,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var Observable_1 = __webpack_require__(1);
-var tryCatch_1 = __webpack_require__(43);
+var tryCatch_1 = __webpack_require__(44);
 var isFunction_1 = __webpack_require__(93);
 var errorObject_1 = __webpack_require__(31);
 var Subscription_1 = __webpack_require__(23);
@@ -45343,7 +45345,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var isNumeric_1 = __webpack_require__(471);
 var Observable_1 = __webpack_require__(1);
-var async_1 = __webpack_require__(42);
+var async_1 = __webpack_require__(43);
 /**
  * We need this JSDoc comment for affecting ESDoc.
  * @extends {Ignored}
@@ -45742,7 +45744,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var root_1 = __webpack_require__(18);
-var tryCatch_1 = __webpack_require__(43);
+var tryCatch_1 = __webpack_require__(44);
 var errorObject_1 = __webpack_require__(31);
 var Observable_1 = __webpack_require__(1);
 var Subscriber_1 = __webpack_require__(9);
@@ -46408,7 +46410,7 @@ exports.count = count;
 
 "use strict";
 
-var async_1 = __webpack_require__(42);
+var async_1 = __webpack_require__(43);
 var delay_1 = __webpack_require__(451);
 /**
  * Delays the emission of items from the source Observable by a given timeout or
@@ -46520,7 +46522,7 @@ exports._do = _do;
 "use strict";
 
 var merge_1 = __webpack_require__(453);
-var merge_2 = __webpack_require__(41);
+var merge_2 = __webpack_require__(42);
 exports.mergeStatic = merge_2.merge;
 /* tslint:enable:max-line-length */
 /**
@@ -46868,7 +46870,7 @@ exports.takeUntil = takeUntil;
 
 "use strict";
 
-var async_1 = __webpack_require__(42);
+var async_1 = __webpack_require__(43);
 var throttle_1 = __webpack_require__(172);
 var throttleTime_1 = __webpack_require__(463);
 /**
@@ -47325,7 +47327,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var async_1 = __webpack_require__(42);
+var async_1 = __webpack_require__(43);
 var isDate_1 = __webpack_require__(470);
 var Subscriber_1 = __webpack_require__(9);
 var Notification_1 = __webpack_require__(154);
@@ -47561,8 +47563,8 @@ var FilterSubscriber = (function (_super) {
 
 "use strict";
 
-var merge_1 = __webpack_require__(41);
-var merge_2 = __webpack_require__(41);
+var merge_1 = __webpack_require__(42);
+var merge_2 = __webpack_require__(42);
 exports.mergeStatic = merge_2.merge;
 /* tslint:enable:max-line-length */
 /**
@@ -47878,7 +47880,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var Subject_1 = __webpack_require__(30);
-var tryCatch_1 = __webpack_require__(43);
+var tryCatch_1 = __webpack_require__(44);
 var errorObject_1 = __webpack_require__(31);
 var OuterSubscriber_1 = __webpack_require__(22);
 var subscribeToResult_1 = __webpack_require__(24);
@@ -48461,7 +48463,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var Subscriber_1 = __webpack_require__(9);
-var async_1 = __webpack_require__(42);
+var async_1 = __webpack_require__(43);
 var throttle_1 = __webpack_require__(172);
 /**
  * Emits a value from the source Observable, then ignores subsequent source
@@ -49027,7 +49029,7 @@ if (typeof self !== 'undefined') {
 var result = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__ponyfill_js__["a" /* default */])(root);
 /* harmony default export */ __webpack_exports__["a"] = (result);
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(44), __webpack_require__(479)(module)))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(45), __webpack_require__(479)(module)))
 
 /***/ }),
 /* 476 */

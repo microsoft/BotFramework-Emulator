@@ -41,10 +41,11 @@ import Main from './ui/shell/main';
 //import setupContextMenu from './setupContextMenu';
 import store from './data/store';
 import { CommandRegistry } from 'botframework-emulator-shared/built/platform/commands/commandRegistry';
+import { CommandService } from './platform/commands/commandService';
+import { SettingsService } from './platform/settings/settingsService';
 
-CommandRegistry.registerCommand('say:hello', (context: any, ...args: any[]): any => {
-  console.log("Client: Hello!", ...args);
-});
+CommandService.init();
+SettingsService.init();
 
 interceptError();
 interceptHyperlink();
@@ -59,8 +60,8 @@ if (webFrame) {
 }
 
 ReactDOM.render(
-    <Provider store={ store }>
-        { React.createElement(Main as any) }
-    </Provider>,
-    document.getElementById('root')
+  <Provider store={store}>
+    {React.createElement(Main as any)}
+  </Provider>,
+  document.getElementById('root')
 );

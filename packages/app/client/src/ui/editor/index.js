@@ -45,7 +45,7 @@ export default class EditorFactory extends React.Component {
 
     return (
       contentType === constants.ContentType_LiveChat ?
-        <Emulator botId={document.documentId} />
+        <Emulator documentId={document.documentId} />
         : contentType === constants.ContentType_TestBed ?
           <TestBedEditor />
           : false

@@ -16,7 +16,6 @@ var Chat = (function (_super) {
     tslib_1.__extends(Chat, _super);
     function Chat(props) {
         var _this = _super.call(this, props) || this;
-        _this.store = Store_1.createStore();
         _this.resizeListener = function () { return _this.setSize(); };
         _this._handleCardAction = _this.handleCardAction.bind(_this);
         _this._handleKeyDownCapture = _this.handleKeyDownCapture.bind(_this);
@@ -24,6 +23,7 @@ var Chat = (function (_super) {
         _this._saveHistoryRef = _this.saveHistoryRef.bind(_this);
         _this._saveShellRef = _this.saveShellRef.bind(_this);
         konsole.log("BotChat.Chat props", props);
+        _this.store = props.store || Store_1.createStore();
         _this.store.dispatch({
             type: 'Set_Locale',
             locale: props.locale || window.navigator["userLanguage"] || window.navigator.language || 'en'

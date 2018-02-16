@@ -44,7 +44,7 @@ export const IPCServer = new class {
     this._ipcs[ipc.id] = ipc;
     return {
       dispose() {
-        this._ipcs[ipc.id] = undefined;
+        delete this._ipcs[ipc.id];
       }
     }
   }

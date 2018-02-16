@@ -33,13 +33,13 @@
 
 import * as Electron from 'electron';
 import { Menu } from 'electron';
-import { Subject} from 'rxjs';
+import { Subject } from 'rxjs';
 import { getSettings, dispatch } from './settings';
 import { WindowStateAction } from './reducers/windowStateReducer';
 import * as url from 'url';
 import * as path from 'path';
 import * as log from './log';
-import { Emulator } from './emulator';
+import { Emulator, emulator } from './emulator';
 import { WindowManager } from './windowManager';
 import * as commandLine from './commandLine'
 import * as electronLocalShortcut from 'electron-localshortcut';
@@ -49,8 +49,8 @@ import { CommandRegistry } from 'botframework-emulator-shared/built/platform/com
 
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
-    console.error(error);
-    log.error('[err-server]', error.message.toString(), JSON.stringify(error.stack));
+  console.error(error);
+  log.error('[err-server]', error.message.toString(), JSON.stringify(error.stack));
 });
 
 export let mainWindow: Window;
@@ -58,39 +58,38 @@ export let windowManager: WindowManager;
 
 var openUrls = [];
 var onOpenUrl = function (event, url) {
-    event.preventDefault();
-    if (process.platform === 'darwin') {
-        if (mainWindow && mainWindow.webContents) {
-            // the app is already running, send a message containing the url to the renderer process
-            mainWindow.webContents.send('botemulator', url);
-        } else {
-            // the app is not yet running, so store the url so the UI can request it later
-            openUrls.push(url);
-        }
+  event.preventDefault();
+  if (process.platform === 'darwin') {
+    if (mainWindow && mainWindow.webContents) {
+      // the app is already running, send a message containing the url to the renderer process
+      mainWindow.webContents.send('botemulator', url);
+    } else {
+      // the app is not yet running, so store the url so the UI can request it later
+      openUrls.push(url);
     }
+  }
 };
 
 commandLine.parseArgs();
 
 Electron.app.on('will-finish-launching', (event, args) => {
-    Electron.ipcMain.on('getUrls', (event, arg) => {
-        openUrls.forEach(url => mainWindow.webContents.send('botemulator', url));
-        openUrls = [];
-    });
+  Electron.ipcMain.on('getUrls', (event, arg) => {
+    openUrls.forEach(url => mainWindow.webContents.send('botemulator', url));
+    openUrls = [];
+  });
 
-    // On Mac, a protocol handler invocation sends urls via this event
-    Electron.app.on('open-url', onOpenUrl);
+  // On Mac, a protocol handler invocation sends urls via this event
+  Electron.app.on('open-url', onOpenUrl);
 });
 
-
-var windowIsOffScreen = function(windowBounds: Electron.Rectangle): boolean {
-    const nearestDisplay = Electron.screen.getDisplayMatching(windowBounds).workArea;
-    return (
-        windowBounds.x > (nearestDisplay.x + nearestDisplay.width) ||
-        (windowBounds.x + windowBounds.width) < nearestDisplay.x ||
-        windowBounds.y > (nearestDisplay.y + nearestDisplay.height) ||
-        (windowBounds.y + windowBounds.height) < nearestDisplay.y
-    );
+var windowIsOffScreen = function (windowBounds: Electron.Rectangle): boolean {
+  const nearestDisplay = Electron.screen.getDisplayMatching(windowBounds).workArea;
+  return (
+    windowBounds.x > (nearestDisplay.x + nearestDisplay.width) ||
+    (windowBounds.x + windowBounds.width) < nearestDisplay.x ||
+    windowBounds.y > (nearestDisplay.y + nearestDisplay.height) ||
+    (windowBounds.y + windowBounds.height) < nearestDisplay.y
+  );
 }
 
 CommandRegistry.registerCommand("say:hello", (context: any, ...args: any[]): any => {
@@ -100,190 +99,195 @@ CommandRegistry.registerCommand("say:hello", (context: any, ...args: any[]): any
 
 const createMainWindow = () => {
 
-    const windowTitle = "Bot Framework Emulator";
+  const windowTitle = "Bot Framework Emulator";
 
-    const settings = getSettings();
-    let initBounds: Electron.Rectangle = {
-        width: settings.windowState.width || 0,
-        height: settings.windowState.height || 0,
-        x: settings.windowState.left || 0,
-        y: settings.windowState.top || 0,
+  const settings = getSettings();
+  let initBounds: Electron.Rectangle = {
+    width: settings.windowState.width || 0,
+    height: settings.windowState.height || 0,
+    x: settings.windowState.left || 0,
+    y: settings.windowState.top || 0,
+  }
+  if (windowIsOffScreen(initBounds)) {
+    let display = Electron.screen.getAllDisplays().find(display => display.id === settings.windowState.displayId);
+    display = display || Electron.screen.getDisplayMatching(initBounds);
+    initBounds.x = display.workArea.x;
+    initBounds.y = display.workArea.y;
+  }
+  mainWindow = new Window(
+    new Electron.BrowserWindow(
+      {
+        show: false,
+        backgroundColor: '#f7f7f7',
+        width: initBounds.width,
+        height: initBounds.height,
+        x: initBounds.x,
+        y: initBounds.y
+      }));
+  mainWindow.browserWindow.setTitle(windowTitle);
+  windowManager = new WindowManager();
+
+  //mainWindow.webContents.openDevTools();
+
+  if (process.platform === 'darwin') {
+    // Create the Application's main menu
+    var template: Electron.MenuItemConstructorOptions[] = [
+      {
+        label: windowTitle,
+        submenu: [
+          { label: "About", click: () => Emulator.send('show-about') },
+          { type: "separator" },
+          { label: "Quit", accelerator: "Command+Q", click: () => Electron.app.quit() }
+        ]
+      }, {
+        label: "Edit",
+        submenu: [
+          { label: "Undo", accelerator: "CmdOrCtrl+Z", role: "undo" },
+          { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", role: "redo" },
+          { type: "separator" },
+          { label: "Cut", accelerator: "CmdOrCtrl+X", role: "cut" },
+          { label: "Copy", accelerator: "CmdOrCtrl+C", role: "copy" },
+          { label: "Paste", accelerator: "CmdOrCtrl+V", role: "paste" },
+          { label: "Select All", accelerator: "CmdOrCtrl+A", role: "selectall" }
+        ]
+      }
+    ];
+    Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+  } else {
+    Menu.setApplicationMenu(null);
+  }
+
+  const rememberBounds = () => {
+    const bounds = mainWindow.browserWindow.getBounds();
+    dispatch<WindowStateAction>({
+      type: 'Window_RememberBounds',
+      state: {
+        displayId: Electron.screen.getDisplayMatching(bounds).id,
+        width: bounds.width,
+        height: bounds.height,
+        left: bounds.x,
+        top: bounds.y
+      }
+    });
+  }
+
+  mainWindow.browserWindow.on('resize', () => {
+    rememberBounds();
+  });
+
+  mainWindow.browserWindow.on('move', () => {
+    rememberBounds();
+  });
+
+  mainWindow.browserWindow.on('closed', function () {
+    windowManager.closeAll();
+    mainWindow = null;
+  });
+
+  mainWindow.browserWindow.on('restore', () => {
+    if (windowIsOffScreen(mainWindow.browserWindow.getBounds())) {
+      const bounds = mainWindow.browserWindow.getBounds();
+      let display = Electron.screen.getAllDisplays().find(display => display.id === getSettings().windowState.displayId);
+      display = display || Electron.screen.getDisplayMatching(bounds);
+      mainWindow.browserWindow.setPosition(display.workArea.x, display.workArea.y);
+      dispatch<WindowStateAction>({
+        type: 'Window_RememberBounds',
+        state: {
+          displayId: display.id,
+          width: bounds.width,
+          height: bounds.height,
+          left: display.workArea.x,
+          top: display.workArea.y
+        }
+      });
     }
-    if (windowIsOffScreen(initBounds)) {
-        let display = Electron.screen.getAllDisplays().find(display => display.id === settings.windowState.displayId);
-        display = display || Electron.screen.getDisplayMatching(initBounds);
-        initBounds.x = display.workArea.x;
-        initBounds.y = display.workArea.y;
-    }
-    mainWindow = new Window(
-      new Electron.BrowserWindow(
-        {
-            show: false,
-            backgroundColor: '#f7f7f7',
-            width: initBounds.width,
-            height: initBounds.height,
-            x: initBounds.x,
-            y: initBounds.y
-        }));
-    mainWindow.browserWindow.setTitle(windowTitle);
-    windowManager = new WindowManager();
+  });
 
-    //mainWindow.webContents.openDevTools();
-
-    if (process.platform === 'darwin') {
-        // Create the Application's main menu
-        var template: Electron.MenuItemConstructorOptions[] = [
-            {
-                label: windowTitle,
-                submenu: [
-                    { label: "About", click: () => Emulator.send('show-about') },
-                    { type: "separator" },
-                    { label: "Quit", accelerator: "Command+Q", click: () => Electron.app.quit() }
-                ]
-            }, {
-            label: "Edit",
-            submenu: [
-                { label: "Undo", accelerator: "CmdOrCtrl+Z", role: "undo" },
-                { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", role: "redo" },
-                { type: "separator" },
-                { label: "Cut", accelerator: "CmdOrCtrl+X", role: "cut" },
-                { label: "Copy", accelerator: "CmdOrCtrl+C", role: "copy" },
-                { label: "Paste", accelerator: "CmdOrCtrl+V", role: "paste" },
-                { label: "Select All", accelerator: "CmdOrCtrl+A", role: "selectall" }
-            ]}
-        ];
-        Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+  let registerHotkeys = (hotkeys: Array<string>, callback: () => void, window?: Electron.BrowserWindow) => {
+    const eventStream = new Subject();
+    eventStream.debounceTime(100).subscribe(callback);
+    const addToEventStream = () => eventStream.next("");
+    if (window) {
+      hotkeys.forEach(hotkey => electronLocalShortcut.register(window, hotkey, addToEventStream));
     } else {
-        Menu.setApplicationMenu(null);
+      hotkeys.forEach(hotkey => electronLocalShortcut.register(hotkey, addToEventStream));
     }
+  };
 
-    const rememberBounds = () => {
-        const bounds = mainWindow.browserWindow.getBounds();
-        dispatch<WindowStateAction>({
-            type: 'Window_RememberBounds',
-            state: {
-                displayId: Electron.screen.getDisplayMatching(bounds).id,
-                width: bounds.width,
-                height: bounds.height,
-                left: bounds.x,
-                top: bounds.y
-            }
-        });
-    }
+  registerHotkeys(["CmdOrCtrl+="], () => {
+    windowManager.zoomIn();
+  });
+  registerHotkeys(["CmdOrCtrl+-"], () => {
+    windowManager.zoomOut();
+  });
+  registerHotkeys(["CmdOrCtrl+0"], () => {
+    windowManager.zoomTo(0);
+  });
+  registerHotkeys(["F10", "Alt+F"], () => {
+    Emulator.send('open-menu');
+  }, mainWindow.browserWindow);
+  registerHotkeys(["F5", "CmdOrCtrl+R"], () => {
+    Emulator.send('new-conversation');
+  }, mainWindow.browserWindow);
+  registerHotkeys(["F6", "CmdOrCtrl+L"], () => {
+    Emulator.send('toggle-address-bar-focus');
+  }, mainWindow.browserWindow);
 
-    mainWindow.browserWindow.on('resize', () => {
-        rememberBounds();
-    });
+  mainWindow.browserWindow.once('ready-to-show', () => {
+    mainWindow.webContents.setZoomLevel(settings.windowState.zoomLevel);
+    mainWindow.browserWindow.show();
+  });
 
-    mainWindow.browserWindow.on('move', () => {
-        rememberBounds();
-    });
+  mainWindow.browserWindow.on('show', () => {
+    mainWindow.commandService.executeRemoteCommand("emulator:listener:url:set", emulator.framework.router.url);
+  });
 
-    mainWindow.browserWindow.on('closed', function () {
-        windowManager.closeAll();
-        mainWindow = null;
-    });
+  let queryString = '';
+  if (process.argv[1] && process.argv[1].indexOf('botemulator') !== -1) {
+    // add a query string with the botemulator protocol handler content
+    queryString = '?' + process.argv[1];
+  }
 
-    mainWindow.browserWindow.on('restore', () => {
-        if (windowIsOffScreen(mainWindow.browserWindow.getBounds())) {
-            const bounds = mainWindow.browserWindow.getBounds();
-            let display = Electron.screen.getAllDisplays().find(display => display.id === getSettings().windowState.displayId);
-            display = display || Electron.screen.getDisplayMatching(bounds);
-            mainWindow.browserWindow.setPosition(display.workArea.x, display.workArea.y);
-            dispatch<WindowStateAction>({
-                type: 'Window_RememberBounds',
-                state: {
-                    displayId: display.id,
-                    width: bounds.width,
-                    height: bounds.height,
-                    left: display.workArea.x,
-                    top: display.workArea.y
-                }
-            });
-        }
-    });
+  let page = process.env.ELECTRON_TARGET_URL || url.format({
+    protocol: 'file',
+    slashes: true,
+    pathname: path.join(__dirname, '../client/index.html')
+  });
 
-    let registerHotkeys = (hotkeys: Array<string>, callback: () => void, window?: Electron.BrowserWindow) => {
-        const eventStream = new Subject();
-        eventStream.debounceTime(100).subscribe(callback);
-        const addToEventStream = () => eventStream.next("");
-        if (window) {
-            hotkeys.forEach(hotkey => electronLocalShortcut.register(window, hotkey, addToEventStream));
-        } else {
-            hotkeys.forEach(hotkey => electronLocalShortcut.register(hotkey, addToEventStream));
-        }
-    };
+  if (/^http:\/\//.test(page)) {
+    log.warn(`Loading emulator code from ${page}`);
+  }
 
-    registerHotkeys(["CmdOrCtrl+="], () => {
-        windowManager.zoomIn();
-    });
-    registerHotkeys(["CmdOrCtrl+-"], () => {
-        windowManager.zoomOut();
-    });
-    registerHotkeys(["CmdOrCtrl+0"], () => {
-        windowManager.zoomTo(0);
-    });
-    registerHotkeys(["F10", "Alt+F"], () => {
-        Emulator.send('open-menu');
-    }, mainWindow.browserWindow);
-    registerHotkeys(["F5", "CmdOrCtrl+R"], () => {
-        Emulator.send('new-conversation');
-    }, mainWindow.browserWindow);
-    registerHotkeys(["F6", "CmdOrCtrl+L"], () => {
-        Emulator.send('toggle-address-bar-focus');
-    }, mainWindow.browserWindow);
+  if (queryString) {
+    page = page + queryString;
+  }
 
-    mainWindow.browserWindow.once('ready-to-show', () => {
-        mainWindow.webContents.setZoomLevel(settings.windowState.zoomLevel);
-        mainWindow.browserWindow.show();
-    });
-
-    let queryString = '';
-    if (process.argv[1] && process.argv[1].indexOf('botemulator') !== -1) {
-        // add a query string with the botemulator protocol handler content
-        queryString = '?' + process.argv[1];
-    }
-
-    let page = process.env.ELECTRON_TARGET_URL || url.format({
-        protocol: 'file',
-        slashes: true,
-        pathname: path.join(__dirname, '../client/index.html')
-    });
-
-    if (/^http:\/\//.test(page)) {
-        log.warn(`Loading emulator code from ${ page }`);
-    }
-
-    if (queryString) {
-        page = page + queryString;
-    }
-
-    mainWindow.browserWindow.loadURL(page);
+  mainWindow.browserWindow.loadURL(page);
 }
 
 Emulator.startup();
 
 Electron.app.on('ready', function () {
-    if (!mainWindow) {
-        if (process.argv.find(val => val.includes('--vscode-debugger'))) {
-            // workaround for delay in vscode debugger attach
-            setTimeout(createMainWindow, 5000);
-        } else {
-            createMainWindow();
-        }
+  if (!mainWindow) {
+    if (process.argv.find(val => val.includes('--vscode-debugger'))) {
+      // workaround for delay in vscode debugger attach
+      setTimeout(createMainWindow, 5000);
+    } else {
+      createMainWindow();
     }
+  }
 });
 
 Electron.app.on('window-all-closed', function () {
-    if (process.platform !== 'darwin') {
-        Electron.app.quit();
-    }
+  if (process.platform !== 'darwin') {
+    Electron.app.quit();
+  }
 });
 
 Electron.app.on('activate', function () {
-    if (!mainWindow) {
-        createMainWindow();
-    }
+  if (!mainWindow) {
+    createMainWindow();
+  }
 });
 
 // Do this last, otherwise startup bugs are harder to diagnose.

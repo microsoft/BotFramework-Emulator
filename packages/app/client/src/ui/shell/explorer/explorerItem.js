@@ -38,10 +38,12 @@ import * as Colors from '../../styles/colors';
 
 const CSS = css({
     color: Colors.EXPLORER_FOREGROUND_DARK,
-    padding: '4px 24px',
+    paddingLeft: '4px',
     cursor: 'pointer',
     display: 'block',
     whiteSpace: 'nowrap',
+    lineHeight: '22px',
+    height: '22px',
 
     '&:hover': {
         backgroundColor: Colors.EXPLORER_ITEM_HOVER_BACKGROUND_DARK
@@ -49,7 +51,14 @@ const CSS = css({
 
     '&.active-explorer-item': {
         backgroundColor: Colors.EXPLORER_ITEM_ACTIVE_BACKGROUND_DARK
+    },
+    '&:before': {
+      content: '🗋',
+      color: Colors.C5,
+      fontSize: '16px',
+      paddingRight: '6px',
     }
+
 });
 
 export default class ExplorerItem extends React.Component {

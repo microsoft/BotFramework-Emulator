@@ -32,8 +32,10 @@
 //
 
 import { uniqueId } from "../../utils";
+import { createStore as createWebChatStore } from "custom-botframework-webchat";
 
 export const NEW_LIVECHAT_DOCUMENT = 'CHAT/DOCUMENT/NEW/LIVE';
+export const CLOSE_LIVECHAT_DOCUMENT = 'CHAT/DOCUMENT/CLOSE/LIVE';
 export const APPEND_TO_LOG = 'CHAT/LOG/APPEND';
 export const CLEAR_LOG = 'CHAT/LOG/CLEAR';
 
@@ -41,11 +43,18 @@ export function newLiveChatDocument(url) {
   return {
     type: NEW_LIVECHAT_DOCUMENT,
     payload: {
-      botId: uniqueId(),
-      connection: {
-        state: 'NEW_DOCUMENT',
-        url
-      }
+      conversationId: uniqueId(),
+      webChatStore: createWebChatStore(),
+      directLine: null
+    }
+  }
+}
+
+export function closeLiveChatDocument(conversationId) {
+  return {
+    type: CLOSE_LIVECHAT_DOCUMENT,
+    payload: {
+      conversationId: conversationId
     }
   }
 }

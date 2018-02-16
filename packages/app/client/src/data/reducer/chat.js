@@ -43,6 +43,7 @@ const DEFAULT_STATE = {
       },
     ]
   },
+  liveChatChangeKey: 0,
   liveChats: {}
 }
 
@@ -50,11 +51,28 @@ export default function chat(state = DEFAULT_STATE, action) {
   const { payload } = action;
 
   switch (action.type) {
-    case ChatActions.NEW_LIVECHAT_DOCUMENT:
+    case ChatActions.NEW_LIVECHAT_DOCUMENT: {
+      state = {
+        ...state,
+        liveChatChangeKey: state.liveChatChangeKey + 1,
+        liveChats: {
+          ...state.liveChats, [payload.conversationId]: { ...payload }
+        }
+      }
+    }
+      break;
+
+
+    case ChatActions.CLOSE_LIVECHAT_DOCUMENT: {
+      const copy = { ...state };
+      copy.liveChatChangeKey += 1;
+      delete copy.liveChats[payload.conversationId];
+      state = { ...copy };
+    }
       break;
 
     default: break;
   }
-  
+
   return state;
 }

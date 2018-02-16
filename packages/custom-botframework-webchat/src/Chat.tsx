@@ -6,7 +6,7 @@ import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
 import { Activity, IBotConnection, User, DirectLine, DirectLineOptions, CardActionTypes } from 'botframework-directlinejs';
-import { createStore, ChatActions, sendMessage } from './Store';
+import { createStore, ChatActions, sendMessage, ChatStore } from './Store';
 import { Provider } from 'react-redux';
 import { SpeechOptions } from './SpeechOptions';
 import { Speech } from './SpeechModule';
@@ -25,7 +25,8 @@ export interface ChatProps {
     selectedActivity?: BehaviorSubject<ActivityOrID>,
     sendTyping?: boolean,
     formatOptions?: FormatOptions,
-    resize?: 'none' | 'window' | 'detect'
+    resize?: 'none' | 'window' | 'detect',
+    store?: ChatStore
 }
 
 import { History } from './History';
@@ -34,7 +35,7 @@ import { Shell, ShellFunctions } from './Shell';
 
 export class Chat extends React.Component<ChatProps, {}> {
 
-    private store = createStore();
+    private store: ChatStore;
 
     private botConnection: IBotConnection;
 
@@ -57,6 +58,8 @@ export class Chat extends React.Component<ChatProps, {}> {
         super(props);
 
         konsole.log("BotChat.Chat props", props);
+
+        this.store = props.store || createStore();
 
         this.store.dispatch<ChatActions>({
             type: 'Set_Locale',

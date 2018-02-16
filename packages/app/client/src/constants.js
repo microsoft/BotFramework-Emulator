@@ -46,3 +46,8 @@ export const NavBar_User = 'navbar.user';
 
 export const EditorKey_Primary = 'primary';
 export const EditorKey_Secondary = 'secondary';
+
+export const EditorKeys = [
+  EditorKey_Primary,
+  EditorKey_Secondary
+];

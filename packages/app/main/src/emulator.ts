@@ -39,77 +39,77 @@ import { windowManager, mainWindow } from './main';
 
 
 interface IQueuedMessage {
-    channel: any,
-    args: any[]
+  channel: any,
+  args: any[]
 }
 
 /**
  * Top-level state container for the Node process.
  */
 export class Emulator {
-    framework = new BotFrameworkService();
-    conversations = new ConversationManager();
-    static queuedMessages: IQueuedMessage[] = [];
+  framework = new BotFrameworkService();
+  conversations = new ConversationManager();
+  static queuedMessages: IQueuedMessage[] = [];
 
-    constructor() {
-        // When the client notifies us it has started up, send it the configuration.
-        // Note: We're intentionally sending and ISettings here, not a Settings. This
-        // is why we're getting the value from getStore().getState().
-        Electron.ipcMain.on('clientStarted', () => {
-            windowManager.addMainWindow(mainWindow.browserWindow);
-            Emulator.queuedMessages.forEach((msg) => {
-                Emulator.send(msg.channel, ...msg.args);
-            });
-            Emulator.queuedMessages = [];
-            Emulator.send('serverSettings', Settings.getStore().getState());
-        });
-        Settings.addSettingsListener(() => {
-            Emulator.send('serverSettings', Settings.getStore().getState());
-        });
+  constructor() {
+    // When the client notifies us it has started up, send it the configuration.
+    // Note: We're intentionally sending and ISettings here, not a Settings. This
+    // is why we're getting the value from getStore().getState().
+    Electron.ipcMain.on('clientStarted', () => {
+      windowManager.addMainWindow(mainWindow.browserWindow);
+      Emulator.queuedMessages.forEach((msg) => {
+        Emulator.send(msg.channel, ...msg.args);
+      });
+      Emulator.queuedMessages = [];
+      Emulator.send('serverSettings', Settings.getStore().getState());
+    });
+    Settings.addSettingsListener(() => {
+      Emulator.send('serverSettings', Settings.getStore().getState());
+    });
 
-        Electron.ipcMain.on('getSpeechToken', (event, args: string) => {
-            // args is the conversation id
-            this.getSpeechToken(event, args);
-        });
+    Electron.ipcMain.on('getSpeechToken', (event, args: string) => {
+      // args is the conversation id
+      this.getSpeechToken(event, args);
+    });
 
-        Electron.ipcMain.on('refreshSpeechToken', (event, args: string) => {
-            // args is the conversation id
-            this.getSpeechToken(event, args, true);
-        });
+    Electron.ipcMain.on('refreshSpeechToken', (event, args: string) => {
+      // args is the conversation id
+      this.getSpeechToken(event, args, true);
+    });
+  }
+
+  private getSpeechToken(event: Electron.Event, conversationId: string, refresh: boolean = false) {
+    const settings = Settings.getSettings();
+    const activeBot = settings.getActiveBot();
+    if (activeBot && activeBot.botId && conversationId) {
+      let conversation = this.conversations.conversationById(activeBot.botId, conversationId);
+      conversation.getSpeechToken(10, (tokenInfo) => {
+        event.returnValue = tokenInfo;
+      }, refresh);
+    } else {
+      event.returnValue = { error: 'No bot', error_Description: 'To use speech, you must connect to a bot and have an active conversation.' };
     }
+  }
 
-    private getSpeechToken(event: Electron.Event, conversationId: string, refresh: boolean = false) {
-        const settings = Settings.getSettings();
-        const activeBot = settings.getActiveBot();
-        if (activeBot && activeBot.botId && conversationId) {
-            let conversation = this.conversations.conversationById(activeBot.botId, conversationId);
-            conversation.getSpeechToken(10, (tokenInfo) => {
-                event.returnValue = tokenInfo;
-            }, refresh);
-        } else {
-            event.returnValue = { error: 'No bot', error_Description: 'To use speech, you must connect to a bot and have an active conversation.'};
-        }
-    }
+  /**
+   * Loads settings from disk and then creates the emulator.
+   */
+  static startup() {
+    Settings.startup();
+    emulator = new Emulator();
+    emulator.framework.startup();
+  }
 
-    /**
-     * Loads settings from disk and then creates the emulator.
-     */
-    static startup() {
-        Settings.startup();
-        emulator = new Emulator();
-        emulator.framework.startup();
+  /**
+   * Sends a command to the client.
+   */
+  static send(channel: string, ...args: any[]) {
+    if (windowManager && windowManager.hasMainWindow()) {
+      windowManager.getMainWindow().webContents.send(channel, ...args);
+    } else {
+      Emulator.queuedMessages.push({ channel, args })
     }
-
-    /**
-     * Sends a command to the client.
-     */
-    static send(channel: string, ...args: any[]) {
-        if (windowManager && windowManager.hasMainWindow()) {
-            windowManager.getMainWindow().webContents.send(channel, ...args);
-        } else {
-            Emulator.queuedMessages.push({ channel, args})
-        }
-    }
+  }
 }
 
 export let emulator: Emulator;

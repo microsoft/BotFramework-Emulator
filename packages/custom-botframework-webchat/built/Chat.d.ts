@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { IBotConnection, User, DirectLineOptions, CardActionTypes } from 'botframework-directlinejs';
+import { ChatStore } from './Store';
 import { SpeechOptions } from './SpeechOptions';
 import { ActivityOrID, FormatOptions } from './Types';
 export interface ChatProps {
@@ -16,6 +17,7 @@ export interface ChatProps {
     sendTyping?: boolean;
     formatOptions?: FormatOptions;
     resize?: 'none' | 'window' | 'detect';
+    store?: ChatStore;
 }
 export declare class Chat extends React.Component<ChatProps, {}> {
     private store;

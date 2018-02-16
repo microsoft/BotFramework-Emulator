@@ -55,5 +55,3 @@ export default class DetailPanel extends React.Component {
     );
   }
 }
-
-const foo = "What would you like on your ${Meat} ${(Bread.length() > 0 ? 'on ' ${Bread}} sandwich ${Toppings.count() > 0 ? 'with ' Toppings.toList()}?"

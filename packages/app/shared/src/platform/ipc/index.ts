@@ -10,7 +10,7 @@ export abstract class BaseIPC extends Disposable implements ISender {
     this._channels[channel.name] = channel;
     return {
       dispose() {
-        this._channels[channel.name] = undefined;
+        delete this._channels[channel.name];
       }
     }
   }

@@ -8,6 +8,8 @@ export const CommandService = new class extends Disposable implements ICommandSe
 
   private _channel: Channel;
 
+  init() { }
+
   constructor() {
     super();
     this._channel = new Channel('commandService', IPC);

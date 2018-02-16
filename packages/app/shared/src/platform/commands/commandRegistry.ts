@@ -25,7 +25,7 @@ export const CommandRegistry: ICommandRegistry = new class implements ICommandRe
 
     return {
       dispose() {
-        this._commands[id] = undefined;
+        delete this._commands[id];
       }
     }
   }
