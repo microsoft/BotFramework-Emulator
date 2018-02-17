@@ -92,9 +92,13 @@ var windowIsOffScreen = function (windowBounds: Electron.Rectangle): boolean {
   );
 }
 
+CommandRegistry.registerCommand("say:hello", (context: any, ...args: any[]): any => {
+  return "Hi from main!";
+});
+
 CommandRegistry.registerCommand("client:loaded", (context: any, ...args: any[]): any => {
   // Send app settings to client.
-  mainWindow.commandService.executeRemoteCommand("settings:emulator:url:set", emulator.framework.router.url);
+  mainWindow.commandService.remoteCall("settings:emulator:url:set", emulator.framework.router.url);
 });
 
 const createMainWindow = () => {

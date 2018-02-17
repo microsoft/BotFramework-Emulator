@@ -22,8 +22,8 @@ export interface ICommandDescription {
 }
 
 export interface ICommandService extends IDisposable {
-	executeCommand<T = any>(context: any, id: string, ...args: any[]): Promise<T>;
-	executeRemoteCommand(id: string, ...args: any[]): void;
+	call<T = any>(commandName: string, ...args: any[]): Promise<T>;
+	remoteCall<T = any>(commandName: string, ...args: any[]): Promise<T>;
 }
 
 export interface ICommandRegistry {

@@ -9,6 +9,6 @@ export class LogService extends Disposable implements ILogService {
   }
 
   logToLiveChat(level: LogLevel, conversationId: string, ...args: any[]): void {
-    this._window.commandService.executeRemoteCommand("conversation:log:append", level, conversationId, ...args);
+    this._window.commandService.remoteCall("conversation:log:append", level, conversationId, ...args);
   }
 }

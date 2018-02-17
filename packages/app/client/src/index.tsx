@@ -68,4 +68,8 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-CommandService.executeRemoteCommand('client:loaded');
+CommandService.remoteCall('client:loaded');
+
+CommandService.remoteCall('say:hello')
+  .then(result => console.log(result))
+  .catch(err => console.log(err));

@@ -38,7 +38,9 @@
 /**
  * Generates a random id that is unique enough for our purposes.
  */
-export const uniqueId = (length?: number) => Math.random().toString(24).substr(2, length);
+export function uniqueId() {
+  return Math.random().toString(36).substr(2);
+}
 
 export function isObject(item: any): boolean {
     return (item && typeof item === 'object' && !Array.isArray(item) && item !== null);

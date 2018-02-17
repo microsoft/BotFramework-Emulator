@@ -241,7 +241,7 @@ export class Conversation {
 
     // add member
     public addMember(id: string, name: string): IUser {
-        name = name || `user-${uniqueId(4)}`;
+        name = name || `user-${uniqueId()}`;
         id = id || uniqueId();
         let user = {name, id};
         this.members.push(user);

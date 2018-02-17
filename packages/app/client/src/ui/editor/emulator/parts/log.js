@@ -38,7 +38,6 @@ import * as React from 'react';
 
 import * as Colors from '../../../../ui/styles/colors';
 import * as Fonts from '../../../../ui/styles/fonts';
-import { uniqueId } from '../../../../utils';
 
 const CSS = css({
   height: '100%',

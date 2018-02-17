@@ -35,7 +35,6 @@ import { css } from 'glamor';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { uniqueId } from '../../../../utils';
 import * as constants from '../../../../constants';
 import * as ChatActions from '../../../../data/action/chatActions';
 import * as EditorActions from '../../../../data/action/editorActions';
@@ -86,7 +85,7 @@ class LiveChatExplorer extends React.Component {
 
   handleAddClick(e) {
     e.stopPropagation();
-    CommandService.executeCommand(undefined, 'livechat:new', this.props.activeEditor);
+    CommandService.call(undefined, 'livechat:new', this.props.activeEditor);
   }
 
   handleItemClick(conversationId) {
