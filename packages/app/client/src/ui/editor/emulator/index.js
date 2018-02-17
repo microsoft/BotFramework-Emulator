@@ -76,8 +76,8 @@ class Emulator extends React.Component {
     this.props.document.webChatStore = BotChat.createStore();
 
     this.props.document.directLine = new BotChat.DirectLine({
-      secret: this.props.document.documentId,
-      token: this.props.document.documentId,
+      secret: this.props.document.conversationId,
+      token: this.props.document.conversationId,
       domain: `${SettingsService.emulator.url}/v3/directline`,
       webSocket: false
     });

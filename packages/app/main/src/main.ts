@@ -92,9 +92,9 @@ var windowIsOffScreen = function (windowBounds: Electron.Rectangle): boolean {
   );
 }
 
-CommandRegistry.registerCommand("say:hello", (context: any, ...args: any[]): any => {
-  console.log("Main: Hi!", ...args);
-  (context as Window).commandService.executeRemoteCommand("say:hello", ...args);
+CommandRegistry.registerCommand("client:loaded", (context: any, ...args: any[]): any => {
+  // Send app settings to client.
+  mainWindow.commandService.executeRemoteCommand("settings:emulator:url:set", emulator.framework.router.url);
 });
 
 const createMainWindow = () => {
@@ -236,10 +236,6 @@ const createMainWindow = () => {
   mainWindow.browserWindow.once('ready-to-show', () => {
     mainWindow.webContents.setZoomLevel(settings.windowState.zoomLevel);
     mainWindow.browserWindow.show();
-  });
-
-  mainWindow.browserWindow.on('show', () => {
-    mainWindow.commandService.executeRemoteCommand("emulator:listener:url:set", emulator.framework.router.url);
   });
 
   let queryString = '';

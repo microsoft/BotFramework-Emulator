@@ -43,13 +43,13 @@ const CSS = css({
   height: '100%'
 });
 
-class LogPanel extends React.Component {
+export default class LogPanel extends React.Component {
   render() {
     return (
       <div className={CSS}>
         <Panel title="Log">
           <PanelContent>
-            <Log />
+            <Log document={this.props.document} />
           </PanelContent>
         </Panel>
       </div>
@@ -58,9 +58,5 @@ class LogPanel extends React.Component {
 }
 
 LogPanel.propTypes = {
-  log: PropTypes.object.isRequired
+  document: PropTypes.object.isRequired
 };
-
-export default connect((state, { botId }) => ({
-  log: state.chat.log
-}))(LogPanel)

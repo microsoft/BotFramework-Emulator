@@ -35,7 +35,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import ExplorerSet from './explorerSet';
 import LiveChatExplorer from './liveChatExplorer';
-//import TranscriptExplorer from './transcriptExplorer';
+import TranscriptExplorer from './transcriptExplorer';
 import FolderNotOpenExplorer from './folderNotOpenExplorer';
 import { directoryExists } from '../../utils';
 
@@ -45,6 +45,7 @@ class AssetExplorerSet extends React.Component {
       return (
         <ExplorerSet title="Asset Explorer">
           <LiveChatExplorer />
+          <TranscriptExplorer />
         </ExplorerSet>
       );
     } else {

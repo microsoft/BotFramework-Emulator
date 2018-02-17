@@ -50,7 +50,7 @@ const CSS = css({
     paddingLeft: '16px',
     textTransform: 'lowercase',
     userSelect: 'text',
-    whiteSpace: 'no-wrap'
+    whiteSpace: 'nowrap'
   }
 });
 

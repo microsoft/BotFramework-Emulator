@@ -35,9 +35,14 @@ import { uniqueId } from "../../utils";
 import { createStore as createWebChatStore } from "custom-botframework-webchat";
 
 export const NEW_LIVECHAT_DOCUMENT = 'CHAT/DOCUMENT/NEW/LIVE';
+export const OPEN_LIVECHAT_DOCUMENT = 'CHAT/DOCUMENT/OPEN/LIVE';
 export const CLOSE_LIVECHAT_DOCUMENT = 'CHAT/DOCUMENT/CLOSE/LIVE';
+
 export const APPEND_TO_LOG = 'CHAT/LOG/APPEND';
 export const CLEAR_LOG = 'CHAT/LOG/CLEAR';
+
+export const OPEN_TRANSCRIPT_DOCUMENT = 'CHAT/DOCUMENT/OPEN/TRANSCRIPT';
+export const CLOSE_TRANSCRIPT_DOCUMENT = 'CHAT/DOCUMENT/CLOSE/TRANSCRIPT';
 
 export function newLiveChatDocument(url) {
   return {
@@ -45,7 +50,10 @@ export function newLiveChatDocument(url) {
     payload: {
       conversationId: uniqueId(),
       webChatStore: createWebChatStore(),
-      directLine: null
+      directLine: null,
+      log: {
+        entries: []
+      }
     }
   }
 }
@@ -54,23 +62,27 @@ export function closeLiveChatDocument(conversationId) {
   return {
     type: CLOSE_LIVECHAT_DOCUMENT,
     payload: {
-      conversationId: conversationId
+      conversationId,
     }
   }
 }
 
-export function appendToLog(entry) {
+export function appendToLog(level, conversationId, ...args) {
   return {
     type: APPEND_TO_LOG,
     payload: {
-      entry
+      level,
+      conversationId,
+      args
     }
   }
 }
 
-export function clearLog() {
+export function clearLog(conversationId) {
   return {
     type: CLEAR_LOG,
-    payload: {}
+    payload: {
+      conversationId,
+    }
   }
 }

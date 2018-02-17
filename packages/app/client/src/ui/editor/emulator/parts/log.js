@@ -59,13 +59,15 @@ const CSS = css({
   },
 });
 
-class Log extends React.Component {
+export default class Log extends React.Component {
   render() {
+    const entries = this.props.document.log.entries;
+    let key = 0;
     return (
       <div className={CSS}>
         {
-          this.props.entries.map(entry =>
-            <div className="entry" key={entry + uniqueId()}>
+          entries.map(entry =>
+            <div className="entry" key={key++}>
               <span className="source">
                 {'[' + entry.source + ']'}
               </span>
@@ -82,9 +84,5 @@ class Log extends React.Component {
 }
 
 Log.propTypes = {
-  entries: PropTypes.array.isRequired
+  document: PropTypes.object.isRequired
 };
-
-export default connect((state, { botId }) => ({
-  entries: state.chat.log.entries
-}))(Log);

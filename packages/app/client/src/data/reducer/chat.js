@@ -34,17 +34,10 @@
 import * as ChatActions from '../action/chatActions';
 
 const DEFAULT_STATE = {
-  log: {
-    entries: [
-      {
-        type: 'info',
-        source: 'app',
-        text: 'Welcome to the Bot Framework Emulator.'
-      },
-    ]
-  },
   liveChatChangeKey: 0,
-  liveChats: {}
+  liveChats: {},
+  transcriptChangeKey: 0,
+  transcripts: {},
 }
 
 export default function chat(state = DEFAULT_STATE, action) {
@@ -68,6 +61,32 @@ export default function chat(state = DEFAULT_STATE, action) {
       copy.liveChatChangeKey += 1;
       delete copy.liveChats[payload.conversationId];
       state = { ...copy };
+    }
+      break;
+
+    case ChatActions.APPEND_TO_LOG: {
+      let document = state.liveChats[payload.conversationId];
+      if (document) {
+        document = {
+          ...document,
+          log: {
+            ...document.log,
+            entries: [
+              ...document.log.entries,
+              { ...payload.args }
+            ]
+          }
+        }
+        state = {
+          ...state,
+          liveChats: {
+            ...state.liveChats,
+            [payload.conversationId]: {
+              ...document
+            }
+          }
+        }
+      }
     }
       break;
 

@@ -26,6 +26,7 @@ const CSS = css({
       height: '30px',
       backgroundColor: Colors.TOOLBAR_BUTTON_BACKGROUND_DARK,
       color: Colors.TOOLBAR_BUTTON_FOREGROUND_DARK,
+      whiteSpace: 'nowrap',
 
       ':hover': {
         backgroundColor: Colors.TOOLBAR_BUTTON_HOVER_BACKGROUND_DARK,

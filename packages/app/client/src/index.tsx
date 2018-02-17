@@ -43,9 +43,11 @@ import store from './data/store';
 import { CommandRegistry } from 'botframework-emulator-shared/built/platform/commands/commandRegistry';
 import { CommandService } from './platform/commands/commandService';
 import { SettingsService } from './platform/settings/settingsService';
+import { LogService } from "./platform/log/logService";
 
 CommandService.init();
 SettingsService.init();
+LogService.init();
 
 interceptError();
 interceptHyperlink();
@@ -65,3 +67,5 @@ ReactDOM.render(
   </Provider>,
   document.getElementById('root')
 );
+
+CommandService.executeRemoteCommand('client:loaded');
