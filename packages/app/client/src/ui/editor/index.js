@@ -35,6 +35,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import * as constants from '../../constants';
+import BotSettingsEditor from './botSettingsEditor';
 import Emulator from './emulator';
 import TestBedEditor from './testBedEditor';
 
@@ -47,8 +48,10 @@ export default class EditorFactory extends React.Component {
       contentType === constants.ContentType_LiveChat ?
         <Emulator documentId={document.documentId} />
         : contentType === constants.ContentType_TestBed ?
-          <TestBedEditor />
-          : false
+        <TestBedEditor />
+        : contentType === constants.ContentType_BotSettings ?
+        <BotSettingsEditor bot={ document.meta } documentId={ document.documentId } />
+        : false
     );
   }
 }

@@ -1,42 +1,43 @@
-export const ADD = 'BOT/ADD';
-export const LOAD_BOTS_REQUEST = 'BOT/LOAD_BOTS_REQUEST';
-export const LOAD_BOTS_RESPONSE = 'BOT/LOAD_BOTS_RESPONSE';
+export const CREATE = 'BOT/CREATE';
+export const OPEN = 'BOT/OPEN';
+export const PATCH = 'BOT/PATCH';
 export const REMOVE = 'BOT/REMOVE';
 export const SET_ACTIVE = 'BOT/SET_ACTIVE';
 
-export function add(handle) {
-    return {
-        type: ADD,
-        payload: handle
-    };
+export function create(bot) {
+  return {
+    type: CREATE,
+    payload: bot
+  };
 }
 
-// cause main process to read file system for bots
-export function loadBotsRequest(botsFilePath) {
-    return {
-        type: LOAD_BOTS_REQUEST,
-        meta: { send: true },
-        payload: botsFilePath
-    };
+export function open(bot) {
+  return {
+    type: OPEN,
+    payload: bot
+  };
 }
 
-export function loadBotsResponse(bots) {
-    return {
-        type: LOAD_BOTS_RESPONSE,
-        payload: bots
-    };
+export function patch(handle, bot) {
+  return {
+    type: PATCH,
+    payload: {
+      handle,
+      bot
+    }
+  };
 }
 
 export function remove(handle) {
-    return {
-        type: DELETE,
-        payload: handle
-    };
+  return {
+    type: DELETE,
+    payload: handle
+  };
 }
 
 export function setActive(handle) {
-    return {
-        type: SET_ACTIVE,
-        payload: handle
-    };
+  return {
+    type: SET_ACTIVE,
+    payload: handle
+  };
 }

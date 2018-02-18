@@ -1,3 +1,4 @@
+//
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 //
@@ -30,32 +31,32 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
 import React from 'react';
 import { connect } from 'react-redux';
 
-const CSS = css({
-    '& > header': {
-        fontSize: '13px',
-        lineHeight: '30px',
-        height: '30px',
-        paddingLeft: '16px',
-        textTransform: 'uppercase',
-    },
-});
+import * as EditorActions from '../../../data/action/editorActions';
+import GenericTab from './genericTab';
 
-class BotExplorerTitle extends React.Component {
+export class SettingsTab extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+
+        this.onCloseClick = this.onCloseClick.bind(this);
+    }
+
+    onCloseClick(e) {
+        e.stopPropagation();
+        this.props.dispatch(EditorActions.close(this.props.owningEditor, this.props.documentId));
+    }
+
     render() {
-        return (
-            <div className={ CSS }>
-                <header>
-                    { this.props.activeBot }
-                </header>
-            </div>
+        return(
+            <GenericTab active={ this.props.active } title={ this.props.documentId } onCloseClick={ this.onCloseClick }
+                documentId={ this.props.documentId } owningEditor={ this.props.owningEditor } />
         );
     }
 }
 
-export default connect(state => ({
-    activeBot: state.bot.activeBot
-}))(BotExplorerTitle)
+export default connect((state, { documentId, owningEditor }) => ({
+    active: owningEditor === state.editor.activeEditor && state.editor.editors[owningEditor].activeDocumentId === documentId
+}))(SettingsTab);

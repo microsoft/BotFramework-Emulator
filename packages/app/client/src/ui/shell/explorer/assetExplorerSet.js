@@ -33,15 +33,15 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+
 import ExplorerSet from './explorerSet';
 import LiveChatExplorer from './liveChatExplorer';
+import BotNotOpenExplorer from './botNotOpenExplorer';
 import TranscriptExplorer from './transcriptExplorer';
-import FolderNotOpenExplorer from './folderNotOpenExplorer';
-import { directoryExists } from '../../utils';
 
 class AssetExplorerSet extends React.Component {
   render() {
-    if (directoryExists(this.props.folder)) {
+    if (this.props.activeBot) {
       return (
         <ExplorerSet title="Asset Explorer">
           <LiveChatExplorer />
@@ -51,11 +51,11 @@ class AssetExplorerSet extends React.Component {
     } else {
       return (
         <ExplorerSet title="Asset Explorer">
-          <FolderNotOpenExplorer />
+          <BotNotOpenExplorer />
         </ExplorerSet>
       );
     }
   }
 }
 
-export default connect(state => ({ folder: state.assetExplorer.folder }))(AssetExplorerSet)
+export default connect(state => ({ activeBot: state.bot.activeBot }))(AssetExplorerSet)

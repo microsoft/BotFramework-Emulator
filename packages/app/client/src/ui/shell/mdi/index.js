@@ -41,6 +41,8 @@ import EditorFactory from '../../editor';
 import MultiTabs from '../multiTabs';
 import TabFactory from './tabFactory';
 import TabbedDocument, { Tab as TabbedDocumentTab, Content as TabbedDocumentContent } from '../multiTabs/tabbedDocument';
+import { CommandRegistry } from 'botframework-emulator-shared/built/platform/commands/commandRegistry';
+import * as Constants from '../../../constants';
 
 class MDI extends React.Component {
     constructor(props, context) {
@@ -51,6 +53,20 @@ class MDI extends React.Component {
 
     handleTabChange(tabValue) {
         this.props.dispatch(EditorActions.setActiveTab(this.props.owningEditor, this.props.documents[tabValue].documentId));
+    }
+
+    componentWillMount() {
+      this._openBotSettingsCommandHandler = CommandRegistry.registerCommand('bot:settings:open', (context, bot) => {
+        this.props.dispatch(EditorActions.open(Constants.ContentType_BotSettings, bot.handle + ':settings', bot));
+      });
+    }
+
+    componentWillUnmount() {
+      if (this._openBotSettingsCommandHandler) {
+        try {
+          this._openBotSettingsCommandHandler.dispose();
+        } catch (e) {}
+      }
     }
 
     render() {

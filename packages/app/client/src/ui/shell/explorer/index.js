@@ -51,7 +51,7 @@ const CSS = css({
 
 class ExplorerBar extends React.Component {
     render() {
-        let explorer = this.props.selectedNavTab === Constants.NavBar_App ?
+        const explorer = this.props.selectedNavTab === Constants.NavBar_App ?
             <BotExplorer />
         :
             (

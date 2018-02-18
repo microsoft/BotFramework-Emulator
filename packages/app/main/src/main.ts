@@ -46,7 +46,9 @@ import * as electronLocalShortcut from 'electron-localshortcut';
 import { setTimeout } from 'timers';
 import { Window } from './platform/window';
 import { CommandRegistry } from 'botframework-emulator-shared/built/platform/commands/commandRegistry';
-
+import { readFileSync, showOpenDialog, writeFile } from './utils';
+import { uniqueId } from 'botframework-emulator-shared/built/utils';
+import * as BotActions from './data-v2/action/bot';
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
   console.error(error);
@@ -91,6 +93,93 @@ var windowIsOffScreen = function (windowBounds: Electron.Rectangle): boolean {
     (windowBounds.y + windowBounds.height) < nearestDisplay.y
   );
 }
+
+/** COMMAND REGISTRATION */
+
+// open a bot from bot list
+CommandRegistry.registerCommand('bot:list:open', (context: Window, ...args: any[]): any => {
+  return showOpenDialog({ title: 'Open a bot', buttonLabel: 'Open', properties: ['openFile'] })
+    .then((path: string) => {
+      try {
+        // TODO: add bot validation here so we don't try to open some invalid bot JSON
+        // read and return bot
+        const bot = JSON.parse(readFileSync(path));
+        return bot;
+      } catch(e) {
+        console.log('Failure reading bot file in bot:list:open: ', e);
+        throw e;
+      }
+    });
+});
+
+// show explorer prompt and write bot file to target directory
+CommandRegistry.registerCommand('bot:list:promptCreate', (context: Window, ...args: any[]): any => {
+  return showOpenDialog({ title: 'Choose a folder for your bot', buttonLabel: 'Create', properties: ['openDirectory', 'promptToCreate'] })
+    .then((path: string) => {
+      path += '\\bot.bot';
+
+      // create a new bot file
+      const bot = {
+        handle: uniqueId().substring(0, 5),
+        path: path,
+        settings: {
+          endpoint: '',
+          msaAppId: '',
+          msaAppPw: '',
+          locale: 'en-US'
+        }
+      };
+
+      // write bot file to disk
+      try {
+        writeFile(path, bot);
+        return bot;
+      } catch(e) {
+        console.error('Failure writing bot file in bot:list:promptCreate: ', e);
+        throw e;
+      }
+    });
+});
+
+// dispatch bot CREATE action
+CommandRegistry.registerCommand('bot:list:create', (context: Window, bot: any): any => {
+  console.log('DISPATCHING CREATE ON SERVER: ', Date.now());
+  context.store.dispatch(BotActions.create(bot));
+});
+
+// save bot file
+CommandRegistry.registerCommand('bot:save', (context: Window, bot: any, originalHandle: string): any => {
+  try {
+    writeFile(bot.path, bot);
+    context.store.dispatch(BotActions.patch(originalHandle, bot));
+    return true;
+  } catch (e) {
+    console.error('Failure writing bot file in bot:save: ', e);
+    throw e;
+  }
+})
+
+// read file
+CommandRegistry.registerCommand('file:read', (context: Window, path: string): any => {
+  try {
+    const contents = readFileSync(path);
+    return contents;
+  } catch (e) {
+    console.error(`Failure reading file at ${path}: `, e);
+    throw e;
+  }
+});
+
+// write file
+CommandRegistry.registerCommand('file:write', (context: Window, path: string, contents: object | string): any => {
+  try {
+    writeFile(path, contents);
+    return true;
+  } catch (e) {
+    console.error(`Failure writing to file at ${path}: `, e);
+    throw e;
+  }
+});
 
 CommandRegistry.registerCommand("say:hello", (context: any, ...args: any[]): any => {
   return "Hi from main!";

@@ -39,8 +39,7 @@ import createWebSocketBridge from 'redux-websocket-bridge';
 import reducers from './reducer';
 import rootSaga from './sagas';
 import { IState, DEFAULT_STATE } from './state';
-
-
+import thunk from 'redux-thunk';
 
 export default function create(window): Promise<Store<IState>> {
   return new Promise<Store<IState>>((resolve, reject) => {
@@ -53,6 +52,7 @@ export default function create(window): Promise<Store<IState>> {
           return next(action);
         },
         createPromiseMiddleware(),
+        thunk,
         createWebSocketBridge(() => connection),
         sagaMiddleware,
         store => next => action => {

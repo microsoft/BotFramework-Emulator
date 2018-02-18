@@ -32,9 +32,9 @@
 //
 
 import { call, put, takeEvery } from 'redux-saga/effects';
-import { dialog, OpenDialogOptions } from 'electron';
 
 import * as AssetExplorerActions from '../../action/assetExplorer';
+import { showOpenDialog } from '../../../utils';
 
 export default function* promptOpenFolder() {
     yield takeEvery(AssetExplorerActions.PROMPT_OPEN_FOLDER, function* () {
@@ -50,15 +50,5 @@ export default function* promptOpenFolder() {
                 throw err;
             }
         }
-    });
-}
-
-function showOpenDialog(options: OpenDialogOptions) {
-    return new Promise((resolve, reject) => {
-        dialog.showOpenDialog(options, filePaths => {
-            const filePath = filePaths && filePaths[0];
-
-            filePath ? resolve(filePath) : reject(new Error('user cancelled'));
-        });
     });
 }

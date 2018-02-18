@@ -61,13 +61,13 @@ export function close(editorKey, documentId) {
     };
 }
 
-export function open(editorKey, contentType, documentId) {
+export function open(contentType, documentId, meta) {
     return {
         type: OPEN,
         payload: {
-            editorKey,
             contentType,
-            documentId
+            documentId,
+            meta
         }
     };
 }

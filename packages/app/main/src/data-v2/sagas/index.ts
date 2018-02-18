@@ -32,11 +32,9 @@
 //
 
 import assetExplorerPromptOpenFolder from './assetExplorer/promptOpenFolder';
-import botLoadBotsRequest from './bot/loadBotsRequest';
 import ping from './ping';
 
 export default function* rootSaga() {
     yield* assetExplorerPromptOpenFolder();
-    yield* botLoadBotsRequest();
     yield* ping();
 }

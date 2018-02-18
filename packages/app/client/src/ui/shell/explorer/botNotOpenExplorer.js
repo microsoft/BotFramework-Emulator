@@ -35,9 +35,10 @@ import { connect } from 'react-redux';
 import { css } from 'glamor';
 import React from 'react';
 
-import * as AssetExplorerActions from '../../../data/action/assetExplorerActions';
 import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
 import * as Colors from '../../styles/colors';
+import { CommandService } from '../../../platform/commands/commandService';
+import * as Constants from '../../../constants';
 
 const CSS = css({
     backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
@@ -54,15 +55,15 @@ const CSS = css({
     }
 });
 
-class FolderNotOpenExplorer extends React.Component {
+class BotNotOpenExplorer extends React.Component {
     constructor(props, context) {
         super(props, context);
 
-        this.handleOpenFolderClick = this.handleOpenFolderClick.bind(this);
+        this.handleOpenBot = this.handleOpenBot.bind(this);
     }
 
-    handleOpenFolderClick(e) {
-        this.props.dispatch(AssetExplorerActions.promptOpenFolder());
+    handleOpenBot(e) {
+      CommandService.call('navbar:switchtab', Constants.NavBar_App);
     }
 
     render() {
@@ -71,12 +72,12 @@ class FolderNotOpenExplorer extends React.Component {
                 <li>
                     <ExpandCollapse
                         initialExpanded={ true }
-                        title="No Folder Opened"
+                        title="No Bot Selected"
                     >
                         <ExpandCollapseContent>
                             <div className="folder-empty-state">
-                                <p><span>You have not yet opened a folder.</span></p>
-                                <p><button onClick={ this.handleOpenFolderClick }>Open Folder</button></p>
+                                <p><span>You have not yet selected a bot.</span></p>
+                                <p><button onClick={ this.handleOpenBot }>Select / Create bot</button></p>
                             </div>
                         </ExpandCollapseContent>
                     </ExpandCollapse>
@@ -86,4 +87,4 @@ class FolderNotOpenExplorer extends React.Component {
     }
 }
 
-export default connect(state => ({}))(FolderNotOpenExplorer)
+export default connect(state => ({}))(BotNotOpenExplorer)

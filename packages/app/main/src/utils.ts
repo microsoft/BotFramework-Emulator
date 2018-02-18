@@ -3,6 +3,7 @@ import * as Restify from 'restify';
 import * as HttpStatus from "http-status-codes";
 import { IErrorResponse, APIException, createErrorResponse, ErrorCodes } from "botframework-emulator-shared/built/types/responseTypes";
 import { mergeDeep } from "botframework-emulator-shared/built/utils";
+import { dialog, OpenDialogOptions } from 'electron';
 
 const electron = require('electron'); // use a lowercase name "electron" to prevent clash with "Electron" namespace
 const electronApp: Electron.App = electron.app;
@@ -112,4 +113,25 @@ export const readFileSync = (path) => {
   } catch (e) {
       return false;
   }
+}
+
+/** Writes contents to a file at path */
+export const writeFile = (path: string, contents: object | string): void => {
+  try {
+    const contentsToWrite = typeof contents === 'object' ? JSON.stringify(contents, null, 2) : contents;
+    Fs.writeFileSync(path, contentsToWrite, { encoding: 'utf8' });
+  } catch (e) {
+    console.error(`Failed to write bot settings file at ${path}`, e);
+  }
+}
+
+/** Shows a native open file / directory dialog */
+export const showOpenDialog = (options: OpenDialogOptions) => {
+  return new Promise((resolve, reject) => {
+      dialog.showOpenDialog(options, filePaths => {
+          const filePath = filePaths && filePaths[0];
+
+          filePath ? resolve(filePath) : reject(new Error('user cancelled'));
+      });
+  });
 }

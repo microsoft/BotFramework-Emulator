@@ -85,7 +85,7 @@ class LiveChatExplorer extends React.Component {
 
   handleAddClick(e) {
     e.stopPropagation();
-    CommandService.call(undefined, 'livechat:new', this.props.activeEditor);
+    CommandService.call('livechat:new', this.props.activeEditor);
   }
 
   handleItemClick(conversationId) {
@@ -122,7 +122,6 @@ class LiveChatExplorer extends React.Component {
 }
 
 export default connect(state => ({
-  activeEditor: state.editor.activeEditor,
   activeDocumentId: state.editor.editors[state.editor.activeEditor].activeDocumentId,
   liveChats: state.chat.liveChats,
   changeKey: state.chat.liveChatChangeKey

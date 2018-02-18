@@ -1,4 +1,3 @@
-//
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 //
@@ -31,31 +30,32 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { call, put, takeEvery } from 'redux-saga/effects';
+import { css } from 'glamor';
+import React from 'react';
+import { connect } from 'react-redux';
 
-import * as BotActions from '../../action/bot';
-import { readFileSync } from '../../../utils'
+const CSS = css({
+    '& > header': {
+        fontSize: '13px',
+        lineHeight: '72px',
+        height: '72px',
+        paddingLeft: '16px',
+        textTransform: 'uppercase',
+    },
+});
 
-export default function* loadBotsRequest() {
-    yield takeEvery(BotActions.LOAD_BOTS_REQUEST, function* (action: any) {
-        // TODO: where does the command manager / hub fit into this?
-        const bots = yield call(loadBotsFromDisk as any, action.payload);
-        
-        yield put(BotActions.loadBotsResponse(bots));
-    });
-}
-
-function loadBotsFromDisk(botsFilePath) {
-    const botPaths = readFileSync(botsFilePath);
-    if (botPaths) {
-        const pathsJson = JSON.parse(botPaths);
-        const bots = pathsJson.bots.map(botPath => {
-            const bot = readFileSync(botPath.path);
-            return bot ? JSON.parse(bot) : null;
-        }).filter(bot => !!bot);
-        return bots;
-    } else {
-        console.log('failed loading initial bots');
-        return [];
+class BotExplorerTitle extends React.Component {
+    render() {
+        return (
+            <div className={ CSS }>
+                <header>
+                    { this.props.activeBot }
+                </header>
+            </div>
+        );
     }
 }
+
+export default connect(state => ({
+    activeBot: state.bot.activeBot
+}))(BotExplorerTitle)

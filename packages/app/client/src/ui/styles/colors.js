@@ -41,7 +41,6 @@ export const C7 = '#969696';
 export const C8 = '#1E1E1E';
 export const C9 = '#4E257F';
 
-
 export const APP_BACKGROUND_DARK = C8;
 export const APP_FOREGROUND_DARK = C2;
 

@@ -42,7 +42,6 @@ import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCo
 import * as Colors from '../../../styles/colors';
 import ExplorerItem from '../explorerItem';
 import { CommandRegistry } from 'botframework-emulator-shared/built/platform/commands/commandRegistry';
-import { CommandService } from '../../../../platform/commands/commandService';
 import store from '../../../../data/store';
 
 CommandRegistry.registerCommand('livechat:new', (context, activeEditor) => {

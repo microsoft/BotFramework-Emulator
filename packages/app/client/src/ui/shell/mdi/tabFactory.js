@@ -34,6 +34,7 @@
 import React from 'react';
 
 import * as constants from '../../../constants';
+import SettingsTab from './settingsTab';
 import EmulatorTab from './emulatorTab';
 import TestBedTab from './testBedTab';
 
@@ -42,4 +43,6 @@ export default props =>
         <EmulatorTab documentId={ props.document.documentId } owningEditor={ props.owningEditor }/>
     : props.document.contentType === constants.ContentType_TestBed ?
         <TestBedTab documentId={ props.document.documentId } owningEditor={ props.owningEditor }/>
+    : props.document.contentType === constants.ContentType_BotSettings ?
+        <SettingsTab documentId={ props.document.documentId } owningEditor={ props.owningEditor }/>
     : false

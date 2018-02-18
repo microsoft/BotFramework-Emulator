@@ -35,16 +35,15 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import AssetExplorerSet from './assetExplorerSet';
-import { directoryExists } from '../../utils';
 import ExplorerSet from './explorerSet';
-import FolderNotOpenExplorer from './folderNotOpenExplorer';
+import BotNotOpenExplorer from './botNotOpenExplorer';
 
 const CSS = css({
 });
 
 class ExplorerBarContent extends React.Component {
   render() {
-    if (directoryExists(this.props.folder)) {
+    if (this.props.activeBot) {
       return (
         <div className={ CSS }>
           <AssetExplorerSet />
@@ -53,7 +52,7 @@ class ExplorerBarContent extends React.Component {
     } else {
       return (
         <ExplorerSet>
-          <FolderNotOpenExplorer />
+          <BotNotOpenExplorer />
         </ExplorerSet>
       );
     }
@@ -61,6 +60,6 @@ class ExplorerBarContent extends React.Component {
 }
 
 export default connect(state => ({
-  navBar: state.navBar,
-  folder: state.assetExplorer.folder
+  activeBot: state.bot.activeBot,
+  navBar: state.navBar
 }))(ExplorerBarContent)

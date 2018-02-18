@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 
-import * as Colors from '../../styles/colors';
+import * as Colors from '../../../styles/colors';
 
-const CSS = css({
+const BASE_CSS = css({
     width: '100%',
     height: '48px',
     display: 'flex',
@@ -31,12 +31,23 @@ const CSS = css({
         width: '32px',
         borderRadius: '32px',
         marginRight: '8px',
-        backgroundColor: Colors.C9
+        backgroundColor: Colors.C9,
+        lineHeight: '32px',
+        textAlign: 'center'
     },
 
     '& > span': {
         display: 'inline-block',
         lineHeight: '32px'
+    },
+
+    '& > span.bot-settings-icon': {
+      display: 'inline-block',
+      marginLeft: 'auto',
+      background: "url('./external/media/ic_settings.svg') no-repeat 50% 50%",
+      backgroundSize: '16px',
+      width: '32px',
+      height: '32px'
     }
 });
 
@@ -48,13 +59,19 @@ export class BotListItem extends React.Component {
     render() {
         const className = this.props.activeBot === this.props.bot.handle ? ' selected-bot' : '';
 
+        const ICON_LETTERING = css({
+          '& > div:after': { content: this.props.bot.handle.substring(0, 1).toUpperCase() || '' }
+        });
+        const CSS = css(BASE_CSS, ICON_LETTERING);
+
         return (
             <li className={ CSS + className } onClick={ (ev) => this.props.onSelect(ev, this.props.bot.handle) }
-                role="button" title={ this.props.bot.endpoint }>
+                role="button" title={ this.props.bot.settings.endpoint }>
                 <div />
                 <span>
                     { this.props.bot.handle }
                 </span>
+                <span className="bot-settings-icon" onClick={ (ev) => this.props.onClickSettings(ev, this.props.bot) } />
             </li>
         );
     }
@@ -63,5 +80,6 @@ export class BotListItem extends React.Component {
 BotListItem.propTypes = {
     activeBot: PropTypes.string,
     bot: PropTypes.object,
+    onClickSettings: PropTypes.func,
     onSelect: PropTypes.func
 };

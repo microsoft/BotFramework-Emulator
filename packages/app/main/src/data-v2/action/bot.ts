@@ -35,12 +35,42 @@
 export const LOAD_BOTS_REQUEST = 'BOT/LOAD_BOTS_REQUEST';
 
 // from server
+export const CREATE ='BOT/CREATE';
 export const LOAD_BOTS_RESPONSE = 'BOT/LOAD_BOTS_RESPONSE';
+export const OPEN = 'BOT/OPEN';
+export const PATCH = 'BOT/PATCH';
+
+export function create(bot) {
+  return {
+    type: CREATE,
+    meta: { send: true },
+    payload: bot
+  };
+}
 
 export function loadBotsResponse(bots) {
-    return {
-        type: LOAD_BOTS_RESPONSE,
-        meta: { send: true },
-        payload: bots
-    };
+  return {
+    type: LOAD_BOTS_RESPONSE,
+    meta: { send: true },
+    payload: bots
+  };
+}
+
+export function open(bot) {
+  return {
+    type: OPEN,
+    meta: { send: true },
+    payload: bot
+  };
+}
+
+export function patch(handle, bot) {
+  return {
+    type: PATCH,
+    meta: { send: true },
+    payload: {
+      handle,
+      bot
+    }
+  };
 }

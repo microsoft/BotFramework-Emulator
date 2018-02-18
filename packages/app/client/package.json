@@ -19,6 +19,7 @@
     "react-split-pane": "^0.1.74",
     "redux": "^3.7.2",
     "redux-promise-middleware": "^5.0.0",
+    "redux-thunk": "^2.2.0",
     "redux-websocket-bridge": "^0.1.0-0",
     "request": "^2.83.0",
     "rxjs": "^5.5.6",

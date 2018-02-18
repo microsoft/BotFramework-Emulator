@@ -39,6 +39,7 @@ import Button from './button';
 import * as Colors from '../../styles/colors';
 import * as constants from '../../../constants';
 import * as NavBarActions from '../../../data/action/navBarActions';
+import { CommandRegistry } from 'botframework-emulator-shared/built/platform/commands/commandRegistry';
 
 
 const CSS = css({
@@ -130,6 +131,18 @@ class NavBar extends React.Component {
     this.handleSettingsClick = this.handleClick.bind(this, constants.NavBar_Settings);
     this.handleNotificationsClick = this.handleClick.bind(this, constants.NavBar_Notifications);
     this.handleUserClick = this.handleClick.bind(this, constants.NavBar_User);
+  }
+
+  componentWillMount() {
+    this._switchTabCommandHandler = CommandRegistry.registerCommand('navbar:switchtab', (context, tabName) => {
+      this.props.dispatch(NavBarActions.selectOrToggle(tabName));
+    });
+  }
+
+  componentWillUnmount() {
+    if (this._switchTabCommandHandler) {
+      this._switchTabCommandHandler.dispose();
+    }
   }
 
   handleClick(selection) {
