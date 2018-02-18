@@ -56,6 +56,11 @@ export interface IActivity extends IETagObject {
     channelData?: any,
 };
 
+export interface IEventActivity extends IActivity {
+    value?: string,
+    name: string
+}
+
 export interface ITypingActivity extends IActivity {
 }
 

@@ -130,6 +130,15 @@ export class AddressBarMenu extends React.Component<{}, {}> {
                                 click: () => {
                                     Emulator.deleteUserData();
                                 }
+                            },
+                            {
+                                type: 'separator'
+                            },
+                            {
+                                label: 'customEvent',
+                                click: () => {
+                                    AddressBarActions.showCustomEventDialog()
+                                }
                             }
                         ]
                     },

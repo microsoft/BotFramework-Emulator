@@ -58,6 +58,7 @@ import {
     IHotkeyState,
     serverChangeSetting
 } from './settings';
+import { type } from 'os';
 
 
 type LayoutAction = {
@@ -118,6 +119,10 @@ type AddressBarAction = {
     type: 'AddressBar_GainFocus'
 } | {
     type: 'AddressBar_LoseFocus'
+} | {
+    type: 'AddressBar_ShowCustomEventDialog'
+} | {
+    type: 'AddressBar_HideCustomEventDialog'
 }
 
 
@@ -293,6 +298,16 @@ export class AddressBarActions {
     static loseFocus() {
         dispatch<AddressBarAction>({
             type: 'AddressBar_LoseFocus'
+        })
+    }
+    static showCustomEventDialog() {
+        dispatch<AddressBarAction>({
+            type: 'AddressBar_ShowCustomEventDialog'
+        })
+    }
+    static hideCustomEventDialog() {
+        dispatch<AddressBarAction>({
+            type: 'AddressBar_HideCustomEventDialog'
         })
     }
 }
@@ -471,6 +486,10 @@ export const addressBarReducer: Reducer<IAddressBarState> = (
             return Object.assign({}, state, { hasFocus: true });
         case 'AddressBar_LoseFocus':
             return Object.assign({}, state, { hasFocus: false });
+        case 'AddressBar_ShowCustomEventDialog':
+            return Object.assign({}, state, { showCustomEventDialog: true });
+        case 'AddressBar_HideCustomEventDialog':
+            return Object.assign({}, state, { showCustomEventDialog: false });
         default:
             return state;
     }

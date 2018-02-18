@@ -445,6 +445,38 @@
         width: 460px;
     }
 
+/* customevent-dialog */
+
+    .customevent-dialog .input-group {
+        margin: 0;
+        width: 100%;
+    }
+
+    .customevent-submitbtn {
+        position: absolute;
+        left: 50%;
+        transform: translate(-110%, 0%);
+        padding: 10.5px 16px 10.5px 16px;
+        font-size: 13px;
+        text-transform: uppercase;
+        line-height: 1.3333333;
+        font-weight: 500;
+        width: 96px;
+    }
+
+    .customevent-cancelbtn {
+        background: #E6E6E6;
+        color: #888;
+        position: absolute;
+        left: 50%;
+        transform: translate(10%, 0%);
+        padding: 10.5px 16px 10.5px 16px;
+        font-size: 13px;
+        text-transform: uppercase;
+        line-height: 1.3333333;
+        font-weight: 500;
+        width: 96px;
+    }
 
 /* conversationsettings-dialog */
 
