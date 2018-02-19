@@ -66,8 +66,8 @@ export class BotList extends React.Component {
     this.state = { botQuery: '' };
   }
 
-  onSelectBot(e, handle) {
-    this.props.dispatch(BotActions.setActive(handle));
+  onSelectBot(e, botId) {
+    this.props.dispatch(BotActions.setActive(botId));
   }
 
   onClickSettings(e, bot) {
@@ -92,14 +92,14 @@ export class BotList extends React.Component {
     // show explorer to choose directory and write bot file to disk
     CommandService.remoteCall('bot:list:promptCreate')
       .then(bot => {
-
         this.props.dispatch((dispatch) => {
           // have main process dispatch a bot CREATE action
-          CommandService.remoteCall('bot:list:create', bot);
-
-          // open bot settings and switch to explorer view
-          this.props.dispatch(NavBarActions.selectOrToggle(Constants.NavBar_Files));
-          this.props.dispatch(EditorActions.open(Constants.ContentType_BotSettings, bot.handle + ':settings', bot));
+          CommandService.remoteCall('bot:list:create', bot)
+          .then(() => {
+            // open bot settings and switch to explorer view
+            this.props.dispatch(NavBarActions.selectOrToggle(Constants.NavBar_Files));
+            this.props.dispatch(EditorActions.open(Constants.ContentType_BotSettings, bot.botId + ':settings', bot.botId));
+          })
         });
       })
       .catch(err => {
@@ -114,26 +114,26 @@ export class BotList extends React.Component {
 
   render() {
     let bots = this.state.botQuery ?
-      this.props.bots.map(bot => fuzzysearch(this.state.botQuery, bot.handle.toLowerCase()) ? bot : null).filter(bot => !!bot)
-    :
+      this.props.bots.map(bot => fuzzysearch(this.state.botQuery, bot.botId.toLowerCase()) ? bot : null).filter(bot => !!bot)
+      :
       this.props.bots;
 
     return (
-      <ExpandCollapse initialExpanded={ true } title="Bots">
+      <ExpandCollapse initialExpanded={true} title="Bots">
         <AccessoryButtons>
-          <div className={ ACTIONS_CSS }>
-            <span role="button" onClick={ this.onCreateBot }>+</span>
-            <span role="button" className="open-bot-icon" onClick={ this.onOpenBot }></span>
+          <div className={ACTIONS_CSS}>
+            <span role="button" onClick={this.onCreateBot}>+</span>
+            <span role="button" className="open-bot-icon" onClick={this.onOpenBot}></span>
           </div>
         </AccessoryButtons>
         <ExpandCollapseContent>
-          { bots.length ? <input className={ INPUT_CSS } value={ this.state.botQuery } onChange={ this.onChangeQuery } placeholder={ 'Search for a bot...' } /> : null }
-          <div className={ CSS }>
+          {bots.length ? <input className={INPUT_CSS} value={this.state.botQuery} onChange={this.onChangeQuery} placeholder={'Search for a bot...'} /> : null}
+          <div className={CSS}>
             <ul>
               {
                 bots.length ?
-                  bots.map(bot => <BotListItem key={ bot.handle } bot={ bot } onSelect={ this.onSelectBot } onClickSettings={ this.onClickSettings } activeBot={ this.props.activeBot } />)
-                :
+                  bots.map(bot => <BotListItem key={bot.botId} bot={bot} onSelect={this.onSelectBot} onClickSettings={this.onClickSettings} activeBot={this.props.activeBot} />)
+                  :
                   <li className="empty-bot-list">No bots found...</li>
               }
             </ul>

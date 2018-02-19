@@ -44,13 +44,14 @@ export const CLEAR_LOG = 'CHAT/LOG/CLEAR';
 export const OPEN_TRANSCRIPT_DOCUMENT = 'CHAT/DOCUMENT/OPEN/TRANSCRIPT';
 export const CLOSE_TRANSCRIPT_DOCUMENT = 'CHAT/DOCUMENT/CLOSE/TRANSCRIPT';
 
-export function newLiveChatDocument(url) {
+export function newLiveChatDocument(conversationId, executive) {
   return {
     type: NEW_LIVECHAT_DOCUMENT,
     payload: {
-      conversationId: uniqueId(),
+      conversationId,
       webChatStore: createWebChatStore(),
       directLine: null,
+      executive,
       log: {
         entries: []
       }
@@ -67,13 +68,12 @@ export function closeLiveChatDocument(conversationId) {
   }
 }
 
-export function appendToLog(level, conversationId, ...args) {
+export function appendToLog(conversationId, entry) {
   return {
     type: APPEND_TO_LOG,
     payload: {
-      level,
       conversationId,
-      args
+      entry
     }
   }
 }

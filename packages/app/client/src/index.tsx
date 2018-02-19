@@ -68,8 +68,5 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
+// Let the main process know we're loaded
 CommandService.remoteCall('client:loaded');
-
-CommandService.remoteCall('say:hello')
-  .then(result => console.log(result))
-  .catch(err => console.log(err));

@@ -36,6 +36,7 @@ import { ConversationManager } from './conversationManager';
 import * as Settings from './settings';
 import * as Electron from 'electron';
 import { windowManager, mainWindow } from './main';
+import { getActiveBot } from './botHelpers';
 
 
 interface IQueuedMessage {
@@ -79,8 +80,7 @@ export class Emulator {
   }
 
   private getSpeechToken(event: Electron.Event, conversationId: string, refresh: boolean = false) {
-    const settings = Settings.getSettings();
-    const activeBot = settings.getActiveBot();
+    const activeBot = getActiveBot();
     if (activeBot && activeBot.botId && conversationId) {
       let conversation = this.conversations.conversationById(activeBot.botId, conversationId);
       conversation.getSpeechToken(10, (tokenInfo) => {

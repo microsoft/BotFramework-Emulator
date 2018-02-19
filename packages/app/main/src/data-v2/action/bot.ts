@@ -64,12 +64,12 @@ export function open(bot) {
   };
 }
 
-export function patch(handle, bot) {
+export function patch(botId, bot) {
   return {
     type: PATCH,
     meta: { send: true },
     payload: {
-      handle,
+      botId,
       bot
     }
   };

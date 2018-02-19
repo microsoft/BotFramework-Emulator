@@ -164,7 +164,7 @@ export class TabManager extends React.Component {
             case 'Control':
                 if (this.state.showing) {
                     this.setState(({ controlIsPressed: false, showing: false }));
-                    this.props.dispatch(EditorActions.setActiveTab(this.props.activeEditor, this.props.openTabs[this.state.selectedIndex]));
+                    this.props.dispatch(EditorActions.setActiveTab(this.props.openTabs[this.state.selectedIndex]));
                 } else {
                     this.setState(({ controlIsPressed: false }));
                 }

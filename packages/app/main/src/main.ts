@@ -49,6 +49,8 @@ import { CommandRegistry } from 'botframework-emulator-shared/built/platform/com
 import { readFileSync, showOpenDialog, writeFile } from './utils';
 import { uniqueId } from 'botframework-emulator-shared/built/utils';
 import * as BotActions from './data-v2/action/bot';
+import * as ChatActions from './data-v2/action/chat';
+import { IBot } from 'botframework-emulator-shared/built/types/botTypes';
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
   console.error(error);
@@ -118,16 +120,15 @@ CommandRegistry.registerCommand('bot:list:promptCreate', (context: Window, ...ar
     .then((path: string) => {
       path += '\\bot.bot';
 
+      const botId = uniqueId();
       // create a new bot file
-      const bot = {
-        handle: uniqueId().substring(0, 5),
-        path: path,
-        settings: {
-          endpoint: '',
-          msaAppId: '',
-          msaAppPw: '',
-          locale: 'en-US'
-        }
+      const bot: IBot = {
+        botId,
+        botUrl: '',
+        msaAppId: '',
+        msaPassword: '',
+        locale: '',
+        path,
       };
 
       // write bot file to disk
@@ -142,13 +143,13 @@ CommandRegistry.registerCommand('bot:list:promptCreate', (context: Window, ...ar
 });
 
 // dispatch bot CREATE action
-CommandRegistry.registerCommand('bot:list:create', (context: Window, bot: any): any => {
+CommandRegistry.registerCommand('bot:list:create', (context: Window, bot: IBot): any => {
   console.log('DISPATCHING CREATE ON SERVER: ', Date.now());
   context.store.dispatch(BotActions.create(bot));
 });
 
 // save bot file
-CommandRegistry.registerCommand('bot:save', (context: Window, bot: any, originalHandle: string): any => {
+CommandRegistry.registerCommand('bot:save', (context: Window, bot: IBot, originalHandle: string): any => {
   try {
     writeFile(bot.path, bot);
     context.store.dispatch(BotActions.patch(originalHandle, bot));
@@ -181,14 +182,20 @@ CommandRegistry.registerCommand('file:write', (context: Window, path: string, co
   }
 });
 
-CommandRegistry.registerCommand("say:hello", (context: any, ...args: any[]): any => {
-  return "Hi from main!";
+// Send app settings to client.
+CommandRegistry.registerCommand("client:loaded", (context: any, ...args: any[]): any => {
+  context.commandService.remoteCall("settings:emulator:url:set", emulator.framework.router.url);
 });
 
-CommandRegistry.registerCommand("client:loaded", (context: any, ...args: any[]): any => {
-  // Send app settings to client.
-  mainWindow.commandService.remoteCall("settings:emulator:url:set", emulator.framework.router.url);
+// Create a new livechat conversation
+CommandRegistry.registerCommand("livechat:new", (context: any, ...args: any[]): any => {
+  const action = ChatActions.newLiveChat();
+  // TODO: Validate a bot is active first
+  context.store.dispatch(action);
+  return action.payload.conversationId;
 });
+
+//=============================================================================
 
 const createMainWindow = () => {
 

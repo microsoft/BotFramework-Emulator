@@ -18,26 +18,26 @@ export function open(bot) {
   };
 }
 
-export function patch(handle, bot) {
+export function patch(botId, bot) {
   return {
     type: PATCH,
     payload: {
-      handle,
+      botId,
       bot
     }
   };
 }
 
-export function remove(handle) {
+export function remove(botId) {
   return {
     type: DELETE,
-    payload: handle
+    payload: botId
   };
 }
 
-export function setActive(handle) {
+export function setActive(botId) {
   return {
     type: SET_ACTIVE,
-    payload: handle
+    payload: botId
   };
 }

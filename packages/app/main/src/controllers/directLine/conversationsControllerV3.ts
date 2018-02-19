@@ -47,7 +47,7 @@ import { jsonBodyParser } from '../../jsonBodyParser';
 import { usersDefault } from 'botframework-emulator-shared/built/types/serverSettingsTypes';
 import { mainWindow } from '../../main';
 import { LogLevel } from 'botframework-emulator-shared/built/platform/log';
-
+import { getActiveBot } from '../../botHelpers';
 
 export class ConversationsControllerV3 {
 
@@ -67,7 +67,7 @@ export class ConversationsControllerV3 {
   }
 
   static startConversation = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    const activeBot = getSettings().getActiveBot();
+    const activeBot = getActiveBot();
     const auth = req.header('Authorization');
     const tokenMatch = /Bearer\s+(.+)/.exec(auth);
     const conversationId = tokenMatch[1];
@@ -111,14 +111,18 @@ export class ConversationsControllerV3 {
       });
     } else {
       res.send(HttpStatus.NOT_FOUND, "no active bot");
-      mainWindow.logService.logToLiveChat(LogLevel.Error, conversationId, "DirectLine: Cannot start conversation. No active bot");
+      mainWindow.logService.logToLiveChat(conversationId, {
+        level: LogLevel.Error,
+        source: "directline",
+        message: "Cannot start conversation. No active bot."
+      });
       log.error("DirectLine: Cannot start conversation. No active bot");
     }
     res.end();
   }
 
   static reconnectToConversation = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    const activeBot = getSettings().getActiveBot();
+    const activeBot = getActiveBot();
     if (activeBot) {
       const conversation = emulator.conversations.conversationById(activeBot.botId, req.params.conversationId);
       if (conversation) {
@@ -140,7 +144,7 @@ export class ConversationsControllerV3 {
   }
 
   static getActivities = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    const activeBot = getSettings().getActiveBot();
+    const activeBot = getActiveBot();
     if (activeBot) {
       const conversation = emulator.conversations.conversationById(activeBot.botId, req.params.conversationId);
       if (conversation) {
@@ -162,7 +166,7 @@ export class ConversationsControllerV3 {
   }
 
   static postActivity = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    const activeBot = getSettings().getActiveBot();
+    const activeBot = getActiveBot();
     if (activeBot) {
       const conversation = emulator.conversations.conversationById(activeBot.botId, req.params.conversationId);
       if (conversation) {
@@ -189,8 +193,7 @@ export class ConversationsControllerV3 {
 
 
   static upload = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    const settings = getSettings();
-    const activeBot = settings.getActiveBot();
+    const activeBot = getActiveBot();
     if (activeBot) {
       const conversation = emulator.conversations.conversationById(activeBot.botId, req.params.conversationId);
       if (conversation) {

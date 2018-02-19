@@ -72,7 +72,7 @@ export default class Log extends React.Component {
               </span>
               <span>&nbsp;</span>
               <span className={entry.type}>
-                {entry.text}
+                {entry.message}
               </span>
             </div>
           )

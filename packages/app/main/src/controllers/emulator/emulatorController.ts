@@ -45,11 +45,11 @@ import { windowManager } from '../../main';
 import { Conversation } from '../../conversationManager';
 import * as Payment from 'botframework-emulator-shared/built/types/paymentTypes';
 import { sendErrorResponse } from '../../utils';
+import { getActiveBot } from '../../botHelpers';
 
 
 function getConversation(conversationId: string): Conversation {
-    const settings = getSettings();
-    const activeBot = settings.getActiveBot();
+    const activeBot = getActiveBot();
     if (!activeBot) {
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
     }

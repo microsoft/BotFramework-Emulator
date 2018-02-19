@@ -35,27 +35,27 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 const CSS = css({
-    '& > header': {
-        fontSize: '13px',
-        lineHeight: '72px',
-        height: '72px',
-        paddingLeft: '16px',
-        textTransform: 'uppercase',
-    },
+  '& > header': {
+    fontSize: '13px',
+    lineHeight: '72px',
+    height: '72px',
+    paddingLeft: '16px',
+    textTransform: 'uppercase',
+  },
 });
 
 class BotExplorerTitle extends React.Component {
-    render() {
-        return (
-            <div className={ CSS }>
-                <header>
-                    { this.props.activeBot }
-                </header>
-            </div>
-        );
-    }
+  render() {
+    return (
+      <div className={CSS}>
+        <header>
+          {this.props.activeBot}
+        </header>
+      </div>
+    );
+  }
 }
 
 export default connect(state => ({
-    activeBot: state.bot.activeBot
+  activeBot: state.bot.activeBot
 }))(BotExplorerTitle)

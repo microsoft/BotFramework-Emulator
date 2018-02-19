@@ -52,12 +52,12 @@ class MDI extends React.Component {
     }
 
     handleTabChange(tabValue) {
-        this.props.dispatch(EditorActions.setActiveTab(this.props.owningEditor, this.props.documents[tabValue].documentId));
+        this.props.dispatch(EditorActions.setActiveTab(this.props.documents[tabValue].documentId));
     }
 
     componentWillMount() {
       this._openBotSettingsCommandHandler = CommandRegistry.registerCommand('bot:settings:open', (context, bot) => {
-        this.props.dispatch(EditorActions.open(Constants.ContentType_BotSettings, bot.handle + ':settings', bot));
+        this.props.dispatch(EditorActions.open(Constants.ContentType_BotSettings, bot.botId + ':settings', bot.botId));
       });
     }
 

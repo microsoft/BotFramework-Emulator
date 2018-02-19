@@ -44,17 +44,6 @@ import ExplorerItem from '../explorerItem';
 import { CommandRegistry } from 'botframework-emulator-shared/built/platform/commands/commandRegistry';
 import store from '../../../../data/store';
 
-CommandRegistry.registerCommand('livechat:new', (context, activeEditor) => {
-  const createAction = ChatActions.newLiveChatDocument();
-  store.dispatch(createAction);
-  // TODO: Turn this into a saga, the conversation ID maybe generated from server asynchronously
-  store.dispatch(EditorActions.open(
-    activeEditor,
-    constants.ContentType_LiveChat,
-    createAction.payload.conversationId
-  ));
-});
-
 const CSS = css({
   display: 'flex',
   flex: 1,
@@ -82,7 +71,7 @@ class TranscriptExplorer extends React.Component {
   }
 
   handleItemClick(conversationId) {
-    this.props.dispatch(EditorActions.setActiveTab(null, conversationId));
+    this.props.dispatch(EditorActions.setActiveTab(conversationId));
   }
 
   render() {

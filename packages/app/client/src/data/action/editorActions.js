@@ -72,11 +72,10 @@ export function open(contentType, documentId, meta) {
     };
 }
 
-export function setActiveTab(editorKey, documentId) {
+export function setActiveTab(documentId) {
     return {
         type: SET_ACTIVE_TAB,
         payload: {
-            editorKey,
             documentId
         }
     };

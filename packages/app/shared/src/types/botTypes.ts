@@ -38,7 +38,8 @@ export interface IBot {
   botUrl?: string,
   msaAppId?: string,
   msaPassword?: string,
-  locale?: string
+  locale?: string,
+  path?: string
 }
 
 export function newBot(bot: IBot): IBot {

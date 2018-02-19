@@ -45,16 +45,22 @@ import { CommandRegistry } from 'botframework-emulator-shared/built/platform/com
 import { CommandService } from '../../../../platform/commands/commandService';
 import store from '../../../../data/store';
 
+//=============================================================================
+// LIVE CHAT COMMANDS
+
 CommandRegistry.registerCommand('livechat:new', (context, activeEditor) => {
-  const createAction = ChatActions.newLiveChatDocument();
-  store.dispatch(createAction);
-  // TODO: Turn this into a saga, the conversation ID maybe generated from server asynchronously
-  store.dispatch(EditorActions.open(
-    activeEditor,
-    constants.ContentType_LiveChat,
-    createAction.payload.conversationId
-  ));
+  CommandService.remoteCall('livechat:new')
+  .then(conversationId => {
+    store.dispatch(ChatActions.newLiveChatDocument(conversationId));
+    store.dispatch(EditorActions.open(
+      constants.ContentType_LiveChat,
+      conversationId
+    ));
+  })
+  .catch(err => console.log(err));  // TODO: Show failure as a notification
 });
+
+//=============================================================================
 
 const CSS = css({
   display: 'flex',
@@ -89,7 +95,7 @@ class LiveChatExplorer extends React.Component {
   }
 
   handleItemClick(conversationId) {
-    this.props.dispatch(EditorActions.setActiveTab(null, conversationId));
+    this.props.dispatch(EditorActions.setActiveTab(conversationId));
   }
 
   render() {

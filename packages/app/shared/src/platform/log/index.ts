@@ -5,6 +5,13 @@ export enum LogLevel {
   Error
 }
 
+export interface ILogEntry {
+  level?: LogLevel;
+  source?: string;
+  category?: string;
+  message: string;
+}
+
 export interface ILogService {
-  logToLiveChat(level: LogLevel, conversationId: string, ...args: any[]): void;
+  logToLiveChat(conversationId: string, entry: ILogEntry): void;
 }

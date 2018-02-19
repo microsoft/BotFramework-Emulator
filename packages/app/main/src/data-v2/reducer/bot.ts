@@ -1,19 +1,20 @@
 import * as BotActions from '../action/bot';
+import { IBot } from 'botframework-emulator-shared/built/types/botTypes';
 
 export interface IBotState {
   activeBot: string;
-  bots: Array<any>;
+  bots: IBot[];
 }
 
 export type BotAction = {
   type: 'BOT/CREATE';
-  payload: any;
+  payload: IBot;
 } | {
   type: 'BOT/LOAD_BOTS_RESPONSE',
   payload: any
 } | {
   type: 'BOT/OPEN';
-  payload: any;
+  payload: IBot;
 } | {
   type: 'BOT/PATCH',
   payload: any;
@@ -25,28 +26,27 @@ const DEFAULT_STATE: IBotState = {
 };
 
 export const bot: any = (state: IBotState = DEFAULT_STATE, action: BotAction) => {
-  const payload = action.payload;
 
   switch(action.type) {
     case BotActions.CREATE:
     case BotActions.OPEN: {
       // set active bot and add bot to bots list
-      const bots = [...state.bots, payload];
+      const bots = [...state.bots, action.payload];
       state = setBotsState(bots, state);
-      state = setActiveBot(payload.handle, state);
+      state = setActiveBot(action.payload.botId, state);
       break;
     }
 
     case BotActions.PATCH: {
-      const botIndex = state.bots.findIndex(bot => bot.handle === payload.handle);
+      const botIndex = state.bots.findIndex(bot => bot.botId === action.payload.botId);
       const patchedBot = {
         ...state.bots[botIndex],
-        ...payload.bot
+        ...action.payload.bot
       };
       const bots = [...state.bots];
       bots[botIndex] = patchedBot;
       state = setBotsState(bots, state);
-      state = setActiveBot(patchedBot.handle, state);
+      state = setActiveBot(patchedBot.botId, state);
       break;
     }
 
@@ -55,10 +55,10 @@ export const bot: any = (state: IBotState = DEFAULT_STATE, action: BotAction) =>
   return state;
 }
 
-function setActiveBot(botHandle, state) {
+function setActiveBot(botId, state) {
   let newState = Object.assign({}, state);
 
-  newState.activeBot = botHandle;
+  newState.activeBot = botId;
   return newState;
 }
 

@@ -73,8 +73,30 @@ export default function chat(state = DEFAULT_STATE, action) {
             ...document.log,
             entries: [
               ...document.log.entries,
-              { ...payload.args }
+              payload.entry
             ]
+          }
+        }
+        state = {
+          ...state,
+          liveChats: {
+            ...state.liveChats,
+            [payload.conversationId]: {
+              ...document
+            }
+          }
+        }
+      }
+    }
+      break;
+
+    case ChatActions.CLEAR_LOG: {
+      let document = state.liveChats[payload.conversationId];
+      if (document) {
+        document = {
+          ...document,
+          log: {
+            entries: []
           }
         }
         state = {

@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { getSettings, authenticationSettings, v31AuthenticationSettings, v32AuthenticationSettings } from './settings';
+import { authenticationSettings, v31AuthenticationSettings, v32AuthenticationSettings } from './settings';
 import * as jwt from 'jsonwebtoken';
 import * as oid from './OpenIdMetadata';
 import * as Restify from 'restify';
-
+import { getActiveBot } from './botHelpers';
 
 export class BotFrameworkAuthentication {
     private openIdMetadata: oid.OpenIdMetadata;
@@ -52,7 +52,7 @@ export class BotFrameworkAuthentication {
                 token = auth[1];
             }
         }
-        const activeBot = getSettings().getActiveBot();
+        const activeBot = getActiveBot();
         // Verify token
         if (token) {
             let decoded = jwt.decode(token, { complete: true });

@@ -4,6 +4,9 @@ import { css } from 'glamor';
 
 import { CommandService } from '../../../platform/commands/commandService';
 import * as Fonts from '../../styles/fonts';
+import * as BotActions from '../../../data/action/botActions';
+import store from "../../../data/store";
+import { getBotById } from "../../../data/botHelpers";
 
 const CSS = css({
   boxSizing: 'border-box',
@@ -50,84 +53,74 @@ export default class SettingsEditor extends React.Component {
     this.onSave = this.onSave.bind(this);
 
     this.state = {
-      originalHandle: this.props.bot.handle,
-      handle: this.props.bot.handle,
-      endpoint: this.props.bot.settings.endpoint,
-      msaAppId: this.props.bot.settings.msaAppId,
-      msaAppPw: this.props.bot.settings.msaAppPw,
-      locale: this.props.bot.settings.locale
+      originalHandle: this.props.botId,
+      bot: getBotById(this.props.botId)
     };
   }
 
-  componentWillReceiveProps(newProps) {
-    // If opening two bot settings tabs back-to-back, the component will not re-intialize,
-    // so we need to detect if a new bot's settings should be displayed
-    if (newProps.bot.handle !== this.state.handle) {
-      this.setState(({
-        originalHandle: newProps.bot.handle,
-        handle: newProps.bot.handle,
-        endpoint: newProps.bot.settings.endpoint,
-        msaAppId: newProps.bot.settings.msaAppId,
-        msaAppPw: newProps.bot.settings.msaAppPw,
-        locale: newProps.bot.settings.locale
-      }));
-    }
+  componentWillMount() {
+    this.setState({
+      originalHandle: this.props.botId,
+      bot: getBotById(this.props.botId)
+    });
   }
 
   onChangeHandle(e) {
-    this.setState(({ handle: e.target.value }));
+    const bot = { ...this.state.bot, botId: e.target.value };
+    this.setState({ bot });
   }
 
   onChangeEndpoint(e) {
-    this.setState(({ endpoint: e.target.value }));
+    const bot = { ...this.state.bot, botUrl: e.target.value };
+    this.setState({ bot });
   }
 
   onChangeAppId(e) {
-    this.setState(({ msaAppId: e.target.value }));
+    const bot = { ...this.state.bot, msaAppId: e.target.value };
+    this.setState({ bot });
   }
 
   onChangeAppPw(e) {
-    this.setState(({ msaAppPw: e.target.value }));
+    const bot = { ...this.state.bot, msaPassword: e.target.value };
+    this.setState({ bot });
   }
-  
+
   onChangeLocale(e) {
-    this.setState(({ locale: e.target.value }));
+    const bot = { ...this.state.bot, locale: e.target.value };
+    this.setState({ bot });
   }
 
   onSave(e) {
     // write new settings to bot file
     const newBotFile = {
-      ...this.props.bot,
-      handle: this.state.handle,
-      settings: {
-        endpoint: this.state.endpoint,
-        msaAppId: this.state.msaAppId,
-        msaAppPw: this.state.msaAppPw,
-        locale: this.state.locale
-      }
+      ...this.state.bot
     };
-    CommandService.remoteCall('bot:save', newBotFile, this.state.originalHandle);
+    CommandService.remoteCall('bot:save', newBotFile, this.state.originalHandle)
+    .then(() => {
+      store.dispatch(BotActions.patch(this.state.originalHandle, newBotFile))
+      this.setState({ originalHandle: newBotFile.botId });
+    });
   }
 
   render() {
     return (
       <div className={ CSS }>
-        <h1>Bot Settings for { this.props.bot.handle }</h1>
+        <h1>Bot Settings for { this.state.bot.botId }</h1>
 
         <span>Bot handle</span>
-        <input value={ this.state.handle } onChange={ this.onChangeHandle } type="text" />
+        <input value={ this.state.bot.botId } onChange={ this.onChangeHandle } type="text" />
 
         <span>Endpoint</span>
-        <input value={ this.state.endpoint } onChange={ this.onChangeEndpoint } type="text" />
+        <input value={ this.state.bot.botUrl } onChange={ this.onChangeEndpoint } type="text" />
 
         <span>MSA App Id</span>
-        <input value={ this.state.msaAppId } onChange={ this.onChangeAppId } type="text" />
+        <input value={ this.state.bot.msaAppId } onChange={ this.onChangeAppId } type="text" />
 
         <span>MSA App Password</span>
-        <input value={ this.state.msaAppPw } onChange={ this.onChangeAppPw } type="password" />
+        <input value={ this.state.bot.msaPassword } onChange={ this.onChangeAppPw } type="password" />
 
         <span>Locale</span>
-        <input value={ this.state.locale } onChange={ this.onChangeLocale } type="text" />
+        <input value={ this.state.bot.locale } onChange={ this.onChangeLocale } type="text" />
 
         <button onClick={ this.onSave }>Save</button>
       </div>
@@ -136,5 +129,5 @@ export default class SettingsEditor extends React.Component {
 }
 
 SettingsEditor.propTypes = {
-  bot: PropTypes.object.isRequired
+  botId: PropTypes.string.isRequired
 };

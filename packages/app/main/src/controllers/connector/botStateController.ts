@@ -44,6 +44,7 @@ import { approximateObjectSize } from 'botframework-emulator-shared/built/utils'
 import { emulator } from '../../emulator';
 import { Conversation } from '../../conversationManager';
 import { sendErrorResponse } from "../../utils";
+import { getActiveBot } from '../../botHelpers';
 
 
 interface IBotData {
@@ -114,7 +115,7 @@ export class BotStateController {
     // Get USER Data
     public getUserData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         try {
-            const activeBot = getSettings().getActiveBot();
+            const activeBot = getActiveBot();
             if (!activeBot) {
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
             }
@@ -131,7 +132,7 @@ export class BotStateController {
     // Get Conversation Data
     public getConversationData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         try {
-            const activeBot = getSettings().getActiveBot();
+            const activeBot = getActiveBot();
             if (!activeBot) {
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
             }
@@ -148,7 +149,7 @@ export class BotStateController {
     // Get PrivateConversation Data
     public getPrivateConversationData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         try {
-            const activeBot = getSettings().getActiveBot();
+            const activeBot = getActiveBot();
             if (!activeBot) {
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
             }
@@ -166,7 +167,7 @@ export class BotStateController {
     public setUserData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         let botData;
         try {
-            const activeBot = getSettings().getActiveBot();
+            const activeBot = getActiveBot();
             if (!activeBot) {
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
             }
@@ -183,7 +184,7 @@ export class BotStateController {
     // set conversation data
     public setConversationData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         try {
-            const activeBot = getSettings().getActiveBot();
+            const activeBot = getActiveBot();
             if (!activeBot) {
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
             }
@@ -200,7 +201,7 @@ export class BotStateController {
     // set private conversation data
     public setPrivateConversationData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         try {
-            const activeBot = getSettings().getActiveBot();
+            const activeBot = getActiveBot();
             if (!activeBot) {
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
             }
@@ -217,7 +218,7 @@ export class BotStateController {
     // delete state for user
     public deleteStateForUser = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
         try {
-            const activeBot = getSettings().getActiveBot();
+            const activeBot = getActiveBot();
             if (!activeBot) {
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
             }

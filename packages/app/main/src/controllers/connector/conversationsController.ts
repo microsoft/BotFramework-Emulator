@@ -48,6 +48,7 @@ import { error } from '../../log';
 import { jsonBodyParser } from '../../jsonBodyParser';
 import { VersionManager } from '../../versionManager';
 import { sendErrorResponse } from '../../utils';
+import { getActiveBot } from '../../botHelpers';
 
 interface IConversationAPIPathParameters {
     conversationId: string;
@@ -73,7 +74,7 @@ export class ConversationsController {
         try {
             const settings = getSettings();
             // look up bot
-            const activeBot = settings.getActiveBot();
+            const activeBot = getActiveBot();
             if (!activeBot)
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
 
@@ -145,7 +146,7 @@ export class ConversationsController {
             const parms: IConversationAPIPathParameters = req.params;
 
             // look up bot
-            const activeBot = getSettings().getActiveBot();
+            const activeBot = getActiveBot();
             if (!activeBot)
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
 
@@ -175,7 +176,7 @@ export class ConversationsController {
             const parms: IConversationAPIPathParameters = req.params;
 
             // look up bot
-            const activeBot = getSettings().getActiveBot();
+            const activeBot = getActiveBot();
             if (!activeBot)
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
 
@@ -211,7 +212,7 @@ export class ConversationsController {
             const parms: IConversationAPIPathParameters = req.params;
 
             // look up bot
-            const activeBot = getSettings().getActiveBot();
+            const activeBot = getActiveBot();
             if (!activeBot)
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
 
@@ -241,7 +242,7 @@ export class ConversationsController {
         const parms: IConversationAPIPathParameters = req.params;
         try {
             // look up bot
-            const activeBot = getSettings().getActiveBot();
+            const activeBot = getActiveBot();
             if (!activeBot)
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
 
@@ -266,7 +267,7 @@ export class ConversationsController {
         const parms: IConversationAPIPathParameters = req.params;
         try {
             // look up bot
-            const activeBot = getSettings().getActiveBot();
+            const activeBot = getActiveBot();
             if (!activeBot)
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
 
@@ -290,7 +291,7 @@ export class ConversationsController {
         const parms: IConversationAPIPathParameters = req.params;
         try {
             // look up bot
-            const activeBot = getSettings().getActiveBot();
+            const activeBot = getActiveBot();
             if (!activeBot)
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
 
@@ -313,7 +314,7 @@ export class ConversationsController {
         let attachmentData = <IAttachmentData>req.body;
         try {
             // look up bot
-            const activeBot = getSettings().getActiveBot();
+            const activeBot = getActiveBot();
             if (!activeBot)
                 throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
 

@@ -49,6 +49,7 @@ import * as log from './log';
 import { usersDefault } from 'botframework-emulator-shared/built/types/serverSettingsTypes';
 import * as moment from 'moment';
 import { isLocalhostUrl } from './utils';
+import { getBotById } from './botHelpers';
 
 /**
  * Stores and propagates conversation messages.
@@ -118,8 +119,7 @@ export class Conversation {
         if (!activity.recipient.name) {
             activity.recipient.name = "Bot";
         }
-        const settings = getSettings();
-        const bot = settings.botById(this.botId);
+        const bot = getBotById(this.botId);
         if (bot) {
             activity.serviceUrl = emulator.framework.getServiceUrl(bot.botUrl);
 
@@ -341,8 +341,7 @@ export class Conversation {
             details: request.details
         };
         let serviceUrl;
-        const settings = getSettings();
-        const bot = settings.botById(this.botId);
+        const bot = getBotById(this.botId);
         serviceUrl = emulator.framework.getServiceUrl(bot.botUrl);
 
         const activity: IInvokeActivity = {
@@ -406,8 +405,7 @@ export class Conversation {
             }
         };
         let serviceUrl;
-        const settings = getSettings();
-        const bot = settings.botById(this.botId);
+        const bot = getBotById(this.botId);
         serviceUrl = emulator.framework.getServiceUrl(bot.botUrl);
 
         const activity: IInvokeActivity = {
@@ -435,8 +433,7 @@ export class Conversation {
             cb(this.speechToken);
         } else {
             // fetch the speech token
-            const settings = getSettings();
-            const bot = settings.botById(this.botId);
+            const bot = getBotById(this.botId);
 
             if (bot.msaAppId && bot.msaPassword) {
                 let options = {
@@ -515,7 +512,7 @@ export class Conversation {
 
     public getAccessToken(cb: (err: Error, accessToken: string) => void): void {
         if (!this.accessToken || new Date().getTime() >= this.accessTokenExpires) {
-            const bot = getSettings().botById(this.botId);
+            const bot = getBotById(this.botId);
             // Refresh access token
             let opt = {
                 method: 'POST',
@@ -555,7 +552,7 @@ export class Conversation {
     }
 
     private addAccessToken(options:any, cb: (err: Error) => void): void {
-        const bot = getSettings().botById(this.botId);
+        const bot = getBotById(this.botId);
 
         if (bot.msaAppId && bot.msaPassword) {
             this.getAccessToken((err, token) => {
