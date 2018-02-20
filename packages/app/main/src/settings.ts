@@ -78,7 +78,7 @@ export const getStore = (): Store<ISettings> => {
 
         store = createStore(combineReducers<ISettings>({
             framework: frameworkReducer,
-            bots: botsReducer,
+            legacyBots: botsReducer,
             activeBot: activeBotReducer,
             windowState: windowStateReducer,
             users: usersReducer

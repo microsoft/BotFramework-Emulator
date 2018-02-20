@@ -124,7 +124,7 @@ CommandRegistry.registerCommand('bot:list:promptCreate', (context: Window, ...ar
       // create a new bot file
       const bot: IBot = {
         botId,
-        botUrl: '',
+        botUrl: 'http://localhost:3978/api/messages',
         msaAppId: '',
         msaPassword: '',
         locale: '',

@@ -38,11 +38,10 @@ import { BotStateController } from './controllers/connector/botStateController';
 import { ConversationsControllerV3 as DirectLineConversationsController } from './controllers/directLine/conversationsControllerV3';
 import { EmulatorController } from './controllers/emulator/emulatorController';
 import { RestServer } from './restServer';
-import { getStore, getSettings, addSettingsListener } from './settings';
+import { getStore, addSettingsListener } from './settings';
 import { Settings } from 'botframework-emulator-shared/built/types/serverSettingsTypes';
 import * as log from './log';
 import * as ngrok from './ngrok';
-import { Emulator } from './emulator';
 import { isLocalhostUrl } from './utils';
 
 /**
@@ -78,11 +77,6 @@ export class BotFrameworkService extends RestServer {
         addSettingsListener((settings: Settings) => {
             this.configure(settings);
         });
-        this.router.on('listening', () => {
-            this.configure(getSettings());
-            Emulator.send('listening', { serviceUrl: this.localhostServiceUrl });
-        });
-        //this.router.on('NotFound', (req: Restify.Request, res: Restify.Response, cb) => {});
     }
 
     startup() {

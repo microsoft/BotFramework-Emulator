@@ -52,7 +52,20 @@ const CSS = css({
       color: Colors.LOG_PANEL_SOURCE_DARK,
     },
 
-    '& > .info': {
+    // info
+    '& > .level-0': {
+      color: Colors.LOG_PANEL_INFO_DARK,
+    },
+    // trace
+    '& > .level-1': {
+      color: Colors.LOG_PANEL_INFO_DARK,
+    },
+    // warn
+    '& > .level-2': {
+      color: Colors.LOG_PANEL_INFO_DARK,
+    },
+    // error
+    '& > .level-3': {
       color: Colors.LOG_PANEL_INFO_DARK,
     },
   },
@@ -60,21 +73,12 @@ const CSS = css({
 
 export default class Log extends React.Component {
   render() {
-    const entries = this.props.document.log.entries;
     let key = 0;
     return (
       <div className={CSS}>
         {
-          entries.map(entry =>
-            <div className="entry" key={key++}>
-              <span className="source">
-                {'[' + entry.source + ']'}
-              </span>
-              <span>&nbsp;</span>
-              <span className={entry.type}>
-                {entry.message}
-              </span>
-            </div>
+          this.props.document.log.entries.map(entry =>
+            <LogEntry key={`entry-${key++}`} entry={entry} />
           )
         }
       </div>
@@ -85,3 +89,39 @@ export default class Log extends React.Component {
 Log.propTypes = {
   document: PropTypes.object.isRequired
 };
+
+class LogEntry extends React.Component {
+  render() {
+    let key = 0;
+    return (
+      <div className="entry">
+        <span className="source">
+          {`[${this.props.entry.source}]`}
+        </span>
+        <span>&nbsp;</span>
+        <span className={`level-${this.props.entry.level}`}>
+        {this.props.entry.messages.map(message =>
+          this.renderMessage(message, key++)
+        )}
+        </span>
+      </div>
+    );
+  }
+
+  renderMessage(message, key) {
+    if (Array.isArray(message)) {
+      return <span key={key}>array?</span>;
+    } else if (typeof message === 'object') {
+      if (message.type) {
+        return <span key={key}>{message.type}</span>
+      }
+      return <span key={key}>Unknown log entry type</span>
+    } else if (typeof message === 'string' || typeof message === 'number') {
+      return <span key={key}>{message}</span>;
+    }
+  }
+}
+
+LogEntry.propTypes = {
+  entry: PropTypes.object.isRequired
+}

@@ -39,15 +39,14 @@ import { IGenericActivity } from 'botframework-emulator-shared/built/types/activ
 import { IAttachment } from 'botframework-emulator-shared/built/types/attachmentTypes';
 import { IAttachmentData } from 'botframework-emulator-shared/built/types/attachmentTypes';
 import { AttachmentsController } from '../connector/attachmentsController';
-import * as log from '../../log';
 import * as Fs from 'fs';
 import * as Formidable from 'formidable';
 import { RestServer } from '../../restServer';
 import { jsonBodyParser } from '../../jsonBodyParser';
 import { usersDefault } from 'botframework-emulator-shared/built/types/serverSettingsTypes';
-import { mainWindow } from '../../main';
-import { LogLevel } from 'botframework-emulator-shared/built/platform/log';
+import { LogLevel, logEntry } from 'botframework-emulator-shared/built/platform/log';
 import { getActiveBot } from '../../botHelpers';
+import { logError, logNetwork } from '../../logHelpers';
 
 export class ConversationsControllerV3 {
 
@@ -71,7 +70,7 @@ export class ConversationsControllerV3 {
     const auth = req.header('Authorization');
     const tokenMatch = /Bearer\s+(.+)/.exec(auth);
     const conversationId = tokenMatch[1];
-  if (activeBot) {
+    if (activeBot) {
       let created = false;
       const users = getSettings().users;
       let currentUser = users.usersById[users.currentUserId];
@@ -111,12 +110,7 @@ export class ConversationsControllerV3 {
       });
     } else {
       res.send(HttpStatus.NOT_FOUND, "no active bot");
-      mainWindow.logService.logToLiveChat(conversationId, {
-        level: LogLevel.Error,
-        source: "directline",
-        message: "Cannot start conversation. No active bot."
-      });
-      log.error("DirectLine: Cannot start conversation. No active bot");
+      logError(conversationId, "Cannot start conversation. No active bot.");
     }
     res.end();
   }
@@ -134,11 +128,11 @@ export class ConversationsControllerV3 {
         });
       } else {
         res.send(HttpStatus.NOT_FOUND, "conversation not found");
-        log.error("DirectLine: Cannot post activity. Conversation not found");
+        logError(req.params.conversationId, logEntry(LogLevel.Error, "directline", "Cannot post activity. Conversation not found."));
       }
     } else {
       res.send(HttpStatus.NOT_FOUND, "no active bot");
-      log.error("DirectLine: Cannot start conversation. No active bot");
+      logError(req.params.conversationId, "Cannot start conversation. No active bot.");
     }
     res.end();
   }
@@ -156,11 +150,11 @@ export class ConversationsControllerV3 {
         });
       } else {
         res.send(HttpStatus.NOT_FOUND, "conversation not found");
-        log.error("DirectLine: Cannot get activities. Conversation not found");
+        logError(req.params.conversationId, "directline", "Cannot get activities. Conversation not found.");
       }
     } else {
       res.send(HttpStatus.NOT_FOUND, "no active bot");
-      log.error("DirectLine: Cannot get activities. No active bot");
+      logError(req.params.conversationId, "Cannot get activities. No active bot.");
     }
     res.end();
   }
@@ -172,6 +166,7 @@ export class ConversationsControllerV3 {
       if (conversation) {
         const activity = <IGenericActivity>req.body;
         conversation.postActivityToBot(activity, true, (err, statusCode, activityId) => {
+          logNetwork(conversation.conversationId, req, res, `[${activity.type}]`);
           if (err || !/^2\d\d$/.test(`${statusCode}`)) {
             res.send(statusCode || HttpStatus.INTERNAL_SERVER_ERROR);
           } else {
@@ -181,13 +176,13 @@ export class ConversationsControllerV3 {
         });
       } else {
         res.send(HttpStatus.NOT_FOUND, "conversation not found");
-        log.error("DirectLine: Cannot post activity. Conversation not found");
         res.end();
+        logError(req.params.conversationId, "Cannot post activity. Conversation not found.");
       }
     } else {
       res.send(HttpStatus.NOT_FOUND, "no active bot");
-      log.error("DirectLine: Cannot post activity. No active bot");
       res.end();
+      logError(req.params.conversationId, "Cannot post activity. No active bot.");
     }
   }
 
@@ -235,6 +230,7 @@ export class ConversationsControllerV3 {
               });
 
               conversation.postActivityToBot(activity, true, (err, statusCode, activityId) => {
+                logNetwork(conversation.conversationId, req, res, `[${activity.type}]`);
                 if (err || !/^2\d\d$/.test(`${statusCode}`)) {
                   res.send(statusCode || HttpStatus.INTERNAL_SERVER_ERROR);
                 } else {
@@ -244,30 +240,30 @@ export class ConversationsControllerV3 {
               });
             } else {
               res.send(HttpStatus.BAD_REQUEST, "no file uploaded");
-              log.error("DirectLine: Cannot post activity. No file uploaded");
               res.end();
+              logError(req.params.conversationId, "Upload failed.");
             }
           } catch (e) {
             res.send(HttpStatus.INTERNAL_SERVER_ERROR, "error processing uploads");
-            log.error("DirectLine: Failed to post activity. No files uploaded");
             res.end();
+            logError(req.params.conversationId, "Upload failed.");
           }
         });
       } else {
         res.send(HttpStatus.NOT_FOUND, "conversation not found");
-        log.error("DirectLine: Cannot post activity. Conversation not found");
         res.end();
+        logError(req.params.conversationId, "Cannot upload file. Conversation not found.");
       }
     } else {
       res.send(HttpStatus.NOT_FOUND, "no active bot");
-      log.error("DirectLine: Cannot post activity. No active bot");
       res.end();
+      logError(req.params.conversationId, "Cannot upload file. No active bot.");
     }
   }
 
   static stream = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     res.send(HttpStatus.NOT_IMPLEMENTED);
-    log.error("DirectLine: Cannot upgrade socket. Not implemented.");
+    logError(req.params.conversationId, "Cannot upgrade socket. Not implemented.");
     res.end();
   }
 }
