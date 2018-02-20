@@ -59,5 +59,5 @@ export class CardTab extends React.Component {
 
 export default connect((state, { documentId, owningEditor }) => ({
     title: state.card.cards[documentId].title,
-    active: owningEditor === state.editor.activeEditor && state.editor.editors[owningEditor].activeDocumentId === documentId
+    active: state.editor.editors[state.editor.activeEditor].activeDocumentId === documentId
 }))(CardTab);

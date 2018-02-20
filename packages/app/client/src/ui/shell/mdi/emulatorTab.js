@@ -61,5 +61,5 @@ export class EmulatorTab extends React.Component {
 
 export default connect((state, { documentId, owningEditor }) => ({
   title: `Emulator : ${documentId}`,
-  active: owningEditor === state.editor.activeEditor && state.editor.editors[owningEditor].activeDocumentId === documentId
+  active: state.editor.editors[state.editor.activeEditor].activeDocumentId === documentId
 }))(EmulatorTab);
