@@ -127,7 +127,7 @@ export class BotList extends React.Component {
           </div>
         </AccessoryButtons>
         <ExpandCollapseContent>
-          {bots.length ? <input className={INPUT_CSS} value={this.state.botQuery} onChange={this.onChangeQuery} placeholder={'Search for a bot...'} /> : null}
+          {this.props.bots.length ? <input className={INPUT_CSS} value={this.state.botQuery} onChange={this.onChangeQuery} placeholder="Search for a bot..." /> : null}
           <div className={CSS}>
             <ul>
               {
