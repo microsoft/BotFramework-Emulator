@@ -15,6 +15,9 @@ export type BotAction = {
 } | {
   type: 'BOT/PATCH',
   payload: any;
+} | {
+  type: 'BOT/SET_ACTIVE',
+  payload: string
 };
 
 const DEFAULT_STATE: IBotState = {
@@ -23,7 +26,6 @@ const DEFAULT_STATE: IBotState = {
 };
 
 export const bot: any = (state: IBotState = DEFAULT_STATE, action: BotAction) => {
-
   switch(action.type) {
     case BotActions.CREATE: {
       // set active bot and add bot to bots list
@@ -48,6 +50,11 @@ export const bot: any = (state: IBotState = DEFAULT_STATE, action: BotAction) =>
       bots[botIndex] = patchedBot;
       state = setBotsState(bots, state);
       state = setActiveBot(patchedBot.botId, state);
+      break;
+    }
+
+    case BotActions.SET_ACTIVE: {
+      state = setActiveBot(action.payload, state);
       break;
     }
 

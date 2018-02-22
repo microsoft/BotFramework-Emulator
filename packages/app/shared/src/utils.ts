@@ -35,6 +35,8 @@
 // 1. We are using react-scripts, thus, we are not able to configure Webpack
 // 2. To skip bundling, we can hack with window['require']
 
+import { IBot } from './types/botTypes';
+
 /**
  * Generates a random id that is unique enough for our purposes.
  */
@@ -106,4 +108,9 @@ export const approximateObjectSize = (object: any, cache:any[] = []): number => 
             //value is null, undefined, or a function
             return 0;
     }
+}
+
+/** Tries to scan the bot record for an identifying string */
+export const getBotIdentifier = (bot: IBot = {}): string => {
+  return bot.botId || bot.botUrl || bot.path || '¯\\_(ツ)_/¯';
 }

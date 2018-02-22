@@ -39,52 +39,52 @@ import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCo
 import * as Colors from '../../styles/colors';
 import { CommandService } from '../../../platform/commands/commandService';
 import * as Constants from '../../../constants';
+import PrimaryButton from './botExplorer/primaryButton';
 
 const CSS = css({
-    backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
-    color: Colors.EXPLORER_FOREGROUND_DARK,
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0,
+  backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
+  color: Colors.EXPLORER_FOREGROUND_DARK,
+  display: 'flex',
+  flex: 1,
+  flexDirection: 'column',
+  listStyleType: 'none',
+  margin: 0,
+  padding: 0,
 
-    '& .folder-empty-state': {
-        padding: '0 24px',
-    }
+  '& .explorer-empty-state': {
+    padding: '16px'
+  }
 });
 
 class BotNotOpenExplorer extends React.Component {
-    constructor(props, context) {
-        super(props, context);
+  constructor(props, context) {
+    super(props, context);
 
-        this.handleOpenBot = this.handleOpenBot.bind(this);
-    }
+    this.onOpenBot = this.onOpenBot.bind(this);
+  }
 
-    handleOpenBot(e) {
-      CommandService.call('navbar:switchtab', Constants.NavBar_App);
-    }
+  onOpenBot(e) {
+    CommandService.call('navbar:switchtab', Constants.NavBar_App);
+  }
 
-    render() {
-        return (
-            <ul className={ CSS }>
-                <li>
-                    <ExpandCollapse
-                        initialExpanded={ true }
-                        title="No Bot Selected"
-                    >
-                        <ExpandCollapseContent>
-                            <div className="folder-empty-state">
-                                <p><span>You have not yet selected a bot.</span></p>
-                                <p><button onClick={ this.handleOpenBot }>Select / Create bot</button></p>
-                            </div>
-                        </ExpandCollapseContent>
-                    </ExpandCollapse>
-                </li>
-            </ul>
-        );
-    }
+  render() {
+    return (
+      <ul className={ CSS }>
+        <li>
+          <ExpandCollapse
+            initialExpanded={ true }
+            title="No Bot Selected"
+          >
+            <ExpandCollapseContent>
+              <div className="explorer-empty-state">
+                <PrimaryButton text='Select / Create a bot' onClick={ this.onOpenBot } />
+              </div>
+            </ExpandCollapseContent>
+          </ExpandCollapse>
+        </li>
+      </ul>
+    );
+  }
 }
 
 export default connect(state => ({}))(BotNotOpenExplorer)

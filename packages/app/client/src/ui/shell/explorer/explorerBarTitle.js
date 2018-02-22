@@ -34,29 +34,59 @@ import { css } from 'glamor';
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { CommandService } from '../../../platform/commands/commandService';
+
 const CSS = css({
-    '& > header': {
-        fontSize: '13px',
-        lineHeight: '72px',
-        height: '72px',
-        paddingLeft: '16px',
-        textTransform: 'uppercase',
-    },
+  padding: '8px 16px',
+  display: 'flex',
+  flexFlow: 'row nowrap',
+  alignItems: 'center',
+  flexShrink: 0,
+
+  '& > header': {
+    fontSize: '13px',
+    lineHeight: '24px',
+    height: '24px',
+    textTransform: 'uppercase'
+  },
+
+  '& > span.bot-settings-icon': {
+    display: 'inline-block',
+    marginLeft: 'auto',
+    background: "url('./external/media/ic_settings.svg') no-repeat 50% 50%",
+    backgroundSize: '16px',
+    width: '24px',
+    height: '24px',
+    cursor: 'pointer'
+  }
 });
 
 class ExplorerBarTitle extends React.Component {
-    render() {
-        return (
-            <div className={ CSS }>
-                <header>
-                    { this.props.activeBot }
-                </header>
-            </div>
-        );
-    }
+  constructor(context, props) {
+    super(context, props);
+
+    this.onClickSettings = this.onClickSettings.bind(this);
+  }
+
+  onClickSettings(e) {
+    const bot = this.props.bots.find(bot => bot.botId === this.props.activeBot);
+    CommandService.call('bot:settings:open', bot);
+  }
+
+  render() {
+    return (
+      <div className={ CSS }>
+        <header>
+          { this.props.activeBot }
+        </header>
+        { this.props.activeBot ? <span className="bot-settings-icon" onClick={ this.onClickSettings } /> : null }
+      </div>
+    );
+  }
 }
 
 export default connect(state => ({
-    activeBot: state.bot.activeBot,
-    navBar: state.navBar
+  activeBot: state.bot.activeBot,
+  bots: state.bot.bots,
+  navBar: state.navBar
 }))(ExplorerBarTitle)

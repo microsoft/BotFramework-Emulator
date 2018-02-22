@@ -34,6 +34,7 @@
 export const CREATE ='BOT/CREATE';
 export const LOAD = 'BOT/LOAD';
 export const PATCH = 'BOT/PATCH';
+export const SET_ACTIVE = 'BOT/SET_ACTIVE';
 
 export function create(bot) {
   return {
@@ -56,5 +57,11 @@ export function patch(botId, bot) {
       botId,
       bot
     }
+  };
+}
+export function setActive(botId) {
+  return {
+    type: SET_ACTIVE,
+    payload: botId
   };
 }

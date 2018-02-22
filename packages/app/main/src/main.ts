@@ -147,7 +147,12 @@ CommandRegistry.registerCommand('bot:settings:chooseFolder', (context: Window, .
 CommandRegistry.registerCommand('bot:save', (context: Window, bot: IBot, originalHandle: string): any => {
   context.store.dispatch(BotActions.patch(originalHandle, bot));
   return true;
-})
+});
+
+CommandRegistry.registerCommand('bot:setActive', (context: Window, botId: string): any => {
+  context.store.dispatch(BotActions.setActive(botId));
+  return true;
+});
 
 // Read file
 CommandRegistry.registerCommand('file:read', (context: Window, path: string): any => {
@@ -182,6 +187,11 @@ CommandRegistry.registerCommand("livechat:new", (context: any, ...args: any[]): 
   // TODO: Validate a bot is active first
   context.store.dispatch(action);
   return action.payload.conversationId;
+});
+
+// Sets the app's title bar
+CommandRegistry.registerCommand('app:setTitleBar', (context: Window, text: string): any => {
+  context.browserWindow.setTitle('Bot Framework Emulator - ' + text);
 });
 
 //=============================================================================

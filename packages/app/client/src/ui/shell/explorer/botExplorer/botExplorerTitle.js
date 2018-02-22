@@ -35,22 +35,30 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 const CSS = css({
+  boxSizing: 'border-box',
+  height: '40px',
+  padding: '8px 16px',
+  display: 'flex',
+  alignItems: 'center',
+  flexShrink: 0,
+
   '& > header': {
     fontSize: '13px',
-    lineHeight: '72px',
-    height: '72px',
-    paddingLeft: '16px',
-    textTransform: 'uppercase',
-  },
+    lineHeight: '24px',
+    height: '24px',
+    textTransform: 'uppercase'
+  }
 });
 
 class BotExplorerTitle extends React.Component {
+  constructor(context, props) {
+    super(context, props);
+  }
+
   render() {
     return (
       <div className={CSS}>
-        <header>
-          {this.props.activeBot}
-        </header>
+        <header>My Bots</header>
       </div>
     );
   }

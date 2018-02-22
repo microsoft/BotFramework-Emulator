@@ -40,6 +40,10 @@ import * as Colors from '../styles/colors';
 
 const CSS = css({
   boxShadow: 'inset -4px 0px 8px -4px rgba(0,0,0,0.6)',
+  display: 'flex',
+  flexFlow: 'column nowrap',
+  height: '100%',
+  overflow: 'hidden',
 
   '& > header': {
     backgroundColor: 'rgba(128, 128, 128, 0.2)',
@@ -52,6 +56,7 @@ const CSS = css({
     lineHeight: '22px',
     textTransform: 'uppercase',
     whiteSpace: 'nowrap',
+    flexShrink: 0,
 
     '& > .content': {
       flex: 1,
@@ -75,6 +80,15 @@ const CSS = css({
     }
   },
   '& > .body': {
+    height: '100%',
+    overflow: 'hidden',
+
+    '& > section': {
+      height: '100%',
+      overflow: 'hidden',
+      display: 'flex',
+      flexFlow: 'column nowrap'
+    }
   }
 });
 

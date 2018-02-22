@@ -11,28 +11,32 @@ import { BotListItem } from './botListItem';
 import { fuzzysearch } from '../../../utils/fuzzySearch';
 import { CommandService } from '../../../../platform/commands/commandService';
 import ExpandCollapse, { Controls as AccessoryButtons, Content as ExpandCollapseContent } from '../../../layout/expandCollapse';
+import PrimaryButton from './primaryButton';
+import { getBotIdentifier } from 'botframework-emulator-shared/built/utils';
 
 const CSS = css({
   overflow: 'auto',
+  height: '100%',
 
   '& > ul': {
     listStyle: 'none',
     margin: 0,
     padding: 0,
+    height: '100%'
   },
 
   '& > ul > li.empty-bot-list': {
     width: '100%',
-    height: '48px',
-    padding: '12px 24px',
+    padding: '16px',
     boxSizing: 'border-box'
   }
 });
 
 const INPUT_CSS = css({
-  minHeight: '24px',
+  minHeight: '32px',
   padding: '4px 8px',
-  width: '100%'
+  width: '100%',
+  boxSizing: 'border-box'
 });
 
 const ACTIONS_CSS = css({
@@ -50,7 +54,16 @@ const ACTIONS_CSS = css({
     width: '11px',
     background: "url('./external/media/ic_files.svg') no-repeat 50% 50%",
     backgroundSize: '11px',
+  },
+
+  '& > .create-bot-cta': {
+    marginTop: 'auto'
   }
+});
+
+const BOTTOM_DOCK_CSS = css({
+  marginTop: 'auto',
+  padding: '16px'
 });
 
 export class BotList extends React.Component {
@@ -66,7 +79,13 @@ export class BotList extends React.Component {
   }
 
   onSelectBot(e, botId) {
-    this.props.dispatch(BotActions.setActive(botId));
+    CommandService.remoteCall('bot:setActive', botId)
+      .then(() => {
+        this.props.dispatch(BotActions.setActive(botId));
+        const bot = this.props.bots.find(bot => bot.botId === botId);
+        CommandService.remoteCall('app:setTitleBar', getBotIdentifier(bot));
+      })
+      .catch(err => console.error('Error while setting active bot: ', err));
   }
 
   onClickSettings(e, bot) {
@@ -101,26 +120,31 @@ export class BotList extends React.Component {
       this.props.bots;
 
     return (
-      <ExpandCollapse initialExpanded={true} title="Bots">
-        <AccessoryButtons>
-          <div className={ACTIONS_CSS}>
-            <span role="button" onClick={this.onCreateBot}>+</span>
-          </div>
-        </AccessoryButtons>
-        <ExpandCollapseContent>
-          {this.props.bots.length ? <input className={INPUT_CSS} value={this.state.botQuery} onChange={this.onChangeQuery} placeholder="Search for a bot..." /> : null}
-          <div className={CSS}>
-            <ul>
-              {
-                bots.length ?
-                  bots.map(bot => <BotListItem key={bot.botId} bot={bot} onSelect={this.onSelectBot} onClickSettings={this.onClickSettings} activeBot={this.props.activeBot} />)
-                  :
-                  <li className="empty-bot-list">No bots found...</li>
-              }
-            </ul>
-          </div>
-        </ExpandCollapseContent>
-      </ExpandCollapse>
+      <React.Fragment>
+        <ExpandCollapse initialExpanded={ true } title="Bots">
+          <AccessoryButtons>
+            <div className={ ACTIONS_CSS }>
+              <span role="button" onClick={ this.onCreateBot }>+</span>
+            </div>
+          </AccessoryButtons>
+          <ExpandCollapseContent>
+            { this.props.bots.length ? <input className={ INPUT_CSS } value={ this.state.botQuery } onChange={ this.onChangeQuery } placeholder="Search for a bot..." /> : null }
+            <div className={ CSS }>
+              <ul>
+                {
+                  bots.length ?
+                    bots.map(bot => <BotListItem key={ bot.botId } bot={ bot } onSelect={ this.onSelectBot } onClickSettings={ this.onClickSettings } activeBot={ this.props.activeBot } />)
+                    :
+                    <li className="empty-bot-list"><PrimaryButton text='+ Configure a bot' onClick={ this.onCreateBot } /></li>
+                }
+              </ul>
+            </div>
+          </ExpandCollapseContent>
+        </ExpandCollapse>
+        <div className={ BOTTOM_DOCK_CSS }>
+          <PrimaryButton text='+ Add a bot config' onClick={ this.onCreateBot } />
+        </div>
+      </React.Fragment>
     );
   }
 }

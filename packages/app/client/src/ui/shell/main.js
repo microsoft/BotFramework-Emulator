@@ -88,9 +88,9 @@ const NAV_CSS = css({
   height: '100%',
 
   '& > .workbench': {
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
+  display: 'flex',
+  flex: 1,
+  flexDirection: 'column',
   },
 
   '& .mdi-wrapper': {
