@@ -101,9 +101,9 @@ class Emulator extends React.Component {
           <ToolBarButton title="Save As..." onClick={this.handleExportClick} />
           <ToolBarButton title="Load..." onClick={this.handleImportClick} />
         </ToolBar>
-        <Splitter orientation={'vertical'} primaryPaneIndex={1} initialSizeIndex={2} initialSize={300} minSizes={[80, 80]}>
+        <Splitter orientation={'vertical'} primaryPaneIndex={1} initialSizes={{ 1: 300 }} minSizes={{ 0: 80, 1: 80 }}>
           <ChatPanel document={this.props.document} />
-          <Splitter orientation={'horizontal'} primaryPaneIndex={0} initialSizeIndex={1} initialSize={500} minSizes={[80, 80]}>
+          <Splitter orientation={'horizontal'} primaryPaneIndex={0} initialSizes={{ 0: 500 }} minSizes={{ 0: 80, 1: 80 }}>
             <LogPanel document={this.props.document} />
             <DetailPanel document={this.props.document} />
           </Splitter>

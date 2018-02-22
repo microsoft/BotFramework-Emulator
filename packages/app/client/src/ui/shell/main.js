@@ -79,7 +79,7 @@ const CSS = css({
   height: '100%',
   minHeight: '100%',
   flexDirection: 'column',
-  });
+});
 
 const NAV_CSS = css({
   display: 'flex',
@@ -88,9 +88,9 @@ const NAV_CSS = css({
   height: '100%',
 
   '& > .workbench': {
-  display: 'flex',
-  flex: 1,
-  flexDirection: 'column',
+    display: 'flex',
+    flex: 1,
+    flexDirection: 'column',
   },
 
   '& .mdi-wrapper': {
@@ -130,7 +130,7 @@ export class Main extends React.Component {
         <div className={ NAV_CSS }>
         <NavBar/>
         <div className="workbench">
-          <Splitter orientation={ 'vertical' } initialSizeIndex={ 0 } initialSize={ 300 } primaryPaneIndex={ 0 } minSizes={ [200, 80] }>
+          <Splitter orientation={ 'vertical' } primaryPaneIndex={ 0 } minSizes={{ 0: 200, 1: 80 }} initialSizes={{ 0: 300 }}>
             <ExplorerBar />
             <Splitter orientation={ 'vertical' }>
             {

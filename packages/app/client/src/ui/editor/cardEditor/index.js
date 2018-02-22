@@ -90,7 +90,7 @@ export default class CardEditor extends React.Component {
     render() {
         return(
             <div className={ CSS }>
-                <Splitter orientation={ 'vertical' } onSizeChange={ this.onChangeVerticalSplit } primaryPaneIndex={ 1 } minSizes={ [null, 200] }>
+                <Splitter orientation={ 'vertical' } onSizeChange={ this.onChangeVerticalSplit } primaryPaneIndex={ 1 } minSizes={{ 1: 200 }}>
                     <div className="card-json-editor-container" ref={ this.saveJsonEditorContainer }>
                         <CardJsonEditor cardId={ this.props.cardId } editorWidth={ this.state.containerWidth } />
                     </div>
