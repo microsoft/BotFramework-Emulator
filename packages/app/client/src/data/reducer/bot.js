@@ -10,12 +10,16 @@ export default function bot(state = DEFAULT_STATE, action) {
   const payload = action.payload;
 
   switch(action.type) {
-    case BotActions.CREATE:
-    case BotActions.OPEN: {
+    case BotActions.CREATE: {
       // set active bot and add bot to bots list
       const bots = [...state.bots, payload];
       state = setBotsState(bots, state);
       state = setActiveBot(payload.botId, state);
+      break;
+    }
+
+    case BotActions.LOAD: {
+      state = setBotsState(payload, state);
       break;
     }
 

@@ -47,38 +47,38 @@ import * as Constants from '../../constants';
 import StatusBar from './statusBar';
 
 css.global('html, body, #root', {
-    backgroundColor: Colors.APP_BACKGROUND_DARK,
-    cursor: 'default',
-    fontFamily: Fonts.FONT_FAMILY_DEFAULT,
-    fontSize: '13px',
-    height: '100%',
-    margin: 0,
-    minHeight: '100%',
-    overflow: 'hidden',
-    userSelect: 'none',
+  backgroundColor: Colors.APP_BACKGROUND_DARK,
+  cursor: 'default',
+  fontFamily: Fonts.FONT_FAMILY_DEFAULT,
+  fontSize: '13px',
+  height: '100%',
+  margin: 0,
+  minHeight: '100%',
+  overflow: 'hidden',
+  userSelect: 'none',
 });
 
 css.global('::-webkit-scrollbar', {
-    width: '10px',
-    height: '10px',
+  width: '10px',
+  height: '10px',
 });
 
 css.global('::-webkit-scrollbar-track', {
-    background: Colors.SCROLLBAR_TRACK_BACKGROUND_DARK,
+  background: Colors.SCROLLBAR_TRACK_BACKGROUND_DARK,
 });
 
 css.global('::-webkit-scrollbar-thumb', {
-    background: Colors.SCROLLBAR_THUMB_BACKGROUND_DARK,
+  background: Colors.SCROLLBAR_THUMB_BACKGROUND_DARK,
 });
 
 const CSS = css({
-    backgroundColor: Colors.APP_BACKGROUND_DARK,
-    color: Colors.APP_FOREGROUND_DARK,
-    display: 'flex',
-    width: '100%',
-    height: '100%',
-    minHeight: '100%',
-    flexDirection: 'column',
+  backgroundColor: Colors.APP_BACKGROUND_DARK,
+  color: Colors.APP_FOREGROUND_DARK,
+  display: 'flex',
+  width: '100%',
+  height: '100%',
+  minHeight: '100%',
+  flexDirection: 'column',
   });
 
 const NAV_CSS = css({
@@ -88,71 +88,71 @@ const NAV_CSS = css({
   height: '100%',
 
   '& > .workbench': {
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
+  display: 'flex',
+  flex: 1,
+  flexDirection: 'column',
   },
 
   '& .mdi-wrapper': {
-      height: '100%',
-      width: '100%',
+    height: '100%',
+    width: '100%',
   },
 
   '& .secondary-mdi': {
-      borderLeft: `1px solid ${Colors.C3}`
+    borderLeft: `1px solid ${Colors.C3}`
   }
 });
 
 export class Main extends React.Component {
-    constructor(props, context) {
-        super(props, context);
+  constructor(props, context) {
+    super(props, context);
 
-        this.handleTabChange = this.handleTabChange.bind(this);
+    this.handleTabChange = this.handleTabChange.bind(this);
 
-        this.state = {
-            tabValue: 0
-        };
-    }
+    this.state = {
+      tabValue: 0
+    };
+  }
 
-    handleTabChange(nextTabValue) {
-        this.setState(() => ({ tabValue: nextTabValue }));
-    }
+  handleTabChange(nextTabValue) {
+    this.setState(() => ({ tabValue: nextTabValue }));
+  }
 
-    render() {
-        const primaryEditor = this.props.primaryEditor &&
-            <div className="mdi-wrapper" key={ 'primaryEditor' } ><MDI owningEditor={ Constants.EditorKey_Primary } /></div>;
+  render() {
+    const primaryEditor = this.props.primaryEditor &&
+      <div className="mdi-wrapper" key={ 'primaryEditor' } ><MDI owningEditor={ Constants.EditorKey_Primary } /></div>;
 
-        const secondaryEditor = this.props.secondaryEditor && this.props.secondaryEditor.documents.length ?
-            <div className="mdi-wrapper secondary-mdi" key={ 'secondaryEditor' } ><MDI owningEditor={ Constants.EditorKey_Secondary } /></div> : null;
+    const secondaryEditor = this.props.secondaryEditor && this.props.secondaryEditor.documents.length ?
+      <div className="mdi-wrapper secondary-mdi" key={ 'secondaryEditor' } ><MDI owningEditor={ Constants.EditorKey_Secondary } /></div> : null;
 
-        return (
-            <div className={ CSS }>
-              <div className={ NAV_CSS }>
-                <NavBar/>
-                <div className="workbench">
-                    <Splitter orientation={ 'vertical' } initialSizeIndex={ 0 } initialSize={ 300 } primaryPaneIndex={ 0 } minSizes={ [200, 80] }>
-                        <ExplorerBar />
-                        <Splitter orientation={ 'vertical' }>
-                        {
-                            [primaryEditor, secondaryEditor].filter(elem => !!elem)
-                        }
-                        </Splitter>
-                    </Splitter>
-                </div>
-                <TabManager disabled={ false } />
-            </div>
-            <StatusBar />
-          </div>
-        );
-    }
+    return (
+      <div className={ CSS }>
+        <div className={ NAV_CSS }>
+        <NavBar/>
+        <div className="workbench">
+          <Splitter orientation={ 'vertical' } initialSizeIndex={ 0 } initialSize={ 300 } primaryPaneIndex={ 0 } minSizes={ [200, 80] }>
+            <ExplorerBar />
+            <Splitter orientation={ 'vertical' }>
+            {
+              [primaryEditor, secondaryEditor].filter(elem => !!elem)
+            }
+            </Splitter>
+          </Splitter>
+        </div>
+        <TabManager disabled={ false } />
+      </div>
+      <StatusBar />
+      </div>
+    );
+  }
 }
 
 export default connect((state, ownProps) => ({
-    primaryEditor: state.editor.editors[Constants.EditorKey_Primary],
-    secondaryEditor: state.editor.editors[Constants.EditorKey_Secondary]
+  primaryEditor: state.editor.editors[Constants.EditorKey_Primary],
+  secondaryEditor: state.editor.editors[Constants.EditorKey_Secondary]
 }))(Main);
 
 Main.propTypes = {
-    primaryEditor: PropTypes.object,
-    secondaryEditor: PropTypes.object
+  primaryEditor: PropTypes.object,
+  secondaryEditor: PropTypes.object
 };

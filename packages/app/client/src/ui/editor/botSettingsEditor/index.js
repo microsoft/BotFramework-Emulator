@@ -96,10 +96,10 @@ export default class SettingsEditor extends React.Component {
       ...this.state.bot
     };
     CommandService.remoteCall('bot:save', newBotFile, this.state.originalHandle)
-    .then(() => {
-      store.dispatch(BotActions.patch(this.state.originalHandle, newBotFile))
-      this.setState({ originalHandle: newBotFile.botId });
-    });
+      .then(() => {
+        store.dispatch(BotActions.patch(this.state.originalHandle, newBotFile))
+        this.setState({ originalHandle: newBotFile.botId });
+      });
   }
 
   render() {

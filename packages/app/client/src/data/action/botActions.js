@@ -1,5 +1,5 @@
 export const CREATE = 'BOT/CREATE';
-export const OPEN = 'BOT/OPEN';
+export const LOAD = 'BOT/LOAD';
 export const PATCH = 'BOT/PATCH';
 export const REMOVE = 'BOT/REMOVE';
 export const SET_ACTIVE = 'BOT/SET_ACTIVE';
@@ -11,10 +11,10 @@ export function create(bot) {
   };
 }
 
-export function open(bot) {
+export function load(bots) {
   return {
-    type: OPEN,
-    payload: bot
+    type: LOAD,
+    payload: bots
   };
 }
 

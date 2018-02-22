@@ -31,43 +31,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-// from client
-export const LOAD_BOTS_REQUEST = 'BOT/LOAD_BOTS_REQUEST';
-
-// from server
 export const CREATE ='BOT/CREATE';
-export const LOAD_BOTS_RESPONSE = 'BOT/LOAD_BOTS_RESPONSE';
-export const OPEN = 'BOT/OPEN';
+export const LOAD = 'BOT/LOAD';
 export const PATCH = 'BOT/PATCH';
 
 export function create(bot) {
   return {
     type: CREATE,
-    meta: { send: true },
     payload: bot
   };
 }
 
-export function loadBotsResponse(bots) {
+export function load(bots) {
   return {
-    type: LOAD_BOTS_RESPONSE,
-    meta: { send: true },
+    type: LOAD,
     payload: bots
-  };
-}
-
-export function open(bot) {
-  return {
-    type: OPEN,
-    meta: { send: true },
-    payload: bot
   };
 }
 
 export function patch(botId, bot) {
   return {
     type: PATCH,
-    meta: { send: true },
     payload: {
       botId,
       bot

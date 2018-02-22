@@ -25,12 +25,20 @@ export class Window extends Disposable {
 
   constructor(private _browserWindow: BrowserWindow) {
     super();
-    createStore(this._browserWindow).then(store => this._store = store);
     this._ipc = new IPC(this._browserWindow.webContents);
     let commandService = this._commandService = new CommandService(this);
     let logService = this._logService = new LogService(this);
     this.toDispose(IPCServer.registerIPC(this._ipc));
     this.toDispose(commandService);
     this.toDispose(logService);
+  }
+
+  initStore(): Promise<Store<IState>> {
+    return new Promise((resolve, reject) => {
+      createStore(this._browserWindow).then(store => {
+        this._store = store;
+        resolve(this.store);
+      });
+    });
   }
 }

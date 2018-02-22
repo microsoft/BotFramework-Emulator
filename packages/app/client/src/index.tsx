@@ -44,6 +44,7 @@ import { CommandRegistry } from 'botframework-emulator-shared/built/platform/com
 import { CommandService } from './platform/commands/commandService';
 import { SettingsService } from './platform/settings/settingsService';
 import { LogService } from "./platform/log/logService";
+import * as BotActions from './data/action/botActions';
 
 CommandService.init();
 SettingsService.init();
@@ -70,3 +71,12 @@ ReactDOM.render(
 
 // Let the main process know we're loaded
 CommandService.remoteCall('client:loaded');
+
+// load bots from disk on app start-up
+CommandService.remoteCall('bot:list:load')
+  .then(payload => {
+    store.dispatch(BotActions.load(payload.bots));
+  })
+  .catch(err => {
+    console.error('Error during bot list load: ', err);
+  });

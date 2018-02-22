@@ -31,10 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import assetExplorerPromptOpenFolder from './assetExplorer/promptOpenFolder';
 import ping from './ping';
 
 export default function* rootSaga() {
-    yield* assetExplorerPromptOpenFolder();
     yield* ping();
 }

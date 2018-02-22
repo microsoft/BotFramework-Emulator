@@ -33,7 +33,7 @@ export function sendErrorResponse(req: Restify.Request, res: Restify.Response, n
   }
 }
 
-const ensureStoragePath = (): string => {
+export const ensureStoragePath = (): string => {
   const commandLineArgs = globals.getGlobal('commandlineargs');
   const app = electronApp || electronRemote.app;
   const storagePath = commandLineArgs.storagepath || path.join(app.getPath("userData"), "botframework-emulator");

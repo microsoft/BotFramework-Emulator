@@ -61,7 +61,6 @@ export class BotList extends React.Component {
     this.onChangeQuery = this.onChangeQuery.bind(this);
     this.onClickSettings = this.onClickSettings.bind(this);
     this.onCreateBot = this.onCreateBot.bind(this);
-    this.onOpenBot = this.onOpenBot.bind(this);
 
     this.state = { botQuery: '' };
   }
@@ -74,36 +73,19 @@ export class BotList extends React.Component {
     CommandService.call('bot:settings:open', bot);
   }
 
-  onOpenBot(e) {
-    CommandService.remoteCall('bot:list:open')
-      .then(bot => {
-        this.props.dispatch((dispatch) => {
-          // open bot settings and switch to explorer view
-          this.props.dispatch(BotActions.open(bot));
-          this.props.dispatch(NavBarActions.selectOrToggle(Constants.NavBar_Files));
-        });
-      })
-      .catch(err => {
-        console.error('Error during bot open: ', err);
-      });
-  }
-
   onCreateBot(e) {
-    // show explorer to choose directory and write bot file to disk
-    CommandService.remoteCall('bot:list:promptCreate')
+    CommandService.remoteCall('bot:list:create')
       .then(bot => {
         this.props.dispatch((dispatch) => {
-          // have main process dispatch a bot CREATE action
-          CommandService.remoteCall('bot:list:create', bot)
-          .then(() => {
-            // open bot settings and switch to explorer view
-            this.props.dispatch(NavBarActions.selectOrToggle(Constants.NavBar_Files));
-            this.props.dispatch(EditorActions.open(Constants.ContentType_BotSettings, bot.botId + ':settings', bot.botId));
-          })
+          this.props.dispatch(BotActions.create(bot));
+
+          // open bot settings and switch to explorer view
+          this.props.dispatch(NavBarActions.selectOrToggle(Constants.NavBar_Files));
+          this.props.dispatch(EditorActions.open(Constants.ContentType_BotSettings, bot.botId + ':settings', bot.botId));
         });
       })
       .catch(err => {
-        console.error('Error during bot prompt create: ', err)
+        console.error('Error during bot create: ', err);
       });
   }
 
@@ -123,7 +105,6 @@ export class BotList extends React.Component {
         <AccessoryButtons>
           <div className={ACTIONS_CSS}>
             <span role="button" onClick={this.onCreateBot}>+</span>
-            <span role="button" className="open-bot-icon" onClick={this.onOpenBot}></span>
           </div>
         </AccessoryButtons>
         <ExpandCollapseContent>

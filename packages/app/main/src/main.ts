@@ -46,7 +46,7 @@ import * as electronLocalShortcut from 'electron-localshortcut';
 import { setTimeout } from 'timers';
 import { Window } from './platform/window';
 import { CommandRegistry } from 'botframework-emulator-shared/built/platform/commands/commandRegistry';
-import { readFileSync, showOpenDialog, writeFile } from './utils';
+import { ensureStoragePath, readFileSync, showOpenDialog, writeFile } from './utils';
 import { uniqueId } from 'botframework-emulator-shared/built/utils';
 import * as BotActions from './data-v2/action/bot';
 import * as ChatActions from './data-v2/action/chat';
@@ -98,69 +98,58 @@ var windowIsOffScreen = function (windowBounds: Electron.Rectangle): boolean {
 
 /** COMMAND REGISTRATION */
 
-// open a bot from bot list
-CommandRegistry.registerCommand('bot:list:open', (context: Window, ...args: any[]): any => {
-  return showOpenDialog({ title: 'Open a bot', buttonLabel: 'Open', properties: ['openFile'] })
-    .then((path: string) => {
-      try {
-        // TODO: add bot validation here so we don't try to open some invalid bot JSON
-        // read and return bot
-        const bot = JSON.parse(readFileSync(path));
-        return bot;
-      } catch(e) {
-        console.log('Failure reading bot file in bot:list:open: ', e);
-        throw e;
-      }
-    });
-});
+// Load bots from file system
+CommandRegistry.registerCommand('bot:list:load', (context: Window, ...args: any[]): any => {
+  const botsJsonPath = `${ensureStoragePath()}/bots.json`;
+  const botsJson = JSON.parse(readFileSync(botsJsonPath));
 
-// show explorer prompt and write bot file to target directory
-CommandRegistry.registerCommand('bot:list:promptCreate', (context: Window, ...args: any[]): any => {
-  return showOpenDialog({ title: 'Choose a folder for your bot', buttonLabel: 'Create', properties: ['openDirectory', 'promptToCreate'] })
-    .then((path: string) => {
-      path += '\\bot.bot';
-
-      const botId = uniqueId();
-      // create a new bot file
-      const bot: IBot = {
-        botId,
-        botUrl: 'http://localhost:3978/api/messages',
-        msaAppId: '',
-        msaPassword: '',
-        locale: '',
-        path,
-      };
-
-      // write bot file to disk
-      try {
-        writeFile(path, bot);
-        return bot;
-      } catch(e) {
-        console.error('Failure writing bot file in bot:list:promptCreate: ', e);
-        throw e;
-      }
-    });
-});
-
-// dispatch bot CREATE action
-CommandRegistry.registerCommand('bot:list:create', (context: Window, bot: IBot): any => {
-  console.log('DISPATCHING CREATE ON SERVER: ', Date.now());
-  context.store.dispatch(BotActions.create(bot));
-});
-
-// save bot file
-CommandRegistry.registerCommand('bot:save', (context: Window, bot: IBot, originalHandle: string): any => {
-  try {
-    writeFile(bot.path, bot);
-    context.store.dispatch(BotActions.patch(originalHandle, bot));
-    return true;
-  } catch (e) {
-    console.error('Failure writing bot file in bot:save: ', e);
-    throw e;
+  if (botsJson && botsJson.bots) {
+    const bots = botsJson.bots;
+    context.store.dispatch(BotActions.load(bots));
+    return { bots: bots };
+  } else {
+    console.log('No bots file exists on disk, creating one.');
+    const newBotsJson = { 'bots': [] };
+    try {
+      writeFile(botsJsonPath, newBotsJson);
+      return { bots: [] };
+    } catch (e) {
+      console.error(`Failure writing new bots.json to ${botsJsonPath}: `, e);
+      throw e;
+    }
   }
+});
+
+// Create a bot
+CommandRegistry.registerCommand('bot:list:create', (context: Window, ...args: any[]): any => {
+  const botId = uniqueId();
+
+  const bot: IBot = {
+    botId,
+    botUrl: 'http://localhost:3978/api/messages',
+    msaAppId: '',
+    msaPassword: '',
+    locale: 'en-US',
+    path: ''
+  };
+
+  context.store.dispatch(BotActions.create(bot));
+
+  return bot;
+});
+
+// Show explorer prompt to set a local path for a bot
+CommandRegistry.registerCommand('bot:settings:chooseFolder', (context: Window, ...args: any[]): any => {
+  return showOpenDialog({ title: 'Choose a folder for your bot', buttonLabel: 'Create', properties: ['openDirectory', 'promptToCreate'] });
+});
+
+// Save bot file and cause a bots list write
+CommandRegistry.registerCommand('bot:save', (context: Window, bot: IBot, originalHandle: string): any => {
+  context.store.dispatch(BotActions.patch(originalHandle, bot));
+  return true;
 })
 
-// read file
+// Read file
 CommandRegistry.registerCommand('file:read', (context: Window, path: string): any => {
   try {
     const contents = readFileSync(path);
@@ -171,7 +160,7 @@ CommandRegistry.registerCommand('file:read', (context: Window, path: string): an
   }
 });
 
-// write file
+// Write file
 CommandRegistry.registerCommand('file:write', (context: Window, path: string, contents: object | string): any => {
   try {
     writeFile(path, contents);
@@ -182,8 +171,8 @@ CommandRegistry.registerCommand('file:write', (context: Window, path: string, co
   }
 });
 
-// Send app settings to client.
-CommandRegistry.registerCommand("client:loaded", (context: any, ...args: any[]): any => {
+// Send app settings to client
+CommandRegistry.registerCommand("client:loaded", (context: Window, ...args: any[]): any => {
   context.commandService.remoteCall("settings:emulator:url:set", emulator.framework.router.url);
 });
 
@@ -224,6 +213,35 @@ const createMainWindow = () => {
         x: initBounds.x,
         y: initBounds.y
       }));
+
+  mainWindow.initStore()
+    .then(store => {
+      store.subscribe(() => {
+        const state = store.getState();
+        const botsJson = { bots: state.bot.bots };
+        const filePath = `${ensureStoragePath()}/bots.json`;
+
+        try {
+          writeFile(filePath, botsJson);
+        } catch (e) { console.error('Error writing bot settings to disk: ', e); }
+
+        /* Timeout's are currently busted in Electron; will write on every store change until fix is in official build.
+        // Issue: https://github.com/electron/electron/issues/7079
+        // Commit for fix: https://github.com/ifedapoolarewaju/igdm/commit/63496c3d38f3d4cc55b26da38f3613796b615623
+
+        clearTimeout(botSettingsTimer);
+
+        // wait 5 seconds after updates to bots list to write to disk
+        botSettingsTimer = setTimeout(() => {
+          const filePath = `${ensureStoragePath()}/bots.json`;
+          try {
+            writeFile(filePath, botsJson);
+            console.log('Wrote bot settings to desk.');
+          } catch (e) { console.error('Error writing bot settings to disk: ', e); }
+        }, 1000);*/
+      });
+    });
+
   mainWindow.browserWindow.setTitle(windowTitle);
   windowManager = new WindowManager();
 
