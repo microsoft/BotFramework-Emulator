@@ -36,13 +36,15 @@ import { css } from 'glamor';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 
+import * as ChatActions from '../../../../data/action/chatActions';
+import store from '../../../../data/store';
 import * as Colors from '../../../../ui/styles/colors';
 import * as Fonts from '../../../../ui/styles/fonts';
 
 const CSS = css({
   height: '100%',
   overflow: 'auto',
-  userSelect: 'initial',
+  userSelect: 'text',
   padding: '0 16px 0 16px',
 
   '& > .entry': {
@@ -56,29 +58,40 @@ const CSS = css({
       color: Colors.LOG_PANEL_TIMESTAMP_DARK,
     },
 
+    '& .src-dst': {
+      color: Colors.LOG_PANEL_SRC_DST_DARK,
+    },
+
+    '& a': {
+      color: Colors.LOG_PANEL_LINK_DARK,
+      textDecoration: 'underline',
+      cursor: 'pointer',
+    },
+
     // info
-    '& > .level-0': {
+    '& .level-0': {
       color: Colors.LOG_PANEL_INFO_DARK,
     },
     // trace
-    '& > .level-1': {
+    '& .level-1': {
       color: Colors.LOG_PANEL_INFO_DARK,
     },
     // warn
-    '& > .level-2': {
-      color: Colors.LOG_PANEL_INFO_DARK,
+    '& .level-2': {
+      color: Colors.LOG_PANEL_WARN_DARK,
     },
     // error
-    '& > .level-3': {
-      color: Colors.LOG_PANEL_INFO_DARK,
+    '& .level-3': {
+      color: Colors.LOG_PANEL_ERROR_DARK,
     },
 
-    '& span.spaced': {
+    '& .spaced': {
       marginLeft: '8px',
     },
-    '& span.spaced:first-child': {
+
+    '& .spaced:first-child': {
       marginLeft: 0
-    }
+    },
   },
 });
 
@@ -101,7 +114,7 @@ export default class Log extends React.Component {
       <div className={ CSS }>
         {
           this.props.document.log.entries.map(entry =>
-            <LogEntry key={ `entry-${key++}` } entry={ entry } />
+            <LogEntry key={ `entry-${key++}` } entry={ entry } document={ this.props.document } />
           )
         }
       </div>
@@ -114,6 +127,11 @@ Log.propTypes = {
 };
 
 class LogEntry extends React.Component {
+
+  inspect(obj) {
+    store.dispatch(ChatActions.setInspectorObjects(this.props.document.conversationId, obj));
+  }
+
   render() {
     let key = 0;
     return (
@@ -130,21 +148,50 @@ class LogEntry extends React.Component {
     );
   }
 
+  renderResponseMessage(message) {
+    return (
+      <React.Fragment>
+        { message.payload.body
+          ?
+          <span className="spaced"><a onClick={ () => this.inspect(message) }>{ message.payload.statusCode }</a></span>
+          :
+          <span className="spaced">{ message.payload.statusCode }</span>
+        }
+      </React.Fragment>
+    );
+  }
+
   renderMessage(message, key) {
     if (Array.isArray(message)) {
-      return <span className="spaced" key={ key }>array?</span>;
+      return <span className="spaced level-3" key={ key }>ARR?</span>;
     } else if (typeof message === 'object') {
       switch (message.type) {
         case "request": {
           return (
-            <span className="spaced" key={ key }>request</span>
+            <span className="spaced" key={ key }>
+              <span className="spaced">{ `->` }</span>
+              <span className="spaced"><a onClick={ () => this.inspect(message) }>{ message.payload.method }</a></span>
+              <span className="src-dst spaced">from { message.payload.source }</span>
+            </span>
           );
         }
           break;
 
         case "response": {
           return (
-            <span className="spaced" key={ key }>response</span>
+            <span className="spaced" key={ key }>
+              <span className="spaced">{ "<-" }</span>
+              { this.renderResponseMessage(message) }
+              <span className="src-dst spaced">to { message.payload.destination }</span>
+              {
+                message.payload.statusMessage && message.payload.statusMessage.length
+                  ?
+                  <span className="spaced">{ message.payload.statusMessage }</span>
+                  :
+                  false
+              }
+
+            </span>
           );
         }
 
@@ -157,7 +204,7 @@ class LogEntry extends React.Component {
 
         case "url:external": {
           return (
-            <span className="spaced" key={ key }>{ message.text }</span>
+            <span className="spaced" key={ key }><a href={ message.url } title={ message.title }>{ message.text }</a></span>
           );
         }
           break;
@@ -177,7 +224,7 @@ class LogEntry extends React.Component {
           break;
 
         default:
-          return <span className="spaced" key={ key }>Unknown log entry type</span>
+          return <span className="spaced level-3" key={ key }>UNK?</span>
       }
     } else if (typeof message === 'string' || typeof message === 'number') {
       return <span className="spaced" key={ key }>{ message }</span>;

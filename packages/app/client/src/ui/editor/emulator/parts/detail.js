@@ -37,16 +37,89 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 
 import * as Colors from '../../../../ui/styles/colors';
+import * as Fonts from '../../../../ui/styles/fonts';
 
 const CSS = css({
-  padding: '0 16px 0 16px',
+  padding: '16px',
+  fontFamily: Fonts.FONT_FAMILY_MONOSPACE,
+  wordWrap: 'break-word',
+  whiteSpace: 'pre-wrap',
+  overflowY: 'auto',
+  userSelect: 'text',
+  height: '100%',
+
+  '& .json-key': {
+    color: Colors.JSON_FORMATTING_KEY_DARK,
+  },
+  '& .json-string': {
+    color: Colors.JSON_FORMATTING_STRING_DARK,
+  },
+  '& .json-number': {
+    color: Colors.JSON_FORMATTING_NUMBER_DARK,
+  },
+  '& .json-boolean': {
+    color: Colors.JSON_FORMATTING_BOOLEAN_DARK,
+  },
+  '& .json-null': {
+    color: Colors.JSON_FORMATTING_NULL_DARK,
+  },
 });
 
 export default class Detail extends React.Component {
   render() {
-    return (
-      <div className={CSS}>
-      </div>
-    );
+    if (this.props.document.inspectorObjects.length) {
+      return (
+        <div className={ CSS }>
+          { formatJSON(this.props.document.inspectorObjects[0]) }
+        </div>
+      );
+    } else {
+      return (
+        <div className={ CSS }>
+          <span>Nothing selected yet</span>
+        </div>
+      );
+    }
   }
+}
+
+function formatJSON(obj) {
+  if (!obj) return null;
+  let json = JSON.stringify(obj, null, 2);
+  // Hide ampersands we don't want replaced
+  json = json.replace(/&(amp|apos|copy|gt|lt|nbsp|quot|#x?\d+|[\w\d]+);/g, '\x01');
+  // Escape remaining ampersands and other HTML special characters
+  json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  // Restore hidden ampersands
+  json = json.replace(/\x01/g, '&');
+  // Match all the JSON parts and add theming markup
+  json = json.replace(/"(\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,
+    (match) => {
+      // Default to "number"
+      let cls = 'number';
+      // Detect the type of the JSON part
+      if (/^"/.test(match)) {
+        if (/:$/.test(match)) {
+          cls = 'key';
+        } else {
+          cls = 'string';
+        }
+      } else if (/true|false/.test(match)) {
+        cls = 'boolean';
+      } else if (/null/.test(match)) {
+        cls = 'null';
+      }
+      if (cls === 'key') {
+        // Color string content, not the quotes or colon delimiter
+        let exec = /"(.*)":\s*/.exec(match);
+        return `"<span class="json-${cls}">${exec[1]}</span>":`;
+      } else if (cls === 'string') {
+        // Color string content, not the quotes
+        let exec = /"(.*)"/.exec(match);
+        return `"<span class="json-${cls}">${exec[1]}</span>"`;
+      } else {
+        return `<span class="json-${cls}">${match}</span>`;
+      }
+    })
+  return <span dangerouslySetInnerHTML={ { __html: json } } />;
 }

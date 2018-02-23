@@ -50,14 +50,14 @@ import store from '../../../../data/store';
 
 CommandRegistry.registerCommand('livechat:new', (context, activeEditor) => {
   CommandService.remoteCall('livechat:new')
-  .then(conversationId => {
-    store.dispatch(ChatActions.newLiveChatDocument(conversationId));
-    store.dispatch(EditorActions.open(
-      constants.ContentType_LiveChat,
-      conversationId
-    ));
-  })
-  .catch(err => console.log(err));  // TODO: Show failure as a notification
+    .then(conversationId => {
+      store.dispatch(ChatActions.newLiveChatDocument(conversationId));
+      store.dispatch(EditorActions.open(
+        constants.ContentType_LiveChat,
+        conversationId
+      ));
+    })
+    .catch(err => console.log(err));  // TODO: Show failure as a notification
 });
 
 //=============================================================================
@@ -71,6 +71,12 @@ const CSS = css({
   padding: 0,
   backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
   color: Colors.EXPLORER_FOREGROUND_DARK,
+
+  '& .empty-list': {
+    padding: '4px 4px 0px 16px',
+    whiteSpace: 'nowrap',
+    height: '30px',
+  }
 });
 
 const CONVO_CSS = css({
@@ -78,7 +84,7 @@ const CONVO_CSS = css({
   flexDirection: 'column',
   listStyleType: 'none',
   margin: 0,
-  padding: 0
+  padding: 0,
 });
 
 class LiveChatExplorer extends React.Component {
@@ -98,28 +104,46 @@ class LiveChatExplorer extends React.Component {
     this.props.dispatch(EditorActions.setActiveTab(conversationId));
   }
 
+  renderLiveChatList() {
+    return (
+      <ExpandCollapseContent key={ this.props.changeKey }>
+        <ul className={ CONVO_CSS }>
+          {
+            Object.keys(this.props.liveChats).map(conversationId =>
+              <ExplorerItem key={ conversationId } active={ this.props.activeDocumentId === conversationId } onClick={ () => this.onItemClick(conversationId) }>
+                <span>{ `Emulator : ${conversationId}` }</span>
+              </ExplorerItem>
+            )
+          }
+        </ul>
+      </ExpandCollapseContent>
+    );
+  }
+
+  renderEmptyLiveChatList() {
+    return (
+      <ExpandCollapseContent key={ this.props.changeKey }>
+        <span className="empty-list">No live chats yet</span>
+      </ExpandCollapseContent>
+    );
+  }
+
   render() {
     return (
-      <ul className={CSS}>
+      <ul className={ CSS }>
         <li>
           <ExpandCollapse
-            initialExpanded={true}
+            initialExpanded={ true }
             title="Live Chats"
           >
             <ExpandCollapseControls>
-              <button onClick={this.onAddClick}>+</button>
+              <button onClick={ this.onAddClick }>+</button>
             </ExpandCollapseControls>
-            <ExpandCollapseContent key={this.props.changeKey}>
-              <ul className={CONVO_CSS}>
-                {
-                  Object.keys(this.props.liveChats).map(conversationId =>
-                    <ExplorerItem key={conversationId} active={this.props.activeDocumentId === conversationId} onClick={() => this.onItemClick(conversationId)}>
-                      <span>{`Emulator : ${conversationId}`}</span>
-                    </ExplorerItem>
-                  )
-                }
-              </ul>
-            </ExpandCollapseContent>
+            {
+              Object.keys(this.props.liveChats).length
+                ? this.renderLiveChatList()
+                : this.renderEmptyLiveChatList()
+            }
           </ExpandCollapse>
         </li>
       </ul>

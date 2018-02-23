@@ -37,49 +37,49 @@ import React from 'react';
 import * as Colors from '../../styles/colors';
 
 const CSS = css({
-    backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
-    display: 'flex',
-    flexDirection: 'column',
+  backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
+  display: 'flex',
+  flexDirection: 'column',
+  listStyleType: 'none',
+  margin: 0,
+  padding: 0,
+
+  '& > header': {
+    fontSize: '13px',
+    lineHeight: '30px',
+    height: '30px',
+    paddingLeft: '16px',
+    textTransform: 'uppercase',
+  },
+
+  '& > ul': {
     listStyleType: 'none',
     margin: 0,
     padding: 0,
+  },
 
-    '& > header': {
-        fontSize: '13px',
-        lineHeight: '30px',
-        height: '30px',
-        paddingLeft: '16px',
-        textTransform: 'uppercase',
-    },
+  '& > li': {
+    display: 'flex',
+    flexDirection: 'column'
+  },
 
-    '& > ul': {
-        listStyleType: 'none',
-        margin: 0,
-        padding: 0,
-    },
-
-    '& > li': {
-        display: 'flex',
-        flexDirection: 'column'
-    },
-
-    '& > li:last-child': {
-        flex: 1
-    }
+  '& > li:last-child': {
+    flex: 1
+  }
 });
 
 export default class ExplorerSet extends React.Component {
-    render() {
-        return (
-            <div className={ CSS }>
-                <ul>
-                    {
-                        React.Children.map(this.props.children, child =>
-                            <li>{ child }</li>
-                        )
-                    }
-                </ul>
-            </div>
-        );
-    }
+  render() {
+    return (
+      <div className={ CSS }>
+        <ul>
+          {
+            React.Children.map(this.props.children, child =>
+              <li>{ child }</li>
+            )
+          }
+        </ul>
+      </div>
+    );
+  }
 }

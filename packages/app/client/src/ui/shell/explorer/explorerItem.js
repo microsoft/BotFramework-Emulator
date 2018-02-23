@@ -37,46 +37,50 @@ import { css } from 'glamor';
 import * as Colors from '../../styles/colors';
 
 const CSS = css({
-    color: Colors.EXPLORER_FOREGROUND_DARK,
-    paddingLeft: '4px',
-    cursor: 'pointer',
-    display: 'block',
-    whiteSpace: 'nowrap',
-    lineHeight: '22px',
-    height: '22px',
+  color: Colors.EXPLORER_FOREGROUND_DARK,
+  cursor: 'pointer',
+  display: 'block',
+  whiteSpace: 'nowrap',
+  lineHeight: '30px',
+  height: '30px',
+  paddingLeft: '16px',
 
-    '&:hover': {
-        backgroundColor: Colors.EXPLORER_ITEM_HOVER_BACKGROUND_DARK
-    },
+  '&:hover': {
+    backgroundColor: Colors.EXPLORER_ITEM_HOVER_BACKGROUND_DARK
+  },
 
-    '&.active-explorer-item': {
-        backgroundColor: Colors.EXPLORER_ITEM_ACTIVE_BACKGROUND_DARK
-    },
-    '&:before': {
-      content: '🗋',
-      color: Colors.C5,
-      fontSize: '16px',
-      paddingRight: '6px',
-    }
+  '&.active-explorer-item': {
+    backgroundColor: Colors.EXPLORER_ITEM_ACTIVE_BACKGROUND_DARK
+  },
 
+  '&:before': {
+    content: '🗋',
+    color: Colors.C5,
+    fontSize: '16px',
+    paddingRight: '6px',
+  },
+
+  '&:last-child': {
+    paddingBottom: '4px',
+  },
 });
 
 export default class ExplorerItem extends React.Component {
-    constructor(props, context) {
-        super(props, context);
-    }
+  constructor(props, context) {
+    super(props, context);
+  }
 
-    render() {
-        return (
-            this.props.active ?
-                <li className={ CSS + ' active-explorer-item' } onClick={ this.props.onClick }>{ this.props.children }</li>
-            :
-                <li className={ CSS } onClick={ this.props.onClick }>{ this.props.children }</li>
-        );
-    }
+  render() {
+    return (
+      this.props.active ?
+        <li className={ CSS + ' active-explorer-item' } onClick={ this.props.onClick }>{ this.props.children }</li>
+        :
+        <li className={ CSS } onClick={ this.props.onClick }>{ this.props.children }</li>
+    );
+  }
 }
 
 ExplorerItem.propTypes = {
-    active: PropTypes.bool.isRequired,
-    onClick: PropTypes.func
+  active: PropTypes.bool.isRequired,
+  onClick: PropTypes.func
 }

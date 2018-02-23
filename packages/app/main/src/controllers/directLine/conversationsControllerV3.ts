@@ -66,7 +66,7 @@ export class ConversationsControllerV3 {
   }
 
   static startConversation = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    logRequest(req.params.conversationId, req);
+    logRequest(req.params.conversationId, "user", req);
     const activeBot = getActiveBot();
     const auth = req.header('Authorization');
     const tokenMatch = /Bearer\s+(.+)/.exec(auth);
@@ -114,11 +114,11 @@ export class ConversationsControllerV3 {
       logError(conversationId, "Cannot start conversation. No active bot.");
     }
     res.end();
-    logResponse(conversationId, res);
+    logResponse(conversationId, "user", res);
   }
 
   static reconnectToConversation = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    logRequest(req.params.conversationId, req);
+    logRequest(req.params.conversationId, "user", req);
     const activeBot = getActiveBot();
     if (activeBot) {
       const conversation = emulator.conversations.conversationById(activeBot.botId, req.params.conversationId);
@@ -138,7 +138,7 @@ export class ConversationsControllerV3 {
       logError(req.params.conversationId, "Cannot start conversation. No active bot.");
     }
     res.end();
-    logResponse(req.params.conversationId, res);
+    logResponse(req.params.conversationId, "user", res);
   }
 
   static getActivities = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
@@ -162,7 +162,7 @@ export class ConversationsControllerV3 {
   }
 
   static postActivity = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    logRequest(req.params.conversationId, req);
+    logRequest(req.params.conversationId, "user", req);
     const activeBot = getActiveBot();
     if (activeBot) {
       const conversation = emulator.conversations.conversationById(activeBot.botId, req.params.conversationId);
@@ -176,25 +176,25 @@ export class ConversationsControllerV3 {
             res.send(statusCode, { id: activityId });
           }
           res.end();
-          logResponse(req.params.conversationId, res);
+          logResponse(req.params.conversationId, "user", res);
         });
       } else {
         res.send(HttpStatus.NOT_FOUND, "conversation not found");
         res.end();
         logError(req.params.conversationId, "Cannot post activity. Conversation not found.");
-        logResponse(req.params.conversationId, res);
+        logResponse(req.params.conversationId, "user", res);
       }
     } else {
       res.send(HttpStatus.NOT_FOUND, "no active bot");
       res.end();
       logError(req.params.conversationId, "Cannot post activity. No active bot.");
-      logResponse(req.params.conversationId, res);
+      logResponse(req.params.conversationId, "user", res);
     }
   }
 
 
   static upload = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    logRequest(req.params.conversationId, req);
+    logRequest(req.params.conversationId, "user", req);
     const activeBot = getActiveBot();
     if (activeBot) {
       const conversation = emulator.conversations.conversationById(activeBot.botId, req.params.conversationId);
@@ -244,32 +244,32 @@ export class ConversationsControllerV3 {
                   res.send(statusCode, { id: activityId });
                 }
                 res.end();
-                logResponse(req.params.conversationId, res);
+                logResponse(req.params.conversationId, "user", res);
               });
             } else {
               res.send(HttpStatus.BAD_REQUEST, "no file uploaded");
               res.end();
               logError(req.params.conversationId, "Upload failed.");
-              logResponse(req.params.conversationId, res);
+              logResponse(req.params.conversationId, "user", res);
             }
           } catch (e) {
             res.send(HttpStatus.INTERNAL_SERVER_ERROR, "error processing uploads");
             res.end();
             logError(req.params.conversationId, "Upload failed.");
-            logResponse(req.params.conversationId, res);
+            logResponse(req.params.conversationId, "user", res);
           }
         });
       } else {
         res.send(HttpStatus.NOT_FOUND, "conversation not found");
         res.end();
         logError(req.params.conversationId, "Cannot upload file. Conversation not found.");
-        logResponse(req.params.conversationId, res);
+        logResponse(req.params.conversationId, "user", res);
       }
     } else {
       res.send(HttpStatus.NOT_FOUND, "no active bot");
       res.end();
       logError(req.params.conversationId, "Cannot upload file. No active bot.");
-      logResponse(req.params.conversationId, res);
+      logResponse(req.params.conversationId, "user", res);
     }
   }
 

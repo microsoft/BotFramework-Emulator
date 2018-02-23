@@ -44,6 +44,14 @@ export const C10 = '#0063B1';
 export const C11 = '#004E8C';
 export const C12 = '#003966';
 export const C13 = '#47B07F';
+export const C14 = '#9CDCFE';
+export const C15 = '#ED4556';
+export const C16 = '#F5A623';
+export const C17 = '#9CDCFE';
+export const C18 = '#CE9178';
+export const C19 = '#B5CEA8';
+export const C20 = '#569CD6';
+export const C21 = '#F4E321';
 
 export const APP_BACKGROUND_DARK = C8;
 export const APP_FOREGROUND_DARK = C2;
@@ -80,7 +88,13 @@ export const EDITOR_TAB_DRAGGED_OVER_BACKGROUND_DARK = '#383838';
 
 export const LOG_PANEL_SOURCE_DARK = '#AAAAAA';
 export const LOG_PANEL_INFO_DARK = C4;
+export const LOG_PANEL_WARN_DARK = C16;
+export const LOG_PANEL_ERROR_DARK = C15;
 export const LOG_PANEL_TIMESTAMP_DARK = C13;
+export const LOG_PANEL_LINK_DARK = C14;
+export const LOG_PANEL_SRC_DST_DARK = C3;
+
+export const WEBCHAT_SELECTED_BACKGROUND_DARK = C21;
 
 export const EDITOR_DRAG_OVERLAY_TRANSPARENT_DARK = 'rgba(85, 85, 85, 0)';
 export const EDITOR_DRAG_OVERLAY_VISIBLE_DARK = 'rgba(85, 85, 85, 0.6)';
@@ -91,3 +105,9 @@ export const TOOLBAR_BUTTON_BACKGROUND_DARK = 'transparent';
 export const TOOLBAR_BUTTON_FOREGROUND_DARK = C7;
 export const TOOLBAR_BUTTON_HOVER_BACKGROUND_DARK = '';
 export const TOOLBAR_BUTTON_HOVER_FOREGROUND_DARK = C4;
+
+export const JSON_FORMATTING_KEY_DARK = C17;
+export const JSON_FORMATTING_STRING_DARK = C18;
+export const JSON_FORMATTING_NUMBER_DARK = C19;
+export const JSON_FORMATTING_BOOLEAN_DARK = C20;
+export const JSON_FORMATTING_NULL_DARK = C20;

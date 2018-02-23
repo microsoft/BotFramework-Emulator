@@ -38,8 +38,10 @@ export const NEW_LIVECHAT_DOCUMENT = 'CHAT/DOCUMENT/NEW/LIVE';
 export const OPEN_LIVECHAT_DOCUMENT = 'CHAT/DOCUMENT/OPEN/LIVE';
 export const CLOSE_LIVECHAT_DOCUMENT = 'CHAT/DOCUMENT/CLOSE/LIVE';
 
-export const APPEND_TO_LOG = 'CHAT/LOG/APPEND';
-export const CLEAR_LOG = 'CHAT/LOG/CLEAR';
+export const LOG_APPEND = 'CHAT/LOG/APPEND';
+export const LOG_CLEAR = 'CHAT/LOG/CLEAR';
+
+export const INSPECTOR_OBJECTS_SET = 'CHAT/INSPECTOR/OBJECTS/SET';
 
 export const OPEN_TRANSCRIPT_DOCUMENT = 'CHAT/DOCUMENT/OPEN/TRANSCRIPT';
 export const CLOSE_TRANSCRIPT_DOCUMENT = 'CHAT/DOCUMENT/CLOSE/TRANSCRIPT';
@@ -54,7 +56,8 @@ export function newLiveChatDocument(conversationId, executive) {
       executive,
       log: {
         entries: []
-      }
+      },
+      inspectorObjects: []
     }
   }
 }
@@ -70,7 +73,7 @@ export function closeLiveChatDocument(conversationId) {
 
 export function appendToLog(conversationId, entry) {
   return {
-    type: APPEND_TO_LOG,
+    type: LOG_APPEND,
     payload: {
       conversationId,
       entry
@@ -80,9 +83,20 @@ export function appendToLog(conversationId, entry) {
 
 export function clearLog(conversationId) {
   return {
-    type: CLEAR_LOG,
+    type: LOG_CLEAR,
     payload: {
       conversationId,
+    }
+  }
+}
+
+export function setInspectorObjects(conversationId, objs) {
+  objs = Array.isArray(objs) ? objs : [objs];
+  return {
+    type: INSPECTOR_OBJECTS_SET,
+    payload: {
+      conversationId,
+      objs
     }
   }
 }

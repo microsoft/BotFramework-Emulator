@@ -34,8 +34,12 @@
 import { css } from 'glamor';
 import * as React from 'react';
 import * as WebChat from 'custom-botframework-webchat';
-
+import { BehaviorSubject } from 'rxjs';
+import { ActivityOrID } from 'botframework-emulator-shared/built/types/activityTypes';
 import state from '../state';
+import store from '../../../../data/store';
+import * as ChatActions from '../../../../data/action/chatActions';
+import * as Colors from '../../../styles/colors';
 
 const CSS = css({
   backgroundColor: 'white',
@@ -43,18 +47,59 @@ const CSS = css({
   maxHeight: '100%',
   display: 'flex',
 
-  '& > .wc-chatview-panel': {
+  '& .wc-chatview-panel': {
     flex: 1,
     position: 'relative',
 
     '&::-webkit-scrollbar-thumb': {
       backgroundColor: 'blue',
       color: 'red',
-    }
+    },
+
+    '& .format-markdown>p': {
+      marginBottom: 0,
+      marginTop: 0,
+    },
+
+    '& .wc-message-content *': {
+      userSelect: 'text',
+    },
+
+    '& .wc-message-content.selected': {
+      color: 'black',
+      backgroundColor: Colors.WEBCHAT_SELECTED_BACKGROUND_DARK,
+      boxShadow: '0px 1px 1px 0px rgba(0,0,0,0.2)',
+    },
+
+    '& .wc-message-content.selected>svg.wc-message-callout>path': {
+      fill: Colors.WEBCHAT_SELECTED_BACKGROUND_DARK,
+    },
+
+    '& .wc-card': {
+      color: '#000',
+    },
+
+    '& .wc-card button': {
+      border: '1px solid #ccc',
+      borderRadius: '1px',
+      cursor: 'pointer',
+      outline: 'none',
+      transition: 'color .2s ease, background-color .2s ease',
+      backgroundColor: 'transparent',
+      color: '#0078D7',
+      minHeight: '32px',
+      width: '100%',
+      padding: '0 16px',
+    },
+
+    '& .wc-list ul': {
+      padding: 0,
+    },
   }
 });
 
 const DISCONNECTED_CSS = css({
+  padding: '16px',
   backgroundColor: 'lightgray',
   color: 'black',
   height: '100%'
@@ -66,6 +111,17 @@ export interface ChatProps {
 };
 
 export default class Chat extends React.Component<ChatProps> {
+
+  selectedActivity$: BehaviorSubject<ActivityOrID>;
+
+  constructor(props, context) {
+    super(props, context);
+    this.selectedActivity$ = new BehaviorSubject<ActivityOrID>({});
+    this.selectedActivity$.subscribe((obj) => {
+      store.dispatch(ChatActions.setInspectorObjects(this.props.document.conversationId, obj));
+    });
+  }
+
   render() {
     if (this.props.document.directLine) {
       const props: WebChat.ChatProps = {
@@ -81,6 +137,7 @@ export default class Chat extends React.Component<ChatProps> {
         formatOptions: {
           showHeader: false
         },
+        selectedActivity: (this.selectedActivity$ as any),
         botConnection: this.props.document.directLine,
         store: this.props.document.webChatStore
       };

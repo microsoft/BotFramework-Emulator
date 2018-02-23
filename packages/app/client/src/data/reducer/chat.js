@@ -49,7 +49,8 @@ export default function chat(state = DEFAULT_STATE, action) {
         ...state,
         liveChatChangeKey: state.liveChatChangeKey + 1,
         liveChats: {
-          ...state.liveChats, [payload.conversationId]: { ...payload }
+          ...state.liveChats,
+          [payload.conversationId]: { ...payload }
         }
       }
     }
@@ -64,7 +65,7 @@ export default function chat(state = DEFAULT_STATE, action) {
     }
       break;
 
-    case ChatActions.APPEND_TO_LOG: {
+    case ChatActions.LOG_APPEND: {
       let document = state.liveChats[payload.conversationId];
       if (document) {
         document = {
@@ -90,7 +91,7 @@ export default function chat(state = DEFAULT_STATE, action) {
     }
       break;
 
-    case ChatActions.CLEAR_LOG: {
+    case ChatActions.LOG_CLEAR: {
       let document = state.liveChats[payload.conversationId];
       if (document) {
         document = {
@@ -106,6 +107,26 @@ export default function chat(state = DEFAULT_STATE, action) {
             [payload.conversationId]: {
               ...document
             }
+          }
+        }
+      }
+    }
+      break;
+
+    case ChatActions.INSPECTOR_OBJECTS_SET: {
+      let document = state.liveChats[payload.conversationId];
+      if (document) {
+        document = {
+          ...document,
+          inspectorObjects: payload.objs
+        }
+      }
+      state = {
+        ...state,
+        liveChats: {
+          ...state.liveChats,
+          [payload.conversationId]: {
+            ...document
           }
         }
       }

@@ -38,6 +38,8 @@ import ExplorerSet from './explorerSet';
 import LiveChatExplorer from './liveChatExplorer';
 import BotNotOpenExplorer from './botNotOpenExplorer';
 import TranscriptExplorer from './transcriptExplorer';
+import EmulatorServicesExplorer from './emulatorServicesExplorer';
+import PortalsExplorer from './portalsExplorer';
 
 class AssetExplorerSet extends React.Component {
   render() {
@@ -46,6 +48,8 @@ class AssetExplorerSet extends React.Component {
         <ExplorerSet title="Asset Explorer">
           <LiveChatExplorer />
           <TranscriptExplorer />
+          <PortalsExplorer />
+          <EmulatorServicesExplorer />
         </ExplorerSet>
       );
     } else {

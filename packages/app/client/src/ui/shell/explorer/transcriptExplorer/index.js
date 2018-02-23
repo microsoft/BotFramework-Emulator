@@ -53,6 +53,12 @@ const CSS = css({
   padding: 0,
   backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
   color: Colors.EXPLORER_FOREGROUND_DARK,
+
+  '& .empty-list': {
+    padding: '4px 4px 0px 16px',
+    whiteSpace: 'nowrap',
+    height: '30px',
+  }
 });
 
 const CONVO_CSS = css({
@@ -74,25 +80,43 @@ class TranscriptExplorer extends React.Component {
     this.props.dispatch(EditorActions.setActiveTab(conversationId));
   }
 
+  renderTranscriptList() {
+    return (
+      <ExpandCollapseContent key={ this.props.changeKey }>
+        <ul className={ CONVO_CSS }>
+          {
+            Object.keys(this.props.transcripts).map(transcriptId =>
+              <ExplorerItem key={ transcriptId } active={ this.props.activeDocumentId === transcriptId } onClick={ () => this.onItemClick(transcriptId) }>
+                <span>{ `Transcript : ${transcriptId}` }</span>
+              </ExplorerItem>
+            )
+          }
+        </ul>
+      </ExpandCollapseContent>
+    );
+  }
+
+  renderEmptyTranscriptList() {
+    return (
+      <ExpandCollapseContent key={ this.props.changeKey }>
+        <span className="empty-list">No transcripts yet</span>
+      </ExpandCollapseContent>
+    );
+  }
+
   render() {
     return (
-      <ul className={CSS}>
+      <ul className={ CSS }>
         <li>
           <ExpandCollapse
-            initialExpanded={true}
+            initialExpanded={ true }
             title="Transcripts"
           >
-            <ExpandCollapseContent key={this.props.changeKey}>
-              <ul className={CONVO_CSS}>
-                {
-                  Object.keys(this.props.transcripts).map(transcriptId =>
-                    <ExplorerItem key={transcriptId} active={this.props.activeDocumentId === transcriptId} onClick={() => this.onItemClick(transcriptId)}>
-                      <span>{`Transcript : ${transcriptId}`}</span>
-                    </ExplorerItem>
-                  )
-                }
-              </ul>
-            </ExpandCollapseContent>
+            {
+              Object.keys(this.props.transcripts).length
+                ? this.renderTranscriptList()
+                : this.renderEmptyTranscriptList()
+            }
           </ExpandCollapse>
         </li>
       </ul>

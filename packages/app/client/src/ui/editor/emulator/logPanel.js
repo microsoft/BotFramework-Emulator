@@ -46,10 +46,10 @@ const CSS = css({
 export default class LogPanel extends React.Component {
   render() {
     return (
-      <div className={CSS}>
+      <div className={ CSS }>
         <Panel title="Log">
           <PanelContent>
-            <Log document={this.props.document} />
+            <Log document={ this.props.document } />
           </PanelContent>
         </Panel>
       </div>

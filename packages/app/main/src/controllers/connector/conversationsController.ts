@@ -71,7 +71,7 @@ export class ConversationsController {
   // Create conversation API
   public static createConversation = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     let conversationParameters = <IConversationParameters>req.body;
-    logRequest(conversationParameters.conversationId, req);
+    logRequest(conversationParameters.conversationId, "bot", req);
     try {
       const settings = getSettings();
       // look up bot
@@ -135,14 +135,14 @@ export class ConversationsController {
       sendErrorResponse(req, res, next, err);
       //logNetwork(conversationParameters.conversationId, req, res, getErrorText(err));
     }
-    logResponse(conversationParameters.conversationId, res);
+    logResponse(conversationParameters.conversationId, "bot", res);
   }
 
   // SendToConversation
   public static sendToConversation = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     let activity = <IGenericActivity>req.body;
     const conversationParameters: IConversationAPIPathParameters = req.params;
-    logRequest(conversationParameters.conversationId, req);
+    logRequest(conversationParameters.conversationId, "bot", req);
     try {
       // look up bot
       const activeBot = getActiveBot();
@@ -166,14 +166,14 @@ export class ConversationsController {
       sendErrorResponse(req, res, next, err);
       //logNetwork(parms.conversationId, req, res, getErrorText(err));
     }
-    logResponse(conversationParameters.conversationId, res);
+    logResponse(conversationParameters.conversationId, "bot", res);
   }
 
   // replyToActivity
   public static replyToActivity = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     let activity = <IGenericActivity>req.body;
     const conversationParameters: IConversationAPIPathParameters = req.params;
-    logRequest(conversationParameters.conversationId, req);
+    logRequest(conversationParameters.conversationId, "bot", req);
     try {
       // look up bot
       const activeBot = getActiveBot();
@@ -203,14 +203,14 @@ export class ConversationsController {
       sendErrorResponse(req, res, next, err);
       //logNetwork(parms.conversationId, req, res, getErrorText(err));
     }
-    logResponse(conversationParameters.conversationId, res);
+    logResponse(conversationParameters.conversationId, "bot", res);
   }
 
   // updateActivity
   public static updateActivity = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     let activity = <IGenericActivity>req.body;
     const conversationParameters: IConversationAPIPathParameters = req.params;
-    logRequest(conversationParameters.conversationId, req);
+    logRequest(conversationParameters.conversationId, "bot", req);
     try {
       // look up bot
       const activeBot = getActiveBot();
@@ -236,13 +236,13 @@ export class ConversationsController {
       sendErrorResponse(req, res, next, err);
       //logNetwork(parms.conversationId, req, res, activity, getErrorText(err));
     }
-    logResponse(conversationParameters.conversationId, res);
+    logResponse(conversationParameters.conversationId, "bot", res);
   }
 
   // deleteActivity
   public static deleteActivity = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const conversationParameters: IConversationAPIPathParameters = req.params;
-    logRequest(conversationParameters.conversationId, req);
+    logRequest(conversationParameters.conversationId, "bot", req);
     try {
       // look up bot
       const activeBot = getActiveBot();
@@ -263,13 +263,13 @@ export class ConversationsController {
       sendErrorResponse(req, res, next, err);
       //logNetwork(parms.conversationId, req, res, getErrorText(error));
     }
-    logResponse(conversationParameters.conversationId, res);
+    logResponse(conversationParameters.conversationId, "bot", res);
   }
 
   // get members of a conversation
   public static getConversationMembers = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const conversationParameters: IConversationAPIPathParameters = req.params;
-    logRequest(conversationParameters.conversationId, req);
+    logRequest(conversationParameters.conversationId, "bot", req);
     try {
       // look up bot
       const activeBot = getActiveBot();
@@ -288,13 +288,13 @@ export class ConversationsController {
       sendErrorResponse(req, res, next, err);
       //logNetwork(parms.conversationId, req, res, null, getErrorText(err));
     }
-    logResponse(conversationParameters.conversationId, res);
+    logResponse(conversationParameters.conversationId, "bot", res);
   }
 
   // get members of an activity
   public static getActivityMembers = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const conversationParameters: IConversationAPIPathParameters = req.params;
-    logRequest(conversationParameters.conversationId, req);
+    logRequest(conversationParameters.conversationId, "bot", req);
     try {
       // look up bot
       const activeBot = getActiveBot();
@@ -313,14 +313,14 @@ export class ConversationsController {
       sendErrorResponse(req, res, next, err);
       //logNetwork(parms.conversationId, req, res, getErrorText(err));
     }
-    logResponse(conversationParameters.conversationId, res);
+    logResponse(conversationParameters.conversationId, "bot", res);
   }
 
   // upload attachment
   public static uploadAttachment = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     let attachmentData = <IAttachmentData>req.body;
     const conversationParameters: IConversationAPIPathParameters = req.params;
-    logRequest(conversationParameters.conversationId, req);
+    logRequest(conversationParameters.conversationId, "bot", req);
     try {
       // look up bot
       const activeBot = getActiveBot();
@@ -341,6 +341,6 @@ export class ConversationsController {
       sendErrorResponse(req, res, next, err);
       //logNetwork(parms.conversationId, req, res, getErrorText(err));
     }
-    logResponse(conversationParameters.conversationId, res);
+    logResponse(conversationParameters.conversationId, "bot", res);
   }
 }

@@ -42,13 +42,14 @@ export function makeExternalLink(text: string, url: string): any {
   };
 }
 
-export function logRequest(conversationId: string, req: Restify.Request, ...messages: any[]) {
+export function logRequest(conversationId: string, source: string, req: Restify.Request, ...messages: any[]) {
   const entry = makeLogEntry(
     LogLevel.Info,
     "network",
     {
       type: "request",
       payload: {
+        source,
         headers: req.headers,
         method: req.method,
         body: req.body,
@@ -59,13 +60,14 @@ export function logRequest(conversationId: string, req: Restify.Request, ...mess
   mainWindow.logService.logToLiveChat(conversationId, entry);
 }
 
-export function logResponse(conversationId: string, res: Restify.Response, ...messages: any[]) {
+export function logResponse(conversationId: string, destination: string, res: Restify.Response, ...messages: any[]) {
   const entry = makeLogEntry(
     res.statusCode >= 400 ? LogLevel.Error : LogLevel.Info,
     "network",
     {
       type: "response",
       payload: {
+        destination,
         headers: (res as any)._headers,
         body: (res as any)._body,
         statusCode: res.statusCode,

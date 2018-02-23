@@ -10,7 +10,7 @@ import * as NavBarActions from '../../../../data/action/navBarActions';
 import { BotListItem } from './botListItem';
 import { fuzzysearch } from '../../../utils/fuzzySearch';
 import { CommandService } from '../../../../platform/commands/commandService';
-import ExpandCollapse, { Controls as AccessoryButtons, Content as ExpandCollapseContent } from '../../../layout/expandCollapse';
+import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../../layout/expandCollapse';
 import PrimaryButton from './primaryButton';
 import { getBotDisplayName } from 'botframework-emulator-shared/built/utils';
 import { getBotById } from '../../../../data/botHelpers';
@@ -133,21 +133,21 @@ export class BotList extends React.Component {
     return (
       <React.Fragment>
         <ExpandCollapse initialExpanded={ true } title="Bots">
-          <AccessoryButtons>
+          <ExpandCollapseControls>
             <div className={ ACTIONS_CSS }>
               <span className="bot-list-widget create-bot-button" role="button" onClick={ this.onCreateBot } />
             </div>
-          </AccessoryButtons>
+          </ExpandCollapseControls>
           <ExpandCollapseContent>
             { this.props.bots.length ? <input className={ INPUT_CSS } value={ this.state.botQuery } onChange={ this.onChangeQuery } placeholder="Search for a bot..." /> : null }
             <div className={ CSS }>
               <ul>
                 {
                   bots.length ?
-                    bots.map(bot => <BotListItem key={ bot.botId } bot={ bot } onSelect={ this.onSelectBot }  activeBot={ this.props.activeBot }
-                                      onClickSettings={ this.onClickSettings } onClickDelete={ this.onClickDelete } />)
+                    bots.map(bot => <BotListItem key={ bot.botId } bot={ bot } onSelect={ this.onSelectBot } activeBot={ this.props.activeBot }
+                      onClickSettings={ this.onClickSettings } onClickDelete={ this.onClickDelete } />)
                     :
-                    <li className="empty-bot-list"><PrimaryButton text='+ Configure a bot' onClick={ this.onCreateBot } /></li>
+                    false
                 }
               </ul>
             </div>

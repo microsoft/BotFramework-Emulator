@@ -18,35 +18,34 @@ const CSS = css({
   fontFamily: Fonts.FONT_FAMILY_DEFAULT,
   boxSizing: 'border-box',
 
-  '& > input': {
+  '& input': {
     marginTop: '16px',
     height: '32px',
     padding: '4px 8px',
-    boxSizing: 'border-box'
+    boxSizing: 'border-box',
+    width: '100%'
   },
 
-  '& > input:first-child': {
-    marginTop: 0
-  },
-
-  '& > span': {
+  '& span': {
     marginTop: '16px'
   },
 
-  '& > span:first-child': {
-    marginTop: 0
+  '& button': {
+    width: '120px',
+    height: '32px',
   },
 
-  '& > button': {
-    maxWidth: '120px'
+  '& .browse-path-button': {
+    marginLeft: '8px',
+    alignSelf: 'flex-end',
   },
 
-  '& > .browse-path-button': {
-    marginTop: '8px'
+  '& .save-button': {
+    marginTop: '48px',
   },
 
-  '& > .save-button': {
-    marginTop: '48px'
+  '& .horz-group': {
+    display: 'flex'
   }
 });
 
@@ -142,7 +141,7 @@ export default class SettingsEditor extends React.Component {
 
     return (
       <div className={ CSS }>
-        <h1>Bot Settings for { botIdentifier }</h1>
+        <h1>Settings for { botIdentifier }</h1>
 
         <span>Bot name</span>
         <input value={ this.state.bot.botName } onChange={ this.onChangeName } type="text" />
@@ -163,8 +162,10 @@ export default class SettingsEditor extends React.Component {
         <input value={ this.state.bot.locale } onChange={ this.onChangeLocale } type="text" />
 
         <span>Local folder</span>
-        <input value={ this.state.bot.path } type="text" placeholder="Folder containing your bot" readOnly />
-        <PrimaryButton text='Browse' onClick={ this.onSelectFolder } buttonClass='browse-path-button' />
+        <div className='horz-group'>
+          <input value={ this.state.bot.path } type="text" placeholder="Folder containing your bot project" readOnly />
+          <PrimaryButton text='Browse' onClick={ this.onSelectFolder } buttonClass='browse-path-button' />
+        </div>
 
         <PrimaryButton text='Save' onClick={ this.onSave } buttonClass='save-button' />
       </div>

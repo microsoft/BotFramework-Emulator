@@ -133,11 +133,6 @@ export class Conversation {
       };
 
       let responseCallback = (resp) => {
-        let messageActivity: IMessageActivity = activity;
-        let text = messageActivity.text || '';
-        if (text && text.length > 50)
-          text = text.substring(0, 50);
-
         if (resp) {
           if (!/^2\d\d$/.test(`${resp.statusCode}`)) {
             if (Number(resp.statusCode) == 401 || Number(resp.statusCode) == 402) {
@@ -157,6 +152,7 @@ export class Conversation {
           }
         }
       }
+
       let handleError = (err) => {
         cb(err);
       }
@@ -599,8 +595,8 @@ export class ConversationManager {
    */
   private configure(settings: Settings) {
     // Remove conversations that reference nonexistent bots.
-//    const deadBotIds = this.conversationSets.filter(set => !settings.bots.find(bot => bot.botId === set.botId)).map(conversation => conversation.botId);
-//    this.conversationSets = this.conversationSets.filter(set => !deadBotIds.find(botId => set.botId === botId));
+    //    const deadBotIds = this.conversationSets.filter(set => !settings.bots.find(bot => bot.botId === set.botId)).map(conversation => conversation.botId);
+    //    this.conversationSets = this.conversationSets.filter(set => !deadBotIds.find(botId => set.botId === botId));
   }
 
   /**

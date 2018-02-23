@@ -45,10 +45,10 @@ const CSS = css({
 export default class DetailPanel extends React.Component {
   render() {
     return (
-      <div className={CSS}>
+      <div className={ CSS }>
         <Panel title="Inspect">
           <PanelContent>
-            <Detail />
+            <Detail document={ this.props.document } />
           </PanelContent>
         </Panel>
       </div>

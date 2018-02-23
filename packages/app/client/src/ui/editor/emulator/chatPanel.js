@@ -38,6 +38,7 @@ import React from 'react';
 import Chat from './parts/chat';
 import * as Colors from '../../styles/colors';
 import Panel, { Controls as PanelControls, Content as PanelContent } from '../panel';
+import { getActiveBot, getBotById } from '../../../data/botHelpers';
 
 const CSS = css({
   height: '100%',
@@ -56,10 +57,13 @@ const CSS = css({
 
 export default class ChatPanel extends React.Component {
   render() {
+    let botId = getActiveBot();
+    let bot = getBotById(botId);
+    let endpoint = bot ? bot.botUrl : "";
     return (
-      <div className={CSS}>
-        <header>http://localhost:3978/api/messages</header>
-        <Chat document={this.props.document} />
+      <div className={ CSS }>
+        <header>{ endpoint }</header>
+        <Chat document={ this.props.document } />
       </div>
     );
   }

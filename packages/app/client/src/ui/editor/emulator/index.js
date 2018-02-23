@@ -93,19 +93,19 @@ class Emulator extends React.Component {
 
   render() {
     return (
-      <div className={CSS} key={`${this.props.documentId}|${this.state.sessionId}`}>
+      <div className={ CSS } key={ `${this.props.documentId}|${this.state.sessionId}` }>
         <ToolBar>
-          <ToolBarButton title="Presentation" onClick={this.onPresentationClick} />
+          <ToolBarButton title="Presentation" onClick={ this.onPresentationClick } />
           <ToolBarSeparator />
-          <ToolBarButton title="Start Over" onClick={this.onStartOverClick} />
-          <ToolBarButton title="Save As..." onClick={this.handleExportClick} />
-          <ToolBarButton title="Load..." onClick={this.handleImportClick} />
+          <ToolBarButton title="Start Over" onClick={ this.onStartOverClick } />
+          <ToolBarButton title="Save As..." onClick={ this.handleExportClick } />
+          <ToolBarButton title="Load..." onClick={ this.handleImportClick } />
         </ToolBar>
-        <Splitter orientation={'vertical'} primaryPaneIndex={1} initialSizes={{ 1: 300 }} minSizes={{ 0: 80, 1: 80 }}>
-          <ChatPanel document={this.props.document} />
-          <Splitter orientation={'horizontal'} primaryPaneIndex={0} initialSizes={{ 0: 500 }} minSizes={{ 0: 80, 1: 80 }}>
-            <LogPanel document={this.props.document} />
-            <DetailPanel document={this.props.document} />
+        <Splitter orientation={ 'vertical' } primaryPaneIndex={ 0 } minSizes={ { 0: 80, 1: 80 } }>
+          <ChatPanel document={ this.props.document } />
+          <Splitter orientation={ 'horizontal' } primaryPaneIndex={ 1 } minSizes={ { 0: 80, 1: 80 } }>
+            <LogPanel document={ this.props.document } />
+            <DetailPanel document={ this.props.document } />
           </Splitter>
         </Splitter>
       </div>
