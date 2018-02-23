@@ -43,6 +43,7 @@ export const C9 = '#4E257F';
 export const C10 = '#0063B1';
 export const C11 = '#004E8C';
 export const C12 = '#003966';
+export const C13 = '#47B07F';
 
 export const APP_BACKGROUND_DARK = C8;
 export const APP_FOREGROUND_DARK = C2;
@@ -79,6 +80,7 @@ export const EDITOR_TAB_DRAGGED_OVER_BACKGROUND_DARK = '#383838';
 
 export const LOG_PANEL_SOURCE_DARK = '#AAAAAA';
 export const LOG_PANEL_INFO_DARK = C4;
+export const LOG_PANEL_TIMESTAMP_DARK = C13;
 
 export const EDITOR_DRAG_OVERLAY_TRANSPARENT_DARK = 'rgba(85, 85, 85, 0)';
 export const EDITOR_DRAG_OVERLAY_VISIBLE_DARK = 'rgba(85, 85, 85, 0.6)';

@@ -34,9 +34,7 @@
 import { combineReducers } from 'redux';
 
 import { bot } from './bot';
-import { chat } from './chat';
 
 export default combineReducers({
   bot,
-  chat
 });

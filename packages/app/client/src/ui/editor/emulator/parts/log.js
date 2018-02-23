@@ -52,6 +52,10 @@ const CSS = css({
       color: Colors.LOG_PANEL_SOURCE_DARK,
     },
 
+    '& .timestamp': {
+      color: Colors.LOG_PANEL_TIMESTAMP_DARK,
+    },
+
     // info
     '& > .level-0': {
       color: Colors.LOG_PANEL_INFO_DARK,
@@ -68,17 +72,36 @@ const CSS = css({
     '& > .level-3': {
       color: Colors.LOG_PANEL_INFO_DARK,
     },
+
+    '& span.spaced': {
+      marginLeft: '8px',
+    },
+    '& span.spaced:first-child': {
+      marginLeft: 0
+    }
   },
 });
+
+function number2(n) {
+  return ('0' + n).slice(-2);
+}
+
+function timestamp(entry) {
+  let timestamp = new Date(entry.timestamp);
+  let hours = number2(timestamp.getHours());
+  let minutes = number2(timestamp.getMinutes());
+  let seconds = number2(timestamp.getSeconds());
+  return `${hours}:${minutes}:${seconds}`;
+}
 
 export default class Log extends React.Component {
   render() {
     let key = 0;
     return (
-      <div className={CSS}>
+      <div className={ CSS }>
         {
           this.props.document.log.entries.map(entry =>
-            <LogEntry key={`entry-${key++}`} entry={entry} />
+            <LogEntry key={ `entry-${key++}` } entry={ entry } />
           )
         }
       </div>
@@ -95,14 +118,13 @@ class LogEntry extends React.Component {
     let key = 0;
     return (
       <div className="entry">
-        <span className="source">
-          {`[${this.props.entry.source}]`}
+        <span className="spaced">
+          [<span className="timestamp">{ timestamp(this.props.entry) }</span>]
         </span>
-        <span>&nbsp;</span>
-        <span className={`level-${this.props.entry.level}`}>
-        {this.props.entry.messages.map(message =>
-          this.renderMessage(message, key++)
-        )}
+        <span className={ `spaced level-${this.props.entry.level}` }>
+          { this.props.entry.messages.map(message =>
+            this.renderMessage(message, key++)
+          ) }
         </span>
       </div>
     );
@@ -110,14 +132,55 @@ class LogEntry extends React.Component {
 
   renderMessage(message, key) {
     if (Array.isArray(message)) {
-      return <span key={key}>array?</span>;
+      return <span className="spaced" key={ key }>array?</span>;
     } else if (typeof message === 'object') {
-      if (message.type) {
-        return <span key={key}>{message.type}</span>
+      switch (message.type) {
+        case "request": {
+          return (
+            <span className="spaced" key={ key }>request</span>
+          );
+        }
+          break;
+
+        case "response": {
+          return (
+            <span className="spaced" key={ key }>response</span>
+          );
+        }
+
+        case "inspector": {
+          return (
+            <span className="spaced" key={ key }><a href='inspector://activity?obj=' title={ message.title }>{ message.text }</a></span>
+          );
+        }
+          break;
+
+        case "url:external": {
+          return (
+            <span className="spaced" key={ key }>{ message.text }</span>
+          );
+        }
+          break;
+
+        case "settings:bot": {
+          return (
+            <span className="spaced" key={ key }>bot settings</span>
+          );
+        }
+          break;
+
+        case "settings:app": {
+          return (
+            <span className="spaced" key={ key }>app settings</span>
+          );
+        }
+          break;
+
+        default:
+          return <span className="spaced" key={ key }>Unknown log entry type</span>
       }
-      return <span key={key}>Unknown log entry type</span>
     } else if (typeof message === 'string' || typeof message === 'number') {
-      return <span key={key}>{message}</span>;
+      return <span className="spaced" key={ key }>{ message }</span>;
     }
   }
 }

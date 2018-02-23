@@ -43,11 +43,10 @@ import { IAttachmentData } from 'botframework-emulator-shared/built/types/attach
 import { AttachmentsController } from './attachmentsController';
 import { RestServer } from '../../restServer';
 import { BotFrameworkAuthentication } from '../../botFrameworkAuthentication';
-import { error } from '../../log';
 import { jsonBodyParser } from '../../jsonBodyParser';
 import { VersionManager } from '../../versionManager';
 import { sendErrorResponse } from '../../utils';
-import { logNetwork } from '../../logHelpers';
+import { logRequest, logResponse } from '../../logHelpers';
 import { getActiveBot } from '../../botHelpers';
 import { getActivityText, getErrorText } from '../../activityHelpers';
 
@@ -72,6 +71,7 @@ export class ConversationsController {
   // Create conversation API
   public static createConversation = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     let conversationParameters = <IConversationParameters>req.body;
+    logRequest(conversationParameters.conversationId, req);
     try {
       const settings = getSettings();
       // look up bot
@@ -130,17 +130,19 @@ export class ConversationsController {
       var response = ResponseTypes.createConversationResponse(newConversation.conversationId, activityId);
       res.send(HttpStatus.OK, response);
       res.end();
-      logNetwork(newConversation.conversationId, req, res, getActivityText(conversationParameters.activity));
+      //logNetwork(newConversation.conversationId, req, res, getActivityText(conversationParameters.activity));
     } catch (err) {
       sendErrorResponse(req, res, next, err);
-      logNetwork(conversationParameters.conversationId, req, res, getErrorText(err));
+      //logNetwork(conversationParameters.conversationId, req, res, getErrorText(err));
     }
+    logResponse(conversationParameters.conversationId, res);
   }
 
   // SendToConversation
   public static sendToConversation = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     let activity = <IGenericActivity>req.body;
-    const parms: IConversationAPIPathParameters = req.params;
+    const conversationParameters: IConversationAPIPathParameters = req.params;
+    logRequest(conversationParameters.conversationId, req);
     try {
       // look up bot
       const activeBot = getActiveBot();
@@ -151,7 +153,7 @@ export class ConversationsController {
       activity.replyToId = req.params.activityId;
 
       // look up conversation
-      const conversation = emulator.conversations.conversationById(activeBot.botId, parms.conversationId);
+      const conversation = emulator.conversations.conversationById(activeBot.botId, conversationParameters.conversationId);
       if (!conversation)
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "conversation not found");
 
@@ -159,17 +161,19 @@ export class ConversationsController {
       let response: IResourceResponse = conversation.postActivityToUser(activity);
       res.send(HttpStatus.OK, response);
       res.end();
-      logNetwork(parms.conversationId, req, res, getActivityText(activity));
+      //logNetwork(parms.conversationId, req, res, getActivityText(activity));
     } catch (err) {
       sendErrorResponse(req, res, next, err);
-      logNetwork(parms.conversationId, req, res, getErrorText(err));
+      //logNetwork(parms.conversationId, req, res, getErrorText(err));
     }
+    logResponse(conversationParameters.conversationId, res);
   }
 
   // replyToActivity
   public static replyToActivity = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     let activity = <IGenericActivity>req.body;
-    const parms: IConversationAPIPathParameters = req.params;
+    const conversationParameters: IConversationAPIPathParameters = req.params;
+    logRequest(conversationParameters.conversationId, req);
     try {
       // look up bot
       const activeBot = getActiveBot();
@@ -182,7 +186,7 @@ export class ConversationsController {
       activity.replyToId = req.params.activityId;
 
       // look up conversation
-      const conversation = emulator.conversations.conversationById(activeBot.botId, parms.conversationId);
+      const conversation = emulator.conversations.conversationById(activeBot.botId, conversationParameters.conversationId);
       if (!conversation)
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "conversation not found");
 
@@ -194,17 +198,19 @@ export class ConversationsController {
       let response: IResourceResponse = conversation.postActivityToUser(activity);
       res.send(HttpStatus.OK, response);
       res.end();
-      logNetwork(parms.conversationId, req, res, getActivityText(activity));
+      //logNetwork(parms.conversationId, req, res, getActivityText(activity));
     } catch (err) {
       sendErrorResponse(req, res, next, err);
-      logNetwork(parms.conversationId, req, res, getErrorText(err));
+      //logNetwork(parms.conversationId, req, res, getErrorText(err));
     }
+    logResponse(conversationParameters.conversationId, res);
   }
 
   // updateActivity
   public static updateActivity = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     let activity = <IGenericActivity>req.body;
-    const parms: IConversationAPIPathParameters = req.params;
+    const conversationParameters: IConversationAPIPathParameters = req.params;
+    logRequest(conversationParameters.conversationId, req);
     try {
       // look up bot
       const activeBot = getActiveBot();
@@ -213,11 +219,11 @@ export class ConversationsController {
 
       activity.replyToId = req.params.activityId;
 
-      if (activity.id != parms.activityId)
+      if (activity.id != conversationParameters.activityId)
         throw ResponseTypes.createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.BadArgument, "uri activity id does not match payload activity id");
 
       // look up conversation
-      const conversation = emulator.conversations.conversationById(activeBot.botId, parms.conversationId);
+      const conversation = emulator.conversations.conversationById(activeBot.botId, conversationParameters.conversationId);
       if (!conversation)
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "conversation not found");
 
@@ -225,16 +231,18 @@ export class ConversationsController {
       let response: IResourceResponse = conversation.updateActivity(activity);
       res.send(HttpStatus.OK, response);
       res.end();
-      logNetwork(parms.conversationId, req, res, activity, getActivityText(activity));
+      //logNetwork(parms.conversationId, req, res, activity, getActivityText(activity));
     } catch (err) {
       sendErrorResponse(req, res, next, err);
-      logNetwork(parms.conversationId, req, res, activity, getErrorText(err));
+      //logNetwork(parms.conversationId, req, res, activity, getErrorText(err));
     }
+    logResponse(conversationParameters.conversationId, res);
   }
 
   // deleteActivity
   public static deleteActivity = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    const parms: IConversationAPIPathParameters = req.params;
+    const conversationParameters: IConversationAPIPathParameters = req.params;
+    logRequest(conversationParameters.conversationId, req);
     try {
       // look up bot
       const activeBot = getActiveBot();
@@ -242,24 +250,26 @@ export class ConversationsController {
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
 
       // look up conversation
-      const conversation = emulator.conversations.conversationById(activeBot.botId, parms.conversationId);
+      const conversation = emulator.conversations.conversationById(activeBot.botId, conversationParameters.conversationId);
       if (!conversation)
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "conversation not found");
 
-      conversation.deleteActivity(parms.activityId);
+      conversation.deleteActivity(conversationParameters.activityId);
 
       res.send(HttpStatus.OK);
       res.end();
-      logNetwork(parms.conversationId, req, res);
+      //logNetwork(parms.conversationId, req, res);
     } catch (err) {
       sendErrorResponse(req, res, next, err);
-      logNetwork(parms.conversationId, req, res, getErrorText(error));
+      //logNetwork(parms.conversationId, req, res, getErrorText(error));
     }
+    logResponse(conversationParameters.conversationId, res);
   }
 
   // get members of a conversation
   public static getConversationMembers = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    const parms: IConversationAPIPathParameters = req.params;
+    const conversationParameters: IConversationAPIPathParameters = req.params;
+    logRequest(conversationParameters.conversationId, req);
     try {
       // look up bot
       const activeBot = getActiveBot();
@@ -267,22 +277,24 @@ export class ConversationsController {
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
 
       // look up conversation
-      const conversation = emulator.conversations.conversationById(activeBot.botId, parms.conversationId);
+      const conversation = emulator.conversations.conversationById(activeBot.botId, conversationParameters.conversationId);
       if (!conversation)
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "conversation not found");
 
       res.send(HttpStatus.OK, conversation.members);
       res.end();
-      logNetwork(parms.conversationId, req, res, conversation.members);
+      //logNetwork(parms.conversationId, req, res, conversation.members);
     } catch (err) {
       sendErrorResponse(req, res, next, err);
-      logNetwork(parms.conversationId, req, res, null, getErrorText(err));
+      //logNetwork(parms.conversationId, req, res, null, getErrorText(err));
     }
+    logResponse(conversationParameters.conversationId, res);
   }
 
   // get members of an activity
   public static getActivityMembers = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    const parms: IConversationAPIPathParameters = req.params;
+    const conversationParameters: IConversationAPIPathParameters = req.params;
+    logRequest(conversationParameters.conversationId, req);
     try {
       // look up bot
       const activeBot = getActiveBot();
@@ -290,23 +302,25 @@ export class ConversationsController {
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
 
       // look up conversation
-      const conversation = emulator.conversations.conversationById(activeBot.botId, parms.conversationId);
+      const conversation = emulator.conversations.conversationById(activeBot.botId, conversationParameters.conversationId);
       if (!conversation)
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "conversation not found");
 
       res.send(HttpStatus.OK, conversation.members);
       res.end();
-      logNetwork(parms.conversationId, req, res, conversation.members);
+      //logNetwork(parms.conversationId, req, res, conversation.members);
     } catch (err) {
       sendErrorResponse(req, res, next, err);
-      logNetwork(parms.conversationId, req, res, getErrorText(err));
+      //logNetwork(parms.conversationId, req, res, getErrorText(err));
     }
+    logResponse(conversationParameters.conversationId, res);
   }
 
   // upload attachment
   public static uploadAttachment = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     let attachmentData = <IAttachmentData>req.body;
-    const parms: IConversationAPIPathParameters = req.params;
+    const conversationParameters: IConversationAPIPathParameters = req.params;
+    logRequest(conversationParameters.conversationId, req);
     try {
       // look up bot
       const activeBot = getActiveBot();
@@ -314,7 +328,7 @@ export class ConversationsController {
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
 
       // look up conversation
-      const conversation = emulator.conversations.conversationById(activeBot.botId, parms.conversationId);
+      const conversation = emulator.conversations.conversationById(activeBot.botId, conversationParameters.conversationId);
       if (!conversation)
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "conversation not found");
 
@@ -322,10 +336,11 @@ export class ConversationsController {
       let resourceResponse: IResourceResponse = { id: resourceId };
       res.send(HttpStatus.OK, resourceResponse);
       res.end();
-      logNetwork(parms.conversationId, req, res, attachmentData.name);
+      //logNetwork(parms.conversationId, req, res, attachmentData.name);
     } catch (err) {
       sendErrorResponse(req, res, next, err);
-      logNetwork(parms.conversationId, req, res, getErrorText(err));
+      //logNetwork(parms.conversationId, req, res, getErrorText(err));
     }
+    logResponse(conversationParameters.conversationId, res);
   }
 }

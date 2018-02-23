@@ -49,7 +49,6 @@ import { CommandRegistry } from 'botframework-emulator-shared/built/platform/com
 import { ensureStoragePath, readFileSync, showOpenDialog, writeFile } from './utils';
 import { uniqueId } from 'botframework-emulator-shared/built/utils';
 import * as BotActions from './data-v2/action/bot';
-import * as ChatActions from './data-v2/action/chat';
 import { IBot } from 'botframework-emulator-shared/built/types/botTypes';
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
@@ -183,10 +182,8 @@ CommandRegistry.registerCommand("client:loaded", (context: Window, ...args: any[
 
 // Create a new livechat conversation
 CommandRegistry.registerCommand("livechat:new", (context: any, ...args: any[]): any => {
-  const action = ChatActions.newLiveChat();
   // TODO: Validate a bot is active first
-  context.store.dispatch(action);
-  return action.payload.conversationId;
+  return uniqueId();
 });
 
 // Sets the app's title bar

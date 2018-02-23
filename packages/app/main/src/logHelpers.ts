@@ -1,6 +1,15 @@
 import * as Restify from 'restify';
-import { LogLevel, logEntry } from 'botframework-emulator-shared/built/platform/log';
+import { LogLevel, ILogEntry } from 'botframework-emulator-shared/built/platform/log';
 import { mainWindow } from './main';
+
+export function makeLogEntry(level: LogLevel, category: string, ...messages: any[]): ILogEntry {
+  return {
+    timestamp: Date.now(),
+    level,
+    category,
+    messages
+  }
+}
 
 export function makeInspectorLink(text: any, obj: any, title?: string): any {
   return {
@@ -33,23 +42,53 @@ export function makeExternalLink(text: string, url: string): any {
   };
 }
 
-export function logNetwork(conversationId: string, req: Restify.Request, res: Restify.Response, ...messages: any[]) {
-  const level = res.statusCode >= 400 ? LogLevel.Error : LogLevel.Info;
-  const entry = logEntry(
-    level,
+export function logRequest(conversationId: string, req: Restify.Request, ...messages: any[]) {
+  const entry = makeLogEntry(
+    LogLevel.Info,
     "network",
-    "network"
+    {
+      type: "request",
+      payload: {
+        headers: req.headers,
+        method: req.method,
+        body: req.body,
+      }
+    },
+    ...messages
   );
-  entry.messages.push(makeInspectorLink(req.method, req.body));
-  entry.messages.push(makeInspectorLink(`${res.statusCode}`, (res as any).body,`(${res.statusMessage})`));
-  entry.messages.push(...messages);
+  mainWindow.logService.logToLiveChat(conversationId, entry);
+}
+
+export function logResponse(conversationId: string, res: Restify.Response, ...messages: any[]) {
+  const entry = makeLogEntry(
+    res.statusCode >= 400 ? LogLevel.Error : LogLevel.Info,
+    "network",
+    {
+      type: "response",
+      payload: {
+        headers: (res as any)._headers,
+        body: (res as any)._body,
+        statusCode: res.statusCode,
+        statusMessage: res.statusMessage,
+      }
+    },
+    ...messages
+  );
   mainWindow.logService.logToLiveChat(conversationId, entry);
 }
 
 export function logError(conversationId: string, ...messages: any[]) {
-  const entry = logEntry(
+  const entry = makeLogEntry(
     LogLevel.Error,
     "network",
+    ...messages
+  );
+  mainWindow.logService.logToLiveChat(conversationId, entry);
+}
+
+export function logWarning(conversationId: string, ...messages: any[]) {
+  const entry = makeLogEntry(
+    LogLevel.Warn,
     "network",
     ...messages
   );

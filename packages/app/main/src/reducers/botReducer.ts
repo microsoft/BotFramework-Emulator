@@ -79,22 +79,3 @@ export const botsReducer: /*Reducer<IBot[]>*/ any = (
       return state;
   }
 }
-
-export type ActiveBotAction = {
-  type: 'ActiveBot_Set',
-  state: {
-    botId: string
-  }
-}
-
-export const activeBotReducer: /*Reducer<string>*/ any = (
-  state = '',
-  action: ActiveBotAction
-) => {
-  switch (action.type) {
-    case 'ActiveBot_Set':
-      return action.state.botId || state;
-    default:
-      return state;
-  }
-}

@@ -38,7 +38,6 @@ import { ErrorCodes, } from 'botframework-emulator-shared/built/types/responseTy
 import { IAttachmentData, IAttachmentInfo } from 'botframework-emulator-shared/built/types/attachmentTypes';
 import { uniqueId } from 'botframework-emulator-shared/built/utils';
 import { RestServer } from '../../restServer';
-import * as log from '../../log';
 import { sendErrorResponse } from "../../utils";
 
 
@@ -91,13 +90,13 @@ export class AttachmentsController {
 
         res.send(HttpStatus.OK, attachmentInfo);
         res.end();
-        log.api('getAttachmentInfo', req, res, null, attachmentInfo);
+        //log.api('getAttachmentInfo', req, res, null, attachmentInfo);
       }
       else
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, `attachment[${parms.attachmentId}] not found`);
     } catch (err) {
       let error = sendErrorResponse(req, res, next, err);
-      log.api('getAttachmentInfo', req, res, null, error);
+      //log.api('getAttachmentInfo', req, res, null, error);
     }
   }
 
@@ -111,7 +110,7 @@ export class AttachmentsController {
             res.contentType = attachment.type;
             var buffer = new Buffer(attachment.originalBase64, 'base64');
             res.send(HttpStatus.OK, buffer);
-            log.api('getAttachment', req, res, null, buffer.length);
+            //log.api('getAttachment', req, res, null, buffer.length);
           }
           else {
             throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "There is no original view");
@@ -122,7 +121,7 @@ export class AttachmentsController {
             res.contentType = attachment.type;
             var buffer = new Buffer(attachment.thumbnailBase64, 'base64');
             res.send(HttpStatus.OK, buffer);
-            log.api('getAttachment', req, res, null, buffer.length);
+            //log.api('getAttachment', req, res, null, buffer.length);
           }
           else {
             throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "There is no thumbnail view");
@@ -135,7 +134,7 @@ export class AttachmentsController {
     }
     catch (err) {
       let error = sendErrorResponse(req, res, next, err);
-      log.api('getAttachment', req, res, null, error);
+      //log.api('getAttachment', req, res, null, error);
     }
   }
 }

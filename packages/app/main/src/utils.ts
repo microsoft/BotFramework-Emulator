@@ -16,21 +16,22 @@ const path = require('path');
 
 import * as globals from './globals';
 
+export function exceptionToAPIException(exception: any): APIException {
+  if (exception.error && exception.statusCode) {
+    return exception;
+  }
+  return {
+    error: createErrorResponse(ErrorCodes.ServiceError, exception.message),
+    statusCode: HttpStatus.BAD_REQUEST
+  }
+}
 
 // send exception as error response
 export function sendErrorResponse(req: Restify.Request, res: Restify.Response, next: Restify.Next, exception: any): IErrorResponse {
-  let apiException: APIException = exception;
-  if (apiException.error) {
-    res.send(apiException.statusCode, apiException.error);
-    res.end();
-    return apiException.error;
-  }
-  else {
-    let error = createErrorResponse(ErrorCodes.ServiceError, exception.message);
-    res.send(HttpStatus.BAD_REQUEST, error);
-    res.end();
-    return error;
-  }
+  let apiException = exceptionToAPIException(exception);
+  res.send(apiException.statusCode, apiException.error);
+  res.end();
+  return apiException.error;
 }
 
 export const ensureStoragePath = (): string => {
@@ -84,22 +85,22 @@ export const isSecuretUrl = (urlStr: string): boolean => {
 export const directoryExists = (path) => {
   let stat = null;
   try {
-      stat = Fs.statSync(path);
+    stat = Fs.statSync(path);
   } catch (e) { }
 
   if (!stat || !stat.isDirectory()) {
-      return false;
+    return false;
   } else return true;
 }
 
 export const fileExists = (path) => {
   let stat = null;
   try {
-      stat = Fs.statSync(path);
+    stat = Fs.statSync(path);
   } catch (e) { }
 
   if (!stat || !stat.isFile()) {
-      return false;
+    return false;
   } else return true;
 }
 
@@ -109,9 +110,9 @@ export const getFilesInDir = (path) => {
 
 export const readFileSync = (path) => {
   try {
-      return Fs.readFileSync(path, 'utf-8');
+    return Fs.readFileSync(path, 'utf-8');
   } catch (e) {
-      return false;
+    return false;
   }
 }
 
@@ -128,10 +129,10 @@ export const writeFile = (path: string, contents: object | string): void => {
 /** Shows a native open file / directory dialog */
 export const showOpenDialog = (options: OpenDialogOptions) => {
   return new Promise((resolve, reject) => {
-      dialog.showOpenDialog(options, filePaths => {
-          const filePath = filePaths && filePaths[0];
+    dialog.showOpenDialog(options, filePaths => {
+      const filePath = filePaths && filePaths[0];
 
-          filePath ? resolve(filePath) : reject(new Error('user cancelled'));
-      });
+      filePath ? resolve(filePath) : reject(new Error('user cancelled'));
+    });
   });
 }
