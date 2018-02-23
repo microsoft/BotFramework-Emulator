@@ -43,6 +43,7 @@ import TabFactory from './tabFactory';
 import TabbedDocument, { Tab as TabbedDocumentTab, Content as TabbedDocumentContent } from '../multiTabs/tabbedDocument';
 import { CommandRegistry } from 'botframework-emulator-shared/built/platform/commands/commandRegistry';
 import * as Constants from '../../../constants';
+import { getBotDisplayName } from 'botframework-emulator-shared/built/utils';
 
 class MDI extends React.Component {
     constructor(props, context) {
@@ -57,7 +58,7 @@ class MDI extends React.Component {
 
     componentWillMount() {
       this._openBotSettingsCommandHandler = CommandRegistry.registerCommand('bot:settings:open', (context, bot) => {
-        this.props.dispatch(EditorActions.open(Constants.ContentType_BotSettings, bot.botId + ':settings', bot.botId));
+        this.props.dispatch(EditorActions.open(Constants.ContentType_BotSettings, getBotDisplayName(bot) + ':settings', bot.botId));
       });
     }
 

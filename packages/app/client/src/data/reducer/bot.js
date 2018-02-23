@@ -18,6 +18,16 @@ export default function bot(state = DEFAULT_STATE, action) {
       break;
     }
 
+    case BotActions.DELETE: {
+      const bots = state.bots.filter(bot => bot.botId !== action.payload.botId);
+      state = setBotsState(bots, state);
+
+      if (state.activeBot === action.payload.botId) {
+        state = setActiveBot(null, state);
+      }
+      break;
+    }
+
     case BotActions.LOAD: {
       state = setBotsState(payload, state);
       break;

@@ -10,6 +10,9 @@ export type BotAction = {
   type: 'BOT/CREATE';
   payload: IBot;
 } | {
+  type: 'BOT/DELETE',
+  payload: IBot;
+} | {
   type: 'BOT/LOAD',
   payload: any
 } | {
@@ -32,6 +35,16 @@ export const bot: any = (state: IBotState = DEFAULT_STATE, action: BotAction) =>
       const bots = [...state.bots, action.payload];
       state = setBotsState(bots, state);
       state = setActiveBot(action.payload.botId, state);
+      break;
+    }
+
+    case BotActions.DELETE: {
+      const bots = state.bots.filter(bot => bot.botId !== action.payload.botId);
+      state = setBotsState(bots, state);
+
+      if (state.activeBot === action.payload.botId) {
+        state = setActiveBot(null, state);
+      }
       break;
     }
 

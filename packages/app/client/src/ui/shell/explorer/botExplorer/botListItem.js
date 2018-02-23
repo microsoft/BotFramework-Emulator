@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 
 import * as Colors from '../../../styles/colors';
+import { getBotDisplayName } from 'botframework-emulator-shared/built/utils';
 
 const BASE_CSS = css({
   width: '100%',
@@ -41,13 +42,26 @@ const BASE_CSS = css({
     lineHeight: '32px'
   },
 
-  '& > span.bot-settings-icon': {
+  '&:hover > span.bot-widget': {
+    visibility: 'visible'
+  },
+
+  '& > span.bot-widget': {
     display: 'inline-block',
-    marginLeft: 'auto',
-    background: "url('./external/media/ic_settings.svg') no-repeat 50% 50%",
-    backgroundSize: '16px',
+    visibility: 'hidden',
     width: '32px',
     height: '32px'
+  },
+
+  '& > span.bot-settings-icon': {
+    marginLeft: 'auto',
+    background: "url('./external/media/ic_settings.svg') no-repeat 50% 50%",
+    backgroundSize: '16px'
+  },
+
+  '& > span.bot-delete-icon': {
+    background: "url('./external/media/ic_close.svg') no-repeat 50% 50%",
+    backgroundSize: '16px'
   }
 });
 
@@ -57,21 +71,23 @@ export class BotListItem extends React.Component {
   }
 
   render() {
+    const botIdentifier = getBotDisplayName(this.props.bot);
     const className = this.props.activeBot === this.props.bot.botId ? ' selected-bot' : '';
 
     const ICON_LETTERING = css({
-      '& > div:after': { content: this.props.bot.botId.substring(0, 1).toUpperCase() || '' }
+      '& > div:after': { content: botIdentifier.substring(0, 1).toUpperCase() || '' }
     });
     const CSS = css(BASE_CSS, ICON_LETTERING);
 
     return (
-      <li className={CSS + className} onClick={(ev) => this.props.onSelect(ev, this.props.bot.botId)}
-        role="button" title={this.props.bot.botUrl}>
+      <li className={ CSS + className } onClick={ (ev) => this.props.onSelect(ev, this.props.bot.botId) }
+        role="button" title={ this.props.bot.botUrl }>
         <div />
         <span>
-          {this.props.bot.botId}
+          { botIdentifier }
         </span>
-        <span className="bot-settings-icon" onClick={(ev) => this.props.onClickSettings(ev, this.props.bot)} />
+        <span className="bot-widget bot-settings-icon" onClick={ (ev) => this.props.onClickSettings(ev, this.props.bot) } role="button" />
+        <span className="bot-widget bot-delete-icon" onClick={ (ev) => this.props.onClickDelete(ev, this.props.bot) } role="button" />
       </li>
     );
   }

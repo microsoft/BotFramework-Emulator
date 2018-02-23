@@ -35,6 +35,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { CommandService } from '../../../platform/commands/commandService';
+import { getBotDisplayName } from 'botframework-emulator-shared/built/utils';
+import { getBotById } from '../../../data/botHelpers';
 
 const CSS = css({
   padding: '8px 16px',
@@ -69,15 +71,17 @@ class ExplorerBarTitle extends React.Component {
   }
 
   onClickSettings(e) {
-    const bot = this.props.bots.find(bot => bot.botId === this.props.activeBot);
+    const bot = getBotById(this.props.activeBot);
     CommandService.call('bot:settings:open', bot);
   }
 
   render() {
+    const botIdentifier = this.props.activeBot ? getBotDisplayName(getBotById(this.props.activeBot)) : null;
+
     return (
       <div className={ CSS }>
         <header>
-          { this.props.activeBot }
+          { botIdentifier }
         </header>
         { this.props.activeBot ? <span className="bot-settings-icon" onClick={ this.onClickSettings } /> : null }
       </div>

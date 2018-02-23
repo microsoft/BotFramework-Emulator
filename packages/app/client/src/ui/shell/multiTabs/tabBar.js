@@ -93,10 +93,10 @@ const CSS = css({
     },
 
     '& > .split-widget': {
-      '&:after': {
-        content: '[ | ]',
-        color: Colors.EDITOR_TAB_WIDGET_ENABLED_DARK
-      }
+      background: "url('./external/media/ic_split.svg') no-repeat 50% 50%",
+      backgroundSize: '16px',
+      height: '32px',
+      width: '32px'
     }
   }
 });

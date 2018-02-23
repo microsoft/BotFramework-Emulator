@@ -70,6 +70,8 @@ const CSS = css({
 
     '& > .accessories': {
       margin: '0 0 0 auto',
+      height: '100%',
+      width: 'auto',
 
       '& > button': {
         backgroundColor: 'transparent',
@@ -79,6 +81,7 @@ const CSS = css({
       }
     }
   },
+
   '& > .body': {
     height: '100%',
     overflow: 'hidden',

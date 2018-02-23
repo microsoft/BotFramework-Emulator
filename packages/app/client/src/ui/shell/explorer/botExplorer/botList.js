@@ -12,7 +12,8 @@ import { fuzzysearch } from '../../../utils/fuzzySearch';
 import { CommandService } from '../../../../platform/commands/commandService';
 import ExpandCollapse, { Controls as AccessoryButtons, Content as ExpandCollapseContent } from '../../../layout/expandCollapse';
 import PrimaryButton from './primaryButton';
-import { getBotIdentifier } from 'botframework-emulator-shared/built/utils';
+import { getBotDisplayName } from 'botframework-emulator-shared/built/utils';
+import { getBotById } from '../../../../data/botHelpers';
 
 const CSS = css({
   overflow: 'auto',
@@ -49,11 +50,15 @@ const ACTIONS_CSS = css({
     lineHeight: '22px'
   },
 
-  '& > span.open-bot-icon': {
+  '& > span.bot-list-widget': {
+    display: 'inline-block',
     height: '22px',
-    width: '11px',
-    background: "url('./external/media/ic_files.svg') no-repeat 50% 50%",
-    backgroundSize: '11px',
+    width: '22px'
+  },
+
+  '& > span.create-bot-button': {
+    background: "url('./external/media/ic_new_file.svg') no-repeat 50% 50%",
+    backgroundSize: '18px',
   },
 
   '& > .create-bot-cta': {
@@ -74,6 +79,7 @@ export class BotList extends React.Component {
     this.onChangeQuery = this.onChangeQuery.bind(this);
     this.onClickSettings = this.onClickSettings.bind(this);
     this.onCreateBot = this.onCreateBot.bind(this);
+    this.onClickDelete = this.onClickDelete.bind(this);
 
     this.state = { botQuery: '' };
   }
@@ -82,14 +88,21 @@ export class BotList extends React.Component {
     CommandService.remoteCall('bot:setActive', botId)
       .then(() => {
         this.props.dispatch(BotActions.setActive(botId));
-        const bot = this.props.bots.find(bot => bot.botId === botId);
-        CommandService.remoteCall('app:setTitleBar', getBotIdentifier(bot));
+        const bot = getBotById(botId);
+        CommandService.remoteCall('app:setTitleBar', getBotDisplayName(bot));
       })
       .catch(err => console.error('Error while setting active bot: ', err));
   }
 
   onClickSettings(e, bot) {
     CommandService.call('bot:settings:open', bot);
+  }
+
+  onClickDelete(e, bot) {
+    e.stopPropagation();
+    CommandService.remoteCall('bot:list:delete', bot)
+      .then(() => this.props.dispatch(BotActions.deleteBot(bot)))
+      .catch(err => console.error('Error during bot delete: ', err));
   }
 
   onCreateBot(e) {
@@ -100,12 +113,10 @@ export class BotList extends React.Component {
 
           // open bot settings and switch to explorer view
           this.props.dispatch(NavBarActions.selectOrToggle(Constants.NavBar_Files));
-          this.props.dispatch(EditorActions.open(Constants.ContentType_BotSettings, bot.botId + ':settings', bot.botId));
+          this.props.dispatch(EditorActions.open(Constants.ContentType_BotSettings, getBotDisplayName(bot) + ':settings', bot.botId));
         });
       })
-      .catch(err => {
-        console.error('Error during bot create: ', err);
-      });
+      .catch(err => console.error('Error during bot create: ', err));
   }
 
   onChangeQuery(e) {
@@ -115,7 +126,7 @@ export class BotList extends React.Component {
 
   render() {
     let bots = this.state.botQuery ?
-      this.props.bots.map(bot => fuzzysearch(this.state.botQuery, bot.botId.toLowerCase()) ? bot : null).filter(bot => !!bot)
+      this.props.bots.map(bot => fuzzysearch(this.state.botQuery, getBotDisplayName(bot).toLowerCase()) ? bot : null).filter(bot => !!bot)
       :
       this.props.bots;
 
@@ -124,7 +135,7 @@ export class BotList extends React.Component {
         <ExpandCollapse initialExpanded={ true } title="Bots">
           <AccessoryButtons>
             <div className={ ACTIONS_CSS }>
-              <span role="button" onClick={ this.onCreateBot }>+</span>
+              <span className="bot-list-widget create-bot-button" role="button" onClick={ this.onCreateBot } />
             </div>
           </AccessoryButtons>
           <ExpandCollapseContent>
@@ -133,7 +144,8 @@ export class BotList extends React.Component {
               <ul>
                 {
                   bots.length ?
-                    bots.map(bot => <BotListItem key={ bot.botId } bot={ bot } onSelect={ this.onSelectBot } onClickSettings={ this.onClickSettings } activeBot={ this.props.activeBot } />)
+                    bots.map(bot => <BotListItem key={ bot.botId } bot={ bot } onSelect={ this.onSelectBot }  activeBot={ this.props.activeBot }
+                                      onClickSettings={ this.onClickSettings } onClickDelete={ this.onClickDelete } />)
                     :
                     <li className="empty-bot-list"><PrimaryButton text='+ Configure a bot' onClick={ this.onCreateBot } /></li>
                 }

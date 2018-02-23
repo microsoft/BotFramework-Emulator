@@ -14,6 +14,8 @@ const CSS = css({
   whiteSpace: 'nowrap',
   textOverflow: 'ellipsis',
   overflow: 'hidden',
+  display: 'inline-block',
+  width: 'auto',
 
   '&:hover': {
     backgroundColor: Colors.C11
@@ -29,5 +31,7 @@ const CSS = css({
 });
 
 // TODO: Move to packages/ui-react unless we start using Fabric
-export default props => 
-  <button className={ CSS } onClick={ props.onClick }>{ props.text }</button>;
+export default props => {
+  const buttonClass = props.buttonClass ? ` ${props.buttonClass}` : '';
+  return <button className={ CSS + buttonClass } onClick={ props.onClick }>{ props.text }</button>;
+}

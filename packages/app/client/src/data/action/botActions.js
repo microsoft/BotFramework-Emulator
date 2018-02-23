@@ -1,4 +1,5 @@
 export const CREATE = 'BOT/CREATE';
+export const DELETE = 'BOT/DELETE';
 export const LOAD = 'BOT/LOAD';
 export const PATCH = 'BOT/PATCH';
 export const REMOVE = 'BOT/REMOVE';
@@ -7,6 +8,13 @@ export const SET_ACTIVE = 'BOT/SET_ACTIVE';
 export function create(bot) {
   return {
     type: CREATE,
+    payload: bot
+  };
+}
+
+export function deleteBot(bot) {
+  return {
+    type: DELETE,
     payload: bot
   };
 }

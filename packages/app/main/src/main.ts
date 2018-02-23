@@ -47,7 +47,7 @@ import { setTimeout } from 'timers';
 import { Window } from './platform/window';
 import { CommandRegistry } from 'botframework-emulator-shared/built/platform/commands/commandRegistry';
 import { ensureStoragePath, readFileSync, showOpenDialog, writeFile } from './utils';
-import { uniqueId } from 'botframework-emulator-shared/built/utils';
+import { generateRandomBotName, uniqueId } from 'botframework-emulator-shared/built/utils';
 import * as BotActions from './data-v2/action/bot';
 import { IBot } from 'botframework-emulator-shared/built/types/botTypes';
 
@@ -122,13 +122,15 @@ CommandRegistry.registerCommand('bot:list:load', (context: Window, ...args: any[
 // Create a bot
 CommandRegistry.registerCommand('bot:list:create', (context: Window, ...args: any[]): any => {
   const botId = uniqueId();
+  const botName = generateRandomBotName();
 
   const bot: IBot = {
     botId,
+    botName,
     botUrl: 'http://localhost:3978/api/messages',
     msaAppId: '',
     msaPassword: '',
-    locale: 'en-US',
+    locale: '',
     path: ''
   };
 
@@ -137,20 +139,23 @@ CommandRegistry.registerCommand('bot:list:create', (context: Window, ...args: an
   return bot;
 });
 
+// Delete a bot
+CommandRegistry.registerCommand('bot:list:delete', (context: Window, bot: IBot): any => {
+  context.store.dispatch(BotActions.deleteBot(bot));
+});
+
 // Show explorer prompt to set a local path for a bot
 CommandRegistry.registerCommand('bot:settings:chooseFolder', (context: Window, ...args: any[]): any => {
-  return showOpenDialog({ title: 'Choose a folder for your bot', buttonLabel: 'Create', properties: ['openDirectory', 'promptToCreate'] });
+  return showOpenDialog({ title: 'Choose a folder for your bot', buttonLabel: 'Choose folder', properties: ['openDirectory', 'promptToCreate'] });
 });
 
 // Save bot file and cause a bots list write
 CommandRegistry.registerCommand('bot:save', (context: Window, bot: IBot, originalHandle: string): any => {
   context.store.dispatch(BotActions.patch(originalHandle, bot));
-  return true;
 });
 
 CommandRegistry.registerCommand('bot:setActive', (context: Window, botId: string): any => {
   context.store.dispatch(BotActions.setActive(botId));
-  return true;
 });
 
 // Read file
@@ -168,7 +173,6 @@ CommandRegistry.registerCommand('file:read', (context: Window, path: string): an
 CommandRegistry.registerCommand('file:write', (context: Window, path: string, contents: object | string): any => {
   try {
     writeFile(path, contents);
-    return true;
   } catch (e) {
     console.error(`Failure writing to file at ${path}: `, e);
     throw e;

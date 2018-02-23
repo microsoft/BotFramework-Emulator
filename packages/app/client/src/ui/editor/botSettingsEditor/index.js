@@ -7,6 +7,8 @@ import * as Fonts from '../../styles/fonts';
 import * as BotActions from '../../../data/action/botActions';
 import store from "../../../data/store";
 import { getBotById } from "../../../data/botHelpers";
+import PrimaryButton from '../../shell/explorer/botExplorer/primaryButton';
+import { getBotDisplayName } from 'botframework-emulator-shared/built/utils';
 
 const CSS = css({
   boxSizing: 'border-box',
@@ -36,8 +38,15 @@ const CSS = css({
   },
 
   '& > button': {
-    marginTop: '32px',
-    width: '120px'
+    maxWidth: '120px'
+  },
+
+  '& > .browse-path-button': {
+    marginTop: '8px'
+  },
+
+  '& > .save-button': {
+    marginTop: '48px'
   }
 });
 
@@ -50,12 +59,24 @@ export default class SettingsEditor extends React.Component {
     this.onChangeAppId = this.onChangeAppId.bind(this);
     this.onChangeAppPw = this.onChangeAppPw.bind(this);
     this.onChangeLocale = this.onChangeLocale.bind(this);
+    this.onChangeName = this.onChangeName.bind(this);
     this.onSave = this.onSave.bind(this);
+    this.onSelectFolder = this.onSelectFolder.bind(this);
 
     this.state = {
       originalHandle: this.props.botId,
       bot: getBotById(this.props.botId)
     };
+  }
+
+  componentWillReceiveProps(newProps) {
+    const { botId: newBotId } = newProps;
+    if (newBotId !== this.props.botId) {
+      this.setState({
+        originalHandle: newBotId,
+        bot: getBotById(newBotId)
+      });
+    }
   }
 
   componentWillMount() {
@@ -90,6 +111,11 @@ export default class SettingsEditor extends React.Component {
     this.setState({ bot });
   }
 
+  onChangeName(e) {
+    const bot = { ...this.state.bot, botName: e.target.value };
+    this.setState({ bot });
+  }
+
   onSave(e) {
     // write new settings to bot file
     const newBotFile = {
@@ -102,10 +128,24 @@ export default class SettingsEditor extends React.Component {
       });
   }
 
+  onSelectFolder(e) {
+    CommandService.remoteCall('bot:settings:chooseFolder')
+      .then(path => {
+        const bot = { ...this.state.bot, path: path };
+        this.setState({ bot });
+      })
+      .catch(err => console.log('User cancelled choosing a bot folder: ', err));
+  }
+
   render() {
+    const botIdentifier = getBotDisplayName(this.state.bot);
+
     return (
       <div className={ CSS }>
-        <h1>Bot Settings for { this.state.bot.botId }</h1>
+        <h1>Bot Settings for { botIdentifier }</h1>
+
+        <span>Bot name</span>
+        <input value={ this.state.bot.botName } onChange={ this.onChangeName } type="text" />
 
         <span>Bot handle</span>
         <input value={ this.state.bot.botId } onChange={ this.onChangeHandle } type="text" />
@@ -122,7 +162,11 @@ export default class SettingsEditor extends React.Component {
         <span>Locale</span>
         <input value={ this.state.bot.locale } onChange={ this.onChangeLocale } type="text" />
 
-        <button onClick={ this.onSave }>Save</button>
+        <span>Local folder</span>
+        <input value={ this.state.bot.path } type="text" placeholder="Folder containing your bot" readOnly />
+        <PrimaryButton text='Browse' onClick={ this.onSelectFolder } buttonClass='browse-path-button' />
+
+        <PrimaryButton text='Save' onClick={ this.onSave } buttonClass='save-button' />
       </div>
     );
   }

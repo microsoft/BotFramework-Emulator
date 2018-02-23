@@ -35,10 +35,11 @@ import { uniqueId } from '../utils';
 
 export interface IBot {
   botId?: string,
+  botName?: string,
   botUrl?: string,
+  locale?: string,
   msaAppId?: string,
   msaPassword?: string,
-  locale?: string,
   path?: string
 }
 
@@ -46,9 +47,12 @@ export function newBot(bot: IBot): IBot {
   return Object.assign(
     {},
     {
+      botName: '',
       botUrl: '',
+      locale: '',
       msaAppId: '',
-      msaPassword: ''
+      msaPassword: '',
+      path: ''
     },
     bot,
     {
