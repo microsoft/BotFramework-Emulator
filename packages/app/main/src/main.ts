@@ -121,8 +121,8 @@ CommandRegistry.registerCommand('bot:list:load', (context: Window, ...args: any[
 
 // Create a bot
 CommandRegistry.registerCommand('bot:list:create', (context: Window, ...args: any[]): any => {
-  const botId = uniqueId();
   const botName = generateRandomBotName();
+  const botId = botName.toLowerCase().replace(/\s/g, '_');
 
   const bot: IBot = {
     botId,

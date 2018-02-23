@@ -125,5 +125,5 @@ export const generateRandomBotName = (): string => {
   let noun = NOUNS[Math.floor(Math.random() * NOUNS.length)].trim();
   noun = noun.slice(0, 1).toUpperCase() + noun.substring(1);
 
-  return adjective + noun;
+  return `${adjective} ${noun} Bot`;
 }
