@@ -36,8 +36,8 @@
 // 2. To skip bundling, we can hack with window['require']
 
 import { IBot } from './types/botTypes';
-import { ADJECTIVES } from './constants';
-import { NOUNS } from './constants';
+//import { ADJECTIVES } from './constants';
+//import { NOUNS } from './constants';
 
 /**
  * Generates a random id that is unique enough for our purposes.
@@ -119,6 +119,8 @@ export const getBotDisplayName = (bot: IBot = {}): string => {
 
 /** Generates a random bot name from a list of adjectives and nouns */
 export const generateRandomBotName = (): string => {
+  return "My Bot";
+  /*
   let adjective = ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)].trim();
   adjective = adjective.slice(0, 1).toUpperCase() + adjective.substring(1);
 
@@ -126,4 +128,5 @@ export const generateRandomBotName = (): string => {
   noun = noun.slice(0, 1).toUpperCase() + noun.substring(1);
 
   return `${adjective} ${noun} Bot`;
+  */
 }

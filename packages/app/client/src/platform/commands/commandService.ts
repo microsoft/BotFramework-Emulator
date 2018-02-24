@@ -1,9 +1,5 @@
-import { uniqueId } from 'botframework-emulator-shared/built/utils';
-import { Disposable } from "botframework-emulator-shared/built/base/lifecycle/disposable";
-import { ICommandService } from "botframework-emulator-shared/built/platform/commands";
-import { CommandRegistry } from "botframework-emulator-shared/built/platform/commands/commandRegistry";
-import { Channel } from "botframework-emulator-shared/built/platform/ipc/channel";
-import { IPC } from "../../ipc";
+import { uniqueId, Disposable, ICommandService, CommandRegistry, Channel } from 'botframework-emulator-shared';
+import { IPC } from '../../ipc';
 
 export const CommandService = new class extends Disposable implements ICommandService {
 
@@ -14,9 +10,9 @@ export const CommandService = new class extends Disposable implements ICommandSe
   constructor() {
     super();
     this._channel = new Channel('commandService', IPC);
-    this.toDispose(
+    super.toDispose(
       IPC.registerChannel(this._channel));
-    this.toDispose(
+      super.toDispose(
       this._channel.setListener('call', (commandName: string, transactionId: string, ...args: any[]) => {
         this.call(commandName, ...args)
           .then(result => {

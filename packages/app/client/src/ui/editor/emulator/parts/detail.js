@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
 import { css } from 'glamor';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
@@ -67,10 +66,14 @@ const CSS = css({
 
 export default class Detail extends React.Component {
   render() {
-    if (this.props.document.inspectorObjects.length) {
+    const objs = this.props.document.inspectorObjects;
+    if (objs.length) {
+      const obj0 = objs[0];
+      if (Object.keys(obj0).length === 0)
+        return false;
       return (
         <div className={ CSS }>
-          { formatJSON(this.props.document.inspectorObjects[0]) }
+          { formatJSON(obj0) }
         </div>
       );
     } else {

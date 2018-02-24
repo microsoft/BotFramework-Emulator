@@ -40,10 +40,10 @@ import interceptHyperlink from './interceptHyperlink';
 import Main from './ui/shell/main';
 //import setupContextMenu from './setupContextMenu';
 import store from './data/store';
-import { CommandRegistry } from 'botframework-emulator-shared/built/platform/commands/commandRegistry';
+import { CommandRegistry } from 'botframework-emulator-shared';
 import { CommandService } from './platform/commands/commandService';
 import { SettingsService } from './platform/settings/settingsService';
-import { LogService } from "./platform/log/logService";
+import { LogService } from './platform/log/logService';
 import * as BotActions from './data/action/botActions';
 
 CommandService.init();

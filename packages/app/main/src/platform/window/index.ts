@@ -1,11 +1,9 @@
 import { Store } from 'redux';
-import { BrowserWindow, WebContents } from "electron";
-import { ICommandService } from "botframework-emulator-shared/built/platform/commands";
-import { CommandService } from "../commands/commandService";
-import { ILogService } from "botframework-emulator-shared/built/platform/log";
-import { LogService } from "../log/logService";
-import { IPC, IPCServer } from "../../ipc";
-import { Disposable } from "botframework-emulator-shared/built/base/lifecycle/disposable";
+import { BrowserWindow, WebContents } from 'electron';
+import { ICommandService, ILogService, Disposable } from 'botframework-emulator-shared';
+import { CommandService } from '../commands/commandService';
+import { LogService } from '../log/logService';
+import { IPC, IPCServer } from '../../ipc';
 import createStore from '../../data-v2/createStore';
 import { IState } from '../../data-v2/state';
 
@@ -28,9 +26,9 @@ export class Window extends Disposable {
     this._ipc = new IPC(this._browserWindow.webContents);
     let commandService = this._commandService = new CommandService(this);
     let logService = this._logService = new LogService(this);
-    this.toDispose(IPCServer.registerIPC(this._ipc));
-    this.toDispose(commandService);
-    this.toDispose(logService);
+    super.toDispose(IPCServer.registerIPC(this._ipc));
+    super.toDispose(commandService);
+    super.toDispose(logService);
   }
 
   initStore(): Promise<Store<IState>> {

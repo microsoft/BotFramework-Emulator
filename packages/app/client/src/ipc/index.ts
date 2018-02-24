@@ -1,14 +1,14 @@
 const electron = window['require']('electron');
 const ipcRenderer = electron.ipcRenderer;
 
-import { BaseIPC } from "botframework-emulator-shared/built/platform/ipc";
+import { BaseIPC, Channel, IDisposable } from 'botframework-emulator-shared';
 
 export const IPC = new class extends BaseIPC {
   constructor() {
     super();
     ipcRenderer.on('ipc:message', (sender: any, ...args: any[]) => {
       const channelName = args.shift();
-      const channel = this.getChannel(channelName);
+      const channel = super.getChannel(channelName);
       if (channel) {
         channel.onMessage(...args);
       }
@@ -17,5 +17,9 @@ export const IPC = new class extends BaseIPC {
 
   send(...args: any[]): void {
     ipcRenderer.send('ipc:message', ...args);
+  }
+
+  registerChannel(channel: Channel): IDisposable {
+    return super.registerChannel(channel);
   }
 }

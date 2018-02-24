@@ -1,5 +1,5 @@
 
-import { IBot } from 'botframework-emulator-shared/built/types/botTypes';
+import { IBot } from 'botframework-emulator-shared';
 import { mainWindow } from './main';
 
 export function getActiveBot(): IBot {

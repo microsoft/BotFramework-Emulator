@@ -32,8 +32,7 @@
 //
 
 //import { Reducer } from 'redux';
-import { uniqueId } from 'botframework-emulator-shared/built/utils';
-import { IBot } from 'botframework-emulator-shared/built/types/botTypes';
+import { uniqueId, IBot } from 'botframework-emulator-shared';
 import { getSettings } from '../settings';
 
 

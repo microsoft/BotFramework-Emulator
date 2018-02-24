@@ -32,19 +32,15 @@
 //
 
 import * as Restify from 'restify';
-import * as HttpStatus from "http-status-codes";
+import * as HttpStatus from 'http-status-codes';
 import { emulator } from '../../emulator';
 import { getSettings, dispatch } from '../../settings';
-import { IGenericActivity } from 'botframework-emulator-shared/built/types/activityTypes';
-import { IAttachment } from 'botframework-emulator-shared/built/types/attachmentTypes';
-import { IAttachmentData } from 'botframework-emulator-shared/built/types/attachmentTypes';
+import { IGenericActivity, IAttachment, IAttachmentData, usersDefault, LogLevel } from 'botframework-emulator-shared';
 import { AttachmentsController } from '../connector/attachmentsController';
 import * as Fs from 'fs';
 import * as Formidable from 'formidable';
 import { RestServer } from '../../restServer';
 import { jsonBodyParser } from '../../jsonBodyParser';
-import { usersDefault } from 'botframework-emulator-shared/built/types/serverSettingsTypes';
-import { LogLevel } from 'botframework-emulator-shared/built/platform/log';
 import { getActiveBot } from '../../botHelpers';
 import { logError, logRequest, logResponse } from '../../logHelpers';
 

@@ -32,17 +32,16 @@
 //
 
 import * as Restify from 'restify';
-import * as HttpStatus from "http-status-codes";
-import * as ResponseTypes from 'botframework-emulator-shared/built/types/responseTypes';
-import { ErrorCodes } from 'botframework-emulator-shared/built/types/responseTypes';
+import * as HttpStatus from 'http-status-codes';
+import * as ResponseTypes from 'botframework-emulator-shared';
+import { ErrorCodes, approximateObjectSize } from 'botframework-emulator-shared';
 import { RestServer } from '../../restServer';
 import { BotFrameworkAuthentication } from '../../botFrameworkAuthentication';
 import { jsonBodyParser } from '../../jsonBodyParser';
 import { getSettings } from '../../settings';
-import { approximateObjectSize } from 'botframework-emulator-shared/built/utils';
 import { emulator } from '../../emulator';
 import { Conversation } from '../../conversationManager';
-import { sendErrorResponse } from "../../utils";
+import { sendErrorResponse } from '../../utils';
 import { getActiveBot } from '../../botHelpers';
 import { logRequest, logResponse } from '../../logHelpers';
 import * as log from '../../logHelpers';

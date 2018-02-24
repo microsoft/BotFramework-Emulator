@@ -33,7 +33,7 @@ export abstract class Disposable implements IDisposable {
     this._toDispose = dispose(this._toDispose);
   }
 
-  protected toDispose(...objs: IDisposable[]): void {
+  public toDispose(...objs: IDisposable[]): void {
     this._toDispose.push(...objs);
   }
 }

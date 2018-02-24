@@ -39,7 +39,7 @@ import Button from './button';
 import * as Colors from '../../styles/colors';
 import * as constants from '../../../constants';
 import * as NavBarActions from '../../../data/action/navBarActions';
-import { CommandRegistry } from 'botframework-emulator-shared/built/platform/commands/commandRegistry';
+import { CommandRegistry } from 'botframework-emulator-shared';
 
 
 const CSS = css({
@@ -66,7 +66,7 @@ const CSS = css({
       '& > div': {
         height: '100%',
         width: '100%',
-        
+
         '&:hover': {
           backgroundColor: 'rgba(0,0,0,0.15) !important',
         },

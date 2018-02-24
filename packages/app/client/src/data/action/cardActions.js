@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { uniqueId } from 'botframework-emulator-shared/built/utils';
+import { uniqueId } from 'botframework-emulator-shared';
 
 export const UPDATE_JSON = 'CARD/UPDATE_JSON';
 export const ADD_OUTPUT_MSG = 'CARD/ADD_OUTPUT_MSG';

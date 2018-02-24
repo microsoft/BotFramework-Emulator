@@ -45,11 +45,9 @@ import * as commandLine from './commandLine'
 import * as electronLocalShortcut from 'electron-localshortcut';
 import { setTimeout } from 'timers';
 import { Window } from './platform/window';
-import { CommandRegistry } from 'botframework-emulator-shared/built/platform/commands/commandRegistry';
+import { IBot, CommandRegistry, generateRandomBotName, uniqueId } from 'botframework-emulator-shared';
 import { ensureStoragePath, readFileSync, showOpenDialog, writeFile } from './utils';
-import { generateRandomBotName, uniqueId } from 'botframework-emulator-shared/built/utils';
 import * as BotActions from './data-v2/action/bot';
-import { IBot } from 'botframework-emulator-shared/built/types/botTypes';
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
   console.error(error);

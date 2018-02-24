@@ -1,5 +1,5 @@
-import { ISender } from "./sender";
-import { IDisposable } from "../../base/lifecycle/disposable";
+import { ISender } from './sender';
+import { IDisposable } from '../../base/lifecycle/disposable';
 
 export interface Listener {
   (...args: any[]);

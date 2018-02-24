@@ -12,11 +12,11 @@ import { fuzzysearch } from '../../../utils/fuzzySearch';
 import { CommandService } from '../../../../platform/commands/commandService';
 import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../../layout/expandCollapse';
 import PrimaryButton from './primaryButton';
-import { getBotDisplayName } from 'botframework-emulator-shared/built/utils';
+import { getBotDisplayName } from 'botframework-emulator-shared';
 import { getBotById } from '../../../../data/botHelpers';
 
 const CSS = css({
-  overflow: 'auto',
+  overflowX: 'hidden',
   height: '100%',
 
   '& > ul': {
@@ -30,7 +30,7 @@ const CSS = css({
     width: '100%',
     padding: '16px',
     boxSizing: 'border-box'
-  }
+  },
 });
 
 const INPUT_CSS = css({
@@ -40,30 +40,16 @@ const INPUT_CSS = css({
   boxSizing: 'border-box'
 });
 
-const ACTIONS_CSS = css({
-  display: 'flex',
-
-  '& > span': {
-    marginRight: '12px',
-    display: 'inline-block',
-    fontSize: '16px',
-    lineHeight: '22px'
+const ACCESSORIES_CSS = css({
+  '& .accessory-button': {
+    width: '30px',
+    height: '30px',
   },
 
-  '& > span.bot-list-widget': {
-    display: 'inline-block',
-    height: '22px',
-    width: '22px'
-  },
-
-  '& > span.create-bot-button': {
+  '& .create-bot-button': {
     background: "url('./external/media/ic_new_file.svg') no-repeat 50% 50%",
-    backgroundSize: '18px',
+    backgroundSize: '16px',
   },
-
-  '& > .create-bot-cta': {
-    marginTop: 'auto'
-  }
 });
 
 const BOTTOM_DOCK_CSS = css({
@@ -134,8 +120,8 @@ export class BotList extends React.Component {
       <React.Fragment>
         <ExpandCollapse initialExpanded={ true } title="Bots">
           <ExpandCollapseControls>
-            <div className={ ACTIONS_CSS }>
-              <span className="bot-list-widget create-bot-button" role="button" onClick={ this.onCreateBot } />
+            <div className={ ACCESSORIES_CSS }>
+              <div className="accessory-button create-bot-button" role="button" onClick={ this.onCreateBot } />
             </div>
           </ExpandCollapseControls>
           <ExpandCollapseContent>

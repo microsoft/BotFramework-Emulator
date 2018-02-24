@@ -3,13 +3,12 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 
 import * as Colors from '../../../styles/colors';
-import { getBotDisplayName } from 'botframework-emulator-shared/built/utils';
+import { getBotDisplayName } from 'botframework-emulator-shared';
 
 const BASE_CSS = css({
   width: '100%',
   height: '48px',
   display: 'flex',
-  flexFlow: 'row nowrap',
   padding: '8px',
   boxSizing: 'border-box',
   cursor: 'pointer',
@@ -27,9 +26,11 @@ const BASE_CSS = css({
   },
 
   // icon
-  '& > div': {
-    height: '100%',
+  '& div.bot-icon': {
+    height: '32px',
+    minHeight: '32px',
     width: '32px',
+    minWidth: '32px',
     borderRadius: '32px',
     marginRight: '8px',
     backgroundColor: Colors.C9,
@@ -37,29 +38,36 @@ const BASE_CSS = css({
     textAlign: 'center'
   },
 
-  '& > span': {
-    display: 'inline-block',
-    lineHeight: '32px'
+  '& div.bot-name': {
+    whiteSpace: 'nowrap',
+    lineHeight: '32px',
+    flexGrow: 1,
+    flexShrink: 1,
   },
 
-  '&:hover > span.bot-widget': {
+  '& div.bot-accessories': {
+    alignSelf: 'flex-end',
+    display: 'flex',
+  },
+
+  '&:hover span.bot-widget': {
     visibility: 'visible'
   },
 
-  '& > span.bot-widget': {
+  '& span.bot-widget': {
     display: 'inline-block',
     visibility: 'hidden',
     width: '32px',
     height: '32px'
   },
 
-  '& > span.bot-settings-icon': {
+  '& span.bot-settings-icon': {
     marginLeft: 'auto',
     background: "url('./external/media/ic_settings.svg') no-repeat 50% 50%",
     backgroundSize: '16px'
   },
 
-  '& > span.bot-delete-icon': {
+  '& span.bot-delete-icon': {
     background: "url('./external/media/ic_close.svg') no-repeat 50% 50%",
     backgroundSize: '16px'
   }
@@ -75,19 +83,21 @@ export class BotListItem extends React.Component {
     const className = this.props.activeBot === this.props.bot.botId ? ' selected-bot' : '';
 
     const ICON_LETTERING = css({
-      '& > div:after': { content: botIdentifier.substring(0, 1).toUpperCase() || '' }
+      '& > div.bot-icon:after': { content: botIdentifier.substring(0, 1).toUpperCase() || '' }
     });
     const CSS = css(BASE_CSS, ICON_LETTERING);
 
     return (
       <li className={ CSS + className } onClick={ (ev) => this.props.onSelect(ev, this.props.bot.botId) }
         role="button" title={ this.props.bot.botUrl }>
-        <div />
-        <span>
+        <div className="bot-icon" />
+        <div className="bot-name">
           { botIdentifier }
-        </span>
-        <span className="bot-widget bot-settings-icon" onClick={ (ev) => this.props.onClickSettings(ev, this.props.bot) } role="button" />
-        <span className="bot-widget bot-delete-icon" onClick={ (ev) => this.props.onClickDelete(ev, this.props.bot) } role="button" />
+        </div>
+        <div className="bot-accessories">
+          <span className="bot-widget bot-settings-icon" onClick={ (ev) => this.props.onClickSettings(ev, this.props.bot) } role="button" />
+          <span className="bot-widget bot-delete-icon" onClick={ (ev) => this.props.onClickDelete(ev, this.props.bot) } role="button" />
+        </div>
       </li>
     );
   }

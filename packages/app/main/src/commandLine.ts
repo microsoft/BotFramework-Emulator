@@ -32,7 +32,7 @@
 //
 
 import * as commandLineArgs from 'command-line-args';
-import {ICommandLineArgs} from 'botframework-emulator-shared/built/types/commandLineArgsTypes';
+import {ICommandLineArgs} from 'botframework-emulator-shared';
 import * as globals from './globals';
 
 

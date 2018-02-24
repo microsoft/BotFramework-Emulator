@@ -41,7 +41,7 @@ import * as EditorActions from '../../../../data/action/editorActions';
 import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../../layout/expandCollapse';
 import * as Colors from '../../../styles/colors';
 import ExplorerItem from '../explorerItem';
-import { CommandRegistry } from 'botframework-emulator-shared/built/platform/commands/commandRegistry';
+import { CommandRegistry } from 'botframework-emulator-shared';
 import store from '../../../../data/store';
 
 const CSS = css({
@@ -87,7 +87,7 @@ class TranscriptExplorer extends React.Component {
           {
             Object.keys(this.props.transcripts).map(transcriptId =>
               <ExplorerItem key={ transcriptId } active={ this.props.activeDocumentId === transcriptId } onClick={ () => this.onItemClick(transcriptId) }>
-                <span>{ `Transcript : ${transcriptId}` }</span>
+                <span>{ `Saved Chat : ${transcriptId}` }</span>
               </ExplorerItem>
             )
           }
@@ -110,7 +110,7 @@ class TranscriptExplorer extends React.Component {
         <li>
           <ExpandCollapse
             initialExpanded={ true }
-            title="Transcripts"
+            title="Saved Chats"
           >
             {
               Object.keys(this.props.transcripts).length

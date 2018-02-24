@@ -1,4 +1,4 @@
-import { IGenericActivity } from 'botframework-emulator-shared/built/types/activityTypes';
+import { IGenericActivity } from 'botframework-emulator-shared';
 
 export function getActivityText(activity: IGenericActivity): string {
   if (activity) {

@@ -5,10 +5,10 @@ import { css } from 'glamor';
 import { CommandService } from '../../../platform/commands/commandService';
 import * as Fonts from '../../styles/fonts';
 import * as BotActions from '../../../data/action/botActions';
-import store from "../../../data/store";
-import { getBotById } from "../../../data/botHelpers";
+import store from '../../../data/store';
+import { getBotById } from '../../../data/botHelpers';
 import PrimaryButton from '../../shell/explorer/botExplorer/primaryButton';
-import { getBotDisplayName } from 'botframework-emulator-shared/built/utils';
+import { getBotDisplayName } from 'botframework-emulator-shared';
 
 const CSS = css({
   boxSizing: 'border-box',

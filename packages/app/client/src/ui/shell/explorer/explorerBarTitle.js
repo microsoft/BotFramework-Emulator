@@ -35,7 +35,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { CommandService } from '../../../platform/commands/commandService';
-import { getBotDisplayName } from 'botframework-emulator-shared/built/utils';
+import { getBotDisplayName } from 'botframework-emulator-shared';
 import { getBotById } from '../../../data/botHelpers';
 
 const CSS = css({
@@ -49,7 +49,8 @@ const CSS = css({
     fontSize: '13px',
     lineHeight: '24px',
     height: '24px',
-    textTransform: 'uppercase'
+    textTransform: 'uppercase',
+    whiteSpace: 'nowrap',
   },
 
   '& > span.bot-settings-icon': {

@@ -46,7 +46,8 @@ const CSS = css({
     fontSize: '13px',
     lineHeight: '24px',
     height: '24px',
-    textTransform: 'uppercase'
+    textTransform: 'uppercase',
+    whiteSpace: 'nowrap',
   }
 });
 

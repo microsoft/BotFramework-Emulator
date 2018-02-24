@@ -1,5 +1,4 @@
-import { Disposable } from "botframework-emulator-shared/built/base/lifecycle/disposable";
-import { CommandRegistry } from "botframework-emulator-shared/built/platform/commands/commandRegistry";
+import { Disposable, CommandRegistry } from 'botframework-emulator-shared';
 
 export interface IEmulatorSettings {
   url?: string;
@@ -30,7 +29,7 @@ export const SettingsService = new class extends Disposable {
   constructor() {
     super();
     this._emulator = new EmulatorSettings();
-    this.toDispose(CommandRegistry.registerCommand("settings:emulator:url:set", (context: any, ...args: any[]): any => {
+    super.toDispose(CommandRegistry.registerCommand("settings:emulator:url:set", (context: any, ...args: any[]): any => {
       SettingsService.emulator.url = args[0].replace('[::]', '127.0.0.1');
     }));
   }

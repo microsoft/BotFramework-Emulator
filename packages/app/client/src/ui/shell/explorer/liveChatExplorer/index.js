@@ -41,7 +41,7 @@ import * as EditorActions from '../../../../data/action/editorActions';
 import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../../layout/expandCollapse';
 import * as Colors from '../../../styles/colors';
 import ExplorerItem from '../explorerItem';
-import { CommandRegistry } from 'botframework-emulator-shared/built/platform/commands/commandRegistry';
+import { CommandRegistry } from 'botframework-emulator-shared';
 import { CommandService } from '../../../../platform/commands/commandService';
 import store from '../../../../data/store';
 
@@ -76,7 +76,19 @@ const CSS = css({
     padding: '4px 4px 0px 16px',
     whiteSpace: 'nowrap',
     height: '30px',
-  }
+  },
+});
+
+const ACCESSORIES_CSS = css({
+  '& .accessory-button': {
+    width: '30px',
+    height: '30px',
+  },
+
+  '& .create-button': {
+    background: "url('./external/media/ic_new_file.svg') no-repeat 50% 50%",
+    backgroundSize: '16px',
+  },
 });
 
 const CONVO_CSS = css({
@@ -111,7 +123,7 @@ class LiveChatExplorer extends React.Component {
           {
             Object.keys(this.props.liveChats).map(conversationId =>
               <ExplorerItem key={ conversationId } active={ this.props.activeDocumentId === conversationId } onClick={ () => this.onItemClick(conversationId) }>
-                <span>{ `Emulator : ${conversationId}` }</span>
+                <span>{ `Live Chat : ${conversationId}` }</span>
               </ExplorerItem>
             )
           }
@@ -137,7 +149,9 @@ class LiveChatExplorer extends React.Component {
             title="Live Chats"
           >
             <ExpandCollapseControls>
-              <button onClick={ this.onAddClick }>+</button>
+            <div className={ ACCESSORIES_CSS }>
+              <div className="accessory-button create-button" role="button" onClick={ this.onAddClick } />
+            </div>
             </ExpandCollapseControls>
             {
               Object.keys(this.props.liveChats).length

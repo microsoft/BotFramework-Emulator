@@ -130,7 +130,7 @@ export class Main extends React.Component {
         <div className={ NAV_CSS }>
         <NavBar/>
         <div className="workbench">
-          <Splitter orientation={ 'vertical' } primaryPaneIndex={ 0 } minSizes={{ 0: 200, 1: 80 }} initialSizes={{ 0: 300 }}>
+          <Splitter orientation={ 'vertical' } primaryPaneIndex={ 0 } minSizes={{ 0: 40, 1: 40 }} initialSizes={{ 0: 300 }}>
             <ExplorerBar />
             <Splitter orientation={ 'vertical' }>
             {

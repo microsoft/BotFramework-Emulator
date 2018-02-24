@@ -1,5 +1,5 @@
-import { ICommandRegistry, ICommand, ICommandHandler, ICommandMap } from "./";
-import { IDisposable } from "../../base/lifecycle/disposable"
+import { ICommandRegistry, ICommand, ICommandHandler, ICommandMap } from './';
+import { IDisposable } from '../../base/lifecycle/disposable'
 
 
 export const CommandRegistry: ICommandRegistry = new class implements ICommandRegistry {

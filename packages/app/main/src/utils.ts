@@ -1,8 +1,7 @@
 
 import * as Restify from 'restify';
-import * as HttpStatus from "http-status-codes";
-import { IErrorResponse, APIException, createErrorResponse, ErrorCodes } from "botframework-emulator-shared/built/types/responseTypes";
-import { mergeDeep } from "botframework-emulator-shared/built/utils";
+import * as HttpStatus from 'http-status-codes';
+import { IErrorResponse, APIException, createErrorResponse, ErrorCodes, mergeDeep } from 'botframework-emulator-shared';
 import { dialog, OpenDialogOptions } from 'electron';
 
 const electron = require('electron'); // use a lowercase name "electron" to prevent clash with "Electron" namespace

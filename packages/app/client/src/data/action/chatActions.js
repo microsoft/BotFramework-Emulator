@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { uniqueId } from 'botframework-emulator-shared/built/utils';
-import { createStore as createWebChatStore } from "custom-botframework-webchat";
+import { uniqueId } from 'botframework-emulator-shared';
+import { createStore as createWebChatStore } from 'custom-botframework-webchat';
 
 export const NEW_LIVECHAT_DOCUMENT = 'CHAT/DOCUMENT/NEW/LIVE';
 export const OPEN_LIVECHAT_DOCUMENT = 'CHAT/DOCUMENT/OPEN/LIVE';

@@ -32,8 +32,8 @@
 //
 
 //import { Reducer } from 'redux';
-//import { IFrameworkSettings, frameworkDefault } from 'botframework-emulator-shared/built/types/serverSettingsTypes';
-import { frameworkDefault } from 'botframework-emulator-shared/built/types/serverSettingsTypes';
+//import { IFrameworkSettings, frameworkDefault } from 'botframework-emulator-shared';
+import { frameworkDefault } from 'botframework-emulator-shared';
 
 export type FrameworkAction = {
     type: 'Framework_Set',

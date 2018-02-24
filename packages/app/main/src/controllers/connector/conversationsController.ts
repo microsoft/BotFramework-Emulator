@@ -32,14 +32,11 @@
 //
 
 import * as Restify from 'restify';
-import { IGenericActivity, IConversationParameters } from 'botframework-emulator-shared/built/types/activityTypes';
-import { IUser } from 'botframework-emulator-shared/built/types/userTypes';
+import { IGenericActivity, IConversationParameters, IUser, ErrorCodes, IResourceResponse, IAttachmentData } from 'botframework-emulator-shared';
+import * as HttpStatus from 'http-status-codes';
+import * as ResponseTypes from 'botframework-emulator-shared';
 import { getSettings, getStore } from '../../settings';
 import { emulator } from '../../emulator';
-import * as HttpStatus from "http-status-codes";
-import * as ResponseTypes from 'botframework-emulator-shared/built/types/responseTypes';
-import { ErrorCodes, IResourceResponse } from 'botframework-emulator-shared/built/types/responseTypes';
-import { IAttachmentData } from 'botframework-emulator-shared/built/types/attachmentTypes';
 import { AttachmentsController } from './attachmentsController';
 import { RestServer } from '../../restServer';
 import { BotFrameworkAuthentication } from '../../botFrameworkAuthentication';

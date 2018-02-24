@@ -38,8 +38,8 @@ import { botsReducer } from './reducers/botReducer';
 import { windowStateReducer } from './reducers/windowStateReducer';
 import { usersReducer } from './reducers/usersReducer';
 import { loadSettings, saveSettings } from './utils';
-import { IBot } from 'botframework-emulator-shared/built/types/botTypes';
 import {
+  IBot,
   IFrameworkSettings,
   IWindowStateSettings,
   IUserSettings,
@@ -47,7 +47,7 @@ import {
   ISettings,
   Settings,
   settingsDefault
-} from 'botframework-emulator-shared/built/types/serverSettingsTypes';
+} from 'botframework-emulator-shared';
 
 
 export class PersistentSettings implements IPersistentSettings {

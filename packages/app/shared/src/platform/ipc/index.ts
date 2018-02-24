@@ -1,3 +1,6 @@
+export * from './channel';
+export * from './sender';
+
 import { Channel } from './channel';
 import { IDisposable, Disposable } from '../../base/lifecycle/disposable';
 import { ISender } from './sender';

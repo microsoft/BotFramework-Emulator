@@ -32,9 +32,8 @@
 //
 
 //import { Reducer } from 'redux';
-//import { IUserSettings, usersDefault } from 'botframework-emulator-shared/built/types/serverSettingsTypes'
-import { usersDefault } from 'botframework-emulator-shared/built/types/serverSettingsTypes'
-import { IUser } from 'botframework-emulator-shared/built/types/userTypes';
+//import { IUserSettings, usersDefault } from 'botframework-emulator-shared';
+import { usersDefault, IUser } from 'botframework-emulator-shared';
 
 
 export type UsersAction = {

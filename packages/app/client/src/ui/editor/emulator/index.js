@@ -104,8 +104,8 @@ class Emulator extends React.Component {
         <Splitter orientation={ 'vertical' } primaryPaneIndex={ 0 } minSizes={ { 0: 80, 1: 80 } }>
           <ChatPanel document={ this.props.document } />
           <Splitter orientation={ 'horizontal' } primaryPaneIndex={ 1 } minSizes={ { 0: 80, 1: 80 } }>
-            <LogPanel document={ this.props.document } />
             <DetailPanel document={ this.props.document } />
+            <LogPanel document={ this.props.document } />
           </Splitter>
         </Splitter>
       </div>

@@ -1,3 +1,4 @@
+export * from './commandRegistry';
 
 import { IDisposable } from '../../base/lifecycle/disposable';
 

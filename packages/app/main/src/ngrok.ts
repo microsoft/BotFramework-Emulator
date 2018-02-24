@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as path from "path";
+import * as path from 'path';
 import * as got from 'got';
 var spawn = require('child_process').spawn;
 var Emitter = require('events').EventEmitter;

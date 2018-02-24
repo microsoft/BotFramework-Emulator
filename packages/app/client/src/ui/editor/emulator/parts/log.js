@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
 import { css } from 'glamor';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';

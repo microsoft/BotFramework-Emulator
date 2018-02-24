@@ -39,7 +39,7 @@ import { ConversationsControllerV3 as DirectLineConversationsController } from '
 import { EmulatorController } from './controllers/emulator/emulatorController';
 import { RestServer } from './restServer';
 import { getStore, addSettingsListener } from './settings';
-import { Settings } from 'botframework-emulator-shared/built/types/serverSettingsTypes';
+import { Settings } from 'botframework-emulator-shared';
 import * as log from './log';
 import * as ngrok from './ngrok';
 import { isLocalhostUrl } from './utils';

@@ -1,9 +1,4 @@
-import { Disposable } from "botframework-emulator-shared/built/base/lifecycle/disposable";
-import { ICommandService } from "botframework-emulator-shared/built/platform/commands";
-import { CommandRegistry } from "botframework-emulator-shared/built/platform/commands/commandRegistry";
-import { Channel } from "botframework-emulator-shared/built/platform/ipc/channel";
-import { uniqueId } from 'botframework-emulator-shared/built/utils';
-import { Window } from "../window";
+import { Disposable, ICommandService, CommandRegistry, Channel, uniqueId, Window } from 'botframework-emulator-shared';
 
 export class CommandService extends Disposable implements ICommandService {
 
@@ -12,9 +7,9 @@ export class CommandService extends Disposable implements ICommandService {
   constructor(private _window: Window) {
     super();
     this._channel = new Channel('commandService', this._window.ipc);
-    this.toDispose(
+    super.toDispose(
       this._window.ipc.registerChannel(this._channel));
-    this.toDispose(
+    super.toDispose(
       this._channel.setListener('call', (commandName: string, transactionId: string, ...args: any[]) => {
         this.call(commandName, ...args)
           .then(result => {

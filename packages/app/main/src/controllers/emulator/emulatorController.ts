@@ -32,18 +32,17 @@
 //
 
 import * as Restify from 'restify';
-import * as HttpStatus from "http-status-codes";
+import * as HttpStatus from 'http-status-codes';
 import { autoUpdater } from 'electron';
 import { getSettings } from '../../settings';
 import { emulator } from '../../emulator';
 import { RestServer } from '../../restServer';
 import { jsonBodyParser } from '../../jsonBodyParser';
-import * as ResponseTypes from 'botframework-emulator-shared/built/types/responseTypes';
-import { ErrorCodes } from 'botframework-emulator-shared/built/types/responseTypes';
-import { IChannelAccount } from 'botframework-emulator-shared/built/types/accountTypes';
+import { ErrorCodes, IChannelAccount } from 'botframework-emulator-shared';
+import * as ResponseTypes from 'botframework-emulator-shared';
+import * as Payment from 'botframework-emulator-shared';
 import { windowManager } from '../../main';
 import { Conversation } from '../../conversationManager';
-import * as Payment from 'botframework-emulator-shared/built/types/paymentTypes';
 import { sendErrorResponse } from '../../utils';
 import { getActiveBot } from '../../botHelpers';
 

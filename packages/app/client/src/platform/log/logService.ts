@@ -1,8 +1,6 @@
-import { Disposable } from "botframework-emulator-shared/built/base/lifecycle/disposable";
-import { ILogService, ILogEntry } from "botframework-emulator-shared/built/platform/log";
-import { CommandRegistry } from "botframework-emulator-shared/built/platform/commands/commandRegistry";
-import * as ChatActions from "../../data/action/chatActions";
-import store from "../../data/store";
+import { Disposable, ILogService, ILogEntry, CommandRegistry } from 'botframework-emulator-shared';
+import * as ChatActions from '../../data/action/chatActions';
+import store from '../../data/store';
 
 export const LogService = new class extends Disposable implements ILogService {
 

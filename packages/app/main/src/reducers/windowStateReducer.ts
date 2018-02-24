@@ -32,8 +32,8 @@
 //
 
 //import { Reducer } from 'redux';
-//import { IWindowStateSettings, windowStateDefault } from 'botframework-emulator-shared/built/types/serverSettingsTypes';
-import { windowStateDefault } from 'botframework-emulator-shared/built/types/serverSettingsTypes';
+//import { IWindowStateSettings, windowStateDefault } from 'botframework-emulator-shared';
+import { windowStateDefault } from 'botframework-emulator-shared';
 
 
 export type WindowStateAction = {
