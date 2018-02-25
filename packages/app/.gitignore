@@ -1,2 +1,5 @@
 /**/install/
 /**/built/
+/**/dist/
+/**/cache/
+/**/app/

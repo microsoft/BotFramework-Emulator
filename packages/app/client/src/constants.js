@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export const ContentType_BotSettings = 'application/vnd.microsoft.botbuilderstudio.document.botsettings';
-export const ContentType_Transcript = 'application/vnd.microsoft.botbuilderstudio.document.transcript';
-export const ContentType_LiveChat = 'application/vnd.microsoft.botbuilderstudio.document.livechat';
-export const ContentType_TestBed = 'application/vnd.microsoft.botbuilderstudio.testbed';
+export const ContentType_BotSettings = 'application/vnd.microsoft.bfemulator.document.botsettings';
+export const ContentType_Transcript = 'application/vnd.microsoft.bfemulator.document.transcript';
+export const ContentType_LiveChat = 'application/vnd.microsoft.bfemulator.document.livechat';
+export const ContentType_TestBed = 'application/vnd.microsoft.bfemulator.testbed';
 
 export const NavBar_App = 'navbar.app';
 export const NavBar_Files = 'navbar.files';

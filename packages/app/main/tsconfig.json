@@ -13,16 +13,17 @@
     "noEmitOnError": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "outDir": "built/server",
+    "outDir": "app/server",
     "removeComments": true
   },
   "include": [
     "./src"
   ],
   "exclude": [
+    "./app",
     "./built",
-    "./node_modules",
     "./dist",
+    "./node_modules",
     "./scripts"
   ],
   "compileOnSave": false

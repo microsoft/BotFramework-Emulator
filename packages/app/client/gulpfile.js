@@ -4,7 +4,6 @@ gulp.task('copy', [
     'copy:media',
     'copy:webchat:cognitiveservices',
     'copy:webchat:css',
-    'copy:monaco'
 ]);
 
 // TODO: We should either repackage CognitiveServices.js into a separate package, or expose it in Web Chat
@@ -26,11 +25,4 @@ gulp.task('copy:media', function () {
     return gulp
         .src('src/ui/media/**/*')
         .pipe(gulp.dest('./public/external/media'));
-});
-
-// Copy monaco to /public
-gulp.task('copy:monaco', function () {
-    return gulp
-        .src('node_modules/monaco-editor/min/vs/**/*')
-        .pipe(gulp.dest('./public/external/vs'))
 });

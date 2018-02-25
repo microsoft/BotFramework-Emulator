@@ -374,7 +374,7 @@ const createMainWindow = () => {
   let page = process.env.ELECTRON_TARGET_URL || url.format({
     protocol: 'file',
     slashes: true,
-    pathname: path.join(__dirname, '../client/index.html')
+    pathname: path.join(__dirname, '../../node_modules/botframework-emulator-client/build/index.html')
   });
 
   if (/^http:\/\//.test(page)) {
