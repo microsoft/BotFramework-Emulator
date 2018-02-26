@@ -135,3 +135,18 @@ export const showOpenDialog = (options: OpenDialogOptions) => {
     });
   });
 }
+
+
+/** Generates a random bot name from a list of adjectives and nouns */
+export function generateRandomBotName(): string {
+  return "My Bot";
+  /*
+  let adjective = ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)].trim();
+  adjective = adjective.slice(0, 1).toUpperCase() + adjective.substring(1);
+
+  let noun = NOUNS[Math.floor(Math.random() * NOUNS.length)].trim();
+  noun = noun.slice(0, 1).toUpperCase() + noun.substring(1);
+
+  return `${adjective} ${noun} Bot`;
+  */
+}

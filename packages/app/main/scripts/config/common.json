@@ -1,6 +1,6 @@
 {
   "asar": true,
-  "appId": "com.microsoft.botframework-emulator",
+  "appId": "${appId}",
   "productName": "Bot Framework Emulator",
   "copyright": "Copyright © 2018 Microsoft Corporation",
   "protocols": [
@@ -8,12 +8,13 @@
       "name": "Bot Framework Emulator",
       "role": "Viewer",
       "schemes": [
-        "bfemulator"
+        "msbots"
       ]
     }
   ],
   "directories": {
-    "buildResources": "./scripts/config/resources"
+    "buildResources": "./scripts/config/resources",
+    "output": "./installer"
   },
   "files": [
     "**/*",
@@ -28,7 +29,8 @@
     "!**/{tsconfig.json,gulpfile.js,README.md,getlicenses.cmd}",
     "!**/node_modules/@types",
     "!**/scripts",
-    "!**/cache"
+    "!**/cache",
+    "!**/installer"
   ],
   "electronDownload": {
     "cache": "./cache",

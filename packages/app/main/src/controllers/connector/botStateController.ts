@@ -56,12 +56,12 @@ export class BotStateController {
 
   private botDataStore: { [key: string]: IBotData } = {};
 
-  private botDataKey(botId: string, channelId: string, conversationId: string, userId: string) {
-    return `${botId || '*'}!${channelId || '*'}!${conversationId || '*'}!${userId || '*'}`;
+  private botDataKey(idOfBotRecord: string, channelId: string, conversationId: string, userId: string) {
+    return `${idOfBotRecord || '*'}!${channelId || '*'}!${conversationId || '*'}!${userId || '*'}`;
   }
 
-  private logBotStateApiDeprecationWarning(botId: string, conversationId: string) {
-    const conversation: Conversation = emulator.conversations.conversationById(botId, conversationId);
+  private logBotStateApiDeprecationWarning(idOfBotRecord: string, conversationId: string) {
+    const conversation: Conversation = emulator.conversations.conversationById(idOfBotRecord, conversationId);
     if (conversation && !conversation.stateApiDeprecationWarningShown) {
       conversation.stateApiDeprecationWarningShown = true;
       log.logWarning('Warning: The Bot Framework State API is not recommended for production environments, and may be deprecated in a future release.',
@@ -69,17 +69,17 @@ export class BotStateController {
     }
   }
 
-  private getBotData(botId: string, channelId: string, conversationId: string, userId: string): IBotData {
-    this.logBotStateApiDeprecationWarning(botId, conversationId);
-    const key = this.botDataKey(botId, channelId, conversationId, userId);
+  private getBotData(idOfBotRecord: string, channelId: string, conversationId: string, userId: string): IBotData {
+    this.logBotStateApiDeprecationWarning(idOfBotRecord, conversationId);
+    const key = this.botDataKey(idOfBotRecord, channelId, conversationId, userId);
     return this.botDataStore[key] || {
       data: null, eTag: '*'
     };
   }
 
-  private setBotData(botId: string, channelId: string, conversationId: string, userId: string, incomingData: IBotData): IBotData {
-    this.logBotStateApiDeprecationWarning(botId, conversationId);
-    const key = this.botDataKey(botId, channelId, conversationId, userId);
+  private setBotData(idOfBotRecord: string, channelId: string, conversationId: string, userId: string, incomingData: IBotData): IBotData {
+    this.logBotStateApiDeprecationWarning(idOfBotRecord, conversationId);
+    const key = this.botDataKey(idOfBotRecord, channelId, conversationId, userId);
     let oldData = this.botDataStore[key];
     if (oldData && oldData.eTag && (oldData.eTag.length > 0) && (incomingData.eTag != '*') && (oldData.eTag != incomingData.eTag)) {
       throw ResponseTypes.createAPIException(HttpStatus.PRECONDITION_FAILED, ErrorCodes.BadArgument, "The data is changed");
@@ -116,11 +116,12 @@ export class BotStateController {
   public getUserData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     logRequest(req.params.conversationId, "bot", req);
     try {
+      // FIX: This is not going to work for multiple bots!
       const activeBot = getActiveBot();
       if (!activeBot) {
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
       }
-      const botData = this.getBotData(activeBot.botId, req.params.channelId, req.params.conversationId, req.params.userId);
+      const botData = this.getBotData(activeBot.id, req.params.channelId, req.params.conversationId, req.params.userId);
       res.send(HttpStatus.OK, botData);
       res.end();
       //log.api('getUserData', req, res, req.params, botData);
@@ -139,7 +140,7 @@ export class BotStateController {
       if (!activeBot) {
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
       }
-      const botData = this.getBotData(activeBot.botId, req.params.channelId, req.params.conversationId, req.params.userId);
+      const botData = this.getBotData(activeBot.id, req.params.channelId, req.params.conversationId, req.params.userId);
       res.send(HttpStatus.OK, botData);
       res.end();
       //log.api('getConversationData', req, res, req.params, botData);
@@ -158,7 +159,7 @@ export class BotStateController {
       if (!activeBot) {
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
       }
-      const botData = this.getBotData(activeBot.botId, req.params.channelId, req.params.conversationId, req.params.userId);
+      const botData = this.getBotData(activeBot.id, req.params.channelId, req.params.conversationId, req.params.userId);
       res.send(HttpStatus.OK, botData);
       res.end();
       //log.api('getPrivateConversationData', req, res, req.params, botData);
@@ -178,7 +179,7 @@ export class BotStateController {
       if (!activeBot) {
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
       }
-      botData = this.setBotData(activeBot.botId, req.params.channelId, req.params.conversationId, req.params.userId, req.body as IBotData);
+      botData = this.setBotData(activeBot.id, req.params.channelId, req.params.conversationId, req.params.userId, req.body as IBotData);
       res.send(HttpStatus.OK, botData);
       res.end();
       //log.api('setUserData', req, res, { key: req.params, state: req.body }, botData);
@@ -197,7 +198,7 @@ export class BotStateController {
       if (!activeBot) {
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
       }
-      const botData = this.setBotData(activeBot.botId, req.params.channelId, req.params.conversationId, req.params.userId, req.body);
+      const botData = this.setBotData(activeBot.id, req.params.channelId, req.params.conversationId, req.params.userId, req.body);
       res.send(HttpStatus.OK, botData);
       res.end();
       //log.api('setConversationData', req, res, { key: req.params, state: req.body }, botData);
@@ -216,7 +217,7 @@ export class BotStateController {
       if (!activeBot) {
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
       }
-      const botData = this.setBotData(activeBot.botId, req.params.channelId, req.params.conversationId, req.params.userId, req.body);
+      const botData = this.setBotData(activeBot.id, req.params.channelId, req.params.conversationId, req.params.userId, req.body);
       res.send(HttpStatus.OK, botData);
       res.end();
       //log.api('setPrivateConversationData', req, res, { key: req.params, state: req.body }, botData);
@@ -239,7 +240,7 @@ export class BotStateController {
       let keys = Object.keys(this.botDataStore);
       for (let i = 0; i < keys.length; i++) {
         let key = keys[i];
-        if (key.startsWith(`${activeBot.botId}!`) && key.endsWith(`!${req.params.userId}`)) {
+        if (key.startsWith(`${activeBot.id}!`) && key.endsWith(`!${req.params.userId}`)) {
           delete this.botDataStore[key];
         }
       }

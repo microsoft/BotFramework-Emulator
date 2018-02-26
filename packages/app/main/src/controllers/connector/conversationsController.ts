@@ -89,7 +89,7 @@ export class ConversationsController {
       if (conversationParameters.bot == null)
         throw ResponseTypes.createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.MissingProperty, "missing Bot property");
 
-      if (conversationParameters.bot.id != activeBot.botId)
+      if (conversationParameters.bot.id != activeBot.id)
         throw ResponseTypes.createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.BadArgument, "conversationParameters.bot.id doesn't match security bot id");
 
       let newUsers: IUser[] = [];
@@ -108,16 +108,16 @@ export class ConversationsController {
 
       let newConversation;
       if (conversationParameters.conversationId) {
-        newConversation = emulator.conversations.conversationById(activeBot.botId, conversationParameters.conversationId);
+        newConversation = emulator.conversations.conversationById(activeBot.id, conversationParameters.conversationId);
       }
       if (!newConversation) {
-        newConversation = emulator.conversations.newConversation(activeBot.botId, users.usersById[conversationParameters.members[0].id], conversationParameters.conversationId);
+        newConversation = emulator.conversations.newConversation(activeBot.id, users.usersById[conversationParameters.members[0].id], conversationParameters.conversationId);
       }
       let activityId: string = null;
       if (conversationParameters.activity != null) {
         // set routing information for new conversation
         conversationParameters.activity.conversation = { id: newConversation.conversationId };
-        conversationParameters.activity.from = { id: activeBot.botId };
+        conversationParameters.activity.from = { id: activeBot.id };
         conversationParameters.activity.recipient = { id: conversationParameters.members[0].id };
 
         let response: IResourceResponse = newConversation.postActivityToUser(conversationParameters.activity);
@@ -150,7 +150,7 @@ export class ConversationsController {
       activity.replyToId = req.params.activityId;
 
       // look up conversation
-      const conversation = emulator.conversations.conversationById(activeBot.botId, conversationParameters.conversationId);
+      const conversation = emulator.conversations.conversationById(activeBot.id, conversationParameters.conversationId);
       if (!conversation)
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "conversation not found");
 
@@ -183,7 +183,7 @@ export class ConversationsController {
       activity.replyToId = req.params.activityId;
 
       // look up conversation
-      const conversation = emulator.conversations.conversationById(activeBot.botId, conversationParameters.conversationId);
+      const conversation = emulator.conversations.conversationById(activeBot.id, conversationParameters.conversationId);
       if (!conversation)
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "conversation not found");
 
@@ -220,7 +220,7 @@ export class ConversationsController {
         throw ResponseTypes.createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.BadArgument, "uri activity id does not match payload activity id");
 
       // look up conversation
-      const conversation = emulator.conversations.conversationById(activeBot.botId, conversationParameters.conversationId);
+      const conversation = emulator.conversations.conversationById(activeBot.id, conversationParameters.conversationId);
       if (!conversation)
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "conversation not found");
 
@@ -247,7 +247,7 @@ export class ConversationsController {
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
 
       // look up conversation
-      const conversation = emulator.conversations.conversationById(activeBot.botId, conversationParameters.conversationId);
+      const conversation = emulator.conversations.conversationById(activeBot.id, conversationParameters.conversationId);
       if (!conversation)
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "conversation not found");
 
@@ -274,7 +274,7 @@ export class ConversationsController {
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
 
       // look up conversation
-      const conversation = emulator.conversations.conversationById(activeBot.botId, conversationParameters.conversationId);
+      const conversation = emulator.conversations.conversationById(activeBot.id, conversationParameters.conversationId);
       if (!conversation)
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "conversation not found");
 
@@ -299,7 +299,7 @@ export class ConversationsController {
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
 
       // look up conversation
-      const conversation = emulator.conversations.conversationById(activeBot.botId, conversationParameters.conversationId);
+      const conversation = emulator.conversations.conversationById(activeBot.id, conversationParameters.conversationId);
       if (!conversation)
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "conversation not found");
 
@@ -325,7 +325,7 @@ export class ConversationsController {
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
 
       // look up conversation
-      const conversation = emulator.conversations.conversationById(activeBot.botId, conversationParameters.conversationId);
+      const conversation = emulator.conversations.conversationById(activeBot.id, conversationParameters.conversationId);
       if (!conversation)
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "conversation not found");
 

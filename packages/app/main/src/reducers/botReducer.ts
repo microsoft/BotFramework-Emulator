@@ -41,39 +41,13 @@ export type BotsAction = {
   state: {
     bot: IBot
   }
-} | {
-    type: 'Bots_RemoveBot',
-    state: {
-      botId: string
-    }
-  };
+}
 
 export const botsReducer: /*Reducer<IBot[]>*/ any = (
   state: IBot[] = [],
   action: BotsAction
 ) => {
   switch (action.type) {
-    case 'Bots_AddOrUpdateBot': {
-      let botId = action.state.bot.botId || uniqueId();
-      const settings = getSettings();
-      if (settings.bots.find(value => value.botId === botId)) {
-        botId = uniqueId();
-      }
-      let index = state.findIndex(value => value.botId === action.state.bot.botId);
-      if (index >= 0) {
-        return [
-          ...state.slice(0, index),
-          Object.assign({}, action.state.bot, { botId: state[index].botId }),
-          ...state.slice(index + 1)];
-      } else {
-        return [
-          ...state,
-          Object.assign({}, action.state.bot, { botId: botId })];
-      }
-    }
-    case 'Bots_RemoveBot': {
-      return state.filter(value => value.botId !== action.state.botId);
-    }
     default:
       return state;
   }

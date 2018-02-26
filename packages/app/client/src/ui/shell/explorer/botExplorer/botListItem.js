@@ -79,20 +79,20 @@ export class BotListItem extends React.Component {
   }
 
   render() {
-    const botIdentifier = getBotDisplayName(this.props.bot);
-    const className = this.props.activeBot === this.props.bot.botId ? ' selected-bot' : '';
+    const botLabel = getBotDisplayName(this.props.bot);
+    const className = this.props.activeBot === this.props.bot.id ? ' selected-bot' : '';
 
     const ICON_LETTERING = css({
-      '& > div.bot-icon:after': { content: botIdentifier.substring(0, 1).toUpperCase() || '' }
+      '& > div.bot-icon:after': { content: botLabel.substring(0, 1).toUpperCase() || '' }
     });
     const CSS = css(BASE_CSS, ICON_LETTERING);
 
     return (
-      <li className={ CSS + className } onClick={ (ev) => this.props.onSelect(ev, this.props.bot.botId) }
+      <li className={ CSS + className } onClick={ (ev) => this.props.onSelect(ev, this.props.bot.id) }
         role="button" title={ this.props.bot.botUrl }>
         <div className="bot-icon" />
         <div className="bot-name">
-          { botIdentifier }
+          { botLabel }
         </div>
         <div className="bot-accessories">
           <span className="bot-widget bot-settings-icon" onClick={ (ev) => this.props.onClickSettings(ev, this.props.bot) } role="button" />

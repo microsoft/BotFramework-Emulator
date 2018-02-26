@@ -35,97 +35,89 @@ import { IBot } from './botTypes';
 import { IUser } from './userTypes';
 
 export interface IFrameworkSettings {
-    // path to use for ngrok
-    ngrokPath?: string,
-    // option for deciding whether to bypass ngrok for bots on localhost
-    bypassNgrokLocalhost?: boolean,
-    stateSizeLimit?: number,
-    // option for using 2.0 or 1.0 tokens
-    use10Tokens?: boolean
+  // path to use for ngrok
+  ngrokPath?: string,
+  // option for deciding whether to bypass ngrok for bots on localhost
+  bypassNgrokLocalhost?: boolean,
+  stateSizeLimit?: number,
+  // option for using 2.0 or 1.0 tokens
+  use10Tokens?: boolean
 }
 
 export interface IWindowStateSettings {
-    displayId?: number,
-    zoomLevel?: number,
-    top?: number,
-    left?: number,
-    width?: number,
-    height?: number,
+  displayId?: number,
+  zoomLevel?: number,
+  top?: number,
+  left?: number,
+  width?: number,
+  height?: number,
 }
 
 export interface IUserSettings {
-    currentUserId?: string,
-    usersById?: { [id: string]: IUser }
+  currentUserId?: string,
+  usersById?: { [id: string]: IUser }
 }
 
 export interface IPersistentSettings {
-    framework?: IFrameworkSettings,
-    bots?: IBot[],
-    windowState?: IWindowStateSettings,
-    users?: IUserSettings
+  framework?: IFrameworkSettings,
+  bots?: IBot[],
+  windowState?: IWindowStateSettings,
+  users?: IUserSettings
 }
 
 export interface ISettings extends IPersistentSettings {
-    activeBot?: string
+  activeBot?: string
 }
 
 export class Settings implements ISettings {
-    public framework: IFrameworkSettings;
-    public bots: IBot[];
-    public windowState: IWindowStateSettings;
-    public users: IUserSettings;
-    public activeBot: string;
+  public framework: IFrameworkSettings;
+  public bots: IBot[];
+  public windowState: IWindowStateSettings;
+  public users: IUserSettings;
+  public activeBot: string;
 
-    constructor(settings?: ISettings) {
-        Object.assign(this, settings);
-    }
-
-    public getActiveBot(): IBot {
-        return this.botById(this.activeBot);
-    }
-
-    public botById(botId: string): IBot {
-        return this.bots ? this.bots.find(value => value.botId === botId) : undefined;
-    }
+  constructor(settings?: ISettings) {
+    Object.assign(this, settings);
+  }
 }
 
 export const frameworkDefault: IFrameworkSettings = {
-    ngrokPath: '',
-    bypassNgrokLocalhost: true,
-    stateSizeLimit: 64,
-    use10Tokens: false
+  ngrokPath: '',
+  bypassNgrokLocalhost: true,
+  stateSizeLimit: 64,
+  use10Tokens: false
 }
 
 export const windowStateDefault: IWindowStateSettings = {
-    zoomLevel: 0,
-    width: 800,
-    height: 600,
-    left: 100,
-    top: 50
+  zoomLevel: 0,
+  width: 800,
+  height: 600,
+  left: 100,
+  top: 50
 }
 
 export const usersDefault: IUserSettings = {
-    currentUserId: 'default-user',
-    usersById: {
-        'default-user': {
-            id: 'default-user',
-            name: 'User'
-        }
+  currentUserId: 'default-user',
+  usersById: {
+    'default-user': {
+      id: 'default-user',
+      name: 'User'
     }
+  }
 }
 
 export const settingsDefault: ISettings = {
-    framework: frameworkDefault,
-    bots: [
-        {
-            "botId": "default-bot",
-            "botUrl": "http://localhost:3978/api/messages",
-            "msaAppId": "",
-            "msaPassword": "",
-            "locale": ""
-        }
-    ],
-    activeBot: '',
-    windowState: windowStateDefault,
-    users: usersDefault
+  framework: frameworkDefault,
+  bots: [
+    {
+      "botId": "default-bot",
+      "botUrl": "http://localhost:3978/api/messages",
+      "msaAppId": "",
+      "msaPassword": "",
+      "locale": ""
+    }
+  ],
+  activeBot: '',
+  windowState: windowStateDefault,
+  users: usersDefault
 }

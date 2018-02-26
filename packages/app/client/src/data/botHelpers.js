@@ -4,6 +4,6 @@ export function getActiveBot() {
   return store.getState().bot.activeBot;
 }
 
-export function getBotById(botId) {
-  return store.getState().bot.bots.filter(bot => bot.botId === botId).shift();
+export function getBotById(id) {
+  return store.getState().bot.bots.filter(bot => bot.id === id).shift();
 }

@@ -77,12 +77,12 @@ class ExplorerBarTitle extends React.Component {
   }
 
   render() {
-    const botIdentifier = this.props.activeBot ? getBotDisplayName(getBotById(this.props.activeBot)) : null;
+    const botLabel = this.props.activeBot ? getBotDisplayName(getBotById(this.props.activeBot)) : null;
 
     return (
       <div className={ CSS }>
         <header>
-          { botIdentifier }
+          { botLabel }
         </header>
         { this.props.activeBot ? <span className="bot-settings-icon" onClick={ this.onClickSettings } /> : null }
       </div>

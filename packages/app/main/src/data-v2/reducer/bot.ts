@@ -34,15 +34,15 @@ export const bot: any = (state: IBotState = DEFAULT_STATE, action: BotAction) =>
       // set active bot and add bot to bots list
       const bots = [...state.bots, action.payload];
       state = setBotsState(bots, state);
-      state = setActiveBot(action.payload.botId, state);
+      state = setActiveBot(action.payload.id, state);
       break;
     }
 
     case BotActions.DELETE: {
-      const bots = state.bots.filter(bot => bot.botId !== action.payload.botId);
+      const bots = state.bots.filter(bot => bot.id !== action.payload.id);
       state = setBotsState(bots, state);
 
-      if (state.activeBot === action.payload.botId) {
+      if (state.activeBot === action.payload.id) {
         state = setActiveBot(null, state);
       }
       break;
@@ -54,7 +54,7 @@ export const bot: any = (state: IBotState = DEFAULT_STATE, action: BotAction) =>
     }
 
     case BotActions.PATCH: {
-      const botIndex = state.bots.findIndex(bot => bot.botId === action.payload.botId);
+      const botIndex = state.bots.findIndex(bot => bot.id === action.payload.id);
       const patchedBot = {
         ...state.bots[botIndex],
         ...action.payload.bot
@@ -62,7 +62,7 @@ export const bot: any = (state: IBotState = DEFAULT_STATE, action: BotAction) =>
       const bots = [...state.bots];
       bots[botIndex] = patchedBot;
       state = setBotsState(bots, state);
-      state = setActiveBot(patchedBot.botId, state);
+      state = setActiveBot(patchedBot.id, state);
       break;
     }
 
@@ -76,10 +76,10 @@ export const bot: any = (state: IBotState = DEFAULT_STATE, action: BotAction) =>
   return state;
 }
 
-function setActiveBot(botId, state) {
+function setActiveBot(id, state) {
   let newState = Object.assign({}, state);
 
-  newState.activeBot = botId;
+  newState.activeBot = id;
   return newState;
 }
 

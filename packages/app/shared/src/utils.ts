@@ -47,86 +47,72 @@ export function uniqueId() {
 }
 
 export function isObject(item: any): boolean {
-    return (item && typeof item === 'object' && !Array.isArray(item) && item !== null);
+  return (item && typeof item === 'object' && !Array.isArray(item) && item !== null);
 }
 
 export function mergeDeep(target: any, source: any): any {
-    let output = Object.assign({}, target);
-    //if (isObject(target) && isObject(source)) {
-    {
-        Object.keys(source).forEach(key => {
-            if (isObject(source[key])) {
-            if (!(key in target))
-                Object.assign(output, { [key]: source[key] });
-            else
-                output[key] = mergeDeep(target[key], source[key]);
-            } else {
-            Object.assign(output, { [key]: source[key] });
-            }
-        });
-    }
-    return output;
+  let output = Object.assign({}, target);
+  //if (isObject(target) && isObject(source)) {
+  {
+    Object.keys(source).forEach(key => {
+      if (isObject(source[key])) {
+        if (!(key in target))
+          Object.assign(output, { [key]: source[key] });
+        else
+          output[key] = mergeDeep(target[key], source[key]);
+      } else {
+        Object.assign(output, { [key]: source[key] });
+      }
+    });
+  }
+  return output;
 }
 
 export const safeStringify = (o: any, space: string | number = undefined): string => {
-    let cache = [];
-    if (typeof o !== 'object')
-        return `${o}`;
-    return JSON.stringify(o, function (key, value) {
-        if (typeof value === 'object' && value !== null) {
-            if (cache.indexOf(value) !== -1) {
-                return;
-            }
-            cache.push(value);
-        }
-        return value;
-    }, space);
+  let cache = [];
+  if (typeof o !== 'object')
+    return `${o}`;
+  return JSON.stringify(o, function (key, value) {
+    if (typeof value === 'object' && value !== null) {
+      if (cache.indexOf(value) !== -1) {
+        return;
+      }
+      cache.push(value);
+    }
+    return value;
+  }, space);
 }
 
-export const approximateObjectSize = (object: any, cache:any[] = []): number => {
-    switch (typeof object) {
-        case 'boolean':
-            return 4;
-        case 'number':
-            return 8;
-        case 'string':
-            return object.length * 2;
-        case 'object':
-            let bytes = 0;
-            cache.push(object);
-            for (let i in object) {
-                let value = object[i];
-                //check for infinite recursion
-                if (typeof value === 'object' && value !== null) {
-                    if (cache.indexOf(value) !== -1) {
-                        continue;
-                    }
-                    cache.push(value);
-                }
-                bytes += approximateObjectSize(value, cache);
-            }
-            return bytes;
-        default:
-            //value is null, undefined, or a function
-            return 0;
-    }
+export const approximateObjectSize = (object: any, cache: any[] = []): number => {
+  switch (typeof object) {
+    case 'boolean':
+      return 4;
+    case 'number':
+      return 8;
+    case 'string':
+      return object.length * 2;
+    case 'object':
+      let bytes = 0;
+      cache.push(object);
+      for (let i in object) {
+        let value = object[i];
+        //check for infinite recursion
+        if (typeof value === 'object' && value !== null) {
+          if (cache.indexOf(value) !== -1) {
+            continue;
+          }
+          cache.push(value);
+        }
+        bytes += approximateObjectSize(value, cache);
+      }
+      return bytes;
+    default:
+      //value is null, undefined, or a function
+      return 0;
+  }
 }
 
 /** Tries to scan the bot record for a display string */
 export const getBotDisplayName = (bot: IBot = {}): string => {
   return bot.botName || bot.botId || bot.botUrl || bot.path || '¯\\_(ツ)_/¯';
-}
-
-/** Generates a random bot name from a list of adjectives and nouns */
-export const generateRandomBotName = (): string => {
-  return "My Bot";
-  /*
-  let adjective = ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)].trim();
-  adjective = adjective.slice(0, 1).toUpperCase() + adjective.substring(1);
-
-  let noun = NOUNS[Math.floor(Math.random() * NOUNS.length)].trim();
-  noun = noun.slice(0, 1).toUpperCase() + noun.substring(1);
-
-  return `${adjective} ${noun} Bot`;
-  */
 }

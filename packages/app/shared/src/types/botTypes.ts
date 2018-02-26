@@ -34,6 +34,7 @@
 import { uniqueId } from '../utils';
 
 export interface IBot {
+  id?: string,
   botId?: string,
   botName?: string,
   botUrl?: string,
@@ -47,16 +48,15 @@ export function newBot(bot: IBot): IBot {
   return Object.assign(
     {},
     {
-      botName: '',
-      botUrl: '',
+      id: uniqueId(),
+      botId: 'my_bot',
+      botName: 'My Bot',
+      botUrl: 'http://localhost:3978/api/messages',
       locale: '',
       msaAppId: '',
       msaPassword: '',
       path: ''
     },
-    bot,
-    {
-      botId: uniqueId()
-    }
-  ) as IBot;
+    bot
+  );
 }

@@ -45,8 +45,8 @@ import * as commandLine from './commandLine'
 import * as electronLocalShortcut from 'electron-localshortcut';
 import { setTimeout } from 'timers';
 import { Window } from './platform/window';
-import { IBot, CommandRegistry, generateRandomBotName, uniqueId } from 'botframework-emulator-shared';
-import { ensureStoragePath, readFileSync, showOpenDialog, writeFile } from './utils';
+import { IBot, newBot, CommandRegistry, uniqueId } from 'botframework-emulator-shared';
+import { ensureStoragePath, readFileSync, showOpenDialog, writeFile, generateRandomBotName } from './utils';
 import * as BotActions from './data-v2/action/bot';
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
@@ -98,23 +98,28 @@ var windowIsOffScreen = function (windowBounds: Electron.Rectangle): boolean {
 // Load bots from file system
 CommandRegistry.registerCommand('bot:list:load', (context: Window, ...args: any[]): any => {
   const botsJsonPath = `${ensureStoragePath()}/bots.json`;
-  const botsJson = JSON.parse(readFileSync(botsJsonPath));
+  let botsJson = JSON.parse(readFileSync(botsJsonPath));
 
-  if (botsJson && botsJson.bots) {
+  if (botsJson && botsJson.bots && Array.isArray(botsJson.bots)) {
     const bots = botsJson.bots;
+    // Back-compat: Assign a unique id to the bot if not present.
+    bots.forEach(bot => {
+      bot.id = bot.id || uniqueId()
+    });
     context.store.dispatch(BotActions.load(bots));
-    return { bots: bots };
   } else {
     console.log('No bots file exists on disk, creating one.');
-    const newBotsJson = { 'bots': [] };
-    try {
-      writeFile(botsJsonPath, newBotsJson);
-      return { bots: [] };
-    } catch (e) {
-      console.error(`Failure writing new bots.json to ${botsJsonPath}: `, e);
-      throw e;
-    }
+    botsJson = { 'bots': [] };
   }
+  
+  try {
+    writeFile(botsJsonPath, botsJson);
+  } catch (e) {
+    console.error(`Failure writing new bots.json to ${botsJsonPath}: `, e);
+    throw e;
+  }
+  
+  return botsJson;
 });
 
 // Create a bot
@@ -122,15 +127,11 @@ CommandRegistry.registerCommand('bot:list:create', (context: Window, ...args: an
   const botName = generateRandomBotName();
   const botId = botName.toLowerCase().replace(/\s/g, '_');
 
-  const bot: IBot = {
+  const bot: IBot = newBot({
     botId,
     botName,
-    botUrl: 'http://localhost:3978/api/messages',
-    msaAppId: '',
-    msaPassword: '',
-    locale: '',
-    path: ''
-  };
+    botUrl: 'http://localhost:3978/api/messages'
+  });
 
   context.store.dispatch(BotActions.create(bot));
 
@@ -152,8 +153,8 @@ CommandRegistry.registerCommand('bot:save', (context: Window, bot: IBot, origina
   context.store.dispatch(BotActions.patch(originalHandle, bot));
 });
 
-CommandRegistry.registerCommand('bot:setActive', (context: Window, botId: string): any => {
-  context.store.dispatch(BotActions.setActive(botId));
+CommandRegistry.registerCommand('bot:setActive', (context: Window, id: string): any => {
+  context.store.dispatch(BotActions.setActive(id));
 });
 
 // Read file

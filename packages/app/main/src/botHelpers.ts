@@ -4,11 +4,11 @@ import { mainWindow } from './main';
 
 export function getActiveBot(): IBot {
   const state = mainWindow.store.getState();
-  const botId = state.bot.activeBot;
-  return getBotById(botId);
+  const id = state.bot.activeBot;
+  return getBotById(id);
 }
 
-export function getBotById(botId: string): IBot {
+export function getBotById(id: string): IBot {
   const state = mainWindow.store.getState();
-  return state.bot.bots.filter(bot => bot.botId === botId).shift();
+  return state.bot.bots.filter(bot => bot.id === id).shift();
 }

@@ -4,6 +4,8 @@
     ],
     "squirrelWindows": {
         "name": "botframework-emulator",
-        "loadingGif": "./scripts/config/resources/squirrel/bf-splash.gif"
+        "loadingGif": "./scripts/config/resources/squirrel/bf-splash.gif",
+        "iconUrl": "http://example.com/icon.png",
+        "remoteReleases": false
    }
 }

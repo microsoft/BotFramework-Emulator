@@ -57,8 +57,7 @@ const CSS = css({
 
 export default class ChatPanel extends React.Component {
   render() {
-    let botId = getActiveBot();
-    let bot = getBotById(botId);
+    let bot = getBotById(getActiveBot());
     let endpoint = bot ? bot.botUrl : "";
     return (
       <div className={ CSS }>

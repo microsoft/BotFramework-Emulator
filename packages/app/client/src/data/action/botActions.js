@@ -26,26 +26,26 @@ export function load(bots) {
   };
 }
 
-export function patch(botId, bot) {
+export function patch(id, bot) {
   return {
     type: PATCH,
     payload: {
-      botId,
+      id,
       bot
     }
   };
 }
 
-export function remove(botId) {
+export function remove(id) {
   return {
     type: DELETE,
-    payload: botId
+    payload: id
   };
 }
 
-export function setActive(botId) {
+export function setActive(id) {
   return {
     type: SET_ACTIVE,
-    payload: botId
+    payload: id
   };
 }

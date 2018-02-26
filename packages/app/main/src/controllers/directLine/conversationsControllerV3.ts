@@ -62,11 +62,11 @@ export class ConversationsControllerV3 {
   }
 
   static startConversation = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    logRequest(req.params.conversationId, "user", req);
     const activeBot = getActiveBot();
     const auth = req.header('Authorization');
     const tokenMatch = /Bearer\s+(.+)/.exec(auth);
     const conversationId = tokenMatch[1];
+    logRequest(conversationId, "user", req);
     if (activeBot) {
       let created = false;
       const users = getSettings().users;
@@ -81,18 +81,18 @@ export class ConversationsControllerV3 {
           }
         })
       }
-      let conversation = emulator.conversations.conversationById(activeBot.botId, conversationId);
+      let conversation = emulator.conversations.conversationById(activeBot.id, conversationId);
       if (!conversation) {
-        conversation = emulator.conversations.newConversation(activeBot.botId, currentUser, conversationId);
+        conversation = emulator.conversations.newConversation(activeBot.id, currentUser, conversationId);
         // Send "bot added to conversation"
-        conversation.sendConversationUpdate([{ id: activeBot.botId, name: "Bot" }], undefined);
+        conversation.sendConversationUpdate([{ id: activeBot.id, name: "Bot" }], undefined);
         // Send "user added to conversation"
         conversation.sendConversationUpdate([currentUser], undefined);
         created = true;
       } else {
-        if (conversation.members.findIndex((user) => user.id == activeBot.botId) === -1) {
+        if (conversation.members.findIndex((user) => user.id == activeBot.id) === -1) {
           // Sends "bot added to conversation"
-          conversation.addMember(activeBot.botId, "Bot");
+          conversation.addMember(activeBot.id, "Bot");
         }
         if (conversation.members.findIndex((user) => user.id == currentUser.id) === -1) {
           // Sends "user added to conversation"
@@ -117,7 +117,7 @@ export class ConversationsControllerV3 {
     logRequest(req.params.conversationId, "user", req);
     const activeBot = getActiveBot();
     if (activeBot) {
-      const conversation = emulator.conversations.conversationById(activeBot.botId, req.params.conversationId);
+      const conversation = emulator.conversations.conversationById(activeBot.id, req.params.conversationId);
       if (conversation) {
         res.json(HttpStatus.OK, {
           conversationId: conversation.conversationId,
@@ -140,7 +140,7 @@ export class ConversationsControllerV3 {
   static getActivities = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const activeBot = getActiveBot();
     if (activeBot) {
-      const conversation = emulator.conversations.conversationById(activeBot.botId, req.params.conversationId);
+      const conversation = emulator.conversations.conversationById(activeBot.id, req.params.conversationId);
       if (conversation) {
         const watermark = Number(req.params.watermark || 0) || 0;
         const activities = conversation.getActivitiesSince(req.params.watermark);
@@ -161,7 +161,7 @@ export class ConversationsControllerV3 {
     logRequest(req.params.conversationId, "user", req);
     const activeBot = getActiveBot();
     if (activeBot) {
-      const conversation = emulator.conversations.conversationById(activeBot.botId, req.params.conversationId);
+      const conversation = emulator.conversations.conversationById(activeBot.id, req.params.conversationId);
       if (conversation) {
         const activity = <IGenericActivity>req.body;
         conversation.postActivityToBot(activity, true, (err, statusCode, activityId) => {
@@ -172,7 +172,10 @@ export class ConversationsControllerV3 {
             res.send(statusCode, { id: activityId });
           }
           res.end();
-          logResponse(req.params.conversationId, "user", res);
+          logResponse(req.params.conversationId, "user", res, {
+            type: "err",
+            err
+          });
         });
       } else {
         res.send(HttpStatus.NOT_FOUND, "conversation not found");
@@ -193,7 +196,7 @@ export class ConversationsControllerV3 {
     logRequest(req.params.conversationId, "user", req);
     const activeBot = getActiveBot();
     if (activeBot) {
-      const conversation = emulator.conversations.conversationById(activeBot.botId, req.params.conversationId);
+      const conversation = emulator.conversations.conversationById(activeBot.id, req.params.conversationId);
       if (conversation) {
         if (req.getContentType() !== 'multipart/form-data' ||
           (req.getContentLength() === 0 && !req.isChunked())) {
@@ -240,7 +243,10 @@ export class ConversationsControllerV3 {
                   res.send(statusCode, { id: activityId });
                 }
                 res.end();
-                logResponse(req.params.conversationId, "user", res);
+                logResponse(req.params.conversationId, "user", res, {
+                  type: "err",
+                  err}
+                );
               });
             } else {
               res.send(HttpStatus.BAD_REQUEST, "no file uploaded");

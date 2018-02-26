@@ -52,7 +52,7 @@ function getConversation(conversationId: string): Conversation {
     if (!activeBot) {
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
     }
-    const conversation = emulator.conversations.conversationById(activeBot.botId, conversationId);
+    const conversation = emulator.conversations.conversationById(activeBot.id, conversationId);
     if (!conversation) {
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "conversation not found");
     }
@@ -110,7 +110,7 @@ export class EmulatorController {
             if (!members) {
                 let settings = getSettings();
                 members = [...conversation.members];
-                members = members.filter(member => member.id != settings.users.currentUserId && member.id != conversation.botId);
+                members = members.filter(member => member.id != settings.users.currentUserId && member.id != conversation.idOfBotRecord);
                 members = members.slice(0);
             }
             members.forEach((member) => {

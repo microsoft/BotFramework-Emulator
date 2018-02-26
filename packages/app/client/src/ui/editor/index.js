@@ -50,7 +50,7 @@ export default class EditorFactory extends React.Component {
         : contentType === constants.ContentType_TestBed ?
         <TestBedEditor />
         : contentType === constants.ContentType_BotSettings ?
-        <BotSettingsEditor botId={ document.meta } documentId={ document.documentId } />
+        <BotSettingsEditor id={ document.meta } documentId={ document.documentId } />
         : false
     );
   }

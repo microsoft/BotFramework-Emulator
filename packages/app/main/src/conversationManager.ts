@@ -35,7 +35,7 @@ import * as got from 'got';
 import * as http from 'http';
 import * as Payment from 'botframework-emulator-shared';
 import { IUser } from 'botframework-emulator-shared';
-import { IActivity, IConversationUpdateActivity, IMessageActivity, IContactRelationUpdateActivity, IInvokeActivity } from 'botframework-emulator-shared';
+import { IBot, IActivity, IConversationUpdateActivity, IMessageActivity, IContactRelationUpdateActivity, IInvokeActivity } from 'botframework-emulator-shared';
 import { PaymentEncoder } from 'botframework-emulator-shared';
 import { ISpeechTokenInfo } from 'botframework-emulator-shared';
 import { uniqueId } from 'botframework-emulator-shared';
@@ -59,15 +59,15 @@ export class Conversation {
   private accessTokenExpires: number;
   private speechToken: ISpeechTokenInfo;
 
-  constructor(botId: string, conversationId: string, user: IUser) {
-    this.botId = botId;
+  constructor(public idOfBotRecord: string, conversationId: string, user: IUser) {
     this.conversationId = conversationId;
-    this.members.push({ id: botId, name: "Bot" });
+    this.members.push({ id: idOfBotRecord, name: "Bot" });
     this.members.push({ id: user.id, name: user.name });
   }
 
-  // the botId this conversation is with
-  public botId: string;
+  public get bot(): IBot {
+    return getBotById(this.idOfBotRecord);
+  }
 
   // the id for this conversation
   public conversationId: string;
@@ -113,14 +113,14 @@ export class Conversation {
    * Sends the activity to the conversation's bot.
    */
   postActivityToBot(activity: IActivity, recordInConversation: boolean, cb?) {
-    // Do not make a shallow copy here before modifying
-    this.postage(this.botId, activity);
-    activity.from = activity.from || this.getCurrentUser();
-    if (!activity.recipient.name) {
-      activity.recipient.name = "Bot";
-    }
-    const bot = getBotById(this.botId);
+    const bot = this.bot;
     if (bot) {
+      // Do not make a shallow copy here before modifying
+      this.postage(bot.id, activity);
+      activity.from = activity.from || this.getCurrentUser();
+      if (!activity.recipient.name) {
+        activity.recipient.name = "Bot";
+      }
       activity.serviceUrl = emulator.framework.getServiceUrl(bot.botUrl);
 
       let options = {
@@ -325,27 +325,29 @@ export class Conversation {
       details: request.details
     };
     let serviceUrl;
-    const bot = getBotById(this.botId);
-    serviceUrl = emulator.framework.getServiceUrl(bot.botUrl);
+    const bot = this.bot;
+    if (bot) {
+      serviceUrl = emulator.framework.getServiceUrl(bot.botUrl);
 
-    const activity: IInvokeActivity = {
-      type: 'invoke',
-      name: operation,
-      from: { id: checkoutSession.checkoutFromId },
-      conversation: { id: checkoutSession.checkoutConversationId },
-      relatesTo: {
-        activityId: checkoutSession.paymentActivityId,
-        bot: { id: this.botId },
-        channelId: 'emulator',
-        conversation: { id: this.conversationId },
-        serviceUrl: serviceUrl,
-        user: this.getCurrentUser()
-      },
-      value: updateValue
-    };
-    this.postActivityToBot(activity, false, (err, statusCode, activityId, responseBody) => {
-      cb(statusCode, responseBody);
-    });
+      const activity: IInvokeActivity = {
+        type: 'invoke',
+        name: operation,
+        from: { id: checkoutSession.checkoutFromId },
+        conversation: { id: checkoutSession.checkoutConversationId },
+        relatesTo: {
+          activityId: checkoutSession.paymentActivityId,
+          bot: { id: bot.id },
+          channelId: 'emulator',
+          conversation: { id: this.conversationId },
+          serviceUrl: serviceUrl,
+          user: this.getCurrentUser()
+        },
+        value: updateValue
+      };
+      this.postActivityToBot(activity, false, (err, statusCode, activityId, responseBody) => {
+        cb(statusCode, responseBody);
+      });
+    }
   }
 
   public sendPaymentCompleteOperation(
@@ -356,97 +358,100 @@ export class Conversation {
     payerEmail: string,
     payerPhone: string,
     cb: (errCode, body) => void) {
+    const bot = this.bot;
+    if (bot) {
+      let paymentTokenHeader = {
+        format: 2,
+        merchantId: request.methodData[0].data.merchantId,
+        paymentRequestId: request.id,
+        amount: request.details.total.amount,
+        expiry: '1/1/2020',
+        timestamp: '4/27/2017',
+      };
 
-    let paymentTokenHeader = {
-      format: 2,
-      merchantId: request.methodData[0].data.merchantId,
-      paymentRequestId: request.id,
-      amount: request.details.total.amount,
-      expiry: '1/1/2020',
-      timestamp: '4/27/2017',
-    };
+      let paymentTokenHeaderStr = JSON.stringify(paymentTokenHeader);
+      let pthBytes = new Buffer(paymentTokenHeaderStr).toString('base64');
 
-    let paymentTokenHeaderStr = JSON.stringify(paymentTokenHeader);
-    let pthBytes = new Buffer(paymentTokenHeaderStr).toString('base64');
+      let paymentTokenSource = 'tok_18yWDMKVgMv7trmwyE21VqO';
+      let ptsBytes = new Buffer(paymentTokenSource).toString('base64');
 
-    let paymentTokenSource = 'tok_18yWDMKVgMv7trmwyE21VqO';
-    let ptsBytes = new Buffer(paymentTokenSource).toString('base64');
+      let ptsigBytes = new Buffer('Emulator').toString('base64');
 
-    let ptsigBytes = new Buffer('Emulator').toString('base64');
+      const updateValue: Payment.IPaymentRequestComplete = {
+        id: request.id,
+        paymentRequest: request,
+        paymentResponse: {
+          details: {
+            paymentToken: pthBytes + '.' + ptsBytes + '.' + ptsigBytes
+          },
+          methodName: request.methodData[0].supportedMethods[0],
+          payerEmail: payerEmail,
+          payerPhone: payerPhone,
+          shippingAddress: shippingAddress,
+          shippingOption: shippingOptionId
+        }
+      };
+      let serviceUrl;
+      serviceUrl = emulator.framework.getServiceUrl(bot.botUrl);
 
-    const updateValue: Payment.IPaymentRequestComplete = {
-      id: request.id,
-      paymentRequest: request,
-      paymentResponse: {
-        details: {
-          paymentToken: pthBytes + '.' + ptsBytes + '.' + ptsigBytes
+      const activity: IInvokeActivity = {
+        type: 'invoke',
+        name: Payment.PaymentOperations.PaymentCompleteOperationName,
+        from: { id: checkoutSession.checkoutFromId },
+        conversation: { id: checkoutSession.checkoutConversationId },
+        relatesTo: {
+          activityId: checkoutSession.paymentActivityId,
+          bot: { id: bot.id },
+          channelId: 'emulator',
+          conversation: { id: this.conversationId },
+          serviceUrl: serviceUrl,
+          user: this.getCurrentUser()
         },
-        methodName: request.methodData[0].supportedMethods[0],
-        payerEmail: payerEmail,
-        payerPhone: payerPhone,
-        shippingAddress: shippingAddress,
-        shippingOption: shippingOptionId
-      }
-    };
-    let serviceUrl;
-    const bot = getBotById(this.botId);
-    serviceUrl = emulator.framework.getServiceUrl(bot.botUrl);
-
-    const activity: IInvokeActivity = {
-      type: 'invoke',
-      name: Payment.PaymentOperations.PaymentCompleteOperationName,
-      from: { id: checkoutSession.checkoutFromId },
-      conversation: { id: checkoutSession.checkoutConversationId },
-      relatesTo: {
-        activityId: checkoutSession.paymentActivityId,
-        bot: { id: this.botId },
-        channelId: 'emulator',
-        conversation: { id: this.conversationId },
-        serviceUrl: serviceUrl,
-        user: this.getCurrentUser()
-      },
-      value: updateValue
-    };
-    this.postActivityToBot(activity, false, (err, statusCode, activityId, responseBody) => {
-      cb(statusCode, responseBody);
-    });
+        value: updateValue
+      };
+      this.postActivityToBot(activity, false, (err, statusCode, activityId, responseBody) => {
+        cb(statusCode, responseBody);
+      });
+    }
   }
 
   public getSpeechToken(duration: number, cb: (tokenInfo: ISpeechTokenInfo) => void, refresh: boolean = false) {
     if (this.speechToken && !refresh) {
       cb(this.speechToken);
     } else {
-      // fetch the speech token
-      const bot = getBotById(this.botId);
+      const bot = this.bot;
+      if (bot) {
+        if (bot.msaAppId && bot.msaPassword) {
+          let options = {
+            url: speechSettings.tokenEndpoint + '?goodForInMinutes=' + duration,
+            method: 'GET',
+            strictSSL: false,
+            useElectronNet: true
+          };
 
-      if (bot.msaAppId && bot.msaPassword) {
-        let options = {
-          url: speechSettings.tokenEndpoint + '?goodForInMinutes=' + duration,
-          method: 'GET',
-          strictSSL: false,
-          useElectronNet: true
-        };
-
-        let responseCallback = (resp) => {
-          if (resp.body) {
-            let speechToken: ISpeechTokenInfo = JSON.parse(resp.body) as ISpeechTokenInfo;
-            if (speechToken.access_Token) {
-              this.speechToken = speechToken;
+          let responseCallback = (resp) => {
+            if (resp.body) {
+              let speechToken: ISpeechTokenInfo = JSON.parse(resp.body) as ISpeechTokenInfo;
+              if (speechToken.access_Token) {
+                this.speechToken = speechToken;
+              }
+              cb(speechToken);
+            } else if (resp.statusCode === 401) {
+              cb({ access_Token: undefined, error: 'Unauthorized', error_Description: 'This bot is not authorized to use the Cognitive Services Speech API.' });
+            } else {
+              cb({ access_Token: undefined, error: 'Unable to retrieve speech token', error_Description: 'A speech token could not be retrieved for this bot. Response code: ' + resp.statusCode });
             }
-            cb(speechToken);
-          } else if (resp.statusCode === 401) {
-            cb({ access_Token: undefined, error: 'Unauthorized', error_Description: 'This bot is not authorized to use the Cognitive Services Speech API.' });
-          } else {
-            cb({ access_Token: undefined, error: 'Unable to retrieve speech token', error_Description: 'A speech token could not be retrieved for this bot. Response code: ' + resp.statusCode });
           }
-        }
-        let handleError = (err) => {
-          cb({ access_Token: undefined, error: err, error_Description: undefined });
-        }
+          let handleError = (err) => {
+            cb({ access_Token: undefined, error: err, error_Description: undefined });
+          }
 
-        this.authenticatedRequest(options, responseCallback, handleError);
+          this.authenticatedRequest(options, responseCallback, handleError);
+        } else {
+          cb({ access_Token: undefined, error: 'Unauthorized', error_Description: 'To use speech, the bot must be registered and using a valid MS AppId and Password.' });
+        }
       } else {
-        cb({ access_Token: undefined, error: 'Unauthorized', error_Description: 'To use speech, the bot must be registered and using a valid MS AppId and Password.' });
+        cb({ access_Token: undefined, error: 'NotFound', error_Description: 'Unknown bot.' });
       }
     }
   }
@@ -496,7 +501,7 @@ export class Conversation {
 
   public getAccessToken(cb: (err: Error, accessToken: string) => void): void {
     if (!this.accessToken || new Date().getTime() >= this.accessTokenExpires) {
-      const bot = getBotById(this.botId);
+      const bot = this.bot;
       // Refresh access token
       let opt = {
         method: 'POST',
@@ -536,7 +541,7 @@ export class Conversation {
   }
 
   private addAccessToken(options: any, cb: (err: Error) => void): void {
-    const bot = getBotById(this.botId);
+    const bot = this.bot;
 
     if (bot.msaAppId && bot.msaPassword) {
       this.getAccessToken((err, token) => {
@@ -559,15 +564,13 @@ export class Conversation {
  * A set of conversations with a bot.
  */
 class ConversationSet {
-  botId: string;
   conversations: Conversation[] = [];
 
-  constructor(botId: string) {
-    this.botId = botId;
+  constructor(public idOfBotRecord: string) {
   }
 
   newConversation(user: IUser, conversationId?: string): Conversation {
-    const conversation = new Conversation(this.botId, conversationId || uniqueId(), user);
+    const conversation = new Conversation(this.idOfBotRecord, conversationId || uniqueId(), user);
     this.conversations.push(conversation);
     return conversation;
   }
@@ -595,17 +598,17 @@ export class ConversationManager {
    */
   private configure(settings: Settings) {
     // Remove conversations that reference nonexistent bots.
-    //    const deadBotIds = this.conversationSets.filter(set => !settings.bots.find(bot => bot.botId === set.botId)).map(conversation => conversation.botId);
-    //    this.conversationSets = this.conversationSets.filter(set => !deadBotIds.find(botId => set.botId === botId));
+    //    const deadBotIds = this.conversationSets.filter(set => !settings.bots.find(bot => bot.id === set.id)).map(conversation => conversation.id);
+    //    this.conversationSets = this.conversationSets.filter(set => !deadBotIds.find(id => set.id === id));
   }
 
   /**
    * Creates a new conversation.
    */
-  public newConversation(botId: string, user: IUser, conversationId?: string): Conversation {
-    let conversationSet = this.conversationSets.find(value => value.botId === botId);
+  public newConversation(idOfBotRecord: string, user: IUser, conversationId?: string): Conversation {
+    let conversationSet = this.conversationSets.find(value => value.idOfBotRecord === idOfBotRecord);
     if (!conversationSet) {
-      conversationSet = new ConversationSet(botId);
+      conversationSet = new ConversationSet(idOfBotRecord);
       this.conversationSets.push(conversationSet);
     }
     let conversation = conversationSet.newConversation(user, conversationId);
@@ -615,8 +618,8 @@ export class ConversationManager {
   /**
    * Gets the existing conversation, or returns undefined.
    */
-  public conversationById(botId: string, conversationId: string): Conversation {
-    const set = this.conversationSets.find(set => set.botId === botId);
+  public conversationById(idOfBotRecord: string, conversationId: string): Conversation {
+    const set = this.conversationSets.find(set => set.idOfBotRecord === idOfBotRecord);
     if (set) {
       return set.conversationById(conversationId);
     } else {

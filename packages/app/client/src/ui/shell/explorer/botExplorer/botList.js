@@ -70,11 +70,11 @@ export class BotList extends React.Component {
     this.state = { botQuery: '' };
   }
 
-  onSelectBot(e, botId) {
-    CommandService.remoteCall('bot:setActive', botId)
+  onSelectBot(e, id) {
+    CommandService.remoteCall('bot:setActive', id)
       .then(() => {
-        this.props.dispatch(BotActions.setActive(botId));
-        const bot = getBotById(botId);
+        this.props.dispatch(BotActions.setActive(id));
+        const bot = getBotById(id);
         CommandService.remoteCall('app:setTitleBar', getBotDisplayName(bot));
       })
       .catch(err => console.error('Error while setting active bot: ', err));
@@ -99,7 +99,7 @@ export class BotList extends React.Component {
 
           // open bot settings and switch to explorer view
           this.props.dispatch(NavBarActions.selectOrToggle(Constants.NavBar_Files));
-          this.props.dispatch(EditorActions.open(Constants.ContentType_BotSettings, getBotDisplayName(bot) + ':settings', bot.botId));
+          this.props.dispatch(EditorActions.open(Constants.ContentType_BotSettings, getBotDisplayName(bot) + ':settings', bot.id));
         });
       })
       .catch(err => console.error('Error during bot create: ', err));
@@ -130,7 +130,7 @@ export class BotList extends React.Component {
               <ul>
                 {
                   bots.length ?
-                    bots.map(bot => <BotListItem key={ bot.botId } bot={ bot } onSelect={ this.onSelectBot } activeBot={ this.props.activeBot }
+                    bots.map(bot => <BotListItem key={ bot.id } bot={ bot } onSelect={ this.onSelectBot } activeBot={ this.props.activeBot }
                       onClickSettings={ this.onClickSettings } onClickDelete={ this.onClickDelete } />)
                     :
                     false

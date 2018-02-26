@@ -31,10 +31,10 @@ gulp.task('build-app', function () {
 //----------------------------------------------------------------------------
 gulp.task('build-shared', function () {
   return gulp
-  .src('../shared/package.json', { read: false })
-  .pipe(shell([
-    'npm run build'
-  ], { cwd: '../shared' }));
+    .src('../shared/package.json', { read: false })
+    .pipe(shell([
+      'npm run build'
+    ], { cwd: '../shared' }));
 });
 
 //----------------------------------------------------------------------------
@@ -64,24 +64,24 @@ gulp.task('get-licenses', function () {
   var licenses = require('license-list');
   var source = require('vinyl-source-stream');
   const stream = source('ThirdPartyLicenses.txt');
-  licenses('.', {dev: false}).then(packages => {
-      const keys = Object.keys(packages).sort().filter(key => !key.startsWith(`${pjson.name}@`));
-      keys.forEach(pkgId => {
-          const pkgInfo = packages[pkgId];
-          const formatLicense = () => {
-              const formatLicenseFile = () => {
-                  if (typeof pkgInfo.licenseFile === 'string') {
-                      return pkgInfo.licenseFile.split(/\n/).map(line => `\t${line}`).join('\n');
-                  } else {
-                      return '\tLICENSE file does not exist';
-                  }
-              }
-              return `${pkgInfo.name}@${pkgInfo.version} (${pkgInfo.license})\n\n${formatLicenseFile()}\n\n`;
+  licenses('.', { dev: false }).then(packages => {
+    const keys = Object.keys(packages).sort().filter(key => !key.startsWith(`${pjson.name}@`));
+    keys.forEach(pkgId => {
+      const pkgInfo = packages[pkgId];
+      const formatLicense = () => {
+        const formatLicenseFile = () => {
+          if (typeof pkgInfo.licenseFile === 'string') {
+            return pkgInfo.licenseFile.split(/\n/).map(line => `\t${line}`).join('\n');
+          } else {
+            return '\tLICENSE file does not exist';
           }
-          stream.write(formatLicense());
-      });
-      stream.end();
-      stream.pipe(gulp.dest('.'));
+        }
+        return `${pkgInfo.name}@${pkgInfo.version} (${pkgInfo.license})\n\n${formatLicenseFile()}\n\n`;
+      }
+      stream.write(formatLicense());
+    });
+    stream.end();
+    stream.pipe(gulp.dest('.'));
   });
 });
 
@@ -90,7 +90,7 @@ gulp.task('get-licenses', function () {
 //============================================================================
 
 //----------------------------------------------------------------------------
-function hashFileAsync(filename, algo = 'sha512', encoding='base64') {
+function hashFileAsync(filename, algo = 'sha512', encoding = 'base64') {
   var asarIntegrity = require('asar-integrity');
   return asarIntegrity.hashFile(filename, algo, encoding);
 }
@@ -101,15 +101,15 @@ function writeYamlMetadataFile(releaseFilename, yamlFilename, fileHash, releaseD
   var yaml = require('js-yaml');
 
   const ymlInfo = {
-      version: pjson.version,
-      releaseDate: releaseDate,
-      githubArtifactName: releaseFilename,
-      path: releaseFilename,
-      sha512: fileHash
+    version: pjson.version,
+    releaseDate: releaseDate,
+    githubArtifactName: releaseFilename,
+    path: releaseFilename,
+    sha512: fileHash
   };
   const obj = Object.assign({}, ymlInfo, extra);
   const ymlStr = yaml.safeDump(obj);
-  fsp.writeFileSync(`./dist/${yamlFilename}`, ymlStr);
+  fsp.writeFileSync(`./installer/${yamlFilename}`, ymlStr);
 }
 
 //----------------------------------------------------------------------------
@@ -117,51 +117,51 @@ function writeJsonMetadataFile(releaseFilename, jsonFilename, releaseDate) {
   var fsp = require('fs-extra-p');
 
   const jsonInfo = {
-      version: pjson.version,
-      releaseDate: releaseDate,
-      url: `https://github.com/${githubAccountName}/${githubRepoName}/releases/v${pjson.version}/${releaseFilename}`
+    version: pjson.version,
+    releaseDate: releaseDate,
+    url: `https://github.com/${githubAccountName}/${githubRepoName}/releases/v${pjson.version}/${releaseFilename}`
   };
-  fsp.outputJsonSync(`./dist/${jsonFilename}`, jsonInfo, { spaces: 2 });
+  fsp.outputJsonSync(`./installer/${jsonFilename}`, jsonInfo, { spaces: 2 });
 }
 
 //============================================================================
 // PACKAGE:WINDOWS
 
 //----------------------------------------------------------------------------
-gulp.task('package:windows:binaries', function() {
+gulp.task('package:windows:binaries', function () {
   var wait = require('gulp-wait');
   var rename = require('gulp-rename');
   var builder = require('electron-builder');
   const config = Object.assign({},
-      replacePackageEnvironmentVars(require('./scripts/config/common.json')),
-      replacePackageEnvironmentVars(require('./scripts/config/windows.json')));
+    replacePackageEnvironmentVars(require('./scripts/config/common.json')),
+    replacePackageEnvironmentVars(require('./scripts/config/windows.json')));
   console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
   return builder.build({
-      targets: builder.Platform.WINDOWS.createTarget(["nsis", "zip"], builder.Arch.ia32, builder.Arch.x64),
-      config
+    targets: builder.Platform.WINDOWS.createTarget(["nsis", "zip"], builder.Arch.ia32, builder.Arch.x64),
+    config
   }).then((filenames) => {
-      return gulp.src(filenames)
-          .pipe(rename(function (path) {
-              path.basename = setReleaseFilename(path.basename);
-          }))
-          .pipe(gulp.dest('./dist'))
+    return gulp.src(filenames)
+      .pipe(rename(function (path) {
+        path.basename = setReleaseFilename(path.basename);
+      }))
+      .pipe(gulp.dest('./installer'))
   }).then(() => {
-      // Wait for the files to be written to disk and closed.
-      return delay(10000);
+    // Wait for the files to be written to disk and closed.
+    return delay(10000);
   });
 });
 
 //----------------------------------------------------------------------------
-gulp.task('package:windows:metadata', ['package:windows:binaries'], function() {
+gulp.task('package:windows:metadata', ['package:windows:binaries'], function () {
   const releaseFilename = `botframework-emulator-Setup-${pjson.version}.exe`;
-  const sha512 = hashFileAsync(`./dist/${releaseFilename}`);
-  const sha2 = hashFileAsync(`./dist/${releaseFilename}`, 'sha256', 'hex');
+  const sha512 = hashFileAsync(`./installer/${releaseFilename}`);
+  const sha2 = hashFileAsync(`./installer/${releaseFilename}`, 'sha256', 'hex');
   const releaseDate = new Date().toISOString();
 
   return Promise.all([sha512, sha2])
-      .then((values) => {
-          writeYamlMetadataFile(releaseFilename, 'latest.yml', values[0], releaseDate, { sha2: values[1] });
-      });
+    .then((values) => {
+      writeYamlMetadataFile(releaseFilename, 'latest.yml', values[0], releaseDate, { sha2: values[1] });
+    });
 });
 
 //----------------------------------------------------------------------------
@@ -171,30 +171,30 @@ gulp.task('package:windows', ['package:windows:metadata']);
 // PACKAGE:SQUIRREL.WINDOWS
 
 //----------------------------------------------------------------------------
-gulp.task('package:squirrel.windows', function() {
+gulp.task('package:squirrel.windows', function () {
   var rename = require('gulp-rename');
   var builder = require('electron-builder');
   const config = Object.assign({},
-      replacePackageEnvironmentVars(require('./scripts/config/common.json')),
-      require('./scripts/config/squirrel.windows.json'));
+    replacePackageEnvironmentVars(require('./scripts/config/common.json')),
+    require('./scripts/config/squirrel.windows.json'));
   console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
   return builder.build({
-      targets: builder.Platform.WINDOWS.createTarget(["squirrel"], builder.Arch.x64),
-      config
+    targets: builder.Platform.WINDOWS.createTarget(["squirrel"], builder.Arch.x64),
+    config
   }).then((filenames) => {
-      return gulp.src(filenames)
-          .pipe(rename(function (path) {
-              path.basename = setReleaseFilename(path.basename, {
-                  lowerCase: false,
-                  replaceName: true,
-                  srcName: config.productName,
-                  dstName: config.squirrelWindows.name
-              });
-          }))
-          .pipe(gulp.dest('./dist'));
+    return gulp.src(filenames)
+      .pipe(rename(function (path) {
+        path.basename = setReleaseFilename(path.basename, {
+          lowerCase: false,
+          replaceName: true,
+          srcName: config.productName,
+          dstName: config.squirrelWindows.name
+        });
+      }))
+      .pipe(gulp.dest('./installer'));
   }).then(() => {
-      // Wait for the files to be written to disk and closed.
-      return delay(10000);
+    // Wait for the files to be written to disk and closed.
+    return delay(10000);
   });
 });
 
@@ -202,37 +202,37 @@ gulp.task('package:squirrel.windows', function() {
 // PACKAGE:MAC
 
 //----------------------------------------------------------------------------
-gulp.task('package:mac:binaries', function() {
+gulp.task('package:mac:binaries', function () {
   var rename = require('gulp-rename');
   var builder = require('electron-builder');
   const config = Object.assign({},
-      replacePackageEnvironmentVars(require('./scripts/config/common.json')),
-      require('./scripts/config/mac.json'));
+    replacePackageEnvironmentVars(require('./scripts/config/common.json')),
+    require('./scripts/config/mac.json'));
   console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
   return builder.build({
-      targets: builder.Platform.MAC.createTarget(["dmg", "zip"]),
-      config
+    targets: builder.Platform.MAC.createTarget(["dmg", "zip"]),
+    config
   }).then((filenames) => {
-      return gulp.src(filenames)
-          .pipe(rename(function (path) {
-              path.basename = setReleaseFilename(path.basename);
-          }))
-          .pipe(gulp.dest('./dist'));
+    return gulp.src(filenames)
+      .pipe(rename(function (path) {
+        path.basename = setReleaseFilename(path.basename);
+      }))
+      .pipe(gulp.dest('./installer'));
   }).then(() => {
-      // Wait for the files to be written to disk and closed.
-      return delay(10000);
+    // Wait for the files to be written to disk and closed.
+    return delay(10000);
   });
 });
 
 //----------------------------------------------------------------------------
-gulp.task('package:mac:metadata', ['package:mac:binaries'], function() {
+gulp.task('package:mac:metadata', ['package:mac:binaries'], function () {
   const releaseFilename = `botframework-emulator-${pjson.version}-mac.zip`;
-  const releaseHash = hashFileAsync(`./dist/${releaseFilename}`);
+  const releaseHash = hashFileAsync(`./installer/${releaseFilename}`);
   const releaseDate = new Date().toISOString();
 
   writeJsonMetadataFile(releaseFilename, 'latest-mac.json', releaseDate);
   return releaseHash.then((hashValue) => {
-      writeYamlMetadataFile(releaseFilename, 'latest-mac.yml', hashValue, releaseDate);
+    writeYamlMetadataFile(releaseFilename, 'latest-mac.yml', hashValue, releaseDate);
   });
 });
 
@@ -243,25 +243,25 @@ gulp.task('package:mac', ['package:mac:metadata']);
 // PACKAGE:LINUX
 
 //----------------------------------------------------------------------------
-gulp.task('package:linux', function() {
+gulp.task('package:linux', function () {
   var rename = require('gulp-rename');
   var builder = require('electron-builder');
   const config = Object.assign({},
-      replacePackageEnvironmentVars(require('./scripts/config/common.json')),
-      require('./scripts/config/linux.json'));
+    replacePackageEnvironmentVars(require('./scripts/config/common.json')),
+    require('./scripts/config/linux.json'));
   console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
   return builder.build({
-      targets: builder.Platform.LINUX.createTarget(["deb", "AppImage"], builder.Arch.ia32, builder.Arch.x64),
-      config
+    targets: builder.Platform.LINUX.createTarget(["deb", "AppImage"], builder.Arch.ia32, builder.Arch.x64),
+    config
   }).then((filenames) => {
-      return gulp.src(filenames)
-          .pipe(rename(function (path) {
-              path.basename = setReleaseFilename(path.basename);
-          }))
-          .pipe(gulp.dest('./dist'));
+    return gulp.src(filenames)
+      .pipe(rename(function (path) {
+        path.basename = setReleaseFilename(path.basename);
+      }))
+      .pipe(gulp.dest('./installer'));
   }).then(() => {
-      // Wait for the files to be written to disk and closed.
-      return delay(10000);
+    // Wait for the files to be written to disk and closed.
+    return delay(10000);
   });
 });
 
@@ -278,35 +278,35 @@ function publishFiles(filelist) {
   var publishConfig = replacePublishEnvironmentVars(require('./scripts/config/publish.json'));
 
   const context = {
-      cancellationToken: new CancellationToken(),
-      progress: new MultiProgress()
+    cancellationToken: new CancellationToken(),
+    progress: new MultiProgress()
   };
   const publisher = new GitHubPublisher(
-      context,
-      publishConfig,
-      pjson.version, {
-          publish: "always",
-          draft: true,
-          prerelease: true
-      });
+    context,
+    publishConfig,
+    pjson.version, {
+      publish: "always",
+      draft: true,
+      prerelease: true
+    });
   const errorlist = [];
 
   const uploads = filelist.map(file => {
-      return publisher.upload(file)
-          .catch((err) => {
-              errorlist.push(err.response ? `Failed to upload ${file}, http status code ${err.response.statusCode}` : err);
-              return Promise.resolve();
-          });
+    return publisher.upload(file)
+      .catch((err) => {
+        errorlist.push(err.response ? `Failed to upload ${file}, http status code ${err.response.statusCode}` : err);
+        return Promise.resolve();
+      });
   });
 
   return Promise.all(uploads)
-  .then(() => errorlist.forEach((err) => console.error(err)));
+    .then(() => errorlist.forEach((err) => console.error(err)));
 }
 
 //----------------------------------------------------------------------------
 gulp.task('publish:windows', function () {
   const filelist = getFileList("windows", {
-      path: './dist/'
+    path: './installer/'
   });
   return publishFiles(filelist);
 });
@@ -315,8 +315,8 @@ gulp.task('publish:windows', function () {
 gulp.task('publish:squirrel.windows', function () {
   const basename = require('./scripts/config/squirrel.windows.json').squirrelWindows.name;
   const filelist = getFileList("squirrel.windows", {
-      basename,
-      path: './dist/'
+    basename,
+    path: './installer/'
   });
   return publishFiles(filelist);
 });
@@ -324,7 +324,7 @@ gulp.task('publish:squirrel.windows', function () {
 //----------------------------------------------------------------------------
 gulp.task('publish:mac', function () {
   const filelist = getFileList("mac", {
-      path: './dist/'
+    path: './installer/'
   });
   return publishFiles(filelist);
 });
@@ -332,7 +332,7 @@ gulp.task('publish:mac', function () {
 //----------------------------------------------------------------------------
 gulp.task('publish:linux', function () {
   const filelist = getFileList("linux", {
-      path: './dist/'
+    path: './installer/'
   });
   return publishFiles(filelist);
 });
@@ -345,37 +345,37 @@ gulp.task('publish:linux', function () {
 //----------------------------------------------------------------------------
 function getFileList(platform, options = {}) {
   options = Object.assign({}, {
-      basename: pjson.name,
-      version: pjson.version,
-      path: './'
+    basename: pjson.name,
+    version: pjson.version,
+    path: './'
   }, options);
   const filelist = [];
   switch (platform) {
-      case "windows":
-          filelist.push(`${options.path}latest.yml`);
-          filelist.push(`${options.path}${options.basename}-Setup-${options.version}.exe`);
-          filelist.push(`${options.path}${options.basename}-${options.version}-win.zip`);
-          filelist.push(`${options.path}${options.basename}-${options.version}-ia32-win.zip`);
+    case "windows":
+      filelist.push(`${options.path}latest.yml`);
+      filelist.push(`${options.path}${options.basename}-Setup-${options.version}.exe`);
+      filelist.push(`${options.path}${options.basename}-${options.version}-win.zip`);
+      filelist.push(`${options.path}${options.basename}-${options.version}-ia32-win.zip`);
       break;
 
-      case "squirrel.windows":
-          filelist.push(`${options.path}RELEASES`);
-          //filelist.push(`${options.path}${options.basename}-Setup-${options.version}.exe`);
-          filelist.push(`${options.path}${options.basename}-${options.version}-full.nupkg`);
+    case "squirrel.windows":
+      filelist.push(`${options.path}RELEASES`);
+      //filelist.push(`${options.path}${options.basename}-Setup-${options.version}.exe`);
+      filelist.push(`${options.path}${options.basename}-${options.version}-full.nupkg`);
       break;
 
-      case "mac":
-          filelist.push(`${options.path}latest-mac.yml`);
-          filelist.push(`${options.path}latest-mac.json`);
-          filelist.push(`${options.path}${options.basename}-${options.version}-mac.zip`);
-          filelist.push(`${options.path}${options.basename}-${options.version}.dmg`);
+    case "mac":
+      filelist.push(`${options.path}latest-mac.yml`);
+      filelist.push(`${options.path}latest-mac.json`);
+      filelist.push(`${options.path}${options.basename}-${options.version}-mac.zip`);
+      filelist.push(`${options.path}${options.basename}-${options.version}.dmg`);
       break;
 
-      case "linux":
-          filelist.push(`${options.path}${options.basename}-${options.version}-i386.AppImage`);
-          filelist.push(`${options.path}${options.basename}-${options.version}-x86_64.AppImage`);
-          filelist.push(`${options.path}${options.basename}_${options.version}_i386.deb`);
-          filelist.push(`${options.path}${options.basename}_${options.version}_amd64.deb`);
+    case "linux":
+      filelist.push(`${options.path}${options.basename}-${options.version}-i386.AppImage`);
+      filelist.push(`${options.path}${options.basename}-${options.version}-x86_64.AppImage`);
+      filelist.push(`${options.path}${options.basename}_${options.version}_i386.deb`);
+      filelist.push(`${options.path}${options.basename}_${options.version}_amd64.deb`);
       break;
   }
   return filelist;
@@ -384,32 +384,31 @@ function getFileList(platform, options = {}) {
 //----------------------------------------------------------------------------
 function setReleaseFilename(filename, options = {}) {
   options = Object.assign({}, {
-      lowerCase: true,
-      replaceWhitespace: true,
-      fixBasename: true,
-      replaceName: false,
-      srcName: null,
-      dstName: null
+    lowerCase: true,
+    replaceWhitespace: true,
+    fixBasename: true,
+    replaceName: false,
+    srcName: null,
+    dstName: null
   },
-  options);
+    options);
   if (options.replaceName && options.srcName && options.dstName) {
-      filename = filename.replace(options.srcName, options.dstName);
+    filename = filename.replace(options.srcName, options.dstName);
   }
   if (options.lowerCase) {
-      filename = filename.toLowerCase();
+    filename = filename.toLowerCase();
   }
   if (options.replaceWhitespace) {
-      filename = filename.replace(/\s/g, '-');
+    filename = filename.replace(/\s/g, '-');
   }
   if (options.fixBasename) {
-      filename = filename.replace(/bot[-|\s]framework/ig, 'botframework');
+    filename = filename.replace(/bot[-|\s]framework/ig, 'botframework');
   }
   return filename;
 }
 
 //----------------------------------------------------------------------------
-function getEnvironmentVar(name, defaultValue = undefined)
-{
+function getEnvironmentVar(name, defaultValue = undefined) {
   return (process.env[name] === undefined) ? defaultValue : process.env[name]
 }
 
@@ -417,7 +416,7 @@ function getEnvironmentVar(name, defaultValue = undefined)
 function replaceEnvironmentVar(str, name, defaultValue = undefined) {
   let value = getEnvironmentVar(name, defaultValue);
   if (value == undefined)
-      throw new Error(`Required environment variable missing: ${name}`);
+    throw new Error(`Required environment variable missing: ${name}`);
   return str.replace(new RegExp('\\${' + name + '}', 'g'), value);
 }
 
@@ -440,8 +439,7 @@ function replacePublishEnvironmentVars(obj) {
 }
 
 //----------------------------------------------------------------------------
-function getElectronMirrorUrl()
-{
+function getElectronMirrorUrl() {
   return `${getEnvironmentVar("ELECTRON_MIRROR", defaultElectronMirror)}${getEnvironmentVar("ELECTRON_VERSION", defaultElectronVersion)}`;
 }
 

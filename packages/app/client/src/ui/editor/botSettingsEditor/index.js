@@ -53,7 +53,7 @@ export default class SettingsEditor extends React.Component {
   constructor(props, context) {
     super(props, context);
 
-    this.onChangeHandle = this.onChangeHandle.bind(this);
+    this.onChangeBotId = this.onChangeBotId.bind(this);
     this.onChangeEndpoint = this.onChangeEndpoint.bind(this);
     this.onChangeAppId = this.onChangeAppId.bind(this);
     this.onChangeAppPw = this.onChangeAppPw.bind(this);
@@ -63,29 +63,26 @@ export default class SettingsEditor extends React.Component {
     this.onSelectFolder = this.onSelectFolder.bind(this);
 
     this.state = {
-      originalHandle: this.props.botId,
-      bot: getBotById(this.props.botId)
+      bot: getBotById(this.props.id)
     };
   }
 
   componentWillReceiveProps(newProps) {
-    const { botId: newBotId } = newProps;
-    if (newBotId !== this.props.botId) {
+    const { id: newId } = newProps;
+    if (newId !== this.props.id) {
       this.setState({
-        originalHandle: newBotId,
-        bot: getBotById(newBotId)
+        bot: getBotById(newId)
       });
     }
   }
 
   componentWillMount() {
     this.setState({
-      originalHandle: this.props.botId,
-      bot: getBotById(this.props.botId)
+      bot: getBotById(this.props.id)
     });
   }
 
-  onChangeHandle(e) {
+  onChangeBotId(e) {
     const bot = { ...this.state.bot, botId: e.target.value };
     this.setState({ bot });
   }
@@ -120,10 +117,9 @@ export default class SettingsEditor extends React.Component {
     const newBotFile = {
       ...this.state.bot
     };
-    CommandService.remoteCall('bot:save', newBotFile, this.state.originalHandle)
+    CommandService.remoteCall('bot:save', newBotFile, this.props.id)
       .then(() => {
-        store.dispatch(BotActions.patch(this.state.originalHandle, newBotFile))
-        this.setState({ originalHandle: newBotFile.botId });
+        store.dispatch(BotActions.patch(this.props.id, newBotFile))
       });
   }
 
@@ -137,17 +133,17 @@ export default class SettingsEditor extends React.Component {
   }
 
   render() {
-    const botIdentifier = getBotDisplayName(this.state.bot);
+    const botLabel = getBotDisplayName(this.state.bot);
 
     return (
       <div className={ CSS }>
-        <h1>Settings for { botIdentifier }</h1>
+        <h1>Settings for { botLabel }</h1>
 
         <span>Bot name</span>
         <input value={ this.state.bot.botName } onChange={ this.onChangeName } type="text" />
 
-        <span>Bot handle</span>
-        <input value={ this.state.bot.botId } onChange={ this.onChangeHandle } type="text" />
+        <span>Bot Id</span>
+        <input value={ this.state.bot.botId } onChange={ this.onChangeBotId } type="text" />
 
         <span>Endpoint</span>
         <input value={ this.state.bot.botUrl } onChange={ this.onChangeEndpoint } type="text" />
@@ -174,5 +170,5 @@ export default class SettingsEditor extends React.Component {
 }
 
 SettingsEditor.propTypes = {
-  botId: PropTypes.string.isRequired
+  id: PropTypes.string.isRequired
 };
