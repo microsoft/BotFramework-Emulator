@@ -1,0 +1,15 @@
+{
+  "directories": {
+    "output": "./installer/windows-squirrel"
+  },
+  "extraResources": [
+    "app-update.yml"
+  ],
+  "squirrelWindows": {
+    "name": "botframework-emulator",
+    "loadingGif": "./scripts/config/resources/squirrel/bf-splash.gif",
+    "iconUrl": "https://github.com/${githubAccountName}/${githubRepoName}/blob/master/scripts/resources/icon.ico?raw=true",
+    "remoteReleases": false,
+    "useAppIdAsId": true
+  }
+}

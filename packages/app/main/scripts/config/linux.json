@@ -1,4 +1,7 @@
 {
+  "directories": {
+    "output": "./installer/linux"
+  },
   "linux": {
     "category": "Development"
   }

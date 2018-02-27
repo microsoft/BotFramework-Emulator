@@ -96,7 +96,7 @@ function hashFileAsync(filename, algo = 'sha512', encoding = 'base64') {
 }
 
 //----------------------------------------------------------------------------
-function writeYamlMetadataFile(releaseFilename, yamlFilename, fileHash, releaseDate, extra = {}) {
+function writeYamlMetadataFile(releaseFilename, yamlFilename, path, fileHash, releaseDate, extra = {}) {
   var fsp = require('fs-extra-p');
   var yaml = require('js-yaml');
 
@@ -107,13 +107,13 @@ function writeYamlMetadataFile(releaseFilename, yamlFilename, fileHash, releaseD
     path: releaseFilename,
     sha512: fileHash
   };
-  const obj = Object.assign({}, ymlInfo, extra);
+  const obj = extend({}, ymlInfo, extra);
   const ymlStr = yaml.safeDump(obj);
-  fsp.writeFileSync(`./installer/${yamlFilename}`, ymlStr);
+  fsp.writeFileSync(`./${path}/${yamlFilename}`, ymlStr);
 }
 
 //----------------------------------------------------------------------------
-function writeJsonMetadataFile(releaseFilename, jsonFilename, releaseDate) {
+function writeJsonMetadataFile(releaseFilename, jsonFilename, path, releaseDate) {
   var fsp = require('fs-extra-p');
 
   const jsonInfo = {
@@ -121,20 +121,18 @@ function writeJsonMetadataFile(releaseFilename, jsonFilename, releaseDate) {
     releaseDate: releaseDate,
     url: `https://github.com/${githubAccountName}/${githubRepoName}/releases/v${pjson.version}/${releaseFilename}`
   };
-  fsp.outputJsonSync(`./installer/${jsonFilename}`, jsonInfo, { spaces: 2 });
+  fsp.outputJsonSync(`./${path}/${jsonFilename}`, jsonInfo, { spaces: 2 });
 }
 
 //============================================================================
-// PACKAGE:WINDOWS
+// PACKAGE:WINDOWS-NSIS
 
 //----------------------------------------------------------------------------
-gulp.task('package:windows:binaries', function () {
+gulp.task('package:windows-nsis:binaries', function () {
   var wait = require('gulp-wait');
   var rename = require('gulp-rename');
   var builder = require('electron-builder');
-  const config = Object.assign({},
-    replacePackageEnvironmentVars(require('./scripts/config/common.json')),
-    replacePackageEnvironmentVars(require('./scripts/config/windows.json')));
+  const config = getConfig("windows", "nsis");
   console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
   return builder.build({
     targets: builder.Platform.WINDOWS.createTarget(["nsis", "zip"], builder.Arch.ia32, builder.Arch.x64),
@@ -144,7 +142,7 @@ gulp.task('package:windows:binaries', function () {
       .pipe(rename(function (path) {
         path.basename = setReleaseFilename(path.basename);
       }))
-      .pipe(gulp.dest('./installer'))
+      .pipe(gulp.dest(config.directories.output))
   }).then(() => {
     // Wait for the files to be written to disk and closed.
     return delay(10000);
@@ -152,31 +150,30 @@ gulp.task('package:windows:binaries', function () {
 });
 
 //----------------------------------------------------------------------------
-gulp.task('package:windows:metadata', ['package:windows:binaries'], function () {
+gulp.task('package:windows-nsis:metadata', ['package:windows-nsis:binaries'], function () {
+  const config = getConfig("windows", "nsis");
   const releaseFilename = `botframework-emulator-Setup-${pjson.version}.exe`;
-  const sha512 = hashFileAsync(`./installer/${releaseFilename}`);
-  const sha2 = hashFileAsync(`./installer/${releaseFilename}`, 'sha256', 'hex');
+  const sha512 = hashFileAsync(`${config.directories.output}/${releaseFilename}`);
+  const sha2 = hashFileAsync(`${config.directories.output}/${releaseFilename}`, 'sha256', 'hex');
   const releaseDate = new Date().toISOString();
 
   return Promise.all([sha512, sha2])
     .then((values) => {
-      writeYamlMetadataFile(releaseFilename, 'latest.yml', values[0], releaseDate, { sha2: values[1] });
+      writeYamlMetadataFile(releaseFilename, 'latest.yml', config.directories.output, values[0], releaseDate, { sha2: values[1] });
     });
 });
 
 //----------------------------------------------------------------------------
-gulp.task('package:windows', ['package:windows:metadata']);
+gulp.task('package:windows-nsis', ['package:windows-nsis:metadata']);
 
 //============================================================================
-// PACKAGE:SQUIRREL.WINDOWS
+// PACKAGE:WINDOWS-SQUIRREL
 
 //----------------------------------------------------------------------------
-gulp.task('package:squirrel.windows', function () {
+gulp.task('package:windows-squirrel', function () {
   var rename = require('gulp-rename');
   var builder = require('electron-builder');
-  const config = Object.assign({},
-    replacePackageEnvironmentVars(require('./scripts/config/common.json')),
-    require('./scripts/config/squirrel.windows.json'));
+  const config = getConfig("windows", "squirrel");
   console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
   return builder.build({
     targets: builder.Platform.WINDOWS.createTarget(["squirrel"], builder.Arch.x64),
@@ -191,7 +188,7 @@ gulp.task('package:squirrel.windows', function () {
           dstName: config.squirrelWindows.name
         });
       }))
-      .pipe(gulp.dest('./installer'));
+      .pipe(gulp.dest(config.directories.output));
   }).then(() => {
     // Wait for the files to be written to disk and closed.
     return delay(10000);
@@ -199,15 +196,13 @@ gulp.task('package:squirrel.windows', function () {
 });
 
 //============================================================================
-// PACKAGE:MAC
+// PACKAGE:MAC-DMG
 
 //----------------------------------------------------------------------------
-gulp.task('package:mac:binaries', function () {
+gulp.task('package:mac-dmg:binaries', function () {
   var rename = require('gulp-rename');
   var builder = require('electron-builder');
-  const config = Object.assign({},
-    replacePackageEnvironmentVars(require('./scripts/config/common.json')),
-    require('./scripts/config/mac.json'));
+  const config = getConfig("mac", "dmg");
   console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
   return builder.build({
     targets: builder.Platform.MAC.createTarget(["dmg", "zip"]),
@@ -217,7 +212,7 @@ gulp.task('package:mac:binaries', function () {
       .pipe(rename(function (path) {
         path.basename = setReleaseFilename(path.basename);
       }))
-      .pipe(gulp.dest('./installer'));
+      .pipe(gulp.dest(config.directories.output));
   }).then(() => {
     // Wait for the files to be written to disk and closed.
     return delay(10000);
@@ -225,19 +220,20 @@ gulp.task('package:mac:binaries', function () {
 });
 
 //----------------------------------------------------------------------------
-gulp.task('package:mac:metadata', ['package:mac:binaries'], function () {
+gulp.task('package:mac-dmg:metadata', ['package:mac-dmg:binaries'], function () {
+  const config = getConfig("mac", "dmg");
   const releaseFilename = `botframework-emulator-${pjson.version}-mac.zip`;
-  const releaseHash = hashFileAsync(`./installer/${releaseFilename}`);
+  const releaseHash = hashFileAsync(`./${config.directories.output}/${releaseFilename}`);
   const releaseDate = new Date().toISOString();
 
-  writeJsonMetadataFile(releaseFilename, 'latest-mac.json', releaseDate);
+  writeJsonMetadataFile(releaseFilename, 'latest-mac.json', config.directories.output, releaseDate);
   return releaseHash.then((hashValue) => {
-    writeYamlMetadataFile(releaseFilename, 'latest-mac.yml', hashValue, releaseDate);
+    writeYamlMetadataFile(releaseFilename, 'latest-mac.yml', config.directories.output, hashValue, releaseDate);
   });
 });
 
 //----------------------------------------------------------------------------
-gulp.task('package:mac', ['package:mac:metadata']);
+gulp.task('package:mac-dmg', ['package:mac-dmg:metadata']);
 
 //============================================================================
 // PACKAGE:LINUX
@@ -246,9 +242,7 @@ gulp.task('package:mac', ['package:mac:metadata']);
 gulp.task('package:linux', function () {
   var rename = require('gulp-rename');
   var builder = require('electron-builder');
-  const config = Object.assign({},
-    replacePackageEnvironmentVars(require('./scripts/config/common.json')),
-    require('./scripts/config/linux.json'));
+  const config = getConfig("linux");
   console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
   return builder.build({
     targets: builder.Platform.LINUX.createTarget(["deb", "AppImage"], builder.Arch.ia32, builder.Arch.x64),
@@ -258,7 +252,7 @@ gulp.task('package:linux', function () {
       .pipe(rename(function (path) {
         path.basename = setReleaseFilename(path.basename);
       }))
-      .pipe(gulp.dest('./installer'));
+      .pipe(gulp.dest(config.directories.output));
   }).then(() => {
     // Wait for the files to be written to disk and closed.
     return delay(10000);
@@ -304,36 +298,29 @@ function publishFiles(filelist) {
 }
 
 //----------------------------------------------------------------------------
-gulp.task('publish:windows', function () {
-  const filelist = getFileList("windows", {
-    path: './installer/'
-  });
+gulp.task('publish:windows-nsis', function () {
+  const filelist = getFileList("windows", "nsis");
   return publishFiles(filelist);
 });
 
 //----------------------------------------------------------------------------
-gulp.task('publish:squirrel.windows', function () {
-  const basename = require('./scripts/config/squirrel.windows.json').squirrelWindows.name;
-  const filelist = getFileList("squirrel.windows", {
+gulp.task('publish:windows-squirrel', function () {
+  const basename = require('./scripts/config/windows-squirrel.json').squirrelWindows.name;
+  const filelist = getFileList("windows", "squirrel", {
     basename,
-    path: './installer/'
   });
   return publishFiles(filelist);
 });
 
 //----------------------------------------------------------------------------
-gulp.task('publish:mac', function () {
-  const filelist = getFileList("mac", {
-    path: './installer/'
-  });
+gulp.task('publish:mac-dmg', function () {
+  const filelist = getFileList("mac", "dmg");
   return publishFiles(filelist);
 });
 
 //----------------------------------------------------------------------------
 gulp.task('publish:linux', function () {
-  const filelist = getFileList("linux", {
-    path: './installer/'
-  });
+  const filelist = getFileList("linux");
   return publishFiles(filelist);
 });
 
@@ -343,39 +330,49 @@ gulp.task('publish:linux', function () {
 //============================================================================
 
 //----------------------------------------------------------------------------
-function getFileList(platform, options = {}) {
-  options = Object.assign({}, {
+function getConfig(platform, target) {
+  return extend({},
+    replacePackageEnvironmentVars(require('./scripts/config/common.json')),
+    replacePackageEnvironmentVars(require(`./scripts/config/${platform}.json`)),
+    (target ? replacePackageEnvironmentVars(require(`./scripts/config/${platform}-${target}.json`)) : {})
+  );
+}
+
+//----------------------------------------------------------------------------
+function getFileList(platform, target, options = {}) {
+  options = extend({}, {
     basename: pjson.name,
     version: pjson.version,
-    path: './'
   }, options);
+  const config = getConfig(platform, target);
+  const path = config.directories.output;
   const filelist = [];
-  switch (platform) {
-    case "windows":
-      filelist.push(`${options.path}latest.yml`);
-      filelist.push(`${options.path}${options.basename}-Setup-${options.version}.exe`);
-      filelist.push(`${options.path}${options.basename}-${options.version}-win.zip`);
-      filelist.push(`${options.path}${options.basename}-${options.version}-ia32-win.zip`);
+  switch (`${target || ''}-${platform}`) {
+    case "windows-nsis":
+      filelist.push(`${path}/latest.yml`);
+      filelist.push(`${path}/${options.basename}-Setup-${options.version}.exe`);
+      filelist.push(`${path}/${options.basename}-${options.version}-win.zip`);
+      filelist.push(`${path}/${options.basename}-${options.version}-ia32-win.zip`);
       break;
 
-    case "squirrel.windows":
-      filelist.push(`${options.path}RELEASES`);
+    case "windows-squirrel":
+      filelist.push(`${path}/RELEASES`);
       //filelist.push(`${options.path}${options.basename}-Setup-${options.version}.exe`);
-      filelist.push(`${options.path}${options.basename}-${options.version}-full.nupkg`);
+      filelist.push(`${path}/${options.basename}-${options.version}-full.nupkg`);
       break;
 
-    case "mac":
-      filelist.push(`${options.path}latest-mac.yml`);
-      filelist.push(`${options.path}latest-mac.json`);
-      filelist.push(`${options.path}${options.basename}-${options.version}-mac.zip`);
-      filelist.push(`${options.path}${options.basename}-${options.version}.dmg`);
+    case "mac-dmg":
+      filelist.push(`${path}/latest-mac.yml`);
+      filelist.push(`${path}/latest-mac.json`);
+      filelist.push(`${path}/${options.basename}-${options.version}-mac.zip`);
+      filelist.push(`${path}/${options.basename}-${options.version}.dmg`);
       break;
 
-    case "linux":
-      filelist.push(`${options.path}${options.basename}-${options.version}-i386.AppImage`);
-      filelist.push(`${options.path}${options.basename}-${options.version}-x86_64.AppImage`);
-      filelist.push(`${options.path}${options.basename}_${options.version}_i386.deb`);
-      filelist.push(`${options.path}${options.basename}_${options.version}_amd64.deb`);
+    case "linux-":
+      filelist.push(`${path}/${options.basename}-${options.version}-i386.AppImage`);
+      filelist.push(`${path}/${options.basename}-${options.version}-x86_64.AppImage`);
+      filelist.push(`${path}/${options.basename}_${options.version}_i386.deb`);
+      filelist.push(`${path}/${options.basename}_${options.version}_amd64.deb`);
       break;
   }
   return filelist;
@@ -383,7 +380,7 @@ function getFileList(platform, options = {}) {
 
 //----------------------------------------------------------------------------
 function setReleaseFilename(filename, options = {}) {
-  options = Object.assign({}, {
+  options = extend({}, {
     lowerCase: true,
     replaceWhitespace: true,
     fixBasename: true,
@@ -446,4 +443,27 @@ function getElectronMirrorUrl() {
 //----------------------------------------------------------------------------
 function delay(ms, result) {
   return new Promise((resolve, reject) => setTimeout(resolve, ms, result));
+}
+
+//----------------------------------------------------------------------------
+function extend1(destination, source) {
+  for (var property in source) {
+    if (source[property] && source[property].constructor &&
+     source[property].constructor === Object) {
+      destination[property] = destination[property] || {};
+      arguments.callee(destination[property], source[property]);
+    } else {
+      destination[property] = source[property];
+    }
+  }
+  return destination;
+};
+
+//----------------------------------------------------------------------------
+function extend(...sources) {
+  let output = {};
+  sources.forEach(source => {
+    extend1(output, source);
+  });
+  return output;
 }

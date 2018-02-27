@@ -2,10 +2,16 @@
   "name": "botframework-emulator-client",
   "version": "1.0.0",
   "private": true,
-  "main": "./built/index.js",
+  "main": "./build/index.html",
   "homepage": "./",
+  "scripts": {
+    "copy:external": "gulp copy",
+    "start": "npm run copy:external && cross-env BROWSER=none react-scripts-ts start",
+    "build": "npm run copy:external && react-scripts-ts build",
+    "test": "react-scripts-ts test --env=jsdom",
+    "eject": "react-scripts-ts eject"
+  },
   "dependencies": {
-    "adaptivecards": "^1.0.0-beta9",
     "botframework-emulator-shared": "^1.0.0",
     "classnames": "^2.2.5",
     "custom-botframework-webchat": "^0.11.5-c0",
@@ -23,13 +29,6 @@
     "request": "^2.83.0",
     "rxjs": "^5.5.6",
     "sockjs-client": "^1.1.4"
-  },
-  "scripts": {
-    "copy:external": "gulp copy",
-    "start": "npm run copy:external && cross-env BROWSER=none react-scripts-ts start",
-    "build": "npm run copy:external && react-scripts-ts build",
-    "test": "react-scripts-ts test --env=jsdom",
-    "eject": "react-scripts-ts eject"
   },
   "devDependencies": {
     "@types/jest": "^21.1.9",

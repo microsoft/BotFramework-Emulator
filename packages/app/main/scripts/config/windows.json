@@ -1,17 +1,5 @@
 {
-  "nsis": {
-    "guid": "${appId}",
-    "include": "./scripts/config/resources/nsis/installer.nsh",
-    "perMachine": false,
-    "allowElevation": false,
-    "packElevateHelper": false,
-    "artifactName": "${productName}-Setup-${version}.${ext}",
-    "unicode": true,
-    "runAfterFinish": true,
-    "installerIcon": "./scripts/config/resources/icon.ico",
-    "uninstallerIcon": "./scripts/config/resources/icon.ico",
-    "installerHeader": "./sripts/config/resources/nsis/installerHeader.bmp",
-    "installerSidebar": "./sripts/config/resources/nsis/installerSidebar.bmp",
-    "uninstallerSidebar": "./sripts/config/resources/nsis/installerSidebar.bmp"
+  "win": {
+    "icon": "./scripts/config/resources/icon.ico"
   }
 }
