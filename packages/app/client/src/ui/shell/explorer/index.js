@@ -40,13 +40,14 @@ import * as Colors from '../../styles/colors';
 import ExplorerBarContent from './explorerBarContent';
 import ExplorerBarTitle from './explorerBarTitle';
 import * as Constants from '../../../constants';
+import InsetShadow from '../../layout/insetShadow';
 
 const CSS = css({
     backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
-    boxShadow: 'inset -4px 0px 8px -4px rgba(0,0,0,0.6)',
     height: '100%',
     display: 'flex',
-    flexFlow: 'column nowrap'
+    flexFlow: 'column nowrap',
+    position: 'relative'
 });
 
 class ExplorerBar extends React.Component {
@@ -64,6 +65,7 @@ class ExplorerBar extends React.Component {
         return (
             <div className={ CSS }>
                 { explorer }
+                <InsetShadow right={ true } />
             </div>
         );
     }

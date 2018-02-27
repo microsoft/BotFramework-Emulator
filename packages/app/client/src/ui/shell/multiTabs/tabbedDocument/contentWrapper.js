@@ -42,6 +42,7 @@ import ContentOverlay from './contentOverlay';
 import LeftContentOverlay from './leftContentOverlay';
 import RightContentOverlay from './rightContentOverlay';
 import * as Constants from '../../../../constants';
+import InsetShadow from '../../../layout/insetShadow';
 
 const CSS = css({
     position: 'relative',
@@ -79,6 +80,7 @@ export class TabbedDocumentContentWrapper extends React.Component {
                     :
                         null
                 }
+                <InsetShadow top={ true } />
             </div>
         );
     }

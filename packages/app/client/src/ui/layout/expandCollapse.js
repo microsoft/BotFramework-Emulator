@@ -37,9 +37,9 @@ import React from 'react';
 
 import { filterChildren } from '../utils';
 import * as Colors from '../styles/colors';
+import InsetShadow from '../layout/insetShadow';
 
 const CSS = css({
-  boxShadow: 'inset -4px 0px 8px -4px rgba(0,0,0,0.6)',
   display: 'flex',
   flexFlow: 'column nowrap',
   height: '100%',
@@ -47,7 +47,6 @@ const CSS = css({
 
   '& > header': {
     backgroundColor: 'rgba(128, 128, 128, 0.2)',
-    boxShadow: '0px 2px 2px 0px rgba(0,0,0,0.2)',
     cursor: 'pointer',
     display: 'flex',
     fontSize: '11px',
@@ -85,6 +84,7 @@ const CSS = css({
   '& > .body': {
     height: '100%',
     overflow: 'hidden',
+    position: 'relative',
 
     '& > section': {
       height: '100%',
@@ -113,21 +113,22 @@ export default class ExpandCollapse extends React.Component {
   render() {
     // TODO: Consider <input type="checkbox"> instead of <div />
     return (
-      <div aria-expanded={this.state.expanded} className={CSS}>
+      <div aria-expanded={ this.state.expanded } className={ CSS }>
         <header>
-          <div className="content" onClick={this.handleTitleClick}>
-            <span className="toggle"> {this.state.expanded ? '◢' : '▷'}</span>
-            {this.props.title}
+          <div className="content" onClick={ this.handleTitleClick }>
+            <span className="toggle"> { this.state.expanded ? '◢' : '▷' }</span>
+            { this.props.title }
           </div>
           <div className="accessories">
-            {filterChildren(this.props.children, child => child.type === Controls)}
+            { filterChildren(this.props.children, child => child.type === Controls) }
           </div>
         </header>
         <div className="body">
           {
             this.state.expanded &&
             <section>
-              {filterChildren(this.props.children, child => child.type === Content)}
+              { filterChildren(this.props.children, child => child.type === Content) }
+            <InsetShadow top={ true } />
             </section>
           }
         </div>

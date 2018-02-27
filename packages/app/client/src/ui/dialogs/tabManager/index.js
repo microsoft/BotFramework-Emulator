@@ -40,168 +40,177 @@ import * as Colors from '../../styles/colors';
 import * as EditorActions from '../../../data/action/editorActions';
 
 const CSS = css({
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
-    position: 'absolute',
-    display: 'flex',
-    flexFlow: 'row nowrap',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0)',
+  top: 0,
+  left: 0,
+  bottom: 0,
+  right: 0,
+  position: 'absolute',
+  display: 'flex',
+  flexFlow: 'row nowrap',
+  alignItems: 'center',
+  justifyContent: 'center',
+  backgroundColor: 'rgba(0, 0, 0, 0)',
 
-    '& > ul': {
-        height: 'auto',
-        width: 'auto',
-        maxHeight: '30%',
-        overflowY: 'auto',
-        margin: '0',
-        padding: '24px 64px',
-        listStyle: 'none',
-        backgroundColor: Colors.EDITOR_TAB_INACTIVE_BACKGROUND_DARK,
-        color: Colors.EDITOR_TAB_INACTIVE_FOREGROUND_DARK,
-        boxShadow: '0px 2px 2px 0px rgba(0,0,0,0.2), 2px 0px 2px 0px rgba(0,0,0,0.2), -2px 0px 2px 0px rgba(0,0,0,0.2)'
-    },
+  '& > ul': {
+    height: 'auto',
+    width: 'auto',
+    maxHeight: '30%',
+    overflowY: 'auto',
+    margin: '0',
+    padding: '24px 64px',
+    listStyle: 'none',
+    backgroundColor: Colors.EDITOR_TAB_INACTIVE_BACKGROUND_DARK,
+    color: Colors.EDITOR_TAB_INACTIVE_FOREGROUND_DARK,
+    boxShadow: '0px 2px 2px 0px rgba(0,0,0,0.2), 2px 0px 2px 0px rgba(0,0,0,0.2), -2px 0px 2px 0px rgba(0,0,0,0.2)'
+  },
 
-    '& > ul > li': {
-        padding: '4px 0',
-        textAlign: 'center',
+  '& > ul > li': {
+    padding: '4px 0',
+    textAlign: 'center',
 
-        '&:focus': { outline: '0' }
-    },
+    '&:focus': { outline: '0' }
+  },
 
-    '& > ul > .selected-tab': {
-        color: Colors.EDITOR_TAB_HOVER_FOREGROUND_DARK,
-        textDecoration: 'underline'
-    }
+  '& > ul > .selected-tab': {
+    color: Colors.EDITOR_TAB_HOVER_FOREGROUND_DARK,
+    textDecoration: 'underline'
+  }
 });
 
 export class TabManager extends React.Component {
-    constructor(props, context) {
-        super(props, context);
+  constructor(props, context) {
+    super(props, context);
 
-        this.onKeyDown = this.onKeyDown.bind(this);
-        this.onKeyUp = this.onKeyUp.bind(this);
-        this.saveTabRef = this.saveTabRef.bind(this);
+    this.onKeyDown = this.onKeyDown.bind(this);
+    this.onKeyUp = this.onKeyUp.bind(this);
+    this.saveTabRef = this.saveTabRef.bind(this);
 
-        this.state = {
-            controlIsPressed: false,
-            selectedIndex: 0,
-            shiftIsPressed: false,
-            showing: false
-        };
+    this.state = {
+      controlIsPressed: false,
+      selectedIndex: 0,
+      shiftIsPressed: false,
+      showing: false
+    };
 
-        this.tabRefs = [];
+    this.tabRefs = [];
+  }
+
+  componentWillMount() {
+    window.addEventListener('keydown', this.onKeyDown);
+    window.addEventListener('keyup', this.onKeyUp);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.onKeyDown);
+    window.removeEventListener('keyup', this.onKeyUp);
+  }
+
+  saveTabRef(element, index) {
+    this.tabRefs[index] = element;
+  }
+
+  moveIndexDown() {
+    return this.state.selectedIndex === this.props.openTabs.length - 1 ? 0 : this.state.selectedIndex + 1;
+  }
+
+  moveIndexUp() {
+    return this.state.selectedIndex === 0 ? this.props.openTabs.length - 1 : this.state.selectedIndex - 1;
+  }
+
+  onKeyDown(e) {
+    if (!this.props.openTabs.length) {
+      return;
     }
 
-    componentWillMount() {
-        window.addEventListener('keydown', this.onKeyDown);
-        window.addEventListener('keyup', this.onKeyUp);
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener('keydown', this.onKeyDown);
-        window.removeEventListener('keyup', this.onKeyUp);
-    }
-
-    saveTabRef(element, index) {
-        this.tabRefs[index] = element;
-    }
-
-    moveIndexDown() {
-        return this.state.selectedIndex === this.props.openTabs.length - 1 ? 0 : this.state.selectedIndex + 1;
-    }
-
-    moveIndexUp() {
-        return this.state.selectedIndex === 0 ? this.props.openTabs.length - 1 : this.state.selectedIndex - 1;
-    }
-
-    onKeyDown(e) {
-        switch (e.key) {
-            case 'ArrowUp':
-                if (this.state.showing) {
-                    this.setState(({ selectedIndex: this.moveIndexUp() }));
-                }
-                this.tabRefs[this.state.selectedIndex].focus();
-                break;
-
-            case'ArrowDown':
-                if (this.state.showing) {
-                    this.setState(({ selectedIndex: this.moveIndexDown() }));
-                }
-                this.tabRefs[this.state.selectedIndex].focus();
-                break;
-
-            case 'Control':
-                this.setState(({ controlIsPressed: true }));
-                break;
-
-            case 'Tab':
-                if (this.state.controlIsPressed) {
-                    if (this.state.showing && !this.state.shiftIsPressed) {
-                        this.setState(({ selectedIndex: this.moveIndexDown() }));
-                    } else if (this.state.showing && this.state.shiftIsPressed) {
-                        this.setState(({ selectedIndex: this.moveIndexUp() }));
-                    } else {
-                        this.setState(({ showing: true, selectedIndex: 0 }));
-                    }
-                    this.tabRefs[this.state.selectedIndex].focus();
-                }
-                break;
-
-            case 'Shift':
-                this.setState(({ shiftIsPressed: true }));
-                break;
-
-            default:
-                break;
+    switch (e.key) {
+      case 'ArrowUp':
+        if (this.state.showing) {
+          this.setState(({ selectedIndex: this.moveIndexUp() }));
         }
-    }
+        break;
 
-    onKeyUp(e) {
-        switch (e.key) {
-            case 'Control':
-                if (this.state.showing) {
-                    this.setState(({ controlIsPressed: false, showing: false }));
-                    this.props.dispatch(EditorActions.setActiveTab(this.props.openTabs[this.state.selectedIndex]));
-                } else {
-                    this.setState(({ controlIsPressed: false }));
-                }
-                break;
-
-            case 'Shift':
-                this.setState(({ shiftIsPressed: false }));
-                break;
-
-            default:
-                break;
+      case'ArrowDown':
+        if (this.state.showing) {
+          this.setState(({ selectedIndex: this.moveIndexDown() }));
         }
+        break;
+
+      case 'Control':
+        this.setState(({ controlIsPressed: true }));
+        break;
+
+      case 'Tab':
+        if (this.state.controlIsPressed) {
+          if (this.state.showing && !this.state.shiftIsPressed) {
+            this.setState(({ selectedIndex: this.moveIndexDown() }));
+          } else if (this.state.showing && this.state.shiftIsPressed) {
+            this.setState(({ selectedIndex: this.moveIndexUp() }));
+          } else {
+            this.setState(({ showing: true, selectedIndex: 0 }));
+          }
+        }
+        break;
+
+      case 'Shift':
+        this.setState(({ shiftIsPressed: true }));
+        break;
+
+      default:
+        break;
     }
 
-    render() {
-        return (this.state.showing && !this.props.disabled) ? (
-            <div className={ CSS }>
-                <ul>
-                    {
-                        this.props.openTabs.map((tabId, index) => {
-                            // TODO: Come up with a simple way to retrieve document
-                            // name from store using documentId
-                            const tabClassName = index === this.state.selectedIndex ? 'selected-tab' : '';
-                            return (<li className={ tabClassName } ref={ x => this.saveTabRef(x, index) } key={ tabId } tabIndex={ 0 }>{ tabId }</li>);
-                        })
-                    }
-                </ul>
-            </div>
-        ) : null;
+    if (this.tabRefs[this.state.selectedIndex]) {
+      this.tabRefs[this.state.selectedIndex].focus();
     }
+  }
+
+  onKeyUp(e) {
+    switch (e.key) {
+      case 'Control':
+        if (this.state.showing) {
+          this.setState(({ controlIsPressed: false, showing: false }));
+          this.props.dispatch(EditorActions.setActiveTab(this.props.openTabs[this.state.selectedIndex]));
+        } else {
+          this.setState(({ controlIsPressed: false }));
+        }
+        break;
+
+      case 'Shift':
+        this.setState(({ shiftIsPressed: false }));
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  render() {
+    return (this.state.showing && !this.props.disabled) ? (
+      <div className={ CSS }>
+        <ul>
+          {
+            this.props.openTabs.map((tabId, index) => {
+              // TODO: Come up with a simple way to retrieve document
+              // name from store using documentId
+              const tabClassName = index === this.state.selectedIndex ? 'selected-tab' : '';
+              return (<li className={ tabClassName } ref={ x => this.saveTabRef(x, index) } key={ tabId } tabIndex={ 0 }>{ tabId }</li>);
+            })
+          }
+        </ul>
+      </div>
+    ) : null;
+  }
 }
 
 TabManager.propTypes = {
-    disabled: PropTypes.bool.isRequired
+  disabled: PropTypes.bool.isRequired
+};
+
+TabManager.defaultProps = {
+  openTabs: []
 };
 
 export default connect((state, ownProps) => ({
-    activeEditor: state.editor.activeEditor,
-    openTabs: state.editor.editors[state.editor.activeEditor].tabStack
+  activeEditor: state.editor.activeEditor,
+  openTabs: state.editor.editors[state.editor.activeEditor].tabStack
 }))(TabManager);

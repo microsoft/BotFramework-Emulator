@@ -111,3 +111,5 @@ export const JSON_FORMATTING_STRING_DARK = C18;
 export const JSON_FORMATTING_NUMBER_DARK = C19;
 export const JSON_FORMATTING_BOOLEAN_DARK = C20;
 export const JSON_FORMATTING_NULL_DARK = C20;
+
+export const SHADOW_COLOR = 'rgba(0,0,0,0.6)';

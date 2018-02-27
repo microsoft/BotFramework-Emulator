@@ -44,7 +44,6 @@ import * as Constants from '../../../constants';
 const CSS = css({
   display: 'flex',
   backgroundColor: Colors.EDITOR_TAB_BACKGROUND_DARK,
-  boxShadow: '0px 2px 2px 0px rgba(0,0,0,0.2)',
   minHeight: '32px',
 
   '&.dragged-over-tab-bar': {

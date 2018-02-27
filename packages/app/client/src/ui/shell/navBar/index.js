@@ -40,15 +40,16 @@ import * as Colors from '../../styles/colors';
 import * as constants from '../../../constants';
 import * as NavBarActions from '../../../data/action/navBarActions';
 import { CommandRegistry } from 'botframework-emulator-shared';
+import InsetShadow from '../../layout/insetShadow';
 
 
 const CSS = css({
   backgroundColor: Colors.NAVBAR_BACKGROUND_DARK,
-  boxShadow: 'inset -4px 0px 8px -4px rgba(0,0,0,0.6)',
   overflow: 'hidden',
   width: '48px',
   display: 'flex',
   flexDirection: 'column',
+  position: 'relative',
 
   '& > ul': {
     display: 'flex',
@@ -166,6 +167,7 @@ class NavBar extends React.Component {
           <li role="button" className="notifications" title="Notifications" onClick={this.handleNotificationsClick}><div className={this.selectionClass(constants.NavBar_Notifications)} /></li>
           <li role="button" className="user" title="User" onClick={this.handleUserClick}><div className={this.selectionClass(constants.NavBar_User)} /></li>
         </ul>
+        <InsetShadow right={ true } />
       </nav>
     );
   }
