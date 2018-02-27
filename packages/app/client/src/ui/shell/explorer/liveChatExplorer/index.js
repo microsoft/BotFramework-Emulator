@@ -44,6 +44,7 @@ import ExplorerItem from '../explorerItem';
 import { CommandRegistry } from 'botframework-emulator-shared';
 import { CommandService } from '../../../../platform/commands/commandService';
 import store from '../../../../data/store';
+import { EXPLORER_CSS } from '../explorerStyle';
 
 //=============================================================================
 // LIVE CHAT COMMANDS
@@ -61,23 +62,6 @@ CommandRegistry.registerCommand('livechat:new', (context, activeEditor) => {
 });
 
 //=============================================================================
-
-const CSS = css({
-  display: 'flex',
-  flex: 1,
-  flexDirection: 'column',
-  listStyleType: 'none',
-  margin: 0,
-  padding: 0,
-  backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
-  color: Colors.EXPLORER_FOREGROUND_DARK,
-
-  '& .empty-list': {
-    padding: '4px 4px 0px 16px',
-    whiteSpace: 'nowrap',
-    height: '30px',
-  },
-});
 
 const ACCESSORIES_CSS = css({
   '& .accessory-button': {
@@ -97,6 +81,8 @@ const CONVO_CSS = css({
   listStyleType: 'none',
   margin: 0,
   padding: 0,
+  maxHeight: '100%',
+  overflow: 'auto'
 });
 
 class LiveChatExplorer extends React.Component {
@@ -142,25 +128,23 @@ class LiveChatExplorer extends React.Component {
 
   render() {
     return (
-      <ul className={ CSS }>
-        <li>
-          <ExpandCollapse
-            initialExpanded={ true }
-            title="Live Chats"
-          >
-            <ExpandCollapseControls>
+      <div className={ EXPLORER_CSS }>
+        <ExpandCollapse
+          initialExpanded={ true }
+          title="Live Chats"
+        >
+          <ExpandCollapseControls>
             <div className={ ACCESSORIES_CSS }>
               <div className="accessory-button create-button" role="button" onClick={ this.onAddClick } />
             </div>
-            </ExpandCollapseControls>
-            {
-              Object.keys(this.props.liveChats).length
-                ? this.renderLiveChatList()
-                : this.renderEmptyLiveChatList()
-            }
-          </ExpandCollapse>
-        </li>
-      </ul>
+          </ExpandCollapseControls>
+          {
+            Object.keys(this.props.liveChats).length
+              ? this.renderLiveChatList()
+              : this.renderEmptyLiveChatList()
+          }
+        </ExpandCollapse>
+      </div>
     );
   }
 }

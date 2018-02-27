@@ -83,12 +83,11 @@ const CSS = css({
 
   '& > .body': {
     height: '100%',
-    overflow: 'hidden',
+    overflow: 'auto',
     position: 'relative',
 
     '& > section': {
       height: '100%',
-      overflow: 'hidden',
       display: 'flex',
       flexFlow: 'column nowrap'
     }
@@ -113,7 +112,7 @@ export default class ExpandCollapse extends React.Component {
   render() {
     // TODO: Consider <input type="checkbox"> instead of <div />
     return (
-      <div aria-expanded={ this.state.expanded } className={ CSS }>
+      <div aria-expanded={ this.state.expanded } className={ CSS + ' expand-collapse-container' }>
         <header>
           <div className="content" onClick={ this.handleTitleClick }>
             <span className="toggle"> { this.state.expanded ? '◢' : '▷' }</span>
@@ -128,7 +127,7 @@ export default class ExpandCollapse extends React.Component {
             this.state.expanded &&
             <section>
               { filterChildren(this.props.children, child => child.type === Content) }
-            <InsetShadow top={ true } />
+              <InsetShadow top={ true } />
             </section>
           }
         </div>

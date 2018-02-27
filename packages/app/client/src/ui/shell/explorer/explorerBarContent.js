@@ -30,7 +30,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -38,16 +37,11 @@ import AssetExplorerSet from './assetExplorerSet';
 import ExplorerSet from './explorerSet';
 import BotNotOpenExplorer from './botNotOpenExplorer';
 
-const CSS = css({
-});
-
 class ExplorerBarContent extends React.Component {
   render() {
     if (this.props.activeBot) {
       return (
-        <div className={ CSS }>
-          <AssetExplorerSet />
-        </div>
+        <AssetExplorerSet />
       );
     } else {
       return (

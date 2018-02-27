@@ -43,23 +43,7 @@ import * as Colors from '../../../styles/colors';
 import ExplorerItem from '../explorerItem';
 import { CommandRegistry } from 'botframework-emulator-shared';
 import store from '../../../../data/store';
-
-const CSS = css({
-  display: 'flex',
-  flex: 1,
-  flexDirection: 'column',
-  listStyleType: 'none',
-  margin: 0,
-  padding: 0,
-  backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
-  color: Colors.EXPLORER_FOREGROUND_DARK,
-
-  '& .empty-list': {
-    padding: '4px 4px 0px 16px',
-    whiteSpace: 'nowrap',
-    height: '30px',
-  }
-});
+import { EXPLORER_CSS } from '../explorerStyle';
 
 const CONVO_CSS = css({
   display: 'flex',
@@ -106,20 +90,18 @@ class TranscriptExplorer extends React.Component {
 
   render() {
     return (
-      <ul className={ CSS }>
-        <li>
-          <ExpandCollapse
-            initialExpanded={ true }
-            title="Saved Chats"
-          >
-            {
-              Object.keys(this.props.transcripts).length
-                ? this.renderTranscriptList()
-                : this.renderEmptyTranscriptList()
-            }
-          </ExpandCollapse>
-        </li>
-      </ul>
+      <div className={ EXPLORER_CSS }>
+        <ExpandCollapse
+          initialExpanded={ true }
+          title="Saved Chats"
+        >
+          {
+            Object.keys(this.props.transcripts).length
+              ? this.renderTranscriptList()
+              : this.renderEmptyTranscriptList()
+          }
+        </ExpandCollapse>
+      </div>
     );
   }
 }
