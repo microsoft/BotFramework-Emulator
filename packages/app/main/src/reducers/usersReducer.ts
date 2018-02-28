@@ -32,8 +32,8 @@
 //
 
 //import { Reducer } from 'redux';
-//import { IUserSettings, usersDefault } from 'botframework-emulator-shared';
-import { usersDefault, IUser } from 'botframework-emulator-shared';
+//import { IUserSettings, usersDefault } from '@bfemulator/app-shared';
+import { usersDefault, IUser } from '@bfemulator/app-shared';
 
 
 export type UsersAction = {

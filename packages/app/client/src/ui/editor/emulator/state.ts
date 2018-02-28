@@ -1,5 +1,5 @@
 
-import * as WebChat from 'custom-botframework-webchat';
+import * as WebChat from '@bfemulator/custom-botframework-webchat';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 export interface IEmulatorState {

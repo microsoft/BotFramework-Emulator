@@ -33,9 +33,9 @@
 
 import { css } from 'glamor';
 import * as React from 'react';
-import * as WebChat from 'custom-botframework-webchat';
+import * as WebChat from '@bfemulator/custom-botframework-webchat';
 import { BehaviorSubject } from 'rxjs';
-import { ActivityOrID } from 'botframework-emulator-shared';
+import { ActivityOrID } from '@bfemulator/app-shared';
 import state from '../state';
 import store from '../../../../data/store';
 import * as ChatActions from '../../../../data/action/chatActions';

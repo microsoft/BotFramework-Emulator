@@ -1,5 +1,5 @@
 {
-  "name": "custom-botframework-webchat",
+  "name": "@bfemulator/custom-botframework-webchat",
   "version": "0.11.5-c0",
   "description": "Embeddable web chat control for the Microsoft Bot Framework",
   "main": "built/BotChat.js",
@@ -44,7 +44,6 @@
   "devDependencies": {
     "@types/chai": "3.4.34",
     "@types/chai-subset": "1.0.29",
-    "@types/deep-freeze": "0.0.29",
     "@types/markdown-it": "0.0.2",
     "@types/nightmare": "1.6.30",
     "@types/react-dom": "0.14.23",
@@ -53,24 +52,20 @@
     "chai": "3.5",
     "chai-subset": "1.4.0",
     "concurrently": "3.1.0",
-    "deep-freeze": "0.0.1",
     "expose-loader": "0.7.3",
-    "fs-extra": "1.0.0",
     "http-server": "^0.10.0",
     "microsoft-adaptivecards-scss-to-json": "1.2.0",
     "mocha": "3.2.0",
     "nightmare": "2.8.1",
     "nightmare-upload": "0.1.1",
     "nightmare-window-manager": "^0.2.2",
-    "node-sass": "4.5.0",
-    "nodemon": "1.11.0",
+    "node-sass": "^4.7.2",
     "npm-run-all": "3.1.2",
     "remote": "0.2.6",
-    "rimraf": "2.6.1",
     "source-map-loader": "0.2.1",
     "typescript": "2.3",
     "vo": "4.0.2",
-    "webpack": "2.3.3"
+    "webpack-cli": "^2.0.9"
   },
   "files": [
     "built/",

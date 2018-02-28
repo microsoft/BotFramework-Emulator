@@ -1,5 +1,5 @@
 {
-  "name": "custom-ngrok",
+  "name": "@bfemulator/custom-ngrok",
   "version": "2.2.26",
   "description": "node wrapper for ngrok",
   "main": "index.js",

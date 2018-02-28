@@ -41,9 +41,9 @@ import EditorFactory from '../../editor';
 import MultiTabs from '../multiTabs';
 import TabFactory from './tabFactory';
 import TabbedDocument, { Tab as TabbedDocumentTab, Content as TabbedDocumentContent } from '../multiTabs/tabbedDocument';
-import { CommandRegistry } from 'botframework-emulator-shared';
+import { CommandRegistry } from '@bfemulator/app-shared';
 import * as Constants from '../../../constants';
-import { getBotDisplayName } from 'botframework-emulator-shared';
+import { getBotDisplayName } from '@bfemulator/app-shared';
 
 class MDI extends React.Component {
     constructor(props, context) {

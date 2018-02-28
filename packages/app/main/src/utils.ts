@@ -1,7 +1,7 @@
 
 import * as Restify from 'restify';
 import * as HttpStatus from 'http-status-codes';
-import { IErrorResponse, APIException, createErrorResponse, ErrorCodes, mergeDeep } from 'botframework-emulator-shared';
+import { IErrorResponse, APIException, createErrorResponse, ErrorCodes, mergeDeep } from '@bfemulator/app-shared';
 import { dialog, OpenDialogOptions } from 'electron';
 
 const electron = require('electron'); // use a lowercase name "electron" to prevent clash with "Electron" namespace

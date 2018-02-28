@@ -1,7 +1,7 @@
 const electron = window['require']('electron');
 const ipcRenderer = electron.ipcRenderer;
 
-import { BaseIPC, Channel, IDisposable } from 'botframework-emulator-shared';
+import { BaseIPC, Channel, IDisposable } from '@bfemulator/app-shared';
 
 export const IPC = new class extends BaseIPC {
   constructor() {

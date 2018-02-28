@@ -45,7 +45,7 @@ import * as commandLine from './commandLine'
 import * as electronLocalShortcut from 'electron-localshortcut';
 import { setTimeout } from 'timers';
 import { Window } from './platform/window';
-import { IBot, newBot, CommandRegistry, uniqueId } from 'botframework-emulator-shared';
+import { IBot, newBot, CommandRegistry, uniqueId } from '@bfemulator/app-shared';
 import { ensureStoragePath, readFileSync, showOpenDialog, writeFile, generateRandomBotName } from './utils';
 import * as BotActions from './data-v2/action/bot';
 

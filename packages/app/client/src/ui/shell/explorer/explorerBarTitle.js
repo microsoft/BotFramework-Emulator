@@ -35,7 +35,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { CommandService } from '../../../platform/commands/commandService';
-import { getBotDisplayName } from 'botframework-emulator-shared';
+import { getBotDisplayName } from '@bfemulator/app-shared';
 import { getBotById } from '../../../data/botHelpers';
 
 const CSS = css({

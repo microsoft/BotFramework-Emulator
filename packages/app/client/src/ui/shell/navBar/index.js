@@ -39,7 +39,7 @@ import Button from './button';
 import * as Colors from '../../styles/colors';
 import * as constants from '../../../constants';
 import * as NavBarActions from '../../../data/action/navBarActions';
-import { CommandRegistry } from 'botframework-emulator-shared';
+import { CommandRegistry } from '@bfemulator/app-shared';
 import InsetShadow from '../../layout/insetShadow';
 
 

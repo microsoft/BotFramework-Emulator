@@ -1,4 +1,4 @@
-import { Disposable, ICommandService, CommandRegistry, Channel, uniqueId, Window } from 'botframework-emulator-shared';
+import { Disposable, ICommandService, CommandRegistry, Channel, uniqueId, Window } from '@bfemulator/app-shared';
 
 export class CommandService extends Disposable implements ICommandService {
 

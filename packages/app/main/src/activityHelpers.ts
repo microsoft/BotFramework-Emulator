@@ -1,4 +1,4 @@
-import { IGenericActivity } from 'botframework-emulator-shared';
+import { IGenericActivity } from '@bfemulator/app-shared';
 
 export function getActivityText(activity: IGenericActivity): string {
   if (activity) {

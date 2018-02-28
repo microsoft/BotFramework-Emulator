@@ -32,9 +32,9 @@
 //
 
 import * as Restify from 'restify';
-import { IGenericActivity, IConversationParameters, IUser, ErrorCodes, IResourceResponse, IAttachmentData } from 'botframework-emulator-shared';
+import { IGenericActivity, IConversationParameters, IUser, ErrorCodes, IResourceResponse, IAttachmentData } from '@bfemulator/app-shared';
 import * as HttpStatus from 'http-status-codes';
-import * as ResponseTypes from 'botframework-emulator-shared';
+import * as ResponseTypes from '@bfemulator/app-shared';
 import { getSettings, getStore } from '../../settings';
 import { emulator } from '../../emulator';
 import { AttachmentsController } from './attachmentsController';

@@ -8,7 +8,7 @@ import * as BotActions from '../../../data/action/botActions';
 import store from '../../../data/store';
 import { getBotById } from '../../../data/botHelpers';
 import PrimaryButton from '../../shell/explorer/botExplorer/primaryButton';
-import { getBotDisplayName } from 'botframework-emulator-shared';
+import { getBotDisplayName } from '@bfemulator/app-shared';
 
 const CSS = css({
   boxSizing: 'border-box',

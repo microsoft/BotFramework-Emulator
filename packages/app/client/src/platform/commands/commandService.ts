@@ -1,4 +1,4 @@
-import { uniqueId, Disposable, ICommandService, CommandRegistry, Channel } from 'botframework-emulator-shared';
+import { uniqueId, Disposable, ICommandService, CommandRegistry, Channel } from '@bfemulator/app-shared';
 import { IPC } from '../../ipc';
 
 export const CommandService = new class extends Disposable implements ICommandService {

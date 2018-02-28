@@ -33,8 +33,8 @@
 
 import * as Restify from 'restify';
 import * as HttpStatus from 'http-status-codes';
-import * as ResponseTypes from 'botframework-emulator-shared';
-import { ErrorCodes, approximateObjectSize } from 'botframework-emulator-shared';
+import * as ResponseTypes from '@bfemulator/app-shared';
+import { ErrorCodes, approximateObjectSize } from '@bfemulator/app-shared';
 import { RestServer } from '../../restServer';
 import { BotFrameworkAuthentication } from '../../botFrameworkAuthentication';
 import { jsonBodyParser } from '../../jsonBodyParser';

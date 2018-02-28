@@ -14,7 +14,8 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "outDir": "app/server",
-    "removeComments": true
+    "removeComments": true,
+    "skipLibCheck": true
   },
   "include": [
     "./src"

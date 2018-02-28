@@ -32,7 +32,7 @@
 //
 
 import * as commandLineArgs from 'command-line-args';
-import {ICommandLineArgs} from 'botframework-emulator-shared';
+import {ICommandLineArgs} from '@bfemulator/app-shared';
 import * as globals from './globals';
 
 

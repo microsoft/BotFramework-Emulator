@@ -16,7 +16,8 @@
     "noUnusedLocals": true,
     "outDir": "built",
     "removeComments": true,
-    "declaration": true
+    "declaration": true,
+    "skipLibCheck": true
   },
   "include": [
     "./src"

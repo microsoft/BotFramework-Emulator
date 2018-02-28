@@ -1,5 +1,5 @@
 import * as Restify from 'restify';
-import { LogLevel, ILogEntry } from 'botframework-emulator-shared';
+import { LogLevel, ILogEntry } from '@bfemulator/app-shared';
 import { mainWindow } from './main';
 
 export function makeLogEntry(level: LogLevel, category: string, ...messages: any[]): ILogEntry {

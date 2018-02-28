@@ -41,7 +41,7 @@ import * as EditorActions from '../../../../data/action/editorActions';
 import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../../layout/expandCollapse';
 import * as Colors from '../../../styles/colors';
 import ExplorerItem from '../explorerItem';
-import { CommandRegistry } from 'botframework-emulator-shared';
+import { CommandRegistry } from '@bfemulator/app-shared';
 import { CommandService } from '../../../../platform/commands/commandService';
 import store from '../../../../data/store';
 import { EXPLORER_CSS } from '../explorerStyle';

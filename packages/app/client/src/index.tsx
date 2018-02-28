@@ -40,7 +40,7 @@ import interceptHyperlink from './interceptHyperlink';
 import Main from './ui/shell/main';
 //import setupContextMenu from './setupContextMenu';
 import store from './data/store';
-import { CommandRegistry } from 'botframework-emulator-shared';
+import { CommandRegistry } from '@bfemulator/app-shared';
 import { CommandService } from './platform/commands/commandService';
 import { SettingsService } from './platform/settings/settingsService';
 import { LogService } from './platform/log/logService';
@@ -63,9 +63,7 @@ if (webFrame) {
 }
 
 ReactDOM.render(
-  <Provider store={store}>
-    {React.createElement(Main as any)}
-  </Provider>,
+  React.createElement(Provider, { store }, React.createElement(Main as any)),
   document.getElementById('root')
 );
 

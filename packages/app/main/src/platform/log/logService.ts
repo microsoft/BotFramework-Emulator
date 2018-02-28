@@ -1,4 +1,4 @@
-import { Disposable, ILogService, ILogEntry } from 'botframework-emulator-shared';
+import { Disposable, ILogService, ILogEntry } from '@bfemulator/app-shared';
 import { Window } from '../window';
 
 export class LogService extends Disposable implements ILogService {

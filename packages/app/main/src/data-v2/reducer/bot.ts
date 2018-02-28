@@ -1,5 +1,5 @@
 import * as BotActions from '../action/bot';
-import { IBot } from 'botframework-emulator-shared';
+import { IBot } from '@bfemulator/app-shared';
 
 export interface IBotState {
   activeBot: string;

@@ -33,7 +33,7 @@
 
 import * as Restify from 'restify';
 import { Emulator } from './emulator';
-import { safeStringify } from 'botframework-emulator-shared';
+import { safeStringify } from '@bfemulator/app-shared';
 
 
 const sendMessage = (method: string, message: any, ...args) => {

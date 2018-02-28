@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 
 import * as Colors from '../../../styles/colors';
-import { getBotDisplayName } from 'botframework-emulator-shared';
+import { getBotDisplayName } from '@bfemulator/app-shared';
 
 const BASE_CSS = css({
   width: '100%',

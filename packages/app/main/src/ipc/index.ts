@@ -1,5 +1,5 @@
 import { ipcMain, WebContents, Event } from 'electron';
-import { BaseIPC, IDisposable } from 'botframework-emulator-shared';
+import { BaseIPC, IDisposable } from '@bfemulator/app-shared';
 
 export class IPC extends BaseIPC {
   get id(): number { return this._webContents.id; }

@@ -47,7 +47,7 @@ import {
   ISettings,
   Settings,
   settingsDefault
-} from 'botframework-emulator-shared';
+} from '@bfemulator/app-shared';
 
 
 export class PersistentSettings implements IPersistentSettings {

@@ -1,10 +1,11 @@
 {
   "lerna": "2.8.0",
   "packages": [
-    "packages/*",
     "packages/app/client",
     "packages/app/main",
-    "packages/app/shared"
+    "packages/app/shared",
+    "packages/custom-botframework-webchat",
+    "packages/custom-ngrok"
   ],
   "version": "independent"
 }

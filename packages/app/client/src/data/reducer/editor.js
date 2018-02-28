@@ -33,7 +33,7 @@
 
 import * as EditorActions from '../action/editorActions';
 import * as Constants from '../../constants';
-import { deepCopySlow } from 'botframework-emulator-shared';
+import { deepCopySlow } from '@bfemulator/app-shared';
 
 const DEFAULT_STATE = {
   activeEditor: Constants.EditorKey_Primary,

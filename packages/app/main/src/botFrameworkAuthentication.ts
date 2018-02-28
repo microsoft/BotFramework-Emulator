@@ -47,7 +47,7 @@ export class BotFrameworkAuthentication {
     public verifyBotFramework = (req: Restify.Request, res: Restify.Response, next: Restify.Next): void => {
         let token: string;
         if (req.headers && req.headers.hasOwnProperty('authorization')) {
-            let auth = req.headers['authorization'].trim().split(' ');;
+            let auth = (req.headers['authorization'] as string).trim().split(' ');;
             if (auth.length == 2 && auth[0].toLowerCase() == 'bearer') {
                 token = auth[1];
             }
@@ -55,7 +55,7 @@ export class BotFrameworkAuthentication {
         const activeBot = getActiveBot();
         // Verify token
         if (token) {
-            let decoded = jwt.decode(token, { complete: true });
+            let decoded: any = jwt.decode(token, { complete: true });
             this.openIdMetadata.getKey(decoded.header.kid, key => {
                 if (key) {
                     try {

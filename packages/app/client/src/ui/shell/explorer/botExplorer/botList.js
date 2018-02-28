@@ -12,7 +12,7 @@ import { fuzzysearch } from '../../../utils/fuzzySearch';
 import { CommandService } from '../../../../platform/commands/commandService';
 import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../../layout/expandCollapse';
 import PrimaryButton from './primaryButton';
-import { getBotDisplayName } from 'botframework-emulator-shared';
+import { getBotDisplayName } from '@bfemulator/app-shared';
 import { getBotById, getActiveBot } from '../../../../data/botHelpers';
 import { getTabCount } from '../../../../data/editorHelpers';
 

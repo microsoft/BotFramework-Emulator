@@ -1,6 +1,6 @@
 import { Store } from 'redux';
 import { BrowserWindow, WebContents } from 'electron';
-import { ICommandService, ILogService, Disposable } from 'botframework-emulator-shared';
+import { ICommandService, ILogService, Disposable } from '@bfemulator/app-shared';
 import { CommandService } from '../commands/commandService';
 import { LogService } from '../log/logService';
 import { IPC, IPCServer } from '../../ipc';

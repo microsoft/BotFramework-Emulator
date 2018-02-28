@@ -1,4 +1,4 @@
-import { Disposable, CommandRegistry } from 'botframework-emulator-shared';
+import { Disposable, CommandRegistry } from '@bfemulator/app-shared';
 
 export interface IEmulatorSettings {
   url?: string;

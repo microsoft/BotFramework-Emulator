@@ -1,4 +1,4 @@
-import { Disposable, ILogService, ILogEntry, CommandRegistry } from 'botframework-emulator-shared';
+import { Disposable, ILogService, ILogEntry, CommandRegistry } from '@bfemulator/app-shared';
 import * as ChatActions from '../../data/action/chatActions';
 import store from '../../data/store';
 

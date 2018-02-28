@@ -41,7 +41,7 @@ import DetailPanel from './detailPanel';
 import LogPanel from './logPanel';
 import Splitter from '../../layout/splitter-v2';
 import ToolBar, { Button as ToolBarButton, Separator as ToolBarSeparator } from '../toolbar';
-import * as BotChat from 'custom-botframework-webchat';
+import * as BotChat from '@bfemulator/custom-botframework-webchat';
 import { SettingsService } from '../../../platform/settings/settingsService';
 
 const CSS = css({
