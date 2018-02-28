@@ -111,14 +111,14 @@ CommandRegistry.registerCommand('bot:list:load', (context: Window, ...args: any[
     console.log('No bots file exists on disk, creating one.');
     botsJson = { 'bots': [] };
   }
-  
+
   try {
     writeFile(botsJsonPath, botsJson);
   } catch (e) {
     console.error(`Failure writing new bots.json to ${botsJsonPath}: `, e);
     throw e;
   }
-  
+
   return botsJson;
 });
 
@@ -155,6 +155,13 @@ CommandRegistry.registerCommand('bot:save', (context: Window, bot: IBot, origina
 
 CommandRegistry.registerCommand('bot:setActive', (context: Window, id: string): any => {
   context.store.dispatch(BotActions.setActive(id));
+});
+
+CommandRegistry.registerCommand('shell:showMessageBox', (context: Window, modal: boolean, options: Electron.MessageBoxOptions) => {
+  if (modal)
+    return Electron.dialog.showMessageBox(context.browserWindow, options);
+  else
+    return Electron.dialog.showMessageBox(options);
 });
 
 // Read file

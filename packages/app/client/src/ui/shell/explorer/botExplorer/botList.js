@@ -13,7 +13,8 @@ import { CommandService } from '../../../../platform/commands/commandService';
 import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../../layout/expandCollapse';
 import PrimaryButton from './primaryButton';
 import { getBotDisplayName } from 'botframework-emulator-shared';
-import { getBotById } from '../../../../data/botHelpers';
+import { getBotById, getActiveBot } from '../../../../data/botHelpers';
+import { getTabCount } from '../../../../data/editorHelpers';
 
 const CSS = css({
   overflowX: 'hidden',
@@ -70,14 +71,45 @@ export class BotList extends React.Component {
     this.state = { botQuery: '' };
   }
 
+  setActiveBot(id) {
+    this.props.dispatch((dispatch) => {
+      this.props.dispatch(EditorActions.closeAllTabs());
+      const tabCount = getTabCount();
+      this.props.dispatch((dispatch) => {
+        CommandService.remoteCall('bot:setActive', id)
+          .then(() => {
+            this.props.dispatch(BotActions.setActive(id));
+            const bot = getBotById(id);
+            CommandService.remoteCall('app:setTitleBar', getBotDisplayName(bot));
+          })
+          .catch(err => console.error('Error while setting active bot: ', err));
+      });
+    });
+  }
+
   onSelectBot(e, id) {
-    CommandService.remoteCall('bot:setActive', id)
-      .then(() => {
-        this.props.dispatch(BotActions.setActive(id));
-        const bot = getBotById(id);
-        CommandService.remoteCall('app:setTitleBar', getBotDisplayName(bot));
+    const activeBot = getActiveBot();
+    if (activeBot === id)
+      return;
+    const tabCount = getTabCount();
+    if (activeBot && tabCount) {
+      CommandService.remoteCall('shell:showMessageBox', true, {
+        type: "question",
+        buttons: ["Cancel", "OK"],
+        defaultId: 1,
+        title: "Switch Bots",
+        message: "Are you sure? All tabs will be closed.",
+        cancelId: 0,
       })
-      .catch(err => console.error('Error while setting active bot: ', err));
+        .then((result) => {
+          if (result) {
+            this.setActiveBot(id);
+          }
+        })
+        .catch(err => console.error('Error while setting active bot: ', err));
+    } else {
+      this.setActiveBot(id);
+    }
   }
 
   onClickSettings(e, bot) {
@@ -99,7 +131,7 @@ export class BotList extends React.Component {
 
           // open bot settings and switch to explorer view
           this.props.dispatch(NavBarActions.selectOrToggle(Constants.NavBar_Files));
-          this.props.dispatch(EditorActions.open(Constants.ContentType_BotSettings, getBotDisplayName(bot) + ':settings', bot.id));
+          this.props.dispatch(EditorActions.open(Constants.ContentType_BotSettings, "Bot Settings", bot.id));
         });
       })
       .catch(err => console.error('Error during bot create: ', err));

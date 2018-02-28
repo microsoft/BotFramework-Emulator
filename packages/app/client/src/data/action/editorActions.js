@@ -33,6 +33,7 @@
 
 export const APPEND_TAB = 'EDITOR/APPEND_TAB';
 export const CLOSE = 'EDITOR/CLOSE';
+export const CLOSE_ALL = 'EDITOR/CLOSE_ALL';
 export const OPEN = 'EDITOR/OPEN';
 export const SET_ACTIVE_TAB = 'EDITOR/SET_ACTIVE_TAB';
 export const SET_ACTIVE_EDITOR = 'EDITOR/SET_ACTIVE_EDITOR';
@@ -59,6 +60,14 @@ export function close(editorKey, documentId) {
             documentId
         }
     };
+}
+
+export function closeAllTabs() {
+  return {
+      type: CLOSE_ALL,
+      payload: {
+      }
+  };
 }
 
 export function open(contentType, documentId, meta) {

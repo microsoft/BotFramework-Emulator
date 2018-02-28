@@ -109,7 +109,7 @@ class LiveChatExplorer extends React.Component {
           {
             Object.keys(this.props.liveChats).map(conversationId =>
               <ExplorerItem key={ conversationId } active={ this.props.activeDocumentId === conversationId } onClick={ () => this.onItemClick(conversationId) }>
-                <span>{ `Live Chat : ${conversationId}` }</span>
+                <span>{ `Live Chat` }</span>
               </ExplorerItem>
             )
           }

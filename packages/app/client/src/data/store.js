@@ -39,7 +39,6 @@ import thunk from 'redux-thunk';
 
 import assetExplorer from './reducer/assetExplorer';
 import bot from './reducer/bot';
-import card from './reducer/card';
 import chat from './reducer/chat';
 import editor from './reducer/editor';
 import navBar from './reducer/navBar';
@@ -62,7 +61,6 @@ const DEFAULT_STATE = {};
 export default createStoreWithMiddleware(combineReducers({
   assetExplorer,
   bot,
-  card,
   editor,
   chat,
   navBar,

@@ -28,6 +28,9 @@ export default class PortalsExplorer extends React.Component {
                 <span>Bot Framework</span>
               </ExplorerItem>
               <ExplorerItem active={ false }>
+                <span>Chat Logs</span>
+              </ExplorerItem>
+              <ExplorerItem active={ false }>
                 <span>LUIS</span>
               </ExplorerItem>
               <ExplorerItem active={ false }>

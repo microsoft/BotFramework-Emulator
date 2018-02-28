@@ -449,7 +449,7 @@ function delay(ms, result) {
 function extend1(destination, source) {
   for (var property in source) {
     if (source[property] && source[property].constructor &&
-     source[property].constructor === Object) {
+      source[property].constructor === Object) {
       destination[property] = destination[property] || {};
       arguments.callee(destination[property], source[property]);
     } else {

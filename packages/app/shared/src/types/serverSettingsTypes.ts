@@ -66,7 +66,6 @@ export interface IPersistentSettings {
 }
 
 export interface ISettings extends IPersistentSettings {
-  activeBot?: string
 }
 
 export class Settings implements ISettings {
@@ -74,7 +73,6 @@ export class Settings implements ISettings {
   public bots: IBot[];
   public windowState: IWindowStateSettings;
   public users: IUserSettings;
-  public activeBot: string;
 
   constructor(settings?: ISettings) {
     Object.assign(this, settings);
@@ -117,7 +115,6 @@ export const settingsDefault: ISettings = {
       "locale": ""
     }
   ],
-  activeBot: '',
   windowState: windowStateDefault,
   users: usersDefault
 }

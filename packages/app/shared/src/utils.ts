@@ -68,6 +68,10 @@ export function mergeDeep(target: any, source: any): any {
   return output;
 }
 
+export function deepCopySlow(obj: any): any {
+  return JSON.parse(JSON.stringify(obj));
+}
+
 export const safeStringify = (o: any, space: string | number = undefined): string => {
   let cache = [];
   if (typeof o !== 'object')

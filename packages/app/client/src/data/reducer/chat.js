@@ -32,6 +32,7 @@
 //
 
 import * as ChatActions from '../action/chatActions';
+import * as EditorActions from '../action/editorActions';
 
 const DEFAULT_STATE = {
   liveChatChangeKey: 0,
@@ -55,7 +56,6 @@ export default function chat(state = DEFAULT_STATE, action) {
       }
     }
       break;
-
 
     case ChatActions.CLOSE_LIVECHAT_DOCUMENT: {
       const copy = { ...state };
@@ -132,6 +132,11 @@ export default function chat(state = DEFAULT_STATE, action) {
       }
     }
       break;
+
+    case EditorActions.CLOSE_ALL: {
+      // HACK. Need a better system.
+      return DEFAULT_STATE;
+    }
 
     default: break;
   }
