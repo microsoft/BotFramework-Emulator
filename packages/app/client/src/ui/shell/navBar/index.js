@@ -31,25 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
-import React from 'react';
-import { connect } from 'react-redux';
-
-import Button from './button';
-import * as Colors from '../../styles/colors';
-import * as constants from '../../../constants';
-import * as NavBarActions from '../../../data/action/navBarActions';
 import { CommandRegistry } from '@bfemulator/app-shared';
-import InsetShadow from '../../layout/insetShadow';
+import { connect } from 'react-redux';
+import { css } from 'glamor';
+import classNames from 'classnames';
+import React from 'react';
 
+import * as Colors from '../../styles/colors';
+import * as Constants from '../../../constants';
+import * as NavBarActions from '../../../data/action/navBarActions';
+import Button from './button';
+import InsetShadow from '../../layout/insetShadow';
 
 const CSS = css({
   backgroundColor: Colors.NAVBAR_BACKGROUND_DARK,
-  overflow: 'hidden',
-  width: '48px',
   display: 'flex',
   flexDirection: 'column',
+  overflow: 'hidden',
   position: 'relative',
+  width: 48,
 
   '& > ul': {
     display: 'flex',
@@ -59,84 +59,102 @@ const CSS = css({
     padding: 0,
 
     '& > li': {
-      backgroundColor: 'rgba(0,0,0,0)',
-      transition: 'background-color 0.1s ease-out',
+      backgroundColor: 'Transparent',
       cursor: 'pointer',
-      height: '48px',
+      height: 48,
+      transition: 'background-color .1s ease-out',
 
       '& > div': {
         height: '100%',
         width: '100%',
 
         '&:hover': {
-          backgroundColor: 'rgba(0,0,0,0.15) !important',
-        },
+          // TODO: Don't use !important
+          backgroundColor: 'rgba(0, 0, 0, .15) !important'
+        }
       },
+
       '& > div.selected': {
-        backgroundColor: 'rgba(0,0,0,0.15) !important',
+        // TODO: Don't use !important
+        backgroundColor: 'rgba(0, 0, 0, .15) !important'
       }
-    },
+    }
+  },
+
+  // TODO: We should use WOFF and not need backgroundSize here
+  '& > ul > li > div': {
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: '50% 50%',
+    backgroundSize: 24
   },
 
   '& > ul.app': {
     marginBottom: 'auto',
 
     '& > li.app > div': {
-      background: "url('./external/media/ic_bot_framework.svg') no-repeat 50% 50%",
-      backgroundSize: '26px',
+      backgroundImage: 'url(./external/media/ic_bot_framework.svg)',
+      backgroundSize: 26
     },
+
     '& > li.files > div': {
-      background: "url('./external/media/ic_files.svg') no-repeat 50% 50%",
-      backgroundSize: '24px',
+      backgroundImage: 'url(./external/media/ic_files.svg)'
     },
+
     '& > li.assets > div': {
-      background: "url('./external/media/ic_assets.svg') no-repeat 50% 50%",
-      backgroundSize: '24px',
+      backgroundImage: 'url(./external/media/ic_assets.svg)'
     },
+
     '& > li.services > div': {
-      background: "url('./external/media/ic_services.svg') no-repeat 50% 50%",
-      backgroundSize: '24px',
+      backgroundImage: 'url(./external/media/ic_services.svg)'
     },
+
     '& > li.analytics > div': {
-      background: "url('./external/media/ic_analytics.svg') no-repeat 50% 50%",
-      backgroundSize: '24px',
-    },
+      backgroundImage: 'url(./external/media/ic_analytics.svg)'
+    }
   },
 
   '& > ul.sys': {
     '& > li.settings > div': {
-      background: "url('./external/media/ic_settings.svg') no-repeat 50% 50%",
-      backgroundSize: '24px'
+      backgroundImage: 'url(./external/media/ic_settings.svg)'
     },
+
     '& > li.notifications > div': {
-      background: "url('./external/media/ic_notification.svg') no-repeat 50% 50%",
-      backgroundSize: '22px'
+      backgroundImage: 'url(./external/media/ic_notification.svg)',
+      backgroundSize: 22
     },
+
     '& > li.user > div': {
-      background: "url('./external/media/ic_user.svg') no-repeat 50% 50%",
-      backgroundSize: '24px'
-    },
+      backgroundImage: 'url(./external/media/ic_user.svg)'
+    }
   }
 });
 
 class NavBar extends React.Component {
-
   constructor(props, context) {
     super(props, context);
 
-    this.handleAppClick = this.handleClick.bind(this, constants.NavBar_App);
-    this.handleFilesClick = this.handleClick.bind(this, constants.NavBar_Files);
-    this.handleAssetsClick = this.handleClick.bind(this, constants.NavBar_Assets);
-    this.handleServicesClick = this.handleClick.bind(this, constants.NavBar_Services);
-    this.handleAnalyticsClick = this.handleClick.bind(this, constants.NavBar_Analytics);
-    this.handleSettingsClick = this.handleClick.bind(this, constants.NavBar_Settings);
-    this.handleNotificationsClick = this.handleClick.bind(this, constants.NavBar_Notifications);
-    this.handleUserClick = this.handleClick.bind(this, constants.NavBar_User);
+    this.handleAnalyticsClick = this.handleClick.bind(this, Constants.NavBar_Analytics);
+    this.handleAppClick = this.handleClick.bind(this, Constants.NavBar_App);
+    this.handleAssetsClick = this.handleClick.bind(this, Constants.NavBar_Assets);
+    this.handleFilesClick = this.handleClick.bind(this, Constants.NavBar_Files);
+    this.handleNotificationsClick = this.handleClick.bind(this, Constants.NavBar_Notifications);
+    this.handleServicesClick = this.handleClick.bind(this, Constants.NavBar_Services);
+    this.handleSettingsClick = this.handleClick.bind(this, Constants.NavBar_Settings);
+    this.handleUserClick = this.handleClick.bind(this, Constants.NavBar_User);
   }
 
   componentWillMount() {
     this._switchTabCommandHandler = CommandRegistry.registerCommand('navbar:switchtab', (context, tabName) => {
-      this.props.dispatch(NavBarActions.selectOrToggle(tabName));
+      switch (tabName) {
+        case Constants.NavBar_Analytics:
+        case Constants.NavBar_App:
+        case Constants.NavBar_Files:
+        case Constants.NavBar_Notifications:
+        case Constants.NavBar_Settings:
+        case Constants.NavBar_User:
+          this.props.dispatch(NavBarActions.selectOrToggle(tabName));
+          break;
+      }
     });
   }
 
@@ -150,22 +168,33 @@ class NavBar extends React.Component {
     this.props.dispatch(NavBarActions.selectOrToggle(selection));
   }
 
-  selectionClass(entry) {
-    return (entry === this.props.navBar.selection) ? "selected" : "";
-  }
-
   render() {
+    const { selection } = this.props;
+
+    // TODO: Don't use onClick on <li>, if it is a button, make it a <button>
     return (
-      <nav className={CSS}>
+      <nav className={ CSS }>
         <ul className="app">
-          <li role="button" className="app" title="App" onClick={this.handleAppClick}><div className={this.selectionClass(constants.NavBar_App)} /></li>
-          <li role="button" className="files" title="Files" onClick={this.handleFilesClick}><div className={this.selectionClass(constants.NavBar_Files)} /></li>
-          <li role="button" className="analytics" title="Analytics" onClick={this.handleAnalyticsClick}><div className={this.selectionClass(constants.NavBar_Analytics)} /></li>
+          <li role="button" className="app" onClick={ this.handleAppClick } title="App">
+            <div className={ classNames({ selected: selection === Constants.NavBar_App }) } />
+          </li>
+          <li role="button" className="files" onClick={ this.handleFilesClick } title="Files">
+            <div className={ classNames({ selected: selection === Constants.NavBar_Files }) } />
+          </li>
+          <li role="button" className="analytics" onClick={ this.handleAnalyticsClick } title="Analytics">
+            <div className={ classNames({ selected: selection === Constants.NavBar_Analytics }) } />
+          </li>
         </ul>
         <ul className="sys">
-          <li role="button" className="settings" title="Settings" onClick={this.handleSettingsClick}><div className={this.selectionClass(constants.NavBar_Settings)} /></li>
-          <li role="button" className="notifications" title="Notifications" onClick={this.handleNotificationsClick}><div className={this.selectionClass(constants.NavBar_Notifications)} /></li>
-          <li role="button" className="user" title="User" onClick={this.handleUserClick}><div className={this.selectionClass(constants.NavBar_User)} /></li>
+          <li role="button" className="settings" onClick={ this.handleSettingsClick } title="Settings">
+            <div className={ classNames({ selected: selection === Constants.NavBar_Settings }) } />
+          </li>
+          <li role="button" className="notifications" onClick={ this.handleNotificationsClick } title="Notifications">
+            <div className={ classNames({ selected: selection === Constants.NavBar_Notifications }) } />
+          </li>
+          <li role="button" className="user" onClick={ this.handleUserClick } title="User">
+            <div className={ classNames({ selected: selection === Constants.NavBar_User }) } />
+          </li>
         </ul>
         <InsetShadow right={ true } />
       </nav>
@@ -173,4 +202,4 @@ class NavBar extends React.Component {
   }
 }
 
-export default connect(state => ({ navBar: state.navBar }))(NavBar)
+export default connect(state => ({ selection: state.navBar.selection }))(NavBar)
