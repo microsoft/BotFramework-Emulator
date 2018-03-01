@@ -74,7 +74,7 @@ export class OpenIdMetadata {
             useElectronNet: true
         };
 
-        got(options)
+        got(options.url, options)
             .then((resp) => {
                 if (resp.statusCode >= 400 || !resp.body) {
                     throw new Error('Failed to load openID config: ' + resp.statusCode);
@@ -90,7 +90,7 @@ export class OpenIdMetadata {
                     useElectronNet: true
                 };
 
-                got(options)
+                got(options.url, options)
                     .then((resp) => {
                         if (resp.statusCode >= 400 || !resp.body) {
                             throw new Error("Failed to load Keys: " + resp.statusCode);

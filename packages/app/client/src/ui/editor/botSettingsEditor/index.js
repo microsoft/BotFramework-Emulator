@@ -18,6 +18,16 @@ const CSS = css({
   fontFamily: Fonts.FONT_FAMILY_DEFAULT,
   boxSizing: 'border-box',
 
+  '& h2': {
+    fontWeight: 200,
+    marginTop: 0,
+    marginBottom: '5px',
+    fontSize: '19px',
+    lineHeight: 'normal',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+  },
+
   '& input': {
     marginTop: '16px',
     height: '32px',
@@ -41,12 +51,44 @@ const CSS = css({
   },
 
   '& .save-button': {
-    marginTop: '48px',
+  },
+
+  '& .save-connect-button': {
+    marginLeft: '8px',
   },
 
   '& .horz-group': {
-    display: 'flex'
-  }
+    display: 'flex',
+    flexWrap: 'nowrap',
+  },
+
+  '& .column': {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+
+  '& .right': {
+    marginLeft: 'auto',
+  },
+  
+  '& .stretch': {
+    flexGrow: 1,
+    flexShrink: 1,
+    flexBasis: '0px',
+  },
+  
+  '& .space-left': {
+    marginLeft: '8px',
+  },
+  
+  '& .space-right': {
+    marginRight: '8px',
+  },
+  
+  '& .label': {
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+  },
 });
 
 export default class SettingsEditor extends React.Component {
@@ -60,6 +102,7 @@ export default class SettingsEditor extends React.Component {
     this.onChangeLocale = this.onChangeLocale.bind(this);
     this.onChangeName = this.onChangeName.bind(this);
     this.onSave = this.onSave.bind(this);
+    this.onSaveAndConnect = this.onSaveAndConnect.bind(this);
     this.onSelectFolder = this.onSelectFolder.bind(this);
 
     this.state = {
@@ -83,41 +126,48 @@ export default class SettingsEditor extends React.Component {
   }
 
   onChangeBotId(e) {
-    const bot = { ...this.state.bot, botId: e.target.value };
+    const bot = { ...this.state.bot, botId: e.target.value.trim() };
     this.setState({ bot });
   }
 
   onChangeEndpoint(e) {
-    const bot = { ...this.state.bot, botUrl: e.target.value };
+    const bot = { ...this.state.bot, botUrl: e.target.value.trim() };
     this.setState({ bot });
   }
 
   onChangeAppId(e) {
-    const bot = { ...this.state.bot, msaAppId: e.target.value };
+    const bot = { ...this.state.bot, msaAppId: e.target.value.trim() };
     this.setState({ bot });
   }
 
   onChangeAppPw(e) {
-    const bot = { ...this.state.bot, msaPassword: e.target.value };
+    const bot = { ...this.state.bot, msaPassword: e.target.value.trim() };
     this.setState({ bot });
   }
 
   onChangeLocale(e) {
-    const bot = { ...this.state.bot, locale: e.target.value };
+    const bot = { ...this.state.bot, locale: e.target.value.trim() };
     this.setState({ bot });
   }
 
   onChangeName(e) {
-    const bot = { ...this.state.bot, botName: e.target.value };
+    const bot = { ...this.state.bot, botName: e.target.value.trim() };
     this.setState({ bot });
   }
 
   onSave(e) {
-    CommandService.remoteCall('bot:save', this.state.bot, this.props.id)
+    return CommandService.remoteCall('bot:save', this.state.bot, this.props.id)
       .then(() => {
         store.dispatch(BotActions.patch(this.props.id, this.state.bot))
         CommandService.remoteCall('app:setTitleBar', getBotDisplayName(this.state.bot));
       });
+  }
+
+  onSaveAndConnect(e) {
+    this.onSave(e)
+      .then(() => {
+        CommandService.call('livechat:new');
+      })
   }
 
   onSelectFolder(e) {
@@ -134,28 +184,56 @@ export default class SettingsEditor extends React.Component {
 
     return (
       <div className={ CSS }>
-        <span>Endpoint</span>
-        <input value={ this.state.bot.botUrl } onChange={ this.onChangeEndpoint } type="text" />
-
-        <span>MSA App Id</span>
-        <input value={ this.state.bot.msaAppId } onChange={ this.onChangeAppId } type="text" />
-
-        <span>MSA App Password</span>
-        <input value={ this.state.bot.msaPassword } onChange={ this.onChangeAppPw } type="password" />
-
-        <span>Locale</span>
-        <input value={ this.state.bot.locale } onChange={ this.onChangeLocale } type="text" />
-
-        <span>Bot name</span>
-        <input value={ this.state.bot.botName } onChange={ this.onChangeName } type="text" />
-
-        <span>Local folder</span>
-        <div className='horz-group'>
-          <input value={ this.state.bot.path } type="text" placeholder="Folder containing your bot project" readOnly />
-          <PrimaryButton text='Browse' onClick={ this.onSelectFolder } buttonClass='browse-path-button' />
+        <div className="horz-group">
+          <div className="column">
+            <h2>Bot Settings</h2>
+          </div>
+          <div className="column right">
+            <div className="label space-left">
+              <PrimaryButton text="Save" onClick={ this.onSave } buttonClass='save-button' />
+              <PrimaryButton text="Save & Connect" onClick={ this.onSaveAndConnect } buttonClass='save-connect-button' />
+            </div>
+          </div>
         </div>
 
-        <PrimaryButton text='Save' onClick={ this.onSave } buttonClass='save-button' />
+        <div className="horz-group">
+          <div className="column stretch">
+            <span className='label'>Endpoint URL</span>
+            <input value={ this.state.bot.botUrl } onChange={ this.onChangeEndpoint } type="text" />
+          </div>
+        </div>
+
+        <div className="horz-group">
+          <div className="column stretch">
+            <span className='label'>MSA App Id</span>
+            <input value={ this.state.bot.msaAppId } onChange={ this.onChangeAppId } type="text" />
+          </div>
+
+          <div className="column stretch space-left space-right">
+            <span className='label'>MSA App Password</span>
+            <input value={ this.state.bot.msaPassword } onChange={ this.onChangeAppPw } type="password" />
+          </div>
+
+          <div className="column">
+            <span className='label'>Locale</span>
+            <input value={ this.state.bot.locale } onChange={ this.onChangeLocale } type="text" />
+          </div>
+        </div>
+
+        <div className="horz-group">
+          <div className="column">
+            <span className='label'>Bot name</span>
+            <input value={ this.state.bot.botName } onChange={ this.onChangeName } type="text" />
+          </div>
+
+          <div className="column stretch space-left">
+            <span className='label'>Local folder</span>
+            <div className='horz-group'>
+              <input value={ this.state.bot.path } type="text" placeholder="Folder containing your bot project" readOnly />
+              <PrimaryButton text='Browse' onClick={ this.onSelectFolder } buttonClass='browse-path-button' />
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

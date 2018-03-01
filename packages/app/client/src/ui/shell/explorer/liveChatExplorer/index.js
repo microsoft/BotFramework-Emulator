@@ -85,6 +85,10 @@ const CONVO_CSS = css({
   maxHeight: '100%',
   overflowY: 'auto',
   overflowX: 'hidden',
+  
+  '& .empty-list': {
+    fontStyle: 'italic',
+  }
 });
 
 class LiveChatExplorer extends React.Component {
@@ -123,7 +127,10 @@ class LiveChatExplorer extends React.Component {
   renderEmptyLiveChatList() {
     return (
       <ExpandCollapseContent key={ this.props.changeKey }>
-        <span className="empty-list">No live chats yet</span>
+        <ul className={ CONVO_CSS }>
+          <li><span className="empty-list">No live chats yet</span></li>
+          <li>&nbsp;</li>
+        </ul>
       </ExpandCollapseContent>
     );
   }

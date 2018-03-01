@@ -166,7 +166,7 @@ export class Conversation {
       if (bot.msaAppId && bot.msaPassword) {
         this.authenticatedRequest(options, responseCallback, handleError);
       } else {
-        got(options)
+        got(options.url, options)
           .then(responseCallback)
           .catch(handleError);
       }
@@ -469,7 +469,7 @@ export class Conversation {
     }
     this.addAccessToken(options, (err) => {
       if (!err) {
-        got(options)
+        got(options.url, options)
           .then((response) => {
             if (!err) {
               switch (response.statusCode) {
@@ -519,7 +519,7 @@ export class Conversation {
         useElectronNet: true
       };
 
-      got(opt)
+      got(opt.url, opt)
         .then((resp) => {
           if (resp.body && resp.statusCode < 300) {
             // Subtract 5 minutes from expires_in so they'll we'll get a

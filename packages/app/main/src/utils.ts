@@ -14,6 +14,7 @@ const url = require('url');
 const path = require('path');
 
 import * as globals from './globals';
+import { mainWindow } from './main';
 
 export function exceptionToAPIException(exception: any): APIException {
   if (exception.error && exception.statusCode) {
@@ -137,16 +138,17 @@ export const showOpenDialog = (options: OpenDialogOptions) => {
 }
 
 
-/** Generates a random bot name from a list of adjectives and nouns */
-export function generateRandomBotName(): string {
-  return "My Bot";
-  /*
-  let adjective = ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)].trim();
-  adjective = adjective.slice(0, 1).toUpperCase() + adjective.substring(1);
-
-  let noun = NOUNS[Math.floor(Math.random() * NOUNS.length)].trim();
-  noun = noun.slice(0, 1).toUpperCase() + noun.substring(1);
-
-  return `${adjective} ${noun} Bot`;
-  */
+/** Scans the list of all bots to generate a bot name with a number one higher than the highest value found */
+export function getSafeBotName(): string {
+  const state = mainWindow.store.getState();
+  const nums = [];
+  nums.push(0);
+  const botNumber = /^bot\s(\d+)$/i;
+  state.bot.bots.forEach(bot => {
+    const match = botNumber.exec(bot.botName);
+    if (match && match[1])
+      nums.push(+match[1])
+  });
+  const botNum = 1 + nums.sort((a, b) => b - a).shift();
+  return `Bot ${botNum}`;
 }

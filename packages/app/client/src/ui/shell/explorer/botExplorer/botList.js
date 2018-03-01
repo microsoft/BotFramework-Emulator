@@ -3,18 +3,11 @@ import { connect } from 'react-redux';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 
-import * as BotActions from '../../../../data/action/botActions';
-import * as Constants from '../../../../constants';
-import * as EditorActions from '../../../../data/action/editorActions';
-import * as NavBarActions from '../../../../data/action/navBarActions';
 import { BotListItem } from './botListItem';
 import { fuzzysearch } from '../../../utils/fuzzySearch';
-import { CommandService } from '../../../../platform/commands/commandService';
 import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../../layout/expandCollapse';
 import PrimaryButton from './primaryButton';
-import { getBotDisplayName } from '@bfemulator/app-shared';
-import { getBotById, getActiveBot } from '../../../../data/botHelpers';
-import { hasNonGlobalTabs } from '../../../../data/editorHelpers';
+import { ActiveBotHelper } from '../../../helpers/activeBotHelper';
 
 const CSS = css({
   overflowX: 'hidden',
@@ -71,49 +64,9 @@ export class BotList extends React.Component {
     this.state = { botQuery: '' };
   }
 
-  setActiveBot(id) {
-    return CommandService.remoteCall('bot:setActive', id)
-      .then(() => {
-        this.props.dispatch(BotActions.setActive(id));
-        const bot = getBotById(id);
-        CommandService.remoteCall('app:setTitleBar', getBotDisplayName(bot));
-      })
-      .catch(err => console.error('Error while setting active bot: ', err));
-  }
-
-  confirmSwitchBot() {
-    const hasTabs = hasNonGlobalTabs();
-    if (hasTabs) {
-      return CommandService.remoteCall('shell:showMessageBox', true, {
-        type: "question",
-        buttons: ["Cancel", "OK"],
-        defaultId: 1,
-        title: "Switch Bots",
-        message: "Are you sure? All tabs will be closed.",
-        cancelId: 0,
-      });
-    } else {
-      return Promise.resolve(true);
-    }
-  }
-
   onSelectBot(e, id) {
     e.stopPropagation();
-    const activeBot = getActiveBot();
-    if (activeBot === id)
-      return;
-    this.confirmSwitchBot()
-      .then((result) => {
-        if (result) {
-          this.props.dispatch(EditorActions.closeNonGlobalTabs());
-          this.setActiveBot(id)
-            .then(() => {
-              CommandService.call('livechat:new');
-              this.props.dispatch(NavBarActions.selectOrToggle(Constants.NavBar_Files));
-            })
-        }
-      })
-      .catch(err => console.error('Error while setting active bot: ', err));
+    ActiveBotHelper.confirmAndSwitchBots(id);
   }
 
   onClickSettings(e, bot) {
@@ -123,46 +76,12 @@ export class BotList extends React.Component {
 
   onClickDelete(e, bot) {
     e.stopPropagation();
-    CommandService.remoteCall('shell:showMessageBox', true, {
-      type: "question",
-      buttons: ["Cancel", "OK"],
-      defaultId: 1,
-      title: "Delete Bot",
-      message: "Are you sure?",
-      cancelId: 0,
-    })
-      .then((result) => {
-        if (result) {
-          const activeBot = getActiveBot();
-          if (activeBot === bot.id)
-            this.props.dispatch(EditorActions.closeNonGlobalTabs());
-          CommandService.remoteCall('bot:list:delete', bot.id)
-            .then(() => this.props.dispatch(BotActions.deleteBot(bot.id)))
-            .catch(err => console.error('Error during bot delete: ', err));
-        }
-      })
-      .catch(err => console.error('Error while deleting bot: ', err));
+    ActiveBotHelper.confirmAndDeleteBot(bot.id);
   }
 
   onCreateBot(e) {
-    this.confirmSwitchBot()
-      .then((result) => {
-        if (result) {
-          this.props.dispatch(EditorActions.closeNonGlobalTabs());
-          CommandService.remoteCall('bot:list:create')
-            .then(bot => {
-              this.props.dispatch((dispatch) => {
-                this.props.dispatch(BotActions.create(bot));
-                this.setActiveBot(bot.id);
-
-                // open bot settings and switch to explorer view
-                this.props.dispatch(NavBarActions.selectOrToggle(Constants.NavBar_Files));
-                this.props.dispatch(EditorActions.open(Constants.ContentType_BotSettings, "Bot Settings", false, bot.id));
-              });
-            })
-            .catch(err => console.error('Error during bot create: ', err));
-        }
-      });
+    e.stopPropagation();
+    ActiveBotHelper.confirmAndCreateBot();
   }
 
   onChangeQuery(e) {
@@ -178,7 +97,7 @@ export class BotList extends React.Component {
 
     return (
       <React.Fragment>
-        <ExpandCollapse initialExpanded={ true } title="Bots">
+        <ExpandCollapse initialExpanded={ true } title="My Bots">
           <ExpandCollapseControls>
             <div className={ ACCESSORIES_CSS }>
               <div className="accessory-button create-bot-button" role="button" onClick={ this.onCreateBot } />
@@ -198,9 +117,6 @@ export class BotList extends React.Component {
             </div>
           </ExpandCollapseContent>
         </ExpandCollapse>
-        <div className={ BOTTOM_DOCK_CSS }>
-          <PrimaryButton text='+ Add a bot config' onClick={ this.onCreateBot } />
-        </div>
       </React.Fragment>
     );
   }

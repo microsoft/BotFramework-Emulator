@@ -1,10 +1,10 @@
 import { css } from 'glamor';
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { CommandRegistry } from '@bfemulator/app-shared';
-import * as EditorActions from '../../../data/action/editorActions';
-import * as Constants from '../../../constants';
 import * as Colors from '../../styles/colors';
+import PrimaryButton from '../../shell/explorer/botExplorer/primaryButton';
+import { CommandService } from '../../../platform/commands/commandService';
+import { hasNonGlobalTabs } from '../../../data/editorHelpers';
+import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 
 const CSS = css({
   display: 'flex',
@@ -79,6 +79,10 @@ const CSS = css({
 
         '& .section': {
           marginBottom: '5em',
+        },
+        
+        '& .no-bots': {
+          fontStyle: 'italic',
         }
       },
     },
@@ -86,6 +90,15 @@ const CSS = css({
 });
 
 export default class WelcomePage extends React.Component {
+  constructor(props, context) {
+    super(props, context);
+    this.onAddBotClick = this.onAddBotClick.bind(this);
+  }
+
+  onAddBotClick() {
+    ActiveBotHelper.confirmAndCreateBot();
+  }
+
   render() {
     return (
       <div className={ CSS as any }>
@@ -97,6 +110,10 @@ export default class WelcomePage extends React.Component {
             <div className="column">
               <div className="section">
                 <h2>My Bots</h2>
+                <ul>
+                  <li><span className="no-bots">No recent bots</span></li>
+                  </ul>
+                  <p><PrimaryButton text="Add a bot" onClick={ this.onAddBotClick } /></p>
               </div>
             </div>
             <div className="column">

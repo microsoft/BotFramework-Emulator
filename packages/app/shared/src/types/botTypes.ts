@@ -49,8 +49,8 @@ export function newBot(bot: IBot): IBot {
     {},
     {
       id: uniqueId(),
-      botId: 'my_bot',
-      botName: 'My Bot',
+      botId: '',
+      botName: '',
       botUrl: 'http://localhost:3978/api/messages',
       locale: '',
       msaAppId: '',

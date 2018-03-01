@@ -46,7 +46,7 @@ import * as electronLocalShortcut from 'electron-localshortcut';
 import { setTimeout } from 'timers';
 import { Window } from './platform/window';
 import { IBot, newBot, CommandRegistry, uniqueId } from '@bfemulator/app-shared';
-import { ensureStoragePath, readFileSync, showOpenDialog, writeFile, generateRandomBotName } from './utils';
+import { ensureStoragePath, readFileSync, showOpenDialog, writeFile, getSafeBotName } from './utils';
 import * as BotActions from './data-v2/action/bot';
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
@@ -123,13 +123,11 @@ CommandRegistry.registerCommand('bot:list:load', (context: Window, ...args: any[
 
 // Create a bot
 CommandRegistry.registerCommand('bot:list:create', (context: Window, ...args: any[]): any => {
-  const botName = generateRandomBotName();
-  const botId = botName.toLowerCase().replace(/\s/g, '_');
+  const botName = getSafeBotName();
 
   const bot: IBot = newBot({
-    botId,
     botName,
-    botUrl: 'http://localhost:3978/api/messages'
+    botUrl: 'http://localhost:3978/api/messages',
   });
 
   context.store.dispatch(BotActions.create(bot));
@@ -241,9 +239,8 @@ const createMainWindow = () => {
           writeFile(filePath, botsJson);
         } catch (e) { console.error('Error writing bot settings to disk: ', e); }
 
-        /* Timeout's are currently busted in Electron; will write on every store change until fix is in official build.
+        /* Timeout's are currently busted in Electron; will write on every store change until fix is made.
         // Issue: https://github.com/electron/electron/issues/7079
-        // Commit for fix: https://github.com/ifedapoolarewaju/igdm/commit/63496c3d38f3d4cc55b26da38f3613796b615623
 
         clearTimeout(botSettingsTimer);
 

@@ -12,6 +12,8 @@ const CONVO_CSS = css({
   listStyleType: 'none',
   margin: 0,
   padding: 0,
+  overflowY: 'auto',
+  overflowX: 'hidden',
 });
 
 export default class PortalsExplorer extends React.Component {

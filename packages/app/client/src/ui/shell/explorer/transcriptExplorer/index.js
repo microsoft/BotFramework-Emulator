@@ -53,6 +53,10 @@ const CONVO_CSS = css({
   padding: 0,
   overflowY: 'auto',
   overflowX: 'hidden',
+
+  '& .empty-list': {
+    fontStyle: 'italic',
+  }
 });
 
 class TranscriptExplorer extends React.Component {
@@ -85,7 +89,10 @@ class TranscriptExplorer extends React.Component {
   renderEmptyTranscriptList() {
     return (
       <ExpandCollapseContent key={ this.props.changeKey }>
-        <span className="empty-list">No saved chats yet</span>
+        <ul className={ CONVO_CSS }>
+          <li><span className="empty-list">No saved chats yet</span></li>
+          <li>&nbsp;</li>
+        </ul>
       </ExpandCollapseContent>
     );
   }
