@@ -44,10 +44,12 @@ export function create(bot) {
   };
 }
 
-export function deleteBot(bot) {
+export function deleteBot(id) {
   return {
     type: DELETE,
-    payload: bot
+    payload: {
+      id
+    }
   };
 }
 
@@ -70,6 +72,8 @@ export function patch(id, bot) {
 export function setActive(id) {
   return {
     type: SET_ACTIVE,
-    payload: id
+    payload: {
+      id
+    }
   };
 }

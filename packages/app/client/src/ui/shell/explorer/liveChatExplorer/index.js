@@ -49,13 +49,14 @@ import { EXPLORER_CSS } from '../explorerStyle';
 //=============================================================================
 // LIVE CHAT COMMANDS
 
-CommandRegistry.registerCommand('livechat:new', (context, activeEditor) => {
+CommandRegistry.registerCommand('livechat:new', (context) => {
   CommandService.remoteCall('livechat:new')
     .then(conversationId => {
       store.dispatch(ChatActions.newLiveChatDocument(conversationId));
       store.dispatch(EditorActions.open(
         constants.ContentType_LiveChat,
-        conversationId
+        conversationId,
+        false
       ));
     })
     .catch(err => console.log(err));  // TODO: Show failure as a notification
@@ -82,7 +83,8 @@ const CONVO_CSS = css({
   margin: 0,
   padding: 0,
   maxHeight: '100%',
-  overflow: 'auto'
+  overflowY: 'auto',
+  overflowX: 'hidden',
 });
 
 class LiveChatExplorer extends React.Component {
@@ -95,7 +97,7 @@ class LiveChatExplorer extends React.Component {
 
   handleAddClick(e) {
     e.stopPropagation();
-    CommandService.call('livechat:new', this.props.activeEditor);
+    CommandService.call('livechat:new');
   }
 
   handleItemClick(conversationId) {

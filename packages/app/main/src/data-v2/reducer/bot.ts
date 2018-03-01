@@ -11,7 +11,7 @@ export type BotAction = {
   payload: IBot;
 } | {
   type: 'BOT/DELETE',
-  payload: IBot;
+  payload: any;
 } | {
   type: 'BOT/LOAD',
   payload: any
@@ -20,7 +20,7 @@ export type BotAction = {
   payload: any;
 } | {
   type: 'BOT/SET_ACTIVE',
-  payload: string
+  payload: any
 };
 
 const DEFAULT_STATE: IBotState = {
@@ -67,7 +67,7 @@ export const bot: any = (state: IBotState = DEFAULT_STATE, action: BotAction) =>
     }
 
     case BotActions.SET_ACTIVE: {
-      state = setActiveBot(action.payload, state);
+      state = setActiveBot(action.payload.id, state);
       break;
     }
 

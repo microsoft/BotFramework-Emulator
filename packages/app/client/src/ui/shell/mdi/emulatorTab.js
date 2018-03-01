@@ -36,7 +36,7 @@ import { connect } from 'react-redux';
 
 import * as EditorActions from '../../../data/action/editorActions';
 import * as ChatActions from '../../../data/action/chatActions';
-import GenericTab from './genericTab';
+import Tab from './tab';
 
 export class EmulatorTab extends React.Component {
   constructor(props, context) {
@@ -53,13 +53,13 @@ export class EmulatorTab extends React.Component {
 
   render() {
     return (
-      <GenericTab active={this.props.active} title={this.props.title} onCloseClick={this.onCloseClick}
+      <Tab active={this.props.active} title={this.props.title} onCloseClick={this.onCloseClick}
         documentId={this.props.documentId} owningEditor={this.props.owningEditor} />
     );
   }
 }
 
 export default connect((state, { documentId, owningEditor }) => ({
-  title: `Live Chat`,
+  title: "Live Chat",
   active: state.editor.editors[state.editor.activeEditor].activeDocumentId === documentId
 }))(EmulatorTab);

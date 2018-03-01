@@ -58,7 +58,7 @@ class MDI extends React.Component {
 
     componentWillMount() {
       this._openBotSettingsCommandHandler = CommandRegistry.registerCommand('bot:settings:open', (context, bot) => {
-        this.props.dispatch(EditorActions.open(Constants.ContentType_BotSettings, "Bot Settings", bot.id));
+        this.props.dispatch(EditorActions.open(Constants.ContentType_BotSettings, "Bot Settings", false, bot.id));
       });
     }
 

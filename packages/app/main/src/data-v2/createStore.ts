@@ -47,7 +47,7 @@ export default function create(window): Promise<Store<IState>> {
       const sagaMiddleware = createSagaMiddleware<IState>();
       const store: Store<IState> = applyMiddleware(
         store => next => action => {
-          console.log(action);
+          //console.log(action);
 
           return next(action);
         },
@@ -56,7 +56,7 @@ export default function create(window): Promise<Store<IState>> {
         createWebSocketBridge(() => connection),
         sagaMiddleware,
         store => next => action => {
-          console.log(action);
+          //console.log(action);
 
           return next(action);
         }

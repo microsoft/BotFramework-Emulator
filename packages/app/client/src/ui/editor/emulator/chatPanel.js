@@ -62,7 +62,7 @@ export default class ChatPanel extends React.Component {
     return (
       <div className={ CSS }>
         <header>{ endpoint }</header>
-        <Chat document={ this.props.document } />
+        <Chat document={ this.props.document } onStartConversation={ this.props.onStartConversation } />
       </div>
     );
   }

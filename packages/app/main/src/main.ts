@@ -108,7 +108,6 @@ CommandRegistry.registerCommand('bot:list:load', (context: Window, ...args: any[
     });
     context.store.dispatch(BotActions.load(bots));
   } else {
-    console.log('No bots file exists on disk, creating one.');
     botsJson = { 'bots': [] };
   }
 
@@ -139,8 +138,8 @@ CommandRegistry.registerCommand('bot:list:create', (context: Window, ...args: an
 });
 
 // Delete a bot
-CommandRegistry.registerCommand('bot:list:delete', (context: Window, bot: IBot): any => {
-  context.store.dispatch(BotActions.deleteBot(bot));
+CommandRegistry.registerCommand('bot:list:delete', (context: Window, id: string): any => {
+  context.store.dispatch(BotActions.deleteBot(id));
 });
 
 // Show explorer prompt to set a local path for a bot

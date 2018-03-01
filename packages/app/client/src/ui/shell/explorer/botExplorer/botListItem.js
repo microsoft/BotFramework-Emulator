@@ -95,7 +95,6 @@ export class BotListItem extends React.Component {
           { botLabel }
         </div>
         <div className="bot-accessories">
-          <span className="bot-widget bot-settings-icon" onClick={ (ev) => this.props.onClickSettings(ev, this.props.bot) } role="button" />
           <span className="bot-widget bot-delete-icon" onClick={ (ev) => this.props.onClickDelete(ev, this.props.bot) } role="button" />
         </div>
       </li>

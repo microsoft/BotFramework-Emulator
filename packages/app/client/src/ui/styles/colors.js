@@ -52,9 +52,12 @@ export const C18 = '#CE9178';
 export const C19 = '#B5CEA8';
 export const C20 = '#569CD6';
 export const C21 = '#F4E321';
+export const C22 = '#4080d0';
 
 export const APP_BACKGROUND_DARK = C8;
 export const APP_FOREGROUND_DARK = C2;
+export const APP_HYPERLINK_FOREGROUND_DARK = C22;
+export const APP_HYPERLINK_HOVER_DARK = C22;
 
 export const SPLITTER_BACKGROUND_DARK = 'transparent';
 

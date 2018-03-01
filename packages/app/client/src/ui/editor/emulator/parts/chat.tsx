@@ -40,6 +40,7 @@ import state from '../state';
 import store from '../../../../data/store';
 import * as ChatActions from '../../../../data/action/chatActions';
 import * as Colors from '../../../styles/colors';
+import PrimaryButton from '../../../shell/explorer/botExplorer/primaryButton';
 
 const CSS = css({
   backgroundColor: 'white',
@@ -100,14 +101,23 @@ const CSS = css({
 
 const DISCONNECTED_CSS = css({
   padding: '16px',
-  backgroundColor: 'lightgray',
-  color: 'black',
-  height: '100%'
+  backgroundColor: 'white',
+  height: '100%',
+  display: 'flex',
+  alignItems: 'flex-start',
+  flexAlign: 'center',
+
+  '& .start-button': {
+    flexGrow: 1,
+    flexShrink: 1,
+    flexBasis: '0px',
+  },
 });
 
 // TODO: Fill this out
 export interface ChatProps {
   document: any;
+  onStartConversation: any;
 };
 
 export default class Chat extends React.Component<ChatProps> {
@@ -149,7 +159,7 @@ export default class Chat extends React.Component<ChatProps> {
     } else {
       return (
         <div {...DISCONNECTED_CSS}>
-          <span>Not connected. Press the 'Start Over' button.</span>
+          <PrimaryButton text='Start the Conversation' onClick={ this.props.onStartConversation } buttonClass='start-button' />
         </div>
       );
     }

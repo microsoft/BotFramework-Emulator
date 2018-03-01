@@ -50,7 +50,9 @@ const CONVO_CSS = css({
   flexDirection: 'column',
   listStyleType: 'none',
   margin: 0,
-  padding: 0
+  padding: 0,
+  overflowY: 'auto',
+  overflowX: 'hidden',
 });
 
 class TranscriptExplorer extends React.Component {
@@ -83,7 +85,7 @@ class TranscriptExplorer extends React.Component {
   renderEmptyTranscriptList() {
     return (
       <ExpandCollapseContent key={ this.props.changeKey }>
-        <span className="empty-list">No transcripts yet</span>
+        <span className="empty-list">No saved chats yet</span>
       </ExpandCollapseContent>
     );
   }

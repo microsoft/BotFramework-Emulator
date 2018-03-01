@@ -34,15 +34,17 @@
 import React from 'react';
 
 import * as constants from '../../../constants';
-import SettingsTab from './settingsTab';
+import GenericTab from './genericTab';
 import EmulatorTab from './emulatorTab';
 import TestBedTab from './testBedTab';
 
 export default props =>
-    props.document.contentType === constants.ContentType_LiveChat ?
-        <EmulatorTab documentId={ props.document.documentId } owningEditor={ props.owningEditor }/>
-    : props.document.contentType === constants.ContentType_TestBed ?
-        <TestBedTab documentId={ props.document.documentId } owningEditor={ props.owningEditor }/>
-    : props.document.contentType === constants.ContentType_BotSettings ?
-        <SettingsTab documentId={ props.document.documentId } owningEditor={ props.owningEditor }/>
-    : false
+  props.document.contentType === constants.ContentType_LiveChat ?
+    <EmulatorTab documentId={ props.document.documentId } owningEditor={ props.owningEditor } />
+  : props.document.contentType === constants.ContentType_TestBed ?
+    <TestBedTab documentId={ props.document.documentId } owningEditor={ props.owningEditor } />
+  : props.document.contentType === constants.ContentType_BotSettings ?
+    <GenericTab documentId={ props.document.documentId } owningEditor={ props.owningEditor } title={ "Bot Settings" } />
+  : props.document.contentType === constants.ContentType_WelcomePage ?
+    <GenericTab documentId={ props.document.documentId } owningEditor={ props.owningEditor } title={ "Welcome" } />
+  : false

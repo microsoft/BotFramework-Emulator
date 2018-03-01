@@ -38,6 +38,7 @@ import * as constants from '../../constants';
 import BotSettingsEditor from './botSettingsEditor';
 import Emulator from './emulator';
 import TestBedEditor from './testBedEditor';
+import WelcomePage from './welcomePage';
 
 export default class EditorFactory extends React.Component {
   render() {
@@ -51,6 +52,8 @@ export default class EditorFactory extends React.Component {
         <TestBedEditor />
         : contentType === constants.ContentType_BotSettings ?
         <BotSettingsEditor id={ document.meta } documentId={ document.documentId } />
+        : contentType === constants.ContentType_WelcomePage ?
+        <WelcomePage />
         : false
     );
   }

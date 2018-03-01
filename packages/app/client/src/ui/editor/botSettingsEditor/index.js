@@ -113,13 +113,10 @@ export default class SettingsEditor extends React.Component {
   }
 
   onSave(e) {
-    // write new settings to bot file
-    const newBotFile = {
-      ...this.state.bot
-    };
-    CommandService.remoteCall('bot:save', newBotFile, this.props.id)
+    CommandService.remoteCall('bot:save', this.state.bot, this.props.id)
       .then(() => {
-        store.dispatch(BotActions.patch(this.props.id, newBotFile))
+        store.dispatch(BotActions.patch(this.props.id, this.state.bot))
+        CommandService.remoteCall('app:setTitleBar', getBotDisplayName(this.state.bot));
       });
   }
 
@@ -137,14 +134,6 @@ export default class SettingsEditor extends React.Component {
 
     return (
       <div className={ CSS }>
-        <h1>Settings for { botLabel }</h1>
-
-        <span>Bot name</span>
-        <input value={ this.state.bot.botName } onChange={ this.onChangeName } type="text" />
-
-        <span>Bot Id</span>
-        <input value={ this.state.bot.botId } onChange={ this.onChangeBotId } type="text" />
-
         <span>Endpoint</span>
         <input value={ this.state.bot.botUrl } onChange={ this.onChangeEndpoint } type="text" />
 
@@ -156,6 +145,9 @@ export default class SettingsEditor extends React.Component {
 
         <span>Locale</span>
         <input value={ this.state.bot.locale } onChange={ this.onChangeLocale } type="text" />
+
+        <span>Bot name</span>
+        <input value={ this.state.bot.botName } onChange={ this.onChangeName } type="text" />
 
         <span>Local folder</span>
         <div className='horz-group'>

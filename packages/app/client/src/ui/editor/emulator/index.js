@@ -102,10 +102,10 @@ class Emulator extends React.Component {
           <ToolBarButton title="Load..." onClick={ this.handleImportClick } />
         </ToolBar>
         <Splitter orientation={ 'vertical' } primaryPaneIndex={ 0 } minSizes={ { 0: 80, 1: 80 } }>
-          <ChatPanel document={ this.props.document } />
-          <Splitter orientation={ 'horizontal' } primaryPaneIndex={ 1 } minSizes={ { 0: 80, 1: 80 } }>
-            <DetailPanel document={ this.props.document } />
+          <ChatPanel document={ this.props.document } onStartConversation={ this.onStartOverClick } />
+          <Splitter orientation={ 'horizontal' } primaryPaneIndex={ 0 } minSizes={ { 0: 80, 1: 80 } }>
             <LogPanel document={ this.props.document } />
+            <DetailPanel document={ this.props.document } />
           </Splitter>
         </Splitter>
       </div>

@@ -129,7 +129,7 @@ export class TabManager extends React.Component {
         }
         break;
 
-      case'ArrowDown':
+      case 'ArrowDown':
         if (this.state.showing) {
           this.setState(({ selectedIndex: this.moveIndexDown() }));
         }

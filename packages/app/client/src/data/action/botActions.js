@@ -12,10 +12,12 @@ export function create(bot) {
   };
 }
 
-export function deleteBot(bot) {
+export function deleteBot(id) {
   return {
     type: DELETE,
-    payload: bot
+    payload: {
+      id
+    }
   };
 }
 

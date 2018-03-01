@@ -12,5 +12,7 @@
   "search.exclude": {
     "app": true,
     "client-v2/build": true
-  }
+  },
+  "javascript.format.insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces": true,
+  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces": true
 }

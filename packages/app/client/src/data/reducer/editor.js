@@ -131,7 +131,42 @@ export default function documents(state = DEFAULT_STATE, action) {
     }
 
     case EditorActions.CLOSE_ALL: {
-      return DEFAULT_STATE;
+      if (action.payload.includeGlobal) {
+        return DEFAULT_STATE;
+      } else {
+        let newState = {
+          ...state
+        };
+        for (let key in state.editors) {
+          let tabGroup = state.editors[key];
+          if (tabGroup) {
+            let newTabStack = [...tabGroup.tabStack];
+            let newDocumentList = [];
+            let newActiveDocumentId = null;
+            tabGroup.documents.forEach(document => {
+              if (document.isGlobal) {
+                newDocumentList.push(document);
+              } else {
+                newTabStack = newTabStack.filter(documentId => documentId != document.documentId);
+              }
+            });
+            let newTabGroup = {
+              tabStack: newTabStack,
+              documents: newDocumentList,
+              activeDocumentId: newTabStack[0] || null
+            }
+            newState = {
+              ...newState,
+              editors: {
+                ...newState.editors,
+                [key]: newTabGroup
+              }
+            }
+          }
+        }
+        state = fixupActiveEditor(newState);
+      }
+      break;
     }
 
     case EditorActions.OPEN: {
@@ -148,6 +183,7 @@ export default function documents(state = DEFAULT_STATE, action) {
           {
             documentId: action.payload.documentId,
             contentType: action.payload.contentType,
+            isGlobal: action.payload.isGlobal || false,
             meta: action.payload.meta || null
           }
         ];
@@ -320,4 +356,12 @@ function setDraggingTab(dragging, state) {
 
   newState.draggingTab = dragging;
   return newState;
+}
+
+function fixupActiveEditor(state) {
+  if (state.activeEditor === Constants.EditorKey_Primary
+    && !state.editors[Constants.EditorKey_Primary].tabStack.length
+    && state.editors[Constants.EditorKey_Secondary])
+    state = setNewPrimaryEditor(state.editors[Constants.EditorKey_Secondary], state);
+  return state;
 }

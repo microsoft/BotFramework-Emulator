@@ -45,6 +45,7 @@ import { CommandService } from './platform/commands/commandService';
 import { SettingsService } from './platform/settings/settingsService';
 import { LogService } from './platform/log/logService';
 import * as BotActions from './data/action/botActions';
+import { showWelcomePage } from './data/editorHelpers';
 
 CommandService.init();
 SettingsService.init();
@@ -67,10 +68,24 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-// Let the main process know we're loaded
-CommandService.remoteCall('client:loaded');
+//-----------------------------------------------------------------------------
+// REGISTER COMMANDS (doesn't have to be done here exclusively, but no better
+// place right now to ensure they're registered before main process might call
+// one remotely)
 
-// load bots from disk on app start-up
+CommandRegistry.registerCommand('welcome-page:show', () => {
+  showWelcomePage();
+});
+
+//-----------------------------------------------------------------------------
+
+// Tell the process we're loaded
+CommandService.remoteCall('client:loaded')
+  .then(() => {
+    showWelcomePage();
+  });
+
+// Load bots from disk on app start-up
 CommandService.remoteCall('bot:list:load')
   .then(payload => {
     store.dispatch(BotActions.load(payload.bots));

@@ -52,7 +52,8 @@ const CSS = css({
   padding: 0,
 
   '& .explorer-empty-state': {
-    padding: '16px'
+    padding: '16px',
+    overflow: 'hidden',
   }
 });
 

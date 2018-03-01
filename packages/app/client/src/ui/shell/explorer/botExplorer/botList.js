@@ -14,7 +14,7 @@ import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCo
 import PrimaryButton from './primaryButton';
 import { getBotDisplayName } from '@bfemulator/app-shared';
 import { getBotById, getActiveBot } from '../../../../data/botHelpers';
-import { getTabCount } from '../../../../data/editorHelpers';
+import { hasNonGlobalTabs } from '../../../../data/editorHelpers';
 
 const CSS = css({
   overflowX: 'hidden',
@@ -72,69 +72,97 @@ export class BotList extends React.Component {
   }
 
   setActiveBot(id) {
-    this.props.dispatch((dispatch) => {
-      this.props.dispatch(EditorActions.closeAllTabs());
-      const tabCount = getTabCount();
-      this.props.dispatch((dispatch) => {
-        CommandService.remoteCall('bot:setActive', id)
-          .then(() => {
-            this.props.dispatch(BotActions.setActive(id));
-            const bot = getBotById(id);
-            CommandService.remoteCall('app:setTitleBar', getBotDisplayName(bot));
-          })
-          .catch(err => console.error('Error while setting active bot: ', err));
-      });
-    });
+    return CommandService.remoteCall('bot:setActive', id)
+      .then(() => {
+        this.props.dispatch(BotActions.setActive(id));
+        const bot = getBotById(id);
+        CommandService.remoteCall('app:setTitleBar', getBotDisplayName(bot));
+      })
+      .catch(err => console.error('Error while setting active bot: ', err));
   }
 
-  onSelectBot(e, id) {
-    const activeBot = getActiveBot();
-    if (activeBot === id)
-      return;
-    const tabCount = getTabCount();
-    if (activeBot && tabCount) {
-      CommandService.remoteCall('shell:showMessageBox', true, {
+  confirmSwitchBot() {
+    const hasTabs = hasNonGlobalTabs();
+    if (hasTabs) {
+      return CommandService.remoteCall('shell:showMessageBox', true, {
         type: "question",
         buttons: ["Cancel", "OK"],
         defaultId: 1,
         title: "Switch Bots",
         message: "Are you sure? All tabs will be closed.",
         cancelId: 0,
-      })
-        .then((result) => {
-          if (result) {
-            this.setActiveBot(id);
-          }
-        })
-        .catch(err => console.error('Error while setting active bot: ', err));
+      });
     } else {
-      this.setActiveBot(id);
+      return Promise.resolve(true);
     }
   }
 
+  onSelectBot(e, id) {
+    e.stopPropagation();
+    const activeBot = getActiveBot();
+    if (activeBot === id)
+      return;
+    this.confirmSwitchBot()
+      .then((result) => {
+        if (result) {
+          this.props.dispatch(EditorActions.closeNonGlobalTabs());
+          this.setActiveBot(id)
+            .then(() => {
+              CommandService.call('livechat:new');
+              this.props.dispatch(NavBarActions.selectOrToggle(Constants.NavBar_Files));
+            })
+        }
+      })
+      .catch(err => console.error('Error while setting active bot: ', err));
+  }
+
   onClickSettings(e, bot) {
+    e.stopPropagation();
     CommandService.call('bot:settings:open', bot);
   }
 
   onClickDelete(e, bot) {
     e.stopPropagation();
-    CommandService.remoteCall('bot:list:delete', bot)
-      .then(() => this.props.dispatch(BotActions.deleteBot(bot)))
-      .catch(err => console.error('Error during bot delete: ', err));
+    CommandService.remoteCall('shell:showMessageBox', true, {
+      type: "question",
+      buttons: ["Cancel", "OK"],
+      defaultId: 1,
+      title: "Delete Bot",
+      message: "Are you sure?",
+      cancelId: 0,
+    })
+      .then((result) => {
+        if (result) {
+          const activeBot = getActiveBot();
+          if (activeBot === bot.id)
+            this.props.dispatch(EditorActions.closeNonGlobalTabs());
+          CommandService.remoteCall('bot:list:delete', bot.id)
+            .then(() => this.props.dispatch(BotActions.deleteBot(bot.id)))
+            .catch(err => console.error('Error during bot delete: ', err));
+        }
+      })
+      .catch(err => console.error('Error while deleting bot: ', err));
   }
 
   onCreateBot(e) {
-    CommandService.remoteCall('bot:list:create')
-      .then(bot => {
-        this.props.dispatch((dispatch) => {
-          this.props.dispatch(BotActions.create(bot));
+    this.confirmSwitchBot()
+      .then((result) => {
+        if (result) {
+          this.props.dispatch(EditorActions.closeNonGlobalTabs());
+          CommandService.remoteCall('bot:list:create')
+            .then(bot => {
+              this.props.dispatch((dispatch) => {
+                this.props.dispatch(BotActions.create(bot));
+                this.setActiveBot(bot.id);
 
-          // open bot settings and switch to explorer view
-          this.props.dispatch(NavBarActions.selectOrToggle(Constants.NavBar_Files));
-          this.props.dispatch(EditorActions.open(Constants.ContentType_BotSettings, "Bot Settings", bot.id));
-        });
-      })
-      .catch(err => console.error('Error during bot create: ', err));
+                // open bot settings and switch to explorer view
+                this.props.dispatch(NavBarActions.selectOrToggle(Constants.NavBar_Files));
+                this.props.dispatch(EditorActions.open(Constants.ContentType_BotSettings, "Bot Settings", false, bot.id));
+              });
+            })
+            .catch(err => console.error('Error during bot create: ', err));
+        }
+      });
   }
 
   onChangeQuery(e) {
@@ -157,7 +185,6 @@ export class BotList extends React.Component {
             </div>
           </ExpandCollapseControls>
           <ExpandCollapseContent>
-            { this.props.bots.length ? <input className={ INPUT_CSS } value={ this.state.botQuery } onChange={ this.onChangeQuery } placeholder="Search for a bot..." /> : null }
             <div className={ CSS }>
               <ul>
                 {

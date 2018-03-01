@@ -42,88 +42,90 @@ export const SWAP_TABS = 'EDITOR/SWAP_TABS';
 export const TOGGLE_DRAGGING_TAB = 'EDITOR/TOGGLE_DRAGGING_TAB';
 
 export function appendTab(srcEditorKey, destEditorKey, documentId) {
-    return {
-        type: APPEND_TAB,
-        payload: {
-            srcEditorKey,
-            destEditorKey,
-            documentId
-        }
-    };
-}
-
-export function close(editorKey, documentId) {
-    return {
-        type: CLOSE,
-        payload: {
-            editorKey,
-            documentId
-        }
-    };
-}
-
-export function closeAllTabs() {
   return {
-      type: CLOSE_ALL,
-      payload: {
-      }
+    type: APPEND_TAB,
+    payload: {
+      srcEditorKey,
+      destEditorKey,
+      documentId
+    }
   };
 }
 
-export function open(contentType, documentId, meta) {
-    return {
-        type: OPEN,
-        payload: {
-            contentType,
-            documentId,
-            meta
-        }
-    };
+export function close(editorKey, documentId) {
+  return {
+    type: CLOSE,
+    payload: {
+      editorKey,
+      documentId
+    }
+  };
+}
+
+export function closeNonGlobalTabs() {
+  return {
+    type: CLOSE_ALL,
+    payload: {
+      includeGlobal: false
+    }
+  };
+}
+
+export function open(contentType, documentId, isGlobal, meta) {
+  return {
+    type: OPEN,
+    payload: {
+      contentType,
+      documentId,
+      isGlobal,
+      meta
+    }
+  };
 }
 
 export function setActiveTab(documentId) {
-    return {
-        type: SET_ACTIVE_TAB,
-        payload: {
-            documentId
-        }
-    };
+  return {
+    type: SET_ACTIVE_TAB,
+    payload: {
+      documentId
+    }
+  };
 }
 
 export function setActiveEditor(editorKey) {
-    return {
-        type: SET_ACTIVE_EDITOR,
-        payload: editorKey
-    }
+  return {
+    type: SET_ACTIVE_EDITOR,
+    payload: editorKey
+  }
 }
 
 export function splitTab(contentType, documentId, srcEditorKey, destEditorKey) {
-    return {
-        type: SPLIT_TAB,
-        payload: {
-            contentType,
-            documentId,
-            srcEditorKey,
-            destEditorKey
-        }
-    };
+  return {
+    type: SPLIT_TAB,
+    payload: {
+      contentType,
+      documentId,
+      srcEditorKey,
+      destEditorKey
+    }
+  };
 }
 
 export function swapTabs(srcEditorKey, destEditorKey, srcTabId, destTabId) {
-    return {
-        type: SWAP_TABS,
-        payload: {
-            srcEditorKey,
-            destEditorKey,
-            srcTabId,
-            destTabId
-        }
-    };
+  return {
+    type: SWAP_TABS,
+    payload: {
+      srcEditorKey,
+      destEditorKey,
+      srcTabId,
+      destTabId
+    }
+  };
 }
 
 export function toggleDraggingTab(draggingTab) {
-    return {
-        type: TOGGLE_DRAGGING_TAB,
-        payload: draggingTab
-    };
+  return {
+    type: TOGGLE_DRAGGING_TAB,
+    payload: draggingTab
+  };
 }
