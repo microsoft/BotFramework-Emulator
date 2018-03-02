@@ -32,7 +32,7 @@
 //
 
 import * as Electron from 'electron';
-import { Menu } from 'electron';
+import { app, Menu } from 'electron';
 import { Subject } from 'rxjs';
 import { getSettings, dispatch } from './settings';
 import { WindowStateAction } from './reducers/windowStateReducer';
@@ -202,9 +202,9 @@ CommandRegistry.registerCommand('app:setTitleBar', (context: Window, text: strin
 //=============================================================================
 
 const createMainWindow = () => {
-  if(squirrel.handleStartupEvent()) {
+  if (squirrel.handleStartupEvent()) {
     return;
-}
+  }
 
   const windowTitle = "Bot Framework Emulator";
 
@@ -264,9 +264,57 @@ const createMainWindow = () => {
 
   //mainWindow.webContents.openDevTools();
 
+  const template: Electron.MenuItemConstructorOptions[] = [
+    {
+      label: 'File',
+      submenu: [
+        { role: 'quit' }
+      ]
+    },
+    {
+      label: 'Edit',
+      submenu: [
+        { role: 'undo' },
+        { role: 'redo' },
+        { type: 'separator' },
+        { role: 'cut' },
+        { role: 'copy' },
+        { role: 'paste' },
+        { role: 'delete' },
+        { role: 'selectall' }
+      ]
+    },
+    {
+      label: 'View',
+      submenu: [
+        { role: 'reload' },
+        { role: 'forcereload' },
+        { role: 'toggledevtools' },
+        { type: 'separator' },
+        { role: 'resetzoom' },
+        { role: 'zoomin' },
+        { role: 'zoomout' },
+        { type: 'separator' },
+        { role: 'togglefullscreen' }
+      ]
+    },
+    {
+      role: 'window',
+      submenu: [
+        { role: 'minimize' }
+      ]
+    },
+    {
+      role: 'help',
+      submenu: [
+      ]
+    }
+  ];
+
   if (process.platform === 'darwin') {
+    /*
     // Create the Application's main menu
-    var template: Electron.MenuItemConstructorOptions[] = [
+    var template2: Electron.MenuItemConstructorOptions[] = [
       {
         label: windowTitle,
         submenu: [
@@ -286,11 +334,45 @@ const createMainWindow = () => {
           { label: "Select All", accelerator: "CmdOrCtrl+A", role: "selectall" }
         ]
       }
+      */
+    template.unshift({
+      label: app.getName(),
+      submenu: [
+        { role: 'about' },
+        { type: 'separator' },
+        { role: 'services', submenu: [] },
+        { type: 'separator' },
+        { role: 'hide' },
+        { role: 'hideothers' },
+        { role: 'unhide' },
+        { type: 'separator' },
+        { role: 'quit' }
+      ]
+    });
+
+    // Edit menu
+    (template[2].submenu as any).push(
+      { type: 'separator' },
+      {
+        label: 'Speech',
+        submenu: [
+          { role: 'startspeaking' },
+          { role: 'stopspeaking' }
+        ]
+      }
+    );
+
+    // Window menu
+    template[4].submenu = [
+      { role: 'close' },
+      { role: 'minimize' },
+      { role: 'zoom' },
+      { type: 'separator' },
+      { role: 'front' }
     ];
-    Menu.setApplicationMenu(Menu.buildFromTemplate(template));
-  } else {
-    Menu.setApplicationMenu(null);
   }
+  
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
   const rememberBounds = () => {
     const bounds = mainWindow.browserWindow.getBounds();
