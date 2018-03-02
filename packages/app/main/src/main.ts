@@ -48,6 +48,7 @@ import { Window } from './platform/window';
 import { IBot, newBot, CommandRegistry, uniqueId } from '@bfemulator/app-shared';
 import { ensureStoragePath, readFileSync, showOpenDialog, writeFile, getSafeBotName } from './utils';
 import * as BotActions from './data-v2/action/bot';
+import * as squirrel from './squirrelEvents';
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
   console.error(error);
@@ -201,6 +202,9 @@ CommandRegistry.registerCommand('app:setTitleBar', (context: Window, text: strin
 //=============================================================================
 
 const createMainWindow = () => {
+  if(squirrel.handleStartupEvent()) {
+    return;
+}
 
   const windowTitle = "Bot Framework Emulator";
 
@@ -378,7 +382,7 @@ const createMainWindow = () => {
   let page = process.env.ELECTRON_TARGET_URL || url.format({
     protocol: 'file',
     slashes: true,
-    pathname: path.join(__dirname, '../../node_modules/botframework-emulator-client/build/index.html')
+    pathname: path.join(__dirname, '../../node_modules/@bfemulator/client/build/index.html')
   });
 
   if (/^http:\/\//.test(page)) {
@@ -418,4 +422,6 @@ Electron.app.on('activate', function () {
 });
 
 // Do this last, otherwise startup bugs are harder to diagnose.
-require('electron-debug')();
+require('electron-debug')({
+  enabled: true
+});

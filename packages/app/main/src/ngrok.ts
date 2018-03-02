@@ -36,7 +36,7 @@ import * as got from 'got';
 var spawn = require('child_process').spawn;
 var Emitter = require('events').EventEmitter;
 var platform = require('os').platform();
-var lock = require('lock').Lock();
+var lock = require('lock')();
 var async = require('async');
 var uuid = require('node-uuid');
 var xtend = require('xtend');
