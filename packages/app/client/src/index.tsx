@@ -46,6 +46,7 @@ import { SettingsService } from './platform/settings/settingsService';
 import { LogService } from './platform/log/logService';
 import * as BotActions from './data/action/botActions';
 import { showWelcomePage } from './data/editorHelpers';
+import { ActiveBotHelper } from './ui/helpers/activeBotHelper';
 
 CommandService.init();
 SettingsService.init();
@@ -75,6 +76,10 @@ ReactDOM.render(
 
 CommandRegistry.registerCommand('welcome-page:show', () => {
   showWelcomePage();
+});
+
+CommandRegistry.registerCommand('bot:create', () => {
+  ActiveBotHelper.confirmAndCreateBot();
 });
 
 //-----------------------------------------------------------------------------

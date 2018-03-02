@@ -229,7 +229,7 @@ export default class SettingsEditor extends React.Component {
           <div className="column stretch space-left">
             <span className='label'>Local folder</span>
             <div className='horz-group'>
-              <input value={ this.state.bot.path } type="text" placeholder="Folder containing your bot project" readOnly />
+              <input value={ this.state.bot.path } type="text" readOnly />
               <PrimaryButton text='Browse' onClick={ this.onSelectFolder } buttonClass='browse-path-button' />
             </div>
           </div>

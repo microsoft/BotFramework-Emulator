@@ -268,6 +268,11 @@ const createMainWindow = () => {
     {
       label: 'File',
       submenu: [
+        { 
+          label: "New Bot",
+          click: () => mainWindow.commandService.remoteCall('bot:create')
+        },
+        { type: 'separator' },
         { role: 'quit' }
       ]
     },
@@ -281,32 +286,35 @@ const createMainWindow = () => {
         { role: 'copy' },
         { role: 'paste' },
         { role: 'delete' },
-        { role: 'selectall' }
+        { role: 'selectall' },
       ]
     },
     {
       label: 'View',
       submenu: [
-        { role: 'reload' },
-        { role: 'forcereload' },
-        { role: 'toggledevtools' },
         { type: 'separator' },
         { role: 'resetzoom' },
         { role: 'zoomin' },
         { role: 'zoomout' },
         { type: 'separator' },
-        { role: 'togglefullscreen' }
+        { role: 'togglefullscreen' },
       ]
     },
     {
       role: 'window',
       submenu: [
-        { role: 'minimize' }
+        { role: 'minimize' },
       ]
     },
     {
       role: 'help',
       submenu: [
+        {
+          label: "Welcome",
+          click: () => mainWindow.commandService.remoteCall('welcome-page:show')
+        },
+        { type: 'separator' },
+        { role: 'toggledevtools' },
       ]
     }
   ];
@@ -371,7 +379,7 @@ const createMainWindow = () => {
       { role: 'front' }
     ];
   }
-  
+
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
   const rememberBounds = () => {
@@ -503,7 +511,9 @@ Electron.app.on('activate', function () {
   }
 });
 
+/*
 // Do this last, otherwise startup bugs are harder to diagnose.
 require('electron-debug')({
   enabled: true
 });
+*/
