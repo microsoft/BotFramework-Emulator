@@ -38,7 +38,7 @@ import { ErrorCodes, } from '@bfemulator/app-shared';
 import { IAttachmentData, IAttachmentInfo } from '@bfemulator/app-shared';
 import { uniqueId } from '@bfemulator/app-shared';
 import { RestServer } from '../../restServer';
-import { sendErrorResponse } from '../../utils';
+//import { sendErrorResponse } from '../../utils';
 
 
 interface IAttachmentParams {
@@ -95,7 +95,7 @@ export class AttachmentsController {
       else
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, `attachment[${parms.attachmentId}] not found`);
     } catch (err) {
-      let error = sendErrorResponse(req, res, next, err);
+      //let error = sendErrorResponse(req, res, next, err);
       //log.api('getAttachmentInfo', req, res, null, error);
     }
   }
@@ -133,7 +133,7 @@ export class AttachmentsController {
       }
     }
     catch (err) {
-      let error = sendErrorResponse(req, res, next, err);
+      //let error = sendErrorResponse(req, res, next, err);
       //log.api('getAttachment', req, res, null, error);
     }
   }

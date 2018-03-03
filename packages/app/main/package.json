@@ -7,7 +7,7 @@
   "homepage": "https://github.com/Microsoft/BotFramework-Emulator",
   "scripts": {
     "build": "gulp build",
-    "build:electron": "tsc --version && tsc -p . --outdir app/server --pretty",
+    "build:electron": "tsc --version && tsc -p . --outdir app/server",
     "pack": "build --dir",
     "dist": "build",
     "release": "build",
@@ -71,9 +71,7 @@
     "async": "^2.6.0",
     "base64url": "^2.0.0",
     "command-line-args": "^5.0.2",
-    "electron-debug": "^1.5.0",
     "electron-ipcmain-websocket": "^0.0.1-1",
-    "electron-localshortcut": "^3.1.0",
     "es6-shim": "^0.35.3",
     "formidable": "^1.1.1",
     "got": "^8.2.0",

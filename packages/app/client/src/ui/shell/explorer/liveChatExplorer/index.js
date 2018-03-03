@@ -46,23 +46,20 @@ import { CommandService } from '../../../../platform/commands/commandService';
 import store from '../../../../data/store';
 import { EXPLORER_CSS } from '../explorerStyle';
 
-//=============================================================================
-// LIVE CHAT COMMANDS
-
-CommandRegistry.registerCommand('livechat:new', (context) => {
-  CommandService.remoteCall('livechat:new')
-    .then(conversationId => {
-      store.dispatch(ChatActions.newLiveChatDocument(conversationId));
-      store.dispatch(EditorActions.open(
-        constants.ContentType_LiveChat,
-        conversationId,
-        false
-      ));
-    })
-    .catch(err => console.log(err));  // TODO: Show failure as a notification
-});
-
-//=============================================================================
+export function registerCommands() {
+  CommandRegistry.registerCommand('livechat:new', (context) => {
+    CommandService.remoteCall('livechat:new')
+      .then(conversationId => {
+        store.dispatch(ChatActions.newLiveChatDocument(conversationId));
+        store.dispatch(EditorActions.open(
+          constants.ContentType_LiveChat,
+          conversationId,
+          false
+        ));
+      })
+      .catch(err => console.log(err));  // TODO: Show failure as a notification
+  });
+}
 
 const ACCESSORIES_CSS = css({
   '& .accessory-button': {
@@ -85,7 +82,7 @@ const CONVO_CSS = css({
   maxHeight: '100%',
   overflowY: 'auto',
   overflowX: 'hidden',
-  
+
   '& .empty-list': {
     fontStyle: 'italic',
   }

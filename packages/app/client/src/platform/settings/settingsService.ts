@@ -1,5 +1,11 @@
 import { Disposable, CommandRegistry } from '@bfemulator/app-shared';
 
+export function registerCommands() {
+  CommandRegistry.registerCommand("settings:emulator:url:set", (context: any, ...args: any[]): any => {
+    SettingsService.emulator.url = args[0].replace('[::]', '127.0.0.1');
+  });
+}
+
 export interface IEmulatorSettings {
   url?: string;
 }
@@ -29,8 +35,5 @@ export const SettingsService = new class extends Disposable {
   constructor() {
     super();
     this._emulator = new EmulatorSettings();
-    super.toDispose(CommandRegistry.registerCommand("settings:emulator:url:set", (context: any, ...args: any[]): any => {
-      SettingsService.emulator.url = args[0].replace('[::]', '127.0.0.1');
-    }));
   }
 }

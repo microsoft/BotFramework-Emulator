@@ -45,7 +45,7 @@ import { VersionManager } from '../../versionManager';
 import { sendErrorResponse } from '../../utils';
 import { logRequest, logResponse } from '../../logHelpers';
 import { getActiveBot } from '../../botHelpers';
-import { getActivityText, getErrorText } from '../../activityHelpers';
+//import { getActivityText, getErrorText } from '../../activityHelpers';
 
 interface IConversationAPIPathParameters {
   conversationId: string;

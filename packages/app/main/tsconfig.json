@@ -13,6 +13,7 @@
     "noEmitOnError": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": false,
     "outDir": "app/server",
     "removeComments": true,
     "skipLibCheck": true

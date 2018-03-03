@@ -32,8 +32,7 @@
 //
 
 //import { Reducer } from 'redux';
-import { uniqueId, IBot } from '@bfemulator/app-shared';
-import { getSettings } from '../settings';
+import { IBot } from '@bfemulator/app-shared';
 
 
 export type BotsAction = {

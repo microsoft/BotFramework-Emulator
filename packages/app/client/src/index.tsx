@@ -38,51 +38,28 @@ import * as ReactDOM from 'react-dom';
 import interceptError from './interceptError';
 import interceptHyperlink from './interceptHyperlink';
 import Main from './ui/shell/main';
-//import setupContextMenu from './setupContextMenu';
 import store from './data/store';
-import { CommandRegistry } from '@bfemulator/app-shared';
 import { CommandService } from './platform/commands/commandService';
 import { SettingsService } from './platform/settings/settingsService';
 import { LogService } from './platform/log/logService';
 import * as BotActions from './data/action/botActions';
 import { showWelcomePage } from './data/editorHelpers';
-import { ActiveBotHelper } from './ui/helpers/activeBotHelper';
+import * as Commands from './commands';
+
+interceptError();
+interceptHyperlink();
 
 CommandService.init();
 SettingsService.init();
 LogService.init();
 
-interceptError();
-interceptHyperlink();
-//setupContextMenu();
+Commands.registerCommands();
 
-const { webFrame } = window['require']('electron');
-
-if (webFrame) {
-  webFrame.setZoomLevel(1);
-  webFrame.setZoomFactor(1);
-  webFrame.registerURLSchemeAsPrivileged('emulator');
-}
-
+// Start rendering the UI
 ReactDOM.render(
   React.createElement(Provider, { store }, React.createElement(Main as any)),
   document.getElementById('root')
 );
-
-//-----------------------------------------------------------------------------
-// REGISTER COMMANDS (doesn't have to be done here exclusively, but no better
-// place right now to ensure they're registered before main process might call
-// one remotely)
-
-CommandRegistry.registerCommand('welcome-page:show', () => {
-  showWelcomePage();
-});
-
-CommandRegistry.registerCommand('bot:create', () => {
-  ActiveBotHelper.confirmAndCreateBot();
-});
-
-//-----------------------------------------------------------------------------
 
 // Tell the process we're loaded
 CommandService.remoteCall('client:loaded')

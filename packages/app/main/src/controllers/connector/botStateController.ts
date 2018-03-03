@@ -41,7 +41,7 @@ import { jsonBodyParser } from '../../jsonBodyParser';
 import { getSettings } from '../../settings';
 import { emulator } from '../../emulator';
 import { Conversation } from '../../conversationManager';
-import { sendErrorResponse } from '../../utils';
+//import { sendErrorResponse } from '../../utils';
 import { getActiveBot } from '../../botHelpers';
 import { logRequest, logResponse } from '../../logHelpers';
 import * as log from '../../logHelpers';
@@ -126,7 +126,7 @@ export class BotStateController {
       res.end();
       //log.api('getUserData', req, res, req.params, botData);
     } catch (err) {
-      var error = sendErrorResponse(req, res, next, err);
+      //var error = sendErrorResponse(req, res, next, err);
       //log.api('getUserData', req, res, req.params, error);
     }
     logResponse(req.params.conversationId, "bot", res);
@@ -145,7 +145,7 @@ export class BotStateController {
       res.end();
       //log.api('getConversationData', req, res, req.params, botData);
     } catch (err) {
-      var error = sendErrorResponse(req, res, next, err);
+     // var error = sendErrorResponse(req, res, next, err);
       //log.api('getConversationData', req, res, req.params, error);
     }
     logResponse(req.params.conversationId, "bot", res);
@@ -164,7 +164,7 @@ export class BotStateController {
       res.end();
       //log.api('getPrivateConversationData', req, res, req.params, botData);
     } catch (err) {
-      var error = sendErrorResponse(req, res, next, err);
+      //var error = sendErrorResponse(req, res, next, err);
       //log.api('getPrivateConversationData', req, res, req.params, error);
     }
     logResponse(req.params.conversationId, "bot", res);
@@ -184,7 +184,7 @@ export class BotStateController {
       res.end();
       //log.api('setUserData', req, res, { key: req.params, state: req.body }, botData);
     } catch (err) {
-      var error = sendErrorResponse(req, res, next, err);
+      //var error = sendErrorResponse(req, res, next, err);
       //log.api('setUserData', req, res, { key: req.params, state: req.body }, error);
     }
     logResponse(req.params.conversationId, "bot", res);
@@ -203,7 +203,7 @@ export class BotStateController {
       res.end();
       //log.api('setConversationData', req, res, { key: req.params, state: req.body }, botData);
     } catch (err) {
-      var error = sendErrorResponse(req, res, next, err);
+      //var error = sendErrorResponse(req, res, next, err);
       //log.api('setConversationData', req, res, { key: req.params, state: req.body }, error);
     }
     logResponse(req.params.conversationId, "bot", res);
@@ -222,7 +222,7 @@ export class BotStateController {
       res.end();
       //log.api('setPrivateConversationData', req, res, { key: req.params, state: req.body }, botData);
     } catch (err) {
-      var error = sendErrorResponse(req, res, next, err);
+      //var error = sendErrorResponse(req, res, next, err);
       //log.api('setPrivateConversationData', req, res, { key: req.params, state: req.body }, error);
     }
     logResponse(req.params.conversationId, "bot", res);
@@ -248,7 +248,7 @@ export class BotStateController {
       res.end();
       //log.api('deleteStateForUser', req, res, req.params, null);
     } catch (err) {
-      var error = sendErrorResponse(req, res, next, err);
+     // var error = sendErrorResponse(req, res, next, err);
       //log.api('deleteStateForUser', req, res, req.params, error);
     }
     logResponse(req.params.conversationId, "bot", res);

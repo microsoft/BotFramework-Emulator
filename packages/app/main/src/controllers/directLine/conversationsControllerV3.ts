@@ -35,7 +35,7 @@ import * as Restify from 'restify';
 import * as HttpStatus from 'http-status-codes';
 import { emulator } from '../../emulator';
 import { getSettings, dispatch } from '../../settings';
-import { IGenericActivity, IAttachment, IAttachmentData, usersDefault, LogLevel } from '@bfemulator/app-shared';
+import { IGenericActivity, IAttachment, IAttachmentData, usersDefault } from '@bfemulator/app-shared';
 import { AttachmentsController } from '../connector/attachmentsController';
 import * as Fs from 'fs';
 import * as Formidable from 'formidable';

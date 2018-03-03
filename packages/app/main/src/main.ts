@@ -33,22 +33,19 @@
 
 import * as Electron from 'electron';
 import { app, Menu } from 'electron';
-import { Subject } from 'rxjs';
 import { getSettings, dispatch } from './settings';
 import { WindowStateAction } from './reducers/windowStateReducer';
 import * as url from 'url';
 import * as path from 'path';
 import * as log from './log';
-import { Emulator, emulator } from './emulator';
+import { Emulator } from './emulator';
 import { WindowManager } from './windowManager';
 import * as commandLine from './commandLine'
-import * as electronLocalShortcut from 'electron-localshortcut';
 import { setTimeout } from 'timers';
 import { Window } from './platform/window';
-import { IBot, newBot, CommandRegistry, uniqueId } from '@bfemulator/app-shared';
-import { ensureStoragePath, readFileSync, showOpenDialog, writeFile, getSafeBotName } from './utils';
-import * as BotActions from './data-v2/action/bot';
+import { ensureStoragePath, writeFile } from './utils';
 import * as squirrel from './squirrelEvents';
+import * as Commands from './commands';
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
   console.error(error);
@@ -72,6 +69,10 @@ var onOpenUrl = function (event, url) {
   }
 };
 
+// REGISTER ALL COMMANDS
+Commands.registerCommands();
+
+// PARSE COMMAND LINE
 commandLine.parseArgs();
 
 Electron.app.on('will-finish-launching', (event, args) => {
@@ -94,119 +95,10 @@ var windowIsOffScreen = function (windowBounds: Electron.Rectangle): boolean {
   );
 }
 
-/** COMMAND REGISTRATION */
-
-// Load bots from file system
-CommandRegistry.registerCommand('bot:list:load', (context: Window, ...args: any[]): any => {
-  const botsJsonPath = `${ensureStoragePath()}/bots.json`;
-  let botsJson = JSON.parse(readFileSync(botsJsonPath));
-
-  if (botsJson && botsJson.bots && Array.isArray(botsJson.bots)) {
-    const bots = botsJson.bots;
-    // Back-compat: Assign a unique id to the bot if not present.
-    bots.forEach(bot => {
-      bot.id = bot.id || uniqueId()
-    });
-    context.store.dispatch(BotActions.load(bots));
-  } else {
-    botsJson = { 'bots': [] };
-  }
-
-  try {
-    writeFile(botsJsonPath, botsJson);
-  } catch (e) {
-    console.error(`Failure writing new bots.json to ${botsJsonPath}: `, e);
-    throw e;
-  }
-
-  return botsJson;
-});
-
-// Create a bot
-CommandRegistry.registerCommand('bot:list:create', (context: Window, ...args: any[]): any => {
-  const botName = getSafeBotName();
-
-  const bot: IBot = newBot({
-    botName,
-    botUrl: 'http://localhost:3978/api/messages',
-  });
-
-  context.store.dispatch(BotActions.create(bot));
-
-  return bot;
-});
-
-// Delete a bot
-CommandRegistry.registerCommand('bot:list:delete', (context: Window, id: string): any => {
-  context.store.dispatch(BotActions.deleteBot(id));
-});
-
-// Show explorer prompt to set a local path for a bot
-CommandRegistry.registerCommand('bot:settings:chooseFolder', (context: Window, ...args: any[]): any => {
-  return showOpenDialog({ title: 'Choose a folder for your bot', buttonLabel: 'Choose folder', properties: ['openDirectory', 'promptToCreate'] });
-});
-
-// Save bot file and cause a bots list write
-CommandRegistry.registerCommand('bot:save', (context: Window, bot: IBot, originalHandle: string): any => {
-  context.store.dispatch(BotActions.patch(originalHandle, bot));
-});
-
-CommandRegistry.registerCommand('bot:setActive', (context: Window, id: string): any => {
-  context.store.dispatch(BotActions.setActive(id));
-});
-
-CommandRegistry.registerCommand('shell:showMessageBox', (context: Window, modal: boolean, options: Electron.MessageBoxOptions) => {
-  if (modal)
-    return Electron.dialog.showMessageBox(context.browserWindow, options);
-  else
-    return Electron.dialog.showMessageBox(options);
-});
-
-// Read file
-CommandRegistry.registerCommand('file:read', (context: Window, path: string): any => {
-  try {
-    const contents = readFileSync(path);
-    return contents;
-  } catch (e) {
-    console.error(`Failure reading file at ${path}: `, e);
-    throw e;
-  }
-});
-
-// Write file
-CommandRegistry.registerCommand('file:write', (context: Window, path: string, contents: object | string): any => {
-  try {
-    writeFile(path, contents);
-  } catch (e) {
-    console.error(`Failure writing to file at ${path}: `, e);
-    throw e;
-  }
-});
-
-// Send app settings to client
-CommandRegistry.registerCommand("client:loaded", (context: Window, ...args: any[]): any => {
-  context.commandService.remoteCall("settings:emulator:url:set", emulator.framework.router.url);
-});
-
-// Create a new livechat conversation
-CommandRegistry.registerCommand("livechat:new", (context: any, ...args: any[]): any => {
-  // TODO: Validate a bot is active first
-  return uniqueId();
-});
-
-// Sets the app's title bar
-CommandRegistry.registerCommand('app:setTitleBar', (context: Window, text: string): any => {
-  context.browserWindow.setTitle('Bot Framework Emulator - ' + text);
-});
-
-//=============================================================================
-
 const createMainWindow = () => {
   if (squirrel.handleStartupEvent()) {
     return;
   }
-
-  const windowTitle = "Bot Framework Emulator";
 
   const settings = getSettings();
   let initBounds: Electron.Rectangle = {
@@ -259,10 +151,8 @@ const createMainWindow = () => {
       });
     });
 
-  mainWindow.browserWindow.setTitle(windowTitle);
+  mainWindow.browserWindow.setTitle(app.getName());
   windowManager = new WindowManager();
-
-  //mainWindow.webContents.openDevTools();
 
   const template: Electron.MenuItemConstructorOptions[] = [
     {
@@ -428,36 +318,6 @@ const createMainWindow = () => {
     }
   });
 
-  let registerHotkeys = (hotkeys: Array<string>, callback: () => void, window?: Electron.BrowserWindow) => {
-    const eventStream = new Subject();
-    eventStream.debounceTime(100).subscribe(callback);
-    const addToEventStream = () => eventStream.next("");
-    if (window) {
-      hotkeys.forEach(hotkey => electronLocalShortcut.register(window, hotkey, addToEventStream));
-    } else {
-      hotkeys.forEach(hotkey => electronLocalShortcut.register(hotkey, addToEventStream));
-    }
-  };
-
-  registerHotkeys(["CmdOrCtrl+="], () => {
-    windowManager.zoomIn();
-  });
-  registerHotkeys(["CmdOrCtrl+-"], () => {
-    windowManager.zoomOut();
-  });
-  registerHotkeys(["CmdOrCtrl+0"], () => {
-    windowManager.zoomTo(0);
-  });
-  registerHotkeys(["F10", "Alt+F"], () => {
-    Emulator.send('open-menu');
-  }, mainWindow.browserWindow);
-  registerHotkeys(["F5", "CmdOrCtrl+R"], () => {
-    Emulator.send('new-conversation');
-  }, mainWindow.browserWindow);
-  registerHotkeys(["F6", "CmdOrCtrl+L"], () => {
-    Emulator.send('toggle-address-bar-focus');
-  }, mainWindow.browserWindow);
-
   mainWindow.browserWindow.once('ready-to-show', () => {
     mainWindow.webContents.setZoomLevel(settings.windowState.zoomLevel);
     mainWindow.browserWindow.show();
@@ -510,10 +370,3 @@ Electron.app.on('activate', function () {
     createMainWindow();
   }
 });
-
-/*
-// Do this last, otherwise startup bugs are harder to diagnose.
-require('electron-debug')({
-  enabled: true
-});
-*/
