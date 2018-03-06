@@ -1,11 +1,17 @@
 import * as Electron from 'electron';
 import { emulator } from './emulator';
 import { Window } from './platform/window';
-import { IBot, IFrameworkSettings, newBot, CommandRegistry, uniqueId } from '@bfemulator/app-shared';
+import { CommandRegistry as CommReg, uniqueId } from '@bfemulator/sdk-shared';
+import { IBot, newBot, IFrameworkSettings } from '@bfemulator/app-shared';
 import { ensureStoragePath, readFileSync, showOpenDialog, writeFile, getSafeBotName } from './utils';
 import * as BotActions from './data-v2/action/bot';
 import { app } from 'electron';
+import { mainWindow } from './main';
+import { ExtensionManager } from './extensions';
 import { getSettings, dispatch } from './settings';
+
+//=============================================================================
+export const CommandRegistry = new CommReg();
 
 //=============================================================================
 export function registerCommands() {
@@ -14,8 +20,13 @@ export function registerCommands() {
   //
 
   //---------------------------------------------------------------------------
+  CommandRegistry.registerCommand('ping', () => {
+    return 'pong';
+  });
+
+  //---------------------------------------------------------------------------
   // Load bots from file system
-  CommandRegistry.registerCommand('bot:list:load', (context: Window, ...args: any[]): any => {
+  CommandRegistry.registerCommand('bot:list:load', () => {
     const botsJsonPath = `${ensureStoragePath()}/bots.json`;
     let botsJson = JSON.parse(readFileSync(botsJsonPath));
 
@@ -25,7 +36,7 @@ export function registerCommands() {
       bots.forEach(bot => {
         bot.id = bot.id || uniqueId()
       });
-      context.store.dispatch(BotActions.load(bots));
+      mainWindow.store.dispatch(BotActions.load(bots));
     } else {
       botsJson = { 'bots': [] };
     }
@@ -42,7 +53,7 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Create a bot
-  CommandRegistry.registerCommand('bot:list:create', (context: Window, ...args: any[]): any => {
+  CommandRegistry.registerCommand('bot:list:create', (): IBot => {
     const botName = getSafeBotName();
 
     const bot: IBot = newBot({
@@ -50,41 +61,41 @@ export function registerCommands() {
       botUrl: 'http://localhost:3978/api/messages',
     });
 
-    context.store.dispatch(BotActions.create(bot));
+    mainWindow.store.dispatch(BotActions.create(bot));
 
     return bot;
   });
 
   //---------------------------------------------------------------------------
   // Delete a bot
-  CommandRegistry.registerCommand('bot:list:delete', (context: Window, id: string): any => {
-    context.store.dispatch(BotActions.deleteBot(id));
+  CommandRegistry.registerCommand('bot:list:delete', (id: string) => {
+    mainWindow.store.dispatch(BotActions.deleteBot(id));
   });
 
   //---------------------------------------------------------------------------
   // Save bot file and cause a bots list write
-  CommandRegistry.registerCommand('bot:save', (context: Window, bot: IBot, originalHandle: string): any => {
-    context.store.dispatch(BotActions.patch(originalHandle, bot));
+  CommandRegistry.registerCommand('bot:save', (bot: IBot, originalHandle: string) => {
+    mainWindow.store.dispatch(BotActions.patch(originalHandle, bot));
   });
 
   //---------------------------------------------------------------------------
   // Set active bot
-  CommandRegistry.registerCommand('bot:setActive', (context: Window, id: string): any => {
-    context.store.dispatch(BotActions.setActive(id));
+  CommandRegistry.registerCommand('bot:setActive', (id: string) => {
+    mainWindow.store.dispatch(BotActions.setActive(id));
   });
 
   //---------------------------------------------------------------------------
   // Show OS-native messsage box
-  CommandRegistry.registerCommand('shell:showMessageBox', (context: Window, modal: boolean, options: Electron.MessageBoxOptions) => {
+  CommandRegistry.registerCommand('shell:showMessageBox', (modal: boolean, options: Electron.MessageBoxOptions) => {
     if (modal)
-      return Electron.dialog.showMessageBox(context.browserWindow, options);
+      return Electron.dialog.showMessageBox(mainWindow.browserWindow, options);
     else
       return Electron.dialog.showMessageBox(options);
   });
 
   //---------------------------------------------------------------------------
   // Read file
-  CommandRegistry.registerCommand('file:read', (context: Window, path: string): any => {
+  CommandRegistry.registerCommand('file:read', (path: string): any => {
     try {
       const contents = readFileSync(path);
       return contents;
@@ -96,7 +107,7 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Write file
-  CommandRegistry.registerCommand('file:write', (context: Window, path: string, contents: object | string): any => {
+  CommandRegistry.registerCommand('file:write', (path: string, contents: object | string) => {
     try {
       writeFile(path, contents);
     } catch (e) {
@@ -106,30 +117,34 @@ export function registerCommands() {
   });
 
   //---------------------------------------------------------------------------
-  // Send app settings to client
-  CommandRegistry.registerCommand("client:loaded", (context: Window, ...args: any[]): any => {
-    context.commandService.remoteCall("settings:emulator:url:set", emulator.framework.router.url);
+  // Client notifying us it's initialized and has rendered
+  CommandRegistry.registerCommand("client:loaded", () => {
+    // Send app settings to client
+    mainWindow.commandService.remoteCall("settings:emulator:url:set", emulator.framework.router.url);
+    // LOAD EXTENSIONS
+    ExtensionManager.unloadExtensions();
+    ExtensionManager.loadExtensions();
   });
 
   //---------------------------------------------------------------------------
   // Create a new livechat conversation
-  CommandRegistry.registerCommand("livechat:new", (context: any, ...args: any[]): any => {
+  CommandRegistry.registerCommand("livechat:new", (): string => {
     // TODO: Validate a bot is active first
     return uniqueId();
   });
 
   //---------------------------------------------------------------------------
   // Sets the app's title bar
-  CommandRegistry.registerCommand('app:setTitleBar', (context: Window, text: string): any => {
+  CommandRegistry.registerCommand('app:setTitleBar', (text: string) => {
     if (text && text.length)
-      context.browserWindow.setTitle(`${app.getName()} - ${text}`);
+      mainWindow.browserWindow.setTitle(`${app.getName()} - ${text}`);
     else
-      context.browserWindow.setTitle(app.getName());
+      mainWindow.browserWindow.setTitle(app.getName());
   });
 
   //---------------------------------------------------------------------------
   // Saves global app settings
-  CommandRegistry.registerCommand('app:settings:save', (context: Window, settings: IFrameworkSettings): any => {
+  CommandRegistry.registerCommand('app:settings:save', (settings: IFrameworkSettings): any => {
     dispatch({
       type: 'Framework_Set',
       state: settings
@@ -138,13 +153,13 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Get and return app settings from store
-  CommandRegistry.registerCommand('app:settings:load', (context: Window, ...args: any[]): IFrameworkSettings => {
+  CommandRegistry.registerCommand('app:settings:load', (...args: any[]): IFrameworkSettings => {
     return getSettings().framework;
   });
 
   //---------------------------------------------------------------------------
   // Shows an open dialog and returns a path
-  CommandRegistry.registerCommand('shell:showOpenDialog', (context: Window, dialogOptions: Electron.OpenDialogOptions = {}): any => {
+  CommandRegistry.registerCommand('shell:showOpenDialog', (dialogOptions: Electron.OpenDialogOptions = {}): any => {
     return showOpenDialog(dialogOptions);
   });
 }

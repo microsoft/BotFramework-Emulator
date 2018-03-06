@@ -1,8 +1,9 @@
-import { Disposable, CommandRegistry } from '@bfemulator/app-shared';
+import { Disposable } from '@bfemulator/sdk-shared';
+import { CommandRegistry } from '../../commands';
 
 export function registerCommands() {
-  CommandRegistry.registerCommand("settings:emulator:url:set", (context: any, ...args: any[]): any => {
-    SettingsService.emulator.url = args[0].replace('[::]', '127.0.0.1');
+  CommandRegistry.registerCommand("settings:emulator:url:set", (url: string): any => {
+    SettingsService.emulator.url = url.replace('[::]', '127.0.0.1');
   });
 }
 

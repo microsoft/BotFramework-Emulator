@@ -41,9 +41,9 @@ import EditorFactory from '../../editor';
 import MultiTabs from '../multiTabs';
 import TabFactory from './tabFactory';
 import TabbedDocument, { Tab as TabbedDocumentTab, Content as TabbedDocumentContent } from '../multiTabs/tabbedDocument';
-import { CommandRegistry } from '@bfemulator/app-shared';
 import * as Constants from '../../../constants';
 import { getBotDisplayName } from '@bfemulator/app-shared';
+import { CommandRegistry } from '../../../commands';
 
 class MDI extends React.Component {
   constructor(props, context) {
@@ -57,7 +57,7 @@ class MDI extends React.Component {
   }
 
   componentWillMount() {
-    this._openBotSettingsCommandHandler = CommandRegistry.registerCommand('bot:settings:open', (context, bot) => {
+      this._openBotSettingsCommandHandler = CommandRegistry.registerCommand('bot:settings:open', (bot) => {
       this.props.dispatch(EditorActions.open(Constants.ContentType_BotSettings, "Bot Settings", false, bot.id));
     });
   }

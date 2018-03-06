@@ -1,4 +1,5 @@
-import { Disposable, ILogService, ILogEntry } from '@bfemulator/app-shared';
+import { ILogService, ILogEntry } from '@bfemulator/app-shared';
+import { Disposable } from '@bfemulator/sdk-shared';
 import { Window } from '../window';
 
 export class LogService extends Disposable implements ILogService {

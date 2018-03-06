@@ -1,0 +1,25 @@
+{
+  "name": "@bfemulator/extension-qnamaker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm run clean && tsc",
+    "clean": "rimraf ./built",
+    "prepare": "npm run clean && npm run build",
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^9.4.6",
+    "jest": "^22.4.2",
+    "rimraf": "^2.6.2",
+    "typescript": "^2.7.2"
+  },
+  "dependencies": {
+    "@bfemulator/sdk-main": "^1.0.0",
+    "@bfemulator/sdk-shared": "^1.0.0",
+    "tslib": "^1.9.0"
+  }
+}

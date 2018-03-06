@@ -1,0 +1,19 @@
+{
+  "name": "QnA Maker",
+  "main": "built/index.js",
+  "portals": [
+    {
+      "title": "QnA Maker",
+      "url": "http://qnamaker.ai"
+    }
+  ],
+  "files": [
+    ".qna",
+    "/.*\\.qna$/i"
+  ],
+  "inspectors": [
+    {
+      "trace": "qnamaker"
+    }
+  ]
+}

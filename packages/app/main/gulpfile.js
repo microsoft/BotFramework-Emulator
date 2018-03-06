@@ -15,27 +15,87 @@ const appId = "F3C061A6-FE81-4548-82ED-C1171D9856BB";
 //----------------------------------------------------------------------------
 gulp.task('clean', function () {
   const clean = require('gulp-clean');
-  return gulp.src('./app/', { read: false })
+  return gulp.src('./app/', { read: false, allowEmpty: true })
     .pipe(clean());
 });
 
 //----------------------------------------------------------------------------
-gulp.task('build-app', function () {
+gulp.task('copy-extension-stubs', function () {
   return gulp
-    .src('./package.json', { read: false })
-    .pipe(shell([
-      'npm run build:electron'
-    ]));
+    .src('./src/extensions/**/*')
+    .pipe(gulp.dest('./app/extensions'));
 });
 
 //----------------------------------------------------------------------------
-gulp.task('build-shared', function () {
+gulp.task('build-qnamaker-extension', function () {
+  return gulp
+    .src('../../extensions/qnamaker/package.json', { read: false })
+    .pipe(shell([
+      'npm run build'
+    ], { cwd: '../../extensions/qnamaker/' }));
+});
+
+//----------------------------------------------------------------------------
+gulp.task('build-extensions',
+  gulp.parallel(
+    'build-qnamaker-extension')
+);
+
+//----------------------------------------------------------------------------
+gulp.task('build-app', gulp.parallel(
+  'build-extensions',
+  'copy-extension-stubs',
+  function () {
+    return gulp
+      .src('./package.json', { read: false })
+      .pipe(shell([
+        'npm run build:electron'
+      ]));
+  }));
+
+//----------------------------------------------------------------------------
+gulp.task('build-sdk-shared', function () {
+  return gulp
+    .src('../../sdk/shared/package.json', { read: false })
+    .pipe(shell([
+      'npm run build'
+    ], { cwd: '../../sdk/shared' }));
+});
+
+//----------------------------------------------------------------------------
+gulp.task('build-sdk-client', function () {
+  return gulp
+    .src('../../sdk/client/package.json', { read: false })
+    .pipe(shell([
+      'npm run build'
+    ], { cwd: '../../sdk/client' }));
+});
+
+//----------------------------------------------------------------------------
+gulp.task('build-sdk-main', function () {
+  return gulp
+    .src('../../sdk/main/package.json', { read: false })
+    .pipe(shell([
+      'npm run build'
+    ], { cwd: '../../sdk/main' }));
+});
+
+//----------------------------------------------------------------------------
+gulp.task('build-sdk',
+  gulp.series('build-sdk-shared',
+    gulp.parallel(
+      'build-sdk-client',
+      'build-sdk-main'))
+);
+
+//----------------------------------------------------------------------------
+gulp.task('build-shared', gulp.series('build-sdk', function () {
   return gulp
     .src('../shared/package.json', { read: false })
     .pipe(shell([
       'npm run build'
     ], { cwd: '../shared' }));
-});
+}));
 
 //----------------------------------------------------------------------------
 gulp.task('build-react', function () {
@@ -47,13 +107,12 @@ gulp.task('build-react', function () {
 });
 
 //----------------------------------------------------------------------------
-gulp.task('build', ['clean', 'build-shared'], function () {
-  return gulp.start([
-    'build-app',
-    'build-react'
-  ]);
-});
-
+gulp.task('build',
+  gulp.series('clean', 'build-shared',
+    gulp.parallel(
+      'build-app',
+      'build-react'))
+);
 
 //============================================================================
 // GET-LICENSES
@@ -150,7 +209,7 @@ gulp.task('package:windows-nsis:binaries', function () {
 });
 
 //----------------------------------------------------------------------------
-gulp.task('package:windows-nsis:metadata', ['package:windows-nsis:binaries'], function () {
+gulp.task('package:windows-nsis:metadata', gulp.series('package:windows-nsis:binaries', function () {
   const config = getConfig("windows", "nsis");
   const releaseFilename = `botframework-emulator-Setup-${pjson.version}.exe`;
   const sha512 = hashFileAsync(`${config.directories.output}/${releaseFilename}`);
@@ -161,10 +220,10 @@ gulp.task('package:windows-nsis:metadata', ['package:windows-nsis:binaries'], fu
     .then((values) => {
       writeYamlMetadataFile(releaseFilename, 'latest.yml', config.directories.output, values[0], releaseDate, { sha2: values[1] });
     });
-});
+}));
 
 //----------------------------------------------------------------------------
-gulp.task('package:windows-nsis', ['package:windows-nsis:metadata']);
+gulp.task('package:windows-nsis', gulp.series('package:windows-nsis:metadata'));
 
 //============================================================================
 // PACKAGE:WINDOWS-SQUIRREL
@@ -220,7 +279,7 @@ gulp.task('package:mac-dmg:binaries', function () {
 });
 
 //----------------------------------------------------------------------------
-gulp.task('package:mac-dmg:metadata', ['package:mac-dmg:binaries'], function () {
+gulp.task('package:mac-dmg:metadata', gulp.series('package:mac-dmg:binaries', function () {
   const config = getConfig("mac", "dmg");
   const releaseFilename = `botframework-emulator-${pjson.version}-mac.zip`;
   const releaseHash = hashFileAsync(`./${config.directories.output}/${releaseFilename}`);
@@ -230,10 +289,10 @@ gulp.task('package:mac-dmg:metadata', ['package:mac-dmg:binaries'], function () 
   return releaseHash.then((hashValue) => {
     writeYamlMetadataFile(releaseFilename, 'latest-mac.yml', config.directories.output, hashValue, releaseDate);
   });
-});
+}));
 
 //----------------------------------------------------------------------------
-gulp.task('package:mac-dmg', ['package:mac-dmg:metadata']);
+gulp.task('package:mac-dmg', gulp.series('package:mac-dmg:metadata'));
 
 //============================================================================
 // PACKAGE:LINUX

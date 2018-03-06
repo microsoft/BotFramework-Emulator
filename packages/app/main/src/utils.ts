@@ -1,8 +1,9 @@
-
 import * as Restify from 'restify';
 import * as HttpStatus from 'http-status-codes';
 import { IErrorResponse, APIException, createErrorResponse, ErrorCodes, mergeDeep } from '@bfemulator/app-shared';
 import { dialog, OpenDialogOptions } from 'electron';
+const { lstatSync, readdirSync } = require('fs')
+const { join } = require('path')
 
 const electron = require('electron'); // use a lowercase name "electron" to prevent clash with "Electron" namespace
 const electronApp: Electron.App = electron.app;
@@ -150,4 +151,12 @@ export function getSafeBotName(): string {
   });
   const botNum = 1 + nums.sort((a, b) => b - a).shift();
   return `Bot ${botNum}`;
+}
+
+/** Returns a list of subfolders */
+export const getDirectories = source =>
+  readdirSync(source).map(name => join(source, name)).filter(source => lstatSync(source).isDirectory())
+
+export function isDev(): boolean {
+  return (process.defaultApp || /node_modules[\\/]electron[\\/]/.test(process.execPath));
 }

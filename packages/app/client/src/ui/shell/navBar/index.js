@@ -40,8 +40,8 @@ import * as Colors from '../../styles/colors';
 import * as Constants from '../../../constants';
 import * as NavBarActions from '../../../data/action/navBarActions';
 import * as EditorActions from '../../../data/action/editorActions';
-import { CommandRegistry } from '@bfemulator/app-shared';
 import InsetShadow from '../../layout/insetShadow';
+import { CommandRegistry } from '../../../commands';
 
 const CSS = css({
   backgroundColor: Colors.NAVBAR_BACKGROUND_DARK,
@@ -144,7 +144,7 @@ class NavBar extends React.Component {
   }
 
   componentWillMount() {
-    this._switchTabCommandHandler = CommandRegistry.registerCommand('navbar:switchtab', (context, tabName) => {
+    this._switchTabCommandHandler = CommandRegistry.registerCommand('navbar:switchtab', (tabName) => {
       switch (tabName) {
         case Constants.NavBar_Analytics:
         case Constants.NavBar_App:
