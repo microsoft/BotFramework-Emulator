@@ -10,7 +10,7 @@ gulp.task('copy', [
 gulp.task('copy:webchat:cognitiveservices', function () {
     return gulp
         .src('node_modules/@bfemulator/custom-botframework-webchat/CognitiveServices.js')
-        .pipe(gulp.dest('./src/external/custom-botframework-webchat'));
+        .pipe(gulp.dest('./public/external/custom-botframework-webchat'));
 });
 
 // TODO: We should expose CSS programmatically in Web Chat

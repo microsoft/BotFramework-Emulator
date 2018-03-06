@@ -126,32 +126,32 @@ export default class SettingsEditor extends React.Component {
   }
 
   onChangeBotId(e) {
-    const bot = { ...this.state.bot, botId: e.target.value.trim() };
+    const bot = { ...this.state.bot, botId: e.target.value };
     this.setState({ bot });
   }
 
   onChangeEndpoint(e) {
-    const bot = { ...this.state.bot, botUrl: e.target.value.trim() };
+    const bot = { ...this.state.bot, botUrl: e.target.value };
     this.setState({ bot });
   }
 
   onChangeAppId(e) {
-    const bot = { ...this.state.bot, msaAppId: e.target.value.trim() };
+    const bot = { ...this.state.bot, msaAppId: e.target.value };
     this.setState({ bot });
   }
 
   onChangeAppPw(e) {
-    const bot = { ...this.state.bot, msaPassword: e.target.value.trim() };
+    const bot = { ...this.state.bot, msaPassword: e.target.value };
     this.setState({ bot });
   }
 
   onChangeLocale(e) {
-    const bot = { ...this.state.bot, locale: e.target.value.trim() };
+    const bot = { ...this.state.bot, locale: e.target.value };
     this.setState({ bot });
   }
 
   onChangeName(e) {
-    const bot = { ...this.state.bot, botName: e.target.value.trim() };
+    const bot = { ...this.state.bot, botName: e.target.value };
     this.setState({ bot });
   }
 

@@ -90,7 +90,7 @@ export class VersionManager {
                 }
             }
         }
-        got(options.url, options)
+        got(options)
             .then(responseCallback)
             .catch(err => {
                 // do not show the error; relies on 3rd party endpoint
@@ -127,7 +127,7 @@ export class VersionManager {
                 }
             }
         }
-        got(options.url, options)
+        got(options)
             .then(responseCallback)
             .catch(err => {
                 // do not show the error; relies on 3rd party endpoint

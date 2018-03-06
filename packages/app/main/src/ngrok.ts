@@ -140,7 +140,7 @@ function runNgrok(opts, cb) {
 			api = (options) => {
 				const urlCombined = `${inspectUrl}/${options.url}`;
 				options = Object.assign(options, {json: true, url: urlCombined, useElectronNet: true});
-				return got(options.url, options);
+				return got(options);
 			}
 
 			cb();
