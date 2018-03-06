@@ -24,5 +24,5 @@ gulp.task('copy:media', function () {
 gulp.task('copy', gulp.parallel(
   'copy:media',
   'copy:webchat:cognitiveservices',
-  'copy:webchat:css',
+  'copy:webchat:css'
 ));
