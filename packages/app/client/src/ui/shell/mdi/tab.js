@@ -40,84 +40,86 @@ import * as EditorActions from './../../../data/action/editorActions';
 import * as Constants from '../../../constants';
 
 class Tab extends React.Component {
-    constructor(props, context) {
-        super(props, context);
+  constructor(props, context) {
+    super(props, context);
 
-        this.onDragStart = this.onDragStart.bind(this);
-        this.onDragOver = this.onDragOver.bind(this);
-        this.onDragEnter = this.onDragEnter.bind(this);
-        this.onDragLeave = this.onDragLeave.bind(this);
-        this.onDrop = this.onDrop.bind(this);
-        this.onDragEnd = this.onDragEnd.bind(this);
+    this.onDragStart = this.onDragStart.bind(this);
+    this.onDragOver = this.onDragOver.bind(this);
+    this.onDragEnter = this.onDragEnter.bind(this);
+    this.onDragLeave = this.onDragLeave.bind(this);
+    this.onDrop = this.onDrop.bind(this);
+    this.onDragEnd = this.onDragEnd.bind(this);
 
-        this.state = {};
+    this.state = {};
+  }
+
+  onDragStart(e) {
+    const dragData = {
+      tabId: this.props.documentId,
+      editorKey: this.props.owningEditor
+    };
+    e.dataTransfer.setData('application/json', JSON.stringify(dragData));
+    this.props.dispatch(EditorActions.toggleDraggingTab(true));
+  }
+
+  onDragEnd(e) {
+    this.props.dispatch(EditorActions.toggleDraggingTab(false));
+  }
+
+  onDragOver(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    this.setState(({ draggedOver: true }));
+  }
+
+  onDragEnter(e) {
+    e.preventDefault();
+  }
+
+  onDragLeave(e) {
+    this.setState(({ draggedOver: false }));
+  }
+
+  onDrop(e) {
+    const tabData = JSON.parse(e.dataTransfer.getData('application/json'));
+
+    // only swap the tabs if they are different
+    if (tabData.tabId !== this.props.documentId) {
+      this.props.dispatch(EditorActions.swapTabs(tabData.editorKey, this.props.owningEditor, tabData.tabId, this.props.documentId));
     }
 
-    onDragStart(e) {
-        const dragData = {
-            tabId: this.props.documentId,
-            editorKey: this.props.owningEditor
-        };
-        e.dataTransfer.setData('application/json', JSON.stringify(dragData));
-        this.props.dispatch(EditorActions.toggleDraggingTab(true));
+    this.setState(({ draggedOver: false }));
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  render() {
+    let tabClassName = '';
+    if (this.props.active) {
+      tabClassName += ' active-editor-tab';
+    } else if (this.state.draggedOver) {
+      tabClassName += ' dragged-over-editor-tab';
     }
 
-    onDragEnd(e) {
-        this.props.dispatch(EditorActions.toggleDraggingTab(false));
-    }
-
-    onDragOver(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        this.setState(({ draggedOver: true }));
-    }
-
-    onDragEnter(e) {
-        e.preventDefault();
-    }
-
-    onDragLeave(e) {
-        this.setState(({ draggedOver: false }));
-    }
-
-    onDrop(e) {
-        const tabData = JSON.parse(e.dataTransfer.getData('application/json'));
-
-        // only swap the tabs if they are different
-        if (tabData.tabId !== this.props.documentId) {
-            this.props.dispatch(EditorActions.swapTabs(tabData.editorKey, this.props.owningEditor, tabData.tabId, this.props.documentId));
-        }
-
-        this.setState(({ draggedOver: false }));
-        e.preventDefault();
-        e.stopPropagation();
-    }
-
-    render() {
-        let tabClassName = '';
-        if (this.props.active) {
-            tabClassName += ' active-editor-tab';
-        } else if (this.state.draggedOver) {
-            tabClassName += ' dragged-over-editor-tab';
-        }
-
-        return (
-            <div className={ TAB_CSS + tabClassName } draggable
-                onDragOver={ this.onDragOver } onDragEnter={ this.onDragEnter } onDragStart={ this.onDragStart }
-                onDrop={ this.onDrop } onDragLeave={ this.onDragLeave } onDragEnd={ this.onDragEnd }>
-                <span className="editor-tab-icon"></span>
-                <span>{ this.props.title }</span>
-                <span className="editor-tab-close" onClick={ this.props.onCloseClick }></span>
-            </div>
-        );
-    }
+    return (
+      <div className={ TAB_CSS + tabClassName } draggable
+        onDragOver={ this.onDragOver } onDragEnter={ this.onDragEnter } onDragStart={ this.onDragStart }
+        onDrop={ this.onDrop } onDragLeave={ this.onDragLeave } onDragEnd={ this.onDragEnd }>
+        <span className="editor-tab-icon"></span>
+        <span>{ this.props.title }</span>
+        { this.props.dirty ? <span>*</span> : null }
+        <span className="editor-tab-close" onClick={ this.props.onCloseClick }></span>
+      </div>
+    );
+  }
 }
 
 export default connect((state, ownProps) => ({}))(Tab);
 
 Tab.propTypes = {
-    owningEditor: PropTypes.oneOf([
-        Constants.EditorKey_Primary,
-        Constants.EditorKey_Secondary
-    ])
+  owningEditor: PropTypes.oneOf([
+    Constants.EditorKey_Primary,
+    Constants.EditorKey_Secondary
+  ]),
+  dirty: PropTypes.bool
 };

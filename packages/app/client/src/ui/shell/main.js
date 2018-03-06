@@ -128,18 +128,18 @@ export class Main extends React.Component {
     return (
       <div className={ CSS }>
         <div className={ NAV_CSS }>
-        <NavBar/>
-        <div className="workbench">
-          <Splitter orientation={ 'vertical' } primaryPaneIndex={ 0 } minSizes={{ 0: 40, 1: 40 }} initialSizes={{ 0: 300 }}>
-            <ExplorerBar />
-            <Splitter orientation={ 'vertical' }>
-            {
-              [primaryEditor, secondaryEditor].filter(elem => !!elem)
-            }
+          <NavBar/>
+          <div className="workbench">
+            <Splitter orientation={ 'vertical' } primaryPaneIndex={ 0 } minSizes={{ 0: 40, 1: 40 }} initialSizes={{ 0: 300 }}>
+              <ExplorerBar />
+              <Splitter orientation={ 'vertical' }>
+              {
+                [primaryEditor, secondaryEditor].filter(elem => !!elem)
+              }
+              </Splitter>
             </Splitter>
-          </Splitter>
-        </div>
-        <TabManager disabled={ false } />
+          </div>
+          <TabManager disabled={ false } />
       </div>
       <StatusBar />
       </div>

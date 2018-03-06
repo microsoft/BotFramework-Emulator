@@ -52,7 +52,7 @@ export class TestBedTab extends React.Component {
     render() {
         return(
             <GenericTab active={ this.props.active } title={ this.props.title } onCloseClick={ this.onCloseClick }
-                documentId={ this.props.documentId } owningEditor={ this.props.owningEditor } />
+                documentId={ this.props.documentId } owningEditor={ this.props.owningEditor } dirty={ this.props.dirty } />
         );
     }
 }

@@ -23,11 +23,11 @@ export const CommandRegistry: ICommandRegistry = new class implements ICommandRe
 
     this._commands[id] = idOrCommand;
 
+    const dispose = () => delete this._commands[id];
+
     return {
-      dispose() {
-        delete this._commands[id];
-      }
-    }
+      dispose
+    };
   }
 
   getCommand(id: string): ICommand {

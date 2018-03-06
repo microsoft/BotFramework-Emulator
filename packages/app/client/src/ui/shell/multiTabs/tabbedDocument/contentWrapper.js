@@ -45,63 +45,63 @@ import * as Constants from '../../../../constants';
 import InsetShadow from '../../../layout/insetShadow';
 
 const CSS = css({
-    position: 'relative',
-    height: '100%',
-    width: '100%',
-    overflow: 'auto'
+  position: 'relative',
+  height: '100%',
+  width: '100%',
+  overflow: 'auto'
 });
 
 export class TabbedDocumentContentWrapper extends React.Component {
-    constructor(props, context) {
-        super(props, context);
+  constructor(props, context) {
+    super(props, context);
 
-        this.onClick = this.onClick.bind(this);
+    this.onClick = this.onClick.bind(this);
+  }
+
+  onClick(e) {
+    if (this.props.owningEditor !== this.props.activeEditor) {
+      this.props.dispatch(EditorActions.setActiveEditor(this.props.owningEditor));
     }
+  }
 
-    onClick(e) {
-        if (this.props.owningEditor !== this.props.activeEditor) {
-            this.props.dispatch(EditorActions.setActiveEditor(this.props.owningEditor));
+  render() {
+    const onlyOneEditorActive = this.props.primaryEditor && !this.props.secondaryEditor;
+    const splittingEnabled = onlyOneEditorActive && this.props.primaryEditor.documents && this.props.primaryEditor.documents.length > 1;
+
+    return (
+      <div className={ CSS } onClickCapture={ this.onClick }>
+        { this.props.children }
+        <ContentOverlay owningEditor={ this.props.owningEditor } />
+        {
+          splittingEnabled ?
+            <React.Fragment>
+              <LeftContentOverlay />
+              <RightContentOverlay />
+            </React.Fragment>
+          :
+            null
         }
-    }
-
-    render() {
-        const onlyOneEditorActive = this.props.primaryEditor && !this.props.secondaryEditor;
-        const splittingEnabled = onlyOneEditorActive && this.props.primaryEditor.documents && this.props.primaryEditor.documents.length > 1;
-
-        return (
-            <div className={ CSS } onClickCapture={ this.onClick }>
-                { this.props.children }
-                <ContentOverlay owningEditor={ this.props.owningEditor } />
-                {
-                    splittingEnabled ?
-                        <React.Fragment>
-                            <LeftContentOverlay />
-                            <RightContentOverlay />
-                        </React.Fragment>
-                    :
-                        null
-                }
-                <InsetShadow top={ true } />
-            </div>
-        );
-    }
+        <InsetShadow top={ true } />
+      </div>
+    );
+  }
 }
 
 export default connect((state, ownProps) => ({
-    activeEditor: state.editor.activeEditor,
-    primaryEditor: state.editor.editors[Constants.EditorKey_Primary],
-    secondaryEditor: state.editor.editors[Constants.EditorKey_Secondary]
+  activeEditor: state.editor.activeEditor,
+  primaryEditor: state.editor.editors[Constants.EditorKey_Primary],
+  secondaryEditor: state.editor.editors[Constants.EditorKey_Secondary]
 }))(TabbedDocumentContentWrapper);
 
 TabbedDocumentContentWrapper.propTypes = {
-    activeEditor: PropTypes.oneOf([
-        Constants.EditorKey_Primary,
-        Constants.EditorKey_Secondary
-    ]),
-    owningEditor: PropTypes.oneOf([
-        Constants.EditorKey_Primary,
-        Constants.EditorKey_Secondary
-    ]),
-    primaryEditor: PropTypes.object,
-    secondaryEditor: PropTypes.object
+  activeEditor: PropTypes.oneOf([
+    Constants.EditorKey_Primary,
+    Constants.EditorKey_Secondary
+  ]),
+  owningEditor: PropTypes.oneOf([
+    Constants.EditorKey_Primary,
+    Constants.EditorKey_Secondary
+  ]),
+  primaryEditor: PropTypes.object,
+  secondaryEditor: PropTypes.object
 };

@@ -32,21 +32,31 @@
 //
 
 import React from 'react';
+import { connect } from 'react-redux';
 
-import * as Constants from '../../../constants';
+import * as EditorActions from '../../../data/action/editorActions';
 import GenericTab from './genericTab';
-import EmulatorTab from './emulatorTab';
-import TestBedTab from './testBedTab';
 
-export default props =>
-  props.document.contentType === Constants.ContentType_LiveChat ?
-    <EmulatorTab documentId={ props.document.documentId } owningEditor={ props.owningEditor } dirty={ props.document.dirty } />
-  : props.document.contentType === Constants.ContentType_TestBed ?
-    <TestBedTab documentId={ props.document.documentId } owningEditor={ props.owningEditor } dirty={ props.document.dirty } />
-  : props.document.contentType === Constants.ContentType_BotSettings ?
-    <GenericTab documentId={ props.document.documentId } owningEditor={ props.owningEditor } title={ "Bot Settings" } dirty={ props.document.dirty } />
-  : props.document.contentType === Constants.ContentType_WelcomePage ?
-    <GenericTab documentId={ props.document.documentId } owningEditor={ props.owningEditor } title={ "Welcome" } dirty={ props.document.dirty } />
-  : props.document.contentType === Constants.ContentType_AppSettings ?
-    <GenericTab documentId={ props.document.documentId } owningEditor={ props.owningEditor } title={ "App Settings" } dirty={ props.document.dirty } />
-  : false
+export class BotSettingsTab extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+
+        this.onCloseClick = this.onCloseClick.bind(this);
+    }
+
+    onCloseClick(e) {
+        e.stopPropagation();
+        this.props.dispatch(EditorActions.close(this.props.owningEditor, this.props.documentId));
+    }
+
+    render() {
+        return(
+            <GenericTab active={ this.props.active } title={ this.props.documentId } onCloseClick={ this.onCloseClick }
+                documentId={ this.props.documentId } owningEditor={ this.props.owningEditor } dirty={ this.props.dirty } />
+        );
+    }
+}
+
+export default connect((state, { documentId, owningEditor }) => ({
+    active: state.editor.editors[state.editor.activeEditor].activeDocumentId === documentId
+}))(BotSettingsTab);

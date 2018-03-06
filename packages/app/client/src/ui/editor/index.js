@@ -34,7 +34,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import * as constants from '../../constants';
+import * as Constants from '../../constants';
+import AppSettingsEditor from './appSettingsEditor';
 import BotSettingsEditor from './botSettingsEditor';
 import Emulator from './emulator';
 import TestBedEditor from './testBedEditor';
@@ -46,13 +47,15 @@ export default class EditorFactory extends React.Component {
     const { contentType } = document;
 
     return (
-      contentType === constants.ContentType_LiveChat ?
-        <Emulator documentId={document.documentId} />
-        : contentType === constants.ContentType_TestBed ?
-        <TestBedEditor />
-        : contentType === constants.ContentType_BotSettings ?
-        <BotSettingsEditor id={ document.meta } documentId={ document.documentId } />
-        : contentType === constants.ContentType_WelcomePage ?
+      contentType === Constants.ContentType_LiveChat ?
+        <Emulator documentId={document.documentId} dirty={ this.props.document.dirty } />
+        : contentType === Constants.ContentType_TestBed ?
+        <TestBedEditor dirty={ this.props.document.dirty } />
+        : contentType === Constants.ContentType_BotSettings ?
+        <BotSettingsEditor id={ document.meta } documentId={ document.documentId } dirty={ this.props.document.dirty } />
+        : contentType === Constants.ContentType_AppSettings ?
+        <AppSettingsEditor documentId={ document.documentId } dirty={ this.props.document.dirty } />
+        : contentType === Constants.ContentType_WelcomePage ?
         <WelcomePage />
         : false
     );
@@ -62,6 +65,8 @@ export default class EditorFactory extends React.Component {
 EditorFactory.propTypes = {
   document: PropTypes.shape({
     contentType: PropTypes.string,
-    documentId: PropTypes.string
+    documentId: PropTypes.string,
+    meta: PropTypes.any,
+    dirty: PropTypes.bool
   })
 };

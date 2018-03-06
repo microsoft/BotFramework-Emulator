@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+export const ContentType_AppSettings = 'application/vnd.microsoft.bfemulator.document.appsettings';
 export const ContentType_WelcomePage = 'application/vnd.microsoft.bfemulator.document.welcome';
 export const ContentType_BotSettings = 'application/vnd.microsoft.bfemulator.document.botsettings';
 export const ContentType_Transcript = 'application/vnd.microsoft.bfemulator.document.transcript';
@@ -53,3 +54,5 @@ export const EditorKeys = [
   EditorKey_Primary,
   EditorKey_Secondary
 ];
+
+export const DocumentId_AppSettings = 'app:settings';

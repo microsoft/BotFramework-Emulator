@@ -33,7 +33,9 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
+import * as Constants from '../../../constants';
 import * as EditorActions from '../../../data/action/editorActions';
 import Tab from './tab';
 
@@ -52,10 +54,18 @@ class GenericTab extends React.Component {
   render() {
     return (
       <Tab active={ this.props.active } title={ this.props.title } onCloseClick={ this.onCloseClick }
-        documentId={ this.props.documentId } owningEditor={ this.props.owningEditor } />
+        documentId={ this.props.documentId } owningEditor={ this.props.owningEditor } dirty={ this.props.dirty } />
     );
   }
 }
+
+GenericTab.propTypes = {
+  owningEditor: PropTypes.oneOf([
+      Constants.EditorKey_Primary,
+      Constants.EditorKey_Secondary
+  ]),
+  dirty: PropTypes.bool
+};
 
 export default connect((state, { documentId, owningEditor }) => ({
   active: state.editor.editors[state.editor.activeEditor].activeDocumentId === documentId

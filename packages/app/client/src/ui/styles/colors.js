@@ -52,12 +52,13 @@ export const C18 = '#CE9178';
 export const C19 = '#B5CEA8';
 export const C20 = '#569CD6';
 export const C21 = '#F4E321';
-export const C22 = '#4080d0';
+export const C22 = '#9E9E9E';
+export const C23 = '#4080D0';
 
 export const APP_BACKGROUND_DARK = C8;
 export const APP_FOREGROUND_DARK = C2;
-export const APP_HYPERLINK_FOREGROUND_DARK = C22;
-export const APP_HYPERLINK_HOVER_DARK = C22;
+export const APP_HYPERLINK_FOREGROUND_DARK = C23;
+export const APP_HYPERLINK_HOVER_DARK = C23;
 
 export const SPLITTER_BACKGROUND_DARK = 'transparent';
 
@@ -115,4 +116,6 @@ export const JSON_FORMATTING_NUMBER_DARK = C19;
 export const JSON_FORMATTING_BOOLEAN_DARK = C20;
 export const JSON_FORMATTING_NULL_DARK = C20;
 
-export const SHADOW_COLOR = 'rgba(0,0,0,0.6)';
+export const SHADOW_COLOR_DARK = 'rgba(0,0,0,0.6)';
+
+export const LOGO_FOREGROUND_DARK = C10;

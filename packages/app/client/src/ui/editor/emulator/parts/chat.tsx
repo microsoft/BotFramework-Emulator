@@ -40,7 +40,7 @@ import state from '../state';
 import store from '../../../../data/store';
 import * as ChatActions from '../../../../data/action/chatActions';
 import * as Colors from '../../../styles/colors';
-import PrimaryButton from '../../../shell/explorer/botExplorer/primaryButton';
+import PrimaryButton from '../../../widget/primaryButton';
 
 const CSS = css({
   backgroundColor: 'white',

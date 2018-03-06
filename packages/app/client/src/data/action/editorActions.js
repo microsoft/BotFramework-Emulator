@@ -34,6 +34,7 @@
 export const APPEND_TAB = 'EDITOR/APPEND_TAB';
 export const CLOSE = 'EDITOR/CLOSE';
 export const CLOSE_ALL = 'EDITOR/CLOSE_ALL';
+export const SET_DIRTY_FLAG = 'EDITOR/SET_DIRTY_FLAG';
 export const OPEN = 'EDITOR/OPEN';
 export const SET_ACTIVE_TAB = 'EDITOR/SET_ACTIVE_TAB';
 export const SET_ACTIVE_EDITOR = 'EDITOR/SET_ACTIVE_EDITOR';
@@ -67,6 +68,16 @@ export function closeNonGlobalTabs() {
     type: CLOSE_ALL,
     payload: {
       includeGlobal: false
+    }
+  };
+}
+
+export function setDirtyFlag(documentId, dirty) {
+  return {
+    type: SET_DIRTY_FLAG,
+    payload: {
+      documentId,
+      dirty
     }
   };
 }

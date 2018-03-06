@@ -1,17 +1,18 @@
 import * as Electron from 'electron';
 import { emulator } from './emulator';
 import { Window } from './platform/window';
-import { IBot, newBot, CommandRegistry, uniqueId } from '@bfemulator/app-shared';
+import { IBot, IFrameworkSettings, newBot, CommandRegistry, uniqueId } from '@bfemulator/app-shared';
 import { ensureStoragePath, readFileSync, showOpenDialog, writeFile, getSafeBotName } from './utils';
 import * as BotActions from './data-v2/action/bot';
 import { app } from 'electron';
+import { getSettings, dispatch } from './settings';
 
 //=============================================================================
 export function registerCommands() {
   //
   // TODO: Move related commands out to own files.
   //
-  
+
   //---------------------------------------------------------------------------
   // Load bots from file system
   CommandRegistry.registerCommand('bot:list:load', (context: Window, ...args: any[]): any => {
@@ -58,12 +59,6 @@ export function registerCommands() {
   // Delete a bot
   CommandRegistry.registerCommand('bot:list:delete', (context: Window, id: string): any => {
     context.store.dispatch(BotActions.deleteBot(id));
-  });
-
-  //---------------------------------------------------------------------------
-  // Show explorer prompt to set a local path for a bot
-  CommandRegistry.registerCommand('bot:settings:chooseFolder', (context: Window, ...args: any[]): any => {
-    return showOpenDialog({ title: 'Choose a folder for your bot', buttonLabel: 'Choose folder', properties: ['openDirectory', 'promptToCreate'] });
   });
 
   //---------------------------------------------------------------------------
@@ -130,5 +125,26 @@ export function registerCommands() {
       context.browserWindow.setTitle(`${app.getName()} - ${text}`);
     else
       context.browserWindow.setTitle(app.getName());
+  });
+
+  //---------------------------------------------------------------------------
+  // Saves global app settings
+  CommandRegistry.registerCommand('app:settings:save', (context: Window, settings: IFrameworkSettings): any => {
+    dispatch({
+      type: 'Framework_Set',
+      state: settings
+    });
+  });
+
+  //---------------------------------------------------------------------------
+  // Get and return app settings from store
+  CommandRegistry.registerCommand('app:settings:load', (context: Window, ...args: any[]): IFrameworkSettings => {
+    return getSettings().framework;
+  });
+
+  //---------------------------------------------------------------------------
+  // Shows an open dialog and returns a path
+  CommandRegistry.registerCommand('shell:showOpenDialog', (context: Window, dialogOptions: Electron.OpenDialogOptions = {}): any => {
+    return showOpenDialog(dialogOptions);
   });
 }

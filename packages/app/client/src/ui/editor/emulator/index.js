@@ -119,5 +119,6 @@ export default connect((state, { documentId }) => ({
 
 
 Emulator.propTypes = {
-  documentId: PropTypes.string.isRequired
+  documentId: PropTypes.string.isRequired,
+  dirty: PropTypes.bool
 };

@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CommandRegistry } from '@bfemulator/app-shared';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
 import classNames from 'classnames';
@@ -40,7 +39,8 @@ import React from 'react';
 import * as Colors from '../../styles/colors';
 import * as Constants from '../../../constants';
 import * as NavBarActions from '../../../data/action/navBarActions';
-import Button from './button';
+import * as EditorActions from '../../../data/action/editorActions';
+import { CommandRegistry } from '@bfemulator/app-shared';
 import InsetShadow from '../../layout/insetShadow';
 
 const CSS = css({
@@ -139,7 +139,7 @@ class NavBar extends React.Component {
     this.handleFilesClick = this.handleClick.bind(this, Constants.NavBar_Files);
     this.handleNotificationsClick = this.handleClick.bind(this, Constants.NavBar_Notifications);
     this.handleServicesClick = this.handleClick.bind(this, Constants.NavBar_Services);
-    this.handleSettingsClick = this.handleClick.bind(this, Constants.NavBar_Settings);
+    this.handleSettingsClick = this.handleSettingsClick.bind(this);
     this.handleUserClick = this.handleClick.bind(this, Constants.NavBar_User);
   }
 
@@ -166,6 +166,10 @@ class NavBar extends React.Component {
 
   handleClick(selection) {
     this.props.dispatch(NavBarActions.selectOrToggle(selection));
+  }
+
+  handleSettingsClick(e) {
+    this.props.dispatch(EditorActions.open(Constants.ContentType_AppSettings, Constants.DocumentId_AppSettings, true, null));
   }
 
   render() {

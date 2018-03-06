@@ -183,8 +183,9 @@ export default function documents(state = DEFAULT_STATE, action) {
           {
             documentId: action.payload.documentId,
             contentType: action.payload.contentType,
-            isGlobal: action.payload.isGlobal || false,
-            meta: action.payload.meta || null
+            meta: action.payload.meta || null,
+            dirty: false,
+            isGlobal: action.payload.isGlobal || false
           }
         ];
 
@@ -217,6 +218,27 @@ export default function documents(state = DEFAULT_STATE, action) {
           };
           state = setEditorState(editorKey, editorState, state);
           state = setActiveEditor(editorKey, state);
+        }
+      });
+      break;
+    }
+
+    case EditorActions.SET_DIRTY_FLAG: {
+      Constants.EditorKeys.forEach(editorKey => {
+        if (state.editors[editorKey]) {
+          let docs = [...state.editors[editorKey].documents];
+          let docIndex = docs.findIndex(doc => doc.documentId === action.payload.documentId);
+          let newDoc = {
+            ...docs[docIndex],
+            dirty: action.payload.dirty
+          }
+          docs[docIndex] = newDoc;
+
+          let editorState = {
+            ...state.editors[editorKey],
+            documents: docs
+          };
+          state = setEditorState(editorKey, editorState, state);
         }
       });
       break;

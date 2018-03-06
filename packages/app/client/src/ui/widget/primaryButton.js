@@ -1,8 +1,8 @@
 import React from 'react';
 import { css } from 'glamor';
 
-import * as Colors from '../../../styles/colors';
-import * as Fonts from '../../../styles/fonts';
+import * as Colors from '../styles/colors';
+import * as Fonts from '../styles/fonts';
 
 const CSS = css({
   backgroundColor: Colors.C10,
@@ -16,6 +16,7 @@ const CSS = css({
   overflow: 'hidden',
   display: 'inline-block',
   width: 'auto',
+  minWidth: '120px',
 
   '&:hover': {
     backgroundColor: Colors.C11
@@ -27,11 +28,16 @@ const CSS = css({
 
   '&:active': {
     backgroundColor: Colors.C12
+  },
+
+  '&:disabled': {
+    backgroundColor: Colors.C2,
+    color: Colors.C22
   }
 });
 
 // TODO: Move to packages/ui-react unless we start using Fabric
 export default props => {
   const buttonClass = props.buttonClass ? ` ${props.buttonClass}` : '';
-  return <button className={ CSS + buttonClass } onClick={ props.onClick }>{ props.text }</button>;
+  return <button className={ CSS + buttonClass } onClick={ props.onClick } disabled={ props.disabled }>{ props.text }</button>;
 }

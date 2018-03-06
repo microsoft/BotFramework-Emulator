@@ -39,7 +39,7 @@ import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCo
 import * as Colors from '../../styles/colors';
 import { CommandService } from '../../../platform/commands/commandService';
 import * as Constants from '../../../constants';
-import PrimaryButton from './botExplorer/primaryButton';
+import PrimaryButton from '../../widget/primaryButton';
 
 const CSS = css({
   backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,

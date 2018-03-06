@@ -46,70 +46,68 @@ import * as Constants from '../../../constants';
 import { getBotDisplayName } from '@bfemulator/app-shared';
 
 class MDI extends React.Component {
-    constructor(props, context) {
-        super(props, context);
+  constructor(props, context) {
+    super(props, context);
 
-        this.handleTabChange = this.handleTabChange.bind(this);
+    this.handleTabChange = this.handleTabChange.bind(this);
+  }
+
+  handleTabChange(tabValue) {
+    this.props.dispatch(EditorActions.setActiveTab(this.props.documents[tabValue].documentId));
+  }
+
+  componentWillMount() {
+    this._openBotSettingsCommandHandler = CommandRegistry.registerCommand('bot:settings:open', (context, bot) => {
+      this.props.dispatch(EditorActions.open(Constants.ContentType_BotSettings, "Bot Settings", false, bot.id));
+    });
+  }
+
+  componentWillUnmount() {
+    if (this._openBotSettingsCommandHandler) {
+      this._openBotSettingsCommandHandler.dispose();
     }
+  }
 
-    handleTabChange(tabValue) {
-        this.props.dispatch(EditorActions.setActiveTab(this.props.documents[tabValue].documentId));
-    }
+  render() {
+    const activeIndex = this.props.documents.findIndex(document => document.documentId === this.props.activeDocumentId);
 
-    componentWillMount() {
-      this._openBotSettingsCommandHandler = CommandRegistry.registerCommand('bot:settings:open', (context, bot) => {
-        this.props.dispatch(EditorActions.open(Constants.ContentType_BotSettings, "Bot Settings", false, bot.id));
-      });
-    }
-
-    componentWillUnmount() {
-      if (this._openBotSettingsCommandHandler) {
-        try {
-          this._openBotSettingsCommandHandler.dispose();
-        } catch (e) {}
-      }
-    }
-
-    render() {
-        const activeIndex = this.props.documents.findIndex(document => document.documentId === this.props.activeDocumentId);
-
-        return (
-            <MultiTabs
-                onChange={ this.handleTabChange }
-                value={ ~activeIndex ? activeIndex : 0 }
-                owningEditor={ this.props.owningEditor }
-            >
-                {
-                    this.props.documents.map(document =>
-                        <TabbedDocument key={ document.documentId }>
-                            <TabbedDocumentTab>
-                                <TabFactory document={ document } owningEditor={ this.props.owningEditor } />
-                            </TabbedDocumentTab>
-                            <TabbedDocumentContent owningEditor={ this.props.owningEditor }>
-                                <EditorFactory document={ document } />
-                            </TabbedDocumentContent>
-                        </TabbedDocument>
-                    )
-                }
-            </MultiTabs>
-        );
-    }
+    return (
+      <MultiTabs
+        onChange={ this.handleTabChange }
+        value={ ~activeIndex ? activeIndex : 0 }
+        owningEditor={ this.props.owningEditor }
+      >
+        {
+          this.props.documents.map(document =>
+            <TabbedDocument key={ document.documentId }>
+              <TabbedDocumentTab>
+                <TabFactory document={ document } owningEditor={ this.props.owningEditor } />
+              </TabbedDocumentTab>
+              <TabbedDocumentContent owningEditor={ this.props.owningEditor }>
+                <EditorFactory document={ document } />
+              </TabbedDocumentContent>
+            </TabbedDocument>
+          )
+        }
+      </MultiTabs>
+    );
+  }
 }
 
 export default connect((state, { owningEditor }) => ({
-    activeDocumentId: state.editor.editors[owningEditor].activeDocumentId,
-    documents: state.editor.editors[owningEditor].documents,
-    activeEditor: state.editor.activeEditor
+  activeDocumentId: state.editor.editors[owningEditor].activeDocumentId,
+  documents: state.editor.editors[owningEditor].documents,
+  activeEditor: state.editor.activeEditor
 }))(MDI)
 
 MDI.propTypes = {
-    activeDocumentId: PropTypes.string,
-    documents: PropTypes.arrayOf(
-        PropTypes.shape({
-            documentId: PropTypes.string,
-            contentType: PropTypes.string
-        })
-    ),
-    activeEditor: PropTypes.string,
-    owningEditor: PropTypes.string
+  activeDocumentId: PropTypes.string,
+  documents: PropTypes.arrayOf(
+    PropTypes.shape({
+      documentId: PropTypes.string,
+      contentType: PropTypes.string
+    })
+  ),
+  activeEditor: PropTypes.string,
+  owningEditor: PropTypes.string
 };

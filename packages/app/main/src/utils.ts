@@ -137,7 +137,6 @@ export const showOpenDialog = (options: OpenDialogOptions) => {
   });
 }
 
-
 /** Scans the list of all bots to generate a bot name with a number one higher than the highest value found */
 export function getSafeBotName(): string {
   const state = mainWindow.store.getState();

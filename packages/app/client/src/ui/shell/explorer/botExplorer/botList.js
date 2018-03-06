@@ -6,7 +6,10 @@ import PropTypes from 'prop-types';
 import { BotListItem } from './botListItem';
 import { fuzzysearch } from '../../../utils/fuzzySearch';
 import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../../layout/expandCollapse';
-import PrimaryButton from './primaryButton';
+import PrimaryButton from '../../../widget/primaryButton';
+import { getBotDisplayName } from '@bfemulator/app-shared';
+import { getBotById, getActiveBot } from '../../../../data/botHelpers';
+import { getTabCount } from '../../../../data/editorHelpers';
 import { ActiveBotHelper } from '../../../helpers/activeBotHelper';
 
 const CSS = css({

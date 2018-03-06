@@ -32,7 +32,7 @@
 //
 
 import * as Electron from 'electron';
-import { app, Menu } from 'electron';
+import { app, Menu, OpenDialogOptions } from 'electron';
 import { getSettings, dispatch } from './settings';
 import { WindowStateAction } from './reducers/windowStateReducer';
 import * as url from 'url';
@@ -158,7 +158,7 @@ const createMainWindow = () => {
     {
       label: 'File',
       submenu: [
-        { 
+        {
           label: "New Bot",
           click: () => mainWindow.commandService.remoteCall('bot:create')
         },

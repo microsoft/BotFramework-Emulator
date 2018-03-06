@@ -1,7 +1,7 @@
 import { css } from 'glamor';
 import * as React from 'react';
 import * as Colors from '../../styles/colors';
-import PrimaryButton from '../../shell/explorer/botExplorer/primaryButton';
+import PrimaryButton from '../../widget/primaryButton';
 import { CommandService } from '../../../platform/commands/commandService';
 import { hasNonGlobalTabs } from '../../../data/editorHelpers';
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
@@ -80,7 +80,7 @@ const CSS = css({
         '& .section': {
           marginBottom: '5em',
         },
-        
+
         '& .no-bots': {
           fontStyle: 'italic',
         }
