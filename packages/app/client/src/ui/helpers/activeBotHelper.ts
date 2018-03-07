@@ -49,7 +49,7 @@ export const ActiveBotHelper = new class {
                 this.setActiveBot(bot.id);
 
                 // open bot settings and switch to explorer view
-                store.dispatch(NavBarActions.selectOrToggle(Constants.NavBar_Files));
+                store.dispatch(NavBarActions.select(Constants.NavBar_Files));
                 store.dispatch(EditorActions.open(Constants.ContentType_BotSettings, "Bot Settings", false, bot.id));
               });
             })
@@ -69,7 +69,7 @@ export const ActiveBotHelper = new class {
           this.setActiveBot(id)
             .then(() => {
               CommandService.call('livechat:new');
-              store.dispatch(NavBarActions.selectOrToggle(Constants.NavBar_Files));
+              store.dispatch(NavBarActions.select(Constants.NavBar_Files));
             })
         }
       })

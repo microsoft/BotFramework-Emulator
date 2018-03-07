@@ -1,3 +1,4 @@
+//
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 //
@@ -31,67 +32,39 @@
 //
 
 import { css } from 'glamor';
-import React from 'react';
-import { connect } from 'react-redux';
+import * as React from 'react';
 
-import { CommandService } from '../../../platform/commands/commandService';
-import { getBotDisplayName } from '@bfemulator/app-shared';
-import { getBotById } from '../../../data/botHelpers';
+import * as Colors from '../../styles/colors';
 
 const CSS = css({
-  padding: '8px 16px',
+  backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
   display: 'flex',
-  flexFlow: 'row nowrap',
-  alignItems: 'center',
-  flexShrink: 0,
+  flexFlow: 'column nowrap',
+  height: '100%',
+  overflow: 'hidden',
+  listStyleType: 'none',
+  margin: 0,
+  padding: 0,
 
-  '& > header': {
-    fontSize: '13px',
-    lineHeight: '24px',
-    height: '24px',
-    textTransform: 'uppercase',
-    whiteSpace: 'nowrap',
-  },
-
-  '& > span.bot-settings-icon': {
-    display: 'inline-block',
-    marginLeft: 'auto',
-    background: "url('./external/media/ic_settings.svg') no-repeat 50% 50%",
-    backgroundSize: '16px',
-    width: '24px',
-    height: '24px',
-    cursor: 'pointer'
+  '& > li': {
+    display: 'flex',
+    flexDirection: 'column',
+    overflow: 'hidden',
+    flex: '0 1 auto',
+    maxHeight: '100%'
   }
 });
 
-class ExplorerBarTitle extends React.Component {
-  constructor(context, props) {
-    super(context, props);
-
-    this.onClickSettings = this.onClickSettings.bind(this);
-  }
-
-  onClickSettings(e) {
-    const bot = getBotById(this.props.activeBot);
-    CommandService.call('bot:settings:open', bot);
-  }
-
+export class ExplorerSet extends React.Component {
   render() {
-    const botLabel = this.props.activeBot ? getBotDisplayName(getBotById(this.props.activeBot)) : null;
-
     return (
-      <div className={ CSS }>
-        <header>
-          { botLabel }
-        </header>
-        { this.props.activeBot ? <span className="bot-settings-icon" onClick={ this.onClickSettings } /> : null }
-      </div>
+      <ul className={ CSS + ' explorer-set' }>
+        {
+          React.Children.map(this.props.children, child =>
+            <li>{ child }</li>
+          )
+        }
+      </ul>
     );
   }
 }
-
-export default connect(state => ({
-  activeBot: state.bot.activeBot,
-  bots: state.bot.bots,
-  navBar: state.navBar
-}))(ExplorerBarTitle)

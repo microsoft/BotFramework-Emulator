@@ -1,4 +1,3 @@
-//
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 //
@@ -32,39 +31,50 @@
 //
 
 import { css } from 'glamor';
-import React from 'react';
-
-import * as Colors from '../../styles/colors';
+import * as React from 'react';
+import { filterChildren } from '../../utils';
 
 const CSS = css({
-  backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
+  padding: '8px 16px',
   display: 'flex',
-  flexFlow: 'column nowrap',
-  height: '100%',
-  overflow: 'hidden',
-  listStyleType: 'none',
-  margin: 0,
-  padding: 0,
+  flexFlow: 'row nowrap',
+  alignItems: 'center',
+  flexShrink: 0,
 
-  '& > li': {
-    display: 'flex',
-    flexDirection: 'column',
-    overflow: 'hidden',
-    flex: '0 1 auto',
-    maxHeight: '100%'
+  '& > header': {
+    fontSize: '13px',
+    lineHeight: '24px',
+    height: '24px',
+    textTransform: 'uppercase',
+    whiteSpace: 'nowrap',
+  },
+
+  '& > span.accessory': {
+    display: 'inline-block',
+    marginLeft: 'auto',
+    width: '24px',
+    height: '24px',
+    cursor: 'pointer'
+  },
+
+  '& > span.bot-settings-icon': {
+    background: "url('./external/media/ic_settings.svg') no-repeat 50% 50%",
+    backgroundSize: '16px',
   }
 });
 
-export default class ExplorerSet extends React.Component {
+export class ExplorerBarHeader extends React.Component {
   render() {
     return (
-      <ul className={ CSS + ' explorer-set' }>
-        {
-          React.Children.map(this.props.children, child =>
-            <li>{ child }</li>
-          )
-        }
-      </ul>
+      <div className={ CSS as any }>
+        <header>
+          { filterChildren(this.props.children, child => child.type === Title) }
+        </header>
+        { filterChildren(this.props.children, child => child.type === Accessories) }
+      </div>
     );
   }
 }
+
+export const Title = props => props.children;
+export const Accessories = props => props.children;

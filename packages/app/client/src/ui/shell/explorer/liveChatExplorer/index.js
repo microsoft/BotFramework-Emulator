@@ -38,9 +38,9 @@ import { connect } from 'react-redux';
 import * as constants from '../../../../constants';
 import * as ChatActions from '../../../../data/action/chatActions';
 import * as EditorActions from '../../../../data/action/editorActions';
-import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../../layout/expandCollapse';
+import { ExpandCollapse, Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../../layout/expandCollapse';
 import * as Colors from '../../../styles/colors';
-import ExplorerItem from '../explorerItem';
+import { ExplorerItem } from '../explorerItem';
 import { CommandService } from '../../../../platform/commands/commandService';
 import store from '../../../../data/store';
 import { EXPLORER_CSS } from '../explorerStyle';
@@ -136,7 +136,7 @@ class LiveChatExplorer extends React.Component {
     return (
       <div className={ EXPLORER_CSS }>
         <ExpandCollapse
-          initialExpanded={ true }
+          expanded={ true }
           title="Live Chats"
         >
           <ExpandCollapseControls>

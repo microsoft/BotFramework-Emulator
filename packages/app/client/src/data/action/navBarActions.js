@@ -32,6 +32,7 @@
 //
 
 export const SELECT_OR_TOGGLE = 'NAVBAR/SELECT_OR_TOGGLE';
+export const SELECT = 'NAVBAR/SELECT';
 
 export function selectOrToggle(selection) {
     return {
@@ -40,4 +41,13 @@ export function selectOrToggle(selection) {
             selection
         }
     };
+}
+
+export function select(selection) {
+  return {
+      type: SELECT,
+      payload: {
+          selection
+      }
+  };
 }

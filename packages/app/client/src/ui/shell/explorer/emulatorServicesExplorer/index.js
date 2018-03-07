@@ -1,9 +1,9 @@
 import { css } from 'glamor';
 import React from 'react';
 
-import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../../layout/expandCollapse';
+import { ExpandCollapse, Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../../layout/expandCollapse';
 import * as Colors from '../../../styles/colors';
-import ExplorerItem from '../explorerItem';
+import { ExplorerItem } from '../explorerItem';
 import { EXPLORER_CSS } from '../explorerStyle';
 
 const CONVO_CSS = css({
@@ -21,7 +21,7 @@ export default class EmulatorServicesExplorer extends React.Component {
     return (
       <div className={ EXPLORER_CSS }>
         <ExpandCollapse
-          initialExpanded={ true }
+          expanded={ true }
           title="Emulator Services"
         >
           <ExpandCollapseContent key={ this.props.changeKey }>

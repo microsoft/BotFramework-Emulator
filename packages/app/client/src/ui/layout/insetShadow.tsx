@@ -1,5 +1,4 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { css } from 'glamor';
 
 import * as Shadows from '../styles/shadows';
@@ -13,7 +12,14 @@ const BASE_CSS = css({
   pointerEvents: 'none'
 });
 
-export default class InsetShadow extends React.Component {
+export interface Props {
+  top?: boolean;
+  left?: boolean;
+  bottom?: boolean;
+  right?: boolean;
+}
+
+export class InsetShadow extends React.Component<Props> {
   constructor(props, context) {
     super(props, context);
   }
@@ -34,7 +40,7 @@ export default class InsetShadow extends React.Component {
     const CSS = css(BASE_CSS, SHADOW_CSS);
 
     return (
-      <div className={ CSS + ' inset-shadow-component' } aria-hidden="true" />
+      <div className={ CSS as any + ' inset-shadow-component' } aria-hidden="true" />
     );
   }
 }

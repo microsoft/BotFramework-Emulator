@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 import { BotListItem } from './botListItem';
 import { fuzzysearch } from '../../../utils/fuzzySearch';
-import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../../layout/expandCollapse';
+import { ExpandCollapse, Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../../layout/expandCollapse';
 import PrimaryButton from '../../../widget/primaryButton';
 import { getBotDisplayName } from '@bfemulator/app-shared';
 import { getBotById, getActiveBot } from '../../../../data/botHelpers';
@@ -100,7 +100,7 @@ export class BotList extends React.Component {
 
     return (
       <React.Fragment>
-        <ExpandCollapse initialExpanded={ true } title="My Bots">
+        <ExpandCollapse expanded={ true } title="My Bots">
           <ExpandCollapseControls>
             <div className={ ACCESSORIES_CSS }>
               <div className="accessory-button create-bot-button" role="button" onClick={ this.onCreateBot } />

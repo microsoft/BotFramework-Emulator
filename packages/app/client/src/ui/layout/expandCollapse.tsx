@@ -32,12 +32,12 @@
 //
 
 import { css } from 'glamor';
-import PropTypes from 'prop-types';
-import React from 'react';
+import * as PropTypes from 'prop-types';
+import * as React from 'react';
 
 import { filterChildren } from '../utils';
 import * as Colors from '../styles/colors';
-import InsetShadow from '../layout/insetShadow';
+import { InsetShadow } from '../layout/insetShadow';
 
 const CSS = css({
   display: 'flex',
@@ -94,14 +94,23 @@ const CSS = css({
   }
 });
 
-export default class ExpandCollapse extends React.Component {
+export interface Props {
+  expanded?: boolean;
+  title?: string;
+}
+
+export interface State {
+  expanded: boolean;
+}
+
+export class ExpandCollapse extends React.Component<Props, State> {
   constructor(props, context) {
     super(props, context);
 
     this.handleTitleClick = this.handleTitleClick.bind(this);
 
     this.state = {
-      expanded: props.initialExpanded
+      expanded: props.expanded
     };
   }
 
@@ -135,14 +144,6 @@ export default class ExpandCollapse extends React.Component {
     );
   }
 }
-
-ExpandCollapse.defaultProps = {
-  initialExpanded: false
-};
-
-ExpandCollapse.propTypes = {
-  initialExpanded: PropTypes.bool
-};
 
 export const Controls = props => props.children;
 export const Content = props => props.children;

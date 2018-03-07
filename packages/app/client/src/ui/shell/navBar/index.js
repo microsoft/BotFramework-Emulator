@@ -40,7 +40,7 @@ import * as Colors from '../../styles/colors';
 import * as Constants from '../../../constants';
 import * as NavBarActions from '../../../data/action/navBarActions';
 import * as EditorActions from '../../../data/action/editorActions';
-import InsetShadow from '../../layout/insetShadow';
+import { InsetShadow } from '../../layout/insetShadow';
 import { CommandRegistry } from '../../../commands';
 
 const CSS = css({
@@ -151,8 +151,9 @@ class NavBar extends React.Component {
         case Constants.NavBar_Files:
         case Constants.NavBar_Notifications:
         case Constants.NavBar_Settings:
+        case Constants.NavBar_Services:
         case Constants.NavBar_User:
-          this.props.dispatch(NavBarActions.selectOrToggle(tabName));
+          this.props.dispatch(NavBarActions.select(tabName));
           break;
       }
     });
@@ -185,19 +186,13 @@ class NavBar extends React.Component {
           <li role="button" className="files" onClick={ this.handleFilesClick } title="Files">
             <div className={ classNames({ selected: selection === Constants.NavBar_Files }) } />
           </li>
-          <li role="button" className="analytics" onClick={ this.handleAnalyticsClick } title="Analytics">
-            <div className={ classNames({ selected: selection === Constants.NavBar_Analytics }) } />
+          <li role="button" className="services" onClick={ this.handleServicesClick } title="Services">
+            <div className={ classNames({ selected: selection === Constants.NavBar_Services }) } />
           </li>
         </ul>
         <ul className="sys">
           <li role="button" className="settings" onClick={ this.handleSettingsClick } title="Settings">
             <div className={ classNames({ selected: selection === Constants.NavBar_Settings }) } />
-          </li>
-          <li role="button" className="notifications" onClick={ this.handleNotificationsClick } title="Notifications">
-            <div className={ classNames({ selected: selection === Constants.NavBar_Notifications }) } />
-          </li>
-          <li role="button" className="user" onClick={ this.handleUserClick } title="User">
-            <div className={ classNames({ selected: selection === Constants.NavBar_User }) } />
           </li>
         </ul>
         <InsetShadow right={ true } />

@@ -36,22 +36,26 @@ import * as NavBarActions from '../action/navBarActions';
 
 
 const DEFAULT_STATE = {
-    selection: constants.NavBar_Files,
-    expanded: false
+  selection: constants.NavBar_Files,
+  expanded: false
 };
 
 export default function navBar(state = DEFAULT_STATE, action) {
-    switch (action.type) {
-        case NavBarActions.SELECT_OR_TOGGLE:
-            if (state.selection === action.payload.selection) {
-                state = { ...state, expanded: !state.expanded };
-            } else {
-                state = { ...state, selection: action.payload.selection };
-            }
-            break;
+  switch (action.type) {
+    case NavBarActions.SELECT_OR_TOGGLE:
+      if (state.selection === action.payload.selection) {
+        state = { ...state, expanded: !state.expanded };
+      } else {
+        state = { ...state, expanded: true, selection: action.payload.selection };
+      }
+      break;
 
-        default: break;
-    }
+    case NavBarActions.SELECT:
+      state = { ...state, expanded: true, selection: action.payload.selection };
+      break;
 
-    return state;
+    default: break;
+  }
+
+  return state;
 }

@@ -31,8 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import React from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { css } from 'glamor';
 import * as Colors from '../../styles/colors';
 
@@ -65,7 +64,12 @@ const CSS = css({
   },
 });
 
-export default class ExplorerItem extends React.Component {
+export interface Props {
+  active: boolean;
+  onClick?: any;
+}
+
+export class ExplorerItem extends React.Component<Props> {
   constructor(props, context) {
     super(props, context);
   }
@@ -75,12 +79,7 @@ export default class ExplorerItem extends React.Component {
       this.props.active ?
         <li className={ CSS + ' active-explorer-item' } onClick={ this.props.onClick }>{ this.props.children }</li>
         :
-        <li className={ CSS } onClick={ this.props.onClick }>{ this.props.children }</li>
+        <li className={ CSS as any } onClick={ this.props.onClick }>{ this.props.children }</li>
     );
   }
-}
-
-ExplorerItem.propTypes = {
-  active: PropTypes.bool.isRequired,
-  onClick: PropTypes.func
 }

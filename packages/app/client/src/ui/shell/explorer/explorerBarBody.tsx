@@ -1,4 +1,3 @@
-//
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 //
@@ -31,35 +30,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import React from 'react';
-import { connect } from 'react-redux';
+import * as React from 'react';
 
-import ExplorerSet from './explorerSet';
-import LiveChatExplorer from './liveChatExplorer';
-import BotNotOpenExplorer from './botNotOpenExplorer';
-import TranscriptExplorer from './transcriptExplorer';
-import EmulatorServicesExplorer from './emulatorServicesExplorer';
-import PortalsExplorer from './portalsExplorer';
+import { ExplorerSet } from './explorerSet';
 
-class AssetExplorerSet extends React.Component {
+export class ExplorerBarBody extends React.Component {
   render() {
-    if (this.props.activeBot) {
-      return (
-        <ExplorerSet title="Asset Explorer">
-          <LiveChatExplorer />
-          <TranscriptExplorer />
-          <PortalsExplorer />
-          <EmulatorServicesExplorer />
-        </ExplorerSet>
-      );
-    } else {
-      return (
-        <ExplorerSet title="Asset Explorer">
-          <BotNotOpenExplorer />
-        </ExplorerSet>
-      );
-    }
+    return (
+      <ExplorerSet>
+        { this.props.children }
+      </ExplorerSet>
+    );
   }
 }
-
-export default connect(state => ({ activeBot: state.bot.activeBot }))(AssetExplorerSet)

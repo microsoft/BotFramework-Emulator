@@ -35,43 +35,51 @@ import { css } from 'glamor';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import BotExplorer from './botExplorer';
+import BotExplorerBar from './botExplorerBar';
+import AssetExplorerBar from './assetExplorerBar';
+import ServicesExplorerBar from './servicesExplorerBar';
 import * as Colors from '../../styles/colors';
-import ExplorerBarContent from './explorerBarContent';
-import ExplorerBarTitle from './explorerBarTitle';
 import * as Constants from '../../../constants';
-import InsetShadow from '../../layout/insetShadow';
+import { InsetShadow } from '../../layout/insetShadow';
 
 const CSS = css({
-    backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
-    height: '100%',
-    display: 'flex',
-    flexFlow: 'column nowrap',
-    position: 'relative'
+  backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
+  height: '100%',
+  display: 'flex',
+  flexFlow: 'column nowrap',
+  position: 'relative'
 });
 
 class ExplorerBar extends React.Component {
-    render() {
-        const explorer = this.props.selectedNavTab === Constants.NavBar_App ?
-            <BotExplorer />
-        :
-            (
-                <React.Fragment>
-                    <ExplorerBarTitle />
-                    <ExplorerBarContent />
-                </React.Fragment>
-            );
+  render() {
+    let explorer;
+    if (this.props.selectedNavTab === Constants.NavBar_App)
+      explorer = (
+        <BotExplorerBar activeBot={ this.props.activeBot } />
+      );
+    else if (this.props.selectedNavTab === Constants.NavBar_Files)
+      explorer = (
+        <AssetExplorerBar activeBot={ this.props.activeBot } />
+      );
+    else if (this.props.selectedNavTab === Constants.NavBar_Services)
+      explorer = (
+        <ServicesExplorerBar />
+      );
+    else
+      explorer = (
+        false
+      );
 
-        return (
-            <div className={ CSS }>
-                { explorer }
-                <InsetShadow right={ true } />
-            </div>
-        );
-    }
+    return (
+      <div className={ CSS }>
+        { explorer }
+        <InsetShadow right={ true } />
+      </div>
+    );
+  }
 }
 
 export default connect(state => ({
-    activeBot: state.bot.activeBot,
-    selectedNavTab: state.navBar.selection
+  activeBot: state.bot.activeBot,
+  selectedNavTab: state.navBar.selection
 }))(ExplorerBar)

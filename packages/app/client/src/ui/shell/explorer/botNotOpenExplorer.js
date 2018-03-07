@@ -35,7 +35,7 @@ import { connect } from 'react-redux';
 import { css } from 'glamor';
 import React from 'react';
 
-import ExpandCollapse, { Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
+import { ExpandCollapse, Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
 import * as Colors from '../../styles/colors';
 import { CommandService } from '../../../platform/commands/commandService';
 import * as Constants from '../../../constants';
@@ -73,7 +73,7 @@ class BotNotOpenExplorer extends React.Component {
       <ul className={ CSS }>
         <li>
           <ExpandCollapse
-            initialExpanded={ true }
+            expanded={ true }
             title="No Bot Selected"
           >
             <ExpandCollapseContent>

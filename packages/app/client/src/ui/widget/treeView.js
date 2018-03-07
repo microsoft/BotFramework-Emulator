@@ -104,7 +104,7 @@ export class Branch extends React.Component {
         this.handleClick = this.handleClick.bind(this);
 
         this.state = {
-            expanded: typeof props.initialExpanded === 'undefined' || props.initialExpanded
+            expanded: typeof props.expanded === 'undefined' || props.expanded
         };
     }
 
