@@ -197,7 +197,7 @@ gulp.task('package:windows-nsis:binaries', function () {
     targets: builder.Platform.WINDOWS.createTarget(["nsis", "zip"], builder.Arch.ia32, builder.Arch.x64),
     config
   }).then((filenames) => {
-    return gulp.src(filenames, { read: false, allowEmpty: true })
+    return gulp.src(filenames, { allowEmpty: true })
       .pipe(rename(function (path) {
         path.basename = setReleaseFilename(path.basename);
       }))
@@ -238,7 +238,7 @@ gulp.task('package:windows-squirrel', function () {
     targets: builder.Platform.WINDOWS.createTarget(["squirrel"], builder.Arch.x64),
     config
   }).then((filenames) => {
-    return gulp.src(filenames, { read: false, allowEmpty: true })
+    return gulp.src(filenames, { allowEmpty: true })
       .pipe(rename(function (path) {
         path.basename = setReleaseFilename(path.basename, {
           lowerCase: false,
@@ -267,7 +267,7 @@ gulp.task('package:mac-dmg:binaries', function () {
     targets: builder.Platform.MAC.createTarget(["dmg", "zip"]),
     config
   }).then((filenames) => {
-    return gulp.src(filenames, { read: false, allowEmpty: true })
+    return gulp.src(filenames, { allowEmpty: true })
       .pipe(rename(function (path) {
         path.basename = setReleaseFilename(path.basename);
       }))
@@ -307,7 +307,7 @@ gulp.task('package:linux', function () {
     targets: builder.Platform.LINUX.createTarget(["deb", "AppImage"], builder.Arch.ia32, builder.Arch.x64),
     config
   }).then((filenames) => {
-    return gulp.src(filenames, { read: false, allowEmpty: true })
+    return gulp.src(filenames, { allowEmpty: true })
       .pipe(rename(function (path) {
         path.basename = setReleaseFilename(path.basename);
       }))
