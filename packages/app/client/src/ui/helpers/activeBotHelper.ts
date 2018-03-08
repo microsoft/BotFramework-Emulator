@@ -45,11 +45,11 @@ export const ActiveBotHelper = new class {
             .then(bot => {
               store.dispatch((dispatch) => {
                 store.dispatch(BotActions.create(bot));
-                this.setActiveBot(bot.path);
-
-                // open bot settings and switch to explorer view
-                store.dispatch(NavBarActions.select(Constants.NavBar_Files));
-                store.dispatch(EditorActions.open(Constants.ContentType_BotSettings, "Bot Settings", false, bot.id));
+                this.setActiveBot(bot.path)
+                .then(() => {
+                  CommandService.call('livechat:new');
+                  store.dispatch(NavBarActions.select(Constants.NavBar_Files));
+                })
               });
             })
             .catch(err => console.error('Error during bot create: ', err));

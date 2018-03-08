@@ -65,8 +65,8 @@ class TranscriptExplorer extends React.Component {
     this.onItemClick = this.handleItemClick.bind(this);
   }
 
-  handleItemClick(conversationId) {
-    this.props.dispatch(EditorActions.setActiveTab(conversationId));
+  handleItemClick(documentId) {
+    this.props.dispatch(EditorActions.setActiveTab(documentId));
   }
 
   renderTranscriptList() {
@@ -75,8 +75,8 @@ class TranscriptExplorer extends React.Component {
         <ul className={ CONVO_CSS }>
           {
             Object.keys(this.props.transcripts).map(transcriptId =>
-              <ExplorerItem key={ transcriptId } active={ this.props.activeDocumentId === transcriptId } onClick={ () => this.onItemClick(transcriptId) }>
-                <span>{ `Saved Chat : ${transcriptId}` }</span>
+              <ExplorerItem key={ documentId } active={ this.props.activeDocumentId === documentId } onClick={ () => this.onItemClick(documentId) }>
+                <span>{ 'Transcript' }</span>
               </ExplorerItem>
             )
           }
@@ -89,7 +89,7 @@ class TranscriptExplorer extends React.Component {
     return (
       <ExpandCollapseContent key={ this.props.changeKey }>
         <ul className={ CONVO_CSS }>
-          <li><span className="empty-list">No saved chats yet</span></li>
+          <li><span className="empty-list">No transcripts yet</span></li>
           <li>&nbsp;</li>
         </ul>
       </ExpandCollapseContent>
@@ -101,7 +101,7 @@ class TranscriptExplorer extends React.Component {
       <div className={ EXPLORER_CSS }>
         <ExpandCollapse
           expanded={ true }
-          title="Saved Chats"
+          title="Transcripts"
         >
           {
             Object.keys(this.props.transcripts).length

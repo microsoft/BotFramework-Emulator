@@ -78,10 +78,15 @@ const CSS = css({
       flexDirection: 'row',
       flexWrap: 'initial',
 
+      '& .column:first-child': {
+        marginLeft: 0,
+      },
+
       '& .column': {
         flexGrow: 1,
         flexShrink: 1,
         flexBasis: '0px',
+        marginLeft: '8px',
 
         '& .section': {
           marginBottom: '5em',
@@ -95,16 +100,16 @@ const CSS = css({
   },
 });
 
-interface IWelcomePageProps {
+interface Props {
   documentId?: string;
   recentBots?: IBotInfo[];
 }
 
-interface IWelcomePageState {
+interface State {
   activeEditor?: string;
 }
 
-class WelcomePage extends React.Component<IWelcomePageProps, IWelcomePageState> {
+class WelcomePage extends React.Component<Props, State> {
   constructor(props, context) {
     super(props, context);
     this.onAddBotClick = this.onAddBotClick.bind(this);

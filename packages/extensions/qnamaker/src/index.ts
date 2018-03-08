@@ -18,9 +18,9 @@ ipc = new ProcessIPC(process);
 
 const commands = new CommandService(ipc, `ext-${config.name}`);
 
-commands.remoteCall('ext-ping')
-  .then(reply => console.log(reply))
-  .catch(err => console.log('ping failed', err));
+//commands.remoteCall('ext-ping')
+//  .then(reply => console.log(reply))
+//  .catch(err => console.log('ping failed', err));
 
 commands.registry.registerCommand('connect', () => {
   //console.log('got connect');

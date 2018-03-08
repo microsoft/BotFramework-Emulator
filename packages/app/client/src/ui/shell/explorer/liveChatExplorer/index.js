@@ -45,19 +45,17 @@ import { CommandService } from '../../../../platform/commands/commandService';
 import store from '../../../../data/store';
 import { EXPLORER_CSS } from '../explorerStyle';
 import { CommandRegistry } from '../../../../commands';
+import { uniqueId } from '@bfemulator/sdk-shared';
 
 export function registerCommands() {
   CommandRegistry.registerCommand('livechat:new', () => {
-    CommandService.remoteCall('livechat:new')
-      .then(conversationId => {
-        store.dispatch(ChatActions.newLiveChatDocument(conversationId));
-        store.dispatch(EditorActions.open(
-          constants.ContentType_LiveChat,
-          conversationId,
-          false
-        ));
-      })
-      .catch(err => console.log(err));  // TODO: Show failure as a notification
+    const documentId = uniqueId();
+    store.dispatch(ChatActions.newLiveChatDocument(documentId));
+    store.dispatch(EditorActions.open(
+      constants.ContentType_LiveChat,
+      documentId,
+      false
+    ));
   });
 }
 
@@ -101,8 +99,8 @@ class LiveChatExplorer extends React.Component {
     CommandService.call('livechat:new');
   }
 
-  handleItemClick(conversationId) {
-    this.props.dispatch(EditorActions.setActiveTab(conversationId));
+  handleItemClick(documentId) {
+    this.props.dispatch(EditorActions.setActiveTab(documentId));
   }
 
   renderLiveChatList() {
@@ -110,8 +108,8 @@ class LiveChatExplorer extends React.Component {
       <ExpandCollapseContent key={ this.props.changeKey }>
         <ul className={ CONVO_CSS }>
           {
-            Object.keys(this.props.liveChats).map(conversationId =>
-              <ExplorerItem key={ conversationId } active={ this.props.activeDocumentId === conversationId } onClick={ () => this.onItemClick(conversationId) }>
+            Object.keys(this.props.liveChats).map(documentId =>
+              <ExplorerItem key={ documentId } active={ this.props.activeDocumentId === documentId } onClick={ () => this.onItemClick(documentId) }>
                 <span>{ `Live Chat` }</span>
               </ExplorerItem>
             )

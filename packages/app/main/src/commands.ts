@@ -3,14 +3,17 @@ import { emulator } from './emulator';
 import { Window } from './platform/window';
 import { CommandRegistry as CommReg, uniqueId } from '@bfemulator/sdk-shared';
 import { IBot, newBot, IFrameworkSettings } from '@bfemulator/app-shared';
-import { ensureStoragePath, getBotDirectoryPath, getSafeBotName, readFileSync, showOpenDialog, writeFile } from './utils';
+import { ensureStoragePath, getBotDirectoryPath, getSafeBotName, readFileSync, showOpenDialog, writeFile, showSaveDialog } from './utils';
 import * as BotActions from './data-v2/action/bot';
 import { app } from 'electron';
 import { mainWindow } from './main';
 import { ExtensionManager } from './extensions';
 import { getSettings, dispatch } from './settings';
-
-const Path = require('path');
+import { getActiveBot } from './botHelpers';
+import * as Path from 'path';
+import * as Fs from 'fs';
+import * as OS from 'os';
+import { sync as mkdirpSync } from 'mkdirp';
 
 //=============================================================================
 export const CommandRegistry = new CommReg();
@@ -143,13 +146,6 @@ export function registerCommands() {
   });
 
   //---------------------------------------------------------------------------
-  // Create a new livechat conversation
-  CommandRegistry.registerCommand("livechat:new", (): string => {
-    // TODO: Validate a bot is active first
-    return uniqueId();
-  });
-
-  //---------------------------------------------------------------------------
   // Sets the app's title bar
   CommandRegistry.registerCommand('app:setTitleBar', (text: string) => {
     if (text && text.length)
@@ -175,7 +171,47 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Shows an open dialog and returns a path
-  CommandRegistry.registerCommand('shell:showOpenDialog', (dialogOptions: Electron.OpenDialogOptions = {}): any => {
-    return showOpenDialog(dialogOptions);
+  CommandRegistry.registerCommand('shell:showOpenDialog', (dialogOptions: Electron.OpenDialogOptions = {}): string => {
+    return showOpenDialog(mainWindow.browserWindow, dialogOptions);
+  });
+
+  //---------------------------------------------------------------------------
+  // Shows a save dialog and returns a path + filename
+  CommandRegistry.registerCommand('shell:showSaveDialog', (dialogOptions: Electron.SaveDialogOptions = {}): string => {
+    return showSaveDialog(mainWindow.browserWindow, dialogOptions);
+  });
+
+  //---------------------------------------------------------------------------
+  // Saves the conversation to a transcript file, with user interaction to set filename.
+  CommandRegistry.registerCommand('emulator:save-transcript-to-file', (conversationId: string): void => {
+    const activeBot: IBot = getActiveBot();
+    if (!activeBot) {
+      throw new Error('save-transcript-to-file: No active bot.');
+    }
+
+    const path = Path.resolve(activeBot.localDir) || `${OS.homedir()}/Transcripts`;
+
+    const conversation = emulator.conversations.conversationById(activeBot.id, conversationId);
+    if (!conversation) {
+      throw new Error(`save-transcript-to-file: Conversation ${conversationId} not found.`);
+    }
+
+    const filename = showSaveDialog(mainWindow.browserWindow, {
+      filters: [
+        {
+          name: "Transcript Files",
+          extensions: ['transcript']
+        }
+      ],
+      defaultPath: path,
+      showsTagField: false,
+      title: "Save conversation transcript",
+      buttonLabel: "Save"
+    });
+
+    if (filename && filename.length) {
+      mkdirpSync(Path.dirname(filename));
+      writeFile(filename, conversation.activities);
+    }
   });
 }

@@ -37,6 +37,7 @@ import { createStore as createWebChatStore } from '@bfemulator/custom-botframewo
 export const NEW_LIVECHAT_DOCUMENT = 'CHAT/DOCUMENT/NEW/LIVE';
 export const OPEN_LIVECHAT_DOCUMENT = 'CHAT/DOCUMENT/OPEN/LIVE';
 export const CLOSE_LIVECHAT_DOCUMENT = 'CHAT/DOCUMENT/CLOSE/LIVE';
+export const NEW_LIVECHAT_CONVERSATION = 'CHAT/CONVERSATION/NEW/LIVE';
 
 export const LOG_APPEND = 'CHAT/LOG/APPEND';
 export const LOG_CLEAR = 'CHAT/LOG/CLEAR';
@@ -46,14 +47,14 @@ export const INSPECTOR_OBJECTS_SET = 'CHAT/INSPECTOR/OBJECTS/SET';
 export const OPEN_TRANSCRIPT_DOCUMENT = 'CHAT/DOCUMENT/OPEN/TRANSCRIPT';
 export const CLOSE_TRANSCRIPT_DOCUMENT = 'CHAT/DOCUMENT/CLOSE/TRANSCRIPT';
 
-export function newLiveChatDocument(conversationId, executive) {
+export function newLiveChatDocument(documentId) {
   return {
     type: NEW_LIVECHAT_DOCUMENT,
     payload: {
-      conversationId,
+      documentId,
+      conversationId: null,
       webChatStore: createWebChatStore(),
       directLine: null,
-      executive,
       log: {
         entries: []
       },
@@ -62,40 +63,50 @@ export function newLiveChatDocument(conversationId, executive) {
   }
 }
 
-export function closeLiveChatDocument(conversationId) {
+export function closeLiveChatDocument(documentId) {
   return {
     type: CLOSE_LIVECHAT_DOCUMENT,
     payload: {
-      conversationId,
+      documentId,
     }
   }
 }
 
-export function appendToLog(conversationId, entry) {
+export function newLiveChatConversation(documentId, conversationId) {
+  return {
+    type: NEW_LIVECHAT_CONVERSATION,
+    payload: {
+      documentId,
+      conversationId
+    }
+  }
+}
+
+export function appendToLog(documentId, entry) {
   return {
     type: LOG_APPEND,
     payload: {
-      conversationId,
+      documentId,
       entry
     }
   }
 }
 
-export function clearLog(conversationId) {
+export function clearLog(documentId) {
   return {
     type: LOG_CLEAR,
     payload: {
-      conversationId,
+      documentId,
     }
   }
 }
 
-export function setInspectorObjects(conversationId, objs) {
+export function setInspectorObjects(documentId, objs) {
   objs = Array.isArray(objs) ? objs : [objs];
   return {
     type: INSPECTOR_OBJECTS_SET,
     payload: {
-      conversationId,
+      documentId,
       objs
     }
   }

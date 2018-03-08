@@ -1,7 +1,7 @@
 import * as Restify from 'restify';
 import * as HttpStatus from 'http-status-codes';
 import { IErrorResponse, APIException, createErrorResponse, ErrorCodes, mergeDeep } from '@bfemulator/app-shared';
-import { dialog, OpenDialogOptions } from 'electron';
+import { dialog, OpenDialogOptions, SaveDialogOptions, BrowserWindow } from 'electron';
 
 const { lstatSync, readdirSync } = require('fs')
 const { join } = require('path')
@@ -134,14 +134,14 @@ export const writeFile = (filePath: string, contents: object | string): void => 
 }
 
 /** Shows a native open file / directory dialog */
-export const showOpenDialog = (options: OpenDialogOptions) => {
-  return new Promise((resolve, reject) => {
-    dialog.showOpenDialog(options, filePaths => {
-      const filePath = filePaths && filePaths[0];
+export function showOpenDialog(window: BrowserWindow, options: OpenDialogOptions): string {
+  const filePaths = dialog.showOpenDialog(window, options);
+  const filePath = filePaths && filePaths[0];
+  return filePath;
+}
 
-      filePath ? resolve(filePath) : reject(new Error('user cancelled'));
-    });
-  });
+export function showSaveDialog(window: BrowserWindow, options: SaveDialogOptions): string {
+  return dialog.showSaveDialog(window, options);
 }
 
 /** Returns a starting name for a bot */

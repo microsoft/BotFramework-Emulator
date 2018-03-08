@@ -97,7 +97,8 @@ const CSS = css({
 
     '& > li.app > div': {
       backgroundImage: 'url(./external/media/ic_bot_framework.svg)',
-      backgroundSize: 26
+      backgroundSize: 26,
+      cursor: 'default'
     },
 
     '& > li.files > div': {

@@ -39,13 +39,14 @@ import * as Colors from '../../../../ui/styles/colors';
 import * as Fonts from '../../../../ui/styles/fonts';
 
 const CSS = css({
-  padding: '16px',
+  padding: '0 16px 0 16px',
   fontFamily: Fonts.FONT_FAMILY_MONOSPACE,
   wordWrap: 'break-word',
   whiteSpace: 'pre-wrap',
   overflowY: 'auto',
   userSelect: 'text',
   height: '100%',
+  boxSizing: 'border-box',
 
   '& .json-key': {
     color: Colors.JSON_FORMATTING_KEY_DARK,

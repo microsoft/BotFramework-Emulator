@@ -51,7 +51,7 @@ export default function chat(state = DEFAULT_STATE, action) {
         liveChatChangeKey: state.liveChatChangeKey + 1,
         liveChats: {
           ...state.liveChats,
-          [payload.conversationId]: { ...payload }
+          [payload.documentId]: { ...payload }
         }
       }
     }
@@ -60,13 +60,33 @@ export default function chat(state = DEFAULT_STATE, action) {
     case ChatActions.CLOSE_LIVECHAT_DOCUMENT: {
       const copy = { ...state };
       copy.liveChatChangeKey += 1;
-      delete copy.liveChats[payload.conversationId];
+      delete copy.liveChats[payload.documentId];
       state = { ...copy };
     }
       break;
 
+    case ChatActions.NEW_LIVECHAT_CONVERSATION: {
+      let document = state.liveChats[payload.documentId];
+      if (document) {
+        document = {
+          ...document,
+          conversationId: payload.conversationId
+        }
+        state = {
+          ...state,
+          liveChats: {
+            ...state.liveChats,
+            [payload.documentId]: {
+              ...document
+            }
+          }
+        }
+      }
+    }
+      break;
+
     case ChatActions.LOG_APPEND: {
-      let document = state.liveChats[payload.conversationId];
+      let document = state.liveChats[payload.documentId];
       if (document) {
         document = {
           ...document,
@@ -82,7 +102,7 @@ export default function chat(state = DEFAULT_STATE, action) {
           ...state,
           liveChats: {
             ...state.liveChats,
-            [payload.conversationId]: {
+            [payload.documentId]: {
               ...document
             }
           }
@@ -92,7 +112,7 @@ export default function chat(state = DEFAULT_STATE, action) {
       break;
 
     case ChatActions.LOG_CLEAR: {
-      let document = state.liveChats[payload.conversationId];
+      let document = state.liveChats[payload.documentId];
       if (document) {
         document = {
           ...document,
@@ -104,7 +124,7 @@ export default function chat(state = DEFAULT_STATE, action) {
           ...state,
           liveChats: {
             ...state.liveChats,
-            [payload.conversationId]: {
+            [payload.documentId]: {
               ...document
             }
           }
@@ -114,7 +134,7 @@ export default function chat(state = DEFAULT_STATE, action) {
       break;
 
     case ChatActions.INSPECTOR_OBJECTS_SET: {
-      let document = state.liveChats[payload.conversationId];
+      let document = state.liveChats[payload.documentId];
       if (document) {
         document = {
           ...document,
@@ -125,7 +145,7 @@ export default function chat(state = DEFAULT_STATE, action) {
         ...state,
         liveChats: {
           ...state.liveChats,
-          [payload.conversationId]: {
+          [payload.documentId]: {
             ...document
           }
         }

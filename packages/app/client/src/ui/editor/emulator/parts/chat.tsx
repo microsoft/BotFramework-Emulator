@@ -34,7 +34,7 @@
 import { css } from 'glamor';
 import * as React from 'react';
 import * as WebChat from '@bfemulator/custom-botframework-webchat';
-import { BehaviorSubject } from 'rxjs';
+import { Subscription, BehaviorSubject } from 'rxjs';
 import { ActivityOrID } from '@bfemulator/app-shared';
 import state from '../state';
 import store from '../../../../data/store';
@@ -44,8 +44,7 @@ import PrimaryButton from '../../../widget/primaryButton';
 
 const CSS = css({
   backgroundColor: 'white',
-  height: '90%',
-  maxHeight: '100%',
+  height: '100%',
   display: 'flex',
 
   '& .wc-chatview-panel': {
@@ -115,21 +114,62 @@ const DISCONNECTED_CSS = css({
 });
 
 // TODO: Fill this out
-export interface ChatProps {
+export interface Props {
   document: any;
   onStartConversation: any;
 };
 
-export default class Chat extends React.Component<ChatProps> {
+export interface State {
+  sub: Subscription;
+}
 
-  selectedActivity$: BehaviorSubject<ActivityOrID>;
+export default class Chat extends React.Component<Props, State> {
 
   constructor(props, context) {
     super(props, context);
-    this.selectedActivity$ = new BehaviorSubject<ActivityOrID>({});
-    this.selectedActivity$.subscribe((obj) => {
-      store.dispatch(ChatActions.setInspectorObjects(this.props.document.conversationId, obj));
-    });
+    this.state = {
+      sub: null
+    }
+  }
+
+  componentWillMount() {
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe();
+  }
+
+  componentWillReceiveProps(nextProps, nextContext) {
+    if (this.props.document.documentId !== nextProps.document.documentId) {
+      this.unsubscribe();
+    }
+  }
+
+  componentWillUpdate(nextProps: Props, nextState: State, nextContext: any): void {
+  }
+
+  componentDidUpdate(prevProps: Props, prevState: State, prevContext: any): void {
+    this.checkSubscription();
+  }
+
+  unsubscribe() {
+    if (this.state.sub) {
+      this.state.sub.unsubscribe();
+      this.setState({
+        sub: null
+      });
+    }
+  }
+
+  checkSubscription() {
+    if (!this.state.sub && this.props.document.selectedActivity$) {
+      const sub = this.props.document.selectedActivity$.subscribe((obj) => {
+        store.dispatch(ChatActions.setInspectorObjects(this.props.document.documentId, obj));
+      });
+      this.setState({
+        sub
+      });
+    }
   }
 
   render() {
@@ -147,19 +187,19 @@ export default class Chat extends React.Component<ChatProps> {
         formatOptions: {
           showHeader: false
         },
-        selectedActivity: (this.selectedActivity$ as any),
+        selectedActivity: (this.props.document.selectedActivity$ as any),
         botConnection: this.props.document.directLine,
         store: this.props.document.webChatStore
       };
       return (
-        <div {...CSS}>
-          {<WebChat.Chat {...props} />}
+        <div { ...CSS }>
+          { <WebChat.Chat { ...props } key={ this.props.document.directLine.token } /> }
         </div>
       );
     } else {
       return (
-        <div {...DISCONNECTED_CSS}>
-          <PrimaryButton text='Start the Conversation' onClick={ this.props.onStartConversation } buttonClass='start-button' />
+        <div { ...DISCONNECTED_CSS }>
+          Not Connected
         </div>
       );
     }

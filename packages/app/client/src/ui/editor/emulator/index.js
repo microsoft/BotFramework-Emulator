@@ -35,7 +35,7 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-
+import { ActivityOrID } from '@bfemulator/app-shared';
 import ChatPanel from './chatPanel';
 import DetailPanel from './detailPanel';
 import LogPanel from './logPanel';
@@ -43,10 +43,39 @@ import Splitter from '../../layout/splitter-v2';
 import ToolBar, { Button as ToolBarButton, Separator as ToolBarSeparator } from '../toolbar';
 import * as BotChat from '@bfemulator/custom-botframework-webchat';
 import { SettingsService } from '../../../platform/settings/settingsService';
+import { CommandService } from '../../../platform/commands/commandService';
+import { uniqueId } from '@bfemulator/sdk-shared';
+import * as ChatActions from '../../../data/action/chatActions';
+import { Subscription, BehaviorSubject } from 'rxjs';
 
 const CSS = css({
+  display: 'flex',
+  flexDirection: 'column',
   flex: 1,
   height: '100%',
+
+  '& .vertical': {
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
+  },
+
+  '& .header': {
+    flexGrow: 0,
+    flexShrink: 1,
+    flexBasis: '0px',
+
+  },
+
+  '& .content': {
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
+    flexGrow: 1,
+    flexShrink: 1,
+    flexBasis: '0px',
+    height: '100%',
+  },
 });
 
 class Emulator extends React.Component {
@@ -57,35 +86,65 @@ class Emulator extends React.Component {
     this.onStartOverClick = this.handleStartOverClick.bind(this);
     this.onExportClick = this.handleExportClick.bind(this);
     this.onImportClick = this.handleImportClick.bind(this);
+  }
 
-    this.state = {
-      sessionId: 0
-    };
+  shouldStartNewConversation(props) {
+    props = props || this.props;
+    return !props.document.directLine ||
+      (props.document.conversationId != props.document.directLine.token);
+  }
+
+  componentWillMount() {
+    if (this.shouldStartNewConversation()) {
+      this.startNewConversation();
+    }
+  }
+
+  componentWillReceiveProps(nextProps, nextContext) {
+    if (this.shouldStartNewConversation(nextProps)) {
+      this.startNewConversation(nextProps);
+    }
+  }
+
+  componentWillUpdate(nextProps, nextState, nextContext) {
+  }
+
+  componentDidUpdate(prevProps, prevState, prevContext) {
   }
 
   handlePresentationClick() {
   }
 
-  handleStartOverClick() {
-    this.state.sessionId += 1;
+  startNewConversation(props) {
+    props = props || this.props;
 
-    if (this.props.document.directLine) {
-      this.props.document.directLine.end();
+    this.props.document.selectedActivity$ = new BehaviorSubject({});
+
+    const conversationId = uniqueId();
+
+    if (props.document.directLine) {
+      props.document.directLine.end();
     }
 
-    this.props.document.webChatStore = BotChat.createStore();
+    props.document.webChatStore = BotChat.createStore();
 
-    this.props.document.directLine = new BotChat.DirectLine({
-      secret: this.props.document.conversationId,
-      token: this.props.document.conversationId,
+    props.document.directLine = new BotChat.DirectLine({
+      secret: conversationId,
+      token: conversationId,
       domain: `${SettingsService.emulator.url}/v3/directline`,
       webSocket: false
     });
+    props.dispatch(ChatActions.newLiveChatConversation(props.documentId, conversationId));
+  }
 
-    this.forceUpdate();
+  handleStartOverClick() {
+    this.startNewConversation();
   }
 
   handleExportClick() {
+    if (this.props.document.directLine) {
+      CommandService.remoteCall('emulator:save-transcript-to-file', this.props.document.directLine.token);
+    }
   }
 
   handleImportClick() {
@@ -93,28 +152,37 @@ class Emulator extends React.Component {
 
   render() {
     return (
-      <div className={ CSS } key={ `${this.props.documentId}|${this.state.sessionId}` }>
-        <ToolBar>
-          <ToolBarButton title="Presentation" onClick={ this.onPresentationClick } />
-          <ToolBarSeparator />
-          <ToolBarButton title="Start Over" onClick={ this.onStartOverClick } />
-          <ToolBarButton title="Save As..." onClick={ this.handleExportClick } />
-          <ToolBarButton title="Load..." onClick={ this.handleImportClick } />
-        </ToolBar>
-        <Splitter orientation={ 'vertical' } primaryPaneIndex={ 0 } minSizes={ { 0: 80, 1: 80 } }>
-          <ChatPanel document={ this.props.document } onStartConversation={ this.onStartOverClick } />
-          <Splitter orientation={ 'horizontal' } primaryPaneIndex={ 0 } minSizes={ { 0: 80, 1: 80 } }>
-            <DetailPanel document={ this.props.document } />
-            <LogPanel document={ this.props.document } />
+      <div className={ CSS } >
+        <div className="header">
+          <ToolBar>
+            <ToolBarButton title="Presentation" onClick={ this.onPresentationClick } />
+            <ToolBarSeparator />
+            <ToolBarButton title="Start Over" onClick={ this.onStartOverClick } />
+            <ToolBarButton title="Save As..." onClick={ this.onExportClick } />
+            <ToolBarButton title="Load..." onClick={ this.onImportClick } />
+          </ToolBar>
+        </div>
+        <div className="content vertical">
+          <Splitter orientation={ 'vertical' } primaryPaneIndex={ 0 } minSizes={ { 0: 80, 1: 80 } }>
+            <div className="content">
+              <ChatPanel document={ this.props.document } onStartConversation={ this.onStartOverClick } />
+            </div>
+            <div className="content">
+              <Splitter orientation={ 'horizontal' } primaryPaneIndex={ 0 } minSizes={ { 0: 80, 1: 80 } }>
+                <DetailPanel document={ this.props.document } />
+                <LogPanel document={ this.props.document } />
+              </Splitter>
+            </div>
           </Splitter>
-        </Splitter>
+        </div>
       </div>
     );
   }
 }
 
 export default connect((state, { documentId }) => ({
-  document: state.chat.liveChats[documentId]
+  document: state.chat.liveChats[documentId],
+  conversationId: state.chat.liveChats[documentId].conversationId
 }))(Emulator);
 
 

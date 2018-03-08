@@ -42,6 +42,8 @@ import { getActiveBot } from '../../../data/botHelpers';
 
 const CSS = css({
   height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
 
   '& > header': {
     backgroundColor: Colors.SECTION_HEADER_BACKGROUND_DARK,

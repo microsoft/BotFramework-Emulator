@@ -45,6 +45,7 @@ const CSS = css({
   overflow: 'auto',
   userSelect: 'text',
   padding: '0 16px 0 16px',
+  boxSizing: 'border-box',
 
   '& > .entry': {
     fontFamily: Fonts.FONT_FAMILY_MONOSPACE,
@@ -128,7 +129,7 @@ Log.propTypes = {
 class LogEntry extends React.Component {
 
   inspect(obj) {
-    store.dispatch(ChatActions.setInspectorObjects(this.props.document.conversationId, obj));
+    store.dispatch(ChatActions.setInspectorObjects(this.props.document.documentId, obj));
   }
 
   render() {
