@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { getBotById } from '../../../../data/botHelpers';
 import { ExplorerBarHeader, Title, Accessories } from '../explorerBarHeader';
 import { ExplorerBarBody } from '../explorerBarBody';
 import { getBotDisplayName } from '@bfemulator/app-shared';
@@ -20,17 +19,15 @@ export default class AssetExplorerBar extends React.Component<IAssetExplorerBarP
   }
 
   onClickSettings(e) {
-    const bot = getBotById(this.props.activeBot);
-    CommandService.call('bot:settings:open', bot);
+    CommandService.call('bot:settings:open', this.props.activeBot);
   }
 
   render() {
-    const bot = getBotById(this.props.activeBot);
     return (
       <>
         <ExplorerBarHeader>
           <Title>
-            { this.props.activeBot ? getBotDisplayName(bot) : false }
+            { this.props.activeBot ? getBotDisplayName(this.props.activeBot) : false }
           </Title>
           <Accessories>
             { this.props.activeBot ? <span className="accessory bot-settings-icon" onClick={ this.onClickSettings } /> : false }

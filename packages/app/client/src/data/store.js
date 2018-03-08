@@ -38,8 +38,9 @@ import WebSocketActionBridge from 'redux-websocket-bridge';
 import thunk from 'redux-thunk';
 
 import assetExplorer from './reducer/assetExplorer';
-import bot from './reducer/bot';
+import { bot } from './reducer/bot';
 import chat from './reducer/chat';
+import dialog from './reducer/dialog';
 import editor from './reducer/editor';
 import navBar from './reducer/navBar';
 import server from './reducer/server';
@@ -61,6 +62,7 @@ const DEFAULT_STATE = {};
 export default createStoreWithMiddleware(combineReducers({
   assetExplorer,
   bot,
+  dialog,
   editor,
   chat,
   navBar,

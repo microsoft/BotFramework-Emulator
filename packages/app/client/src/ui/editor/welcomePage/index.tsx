@@ -1,10 +1,15 @@
 import { css } from 'glamor';
 import * as React from 'react';
+import { connect } from 'react-redux';
+
 import * as Colors from '../../styles/colors';
 import PrimaryButton from '../../widget/primaryButton';
 import { CommandService } from '../../../platform/commands/commandService';
-import { hasNonGlobalTabs } from '../../../data/editorHelpers';
+import { getTabGroupForDocument, hasNonGlobalTabs } from '../../../data/editorHelpers';
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
+import { DialogService } from '../../dialogs/service/index';
+import BotCreationDialog from '../../dialogs/botCreationDialog';
+import { IBotInfo } from '@bfemulator/app-shared';
 
 const CSS = css({
   display: 'flex',
@@ -13,6 +18,11 @@ const CSS = css({
   alignItems: 'center',
   justifyContent: 'center',
   overflow: 'auto',
+
+  '& .recent-bots-list': {
+    maxHeight: '200px',
+    overflowY: 'auto'
+  },
 
   '& .welcome': {
     width: '90%',
@@ -63,10 +73,6 @@ const CSS = css({
       padding: 0,
     },
 
-    '& li': {
-
-    },
-
     '& .content': {
       display: 'flex',
       flexDirection: 'row',
@@ -89,14 +95,31 @@ const CSS = css({
   },
 });
 
-export default class WelcomePage extends React.Component {
+interface IWelcomePageProps {
+  documentId?: string;
+  recentBots?: IBotInfo[];
+}
+
+interface IWelcomePageState {
+  activeEditor?: string;
+}
+
+class WelcomePage extends React.Component<IWelcomePageProps, IWelcomePageState> {
   constructor(props, context) {
     super(props, context);
     this.onAddBotClick = this.onAddBotClick.bind(this);
+    this.onBotClick = this.onBotClick.bind(this);
+
+    this.state = { activeEditor: getTabGroupForDocument(this.props.documentId) };
   }
 
   onAddBotClick() {
-    ActiveBotHelper.confirmAndCreateBot();
+    const dialog = <BotCreationDialog activeEditor={ this.state.activeEditor } />
+    DialogService.showDialog(dialog);
+  }
+
+  onBotClick(e, botPath) {
+    ActiveBotHelper.confirmAndSwitchBots(botPath);
   }
 
   render() {
@@ -110,8 +133,13 @@ export default class WelcomePage extends React.Component {
             <div className="column">
               <div className="section">
                 <h2>My Bots</h2>
-                <ul>
-                  <li><span className="no-bots">No recent bots</span></li>
+                <ul className="recent-bots-list">
+                  {
+                    this.props.recentBots && this.props.recentBots.length ?
+                      this.props.recentBots.map(bot => <li key={ bot.path } onClick={ ev => this.onBotClick(ev, bot.path) }><a href="javascript:void(0);">{ bot.path }</a></li>)
+                    :
+                      <li><span className="no-bots">No recent bots</span></li>
+                  }
                   </ul>
                   <p><PrimaryButton text="Add a bot" onClick={ this.onAddBotClick } /></p>
               </div>
@@ -140,3 +168,9 @@ export default class WelcomePage extends React.Component {
     );
   }
 }
+
+function mapStateToProps(state: any): any {
+  return ({ recentBots: state.bot.botFiles });
+}
+
+export default connect(mapStateToProps, null)(WelcomePage);

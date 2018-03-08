@@ -52,11 +52,11 @@ export default class EditorFactory extends React.Component {
         : contentType === Constants.ContentType_TestBed ?
         <TestBedEditor dirty={ this.props.document.dirty } />
         : contentType === Constants.ContentType_BotSettings ?
-        <BotSettingsEditor id={ document.meta } documentId={ document.documentId } dirty={ this.props.document.dirty } />
+        <BotSettingsEditor documentId={ document.documentId } dirty={ this.props.document.dirty } />
         : contentType === Constants.ContentType_AppSettings ?
         <AppSettingsEditor documentId={ document.documentId } dirty={ this.props.document.dirty } />
         : contentType === Constants.ContentType_WelcomePage ?
-        <WelcomePage />
+        <WelcomePage documentId={ document.documentId } />
         : false
     );
   }

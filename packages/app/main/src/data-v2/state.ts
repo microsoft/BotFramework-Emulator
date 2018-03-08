@@ -10,6 +10,6 @@ export interface IState {
 export const DEFAULT_STATE: IState = {
   bot: {
     activeBot: null,
-    bots: []
+    botFiles: []
   }
 };

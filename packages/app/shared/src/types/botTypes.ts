@@ -41,7 +41,8 @@ export interface IBot {
   locale?: string,
   msaAppId?: string,
   msaPassword?: string,
-  path?: string
+  path?: string,
+  localDir?: string
 }
 
 export function newBot(bot: IBot): IBot {
@@ -55,8 +56,14 @@ export function newBot(bot: IBot): IBot {
       locale: '',
       msaAppId: '',
       msaPassword: '',
-      path: ''
+      path: '',
+      localDir: ''
     },
     bot
   );
+}
+
+/** Represents a recently-used bot that isn't currently loaded */
+export interface IBotInfo {
+  path?: string;
 }

@@ -3,12 +3,14 @@ import { emulator } from './emulator';
 import { Window } from './platform/window';
 import { CommandRegistry as CommReg, uniqueId } from '@bfemulator/sdk-shared';
 import { IBot, newBot, IFrameworkSettings } from '@bfemulator/app-shared';
-import { ensureStoragePath, readFileSync, showOpenDialog, writeFile, getSafeBotName } from './utils';
+import { ensureStoragePath, getBotDirectoryPath, getSafeBotName, readFileSync, showOpenDialog, writeFile } from './utils';
 import * as BotActions from './data-v2/action/bot';
 import { app } from 'electron';
 import { mainWindow } from './main';
 import { ExtensionManager } from './extensions';
 import { getSettings, dispatch } from './settings';
+
+const Path = require('path');
 
 //=============================================================================
 export const CommandRegistry = new CommReg();
@@ -27,15 +29,12 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Load bots from file system
   CommandRegistry.registerCommand('bot:list:load', () => {
-    const botsJsonPath = `${ensureStoragePath()}/bots.json`;
-    let botsJson = JSON.parse(readFileSync(botsJsonPath));
+    const botsJsonPath = Path.join(ensureStoragePath(), 'bots.json');
+    const botsJsonContents = readFileSync(botsJsonPath);
+    let botsJson = botsJsonContents ? JSON.parse(botsJsonContents) : null;
 
     if (botsJson && botsJson.bots && Array.isArray(botsJson.bots)) {
       const bots = botsJson.bots;
-      // Back-compat: Assign a unique id to the bot if not present.
-      bots.forEach(bot => {
-        bot.id = bot.id || uniqueId()
-      });
       mainWindow.store.dispatch(BotActions.load(bots));
     } else {
       botsJson = { 'bots': [] };
@@ -53,16 +52,9 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Create a bot
-  CommandRegistry.registerCommand('bot:list:create', (): IBot => {
-    const botName = getSafeBotName();
-
-    const bot: IBot = newBot({
-      botName,
-      botUrl: 'http://localhost:3978/api/messages',
-    });
-
+  CommandRegistry.registerCommand('bot:create', (bot: IBot): IBot => {
+    writeFile(bot.path, bot);
     mainWindow.store.dispatch(BotActions.create(bot));
-
     return bot;
   });
 
@@ -74,14 +66,34 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Save bot file and cause a bots list write
-  CommandRegistry.registerCommand('bot:save', (bot: IBot, originalHandle: string) => {
-    mainWindow.store.dispatch(BotActions.patch(originalHandle, bot));
+  CommandRegistry.registerCommand('bot:save', (bot: IBot) => {
+    mainWindow.store.dispatch(BotActions.patch(bot));
+  });
+
+  //---------------------------------------------------------------------------
+  // Create a new bot object; don't save to state
+  CommandRegistry.registerCommand('bot:new', (): IBot => {
+    const botName = getSafeBotName();
+    const localDir = getBotDirectoryPath(botName);
+    const path = Path.join(localDir, '.botproj');
+
+    const bot: IBot = newBot({
+      botName,
+      botUrl: 'http://localhost:3978/api/messages',
+      path,
+      localDir
+    });
+    return bot;
   });
 
   //---------------------------------------------------------------------------
   // Set active bot
-  CommandRegistry.registerCommand('bot:setActive', (id: string) => {
-    mainWindow.store.dispatch(BotActions.setActive(id));
+  CommandRegistry.registerCommand('bot:setActive', (path: string): IBot => {
+    // read the bot file at path and return the IBot (easier for client-side)
+    const contents = readFileSync(path);
+    const bot = contents ? JSON.parse(contents) : null;
+    mainWindow.store.dispatch(BotActions.setActive(bot));
+    return bot;
   });
 
   //---------------------------------------------------------------------------
@@ -115,6 +127,10 @@ export function registerCommands() {
       throw e;
     }
   });
+
+  //---------------------------------------------------------------------------
+  // Call path.basename()
+  CommandRegistry.registerCommand('path:basename', (path: string): string => Path.basename(path));
 
   //---------------------------------------------------------------------------
   // Client notifying us it's initialized and has rendered

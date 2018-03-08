@@ -95,6 +95,7 @@
     "restify-cors-middleware": "^1.1.0",
     "rsa-pem-from-mod-exp": "^0.8.4",
     "rxjs": "^5.5.6",
+    "sanitize-filename": "^1.6.1",
     "tslib": "^1.9.0",
     "winreg": "^1.2.4",
     "xmldom": "^0.1.27",

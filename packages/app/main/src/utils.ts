@@ -2,8 +2,10 @@ import * as Restify from 'restify';
 import * as HttpStatus from 'http-status-codes';
 import { IErrorResponse, APIException, createErrorResponse, ErrorCodes, mergeDeep } from '@bfemulator/app-shared';
 import { dialog, OpenDialogOptions } from 'electron';
+
 const { lstatSync, readdirSync } = require('fs')
 const { join } = require('path')
+const os = require('os');
 
 const electron = require('electron'); // use a lowercase name "electron" to prevent clash with "Electron" namespace
 const electronApp: Electron.App = electron.app;
@@ -13,6 +15,7 @@ const Fs = require('fs');
 const Mkdirp = require('mkdirp');
 const url = require('url');
 const path = require('path');
+const sanitize = require("sanitize-filename");
 
 import * as globals from './globals';
 import { mainWindow } from './main';
@@ -109,21 +112,24 @@ export const getFilesInDir = (path) => {
   return Fs.readdirSync(path, 'utf-8');
 }
 
-export const readFileSync = (path) => {
+export const readFileSync = (path: string): string => {
   try {
     return Fs.readFileSync(path, 'utf-8');
   } catch (e) {
-    return false;
+    return '';
   }
 }
 
 /** Writes contents to a file at path */
-export const writeFile = (path: string, contents: object | string): void => {
+export const writeFile = (filePath: string, contents: object | string): void => {
   try {
     const contentsToWrite = typeof contents === 'object' ? JSON.stringify(contents, null, 2) : contents;
-    Fs.writeFileSync(path, contentsToWrite, { encoding: 'utf8' });
+
+    // write parent director(y | ies) if non-existent
+    Mkdirp.sync(path.dirname(filePath));
+    Fs.writeFileSync(filePath, contentsToWrite, { encoding: 'utf8' });
   } catch (e) {
-    console.error(`Failed to write bot settings file at ${path}`, e);
+    console.error(`Failed to write bot settings file at ${filePath}`, e);
   }
 }
 
@@ -138,25 +144,28 @@ export const showOpenDialog = (options: OpenDialogOptions) => {
   });
 }
 
-/** Scans the list of all bots to generate a bot name with a number one higher than the highest value found */
-export function getSafeBotName(): string {
-  const state = mainWindow.store.getState();
-  const nums = [];
-  nums.push(0);
-  const botNumber = /^bot\s(\d+)$/i;
-  state.bot.bots.forEach(bot => {
-    const match = botNumber.exec(bot.botName);
-    if (match && match[1])
-      nums.push(+match[1])
-  });
-  const botNum = 1 + nums.sort((a, b) => b - a).shift();
-  return `Bot ${botNum}`;
-}
+/** Returns a starting name for a bot */
+export const getSafeBotName = (): string => 'My Bot';
 
 /** Returns a list of subfolders */
 export const getDirectories = source =>
-  readdirSync(source).map(name => join(source, name)).filter(source => lstatSync(source).isDirectory())
+  readdirSync(source).map(name => join(source, name)).filter(source => lstatSync(source).isDirectory());
 
 export function isDev(): boolean {
   return (process.defaultApp || /node_modules[\\/]electron[\\/]/.test(process.execPath));
+}
+
+/** Returns an unused path for a bot directory */
+export const getBotDirectoryPath = (botName: string): string => {
+  const myBotsFolderBasePath = path.join(os.homedir(), 'MyBots');
+  let botDirectoryName = sanitize(botName);
+  let botPath = path.join(myBotsFolderBasePath, botDirectoryName);
+
+  let directoryWriteAttempts = 1;
+  while(Fs.existsSync(botPath)) {
+    botDirectoryName = sanitize(botName + `(${directoryWriteAttempts})`);
+    botPath = path.join(myBotsFolderBasePath, botDirectoryName);
+    directoryWriteAttempts++;
+  }
+  return botPath;
 }

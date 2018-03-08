@@ -56,3 +56,5 @@ export const EditorKeys = [
 ];
 
 export const DocumentId_AppSettings = 'app:settings';
+export const DocumentId_BotSettings = 'bot:settings';
+export const DocumentId_WelcomePage = 'welcome-page';

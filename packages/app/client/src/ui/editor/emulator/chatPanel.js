@@ -38,7 +38,7 @@ import React from 'react';
 import Chat from './parts/chat';
 import * as Colors from '../../styles/colors';
 import Panel, { Controls as PanelControls, Content as PanelContent } from '../panel';
-import { getActiveBot, getBotById } from '../../../data/botHelpers';
+import { getActiveBot } from '../../../data/botHelpers';
 
 const CSS = css({
   height: '100%',
@@ -57,7 +57,7 @@ const CSS = css({
 
 export default class ChatPanel extends React.Component {
   render() {
-    let bot = getBotById(getActiveBot());
+    let bot = getActiveBot();
     let endpoint = bot ? bot.botUrl : "";
     return (
       <div className={ CSS }>

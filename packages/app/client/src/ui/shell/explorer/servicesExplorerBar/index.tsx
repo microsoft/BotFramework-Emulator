@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { getBotById } from '../../../../data/botHelpers';
 import { ExplorerBarHeader, Title, Accessories } from '../explorerBarHeader';
 import { ExplorerBarBody } from '../explorerBarBody';
 import { getBotDisplayName } from '@bfemulator/app-shared';

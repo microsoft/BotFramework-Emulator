@@ -2,13 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import { debounce } from 'lodash';
+import { connect } from 'react-redux';
 
 import { CommandService } from '../../../platform/commands/commandService';
 import * as Fonts from '../../styles/fonts';
 import * as BotActions from '../../../data/action/botActions';
 import * as EditorActions from '../../../data/action/editorActions';
 import store from '../../../data/store';
-import { getBotById } from '../../../data/botHelpers';
 import PrimaryButton from '../../widget/primaryButton';
 import { getBotDisplayName } from '@bfemulator/app-shared';
 
@@ -93,7 +93,7 @@ const CSS = css({
   },
 });
 
-export default class SettingsEditor extends React.Component {
+class BotSettingsEditor extends React.Component {
   constructor(props, context) {
     super(props, context);
 
@@ -109,22 +109,16 @@ export default class SettingsEditor extends React.Component {
     this.setDirtyFlag = debounce(this.setDirtyFlag, 500);
 
     this.state = {
-      bot: getBotById(this.props.id)
+      bot: this.props.bot
     };
   }
 
   componentWillReceiveProps(newProps) {
-    const { id: newId } = newProps;
-    if (newId !== this.props.id) {
-      this.setState({ bot: getBotById(newId) });
+    const { bot: newBot } = newProps;
+    // handling a new bot
+    if (newBot.path !== this.state.bot.path) {
       this.setDirtyFlag(false);
     }
-  }
-
-  componentWillMount() {
-    this.setState({
-      bot: getBotById(this.props.id)
-    });
   }
 
   onChangeBotId(e) {
@@ -164,10 +158,11 @@ export default class SettingsEditor extends React.Component {
   }
 
   onSave(e) {
-    return CommandService.remoteCall('bot:save', this.state.bot, this.props.id)
+    return CommandService.remoteCall('bot:save', this.state.bot)
       .then(() => {
-        store.dispatch(BotActions.patch(this.props.id, this.state.bot));
+        store.dispatch(BotActions.patch(this.state.bot));
         this.setDirtyFlag(false);
+        this.setState({ bot: this.state.bot });
         CommandService.remoteCall('app:setTitleBar', getBotDisplayName(this.state.bot));
       });
   }
@@ -188,7 +183,7 @@ export default class SettingsEditor extends React.Component {
 
     CommandService.remoteCall('shell:showOpenDialog', dialogOptions)
       .then(path => {
-        const bot = { ...this.state.bot, path: path };
+        const bot = { ...this.state.bot, localDir: path };
         this.setState({ bot });
         this.setDirtyFlag(true);
       })
@@ -249,7 +244,7 @@ export default class SettingsEditor extends React.Component {
           <div className="column stretch space-left">
             <span className='label'>Local folder</span>
             <div className='horz-group'>
-              <input value={ this.state.bot.path } type="text" readOnly />
+              <input value={ this.state.bot.localDir } type="text" readOnly />
               <PrimaryButton text='Browse' onClick={ this.onSelectFolder } buttonClass='browse-path-button' />
             </div>
           </div>
@@ -259,8 +254,12 @@ export default class SettingsEditor extends React.Component {
   }
 }
 
-SettingsEditor.propTypes = {
+export default connect((state, ownProps) => ({
+  bot: state.bot.activeBot
+}))(BotSettingsEditor);
+
+BotSettingsEditor.propTypes = {
   documentId: PropTypes.string.isRequired,
-  id: PropTypes.string.isRequired,
+  bot: PropTypes.object.isRequired,
   dirty: PropTypes.bool
 };

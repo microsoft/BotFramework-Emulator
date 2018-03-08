@@ -35,7 +35,6 @@ import { css } from 'glamor';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import BotExplorerBar from './botExplorerBar';
 import AssetExplorerBar from './assetExplorerBar';
 import ServicesExplorerBar from './servicesExplorerBar';
 import * as Colors from '../../styles/colors';
@@ -53,11 +52,7 @@ const CSS = css({
 class ExplorerBar extends React.Component {
   render() {
     let explorer;
-    if (this.props.selectedNavTab === Constants.NavBar_App)
-      explorer = (
-        <BotExplorerBar activeBot={ this.props.activeBot } />
-      );
-    else if (this.props.selectedNavTab === Constants.NavBar_Files)
+    if (this.props.selectedNavTab === Constants.NavBar_Files)
       explorer = (
         <AssetExplorerBar activeBot={ this.props.activeBot } />
       );

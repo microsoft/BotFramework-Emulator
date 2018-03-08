@@ -1,7 +1,7 @@
 import { SHADOW_COLOR_DARK } from './colors';
 
 const BLUR_RADIUS = '6px';
-const SPREAD_RADIUS = '-3px'
+const SPREAD_RADIUS = '-3px';
 
 export const INSET_TOP = `inset 0px 3px ${BLUR_RADIUS} ${SPREAD_RADIUS} ${SHADOW_COLOR_DARK}`;
 export const INSET_BOTTOM = `inset 0px -3px ${BLUR_RADIUS} ${SPREAD_RADIUS} ${SHADOW_COLOR_DARK}`;

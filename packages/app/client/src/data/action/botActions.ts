@@ -1,3 +1,4 @@
+//
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 //
@@ -30,41 +31,44 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
-import React from 'react';
-import { connect } from 'react-redux';
+import { IBot, IBotInfo } from '@bfemulator/app-shared';
 
-const CSS = css({
-  boxSizing: 'border-box',
-  height: '40px',
-  padding: '8px 16px',
-  display: 'flex',
-  alignItems: 'center',
-  flexShrink: 0,
+export const CREATE ='BOT/CREATE';
+export const DELETE = 'BOT/DELETE';
+export const LOAD = 'BOT/LOAD';
+export const PATCH = 'BOT/PATCH';
+export const SET_ACTIVE = 'BOT/SET_ACTIVE';
 
-  '& > header': {
-    fontSize: '13px',
-    lineHeight: '24px',
-    height: '24px',
-    textTransform: 'uppercase',
-    whiteSpace: 'nowrap',
-  }
-});
-
-class BotExplorerTitle extends React.Component {
-  constructor(context, props) {
-    super(context, props);
-  }
-
-  render() {
-    return (
-      <div className={CSS}>
-        <header>My Bots</header>
-      </div>
-    );
-  }
+export function create(bot: IBot) {
+  return {
+    type: CREATE,
+    payload: bot
+  };
 }
 
-export default connect(state => ({
-  activeBot: state.bot.activeBot
-}))(BotExplorerTitle)
+export function deleteBot(path: string) {
+  return {
+    type: DELETE,
+    payload: path
+  };
+}
+
+export function load(bots: IBotInfo[]) {
+  return {
+    type: LOAD,
+    payload: bots
+  };
+}
+
+export function patch(bot: IBot) {
+  return {
+    type: PATCH,
+    payload: bot
+  };
+}
+export function setActive(bot: IBot) {
+  return {
+    type: SET_ACTIVE,
+    payload: bot
+  };
+}

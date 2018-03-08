@@ -1,13 +1,12 @@
-import { getBotDisplayName } from '@bfemulator/app-shared';
+import { getBotDisplayName, IBot } from '@bfemulator/app-shared';
 import { hasNonGlobalTabs } from '../../data/editorHelpers';
 import { CommandService } from '../../platform/commands/commandService';
-import { getBotById, getActiveBot } from '../../data/botHelpers';
+import { getActiveBot } from '../../data/botHelpers';
 import store from '../../data/store';
 import * as BotActions from '../../data/action/botActions';
 import * as NavBarActions from '../../data/action/navBarActions';
 import * as EditorActions from '../../data/action/editorActions';
 import * as Constants from '../../constants';
-
 
 export const ActiveBotHelper = new class {
 
@@ -27,26 +26,26 @@ export const ActiveBotHelper = new class {
     }
   }
 
-  setActiveBot(id): Promise<any> {
-    return CommandService.remoteCall('bot:setActive', id)
-      .then(() => {
-        store.dispatch(BotActions.setActive(id));
-        const bot = getBotById(id);
+  /** Uses a bot project path to read the file on server-side and set the corresponding bot object as active */
+  setActiveBot(path): Promise<any> {
+    return CommandService.remoteCall('bot:setActive', path)
+      .then(bot => {
+        store.dispatch(BotActions.setActive(bot));
         CommandService.remoteCall('app:setTitleBar', getBotDisplayName(bot));
       })
       .catch(err => console.error('Error while setting active bot: ', err));
   }
 
-  confirmAndCreateBot(): Promise<any> {
+  confirmAndCreateBot(botToCreate: IBot): Promise<any> {
     return this.confirmSwitchBot()
       .then((result) => {
         if (result) {
           store.dispatch(EditorActions.closeNonGlobalTabs());
-          CommandService.remoteCall('bot:list:create')
+          CommandService.remoteCall('bot:create', botToCreate)
             .then(bot => {
               store.dispatch((dispatch) => {
                 store.dispatch(BotActions.create(bot));
-                this.setActiveBot(bot.id);
+                this.setActiveBot(bot.path);
 
                 // open bot settings and switch to explorer view
                 store.dispatch(NavBarActions.select(Constants.NavBar_Files));
@@ -58,15 +57,15 @@ export const ActiveBotHelper = new class {
       });
   }
 
-  confirmAndSwitchBots(id: string): Promise<any> {
-    const activeBot = getActiveBot();
-    if (activeBot === id)
+  confirmAndSwitchBots(path: string): Promise<any> {
+    const activeBot = getActiveBot() || {};
+    if (activeBot.path === path)
       return Promise.resolve();
     return this.confirmSwitchBot()
       .then((result) => {
         if (result) {
           store.dispatch(EditorActions.closeNonGlobalTabs());
-          this.setActiveBot(id)
+          this.setActiveBot(path)
             .then(() => {
               CommandService.call('livechat:new');
               store.dispatch(NavBarActions.select(Constants.NavBar_Files));
@@ -75,7 +74,7 @@ export const ActiveBotHelper = new class {
       })
       .catch(err => console.error('Error while setting active bot: ', err));
   }
-  
+
   confirmAndDeleteBot(id): Promise<any> {
     return CommandService.remoteCall('shell:showMessageBox', true, {
       type: "question",

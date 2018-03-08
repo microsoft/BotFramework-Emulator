@@ -1,6 +1,6 @@
-import * as BotActions from '../action/bot';
+import * as BotActions from '../action/botActions';
 import { IBot, IBotInfo } from '@bfemulator/app-shared';
-import { readFileSync } from '../../utils';
+import { CommandService } from '../../platform/commands/commandService';
 
 export interface IBotState {
   activeBot: IBot;
@@ -21,7 +21,7 @@ export type BotAction = {
   payload: IBot
 } | {
   type: 'BOT/SET_ACTIVE',
-  payload: string
+  payload: IBot
 };
 
 const DEFAULT_STATE: IBotState = {
@@ -82,7 +82,7 @@ function setActiveBot(bot: IBot, state: IBotState): IBotState {
   return newState;
 }
 
-function setBotFilesState(botFilesState: IBotInfo[], state: IBotState): IBotState {
+function setBotFilesState(botFilesState: IBotInfo, state: IBotState): IBotState {
   let newState = Object.assign({}, state);
 
   newState.botFiles = botFilesState;

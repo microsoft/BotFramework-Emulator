@@ -48,7 +48,7 @@ import { emulator } from './emulator';
 import { usersDefault } from '@bfemulator/app-shared';
 import * as moment from 'moment';
 import { isLocalhostUrl } from './utils';
-import { getBotById } from './botHelpers';
+import { getActiveBot } from './botHelpers';
 import { logError, makeBotSettingsLink, makeAppSettingsLink, makeExternalLink } from './logHelpers';
 
 /**
@@ -66,7 +66,7 @@ export class Conversation {
   }
 
   public get bot(): IBot {
-    return getBotById(this.idOfBotRecord);
+    return getActiveBot();
   }
 
   // the id for this conversation

@@ -45,6 +45,7 @@ import Splitter from '../layout/splitter-v2';
 import TabManager from '../dialogs/tabManager';
 import * as Constants from '../../constants';
 import StatusBar from './statusBar';
+import DialogHost from '../dialogs/host';
 
 css.global('html, body, #root', {
   backgroundColor: Colors.APP_BACKGROUND_DARK,
@@ -140,8 +141,9 @@ export class Main extends React.Component {
             </Splitter>
           </div>
           <TabManager disabled={ false } />
-      </div>
-      <StatusBar />
+        </div>
+        <StatusBar />
+        <DialogHost />
       </div>
     );
   }

@@ -26,10 +26,9 @@ export function getTabGroupForDocument(documentId, tabGroups) {
 }
 
 export function showWelcomePage() {
-  const key = getTabGroupForDocument('welcome-page');
-  if (key) {
-    store.dispatch(EditorActions.setActiveTab('welcome-page'));
-  } else {
-    store.dispatch(EditorActions.open(Constants.ContentType_WelcomePage, 'welcome-page', true));
-  }
+  store.dispatch(EditorActions.open(Constants.ContentType_WelcomePage, Constants.DocumentId_WelcomePage, true));
+}
+
+export function showAppSettingsPage() {
+  store.dispatch(EditorActions.open(Constants.ContentType_AppSettings, Constants.DocumentId_AppSettings, true));
 }

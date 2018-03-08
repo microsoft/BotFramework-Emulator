@@ -31,49 +31,44 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { IBot, IBotInfo } from '@bfemulator/app-shared';
+
 export const CREATE ='BOT/CREATE';
 export const DELETE = 'BOT/DELETE';
 export const LOAD = 'BOT/LOAD';
 export const PATCH = 'BOT/PATCH';
 export const SET_ACTIVE = 'BOT/SET_ACTIVE';
 
-export function create(bot) {
+export function create(bot: IBot) {
   return {
     type: CREATE,
     payload: bot
   };
 }
 
-export function deleteBot(id) {
+export function deleteBot(path: string) {
   return {
     type: DELETE,
-    payload: {
-      id
-    }
+    payload: path
   };
 }
 
-export function load(bots) {
+export function load(bots: IBotInfo[]) {
   return {
     type: LOAD,
     payload: bots
   };
 }
 
-export function patch(id, bot) {
+export function patch(bot: IBot) {
   return {
     type: PATCH,
-    payload: {
-      id,
-      bot
-    }
+    payload: bot
   };
 }
-export function setActive(id) {
+export function setActive(bot: IBot) {
   return {
     type: SET_ACTIVE,
-    payload: {
-      id
-    }
+    payload: bot
   };
 }

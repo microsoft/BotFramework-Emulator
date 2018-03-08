@@ -128,11 +128,16 @@ const createMainWindow = () => {
     .then(store => {
       store.subscribe(() => {
         const state = store.getState();
-        const botsJson = { bots: state.bot.bots };
-        const filePath = `${ensureStoragePath()}/bots.json`;
+        const botsJson = { bots: state.bot.botFiles };
+        const filePath = path.join(ensureStoragePath(), 'bots.json');
 
         try {
+          // write bots list
           writeFile(filePath, botsJson);
+          // write active bot
+          if (state.bot.activeBot && state.bot.activeBot.path) {
+            writeFile(state.bot.activeBot.path, state.bot.activeBot);
+          }
         } catch (e) { console.error('Error writing bot settings to disk: ', e); }
 
         /* Timeout's are currently busted in Electron; will write on every store change until fix is made.
@@ -160,7 +165,11 @@ const createMainWindow = () => {
       submenu: [
         {
           label: "New Bot",
-          click: () => mainWindow.commandService.remoteCall('bot:create')
+          click: () => {
+            mainWindow.commandService.call('bot:new')
+              .then(bot => mainWindow.commandService.remoteCall('bot:create', bot))
+              .catch(err => console.error('Error while getting new bot in File menu: ', err));
+          }
         },
         { type: 'separator' },
         { role: 'quit' }

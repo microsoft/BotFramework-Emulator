@@ -74,6 +74,10 @@ const CSS = css({
         }
       },
 
+      '&.app > div': {
+        backgroundColor: 'initial !important'
+      },
+
       '& > div.selected': {
         // TODO: Don't use !important
         backgroundColor: 'rgba(0, 0, 0, .15) !important'
@@ -147,7 +151,6 @@ class NavBar extends React.Component {
     this._switchTabCommandHandler = CommandRegistry.registerCommand('navbar:switchtab', (tabName) => {
       switch (tabName) {
         case Constants.NavBar_Analytics:
-        case Constants.NavBar_App:
         case Constants.NavBar_Files:
         case Constants.NavBar_Notifications:
         case Constants.NavBar_Settings:
@@ -180,8 +183,8 @@ class NavBar extends React.Component {
     return (
       <nav className={ CSS }>
         <ul className="app">
-          <li role="button" className="app" onClick={ this.handleAppClick } title="App">
-            <div className={ classNames({ selected: selection === Constants.NavBar_App }) } />
+          <li role="button" className="app" title="App">
+            <div />
           </li>
           <li role="button" className="files" onClick={ this.handleFilesClick } title="Files">
             <div className={ classNames({ selected: selection === Constants.NavBar_Files }) } />
