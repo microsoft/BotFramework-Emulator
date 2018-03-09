@@ -40,6 +40,7 @@ import * as Colors from '../../styles/colors';
 import * as Constants from '../../../constants';
 import * as NavBarActions from '../../../data/action/navBarActions';
 import * as EditorActions from '../../../data/action/editorActions';
+import * as ExplorerActions from '../../../data/action/explorerActions';
 import { InsetShadow } from '../../layout/insetShadow';
 import { CommandRegistry } from '../../../commands';
 
@@ -148,29 +149,17 @@ class NavBar extends React.Component {
     this.handleUserClick = this.handleClick.bind(this, Constants.NavBar_User);
   }
 
-  componentWillMount() {
-    this._switchTabCommandHandler = CommandRegistry.registerCommand('navbar:switchtab', (tabName) => {
-      switch (tabName) {
-        case Constants.NavBar_Analytics:
-        case Constants.NavBar_Files:
-        case Constants.NavBar_Notifications:
-        case Constants.NavBar_Settings:
-        case Constants.NavBar_Services:
-        case Constants.NavBar_User:
-          this.props.dispatch(NavBarActions.select(tabName));
-          break;
-      }
-    });
-  }
-
-  componentWillUnmount() {
-    if (this._switchTabCommandHandler) {
-      this._switchTabCommandHandler.dispose();
-    }
-  }
-
   handleClick(selection) {
-    this.props.dispatch(NavBarActions.selectOrToggle(selection));
+    if (this.props.selection === selection) {
+      // toggle explorer when clicking the same navbar icon
+      this.props.dispatch(ExplorerActions.show(!this.props.explorerShowing));
+    } else {
+      // switch tabs and show explorer when clicking different navbar icon
+      this.props.dispatch(() => {
+        this.props.dispatch(NavBarActions.selectOrToggle(selection));
+        this.props.dispatch(ExplorerActions.show(true));
+      });
+    }
   }
 
   handleSettingsClick(e) {
@@ -205,4 +194,7 @@ class NavBar extends React.Component {
   }
 }
 
-export default connect(state => ({ selection: state.navBar.selection }))(NavBar)
+export default connect(state => ({
+  selection: state.navBar.selection,
+  explorerShowing: state.explorer.showing
+}))(NavBar)

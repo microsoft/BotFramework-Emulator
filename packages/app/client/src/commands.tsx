@@ -12,6 +12,9 @@ import BotCreationDialog from './ui/dialogs/botCreationDialog';
 import { DialogService } from './ui/dialogs/service';
 import store from './data/store';
 import * as ChatActions from './data/action/chatActions';
+import * as EditorActions from './data/action/editorActions';
+import * as NavBarActions from './data/action/navBarActions';
+import * as Constants from './constants';
 
 //=============================================================================
 export const CommandRegistry = new CommReg();
@@ -54,5 +57,17 @@ export function registerCommands() {
   // Removes a transcript
   CommandRegistry.registerCommand('transcript:remove', (filename: string): void => {
     store.dispatch(ChatActions.removeTranscript(filename));
+  });
+
+  //---------------------------------------------------------------------------
+  // Opens up bot settings page for a bot
+  CommandRegistry.registerCommand('bot-settings:open', (bot: IBot): void => {
+    store.dispatch(EditorActions.open(Constants.ContentType_BotSettings, Constants.DocumentId_BotSettings, false, bot.id));
+  });
+
+  //---------------------------------------------------------------------------
+  // Switches navbar tab selection
+  CommandRegistry.registerCommand('navbar:switchtab', (tabName: string): void => {
+    store.dispatch(NavBarActions.select(tabName));
   });
 }

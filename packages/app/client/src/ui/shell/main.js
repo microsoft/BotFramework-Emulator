@@ -120,11 +120,28 @@ export class Main extends React.Component {
   }
 
   render() {
-    const primaryEditor = this.props.primaryEditor &&
+    const tabGroup1 = this.props.primaryEditor &&
       <div className="mdi-wrapper" key={ 'primaryEditor' } ><MDI owningEditor={ Constants.EditorKey_Primary } /></div>;
 
-    const secondaryEditor = this.props.secondaryEditor && this.props.secondaryEditor.documents.length ?
+    const tabGroup2 = this.props.secondaryEditor && this.props.secondaryEditor.documents.length ?
       <div className="mdi-wrapper secondary-mdi" key={ 'secondaryEditor' } ><MDI owningEditor={ Constants.EditorKey_Secondary } /></div> : null;
+
+    // If falsy children aren't filtered out, splitter won't recognize change in number of children
+    // (i.e. [child1, child2] -> [false, child2] is still seen as 2 children by the splitter)
+    // TODO: Move this logic to splitter-side
+    const tabGroups = [tabGroup1, tabGroup2].filter(tG => !!tG);
+
+    // Explorer & TabGroup(s) pane
+    const workbenchChildren = [];
+
+    if (this.props.showingExplorer)
+      workbenchChildren.unshift(<ExplorerBar key={ 'explorer-bar' } />);
+
+    workbenchChildren.push(
+      <Splitter orientation={ 'vertical' } key={ 'tab-group-splitter' }>
+        { tabGroups }
+      </Splitter>
+    );
 
     return (
       <div className={ CSS }>
@@ -132,12 +149,7 @@ export class Main extends React.Component {
           <NavBar/>
           <div className="workbench">
             <Splitter orientation={ 'vertical' } primaryPaneIndex={ 0 } minSizes={{ 0: 40, 1: 40 }} initialSizes={{ 0: 300 }}>
-              <ExplorerBar />
-              <Splitter orientation={ 'vertical' }>
-              {
-                [primaryEditor, secondaryEditor].filter(elem => !!elem)
-              }
-              </Splitter>
+              { workbenchChildren }
             </Splitter>
           </div>
           <TabManager disabled={ false } />
@@ -151,7 +163,8 @@ export class Main extends React.Component {
 
 export default connect((state, ownProps) => ({
   primaryEditor: state.editor.editors[Constants.EditorKey_Primary],
-  secondaryEditor: state.editor.editors[Constants.EditorKey_Secondary]
+  secondaryEditor: state.editor.editors[Constants.EditorKey_Secondary],
+  showingExplorer: state.explorer.showing
 }))(Main);
 
 Main.propTypes = {

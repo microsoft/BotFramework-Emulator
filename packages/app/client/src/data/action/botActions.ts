@@ -52,26 +52,34 @@ export function create(bot: IBot, botFilePath: string) {
 export function deleteBot(path: string) {
   return {
     type: DELETE,
-    payload: path
+    payload: {
+      path
+    }
   };
 }
 
 export function load(bots: IBotInfo[]) {
   return {
     type: LOAD,
-    payload: bots
+    payload: {
+      bots
+    }
   };
 }
 
 export function patch(bot: IBot) {
   return {
     type: PATCH,
-    payload: bot
+    payload: {
+      bot
+    }
   };
 }
 export function setActive(bot: IBot) {
   return {
     type: SET_ACTIVE,
-    payload: bot
+    payload: {
+      bot
+    }
   };
 }

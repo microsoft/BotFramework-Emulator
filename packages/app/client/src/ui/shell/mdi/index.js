@@ -56,18 +56,6 @@ class MDI extends React.Component {
     this.props.dispatch(EditorActions.setActiveTab(this.props.documents[tabValue].documentId));
   }
 
-  componentWillMount() {
-      this._openBotSettingsCommandHandler = CommandRegistry.registerCommand('bot:settings:open', (bot) => {
-      this.props.dispatch(EditorActions.open(Constants.ContentType_BotSettings, Constants.DocumentId_BotSettings, false, bot.id));
-    });
-  }
-
-  componentWillUnmount() {
-    if (this._openBotSettingsCommandHandler) {
-      this._openBotSettingsCommandHandler.dispose();
-    }
-  }
-
   render() {
     const activeIndex = this.props.documents.findIndex(document => document.documentId === this.props.activeDocumentId);
 

@@ -31,31 +31,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as constants from '../../constants';
-import * as NavBarActions from '../action/navBarActions';
+export const SELECT_OR_TOGGLE = 'NAVBAR/SELECT_OR_TOGGLE';
+export const SELECT = 'NAVBAR/SELECT';
 
+export function selectOrToggle(selection: string) {
+  return {
+    type: SELECT_OR_TOGGLE,
+    payload: {
+      selection
+    }
+  };
+}
 
-const DEFAULT_STATE = {
-  selection: constants.NavBar_Files,
-  expanded: false
-};
-
-export default function navBar(state = DEFAULT_STATE, action) {
-  switch (action.type) {
-    case NavBarActions.SELECT_OR_TOGGLE:
-      if (state.selection === action.payload.selection) {
-        state = { ...state, expanded: !state.expanded };
-      } else {
-        state = { ...state, expanded: true, selection: action.payload.selection };
-      }
-      break;
-
-    case NavBarActions.SELECT:
-      state = { ...state, expanded: true, selection: action.payload.selection };
-      break;
-
-    default: break;
-  }
-
-  return state;
+export function select(selection: string) {
+  return {
+    type: SELECT,
+    payload: {
+      selection
+    }
+  };
 }

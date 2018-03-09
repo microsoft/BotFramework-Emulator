@@ -61,7 +61,7 @@ export function removeTranscript(filename) {
   return {
     type: REMOVE_TRANSCRIPT,
     payload: {
-      documentId
+      filename
     }
   };
 }

@@ -31,23 +31,49 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export const SELECT_OR_TOGGLE = 'NAVBAR/SELECT_OR_TOGGLE';
-export const SELECT = 'NAVBAR/SELECT';
+import * as constants from '../../constants';
+import * as NavBarActions from '../action/navBarActions';
 
-export function selectOrToggle(selection) {
-    return {
-        type: SELECT_OR_TOGGLE,
-        payload: {
-            selection
-        }
-    };
+type NavBarAction = {
+  type: 'NAVBAR/SELECT',
+  payload: {
+    selection: string
+  }
+} | {
+  type: 'NAVBAR/SELECT_OR_TOGGLE',
+  payload: {
+    selection: string
+  }
+};
+
+interface INavBarState {
+  selection: string;
+  expanded: boolean;
 }
 
-export function select(selection) {
-  return {
-      type: SELECT,
-      payload: {
-          selection
+const DEFAULT_STATE: INavBarState = {
+  selection: constants.NavBar_Files,
+  expanded: false
+};
+
+export default function navBar(state: INavBarState = DEFAULT_STATE, action: NavBarAction): INavBarState {
+  switch (action.type) {
+    case NavBarActions.SELECT_OR_TOGGLE: {
+      if (state.selection === action.payload.selection) {
+        state = { ...state, expanded: !state.expanded };
+      } else {
+        state = { ...state, expanded: true, selection: action.payload.selection };
       }
-  };
+      break;
+    }
+
+    case NavBarActions.SELECT: {
+      state = { ...state, expanded: true, selection: action.payload.selection };
+      break;
+    }
+
+    default: break;
+  }
+
+  return state;
 }

@@ -19,7 +19,7 @@ export default class AssetExplorerBar extends React.Component<IAssetExplorerBarP
   }
 
   onClickSettings(e) {
-    CommandService.call('bot:settings:open', this.props.activeBot);
+    CommandService.call('bot-settings:open', this.props.activeBot);
   }
 
   render() {

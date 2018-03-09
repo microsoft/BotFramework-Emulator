@@ -6,7 +6,9 @@ interface IDialogState {
 
 type IDialogAction = {
   type: 'DIALOG/SET_SHOWING';
-  payload: boolean;
+  payload: {
+    showing: boolean
+  };
 };
 
 const DEFAULT_STATE: IDialogState = {
@@ -16,7 +18,7 @@ const DEFAULT_STATE: IDialogState = {
 export default function dialog(state: IDialogState = DEFAULT_STATE, action: IDialogAction): IDialogState {
   switch(action.type) {
     case DialogActions.SET_SHOWING: {
-      state = setShowing(action.payload, state);
+      state = setShowing(action.payload.showing, state);
       break;
     }
 
