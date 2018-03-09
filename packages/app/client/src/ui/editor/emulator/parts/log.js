@@ -129,7 +129,15 @@ Log.propTypes = {
 class LogEntry extends React.Component {
 
   inspect(obj) {
+    this.props.document.selectedActivity$.next({});
     store.dispatch(ChatActions.setInspectorObjects(this.props.document.documentId, obj));
+  }
+
+  inspectAndHighlight(obj) {
+    this.inspect(obj);
+    if (obj.id) {
+      this.props.document.selectedActivity$.next(obj);
+    }
   }
 
   render() {
@@ -170,7 +178,8 @@ class LogEntry extends React.Component {
         case "activity": {
           return (
             <span className="spaced" key={ key }>
-              <span className="spaced"><a onClick={ () => this.inspect(message.payload.activity) }>Activity</a></span>
+              <span className="spaced">{ message.payload.destination === "bot" ? '->' : '<-' }</span>
+              <span className="spaced"><a onClick={ () => this.inspectAndHighlight(message.payload.activity) }>Activity</a></span>
               <span className="spaced">{ message.payload.text }</span>
             </span>
           );
@@ -179,9 +188,8 @@ class LogEntry extends React.Component {
         case "request": {
           return (
             <span className="spaced" key={ key }>
-              <span className="spaced">{ `->` }</span>
+              <span className="spaced">{ '->' }</span>
               <span className="spaced"><a onClick={ () => this.inspect(message) }>{ message.payload.method }</a></span>
-              <span className="src-dst spaced">from { message.payload.source }</span>
             </span>
           );
         }
@@ -189,9 +197,8 @@ class LogEntry extends React.Component {
         case "response": {
           return (
             <span className="spaced" key={ key }>
-              <span className="spaced">{ "<-" }</span>
+              <span className="spaced">{ '<-' }</span>
               { this.renderResponseMessage(message) }
-              <span className="src-dst spaced">to { message.payload.destination }</span>
               {
                 message.payload.statusMessage && message.payload.statusMessage.length
                   ?

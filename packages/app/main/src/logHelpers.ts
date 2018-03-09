@@ -43,7 +43,7 @@ export function makeExternalLink(text: string, url: string): any {
   };
 }
 
-export function logActivity(conversationId: string, activity: IActivity) {
+export function logActivity(conversationId: string, activity: IActivity, destination: string) {
   const activityText = ActivityHelpers.getActivityText(activity);
   const entry = makeLogEntry(
     LogLevel.Info,
@@ -52,7 +52,8 @@ export function logActivity(conversationId: string, activity: IActivity) {
       type: "activity",
       payload: {
         text: activityText,
-        activity
+        activity,
+        destination
       }
     }
   );

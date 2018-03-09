@@ -81,6 +81,10 @@ export class Chat extends React.Component<ChatProps, {}> {
         if (props.sendTyping) {
             this.store.dispatch<ChatActions>({ type: 'Set_Send_Typing', sendTyping: props.sendTyping });
         }
+        
+        if (typeof props.showShell === 'boolean') {
+          this.store.dispatch<ChatActions>({ type: 'Set_Visible', visible: props.showShell });
+        }
 
         if (props.speechOptions) {
             Speech.SpeechRecognizer.setSpeechRecognizer(props.speechOptions.speechRecognizer);
@@ -269,7 +273,6 @@ export class Chat extends React.Component<ChatProps, {}> {
                         />
                     </MessagePane>
                     <Shell
-                      visible={ this.props.showShell }
                       ref={ this._saveShellRef } />
                     { resize }
                 </div>

@@ -110,9 +110,9 @@ export class Conversation {
     activity.conversation = activity.conversation || { id: this.conversationId };
   }
 
-  private addActivityToQueue(activity: IActivity) {
+  private addActivityToQueue(activity: IActivity, destination: string) {
     this.activities.push(activity);
-    logActivity(this.conversationId, activity);
+    logActivity(this.conversationId, activity, destination);
   }
 
   /**
@@ -121,7 +121,7 @@ export class Conversation {
   postActivityToBot(activity: IActivity, recordInConversation: boolean, cb?) {
     if (this.conversationId.includes("transcript")) {
       if (recordInConversation) {
-        this.addActivityToQueue(Object.assign({}, activity));
+        this.addActivityToQueue(Object.assign({}, activity), "bot");
       }
       cb && cb();
       return;
@@ -156,7 +156,7 @@ export class Conversation {
             cb(null, resp ? resp.statusCode : undefined);
           } else {
             if (recordInConversation) {
-              this.addActivityToQueue(Object.assign({}, activity));
+              this.addActivityToQueue(Object.assign({}, activity), "bot");
             }
             if (activity.type === 'invoke') {
               cb(null, resp.statusCode, activity.id, resp.body);
@@ -202,11 +202,6 @@ export class Conversation {
    * Queues activity for delivery to user.
    */
   public postActivityToUser(activity: IActivity): IResourceResponse {
-    if (this.conversationId.includes("transcript")) {
-      this.addActivityToQueue(activity);
-      return;
-    }
-
     const settings = getSettings();
     // Make a shallow copy before modifying & queuing
     let visitor = new PaymentEncoder();
@@ -216,7 +211,7 @@ export class Conversation {
     if (!activity.from.name) {
       activity.from.name = "Bot";
     }
-    this.addActivityToQueue(activity);
+    this.addActivityToQueue(activity, "user");
     return ResponseTypes.createResourceResponse(activity.id);
   }
 

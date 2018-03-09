@@ -7,6 +7,7 @@ import { Reducer } from 'redux';
 export declare const sendMessage: (text: string, from: User, locale: string) => ChatActions;
 export declare const sendFiles: (files: FileList, from: User, locale: string) => ChatActions;
 export interface ShellState {
+    visible: boolean;
     sendTyping: boolean;
     input: string;
     listening: boolean;
@@ -29,6 +30,12 @@ export declare type ShellAction = {
 } | {
     type: 'Set_Send_Typing';
     sendTyping: boolean;
+} | {
+    type: 'Set_Visible';
+    visible: boolean;
+} | {
+    type: 'Set_Visible';
+    visible: boolean;
 } | {
     type: 'Send_Message';
     activity: Activity;

@@ -40,6 +40,7 @@ var attachmentsFromFiles = function (files) {
 };
 exports.shell = function (state, action) {
     if (state === void 0) { state = {
+        visible: true,
         input: '',
         sendTyping: false,
         listening: false,
@@ -56,6 +57,8 @@ exports.shell = function (state, action) {
             return tslib_1.__assign({}, state, { input: '' });
         case 'Set_Send_Typing':
             return tslib_1.__assign({}, state, { sendTyping: action.sendTyping });
+        case 'Set_Visible':
+            return tslib_1.__assign({}, state, { visible: action.visible });
         case 'Card_Action_Clicked':
             return tslib_1.__assign({}, state, { lastInputViaSpeech: false });
         default:

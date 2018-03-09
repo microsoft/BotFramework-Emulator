@@ -8,7 +8,7 @@ import { Speech } from './SpeechModule'
 import { ChatActions, sendMessage, sendFiles } from './Store';
 
 interface Props {
-    visible?: boolean,
+    visible: boolean,
     inputText: string,
     strings: Strings,
     listening: boolean,
@@ -183,6 +183,7 @@ class ShellContainer extends React.Component<Props> implements ShellFunctions {
 export const Shell = connect(
     (state: ChatState) => ({
         // passed down to ShellContainer
+        visible: state.shell.visible,
         inputText: state.shell.input,
         strings: state.format.strings,
         // only used to create helper functions below
@@ -199,6 +200,7 @@ export const Shell = connect(
         sendFiles
     }, (stateProps: any, dispatchProps: any, ownProps: any): Props => ({
         // from stateProps
+        visible: stateProps.visible,
         inputText: stateProps.inputText,
         strings: stateProps.strings,
         listening : stateProps.listening,

@@ -90,6 +90,7 @@ var ShellContainer = (function (_super) {
 }(React.Component));
 exports.Shell = react_redux_1.connect(function (state) { return ({
     // passed down to ShellContainer
+    visible: state.shell.visible,
     inputText: state.shell.input,
     strings: state.format.strings,
     // only used to create helper functions below
@@ -106,6 +107,7 @@ exports.Shell = react_redux_1.connect(function (state) { return ({
     sendFiles: Store_1.sendFiles
 }, function (stateProps, dispatchProps, ownProps) { return ({
     // from stateProps
+    visible: stateProps.visible,
     inputText: stateProps.inputText,
     strings: stateProps.strings,
     listening: stateProps.listening,
