@@ -26,7 +26,8 @@ export interface ChatProps {
     sendTyping?: boolean,
     formatOptions?: FormatOptions,
     resize?: 'none' | 'window' | 'detect',
-    store?: ChatStore
+    store?: ChatStore,
+    showShell?: boolean
 }
 
 import { History } from './History';
@@ -267,7 +268,9 @@ export class Chat extends React.Component<ChatProps, {}> {
                             ref={ this._saveHistoryRef }
                         />
                     </MessagePane>
-                    <Shell ref={ this._saveShellRef } />
+                    <Shell
+                      visible={ this.props.showShell }
+                      ref={ this._saveShellRef } />
                     { resize }
                 </div>
             </Provider>

@@ -2,7 +2,9 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import { filterChildren } from '../utils';
 import * as Colors from '../styles/colors';
+import * as Misc from '../styles/misc';
 
 const CSS = css({
   height: '40px',
@@ -31,6 +33,7 @@ const CSS = css({
       ':hover': {
         backgroundColor: Colors.TOOLBAR_BUTTON_HOVER_BACKGROUND_DARK,
         color: Colors.TOOLBAR_BUTTON_HOVER_FOREGROUND_DARK,
+        textDecoration: Misc.TOOLBAR_BUTTON_HOVER_TEXTDECORATION,
       }
     },
 
@@ -47,7 +50,7 @@ export default class ToolBar extends React.Component {
     return (
       <div className={ CSS }>
         <ul>
-          { React.Children.map(this.props.children, child => this.createClass(child)) }
+          { filterChildren(this.props.children, child => child && child.props.visible).map(child => this.createClass(child)) }
         </ul>
       </div>
     );

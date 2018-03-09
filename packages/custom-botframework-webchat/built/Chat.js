@@ -183,7 +183,7 @@ var Chat = (function (_super) {
                 header,
                 React.createElement(MessagePane_1.MessagePane, null,
                     React.createElement(History_1.History, { onCardAction: this._handleCardAction, ref: this._saveHistoryRef })),
-                React.createElement(Shell_1.Shell, { ref: this._saveShellRef }),
+                React.createElement(Shell_1.Shell, { visible: this.props.showShell, ref: this._saveShellRef }),
                 resize)));
     };
     return Chat;

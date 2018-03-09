@@ -2,9 +2,9 @@ import store from './store';
 
 export function documentIdForConversation(conversationId) {
   const state = store.getState();
-  for (let key in state.chat.liveChats) {
-    if (state.chat.liveChats[key].conversationId === conversationId) {
-      return state.chat.liveChats[key].documentId
+  for (let key in state.chat.chats) {
+    if (state.chat.chats[key].conversationId === conversationId) {
+      return state.chat.chats[key].documentId
     }
   }
   return undefined;

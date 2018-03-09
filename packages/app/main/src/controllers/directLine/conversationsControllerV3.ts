@@ -43,6 +43,8 @@ import { RestServer } from '../../restServer';
 import { jsonBodyParser } from '../../jsonBodyParser';
 import { getActiveBot } from '../../botHelpers';
 import { logError, logRequest, logResponse } from '../../logHelpers';
+import { mainWindow } from '../../main';
+import * as BotActions from '../../data-v2/action/bot';
 
 export class ConversationsControllerV3 {
 
@@ -62,11 +64,17 @@ export class ConversationsControllerV3 {
   }
 
   static startConversation = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    const activeBot = getActiveBot();
+    let activeBot = getActiveBot();
     const auth = req.header('Authorization');
     const tokenMatch = /Bearer\s+(.+)/.exec(auth);
     const conversationId = tokenMatch[1];
     logRequest(conversationId, "user", req);
+
+    if (conversationId && conversationId.includes("transcript") && !activeBot) {
+      mainWindow.store.dispatch(BotActions.setActiveRandom());
+      activeBot = getActiveBot();
+    }
+
     if (activeBot) {
       let created = false;
       const users = getSettings().users;
@@ -158,6 +166,11 @@ export class ConversationsControllerV3 {
   }
 
   static postActivity = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+    if (req.params.conversationId.includes("transcript")) {
+      res.end();
+      return;
+    }
+
     logRequest(req.params.conversationId, "user", req);
     const activeBot = getActiveBot();
     if (activeBot) {
@@ -193,6 +206,11 @@ export class ConversationsControllerV3 {
 
 
   static upload = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+    if (req.params.conversationId.includes("transcript")) {
+      res.end();
+      return;
+    }
+
     logRequest(req.params.conversationId, "user", req);
     const activeBot = getActiveBot();
     if (activeBot) {

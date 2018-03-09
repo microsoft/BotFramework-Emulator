@@ -43,6 +43,7 @@ import * as Colors from '../../../styles/colors';
 import ExplorerItem from '../explorerItem';
 import store from '../../../../data/store';
 import { EXPLORER_CSS } from '../explorerStyle';
+import { CommandService } from '../../../../platform/commands/commandService';
 
 const CONVO_CSS = css({
   display: 'flex',
@@ -65,8 +66,8 @@ class TranscriptExplorer extends React.Component {
     this.onItemClick = this.handleItemClick.bind(this);
   }
 
-  handleItemClick(documentId) {
-    //this.props.dispatch(EditorActions.setActiveTab(documentId));
+  handleItemClick(filename) {
+    CommandService.call("transcript:open", filename);
   }
 
   renderTranscriptList() {
@@ -74,9 +75,9 @@ class TranscriptExplorer extends React.Component {
       <ExpandCollapseContent key={ this.props.changeKey }>
         <ul className={ CONVO_CSS }>
           {
-            this.props.transcripts.map(transcript =>
-              <ExplorerItem key={ transcript } active={ this.props.activeDocumentId === transcript } onClick={ () => this.onItemClick(transcript) }>
-                <span>{ transcript }</span>
+            this.props.transcripts.map(filename =>
+              <ExplorerItem key={ filename } active={ this.props.activeDocumentId === filename } onClick={ () => this.onItemClick(filename) }>
+                <span>{ filename.replace(/\\$/,'').split('\\').pop() }</span>
               </ExplorerItem>
             )
           }
@@ -118,5 +119,5 @@ export default connect(state => ({
   activeEditor: state.editor.activeEditor,
   activeDocumentId: state.editor.editors[state.editor.activeEditor].activeDocumentId,
   transcripts: state.chat.transcripts,
-  changeKey: state.chat.transcriptsChangeKey
+  changeKey: state.chat.changeKey
 }))(TranscriptExplorer)

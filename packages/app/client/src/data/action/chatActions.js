@@ -34,40 +34,43 @@
 import { uniqueId } from '@bfemulator/sdk-shared';
 import { createStore as createWebChatStore } from '@bfemulator/custom-botframework-webchat';
 
-export const NEW_LIVECHAT_DOCUMENT = 'CHAT/DOCUMENT/NEW/LIVE';
-export const OPEN_LIVECHAT_DOCUMENT = 'CHAT/DOCUMENT/OPEN/LIVE';
-export const CLOSE_LIVECHAT_DOCUMENT = 'CHAT/DOCUMENT/CLOSE/LIVE';
-export const NEW_LIVECHAT_CONVERSATION = 'CHAT/CONVERSATION/NEW/LIVE';
+export const NEW_CHAT_DOCUMENT = 'CHAT/DOCUMENT/NEW';
+export const OPEN_CHAT_DOCUMENT = 'CHAT/DOCUMENT/OPEN';
+export const CLOSE_CHAT_DOCUMENT = 'CHAT/DOCUMENT/CLOSE';
+
+export const NEW_CONVERSATION = 'CHAT/CONVERSATION/NEW';
 
 export const LOG_APPEND = 'CHAT/LOG/APPEND';
 export const LOG_CLEAR = 'CHAT/LOG/CLEAR';
 
 export const INSPECTOR_OBJECTS_SET = 'CHAT/INSPECTOR/OBJECTS/SET';
 
-export const OPEN_TRANSCRIPT_DOCUMENT = 'CHAT/DOCUMENT/OPEN/TRANSCRIPT';
-export const CLOSE_TRANSCRIPT_DOCUMENT = 'CHAT/DOCUMENT/CLOSE/TRANSCRIPT';
-
 export const ADD_TRANSCRIPT = 'CHAT/TRANSCRIPT/ADD';
 export const REMOVE_TRANSCRIPT = 'CHAT/TRANSCRIPT/REMOVE';
 
-export function addTranscript(fileName) {
+export function addTranscript(filename) {
   return {
     type: ADD_TRANSCRIPT,
-    payload: fileName
+    payload: {
+      filename
+    }
   };
 }
 
-export function removeTranscript(fileName) {
+export function removeTranscript(filename) {
   return {
     type: REMOVE_TRANSCRIPT,
-    payload: fileName
+    payload: {
+      documentId
+    }
   };
 }
 
-export function newLiveChatDocument(documentId) {
+export function newDocument(documentId, mode, ...args) {
   return {
-    type: NEW_LIVECHAT_DOCUMENT,
+    type: NEW_CHAT_DOCUMENT,
     payload: {
+      mode,
       documentId,
       conversationId: null,
       webChatStore: createWebChatStore(),
@@ -75,26 +78,27 @@ export function newLiveChatDocument(documentId) {
       log: {
         entries: []
       },
-      inspectorObjects: []
+      inspectorObjects: [],
+      ...args
     }
   }
 }
 
-export function closeLiveChatDocument(documentId) {
+export function closeDocument(documentId) {
   return {
-    type: CLOSE_LIVECHAT_DOCUMENT,
+    type: CLOSE_CHAT_DOCUMENT,
     payload: {
       documentId,
     }
   }
 }
 
-export function newLiveChatConversation(documentId, conversationId) {
+export function newConversation(documentId, options) {
   return {
-    type: NEW_LIVECHAT_CONVERSATION,
+    type: NEW_CONVERSATION,
     payload: {
       documentId,
-      conversationId
+      options
     }
   }
 }

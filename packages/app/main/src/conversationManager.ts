@@ -49,7 +49,9 @@ import { usersDefault } from '@bfemulator/app-shared';
 import * as moment from 'moment';
 import { isLocalhostUrl } from './utils';
 import { getActiveBot } from './botHelpers';
-import { logError, makeBotSettingsLink, makeAppSettingsLink, makeExternalLink } from './logHelpers';
+import { logError, logActivity, makeBotSettingsLink, makeAppSettingsLink, makeExternalLink } from './logHelpers';
+import { LogService } from './platform/log/logService';
+import { mainWindow } from './main';
 
 /**
  * Stores and propagates conversation messages.
@@ -108,11 +110,23 @@ export class Conversation {
     activity.conversation = activity.conversation || { id: this.conversationId };
   }
 
+  private addActivityToQueue(activity: IActivity) {
+    this.activities.push(activity);
+    logActivity(this.conversationId, activity);
+  }
 
   /**
    * Sends the activity to the conversation's bot.
    */
   postActivityToBot(activity: IActivity, recordInConversation: boolean, cb?) {
+    if (this.conversationId.includes("transcript")) {
+      if (recordInConversation) {
+        this.addActivityToQueue(Object.assign({}, activity));
+      }
+      cb && cb();
+      return;
+    }
+
     const bot = this.bot;
     if (bot) {
       // Do not make a shallow copy here before modifying
@@ -142,7 +156,7 @@ export class Conversation {
             cb(null, resp ? resp.statusCode : undefined);
           } else {
             if (recordInConversation) {
-              this.activities.push(Object.assign({}, activity));
+              this.addActivityToQueue(Object.assign({}, activity));
             }
             if (activity.type === 'invoke') {
               cb(null, resp.statusCode, activity.id, resp.body);
@@ -188,6 +202,11 @@ export class Conversation {
    * Queues activity for delivery to user.
    */
   public postActivityToUser(activity: IActivity): IResourceResponse {
+    if (this.conversationId.includes("transcript")) {
+      this.addActivityToQueue(activity);
+      return;
+    }
+
     const settings = getSettings();
     // Make a shallow copy before modifying & queuing
     let visitor = new PaymentEncoder();
@@ -197,7 +216,7 @@ export class Conversation {
     if (!activity.from.name) {
       activity.from.name = "Bot";
     }
-    this.activities.push(activity);
+    this.addActivityToQueue(activity);
     return ResponseTypes.createResourceResponse(activity.id);
   }
 
@@ -557,6 +576,15 @@ export class Conversation {
     } else {
       cb(null);
     }
+  }
+
+  public feedActivities(activities: IActivity[]) {
+    activities.forEach(activity => {
+      if (activity.conversation) {
+        activity.conversation.id = this.conversationId
+      }
+      this.postActivityToUser(activity);
+    });
   }
 }
 

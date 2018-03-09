@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IBot, IBotInfo } from '@bfemulator/app-shared';
+import { IBot, IBotInfo, newBot } from '@bfemulator/app-shared';
 
 export const CREATE ='BOT/CREATE';
 export const DELETE = 'BOT/DELETE';
@@ -74,4 +74,11 @@ export function setActive(bot: IBot) {
     type: SET_ACTIVE,
     payload: bot
   };
+}
+
+export function setActiveRandom() {
+  const bot = newBot({
+    botName: 'Random Bot'
+  });
+  return setActive(bot);
 }

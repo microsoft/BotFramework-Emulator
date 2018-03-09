@@ -36,10 +36,9 @@ import * as EditorActions from '../action/editorActions';
 
 
 const DEFAULT_STATE = {
-  liveChatChangeKey: 0,
-  liveChats: {},
-  transcriptChangeKey: 0,
-  transcripts: []
+  changeKey: 0,
+  chats: {},
+  transcripts: [],
 }
 
 export default function chat(state = DEFAULT_STATE, action) {
@@ -47,61 +46,62 @@ export default function chat(state = DEFAULT_STATE, action) {
 
   switch (action.type) {
     case ChatActions.ADD_TRANSCRIPT: {
-      const transcripts = [...state.transcripts];
-      transcripts.push(payload);
+      const transcriptsCopy = [...state.transcripts];
+      const transcripts = transcriptsCopy.filter(xs => xs !== payload.filename);
+      transcripts.push(payload.filename);
       state = setTranscriptsState(transcripts, state);
-    }
       break;
+    }
 
     case ChatActions.REMOVE_TRANSCRIPT: {
       const transcriptsCopy = [...state.transcripts];
-      const transcripts = transcriptsCopy.filter(xs => xs !== payload);
+      const transcripts = transcriptsCopy.filter(xs => xs !== payload.filename);
       state = setTranscriptsState(transcripts, state);
-    }
       break;
+    }
 
-    case ChatActions.NEW_LIVECHAT_DOCUMENT: {
+    case ChatActions.NEW_CHAT_DOCUMENT: {
       state = {
         ...state,
-        liveChatChangeKey: state.liveChatChangeKey + 1,
-        liveChats: {
-          ...state.liveChats,
+        changeKey: state.changeKey + 1,
+        chats: {
+          ...state.chats,
           [payload.documentId]: { ...payload }
         }
       }
-    }
       break;
+    }
 
-    case ChatActions.CLOSE_LIVECHAT_DOCUMENT: {
+    case ChatActions.CLOSE_CHAT_DOCUMENT: {
       const copy = { ...state };
-      copy.liveChatChangeKey += 1;
-      delete copy.liveChats[payload.documentId];
+      copy.changeKey += 1;
+      delete copy.chats[payload.documentId];
       state = { ...copy };
-    }
       break;
+    }
 
-    case ChatActions.NEW_LIVECHAT_CONVERSATION: {
-      let document = state.liveChats[payload.documentId];
+    case ChatActions.NEW_CONVERSATION: {
+      let document = state.chats[payload.documentId];
       if (document) {
         document = {
           ...document,
-          conversationId: payload.conversationId
+          ...payload.options
         }
         state = {
           ...state,
-          liveChats: {
-            ...state.liveChats,
+          chats: {
+            ...state.chats,
             [payload.documentId]: {
               ...document
             }
           }
         }
       }
-    }
       break;
+    }
 
     case ChatActions.LOG_APPEND: {
-      let document = state.liveChats[payload.documentId];
+      let document = state.chats[payload.documentId];
       if (document) {
         document = {
           ...document,
@@ -115,19 +115,19 @@ export default function chat(state = DEFAULT_STATE, action) {
         }
         state = {
           ...state,
-          liveChats: {
-            ...state.liveChats,
+          chats: {
+            ...state.chats,
             [payload.documentId]: {
               ...document
             }
           }
         }
       }
-    }
       break;
+    }
 
     case ChatActions.LOG_CLEAR: {
-      let document = state.liveChats[payload.documentId];
+      let document = state.chats[payload.documentId];
       if (document) {
         document = {
           ...document,
@@ -137,19 +137,19 @@ export default function chat(state = DEFAULT_STATE, action) {
         }
         state = {
           ...state,
-          liveChats: {
-            ...state.liveChats,
+          chats: {
+            ...state.chats,
             [payload.documentId]: {
               ...document
             }
           }
         }
       }
-    }
       break;
+    }
 
     case ChatActions.INSPECTOR_OBJECTS_SET: {
-      let document = state.liveChats[payload.documentId];
+      let document = state.chats[payload.documentId];
       if (document) {
         document = {
           ...document,
@@ -158,15 +158,15 @@ export default function chat(state = DEFAULT_STATE, action) {
       }
       state = {
         ...state,
-        liveChats: {
-          ...state.liveChats,
+        chats: {
+          ...state.chats,
           [payload.documentId]: {
             ...document
           }
         }
       }
-    }
       break;
+    }
 
     case EditorActions.CLOSE_ALL: {
       // HACK. Need a better system.
@@ -183,5 +183,6 @@ function setTranscriptsState(transcripts, state) {
   let newState = Object.assign({}, state);
 
   newState.transcripts = transcripts;
+  newState.changeKey = state.changeKey + 1;
   return newState;
 }

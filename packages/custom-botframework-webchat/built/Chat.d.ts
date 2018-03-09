@@ -18,6 +18,7 @@ export interface ChatProps {
     formatOptions?: FormatOptions;
     resize?: 'none' | 'window' | 'detect';
     store?: ChatStore;
+    showShell?: boolean;
 }
 export declare class Chat extends React.Component<ChatProps, {}> {
     private store;

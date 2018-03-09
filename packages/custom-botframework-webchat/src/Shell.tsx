@@ -8,6 +8,7 @@ import { Speech } from './SpeechModule'
 import { ChatActions, sendMessage, sendFiles } from './Store';
 
 interface Props {
+    visible?: boolean,
     inputText: string,
     strings: Strings,
     listening: boolean,
@@ -88,6 +89,9 @@ class ShellContainer extends React.Component<Props> implements ShellFunctions {
     }
 
     render() {
+        if (this.props.visible === false)
+          return false;
+          
         const className = classList(
             'wc-console',
             this.props.inputText.length > 0 && 'has-text'

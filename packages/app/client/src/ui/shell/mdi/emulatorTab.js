@@ -48,7 +48,7 @@ export class EmulatorTab extends React.Component {
   onCloseClick(e) {
     e.stopPropagation();
     this.props.dispatch(EditorActions.close(this.props.owningEditor, this.props.documentId));
-    this.props.dispatch(ChatActions.closeLiveChatDocument(this.props.documentId));
+    this.props.dispatch(ChatActions.closeDocument(this.props.documentId));
   }
 
   render() {
@@ -59,7 +59,15 @@ export class EmulatorTab extends React.Component {
   }
 }
 
-export default connect((state, { documentId, owningEditor }) => ({
-  title: "Live Chat",
+export default connect((state, { mode, documentId, owningEditor }) => ({
+  title: titleForMode(mode),
   active: state.editor.editors[state.editor.activeEditor].activeDocumentId === documentId
 }))(EmulatorTab);
+
+function titleForMode(mode) {
+  switch (mode) {
+    case "livechat": return "Live Chat";
+    case "transcript": return "Transcript";
+    default: "???"
+  }
+}

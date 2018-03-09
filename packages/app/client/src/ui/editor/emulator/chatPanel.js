@@ -64,7 +64,7 @@ export default class ChatPanel extends React.Component {
     return (
       <div className={ CSS }>
         <header>{ endpoint }</header>
-        <Chat document={ this.props.document } onStartConversation={ this.props.onStartConversation } />
+        <Chat mode= {this.props.mode } document={ this.props.document } onStartConversation={ this.props.onStartConversation } />
       </div>
     );
   }
@@ -72,5 +72,6 @@ export default class ChatPanel extends React.Component {
 
 
 ChatPanel.propTypes = {
-  document: PropTypes.object.isRequired
+  document: PropTypes.object.isRequired,
+  mode: PropTypes.string.isRequired
 };

@@ -46,15 +46,13 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Adds a transcript
-  CommandRegistry.registerCommand('transcript:add', (fileName: string): void => {
-    console.log('got transcript add');
-    store.dispatch(ChatActions.addTranscript(fileName));
+  CommandRegistry.registerCommand('transcript:add', (filename: string): void => {
+    store.dispatch(ChatActions.addTranscript(filename));
   });
 
   //---------------------------------------------------------------------------
   // Removes a transcript
-  CommandRegistry.registerCommand('transcript:remove', (fileName: string): void => {
-    console.log('got transcript remove');
-    store.dispatch(ChatActions.removeTranscript(fileName));
+  CommandRegistry.registerCommand('transcript:remove', (filename: string): void => {
+    store.dispatch(ChatActions.removeTranscript(filename));
   });
 }

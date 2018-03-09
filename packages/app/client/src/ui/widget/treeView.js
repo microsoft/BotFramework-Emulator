@@ -143,7 +143,7 @@ Branch.defaultProps = {
 
 Branch.propTypes = {
     depth: PropTypes.number,
-    initialExpanded: PropTypes.bool
+    expanded: PropTypes.bool
 };
 
 export const Leaf = props =>

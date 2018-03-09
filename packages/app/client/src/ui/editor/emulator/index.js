@@ -47,6 +47,8 @@ import { CommandService } from '../../../platform/commands/commandService';
 import { uniqueId } from '@bfemulator/sdk-shared';
 import * as ChatActions from '../../../data/action/chatActions';
 import { Subscription, BehaviorSubject } from 'rxjs';
+import state from './state';
+import store from '../../../data/store';
 
 const CSS = css({
   display: 'flex',
@@ -101,9 +103,9 @@ class Emulator extends React.Component {
   }
 
   componentWillReceiveProps(nextProps, nextContext) {
-    if (this.shouldStartNewConversation(nextProps)) {
-      this.startNewConversation(nextProps);
-    }
+    if (nextProps.document.directLine || this.props.document.documentId === nextProps.document.documentId)
+      return;
+    this.startNewConversation(nextProps);
   }
 
   componentWillUpdate(nextProps, nextState, nextContext) {
@@ -118,23 +120,44 @@ class Emulator extends React.Component {
   startNewConversation(props) {
     props = props || this.props;
 
-    this.props.document.selectedActivity$ = new BehaviorSubject({});
+    if (props.document.subscription) {
+      props.document.subscription.unsubscribe();
+    }
+    const selectedActivity$ = new BehaviorSubject({});
+    const subscription = selectedActivity$.subscribe((obj) => {
+      store.dispatch(ChatActions.setInspectorObjects(props.document.documentId, obj));
+    });
 
-    const conversationId = uniqueId();
+    const conversationId = `${uniqueId()}|${props.mode}`;
 
     if (props.document.directLine) {
       props.document.directLine.end();
     }
 
-    props.document.webChatStore = BotChat.createStore();
+    const webChatStore = BotChat.createStore();
 
-    props.document.directLine = new BotChat.DirectLine({
+    const directLine = new BotChat.DirectLine({
       secret: conversationId,
       token: conversationId,
       domain: `${SettingsService.emulator.url}/v3/directline`,
       webSocket: false
     });
-    props.dispatch(ChatActions.newLiveChatConversation(props.documentId, conversationId));
+
+    props.dispatch(
+      ChatActions.newConversation(props.documentId, {
+        conversationId,
+        webChatStore,
+        directLine,
+        selectedActivity$,
+        subscription
+      }));
+
+    // 😱😱😱
+    if (props.mode === "transcript") {
+      setTimeout(() => {
+        CommandService.remoteCall('emulator:feed-transcript', conversationId, props.document.documentId);
+      }, 1000)
+    }
   }
 
   handleStartOverClick() {
@@ -155,17 +178,16 @@ class Emulator extends React.Component {
       <div className={ CSS } >
         <div className="header">
           <ToolBar>
-            <ToolBarButton title="Presentation" onClick={ this.onPresentationClick } />
-            <ToolBarSeparator />
-            <ToolBarButton title="Start Over" onClick={ this.onStartOverClick } />
-            <ToolBarButton title="Save As..." onClick={ this.onExportClick } />
-            <ToolBarButton title="Load..." onClick={ this.onImportClick } />
+            <ToolBarButton visible={ true } title="Presentation" onClick={ this.onPresentationClick } />
+            <ToolBarSeparator visible={ this.props.mode === "livechat" } />
+            <ToolBarButton visible={ this.props.mode === "livechat" } title="Start Over" onClick={ this.onStartOverClick } />
+            <ToolBarButton visible={ this.props.mode === "livechat" } title="Save Transcript..." onClick={ this.onExportClick } />
           </ToolBar>
         </div>
         <div className="content vertical">
           <Splitter orientation={ 'vertical' } primaryPaneIndex={ 0 } minSizes={ { 0: 80, 1: 80 } }>
             <div className="content">
-              <ChatPanel document={ this.props.document } onStartConversation={ this.onStartOverClick } />
+              <ChatPanel mode={ this.props.mode } document={ this.props.document } onStartConversation={ this.onStartOverClick } />
             </div>
             <div className="content">
               <Splitter orientation={ 'horizontal' } primaryPaneIndex={ 0 } minSizes={ { 0: 80, 1: 80 } }>
@@ -181,12 +203,13 @@ class Emulator extends React.Component {
 }
 
 export default connect((state, { documentId }) => ({
-  document: state.chat.liveChats[documentId],
-  conversationId: state.chat.liveChats[documentId].conversationId
+  document: state.chat.chats[documentId],
+  conversationId: state.chat.chats[documentId].conversationId
 }))(Emulator);
 
 
 Emulator.propTypes = {
+  mode: PropTypes.string.isRequired,
   documentId: PropTypes.string.isRequired,
-  dirty: PropTypes.bool
+  dirty: PropTypes.bool,
 };

@@ -216,4 +216,28 @@ export function registerCommands() {
       writeFile(filename, conversation.activities);
     }
   });
+
+  //---------------------------------------------------------------------------
+  // Feeds a transcript to a conversation
+  CommandRegistry.registerCommand('emulator:feed-transcript', (conversationId: string, filename: string) => {
+    const activeBot: IBot = getActiveBot();
+    if (!activeBot) {
+      throw new Error('feed-transcript: No active bot.');
+    }
+
+    const conversation = emulator.conversations.conversationById(activeBot.id, conversationId);
+    if (!conversation) {
+      throw new Error(`feed-transcript: Conversation ${conversationId} not found.`);
+    }
+
+    const path = Path.resolve(filename);
+    const stat = Fs.statSync(path);
+    if (!stat || !stat.isFile()) {
+      throw new Error(`feed-transcript: File ${filename} not found.`);
+    }
+
+    const activities = JSON.parse(readFileSync(path));
+
+    conversation.feedActivities(activities);
+  });
 }

@@ -13,5 +13,5 @@ export interface ILogEntry {
 }
 
 export interface ILogService {
-  logToLiveChat(conversationId: string, entry: ILogEntry): void;
+  logToChat(conversationId: string, entry: ILogEntry): void;
 }

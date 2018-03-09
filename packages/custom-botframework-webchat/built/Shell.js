@@ -63,6 +63,8 @@ var ShellContainer = (function (_super) {
     };
     ShellContainer.prototype.render = function () {
         var _this = this;
+        if (this.props.visible === false)
+            return false;
         var className = Chat_1.classList('wc-console', this.props.inputText.length > 0 && 'has-text');
         var showMicButton = this.props.listening || (SpeechModule_1.Speech.SpeechRecognizer.speechIsAvailable() && !this.props.inputText.length);
         var sendButtonClassName = Chat_1.classList('wc-send', showMicButton && 'hidden');

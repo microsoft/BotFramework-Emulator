@@ -46,16 +46,31 @@ import store from '../../../../data/store';
 import { EXPLORER_CSS } from '../explorerStyle';
 import { CommandRegistry } from '../../../../commands';
 import { uniqueId } from '@bfemulator/sdk-shared';
+import { getTabGroupForDocument } from '../../../../data/editorHelpers';
 
 export function registerCommands() {
   CommandRegistry.registerCommand('livechat:new', () => {
     const documentId = uniqueId();
-    store.dispatch(ChatActions.newLiveChatDocument(documentId));
+    store.dispatch(ChatActions.newDocument(documentId, "livechat"));
     store.dispatch(EditorActions.open(
       constants.ContentType_LiveChat,
       documentId,
       false
     ));
+  });
+
+  CommandRegistry.registerCommand('transcript:open', (filename) => {
+    const tabGroup = getTabGroupForDocument(filename);
+    if (tabGroup) {
+      store.dispatch(EditorActions.setActiveTab(filename));
+    } else {
+      store.dispatch(ChatActions.newDocument(filename, "transcript"));
+      store.dispatch(EditorActions.open(
+        constants.ContentType_Transcript,
+        filename,
+        false
+      ));
+    }
   });
 }
 
@@ -99,8 +114,8 @@ class LiveChatExplorer extends React.Component {
     CommandService.call('livechat:new');
   }
 
-  handleItemClick(conversationId) {
-    this.props.dispatch(EditorActions.setActiveTab(conversationId));
+  handleItemClick(documentId) {
+    this.props.dispatch(EditorActions.setActiveTab(documentId));
   }
 
   renderLiveChatList() {
@@ -108,10 +123,14 @@ class LiveChatExplorer extends React.Component {
       <ExpandCollapseContent key={ this.props.changeKey }>
         <ul className={ CONVO_CSS }>
           {
-            Object.keys(this.props.liveChats).map(conversationId =>
-              <ExplorerItem key={ conversationId } active={ this.props.activeDocumentId === conversationId } onClick={ () => this.onItemClick(conversationId) }>
-                <span>{ `Live Chat` }</span>
-              </ExplorerItem>
+            Object.keys(this.props.chats).map(documentId =>
+              this.props.chats[documentId].conversationId && !this.props.chats[documentId].conversationId.includes("transcript")
+                ? (
+                  <ExplorerItem key={ documentId } active={ this.props.activeDocumentId === documentId } onClick={ () => this.onItemClick(documentId) }>
+                    <span>{ `Live Chat` }</span>
+                  </ExplorerItem>
+                )
+                : false
             )
           }
         </ul>
@@ -134,7 +153,7 @@ class LiveChatExplorer extends React.Component {
     return (
       <div className={ EXPLORER_CSS }>
         <ExpandCollapse
-          initialExpanded={ true }
+          expanded={ true }
           title="Live Chats"
         >
           <ExpandCollapseControls>
@@ -143,7 +162,7 @@ class LiveChatExplorer extends React.Component {
             </div>
           </ExpandCollapseControls>
           {
-            Object.keys(this.props.liveChats).length
+            Object.keys(this.props.chats).length
               ? this.renderLiveChatList()
               : this.renderEmptyLiveChatList()
           }
@@ -155,6 +174,6 @@ class LiveChatExplorer extends React.Component {
 
 export default connect(state => ({
   activeDocumentId: state.editor.editors[state.editor.activeEditor].activeDocumentId,
-  liveChats: state.chat.liveChats,
-  changeKey: state.chat.liveChatChangeKey
+  chats: state.chat.chats,
+  changeKey: state.chat.changeKey
 }))(LiveChatExplorer)

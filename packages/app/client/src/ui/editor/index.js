@@ -48,7 +48,9 @@ export default class EditorFactory extends React.Component {
 
     return (
       contentType === Constants.ContentType_LiveChat ?
-        <Emulator documentId={document.documentId} dirty={ this.props.document.dirty } />
+        <Emulator mode="livechat" documentId={document.documentId} dirty={ this.props.document.dirty } />
+        : contentType === Constants.ContentType_Transcript ?
+        <Emulator mode="transcript" documentId={document.documentId} dirty={ this.props.document.dirty } />
         : contentType === Constants.ContentType_TestBed ?
         <TestBedEditor dirty={ this.props.document.dirty } />
         : contentType === Constants.ContentType_BotSettings ?

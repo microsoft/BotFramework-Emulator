@@ -166,6 +166,16 @@ class LogEntry extends React.Component {
       return <span className="spaced level-3" key={ key }>ARR?</span>;
     } else if (typeof message === 'object') {
       switch (message.type) {
+
+        case "activity": {
+          return (
+            <span className="spaced" key={ key }>
+              <span className="spaced"><a onClick={ () => this.inspect(message.payload.activity) }>Activity</a></span>
+              <span className="spaced">{ message.payload.text }</span>
+            </span>
+          );
+        }
+
         case "request": {
           return (
             <span className="spaced" key={ key }>
@@ -175,7 +185,6 @@ class LogEntry extends React.Component {
             </span>
           );
         }
-          break;
 
         case "response": {
           return (
@@ -190,7 +199,14 @@ class LogEntry extends React.Component {
                   :
                   false
               }
+            </span>
+          );
+        }
 
+        case "err": {
+          return (
+            <span className="spaced" key={ key }>
+              <span className="spaced"><a onClick={ () => this.inspect(message) }>{ Error }</a></span>
             </span>
           );
         }
@@ -200,28 +216,24 @@ class LogEntry extends React.Component {
             <span className="spaced" key={ key }><a href='inspector://activity?obj=' title={ message.title }>{ message.text }</a></span>
           );
         }
-          break;
 
         case "url:external": {
           return (
             <span className="spaced" key={ key }><a href={ message.url } title={ message.title }>{ message.text }</a></span>
           );
         }
-          break;
 
         case "settings:bot": {
           return (
             <span className="spaced" key={ key }>bot settings</span>
           );
         }
-          break;
 
         case "settings:app": {
           return (
             <span className="spaced" key={ key }>app settings</span>
           );
         }
-          break;
 
         default:
           return <span className="spaced level-3" key={ key }>UNK?</span>

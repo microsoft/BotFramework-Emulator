@@ -7,7 +7,7 @@ import * as chatHelpers from '../../data/chatHelpers';
 
 export function registerCommands() {
   CommandRegistry.registerCommand("conversation:log:append", (conversationId: string, entry: ILogEntry): any => {
-    LogService.logToLiveChat(conversationId, entry);
+    LogService.logToChat(conversationId, entry);
   });
 }
 
@@ -15,7 +15,7 @@ export const LogService = new class extends Disposable implements ILogService {
 
   init() { }
 
-  logToLiveChat(conversationId: string, entry: ILogEntry): void {
+  logToChat(conversationId: string, entry: ILogEntry): void {
     const documentId = chatHelpers.documentIdForConversation(conversationId);
     if (documentId) {
       store.dispatch(ChatActions.appendToLog(documentId, entry));

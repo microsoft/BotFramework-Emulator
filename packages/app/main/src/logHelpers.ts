@@ -1,6 +1,7 @@
 import * as Restify from 'restify';
-import { LogLevel, ILogEntry } from '@bfemulator/app-shared';
+import { LogLevel, ILogEntry, IActivity } from '@bfemulator/app-shared';
 import { mainWindow } from './main';
+import * as ActivityHelpers from './activityHelpers';
 
 export function makeLogEntry(level: LogLevel, category: string, ...messages: any[]): ILogEntry {
   return {
@@ -42,7 +43,25 @@ export function makeExternalLink(text: string, url: string): any {
   };
 }
 
+export function logActivity(conversationId: string, activity: IActivity) {
+  const activityText = ActivityHelpers.getActivityText(activity);
+  const entry = makeLogEntry(
+    LogLevel.Info,
+    "conversation",
+    {
+      type: "activity",
+      payload: {
+        text: activityText,
+        activity
+      }
+    }
+  );
+  mainWindow.logService.logToChat(conversationId, entry);
+}
+
 export function logRequest(conversationId: string, source: string, req: Restify.Request, ...messages: any[]) {
+  if (conversationId && conversationId.includes("transcript"))
+    return;
   const entry = makeLogEntry(
     LogLevel.Info,
     "network",
@@ -57,10 +76,12 @@ export function logRequest(conversationId: string, source: string, req: Restify.
     },
     ...messages
   );
-  mainWindow.logService.logToLiveChat(conversationId, entry);
+  mainWindow.logService.logToChat(conversationId, entry);
 }
 
 export function logResponse(conversationId: string, destination: string, res: Restify.Response, ...messages: any[]) {
+  if (conversationId && conversationId.includes("transcript"))
+    return;
   const entry = makeLogEntry(
     res.statusCode >= 400 ? LogLevel.Error : LogLevel.Info,
     "network",
@@ -76,7 +97,7 @@ export function logResponse(conversationId: string, destination: string, res: Re
     },
     ...messages
   );
-  mainWindow.logService.logToLiveChat(conversationId, entry);
+  mainWindow.logService.logToChat(conversationId, entry);
 }
 
 export function logError(conversationId: string, ...messages: any[]) {
@@ -85,7 +106,7 @@ export function logError(conversationId: string, ...messages: any[]) {
     "network",
     ...messages
   );
-  mainWindow.logService.logToLiveChat(conversationId, entry);
+  mainWindow.logService.logToChat(conversationId, entry);
 }
 
 export function logWarning(conversationId: string, ...messages: any[]) {
@@ -94,5 +115,5 @@ export function logWarning(conversationId: string, ...messages: any[]) {
     "network",
     ...messages
   );
-  mainWindow.logService.logToLiveChat(conversationId, entry);
+  mainWindow.logService.logToChat(conversationId, entry);
 }

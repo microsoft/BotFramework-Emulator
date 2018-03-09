@@ -40,7 +40,9 @@ import TestBedTab from './testBedTab';
 
 export default props =>
   props.document.contentType === Constants.ContentType_LiveChat ?
-    <EmulatorTab documentId={ props.document.documentId } owningEditor={ props.owningEditor } dirty={ props.document.dirty } />
+    <EmulatorTab mode="livechat" documentId={ props.document.documentId } owningEditor={ props.owningEditor } dirty={ props.document.dirty } />
+  : props.document.contentType === Constants.ContentType_Transcript ?
+    <EmulatorTab mode="transcript" documentId={ props.document.documentId } owningEditor={ props.owningEditor } dirty={ props.document.dirty } />
   : props.document.contentType === Constants.ContentType_TestBed ?
     <TestBedTab documentId={ props.document.documentId } owningEditor={ props.owningEditor } dirty={ props.document.dirty } />
   : props.document.contentType === Constants.ContentType_BotSettings ?
