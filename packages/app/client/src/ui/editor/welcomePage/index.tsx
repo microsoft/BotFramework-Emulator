@@ -21,7 +21,20 @@ const CSS = css({
 
   '& .recent-bots-list': {
     maxHeight: '200px',
-    overflowY: 'auto'
+    overflowY: 'auto',
+
+    '& > li': {
+      whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis'
+    }
+  },
+
+  '& .recent-bot-detail': {
+    display: 'inline-block',
+    marginLeft: '8px',
+    color: Colors.APP_HYPERLINK_DETAIL_DARK,
+    userSelect: 'text',
+    cursor: 'text'
   },
 
   '& .welcome': {
@@ -119,17 +132,16 @@ class WelcomePage extends React.Component<Props, State> {
   }
 
   onAddBotClick() {
-    const dialog = <BotCreationDialog activeEditor={ this.state.activeEditor } />
-    DialogService.showDialog(dialog);
+    CommandService.call('bot-creation:show');
   }
 
-  onBotClick(e, botPath) {
-    ActiveBotHelper.confirmAndSwitchBots(botPath);
+  onBotClick(e, id) {
+    ActiveBotHelper.confirmAndSwitchBots(id);
   }
 
   render() {
     return (
-      <div className={ CSS as any }>
+      <div { ...CSS }>
         <div className="welcome">
           <div className="title">
             <h1 className="title">Welcome to the Bot Framework Emulator</h1>
@@ -141,7 +153,11 @@ class WelcomePage extends React.Component<Props, State> {
                 <ul className="recent-bots-list">
                   {
                     this.props.recentBots && this.props.recentBots.length ?
-                      this.props.recentBots.map(bot => <li key={ bot.path } onClick={ ev => this.onBotClick(ev, bot.path) }><a href="javascript:void(0);">{ bot.path }</a></li>)
+                      this.props.recentBots.map(bot =>
+                        <li key={ bot.id }>
+                          <a href="javascript:void(0);" onClick={ ev => this.onBotClick(ev, bot.id)} >{ bot.displayName }</a>
+                          <span className="recent-bot-detail">{ bot.path }</span>
+                        </li>)
                     :
                       <li><span className="no-bots">No recent bots</span></li>
                   }

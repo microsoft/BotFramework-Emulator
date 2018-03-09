@@ -94,7 +94,7 @@ export default class BotCreationDialog extends React.Component<IBotCreationDialo
     this.onSelectFolder = this.onSelectFolder.bind(this);
 
     this.state = {
-      bot: { botUrl: '', msaAppId: '', msaPassword: '', locale: '', botName: '', localDir: '' },
+      bot: { botUrl: '', msaAppId: '', msaPassword: '', locale: '', botName: '', projectDir: '' },
       touchedName: false
     };
 
@@ -102,11 +102,6 @@ export default class BotCreationDialog extends React.Component<IBotCreationDialo
     CommandService.remoteCall('bot:new')
       .then(bot => {
         this.setState({ ...this.state, bot });
-        return CommandService.remoteCall('path:basename', bot.localDir);
-      })
-      .then(dirName => {
-        const bot = { ...this.state.bot, botName: dirName };
-        this.setState({ bot });
       })
       .catch(err => console.error('Error getting a new bot object from the server: ', err));
   }
@@ -155,11 +150,11 @@ export default class BotCreationDialog extends React.Component<IBotCreationDialo
 
     CommandService.remoteCall('shell:showOpenDialog', dialogOptions)
       .then(path => {
-        const bot = { ...this.state.bot, localDir: path };
+        const bot = { ...this.state.bot, projectDir: path };
         this.setState({ bot });
 
         // use bot directory as bot name if name hasn't been touched
-        if (!this.state.touchedName)
+        if (!this.state.touchedName && path)
           CommandService.remoteCall('path:basename', path)
             .then(dirName => {
               const bot = { ...this.state.bot, botName: dirName };
@@ -170,11 +165,16 @@ export default class BotCreationDialog extends React.Component<IBotCreationDialo
   }
 
   render(): JSX.Element {
+    const requiredFieldsCompleted = this.state.bot
+      && this.state.bot.botUrl
+      && this.state.bot.botName
+      && this.state.bot.projectDir;
+
     return (
-      <div className={ CSS as any }>
+      <div { ...CSS }>
         <h1>Add a bot</h1>
 
-        <span>Endpoint URL</span>
+        <span>Endpoint URL*</span>
         <input value={ this.state.bot.botUrl } onChange={ this.onChangeEndpoint } type="text" />
 
         <div className="horiz-input-group">
@@ -196,14 +196,14 @@ export default class BotCreationDialog extends React.Component<IBotCreationDialo
 
         <div className="horiz-input-group">
           <div className="vert-input-group">
-            <span>Bot name</span>
+            <span>Bot name*</span>
             <input value={ this.state.bot.botName } onChange={ this.onChangeName } type="text" />
           </div>
 
           <div className="vert-input-group">
-            <span>Local folder (optional)</span>
+            <span>Project folder*</span>
             <div className='horiz-input-group'>
-              <input value={ this.state.bot.localDir } type="text" readOnly />
+              <input value={ this.state.bot.projectDir } type="text" readOnly />
               <PrimaryButton text='Browse' onClick={ this.onSelectFolder } buttonClass='browse-path-button' />
             </div>
           </div>
@@ -211,7 +211,7 @@ export default class BotCreationDialog extends React.Component<IBotCreationDialo
 
         <div className="button-row">
           <PrimaryButton text='Cancel' onClick={ this.onCancel } buttonClass='cancel-button' />
-          <PrimaryButton text='Connect' onClick={ this.onConnect } buttonClass='connect-button' />
+          <PrimaryButton text='Connect' onClick={ this.onConnect }  disabled={ !requiredFieldsCompleted } buttonClass='connect-button' />
         </div>
       </div>
     );

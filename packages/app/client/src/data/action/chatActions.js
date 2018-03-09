@@ -47,6 +47,23 @@ export const INSPECTOR_OBJECTS_SET = 'CHAT/INSPECTOR/OBJECTS/SET';
 export const OPEN_TRANSCRIPT_DOCUMENT = 'CHAT/DOCUMENT/OPEN/TRANSCRIPT';
 export const CLOSE_TRANSCRIPT_DOCUMENT = 'CHAT/DOCUMENT/CLOSE/TRANSCRIPT';
 
+export const ADD_TRANSCRIPT = 'CHAT/TRANSCRIPT/ADD';
+export const REMOVE_TRANSCRIPT = 'CHAT/TRANSCRIPT/REMOVE';
+
+export function addTranscript(fileName) {
+  return {
+    type: ADD_TRANSCRIPT,
+    payload: fileName
+  };
+}
+
+export function removeTranscript(fileName) {
+  return {
+    type: REMOVE_TRANSCRIPT,
+    payload: fileName
+  };
+}
+
 export function newLiveChatDocument(documentId) {
   return {
     type: NEW_LIVECHAT_DOCUMENT,

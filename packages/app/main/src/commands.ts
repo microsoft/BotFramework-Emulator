@@ -3,17 +3,18 @@ import { emulator } from './emulator';
 import { Window } from './platform/window';
 import { CommandRegistry as CommReg, uniqueId } from '@bfemulator/sdk-shared';
 import { IBot, newBot, IFrameworkSettings } from '@bfemulator/app-shared';
-import { ensureStoragePath, getBotDirectoryPath, getSafeBotName, readFileSync, showOpenDialog, writeFile, showSaveDialog } from './utils';
+import { ensureStoragePath, getSafeBotName, readFileSync, showOpenDialog, writeFile, showSaveDialog } from './utils';
 import * as BotActions from './data-v2/action/bot';
 import { app } from 'electron';
 import { mainWindow } from './main';
 import { ExtensionManager } from './extensions';
 import { getSettings, dispatch } from './settings';
-import { getActiveBot } from './botHelpers';
+import { getActiveBot, getBotInfoById } from './botHelpers';
 import * as Path from 'path';
 import * as Fs from 'fs';
 import * as OS from 'os';
 import { sync as mkdirpSync } from 'mkdirp';
+import { BotProjectFileWatcher } from './botProjectFileWatcher';
 
 //=============================================================================
 export const CommandRegistry = new CommReg();
@@ -56,9 +57,10 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Create a bot
   CommandRegistry.registerCommand('bot:create', (bot: IBot): IBot => {
-    writeFile(bot.path, bot);
-    mainWindow.store.dispatch(BotActions.create(bot));
-    return bot;
+    const botFilePath = Path.join(bot.projectDir, bot.botName + '.botproj');
+    writeFile(botFilePath, bot);
+    mainWindow.store.dispatch(BotActions.create(bot, botFilePath));
+    return { bot, botFilePath };
   });
 
   //---------------------------------------------------------------------------
@@ -77,24 +79,24 @@ export function registerCommands() {
   // Create a new bot object; don't save to state
   CommandRegistry.registerCommand('bot:new', (): IBot => {
     const botName = getSafeBotName();
-    const localDir = getBotDirectoryPath(botName);
-    const path = Path.join(localDir, '.botproj');
 
     const bot: IBot = newBot({
       botName,
-      botUrl: 'http://localhost:3978/api/messages',
-      path,
-      localDir
+      botUrl: 'http://localhost:3978/api/messages'
     });
     return bot;
   });
 
   //---------------------------------------------------------------------------
   // Set active bot
-  CommandRegistry.registerCommand('bot:setActive', (path: string): IBot => {
-    // read the bot file at path and return the IBot (easier for client-side)
-    const contents = readFileSync(path);
+  CommandRegistry.registerCommand('bot:setActive', (id: string): IBot => {
+    // read the bot file at the id's corresponding path and return the IBot (easier for client-side)
+    const botInfo = getBotInfoById(id);
+    const contents = readFileSync(botInfo.path);
     const bot = contents ? JSON.parse(contents) : null;
+
+    // set up the file watcher
+    BotProjectFileWatcher.watch(bot.projectDir);
     mainWindow.store.dispatch(BotActions.setActive(bot));
     return bot;
   });
@@ -189,7 +191,7 @@ export function registerCommands() {
       throw new Error('save-transcript-to-file: No active bot.');
     }
 
-    const path = Path.resolve(activeBot.localDir) || `${OS.homedir()}/Transcripts`;
+    const path = Path.resolve(activeBot.projectDir) || Path.join(OS.homedir(), 'Transcripts');
 
     const conversation = emulator.conversations.conversationById(activeBot.id, conversationId);
     if (!conversation) {

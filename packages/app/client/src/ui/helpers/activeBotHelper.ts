@@ -26,9 +26,9 @@ export const ActiveBotHelper = new class {
     }
   }
 
-  /** Uses a bot project path to read the file on server-side and set the corresponding bot object as active */
-  setActiveBot(path): Promise<any> {
-    return CommandService.remoteCall('bot:setActive', path)
+  /** Uses a bot id to look up the .botproj path and perform a read on the server-side to populate the corresponding bot object */
+  setActiveBot(id: string): Promise<any> {
+    return CommandService.remoteCall('bot:setActive', id)
       .then(bot => {
         store.dispatch(BotActions.setActive(bot));
         CommandService.remoteCall('app:setTitleBar', getBotDisplayName(bot));
@@ -42,10 +42,11 @@ export const ActiveBotHelper = new class {
         if (result) {
           store.dispatch(EditorActions.closeNonGlobalTabs());
           CommandService.remoteCall('bot:create', botToCreate)
-            .then(bot => {
+            .then(({ bot, botFilePath }) => {
+              console.log(bot, botFilePath);
               store.dispatch((dispatch) => {
-                store.dispatch(BotActions.create(bot));
-                this.setActiveBot(bot.path)
+                store.dispatch(BotActions.create(bot, botFilePath));
+                this.setActiveBot(bot.id)
                 .then(() => {
                   CommandService.call('livechat:new');
                   store.dispatch(NavBarActions.select(Constants.NavBar_Files));
@@ -57,15 +58,15 @@ export const ActiveBotHelper = new class {
       });
   }
 
-  confirmAndSwitchBots(path: string): Promise<any> {
+  confirmAndSwitchBots(id: string): Promise<any> {
     const activeBot = getActiveBot() || {};
-    if (activeBot.path === path)
+    if (activeBot.id === id)
       return Promise.resolve();
     return this.confirmSwitchBot()
       .then((result) => {
         if (result) {
           store.dispatch(EditorActions.closeNonGlobalTabs());
-          this.setActiveBot(path)
+          this.setActiveBot(id)
             .then(() => {
               CommandService.call('livechat:new');
               store.dispatch(NavBarActions.select(Constants.NavBar_Files));

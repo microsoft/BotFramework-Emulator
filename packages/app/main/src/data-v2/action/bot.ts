@@ -39,10 +39,13 @@ export const LOAD = 'BOT/LOAD';
 export const PATCH = 'BOT/PATCH';
 export const SET_ACTIVE = 'BOT/SET_ACTIVE';
 
-export function create(bot: IBot) {
+export function create(bot: IBot, botFilePath: string) {
   return {
     type: CREATE,
-    payload: bot
+    payload: {
+      bot,
+      botFilePath
+    }
   };
 }
 

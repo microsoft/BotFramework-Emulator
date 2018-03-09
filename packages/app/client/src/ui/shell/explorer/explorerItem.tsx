@@ -69,7 +69,7 @@ export interface Props {
   onClick?: any;
 }
 
-export class ExplorerItem extends React.Component<Props> {
+export default class ExplorerItem extends React.Component<Props> {
   constructor(props, context) {
     super(props, context);
   }
@@ -77,9 +77,9 @@ export class ExplorerItem extends React.Component<Props> {
   render() {
     return (
       this.props.active ?
-        <li className={ CSS + ' active-explorer-item' } onClick={ this.props.onClick }>{ this.props.children }</li>
+        <li className="active-explorer-item" { ...CSS } onClick={ this.props.onClick }>{ this.props.children }</li>
         :
-        <li className={ CSS as any } onClick={ this.props.onClick }>{ this.props.children }</li>
+        <li { ...CSS } onClick={ this.props.onClick }>{ this.props.children }</li>
     );
   }
 }

@@ -11,6 +11,7 @@ import { ExtensionManager } from './extensions';
 import BotCreationDialog from './ui/dialogs/botCreationDialog';
 import { DialogService } from './ui/dialogs/service';
 import store from './data/store';
+import * as ChatActions from './data/action/chatActions';
 
 //=============================================================================
 export const CommandRegistry = new CommReg();
@@ -34,12 +35,26 @@ export function registerCommands() {
   });
 
   //---------------------------------------------------------------------------
-  // Spawns a bot creation dialog
-  CommandRegistry.registerCommand('bot:create', (bot: IBot) => {
+  // Shows a bot creation dialog
+  CommandRegistry.registerCommand('bot-creation:show', () => {
     // TODO: convert store to typescript so we don't have to cast
     const state = store.getState() as any;
     const activeEditor = state.editor.activeEditor;
     const dialog = <BotCreationDialog activeEditor={ activeEditor } />;
     DialogService.showDialog(dialog);
+  });
+
+  //---------------------------------------------------------------------------
+  // Adds a transcript
+  CommandRegistry.registerCommand('transcript:add', (fileName: string): void => {
+    console.log('got transcript add');
+    store.dispatch(ChatActions.addTranscript(fileName));
+  });
+
+  //---------------------------------------------------------------------------
+  // Removes a transcript
+  CommandRegistry.registerCommand('transcript:remove', (fileName: string): void => {
+    console.log('got transcript remove');
+    store.dispatch(ChatActions.removeTranscript(fileName));
   });
 }

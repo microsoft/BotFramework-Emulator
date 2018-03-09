@@ -59,6 +59,7 @@ export const APP_BACKGROUND_DARK = C8;
 export const APP_FOREGROUND_DARK = C2;
 export const APP_HYPERLINK_FOREGROUND_DARK = C23;
 export const APP_HYPERLINK_HOVER_DARK = C23;
+export const APP_HYPERLINK_DETAIL_DARK = 'rgba(204, 204, 204, 0.7)';
 
 export const SPLITTER_BACKGROUND_DARK = 'transparent';
 

@@ -40,7 +40,7 @@ import * as ChatActions from '../../../../data/action/chatActions';
 import * as EditorActions from '../../../../data/action/editorActions';
 import { ExpandCollapse, Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../../layout/expandCollapse';
 import * as Colors from '../../../styles/colors';
-import { ExplorerItem } from '../explorerItem';
+import ExplorerItem from '../explorerItem';
 import store from '../../../../data/store';
 import { EXPLORER_CSS } from '../explorerStyle';
 
@@ -66,7 +66,7 @@ class TranscriptExplorer extends React.Component {
   }
 
   handleItemClick(documentId) {
-    this.props.dispatch(EditorActions.setActiveTab(documentId));
+    //this.props.dispatch(EditorActions.setActiveTab(documentId));
   }
 
   renderTranscriptList() {
@@ -74,9 +74,9 @@ class TranscriptExplorer extends React.Component {
       <ExpandCollapseContent key={ this.props.changeKey }>
         <ul className={ CONVO_CSS }>
           {
-            Object.keys(this.props.transcripts).map(transcriptId =>
-              <ExplorerItem key={ documentId } active={ this.props.activeDocumentId === documentId } onClick={ () => this.onItemClick(documentId) }>
-                <span>{ 'Transcript' }</span>
+            this.props.transcripts.map(transcript =>
+              <ExplorerItem key={ transcript } active={ this.props.activeDocumentId === transcript } onClick={ () => this.onItemClick(transcript) }>
+                <span>{ transcript }</span>
               </ExplorerItem>
             )
           }
@@ -104,7 +104,7 @@ class TranscriptExplorer extends React.Component {
           title="Transcripts"
         >
           {
-            Object.keys(this.props.transcripts).length
+            this.props.transcripts.length
               ? this.renderTranscriptList()
               : this.renderEmptyTranscriptList()
           }

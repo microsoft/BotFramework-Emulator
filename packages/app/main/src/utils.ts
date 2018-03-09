@@ -154,18 +154,3 @@ export const getDirectories = source =>
 export function isDev(): boolean {
   return (process.defaultApp || /node_modules[\\/]electron[\\/]/.test(process.execPath));
 }
-
-/** Returns an unused path for a bot directory */
-export const getBotDirectoryPath = (botName: string): string => {
-  const myBotsFolderBasePath = path.join(os.homedir(), 'MyBots');
-  let botDirectoryName = sanitize(botName);
-  let botPath = path.join(myBotsFolderBasePath, botDirectoryName);
-
-  let directoryWriteAttempts = 1;
-  while(Fs.existsSync(botPath)) {
-    botDirectoryName = sanitize(botName + `(${directoryWriteAttempts})`);
-    botPath = path.join(myBotsFolderBasePath, botDirectoryName);
-    directoryWriteAttempts++;
-  }
-  return botPath;
-}

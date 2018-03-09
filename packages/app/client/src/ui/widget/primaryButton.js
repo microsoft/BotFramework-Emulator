@@ -32,7 +32,8 @@ const CSS = css({
 
   '&:disabled': {
     backgroundColor: Colors.C2,
-    color: Colors.C22
+    color: Colors.C22,
+    cursor: 'default'
   }
 });
 

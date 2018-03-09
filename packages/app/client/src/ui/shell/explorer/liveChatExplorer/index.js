@@ -40,7 +40,7 @@ import * as ChatActions from '../../../../data/action/chatActions';
 import * as EditorActions from '../../../../data/action/editorActions';
 import { ExpandCollapse, Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../../layout/expandCollapse';
 import * as Colors from '../../../styles/colors';
-import { ExplorerItem } from '../explorerItem';
+import ExplorerItem from '../explorerItem';
 import { CommandService } from '../../../../platform/commands/commandService';
 import store from '../../../../data/store';
 import { EXPLORER_CSS } from '../explorerStyle';
@@ -99,8 +99,8 @@ class LiveChatExplorer extends React.Component {
     CommandService.call('livechat:new');
   }
 
-  handleItemClick(documentId) {
-    this.props.dispatch(EditorActions.setActiveTab(documentId));
+  handleItemClick(conversationId) {
+    this.props.dispatch(EditorActions.setActiveTab(conversationId));
   }
 
   renderLiveChatList() {
@@ -108,8 +108,8 @@ class LiveChatExplorer extends React.Component {
       <ExpandCollapseContent key={ this.props.changeKey }>
         <ul className={ CONVO_CSS }>
           {
-            Object.keys(this.props.liveChats).map(documentId =>
-              <ExplorerItem key={ documentId } active={ this.props.activeDocumentId === documentId } onClick={ () => this.onItemClick(documentId) }>
+            Object.keys(this.props.liveChats).map(conversationId =>
+              <ExplorerItem key={ conversationId } active={ this.props.activeDocumentId === conversationId } onClick={ () => this.onItemClick(conversationId) }>
                 <span>{ `Live Chat` }</span>
               </ExplorerItem>
             )
@@ -134,7 +134,7 @@ class LiveChatExplorer extends React.Component {
     return (
       <div className={ EXPLORER_CSS }>
         <ExpandCollapse
-          expanded={ true }
+          initialExpanded={ true }
           title="Live Chats"
         >
           <ExpandCollapseControls>

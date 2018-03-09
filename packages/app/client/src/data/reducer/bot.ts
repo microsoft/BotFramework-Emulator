@@ -1,6 +1,5 @@
 import * as BotActions from '../action/botActions';
-import { IBot, IBotInfo } from '@bfemulator/app-shared';
-import { CommandService } from '../../platform/commands/commandService';
+import { getBotDisplayName, IBot, IBotInfo } from '@bfemulator/app-shared';
 
 export interface IBotState {
   activeBot: IBot;
@@ -9,7 +8,10 @@ export interface IBotState {
 
 export type BotAction = {
   type: 'BOT/CREATE',
-  payload: IBot
+  payload: {
+    bot: IBot,
+    botFilePath: string
+  }
 } | {
   type: 'BOT/DELETE',
   payload: string
@@ -33,11 +35,11 @@ export const bot: any = (state: IBotState = DEFAULT_STATE, action: BotAction) =>
   switch(action.type) {
     case BotActions.CREATE: {
       // set active bot and add bot to bots list
-      const newBot: IBotInfo = { path: action.payload.path };
+      const newBot: IBotInfo = { path: action.payload.botFilePath, id: action.payload.bot.id, displayName: getBotDisplayName(action.payload.bot) };
       const bots = [...state.botFiles];
       bots.unshift(newBot);
       state = setBotFilesState(bots, state);
-      state = setActiveBot(action.payload, state);
+      state = setActiveBot(action.payload.bot, state);
       break;
     }
 
@@ -61,11 +63,19 @@ export const bot: any = (state: IBotState = DEFAULT_STATE, action: BotAction) =>
         ...state.activeBot,
         ...action.payload
       };
+      // update the bot display name in the list if it was changed
+      const bot = state.botFiles.find(bot => bot.id === action.payload.id);
+      bot.displayName = getBotDisplayName(action.payload);
       state = setActiveBot(patchedBot, state);
       break;
     }
 
     case BotActions.SET_ACTIVE: {
+      // move active bot up to the top of the recent bots list
+      const mostRecentBot = state.botFiles.find(bot => bot.id === action.payload.id);
+      let recentBots = state.botFiles.filter(bot => bot.id !== action.payload.id);
+      recentBots.unshift(mostRecentBot);
+      state = setBotFilesState(recentBots, state);
       state = setActiveBot(action.payload, state);
       break;
     }
@@ -82,7 +92,7 @@ function setActiveBot(bot: IBot, state: IBotState): IBotState {
   return newState;
 }
 
-function setBotFilesState(botFilesState: IBotInfo, state: IBotState): IBotState {
+function setBotFilesState(botFilesState: IBotInfo[], state: IBotState): IBotState {
   let newState = Object.assign({}, state);
 
   newState.botFiles = botFilesState;

@@ -46,6 +46,7 @@ import { Window } from './platform/window';
 import { ensureStoragePath, writeFile } from './utils';
 import * as squirrel from './squirrelEvents';
 import * as Commands from './commands';
+import { getBotInfoById } from './botHelpers';
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
   console.error(error);
@@ -129,14 +130,15 @@ const createMainWindow = () => {
       store.subscribe(() => {
         const state = store.getState();
         const botsJson = { bots: state.bot.botFiles };
-        const filePath = path.join(ensureStoragePath(), 'bots.json');
+        const botsJsonPath = path.join(ensureStoragePath(), 'bots.json');
 
         try {
           // write bots list
-          writeFile(filePath, botsJson);
+          writeFile(botsJsonPath, botsJson);
           // write active bot
-          if (state.bot.activeBot && state.bot.activeBot.path) {
-            writeFile(state.bot.activeBot.path, state.bot.activeBot);
+          if (state.bot.activeBot && state.bot.activeBot.id) {
+            const activeBotInfo = getBotInfoById(state.bot.activeBot.id);
+            writeFile(activeBotInfo.path, state.bot.activeBot);
           }
         } catch (e) { console.error('Error writing bot settings to disk: ', e); }
 
@@ -147,9 +149,9 @@ const createMainWindow = () => {
 
         // wait 5 seconds after updates to bots list to write to disk
         botSettingsTimer = setTimeout(() => {
-          const filePath = `${ensureStoragePath()}/bots.json`;
+          const botsJsonPath = `${ensureStoragePath()}/bots.json`;
           try {
-            writeFile(filePath, botsJson);
+            writeFile(botsJsonPath, botsJson);
             console.log('Wrote bot settings to desk.');
           } catch (e) { console.error('Error writing bot settings to disk: ', e); }
         }, 1000);*/
@@ -167,7 +169,7 @@ const createMainWindow = () => {
           label: "New Bot",
           click: () => {
             mainWindow.commandService.call('bot:new')
-              .then(bot => mainWindow.commandService.remoteCall('bot:create', bot))
+              .then(bot => mainWindow.commandService.remoteCall('bot-creation:show'))
               .catch(err => console.error('Error while getting new bot in File menu: ', err));
           }
         },

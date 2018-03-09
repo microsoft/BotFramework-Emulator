@@ -40,7 +40,7 @@ export class InsetShadow extends React.Component<Props> {
     const CSS = css(BASE_CSS, SHADOW_CSS);
 
     return (
-      <div className={ CSS as any + ' inset-shadow-component' } aria-hidden="true" />
+      <div className="inset-shadow-component" { ...CSS } aria-hidden="true" />
     );
   }
 }

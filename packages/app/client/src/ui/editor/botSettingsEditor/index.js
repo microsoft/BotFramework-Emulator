@@ -116,7 +116,7 @@ class BotSettingsEditor extends React.Component {
   componentWillReceiveProps(newProps) {
     const { bot: newBot } = newProps;
     // handling a new bot
-    if (newBot.path !== this.state.bot.path) {
+    if (newBot.id !== this.state.bot.id) {
       this.setDirtyFlag(false);
     }
   }
@@ -183,7 +183,7 @@ class BotSettingsEditor extends React.Component {
 
     CommandService.remoteCall('shell:showOpenDialog', dialogOptions)
       .then(path => {
-        const bot = { ...this.state.bot, localDir: path };
+        const bot = { ...this.state.bot, projectDir: path };
         this.setState({ bot });
         this.setDirtyFlag(true);
       })
@@ -244,7 +244,7 @@ class BotSettingsEditor extends React.Component {
           <div className="column stretch space-left">
             <span className='label'>Local folder</span>
             <div className='horz-group'>
-              <input value={ this.state.bot.localDir } type="text" readOnly />
+              <input value={ this.state.bot.projectDir } type="text" readOnly />
               <PrimaryButton text='Browse' onClick={ this.onSelectFolder } buttonClass='browse-path-button' />
             </div>
           </div>

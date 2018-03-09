@@ -34,17 +34,32 @@
 import * as ChatActions from '../action/chatActions';
 import * as EditorActions from '../action/editorActions';
 
+
 const DEFAULT_STATE = {
   liveChatChangeKey: 0,
   liveChats: {},
   transcriptChangeKey: 0,
-  transcripts: {},
+  transcripts: []
 }
 
 export default function chat(state = DEFAULT_STATE, action) {
   const { payload } = action;
 
   switch (action.type) {
+    case ChatActions.ADD_TRANSCRIPT: {
+      const transcripts = [...state.transcripts];
+      transcripts.push(payload);
+      state = setTranscriptsState(transcripts, state);
+    }
+      break;
+
+    case ChatActions.REMOVE_TRANSCRIPT: {
+      const transcriptsCopy = [...state.transcripts];
+      const transcripts = transcriptsCopy.filter(xs => xs !== payload);
+      state = setTranscriptsState(transcripts, state);
+    }
+      break;
+
     case ChatActions.NEW_LIVECHAT_DOCUMENT: {
       state = {
         ...state,
@@ -162,4 +177,11 @@ export default function chat(state = DEFAULT_STATE, action) {
   }
 
   return state;
+}
+
+function setTranscriptsState(transcripts, state) {
+  let newState = Object.assign({}, state);
+
+  newState.transcripts = transcripts;
+  return newState;
 }

@@ -66,7 +66,7 @@ const CSS = css({
 export class ExplorerBarHeader extends React.Component {
   render() {
     return (
-      <div className={ CSS as any }>
+      <div { ...CSS }>
         <header>
           { filterChildren(this.props.children, child => child.type === Title) }
         </header>
