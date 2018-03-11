@@ -13,7 +13,7 @@
     "noEmitOnError": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "outDir": "built",
     "removeComments": true,
     "declaration": true,

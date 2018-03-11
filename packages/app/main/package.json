@@ -42,6 +42,7 @@
     "@types/request": "^2.47.0",
     "@types/restify": "4.3.2",
     "@types/restify-cors-middleware": "^1.0.1",
+    "@types/ws": "^4.0.1",
     "asar-integrity": "^0.2.4",
     "botbuilder": "^3.14.0",
     "concurrently": "^3.5.1",
@@ -99,6 +100,7 @@
     "sanitize-filename": "^1.6.1",
     "tslib": "^1.9.0",
     "winreg": "^1.2.4",
+    "ws": "^5.0.0",
     "xmldom": "^0.1.27",
     "xtend": "^4.0.1"
   }

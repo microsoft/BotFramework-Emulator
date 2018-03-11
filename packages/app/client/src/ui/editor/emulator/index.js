@@ -47,7 +47,6 @@ import { CommandService } from '../../../platform/commands/commandService';
 import { uniqueId } from '@bfemulator/sdk-shared';
 import * as ChatActions from '../../../data/action/chatActions';
 import { Subscription, BehaviorSubject } from 'rxjs';
-import state from './state';
 import store from '../../../data/store';
 
 const CSS = css({

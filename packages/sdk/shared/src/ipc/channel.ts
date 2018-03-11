@@ -22,7 +22,7 @@ export class Channel {
     this.clearListener(messageName);
     this._listeners[messageName] = listener;
     return {
-      dispose() {
+      dispose: () => {
         this.clearListener(messageName);
       }
     }

@@ -36,7 +36,7 @@ export const ElectronIPCServer = new class {
   registerIPC(ipc: ElectronIPC): IDisposable {
     this._ipcs[ipc.id] = ipc;
     return {
-      dispose() {
+      dispose: () => {
         delete this._ipcs[ipc.id];
       }
     }

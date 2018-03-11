@@ -43,10 +43,11 @@ import { WindowManager } from './windowManager';
 import * as commandLine from './commandLine'
 import { setTimeout } from 'timers';
 import { Window } from './platform/window';
-import { ensureStoragePath, writeFile } from './utils';
+import { ensureStoragePath, writeFile, isDev } from './utils';
 import * as squirrel from './squirrelEvents';
 import * as Commands from './commands';
 import { getBotInfoById } from './botHelpers';
+import { ExtensionServer } from './extensions';
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
   console.error(error);
@@ -75,6 +76,15 @@ Commands.registerCommands();
 
 // PARSE COMMAND LINE
 commandLine.parseArgs();
+
+// INIT EXTENSION SERVER (FOR EXTENSION DEVELOPMENT)
+if (isDev) {
+  try {
+    ExtensionServer.init();
+  } catch (err) {
+    console.log("Failed to start extension server", err)
+  }
+}
 
 Electron.app.on('will-finish-launching', (event, args) => {
   Electron.ipcMain.on('getUrls', (event, arg) => {
