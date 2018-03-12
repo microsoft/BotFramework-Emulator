@@ -156,7 +156,7 @@ class NavBar extends React.Component {
     } else {
       // switch tabs and show explorer when clicking different navbar icon
       this.props.dispatch(() => {
-        this.props.dispatch(NavBarActions.selectOrToggle(selection));
+        this.props.dispatch(NavBarActions.select(selection));
         this.props.dispatch(ExplorerActions.show(true));
       });
     }

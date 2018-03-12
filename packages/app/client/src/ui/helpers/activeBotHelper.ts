@@ -6,6 +6,7 @@ import store from '../../data/store';
 import * as BotActions from '../../data/action/botActions';
 import * as NavBarActions from '../../data/action/navBarActions';
 import * as EditorActions from '../../data/action/editorActions';
+import * as ExplorerActions from '../../data/action/explorerActions';
 import * as Constants from '../../constants';
 
 export const ActiveBotHelper = new class {
@@ -50,6 +51,7 @@ export const ActiveBotHelper = new class {
                 .then(() => {
                   CommandService.call('livechat:new');
                   store.dispatch(NavBarActions.select(Constants.NavBar_Files));
+                  store.dispatch(ExplorerActions.show(true));
                 })
               });
             })
@@ -71,6 +73,7 @@ export const ActiveBotHelper = new class {
             .then(() => {
               CommandService.call('livechat:new');
               store.dispatch(NavBarActions.select(Constants.NavBar_Files));
+              store.dispatch(ExplorerActions.show(true));
             })
         }
       })
