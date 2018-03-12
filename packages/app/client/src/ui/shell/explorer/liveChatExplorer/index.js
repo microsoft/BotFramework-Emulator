@@ -45,34 +45,6 @@ import { CommandService } from '../../../../platform/commands/commandService';
 import store from '../../../../data/store';
 import { EXPLORER_CSS } from '../explorerStyle';
 import { CommandRegistry } from '../../../../commands';
-import { uniqueId } from '@bfemulator/sdk-shared';
-import { getTabGroupForDocument } from '../../../../data/editorHelpers';
-
-export function registerCommands() {
-  CommandRegistry.registerCommand('livechat:new', () => {
-    const documentId = uniqueId();
-    store.dispatch(ChatActions.newDocument(documentId, "livechat"));
-    store.dispatch(EditorActions.open(
-      constants.ContentType_LiveChat,
-      documentId,
-      false
-    ));
-  });
-
-  CommandRegistry.registerCommand('transcript:open', (filename) => {
-    const tabGroup = getTabGroupForDocument(filename);
-    if (tabGroup) {
-      store.dispatch(EditorActions.setActiveTab(filename));
-    } else {
-      store.dispatch(ChatActions.newDocument(filename, "transcript"));
-      store.dispatch(EditorActions.open(
-        constants.ContentType_Transcript,
-        filename,
-        false
-      ));
-    }
-  });
-}
 
 const ACCESSORIES_CSS = css({
   '& .accessory-button': {

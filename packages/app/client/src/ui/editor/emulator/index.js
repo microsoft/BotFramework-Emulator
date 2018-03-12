@@ -178,9 +178,9 @@ class Emulator extends React.Component {
         <div className="header">
           <ToolBar>
             <ToolBarButton visible={ true } title="Presentation" onClick={ this.onPresentationClick } />
-            <ToolBarSeparator visible={ this.props.mode === "livechat" } />
+            <ToolBarSeparator visible={ true } />
             <ToolBarButton visible={ this.props.mode === "livechat" } title="Start Over" onClick={ this.onStartOverClick } />
-            <ToolBarButton visible={ this.props.mode === "livechat" } title="Save Transcript..." onClick={ this.onExportClick } />
+            <ToolBarButton visible={ true } title="Save Transcript As..." onClick={ this.onExportClick } />
           </ToolBar>
         </div>
         <div className="content vertical">

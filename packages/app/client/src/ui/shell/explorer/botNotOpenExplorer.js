@@ -78,7 +78,7 @@ class BotNotOpenExplorer extends React.Component {
           >
             <ExpandCollapseContent>
               <div className="explorer-empty-state">
-                <PrimaryButton text='Select or Create a bot' onClick={ this.onOpenBot } />
+                { false && <PrimaryButton text='Select or Create a bot' onClick={ this.onOpenBot } /> }
               </div>
             </ExpandCollapseContent>
           </ExpandCollapse>

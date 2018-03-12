@@ -60,8 +60,9 @@ export const ActiveBotHelper = new class {
 
   confirmAndSwitchBots(id: string): Promise<any> {
     const activeBot = getActiveBot() || {};
-    if (activeBot.id === id)
+    if (activeBot && activeBot.id === id)
       return Promise.resolve();
+    console.log(`Switching to bot ${id}`);
     return this.confirmSwitchBot()
       .then((result) => {
         if (result) {

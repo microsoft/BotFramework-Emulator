@@ -72,7 +72,7 @@ export default function bot(state: IBotState = DEFAULT_STATE, action: BotAction)
         ...action.payload.bot
       };
       // update the bot display name in the list if it was changed
-      const bot = state.botFiles.find(bot => bot.id === action.payload.bot.id);
+      const bot = state.botFiles.find(bot => bot && bot.id === action.payload.bot.id);
       bot.displayName = getBotDisplayName(action.payload.bot);
       state = setActiveBot(patchedBot, state);
       break;
@@ -80,8 +80,8 @@ export default function bot(state: IBotState = DEFAULT_STATE, action: BotAction)
 
     case BotActions.SET_ACTIVE: {
       // move active bot up to the top of the recent bots list
-      const mostRecentBot = state.botFiles.find(bot => bot.id === action.payload.bot.id);
-      let recentBots = state.botFiles.filter(bot => bot.id !== action.payload.bot.id);
+      const mostRecentBot = state.botFiles.find(bot => bot && bot.id === action.payload.bot.id);
+      let recentBots = state.botFiles.filter(bot => bot && bot.id !== action.payload.bot.id);
       recentBots.unshift(mostRecentBot);
       state = setBotFilesState(recentBots, state);
       state = setActiveBot(action.payload.bot, state);

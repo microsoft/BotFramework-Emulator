@@ -183,6 +183,13 @@ const createMainWindow = () => {
               .catch(err => console.error('Error while getting new bot in File menu: ', err));
           }
         },
+        {
+          label: "Open Transcript File...",
+          click: () => {
+            mainWindow.commandService.remoteCall('transcript:prompt-open')
+              .catch(err => console.error('Error opening transcript file from menu: ', err));
+          }
+        },
         { type: 'separator' },
         { role: 'quit' }
       ]

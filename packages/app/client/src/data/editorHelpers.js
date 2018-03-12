@@ -18,7 +18,7 @@ export function getTabGroupForDocument(documentId, tabGroups) {
   tabGroups = tabGroups || store.getState().editor.editors;
   for (let key in tabGroups) {
     if (tabGroups[key] && tabGroups[key].documents) {
-      if (tabGroups[key].documents.some(document => document.documentId == documentId))
+      if (tabGroups[key].documents.some(document => document.documentId.toLowerCase() === documentId.toLowerCase()))
         return key;
     }
   }

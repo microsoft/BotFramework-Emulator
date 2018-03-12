@@ -14,16 +14,24 @@ export type BotAction = {
   }
 } | {
   type: 'BOT/DELETE',
-  payload: string
+  payload: {
+    path: string,
+  }
 } | {
   type: 'BOT/LOAD',
-  payload: IBotInfo[]
+  payload: {
+    bots: IBotInfo[]
+  }
 } | {
   type: 'BOT/PATCH',
-  payload: IBot
+  payload: {
+    bot: IBot
+  }
 } | {
   type: 'BOT/SET_ACTIVE',
-  payload: IBot
+  payload: {
+    bot: IBot
+  }
 };
 
 const DEFAULT_STATE: IBotState = {
@@ -44,39 +52,39 @@ export const bot: any = (state: IBotState = DEFAULT_STATE, action: BotAction) =>
     }
 
     case BotActions.DELETE: {
-      const bots = state.botFiles.filter(bot => bot.path !== action.payload);
+      const bots = state.botFiles.filter(bot => bot.path !== action.payload.path);
       state = setBotFilesState(bots, state);
 
-      if (state.activeBot.path === action.payload) {
+      if (state.activeBot.path === action.payload.path) {
         state = setActiveBot(null, state);
       }
       break;
     }
 
     case BotActions.LOAD: {
-      state = setBotFilesState(action.payload, state);
+      state = setBotFilesState(action.payload.bots, state);
       break;
     }
 
     case BotActions.PATCH: {
       const patchedBot = {
         ...state.activeBot,
-        ...action.payload
+        ...action.payload.bot
       };
       // update the bot display name in the list if it was changed
-      const bot = state.botFiles.find(bot => bot.id === action.payload.id);
-      bot.displayName = getBotDisplayName(action.payload);
+      const bot = state.botFiles.find(bot => bot && bot.id === action.payload.bot.id);
+      bot.displayName = getBotDisplayName(action.payload.bot);
       state = setActiveBot(patchedBot, state);
       break;
     }
 
     case BotActions.SET_ACTIVE: {
       // move active bot up to the top of the recent bots list
-      const mostRecentBot = state.botFiles.find(bot => bot.id === action.payload.id);
-      let recentBots = state.botFiles.filter(bot => bot.id !== action.payload.id);
+      const mostRecentBot = state.botFiles.find(bot => bot && bot.id === action.payload.bot.id);
+      let recentBots = state.botFiles.filter(bot => bot && bot.id !== action.payload.bot.id);
       recentBots.unshift(mostRecentBot);
       state = setBotFilesState(recentBots, state);
-      state = setActiveBot(action.payload, state);
+      state = setActiveBot(action.payload.bot, state);
       break;
     }
 

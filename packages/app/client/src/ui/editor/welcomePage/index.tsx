@@ -20,7 +20,7 @@ const CSS = css({
   overflow: 'auto',
 
   '& .recent-bots-list': {
-    maxHeight: '200px',
+    maxHeight: '106px',
     overflowY: 'auto',
 
     '& > li': {
@@ -127,6 +127,7 @@ class WelcomePage extends React.Component<Props, State> {
     super(props, context);
     this.onAddBotClick = this.onAddBotClick.bind(this);
     this.onBotClick = this.onBotClick.bind(this);
+    this.onOpenTranscriptClick = this.onOpenTranscriptClick.bind(this);
 
     this.state = { activeEditor: getTabGroupForDocument(this.props.documentId) };
   }
@@ -139,6 +140,10 @@ class WelcomePage extends React.Component<Props, State> {
     ActiveBotHelper.confirmAndSwitchBots(id);
   }
 
+  onOpenTranscriptClick() {
+    CommandService.call('transcript:prompt-open');
+  }
+
   render() {
     return (
       <div { ...CSS }>
@@ -149,20 +154,26 @@ class WelcomePage extends React.Component<Props, State> {
           <div className="content">
             <div className="column">
               <div className="section">
+                <h2>Start</h2>
+                <ul>
+                  <li><a href='javascript:void(0);' onClick={ this.onAddBotClick } title=''>Add a bot configuration</a></li>
+                  <li><a href='javascript:void(0);' onClick={ this.onOpenTranscriptClick } title=''>Open a saved chat transcript</a></li>
+                </ul>
+              </div>
+              <div className="section">
                 <h2>My Bots</h2>
                 <ul className="recent-bots-list">
                   {
                     this.props.recentBots && this.props.recentBots.length ?
-                      this.props.recentBots.map(bot =>
+                      this.props.recentBots.map(bot => bot &&
                         <li key={ bot.id }>
-                          <a href="javascript:void(0);" onClick={ ev => this.onBotClick(ev, bot.id)} >{ bot.displayName }</a>
+                          <a href="javascript:void(0);" onClick={ ev => this.onBotClick(ev, bot.id) } >{ bot.displayName }</a>
                           <span className="recent-bot-detail">{ bot.path }</span>
                         </li>)
-                    :
+                      :
                       <li><span className="no-bots">No recent bots</span></li>
                   }
-                  </ul>
-                  <p><PrimaryButton text="Add a bot" onClick={ this.onAddBotClick } /></p>
+                </ul>
               </div>
             </div>
             <div className="column">
@@ -180,6 +191,8 @@ class WelcomePage extends React.Component<Props, State> {
                   <li><a href='javascript:void(0);' title=''>BotBuilder SDK Documentation</a></li>
                   <li><a href='javascript:void(0);' title=''>BotBuilder SDK API Reference</a></li>
                   <li><a href='javascript:void(0);' title=''>Samples</a></li>
+                  <li><a href='javascript:void(0);' title=''>GitHub repository</a></li>
+                  <li><a href='javascript:void(0);' title=''>Report an issue</a></li>
                 </ul>
               </div>
             </div>

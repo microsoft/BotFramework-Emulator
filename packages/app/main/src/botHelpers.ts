@@ -9,5 +9,5 @@ export function getActiveBot(): IBot {
 
 export function getBotInfoById(id: string): IBotInfo {
   const state = mainWindow.store.getState();
-  return state.bot.botFiles.find(bot => bot.id === id);
+  return state.bot.botFiles.find(bot => bot && bot.id === id);
 }
