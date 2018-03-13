@@ -53,6 +53,11 @@ export default function chat(state = DEFAULT_STATE, action) {
       break;
     }
 
+    case ChatActions.CLEAR_TRANSCRIPTS: {
+      state = setTranscriptsState([], state);
+      break;
+    }
+
     case ChatActions.REMOVE_TRANSCRIPT: {
       const transcriptsCopy = [...state.transcripts];
       const transcripts = transcriptsCopy.filter(xs => xs !== payload.filename);

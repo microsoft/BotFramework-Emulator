@@ -103,6 +103,16 @@ export function registerCommands() {
   });
 
   //---------------------------------------------------------------------------
+  // Sets up a filewatcher on the bot's .projectDir
+  CommandRegistry.registerCommand('bot:init-filewatcher', (bot: IBot): void => {
+    if (bot && bot.projectDir) {
+      BotProjectFileWatcher.watch(bot.projectDir);
+    } else {
+      throw new Error('Bot needs to be valid and have a valid projectDir property to initialize file watcher.');
+    }
+  });
+
+  //---------------------------------------------------------------------------
   // Show OS-native messsage box
   CommandRegistry.registerCommand('shell:showMessageBox', (modal: boolean, options: Electron.MessageBoxOptions) => {
     if (modal)

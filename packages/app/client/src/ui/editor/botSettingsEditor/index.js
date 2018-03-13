@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { CommandService } from '../../../platform/commands/commandService';
 import * as Fonts from '../../styles/fonts';
 import * as BotActions from '../../../data/action/botActions';
+import * as ChatActions from '../../../data/action/chatActions';
 import * as EditorActions from '../../../data/action/editorActions';
 import store from '../../../data/store';
 import PrimaryButton from '../../widget/primaryButton';
@@ -109,7 +110,8 @@ class BotSettingsEditor extends React.Component {
     this.setDirtyFlag = debounce(this.setDirtyFlag, 500);
 
     this.state = {
-      bot: this.props.bot
+      bot: this.props.bot,
+      projectDir: this.props.bot.projectDir
     };
   }
 
@@ -160,9 +162,15 @@ class BotSettingsEditor extends React.Component {
   onSave(e) {
     return CommandService.remoteCall('bot:save', this.state.bot)
       .then(() => {
+        // refresh filewatcher if project directory was changed
+        if (this.state.bot.projectDir !== this.state.projectDir) {
+          store.dispatch(ChatActions.clearTranscripts());
+          CommandService.remoteCall('bot:init-filewatcher', this.state.bot);
+        }
+
         store.dispatch(BotActions.patch(this.state.bot));
         this.setDirtyFlag(false);
-        this.setState({ bot: this.state.bot });
+        this.setState({ bot: this.state.bot, projectDir: this.state.bot.projectDir });
         CommandService.remoteCall('app:setTitleBar', getBotDisplayName(this.state.bot));
       });
   }

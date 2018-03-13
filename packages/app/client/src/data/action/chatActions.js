@@ -46,6 +46,7 @@ export const LOG_CLEAR = 'CHAT/LOG/CLEAR';
 export const INSPECTOR_OBJECTS_SET = 'CHAT/INSPECTOR/OBJECTS/SET';
 
 export const ADD_TRANSCRIPT = 'CHAT/TRANSCRIPT/ADD';
+export const CLEAR_TRANSCRIPTS = 'CHAT/TRANSCRIPT/CLEAR';
 export const REMOVE_TRANSCRIPT = 'CHAT/TRANSCRIPT/REMOVE';
 
 export function addTranscript(filename) {
@@ -54,6 +55,13 @@ export function addTranscript(filename) {
     payload: {
       filename
     }
+  };
+}
+
+export function clearTranscripts() {
+  return {
+    type: CLEAR_TRANSCRIPTS,
+    payload: {}
   };
 }
 
