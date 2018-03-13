@@ -160,18 +160,29 @@ class BotSettingsEditor extends React.Component {
   }
 
   onSave(e) {
-    return CommandService.remoteCall('bot:save', this.state.bot)
+    const bot = {
+      ...this.state.bot,
+      botId: this.state.bot.botId.trim(),
+      botUrl: this.state.bot.botUrl.trim(),
+      msaAppId: this.state.bot.msaAppId.trim(),
+      msaPassword: this.state.bot.msaPassword.trim(),
+      locale: this.state.bot.locale.trim(),
+      botName: this.state.bot.botName.trim(),
+      projectDir: this.state.bot.projectDir.trim()
+    };
+
+    return CommandService.remoteCall('bot:save', bot)
       .then(() => {
         // refresh filewatcher if project directory was changed
-        if (this.state.bot.projectDir !== this.state.projectDir) {
+        if (bot.projectDir !== this.state.projectDir) {
           store.dispatch(ChatActions.clearTranscripts());
-          CommandService.remoteCall('bot:init-filewatcher', this.state.bot);
+          CommandService.remoteCall('bot:init-filewatcher', bot);
         }
 
-        store.dispatch(BotActions.patch(this.state.bot));
+        store.dispatch(BotActions.patch(bot));
         this.setDirtyFlag(false);
-        this.setState({ bot: this.state.bot, projectDir: this.state.bot.projectDir });
-        CommandService.remoteCall('app:setTitleBar', getBotDisplayName(this.state.bot));
+        this.setState({ bot: bot, projectDir: bot.projectDir });
+        CommandService.remoteCall('app:setTitleBar', getBotDisplayName(bot));
       });
   }
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IBot, newBot } from '@bfemulator/app-shared';
+import { IBot } from '@bfemulator/app-shared';
 import { css } from 'glamor';
 
 import * as Fonts from '../styles/fonts';
@@ -136,7 +136,17 @@ export default class BotCreationDialog extends React.Component<IBotCreationDialo
   }
 
   onConnect(e) {
-    ActiveBotHelper.confirmAndCreateBot(this.state.bot)
+    const bot = {
+      ...this.state.bot,
+      botUrl: this.state.bot.botUrl.trim(),
+      msaAppId: this.state.bot.msaAppId.trim(),
+      msaPassword: this.state.bot.msaPassword.trim(),
+      locale: this.state.bot.locale.trim(),
+      botName: this.state.bot.botName.trim(),
+      projectDir: this.state.bot.projectDir.trim()
+    };
+
+    ActiveBotHelper.confirmAndCreateBot(bot)
       .then(() => DialogService.hideDialog())
       .catch(err => console.error('Error during confirm and create bot.'))
   }

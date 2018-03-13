@@ -184,9 +184,9 @@ export default class AppSettingsEditor extends React.Component {
 
   onClickSave(e) {
     const settings = {
-      ngrokPath: this.state.ngrokPath,
+      ngrokPath: this.state.ngrokPath.trim(),
       bypassNgrokLocalhost: this.state.bypassNgrokLocalhost,
-      stateSizeLimit: this.state.stateSizeLimit,
+      stateSizeLimit: +this.state.stateSizeLimit.trim(),
       use10Tokens: this.state.use10Tokens
     };
 
