@@ -50,6 +50,12 @@ export function registerCommands() {
   });
 
   //---------------------------------------------------------------------------
+  // Switches the current active bot
+  CommandRegistry.registerCommand('bot:switch', (id: string) => {
+    ActiveBotHelper.confirmAndSwitchBots(id);
+  });
+
+  //---------------------------------------------------------------------------
   // Adds a transcript
   CommandRegistry.registerCommand('transcript:add', (filename: string): void => {
     store.dispatch(ChatActions.addTranscript(filename));

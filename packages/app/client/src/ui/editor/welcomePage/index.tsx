@@ -6,7 +6,6 @@ import * as Colors from '../../styles/colors';
 import PrimaryButton from '../../widget/primaryButton';
 import { CommandService } from '../../../platform/commands/commandService';
 import { getTabGroupForDocument, hasNonGlobalTabs } from '../../../data/editorHelpers';
-import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 import { DialogService } from '../../dialogs/service/index';
 import BotCreationDialog from '../../dialogs/botCreationDialog';
 import { IBotInfo } from '@bfemulator/app-shared';
@@ -137,7 +136,7 @@ class WelcomePage extends React.Component<Props, State> {
   }
 
   onBotClick(e, id) {
-    ActiveBotHelper.confirmAndSwitchBots(id);
+    CommandService.call('bot:switch', id);
   }
 
   onOpenTranscriptClick() {

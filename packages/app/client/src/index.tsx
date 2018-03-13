@@ -71,6 +71,7 @@ CommandService.remoteCall('client:loaded')
 CommandService.remoteCall('bot:list:load')
   .then(payload => {
     store.dispatch(BotActions.load(payload.bots));
+    CommandService.remoteCall('menu:update-recent-bots')
   })
   .catch(err => {
     console.error('Error during bot list load: ', err);

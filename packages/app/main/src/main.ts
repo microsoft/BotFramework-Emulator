@@ -48,6 +48,7 @@ import * as squirrel from './squirrelEvents';
 import * as Commands from './commands';
 import { getBotInfoById } from './botHelpers';
 import { ExtensionServer } from './extensions';
+import { getAppMenuTemplate } from './appMenuBuilder';
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
   console.error(error);
@@ -171,132 +172,7 @@ const createMainWindow = () => {
   mainWindow.browserWindow.setTitle(app.getName());
   windowManager = new WindowManager();
 
-  const template: Electron.MenuItemConstructorOptions[] = [
-    {
-      label: 'File',
-      submenu: [
-        {
-          label: "New Bot",
-          click: () => {
-            mainWindow.commandService.call('bot:new')
-              .then(bot => mainWindow.commandService.remoteCall('bot-creation:show'))
-              .catch(err => console.error('Error while getting new bot in File menu: ', err));
-          }
-        },
-        {
-          label: "Open Transcript File...",
-          click: () => {
-            mainWindow.commandService.remoteCall('transcript:prompt-open')
-              .catch(err => console.error('Error opening transcript file from menu: ', err));
-          }
-        },
-        { type: 'separator' },
-        { role: 'quit' }
-      ]
-    },
-    {
-      label: 'Edit',
-      submenu: [
-        { role: 'undo' },
-        { role: 'redo' },
-        { type: 'separator' },
-        { role: 'cut' },
-        { role: 'copy' },
-        { role: 'paste' },
-        { role: 'delete' },
-        { role: 'selectall' },
-      ]
-    },
-    {
-      label: 'View',
-      submenu: [
-        { type: 'separator' },
-        { role: 'resetzoom' },
-        { role: 'zoomin' },
-        { role: 'zoomout' },
-        { type: 'separator' },
-        { role: 'togglefullscreen' },
-      ]
-    },
-    {
-      role: 'window',
-      submenu: [
-        { role: 'minimize' },
-      ]
-    },
-    {
-      role: 'help',
-      submenu: [
-        {
-          label: "Welcome",
-          click: () => mainWindow.commandService.remoteCall('welcome-page:show')
-        },
-        { type: 'separator' },
-        { role: 'toggledevtools' },
-      ]
-    }
-  ];
-
-  if (process.platform === 'darwin') {
-    /*
-    // Create the Application's main menu
-    var template2: Electron.MenuItemConstructorOptions[] = [
-      {
-        label: windowTitle,
-        submenu: [
-          { label: "About", click: () => Emulator.send('show-about') },
-          { type: "separator" },
-          { label: "Quit", accelerator: "Command+Q", click: () => Electron.app.quit() }
-        ]
-      }, {
-        label: "Edit",
-        submenu: [
-          { label: "Undo", accelerator: "CmdOrCtrl+Z", role: "undo" },
-          { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", role: "redo" },
-          { type: "separator" },
-          { label: "Cut", accelerator: "CmdOrCtrl+X", role: "cut" },
-          { label: "Copy", accelerator: "CmdOrCtrl+C", role: "copy" },
-          { label: "Paste", accelerator: "CmdOrCtrl+V", role: "paste" },
-          { label: "Select All", accelerator: "CmdOrCtrl+A", role: "selectall" }
-        ]
-      }
-      */
-    template.unshift({
-      label: app.getName(),
-      submenu: [
-        { role: 'about' },
-        { type: 'separator' },
-        { role: 'services', submenu: [] },
-        { type: 'separator' },
-        { role: 'hide' },
-        { role: 'hideothers' },
-        { role: 'unhide' },
-        { type: 'separator' },
-        { role: 'quit' }
-      ]
-    });
-
-    // Edit menu
-    (template[2].submenu as any).push(
-      { type: 'separator' },
-      {
-        label: 'Speech',
-        submenu: [
-          { role: 'startspeaking' },
-          { role: 'stopspeaking' }
-        ]
-      }
-    );
-
-    // Window menu
-    template[4].submenu = [
-      { role: 'close' },
-      { role: 'minimize' },
-      { role: 'zoom' },
-      { type: 'separator' },
-      { role: 'front' }
-    ];
-  }
+  const template: Electron.MenuItemConstructorOptions[] = getAppMenuTemplate();
 
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 

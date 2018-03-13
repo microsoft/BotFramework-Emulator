@@ -5,7 +5,7 @@ import { CommandRegistry as CommReg, uniqueId } from '@bfemulator/sdk-shared';
 import { IBot, newBot, IFrameworkSettings } from '@bfemulator/app-shared';
 import { ensureStoragePath, getSafeBotName, readFileSync, showOpenDialog, writeFile, showSaveDialog } from './utils';
 import * as BotActions from './data-v2/action/bot';
-import { app } from 'electron';
+import { app, Menu } from 'electron';
 import { mainWindow } from './main';
 import { ExtensionManager } from './extensions';
 import { getSettings, dispatch } from './settings';
@@ -15,6 +15,7 @@ import * as Fs from 'fs';
 import * as OS from 'os';
 import { sync as mkdirpSync } from 'mkdirp';
 import { BotProjectFileWatcher } from './botProjectFileWatcher';
+import { getAppMenuTemplate, getFileMenu, setFileMenu } from './appMenuBuilder';
 
 //=============================================================================
 export const CommandRegistry = new CommReg();
@@ -239,5 +240,26 @@ export function registerCommands() {
     const activities = JSON.parse(readFileSync(path));
 
     conversation.feedActivities(activities);
+  });
+
+  //---------------------------------------------------------------------------
+  // Builds a new app menu to reflect the updated recent bots list
+  //
+  // NOTE: There is currently no way to go from the current, built Electron menu
+  // (Menu.getApplicationMenu()) to its template form. Which means if we have previously
+  // modified the app menu, we need to recreate those modifications while adding the
+  // recent bots list, or they will be overriden.
+  CommandRegistry.registerCommand('menu:update-recent-bots', (): void => {
+    // get a new app menu template
+    let menu = getAppMenuTemplate();
+
+    // get a file menu template with recent bots added
+    const state = mainWindow.store.getState();
+    const recentBots = state.bot && state.bot.botFiles ? state.bot.botFiles : [];
+    const newFileMenu = getFileMenu(recentBots);
+
+    // update the app menu to use the new file menu and build the template into a menu
+    menu = setFileMenu(newFileMenu, menu);
+    Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
   });
 }
