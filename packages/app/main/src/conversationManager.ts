@@ -100,7 +100,8 @@ export class Conversation {
     return currentUser;
   }
 
-  private postage(recipientId: string, activity: IActivity) {
+  private postage(recipientId: string, activity: IActivity): IActivity {
+    activity = Object.assign({}, activity);
     const date = moment();
     activity.id = activity.id || uniqueId();
     activity.channelId = 'emulator';
@@ -108,32 +109,29 @@ export class Conversation {
     activity.localTimestamp = date.format();
     activity.recipient = { id: recipientId };
     activity.conversation = activity.conversation || { id: this.conversationId };
+    return activity;
   }
 
-  private addActivityToQueue(activity: IActivity, destination: string) {
+  private addActivityToQueue(activity: IActivity) {
     this.activities.push(activity);
-    logActivity(this.conversationId, activity, destination);
+    logActivity(this.conversationId, activity, activity.recipient.role);
   }
 
   /**
    * Sends the activity to the conversation's bot.
    */
   postActivityToBot(activity: IActivity, recordInConversation: boolean, cb?) {
-    if (this.conversationId.includes("transcript")) {
-      if (recordInConversation) {
-        this.addActivityToQueue(Object.assign({}, activity), "bot");
-      }
-      cb && cb();
-      return;
-    }
-
     const bot = this.bot;
     if (bot) {
       // Do not make a shallow copy here before modifying
-      this.postage(bot.id, activity);
+      activity = this.postage(bot.id, activity);
       activity.from = activity.from || this.getCurrentUser();
       if (!activity.recipient.name) {
         activity.recipient.name = "Bot";
+      }
+      // Fill in role field, if missing
+      if (!activity.recipient.role) {
+        activity.recipient.role = "bot";
       }
       activity.serviceUrl = emulator.framework.getServiceUrl(bot.botUrl);
 
@@ -156,7 +154,7 @@ export class Conversation {
             cb(null, resp ? resp.statusCode : undefined);
           } else {
             if (recordInConversation) {
-              this.addActivityToQueue(Object.assign({}, activity), "bot");
+              this.addActivityToQueue(Object.assign({}, activity));
             }
             if (activity.type === 'invoke') {
               cb(null, resp.statusCode, activity.id, resp.body);
@@ -203,16 +201,24 @@ export class Conversation {
    */
   public postActivityToUser(activity: IActivity): IResourceResponse {
     const settings = getSettings();
-    // Make a shallow copy before modifying & queuing
-    let visitor = new PaymentEncoder();
-    activity = Object.assign({}, activity);
-    visitor.traverseActivity(activity);
-    this.postage(settings.users.currentUserId, activity);
+    activity = this.processActivityForPayments(activity);
+    activity = this.postage(settings.users.currentUserId, activity);
     if (!activity.from.name) {
       activity.from.name = "Bot";
     }
-    this.addActivityToQueue(activity, "user");
+      // Fill in role field, if missing
+      if (!activity.recipient.role) {
+      activity.recipient.role = "user";
+    }
+    this.addActivityToQueue(activity);
     return ResponseTypes.createResourceResponse(activity.id);
+  }
+
+  public processActivityForPayments(activity: IActivity): IActivity {
+    const visitor = new PaymentEncoder();
+    activity = Object.assign({}, activity);
+    visitor.traverseActivity(activity);
+    return activity;
   }
 
   // updateActivity with replacement
@@ -574,11 +580,52 @@ export class Conversation {
   }
 
   public feedActivities(activities: IActivity[]) {
+    /*
+    * We need to fixup the activities to look like they're part of the current conversation.
+    * This a limitation of the way the emulator was originally designed, and not a problem
+    * with the transcript data. In the fullness of time, the emulator (and webchat control)
+    * could be better adapted to loading transcripts.
+    * */
+
+    const settings = getSettings();
+    const currUserId = settings.users.currentUserId;
+    let origUserId = null;
+    let origBotId = null;
+    // Get original botId and userId
+    // Fixup conversationId
     activities.forEach(activity => {
+      if (!origBotId && activity.recipient.role === "bot") {
+        origBotId = activity.recipient.id;
+      }
+      if (!origBotId && activity.recipient.role === "user") {
+        if (!origUserId)
+          origUserId = activity.recipient.id;
+        if (origBotId)
+          activity.recipient.id = currUserId;
+      }
       if (activity.conversation) {
         activity.conversation.id = this.conversationId
       }
-      this.postActivityToUser(activity);
+    });
+    // Fixup recipient and from ids
+    if (origUserId || origBotId) {
+      activities.forEach(activity => {
+        if (activity.recipient.id === origBotId)
+          activity.recipient.id = this.bot.id;
+        if (activity.from.id === origBotId)
+          activity.from.id = this.bot.id;
+        if (activity.recipient.id === origUserId)
+          activity.recipient.id = currUserId;
+        if (activity.from.id === origUserId)
+          activity.from.id = currUserId;
+      });
+    }
+    // Add activities to the queue
+    activities.forEach(activity => {
+      if (activity.recipient.role === "user") {
+        activity = this.processActivityForPayments(activity);
+      }
+      this.addActivityToQueue(activity);
     });
   }
 }

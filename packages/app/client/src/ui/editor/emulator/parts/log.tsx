@@ -107,11 +107,37 @@ function timestamp(entry) {
   return `${hours}:${minutes}:${seconds}`;
 }
 
-export default class Log extends React.Component {
+export interface LogProps {
+  document: any;
+}
+
+export interface LogState {
+  count: number;
+}
+
+export default class Log extends React.Component<LogProps, LogState> {
+  scrollMe: Element;
+
+  constructor(props, context) {
+    super(props, context);
+    this.state = {
+      count: 0
+    };
+  }
+
+  componentDidUpdate(prevProps: LogProps, prevState: any, prevContext: any): void {
+    if (this.props.document.log.entries.length !== this.state.count) {
+      this.scrollMe.scrollTop = this.scrollMe.scrollHeight;
+      this.setState({
+        count: this.props.document.log.entries.length
+      });
+    }
+  }
+
   render() {
     let key = 0;
     return (
-      <div className={ CSS }>
+      <div { ...CSS } ref={ ref => this.scrollMe = ref }>
         {
           this.props.document.log.entries.map(entry =>
             <LogEntry key={ `entry-${key++}` } entry={ entry } document={ this.props.document } />
@@ -122,11 +148,12 @@ export default class Log extends React.Component {
   }
 }
 
-Log.propTypes = {
-  document: PropTypes.object.isRequired
-};
+export interface LogEntryProps {
+  document: any;
+  entry: any;
+}
 
-class LogEntry extends React.Component {
+class LogEntry extends React.Component<LogEntryProps> {
 
   inspect(obj) {
     this.props.document.selectedActivity$.next({});
@@ -158,14 +185,14 @@ class LogEntry extends React.Component {
 
   renderResponseMessage(message) {
     return (
-      <React.Fragment>
+      <>
         { message.payload.body
           ?
           <span className="spaced"><a onClick={ () => this.inspect(message) }>{ message.payload.statusCode }</a></span>
           :
           <span className="spaced">{ message.payload.statusCode }</span>
         }
-      </React.Fragment>
+      </>
     );
   }
 
@@ -248,9 +275,6 @@ class LogEntry extends React.Component {
     } else if (typeof message === 'string' || typeof message === 'number') {
       return <span className="spaced" key={ key }>{ message }</span>;
     }
+    return false;
   }
-}
-
-LogEntry.propTypes = {
-  entry: PropTypes.object.isRequired
 }

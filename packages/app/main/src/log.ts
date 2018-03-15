@@ -35,9 +35,12 @@ import * as Restify from 'restify';
 import { Emulator } from './emulator';
 import { safeStringify } from '@bfemulator/app-shared';
 
+// READ READ: This is the "old" implementation of the log service. It no longer logs to the client or anywhere. It's getting phased out.
+
 
 const sendMessage = (method: string, message: any, ...args) => {
-    Emulator.send(method, message, ...args);
+    //Emulator.send(method, message, ...args);
+    //TODO: Update to new log service.
 }
 
 export const log = (message: any, ...args: any[]) => {

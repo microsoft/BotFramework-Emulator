@@ -119,6 +119,8 @@ class Emulator extends React.Component {
   startNewConversation(props) {
     props = props || this.props;
 
+    store.dispatch(ChatActions.clearLog(this.props.document.documentId));
+
     if (props.document.subscription) {
       props.document.subscription.unsubscribe();
     }

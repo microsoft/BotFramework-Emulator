@@ -53,23 +53,6 @@ export class Emulator {
   conversations = new ConversationManager();
   static queuedMessages: IQueuedMessage[] = [];
 
-  constructor() {
-    // When the client notifies us it has started up, send it the configuration.
-    // Note: We're intentionally sending and ISettings here, not a Settings. This
-    // is why we're getting the value from getStore().getState().
-    Electron.ipcMain.on('clientStarted', () => {
-      windowManager.addMainWindow(mainWindow.browserWindow);
-      Emulator.queuedMessages.forEach((msg) => {
-        Emulator.send(msg.channel, ...msg.args);
-      });
-      Emulator.queuedMessages = [];
-      Emulator.send('serverSettings', Settings.getStore().getState());
-    });
-    Settings.addSettingsListener(() => {
-      Emulator.send('serverSettings', Settings.getStore().getState());
-    });
-  }
-
   public getSpeechToken(authIdEvent: string, conversationId: string, refresh: boolean): Promise<ISpeechTokenInfo> {
     const activeBot = getActiveBot();
     const conversation = this.conversations.conversationById(activeBot.id, conversationId);
@@ -93,17 +76,6 @@ export class Emulator {
     Settings.startup();
     emulator = new Emulator();
     emulator.framework.startup();
-  }
-
-  /**
-   * Sends a command to the client.
-   */
-  static send(channel: string, ...args: any[]) {
-    if (windowManager && windowManager.hasMainWindow()) {
-      windowManager.getMainWindow().webContents.send(channel, ...args);
-    } else {
-      Emulator.queuedMessages.push({ channel, args })
-    }
   }
 }
 

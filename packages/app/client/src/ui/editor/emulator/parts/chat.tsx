@@ -41,6 +41,7 @@ import { ISpeechTokenInfo } from '@bfemulator/app-shared';
 import { CommandService } from '../../../../platform/commands/commandService';
 
 const CognitiveServices = require('@bfemulator/custom-botframework-webchat/CognitiveServices');
+const AdaptiveCardsHostConfig = require('@bfemulator/custom-botframework-webchat/adaptivecards-hostconfig.json');
 
 const CSS = css({
   backgroundColor: 'white',
@@ -143,7 +144,7 @@ export default class Chat extends React.Component<Props> {
   render() {
     if (this.props.document.directLine) {
       const props: WebChat.ChatProps = {
-        adaptiveCardsHostConfig: null,
+        adaptiveCardsHostConfig: AdaptiveCardsHostConfig,
         user: {
           id: "1234",
           name: "User"
