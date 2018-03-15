@@ -110,15 +110,15 @@ export class TabManager extends React.Component {
   }
 
   moveIndexDown() {
-    return this.state.selectedIndex === this.props.openTabs.length - 1 ? 0 : this.state.selectedIndex + 1;
+    return this.state.selectedIndex === this.props.recentTabs.length - 1 ? 0 : this.state.selectedIndex + 1;
   }
 
   moveIndexUp() {
-    return this.state.selectedIndex === 0 ? this.props.openTabs.length - 1 : this.state.selectedIndex - 1;
+    return this.state.selectedIndex === 0 ? this.props.recentTabs.length - 1 : this.state.selectedIndex - 1;
   }
 
   onKeyDown(e) {
-    if (!this.props.openTabs.length) {
+    if (!this.props.recentTabs.length) {
       return;
     }
 
@@ -169,7 +169,7 @@ export class TabManager extends React.Component {
       case 'Control':
         if (this.state.showing) {
           this.setState(({ controlIsPressed: false, showing: false }));
-          this.props.dispatch(EditorActions.setActiveTab(this.props.openTabs[this.state.selectedIndex]));
+          this.props.dispatch(EditorActions.setActiveTab(this.props.recentTabs[this.state.selectedIndex]));
         } else {
           this.setState(({ controlIsPressed: false }));
         }
@@ -189,7 +189,7 @@ export class TabManager extends React.Component {
       <div className={ CSS }>
         <ul>
           {
-            this.props.openTabs.map((tabId, index) => {
+            this.props.recentTabs.map((tabId, index) => {
               // TODO: Come up with a simple way to retrieve document
               // name from store using documentId
               const tabClassName = index === this.state.selectedIndex ? 'selected-tab' : '';
@@ -207,10 +207,10 @@ TabManager.propTypes = {
 };
 
 TabManager.defaultProps = {
-  openTabs: []
+  recentTabs: []
 };
 
 export default connect((state, ownProps) => ({
   activeEditor: state.editor.activeEditor,
-  openTabs: state.editor.editors[state.editor.activeEditor].tabStack
+  recentTabs: state.editor.editors[state.editor.activeEditor].recentTabs
 }))(TabManager);

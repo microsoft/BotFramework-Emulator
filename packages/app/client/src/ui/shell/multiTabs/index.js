@@ -41,44 +41,44 @@ import TabbedDocument, { Tab as TabbedDocumentTab, Content as TabbedDocumentCont
 import { filterChildren } from '../../utils';
 
 const CSS = css({
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    height: '100%',
-    boxSizing: 'border-box'
+  display: 'flex',
+  flex: 1,
+  flexDirection: 'column',
+  height: '100%',
+  boxSizing: 'border-box'
 });
 
 export default class MultiTabs extends React.Component {
-    constructor(props, context) {
-        super(props, context);
+  constructor(props, context) {
+    super(props, context);
 
-        this.handleTabClick = this.handleTabClick.bind(this);
-    }
+    this.handleTabClick = this.handleTabClick.bind(this);
+  }
 
-    handleTabClick(nextValue) {
-        this.props.onChange && this.props.onChange(nextValue);
-    }
+  handleTabClick(nextValue) {
+    this.props.onChange && this.props.onChange(nextValue);
+  }
 
-    render() {
-        return (
-            <div className={ CSS }>
-                <TabBar owningEditor={ this.props.owningEditor }>
-                    {
-                        React.Children.map(this.props.children, (tabbedDocument, index) =>
-                            <TabBarTab onClick={ this.handleTabClick.bind(this, index) }>
-                                { filterChildren(tabbedDocument.props.children, child => child.type === TabbedDocumentTab) }
-                            </TabBarTab>
-                        )
-                    }
-                </TabBar>
-                { !!this.props.children.length && filterChildren(React.Children.toArray(this.props.children)[this.props.value].props.children, child => child.type === TabbedDocumentContent) }
-            </div>
-        );
-    }
+  render() {
+    return (
+      <div className={ CSS }>
+        <TabBar owningEditor={ this.props.owningEditor }>
+          {
+            React.Children.map(this.props.children, (tabbedDocument, index) =>
+              <TabBarTab onClick={ this.handleTabClick.bind(this, index) }>
+                { filterChildren(tabbedDocument.props.children, child => child.type === TabbedDocumentTab) }
+              </TabBarTab>
+            )
+          }
+        </TabBar>
+        { !!this.props.children.length && filterChildren(React.Children.toArray(this.props.children)[this.props.value].props.children, child => child.type === TabbedDocumentContent) }
+      </div>
+    );
+  }
 }
 
 MultiTabs.propTypes = {
-    onChange: PropTypes.func,
-    value: PropTypes.number,
-    owningEditor: PropTypes.string
+  onChange: PropTypes.func,
+  value: PropTypes.number,
+  owningEditor: PropTypes.string
 };

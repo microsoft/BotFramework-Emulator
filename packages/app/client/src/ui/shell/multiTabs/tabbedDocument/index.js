@@ -38,20 +38,16 @@ import React from 'react';
 import TabbedDocumentContentWrapper from './contentWrapper';
 
 const CSS = css({
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column'
+  display: 'flex',
+  flex: 1,
+  flexDirection: 'column'
 });
 
 export default class TabbedDocument extends React.Component {
-    render() {
-        return false;
-    }
+  render() {
+    return false;
+  }
 }
 
-TabbedDocument.propTypes = {
-    title: PropTypes.string
-};
-
 export const Tab = props => props.children;
-export const Content = props => <TabbedDocumentContentWrapper owningEditor={ props.owningEditor }>{ props.children }</TabbedDocumentContentWrapper>;
+export const Content = props => <TabbedDocumentContentWrapper documentId={ props.documentId }>{ props.children }</TabbedDocumentContentWrapper>;

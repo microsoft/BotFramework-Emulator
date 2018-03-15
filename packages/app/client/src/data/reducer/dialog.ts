@@ -1,6 +1,6 @@
 import * as DialogActions from '../action/dialogActions';
 
-interface IDialogState {
+export interface IDialogState {
   showing: boolean;
 }
 

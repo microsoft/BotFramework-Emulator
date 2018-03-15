@@ -43,6 +43,7 @@ import LeftContentOverlay from './leftContentOverlay';
 import RightContentOverlay from './rightContentOverlay';
 import * as Constants from '../../../../constants';
 import { InsetShadow } from '../../../layout/insetShadow';
+import { getTabGroupForDocument, tabGroupHasDocuments } from '../../../../data/editorHelpers';
 
 const CSS = css({
   position: 'relative',
@@ -56,22 +57,33 @@ export class TabbedDocumentContentWrapper extends React.Component {
     super(props, context);
 
     this.onClick = this.onClick.bind(this);
+
+    this.state = {
+      owningEditor: getTabGroupForDocument(props.documentId)
+    };
+  }
+
+  componentWillReceiveProps(newProps) {
+    const { documentId: newDocumentId } = newProps;
+    if (this.props.documentId && this.props.documentId !== newDocumentId) {
+      this.setState({ owningEditor: getTabGroupForDocument(newDocumentId) });
+    }
   }
 
   onClick(e) {
-    if (this.props.owningEditor !== this.props.activeEditor) {
-      this.props.dispatch(EditorActions.setActiveEditor(this.props.owningEditor));
+    if (this.state.owningEditor !== this.props.activeEditor) {
+      this.props.dispatch(EditorActions.setActiveEditor(this.state.owningEditor));
     }
   }
 
   render() {
-    const onlyOneEditorActive = this.props.primaryEditor && !this.props.secondaryEditor;
-    const splittingEnabled = onlyOneEditorActive && this.props.primaryEditor.documents && this.props.primaryEditor.documents.length > 1;
+    const onlyOneEditorActive = tabGroupHasDocuments(this.props.primaryEditor) && !tabGroupHasDocuments(this.props.secondaryEditor);
+    const splittingEnabled = onlyOneEditorActive && this.props.primaryEditor.documents && Object.keys(this.props.primaryEditor.documents).length > 1;
 
     return (
       <div className={ CSS } onClickCapture={ this.onClick }>
         { this.props.children }
-        <ContentOverlay owningEditor={ this.props.owningEditor } />
+        <ContentOverlay documentId={ this.props.documentId } />
         {
           splittingEnabled ?
             <React.Fragment>
@@ -98,10 +110,7 @@ TabbedDocumentContentWrapper.propTypes = {
     Constants.EditorKey_Primary,
     Constants.EditorKey_Secondary
   ]),
-  owningEditor: PropTypes.oneOf([
-    Constants.EditorKey_Primary,
-    Constants.EditorKey_Secondary
-  ]),
+  documentId: PropTypes.string,
   primaryEditor: PropTypes.object,
   secondaryEditor: PropTypes.object
 };

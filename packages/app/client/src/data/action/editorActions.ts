@@ -31,6 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { IDocument } from '../reducer/editor';
+
 export const APPEND_TAB = 'EDITOR/APPEND_TAB';
 export const CLOSE = 'EDITOR/CLOSE';
 export const CLOSE_ALL = 'EDITOR/CLOSE_ALL';
@@ -42,7 +44,67 @@ export const SPLIT_TAB = 'EDITOR/SPLIT_TAB';
 export const SWAP_TABS = 'EDITOR/SWAP_TABS';
 export const TOGGLE_DRAGGING_TAB = 'EDITOR/TOGGLE_DRAGGING_TAB';
 
-export function appendTab(srcEditorKey, destEditorKey, documentId) {
+export type EditorAction = {
+  type: 'EDITOR/APPEND_TAB',
+  payload: {
+    srcEditorKey: string,
+    destEditorKey: string,
+    documentId: string
+  }
+} | {
+  type: 'EDITOR/CLOSE',
+  payload: {
+    editorKey: string,
+    documentId: string
+  }
+} | {
+  type: 'EDITOR/CLOSE_ALL',
+  payload : {
+    includeGlobal: boolean
+  }
+} | {
+  type: 'EDITOR/SET_DIRTY_FLAG',
+  payload: {
+    documentId: string,
+    dirty: boolean
+  }
+} | {
+  type: 'EDITOR/OPEN',
+  payload: IDocument
+} | {
+  type: 'EDITOR/SET_ACTIVE_TAB',
+  payload: {
+    documentId: string
+  }
+} | {
+  type: 'EDITOR/SET_ACTIVE_EDITOR',
+  payload: {
+    editorKey: string
+  }
+} | {
+  type: 'EDITOR/SPLIT_TAB',
+  payload: {
+    contentType: string,
+    documentId: string,
+    srcEditorKey: string,
+    destEditorKey: string
+  }
+} | {
+  type: 'EDITOR/SWAP_TABS',
+  payload: {
+    srcEditorKey: string,
+    destEditorKey: string,
+    srcTabId: string,
+    destTabId: string
+  }
+} | {
+  type: 'EDITOR/TOGGLE_DRAGGING_TAB',
+  payload: {
+    draggingTab: boolean
+  }
+};
+
+export function appendTab(srcEditorKey: string, destEditorKey: string, documentId: string): EditorAction {
   return {
     type: APPEND_TAB,
     payload: {
@@ -53,7 +115,7 @@ export function appendTab(srcEditorKey, destEditorKey, documentId) {
   };
 }
 
-export function close(editorKey, documentId) {
+export function close(editorKey: string, documentId: string): EditorAction {
   return {
     type: CLOSE,
     payload: {
@@ -63,7 +125,7 @@ export function close(editorKey, documentId) {
   };
 }
 
-export function closeNonGlobalTabs() {
+export function closeNonGlobalTabs(): EditorAction {
   return {
     type: CLOSE_ALL,
     payload: {
@@ -72,7 +134,7 @@ export function closeNonGlobalTabs() {
   };
 }
 
-export function setDirtyFlag(documentId, dirty) {
+export function setDirtyFlag(documentId: string, dirty: boolean): EditorAction {
   return {
     type: SET_DIRTY_FLAG,
     payload: {
@@ -82,7 +144,7 @@ export function setDirtyFlag(documentId, dirty) {
   };
 }
 
-export function open(contentType, documentId, isGlobal, meta) {
+export function open(contentType: string, documentId: string, isGlobal: boolean, meta?: any): EditorAction {
   return {
     type: OPEN,
     payload: {
@@ -94,7 +156,7 @@ export function open(contentType, documentId, isGlobal, meta) {
   };
 }
 
-export function setActiveTab(documentId) {
+export function setActiveTab(documentId: string): EditorAction {
   return {
     type: SET_ACTIVE_TAB,
     payload: {
@@ -103,14 +165,16 @@ export function setActiveTab(documentId) {
   };
 }
 
-export function setActiveEditor(editorKey) {
+export function setActiveEditor(editorKey: string): EditorAction {
   return {
     type: SET_ACTIVE_EDITOR,
-    payload: editorKey
+    payload: {
+      editorKey
+    }
   }
 }
 
-export function splitTab(contentType, documentId, srcEditorKey, destEditorKey) {
+export function splitTab(contentType: string, documentId: string, srcEditorKey: string, destEditorKey: string): EditorAction {
   return {
     type: SPLIT_TAB,
     payload: {
@@ -122,7 +186,7 @@ export function splitTab(contentType, documentId, srcEditorKey, destEditorKey) {
   };
 }
 
-export function swapTabs(srcEditorKey, destEditorKey, srcTabId, destTabId) {
+export function swapTabs(srcEditorKey: string, destEditorKey: string, srcTabId: string, destTabId: string): EditorAction {
   return {
     type: SWAP_TABS,
     payload: {
@@ -134,9 +198,11 @@ export function swapTabs(srcEditorKey, destEditorKey, srcTabId, destTabId) {
   };
 }
 
-export function toggleDraggingTab(draggingTab) {
+export function toggleDraggingTab(draggingTab: boolean): EditorAction {
   return {
     type: TOGGLE_DRAGGING_TAB,
-    payload: draggingTab
+    payload: {
+      draggingTab
+    }
   };
 }

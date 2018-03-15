@@ -38,6 +38,7 @@ import PropTypes from 'prop-types';
 import { TAB_CSS } from './tabStyle';
 import * as EditorActions from './../../../data/action/editorActions';
 import * as Constants from '../../../constants';
+import { getTabGroupForDocument } from '../../../data/editorHelpers';
 
 class Tab extends React.Component {
   constructor(props, context) {
@@ -50,13 +51,15 @@ class Tab extends React.Component {
     this.onDrop = this.onDrop.bind(this);
     this.onDragEnd = this.onDragEnd.bind(this);
 
-    this.state = {};
+    this.state = {
+      owningEditor: getTabGroupForDocument(props.documentId)
+    };
   }
 
   onDragStart(e) {
     const dragData = {
       tabId: this.props.documentId,
-      editorKey: this.props.owningEditor
+      editorKey: this.state.owningEditor
     };
     e.dataTransfer.setData('application/json', JSON.stringify(dragData));
     this.props.dispatch(EditorActions.toggleDraggingTab(true));
@@ -85,7 +88,7 @@ class Tab extends React.Component {
 
     // only swap the tabs if they are different
     if (tabData.tabId !== this.props.documentId) {
-      this.props.dispatch(EditorActions.swapTabs(tabData.editorKey, this.props.owningEditor, tabData.tabId, this.props.documentId));
+      this.props.dispatch(EditorActions.swapTabs(tabData.editorKey, this.state.owningEditor, tabData.tabId, this.props.documentId));
     }
 
     this.setState(({ draggedOver: false }));
@@ -117,9 +120,5 @@ class Tab extends React.Component {
 export default connect((state, ownProps) => ({}))(Tab);
 
 Tab.propTypes = {
-  owningEditor: PropTypes.oneOf([
-    Constants.EditorKey_Primary,
-    Constants.EditorKey_Secondary
-  ]),
   dirty: PropTypes.bool
 };

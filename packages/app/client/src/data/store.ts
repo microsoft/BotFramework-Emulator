@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { applyMiddleware, combineReducers, createStore } from 'redux';
+import { applyMiddleware, combineReducers, createStore, Store } from 'redux';
 import IPCRendererWebSocket from 'electron-ipcrenderer-websocket';
 import promiseMiddleware from 'redux-promise-middleware';
 import WebSocketActionBridge from 'redux-websocket-bridge';
@@ -46,27 +46,51 @@ import explorer from './reducer/explorer';
 import navBar from './reducer/navBar';
 import server from './reducer/server';
 
+import { IBotState } from './reducer/bot';
+import { IDialogState } from './reducer/dialog';
+import { IEditorState } from './reducer/editor';
+import { IExplorerState } from './reducer/explorer';
+import { INavBarState } from './reducer/navBar';
+
 // TODO: Remove this when we no longer need to debug the WebSocket connection
 // import DebugWebSocketConnection from './debugWebSocketConnection';
 
-const electron = window.process && window.process.versions.electron;
+const _window = window as any;
+const electron = _window.process && _window.process.versions.electron;
 
-const createStoreWithMiddleware = applyMiddleware(
-  WebSocketActionBridge(() => new IPCRendererWebSocket()),
-  // WebSocketActionBridge(() => new DebugWebSocketConnection(new IPCRendererWebSocket())),
-  promiseMiddleware(),
-  thunk
-)(createStore);
+export interface IRootState {
+  assetExplorer?: any;
+  bot?: IBotState;
+  dialog?: IDialogState;
+  editor?: IEditorState;
+  explorer?: IExplorerState;
+  chat?: any;
+  navBar?: INavBarState;
+  server?: any;
+}
 
-const DEFAULT_STATE = {};
+const DEFAULT_STATE: IRootState = {};
 
-export default createStoreWithMiddleware(combineReducers({
-  assetExplorer,
-  bot,
-  dialog,
-  editor,
-  explorer,
-  chat,
-  navBar,
-  server
-}));
+const configureStore = (initialState: IRootState = DEFAULT_STATE): Store<IRootState> => createStore(
+  combineReducers({
+    assetExplorer,
+    bot,
+    dialog,
+    editor,
+    explorer,
+    chat,
+    navBar,
+    server
+  }),
+  initialState,
+  applyMiddleware(
+    WebSocketActionBridge(() => new IPCRendererWebSocket()),
+    // WebSocketActionBridge(() => new DebugWebSocketConnection(new IPCRendererWebSocket())),
+    promiseMiddleware(),
+    thunk
+  )
+);
+
+const store = configureStore();
+
+export default store;

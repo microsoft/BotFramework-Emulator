@@ -37,6 +37,7 @@ import { connect } from 'react-redux';
 import * as EditorActions from '../../../data/action/editorActions';
 import * as ChatActions from '../../../data/action/chatActions';
 import Tab from './tab';
+import { getTabGroupForDocument } from '../../../data/editorHelpers';
 
 export class EmulatorTab extends React.Component {
   constructor(props, context) {
@@ -47,19 +48,19 @@ export class EmulatorTab extends React.Component {
 
   onCloseClick(e) {
     e.stopPropagation();
-    this.props.dispatch(EditorActions.close(this.props.owningEditor, this.props.documentId));
+    this.props.dispatch(EditorActions.close(getTabGroupForDocument(this.props.documentId), this.props.documentId));
     this.props.dispatch(ChatActions.closeDocument(this.props.documentId));
   }
 
   render() {
     return (
       <Tab active={ this.props.active } title={ this.props.title } onCloseClick={ this.onCloseClick }
-        documentId={ this.props.documentId } owningEditor={ this.props.owningEditor } dirty={ this.props.dirty } />
+        documentId={ this.props.documentId } dirty={ this.props.dirty } />
     );
   }
 }
 
-export default connect((state, { mode, documentId, owningEditor }) => ({
+export default connect((state, { mode, documentId }) => ({
   title: titleForMode(mode),
   active: state.editor.editors[state.editor.activeEditor].activeDocumentId === documentId
 }))(EmulatorTab);

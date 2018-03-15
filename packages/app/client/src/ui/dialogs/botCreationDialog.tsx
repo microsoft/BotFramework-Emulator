@@ -71,16 +71,12 @@ const CSS = css({
   }
 });
 
-interface IBotCreationDialogProps {
-  activeEditor?: string;
-}
-
 interface IBotCreationDialogState {
   bot: IBot;
   touchedName: boolean;
 }
 
-export default class BotCreationDialog extends React.Component<IBotCreationDialogProps, IBotCreationDialogState> {
+export default class BotCreationDialog extends React.Component<{}, IBotCreationDialogState> {
   constructor(props, context) {
     super(props, context);
 

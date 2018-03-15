@@ -39,72 +39,79 @@ import PropTypes from 'prop-types';
 import { OVERLAY_CSS } from './overlayStyle';
 import * as EditorActions from '../../../../data/action/editorActions';
 import * as Constants from '../../../../constants';
+import { getTabGroupForDocument } from '../../../../data/editorHelpers';
 
 const CSS = css({
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0
 }, OVERLAY_CSS);
 
 export class ContentOverlay extends React.Component {
-    constructor(props, context) {
-        super(props, context);
+  constructor(props, context) {
+    super(props, context);
 
-        this.onDragEnter = this.onDragEnter.bind(this);
-        this.onDragLeave = this.onDragLeave.bind(this);
-        this.onDragOver = this.onDragOver.bind(this);
-        this.onDrop = this.onDrop.bind(this);
+    this.onDragEnter = this.onDragEnter.bind(this);
+    this.onDragLeave = this.onDragLeave.bind(this);
+    this.onDragOver = this.onDragOver.bind(this);
+    this.onDrop = this.onDrop.bind(this);
 
-        this.state = {};
+    this.state = {
+      owningEditor: getTabGroupForDocument(props.documentId)
+    };
+  }
+
+  componentWillReceiveProps(newProps) {
+    const { documentId: newDocumentId } = newProps;
+    if (this.props.documentId && this.props.documentId !== newDocumentId) {
+      this.setState({ owningEditor: getTabGroupForDocument(newDocumentId) });
+    }
+  }
+
+  onDragEnter(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  onDragLeave(e) {
+    this.setState(({ draggedOver: false }));
+  }
+
+  onDragOver(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    this.setState(({ draggedOver: true }));
+  }
+
+  onDrop(e) {
+    const tabData = JSON.parse(e.dataTransfer.getData('application/json'));
+    if (tabData.editorKey !== this.state.owningEditor) {
+      this.props.dispatch(EditorActions.appendTab(tabData.editorKey, this.state.owningEditor, tabData.tabId));
     }
 
-    onDragEnter(e) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
+    this.setState(({ draggedOver: false }));
+    e.preventDefault();
+    e.stopPropagation();
+  }
 
-    onDragLeave(e) {
-        this.setState(({ draggedOver: false }));
-    }
+  render() {
+    let overlayClassName = this.state.draggedOver ? ' dragged-over-overlay' : '';
+    overlayClassName += (this.props.draggingTab ? ' enabled-for-drop' : '');
 
-    onDragOver(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        this.setState(({ draggedOver: true }));
-    }
-
-    onDrop(e) {
-        const tabData = JSON.parse(e.dataTransfer.getData('application/json'));
-        if (tabData.editorKey !== this.props.owningEditor) {
-            this.props.dispatch(EditorActions.appendTab(tabData.editorKey, this.props.owningEditor, tabData.tabId));
-        }
-
-        this.setState(({ draggedOver: false }));
-        e.preventDefault();
-        e.stopPropagation();
-    }
-
-    render() {
-        let overlayClassName = this.state.draggedOver ? ' dragged-over-overlay' : '';
-        overlayClassName += (this.props.draggingTab ? ' enabled-for-drop' : '');
-
-        return (
-            <div className={ CSS + overlayClassName }
-                onDragEnterCapture={ this.onDragEnter } onDragLeave={ this.onDragLeave }
-                onDragOverCapture={ this.onDragOver } onDropCapture={ this.onDrop } />
-        );
-    }
+    return (
+      <div className={ CSS + overlayClassName }
+        onDragEnterCapture={ this.onDragEnter } onDragLeave={ this.onDragLeave }
+        onDragOverCapture={ this.onDragOver } onDropCapture={ this.onDrop } />
+    );
+  }
 }
 
 export default connect((state, ownProps) => ({
-    draggingTab: state.editor.draggingTab
+  draggingTab: state.editor.draggingTab
 }))(ContentOverlay);
 
 ContentOverlay.propTypes = {
-    draggingTab: PropTypes.bool,
-    owningEditor: PropTypes.oneOf([
-        Constants.EditorKey_Primary,
-        Constants.EditorKey_Secondary
-    ])
+  draggingTab: PropTypes.bool,
+  documentId: PropTypes.string
 };

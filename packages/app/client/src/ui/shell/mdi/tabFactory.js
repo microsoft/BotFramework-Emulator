@@ -40,15 +40,15 @@ import TestBedTab from './testBedTab';
 
 export default props =>
   props.document.contentType === Constants.ContentType_LiveChat ?
-    <EmulatorTab mode="livechat" documentId={ props.document.documentId } owningEditor={ props.owningEditor } dirty={ props.document.dirty } />
+    <EmulatorTab mode="livechat" documentId={ props.document.documentId } dirty={ props.document.dirty } />
   : props.document.contentType === Constants.ContentType_Transcript ?
-    <EmulatorTab mode="transcript" documentId={ props.document.documentId } owningEditor={ props.owningEditor } dirty={ props.document.dirty } />
+    <EmulatorTab mode="transcript" documentId={ props.document.documentId } dirty={ props.document.dirty } />
   : props.document.contentType === Constants.ContentType_TestBed ?
-    <TestBedTab documentId={ props.document.documentId } owningEditor={ props.owningEditor } dirty={ props.document.dirty } />
+    <TestBedTab documentId={ props.document.documentId } dirty={ props.document.dirty } />
   : props.document.contentType === Constants.ContentType_BotSettings ?
-    <GenericTab documentId={ props.document.documentId } owningEditor={ props.owningEditor } title={ "Bot Settings" } dirty={ props.document.dirty } />
+    <GenericTab documentId={ props.document.documentId } title={ "Bot Settings" } dirty={ props.document.dirty } />
   : props.document.contentType === Constants.ContentType_WelcomePage ?
-    <GenericTab documentId={ props.document.documentId } owningEditor={ props.owningEditor } title={ "Welcome" } dirty={ props.document.dirty } />
+    <GenericTab documentId={ props.document.documentId } title={ "Welcome" } dirty={ props.document.dirty } />
   : props.document.contentType === Constants.ContentType_AppSettings ?
-    <GenericTab documentId={ props.document.documentId } owningEditor={ props.owningEditor } title={ "App Settings" } dirty={ props.document.dirty } />
+    <GenericTab documentId={ props.document.documentId } title={ "App Settings" } dirty={ props.document.dirty } />
   : false

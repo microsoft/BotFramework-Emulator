@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import * as Colors from '../../styles/colors';
 import PrimaryButton from '../../widget/primaryButton';
 import { CommandService } from '../../../platform/commands/commandService';
-import { getTabGroupForDocument, hasNonGlobalTabs } from '../../../data/editorHelpers';
 import { DialogService } from '../../dialogs/service/index';
 import BotCreationDialog from '../../dialogs/botCreationDialog';
 import { IBotInfo } from '@bfemulator/app-shared';
@@ -117,18 +116,12 @@ interface Props {
   recentBots?: IBotInfo[];
 }
 
-interface State {
-  activeEditor?: string;
-}
-
-class WelcomePage extends React.Component<Props, State> {
+class WelcomePage extends React.Component<Props, {}> {
   constructor(props, context) {
     super(props, context);
     this.onAddBotClick = this.onAddBotClick.bind(this);
     this.onBotClick = this.onBotClick.bind(this);
     this.onOpenTranscriptClick = this.onOpenTranscriptClick.bind(this);
-
-    this.state = { activeEditor: getTabGroupForDocument(this.props.documentId) };
   }
 
   onAddBotClick() {

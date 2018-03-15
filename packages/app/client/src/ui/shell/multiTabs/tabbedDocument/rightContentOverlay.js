@@ -77,7 +77,7 @@ export class RightContentOverlay extends React.Component {
     onDrop(e) {
         const tabData = JSON.parse(e.dataTransfer.getData('application/json'));
         const tabId = tabData.tabId;
-        const docToSplit = this.props.primaryEditor.documents.find(doc => doc.documentId === tabId);
+        const docToSplit = this.props.primaryEditor.documents[tabId];
         this.props.dispatch(EditorActions.splitTab(docToSplit.contentType, tabId, Constants.EditorKey_Primary, Constants.EditorKey_Secondary));
         this.setState(({ draggedOver: false }));
 

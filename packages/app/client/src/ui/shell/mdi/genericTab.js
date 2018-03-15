@@ -38,6 +38,7 @@ import PropTypes from 'prop-types';
 import * as Constants from '../../../constants';
 import * as EditorActions from '../../../data/action/editorActions';
 import Tab from './tab';
+import { getTabGroupForDocument } from '../../../data/editorHelpers';
 
 class GenericTab extends React.Component {
   constructor(props, context) {
@@ -48,25 +49,21 @@ class GenericTab extends React.Component {
 
   onCloseClick(e) {
     e.stopPropagation();
-    this.props.dispatch(EditorActions.close(this.props.owningEditor, this.props.documentId));
+    this.props.dispatch(EditorActions.close(getTabGroupForDocument(this.props.documentId), this.props.documentId));
   }
 
   render() {
     return (
       <Tab active={ this.props.active } title={ this.props.title } onCloseClick={ this.onCloseClick }
-        documentId={ this.props.documentId } owningEditor={ this.props.owningEditor } dirty={ this.props.dirty } />
+        documentId={ this.props.documentId } dirty={ this.props.dirty } />
     );
   }
 }
 
 GenericTab.propTypes = {
-  owningEditor: PropTypes.oneOf([
-      Constants.EditorKey_Primary,
-      Constants.EditorKey_Secondary
-  ]),
   dirty: PropTypes.bool
 };
 
-export default connect((state, { documentId, owningEditor }) => ({
+export default connect((state, { documentId }) => ({
   active: state.editor.editors[state.editor.activeEditor].activeDocumentId === documentId
 }))(GenericTab);

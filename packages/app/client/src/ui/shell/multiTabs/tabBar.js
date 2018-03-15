@@ -40,6 +40,7 @@ import TabBarTab from './tabBarTab';
 import * as Colors from '../../styles/colors';
 import * as EditorActions from '../../../data/action/editorActions';
 import * as Constants from '../../../constants';
+import { getOtherTabGroup } from '../../../data/editorHelpers';
 
 const CSS = css({
   display: 'flex',
@@ -117,8 +118,8 @@ export class TabBar extends React.Component {
   onSplitClick() {
     const owningEditor = this.props.editors[this.props.owningEditor];
     const docIdToSplit = owningEditor.activeDocumentId;
-    const docToSplit = owningEditor.documents.find(doc => doc.documentId === docIdToSplit);
-    const destEditorKey = this.props.owningEditor === Constants.EditorKey_Primary ? Constants.EditorKey_Secondary : Constants.EditorKey_Primary;
+    const docToSplit = owningEditor.documents[docIdToSplit];
+    const destEditorKey = getOtherTabGroup(this.props.owningEditor);
     this.props.dispatch(EditorActions.splitTab(docToSplit.contentType, docToSplit.documentId, this.props.owningEditor, destEditorKey));
   }
 
@@ -148,11 +149,13 @@ export class TabBar extends React.Component {
   }
 
   render() {
+    const splitEnabled = Object.keys(this.props.documents).length > 1;
+
     const tabBarClassName = this.state.draggedOver ? ' dragged-over-tab-bar' : '';
 
     return (
-      <div className={CSS + tabBarClassName} onDragEnter={this.onDragEnter} onDragOver={this.onDragOver}
-        onDragLeave={this.onDragLeave} onDrop={this.onDrop} >
+      <div className={ CSS + tabBarClassName } onDragEnter={ this.onDragEnter } onDragOver={ this.onDragOver }
+        onDragLeave={ this.onDragLeave } onDrop={ this.onDrop } >
         <ul>
           {
             React.Children.map(this.props.children, child =>
@@ -161,7 +164,7 @@ export class TabBar extends React.Component {
           }
         </ul>
         <div className="tab-bar-widgets">
-          {this.props.splitEnabled ? <span className="split-widget" onClick={this.onSplitClick}></span> : null}
+          { splitEnabled ? <span className="split-widget" onClick={ this.onSplitClick }></span> : null }
         </div>
       </div>
     );
@@ -171,7 +174,7 @@ export class TabBar extends React.Component {
 export default connect((state, { owningEditor }) => ({
   activeEditor: state.editor.activeEditor,
   editors: state.editor.editors,
-  splitEnabled: state.editor.editors[owningEditor].documents.length > 1
+  documents: state.editor.editors[owningEditor].documents
 }))(TabBar);
 
 TabBar.propTypes = {

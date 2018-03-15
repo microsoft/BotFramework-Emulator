@@ -46,6 +46,7 @@ import TabManager from '../dialogs/tabManager';
 import * as Constants from '../../constants';
 import StatusBar from './statusBar';
 import DialogHost from '../dialogs/host';
+import StoreVisualizer from '../debug/storeVisualizer';
 
 css.global('html, body, #root', {
   backgroundColor: Colors.APP_BACKGROUND_DARK,
@@ -123,7 +124,7 @@ export class Main extends React.Component {
     const tabGroup1 = this.props.primaryEditor &&
       <div className="mdi-wrapper" key={ 'primaryEditor' } ><MDI owningEditor={ Constants.EditorKey_Primary } /></div>;
 
-    const tabGroup2 = this.props.secondaryEditor && this.props.secondaryEditor.documents.length ?
+    const tabGroup2 = this.props.secondaryEditor && Object.keys(this.props.secondaryEditor.documents).length ?
       <div className="mdi-wrapper secondary-mdi" key={ 'secondaryEditor' } ><MDI owningEditor={ Constants.EditorKey_Secondary } /></div> : null;
 
     // If falsy children aren't filtered out, splitter won't recognize change in number of children
@@ -156,6 +157,7 @@ export class Main extends React.Component {
         </div>
         <StatusBar />
         <DialogHost />
+        <StoreVisualizer enabled={ false } />
       </div>
     );
   }

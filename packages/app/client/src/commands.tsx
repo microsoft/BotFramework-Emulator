@@ -42,10 +42,7 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Shows a bot creation dialog
   CommandRegistry.registerCommand('bot-creation:show', () => {
-    // TODO: convert store to typescript so we don't have to cast
-    const state = store.getState() as any;
-    const activeEditor = state.editor.activeEditor;
-    const dialog = <BotCreationDialog activeEditor={ activeEditor } />;
+    const dialog = <BotCreationDialog />;
     DialogService.showDialog(dialog);
   });
 

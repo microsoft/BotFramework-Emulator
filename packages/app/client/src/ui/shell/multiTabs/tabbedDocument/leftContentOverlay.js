@@ -40,65 +40,62 @@ import { OVERLAY_CSS } from './overlayStyle';
 import * as Constants from '../../../../constants';
 
 const CSS = css({
-    top: 0,
-    left: 0,
-    right: '80%',
-    bottom: 0
+  top: 0,
+  left: 0,
+  right: '80%',
+  bottom: 0
 }, OVERLAY_CSS);
 
 export class ContentOverlay extends React.Component {
-    constructor(props, context) {
-        super(props, context);
+  constructor(props, context) {
+    super(props, context);
 
-        this.onDragEnter = this.onDragEnter.bind(this);
-        this.onDragLeave = this.onDragLeave.bind(this);
-        this.onDragOver = this.onDragOver.bind(this);
-        this.onDrop = this.onDrop.bind(this);
+    this.onDragEnter = this.onDragEnter.bind(this);
+    this.onDragLeave = this.onDragLeave.bind(this);
+    this.onDragOver = this.onDragOver.bind(this);
+    this.onDrop = this.onDrop.bind(this);
 
-        this.state = {};
-    }
+    this.state = {};
+  }
 
-    onDragEnter(e) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
+  onDragEnter(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
 
-    onDragLeave(e) {
-        this.setState(({ draggedOver: false }));
-    }
+  onDragLeave(e) {
+    this.setState(({ draggedOver: false }));
+  }
 
-    onDragOver(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        this.setState(({ draggedOver: true }));
-    }
+  onDragOver(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    this.setState(({ draggedOver: true }));
+  }
 
-    onDrop(e) {
-        this.setState(({ draggedOver: false }));
-        e.preventDefault();
-        e.stopPropagation();
-    }
+  onDrop(e) {
+    this.setState(({ draggedOver: false }));
+    e.preventDefault();
+    e.stopPropagation();
+  }
 
-    render() {
-        let overlayClassName = this.state.draggedOver ? ' dragged-over-overlay' : '';
-        overlayClassName += (this.props.draggingTab ? ' enabled-for-drop' : '');
+  render() {
+    let overlayClassName = this.state.draggedOver ? ' dragged-over-overlay' : '';
+    overlayClassName += (this.props.draggingTab ? ' enabled-for-drop' : '');
 
-        return (
-            <div className={ CSS + overlayClassName }
-                onDragEnterCapture={ this.onDragEnter } onDragLeave={ this.onDragLeave }
-                onDragOverCapture={ this.onDragOver } onDropCapture={ this.onDrop } />
-        );
-    }
+    return (
+      <div className={ CSS + overlayClassName }
+        onDragEnterCapture={ this.onDragEnter } onDragLeave={ this.onDragLeave }
+        onDragOverCapture={ this.onDragOver } onDropCapture={ this.onDrop } />
+    );
+  }
 }
 
 export default connect((state, ownProps) => ({
-    draggingTab: state.editor.draggingTab
+  draggingTab: state.editor.draggingTab
 }))(ContentOverlay);
 
 ContentOverlay.propTypes = {
-    draggingTab: PropTypes.bool,
-    owningEditor: PropTypes.oneOf([
-        Constants.EditorKey_Primary,
-        Constants.EditorKey_Secondary
-    ])
+  draggingTab: PropTypes.bool,
+  documentId: PropTypes.string
 };

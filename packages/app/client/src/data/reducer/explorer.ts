@@ -7,7 +7,7 @@ type ExplorerAction = {
   }
 };
 
-interface IExplorerState {
+export interface IExplorerState {
   showing: boolean;
 }
 

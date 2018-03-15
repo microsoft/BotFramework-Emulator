@@ -46,7 +46,7 @@ type NavBarAction = {
   }
 };
 
-interface INavBarState {
+export interface INavBarState {
   selection: string;
   expanded: boolean;
 }

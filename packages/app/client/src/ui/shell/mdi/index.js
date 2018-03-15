@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -53,11 +53,11 @@ class MDI extends React.Component {
   }
 
   handleTabChange(tabValue) {
-    this.props.dispatch(EditorActions.setActiveTab(this.props.documents[tabValue].documentId));
+    this.props.dispatch(EditorActions.setActiveTab(this.props.tabOrder[tabValue]));
   }
 
   render() {
-    const activeIndex = this.props.documents.findIndex(document => document.documentId === this.props.activeDocumentId);
+    const activeIndex = this.props.tabOrder.findIndex(documentId => documentId === this.props.activeDocumentId);
 
     return (
       <MultiTabs
@@ -66,13 +66,13 @@ class MDI extends React.Component {
         owningEditor={ this.props.owningEditor }
       >
         {
-          this.props.documents.map(document =>
-            <TabbedDocument key={ document.documentId }>
+          this.props.tabOrder.map(documentId =>
+            <TabbedDocument key={ documentId }>
               <TabbedDocumentTab>
-                <TabFactory document={ document } owningEditor={ this.props.owningEditor } />
+                <TabFactory document={ this.props.documents[documentId] } />
               </TabbedDocumentTab>
-              <TabbedDocumentContent owningEditor={ this.props.owningEditor }>
-                <EditorFactory document={ document } />
+              <TabbedDocumentContent documentId={ documentId }>
+                <EditorFactory document={ this.props.documents[documentId] } />
               </TabbedDocumentContent>
             </TabbedDocument>
           )
@@ -85,17 +85,13 @@ class MDI extends React.Component {
 export default connect((state, { owningEditor }) => ({
   activeDocumentId: state.editor.editors[owningEditor].activeDocumentId,
   documents: state.editor.editors[owningEditor].documents,
+  tabOrder: state.editor.editors[owningEditor].tabOrder,
   activeEditor: state.editor.activeEditor
 }))(MDI)
 
 MDI.propTypes = {
   activeDocumentId: PropTypes.string,
-  documents: PropTypes.arrayOf(
-    PropTypes.shape({
-      documentId: PropTypes.string,
-      contentType: PropTypes.string
-    })
-  ),
+  documents: PropTypes.object,
   activeEditor: PropTypes.string,
   owningEditor: PropTypes.string
 };
