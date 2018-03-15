@@ -10,7 +10,7 @@ export class WebSocketIPC extends IPC {
   get id(): number { return this._id; }
   set id(value: number) { this._id = value; }
 
-  constructor(arg: WebSocket | string = "http://localhost:8080") {
+  constructor(arg: WebSocket | string = "http://localhost:9091") {
     super();
     if (typeof arg === 'string') {
       this._ws = new WebSocket(arg, { perMessageDeflate: false });
@@ -43,7 +43,7 @@ export abstract class WebSocketServer {
   private _wss: WebSocket.Server;
   public _on: (ws: WebSocket) => void;
 
-  constructor(port: number = 8080) {
+  constructor(port: number = 9091) {
     this._wss = new WebSocket.Server({ port });
     this._wss.on('connection', ws => {
       this.onConnection(ws);

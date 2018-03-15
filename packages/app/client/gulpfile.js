@@ -1,12 +1,5 @@
 var gulp = require('gulp');
 
-// TODO: We should either repackage CognitiveServices.js into a separate package, or expose it in Web Chat
-gulp.task('copy:webchat:cognitiveservices', function () {
-  return gulp
-    .src('node_modules/@bfemulator/custom-botframework-webchat/CognitiveServices.js')
-    .pipe(gulp.dest('./public/external/custom-botframework-webchat'));
-});
-
 // TODO: We should expose CSS programmatically in Web Chat
 gulp.task('copy:webchat:css', function () {
   return gulp
@@ -23,6 +16,5 @@ gulp.task('copy:media', function () {
 
 gulp.task('copy', gulp.parallel(
   'copy:media',
-  'copy:webchat:cognitiveservices',
   'copy:webchat:css'
 ));

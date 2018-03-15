@@ -149,7 +149,9 @@ const createMainWindow = () => {
           // write active bot
           if (state.bot.activeBot && state.bot.activeBot.id) {
             const activeBotInfo = getBotInfoById(state.bot.activeBot.id);
-            writeFile(activeBotInfo.path, state.bot.activeBot);
+            if (activeBotInfo) {
+              writeFile(activeBotInfo.path, state.bot.activeBot);
+            }
           }
         } catch (e) { console.error('Error writing bot settings to disk: ', e); }
 

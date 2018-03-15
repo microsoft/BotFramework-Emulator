@@ -129,7 +129,7 @@ export const writeFile = (filePath: string, contents: object | string): void => 
     Mkdirp.sync(path.dirname(filePath));
     Fs.writeFileSync(filePath, contentsToWrite, { encoding: 'utf8' });
   } catch (e) {
-    console.error(`Failed to write bot settings file at ${filePath}`, e);
+    console.error(`Failed to write file at ${filePath}`, e);
   }
 }
 

@@ -272,4 +272,16 @@ export function registerCommands() {
     menu = setFileMenu(newFileMenu, menu);
     Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
   });
+
+  //---------------------------------------------------------------------------
+  // Get a speech token
+  CommandRegistry.registerCommand('speech-token:get', (authIdEvent: string, conversationId: string) => {
+    return emulator.getSpeechToken(authIdEvent, conversationId, false);
+  });
+
+  //---------------------------------------------------------------------------
+  // Refresh a speech token
+  CommandRegistry.registerCommand('speech-token:refresh', (authIdEvent: string, conversationId: string) => {
+    return emulator.getSpeechToken(authIdEvent, conversationId, true);
+  });
 }

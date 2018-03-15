@@ -160,6 +160,7 @@ export default class BotCreationDialog extends React.Component<IBotCreationDialo
 
     CommandService.remoteCall('shell:showOpenDialog', dialogOptions)
       .then(path => {
+        if (path) {
         const bot = { ...this.state.bot, projectDir: path };
         this.setState({ bot });
 
@@ -170,6 +171,7 @@ export default class BotCreationDialog extends React.Component<IBotCreationDialo
               const bot = { ...this.state.bot, botName: dirName };
               this.setState({ bot });
             });
+          }
       })
       .catch(err => console.log('User cancelled choosing a bot folder: ', err));
   }

@@ -72,7 +72,7 @@ export class BotFrameworkAuthentication {
                         }
                         // first try 3.2  token characteristics
                         let verifyOptions = {
-                            jwtId: activeBot.botId,
+                            jwtId: activeBot.id,
                             issuer: issuer,
                             audience: authenticationSettings.botTokenAudience,
                             clockTolerance: 300
@@ -85,7 +85,7 @@ export class BotFrameworkAuthentication {
                         try {
                             // then try v3.1 token characteristics
                             let verifyOptions = {
-                                jwtId: activeBot.botId,
+                                jwtId: activeBot.id,
                                 issuer: v31AuthenticationSettings.tokenIssuer,
                                 audience: authenticationSettings.botTokenAudience,
                                 clockTolerance: 300

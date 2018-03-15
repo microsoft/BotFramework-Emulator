@@ -37,6 +37,7 @@ import * as Settings from './settings';
 import * as Electron from 'electron';
 import { windowManager, mainWindow } from './main';
 import { getActiveBot } from './botHelpers';
+import { ISpeechTokenInfo } from '@bfemulator/app-shared';
 
 
 interface IQueuedMessage {
@@ -67,28 +68,22 @@ export class Emulator {
     Settings.addSettingsListener(() => {
       Emulator.send('serverSettings', Settings.getStore().getState());
     });
-
-    Electron.ipcMain.on('getSpeechToken', (event, args: string) => {
-      // args is the conversation id
-      this.getSpeechToken(event, args);
-    });
-
-    Electron.ipcMain.on('refreshSpeechToken', (event, args: string) => {
-      // args is the conversation id
-      this.getSpeechToken(event, args, true);
-    });
   }
 
-  private getSpeechToken(event: Electron.Event, conversationId: string, refresh: boolean = false) {
+  public getSpeechToken(authIdEvent: string, conversationId: string, refresh: boolean): Promise<ISpeechTokenInfo> {
     const activeBot = getActiveBot();
-    if (activeBot && activeBot.botId && conversationId) {
-      let conversation = this.conversations.conversationById(activeBot.botId, conversationId);
-      conversation.getSpeechToken(10, (tokenInfo) => {
-        event.returnValue = tokenInfo;
-      }, refresh);
-    } else {
-      event.returnValue = { error: 'No bot', error_Description: 'To use speech, you must connect to a bot and have an active conversation.' };
+    const conversation = this.conversations.conversationById(activeBot.id, conversationId);
+    if (conversation) {
+      return new Promise<ISpeechTokenInfo>((resolve, reject) => {
+        conversation.getSpeechToken(10, (tokenInfo) => {
+          resolve(tokenInfo);
+        }, refresh);
+      });
     }
+    return Promise.resolve({
+      error: 'No bot',
+      error_Description: 'To use speech, you must connect to a bot and have an active conversation.'
+    });
   }
 
   /**

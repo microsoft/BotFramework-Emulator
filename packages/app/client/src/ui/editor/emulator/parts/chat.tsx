@@ -37,6 +37,10 @@ import * as WebChat from '@bfemulator/custom-botframework-webchat';
 import { Subscription, BehaviorSubject } from 'rxjs';
 import * as Colors from '../../../styles/colors';
 import PrimaryButton from '../../../widget/primaryButton';
+import { ISpeechTokenInfo } from '@bfemulator/app-shared';
+import { CommandService } from '../../../../platform/commands/commandService';
+
+const CognitiveServices = require('@bfemulator/custom-botframework-webchat/CognitiveServices');
 
 const CSS = css({
   backgroundColor: 'white',
@@ -151,6 +155,13 @@ export default class Chat extends React.Component<Props> {
         formatOptions: {
           showHeader: false
         },
+        speechOptions: {
+          speechRecognizer: new CognitiveServices.SpeechRecognizer({
+            fetchCallback: this.fetchSpeechToken.bind(this),
+            fetchOnExpiryCallback: this.fetchSpeechTokenOnExpiry.bind(this)
+          }),
+          speechSynthesizer: new WebChat.Speech.BrowserSpeechSynthesizer()
+        },
         selectedActivity: (this.props.document.selectedActivity$ as any),
         botConnection: this.props.document.directLine,
         store: this.props.document.webChatStore,
@@ -168,5 +179,34 @@ export default class Chat extends React.Component<Props> {
         </div>
       );
     }
+  }
+
+  private fetchSpeechToken(authIdEvent: string): Promise<string> {
+    return this.getSpeechToken(authIdEvent, false);
+  }
+
+  private fetchSpeechTokenOnExpiry(authIdEvent: string): Promise<string> {
+    return this.getSpeechToken(authIdEvent, true);
+  }
+
+  private getSpeechToken(authIdEvent: string, refresh: boolean): Promise<string> {
+    let command = refresh ? 'speech-token:refresh' : 'speech-token:get';
+    return CommandService.remoteCall(command, authIdEvent, this.props.document.directLine.token)
+      .then((speechToken: ISpeechTokenInfo) => {
+        if (speechToken) {
+          if (speechToken.access_Token) {
+            return speechToken.access_Token;
+          } else {
+            console.warn('Could not retrieve Cognitive Services speech token');
+            if (typeof speechToken.error === 'string')
+              console.warn('Error: ' + speechToken.error);
+            if (typeof speechToken.error_Description === 'string')
+              console.warn('Details: ' + speechToken.error_Description);
+          }
+        } else {
+          console.error('Could not retrieve Cognitive Services speech token.');
+        }
+      })
+      .catch(err => console.error(err));
   }
 }
