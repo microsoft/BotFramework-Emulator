@@ -46,11 +46,14 @@ import explorer from './reducer/explorer';
 import navBar from './reducer/navBar';
 import server from './reducer/server';
 
+import { IAssetExplorerState } from './reducer/assetExplorer';
 import { IBotState } from './reducer/bot';
+import { IChatState } from './reducer/chat';
 import { IDialogState } from './reducer/dialog';
 import { IEditorState } from './reducer/editor';
 import { IExplorerState } from './reducer/explorer';
 import { INavBarState } from './reducer/navBar';
+import { IServerState } from './reducer/server';
 
 // TODO: Remove this when we no longer need to debug the WebSocket connection
 // import DebugWebSocketConnection from './debugWebSocketConnection';
@@ -59,14 +62,14 @@ const _window = window as any;
 const electron = _window.process && _window.process.versions.electron;
 
 export interface IRootState {
-  assetExplorer?: any;
+  assetExplorer?: IAssetExplorerState;
   bot?: IBotState;
   dialog?: IDialogState;
   editor?: IEditorState;
   explorer?: IExplorerState;
-  chat?: any;
+  chat?: IChatState;
   navBar?: INavBarState;
-  server?: any;
+  server?: IServerState;
 }
 
 const DEFAULT_STATE: IRootState = {};

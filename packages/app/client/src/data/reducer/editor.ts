@@ -376,7 +376,7 @@ function getNewEditor(): IEditor {
 }
 
 /** Removes all trace of a document from a tab group and returns
- *  the updated state, or null if the tab group has no documents (empty)
+ *  the updated state, or a new editor if the tab group has no documents (empty)
  */
 function removeDocumentFromTabGroup(tabGroup: IEditor, documentId: string): IEditor {
   const newTabOrder = [...tabGroup.tabOrder].filter(docId => docId !== documentId);

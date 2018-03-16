@@ -31,45 +31,32 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import EventEmitter from 'events';
+import { fromJS } from 'immutable';
 
-class DebugConnection extends EventEmitter {
-    constructor(connection) {
-        super();
+import * as ServerActions from '../action/serverActions';
+import { ServerAction } from '../action/serverActions';
 
-        this._connection = connection;
-
-        this._connection.onmessage = event => {
-            console.info(`WS.recv: ${ event.data }`);
-            this.emit('message', event);
-            this.onmessage && this.onmessage(event);
-        };
-
-        this._connection.onopen = () => {
-            console.info(`WS.open`);
-            this.emit('open');
-            this.onopen && this.onopen();
-        };
-
-        this._connection.onclose = () => {
-            console.info(`WS.close`);
-            this.emit('close');
-            this.onclose && this.onclose();
-        };
-    }
-
-    close() {
-        this._connection.close();
-    }
-
-    end() {
-        this._connection.end();
-    }
-
-    send(data) {
-        console.info(`WS.send: ${ data }`);
-        this._connection.send(data);
-    }
+export interface IServerState {
+  connected?: boolean;
 }
 
-export default DebugConnection
+const DEFAULT_STATE = fromJS({
+  connected: false
+});
+
+export default function server(state: any = DEFAULT_STATE, action: ServerAction): IServerState {
+  switch (action.type) {
+    case ServerActions.ALIVE:
+      const { payload } = action;
+      state = state.set('connected', true).set('host', payload.host).set('version', payload.version);
+      break;
+
+    case ServerActions.PING:
+      state = state.set('connected', null);
+      break;
+
+    default: break;
+  }
+
+  return state;
+}

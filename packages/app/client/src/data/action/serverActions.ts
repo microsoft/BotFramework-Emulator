@@ -31,27 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { fromJS } from 'immutable';
-import * as ServerActions from '../action/serverActions';
+export const ALIVE = 'SERVER/ALIVE';
+export const PING = 'SERVER/PING';
 
-const DEFAULT_STATE = fromJS({
-    connected: false
-});
+export type ServerAction = {
+  type: 'SERVER/PING',
+  meta: { send: boolean }
+} | {
+  type: 'SERVER/ALIVE',
+  meta: { send: boolean },
+  payload: {
+    host: string,
+    now: string,
+    version: string
+  }
+};
 
-export default function server(state = DEFAULT_STATE, action) {
-    const { payload } = action;
-
-    switch (action.type) {
-    case ServerActions.ALIVE:
-        state = state.set('connected', true).set('host', payload.host).set('version', payload.version);
-        break;
-
-    case ServerActions.PING:
-        state = state.set('connected', null);
-        break;
-
-    default: break;
-    }
-
-    return state;
+export function ping(): ServerAction {
+  return {
+    type: PING,
+    meta: { send: true }
+  };
 }

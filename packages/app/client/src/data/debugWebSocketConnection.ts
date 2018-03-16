@@ -31,12 +31,50 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export const ALIVE = 'SERVER/ALIVE';
-export const PING = 'SERVER/PING';
+import { EventEmitter } from 'events';
 
-export function ping() {
-    return {
-        type: PING,
-        meta: { send: true }
+class DebugConnection extends EventEmitter {
+  private _connection: any;
+  private onmessage: any;
+  private onopen: any;
+  private onclose: any;
+
+  constructor(connection: any) {
+    super();
+
+    this._connection = connection;
+
+    this._connection.onmessage = event => {
+      console.info(`WS.recv: ${ event.data }`);
+      this.emit('message', event);
+      this.onmessage && this.onmessage(event);
     };
+
+    this._connection.onopen = () => {
+      console.info(`WS.open`);
+      this.emit('open');
+      this.onopen && this.onopen();
+    };
+
+    this._connection.onclose = () => {
+      console.info(`WS.close`);
+      this.emit('close');
+      this.onclose && this.onclose();
+    };
+  }
+
+  close() {
+    this._connection.close();
+  }
+
+  end() {
+    this._connection.end();
+  }
+
+  send(data) {
+    console.info(`WS.send: ${ data }`);
+    this._connection.send(data);
+  }
 }
+
+export default DebugConnection

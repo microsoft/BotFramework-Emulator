@@ -31,7 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-const DEFAULT_STATE = {
+export interface IAssetExplorerState {
+  files?: { [fileName: string]: { size: number } };
+  folder?: string;
+}
+
+type AssetExplorerAction = any;
+
+const DEFAULT_STATE: IAssetExplorerState = {
   files: {
     '.gitignore': { size: 341 },
     'gulpfile.js': { size: 1392 },
@@ -235,9 +242,9 @@ const DEFAULT_STATE = {
     'src/v1/payments/selectShippingMethod.tsx': { size: 2011 }
   },
   folder: null
-}
+};
 
-export default function assetExplorer(state = DEFAULT_STATE, action) {
+export default function assetExplorer(state: IAssetExplorerState = DEFAULT_STATE, action: AssetExplorerAction): IAssetExplorerState {
   switch (action.type) {
     default: break;
   }

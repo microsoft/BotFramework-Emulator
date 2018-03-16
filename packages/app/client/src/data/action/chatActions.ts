@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { uniqueId } from '@bfemulator/sdk-shared';
+import { ILogEntry, uniqueId } from '@bfemulator/sdk-shared';
 import { createStore as createWebChatStore } from '@bfemulator/custom-botframework-webchat';
 
 export const NEW_CHAT_DOCUMENT = 'CHAT/DOCUMENT/NEW';
@@ -49,7 +49,61 @@ export const ADD_TRANSCRIPT = 'CHAT/TRANSCRIPT/ADD';
 export const CLEAR_TRANSCRIPTS = 'CHAT/TRANSCRIPT/CLEAR';
 export const REMOVE_TRANSCRIPT = 'CHAT/TRANSCRIPT/REMOVE';
 
-export function addTranscript(filename) {
+type ChatMode = 'livechat' | 'transcript';
+
+export type ChatAction = {
+  type: 'CHAT/DOCUMENT/NEW',
+  payload: {
+    documentId: string,
+    mode: ChatMode
+  }
+} | {
+  type: 'CHAT/DOCUMENT/OPEN',
+  payload: {}
+} | {
+  type: 'CHAT/DOCUMENT/CLOSE',
+  payload: {
+    documentId: string
+  }
+} | {
+  type: 'CHAT/CONVERSATION/NEW',
+  payload: {
+    documentId: string,
+    options: any
+  }
+} | {
+  type: 'CHAT/LOG/APPEND',
+  payload: {
+    documentId: string,
+    entry: ILogEntry
+  }
+} | {
+  type: 'CHAT/LOG/CLEAR',
+  payload: {
+    documentId: string
+  }
+} | {
+  type: 'CHAT/INSPECTOR/OBJECTS/SET',
+  payload: {
+    documentId: string,
+    objs: any
+  }
+} | {
+  type: 'CHAT/TRANSCRIPT/ADD',
+  payload: {
+    filename: string
+  }
+} | {
+  type: 'CHAT/TRANSCRIPT/CLEAR',
+  payload: {}
+} | {
+  type: 'CHAT/TRANSCRIPT/REMOVE',
+  payload: {
+    filename: string
+  }
+};
+
+export function addTranscript(filename: string): ChatAction {
   return {
     type: ADD_TRANSCRIPT,
     payload: {
@@ -58,14 +112,14 @@ export function addTranscript(filename) {
   };
 }
 
-export function clearTranscripts() {
+export function clearTranscripts(): ChatAction {
   return {
     type: CLEAR_TRANSCRIPTS,
     payload: {}
   };
 }
 
-export function removeTranscript(filename) {
+export function removeTranscript(filename: string): ChatAction {
   return {
     type: REMOVE_TRANSCRIPT,
     payload: {
@@ -74,7 +128,7 @@ export function removeTranscript(filename) {
   };
 }
 
-export function newDocument(documentId, mode, ...args) {
+export function newDocument(documentId: string, mode: ChatMode, ...args: any[]): ChatAction {
   return {
     type: NEW_CHAT_DOCUMENT,
     payload: {
@@ -92,7 +146,7 @@ export function newDocument(documentId, mode, ...args) {
   }
 }
 
-export function closeDocument(documentId) {
+export function closeDocument(documentId: string): ChatAction {
   return {
     type: CLOSE_CHAT_DOCUMENT,
     payload: {
@@ -101,7 +155,7 @@ export function closeDocument(documentId) {
   }
 }
 
-export function newConversation(documentId, options) {
+export function newConversation(documentId: string, options: any): ChatAction {
   return {
     type: NEW_CONVERSATION,
     payload: {
@@ -111,7 +165,7 @@ export function newConversation(documentId, options) {
   }
 }
 
-export function appendToLog(documentId, entry) {
+export function appendToLog(documentId: string, entry: ILogEntry): ChatAction {
   return {
     type: LOG_APPEND,
     payload: {
@@ -121,7 +175,7 @@ export function appendToLog(documentId, entry) {
   }
 }
 
-export function clearLog(documentId) {
+export function clearLog(documentId: string): ChatAction {
   return {
     type: LOG_CLEAR,
     payload: {
@@ -130,7 +184,7 @@ export function clearLog(documentId) {
   }
 }
 
-export function setInspectorObjects(documentId, objs) {
+export function setInspectorObjects(documentId: string, objs: any): ChatAction {
   objs = Array.isArray(objs) ? objs : [objs];
   return {
     type: INSPECTOR_OBJECTS_SET,

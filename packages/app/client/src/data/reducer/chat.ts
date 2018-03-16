@@ -33,19 +33,29 @@
 
 import * as ChatActions from '../action/chatActions';
 import * as EditorActions from '../action/editorActions';
+import { ChatAction } from '../action/chatActions';
+import { EditorAction } from '../action/editorActions';
 
+// TODO: Should be defined and maybe added to shared
+interface IChat {}
 
-const DEFAULT_STATE = {
+export interface IChatState {
+  changeKey?: number;
+  // TODO: keys should map to an IChat
+  chats?: { [chatId: string]: any };
+  transcripts?: string[];
+}
+
+const DEFAULT_STATE: IChatState = {
   changeKey: 0,
   chats: {},
   transcripts: [],
 }
 
-export default function chat(state = DEFAULT_STATE, action) {
-  const { payload } = action;
-
+export default function chat(state: IChatState = DEFAULT_STATE, action: ChatAction | EditorAction): IChatState {
   switch (action.type) {
     case ChatActions.ADD_TRANSCRIPT: {
+      const { payload } = action;
       const transcriptsCopy = [...state.transcripts];
       const transcripts = transcriptsCopy.filter(xs => xs !== payload.filename);
       transcripts.push(payload.filename);
@@ -59,6 +69,7 @@ export default function chat(state = DEFAULT_STATE, action) {
     }
 
     case ChatActions.REMOVE_TRANSCRIPT: {
+      const { payload } = action;
       const transcriptsCopy = [...state.transcripts];
       const transcripts = transcriptsCopy.filter(xs => xs !== payload.filename);
       state = setTranscriptsState(transcripts, state);
@@ -66,6 +77,7 @@ export default function chat(state = DEFAULT_STATE, action) {
     }
 
     case ChatActions.NEW_CHAT_DOCUMENT: {
+      const { payload } = action;
       state = {
         ...state,
         changeKey: state.changeKey + 1,
@@ -78,6 +90,7 @@ export default function chat(state = DEFAULT_STATE, action) {
     }
 
     case ChatActions.CLOSE_CHAT_DOCUMENT: {
+      const { payload } = action;
       const copy = { ...state };
       copy.changeKey += 1;
       delete copy.chats[payload.documentId];
@@ -86,6 +99,7 @@ export default function chat(state = DEFAULT_STATE, action) {
     }
 
     case ChatActions.NEW_CONVERSATION: {
+      const { payload } = action;
       let document = state.chats[payload.documentId];
       if (document) {
         document = {
@@ -106,6 +120,7 @@ export default function chat(state = DEFAULT_STATE, action) {
     }
 
     case ChatActions.LOG_APPEND: {
+      const { payload } = action;
       let document = state.chats[payload.documentId];
       if (document) {
         document = {
@@ -132,6 +147,7 @@ export default function chat(state = DEFAULT_STATE, action) {
     }
 
     case ChatActions.LOG_CLEAR: {
+      const { payload } = action;
       let document = state.chats[payload.documentId];
       if (document) {
         document = {
@@ -154,6 +170,7 @@ export default function chat(state = DEFAULT_STATE, action) {
     }
 
     case ChatActions.INSPECTOR_OBJECTS_SET: {
+      const { payload } = action;
       let document = state.chats[payload.documentId];
       if (document) {
         document = {
@@ -184,7 +201,7 @@ export default function chat(state = DEFAULT_STATE, action) {
   return state;
 }
 
-function setTranscriptsState(transcripts, state) {
+function setTranscriptsState(transcripts: string[], state: IChatState): IChatState {
   let newState = Object.assign({}, state);
 
   newState.transcripts = transcripts;
