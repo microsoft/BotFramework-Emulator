@@ -175,19 +175,25 @@ export default class SplitterV2 extends React.Component {
     const numberOfSplitters = numberOfPanes - 1;
 
     let defaultPaneSize;
-    if (this.props.initialSizes) {
+    let initialSizes = this.props.initialSizes;
+    if (initialSizes) {
+      if (typeof initialSizes === 'function')
+        initialSizes = initialSizes();
+    }
+
+    if (initialSizes) {
       // subtract initial sizes from container size and distribute the remaining size equally
       let remainingContainerSize = this.containerSize;
       let defaultPanes = numberOfPanes;
-      Object.keys(this.props.initialSizes).forEach(key => {
+      Object.keys(initialSizes).forEach(key => {
         // convert percentage to absolute value if necessary
-        this.props.initialSizes[key] = typeof this.props.initialSizes[key] === 'string' ?
-          parseInt(this.props.initialSizes[key]) / 100 * this.containerSize : this.props.initialSizes[key];
+        initialSizes[key] = typeof initialSizes[key] === 'string' ?
+          parseInt(initialSizes[key]) / 100 * this.containerSize : initialSizes[key];
 
-        if (isNaN(this.props.initialSizes[key])) {
-          throw new Error('Invalid value passed as element of initialSizes in Splitter: ', this.props.initialSizes[key]);
+        if (isNaN(initialSizes[key])) {
+          throw new Error('Invalid value passed as element of initialSizes in Splitter: ', initialSizes[key]);
         }
-        remainingContainerSize -= this.props.initialSizes[key];
+        remainingContainerSize -= initialSizes[key];
         defaultPanes--;
       });
       defaultPaneSize = (remainingContainerSize - numberOfSplitters * SPLITTER_SIZE) / defaultPanes;
@@ -196,8 +202,8 @@ export default class SplitterV2 extends React.Component {
     }
 
     for (let i = 0; i < numberOfPanes; i++) {
-      if (this.props.initialSizes && this.props.initialSizes[i]) {
-        currentPaneSizes[i] = this.props.initialSizes[i];
+      if (initialSizes && initialSizes[i]) {
+        currentPaneSizes[i] = initialSizes[i];
       } else {
         currentPaneSizes[i] = defaultPaneSize;
       }

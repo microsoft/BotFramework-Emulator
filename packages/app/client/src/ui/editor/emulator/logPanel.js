@@ -49,7 +49,7 @@ export default class LogPanel extends React.Component {
       <div className={ CSS }>
         <Panel title="Log">
           <PanelContent>
-            <Log document={ this.props.document } />
+            <Log document={ this.props.document } key={ this.props.document.pingId } />
           </PanelContent>
         </Panel>
       </div>

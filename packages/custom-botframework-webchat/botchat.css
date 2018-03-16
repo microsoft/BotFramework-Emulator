@@ -47,26 +47,20 @@
   overflow-x: hidden;
   overflow-y: scroll;
   padding: 10px;
-  top: 38px;
   transition: transform 0.2s cubic-bezier(0, 0, 0.5, 1);
-  width: 100%; }
-  .wc-message-groups.no-header {
-    top: 0; }
+  width: 100%;
+  margin-top: auto; }
 
 .wc-message-group-content {
   overflow: hidden; }
 
 .wc-suggested-actions {
   background-color: #f9f9f9;
-  bottom: 0;
-  height: 0;
-  left: 0;
   overflow: hidden;
-  position: absolute;
-  right: 0;
-  transition: height 0.2s cubic-bezier(0, 0, 0.5, 1); }
+  position: initial;
+  transition: height 0.2s cubic-bezier(0, 0, 0.5, 1);
+  width: 100%; }
   .wc-suggested-actions .wc-hscroll > ul {
-    height: 40px;
     padding: 2px 3px; }
     .wc-suggested-actions .wc-hscroll > ul > li {
       display: inline-block;
@@ -114,15 +108,11 @@
 
 .wc-message-pane {
   display: flex;
+  flex-direction: column;
   flex-grow: 1;
-  position: relative;
-  align-self: flex-start;
+  align-items: flex-end;
   width: 100%;
   height: 100%; }
-  .wc-message-pane .show-actions .wc-message-groups {
-    transform: translateY(-40px); }
-  .wc-message-pane .show-actions .wc-suggested-actions {
-    height: 40px; }
 
 /* views */
 .wc-chatview-panel {

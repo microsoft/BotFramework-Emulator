@@ -48,6 +48,7 @@ import { uniqueId } from '@bfemulator/sdk-shared';
 import * as ChatActions from '../../../data/action/chatActions';
 import { Subscription, BehaviorSubject } from 'rxjs';
 import store from '../../../data/store';
+import * as _ from 'lodash';
 
 const CSS = css({
   display: 'flex',
@@ -87,6 +88,38 @@ class Emulator extends React.Component {
     this.onStartOverClick = this.handleStartOverClick.bind(this);
     this.onExportClick = this.handleExportClick.bind(this);
     this.onImportClick = this.handleImportClick.bind(this);
+
+    this.onVerticalSizeChange = _.debounce(this.onVerticalSizeChange.bind(this), 500);
+    this.onHorizontalSizeChange = _.debounce(this.onHorizontalSizeChange.bind(this), 500);
+
+    this.getVerticalSplitterSizes = this.getVerticalSplitterSizes.bind(this);
+    this.getHorizontalSplitterSizes = this.getHorizontalSplitterSizes.bind(this);
+  }
+
+  getVerticalSplitterSizes() {
+    return {
+      0: `${this.props.document.ui.verticalSplitter[0].percentage}`
+    }
+  }
+
+  getHorizontalSplitterSizes() {
+    return {
+      0: `${this.props.document.ui.horizontalSplitter[0].percentage}`
+    }
+  }
+
+  onVerticalSizeChange(sizes) {
+    this.props.document.ui = {
+      ...this.props.document.ui,
+      verticalSplitter: sizes
+    };
+  }
+
+  onHorizontalSizeChange(sizes) {
+    this.props.document.ui = {
+      ...this.props.document.ui,
+      horizontalSplitter: sizes
+    };
   }
 
   shouldStartNewConversation(props) {
@@ -102,9 +135,16 @@ class Emulator extends React.Component {
   }
 
   componentWillReceiveProps(nextProps, nextContext) {
-    if (nextProps.document.directLine || this.props.document.documentId === nextProps.document.documentId)
-      return;
-    this.startNewConversation(nextProps);
+    for (; ;) {
+      if (nextProps.document.directLine || this.props.document.documentId === nextProps.document.documentId) {
+        break;
+      }
+      this.startNewConversation(nextProps);
+      break;
+    }
+    if (this.props.document.documentId !== nextProps.document.documentId) {
+      store.dispatch(ChatActions.pingDocument(nextProps.document.documentId));
+    }
   }
 
   componentWillUpdate(nextProps, nextState, nextContext) {
@@ -176,7 +216,7 @@ class Emulator extends React.Component {
 
   render() {
     return (
-      <div className={ CSS } >
+      <div className={ CSS } key={ this.props.pingId }>
         <div className="header">
           <ToolBar>
             <ToolBarButton visible={ true } title="Presentation" onClick={ this.onPresentationClick } />
@@ -186,14 +226,14 @@ class Emulator extends React.Component {
           </ToolBar>
         </div>
         <div className="content vertical">
-          <Splitter orientation={ 'vertical' } primaryPaneIndex={ 0 } minSizes={ { 0: 80, 1: 80 } }>
+          <Splitter orientation={ 'vertical' } primaryPaneIndex={ 0 } minSizes={ { 0: 80, 1: 80 } } initialSizes={ this.getVerticalSplitterSizes } onSizeChange={ this.onVerticalSizeChange } key={ this.props.pingId }>
             <div className="content">
               <ChatPanel mode={ this.props.mode } document={ this.props.document } onStartConversation={ this.onStartOverClick } />
             </div>
             <div className="content">
-              <Splitter orientation={ 'horizontal' } primaryPaneIndex={ 0 } minSizes={ { 0: 80, 1: 80 } }>
-                <DetailPanel document={ this.props.document } />
-                <LogPanel document={ this.props.document } />
+              <Splitter orientation={ 'horizontal' } primaryPaneIndex={ 0 } minSizes={ { 0: 80, 1: 80 } } initialSizes={ this.getHorizontalSplitterSizes } onSizeChange={ this.onHorizontalSizeChange } key={ this.props.pingId }>
+                <DetailPanel document={ this.props.document } key={ this.props.pingId }/>
+                <LogPanel document={ this.props.document } key={ this.props.pingId }/>
               </Splitter>
             </div>
           </Splitter>
@@ -205,7 +245,8 @@ class Emulator extends React.Component {
 
 export default connect((state, { documentId }) => ({
   document: state.chat.chats[documentId],
-  conversationId: state.chat.chats[documentId].conversationId
+  conversationId: state.chat.chats[documentId].conversationId,
+  pingId: state.chat.chats[documentId].pingId
 }))(Emulator);
 
 

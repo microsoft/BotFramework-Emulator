@@ -54,6 +54,22 @@ const DEFAULT_STATE: IChatState = {
 
 export default function chat(state: IChatState = DEFAULT_STATE, action: ChatAction | EditorAction): IChatState {
   switch (action.type) {
+    case ChatActions.PING_CHAT_DOCUMENT: {
+      const { payload } = action;
+      state = {
+        ...state,
+        changeKey: state.changeKey + 1,
+        chats: {
+          ...state.chats,
+          [payload.documentId]: {
+            ...state.chats[payload.documentId],
+            pingId: state.chats[payload.documentId].pingId + 1
+          }
+        }
+      }
+      break;
+    }
+
     case ChatActions.ADD_TRANSCRIPT: {
       const { payload } = action;
       const transcriptsCopy = [...state.transcripts];
@@ -169,7 +185,7 @@ export default function chat(state: IChatState = DEFAULT_STATE, action: ChatActi
       break;
     }
 
-    case ChatActions.INSPECTOR_OBJECTS_SET: {
+    case ChatActions.SET_INSPECTOR_OBJECTS: {
       const { payload } = action;
       let document = state.chats[payload.documentId];
       if (document) {

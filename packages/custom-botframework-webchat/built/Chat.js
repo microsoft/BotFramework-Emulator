@@ -11,6 +11,7 @@ var konsole = require("./Konsole");
 var getTabIndex_1 = require("./getTabIndex");
 var History_1 = require("./History");
 var MessagePane_1 = require("./MessagePane");
+var SuggestedActions_1 = require("./SuggestedActions");
 var Shell_1 = require("./Shell");
 var Chat = (function (_super) {
     tslib_1.__extends(Chat, _super);
@@ -186,6 +187,7 @@ var Chat = (function (_super) {
                 header,
                 React.createElement(MessagePane_1.MessagePane, null,
                     React.createElement(History_1.History, { onCardAction: this._handleCardAction, ref: this._saveHistoryRef })),
+                React.createElement(SuggestedActions_1.SuggestedActions, null),
                 React.createElement(Shell_1.Shell, { ref: this._saveShellRef }),
                 resize)));
     };

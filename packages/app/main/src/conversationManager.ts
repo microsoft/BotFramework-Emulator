@@ -121,6 +121,13 @@ export class Conversation {
    * Sends the activity to the conversation's bot.
    */
   postActivityToBot(activity: IActivity, recordInConversation: boolean, cb?) {
+    // If a message to the bot was triggered from a transcript, don't actually send it.
+    // This can happen when clicking a button in an adaptive card, for instance.
+    if (this.conversationId.includes("transcript")) {
+      cb();
+      return;
+    }
+
     const bot = this.bot;
     if (bot) {
       // Do not make a shallow copy here before modifying

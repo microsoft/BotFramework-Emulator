@@ -32,6 +32,7 @@ export interface ChatProps {
 
 import { History } from './History';
 import { MessagePane } from './MessagePane';
+import { SuggestedActions } from './SuggestedActions';
 import { Shell, ShellFunctions } from './Shell';
 
 export class Chat extends React.Component<ChatProps, {}> {
@@ -272,6 +273,7 @@ export class Chat extends React.Component<ChatProps, {}> {
                             ref={ this._saveHistoryRef }
                         />
                     </MessagePane>
+                    <SuggestedActions />
                     <Shell
                       ref={ this._saveShellRef } />
                     { resize }

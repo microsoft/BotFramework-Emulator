@@ -37,14 +37,11 @@ import { createStore as createWebChatStore } from '@bfemulator/custom-botframewo
 export const NEW_CHAT_DOCUMENT = 'CHAT/DOCUMENT/NEW';
 export const OPEN_CHAT_DOCUMENT = 'CHAT/DOCUMENT/OPEN';
 export const CLOSE_CHAT_DOCUMENT = 'CHAT/DOCUMENT/CLOSE';
-
+export const PING_CHAT_DOCUMENT = 'CHAT/DOCUMENT/PING';
 export const NEW_CONVERSATION = 'CHAT/CONVERSATION/NEW';
-
 export const LOG_APPEND = 'CHAT/LOG/APPEND';
 export const LOG_CLEAR = 'CHAT/LOG/CLEAR';
-
-export const INSPECTOR_OBJECTS_SET = 'CHAT/INSPECTOR/OBJECTS/SET';
-
+export const SET_INSPECTOR_OBJECTS = 'CHAT/INSPECTOR/OBJECTS/SET';
 export const ADD_TRANSCRIPT = 'CHAT/TRANSCRIPT/ADD';
 export const CLEAR_TRANSCRIPTS = 'CHAT/TRANSCRIPT/CLEAR';
 export const REMOVE_TRANSCRIPT = 'CHAT/TRANSCRIPT/REMOVE';
@@ -101,7 +98,22 @@ export type ChatAction = {
   payload: {
     filename: string
   }
+} | {
+  type: 'CHAT/DOCUMENT/PING',
+  payload: {
+    documentId: string
+  }
 };
+
+export function pingDocument(documentId: string): ChatAction {
+  return {
+    type: PING_CHAT_DOCUMENT,
+    payload: {
+      documentId
+    }
+  }
+}
+
 
 export function addTranscript(filename: string): ChatAction {
   return {
@@ -132,6 +144,7 @@ export function newDocument(documentId: string, mode: ChatMode, ...args: any[]):
   return {
     type: NEW_CHAT_DOCUMENT,
     payload: {
+      pingId: 0,
       mode,
       documentId,
       conversationId: null,
@@ -141,6 +154,28 @@ export function newDocument(documentId: string, mode: ChatMode, ...args: any[]):
         entries: []
       },
       inspectorObjects: [],
+      ui: {
+        horizontalSplitter: [
+          {
+            absolute: null,
+            percentage: 50
+          },
+          {
+            absolute: null,
+            percentage: 50
+          }
+        ],
+        verticalSplitter: [
+          {
+            absolute: null,
+            percentage: 50
+          },
+          {
+            absolute: null,
+            percentage: 50
+          }
+        ],
+      },
       ...args
     }
   }
@@ -187,7 +222,7 @@ export function clearLog(documentId: string): ChatAction {
 export function setInspectorObjects(documentId: string, objs: any): ChatAction {
   objs = Array.isArray(objs) ? objs : [objs];
   return {
-    type: INSPECTOR_OBJECTS_SET,
+    type: SET_INSPECTOR_OBJECTS,
     payload: {
       documentId,
       objs
