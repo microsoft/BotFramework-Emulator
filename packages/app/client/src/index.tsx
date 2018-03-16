@@ -61,13 +61,13 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-// Tell the process we're loaded
+// Tell the main process we're loaded
 CommandService.remoteCall('client:loaded')
   .then(() => {
     showWelcomePage();
   });
 
-// Load bots from disk on app start-up
+// Fetch the list of bots we know about
 CommandService.remoteCall('bot:list:load')
   .then(payload => {
     store.dispatch(BotActions.load(payload.bots));

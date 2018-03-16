@@ -114,7 +114,7 @@ export class BotStateController {
 
   // Get USER Data
   public getUserData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    logRequest(req.params.conversationId, "bot", req);
+    logRequest(req.params.conversationId, "bot", req, "getUserData");
     try {
       // FIX: This is not going to work for multiple bots!
       const activeBot = getActiveBot();
@@ -129,12 +129,12 @@ export class BotStateController {
       //var error = sendErrorResponse(req, res, next, err);
       //log.api('getUserData', req, res, req.params, error);
     }
-    logResponse(req.params.conversationId, "bot", res);
+    logResponse(req.params.conversationId, "bot", res, "getUserData");
   }
 
   // Get Conversation Data
   public getConversationData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    logRequest(req.params.conversationId, "bot", req);
+    logRequest(req.params.conversationId, "bot", req, "getConversationData");
     try {
       const activeBot = getActiveBot();
       if (!activeBot) {
@@ -148,12 +148,12 @@ export class BotStateController {
      // var error = sendErrorResponse(req, res, next, err);
       //log.api('getConversationData', req, res, req.params, error);
     }
-    logResponse(req.params.conversationId, "bot", res);
+    logResponse(req.params.conversationId, "bot", res, "getConversationData");
   }
 
   // Get PrivateConversation Data
   public getPrivateConversationData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    logRequest(req.params.conversationId, "bot", req);
+    logRequest(req.params.conversationId, "bot", req, "getPrivateConversationData");
     try {
       const activeBot = getActiveBot();
       if (!activeBot) {
@@ -167,12 +167,12 @@ export class BotStateController {
       //var error = sendErrorResponse(req, res, next, err);
       //log.api('getPrivateConversationData', req, res, req.params, error);
     }
-    logResponse(req.params.conversationId, "bot", res);
+    logResponse(req.params.conversationId, "bot", res, "getPrivateConversationData");
   }
 
   // Set User Data
   public setUserData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    logRequest(req.params.conversationId, "bot", req);
+    logRequest(req.params.conversationId, "bot", req, "setUserData");
     let botData;
     try {
       const activeBot = getActiveBot();
@@ -187,12 +187,12 @@ export class BotStateController {
       //var error = sendErrorResponse(req, res, next, err);
       //log.api('setUserData', req, res, { key: req.params, state: req.body }, error);
     }
-    logResponse(req.params.conversationId, "bot", res);
+    logResponse(req.params.conversationId, "bot", res, "setUserData");
   }
 
   // set conversation data
   public setConversationData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    logRequest(req.params.conversationId, "bot", req);
+    logRequest(req.params.conversationId, "bot", req, "setConversationData");
     try {
       const activeBot = getActiveBot();
       if (!activeBot) {
@@ -206,12 +206,12 @@ export class BotStateController {
       //var error = sendErrorResponse(req, res, next, err);
       //log.api('setConversationData', req, res, { key: req.params, state: req.body }, error);
     }
-    logResponse(req.params.conversationId, "bot", res);
+    logResponse(req.params.conversationId, "bot", res, "setConversationData");
   }
 
   // set private conversation data
   public setPrivateConversationData = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    logRequest(req.params.conversationId, "bot", req);
+    logRequest(req.params.conversationId, "bot", req, "setPrivateConversationData");
     try {
       const activeBot = getActiveBot();
       if (!activeBot) {
@@ -225,12 +225,12 @@ export class BotStateController {
       //var error = sendErrorResponse(req, res, next, err);
       //log.api('setPrivateConversationData', req, res, { key: req.params, state: req.body }, error);
     }
-    logResponse(req.params.conversationId, "bot", res);
+    logResponse(req.params.conversationId, "bot", res, "setPrivateConversationData");
   }
 
   // delete state for user
   public deleteStateForUser = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    logRequest(req.params.conversationId, "bot", req);
+    logRequest(req.params.conversationId, "bot", req, "deleteStateForUser");
     try {
       const activeBot = getActiveBot();
       if (!activeBot) {
@@ -251,6 +251,6 @@ export class BotStateController {
      // var error = sendErrorResponse(req, res, next, err);
       //log.api('deleteStateForUser', req, res, req.params, error);
     }
-    logResponse(req.params.conversationId, "bot", res);
+    logResponse(req.params.conversationId, "bot", res, "deleteStateForUser");
   }
 }

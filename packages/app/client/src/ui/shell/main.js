@@ -60,6 +60,10 @@ css.global('html, body, #root', {
   userSelect: 'none',
 });
 
+css.global('div', {
+  boxSizing: 'border-box',
+});
+
 css.global('::-webkit-scrollbar', {
   width: '10px',
   height: '10px',

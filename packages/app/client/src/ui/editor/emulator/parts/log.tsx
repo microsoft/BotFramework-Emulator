@@ -196,6 +196,23 @@ class LogEntry extends React.Component<LogEntryProps> {
     );
   }
 
+  messageDirection(payload) {
+    if (payload.source) {
+      switch (payload.source) {
+        case "bot": return "<-";
+        case "user": return "->";
+        case "service": return "<-";
+      }
+    } else if (payload.destination) {
+      switch (payload.destination) {
+        case "bot": return "->";
+        case "user": return "<-";
+        case "service": return "->";
+      }
+    }
+    return <>&nbsp;&nbsp;</>
+  }
+
   renderMessage(message, key) {
     if (Array.isArray(message)) {
       return <span className="spaced level-3" key={ key }>ARR?</span>;
@@ -205,7 +222,7 @@ class LogEntry extends React.Component<LogEntryProps> {
         case "activity": {
           return (
             <span className="spaced" key={ key }>
-              <span className="spaced">{ message.payload.destination === "bot" ? '->' : '<-' }</span>
+              <span className="spaced">{ this.messageDirection(message.payload) }</span>
               <span className="spaced"><a onClick={ () => this.inspectAndHighlight(message.payload.activity) }>Activity</a></span>
               <span className="spaced">{ message.payload.text }</span>
             </span>
@@ -215,7 +232,7 @@ class LogEntry extends React.Component<LogEntryProps> {
         case "request": {
           return (
             <span className="spaced" key={ key }>
-              <span className="spaced">{ '->' }</span>
+              <span className="spaced">{ this.messageDirection(message.payload) }</span>
               <span className="spaced"><a onClick={ () => this.inspect(message) }>{ message.payload.method }</a></span>
             </span>
           );
@@ -224,7 +241,7 @@ class LogEntry extends React.Component<LogEntryProps> {
         case "response": {
           return (
             <span className="spaced" key={ key }>
-              <span className="spaced">{ '<-' }</span>
+              <span className="spaced">{ this.messageDirection(message.payload) }</span>
               { this.renderResponseMessage(message) }
               {
                 message.payload.statusMessage && message.payload.statusMessage.length

@@ -111,6 +111,10 @@ const CSS = css({
     '& .wc-list ul': {
       padding: 0,
     },
+
+    '& .clickable:hover': {
+      cursor: 'pointer'
+    },
   }
 });
 

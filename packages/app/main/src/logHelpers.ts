@@ -69,6 +69,7 @@ export function logRequest(conversationId: string, source: string, req: Restify.
     {
       type: "request",
       payload: {
+        url: req.url,
         source,
         headers: req.headers,
         method: req.method,
