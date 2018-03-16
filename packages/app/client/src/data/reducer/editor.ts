@@ -194,6 +194,21 @@ export default function editor(state: IEditorState = DEFAULT_STATE, action: Edit
 
     case EditorActions.OPEN: {
       const editorKey = state.activeEditor;
+      const otherTabGroup = getOtherTabGroup(editorKey);
+
+      // if the document is already in another tab group, focus that one
+      if (tabGroupHasDocuments(state.editors[otherTabGroup]) && state.editors[otherTabGroup].documents[action.payload.documentId]) {
+        const recentTabs = [...state.editors[otherTabGroup].recentTabs].filter(docId => docId !== action.payload.documentId);
+        recentTabs.unshift(action.payload.documentId)
+        const tabGroupState: IEditor = {
+          ...state.editors[otherTabGroup],
+          activeDocumentId: action.payload.documentId,
+          recentTabs
+        };
+        state = setEditorState(otherTabGroup, tabGroupState, state);
+        state = setActiveEditor(otherTabGroup, state);
+        break;
+      }
 
       // if the document is new, append it to the tab order
       const newTabOrder = state.editors[editorKey].documents[action.payload.documentId] ?
