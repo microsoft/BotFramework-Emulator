@@ -150,8 +150,8 @@ gulp.task('get-licenses', function () {
 
 //----------------------------------------------------------------------------
 function hashFileAsync(filename, algo = 'sha512', encoding = 'base64') {
-  var asarIntegrity = require('asar-integrity');
-  return asarIntegrity.hashFile(filename, algo, encoding);
+  var builderUtil = require('builder-util');
+  return builderUtil.hashFile(filename, algo, encoding);
 }
 
 //----------------------------------------------------------------------------
