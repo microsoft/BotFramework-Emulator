@@ -32,39 +32,28 @@
 //
 
 import { applyMiddleware, createStore, Store } from 'redux';
-import { WebSocketServer } from 'electron-ipcmain-websocket';
 import createPromiseMiddleware from 'redux-promise-middleware';
-import createSagaMiddleware from 'redux-saga';
-import createWebSocketBridge from 'redux-websocket-bridge';
 import reducers from './reducer';
-import rootSaga from './sagas';
 import { IState, DEFAULT_STATE } from './state';
 import thunk from 'redux-thunk';
 
 export default function create(window): Promise<Store<IState>> {
   return new Promise<Store<IState>>((resolve, reject) => {
-    new WebSocketServer(window).on('connection', connection => {
-      const sagaMiddleware = createSagaMiddleware<IState>();
-      const store: Store<IState> = applyMiddleware(
-        store => next => action => {
-          //console.log(action);
+    const store: Store<IState> = applyMiddleware(
+      store => next => action => {
+        //console.log(action);
 
-          return next(action);
-        },
-        createPromiseMiddleware(),
-        thunk,
-        createWebSocketBridge(() => connection),
-        sagaMiddleware,
-        store => next => action => {
-          //console.log(action);
+        return next(action);
+      },
+      createPromiseMiddleware(),
+      thunk,
+      store => next => action => {
+        //console.log(action);
 
-          return next(action);
-        }
-      )(createStore)(reducers, DEFAULT_STATE) as Store<IState>;
+        return next(action);
+      }
+    )(createStore)(reducers, DEFAULT_STATE) as Store<IState>;
 
-      sagaMiddleware.run(rootSaga);
-
-      resolve(store);
-    })
+    resolve(store);
   });
 }

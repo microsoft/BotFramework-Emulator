@@ -32,9 +32,7 @@
 //
 
 import { applyMiddleware, combineReducers, createStore, Store } from 'redux';
-import IPCRendererWebSocket from 'electron-ipcrenderer-websocket';
 import promiseMiddleware from 'redux-promise-middleware';
-import WebSocketActionBridge from 'redux-websocket-bridge';
 import thunk from 'redux-thunk';
 
 import assetExplorer from './reducer/assetExplorer';
@@ -87,8 +85,6 @@ const configureStore = (initialState: IRootState = DEFAULT_STATE): Store<IRootSt
   }),
   initialState,
   applyMiddleware(
-    WebSocketActionBridge(() => new IPCRendererWebSocket()),
-    // WebSocketActionBridge(() => new DebugWebSocketConnection(new IPCRendererWebSocket())),
     promiseMiddleware(),
     thunk
   )
