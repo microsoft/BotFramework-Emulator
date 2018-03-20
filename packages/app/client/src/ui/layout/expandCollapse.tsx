@@ -37,7 +37,7 @@ import * as React from 'react';
 
 import { filterChildren } from '../utils';
 import * as Colors from '../styles/colors';
-import { InsetShadow } from '../layout/insetShadow';
+import { InsetShadow } from '../widget';
 
 const CSS = css({
   display: 'flex',

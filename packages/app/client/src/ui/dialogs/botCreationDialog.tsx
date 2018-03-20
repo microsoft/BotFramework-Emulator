@@ -9,65 +9,25 @@ import * as NavBarActions from '../../data/action/navBarActions';
 import * as Constants from '../../constants';
 import { CommandService } from '../../platform/commands/commandService';
 import store from '../../data/store';
-import PrimaryButton from '../widget/primaryButton';
+import { PrimaryButton, TextInputField } from '../widget';
 import { DialogService } from './service/index';
 import { ActiveBotHelper } from '../helpers/activeBotHelper';
+import { Row, RowAlignment, RowJustification, Column, GenericDocument } from '../layout';
 
 const CSS = css({
-  boxSizing: 'border-box',
-  padding: '32px',
-  display: 'flex',
-  flexFlow: 'column nowrap',
-  fontFamily: Fonts.FONT_FAMILY_DEFAULT,
   backgroundColor: Colors.EDITOR_TAB_BACKGROUND_DARK,
-  minWidth: '540px',
 
-  '& input': {
-    marginTop: '16px',
-    height: '32px',
-    padding: '4px 8px',
-    boxSizing: 'border-box',
-    width: '100%'
+  '& h2': {
+    fontWeight: 200,
+    fontSize: '20px'
   },
 
-  '& span': {
-    marginTop: '16px'
-  },
-
-  '& button': {
-    width: '120px',
-    height: '32px',
-  },
-
-  '& .browse-path-button': {
-    marginLeft: '8px',
-    alignSelf: 'flex-end',
-  },
-
-  '& .connect-button': {
+  '& .multi-input-row > *': {
     marginLeft: '8px'
   },
 
-  '& > .horiz-input-group': {
-    marginTop: '16px'
-  },
-
-  '& .horiz-input-group': {
-    display: 'flex',
-
-    '& > .vert-input-group': {
-      marginRight: '8px'
-    },
-
-    '& > .vert-input-group:last-child': {
-      margin: 0
-    }
-  },
-
-  '& > .button-row': {
-    marginTop: '48px',
-    display: 'flex',
-    justifyContent: 'flex-end'
+  '& .multi-input-row > *:first-child': {
+    marginLeft: 0
   }
 });
 
@@ -179,49 +139,26 @@ export default class BotCreationDialog extends React.Component<{}, IBotCreationD
       && this.state.bot.projectDir;
 
     return (
-      <div { ...CSS }>
-        <h1>Add a bot</h1>
-
-        <span>Endpoint URL*</span>
-        <input value={ this.state.bot.botUrl } onChange={ this.onChangeEndpoint } type="text" />
-
-        <div className="horiz-input-group">
-          <div className="vert-input-group">
-            <span>MSA app ID (optional)</span>
-            <input value={ this.state.bot.msaAppId } onChange={ this.onChangeAppId } type="text" />
-          </div>
-
-          <div className="vert-input-group">
-            <span>MSA app password (optional)</span>
-            <input value={ this.state.bot.msaPassword } onChange={ this.onChangeAppPw } type="password" />
-          </div>
-
-          <div className="vert-input-group">
-            <span>Locale (optional)</span>
-            <input value={ this.state.bot.locale } onChange={ this.onChangeLocale } type="text" />
-          </div>
-        </div>
-
-        <div className="horiz-input-group">
-          <div className="vert-input-group">
-            <span>Bot name*</span>
-            <input value={ this.state.bot.botName } onChange={ this.onChangeName } type="text" />
-          </div>
-
-          <div className="vert-input-group">
-            <span>Project folder*</span>
-            <div className='horiz-input-group'>
-              <input value={ this.state.bot.projectDir } type="text" readOnly />
-              <PrimaryButton text='Browse' onClick={ this.onSelectFolder } buttonClass='browse-path-button' />
-            </div>
-          </div>
-        </div>
-
-        <div className="button-row">
-          <PrimaryButton text='Cancel' onClick={ this.onCancel } buttonClass='cancel-button' />
-          <PrimaryButton text='Connect' onClick={ this.onConnect }  disabled={ !requiredFieldsCompleted } buttonClass='connect-button' />
-        </div>
-      </div>
+      <GenericDocument style={ CSS }>
+        <Column>
+          <h2>Add a bot</h2>
+          <TextInputField value={ this.state.bot.botUrl } onChange={ this.onChangeEndpoint } label={ 'Endpoint URL' } required={ true } />
+          <Row className="multi-input-row">
+            <TextInputField value={ this.state.bot.msaAppId } onChange={ this.onChangeAppId } label={ 'MSA app ID (optional)' } />
+            <TextInputField value={ this.state.bot.msaPassword } onChange={ this.onChangeAppPw } label={ 'MSA app password (optional)' } type={ 'password' } />
+            <TextInputField value={ this.state.bot.locale } onChange={ this.onChangeLocale } label={ 'Locale (optional)' } />
+          </Row>
+          <Row className="multi-input-row" align={ RowAlignment.Center }>
+            <TextInputField value={ this.state.bot.botName } onChange={ this.onChangeName } label={ 'Bot name' } required={ true } />
+            <TextInputField value={ this.state.bot.projectDir } label={ 'Project folder' } readOnly={ true } required={ true } />
+            <PrimaryButton text='Browse' onClick={ this.onSelectFolder } className="browse-button" />
+          </Row>
+          <Row className="multi-input-row" justify={ RowJustification.Right }>
+            <PrimaryButton text='Cancel' onClick={ this.onCancel } className="cancel-button" />
+            <PrimaryButton text='Connect' onClick={ this.onConnect }  disabled={ !requiredFieldsCompleted } className="connect-button" />
+          </Row>
+        </Column>
+      </GenericDocument>
     );
   }
 }

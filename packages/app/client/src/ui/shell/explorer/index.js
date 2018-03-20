@@ -39,7 +39,7 @@ import AssetExplorerBar from './assetExplorerBar';
 import ServicesExplorerBar from './servicesExplorerBar';
 import * as Colors from '../../styles/colors';
 import * as Constants from '../../../constants';
-import { InsetShadow } from '../../layout/insetShadow';
+import { InsetShadow } from '../../widget';
 
 const CSS = css({
   backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,

@@ -38,7 +38,7 @@ import { connect } from 'react-redux';
 import * as constants from '../../../../constants';
 import * as ChatActions from '../../../../data/action/chatActions';
 import * as EditorActions from '../../../../data/action/editorActions';
-import { ExpandCollapse, Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../../layout/expandCollapse';
+import { ExpandCollapse, Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../../layout';
 import * as Colors from '../../../styles/colors';
 import ExplorerItem from '../explorerItem';
 import store from '../../../../data/store';

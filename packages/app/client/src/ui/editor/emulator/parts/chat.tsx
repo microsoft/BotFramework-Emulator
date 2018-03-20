@@ -35,8 +35,9 @@ import { css } from 'glamor';
 import * as React from 'react';
 import * as WebChat from '@bfemulator/custom-botframework-webchat';
 import { Subscription, BehaviorSubject } from 'rxjs';
+
 import * as Colors from '../../../styles/colors';
-import PrimaryButton from '../../../widget/primaryButton';
+import { PrimaryButton } from '../../../widget';
 import { ISpeechTokenInfo } from '@bfemulator/app-shared';
 import { CommandService } from '../../../../platform/commands/commandService';
 

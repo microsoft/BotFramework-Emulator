@@ -39,7 +39,7 @@ import { ActivityOrID } from '@bfemulator/app-shared';
 import ChatPanel from './chatPanel';
 import DetailPanel from './detailPanel';
 import LogPanel from './logPanel';
-import Splitter from '../../layout/splitter-v2';
+import { Splitter } from '../../layout';
 import ToolBar, { Button as ToolBarButton, Separator as ToolBarSeparator } from '../toolbar';
 import * as BotChat from '@bfemulator/custom-botframework-webchat';
 import { SettingsService } from '../../../platform/settings/settingsService';

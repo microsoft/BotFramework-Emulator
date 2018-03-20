@@ -1,8 +1,9 @@
-import React from 'react';
+import * as React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import { debounce } from 'lodash';
 import { connect } from 'react-redux';
+import { getBotDisplayName, IBot } from '@bfemulator/app-shared';
 
 import { CommandService } from '../../../platform/commands/commandService';
 import * as Fonts from '../../styles/fonts';
@@ -10,92 +11,54 @@ import * as BotActions from '../../../data/action/botActions';
 import * as ChatActions from '../../../data/action/chatActions';
 import * as EditorActions from '../../../data/action/editorActions';
 import store from '../../../data/store';
-import PrimaryButton from '../../widget/primaryButton';
-import { getBotDisplayName } from '@bfemulator/app-shared';
+
+import { PrimaryButton, TextInputField } from '../../widget';
+import { Column, Row, RowAlignment, GenericDocument, TruncateText } from '../../layout';
 
 const CSS = css({
-  boxSizing: 'border-box',
-  padding: '32px',
-  display: 'flex',
-  flexFlow: 'column nowrap',
-  fontFamily: Fonts.FONT_FAMILY_DEFAULT,
-  boxSizing: 'border-box',
-
   '& h2': {
     fontWeight: 200,
-    marginTop: 0,
-    marginBottom: '5px',
-    fontSize: '19px',
-    lineHeight: 'normal',
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
-  },
-
-  '& input': {
-    marginTop: '8px',
-    height: '32px',
-    padding: '4px 8px',
-    boxSizing: 'border-box',
-    width: '100%'
-  },
-
-  '& span': {
-    marginTop: '16px'
-  },
-
-  '& button': {
-    width: '120px',
-    height: '32px',
+    fontSize: '20px',
+    marginRight: '32px'
   },
 
   '& .browse-path-button': {
     marginLeft: '8px',
-    alignSelf: 'flex-end',
+    alignSelf: 'center'
   },
 
   '& .save-button': {
+    marginLeft: 'auto'
   },
 
   '& .save-connect-button': {
-    marginLeft: '8px',
+    marginLeft: '8px'
   },
 
-  '& .horz-group': {
-    display: 'flex',
-    flexWrap: 'nowrap',
-  },
+  '& .multiple-input-row': {
+    '& > div': {
+      marginLeft: '8px'
+    },
 
-  '& .column': {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-
-  '& .right': {
-    marginLeft: 'auto',
-  },
-
-  '& .stretch': {
-    flexGrow: 1,
-    flexShrink: 1,
-    flexBasis: '0px',
-  },
-
-  '& .space-left': {
-    marginLeft: '8px',
-  },
-
-  '& .space-right': {
-    marginRight: '8px',
-  },
-
-  '& .label': {
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
-  },
+    '& > div:first-child': {
+      marginLeft: 0
+    }
+  }
 });
 
-class BotSettingsEditor extends React.Component {
-  constructor(props, context) {
+interface IBotSettingsEditorProps {
+  bot?: IBot;
+  dirty?: boolean;
+  documentId?: string;
+}
+
+interface IBotSettingsEditorState {
+  bot?: IBot;
+  projectDir?: string;
+}
+
+class BotSettingsEditor extends React.Component<IBotSettingsEditorProps, IBotSettingsEditorState> {
+  constructor(props: IBotSettingsEditorProps, context) {
     super(props, context);
 
     this.onChangeBotId = this.onChangeBotId.bind(this);
@@ -217,58 +180,26 @@ class BotSettingsEditor extends React.Component {
     const botLabel = getBotDisplayName(this.state.bot);
 
     return (
-      <div className={ CSS }>
-        <div className="horz-group">
-          <div className="column">
-            <h2>Bot Settings</h2>
-          </div>
-          <div className="column right">
-            <div className="label space-left">
-              <PrimaryButton text="Save" onClick={ this.onSave } buttonClass='save-button' disabled={ !this.props.dirty } />
-              <PrimaryButton text="Save & Connect" onClick={ this.onSaveAndConnect } buttonClass='save-connect-button' disabled={ !this.props.dirty } />
-            </div>
-          </div>
-        </div>
-
-        <div className="horz-group">
-          <div className="column stretch">
-            <span className='label'>Endpoint URL</span>
-            <input value={ this.state.bot.botUrl } onChange={ this.onChangeEndpoint } type="text" />
-          </div>
-        </div>
-
-        <div className="horz-group">
-          <div className="column stretch">
-            <span className='label'>MSA App Id</span>
-            <input value={ this.state.bot.msaAppId } onChange={ this.onChangeAppId } type="text" />
-          </div>
-
-          <div className="column stretch space-left space-right">
-            <span className='label'>MSA App Password</span>
-            <input value={ this.state.bot.msaPassword } onChange={ this.onChangeAppPw } type="password" />
-          </div>
-
-          <div className="column">
-            <span className='label'>Locale</span>
-            <input value={ this.state.bot.locale } onChange={ this.onChangeLocale } type="text" />
-          </div>
-        </div>
-
-        <div className="horz-group">
-          <div className="column">
-            <span className='label'>Bot name</span>
-            <input value={ this.state.bot.botName } onChange={ this.onChangeName } type="text" />
-          </div>
-
-          <div className="column stretch space-left">
-            <span className='label'>Local folder</span>
-            <div className='horz-group'>
-              <input value={ this.state.bot.projectDir } type="text" readOnly />
-              <PrimaryButton text='Browse' onClick={ this.onSelectFolder } buttonClass='browse-path-button' />
-            </div>
-          </div>
-        </div>
-      </div>
+      <GenericDocument style={ CSS }>
+        <Column>
+          <Row align={ RowAlignment.Center }>
+            <h2><TruncateText>Bot Settings</TruncateText></h2>
+            <PrimaryButton text="Save" onClick={ this.onSave } className='save-button' disabled={ !this.props.dirty } />
+            <PrimaryButton text="Save & Connect" onClick={ this.onSaveAndConnect } className='save-connect-button' disabled={ !this.props.dirty } />
+          </Row>
+          <TextInputField label='Endpoint URL' required={ true } onChange={ this.onChangeEndpoint } />
+          <Row className="multiple-input-row">
+            <TextInputField label='MSA App Id' onChange={ this.onChangeAppId } />
+            <TextInputField label='MSA App Password' onChange={ this.onChangeAppPw } />
+            <TextInputField label='Locale' onChange={ this.onChangeLocale } />
+          </Row>
+          <Row className="multiple-input-row">
+            <TextInputField label='Bot name' required={ true } onChange={ this.onChangeName } />
+            <TextInputField label='Local folder' required={ true } readOnly={ true } />
+            <PrimaryButton text='Browse' onClick={ this.onSelectFolder } className='browse-path-button' />
+          </Row>
+        </Column>
+      </GenericDocument>
     );
   }
 }
@@ -276,9 +207,3 @@ class BotSettingsEditor extends React.Component {
 export default connect((state, ownProps) => ({
   bot: state.bot.activeBot
 }))(BotSettingsEditor);
-
-BotSettingsEditor.propTypes = {
-  documentId: PropTypes.string.isRequired,
-  bot: PropTypes.object.isRequired,
-  dirty: PropTypes.bool
-};

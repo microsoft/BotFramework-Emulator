@@ -41,7 +41,7 @@ import ExplorerBar from './explorer';
 import * as Fonts from '../styles/fonts';
 import MDI from './mdi';
 import NavBar from './navBar';
-import Splitter from '../layout/splitter-v2';
+import { Splitter } from '../layout';
 import TabManager from '../dialogs/tabManager';
 import * as Constants from '../../constants';
 import StatusBar from './statusBar';

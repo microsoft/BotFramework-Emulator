@@ -1,7 +1,7 @@
 import { css } from 'glamor';
 import * as React from 'react';
 
-import { ExpandCollapse, Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../../layout/expandCollapse';
+import { ExpandCollapse, Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../../layout';
 import * as Colors from '../../../styles/colors';
 import ExplorerItem from '../explorerItem';
 import { EXPLORER_CSS } from '../explorerStyle';

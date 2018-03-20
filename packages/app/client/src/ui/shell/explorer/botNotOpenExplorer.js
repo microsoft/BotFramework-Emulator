@@ -35,11 +35,11 @@ import { connect } from 'react-redux';
 import { css } from 'glamor';
 import React from 'react';
 
-import { ExpandCollapse, Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout/expandCollapse';
+import { ExpandCollapse, Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../layout';
 import * as Colors from '../../styles/colors';
 import { CommandService } from '../../../platform/commands/commandService';
 import * as Constants from '../../../constants';
-import PrimaryButton from '../../widget/primaryButton';
+import { PrimaryButton } from '../../widget';
 
 const CSS = css({
   backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,

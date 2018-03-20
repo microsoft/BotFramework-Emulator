@@ -54,6 +54,8 @@ export const C20 = '#569CD6';
 export const C21 = '#F4E321';
 export const C22 = '#9E9E9E';
 export const C23 = '#4080D0';
+export const C24 = '#F2F2F2';
+export const C25 = '#A80000';
 
 export const APP_BACKGROUND_DARK = C8;
 export const APP_FOREGROUND_DARK = C2;
@@ -120,3 +122,6 @@ export const JSON_FORMATTING_NULL_DARK = C20;
 export const SHADOW_COLOR_DARK = 'rgba(0,0,0,0.6)';
 
 export const LOGO_FOREGROUND_DARK = C10;
+
+export const INPUT_ERR_BACKGROUND_DARK = C24;
+export const INPUT_ERR_FOREGROUND_DARK = C25;

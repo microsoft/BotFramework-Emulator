@@ -1,8 +1,9 @@
-import React from 'react';
+import * as React from 'react';
 import { css } from 'glamor';
 
 import * as Colors from '../styles/colors';
 import * as Fonts from '../styles/fonts';
+import { TruncateText } from '../layout';
 
 const CSS = css({
   backgroundColor: Colors.C10,
@@ -17,6 +18,7 @@ const CSS = css({
   display: 'inline-block',
   width: 'auto',
   minWidth: '120px',
+  height: '32px',
 
   '&:hover': {
     backgroundColor: Colors.C11
@@ -37,8 +39,25 @@ const CSS = css({
   }
 });
 
+interface IPrimaryButtonProps {
+  className?: string;
+  disabled?: boolean;
+  onClick?: (...args: any[]) => any;
+  text?: string;
+}
+
 // TODO: Move to packages/ui-react unless we start using Fabric
-export default props => {
-  const buttonClass = props.buttonClass ? ` ${props.buttonClass}` : '';
-  return <button className={ CSS + buttonClass } onClick={ props.onClick } disabled={ props.disabled }>{ props.text }</button>;
+export default class PrimaryButton extends React.Component<IPrimaryButtonProps, {}> {
+  constructor(props: any, context: any) {
+    super(props, context);
+  }
+
+  render(): JSX.Element {
+    const buttonClass = this.props.className ? ` ${this.props.className}` : '';
+    return (
+      <button className={ CSS + buttonClass } onClick={ this.props.onClick } disabled={ this.props.disabled }>
+        <TruncateText>{ this.props.text }</TruncateText>
+      </button>
+    );
+  }
 }

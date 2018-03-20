@@ -41,7 +41,7 @@ import * as Constants from '../../../constants';
 import * as NavBarActions from '../../../data/action/navBarActions';
 import * as EditorActions from '../../../data/action/editorActions';
 import * as ExplorerActions from '../../../data/action/explorerActions';
-import { InsetShadow } from '../../layout/insetShadow';
+import { InsetShadow } from '../../widget';
 import { CommandRegistry } from '../../../commands';
 
 const CSS = css({

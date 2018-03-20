@@ -42,7 +42,7 @@ import ContentOverlay from './contentOverlay';
 import LeftContentOverlay from './leftContentOverlay';
 import RightContentOverlay from './rightContentOverlay';
 import * as Constants from '../../../../constants';
-import { InsetShadow } from '../../../layout/insetShadow';
+import { InsetShadow } from '../../../widget';
 import { getTabGroupForDocument, tabGroupHasDocuments } from '../../../../data/editorHelpers';
 
 const CSS = css({
