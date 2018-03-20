@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IETagObject } from './eTagTypes';
+import { IETagObject } from '@bfemulator/sdk-shared';
 
 
 export interface IConversation extends IETagObject {

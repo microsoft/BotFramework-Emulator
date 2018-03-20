@@ -36,9 +36,19 @@ gulp.task('build-qnamaker-extension', function () {
 });
 
 //----------------------------------------------------------------------------
+gulp.task('build-debug-extension', function () {
+  return gulp
+    .src('../../extensions/debug/package.json', { read: false })
+    .pipe(shell([
+      'npm run build'
+    ], { cwd: '../../extensions/debug/' }));
+});
+
+//----------------------------------------------------------------------------
 gulp.task('build-extensions',
   gulp.parallel(
-    'build-qnamaker-extension')
+    'build-qnamaker-extension',
+    'build-debug-extension')
 );
 
 //----------------------------------------------------------------------------

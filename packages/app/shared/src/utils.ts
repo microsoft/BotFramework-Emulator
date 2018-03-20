@@ -36,15 +36,7 @@
 // 2. To skip bundling, we can hack with window['require']
 
 import { IBot } from './types/botTypes';
-//import { ADJECTIVES } from './constants';
-//import { NOUNS } from './constants';
 
-/**
- * Generates a random id that is unique enough for our purposes.
- */
-export function uniqueId() {
-  return Math.random().toString(36).substr(2);
-}
 
 export function isObject(item: any): boolean {
   return (item && typeof item === 'object' && !Array.isArray(item) && item !== null);

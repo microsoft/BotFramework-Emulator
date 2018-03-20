@@ -2,7 +2,7 @@
   "name": "@bfemulator/extension-qnamaker",
   "version": "1.0.0",
   "description": "",
-  "main": "built/index.js",
+  "main": "index.js",
   "scripts": {
     "build": "npm run clean && tsc",
     "clean": "rimraf ./built",

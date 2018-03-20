@@ -1,6 +1,6 @@
 {
   "name": "QnA Maker",
-  "main": "built/index.js",
+  "main": "index.js",
   "portals": [
     {
       "title": "QnA Maker",

@@ -69,6 +69,7 @@
     "@bfemulator/app-shared": "^1.0.0",
     "@bfemulator/client": "^1.0.0",
     "@bfemulator/custom-ngrok": "^2.2.26",
+    "@bfemulator/extension-debug": "^1.0.0",
     "@bfemulator/extension-qnamaker": "^1.0.0",
     "@bfemulator/sdk-main": "^1.0.0",
     "@bfemulator/sdk-shared": "^1.0.0",

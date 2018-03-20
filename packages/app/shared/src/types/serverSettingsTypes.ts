@@ -32,7 +32,7 @@
 //
 
 import { IBot } from './botTypes';
-import { IUser } from './userTypes';
+import { IUser } from '@bfemulator/sdk-shared';
 
 export interface IFrameworkSettings {
   // path to use for ngrok

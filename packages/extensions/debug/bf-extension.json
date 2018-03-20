@@ -1,0 +1,13 @@
+{
+  "name": "Debug",
+  "main": "built/index.js",
+  "portals": [
+  ],
+  "files": [
+  ],
+  "inspectors": [
+    {
+      "trace": "debug"
+    }
+  ]
+}

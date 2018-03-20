@@ -1,10 +1,15 @@
-import { IPC, CommandService } from '@bfemulator/sdk-shared';
+import { IPC, CommandService, IActivity } from '@bfemulator/sdk-shared';
 import { ProcessIPC, WebSocketIPC, stayAlive } from '@bfemulator/sdk-main';
 const config = require('../bf-extension.json');
 
+/**
+ * READ READ: All the junk below will be rolled into a tidy extension SDK that is TBD.
+ * We're defining its internals here! right now!
+ */
+
 stayAlive();
 
-console.log(`QnA Maker running. pid: ${process.pid}`);
+console.log(`Debug Extension running. pid: ${process.pid}`);
 
 let ipc: IPC;
 
@@ -30,14 +35,20 @@ const commands = new CommandService(ipc, `ext-${ipc.id}`);
 //  .catch(err => console.log('ping failed', err));
 
 commands.registry.registerCommand('connect', () => {
-  console.log('[QnA Maker] got connect');
+  console.log('[Debug Ext] got connect');
 });
 
 commands.registry.registerCommand('disconnect', () => {
-  console.log('[QnA Maker] got disconnect');
+  console.log('[Debug Ext] got disconnect');
   process.exit();
 });
 
 commands.registry.registerCommand('ext-ping', () => {
-  return '[QnA Maker] ext-pong';
+  return '[Debug Ext] ext-pong';
 });
+
+commands.registry.registerCommand('get-inspector-url', (activities: IActivity[]): string => {
+  const encodedActivities = encodeURIComponent(JSON.stringify(activities));
+  return `client/inspect.html?activities=${encodedActivities}`;
+});
+
