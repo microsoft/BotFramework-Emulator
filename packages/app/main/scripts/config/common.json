@@ -8,7 +8,7 @@
       "name": "Bot Framework Emulator",
       "role": "Viewer",
       "schemes": [
-        "msbots"
+        "bfemulator"
       ]
     }
   ],

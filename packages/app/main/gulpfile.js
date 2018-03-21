@@ -322,7 +322,7 @@ gulp.task('redist:windows-squirrel', function () {
 gulp.task('redist:mac:binaries', function () {
   var rename = require('gulp-rename');
   var builder = require('electron-builder');
-  const config = getConfig("mac", "dmg");
+  const config = getConfig("mac");
   console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
   return builder.build({
     targets: builder.Platform.MAC.createTarget(["dmg", "zip"]),
@@ -342,7 +342,7 @@ gulp.task('redist:mac:binaries', function () {
 
 //----------------------------------------------------------------------------
 gulp.task('redist:mac:metadata', gulp.series('redist:mac:binaries', function () {
-  const config = getConfig("mac", "dmg");
+  const config = getConfig("mac");
   const releaseFilename = `botframework-emulator-${pjson.version}-mac.zip`;
   const releaseHash = hashFileAsync(`./${config.directories.output}/${releaseFilename}`);
   const releaseDate = new Date().toISOString();
