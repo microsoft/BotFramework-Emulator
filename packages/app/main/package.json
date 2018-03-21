@@ -51,6 +51,7 @@
     "electron": "1.8.1",
     "electron-builder": "^20.2.0",
     "electron-builder-http": "^19.27.5",
+    "electron-builder-lib": "^20.6.2",
     "electron-builder-squirrel-windows": "^20.2.0",
     "electron-react-devtools": "^0.5.3",
     "fs-extra-p": "^4.5.2",
