@@ -341,7 +341,7 @@ gulp.task('redist:mac:binaries', function () {
 });
 
 //----------------------------------------------------------------------------
-gulp.task('redist:mac:metadata', gulp.series('redist:mac-dmg:binaries', function () {
+gulp.task('redist:mac:metadata', gulp.series('redist:mac:binaries', function () {
   const config = getConfig("mac", "dmg");
   const releaseFilename = `botframework-emulator-${pjson.version}-mac.zip`;
   const releaseHash = hashFileAsync(`./${config.directories.output}/${releaseFilename}`);
@@ -354,7 +354,7 @@ gulp.task('redist:mac:metadata', gulp.series('redist:mac-dmg:binaries', function
 }));
 
 //----------------------------------------------------------------------------
-gulp.task('redist:mac', gulp.series('redist:mac-dmg:metadata'));
+gulp.task('redist:mac', gulp.series('redist:mac:metadata'));
 
 //============================================================================
 // REDIST:LINUX
@@ -435,8 +435,8 @@ gulp.task('publish:windows-squirrel', function () {
 });
 
 //----------------------------------------------------------------------------
-gulp.task('publish:mac-dmg', function () {
-  const filelist = getFileList("mac", "dmg");
+gulp.task('publish:mac', function () {
+  const filelist = getFileList("mac");
   return publishFiles(filelist);
 });
 
@@ -483,7 +483,7 @@ function getFileList(platform, target, options = {}) {
       filelist.push(`${path}/${options.basename}-${options.version}-full.nupkg`);
       break;
 
-    case "mac-dmg":
+    case "mac-":
       filelist.push(`${path}/latest-mac.yml`);
       filelist.push(`${path}/latest-mac.json`);
       filelist.push(`${path}/${options.basename}-${options.version}-mac.zip`);

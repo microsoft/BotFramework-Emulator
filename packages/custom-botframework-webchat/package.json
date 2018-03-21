@@ -5,8 +5,6 @@
   "main": "built/BotChat.js",
   "types": "built/BotChat.d.ts",
   "scripts": {
-    "build-test": "tsc -p ./test/mock_dl && tsc -p ./test && tsc -p ./test/mock_speech",
-    "build-test-watch": "concurrently \"tsc -w -p ./test/mock_dl\" \"tsc -w -p ./test\"",
     "build-css": "node-sass ./src/scss/ -o . && rimraf ./includes/",
     "build-ac-config": "ac-scss2json ./src/scss/includes/adaptive-card-config.scss > adaptivecards-hostconfig.json",
     "build-all-style": "npm run build-css && npm run build-ac-config && webpack",
@@ -16,9 +14,7 @@
     "webpack": "webpack",
     "webpack-watch": "webpack --progress --watch",
     "clean": "rimraf built",
-    "start": "http-server -p 8000",
-    "test": "concurrently  \"node test/mock_dl/index.js\" \"mocha test\" ",
-    "mock": "node test/mock_dl/index.js"
+    "start": "http-server -p 8000"
   },
   "repository": {
     "type": "git",
@@ -42,29 +38,18 @@
     "tslib": "1.7.1"
   },
   "devDependencies": {
-    "@types/chai": "3.4.34",
-    "@types/chai-subset": "1.0.29",
     "@types/markdown-it": "0.0.2",
-    "@types/nightmare": "1.6.30",
     "@types/react-dom": "0.14.23",
     "@types/react-redux": "4.4.38",
     "awesome-typescript-loader": "3.1.2",
-    "chai": "3.5",
-    "chai-subset": "1.4.0",
-    "concurrently": "3.1.0",
     "expose-loader": "0.7.3",
     "http-server": "^0.10.0",
     "microsoft-adaptivecards-scss-to-json": "1.2.0",
-    "mocha": "3.2.0",
-    "nightmare": "2.8.1",
-    "nightmare-upload": "0.1.1",
-    "nightmare-window-manager": "^0.2.2",
     "node-sass": "^4.7.2",
     "npm-run-all": "3.1.2",
     "remote": "0.2.6",
     "source-map-loader": "0.2.1",
     "typescript": "2.3",
-    "vo": "4.0.2",
     "webpack-cli": "^2.0.9"
   },
   "files": [
