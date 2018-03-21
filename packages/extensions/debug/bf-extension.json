@@ -1,6 +1,6 @@
 {
   "name": "Debug",
-  "main": "built/index.js",
+  "main": "index.js",
   "portals": [
   ],
   "files": [

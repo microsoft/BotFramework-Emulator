@@ -38,7 +38,7 @@ import { IUser } from '@bfemulator/app-shared';
 import { IBot, IActivity, IConversationUpdateActivity, IContactRelationUpdateActivity, IInvokeActivity } from '@bfemulator/app-shared';
 import { PaymentEncoder } from '@bfemulator/app-shared';
 import { ISpeechTokenInfo } from '@bfemulator/app-shared';
-import { uniqueId } from '@bfemulator/app-shared';
+import { uniqueId } from '@bfemulator/sdk-shared';
 import { dispatch, getSettings, authenticationSettings, addSettingsListener, speechSettings } from './settings';
 import { Settings } from '@bfemulator/app-shared';
 import * as HttpStatus from 'http-status-codes';

@@ -1,6 +1,6 @@
 import { IPC, CommandService } from '@bfemulator/sdk-shared';
 import { ProcessIPC, WebSocketIPC, stayAlive } from '@bfemulator/sdk-main';
-const config = require('../bf-extension.json');
+const config = require('../../bf-extension.json');
 
 /**
  * READ READ: All the junk below will be rolled into a tidy extension SDK that is TBD.
