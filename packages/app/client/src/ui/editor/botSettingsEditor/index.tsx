@@ -54,7 +54,6 @@ interface IBotSettingsEditorProps {
 
 interface IBotSettingsEditorState {
   bot?: IBot;
-  projectDir?: string;
 }
 
 class BotSettingsEditor extends React.Component<IBotSettingsEditorProps, IBotSettingsEditorState> {
@@ -69,12 +68,10 @@ class BotSettingsEditor extends React.Component<IBotSettingsEditorProps, IBotSet
     this.onChangeName = this.onChangeName.bind(this);
     this.onSave = this.onSave.bind(this);
     this.onSaveAndConnect = this.onSaveAndConnect.bind(this);
-    this.onSelectFolder = this.onSelectFolder.bind(this);
     this.setDirtyFlag = debounce(this.setDirtyFlag, 500);
 
     this.state = {
-      bot: this.props.bot,
-      projectDir: this.props.bot.projectDir
+      bot: this.props.bot
     };
   }
 
@@ -130,21 +127,14 @@ class BotSettingsEditor extends React.Component<IBotSettingsEditorProps, IBotSet
       msaAppId: this.state.bot.msaAppId.trim(),
       msaPassword: this.state.bot.msaPassword.trim(),
       locale: this.state.bot.locale.trim(),
-      botName: this.state.bot.botName.trim(),
-      projectDir: this.state.bot.projectDir.trim()
+      botName: this.state.bot.botName.trim()
     };
 
     return CommandService.remoteCall('bot:save', bot)
       .then(() => {
-        // refresh filewatcher if project directory was changed
-        if (bot.projectDir !== this.state.projectDir) {
-          store.dispatch(ChatActions.clearTranscripts());
-          CommandService.remoteCall('bot:init-filewatcher', bot);
-        }
-
         store.dispatch(BotActions.patch(bot));
         this.setDirtyFlag(false);
-        this.setState({ bot: bot, projectDir: bot.projectDir });
+        this.setState({ bot: bot });
         CommandService.remoteCall('app:setTitleBar', getBotDisplayName(bot));
       });
   }
@@ -154,22 +144,6 @@ class BotSettingsEditor extends React.Component<IBotSettingsEditorProps, IBotSet
       .then(() => {
         CommandService.call('livechat:new');
       })
-  }
-
-  onSelectFolder(e) {
-    const dialogOptions = {
-      title: 'Choose a folder for your bot',
-      buttonLabel: 'Choose folder',
-      properties: ['openDirectory', 'promptToCreate']
-    };
-
-    CommandService.remoteCall('shell:showOpenDialog', dialogOptions)
-      .then(path => {
-        const bot = { ...this.state.bot, projectDir: path };
-        this.setState({ bot });
-        this.setDirtyFlag(true);
-      })
-      .catch(err => console.log('User cancelled choosing a bot folder: ', err));
   }
 
   setDirtyFlag(dirty) {
@@ -187,17 +161,13 @@ class BotSettingsEditor extends React.Component<IBotSettingsEditorProps, IBotSet
             <PrimaryButton text="Save" onClick={ this.onSave } className='save-button' disabled={ !this.props.dirty } />
             <PrimaryButton text="Save & Connect" onClick={ this.onSaveAndConnect } className='save-connect-button' disabled={ !this.props.dirty } />
           </Row>
-          <TextInputField label='Endpoint URL' required={ true } onChange={ this.onChangeEndpoint } />
+          <TextInputField label='Endpoint URL' value={ this.state.bot.botUrl } required={ true } onChange={ this.onChangeEndpoint } />
           <Row className="multiple-input-row">
-            <TextInputField label='MSA App Id' onChange={ this.onChangeAppId } />
-            <TextInputField label='MSA App Password' onChange={ this.onChangeAppPw } />
-            <TextInputField label='Locale' onChange={ this.onChangeLocale } />
+            <TextInputField label='MSA App Id' value={ this.state.bot.msaAppId } onChange={ this.onChangeAppId } />
+            <TextInputField label='MSA App Password' value={ this.state.bot.msaPassword } onChange={ this.onChangeAppPw } />
+            <TextInputField label='Locale' value={ this.state.bot.locale } onChange={ this.onChangeLocale } />
           </Row>
-          <Row className="multiple-input-row">
-            <TextInputField label='Bot name' required={ true } onChange={ this.onChangeName } />
-            <TextInputField label='Local folder' required={ true } readOnly={ true } />
-            <PrimaryButton text='Browse' onClick={ this.onSelectFolder } className='browse-path-button' />
-          </Row>
+          <TextInputField label='Bot name' value={ this.state.bot.botName } required={ true } onChange={ this.onChangeName } />
         </Column>
       </GenericDocument>
     );

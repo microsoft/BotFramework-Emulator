@@ -387,9 +387,12 @@ export default class SplitterV2 extends React.Component {
 }
 
 SplitterV2.propTypes = {
-  initialSizes: PropTypes.shape({
-    [PropTypes.number]: PropTypes.oneOf([PropTypes.number, PropTypes.string])
-  }),
+  initialSizes: PropTypes.oneOfType([
+    PropTypes.shape({
+      [PropTypes.number]: PropTypes.oneOf([PropTypes.number, PropTypes.string])
+    }),
+    PropTypes.func
+  ]),
   minSizes: PropTypes.shape({
     [PropTypes.number]: PropTypes.number
   }),

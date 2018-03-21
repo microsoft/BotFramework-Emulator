@@ -110,5 +110,5 @@ export const approximateObjectSize = (object: any, cache: any[] = []): number =>
 
 /** Tries to scan the bot record for a display string */
 export const getBotDisplayName = (bot: IBot = {}): string => {
-  return bot.botName || bot.botId || bot.botUrl || bot.projectDir || '¯\\_(ツ)_/¯';
+  return bot.botName || bot.botId || bot.botUrl || '¯\\_(ツ)_/¯';
 }

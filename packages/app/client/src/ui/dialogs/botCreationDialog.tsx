@@ -33,6 +33,7 @@ const CSS = css({
 
 interface IBotCreationDialogState {
   bot: IBot;
+  botDirectory: string;
   touchedName: boolean;
 }
 
@@ -50,7 +51,8 @@ export default class BotCreationDialog extends React.Component<{}, IBotCreationD
     this.onSelectFolder = this.onSelectFolder.bind(this);
 
     this.state = {
-      bot: { botUrl: '', msaAppId: '', msaPassword: '', locale: '', botName: '', projectDir: '' },
+      bot: { botUrl: '', msaAppId: '', msaPassword: '', locale: '', botName: '' },
+      botDirectory: '',
       touchedName: false
     };
 
@@ -98,11 +100,10 @@ export default class BotCreationDialog extends React.Component<{}, IBotCreationD
       msaAppId: this.state.bot.msaAppId.trim(),
       msaPassword: this.state.bot.msaPassword.trim(),
       locale: this.state.bot.locale.trim(),
-      botName: this.state.bot.botName.trim(),
-      projectDir: this.state.bot.projectDir.trim()
+      botName: this.state.bot.botName.trim()
     };
 
-    ActiveBotHelper.confirmAndCreateBot(bot)
+    ActiveBotHelper.confirmAndCreateBot(bot, this.state.botDirectory)
       .then(() => DialogService.hideDialog())
       .catch(err => console.error('Error during confirm and create bot.'))
   }
@@ -117,17 +118,16 @@ export default class BotCreationDialog extends React.Component<{}, IBotCreationD
     CommandService.remoteCall('shell:showOpenDialog', dialogOptions)
       .then(path => {
         if (path) {
-        const bot = { ...this.state.bot, projectDir: path };
-        this.setState({ bot });
+          this.setState({ botDirectory: path });
 
-        // use bot directory as bot name if name hasn't been touched
-        if (!this.state.touchedName && path)
-          CommandService.remoteCall('path:basename', path)
-            .then(dirName => {
-              const bot = { ...this.state.bot, botName: dirName };
-              this.setState({ bot });
-            });
-          }
+          // use bot directory as bot name if name hasn't been touched
+          if (!this.state.touchedName && path)
+            CommandService.remoteCall('path:basename', path)
+              .then(dirName => {
+                const bot = { ...this.state.bot, botName: dirName };
+                this.setState({ bot });
+              });
+        }
       })
       .catch(err => console.log('User cancelled choosing a bot folder: ', err));
   }
@@ -136,7 +136,7 @@ export default class BotCreationDialog extends React.Component<{}, IBotCreationD
     const requiredFieldsCompleted = this.state.bot
       && this.state.bot.botUrl
       && this.state.bot.botName
-      && this.state.bot.projectDir;
+      && this.state.botDirectory;
 
     return (
       <GenericDocument style={ CSS }>
@@ -150,7 +150,7 @@ export default class BotCreationDialog extends React.Component<{}, IBotCreationD
           </Row>
           <Row className="multi-input-row" align={ RowAlignment.Center }>
             <TextInputField value={ this.state.bot.botName } onChange={ this.onChangeName } label={ 'Bot name' } required={ true } />
-            <TextInputField value={ this.state.bot.projectDir } label={ 'Project folder' } readOnly={ true } required={ true } />
+            <TextInputField value={ this.state.botDirectory } label={ 'Project folder' } readOnly={ true } required={ true } />
             <PrimaryButton text='Browse' onClick={ this.onSelectFolder } className="browse-button" />
           </Row>
           <Row className="multi-input-row" justify={ RowJustification.Right }>

@@ -30,20 +30,20 @@ export const ActiveBotHelper = new class {
   /** Uses a bot id to look up the .botproj path and perform a read on the server-side to populate the corresponding bot object */
   setActiveBot(id: string): Promise<any> {
     return CommandService.remoteCall('bot:setActive', id)
-      .then(bot => {
-        store.dispatch(BotActions.setActive(bot));
+      .then(({ bot, botDirectory }) => {
+        store.dispatch(BotActions.setActive(bot, botDirectory));
         CommandService.remoteCall('menu:update-recent-bots');
         CommandService.remoteCall('app:setTitleBar', getBotDisplayName(bot));
       })
       .catch(err => console.error('Error while setting active bot: ', err));
   }
 
-  confirmAndCreateBot(botToCreate: IBot): Promise<any> {
+  confirmAndCreateBot(botToCreate: IBot, botDirectory: string): Promise<any> {
     return this.confirmSwitchBot()
       .then((result) => {
         if (result) {
           store.dispatch(EditorActions.closeNonGlobalTabs());
-          CommandService.remoteCall('bot:create', botToCreate)
+          CommandService.remoteCall('bot:create', botToCreate, botDirectory)
             .then(({ bot, botFilePath }) => {
               console.log(bot, botFilePath);
               store.dispatch((dispatch) => {

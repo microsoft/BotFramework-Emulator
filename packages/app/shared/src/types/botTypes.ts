@@ -40,8 +40,7 @@ export interface IBot {
   botUrl?: string,
   locale?: string,
   msaAppId?: string,
-  msaPassword?: string,
-  projectDir?: string
+  msaPassword?: string
 }
 
 export function newBot(bot: IBot): IBot {
@@ -54,8 +53,7 @@ export function newBot(bot: IBot): IBot {
       botUrl: 'http://localhost:3978/api/messages',
       locale: '',
       msaAppId: '',
-      msaPassword: '',
-      projectDir: ''
+      msaPassword: ''
     },
     bot
   );

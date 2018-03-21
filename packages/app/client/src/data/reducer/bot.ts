@@ -4,6 +4,7 @@ import { getBotDisplayName, IBot, IBotInfo } from '@bfemulator/app-shared';
 export interface IBotState {
   activeBot: IBot;
   botFiles: IBotInfo[];
+  currentBotDirectory: string;
 }
 
 export type BotAction = {
@@ -30,24 +31,24 @@ export type BotAction = {
 } | {
   type: 'BOT/SET_ACTIVE',
   payload: {
-    bot: IBot
+    bot: IBot,
+    botDirectory: string
   }
 };
 
 const DEFAULT_STATE: IBotState = {
   activeBot: null,
-  botFiles: []
+  botFiles: [],
+  currentBotDirectory: ''
 };
 
 export default function bot(state: IBotState = DEFAULT_STATE, action: BotAction): IBotState {
   switch(action.type) {
     case BotActions.CREATE: {
-      // set active bot and add bot to bots list
       const newBot: IBotInfo = { path: action.payload.botFilePath, id: action.payload.bot.id, displayName: getBotDisplayName(action.payload.bot) };
       const bots = [...state.botFiles];
       bots.unshift(newBot);
       state = setBotFilesState(bots, state);
-      state = setActiveBot(action.payload.bot, state);
       break;
     }
 
@@ -85,6 +86,7 @@ export default function bot(state: IBotState = DEFAULT_STATE, action: BotAction)
       recentBots.unshift(mostRecentBot);
       state = setBotFilesState(recentBots, state);
       state = setActiveBot(action.payload.bot, state);
+      state = setCurrentBotDirectory(action.payload.botDirectory, state);
       break;
     }
 
@@ -104,5 +106,12 @@ function setBotFilesState(botFilesState: IBotInfo[], state: IBotState): IBotStat
   let newState = Object.assign({}, state);
 
   newState.botFiles = botFilesState;
+  return newState;
+}
+
+function setCurrentBotDirectory(botDirectory: string, state: IBotState): IBotState {
+  let newState = Object.assign({}, state);
+
+  newState.currentBotDirectory = botDirectory;
   return newState;
 }

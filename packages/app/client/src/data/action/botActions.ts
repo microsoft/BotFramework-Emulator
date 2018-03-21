@@ -75,11 +75,12 @@ export function patch(bot: IBot) {
     }
   };
 }
-export function setActive(bot: IBot) {
+export function setActive(bot: IBot, botDirectory: string) {
   return {
     type: SET_ACTIVE,
     payload: {
-      bot
+      bot,
+      botDirectory
     }
   };
 }

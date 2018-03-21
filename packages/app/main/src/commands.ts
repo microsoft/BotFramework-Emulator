@@ -57,8 +57,8 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Create a bot
-  CommandRegistry.registerCommand('bot:create', (bot: IBot): IBot => {
-    const botFilePath = Path.join(bot.projectDir, bot.botName + '.botproj');
+  CommandRegistry.registerCommand('bot:create', (bot: IBot, botDirectory: string): { bot: IBot, botFilePath: string } => {
+    const botFilePath = Path.join(botDirectory, bot.botName + '.botproj');
     writeFile(botFilePath, bot);
     mainWindow.store.dispatch(BotActions.create(bot, botFilePath));
     return { bot, botFilePath };
@@ -90,26 +90,17 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Set active bot
-  CommandRegistry.registerCommand('bot:setActive', (id: string): IBot => {
+  CommandRegistry.registerCommand('bot:setActive', (id: string): { bot: IBot, botDirectory: string } => {
     // read the bot file at the id's corresponding path and return the IBot (easier for client-side)
     const botInfo = getBotInfoById(id);
     const contents = readFileSync(botInfo.path);
     const bot = contents ? JSON.parse(contents) : null;
 
     // set up the file watcher
-    BotProjectFileWatcher.watch(bot.projectDir);
-    mainWindow.store.dispatch(BotActions.setActive(bot));
-    return bot;
-  });
-
-  //---------------------------------------------------------------------------
-  // Sets up a filewatcher on the bot's .projectDir
-  CommandRegistry.registerCommand('bot:init-filewatcher', (bot: IBot): void => {
-    if (bot && bot.projectDir) {
-      BotProjectFileWatcher.watch(bot.projectDir);
-    } else {
-      throw new Error('Bot needs to be valid and have a valid projectDir property to initialize file watcher.');
-    }
+    const botDirectory = Path.resolve(botInfo.path, '..');
+    BotProjectFileWatcher.watch(botDirectory);
+    mainWindow.store.dispatch(BotActions.setActive(bot, botDirectory));
+    return { bot, botDirectory };
   });
 
   //---------------------------------------------------------------------------
