@@ -94,12 +94,12 @@ class StoreVisualizer extends React.Component<IStoreVisualizerProps, IStoreVisua
                 { prettyState }
               </pre>
 
-              <PrimaryButton text="Hide Visualizer" className='visualizer-button' onClick={ this.toggleShowing } />
+              <PrimaryButton text="Hide Visualizer" className="visualizer-button" onClick={ this.toggleShowing } />
             </>
 
             :
 
-            <PrimaryButton text="Show visualizer" className='visualizer-button' onClick={ this.toggleShowing } />
+            <PrimaryButton text="Show visualizer" className="visualizer-button" onClick={ this.toggleShowing } />
           }
         </div>
       );

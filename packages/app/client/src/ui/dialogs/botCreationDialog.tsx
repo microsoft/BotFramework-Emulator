@@ -9,18 +9,14 @@ import * as NavBarActions from '../../data/action/navBarActions';
 import * as Constants from '../../constants';
 import { CommandService } from '../../platform/commands/commandService';
 import store from '../../data/store';
-import { PrimaryButton, TextInputField } from '../widget';
+import { PrimaryButton, TextInputField, MediumHeader } from '../widget';
 import { DialogService } from './service/index';
 import { ActiveBotHelper } from '../helpers/activeBotHelper';
 import { Row, RowAlignment, RowJustification, Column, GenericDocument } from '../layout';
 
 const CSS = css({
   backgroundColor: Colors.EDITOR_TAB_BACKGROUND_DARK,
-
-  '& h2': {
-    fontWeight: 200,
-    fontSize: '20px'
-  },
+  padding: '32px',
 
   '& .multi-input-row > *': {
     marginLeft: '8px'
@@ -28,6 +24,14 @@ const CSS = css({
 
   '& .multi-input-row > *:first-child': {
     marginLeft: 0
+  },
+
+  '& .button-row': {
+    marginTop: '48px'
+  },
+
+  '& .bot-create-header': {
+    marginBottom: '16px'
   }
 });
 
@@ -139,9 +143,9 @@ export default class BotCreationDialog extends React.Component<{}, IBotCreationD
       && this.state.botDirectory;
 
     return (
-      <GenericDocument style={ CSS }>
+      <div { ...CSS }>
         <Column>
-          <h2>Add a bot</h2>
+          <MediumHeader className="bot-create-header">Add a bot</MediumHeader>
           <TextInputField value={ this.state.bot.botUrl } onChange={ this.onChangeEndpoint } label={ 'Endpoint URL' } required={ true } />
           <Row className="multi-input-row">
             <TextInputField value={ this.state.bot.msaAppId } onChange={ this.onChangeAppId } label={ 'MSA app ID (optional)' } />
@@ -153,12 +157,12 @@ export default class BotCreationDialog extends React.Component<{}, IBotCreationD
             <TextInputField value={ this.state.botDirectory } label={ 'Project folder' } readOnly={ true } required={ true } />
             <PrimaryButton text='Browse' onClick={ this.onSelectFolder } className="browse-button" />
           </Row>
-          <Row className="multi-input-row" justify={ RowJustification.Right }>
+          <Row className="multi-input-row button-row" justify={ RowJustification.Right }>
             <PrimaryButton text='Cancel' onClick={ this.onCancel } className="cancel-button" />
             <PrimaryButton text='Connect' onClick={ this.onConnect }  disabled={ !requiredFieldsCompleted } className="connect-button" />
           </Row>
         </Column>
-      </GenericDocument>
+      </div>
     );
   }
 }

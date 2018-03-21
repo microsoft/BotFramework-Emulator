@@ -4,36 +4,38 @@ import { connect } from 'react-redux';
 import { IBotInfo } from '@bfemulator/app-shared';
 
 import * as Colors from '../../styles/colors';
-import { PrimaryButton } from '../../widget';
+import { PrimaryButton, LargeHeader, SmallHeader } from '../../widget';
 import { CommandService } from '../../../platform/commands/commandService';
 import { DialogService } from '../../dialogs/service/index';
 import BotCreationDialog from '../../dialogs/botCreationDialog';
 import { Column, Row, GenericDocument, TruncateText } from '../../layout';
 
 const CSS = css({
-  '& h1.title': {
-    padding: 0,
-    margin: 0,
-    border: 'none',
-    fontWeight: 400,
-    fontSize: '36px',
-    marginTop: '1em',
-    marginBottom: '1em'
-  },
-
-  '& h2': {
-    fontWeight: 200,
-    fontSize: '20px',
-    lineHeight: 'normal'
-  },
-
   '& .right-column': {
     marginLeft: '48px'
   },
 
   '& .section': {
     marginBottom: '5em',
-    width: '100%'
+    width: 'auto',
+    maxWidth: '100%'
+  },
+
+  '& .well': {
+    padding: '12px 10px',
+    background: 'rgba(0,0,0,.2)',
+
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: 'transparent'
+    },
+
+    '&:hover': {
+      background: 'rgba(200,235,255,.072)',
+
+      '&::-webkit-scrollbar-thumb': {
+        backgroundColor: Colors.SCROLLBAR_THUMB_BACKGROUND_DARK
+      }
+    }
   },
 
   '& .no-bots': {
@@ -79,8 +81,7 @@ const CSS = css({
     margin: 0,
     listStyle: 'none',
     padding: 0,
-  },
-
+  }
 });
 
 interface Props {
@@ -111,53 +112,53 @@ class WelcomePage extends React.Component<Props, {}> {
   render() {
     return (
       <GenericDocument style={ CSS }>
-        <h1 className="title"><TruncateText>Welcome to the Bot Framework Emulator</TruncateText></h1>
-        <Row>
-          <Column>
-            <div className="section">
-              <h2><TruncateText>Start</TruncateText></h2>
-              <ul>
-                <li><a href='javascript:void(0);' onClick={ this.onAddBotClick } title=''><TruncateText>Add a bot configuration</TruncateText></a></li>
-                <li><a href='javascript:void(0);' onClick={ this.onOpenTranscriptClick } title=''><TruncateText>Open a saved chat transcript</TruncateText></a></li>
-              </ul>
-            </div>
-            <div className="section">
-              <h2><TruncateText>My Bots</TruncateText></h2>
-              <ul className="recent-bots-list">
-                {
-                  this.props.recentBots && this.props.recentBots.length ?
-                    this.props.recentBots.map(bot => bot &&
-                      <li key={ bot.id }>
-                        <a href="javascript:void(0);" onClick={ ev => this.onBotClick(ev, bot.id) } ><TruncateText>{ bot.displayName }</TruncateText></a>
-                        <TruncateText className='recent-bot-detail'>{ bot.path }</TruncateText>
-                      </li>)
-                    :
-                    <li><span className="no-bots"><TruncateText>No recent bots</TruncateText></span></li>
-                }
-              </ul>
-            </div>
-          </Column>
-          <Column className='right-column'>
-            <div className="section">
-              <h2><TruncateText>Tutorials</TruncateText></h2>
-              <ul>
-                <li><a href='javascript:void(0);' title=''><TruncateText>VIDEO: Getting started with the Bot Framework Emulator</TruncateText></a></li>
-                <li><a href='javascript:void(0);' title=''><TruncateText>VIDEO: Creating bots with the BotBuilder SDK</TruncateText></a></li>
-              </ul>
-            </div>
-            <div className="section">
-              <h2><TruncateText>Help</TruncateText></h2>
-              <ul>
-                <li><a href='javascript:void(0);' title=''><TruncateText>What is the Bot Framework Emulator?</TruncateText></a></li>
-                <li><a href='javascript:void(0);' title=''><TruncateText>BotBuilder SDK Documentation</TruncateText></a></li>
-                <li><a href='javascript:void(0);' title=''><TruncateText>BotBuilder SDK API Reference</TruncateText></a></li>
-                <li><a href='javascript:void(0);' title=''><TruncateText>Samples</TruncateText></a></li>
-                <li><a href='javascript:void(0);' title=''><TruncateText>GitHub repository</TruncateText></a></li>
-                <li><a href='javascript:void(0);' title=''><TruncateText>Report an issue</TruncateText></a></li>
-              </ul>
-            </div>
-          </Column>
-        </Row>
+          <LargeHeader>Welcome to the Bot Framework Emulator</LargeHeader>
+          <Row>
+            <Column>
+              <div className="section">
+                <SmallHeader>Start</SmallHeader>
+                <ul>
+                  <li><a href='javascript:void(0);' onClick={ this.onAddBotClick } title=''><TruncateText>Add a bot configuration</TruncateText></a></li>
+                  <li><a href='javascript:void(0);' onClick={ this.onOpenTranscriptClick } title=''><TruncateText>Open a saved chat transcript</TruncateText></a></li>
+                </ul>
+              </div>
+              <div className="section">
+                <SmallHeader>My Bots</SmallHeader>
+                <ul className="recent-bots-list well">
+                  {
+                    this.props.recentBots && this.props.recentBots.length ?
+                      this.props.recentBots.slice(0, 10).map(bot => bot &&
+                        <li key={ bot.id }>
+                          <a href="javascript:void(0);" onClick={ ev => this.onBotClick(ev, bot.id) } ><TruncateText>{ bot.displayName }</TruncateText></a>
+                          <TruncateText className='recent-bot-detail'>{ bot.path }</TruncateText>
+                        </li>)
+                      :
+                      <li><span className="no-bots"><TruncateText>No recent bots</TruncateText></span></li>
+                  }
+                </ul>
+              </div>
+            </Column>
+            <Column className='right-column'>
+              <div className="section">
+                <SmallHeader>Tutorials</SmallHeader>
+                <ul>
+                  <li><a href='javascript:void(0);' title=''><TruncateText>VIDEO: Getting started with the Bot Framework Emulator</TruncateText></a></li>
+                  <li><a href='javascript:void(0);' title=''><TruncateText>VIDEO: Creating bots with the BotBuilder SDK</TruncateText></a></li>
+                </ul>
+              </div>
+              <div className="section">
+                <SmallHeader>Help</SmallHeader>
+                <ul>
+                  <li><a href='javascript:void(0);' title=''><TruncateText>What is the Bot Framework Emulator?</TruncateText></a></li>
+                  <li><a href='javascript:void(0);' title=''><TruncateText>BotBuilder SDK Documentation</TruncateText></a></li>
+                  <li><a href='javascript:void(0);' title=''><TruncateText>BotBuilder SDK API Reference</TruncateText></a></li>
+                  <li><a href='javascript:void(0);' title=''><TruncateText>Samples</TruncateText></a></li>
+                  <li><a href='javascript:void(0);' title=''><TruncateText>GitHub repository</TruncateText></a></li>
+                  <li><a href='javascript:void(0);' title=''><TruncateText>Report an issue</TruncateText></a></li>
+                </ul>
+              </div>
+            </Column>
+          </Row>
       </GenericDocument>
     );
   }

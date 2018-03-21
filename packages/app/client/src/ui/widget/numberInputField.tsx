@@ -25,6 +25,7 @@ const CSS = css({
   },
 
   '& > .number-input-label': {
+    fontSize: '12px',
     height: '16px',
     lineHeight: '16px',
     marginBottom: '8px'

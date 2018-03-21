@@ -12,14 +12,12 @@ import * as ChatActions from '../../../data/action/chatActions';
 import * as EditorActions from '../../../data/action/editorActions';
 import store from '../../../data/store';
 
-import { PrimaryButton, TextInputField } from '../../widget';
-import { Column, Row, RowAlignment, GenericDocument, TruncateText } from '../../layout';
+import { PrimaryButton, TextInputField, MediumHeader } from '../../widget';
+import { Column, Row, RowAlignment, GenericDocument } from '../../layout';
 
 const CSS = css({
-  '& h2': {
-    fontWeight: 200,
-    fontSize: '20px',
-    marginRight: '32px'
+  '& .bot-settings-header': {
+    marginBottom: '16px'
   },
 
   '& .browse-path-button': {
@@ -43,6 +41,15 @@ const CSS = css({
     '& > div:first-child': {
       marginLeft: 0
     }
+  },
+
+  '& .button-row': {
+    marginTop: '48px'
+  },
+
+  '& .locale-input': {
+    flexShrink: 2,
+    minWidth: '100px'
   }
 });
 
@@ -156,18 +163,18 @@ class BotSettingsEditor extends React.Component<IBotSettingsEditorProps, IBotSet
     return (
       <GenericDocument style={ CSS }>
         <Column>
-          <Row align={ RowAlignment.Center }>
-            <h2><TruncateText>Bot Settings</TruncateText></h2>
-            <PrimaryButton text="Save" onClick={ this.onSave } className='save-button' disabled={ !this.props.dirty } />
-            <PrimaryButton text="Save & Connect" onClick={ this.onSaveAndConnect } className='save-connect-button' disabled={ !this.props.dirty } />
-          </Row>
+          <MediumHeader className="bot-settings-header">Bot Settings</MediumHeader>
+          <TextInputField label='Bot name' value={ this.state.bot.botName } required={ true } onChange={ this.onChangeName } />
           <TextInputField label='Endpoint URL' value={ this.state.bot.botUrl } required={ true } onChange={ this.onChangeEndpoint } />
           <Row className="multiple-input-row">
             <TextInputField label='MSA App Id' value={ this.state.bot.msaAppId } onChange={ this.onChangeAppId } />
             <TextInputField label='MSA App Password' value={ this.state.bot.msaPassword } onChange={ this.onChangeAppPw } />
-            <TextInputField label='Locale' value={ this.state.bot.locale } onChange={ this.onChangeLocale } />
+            <TextInputField className="locale-input" label='Locale' value={ this.state.bot.locale } onChange={ this.onChangeLocale } />
           </Row>
-          <TextInputField label='Bot name' value={ this.state.bot.botName } required={ true } onChange={ this.onChangeName } />
+          <Row className="button-row">
+            <PrimaryButton text="Save" onClick={ this.onSave } className='save-button' disabled={ !this.props.dirty } />
+            <PrimaryButton text="Save & Connect" onClick={ this.onSaveAndConnect } className='save-connect-button' disabled={ !this.props.dirty } />
+          </Row>
         </Column>
       </GenericDocument>
     );

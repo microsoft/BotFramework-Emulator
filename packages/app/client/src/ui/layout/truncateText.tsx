@@ -9,7 +9,7 @@ interface ITruncateTextProps {
 const CSS = css({
   display: 'inline-block',
   maxWidth: '100%',
-  overflowX: 'hidden',
+  overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap'
 });

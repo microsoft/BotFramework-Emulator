@@ -3,12 +3,19 @@ import { css } from 'glamor';
 
 const CSS = css({
   boxSizing: 'border-box',
-  padding: '32px',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
   height: '100%',
   width: '100%',
   minWidth: '480px',
   overflowX: 'hidden',
-  overflowY: 'auto'
+  overflowY: 'auto',
+
+  '& > .generic-doc-content': {
+    width: '90%',
+    maxWidth: '1200px'
+  }
 });
 
 interface IGenericDocumentProps {
@@ -25,7 +32,9 @@ export default class GenericDocument extends React.Component<IGenericDocumentPro
   render(): JSX.Element {
     return (
       <div className="generic-doc" { ...CSS } { ...this.props.style }>
-        { this.props.children }
+        <div className="generic-doc-content">
+          { this.props.children }
+        </div>
       </div>
     );
   }

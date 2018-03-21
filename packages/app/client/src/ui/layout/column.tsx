@@ -18,6 +18,7 @@ const BASE_CSS = css({
   display: 'flex',
   flexFlow: 'column nowrap',
   maxWidth: '100%',
+  width: '100%',
   overflow: 'hidden'
 });
 

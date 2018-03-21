@@ -9,15 +9,10 @@ import * as EditorActions from '../../data/action/editorActions';
 import * as Constants from '../../constants';
 import store from '../../data/store';
 import { getTabGroupForDocument } from '../../data/editorHelpers';
-import { Column, ColumnAlignment, GenericDocument, Row, RowAlignment, RowJustification, TruncateText } from '../layout';
-import { Checkbox, NumberInputField, TextInputField, PrimaryButton } from '../widget';
+import { Column, ColumnAlignment, GenericDocument, Row, RowAlignment, RowJustification } from '../layout';
+import { Checkbox, NumberInputField, TextInputField, PrimaryButton, MediumHeader, SmallHeader } from '../widget';
 
 const CSS = css({
-  '& h2': {
-    fontWeight: 200,
-    fontSize: '20px'
-  },
-
   '& .right-column': {
     marginLeft: '48px'
   },
@@ -34,6 +29,10 @@ const CSS = css({
     ':hover': {
       color: Colors.APP_HYPERLINK_FOREGROUND_DARK
     }
+  },
+
+  '& .button-row': {
+    marginTop: '48px'
   },
 
   '& .browse-button, & .save-button': {
@@ -137,9 +136,10 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
   render(): JSX.Element {
     return (
       <GenericDocument style={ CSS }>
+        <MediumHeader>App settings</MediumHeader>
         <Row>
           <Column>
-            <h2><TruncateText>Service settings</TruncateText></h2>
+            <SmallHeader>Service settings</SmallHeader>
             <p><a href="https://ngrok.com/" target="_blank">ngrok</a> is network tunneling software. The Bot Framework Emulator works with ngrok to communicate with bots hosted remotely. Read the <a href="https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)" target="_blank">wiki page</a> to learn more about using ngrok and to download it.</p>
             <Row align={ RowAlignment.Center }>
               <TextInputField readOnly={ true } value={ this.state.ngrokPath } label={ 'Path to ngrok' } />
@@ -149,7 +149,7 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
             <Checkbox checked={ this.state.use10Tokens } onChange={ this.onChangeAuthTokenVersion } id={ 'auth-token-version' } label={ 'Use version 1.0 authentication tokens' } />
           </Column>
           <Column className="right-column">
-            <h2><TruncateText>Bot state settings</TruncateText></h2>
+            <SmallHeader>Bot state settings</SmallHeader>
             <p>Bots use the <a href="https://docs.microsoft.com/en-us/bot-framework/dotnet/bot-builder-dotnet-state" target="_blank">Bot State service</a> to store and retrieve application data. The Bot Framework's bot state service has a size limit of 64KB. Custom state services may differ.</p>
             <Row align={ RowAlignment.Center }>
               <NumberInputField min={ 0 } value={ this.state.stateSizeLimit } onChange={ this.onChangeSizeLimit} label={ 'Size limit (zero for no limit)' } />
