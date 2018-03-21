@@ -1,0 +1,5 @@
+{
+  "directories": {
+    "output": "./installer/packaged/mac"
+  }
+}

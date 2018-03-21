@@ -2,5 +2,23 @@
   "mac": {
     "category": "public.app-category.developer-tools"
   },
-  "icon": "./scripts/config/resources/icon.icns"
+  "icon": "./scripts/config/resources/icon.icns",
+  "directories": {
+    "output": "./installer/redist/mac"
+  },
+  "dmg": {
+    "icon": "./scripts/config/resources/icon.icns",
+    "contents": [
+      {
+        "x": 110,
+        "y": 150
+      },
+      {
+        "x": 240,
+        "y": 150,
+        "type": "link",
+        "path": "/Applications"
+      }
+    ]
+  }
 }

@@ -156,6 +156,55 @@ gulp.task('get-licenses', function () {
 
 //============================================================================
 // PACKAGE
+// Packages the application ASAR and prepares a staging folder from which the
+// redistributables are built.
+//============================================================================
+
+//============================================================================
+// PACKAGE:WINDOWS
+
+//----------------------------------------------------------------------------
+gulp.task('package:windows', function () {
+  var builder = require('electron-builder');
+  const config = getConfig("windows", "package");
+  console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
+  return builder.build({
+    targets: builder.Platform.WINDOWS.createTarget(["dir"], builder.Arch.ia32, builder.Arch.x64),
+    config
+  });
+});
+
+//============================================================================
+// PACKAGE:MAC
+
+//----------------------------------------------------------------------------
+gulp.task('package:mac', function () {
+  var builder = require('electron-builder');
+  const config = getConfig("mac", "package");
+  console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
+  return builder.build({
+    targets: builder.Platform.MAC.createTarget(["dir"]),
+    config
+  });
+});
+
+//============================================================================
+// PACKAGE:LINUX
+
+//----------------------------------------------------------------------------
+gulp.task('package:linux', function () {
+  var builder = require('electron-builder');
+  const config = getConfig("linux", "package");
+  console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
+  return builder.build({
+    targets: builder.Platform.LINUX.createTarget(["dir"]),
+    config
+  });
+});
+
+//============================================================================
+// REDIST
+// Builds a redistributable from the packaged application.
 //============================================================================
 
 //----------------------------------------------------------------------------
@@ -194,10 +243,10 @@ function writeJsonMetadataFile(releaseFilename, jsonFilename, path, releaseDate)
 }
 
 //============================================================================
-// PACKAGE:WINDOWS-NSIS
+// REDIST:WINDOWS-NSIS
 
 //----------------------------------------------------------------------------
-gulp.task('package:windows-nsis:binaries', function () {
+gulp.task('redist:windows-nsis:binaries', function () {
   var wait = require('gulp-wait');
   var rename = require('gulp-rename');
   var builder = require('electron-builder');
@@ -205,7 +254,8 @@ gulp.task('package:windows-nsis:binaries', function () {
   console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
   return builder.build({
     targets: builder.Platform.WINDOWS.createTarget(["nsis", "zip"], builder.Arch.ia32, builder.Arch.x64),
-    config
+    config,
+    prepackaged: './installer/packaged/windows'
   }).then((filenames) => {
     return gulp.src(filenames, { allowEmpty: true })
       .pipe(rename(function (path) {
@@ -219,7 +269,7 @@ gulp.task('package:windows-nsis:binaries', function () {
 });
 
 //----------------------------------------------------------------------------
-gulp.task('package:windows-nsis:metadata', gulp.series('package:windows-nsis:binaries', function () {
+gulp.task('redist:windows-nsis:metadata', gulp.series('redist:windows-nsis:binaries', function () {
   const config = getConfig("windows", "nsis");
   const releaseFilename = `botframework-emulator-Setup-${pjson.version}.exe`;
   const sha512 = hashFileAsync(`${config.directories.output}/${releaseFilename}`);
@@ -233,20 +283,21 @@ gulp.task('package:windows-nsis:metadata', gulp.series('package:windows-nsis:bin
 }));
 
 //----------------------------------------------------------------------------
-gulp.task('package:windows-nsis', gulp.series('package:windows-nsis:metadata'));
+gulp.task('redist:windows-nsis', gulp.series('redist:windows-nsis:metadata'));
 
 //============================================================================
-// PACKAGE:WINDOWS-SQUIRREL
+// REDIST:WINDOWS-SQUIRREL
 
 //----------------------------------------------------------------------------
-gulp.task('package:windows-squirrel', function () {
+gulp.task('redist:windows-squirrel', function () {
   var rename = require('gulp-rename');
   var builder = require('electron-builder');
   const config = getConfig("windows", "squirrel");
   console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
   return builder.build({
     targets: builder.Platform.WINDOWS.createTarget(["squirrel"], builder.Arch.x64),
-    config
+    config,
+    prepackaged: './installer/packaged/windows'
   }).then((filenames) => {
     return gulp.src(filenames, { allowEmpty: true })
       .pipe(rename(function (path) {
@@ -265,17 +316,18 @@ gulp.task('package:windows-squirrel', function () {
 });
 
 //============================================================================
-// PACKAGE:MAC-DMG
+// REDIST:MAC
 
 //----------------------------------------------------------------------------
-gulp.task('package:mac-dmg:binaries', function () {
+gulp.task('redist:mac:binaries', function () {
   var rename = require('gulp-rename');
   var builder = require('electron-builder');
   const config = getConfig("mac", "dmg");
   console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
   return builder.build({
     targets: builder.Platform.MAC.createTarget(["dmg", "zip"]),
-    config
+    config,
+    prepackaged: './installer/packaged/mac'
   }).then((filenames) => {
     return gulp.src(filenames, { allowEmpty: true })
       .pipe(rename(function (path) {
@@ -289,7 +341,7 @@ gulp.task('package:mac-dmg:binaries', function () {
 });
 
 //----------------------------------------------------------------------------
-gulp.task('package:mac-dmg:metadata', gulp.series('package:mac-dmg:binaries', function () {
+gulp.task('redist:mac:metadata', gulp.series('redist:mac-dmg:binaries', function () {
   const config = getConfig("mac", "dmg");
   const releaseFilename = `botframework-emulator-${pjson.version}-mac.zip`;
   const releaseHash = hashFileAsync(`./${config.directories.output}/${releaseFilename}`);
@@ -302,20 +354,21 @@ gulp.task('package:mac-dmg:metadata', gulp.series('package:mac-dmg:binaries', fu
 }));
 
 //----------------------------------------------------------------------------
-gulp.task('package:mac-dmg', gulp.series('package:mac-dmg:metadata'));
+gulp.task('redist:mac', gulp.series('redist:mac-dmg:metadata'));
 
 //============================================================================
-// PACKAGE:LINUX
+// REDIST:LINUX
 
 //----------------------------------------------------------------------------
-gulp.task('package:linux', function () {
+gulp.task('redist:linux', function () {
   var rename = require('gulp-rename');
   var builder = require('electron-builder');
   const config = getConfig("linux");
   console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
   return builder.build({
     targets: builder.Platform.LINUX.createTarget(["deb", "AppImage"], builder.Arch.ia32, builder.Arch.x64),
-    config
+    config,
+    prepackaged: './installer/packaged/linux'
   }).then((filenames) => {
     return gulp.src(filenames, { allowEmpty: true })
       .pipe(rename(function (path) {

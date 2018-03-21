@@ -1,6 +1,6 @@
 {
   "directories": {
-    "output": "./installer/windows-nsis"
+    "output": "./installer/redist/windows/nsis"
   },
   "nsis": {
     "guid": "${appId}",

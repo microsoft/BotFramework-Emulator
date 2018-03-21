@@ -1,6 +1,6 @@
 {
   "directories": {
-    "output": "./installer/linux"
+    "output": "./installer/redist/linux"
   },
   "linux": {
     "category": "Development"
