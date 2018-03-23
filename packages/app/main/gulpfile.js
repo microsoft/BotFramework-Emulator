@@ -325,7 +325,7 @@ gulp.task('redist:mac:binaries', function () {
   const config = getConfig("mac");
   console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
   return builder.build({
-    targets: builder.Platform.MAC.createTarget(["dmg", "zip"]),
+    targets: builder.Platform.MAC.createTarget(["zip"]),
     config,
     prepackaged: './installer/packaged/mac/mac-unpacked'
   }).then((filenames) => {
