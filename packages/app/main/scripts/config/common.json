@@ -42,6 +42,6 @@
     "mirror": "${ELECTRON_MIRROR}"
   },
   "electronVersion": "${ELECTRON_VERSION}",
-  "publish": "never",
+  "publish": null,
   "remoteBuild": false
 }
