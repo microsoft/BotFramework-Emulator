@@ -327,7 +327,7 @@ gulp.task('redist:mac:binaries', function () {
   return builder.build({
     targets: builder.Platform.MAC.createTarget(["zip"]),
     config,
-    prepackaged: './installer/packaged/mac/mac-unpacked'
+    prepackaged: './installer/packaged/mac/mac'
   }).then((filenames) => {
     return gulp.src(filenames, { allowEmpty: true })
       .pipe(rename(function (path) {
