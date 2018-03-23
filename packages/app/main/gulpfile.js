@@ -155,18 +155,18 @@ gulp.task('get-licenses', function () {
 });
 
 //============================================================================
-// PACKAGE
+// DIR
 // Packages the application ASAR and prepares a staging folder from which the
 // redistributables are built.
 //============================================================================
 
 //============================================================================
-// PACKAGE:WINDOWS
+// DIR:WINDOWS
 
 //----------------------------------------------------------------------------
-gulp.task('package:windows', function () {
+gulp.task('dir:windows', function () {
   var builder = require('electron-builder');
-  const config = getConfig("windows", "package");
+  const config = getConfig("windows", "dir");
   console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
   return builder.build({
     targets: builder.Platform.WINDOWS.createTarget(["dir"], builder.Arch.ia32, builder.Arch.x64),
@@ -175,12 +175,12 @@ gulp.task('package:windows', function () {
 });
 
 //============================================================================
-// PACKAGE:MAC
+// DIR:MAC
 
 //----------------------------------------------------------------------------
-gulp.task('package:mac', function () {
+gulp.task('dir:mac', function () {
   var builder = require('electron-builder');
-  const config = getConfig("mac", "package");
+  const config = getConfig("mac", "dir");
   console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
   return builder.build({
     targets: builder.Platform.MAC.createTarget(["dir"]),
@@ -189,12 +189,12 @@ gulp.task('package:mac', function () {
 });
 
 //============================================================================
-// PACKAGE:LINUX
+// DIR:LINUX
 
 //----------------------------------------------------------------------------
-gulp.task('package:linux', function () {
+gulp.task('dir:linux', function () {
   var builder = require('electron-builder');
-  const config = getConfig("linux", "package");
+  const config = getConfig("linux", "dir");
   console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
   return builder.build({
     targets: builder.Platform.LINUX.createTarget(["dir"]),
@@ -204,7 +204,8 @@ gulp.task('package:linux', function () {
 
 //============================================================================
 // REDIST
-// Builds a redistributable from the packaged application.
+// Builds a redistributable from the packaged application created by the dir:
+// build steps above.
 //============================================================================
 
 //----------------------------------------------------------------------------
@@ -327,7 +328,7 @@ gulp.task('redist:mac:binaries', function () {
   return builder.build({
     targets: builder.Platform.MAC.createTarget(["zip"]),
     config,
-    prepackaged: './installer/packaged/mac/mac/mac'
+    prepackaged: './installer/packaged/mac/mac'
   }).then((filenames) => {
     return gulp.src(filenames, { allowEmpty: true })
       .pipe(rename(function (path) {
@@ -369,6 +370,146 @@ gulp.task('redist:linux', function () {
     targets: builder.Platform.LINUX.createTarget(["deb", "AppImage"], builder.Arch.ia32, builder.Arch.x64),
     config,
     prepackaged: './installer/packaged/linux/linux-unpacked'
+  }).then((filenames) => {
+    return gulp.src(filenames, { allowEmpty: true })
+      .pipe(rename(function (path) {
+        path.basename = setReleaseFilename(path.basename);
+      }))
+      .pipe(gulp.dest(config.directories.output));
+  }).then(() => {
+    // Wait for the files to be written to disk and closed.
+    return delay(10000);
+  });
+});
+
+//============================================================================
+// PACKAGE
+// Packages and builds a redistributable.
+//============================================================================
+
+//============================================================================
+// PACKAGE:WINDOWS-NSIS
+
+//----------------------------------------------------------------------------
+gulp.task('package:windows-nsis:binaries', function () {
+  var wait = require('gulp-wait');
+  var rename = require('gulp-rename');
+  var builder = require('electron-builder');
+  const config = getConfig("windows", "nsis");
+  console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
+  return builder.build({
+    targets: builder.Platform.WINDOWS.createTarget(["nsis", "zip"], builder.Arch.ia32, builder.Arch.x64),
+    config
+  }).then((filenames) => {
+    return gulp.src(filenames, { allowEmpty: true })
+      .pipe(rename(function (path) {
+        path.basename = setReleaseFilename(path.basename);
+      }))
+      .pipe(gulp.dest(config.directories.output))
+  }).then(() => {
+    // Wait for the files to be written to disk and closed.
+    return delay(10000);
+  });
+});
+
+//----------------------------------------------------------------------------
+gulp.task('package:windows-nsis:metadata', gulp.series('package:windows-nsis:binaries', function () {
+  const config = getConfig("windows", "nsis");
+  const releaseFilename = `botframework-emulator-Setup-${pjson.version}.exe`;
+  const sha512 = hashFileAsync(`${config.directories.output}/${releaseFilename}`);
+  const sha2 = hashFileAsync(`${config.directories.output}/${releaseFilename}`, 'sha256', 'hex');
+  const releaseDate = new Date().toISOString();
+
+  return Promise.all([sha512, sha2])
+    .then((values) => {
+      writeYamlMetadataFile(releaseFilename, 'latest.yml', config.directories.output, values[0], releaseDate, { sha2: values[1] });
+    });
+}));
+
+//----------------------------------------------------------------------------
+gulp.task('package:windows-nsis', gulp.series('package:windows-nsis:metadata'));
+
+//============================================================================
+// PACKAGE:WINDOWS-SQUIRREL
+
+//----------------------------------------------------------------------------
+gulp.task('package:windows-squirrel', function () {
+  var rename = require('gulp-rename');
+  var builder = require('electron-builder');
+  const config = getConfig("windows", "squirrel");
+  console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
+  return builder.build({
+    targets: builder.Platform.WINDOWS.createTarget(["squirrel"], builder.Arch.x64),
+    config
+  }).then((filenames) => {
+    return gulp.src(filenames, { allowEmpty: true })
+      .pipe(rename(function (path) {
+        path.basename = setReleaseFilename(path.basename, {
+          lowerCase: false,
+          replaceName: true,
+          srcName: config.productName,
+          dstName: config.squirrelWindows.name
+        });
+      }))
+      .pipe(gulp.dest(config.directories.output));
+  }).then(() => {
+    // Wait for the files to be written to disk and closed.
+    return delay(10000);
+  });
+});
+
+//============================================================================
+// PACKAGE:MAC
+
+//----------------------------------------------------------------------------
+gulp.task('package:mac:binaries', function () {
+  var rename = require('gulp-rename');
+  var builder = require('electron-builder');
+  const config = getConfig("mac");
+  console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
+  return builder.build({
+    targets: builder.Platform.MAC.createTarget(["zip"]),
+    config
+  }).then((filenames) => {
+    return gulp.src(filenames, { allowEmpty: true })
+      .pipe(rename(function (path) {
+        path.basename = setReleaseFilename(path.basename);
+      }))
+      .pipe(gulp.dest(config.directories.output));
+  }).then(() => {
+    // Wait for the files to be written to disk and closed.
+    return delay(10000);
+  });
+});
+
+//----------------------------------------------------------------------------
+gulp.task('package:mac:metadata', gulp.series('package:mac:binaries', function () {
+  const config = getConfig("mac");
+  const releaseFilename = `botframework-emulator-${pjson.version}-mac.zip`;
+  const releaseHash = hashFileAsync(`./${config.directories.output}/${releaseFilename}`);
+  const releaseDate = new Date().toISOString();
+
+  writeJsonMetadataFile(releaseFilename, 'latest-mac.json', config.directories.output, releaseDate);
+  return releaseHash.then((hashValue) => {
+    writeYamlMetadataFile(releaseFilename, 'latest-mac.yml', config.directories.output, hashValue, releaseDate);
+  });
+}));
+
+//----------------------------------------------------------------------------
+gulp.task('package:mac', gulp.series('package:mac:metadata'));
+
+//============================================================================
+// PACKAGE:LINUX
+
+//----------------------------------------------------------------------------
+gulp.task('package:linux', function () {
+  var rename = require('gulp-rename');
+  var builder = require('electron-builder');
+  const config = getConfig("linux");
+  console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
+  return builder.build({
+    targets: builder.Platform.LINUX.createTarget(["deb", "AppImage"], builder.Arch.ia32, builder.Arch.x64),
+    config
   }).then((filenames) => {
     return gulp.src(filenames, { allowEmpty: true })
       .pipe(rename(function (path) {
