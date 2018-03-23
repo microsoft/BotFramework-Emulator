@@ -255,7 +255,7 @@ gulp.task('redist:windows-nsis:binaries', function () {
   return builder.build({
     targets: builder.Platform.WINDOWS.createTarget(["nsis", "zip"], builder.Arch.ia32, builder.Arch.x64),
     config,
-    prepackaged: './installer/packaged/windows'
+    prepackaged: './installer/packaged/windows/win-unpacked'
   }).then((filenames) => {
     return gulp.src(filenames, { allowEmpty: true })
       .pipe(rename(function (path) {
@@ -297,7 +297,7 @@ gulp.task('redist:windows-squirrel', function () {
   return builder.build({
     targets: builder.Platform.WINDOWS.createTarget(["squirrel"], builder.Arch.x64),
     config,
-    prepackaged: './installer/packaged/windows'
+    prepackaged: './installer/packaged/windows/win-ia32-unpacked'
   }).then((filenames) => {
     return gulp.src(filenames, { allowEmpty: true })
       .pipe(rename(function (path) {
@@ -327,7 +327,7 @@ gulp.task('redist:mac:binaries', function () {
   return builder.build({
     targets: builder.Platform.MAC.createTarget(["dmg", "zip"]),
     config,
-    prepackaged: './installer/packaged/mac'
+    prepackaged: './installer/packaged/mac/mac-unpacked'
   }).then((filenames) => {
     return gulp.src(filenames, { allowEmpty: true })
       .pipe(rename(function (path) {
@@ -368,7 +368,7 @@ gulp.task('redist:linux', function () {
   return builder.build({
     targets: builder.Platform.LINUX.createTarget(["deb", "AppImage"], builder.Arch.ia32, builder.Arch.x64),
     config,
-    prepackaged: './installer/packaged/linux'
+    prepackaged: './installer/packaged/linux/linux-unpacked'
   }).then((filenames) => {
     return gulp.src(filenames, { allowEmpty: true })
       .pipe(rename(function (path) {

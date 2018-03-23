@@ -12,6 +12,12 @@
       ]
     }
   ],
+  "fileAssociations": [
+    {
+      "name": "Bot Project",
+      "ext": "botproj"
+    }
+  ],
   "directories": {
     "buildResources": "./scripts/config/resources"
   },
@@ -36,5 +42,6 @@
     "mirror": "${ELECTRON_MIRROR}"
   },
   "electronVersion": "${ELECTRON_VERSION}",
-  "publish": null
+  "publish": "never",
+  "remoteBuild": false
 }

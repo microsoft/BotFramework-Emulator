@@ -5,9 +5,9 @@
   "nsis": {
     "guid": "${appId}",
     "include": "./scripts/config/resources/nsis/installer.nsh",
-    "perMachine": false,
-    "allowElevation": false,
-    "packElevateHelper": false,
+    "perMachine": true,
+    "allowElevation": true,
+    "packElevateHelper": true,
     "artifactName": "${productName}-Setup-${version}.${ext}",
     "unicode": true,
     "runAfterFinish": true,
