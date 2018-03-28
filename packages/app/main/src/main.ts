@@ -140,7 +140,7 @@ const createMainWindow = () => {
     .then(store => {
       store.subscribe(() => {
         const state = store.getState();
-        const botsJson = { bots: state.bot.botFiles };
+        const botsJson = { bots: state.bot.botFiles.filter(botFile => !!botFile) };
         const botsJsonPath = path.join(ensureStoragePath(), 'bots.json');
 
         try {

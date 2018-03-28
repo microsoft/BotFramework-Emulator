@@ -36,7 +36,7 @@ const CSS = css({
   }
 });
 
-type StateSlice = 'assetExplorer' | 'bot' | 'dialog' | 'editor' | 'explorer' | 'navBar' | 'server';
+type StateSlice = 'assetExplorer' | 'bot' | 'chat' | 'dialog' | 'editor' | 'explorer' | 'navBar' | 'server';
 
 interface IStoreVisualizerProps {
   enabled?: boolean;
@@ -83,6 +83,7 @@ class StoreVisualizer extends React.Component<IStoreVisualizerProps, IStoreVisua
               <select value={ this.state.selectedSlice } onChange={ this.onSelectSlice } >
                 <option value="assetExplorer">Asset Explorer</option>
                 <option value="bot">Bot</option>
+                <option value="chat">Chat</option>
                 <option value="dialog">Dialog</option>
                 <option value="editor">Editor</option>
                 <option value="explorer">Explorer</option>

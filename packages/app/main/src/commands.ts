@@ -2,7 +2,7 @@ import * as Electron from 'electron';
 import { emulator } from './emulator';
 import { Window } from './platform/window';
 import { CommandRegistry as CommReg, uniqueId } from '@bfemulator/sdk-shared';
-import { IBot, newBot, IFrameworkSettings } from '@bfemulator/app-shared';
+import { IActivity, IBot, newBot, IFrameworkSettings, usersDefault } from '@bfemulator/app-shared';
 import { ensureStoragePath, getSafeBotName, readFileSync, showOpenDialog, writeFile, showSaveDialog } from './utils';
 import * as BotActions from './data-v2/action/bot';
 import { app, Menu } from 'electron';
@@ -16,6 +16,9 @@ import * as OS from 'os';
 import { sync as mkdirpSync } from 'mkdirp';
 import { BotProjectFileWatcher } from './botProjectFileWatcher';
 import { getAppMenuTemplate, getFileMenu, setFileMenu } from './appMenuBuilder';
+import { ProtocolHandler } from './protocolHandler';
+import { Protocol } from './constants';
+import { Conversation } from './conversationManager';
 
 //=============================================================================
 export const CommandRegistry = new CommReg();
@@ -142,11 +145,19 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Client notifying us it's initialized and has rendered
   CommandRegistry.registerCommand("client:loaded", () => {
+    // Reset the app title bar
+    mainWindow.commandService.call('app:setTitleBar');
     // Send app settings to client
     mainWindow.commandService.remoteCall("settings:emulator:url:set", emulator.framework.router.url);
-    // LOAD EXTENSIONS
+    // Load extensions
     ExtensionManager.unloadExtensions();
     ExtensionManager.loadExtensions();
+    // Parse command line args for a protocol url
+    const args = process.argv.length ? process.argv.slice(1) : [];
+    if (args.some(arg => arg.includes(Protocol))) {
+      const protocolArg = args.find(arg => arg.includes(Protocol));
+      ProtocolHandler.parseProtocolUrlAndDispatch(protocolArg);
+    }
   });
 
   //---------------------------------------------------------------------------
@@ -220,25 +231,41 @@ export function registerCommands() {
   });
 
   //---------------------------------------------------------------------------
-  // Feeds a transcript to a conversation
-  CommandRegistry.registerCommand('emulator:feed-transcript', (conversationId: string, filename: string) => {
+  // Feeds a transcript from disk to a conversation
+  CommandRegistry.registerCommand('emulator:feed-transcript:disk', (conversationId: string, filename: string) => {
     const activeBot: IBot = getActiveBot();
     if (!activeBot) {
-      throw new Error('feed-transcript: No active bot.');
+      throw new Error('feed-transcript:disk: No active bot.');
     }
 
     const conversation = emulator.conversations.conversationById(activeBot.id, conversationId);
     if (!conversation) {
-      throw new Error(`feed-transcript: Conversation ${conversationId} not found.`);
+      throw new Error(`feed-transcript:disk: Conversation ${conversationId} not found.`);
     }
 
     const path = Path.resolve(filename);
     const stat = Fs.statSync(path);
     if (!stat || !stat.isFile()) {
-      throw new Error(`feed-transcript: File ${filename} not found.`);
+      throw new Error(`feed-transcript:disk: File ${filename} not found.`);
     }
 
     const activities = JSON.parse(readFileSync(path));
+
+    conversation.feedActivities(activities);
+  });
+
+  //---------------------------------------------------------------------------
+  // Feeds a deep-linked transcript (array of parsed activities) to a conversation
+  CommandRegistry.registerCommand('emulator:feed-transcript:deep-link', (conversationId: string, activities: IActivity): void => {
+    const activeBot: IBot = getActiveBot();
+    if (!activeBot) {
+      throw new Error('emulator:feed-transcript:deep-link: No active bot.');
+    }
+
+    const conversation = emulator.conversations.conversationById(activeBot.id, conversationId);
+    if (!conversation) {
+      throw new Error(`emulator:feed-transcript:deep-link: Conversation ${conversationId} not found.`);
+    }
 
     conversation.feedActivities(activities);
   });
@@ -274,5 +301,26 @@ export function registerCommands() {
   // Refresh a speech token
   CommandRegistry.registerCommand('speech-token:refresh', (authIdEvent: string, conversationId: string) => {
     return emulator.getSpeechToken(authIdEvent, conversationId, true);
+  });
+
+  //---------------------------------------------------------------------------
+  // Creates a new conversation object
+  CommandRegistry.registerCommand('conversation:new', (mode: string): Conversation => {
+    if ((mode !== 'transcript') && (mode !== 'livechat')){
+      throw new Error('A mode of either "transcript" or "livechat" must be provided to "conversation:new"');
+    }
+
+    // get the active bot or mock one
+    let bot: IBot = getActiveBot();
+    if (!bot) {
+      bot = newBot({});
+      mainWindow.store.dispatch(BotActions.mockAndSetActive(bot));
+    }
+
+    // create a conversation object
+    const conversationId = `${uniqueId()}|${mode}`;
+    // TODO: Move away from the .users state on legacy emulator settings, and towards per-conversation users
+    const conversation = emulator.conversations.newConversation(bot.id, {}, conversationId);
+    return conversation;
   });
 }

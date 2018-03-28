@@ -175,6 +175,35 @@ class Emulator extends React.Component {
       props.document.directLine.end();
     }
 
+    if (props.mode === 'transcript') {
+      CommandService.remoteCall('conversation:new', props.mode)
+        .then(conversation => {
+          if (props.document && props.document.deepLink && props.document.activities) {
+            // transcript was deep linked via protocol, and should just be fed its own activities attached to the document
+            CommandService.remoteCall('emulator:feed-transcript:deep-link', conversation.conversationId, props.document.activities)
+              .then(() => {
+                this.initConversation(props, conversation.conversationId, selectedActivity$, subscription)
+              })
+              .catch(err => { throw new Error(`Error while feeding deep-linked transcript to conversation: ${err}`) });
+          } else {
+            // the transcript is on disk, so its activities need to be read on the main side and fed in
+            CommandService.remoteCall('emulator:feed-transcript:disk', conversation.conversationId, props.document.documentId)
+              .then(() => {
+                this.initConversation(props, conversation.conversationId, selectedActivity$, subscription)
+              })
+              .catch(err => { throw new Error(`Error while feeding transcript on disk to conversation: ${err}`) });
+          }
+        })
+        .catch(err => {
+          // TODO: surface error somewhere
+          console.error('Error creating a new conversation for transcript mode: ', err)
+        });
+    } else {
+      this.initConversation(props, conversationId, selectedActivity$, subscription);
+    }
+  }
+
+  initConversation(props, conversationId, selectedActivity$, subscription) {
     const webChatStore = BotChat.createStore();
 
     const directLine = new BotChat.DirectLine({
@@ -192,13 +221,6 @@ class Emulator extends React.Component {
         selectedActivity$,
         subscription
       }));
-
-    // 😱😱😱
-    if (props.mode === "transcript") {
-      setTimeout(() => {
-        CommandService.remoteCall('emulator:feed-transcript', conversationId, props.document.documentId);
-      }, 1000)
-    }
   }
 
   handleStartOverClick() {

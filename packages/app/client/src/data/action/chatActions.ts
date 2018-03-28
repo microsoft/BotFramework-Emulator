@@ -140,7 +140,7 @@ export function removeTranscript(filename: string): ChatAction {
   };
 }
 
-export function newDocument(documentId: string, mode: ChatMode, ...args: any[]): ChatAction {
+export function newDocument(documentId: string, mode: ChatMode, additionalData?: object): ChatAction {
   return {
     type: NEW_CHAT_DOCUMENT,
     payload: {
@@ -176,7 +176,7 @@ export function newDocument(documentId: string, mode: ChatMode, ...args: any[]):
           }
         ],
       },
-      ...args
+      ...additionalData
     }
   }
 }

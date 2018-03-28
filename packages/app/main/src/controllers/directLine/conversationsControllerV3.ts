@@ -70,11 +70,6 @@ export class ConversationsControllerV3 {
     const conversationId = tokenMatch[1];
     logRequest(conversationId, "user", req);
 
-    if (conversationId && conversationId.includes("transcript") && !activeBot) {
-      mainWindow.store.dispatch(BotActions.setActiveRandom());
-      activeBot = getActiveBot();
-    }
-
     if (activeBot) {
       let created = false;
       const users = getSettings().users;

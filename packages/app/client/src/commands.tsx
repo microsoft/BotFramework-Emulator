@@ -90,18 +90,16 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Open the transcript file in a tabbed document
-  CommandRegistry.registerCommand('transcript:open', (filename) => {
+  CommandRegistry.registerCommand('transcript:open', (filename: string, additionalData?: object) => {
     const tabGroup = getTabGroupForDocument(filename);
-    if (tabGroup) {
-      store.dispatch(EditorActions.setActiveTab(filename));
-    } else {
-      store.dispatch(ChatActions.newDocument(filename, "transcript"));
-      store.dispatch(EditorActions.open(
-        Constants.ContentType_Transcript,
-        filename,
-        false
-      ));
+    if (!tabGroup) {
+      store.dispatch(ChatActions.newDocument(filename, "transcript", additionalData));
     }
+    store.dispatch(EditorActions.open(
+      Constants.ContentType_Transcript,
+      filename,
+      false
+    ));
   });
 
   //---------------------------------------------------------------------------

@@ -85,9 +85,11 @@ export function setActive(bot: IBot, botDirectory: string) {
   };
 }
 
-export function setActiveRandom() {
+export function mockAndSetActive(mock?: IBot) {
   const bot = newBot({
-    botName: 'Random Bot'
-  });
+      botName: 'Random Bot'
+    },
+    mock
+  );
   return setActive(bot, '');
 }

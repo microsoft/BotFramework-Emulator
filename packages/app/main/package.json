@@ -88,6 +88,7 @@
     "moment": "^2.20.1",
     "mz": "^2.7.0",
     "node-uuid": "^1.4.8",
+    "query-string": "^6.0.0",
     "redux": "^3.7.2",
     "redux-promise-middleware": "^5.0.0",
     "redux-saga": "^0.16.0",

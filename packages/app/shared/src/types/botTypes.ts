@@ -43,7 +43,7 @@ export interface IBot {
   msaPassword?: string
 }
 
-export function newBot(bot: IBot): IBot {
+export function newBot(...bots: IBot[]): IBot {
   return Object.assign(
     {},
     {
@@ -55,7 +55,7 @@ export function newBot(bot: IBot): IBot {
       msaAppId: '',
       msaPassword: ''
     },
-    bot
+    ...bots
   );
 }
 

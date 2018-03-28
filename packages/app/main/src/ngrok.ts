@@ -45,7 +45,7 @@ var bin = 'ngrok' + (platform === 'win32' ? '.exe' : '');
 var ready = /starting web service.*addr=(\d+\.\d+\.\d+\.\d+:\d+)/;
 
 var noop = function () { };
-var emitter = new Emitter().on('error', noop);
+export var ngrokEmitter = new Emitter().on('error', noop);
 var api:(any) => Promise<any>;
 var ngrok, tunnels = {};
 var inspectUrl = "";
@@ -70,12 +70,12 @@ export function connect(opts, cb) {
 	lock('ngrok', function (release) {
 		function run(err) {
 			if (err) {
-				emitter.emit('error', err);
+				ngrokEmitter.emit('error', err);
 				return cb(err);
 			}
 			runNgrok(opts, release(function (err) {
 				if (err) {
-					emitter.emit('error', err);
+					ngrokEmitter.emit('error', err);
 					return cb(err);
 				}
 				runTunnel(opts, cb)
@@ -155,11 +155,11 @@ function runNgrok(opts, cb) {
 	ngrok.on('exit', function () {
 		api = null;
 		tunnels = {};
-		emitter.emit('disconnect');
+		ngrokEmitter.emit('disconnect');
 	});
 
 	ngrok.on('close', function () {
-		return emitter.emit('close');
+		return ngrokEmitter.emit('close');
 	});
 
 	(process as NodeJS.EventEmitter).on('exit', function () {
@@ -170,10 +170,10 @@ function runNgrok(opts, cb) {
 function runTunnel(opts, cb) {
 	_runTunnel(opts, function (err, url, inspectPort) {
 		if (err) {
-			emitter.emit('error', err);
+			ngrokEmitter.emit('error', err);
 			return cb(err);
 		}
-		emitter.emit('connect', url, inspectPort);
+		ngrokEmitter.emit('connect', url, inspectPort);
 		return cb(null, url, inspectPort);
 	});
 }
@@ -250,7 +250,7 @@ export function disconnect(url, cb) {
 					return cb(new Error(resp.body));
 				}
 				delete tunnels[url];
-				emitter.emit('disconnect', url);
+				ngrokEmitter.emit('disconnect', url);
 				return cb();
 			})
 			.catch(err => {
@@ -263,10 +263,10 @@ export function disconnect(url, cb) {
 		disconnect,
 		function (err) {
 			if (err) {
-				emitter.emit('error', err);
+				ngrokEmitter.emit('error', err);
 				return cb(err);
 			}
-			emitter.emit('disconnect');
+			ngrokEmitter.emit('disconnect');
 			return cb();
 		});
 }
@@ -280,7 +280,7 @@ export function kill(cb) {
 	ngrok.on('exit', function () {
 		// api = null;
 		// tunnels = {};
-		// emitter.emit('disconnect');
+		// ngrokEmitter.emit('disconnect');
 		cb(true);
 	});
 	try {
