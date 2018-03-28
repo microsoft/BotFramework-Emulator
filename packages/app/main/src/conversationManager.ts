@@ -213,8 +213,8 @@ export class Conversation {
     if (!activity.from.name) {
       activity.from.name = "Bot";
     }
-      // Fill in role field, if missing
-      if (!activity.recipient.role) {
+    // Fill in role field, if missing
+    if (!activity.recipient.role) {
       activity.recipient.role = "user";
     }
     this.addActivityToQueue(activity);
@@ -604,18 +604,15 @@ export class Conversation {
       if (!origBotId && activity.recipient.role === "bot") {
         origBotId = activity.recipient.id;
       }
-      if (!origBotId && activity.recipient.role === "user") {
-        if (!origUserId)
-          origUserId = activity.recipient.id;
-        if (origBotId)
-          activity.recipient.id = currUserId;
+      if (!origUserId && activity.recipient.role === "user") {
+        origUserId = activity.recipient.id;
       }
       if (activity.conversation) {
         activity.conversation.id = this.conversationId
       }
     });
     // Fixup recipient and from ids
-    if (origUserId || origBotId) {
+    if (origUserId && origBotId) {
       activities.forEach(activity => {
         if (activity.recipient.id === origBotId)
           activity.recipient.id = this.bot.id;

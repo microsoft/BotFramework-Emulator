@@ -62,12 +62,14 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
     this.onChangeAuthTokenVersion = this.onChangeAuthTokenVersion.bind(this);
     this.setDirtyFlag = debounce(this.setDirtyFlag, 500);
     this.onClickDiscard = this.onClickDiscard.bind(this);
+    this.onChangeLocalhost = this.onChangeLocalhost.bind(this);
 
     this.state = {
       ngrokPath: '',
       bypassNgrokLocalhost: true,
       stateSizeLimit: 64,
-      use10Tokens: false
+      use10Tokens: false,
+      localhost: ''
     };
   }
 
@@ -104,8 +106,9 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
     const settings: IFrameworkSettings = {
       ngrokPath: this.state.ngrokPath.trim(),
       bypassNgrokLocalhost: this.state.bypassNgrokLocalhost,
-      stateSizeLimit: +this.state.stateSizeLimit.trim(),
-      use10Tokens: this.state.use10Tokens
+      stateSizeLimit: +this.state.stateSizeLimit,
+      use10Tokens: this.state.use10Tokens,
+      localhost: this.state.localhost.trim()
     };
 
     CommandService.remoteCall('app:settings:save', settings)
@@ -122,6 +125,11 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
 
   onChangeNgrokBypass(e): void {
     this.setState(({ bypassNgrokLocalhost: !this.state.bypassNgrokLocalhost }));
+    this.setDirtyFlag(true);
+  }
+
+  onChangeLocalhost(e): void {
+    this.setState({ localhost: e.target.value });
     this.setDirtyFlag(true);
   }
 
@@ -142,17 +150,20 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
             <SmallHeader>Service settings</SmallHeader>
             <p><a href="https://ngrok.com/" target="_blank">ngrok</a> is network tunneling software. The Bot Framework Emulator works with ngrok to communicate with bots hosted remotely. Read the <a href="https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)" target="_blank">wiki page</a> to learn more about using ngrok and to download it.</p>
             <Row align={ RowAlignment.Center }>
-              <TextInputField readOnly={ true } value={ this.state.ngrokPath } label={ 'Path to ngrok' } />
+              <TextInputField readOnly={ false } value={ this.state.ngrokPath } label={ 'Path to ngrok' } />
               <PrimaryButton onClick={ this.onClickBrowse } text={ 'Browse' } className="browse-button" />
             </Row>
             <Checkbox checked={ this.state.bypassNgrokLocalhost } onChange={ this.onChangeNgrokBypass } id={ 'ngrok-bypass' } label={ 'Bypass ngrok for local addresses' } />
             <Checkbox checked={ this.state.use10Tokens } onChange={ this.onChangeAuthTokenVersion } id={ 'auth-token-version' } label={ 'Use version 1.0 authentication tokens' } />
+            <Row align={ RowAlignment.Center }>
+              <TextInputField readOnly={ false } value={ this.state.localhost } onChange={ this.onChangeLocalhost } label={ 'localhost override' } />
+            </Row>
           </Column>
           <Column className="right-column">
             <SmallHeader>Bot state settings</SmallHeader>
             <p>Bots use the <a href="https://docs.microsoft.com/en-us/bot-framework/dotnet/bot-builder-dotnet-state" target="_blank">Bot State service</a> to store and retrieve application data. The Bot Framework's bot state service has a size limit of 64KB. Custom state services may differ.</p>
             <Row align={ RowAlignment.Center }>
-              <NumberInputField min={ 0 } value={ this.state.stateSizeLimit } onChange={ this.onChangeSizeLimit} label={ 'Size limit (zero for no limit)' } />
+              <NumberInputField min={ 0 } value={ this.state.stateSizeLimit } onChange={ this.onChangeSizeLimit } label={ 'Size limit (zero for no limit)' } />
               <span className="size-limit-suffix">KB</span>
             </Row>
           </Column>

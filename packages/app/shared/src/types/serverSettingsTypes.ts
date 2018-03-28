@@ -41,7 +41,9 @@ export interface IFrameworkSettings {
   bypassNgrokLocalhost?: boolean,
   stateSizeLimit?: number,
   // option for using 2.0 or 1.0 tokens
-  use10Tokens?: boolean
+  use10Tokens?: boolean,
+  // address to use for localhost, default: localhost
+  localhost?: string
 }
 
 export interface IWindowStateSettings {
@@ -83,7 +85,8 @@ export const frameworkDefault: IFrameworkSettings = {
   ngrokPath: '',
   bypassNgrokLocalhost: true,
   stateSizeLimit: 64,
-  use10Tokens: false
+  use10Tokens: false,
+  localhost: 'localhost'
 }
 
 export const windowStateDefault: IWindowStateSettings = {

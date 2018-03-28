@@ -154,7 +154,7 @@ export default class BotCreationDialog extends React.Component<{}, IBotCreationD
           </Row>
           <Row className="multi-input-row" align={ RowAlignment.Center }>
             <TextInputField value={ this.state.bot.botName } onChange={ this.onChangeName } label={ 'Bot name' } required={ true } />
-            <TextInputField value={ this.state.botDirectory } label={ 'Project folder' } readOnly={ true } required={ true } />
+            <TextInputField value={ this.state.botDirectory } label={ 'Project folder' } readOnly={ false } required={ true } />
             <PrimaryButton text='Browse' onClick={ this.onSelectFolder } className="browse-button" />
           </Row>
           <Row className="multi-input-row button-row" justify={ RowJustification.Right }>

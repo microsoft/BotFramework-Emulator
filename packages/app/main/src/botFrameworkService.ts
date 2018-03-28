@@ -49,120 +49,133 @@ import { isLocalhostUrl } from './utils';
  */
 export class BotFrameworkService extends RestServer {
 
-    localhostServiceUrl: string;
-    inspectUrl: string;
-    ngrokPath: string;
-    ngrokServiceUrl: string;
-    bypassNgrokLocalhost: boolean;
+  localhostServicePort: number;
+  inspectUrl: string;
+  ngrokPath: string;
+  ngrokServiceUrl: string;
+  bypassNgrokLocalhost: boolean;
 
-    public getServiceUrl(botUrl: string) {
-        if (this.bypassNgrokLocalhost && isLocalhostUrl(botUrl))
-            return this.localhostServiceUrl;
-        else {
-            return ngrok.running()
-                ? this.ngrokServiceUrl || this.localhostServiceUrl
-                : this.localhostServiceUrl;
-        }
+  getLocalhostServiceUrl(): string {
+    let localhost = getStore().getState().framework.localhost;
+    let port = this.localhostServicePort;
+    localhost = localhost && localhost.length ? localhost : "localhost";
+    const parts = localhost.split(':');
+    if (parts.length == 2) {
+      localhost = parts[0];
+      port = +parts[1];
     }
+    // Ignore user-specified port, for now.
+    return `http://${localhost}:${this.localhostServicePort}`;
+  }
 
-    authentication = new BotFrameworkAuthentication();
-
-    constructor() {
-        super("Emulator");
-        ConversationsController.registerRoutes(this, this.authentication);
-        AttachmentsController.registerRoutes(this);
-        BotStateController.registerRoutes(this, this.authentication);
-        DirectLineConversationsController.registerRoutes(this);
-        EmulatorController.registerRoutes(this);
-        addSettingsListener((settings: Settings) => {
-            this.configure(settings);
-        });
+  public getServiceUrl(botUrl: string) {
+    if (this.bypassNgrokLocalhost && isLocalhostUrl(botUrl))
+      return this.getLocalhostServiceUrl();
+    else {
+      return ngrok.running()
+        ? this.ngrokServiceUrl || this.getLocalhostServiceUrl()
+        : this.getLocalhostServiceUrl();
     }
+  }
 
-    startup() {
-        this.restart();
-    }
+  authentication = new BotFrameworkAuthentication();
 
-    relaunchNgrok(settings: Settings) {
-        let router = this.router;
-        if (!router) return;
-        let address = router.address();
-        if (!address) return;
-        let port = address.port;
-        if (!port) return;
-        const prevNgrokPath = this.ngrokPath;
-        this.ngrokPath = settings.framework.ngrokPath;
-        const prevbypassNgrokLocalhost = this.bypassNgrokLocalhost;
-        this.bypassNgrokLocalhost = settings.framework.bypassNgrokLocalhost;
-        this.localhostServiceUrl = `http://localhost:${port}`;
-        const startNgrok = () => {
-            this.inspectUrl = null;
-            this.ngrokServiceUrl = null;
-            // if we have an ngrok path
-            if (this.ngrokPath) {
-                // then make it so
-                ngrok.connect({
-                    port,
-                    path: this.ngrokPath
-                }, (err, url: string, inspectUrl: string) => {
-                    if (err) {
-                        log.error(`Failed to start ngrok: ${err.message || err.msg}`);
-                        if (err.code && err.code === 'ENOENT') {
-                            log.debug("The path to ngrok may be incorrect.");
-                            log.error(log.ngrokConfigurationLink('Edit ngrok settings'));
-                        } else {
-                            log.debug("ngrok may already be running in a different process. ngrok's free tier allows only one instance at a time per host.");
-                        }
-                    } else {
-                        this.inspectUrl = inspectUrl;
-                        this.ngrokServiceUrl = url;
-                        log.debug(`ngrok listening on ${url}`);
-                        log.debug('ngrok traffic inspector:', log.makeLinkMessage(inspectUrl, inspectUrl));
-                        if (this.bypassNgrokLocalhost) {
-                            log.debug(`Will bypass ngrok for local addresses`);
-                        } else {
-                            log.debug(`Will use ngrok for local addresses`);
-                        }
-                    }
-                    // Sync settings to client
-                    getStore().dispatch({
-                        type: 'Framework_Set',
-                        state: {
-                            ngrokPath: this.ngrokPath,
-                            bypassNgrokLocalhost: this.bypassNgrokLocalhost
-                        }
-                    });
-                });
+  constructor() {
+    super("Emulator");
+    ConversationsController.registerRoutes(this, this.authentication);
+    AttachmentsController.registerRoutes(this);
+    BotStateController.registerRoutes(this, this.authentication);
+    DirectLineConversationsController.registerRoutes(this);
+    EmulatorController.registerRoutes(this);
+    addSettingsListener((settings: Settings) => {
+      this.configure(settings);
+    });
+  }
+
+  startup() {
+    this.restart();
+  }
+
+  relaunchNgrok(settings: Settings) {
+    let router = this.router;
+    if (!router) return;
+    let address = router.address();
+    if (!address) return;
+    let port = address.port;
+    if (!port) return;
+    const prevNgrokPath = this.ngrokPath;
+    this.ngrokPath = settings.framework.ngrokPath;
+    const prevbypassNgrokLocalhost = this.bypassNgrokLocalhost;
+    this.bypassNgrokLocalhost = settings.framework.bypassNgrokLocalhost;
+    this.localhostServicePort = +port;
+    const startNgrok = () => {
+      this.inspectUrl = null;
+      this.ngrokServiceUrl = null;
+      // if we have an ngrok path
+      if (this.ngrokPath) {
+        // then make it so
+        ngrok.connect({
+          port,
+          path: this.ngrokPath
+        }, (err, url: string, inspectUrl: string) => {
+          if (err) {
+            log.error(`Failed to start ngrok: ${err.message || err.msg}`);
+            if (err.code && err.code === 'ENOENT') {
+              log.debug("The path to ngrok may be incorrect.");
+              log.error(log.ngrokConfigurationLink('Edit ngrok settings'));
             } else {
-                log.debug("ngrok not configured (only needed when connecting to remotely hosted bots)");
-                log.error(log.makeLinkMessage('Connecting to bots hosted remotely', 'https://aka.ms/cnjvpo'));
-                log.error(log.ngrokConfigurationLink('Edit ngrok settings'));
+              log.debug("ngrok may already be running in a different process. ngrok's free tier allows only one instance at a time per host.");
             }
-        }
-        if (this.ngrokPath !== prevNgrokPath) {
-            ngrok.kill((wasRunning) => {
-                if (wasRunning)
-                    log.debug('ngrok stopped');
-                startNgrok();
-                return true;
-            });
-        } else if (this.ngrokServiceUrl && this.bypassNgrokLocalhost !== prevbypassNgrokLocalhost) {
+          } else {
+            this.inspectUrl = inspectUrl;
+            this.ngrokServiceUrl = url;
+            log.debug(`ngrok listening on ${url}`);
+            log.debug('ngrok traffic inspector:', log.makeLinkMessage(inspectUrl, inspectUrl));
             if (this.bypassNgrokLocalhost) {
-                log.debug(`Will bypass ngrok for local addresses`);
+              log.debug(`Will bypass ngrok for local addresses`);
             } else {
-                log.debug(`Will use ngrok for local addresses`);
+              log.debug(`Will use ngrok for local addresses`);
             }
-        }
+          }
+          // Sync settings to client
+          getStore().dispatch({
+            type: 'Framework_Set',
+            state: {
+              ngrokPath: this.ngrokPath,
+              bypassNgrokLocalhost: this.bypassNgrokLocalhost
+            }
+          });
+        });
+      } else {
+        log.debug("ngrok not configured (only needed when connecting to remotely hosted bots)");
+        log.error(log.makeLinkMessage('Connecting to bots hosted remotely', 'https://aka.ms/cnjvpo'));
+        log.error(log.ngrokConfigurationLink('Edit ngrok settings'));
+      }
     }
+    if (this.ngrokPath !== prevNgrokPath) {
+      ngrok.kill((wasRunning) => {
+        if (wasRunning)
+          log.debug('ngrok stopped');
+        startNgrok();
+        return true;
+      });
+    } else if (this.ngrokServiceUrl && this.bypassNgrokLocalhost !== prevbypassNgrokLocalhost) {
+      if (this.bypassNgrokLocalhost) {
+        log.debug(`Will bypass ngrok for local addresses`);
+      } else {
+        log.debug(`Will use ngrok for local addresses`);
+      }
+    }
+  }
 
-    /**
-     * Applies configuration changes.
-     */
-    private configure(settings: Settings) {
-        // Did ngrok path change?
-        if (this.ngrokPath !== settings.framework.ngrokPath ||
-                this.bypassNgrokLocalhost !== settings.framework.bypassNgrokLocalhost) {
-            this.relaunchNgrok(settings);
-        }
+  /**
+   * Applies configuration changes.
+   */
+  private configure(settings: Settings) {
+    // Did ngrok path change?
+    if (this.ngrokPath !== settings.framework.ngrokPath ||
+      this.bypassNgrokLocalhost !== settings.framework.bypassNgrokLocalhost) {
+      this.relaunchNgrok(settings);
     }
+  }
 }

@@ -173,9 +173,6 @@ class NavBar extends React.Component {
     return (
       <nav className={ CSS }>
         <ul className="app">
-          <li role="button" className="app" title="App">
-            <div />
-          </li>
           <li role="button" className="files" onClick={ this.handleFilesClick } title="Files">
             <div className={ classNames({ selected: selection === Constants.NavBar_Files }) } />
           </li>
