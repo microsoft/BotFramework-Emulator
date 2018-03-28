@@ -1,5 +1,7 @@
+import * as uuidv1 from "uuid/v1";
+
 export function uniqueId(): string {
-  return Math.random().toString(36).substr(2);
+  return uuidv1().toString();
 }
 
 export function isObject(item: any): boolean {
