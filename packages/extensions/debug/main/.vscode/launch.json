@@ -8,7 +8,8 @@
       "type": "node",
       "request": "launch",
       "name": "Launch Program",
-      "program": "${workspaceFolder}\\built\\index.js"
+      "program": "${workspaceFolder}/built/index.js",
+      "cwd": "${workspaceFolder}/built"
     }
   ]
 }

@@ -26,7 +26,7 @@
     "react-dev-utils": "^5.0.0",
     "react-scripts-ts": "^2.13.0",
     "rimraf": "^2.6.2",
-    "typescript": "^2.7.2"
+    "typescript": "2.7.2"
   },
   "dependencies": {
     "@bfemulator/app-shared": "^1.0.0",

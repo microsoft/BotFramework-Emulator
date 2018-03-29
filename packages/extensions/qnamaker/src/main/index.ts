@@ -1,5 +1,6 @@
 import { IPC, CommandService } from '@bfemulator/sdk-shared';
 import { ProcessIPC, WebSocketIPC, stayAlive } from '@bfemulator/sdk-main';
+import * as path from 'path';
 const config = require('../../bf-extension.json');
 
 /**
@@ -25,6 +26,7 @@ if (process.send) {
   connector.on('hello', () => {
     return {
       id: ipc.id,
+      configPath: path.resolve('../../'),
       config
     }});
 }

@@ -72,7 +72,7 @@
     "react-scripts-ts": "^2.13.0",
     "rimraf": "^2.6.2",
     "source-map-loader": "^0.2.3",
-    "typescript": "^2.7.2",
+    "typescript": "2.7.2",
     "vinyl-source-stream": "^2.0.0",
     "vo": "^4.0.2",
     "webpack": "^4.0.1",

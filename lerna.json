@@ -10,7 +10,8 @@
     "packages/sdk/main",
     "packages/sdk/shared",
     "packages/extensions/qnamaker",
-    "packages/extensions/debug"
+    "packages/extensions/debug/client",
+    "packages/extensions/debug/main"
   ],
   "version": "independent"
 }

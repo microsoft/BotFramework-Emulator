@@ -74,6 +74,15 @@ export const ExtensionManager = new class implements IExtensionManager {
     }
   }
 
+  public findExtension(name: string): Extension {
+    for (let unid in this.extensions) {
+      const extension = this.extensions[unid];
+      if (extension.config.name === name)
+        return extension;
+    }
+    return null;
+  }
+
   public fileActivated(path: string) {
     const handlers: Extension[] = [];
     for (let unid in this.extensions) {

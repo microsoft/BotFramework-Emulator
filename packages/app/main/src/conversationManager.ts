@@ -200,7 +200,11 @@ export class Conversation {
       membersAdded,
       membersRemoved
     }
-    this.postActivityToBot(activity, false, () => { });
+    this.postActivityToBot(activity, false, (err) => {
+      if (err) {
+        logError(this.conversationId, err);
+      }
+     });
   }
 
   /**

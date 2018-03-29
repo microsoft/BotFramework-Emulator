@@ -47,7 +47,6 @@ import { ensureStoragePath, writeFile, isDev } from './utils';
 import * as squirrel from './squirrelEvents';
 import * as Commands from './commands';
 import { getBotInfoById } from './botHelpers';
-import { ExtensionServer } from './extensions';
 import { getAppMenuTemplate } from './appMenuBuilder';
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
@@ -77,15 +76,6 @@ Commands.registerCommands();
 
 // PARSE COMMAND LINE
 commandLine.parseArgs();
-
-// INIT EXTENSION SERVER (FOR EXTENSION DEVELOPMENT)
-if (isDev) {
-  try {
-    ExtensionServer.init();
-  } catch (err) {
-    console.log("Failed to start extension server", err)
-  }
-}
 
 Electron.app.on('will-finish-launching', (event, args) => {
   Electron.ipcMain.on('getUrls', (event, arg) => {

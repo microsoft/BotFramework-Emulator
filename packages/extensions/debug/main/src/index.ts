@@ -1,5 +1,6 @@
 import { IPC, CommandService, IActivity } from '@bfemulator/sdk-shared';
 import { ProcessIPC, WebSocketIPC, stayAlive } from '@bfemulator/sdk-main';
+import * as path from 'path';
 const config = require('../../bf-extension.json');
 
 /**
@@ -18,12 +19,18 @@ if (process.send) {
   ipc = new ProcessIPC(process);
 } else {
   // We're a peer process
-  ipc = new WebSocketIPC();
+  config.node = config.node || {};
+  config.node.debug = config.node.debug || {};
+  config.node.debug.webpack = config.node.debug.websocket || {};
+  config.node.debug.webpack.port = config.node.debug.websocket.port || 3030;
+  config.node.debug.webpack.host = config.node.debug.websocket.host || "localhost";
+  ipc = new WebSocketIPC(`http://${config.node.debug.websocket.host}:${config.node.debug.websocket.port}`);
   ipc.id = process.pid;
   const connector = new CommandService(ipc, 'connector');
   connector.on('hello', () => {
     return {
       id: ipc.id,
+      configPath: path.resolve('../../'),
       config
     }});
 }

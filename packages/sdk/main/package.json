@@ -16,7 +16,7 @@
     "@types/ws": "^4.0.1",
     "jest": "^22.4.2",
     "rimraf": "^2.6.2",
-    "typescript": "^2.7.2"
+    "typescript": "2.7.2"
   },
   "dependencies": {
     "@bfemulator/sdk-shared": "^1.0.0",

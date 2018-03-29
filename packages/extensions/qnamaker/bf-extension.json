@@ -1,19 +1,24 @@
 {
   "name": "QnA Maker",
-  "main": "index.js",
-  "portals": [
-    {
-      "title": "QnA Maker",
-      "url": "http://qnamaker.ai"
-    }
-  ],
-  "files": [
-    ".qna",
-    "/.*\\.qna$/i"
-  ],
-  "inspectors": [
-    {
-      "trace": "qnamaker"
-    }
-  ]
+  "node": {
+    "main": "index.js"
+  },
+  "client": {
+    "portals": [
+      {
+        "title": "QnA Maker",
+        "url": "http://qnamaker.ai"
+      }
+    ],
+    "files": [
+      ".qna",
+      "/.*\\.qna$/i"
+    ],
+    "inspectors": [
+      {
+        "name": "QnA Maker",
+        "path": "client/built/inspector.html"
+      }
+    ]
+  }
 }

@@ -1,13 +1,29 @@
 {
   "name": "Debug",
-  "main": "index.js",
-  "portals": [
-  ],
-  "files": [
-  ],
-  "inspectors": [
-    {
-      "trace": "debug"
+  "node": {
+    "main": "main/built/index.js",
+    "debug": {
+      "enabled": false,
+      "websocket": {
+        "port": 8081
+      }
     }
-  ]
+  },
+  "client": {
+    "basePath": "client/build/",
+    "debug": {
+      "enabled": false,
+      "webpack": {
+        "port": 3031
+      }
+    },
+    "portals": [],
+    "filetypes": [],
+    "inspectors": [
+      {
+        "name": "Debug",
+        "path": "client/build/index.html"
+      }
+    ]
+  }
 }

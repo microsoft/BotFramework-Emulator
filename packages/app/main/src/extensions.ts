@@ -1,4 +1,4 @@
-import { IPC, IDisposable, Disposable, CommandService, IExtensionConfig, uniqueId } from '@bfemulator/sdk-shared';
+import { IPC, IDisposable, Disposable, CommandService, IExtensionConfig, uniqueId, NoopIPC } from '@bfemulator/sdk-shared';
 import { ProcessIPC, WebSocketIPC, WebSocketServer } from '@bfemulator/sdk-main';
 import { getDirectories, readFileSync, isDev } from './utils';
 import { fork, ChildProcess } from 'child_process';
@@ -116,9 +116,19 @@ export class PeerExtension extends Extension {
 }
 
 //=============================================================================
+export class ClientExtension extends Extension {
+  constructor(config: IExtensionConfig) {
+    super(config, new NoopIPC());
+  }
+  on(event: 'exit', listener: NodeJS.ExitListener) { }
+  connect() { }
+  disconnect() { }
+}
+
+//=============================================================================
 export interface IExtensionManager {
   findExtension(name: string): IExtension;
-  addExtension(extension: IExtension);
+  addExtension(extension: IExtension, configPath: string);
   loadExtensions();
   unloadExtensions();
 }
@@ -171,7 +181,9 @@ export const ExtensionManager = new class extends Disposable implements IExtensi
     }
   }
 
-  public addExtension(extension: IExtension) {
+  public addExtension(extension: IExtension, configPath: string) {
+    // Cleanup configPath
+    configPath = configPath.replace(/\\/g, '/');
     // Remove any previous extension with matching name.
     const existing = this.findExtension(extension.config.name);
     if (existing) {
@@ -184,7 +196,37 @@ export const ExtensionManager = new class extends Disposable implements IExtensi
       this.unloadExtension(extension.unid);
     });
     console.log(`Adding extension ${extension.config.name}`);
-    // Connect to the extension.
+    // Cleanup some data
+    extension.config.client = extension.config.client || {};
+    extension.config.node = extension.config.node || {};
+    // Cleanup basePath (root of webpack-dev-server, where index.html would live)
+    extension.config.client.basePath = (extension.config.client.basePath || "").replace(/\\/g, '/');
+    // Get the list of inspectors
+    const inspectors = extension.config.client.inspectors || [];
+    // Cleanup inspector paths
+    inspectors.forEach(inspector => {
+      inspector.path = (inspector.path || "").replace(/\\/g, '/');
+    });
+    if (extension.config.client.debug
+      && extension.config.client.debug.enabled
+      && extension.config.client.debug.webpack) {
+      // If running in debug mode, rewrite inspector paths as http URLs for webpack-dev-server.
+      const port = extension.config.client.debug.webpack.port || 3030;
+      const host = extension.config.client.debug.webpack.host || "localhost";
+      inspectors.forEach(inspector => {
+        inspector.path = `http://${host}:${port}/${inspector.path}`.replace(extension.config.client.basePath, "");
+      });
+    } else {
+      // If not in debug mode, rewrite paths as file path URLs.
+      inspectors.forEach(inspector => {
+        let folder = path.resolve(configPath).replace(/\\/g, '/');
+        if (folder[0] != '/') {
+          folder = `/${folder}`;
+        }
+        inspector.path = `file://${folder}/` + inspector.path;
+      });
+    }
+    // Connect to the extension's node process (if any).
     extension.connect();
     // Notify the client of the new extension.
     mainWindow.commandService.remoteCall('shell:extension-connect', extension.config, extension.unid);
@@ -204,23 +246,48 @@ export const ExtensionManager = new class extends Disposable implements IExtensi
           config = null;
         }
       }
-      if (config.name) {
-        const file = path.resolve(folder, config.main);
-        // Start the extension in a child process.
-        child = fork(file, [], {
-          cwd: path.dirname(file),
-          stdio: [0, 1, 2, 'ipc']
-        });
-        // Wrap the extension process.
-        const extension = new ChildExtension(config, child);
-        // Add it to the ecosystem (notifies client, etc).
-        this.addExtension(extension);
+      if (config && config.name) {
+        if (config.node) {
+          if (config.node.debug && config.node.debug.enabled) {
+            if (config.node.debug.websocket && config.node.debug.websocket.port) {
+              const port = +config.node.debug.websocket.port;
+              try {
+                // This extension is going to connect to us over websocket. Once that
+                // connection is established we'll add the extension.
+                const wss = new ExtensionServer(port);
+                console.log(`Waiting for extension ${config.name} to connect on port ${port}`);
+              } catch (err) {
+                console.log(`Failed to spawn WebSocketServer on port ${port}. Extension ${config.name} will be unable to connect.`, err);
+              }
+            }
+          } else if (config.node.main) {
+            // Launch node process as a child of this one.
+            const file = path.resolve(folder, config.node.main);
+            // Start the extension in a child process.
+            child = fork(file, [], {
+              cwd: path.dirname(file),
+              stdio: [0, 1, 2, 'ipc']
+            });
+            // Wrap the extension process.
+            const extension = new ChildExtension(config, child);
+            // Add it to the ecosystem (notifies client, etc).
+            this.addExtension(extension, folder);
+          }
+        } else {
+          // It's a client-only extension
+          const extension = new ClientExtension(config);
+          // Add it to the ecosystem (notifies client, etc).
+          this.addExtension(extension, folder);
+        }
       }
     } catch (err) {
+      // Something went wrong. If we still have a child process, try to kill it.
       console.log("Failed to spawn extension", folder, err);
-      if (child) {
-        child.kill();
-      }
+      try {
+        if (child) {
+          child.kill();
+        }
+      } catch (ex) { }
     }
   }
 }
@@ -239,20 +306,24 @@ class PendingExtension extends Disposable {
     this._ext.remoteCall('hello')
       .then((reply: {
         id: number,
+        configPath: string,
         config: IExtensionConfig
       }) => {
         const ipc = new WebSocketIPC(this._ws);
         ipc.id = reply.id;
+        const configPath = reply.configPath;
         const extension = new PeerExtension(reply.config, ipc);
-        ExtensionManager.addExtension(extension);
+        ExtensionManager.addExtension(extension, configPath);
         super.dispose();
       });
   }
 }
 //=============================================================================
-export const ExtensionServer = new class extends WebSocketServer {
+class ExtensionServer extends WebSocketServer {
 
-  init() { }
+  constructor(port: number) {
+    super(port);
+  }
 
   public onConnection(ws: WebSocket): void {
     new PendingExtension(ws);

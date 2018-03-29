@@ -29,3 +29,8 @@ export abstract class IPC extends Disposable implements ISender {
 
   abstract send(...args: any[]): void;
 }
+
+export class NoopIPC extends IPC {
+  get id(): number { return 0; }
+  send(...args: any[]): void { }
+}

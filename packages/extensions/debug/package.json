@@ -4,26 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npm run clean && tsc",
-    "clean": "rimraf ./built",
-    "prepare": "npm run clean && npm run build",
-    "test": "jest"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "concurrently \"npm run build:main\" \"npm run build:client\"",
+    "build:main": "cd ./main && npm run build",
+    "build:client": "cd ./client && npm run build"
   },
   "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@types/node": "^9.4.6",
-    "@types/react": "^16.0.38",
-    "@types/react-dom": "^16.0.4",
-    "jest": "^22.4.2",
-    "rimraf": "^2.6.2",
-    "typescript": "^2.7.2"
-  },
-  "dependencies": {
-    "@bfemulator/sdk-main": "^1.0.0",
-    "@bfemulator/sdk-shared": "^1.0.0",
-    "react-dom": "^16.2.0",
-    "react": "^16.2.0",
-    "tslib": "^1.9.0"
-  }
+  "license": "ISC"
 }
