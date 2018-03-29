@@ -3,6 +3,3 @@ lerna-debug.log
 node_modules
 npm-debug.log
 Thumbs.db
-
-# TODO: We should commit package-lock.json when things get stable
-package-lock.json
