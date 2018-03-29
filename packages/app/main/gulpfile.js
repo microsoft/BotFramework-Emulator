@@ -28,11 +28,14 @@ gulp.task('copy-extension-stubs', function () {
 
 //----------------------------------------------------------------------------
 gulp.task('build-qnamaker-extension', function () {
+  return Promise.resolve();
+  /*
   return gulp
     .src('../../extensions/qnamaker/package.json', { read: false })
     .pipe(shell([
       'npm run build'
     ], { cwd: '../../extensions/qnamaker/' }));
+    */
 });
 
 //----------------------------------------------------------------------------

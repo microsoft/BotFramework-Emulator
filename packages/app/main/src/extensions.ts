@@ -117,8 +117,9 @@ export class PeerExtension extends Extension {
 
 //=============================================================================
 export class ClientExtension extends Extension {
+  static counter: number = 0;
   constructor(config: IExtensionConfig) {
-    super(config, new NoopIPC());
+    super(config, new NoopIPC(--ClientExtension.counter));
   }
   on(event: 'exit', listener: NodeJS.ExitListener) { }
   connect() { }

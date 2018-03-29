@@ -1,8 +1,5 @@
 {
   "name": "QnA Maker",
-  "node": {
-    "main": "index.js"
-  },
   "client": {
     "portals": [
       {

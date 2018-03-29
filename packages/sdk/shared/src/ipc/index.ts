@@ -31,6 +31,9 @@ export abstract class IPC extends Disposable implements ISender {
 }
 
 export class NoopIPC extends IPC {
-  get id(): number { return 0; }
+  constructor(private _id: number) {
+    super();
+  }
+  get id(): number { return this._id; }
   send(...args: any[]): void { }
 }

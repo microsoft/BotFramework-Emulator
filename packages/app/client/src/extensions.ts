@@ -1,8 +1,9 @@
-import { IExtensionConfig, Channel, IDisposable, CommandService } from '@bfemulator/sdk-shared';
+import { IExtensionConfig, Channel, IDisposable, CommandService, IExtensionInspector } from '@bfemulator/sdk-shared';
 import { ElectronIPC } from './ipc';
 import { CommandRegistry } from './commands';
 import { IActivity } from '@bfemulator/app-shared';
 
+//=============================================================================
 export class Extension {
   private _ext: CommandService;
 
@@ -18,45 +19,25 @@ export class Extension {
     */
   }
 
+  public getInspectors(): IExtensionInspector[] {
+    return this.config.client.inspectors || [];
+  }
+
   public call<T = any>(commandName: string, ...args: any[]): Promise<T> {
     return this._ext.remoteCall<T>(commandName, ...args);
   }
-
-  public canActivateFile(filename: string): boolean {
-    if (this._config.files && this._config.files.length) {
-      for (let i = 0; i < this._config.files; ++i) {
-        const pattern = this._config.files[i];
-        if (typeof pattern === 'string') {
-          if (pattern.startsWith('.')) {
-            // Check file extension match
-            if (filename.endsWith(pattern)) {
-              return true;
-            }
-          } else if (pattern.startsWith('/')) {
-            // Check regex match
-            const regex = new RegExp(pattern);
-            if (regex.test(filename)) {
-              return true;
-            }
-          }
-        }
-      }
-    }
-    return false;
-  }
-
-  public getInspectors(activities: IActivity[]) {
-
-  }
 }
 
+//=============================================================================
 export interface IExtensionManager {
   registerCommands();
   addExtension(config: Extension, unid: string);
   removeExtension(unid: string);
-  fileActivated(path: string);
+  getExtensions(): Extension[];
+  getInspectors(): IExtensionInspector[];
 }
 
+//=============================================================================
 export const ExtensionManager = new class implements IExtensionManager {
   private extensions: { [unid: string]: Extension } = {};
 
@@ -83,14 +64,16 @@ export const ExtensionManager = new class implements IExtensionManager {
     return null;
   }
 
-  public fileActivated(path: string) {
-    const handlers: Extension[] = [];
-    for (let unid in this.extensions) {
-      const extension = this.extensions[unid];
-      if (extension.canActivateFile(path)) {
-        handlers.push(extension);
-      }
+  public getExtensions(): Extension[] {
+    return Object.keys(this.extensions).map(key => this.extensions[key]);
+  }
+
+  public getInspectors(): IExtensionInspector[] {
+    let arr = this.getExtensions().map(extension => extension.getInspectors());
+    if (arr.length) {
+      arr = arr.reduce((a, b) => a.concat(b));
     }
+    return arr;
   }
 
   public registerCommands() {
