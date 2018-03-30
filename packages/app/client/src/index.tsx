@@ -65,14 +65,6 @@ ReactDOM.render(
 CommandService.remoteCall('client:loaded')
   .then(() => {
     showWelcomePage();
-  });
-
-// Fetch the list of bots we know about
-CommandService.remoteCall('bot:list:load')
-  .then(payload => {
-    store.dispatch(BotActions.load(payload.bots));
-    CommandService.remoteCall('menu:update-recent-bots')
+    CommandService.remoteCall('menu:update-recent-bots');
   })
-  .catch(err => {
-    console.error('Error during bot list load: ', err);
-  });
+  .catch(err => console.error(`Error occured during client:loaded: ${err}`));

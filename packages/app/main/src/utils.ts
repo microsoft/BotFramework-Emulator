@@ -1,6 +1,6 @@
 import * as Restify from 'restify';
 import * as HttpStatus from 'http-status-codes';
-import { IErrorResponse, APIException, createErrorResponse, ErrorCodes, mergeDeep } from '@bfemulator/app-shared';
+import { IErrorResponse, APIException, createErrorResponse, ErrorCodes, mergeDeep, IBotInfo } from '@bfemulator/app-shared';
 import { dialog, OpenDialogOptions, SaveDialogOptions, BrowserWindow } from 'electron';
 
 const { lstatSync, readdirSync } = require('fs')
@@ -153,4 +153,19 @@ export const getDirectories = source =>
 
 export function isDev(): boolean {
   return (process.defaultApp || /node_modules[\\/]electron[\\/]/.test(process.execPath));
+}
+
+export const decodeBase64 = (str: string) =>
+  Buffer.from(str, 'base64').toString();
+
+export const getBotsFromDisk = (): IBotInfo[] => {
+  const botsJsonPath = path.join(ensureStoragePath(), 'bots.json');
+  const botsJsonContents = readFileSync(botsJsonPath);
+  const botsJson = botsJsonContents ? JSON.parse(botsJsonContents) : null;
+
+  if (botsJson && botsJson.bots && Array.isArray(botsJson.bots)) {
+    return botsJson.bots;
+  } else {
+    return [];
+  }
 }

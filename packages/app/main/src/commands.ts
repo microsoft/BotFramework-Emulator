@@ -3,7 +3,7 @@ import { emulator } from './emulator';
 import { Window } from './platform/window';
 import { CommandRegistry as CommReg, uniqueId } from '@bfemulator/sdk-shared';
 import { IActivity, IBot, newBot, IFrameworkSettings, usersDefault } from '@bfemulator/app-shared';
-import { ensureStoragePath, getSafeBotName, readFileSync, showOpenDialog, writeFile, showSaveDialog } from './utils';
+import { ensureStoragePath, getBotsFromDisk, getSafeBotName, readFileSync, showOpenDialog, writeFile, showSaveDialog } from './utils';
 import * as BotActions from './data-v2/action/bot';
 import { app, Menu } from 'electron';
 import { mainWindow } from './main';
@@ -32,30 +32,6 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   CommandRegistry.registerCommand('ping', () => {
     return 'pong';
-  });
-
-  //---------------------------------------------------------------------------
-  // Load bots from file system
-  CommandRegistry.registerCommand('bot:list:load', () => {
-    const botsJsonPath = Path.join(ensureStoragePath(), 'bots.json');
-    const botsJsonContents = readFileSync(botsJsonPath);
-    let botsJson = botsJsonContents ? JSON.parse(botsJsonContents) : null;
-
-    if (botsJson && botsJson.bots && Array.isArray(botsJson.bots)) {
-      const bots = botsJson.bots;
-      mainWindow.store.dispatch(BotActions.load(bots));
-    } else {
-      botsJson = { 'bots': [] };
-    }
-
-    try {
-      writeFile(botsJsonPath, botsJson);
-    } catch (e) {
-      console.error(`Failure writing new bots.json to ${botsJsonPath}: `, e);
-      throw e;
-    }
-
-    return botsJson;
   });
 
   //---------------------------------------------------------------------------
@@ -89,6 +65,25 @@ export function registerCommands() {
       botUrl: 'http://localhost:3978/api/messages'
     });
     return bot;
+  });
+
+  //---------------------------------------------------------------------------
+  // Open a bot project from a .bot path
+  CommandRegistry.registerCommand('bot:load', (botFilePath: string): Promise<IBot> => {
+    const contents = readFileSync(botFilePath);
+    const bot: IBot = contents ? JSON.parse(contents) : null;
+    if (!bot) {
+      throw new Error(`Invalid .bot file found at path: ${botFilePath}`);
+    }
+
+    if (!getBotInfoById(bot.id)) {
+      // add the bot to bots.json
+      mainWindow.store.dispatch(BotActions.create(bot, botFilePath));
+    }
+
+    const botDirectory = Path.resolve(botFilePath, '..');
+    mainWindow.store.dispatch(BotActions.setActive(bot, botDirectory));
+    return mainWindow.commandService.remoteCall('bot:load', { bot, botDirectory });
   });
 
   //---------------------------------------------------------------------------
@@ -145,6 +140,10 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Client notifying us it's initialized and has rendered
   CommandRegistry.registerCommand("client:loaded", () => {
+    // Load bots from disk and sync list with client
+    const bots = getBotsFromDisk();
+    mainWindow.store.dispatch(BotActions.load(bots));
+    mainWindow.commandService.remoteCall('bot:list:sync', bots);
     // Reset the app title bar
     mainWindow.commandService.call('app:setTitleBar');
     // Send app settings to client

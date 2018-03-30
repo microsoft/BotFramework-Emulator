@@ -9,6 +9,7 @@ import * as BotActions from './data-v2/action/bot';
 import { ngrokEmitter } from './ngrok';
 import { getSettings } from './settings';
 import { Conversation } from './conversationManager';
+import { decodeBase64 } from './utils';
 
 enum ProtocolDomains {
   livechat,
@@ -24,7 +25,9 @@ enum ProtocolTranscriptActions {
   open
 }
 
-enum ProtocolBotActions {}
+enum ProtocolBotActions {
+  open
+}
 
 interface IProtocol {
   // the 'controller'
@@ -105,7 +108,7 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
   performLiveChatAction(protocol: IProtocol): void {
     switch (ProtocolLiveChatActions[protocol.action]) {
       case ProtocolLiveChatActions.open:
-      this.openLiveChat(protocol);
+        this.openLiveChat(protocol);
         break;
 
       default:
@@ -124,7 +127,16 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
     }
   }
 
-  performBotAction(protocol: IProtocol): void {}
+  performBotAction(protocol: IProtocol): void {
+    switch(ProtocolBotActions[protocol.action]) {
+      case ProtocolBotActions.open:
+        this.openBot(protocol);
+        break;
+
+      default:
+        break;
+    }
+  }
 
   /** Mocks a bot object with any configuration parsed from the
    *  protocol string and starts a live chat session with that bot
@@ -133,9 +145,9 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
     // mock up a bot object
     let { botUrl, msaAppId, msaPassword } = protocol.parsedArgs;
     mainWindow.store.dispatch(BotActions.mockAndSetActive({
-      botUrl: Buffer.from(botUrl, 'base64').toString(),
-      msaAppId: Buffer.from(msaAppId, 'base64').toString(),
-      msaPassword: Buffer.from(msaPassword, 'base64').toString()
+      botUrl: decodeBase64(botUrl),
+      msaAppId: decodeBase64(msaAppId),
+      msaPassword: decodeBase64(msaPassword)
     }));
 
     const appSettings: IFrameworkSettings = getSettings().framework;
@@ -156,8 +168,9 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
   /** Downloads a transcript from a URL provided in the protocol string,
    *  parses out the list of activities, and has the client side open it
    */
-  private openTranscript(protocol: IProtocol): void {let { url } = protocol.parsedArgs;
-    url = Buffer.from(url, 'base64').toString();
+  private openTranscript(protocol: IProtocol): void {
+    let { url } = protocol.parsedArgs;
+    url = decodeBase64(url);
     const options = { url };
 
     got(options)
@@ -192,5 +205,35 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
         // TODO: surface this error somewhere; native error box?
         console.error('Error downloading and parsing transcript file: ', err)
       });
+  }
+
+  /** Opens the bot project associated with the .bot file at the specified path */
+  private openBot(protocol: IProtocol): void {
+    let { path } = protocol.parsedArgs;
+    path = decodeBase64(path);
+
+    const appSettings: IFrameworkSettings = getSettings().framework;
+    if (appSettings.ngrokPath) {
+      // if ngrok is configured, wait for it to connect and load the bot
+      ngrokEmitter.once('connect', (...args: any[]): void => {
+        mainWindow.commandService.call('bot:load', path)
+          .then(console.log('opened bot successfully'))
+          // TODO: surface this error somewhere; native error box?
+          .catch(err => { throw new Error(`Error occurred while trying to deep link to bot project at: ${path}`) });
+      });
+    } else {
+      // load the bot and let the chat log show the user the error
+      // TODO: We shouldn't have to wait for welcome to render
+      // (we are still within the client:loaded command logic, which will show the welcome page afterwards;
+      //  we need to wait for welcome page and then show the emulator tab so it's not unfocused)
+      setTimeout(() =>
+        mainWindow.commandService.call('bot:load', path)
+          .then(console.log('opened bot successfully'))
+          // TODO: surface this error somewhere; native error box?
+          .catch(err => { throw new Error(`Error occurred while trying to deep link to bot project at: ${path}`) })
+      , 1000);
+    }
+
+
   }
 }

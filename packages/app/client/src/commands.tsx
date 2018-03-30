@@ -1,9 +1,9 @@
 import * as React from 'react';
 
 import { CommandRegistry as CommReg, IExtensionConfig } from '@bfemulator/sdk-shared';
-import { IBot } from '@bfemulator/app-shared';
+import { IBot, IBotInfo } from '@bfemulator/app-shared';
 import { showWelcomePage } from "./data/editorHelpers";
-import { ActiveBotHelper } from "./ui/helpers/activeBotHelper";
+import { ActiveBotHelper } from './ui/helpers/activeBotHelper';
 import * as LogService from './platform/log/logService';
 import * as SettingsService from './platform/settings/settingsService';
 import * as LiveChat from './ui/shell/explorer/liveChatExplorer';
@@ -18,6 +18,8 @@ import * as Constants from './constants';
 import { uniqueId } from '@bfemulator/sdk-shared';
 import { getTabGroupForDocument } from './data/editorHelpers';
 import { CommandService } from './platform/commands/commandService';
+import { getBotInfoById } from './data/botHelpers';
+import * as BotActions from './data/action/botActions';
 
 //=============================================================================
 export const CommandRegistry = new CommReg();
@@ -50,6 +52,26 @@ export function registerCommands() {
   // Switches the current active bot
   CommandRegistry.registerCommand('bot:switch', (id: string) => {
     ActiveBotHelper.confirmAndSwitchBots(id);
+  });
+
+  //---------------------------------------------------------------------------
+  // Completes the client side sync of the bot:load command on the server side
+  // (NOTE: should NOT be called by itself; call server side instead)
+  CommandRegistry.registerCommand('bot:load', ({ bot, botDirectory }: { bot: IBot, botDirectory: string }): void => {
+      if (!getBotInfoById(bot.id)) {
+        // create and switch bots
+        ActiveBotHelper.confirmAndCreateBot(bot, botDirectory);
+        return;
+      }
+      ActiveBotHelper.confirmAndSwitchBots(bot.id);
+  });
+
+
+  //---------------------------------------------------------------------------
+  // Syncs the client side list of bots with bots arg (usually called from server side)
+  CommandRegistry.registerCommand('bot:list:sync', (bots: IBotInfo[]): void => {
+    store.dispatch(BotActions.load(bots));
+    CommandService.remoteCall('menu:update-recent-bots');
   });
 
   //---------------------------------------------------------------------------
