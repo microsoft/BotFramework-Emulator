@@ -1,0 +1,21 @@
+{
+  "name": "LUIS",
+  "client": {
+    "portals": [
+      {
+        "title": "LUIS",
+        "url": "http://www.luis.ai"
+      }
+    ],
+    "files": [
+      ".luis",
+      "/.*\\.luis$/i"
+    ],
+    "inspectors": [
+      {
+        "name": "Luis",
+        "path": "index.html"
+      }
+    ]
+  }
+}

@@ -12,7 +12,8 @@
     "packages/extensions/qnamaker",
     "packages/extensions/debug",
     "packages/extensions/debug/client",
-    "packages/extensions/debug/main"
+    "packages/extensions/debug/main",
+    "packages/extensions/luis"
   ],
   "version": "independent"
 }
