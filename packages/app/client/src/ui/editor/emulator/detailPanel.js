@@ -35,7 +35,7 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import Detail from './parts/detail';
+import { Detail } from './parts/detail';
 import Panel, { Controls as PanelControls, Content as PanelContent } from '../panel';
 
 const CSS = css({

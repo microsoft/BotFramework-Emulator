@@ -72,6 +72,7 @@
     "@bfemulator/custom-ngrok": "^2.2.26",
     "@bfemulator/extension-debug": "^1.0.0",
     "@bfemulator/extension-luis": "^1.0.0",
+    "@bfemulator/extension-json": "^1.0.0",
     "@bfemulator/extension-qnamaker": "^1.0.0",
     "@bfemulator/sdk-main": "^1.0.0",
     "@bfemulator/sdk-shared": "^1.0.0",

@@ -37,8 +37,8 @@ import * as React from 'react';
 
 import * as ChatActions from '../../../../data/action/chatActions';
 import store from '../../../../data/store';
-import * as Colors from '../../../../ui/styles/colors';
-import * as Fonts from '../../../../ui/styles/fonts';
+import * as Colors from '../../../styles/colors';
+import * as Fonts from '../../../styles/fonts';
 
 const CSS = css({
   height: '100%',
@@ -214,6 +214,7 @@ class LogEntry extends React.Component<LogEntryProps> {
   }
 
   renderMessage(message, key) {
+    if (!message) return false;
     if (Array.isArray(message)) {
       return <span className="spaced level-3" key={ key }>ARR?</span>;
     } else if (typeof message === 'object') {
@@ -257,7 +258,7 @@ class LogEntry extends React.Component<LogEntryProps> {
         case "err": {
           return (
             <span className="spaced" key={ key }>
-              <span className="spaced"><a onClick={ () => this.inspect(message) }>{ Error }</a></span>
+              <span className="spaced"><a onClick={ () => this.inspect(message) }>Error</a></span>
             </span>
           );
         }

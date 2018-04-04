@@ -176,14 +176,17 @@ export class ConversationsControllerV3 {
           //logNetwork(conversation.conversationId, req, res, `[${activity.type}]`);
           if (err || !/^2\d\d$/.test(`${statusCode}`)) {
             res.send(statusCode || HttpStatus.INTERNAL_SERVER_ERROR);
+            err = err || {
+              statusCode
+            }
           } else {
             res.send(statusCode, { id: activityId });
           }
           res.end();
-          logResponse(req.params.conversationId, "user", res, {
+          logResponse(req.params.conversationId, "user", res, err ? {
             type: "err",
             err
-          });
+          } : null);
         });
       } else {
         res.send(HttpStatus.NOT_FOUND, "conversation not found");
@@ -252,14 +255,17 @@ export class ConversationsControllerV3 {
                 //logNetwork(conversation.conversationId, req, res, `[${activity.type}]`);
                 if (err || !/^2\d\d$/.test(`${statusCode}`)) {
                   res.send(statusCode || HttpStatus.INTERNAL_SERVER_ERROR);
+                  err = err || {
+                    statusCode
+                  }
                 } else {
                   res.send(statusCode, { id: activityId });
                 }
                 res.end();
-                logResponse(req.params.conversationId, "user", res, {
+                logResponse(req.params.conversationId, "user", res, err ? {
                   type: "err",
-                  err}
-                );
+                  err
+                } : null);
               });
             } else {
               res.send(HttpStatus.BAD_REQUEST, "no file uploaded");

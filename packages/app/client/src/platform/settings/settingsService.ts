@@ -2,17 +2,23 @@ import { Disposable } from '@bfemulator/sdk-shared';
 import { CommandRegistry } from '../../commands';
 
 export function registerCommands() {
-  CommandRegistry.registerCommand("settings:emulator:url:set", (url: string): any => {
-    SettingsService.emulator.url = url.replace('[::]', '127.0.0.1');
+  CommandRegistry.registerCommand("receive-global-settings", (settings: {
+    url: string,
+    cwd: string
+  }): any => {
+    SettingsService.emulator.url = settings.url.replace('[::]', '127.0.0.1');
+    SettingsService.emulator.cwd = settings.cwd.replace(/\\/g, '/');
   });
 }
 
 export interface IEmulatorSettings {
   url?: string;
+  cwd?: string;
 }
 
 class EmulatorSettings implements IEmulatorSettings {
   private _url: string;
+  private _cwd: string;
 
   get url(): string {
     if (!this._url || !this._url.length) {
@@ -22,6 +28,17 @@ class EmulatorSettings implements IEmulatorSettings {
   }
   set url(value: string) {
     this._url = value;
+  }
+
+  get cwd(): string {
+    if (!this._cwd || !this._cwd.length) {
+      throw new Error("Emulator cwd not set");
+    }
+    return this._cwd;
+  }
+
+  set cwd(value: string) {
+    this._cwd = value;
   }
 }
 

@@ -1,0 +1,15 @@
+{
+  "name": "JSON",
+  "client": {
+    "inspectors": [
+      {
+        "name": "JSON",
+        "path": "index.html",
+        "criteria": {
+          "path": "$.type",
+          "value": "message"
+        }
+      }
+    ]
+  }
+}

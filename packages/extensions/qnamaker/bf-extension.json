@@ -1,20 +1,20 @@
 {
   "name": "QnA Maker",
   "client": {
-    "portals": [
-      {
-        "title": "QnA Maker",
-        "url": "http://qnamaker.ai"
-      }
-    ],
-    "files": [
-      ".qna",
-      "/.*\\.qna$/i"
-    ],
     "inspectors": [
       {
-        "name": "QnA Maker",
-        "path": "client/built/inspector.html"
+        "name": "QnA",
+        "path": "index.html",
+        "criteria": [
+          {
+            "path": "$.type",
+            "value": "event"
+          },
+          {
+            "path": "$.event",
+            "value": "QnATraceInfo"
+          }
+        ]
       }
     ]
   }

@@ -17,12 +17,22 @@
         "port": 3031
       }
     },
-    "portals": [],
+    "deeplink": "",
     "filetypes": [],
     "inspectors": [
       {
         "name": "Debug",
-        "path": "client/build/index.html"
+        "path": "client/build/index.html",
+        "criteria": [
+          {
+            "path": "$.type",
+            "value": "event"
+          },
+          {
+            "path": "$.name",
+            "value": "debug"
+          }
+        ]
       }
     ]
   }

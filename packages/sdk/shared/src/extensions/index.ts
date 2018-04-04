@@ -11,9 +11,16 @@ export interface IExtensionFile {
 }
 
 //=============================================================================
+export interface IInspectorCriteria {
+  path: string;
+  value: string;
+}
+
+//=============================================================================
 export interface IExtensionInspector {
   name: string;
   path: string;
+  criteria: IInspectorCriteria | IInspectorCriteria[];
 }
 
 //=============================================================================

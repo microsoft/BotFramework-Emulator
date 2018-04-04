@@ -13,7 +13,8 @@
     "packages/extensions/debug",
     "packages/extensions/debug/client",
     "packages/extensions/debug/main",
-    "packages/extensions/luis"
+    "packages/extensions/luis",
+    "packages/extensions/json"
   ],
   "version": "independent"
 }

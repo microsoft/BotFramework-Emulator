@@ -1,20 +1,20 @@
 {
   "name": "LUIS",
   "client": {
-    "portals": [
-      {
-        "title": "LUIS",
-        "url": "http://www.luis.ai"
-      }
-    ],
-    "files": [
-      ".luis",
-      "/.*\\.luis$/i"
-    ],
     "inspectors": [
       {
-        "name": "Luis",
-        "path": "index.html"
+        "name": "LUIS",
+        "path": "index.html",
+        "criteria": [
+          {
+            "path": "$.type",
+            "value": "event"
+          },
+          {
+            "path": "$.event",
+            "value": "LuisTraceInfo"
+          }
+        ]
       }
     ]
   }

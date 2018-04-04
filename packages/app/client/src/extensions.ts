@@ -2,6 +2,7 @@ import { IExtensionConfig, Channel, IDisposable, CommandService, IExtensionInspe
 import { ElectronIPC } from './ipc';
 import { CommandRegistry } from './commands';
 import { IActivity } from '@bfemulator/app-shared';
+import * as jsonpath from 'jsonpath';
 
 //=============================================================================
 export class Extension {
@@ -19,8 +20,35 @@ export class Extension {
     */
   }
 
-  public getInspectors(): IExtensionInspector[] {
-    return this.config.client.inspectors || [];
+  public inspectorForObject(obj: any): IExtensionInspector | null {
+    const inspectors = this.config.client.inspectors || [];
+    return inspectors.find(inspector => Extension.canInspect(inspector, obj));
+  }
+
+  public static canInspect(inspector: IExtensionInspector, obj: any): boolean {
+    if (!obj) return false;
+    if (typeof obj !== 'object') return false;
+    // Check the activity against the inspector's set of criteria
+    let criterias = inspector.criteria || [];
+    if (!Array.isArray(criterias))
+      criterias = [criterias];
+    let canInspect = true;
+    criterias.forEach(criteria => {
+      // Path is a json-path
+      const value = jsonpath.value(obj, criteria.path);
+      if (typeof value === 'undefined') {
+        canInspect = false;
+      } else {
+        // Value can be a regex or a string literal
+        if (criteria.value.startsWith('/')) {
+          const regex = new RegExp(criteria.value);
+          canInspect = canInspect && regex.test(value);
+        } else {
+          canInspect = canInspect && criteria.value === value;
+        }
+      }
+    });
+    return canInspect;
   }
 
   public call<T = any>(commandName: string, ...args: any[]): Promise<T> {
@@ -34,7 +62,7 @@ export interface IExtensionManager {
   addExtension(config: Extension, unid: string);
   removeExtension(unid: string);
   getExtensions(): Extension[];
-  getInspectors(): IExtensionInspector[];
+  inspectorForObject(obj: any): IExtensionInspector | null;
 }
 
 //=============================================================================
@@ -56,24 +84,15 @@ export const ExtensionManager = new class implements IExtensionManager {
   }
 
   public findExtension(name: string): Extension {
-    for (let unid in this.extensions) {
-      const extension = this.extensions[unid];
-      if (extension.config.name === name)
-        return extension;
-    }
-    return null;
+    return this.getExtensions().find(extension => extension.config.name === name);
   }
 
   public getExtensions(): Extension[] {
-    return Object.keys(this.extensions).map(key => this.extensions[key]);
+    return Object.keys(this.extensions).map(key => this.extensions[key]) || [];
   }
 
-  public getInspectors(): IExtensionInspector[] {
-    let arr = this.getExtensions().map(extension => extension.getInspectors());
-    if (arr.length) {
-      arr = arr.reduce((a, b) => a.concat(b));
-    }
-    return arr;
+  public inspectorForObject(obj: any): IExtensionInspector | null {
+    return this.getExtensions().map(extension => extension.inspectorForObject(obj)).filter(inspector => !!inspector).shift();
   }
 
   public registerCommands() {

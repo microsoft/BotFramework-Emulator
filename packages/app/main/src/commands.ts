@@ -147,7 +147,10 @@ export function registerCommands() {
     // Reset the app title bar
     mainWindow.commandService.call('app:setTitleBar');
     // Send app settings to client
-    mainWindow.commandService.remoteCall("settings:emulator:url:set", emulator.framework.router.url);
+    mainWindow.commandService.remoteCall("receive-global-settings", {
+      url: emulator.framework.router.url,
+      cwd: __dirname
+    });
     // Load extensions
     ExtensionManager.unloadExtensions();
     ExtensionManager.loadExtensions();
