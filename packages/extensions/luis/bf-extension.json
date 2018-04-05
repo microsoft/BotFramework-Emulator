@@ -11,8 +11,8 @@
             "value": "event"
           },
           {
-            "path": "$.event",
-            "value": "LuisTraceInfo"
+            "path": "$.name",
+            "value": "https://www.luis.ai/schemas/trace"
           }
         ]
       }
