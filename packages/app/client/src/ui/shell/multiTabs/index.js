@@ -34,6 +34,7 @@
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 
 import TabBar from './tabBar';
 import TabBarTab from './tabBarTab';
@@ -48,7 +49,7 @@ const CSS = css({
   boxSizing: 'border-box'
 });
 
-export default class MultiTabs extends React.Component {
+class MultiTabs extends React.Component {
   constructor(props, context) {
     super(props, context);
 
@@ -62,20 +63,27 @@ export default class MultiTabs extends React.Component {
   render() {
     return (
       <div className={ CSS }>
-        <TabBar owningEditor={ this.props.owningEditor }>
-          {
-            React.Children.map(this.props.children, (tabbedDocument, index) =>
-              <TabBarTab onClick={ this.handleTabClick.bind(this, index) }>
-                { filterChildren(tabbedDocument.props.children, child => child.type === TabbedDocumentTab) }
-              </TabBarTab>
-            )
-          }
-        </TabBar>
+        {
+          !this.props.presentationModeEnabled &&
+          <TabBar owningEditor={ this.props.owningEditor }>
+            {
+              React.Children.map(this.props.children, (tabbedDocument, index) =>
+                <TabBarTab onClick={ this.handleTabClick.bind(this, index) }>
+                  { filterChildren(tabbedDocument.props.children, child => child.type === TabbedDocumentTab) }
+                </TabBarTab>
+              )
+            }
+          </TabBar>
+        }
         { !!this.props.children.length && filterChildren(React.Children.toArray(this.props.children)[this.props.value].props.children, child => child.type === TabbedDocumentContent) }
       </div>
     );
   }
 }
+
+export default connect((state) => ({
+  presentationModeEnabled: state.presentation.enabled
+}))(MultiTabs);
 
 MultiTabs.propTypes = {
   onChange: PropTypes.func,

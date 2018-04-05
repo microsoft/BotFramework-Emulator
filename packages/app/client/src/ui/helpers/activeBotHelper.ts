@@ -33,7 +33,7 @@ export const ActiveBotHelper = new class {
       .then(({ bot, botDirectory }) => {
         store.dispatch(BotActions.setActive(bot, botDirectory));
         CommandService.remoteCall('menu:update-recent-bots');
-        CommandService.remoteCall('app:setTitleBar', getBotDisplayName(bot));
+        CommandService.remoteCall('electron:set-title-bar', getBotDisplayName(bot));
       })
       .catch(err => console.error('Error while setting active bot: ', err));
   }

@@ -32,9 +32,11 @@
 //
 
 import { css } from 'glamor';
-import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
+import * as _ from 'lodash';
+import { Subscription, BehaviorSubject } from 'rxjs';
+
 import { ActivityOrID } from '@bfemulator/app-shared';
 import ChatPanel from './chatPanel';
 import DetailPanel from './detailPanel';
@@ -46,9 +48,10 @@ import { SettingsService } from '../../../platform/settings/settingsService';
 import { CommandService } from '../../../platform/commands/commandService';
 import { uniqueId } from '@bfemulator/sdk-shared';
 import * as ChatActions from '../../../data/action/chatActions';
-import { Subscription, BehaviorSubject } from 'rxjs';
-import store from '../../../data/store';
-import * as _ from 'lodash';
+import store, { IRootState } from '../../../data/store';
+import * as PresentationActions from '../../../data/action/presentationActions';
+import * as Colors from '../../styles/colors';
+import PlaybackBar from './playbackBar';
 
 const CSS = css({
   display: 'flex',
@@ -59,14 +62,13 @@ const CSS = css({
   '& .vertical': {
     display: 'flex',
     flexDirection: 'column',
-    flex: 1,
+    flex: 1
   },
 
   '& .header': {
     flexGrow: 0,
     flexShrink: 1,
-    flexBasis: '0px',
-
+    flexBasis: '0px'
   },
 
   '& .content': {
@@ -76,23 +78,73 @@ const CSS = css({
     flexGrow: 1,
     flexShrink: 1,
     flexBasis: '0px',
-    height: '100%',
+    height: '100%'
   },
 });
 
-class Emulator extends React.Component {
+const PRESENTATION_CSS = css({
+  position: 'absolute',
+  top: 0,
+  bottom: 0,
+  left: 0,
+  right: 0,
+  backgroundColor: Colors.APP_BACKGROUND_DARK,
 
+  '& > .presentation-content': {
+    posiiton: 'relative',
+    height: '100%',
+    padding: '64px 0',
+    maxWidth: '400px',
+    margin: '0 auto'
+  },
+
+  '& > .close-presentation-icon': {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    display: 'inline-block',
+    width: '64px',
+    height: '64px',
+    backgroundImage: 'url(./external/media/ic_close.svg)',
+    backgroundSize: '32px',
+    backgroundPosition: '50% 50%',
+    backgroundRepeat: 'no-repeat',
+    cursor: 'pointer'
+  },
+
+  '& .presentation-playback-dock': {
+    position: 'absolute',
+    bottom: 0,
+    height: '64px',
+    width: '400px',
+  }
+});
+
+export type EmulatorMode = 'transcript' | 'livechat';
+
+interface IEmulatorProps {
+  document?: any;
+  conversationId?: string;
+  pingId?: number;
+  mode?: EmulatorMode;
+  documentId?: string;
+  dirty?: boolean;
+  presentationModeEnabled?: boolean;
+}
+
+class Emulator extends React.Component<IEmulatorProps, {}> {
   constructor(props, context) {
     super(props, context)
-    this.onPresentationClick = this.handlePresentationClick.bind(this);
-    this.onStartOverClick = this.handleStartOverClick.bind(this);
-    this.onExportClick = this.handleExportClick.bind(this);
-    this.onImportClick = this.handleImportClick.bind(this);
+    this.handlePresentationClick = this.handlePresentationClick.bind(this);
+    this.handleStartOverClick = this.handleStartOverClick.bind(this);
+    this.handleExportClick = this.handleExportClick.bind(this);
+    this.handleImportClick = this.handleImportClick.bind(this);
 
     this.onVerticalSizeChange = _.debounce(this.onVerticalSizeChange.bind(this), 500);
     this.onHorizontalSizeChange = _.debounce(this.onHorizontalSizeChange.bind(this), 500);
 
     this.getVerticalSplitterSizes = this.getVerticalSplitterSizes.bind(this);
+
     this.getHorizontalSplitterSizes = this.getHorizontalSplitterSizes.bind(this);
   }
 
@@ -122,7 +174,7 @@ class Emulator extends React.Component {
     };
   }
 
-  shouldStartNewConversation(props) {
+  shouldStartNewConversation(props?: any) {
     props = props || this.props;
     return !props.document.directLine ||
       (props.document.conversationId != props.document.directLine.token);
@@ -153,10 +205,12 @@ class Emulator extends React.Component {
   componentDidUpdate(prevProps, prevState, prevContext) {
   }
 
-  handlePresentationClick() {
+  handlePresentationClick(enable: boolean) {
+    enable ? store.dispatch(PresentationActions.enable()) :
+      store.dispatch(PresentationActions.disable());
   }
 
-  startNewConversation(props) {
+  startNewConversation(props?: any) {
     props = props || this.props;
 
     store.dispatch(ChatActions.clearLog(this.props.document.documentId));
@@ -236,21 +290,42 @@ class Emulator extends React.Component {
   handleImportClick() {
   }
 
-  render() {
+  render(): JSX.Element {
+    return this.props.presentationModeEnabled ? this.renderPresentationView() : this.renderDefaultView();
+  }
+
+  renderPresentationView(): JSX.Element {
     return (
-      <div className={ CSS } key={ this.props.pingId }>
+      <div { ...PRESENTATION_CSS }>
+        <div className="presentation-content">
+          <ChatPanel mode={ this.props.mode } document={ this.props.document } onStartConversation={ this.handleStartOverClick } />
+          {
+            this.props.mode === 'transcript' ?
+              <div className="presentation-playback-dock"><PlaybackBar /></div>
+            :
+              null
+          }
+        </div>
+        <span className="close-presentation-icon" onClick={ () => this.handlePresentationClick(false) }></span>
+      </div>
+    );
+  }
+
+  renderDefaultView(): JSX.Element {
+    return (
+      <div { ...CSS } key={ this.props.pingId }>
         <div className="header">
           <ToolBar>
-            <ToolBarButton visible={ true } title="Presentation" onClick={ this.onPresentationClick } />
+            <ToolBarButton visible={ true } title="Presentation" onClick={ () => this.handlePresentationClick(true) } />
             <ToolBarSeparator visible={ true } />
-            <ToolBarButton visible={ this.props.mode === "livechat" } title="Start Over" onClick={ this.onStartOverClick } />
-            <ToolBarButton visible={ true } title="Save Transcript As..." onClick={ this.onExportClick } />
+            <ToolBarButton visible={ this.props.mode === "livechat" } title="Start Over" onClick={ this.handleStartOverClick } />
+            <ToolBarButton visible={ true } title="Save Transcript As..." onClick={ this.handleExportClick } />
           </ToolBar>
         </div>
         <div className="content vertical">
           <Splitter orientation={ 'vertical' } primaryPaneIndex={ 0 } minSizes={ { 0: 80, 1: 80 } } initialSizes={ this.getVerticalSplitterSizes } onSizeChange={ this.onVerticalSizeChange } key={ this.props.pingId }>
             <div className="content">
-              <ChatPanel mode={ this.props.mode } document={ this.props.document } onStartConversation={ this.onStartOverClick } />
+              <ChatPanel mode={ this.props.mode } document={ this.props.document } onStartConversation={ this.handleStartOverClick } />
             </div>
             <div className="content">
               <Splitter orientation={ 'horizontal' } primaryPaneIndex={ 0 } minSizes={ { 0: 80, 1: 80 } } initialSizes={ this.getHorizontalSplitterSizes } onSizeChange={ this.onHorizontalSizeChange } key={ this.props.pingId }>
@@ -265,15 +340,13 @@ class Emulator extends React.Component {
   }
 }
 
-export default connect((state, { documentId }) => ({
-  document: state.chat.chats[documentId],
-  conversationId: state.chat.chats[documentId].conversationId,
-  pingId: state.chat.chats[documentId].pingId
-}))(Emulator);
+function mapStateToProps(state: IRootState, { documentId }: { documentId: string }): IEmulatorProps {
+  return {
+    document: state.chat.chats[documentId],
+    conversationId: state.chat.chats[documentId].conversationId,
+    pingId: state.chat.chats[documentId].pingId,
+    presentationModeEnabled: state.presentation.enabled
+  };
+}
 
-
-Emulator.propTypes = {
-  mode: PropTypes.string.isRequired,
-  documentId: PropTypes.string.isRequired,
-  dirty: PropTypes.bool,
-};
+export default connect(mapStateToProps, null)(Emulator);

@@ -47,7 +47,7 @@ import { ensureStoragePath, writeFile, isDev } from './utils';
 import * as squirrel from './squirrelEvents';
 import * as Commands from './commands';
 import { getBotInfoById } from './botHelpers';
-import { getAppMenuTemplate } from './appMenuBuilder';
+import { AppMenuBuilder } from './appMenuBuilder';
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
   console.error(error);
@@ -164,7 +164,7 @@ const createMainWindow = () => {
   mainWindow.browserWindow.setTitle(app.getName());
   windowManager = new WindowManager();
 
-  const template: Electron.MenuItemConstructorOptions[] = getAppMenuTemplate();
+  const template: Electron.MenuItemConstructorOptions[] = AppMenuBuilder.getAppMenuTemplate();
 
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 

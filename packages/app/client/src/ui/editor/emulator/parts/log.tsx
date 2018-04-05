@@ -32,7 +32,6 @@
 //
 
 import { css } from 'glamor';
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 
 import * as ChatActions from '../../../../data/action/chatActions';

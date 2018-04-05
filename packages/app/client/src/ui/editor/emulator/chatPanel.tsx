@@ -31,46 +31,52 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import React from 'react';
-import PropTypes from 'prop-types';
+import { css } from 'glamor';
+import * as React from 'react';
 
-export default class SplitterV2Pane extends React.Component {
-  constructor(props, context) {
+import Chat from './parts/chat';
+import * as Colors from '../../styles/colors';
+import Panel, { Controls as PanelControls, Content as PanelContent } from '../panel';
+import { getActiveBot } from '../../../data/botHelpers';
+import { EmulatorMode } from './index';
+
+const CSS = css({
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+
+  '& > header': {
+    backgroundColor: Colors.SECTION_HEADER_BACKGROUND_DARK,
+    color: Colors.SECTION_HEADER_FOREGROUND_DARK,
+    lineHeight: '30px',
+    minHeight: '30px',
+    paddingLeft: '16px',
+    textTransform: 'lowercase',
+    userSelect: 'text',
+    whiteSpace: 'nowrap'
+  }
+});
+
+interface IChatPanelProps {
+  document: any;
+  mode?: EmulatorMode;
+  onStartConversation?: () => any;
+}
+
+export default class ChatPanel extends React.Component<IChatPanelProps, {}> {
+  constructor(props: IChatPanelProps, context) {
     super(props, context);
   }
 
   render() {
-    const style = {
-      overflow: 'hidden',
-      flexShrink: 1,
-      flexGrow: 1,
-      flexBasis: this.props.size,
-      boxSizing: 'border-box',
-      zIndex: 0
-    };
-
-    if (this.props.orientation === 'horizontal') {
-      style.maxWidth = '100%';
-      style.left = 0;
-      style.right = 0;
-    } else {
-      style.maxHeight = '100%';
-      style.top = 0;
-      style.bottom = 0;
-    }
+    let bot = getActiveBot();
+    let endpoint = bot ? bot.botUrl : "";
 
     return (
-      <div className={ 'splitter-pane' } style={ style } >
-        { this.props.children }
+      <div { ...CSS }>
+        <header>{ endpoint }</header>
+        <Chat mode={ this.props.mode } document={ this.props.document } onStartConversation={ this.props.onStartConversation } key={ this.props.document.pingId } />
       </div>
     );
   }
 }
-
-SplitterV2Pane.propTypes = {
-  orientation: PropTypes.oneOf([
-    'horizontal',
-    'vertical'
-  ]).isRequired,
-  size: PropTypes.number
-};

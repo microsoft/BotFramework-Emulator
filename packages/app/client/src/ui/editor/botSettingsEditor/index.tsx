@@ -142,7 +142,7 @@ class BotSettingsEditor extends React.Component<IBotSettingsEditorProps, IBotSet
         store.dispatch(BotActions.patch(bot));
         this.setDirtyFlag(false);
         this.setState({ bot: bot });
-        CommandService.remoteCall('app:setTitleBar', getBotDisplayName(bot));
+        CommandService.remoteCall('electron:set-title-bar', getBotDisplayName(bot));
       });
   }
 

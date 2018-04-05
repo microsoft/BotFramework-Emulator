@@ -31,47 +31,31 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { connect } from 'react-redux';
 import { css } from 'glamor';
-import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 
-import Chat from './parts/chat';
-import * as Colors from '../../styles/colors';
+import Log from './parts/log';
 import Panel, { Controls as PanelControls, Content as PanelContent } from '../panel';
-import { getActiveBot } from '../../../data/botHelpers';
 
 const CSS = css({
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-
-  '& > header': {
-    backgroundColor: Colors.SECTION_HEADER_BACKGROUND_DARK,
-    color: Colors.SECTION_HEADER_FOREGROUND_DARK,
-    lineHeight: '30px',
-    minHeight: '30px',
-    paddingLeft: '16px',
-    textTransform: 'lowercase',
-    userSelect: 'text',
-    whiteSpace: 'nowrap'
-  }
+  height: '100%'
 });
 
-export default class ChatPanel extends React.Component {
+interface ILogPanelProps {
+  document: any;
+}
+
+export default class LogPanel extends React.Component<ILogPanelProps, {}> {
   render() {
-    let bot = getActiveBot();
-    let endpoint = bot ? bot.botUrl : "";
     return (
-      <div className={ CSS }>
-        <header>{ endpoint }</header>
-        <Chat mode={ this.props.mode } document={ this.props.document } onStartConversation={ this.props.onStartConversation } key={ this.props.document.pingId } />
+      <div { ...CSS }>
+        <Panel title="Log">
+          <PanelContent>
+            <Log document={ this.props.document } key={ this.props.document.pingId } />
+          </PanelContent>
+        </Panel>
       </div>
     );
   }
 }
-
-
-ChatPanel.propTypes = {
-  document: PropTypes.object.isRequired,
-  mode: PropTypes.string.isRequired
-};

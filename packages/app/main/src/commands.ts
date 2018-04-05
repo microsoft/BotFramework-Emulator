@@ -15,7 +15,7 @@ import * as Fs from 'fs';
 import * as OS from 'os';
 import { sync as mkdirpSync } from 'mkdirp';
 import { BotProjectFileWatcher } from './botProjectFileWatcher';
-import { getAppMenuTemplate, getFileMenu, setFileMenu } from './appMenuBuilder';
+import { AppMenuBuilder } from './appMenuBuilder';
 import { ProtocolHandler } from './protocolHandler';
 import { Protocol } from './constants';
 import { Conversation } from './conversationManager';
@@ -145,7 +145,9 @@ export function registerCommands() {
     mainWindow.store.dispatch(BotActions.load(bots));
     mainWindow.commandService.remoteCall('bot:list:sync', bots);
     // Reset the app title bar
-    mainWindow.commandService.call('app:setTitleBar');
+    mainWindow.commandService.call('electron:set-title-bar');
+    // Un-fullscreen the screen
+    mainWindow.commandService.call('electron:set-fullscreen', false);
     // Send app settings to client
     mainWindow.commandService.remoteCall("receive-global-settings", {
       url: emulator.framework.router.url,
@@ -160,15 +162,6 @@ export function registerCommands() {
       const protocolArg = args.find(arg => arg.includes(Protocol));
       ProtocolHandler.parseProtocolUrlAndDispatch(protocolArg);
     }
-  });
-
-  //---------------------------------------------------------------------------
-  // Sets the app's title bar
-  CommandRegistry.registerCommand('app:setTitleBar', (text: string) => {
-    if (text && text.length)
-      mainWindow.browserWindow.setTitle(`${app.getName()} - ${text}`);
-    else
-      mainWindow.browserWindow.setTitle(app.getName());
   });
 
   //---------------------------------------------------------------------------
@@ -274,22 +267,19 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Builds a new app menu to reflect the updated recent bots list
-  //
-  // NOTE: There is currently no way to go from the current, built Electron menu
-  // (Menu.getApplicationMenu()) to its template form. Which means if we have previously
-  // modified the app menu, we need to recreate those modifications while adding the
-  // recent bots list, or they will be overriden.
   CommandRegistry.registerCommand('menu:update-recent-bots', (): void => {
-    // get a new app menu template
-    let menu = getAppMenuTemplate();
+    // get previous app menu template
+    let menu = AppMenuBuilder.menuTemplate;
 
     // get a file menu template with recent bots added
     const state = mainWindow.store.getState();
     const recentBots = state.bot && state.bot.botFiles ? state.bot.botFiles : [];
-    const newFileMenu = getFileMenu(recentBots);
+    const newFileMenu = AppMenuBuilder.getFileMenu(recentBots);
 
     // update the app menu to use the new file menu and build the template into a menu
-    menu = setFileMenu(newFileMenu, menu);
+    menu = AppMenuBuilder.setFileMenu(newFileMenu, menu);
+    // update stored menu state
+    AppMenuBuilder.menuTemplate = menu;
     Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
   });
 
@@ -324,5 +314,25 @@ export function registerCommands() {
     // TODO: Move away from the .users state on legacy emulator settings, and towards per-conversation users
     const conversation = emulator.conversations.newConversation(bot.id, {}, conversationId);
     return conversation;
+  });
+
+  //---------------------------------------------------------------------------
+  // Toggles app fullscreen mode
+  CommandRegistry.registerCommand('electron:set-fullscreen', (fullscreen: boolean): void => {
+    mainWindow.browserWindow.setFullScreen(fullscreen);
+    if (fullscreen) {
+      Menu.setApplicationMenu(null);
+    } else {
+      Menu.setApplicationMenu(Menu.buildFromTemplate(AppMenuBuilder.menuTemplate));
+    }
+  });
+
+  //---------------------------------------------------------------------------
+  // Sets the app's title bar
+  CommandRegistry.registerCommand('electron:set-title-bar', (text: string) => {
+    if (text && text.length)
+      mainWindow.browserWindow.setTitle(`${app.getName()} - ${text}`);
+    else
+      mainWindow.browserWindow.setTitle(app.getName());
   });
 }

@@ -1,6 +1,6 @@
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 
 import { filterChildren } from '../utils';
 import * as Colors from '../styles/colors';
@@ -44,11 +44,10 @@ const CSS = css({
   }
 });
 
-
-export default class ToolBar extends React.Component {
+export default class ToolBar extends React.Component<{}, {}> {
   render() {
     return (
-      <div className={ CSS }>
+      <div { ...CSS }>
         <ul>
           { filterChildren(this.props.children, child => child && child.props.visible).map((child, i) => this.createClass(child, i)) }
         </ul>

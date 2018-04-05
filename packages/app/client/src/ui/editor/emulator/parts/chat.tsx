@@ -40,6 +40,7 @@ import * as Colors from '../../../styles/colors';
 import { PrimaryButton } from '../../../widget';
 import { ISpeechTokenInfo } from '@bfemulator/app-shared';
 import { CommandService } from '../../../../platform/commands/commandService';
+import { EmulatorMode } from '..';
 
 const CognitiveServices = require('@bfemulator/custom-botframework-webchat/CognitiveServices');
 const AdaptiveCardsHostConfig = require('@bfemulator/custom-botframework-webchat/adaptivecards-hostconfig.json');
@@ -135,7 +136,7 @@ const DISCONNECTED_CSS = css({
 });
 
 export interface Props {
-  mode: string,
+  mode: EmulatorMode,
   document: any;
   onStartConversation: any;
 };
@@ -174,7 +175,7 @@ export default class Chat extends React.Component<Props> {
         showShell: this.props.mode === "livechat"
       };
       return (
-        <div { ...CSS }>
+        <div id="webchat-container" { ...CSS }>
           { <WebChat.Chat { ...props } key={ this.props.document.directLine.token } /> }
         </div>
       );

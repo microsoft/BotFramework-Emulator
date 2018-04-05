@@ -32,26 +32,66 @@
 //
 
 import { css } from 'glamor';
-import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 
-import { Detail } from './parts/detail';
-import Panel, { Controls as PanelControls, Content as PanelContent } from '../panel';
+import { filterChildren } from '../utils';
+import * as Colors from '../styles/colors';
 
 const CSS = css({
-  height: '100%'
+  display: 'flex',
+  flex: 1,
+  flexDirection: 'column',
+  height: '100%',
+  position: 'relative',
+
+  '& > .header': {
+    backgroundColor: Colors.SECTION_HEADER_BACKGROUND_DARK,
+    color: Colors.SECTION_HEADER_FOREGROUND_DARK,
+    lineHeight: '30px',
+    minHeight: '30px',
+    textTransform: 'uppercase',
+    paddingLeft: '16px',
+
+    '& > .accessories': {
+      margin: '0 0 0 auto'
+    }
+  },
+
+  '& > .body': {
+    backgroundColor: Colors.PANEL_BACKGROUND_DARK,
+    color: Colors.PANEL_FOREGROUND_DARK,
+    flex: 1,
+    overflow: 'auto',
+    padding: 0,
+  }
 });
 
-export default class DetailPanel extends React.Component {
+interface IPanelProps {
+  children?: any;
+  title?: string;
+}
+
+export default class Panel extends React.Component<IPanelProps, {}> {
+  constructor(props: IPanelProps, context) {
+    super(props, context);
+  }
+
   render() {
     return (
-      <div className={ CSS }>
-        <Panel title="Inspect">
-          <PanelContent>
-            <Detail document={ this.props.document } />
-          </PanelContent>
-        </Panel>
+      <div { ...CSS }>
+        <div className="header">
+          { this.props.title }
+          <div className="accessories">
+            { filterChildren(this.props.children, child => child.type === Controls) }
+          </div>
+        </div>
+        <div className="body">
+          { filterChildren(this.props.children, child => child.type === Content) }
+        </div>
       </div>
     );
   }
 }
+
+export const Controls = props => props.children;
+export const Content = props => props.children;

@@ -31,32 +31,34 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
 import { css } from 'glamor';
-import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 
-import Log from './parts/log';
+import { Detail } from './parts/detail';
 import Panel, { Controls as PanelControls, Content as PanelContent } from '../panel';
 
 const CSS = css({
   height: '100%'
 });
 
-export default class LogPanel extends React.Component {
+interface IDetailPanelProps {
+  document: any;
+}
+
+export default class DetailPanel extends React.Component<IDetailPanelProps, {}> {
+  constructor(props: IDetailPanelProps, context){
+    super(props, context);
+  }
+
   render() {
     return (
-      <div className={ CSS }>
-        <Panel title="Log">
+      <div { ...CSS }>
+        <Panel title="Inspect">
           <PanelContent>
-            <Log document={ this.props.document } key={ this.props.document.pingId } />
+            <Detail document={ this.props.document } />
           </PanelContent>
         </Panel>
       </div>
     );
   }
 }
-
-LogPanel.propTypes = {
-  document: PropTypes.object.isRequired
-};

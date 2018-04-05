@@ -139,7 +139,7 @@ export class Main extends React.Component {
     // Explorer & TabGroup(s) pane
     const workbenchChildren = [];
 
-    if (this.props.showingExplorer)
+    if (this.props.showingExplorer && !this.props.presentationModeEnabled)
       workbenchChildren.unshift(<ExplorerBar key={ 'explorer-bar' } />);
 
     workbenchChildren.push(
@@ -151,7 +151,7 @@ export class Main extends React.Component {
     return (
       <div className={ CSS }>
         <div className={ NAV_CSS }>
-          <NavBar/>
+          { !this.props.presentationModeEnabled && <NavBar/> }
           <div className="workbench">
             <Splitter orientation={ 'vertical' } primaryPaneIndex={ 0 } minSizes={{ 0: 40, 1: 40 }} initialSizes={{ 0: 300 }}>
               { workbenchChildren }
@@ -159,7 +159,7 @@ export class Main extends React.Component {
           </div>
           <TabManager disabled={ false } />
         </div>
-        <StatusBar />
+        { !this.props.presentationModeEnabled && <StatusBar /> }
         <DialogHost />
         <StoreVisualizer enabled={ false } />
       </div>
@@ -168,6 +168,7 @@ export class Main extends React.Component {
 }
 
 export default connect((state, ownProps) => ({
+  presentationModeEnabled: state.presentation.enabled,
   primaryEditor: state.editor.editors[Constants.EditorKey_Primary],
   secondaryEditor: state.editor.editors[Constants.EditorKey_Secondary],
   showingExplorer: state.explorer.showing

@@ -3,7 +3,7 @@ import GenericDocument from './genericDocument';
 import Labelling from './labelling';
 import Row from './row';
 import SideBySide from './sideBySide';
-import Splitter from './splitter-v2';
+import Splitter from './splitter';
 import TruncateText from './truncateText';
 
 export * from './column';
