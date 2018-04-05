@@ -201,8 +201,8 @@ export class Conversation {
       membersRemoved
     }
     this.postActivityToBot(activity, false, (err) => {
-      if (err) {
-        logError(this.conversationId, err);
+      if (err && err.message) {
+        logError(this.conversationId, err.message);
       }
      });
   }

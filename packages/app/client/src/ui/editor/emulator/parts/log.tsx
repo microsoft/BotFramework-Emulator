@@ -255,9 +255,13 @@ class LogEntry extends React.Component<LogEntryProps> {
         }
 
         case "err": {
+          const payload = message.payload || {};
+          let msg = payload.message || payload.method || payload || "details";
+          if (msg.length > 50)
+            msg = msg.substring(0, 50) + '...';
           return (
             <span className="spaced" key={ key }>
-              <span className="spaced"><a onClick={ () => this.inspect(message) }>Error</a></span>
+              <span className="spaced"><a onClick={ () => this.inspect(message) }>{ msg }</a></span>
             </span>
           );
         }
@@ -287,7 +291,7 @@ class LogEntry extends React.Component<LogEntryProps> {
         }
 
         default:
-          return <span className="spaced level-3" key={ key }>UNK?</span>
+          return <span className="spaced level-3" key={ key }><a onClick={ () => this.inspect(message) }>UNK?</a></span>
       }
     } else if (typeof message === 'string' || typeof message === 'number') {
       return <span className="spaced" key={ key }>{ message }</span>;

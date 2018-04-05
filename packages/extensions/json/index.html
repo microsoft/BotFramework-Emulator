@@ -121,13 +121,9 @@
           cls = 'null';
         }
         if (cls === 'key') {
-          // Color string content, not the quotes or colon delimiter
+          // Don't color the : character after the key
           let exec = /"(.*)":\s*/.exec(match);
-          return `"<span class="json-${cls}">${exec[1]}</span>":`;
-        } else if (cls === 'string') {
-          // Color string content, not the quotes
-          let exec = /"(.*)"/.exec(match);
-          return `"<span class="json-${cls}">${exec[1]}</span>"`;
+          return `<span class="json-${cls}">"${exec[1]}"</span>:`;
         } else {
           return `<span class="json-${cls}">${match}</span>`;
         }
