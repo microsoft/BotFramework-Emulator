@@ -61,7 +61,7 @@ export function newBot(...bots: IBot[]): IBot {
 
 /** Represents a recently-used bot that isn't currently loaded */
 export interface IBotInfo {
-  /** Path to corresponding bot's .botproj file */
+  /** Path to corresponding .bot file */
   path?: string;
   /** GUID (so IBot and IBotInfo can be compared w/o need to perform a file read on IBotInfo.path) */
   id?: string;

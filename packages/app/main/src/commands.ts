@@ -37,7 +37,7 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Create a bot
   CommandRegistry.registerCommand('bot:create', (bot: IBot, botDirectory: string): { bot: IBot, botFilePath: string } => {
-    const botFilePath = Path.join(botDirectory, bot.botName + '.botproj');
+    const botFilePath = Path.join(botDirectory, bot.botName + '.bot');
     writeFile(botFilePath, bot);
     mainWindow.store.dispatch(BotActions.create(bot, botFilePath));
     return { bot, botFilePath };

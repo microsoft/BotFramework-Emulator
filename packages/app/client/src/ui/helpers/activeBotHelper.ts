@@ -27,7 +27,7 @@ export const ActiveBotHelper = new class {
     }
   }
 
-  /** Uses a bot id to look up the .botproj path and perform a read on the server-side to populate the corresponding bot object */
+  /** Uses a bot id to look up the .bot path and perform a read on the server-side to populate the corresponding bot object */
   setActiveBot(id: string): Promise<any> {
     return CommandService.remoteCall('bot:setActive', id)
       .then(({ bot, botDirectory }) => {
