@@ -33,9 +33,9 @@
 
 import * as got from 'got';
 import * as http from 'http';
-import * as Payment from '@bfemulator/app-shared';
-import { IUser } from '@bfemulator/app-shared';
-import { IBot, IActivity, IConversationUpdateActivity, IContactRelationUpdateActivity, IInvokeActivity } from '@bfemulator/app-shared';
+import { Payment } from '@bfemulator/sdk-shared';
+import { IBot } from '@bfemulator/app-shared';
+import { IUser, IActivity, IConversationUpdateActivity, IContactRelationUpdateActivity, IInvokeActivity } from '@bfemulator/sdk-shared';
 import { PaymentEncoder } from '@bfemulator/app-shared';
 import { ISpeechTokenInfo } from '@bfemulator/app-shared';
 import { uniqueId } from '@bfemulator/sdk-shared';

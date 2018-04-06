@@ -18,15 +18,15 @@ const CSS = css({
   }
 });
 
-interface ICheckboxProps {
+export interface CheckboxProps {
   checked?: boolean;
   id?: string;
   label?: string;
   onChange?: (...args: any[]) => any;
 }
 
-export class Checkbox extends React.Component<ICheckboxProps, {}> {
-  constructor(props: ICheckboxProps, context) {
+export class Checkbox extends React.Component<CheckboxProps, {}> {
+  constructor(props: CheckboxProps, context) {
     super(props, context);
   }
 

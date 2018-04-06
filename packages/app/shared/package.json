@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "description": "",
-  "main": "index.js",
+  "main": "built/index.js",
+  "types": "built/index.d.ts",
   "scripts": {
     "build": "npm run clean && tsc --pretty",
     "clean": "rimraf ./built",

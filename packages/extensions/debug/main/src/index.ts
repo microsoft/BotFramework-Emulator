@@ -41,20 +41,20 @@ const commands = new CommandService(ipc, `ext-${ipc.id}`);
 //  .then(reply => console.log(reply))
 //  .catch(err => console.log('ping failed', err));
 
-commands.registry.registerCommand('connect', () => {
+commands.on('connect', () => {
   console.log('[Debug Ext] got connect');
 });
 
-commands.registry.registerCommand('disconnect', () => {
+commands.on('disconnect', () => {
   console.log('[Debug Ext] got disconnect');
   process.exit();
 });
 
-commands.registry.registerCommand('ext-ping', () => {
+commands.on('ext-ping', () => {
   return '[Debug Ext] ext-pong';
 });
 
-commands.registry.registerCommand('get-inspector-url', (activities: IActivity[]): string => {
+commands.on('get-inspector-url', (activities: IActivity[]): string => {
   const encodedActivities = encodeURIComponent(JSON.stringify(activities));
   return `client/inspect.html?activities=${encodedActivities}`;
 });

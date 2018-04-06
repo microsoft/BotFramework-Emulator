@@ -25,6 +25,7 @@ export interface IExtensionInspector {
 
 //=============================================================================
 export interface IExtensionConfigClient {
+  basePath?: string;
   portals?: IExtensionPortal[];
   files?: IExtensionFile[];
   inspectors?: IExtensionInspector[];

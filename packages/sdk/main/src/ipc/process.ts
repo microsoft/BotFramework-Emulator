@@ -2,7 +2,7 @@ import { IPC, isObject } from '@bfemulator/sdk-shared';
 
 export interface IProcess {
   pid: number;
-  send(message: any);
+  send?(message: any);
   on(event: 'message', listener: NodeJS.MessageListener);
   on(event: 'exit', listener: NodeJS.ExitListener);
 }

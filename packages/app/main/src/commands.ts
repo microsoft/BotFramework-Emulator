@@ -1,8 +1,8 @@
 import * as Electron from 'electron';
 import { emulator } from './emulator';
 import { Window } from './platform/window';
-import { CommandRegistry as CommReg, uniqueId } from '@bfemulator/sdk-shared';
-import { IActivity, IBot, newBot, IFrameworkSettings, usersDefault } from '@bfemulator/app-shared';
+import { IActivity, CommandRegistry as CommReg, uniqueId } from '@bfemulator/sdk-shared';
+import { IBot, newBot, IFrameworkSettings, usersDefault } from '@bfemulator/app-shared';
 import { ensureStoragePath, getBotsFromDisk, getSafeBotName, readFileSync, showOpenDialog, writeFile, showSaveDialog } from './utils';
 import * as BotActions from './data-v2/action/bot';
 import { app, Menu } from 'electron';
@@ -41,12 +41,6 @@ export function registerCommands() {
     writeFile(botFilePath, bot);
     mainWindow.store.dispatch(BotActions.create(bot, botFilePath));
     return { bot, botFilePath };
-  });
-
-  //---------------------------------------------------------------------------
-  // Delete a bot
-  CommandRegistry.registerCommand('bot:list:delete', (id: string) => {
-    mainWindow.store.dispatch(BotActions.deleteBot(id));
   });
 
   //---------------------------------------------------------------------------
@@ -198,8 +192,11 @@ export function registerCommands() {
     if (!activeBot) {
       throw new Error('save-transcript-to-file: No active bot.');
     }
-
-    const path = Path.resolve(activeBot.projectDir) || Path.join(OS.homedir(), 'Transcripts');
+    
+    const path = Path.resolve(mainWindow.store.getState().bot.currentBotDirectory);
+    if (!path || !path.length) {
+      throw new Error("save-transcript-to-file: Project directory not set");
+    }
 
     const conversation = emulator.conversations.conversationById(activeBot.id, conversationId);
     if (!conversation) {
@@ -251,7 +248,7 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Feeds a deep-linked transcript (array of parsed activities) to a conversation
-  CommandRegistry.registerCommand('emulator:feed-transcript:deep-link', (conversationId: string, activities: IActivity): void => {
+  CommandRegistry.registerCommand('emulator:feed-transcript:deep-link', (conversationId: string, activities: IActivity[]): void => {
     const activeBot: IBot = getActiveBot();
     if (!activeBot) {
       throw new Error('emulator:feed-transcript:deep-link: No active bot.');
@@ -312,7 +309,7 @@ export function registerCommands() {
     // create a conversation object
     const conversationId = `${uniqueId()}|${mode}`;
     // TODO: Move away from the .users state on legacy emulator settings, and towards per-conversation users
-    const conversation = emulator.conversations.newConversation(bot.id, {}, conversationId);
+    const conversation = emulator.conversations.newConversation(bot.id, { id: uniqueId(), name: "User" }, conversationId);
     return conversation;
   });
 

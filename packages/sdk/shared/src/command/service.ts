@@ -3,12 +3,15 @@ import { Channel } from '../ipc/channel';
 import { IPC } from '../ipc/index';
 import { uniqueId } from '../utils';
 import { ICommandRegistry, CommandRegistry } from '..';
+import { ICommandHandler } from '.';
 
 
 export interface ICommandService extends IDisposable {
   registry: ICommandRegistry;
-  call<T = any>(commandName: string, ...args: any[]): Promise<T>;
-  remoteCall<T = any>(commandName: string, ...args: any[]): Promise<T>;
+  call(commandName: string, ...args: any[]): Promise<any>;
+  remoteCall(commandName: string, ...args: any[]): Promise<any>;
+  on(commandName: string, handler?: ICommandHandler): IDisposable;
+  on(event: 'command-not-found', notFoundHandler?: (commandName: string, ...args: any[]) => any);
 }
 
 export class CommandService extends Disposable implements ICommandService {
@@ -38,11 +41,17 @@ export class CommandService extends Disposable implements ICommandService {
       }));
   }
 
-  on(event: 'command-not-found', notFoundHandler: (commandName: string, ...args: any[]) => any) {
-    this._notFoundHandler = notFoundHandler;
+  on(event: string, handler?: ICommandHandler): IDisposable
+  on(event: 'command-not-found', handler?: (commandName: string, ...args: any[]) => any) {
+    if (event === 'command-not-found') {
+      this._notFoundHandler = handler;
+      return undefined;
+    } else {
+      return this.registry.registerCommand(event, handler);
+    }
   }
 
-  call<T = any>(commandName: string, ...args: any[]): Promise<T> {
+  call(commandName: string, ...args: any[]): Promise<any> {
     const command = this._registry.getCommand(commandName);
     try {
       if (!command) {
@@ -53,7 +62,7 @@ export class CommandService extends Disposable implements ICommandService {
           throw new Error(`Command '${commandName}' not found`);
         }
       } else {
-        const result = command.handler<T>(...args);
+        const result = command.handler(...args);
         return Promise.resolve(result);
       }
     } catch (err) {
@@ -61,10 +70,10 @@ export class CommandService extends Disposable implements ICommandService {
     }
   }
 
-  remoteCall<T = any>(commandName: string, ...args: any[]): Promise<T> {
+  remoteCall(commandName: string, ...args: any[]): Promise<any> {
     const transactionId = uniqueId();
     this._channel.send('call', commandName, transactionId, ...args);
-    return new Promise<T>((resolve, reject) => {
+    return new Promise<any>((resolve, reject) => {
       this._channel.setListener(transactionId, (success: boolean, ...responseArgs: any[]) => {
         this._channel.clearListener(transactionId);
         if (success) {

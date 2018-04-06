@@ -1,5 +1,6 @@
 import * as Restify from 'restify';
-import { LogLevel, ILogEntry, IActivity } from '@bfemulator/app-shared';
+import { LogLevel, ILogEntry } from '@bfemulator/app-shared';
+import { IActivity } from '@bfemulator/sdk-shared';
 import { mainWindow } from './main';
 import * as ActivityHelpers from './activityHelpers';
 

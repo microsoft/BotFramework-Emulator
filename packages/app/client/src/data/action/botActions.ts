@@ -34,7 +34,6 @@
 import { IBot, IBotInfo } from '@bfemulator/app-shared';
 
 export const CREATE ='BOT/CREATE';
-export const DELETE = 'BOT/DELETE';
 export const LOAD = 'BOT/LOAD';
 export const PATCH = 'BOT/PATCH';
 export const SET_ACTIVE = 'BOT/SET_ACTIVE';
@@ -45,15 +44,6 @@ export function create(bot: IBot, botFilePath: string) {
     payload: {
       bot,
       botFilePath
-    }
-  };
-}
-
-export function deleteBot(path: string) {
-  return {
-    type: DELETE,
-    payload: {
-      path
     }
   };
 }

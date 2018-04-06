@@ -39,7 +39,7 @@ const CSS = css({
   }
 });
 
-interface IPrimaryButtonProps {
+export interface PrimaryButtonProps {
   className?: string;
   disabled?: boolean;
   onClick?: (...args: any[]) => any;
@@ -47,7 +47,7 @@ interface IPrimaryButtonProps {
 }
 
 // TODO: Move to packages/ui-react unless we start using Fabric
-export class PrimaryButton extends React.Component<IPrimaryButtonProps, {}> {
+export class PrimaryButton extends React.Component<PrimaryButtonProps, {}> {
   constructor(props: any, context: any) {
     super(props, context);
   }

@@ -80,26 +80,4 @@ export const ActiveBotHelper = new class {
       })
       .catch(err => console.error('Error while setting active bot: ', err));
   }
-
-  confirmAndDeleteBot(id): Promise<any> {
-    return CommandService.remoteCall('shell:showMessageBox', true, {
-      type: "question",
-      buttons: ["Cancel", "OK"],
-      defaultId: 1,
-      title: "Delete Bot",
-      message: "Are you sure?",
-      cancelId: 0,
-    })
-      .then((result) => {
-        if (result) {
-          const activeBot = getActiveBot();
-          if (activeBot === id)
-            store.dispatch(EditorActions.closeNonGlobalTabs());
-          CommandService.remoteCall('bot:list:delete', id)
-            .then(() => store.dispatch(BotActions.deleteBot(id)))
-            .catch(err => console.error('Error during bot delete: ', err));
-        }
-      })
-      .catch(err => console.error('Error while deleting bot: ', err));
-  }
 }

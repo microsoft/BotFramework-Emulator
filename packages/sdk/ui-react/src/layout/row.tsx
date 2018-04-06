@@ -22,13 +22,13 @@ const BASE_CSS = css({
   width: '100%'
 });
 
-interface IRowProps {
+export interface RowProps {
   align?: RowAlignment;
   className?: string;
   justify?: RowJustification;
 }
 
-export class Row extends React.Component<IRowProps, {}> {
+export class Row extends React.Component<RowProps, {}> {
   constructor(props, context) {
     super(props, context);
   }

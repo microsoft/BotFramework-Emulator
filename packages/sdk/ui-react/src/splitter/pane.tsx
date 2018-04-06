@@ -36,12 +36,12 @@ import PropTypes from 'prop-types';
 
 import { SplitterOrientation } from './index';
 
-interface ISplitterPaneProps {
+export interface SplitterPaneProps {
   orientation?: SplitterOrientation;
   size?: number;
 }
 
-export class SplitterPane extends React.Component<ISplitterPaneProps, {}> {
+export class SplitterPane extends React.Component<SplitterPaneProps, {}> {
   constructor(props, context) {
     super(props, context);
   }

@@ -1,7 +1,6 @@
-import { IExtensionConfig, Channel, IDisposable, CommandService, IExtensionInspector } from '@bfemulator/sdk-shared';
+import { IExtensionConfig, Channel, IDisposable, CommandService, IExtensionInspector, IActivity } from '@bfemulator/sdk-shared';
 import { ElectronIPC } from './ipc';
 import { CommandRegistry } from './commands';
-import { IActivity } from '@bfemulator/app-shared';
 import * as jsonpath from 'jsonpath';
 
 //=============================================================================
@@ -51,15 +50,15 @@ export class Extension {
     return canInspect;
   }
 
-  public call<T = any>(commandName: string, ...args: any[]): Promise<T> {
-    return this._ext.remoteCall<T>(commandName, ...args);
+  public call(commandName: string, ...args: any[]): Promise<any> {
+    return this._ext.remoteCall(commandName, ...args);
   }
 }
 
 //=============================================================================
 export interface IExtensionManager {
   registerCommands();
-  addExtension(config: Extension, unid: string);
+  addExtension(config: IExtensionConfig, unid: string);
   removeExtension(unid: string);
   getExtensions(): Extension[];
   inspectorForObject(obj: any): IExtensionInspector | null;

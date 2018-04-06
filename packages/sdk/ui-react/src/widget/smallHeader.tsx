@@ -14,10 +14,10 @@ const CSS = css({
   padding: 0
 });
 
-interface IHeaderProps {
+export interface SmallIHeaderProps {
   className?: string;
   children?: any;
 }
 
-export const SmallHeader = (props: IHeaderProps): JSX.Element =>
+export const SmallHeader = (props: SmallIHeaderProps): JSX.Element =>
    <h3 className={ 'small-header-comp ' + (props.className || '') } { ...CSS }><TruncateText>{ props.children }</TruncateText></h3>

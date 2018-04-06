@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { css } from 'glamor';
 
-interface ITruncateTextProps {
+export interface TruncateTextProps {
   className?: string;
   children?: any;
 }
@@ -14,7 +14,7 @@ const CSS = css({
   whiteSpace: 'nowrap'
 });
 
-export const TruncateText = (props: ITruncateTextProps): JSX.Element =>
+export const TruncateText = (props: TruncateTextProps): JSX.Element =>
   <span className={ 'truncate-text ' + (props.className || '') }  { ...CSS }>
     { props.children }
   </span>

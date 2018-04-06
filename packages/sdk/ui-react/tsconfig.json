@@ -5,7 +5,6 @@
     "target": "es5",
     "lib": ["es6", "dom"],
     "sourceMap": true,
-    "allowJs": true,
     "jsx": "react",
     "moduleResolution": "node",
     "rootDir": "src",
@@ -16,6 +15,7 @@
     // "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": false,
+    "declaration": true,
 
     // Should disable this when RxJS 6 release, and it should play nice with TS >= 2.4.1
     "skipLibCheck": true

@@ -31,7 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ILogEntry, uniqueId } from '@bfemulator/sdk-shared';
+import { uniqueId } from '@bfemulator/sdk-shared';
+import { ILogEntry } from '@bfemulator/app-shared';
 import { createStore as createWebChatStore } from '@bfemulator/custom-botframework-webchat';
 
 export const NEW_CHAT_DOCUMENT = 'CHAT/DOCUMENT/NEW';

@@ -35,6 +35,7 @@
 export interface IChannelAccount {
     id?: string,
     name?: string,
+    role?: string,
 }
 
 export interface IConversationAccount extends IChannelAccount {

@@ -12,10 +12,10 @@ const CSS = css({
   padding: 0
 });
 
-interface IHeaderProps {
+export interface MediumHeaderProps {
   className?: string;
   children?: any;
 }
 
-export const MediumHeader = (props: IHeaderProps): JSX.Element =>
+export const MediumHeader = (props: MediumHeaderProps): JSX.Element =>
    <h2 className={ 'medium-header-comp ' + (props.className || '') } { ...CSS }><TruncateText>{ props.children }</TruncateText></h2>

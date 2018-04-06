@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import React from 'react';
+import * as React from 'react';
 
 export function filterChildren(children, predicate) {
     return React.Children.map(children, child => predicate(child) ? child : false);

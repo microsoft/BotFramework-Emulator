@@ -14,11 +14,6 @@ export type BotAction = {
     botFilePath: string
   }
 } | {
-  type: 'BOT/DELETE',
-  payload: {
-    path: string
-  }
-} | {
   type: 'BOT/LOAD',
   payload: {
     bots: IBotInfo[]
@@ -49,16 +44,6 @@ export default function bot(state: IBotState = DEFAULT_STATE, action: BotAction)
       const bots = [...state.botFiles];
       bots.unshift(newBot);
       state = setBotFilesState(bots, state);
-      break;
-    }
-
-    case BotActions.DELETE: {
-      const bots = state.botFiles.filter(bot => bot.path !== action.payload.path);
-      state = setBotFilesState(bots, state);
-
-      if (state.activeBot.path === action.payload.path) {
-        state = setActiveBot(null, state);
-      }
       break;
     }
 

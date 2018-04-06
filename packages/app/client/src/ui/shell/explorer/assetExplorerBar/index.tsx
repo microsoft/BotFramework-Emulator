@@ -6,6 +6,7 @@ import { CommandService } from '../../../../platform/commands/commandService';
 import LiveChatExplorer from '../liveChatExplorer';
 import BotNotOpenExplorer from '../botNotOpenExplorer';
 import TranscriptExplorer from '../transcriptExplorer';
+import * as botHelpers from '../../../../data/botHelpers';
 
 export class IAssetExplorerBarProps {
   activeBot: string;
@@ -23,11 +24,12 @@ export default class AssetExplorerBar extends React.Component<IAssetExplorerBarP
   }
 
   render() {
+    const activeBot = botHelpers.getActiveBot();
     return (
       <>
         <ExplorerBarHeader>
           <Title>
-            { this.props.activeBot ? getBotDisplayName(this.props.activeBot) : false }
+            { this.props.activeBot ? getBotDisplayName(activeBot) : false }
           </Title>
           <Accessories>
             { this.props.activeBot ? <span className="accessory bot-settings-icon" onClick={ this.onClickSettings } /> : false }

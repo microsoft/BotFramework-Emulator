@@ -13,7 +13,7 @@ export interface IExtension {
   readonly unid: string;
   readonly config: IExtensionConfig;
   on(event: 'exit', listener: NodeJS.ExitListener);
-  call<T = any>(commandName: string, ...args: any[]): Promise<T>;
+  call(commandName: string, ...args: any[]): Promise<any>;
   connect();
   disconnect();
 }
@@ -23,7 +23,7 @@ export abstract class Extension extends Disposable implements IExtension {
   protected _ext: CommandService;
   protected _cli: CommandService;
 
-  get unid(): string { return this._ipc.id; }
+  get unid(): string { return this._ipc.id.toString(); }
   get config(): IExtensionConfig { return this._config; }
 
   constructor(private _config: IExtensionConfig, protected _ipc: IPC) {
@@ -35,13 +35,13 @@ export abstract class Extension extends Disposable implements IExtension {
 
     //-------------------------------------------------------------------------
     // Methods callable by extension
-    this._ext.registry.registerCommand('ext-ping', () => {
+    this._ext.on('ext-ping', () => {
       return 'ext-pong';
     });
 
     //-------------------------------------------------------------------------
     // Methods callable by client interface
-    this._cli.registry.registerCommand('cli-ping', () => {
+    this._cli.on('cli-ping', () => {
       return 'cli-pong';
     });
 
@@ -58,9 +58,9 @@ export abstract class Extension extends Disposable implements IExtension {
     });
   }
 
-  public call<T = any>(commandName: string, ...args: any[]): Promise<T> {
+  public call(commandName: string, ...args: any[]): Promise<any> {
     try {
-      return this._ext.remoteCall<T>(commandName, ...args);
+      return this._ext.remoteCall(commandName, ...args);
     } catch (err) {
       return Promise.reject(err);
     }
@@ -98,12 +98,12 @@ export class ChildExtension extends Extension {
 
 //=============================================================================
 export class PeerExtension extends Extension {
-  constructor(config: IExtensionConfig, ipc: WebSocketIPC) {
-    super(config, ipc);
+  constructor(config: IExtensionConfig, private _wsipc: WebSocketIPC) {
+    super(config, _wsipc);
   }
 
   public on(event: 'exit', listener: NodeJS.ExitListener) {
-    this._ipc.ws.on('close', listener);
+    this._wsipc.ws.on('close', listener);
   }
 
   public connect() {

@@ -82,9 +82,9 @@ const CSS = css({
   }
 });
 
-type TextInputType = 'text' | 'password';
+export type TextInputType = 'text' | 'password';
 
-interface ITextInputFieldProps {
+export interface TextInputFieldProps {
   className?: string;
   error?: string;
   inputClass?: string;
@@ -97,8 +97,8 @@ interface ITextInputFieldProps {
   value?: string;
 }
 
-export class TextInputField extends React.Component<ITextInputFieldProps, {}> {
-  constructor(props: ITextInputFieldProps, context: any) {
+export class TextInputField extends React.Component<TextInputFieldProps, {}> {
+  constructor(props: TextInputFieldProps, context: any) {
     super(props, context);
   }
 

@@ -53,7 +53,7 @@ const event = new Event('splitterResize');
 
 export type SplitterOrientation = 'horizontal' | 'vertical';
 
-interface ISplitterProps {
+export interface SplitterProps {
   children?: any;
   initialSizes?: { [paneIndex: number]: number | string } | (() => { [paneIndex: number]: number | string });
   minSizes?: { [paneIndex: number]: number };
@@ -62,12 +62,12 @@ interface ISplitterProps {
   primaryPaneIndex?: number;
 }
 
-interface ISplitterState {
+export interface SplitterState {
   paneSizes?: number[];
   resizing?: boolean;
 }
 
-export class Splitter extends React.Component<ISplitterProps, ISplitterState> {
+export class Splitter extends React.Component<SplitterProps, SplitterState> {
   private activeSplitter: any;
   private splitters: any[];
   private splitNum: number;
@@ -80,7 +80,7 @@ export class Splitter extends React.Component<ISplitterProps, ISplitterState> {
   private CONTAINER_CSS: any;
   private FLOATING_CANVAS_CSS: any;
 
-  public static defaultProps: ISplitterProps = {
+  public static defaultProps: SplitterProps = {
     minSizes: {}
   };
 

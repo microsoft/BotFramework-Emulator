@@ -187,15 +187,15 @@ export default class Chat extends React.Component<Props> {
     }
   }
 
-  private fetchSpeechToken(authIdEvent: string): Promise<string> {
+  private fetchSpeechToken(authIdEvent: string): Promise<string | void> {
     return this.getSpeechToken(authIdEvent, false);
   }
 
-  private fetchSpeechTokenOnExpiry(authIdEvent: string): Promise<string> {
+  private fetchSpeechTokenOnExpiry(authIdEvent: string): Promise<string | void> {
     return this.getSpeechToken(authIdEvent, true);
   }
 
-  private getSpeechToken(authIdEvent: string, refresh: boolean): Promise<string> {
+  private getSpeechToken(authIdEvent: string, refresh: boolean): Promise<string | void> {
     let command = refresh ? 'speech-token:refresh' : 'speech-token:get';
     return CommandService.remoteCall(command, authIdEvent, this.props.document.directLine.token)
       .then((speechToken: ISpeechTokenInfo) => {
@@ -212,6 +212,7 @@ export default class Chat extends React.Component<Props> {
         } else {
           console.error('Could not retrieve Cognitive Services speech token.');
         }
+        return undefined;
       })
       .catch(err => console.error(err));
   }

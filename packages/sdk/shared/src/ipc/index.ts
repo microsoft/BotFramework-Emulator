@@ -6,9 +6,9 @@ import { Channel } from './channel';
 import { ISender } from './sender';
 
 export abstract class IPC extends Disposable implements ISender {
-  private _channels: { [id: string]: Channel } = {};
+  protected _channels: { [id: string]: Channel } = {};
 
-  abstract get id(): number;
+  public id: number;
 
   registerChannel(channel: Channel): IDisposable {
     if (!channel)

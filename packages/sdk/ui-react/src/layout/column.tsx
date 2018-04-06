@@ -22,13 +22,13 @@ const BASE_CSS = css({
   overflow: 'hidden'
 });
 
-interface IColumnProps {
+export interface ColumnProps {
   align?: ColumnAlignment;
   className?: string;
   justify?: ColumnJustification;
 }
 
-export class Column extends React.Component<IColumnProps, {}> {
+export class Column extends React.Component<ColumnProps, {}> {
   constructor(props, context) {
     super(props, context);
   }

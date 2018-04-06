@@ -217,7 +217,7 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
       // if ngrok is configured, wait for it to connect and load the bot
       ngrokEmitter.once('connect', (...args: any[]): void => {
         mainWindow.commandService.call('bot:load', path)
-          .then(console.log('opened bot successfully'))
+          .then(() => console.log('opened bot successfully'))
           // TODO: surface this error somewhere; native error box?
           .catch(err => { throw new Error(`Error occurred while trying to deep link to bot project at: ${path}`) });
       });
@@ -228,7 +228,7 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
       //  we need to wait for welcome page and then show the emulator tab so it's not unfocused)
       setTimeout(() =>
         mainWindow.commandService.call('bot:load', path)
-          .then(console.log('opened bot successfully'))
+          .then(() => console.log('opened bot successfully'))
           // TODO: surface this error somewhere; native error box?
           .catch(err => { throw new Error(`Error occurred while trying to deep link to bot project at: ${path}`) })
       , 1000);

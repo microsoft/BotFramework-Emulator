@@ -33,7 +33,8 @@
 
 //import { Reducer } from 'redux';
 //import { IUserSettings, usersDefault } from '@bfemulator/app-shared';
-import { usersDefault, IUser } from '@bfemulator/app-shared';
+import { usersDefault } from '@bfemulator/app-shared';
+import { IUser } from '@bfemulator/sdk-shared';
 
 
 export type UsersAction = {

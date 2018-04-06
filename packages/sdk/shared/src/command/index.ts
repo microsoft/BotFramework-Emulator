@@ -12,7 +12,7 @@ export interface ICommandMap {
 }
 
 export interface ICommandHandler {
-  <T>(...args: any[]): T;
+  (...args: any[]): any;
 }
 
 export interface ICommandDescription {

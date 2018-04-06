@@ -66,7 +66,7 @@ export class Emulator {
     return Promise.resolve({
       error: 'No bot',
       error_Description: 'To use speech, you must connect to a bot and have an active conversation.'
-    });
+    } as ISpeechTokenInfo);
   }
 
   /**

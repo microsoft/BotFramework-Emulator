@@ -82,7 +82,7 @@ const CSS = css({
   }
 });
 
-interface INumberInputFieldProps {
+export interface NumberInputFieldProps {
   className?: string;
   error?: string;
   inputClass?: string;
@@ -96,8 +96,8 @@ interface INumberInputFieldProps {
   value?: number;
 }
 
-export class NumberInputField extends React.Component<INumberInputFieldProps, {}> {
-  constructor(props: INumberInputFieldProps, context: any) {
+export class NumberInputField extends React.Component<NumberInputFieldProps, {}> {
+  constructor(props: NumberInputFieldProps, context: any) {
     super(props, context);
   }
 

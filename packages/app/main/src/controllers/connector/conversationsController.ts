@@ -32,7 +32,8 @@
 //
 
 import * as Restify from 'restify';
-import { IGenericActivity, IConversationParameters, IUser, ErrorCodes, IResourceResponse, IAttachmentData } from '@bfemulator/app-shared';
+import { ErrorCodes, IResourceResponse } from '@bfemulator/app-shared';
+import { IGenericActivity, IConversationParameters, IUser, IAttachmentData } from '@bfemulator/sdk-shared';
 import * as HttpStatus from 'http-status-codes';
 import * as ResponseTypes from '@bfemulator/app-shared';
 import { getSettings, getStore } from '../../settings';

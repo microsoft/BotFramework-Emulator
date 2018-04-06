@@ -1,6 +1,4 @@
-import { IGenericActivity } from '@bfemulator/app-shared';
-
-export function getActivityText(activity: IGenericActivity): string {
+export function getActivityText(activity: any): string {
   if (activity) {
     if (activity.attachments && activity.attachments.length > 0)
       return activity.attachments[0].contentType;

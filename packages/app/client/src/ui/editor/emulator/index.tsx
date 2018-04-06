@@ -37,7 +37,7 @@ import { connect } from 'react-redux';
 import * as _ from 'lodash';
 import { Subscription, BehaviorSubject } from 'rxjs';
 
-import { ActivityOrID } from '@bfemulator/app-shared';
+import { ActivityOrID } from '@bfemulator/sdk-shared';
 import ChatPanel from './chatPanel';
 import DetailPanel from './detailPanel';
 import LogPanel from './logPanel';
