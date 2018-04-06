@@ -33,7 +33,7 @@
 
 import { css } from 'glamor';
 
-import * as Colors from '../../../styles/colors';
+import { Colors } from '@bfemulator/ui-react';
 
 export const OVERLAY_CSS = css({
     position: 'absolute',

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { css } from 'glamor';
 
-import * as Fonts from '../styles/fonts';
+import { Fonts } from '../styles/fonts';
 
 const CSS = css({
   display: 'flex',
@@ -25,7 +25,7 @@ interface ICheckboxProps {
   onChange?: (...args: any[]) => any;
 }
 
-export default class Checkbox extends React.Component<ICheckboxProps, {}> {
+export class Checkbox extends React.Component<ICheckboxProps, {}> {
   constructor(props: ICheckboxProps, context) {
     super(props, context);
   }

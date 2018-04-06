@@ -2,8 +2,8 @@ import * as React from 'react';
 import { css } from 'glamor';
 
 import { TruncateText } from '../layout';
-import * as Fonts from '../styles/fonts';
-import * as Colors from '../styles/colors';
+import { Fonts } from '../styles/fonts';
+import { Colors } from '../styles/colors';
 
 const CSS = css({
   position: 'relative',
@@ -24,14 +24,14 @@ const CSS = css({
     width: '100%'
   },
 
-  '& > .text-input-label': {
+  '& > .number-input-label': {
     fontSize: '12px',
     height: '16px',
     lineHeight: '16px',
     marginBottom: '8px'
   },
 
-  '& > .text-input-err': {
+  '& > .number-input-err': {
     position: 'absolute',
     left: '8px',
     bottom: '4px',
@@ -46,7 +46,7 @@ const CSS = css({
       opacity: 1
     },
 
-    '& > .text-input-err-caret': {
+    '& > .number-input-err-caret': {
       display: 'inline-block',
       position: 'absolute',
       top: '-4px',
@@ -57,7 +57,7 @@ const CSS = css({
       transform: 'rotateZ(45deg)'
     },
 
-    '& > .text-input-err-msg': {
+    '& > .number-input-err-msg': {
       display: 'inline-block',
       backgroundColor: Colors.INPUT_ERR_BACKGROUND_DARK,
       padding: '4px 8px',
@@ -82,35 +82,35 @@ const CSS = css({
   }
 });
 
-type TextInputType = 'text' | 'password';
-
-interface ITextInputFieldProps {
+interface INumberInputFieldProps {
   className?: string;
   error?: string;
   inputClass?: string;
   label?: string;
+  max?: number;
+  min?: number;
   onChange?: (e: any, ...args: any[]) => any;
   placeholder?: string;
   readOnly?: boolean;
   required?: boolean;
-  type?: TextInputType;
-  value?: string;
+  value?: number;
 }
 
-export default class TextInputField extends React.Component<ITextInputFieldProps, {}> {
-  constructor(props: ITextInputFieldProps, context: any) {
+export class NumberInputField extends React.Component<INumberInputFieldProps, {}> {
+  constructor(props: INumberInputFieldProps, context: any) {
     super(props, context);
   }
 
   render(): JSX.Element {
     return (
-      <div className={ 'text-input-comp ' + (this.props.className || '') } { ...CSS }>
-        { this.props.label ? <TruncateText className="text-input-label">{ this.props.label}{ this.props.required ? '*' : '' }</TruncateText> : null }
-        <input type={ this.props.type || 'text' } className={ this.props.inputClass || '' } value={ this.props.value } onChange={ this.props.onChange }
-          placeholder={ this.props.placeholder } readOnly={ this.props.readOnly } required={ this.props.required } />
-        <div className={ 'text-input-err ' + (this.props.error ? 'error-showing' : '') }>
-          <span className="text-input-err-caret"></span>
-          <span className="text-input-err-msg"><span></span>{ this.props.error }</span>
+      <div className={ 'number-input-comp ' + (this.props.className || '') } { ...CSS }>
+        { this.props.label ? <TruncateText className="number-input-label">{ this.props.label}{ this.props.required ? '*' : '' }</TruncateText> : null }
+        <input type="number" className={ this.props.inputClass || '' } value={ this.props.value } onChange={ this.props.onChange }
+          placeholder={ this.props.placeholder } readOnly={ this.props.readOnly } required={ this.props.required }
+          max={ this.props.max } min={ this.props.min } />
+        <div className={ 'number-input-err ' + (this.props.error ? 'error-showing' : '') }>
+          <span className="number-input-err-caret"></span>
+          <span className="number-input-err-msg"><span></span>{ this.props.error }</span>
         </div>
       </div>
     );

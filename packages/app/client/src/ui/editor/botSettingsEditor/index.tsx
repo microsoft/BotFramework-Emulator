@@ -4,16 +4,14 @@ import { css } from 'glamor';
 import { debounce } from 'lodash';
 import { connect } from 'react-redux';
 import { getBotDisplayName, IBot } from '@bfemulator/app-shared';
+import { Fonts, Column, Row, RowAlignment, PrimaryButton, TextInputField, MediumHeader } from '@bfemulator/ui-react';
 
 import { CommandService } from '../../../platform/commands/commandService';
-import * as Fonts from '../../styles/fonts';
 import * as BotActions from '../../../data/action/botActions';
 import * as ChatActions from '../../../data/action/chatActions';
 import * as EditorActions from '../../../data/action/editorActions';
 import store from '../../../data/store';
-
-import { PrimaryButton, TextInputField, MediumHeader } from '../../widget';
-import { Column, Row, RowAlignment, GenericDocument } from '../../layout';
+import { GenericDocument } from '../../layout';
 
 const CSS = css({
   '& .bot-settings-header': {

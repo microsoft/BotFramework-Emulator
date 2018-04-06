@@ -4,7 +4,7 @@ import { css } from 'glamor';
 
 import { IRootState } from '../../data/store';
 import * as Constants from '../../constants';
-import PrimaryButton from '../widget/primaryButton';
+import { PrimaryButton } from '@bfemulator/ui-react';
 
 const CSS = css({
   position: 'absolute',

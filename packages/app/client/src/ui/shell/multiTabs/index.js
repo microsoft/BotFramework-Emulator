@@ -39,7 +39,7 @@ import { connect } from 'react-redux';
 import TabBar from './tabBar';
 import TabBarTab from './tabBarTab';
 import TabbedDocument, { Tab as TabbedDocumentTab, Content as TabbedDocumentContent } from './tabbedDocument';
-import { filterChildren } from '../../utils';
+import { filterChildren } from '@bfemulator/ui-react';
 
 const CSS = css({
   display: 'flex',

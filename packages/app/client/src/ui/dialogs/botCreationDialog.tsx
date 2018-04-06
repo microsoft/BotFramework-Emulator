@@ -2,17 +2,15 @@ import * as React from 'react';
 import { IBot } from '@bfemulator/app-shared';
 import { css } from 'glamor';
 
-import * as Fonts from '../styles/fonts';
-import * as Colors from '../styles/colors';
 import * as BotActions from '../../data/action/botActions';
 import * as NavBarActions from '../../data/action/navBarActions';
 import * as Constants from '../../constants';
 import { CommandService } from '../../platform/commands/commandService';
 import store from '../../data/store';
-import { PrimaryButton, TextInputField, MediumHeader } from '../widget';
+import { Fonts, Colors, PrimaryButton, TextInputField, MediumHeader, Row, RowAlignment, RowJustification, Column } from '@bfemulator/ui-react';
 import { DialogService } from './service/index';
 import { ActiveBotHelper } from '../helpers/activeBotHelper';
-import { Row, RowAlignment, RowJustification, Column, GenericDocument } from '../layout';
+import { GenericDocument } from '../layout';
 
 const CSS = css({
   backgroundColor: Colors.EDITOR_TAB_BACKGROUND_DARK,
@@ -159,7 +157,7 @@ export default class BotCreationDialog extends React.Component<{}, IBotCreationD
           </Row>
           <Row className="multi-input-row button-row" justify={ RowJustification.Right }>
             <PrimaryButton text='Cancel' onClick={ this.onCancel } className="cancel-button" />
-            <PrimaryButton text='Connect' onClick={ this.onConnect }  disabled={ !requiredFieldsCompleted } className="connect-button" />
+            <PrimaryButton text='Connect' onClick={ this.onConnect } disabled={ !requiredFieldsCompleted } className="connect-button" />
           </Row>
         </Column>
       </div>

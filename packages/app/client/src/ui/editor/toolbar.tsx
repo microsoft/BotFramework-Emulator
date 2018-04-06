@@ -2,9 +2,7 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import * as React from 'react';
 
-import { filterChildren } from '../utils';
-import * as Colors from '../styles/colors';
-import * as Misc from '../styles/misc';
+import { Colors, Decorators, filterChildren } from '@bfemulator/ui-react';
 
 const CSS = css({
   height: '40px',
@@ -33,7 +31,7 @@ const CSS = css({
       ':hover': {
         backgroundColor: Colors.TOOLBAR_BUTTON_HOVER_BACKGROUND_DARK,
         color: Colors.TOOLBAR_BUTTON_HOVER_FOREGROUND_DARK,
-        textDecoration: Misc.TOOLBAR_BUTTON_HOVER_TEXTDECORATION,
+        textDecoration: Decorators.TOOLBAR_BUTTON_HOVER_TEXTDECORATION,
       }
     },
 

@@ -27,7 +27,7 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
 // NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// OF CONTRACT, TORT OR OTHERWISE , ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
@@ -35,8 +35,8 @@ import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { css } from 'glamor';
 
-import SplitterPane from './pane';
-import * as Colors from '../../styles/colors';
+import { SplitterPane } from './pane';
+import { Colors } from '../styles/colors';
 
 const CSS = css({
   height: "100%",
@@ -67,7 +67,7 @@ interface ISplitterState {
   resizing?: boolean;
 }
 
-export default class Splitter extends React.Component<ISplitterProps, ISplitterState> {
+export class Splitter extends React.Component<ISplitterProps, ISplitterState> {
   private activeSplitter: any;
   private splitters: any[];
   private splitNum: number;

@@ -28,7 +28,7 @@ interface IColumnProps {
   justify?: ColumnJustification;
 }
 
-export default class Column extends React.Component<IColumnProps, {}> {
+export class Column extends React.Component<IColumnProps, {}> {
   constructor(props, context) {
     super(props, context);
   }

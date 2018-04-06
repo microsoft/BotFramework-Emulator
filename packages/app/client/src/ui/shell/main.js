@@ -36,12 +36,10 @@ import { css } from 'glamor';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import * as Colors from '../styles/colors';
+import { Colors, Fonts, Splitter } from '@bfemulator/ui-react';
 import ExplorerBar from './explorer';
-import * as Fonts from '../styles/fonts';
 import MDI from './mdi';
 import NavBar from './navBar';
-import { Splitter } from '../layout';
 import TabManager from '../dialogs/tabManager';
 import * as Constants from '../../constants';
 import StatusBar from './statusBar';
@@ -94,9 +92,9 @@ const NAV_CSS = css({
   height: '100%',
 
   '& > .workbench': {
-  display: 'flex',
-  flex: 1,
-  flexDirection: 'column',
+    display: 'flex',
+    flex: 1,
+    flexDirection: 'column',
   },
 
   '& .mdi-wrapper': {
@@ -151,9 +149,9 @@ export class Main extends React.Component {
     return (
       <div className={ CSS }>
         <div className={ NAV_CSS }>
-          { !this.props.presentationModeEnabled && <NavBar/> }
+          { !this.props.presentationModeEnabled && <NavBar /> }
           <div className="workbench">
-            <Splitter orientation={ 'vertical' } primaryPaneIndex={ 0 } minSizes={{ 0: 40, 1: 40 }} initialSizes={{ 0: 300 }}>
+            <Splitter orientation={ 'vertical' } primaryPaneIndex={ 0 } minSizes={ { 0: 40, 1: 40 } } initialSizes={ { 0: 300 } }>
               { workbenchChildren }
             </Splitter>
           </div>

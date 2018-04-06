@@ -14,7 +14,7 @@ const CSS = css({
   whiteSpace: 'nowrap'
 });
 
-export default (props: ITruncateTextProps): JSX.Element =>
+export const TruncateText = (props: ITruncateTextProps): JSX.Element =>
   <span className={ 'truncate-text ' + (props.className || '') }  { ...CSS }>
     { props.children }
-  </span>;
+  </span>

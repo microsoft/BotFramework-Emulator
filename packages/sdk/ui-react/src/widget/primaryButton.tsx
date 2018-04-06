@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { css } from 'glamor';
 
-import * as Colors from '../styles/colors';
-import * as Fonts from '../styles/fonts';
+import { Colors } from '../styles/colors';
+import { Fonts } from '../styles/fonts';
 import { TruncateText } from '../layout';
 
 const CSS = css({
@@ -47,7 +47,7 @@ interface IPrimaryButtonProps {
 }
 
 // TODO: Move to packages/ui-react unless we start using Fabric
-export default class PrimaryButton extends React.Component<IPrimaryButtonProps, {}> {
+export class PrimaryButton extends React.Component<IPrimaryButtonProps, {}> {
   constructor(props: any, context: any) {
     super(props, context);
   }

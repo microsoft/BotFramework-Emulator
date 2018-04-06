@@ -41,7 +41,7 @@ import { ActivityOrID } from '@bfemulator/app-shared';
 import ChatPanel from './chatPanel';
 import DetailPanel from './detailPanel';
 import LogPanel from './logPanel';
-import { Splitter } from '../../layout';
+import { Splitter, Colors } from '@bfemulator/ui-react';
 import ToolBar, { Button as ToolBarButton, Separator as ToolBarSeparator } from '../toolbar';
 import * as BotChat from '@bfemulator/custom-botframework-webchat';
 import { SettingsService } from '../../../platform/settings/settingsService';
@@ -50,7 +50,6 @@ import { uniqueId } from '@bfemulator/sdk-shared';
 import * as ChatActions from '../../../data/action/chatActions';
 import store, { IRootState } from '../../../data/store';
 import * as PresentationActions from '../../../data/action/presentationActions';
-import * as Colors from '../../styles/colors';
 import PlaybackBar from './playbackBar';
 
 const CSS = css({

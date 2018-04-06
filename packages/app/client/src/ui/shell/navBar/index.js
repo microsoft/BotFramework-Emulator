@@ -36,12 +36,11 @@ import { css } from 'glamor';
 import classNames from 'classnames';
 import React from 'react';
 
-import * as Colors from '../../styles/colors';
+import { Colors, InsetShadow } from '@bfemulator/ui-react';
 import * as Constants from '../../../constants';
 import * as NavBarActions from '../../../data/action/navBarActions';
 import * as EditorActions from '../../../data/action/editorActions';
 import * as ExplorerActions from '../../../data/action/explorerActions';
-import { InsetShadow } from '../../widget';
 import { CommandRegistry } from '../../../commands';
 
 const CSS = css({

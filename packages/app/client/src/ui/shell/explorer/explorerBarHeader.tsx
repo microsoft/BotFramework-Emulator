@@ -32,7 +32,7 @@
 
 import { css } from 'glamor';
 import * as React from 'react';
-import { filterChildren } from '../../utils';
+import { filterChildren } from '@bfemulator/ui-react';
 
 const CSS = css({
   padding: '8px 16px',

@@ -31,8 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import React from 'react';
-
-export default function filterChildren(children, predicate) {
-    return React.Children.map(children, child => predicate(child) ? child : false);
+export namespace Fonts {
+  export const FONT_FAMILY_DEFAULT = '-apple-system,BlinkMacSystemFont,Segoe WPC,Segoe UI,HelveticaNeue-Light,Ubuntu,Droid Sans,sans-serif';
+  export const FONT_FAMILY_MONOSPACE = 'Menlo,Monaco,Consolas,Droid Sans Mono,Courier New,monospace,Droid Sans Fallback';
 }

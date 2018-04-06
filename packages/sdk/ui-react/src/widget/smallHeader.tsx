@@ -2,7 +2,7 @@ import * as React from 'react';
 import { css } from 'glamor';
 
 import { TruncateText } from '../layout';
-import * as Fonts from '../styles/fonts';
+import { Fonts } from '../styles/fonts';
 
 const CSS = css({
   fontFamily: Fonts.FONT_FAMILY_DEFAULT,
@@ -19,5 +19,5 @@ interface IHeaderProps {
   children?: any;
 }
 
-export default (props: IHeaderProps): JSX.Element =>
+export const SmallHeader = (props: IHeaderProps): JSX.Element =>
    <h3 className={ 'small-header-comp ' + (props.className || '') } { ...CSS }><TruncateText>{ props.children }</TruncateText></h3>

@@ -1,8 +1,7 @@
 import { css } from 'glamor';
 import React from 'react';
 
-import { ExpandCollapse, Controls as ExpandCollapseControls, Content as ExpandCollapseContent } from '../../../layout/expandCollapse';
-import * as Colors from '../../../styles/colors';
+import { Colors, ExpandCollapse, ExpandCollapseControls, ExpandCollapseContent } from '@bfemulator/ui-react';
 import { ExplorerItem } from '../explorerItem';
 import { EXPLORER_CSS } from '../explorerStyle';
 

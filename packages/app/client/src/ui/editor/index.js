@@ -38,7 +38,6 @@ import * as Constants from '../../constants';
 import AppSettingsEditor from './appSettingsEditor';
 import BotSettingsEditor from './botSettingsEditor';
 import Emulator from './emulator';
-import TestBedEditor from './testBedEditor';
 import WelcomePage from './welcomePage';
 
 export default class EditorFactory extends React.Component {
@@ -51,8 +50,6 @@ export default class EditorFactory extends React.Component {
         <Emulator mode="livechat" documentId={ document.documentId } dirty={ this.props.document.dirty } />
         : contentType === Constants.ContentType_Transcript ?
         <Emulator mode="transcript" documentId={ document.documentId } dirty={ this.props.document.dirty } />
-        : contentType === Constants.ContentType_TestBed ?
-        <TestBedEditor dirty={ this.props.document.dirty } />
         : contentType === Constants.ContentType_BotSettings ?
         <BotSettingsEditor documentId={ document.documentId } dirty={ this.props.document.dirty } />
         : contentType === Constants.ContentType_AppSettings ?

@@ -35,8 +35,7 @@ import { css } from 'glamor';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 
-import * as Colors from '../../../styles/colors';
-import * as Fonts from '../../../styles/fonts';
+import { Colors, Fonts } from '@bfemulator/ui-react';
 import { ExtensionManager } from '../../../../extensions';
 import { Inspector } from './inspector';
 

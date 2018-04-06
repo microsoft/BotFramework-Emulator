@@ -36,8 +36,7 @@ import * as React from 'react';
 import * as WebChat from '@bfemulator/custom-botframework-webchat';
 import { Subscription, BehaviorSubject } from 'rxjs';
 
-import * as Colors from '../../../styles/colors';
-import { PrimaryButton } from '../../../widget';
+import { Colors, PrimaryButton } from '@bfemulator/ui-react';
 import { ISpeechTokenInfo } from '@bfemulator/app-shared';
 import { CommandService } from '../../../../platform/commands/commandService';
 import { EmulatorMode } from '..';

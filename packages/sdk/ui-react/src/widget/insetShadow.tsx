@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { css } from 'glamor';
 
-import * as Shadows from '../styles/shadows';
+import { Shadows } from '../styles/shadows';
 
 const BASE_CSS = css({
   position: 'absolute',

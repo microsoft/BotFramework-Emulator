@@ -37,7 +37,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import TabBarTab from './tabBarTab';
-import * as Colors from '../../styles/colors';
+import { Colors } from '@bfemulator/ui-react';
 import * as EditorActions from '../../../data/action/editorActions';
 import * as Constants from '../../../constants';
 import { getOtherTabGroup } from '../../../data/editorHelpers';

@@ -3,12 +3,11 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { IBotInfo } from '@bfemulator/app-shared';
 
-import * as Colors from '../../styles/colors';
-import { PrimaryButton, LargeHeader, SmallHeader } from '../../widget';
+import { Colors, Column, Row, PrimaryButton, LargeHeader, SmallHeader, TruncateText } from '@bfemulator/ui-react';
 import { CommandService } from '../../../platform/commands/commandService';
 import { DialogService } from '../../dialogs/service/index';
 import BotCreationDialog from '../../dialogs/botCreationDialog';
-import { Column, Row, GenericDocument, TruncateText } from '../../layout';
+import { GenericDocument } from '../../layout';
 
 const CSS = css({
   '& .right-column': {

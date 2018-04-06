@@ -28,7 +28,7 @@ interface IRowProps {
   justify?: RowJustification;
 }
 
-export default class Row extends React.Component<IRowProps, {}> {
+export class Row extends React.Component<IRowProps, {}> {
   constructor(props, context) {
     super(props, context);
   }

@@ -41,7 +41,7 @@ interface ISplitterPaneProps {
   size?: number;
 }
 
-export default class SplitterPane extends React.Component<ISplitterPaneProps, {}> {
+export class SplitterPane extends React.Component<ISplitterPaneProps, {}> {
   constructor(props, context) {
     super(props, context);
   }

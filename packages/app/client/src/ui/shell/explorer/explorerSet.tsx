@@ -34,7 +34,7 @@
 import { css } from 'glamor';
 import * as React from 'react';
 
-import * as Colors from '../../styles/colors';
+import { Colors } from '@bfemulator/ui-react';
 
 const CSS = css({
   backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,

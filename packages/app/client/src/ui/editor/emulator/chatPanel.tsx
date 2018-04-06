@@ -35,8 +35,8 @@ import { css } from 'glamor';
 import * as React from 'react';
 
 import Chat from './parts/chat';
-import * as Colors from '../../styles/colors';
-import Panel, { Controls as PanelControls, Content as PanelContent } from '../panel';
+import { Colors } from '@bfemulator/ui-react';
+import Panel, { PanelControls, PanelContent } from '../panel';
 import { getActiveBot } from '../../../data/botHelpers';
 import { EmulatorMode } from './index';
 

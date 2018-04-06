@@ -37,9 +37,8 @@ import { connect } from 'react-redux';
 
 import AssetExplorerBar from './assetExplorerBar';
 import ServicesExplorerBar from './servicesExplorerBar';
-import * as Colors from '../../styles/colors';
+import { Colors, InsetShadow } from '@bfemulator/ui-react';
 import * as Constants from '../../../constants';
-import { InsetShadow } from '../../widget';
 
 const CSS = css({
   backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,

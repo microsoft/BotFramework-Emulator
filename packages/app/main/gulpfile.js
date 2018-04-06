@@ -85,6 +85,15 @@ gulp.task('build-sdk-client', function () {
 });
 
 //----------------------------------------------------------------------------
+gulp.task('build-sdk-ui-react', function () {
+  return gulp
+    .src('../../sdk/ui-react/package.json', { read: false })
+    .pipe(shell([
+      'npm run build'
+    ], { cwd: '../../sdk/ui-react' }));
+});
+
+//----------------------------------------------------------------------------
 gulp.task('build-sdk-main', function () {
   return gulp
     .src('../../sdk/main/package.json', { read: false })
@@ -98,7 +107,8 @@ gulp.task('build-sdk',
   gulp.series('build-sdk-shared',
     gulp.parallel(
       'build-sdk-client',
-      'build-sdk-main'))
+      'build-sdk-main',
+      'build-sdk-ui-react'))
 );
 
 //----------------------------------------------------------------------------

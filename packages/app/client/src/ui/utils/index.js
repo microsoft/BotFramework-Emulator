@@ -32,9 +32,7 @@
 //
 
 import expandFlatTree from './expandFlatTree';
-import filterChildren from './filterChildren';
 
 export {
-    expandFlatTree,
-    filterChildren,
+    expandFlatTree
 }

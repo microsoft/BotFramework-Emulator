@@ -35,7 +35,7 @@ import { css } from 'glamor';
 import * as React from 'react';
 
 import { Detail } from './parts/detail';
-import Panel, { Controls as PanelControls, Content as PanelContent } from '../panel';
+import Panel, { PanelControls, PanelContent } from '../panel';
 
 const CSS = css({
   height: '100%'

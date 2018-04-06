@@ -36,7 +36,7 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 
 import { filterChildren } from '../utils';
-import * as Colors from '../styles/colors';
+import { Colors } from '../styles/colors';
 import { InsetShadow } from '../widget';
 
 const CSS = css({
@@ -94,16 +94,16 @@ const CSS = css({
   }
 });
 
-export interface Props {
+export interface IExpandCollapseProps {
   expanded?: boolean;
   title?: string;
 }
 
-export interface State {
+export interface IExpandCollapseState {
   expanded: boolean;
 }
 
-export class ExpandCollapse extends React.Component<Props, State> {
+export class ExpandCollapse extends React.Component<IExpandCollapseProps, IExpandCollapseState> {
   constructor(props, context) {
     super(props, context);
 
@@ -128,14 +128,14 @@ export class ExpandCollapse extends React.Component<Props, State> {
             { this.props.title }
           </div>
           <div className="accessories">
-            { filterChildren(this.props.children, child => child.type === Controls) }
+            { filterChildren(this.props.children, child => child.type === ExpandCollapseControls) }
           </div>
         </header>
         <div className="body">
           {
             this.state.expanded &&
             <section>
-              { filterChildren(this.props.children, child => child.type === Content) }
+              { filterChildren(this.props.children, child => child.type === ExpandCollapseContent) }
               <InsetShadow top={ true } />
             </section>
           }
@@ -145,5 +145,5 @@ export class ExpandCollapse extends React.Component<Props, State> {
   }
 }
 
-export const Controls = props => props.children;
-export const Content = props => props.children;
+export const ExpandCollapseControls = props => props.children;
+export const ExpandCollapseContent = props => props.children;

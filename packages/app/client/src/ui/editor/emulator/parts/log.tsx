@@ -36,8 +36,7 @@ import * as React from 'react';
 
 import * as ChatActions from '../../../../data/action/chatActions';
 import store from '../../../../data/store';
-import * as Colors from '../../../styles/colors';
-import * as Fonts from '../../../styles/fonts';
+import { Colors, Fonts } from '@bfemulator/ui-react';
 
 const CSS = css({
   height: '100%',

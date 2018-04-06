@@ -9,6 +9,7 @@
     "packages/sdk/client",
     "packages/sdk/main",
     "packages/sdk/shared",
+    "packages/sdk/ui-react",
     "packages/extensions/qnamaker",
     "packages/extensions/debug",
     "packages/extensions/debug/client",

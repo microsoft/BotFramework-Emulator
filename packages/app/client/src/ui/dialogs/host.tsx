@@ -3,7 +3,7 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import * as Colors from '../styles/colors';
+import { Colors } from '@bfemulator/ui-react';
 import { DialogService } from './service';
 
 interface IDialogHostProps {

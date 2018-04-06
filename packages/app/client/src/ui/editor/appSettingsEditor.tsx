@@ -4,13 +4,13 @@ import { debounce } from 'lodash';
 
 import { IFrameworkSettings } from '@bfemulator/app-shared';
 import { CommandService } from '../../platform/commands/commandService';
-import * as Colors from '../styles/colors';
+import { Colors } from '@bfemulator/ui-react';
 import * as EditorActions from '../../data/action/editorActions';
 import * as Constants from '../../constants';
 import store from '../../data/store';
 import { getTabGroupForDocument } from '../../data/editorHelpers';
-import { Column, ColumnAlignment, GenericDocument, Row, RowAlignment, RowJustification } from '../layout';
-import { Checkbox, NumberInputField, TextInputField, PrimaryButton, MediumHeader, SmallHeader } from '../widget';
+import { GenericDocument } from '../layout';
+import { Column, ColumnAlignment, Row, RowAlignment, RowJustification, Checkbox, NumberInputField, TextInputField, PrimaryButton, MediumHeader, SmallHeader } from '@bfemulator/ui-react';
 
 const CSS = css({
   '& .right-column': {

@@ -1,6 +1,6 @@
 import { css } from 'glamor';
 
-import * as Colors from '../../styles/colors';
+import { Colors } from '@bfemulator/ui-react';
 
 export const EXPLORER_CSS = css({
   display: 'flex',

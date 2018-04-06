@@ -37,12 +37,11 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 
 import * as EditorActions from '../../../../data/action/editorActions';
-import * as Colors from '../../../styles/colors';
+import { Colors, InsetShadow } from '@bfemulator/ui-react';
 import ContentOverlay from './contentOverlay';
 import LeftContentOverlay from './leftContentOverlay';
 import RightContentOverlay from './rightContentOverlay';
 import * as Constants from '../../../../constants';
-import { InsetShadow } from '../../../widget';
 import { getTabGroupForDocument, tabGroupHasDocuments } from '../../../../data/editorHelpers';
 
 const CSS = css({
