@@ -6,13 +6,12 @@ var react_redux_1 = require("react-redux");
 var Chat_1 = require("./Chat");
 var HScroll_1 = require("./HScroll");
 var Store_1 = require("./Store");
-var SuggestedActionsContainer = (function (_super) {
+var SuggestedActionsContainer = /** @class */ (function (_super) {
     tslib_1.__extends(SuggestedActionsContainer, _super);
     function SuggestedActionsContainer(props) {
         return _super.call(this, props) || this;
     }
     SuggestedActionsContainer.prototype.actionClick = function (e, cardAction) {
-        //"stale" actions may be displayed (see shouldComponentUpdate), do not respond to click events if there aren't actual actions
         if (!this.props.activityWithSuggestedActions)
             return;
         this.props.takeSuggestedAction(this.props.activityWithSuggestedActions);
@@ -20,7 +19,6 @@ var SuggestedActionsContainer = (function (_super) {
         e.stopPropagation();
     };
     SuggestedActionsContainer.prototype.shouldComponentUpdate = function (nextProps) {
-        //update only when there are actions. We want the old actions to remain displayed as it animates down.
         return !nextProps.activityWithSuggestedActions != !this.props.activityWithSuggestedActions;
     };
     SuggestedActionsContainer.prototype.render = function () {

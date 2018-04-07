@@ -24,7 +24,7 @@ function cardWithoutHttpActions(card) {
     });
     return tslib_1.__assign({}, card, { actions: actions });
 }
-var AdaptiveCardContainer = (function (_super) {
+var AdaptiveCardContainer = /** @class */ (function (_super) {
     tslib_1.__extends(AdaptiveCardContainer, _super);
     function AdaptiveCardContainer(props) {
         var _this = _super.call(this, props) || this;

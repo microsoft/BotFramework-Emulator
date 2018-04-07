@@ -5,7 +5,7 @@ var React = require("react");
 var Observable_1 = require("rxjs/Observable");
 require("rxjs/add/observable/fromEvent");
 require("rxjs/add/observable/merge");
-var HScroll = (function (_super) {
+var HScroll = /** @class */ (function (_super) {
     tslib_1.__extends(HScroll, _super);
     function HScroll(props) {
         return _super.call(this, props) || this;

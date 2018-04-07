@@ -1,7 +1,7 @@
 import { Activity, ConnectionStatus, IBotConnection, Media, MediaType, Message, User } from 'botframework-directlinejs';
 import { strings, defaultStrings, Strings } from './Strings';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Speech } from './SpeechModule';
+import { Speech, Action } from './SpeechModule';
 import { ActivityOrID, FormatOptions } from './Types';
 import { HostConfig } from 'adaptivecards';
 import * as konsole from './Konsole';
@@ -568,7 +568,7 @@ const trySendMessageEpic: Epic<ChatActions, ChatState> = (action$, store) =>
         .catch(error => Observable.of({ type: 'Send_Message_Fail', clientActivityId } as HistoryAction))
     });
 
-const speakObservable = Observable.bindCallback<string, string, {}, {}>(Speech.SpeechSynthesizer.speak);
+const speakObservable = Observable.bindCallback<string, string, Action, Action, void>(Speech.SpeechSynthesizer.speak);
 
 const speakSSMLEpic: Epic<ChatActions, ChatState> = (action$, store) =>
   action$.ofType('Speak_SSML')
@@ -582,7 +582,7 @@ const speakSSMLEpic: Epic<ChatActions, ChatState> = (action$, store) =>
         onSpeakingFinished = () => ({ type: 'Listening_Starting' } as ShellAction);
       }
 
-      const call$ = speakObservable(action.ssml, action.locale, onSpeakingStarted);
+      const call$ = speakObservable(action.ssml, action.locale, onSpeakingStarted, undefined);
       return call$.map(onSpeakingFinished)
         .catch(error => Observable.of(nullAction));
     })

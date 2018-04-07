@@ -6,7 +6,7 @@ var Chat_1 = require("./Chat");
 var react_redux_1 = require("react-redux");
 var SpeechModule_1 = require("./SpeechModule");
 var Store_1 = require("./Store");
-var ShellContainer = (function (_super) {
+var ShellContainer = /** @class */ (function (_super) {
     tslib_1.__extends(ShellContainer, _super);
     function ShellContainer() {
         return _super !== null && _super.apply(this, arguments) || this;

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var SpeechOptions = (function () {
+var SpeechOptions = /** @class */ (function () {
     function SpeechOptions() {
     }
     return SpeechOptions;

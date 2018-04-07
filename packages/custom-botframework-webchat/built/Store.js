@@ -283,7 +283,7 @@ var speakSSMLEpic = function (action$, store) {
             onSpeakingStarted = function () { return SpeechModule_1.Speech.SpeechRecognizer.warmup(); };
             onSpeakingFinished = function () { return ({ type: 'Listening_Starting' }); };
         }
-        var call$ = speakObservable(action.ssml, action.locale, onSpeakingStarted);
+        var call$ = speakObservable(action.ssml, action.locale, onSpeakingStarted, undefined);
         return call$.map(onSpeakingFinished)
             .catch(function (error) { return Observable_1.Observable.of(nullAction); });
     })

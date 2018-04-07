@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var adaptivecards_1 = require("adaptivecards");
-var AdaptiveCardBuilder = (function () {
+var AdaptiveCardBuilder = /** @class */ (function () {
     function AdaptiveCardBuilder() {
         this.card = new adaptivecards_1.AdaptiveCard();
         this.container = new adaptivecards_1.Container();

@@ -1,13 +1,11 @@
 "use strict";
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
 Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
 var App_1 = require("./App");
 exports.App = App_1.App;
 var Chat_1 = require("./Chat");
 exports.Chat = Chat_1.Chat;
-__export(require("botframework-directlinejs"));
+tslib_1.__exportStar(require("botframework-directlinejs"), exports);
 var Attachment_1 = require("./Attachment");
 exports.queryParams = Attachment_1.queryParams;
 var SpeechOptions_1 = require("./SpeechOptions");

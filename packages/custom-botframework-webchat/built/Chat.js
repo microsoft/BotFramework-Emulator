@@ -13,7 +13,7 @@ var History_1 = require("./History");
 var MessagePane_1 = require("./MessagePane");
 var SuggestedActions_1 = require("./SuggestedActions");
 var Shell_1 = require("./Shell");
-var Chat = (function (_super) {
+var Chat = /** @class */ (function (_super) {
     tslib_1.__extends(Chat, _super);
     function Chat(props) {
         var _this = _super.call(this, props) || this;

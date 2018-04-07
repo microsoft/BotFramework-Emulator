@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var Speech;
 (function (Speech) {
-    var SpeechRecognizer = (function () {
+    var SpeechRecognizer = /** @class */ (function () {
         function SpeechRecognizer() {
         }
         SpeechRecognizer.setSpeechRecognizer = function (recognizer) {
@@ -45,11 +45,11 @@ var Speech;
         SpeechRecognizer.alreadyRecognizing = function () {
             return SpeechRecognizer.instance ? SpeechRecognizer.instance.isStreamingToService : false;
         };
+        SpeechRecognizer.instance = null;
         return SpeechRecognizer;
     }());
-    SpeechRecognizer.instance = null;
     Speech.SpeechRecognizer = SpeechRecognizer;
-    var SpeechSynthesizer = (function () {
+    var SpeechSynthesizer = /** @class */ (function () {
         function SpeechSynthesizer() {
         }
         SpeechSynthesizer.setSpeechSynthesizer = function (speechSynthesizer) {
@@ -67,11 +67,11 @@ var Speech;
                 return;
             SpeechSynthesizer.instance.stopSpeaking();
         };
+        SpeechSynthesizer.instance = null;
         return SpeechSynthesizer;
     }());
-    SpeechSynthesizer.instance = null;
     Speech.SpeechSynthesizer = SpeechSynthesizer;
-    var BrowserSpeechRecognizer = (function () {
+    var BrowserSpeechRecognizer = /** @class */ (function () {
         function BrowserSpeechRecognizer() {
             var _this = this;
             this.locale = null;
@@ -130,7 +130,7 @@ var Speech;
         return BrowserSpeechRecognizer;
     }());
     Speech.BrowserSpeechRecognizer = BrowserSpeechRecognizer;
-    var BrowserSpeechSynthesizer = (function () {
+    var BrowserSpeechSynthesizer = /** @class */ (function () {
         function BrowserSpeechSynthesizer() {
             this.lastOperation = null;
             this.audioElement = null;
@@ -297,7 +297,7 @@ var Speech;
         return BrowserSpeechSynthesizer;
     }());
     Speech.BrowserSpeechSynthesizer = BrowserSpeechSynthesizer;
-    var SpeakRequest = (function () {
+    var SpeakRequest = /** @class */ (function () {
         function SpeakRequest(speakChunks, lang, onSpeakQueued, onSpeakingStarted, onSpeakingFinished) {
             if (onSpeakQueued === void 0) { onSpeakQueued = null; }
             if (onSpeakingStarted === void 0) { onSpeakingStarted = null; }

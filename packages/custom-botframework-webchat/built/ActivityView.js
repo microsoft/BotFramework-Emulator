@@ -16,7 +16,7 @@ var Attachments = function (props) {
                 return React.createElement(Attachment_1.AttachmentView, { key: index, attachment: attachment, format: props.format, onCardAction: props.onCardAction, onImageLoad: props.onImageLoad });
             }));
 };
-var ActivityView = (function (_super) {
+var ActivityView = /** @class */ (function (_super) {
     tslib_1.__extends(ActivityView, _super);
     function ActivityView(props) {
         return _super.call(this, props) || this;
@@ -24,7 +24,9 @@ var ActivityView = (function (_super) {
     ActivityView.prototype.shouldComponentUpdate = function (nextProps) {
         // if the activity changed, re-render
         return this.props.activity !== nextProps.activity
+            // if the format changed, re-render
             || this.props.format !== nextProps.format
+            // if it's a carousel and the size changed, re-render
             || (this.props.activity.type === 'message'
                 && this.props.activity.attachmentLayout === 'carousel'
                 && this.props.size !== nextProps.size);
