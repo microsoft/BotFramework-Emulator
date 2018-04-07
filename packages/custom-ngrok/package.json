@@ -33,11 +33,11 @@
     "mocha": "~3.4.2"
   },
   "dependencies": {
-    "@types/node": "^8.0.19",
-    "async": "^2.3.0",
+    "@types/node": "^9.4.6",
+    "async": "^2.6.0",
     "decompress-zip": "^0.3.0",
     "lock": "^0.1.2",
-    "request": "^2.55.0",
-    "uuid": "^3.0.0"
+    "request": "^2.83.0",
+    "uuid": "^3.2.1"
   }
 }

@@ -347,4 +347,4 @@ function mapStateToProps(state: IRootState, { documentId }: { documentId: string
   };
 }
 
-export default connect(mapStateToProps, null)(Emulator);
+export default connect(mapStateToProps, null)(Emulator as any);

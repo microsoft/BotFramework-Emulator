@@ -181,4 +181,4 @@ class BotSettingsEditor extends React.Component<IBotSettingsEditorProps, IBotSet
 
 export default connect((state, ownProps) => ({
   bot: state.bot.activeBot
-}))(BotSettingsEditor);
+}))(BotSettingsEditor as any);
