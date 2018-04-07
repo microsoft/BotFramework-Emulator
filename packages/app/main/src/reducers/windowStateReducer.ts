@@ -31,10 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-//import { Reducer } from 'redux';
-//import { IWindowStateSettings, windowStateDefault } from '@bfemulator/app-shared';
 import { windowStateDefault } from '@bfemulator/app-shared';
-
 
 export type WindowStateAction = {
     type: 'Window_RememberBounds',

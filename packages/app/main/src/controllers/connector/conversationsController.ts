@@ -32,10 +32,10 @@
 //
 
 import * as Restify from 'restify';
+import * as ResponseTypes from '@bfemulator/app-shared';
 import { ErrorCodes, IResourceResponse } from '@bfemulator/app-shared';
 import { IGenericActivity, IConversationParameters, IUser, IAttachmentData } from '@bfemulator/sdk-shared';
 import * as HttpStatus from 'http-status-codes';
-import * as ResponseTypes from '@bfemulator/app-shared';
 import { getSettings, getStore } from '../../settings';
 import { emulator } from '../../emulator';
 import { AttachmentsController } from './attachmentsController';

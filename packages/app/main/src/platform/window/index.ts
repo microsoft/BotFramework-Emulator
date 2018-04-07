@@ -1,8 +1,7 @@
 import { Store } from 'redux';
 import { BrowserWindow, WebContents } from 'electron';
 import { ILogService } from '@bfemulator/app-shared';
-import { Disposable } from '@bfemulator/sdk-shared';
-import { ICommandService, CommandService } from '@bfemulator/sdk-shared';
+import { ICommandService, CommandService, Disposable } from '@bfemulator/sdk-shared';
 import { LogService } from '../log/logService';
 import { ElectronIPC, ElectronIPCServer } from '../../ipc';
 import createStore from '../../data-v2/createStore';

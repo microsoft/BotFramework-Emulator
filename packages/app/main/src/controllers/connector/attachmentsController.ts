@@ -34,7 +34,7 @@
 import * as Restify from 'restify';
 import * as HttpStatus from 'http-status-codes';
 import * as ResponseTypes from '@bfemulator/app-shared';
-import { ErrorCodes, } from '@bfemulator/app-shared';
+import { ErrorCodes } from '@bfemulator/app-shared';
 import { IAttachmentData, IAttachmentInfo, uniqueId } from '@bfemulator/sdk-shared';
 import { RestServer } from '../../restServer';
 //import { sendErrorResponse } from '../../utils';

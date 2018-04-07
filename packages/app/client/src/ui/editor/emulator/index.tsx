@@ -37,7 +37,7 @@ import { connect } from 'react-redux';
 import * as _ from 'lodash';
 import { Subscription, BehaviorSubject } from 'rxjs';
 
-import { ActivityOrID } from '@bfemulator/sdk-shared';
+import { ActivityOrID, uniqueId } from '@bfemulator/sdk-shared';
 import ChatPanel from './chatPanel';
 import DetailPanel from './detailPanel';
 import LogPanel from './logPanel';
@@ -46,7 +46,6 @@ import ToolBar, { Button as ToolBarButton, Separator as ToolBarSeparator } from 
 import * as BotChat from '@bfemulator/custom-botframework-webchat';
 import { SettingsService } from '../../../platform/settings/settingsService';
 import { CommandService } from '../../../platform/commands/commandService';
-import { uniqueId } from '@bfemulator/sdk-shared';
 import * as ChatActions from '../../../data/action/chatActions';
 import store, { IRootState } from '../../../data/store';
 import * as PresentationActions from '../../../data/action/presentationActions';

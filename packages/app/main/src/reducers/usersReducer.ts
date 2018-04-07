@@ -31,8 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-//import { Reducer } from 'redux';
-//import { IUserSettings, usersDefault } from '@bfemulator/app-shared';
 import { usersDefault } from '@bfemulator/app-shared';
 import { IUser } from '@bfemulator/sdk-shared';
 

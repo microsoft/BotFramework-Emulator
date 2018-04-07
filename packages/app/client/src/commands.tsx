@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { CommandRegistry as CommReg, IExtensionConfig } from '@bfemulator/sdk-shared';
+import { CommandRegistry as CommReg, IExtensionConfig, uniqueId } from '@bfemulator/sdk-shared';
 import { IBot, IBotInfo } from '@bfemulator/app-shared';
 import { showWelcomePage } from "./data/editorHelpers";
 import { ActiveBotHelper } from './ui/helpers/activeBotHelper';
@@ -15,7 +15,6 @@ import * as ChatActions from './data/action/chatActions';
 import * as EditorActions from './data/action/editorActions';
 import * as NavBarActions from './data/action/navBarActions';
 import * as Constants from './constants';
-import { uniqueId } from '@bfemulator/sdk-shared';
 import { getTabGroupForDocument } from './data/editorHelpers';
 import { CommandService } from './platform/commands/commandService';
 import { getBotInfoById } from './data/botHelpers';

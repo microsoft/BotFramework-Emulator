@@ -31,8 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-//import { Reducer } from 'redux';
-//import { IFrameworkSettings, frameworkDefault } from '@bfemulator/app-shared';
 import { frameworkDefault } from '@bfemulator/app-shared';
 
 export type FrameworkAction = {

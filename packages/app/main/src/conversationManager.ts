@@ -33,19 +33,12 @@
 
 import * as got from 'got';
 import * as http from 'http';
-import { Payment } from '@bfemulator/sdk-shared';
-import { IBot } from '@bfemulator/app-shared';
-import { IUser, IActivity, IConversationUpdateActivity, IContactRelationUpdateActivity, IInvokeActivity } from '@bfemulator/sdk-shared';
-import { PaymentEncoder } from '@bfemulator/app-shared';
-import { ISpeechTokenInfo } from '@bfemulator/app-shared';
-import { uniqueId } from '@bfemulator/sdk-shared';
-import { dispatch, getSettings, authenticationSettings, addSettingsListener, speechSettings } from './settings';
-import { Settings } from '@bfemulator/app-shared';
-import * as HttpStatus from 'http-status-codes';
 import * as ResponseTypes from '@bfemulator/app-shared';
-import { ErrorCodes, IResourceResponse } from '@bfemulator/app-shared';
+import { IBot, PaymentEncoder, ISpeechTokenInfo, Settings, ErrorCodes, IResourceResponse, usersDefault } from '@bfemulator/app-shared';
+import { Payment, IUser, IActivity, IConversationUpdateActivity, IContactRelationUpdateActivity, IInvokeActivity, uniqueId } from '@bfemulator/sdk-shared';
+import { dispatch, getSettings, authenticationSettings, addSettingsListener, speechSettings } from './settings';
+import * as HttpStatus from 'http-status-codes';
 import { emulator } from './emulator';
-import { usersDefault } from '@bfemulator/app-shared';
 import * as moment from 'moment';
 import { isLocalhostUrl } from './utils';
 import { getActiveBot } from './botHelpers';
