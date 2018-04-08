@@ -15,6 +15,7 @@
     "packages/extensions/debug/client",
     "packages/extensions/debug/main",
     "packages/extensions/luis",
+    "packages/extensions/luis/client",
     "packages/extensions/json"
   ],
   "version": "independent"
