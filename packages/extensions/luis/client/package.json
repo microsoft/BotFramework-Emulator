@@ -8,7 +8,8 @@
     "react-dom": "^16.2.0",
     "@bfemulator/ui-react": "^1.0.0",
     "glamor": "^2.20.40",
-    "react-json-view": "1.16.1"
+    "react-json-view": "1.16.1",
+    "luis-apis": "^1.0.7"
   },
   "scripts": {
     "start": "react-scripts-ts start",

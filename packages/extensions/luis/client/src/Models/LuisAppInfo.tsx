@@ -1,4 +1,8 @@
+import { AppInfo } from '../Luis/AppInfo';
+
 export interface LuisAppInfo {
-    appId: string;
-    key: any;
+  appId: string;
+  key: string;
+  baseUri: string;
+  appInfo: AppInfo;
 }

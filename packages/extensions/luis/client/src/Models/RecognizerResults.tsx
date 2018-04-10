@@ -1,5 +1,5 @@
 export interface RecognizerResult {
-    Text: string;
-    Intents: any;
-    Entities: any;
+  Text: string;
+  Intents: any;
+  Entities: any;
 }
