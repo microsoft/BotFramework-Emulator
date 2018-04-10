@@ -1,9 +1,7 @@
-import * as React from 'react';
 import { css } from 'glamor';
-import PropTypes from 'prop-types';
+import * as React from 'react';
+import { EventHandler } from 'react';
 import { connect } from 'react-redux';
-
-import { Colors } from '@bfemulator/ui-react';
 import { DialogService } from './service';
 
 interface IDialogHostProps {
@@ -11,7 +9,8 @@ interface IDialogHostProps {
   showing?: boolean;
 }
 
-interface IDialogHostState {}
+interface IDialogHostState {
+}
 
 const CSS = css({
   position: 'absolute',
@@ -41,31 +40,28 @@ const CSS = css({
 class DialogHost extends React.Component<IDialogHostProps, IDialogHostState> {
   constructor(props, context) {
     super(props, context);
-    this.handleOverlayClick = this.handleOverlayClick.bind(this);
-    this.handleContentClick = this.handleContentClick.bind(this);
-    this.saveHostRef = this.saveHostRef.bind(this);
   }
 
-  handleOverlayClick(e) {
-    e.stopPropagation();
+  private handleOverlayClick: EventHandler<any> = (event: MouseEvent) => {
+    event.stopPropagation();
     DialogService.hideDialog();
-  }
+  };
 
-  handleContentClick(e) {
+  private handleContentClick: EventHandler<any> = (event: MouseEvent) => {
     // need to stop clicks inside the dialog from bubbling up to the overlay
-    e.stopPropagation();
-  }
+    event.stopPropagation();
+  };
 
-  saveHostRef(elem) {
+  private saveHostRef = (elem) => {
     DialogService.setHost(elem);
-  }
+  };
 
   render() {
     const visibilityClass = this.props.showing ? ' dialog-host-visible' : '';
 
     return (
-      <div className={ CSS + ' dialog-host-overlay' + visibilityClass } onClick={ this.handleOverlayClick }>
-        <div className="dialog-host-content" onClick={ this.handleContentClick } ref={ this.saveHostRef }>
+      <div className={CSS + ' dialog-host-overlay' + visibilityClass} onClick={this.handleOverlayClick}>
+        <div className="dialog-host-content" onClick={this.handleContentClick} ref={this.saveHostRef}>
         </div>
       </div>
     );

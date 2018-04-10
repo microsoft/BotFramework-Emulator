@@ -1,24 +1,23 @@
+import { IBot, IFrameworkSettings, newBot } from '@bfemulator/app-shared';
+import { CommandRegistry as CommReg, IActivity, uniqueId } from '@bfemulator/sdk-shared';
 import * as Electron from 'electron';
-import { emulator } from './emulator';
-import { Window } from './platform/window';
-import { IActivity, CommandRegistry as CommReg, uniqueId } from '@bfemulator/sdk-shared';
-import { IBot, newBot, IFrameworkSettings, usersDefault } from '@bfemulator/app-shared';
-import { ensureStoragePath, getBotsFromDisk, getSafeBotName, readFileSync, showOpenDialog, writeFile, showSaveDialog } from './utils';
-import * as BotActions from './data-v2/action/bot';
 import { app, Menu } from 'electron';
-import { mainWindow } from './main';
-import { ExtensionManager } from './extensions';
-import { getSettings, dispatch } from './settings';
-import { getActiveBot, getBotInfoById } from './botHelpers';
-import * as Path from 'path';
 import * as Fs from 'fs';
-import * as OS from 'os';
 import { sync as mkdirpSync } from 'mkdirp';
-import { BotProjectFileWatcher } from './botProjectFileWatcher';
+import * as Path from 'path';
 import { AppMenuBuilder } from './appMenuBuilder';
-import { ProtocolHandler } from './protocolHandler';
+import { getActiveBot, getBotInfoById } from './botHelpers';
+import { BotProjectFileWatcher } from './botProjectFileWatcher';
 import { Protocol } from './constants';
 import { Conversation } from './conversationManager';
+import * as BotActions from './data-v2/action/bot';
+import { emulator } from './emulator';
+import { ExtensionManager } from './extensions';
+import { mainWindow } from './main';
+import { ProtocolHandler } from './protocolHandler';
+import { LuisAuthWorkflowService } from './services/luisAuthWorkflowService';
+import { dispatch, getSettings } from './settings';
+import { getBotsFromDisk, getSafeBotName, readFileSync, showOpenDialog, showSaveDialog, writeFile } from './utils';
 
 //=============================================================================
 export const CommandRegistry = new CommReg();
@@ -133,7 +132,7 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Client notifying us it's initialized and has rendered
-  CommandRegistry.registerCommand("client:loaded", () => {
+  CommandRegistry.registerCommand('client:loaded', () => {
     // Load bots from disk and sync list with client
     const bots = getBotsFromDisk();
     mainWindow.store.dispatch(BotActions.load(bots));
@@ -143,7 +142,7 @@ export function registerCommands() {
     // Un-fullscreen the screen
     mainWindow.commandService.call('electron:set-fullscreen', false);
     // Send app settings to client
-    mainWindow.commandService.remoteCall("receive-global-settings", {
+    mainWindow.commandService.remoteCall('receive-global-settings', {
       url: emulator.framework.router.url,
       cwd: __dirname
     });
@@ -192,10 +191,10 @@ export function registerCommands() {
     if (!activeBot) {
       throw new Error('save-transcript-to-file: No active bot.');
     }
-    
+
     const path = Path.resolve(mainWindow.store.getState().bot.currentBotDirectory);
     if (!path || !path.length) {
-      throw new Error("save-transcript-to-file: Project directory not set");
+      throw new Error('save-transcript-to-file: Project directory not set');
     }
 
     const conversation = emulator.conversations.conversationById(activeBot.id, conversationId);
@@ -295,7 +294,7 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Creates a new conversation object
   CommandRegistry.registerCommand('conversation:new', (mode: string): Conversation => {
-    if ((mode !== 'transcript') && (mode !== 'livechat')){
+    if ((mode !== 'transcript') && (mode !== 'livechat')) {
       throw new Error('A mode of either "transcript" or "livechat" must be provided to "conversation:new"');
     }
 
@@ -309,7 +308,10 @@ export function registerCommands() {
     // create a conversation object
     const conversationId = `${uniqueId()}|${mode}`;
     // TODO: Move away from the .users state on legacy emulator settings, and towards per-conversation users
-    const conversation = emulator.conversations.newConversation(bot.id, { id: uniqueId(), name: "User" }, conversationId);
+    const conversation = emulator.conversations.newConversation(bot.id, {
+      id: uniqueId(),
+      name: 'User'
+    }, conversationId);
     return conversation;
   });
 
@@ -331,5 +333,27 @@ export function registerCommands() {
       mainWindow.browserWindow.setTitle(`${app.getName()} - ${text}`);
     else
       mainWindow.browserWindow.setTitle(app.getName());
+  });
+
+  //---------------------------------------------------------------------------
+// Retrieve the LUIS authoring key
+  CommandRegistry.registerCommand('luis:retrieve-authoring-key', async () => {
+    const workflow = LuisAuthWorkflowService.enterAuthWorkflow();
+    const { dispatch } = mainWindow.store;
+    const type = 'LUIS_AUTH_STATUS_CHANGED';
+    dispatch({ type, luisAuthWorkflowStatus: 'inProgress' });
+    let result = undefined;
+    while (true) {
+      const next = workflow.next(result);
+      if (next.done) {
+        dispatch({ type, luisAuthWorkflowStatus: 'ended' });
+        if (!result) {
+          dispatch({ type, luisAuthWorkflowStatus: 'canceled' });
+        }
+        break;
+      }
+      result = await next.value;
+    }
+    return result;
   });
 }

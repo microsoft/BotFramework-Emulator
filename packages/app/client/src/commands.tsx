@@ -44,8 +44,7 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Shows a bot creation dialog
   CommandRegistry.registerCommand('bot-creation:show', () => {
-    const dialog = <BotCreationDialog />;
-    DialogService.showDialog(dialog);
+    DialogService.showDialog(BotCreationDialog);
   });
 
   //---------------------------------------------------------------------------

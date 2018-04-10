@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { css } from 'glamor';
 
-import { Fonts } from '../styles/fonts';
+import { Fonts } from '../styles';
 
 const CSS = css({
   display: 'flex',

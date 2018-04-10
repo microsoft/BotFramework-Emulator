@@ -1,9 +1,8 @@
-import * as React from 'react';
 import { css } from 'glamor';
+import * as React from 'react';
 
 import { TruncateText } from '../layout';
-import { Fonts } from '../styles/fonts';
-import { Colors } from '../styles/colors';
+import { Colors, Fonts } from '../styles';
 
 const CSS = css({
   position: 'relative',
@@ -103,14 +102,16 @@ export class NumberInputField extends React.Component<NumberInputFieldProps, {}>
 
   render(): JSX.Element {
     return (
-      <div className={ 'number-input-comp ' + (this.props.className || '') } { ...CSS }>
-        { this.props.label ? <TruncateText className="number-input-label">{ this.props.label}{ this.props.required ? '*' : '' }</TruncateText> : null }
-        <input type="number" className={ this.props.inputClass || '' } value={ this.props.value } onChange={ this.props.onChange }
-          placeholder={ this.props.placeholder } readOnly={ this.props.readOnly } required={ this.props.required }
-          max={ this.props.max } min={ this.props.min } />
-        <div className={ 'number-input-err ' + (this.props.error ? 'error-showing' : '') }>
+      <div className={'number-input-comp ' + (this.props.className || '')} {...CSS}>
+        {this.props.label ? <TruncateText
+          className="number-input-label">{this.props.label}{this.props.required ? '*' : ''}</TruncateText> : null}
+        <input type="number" className={this.props.inputClass || ''} value={this.props.value}
+               onChange={this.props.onChange}
+               placeholder={this.props.placeholder} readOnly={this.props.readOnly} required={this.props.required}
+               max={this.props.max} min={this.props.min}/>
+        <div className={'number-input-err ' + (this.props.error ? 'error-showing' : '')}>
           <span className="number-input-err-caret"></span>
-          <span className="number-input-err-msg"><span></span>{ this.props.error }</span>
+          <span className="number-input-err-msg"><span></span>{this.props.error}</span>
         </div>
       </div>
     );

@@ -1,20 +1,21 @@
+import * as React from 'react';
+import { ComponentClass, StatelessComponent } from 'react';
 import * as ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import * as DialogActions from '../../../data/action/dialogActions';
 
 import store from '../../../data/store';
-import * as DialogActions from '../../../data/action/dialogActions';
 import { IDialogService } from './IDialogService';
 
 export const DialogService = new class implements IDialogService {
   private _hostElement: HTMLElement;
 
-  constructor() { }
-
-  showDialog(dialog: JSX.Element): void {
+  showDialog(dialog: ComponentClass<any> | StatelessComponent<any>): void {
     if (!this._hostElement) {
       return;
     }
-
-    ReactDOM.render(dialog, this._hostElement);
+    const reactElement = React.createElement(Provider, { store }, React.createElement(dialog));
+    ReactDOM.render(reactElement, this._hostElement);
     store.dispatch(DialogActions.setShowing(true));
   }
 
@@ -30,4 +31,4 @@ export const DialogService = new class implements IDialogService {
   setHost(hostElement: HTMLElement): void {
     this._hostElement = hostElement;
   }
-}
+};

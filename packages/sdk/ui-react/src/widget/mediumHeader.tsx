@@ -2,7 +2,7 @@ import * as React from 'react';
 import { css } from 'glamor';
 
 import { TruncateText } from '../layout';
-import { Fonts } from '../styles/fonts';
+import { Fonts } from '../styles';
 
 const CSS = css({
   fontFamily: Fonts.FONT_FAMILY_DEFAULT,

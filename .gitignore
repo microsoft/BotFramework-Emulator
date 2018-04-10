@@ -3,3 +3,6 @@ lerna-debug.log
 node_modules
 npm-debug.log
 Thumbs.db
+.idea
+
+custom-botframework-webchat/dist

@@ -32,11 +32,10 @@
 //
 
 import { css } from 'glamor';
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
+import { Colors } from '../styles';
 
 import { filterChildren } from '../utils';
-import { Colors } from '../styles/colors';
 import { InsetShadow } from '../widget';
 
 const CSS = css({
@@ -106,16 +105,17 @@ export interface IExpandCollapseState {
 export class ExpandCollapse extends React.Component<IExpandCollapseProps, IExpandCollapseState> {
   constructor(props, context) {
     super(props, context);
-
-    this.handleTitleClick = this.handleTitleClick.bind(this);
-
-    this.state = {
-      expanded: props.expanded
-    };
+    const { expanded } = props;
+    this.state = { expanded };
   }
 
-  handleTitleClick() {
-    this.setState(state => ({ expanded: !state.expanded }));
+  private handleTitleClick = () => {
+    this.setState(state => ( { expanded: !state.expanded } ));
+  };
+
+  public componentWillReceiveProps(newProps) {
+    const { expanded } = newProps;
+    this.setState({ expanded });
   }
 
   render() {
@@ -136,7 +136,7 @@ export class ExpandCollapse extends React.Component<IExpandCollapseProps, IExpan
             this.state.expanded &&
             <section>
               { filterChildren(this.props.children, child => child.type === ExpandCollapseContent) }
-              <InsetShadow top={ true } />
+              <InsetShadow top={ true }/>
             </section>
           }
         </div>

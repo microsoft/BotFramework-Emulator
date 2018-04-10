@@ -31,12 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { css } from 'glamor';
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
-import { css } from 'glamor';
+import { Colors } from '../styles';
 
 import { SplitterPane } from './pane';
-import { Colors } from '../styles/colors';
 
 const CSS = css({
   height: "100%",

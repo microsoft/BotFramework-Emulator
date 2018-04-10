@@ -17,4 +17,4 @@ const CSS = css({
 export const TruncateText = (props: TruncateTextProps): JSX.Element =>
   <span className={ 'truncate-text ' + (props.className || '') }  { ...CSS }>
     { props.children }
-  </span>
+  </span>;

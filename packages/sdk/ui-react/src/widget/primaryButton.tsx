@@ -1,9 +1,7 @@
-import * as React from 'react';
 import { css } from 'glamor';
-
-import { Colors } from '../styles/colors';
-import { Fonts } from '../styles/fonts';
+import * as React from 'react';
 import { TruncateText } from '../layout';
+import { Colors, Fonts } from '../styles';
 
 const CSS = css({
   backgroundColor: Colors.C10,
@@ -55,8 +53,8 @@ export class PrimaryButton extends React.Component<PrimaryButtonProps, {}> {
   render(): JSX.Element {
     const buttonClass = this.props.className ? ` ${this.props.className}` : '';
     return (
-      <button className={ CSS + buttonClass } onClick={ this.props.onClick } disabled={ this.props.disabled }>
-        <TruncateText>{ this.props.text }</TruncateText>
+      <button className={CSS + buttonClass} onClick={this.props.onClick} disabled={this.props.disabled}>
+        <TruncateText>{this.props.text}</TruncateText>
       </button>
     );
   }

@@ -33,29 +33,22 @@
 
 import { applyMiddleware, combineReducers, createStore, Store } from 'redux';
 import promiseMiddleware from 'redux-promise-middleware';
+import sagaMiddlewareFactory from 'redux-saga';
 import thunk from 'redux-thunk';
+import assetExplorer, { IAssetExplorerState } from './reducer/assetExplorer';
+import bot, { IBotState } from './reducer/bot';
+import chat, { IChatState } from './reducer/chat';
+import dialog, { IDialogState } from './reducer/dialog';
+import editor, { IEditorState } from './reducer/editor';
+import explorer, { IExplorerState } from './reducer/explorer';
+import files, { IFileTreeState } from './reducer/files';
+import luisAuth, { ILuisAuthState } from './reducer/luisAuthReducer';
+import luisModel, { ILuisModelsState } from './reducer/luisModelsReducer';
+import navBar, { INavBarState } from './reducer/navBar';
 
-import assetExplorer from './reducer/assetExplorer';
-import bot from './reducer/bot';
-import chat from './reducer/chat';
-import dialog from './reducer/dialog';
-import editor from './reducer/editor';
-import files from './reducer/files';
-import explorer from './reducer/explorer';
-import navBar from './reducer/navBar';
-import presentation from './reducer/presentation';
-import server from './reducer/server';
-
-import { IAssetExplorerState } from './reducer/assetExplorer';
-import { IBotState } from './reducer/bot';
-import { IChatState } from './reducer/chat';
-import { IDialogState } from './reducer/dialog';
-import { IEditorState } from './reducer/editor';
-import { IFileTreeState } from './reducer/files'
-import { IExplorerState } from './reducer/explorer';
-import { INavBarState } from './reducer/navBar';
-import { IPresentationState } from './reducer/presentation';
-import { IServerState } from './reducer/server';
+import presentation, { IPresentationState } from './reducer/presentation';
+import server, { IServerState } from './reducer/server';
+import { applicationSagas } from './sagas';
 
 // TODO: Remove this when we no longer need to debug the WebSocket connection
 // import DebugWebSocketConnection from './debugWebSocketConnection';
@@ -73,9 +66,12 @@ export interface IRootState {
   navBar?: INavBarState;
   presentation?: IPresentationState;
   server?: IServerState;
+  luisAuth?: ILuisAuthState;
+  luisModel?: ILuisModelsState;
   files?: IFileTreeState;
 }
 
+const sagaMiddleWare = sagaMiddlewareFactory();
 const DEFAULT_STATE: IRootState = {};
 
 const configureStore = (initialState: IRootState = DEFAULT_STATE): Store<IRootState> => createStore(
@@ -89,15 +85,19 @@ const configureStore = (initialState: IRootState = DEFAULT_STATE): Store<IRootSt
     chat,
     navBar,
     presentation,
-    server
+    server,
+    luisAuth,
+    luisModel
   }),
   initialState,
   applyMiddleware(
+    sagaMiddleWare,
     promiseMiddleware(),
     thunk
   )
 );
 
 const store = configureStore();
+applicationSagas.forEach(saga => sagaMiddleWare.run(saga));
 
 export default store;
