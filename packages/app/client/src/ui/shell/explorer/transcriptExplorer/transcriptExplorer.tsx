@@ -32,17 +32,22 @@
 //
 
 import { css } from 'glamor';
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
-
+import { FileInfo } from '@BFEmulator/app-shared';
+import { lazy, pathExt } from '@intercom/ui-shared/lib';
+import { TreeView, TreeViewProps, initFontFaces } from '@intercom/ui-fabric/lib';
 import * as constants from '../../../../constants';
+import { SettingsService } from '../../../../platform/settings/settingsService';
 import * as ChatActions from '../../../../data/action/chatActions';
 import * as EditorActions from '../../../../data/action/editorActions';
 import { Colors, ExpandCollapse, ExpandCollapseControls, ExpandCollapseContent } from '@bfemulator/ui-react';
 import ExplorerItem from '../explorerItem';
 import store from '../../../../data/store';
+import { IFileTreeState } from '../../../../data/reducer/files';
 import { EXPLORER_CSS } from '../explorerStyle';
 import { CommandService } from '../../../../platform/commands/commandService';
+import { FileTreeDataProvider } from './fileTreeProvider';
 
 const CONVO_CSS = css({
   display: 'flex',
@@ -58,21 +63,68 @@ const CONVO_CSS = css({
   }
 });
 
-class TranscriptExplorer extends React.Component {
-  constructor(props, context) {
-    super(props, context);
+interface TranscriptExplorerProps {
+  activeEditor: string,
+  activeDocumentId: string,
+  transcripts: any[],
+  changeKey: number,
+  files: IFileTreeState
 
+}
+
+function isTranscript(path: string) : boolean {
+  const ext = (pathExt(path) || '').toLowerCase();
+  return ext === '.transcript';
+}
+
+class _TranscriptExplorer extends React.Component<TranscriptExplorerProps> {
+  private onItemClick: (name: string) => void;
+
+  constructor(props) {
+    super(props);
     this.onItemClick = this.handleItemClick.bind(this);
   }
-
-  handleItemClick(filename) {
+  
+  private handleItemClick(filename) {
     CommandService.call("transcript:open", filename);
   }
 
-  renderTranscriptList() {
+  private renderFileTree() : JSX.Element {
+    if (!this.props.files.root) {
+      return null;
+    }
+    const provider = new FileTreeDataProvider(this.props.files);
+    const props : TreeViewProps<FileInfo> = {
+      loadContainer: provider.loadContainer.bind(provider),
+      remove: provider.remove.bind(provider),
+      insertAt: provider.insertAt.bind(provider),
+      selectNode: node => {
+        if (isTranscript(node.data.path)) {
+          this.handleItemClick(node.data.path);
+        }
+        provider.selectNode.bind(provider);
+      },
+      selectedData: provider.selected,
+      getStyle: provider.getStyle.bind(provider),
+      data: provider.root,
+      selected: false,
+      parent: null,
+      compact: true,
+      readonly: true,
+      theme: 'dark'
+    };
+
     return (
       <ExpandCollapseContent key={ this.props.changeKey }>
-        <ul className={ CONVO_CSS }>
+        <TreeView {...props}/>
+      </ExpandCollapseContent>
+    );
+  }
+
+  private renderTranscriptList() : JSX.Element {
+    return (
+      <ExpandCollapseContent key={ this.props.changeKey }>
+        <ul {...CONVO_CSS }>
           {
             this.props.transcripts.map(filename =>
               <ExplorerItem key={ filename } active={ this.props.activeDocumentId === filename } onClick={ () => this.onItemClick(filename) }>
@@ -85,10 +137,10 @@ class TranscriptExplorer extends React.Component {
     );
   }
 
-  renderEmptyTranscriptList() {
+  private renderEmptyTranscriptList() : JSX.Element {
     return (
       <ExpandCollapseContent key={ this.props.changeKey }>
-        <ul className={ CONVO_CSS }>
+        <ul {...CONVO_CSS }>
           <li><span className="empty-list">No transcripts yet</span></li>
           <li>&nbsp;</li>
         </ul>
@@ -96,17 +148,31 @@ class TranscriptExplorer extends React.Component {
     );
   }
 
-  render() {
+  @lazy()
+  private get setiFont() : string {
+    const fontCalc = x => `url(./external/media${x})`;
+    initFontFaces(fontCalc);    
+    return './external/media';
+  }
+
+  public componentDidMount() {
+    // make sure setiFont is injected
+    const font = this.setiFont;
+  }
+
+  public render() : JSX.Element {
     return (
-      <div className={ EXPLORER_CSS }>
+      <div {...EXPLORER_CSS }>
         <ExpandCollapse
           expanded={ true }
           title="Transcripts"
         >
-          {
+          { this.renderFileTree() }
+          {/*
             this.props.transcripts.length
               ? this.renderTranscriptList()
               : this.renderEmptyTranscriptList()
+          */
           }
         </ExpandCollapse>
       </div>
@@ -114,9 +180,14 @@ class TranscriptExplorer extends React.Component {
   }
 }
 
-export default connect(state => ({
-  activeEditor: state.editor.activeEditor,
-  activeDocumentId: state.editor.editors[state.editor.activeEditor].activeDocumentId,
-  transcripts: state.chat.transcripts,
-  changeKey: state.chat.changeKey
-}))(TranscriptExplorer)
+function mapStateToProps(state: any) : TranscriptExplorerProps {
+  return {
+    activeEditor: state.editor.activeEditor,
+    activeDocumentId: state.editor.editors[state.editor.activeEditor].activeDocumentId,
+    transcripts: state.chat.transcripts,
+    changeKey: state.chat.changeKey,
+    files: state.files
+  };
+}
+
+export const TranscriptExplorer = (connect(mapStateToProps, null)(_TranscriptExplorer)) as any;

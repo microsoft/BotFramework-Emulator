@@ -40,6 +40,7 @@ import bot from './reducer/bot';
 import chat from './reducer/chat';
 import dialog from './reducer/dialog';
 import editor from './reducer/editor';
+import files from './reducer/files';
 import explorer from './reducer/explorer';
 import navBar from './reducer/navBar';
 import presentation from './reducer/presentation';
@@ -50,6 +51,7 @@ import { IBotState } from './reducer/bot';
 import { IChatState } from './reducer/chat';
 import { IDialogState } from './reducer/dialog';
 import { IEditorState } from './reducer/editor';
+import { IFileTreeState } from './reducer/files'
 import { IExplorerState } from './reducer/explorer';
 import { INavBarState } from './reducer/navBar';
 import { IPresentationState } from './reducer/presentation';
@@ -71,6 +73,7 @@ export interface IRootState {
   navBar?: INavBarState;
   presentation?: IPresentationState;
   server?: IServerState;
+  files?: IFileTreeState;
 }
 
 const DEFAULT_STATE: IRootState = {};
@@ -81,6 +84,7 @@ const configureStore = (initialState: IRootState = DEFAULT_STATE): Store<IRootSt
     bot,
     dialog,
     editor,
+    files,
     explorer,
     chat,
     navBar,

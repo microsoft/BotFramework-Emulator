@@ -3,10 +3,10 @@ import { ExplorerBarHeader, Title, Accessories } from '../explorerBarHeader';
 import { ExplorerBarBody } from '../explorerBarBody';
 import { getBotDisplayName } from '@bfemulator/app-shared';
 import { CommandService } from '../../../../platform/commands/commandService';
+import * as botHelpers from '../../../../data/botHelpers';
 import LiveChatExplorer from '../liveChatExplorer';
 import BotNotOpenExplorer from '../botNotOpenExplorer';
-import TranscriptExplorer from '../transcriptExplorer';
-import * as botHelpers from '../../../../data/botHelpers';
+import { TranscriptExplorer } from '../transcriptExplorer';
 
 export class IAssetExplorerBarProps {
   activeBot: string;

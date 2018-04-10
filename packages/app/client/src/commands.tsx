@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { CommandRegistry as CommReg, IExtensionConfig, uniqueId } from '@bfemulator/sdk-shared';
-import { IBot, IBotInfo } from '@bfemulator/app-shared';
+import { FileInfo, IBot, IBotInfo } from '@bfemulator/app-shared';
 import { showWelcomePage } from "./data/editorHelpers";
 import { ActiveBotHelper } from './ui/helpers/activeBotHelper';
 import * as LogService from './platform/log/logService';
@@ -13,6 +13,7 @@ import { DialogService } from './ui/dialogs/service';
 import store from './data/store';
 import * as ChatActions from './data/action/chatActions';
 import * as EditorActions from './data/action/editorActions';
+import * as FileActions from './data/action/fileActions';
 import * as NavBarActions from './data/action/navBarActions';
 import * as Constants from './constants';
 import { getTabGroupForDocument } from './data/editorHelpers';
@@ -144,5 +145,13 @@ export function registerCommands() {
         }
       })
       .catch(err => console.error(err));
+  });
+
+  CommandRegistry.registerCommand('file:add', (payload) => {
+    store.dispatch(FileActions.addFile(payload));
+  });
+  
+  CommandRegistry.registerCommand('file:remove', (path) => {
+    store.dispatch(FileActions.removeFile(path));
   });
 }

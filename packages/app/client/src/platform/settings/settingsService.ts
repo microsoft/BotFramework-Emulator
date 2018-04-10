@@ -1,3 +1,4 @@
+import {lazy} from '@intercom/ui-shared/lib';
 import { Disposable } from '@bfemulator/sdk-shared';
 import { CommandRegistry } from '../../commands';
 
@@ -14,6 +15,7 @@ export function registerCommands() {
 export interface IEmulatorSettings {
   url?: string;
   cwd?: string;
+  readonly cwdAsBase: string;
 }
 
 class EmulatorSettings implements IEmulatorSettings {
@@ -39,6 +41,16 @@ class EmulatorSettings implements IEmulatorSettings {
 
   set cwd(value: string) {
     this._cwd = value;
+  }
+
+  @lazy()
+  get cwdAsBase() : string {
+    let base = this.cwd;
+    if (!base.startsWith('/')) {
+      base = `/${base}`;    
+    }
+
+    return base;
   }
 }
 

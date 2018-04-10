@@ -90,8 +90,8 @@ export function registerCommands() {
 
     // set up the file watcher
     const botDirectory = Path.resolve(botInfo.path, '..');
-    BotProjectFileWatcher.watch(botDirectory);
     mainWindow.store.dispatch(BotActions.setActive(bot, botDirectory));
+    BotProjectFileWatcher.watch(botDirectory);
     return { bot, botDirectory };
   });
 

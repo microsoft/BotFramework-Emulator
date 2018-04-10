@@ -4,6 +4,7 @@ import { CommandService } from '../../platform/commands/commandService';
 import { getActiveBot } from '../../data/botHelpers';
 import store from '../../data/store';
 import * as BotActions from '../../data/action/botActions';
+import * as FileActions from '../../data/action/fileActions';
 import * as NavBarActions from '../../data/action/navBarActions';
 import * as EditorActions from '../../data/action/editorActions';
 import * as ExplorerActions from '../../data/action/explorerActions';
@@ -32,6 +33,7 @@ export const ActiveBotHelper = new class {
     return CommandService.remoteCall('bot:setActive', id)
       .then(({ bot, botDirectory }) => {
         store.dispatch(BotActions.setActive(bot, botDirectory));
+        store.dispatch(FileActions.setRoot(botDirectory));
         CommandService.remoteCall('menu:update-recent-bots');
         CommandService.remoteCall('electron:set-title-bar', getBotDisplayName(bot));
       })

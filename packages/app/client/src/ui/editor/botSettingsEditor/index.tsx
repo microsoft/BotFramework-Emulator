@@ -10,7 +10,7 @@ import { CommandService } from '../../../platform/commands/commandService';
 import * as BotActions from '../../../data/action/botActions';
 import * as ChatActions from '../../../data/action/chatActions';
 import * as EditorActions from '../../../data/action/editorActions';
-import store from '../../../data/store';
+import store, { IRootState } from '../../../data/store';
 import { GenericDocument } from '../../layout';
 
 const CSS = css({
@@ -179,6 +179,10 @@ class BotSettingsEditor extends React.Component<IBotSettingsEditorProps, IBotSet
   }
 }
 
-export default connect((state, ownProps) => ({
-  bot: state.bot.activeBot
-}))(BotSettingsEditor as any);
+function mapStateToProps(state: IRootState, ownProps: object) : IBotSettingsEditorProps {
+  return {
+    bot:  state.bot.activeBot
+  }
+}
+
+export default connect(mapStateToProps)(BotSettingsEditor);
