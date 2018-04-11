@@ -1,5 +1,4 @@
 import { Colors, ExpandCollapse, ExpandCollapseContent, ExpandCollapseControls } from '@bfemulator/ui-react';
-import { shell } from 'electron';
 import { css } from 'glamor';
 import * as React from 'react';
 import { Component, ComponentClass } from 'react';

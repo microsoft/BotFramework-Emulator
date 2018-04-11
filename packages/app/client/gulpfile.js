@@ -29,9 +29,9 @@ gulp.task('copy:intercom', function() {
     .pipe(gulp.dest('./public/external/media'));
 });
 
-gulp.task('copy', [
+gulp.task('copy', gulp.parallel(
   'copy:media',
   'copy:webchat:css',
   'copy:intercom:css',
   'copy:intercom'
-]);
+));
