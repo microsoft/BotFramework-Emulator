@@ -1,6 +1,19 @@
 import * as React from 'react';
 import { Component } from 'react';
 import { Intent } from '../Models/Intent';
+import { css } from 'glamor';
+
+const INTENT_VIEWER_CSS = css({
+  color: 'white',
+  fontFamily: 'Segoe UI, sans-serif',
+  fontSize: '12px',
+  userSelect: 'text',
+
+  '& #topScoreIntentLabel': {
+    fontWeight: 'bold',
+    paddingBottom: '5px'
+  }
+});
 
 interface IntentViewerState {
 
@@ -19,8 +32,8 @@ class IntentViewer extends Component<IntentViewerProps, IntentViewerState> {
 
   render() {
     return (
-      <div>
-        <div>Top-Scoring Intent</div>
+      <div {...INTENT_VIEWER_CSS}>
+        <div id="topScoreIntentLabel">Top-Scoring Intent</div>
         <div>{this.props.topScoringIntent.intent} ({this.props.topScoringIntent.score})</div>
       </div>
     );

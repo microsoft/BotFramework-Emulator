@@ -31,31 +31,28 @@ class LuisClient {
     return this.appsService.getApplicationsList();
   }
 
-  getApplicationInfo(): Promise<AppInfo> {
+  async getApplicationInfo(): Promise<AppInfo> {
     this.configureClient();
-    return this.appsService.getApplicationInfo({ appId: this.luisAppInfo.appId }).then(r => {
-      let appInfo: AppInfo;
-      if (r.status === 401) {
-        appInfo = {
-          authorized: false,
-          activeVersion: '',
-          name: ''
-        };
-      } else {
-        appInfo = r.json();
-        appInfo.authorized = true;
-      }
-      return appInfo;
-    });
+    let r = await this.appsService.getApplicationInfo({ appId: this.luisAppInfo.appId });
+    let appInfo: AppInfo;
+    if (r.status === 401) {
+      appInfo = {
+        authorized: false,
+        activeVersion: '',
+        name: ''
+      };
+    } else {
+      appInfo = await r.json();
+      appInfo.authorized = true;
+    }
+    return appInfo;
   }
 
-  getApplicationIntents(appId: string, appInfo: AppInfo): Promise<IntentInfo[]> {
+  async getApplicationIntents(appId: string, appInfo: AppInfo): Promise<IntentInfo[]> {
     this.configureClient();
-    return this.intentsService.getVersionIntentList({ appId: appId, versionId: appInfo.activeVersion }).then(r => {
-      return r.json();
-    }).then((intents: any[]) => {
-      return intents.map((i: any) => i as IntentInfo);
-    });
+    let r = await this.intentsService.getVersionIntentList({ appId: appId, versionId: appInfo.activeVersion });
+    let intents = await r.json();
+    return intents.map((i: any) => i as IntentInfo);
   }
 
   reassignIntent(appId: string, appInfo: AppInfo, luisResponse: LuisResponse, newIntent: string): Promise<void> {

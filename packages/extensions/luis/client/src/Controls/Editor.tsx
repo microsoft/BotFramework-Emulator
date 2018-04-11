@@ -6,6 +6,7 @@ import IntentEditor from './IntentEditor';
 import { Intent } from '../Models/Intent';
 import { RecognizerResult } from '../Models/RecognizerResults';
 import { IntentInfo } from '../Luis/IntentInfo';
+import EntitiesViewer from './EntitiesViewer';
 
 const NoneIntent: string = 'None';
 
@@ -22,7 +23,8 @@ interface EditorProps {
 const EDITOR_CSS = css({
   color: 'white',
   overflowY: 'auto',
-  height: '100%'
+  height: '100%',
+  padding: '8px 16px'
 });
 
 class Editor extends Component<EditorProps, EditorState> {
@@ -52,6 +54,7 @@ class Editor extends Component<EditorProps, EditorState> {
           intentInfo={this.props.intentInfo} 
           intentReassigner={this.props.intentReassigner} 
         />
+        <EntitiesViewer entities={this.props.recognizerResult.Entities} />
       </div>
     );
   }

@@ -2,6 +2,23 @@ import * as React from 'react';
 import { Component } from 'react';
 import { Intent } from '../Models/Intent';
 import { IntentInfo } from '../Luis/IntentInfo';
+import { css } from 'glamor';
+
+const INTENT_VIEWER_CSS = css({
+  color: 'white',
+  fontFamily: 'Segoe UI, sans-serif',
+  fontSize: '12px',
+  userSelect: 'text',
+  paddingTop: '16px',
+
+  '& #selectorContainer': {
+    paddingLeft: '16px'
+  },
+
+  '& #selector': {
+    width: '213px'
+  }
+});
 
 interface IntentEditorState {
   currentIntent: string;
@@ -36,12 +53,14 @@ class IntentEditor extends Component<IntentEditorProps, IntentEditorState> {
       return <option key={i.id} value={i.name} label={i.name}>{i.name}</option>;
     });
     return (
-      <div>
+      <div {...INTENT_VIEWER_CSS}>
         <form>
           <label>Reassign Intent</label>
-          <select value={this.state.currentIntent} onChange={this.handleChange}>
-            {options}
-          </select>
+          <span id="selectorContainer" >
+            <select id="selector" value={this.state.currentIntent} onChange={this.handleChange}>
+              {options}
+            </select>
+          </span>
         </form>
       </div>
     );
