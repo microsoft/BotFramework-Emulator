@@ -1,7 +1,7 @@
 import store from './store';
-import { IBot, IBotInfo } from '@bfemulator/app-shared';
+import { IBotConfig, IBotInfo } from '@bfemulator/app-shared';
 
-export function getActiveBot(): IBot {
+export function getActiveBot(): IBotConfig {
   return store.getState().bot.activeBot;
 }
 

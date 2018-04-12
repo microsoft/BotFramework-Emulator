@@ -37,7 +37,7 @@ import * as Settings from './settings';
 import * as Electron from 'electron';
 import { windowManager, mainWindow } from './main';
 import { getActiveBot } from './botHelpers';
-import { ISpeechTokenInfo } from '@bfemulator/app-shared';
+import { ISpeechTokenInfo, getBotId } from '@bfemulator/app-shared';
 
 
 interface IQueuedMessage {
@@ -55,7 +55,7 @@ export class Emulator {
 
   public getSpeechToken(authIdEvent: string, conversationId: string, refresh: boolean): Promise<ISpeechTokenInfo> {
     const activeBot = getActiveBot();
-    const conversation = this.conversations.conversationById(activeBot.id, conversationId);
+    const conversation = this.conversations.conversationById(getBotId(activeBot), conversationId);
     if (conversation) {
       return new Promise<ISpeechTokenInfo>((resolve, reject) => {
         conversation.getSpeechToken(10, (tokenInfo) => {

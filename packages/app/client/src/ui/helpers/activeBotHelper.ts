@@ -1,4 +1,4 @@
-import { getBotDisplayName, IBot } from '@bfemulator/app-shared';
+import { getBotDisplayName, IBotConfig, getBotId, newBot, newEndpoint } from '@bfemulator/app-shared';
 import { hasNonGlobalTabs } from '../../data/editorHelpers';
 import { CommandService } from '../../platform/commands/commandService';
 import { getActiveBot } from '../../data/botHelpers';
@@ -31,7 +31,7 @@ export const ActiveBotHelper = new class {
   /** Uses a bot id to look up the .bot path and perform a read on the server-side to populate the corresponding bot object */
   setActiveBot(id: string): Promise<any> {
     return CommandService.remoteCall('bot:setActive', id)
-      .then(({ bot, botDirectory }) => {
+      .then(({ bot, botDirectory }: { bot: IBotConfig, botDirectory: string }) => {
         store.dispatch(BotActions.setActive(bot, botDirectory));
         store.dispatch(FileActions.setRoot(botDirectory));
         CommandService.remoteCall('menu:update-recent-bots');
@@ -40,17 +40,18 @@ export const ActiveBotHelper = new class {
       .catch(err => console.error('Error while setting active bot: ', err));
   }
 
-  confirmAndCreateBot(botToCreate: IBot, botDirectory: string): Promise<any> {
+  // TODO: cleanup nested promises
+  confirmAndCreateBot(botToCreate: IBotConfig, botDirectory: string, secret: string): Promise<any> {
     return this.confirmSwitchBot()
       .then((result) => {
         if (result) {
           store.dispatch(EditorActions.closeNonGlobalTabs());
-          CommandService.remoteCall('bot:create', botToCreate, botDirectory)
-            .then(({ bot, botFilePath }) => {
+          CommandService.remoteCall('bot:create', botToCreate, botDirectory, secret)
+            .then(({ bot, botFilePath }: { bot: IBotConfig, botFilePath: string }) => {
               console.log(bot, botFilePath);
               store.dispatch((dispatch) => {
-                store.dispatch(BotActions.create(bot, botFilePath));
-                this.setActiveBot(bot.id)
+                store.dispatch(BotActions.create(bot, botFilePath, secret));
+                this.setActiveBot(getBotId(bot))
                 .then(() => {
                   CommandService.call('livechat:new');
                   store.dispatch(NavBarActions.select(Constants.NavBar_Files));
@@ -64,8 +65,12 @@ export const ActiveBotHelper = new class {
   }
 
   confirmAndSwitchBots(id: string): Promise<any> {
-    const activeBot = getActiveBot() || {};
-    if (activeBot && activeBot.id === id)
+    let activeBot = getActiveBot();
+    if (!activeBot) {
+      activeBot = newBot();
+      activeBot.services.push(newEndpoint());
+    }
+    if (activeBot && getBotId(activeBot) === id)
       return Promise.resolve();
     console.log(`Switching to bot ${id}`);
     return this.confirmSwitchBot()

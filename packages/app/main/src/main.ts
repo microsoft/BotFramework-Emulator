@@ -33,6 +33,8 @@
 
 import * as Electron from 'electron';
 import { app, Menu } from 'electron';
+import { getBotId } from '@bfemulator/app-shared';
+
 import { getSettings, dispatch } from './settings';
 import { WindowStateAction } from './reducers/windowStateReducer';
 import * as url from 'url';
@@ -46,7 +48,7 @@ import { Window } from './platform/window';
 import { ensureStoragePath, writeFile, isDev } from './utils';
 import * as squirrel from './squirrelEvents';
 import * as Commands from './commands';
-import { getBotInfoById } from './botHelpers';
+import { getBotInfoById, encryptBot, IBotConfigToBotConfig } from './botHelpers';
 import { AppMenuBuilder } from './appMenuBuilder';
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
@@ -132,15 +134,19 @@ const createMainWindow = () => {
         const state = store.getState();
         const botsJson = { bots: state.bot.botFiles.filter(botFile => !!botFile) };
         const botsJsonPath = path.join(ensureStoragePath(), 'bots.json');
+        const botId = getBotId(state.bot.activeBot);
 
         try {
           // write bots list
           writeFile(botsJsonPath, botsJson);
           // write active bot
-          if (state.bot.activeBot && state.bot.activeBot.id) {
-            const activeBotInfo = getBotInfoById(state.bot.activeBot.id);
+          if (state.bot.activeBot && botId) {
+            const activeBotInfo = getBotInfoById(botId);
             if (activeBotInfo) {
-              writeFile(activeBotInfo.path, state.bot.activeBot);
+              // encrypt bot file and write to disk
+              const bot = IBotConfigToBotConfig(state.bot.activeBot);
+              const encryptedBot = encryptBot(bot, activeBotInfo.secret);
+              encryptedBot.Save(activeBotInfo.path);
             }
           }
         } catch (e) { console.error('Error writing bot settings to disk: ', e); }

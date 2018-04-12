@@ -1,7 +1,7 @@
 import * as Electron from 'electron';
 
 import { mainWindow } from './main';
-import { IBotInfo } from '@bfemulator/app-shared';
+import { IBotInfo, getBotId } from '@bfemulator/app-shared';
 
 export interface IAppMenuBuilder {
   menuTemplate: Electron.MenuItemConstructorOptions[];
@@ -81,6 +81,9 @@ export const AppMenuBuilder = new class AppMenuBuilder implements IAppMenuBuilde
 
   /** Creates a file menu item for each bot that will set the bot as active when clicked */
   createRecentBotsList(bots: IBotInfo[]): Electron.MenuItemConstructorOptions[] {
+    // TODO: will need to change this to recent endpoints instead of bots
+    // once we allow multiple endpoints per bot
+
     // only list 5 most-recent bots
     return bots.slice(0, 5).map(bot => ({
       label: bot.displayName,
@@ -97,16 +100,14 @@ export const AppMenuBuilder = new class AppMenuBuilder implements IAppMenuBuilde
       {
         label: "New Bot",
         click: () => {
-          mainWindow.commandService.call('bot:new')
-            .then(bot => mainWindow.commandService.remoteCall('bot-creation:show'))
-            .catch(err => console.error('Error while getting new bot in File menu: ', err));
+          mainWindow.commandService.remoteCall('bot-creation:show');
         }
       }];
 
     if (recentBots && recentBots.length) {
-      recentBots = this.createRecentBotsList(recentBots);
+      const recentBotsList = this.createRecentBotsList(recentBots);
       subMenu.push({ type: 'separator' });
-      subMenu.push(...recentBots);
+      subMenu.push(...recentBotsList);
       subMenu.push({ type: 'separator' });
     }
 

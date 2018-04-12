@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { CommandRegistry as CommReg, IExtensionConfig, uniqueId } from '@bfemulator/sdk-shared';
-import { FileInfo, IBot, IBotInfo } from '@bfemulator/app-shared';
+import { FileInfo, IBotInfo, IBotConfig, getBotId } from '@bfemulator/app-shared';
 import { showWelcomePage } from "./data/editorHelpers";
 import { ActiveBotHelper } from './ui/helpers/activeBotHelper';
 import * as LogService from './platform/log/logService';
@@ -56,13 +56,15 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Completes the client side sync of the bot:load command on the server side
   // (NOTE: should NOT be called by itself; call server side instead)
-  CommandRegistry.registerCommand('bot:load', ({ bot, botDirectory }: { bot: IBot, botDirectory: string }): void => {
-      if (!getBotInfoById(bot.id)) {
-        // create and switch bots
-        ActiveBotHelper.confirmAndCreateBot(bot, botDirectory);
-        return;
-      }
-      ActiveBotHelper.confirmAndSwitchBots(bot.id);
+  CommandRegistry.registerCommand('bot:load', ({ bot, botDirectory }: { bot: IBotConfig, botDirectory: string }): void => {
+    const botId = getBotId(bot);
+    if (!getBotInfoById(botId)) {
+      // create and switch bots
+      // TODO: will need a way of loading a bot with a secret
+      ActiveBotHelper.confirmAndCreateBot(bot, botDirectory, '');
+      return;
+    }
+    ActiveBotHelper.confirmAndSwitchBots(botId);
   });
 
 
@@ -87,8 +89,8 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Opens up bot settings page for a bot
-  CommandRegistry.registerCommand('bot-settings:open', (bot: IBot): void => {
-    store.dispatch(EditorActions.open(Constants.ContentType_BotSettings, Constants.DocumentId_BotSettings, false, bot.id));
+  CommandRegistry.registerCommand('bot-settings:open', (bot: IBotConfig): void => {
+    store.dispatch(EditorActions.open(Constants.ContentType_BotSettings, Constants.DocumentId_BotSettings, false, getBotId(bot)));
   });
 
   //---------------------------------------------------------------------------
@@ -149,7 +151,7 @@ export function registerCommands() {
   CommandRegistry.registerCommand('file:add', (payload) => {
     store.dispatch(FileActions.addFile(payload));
   });
-  
+
   CommandRegistry.registerCommand('file:remove', (path) => {
     store.dispatch(FileActions.removeFile(path));
   });

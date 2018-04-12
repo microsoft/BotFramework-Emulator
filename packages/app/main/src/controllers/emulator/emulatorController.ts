@@ -39,7 +39,7 @@ import { emulator } from '../../emulator';
 import { RestServer } from '../../restServer';
 import { jsonBodyParser } from '../../jsonBodyParser';
 import * as ResponseTypes from '@bfemulator/app-shared';
-import { ErrorCodes } from '@bfemulator/app-shared';
+import { ErrorCodes, getBotId } from '@bfemulator/app-shared';
 import { IChannelAccount, Payment } from '@bfemulator/sdk-shared';
 import { windowManager } from '../../main';
 import { Conversation } from '../../conversationManager';
@@ -52,7 +52,7 @@ function getConversation(conversationId: string): Conversation {
     if (!activeBot) {
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "bot not found");
     }
-    const conversation = emulator.conversations.conversationById(activeBot.id, conversationId);
+    const conversation = emulator.conversations.conversationById(getBotId(activeBot), conversationId);
     if (!conversation) {
         throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "conversation not found");
     }

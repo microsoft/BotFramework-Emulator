@@ -1,23 +1,26 @@
-import { IBot, IFrameworkSettings, newBot } from '@bfemulator/app-shared';
+import { newBot, IFrameworkSettings, usersDefault, getBotId, IBotConfig, addIdToBotEndpoints, newEndpoint, getFirstBotEndpoint } from '@bfemulator/app-shared';
 import { CommandRegistry as CommReg, IActivity, uniqueId } from '@bfemulator/sdk-shared';
 import * as Electron from 'electron';
+import { BotConfig } from 'msbot';
+
+import { Window } from './platform/window';
+import { ensureStoragePath, getBotsFromDisk, getSafeBotName, readFileSync, showOpenDialog, writeFile, showSaveDialog } from './utils';
+import * as BotActions from './data-v2/action/bot';
 import { app, Menu } from 'electron';
 import * as Fs from 'fs';
 import { sync as mkdirpSync } from 'mkdirp';
 import * as Path from 'path';
 import { AppMenuBuilder } from './appMenuBuilder';
-import { getActiveBot, getBotInfoById } from './botHelpers';
+import { getActiveBot, getBotInfoById, pathExistsInRecentBots, encryptBot, decryptBot, IBotConfigToBotConfig } from './botHelpers';
 import { BotProjectFileWatcher } from './botProjectFileWatcher';
 import { Protocol } from './constants';
 import { Conversation } from './conversationManager';
-import * as BotActions from './data-v2/action/bot';
 import { emulator } from './emulator';
 import { ExtensionManager } from './extensions';
 import { mainWindow } from './main';
 import { ProtocolHandler } from './protocolHandler';
 import { LuisAuthWorkflowService } from './services/luisAuthWorkflowService';
 import { dispatch, getSettings } from './settings';
-import { getBotsFromDisk, getSafeBotName, readFileSync, showOpenDialog, showSaveDialog, writeFile } from './utils';
 
 //=============================================================================
 export const CommandRegistry = new CommReg();
@@ -35,63 +38,88 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Create a bot
-  CommandRegistry.registerCommand('bot:create', (bot: IBot, botDirectory: string): { bot: IBot, botFilePath: string } => {
-    const botFilePath = Path.join(botDirectory, bot.botName + '.bot');
-    writeFile(botFilePath, bot);
-    mainWindow.store.dispatch(BotActions.create(bot, botFilePath));
+  CommandRegistry.registerCommand('bot:create', (bot: IBotConfig, botDirectory: string, secret: string): { bot: IBotConfig, botFilePath: string } => {
+    // map IBotConfig from client to BotConfig
+    const botConfig: BotConfig = new BotConfig(secret);
+    botConfig.name = bot.name;
+    botConfig.description = bot.description;
+    botConfig.services = bot.services;
+
+    // encrypt bot and write to disk
+    const encryptedBot = encryptBot(botConfig, secret);
+    const botFilePath = Path.join(botDirectory, bot.name + '.bot');
+    encryptedBot.Save(botFilePath);
+
+    // add bot to store and return to client to be added to client store
+    mainWindow.store.dispatch(BotActions.create(bot, botFilePath, secret));
     return { bot, botFilePath };
   });
 
   //---------------------------------------------------------------------------
   // Save bot file and cause a bots list write
-  CommandRegistry.registerCommand('bot:save', (bot: IBot) => {
-    mainWindow.store.dispatch(BotActions.patch(bot));
-  });
-
-  //---------------------------------------------------------------------------
-  // Create a new bot object; don't save to state
-  CommandRegistry.registerCommand('bot:new', (): IBot => {
-    const botName = getSafeBotName();
-
-    const bot: IBot = newBot({
-      botName,
-      botUrl: 'http://localhost:3978/api/messages'
-    });
-    return bot;
+  CommandRegistry.registerCommand('bot:save', (bot: IBotConfig, secret?: string) => {
+    mainWindow.store.dispatch(BotActions.patch(bot, secret));
   });
 
   //---------------------------------------------------------------------------
   // Open a bot project from a .bot path
-  CommandRegistry.registerCommand('bot:load', (botFilePath: string): Promise<IBot> => {
-    const contents = readFileSync(botFilePath);
-    const bot: IBot = contents ? JSON.parse(contents) : null;
-    if (!bot) {
-      throw new Error(`Invalid .bot file found at path: ${botFilePath}`);
-    }
+  CommandRegistry.registerCommand('bot:load', (botFilePath: string, botSecret?: string): Promise<IBotConfig> => {
+    return BotConfig.Load(botFilePath)
+      .then(bot => {
+        let botId = getBotId(bot);
+        if (!botId) {
+          addIdToBotEndpoints(bot);
+          botId = getBotId(bot);
+        }
 
-    if (!getBotInfoById(bot.id)) {
-      // add the bot to bots.json
-      mainWindow.store.dispatch(BotActions.create(bot, botFilePath));
-    }
+        // opening an existing bot, we have the secret
+        const botInfo = getBotInfoById(botId);
+        if (botInfo && botInfo.secret) {
+          botSecret = botInfo.secret;
+        }
 
-    const botDirectory = Path.resolve(botFilePath, '..');
-    mainWindow.store.dispatch(BotActions.setActive(bot, botDirectory));
-    return mainWindow.commandService.remoteCall('bot:load', { bot, botDirectory });
+        // opening a new bot, could have passed secret in via protocol
+        if (!botInfo && !pathExistsInRecentBots(botFilePath)) {
+          // add the bot to bots.json
+          mainWindow.store.dispatch(BotActions.create(bot, botFilePath, botSecret));
+        }
+
+        // either way, if we have the secret, decrypt the bot
+        if (botSecret) {
+          // decrypt the bot
+          bot = decryptBot(bot, botSecret);
+        }
+
+        const botDirectory = Path.resolve(botFilePath, '..');
+        mainWindow.store.dispatch(BotActions.setActive(bot, botDirectory));
+        return mainWindow.commandService.remoteCall('bot:load', { bot, botDirectory });
+      })
+      .catch(err => { throw new Error(`bot:setActive: Error loading bot from path ${botFilePath}: ${err}`); });
   });
 
   //---------------------------------------------------------------------------
   // Set active bot
-  CommandRegistry.registerCommand('bot:setActive', (id: string): { bot: IBot, botDirectory: string } => {
-    // read the bot file at the id's corresponding path and return the IBot (easier for client-side)
+  CommandRegistry.registerCommand('bot:setActive', (id: string): Promise<{ bot: IBotConfig, botDirectory: string } | void> => {
+    // read the bot file at the id's corresponding path and return the IBotConfig (easier for client-side)
     const botInfo = getBotInfoById(id);
-    const contents = readFileSync(botInfo.path);
-    const bot = contents ? JSON.parse(contents) : null;
 
-    // set up the file watcher
-    const botDirectory = Path.resolve(botInfo.path, '..');
-    mainWindow.store.dispatch(BotActions.setActive(bot, botDirectory));
-    BotProjectFileWatcher.watch(botDirectory);
-    return { bot, botDirectory };
+    return BotConfig.Load(botInfo.path, botInfo.secret)
+      .then(bot => {
+        // set up the file watcher
+        const botDirectory = Path.resolve(botInfo.path, '..');
+        BotProjectFileWatcher.watch(botDirectory);
+
+        // if the bot's endpoint has a password it needs to be decrypted
+        const endpoint = getFirstBotEndpoint(bot);
+        if (endpoint && endpoint.appPassword) {
+          if (!botInfo.secret)
+            throw new Error('bot:setActive: Bot has an endpoint with a msa password, but no secret to decrypt the password!');
+          bot = decryptBot(IBotConfigToBotConfig(bot), botInfo.secret);
+        }
+        mainWindow.store.dispatch(BotActions.setActive(bot, botDirectory));
+        return { bot, botDirectory };
+      })
+      .catch(err => { throw new Error(`bot:setActive: Error loading bot from path ${botInfo.path}: ${err}`); });
   });
 
   //---------------------------------------------------------------------------
@@ -187,7 +215,7 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Saves the conversation to a transcript file, with user interaction to set filename.
   CommandRegistry.registerCommand('emulator:save-transcript-to-file', (conversationId: string): void => {
-    const activeBot: IBot = getActiveBot();
+    const activeBot: IBotConfig = getActiveBot();
     if (!activeBot) {
       throw new Error('save-transcript-to-file: No active bot.');
     }
@@ -197,7 +225,7 @@ export function registerCommands() {
       throw new Error('save-transcript-to-file: Project directory not set');
     }
 
-    const conversation = emulator.conversations.conversationById(activeBot.id, conversationId);
+    const conversation = emulator.conversations.conversationById(getBotId(activeBot), conversationId);
     if (!conversation) {
       throw new Error(`save-transcript-to-file: Conversation ${conversationId} not found.`);
     }
@@ -224,12 +252,12 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Feeds a transcript from disk to a conversation
   CommandRegistry.registerCommand('emulator:feed-transcript:disk', (conversationId: string, filename: string) => {
-    const activeBot: IBot = getActiveBot();
+    const activeBot: IBotConfig = getActiveBot();
     if (!activeBot) {
       throw new Error('feed-transcript:disk: No active bot.');
     }
 
-    const conversation = emulator.conversations.conversationById(activeBot.id, conversationId);
+    const conversation = emulator.conversations.conversationById(getBotId(activeBot), conversationId);
     if (!conversation) {
       throw new Error(`feed-transcript:disk: Conversation ${conversationId} not found.`);
     }
@@ -248,12 +276,12 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Feeds a deep-linked transcript (array of parsed activities) to a conversation
   CommandRegistry.registerCommand('emulator:feed-transcript:deep-link', (conversationId: string, activities: IActivity[]): void => {
-    const activeBot: IBot = getActiveBot();
+    const activeBot: IBotConfig = getActiveBot();
     if (!activeBot) {
       throw new Error('emulator:feed-transcript:deep-link: No active bot.');
     }
 
-    const conversation = emulator.conversations.conversationById(activeBot.id, conversationId);
+    const conversation = emulator.conversations.conversationById(getBotId(activeBot), conversationId);
     if (!conversation) {
       throw new Error(`emulator:feed-transcript:deep-link: Conversation ${conversationId} not found.`);
     }
@@ -299,19 +327,18 @@ export function registerCommands() {
     }
 
     // get the active bot or mock one
-    let bot: IBot = getActiveBot();
+    let bot: IBotConfig = getActiveBot();
     if (!bot) {
-      bot = newBot({});
+      bot = newBot();
+      const endpoint = newEndpoint();
+      bot.services.push(endpoint);
       mainWindow.store.dispatch(BotActions.mockAndSetActive(bot));
     }
 
     // create a conversation object
     const conversationId = `${uniqueId()}|${mode}`;
     // TODO: Move away from the .users state on legacy emulator settings, and towards per-conversation users
-    const conversation = emulator.conversations.newConversation(bot.id, {
-      id: uniqueId(),
-      name: 'User'
-    }, conversationId);
+    const conversation = emulator.conversations.newConversation(getBotId(bot), { id: uniqueId(), name: "User" }, conversationId);
     return conversation;
   });
 

@@ -34,7 +34,7 @@
 import * as got from 'got';
 import * as http from 'http';
 import * as ResponseTypes from '@bfemulator/app-shared';
-import { IBot, PaymentEncoder, ISpeechTokenInfo, Settings, ErrorCodes, IResourceResponse, usersDefault } from '@bfemulator/app-shared';
+import { IBotConfig, PaymentEncoder, ISpeechTokenInfo, Settings, ErrorCodes, IResourceResponse, usersDefault, getBotId, getFirstBotEndpoint } from '@bfemulator/app-shared';
 import { Payment, IUser, IActivity, IConversationUpdateActivity, IContactRelationUpdateActivity, IInvokeActivity, uniqueId } from '@bfemulator/sdk-shared';
 import { dispatch, getSettings, authenticationSettings, addSettingsListener, speechSettings } from './settings';
 import * as HttpStatus from 'http-status-codes';
@@ -60,7 +60,7 @@ export class Conversation {
     this.members.push({ id: user.id, name: user.name });
   }
 
-  public get bot(): IBot {
+  public get bot(): IBotConfig {
     return getActiveBot();
   }
 
@@ -122,9 +122,13 @@ export class Conversation {
     }
 
     const bot = this.bot;
+    const botEndpoint = getFirstBotEndpoint(bot);
+    if (!botEndpoint)
+      throw new Error(`Bot ${bot} doesn't have an endpoint!`);
+
     if (bot) {
       // Do not make a shallow copy here before modifying
-      activity = this.postage(bot.id, activity);
+      activity = this.postage(getBotId(bot), activity);
       activity.from = activity.from || this.getCurrentUser();
       if (!activity.recipient.name) {
         activity.recipient.name = "Bot";
@@ -133,10 +137,10 @@ export class Conversation {
       if (!activity.recipient.role) {
         activity.recipient.role = "bot";
       }
-      activity.serviceUrl = emulator.framework.getServiceUrl(bot.botUrl);
+      activity.serviceUrl = emulator.framework.getServiceUrl(botEndpoint.endpoint);
 
       let options = {
-        url: bot.botUrl,
+        url: botEndpoint.endpoint,
         method: "POST",
         body: activity,
         json: true,
@@ -169,13 +173,13 @@ export class Conversation {
         cb(err);
       }
 
-      if (!isLocalhostUrl(bot.botUrl) && isLocalhostUrl(emulator.framework.getServiceUrl(bot.botUrl))) {
+      if (!isLocalhostUrl(botEndpoint.endpoint) && isLocalhostUrl(emulator.framework.getServiceUrl(botEndpoint.endpoint))) {
         logError(this.conversationId, 'Error: The bot is remote, but the callback URL is localhost. Without tunneling software you will not receive replies.');
         logError(this.conversationId, makeExternalLink('Connecting to bots hosted remotely', 'https://aka.ms/cnjvpo'));
         logError(this.conversationId, makeAppSettingsLink('Edit ngrok settings'));
       }
 
-      if (bot.msaAppId && bot.msaPassword) {
+      if (botEndpoint.appId && botEndpoint.appPassword) {
         this.authenticatedRequest(options, responseCallback, handleError);
       } else {
         got(options)
@@ -351,7 +355,7 @@ export class Conversation {
     let serviceUrl;
     const bot = this.bot;
     if (bot) {
-      serviceUrl = emulator.framework.getServiceUrl(bot.botUrl);
+      serviceUrl = emulator.framework.getServiceUrl(getFirstBotEndpoint(bot).endpoint);
 
       const activity: IInvokeActivity = {
         type: 'invoke',
@@ -360,7 +364,7 @@ export class Conversation {
         conversation: { id: checkoutSession.checkoutConversationId },
         relatesTo: {
           activityId: checkoutSession.paymentActivityId,
-          bot: { id: bot.id },
+          bot: { id: getBotId(bot) },
           channelId: 'emulator',
           conversation: { id: this.conversationId },
           serviceUrl: serviceUrl,
@@ -416,7 +420,7 @@ export class Conversation {
         }
       };
       let serviceUrl;
-      serviceUrl = emulator.framework.getServiceUrl(bot.botUrl);
+      serviceUrl = emulator.framework.getServiceUrl(getFirstBotEndpoint(bot).endpoint);
 
       const activity: IInvokeActivity = {
         type: 'invoke',
@@ -425,7 +429,7 @@ export class Conversation {
         conversation: { id: checkoutSession.checkoutConversationId },
         relatesTo: {
           activityId: checkoutSession.paymentActivityId,
-          bot: { id: bot.id },
+          bot: { id: getBotId(bot) },
           channelId: 'emulator',
           conversation: { id: this.conversationId },
           serviceUrl: serviceUrl,
@@ -444,8 +448,10 @@ export class Conversation {
       cb(this.speechToken);
     } else {
       const bot = this.bot;
+      const botEndpoint = getFirstBotEndpoint(bot);
+
       if (bot) {
-        if (bot.msaAppId && bot.msaPassword) {
+        if (botEndpoint.appId && botEndpoint.appPassword) {
           let options = {
             url: speechSettings.tokenEndpoint + '?goodForInMinutes=' + duration,
             method: 'GET',
@@ -526,15 +532,19 @@ export class Conversation {
   public getAccessToken(cb: (err: Error, accessToken: string) => void): void {
     if (!this.accessToken || new Date().getTime() >= this.accessTokenExpires) {
       const bot = this.bot;
+      const botEndpoint = getFirstBotEndpoint(bot);
+      if (!botEndpoint)
+        throw new Error(`Bot ${bot} doesn't have an endpoint!`);
+
       // Refresh access token
       let opt = {
         method: 'POST',
         url: authenticationSettings.tokenEndpoint,
         body: {
           grant_type: 'client_credentials',
-          client_id: bot.msaAppId,
-          client_secret: bot.msaPassword,
-          scope: bot.msaAppId + '/.default',
+          client_id: botEndpoint.appId,
+          client_secret: botEndpoint.appPassword,
+          scope: botEndpoint.appId + '/.default',
           // flag to request a version 1.0 token
           atver: getSettings().framework.use10Tokens ? 1 : null
         },
@@ -566,8 +576,11 @@ export class Conversation {
 
   private addAccessToken(options: any, cb: (err: Error) => void): void {
     const bot = this.bot;
+    const botEndpoint = getFirstBotEndpoint(bot);
+    if (!botEndpoint)
+      throw new Error(`Bot ${bot} doesn't have an endpoint!`);
 
-    if (bot.msaAppId && bot.msaPassword) {
+    if (botEndpoint.appId && botEndpoint.appPassword) {
       this.getAccessToken((err, token) => {
         if (!err && token) {
           options.headers = {
@@ -595,6 +608,8 @@ export class Conversation {
     const currUserId = settings.users.currentUserId;
     let origUserId = null;
     let origBotId = null;
+    const botId = getBotId(this.bot);
+
     // Get original botId and userId
     // Fixup conversationId
     activities.forEach(activity => {
@@ -612,9 +627,9 @@ export class Conversation {
     if (origUserId && origBotId) {
       activities.forEach(activity => {
         if (activity.recipient.id === origBotId)
-          activity.recipient.id = this.bot.id;
+          activity.recipient.id = botId;
         if (activity.from.id === origBotId)
-          activity.from.id = this.bot.id;
+          activity.from.id = botId;
         if (activity.recipient.id === origUserId)
           activity.recipient.id = currUserId;
         if (activity.from.id === origUserId)

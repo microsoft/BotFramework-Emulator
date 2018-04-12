@@ -63,13 +63,15 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
     this.setDirtyFlag = debounce(this.setDirtyFlag, 500);
     this.onClickDiscard = this.onClickDiscard.bind(this);
     this.onChangeLocalhost = this.onChangeLocalhost.bind(this);
+    this.onChangeLocale = this.onChangeLocale.bind(this);
 
     this.state = {
       ngrokPath: '',
       bypassNgrokLocalhost: true,
       stateSizeLimit: 64,
       use10Tokens: false,
-      localhost: ''
+      localhost: '',
+      locale: ''
     };
   }
 
@@ -108,7 +110,8 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
       bypassNgrokLocalhost: this.state.bypassNgrokLocalhost,
       stateSizeLimit: +this.state.stateSizeLimit,
       use10Tokens: this.state.use10Tokens,
-      localhost: this.state.localhost.trim()
+      localhost: this.state.localhost.trim(),
+      locale: this.state.locale.trim()
     };
 
     CommandService.remoteCall('app:settings:save', settings)
@@ -130,6 +133,11 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
 
   onChangeLocalhost(e): void {
     this.setState({ localhost: e.target.value });
+    this.setDirtyFlag(true);
+  }
+
+  onChangeLocale(e): void {
+    this.setState({ locale: e.target.value });
     this.setDirtyFlag(true);
   }
 
@@ -157,6 +165,9 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
             <Checkbox checked={ this.state.use10Tokens } onChange={ this.onChangeAuthTokenVersion } id={ 'auth-token-version' } label={ 'Use version 1.0 authentication tokens' } />
             <Row align={ RowAlignment.Center }>
               <TextInputField readOnly={ false } value={ this.state.localhost } onChange={ this.onChangeLocalhost } label={ 'localhost override' } />
+            </Row>
+            <Row align={ RowAlignment.Center }>
+              <TextInputField readOnly={ false } value={ this.state.locale } onChange={ this.onChangeLocale } label={ 'Locale' } />
             </Row>
           </Column>
           <Column className="right-column">

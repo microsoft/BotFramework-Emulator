@@ -35,7 +35,7 @@ import * as Restify from 'restify';
 import * as HttpStatus from 'http-status-codes';
 import { emulator } from '../../emulator';
 import { getSettings, dispatch } from '../../settings';
-import { usersDefault } from '@bfemulator/app-shared';
+import { usersDefault, getBotId, getFirstBotEndpoint } from '@bfemulator/app-shared';
 import { IGenericActivity, IAttachment, IAttachmentData } from '@bfemulator/sdk-shared';
 import { AttachmentsController } from '../connector/attachmentsController';
 import * as Fs from 'fs';
@@ -65,7 +65,8 @@ export class ConversationsControllerV3 {
   }
 
   static startConversation = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    let activeBot = getActiveBot();
+    const activeBot = getActiveBot();
+    const activeBotId = getBotId(activeBot);
     const auth = req.header('Authorization');
     const tokenMatch = /Bearer\s+(.+)/.exec(auth);
     const conversationId = tokenMatch[1];
@@ -85,18 +86,18 @@ export class ConversationsControllerV3 {
           }
         })
       }
-      let conversation = emulator.conversations.conversationById(activeBot.id, conversationId);
+      let conversation = emulator.conversations.conversationById(activeBotId, conversationId);
       if (!conversation) {
-        conversation = emulator.conversations.newConversation(activeBot.id, currentUser, conversationId);
+        conversation = emulator.conversations.newConversation(activeBotId, currentUser, conversationId);
         // Send "bot added to conversation"
-        conversation.sendConversationUpdate([{ id: activeBot.id, name: "Bot" }], undefined);
+        conversation.sendConversationUpdate([{ id: activeBotId, name: "Bot" }], undefined);
         // Send "user added to conversation"
         conversation.sendConversationUpdate([currentUser], undefined);
         created = true;
       } else {
-        if (conversation.members.findIndex((user) => user.id == activeBot.id) === -1) {
+        if (conversation.members.findIndex((user) => user.id == activeBotId) === -1) {
           // Sends "bot added to conversation"
-          conversation.addMember(activeBot.id, "Bot");
+          conversation.addMember(activeBotId, "Bot");
         }
         if (conversation.members.findIndex((user) => user.id == currentUser.id) === -1) {
           // Sends "user added to conversation"
@@ -121,7 +122,7 @@ export class ConversationsControllerV3 {
     logRequest(req.params.conversationId, "user", req);
     const activeBot = getActiveBot();
     if (activeBot) {
-      const conversation = emulator.conversations.conversationById(activeBot.id, req.params.conversationId);
+      const conversation = emulator.conversations.conversationById(getBotId(activeBot), req.params.conversationId);
       if (conversation) {
         res.json(HttpStatus.OK, {
           conversationId: conversation.conversationId,
@@ -144,7 +145,7 @@ export class ConversationsControllerV3 {
   static getActivities = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const activeBot = getActiveBot();
     if (activeBot) {
-      const conversation = emulator.conversations.conversationById(activeBot.id, req.params.conversationId);
+      const conversation = emulator.conversations.conversationById(getBotId(activeBot), req.params.conversationId);
       if (conversation) {
         const watermark = Number(req.params.watermark || 0) || 0;
         const activities = conversation.getActivitiesSince(req.params.watermark);
@@ -170,7 +171,7 @@ export class ConversationsControllerV3 {
     logRequest(req.params.conversationId, "user", req);
     const activeBot = getActiveBot();
     if (activeBot) {
-      const conversation = emulator.conversations.conversationById(activeBot.id, req.params.conversationId);
+      const conversation = emulator.conversations.conversationById(getBotId(activeBot), req.params.conversationId);
       if (conversation) {
         const activity = <IGenericActivity>req.body;
         conversation.postActivityToBot(activity, true, (err, statusCode, activityId) => {
@@ -213,7 +214,7 @@ export class ConversationsControllerV3 {
     logRequest(req.params.conversationId, "user", req);
     const activeBot = getActiveBot();
     if (activeBot) {
-      const conversation = emulator.conversations.conversationById(activeBot.id, req.params.conversationId);
+      const conversation = emulator.conversations.conversationById(getBotId(activeBot), req.params.conversationId);
       if (conversation) {
         if (req.getContentType() !== 'multipart/form-data' ||
           (req.getContentLength() === 0 && !req.isChunked())) {
@@ -247,7 +248,7 @@ export class ConversationsControllerV3 {
                 const attachment: IAttachment = {
                   name,
                   contentType: type,
-                  contentUrl: `${emulator.framework.getServiceUrl(activeBot.botUrl)}/v3/attachments/${attachmentId}/views/original`
+                  contentUrl: `${emulator.framework.getServiceUrl(getFirstBotEndpoint(activeBot).endpoint)}/v3/attachments/${attachmentId}/views/original`
                 }
                 activity.attachments.push(attachment);
               });

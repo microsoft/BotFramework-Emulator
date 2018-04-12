@@ -2,7 +2,7 @@ import * as QueryString from 'querystring';
 import * as got from 'got';
 import * as Electron from 'electron';
 
-import { IFrameworkSettings } from '@bfemulator/app-shared';
+import { IFrameworkSettings, newBot, newEndpoint, IBotConfig, IEndpointService } from '@bfemulator/app-shared';
 import { Protocol } from './constants';
 import { mainWindow } from './main';
 import * as BotActions from './data-v2/action/bot';
@@ -144,11 +144,13 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
   private openLiveChat(protocol: IProtocol): void {
     // mock up a bot object
     let { botUrl, msaAppId, msaPassword } = protocol.parsedArgs;
-    mainWindow.store.dispatch(BotActions.mockAndSetActive({
-      botUrl: decodeBase64(botUrl),
-      msaAppId: decodeBase64(msaAppId),
-      msaPassword: decodeBase64(msaPassword)
-    }));
+    const bot: IBotConfig = newBot();
+    const endpoint: IEndpointService = newEndpoint();
+    endpoint.endpoint = decodeBase64(botUrl);
+    endpoint.appId = decodeBase64(msaAppId);
+    endpoint.appPassword = decodeBase64(msaPassword);
+    bot.services.push(endpoint);
+    mainWindow.store.dispatch(BotActions.mockAndSetActive(bot));
 
     const appSettings: IFrameworkSettings = getSettings().framework;
     if (appSettings.ngrokPath) {

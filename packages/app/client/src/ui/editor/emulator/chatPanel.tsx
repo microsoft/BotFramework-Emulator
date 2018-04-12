@@ -39,6 +39,7 @@ import { Colors } from '@bfemulator/ui-react';
 import Panel, { PanelControls, PanelContent } from '../panel';
 import { getActiveBot } from '../../../data/botHelpers';
 import { EmulatorMode } from './index';
+import { getFirstBotEndpoint } from '@bfemulator/app-shared';
 
 const CSS = css({
   height: '100%',
@@ -72,7 +73,7 @@ export default class ChatPanel extends React.Component<IChatPanelProps, {}> {
     let endpoint = "";
     if (this.props.mode === 'livechat') {
       let bot = getActiveBot();
-      endpoint = bot ? bot.botUrl : "";
+      endpoint = bot ? getFirstBotEndpoint(bot).endpoint : "";
     }
     return (
       <div { ...CSS }>

@@ -31,24 +31,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IBot, IBotInfo } from '@bfemulator/app-shared';
+import { IBotInfo, IBotConfig } from '@bfemulator/app-shared';
+import { BotAction } from '../reducer/bot';
 
 export const CREATE ='BOT/CREATE';
 export const LOAD = 'BOT/LOAD';
 export const PATCH = 'BOT/PATCH';
 export const SET_ACTIVE = 'BOT/SET_ACTIVE';
 
-export function create(bot: IBot, botFilePath: string) {
+export function create(bot: IBotConfig, botFilePath: string, secret: string): BotAction {
   return {
     type: CREATE,
     payload: {
       bot,
-      botFilePath
+      botFilePath,
+      secret
     }
   };
 }
 
-export function load(bots: IBotInfo[]) {
+export function load(bots: IBotInfo[]): BotAction {
   return {
     type: LOAD,
     payload: {
@@ -57,15 +59,16 @@ export function load(bots: IBotInfo[]) {
   };
 }
 
-export function patch(bot: IBot) {
+export function patch(bot: IBotConfig, secret?: string): BotAction {
   return {
     type: PATCH,
     payload: {
-      bot
+      bot,
+      secret
     }
   };
 }
-export function setActive(bot: IBot, botDirectory: string) {
+export function setActive(bot: IBotConfig, botDirectory: string): BotAction {
   return {
     type: SET_ACTIVE,
     payload: {

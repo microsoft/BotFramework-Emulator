@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { uniqueId } from '@bfemulator/sdk-shared';
+import { IConnectedService } from './serviceTypes';
 
 export interface IBot {
   id?: string,
@@ -43,28 +43,21 @@ export interface IBot {
   msaPassword?: string
 }
 
-export function newBot(...bots: IBot[]): IBot {
-  return Object.assign(
-    {},
-    {
-      id: uniqueId(),
-      botId: '',
-      botName: '',
-      botUrl: 'http://localhost:3978/api/messages',
-      locale: '',
-      msaAppId: '',
-      msaPassword: ''
-    },
-    ...bots
-  );
-}
-
 /** Represents a recently-used bot that isn't currently loaded */
 export interface IBotInfo {
   /** Path to corresponding .bot file */
   path?: string;
-  /** GUID (so IBot and IBotInfo can be compared w/o need to perform a file read on IBotInfo.path) */
+  /** GUID (so IBotConfig and IBotInfo can be compared w/o need to perform a file read on IBotInfo.path) */
   id?: string;
   /** Display name of bot */
   displayName?: string;
+  /** Bot secret used to encrypt / decrypt sensitive service info */
+  secret?: string;
+}
+
+/** Bot consumed by msbot package */
+export interface IBotConfig {
+  name: string;
+  description: string;
+  services: IConnectedService[];
 }

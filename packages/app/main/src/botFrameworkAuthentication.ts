@@ -31,6 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { getBotId, getFirstBotEndpoint } from '@bfemulator/app-shared';
+
 import { authenticationSettings, v31AuthenticationSettings, v32AuthenticationSettings } from './settings';
 import * as jwt from 'jsonwebtoken';
 import * as oid from './OpenIdMetadata';
@@ -72,7 +74,7 @@ export class BotFrameworkAuthentication {
                         }
                         // first try 3.2  token characteristics
                         let verifyOptions = {
-                            jwtId: activeBot.id,
+                            jwtId: getBotId(activeBot),
                             issuer: issuer,
                             audience: authenticationSettings.botTokenAudience,
                             clockTolerance: 300
@@ -85,7 +87,7 @@ export class BotFrameworkAuthentication {
                         try {
                             // then try v3.1 token characteristics
                             let verifyOptions = {
-                                jwtId: activeBot.id,
+                                jwtId: getBotId(activeBot),
                                 issuer: v31AuthenticationSettings.tokenIssuer,
                                 audience: authenticationSettings.botTokenAudience,
                                 clockTolerance: 300
@@ -108,7 +110,7 @@ export class BotFrameworkAuthentication {
                     return;
                 }
             });
-        } else if (!activeBot.msaAppId && !activeBot.msaPassword) {
+        } else if (!getFirstBotEndpoint(activeBot).appId && !getFirstBotEndpoint(activeBot).appPassword) {
               // Emulator running without auth enabled
             next();
         } else {

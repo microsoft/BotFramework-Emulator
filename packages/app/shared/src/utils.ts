@@ -35,8 +35,9 @@
 // 1. We are using react-scripts, thus, we are not able to configure Webpack
 // 2. To skip bundling, we can hack with window['require']
 
-import { IBot } from './types/botTypes';
-
+import { IBotConfig } from './types/botTypes';
+import { IEndpointService, ServiceType } from './types/serviceTypes';
+import { uniqueId } from '@bfemulator/sdk-shared';
 
 export function isObject(item: any): boolean {
   return (item && typeof item === 'object' && !Array.isArray(item) && item !== null);
@@ -109,6 +110,70 @@ export const approximateObjectSize = (object: any, cache: any[] = []): number =>
 }
 
 /** Tries to scan the bot record for a display string */
-export const getBotDisplayName = (bot: IBot = {}): string => {
-  return bot.botName || bot.botId || bot.botUrl || '¯\\_(ツ)_/¯';
+export const getBotDisplayName = (bot: IBotConfig = newBot()): string => {
+  return bot.name || getBotId(bot) || (getFirstBotEndpoint(bot) ? getFirstBotEndpoint(bot).endpoint : null) || '¯\\_(ツ)_/¯';
+}
+
+/** Creates a new bot */
+export const newBot = (...bots: IBotConfig[]): IBotConfig => {
+  return Object.assign(
+    {},
+    {
+      name: '',
+      description: '',
+      services: []
+    },
+    ...bots
+  );
+}
+
+/** Creates a new endpoint */
+export const newEndpoint = (...endpoints: IEndpointService[]): IEndpointService => {
+  return Object.assign(
+    {},
+    {
+      type: ServiceType.Endpoint,
+      name: '',
+      id: uniqueId(),
+      appId: '',
+      appPassword: '',
+      endpoint: 'http://localhost:3978/api/messages'
+    },
+    ...endpoints
+  );
+}
+
+/** Adds -- if missing -- an id to all of a bot's endpoint services */
+export const addIdToBotEndpoints = (bot: IBotConfig): IBotConfig => {
+  bot.services.map(service => {
+    if (service.type === ServiceType.Endpoint && !service.id) {
+      service.id = uniqueId();
+      return service;
+    }
+    return service;
+  });
+  return bot;
+}
+
+/** Returns the first endpoint service of a bot */
+export const getFirstBotEndpoint = (bot: IBotConfig): IEndpointService => {
+  if (bot.services && bot.services.length) {
+    return <IEndpointService> bot.services.find(service => service.type === ServiceType.Endpoint);
+  }
+  return null;
+}
+
+/** Hacky for getting a bot id by defaulting to the id of its first endpoint service */
+export const getBotId = (bot: IBotConfig): string => {
+  if (!bot)
+    return null;
+
+  const endpoint: IEndpointService = getFirstBotEndpoint(bot);
+  if (endpoint) {
+    if (!endpoint.id)
+      addIdToBotEndpoints(bot);
+    return endpoint.id;
+  }
+
+  throw new Error(`Could not find an id for bot: ${bot}`);
 }
