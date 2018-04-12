@@ -4,7 +4,7 @@
     "inspectors": [
       {
         "name": "QnA",
-        "path": "index.html",
+        "src": "index.html",
         "criteria": [
           {
             "path": "$.type",
@@ -13,6 +13,19 @@
           {
             "path": "$.event",
             "value": "QnATraceInfo"
+          }
+        ],
+        "summaryText": [
+          "$.label"
+        ],
+        "accessories": [
+          {
+            "id": "train",
+            "label": "Train"
+          },
+          {
+            "id": "publish",
+            "label": "Publish"
           }
         ]
       }

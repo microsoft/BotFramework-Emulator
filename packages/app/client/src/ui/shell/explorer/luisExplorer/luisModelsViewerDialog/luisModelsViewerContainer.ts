@@ -18,4 +18,4 @@ const mapDispatchToProps = dispatch => {
 export const LuisModelsViewerContainer = connect(
   mapStateToProps,
   mapDispatchToProps
-)(LuisModelsViewer) as any;
+)(LuisModelsViewer as any) as any;

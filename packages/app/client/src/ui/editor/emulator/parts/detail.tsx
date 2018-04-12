@@ -36,8 +36,9 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 
 import { Colors, Fonts } from '@bfemulator/ui-react';
-import { ExtensionManager } from '../../../../extensions';
+import { ExtensionManager, Extension } from '../../../../extensions';
 import { Inspector } from './inspector';
+import { IExtensionInspector } from '@bfemulator/sdk-shared';
 
 const CSS = css({
   padding: 0,
@@ -50,44 +51,41 @@ const CSS = css({
   boxSizing: 'border-box',
 });
 
-export interface Props {
+export interface DetailProps {
   document: any;
+  obj: any;
+  extension: Extension;
+  inspector: IExtensionInspector;
 }
 
-export class Detail extends React.Component<Props> {
+export class Detail extends React.Component<DetailProps> {
+
+  inspectorRef: any;
+
+  toggleDevTools() {
+    if (this.inspectorRef) {
+      this.inspectorRef.toggleDevTools();
+    }
+  }
+  
+  accessoryClick(id: string) {
+    if (this.inspectorRef) {
+      this.inspectorRef.accessoryClick(id);
+    }
+  }
+
   render() {
-    let obj = this.props.document.inspectorObjects && this.props.document.inspectorObjects.length ?
-      this.props.document.inspectorObjects[0] : null;
-    if (!obj || Object.keys(obj).length == 0) {
+    if (!this.props.obj || Object.keys(this.props.obj).length == 0) {
       return (
         <div { ...CSS } >
           <span>No activity selected</span>
         </div>
       );
     }
-    // Sometimes the activity is buried.
-    if (obj.activity) {
-      obj = obj.activity;
-    }
-    // Find an inspecetor for this object
-    let inspector = ExtensionManager.inspectorForObject(obj);
-    if (!inspector) {
-      // Default to the JSON inspector
-      const jsonExtension = ExtensionManager.findExtension('JSON');
-      if (jsonExtension) {
-        inspector = jsonExtension.config.client.inspectors ? jsonExtension.config.client.inspectors[0] : null;
-      }
-    }
-    if (inspector) {
-      return (
-        <div { ...CSS } >
-          <Inspector inspector={ inspector } document={ this.props.document } src={ inspector.path } obj={ obj } />
-        </div>
-      );
-    }
+
     return (
       <div { ...CSS } >
-        <span>No inspector for this activity</span>
+        <Inspector ref={ ref => this.inspectorRef = ref } document={ this.props.document } extension={ this.props.extension } inspector={ this.props.inspector } obj={ this.props.obj } />
       </div>
     );
   }

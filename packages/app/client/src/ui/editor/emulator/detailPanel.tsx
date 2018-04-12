@@ -36,6 +36,8 @@ import * as React from 'react';
 
 import { Detail } from './parts/detail';
 import Panel, { PanelControls, PanelContent } from '../panel';
+import { ExtensionManager } from '../../../extensions';
+import { IExtensionInspector, IInspectorAccessory } from '@bfemulator/sdk-shared';
 
 const CSS = css({
   height: '100%'
@@ -46,16 +48,53 @@ interface IDetailPanelProps {
 }
 
 export default class DetailPanel extends React.Component<IDetailPanelProps, {}> {
-  constructor(props: IDetailPanelProps, context){
+
+  detailRef: any;
+
+  constructor(props: IDetailPanelProps, context) {
     super(props, context);
   }
 
+  onAccessoryClick = (id: string) => {
+    if (this.detailRef) {
+      this.detailRef.accessoryClick(id);
+    }
+  }
+
+  onToggleDevToolsClick = () => {
+    if (this.detailRef) {
+      this.detailRef.toggleDevTools();
+    }
+  }
+
+  renderPanelControls(inspector: IExtensionInspector) {
+    const accessories = inspector.accessories || [];
+    return (
+      <PanelControls>
+        { accessories.map(accessory => <button onClick={ ev => this.onAccessoryClick(accessory.id) }>{ accessory.label }</button>) }
+        <button onClick={ ev => this.onToggleDevToolsClick() }>DevTools</button>
+      </PanelControls>
+    );
+  }
+
   render() {
+    let obj = this.props.document.inspectorObjects && this.props.document.inspectorObjects.length ?
+      this.props.document.inspectorObjects[0] : null;
+
+    // Sometimes the activity is buried.
+    if (obj && obj.activity) {
+      obj = obj.activity;
+    }
+
+    // Find an inspecetor for this object
+    let result = ExtensionManager.inspectorForObject(obj, true);
+
     return (
       <div { ...CSS }>
-        <Panel title="Inspect">
+        <Panel title={ `${result.inspector.name} inspector` }>
+          { this.renderPanelControls(result.inspector) }
           <PanelContent>
-            <Detail document={ this.props.document } />
+            <Detail ref={ ref => this.detailRef = ref } document={ this.props.document } obj={ obj } extension={ result.extension } inspector={ result.inspector } />
           </PanelContent>
         </Panel>
       </div>

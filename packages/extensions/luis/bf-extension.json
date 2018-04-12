@@ -4,7 +4,7 @@
     "inspectors": [
       {
         "name": "LUIS",
-        "path": "client/build/index.html",
+        "src": "client/build/index.html",
         "criteria": [
           {
             "path": "$.type",
@@ -13,6 +13,19 @@
           {
             "path": "$.name",
             "value": "https://www.luis.ai/schemas/trace"
+          }
+        ],
+        "summaryText": [
+          "$.label"
+        ],
+        "accessories": [
+          {
+            "id": "train",
+            "label": "Train"
+          },
+          {
+            "id": "publish",
+            "label": "Publish"
           }
         ]
       }

@@ -50,9 +50,20 @@ const CSS = css({
     minHeight: '30px',
     textTransform: 'uppercase',
     paddingLeft: '16px',
+    display: 'flex',
 
     '& > .accessories': {
-      margin: '0 0 0 auto'
+      margin: '0 0 0 auto',
+      height: '100%',
+      width: 'auto',
+
+      '& > button': {
+        backgroundColor: 'transparent',
+        color: Colors.SECTION_HEADER_FOREGROUND_DARK,
+        border: 0,
+        cursor: 'pointer',
+        whiteSpace: 'nowrap'
+      }
     }
   },
 

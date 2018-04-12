@@ -19,11 +19,22 @@ export class Extension {
     */
   }
 
-  public inspectorForObject(obj: any): IExtensionInspector | null {
+  public inspectorForObject(obj: any): IGetInspectorResult | null {
     const inspectors = this.config.client.inspectors || [];
-    return inspectors.find(inspector => Extension.canInspect(inspector, obj));
+    const inspector = inspectors.find(inspector => InspectorAPI.canInspect(inspector, obj));
+    return inspector ? {
+      extension: this,
+      inspector
+    } : null;
   }
 
+  public call(commandName: string, ...args: any[]): Promise<any> {
+    return this._ext.remoteCall(commandName, ...args);
+  }
+}
+
+//=============================================================================
+export class InspectorAPI {
   public static canInspect(inspector: IExtensionInspector, obj: any): boolean {
     if (!obj) return false;
     if (typeof obj !== 'object') return false;
@@ -49,10 +60,42 @@ export class Extension {
     });
     return canInspect;
   }
-
-  public call(commandName: string, ...args: any[]): Promise<any> {
-    return this._ext.remoteCall(commandName, ...args);
+  
+  public static summaryText(inspector: IExtensionInspector, obj: any): string {
+    let summaryTexts = inspector.summaryText || [];
+    if (!Array.isArray(summaryTexts))
+    summaryTexts = [summaryTexts];
+    let ret: any;
+    for (let i = 0; i < summaryTexts.length; ++i) {
+      const results = jsonpath.query(obj, summaryTexts[i]);
+      if (results && results.length) {
+        if (typeof results[0] === 'string') {
+          const value = results[0];
+          if (value.length > 0) {
+            ret = value;
+          }
+        }
+      }
+    }
+    
+    let text;
+    if (typeof ret == 'string')
+      text = ret;
+    else if (ret)
+      text = JSON.stringify(ret);
+    else
+      text = "";
+      
+    if (text.length > 50)
+      text = text.substring(0, 50) + "...";
+    return text;
   }
+}
+
+//=============================================================================
+export interface IGetInspectorResult {
+  extension: Extension;
+  inspector: IExtensionInspector;
 }
 
 //=============================================================================
@@ -61,7 +104,7 @@ export interface IExtensionManager {
   addExtension(config: IExtensionConfig, unid: string);
   removeExtension(unid: string);
   getExtensions(): Extension[];
-  inspectorForObject(obj: any): IExtensionInspector | null;
+  inspectorForObject(obj: any, defaultToJson: boolean): IGetInspectorResult | null;
 }
 
 //=============================================================================
@@ -90,8 +133,19 @@ export const ExtensionManager = new class implements IExtensionManager {
     return Object.keys(this.extensions).map(key => this.extensions[key]) || [];
   }
 
-  public inspectorForObject(obj: any): IExtensionInspector | null {
-    return this.getExtensions().map(extension => extension.inspectorForObject(obj)).filter(inspector => !!inspector).shift();
+  public inspectorForObject(obj: any, defaultToJson: boolean): IGetInspectorResult | null {
+    let result = this.getExtensions().map(extension => extension.inspectorForObject(obj)).filter(result => !!result).shift();
+    if (!result && defaultToJson) {
+      // Default to the JSON inspector
+      const jsonExtension = ExtensionManager.findExtension('JSON');
+      if (jsonExtension) {
+        result = {
+          extension: jsonExtension,
+          inspector: jsonExtension.config.client.inspectors ? jsonExtension.config.client.inspectors[0] : null
+        }
+      }
+    }
+    return result;
   }
 
   public registerCommands() {

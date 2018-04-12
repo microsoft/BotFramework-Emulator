@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Component } from 'react';
 import { css } from 'glamor';
 import { Splitter, Colors } from '@bfemulator/ui-react';
+import { IInspectorHost } from '@bfemulator/sdk-client';
 import Editor from './Controls/Editor';
 import ReactJson from 'react-json-view';
 import { RecognizerResult } from './Models/RecognizerResults';
@@ -13,9 +14,10 @@ import { IntentInfo } from './Luis/IntentInfo';
 import { LuisTraceInfo } from './Models/LuisTraceInfo';
 import Header from './Controls/Header';
 import MockState from './Data/MockData';
+import { IActivity } from '@bfemulator/sdk-shared';
 
 let debug = false;
-let $window: any = window;
+let $host: IInspectorHost = (window as any).host;
 
 const LuisApiBasePath = 'https://westus.api.cognitive.microsoft.com/luis/api/v2.0';
 
@@ -104,13 +106,17 @@ class App extends Component<AppProps, AppState> {
     // Attach a handler to listen on inspect events
     if (!this.runningDetached()) {
       if (debug) {
-        $window.host.openDevTools();
+        //$host.openDevTools();
       }
 
-      $window.host.on('inspect', async (...args: any[]) => {
-        let appState = new AppStateAdapter(args);
+      $host.on('inspect', async (activities: IActivity[]) => {
+        let appState = new AppStateAdapter(activities);
         this.setState(appState);
         await this.populateLuisInfo();
+      });
+      
+      $host.on('accessory-click', async (id: string) => {
+        console.log('accessory clicked: ', id);
       });
     } else {
       this.setState(new MockState());
@@ -144,7 +150,7 @@ class App extends Component<AppProps, AppState> {
   }
 
   runningDetached() {
-    return !$window.host;
+    return !$host;
   }
 
   async populateLuisInfo() {

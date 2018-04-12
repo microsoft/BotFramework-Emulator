@@ -22,7 +22,7 @@
     "inspectors": [
       {
         "name": "Debug",
-        "path": "client/build/index.html",
+        "src": "client/build/index.html",
         "criteria": [
           {
             "path": "$.type",
@@ -32,6 +32,9 @@
             "path": "$.name",
             "value": "debug"
           }
+        ],
+        "summaryText": [
+          "$.text"
         ]
       }
     ]

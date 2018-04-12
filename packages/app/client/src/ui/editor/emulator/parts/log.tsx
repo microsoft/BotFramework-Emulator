@@ -37,6 +37,7 @@ import * as React from 'react';
 import * as ChatActions from '../../../../data/action/chatActions';
 import store from '../../../../data/store';
 import { Colors, Fonts } from '@bfemulator/ui-react';
+import { ExtensionManager, InspectorAPI } from '../../../../extensions';
 
 const CSS = css({
   height: '100%',
@@ -152,7 +153,7 @@ export interface LogEntryProps {
 }
 
 class LogEntry extends React.Component<LogEntryProps> {
-
+  
   inspect(obj) {
     this.props.document.selectedActivity$.next({});
     store.dispatch(ChatActions.setInspectorObjects(this.props.document.documentId, obj));
@@ -210,6 +211,15 @@ class LogEntry extends React.Component<LogEntryProps> {
     }
     return <>&nbsp;&nbsp;</>
   }
+  
+  summaryText(obj: any): string {
+    const inspResult = ExtensionManager.inspectorForObject(obj, true);
+    if (inspResult && inspResult.inspector) {
+      return InspectorAPI.summaryText(inspResult.inspector, obj);
+    } else {
+      return "";
+    }
+  }
 
   renderMessage(message, key) {
     if (!message) return false;
@@ -219,11 +229,12 @@ class LogEntry extends React.Component<LogEntryProps> {
       switch (message.type) {
 
         case "activity": {
+          let summaryText = this.summaryText(message.payload.activity);
           return (
             <span className="spaced" key={ key }>
               <span className="spaced">{ this.messageDirection(message.payload) }</span>
-              <span className="spaced"><a onClick={ () => this.inspectAndHighlight(message.payload.activity) }>Activity</a></span>
-              <span className="spaced">{ message.payload.text }</span>
+              <span className="spaced"><a onClick={ () => this.inspectAndHighlight(message.payload.activity) }>{ message.payload.activity.type }</a></span>
+              <span className="spaced">{ summaryText }</span>
             </span>
           );
         }
@@ -254,8 +265,10 @@ class LogEntry extends React.Component<LogEntryProps> {
         }
 
         case "err": {
-          const payload = message.payload || {};
+          const payload = message.payload || message.err || {};
           let msg = payload.message || payload.method || payload || "details";
+          if (typeof msg !== 'string')
+            msg = '500';
           if (msg.length > 50)
             msg = msg.substring(0, 50) + '...';
           return (

@@ -1,43 +1,44 @@
 const { ipcRenderer, remote } = require('electron');
 
 ipcRenderer.on('inspect', (sender, ...args) => {
-  window.host.dispatchInspect(...args);
+  window.host.dispatch('inspect', ...args);
 });
 
 ipcRenderer.on('bot-updated', (sender, bot) => {
   window.host.bot = bot;
-  window.host.dispatchBotUpdated(bot);
+  window.host.dispatch('bot-updated', bot);
+});
+
+ipcRenderer.on('toggle-dev-tools', (sender) => {
+  remote.getCurrentWebContents().toggleDevTools();
+});
+
+ipcRenderer.on('accessory-click', (sender, id) => {
+  window.host.dispatch('accessory-click', id);
 });
 
 window.host = {
-  inspectHandlers: [],
-  botUpdatedHandlers: [],
+  handlers: {
+    'inspect': [],
+    'bot-updated': [],
+    'accessory-click': []
+  },
   bot: {},
 
   on(event, handler) {
-    if (event === 'inspect')
-      this.inspectHandlers.push(handler);
-    else if (event === 'bot-updated')
-      this.botUpdatedHandlers.push(handler);
+    if (!this.handlers[event].includes(handler)) {
+      this.handlers[event].push(handler);
+    }
+    return () => {
+      this.handlers[event] = this.handlers[event].filter(item => item !== handler);
+    }
   },
 
   send(...args) {
     ipcRenderer.sendToHost(...args);
   },
 
-  openDevTools() {
-    remote.getCurrentWebContents().openDevTools();
+  dispatch(event, ...args) {
+    this.handlers[event].forEach(handler => handler(...args));
   },
-
-  dispatchInspect(...args) {
-    for (i = 0; i < this.inspectHandlers.length; ++i) {
-      this.inspectHandlers[i](...args);
-    }
-  },
-
-  dispatchBotUpdated(bot) {
-    for (i = 0; i < this.botUpdatedHandlers.length; ++i) {
-      this.botUpdatedHandlers[i](bot);
-    }
-  }
 }

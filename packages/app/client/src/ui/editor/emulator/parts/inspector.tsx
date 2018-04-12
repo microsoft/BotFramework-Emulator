@@ -4,26 +4,43 @@ import { css } from 'glamor';
 import * as React from 'react';
 import * as crypto from 'crypto';
 import { SettingsService } from '../../../../platform/settings/settingsService';
-import { Extension } from '../../../../extensions';
+import { Extension, InspectorAPI } from '../../../../extensions';
+import { IExtensionInspector } from '@bfemulator/sdk-shared';
 
 const CSS = css({
   width: '100%',
   height: '100%'
 });
 
-export interface Props {
-  inspector: any;
+export interface InspectorProps {
+  extension: Extension;
+  inspector: IExtensionInspector;
   document: any;
-  src: string;
   obj: any;
 }
 
-export class Inspector extends React.Component<Props> {
+export class Inspector extends React.Component<InspectorProps> {
 
   ref: any; //HTMLWebViewElement;
 
   constructor(props, context) {
     super(props, context);
+  }
+  
+  toggleDevTools() {
+    if (this.ref) {
+      this.ref.send('toggle-dev-tools');
+    }
+  }
+  
+  accessoryClick(id: string) {
+    if (this.ref) {
+      this.ref.send('accessory-click', id);
+    }
+  }
+  
+  canInspect(obj: any): boolean {
+    return this.props.inspector.name === 'JSON' || InspectorAPI.canInspect(this.props.inspector, obj);
   }
 
   componentDidMount(): void {
@@ -37,37 +54,27 @@ export class Inspector extends React.Component<Props> {
     }
   }
 
-  inspect(obj) {
-    if (this.ref) {
-      if (this.props.inspector.name === "JSON" || Extension.canInspect(this.props.inspector, obj)) {
-        this.ref.send('inspect', obj);
-      }
+  inspect(obj: any) {
+    if (this.ref && this.canInspect(obj)) {
+      this.ref.send('inspect', obj);
     }
   }
 
-  componentWillReceiveProps(nextProps: Props, nextContext: any): void {
+  componentWillReceiveProps(nextProps: InspectorProps, nextContext: any): void {
     this.inspect(nextProps.obj);
-  }
-
-  componentDidUpdate(prevProps: Props, prevState: any, prevContext: any): void {
-  }
-
-  onMessage = () => {
   }
 
   render() {
     const md5 = crypto.createHash('md5');
-    md5.update(this.props.src);
+    md5.update(this.props.inspector.src);
     const hash = md5.digest('base64');
-    let cwd = SettingsService.emulator.cwd;
-    if (!cwd.startsWith('/'))
-      cwd = `/${cwd}`;
     return (
       <webview { ...CSS }
+        key={ hash }
         partition={ `persist:${hash}` }
-        preload={ `file://${cwd}/../../node_modules/@bfemulator/client/build/inspector-preload.js` }
+        preload={ `file://${SettingsService.emulator.cwdAsBase}/../../node_modules/@bfemulator/client/build/inspector-preload.js` }
         ref={ ref => this.ref = ref }
-        src={ this.props.src }
+        src={ this.props.inspector.src }
       />
     );
   }

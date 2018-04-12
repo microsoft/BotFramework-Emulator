@@ -38,57 +38,57 @@ import { IETagObject } from './eTagTypes';
 
 
 export type ActivityOrID = {
-    activity?: IGenericActivity
-    id?: string
+  activity?: IGenericActivity
+  id?: string
 }
 
 export interface IActivity extends IETagObject {
-    type?: string,
-    id?: string,
-    serviceUrl?: string,
-    timestamp?: string,
-    localTimestamp?: string,
-    channelId?: string,
-    from?: IChannelAccount,
-    conversation?: IConversationAccount,
-    recipient?: IChannelAccount,
-    replyToId?: string,
-    channelData?: any,
+  type?: string,
+  id?: string,
+  serviceUrl?: string,
+  timestamp?: string,
+  localTimestamp?: string,
+  channelId?: string,
+  from?: IChannelAccount,
+  conversation?: IConversationAccount,
+  recipient?: IChannelAccount,
+  replyToId?: string,
+  channelData?: any,
 };
 
 export interface ITypingActivity extends IActivity {
 }
 
 export interface IConversationUpdateActivity extends IActivity {
-    membersAdded?: IChannelAccount[],
-    membersRemoved?: IChannelAccount[],
-    topicName?: string,
-    historyDisclosed?: boolean,
+  membersAdded?: IChannelAccount[],
+  membersRemoved?: IChannelAccount[],
+  topicName?: string,
+  historyDisclosed?: boolean,
 }
 
 export interface IConversationParameters extends IActivity {
-    isGroup: boolean,
-    bot: IChannelAccount,
-    members?: IChannelAccount[],
-    membersRemoved?: IChannelAccount[],
-    topicName?: string,
-    activity?: IActivity,
-    channelData?: any,
-    conversationId?: string
+  isGroup: boolean,
+  bot: IChannelAccount,
+  members?: IChannelAccount[],
+  membersRemoved?: IChannelAccount[],
+  topicName?: string,
+  activity?: IActivity,
+  channelData?: any,
+  conversationId?: string
 }
 
 export interface IContactRelationUpdateActivity extends IActivity {
-    action?: string
+  action?: string
 }
 
 export interface IMessageActivity extends IActivity {
-    locale?: string,
-    text?: string,
-    summary?: string,
-    textFormat?: string,
-    attachmentLayout?: string,
-    attachments?: IAttachment[],
-    entities?: IEntity[],
+  locale?: string,
+  text?: string,
+  summary?: string,
+  textFormat?: string,
+  attachmentLayout?: string,
+  attachments?: IAttachment[],
+  entities?: IEntity[],
 }
 
 export interface IActionActivity extends IActivity {
@@ -98,33 +98,40 @@ export interface IEndOfConversationActivity extends IActivity {
 }
 
 export interface ITriggerActivity extends IActivity {
-    value?: any;
+  value?: any;
 }
 
 export interface IConversationReference {
-    activityId: string,
-    bot: IChannelAccount,
-    channelId: string,
-    conversation: IConversationAccount,
-    serviceUrl: string,
-    user: IChannelAccount
+  activityId: string,
+  bot: IChannelAccount,
+  channelId: string,
+  conversation: IConversationAccount,
+  serviceUrl: string,
+  user: IChannelAccount
 }
 
 export interface IInvokeActivity extends IActivity {
-    name?: string,
-    value?: any,
-    relatesTo?: IConversationReference
+  name?: string,
+  value?: any,
+  relatesTo?: IConversationReference
+}
+
+export interface IEventActivity extends IActivity {
+  name?: string,
+  value?: any,
+  relatesTo?: IConversationReference
 }
 
 export interface IGenericActivity extends
-    IActivity,
-    ITypingActivity,
-    IConversationUpdateActivity,
-    IContactRelationUpdateActivity,
-    IMessageActivity,
-    IActionActivity,
-    IEndOfConversationActivity,
-    ITriggerActivity,
-    IInvokeActivity {
+  IActivity,
+  ITypingActivity,
+  IConversationUpdateActivity,
+  IContactRelationUpdateActivity,
+  IMessageActivity,
+  IActionActivity,
+  IEndOfConversationActivity,
+  ITriggerActivity,
+  IEventActivity,
+  IInvokeActivity {
 }
 

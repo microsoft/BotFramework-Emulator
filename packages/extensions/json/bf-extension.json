@@ -4,11 +4,15 @@
     "inspectors": [
       {
         "name": "JSON",
-        "path": "index.html",
+        "src": "index.html",
         "criteria": {
           "path": "$.type",
           "value": "message"
-        }
+        },
+        "summaryText": [
+          "$.attachments[0].contentType",
+          "$.text"
+        ]
       }
     ]
   }

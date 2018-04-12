@@ -72,9 +72,6 @@
 
 <body>
   <div class="json" id="main"></div>
-  <div class="devtools">
-    <button class="tool-button" role="button" onclick="javascript:host.openDevTools()">DevTools</button>
-  </div>
 </body>
 
 <script>
@@ -91,8 +88,11 @@
       jsonNode.innerHTML = str;
       contentNode.appendChild(jsonNode);
     }
-  })
-
+  });
+  
+  window.host.on('accessory-click', id => {
+    console.log('accessory click:', id);
+  });
 
   function formatJSON(obj) {
     if (!obj) return null;

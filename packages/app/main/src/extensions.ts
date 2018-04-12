@@ -206,7 +206,7 @@ export const ExtensionManager = new class extends Disposable implements IExtensi
     const inspectors = extension.config.client.inspectors || [];
     // Cleanup inspector paths
     inspectors.forEach(inspector => {
-      inspector.path = (inspector.path || "").replace(/\\/g, '/');
+      inspector.src = (inspector.src || "").replace(/\\/g, '/');
     });
     if (extension.config.client.debug
       && extension.config.client.debug.enabled
@@ -215,7 +215,7 @@ export const ExtensionManager = new class extends Disposable implements IExtensi
       const port = extension.config.client.debug.webpack.port || 3030;
       const host = extension.config.client.debug.webpack.host || "localhost";
       inspectors.forEach(inspector => {
-        inspector.path = `http://${host}:${port}/${inspector.path}`.replace(extension.config.client.basePath, "");
+        inspector.src = `http://${host}:${port}/${inspector.src}`.replace(extension.config.client.basePath, "");
       });
     } else {
       // If not in debug mode, rewrite paths as file path URLs.
@@ -224,7 +224,7 @@ export const ExtensionManager = new class extends Disposable implements IExtensi
         if (folder[0] != '/') {
           folder = `/${folder}`;
         }
-        inspector.path = `file://${folder}/` + inspector.path;
+        inspector.src = `file://${folder}/` + inspector.src;
       });
     }
     // Connect to the extension's node process (if any).

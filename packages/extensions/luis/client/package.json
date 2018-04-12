@@ -1,15 +1,17 @@
 {
-  "name": "client",
+  "name": "@bfemulator/extension-luis-client",
   "version": "0.1.0",
   "private": true,
   "homepage": "./",
   "dependencies": {
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
+    "@bfemulator/sdk-client": "^1.0.0",
+    "@bfemulator/sdk-shared": "^1.0.0",
     "@bfemulator/ui-react": "^1.0.0",
     "glamor": "^2.20.40",
-    "react-json-view": "1.16.1",
-    "luis-apis": "^1.0.7"
+    "luis-apis": "^1.0.7",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-json-view": "1.16.1"
   },
   "scripts": {
     "start": "react-scripts-ts start",

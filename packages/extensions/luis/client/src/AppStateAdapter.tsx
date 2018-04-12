@@ -4,6 +4,7 @@ import { LuisAppInfo } from './Models/LuisAppInfo';
 import { LuisTraceInfo } from './Models/LuisTraceInfo';
 import { AppInfo } from './Luis/AppInfo';
 import { IntentInfo } from './Luis/IntentInfo';
+import { IActivity, IEventActivity } from '@bfemulator/sdk-shared';
 
 const EventActivity = 'event';
 const LuisTraceEventName = 'https://www.luis.ai/schemas/trace';
@@ -20,17 +21,18 @@ export default class AppStateAdapter implements AppState {
   pendingTrain: boolean;
   pendingPublish: boolean;
 
-  private static validate(args: any): boolean {
-    if (!args || args.length === 0) {
+  private static validate(activities: IActivity[]): boolean {
+    if (!activities || activities.length === 0) {
       return false;
     }
-    if (args[0].type !== EventActivity || args[0].name !== LuisTraceEventName) {
+    const event = activities[0] as IEventActivity;
+    if (event.type !== EventActivity || event.name !== LuisTraceEventName) {
       return false;
     }
-    if (!args[0].value) {
+    if (!event.value) {
       return false;
     }
-    if (!AppStateAdapter.isALuisTraceInfo(args[0].value)) {
+    if (!AppStateAdapter.isALuisTraceInfo(event.value)) {
       return false;
     }
     return true;
@@ -40,10 +42,10 @@ export default class AppStateAdapter implements AppState {
     return obj.recognizerResult !== undefined && obj.luisModel !== undefined;
   }
 
-  constructor(args: any) {
-    if (!AppStateAdapter.validate(args)) {
+  constructor(activities: IActivity[]) {
+    if (!AppStateAdapter.validate(activities)) {
       return;
     }
-    this.traceInfo = args[0].value as LuisTraceInfo;
+    this.traceInfo = (activities[0] as IEventActivity).value as LuisTraceInfo;
   }
 }
