@@ -5,6 +5,7 @@ import { LuisTraceInfo } from './Models/LuisTraceInfo';
 import { AppInfo } from './Luis/AppInfo';
 import { IntentInfo } from './Luis/IntentInfo';
 import { IActivity, IEventActivity } from '@bfemulator/sdk-shared';
+import { ButtonSelected } from './Controls/ControlBar';
 
 const EventActivity = 'event';
 const LuisTraceEventName = 'https://www.luis.ai/schemas/trace';
@@ -20,12 +21,13 @@ export default class AppStateAdapter implements AppState {
   traceInfo: LuisTraceInfo;
   pendingTrain: boolean;
   pendingPublish: boolean;
+  controlBarButtonSelected: ButtonSelected;
 
-  private static validate(activities: IActivity[]): boolean {
-    if (!activities || activities.length === 0) {
+  private static validate(activity: IActivity): boolean {
+    if (!activity) {
       return false;
     }
-    const event = activities[0] as IEventActivity;
+    const event = activity as IEventActivity;
     if (event.type !== EventActivity || event.name !== LuisTraceEventName) {
       return false;
     }
@@ -42,10 +44,13 @@ export default class AppStateAdapter implements AppState {
     return obj.recognizerResult !== undefined && obj.luisModel !== undefined;
   }
 
-  constructor(activities: IActivity[]) {
-    if (!AppStateAdapter.validate(activities)) {
+  constructor(activity: IActivity) {
+    if (!AppStateAdapter.validate(activity)) {
       return;
     }
-    this.traceInfo = (activities[0] as IEventActivity).value as LuisTraceInfo;
+    this.traceInfo = (activity as IEventActivity).value as LuisTraceInfo;
+    this.controlBarButtonSelected = this.traceInfo.recognizerResult ? 
+                                      ButtonSelected.RecognizerResult : 
+                                      ButtonSelected.RawResponse;
   }
 }

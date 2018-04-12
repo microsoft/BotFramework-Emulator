@@ -22,17 +22,22 @@ const INTENT_VIEWER_CSS = css({
 
 interface IntentEditorState {
   currentIntent: string;
+  intentChanged: boolean;
 }
 
 interface IntentEditorProps {
   currentIntent: Intent;
   intentInfo?: IntentInfo[];
   intentReassigner: (newIntent: string) => Promise<void>;
+  enabled: boolean;
 }
 
 class IntentEditor extends Component<IntentEditorProps, IntentEditorState> {
 
   static getDerivedStateFromProps(nextProps: IntentEditorProps, prevState: IntentEditorState) {
+    if (prevState.intentChanged) {
+      return {};
+    }
     return {
       currentIntent: nextProps.currentIntent.intent
     };
@@ -41,13 +46,14 @@ class IntentEditor extends Component<IntentEditorProps, IntentEditorState> {
   constructor(props: any, context: any) {
     super(props, context);
     this.state = {
-      currentIntent: this.props.currentIntent.intent
+      currentIntent: this.props.currentIntent.intent,
+      intentChanged: false
     };
   }
 
   render() {
-    if (!this.props.intentInfo) {
-      return (<div />);
+    if (!this.props.intentInfo || !this.props.enabled) {
+      return (<div id="no-intent-editor" style={{display: 'none'}} />);
     }
     let options = this.props.intentInfo.map(i => {
       return <option key={i.id} value={i.name} label={i.name}>{i.name}</option>;
@@ -69,7 +75,8 @@ class IntentEditor extends Component<IntentEditorProps, IntentEditorState> {
   private handleChange = (event: React.FormEvent<HTMLSelectElement>) => {
     let newIntent: string = event.currentTarget.value;
     this.setState({
-      currentIntent: newIntent
+      currentIntent: newIntent,
+      intentChanged: true
     });
     if (this.props.intentReassigner) {
       this.props.intentReassigner(newIntent);

@@ -7,6 +7,7 @@ import { Intent } from '../Models/Intent';
 import { RecognizerResult } from '../Models/RecognizerResults';
 import { IntentInfo } from '../Luis/IntentInfo';
 import EntitiesViewer from './EntitiesViewer';
+import { AppInfo } from '../Luis/AppInfo';
 
 const NoneIntent: string = 'None';
 
@@ -18,6 +19,7 @@ interface EditorProps {
   recognizerResult: RecognizerResult;
   intentInfo?: IntentInfo[];
   intentReassigner: (newIntent: string) => Promise<void>;
+  appInfo: AppInfo;
 }
 
 const EDITOR_CSS = css({
@@ -52,7 +54,8 @@ class Editor extends Component<EditorProps, EditorState> {
         <IntentEditor 
           currentIntent={topScoringIntent} 
           intentInfo={this.props.intentInfo} 
-          intentReassigner={this.props.intentReassigner} 
+          intentReassigner={this.props.intentReassigner}
+          enabled={this.props.appInfo.authorized}
         />
         <EntitiesViewer entities={this.props.recognizerResult.Entities} />
       </div>

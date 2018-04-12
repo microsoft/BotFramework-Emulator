@@ -4,6 +4,7 @@ import { css } from 'glamor';
 import { Splitter, Colors } from '@bfemulator/ui-react';
 import { IInspectorHost } from '@bfemulator/sdk-client';
 import Editor from './Controls/Editor';
+import { ControlBar, ButtonSelected } from './Controls/ControlBar';
 import ReactJson from 'react-json-view';
 import { RecognizerResult } from './Models/RecognizerResults';
 import { LuisAppInfo } from './Models/LuisAppInfo';
@@ -16,10 +17,10 @@ import Header from './Controls/Header';
 import MockState from './Data/MockData';
 import { IActivity } from '@bfemulator/sdk-shared';
 
-let debug = false;
 let $host: IInspectorHost = (window as any).host;
-
 const LuisApiBasePath = 'https://westus.api.cognitive.microsoft.com/luis/api/v2.0';
+const TrainAccessoryId = 'train';
+const PublichAccessoryId = 'publish';
 
 // TODO: Get these from @bfemulator/react-ui once they're available
 css.global('html, body, #root', {
@@ -61,7 +62,8 @@ let appCss = {
 };
 
 let jsonViewerCss = {
-  overflowY: 'auto'
+  overflowY: 'auto',
+  paddingTop: '10px'
 };
 
 jsonViewerCss = Object.assign({}, appCss, jsonViewerCss);
@@ -74,6 +76,7 @@ interface AppState {
   intentInfo: IntentInfo[];
   pendingTrain: boolean;
   pendingPublish: boolean;
+  controlBarButtonSelected: ButtonSelected;
 }
 
 interface AppProps {
@@ -83,6 +86,12 @@ interface AppProps {
 class App extends Component<AppProps, AppState> {
 
   luisclient: LuisClient;
+
+  setControlButtonSelected: (buttonSelected: ButtonSelected) => void = (buttonSelected: ButtonSelected): void => {
+    this.setState({
+      controlBarButtonSelected: buttonSelected
+    });
+  }
 
   constructor(props: any, context: any) {
     super(props, context);
@@ -97,7 +106,8 @@ class App extends Component<AppProps, AppState> {
       appInfo: {} as AppInfo,
       intentInfo: [] as IntentInfo[],
       pendingPublish: false,
-      pendingTrain: false
+      pendingTrain: false,
+      controlBarButtonSelected: ButtonSelected.RawResponse
     };
     this.reassignIntent = this.reassignIntent.bind(this);
   }
@@ -105,18 +115,23 @@ class App extends Component<AppProps, AppState> {
   componentWillMount() {
     // Attach a handler to listen on inspect events
     if (!this.runningDetached()) {
-      if (debug) {
-        //$host.openDevTools();
-      }
-
-      $host.on('inspect', async (activities: IActivity[]) => {
-        let appState = new AppStateAdapter(activities);
+      $host.on('inspect', async (activity: IActivity) => {
+        let appState = new AppStateAdapter(activity);
         this.setState(appState);
         await this.populateLuisInfo();
       });
       
       $host.on('accessory-click', async (id: string) => {
-        console.log('accessory clicked: ', id);
+        switch (id) {
+          case TrainAccessoryId:
+            await this.train();
+            break;
+          case PublichAccessoryId:
+            await this.publish();
+            break;
+          default:
+            break;
+        }
       });
     } else {
       this.setState(new MockState());
@@ -132,10 +147,18 @@ class App extends Component<AppProps, AppState> {
           slot={this.state.traceInfo.luisOptions.Staging ? 'Staging' : 'Production'} 
           version={this.state.appInfo.activeVersion}
         />
+        <ControlBar 
+          setButtonSelected={this.setControlButtonSelected} 
+          buttonSelected={this.state.controlBarButtonSelected} 
+        />
         <Splitter orientation={'vertical'} primaryPaneIndex={0} minSizes={{ 0: 306, 1: 306 }} initialSizes={{ 0: 306 }}>
           <ReactJson 
-            name="luisResponse" 
-            src={this.state.traceInfo.recognizerResult} 
+            name={this.state.controlBarButtonSelected === ButtonSelected.RecognizerResult ? 
+                  'recognizerResult' : 
+                  'luisResponse' }
+            src={this.state.controlBarButtonSelected === ButtonSelected.RecognizerResult ? 
+                this.state.traceInfo.recognizerResult : 
+                this.state.traceInfo.luisResult} 
             theme="monokai" 
             style={jsonViewerCss} 
           />
@@ -143,6 +166,7 @@ class App extends Component<AppProps, AppState> {
             recognizerResult={this.state.traceInfo.recognizerResult} 
             intentInfo={this.state.intentInfo} 
             intentReassigner={this.reassignIntent} 
+            appInfo={this.state.appInfo}
           />
         </Splitter>
       </div>
@@ -180,7 +204,7 @@ class App extends Component<AppProps, AppState> {
 
     this.setState({
       pendingTrain: true,
-      pendingPublish: true
+      pendingPublish: false
     });
   }
 
@@ -189,7 +213,8 @@ class App extends Component<AppProps, AppState> {
   async train(): Promise<void> {
     await this.luisclient.train(this.state.appInfo);
     this.setState({
-      pendingTrain: false
+      pendingTrain: false,
+      pendingPublish: true
     });
   }
 
