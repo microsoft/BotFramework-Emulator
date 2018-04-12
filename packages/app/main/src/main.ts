@@ -48,7 +48,7 @@ import { Window } from './platform/window';
 import { ensureStoragePath, writeFile, isDev } from './utils';
 import * as squirrel from './squirrelEvents';
 import * as Commands from './commands';
-import { getBotInfoById, encryptBot, IBotConfigToBotConfig } from './botHelpers';
+import { getBotInfoById, encryptBot, IBotConfigToBotConfig, cloneBot } from './botHelpers';
 import { AppMenuBuilder } from './appMenuBuilder';
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
@@ -144,7 +144,8 @@ const createMainWindow = () => {
             const activeBotInfo = getBotInfoById(botId);
             if (activeBotInfo) {
               // encrypt bot file and write to disk
-              const bot = IBotConfigToBotConfig(state.bot.activeBot);
+              const botCopy = cloneBot(state.bot.activeBot);
+              const bot = IBotConfigToBotConfig(botCopy);
               const encryptedBot = encryptBot(bot, activeBotInfo.secret);
               encryptedBot.Save(activeBotInfo.path);
             }

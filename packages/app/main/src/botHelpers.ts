@@ -27,6 +27,11 @@ export function IBotConfigToBotConfig(bot: IBotConfig): BotConfig {
   return newBot;
 }
 
+/** Clones a bot */
+export function cloneBot(bot: IBotConfig): IBotConfig {
+  return JSON.parse(JSON.stringify(bot));
+}
+
 /** Encrypts a bot with its secret */
 export function encryptBot(bot: BotConfig, secret: string): BotConfig {
   const botWithSecret = copyBotWithSecret(bot, secret);

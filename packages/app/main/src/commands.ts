@@ -50,7 +50,8 @@ export function registerCommands() {
     const botFilePath = Path.join(botDirectory, bot.name + '.bot');
     encryptedBot.Save(botFilePath);
 
-    // add bot to store and return to client to be added to client store
+    // decrypt and add bot to store; return to client to be added to client store
+    bot = decryptBot(botConfig, secret);
     mainWindow.store.dispatch(BotActions.create(bot, botFilePath, secret));
     return { bot, botFilePath };
   });
