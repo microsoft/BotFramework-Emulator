@@ -16,7 +16,7 @@ const INTENT_VIEWER_CSS = css({
   },
 
   '& #selector': {
-    width: '213px'
+    width: '190px'
   }
 });
 

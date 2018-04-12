@@ -30,7 +30,7 @@ css.global('html, body, #root', {
   overflow: 'hidden',
   userSelect: 'none',
   whiteSpace: 'nowrap',
-  width: '726px'
+  width: '622px'
 });
 
 css.global('div', {
@@ -70,6 +70,8 @@ interface AppState {
   traceInfo: LuisTraceInfo;
   appInfo: AppInfo;
   intentInfo: IntentInfo[];
+  pendingTrain: boolean;
+  pendingPublish: boolean;
 }
 
 interface AppProps {
@@ -87,10 +89,13 @@ class App extends Component<AppProps, AppState> {
         luisModel: {
           ModelID: ''
         },
-        recognizerResult: {}
+        recognizerResult: {},
+        luisOptions: {}
       } as LuisTraceInfo,
       appInfo: {} as AppInfo,
-      intentInfo: [] as IntentInfo[]
+      intentInfo: [] as IntentInfo[],
+      pendingPublish: false,
+      pendingTrain: false
     };
     this.reassignIntent = this.reassignIntent.bind(this);
   }
@@ -118,7 +123,7 @@ class App extends Component<AppProps, AppState> {
         <Header 
           appId={this.state.traceInfo.luisModel.ModelID}
           appName={this.state.appInfo.name}
-          slot="production" 
+          slot={this.state.traceInfo.luisOptions.Staging ? 'Staging' : 'Production'} 
           version={this.state.appInfo.activeVersion}
         />
         <Splitter orientation={'vertical'} primaryPaneIndex={0} minSizes={{ 0: 306, 1: 306 }} initialSizes={{ 0: 306 }}>
@@ -154,20 +159,43 @@ class App extends Component<AppProps, AppState> {
       this.setState({
         appInfo: appInfo
       });
-      let intents = await this.luisclient.getApplicationIntents(this.state.traceInfo.luisModel.ModelID, appInfo);
+      let intents = await this.luisclient.getApplicationIntents(appInfo);
       this.setState({
         intentInfo: intents
       });
     }
   }
 
-  reassignIntent(newIntent: string): Promise<void> {
-    return this.luisclient.reassignIntent(
-      this.state.traceInfo.luisModel.ModelID, 
+  async reassignIntent(newIntent: string): Promise<void> {
+    await this.luisclient.reassignIntent(
       this.state.appInfo, 
       this.state.traceInfo.luisResult, 
       newIntent);
+
+    this.setState({
+      pendingTrain: true,
+      pendingPublish: true
+    });
   }
+
+  // TODO: Hook this up to the 'Train' Button and only enable the botton
+  // if this.state.pendingTrain is true
+  async train(): Promise<void> {
+    await this.luisclient.train(this.state.appInfo);
+    this.setState({
+      pendingTrain: false
+    });
+  }
+
+  // TODO: Hook this up to the 'Publish' Button and only enable the botton
+  // if this.state.pendingPublish is true
+  async publish(): Promise<void> {
+    await this.luisclient.publish(this.state.appInfo, this.state.traceInfo.luisOptions.Staging || false);
+    this.setState({
+      pendingPublish: false
+    });
+  }
+
 }
 
 export { App, AppState };

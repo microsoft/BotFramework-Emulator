@@ -36,13 +36,18 @@ export default class MockState implements AppState {
         Travel: 0.01
       },
       Text: 'hi'
-    }
+    },
+    luisOptions: {}
   };
   appInfo: AppInfo = {
     activeVersion: '0.1',
     authorized: true,
-    name: 'Contoso App'
+    name: 'Contoso App',
+    appId: '6209a76f-e836-413b-ba92-a5772d1b2087',
+    endpoints: {}
   };
+  pendingPublish: false;
+  pendingTrain: false;
   intentInfo: IntentInfo[] = [
     {
       id: '6209a76f-e836-413b-ba92-a5772d1b2000',
@@ -57,5 +62,4 @@ export default class MockState implements AppState {
       name: 'Travel'
     }
   ];
-
 }

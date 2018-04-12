@@ -17,6 +17,8 @@ export default class AppStateAdapter implements AppState {
   appInfo: AppInfo;
   intentInfo: IntentInfo[];
   traceInfo: LuisTraceInfo;
+  pendingTrain: boolean;
+  pendingPublish: boolean;
 
   private static validate(args: any): boolean {
     if (!args || args.length === 0) {
