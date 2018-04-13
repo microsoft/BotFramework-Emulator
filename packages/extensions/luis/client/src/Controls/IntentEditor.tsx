@@ -16,7 +16,9 @@ const INTENT_VIEWER_CSS = css({
   },
 
   '& #selector': {
-    width: '190px'
+    width: '190px',
+    fontFamily: 'Segoe UI, sans-serif',
+    fontSize: '12px'
   }
 });
 

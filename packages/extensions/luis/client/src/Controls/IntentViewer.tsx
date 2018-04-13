@@ -11,7 +11,10 @@ const INTENT_VIEWER_CSS = css({
 
   '& #topScoreIntentLabel': {
     fontWeight: 'bold',
-    paddingBottom: '5px'
+  },
+
+  '& #topScoringIntentValue': {
+    paddingTop: '8px',
   }
 });
 
@@ -34,7 +37,7 @@ class IntentViewer extends Component<IntentViewerProps, IntentViewerState> {
     return (
       <div {...INTENT_VIEWER_CSS}>
         <div id="topScoreIntentLabel">Top-Scoring Intent</div>
-        <div>{this.props.topScoringIntent.intent} ({this.props.topScoringIntent.score})</div>
+        <div id="topScoringIntentValue">{this.props.topScoringIntent.intent} ({this.props.topScoringIntent.score})</div>
       </div>
     );
   }
