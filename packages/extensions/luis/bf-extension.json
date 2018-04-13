@@ -8,10 +8,10 @@
         "criteria": [
           {
             "path": "$.type",
-            "value": "event"
+            "value": "trace"
           },
           {
-            "path": "$.name",
+            "path": "$.valueType",
             "value": "https://www.luis.ai/schemas/trace"
           }
         ],

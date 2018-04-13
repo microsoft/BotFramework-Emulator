@@ -20,9 +20,13 @@ const INTENT_VIEWER_CSS = css({
   }
 });
 
-interface IntentEditorState {
+interface TraceIntentState {
+  originalIntent: string;
   currentIntent: string;
-  intentChanged: boolean;
+}
+
+interface IntentEditorState {
+  traceIntentStates: { [key: string]: TraceIntentState };
 }
 
 interface IntentEditorProps {
@@ -30,24 +34,31 @@ interface IntentEditorProps {
   intentInfo?: IntentInfo[];
   intentReassigner: (newIntent: string) => Promise<void>;
   enabled: boolean;
+  traceId: string;
 }
 
 class IntentEditor extends Component<IntentEditorProps, IntentEditorState> {
 
   static getDerivedStateFromProps(nextProps: IntentEditorProps, prevState: IntentEditorState) {
-    if (prevState.intentChanged) {
-      return {};
+    let currentTraceIntentStates = prevState.traceIntentStates;
+    if (nextProps.traceId in currentTraceIntentStates) {
+      currentTraceIntentStates[nextProps.traceId].originalIntent = nextProps.currentIntent.intent;  
+    } else {
+      currentTraceIntentStates[nextProps.traceId] = {
+        originalIntent: nextProps.currentIntent.intent,
+        currentIntent: ''
+      };
     }
+    
     return {
-      currentIntent: nextProps.currentIntent.intent
+      traceIntentStates: currentTraceIntentStates
     };
   }
 
   constructor(props: any, context: any) {
     super(props, context);
     this.state = {
-      currentIntent: this.props.currentIntent.intent,
-      intentChanged: false
+      traceIntentStates: {}
     };
   }
 
@@ -58,12 +69,15 @@ class IntentEditor extends Component<IntentEditorProps, IntentEditorState> {
     let options = this.props.intentInfo.map(i => {
       return <option key={i.id} value={i.name} label={i.name}>{i.name}</option>;
     });
+
+    let currentIntent = this.state.traceIntentStates[this.props.traceId].currentIntent || 
+                        this.state.traceIntentStates[this.props.traceId].originalIntent;
     return (
       <div {...INTENT_VIEWER_CSS}>
         <form>
           <label>Reassign Intent</label>
           <span id="selectorContainer" >
-            <select id="selector" value={this.state.currentIntent} onChange={this.handleChange}>
+            <select id="selector" value={currentIntent} onChange={this.handleChange}>
               {options}
             </select>
           </span>
@@ -74,9 +88,10 @@ class IntentEditor extends Component<IntentEditorProps, IntentEditorState> {
 
   private handleChange = (event: React.FormEvent<HTMLSelectElement>) => {
     let newIntent: string = event.currentTarget.value;
+    let currentTraceIntentStates = this.state.traceIntentStates;
+    currentTraceIntentStates[this.props.traceId].currentIntent = newIntent;
     this.setState({
-      currentIntent: newIntent,
-      intentChanged: true
+      traceIntentStates: currentTraceIntentStates
     });
     if (this.props.intentReassigner) {
       this.props.intentReassigner(newIntent);

@@ -4,11 +4,11 @@ import { LuisAppInfo } from './Models/LuisAppInfo';
 import { LuisTraceInfo } from './Models/LuisTraceInfo';
 import { AppInfo } from './Luis/AppInfo';
 import { IntentInfo } from './Luis/IntentInfo';
-import { IActivity, IEventActivity } from '@bfemulator/sdk-shared';
+import { ITraceActivity } from '@bfemulator/sdk-shared';
 import { ButtonSelected } from './Controls/ControlBar';
 
-const EventActivity = 'event';
-const LuisTraceEventName = 'https://www.luis.ai/schemas/trace';
+const TraceActivity = 'trace';
+const LuisTraceType = 'https://www.luis.ai/schemas/trace';
 
 interface LuisModel {
   ModelID: string;
@@ -22,19 +22,20 @@ export default class AppStateAdapter implements AppState {
   pendingTrain: boolean;
   pendingPublish: boolean;
   controlBarButtonSelected: ButtonSelected;
+  id: string;
 
   private static validate(obj: any): boolean {
     if (!obj) {
       return false;
     }
-    const event = obj as IEventActivity;
-    if (event.type !== EventActivity || event.name !== LuisTraceEventName) {
+    const trace = obj as ITraceActivity;
+    if (trace.type !== TraceActivity || trace.valueType !== LuisTraceType) {
       return false;
     }
-    if (!event.value) {
+    if (!trace.value) {
       return false;
     }
-    if (!AppStateAdapter.isALuisTraceInfo(event.value)) {
+    if (!AppStateAdapter.isALuisTraceInfo(trace.value)) {
       return false;
     }
     return true;
@@ -48,9 +49,11 @@ export default class AppStateAdapter implements AppState {
     if (!AppStateAdapter.validate(obj)) {
       return;
     }
-    this.traceInfo = (obj as IEventActivity).value as LuisTraceInfo;
+    let traceActivity = (obj as ITraceActivity);
+    this.traceInfo = traceActivity.value as LuisTraceInfo;
     this.controlBarButtonSelected = this.traceInfo.recognizerResult ? 
                                       ButtonSelected.RecognizerResult : 
                                       ButtonSelected.RawResponse;
+    this.id = traceActivity.id || '';
   }
 }

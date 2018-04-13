@@ -77,6 +77,7 @@ interface AppState {
   pendingTrain: boolean;
   pendingPublish: boolean;
   controlBarButtonSelected: ButtonSelected;
+  id: string;
 }
 
 interface AppProps {
@@ -107,7 +108,8 @@ class App extends Component<AppProps, AppState> {
       intentInfo: [] as IntentInfo[],
       pendingPublish: false,
       pendingTrain: false,
-      controlBarButtonSelected: ButtonSelected.RawResponse
+      controlBarButtonSelected: ButtonSelected.RawResponse,
+      id: ''
     };
     this.reassignIntent = this.reassignIntent.bind(this);
   }
@@ -167,6 +169,7 @@ class App extends Component<AppProps, AppState> {
             intentInfo={this.state.intentInfo} 
             intentReassigner={this.reassignIntent} 
             appInfo={this.state.appInfo}
+            traceId={this.state.id}
           />
         </Splitter>
       </div>

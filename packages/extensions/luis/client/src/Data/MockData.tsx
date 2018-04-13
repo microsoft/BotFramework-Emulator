@@ -50,6 +50,7 @@ export default class MockState implements AppState {
   pendingPublish: false;
   pendingTrain: false;
   controlBarButtonSelected: ButtonSelected.RawResponse;
+  id: '6209a76f-e836-413b-ba92-a5772d1b2003';
   intentInfo: IntentInfo[] = [
     {
       id: '6209a76f-e836-413b-ba92-a5772d1b2000',

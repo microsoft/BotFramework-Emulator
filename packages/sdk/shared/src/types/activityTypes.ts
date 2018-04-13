@@ -135,3 +135,9 @@ export interface IGenericActivity extends
   IInvokeActivity {
 }
 
+export interface ITraceActivity extends IActivity {
+  name?: string,
+  value?: any,
+  label?: string,
+  valueType?: string
+}

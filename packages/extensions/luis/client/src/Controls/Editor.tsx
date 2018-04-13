@@ -20,6 +20,7 @@ interface EditorProps {
   intentInfo?: IntentInfo[];
   intentReassigner: (newIntent: string) => Promise<void>;
   appInfo: AppInfo;
+  traceId: string;
 }
 
 const EDITOR_CSS = css({
@@ -56,6 +57,7 @@ class Editor extends Component<EditorProps, EditorState> {
           intentInfo={this.props.intentInfo} 
           intentReassigner={this.props.intentReassigner}
           enabled={this.props.appInfo.authorized}
+          traceId={this.props.traceId}
         />
         <EntitiesViewer entities={this.props.recognizerResult.Entities} />
       </div>
