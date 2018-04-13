@@ -76,7 +76,7 @@
     "@bfemulator/extension-qnamaker": "^1.0.0",
     "@bfemulator/sdk-main": "^1.0.0",
     "@bfemulator/sdk-shared": "^1.0.0",
-    "@intercom/ui-shared": "^1.0.12",
+    "@fuselab/ui-shared": "^1.0.12",
     "async": "^2.6.0",
     "base64url": "^2.0.0",
     "chokidar": "^2.0.2",

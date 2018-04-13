@@ -1,6 +1,7 @@
-import { FileInfo } from '@bfemulator/app-shared';
-import { callbackToPromise } from '@intercom/ui-shared/lib/asyncUtils';
-import { FSWatcher, Stats, exists, readFile, statSync } from 'fs';
+
+import { FileInfo } from '@BFEmulator/app-shared';
+import { callbackToPromise } from '@fuselab/ui-shared/lib/asyncUtils';
+import { FSWatcher, Stats, exists, readFile } from 'fs';
 import * as Path from 'path';
 import * as Chokidar from 'chokidar';
 import { mainWindow } from './main';

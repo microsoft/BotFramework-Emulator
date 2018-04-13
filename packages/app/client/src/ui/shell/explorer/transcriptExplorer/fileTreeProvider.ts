@@ -1,7 +1,7 @@
-import { FileInfo } from '@bfemulator/app-shared';
-import { Container, Leaf, ITreeNodeView, TreeDataProvider, TreeNode, TreeState } from '@intercom/ui-fabric/lib/tree';
-import { fileExtensionToIcon, iconDefinitionToStyle } from '@intercom/ui-fabric/lib/themes';
-import { pathExt } from '@intercom/ui-shared/lib';
+import { FileInfo } from '@BFEmulator/app-shared';
+import { Container, Leaf, ITreeNodeView, TreeDataProvider, TreeNode, TreeState } from '@fuselab/ui-fabric/lib/tree';
+import { fileExtensionToIcon, iconDefinitionToStyle } from '@fuselab/ui-fabric/lib/themes';
+import { pathExt } from '@fuselab/ui-shared/lib';
 import { IStyleSet } from '@uifabric/styling/lib';
 
 import * as _ from 'lodash';

@@ -1,4 +1,4 @@
-import {lazy} from '@intercom/ui-shared/lib';
+import {lazy} from '@fuselab/ui-shared/lib';
 import { Disposable } from '@bfemulator/sdk-shared';
 import { CommandRegistry } from '../../commands';
 

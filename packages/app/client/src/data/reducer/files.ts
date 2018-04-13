@@ -1,6 +1,6 @@
-import { FileInfo } from '@bfemulator/app-shared';
-import { baseName } from '@intercom/ui-shared/lib/path';
-import { TreeNode, TreeState, Leaf, Container } from '@intercom/ui-fabric/lib/tree';
+import { FileInfo }  from '@BFEmulator/app-shared';
+import { baseName } from '@fuselab/ui-shared/lib/path';
+import { TreeNode, TreeState, Leaf, Container } from '@fuselab/ui-fabric/lib/tree';
 import * as _ from 'lodash';
 import { FileActions } from '../action/fileActions';
 import { sep } from 'path';
