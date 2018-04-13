@@ -111,7 +111,8 @@ class _TranscriptExplorer extends React.Component<TranscriptExplorerProps> {
       parent: null,
       compact: true,
       readonly: true,
-      theme: 'dark'
+      theme: 'dark',
+      hideRoot: true
     };
 
     return (
