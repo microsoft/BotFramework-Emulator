@@ -115,8 +115,8 @@ class App extends Component<AppProps, AppState> {
   componentWillMount() {
     // Attach a handler to listen on inspect events
     if (!this.runningDetached()) {
-      $host.on('inspect', async (activity: IActivity) => {
-        let appState = new AppStateAdapter(activity);
+      $host.on('inspect', async (obj: any) => {
+        let appState = new AppStateAdapter(obj);
         this.setState(appState);
         await this.populateLuisInfo();
       });

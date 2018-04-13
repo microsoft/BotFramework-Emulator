@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as CardBuilder from './CardBuilder';
 import { HorizontalAlignment, IAdaptiveCard, TextSize, TextWeight } from 'adaptivecards';
-import { Attachment, CardAction, CardImage, KnownMedia, UnknownMedia } from 'botframework-directlinejs';
+import { Attachment, CardAction, CardImage, KnownMedia, UnknownMedia } from '@bfemulator/custom-botframework-directlinejs';
 import { renderIfNonempty, IDoCardAction } from './Chat';
 import { FormatState } from './Store';
 import { default as AdaptiveCardContainer } from './AdaptiveCardContainer';

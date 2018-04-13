@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import { Attachment } from 'botframework-directlinejs';
+import { Attachment } from '@bfemulator/custom-botframework-directlinejs';
 import { IDoCardAction } from './Chat';
 import { FormatState } from './Store';
 export interface QueryParams {

@@ -5,6 +5,7 @@
     "packages/app/main",
     "packages/app/shared",
     "packages/custom-botframework-webchat",
+    "packages/custom-botframework-directlinejs",
     "packages/custom-ngrok",
     "packages/sdk/client",
     "packages/sdk/main",

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { ChatState, FormatState } from './Store';
-import { User } from 'botframework-directlinejs';
 import { classList } from './Chat';
 import { Dispatch, connect } from 'react-redux';
 import { Strings } from './Strings';

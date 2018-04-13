@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Activity, Message, User, CardActionTypes } from 'botframework-directlinejs';
+import { Activity, Message, ChannelAccount, CardActionTypes } from '@bfemulator/custom-botframework-directlinejs';
 import { ChatState, FormatState, SizeState } from './Store';
 import { Dispatch, connect } from 'react-redux';
 import { ActivityView } from './ActivityView';
@@ -194,7 +194,7 @@ export const History = connect(
         onClickCardAction: dispatchProps.onClickCardAction,
         // helper functions
         doCardAction: doCardAction(stateProps.botConnection, stateProps.user, stateProps.format.locale, dispatchProps.sendMessage),
-        isFromMe: (activity: Activity) => activity.from.id === stateProps.user.id,
+        isFromMe: (activity: Activity) => activity.from.id === stateProps.user.id || (activity.from.role && activity.from.role === 'user'),
         isSelected: (activity: Activity) => activity === stateProps.selectedActivity,
         onClickActivity: (activity: Activity) => stateProps.connectionSelectedActivity && (() => stateProps.connectionSelectedActivity.next({ activity })),
         onCardAction: ownProps.onCardAction

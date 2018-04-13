@@ -26,25 +26,26 @@ export class Inspector extends React.Component<InspectorProps> {
   constructor(props, context) {
     super(props, context);
   }
-  
+
   toggleDevTools() {
     if (this.ref) {
       this.ref.send('toggle-dev-tools');
     }
   }
-  
+
   accessoryClick(id: string) {
     if (this.ref) {
       this.ref.send('accessory-click', id);
     }
   }
-  
+
   canInspect(obj: any): boolean {
     return this.props.inspector.name === 'JSON' || InspectorAPI.canInspect(this.props.inspector, obj);
   }
 
-  componentDidMount(): void {
-    if (this.ref) {
+  updateRef = (ref) => {
+    this.ref = ref;
+    if (ref) {
       this.ref.addEventListener('dom-ready', (e) => {
         this.inspect(this.props.obj);
       })
@@ -60,8 +61,8 @@ export class Inspector extends React.Component<InspectorProps> {
     }
   }
 
-  componentWillReceiveProps(nextProps: InspectorProps, nextContext: any): void {
-    this.inspect(nextProps.obj);
+  componentDidUpdate(prevProps: InspectorProps, prevState: any, prevContext: any): void {
+    this.inspect(this.props.obj);
   }
 
   render() {
@@ -70,10 +71,11 @@ export class Inspector extends React.Component<InspectorProps> {
     const hash = md5.digest('base64');
     return (
       <webview { ...CSS }
+        webpreferences="webSecurity=no"
         key={ hash }
         partition={ `persist:${hash}` }
         preload={ `file://${SettingsService.emulator.cwdAsBase}/../../node_modules/@bfemulator/client/build/inspector-preload.js` }
-        ref={ ref => this.ref = ref }
+        ref={ ref => this.updateRef(ref) }
         src={ this.props.inspector.src }
       />
     );

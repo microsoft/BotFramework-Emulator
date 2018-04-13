@@ -34,7 +34,7 @@
 import { css } from 'glamor';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { FileInfo } from '@BFEmulator/app-shared';
+import { FileInfo } from '@bfemulator/app-shared';
 import { lazy, pathExt } from '@intercom/ui-shared/lib';
 import { TreeView, TreeViewProps, initFontFaces } from '@intercom/ui-fabric/lib';
 import * as constants from '../../../../constants';
@@ -72,9 +72,9 @@ interface TranscriptExplorerProps {
 
 }
 
-function isTranscript(path: string) : boolean {
+function isTranscript(path: string): boolean {
   const ext = (pathExt(path) || '').toLowerCase();
-  return ext === '.transcript';
+  return ext === 'transcript';
 }
 
 class _TranscriptExplorer extends React.Component<TranscriptExplorerProps> {
@@ -84,17 +84,17 @@ class _TranscriptExplorer extends React.Component<TranscriptExplorerProps> {
     super(props);
     this.onItemClick = this.handleItemClick.bind(this);
   }
-  
+
   private handleItemClick(filename) {
     CommandService.call("transcript:open", filename);
   }
 
-  private renderFileTree() : JSX.Element {
+  private renderFileTree(): JSX.Element {
     if (!this.props.files.root) {
       return null;
     }
     const provider = new FileTreeDataProvider(this.props.files);
-    const props : TreeViewProps<FileInfo> = {
+    const props: TreeViewProps<FileInfo> = {
       loadContainer: provider.loadContainer.bind(provider),
       remove: provider.remove.bind(provider),
       insertAt: provider.insertAt.bind(provider),
@@ -116,19 +116,19 @@ class _TranscriptExplorer extends React.Component<TranscriptExplorerProps> {
 
     return (
       <ExpandCollapseContent key={ this.props.changeKey }>
-        <TreeView {...props}/>
+        <TreeView { ...props } />
       </ExpandCollapseContent>
     );
   }
 
-  private renderTranscriptList() : JSX.Element {
+  private renderTranscriptList(): JSX.Element {
     return (
       <ExpandCollapseContent key={ this.props.changeKey }>
-        <ul {...CONVO_CSS }>
+        <ul { ...CONVO_CSS }>
           {
             this.props.transcripts.map(filename =>
               <ExplorerItem key={ filename } active={ this.props.activeDocumentId === filename } onClick={ () => this.onItemClick(filename) }>
-                <span>{ filename.replace(/\\$/,'').split('\\').pop() }</span>
+                <span>{ filename.replace(/\\$/, '').split('\\').pop() }</span>
               </ExplorerItem>
             )
           }
@@ -137,10 +137,10 @@ class _TranscriptExplorer extends React.Component<TranscriptExplorerProps> {
     );
   }
 
-  private renderEmptyTranscriptList() : JSX.Element {
+  private renderEmptyTranscriptList(): JSX.Element {
     return (
       <ExpandCollapseContent key={ this.props.changeKey }>
-        <ul {...CONVO_CSS }>
+        <ul { ...CONVO_CSS }>
           <li><span className="empty-list">No transcripts yet</span></li>
           <li>&nbsp;</li>
         </ul>
@@ -149,9 +149,9 @@ class _TranscriptExplorer extends React.Component<TranscriptExplorerProps> {
   }
 
   @lazy()
-  private get setiFont() : string {
+  private get setiFont(): string {
     const fontCalc = x => `url(./external/media${x})`;
-    initFontFaces(fontCalc);    
+    initFontFaces(fontCalc);
     return './external/media';
   }
 
@@ -160,12 +160,12 @@ class _TranscriptExplorer extends React.Component<TranscriptExplorerProps> {
     const font = this.setiFont;
   }
 
-  public render() : JSX.Element {
+  public render(): JSX.Element {
     return (
-      <div {...EXPLORER_CSS }>
+      <div { ...EXPLORER_CSS }>
         <ExpandCollapse
           expanded={ true }
-          title="Transcripts"
+          title="File Explorer"
         >
           { this.renderFileTree() }
           {/*
@@ -180,7 +180,7 @@ class _TranscriptExplorer extends React.Component<TranscriptExplorerProps> {
   }
 }
 
-function mapStateToProps(state: any) : TranscriptExplorerProps {
+function mapStateToProps(state: any): TranscriptExplorerProps {
   return {
     activeEditor: state.editor.activeEditor,
     activeDocumentId: state.editor.editors[state.editor.activeEditor].activeDocumentId,

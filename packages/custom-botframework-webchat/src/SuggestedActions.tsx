@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { CardAction, Message, Activity } from 'botframework-directlinejs';
+import { CardAction, Message, Activity } from '@bfemulator/custom-botframework-directlinejs';
 import { doCardAction, IDoCardAction } from './Chat';
 import { HScroll } from './HScroll';
 import { ChatActions, sendMessage } from './Store';

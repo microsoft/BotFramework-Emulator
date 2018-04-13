@@ -1,4 +1,4 @@
-import { Attachment, CardAction, HeroCard, Thumbnail, CardImage } from 'botframework-directlinejs';
+import { Attachment, CardAction, HeroCard, Thumbnail, CardImage } from '@bfemulator/custom-botframework-directlinejs';
 import { AdaptiveCard, CardElement, Column, ColumnSet, Container, Image, OpenUrlAction, Size, SubmitAction, TextBlock, TextSize, TextWeight } from 'adaptivecards';
 import { BotFrameworkCardAction } from './AdaptiveCardContainer';
 

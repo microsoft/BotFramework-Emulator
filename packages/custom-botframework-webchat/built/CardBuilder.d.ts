@@ -1,4 +1,4 @@
-import { CardAction } from 'botframework-directlinejs';
+import { CardAction } from '@bfemulator/custom-botframework-directlinejs';
 import { AdaptiveCard, CardElement, Column, Container, TextBlock } from 'adaptivecards';
 export declare class AdaptiveCardBuilder {
     private container;

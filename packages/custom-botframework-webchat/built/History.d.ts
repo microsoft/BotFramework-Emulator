@@ -1,6 +1,6 @@
 /// <reference types="react" />
 import * as React from 'react';
-import { Activity } from 'botframework-directlinejs';
+import { Activity } from '@bfemulator/custom-botframework-directlinejs';
 import { FormatState, SizeState } from './Store';
 import { IDoCardAction } from './Chat';
 export interface HistoryProps {

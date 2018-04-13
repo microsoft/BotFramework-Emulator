@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var React = require("react");
 var react_dom_1 = require("react-dom");
-var botframework_directlinejs_1 = require("botframework-directlinejs");
+var custom_botframework_directlinejs_1 = require("@bfemulator/custom-botframework-directlinejs");
 var Store_1 = require("./Store");
 var react_redux_1 = require("react-redux");
 var SpeechModule_1 = require("./SpeechModule");
@@ -125,7 +125,7 @@ var Chat = /** @class */ (function (_super) {
         // Now that we're mounted, we know our dimensions. Put them in the store (this will force a re-render)
         this.setSize();
         var botConnection = this.props.directLine
-            ? (this.botConnection = new botframework_directlinejs_1.DirectLine(this.props.directLine))
+            ? (this.botConnection = new custom_botframework_directlinejs_1.DirectLine(this.props.directLine))
             : this.props.botConnection;
         if (this.props.resize === 'window')
             window.addEventListener('resize', this.resizeListener);

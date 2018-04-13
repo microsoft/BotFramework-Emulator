@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
-var botframework_directlinejs_1 = require("botframework-directlinejs");
+var custom_botframework_directlinejs_1 = require("@bfemulator/custom-botframework-directlinejs");
 var Strings_1 = require("./Strings");
 var SpeechModule_1 = require("./SpeechModule");
 var adaptivecards_1 = require("adaptivecards");
@@ -100,7 +100,7 @@ exports.size = function (state, action) {
 };
 exports.connection = function (state, action) {
     if (state === void 0) { state = {
-        connectionStatus: botframework_directlinejs_1.ConnectionStatus.Uninitialized,
+        connectionStatus: custom_botframework_directlinejs_1.ConnectionStatus.Uninitialized,
         botConnection: undefined,
         selectedActivity: undefined,
         user: undefined,

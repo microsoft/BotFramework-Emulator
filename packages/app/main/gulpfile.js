@@ -27,6 +27,11 @@ gulp.task('copy-extension-stubs', function () {
 });
 
 //----------------------------------------------------------------------------
+gulp.task('build-json-extension', function () {
+  return Promise.resolve();
+});
+
+//----------------------------------------------------------------------------
 gulp.task('build-qnamaker-extension', function () {
   return Promise.resolve();
   /*
@@ -36,6 +41,15 @@ gulp.task('build-qnamaker-extension', function () {
       'npm run build'
     ], { cwd: '../../extensions/qnamaker/' }));
     */
+});
+
+//----------------------------------------------------------------------------
+gulp.task('build-luis-extension', function () {
+  return gulp
+    .src('../../extensions/luis/client/package.json', { read: false })
+    .pipe(shell([
+      'npm run build'
+    ], { cwd: '../../extensions/luis/client' }));
 });
 
 //----------------------------------------------------------------------------
@@ -50,6 +64,8 @@ gulp.task('build-debug-extension', function () {
 //----------------------------------------------------------------------------
 gulp.task('build-extensions',
   gulp.parallel(
+    'build-json-extension',
+    'build-luis-extension',
     'build-qnamaker-extension',
     'build-debug-extension')
 );

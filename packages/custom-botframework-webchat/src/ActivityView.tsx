@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Activity, Attachment, AttachmentLayout } from 'botframework-directlinejs';
+import { Activity, Attachment, AttachmentLayout } from '@bfemulator/custom-botframework-directlinejs';
 import { AttachmentView } from './Attachment';
 import { Carousel } from './Carousel';
 import { FormattedText } from './FormattedText';

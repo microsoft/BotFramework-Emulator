@@ -123,7 +123,7 @@ exports.History = react_redux_1.connect(function (state) { return ({
     onClickCardAction: dispatchProps.onClickCardAction,
     // helper functions
     doCardAction: Chat_1.doCardAction(stateProps.botConnection, stateProps.user, stateProps.format.locale, dispatchProps.sendMessage),
-    isFromMe: function (activity) { return activity.from.id === stateProps.user.id; },
+    isFromMe: function (activity) { return activity.from.id === stateProps.user.id || (activity.from.role && activity.from.role === 'user'); },
     isSelected: function (activity) { return activity === stateProps.selectedActivity; },
     onClickActivity: function (activity) { return stateProps.connectionSelectedActivity && (function () { return stateProps.connectionSelectedActivity.next({ activity: activity }); }); },
     onCardAction: ownProps.onCardAction

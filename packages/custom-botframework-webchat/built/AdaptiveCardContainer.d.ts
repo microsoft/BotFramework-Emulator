@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { AdaptiveCard, HostConfig } from 'adaptivecards';
 import { IAdaptiveCard } from 'adaptivecards/lib/schema';
-import { CardAction } from 'botframework-directlinejs/built/directLine';
+import { CardAction } from '@bfemulator/custom-botframework-directlinejs/built/directLine';
 import { IDoCardAction } from './Chat';
 export interface Props {
     className?: string;

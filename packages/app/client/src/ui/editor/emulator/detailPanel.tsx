@@ -71,8 +71,8 @@ export default class DetailPanel extends React.Component<IDetailPanelProps, {}> 
     const accessories = inspector.accessories || [];
     return (
       <PanelControls>
-        { accessories.map(accessory => <button onClick={ ev => this.onAccessoryClick(accessory.id) }>{ accessory.label }</button>) }
-        <button onClick={ ev => this.onToggleDevToolsClick() }>DevTools</button>
+        { accessories.map(accessory => <button key={ accessory.id } onClick={ ev => this.onAccessoryClick(accessory.id) }>{ accessory.label }</button>) }
+        <button key="devtools" onClick={ ev => this.onToggleDevToolsClick() }>DevTools</button>
       </PanelControls>
     );
   }
@@ -86,18 +86,26 @@ export default class DetailPanel extends React.Component<IDetailPanelProps, {}> 
       obj = obj.activity;
     }
 
-    // Find an inspecetor for this object
-    let result = ExtensionManager.inspectorForObject(obj, true);
+    // Find an inspector for this object.
+    let insp = obj ? ExtensionManager.inspectorForObject(obj, true) : null;
 
-    return (
-      <div { ...CSS }>
-        <Panel title={ `${result.inspector.name} inspector` }>
-          { this.renderPanelControls(result.inspector) }
-          <PanelContent>
-            <Detail ref={ ref => this.detailRef = ref } document={ this.props.document } obj={ obj } extension={ result.extension } inspector={ result.inspector } />
-          </PanelContent>
-        </Panel>
-      </div>
-    );
+    if (insp) {
+      return (
+        <div { ...CSS }>
+          <Panel title={ `${insp.inspector.name} inspector` }>
+            { this.renderPanelControls(insp.inspector) }
+            <PanelContent>
+              <Detail ref={ ref => this.detailRef = ref } document={ this.props.document } obj={ obj } extension={ insp.extension } inspector={ insp.inspector } />
+            </PanelContent>
+          </Panel>
+        </div>
+      );
+    } else {
+      return (
+        // Placeholder. Need to figure out what to show if no viable inspector was found.
+        <div { ...CSS }>
+        </div>
+      );
+    }
   }
 }

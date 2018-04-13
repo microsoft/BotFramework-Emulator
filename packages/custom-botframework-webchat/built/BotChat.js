@@ -5,7 +5,7 @@ var App_1 = require("./App");
 exports.App = App_1.App;
 var Chat_1 = require("./Chat");
 exports.Chat = Chat_1.Chat;
-tslib_1.__exportStar(require("botframework-directlinejs"), exports);
+tslib_1.__exportStar(require("@bfemulator/custom-botframework-directlinejs"), exports);
 var Attachment_1 = require("./Attachment");
 exports.queryParams = Attachment_1.queryParams;
 var SpeechOptions_1 = require("./SpeechOptions");

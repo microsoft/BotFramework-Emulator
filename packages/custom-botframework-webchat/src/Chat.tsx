@@ -5,7 +5,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
-import { Activity, IBotConnection, User, DirectLine, DirectLineOptions, CardActionTypes } from 'botframework-directlinejs';
+import { Activity, IBotConnection, ChannelAccount, DirectLine, DirectLineOptions, CardActionTypes } from '@bfemulator/custom-botframework-directlinejs';
 import { createStore, ChatActions, sendMessage, ChatStore } from './Store';
 import { Provider } from 'react-redux';
 import { SpeechOptions } from './SpeechOptions';
@@ -16,8 +16,8 @@ import { getTabIndex } from './getTabIndex';
 
 export interface ChatProps {
     adaptiveCardsHostConfig: any,
-    user: User,
-    bot: User,
+    user: ChannelAccount,
+    bot: ChannelAccount,
     botConnection?: IBotConnection,
     directLine?: DirectLineOptions,
     speechOptions?: SpeechOptions,
@@ -203,12 +203,12 @@ export class Chat extends React.Component<ChatProps, {}> {
                 }
                 this.store.dispatch<ChatActions>({ type: 'Connection_Change', connectionStatus })
             }
-        );
+        ) as any;
 
         this.activitySubscription = botConnection.activity$.subscribe(
             activity => this.handleIncomingActivity(activity),
             error => konsole.log("activity$ error", error)
-        );
+        ) as any;
 
         if (this.props.selectedActivity) {
             this.selectedActivitySubscription = this.props.selectedActivity.subscribe(activityOrID => {
@@ -289,9 +289,9 @@ export interface IDoCardAction {
 
 export const doCardAction = (
     botConnection: IBotConnection,
-    from: User,
+    from: ChannelAccount,
     locale: string,
-    sendMessage: (value: string, user: User, locale: string) => void,
+    sendMessage: (value: string, user: ChannelAccount, locale: string) => void,
 ): IDoCardAction => (
     type,
     actionValue
@@ -325,7 +325,7 @@ export const doCardAction = (
         }
 }
 
-export const sendPostBack = (botConnection: IBotConnection, text: string, value: object, from: User, locale: string) => {
+export const sendPostBack = (botConnection: IBotConnection, text: string, value: object, from: ChannelAccount, locale: string) => {
     botConnection.postActivity({
         type: "message",
         text,

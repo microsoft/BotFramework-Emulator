@@ -3,7 +3,7 @@ import { findDOMNode } from 'react-dom';
 import { connect } from 'react-redux';
 import { Action, AdaptiveCard, HostConfig, IValidationError, OpenUrlAction, SubmitAction } from 'adaptivecards';
 import { IActionBase, IActionShowCard, IAdaptiveCard } from 'adaptivecards/lib/schema';
-import { CardAction } from 'botframework-directlinejs/built/directLine';
+import { CardAction } from '@bfemulator/custom-botframework-directlinejs/built/directLine';
 import { classList, IDoCardAction } from './Chat';
 import { AjaxResponse, AjaxRequest } from 'rxjs/observable/dom/AjaxObservable';
 import * as adaptivecardsHostConfig from '../adaptivecards-hostconfig.json';

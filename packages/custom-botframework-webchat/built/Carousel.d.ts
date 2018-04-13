@@ -1,6 +1,6 @@
 /// <reference types="react" />
 import * as React from 'react';
-import { Attachment } from 'botframework-directlinejs';
+import { Attachment } from '@bfemulator/custom-botframework-directlinejs';
 import { FormatState, SizeState } from './Store';
 import { IDoCardAction } from './Chat';
 export interface CarouselProps {

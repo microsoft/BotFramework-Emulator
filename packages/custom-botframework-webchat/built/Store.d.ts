@@ -1,11 +1,11 @@
-import { Activity, ConnectionStatus, IBotConnection, Message, User } from 'botframework-directlinejs';
+import { Activity, ConnectionStatus, IBotConnection, Message, ChannelAccount } from '@bfemulator/custom-botframework-directlinejs';
 import { Strings } from './Strings';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { ActivityOrID, FormatOptions } from './Types';
 import { HostConfig } from 'adaptivecards';
 import { Reducer } from 'redux';
-export declare const sendMessage: (text: string, from: User, locale: string) => ChatActions;
-export declare const sendFiles: (files: FileList, from: User, locale: string) => ChatActions;
+export declare const sendMessage: (text: string, from: ChannelAccount, locale: string) => ChatActions;
+export declare const sendFiles: (files: FileList, from: ChannelAccount, locale: string) => ChatActions;
 export interface ShellState {
     visible: boolean;
     sendTyping: boolean;
@@ -77,14 +77,14 @@ export interface ConnectionState {
     connectionStatus: ConnectionStatus;
     botConnection: IBotConnection;
     selectedActivity: BehaviorSubject<ActivityOrID>;
-    user: User;
-    bot: User;
+    user: ChannelAccount;
+    bot: ChannelAccount;
 }
 export declare type ConnectionAction = {
     type: 'Start_Connection';
     botConnection: IBotConnection;
-    user: User;
-    bot: User;
+    user: ChannelAccount;
+    bot: ChannelAccount;
     selectedActivity: BehaviorSubject<ActivityOrID>;
 } | {
     type: 'Connection_Change';

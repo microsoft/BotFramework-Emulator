@@ -23,11 +23,11 @@ export default class AppStateAdapter implements AppState {
   pendingPublish: boolean;
   controlBarButtonSelected: ButtonSelected;
 
-  private static validate(activity: IActivity): boolean {
-    if (!activity) {
+  private static validate(obj: any): boolean {
+    if (!obj) {
       return false;
     }
-    const event = activity as IEventActivity;
+    const event = obj as IEventActivity;
     if (event.type !== EventActivity || event.name !== LuisTraceEventName) {
       return false;
     }
@@ -44,11 +44,11 @@ export default class AppStateAdapter implements AppState {
     return obj.recognizerResult !== undefined && obj.luisModel !== undefined;
   }
 
-  constructor(activity: IActivity) {
-    if (!AppStateAdapter.validate(activity)) {
+  constructor(obj: any) {
+    if (!AppStateAdapter.validate(obj)) {
       return;
     }
-    this.traceInfo = (activity as IEventActivity).value as LuisTraceInfo;
+    this.traceInfo = (obj as IEventActivity).value as LuisTraceInfo;
     this.controlBarButtonSelected = this.traceInfo.recognizerResult ? 
                                       ButtonSelected.RecognizerResult : 
                                       ButtonSelected.RawResponse;

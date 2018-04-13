@@ -1,4 +1,4 @@
-import { Activity } from 'botframework-directlinejs';
+import { Activity } from '@bfemulator/custom-botframework-directlinejs';
 
 export interface FormatOptions {
     showHeader?: boolean

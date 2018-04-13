@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Attachment } from 'botframework-directlinejs';
+import { Attachment } from '@bfemulator/custom-botframework-directlinejs';
 import { AttachmentView } from './Attachment';
 import { FormatState, SizeState } from './Store';
 import { HScroll } from './HScroll';

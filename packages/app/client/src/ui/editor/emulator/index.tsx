@@ -217,8 +217,10 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
       props.document.subscription.unsubscribe();
     }
     const selectedActivity$ = new BehaviorSubject({});
-    const subscription = selectedActivity$.subscribe((obj) => {
-      store.dispatch(ChatActions.setInspectorObjects(props.document.documentId, obj));
+    const subscription = selectedActivity$.subscribe((obj: any) => {
+      if (obj && obj.activity) {
+        store.dispatch(ChatActions.setInspectorObjects(props.document.documentId, obj.activity));
+      }
     });
 
     const conversationId = `${uniqueId()}|${props.mode}`;

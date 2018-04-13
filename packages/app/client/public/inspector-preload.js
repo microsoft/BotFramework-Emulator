@@ -1,7 +1,7 @@
 const { ipcRenderer, remote } = require('electron');
 
-ipcRenderer.on('inspect', (sender, ...args) => {
-  window.host.dispatch('inspect', ...args);
+ipcRenderer.on('inspect', (sender, obj) => {
+  window.host.dispatch('inspect', obj);
 });
 
 ipcRenderer.on('bot-updated', (sender, bot) => {
