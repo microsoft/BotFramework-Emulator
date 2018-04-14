@@ -1,9 +1,14 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "outDir": "build/dist",
     "module": "esnext",
     "target": "es6",
-    "lib": ["es6", "dom", "es2015"],
+    "lib": [
+      "es6",
+      "dom",
+      "es2015"
+    ],
     "sourceMap": true,
     "allowJs": true,
     "jsx": "react",
@@ -18,7 +23,6 @@
     // "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": false,
-
     // Should disable this when RxJS 6 release, and it should play nice with TS >= 2.4.1
     "skipLibCheck": true,
     "typeRoots": [
