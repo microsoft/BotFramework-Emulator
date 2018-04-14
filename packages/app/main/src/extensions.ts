@@ -139,6 +139,24 @@ export const ExtensionManager = new class extends Disposable implements IExtensi
 
   private extensions: { [unid: string]: IExtension } = {};
 
+  // Check whether we're running from an 'app.asar' packfile. If so, it means we were installed
+  // using an installer (as opposed to running a developer build).
+  private isPacked(): boolean {
+    return /[\\/]app.asar[\\/]/.test(__dirname);
+  }
+
+  // Most source files of the installed application exist in a packed archive called 'app.asar'.
+  // The emulator is configured to unpack extensions out of the asar file onto disk in a folder
+  // called 'app.asar.unpacked'. Electron doesn't support an automatic way to remap file paths
+  // from packed to unpacked locations, so we're doing that manually here.
+  private unpackedFolder(filename: string) {
+    if (path.isAbsolute(filename) && this.isPacked()) {
+      return filename.replace('app.asar', 'app.asar.unpacked');
+    } else {
+      return filename;
+    }
+  }
+
   public findExtension(name: string): IExtension {
     for (let unid in this.extensions) {
       if (this.extensions[unid].config.name === name) {
@@ -152,7 +170,8 @@ export const ExtensionManager = new class extends Disposable implements IExtensi
     let folders = [];
     try {
       // Get all subdirectories under ../extensions
-      folders = getDirectories(`${__dirname}/../extensions`);
+      const folder = this.unpackedFolder(path.resolve(path.join(__dirname, "..", "extensions")));
+      folders = getDirectories(folder);
     } catch (err) { }
     // Load each extension
     folders.forEach(folder => {
@@ -240,7 +259,12 @@ export const ExtensionManager = new class extends Disposable implements IExtensi
       let config = JSON.parse(readFileSync(`${folder}/bf-extension.json`));
       // Follow redirections until we find a config file without one.
       while (config && config.location) {
-        folder = path.resolve(config.location);
+        if (!path.isAbsolute(config.location)) {
+          // If relative path, make it absolute from the app directory
+          folder = this.unpackedFolder(path.join(__dirname, config.location));
+        } else {
+          folder = this.unpackedFolder(path.resolve(config.location));
+        }
         try {
           config = JSON.parse(readFileSync(`${folder}/bf-extension.json`));
         } catch (ex) {
@@ -263,7 +287,7 @@ export const ExtensionManager = new class extends Disposable implements IExtensi
             }
           } else if (config.node.main) {
             // Launch node process as a child of this one.
-            const file = path.resolve(folder, config.node.main);
+            const file = this.unpackedFolder(path.resolve(folder, config.node.main));
             // Start the extension in a child process.
             child = fork(file, [], {
               cwd: path.dirname(file),

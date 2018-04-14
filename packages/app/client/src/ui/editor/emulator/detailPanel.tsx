@@ -92,7 +92,7 @@ export default class DetailPanel extends React.Component<IDetailPanelProps, {}> 
     if (insp) {
       return (
         <div { ...CSS }>
-          <Panel title={ `${insp.inspector.name} inspector` }>
+          <Panel title={ `inspector - ${insp.inspector.name}` }>
             { this.renderPanelControls(insp.inspector) }
             <PanelContent>
               <Detail ref={ ref => this.detailRef = ref } document={ this.props.document } obj={ obj } extension={ insp.extension } inspector={ insp.inspector } />
@@ -104,6 +104,8 @@ export default class DetailPanel extends React.Component<IDetailPanelProps, {}> 
       return (
         // Placeholder. Need to figure out what to show if no viable inspector was found.
         <div { ...CSS }>
+          <Panel title={ `inspector` }>
+          </Panel>
         </div>
       );
     }

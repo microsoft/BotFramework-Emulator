@@ -62,7 +62,13 @@ export class Inspector extends React.Component<InspectorProps> {
   }
 
   componentDidUpdate(prevProps: InspectorProps, prevState: any, prevContext: any): void {
-    this.inspect(this.props.obj);
+    if (prevProps.obj && this.props.obj) {
+      if (JSON.stringify(prevProps.obj) !== JSON.stringify(this.props.obj)) {
+        this.inspect(this.props.obj);
+      }
+    } else {
+      this.inspect(this.props.obj);
+    }
   }
 
   render() {

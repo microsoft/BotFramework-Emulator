@@ -14,9 +14,17 @@
   ],
   "fileAssociations": [
     {
-      "name": "Bot Project",
-      "ext": "botproj"
+      "name": "Bot",
+      "ext": "bot"
+    },
+    {
+      "name": "Transcript",
+      "ext": "transcript"
     }
+  ],
+  "asarUnpack": [
+    "app/extensions/**",
+    "node_modules/@bfemulator/extension-*/**"
   ],
   "directories": {
     "buildResources": "./scripts/config/resources"
