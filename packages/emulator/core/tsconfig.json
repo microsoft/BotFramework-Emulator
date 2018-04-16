@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "declarationDir": "lib",
+    "emitDeclarationOnly": true,
+    "lib": [
+      "es2016"
+    ],
+    "moduleResolution": "node",
+    "pretty": true,
+    "skipLibCheck": true,
+    "target": "es6",
+    "types": [
+      "node"
+    ]
+  },
+  "exclude": [
+    "src/**/*.spec.js",
+    "src/**/*.spec.ts",
+    "src/**/*.test.js",
+    "src/**/*.test.ts",
+    "src/__tests__/**/*.js",
+    "src/__tests__/**/*.ts",
+  ],
+  "include": [
+    "src/**/*"
+  ]
+}

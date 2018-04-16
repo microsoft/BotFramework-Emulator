@@ -1,0 +1,79 @@
+{
+  "name": "@bfemulator/emulator-core",
+  "version": "1.0.0-0",
+  "description": "Local mode server for Bot Framework",
+  "files": [
+    "lib/**/*.js"
+  ],
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "concurrently --names \"babel,typecheck\" \"babel --extensions .js,.ts --ignore **/*.spec.js,**/*.spec.ts,**/*.test.js/,**/*.test.ts/,__test__/**/*.js,__test__/**/*.ts --out-dir lib --source-maps inline --verbose src\" \"tsc\"",
+    "build:watch": "concurrently --kill-others --names \"babel,typecheck\" \"babel --extensions .js,.ts --ignore **/*.spec.js,**/*.spec.ts,**/*.test.js/,**/*.test.ts/,__test__/**/*.js,__test__/**/*.ts --out-dir lib --source-maps inline --verbose src --watch\" \"tsc --preserveWatchOutput --watch\"",
+    "clean": "rimraf lib",
+    "start": "node-dev .",
+    "test": "jest --coverage",
+    "typecheck": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/microsoft/botframework-localmode.git"
+  },
+  "keywords": [
+    "bot",
+    "bot framework",
+    "azure bot services",
+    "abs",
+    "local mode"
+  ],
+  "author": "Microsoft Corporation",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/microsoft/botframework-localmode/issues"
+  },
+  "homepage": "https://github.com/microsoft/botframework-localmode#readme",
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "ts"
+    ],
+    "testMatch": [
+      "**/__tests__/**/*.[jt]s?(x)",
+      "**/?(*.)(spec|test).[jt]s?(x)"
+    ],
+    "transform": {
+      "^.+\\.[jt]sx?$": "babel-jest"
+    }
+  },
+  "dependencies": {
+    "base64url": "^2.0.0",
+    "debug": "^3.1.0",
+    "http-status-codes": "^1.3.0",
+    "jsonwebtoken": "^8.2.0",
+    "moment": "^2.22.0",
+    "node-fetch": "^2.1.2",
+    "npmlog": "^4.1.2",
+    "rsa-pem-from-mod-exp": "^0.8.4",
+    "simple-update-in": "^1.1.1",
+    "uuid": "^3.2.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.0.0-beta.44",
+    "@babel/core": "^7.0.0-beta.44",
+    "@babel/preset-env": "^7.0.0-beta.44",
+    "@babel/preset-stage-3": "^7.0.0-beta.44",
+    "@babel/preset-typescript": "^7.0.0-beta.44",
+    "@types/node": "^9.6.2",
+    "@types/restify": "^5.0.7",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-jest": "^22.4.3",
+    "babel-preset-stage-3": "^6.24.1",
+    "concurrently": "^3.5.1",
+    "gulp": "^3.9.1",
+    "jest": "^22.4.3",
+    "node-dev": "^3.1.3",
+    "restify": "^4.3.3",
+    "rimraf": "^2.6.2",
+    "typescript": "^2.8.1"
+  }
+}

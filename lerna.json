@@ -7,6 +7,8 @@
     "packages/custom-botframework-webchat",
     "packages/custom-botframework-directlinejs",
     "packages/custom-ngrok",
+    "packages/emulator/cli",
+    "packages/emulator/core",
     "packages/sdk/client",
     "packages/sdk/main",
     "packages/sdk/shared",
