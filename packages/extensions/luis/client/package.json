@@ -11,7 +11,8 @@
     "luis-apis": "^1.0.7",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "react-json-view": "1.16.1"
+    "react-json-view": "1.16.1",
+    "lscache": "^1.1.0"
   },
   "scripts": {
     "start": "react-scripts-ts start",
@@ -23,6 +24,7 @@
     "@types/node": "^9.4.6",
     "@types/react": "^16.0.38",
     "@types/react-dom": "^16.0.4",
+    "@types/lscache": "^1.0.29",
     "react-scripts-ts": "^2.13.0",
     "typescript": "2.7.2"
   }

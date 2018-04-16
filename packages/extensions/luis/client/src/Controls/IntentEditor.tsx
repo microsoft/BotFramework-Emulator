@@ -4,6 +4,8 @@ import { Intent } from '../Models/Intent';
 import { IntentInfo } from '../Luis/IntentInfo';
 import { css } from 'glamor';
 
+const TraceIntentStatesKey: string = 'PersistedTraceIntentStates';
+
 const INTENT_VIEWER_CSS = css({
   color: 'white',
   fontFamily: 'Segoe UI, sans-serif',
@@ -34,9 +36,9 @@ interface IntentEditorState {
 interface IntentEditorProps {
   currentIntent: Intent;
   intentInfo?: IntentInfo[];
-  intentReassigner: (newIntent: string) => Promise<void>;
   enabled: boolean;
   traceId: string;
+  intentReassigner: (newIntent: string) => Promise<void>;
 }
 
 class IntentEditor extends Component<IntentEditorProps, IntentEditorState> {
@@ -59,8 +61,13 @@ class IntentEditor extends Component<IntentEditorProps, IntentEditorState> {
 
   constructor(props: any, context: any) {
     super(props, context);
+    let persisted = localStorage.getItem(TraceIntentStatesKey);
+    let traceIntentStates: { [key: string]: TraceIntentState } = {};
+    if (persisted !== null) {
+      traceIntentStates = JSON.parse(persisted);
+    }
     this.state = {
-      traceIntentStates: {}
+      traceIntentStates: traceIntentStates
     };
   }
 
@@ -92,12 +99,17 @@ class IntentEditor extends Component<IntentEditorProps, IntentEditorState> {
     let newIntent: string = event.currentTarget.value;
     let currentTraceIntentStates = this.state.traceIntentStates;
     currentTraceIntentStates[this.props.traceId].currentIntent = newIntent;
-    this.setState({
-      traceIntentStates: currentTraceIntentStates
-    });
+    this.setAndPersistTraceIntentStates(currentTraceIntentStates);
     if (this.props.intentReassigner) {
       this.props.intentReassigner(newIntent);
     }
+  }
+
+  private setAndPersistTraceIntentStates(states: { [key: string]: TraceIntentState }) {
+    this.setState({
+      traceIntentStates: states
+    });
+    localStorage.setItem(TraceIntentStatesKey, JSON.stringify(states));
   }
 }
 

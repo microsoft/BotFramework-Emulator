@@ -88,7 +88,7 @@ class App extends Component<AppProps, AppState> {
 
   luisclient: LuisClient;
 
-  setControlButtonSelected: (buttonSelected: ButtonSelected) => void = (buttonSelected: ButtonSelected): void => {
+  setControlButtonSelected = (buttonSelected: ButtonSelected): void => {
     this.setState({
       controlBarButtonSelected: buttonSelected
     });

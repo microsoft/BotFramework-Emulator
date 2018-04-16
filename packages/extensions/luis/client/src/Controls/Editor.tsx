@@ -37,10 +37,10 @@ class Editor extends Component<EditorProps, EditorState> {
   }
 
   getTopScoringIntent(): Intent {
-    if (!this.props.recognizerResult || !this.props.recognizerResult.Intents) {
+    if (!this.props.recognizerResult || !this.props.recognizerResult.intents) {
       return { intent: NoneIntent, score: 0.0 };
     }
-    let intents = this.props.recognizerResult.Intents;
+    let intents = this.props.recognizerResult.intents;
     let topIntent = Object.keys(intents).reduce((a, b, i, arr) => {
       return intents[a] > intents[b] ? a : b;
     });
@@ -59,7 +59,7 @@ class Editor extends Component<EditorProps, EditorState> {
           enabled={this.props.appInfo.authorized}
           traceId={this.props.traceId}
         />
-        <EntitiesViewer entities={this.props.recognizerResult.Entities} />
+        <EntitiesViewer entities={this.props.recognizerResult.entities} />
       </div>
     );
   }

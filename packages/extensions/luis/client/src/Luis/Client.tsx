@@ -7,10 +7,12 @@ import { Example, EntityLabel, ExampleLabelObject, AddLabelParams } from 'luis-a
 import { AppInfo } from './AppInfo';
 import { IntentInfo } from './IntentInfo';
 import { LuisResponse } from './LuisResponse';
+import * as LSCache from 'lscache';
 
 const DefaultVersion = '0.1';
 const TrainStatusRetryCount = 10;
 const WaitIntervalInMs = 500;
+const cacheTtlInMins = 30;
 
 enum TrainStatus {
   Success = 0,
@@ -31,6 +33,15 @@ class LuisClient {
   private publishService: Publish;
   private luisAppInfo: LuisAppInfo;
 
+  private static getCacheKey(apiName: string, appId: string, versionId: string | undefined= undefined): string {
+    let key: string = appId + '_' + appId;
+    if (versionId) {
+      key += '_';
+      key += versionId;
+    }
+    return key;
+  }
+
   constructor(luisAppInfo: LuisAppInfo) {
     this.luisAppInfo = luisAppInfo;
     this.appsService = new Apps();
@@ -46,6 +57,11 @@ class LuisClient {
   }
 
   async getApplicationInfo(): Promise<AppInfo> {
+    let opCacheKey: string = LuisClient.getCacheKey('GetAppInfo', this.luisAppInfo.appId);
+    let cached: AppInfo;
+    if ((cached = LSCache.get(opCacheKey)) != null) {
+      return cached;
+    }
     this.configureClient();
     let r = await this.appsService.getApplicationInfo({ appId: this.luisAppInfo.appId });
     let appInfo: AppInfo;
@@ -57,19 +73,29 @@ class LuisClient {
         appId: this.luisAppInfo.appId,
         endpoints: {}
       };
+    } else if (r.status !== 200) {
+      throw new Error('Failed to get Luis App Info' );
     } else {
       appInfo = await r.json();
       appInfo.authorized = true;
       appInfo.appId = this.luisAppInfo.appId;
+      LSCache.set(opCacheKey, appInfo, cacheTtlInMins);
     }
     return appInfo;
   }
 
   async getApplicationIntents(appInfo: AppInfo): Promise<IntentInfo[]> {
+    let opCacheKey: string = LuisClient.getCacheKey('GetAppInfo', appInfo.appId, appInfo.activeVersion);
+    let cached: IntentInfo[];
+    if ((cached = LSCache.get(opCacheKey)) != null) {
+      return cached;
+    }
     this.configureClient();
     let r = await this.intentsService.getVersionIntentList({ appId: appInfo.appId, versionId: appInfo.activeVersion });
     let intents = await r.json();
-    return intents.map((i: any) => i as IntentInfo);
+    let intentInfo = intents.map((i: any) => i as IntentInfo);
+    LSCache.set(opCacheKey, intentInfo, cacheTtlInMins);
+    return intentInfo;
   }
 
   async reassignIntent(appInfo: AppInfo, luisResponse: LuisResponse, newIntent: string): Promise<void> {

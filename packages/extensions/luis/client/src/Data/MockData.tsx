@@ -15,7 +15,7 @@ export default class MockState implements AppState {
       entities: []
     },
     recognizerResult: {
-      Entities: {
+      entities: {
         '$instance': {
           'Airline': [
             {
@@ -32,11 +32,11 @@ export default class MockState implements AppState {
           ]
         ]
       },
-      Intents: {
+      intents: {
         Greeting: 0.99,
         Travel: 0.01
       },
-      Text: 'hi'
+      text: 'hi'
     },
     luisOptions: {}
   };
