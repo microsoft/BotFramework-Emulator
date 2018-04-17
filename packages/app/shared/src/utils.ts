@@ -35,9 +35,7 @@
 // 1. We are using react-scripts, thus, we are not able to configure Webpack
 // 2. To skip bundling, we can hack with window['require']
 
-import { IBotConfig } from './types/botTypes';
-import { IEndpointService, ServiceType } from './types/serviceTypes';
-import { uniqueId } from '@bfemulator/sdk-shared';
+import { IBotConfig, IEndpointService, ServiceType, uniqueId } from '@bfemulator/sdk-shared';
 
 export function isObject(item: any): boolean {
   return (item && typeof item === 'object' && !Array.isArray(item) && item !== null);

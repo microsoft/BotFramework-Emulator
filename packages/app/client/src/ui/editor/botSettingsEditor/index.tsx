@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import { debounce } from 'lodash';
 import { connect } from 'react-redux';
-import { getBotDisplayName, IBotConfig, IEndpointService, getFirstBotEndpoint, newEndpoint, getBotId, ServiceType, IBotInfo } from '@bfemulator/app-shared';
+import { getBotDisplayName, getFirstBotEndpoint, newEndpoint, getBotId, IBotInfo } from '@bfemulator/app-shared';
+import { IBotConfig, IEndpointService, ServiceType } from '@bfemulator/sdk-shared';
 import { Fonts, Column, Row, RowAlignment, PrimaryButton, TextInputField, MediumHeader } from '@bfemulator/ui-react';
 
 import { CommandService } from '../../../platform/commands/commandService';

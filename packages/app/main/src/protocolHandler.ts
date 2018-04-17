@@ -2,7 +2,8 @@ import * as QueryString from 'querystring';
 import * as got from 'got';
 import * as Electron from 'electron';
 
-import { IFrameworkSettings, newBot, newEndpoint, IBotConfig, IEndpointService } from '@bfemulator/app-shared';
+import { IFrameworkSettings, newBot, newEndpoint } from '@bfemulator/app-shared';
+import { IBotConfig, IEndpointService } from '@bfemulator/sdk-shared';
 import { Protocol } from './constants';
 import { mainWindow } from './main';
 import * as BotActions from './data-v2/action/bot';

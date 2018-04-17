@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { CommandRegistry as CommReg, IExtensionConfig, uniqueId } from '@bfemulator/sdk-shared';
-import { FileInfo, IBotInfo, IBotConfig, getBotId } from '@bfemulator/app-shared';
+import { CommandRegistry as CommReg, IBotConfig, IExtensionConfig, uniqueId } from '@bfemulator/sdk-shared';
+import { FileInfo, IBotInfo, getBotId } from '@bfemulator/app-shared';
 import { showWelcomePage } from "./data/editorHelpers";
 import { ActiveBotHelper } from './ui/helpers/activeBotHelper';
 import * as LogService from './platform/log/logService';

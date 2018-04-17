@@ -38,7 +38,7 @@ import * as React from 'react';
 import { Colors, Fonts } from '@bfemulator/ui-react';
 import { ExtensionManager, Extension } from '../../../../extensions';
 import { Inspector } from './inspector';
-import { IExtensionInspector } from '@bfemulator/sdk-shared';
+import { IBotConfig, IExtensionInspector } from '@bfemulator/sdk-shared';
 
 const CSS = css({
   padding: 0,
@@ -52,6 +52,7 @@ const CSS = css({
 });
 
 export interface DetailProps {
+  bot: IBotConfig;
   document: any;
   inspectObj: any;
   extension: Extension;
@@ -82,6 +83,7 @@ export class Detail extends React.Component<DetailProps> {
       <div { ...CSS } >
         <Inspector
           ref={ ref => this.inspectorRef = ref }
+          bot={ this.props.bot }
           document={ this.props.document }
           extension={ this.props.extension }
           inspector={ this.props.inspector }

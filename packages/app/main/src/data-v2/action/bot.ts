@@ -31,7 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IBotConfig, IBotInfo, IEndpointService, newBot } from '@bfemulator/app-shared';
+import { IBotInfo, newBot } from '@bfemulator/app-shared';
+import { IBotConfig, IEndpointService } from '@bfemulator/sdk-shared';
 import { BotAction } from '../reducer/bot';
 
 export const CREATE ='BOT/CREATE';

@@ -1,5 +1,6 @@
 import * as BotActions from '../action/bot';
-import { getBotDisplayName, IBotConfig, IBotInfo, IEndpointService, getBotId, getFirstBotEndpoint } from '@bfemulator/app-shared';
+import { getBotDisplayName, IBotInfo, getBotId, getFirstBotEndpoint } from '@bfemulator/app-shared';
+import { IBotConfig, IEndpointService } from '@bfemulator/sdk-shared';
 
 export interface IBotState {
   activeBot: IBotConfig;

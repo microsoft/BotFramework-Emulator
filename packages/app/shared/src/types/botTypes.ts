@@ -31,8 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IConnectedService } from './serviceTypes';
-
 export interface IBot {
   id?: string,
   botId?: string,
@@ -53,11 +51,4 @@ export interface IBotInfo {
   displayName?: string;
   /** Bot secret used to encrypt / decrypt sensitive service info */
   secret?: string;
-}
-
-/** Bot consumed by msbot package */
-export interface IBotConfig {
-  name: string;
-  description: string;
-  services: IConnectedService[];
 }

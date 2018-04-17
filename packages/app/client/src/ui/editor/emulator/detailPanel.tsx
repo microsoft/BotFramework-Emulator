@@ -38,9 +38,8 @@ import { connect } from 'react-redux';
 import { Detail } from './parts/detail';
 import Panel, { PanelControls, PanelContent } from '../panel';
 import { ExtensionManager, IGetInspectorResult, Extension } from '../../../extensions';
-import { IExtensionInspector, IInspectorAccessory, IInspectorAccessoryState } from '@bfemulator/sdk-shared';
+import { IBotConfig, IExtensionInspector, IInspectorAccessory, IInspectorAccessoryState } from '@bfemulator/sdk-shared';
 import { IRootState } from '../../../data/store';
-import { IBotConfig } from '@bfemulator/app-shared';
 import { inspect } from 'util';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 import { Colors } from '@bfemulator/ui-react';
@@ -255,8 +254,9 @@ class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
           <Panel title={ ["inspector", this.state.title].filter(s => s && s.length).join(" - ") }>
             { this.renderAccessoryButtons(this.state.inspector) }
             <PanelContent>
-              <Detail ref={
-                ref => this.detailRef = ref }
+              <Detail
+                ref={ ref => this.detailRef = ref }
+                bot={ this.props.bot }
                 document={ this.props.document }
                 inspectObj={ this.state.inspectObj }
                 extension={ this.state.extension }

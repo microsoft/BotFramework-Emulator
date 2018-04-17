@@ -7,8 +7,8 @@ export function registerCommands() {
     url: string,
     cwd: string
   }): any => {
-    SettingsService.emulator.url = settings.url.replace('[::]', '127.0.0.1');
-    SettingsService.emulator.cwd = settings.cwd.replace(/\\/g, '/');
+    SettingsService.emulator.url = (settings.url || '').replace('[::]', '127.0.0.1');
+    SettingsService.emulator.cwd = (settings.cwd || '').replace(/\\/g, '/');
   });
 }
 
@@ -47,7 +47,7 @@ class EmulatorSettings implements IEmulatorSettings {
   get cwdAsBase() : string {
     let base = this.cwd;
     if (!base.startsWith('/')) {
-      base = `/${base}`;    
+      base = `/${base}`;
     }
 
     return base;

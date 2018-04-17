@@ -1,5 +1,5 @@
-import { newBot, IFrameworkSettings, usersDefault, getBotId, IBotConfig, addIdToBotEndpoints, newEndpoint, getFirstBotEndpoint } from '@bfemulator/app-shared';
-import { CommandRegistry as CommReg, IActivity, uniqueId } from '@bfemulator/sdk-shared';
+import { newBot, IFrameworkSettings, usersDefault, getBotId, addIdToBotEndpoints, newEndpoint, getFirstBotEndpoint } from '@bfemulator/app-shared';
+import { IBotConfig, CommandRegistry as CommReg, IActivity, uniqueId } from '@bfemulator/sdk-shared';
 import * as Electron from 'electron';
 import { BotConfig } from 'msbot';
 

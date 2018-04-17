@@ -32,7 +32,8 @@
 //
 
 import { promisify } from 'util';
-import { Settings, getFirstBotEndpoint, IBotConfig } from '@bfemulator/app-shared';
+import { Settings, getFirstBotEndpoint } from '@bfemulator/app-shared';
+import { IBotConfig } from '@bfemulator/sdk-shared';
 import * as CORS from 'restify-cors-middleware';
 import * as Restify from 'restify';
 import * as getPort from 'get-port';

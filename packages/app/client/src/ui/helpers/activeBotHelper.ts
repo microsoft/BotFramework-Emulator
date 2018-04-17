@@ -1,4 +1,5 @@
-import { getBotDisplayName, IBotConfig, getBotId, newBot, newEndpoint } from '@bfemulator/app-shared';
+import { getBotDisplayName, getBotId, newBot, newEndpoint } from '@bfemulator/app-shared';
+import { IBotConfig } from '@bfemulator/sdk-shared';
 import { hasNonGlobalTabs } from '../../data/editorHelpers';
 import { CommandService } from '../../platform/commands/commandService';
 import { getActiveBot } from '../../data/botHelpers';

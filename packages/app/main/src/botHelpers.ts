@@ -1,7 +1,8 @@
 
 import { BotConfig } from 'msbot';
 
-import { IBotConfig, IBotInfo, getBotId } from '@bfemulator/app-shared';
+import { IBotInfo, getBotId } from '@bfemulator/app-shared';
+import { IBotConfig } from '@bfemulator/sdk-shared';
 import { mainWindow } from './main';
 import * as BotActions from './data-v2/action/bot';
 

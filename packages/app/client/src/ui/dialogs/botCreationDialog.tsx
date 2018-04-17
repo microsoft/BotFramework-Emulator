@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { IBotConfig, IEndpointService } from '@bfemulator/app-shared';
 import { css } from 'glamor';
-import { uniqueId } from '@bfemulator/sdk-shared';
+import { uniqueId, IBotConfig, IEndpointService } from '@bfemulator/sdk-shared';
 
 import * as BotActions from '../../data/action/botActions';
 import * as NavBarActions from '../../data/action/navBarActions';

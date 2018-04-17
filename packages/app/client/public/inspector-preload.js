@@ -26,7 +26,7 @@ window.host = {
   bot: {},
 
   on(event, handler) {
-    if (handler && !this.handlers[event].includes(handler)) {
+    if (handler && Array.isArray(this.handlers[event]) && !this.handlers[event].includes(handler)) {
       this.handlers[event].push(handler);
     }
     return () => {

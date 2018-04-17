@@ -32,7 +32,8 @@
 //
 
 import { Bot as BotEmulator } from '@bfemulator/emulator-core';
-import { IBotConfig, getFirstBotEndpoint, IEndpointService } from '@BFEmulator/app-shared';
+import { getFirstBotEndpoint } from '@BFEmulator/app-shared';
+import { IBotConfig, IEndpointService } from '@bfemulator/sdk-shared';
 import * as CORS from 'restify-cors-middleware';
 import * as Restify from 'restify';
 

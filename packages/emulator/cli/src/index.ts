@@ -36,7 +36,7 @@
 import { Bot } from '@bfemulator/emulator-core';
 import { config } from 'dotenv';
 import * as Restify from 'restify';
-import CORS from 'restify-cors-middleware';
+import * as CORS from 'restify-cors-middleware';
 import getPort from 'get-port';
 
 const packageJSON = require('../package.json');
