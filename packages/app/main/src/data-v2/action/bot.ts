@@ -51,6 +51,9 @@ export function create(bot: IBotConfig, botFilePath: string, secret: string): Bo
 }
 
 export function load(bots: IBotInfo[]): BotAction {
+  // prune bad bots
+  bots = bots.filter(bot => !!bot);
+
   return {
     type: LOAD,
     payload: {

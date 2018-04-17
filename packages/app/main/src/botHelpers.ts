@@ -1,7 +1,9 @@
 
 import { BotConfig } from 'msbot';
-import { IBotConfig, IBotInfo, ServiceType } from '@bfemulator/app-shared';
+
+import { IBotConfig, IBotInfo, getBotId } from '@bfemulator/app-shared';
 import { mainWindow } from './main';
+import * as BotActions from './data-v2/action/bot';
 
 export function getActiveBot(): IBotConfig {
   const state = mainWindow.store.getState();
@@ -18,9 +20,45 @@ export function pathExistsInRecentBots(path: string): boolean {
   return state.bot.botFiles.some(bot => bot && bot.path === path);
 }
 
+/** Will attempt to load the bot, using the secret if specified.
+ *
+ *  If the bot is encrypted and the secret is invalid or missing,
+ *  then the user will be prompted with a dialog allowing him / her
+ *  to keep retrying until the correct secret is entered or the popup
+ *  is dismissed.
+ */
+export async function loadBotWithRetry(botPath: string, secret?: string): Promise<BotConfig> {
+  try {
+    const bot = await BotConfig.Load(botPath, secret);
+
+    // Bot was either decrypted on first try, or we used a new secret
+    // entered via the secret prompt dialog. In the latter case, we should
+    // update the secret for the bot that we have on record with the correct secret.
+    const botId = getBotId(bot);
+    if (botId) {
+      const botInfo = getBotInfoById(botId);
+      if (botInfo && botInfo.secret && botInfo.secret !== secret) {
+        // update the secret in bots.json with the valid secret
+        const updatedBot = { ...botInfo, secret };
+        patchBotsJson(botId, updatedBot);
+      }
+    }
+
+    return bot;
+  } catch (e) {
+    // bot requires a secret to decrypt properties
+    const newSecret = await mainWindow.commandService.remoteCall('secret-prompt:show');
+    if (newSecret === null)
+      // pop-up was dismissed; stop trying to prompt for secret
+      return null;
+    // try again with new secret
+    return await loadBotWithRetry(botPath, newSecret);
+  }
+}
+
 /** Converts an IBotConfig to a BotConfig */
-export function IBotConfigToBotConfig(bot: IBotConfig): BotConfig {
-  const newBot: BotConfig = new BotConfig();
+export function IBotConfigToBotConfig(bot: IBotConfig, secret?: string): BotConfig {
+  const newBot: BotConfig = new BotConfig(secret);
   newBot.description = bot.description;
   newBot.name = bot.name;
   newBot.services = bot.services;
@@ -32,60 +70,16 @@ export function cloneBot(bot: IBotConfig): IBotConfig {
   return JSON.parse(JSON.stringify(bot));
 }
 
-/** Encrypts a bot with its secret */
-export function encryptBot(bot: BotConfig, secret: string): BotConfig {
-  const botWithSecret = copyBotWithSecret(bot, secret);
-  botWithSecret.services.forEach(service => {
-    const propsThatShouldBeEncrypted = botWithSecret.getEncryptedProperties(getServiceType(service.type));
-    propsThatShouldBeEncrypted.forEach(prop => {
-      service[prop] = botWithSecret.encryptValue(service[prop]);
-    });
-  });
-  return botWithSecret;
-}
-
-/** Decrypts a bot with its secret */
-export function decryptBot(bot: BotConfig, secret: string): BotConfig {
-  const botWithSecret = copyBotWithSecret(bot, secret);
-  botWithSecret.services.forEach(service => {
-    const propsThatShouldBeEncrypted = botWithSecret.getEncryptedProperties(getServiceType(service.type));
-    propsThatShouldBeEncrypted.forEach(prop => {
-      service[prop] = botWithSecret.decryptValue(service[prop]);
-    });
-  });
-  return botWithSecret;
-}
-
-/** If we have a bot and its secret separated, this function joins them together */
-export function copyBotWithSecret(bot: BotConfig, secret: string): BotConfig {
-  let copy: BotConfig = new BotConfig(secret);
-  copy.description = bot.description;
-  copy.name = bot.name;
-  copy.services = bot.services;
-
-  return copy;
-}
-
-// for some reason, ServiceType[service.type] returns undefined ?
-/** Hacky work-around to broken enum type look-ups */
-function getServiceType(type: string): ServiceType {
-  switch (type) {
-    case 'endpoint':
-      return ServiceType.Endpoint
-
-    case 'abs':
-      return ServiceType.AzureBotService
-
-    case 'luis':
-      return ServiceType.Luis
-
-    case 'qna':
-      return ServiceType.QnA
-
-    case 'dispatch':
-      return ServiceType.Dispatch
-
-    default:
-      return null;
+/** Patches a bot record in bots.json, and updates the list
+ *  in the store and on disk.
+ */
+function patchBotsJson(botId: string, bot: IBotInfo): void {
+  const state = mainWindow.store.getState();
+  const bots = [...state.bot.botFiles];
+  const botIndex = bots.findIndex(bot => bot.id === botId);
+  if (botIndex > -1) {
+    bots[botIndex] = { ...bots[botIndex], ...bot };
   }
+
+  mainWindow.store.dispatch(BotActions.load(bots));
 }

@@ -211,14 +211,15 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
 
   /** Opens the bot project associated with the .bot file at the specified path */
   private openBot(protocol: IProtocol): void {
-    let { path } = protocol.parsedArgs;
+    let { path, secret }: { path: string, secret: string } = protocol.parsedArgs;
     path = decodeBase64(path);
+    secret = secret ? decodeBase64(secret) : null;
 
     const appSettings: IFrameworkSettings = getSettings().framework;
     if (appSettings.ngrokPath) {
       // if ngrok is configured, wait for it to connect and load the bot
       ngrokEmitter.once('connect', (...args: any[]): void => {
-        mainWindow.commandService.call('bot:load', path)
+        mainWindow.commandService.call('bot:load', path, secret)
           .then(() => console.log('opened bot successfully'))
           // TODO: surface this error somewhere; native error box?
           .catch(err => { throw new Error(`Error occurred while trying to deep link to bot project at: ${path}`) });
@@ -229,13 +230,11 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
       // (we are still within the client:loaded command logic, which will show the welcome page afterwards;
       //  we need to wait for welcome page and then show the emulator tab so it's not unfocused)
       setTimeout(() =>
-        mainWindow.commandService.call('bot:load', path)
+        mainWindow.commandService.call('bot:load', path, secret)
           .then(() => console.log('opened bot successfully'))
           // TODO: surface this error somewhere; native error box?
           .catch(err => { throw new Error(`Error occurred while trying to deep link to bot project at: ${path}`) })
       , 1000);
     }
-
-
   }
 }

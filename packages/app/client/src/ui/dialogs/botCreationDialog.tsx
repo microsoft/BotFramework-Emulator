@@ -8,7 +8,7 @@ import * as NavBarActions from '../../data/action/navBarActions';
 import * as Constants from '../../constants';
 import { CommandService } from '../../platform/commands/commandService';
 import store from '../../data/store';
-import { Fonts, Colors, PrimaryButton, TextInputField, MediumHeader, Row, RowAlignment, RowJustification, Column } from '@bfemulator/ui-react';
+import { Fonts, Colors, PrimaryButton, TextInputField, MediumHeader, Row, RowAlignment, RowJustification, Column, Checkbox } from '@bfemulator/ui-react';
 import { DialogService } from './service/index';
 import { ActiveBotHelper } from '../helpers/activeBotHelper';
 import { GenericDocument } from '../layout';
@@ -31,6 +31,10 @@ const CSS = css({
 
   '& .bot-create-header': {
     marginBottom: '16px'
+  },
+
+  '& .secret-checkbox': {
+    paddingBottom: '8px'
   }
 });
 
@@ -39,6 +43,7 @@ export interface IBotCreationDialogState {
   botDirectory: string;
   endpoint: IEndpointService;
   secret: string;
+  secretEnabled: boolean;
   touchedName: boolean;
 }
 
@@ -62,7 +67,8 @@ export default class BotCreationDialog extends React.Component<{}, IBotCreationD
         endpoint: 'http://localhost:3978/api/messages'
       },
       touchedName: false,
-      secret: ''
+      secret: '',
+      secretEnabled: false
     };
   }
 
@@ -90,6 +96,10 @@ export default class BotCreationDialog extends React.Component<{}, IBotCreationD
     DialogService.hideDialog();
   }
 
+  private onToggleSecret = (e) => {
+    this.setState({ secretEnabled: !this.state.secretEnabled, secret: '' });
+  }
+
   private onConnect = (e) => {
     const endpoint: IEndpointService = {
       type: this.state.endpoint.type.trim(),
@@ -107,7 +117,9 @@ export default class BotCreationDialog extends React.Component<{}, IBotCreationD
       services: [endpoint]
     };
 
-    ActiveBotHelper.confirmAndCreateBot(bot, this.state.botDirectory, this.state.secret)
+    const secret = this.state.secretEnabled && this.state.secret ? this.state.secret : null;
+
+    ActiveBotHelper.confirmAndCreateBot(bot, this.state.botDirectory, secret)
       .then(() => DialogService.hideDialog())
       .catch(err => console.error('Error during confirm and create bot.'));
   }
@@ -141,11 +153,13 @@ export default class BotCreationDialog extends React.Component<{}, IBotCreationD
   }
 
   render(): JSX.Element {
+    const secretCriteria = this.state.secretEnabled ? this.state.secret : true;
+
     const requiredFieldsCompleted = this.state.bot
       && this.state.endpoint.endpoint
       && this.state.bot.name
       && this.state.botDirectory
-      && this.state.secret;
+      && secretCriteria;
 
     return (
       <div { ...CSS }>
@@ -161,9 +175,8 @@ export default class BotCreationDialog extends React.Component<{}, IBotCreationD
             <TextInputField value={ this.state.botDirectory } label={ 'Project folder' } readOnly={ false } required={ true } />
             <PrimaryButton text='Browse' onClick={ this.onSelectFolder } className="browse-button" />
           </Row>
-          <Row>
-            <TextInputField value={ this.state.secret } onChange={ this.onChangeSecret } label={ 'Bot secret' } required={ true } type={ 'password' } />
-          </Row>
+          <Checkbox className={ 'secret-checkbox' } checked={ this.state.secretEnabled } onChange={ this.onToggleSecret } label={ 'Protect your bot with a secret' } id={ 'bot-secret-checkbox' } />
+          { this.state.secretEnabled && <TextInputField value={ this.state.secret } onChange={ this.onChangeSecret } required={ this.state.secretEnabled } type={ 'password' } /> }
           <Row className="multi-input-row button-row" justify={ RowJustification.Right }>
             <PrimaryButton text='Cancel' onClick={ this.onCancel } className="cancel-button" />
             <PrimaryButton text='Connect' onClick={ this.onConnect } disabled={ !requiredFieldsCompleted } className="connect-button" />

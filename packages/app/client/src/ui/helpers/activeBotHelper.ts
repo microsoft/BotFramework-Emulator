@@ -37,7 +37,10 @@ export const ActiveBotHelper = new class {
         CommandService.remoteCall('menu:update-recent-bots');
         CommandService.remoteCall('electron:set-title-bar', getBotDisplayName(bot));
       })
-      .catch(err => console.error('Error while setting active bot: ', err));
+      .catch(err => {
+        console.error('Error while setting active bot: ', err);
+        throw new Error(`Error while setting active bot: ${err}`);
+      });
   }
 
   // TODO: cleanup nested promises
@@ -83,6 +86,7 @@ export const ActiveBotHelper = new class {
               store.dispatch(NavBarActions.select(Constants.NavBar_Files));
               store.dispatch(ExplorerActions.show(true));
             })
+            .catch(err => new Error(err));
         }
       })
       .catch(err => console.error('Error while setting active bot: ', err));

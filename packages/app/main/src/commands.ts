@@ -11,7 +11,7 @@ import * as Fs from 'fs';
 import { sync as mkdirpSync } from 'mkdirp';
 import * as Path from 'path';
 import { AppMenuBuilder } from './appMenuBuilder';
-import { getActiveBot, getBotInfoById, pathExistsInRecentBots, encryptBot, decryptBot, IBotConfigToBotConfig } from './botHelpers';
+import { getActiveBot, getBotInfoById, pathExistsInRecentBots, IBotConfigToBotConfig, cloneBot, loadBotWithRetry } from './botHelpers';
 import { BotProjectFileWatcher } from './botProjectFileWatcher';
 import { Protocol } from './constants';
 import { Conversation } from './conversationManager';
@@ -38,21 +38,18 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Create a bot
-  CommandRegistry.registerCommand('bot:create', (bot: IBotConfig, botDirectory: string, secret: string): { bot: IBotConfig, botFilePath: string } => {
-    // map IBotConfig from client to BotConfig
-    const botConfig: BotConfig = new BotConfig(secret);
-    botConfig.name = bot.name;
-    botConfig.description = bot.description;
-    botConfig.services = bot.services;
-
-    // encrypt bot and write to disk
-    const encryptedBot = encryptBot(botConfig, secret);
+  CommandRegistry.registerCommand('bot:create', async (bot: IBotConfig, botDirectory: string, secret: string): Promise<{ bot: IBotConfig, botFilePath: string }> => {
+    // add bot to store; return to client to be added to client store
     const botFilePath = Path.join(botDirectory, bot.name + '.bot');
-    encryptedBot.Save(botFilePath);
-
-    // decrypt and add bot to store; return to client to be added to client store
-    bot = decryptBot(botConfig, secret);
     mainWindow.store.dispatch(BotActions.create(bot, botFilePath, secret));
+
+    // save the bot
+    const botCopy = cloneBot(bot);
+    const botConfig = IBotConfigToBotConfig(botCopy, secret);
+
+    botConfig.validateSecretKey();
+    await botConfig.Save(botFilePath);
+
     return { bot, botFilePath };
   });
 
@@ -64,63 +61,55 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Open a bot project from a .bot path
-  CommandRegistry.registerCommand('bot:load', (botFilePath: string, botSecret?: string): Promise<IBotConfig> => {
-    return BotConfig.Load(botFilePath)
-      .then(bot => {
-        let botId = getBotId(bot);
-        if (!botId) {
-          addIdToBotEndpoints(bot);
-          botId = getBotId(bot);
-        }
+  CommandRegistry.registerCommand('bot:load', async (botFilePath: string, secret?: string): Promise<IBotConfig> => {
+    // load the bot (and decrypt if we have the secret)
+    let bot = await loadBotWithRetry(botFilePath, secret);
 
-        // opening an existing bot, we have the secret
-        const botInfo = getBotInfoById(botId);
-        if (botInfo && botInfo.secret) {
-          botSecret = botInfo.secret;
-        }
+    // get or assign the bot id
+    let botId = getBotId(bot);
+    if (!botId) {
+      addIdToBotEndpoints(bot);
+      botId = getBotId(bot);
+    }
 
-        // opening a new bot, could have passed secret in via protocol
-        if (!botInfo && !pathExistsInRecentBots(botFilePath)) {
-          // add the bot to bots.json
-          mainWindow.store.dispatch(BotActions.create(bot, botFilePath, botSecret));
-        }
+    // opening an existing bot, we have the secret
+    const botInfo = getBotInfoById(botId);
+    if (botInfo && botInfo.secret) {
+      secret = botInfo.secret;
+      // reload the bot with the secret
+      bot = await loadBotWithRetry(botFilePath, secret);
+    }
 
-        // either way, if we have the secret, decrypt the bot
-        if (botSecret) {
-          // decrypt the bot
-          bot = decryptBot(bot, botSecret);
-        }
+    // opening a new bot
+    if (!botInfo && !pathExistsInRecentBots(botFilePath)) {
+      // add the bot to bots.json
+      mainWindow.store.dispatch(BotActions.create(bot, botFilePath, secret));
+    }
 
-        const botDirectory = Path.resolve(botFilePath, '..');
-        mainWindow.store.dispatch(BotActions.setActive(bot, botDirectory));
-        return mainWindow.commandService.remoteCall('bot:load', { bot, botDirectory });
-      })
-      .catch(err => { throw new Error(`bot:setActive: Error loading bot from path ${botFilePath}: ${err}`); });
+    const botDirectory = Path.resolve(botFilePath, '..');
+    mainWindow.store.dispatch(BotActions.setActive(bot, botDirectory));
+    return mainWindow.commandService.remoteCall('bot:load', { bot, botDirectory });
   });
 
   //---------------------------------------------------------------------------
   // Set active bot
-  CommandRegistry.registerCommand('bot:setActive', (id: string): Promise<{ bot: IBotConfig, botDirectory: string } | void> => {
+  CommandRegistry.registerCommand('bot:setActive', async (id: string): Promise<{ bot: IBotConfig, botDirectory: string } | void> => {
     // read the bot file at the id's corresponding path and return the IBotConfig (easier for client-side)
     const botInfo = getBotInfoById(id);
 
-    return BotConfig.Load(botInfo.path, botInfo.secret)
-      .then(bot => {
-        // set up the file watcher
-        const botDirectory = Path.resolve(botInfo.path, '..');
-        BotProjectFileWatcher.watch(botDirectory);
+    // load and decrypt the bot
+    let bot = await loadBotWithRetry(botInfo.path, botInfo.secret);
+    if (!bot) {
+      // user couldn't provide correct secret, abort
+      throw new Error('No secret provided to decrypt encrypted bot.');
+    }
 
-        // if the bot's endpoint has a password it needs to be decrypted
-        const endpoint = getFirstBotEndpoint(bot);
-        if (endpoint && endpoint.appPassword) {
-          if (!botInfo.secret)
-            throw new Error('bot:setActive: Bot has an endpoint with a msa password, but no secret to decrypt the password!');
-          bot = decryptBot(IBotConfigToBotConfig(bot), botInfo.secret);
-        }
-        mainWindow.store.dispatch(BotActions.setActive(bot, botDirectory));
-        return { bot, botDirectory };
-      })
-      .catch(err => { throw new Error(`bot:setActive: Error loading bot from path ${botInfo.path}: ${err}`); });
+    // set up the file watcher
+    const botDirectory = Path.resolve(botInfo.path, '..');
+    BotProjectFileWatcher.watch(botDirectory);
+
+    mainWindow.store.dispatch(BotActions.setActive(bot, botDirectory));
+    return { bot, botDirectory };
   });
 
   //---------------------------------------------------------------------------

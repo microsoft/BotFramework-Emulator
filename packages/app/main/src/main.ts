@@ -48,7 +48,7 @@ import { Window } from './platform/window';
 import { ensureStoragePath, writeFile, isDev } from './utils';
 import * as squirrel from './squirrelEvents';
 import * as Commands from './commands';
-import { getBotInfoById, encryptBot, IBotConfigToBotConfig, cloneBot } from './botHelpers';
+import { getBotInfoById, IBotConfigToBotConfig, cloneBot } from './botHelpers';
 import { AppMenuBuilder } from './appMenuBuilder';
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
@@ -139,15 +139,16 @@ const createMainWindow = () => {
         try {
           // write bots list
           writeFile(botsJsonPath, botsJson);
+
           // write active bot
           if (state.bot.activeBot && botId) {
-            const activeBotInfo = getBotInfoById(botId);
-            if (activeBotInfo) {
-              // encrypt bot file and write to disk
+            const botInfo = getBotInfoById(botId);
+            if (botInfo.path) {
               const botCopy = cloneBot(state.bot.activeBot);
-              const bot = IBotConfigToBotConfig(botCopy);
-              const encryptedBot = encryptBot(bot, activeBotInfo.secret);
-              encryptedBot.Save(activeBotInfo.path);
+              const bot = IBotConfigToBotConfig(botCopy, botInfo.secret);
+              if (botInfo.secret)
+                bot.validateSecretKey();
+              bot.Save(botInfo.path);
             }
           }
         } catch (e) { console.error('Error writing bot settings to disk: ', e); }

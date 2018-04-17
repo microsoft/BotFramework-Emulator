@@ -10,6 +10,7 @@ import * as LiveChat from './ui/shell/explorer/liveChatExplorer';
 import { ExtensionManager } from './extensions';
 import BotCreationDialog from './ui/dialogs/botCreationDialog';
 import { DialogService } from './ui/dialogs/service';
+import SecretPromptDialog from './ui/dialogs/secretPromptDialog';
 import store from './data/store';
 import * as ChatActions from './data/action/chatActions';
 import * as EditorActions from './data/action/editorActions';
@@ -37,6 +38,7 @@ export function registerCommands() {
   });
 
   //---------------------------------------------------------------------------
+  // Shows the welcome page
   CommandRegistry.registerCommand('welcome-page:show', () => {
     showWelcomePage();
   });
@@ -45,6 +47,12 @@ export function registerCommands() {
   // Shows a bot creation dialog
   CommandRegistry.registerCommand('bot-creation:show', () => {
     DialogService.showDialog(BotCreationDialog);
+  });
+
+  //---------------------------------------------------------------------------
+  // Shows a dialog prompting the user for a bot secret
+  CommandRegistry.registerCommand('secret-prompt:show', async () => {
+    return await DialogService.showDialog(SecretPromptDialog);
   });
 
   //---------------------------------------------------------------------------
@@ -60,7 +68,6 @@ export function registerCommands() {
     const botId = getBotId(bot);
     if (!getBotInfoById(botId)) {
       // create and switch bots
-      // TODO: will need a way of loading a bot with a secret
       ActiveBotHelper.confirmAndCreateBot(bot, botDirectory, '');
       return;
     }

@@ -84,6 +84,7 @@ const CSS = css({
 export type TextInputType = 'text' | 'password';
 
 export interface TextInputFieldProps {
+  disabled?: boolean;
   className?: string;
   error?: string;
   inputClass?: string;
@@ -103,15 +104,15 @@ export class TextInputField extends React.Component<TextInputFieldProps, {}> {
 
   render(): JSX.Element {
     return (
-      <div className={'text-input-comp ' + (this.props.className || '')} {...CSS}>
-        {this.props.label ? <TruncateText
-          className="text-input-label">{this.props.label}{this.props.required ? '*' : ''}</TruncateText> : null}
-        <input type={this.props.type || 'text'} className={this.props.inputClass || ''} value={this.props.value}
-               onChange={this.props.onChange}
-               placeholder={this.props.placeholder} readOnly={this.props.readOnly} required={this.props.required}/>
-        <div className={'text-input-err ' + (this.props.error ? 'error-showing' : '')}>
+      <div className={ 'text-input-comp ' + (this.props.className || '') } { ...CSS }>
+        { this.props.label ? <TruncateText
+          className="text-input-label">{ this.props.label }{ this.props.required ? '*' : '' }</TruncateText> : null }
+        <input type={ this.props.type || 'text' } className={ this.props.inputClass || '' } value={ this.props.value }
+               onChange={ this.props.onChange } disabled={ this.props.disabled }
+               placeholder={ this.props.placeholder } readOnly={ this.props.readOnly } required={ this.props.required }/>
+        <div className={ 'text-input-err ' + (this.props.error ? 'error-showing' : '') }>
           <span className="text-input-err-caret"></span>
-          <span className="text-input-err-msg"><span></span>{this.props.error}</span>
+          <span className="text-input-err-msg"><span></span>{ this.props.error }</span>
         </div>
       </div>
     );

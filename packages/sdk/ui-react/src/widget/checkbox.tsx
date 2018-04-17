@@ -13,6 +13,9 @@ const CSS = css({
   },
 
   '& > label': {
+    fontSize: '12px',
+    height: '16px',
+    lineHeight: '16px',
     fontFamily: Fonts.FONT_FAMILY_DEFAULT,
     cursor: 'pointer'
   }
@@ -20,7 +23,9 @@ const CSS = css({
 
 export interface CheckboxProps {
   checked?: boolean;
+  className?: string;
   id?: string;
+  inputClass?: string;
   label?: string;
   onChange?: (...args: any[]) => any;
 }
@@ -32,8 +37,8 @@ export class Checkbox extends React.Component<CheckboxProps, {}> {
 
   render(): JSX.Element {
     return (
-      <div className="checkbox-comp" { ...CSS }>
-        <input type="checkbox" checked={ this.props.checked } onChange={ this.props.onChange } id={ this.props.id } />
+      <div className={ 'checkbox-comp ' + (this.props.className || '') } { ...CSS }>
+        <input className={ this.props.inputClass || '' } type="checkbox" checked={ this.props.checked } onChange={ this.props.onChange } id={ this.props.id } />
         { this.props.label ? <label htmlFor={ this.props.id }>{ this.props.label }</label> : null }
       </div>
     );

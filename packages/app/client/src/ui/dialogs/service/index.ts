@@ -9,23 +9,37 @@ import { IDialogService } from './IDialogService';
 
 export const DialogService = new class implements IDialogService {
   private _hostElement: HTMLElement;
+  private _dialogReturnValue: Promise<any>;
+  private _resolve: (value?: any) => void;
 
-  showDialog(dialog: ComponentClass<any> | StatelessComponent<any>): void {
+  /** Returns a thenable that can return a value using hideDialog(value)
+   *
+   * Ex. DialogService.showDialog(PasswordPromptDialog).then(pw => // do something with password from dialog)
+  */
+  showDialog(dialog: ComponentClass<any> | StatelessComponent<any>): Promise<any> {
     if (!this._hostElement) {
-      return;
+      return new Promise((resolve, reject) => resolve(null));
     }
     const reactElement = React.createElement(Provider, { store }, React.createElement(dialog));
     ReactDOM.render(reactElement, this._hostElement);
     store.dispatch(DialogActions.setShowing(true));
+
+    // set up the dialog to return a value from the dialog
+    this._dialogReturnValue = new Promise((resolve, reject) => {
+      this._resolve = resolve;
+    });
+    return this._dialogReturnValue;
   }
 
-  hideDialog(): void {
+  hideDialog(dialogReturnValue?: any): void {
     if (!this._hostElement) {
       return;
     }
 
     ReactDOM.render(null, this._hostElement);
     store.dispatch(DialogActions.setShowing(false));
+
+    this._resolve(dialogReturnValue);
   }
 
   setHost(hostElement: HTMLElement): void {
