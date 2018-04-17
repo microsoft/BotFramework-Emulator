@@ -46,16 +46,19 @@ const CSS = css({
   '& > .header': {
     backgroundColor: Colors.SECTION_HEADER_BACKGROUND_DARK,
     color: Colors.SECTION_HEADER_FOREGROUND_DARK,
-    lineHeight: '30px',
-    minHeight: '30px',
+    lineHeight: '36px',
+    minHeight: '36px',
     textTransform: 'uppercase',
     paddingLeft: '16px',
     display: 'flex',
+    whiteSpace: 'nowrap',
 
     '& > .accessories': {
       margin: '0 0 0 auto',
       height: '100%',
       width: 'auto',
+      display: 'flex',
+      alignItems: 'center',
 
       '& > button': {
         backgroundColor: 'transparent',

@@ -53,9 +53,12 @@ const CSS = css({
 
 export interface DetailProps {
   document: any;
-  obj: any;
+  inspectObj: any;
   extension: Extension;
   inspector: IExtensionInspector;
+  enableAccessory: (id: string, enable: boolean) => void;
+  setAccessoryState: (id: string, state: string) => void;
+  setInspectorTitle: (title: string) => void;
 }
 
 export class Detail extends React.Component<DetailProps> {
@@ -67,7 +70,7 @@ export class Detail extends React.Component<DetailProps> {
       this.inspectorRef.toggleDevTools();
     }
   }
-  
+
   accessoryClick(id: string) {
     if (this.inspectorRef) {
       this.inspectorRef.accessoryClick(id);
@@ -75,17 +78,18 @@ export class Detail extends React.Component<DetailProps> {
   }
 
   render() {
-    if (!this.props.obj || Object.keys(this.props.obj).length == 0) {
-      return (
-        <div { ...CSS } >
-          <span>No activity selected</span>
-        </div>
-      );
-    }
-
     return (
       <div { ...CSS } >
-        <Inspector ref={ ref => this.inspectorRef = ref } document={ this.props.document } extension={ this.props.extension } inspector={ this.props.inspector } obj={ this.props.obj } />
+        <Inspector
+          ref={ ref => this.inspectorRef = ref }
+          document={ this.props.document }
+          extension={ this.props.extension }
+          inspector={ this.props.inspector }
+          inspectObj={ this.props.inspectObj }
+          enableAccessory={ this.props.enableAccessory }
+          setAccessoryState={ this.props.setAccessoryState }
+          setInspectorTitle={ this.props.setInspectorTitle }
+        />
       </div>
     );
   }

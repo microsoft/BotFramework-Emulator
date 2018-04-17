@@ -5,5 +5,10 @@ export interface IInspectorHost {
   on(event: 'inspect', handler: (activity: IActivity) => void): () => void;
   //on(event: 'bot-updated', handler: (bot: /*IBotConfig*/ any) => void): () => void;
   on(event: 'accessory-click', handler: (id: string) => void): () => void;
-  //enableAccessory(id: string, enabled: boolean): void;
+  // Enable/disable an accessory button
+  enableAccessory(id: string, enabled: boolean): void;
+  // Set the state of an accessory button
+  setAccessoryState(id: string, state: string): void;
+  // Set inspector title
+  setInspectorTitle(title: string): void;
 }

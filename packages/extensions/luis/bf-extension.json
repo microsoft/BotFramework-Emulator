@@ -21,11 +21,25 @@
         "accessories": [
           {
             "id": "train",
-            "label": "Train"
+            "states": {
+              "default": {
+                "label": "Train",
+                "icon": "Refresh"
+              },
+              "working": {
+                "label": "Training",
+                "icon": "Spinner"
+              }
+            }
           },
           {
             "id": "publish",
-            "label": "Publish"
+            "states": {
+              "default": {
+                "label": "Publish",
+                "icon": "Share"
+              }
+            }
           }
         ]
       }

@@ -19,7 +19,13 @@ export interface IInspectorCriteria {
 //=============================================================================
 export interface IInspectorAccessory {
   id?: string;
+  states?: { [id: string]: IInspectorAccessoryState };
+}
+
+//=============================================================================
+export interface IInspectorAccessoryState {
   label?: string;
+  icon?: string;
 }
 
 //=============================================================================

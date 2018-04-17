@@ -212,6 +212,7 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
     props = props || this.props;
 
     store.dispatch(ChatActions.clearLog(this.props.document.documentId));
+    store.dispatch(ChatActions.setInspectorObjects(props.document.documentId, []));
 
     if (props.document.subscription) {
       props.document.subscription.unsubscribe();

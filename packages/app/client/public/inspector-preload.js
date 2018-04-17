@@ -26,7 +26,7 @@ window.host = {
   bot: {},
 
   on(event, handler) {
-    if (!this.handlers[event].includes(handler)) {
+    if (handler && !this.handlers[event].includes(handler)) {
       this.handlers[event].push(handler);
     }
     return () => {
@@ -34,8 +34,22 @@ window.host = {
     }
   },
 
-  send(...args) {
-    ipcRenderer.sendToHost(...args);
+  enableAccessory(id, enabled) {
+    if (typeof id === 'string') {
+      ipcRenderer.sendToHost('enable-accessory', id, !!enabled);
+    }
+  },
+
+  setAccessoryState(id, state) {
+    if (typeof id === 'string' && typeof state === 'string') {
+      ipcRenderer.sendToHost('set-accessory-state', id, state);
+    }
+  },
+
+  setInspectorTitle(title) {
+    if (typeof title === 'string') {
+      ipcRenderer.sendToHost('set-inspector-title', title);
+    }
   },
 
   dispatch(event, ...args) {

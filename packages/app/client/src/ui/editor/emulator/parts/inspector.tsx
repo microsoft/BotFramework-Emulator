@@ -16,7 +16,10 @@ export interface InspectorProps {
   extension: Extension;
   inspector: IExtensionInspector;
   document: any;
-  obj: any;
+  inspectObj: any;
+  enableAccessory: (id: string, enable: boolean) => void;
+  setAccessoryState: (id: string, state: string) => void;
+  setInspectorTitle: (title: string) => void;
 }
 
 export class Inspector extends React.Component<InspectorProps> {
@@ -39,18 +42,26 @@ export class Inspector extends React.Component<InspectorProps> {
     }
   }
 
-  canInspect(obj: any): boolean {
-    return this.props.inspector.name === 'JSON' || InspectorAPI.canInspect(this.props.inspector, obj);
+  canInspect(inspectObj: any): boolean {
+    return this.props.inspector.name === 'JSON' || InspectorAPI.canInspect(this.props.inspector, inspectObj);
   }
 
   updateRef = (ref) => {
     this.ref = ref;
     if (ref) {
-      this.ref.addEventListener('dom-ready', (e) => {
-        this.inspect(this.props.obj);
-      })
-      this.ref.addEventListener('ipc-message', (ev, ...args) => {
-        console.log("message from inspector", ...args);
+      this.ref.addEventListener('dom-ready', ev => {
+        this.inspect(this.props.inspectObj);
+      });
+      this.ref.addEventListener('ipc-message', ev => {
+        if (ev.channel === 'enable-accessory') {
+          this.props.enableAccessory(ev.args[0], ev.args[1]);
+        } else if (ev.channel === 'set-accessory-state') {
+          this.props.setAccessoryState(ev.args[0], ev.args[1]);
+        } else if (ev.channel === 'set-inspector-title') {
+          this.props.setInspectorTitle(ev.args[0]);
+        } else {
+          console.warn("Unexpected message from inspector", ev.channel, ...ev.args);
+        }
       });
     }
   }
@@ -62,12 +73,12 @@ export class Inspector extends React.Component<InspectorProps> {
   }
 
   componentDidUpdate(prevProps: InspectorProps, prevState: any, prevContext: any): void {
-    if (prevProps.obj && this.props.obj) {
-      if (JSON.stringify(prevProps.obj) !== JSON.stringify(this.props.obj)) {
-        this.inspect(this.props.obj);
+    if (prevProps.inspectObj && this.props.inspectObj) {
+      if (JSON.stringify(prevProps.inspectObj) !== JSON.stringify(this.props.inspectObj)) {
+        this.inspect(this.props.inspectObj);
       }
     } else {
-      this.inspect(this.props.obj);
+      this.inspect(this.props.inspectObj);
     }
   }
 

@@ -58,13 +58,15 @@ export namespace Colors {
   export const C23 = '#4080D0';
   export const C24 = '#F2F2F2';
   export const C25 = '#A80000';
+  export const C26 = '#888888';
+  export const C27 = '#C5C5C5';
 
   export const APP_BACKGROUND_DARK = C8;
   export const APP_FOREGROUND_DARK = C2;
   export const APP_HYPERLINK_FOREGROUND_DARK = C23;
   export const APP_HYPERLINK_HOVER_DARK = C23;
   export const APP_HYPERLINK_DETAIL_DARK = 'rgba(204, 204, 204, 0.7)';
-
+  
   export const SPLITTER_BACKGROUND_DARK = 'transparent';
 
   export const SCROLLBAR_THUMB_BACKGROUND_DARK = '#5E5E5E';
@@ -109,11 +111,13 @@ export namespace Colors {
   export const EDITOR_DRAG_OVERLAY_VISIBLE_DARK = 'rgba(85, 85, 85, 0.6)';
 
   export const TOOLBAR_BACKGROUND_DARK = C8;
-  export const TOOLBAR_FOREGROUND_DARK = C4;
+  export const TOOLBAR_FOREGROUND_DARK = C27;
   export const TOOLBAR_BUTTON_BACKGROUND_DARK = 'transparent';
-  export const TOOLBAR_BUTTON_FOREGROUND_DARK = C4;
+  export const TOOLBAR_BUTTON_FOREGROUND_DARK = C27;
   export const TOOLBAR_BUTTON_HOVER_BACKGROUND_DARK = 'transparent';
-  export const TOOLBAR_BUTTON_HOVER_FOREGROUND_DARK = C4;
+  export const TOOLBAR_BUTTON_HOVER_FOREGROUND_DARK = C27;
+  export const TOOLBAR_BUTTON_DISABLED_FOREGROUND_DARK = C26;
+  export const TOOLBAR_BUTTON_ACTIVE_FOREGROUND_DARK = C4;
 
   export const JSON_FORMATTING_KEY_DARK = C17;
   export const JSON_FORMATTING_STRING_DARK = C18;
