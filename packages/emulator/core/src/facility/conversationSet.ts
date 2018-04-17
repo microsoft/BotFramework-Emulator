@@ -31,6 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { EventEmitter } from 'events';
+
 import Bot from '../bot';
 import Conversation from './conversation';
 import IUser from '../types/user';
@@ -39,11 +41,10 @@ import uniqueId from '../utils/uniqueId';
 /**
  * A set of conversations with a bot.
  */
-export default class ConversationSet {
-  conversations: Conversation[] = [];
+export default class ConversationSet extends EventEmitter {
+  private conversations: Conversation[] = [];
 
-  constructor() {}
-
+  // TODO: May be we want to move "bot" back to the constructor
   newConversation(bot: Bot, user: IUser, conversationId: string = uniqueId()): Conversation {
     const conversation = new Conversation(
       bot,
@@ -52,6 +53,7 @@ export default class ConversationSet {
     );
 
     this.conversations.push(conversation);
+    this.emit('new', conversation);
 
     return conversation;
   }

@@ -6,8 +6,8 @@ import { mainWindow } from './main';
 import * as BotActions from './data-v2/action/bot';
 
 export function getActiveBot(): IBotConfig {
-  const state = mainWindow.store.getState();
-  return state.bot.activeBot;
+  const state = mainWindow && mainWindow.store.getState();
+  return state && state.bot.activeBot;
 }
 
 export function getBotInfoById(id: string): IBotInfo {

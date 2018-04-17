@@ -8,7 +8,6 @@ import { mainWindow } from './main';
 import * as BotActions from './data-v2/action/bot';
 import { ngrokEmitter } from './ngrok';
 import { getSettings } from './settings';
-import { Conversation } from './conversationManager';
 import { decodeBase64 } from './utils';
 
 enum ProtocolDomains {

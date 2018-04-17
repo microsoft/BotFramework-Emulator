@@ -80,7 +80,10 @@ export default class Conversation extends EventEmitter {
   constructor(
     public bot: Bot,
     public conversationId: string,
-    public user: IUser
+    public user: IUser = {
+      id: 'default-user',
+      name: 'User'
+    }
   ) {
     super();
 
@@ -164,6 +167,7 @@ export default class Conversation extends EventEmitter {
     }
 
     this.transcript = [...this.transcript, { type: 'activity add', activity }];
+    this.emit('transcriptupdate');
 
     return {
       activityId: activity.id,
@@ -183,6 +187,7 @@ export default class Conversation extends EventEmitter {
       await this.postActivityToBot(activity, false);
     } catch (err) {
       this.bot.facilities.logger.logError(this.conversationId, err);
+      throw err;
     }
   }
 
@@ -204,6 +209,11 @@ export default class Conversation extends EventEmitter {
 
     this.addActivityToQueue(activity);
     this.transcript = [...this.transcript, { type: 'activity add', activity }];
+    this.emit('transcriptupdate');
+
+    if (activity.type === 'endOfConversation') {
+      this.emit('end');
+    }
 
     return createResourceResponse(activity.id);
   }
@@ -235,6 +245,7 @@ export default class Conversation extends EventEmitter {
     this.emit('activitychange', { activity: updatedActivity });
 
     this.transcript = [...this.transcript, { type: 'activity update', activity: updatedActivity }];
+    this.emit('transcriptupdate');
 
     return createResourceResponse(id);
   }
@@ -255,6 +266,7 @@ export default class Conversation extends EventEmitter {
     this.emit('deleteactivity', { activity });
 
     this.transcript = [...this.transcript, { type: 'activity delete', activity: { id } }];
+    this.emit('transcriptupdate');
   }
 
   public async addMember(id: string, name: string): Promise<IUser> {
@@ -271,6 +283,8 @@ export default class Conversation extends EventEmitter {
       type: 'conversationUpdate',
       membersAdded: [user]
     } as IConversationUpdateActivity }];
+
+    this.emit('transcriptupdate');
 
     return user;
   }
@@ -291,6 +305,8 @@ export default class Conversation extends EventEmitter {
       type: 'conversationUpdate',
       membersRemoved: [{ id }]
     } as IConversationUpdateActivity }];
+
+    this.emit('transcriptupdate');
   }
 
   public async sendContactAdded() {
@@ -302,6 +318,7 @@ export default class Conversation extends EventEmitter {
     await this.postActivityToBot(activity, false);
 
     this.transcript = [...this.transcript, { type: 'contact update', activity }];
+    this.emit('transcriptupdate');
   }
 
   public async sendContactRemoved() {
@@ -313,6 +330,7 @@ export default class Conversation extends EventEmitter {
     await this.postActivityToBot(activity, false);
 
     this.transcript = [...this.transcript, { type: 'contact remove', activity }];
+    this.emit('transcriptupdate');
   }
 
   public async sendTyping() {
@@ -324,6 +342,7 @@ export default class Conversation extends EventEmitter {
     await this.postActivityToBot(activity, false);
 
     this.transcript = [...this.transcript, { type: 'typing', activity }];
+    this.emit('transcriptupdate');
   }
 
   public async sendPing() {
@@ -335,6 +354,7 @@ export default class Conversation extends EventEmitter {
     await this.postActivityToBot(activity, false);
 
     this.transcript = [...this.transcript, { type: 'ping', activity }];
+    this.emit('transcriptupdate');
   }
 
   public async sendDeleteUserData() {
@@ -345,6 +365,7 @@ export default class Conversation extends EventEmitter {
     await this.postActivityToBot(activity, false);
 
     this.transcript = [...this.transcript, { type: 'user data delete', activity }];
+    this.emit('transcriptupdate');
   }
 
   public async sendUpdateShippingAddressOperation(

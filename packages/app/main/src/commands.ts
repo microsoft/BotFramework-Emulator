@@ -14,7 +14,7 @@ import { AppMenuBuilder } from './appMenuBuilder';
 import { getActiveBot, getBotInfoById, pathExistsInRecentBots, IBotConfigToBotConfig, cloneBot, loadBotWithRetry } from './botHelpers';
 import { BotProjectFileWatcher } from './botProjectFileWatcher';
 import { Protocol } from './constants';
-import { Conversation } from './conversationManager';
+import { Conversation } from '@bfemulator/emulator-core';
 import { emulator } from './emulator';
 import { ExtensionManager } from './extensions';
 import { mainWindow } from './main';
@@ -88,6 +88,13 @@ export function registerCommands() {
 
     const botDirectory = Path.resolve(botFilePath, '..');
     mainWindow.store.dispatch(BotActions.setActive(bot, botDirectory));
+
+    await emulator.framework.recycle();
+    await mainWindow.commandService.remoteCall('receive-global-settings', {
+      url: emulator.framework.serverUrl,
+      cwd: __dirname
+    });
+
     return mainWindow.commandService.remoteCall('bot:load', { bot, botDirectory });
   });
 
@@ -109,6 +116,13 @@ export function registerCommands() {
     BotProjectFileWatcher.watch(botDirectory);
 
     mainWindow.store.dispatch(BotActions.setActive(bot, botDirectory));
+
+    await emulator.framework.recycle();
+    await mainWindow.commandService.remoteCall('receive-global-settings', {
+      url: emulator.framework.serverUrl,
+      cwd: __dirname
+    });
+
     return { bot, botDirectory };
   });
 
@@ -161,7 +175,7 @@ export function registerCommands() {
     mainWindow.commandService.call('electron:set-fullscreen', false);
     // Send app settings to client
     mainWindow.commandService.remoteCall('receive-global-settings', {
-      url: emulator.framework.router.url,
+      url: emulator.framework.serverUrl,
       cwd: __dirname
     });
     // Load extensions
@@ -215,7 +229,7 @@ export function registerCommands() {
       throw new Error('save-transcript-to-file: Project directory not set');
     }
 
-    const conversation = emulator.conversations.conversationById(getBotId(activeBot), conversationId);
+    const conversation = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
     if (!conversation) {
       throw new Error(`save-transcript-to-file: Conversation ${conversationId} not found.`);
     }
@@ -235,7 +249,7 @@ export function registerCommands() {
 
     if (filename && filename.length) {
       mkdirpSync(Path.dirname(filename));
-      writeFile(filename, conversation.activities);
+      writeFile(filename, conversation.getTranscript());
     }
   });
 
@@ -247,7 +261,7 @@ export function registerCommands() {
       throw new Error('feed-transcript:disk: No active bot.');
     }
 
-    const conversation = emulator.conversations.conversationById(getBotId(activeBot), conversationId);
+    const conversation = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
     if (!conversation) {
       throw new Error(`feed-transcript:disk: Conversation ${conversationId} not found.`);
     }
@@ -271,7 +285,7 @@ export function registerCommands() {
       throw new Error('emulator:feed-transcript:deep-link: No active bot.');
     }
 
-    const conversation = emulator.conversations.conversationById(getBotId(activeBot), conversationId);
+    const conversation = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
     if (!conversation) {
       throw new Error(`emulator:feed-transcript:deep-link: Conversation ${conversationId} not found.`);
     }
@@ -300,13 +314,13 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Get a speech token
   CommandRegistry.registerCommand('speech-token:get', (authIdEvent: string, conversationId: string) => {
-    return emulator.getSpeechToken(authIdEvent, conversationId, false);
+    return emulator.getSpeechToken(false);
   });
 
   //---------------------------------------------------------------------------
   // Refresh a speech token
   CommandRegistry.registerCommand('speech-token:refresh', (authIdEvent: string, conversationId: string) => {
-    return emulator.getSpeechToken(authIdEvent, conversationId, true);
+    return emulator.getSpeechToken(true);
   });
 
   //---------------------------------------------------------------------------
@@ -328,7 +342,7 @@ export function registerCommands() {
     // create a conversation object
     const conversationId = `${uniqueId()}|${mode}`;
     // TODO: Move away from the .users state on legacy emulator settings, and towards per-conversation users
-    const conversation = emulator.conversations.newConversation(getBotId(bot), { id: uniqueId(), name: "User" }, conversationId);
+    const conversation = emulator.framework.server.botEmulator.facilities.conversations.newConversation(emulator.framework.server.botEmulator, { id: uniqueId(), name: "User" }, conversationId);
     return conversation;
   });
 

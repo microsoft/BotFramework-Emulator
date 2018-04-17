@@ -31,14 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotFrameworkService } from './botFrameworkService';
-import { ConversationManager } from './conversationManager';
-import * as Settings from './settings';
+import { Bot as BotEmulator } from '@bfemulator/emulator-core';
 import * as Electron from 'electron';
-import { windowManager, mainWindow } from './main';
-import { getActiveBot } from './botHelpers';
-import { ISpeechTokenInfo, getBotId } from '@bfemulator/app-shared';
 
+import { BotFrameworkService } from './botFrameworkService';
+import { getActiveBot } from './botHelpers';
+import { windowManager, mainWindow } from './main';
+import * as Settings from './settings';
+import { createBotEmulatorFromBotConfig } from './utils';
 
 interface IQueuedMessage {
   channel: any,
@@ -50,23 +50,9 @@ interface IQueuedMessage {
  */
 export class Emulator {
   framework = new BotFrameworkService();
-  conversations = new ConversationManager();
-  static queuedMessages: IQueuedMessage[] = [];
 
-  public getSpeechToken(authIdEvent: string, conversationId: string, refresh: boolean): Promise<ISpeechTokenInfo> {
-    const activeBot = getActiveBot();
-    const conversation = this.conversations.conversationById(getBotId(activeBot), conversationId);
-    if (conversation) {
-      return new Promise<ISpeechTokenInfo>((resolve, reject) => {
-        conversation.getSpeechToken(10, (tokenInfo) => {
-          resolve(tokenInfo);
-        }, refresh);
-      });
-    }
-    return Promise.resolve({
-      error: 'No bot',
-      error_Description: 'To use speech, you must connect to a bot and have an active conversation.'
-    } as ISpeechTokenInfo);
+  public async getSpeechToken(refresh: boolean): Promise<string> {
+    return await createBotEmulatorFromBotConfig(getActiveBot(), null).getSpeechToken(10, refresh);
   }
 
   /**

@@ -35,14 +35,17 @@ import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
 import Bot from '../../bot';
+import uniqueId from '../../utils/uniqueId';
 
 export default function startConversation(bot: Bot) {
   const { logRequest, logResponse } = bot.facilities.logger;
 
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const auth = req.header('Authorization');
+
+    // TODO: We should not use token as conversation ID
     const tokenMatch = /Bearer\s+(.+)/.exec(auth);
-    const conversationId = tokenMatch[1];
+    const conversationId = (!tokenMatch || tokenMatch[1] === 'null') ? uniqueId() : tokenMatch[1];
     const currentUser = bot.facilities.users.usersById(bot.facilities.users.currentUserId);
 
     logRequest(conversationId, 'user', req);
@@ -69,6 +72,7 @@ export default function startConversation(bot: Bot) {
       }
     }
 
+    // TODO: We should issue a real token, rather than a conversation ID
     res.json(created ? HttpStatus.CREATED : HttpStatus.OK, {
       conversationId: conversation.conversationId,
       token: conversation.conversationId,

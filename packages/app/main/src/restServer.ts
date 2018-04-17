@@ -31,22 +31,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Restify from 'restify';
+import { Bot as BotEmulator } from '@bfemulator/emulator-core';
+import { IBotConfig, getFirstBotEndpoint, IEndpointService } from '@BFEmulator/app-shared';
 import * as CORS from 'restify-cors-middleware';
+import * as Restify from 'restify';
+
+import { createBotEmulatorFromBotConfig } from './utils';
+import { mainWindow } from './main';
 import * as log from './log';
 
-
 export class RestServer {
+  public botEmulator: BotEmulator;
+
+  endpoint: IEndpointService;
   router: Restify.Server;
 
-  constructor(name: string) {
-    this.router = Restify.createServer({
-      name
-    });
-
-    this.router.on('listening', () => {
-      log.debug(`${this.router.name} listening on ${this.router.url}`);
-    });
+  constructor(public botConfig: IBotConfig, public serviceUrl: string) {
+    this.endpoint = getFirstBotEndpoint(botConfig);
 
     const cors = CORS({
       origins: ['*'],
@@ -54,36 +55,41 @@ export class RestServer {
       exposeHeaders: []
     });
 
+    this.router = Restify.createServer({
+      name: this.botConfig.name || 'Emulator'
+    });
+
     this.router.pre(cors.preflight);
     this.router.use(cors.actual);
-    this.router.use(Restify.acceptParser(this.router.acceptable));
-    this.router.use(stripEmptyBearerToken);
-    this.router.use(Restify.dateParser());
-    this.router.use(Restify.queryParser());
   }
 
-  public restart() {
-    this.stop();
-    return this.router.listen();
+  public listen(port?: number): Promise<{ url: string }> {
+    return new Promise((resolve, reject) => {
+      this.router.once('error', err => reject(err));
+
+      this.router.listen(port, () => {
+        log.debug(`${ this.router.name } listening on ${ this.router.url }`);
+
+        const { port } = this.router.address();
+
+        // Because serviceUrl depends on the host:port, we cannot mount the routes when we create the router, but only here
+        this.botEmulator = createBotEmulatorFromBotConfig(this.botConfig, this.serviceUrl);
+
+        // TODO: Fix "inflightRequests" type not found
+        this.botEmulator.mount(this.router as any);
+
+        resolve({ url: this.router.url });
+      });
+    });
   }
 
-  public stop() {
-    return this.router.close();
+  public close() {
+    return new Promise(resolve => {
+      if (this.router) {
+        this.router.close(() => resolve());
+      } else {
+        resolve();
+      }
+    });
   }
-}
-
-// when debugging locally with a bot with appid and password = ""
-// our csx environment will generate a Authorization token of "Bearer"
-// This confuses the auth system, we either want no auth header for local debug
-// or we want a full bearer token.  This parser strips off the Auth header if it is just "Bearer"
-function stripEmptyBearerToken(req, res, next) {
-  if (!req.headers.authorization) {
-    return (next());
-  }
-
-  var pieces = req.headers.authorization.split(' ', 2);
-  if (pieces.length == 1 && pieces[0] == "Bearer")
-    delete req.headers["authorization"];
-
-  return (next());
 }

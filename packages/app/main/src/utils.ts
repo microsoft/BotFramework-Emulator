@@ -1,6 +1,8 @@
+import * as fetch from 'electron-fetch';
 import * as Restify from 'restify';
 import * as HttpStatus from 'http-status-codes';
-import { IErrorResponse, APIException, createErrorResponse, ErrorCodes, mergeDeep, IBotInfo } from '@bfemulator/app-shared';
+import { Bot as BotEmulator } from '@bfemulator/emulator-core';
+import { IErrorResponse, APIException, createErrorResponse, ErrorCodes, mergeDeep, IBotInfo, IBotConfig, getFirstBotEndpoint } from '@bfemulator/app-shared';
 import { dialog, OpenDialogOptions, SaveDialogOptions, BrowserWindow } from 'electron';
 
 const { lstatSync, readdirSync } = require('fs')
@@ -169,3 +171,19 @@ export const getBotsFromDisk = (): IBotInfo[] => {
     return [];
   }
 }
+
+export const createBotEmulatorFromBotConfig = (bot: IBotConfig, serviceUrl: string) => {
+  const endpoint = getFirstBotEndpoint(bot);
+
+  return new BotEmulator(
+    endpoint.id,
+    endpoint.endpoint,
+    serviceUrl,
+    endpoint.appId,
+    endpoint.appPassword,
+    {
+      fetch,
+      loggerOrLogService: mainWindow.logService
+    }
+  );
+};

@@ -54,7 +54,7 @@ export default class LoggerAdapter implements ILogger {
     this.logActivity = this.logActivity.bind(this);
     this.logError = this.logError.bind(this);
     this.logInfo = this.logInfo.bind(this);
-    this.logRequest = this.logActivity.bind(this);
+    this.logRequest = this.logRequest.bind(this);
     this.logResponse = this.logResponse.bind(this);
     this.logTrace = this.logTrace.bind(this);
     this.logWarning = this.logWarning.bind(this);

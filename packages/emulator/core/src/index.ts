@@ -32,5 +32,6 @@
 //
 
 import Bot from './bot';
+import Conversation from './facility/conversation';
 
-export { Bot }
+export { Bot, Conversation }

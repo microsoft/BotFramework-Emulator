@@ -42,11 +42,6 @@ export default function postActivity(bot: Bot) {
   const { logError, logRequest, logResponse } = bot.facilities.logger;
 
   return async (req: Restify.Request, res: Restify.Response, next: Restify.Next) => {
-    if (req.params.conversationId.includes('transcript')) {
-      res.end();
-      return;
-    }
-
     logRequest(req.params.conversationId, 'user', req);
 
     const conversation = bot.facilities.conversations.conversationById(req.params.conversationId);

@@ -27,6 +27,29 @@ gulp.task('copy-extension-stubs', function () {
 });
 
 //----------------------------------------------------------------------------
+gulp.task('build-emulator-core', function () {
+  return gulp
+    .src('../../emulator/core/package.json', { read: false })
+    .pipe(shell([
+      'npm run build'
+    ], { cwd: '../../emulator/core' }));
+});
+
+//----------------------------------------------------------------------------
+gulp.task('build-emulator-cli', function () {
+  return gulp
+    .src('../../emulator/cli/package.json', { read: false })
+    .pipe(shell([
+      'npm run build'
+    ], { cwd: '../../emulator/cli' }));
+});
+
+//----------------------------------------------------------------------------
+gulp.task('build-emulator',
+  gulp.series('build-emulator-core', 'build-emulator-cli')
+);
+
+//----------------------------------------------------------------------------
 gulp.task('build-json-extension', function () {
   return Promise.resolve();
 });
@@ -147,7 +170,7 @@ gulp.task('build-react', function () {
 
 //----------------------------------------------------------------------------
 gulp.task('build',
-  gulp.series('clean', 'build-shared',
+  gulp.series('clean', 'build-shared', 'build-emulator',
     gulp.parallel(
       'build-app',
       'build-react'))

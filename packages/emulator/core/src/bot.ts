@@ -108,7 +108,7 @@ export default class Bot {
     users: Users
   }
 
-  mount(router: Restify.Server): Restify.Server {
+  mount(router: Restify.Server): Bot {
     const uses = [
       Restify.plugins.acceptParser(router.acceptable),
       stripEmptyBearerToken(),
@@ -121,7 +121,7 @@ export default class Bot {
     registerConversationRoutes(this, router, uses);
     registerDirectLineRoutes(this, router, uses);
 
-    return router;
+    return this;
   }
 
   async fetchWithAuth(url, options: any = {}, forceRefresh: boolean = false) {
@@ -181,16 +181,12 @@ export default class Bot {
     }
   }
 
-  private async getSpeechToken(bot: Bot, duration: number, refresh: boolean = false) {
+  public async getSpeechToken(duration: number, refresh: boolean = false) {
     if (this.speechToken && !refresh) {
       return this.speechToken;
     }
 
-    if (!bot) {
-      throw new Error('bot must be specified');
-    };
-
-    if (!bot.msaAppId || !bot.msaPassword) {
+    if (!this.msaAppId || !this.msaPassword) {
       throw new Error('bot must have Microsoft App ID and password');
     }
 
