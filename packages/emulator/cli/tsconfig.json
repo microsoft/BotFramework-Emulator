@@ -2,10 +2,12 @@
   "compilerOptions": {
     "declaration": true,
     "declarationDir": "lib",
-    "emitDeclarationOnly": true,
+    // Emit declaration only when we are building with Babel
+    // "emitDeclarationOnly": true,
     "lib": [
       "es2016"
     ],
+    "module": "commonjs",
     "moduleResolution": "node",
     "pretty": true,
     "skipLibCheck": true,

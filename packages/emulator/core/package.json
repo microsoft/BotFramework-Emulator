@@ -8,8 +8,10 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "build": "concurrently --names \"babel,typecheck\" \"babel --extensions .js,.ts --ignore **/*.spec.js,**/*.spec.ts,**/*.test.js/,**/*.test.ts/,__test__/**/*.js,__test__/**/*.ts --out-dir lib --source-maps inline --verbose src\" \"tsc\"",
-    "build:watch": "concurrently --kill-others --names \"babel,typecheck\" \"babel --extensions .js,.ts --ignore **/*.spec.js,**/*.spec.ts,**/*.test.js/,**/*.test.ts/,__test__/**/*.js,__test__/**/*.ts --out-dir lib --source-maps inline --verbose src --watch\" \"tsc --preserveWatchOutput --watch\"",
+    "build": "tsc --version && tsc -p . --outdir lib",
+    "build:watch": "tsc --version && tsc -p . --outdir lib --watch",
+    "build:babel": "concurrently --names \"babel,typecheck\" \"babel --extensions .js,.ts --ignore **/*.spec.js,**/*.spec.ts,**/*.test.js/,**/*.test.ts/,__test__/**/*.js,__test__/**/*.ts --out-dir lib --source-maps inline --verbose src\" \"tsc\"",
+    "build:babel:watch": "concurrently --kill-others --names \"babel,typecheck\" \"babel --extensions .js,.ts --ignore **/*.spec.js,**/*.spec.ts,**/*.test.js/,**/*.test.ts/,__test__/**/*.js,__test__/**/*.ts --out-dir lib --source-maps inline --verbose src --watch\" \"tsc --preserveWatchOutput --watch\"",
     "clean": "rimraf lib",
     "start": "node-dev .",
     "test": "jest --coverage",
@@ -74,6 +76,6 @@
     "node-dev": "^3.1.3",
     "restify": "^4.3.3",
     "rimraf": "^2.6.2",
-    "typescript": "^2.8.1"
+    "typescript": "2.7.2"
   }
 }
