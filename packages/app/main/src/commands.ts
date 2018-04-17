@@ -46,8 +46,8 @@ export function registerCommands() {
     // save the bot
     const botCopy = cloneBot(bot);
     const botConfig = IBotConfigToBotConfig(botCopy, secret);
-
-    botConfig.validateSecretKey();
+    if (secret)
+      botConfig.validateSecretKey();
     await botConfig.Save(botFilePath);
 
     return { bot, botFilePath };
