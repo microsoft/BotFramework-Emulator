@@ -15,7 +15,7 @@ import { IntentInfo } from './Luis/IntentInfo';
 import { LuisTraceInfo } from './Models/LuisTraceInfo';
 import Header from './Controls/Header';
 import MockState from './Data/MockData';
-import { IActivity, ServiceType, IBotConfig } from '@bfemulator/sdk-shared';
+import { IActivity, ServiceType, IBotConfig, IDispatchService } from '@bfemulator/sdk-shared';
 import { ILuisService } from '@bfemulator/sdk-shared';
 
 let $host: IInspectorHost = (window as any).host;
@@ -94,15 +94,30 @@ class App extends Component<any, AppState> {
 
   luisclient: LuisClient;
 
-  static getLuisAuthoringKey(bot: IBotConfig): string {
-    if (!bot || !bot.services) {
+  static getLuisAuthoringKey(bot: IBotConfig, appId: string): string {
+    if (!bot || !bot.services || !appId) {
       return '';
     }
-    let luisService = bot.services.find(s => s.type === ServiceType.Luis) as ILuisService;
-    if (!luisService) {
-      return '';
+
+    let lcAppId = appId.toLowerCase();
+    let dispatchServices = bot.services.filter(s => s.type === ServiceType.Dispatch) as IDispatchService[];
+    let dispatchService = dispatchServices.find(ds => ds.appId.toLowerCase() === lcAppId);
+    if (dispatchService) {
+      return dispatchService.authoringKey;
     }
-    return luisService.authoringKey;
+
+    let luisServices = bot.services.filter(s => s.type === ServiceType.Luis) as ILuisService[];
+    let luisService = luisServices.find(ls => ls.appId.toLowerCase() === lcAppId);
+    if (luisService) {
+      return luisService.authoringKey;
+    }
+    
+    if (luisServices.length > 0) {
+      return luisServices[0].authoringKey;
+    }
+
+    console.log('No authoring key found in the bot config for app Id: ' + appId);
+    return '';
   }
 
   setControlButtonSelected = (buttonSelected: ButtonSelected): void => {
@@ -126,7 +141,7 @@ class App extends Component<any, AppState> {
       persistentState: this.loadAppPersistentState(),
       controlBarButtonSelected: ButtonSelected.RawResponse,
       id: '',
-      authoringKey: App.getLuisAuthoringKey($host.bot)
+      authoringKey: ''
     };
     this.reassignIntent = this.reassignIntent.bind(this);
   }
@@ -137,7 +152,7 @@ class App extends Component<any, AppState> {
       $host.on('inspect', async (obj: any) => {
         let appState = new AppStateAdapter(obj);
         appState.persistentState = this.loadAppPersistentState();
-        appState.authoringKey = App.getLuisAuthoringKey($host.bot);
+        appState.authoringKey = App.getLuisAuthoringKey($host.bot, appState.traceInfo.luisModel.ModelID);
         this.setState(appState);
         await this.populateLuisInfo();
         $host.setInspectorTitle(this.state.appInfo.isDispatchApp ? 'Dispatch' : 'LUIS');
@@ -164,7 +179,7 @@ class App extends Component<any, AppState> {
 
       $host.on('bot-updated', (bot: IBotConfig) => {
         this.setState({
-          authoringKey: App.getLuisAuthoringKey(bot)
+          authoringKey: App.getLuisAuthoringKey(bot, this.state.appInfo.appId)
         });
       });
     } else {
