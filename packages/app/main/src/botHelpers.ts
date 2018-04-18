@@ -48,7 +48,8 @@ export async function loadBotWithRetry(botPath: string, secret?: string): Promis
     return bot;
   } catch (e) {
     // TODO: Only prompt for password if we know for a fact we need it. Lots of different errors can arrive here, like ENOENT, if the file wasn't found.
-    if (typeof e === 'string') { // <-- This test is not strong enough.
+    // Add easily discernable errors / error codes to msbot package
+    if (typeof e === 'string' && (e.includes('secret') || e.includes('crypt'))) {
       // bot requires a secret to decrypt properties
       const newSecret = await mainWindow.commandService.remoteCall('secret-prompt:show');
       if (newSecret === null)
