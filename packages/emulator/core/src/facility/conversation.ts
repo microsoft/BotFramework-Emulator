@@ -147,6 +147,12 @@ export default class Conversation extends EventEmitter {
 
     activity.serviceUrl = this.bot.serviceUrl;
 
+    if (!isLocalhostUrl(this.bot.botUrl) && isLocalhostUrl(this.bot.serviceUrl)) {
+      this.bot.facilities.logger.logError(this.conversationId, 'Error: The bot is remote, but the service URL is localhost. Without tunneling software you will not receive replies.');
+      this.bot.facilities.logger.logError(this.conversationId, makeExternalLink('Connecting to bots hosted remotely', 'https://aka.ms/cnjvpo'));
+      this.bot.facilities.logger.logError(this.conversationId, makeAppSettingsLink('Edit ngrok settings'));
+    }
+
     const options = {
       body: JSON.stringify(activity),
       headers: {
@@ -159,7 +165,7 @@ export default class Conversation extends EventEmitter {
     const { status } = resp;
 
     if (!statusCodeFamily(status, 200)) {
-      throw new Error(`failed to post activity to bot (status = ${ status })`);
+      throw new Error(`failed to post activity to bot (status = ${status})`);
     }
 
     if (recordInConversation) {
@@ -186,8 +192,7 @@ export default class Conversation extends EventEmitter {
     try {
       await this.postActivityToBot(activity, false);
     } catch (err) {
-      this.bot.facilities.logger.logError(this.conversationId, err);
-      throw err;
+      this.bot.facilities.logger.logError(this.conversationId, err, activity);
     }
   }
 
@@ -279,10 +284,12 @@ export default class Conversation extends EventEmitter {
     this.emit('join', { user });
     await this.sendConversationUpdate([user], undefined);
 
-    this.transcript = [...this.transcript, { type: 'member join', activity: {
-      type: 'conversationUpdate',
-      membersAdded: [user]
-    } as IConversationUpdateActivity }];
+    this.transcript = [...this.transcript, {
+      type: 'member join', activity: {
+        type: 'conversationUpdate',
+        membersAdded: [user]
+      } as IConversationUpdateActivity
+    }];
 
     this.emit('transcriptupdate');
 
@@ -301,10 +308,12 @@ export default class Conversation extends EventEmitter {
 
     await this.sendConversationUpdate(undefined, [{ id, name: undefined }]);
 
-    this.transcript = [...this.transcript, { type: 'member left', activity: {
-      type: 'conversationUpdate',
-      membersRemoved: [{ id }]
-    } as IConversationUpdateActivity }];
+    this.transcript = [...this.transcript, {
+      type: 'member left', activity: {
+        type: 'conversationUpdate',
+        membersRemoved: [{ id }]
+      } as IConversationUpdateActivity
+    }];
 
     this.emit('transcriptupdate');
   }
@@ -315,7 +324,11 @@ export default class Conversation extends EventEmitter {
       action: 'add'
     };
 
-    await this.postActivityToBot(activity, false);
+    try {
+      await this.postActivityToBot(activity, false);
+    } catch (err) {
+      this.bot.facilities.logger.logError(this.conversationId, err, activity);
+    }
 
     this.transcript = [...this.transcript, { type: 'contact update', activity }];
     this.emit('transcriptupdate');
@@ -327,7 +340,11 @@ export default class Conversation extends EventEmitter {
       action: 'remove'
     };
 
-    await this.postActivityToBot(activity, false);
+    try {
+      await this.postActivityToBot(activity, false);
+    } catch (err) {
+      this.bot.facilities.logger.logError(this.conversationId, err, activity);
+    }
 
     this.transcript = [...this.transcript, { type: 'contact remove', activity }];
     this.emit('transcriptupdate');
@@ -339,7 +356,11 @@ export default class Conversation extends EventEmitter {
       type: 'typing'
     };
 
-    await this.postActivityToBot(activity, false);
+    try {
+      await this.postActivityToBot(activity, false);
+    } catch (err) {
+      this.bot.facilities.logger.logError(this.conversationId, err, activity);
+    }
 
     this.transcript = [...this.transcript, { type: 'typing', activity }];
     this.emit('transcriptupdate');
@@ -351,7 +372,11 @@ export default class Conversation extends EventEmitter {
       type: 'ping'
     };
 
-    await this.postActivityToBot(activity, false);
+    try {
+      await this.postActivityToBot(activity, false);
+    } catch (err) {
+      this.bot.facilities.logger.logError(this.conversationId, err, activity);
+    }
 
     this.transcript = [...this.transcript, { type: 'ping', activity }];
     this.emit('transcriptupdate');
@@ -362,7 +387,11 @@ export default class Conversation extends EventEmitter {
       type: 'deleteUserData'
     };
 
-    await this.postActivityToBot(activity, false);
+    try {
+      await this.postActivityToBot(activity, false);
+    } catch (err) {
+      this.bot.facilities.logger.logError(this.conversationId, err, activity);
+    }
 
     this.transcript = [...this.transcript, { type: 'user data delete', activity }];
     this.emit('transcriptupdate');

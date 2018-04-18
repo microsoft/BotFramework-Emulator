@@ -60,6 +60,8 @@ export namespace Colors {
   export const C25 = '#A80000';
   export const C26 = '#888888';
   export const C27 = '#C5C5C5';
+  export const C28 = '#D5D5D5';
+  export const C29 = '#333333';
 
   export const APP_BACKGROUND_DARK = C8;
   export const APP_FOREGROUND_DARK = C2;
@@ -67,6 +69,22 @@ export namespace Colors {
   export const APP_HYPERLINK_HOVER_DARK = C23;
   export const APP_HYPERLINK_DETAIL_DARK = 'rgba(204, 204, 204, 0.7)';
   
+  export const BUTTON_PRIMARY_BACKGROUND_DARK = C10;
+  export const BUTTON_PRIMARY_FOREGROUND_DARK = C4;
+  export const BUTTON_PRIMARY_HOVER_DARK = C11;
+  export const BUTTON_PRIMARY_FOCUS_DARK = C11;
+  export const BUTTON_PRIMARY_ACTIVE_DARK = C11;
+  export const BUTTON_PRIMARY_DISABLED_BACKGROUND_DARK = C2;
+  export const BUTTON_PRIMARY_DISABLED_FOREGROUND_DARK = C22;
+
+  export const BUTTON_SECONDARY_BACKGROUND_DARK = C28;
+  export const BUTTON_SECONDARY_FOREGROUND_DARK = C29;
+  export const BUTTON_SECONDARY_HOVER_DARK = C11;
+  export const BUTTON_SECONDARY_FOCUS_DARK = C11;
+  export const BUTTON_SECONDARY_ACTIVE_DARK = C11;
+  export const BUTTON_SECONDARY_DISABLED_BACKGROUND_DARK = C2;
+  export const BUTTON_SECONDARY_DISABLED_FOREGROUND_DARK = C22;
+
   export const SPLITTER_BACKGROUND_DARK = 'transparent';
 
   export const SCROLLBAR_THUMB_BACKGROUND_DARK = '#5E5E5E';

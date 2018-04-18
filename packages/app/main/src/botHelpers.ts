@@ -47,13 +47,18 @@ export async function loadBotWithRetry(botPath: string, secret?: string): Promis
 
     return bot;
   } catch (e) {
-    // bot requires a secret to decrypt properties
-    const newSecret = await mainWindow.commandService.remoteCall('secret-prompt:show');
-    if (newSecret === null)
-      // pop-up was dismissed; stop trying to prompt for secret
-      return null;
-    // try again with new secret
-    return await loadBotWithRetry(botPath, newSecret);
+    // TODO: Only prompt for password if we know for a fact we need it. Lots of different errors can arrive here, like ENOENT, if the file wasn't found.
+    if (typeof e === 'string') { // <-- This test is not strong enough.
+      // bot requires a secret to decrypt properties
+      const newSecret = await mainWindow.commandService.remoteCall('secret-prompt:show');
+      if (newSecret === null)
+        // pop-up was dismissed; stop trying to prompt for secret
+        return null;
+      // try again with new secret
+      return await loadBotWithRetry(botPath, newSecret);
+    } else {
+      throw e;
+    }
   }
 }
 

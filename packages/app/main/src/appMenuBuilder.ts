@@ -21,7 +21,7 @@ export interface IAppMenuBuilder {
 export const AppMenuBuilder = new class AppMenuBuilder implements IAppMenuBuilder {
   private _menuTemplate: Electron.MenuItemConstructorOptions[];
 
-  constructor() {}
+  constructor() { }
 
   /** Allows preservation of menu state without having to completely rebuild the menu template */
   get menuTemplate(): Electron.MenuItemConstructorOptions[] {
@@ -101,6 +101,12 @@ export const AppMenuBuilder = new class AppMenuBuilder implements IAppMenuBuilde
         label: "New Bot",
         click: () => {
           mainWindow.commandService.remoteCall('bot-creation:show');
+        }
+      },
+      {
+        label: "Open Bot",
+        click: () => {
+          mainWindow.commandService.remoteCall('bot:browse-open');
         }
       }];
 

@@ -65,6 +65,7 @@ export default function postActivity(bot: Bot) {
           logResponse(req.params.conversationId, 'user', res);
         }
       } catch (err) {
+        logError(req.params.conversationId, err);
         res.send(HttpStatus.INTERNAL_SERVER_ERROR);
       }
 

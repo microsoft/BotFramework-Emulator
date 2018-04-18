@@ -56,16 +56,46 @@ export const ActiveBotHelper = new class {
               store.dispatch((dispatch) => {
                 store.dispatch(BotActions.create(bot, botFilePath, secret));
                 this.setActiveBot(getBotId(bot))
-                .then(() => {
-                  CommandService.call('livechat:new');
-                  store.dispatch(NavBarActions.select(Constants.NavBar_Files));
-                  store.dispatch(ExplorerActions.show(true));
-                })
+                  .then(() => {
+                    CommandService.call('livechat:new');
+                    store.dispatch(NavBarActions.select(Constants.NavBar_Files));
+                    store.dispatch(ExplorerActions.show(true));
+                  })
               });
             })
             .catch(err => console.error('Error during bot create: ', err));
         }
       });
+  }
+
+  browseForBotFile(): Promise<any> {
+    const dialogOptions = {
+      title: 'Open bot file',
+      buttonLabel: 'Choose file',
+      properties: ['openFile'],
+      filters: [
+        {
+          name: "Bot Files",
+          extensions: ['bot']
+        }
+      ],
+    };
+    return CommandService.remoteCall('shell:showOpenDialog', dialogOptions);
+  }
+
+  confirmAndOpenBotFromFile(): Promise<any> {
+    return this.browseForBotFile()
+      .then(filename => {
+        this.confirmSwitchBot()
+          .then(result => {
+            if (result) {
+              store.dispatch(EditorActions.closeNonGlobalTabs());
+              CommandService.remoteCall('bot:load', filename);
+            }
+          })
+          .catch(() => console.log("canceled confirmSwitchBot"))
+      })
+      .catch(() => console.log("canceled browseForBotFile"));
   }
 
   confirmAndSwitchBots(id: string): Promise<any> {

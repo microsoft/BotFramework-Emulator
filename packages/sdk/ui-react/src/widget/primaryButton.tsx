@@ -4,8 +4,6 @@ import { TruncateText } from '../layout';
 import { Colors, Fonts } from '../styles';
 
 const CSS = css({
-  backgroundColor: Colors.C10,
-  color: Colors.C4,
   fontFamily: Fonts.FONT_FAMILY_DEFAULT,
   border: 0,
   padding: '8px 12px',
@@ -18,21 +16,53 @@ const CSS = css({
   minWidth: '120px',
   height: '32px',
 
+  '&:disabled': {
+    cursor: 'default'
+  }
+});
+
+const PRIMARY_CSS = css({
+  backgroundColor: Colors.BUTTON_PRIMARY_BACKGROUND_DARK,
+  color: Colors.BUTTON_PRIMARY_FOREGROUND_DARK,
+
   '&:hover': {
-    backgroundColor: Colors.C11
+    backgroundColor: Colors.BUTTON_PRIMARY_HOVER_DARK
   },
 
   '&:focus': {
-    backgroundColor: Colors.C11
+    backgroundColor: Colors.BUTTON_PRIMARY_FOCUS_DARK
   },
 
   '&:active': {
-    backgroundColor: Colors.C12
+    backgroundColor: Colors.BUTTON_PRIMARY_ACTIVE_DARK
   },
 
   '&:disabled': {
-    backgroundColor: Colors.C2,
-    color: Colors.C22,
+    backgroundColor: Colors.BUTTON_PRIMARY_DISABLED_BACKGROUND_DARK,
+    color: Colors.BUTTON_PRIMARY_DISABLED_FOREGROUND_DARK,
+    cursor: 'default'
+  }
+});
+
+const SECONDARY_CSS = css({
+  backgroundColor: Colors.BUTTON_SECONDARY_BACKGROUND_DARK,
+  color: Colors.BUTTON_SECONDARY_FOREGROUND_DARK,
+
+  '&:hover': {
+    backgroundColor: Colors.BUTTON_SECONDARY_HOVER_DARK
+  },
+
+  '&:focus': {
+    backgroundColor: Colors.BUTTON_SECONDARY_FOCUS_DARK
+  },
+
+  '&:active': {
+    backgroundColor: Colors.BUTTON_SECONDARY_ACTIVE_DARK
+  },
+
+  '&:disabled': {
+    backgroundColor: Colors.BUTTON_SECONDARY_DISABLED_BACKGROUND_DARK,
+    color: Colors.BUTTON_SECONDARY_DISABLED_FOREGROUND_DARK,
     cursor: 'default'
   }
 });
@@ -42,19 +72,19 @@ export interface PrimaryButtonProps {
   disabled?: boolean;
   onClick?: (...args: any[]) => any;
   text?: string;
+  secondary?: boolean;
 }
 
-// TODO: Move to packages/ui-react unless we start using Fabric
 export class PrimaryButton extends React.Component<PrimaryButtonProps, {}> {
   constructor(props: any, context: any) {
     super(props, context);
   }
 
   render(): JSX.Element {
-    const buttonClass = this.props.className ? ` ${this.props.className}` : '';
+    const colorClass = this.props.secondary ? SECONDARY_CSS : PRIMARY_CSS;
     return (
-      <button className={CSS + buttonClass} onClick={this.props.onClick} disabled={this.props.disabled}>
-        <TruncateText>{this.props.text}</TruncateText>
+      <button className={ [CSS, colorClass, this.props.className].filter(name => !!name).join(' ') } onClick={ this.props.onClick } disabled={ this.props.disabled }>
+        <TruncateText>{ this.props.text }</TruncateText>
       </button>
     );
   }

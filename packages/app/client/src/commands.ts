@@ -62,6 +62,12 @@ export function registerCommands() {
   });
 
   //---------------------------------------------------------------------------
+  // Browse for a .bot file and open it
+  CommandRegistry.registerCommand('bot:browse-open', () => {
+    ActiveBotHelper.confirmAndOpenBotFromFile();
+  });
+
+  //---------------------------------------------------------------------------
   // Completes the client side sync of the bot:load command on the server side
   // (NOTE: should NOT be called by itself; call server side instead)
   CommandRegistry.registerCommand('bot:load', ({ bot, botDirectory }: { bot: IBotConfig, botDirectory: string }): void => {

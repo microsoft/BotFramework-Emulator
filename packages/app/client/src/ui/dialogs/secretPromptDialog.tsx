@@ -50,7 +50,7 @@ export default class SecretPromptDialog extends React.Component<{}, SecretPrompt
           <SmallHeader>Please enter your bot's secret</SmallHeader>
           <TextInputField value={ this.state.secret } onChange={ this.onChangeSecret } label={ 'Bot secret' } type={ 'password' } />
           <Row className="button-row" justify={ RowJustification.Right }>
-              <PrimaryButton text={ 'Dismiss' } onClick={ this.onClickDismiss } />
+              <PrimaryButton secondary text={ 'Dismiss' } onClick={ this.onClickDismiss } />
               <PrimaryButton className="save-button" text={ 'Save' } onClick={ this.onClickSave } />
           </Row>
         </Column>

@@ -3,7 +3,7 @@
 ## How to build
 
 1. Install `lerna` via `npm install -g lerna`
-2. Navigate to the root of the Emulator repo, run the command `lerna boostrap`
+2. Navigate to the root of the Emulator repo, run the command `lerna bootstrap`
 3. Navigate to `[ROOT]/packages/app/main` and run the command `npm run build`
 
 **IMPORTANT:** Do **not** run `npm install` in any of the directories; lerna will take care of that for you with the `boostrap` command.

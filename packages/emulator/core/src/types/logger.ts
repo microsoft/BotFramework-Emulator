@@ -37,7 +37,7 @@ import IGenericActivity from '../types/activity/generic';
 
 interface ILogger {
   logActivity(conversationId: string, activity: IGenericActivity, destination: string);
-  logError(conversationId: string, ...messages: any[]);
+  logError(conversationId: string, err: any, ...messages: any[]);
   logInfo(conversationId: string, ...messages: any[]);
   logRequest(conversationId: string, source: string, req: Restify.Request, ...messages: any[]);
   logResponse(conversationId: string, destination: string, res: Restify.Response, ...messages: any[]);

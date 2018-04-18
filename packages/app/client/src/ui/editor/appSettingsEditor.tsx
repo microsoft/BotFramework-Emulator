@@ -58,6 +58,7 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
     this.onClickBrowse = this.onClickBrowse.bind(this);
     this.onChangeSizeLimit = this.onChangeSizeLimit.bind(this);
     this.onClickSave = this.onClickSave.bind(this);
+    this.onChangeNgrok = this.onChangeNgrok.bind(this);
     this.onChangeNgrokBypass = this.onChangeNgrokBypass.bind(this);
     this.onChangeAuthTokenVersion = this.onChangeAuthTokenVersion.bind(this);
     this.setDirtyFlag = debounce(this.setDirtyFlag, 500);
@@ -126,6 +127,11 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
     this.setDirtyFlag(true);
   }
 
+  onChangeNgrok(e): void {
+    this.setState(({ ngrokPath: e.target.value }));
+    this.setDirtyFlag(true);
+  }
+
   onChangeNgrokBypass(e): void {
     this.setState(({ bypassNgrokLocalhost: !this.state.bypassNgrokLocalhost }));
     this.setDirtyFlag(true);
@@ -158,7 +164,7 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
             <SmallHeader>Service settings</SmallHeader>
             <p><a href="https://ngrok.com/" target="_blank">ngrok</a> is network tunneling software. The Bot Framework Emulator works with ngrok to communicate with bots hosted remotely. Read the <a href="https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)" target="_blank">wiki page</a> to learn more about using ngrok and to download it.</p>
             <Row align={ RowAlignment.Center }>
-              <TextInputField readOnly={ false } value={ this.state.ngrokPath } label={ 'Path to ngrok' } />
+              <TextInputField readOnly={ false } value={ this.state.ngrokPath } onChange={ this.onChangeNgrok } label={ 'Path to ngrok' } />
               <PrimaryButton onClick={ this.onClickBrowse } text={ 'Browse' } className="browse-button" />
             </Row>
             <Checkbox checked={ this.state.bypassNgrokLocalhost } onChange={ this.onChangeNgrokBypass } id={ 'ngrok-bypass' } label={ 'Bypass ngrok for local addresses' } />
@@ -180,7 +186,7 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
           </Column>
         </Row>
         <Row className="button-row" justify={ RowJustification.Right }>
-          <PrimaryButton text='Discard changes' onClick={ this.onClickDiscard } disabled={ !this.props.dirty } />
+          <PrimaryButton secondary text='Cancel' onClick={ this.onClickDiscard } />
           <PrimaryButton text='Save' onClick={ this.onClickSave } className="save-button" disabled={ !this.props.dirty } />
         </Row>
       </GenericDocument>

@@ -86,7 +86,7 @@ export function registerCommands() {
       mainWindow.store.dispatch(BotActions.create(bot, botFilePath, secret));
     }
 
-    const botDirectory = Path.resolve(botFilePath, '..');
+    const botDirectory = Path.dirname(botFilePath);
     mainWindow.store.dispatch(BotActions.setActive(bot, botDirectory));
 
     await emulator.framework.recycle();
@@ -112,7 +112,7 @@ export function registerCommands() {
     }
 
     // set up the file watcher
-    const botDirectory = Path.resolve(botInfo.path, '..');
+    const botDirectory = Path.dirname(botInfo.path);
     BotProjectFileWatcher.watch(botDirectory);
 
     mainWindow.store.dispatch(BotActions.setActive(bot, botDirectory));

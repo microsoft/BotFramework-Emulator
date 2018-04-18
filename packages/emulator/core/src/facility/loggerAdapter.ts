@@ -126,10 +126,14 @@ export default class LoggerAdapter implements ILogger {
     this.logService.logToChat(conversationId, entry);
   }
 
-  public logError(conversationId: string, ...messages: any[]) {
+  public logError(conversationId: string, err: any, ...messages: any[]) {
     const entry = makeLogEntry(
       LogLevel.Error,
       'network',
+      {
+        type: 'err',
+        payload: err
+      },
       ...messages
     );
 

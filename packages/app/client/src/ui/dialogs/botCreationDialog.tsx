@@ -91,6 +91,10 @@ export default class BotCreationDialog extends React.Component<{}, IBotCreationD
     this.setState({ bot, touchedName: true });
   }
 
+  private onChangeBotDirectory = (e) => {
+    this.setState({ ...this.state, botDirectory: e.target.value });
+  }
+
   private onCancel = (e) => {
     DialogService.hideDialog();
   }
@@ -171,13 +175,13 @@ export default class BotCreationDialog extends React.Component<{}, IBotCreationD
           </Row>
           <Row className="multi-input-row" align={ RowAlignment.Center }>
             <TextInputField value={ this.state.bot.name } onChange={ this.onChangeName } label={ 'Bot name' } required={ true } />
-            <TextInputField value={ this.state.botDirectory } label={ 'Project folder' } readOnly={ false } required={ true } />
+            <TextInputField value={ this.state.botDirectory } onChange={ this.onChangeBotDirectory } label={ 'Project folder' } readOnly={ false } required={ true } />
             <PrimaryButton text='Browse' onClick={ this.onSelectFolder } className="browse-button" />
           </Row>
           <Checkbox className={ 'secret-checkbox' } checked={ this.state.secretEnabled } onChange={ this.onToggleSecret } label={ 'Protect your bot with a secret' } id={ 'bot-secret-checkbox' } />
           { this.state.secretEnabled && <TextInputField value={ this.state.secret } onChange={ this.onChangeSecret } required={ this.state.secretEnabled } type={ 'password' } /> }
           <Row className="multi-input-row button-row" justify={ RowJustification.Right }>
-            <PrimaryButton text='Cancel' onClick={ this.onCancel } className="cancel-button" />
+            <PrimaryButton secondary text='Cancel' onClick={ this.onCancel } className="cancel-button" />
             <PrimaryButton text='Connect' onClick={ this.onConnect } disabled={ !requiredFieldsCompleted } className="connect-button" />
           </Row>
         </Column>

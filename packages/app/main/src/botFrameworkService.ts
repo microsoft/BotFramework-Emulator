@@ -183,7 +183,12 @@ function getLocalhostServiceUrl(port: number): string {
 }
 
 async function killNgrok() {
-  const wasRunning = await promisify(ngrok.kill.bind(ngrok))();
+    const killNgrok = (cb) => {
+    ngrok.kill(wasRunning => {
+      cb(null, wasRunning);
+    });
+  }
+  const wasRunning = await promisify(killNgrok)();
 
   if (wasRunning) {
     log.debug('ngrok stopped');

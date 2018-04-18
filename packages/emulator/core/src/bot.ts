@@ -86,13 +86,6 @@ export default class Bot {
       logger,
       users: new Users()
     };
-
-    // TODO: This may not make sense, local mode assume the user know about ngrok
-    // if (!isLocalhostUrl(this.bot.botUrl) && isLocalhostUrl(activity.serviceUrl)) {
-    //   this.bot.facilities.logger.logError(this.conversationId, 'Error: The bot is remote, but the callback URL is localhost. Without tunneling software you will not receive replies.');
-    //   this.bot.facilities.logger.logError(this.conversationId, makeExternalLink('Connecting to bots hosted remotely', 'https://aka.ms/cnjvpo'));
-    //   this.bot.facilities.logger.logError(this.conversationId, makeAppSettingsLink('Edit ngrok settings'));
-    // }
   }
 
   accessToken: string;
@@ -127,7 +120,7 @@ export default class Bot {
   async fetchWithAuth(url, options: any = {}, forceRefresh: boolean = false) {
     if (this.msaAppId) {
       options.headers = {
-        Authorization: `Bearer ${ await this.getAccessToken(forceRefresh) }`
+        Authorization: `Bearer ${await this.getAccessToken(forceRefresh)}`
       };
     }
 
@@ -155,7 +148,7 @@ export default class Bot {
         grant_type: 'client_credentials',
         client_id: this.msaAppId,
         client_secret: this.msaPassword,
-        scope: `${ this.msaAppId }/.default`,
+        scope: `${this.msaAppId}/.default`,
         // flag to request a version 1.0 token
         ...this.options.use10Tokens ? { atver: 1 } : {}
       } as { [key: string]: string }).toString(),
@@ -191,7 +184,7 @@ export default class Bot {
     }
 
     const query = new URLSearchParams({ goodForInMinutes: duration } as any);
-    const res = this.fetchWithAuth(new URL(`?${ query.toString() }`, speechEndpoint.tokenEndpoint).toString());
+    const res = this.fetchWithAuth(new URL(`?${query.toString()}`, speechEndpoint.tokenEndpoint).toString());
 
     if (statusCodeFamily(res.status, 200)) {
       const body = res.json() as ISpeechTokenInfo;
