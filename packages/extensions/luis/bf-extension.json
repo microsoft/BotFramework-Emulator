@@ -38,6 +38,10 @@
               "default": {
                 "label": "Publish",
                 "icon": "Share"
+              },
+              "working": {
+                "label": "Publishing",
+                "icon": "Spinner"
               }
             }
           }

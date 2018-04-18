@@ -10,9 +10,10 @@ import { LuisResponse } from './LuisResponse';
 import * as LSCache from 'lscache';
 
 const DefaultVersion = '0.1';
-const TrainStatusRetryCount = 10;
+const TrainStatusRetryCount = 20;
 const WaitIntervalInMs = 500;
-const cacheTtlInMins = 30;
+const CacheTtlInMins = 30;
+const Unauthorized = 'Unauthorized';
 
 enum TrainStatus {
   Success = 0,
@@ -68,10 +69,11 @@ class LuisClient {
     if (r.status === 401) {
       appInfo = {
         authorized: false,
-        activeVersion: '',
-        name: '',
+        activeVersion: Unauthorized,
+        name: Unauthorized,
         appId: this.luisAppInfo.appId,
-        endpoints: {}
+        endpoints: {},
+        isDispatchApp: false
       };
     } else if (r.status !== 200) {
       throw new Error('Failed to get Luis App Info' );
@@ -79,7 +81,8 @@ class LuisClient {
       appInfo = await r.json();
       appInfo.authorized = true;
       appInfo.appId = this.luisAppInfo.appId;
-      LSCache.set(opCacheKey, appInfo, cacheTtlInMins);
+      appInfo.isDispatchApp = appInfo.activeVersion.toLocaleLowerCase().startsWith('dispatch');
+      LSCache.set(opCacheKey, appInfo, CacheTtlInMins);
     }
     return appInfo;
   }
@@ -94,7 +97,7 @@ class LuisClient {
     let r = await this.intentsService.getVersionIntentList({ appId: appInfo.appId, versionId: appInfo.activeVersion });
     let intents = await r.json();
     let intentInfo = intents.map((i: any) => i as IntentInfo);
-    LSCache.set(opCacheKey, intentInfo, cacheTtlInMins);
+    LSCache.set(opCacheKey, intentInfo, CacheTtlInMins);
     return intentInfo;
   }
 
@@ -105,7 +108,7 @@ class LuisClient {
       intentName: newIntent,
       entityLabels: luisResponse.entities.map(e => {
                       return {
-                        entityName: e.entity,
+                        entityName: this.getNormalizedEntityType(e.type),
                         startCharIndex: e.startIndex,
                         endCharIndex: e.endIndex
                       };
@@ -157,7 +160,7 @@ class LuisClient {
 
                                     if (retryCounter++ >= TrainStatusRetryCount) {
                                       clearInterval(intervalId);
-                                      reject();
+                                      reject('Failed to train the application');
                                     }
 
                                     if (r.status !== 200) {
@@ -173,6 +176,19 @@ class LuisClient {
                                                               }
                                 }, WaitIntervalInMs);
     });
+  }
+
+  private getNormalizedEntityType(entityType: string): string {
+    const builtinPrefix = 'builtin.';
+    const builtInPrefixLength = builtinPrefix.length;
+    if (entityType.startsWith(builtinPrefix)) {
+      let typeEndIndex = entityType.indexOf('.', builtInPrefixLength);
+      if (typeEndIndex < 0) {
+        typeEndIndex = entityType.length;
+      }
+      return entityType.substring(builtInPrefixLength, typeEndIndex);
+    }
+    return entityType;
   }
 
   private configureClient() {

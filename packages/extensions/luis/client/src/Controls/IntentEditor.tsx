@@ -4,7 +4,7 @@ import { Intent } from '../Models/Intent';
 import { IntentInfo } from '../Luis/IntentInfo';
 import { css } from 'glamor';
 
-const TraceIntentStatesKey: string = 'PersistedTraceIntentStates';
+const TraceIntentStatesKey: string = Symbol('PersistedTraceIntentStates').toString();
 
 const INTENT_VIEWER_CSS = css({
   color: 'white',
@@ -26,7 +26,7 @@ const INTENT_VIEWER_CSS = css({
 
 interface TraceIntentState {
   originalIntent: string;
-  currentIntent: string;
+  currentIntent?: string;
 }
 
 interface IntentEditorState {
@@ -38,7 +38,7 @@ interface IntentEditorProps {
   intentInfo?: IntentInfo[];
   enabled: boolean;
   traceId: string;
-  intentReassigner: (newIntent: string) => Promise<void>;
+  intentReassigner: (newIntent: string, needsRetrain: boolean) => Promise<void>;
 }
 
 class IntentEditor extends Component<IntentEditorProps, IntentEditorState> {
@@ -98,10 +98,19 @@ class IntentEditor extends Component<IntentEditorProps, IntentEditorState> {
   private handleChange = (event: React.FormEvent<HTMLSelectElement>) => {
     let newIntent: string = event.currentTarget.value;
     let currentTraceIntentStates = this.state.traceIntentStates;
-    currentTraceIntentStates[this.props.traceId].currentIntent = newIntent;
+    let currentIntentState = currentTraceIntentStates[this.props.traceId];
+    let needsRetrain: boolean;
+    if (newIntent === currentIntentState.originalIntent) {
+      currentIntentState.currentIntent = undefined;
+      needsRetrain = false;
+    } else {
+      currentIntentState.currentIntent = newIntent;
+      needsRetrain = true;
+    }
+    
     this.setAndPersistTraceIntentStates(currentTraceIntentStates);
     if (this.props.intentReassigner) {
-      this.props.intentReassigner(newIntent);
+      this.props.intentReassigner(newIntent, needsRetrain);
     }
   }
 

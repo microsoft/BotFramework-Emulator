@@ -18,7 +18,7 @@ interface EditorState {
 interface EditorProps {
   recognizerResult: RecognizerResult;
   intentInfo?: IntentInfo[];
-  intentReassigner: (newIntent: string) => Promise<void>;
+  intentReassigner: (newIntent: string, needsRetrain: boolean) => Promise<void>;
   appInfo: AppInfo;
   traceId: string;
 }
@@ -56,7 +56,7 @@ class Editor extends Component<EditorProps, EditorState> {
           currentIntent={topScoringIntent} 
           intentInfo={this.props.intentInfo} 
           intentReassigner={this.props.intentReassigner}
-          enabled={this.props.appInfo.authorized}
+          enabled={this.props.appInfo.authorized && !this.props.appInfo.isDispatchApp}
           traceId={this.props.traceId}
         />
         <EntitiesViewer entities={this.props.recognizerResult.entities} />

@@ -15,12 +15,17 @@ import { IntentInfo } from './Luis/IntentInfo';
 import { LuisTraceInfo } from './Models/LuisTraceInfo';
 import Header from './Controls/Header';
 import MockState from './Data/MockData';
-import { IActivity } from '@bfemulator/sdk-shared';
+import { IActivity, ServiceType, IBotConfig } from '@bfemulator/sdk-shared';
+import { ILuisService } from '@bfemulator/sdk-shared';
 
 let $host: IInspectorHost = (window as any).host;
 const LuisApiBasePath = 'https://westus.api.cognitive.microsoft.com/luis/api/v2.0';
 const TrainAccessoryId = 'train';
 const PublichAccessoryId = 'publish';
+const AccessoryDefaultState = 'default';
+const AccessoryWorkingState = 'working';
+
+let persistentStateKey = Symbol('persistentState').toString();
 
 // TODO: Get these from @bfemulator/react-ui once they're available
 css.global('html, body, #root', {
@@ -74,26 +79,38 @@ interface AppState {
   traceInfo: LuisTraceInfo;
   appInfo: AppInfo;
   intentInfo: IntentInfo[];
-  pendingTrain: boolean;
-  pendingPublish: boolean;
+  persistentState: { [key: string]: PersistentAppState };
   controlBarButtonSelected: ButtonSelected;
+  authoringKey: string;
   id: string;
 }
 
-interface AppProps {
-
+interface PersistentAppState {
+  pendingTrain: boolean;
+  pendingPublish: boolean;
 }
 
-class App extends Component<AppProps, AppState> {
+class App extends Component<any, AppState> {
 
   luisclient: LuisClient;
+
+  static getLuisAuthoringKey(bot: IBotConfig): string {
+    if (!bot || !bot.services) {
+      return '';
+    }
+    let luisService = bot.services.find(s => s.type === ServiceType.Luis) as ILuisService;
+    if (!luisService) {
+      return '';
+    }
+    return luisService.authoringKey;
+  }
 
   setControlButtonSelected = (buttonSelected: ButtonSelected): void => {
     this.setState({
       controlBarButtonSelected: buttonSelected
     });
   }
-
+ 
   constructor(props: any, context: any) {
     super(props, context);
     this.state = {
@@ -106,10 +123,10 @@ class App extends Component<AppProps, AppState> {
       } as LuisTraceInfo,
       appInfo: {} as AppInfo,
       intentInfo: [] as IntentInfo[],
-      pendingPublish: false,
-      pendingTrain: false,
+      persistentState: this.loadAppPersistentState(),
       controlBarButtonSelected: ButtonSelected.RawResponse,
-      id: ''
+      id: '',
+      authoringKey: App.getLuisAuthoringKey($host.bot)
     };
     this.reassignIntent = this.reassignIntent.bind(this);
   }
@@ -119,8 +136,17 @@ class App extends Component<AppProps, AppState> {
     if (!this.runningDetached()) {
       $host.on('inspect', async (obj: any) => {
         let appState = new AppStateAdapter(obj);
+        appState.persistentState = this.loadAppPersistentState();
+        appState.authoringKey = App.getLuisAuthoringKey($host.bot);
         this.setState(appState);
         await this.populateLuisInfo();
+        $host.setInspectorTitle(this.state.appInfo.isDispatchApp ? 'Dispatch' : 'LUIS');
+        $host.setAccessoryState(TrainAccessoryId, AccessoryDefaultState);
+        $host.setAccessoryState(PublichAccessoryId, AccessoryDefaultState);
+        $host.enableAccessory(TrainAccessoryId, this.state.persistentState[this.state.id] && 
+                                                this.state.persistentState[this.state.id].pendingTrain);
+        $host.enableAccessory(PublichAccessoryId, this.state.persistentState[this.state.id] && 
+                                                  this.state.persistentState[this.state.id].pendingPublish);
       });
       
       $host.on('accessory-click', async (id: string) => {
@@ -134,6 +160,12 @@ class App extends Component<AppProps, AppState> {
           default:
             break;
         }
+      });
+
+      $host.on('bot-updated', (bot: IBotConfig) => {
+        this.setState({
+          authoringKey: App.getLuisAuthoringKey(bot)
+        });
       });
     } else {
       this.setState(new MockState());
@@ -185,7 +217,7 @@ class App extends Component<AppProps, AppState> {
       this.luisclient = new LuisClient({
         appId: this.state.traceInfo.luisModel.ModelID,
         baseUri: LuisApiBasePath,
-        key: '368e7395c4884f549fda26bc140aa667' // TODO: Get this from the Emulator
+        key: this.state.authoringKey
       } as LuisAppInfo);
 
       let appInfo = await this.luisclient.getApplicationInfo();
@@ -199,37 +231,63 @@ class App extends Component<AppProps, AppState> {
     }
   }
 
-  async reassignIntent(newIntent: string): Promise<void> {
+  async reassignIntent(newIntent: string, needsRetrain: boolean): Promise<void> {
     await this.luisclient.reassignIntent(
       this.state.appInfo, 
       this.state.traceInfo.luisResult, 
       newIntent);
-
-    this.setState({
-      pendingTrain: true,
+    
+    this.setAppPersistentState({
+      pendingTrain: needsRetrain,
       pendingPublish: false
     });
   }
 
-  // TODO: Hook this up to the 'Train' Button and only enable the botton
-  // if this.state.pendingTrain is true
   async train(): Promise<void> {
-    await this.luisclient.train(this.state.appInfo);
-    this.setState({
+    $host.setAccessoryState(TrainAccessoryId, AccessoryWorkingState);
+    try {
+      await this.luisclient.train(this.state.appInfo);
+    } finally {
+      $host.setAccessoryState(TrainAccessoryId, AccessoryDefaultState);
+    }
+    this.setAppPersistentState({
       pendingTrain: false,
       pendingPublish: true
     });
   }
 
-  // TODO: Hook this up to the 'Publish' Button and only enable the botton
-  // if this.state.pendingPublish is true
   async publish(): Promise<void> {
-    await this.luisclient.publish(this.state.appInfo, this.state.traceInfo.luisOptions.Staging || false);
-    this.setState({
-      pendingPublish: false
+    $host.setAccessoryState(PublichAccessoryId, AccessoryWorkingState);
+    try {
+      await this.luisclient.publish(this.state.appInfo, this.state.traceInfo.luisOptions.Staging || false);
+    } finally {
+      $host.setAccessoryState(PublichAccessoryId, AccessoryDefaultState);
+    }
+    this.setAppPersistentState({
+        pendingPublish: false,
+        pendingTrain: false
     });
   }
 
+  private setAppPersistentState(persistentState: PersistentAppState) {
+    this.state.persistentState[this.state.id] = persistentState;
+    this.setState({persistentState: this.state.persistentState});
+    localStorage.setItem(persistentStateKey, JSON.stringify(this.state.persistentState));
+    $host.enableAccessory(TrainAccessoryId, persistentState.pendingTrain);
+    $host.enableAccessory(PublichAccessoryId, persistentState.pendingPublish);
+  }
+
+  private loadAppPersistentState(): {[key: string]: PersistentAppState} {
+    let persisted = localStorage.getItem(persistentStateKey);
+    if (persisted !== null) {
+      return JSON.parse(persisted);
+    }
+    return { '': {
+      pendingTrain: false,
+      pendingPublish: false
+    }
+   };
+  }
 }
 
-export { App, AppState };
+export { App, AppState, PersistentAppState };

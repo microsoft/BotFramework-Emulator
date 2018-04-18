@@ -13,6 +13,7 @@ interface AppInfo {
   authorized: boolean;
   appId: string;
   endpoints: Endpoints;
+  isDispatchApp: boolean;
 }
 
 export { EndpointInfo, Endpoints, AppInfo };

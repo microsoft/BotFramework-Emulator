@@ -45,12 +45,14 @@ export default class MockState implements AppState {
     authorized: true,
     name: 'Contoso App',
     appId: '6209a76f-e836-413b-ba92-a5772d1b2087',
-    endpoints: {}
+    endpoints: {},
+    isDispatchApp: false
   };
-  pendingPublish: false;
-  pendingTrain: false;
+  persistentState: {
+  };
   controlBarButtonSelected: ButtonSelected.RawResponse;
   id: '6209a76f-e836-413b-ba92-a5772d1b2003';
+  authoringKey: '';
   intentInfo: IntentInfo[] = [
     {
       id: '6209a76f-e836-413b-ba92-a5772d1b2000',

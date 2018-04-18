@@ -1,4 +1,4 @@
-import { AppState } from './App';
+import { AppState, PersistentAppState } from './App';
 import { RecognizerResult } from './Models/RecognizerResults';
 import { LuisAppInfo } from './Models/LuisAppInfo';
 import { LuisTraceInfo } from './Models/LuisTraceInfo';
@@ -16,11 +16,11 @@ interface LuisModel {
 }
 
 export default class AppStateAdapter implements AppState {
+  authoringKey: string;
+  persistentState: { [key: string]: PersistentAppState; };
   appInfo: AppInfo;
   intentInfo: IntentInfo[];
   traceInfo: LuisTraceInfo;
-  pendingTrain: boolean;
-  pendingPublish: boolean;
   controlBarButtonSelected: ButtonSelected;
   id: string;
 
