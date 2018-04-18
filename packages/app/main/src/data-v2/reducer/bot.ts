@@ -1,3 +1,4 @@
+import { cloneBot } from '../../botHelpers';
 import * as BotActions from '../action/bot';
 import { getBotDisplayName, IBotInfo, getBotId, getFirstBotEndpoint } from '@bfemulator/app-shared';
 import { IBotConfig, IEndpointService } from '@bfemulator/sdk-shared';
@@ -88,10 +89,11 @@ export const bot: any = (state: IBotState = DEFAULT_STATE, action: BotAction) =>
 }
 
 function setActiveBot(bot: IBotConfig, state: IBotState): IBotState {
-  let newState = Object.assign({}, state);
-
-  newState.activeBot = bot;
-  return newState;
+  return Object.assign({}, state, {
+    get activeBot() {
+      return cloneBot(bot); // Clones only - this guarantees only pristine bots will exist in the store
+    }
+  });
 }
 
 function setBotFilesState(botFilesState: IBotInfo[], state: IBotState): IBotState {

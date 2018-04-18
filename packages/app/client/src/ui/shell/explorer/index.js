@@ -36,7 +36,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import AssetExplorerBar from './assetExplorerBar';
-import ServicesExplorerBar from './servicesExplorerBar';
+import { ServicesExplorerBarContainer } from "./servicesExplorerBar";
 import { Colors, InsetShadow } from '@bfemulator/ui-react';
 import * as Constants from '../../../constants';
 
@@ -53,11 +53,11 @@ class ExplorerBar extends React.Component {
     let explorer;
     if (this.props.selectedNavTab === Constants.NavBar_Files)
       explorer = (
-        <AssetExplorerBar activeBot={ this.props.activeBot } />
+        <AssetExplorerBar activeBot={this.props.activeBot}/>
       );
     else if (this.props.selectedNavTab === Constants.NavBar_Services)
       explorer = (
-        <ServicesExplorerBar />
+        <ServicesExplorerBarContainer/>
       );
     else
       explorer = (
@@ -65,9 +65,9 @@ class ExplorerBar extends React.Component {
       );
 
     return (
-      <div className={ CSS }>
-        { explorer }
-        <InsetShadow right={ true } />
+      <div className={CSS}>
+        {explorer}
+        <InsetShadow right={true}/>
       </div>
     );
   }

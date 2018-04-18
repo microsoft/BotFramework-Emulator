@@ -16,11 +16,11 @@ export const DialogService = new class implements IDialogService {
    *
    * Ex. DialogService.showDialog(PasswordPromptDialog).then(pw => // do something with password from dialog)
   */
-  showDialog(dialog: ComponentClass<any> | StatelessComponent<any>): Promise<any> {
+  showDialog<T extends ComponentClass | StatelessComponent>(dialog: T, props: { [propName: string]: any} = {}): Promise<any> {
     if (!this._hostElement) {
       return new Promise((resolve, reject) => resolve(null));
     }
-    const reactElement = React.createElement(Provider, { store }, React.createElement(dialog));
+    const reactElement = React.createElement(Provider, { store }, React.createElement(dialog, props));
     ReactDOM.render(reactElement, this._hostElement);
     store.dispatch(DialogActions.setShowing(true));
 

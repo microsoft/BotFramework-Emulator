@@ -43,7 +43,6 @@ import editor, { IEditorState } from './reducer/editor';
 import explorer, { IExplorerState } from './reducer/explorer';
 import files, { IFileTreeState } from './reducer/files';
 import luisAuth, { ILuisAuthState } from './reducer/luisAuthReducer';
-import luisModel, { ILuisModelsState } from './reducer/luisModelsReducer';
 import navBar, { INavBarState } from './reducer/navBar';
 
 import presentation, { IPresentationState } from './reducer/presentation';
@@ -67,7 +66,6 @@ export interface IRootState {
   presentation?: IPresentationState;
   server?: IServerState;
   luisAuth?: ILuisAuthState;
-  luisModel?: ILuisModelsState;
   files?: IFileTreeState;
 }
 
@@ -86,8 +84,7 @@ const configureStore = (initialState: IRootState = DEFAULT_STATE): Store<IRootSt
     navBar,
     presentation,
     server,
-    luisAuth,
-    luisModel
+    luisAuth
   }),
   initialState,
   applyMiddleware(

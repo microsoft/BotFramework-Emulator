@@ -10,7 +10,7 @@ import * as Constants from '../../constants';
 import store from '../../data/store';
 import { getTabGroupForDocument } from '../../data/editorHelpers';
 import { GenericDocument } from '../layout';
-import { Column, ColumnAlignment, Row, RowAlignment, RowJustification, Checkbox, NumberInputField, TextInputField, PrimaryButton, MediumHeader, SmallHeader } from '@bfemulator/ui-react';
+import { Column, Row, RowAlignment, RowJustification, Checkbox, NumberInputField, TextInputField, PrimaryButton, MediumHeader, SmallHeader } from '@bfemulator/ui-react';
 
 const CSS = css({
   '& .right-column': {
@@ -43,6 +43,10 @@ const CSS = css({
     display: 'inline-block',
     lineHeight: '32px',
     marginLeft: '8px'
+  },
+
+  '& .checkboxOverrides': {
+    marginBottom: '16px'
   }
 });
 
@@ -209,8 +213,8 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
               <TextInputField readOnly={ false } value={ uncommitted.ngrokPath } onChange={ this.onChangeNgrok } label={ 'Path to ngrok' } />
               <PrimaryButton onClick={ this.onClickBrowse } text="Browse" className="browse-button" />
             </Row>
-            <Checkbox checked={ uncommitted.bypassNgrokLocalhost } onChange={ this.onChangeNgrokBypass } id="ngrok-bypass" label="Bypass ngrok for local addresses" />
-            <Checkbox checked={ uncommitted.use10Tokens } onChange={ this.onChangeAuthTokenVersion } id="auth-token-version" label="Use version 1.0 authentication tokens" />
+            <Checkbox className="checkboxOverrides" checked={ uncommitted.bypassNgrokLocalhost } onChange={ this.onChangeNgrokBypass } id="ngrok-bypass" label="Bypass ngrok for local addresses" />
+            <Checkbox className="checkboxOverrides" checked={ uncommitted.use10Tokens } onChange={ this.onChangeAuthTokenVersion } id="auth-token-version" label="Use version 1.0 authentication tokens" />
             <Row align={ RowAlignment.Center }>
               <TextInputField readOnly={ false } value={ uncommitted.localhost } onChange={ this.onChangeLocalhost } label="localhost override" />
             </Row>
@@ -228,7 +232,7 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
           </Column>
         </Row>
         <Row className="button-row" justify={ RowJustification.Right }>
-          <PrimaryButton secondary text="Cancel" onClick={ this.onClickDiscard } />
+          <PrimaryButton text="Cancel" onClick={ this.onClickDiscard } />
           <PrimaryButton text="Save" onClick={ this.onClickSave } className="save-button" disabled={ clean } />
         </Row>
       </GenericDocument>

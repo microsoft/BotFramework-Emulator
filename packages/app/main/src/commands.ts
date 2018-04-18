@@ -1,26 +1,25 @@
-import { newBot, IFrameworkSettings, usersDefault, getBotId, addIdToBotEndpoints, newEndpoint, getFirstBotEndpoint } from '@bfemulator/app-shared';
-import { IBotConfig, CommandRegistry as CommReg, IActivity, uniqueId } from '@bfemulator/sdk-shared';
+import { addIdToBotEndpoints, getBotId, IFrameworkSettings, newBot, newEndpoint } from '@bfemulator/app-shared';
+import { Conversation } from '@bfemulator/emulator-core';
+import { CommandRegistry as CommReg, IActivity, IBotConfig, uniqueId } from '@bfemulator/sdk-shared';
 import * as Electron from 'electron';
-import { BotConfig } from 'msbot';
-
-import { Window } from './platform/window';
-import { ensureStoragePath, getBotsFromDisk, getSafeBotName, readFileSync, showOpenDialog, writeFile, showSaveDialog } from './utils';
-import * as BotActions from './data-v2/action/bot';
 import { app, Menu } from 'electron';
 import * as Fs from 'fs';
 import { sync as mkdirpSync } from 'mkdirp';
 import * as Path from 'path';
 import { AppMenuBuilder } from './appMenuBuilder';
-import { getActiveBot, getBotInfoById, pathExistsInRecentBots, IBotConfigToBotConfig, cloneBot, loadBotWithRetry } from './botHelpers';
+import { cloneBot, getActiveBot, getBotInfoById, IBotConfigToBotConfig, loadBotWithRetry, pathExistsInRecentBots } from './botHelpers';
 import { BotProjectFileWatcher } from './botProjectFileWatcher';
 import { Protocol } from './constants';
-import { Conversation } from '@bfemulator/emulator-core';
+import * as BotActions from './data-v2/action/bot';
 import { emulator } from './emulator';
 import { ExtensionManager } from './extensions';
 import { mainWindow } from './main';
 import { ProtocolHandler } from './protocolHandler';
+import { ContextMenuService } from './services/contextMenuService';
 import { LuisAuthWorkflowService } from './services/luisAuthWorkflowService';
 import { dispatch, getSettings } from './settings';
+import { getBotsFromDisk, readFileSync, showOpenDialog, showSaveDialog, writeFile } from './utils';
+import shell = Electron.shell;
 
 //=============================================================================
 export const CommandRegistry = new CommReg();
@@ -367,7 +366,7 @@ export function registerCommands() {
   });
 
   //---------------------------------------------------------------------------
-// Retrieve the LUIS authoring key
+  // Retrieve the LUIS authoring key
   CommandRegistry.registerCommand('luis:retrieve-authoring-key', async () => {
     const workflow = LuisAuthWorkflowService.enterAuthWorkflow();
     const { dispatch } = mainWindow.store;
@@ -387,4 +386,11 @@ export function registerCommands() {
     }
     return result;
   });
+
+  //---------------------------------------------------------------------------
+  // Displays the context menu for a given element
+  CommandRegistry.registerCommand('electron:displayContextMenu', ContextMenuService.showMenuAndWaitForInput);
+//---------------------------------------------------------------------------
+  // Opens an external link
+  CommandRegistry.registerCommand('electron:openExternal', shell.openExternal.bind(shell));
 }

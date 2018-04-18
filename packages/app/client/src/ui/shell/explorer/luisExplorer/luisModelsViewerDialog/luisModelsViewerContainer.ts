@@ -1,18 +1,22 @@
+import { ServiceType } from '@bfemulator/sdk-shared';
 import { connect } from 'react-redux';
-import { addedLuisModelsUpdated } from '../../../../../data/action/luisModelsActions';
 import { IRootState } from '../../../../../data/store';
+import { DialogService } from '../../../../dialogs/service';
 import { LuisModelsViewer } from './luisModelsViewer';
 
-const mapStateToProps = (state: IRootState) => {
-  const { addedLuisModels, availableLuisModels } = state.luisModel;
+const mapStateToProps = (state: IRootState, ownProps: { [propName: string]: any }) => {
+  const { services } = state.bot.activeBot;
   return {
-    addedLuisModels,
-    availableLuisModels
+    luisServices: services.filter(service => service.type === ServiceType.Luis),
+    ...ownProps
   };
 };
 
 const mapDispatchToProps = dispatch => {
-  return { addLuisModels: updatedLuisModels => dispatch(addedLuisModelsUpdated(updatedLuisModels)) };
+  return {
+    addLuisModels: updatedLuisModels => DialogService.hideDialog(updatedLuisModels),
+    cancel: () => DialogService.hideDialog()
+  };
 };
 
 export const LuisModelsViewerContainer = connect(

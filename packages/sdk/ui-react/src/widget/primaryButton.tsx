@@ -6,15 +6,16 @@ import { Colors, Fonts } from '../styles';
 const CSS = css({
   fontFamily: Fonts.FONT_FAMILY_DEFAULT,
   border: 0,
-  padding: '8px 12px',
   cursor: 'pointer',
   whiteSpace: 'nowrap',
   textOverflow: 'ellipsis',
   overflow: 'hidden',
   display: 'inline-block',
   width: 'auto',
-  minWidth: '120px',
-  height: '32px',
+  minWidth: '80px',
+  height: '21px',
+  boxSizing: 'border-box',
+  fontSize: '11px',
 
   '&:disabled': {
     cursor: 'default'

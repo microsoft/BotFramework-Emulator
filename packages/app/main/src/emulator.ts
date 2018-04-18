@@ -31,12 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Bot as BotEmulator } from '@bfemulator/emulator-core';
-import * as Electron from 'electron';
 
 import { BotFrameworkService } from './botFrameworkService';
 import { getActiveBot } from './botHelpers';
-import { windowManager, mainWindow } from './main';
 import * as Settings from './settings';
 import { createBotEmulatorFromBotConfig } from './utils';
 

@@ -1,73 +1,140 @@
-import { Checkbox, PrimaryButton, SmallHeader } from '@bfemulator/ui-react';
+import { Checkbox, Colors, Fonts, PrimaryButton } from '@bfemulator/ui-react';
+import { ILuisService } from '@bfemulator/sdk-shared';
 import { css } from 'glamor';
 import * as React from 'react';
 import { ChangeEvent, ChangeEventHandler, Component } from 'react';
 import { LuisModel } from '../../../../../data/http/luisApi';
-import { Colors } from '@bfemulator/ui-react';
 
 const luisModelViewerCss = css({
-  width: '350px',
-  background: 'black',
-  border: `1px solid ${Colors.C0}`,
+  boxSizing: 'border-box',
+  width: '400px',
+  height: '355px',
+  color: '#333',
+  background: '#f4f4f4',
+  position: 'relative',
 
   '> header': {
-    background: Colors.C12,
-    padding: '5px',
-    position: 'relative',
-
-    '> button': {
-      cursor: 'pointer',
-      background: 'transparent',
-      border: 'none',
-      outline: 'none',
+    '> h3': {
+      fontFamily: Fonts.FONT_FAMILY_DEFAULT,
+      fontSize: '19px',
+      fontWeight: 200,
       margin: 0,
-      padding: 0,
-      position: 'absolute',
-      right: 0,
-      top: '50%',
-      transform: 'translateY(-50%)',
-      '> svg': {
-        fill: Colors.C4,
-        transition: 'fill .5s ease-out',
-        '&:hover': {
-          fill: Colors.C12
-        }
-      }
+      padding: '28px 24px 24px'
     }
   },
 
-  '> div': {
-    padding: '15px',
-    'input[type="checkbox"]': {},
+  '& .listContainer': {
+    padding: '0 24px',
+
+    '> p': {
+      fontSize: '13px',
+      margin: '0',
+      paddingBottom: '20px'
+    },
 
     ' > ul': {
       listStyle: 'none',
       margin: 0,
-      padding: '15px 0',
-      '> li:nth-child(odd)': {
-        backgroundColor: 'rgba(0, 99, 177, .34)'
+      padding: '5px 0 0 0',
+      maxHeight: '96px',
+      overflow:'auto',
+      '> li': {
+        padding: '1px 11px',
+        backgroundColor: '#efefef',
+        display: 'flex',
+        '& span': {
+          color: '#777',
+          width: '100%',
+          '&:last-child': {
+            textAlign: 'right',
+            width: '75%',
+            paddingRight:'9px'
+          }
+        },
+        '&:nth-child(odd)': {
+          backgroundColor: 'white'
+        },
       }
     }
   },
+
+  '& .buttonGroup': {
+    position: 'absolute',
+    right: '24px',
+    bottom: '32px',
+    '> button:first-child': {
+      marginRight: '8px'
+    }
+  },
+  '& .selectAll': {
+    padding: '5px 11px',
+  },
+
+  '& .checkboxOverride': {
+    display: 'inline-block',
+    width: '150px',
+    '> label': {
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+      maxWidth: '130px',
+      display: 'inline-block'
+    }
+  }
+});
+
+const closeButtonCss = css({
+  cursor: 'pointer',
+  background: 'transparent',
+  border: 'none',
+  outline: 'none',
+  margin: 0,
+  padding: 0,
+  position: 'absolute',
+  right: '12px',
+  top: '12px',
+  width: '16px',
+  height: '16px',
+  '> svg': {
+    fill: Colors.C3,
+    '&:hover': {
+      fill: Colors.C12
+    }
+  }
 });
 
 const smallHeaderCssOverrides = css({
-  margin: 0
+  margin: 0,
+  marginTop: 0,
+  marginBottom: 0,
+  marginLeft: 0,
+  marginRight: 0
 });
 
 const mediumHeaderOverrides = css({});
 
-interface LuisModelProps {
-  selectedLuisModels: LuisModel[];
-  availableLuisModels: LuisModel[];
+const secondaryButton = css({
+  backgroundColor: '#d4d4d4 !important',
+  color: `${Colors.C0} !important`,
+  '&:hover': {
+    backgroundColor: `${Colors.C3} !important`,
+    color: `${Colors.C4} !important`,
+  },
+  paddingRight: '4px'
+});
+
+interface LuisModelsViewerProps {
+  luisServices: ILuisService[];
+  luisModels: LuisModel[];
   addLuisModels: (models: LuisModel[]) => void;
+  cancel: () => void
 }
 
 interface LuisModelsViewerState {
   [selectedLuisModelId: string]: LuisModel | false
 }
 
-export class LuisModelsViewer extends Component<LuisModelProps, {}> {
+export class LuisModelsViewer extends Component<LuisModelsViewerProps, LuisModelsViewerState> {
   public state: LuisModelsViewerState = {};
 
   constructor(props, context) {
@@ -75,31 +142,36 @@ export class LuisModelsViewer extends Component<LuisModelProps, {}> {
   }
 
   public componentWillReceiveProps(nextProps = {} as any): void {
-    const { selectedLuisModels = [] as LuisModel[] } = nextProps;
+    const { luisServices = [] as ILuisService[] } = nextProps;
 
-    const state = selectedLuisModels.reduce((agg, luisModel) => {
-      agg[luisModel.id] = luisModel;
+    const state = luisServices.reduce((agg, luisService: ILuisService) => {
+      agg[luisService.appId] = luisService;
+      return agg;
     }, {});
 
     this.setState(state);
   }
 
   public render(): JSX.Element {
-    const { state } = this;
+    const { state, props } = this;
     const keys = Object.keys(state);
-    const checkAllChecked = keys.reduce((isTrue, key) => state[key] && isTrue, !!keys.length);
+    const checkAllChecked = props.luisModels.reduce((isTrue, luisModel) => state[luisModel.id] && isTrue, !!keys.length);
     return (
-      <section {...luisModelViewerCss}>
-        {this.sectionHeader}
-        <div>
-          <SmallHeader className={smallHeaderCssOverrides.toString()}>Link to these LUIS apps</SmallHeader>
-          <Checkbox onChange={this.onSelectAllChange} checked={checkAllChecked} id="select-all-luis-models"
-                    label="Select all"/>
+      <section { ...luisModelViewerCss }>
+        { this.sectionHeader }
+        <div className="listContainer">
+          <p>Selecting a LUIS app below will store the app ID in your bot file.</p>
+          <div className="selectAll">
+            <Checkbox onChange={ this.onSelectAllChange } checked={ checkAllChecked } id="select-all-luis-models" label="Select all"/>
+          </div>
           <ul>
-            {...this.luisModelElements}
+            { ...this.luisModelElements }
           </ul>
         </div>
-        <PrimaryButton text="add" onClick={this.onAddClick}/>
+        <div className="buttonGroup">
+          <PrimaryButton text="Cancel" onClick={ this.onCancelClick } className={ secondaryButton.toString() }/>
+          <PrimaryButton text="Add" onClick={ this.onAddClick }/>
+        </div>
       </section>
     );
   }
@@ -107,24 +179,23 @@ export class LuisModelsViewer extends Component<LuisModelProps, {}> {
   private get sectionHeader(): JSX.Element {
     return (
       <header>
-        <SmallHeader className={smallHeaderCssOverrides.toString()}>Select Services</SmallHeader>
-        <button>
-          <svg xmlns='http://www.w3.org/2000/svg' width='25' height='25' viewBox='3 3 16 16'>
+        <button { ...closeButtonCss } onClick={ this.onCancelClick }>
+          <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='1 1 16 16'>
             <g>
-              <path
-                d='M12.597 11.042l2.803 2.803-1.556 1.555-2.802-2.802L8.239 15.4l-1.556-1.555 2.802-2.803-2.802-2.803 1.555-1.556 2.804 2.803 2.803-2.803L15.4 8.239z'/>
+              <polygon points="14.1015625 2.6015625 8.7109375 8 14.1015625 13.3984375 13.3984375 14.1015625 8 8.7109375 2.6015625 14.1015625 1.8984375 13.3984375 7.2890625 8 1.8984375 2.6015625 2.6015625 1.8984375 8 7.2890625 13.3984375 1.8984375"/>
             </g>
           </svg>
         </button>
+        <h3>Add LUIS apps</h3>
       </header>
     );
   }
 
   private get luisModelElements(): JSX.Element[] {
-    const { state, onChange, props } = this;
-    const { availableLuisModels } = props;
-    return availableLuisModels.map(luisModel => {
-      const { id, name: label, culture } = luisModel;
+    const { state, onChange } = this;
+    const { luisModels } = this.props;
+    return luisModels.map(luisModel => {
+      const { id, name: label, culture, activeVersion } = luisModel;
       const checkboxProps = {
         label,
         checked: !!state[id],
@@ -132,11 +203,10 @@ export class LuisModelsViewer extends Component<LuisModelProps, {}> {
         onChange: onChange.bind(this, luisModel)
       };
       return (
-        <li key={id}>
-          <div>
-            <Checkbox {...checkboxProps}/>
-          </div>
-          <span>{culture}</span>
+        <li key={ id }>
+          <Checkbox { ...checkboxProps } className='checkboxOverride'/>
+          <span>&nbsp;-&nbsp;version { activeVersion }</span>
+          <span>{ culture }</span>
         </li>
       );
     });
@@ -148,10 +218,10 @@ export class LuisModelsViewer extends Component<LuisModelProps, {}> {
   }
 
   private onSelectAllChange: ChangeEventHandler<any> = (event: ChangeEvent<any>) => {
-    const { availableLuisModels } = this.props;
+    const { luisModels = [] } = this.props as any;
     const { target }: { target: HTMLInputElement } = event;
     const newState = {};
-    availableLuisModels.forEach(luisModel => {
+    luisModels.forEach(luisModel => {
       newState[luisModel.id] = target.checked ? luisModel : false;
     });
     this.setState(newState);
@@ -166,5 +236,9 @@ export class LuisModelsViewer extends Component<LuisModelProps, {}> {
       return models;
     }, []);
     this.props.addLuisModels(addedModels);
+  };
+
+  private onCancelClick: ChangeEventHandler<any> = (event: ChangeEvent<any>) => {
+    this.props.cancel();
   };
 }
