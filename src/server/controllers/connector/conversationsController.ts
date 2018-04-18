@@ -47,7 +47,7 @@ import { BotFrameworkAuthentication } from '../../botFrameworkAuthentication';
 import { error } from '../../log';
 import { jsonBodyParser } from '../../jsonBodyParser';
 import { VersionManager } from '../../versionManager';
-
+import { OAuthLinkEncoder } from '../../../shared/oauthLinkEncoder';
 
 interface IConversationAPIPathParameters {
     conversationId: string;
@@ -183,6 +183,9 @@ export class ConversationsController {
 
             activity.id = null;
             activity.replyToId = req.params.activityId;
+
+            let visitors = [new OAuthLinkEncoder()];
+            visitors.forEach(v => v.traverseActivity(activity));
 
             // look up conversation
             const conversation = emulator.conversations.conversationById(activeBot.botId, parms.conversationId);

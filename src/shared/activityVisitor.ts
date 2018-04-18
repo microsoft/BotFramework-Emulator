@@ -70,6 +70,9 @@ export abstract class ActivityVisitor {
                 case Attachments.AttachmentContentTypes.signInCard:
                     this.traverseSignInCard(attachment.content as Attachments.ISigninCard);
                     break;
+                case Attachments.AttachmentContentTypes.oAuthCard:
+                    this.traverseOAuthCard(attachment.content as Attachments.IOAuthCard);
+                    break;
             }
         }
     }
@@ -89,6 +92,13 @@ export abstract class ActivityVisitor {
 
     public traverseSignInCard(signInCard: Attachments.ISigninCard) {
         this.traverseButtons(signInCard.buttons);
+    }
+
+    public traverseOAuthCard(oauthCard: Attachments.IOAuthCard) {
+        let buttons = oauthCard.buttons;
+        if (buttons) {
+            buttons.forEach(cardAction => this.visitOAuthCardAction(oauthCard.connectionName, cardAction));
+        }
     }
 
     public traverseReceiptCard(receiptCard: Attachments.IReceiptCard) {
@@ -117,4 +127,8 @@ export abstract class ActivityVisitor {
     }
 
     protected abstract visitCardAction(cardAction: Attachments.ICardAction);
+
+    protected visitOAuthCardAction(connectionName: string, cardAction: Attachments.ICardAction) {
+        this.visitCardAction(cardAction);
+    }
 }

@@ -169,6 +169,19 @@ export class Emulator {
         request(options, responseCallback);
     }
 
+    public static sendTokenResponse(connectionName: string, token: string, cb: (result: boolean) => void) {
+        const settings = getSettings();
+        let options: request.OptionsWithUrl = {
+            url: `${this.serviceUrl}/emulator/${settings.conversation.conversationId}/invoke/sendTokenResponse`,
+            method: "POST",
+            json: [{token: token, connectionName: connectionName }],
+        };
+        let responseCallback = (err, resp: http.IncomingMessage, body) => {
+            cb(true);
+        };
+        request(options, responseCallback);
+    }
+
     public static zoomIn() {
         let options: request.OptionsWithUrl = {
             url: `${this.serviceUrl}/emulator/window/zoomIn`,

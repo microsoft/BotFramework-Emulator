@@ -541,6 +541,90 @@
         color: #999;
     }
 
+/* OAuth window */
+    .oauth-index {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .oauth-container {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        border-top-color: darkgray;
+        border-top-style: solid;
+        border-top-width: 1px;
+    }
+
+    .oauth-button-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        height: 48px;
+    }
+
+    .oauth-button-bar .button {
+        min-height: 32px;
+        height: 32px;
+        text-align: center;
+        font-size: 14px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-top: 10px;
+        cursor: pointer;
+    }
+
+    .oauth-button-bar .ok-button {
+        min-width: 100px;
+        width: 100px;
+    }
+
+    .oauth-button-bar .primary-button {
+        color: white;
+        background: #0078D7;
+    }
+
+    .oauth-button-bar .primary-button:hover {
+        background: #0063B1;
+    }
+
+    .oauth-button-bar.primary-button:active {
+        background: #4C4C4C;
+    }
+
+    .oauth-field {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .oauth-field .oauth-label {
+        color: #666;
+        font-size: 13px;
+        align-self: center;
+        min-width: 40px;
+        text-align: left;
+        margin-right: 8px;
+    }
+
+    .oauth-field .oauth-input {
+        background-color: #EEE;
+        font-size: 14px;
+        margin-top: 4px;
+        margin-bottom: 4px;
+        margin-left: 4px;
+        min-height: 40px;
+        flex-grow: 1;
+        border-width: 0px;
+        border-radius: 0;
+        padding-left: 10px;
+        padding-right: 10px;
+        text-overflow: ellipsis;
+    }
+
 /* checkout window */
     .checkout-index {
         height: 100%;

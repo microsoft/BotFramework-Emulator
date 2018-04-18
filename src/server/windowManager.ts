@@ -36,6 +36,7 @@ import * as URL from 'url';
 import * as path from 'path';
 import { getSettings, dispatch } from './settings';
 import { WindowStateAction } from './reducers/windowStateReducer';
+import { UserTokenController } from './controllers/connector/userTokenController';
 
 export class WindowManager {
     private mainWindow: Electron.BrowserWindow;
@@ -47,8 +48,15 @@ export class WindowManager {
         Electron.ipcMain.on('createCheckoutWindow', (event, args) => {
             this.createCheckoutWindow(args.payload, args.settings, args.serviceUrl);
         });
+        Electron.ipcMain.on('createOAuthWindow', (event, args) => {
+            this.createOAuthWindow(args.url, args.settings, args.serviceUrl);
+        });
         Electron.ipcMain.on('getCheckoutState', (event, args) => {
             let state = event.sender['checkoutState'];
+            event.returnValue = state;
+        });
+        Electron.ipcMain.on('getOAuthState', (event, args) => {
+            let state = event.sender['oauthState'];
             event.returnValue = state;
         });
     }
@@ -127,6 +135,68 @@ export class WindowManager {
         checkoutWindow.loadURL(page);
 
         checkoutWindow.webContents.setZoomLevel(getSettings().windowState.zoomLevel);
+    }
+
+    public createOAuthWindow(url: string, settings: any, serviceUrl: string) {
+        /*let page = URL.format({
+            protocol: 'file',
+            slashes: true,
+            pathname: path.join(__dirname, '../client/oauth/index.html')
+        });
+        page += '?' + connectionName;
+
+        let oauthWindow = new Electron.BrowserWindow({
+            width: 800,
+            height: 180,
+            title: 'OAuth Emulator'
+        });
+        this.add(oauthWindow);
+
+        oauthWindow.webContents['oauthState'] = {
+            settings: settings,
+            serviceUrl: serviceUrl
+        };
+
+        
+
+        oauthWindow.webContents.openDevTools();
+
+        // Load a remote URL
+        oauthWindow.loadURL(page);
+
+        oauthWindow.webContents.setZoomLevel(getSettings().windowState.zoomLevel);*/
+        let win = new Electron.BrowserWindow({
+            width: 800,
+            height: 600,
+            title: 'SignIn'
+        });
+        let webContents = win.webContents;
+        /*webContents.on('did-get-redirect-request', (event, oldURL, newURL, isMainFrame) => 
+        {
+            console.log(oldURL);
+            console.log(newURL);
+        });*/
+        
+        webContents.setZoomLevel(getSettings().windowState.zoomLevel);
+        
+        win.on('closed', () => {
+            this.remove(win);
+        });
+
+        const ses = webContents.session;
+        ses.webRequest.onBeforeRequest((details, callback) => {
+            if (details.url.toLowerCase().indexOf('postemulatorsignincallback') !== -1) {
+                // final OAuth redirect so augment the call with the code_verifier
+                var newUrl = details.url + '&code_verifier=' + UserTokenController.CodeVerifier;
+                callback({ redirectURL: newUrl });
+            }
+            else {
+                // let the request happen
+                callback({});
+            }
+        });
+        
+        win.loadURL(url);
     }
 
     public closeAll() {
