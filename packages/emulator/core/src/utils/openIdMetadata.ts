@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as base64url from 'base64url';
+let base64url = require('base64url');
 import * as getPem from 'rsa-pem-from-mod-exp';
 
 export default class OpenIdMetadata {
