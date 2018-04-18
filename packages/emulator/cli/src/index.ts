@@ -50,6 +50,7 @@ program
   .option('-p, --port <port>', 'port number for Direct Line service', 5000)
   .option('-I, --app-id <id>', 'Microsoft Application ID, will override environment "MICROSOFT_APP_ID"')
   .option('-P, --app-password <password>', 'Microsoft Application Password, will override environment "MICROSOFT_APP_PASSWORD"')
+  .option('-s, --service-url <url>', 'URL for the bot to callback', 'http://localhost:5000')
   .option('-u, --bot-url <url>', 'URL to connect to bot', 'http://localhost:3978/api/messages/')
   .option('--bot-id <id>', 'bot ID', 'bot-1')
   .parse(process.argv);
@@ -78,7 +79,7 @@ async function main() {
   const bot = new Bot(
     program.botId,
     program.botUrl,
-    `http://localhost:${ port }`,
+    program.serviceUrl || `http://localhost:${ port }`,
     program.appId,
     program.appPassword,
     {
@@ -94,6 +95,7 @@ async function main() {
   // Start listening
   server.listen(port, () => {
     console.log(`${ server.name } listening on ${ server.url } with bot on ${ program.botUrl }`);
+    console.log(`The bot will callback on ${ program.serviceUrl }`);
   });
 }
 
