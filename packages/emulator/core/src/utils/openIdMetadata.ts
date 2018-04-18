@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import base64url from 'base64url';
-import getPem from 'rsa-pem-from-mod-exp';
+import * as base64url from 'base64url';
+import * as getPem from 'rsa-pem-from-mod-exp';
 
 export default class OpenIdMetadata {
   private lastUpdated = 0;
