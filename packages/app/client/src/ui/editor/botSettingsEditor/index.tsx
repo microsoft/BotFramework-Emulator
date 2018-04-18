@@ -69,10 +69,12 @@ class BotSettingsEditor extends React.Component<IBotSettingsEditorProps, IBotSet
   constructor(props: IBotSettingsEditorProps, context) {
     super(props, context);
 
+    const botInfo = getBotInfoById(getBotId(this.props.bot));
+
     this.state = {
       bot: this.props.bot,
       endpoint: getFirstBotEndpoint(this.props.bot) || newEndpoint(),
-      secret: this.props.bot ? getBotInfoById(getBotId(this.props.bot)).secret : ''
+      secret: (botInfo && botInfo.secret) || ''
     };
   }
 
