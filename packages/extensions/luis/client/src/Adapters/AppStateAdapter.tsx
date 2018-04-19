@@ -1,11 +1,12 @@
-import { AppState, PersistentAppState } from './App';
-import { RecognizerResult } from './Models/RecognizerResults';
-import { LuisAppInfo } from './Models/LuisAppInfo';
-import { LuisTraceInfo } from './Models/LuisTraceInfo';
-import { AppInfo } from './Luis/AppInfo';
-import { IntentInfo } from './Luis/IntentInfo';
+import { AppState, PersistentAppState } from '../App';
+import { RecognizerResult } from '../Models/RecognizerResults';
+import { LuisAppInfo } from '../Models/LuisAppInfo';
+import { LuisTraceInfo } from '../Models/LuisTraceInfo';
+import { AppInfo } from '../Luis/AppInfo';
+import { IntentInfo } from '../Luis/IntentInfo';
 import { ITraceActivity } from '@bfemulator/sdk-shared';
-import { ButtonSelected } from './Controls/ControlBar';
+import { ButtonSelected } from '../Controls/ControlBar';
+import { RecognizerResultAdapter } from 'src/Adapters/RecognizerResultAdapter';
 
 const TraceActivity = 'trace';
 const LuisTraceType = 'https://www.luis.ai/schemas/trace';
@@ -42,7 +43,7 @@ export default class AppStateAdapter implements AppState {
   }
 
   private static isALuisTraceInfo(obj: any): obj is LuisTraceInfo {
-    return obj.recognizerResult !== undefined && obj.luisModel !== undefined;
+    return obj.luisOptions && obj.luisModel && obj.luisResult;
   }
 
   constructor(obj: any) {
@@ -54,6 +55,10 @@ export default class AppStateAdapter implements AppState {
     this.controlBarButtonSelected = this.traceInfo.recognizerResult ? 
                                       ButtonSelected.RecognizerResult : 
                                       ButtonSelected.RawResponse;
+    if (!this.traceInfo.recognizerResult) {
+      // Polyfill the Recognizer Result object
+      this.traceInfo.recognizerResult = new RecognizerResultAdapter(this.traceInfo.luisResult);
+    }
     this.id = traceActivity.id || '';
   }
 }

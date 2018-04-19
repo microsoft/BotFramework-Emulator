@@ -8,7 +8,7 @@ import { ControlBar, ButtonSelected } from './Controls/ControlBar';
 import ReactJson from 'react-json-view';
 import { RecognizerResult } from './Models/RecognizerResults';
 import { LuisAppInfo } from './Models/LuisAppInfo';
-import AppStateAdapter from './AppStateAdapter';
+import AppStateAdapter from './Adapters/AppStateAdapter';
 import LuisClient from './Luis/Client';
 import { AppInfo } from './Luis/AppInfo';
 import { IntentInfo } from './Luis/IntentInfo';

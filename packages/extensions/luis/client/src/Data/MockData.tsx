@@ -12,7 +12,13 @@ export default class MockState implements AppState {
     },
     luisResult: {
       query: 'hi',
-      entities: []
+      entities: [],
+      compositeEntities: [],
+      intents: [],
+      topScoringIntent: {
+        intent: 'TopScoring',
+        score: 0.5
+      }
     },
     recognizerResult: {
       entities: {

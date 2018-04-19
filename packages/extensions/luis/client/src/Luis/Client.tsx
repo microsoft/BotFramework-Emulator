@@ -14,6 +14,7 @@ const TrainStatusRetryCount = 20;
 const WaitIntervalInMs = 500;
 const CacheTtlInMins = 30;
 const Unauthorized = 'Unauthorized';
+const CortanaAppId = 'c413b2ef-382c-45bd-8ff0-f76d60e2a821';
 
 enum TrainStatus {
   Success = 0,
@@ -66,7 +67,9 @@ class LuisClient {
     this.configureClient();
     let r = await this.appsService.getApplicationInfo({ appId: this.luisAppInfo.appId });
     let appInfo: AppInfo;
-    if (r.status === 401) {
+    if (r.status === 401 ||
+        // Cortana Built in app (static, user cannot author it)
+        (r.status === 400 && this.luisAppInfo.appId.toLowerCase() === CortanaAppId)) {
       appInfo = {
         authorized: false,
         activeVersion: Unauthorized,
