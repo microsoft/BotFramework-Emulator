@@ -2,7 +2,6 @@
 import { getStore, addSettingsListener, getSettings } from './settings';
 import * as ngrok from './ngrok';
 import { isLocalhostUrl } from './utils';
-import * as getPort from 'get-port';
 import { promisify } from 'util';
 import { emulator } from './emulator';
 

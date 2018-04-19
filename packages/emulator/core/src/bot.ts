@@ -143,6 +143,7 @@ export default class Bot {
   async fetchWithAuth(url, options: any = {}, forceRefresh: boolean = false) {
     if (this.msaAppId) {
       options.headers = {
+        ...options.headers,
         Authorization: `Bearer ${await this.getAccessToken(forceRefresh)}`
       };
     }
