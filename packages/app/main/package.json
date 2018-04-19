@@ -69,7 +69,6 @@
   "dependencies": {
     "@bfemulator/app-shared": "^1.0.0",
     "@bfemulator/client": "^1.0.0",
-    "@bfemulator/custom-ngrok": "^2.2.26",
     "@bfemulator/emulator-core": "^1.0.0-0",
     "@bfemulator/extension-debug": "^1.0.0",
     "@bfemulator/extension-json": "^1.0.0",
