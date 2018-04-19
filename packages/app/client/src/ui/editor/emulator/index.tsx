@@ -87,9 +87,18 @@ const PRESENTATION_CSS = css({
   left: 0,
   right: 0,
   backgroundColor: Colors.APP_BACKGROUND_DARK,
+  
+  '& .chat-panel': {
+    position: 'absolute',
+    top: '50%',
+    height: '75%',
+    maxHeight: '800px',
+    width: '100%',
+    transform: 'translateY(-50%)'
+  },
 
   '& > .presentation-content': {
-    posiiton: 'relative',
+    position: 'relative',
     height: '100%',
     padding: '64px 0',
     maxWidth: '400px',

@@ -76,7 +76,7 @@ export default class ChatPanel extends React.Component<IChatPanelProps, {}> {
       endpoint = bot ? getFirstBotEndpoint(bot).endpoint : "";
     }
     return (
-      <div { ...CSS }>
+      <div className="chat-panel" { ...CSS }>
         <header>{ endpoint }</header>
         <Chat mode={ this.props.mode } document={ this.props.document } onStartConversation={ this.props.onStartConversation } key={ this.props.document.pingId } />
       </div>
