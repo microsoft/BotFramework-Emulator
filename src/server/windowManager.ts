@@ -36,7 +36,7 @@ import * as URL from 'url';
 import * as path from 'path';
 import { getSettings, dispatch } from './settings';
 import { WindowStateAction } from './reducers/windowStateReducer';
-import { UserTokenController } from './controllers/connector/userTokenController';
+import { OAuthLinkEncoder } from '../shared/oauthLinkEncoder';
 
 export class WindowManager {
     private mainWindow: Electron.BrowserWindow;
@@ -138,45 +138,15 @@ export class WindowManager {
     }
 
     public createOAuthWindow(url: string, settings: any, serviceUrl: string) {
-        /*let page = URL.format({
-            protocol: 'file',
-            slashes: true,
-            pathname: path.join(__dirname, '../client/oauth/index.html')
-        });
-        page += '?' + connectionName;
-
-        let oauthWindow = new Electron.BrowserWindow({
-            width: 800,
-            height: 180,
-            title: 'OAuth Emulator'
-        });
-        this.add(oauthWindow);
-
-        oauthWindow.webContents['oauthState'] = {
-            settings: settings,
-            serviceUrl: serviceUrl
-        };
-
-        
-
-        oauthWindow.webContents.openDevTools();
-
-        // Load a remote URL
-        oauthWindow.loadURL(page);
-
-        oauthWindow.webContents.setZoomLevel(getSettings().windowState.zoomLevel);*/
         let win = new Electron.BrowserWindow({
             width: 800,
             height: 600,
-            title: 'SignIn'
+            title: 'Sign In'
         });
+        this.add(win);
         let webContents = win.webContents;
-        /*webContents.on('did-get-redirect-request', (event, oldURL, newURL, isMainFrame) => 
-        {
-            console.log(oldURL);
-            console.log(newURL);
-        });*/
-        
+
+        // webContents.openDevTools();
         webContents.setZoomLevel(getSettings().windowState.zoomLevel);
         
         win.on('closed', () => {
@@ -185,9 +155,10 @@ export class WindowManager {
 
         const ses = webContents.session;
         ses.webRequest.onBeforeRequest((details, callback) => {
-            if (details.url.toLowerCase().indexOf('postemulatorsignincallback') !== -1) {
+            let url = details.url.toLowerCase();
+            if (url.indexOf('/postsignincallback?') !== -1 && url.indexOf('&code_verifier=') === -1) {
                 // final OAuth redirect so augment the call with the code_verifier
-                var newUrl = details.url + '&code_verifier=' + UserTokenController.CodeVerifier;
+                var newUrl = details.url + '&code_verifier=' + OAuthLinkEncoder.CodeVerifier;
                 callback({ redirectURL: newUrl });
             }
             else {

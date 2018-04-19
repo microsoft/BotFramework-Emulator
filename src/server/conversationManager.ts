@@ -435,12 +435,15 @@ export class Conversation {
     public sendTokenResponse(
         connectionName: string,
         token: string,
-        cb: (errCode, body) => void) {
+        cb: (errCode, body) => void,
+        doNotCache?: boolean) {
 
         let user = this.getCurrentUser();
 
-        UserTokenController.addTokenToCache(this.botId, user.id, connectionName, token);
-
+        if(!doNotCache) {
+            UserTokenController.addTokenToCache(this.botId, user.id, connectionName, token);
+        }
+        
         const activity: IEventActivity = {
             type: 'event',
             name: 'tokens/response',

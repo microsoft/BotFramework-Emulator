@@ -46,7 +46,7 @@ import { Conversation } from '../../conversationManager';
 import * as Payment from '../../../types/paymentTypes';
 
 
-function getConversation(conversationId: string): Conversation {
+export function getConversation(conversationId: string): Conversation {
     const settings = getSettings();
     const activeBot = settings.getActiveBot();
     if (!activeBot) {
@@ -58,7 +58,6 @@ function getConversation(conversationId: string): Conversation {
     }
     return conversation;
 }
-
 
 export class EmulatorController {
     public static registerRoutes(server: RestServer) {

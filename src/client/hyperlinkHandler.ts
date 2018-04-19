@@ -43,7 +43,7 @@ import { OAuthClientEncoder } from '../shared/oauthClientEncoder';
 import { OAuthLinkEncoder } from '../shared/oauthLinkEncoder';
 import * as log from './log';
 import * as Electron from 'electron';
-//import { uniqueId } from '../shared/utils';
+import { uniqueId } from '../shared/utils';
 
 export function navigate(url: string) {
     try {
@@ -149,7 +149,7 @@ function navigatePaymentUrl(payload: string) {
 }
 
 function navigateEmulatedOAuthUrl(connectionName: string) {
-    Emulator.sendTokenResponse(connectionName, 'emulatedToken_'/* + uniqueId()*/,
+    Emulator.sendTokenResponse(connectionName, 'emulatedToken_' + uniqueId(),
         (result: boolean) => {});
 }
 

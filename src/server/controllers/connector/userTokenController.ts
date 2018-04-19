@@ -39,6 +39,9 @@ import { ErrorCodes } from '../../../types/responseTypes';
 import { RestServer } from '../../restServer';
 import { BotFrameworkAuthentication } from '../../botFrameworkAuthentication';
 import { getSettings } from '../../settings';
+import { OAuthLinkEncoder } from '../../../shared/oauthLinkEncoder'
+import { getConversation } from '../emulator/emulatorController';
+import { jsonBodyParser } from '../../jsonBodyParser';
 //import { uniqueId } from '../../../shared/utils';
 //var shajs = require('sha.js');
 
@@ -58,15 +61,13 @@ interface IGetTokenParams extends ITokenParams {
 
 export class UserTokenController {
     private static tokenStore: { [key: string]: ITokenResponse } = {};
-    public static EmulateOAuthCards: boolean = false;
-
-    public static CodeVerifier: string; 
 
     public static registerRoutes(server: RestServer, auth: BotFrameworkAuthentication) {
         let controller = new UserTokenController();
         server.router.get('/api/usertoken/GetToken', auth.verifyBotFramework, controller.getToken);
         server.router.post('/api/usertoken/emulateOAuthCards', auth.verifyBotFramework, controller.emulateOAuthCards);
         server.router.del('/api/usertoken/SignOut', auth.verifyBotFramework, controller.signOut);
+        server.router.post('/api/usertoken/tokenResponse', jsonBodyParser(), controller.tokenResponse);
     }
 
     public getToken = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
@@ -97,9 +98,9 @@ export class UserTokenController {
         try {
             let emulate: string = req.params['emulate'];
             if (emulate) {
-                UserTokenController.EmulateOAuthCards = (emulate.toLowerCase() === 'true');
+                OAuthLinkEncoder.EmulateOAuthCards = (emulate.toLowerCase() === 'true');
             } else {
-                UserTokenController.EmulateOAuthCards = false;
+                OAuthLinkEncoder.EmulateOAuthCards = false;
             }
             res.send(HttpStatus.OK);
             
@@ -130,6 +131,29 @@ export class UserTokenController {
         }
     }
 
+    public tokenResponse = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+        try {
+            const conversation = getConversation(req.params.conversationId);
+            const body: {
+                token: string,
+                connectionName: string } = req.body;
+
+            conversation.sendTokenResponse(body.connectionName, body.token, (statusCode, body) => {
+                if (statusCode === HttpStatus.OK) {
+                    res.send(HttpStatus.OK);
+                } else {
+                    res.send(statusCode);
+                }
+                res.end();
+            }, false);
+
+            log.api('tokenResponse', req, res, req.params, req.body);
+        } catch (err) {
+            var error = ResponseTypes.sendErrorResponse(req, res, next, err);
+            log.api('tokenResponse', req, res, req.params, error);
+        }
+    }
+
     public static addTokenToCache(botId: string, userId: string, connectionName: string, token: string) {
         this.tokenStore[this.tokenKey(botId, userId, connectionName)] = {
             connectionName: connectionName,
@@ -147,17 +171,5 @@ export class UserTokenController {
 
     private static tokenKey(botId: string, userId: string, connectionName: string): string {
         return `${botId}_${userId}_${connectionName}`;
-    }
-
-    // Generates a new codeVerifier and returns the codeChallenge hash 
-    public static generateCodeVerifier(): string {
-        this.CodeVerifier = '12345'; //btoa(uniqueId(32));
-
-        //let s = shajs('sha256');
-        //let u = s.update(this.CodeVerifier);
-        //let d = u.digest('hex');
-        //console.log(d);
-
-        return this.CodeVerifier;//d; 
     }
 }

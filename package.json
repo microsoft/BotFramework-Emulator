@@ -74,6 +74,7 @@
     "async": "2.1.4",
     "base64url": "2.0.0",
     "botframework-webchat": "0.11.2",
+    "btoa": "^1.2.1",
     "command-line-args": "4.0.7",
     "electron-debug": "1.1.0",
     "electron-localshortcut": "2.0.2",
@@ -94,6 +95,8 @@
     "restify": "4.3.0",
     "rsa-pem-from-mod-exp": "0.8.4",
     "rxjs": "5.4.2",
+    "sha.js": "^2.4.11",
+    "utf8": "^3.0.0",
     "xmldom": "0.1.27",
     "xtend": "4.0.1"
   },

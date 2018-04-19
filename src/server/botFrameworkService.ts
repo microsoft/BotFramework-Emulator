@@ -68,6 +68,10 @@ export class BotFrameworkService extends RestServer {
         }
     }
 
+    public getNgrokServiceUrl() : string {
+        return this.ngrokServiceUrl;
+    }
+
     authentication = new BotFrameworkAuthentication();
 
     constructor() {

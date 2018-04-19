@@ -32,22 +32,100 @@
 //
 
 import * as Attachments from '../types/attachmentTypes';
-import { ActivityVisitor } from './activityVisitor';
-import { UserTokenController } from '../server/controllers/connector/userTokenController';
+import { uniqueId } from '../shared/utils';
+import * as request from 'request';
+import * as http from 'http';
+import { IGenericActivity } from '../types/activityTypes';
+const utf8 = require('utf8');
+const btoa = require('btoa');
+var shajs = require('sha.js');
 
-export class OAuthLinkEncoder extends ActivityVisitor {
+export class OAuthLinkEncoder {
     public static OAuthUrlProtocol: string = "oauthlink:";
+    public static CodeVerifier: string; 
+    public static EmulateOAuthCards: boolean = false;
 
-    protected visitCardAction(cardAction: Attachments.ICardAction) {
+    private emulatorUrl: string;
+    private authorizationHeader: string;
+    private activity: IGenericActivity; 
+
+    constructor(emulatorUrl: string, authorizationHeader: string, activity: IGenericActivity) {
+        this.emulatorUrl = emulatorUrl;
+        this.authorizationHeader = authorizationHeader;
+        this.activity = activity;
     }
 
-    protected visitOAuthCardAction(connectionName: string, cardAction: Attachments.ICardAction) {
-        if (cardAction && cardAction.type === 'signin' && !cardAction.value && !UserTokenController.EmulateOAuthCards) {
-            //cardAction.value = 'http://www.cnn.com/';
-            //cardAction.type = 'openUrl';
-            //let codeChallenge = UserTokenController.generateCodeVerifier();
-            //console.log(codeChallenge);
-        }
+    public resolveOAuthCards(activity: IGenericActivity): Promise<any> {
+        return new Promise<any>((resolve: (value?: any) => void, reject: (reason?: any) => void) =>
+        {
+            let waiting = false;
+            if (activity && activity.attachments && activity.attachments.length == 1 && activity.attachments[0].contentType === Attachments.AttachmentContentTypes.oAuthCard) {
+                let oauthCard: Attachments.IOAuthCard = activity.attachments[0].content as Attachments.IOAuthCard;
+                if(oauthCard.buttons && oauthCard.buttons.length == 1) {
+                    let cardAction = oauthCard.buttons[0];
+                    if(cardAction.type === 'signin' && !cardAction.value && !OAuthLinkEncoder.EmulateOAuthCards)
+                    {
+                        waiting = true;
+                        let codeChallenge = OAuthLinkEncoder.generateCodeVerifier();
+                        this.getSignInLink(oauthCard.connectionName, codeChallenge, (link: string) => {
+                            if (link) {
+                                cardAction.value =  OAuthLinkEncoder.OAuthUrlProtocol + '//' + link;
+                            }
+                            resolve(true);
+                        });
+                        cardAction.type = 'openUrl';
+                    }
+                }
+            }
+            
+            if (!waiting) {
+                resolve(true);
+            }
+        });
+    }
+
+    // Generates a new codeVerifier and returns the codeChallenge hash 
+    // This is for the PKCE validation flow with OAuth
+    public static generateCodeVerifier(): string {
+        this.CodeVerifier = uniqueId(32);
+
+        let codeChallenge = shajs('sha256').update(this.CodeVerifier).digest('hex');
+
+        return codeChallenge;
+    }
+
+    private getSignInLink(connectionName: string, codeChallenge:string, cb: (link: string) => void) {
+        let tokenExchangeState =
+        {
+            ConnectionName: connectionName,
+            Conversation:
+            {
+                ActivityId: this.activity.id,
+                Bot: this.activity.from,       // Activity is from the bot to the user
+                ChannelId: this.activity.channelId,
+                Conversation: this.activity.conversation,
+                ServiceUrl: this.activity.serviceUrl,
+                User: this.activity.recipient
+            }
+        };
+
+        let serializedState = JSON.stringify(tokenExchangeState);
+        let utfStr = utf8.encode(serializedState);
+        var state = btoa(utfStr);
+        
+        let options: request.OptionsWithUrl = {
+            url: `https://api.botframework.com/api/botsignin/GetSignInUrl?state=${state}&emulator=${this.emulatorUrl}&code_challenge=${codeChallenge}`,
+            method: "GET",
+            headers: {
+                'Authorization': this.authorizationHeader
+            }
+        };
+
+        let responseCallback = (err, resp: http.IncomingMessage, body) => {
+            cb(body as string);
+        };
+
+        request(options, responseCallback);
     }
 }
 
