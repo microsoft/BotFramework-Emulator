@@ -83,12 +83,15 @@ export const BotProjectFileWatcher = new class FileWatcher implements IFileWatch
 
   // TODO: Enable watching more extensions
   onFileAdd(file: string, fstats?: Stats): void {
-    const fileInfo: FileInfo = {
-      path: file,
-      type: fstats.isDirectory() ? 'container' : 'leaf',
-      name: Path.basename(file)
-    };
-    mainWindow.commandService.remoteCall('file:add', fileInfo);
+    // only show .transcript files
+    if (Path.extname(file) === '.transcript') {
+      const fileInfo: FileInfo = {
+        path: file,
+        type: fstats.isDirectory() ? 'container' : 'leaf',
+        name: Path.basename(file)
+      };
+      mainWindow.commandService.remoteCall('file:add', fileInfo);
+    }
   }
 
   // TODO: Enable watching more extensions
