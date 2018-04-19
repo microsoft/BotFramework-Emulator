@@ -30,7 +30,7 @@
       },
       "sourceMaps": true,
       "protocol": "inspector",
-      "console": "internalConsole",
+      "console": "integratedTerminal",
       "cwd": "${workspaceFolder}/main"
     },
     {

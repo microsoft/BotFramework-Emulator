@@ -99,11 +99,13 @@ var windowIsOffScreen = function (windowBounds: Electron.Rectangle): boolean {
   );
 }
 
-const createMainWindow = () => {
+const createMainWindow = async () => {
   if (squirrel.handleStartupEvent()) {
     return;
   }
 
+  /*
+  // TODO: Read window size AFTER store is initialized (how did this ever work?) 
   const settings = getSettings();
   let initBounds: Electron.Rectangle = {
     width: settings.windowState.width || 0,
@@ -117,19 +119,25 @@ const createMainWindow = () => {
     initBounds.x = display.workArea.x;
     initBounds.y = display.workArea.y;
   }
+  */
+
   mainWindow = new Window(
     new Electron.BrowserWindow(
       {
         show: false,
         backgroundColor: '#f7f7f7',
+        /*
         width: initBounds.width,
         height: initBounds.height,
         x: initBounds.x,
         y: initBounds.y
+        */
+        width: 1024,
+        height: 700
       }));
 
   mainWindow.initStore()
-    .then(store => {
+    .then(async store => {
       store.subscribe(() => {
         const state = store.getState();
         const botsJson = { bots: state.bot.botFiles.filter(botFile => !!botFile) };
@@ -167,6 +175,10 @@ const createMainWindow = () => {
           } catch (e) { console.error('Error writing bot settings to disk: ', e); }
         }, 1000);*/
       });
+
+      await Emulator.startup();
+
+      loadMainPage();
     });
 
   mainWindow.browserWindow.setTitle(app.getName());
@@ -223,10 +235,12 @@ const createMainWindow = () => {
   });
 
   mainWindow.browserWindow.once('ready-to-show', () => {
-    mainWindow.webContents.setZoomLevel(settings.windowState.zoomLevel);
+    mainWindow.webContents.setZoomLevel(getSettings().windowState.zoomLevel);
     mainWindow.browserWindow.show();
   });
+}
 
+function loadMainPage() {
   let queryString = '';
   if (process.argv[1] && process.argv[1].indexOf('botemulator') !== -1) {
     // add a query string with the botemulator protocol handler content
@@ -250,13 +264,12 @@ const createMainWindow = () => {
   mainWindow.browserWindow.loadURL(page);
 }
 
-Emulator.startup();
-
 Electron.app.on('ready', function () {
   if (!mainWindow) {
     if (process.argv.find(val => val.includes('--vscode-debugger'))) {
       // workaround for delay in vscode debugger attach
-      setTimeout(createMainWindow, 5000);
+      //setTimeout(createMainWindow, 5000);
+      createMainWindow();
     } else {
       createMainWindow();
     }

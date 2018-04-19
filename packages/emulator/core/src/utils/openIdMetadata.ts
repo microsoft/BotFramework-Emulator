@@ -32,7 +32,7 @@
 //
 
 let base64url = require('base64url');
-import * as getPem from 'rsa-pem-from-mod-exp';
+let getPem = require('rsa-pem-from-mod-exp');
 
 export default class OpenIdMetadata {
   private lastUpdated = 0;

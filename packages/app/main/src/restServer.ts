@@ -36,58 +36,92 @@ import { getFirstBotEndpoint } from '@bfemulator/app-shared';
 import { IBotConfig, IEndpointService } from '@bfemulator/sdk-shared';
 import * as CORS from 'restify-cors-middleware';
 import * as Restify from 'restify';
+import * as fetch from 'electron-fetch';
 
-import { createBotEmulatorFromBotConfig } from './utils';
 import { mainWindow } from './main';
 import * as log from './log';
+import { getActiveBot } from './botHelpers';
+import { emulator } from './emulator';
+
+function getEndpointService(): IEndpointService {
+  const bot = getActiveBot();
+  return bot && getFirstBotEndpoint(bot);
+}
 
 export class RestServer {
-  public botEmulator: BotEmulator;
+  private _botEmulator: BotEmulator;
+  private _router: Restify.Server;
+  
+  public get botEmulator() {
+    return this._botEmulator;
+  }
 
-  endpoint: IEndpointService;
-  router: Restify.Server;
+  public get botId(): string {
+    const endpoint = getEndpointService();
+    return endpoint && endpoint.id;
+  }
 
-  constructor(public botConfig: IBotConfig, public serviceUrl: string) {
-    this.endpoint = getFirstBotEndpoint(botConfig);
+  public get botUrl(): string {
+    const endpoint = getEndpointService();
+    return endpoint && endpoint.endpoint;
+  }
 
+  public get msaAppId(): string {
+    const endpoint = getEndpointService();
+    return endpoint && endpoint.appId;
+  }
+
+  public get msaPassword(): string {
+    const endpoint = getEndpointService();
+    return endpoint && endpoint.appPassword;
+  }
+
+  constructor() {
     const cors = CORS({
       origins: ['*'],
       allowHeaders: ['authorization', 'x-requested-with'],
       exposeHeaders: []
     });
 
-    this.router = Restify.createServer({
-      name: this.botConfig.name || 'Emulator'
+    this._router = Restify.createServer({
+      name: 'Emulator'
     });
 
-    this.router.pre(cors.preflight);
-    this.router.use(cors.actual);
+    this._router.pre(cors.preflight);
+    this._router.use(cors.actual);
+
+    this._botEmulator = new BotEmulator(
+      () => this.botId,
+      () => this.botUrl,
+      () => emulator.ngrok.getServiceUrl(this.botUrl),
+      () => this.msaAppId,
+      () => this.msaPassword,
+      {
+        fetch,
+        loggerOrLogService: mainWindow.logService
+      }
+    );
   }
 
-  public listen(port?: number): Promise<{ url: string }> {
+  public listen(port?: number): Promise<{ url: string, port: number }> {
     return new Promise((resolve, reject) => {
-      this.router.once('error', err => reject(err));
+      this._router.once('error', err => reject(err));
 
-      this.router.listen(port, () => {
-        log.debug(`${ this.router.name } listening on ${ this.router.url }`);
-
-        const { port } = this.router.address();
-
-        // Because serviceUrl depends on the host:port, we cannot mount the routes when we create the router, but only here
-        this.botEmulator = createBotEmulatorFromBotConfig(this.botConfig, this.serviceUrl);
+      this._router.listen(port, () => {
+        log.debug(`${this._router.name} listening on ${this._router.url}`);
 
         // TODO: Fix "inflightRequests" type not found
-        this.botEmulator.mount(this.router as any);
+        this.botEmulator.mount(this._router as any);
 
-        resolve({ url: this.router.url });
+        resolve({ url: this._router.url, port: this._router.address().port });
       });
     });
   }
 
   public close() {
     return new Promise(resolve => {
-      if (this.router) {
-        this.router.close(() => resolve());
+      if (this._router) {
+        this._router.close(() => resolve());
       } else {
         resolve();
       }

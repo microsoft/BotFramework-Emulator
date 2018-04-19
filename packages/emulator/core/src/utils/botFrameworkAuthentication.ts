@@ -42,7 +42,10 @@ export default function createBotFrameworkAuthenticationMiddleware(botId: string
   const openIdMetadata = new OpenIdMetadata(fetch, authentication.openIdMetadata);
 
   return async (req: Restify.Request, res: Restify.Response, next: Restify.Next) => {
-    const authorization = req.header('Authorization');
+    const authorization = req.header('Authorization');    
+    if (!authorization)
+      return;
+      
     const [authMethod, token] = authorization.trim().split(' ');
 
     // Verify token

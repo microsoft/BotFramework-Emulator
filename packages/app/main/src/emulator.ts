@@ -35,7 +35,7 @@
 import { BotFrameworkService } from './botFrameworkService';
 import { getActiveBot } from './botHelpers';
 import * as Settings from './settings';
-import { createBotEmulatorFromBotConfig } from './utils';
+import { NgrokService } from './ngrokService';
 
 interface IQueuedMessage {
   channel: any,
@@ -46,19 +46,25 @@ interface IQueuedMessage {
  * Top-level state container for the Node process.
  */
 export class Emulator {
+  ngrok = new NgrokService();
   framework = new BotFrameworkService();
 
+  async startup() {
+    await this.framework.startup();
+    await this.ngrok.startup();
+  }
+  
   public async getSpeechToken(refresh: boolean): Promise<string> {
-    return await createBotEmulatorFromBotConfig(getActiveBot(), null).getSpeechToken(10, refresh);
+    return await this.framework.server.botEmulator.getSpeechToken(10, refresh);
   }
 
   /**
    * Loads settings from disk and then creates the emulator.
    */
-  static startup() {
+  static async startup() {
     Settings.startup();
     emulator = new Emulator();
-    emulator.framework.startup();
+    await emulator.startup();
   }
 }
 

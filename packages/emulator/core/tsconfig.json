@@ -14,7 +14,8 @@
     "target": "es6",
     "types": [
       "node"
-    ]
+    ],
+    "sourceMap": true
   },
   "exclude": [
     "src/**/*.spec.js",

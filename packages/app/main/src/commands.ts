@@ -88,12 +88,6 @@ export function registerCommands() {
     const botDirectory = Path.dirname(botFilePath);
     mainWindow.store.dispatch(BotActions.setActive(bot, botDirectory));
 
-    await emulator.framework.recycle();
-    await mainWindow.commandService.remoteCall('receive-global-settings', {
-      url: emulator.framework.serverUrl,
-      cwd: __dirname
-    });
-
     return mainWindow.commandService.remoteCall('bot:load', { bot, botDirectory });
   });
 
@@ -115,12 +109,6 @@ export function registerCommands() {
     BotProjectFileWatcher.watch(botDirectory);
 
     mainWindow.store.dispatch(BotActions.setActive(bot, botDirectory));
-
-    await emulator.framework.recycle();
-    await mainWindow.commandService.remoteCall('receive-global-settings', {
-      url: emulator.framework.serverUrl,
-      cwd: __dirname
-    });
 
     return { bot, botDirectory };
   });

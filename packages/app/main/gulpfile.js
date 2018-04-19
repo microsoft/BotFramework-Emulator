@@ -94,16 +94,18 @@ gulp.task('build-extensions',
 );
 
 //----------------------------------------------------------------------------
-gulp.task('build-app', gulp.parallel(
-  'build-extensions',
-  'copy-extension-stubs',
-  function () {
-    return gulp
-      .src('./package.json', { read: false })
-      .pipe(shell([
-        'npm run build:electron'
-      ]));
-  }));
+gulp.task('build-app', gulp.series(
+  'build-emulator',
+    gulp.parallel(
+    'build-extensions',
+    'copy-extension-stubs',
+    function () {
+      return gulp
+        .src('./package.json', { read: false })
+        .pipe(shell([
+          'npm run build:electron'
+        ]));
+    })));
 
 //----------------------------------------------------------------------------
 gulp.task('build-sdk-shared', function () {
@@ -170,7 +172,7 @@ gulp.task('build-react', function () {
 
 //----------------------------------------------------------------------------
 gulp.task('build',
-  gulp.series('clean', 'build-shared', 'build-emulator',
+  gulp.series('clean', 'build-shared',
     gulp.parallel(
       'build-app',
       'build-react'))

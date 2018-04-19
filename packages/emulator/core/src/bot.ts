@@ -54,6 +54,7 @@ import registerDirectLineRoutes from './directLine/registerRoutes';
 import statusCodeFamily from './utils/statusCodeFamily';
 import stripEmptyBearerToken from './utils/stripEmptyBearerToken';
 import Users from './facility/users';
+import { StringProvider } from './utils/stringProvider';
 
 const DEFAULT_OPTIONS: BotOptions = {
   fetch,
@@ -65,13 +66,35 @@ const DEFAULT_OPTIONS: BotOptions = {
 // We will refresh if the token is going to expire within 5 minutes
 const TIME_TO_REFRESH = 5 * 60 * 1000;
 
-export default class Bot {
+const provideString = (s: string | StringProvider) => s ? (typeof s === 'string') ? s : s() : null;
+
+export default class Bot {  
+  public get serviceUrl() {
+    return provideString(this._serviceUrl);
+  }
+  
+  public get botId(): string {
+    return provideString(this._botId);
+  }
+  
+  public get botUrl(): string {
+    return provideString(this._botUrl);
+  }
+  
+  public get msaAppId(): string {
+    return provideString(this._msaAppId);
+  }
+
+  public get msaPassword(): string {
+    return provideString(this._msaPassword);
+  }
+
   constructor(
-    public botId: string,
-    public botUrl: string,
-    public serviceUrl: string,
-    public msaAppId?: string,
-    public msaPassword?: string,
+    private _botId: string | StringProvider,
+    private _botUrl: string | StringProvider,
+    private _serviceUrl: string | StringProvider,
+    private _msaAppId?: string | StringProvider,
+    private _msaPassword?: string | StringProvider,
     options: BotOptions = DEFAULT_OPTIONS
   ) {
     this.options = { ...DEFAULT_OPTIONS, ...options };
