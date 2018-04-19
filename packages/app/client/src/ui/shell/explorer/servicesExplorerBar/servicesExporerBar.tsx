@@ -3,7 +3,6 @@ import { Component } from 'react';
 import { ExplorerBarBody } from '../explorerBarBody';
 import { ExplorerBarHeader, Title } from '../explorerBarHeader';
 import { LuisExplorerContainer } from '../luisExplorer';
-import { PortalsExplorer } from '../portalsExplorer';
 import { QnaMakerExplorerContainer } from '../qnaMakerExplorer';
 
 export default class ServicesExplorerBar extends Component<{ activeBotExists: boolean }> {
@@ -34,7 +33,6 @@ export default class ServicesExplorerBar extends Component<{ activeBotExists: bo
           </Title>
         </ExplorerBarHeader>
         <ExplorerBarBody>
-          <PortalsExplorer/>
           { this.explorerBodyChildren }
         </ExplorerBarBody>
       </>
