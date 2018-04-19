@@ -6,7 +6,7 @@ import { AppInfo } from '../Luis/AppInfo';
 import { IntentInfo } from '../Luis/IntentInfo';
 import { ITraceActivity } from '@bfemulator/sdk-shared';
 import { ButtonSelected } from '../Controls/ControlBar';
-import { RecognizerResultAdapter } from 'src/Adapters/RecognizerResultAdapter';
+import { RecognizerResultAdapter } from '../Adapters/RecognizerResultAdapter';
 
 const TraceActivity = 'trace';
 const LuisTraceType = 'https://www.luis.ai/schemas/trace';
