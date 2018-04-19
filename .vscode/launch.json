@@ -1,17 +1,17 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "node",
-            "request": "attach",
-            "name": "Attach to app/main",
-            "address": "localhost",
-            "port": 7777,
-        },
-        {
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach to app/main",
+      "address": "localhost",
+      "port": 7777,
+    },
+    {
       "name": "Launch app/main",
       "type": "node",
       "request": "launch",
@@ -31,7 +31,8 @@
       },
       "sourceMaps": true,
       "protocol": "inspector",
-      "console": "integratedTerminal",
+      "outputCapture": "std",
+      "internalConsoleOptions": "openOnSessionStart",
       "cwd": "${workspaceFolder}/packages/app/main"
     }
   ]

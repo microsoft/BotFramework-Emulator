@@ -30,7 +30,8 @@
       },
       "sourceMaps": true,
       "protocol": "inspector",
-      "console": "integratedTerminal",
+      "outputCapture": "std",
+      "internalConsoleOptions": "openOnSessionStart",
       "cwd": "${workspaceFolder}/main"
     },
     {
@@ -55,7 +56,8 @@
       },
       "sourceMaps": true,
       "protocol": "inspector",
-      "console": "integratedTerminal",
+      "outputCapture": "std",
+      "internalConsoleOptions": "openOnSessionStart",
       "cwd": "${workspaceFolder}/main"
     }
   ]

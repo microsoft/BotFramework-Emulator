@@ -92,6 +92,10 @@ const CSS = css({
     marginBottom: '8px'
   },
   
+  '& .big-button': {
+    width: '140px',
+    height: '30px'
+  }
   
 });
 
@@ -124,10 +128,10 @@ class WelcomePage extends React.Component<Props, {}> {
               <SmallHeader>Start</SmallHeader>
               <span>Start talking to your bot by connecting to an endpoint or by opening a bot saved locally.</span>
               <Row>
-                <PrimaryButton className="open-bot" text="Open Bot" onClick={ this.onOpenBotClick } />
+                <PrimaryButton className="open-bot big-button" text="Open Bot" onClick={ this.onOpenBotClick } />
               </Row>
               <Row>
-                <PrimaryButton className="new-bot" text="New Bot" onClick={ this.onNewBotClick } />
+                <PrimaryButton className="new-bot big-button" text="New Bot" onClick={ this.onNewBotClick } />
               </Row>
             </div>
             <div className="section">

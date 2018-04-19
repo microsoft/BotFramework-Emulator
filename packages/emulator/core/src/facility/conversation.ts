@@ -76,6 +76,8 @@ interface IActivityBucket {
  */
 export default class Conversation extends EventEmitter {
   // private speechToken: ISpeechTokenInfo;
+  
+  private get conversationIsTranscript() { return this.conversationId.includes('transcript') };
 
   constructor(
     public bot: Bot,
@@ -129,9 +131,6 @@ export default class Conversation extends EventEmitter {
    * Sends the activity to the conversation's bot.
    */
   async postActivityToBot(activity: IActivity, recordInConversation: boolean) {
-    // If a message to the bot was triggered from a transcript, don't actually send it.
-    // This can happen when clicking a button in an adaptive card, for instance.
-
     // Do not make a shallow copy here before modifying
     activity = this.postage(this.bot.botId, activity);
     activity.from = activity.from || this.user;
@@ -147,7 +146,7 @@ export default class Conversation extends EventEmitter {
 
     activity.serviceUrl = this.bot.serviceUrl;
 
-    if (!isLocalhostUrl(this.bot.botUrl) && isLocalhostUrl(this.bot.serviceUrl)) {
+    if (!this.conversationIsTranscript && !isLocalhostUrl(this.bot.botUrl) && isLocalhostUrl(this.bot.serviceUrl)) {
       this.bot.facilities.logger.logError(this.conversationId, 'Error: The bot is remote, but the service URL is localhost. Without tunneling software you will not receive replies.');
       this.bot.facilities.logger.logError(this.conversationId, makeExternalLink('Connecting to bots hosted remotely', 'https://aka.ms/cnjvpo'));
       this.bot.facilities.logger.logError(this.conversationId, makeAppSettingsLink('Edit ngrok settings'));
@@ -161,13 +160,6 @@ export default class Conversation extends EventEmitter {
       method: 'POST'
     };
 
-    const resp = await this.bot.fetchWithAuth(this.bot.botUrl, options);
-    const { status } = resp;
-
-    if (!statusCodeFamily(status, 200)) {
-      throw new Error(`failed to post activity to bot (status = ${status})`);
-    }
-
     if (recordInConversation) {
       this.addActivityToQueue({ ...activity });
     }
@@ -175,9 +167,23 @@ export default class Conversation extends EventEmitter {
     this.transcript = [...this.transcript, { type: 'activity add', activity }];
     this.emit('transcriptupdate');
 
+    let status = 200;
+    let resp: any = {};
+    
+    // If a message to the bot was triggered from a transcript, don't actually send it.
+    // This can happen when clicking a button in an adaptive card, for instance.
+    if (!this.conversationIsTranscript) {
+      resp = await this.bot.fetchWithAuth(this.bot.botUrl, options);
+      status = resp.status;
+    }
+
+    if (!statusCodeFamily(status, 200)) {
+      throw new Error(`failed to post activity to bot (status = ${status})`);
+    }
+  
     return {
       activityId: activity.id,
-      res: activity.type === 'invoke' ? await resp.json() : null,
+      res: resp,
       statusCode: status
     };
   }

@@ -132,8 +132,8 @@ const createMainWindow = async () => {
         x: initBounds.x,
         y: initBounds.y
         */
-        width: 1024,
-        height: 700
+        width: 1400,
+        height: 920
       }));
 
   mainWindow.initStore()

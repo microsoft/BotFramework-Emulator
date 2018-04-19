@@ -230,22 +230,20 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
       props.document.directLine.end();
     }
 
+    this.initConversation(props, conversationId, selectedActivity$, subscription)
+
     if (props.mode === 'transcript') {
-      CommandService.remoteCall('conversation:new', props.mode)
+      CommandService.remoteCall('conversation:new', props.mode, conversationId)
         .then(conversation => {
           if (props.document && props.document.deepLink && props.document.activities) {
             // transcript was deep linked via protocol, and should just be fed its own activities attached to the document
             CommandService.remoteCall('emulator:feed-transcript:deep-link', conversation.conversationId, props.document.activities)
-              .then(() => {
-                this.initConversation(props, conversation.conversationId, selectedActivity$, subscription)
-              })
+              .then(() => { })
               .catch(err => { throw new Error(`Error while feeding deep-linked transcript to conversation: ${err}`) });
           } else {
             // the transcript is on disk, so its activities need to be read on the main side and fed in
             CommandService.remoteCall('emulator:feed-transcript:disk', conversation.conversationId, props.document.documentId)
-              .then(() => {
-                this.initConversation(props, conversation.conversationId, selectedActivity$, subscription)
-              })
+              .then(() => { })
               .catch(err => { throw new Error(`Error while feeding transcript on disk to conversation: ${err}`) });
           }
         })
@@ -253,8 +251,6 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
           // TODO: surface error somewhere
           console.error('Error creating a new conversation for transcript mode: ', err)
         });
-    } else {
-      this.initConversation(props, conversationId, selectedActivity$, subscription);
     }
   }
 
@@ -303,7 +299,7 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
           {
             this.props.mode === 'transcript' ?
               <div className="presentation-playback-dock"><PlaybackBar /></div>
-            :
+              :
               null
           }
         </div>
@@ -330,8 +326,8 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
             </div>
             <div className="content">
               <Splitter orientation={ 'horizontal' } primaryPaneIndex={ 0 } minSizes={ { 0: 80, 1: 80 } } initialSizes={ this.getHorizontalSplitterSizes } onSizeChange={ this.onHorizontalSizeChange } key={ this.props.pingId }>
-                <DetailPanel document={ this.props.document } key={ this.props.pingId }/>
-                <LogPanel document={ this.props.document } key={ this.props.pingId }/>
+                <DetailPanel document={ this.props.document } key={ this.props.pingId } />
+                <LogPanel document={ this.props.document } key={ this.props.pingId } />
               </Splitter>
             </div>
           </Splitter>

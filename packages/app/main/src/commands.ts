@@ -312,7 +312,7 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Creates a new conversation object
-  CommandRegistry.registerCommand('conversation:new', (mode: string): Conversation => {
+  CommandRegistry.registerCommand('conversation:new', (mode: string, conversationId?: string): Conversation => {
     if ((mode !== 'transcript') && (mode !== 'livechat')) {
       throw new Error('A mode of either "transcript" or "livechat" must be provided to "conversation:new"');
     }
@@ -327,7 +327,7 @@ export function registerCommands() {
     }
 
     // create a conversation object
-    const conversationId = `${uniqueId()}|${mode}`;
+    conversationId = conversationId || `${uniqueId()}|${mode}`;
     // TODO: Move away from the .users state on legacy emulator settings, and towards per-conversation users
     const conversation = emulator.framework.server.botEmulator.facilities.conversations.newConversation(emulator.framework.server.botEmulator, { id: uniqueId(), name: "User" }, conversationId);
     return conversation;

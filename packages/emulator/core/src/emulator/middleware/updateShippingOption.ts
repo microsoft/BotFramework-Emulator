@@ -50,9 +50,9 @@ export default function updateShippingOption(bot: Bot) {
         shippingOptionId: string
       } = req.body[0];
 
-      req['conversation'].sendUpdateShippingOptionOperation(body.checkoutSession, body.request, body.shippingAddress, body.shippingOptionId, (statusCode, body) => {
+      req['conversation'].sendUpdateShippingOptionOperation(body.checkoutSession, body.request, body.shippingAddress, body.shippingOptionId, async (statusCode, resp) => {
         if (statusCode === HttpStatus.OK) {
-          res.send(HttpStatus.OK, body);
+          res.send(HttpStatus.OK, await resp.json());
         } else {
           res.send(statusCode);
         }
