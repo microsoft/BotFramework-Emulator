@@ -6,3 +6,4 @@ export * from './primaryButton';
 export * from './smallHeader';
 export * from './textInputField';
 export * from './insetShadow';
+export * from './modal';

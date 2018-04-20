@@ -6,18 +6,19 @@ import { openLuisDeepLink, openLuisExplorerContextMenu } from '../../../../data/
 import { IRootState } from '../../../../data/store';
 import { LuisExplorer } from './luisExplorer';
 
-const mapStateToProps = (state: IRootState) => {
+const mapStateToProps = (state: IRootState, ownProps: {}) => {
   const { services } = state.bot.activeBot;
   return {
-    luisServices: services.filter(service => service.type === ServiceType.Luis),
-    window
+    services: services.filter(service => service.type === ServiceType.Luis),
+    window,
+    ...ownProps
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    launchLuisModelsViewer: (luisModelViewer: ComponentClass<any>) => dispatch(launchLuisModelsViewer(luisModelViewer)),
-    openLuisDeepLink: luisService => dispatch(openLuisDeepLink(luisService)),
+    launchServiceViewer: (luisModelViewer: ComponentClass<any>) => dispatch(launchLuisModelsViewer(luisModelViewer)),
+    openDeepLink: luisService => dispatch(openLuisDeepLink(luisService)),
     openContextMenu: luisService => dispatch(openLuisExplorerContextMenu(luisService))
   };
 };

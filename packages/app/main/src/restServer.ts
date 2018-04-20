@@ -51,7 +51,7 @@ function getEndpointService(): IEndpointService {
 export class RestServer {
   private _botEmulator: BotEmulator;
   private _router: Restify.Server;
-  
+
   public get botEmulator() {
     return this._botEmulator;
   }

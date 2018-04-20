@@ -3,7 +3,7 @@ import { ILuisService } from '@bfemulator/sdk-shared';
 
 export const RETRIEVE_LUIS_MODELS = 'RETRIEVE_LUIS_MODELS';
 export const OPEN_LUIS_SERVICE_DEEP_LINK = 'OPEN_LUIS_SERVICE_DEEP_LINK';
-export const OPEN_LUIS_SERVICE_CONTEXT_MENU = 'OPEN_LUIS_SERVICE_CONTEXT_MENU';
+export const OPEN_LUIS_EXPLORER_CONTEXT_MENU = 'OPEN_LUIS_EXPLORER_CONTEXT_MENU';
 
 export interface LuisServicesActions<T> extends Action {
   payload: T
@@ -22,7 +22,7 @@ export function openLuisDeepLink(luisService: ILuisService): LuisServicesActions
 
 export function openLuisExplorerContextMenu(luisService:ILuisService): LuisServicesActions<LuisServicePayload> {
   return {
-    type: OPEN_LUIS_SERVICE_CONTEXT_MENU,
+    type: OPEN_LUIS_EXPLORER_CONTEXT_MENU,
     payload: { luisService },
   };
 }

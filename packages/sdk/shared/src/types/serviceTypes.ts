@@ -29,6 +29,7 @@ export interface IDispatchService extends IConnectedService {
   authoringKey: string;
   subscriptionKey: string;
   version: string;
+  services: IConnectedService[]
 }
 
 export interface IQnAService extends IConnectedService {
@@ -37,9 +38,9 @@ export interface IQnAService extends IConnectedService {
 }
 
 export enum ServiceType {
-  Endpoint = "endpoint",
-  AzureBotService = "abs",
-  Luis = "luis",
-  QnA = "qna",
-  Dispatch = "dispatch",
+  Endpoint = 'endpoint',
+  AzureBotService = 'abs',
+  Luis = 'luis',
+  QnA = 'qna',
+  Dispatch = 'dispatch',
 }

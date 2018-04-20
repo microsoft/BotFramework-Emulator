@@ -1,27 +1,24 @@
-import { ILuisService, IDispatchService } from '@bfemulator/sdk-shared';
+import { IAzureBotService } from '@bfemulator/sdk-shared';
 import { css, StyleAttribute } from 'glamor';
 import * as React from 'react';
 import { ComponentClass, MouseEventHandler, SyntheticEvent } from 'react';
 import { ServicePane, ServicePaneProps } from '../servicePane';
-import { LuisModelsViewerContainer } from './luisModelsViewerDialog';
 
-interface LuisExplorerProps extends ServicePaneProps {
-  services: ILuisService[] | IDispatchService[];
-  openDeepLink: ( service: ILuisService | IDispatchService) => void;
+interface AzureBotServiceExplorerProps extends ServicePaneProps {
+  services: IAzureBotService[];
   launchServiceViewer: (viewer: ComponentClass<any>) => void;
 }
 
-export class LuisExplorer extends ServicePane<LuisExplorerProps> {
+export class AzureBotServiceExplorer extends ServicePane<AzureBotServiceExplorerProps> {
   constructor(props, context) {
     super(props, context);
   }
 
   protected get links(): JSX.Element[] {
     const { services = [] } = this.props;
-    return services
-      .map((model, index) => {
-        return <li key={ index } onClick={ this.onLinkClick } data-index={ index }>{ model.name } <span>- version { model.version }</span></li>;
-      });
+    return services.map((model, index) => {
+      return <li key={ index } onClick={ this.onLinkClick } data-index={ index }>{ model.name }</li>;
+    });
   }
 
   protected get componentCss(): StyleAttribute {
@@ -38,8 +35,8 @@ export class LuisExplorer extends ServicePane<LuisExplorerProps> {
   protected onLinkClick: MouseEventHandler<HTMLLIElement> = (event: SyntheticEvent<HTMLLIElement>): void => {
     const { currentTarget } = event;
     const { index } = currentTarget.dataset;
-    const { [index]: luisModel } = this.props.services;
-    this.props.openDeepLink(luisModel);
+    const { [index]: abs } = this.props.services;
+    // Unimplemented - future feature
   };
 
   protected onContextMenuOverLiElement(li: HTMLLIElement) {
@@ -50,6 +47,6 @@ export class LuisExplorer extends ServicePane<LuisExplorerProps> {
   }
 
   protected onAddIconClick = (event: SyntheticEvent<HTMLButtonElement>): void => {
-    this.props.launchServiceViewer(LuisModelsViewerContainer);
+    // Unimplemented future feature
   };
 }

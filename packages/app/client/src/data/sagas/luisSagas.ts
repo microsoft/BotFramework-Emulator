@@ -13,7 +13,7 @@ import {
 import {
   LuisServicePayload,
   LuisServicesActions,
-  OPEN_LUIS_SERVICE_CONTEXT_MENU,
+  OPEN_LUIS_EXPLORER_CONTEXT_MENU,
   OPEN_LUIS_SERVICE_DEEP_LINK,
   RETRIEVE_LUIS_MODELS
 } from '../action/luisServicesActions';
@@ -46,7 +46,7 @@ function* beginModelViewLifeCycle(action: LuisAuthAction<LuisModelViewer>, luisM
 
   const { luisModelViewer } = action.payload;
   const result = yield DialogService.showDialog<ComponentClass<LuisModelViewer>>(luisModelViewer, { luisModels });
-  // TODO - write this to the botfile
+  // TODO - write this to the bot file
 }
 
 function* retrieveLuisModels(): IterableIterator<any> {
@@ -105,5 +105,5 @@ export function* luisSagas(): IterableIterator<ForkEffect> {
   yield takeLatest(LUIS_LAUNCH_MODELS_VIEWER, launchLuisModelsViewer);
   yield takeEvery(RETRIEVE_LUIS_MODELS, retrieveLuisModels);
   yield takeEvery(OPEN_LUIS_SERVICE_DEEP_LINK, openLuisDeepLink);
-  yield takeEvery(OPEN_LUIS_SERVICE_CONTEXT_MENU, openLuisContextMenu);
+  yield takeEvery(OPEN_LUIS_EXPLORER_CONTEXT_MENU, openLuisContextMenu);
 }

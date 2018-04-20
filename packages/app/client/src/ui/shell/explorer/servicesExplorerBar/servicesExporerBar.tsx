@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { Component } from 'react';
+import { EndpointExplorerContainer } from '../endpointExplorer';
 import { ExplorerBarBody } from '../explorerBarBody';
 import { ExplorerBarHeader, Title } from '../explorerBarHeader';
-import { LuisExplorerContainer } from '../luisExplorer';
+import { DispatchExplorerContainer, LuisExplorerContainer } from '../luisExplorer';
 import { QnaMakerExplorerContainer } from '../qnaMakerExplorer';
+import {AzureBotServiceExplorerContainer} from '../azurebotServiceExplorer';
 
 export default class ServicesExplorerBar extends Component<{ activeBotExists: boolean }> {
 
@@ -16,8 +18,11 @@ export default class ServicesExplorerBar extends Component<{ activeBotExists: bo
     if (activeBotExists) {
       return (
         <>
-          <LuisExplorerContainer/>
-          <QnaMakerExplorerContainer/>
+          <DispatchExplorerContainer title="Dispatch"/>
+          <EndpointExplorerContainer title="Endpoint"/>
+          <LuisExplorerContainer title="LUIS"/>
+          <QnaMakerExplorerContainer title="QnA Maker"/>
+          <AzureBotServiceExplorerContainer title="Azure Bot Service"/>
         </>
       );
     }

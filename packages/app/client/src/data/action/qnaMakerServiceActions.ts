@@ -1,27 +1,41 @@
-import { Action } from 'redux';
 import { IQnAService } from '@bfemulator/sdk-shared';
+import { ComponentClass } from 'react';
+import { Action } from 'redux';
+import { QnaMakerEditor } from '../../ui/shell/explorer/qnaMakerExplorer/qnaMakerEditor/qnaMakerEditor';
 
 export const OPEN_QNA_MAKER_DEEP_LINK = 'OPEN_QNA_MAKER_DEEP_LINK';
 export const OPEN_QNA_MAKER_CONTEXT_MENU = 'OPEN_QNA_MAKER_CONTEXT_MENU';
+export const LAUNCH_QNA_MAKER_EDITOR = 'LAUNCH_QNA_MAKER_EDITOR';
 
 export interface QnaMakerServiceAction<T> extends Action {
   payload: T;
 }
 
 export interface QnaMakerServicePayload {
-  qnaService?: IQnAService;
+  qnaMakerService: IQnAService;
 }
 
-export function openQnAMakerDeepLink(qnaService: IQnAService): QnaMakerServiceAction<QnaMakerServicePayload> {
+export interface QnaMakerEditorPayload extends QnaMakerServicePayload {
+  qnaMakerEditorComponent?: ComponentClass<QnaMakerEditor>,
+}
+
+export function launchQnaMakerEditor(qnaMakerEditorComponent: ComponentClass<QnaMakerEditor>, qnaMakerService?: IQnAService): QnaMakerServiceAction<QnaMakerEditorPayload> {
   return {
-    type: OPEN_QNA_MAKER_DEEP_LINK,
-    payload: { qnaService }
+    type: LAUNCH_QNA_MAKER_EDITOR,
+    payload: { qnaMakerEditorComponent, qnaMakerService }
   };
 }
 
-export function openQnaMakerExplorerContextMenu(qnaService: IQnAService): QnaMakerServiceAction<QnaMakerServicePayload> {
+export function openQnAMakerDeepLink(qnaMakerService: IQnAService): QnaMakerServiceAction<QnaMakerServicePayload> {
+  return {
+    type: OPEN_QNA_MAKER_DEEP_LINK,
+    payload: { qnaMakerService }
+  };
+}
+
+export function openQnaMakerExplorerContextMenu(qnaMakerEditorComponent: ComponentClass<QnaMakerEditor>, qnaMakerService?: IQnAService): QnaMakerServiceAction<QnaMakerEditorPayload> {
   return {
     type: OPEN_QNA_MAKER_CONTEXT_MENU,
-    payload: { qnaService }
+    payload: { qnaMakerEditorComponent, qnaMakerService }
   };
 }

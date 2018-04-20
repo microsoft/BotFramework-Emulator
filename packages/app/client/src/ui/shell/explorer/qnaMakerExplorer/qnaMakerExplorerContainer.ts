@@ -1,7 +1,9 @@
 import { IQnAService, ServiceType } from '@bfemulator/sdk-shared';
+import { ComponentClass } from 'react';
 import { connect } from 'react-redux';
-import { openQnAMakerDeepLink, openQnaMakerExplorerContextMenu } from '../../../../data/action/qnaMakerServiceActions';
+import { launchQnaMakerEditor, openQnAMakerDeepLink, openQnaMakerExplorerContextMenu } from '../../../../data/action/qnaMakerServiceActions';
 import { IRootState } from '../../../../data/store';
+import { QnaMakerEditor } from './qnaMakerEditor/qnaMakerEditor';
 import { QnaMakerExplorer } from './qnaMakerExplorer';
 
 const mapStateToProps = (state: IRootState) => {
@@ -14,8 +16,9 @@ const mapStateToProps = (state: IRootState) => {
 
 const mapDispatchToProps = dispatch => {
   return {
+    launchQnaMakerEditor: (qnaMakerEditor: ComponentClass<QnaMakerEditor>, qnaMakerService: IQnAService) => dispatch(launchQnaMakerEditor(qnaMakerEditor, qnaMakerService)),
     openQnaMakerDeepLink: (qnaService: IQnAService) => dispatch(openQnAMakerDeepLink(qnaService)),
-    openContextMenu: (qnaService: IQnAService) => dispatch(openQnaMakerExplorerContextMenu(qnaService)),
+    openContextMenu: (qnaMakerService: IQnAService, qnaMakerEditor: ComponentClass<QnaMakerEditor>) => dispatch(openQnaMakerExplorerContextMenu(qnaMakerEditor, qnaMakerService)),
   };
 };
 

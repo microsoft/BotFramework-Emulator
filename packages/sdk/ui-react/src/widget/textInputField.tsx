@@ -9,7 +9,7 @@ const CSS = css({
   display: 'flex',
   flexFlow: 'column nowrap',
   width: '100%',
-  paddingBottom: '24px',
+  paddingBottom: '20px',
   fontFamily: Fonts.FONT_FAMILY_DEFAULT,
 
   '& > *': {
@@ -17,7 +17,7 @@ const CSS = css({
   },
 
   '& > input': {
-    height: '32px',
+    height: '22px',
     padding: '4px 8px',
     boxSizing: 'border-box',
     width: '100%'
@@ -95,6 +95,7 @@ export interface TextInputFieldProps {
   required?: boolean;
   type?: TextInputType;
   value?: string;
+  inputAttributes?: {}
 }
 
 export class TextInputField extends React.Component<TextInputFieldProps, {}> {
@@ -104,13 +105,13 @@ export class TextInputField extends React.Component<TextInputFieldProps, {}> {
 
   render(): JSX.Element {
     return (
-      <div className={ 'text-input-comp ' + (this.props.className || '') } { ...CSS }>
+      <div className={ 'text-input-comp ' + ( this.props.className || '' ) } { ...CSS }>
         { this.props.label ? <TruncateText
           className="text-input-label">{ this.props.label }{ this.props.required ? '*' : '' }</TruncateText> : null }
         <input type={ this.props.type || 'text' } className={ this.props.inputClass || '' } value={ this.props.value }
                onChange={ this.props.onChange } disabled={ this.props.disabled }
-               placeholder={ this.props.placeholder } readOnly={ this.props.readOnly } required={ this.props.required }/>
-        <div className={ 'text-input-err ' + (this.props.error ? 'error-showing' : '') }>
+               placeholder={ this.props.placeholder } readOnly={ this.props.readOnly } required={ this.props.required } { ...this.props.inputAttributes }/>
+        <div className={ 'text-input-err ' + ( this.props.error ? 'error-showing' : '' ) }>
           <span className="text-input-err-caret"></span>
           <span className="text-input-err-msg"><span></span>{ this.props.error }</span>
         </div>

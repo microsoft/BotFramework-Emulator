@@ -1,12 +1,13 @@
+import { IConnectedService } from '@bfemulator/sdk-shared';
 import { Colors, ExpandCollapse, ExpandCollapseContent, ExpandCollapseControls } from '@bfemulator/ui-react';
 import { css, StyleAttribute } from 'glamor';
 import * as React from 'react';
 import { Component, SyntheticEvent } from 'react';
-import { IConnectedService } from '@bfemulator/sdk-shared';
 
 export interface ServicePaneProps {
-  openContextMenu: (service: IConnectedService) => void;
-  window: Window
+  openContextMenu: (service: IConnectedService, ...rest: any[]) => void;
+  window: Window,
+  title: string
 }
 
 export interface ServicePaneState {
@@ -25,7 +26,7 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
     return (
       <ExpandCollapseControls>
         <span { ...this.componentCss }>
-          <button onClick={ this.onAddIconClick }>
+          <button onClick={ this.onAddIconClick } className="addIconButton">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25">
               <g>
                 <path d="M0 10L10 10 10 0 15 0 15 10 25 10 25 15 15 15 15 25 10 25 10 15 0 15"/>
@@ -38,10 +39,6 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
   }
 
   protected abstract get links(): JSX.Element[];
-
-  protected abstract get emptyContent(): JSX.Element;
-
-  protected abstract get title(): string | { toString: () => string };
 
   protected abstract onLinkClick: (event: SyntheticEvent<HTMLLIElement>) => void; // bound
   protected onAddIconClick: (event: SyntheticEvent<HTMLButtonElement>) => void; // bound
@@ -64,13 +61,20 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
     );
   }
 
+  protected get emptyContent(): JSX.Element {
+    return (
+      <p { ...this.emptyContentCss }>You have not saved any { this.props.title } apps to this bot.</p>
+    );
+  }
+
+
   protected get componentCss(): StyleAttribute {
     return css({
       position: 'relative',
       display: 'inline-block',
       height: '100%',
       width: '100%',
-      '> button': {
+      '& .addIconButton': {
         background: 'transparent',
         cursor: 'pointer',
         border: 'none',
@@ -108,25 +112,39 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
         display: 'block',
         whiteSpace: 'nowrap',
         lineHeight: '30px',
-        height: '30px',
-        paddingLeft: '13px',
+        minHeight: '30px',
         fontSize: ' 13px',
 
         '&:hover': {
-          backgroundColor: Colors.EXPLORER_ITEM_ACTIVE_BACKGROUND_DARK,
+          backgroundImage: `linear-gradient(to bottom, ${Colors.EXPLORER_ITEM_ACTIVE_BACKGROUND_DARK} 0%,${Colors.EXPLORER_ITEM_ACTIVE_BACKGROUND_DARK} 100%)`,
+          backgroundSize: '100% 30px',
+          backgroundRepeat: 'no-repeat'
         },
 
         '&[data-selected]': {
-          backgroundColor: Colors.C12
+          backgroundImage: `linear-gradient(to bottom, ${Colors.C12} 0%,${Colors.C12} 100%)`
+        },
+
+        '& span': {
+          color: 'rgba(255, 255, 255, 0.5)'
         },
 
         '&::before': {
           content: '🔗',
           display: 'inline-block',
           color: Colors.C5,
-          paddingRight: '5px'
+          paddingRight: '5px',
+          paddingLeft: '13px',
         }
       }
+    });
+  }
+
+  protected get emptyContentCss(): StyleAttribute {
+    return css({
+      margin: '12px 25px',
+      fontSize: '13px',
+      color: 'rgba(255, 255, 255, .5)'
     });
   }
 
@@ -145,7 +163,7 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
 
   public render(): JSX.Element {
     return (
-      <ExpandCollapse key="LuisExplorer" title={ '' + this.title } expanded={ this.state.expanded }>
+      <ExpandCollapse key={ this.props.title } title={ this.props.title } expanded={ this.state.expanded }>
         { this.controls }
         { this.content }
       </ExpandCollapse>
@@ -154,8 +172,11 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
 
   protected onContextMenu = (event: MouseEvent) => {
     const { listRef } = this;
-    const target = event.target as HTMLElement;
-    if (target.tagName !== 'LI' || !listRef.contains(target)) {
+    let target = event.target as HTMLElement;
+    while (target && target.tagName !== 'LI') {
+      target = target.parentElement;
+    }
+    if (!target || target.tagName !== 'LI' || !listRef.contains(target)) {
       return;
     }
     event.preventDefault();

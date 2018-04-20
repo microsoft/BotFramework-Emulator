@@ -1,17 +1,12 @@
 import { IQnAService } from '@bfemulator/sdk-shared';
-import { css, StyleAttribute } from 'glamor';
 import * as React from 'react';
-import { MouseEventHandler, SyntheticEvent } from 'react';
+import { ComponentClass, MouseEventHandler, SyntheticEvent } from 'react';
 import { ServicePane, ServicePaneProps } from '../servicePane';
+import { QnaMakerEditorContainer } from './qnaMakerEditor';
 
-const emptyContentCss = css({
-  margin: '12px 25px',
-  fontSize: '13px',
-  color: 'rgba(255, 255, 255, .5)'
-});
-
-interface QnaMakerProps extends ServicePaneProps {
+export interface QnaMakerProps extends ServicePaneProps {
   qnaMakerServices?: IQnAService[];
+  launchQnaMakerEditor: (qnaMakerEditor: ComponentClass<any>) => void;
   openQnaMakerDeepLink: (qnaMakerService: IQnAService) => void;
 }
 
@@ -20,27 +15,6 @@ export class QnaMakerExplorer extends ServicePane<QnaMakerProps> {
 
   constructor(props, context) {
     super(props, context);
-  }
-
-  protected get title(): string {
-    return 'QNA MAKER';
-  }
-
-  protected get componentCss(): StyleAttribute {
-    const componentCss = super.componentCss;
-    const overrides = css({
-      '> button': {
-        display: 'none'
-      }
-    });
-
-    return css(componentCss, overrides);
-  }
-
-  protected get emptyContent(): JSX.Element {
-    return (
-      <p { ...emptyContentCss }>You have not saved any QnA Maker apps to this bot.</p>
-    );
   }
 
   protected get links() {
@@ -62,6 +36,10 @@ export class QnaMakerExplorer extends ServicePane<QnaMakerProps> {
     super.onContextMenuOverLiElement(li);
     const { index } = li.dataset;
     const { [index]: qnaMakerService } = this.props.qnaMakerServices;
-    this.props.openContextMenu(qnaMakerService);
+    this.props.openContextMenu(qnaMakerService, QnaMakerEditorContainer);
   }
+
+  protected onAddIconClick = (event: SyntheticEvent<HTMLButtonElement>): void => {
+    this.props.launchQnaMakerEditor(QnaMakerEditorContainer);
+  };
 }
