@@ -35,6 +35,7 @@ import * as Attachments from '../types/attachmentTypes';
 import { uniqueId } from '../shared/utils';
 import * as request from 'request';
 import * as http from 'http';
+import * as URL from 'url';
 import { IGenericActivity } from '../types/activityTypes';
 const utf8 = require('utf8');
 const btoa = require('btoa');
@@ -70,7 +71,39 @@ export class OAuthLinkEncoder {
                         this.getSignInLink(oauthCard.connectionName, codeChallenge, (link: string) => {
                             if (link) {
                                 cardAction.value =  OAuthLinkEncoder.OAuthUrlProtocol + '//' + link;
+                            
+                                // Add a (with code) button that does not have the code_challenge
+                                var codeLink = link;
+                                var parsed = URL.parse(link);
+                                var params = this.getQueryParams(parsed.search);
+                                var redirectParam = params['redirectUri'];
+                                if(redirectParam) {
+                                    var decoded = decodeURIComponent(redirectParam);
+                                    var redirect = URL.parse(decoded);
+                                    var redirectParams = this.getQueryParams(redirect.search);
+                                    delete redirectParams['code_challenge'];
+                                    var newRedirectLink = this.setSearchParams(redirect, redirectParams);
+                                    var encoded = encodeURIComponent(newRedirectLink);
+                                    params['redirectUri'] = encoded;
+                                    codeLink = this.setSearchParams(parsed, params);
+                                }
+
+                                activity.attachments.push({
+                                    contentType: Attachments.AttachmentContentTypes.oAuthCard,
+                                    content: {
+                                        text: '',
+                                        connectionName: oauthCard.connectionName,
+                                        buttons: [
+                                            {
+                                                type: 'openUrl',
+                                                value: OAuthLinkEncoder.OAuthUrlProtocol + '//' + codeLink,
+                                                title: cardAction.title + ' (with code)'
+                                            }
+                                        ]    
+                                    }
+                                });
                             }
+
                             resolve(true);
                         });
                         cardAction.type = 'openUrl';
@@ -114,7 +147,8 @@ export class OAuthLinkEncoder {
         var state = btoa(utfStr);
         
         let options: request.OptionsWithUrl = {
-            url: `https://api.botframework.com/api/botsignin/GetSignInUrl?state=${state}&emulator=${this.emulatorUrl}&code_challenge=${codeChallenge}`,
+            //url: `https://api.botframework.com/api/botsignin/GetSignInUrl?state=${state}&emulatorUrl=${this.emulatorUrl}&code_challenge=${codeChallenge}`,
+            url: `http://localhost:8000/api/botsignin/GetSignInUrl?state=${state}&emulatorUrl=${this.emulatorUrl}&code_challenge=${codeChallenge}`,
             method: "GET",
             headers: {
                 'Authorization': this.authorizationHeader
@@ -126,6 +160,30 @@ export class OAuthLinkEncoder {
         };
 
         request(options, responseCallback);
+    }
+
+    private getQueryParams(query: string): any {
+        var result = {};
+        if(query.startsWith('?')) {
+            query = query.substr(1);
+        }
+        query.split("&").forEach(function(part) {
+            var eq = part.indexOf("=");
+            var item = part.substr(eq+1);
+            result[part.substr(0, eq)] = item;
+        });
+        return result;
+    }
+
+    private setSearchParams(url: URL.Url, newParams: any): string {
+        var newSearch = '';
+        var first = true;
+        for(var p in newParams) {
+            newSearch += (first ? '?' : '&') + p + '=' + newParams[p];
+            first = false;
+        }
+        url.search =  newSearch;
+        return URL.format(url);
     }
 }
 
