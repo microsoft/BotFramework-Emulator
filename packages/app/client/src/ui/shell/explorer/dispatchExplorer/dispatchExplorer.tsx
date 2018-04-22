@@ -1,16 +1,16 @@
-import { IEndpointService } from '@bfemulator/sdk-shared';
+import { IQnAService } from '@bfemulator/sdk-shared';
 import * as React from 'react';
 import { ComponentClass, MouseEventHandler, SyntheticEvent } from 'react';
 import { ServicePane, ServicePaneProps } from '../servicePane';
-import { EndpointEditorContainer } from './endpointEditor';
+import { DispatchEditorContainer } from './dispatchEditor';
 
-export interface EndpointProps extends ServicePaneProps {
-  endpointServices?: IEndpointService[];
-  launchEndpointEditor: (endpointEditor: ComponentClass<any>) => void;
-  openEndpointDeepLink: (endpointService: IEndpointService) => void;
+export interface DispatchProps extends ServicePaneProps {
+  dispatchServices?: IQnAService[];
+  launchDispatchEditor: (dispatchEditor: ComponentClass<any>) => void;
+  openDispatchDeepLink: (dispatchService: IQnAService) => void;
 }
 
-export class EndpointExplorer extends ServicePane<EndpointProps> {
+export class DispatchExplorer extends ServicePane<DispatchProps> {
   public state = {} as { expanded?: boolean };
 
   constructor(props, context) {
@@ -18,8 +18,8 @@ export class EndpointExplorer extends ServicePane<EndpointProps> {
   }
 
   protected get links() {
-    const { endpointServices = [] } = this.props;
-    return endpointServices
+    const { dispatchServices = [] } = this.props;
+    return dispatchServices
       .map((model, index) => {
         return <li key={ index } onClick={ this.onLinkClick } data-index={ index }>{ model.name }</li>;
       });
@@ -28,18 +28,18 @@ export class EndpointExplorer extends ServicePane<EndpointProps> {
   protected onLinkClick: MouseEventHandler<HTMLLIElement> = (event: SyntheticEvent<HTMLLIElement>): void => {
     const { currentTarget } = event;
     const { index } = currentTarget.dataset;
-    const { [index]: endpointService } = this.props.endpointServices;
-    this.props.openEndpointDeepLink(endpointService);
+    const { [index]: dispatchService } = this.props.dispatchServices;
+    this.props.openDispatchDeepLink(dispatchService);
   };
 
   protected onContextMenuOverLiElement(li: HTMLLIElement) {
     super.onContextMenuOverLiElement(li);
     const { index } = li.dataset;
-    const { [index]: endpointService } = this.props.endpointServices;
-    this.props.openContextMenu(endpointService, EndpointEditorContainer);
+    const { [index]: dispatchService } = this.props.dispatchServices;
+    this.props.openContextMenu(dispatchService, DispatchEditorContainer);
   }
 
   protected onAddIconClick = (event: SyntheticEvent<HTMLButtonElement>): void => {
-    this.props.launchEndpointEditor(EndpointEditorContainer);
+    this.props.launchDispatchEditor(DispatchEditorContainer);
   };
 }

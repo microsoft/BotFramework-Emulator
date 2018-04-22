@@ -22,9 +22,9 @@ function* launchQnaMakerEditor(action: QnaMakerServiceAction<QnaMakerEditorPaylo
 
 function* openQnaMakerContextMenu(action: QnaMakerServiceAction<QnaMakerServicePayload | QnaMakerEditorPayload>): IterableIterator<any> {
   const menuItems = [
-    { label: 'Edit', id: 'edit' },
+    { label: 'Edit settings', id: 'edit' },
     { label: 'Open in web portal', id: 'open' },
-    { label: 'Forget this app', id: 'forget' }
+    { label: 'Remove', id: 'forget' }
   ];
   const response = yield call(CommandService.remoteCall.bind(CommandService), 'electron:displayContextMenu', menuItems);
   switch (response.id) {
