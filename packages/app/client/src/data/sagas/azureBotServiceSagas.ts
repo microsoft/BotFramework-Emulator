@@ -17,7 +17,9 @@ const getCurrentDocumentId = (state: IRootState) => {
 function* launchAzureBotServiceEditor(action: AzureBotServiceAction<AzureBotServiceEditorPayload>): IterableIterator<any> {
   const { azureBotServiceEditorComponent, azureBotService = {} } = action.payload;
   const result = yield DialogService.showDialog<ComponentClass<AzureBotServiceEditor>>(azureBotServiceEditorComponent, { azureBotService });
-  // TODO - write this to the bot file
+  if (result) {
+    yield CommandService.remoteCall('bot:add-or-update-service', ServiceType.AzureBotService, result);
+  }
 }
 
 function* openAzureBotServiceContextMenu(action: AzureBotServiceAction<AzureBotServicePayload | AzureBotServiceEditorPayload>): IterableIterator<any> {
@@ -53,19 +55,15 @@ function* openAzureBotServiceDeepLink(action: AzureBotServiceAction<AzureBotServ
 }
 
 function* removeAzureBotServiceFromActiveBot(azureBotService: IAzureBotService): IterableIterator<any> {
-  const activeBot: IBotConfig = yield select(getActiveBot);
-  const activeEditorId = yield select(getCurrentDocumentId);
-  const { services } = activeBot;
-  // Since we cannot guarantee referential integrity
-  // we look for the target service in a loop
-  let i = services.length;
-  while (i--) {
-    const service = services[i];
-    if (service.id === azureBotService.id && service.type === ServiceType.QnA) {
-      services.splice(i, 1);
-      yield put(setDirtyFlag(activeEditorId, true));
-      break;
-    }
+  const result = yield CommandService.remoteCall('shell:show-message-box', true, {
+    type: 'question',
+    buttons: ["Cancel", "OK"],
+    defaultId: 1,
+    message: `Remove QnA service ${azureBotService.name}. Are you sure?`,
+    cancelId: 0,
+  });
+  if (result) {
+    yield CommandService.remoteCall('bot:remove-service', ServiceType.AzureBotService, azureBotService.id);
   }
 }
 

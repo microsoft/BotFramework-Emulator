@@ -16,12 +16,11 @@ export const ActiveBotHelper = new class {
   confirmSwitchBot(): Promise<any> {
     const hasTabs = hasNonGlobalTabs();
     if (hasTabs) {
-      return CommandService.remoteCall('shell:showMessageBox', true, {
-        type: "question",
+      return CommandService.remoteCall('shell:show-message-box', true, {
+        type: 'question',
         buttons: ["Cancel", "OK"],
         defaultId: 1,
-        title: "Switch Bots",
-        message: "Are you sure? All tabs will be closed.",
+        message: "Switch bots? All tabs will be closed.",
         cancelId: 0,
       });
     } else {

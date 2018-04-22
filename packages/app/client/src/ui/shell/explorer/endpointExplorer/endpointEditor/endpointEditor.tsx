@@ -30,7 +30,7 @@ export class EndpointEditor extends Component<EndpointEditorProps, IEndpointServ
   }
 
   public render(): JSX.Element {
-    const { name, endpoint, appId, appPassword, locale } = this.state;
+    const { name, endpoint, appId, appPassword } = this.state;
     return (
       <Modal cssOverrides={modalCssOverrides} title={title} detailedDescription={detailedDescription} cancel={this.onCancelClick}>
         <ModalContent>
@@ -38,7 +38,6 @@ export class EndpointEditor extends Component<EndpointEditorProps, IEndpointServ
           <TextInputField value={endpoint} onChange={this.onInputChange} label="Endpoint url" required={true} inputAttributes={{ 'data-propName': 'endpoint' }} />
           <TextInputField value={appId} onChange={this.onInputChange} label="Application Id" required={false} inputAttributes={{ 'data-propName': 'appId' }} />
           <TextInputField value={appPassword} onChange={this.onInputChange} label="Application Password" required={false} inputAttributes={{ 'data-propName': 'appPassword' }} />
-          <TextInputField value={locale} onChange={this.onInputChange} label="Default Locale" required={false} inputAttributes={{ 'data-propName': 'locale' }} />
         </ModalContent>
         <ModalActions>
           <PrimaryButton text="Cancel" secondary={true} onClick={this.onCancelClick} />

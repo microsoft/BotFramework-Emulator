@@ -8,7 +8,7 @@ import { setDirtyFlag } from '../action/editorActions';
 import {
   DispatchServicePayload,
   DispatchServiceAction,
-  DispatchEditorPayload, 
+  DispatchEditorPayload,
   LAUNCH_DISPATCH_EDITOR,
   OPEN_DISPATCH_CONTEXT_MENU,
   OPEN_DISPATCH_DEEP_LINK,
@@ -54,31 +54,29 @@ function* openDispatchContextMenu(action: DispatchServiceAction<DispatchServiceP
 }
 
 function* removeDispatchServiceFromActiveBot(dispatchService: IDispatchService): IterableIterator<any> {
-  const activeBot: IBotConfig = yield select(getActiveBot);
-  const activeEditorId = yield select(getCurrentDocumentId);
-  const { services } = activeBot;
-  // Since we cannot guarantee referential integrity
-  // we look for the target dispatchService in a loop
-  let i = services.length;
-  while (i--) {
-    const service = services[i];
-    if (service.id === dispatchService.id && service.type === ServiceType.Dispatch) {
-      services.splice(i, 1);
-      yield put(setDirtyFlag(activeEditorId, true));
-      break;
-    }
+  const result = yield CommandService.remoteCall('shell:show-message-box', true, {
+    type: 'question',
+    buttons: ["Cancel", "OK"],
+    defaultId: 1,
+    message: `Remove Dispatch service ${dispatchService.name}. Are you sure?`,
+    cancelId: 0,
+  });
+  if (result) {
+    yield CommandService.remoteCall('bot:remove-service', ServiceType.Dispatch, dispatchService.id);
   }
 }
 
 function* launchDispatchEditor(action: DispatchServiceAction<DispatchEditorPayload>): IterableIterator<any> {
   const { dispatchEditorComponent, dispatchService = {} } = action.payload;
   const result = yield DialogService.showDialog<ComponentClass<DispatchEditor>>(dispatchEditorComponent, { dispatchService });
-  // TODO - write this to the bot file
+  if (result) {
+    yield CommandService.remoteCall('bot:add-or-update-service', ServiceType.Dispatch, result);
+  }
 }
 
 export function* dispatchSagas(): IterableIterator<ForkEffect> {
   yield takeLatest(LAUNCH_DISPATCH_EDITOR, launchDispatchEditor);
   yield takeEvery(OPEN_DISPATCH_DEEP_LINK, openDispatchDeepLink);
   yield takeEvery(OPEN_DISPATCH_CONTEXT_MENU, openDispatchContextMenu);
-  
+
 }

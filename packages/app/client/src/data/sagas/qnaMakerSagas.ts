@@ -17,7 +17,9 @@ const getCurrentDocumentId = (state: IRootState) => {
 function* launchQnaMakerEditor(action: QnaMakerServiceAction<QnaMakerEditorPayload>): IterableIterator<any> {
   const { qnaMakerEditorComponent, qnaMakerService = {} } = action.payload;
   const result = yield DialogService.showDialog<ComponentClass<QnaMakerEditor>>(qnaMakerEditorComponent, { qnaMakerService });
-  // TODO - write this to the bot file
+  if (result) {
+    yield CommandService.remoteCall('bot:add-or-update-service', ServiceType.QnA, result);
+  }
 }
 
 function* openQnaMakerContextMenu(action: QnaMakerServiceAction<QnaMakerServicePayload | QnaMakerEditorPayload>): IterableIterator<any> {
@@ -52,19 +54,15 @@ function* openQnaMakerDeepLink(action: QnaMakerServiceAction<QnaMakerServicePayl
 }
 
 function* removeQnaMakerServiceFromActiveBot(qnaService: IQnAService): IterableIterator<any> {
-  const activeBot: IBotConfig = yield select(getActiveBot);
-  const activeEditorId = yield select(getCurrentDocumentId);
-  const { services } = activeBot;
-  // Since we cannot guarantee referential integrity
-  // we look for the target service in a loop
-  let i = services.length;
-  while (i--) {
-    const service = services[i];
-    if (service.id === qnaService.id && service.type === ServiceType.QnA) {
-      services.splice(i, 1);
-      yield put(setDirtyFlag(activeEditorId, true));
-      break;
-    }
+  const result = yield CommandService.remoteCall('shell:show-message-box', true, {
+    type: 'question',
+    buttons: ["Cancel", "OK"],
+    defaultId: 1,
+    message: `Remove QnA service ${qnaService.name}. Are you sure?`,
+    cancelId: 0,
+  });
+  if (result) {
+    yield CommandService.remoteCall('bot:remove-service', ServiceType.QnA, qnaService.id);
   }
 }
 

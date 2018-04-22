@@ -1,13 +1,13 @@
 import { addIdToBotEndpoints, getBotId, IFrameworkSettings, newBot, newEndpoint, IBotInfo } from '@bfemulator/app-shared';
 import { Conversation } from '@bfemulator/emulator-core';
-import { CommandRegistry as CommReg, IActivity, IBotConfig, uniqueId } from '@bfemulator/sdk-shared';
+import { CommandRegistry as CommReg, IActivity, IBotConfig, uniqueId, IConnectedService, ServiceType } from '@bfemulator/sdk-shared';
 import * as Electron from 'electron';
 import { app, Menu } from 'electron';
 import * as Fs from 'fs';
 import { sync as mkdirpSync } from 'mkdirp';
 import * as Path from 'path';
 import { AppMenuBuilder } from './appMenuBuilder';
-import { cloneBot, getActiveBot, getBotInfoById, IBotConfigToBotConfig, loadBotWithRetry, pathExistsInRecentBots, saveBot, patchBotsJson } from './botHelpers';
+import { cloneBot, getActiveBot, getBotInfoById, toSavableBot, loadBotWithRetry, pathExistsInRecentBots, saveBot, patchBotsJson } from './botHelpers';
 import { BotProjectFileWatcher } from './botProjectFileWatcher';
 import { Protocol } from './constants';
 import * as BotActions from './data-v2/action/bot';
@@ -44,7 +44,7 @@ export function registerCommands() {
 
     // save the bot
     await saveBot(bot);
-    
+
     return { bot, botFilePath };
   });
 
@@ -109,6 +109,41 @@ export function registerCommands() {
     return { bot, botDirectory };
   });
 
+  //---------------------------------------------------------------------------
+  // Adds or updates an msbot service entry.
+  CommandRegistry.registerCommand('bot:add-or-update-service', async (serviceType: ServiceType, service: IConnectedService) => {
+    const activeBot = getActiveBot();
+    const botId = activeBot && getBotId(activeBot);
+    const botInfo = botId && getBotInfoById(botId);
+    if (botInfo) {
+      const botConfig = toSavableBot(activeBot, botInfo.secret)
+      const index = botConfig.services.findIndex(s => s.id === service.id && s.type === service.type);
+      let existing = index >= 0 && botConfig.services[index];
+      if (existing) {
+        // Patch existing service
+        existing = { ...existing, ...service };
+        botConfig.services[index] = existing;
+      } else {
+        // Add new service
+        service.type = serviceType;
+        botConfig.connectService(service);
+      }
+      botConfig.Save(botInfo.path);
+    }
+  });
+
+  //---------------------------------------------------------------------------
+  // Removes an msbot service entry.
+  CommandRegistry.registerCommand('bot:remove-service', async (serviceType: ServiceType, serviceId: string) => {
+    const activeBot = getActiveBot();
+    const botId = activeBot && getBotId(activeBot);
+    const botInfo = botId && getBotInfoById(botId);
+    if (botInfo) {
+      const botConfig = toSavableBot(activeBot, botInfo.secret)
+      botConfig.disconnectService(serviceType, serviceId);
+      botConfig.Save(botInfo.path);
+    }
+  });
 
   //---------------------------------------------------------------------------
   // Patches a bot record in bots.json
@@ -120,7 +155,13 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Show OS-native messsage box
-  CommandRegistry.registerCommand('shell:showMessageBox', (modal: boolean, options: Electron.MessageBoxOptions) => {
+  CommandRegistry.registerCommand('shell:show-message-box', (modal: boolean, options: Electron.MessageBoxOptions) => {
+    options = {
+      message: "",
+      title: app.getName(),
+      ...options
+    };
+    
     if (modal)
       return Electron.dialog.showMessageBox(mainWindow.browserWindow, options);
     else

@@ -17,7 +17,9 @@ const getCurrentDocumentId = (state: IRootState) => {
 function* launchEndpointEditor(action: EndpointServiceAction<EndpointEditorPayload>): IterableIterator<any> {
   const { endpointEditorComponent, endpointService = {} } = action.payload;
   const result = yield DialogService.showDialog<ComponentClass<EndpointEditor>>(endpointEditorComponent, { endpointService });
-  // TODO - write this to the bot file
+  if (result) {
+    yield CommandService.remoteCall('bot:add-or-update-service', ServiceType.Endpoint, result);
+  }
 }
 
 function* openEndpointContextMenu(action: EndpointServiceAction<EndpointServicePayload | EndpointEditorPayload>): IterableIterator<any> {
@@ -47,26 +49,22 @@ function* openEndpointContextMenu(action: EndpointServiceAction<EndpointServiceP
 
 function* openEndpointDeepLink(action: EndpointServiceAction<EndpointServicePayload>): IterableIterator<any> {
   // TODO Open emulator on link
-  
+
   // const { kbid } = action.payload.endpointService;
   // const link = `https://endpointmaker.ai/Edit/KnowledgeBase?kbid=${kbid}`;
   // yield CommandService.remoteCall('electron:openExternal', link);
 }
 
 function* removeEndpointServiceFromActiveBot(endpointService: IEndpointService): IterableIterator<any> {
-  const activeBot: IBotConfig = yield select(getActiveBot);
-  const activeEditorId = yield select(getCurrentDocumentId);
-  const { services } = activeBot;
-  // Since we cannot guarantee referential integrity
-  // we look for the target service in a loop
-  let i = services.length;
-  while (i--) {
-    const service = services[i];
-    if (service.id === endpointService.id && service.type === ServiceType.Endpoint) {
-      services.splice(i, 1);
-      yield put(setDirtyFlag(activeEditorId, true));
-      break;
-    }
+  const result = yield CommandService.remoteCall('shell:show-message-box', true, {
+    type: 'question',
+    buttons: ["Cancel", "OK"],
+    defaultId: 1,
+    message: `Remove endpoint ${endpointService.name}. Are you sure?`,
+    cancelId: 0,
+  });
+  if (result) {
+    yield CommandService.remoteCall('bot:remove-service', ServiceType.Endpoint, endpointService.id);
   }
 }
 

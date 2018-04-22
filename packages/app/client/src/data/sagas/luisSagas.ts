@@ -14,7 +14,7 @@ import {
 import {
   LuisServicePayload,
   LuisServiceAction,
-  LuisEditorPayload, 
+  LuisEditorPayload,
   LAUNCH_LUIS_EDITOR,
   OPEN_LUIS_CONTEXT_MENU,
   OPEN_LUIS_DEEP_LINK,
@@ -92,33 +92,31 @@ function* openLuisContextMenu(action: LuisServiceAction<LuisServicePayload>): It
 }
 
 function* removeLuisServiceFromActiveBot(luisService: ILuisService): IterableIterator<any> {
-  const activeBot: IBotConfig = yield select(getActiveBot);
-  const activeEditorId = yield select(getCurrentDocumentId);
-  const { services } = activeBot;
-  // Since we cannot guarantee referential integrity
-  // we look for the target luisService in a loop
-  let i = services.length;
-  while (i--) {
-    const service = services[i];
-    if (service.id === luisService.id && service.type === ServiceType.Luis) {
-      services.splice(i, 1);
-      yield put(setDirtyFlag(activeEditorId, true));
-      break;
-    }
+  const result = yield CommandService.remoteCall('shell:show-message-box', true, {
+    type: 'question',
+    buttons: ["Cancel", "OK"],
+    defaultId: 1,
+    message: `Remove LUIS service ${luisService.name}. Are you sure?`,
+    cancelId: 0,
+  });
+  if (result) {
+    yield CommandService.remoteCall('bot:remove-service', ServiceType.Luis, luisService.id);
   }
 }
 
 function* launchLuisEditor(action: LuisServiceAction<LuisEditorPayload>): IterableIterator<any> {
   const { luisEditorComponent, luisService = {} } = action.payload;
   const result = yield DialogService.showDialog<ComponentClass<LuisEditor>>(luisEditorComponent, { luisService });
-  // TODO - write this to the bot file
+  if (result) {
+    yield CommandService.remoteCall('bot:add-or-update-service', ServiceType.Luis, result);
+  }
 }
 
 export function* luisSagas(): IterableIterator<ForkEffect> {
-//  yield takeLatest(LUIS_LAUNCH_MODELS_VIEWER, launchLuisModelsViewer);
+  //  yield takeLatest(LUIS_LAUNCH_MODELS_VIEWER, launchLuisModelsViewer);
   yield takeLatest(LAUNCH_LUIS_EDITOR, launchLuisEditor);
   yield takeEvery(RETRIEVE_LUIS_MODELS, retrieveLuisModels);
   yield takeEvery(OPEN_LUIS_DEEP_LINK, openLuisDeepLink);
   yield takeEvery(OPEN_LUIS_CONTEXT_MENU, openLuisContextMenu);
-  
+
 }

@@ -64,11 +64,12 @@ export async function loadBotWithRetry(botPath: string, secret?: string): Promis
 }
 
 /** Converts an IBotConfig to a BotConfig */
-export function IBotConfigToBotConfig(bot: IBotConfig, secret?: string): BotConfig {
+export function toSavableBot(bot: IBotConfig, secret?: string): BotConfig {
+  const botCopy = cloneBot(bot);
   const newBot: BotConfig = new BotConfig(secret);
-  newBot.description = bot.description;
-  newBot.name = bot.name;
-  newBot.services = bot.services;
+  newBot.description = botCopy.description;
+  newBot.name = botCopy.name;
+  newBot.services = botCopy.services;
   return newBot;
 }
 
@@ -98,8 +99,7 @@ export async function saveBot(bot: IBotConfig): Promise<void> {
   const botInfo = getBotInfoById(botId);
   
   if (botInfo && botInfo.path) {
-    const botCopy = cloneBot(bot);
-    const saveableBot = IBotConfigToBotConfig(botCopy, botInfo.secret);
+    const saveableBot = toSavableBot(bot, botInfo.secret);
 
     if (botInfo.secret)
       saveableBot.validateSecretKey();

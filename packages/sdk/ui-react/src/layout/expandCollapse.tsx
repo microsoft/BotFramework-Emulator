@@ -105,17 +105,18 @@ export interface IExpandCollapseState {
 export class ExpandCollapse extends React.Component<IExpandCollapseProps, IExpandCollapseState> {
   constructor(props, context) {
     super(props, context);
-    const { expanded } = props;
-    this.state = { expanded };
+    this.state = { expanded: !!props.expanded };
   }
 
   private handleTitleClick = () => {
-    this.setState(state => ( { expanded: !state.expanded } ));
+    this.setState(state => ({ expanded: !state.expanded }));
   };
 
   public componentWillReceiveProps(newProps) {
-    const { expanded } = newProps;
-    this.setState({ expanded });
+    if (typeof newProps.expanded != 'undefined') {
+      const { expanded } = newProps;
+      this.setState({ expanded });
+    }
   }
 
   render() {
@@ -136,7 +137,7 @@ export class ExpandCollapse extends React.Component<IExpandCollapseProps, IExpan
             this.state.expanded &&
             <section>
               { filterChildren(this.props.children, child => child.type === ExpandCollapseContent) }
-              <InsetShadow top={ true }/>
+              <InsetShadow top={ true } />
             </section>
           }
         </div>
