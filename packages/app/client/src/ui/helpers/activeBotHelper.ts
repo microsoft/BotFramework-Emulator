@@ -31,7 +31,7 @@ export const ActiveBotHelper = new class {
 
   /** Uses a bot id to look up the .bot path and perform a read on the server-side to populate the corresponding bot object */
   setActiveBot(id: string): Promise<any> {
-    return CommandService.remoteCall('bot:setActive', id)
+    return CommandService.remoteCall('bot:set-active', id)
       .then(({ bot, botDirectory }: { bot: IBotConfig, botDirectory: string }) => {
         store.dispatch(BotActions.setActive(bot, botDirectory));
         store.dispatch(FileActions.setRoot(botDirectory));

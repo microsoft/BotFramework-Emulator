@@ -48,7 +48,7 @@ import { Window } from './platform/window';
 import { ensureStoragePath, writeFile, isDev } from './utils';
 import * as squirrel from './squirrelEvents';
 import * as Commands from './commands';
-import { getBotInfoById, IBotConfigToBotConfig, cloneBot } from './botHelpers';
+import { getBotInfoById } from './botHelpers';
 import { AppMenuBuilder } from './appMenuBuilder';
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
@@ -142,24 +142,11 @@ const createMainWindow = async () => {
         const state = store.getState();
         const botsJson = { bots: state.bot.botFiles.filter(botFile => !!botFile) };
         const botsJsonPath = path.join(ensureStoragePath(), 'bots.json');
-        const botId = getBotId(state.bot.activeBot);
 
         try {
           // write bots list
           writeFile(botsJsonPath, botsJson);
-
-          // write active bot
-          if (state.bot.activeBot && botId) {
-            const botInfo = getBotInfoById(botId);
-            if (botInfo.path) {
-              const botCopy = cloneBot(state.bot.activeBot);
-              const bot = IBotConfigToBotConfig(botCopy, botInfo.secret);
-              if (botInfo.secret)
-                bot.validateSecretKey();
-              bot.Save(botInfo.path);
-            }
-          }
-        } catch (e) { console.error('Error writing bot settings to disk: ', e); }
+        } catch (e) { console.error('Error writing bot list to disk: ', e); }
 
         /* Timeout's are currently busted in Electron; will write on every store change until fix is made.
         // Issue: https://github.com/electron/electron/issues/7079

@@ -1,16 +1,19 @@
 
-import { FileInfo } from '@bfemulator/app-shared';
+import { FileInfo, getBotId } from '@bfemulator/app-shared';
 import { callbackToPromise } from '@fuselab/ui-shared/lib/asyncUtils';
 import { FSWatcher, Stats, exists, readFile } from 'fs';
 import * as Path from 'path';
 import * as Chokidar from 'chokidar';
 import { mainWindow } from './main';
+import { loadBotWithRetry, getActiveBot, getBotInfoById } from './botHelpers';
+import * as BotActions from './data-v2/action/bot';
 
 interface IFileWatcher {
   watch: (botProjectDir: string) => void;
   dispose: () => void;
   onFileAdd: (file: string, fstats?: any) => void;
   onFileRemove: (file: string, fstats?: any) => void;
+  onFileChange: (file: string, fstats?: any) => void;
 }
 
 async function findGitIgnore(directory: string): Promise<string> {
@@ -45,31 +48,32 @@ async function readGitIgnore(filePath: string): Promise<string[]> {
 
 /** Singleton class that will watch one bot project directory at a time */
 export const BotProjectFileWatcher = new class FileWatcher implements IFileWatcher {
-  private _botProjectDir: string;
+  private _botFilePath: string;
   private _fileWatcherInstance: FSWatcher;
 
   constructor() { }
 
-  async watch(botProjectDir: string): Promise<boolean> {
+  async watch(botFilePath: string): Promise<boolean> {
     // stop watching any other project directory
     this.dispose();
 
-    // TODO: Implement way of watching deeper into project directory tree
-    this._botProjectDir = botProjectDir;
+    this._botFilePath = botFilePath;
+    const botProjectDir = Path.dirname(botFilePath);
 
     const gitIgnoreFile = await findGitIgnore(botProjectDir);
     const ignoreGlobs = await readGitIgnore(gitIgnoreFile);
 
-    this._fileWatcherInstance = Chokidar.watch(this._botProjectDir, {
+    this._fileWatcherInstance = Chokidar.watch(botProjectDir, {
       ignored: ignoreGlobs,
       followSymlinks: false
     });
 
     this._fileWatcherInstance
-      .on('addDir', this.onFileAdd.bind(this))
-      .on('unlinkDir', this.onFileRemove.bind(this))
-      .on('add', this.onFileAdd.bind(this))
-      .on('unlink', this.onFileRemove.bind(this));
+      .on('addDir', this.onFileAdd)
+      .on('unlinkDir', this.onFileRemove)
+      .on('add', this.onFileAdd)
+      .on('unlink', this.onFileRemove)
+      .on('change', this.onFileChange);
 
     return true;
   }
@@ -77,12 +81,12 @@ export const BotProjectFileWatcher = new class FileWatcher implements IFileWatch
   dispose(): void {
     if (this._fileWatcherInstance) {
       this._fileWatcherInstance.close();
-      this._botProjectDir = null;
+      this._botFilePath = null;
     }
   }
 
   // TODO: Enable watching more extensions
-  onFileAdd(file: string, fstats?: Stats): void {
+  onFileAdd = (file: string, fstats?: Stats): void => {
     // only show .transcript files
     if (Path.extname(file) === '.transcript') {
       const fileInfo: FileInfo = {
@@ -95,7 +99,27 @@ export const BotProjectFileWatcher = new class FileWatcher implements IFileWatch
   }
 
   // TODO: Enable watching more extensions
-  onFileRemove(file: string, fstats?: Stats): void {
+  onFileRemove = (file: string, fstats?: Stats): void => {
     mainWindow.commandService.remoteCall('file:remove', file);
+  }
+
+  onFileChange = async (file: string, fstats?: Stats): Promise<void> => {
+    if (file === this._botFilePath) {
+      // the bot file changed, we should load it and push it to the store
+      const activeBot = getActiveBot();
+      const botId = getBotId(activeBot);
+      if (botId) {
+        const botInfo = getBotInfoById(botId) || {};
+        const bot = await loadBotWithRetry(this._botFilePath, botInfo.secret);
+        if (!bot)
+          // user dismissed the secret prompt dialog (if it was shown)
+          throw new Error('No secret provided to decrypt encrypted bot.');
+
+        // update store
+        const botDir = Path.dirname(this._botFilePath);
+        mainWindow.store.dispatch(BotActions.setActive(bot, botDir));
+        mainWindow.commandService.remoteCall('bot:set-active', bot, botDir);
+      }
+    }
   }
 }

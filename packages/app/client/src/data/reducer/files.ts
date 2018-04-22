@@ -109,6 +109,10 @@ function removeFile(state: IFileTreeState, path: string): IFileTreeState {
 export default function files(state: IFileTreeState = { root: null, selected: null }, action: IFileAction): IFileTreeState {
   switch (action.type) {
     case FileActions.setRoot: {
+      // don't set the root again if it's the same
+      if (state.root && state.root.data.path === action.payload.path)
+        break;
+
       const { path } = action.payload;
       const rootInfo: FileInfo = {
         type: 'container',

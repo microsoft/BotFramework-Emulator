@@ -1,4 +1,4 @@
-import { addIdToBotEndpoints, getBotId, IFrameworkSettings, newBot, newEndpoint } from '@bfemulator/app-shared';
+import { addIdToBotEndpoints, getBotId, IFrameworkSettings, newBot, newEndpoint, IBotInfo } from '@bfemulator/app-shared';
 import { Conversation } from '@bfemulator/emulator-core';
 import { CommandRegistry as CommReg, IActivity, IBotConfig, uniqueId } from '@bfemulator/sdk-shared';
 import * as Electron from 'electron';
@@ -7,7 +7,7 @@ import * as Fs from 'fs';
 import { sync as mkdirpSync } from 'mkdirp';
 import * as Path from 'path';
 import { AppMenuBuilder } from './appMenuBuilder';
-import { cloneBot, getActiveBot, getBotInfoById, IBotConfigToBotConfig, loadBotWithRetry, pathExistsInRecentBots } from './botHelpers';
+import { cloneBot, getActiveBot, getBotInfoById, IBotConfigToBotConfig, loadBotWithRetry, pathExistsInRecentBots, saveBot, patchBotsJson } from './botHelpers';
 import { BotProjectFileWatcher } from './botProjectFileWatcher';
 import { Protocol } from './constants';
 import * as BotActions from './data-v2/action/bot';
@@ -43,19 +43,15 @@ export function registerCommands() {
     mainWindow.store.dispatch(BotActions.create(bot, botFilePath, secret));
 
     // save the bot
-    const botCopy = cloneBot(bot);
-    const botConfig = IBotConfigToBotConfig(botCopy, secret);
-    if (secret)
-      botConfig.validateSecretKey();
-    await botConfig.Save(botFilePath);
-
+    await saveBot(bot);
+    
     return { bot, botFilePath };
   });
 
   //---------------------------------------------------------------------------
   // Save bot file and cause a bots list write
-  CommandRegistry.registerCommand('bot:save', (bot: IBotConfig, secret?: string) => {
-    mainWindow.store.dispatch(BotActions.patch(bot, secret));
+  CommandRegistry.registerCommand('bot:save', async (bot: IBotConfig) => {
+    await saveBot(bot);
   });
 
   //---------------------------------------------------------------------------
@@ -93,7 +89,7 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Set active bot
-  CommandRegistry.registerCommand('bot:setActive', async (id: string): Promise<{ bot: IBotConfig, botDirectory: string } | void> => {
+  CommandRegistry.registerCommand('bot:set-active', async (id: string): Promise<{ bot: IBotConfig, botDirectory: string } | void> => {
     // read the bot file at the id's corresponding path and return the IBotConfig (easier for client-side)
     const botInfo = getBotInfoById(id);
 
@@ -105,12 +101,21 @@ export function registerCommands() {
     }
 
     // set up the file watcher
-    const botDirectory = Path.dirname(botInfo.path);
-    BotProjectFileWatcher.watch(botDirectory);
+    BotProjectFileWatcher.watch(botInfo.path);
 
+    const botDirectory = Path.dirname(botInfo.path);
     mainWindow.store.dispatch(BotActions.setActive(bot, botDirectory));
 
     return { bot, botDirectory };
+  });
+
+
+  //---------------------------------------------------------------------------
+  // Patches a bot record in bots.json
+  CommandRegistry.registerCommand('bot:list:patch', async (botId: string, bot: IBotInfo): Promise<void> => {
+    // patch bots.json and update the store
+    const updatedBots = patchBotsJson(botId, bot);
+    return await mainWindow.commandService.remoteCall('bot:list:sync', updatedBots);
   });
 
   //---------------------------------------------------------------------------
@@ -378,7 +383,8 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Displays the context menu for a given element
   CommandRegistry.registerCommand('electron:displayContextMenu', ContextMenuService.showMenuAndWaitForInput);
-//---------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------
   // Opens an external link
   CommandRegistry.registerCommand('electron:openExternal', shell.openExternal.bind(shell));
 }

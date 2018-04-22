@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { CommandRegistry as CommReg, IBotConfig, IExtensionConfig, uniqueId } from '@bfemulator/sdk-shared';
-import { FileInfo, IBotInfo, getBotId } from '@bfemulator/app-shared';
+import { FileInfo, IBotInfo, getBotId, getBotDisplayName } from '@bfemulator/app-shared';
 import { showWelcomePage } from "./data/editorHelpers";
 import { ActiveBotHelper } from './ui/helpers/activeBotHelper';
 import * as LogService from './platform/log/logService';
@@ -80,10 +80,9 @@ export function registerCommands() {
     ActiveBotHelper.confirmAndSwitchBots(botId);
   });
 
-
   //---------------------------------------------------------------------------
   // Syncs the client side list of bots with bots arg (usually called from server side)
-  CommandRegistry.registerCommand('bot:list:sync', (bots: IBotInfo[]): void => {
+  CommandRegistry.registerCommand('bot:list:sync', async (bots: IBotInfo[]): Promise<void> => {
     store.dispatch(BotActions.load(bots));
     CommandService.remoteCall('menu:update-recent-bots');
   });
@@ -167,5 +166,14 @@ export function registerCommands() {
 
   CommandRegistry.registerCommand('file:remove', (path) => {
     store.dispatch(FileActions.removeFile(path));
+  });
+
+  //---------------------------------------------------------------------------
+  // Sets a bot as active
+  CommandRegistry.registerCommand('bot:set-active', (bot: IBotConfig, botDirectory: string) => {
+    store.dispatch(BotActions.setActive(bot, botDirectory));
+    store.dispatch(FileActions.setRoot(botDirectory));
+    CommandService.remoteCall('menu:update-recent-bots');
+    CommandService.remoteCall('electron:set-title-bar', getBotDisplayName(bot));
   });
 }

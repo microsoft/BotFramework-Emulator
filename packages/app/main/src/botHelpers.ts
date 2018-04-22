@@ -80,7 +80,7 @@ export function cloneBot(bot: IBotConfig): IBotConfig {
 /** Patches a bot record in bots.json, and updates the list
  *  in the store and on disk.
  */
-function patchBotsJson(botId: string, bot: IBotInfo): void {
+export function patchBotsJson(botId: string, bot: IBotInfo): IBotInfo[] {
   const state = mainWindow.store.getState();
   const bots = [...state.bot.botFiles];
   const botIndex = bots.findIndex(bot => bot.id === botId);
@@ -89,4 +89,20 @@ function patchBotsJson(botId: string, bot: IBotInfo): void {
   }
 
   mainWindow.store.dispatch(BotActions.load(bots));
+  return bots;
+}
+
+/** Saves a bot to disk */
+export async function saveBot(bot: IBotConfig): Promise<void> {
+  const botId = getBotId(bot);
+  const botInfo = getBotInfoById(botId);
+  
+  if (botInfo && botInfo.path) {
+    const botCopy = cloneBot(bot);
+    const saveableBot = IBotConfigToBotConfig(botCopy, botInfo.secret);
+
+    if (botInfo.secret)
+      saveableBot.validateSecretKey();
+    return await saveableBot.Save(botInfo.path);
+  }
 }

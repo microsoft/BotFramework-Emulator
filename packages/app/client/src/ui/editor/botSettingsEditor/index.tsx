@@ -118,7 +118,7 @@ class BotSettingsEditor extends React.Component<IBotSettingsEditorProps, IBotSet
     this.setDirtyFlag(true);
   }
 
-  private onSave = (e) => {
+  private onSave = async (e) => {
     const { appId, appPassword, endpoint, type, name, id } = this.state.endpoint;
     const endpointService: IEndpointService = {
       appId: appId.trim(),
@@ -136,12 +136,15 @@ class BotSettingsEditor extends React.Component<IBotSettingsEditorProps, IBotSet
       services: [endpointService]
     };
 
-    return CommandService.remoteCall('bot:save', bot, this.state.secret)
+    // write the bot secret to bots.json
+    const botId = getBotId(bot);
+    let botInfo = getBotInfoById(botId);
+    botInfo.secret = this.state.secret;
+    await CommandService.remoteCall('bot:list:patch', botId, getBotInfoById(botId))
+    return await CommandService.remoteCall('bot:save', bot, this.state.secret)
       .then(() => {
-        store.dispatch(BotActions.patch(bot, this.state.secret));
         this.setDirtyFlag(false);
         this.setState({ bot });
-        CommandService.remoteCall('electron:set-title-bar', getBotDisplayName(bot));
       });
   }
 
