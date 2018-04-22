@@ -1,6 +1,6 @@
 import { ServiceType } from '@bfemulator/sdk-shared';
 import { connect } from 'react-redux';
-import { openDispatchDeepLink, openDispatchExplorerContextMenu } from '../../../../data/action/dispatchActions';
+import { openDispatchDeepLink, openDispatchExplorerContextMenu } from '../../../../data/action/dispatchServiceActions';
 import { IRootState } from '../../../../data/store';
 import { LuisExplorer } from './luisExplorer';
 

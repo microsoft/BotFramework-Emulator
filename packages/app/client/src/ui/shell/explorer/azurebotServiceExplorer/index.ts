@@ -1,1 +1,1 @@
-export { AzureBotServiceExplorerContainer } from './azureBotServiceContainer';
+export { AzureBotServiceExplorerContainer } from './azureBotServiceExplorerContainer';

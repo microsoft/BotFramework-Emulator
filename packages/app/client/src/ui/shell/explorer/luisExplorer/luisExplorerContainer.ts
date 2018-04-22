@@ -1,25 +1,24 @@
-import { ServiceType } from '@bfemulator/sdk-shared';
+import { ILuisService, ServiceType } from '@bfemulator/sdk-shared';
 import { ComponentClass } from 'react';
 import { connect } from 'react-redux';
-import { launchLuisModelsViewer } from '../../../../data/action/luisAuthActions';
-import { openLuisDeepLink, openLuisExplorerContextMenu } from '../../../../data/action/luisServicesActions';
+import { launchLuisEditor, openLuisDeepLink, openLuisExplorerContextMenu } from '../../../../data/action/luisServiceActions';
 import { IRootState } from '../../../../data/store';
+import { LuisEditor } from './luisEditor/luisEditor';
 import { LuisExplorer } from './luisExplorer';
 
-const mapStateToProps = (state: IRootState, ownProps: {}) => {
+const mapStateToProps = (state: IRootState) => {
   const { services } = state.bot.activeBot;
   return {
-    services: services.filter(service => service.type === ServiceType.Luis),
-    window,
-    ...ownProps
+    luisServices: services.filter(service => service.type === ServiceType.Luis),
+    window
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    launchServiceViewer: (luisModelViewer: ComponentClass<any>) => dispatch(launchLuisModelsViewer(luisModelViewer)),
-    openDeepLink: luisService => dispatch(openLuisDeepLink(luisService)),
-    openContextMenu: luisService => dispatch(openLuisExplorerContextMenu(luisService))
+    launchLuisEditor: (luisEditor: ComponentClass<LuisEditor>, luisService: ILuisService) => dispatch(launchLuisEditor(luisEditor, luisService)),
+    openLuisDeepLink: (luisService: ILuisService) => dispatch(openLuisDeepLink(luisService)),
+    openContextMenu: (luisService: ILuisService, luisEditor: ComponentClass<LuisEditor>) => dispatch(openLuisExplorerContextMenu(luisEditor, luisService)),
   };
 };
 

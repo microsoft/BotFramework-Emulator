@@ -1,6 +1,7 @@
 import { IBotConfig, ILuisService, ServiceType } from '@bfemulator/sdk-shared';
 import { ComponentClass } from 'react';
 import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
+import { LuisEditor } from '../../ui/shell/explorer/luisExplorer/luisEditor/luisEditor';
 import { CommandService } from '../../platform/commands/commandService';
 import { DialogService } from '../../ui/dialogs/service';
 import { setDirtyFlag } from '../action/editorActions';
@@ -12,11 +13,13 @@ import {
 } from '../action/luisAuthActions';
 import {
   LuisServicePayload,
-  LuisServicesActions,
-  OPEN_LUIS_EXPLORER_CONTEXT_MENU,
-  OPEN_LUIS_SERVICE_DEEP_LINK,
+  LuisServiceAction,
+  LuisEditorPayload, 
+  LAUNCH_LUIS_EDITOR,
+  OPEN_LUIS_CONTEXT_MENU,
+  OPEN_LUIS_DEEP_LINK,
   RETRIEVE_LUIS_MODELS
-} from '../action/luisServicesActions';
+} from '../action/luisServiceActions';
 import { LuisApi, LuisModel } from '../http/luisApi';
 import { IRootState } from '../store';
 
@@ -58,21 +61,25 @@ function* retrieveLuisModels(): IterableIterator<any> {
   return yield luisModels;
 }
 
-function* openLuisDeepLink(action: LuisServicesActions<LuisServicePayload>): IterableIterator<any> {
+function* openLuisDeepLink(action: LuisServiceAction<LuisServicePayload>): IterableIterator<any> {
   const { appId, version } = action.payload.luisService;
   const link = `https://www.luis.ai/applications/${appId}/versions/${version}/build`;
   yield CommandService.remoteCall('electron:openExternal', link);
 }
 
-function* openLuisContextMenu(action: LuisServicesActions<LuisServicePayload>): IterableIterator<any> {
+function* openLuisContextMenu(action: LuisServiceAction<LuisServicePayload>): IterableIterator<any> {
   const menuItems = [
     { label: 'Open in web portal', id: 'open' },
-    { label: 'Forget this app', id: 'forget' }
+    { label: 'Edit settings', id: 'edit' },
+    { label: 'Remove', id: 'forget' }
   ];
   const response = yield call(CommandService.remoteCall.bind(CommandService), 'electron:displayContextMenu', menuItems);
   switch (response.id) {
     case 'open':
       yield* openLuisDeepLink(action);
+      break;
+    case 'edit':
+      yield* launchLuisEditor(action);
       break;
 
     case 'forget':
@@ -101,9 +108,17 @@ function* removeLuisServiceFromActiveBot(luisService: ILuisService): IterableIte
   }
 }
 
+function* launchLuisEditor(action: LuisServiceAction<LuisEditorPayload>): IterableIterator<any> {
+  const { luisEditorComponent, luisService = {} } = action.payload;
+  const result = yield DialogService.showDialog<ComponentClass<LuisEditor>>(luisEditorComponent, { luisService });
+  // TODO - write this to the bot file
+}
+
 export function* luisSagas(): IterableIterator<ForkEffect> {
-  yield takeLatest(LUIS_LAUNCH_MODELS_VIEWER, launchLuisModelsViewer);
+//  yield takeLatest(LUIS_LAUNCH_MODELS_VIEWER, launchLuisModelsViewer);
+  yield takeLatest(LAUNCH_LUIS_EDITOR, launchLuisEditor);
   yield takeEvery(RETRIEVE_LUIS_MODELS, retrieveLuisModels);
-  yield takeEvery(OPEN_LUIS_SERVICE_DEEP_LINK, openLuisDeepLink);
-  yield takeEvery(OPEN_LUIS_EXPLORER_CONTEXT_MENU, openLuisContextMenu);
+  yield takeEvery(OPEN_LUIS_DEEP_LINK, openLuisDeepLink);
+  yield takeEvery(OPEN_LUIS_CONTEXT_MENU, openLuisContextMenu);
+  
 }
