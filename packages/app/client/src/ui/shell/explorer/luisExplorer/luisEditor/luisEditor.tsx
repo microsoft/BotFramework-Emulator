@@ -53,7 +53,9 @@ export class LuisEditor extends Component<LuisEditorProps, ILuisService> {
   };
 
   private onSubmitClick = (event: SyntheticEvent<HTMLButtonElement>): void => {
-    this.props.updateLuisService(this.state);
+    // appId value should be used as id
+    const state = { ...this.state, id: this.state.appId };
+    this.props.updateLuisService(state);
   };
 
   private onInputChange = (event: SyntheticEvent<HTMLInputElement>): void => {

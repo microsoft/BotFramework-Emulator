@@ -53,7 +53,9 @@ export class DispatchEditor extends Component<DispatchEditorProps, IDispatchServ
   };
 
   private onSubmitClick = (event: SyntheticEvent<HTMLButtonElement>): void => {
-    this.props.updateDispatchService(this.state);
+    // appId value should be used as id
+    const state = { ...this.state, id: this.state.appId };
+    this.props.updateDispatchService(state);
   };
 
   private onInputChange = (event: SyntheticEvent<HTMLInputElement>): void => {

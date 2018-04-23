@@ -51,7 +51,9 @@ export class QnaMakerEditor extends Component<QnaMakerEditorProps, IQnAService> 
   };
 
   private onSubmitClick = (event: SyntheticEvent<HTMLButtonElement>): void => {
-    this.props.updateQnaMakerService(this.state);
+    // kbid value should be used as id
+    const state = { ...this.state, id: this.state.kbid };
+    this.props.updateQnaMakerService(state);
   };
 
   private onInputChange = (event: SyntheticEvent<HTMLInputElement>): void => {

@@ -1,4 +1,4 @@
-import { IEndpointService } from '@bfemulator/sdk-shared';
+import { IEndpointService, uniqueId } from '@bfemulator/sdk-shared';
 import { Modal, ModalActions, ModalContent, PrimaryButton, TextInputField } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { Component, SyntheticEvent } from 'react';
@@ -52,7 +52,11 @@ export class EndpointEditor extends Component<EndpointEditorProps, IEndpointServ
   };
 
   private onSubmitClick = (event: SyntheticEvent<HTMLButtonElement>): void => {
-    this.props.updateEndpointService(this.state);
+    // generate an id if none exists
+    let state = { ...this.state };
+    if (!this.state.id)
+      state.id = uniqueId();
+    this.props.updateEndpointService(state);
   };
 
   private onInputChange = (event: SyntheticEvent<HTMLInputElement>): void => {
