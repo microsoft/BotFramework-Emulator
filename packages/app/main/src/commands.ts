@@ -43,7 +43,13 @@ export function registerCommands() {
     mainWindow.store.dispatch(BotActions.create(bot, botFilePath, secret));
 
     // save the bot
-    await saveBot(bot);
+    try {
+      await saveBot(bot);
+    } catch (e) {
+      // TODO: make sure these are surfaced on the client side and caught so we can act on them
+      console.error(`bot:create: Error trying to save bot: ${e}`);
+      throw e;
+    }
 
     return { bot, botFilePath };
   });
@@ -51,7 +57,12 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Save bot file and cause a bots list write
   CommandRegistry.registerCommand('bot:save', async (bot: IBotConfig) => {
-    await saveBot(bot);
+    try {
+      await saveBot(bot);
+    } catch (e) {
+      console.error(`bot:save: Error trying to save bot: ${e}`);
+      throw e;
+    }
   });
 
   //---------------------------------------------------------------------------
@@ -74,6 +85,10 @@ export function registerCommands() {
       // reload the bot with the secret
       bot = await loadBotWithRetry(botFilePath, secret);
     }
+
+    if (!bot)
+      // user failed to enter a valid secret for an encrypted bot
+      throw new Error('No secret provided to decrypt encrypted bot.');
 
     // opening a new bot
     if (!botInfo && !pathExistsInRecentBots(botFilePath)) {
@@ -128,7 +143,12 @@ export function registerCommands() {
         service.type = serviceType;
         botConfig.connectService(service);
       }
-      botConfig.Save(botInfo.path);
+      try {
+        botConfig.Save(botInfo.path);
+      } catch (e) {
+        console.error(`bot:add-or-update-service: Error trying to save bot: ${e}`);
+        throw e;
+      }
     }
   });
 
@@ -141,7 +161,12 @@ export function registerCommands() {
     if (botInfo) {
       const botConfig = toSavableBot(activeBot, botInfo.secret)
       botConfig.disconnectService(serviceType, serviceId);
-      botConfig.Save(botInfo.path);
+      try {
+        botConfig.Save(botInfo.path);
+      } catch (e) {
+        console.error(`bot:remove-service: Error trying to save bot: ${e}`);
+        throw e;
+      }
     }
   });
 
@@ -161,7 +186,7 @@ export function registerCommands() {
       title: app.getName(),
       ...options
     };
-    
+
     if (modal)
       return Electron.dialog.showMessageBox(mainWindow.browserWindow, options);
     else
