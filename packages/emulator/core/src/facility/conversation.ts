@@ -53,7 +53,6 @@ import isLocalhostUrl from '../utils/isLocalhostUrl';
 import ITranscriptRecord from '../types/transcriptRecord';
 import IUser from '../types/user';
 import PaymentEncoder from '../utils/paymentEncoder';
-import statusCodeFamily from '../utils/statusCodeFamily';
 import uniqueId from '../utils/uniqueId';
 
 import ICheckoutConversationSession from '../types/payment/checkoutConversationSession';
@@ -177,13 +176,9 @@ export default class Conversation extends EventEmitter {
       status = resp.status;
     }
 
-    if (!statusCodeFamily(status, 200)) {
-      throw new Error(`failed to post activity to bot (status = ${status})`);
-    }
-  
     return {
       activityId: activity.id,
-      res: resp,
+      response: resp,
       statusCode: status
     };
   }
@@ -463,11 +458,11 @@ export default class Conversation extends EventEmitter {
       value: updateValue
     };
 
-    const { res } = await this.postActivityToBot(activity, false);
+    const { response } = await this.postActivityToBot(activity, false);
 
     // TODO: Should we record this in transcript? It looks like normal IInvokeActivity
 
-    return res;
+    return response;
   }
 
   public async sendPaymentCompleteOperation(
@@ -526,9 +521,9 @@ export default class Conversation extends EventEmitter {
       value: updateValue
     };
 
-    const { res } = await this.postActivityToBot(activity, false);
+    const { response } = await this.postActivityToBot(activity, false);
 
-    return res;
+    return response;
   }
 
   /**

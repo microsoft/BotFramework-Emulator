@@ -153,7 +153,7 @@ export interface LogEntryProps {
 }
 
 class LogEntry extends React.Component<LogEntryProps> {
-  
+
   inspect(obj) {
     this.props.document.selectedActivity$.next({});
     store.dispatch(ChatActions.setInspectorObjects(this.props.document.documentId, obj));
@@ -211,7 +211,7 @@ class LogEntry extends React.Component<LogEntryProps> {
     }
     return <>&nbsp;&nbsp;</>
   }
-  
+
   summaryText(obj: any): string {
     const inspResult = ExtensionManager.inspectorForObject(obj, true);
     if (inspResult && inspResult.inspector) {
@@ -267,20 +267,28 @@ class LogEntry extends React.Component<LogEntryProps> {
         case "err": {
           const payload = message.payload || message.err || {};
           let msg = payload.message || payload.method || payload || "details";
+          let fullMsg = msg;
           if (typeof msg !== 'string')
             msg = '500';
           if (msg.length > 50)
             msg = msg.substring(0, 50) + '...';
-          return (
-            <span className="spaced" key={ key }>
+          if (msg.startsWith('<!DOCTYPE html>')) {
+            return (
+              <>
+                <span className="spaced" key={ key }><a onClick={ () => this.inspect(message) }>err</a></span>
+                <span className="spaced"><a onClick={ () => this.inspect(fullMsg) }>{ msg }</a></span>
+              </>
+            );
+          } else {
+            return (
               <span className="spaced"><a onClick={ () => this.inspect(message) }>{ msg }</a></span>
-            </span>
-          );
+            );
+          }
         }
 
         case "inspector": {
           return (
-            <span className="spaced" key={ key }><a href='inspector://activity?obj=' title={ message.title }>{ message.text }</a></span>
+            <span className="spaced" key={ key }><a onClick={ () => this.inspect(message.payload) }>{ message.title }</a></span>
           );
         }
 

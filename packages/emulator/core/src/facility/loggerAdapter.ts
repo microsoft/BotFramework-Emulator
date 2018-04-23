@@ -49,6 +49,15 @@ function makeLogEntry(level: LogLevel, category: string, ...messages: any[]): IL
   };
 }
 
+function makeEnumerableObject(src: any) {
+  if (typeof src !== 'object')
+    return src;
+  const dst = {};
+  const keys = Object.getOwnPropertyNames(src);
+  keys.forEach(key => dst[key] = src[key]);
+  return dst;
+}
+
 export default class LoggerAdapter implements ILogger {
   constructor(public logService: ILogService) {
     this.logActivity = this.logActivity.bind(this);
@@ -127,12 +136,13 @@ export default class LoggerAdapter implements ILogger {
   }
 
   public logError(conversationId: string, err: any, ...messages: any[]) {
+    err = makeEnumerableObject(err);
     const entry = makeLogEntry(
       LogLevel.Error,
       'network',
       {
         type: 'err',
-        payload: err
+        payload: err,
       },
       ...messages
     );

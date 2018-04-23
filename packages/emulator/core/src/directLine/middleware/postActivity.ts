@@ -50,15 +50,14 @@ export default function postActivity(bot: Bot) {
       const activity = <IGenericActivity>req.body;
 
       try {
-        const { activityId, statusCode } = await conversation.postActivityToBot(activity, true);
+        const { activityId, response, statusCode } = await conversation.postActivityToBot(activity, true);
 
         //logNetwork(conversation.conversationId, req, res, `[${activity.type}]`);
         if (!statusCodeFamily(statusCode, 200)) {
           res.send(statusCode || HttpStatus.INTERNAL_SERVER_ERROR);
 
-          logResponse(req.params.conversationId, 'user', res, {
-            type: 'err'
-          });
+          logResponse(req.params.conversationId, 'user', res);
+          logError(req.params.conversationId, { message: await response.text(), statusCode });
         } else {
           res.send(statusCode, { id: activityId });
 

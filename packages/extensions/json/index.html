@@ -83,10 +83,15 @@
     contentNode.innerHTML = '';
 
     for (let i = 0; i < args.length; ++i) {
-      let str = formatJSON(args[i]);
-      let jsonNode = document.createElement('div');
-      jsonNode.innerHTML = str;
-      contentNode.appendChild(jsonNode);
+      let node = document.createElement('div');
+      let str;
+      if (typeof args[i] === 'string' && args[i].startsWith('<!DOCTYPE html>')) {
+        str = args[i];
+      } else {
+        str = formatJSON(args[i]);
+      }
+      node.innerHTML = str;
+      contentNode.appendChild(node);
     }
   });
   
