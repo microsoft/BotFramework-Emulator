@@ -54,7 +54,7 @@ export default class Attachments {
       throw createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.MissingProperty, 'You must specify originalBase64 byte[] for the attachment');
     }
 
-    const attachment: any = { ...attachmentData, id: uniqueId };
+    const attachment: any = { ...attachmentData, id: uniqueId() };
 
     this.attachments[attachment.id] = attachment;
 

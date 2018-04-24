@@ -45,6 +45,9 @@ import * as Constants from '../../constants';
 import StatusBar from './statusBar';
 import DialogHost from '../dialogs/host';
 import StoreVisualizer from '../debug/storeVisualizer';
+import store from '../../data/store';
+import { KeyCodes } from '@uifabric/utilities/lib';
+import * as PresentationActions from '../../data/action/presentationActions';
 
 css.global('html, body, #root', {
   backgroundColor: Colors.APP_BACKGROUND_DARK,
@@ -118,16 +121,24 @@ export class Main extends React.Component {
     };
   }
 
+  componentWillReceiveProps(newProps) {
+    if (newProps.presentationModeEnabled) {
+      window.addEventListener("keydown", this.props.exitPresentationMode);
+    } else {
+      window.removeEventListener("keydown", this.props.exitPresentationMode);
+    }
+  }
+
   handleTabChange(nextTabValue) {
     this.setState(() => ({ tabValue: nextTabValue }));
   }
 
   render() {
     const tabGroup1 = this.props.primaryEditor &&
-      <div className="mdi-wrapper" key={ 'primaryEditor' } ><MDI owningEditor={ Constants.EditorKey_Primary } /></div>;
+      <div className="mdi-wrapper" key={'primaryEditor'} ><MDI owningEditor={Constants.EditorKey_Primary} /></div>;
 
     const tabGroup2 = this.props.secondaryEditor && Object.keys(this.props.secondaryEditor.documents).length ?
-      <div className="mdi-wrapper secondary-mdi" key={ 'secondaryEditor' } ><MDI owningEditor={ Constants.EditorKey_Secondary } /></div> : null;
+      <div className="mdi-wrapper secondary-mdi" key={'secondaryEditor'} ><MDI owningEditor={Constants.EditorKey_Secondary} /></div> : null;
 
     // If falsy children aren't filtered out, splitter won't recognize change in number of children
     // (i.e. [child1, child2] -> [false, child2] is still seen as 2 children by the splitter)
@@ -138,30 +149,40 @@ export class Main extends React.Component {
     const workbenchChildren = [];
 
     if (this.props.showingExplorer && !this.props.presentationModeEnabled)
-      workbenchChildren.unshift(<ExplorerBar key={ 'explorer-bar' } />);
+      workbenchChildren.unshift(<ExplorerBar key={'explorer-bar'} />);
 
     workbenchChildren.push(
-      <Splitter orientation={ 'vertical' } key={ 'tab-group-splitter' }>
-        { tabGroups }
+      <Splitter orientation={'vertical'} key={'tab-group-splitter'}>
+        {tabGroups}
       </Splitter>
     );
 
     return (
-      <div className={ CSS }>
-        <div className={ NAV_CSS }>
-          { !this.props.presentationModeEnabled && <NavBar /> }
+      <div className={CSS}>
+        <div className={NAV_CSS}>
+          {!this.props.presentationModeEnabled && <NavBar />}
           <div className="workbench">
-            <Splitter orientation={ 'vertical' } primaryPaneIndex={ 0 } minSizes={ { 0: 40, 1: 40 } } initialSizes={ { 0: 210 } }>
-              { workbenchChildren }
+            <Splitter orientation={'vertical'} primaryPaneIndex={0} minSizes={{ 0: 40, 1: 40 }} initialSizes={{ 0: 210 }}>
+              {workbenchChildren}
             </Splitter>
           </div>
-          <TabManager disabled={ false } />
+          <TabManager disabled={false} />
         </div>
-        { !this.props.presentationModeEnabled && <StatusBar /> }
+        {!this.props.presentationModeEnabled && <StatusBar />}
         <DialogHost />
-        <StoreVisualizer enabled={ false } />
+        <StoreVisualizer enabled={false} />
       </div>
     );
+  }
+}
+
+function connectToProps(dispatch) {
+  return {
+    exitPresentationMode: (e) => {
+      if (e.keyCode === KeyCodes.escape) {
+        dispatch(PresentationActions.disable());
+      }
+    }
   }
 }
 
@@ -170,7 +191,7 @@ export default connect((state, ownProps) => ({
   primaryEditor: state.editor.editors[Constants.EditorKey_Primary],
   secondaryEditor: state.editor.editors[Constants.EditorKey_Secondary],
   showingExplorer: state.explorer.showing
-}))(Main);
+}), connectDispatchToProps)(Main);
 
 Main.propTypes = {
   primaryEditor: PropTypes.object,
