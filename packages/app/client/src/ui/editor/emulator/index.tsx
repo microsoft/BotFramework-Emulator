@@ -37,7 +37,7 @@ import { connect } from 'react-redux';
 import * as _ from 'lodash';
 import { Subscription, BehaviorSubject } from 'rxjs';
 
-import { ActivityOrID, uniqueId } from '@bfemulator/sdk-shared';
+import { ActivityOrID, uniqueId, IEndpointService } from '@bfemulator/sdk-shared';
 import ChatPanel from './chatPanel';
 import DetailPanel from './detailPanel';
 import LogPanel from './logPanel';
@@ -50,6 +50,8 @@ import * as ChatActions from '../../../data/action/chatActions';
 import store, { IRootState } from '../../../data/store';
 import * as PresentationActions from '../../../data/action/presentationActions';
 import PlaybackBar from './playbackBar';
+import { getActiveBot } from '../../../data/botHelpers';
+import { getFirstBotEndpoint } from '@bfemulator/app-shared';
 
 const CSS = css({
   display: 'flex',
@@ -87,7 +89,7 @@ const PRESENTATION_CSS = css({
   left: 0,
   right: 0,
   backgroundColor: Colors.APP_BACKGROUND_DARK,
-  
+
   '& .chat-panel': {
     position: 'absolute',
     top: '50%',
@@ -137,6 +139,7 @@ interface IEmulatorProps {
   documentId?: string;
   dirty?: boolean;
   presentationModeEnabled?: boolean;
+  endpointService?: IEndpointService;
 }
 
 class Emulator extends React.Component<IEmulatorProps, {}> {
@@ -233,13 +236,27 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
       }
     });
 
+    const activeBot = getActiveBot();
+
+    const endpointService: IEndpointService = props.endpointService || activeBot && getFirstBotEndpoint(activeBot) || {};
+
+    // TODO: Don't append mode
     const conversationId = `${uniqueId()}|${props.mode}`;
+
+    let options = {
+      conversationId,
+      conversationMode: props.mode,
+      appId: endpointService.appId,
+      appPassword: endpointService.appPassword,
+      botId: endpointService.id,
+      botUrl: endpointService.endpoint
+    }
 
     if (props.document.directLine) {
       props.document.directLine.end();
     }
 
-    this.initConversation(props, conversationId, selectedActivity$, subscription)
+    this.initConversation(props, options, selectedActivity$, subscription)
 
     if (props.mode === 'transcript') {
       CommandService.remoteCall('conversation:new', props.mode, conversationId)
@@ -263,19 +280,21 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
     }
   }
 
-  initConversation(props, conversationId, selectedActivity$, subscription) {
+  initConversation(props, options, selectedActivity$, subscription) {
     const webChatStore = BotChat.createStore();
 
+    const encodedOptions = btoa(JSON.stringify(options));
+
     const directLine = new BotChat.DirectLine({
-      secret: conversationId,
-      token: conversationId,
+      secret: encodedOptions,
+      token: encodedOptions,
       domain: `${SettingsService.emulator.url}/v3/directline`,
       webSocket: false
     });
 
     props.dispatch(
       ChatActions.newConversation(props.documentId, {
-        conversationId,
+        conversationId: options.conversationId,
         webChatStore,
         directLine,
         selectedActivity$,

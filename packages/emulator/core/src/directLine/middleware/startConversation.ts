@@ -45,8 +45,21 @@ export default function startConversation(bot: Bot) {
 
     // TODO: We should not use token as conversation ID
     const tokenMatch = /Bearer\s+(.+)/.exec(auth);
-    const conversationId = (!tokenMatch || tokenMatch[1] === 'null') ? uniqueId() : tokenMatch[1];
+    let options;
+    if (!tokenMatch || tokenMatch[1] === 'null') {
+      options = {
+        conversationId: uniqueId()
+      }
+    } else {
+      const data = tokenMatch[1];
+      const buffer = new Buffer(data, 'base64');
+      const json = buffer.toString('utf8');
+      options = JSON.parse(json);
+    }
+
     const currentUser = bot.facilities.users.usersById(bot.facilities.users.currentUserId);
+
+    const conversationId = options.conversationId;
 
     logRequest(conversationId, 'user', req);
 

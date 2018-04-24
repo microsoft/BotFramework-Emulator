@@ -191,7 +191,7 @@ export default connect((state, ownProps) => ({
   primaryEditor: state.editor.editors[Constants.EditorKey_Primary],
   secondaryEditor: state.editor.editors[Constants.EditorKey_Secondary],
   showingExplorer: state.explorer.showing
-}), connectDispatchToProps)(Main);
+}), connectToProps)(Main);
 
 Main.propTypes = {
   primaryEditor: PropTypes.object,
