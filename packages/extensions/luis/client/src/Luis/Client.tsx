@@ -10,7 +10,7 @@ import { LuisResponse } from './LuisResponse';
 import * as LSCache from 'lscache';
 
 const DefaultVersion = '0.1';
-const TrainStatusRetryCount = 20;
+const TrainStatusRetryCount = 30;
 const WaitIntervalInMs = 500;
 const CacheTtlInMins = 30;
 const Unauthorized = 'Unauthorized';
