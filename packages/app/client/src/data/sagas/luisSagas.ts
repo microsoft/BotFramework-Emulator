@@ -1,35 +1,16 @@
-import { IBotConfig, ILuisService, ServiceType } from '@bfemulator/sdk-shared';
+import { ILuisService, ServiceType } from '@bfemulator/sdk-shared';
 import { ComponentClass } from 'react';
 import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
-import { LuisEditor } from '../../ui/shell/explorer/luisExplorer/luisEditor/luisEditor';
 import { CommandService } from '../../platform/commands/commandService';
 import { DialogService } from '../../ui/dialogs/service';
-import { setDirtyFlag } from '../action/editorActions';
-import {
-  LUIS_LAUNCH_MODELS_VIEWER,
-  LuisAuthAction,
-  luisAuthoringDataChanged,
-  LuisModelViewer
-} from '../action/luisAuthActions';
-import {
-  LuisServicePayload,
-  LuisServiceAction,
-  LuisEditorPayload,
-  LAUNCH_LUIS_EDITOR,
-  OPEN_LUIS_CONTEXT_MENU,
-  OPEN_LUIS_DEEP_LINK,
-  RETRIEVE_LUIS_MODELS
-} from '../action/luisServiceActions';
+import { LuisEditor } from '../../ui/shell/explorer/luisExplorer/luisEditor/luisEditor';
+import { LuisAuthAction, luisAuthoringDataChanged, LuisModelViewer } from '../action/luisAuthActions';
+import { LAUNCH_LUIS_EDITOR, LuisEditorPayload, LuisServiceAction, LuisServicePayload, OPEN_LUIS_CONTEXT_MENU, OPEN_LUIS_DEEP_LINK, RETRIEVE_LUIS_MODELS } from '../action/luisServiceActions';
 import { LuisApi, LuisModel } from '../http/luisApi';
 import { IRootState } from '../store';
 
 const getLuisAuthFromState = (state: IRootState) => state.luisAuth.luisAuthData;
 const isModalServiceBusy = (state: IRootState) => state.dialog.showing;
-const getActiveBot = (state: IRootState) => state.bot.activeBot;
-const getCurrentDocumentId = (state: IRootState) => {
-  const key = state.editor.activeEditor;
-  return state.editor.editors[key].activeDocumentId;
-};
 
 function* launchLuisModelsViewer(action: LuisAuthAction<LuisModelViewer>): IterableIterator<any> {
   let luisAuth = yield select(getLuisAuthFromState);
@@ -94,7 +75,7 @@ function* openLuisContextMenu(action: LuisServiceAction<LuisServicePayload>): It
 function* removeLuisServiceFromActiveBot(luisService: ILuisService): IterableIterator<any> {
   const result = yield CommandService.remoteCall('shell:show-message-box', true, {
     type: 'question',
-    buttons: ["Cancel", "OK"],
+    buttons: ['Cancel', 'OK'],
     defaultId: 1,
     message: `Remove LUIS service ${luisService.name}. Are you sure?`,
     cancelId: 0,
@@ -118,5 +99,4 @@ export function* luisSagas(): IterableIterator<ForkEffect> {
   yield takeEvery(RETRIEVE_LUIS_MODELS, retrieveLuisModels);
   yield takeEvery(OPEN_LUIS_DEEP_LINK, openLuisDeepLink);
   yield takeEvery(OPEN_LUIS_CONTEXT_MENU, openLuisContextMenu);
-
 }

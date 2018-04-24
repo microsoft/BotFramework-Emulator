@@ -36,7 +36,7 @@ export class QnaMakerExplorer extends ServicePane<QnaMakerProps> {
     super.onContextMenuOverLiElement(li);
     const { index } = li.dataset;
     const { [index]: qnaMakerService } = this.props.qnaMakerServices;
-    this.props.openContextMenu(qnaMakerService, QnaMakerEditorContainer);
+    this.props.openContextMenu(JSON.parse(JSON.stringify(qnaMakerService)), QnaMakerEditorContainer);
   }
 
   protected onAddIconClick = (event: SyntheticEvent<HTMLButtonElement>): void => {

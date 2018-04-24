@@ -2,47 +2,63 @@ import { ILuisService } from '@bfemulator/sdk-shared';
 import { Modal, ModalActions, ModalContent, PrimaryButton, TextInputField } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { Component, SyntheticEvent } from 'react';
+import { LuisService } from './luisService';
 
 interface LuisEditorProps {
   luisService: ILuisService,
   cancel: () => void,
-  updateLuisService: (updatedLuisService: ILuisService) => void;
+  updateService: (updatedLuisService: ILuisService) => void;
+}
+
+interface LuisEditorState {
+  luisService: ILuisService,
+  nameError: string;
+  appIdError: string;
+  authoringKeyError: string;
+  versionError: string;
+  subscriptionKeyError: string;
+  isDirty: boolean
 }
 
 const title = 'Connect to a Luis Application';
 const detailedDescription = 'You can connect your bot to a Luis.ai application';
 const modalCssOverrides = {
   width: '400px',
-  height: '500px'
+  height: '525px'
 };
 
-export class LuisEditor extends Component<LuisEditorProps, ILuisService> {
+export class LuisEditor extends Component<LuisEditorProps, LuisEditorState> {
 
-  public state: ILuisService = {} as ILuisService;
+  public state: LuisEditorState = {} as LuisEditorState;
 
   constructor(props, state) {
     super(props, state);
-    this.state = props.luisService;
+    const luisService = new LuisService(props.luisService);
+    this.state = { luisService, nameError: '', appIdError: '', authoringKeyError: '', versionError: '', subscriptionKeyError: '', isDirty: false };
   }
 
   public componentWillReceiveProps(nextProps: Readonly<LuisEditorProps>): void {
-    this.setState({ ...nextProps.luisService });
+    const luisService = new LuisService(nextProps.luisService);
+    this.setState({ luisService });
   }
 
   public render(): JSX.Element {
-    const { name, appId, authoringKey, subscriptionKey, version } = this.state;
+    const { onCancelClick, onInputChange, onSubmitClick } = this;
+    const { luisService, nameError, appIdError, authoringKeyError, versionError, subscriptionKeyError, isDirty } = this.state;
+    const { name = '', appId = '', authoringKey = '', subscriptionKey = '', version = '' } = luisService;
+    const valid = !nameError && !appIdError && !authoringKeyError && !versionError && !subscriptionKeyError;
     return (
-      <Modal cssOverrides={modalCssOverrides} title={title} detailedDescription={detailedDescription} cancel={this.onCancelClick}>
+      <Modal cssOverrides={ modalCssOverrides } title={ title } detailedDescription={ detailedDescription } cancel={ onCancelClick }>
         <ModalContent>
-          <TextInputField value={name} onChange={this.onInputChange} label="Name" required={true} inputAttributes={{ 'data-propName': 'name' }} />
-          <TextInputField value={appId} onChange={this.onInputChange} label="Application Id" required={true} inputAttributes={{ 'data-propName': 'appId' }} />
-          <TextInputField value={authoringKey} onChange={this.onInputChange} label="Authoring key" required={true} inputAttributes={{ 'data-propName': 'authoringKey' }} />
-          <TextInputField value={version} onChange={this.onInputChange} label="Version" required={true} inputAttributes={{ 'data-propName': 'version' }} />
-          <TextInputField value={subscriptionKey} onChange={this.onInputChange} label="Subscription key" required={false} inputAttributes={{ 'data-propName': 'subscriptionKey' }} />
+          <TextInputField error={ nameError } value={ name } onChange={ onInputChange } label="Name" required={ true } inputAttributes={ { 'data-propname': 'name' } }/>
+          <TextInputField error={ appIdError } value={ appId } onChange={ onInputChange } label="Application Id" required={ true } inputAttributes={ { 'data-propname': 'appId' } }/>
+          <TextInputField error={ authoringKeyError } value={ authoringKey } onChange={ onInputChange } label="Authoring key" required={ true } inputAttributes={ { 'data-propname': 'authoringKey' } }/>
+          <TextInputField error={ versionError } value={ version } onChange={ onInputChange } label="Version" required={ true } inputAttributes={ { 'data-propname': 'version' } }/>
+          <TextInputField error={ subscriptionKeyError } value={ subscriptionKey } onChange={ onInputChange } label="Subscription key" required={ false } inputAttributes={ { 'data-propname': 'subscriptionKey' } }/>
         </ModalContent>
         <ModalActions>
-          <PrimaryButton text="Cancel" secondary={true} onClick={this.onCancelClick} />
-          <PrimaryButton text="Submit" onClick={this.onSubmitClick} />
+          <PrimaryButton text="Cancel" secondary={ true } onClick={ onCancelClick }/>
+          <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ onSubmitClick }/>
         </ModalActions>
       </Modal>
     );
@@ -53,14 +69,22 @@ export class LuisEditor extends Component<LuisEditorProps, ILuisService> {
   };
 
   private onSubmitClick = (event: SyntheticEvent<HTMLButtonElement>): void => {
-    // appId value should be used as id
-    const state = { ...this.state, id: this.state.appId };
-    this.props.updateLuisService(state);
+    this.props.updateService(this.state.luisService);
   };
 
   private onInputChange = (event: SyntheticEvent<HTMLInputElement>): void => {
     const { currentTarget: input } = event;
-    const propName = input.getAttribute('data-propName');
-    this.setState({ [propName as any]: input.value });
+    const { required, value } = input;
+    const trimmedValue = value.trim();
+
+    const { luisService: originalLuisService } = this.props;
+    const propName = input.getAttribute('data-propname');
+    const errorMessage = ( required && !trimmedValue ) ? `The field cannot be empty` : '';
+
+    const { luisService } = this.state;
+    luisService[propName] = input.value;
+
+    const isDirty = Object.keys(luisService).reduce((isDirty, key) => ( isDirty || luisService[key] !== originalLuisService[key] ), false);
+    this.setState({ luisService, [`${propName}Error`]: errorMessage, isDirty } as any);
   };
 }

@@ -17,67 +17,39 @@ const CSS = css({
   },
 
   '& > input': {
+    transition: 'border .2s, ease-out',
     height: '22px',
     padding: '4px 8px',
     boxSizing: 'border-box',
-    width: '100%'
+    border: '1px solid transparent',
+    width: '100%',
+    '&[aria-invalid="true"]': {
+      border: `1px solid ${Colors.C15}`
+    }
   },
 
   '& > .text-input-label': {
     fontSize: '12px',
     height: '16px',
     lineHeight: '16px',
-    marginBottom: '8px'
+    marginBottom: '12px'
   },
 
-  '& > .text-input-err': {
+  '& .error': {
+    color: Colors.C15,
+  },
+
+  '& > .required::after': {
+    content: '*',
+    color: Colors.C15,
+    paddingLeft: '3px'
+  },
+
+  '> sub': {
+    transition: 'opacity .2s, ease-out',
+    opacity: '0',
     position: 'absolute',
-    left: '8px',
-    bottom: '4px',
-    lineHeight: '16px',
-    height: '24px',
-    color: Colors.INPUT_ERR_FOREGROUND_DARK,
-    opacity: 0,
-    pointerEvents: 'none',
-    transition: 'all 0.5s ease-in-out',
-
-    '&.error-showing': {
-      opacity: 1
-    },
-
-    '& > .text-input-err-caret': {
-      display: 'inline-block',
-      position: 'absolute',
-      top: '-4px',
-      left: '20px',
-      width: '8px',
-      height: '8px',
-      backgroundColor: Colors.INPUT_ERR_BACKGROUND_DARK,
-      transform: 'rotateZ(45deg)'
-    },
-
-    '& > .text-input-err-msg': {
-      display: 'inline-block',
-      backgroundColor: Colors.INPUT_ERR_BACKGROUND_DARK,
-      padding: '4px 8px',
-      borderRadius: '4px',
-
-      '& > span': {
-        display: 'inline-block',
-        height: '16px',
-        width: '16px',
-        marginRight: '4px',
-        borderRadius: '16px',
-        backgroundColor: Colors.INPUT_ERR_FOREGROUND_DARK,
-        textAlign: 'center',
-
-        '&:after': {
-          height: '16px',
-          content: '!',
-          color: Colors.INPUT_ERR_BACKGROUND_DARK,
-        }
-      }
-    }
+    bottom: '6px'
   }
 });
 
@@ -103,18 +75,49 @@ export class TextInputField extends React.Component<TextInputFieldProps, {}> {
     super(props, context);
   }
 
-  render(): JSX.Element {
+  protected get labelElement(): JSX.Element {
+    const { label, required, error } = this.props;
+    if (!label) {
+      return null;
+    }
+    let className = 'text-input-label';
+    if (required) {
+      className += ' required';
+    }
+    if (error) {
+      className += ' error';
+    }
+    return ( <TruncateText className={ className }>{ label }</TruncateText> );
+  }
+
+  public render(): JSX.Element {
+    const {
+      inputClass = '',
+      className = '',
+      required = false,
+      disabled = false,
+      type = 'text',
+      value = '',
+      readOnly = false,
+      error = '',
+      inputAttributes = {},
+      placeholder = '',
+      onChange
+    } = this.props;
+
     return (
-      <div className={ 'text-input-comp ' + ( this.props.className || '' ) } { ...CSS }>
-        { this.props.label ? <TruncateText
-          className="text-input-label">{ this.props.label }{ this.props.required ? '*' : '' }</TruncateText> : null }
-        <input type={ this.props.type || 'text' } className={ this.props.inputClass || '' } value={ this.props.value }
-               onChange={ this.props.onChange } disabled={ this.props.disabled }
-               placeholder={ this.props.placeholder } readOnly={ this.props.readOnly } required={ this.props.required } { ...this.props.inputAttributes }/>
-        <div className={ 'text-input-err ' + ( this.props.error ? 'error-showing' : '' ) }>
-          <span className="text-input-err-caret"></span>
-          <span className="text-input-err-msg"><span></span>{ this.props.error }</span>
-        </div>
+      <div className={ 'text-input-comp ' + className } { ...CSS }>
+        { this.labelElement }
+        <input aria-invalid={ !!error }
+               type={ type }
+               className={ inputClass }
+               value={ value }
+               onChange={ onChange }
+               disabled={ disabled }
+               placeholder={ placeholder }
+               readOnly={ readOnly }
+               required={ required } { ...inputAttributes }/>
+        <sub style={ { opacity: +( !!error ) } } className="error">{ error }</sub>
       </div>
     );
   }

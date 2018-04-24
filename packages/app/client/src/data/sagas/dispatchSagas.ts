@@ -1,26 +1,10 @@
-import { IBotConfig, IDispatchService, ServiceType } from '@bfemulator/sdk-shared';
+import { IDispatchService, ServiceType } from '@bfemulator/sdk-shared';
 import { ComponentClass } from 'react';
-import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
-import { DispatchEditor } from '../../ui/shell/explorer/dispatchExplorer/dispatchEditor/dispatchEditor';
+import { call, ForkEffect, takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandService } from '../../platform/commands/commandService';
 import { DialogService } from '../../ui/dialogs/service';
-import { setDirtyFlag } from '../action/editorActions';
-import {
-  DispatchServicePayload,
-  DispatchServiceAction,
-  DispatchEditorPayload,
-  LAUNCH_DISPATCH_EDITOR,
-  OPEN_DISPATCH_CONTEXT_MENU,
-  OPEN_DISPATCH_DEEP_LINK,
-  RETRIEVE_DISPATCH_MODELS
-} from '../action/dispatchServiceActions';
-import { IRootState } from '../store';
-
-const getActiveBot = (state: IRootState) => state.bot.activeBot;
-const getCurrentDocumentId = (state: IRootState) => {
-  const key = state.editor.activeEditor;
-  return state.editor.editors[key].activeDocumentId;
-};
+import { DispatchEditor } from '../../ui/shell/explorer/dispatchExplorer/dispatchEditor/dispatchEditor';
+import { DispatchEditorPayload, DispatchServiceAction, DispatchServicePayload, LAUNCH_DISPATCH_EDITOR, OPEN_DISPATCH_CONTEXT_MENU, OPEN_DISPATCH_DEEP_LINK } from '../action/dispatchServiceActions';
 
 function* openDispatchDeepLink(action: DispatchServiceAction<DispatchServicePayload>): IterableIterator<any> {
   const { appId, version } = action.payload.dispatchService;
@@ -56,7 +40,7 @@ function* openDispatchContextMenu(action: DispatchServiceAction<DispatchServiceP
 function* removeDispatchServiceFromActiveBot(dispatchService: IDispatchService): IterableIterator<any> {
   const result = yield CommandService.remoteCall('shell:show-message-box', true, {
     type: 'question',
-    buttons: ["Cancel", "OK"],
+    buttons: ['Cancel', 'OK'],
     defaultId: 1,
     message: `Remove Dispatch service ${dispatchService.name}. Are you sure?`,
     cancelId: 0,

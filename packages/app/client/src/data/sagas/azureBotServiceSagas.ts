@@ -1,18 +1,10 @@
-import { IBotConfig, IAzureBotService, ServiceType } from '@bfemulator/sdk-shared';
+import { IAzureBotService, ServiceType } from '@bfemulator/sdk-shared';
 import { ComponentClass } from 'react';
-import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
+import { call, ForkEffect, takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandService } from '../../platform/commands/commandService';
 import { DialogService } from '../../ui/dialogs/service';
 import { AzureBotServiceEditor } from '../../ui/shell/explorer/azureBotServiceExplorer/azureBotServiceEditor/azureBotServiceEditor';
-import { setDirtyFlag } from '../action/editorActions';
-import { LAUNCH_AZURE_BOT_SERVICE_EDITOR, OPEN_AZURE_BOT_SERVICE_CONTEXT_MENU, OPEN_AZURE_BOT_SERVICE_DEEP_LINK, AzureBotServiceEditorPayload, AzureBotServiceAction, AzureBotServicePayload } from '../action/azureBotServiceActions';
-import { IRootState } from '../store';
-
-const getActiveBot = (state: IRootState) => state.bot.activeBot;
-const getCurrentDocumentId = (state: IRootState) => {
-  const key = state.editor.activeEditor;
-  return state.editor.editors[key].activeDocumentId;
-};
+import { AzureBotServiceAction, AzureBotServiceEditorPayload, AzureBotServicePayload, LAUNCH_AZURE_BOT_SERVICE_EDITOR, OPEN_AZURE_BOT_SERVICE_CONTEXT_MENU, OPEN_AZURE_BOT_SERVICE_DEEP_LINK } from '../action/azureBotServiceActions';
 
 function* launchAzureBotServiceEditor(action: AzureBotServiceAction<AzureBotServiceEditorPayload>): IterableIterator<any> {
   const { azureBotServiceEditorComponent, azureBotService = {} } = action.payload;

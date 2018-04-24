@@ -1,18 +1,11 @@
-import { IBotConfig, IEndpointService, ServiceType } from '@bfemulator/sdk-shared';
+import { IEndpointService, ServiceType } from '@bfemulator/sdk-shared';
 import { ComponentClass } from 'react';
-import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
+import { call, ForkEffect, takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandService } from '../../platform/commands/commandService';
 import { DialogService } from '../../ui/dialogs/service';
 import { EndpointEditor } from '../../ui/shell/explorer/endpointExplorer/endpointEditor/endpointEditor';
-import { setDirtyFlag } from '../action/editorActions';
-import { LAUNCH_ENDPOINT_EDITOR, OPEN_ENDPOINT_CONTEXT_MENU, OPEN_ENDPOINT_DEEP_LINK, EndpointEditorPayload, EndpointServiceAction, EndpointServicePayload } from '../action/endpointServiceActions';
-import { IRootState } from '../store';
+import { EndpointEditorPayload, EndpointServiceAction, EndpointServicePayload, LAUNCH_ENDPOINT_EDITOR, OPEN_ENDPOINT_CONTEXT_MENU, OPEN_ENDPOINT_DEEP_LINK } from '../action/endpointServiceActions';
 
-const getActiveBot = (state: IRootState) => state.bot.activeBot;
-const getCurrentDocumentId = (state: IRootState) => {
-  const key = state.editor.activeEditor;
-  return state.editor.editors[key].activeDocumentId;
-};
 
 function* launchEndpointEditor(action: EndpointServiceAction<EndpointEditorPayload>): IterableIterator<any> {
   const { endpointEditorComponent, endpointService = {} } = action.payload;
@@ -58,7 +51,7 @@ function* openEndpointDeepLink(action: EndpointServiceAction<EndpointServicePayl
 function* removeEndpointServiceFromActiveBot(endpointService: IEndpointService): IterableIterator<any> {
   const result = yield CommandService.remoteCall('shell:show-message-box', true, {
     type: 'question',
-    buttons: ["Cancel", "OK"],
+    buttons: ['Cancel', 'OK'],
     defaultId: 1,
     message: `Remove endpoint ${endpointService.name}. Are you sure?`,
     cancelId: 0,

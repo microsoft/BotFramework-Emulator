@@ -1,18 +1,10 @@
-import { IBotConfig, IQnAService, ServiceType } from '@bfemulator/sdk-shared';
+import { IQnAService, ServiceType } from '@bfemulator/sdk-shared';
 import { ComponentClass } from 'react';
-import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
+import { call, ForkEffect, takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandService } from '../../platform/commands/commandService';
 import { DialogService } from '../../ui/dialogs/service';
 import { QnaMakerEditor } from '../../ui/shell/explorer/qnaMakerExplorer/qnaMakerEditor/qnaMakerEditor';
-import { setDirtyFlag } from '../action/editorActions';
 import { LAUNCH_QNA_MAKER_EDITOR, OPEN_QNA_MAKER_CONTEXT_MENU, OPEN_QNA_MAKER_DEEP_LINK, QnaMakerEditorPayload, QnaMakerServiceAction, QnaMakerServicePayload } from '../action/qnaMakerServiceActions';
-import { IRootState } from '../store';
-
-const getActiveBot = (state: IRootState) => state.bot.activeBot;
-const getCurrentDocumentId = (state: IRootState) => {
-  const key = state.editor.activeEditor;
-  return state.editor.editors[key].activeDocumentId;
-};
 
 function* launchQnaMakerEditor(action: QnaMakerServiceAction<QnaMakerEditorPayload>): IterableIterator<any> {
   const { qnaMakerEditorComponent, qnaMakerService = {} } = action.payload;
@@ -56,7 +48,7 @@ function* openQnaMakerDeepLink(action: QnaMakerServiceAction<QnaMakerServicePayl
 function* removeQnaMakerServiceFromActiveBot(qnaService: IQnAService): IterableIterator<any> {
   const result = yield CommandService.remoteCall('shell:show-message-box', true, {
     type: 'question',
-    buttons: ["Cancel", "OK"],
+    buttons: ['Cancel', 'OK'],
     defaultId: 1,
     message: `Remove QnA service ${qnaService.name}. Are you sure?`,
     cancelId: 0,

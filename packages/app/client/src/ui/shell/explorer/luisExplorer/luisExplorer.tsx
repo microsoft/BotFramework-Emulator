@@ -36,7 +36,7 @@ export class LuisExplorer extends ServicePane<LuisProps> {
     super.onContextMenuOverLiElement(li);
     const { index } = li.dataset;
     const { [index]: luisService } = this.props.luisServices;
-    this.props.openContextMenu(luisService, LuisEditorContainer);
+    this.props.openContextMenu(JSON.parse(JSON.stringify(luisService)), LuisEditorContainer);
   }
 
   protected onAddIconClick = (event: SyntheticEvent<HTMLButtonElement>): void => {

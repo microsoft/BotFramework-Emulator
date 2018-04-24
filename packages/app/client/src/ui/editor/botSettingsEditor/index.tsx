@@ -93,33 +93,33 @@ class BotSettingsEditor extends React.Component<IBotSettingsEditorProps, IBotSet
     const endpoint: IEndpointService = { ...this.state.endpoint, endpoint: e.target.value, name: e.target.value };
     this.setState({ endpoint });
     this.setDirtyFlag(true);
-  }
+  };
 
   private onChangeAppId = (e) => {
     const endpoint: IEndpointService = { ...this.state.endpoint, appId: e.target.value };
     this.setState({ endpoint });
     this.setDirtyFlag(true);
-  }
+  };
 
   private onChangeAppPw = (e) => {
     const endpoint: IEndpointService = { ...this.state.endpoint, appPassword: e.target.value };
     this.setState({ endpoint });
     this.setDirtyFlag(true);
-  }
+  };
 
   private onChangeName = (e) => {
     const bot: IBotConfig = { ...this.state.bot, name: e.target.value };
     this.setState({ bot });
     this.setDirtyFlag(true);
-  }
+  };
 
   private onChangeSecret = (e) => {
     this.setState({ secret: e.target.value });
     this.setDirtyFlag(true);
-  }
+  };
 
   private onSave = async (e) => {
-    const { appId, appPassword, endpoint, type, name, id } = this.state.endpoint;
+    const { appId = '', appPassword = '', endpoint = '', type = '', name = '', id = '' } = this.state.endpoint;
     const endpointService: IEndpointService = {
       appId: appId.trim(),
       appPassword: appPassword.trim(),
@@ -129,7 +129,7 @@ class BotSettingsEditor extends React.Component<IBotSettingsEditorProps, IBotSet
       id: id.trim()
     };
 
-    const { name: botName, description } = this.state.bot;
+    const { name: botName = '', description = '' } = this.state.bot;
     const bot: IBotConfig = {
       name: botName.trim(),
       description: description.trim(),

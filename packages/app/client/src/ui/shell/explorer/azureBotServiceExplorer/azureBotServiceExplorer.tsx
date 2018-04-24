@@ -2,7 +2,7 @@ import { IQnAService } from '@bfemulator/sdk-shared';
 import * as React from 'react';
 import { ComponentClass, MouseEventHandler, SyntheticEvent } from 'react';
 import { ServicePane, ServicePaneProps } from '../servicePane';
-import { AzureBotServiceEditorContainer } from './azureBotServiceEditor/azureBotServiceEditorContainer';
+import { AzureBotServiceEditorContainer } from './azureBotServiceEditor';
 
 export interface AzureBotServiceProps extends ServicePaneProps {
   azureBotServiceServices?: IQnAService[];
