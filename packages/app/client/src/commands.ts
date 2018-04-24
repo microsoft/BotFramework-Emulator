@@ -176,4 +176,9 @@ export function registerCommands() {
     CommandService.remoteCall('menu:update-recent-bots');
     CommandService.remoteCall('electron:set-title-bar', getBotDisplayName(bot));
   });
+
+  //---------------------------------------------------------------------------
+  CommandRegistry.registerCommand('shell:toggle-inspector-devtools', () => {
+    window.dispatchEvent(new Event('toggle-inspector-devtools'));
+  });
 }

@@ -308,7 +308,7 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
 
   handleExportClick() {
     if (this.props.document.directLine) {
-      CommandService.remoteCall('emulator:save-transcript-to-file', this.props.document.directLine.token);
+      CommandService.remoteCall('emulator:save-transcript-to-file', this.props.document.directLine.conversationId);
     }
   }
 

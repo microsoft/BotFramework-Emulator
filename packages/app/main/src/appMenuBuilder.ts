@@ -224,6 +224,10 @@ export const AppMenuBuilder = new class AppMenuBuilder implements IAppMenuBuilde
         },
         { type: 'separator' },
         { role: 'toggledevtools' },
+        {
+          label: "Toggle Developer Tools (Inspector)",
+          click: () => mainWindow.commandService.remoteCall('shell:toggle-inspector-devtools')
+        }
       ]
     };
   }

@@ -39,6 +39,14 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     };
   }
   
+  componentDidMount() {
+    window.addEventListener('toggle-inspector-devtools', () => this.toggleDevTools());
+  }
+  
+  componentWillUnmount() {
+    window.removeEventListener('toggle-inspector-devtools', () => this.toggleDevTools());    
+  }
+  
   hash(obj: object): string {
     const md5 = crypto.createHash('md5');
     md5.update(JSON.stringify(obj));

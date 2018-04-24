@@ -93,20 +93,6 @@ interface GetInspectorResult {
   inspectObj: any;
 }
 
-const DevTools: AccessoryButton = {
-  config: {
-    id: "__devtools",
-    states: {
-      "default": {
-        label: "DevTools",
-        icon: ""
-      }
-    }
-  },
-  state: "default",
-  enabled: true
-}
-
 class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
 
   detailRef: any;
@@ -242,7 +228,6 @@ class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
     return (
       <PanelControls>
         { this.state.buttons.map(a => this.renderAccessoryButton(a, this.onAccessoryClick)) }
-        { this.renderAccessoryButton(DevTools, this.onToggleDevToolsClick) }
       </PanelControls>
     );
   }
