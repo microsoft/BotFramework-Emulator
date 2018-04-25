@@ -7,11 +7,18 @@ import { SettingsService } from '../../../../platform/settings/settingsService';
 import { Extension, InspectorAPI } from '../../../../extensions';
 import { IBotConfig, IExtensionInspector } from '@bfemulator/sdk-shared';
 import { getActiveBot } from '../../../../data/botHelpers';
+import { LogService } from '../../../../platform/log/logService';
+import { ILogEntry, LogLevel, safeStringify } from '@bfemulator/app-shared';
 
 const CSS = css({
   width: '100%',
   height: '100%'
 });
+
+interface IpcMessageEvent extends Event {
+  channel: string;
+  args: any[];
+}
 
 interface InspectorProps {
   bot: IBotConfig;
@@ -26,6 +33,7 @@ interface InspectorProps {
 
 interface InspectorState {
   botHash: string;
+  titleOverride?: string;
 }
 
 export class Inspector extends React.Component<InspectorProps, InspectorState> {
@@ -38,15 +46,15 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
       botHash: this.hash(getActiveBot())
     };
   }
-  
+
   componentDidMount() {
     window.addEventListener('toggle-inspector-devtools', () => this.toggleDevTools());
   }
-  
+
   componentWillUnmount() {
-    window.removeEventListener('toggle-inspector-devtools', () => this.toggleDevTools());    
+    window.removeEventListener('toggle-inspector-devtools', () => this.toggleDevTools());
   }
-  
+
   hash(obj: object): string {
     const md5 = crypto.createHash('md5');
     md5.update(JSON.stringify(obj));
@@ -54,54 +62,90 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   }
 
   toggleDevTools() {
-    if (this.ref) {
-      this.ref.send('toggle-dev-tools');
-    }
+    this.sendToInspector('toggle-dev-tools');
   }
 
   accessoryClick(id: string) {
-    if (this.ref) {
-      this.ref.send('accessory-click', id);
-    }
+    this.sendToInspector('accessory-click', id);
   }
 
   canInspect(inspectObj: any): boolean {
     return this.props.inspector.name === 'JSON' || InspectorAPI.canInspect(this.props.inspector, inspectObj);
   }
 
+  domReadyEventHandler = (ev) => {
+    this.botUpdated(getActiveBot());
+    this.inspect(this.props.inspectObj);
+  }
+
+  ipcMessageEventHandler = (ev: IpcMessageEvent): void => {
+    if (ev.channel === 'enable-accessory') {
+      this.props.enableAccessory(ev.args[0], ev.args[1]);
+    } else if (ev.channel === 'set-accessory-state') {
+      this.props.setAccessoryState(ev.args[0], ev.args[1]);
+    } else if (ev.channel === 'set-inspector-title') {
+      this.setState({
+        ...this.state,
+        titleOverride: ev.args[0]
+      });
+      this.props.setInspectorTitle(ev.args[0]);
+    } else if (ev.channel === 'logger.log') {
+      const inspectorName = this.state.titleOverride || this.props.inspector.name || "inspector";
+      LogService.logToDocument(this.props.document.documentId, {
+        timestamp: Date.now(),
+        category: "inspector",
+        level: LogLevel.Info,
+        messages: [`[${inspectorName}]`, ev.args[0]]
+      } as ILogEntry);
+    } else if (ev.channel === 'logger.error') {
+      const inspectorName = this.state.titleOverride || this.props.inspector.name || "inspector";
+      LogService.logToDocument(this.props.document.documentId, {
+        timestamp: Date.now(),
+        category: "inspector",
+        level: LogLevel.Error,
+        messages: [`[${inspectorName}]`, ev.args[0]]
+      } as ILogEntry);
+    } else {
+      console.warn("Unexpected message from inspector", ev.channel, ...ev.args);
+    }
+  }
+
   updateRef = (ref) => {
+    if (this.ref) {
+      this.ref.removeEventListener('dom-ready', ev => this.domReadyEventHandler(ev));
+      this.ref.removeEventListener('ipc-message', ev => this.ipcMessageEventHandler(ev));
+    }
     this.ref = ref;
-    if (ref) {
-      this.ref.addEventListener('dom-ready', ev => {
-        this.botUpdated(getActiveBot());
-        this.inspect(this.props.inspectObj);
-      });
-      this.ref.addEventListener('ipc-message', ev => {
-        if (ev.channel === 'enable-accessory') {
-          this.props.enableAccessory(ev.args[0], ev.args[1]);
-        } else if (ev.channel === 'set-accessory-state') {
-          this.props.setAccessoryState(ev.args[0], ev.args[1]);
-        } else if (ev.channel === 'set-inspector-title') {
-          this.props.setInspectorTitle(ev.args[0]);
-        } else {
-          console.warn("Unexpected message from inspector", ev.channel, ...ev.args);
-        }
-      });
+    if (this.ref) {
+      this.ref.addEventListener('dom-ready', ev => this.domReadyEventHandler(ev));
+      this.ref.addEventListener('ipc-message', ev => this.ipcMessageEventHandler(ev));
     }
   }
 
   inspect(obj: any) {
-    if (this.ref && this.canInspect(obj)) {
-      this.ref.send('inspect', obj);
+    if (this.canInspect(obj)) {
+      this.sendToInspector('inspect', obj);
     }
   }
-  
+
   botUpdated(bot: IBotConfig) {
+    this.sendToInspector('bot-updated', bot);
+  }
+
+  sendToInspector(channel, ...args) {
     if (this.ref) {
-      this.ref.send('bot-updated', bot);
+      try {
+        this.ref.send(channel, ...args);
+      } catch (e) {
+        console.error(e);
+      }
     }
   }
-  
+
+  shouldComponentUpdate(nextProps: InspectorProps): boolean {
+    return this.props.inspectObj !== nextProps.inspectObj;
+  }
+
   componentDidUpdate(prevProps: InspectorProps, prevState: any, prevContext: any): void {
     const botHash = this.hash(getActiveBot());
     if (botHash != this.state.botHash) {

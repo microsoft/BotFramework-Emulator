@@ -18,7 +18,11 @@ export const LogService = new class extends Disposable implements ILogService {
   logToChat(conversationId: string, entry: ILogEntry): void {
     const documentId = chatHelpers.documentIdForConversation(conversationId);
     if (documentId) {
-      store.dispatch(ChatActions.appendToLog(documentId, entry));
+      LogService.logToDocument(documentId,entry);
     }
+  }
+
+  logToDocument(documentId: string, entry: ILogEntry): void {
+    store.dispatch(ChatActions.appendToLog(documentId, entry));
   }
 }
