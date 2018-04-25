@@ -50,6 +50,7 @@ import * as squirrel from './squirrelEvents';
 import * as Commands from './commands';
 import { getBotInfoById } from './botHelpers';
 import { AppMenuBuilder } from './appMenuBuilder';
+import { AppUpdater } from './appUpdater';
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
   console.error(error);
@@ -58,6 +59,7 @@ import { AppMenuBuilder } from './appMenuBuilder';
 
 export let mainWindow: Window;
 export let windowManager: WindowManager;
+export let appUpdater = new AppUpdater();
 
 var openUrls = [];
 var onOpenUrl = function (event, url) {
@@ -170,6 +172,9 @@ const createMainWindow = async () => {
 
   mainWindow.browserWindow.setTitle(app.getName());
   windowManager = new WindowManager();
+  
+  // Start auto-updater
+  appUpdater.startup(mainWindow.browserWindow);
 
   const template: Electron.MenuItemConstructorOptions[] = AppMenuBuilder.getAppMenuTemplate();
 
@@ -255,8 +260,8 @@ Electron.app.on('ready', function () {
   if (!mainWindow) {
     if (process.argv.find(val => val.includes('--vscode-debugger'))) {
       // workaround for delay in vscode debugger attach
-      //setTimeout(createMainWindow, 5000);
-      createMainWindow();
+      setTimeout(createMainWindow, 5000);
+      //createMainWindow();
     } else {
       createMainWindow();
     }

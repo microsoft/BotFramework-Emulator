@@ -223,6 +223,20 @@ export const AppMenuBuilder = new class AppMenuBuilder implements IAppMenuBuilde
           click: () => mainWindow.commandService.remoteCall('welcome-page:show')
         },
         { type: 'separator' },
+        {
+          label: 'Privacy',
+          click: () => mainWindow.commandService.remoteCall('shell:open-external-link', 'https://go.microsoft.com/fwlink/?LinkId=512132')
+        },
+        {
+          label: 'Credits',
+          click: () => mainWindow.commandService.remoteCall('shell:open-external-link', 'https://aka.ms/l7si1g')
+        },
+        { type: 'separator' },
+        {
+          label: "Report an issue",
+          click: () => mainWindow.commandService.remoteCall('shell:open-external-link', 'https://aka.ms/cy106f')
+        },
+        { type: 'separator' },
         { role: 'toggledevtools' },
         {
           label: "Toggle Developer Tools (Inspector)",

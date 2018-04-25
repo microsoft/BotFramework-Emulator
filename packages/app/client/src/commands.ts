@@ -160,10 +160,12 @@ export function registerCommands() {
       .catch(err => console.error(err));
   });
 
+  //---------------------------------------------------------------------------
   CommandRegistry.registerCommand('file:add', (payload) => {
     store.dispatch(FileActions.addFile(payload));
   });
 
+  //---------------------------------------------------------------------------
   CommandRegistry.registerCommand('file:remove', (path) => {
     store.dispatch(FileActions.removeFile(path));
   });
@@ -178,7 +180,20 @@ export function registerCommands() {
   });
 
   //---------------------------------------------------------------------------
+  // Toggle inspector dev tools for all open inspectors
   CommandRegistry.registerCommand('shell:toggle-inspector-devtools', () => {
     window.dispatchEvent(new Event('toggle-inspector-devtools'));
+  });
+  
+  //---------------------------------------------------------------------------
+  // Notify the user an update is ready to install
+  CommandRegistry.registerCommand('shell:update-downloaded', () => {
+    // TODO: Set a flag in redux state
+  });
+  
+  //---------------------------------------------------------------------------
+  // Open the link in the default browser
+  CommandRegistry.registerCommand('shell:open-external-link', (url: string) => {
+    window.open(url);
   });
 }

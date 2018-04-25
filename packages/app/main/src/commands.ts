@@ -13,7 +13,7 @@ import { Protocol } from './constants';
 import * as BotActions from './data-v2/action/bot';
 import { emulator } from './emulator';
 import { ExtensionManager } from './extensions';
-import { mainWindow } from './main';
+import { mainWindow, appUpdater } from './main';
 import { ProtocolHandler } from './protocolHandler';
 import { ContextMenuService } from './services/contextMenuService';
 import { LuisAuthWorkflowService } from './services/luisAuthWorkflowService';
@@ -453,4 +453,9 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Opens an external link
   CommandRegistry.registerCommand('electron:openExternal', shell.openExternal.bind(shell));
+
+  //---------------------------------------------------------------------------
+  CommandRegistry.registerCommand('shell:quit-and-install-update', () => {
+    appUpdater.quitAndInstall();
+  });
 }
