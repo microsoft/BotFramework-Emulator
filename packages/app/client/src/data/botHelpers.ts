@@ -6,7 +6,12 @@ export function getActiveBot(): IBotConfig {
   return store.getState().bot.activeBot;
 }
 
-export function getBotInfoById(id: string): IBotInfo {
+export function getBotInfoByPath(path: string): IBotInfo {
   const state = store.getState();
-  return state.bot.botFiles.find(bot => bot && bot.id === id);
+  return state.bot.botFiles.find(bot => bot && bot.path === path);
+}
+
+export function pathExistsInRecentBots(path: string): boolean {
+  const state = store.getState();
+  return state.bot.botFiles.some(bot => bot && bot.path === path);
 }

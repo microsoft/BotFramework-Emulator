@@ -45,8 +45,6 @@ export interface IBot {
 export interface IBotInfo {
   /** Path to corresponding .bot file */
   path?: string;
-  /** GUID (so IBotConfig and IBotInfo can be compared w/o need to perform a file read on IBotInfo.path) */
-  id?: string;
   /** Display name of bot */
   displayName?: string;
   /** Bot secret used to encrypt / decrypt sensitive service info */

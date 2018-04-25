@@ -1,11 +1,11 @@
 
-import { FileInfo, getBotId } from '@bfemulator/app-shared';
+import { FileInfo } from '@bfemulator/app-shared';
 import { callbackToPromise } from '@fuselab/ui-shared/lib/asyncUtils';
 import { FSWatcher, Stats, exists, readFile } from 'fs';
 import * as Path from 'path';
 import * as Chokidar from 'chokidar';
 import { mainWindow } from './main';
-import { loadBotWithRetry, getActiveBot, getBotInfoById } from './botHelpers';
+import { loadBotWithRetry, getActiveBot, getBotInfoByPath } from './botHelpers';
 import * as BotActions from './data-v2/action/bot';
 
 interface IFileWatcher {
@@ -107,9 +107,8 @@ export const BotProjectFileWatcher = new class FileWatcher implements IFileWatch
     if (file === this._botFilePath) {
       // the bot file changed, we should load it and push it to the store
       const activeBot = getActiveBot();
-      const botId = getBotId(activeBot);
-      if (botId) {
-        const botInfo = getBotInfoById(botId) || {};
+      if (activeBot) {
+        const botInfo = getBotInfoByPath(this._botFilePath) || {};
         const bot = await loadBotWithRetry(this._botFilePath, botInfo.secret);
         if (!bot)
           // user dismissed the secret prompt dialog (if it was shown)

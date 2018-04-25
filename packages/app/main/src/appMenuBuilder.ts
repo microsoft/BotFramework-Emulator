@@ -1,7 +1,7 @@
 import * as Electron from 'electron';
 
 import { mainWindow, appUpdater } from './main';
-import { IBotInfo, getBotId } from '@bfemulator/app-shared';
+import { IBotInfo } from '@bfemulator/app-shared';
 
 export interface IAppMenuBuilder {
   menuTemplate: Electron.MenuItemConstructorOptions[];
@@ -86,7 +86,7 @@ export const AppMenuBuilder = new class AppMenuBuilder implements IAppMenuBuilde
     return bots.slice(0, 5).map(bot => ({
       label: bot.displayName,
       click: () => {
-        mainWindow.commandService.remoteCall('bot:switch', bot.id)
+        mainWindow.commandService.remoteCall('bot:switch', bot.path)
           .catch(err => console.error('Error while switching bots from file menu recent bots list: ', err));
       }
     }));

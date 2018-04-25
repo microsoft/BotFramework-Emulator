@@ -33,7 +33,6 @@
 
 import * as Electron from 'electron';
 import { app, Menu } from 'electron';
-import { getBotId } from '@bfemulator/app-shared';
 
 import { getSettings, dispatch } from './settings';
 import { WindowStateAction } from './reducers/windowStateReducer';
@@ -48,7 +47,6 @@ import { Window } from './platform/window';
 import { ensureStoragePath, writeFile, isDev } from './utils';
 import * as squirrel from './squirrelEvents';
 import * as Commands from './commands';
-import { getBotInfoById } from './botHelpers';
 import { AppMenuBuilder } from './appMenuBuilder';
 import { AppUpdater } from './appUpdater';
 

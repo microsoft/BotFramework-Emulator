@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { CommandRegistry as CommReg, IBotConfig, IExtensionConfig, uniqueId } from '@bfemulator/sdk-shared';
-import { FileInfo, IBotInfo, getBotId, getBotDisplayName } from '@bfemulator/app-shared';
+import { FileInfo, IBotInfo, getBotDisplayName } from '@bfemulator/app-shared';
 import { showWelcomePage } from "./data/editorHelpers";
 import { ActiveBotHelper } from './ui/helpers/activeBotHelper';
 import * as LogService from './platform/log/logService';
@@ -19,8 +19,8 @@ import * as NavBarActions from './data/action/navBarActions';
 import * as Constants from './constants';
 import { getTabGroupForDocument } from './data/editorHelpers';
 import { CommandService } from './platform/commands/commandService';
-import { getBotInfoById } from './data/botHelpers';
 import * as BotActions from './data/action/botActions';
+import { pathExistsInRecentBots } from './data/botHelpers';
 
 //=============================================================================
 export const CommandRegistry = new CommReg();
@@ -57,8 +57,8 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Switches the current active bot
-  CommandRegistry.registerCommand('bot:switch', (id: string) => {
-    ActiveBotHelper.confirmAndSwitchBots(id);
+  CommandRegistry.registerCommand('bot:switch', (botPath: string) => {
+    ActiveBotHelper.confirmAndSwitchBots(botPath);
   });
 
   //---------------------------------------------------------------------------
@@ -71,13 +71,12 @@ export function registerCommands() {
   // Completes the client side sync of the bot:load command on the server side
   // (NOTE: should NOT be called by itself; call server side instead)
   CommandRegistry.registerCommand('bot:load', ({ bot, botDirectory }: { bot: IBotConfig, botDirectory: string }): void => {
-    const botId = getBotId(bot);
-    if (!getBotInfoById(botId)) {
+    if (!pathExistsInRecentBots(bot.path)) {
       // create and switch bots
       ActiveBotHelper.confirmAndCreateBot(bot, botDirectory, '');
       return;
     }
-    ActiveBotHelper.confirmAndSwitchBots(botId);
+    ActiveBotHelper.confirmAndSwitchBots(bot.path);
   });
 
   //---------------------------------------------------------------------------
@@ -102,7 +101,7 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Opens up bot settings page for a bot
   CommandRegistry.registerCommand('bot-settings:open', (bot: IBotConfig): void => {
-    store.dispatch(EditorActions.open(Constants.ContentType_BotSettings, Constants.DocumentId_BotSettings, false, getBotId(bot)));
+    store.dispatch(EditorActions.open(Constants.ContentType_BotSettings, Constants.DocumentId_BotSettings, false));
   });
 
   //---------------------------------------------------------------------------
@@ -189,7 +188,7 @@ export function registerCommands() {
   });
 
   //---------------------------------------------------------------------------
-  // Sets a bot as active
+  // Sets a bot as active (called from server-side)
   CommandRegistry.registerCommand('bot:set-active', (bot: IBotConfig, botDirectory: string) => {
     store.dispatch(BotActions.setActive(bot, botDirectory));
     store.dispatch(FileActions.setRoot(botDirectory));
