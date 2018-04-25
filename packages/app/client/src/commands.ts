@@ -112,6 +112,24 @@ export function registerCommands() {
   });
 
   //---------------------------------------------------------------------------
+  // Switches navbar tab selection to Explorer
+  CommandRegistry.registerCommand('shell:show-explorer', (): void => {
+    store.dispatch(NavBarActions.select(Constants.NavBar_Files));
+  });
+
+  //---------------------------------------------------------------------------
+  // Switches navbar tab selection to Services
+  CommandRegistry.registerCommand('shell:show-services', (): void => {
+    store.dispatch(NavBarActions.select(Constants.NavBar_Services));
+  });
+
+  //---------------------------------------------------------------------------
+  // Open App Settings
+  CommandRegistry.registerCommand('shell:show-app-settings', (): void => {
+    store.dispatch(EditorActions.open(Constants.ContentType_AppSettings, Constants.DocumentId_AppSettings, true, null));
+  });
+
+  //---------------------------------------------------------------------------
   // Open a new emulator tabbed document
   CommandRegistry.registerCommand('livechat:new', () => {
     const documentId = uniqueId();
@@ -184,16 +202,30 @@ export function registerCommands() {
   CommandRegistry.registerCommand('shell:toggle-inspector-devtools', () => {
     window.dispatchEvent(new Event('toggle-inspector-devtools'));
   });
-  
+
   //---------------------------------------------------------------------------
-  // Notify the user an update is ready to install
-  CommandRegistry.registerCommand('shell:update-downloaded', () => {
-    // TODO: Set a flag in redux state
+  // An update is ready to install
+  CommandRegistry.registerCommand('shell:update-downloaded', (...args: any[]) => {
+    // TODO: Show a notification
+    console.log("Update available", ...args);
   });
-  
+
+  //---------------------------------------------------------------------------
+  // Application is up to date
+  CommandRegistry.registerCommand('shell:update-not-available', () => {
+    // TODO: Show a notification
+    console.log("Application is up to date");
+  });
+
   //---------------------------------------------------------------------------
   // Open the link in the default browser
   CommandRegistry.registerCommand('shell:open-external-link', (url: string) => {
     window.open(url);
+  });
+
+  //---------------------------------------------------------------------------
+  // Open About dialog
+  CommandRegistry.registerCommand('shell:about', () => {
+    // TODO: Show about dialog (native dialog box)
   });
 }

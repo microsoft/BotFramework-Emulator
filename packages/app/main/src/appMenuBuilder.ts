@@ -1,6 +1,6 @@
 import * as Electron from 'electron';
 
-import { mainWindow } from './main';
+import { mainWindow, appUpdater } from './main';
 import { IBotInfo, getBotId } from '@bfemulator/app-shared';
 
 export interface IAppMenuBuilder {
@@ -12,7 +12,6 @@ export interface IAppMenuBuilder {
   getEditMenu: () => Electron.MenuItemConstructorOptions;
   getEditMenuMac: () => Electron.MenuItemConstructorOptions[];
   getViewMenu: () => Electron.MenuItemConstructorOptions;
-  getWindowMenu: () => Electron.MenuItemConstructorOptions;
   getWindowMenuMac: () => Electron.MenuItemConstructorOptions[];
   getHelpMenu: () => Electron.MenuItemConstructorOptions;
   setFileMenu: (fileMenuTemplate: Electron.MenuItemConstructorOptions, appMenuTemplate: Electron.MenuItemConstructorOptions[]) => Electron.MenuItemConstructorOptions[];
@@ -38,7 +37,6 @@ export const AppMenuBuilder = new class AppMenuBuilder implements IAppMenuBuilde
       this.getFileMenu(),
       this.getEditMenu(),
       this.getViewMenu(),
-      this.getWindowMenu(),
       this.getHelpMenu()
     ];
 
@@ -185,21 +183,24 @@ export const AppMenuBuilder = new class AppMenuBuilder implements IAppMenuBuilde
     return {
       label: 'View',
       submenu: [
+        {
+          label: "Explorer",
+          click: () => mainWindow.commandService.remoteCall('shell:show-explorer')
+        },
+        {
+          label: "Services",
+          click: () => mainWindow.commandService.remoteCall('shell:show-services')
+        },
+        {
+          label: "App Settings",
+          click: () => mainWindow.commandService.remoteCall('shell:show-app-settings')
+        },
         { type: 'separator' },
         { role: 'resetzoom' },
         { role: 'zoomin' },
         { role: 'zoomout' },
         { type: 'separator' },
         { role: 'togglefullscreen' },
-      ]
-    }
-  };
-
-  getWindowMenu(): Electron.MenuItemConstructorOptions {
-    return {
-      role: 'window',
-      submenu: [
-        { role: 'minimize' },
       ]
     }
   };
@@ -241,9 +242,30 @@ export const AppMenuBuilder = new class AppMenuBuilder implements IAppMenuBuilde
         {
           label: "Toggle Developer Tools (Inspector)",
           click: () => mainWindow.commandService.remoteCall('shell:toggle-inspector-devtools')
-        }
+        },
+        { type: 'separator' },
+        this.getUpdateMenuItem(),
+        { type: 'separator' },
+        {
+          label: "About",
+          click: () => mainWindow.commandService.remoteCall('shell:about')
+        },
       ]
     };
+  }
+  
+  getUpdateMenuItem(): Electron.MenuItemConstructorOptions {
+    if (appUpdater.isUpdateAvailable) {
+      return {
+        label: "Restart to Update...",
+        click: () => appUpdater.quitAndInstall()
+      }
+    } else {
+      return {
+        label: "Check for Update...",
+        click: () => appUpdater.checkForUpdates()
+      }
+    }
   }
 
   /** Takes a file menu template and places it at the right position in the app menu template according to platform */

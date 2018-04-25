@@ -458,4 +458,9 @@ export function registerCommands() {
   CommandRegistry.registerCommand('shell:quit-and-install-update', () => {
     appUpdater.quitAndInstall();
   });
+
+  //---------------------------------------------------------------------------
+  CommandRegistry.registerCommand('shell:check-for-updates', () => {
+    appUpdater.checkForUpdates();
+  });
 }

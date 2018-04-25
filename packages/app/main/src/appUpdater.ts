@@ -8,35 +8,42 @@ import * as semver from 'semver';
 import { auto } from 'async';
 
 export class AppUpdater {
+  private _availableUpdateInfo: any = null;
+
+  public get isUpdateAvailable(): boolean { return this._availableUpdateInfo != null; }
+
   startup(window: BrowserWindow) {
     let allowUpdateCheck = (process.argv.indexOf("--no-update") == -1);
     let allowPrerelease = (process.argv.indexOf('--prerelease') >= 0);
 
-    /**
-     * For now, always allow pre-release when version is 4.
-     * TODO: Remove this when 4 becomes stable. 
-     */
-    const major = semver.major(pjson.version);
-    if (major === 4) {
+    // Allow update to prerelease if this is a prerelease
+    const rc = semver.prerelease(pjson.version);
+    if (rc && rc.length) {
       allowPrerelease = true;
     }
 
-    autoUpdater.addListener("update-available", (event: any) => {
+    autoUpdater.addListener("update-available", () => {
       //logger.debug("A new version is available. Downloading it now. You will be notified when download completes.");
     });
     autoUpdater.addListener("update-downloaded" as any, (event: any, releaseNotes: string, releaseName: string, releaseDate: string, updateURL: string) => {
-      mainWindow.commandService.remoteCall('shell:update-downloaded');
+      this._availableUpdateInfo = {
+        releaseNotes,
+        releaseName,
+        releaseDate,
+        updateURL
+      };
+      mainWindow.commandService.remoteCall('shell:update-downloaded', releaseNotes, releaseName, releaseDate, updateURL);
       //logger.debug("Download complete.", logger.makeCommandLink("Restart", 'autoUpdater.quitAndInstall', "Quit and install the update"), "the application to update.");
     });
     autoUpdater.addListener("error", (error: any) => {
       //if (typeof error.message === "string" && !error.message.includes("AggregateException"))
       //    logger.error(error.message, error);
     });
-    autoUpdater.addListener("checking-for-update", (event: any) => {
+    autoUpdater.addListener("checking-for-update", () => {
       //logger.debug("Checking for new version...");
     });
     autoUpdater.addListener("update-not-available", () => {
-      //logger.debug("Application is up to date.");
+      mainWindow.commandService.remoteCall('shell:update-not-available');
     });
 
     if (allowUpdateCheck) {
@@ -48,15 +55,19 @@ export class AppUpdater {
     }
 
     window.once("ready-to-show", (event: any) => {
-      try {
-        if (allowUpdateCheck) {
-          autoUpdater.checkForUpdates();
-        }
-      } catch (e) { }
+      if (allowUpdateCheck) {
+        this.checkForUpdates();
+      }
     });
   }
 
-  quitAndInstall() {
+  public checkForUpdates() {
+    try {
+      autoUpdater.checkForUpdates();
+    } catch (e) { }
+  }
+
+  public quitAndInstall() {
     try {
       autoUpdater.quitAndInstall();
     }
