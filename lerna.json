@@ -13,6 +13,7 @@
     "packages/sdk/shared",
     "packages/sdk/ui-react",
     "packages/extensions/qnamaker",
+    "packages/extensions/qnamaker/client",
     "packages/extensions/debug",
     "packages/extensions/debug/client",
     "packages/extensions/debug/main",
