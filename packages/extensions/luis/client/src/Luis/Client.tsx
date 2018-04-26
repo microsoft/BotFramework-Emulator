@@ -28,7 +28,7 @@ class LuisClientError extends Error {
   private static getMessage(message: string, statusCode: number | undefined): string {
     let errorMessage = message;
     if (statusCode) {
-      errorMessage += 'HTTP Status Code: ' + statusCode;
+      errorMessage += ' - HTTP Status Code: ' + statusCode;
     }
     return errorMessage;
   }
