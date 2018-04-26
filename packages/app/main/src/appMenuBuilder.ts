@@ -70,7 +70,10 @@ export const AppMenuBuilder = new class AppMenuBuilder implements IAppMenuBuilde
       (template[2].submenu as any).push(this.getEditMenuMac());
 
       // Window menu
-      template[4].submenu = this.getWindowMenuMac();
+      template.splice(4, 0, {
+        label: 'Window',
+        submenu: this.getWindowMenuMac()
+      });
     }
     // save menu state
     this.menuTemplate = template;

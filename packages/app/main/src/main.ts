@@ -267,9 +267,9 @@ Electron.app.on('ready', function () {
 });
 
 Electron.app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') {
+  //if (process.platform !== 'darwin') {
     Electron.app.quit();
-  }
+  //}
 });
 
 Electron.app.on('activate', function () {
