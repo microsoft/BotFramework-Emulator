@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Component } from 'react';
 import { css } from 'glamor';
 import IntentViewer from './IntentViewer';
-import IntentEditor from './IntentEditor';
+import { IntentEditor, IntentEditorMode } from './IntentEditor';
 import { Intent } from '../Models/Intent';
 import { RecognizerResult } from '../Models/RecognizerResults';
 import { IntentInfo } from '../Luis/IntentInfo';
@@ -49,6 +49,14 @@ class Editor extends Component<EditorProps, EditorState> {
 
   render() {
     let topScoringIntent = this.getTopScoringIntent();
+    let mode: IntentEditorMode;
+    if (this.props.appInfo.authorized) {
+      mode = IntentEditorMode.Enabled;
+    } else if (this.props.appInfo.isDispatchApp) {
+      mode = IntentEditorMode.Hidden;
+    } else {
+      mode = IntentEditorMode.Disabled;
+    }
     return (
       <div {...EDITOR_CSS}>
         <IntentViewer topScoringIntent={topScoringIntent} />
@@ -56,7 +64,7 @@ class Editor extends Component<EditorProps, EditorState> {
           currentIntent={topScoringIntent} 
           intentInfo={this.props.intentInfo} 
           intentReassigner={this.props.intentReassigner}
-          enabled={this.props.appInfo.authorized && !this.props.appInfo.isDispatchApp}
+          mode={mode}
           traceId={this.props.traceId}
         />
         <EntitiesViewer entities={this.props.recognizerResult.entities} />

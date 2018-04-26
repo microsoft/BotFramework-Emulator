@@ -15,7 +15,7 @@ import { IntentInfo } from './Luis/IntentInfo';
 import { LuisTraceInfo } from './Models/LuisTraceInfo';
 import Header from './Controls/Header';
 import MockState from './Data/MockData';
-import { IActivity, ServiceType, IBotConfig, IDispatchService } from '@bfemulator/sdk-shared';
+import { IActivity, ServiceType, IBotConfig, IDispatchService, IConnectedService } from '@bfemulator/sdk-shared';
 import { ILuisService } from '@bfemulator/sdk-shared';
 
 let $host: IInspectorHost = (window as any).host;
@@ -100,13 +100,14 @@ class App extends Component<any, AppState> {
     }
 
     let lcAppId = appId.toLowerCase();
-    let dispatchServices = bot.services.filter(s => s.type === ServiceType.Dispatch) as IDispatchService[];
+    let dispatchServices = bot.services.filter((s: IConnectedService) => 
+      s.type === ServiceType.Dispatch) as IDispatchService[];
     let dispatchService = dispatchServices.find(ds => ds.appId.toLowerCase() === lcAppId);
     if (dispatchService) {
       return dispatchService.authoringKey;
     }
 
-    let luisServices = bot.services.filter(s => s.type === ServiceType.Luis) as ILuisService[];
+    let luisServices = bot.services.filter((s: IConnectedService) => s.type === ServiceType.Luis) as ILuisService[];
     let luisService = luisServices.find(ls => ls.appId.toLowerCase() === lcAppId);
     if (luisService) {
       return luisService.authoringKey;
@@ -235,53 +236,65 @@ class App extends Component<any, AppState> {
         key: this.state.authoringKey
       } as LuisAppInfo);
 
-      let appInfo = await this.luisclient.getApplicationInfo();
-      this.setState({
-        appInfo: appInfo
-      });
-      let intents = await this.luisclient.getApplicationIntents(appInfo);
-      this.setState({
-        intentInfo: intents
-      });
+      try {
+        let appInfo = await this.luisclient.getApplicationInfo();
+        this.setState({
+          appInfo: appInfo
+        });
+        let intents = await this.luisclient.getApplicationIntents(appInfo);
+        this.setState({
+          intentInfo: intents
+        });
+      } catch (err) {
+        $host.logger.error(err.message);
+      } 
     }
   }
 
   async reassignIntent(newIntent: string, needsRetrain: boolean): Promise<void> {
-    await this.luisclient.reassignIntent(
-      this.state.appInfo, 
-      this.state.traceInfo.luisResult, 
-      newIntent);
-    
-    this.setAppPersistentState({
-      pendingTrain: needsRetrain,
-      pendingPublish: false
-    });
+    try {
+      await this.luisclient.reassignIntent(
+        this.state.appInfo, 
+        this.state.traceInfo.luisResult, 
+        newIntent);
+      $host.logger.log('Intent reassigned successfully');
+      this.setAppPersistentState({
+        pendingTrain: needsRetrain,
+        pendingPublish: false
+      });
+    } catch (err) {
+      $host.logger.error(err.message);
+    }
   }
 
   async train(): Promise<void> {
     $host.setAccessoryState(TrainAccessoryId, AccessoryWorkingState);
     try {
       await this.luisclient.train(this.state.appInfo);
-    } finally {
+      $host.logger.log('Application trained successfully');
       $host.setAccessoryState(TrainAccessoryId, AccessoryDefaultState);
+      this.setAppPersistentState({
+        pendingTrain: false,
+        pendingPublish: true
+      });
+    } catch (err) {
+      $host.logger.error(err.message);
     }
-    this.setAppPersistentState({
-      pendingTrain: false,
-      pendingPublish: true
-    });
   }
 
   async publish(): Promise<void> {
     $host.setAccessoryState(PublichAccessoryId, AccessoryWorkingState);
     try {
       await this.luisclient.publish(this.state.appInfo, this.state.traceInfo.luisOptions.Staging || false);
-    } finally {
+      $host.logger.log('Application published successfully');
       $host.setAccessoryState(PublichAccessoryId, AccessoryDefaultState);
-    }
-    this.setAppPersistentState({
+      this.setAppPersistentState({
         pendingPublish: false,
         pendingTrain: false
     });
+    } catch (err) {
+      $host.logger.error(err.message);
+    }
   }
 
   private setAppPersistentState(persistentState: PersistentAppState) {
