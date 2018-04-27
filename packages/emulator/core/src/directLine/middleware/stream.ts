@@ -34,10 +34,10 @@
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import Bot from '../../bot';
+import BotEmulator from '../../botEmulator';
 
-export default function stream(bot: Bot) {
-  const { logError } = bot.facilities.logger;
+export default function stream(botEmulator: BotEmulator) {
+  const { logError } = botEmulator.facilities.logger;
 
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     res.send(HttpStatus.NOT_IMPLEMENTED);

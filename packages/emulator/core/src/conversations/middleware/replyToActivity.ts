@@ -34,14 +34,14 @@
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import Bot from '../../bot';
+import BotEmulator from '../../botEmulator';
 import IConversationAPIPathParameters from '../conversationAPIPathParameters';
 import IGenericActivity from '../../types/activity/generic';
 import IResourceResponse from '../../types/response/resource';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
-export default function replyToActivity(bot: Bot) {
-  const { logRequest, logResponse } = bot.facilities.logger;
+export default function replyToActivity(botEmulator: BotEmulator) {
+  const { logRequest, logResponse } = botEmulator.facilities.logger;
 
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const activity = <IGenericActivity>req.body;

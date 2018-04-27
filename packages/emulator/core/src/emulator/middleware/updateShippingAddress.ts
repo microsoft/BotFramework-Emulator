@@ -34,13 +34,13 @@
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import Bot from '../../bot';
+import BotEmulator from '../../botEmulator';
 import ICheckoutConversationSession from '../../types/payment/checkoutConversationSession';
 import IPaymentAddress from '../../types/payment/address';
 import IPaymentRequest from '../../types/payment/request';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
-export default function updateShippingAddress(bot: Bot) {
+export default function updateShippingAddress(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     try {
       const body: {

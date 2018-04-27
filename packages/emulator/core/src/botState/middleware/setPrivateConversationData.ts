@@ -34,17 +34,17 @@
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import Bot from '../../bot';
+import BotEmulator from '../../botEmulator';
 import IBotData from '../../types/botData';
 
-export default function setPrivateConversationData(bot: Bot) {
-  const { logRequest, logResponse } = bot.facilities.logger;
+export default function setPrivateConversationData(botEmulator: BotEmulator) {
+  const { logRequest, logResponse } = botEmulator.facilities.logger;
 
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     logRequest(req.params.conversationId, 'bot', req, 'setPrivateConversationData');
 
     try {
-      const botData = bot.facilities.botState.setBotData(req.params.channelId, req.params.conversationId, req.params.userId, req.body as IBotData);
+      const botData = botEmulator.facilities.botState.setBotData(req.params.channelId, req.params.conversationId, req.params.userId, req.body as IBotData);
 
       res.send(HttpStatus.OK, botData);
       res.end();

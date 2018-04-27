@@ -34,15 +34,15 @@
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import Bot from '../../bot';
+import BotEmulator from '../../botEmulator';
 import createAPIException from '../../utils/createResponse/apiException';
 import ErrorCodes from '../../types/errorCodes';
 import IConversationAPIPathParameters from '../conversationAPIPathParameters';
 
-export default function fetchConversation(bot: Bot) {
+export default function fetchConversation(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const conversationParameters: IConversationAPIPathParameters = req.params;
-    const conversation = bot.facilities.conversations.conversationById(conversationParameters.conversationId);
+    const conversation = botEmulator.facilities.conversations.conversationById(conversationParameters.conversationId);
 
     if (!conversation) {
       throw createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, 'conversation not found');

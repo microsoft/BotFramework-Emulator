@@ -34,10 +34,12 @@
 import * as HttpStatus from 'http-status-codes';
 import { RequestHandler, Server } from 'restify';
 
-import Bot from '../bot';
+import BotEmulator from '../botEmulator';
 import createJsonBodyParserMiddleware from '../utils/jsonBodyParser';
 
 import getActivities from './middleware/getActivities';
+import getBotEndpoint from '../middleware/getBotEndpoint';
+import getConversation from './middleware/getConversation';
 import options from './middleware/options';
 import postActivity from './middleware/postActivity';
 import reconnectToConversation from './middleware/reconnectToConversation';
@@ -45,50 +47,61 @@ import startConversation from './middleware/startConversation';
 import stream from './middleware/stream';
 import upload from './middleware/upload';
 
-export default function registerRoutes(bot: Bot, server: Server, uses: RequestHandler[]) {
+export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandler[]) {
   const jsonBodyParser = createJsonBodyParserMiddleware();
+  const botEndpoint = getBotEndpoint(botEmulator);
+  const conversation = getConversation(botEmulator);
 
   server.opts(
     '/v3/directline',
     ...uses,
-    options(bot)
+    options(botEmulator)
   );
 
   server.post(
     '/v3/directline/conversations',
     ...uses,
+    botEndpoint,
     jsonBodyParser,
-    startConversation(bot)
+    startConversation(botEmulator)
   );
 
   server.get(
     '/v3/directline/conversations/:conversationId',
     ...uses,
-    reconnectToConversation(bot)
+    botEndpoint,
+    conversation,
+    reconnectToConversation(botEmulator)
   );
 
   server.get(
     '/v3/directline/conversations/:conversationId/activities',
     ...uses,
-    getActivities(bot)
+    botEndpoint,
+    conversation,
+    getActivities(botEmulator)
   );
 
   server.post(
     '/v3/directline/conversations/:conversationId/activities',
     ...uses,
     jsonBodyParser,
-    postActivity(bot)
+    botEndpoint,
+    conversation,
+    postActivity(botEmulator)
   );
 
   server.post(
     '/v3/directline/conversations/:conversationId/upload',
     ...uses,
-    upload(bot)
+    botEndpoint,
+    conversation,
+    upload(botEmulator)
   );
 
   server.get(
     '/v3/directline/conversations/:conversationId/stream',
     ...uses,
-    stream(bot)
+    stream(botEmulator)
   );
 }

@@ -39,7 +39,8 @@ import updateIn from 'simple-update-in';
 
 import { authentication as authenticationEndpoint } from '../authEndpoints';
 import { makeBotSettingsLink, makeAppSettingsLink, makeExternalLink } from '../utils/linkHelpers';
-import Bot from '../bot';
+import BotEmulator from '../botEmulator';
+import BotEndpoint from './botEndpoint';
 import createAPIException from '../utils/createResponse/apiException';
 import createResourceResponse from '../utils/createResponse/resource';
 import ErrorCodes from '../types/errorCodes';
@@ -75,11 +76,12 @@ interface IActivityBucket {
  */
 export default class Conversation extends EventEmitter {
   // private speechToken: ISpeechTokenInfo;
-  
+
   private get conversationIsTranscript() { return this.conversationId.includes('transcript') };
 
   constructor(
-    public bot: Bot,
+    public botEmulator: BotEmulator,
+    public botEndpoint: BotEndpoint,
     public conversationId: string,
     public user: IUser = {
       id: 'default-user',
@@ -88,7 +90,7 @@ export default class Conversation extends EventEmitter {
   ) {
     super();
 
-    this.members.push({ id: bot.botId, name: 'Bot' });
+    this.members.push({ id: botEndpoint.botId, name: 'Bot' });
     this.members.push({ id: user.id, name: user.name });
   }
 
@@ -123,7 +125,7 @@ export default class Conversation extends EventEmitter {
 
     const genericActivity = activity as IGenericActivity;
 
-    genericActivity && this.bot.facilities.logger.logActivity(this.conversationId, genericActivity, activity.recipient.role);
+    genericActivity && this.botEmulator.facilities.logger.logActivity(this.conversationId, genericActivity, activity.recipient.role);
   }
 
   /**
@@ -131,7 +133,7 @@ export default class Conversation extends EventEmitter {
    */
   async postActivityToBot(activity: IActivity, recordInConversation: boolean) {
     // Do not make a shallow copy here before modifying
-    activity = this.postage(this.bot.botId, activity);
+    activity = this.postage(this.botEndpoint.botId, activity);
     activity.from = activity.from || this.user;
 
     if (!activity.recipient.name) {
@@ -143,12 +145,12 @@ export default class Conversation extends EventEmitter {
       activity.recipient.role = 'bot';
     }
 
-    activity.serviceUrl = this.bot.serviceUrl;
+    activity.serviceUrl = this.botEmulator.getServiceUrl(this.botEndpoint);
 
-    if (!this.conversationIsTranscript && !isLocalhostUrl(this.bot.botUrl) && isLocalhostUrl(this.bot.serviceUrl)) {
-      this.bot.facilities.logger.logError(this.conversationId, 'Error: The bot is remote, but the service URL is localhost. Without tunneling software you will not receive replies.');
-      this.bot.facilities.logger.logError(this.conversationId, makeExternalLink('Connecting to bots hosted remotely', 'https://aka.ms/cnjvpo'));
-      this.bot.facilities.logger.logError(this.conversationId, makeAppSettingsLink('Edit ngrok settings'));
+    if (!this.conversationIsTranscript && !isLocalhostUrl(this.botEndpoint.botUrl) && isLocalhostUrl(this.botEmulator.getServiceUrl(this.botEndpoint))) {
+      this.botEmulator.facilities.logger.logError(this.conversationId, 'Error: The bot is remote, but the service URL is localhost. Without tunneling software you will not receive replies.');
+      this.botEmulator.facilities.logger.logError(this.conversationId, makeExternalLink('Connecting to bots hosted remotely', 'https://aka.ms/cnjvpo'));
+      this.botEmulator.facilities.logger.logError(this.conversationId, makeAppSettingsLink('Edit ngrok settings'));
     }
 
     const options = {
@@ -168,11 +170,11 @@ export default class Conversation extends EventEmitter {
 
     let status = 200;
     let resp: any = {};
-    
+
     // If a message to the bot was triggered from a transcript, don't actually send it.
     // This can happen when clicking a button in an adaptive card, for instance.
     if (!this.conversationIsTranscript) {
-      resp = await this.bot.fetchWithAuth(this.bot.botUrl, options);
+      resp = await this.botEndpoint.fetchWithAuth(this.botEndpoint.botUrl, options);
       status = resp.status;
     }
 
@@ -193,7 +195,7 @@ export default class Conversation extends EventEmitter {
     try {
       await this.postActivityToBot(activity, false);
     } catch (err) {
-      this.bot.facilities.logger.logError(this.conversationId, err, activity);
+      this.botEmulator.facilities.logger.logError(this.conversationId, err, activity);
     }
   }
 
@@ -328,7 +330,7 @@ export default class Conversation extends EventEmitter {
     try {
       await this.postActivityToBot(activity, false);
     } catch (err) {
-      this.bot.facilities.logger.logError(this.conversationId, err, activity);
+      this.botEmulator.facilities.logger.logError(this.conversationId, err, activity);
     }
 
     this.transcript = [...this.transcript, { type: 'contact update', activity }];
@@ -344,7 +346,7 @@ export default class Conversation extends EventEmitter {
     try {
       await this.postActivityToBot(activity, false);
     } catch (err) {
-      this.bot.facilities.logger.logError(this.conversationId, err, activity);
+      this.botEmulator.facilities.logger.logError(this.conversationId, err, activity);
     }
 
     this.transcript = [...this.transcript, { type: 'contact remove', activity }];
@@ -360,7 +362,7 @@ export default class Conversation extends EventEmitter {
     try {
       await this.postActivityToBot(activity, false);
     } catch (err) {
-      this.bot.facilities.logger.logError(this.conversationId, err, activity);
+      this.botEmulator.facilities.logger.logError(this.conversationId, err, activity);
     }
 
     this.transcript = [...this.transcript, { type: 'typing', activity }];
@@ -376,7 +378,7 @@ export default class Conversation extends EventEmitter {
     try {
       await this.postActivityToBot(activity, false);
     } catch (err) {
-      this.bot.facilities.logger.logError(this.conversationId, err, activity);
+      this.botEmulator.facilities.logger.logError(this.conversationId, err, activity);
     }
 
     this.transcript = [...this.transcript, { type: 'ping', activity }];
@@ -391,7 +393,7 @@ export default class Conversation extends EventEmitter {
     try {
       await this.postActivityToBot(activity, false);
     } catch (err) {
-      this.bot.facilities.logger.logError(this.conversationId, err, activity);
+      this.botEmulator.facilities.logger.logError(this.conversationId, err, activity);
     }
 
     this.transcript = [...this.transcript, { type: 'user data delete', activity }];
@@ -449,11 +451,11 @@ export default class Conversation extends EventEmitter {
       conversation: { id: checkoutSession.checkoutConversationId },
       relatesTo: {
         activityId: checkoutSession.paymentActivityId,
-        bot: { id: this.bot.botId },
+        bot: { id: this.botEndpoint.botId },
         channelId: 'emulator',
         conversation: { id: this.conversationId },
-        serviceUrl: this.bot.serviceUrl,
-        user: this.bot.facilities.users.usersById(this.bot.facilities.users.currentUserId)
+        serviceUrl: this.botEmulator.getServiceUrl(this.botEndpoint),
+        user: this.botEmulator.facilities.users.usersById(this.botEmulator.facilities.users.currentUserId)
       },
       value: updateValue
     };
@@ -512,11 +514,11 @@ export default class Conversation extends EventEmitter {
       conversation: { id: checkoutSession.checkoutConversationId },
       relatesTo: {
         activityId: checkoutSession.paymentActivityId,
-        bot: { id: this.bot.botId },
+        bot: { id: this.botEndpoint.botId },
         channelId: 'emulator',
         conversation: { id: this.conversationId },
-        serviceUrl: this.bot.serviceUrl,
-        user: this.bot.facilities.users.usersById(this.bot.facilities.users.currentUserId)
+        serviceUrl: this.botEmulator.getServiceUrl(this.botEndpoint),
+        user: this.botEmulator.facilities.users.usersById(this.botEmulator.facilities.users.currentUserId)
       },
       value: updateValue
     };
@@ -570,11 +572,11 @@ export default class Conversation extends EventEmitter {
     if (origUserId && origBotId) {
       activities.forEach(activity => {
         if (activity.recipient.id === origBotId) {
-          activity.recipient.id = this.bot.botId;
+          activity.recipient.id = this.botEndpoint.botId;
         }
 
         if (activity.from.id === origBotId) {
-          activity.from.id = this.bot.botId;
+          activity.from.id = this.botEndpoint.botId;
         }
 
         if (activity.recipient.id === origUserId) {

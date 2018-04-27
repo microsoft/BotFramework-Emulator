@@ -34,18 +34,18 @@
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import Bot from '../../bot';
+import BotEmulator from '../../botEmulator';
 import createAPIException from '../../utils/createResponse/apiException';
 import ErrorCodes from '../../types/errorCodes';
 import IAttachmentData from '../../types/attachment/data';
 import IAttachmentInfo from '../../types/attachment/info';
 import IAttachmentParams from '../attachmentParams';
 
-export default function getAttachmentInfo(bot: Bot) {
+export default function getAttachmentInfo(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     try {
       const parms: IAttachmentParams = req.params;
-      const attachment: IAttachmentData = bot.facilities.attachments.getAttachmentData(parms.attachmentId);
+      const attachment: IAttachmentData = botEmulator.facilities.attachments.getAttachmentData(parms.attachmentId);
 
       if (attachment) {
         const attachmentInfo: IAttachmentInfo = {

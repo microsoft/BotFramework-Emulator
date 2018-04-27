@@ -31,30 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as HttpStatus from 'http-status-codes';
-import * as Restify from 'restify';
+import BotEndpoint from '../facility/botEndpoint';
+import IBotEndpoint from '../types/botEndpoint';
+import IBotEndpointOptions from './botEndpointOptions';
+import ILogger from './logger';
+import ILogService from './log/service';
 
-import BotEmulator from '../../botEmulator';
-import IBotData from '../../types/botData';
-
-export default function setConversationData(botEmulator: BotEmulator) {
-  const { logRequest, logResponse } = botEmulator.facilities.logger;
-
-  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    logRequest(req.params.conversationId, 'bot', req, 'setConversationData');
-
-    try {
-      const botData = botEmulator.facilities.botState.setBotData(req.params.channelId, req.params.conversationId, req.params.userId, req.body as IBotData);
-
-      res.send(HttpStatus.OK, botData);
-      res.end();
-
-      //log.api('setConversationData', req, res, { key: req.params, state: req.body }, botData);
-    } catch (err) {
-      //var error = sendErrorResponse(req, res, next, err);
-      //log.api('setConversationData', req, res, { key: req.params, state: req.body }, error);
-    }
-
-    logResponse(req.params.conversationId, 'bot', res, 'setConversationData');
-  };
+export interface IBotEmulatorOptions {
+  // TODO: Consider to use IBotEndpoint only, but not instance
+  //       Then we rename instance from BotEndpoint to BotEndpointService
+  defaultEndpoint?: IBotEndpoint | BotEndpoint,
+  fetch?: (string, any) => Promise<any>,
+  loggerOrLogService?: (ILogger | ILogService);
+  stateSizeLimitKB?: number;
 }
+
+export default IBotEmulatorOptions
