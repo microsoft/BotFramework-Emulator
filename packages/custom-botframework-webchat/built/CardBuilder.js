@@ -35,20 +35,28 @@ var AdaptiveCardBuilder = /** @class */ (function () {
             container.addItem(textblock);
         }
     };
-    AdaptiveCardBuilder.prototype.addButtons = function (cardActions) {
+    AdaptiveCardBuilder.prototype.addButtons = function (cardActions, includesOAuthButtons) {
         var _this = this;
         if (cardActions) {
             cardActions.forEach(function (cardAction) {
-                _this.card.addAction(AdaptiveCardBuilder.addCardAction(cardAction));
+                _this.card.addAction(AdaptiveCardBuilder.addCardAction(cardAction, includesOAuthButtons));
             });
         }
     };
-    AdaptiveCardBuilder.addCardAction = function (cardAction) {
+    AdaptiveCardBuilder.addCardAction = function (cardAction, includesOAuthButtons) {
         if (cardAction.type === 'imBack' || cardAction.type === 'postBack') {
             var action = new adaptivecards_1.SubmitAction();
             var botFrameworkCardAction = tslib_1.__assign({ __isBotFrameworkCardAction: true }, cardAction);
             action.data = botFrameworkCardAction;
             action.title = cardAction.title;
+            return action;
+        }
+        else if (cardAction.type === 'signin' && includesOAuthButtons) {
+            // Create a button specific for OAuthCard 'signin' actions (cardAction.type == signin and button action is Action.Submit)
+            var action = new adaptivecards_1.SubmitAction();
+            var botFrameworkCardAction = tslib_1.__assign({ __isBotFrameworkCardAction: true }, cardAction);
+            action.title = cardAction.title,
+                action.data = botFrameworkCardAction;
             return action;
         }
         else {
@@ -59,10 +67,13 @@ var AdaptiveCardBuilder = /** @class */ (function () {
             return action;
         }
     };
-    AdaptiveCardBuilder.prototype.addCommon = function (content) {
+    AdaptiveCardBuilder.prototype.addCommonHeaders = function (content) {
         this.addTextBlock(content.title, { size: adaptivecards_1.TextSize.Medium, weight: adaptivecards_1.TextWeight.Bolder });
         this.addTextBlock(content.subtitle, { isSubtle: true, wrap: true });
         this.addTextBlock(content.text, { wrap: true });
+    };
+    AdaptiveCardBuilder.prototype.addCommon = function (content) {
+        this.addCommonHeaders(content);
         this.addButtons(content.buttons);
     };
     AdaptiveCardBuilder.prototype.addImage = function (url, container, selectAction) {
@@ -83,6 +94,14 @@ exports.buildCommonCard = function (content) {
         return null;
     var cardBuilder = new AdaptiveCardBuilder();
     cardBuilder.addCommon(content);
+    return cardBuilder.card;
+};
+exports.buildOAuthCard = function (content) {
+    if (!content)
+        return null;
+    var cardBuilder = new AdaptiveCardBuilder();
+    cardBuilder.addCommonHeaders(content);
+    cardBuilder.addButtons(content.buttons, true);
     return cardBuilder.card;
 };
 //# sourceMappingURL=CardBuilder.js.map

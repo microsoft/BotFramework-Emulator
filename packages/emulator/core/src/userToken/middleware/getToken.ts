@@ -31,17 +31,34 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ILogger from './logger';
-import ILogService from './log/service';
-import { StringProvider } from '../utils/stringProvider';
+import * as HttpStatus from 'http-status-codes';
+import * as Restify from 'restify';
 
-interface IBotOptions {
-  fetch?: (string, any) => Promise<any>,
-  loggerOrLogService?: (ILogger | ILogService);
-  stateSizeLimitKB?: number;
-  use10Tokens?: boolean;
-  useCodeValidation?: boolean;
-  ngrokServerUrl: string | StringProvider
+import Bot from '../../bot';
+import { ITokenResponse } from '../ITokenResponse';
+import { ITokenParams } from '../ITokenParams';
+import { TokenCache } from '../tokenCache';
+
+
+interface IGetTokenParams extends ITokenParams {
+  code: string;
 }
 
-export default IBotOptions
+export default function getToken(bot: Bot) {
+  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+    try {
+      let params: IGetTokenParams = req.params;
+
+      let tokenResponse: ITokenResponse = TokenCache.getTokenFromCache(bot.botId, params.userId, params.connectionName);
+      if (tokenResponse) {
+          res.send(HttpStatus.OK, tokenResponse);
+      } else {
+          res.send(HttpStatus.NOT_FOUND); 
+      }
+
+      res.end();
+    } catch (err) {
+      res.send(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  };
+}

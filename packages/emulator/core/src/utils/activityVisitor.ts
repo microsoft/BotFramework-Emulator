@@ -40,6 +40,7 @@ import IMediaCard from '../types/card/media';
 import IMessageActivity from '../types/activity/message';
 import IReceiptCard from '../types/card/receipt';
 import ISigninCard from '../types/card/signIn';
+import IOAuthCard from '../types/card/oAuth';
 import IThumbnailCard from '../types/card/thumbnail';
 
 export default abstract class ActivityVisitor {
@@ -80,6 +81,10 @@ export default abstract class ActivityVisitor {
         case AttachmentContentTypes.signInCard:
           this.traverseSignInCard(attachment.content as ISigninCard);
           break;
+
+        case AttachmentContentTypes.oAuthCard:
+          this.traverseOAuthCard(attachment.content as IOAuthCard);
+          break;
       }
     }
   }
@@ -99,6 +104,13 @@ export default abstract class ActivityVisitor {
 
   public traverseSignInCard(signInCard: ISigninCard) {
     this.traverseButtons(signInCard.buttons);
+  }
+
+  public traverseOAuthCard(oauthCard: IOAuthCard) {
+      let buttons = oauthCard.buttons;
+      if (buttons) {
+          buttons.forEach(cardAction => this.visitOAuthCardAction(oauthCard.connectionName, cardAction));
+      }
   }
 
   public traverseReceiptCard(receiptCard: IReceiptCard) {
@@ -127,4 +139,8 @@ export default abstract class ActivityVisitor {
   }
 
   protected abstract visitCardAction(cardAction: ICardAction);
+
+  protected visitOAuthCardAction(connectionName: string, cardAction: ICardAction) {
+      this.visitCardAction(cardAction);
+  }
 }

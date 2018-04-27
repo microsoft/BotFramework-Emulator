@@ -31,17 +31,30 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ILogger from './logger';
-import ILogService from './log/service';
-import { StringProvider } from '../utils/stringProvider';
+import ActivityVisitor from './activityVisitor';
+import ICardAction from '../types/card/cardAction';
+import IPaymentRequest from '../types/payment/request';
 
-interface IBotOptions {
-  fetch?: (string, any) => Promise<any>,
-  loggerOrLogService?: (ILogger | ILogService);
-  stateSizeLimitKB?: number;
-  use10Tokens?: boolean;
-  useCodeValidation?: boolean;
-  ngrokServerUrl: string | StringProvider
+export default class OAuthClientEncoder extends ActivityVisitor {
+  public static OAuthEmulatorUrlProtocol: string = "oauth:";
+
+  private _conversationId: string;
+
+  constructor(conversationId: string) {
+      super();
+      this._conversationId = conversationId;
+  }
+
+  protected visitCardAction(cardAction: ICardAction) {
+  }
+
+  protected visitOAuthCardAction(connectionName: string, cardAction: ICardAction) {
+      if (cardAction && cardAction.type === 'signin' && !cardAction.value) {
+          let url = OAuthClientEncoder.OAuthEmulatorUrlProtocol + '//' + connectionName + '&&&' + this._conversationId;
+
+          // change the card action to a special URL for the emulator
+          cardAction.type = 'openUrl';
+          cardAction.value = url;
+      }
+  }
 }
-
-export default IBotOptions

@@ -151,7 +151,7 @@ export default class Chat extends React.Component<Props> {
       const props: WebChat.ChatProps = {
         adaptiveCardsHostConfig: AdaptiveCardsHostConfig,
         user: {
-          id: "1234",
+          id: "default-user",
           name: "User"
         },
         bot: {

@@ -31,17 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ILogger from './logger';
-import ILogService from './log/service';
-import { StringProvider } from '../utils/stringProvider';
+import * as HttpStatus from 'http-status-codes';
+import * as Restify from 'restify';
 
-interface IBotOptions {
-  fetch?: (string, any) => Promise<any>,
-  loggerOrLogService?: (ILogger | ILogService);
-  stateSizeLimitKB?: number;
-  use10Tokens?: boolean;
-  useCodeValidation?: boolean;
-  ngrokServerUrl: string | StringProvider
+import Bot from '../../bot';
+import sendErrorResponse from '../../utils/sendErrorResponse';
+
+export default function sendTokenResponse(bot: Bot) {
+  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+    const body: {
+      token: string,
+      connectionName: string } = req.body[0];
+
+    const { activityId, response, statusCode } = req['conversation'].sendTokenResponse(body.connectionName, body.token, true);
+
+    if (statusCode === HttpStatus.OK) {
+        res.send(HttpStatus.OK, body);
+    } else {
+        res.send(statusCode);
+    }
+    res.end();
+  };
 }
-
-export default IBotOptions

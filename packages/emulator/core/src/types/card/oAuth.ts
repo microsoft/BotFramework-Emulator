@@ -31,17 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ILogger from './logger';
-import ILogService from './log/service';
-import { StringProvider } from '../utils/stringProvider';
+import ICardAction from './cardAction';
 
-interface IBotOptions {
-  fetch?: (string, any) => Promise<any>,
-  loggerOrLogService?: (ILogger | ILogService);
-  stateSizeLimitKB?: number;
-  use10Tokens?: boolean;
-  useCodeValidation?: boolean;
-  ngrokServerUrl: string | StringProvider
+interface IOAuthCard {
+  text: string;                   // Title of the Card 
+  connectionName: string;         // OAuth connection name
+  buttons: ICardAction[];         // Sign in action 
 }
 
-export default IBotOptions
+export default IOAuthCard

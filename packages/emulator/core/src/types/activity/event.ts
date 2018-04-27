@@ -31,17 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ILogger from './logger';
-import ILogService from './log/service';
-import { StringProvider } from '../utils/stringProvider';
+import IActivity from './activity';
+import IConversationReference from './invoke';
 
-interface IBotOptions {
-  fetch?: (string, any) => Promise<any>,
-  loggerOrLogService?: (ILogger | ILogService);
-  stateSizeLimitKB?: number;
-  use10Tokens?: boolean;
-  useCodeValidation?: boolean;
-  ngrokServerUrl: string | StringProvider
+interface IEventActivity extends IActivity {
+  name?: string,
+  value?: any,
+  relatesTo?: IConversationReference
 }
 
-export default IBotOptions
+export default IEventActivity

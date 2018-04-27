@@ -33,9 +33,33 @@
 
 const Electron = window['require']('electron');
 const { shell } = Electron;
+import { uniqueId } from '@bfemulator/sdk-shared';
+import { CommandService } from './platform/commands/commandService';
+import * as URL from 'url';
 
 export function navigate(url: string) {
-  shell.openExternal(url, { activate: true });
+    try {
+        const parsed = URL.parse(url);
+        if (parsed.protocol.startsWith('oauth:')) {
+            navigateEmulatedOAuthUrl(url.substring(8));
+        } else if (parsed.protocol.startsWith('oauthlink:')) {
+            navigateOAuthUrl(url.substring(12));
+        } else {
+            shell.openExternal(url, { activate: true });
+        }
+    } catch (e) {
+        shell.openExternal(url, { activate: true });
+    }
+}
+
+function navigateEmulatedOAuthUrl(oauthParam: string) {
+    let parts = oauthParam.split('&&&');
+    CommandService.remoteCall('oauth:send-token-response', parts[0], parts[1], 'emulatedToken_' + uniqueId()).then(() => {});
+}
+
+function navigateOAuthUrl(oauthParam: string) {
+    let parts = oauthParam.split('&&&');
+    CommandService.remoteCall('oauth:create-oauth-window', parts[0], parts[1]).then(() => {});
 }
 
 /*

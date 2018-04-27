@@ -48,11 +48,13 @@ import IContactRelationUpdateActivity from '../types/activity/contactRelationUpd
 import IConversationUpdateActivity from '../types/activity/conversationUpdate';
 import IGenericActivity from '../types/activity/generic';
 import IInvokeActivity from '../types/activity/invoke';
+import IEventActivity from '../types/activity/event';
 import IResourceResponse from '../types/response/resource';
 import isLocalhostUrl from '../utils/isLocalhostUrl';
 import ITranscriptRecord from '../types/transcriptRecord';
 import IUser from '../types/user';
 import PaymentEncoder from '../utils/paymentEncoder';
+import OAuthClientEncoder from '../utils/oauthClientEncoder';
 import uniqueId from '../utils/uniqueId';
 
 import ICheckoutConversationSession from '../types/payment/checkoutConversationSession';
@@ -61,6 +63,7 @@ import IPaymentRequest from '../types/payment/request';
 import IPaymentRequestComplete from '../types/payment/requestComplete';
 import IPaymentRequestUpdate from '../types/payment/requestUpdate';
 import PaymentOperations from '../types/payment/operations';
+import { TokenCache } from '../userToken/tokenCache'
 
 // moment currently does not export callable function
 const moment = require('moment');
@@ -102,6 +105,8 @@ export default class Conversation extends EventEmitter {
   // "please don't use default Bot State API" warning message
   // when they try to write bot state data
   public stateApiDeprecationWarningShown: boolean = false;
+
+  public codeVerifier: string = undefined;
 
   private postage(recipientId: string, activity: IActivity): IActivity {
     const date = moment();
@@ -201,7 +206,7 @@ export default class Conversation extends EventEmitter {
    * Queues activity for delivery to user.
    */
   public postActivityToUser(activity: IActivity): IResourceResponse {
-    activity = this.processActivityForPayments(activity);
+    activity = this.processActivity(activity);
     activity = this.postage(this.user.id, activity);
 
     if (!activity.from.name) {
@@ -226,11 +231,11 @@ export default class Conversation extends EventEmitter {
 
   // TODO: Payment modification is only useful for emulator, but not local mode
   //       This function turns all payment cardAction into openUrl to payment://
-  public processActivityForPayments(activity: IActivity): IActivity {
-    const visitor = new PaymentEncoder();
+  public processActivity(activity: IActivity): IActivity {
+    const visitors = [new PaymentEncoder(), new OAuthClientEncoder(activity.conversation.id)];
 
     activity = { ...activity };
-    visitor.traverseActivity(activity);
+    visitors.forEach(v => v.traverseActivity(activity));
 
     return activity;
   }
@@ -526,6 +531,31 @@ export default class Conversation extends EventEmitter {
     return response;
   }
 
+  public async sendTokenResponse(
+    connectionName: string,
+    token: string,
+    doNotCache?: boolean) {
+
+    let userId = this.bot.facilities.users.currentUserId;
+    let botId = this.bot.botId;
+
+    if(!doNotCache) {
+      TokenCache.addTokenToCache(botId, userId, connectionName, token);
+    }
+    
+    const activity: IEventActivity = {
+        type: 'event',
+        name: 'tokens/response',
+        value: {
+            connectionName: connectionName,
+            token: token
+        }
+    };
+
+    return await this.postActivityToBot(activity, false);
+}
+
+
   /**
    * Returns activities since the watermark.
    */
@@ -590,7 +620,7 @@ export default class Conversation extends EventEmitter {
     // Add activities to the queue
     activities.forEach(activity => {
       if (activity.recipient.role === 'user') {
-        activity = this.processActivityForPayments(activity);
+        activity = this.processActivity(activity);
       }
 
       this.addActivityToQueue(activity);

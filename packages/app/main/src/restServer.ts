@@ -98,7 +98,8 @@ export class RestServer {
       () => this.msaPassword,
       {
         fetch,
-        loggerOrLogService: mainWindow.logService
+        loggerOrLogService: mainWindow.logService,
+        ngrokServerUrl: () => emulator.ngrok.getNgrokServiceUrl()
       }
     );
   }

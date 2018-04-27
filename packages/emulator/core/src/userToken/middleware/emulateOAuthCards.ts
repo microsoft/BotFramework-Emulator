@@ -31,17 +31,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ILogger from './logger';
-import ILogService from './log/service';
-import { StringProvider } from '../utils/stringProvider';
+import * as HttpStatus from 'http-status-codes';
+import * as Restify from 'restify';
 
-interface IBotOptions {
-  fetch?: (string, any) => Promise<any>,
-  loggerOrLogService?: (ILogger | ILogService);
-  stateSizeLimitKB?: number;
-  use10Tokens?: boolean;
-  useCodeValidation?: boolean;
-  ngrokServerUrl: string | StringProvider
+import Bot from '../../bot';
+import OAuthLinkEncoder from '../../utils/oauthLinkEncoder';
+
+export default function emulateOAuthCards(bot: Bot) {
+  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+    try {
+      let emulate: string = req.params['emulate'];
+      if (emulate) {
+          OAuthLinkEncoder.EmulateOAuthCards = (emulate.toLowerCase() === 'true');
+      } else {
+          OAuthLinkEncoder.EmulateOAuthCards = false;
+      }
+      res.send(HttpStatus.OK);
+      
+      res.end();
+    } catch (err) {
+      res.send(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  };
 }
-
-export default IBotOptions

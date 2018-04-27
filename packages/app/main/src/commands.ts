@@ -13,7 +13,7 @@ import { Protocol } from './constants';
 import * as BotActions from './data-v2/action/bot';
 import { emulator } from './emulator';
 import { ExtensionManager } from './extensions';
-import { mainWindow } from './main';
+import { mainWindow, windowManager } from './main';
 import { ProtocolHandler } from './protocolHandler';
 import { ContextMenuService } from './services/contextMenuService';
 import { LuisAuthWorkflowService } from './services/luisAuthWorkflowService';
@@ -453,4 +453,21 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Opens an external link
   CommandRegistry.registerCommand('electron:openExternal', shell.openExternal.bind(shell));
+
+  //---------------------------------------------------------------------------
+  // Sends an OAuth TokenResponse
+  CommandRegistry.registerCommand('oauth:send-token-response', async (connectionName: string, conversationId: string, token: string) => {
+    const conversation = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
+    if (!conversation) {
+      throw new Error(`emulator:feed-transcript:deep-link: Conversation ${conversationId} not found.`);
+    }
+    conversation.sendTokenResponse(connectionName, conversationId, false);
+  });
+
+  //---------------------------------------------------------------------------
+  // Opens an OAuth login window
+  CommandRegistry.registerCommand('oauth:create-oauth-window', async (url: string, conversationId: string) => {
+    const conversation = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
+    windowManager.createOAuthWindow(url, conversation.codeVerifier);
+  });
 }

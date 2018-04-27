@@ -31,17 +31,44 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ILogger from './logger';
-import ILogService from './log/service';
-import { StringProvider } from '../utils/stringProvider';
+import * as HttpStatus from 'http-status-codes';
+import { RequestHandler, Server } from 'restify';
 
-interface IBotOptions {
-  fetch?: (string, any) => Promise<any>,
-  loggerOrLogService?: (ILogger | ILogService);
-  stateSizeLimitKB?: number;
-  use10Tokens?: boolean;
-  useCodeValidation?: boolean;
-  ngrokServerUrl: string | StringProvider
+import Bot from '../bot';
+import createBotFrameworkAuthenticationMiddleware from '../utils/botFrameworkAuthentication';
+import createJsonBodyParserMiddleware from '../utils/jsonBodyParser';
+
+import getToken from './middleware/getToken';
+import emulateOAuthCards from './middleware/emulateOAuthCards';
+import signOut from './middleware/signOut';
+import tokenResponse from './middleware/tokenResponse';
+
+export default function registerRoutes(bot: Bot, server: Server, uses: RequestHandler[]) {
+  const jsonBodyParser = createJsonBodyParserMiddleware();
+  const verifyBotFramework = bot.msaAppId ? createBotFrameworkAuthenticationMiddleware(bot.botId, bot.options.fetch) : [];
+
+  server.get(
+    '/api/usertoken/GetToken',
+    verifyBotFramework,
+    getToken(bot)
+  );
+
+  server.post(
+    '/api/usertoken/emulateOAuthCards',
+    verifyBotFramework,
+    emulateOAuthCards(bot)
+  );
+
+  server.del(
+    '/api/usertoken/SignOut',
+    verifyBotFramework,
+    signOut(bot)
+  );
+
+  server.post(
+    '/api/usertoken/tokenResponse',
+    ...uses,
+    jsonBodyParser,
+    tokenResponse(bot)
+  );
 }
-
-export default IBotOptions

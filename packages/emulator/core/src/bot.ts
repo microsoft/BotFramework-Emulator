@@ -51,6 +51,8 @@ import registerAttachmentRoutes from './attachments/registerRoutes';
 import registerBotStateRoutes from './botState/registerRoutes';
 import registerConversationRoutes from './conversations/registerRoutes';
 import registerDirectLineRoutes from './directLine/registerRoutes';
+import registerSessionRoutes from './session/registerRoutes';
+import registerUserTokenRoutes from './userToken/registerRoutes';
 import statusCodeFamily from './utils/statusCodeFamily';
 import stripEmptyBearerToken from './utils/stripEmptyBearerToken';
 import Users from './facility/users';
@@ -60,7 +62,9 @@ const DEFAULT_OPTIONS: BotOptions = {
   fetch,
   loggerOrLogService: new ConsoleLogService(),
   stateSizeLimitKB: 64,
-  use10Tokens: false
+  use10Tokens: false,
+  useCodeValidation: false,
+  ngrokServerUrl: ''
 };
 
 // We will refresh if the token is going to expire within 5 minutes
@@ -87,6 +91,10 @@ export default class Bot {
 
   public get msaPassword(): string {
     return provideString(this._msaPassword);
+  }
+
+  public get ngrokServiceUrl(): string {
+    return provideString(this.options.ngrokServerUrl);
   }
 
   constructor(
@@ -136,6 +144,8 @@ export default class Bot {
     registerBotStateRoutes(this, router, uses);
     registerConversationRoutes(this, router, uses);
     registerDirectLineRoutes(this, router, uses);
+    registerSessionRoutes(this, router, uses);
+    registerUserTokenRoutes(this, router, uses);
 
     return this;
   }

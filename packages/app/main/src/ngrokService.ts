@@ -23,6 +23,10 @@ export class NgrokService {
     }
   }
 
+  public getNgrokServiceUrl() : string {
+    return this._serviceUrl;
+  }
+
   public async startup() {
     this.cacheHostAndPortSettings();
     await this.recycle();

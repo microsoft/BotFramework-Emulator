@@ -129,6 +129,42 @@ export class WindowManager {
         checkoutWindow.webContents.setZoomLevel(getSettings().windowState.zoomLevel);
     }
 
+    public createOAuthWindow(url: string, codeVerifier: string) {
+        let win = new Electron.BrowserWindow({
+            width: 800,
+            height: 600,
+            title: 'Sign In'
+        });
+        this.add(win);
+        let webContents = win.webContents;
+
+        // webContents.openDevTools();
+        webContents.setZoomLevel(getSettings().windowState.zoomLevel);
+        
+        win.on('closed', () => {
+            this.remove(win);
+        });
+
+        const ses = webContents.session;
+        ses.webRequest.onBeforeRequest((details, callback) => {
+            let url = details.url.toLowerCase();
+            if (url.indexOf('/postsignincallback?') !== -1 && url.indexOf('&code_verifier=') === -1) {
+                if(getSettings().framework.useCodeValidation) {
+                    codeVerifier = 'emulated';
+                }
+                // final OAuth redirect so augment the call with the code_verifier
+                var newUrl = details.url + '&code_verifier=' + codeVerifier;
+                callback({ redirectURL: newUrl });
+            }
+            else {
+                // let the request happen
+                callback({});
+            }
+        });
+        
+        win.loadURL(url);
+    }
+
     public closeAll() {
         let openWindows = [];
         this.windows.forEach(win => openWindows.push(win));

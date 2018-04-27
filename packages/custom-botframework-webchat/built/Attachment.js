@@ -153,6 +153,10 @@ exports.AttachmentView = function (props) {
             if (!attachment.content)
                 return null;
             return (React.createElement(AdaptiveCardContainer_1.default, { className: "signin", nativeCard: CardBuilder.buildCommonCard(attachment.content), onCardAction: props.onCardAction }));
+        case "application/vnd.microsoft.card.oauth":
+            if (!attachment.content)
+                return null;
+            return (React.createElement(AdaptiveCardContainer_1.default, { className: "signin", nativeCard: CardBuilder.buildOAuthCard(attachment.content), onCardAction: props.onCardAction }));
         case "application/vnd.microsoft.card.receipt":
             if (!attachment.content)
                 return null;
