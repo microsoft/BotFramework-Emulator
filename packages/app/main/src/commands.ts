@@ -269,7 +269,7 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Saves the conversation to a transcript file, with user interaction to set filename.
-  CommandRegistry.registerCommand('emulator:save-transcript-to-file', (conversationId: string): void => {
+  CommandRegistry.registerCommand('emulator:save-transcript-to-file', async (conversationId: string): Promise<void> => {
     const activeBot: IBotConfig = getActiveBot();
     if (!activeBot) {
       throw new Error('save-transcript-to-file: No active bot.');
@@ -300,7 +300,8 @@ export function registerCommands() {
 
     if (filename && filename.length) {
       mkdirpSync(Path.dirname(filename));
-      writeFile(filename, conversation.getTranscript());
+      const transcripts = await conversation.getTranscript();
+      writeFile(filename, transcripts);
     }
   });
 

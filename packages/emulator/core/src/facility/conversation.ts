@@ -62,9 +62,12 @@ import IPaymentRequest from '../types/payment/request';
 import IPaymentRequestComplete from '../types/payment/requestComplete';
 import IPaymentRequestUpdate from '../types/payment/requestUpdate';
 import PaymentOperations from '../types/payment/operations';
+import IMessageActivity from '../types/activity/message';
+import IAttachment from '../types/attachment'
 
 // moment currently does not export callable function
 const moment = require('moment');
+const maxDataUrlLength = 1 << 22;
 
 interface IActivityBucket {
   activity: IActivity,
@@ -233,6 +236,16 @@ export default class Conversation extends EventEmitter {
 
     activity = { ...activity };
     visitor.traverseActivity(activity);
+
+    return activity;
+  }
+
+  //This function turns local contentUrls into dataUrls://
+  public async processActivityForDataUrls(activity: IActivity): Promise<IActivity> {
+    const visitor = new DataUrlEncoder(this.bot);
+
+    activity = { ...activity };
+    await visitor.traverseActivity(activity);
 
     return activity;
   }
@@ -599,9 +612,68 @@ export default class Conversation extends EventEmitter {
     });
   }
 
-  public getTranscript() {
+  public async getTranscript(): Promise<IActivity[]> {
     // Currently, we only export transcript of activities
     // TODO: Think about "member join/left", "typing", "activity update/delete", etc.
-    return this.transcript.filter(record => record.type === 'activity add').map(record => record.activity);
+    const activities = this.transcript.filter(record => record.type === 'activity add').map(record => record.activity);
+    for (let i = 0; i < activities.length; i++) {
+      await this.processActivityForDataUrls(activities[i]);
+    }
+    return activities;
+  }
+}
+
+class DataUrlEncoder  {
+
+  constructor(
+    public bot: Bot
+  )
+  {
+    // the constructor only exists so we can pass in the bot
+  }
+
+  public async traverseActivity(activity: IActivity) {
+    let messageActivity = activity as IMessageActivity;
+    if (messageActivity) {
+        await this.traverseMessageActivity(messageActivity);
+    }
+  }
+
+  public async traverseMessageActivity(messageActivity: IMessageActivity) {
+    if (messageActivity && messageActivity.attachments) {
+
+      for (var i = 0; i < messageActivity.attachments.length; i++) {
+        await this.traverseAttachment(messageActivity.attachments[i]);
+      }
+
+    }
+  }
+
+  public async traverseAttachment(attachment: IAttachment) {
+    if (attachment && attachment.contentUrl) {
+      await this.visitContentUrl(attachment);
+    }
+  }
+  
+  protected async visitContentUrl(attachment: IAttachment)
+  {
+    if (this.shouldBeDataUrl(attachment.contentUrl)) {
+      attachment.contentUrl = await this.makeDataUrl(attachment.contentUrl);
+    }
+  }
+  protected async makeDataUrl(url: string) : Promise<string> {
+    let resultUrl = url;
+    const imported = await this.bot.options.fetch(url, {});
+    if (parseInt(imported.headers.get('content-length')) < maxDataUrlLength) {
+      const buffer = await imported.buffer();
+      const encoded = Buffer.from(buffer).toString('base64');
+      const typeString = imported.headers.get('content-type');
+      resultUrl = 'data:' + typeString + ';base64,' + encoded;
+     
+    } 
+    return resultUrl;
+  }
+  protected shouldBeDataUrl(url: string) : boolean {
+    return (url && (isLocalhostUrl(url) || url.indexOf('ngrok') != -1));
   }
 }
