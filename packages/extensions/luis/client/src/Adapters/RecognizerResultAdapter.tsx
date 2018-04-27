@@ -1,4 +1,4 @@
-import { RecognizerResult } from '../Models/RecognizerResults';
+import { RecognizerResult, RecognizerResultIntent } from '../Models/RecognizerResults';
 import { LuisResponse } from '../Luis/LuisResponse';
 import { Entity } from '../Luis/Entity';
 import { CompositeEntity } from '../Luis/CompositeEntity';
@@ -9,7 +9,7 @@ import { Intent } from '../Models/Intent';
 // adapter allows teh extension to give a similar experience for both SDKs
 export class RecognizerResultAdapter implements RecognizerResult {
   text: string;
-  intents: any;
+  intents: { [key: string]: RecognizerResultIntent };
   entities: any;
 
   constructor(luisResult: LuisResponse) {
@@ -18,16 +18,20 @@ export class RecognizerResultAdapter implements RecognizerResult {
     this.entities = this.getEntitiesAndMetadata(luisResult.entities, luisResult.compositeEntities, true);
   }
 
-  private getIntents(luisResult: LuisResponse): any {
-    const intents: { [name: string]: number; }  = {};
+  private normalizeName(name: string): string {
+    return name.replace(/\./g, '_');
+  }
+
+  private getIntents(luisResult: LuisResponse): { [key: string]: RecognizerResultIntent } {
+    const intents: { [name: string]: RecognizerResultIntent; }  = {};
     if (luisResult.intents) {
-        luisResult.intents.reduce((prev: any, curr: Intent) => {
-            prev[curr.intent] = curr.score;
+        luisResult.intents.reduce((prev: { [key: string]: RecognizerResultIntent }, curr: Intent) => {
+            prev[curr.intent] = { score: curr.score };
             return prev;
         },                        intents);
     } else {
         const topScoringIntent = luisResult.topScoringIntent;
-        intents[(topScoringIntent).intent] = topScoringIntent.score;
+        intents[this.normalizeName((topScoringIntent).intent)] = { score: topScoringIntent.score };
     }
     return intents;
 }
@@ -66,35 +70,78 @@ private getEntitiesAndMetadata(
 }
 
 private getEntityValue(entity: Entity): any {
-    if (entity.type.startsWith('builtin.datetimeV2.') && 
-        entity.resolution && entity.resolution.values && entity.resolution.values.length) {
-        return entity.resolution.values[0].timex;
-    } else if (entity.resolution) {
-        if (entity.type.startsWith('builtin.number')) {
-          return Number(entity.resolution.value);
-        } else {
-            return Object.keys(entity.resolution).length > 1 ? 
-                    entity.resolution : 
-                    entity.resolution.value ? 
-                        entity.resolution.value : 
+    if (!entity.resolution) {
+        return entity.entity;
+    }
+
+    if (entity.type.startsWith('builtin.datetimeV2.')) {
+        if (!entity.resolution.values || !entity.resolution.values.length) {
+            return entity.resolution;
+        }
+
+        var vals = entity.resolution.values;
+        var type = vals[0].type;
+        var timexes = vals.map((t: any) => t.timex);
+        var distinct = timexes.filter((v: any, i: any, a: any) => a.indexOf(v) === i);
+        return {type: type, timex: distinct};
+    } else {
+        var res = entity.resolution;
+        switch (entity.type) {
+            case 'builtin.number':
+            case 'builtin.ordinal': return Number(res.value);
+            case 'builtin.percentage':
+                {
+                    var svalue = res.value;
+                    if (svalue.endsWith('%')) {
+                        svalue = svalue.substring(0, svalue.length - 1);
+                    }
+                    return Number(svalue);
+                }
+            case 'builtin.age':
+            case 'builtin.dimension':
+            case 'builtin.currency':
+            case 'builtin.temperature':
+                {
+                    var val = res.value;
+                    var obj: any = { };
+                    if (val) {
+                        obj.number = Number(val);
+                    }
+                    obj.units = res.unit;
+                    return obj;
+                }
+            default:
+                return Object.keys(entity.resolution).length > 1 ?
+                    entity.resolution :
+                    entity.resolution.value ?
+                        entity.resolution.value :
                         entity.resolution.values;
         }
-    } else {
-      return entity.entity;
     }
 }
 
 private getEntityMetadata(entity: Entity): any {
     return {
         startIndex: entity.startIndex,
-        endIndex: entity.endIndex,
+        endIndex: entity.endIndex + 1,
         text: entity.entity,
         score: entity.score
     };
 }
 
 private getNormalizedEntityType(entity: Entity): string {
-    return entity.type.replace(/\./g, '_');
+    // Type::Role -> Role
+    var type = entity.type.split(':').pop() || '';
+    if (type.startsWith('builtin.datetimeV2.')) {
+        type = 'builtin_datetime';
+    }
+    if (type.startsWith('builtin.currency')) {
+        type = 'builtin_money';
+    }
+    if (entity.role != null) {
+        type = entity.role;
+    }
+    return type.replace(/\./g, '_');
 }
 
 private populateCompositeEntity(

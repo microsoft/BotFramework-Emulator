@@ -39,8 +39,8 @@ export default class MockState implements AppState {
         ]
       },
       intents: {
-        Greeting: 0.99,
-        Travel: 0.01
+        Greeting: { score: 0.99 },
+        Travel: { score: 0.01 }
       },
       text: 'hi'
     },
