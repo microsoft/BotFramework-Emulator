@@ -157,8 +157,12 @@ export class WindowManager {
         ses.webRequest.onBeforeRequest((details, callback) => {
             let url = details.url.toLowerCase();
             if (url.indexOf('/postsignincallback?') !== -1 && url.indexOf('&code_verifier=') === -1) {
+                let codeVerifier = OAuthLinkEncoder.CodeVerifier;
+                if(getSettings().framework.useCodeValidation) {
+                    codeVerifier = 'emulated';
+                }
                 // final OAuth redirect so augment the call with the code_verifier
-                var newUrl = details.url + '&code_verifier=' + OAuthLinkEncoder.CodeVerifier;
+                var newUrl = details.url + '&code_verifier=' + codeVerifier;
                 callback({ redirectURL: newUrl });
             }
             else {

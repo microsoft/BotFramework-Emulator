@@ -404,6 +404,7 @@ export class ServerSettingsActions {
         ngrokPath: string,
         bypassNgrokLocalhost: boolean,
         use10Tokens: boolean,
+        useCodeValidation: boolean,
         stateSizeLimit: number
     }) {
         serverChangeSetting('Framework_Set', state);

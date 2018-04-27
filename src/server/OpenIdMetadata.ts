@@ -32,7 +32,6 @@
 //
 
 import * as got from 'got';
-import { emulator } from './emulator';
 let getPem = require('rsa-pem-from-mod-exp');
 let base64url = require('base64url');
 
