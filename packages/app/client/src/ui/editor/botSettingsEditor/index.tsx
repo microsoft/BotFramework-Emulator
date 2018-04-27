@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import { debounce } from 'lodash';
 import { connect } from 'react-redux';
-import { getBotDisplayName, getFirstBotEndpoint, newEndpoint, getBotId, IBotInfo } from '@bfemulator/app-shared';
+import { getBotDisplayName, getFirstBotEndpoint, newEndpoint, IBotInfo } from '@bfemulator/app-shared';
 import { IBotConfig, IEndpointService, ServiceType } from '@bfemulator/sdk-shared';
 import { Fonts, Column, Row, RowAlignment, PrimaryButton, TextInputField, MediumHeader } from '@bfemulator/ui-react';
 
@@ -13,7 +13,7 @@ import * as ChatActions from '../../../data/action/chatActions';
 import * as EditorActions from '../../../data/action/editorActions';
 import store, { IRootState } from '../../../data/store';
 import { GenericDocument } from '../../layout';
-import { getBotInfoById } from '../../../data/botHelpers';
+import { getBotInfoByPath } from '../../../data/botHelpers';
 
 const CSS = css({
   '& .bot-settings-header': {
@@ -53,23 +53,23 @@ const CSS = css({
   }
 });
 
-interface IBotSettingsEditorProps {
+interface BotSettingsEditorProps {
   bot?: IBotConfig;
   dirty?: boolean;
   documentId?: string;
 }
 
-interface IBotSettingsEditorState {
+interface BotSettingsEditorState {
   bot?: IBotConfig;
   endpoint?: IEndpointService;
   secret?: string;
 }
 
-class BotSettingsEditor extends React.Component<IBotSettingsEditorProps, IBotSettingsEditorState> {
-  constructor(props: IBotSettingsEditorProps, context) {
+class BotSettingsEditor extends React.Component<BotSettingsEditorProps, BotSettingsEditorState> {
+  constructor(props: BotSettingsEditorProps, context) {
     super(props, context);
 
-    const botInfo = getBotInfoById(getBotId(this.props.bot));
+    const botInfo = getBotInfoByPath(this.props.bot.path);
 
     this.state = {
       bot: this.props.bot,
@@ -78,13 +78,12 @@ class BotSettingsEditor extends React.Component<IBotSettingsEditorProps, IBotSet
     };
   }
 
-  componentWillReceiveProps(newProps) {
-    const { bot: newBot }: { bot: IBotConfig } = newProps;
+  componentWillReceiveProps(newProps: BotSettingsEditorProps) {
+    const { path: newBotPath } = newProps.bot;
     // handling a new bot
-    const newBotId = getBotId(newBot);
-    if (newBotId !== getBotId(this.state.bot)) {
-      const newBotInfo: IBotInfo = getBotInfoById(newBotId);
-      this.setState({ endpoint: getFirstBotEndpoint(newBot) || newEndpoint(), secret: newBotInfo.secret });
+    if (newBotPath !== this.state.bot.path) {
+      const newBotInfo: IBotInfo = getBotInfoByPath(newBotPath);
+      this.setState({ endpoint: getFirstBotEndpoint(newProps.bot) || newEndpoint(), secret: newBotInfo.secret });
       this.setDirtyFlag(false);
     }
   }
@@ -129,19 +128,19 @@ class BotSettingsEditor extends React.Component<IBotSettingsEditorProps, IBotSet
       id: id.trim()
     };
 
-    const { name: botName = '', description = '' } = this.state.bot;
+    const { name: botName = '', description = '', path } = this.state.bot;
     const bot: IBotConfig = {
       name: botName.trim(),
       description: description.trim(),
+      path: path.trim(),
       services: [endpointService]
     };
 
     // write the bot secret to bots.json
-    const botId = getBotId(bot);
-    let botInfo = getBotInfoById(botId);
+    let botInfo = getBotInfoByPath(path);
     botInfo.secret = this.state.secret;
-    await CommandService.remoteCall('bot:list:patch', botId, getBotInfoById(botId))
-    return await CommandService.remoteCall('bot:save', bot, this.state.secret)
+    await CommandService.remoteCall('bot:list:patch', path, botInfo);
+    return await CommandService.remoteCall('bot:save', bot)
       .then(() => {
         this.setDirtyFlag(false);
         this.setState({ bot });
@@ -183,7 +182,7 @@ class BotSettingsEditor extends React.Component<IBotSettingsEditorProps, IBotSet
   }
 }
 
-function mapStateToProps(state: IRootState, ownProps: object) : IBotSettingsEditorProps {
+function mapStateToProps(state: IRootState, ownProps: object) : BotSettingsEditorProps {
   return {
     bot:  state.bot.activeBot
   };

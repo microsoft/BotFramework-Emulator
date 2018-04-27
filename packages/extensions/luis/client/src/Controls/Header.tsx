@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Component } from 'react';
 import { css } from 'glamor';
+import { Colors } from '@bfemulator/ui-react';
 
 interface HeaderState {
 
@@ -31,7 +32,8 @@ const HEADER_CSS = css({
     },
   
     '& #appId': {
-      paddingLeft: '16px'
+      paddingLeft: '16px',
+      color: Colors.APP_HYPERLINK_DETAIL_DARK
     },
   },
 
@@ -40,11 +42,13 @@ const HEADER_CSS = css({
     display: 'block',
     
     '& #appVersion': {  
-      paddingRight: '16px'
+      paddingRight: '16px',
+      color: Colors.APP_HYPERLINK_DETAIL_DARK
     },
   
     '& #appSlot': {
-      paddingRight: '6px'
+      paddingRight: '6px',
+      color: Colors.APP_HYPERLINK_DETAIL_DARK
     }
   }
 });

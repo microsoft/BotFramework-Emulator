@@ -105,4 +105,7 @@ export interface IBotConfig {
 
   // connected services for the bot
   services: IConnectedService[];
+
+  // internal identifier that allows us to map to bots.json entries
+  path?: string;
 }

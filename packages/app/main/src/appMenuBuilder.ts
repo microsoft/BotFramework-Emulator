@@ -1,7 +1,7 @@
 import * as Electron from 'electron';
 
-import { mainWindow } from './main';
-import { IBotInfo, getBotId } from '@bfemulator/app-shared';
+import { mainWindow, appUpdater } from './main';
+import { IBotInfo } from '@bfemulator/app-shared';
 
 export interface IAppMenuBuilder {
   menuTemplate: Electron.MenuItemConstructorOptions[];
@@ -12,7 +12,6 @@ export interface IAppMenuBuilder {
   getEditMenu: () => Electron.MenuItemConstructorOptions;
   getEditMenuMac: () => Electron.MenuItemConstructorOptions[];
   getViewMenu: () => Electron.MenuItemConstructorOptions;
-  getWindowMenu: () => Electron.MenuItemConstructorOptions;
   getWindowMenuMac: () => Electron.MenuItemConstructorOptions[];
   getHelpMenu: () => Electron.MenuItemConstructorOptions;
   setFileMenu: (fileMenuTemplate: Electron.MenuItemConstructorOptions, appMenuTemplate: Electron.MenuItemConstructorOptions[]) => Electron.MenuItemConstructorOptions[];
@@ -38,7 +37,6 @@ export const AppMenuBuilder = new class AppMenuBuilder implements IAppMenuBuilde
       this.getFileMenu(),
       this.getEditMenu(),
       this.getViewMenu(),
-      this.getWindowMenu(),
       this.getHelpMenu()
     ];
 
@@ -72,7 +70,10 @@ export const AppMenuBuilder = new class AppMenuBuilder implements IAppMenuBuilde
       (template[2].submenu as any).push(this.getEditMenuMac());
 
       // Window menu
-      template[4].submenu = this.getWindowMenuMac();
+      template.splice(4, 0, {
+        label: 'Window',
+        submenu: this.getWindowMenuMac()
+      });
     }
     // save menu state
     this.menuTemplate = template;
@@ -88,7 +89,7 @@ export const AppMenuBuilder = new class AppMenuBuilder implements IAppMenuBuilde
     return bots.slice(0, 5).map(bot => ({
       label: bot.displayName,
       click: () => {
-        mainWindow.commandService.remoteCall('bot:switch', bot.id)
+        mainWindow.commandService.remoteCall('bot:switch', bot.path)
           .catch(err => console.error('Error while switching bots from file menu recent bots list: ', err));
       }
     }));
@@ -185,21 +186,24 @@ export const AppMenuBuilder = new class AppMenuBuilder implements IAppMenuBuilde
     return {
       label: 'View',
       submenu: [
+        {
+          label: "Explorer",
+          click: () => mainWindow.commandService.remoteCall('shell:show-explorer')
+        },
+        {
+          label: "Services",
+          click: () => mainWindow.commandService.remoteCall('shell:show-services')
+        },
+        {
+          label: "App Settings",
+          click: () => mainWindow.commandService.remoteCall('shell:show-app-settings')
+        },
         { type: 'separator' },
         { role: 'resetzoom' },
         { role: 'zoomin' },
         { role: 'zoomout' },
         { type: 'separator' },
         { role: 'togglefullscreen' },
-      ]
-    }
-  };
-
-  getWindowMenu(): Electron.MenuItemConstructorOptions {
-    return {
-      role: 'window',
-      submenu: [
-        { role: 'minimize' },
       ]
     }
   };
@@ -223,9 +227,48 @@ export const AppMenuBuilder = new class AppMenuBuilder implements IAppMenuBuilde
           click: () => mainWindow.commandService.remoteCall('welcome-page:show')
         },
         { type: 'separator' },
+        {
+          label: 'Privacy',
+          click: () => mainWindow.commandService.remoteCall('shell:open-external-link', 'https://go.microsoft.com/fwlink/?LinkId=512132')
+        },
+        {
+          label: 'Credits',
+          click: () => mainWindow.commandService.remoteCall('shell:open-external-link', 'https://aka.ms/l7si1g')
+        },
+        { type: 'separator' },
+        {
+          label: "Report an issue",
+          click: () => mainWindow.commandService.remoteCall('shell:open-external-link', 'https://aka.ms/cy106f')
+        },
+        { type: 'separator' },
         { role: 'toggledevtools' },
+        {
+          label: "Toggle Developer Tools (Inspector)",
+          click: () => mainWindow.commandService.remoteCall('shell:toggle-inspector-devtools')
+        },
+        { type: 'separator' },
+        this.getUpdateMenuItem(),
+        { type: 'separator' },
+        {
+          label: "About",
+          click: () => mainWindow.commandService.remoteCall('shell:about')
+        },
       ]
     };
+  }
+  
+  getUpdateMenuItem(): Electron.MenuItemConstructorOptions {
+    if (appUpdater.isUpdateAvailable) {
+      return {
+        label: "Restart to Update...",
+        click: () => appUpdater.quitAndInstall()
+      }
+    } else {
+      return {
+        label: "Check for Update...",
+        click: () => appUpdater.checkForUpdates()
+      }
+    }
   }
 
   /** Takes a file menu template and places it at the right position in the app menu template according to platform */

@@ -33,7 +33,6 @@
 
 import * as Electron from 'electron';
 import { app, Menu } from 'electron';
-import { getBotId } from '@bfemulator/app-shared';
 
 import { getSettings, dispatch } from './settings';
 import { WindowStateAction } from './reducers/windowStateReducer';
@@ -48,8 +47,8 @@ import { Window } from './platform/window';
 import { ensureStoragePath, writeFile, isDev } from './utils';
 import * as squirrel from './squirrelEvents';
 import * as Commands from './commands';
-import { getBotInfoById } from './botHelpers';
 import { AppMenuBuilder } from './appMenuBuilder';
+import { AppUpdater } from './appUpdater';
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
   console.error(error);
@@ -58,6 +57,7 @@ import { AppMenuBuilder } from './appMenuBuilder';
 
 export let mainWindow: Window;
 export let windowManager: WindowManager;
+export let appUpdater = new AppUpdater();
 
 var openUrls = [];
 var onOpenUrl = function (event, url) {
@@ -170,6 +170,9 @@ const createMainWindow = async () => {
 
   mainWindow.browserWindow.setTitle(app.getName());
   windowManager = new WindowManager();
+  
+  // Start auto-updater
+  appUpdater.startup(mainWindow.browserWindow);
 
   const template: Electron.MenuItemConstructorOptions[] = AppMenuBuilder.getAppMenuTemplate();
 
@@ -255,8 +258,8 @@ Electron.app.on('ready', function () {
   if (!mainWindow) {
     if (process.argv.find(val => val.includes('--vscode-debugger'))) {
       // workaround for delay in vscode debugger attach
-      //setTimeout(createMainWindow, 5000);
-      createMainWindow();
+      setTimeout(createMainWindow, 5000);
+      //createMainWindow();
     } else {
       createMainWindow();
     }
@@ -264,9 +267,9 @@ Electron.app.on('ready', function () {
 });
 
 Electron.app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') {
+  //if (process.platform !== 'darwin') {
     Electron.app.quit();
-  }
+  //}
 });
 
 Electron.app.on('activate', function () {

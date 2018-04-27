@@ -1,4 +1,4 @@
-import { addIdToBotEndpoints, getBotId, IFrameworkSettings, newBot, newEndpoint, IBotInfo } from '@bfemulator/app-shared';
+import { addIdToBotEndpoints, IFrameworkSettings, newBot, newEndpoint, IBotInfo, getBotDisplayName } from '@bfemulator/app-shared';
 import { Conversation } from '@bfemulator/emulator-core';
 import { CommandRegistry as CommReg, IActivity, IBotConfig, uniqueId, IConnectedService, ServiceType } from '@bfemulator/sdk-shared';
 import * as Electron from 'electron';
@@ -7,13 +7,13 @@ import * as Fs from 'fs';
 import { sync as mkdirpSync } from 'mkdirp';
 import * as Path from 'path';
 import { AppMenuBuilder } from './appMenuBuilder';
-import { cloneBot, getActiveBot, getBotInfoById, toSavableBot, loadBotWithRetry, pathExistsInRecentBots, saveBot, patchBotsJson } from './botHelpers';
+import { cloneBot, getActiveBot, getBotInfoByPath, toSavableBot, loadBotWithRetry, pathExistsInRecentBots, saveBot, patchBotsJson } from './botHelpers';
 import { BotProjectFileWatcher } from './botProjectFileWatcher';
 import { Protocol } from './constants';
 import * as BotActions from './data-v2/action/bot';
 import { emulator } from './emulator';
 import { ExtensionManager } from './extensions';
-import { mainWindow, windowManager } from './main';
+import { mainWindow, windowManager, appUpdater } from './main';
 import { ProtocolHandler } from './protocolHandler';
 import { ContextMenuService } from './services/contextMenuService';
 import { LuisAuthWorkflowService } from './services/luisAuthWorkflowService';
@@ -37,10 +37,17 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Create a bot
-  CommandRegistry.registerCommand('bot:create', async (bot: IBotConfig, botDirectory: string, secret: string): Promise<{ bot: IBotConfig, botFilePath: string }> => {
-    // add bot to store; return to client to be added to client store
+  CommandRegistry.registerCommand('bot:create', async (bot: IBotConfig, botDirectory: string, secret: string): Promise<IBotConfig> => {
     const botFilePath = Path.join(botDirectory, bot.name + '.bot');
-    mainWindow.store.dispatch(BotActions.create(bot, botFilePath, secret));
+    bot.path = botFilePath;
+
+    // create and add bot entry to bots.json
+    const botsJsonEntry: IBotInfo = {
+      path: botFilePath,
+      displayName: getBotDisplayName(bot),
+      secret
+    };
+    await patchBotsJson(botFilePath, botsJsonEntry);
 
     // save the bot
     try {
@@ -51,7 +58,7 @@ export function registerCommands() {
       throw e;
     }
 
-    return { bot, botFilePath };
+    return bot;
   });
 
   //---------------------------------------------------------------------------
@@ -68,34 +75,19 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Open a bot project from a .bot path
   CommandRegistry.registerCommand('bot:load', async (botFilePath: string, secret?: string): Promise<IBotConfig> => {
-    // load the bot (and decrypt if we have the secret)
-    let bot = await loadBotWithRetry(botFilePath, secret);
-
-    // get or assign the bot id
-    let botId = getBotId(bot);
-    if (!botId) {
-      addIdToBotEndpoints(bot);
-      botId = getBotId(bot);
-    }
-
-    // opening an existing bot, we have the secret
-    const botInfo = getBotInfoById(botId);
+    // try to get the bot secret from bots.json
+    const botInfo = pathExistsInRecentBots(botFilePath) ? getBotInfoByPath(botFilePath) : null;
     if (botInfo && botInfo.secret) {
       secret = botInfo.secret;
-      // reload the bot with the secret
-      bot = await loadBotWithRetry(botFilePath, secret);
     }
 
+    // load the bot (decrypt with secret if we were able to get it)
+    const bot = await loadBotWithRetry(botFilePath, secret);
     if (!bot)
       // user failed to enter a valid secret for an encrypted bot
       throw new Error('No secret provided to decrypt encrypted bot.');
 
-    // opening a new bot
-    if (!botInfo && !pathExistsInRecentBots(botFilePath)) {
-      // add the bot to bots.json
-      mainWindow.store.dispatch(BotActions.create(bot, botFilePath, secret));
-    }
-
+    // set bot as active
     const botDirectory = Path.dirname(botFilePath);
     mainWindow.store.dispatch(BotActions.setActive(bot, botDirectory));
 
@@ -103,22 +95,26 @@ export function registerCommands() {
   });
 
   //---------------------------------------------------------------------------
-  // Set active bot
-  CommandRegistry.registerCommand('bot:set-active', async (id: string): Promise<{ bot: IBotConfig, botDirectory: string } | void> => {
-    // read the bot file at the id's corresponding path and return the IBotConfig (easier for client-side)
-    const botInfo = getBotInfoById(id);
-
-    // load and decrypt the bot
-    let bot = await loadBotWithRetry(botInfo.path, botInfo.secret);
+  // Set active bot (called from client-side)
+  CommandRegistry.registerCommand('bot:set-active', async (botPath: string): Promise<{ bot: IBotConfig, botDirectory: string } | void> => {
+    // try to get the bot secret from bots.json
+    let secret;
+    const botInfo = pathExistsInRecentBots(botPath) ? getBotInfoByPath(botPath) : null;
+    if (botInfo && botInfo.secret) {
+      secret = botInfo.secret;
+    }
+    
+    // load the bot (decrypt with secret if we were able to get it)
+    let bot = await loadBotWithRetry(botPath, secret);
     if (!bot) {
       // user couldn't provide correct secret, abort
       throw new Error('No secret provided to decrypt encrypted bot.');
     }
 
     // set up the file watcher
-    BotProjectFileWatcher.watch(botInfo.path);
+    BotProjectFileWatcher.watch(botPath);
 
-    const botDirectory = Path.dirname(botInfo.path);
+    const botDirectory = Path.dirname(botPath);
     mainWindow.store.dispatch(BotActions.setActive(bot, botDirectory));
 
     return { bot, botDirectory };
@@ -128,8 +124,7 @@ export function registerCommands() {
   // Adds or updates an msbot service entry.
   CommandRegistry.registerCommand('bot:add-or-update-service', async (serviceType: ServiceType, service: IConnectedService) => {
     const activeBot = getActiveBot();
-    const botId = activeBot && getBotId(activeBot);
-    const botInfo = botId && getBotInfoById(botId);
+    const botInfo = activeBot && getBotInfoByPath(activeBot.path);
     if (botInfo) {
       const botConfig = toSavableBot(activeBot, botInfo.secret)
       const index = botConfig.services.findIndex(s => s.id === service.id && s.type === service.type);
@@ -156,8 +151,7 @@ export function registerCommands() {
   // Removes an msbot service entry.
   CommandRegistry.registerCommand('bot:remove-service', async (serviceType: ServiceType, serviceId: string) => {
     const activeBot = getActiveBot();
-    const botId = activeBot && getBotId(activeBot);
-    const botInfo = botId && getBotInfoById(botId);
+    const botInfo = activeBot && getBotInfoByPath(activeBot.path);
     if (botInfo) {
       const botConfig = toSavableBot(activeBot, botInfo.secret)
       botConfig.disconnectService(serviceType, serviceId);
@@ -172,10 +166,9 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Patches a bot record in bots.json
-  CommandRegistry.registerCommand('bot:list:patch', async (botId: string, bot: IBotInfo): Promise<void> => {
+  CommandRegistry.registerCommand('bot:list:patch', async (botPath: string, bot: IBotInfo): Promise<void> => {
     // patch bots.json and update the store
-    const updatedBots = patchBotsJson(botId, bot);
-    return await mainWindow.commandService.remoteCall('bot:list:sync', updatedBots);
+    await patchBotsJson(botPath, bot);
   });
 
   //---------------------------------------------------------------------------
@@ -469,5 +462,13 @@ export function registerCommands() {
   CommandRegistry.registerCommand('oauth:create-oauth-window', async (url: string, conversationId: string) => {
     const conversation = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
     windowManager.createOAuthWindow(url, conversation.codeVerifier);
+
+  CommandRegistry.registerCommand('shell:quit-and-install-update', () => {
+    appUpdater.quitAndInstall();
+  });
+
+  //---------------------------------------------------------------------------
+  CommandRegistry.registerCommand('shell:check-for-updates', () => {
+    appUpdater.checkForUpdates();
   });
 }

@@ -11,8 +11,7 @@ const CSS = css({
   maxWidth: '100%',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',
-  lineHeight: 1
+  whiteSpace: 'nowrap'
 });
 
 export const TruncateText = (props: TruncateTextProps): JSX.Element =>

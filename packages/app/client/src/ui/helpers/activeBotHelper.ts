@@ -1,4 +1,4 @@
-import { getBotDisplayName, getBotId, newBot, newEndpoint } from '@bfemulator/app-shared';
+import { getBotDisplayName, newBot, newEndpoint } from '@bfemulator/app-shared';
 import { IBotConfig } from '@bfemulator/sdk-shared';
 import { hasNonGlobalTabs } from '../../data/editorHelpers';
 import { CommandService } from '../../platform/commands/commandService';
@@ -28,9 +28,9 @@ export const ActiveBotHelper = new class {
     }
   }
 
-  /** Uses a bot id to look up the .bot path and perform a read on the server-side to populate the corresponding bot object */
-  setActiveBot(id: string): Promise<any> {
-    return CommandService.remoteCall('bot:set-active', id)
+  /** Uses a .bot path and perform a read on the server-side to populate the corresponding bot object */
+  setActiveBot(botPath: string): Promise<any> {
+    return CommandService.remoteCall('bot:set-active', botPath)
       .then(({ bot, botDirectory }: { bot: IBotConfig, botDirectory: string }) => {
         store.dispatch(BotActions.setActive(bot, botDirectory));
         store.dispatch(FileActions.setRoot(botDirectory));
@@ -50,11 +50,11 @@ export const ActiveBotHelper = new class {
         if (result) {
           store.dispatch(EditorActions.closeNonGlobalTabs());
           CommandService.remoteCall('bot:create', botToCreate, botDirectory, secret)
-            .then(({ bot, botFilePath }: { bot: IBotConfig, botFilePath: string }) => {
-              console.log(bot, botFilePath);
+            .then((bot: IBotConfig ) => {
+              console.log(bot, bot.path);
               store.dispatch((dispatch) => {
-                store.dispatch(BotActions.create(bot, botFilePath, secret));
-                this.setActiveBot(getBotId(bot))
+                store.dispatch(BotActions.create(bot, bot.path, secret));
+                this.setActiveBot(bot.path)
                   .then(() => {
                     CommandService.call('livechat:new');
                     store.dispatch(NavBarActions.select(Constants.NavBar_Files));
@@ -97,20 +97,18 @@ export const ActiveBotHelper = new class {
       .catch(() => console.log("canceled browseForBotFile"));
   }
 
-  confirmAndSwitchBots(id: string): Promise<any> {
+  confirmAndSwitchBots(botPath: string): Promise<any> {
     let activeBot = getActiveBot();
-    if (!activeBot) {
-      activeBot = newBot();
-      activeBot.services.push(newEndpoint());
-    }
-    if (activeBot && getBotId(activeBot) === id)
+    if (activeBot && activeBot.path === botPath)
       return Promise.resolve();
-    console.log(`Switching to bot ${id}`);
+
+    console.log(`Switching to bot ${botPath}`);
+
     return this.confirmSwitchBot()
       .then((result) => {
         if (result) {
           store.dispatch(EditorActions.closeNonGlobalTabs());
-          this.setActiveBot(id)
+          this.setActiveBot(botPath)
             .then(() => {
               CommandService.call('livechat:new');
               store.dispatch(NavBarActions.select(Constants.NavBar_Files));

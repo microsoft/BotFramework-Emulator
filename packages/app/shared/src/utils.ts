@@ -109,7 +109,7 @@ export const approximateObjectSize = (object: any, cache: any[] = []): number =>
 
 /** Tries to scan the bot record for a display string */
 export const getBotDisplayName = (bot: IBotConfig = newBot()): string => {
-  return bot.name || getBotId(bot) || (getFirstBotEndpoint(bot) ? getFirstBotEndpoint(bot).endpoint : null) || '¯\\_(ツ)_/¯';
+  return bot.name || bot.path || (getFirstBotEndpoint(bot) ? getFirstBotEndpoint(bot).endpoint : null) || '¯\\_(ツ)_/¯';
 }
 
 /** Creates a new bot */
@@ -159,19 +159,4 @@ export const getFirstBotEndpoint = (bot: IBotConfig): IEndpointService => {
     return <IEndpointService> bot.services.find(service => service.type === ServiceType.Endpoint);
   }
   return null;
-}
-
-/** Hacky for getting a bot id by defaulting to the id of its first endpoint service */
-export const getBotId = (bot: IBotConfig): string => {
-  if (!bot)
-    return null;
-
-  const endpoint: IEndpointService = getFirstBotEndpoint(bot);
-  if (endpoint) {
-    if (!endpoint.id)
-      addIdToBotEndpoints(bot);
-    return endpoint.id;
-  }
-
-  throw new Error(`Could not find an id for bot: ${bot}`);
 }

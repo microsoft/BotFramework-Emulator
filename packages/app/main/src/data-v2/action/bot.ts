@@ -35,21 +35,9 @@ import { IBotInfo, newBot } from '@bfemulator/app-shared';
 import { IBotConfig, IEndpointService } from '@bfemulator/sdk-shared';
 import { BotAction } from '../reducer/bot';
 
-export const CREATE ='BOT/CREATE';
 export const LOAD = 'BOT/LOAD';
 export const PATCH = 'BOT/PATCH';
 export const SET_ACTIVE = 'BOT/SET_ACTIVE';
-
-export function create(bot: IBotConfig, botFilePath: string, secret: string): BotAction {
-  return {
-    type: CREATE,
-    payload: {
-      bot,
-      botFilePath,
-      secret
-    }
-  };
-}
 
 export function load(bots: IBotInfo[]): BotAction {
   // prune bad bots

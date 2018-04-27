@@ -1,18 +1,18 @@
 {
-  "name": "QnA Maker",
+  "name": "QNAMaker",
   "client": {
     "inspectors": [
       {
-        "name": "QnA",
-        "src": "index.html",
+        "name": "QNAMaker",
+        "src": "client/build/index.html",
         "criteria": [
           {
             "path": "$.type",
-            "value": "event"
+            "value": "trace"
           },
           {
-            "path": "$.event",
-            "value": "QnATraceInfo"
+            "path": "$.valueType",
+            "value": "https://www.qnamaker.ai/schemas/trace"
           }
         ],
         "summaryText": [

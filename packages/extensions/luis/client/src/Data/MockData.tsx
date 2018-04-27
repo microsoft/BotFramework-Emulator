@@ -48,7 +48,7 @@ export default class MockState implements AppState {
   };
   appInfo: AppInfo = {
     activeVersion: '0.1',
-    authorized: true,
+    authorized: false,
     name: 'Contoso App',
     appId: '6209a76f-e836-413b-ba92-a5772d1b2087',
     endpoints: {},

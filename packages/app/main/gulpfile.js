@@ -1,6 +1,6 @@
 const gulp = require('gulp');
 const shell = require('gulp-shell');
-var pjson = require('./package.json');
+const pjson = require('./package.json');
 
 const defaultElectronMirror = 'https://github.com/electron/electron/releases/download/v';
 const defaultElectronVersion = pjson.devDependencies["electron"];
@@ -96,7 +96,7 @@ gulp.task('build-extensions',
 //----------------------------------------------------------------------------
 gulp.task('build-app', gulp.series(
   'build-emulator',
-    gulp.parallel(
+  gulp.parallel(
     'build-extensions',
     'copy-extension-stubs',
     function () {
@@ -184,28 +184,45 @@ gulp.task('build',
 
 //----------------------------------------------------------------------------
 gulp.task('get-licenses', function () {
-  var licenses = require('license-list');
-  var source = require('vinyl-source-stream');
+  const licenses = require('license-list');
+  const source = require('vinyl-source-stream');
+  const lerna = require('../../../lerna.json');
   const stream = source('ThirdPartyLicenses.txt');
-  licenses('.', { dev: false }).then(packages => {
-    const keys = Object.keys(packages).sort().filter(key => !key.startsWith(`${pjson.name}@`));
-    keys.forEach(pkgId => {
-      const pkgInfo = packages[pkgId];
-      const formatLicense = () => {
-        const formatLicenseFile = () => {
-          if (typeof pkgInfo.licenseFile === 'string') {
-            return pkgInfo.licenseFile.split(/\n/).map(line => `\t${line}`).join('\n');
-          } else {
-            return '\tLICENSE file does not exist';
-          }
-        }
-        return `${pkgInfo.name}@${pkgInfo.version} (${pkgInfo.license})\n\n${formatLicenseFile()}\n\n`;
+
+  const formatLicense = (pkgInfo) => {
+    const formatLicenseFile = () => {
+      if (typeof pkgInfo.licenseFile === 'string') {
+        return pkgInfo.licenseFile.split(/\n/).map(line => `\t${line}`).join('\n');
+      } else {
+        return '\tLICENSE file does not exist';
       }
-      stream.write(formatLicense());
+    }
+    return `${pkgInfo.name}@${pkgInfo.version} (${pkgInfo.license})\n\n${formatLicenseFile()}\n\n`;
+  }
+  
+  const tasks = lerna.packages.map(package => licenses(`../../../${package}`), { dev: false });
+
+  return Promise.all(tasks)
+    .then(values => {
+      const main = values[0];
+      const client = values[1];
+      const packages = {
+        ...main,
+        ...client
+      };
+      const keys = Object.keys(packages).sort().filter(key =>
+        !key.startsWith(`${pjson.name}@`) &&
+        !key.startsWith('@bfemulator'))
+      keys.forEach(pkgId => {
+        const pkgInfo = packages[pkgId];
+        stream.write(formatLicense(pkgInfo));
+      })
+      stream.end();
+      stream.pipe(gulp.dest('.'));
+    })
+    .catch(err => {
+      console.log(err)
     });
-    stream.end();
-    stream.pipe(gulp.dest('.'));
-  });
 });
 
 //============================================================================

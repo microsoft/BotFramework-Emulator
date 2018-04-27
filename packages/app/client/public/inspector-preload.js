@@ -24,8 +24,16 @@ window.host = {
     'accessory-click': []
   },
   bot: {},
-
-  on(event, handler) {
+  logger: {
+    log: function(message) {
+      ipcRenderer.sendToHost('logger.log', message);
+    },
+    error: function(message) {
+      ipcRenderer.sendToHost('logger.error', message);
+    }
+  },
+  
+  on: function(event, handler) {
     if (handler && Array.isArray(this.handlers[event]) && !this.handlers[event].includes(handler)) {
       this.handlers[event].push(handler);
     }
@@ -34,25 +42,25 @@ window.host = {
     }
   },
 
-  enableAccessory(id, enabled) {
+  enableAccessory: function(id, enabled) {
     if (typeof id === 'string') {
       ipcRenderer.sendToHost('enable-accessory', id, !!enabled);
     }
   },
 
-  setAccessoryState(id, state) {
+  setAccessoryState: function(id, state) {
     if (typeof id === 'string' && typeof state === 'string') {
       ipcRenderer.sendToHost('set-accessory-state', id, state);
     }
   },
 
-  setInspectorTitle(title) {
+  setInspectorTitle: function(title) {
     if (typeof title === 'string') {
       ipcRenderer.sendToHost('set-inspector-title', title);
     }
   },
 
-  dispatch(event, ...args) {
+  dispatch: function(event, ...args) {
     this.handlers[event].forEach(handler => handler(...args));
   },
 }

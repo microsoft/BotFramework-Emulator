@@ -23,9 +23,21 @@ enum TrainStatus {
   InProgress = 3,
 }
 
-// TODO: This client should cache the info that doesn't
-// change frequently per app, so that we wouldn't re-query
-// the service on every "inspect" event
+class LuisClientError extends Error {
+  
+  private static getMessage(message: string, statusCode: number | undefined): string {
+    let errorMessage = message;
+    if (statusCode) {
+      errorMessage += ' - HTTP Status Code: ' + statusCode;
+    }
+    return errorMessage;
+  }
+
+  constructor(message: string, statusCode: number | undefined = undefined) {
+    super(LuisClientError.getMessage(message, statusCode));
+  }
+}
+
 class LuisClient {
 
   private appsService: Apps;
@@ -79,7 +91,7 @@ class LuisClient {
         isDispatchApp: false
       };
     } else if (r.status !== 200) {
-      throw new Error('Failed to get Luis App Info' );
+      throw new LuisClientError('Failed to get the Luis App Info', r.status);
     } else {
       appInfo = await r.json();
       appInfo.authorized = true;
@@ -125,7 +137,7 @@ class LuisClient {
 
     let r = await this.exampleService.addLabel(addLabelParapms, exampleLabelObject);
     if (r.status !== 201) {
-      throw new Error('Failed to add label');
+      throw new LuisClientError('Failed to add label', r.status);
     }
   }
 
@@ -134,7 +146,7 @@ class LuisClient {
     let endpointKey: string = staging ? 'STAGING' : 'PRODUCTION';
     let region: string = appInfo.endpoints[endpointKey].endpointRegion;
     if (!region) {
-      throw new Error('Unknown Region');
+      throw new LuisClientError('Unknown publishing region');
     }
     let applicationPublishRequest: ApplicationPublishRequest = {
       isStaging: staging,
@@ -143,7 +155,7 @@ class LuisClient {
     };
     let r = await this.publishService.publishApplication({appId: appInfo.appId}, applicationPublishRequest);
     if (r.status !== 201) {
-      throw new Error('Publish Failed');
+      throw new LuisClientError('Publish Failed', r.status);
     }
   }
 
@@ -151,7 +163,7 @@ class LuisClient {
     this.configureClient();
     let r = await this.trainService.trainApplicationVersion({appId: appInfo.appId, versionId: appInfo.activeVersion});
     if (r.status !== 202) {
-      throw new Error('Failed to queue training request');
+      throw new LuisClientError('Failed to queue training request', r.status);
     }
 
     let retryCounter = 0;

@@ -82,21 +82,21 @@ const CSS = css({
     listStyle: 'none',
     padding: 0,
   },
-  
+
   '& .open-bot': {
     marginTop: '8px',
     marginBottom: '8px'
   },
-  
+
   '& .new-bot': {
     marginBottom: '8px'
   },
-  
+
   '& .big-button': {
     width: '140px',
     height: '30px'
   }
-  
+
 });
 
 interface Props {
@@ -109,13 +109,13 @@ class WelcomePage extends React.Component<Props, {}> {
   onNewBotClick = () => {
     CommandService.call('bot-creation:show');
   }
-  
+
   onOpenBotClick = () => {
     CommandService.call('bot:browse-open');
   }
 
-  onBotClick = (e, id) => {
-    CommandService.call('bot:switch', id);
+  onBotClick = (e, path) => {
+    CommandService.call('bot:switch', path);
   }
 
   render() {
@@ -140,8 +140,8 @@ class WelcomePage extends React.Component<Props, {}> {
                 {
                   this.props.recentBots && this.props.recentBots.length ?
                     this.props.recentBots.slice(0, 10).map(bot => bot &&
-                      <li key={ bot.id }>
-                        <a href="javascript:void(0);" onClick={ ev => this.onBotClick(ev, bot.id) } ><TruncateText>{ bot.displayName }</TruncateText></a>
+                      <li key={ bot.path }>
+                        <a href="javascript:void(0);" onClick={ ev => this.onBotClick(ev, bot.path) } ><TruncateText>{ bot.displayName }</TruncateText></a>
                         <TruncateText className='recent-bot-detail'>{ bot.path }</TruncateText>
                       </li>)
                     :

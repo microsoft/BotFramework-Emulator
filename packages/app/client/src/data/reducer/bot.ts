@@ -1,6 +1,7 @@
 import * as BotActions from '../action/botActions';
-import { getBotDisplayName, IBotInfo, getBotId } from '@bfemulator/app-shared';
+import { getBotDisplayName, IBotInfo } from '@bfemulator/app-shared';
 import { IBotConfig } from '@bfemulator/sdk-shared';
+import { getBotInfoByPath } from '../botHelpers';
 
 export interface IBotState {
   activeBot: IBotConfig;
@@ -43,7 +44,7 @@ const DEFAULT_STATE: IBotState = {
 export default function bot(state: IBotState = DEFAULT_STATE, action: BotAction) {
   switch(action.type) {
     case BotActions.CREATE: {
-      const newBot: IBotInfo = { path: action.payload.botFilePath, displayName: getBotDisplayName(action.payload.bot), id: getBotId(action.payload.bot), secret: action.payload.secret };
+      const newBot: IBotInfo = { path: action.payload.botFilePath, displayName: getBotDisplayName(action.payload.bot), secret: action.payload.secret };
       const bots = [...state.botFiles].filter(bot => bot.path !== action.payload.botFilePath);
       bots.unshift(newBot);
       state = setBotFilesState(bots, state);
@@ -61,20 +62,20 @@ export default function bot(state: IBotState = DEFAULT_STATE, action: BotAction)
         ...action.payload.bot
       };
       // update the bot display name in the list if it was changed
-      const botId = getBotId(action.payload.bot);
-      const bot = state.botFiles.find(bot => bot && bot.id === botId);
-      bot.displayName = getBotDisplayName(action.payload.bot);
-      if (action.payload.secret)
-        bot.secret = action.payload.secret;
+      const bot = getBotInfoByPath(action.payload.bot.path);
+      if (bot) {
+        bot.displayName = getBotDisplayName(action.payload.bot);
+        if (action.payload.secret)
+          bot.secret = action.payload.secret;
+      }
       state = setActiveBot(patchedBot, state);
       break;
     }
 
     case BotActions.SET_ACTIVE: {
       // move active bot up to the top of the recent bots list
-      const botId = getBotId(action.payload.bot);
-      const mostRecentBot = state.botFiles.find(bot => bot && bot.id === botId);
-      let recentBots = state.botFiles.filter(bot => bot && bot.id !== botId);
+      const mostRecentBot = state.botFiles.find(bot => bot && bot.path === action.payload.bot.path);
+      let recentBots = state.botFiles.filter(bot => bot && bot.path !== action.payload.bot.path);
       recentBots.unshift(mostRecentBot);
       state = setBotFilesState(recentBots, state);
       state = setActiveBot(action.payload.bot, state);
