@@ -34,10 +34,10 @@
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import BotEmulator from '../../botEmulator';
+import Bot from '../../bot';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
-export default function ping(botEmulator: BotEmulator) {
+export default function ping(bot: Bot) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     try {
       req['conversation'].sendPing();

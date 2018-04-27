@@ -33,13 +33,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotEmulator } from '@bfemulator/emulator-core';
+import { Bot } from '@bfemulator/emulator-core';
 import { config } from 'dotenv';
-import { readFile } from 'fs';
 import * as Restify from 'restify';
 import * as CORS from 'restify-cors-middleware';
 import getPort from 'get-port';
-import NpmLogger from './npmLogger';
 
 const packageJSON = require('../package.json');
 const program = require('commander');
@@ -55,20 +53,7 @@ program
   .option('-s, --service-url <url>', 'URL for the bot to callback', 'http://localhost:5000')
   .option('-u, --bot-url <url>', 'URL to connect to bot', 'http://localhost:3978/api/messages/')
   .option('--bot-id <id>', 'bot ID', 'bot-1')
-  .option('--use-10-tokens', 'use version 1.0 authentication tokens', false)
-  .option('-f, --file <bots.json>', 'read endpoints from file')
-  .on('--help', () => {
-    console.log();
-    console.log('  Notes:');
-    console.log();
-    console.log('    Use bots.json file to host multiple bots. Put MSA App ID as Direct Line secret to point to different bots.');
-    console.log();
-    console.log('    Using bots.json file will override endpoint defined thru --port and --bot-url.');
-    console.log();
-  })
   .parse(process.argv);
-
-// TODO: Support multi bot from file
 
 program.appId = program.appId || process.env.MICROSOFT_APP_ID;
 program.appPassword = program.appPassword || process.env.MICROSOFT_APP_PASSWORD;
@@ -91,45 +76,25 @@ async function main() {
   const port = program.port || await getPort(5000);
 
   // Create a bot entry
-  const bot = new BotEmulator(
+  const bot = new Bot(
+    program.botId,
+    program.botUrl,
     program.serviceUrl || `http://localhost:${ port }`,
+    program.appId,
+    program.appPassword,
     {
-      loggerOrLogService: new NpmLogger()
+      loggerOrLogService: {
+        logToChat: console.log.bind(console)
+      }
     }
   );
-
-  if (program.file) {
-    const botsJSON = await new Promise<string>((resolve, reject) => {
-      readFile(program.file, { encoding: 'utf8' }, (err, result) => err ? reject(err) : resolve(result));
-    });
-
-    const botEndpoints = JSON.parse(botsJSON);
-
-    botEndpoints.forEach(endpoint => {
-      bot.facilities.endpoints.addEndpoint(endpoint);
-    });
-  } else {
-    bot.facilities.endpoints.addEndpoint({
-      botId: program.botId,
-      botUrl: program.botUrl,
-      msaAppId: program.appId,
-      msaPassword: program.appPassword,
-      use10Tokens: program.use10Tokens
-    });
-  }
 
   // Mount bot routes on the server
   bot.mount(server);
 
-  const endpoints = bot.facilities.endpoints.getEndpoints();
-  const urls = Object.keys(endpoints).reduce((urls, key) => [
-    ...urls,
-    endpoints[key].botUrl
-  ], []).sort();
-
   // Start listening
   server.listen(port, () => {
-    console.log(`${ server.name } listening on ${ server.url } with bot on ${ urls.join(', ') }`);
+    console.log(`${ server.name } listening on ${ server.url } with bot on ${ program.botUrl }`);
     console.log(`The bot will callback on ${ program.serviceUrl }`);
   });
 }

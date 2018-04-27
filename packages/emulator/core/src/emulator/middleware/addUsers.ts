@@ -34,11 +34,11 @@
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import BotEmulator from '../../botEmulator';
+import Bot from '../../bot';
 import IChannelAccount from '../../types/account/channel';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
-export default function addUsers(botEmulator: BotEmulator) {
+export default function addUsers(bot: Bot) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     try {
       const members: IChannelAccount[] = req.body;

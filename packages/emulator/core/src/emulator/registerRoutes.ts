@@ -32,7 +32,7 @@
 //
 
 import { RequestHandler, Server } from 'restify';
-import BotEmulator from '../botEmulator';
+import Bot from '../bot';
 import createFetchConversationMiddleware from './middleware/fetchConversation';
 import createJsonBodyParserMiddleware from '../utils/jsonBodyParser';
 
@@ -48,77 +48,77 @@ import typing from './middleware/typing';
 import updateShippingAddress from './middleware/updateShippingAddress';
 import updateShippingOption from './middleware/updateShippingOption';
 
-export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandler[]) {
-  const fetchConversation = createFetchConversationMiddleware(botEmulator);
+export default function registerRoutes(bot: Bot, server: Server, uses: RequestHandler[]) {
+  const fetchConversation = createFetchConversationMiddleware(bot);
   const jsonBodyParser = createJsonBodyParserMiddleware();
 
   server.get(
     '/emulator/:conversationId/users',
     fetchConversation,
-    getUsers(botEmulator)
+    getUsers(bot)
   );
 
   server.post(
     '/emulator/:conversationId/users',
     jsonBodyParser,
     fetchConversation,
-    addUsers(botEmulator)
+    addUsers(bot)
   );
 
   server.del(
     '/emulator/:conversationId/users',
     fetchConversation,
-    removeUsers(botEmulator)
+    removeUsers(bot)
   );
 
   server.post(
     '/emulator/:conversationId/contacts',
     fetchConversation,
-    contactAdded(botEmulator)
+    contactAdded(bot)
   );
 
   server.del(
     '/emulator/:conversationId/contacts',
     fetchConversation,
-    contactRemoved(botEmulator)
+    contactRemoved(bot)
   );
 
   server.post(
     '/emulator/:conversationId/typing',
     fetchConversation,
-    typing(botEmulator)
+    typing(bot)
   );
 
   server.post(
     '/emulator/:conversationId/ping',
     fetchConversation,
-    ping(botEmulator)
+    ping(bot)
   );
 
   server.del(
     '/emulator/:conversationId/userdata',
     fetchConversation,
-    deleteUserData(botEmulator)
+    deleteUserData(bot)
   );
 
   server.post(
     '/emulator/:conversationId/invoke/updateShippingAddress',
     jsonBodyParser,
     fetchConversation,
-    updateShippingAddress(botEmulator)
+    updateShippingAddress(bot)
   );
 
   server.post(
     '/emulator/:conversationId/invoke/updateShippingOption',
     jsonBodyParser,
     fetchConversation,
-    updateShippingOption(botEmulator)
+    updateShippingOption(bot)
   );
 
   server.post(
     '/emulator/:conversationId/invoke/paymentComplete',
     jsonBodyParser,
     fetchConversation,
-    paymentComplete(botEmulator)
+    paymentComplete(bot)
   );
 }

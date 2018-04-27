@@ -33,20 +33,20 @@
 
 import { RequestHandlerType, Server } from 'restify';
 
-import BotEmulator from '../botEmulator';
+import Bot from '../bot';
 import getAttachment from './middleware/getAttachment';
 import getAttachmentInfo from './middleware/getAttachmentInfo';
 
-export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandlerType[]) {
+export default function registerRoutes(bot: Bot, server: Server, uses: RequestHandlerType[]) {
   server.get(
     '/v3/attachments/:attachmentId',
     ...uses,
-    getAttachmentInfo(botEmulator)
+    getAttachmentInfo(bot)
   );
 
   server.get(
     '/v3/attachments/:attachmentId/views/:viewId',
     ...uses,
-    getAttachment(botEmulator)
+    getAttachment(bot)
   );
 }

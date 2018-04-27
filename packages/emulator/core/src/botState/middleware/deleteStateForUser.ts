@@ -34,17 +34,17 @@
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import BotEmulator from '../../botEmulator';
+import Bot from '../../bot';
 
 // delete state for user
-export default function deleteStateForUser(botEmulator: BotEmulator) {
-  const { logRequest, logResponse } = botEmulator.facilities.logger;
+export default function deleteStateForUser(bot: Bot) {
+  const { logRequest, logResponse } = bot.facilities.logger;
 
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     logRequest(req.params.conversationId, 'bot', req, 'deleteStateForUser');
 
     try {
-      botEmulator.facilities.botState.deleteBotData(req.params.userId);
+      bot.facilities.botState.deleteBotData(req.params.userId);
 
       res.send(HttpStatus.OK);
       res.end();

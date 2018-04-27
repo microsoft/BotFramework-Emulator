@@ -34,14 +34,13 @@
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import BotEmulator from '../../botEmulator';
-import Conversation from '../../facility/conversation';
+import Bot from '../../bot';
 
-export default function getActivities(botEmulator: BotEmulator) {
-  const { logRequest, logResponse } = botEmulator.facilities.logger;
+export default function getActivities(bot: Bot) {
+  const { logRequest, logResponse } = bot.facilities.logger;
 
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    const conversation: Conversation = req['conversation'];
+    const conversation = bot.facilities.conversations.conversationById(req.params.conversationId);
 
     if (conversation) {
       const { activities, watermark } = conversation.getActivitiesSince(Number(req.query.watermark || 0) || 0);

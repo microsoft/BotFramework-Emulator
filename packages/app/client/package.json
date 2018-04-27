@@ -40,7 +40,6 @@
     "@uifabric/merge-styles": "^5.13.0",
     "@uifabric/styling": "^5.20.0",
     "@uifabric/utilities": "^5.19.0",
-    "base64url": "^2.0.0",
     "classnames": "^2.2.5",
     "enzyme": "^3.3.0",
     "glamor": "^2.20.40",

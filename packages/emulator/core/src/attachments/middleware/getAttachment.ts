@@ -34,13 +34,13 @@
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import BotEmulator from '../../botEmulator';
+import Bot from '../../bot';
 import createAPIException from '../../utils/createResponse/apiException';
 import ErrorCodes from '../../types/errorCodes';
 import IAttachmentData from '../../types/attachment/data';
 import IAttachmentParams from '../attachmentParams';
 
-export default function getAttachment(bot: BotEmulator) {
+export default function getAttachment(bot: Bot) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     try {
       const parms: IAttachmentParams = req.params;

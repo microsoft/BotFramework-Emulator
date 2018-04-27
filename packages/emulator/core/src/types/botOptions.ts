@@ -31,9 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-interface IBotEndpointOptions {
-  fetch?: (string, any) => Promise<any>;
+import ILogger from './logger';
+import ILogService from './log/service';
+
+interface IBotOptions {
+  fetch?: (string, any) => Promise<any>,
+  loggerOrLogService?: (ILogger | ILogService);
+  stateSizeLimitKB?: number;
   use10Tokens?: boolean;
 }
 
-export default IBotEndpointOptions
+export default IBotOptions

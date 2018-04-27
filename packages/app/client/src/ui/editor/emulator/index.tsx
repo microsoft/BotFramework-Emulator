@@ -36,7 +36,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import * as _ from 'lodash';
 import { Subscription, BehaviorSubject } from 'rxjs';
-import base64Url from 'base64url';
 
 import { ActivityOrID, uniqueId, IEndpointService } from '@bfemulator/sdk-shared';
 import ChatPanel from './chatPanel';
@@ -53,8 +52,6 @@ import * as PresentationActions from '../../../data/action/presentationActions';
 import PlaybackBar from './playbackBar';
 import { getActiveBot } from '../../../data/botHelpers';
 import { getFirstBotEndpoint } from '@bfemulator/app-shared';
-
-const { encode } = base64Url;
 
 const CSS = css({
   display: 'flex',
@@ -285,12 +282,13 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
 
   initConversation(props, options, selectedActivity$, subscription) {
     const webChatStore = BotChat.createStore();
-    const encodedOptions = encode(JSON.stringify(options));
+
+    const encodedOptions = btoa(JSON.stringify(options));
 
     const directLine = new BotChat.DirectLine({
       secret: encodedOptions,
       token: encodedOptions,
-      domain: `${ SettingsService.emulator.url }/v3/directline`,
+      domain: `${SettingsService.emulator.url}/v3/directline`,
       webSocket: false
     });
 
@@ -301,8 +299,7 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
         directLine,
         selectedActivity$,
         subscription
-      })
-    );
+      }));
   }
 
   handleStartOverClick() {

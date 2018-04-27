@@ -35,21 +35,17 @@ import * as jwt from 'jsonwebtoken';
 import * as Restify from 'restify';
 
 import { authentication, v31Authentication, v32Authentication } from '../authEndpoints';
-import BotEmulator from '../botEmulator';
+import Bot from '../bot';
 import OpenIdMetadata from './openIdMetadata';
 
-export default function createBotFrameworkAuthenticationMiddleware(fetch: any) {
+export default function createBotFrameworkAuthenticationMiddleware(botId: string, fetch: any) {
   const openIdMetadata = new OpenIdMetadata(fetch, authentication.openIdMetadata);
 
   return async (req: Restify.Request, res: Restify.Response, next: Restify.Next) => {
-    const authorization = req.header('Authorization');
-
-    if (!authorization) {
-      next();
-
+    const authorization = req.header('Authorization');    
+    if (!authorization)
       return;
-    }
-
+      
     const [authMethod, token] = authorization.trim().split(' ');
 
     // Verify token
@@ -87,9 +83,8 @@ export default function createBotFrameworkAuthenticationMiddleware(fetch: any) {
     }
 
     try {
-      // TODO: Turn jwt.verify into async call for better performance
       // first try 3.2 token characteristics
-      req['jwt'] = jwt.verify(token, key, {
+      jwt.verify(token, key, {
         audience: authentication.botTokenAudience,
         clockTolerance: 300,
         issuer,
@@ -104,7 +99,7 @@ export default function createBotFrameworkAuthenticationMiddleware(fetch: any) {
     } catch (err) {
       try {
         // then try v3.1 token characteristics
-        req['jwt'] = jwt.verify(token, key, {
+        jwt.verify(token, key, {
           audience: authentication.botTokenAudience,
           clockTolerance: 300,
           issuer: v31Authentication.tokenIssuer,

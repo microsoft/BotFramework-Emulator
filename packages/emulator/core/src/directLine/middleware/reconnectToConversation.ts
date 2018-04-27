@@ -34,16 +34,15 @@
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import BotEmulator from '../../botEmulator';
-import Conversation from '../../facility/conversation';
+import Bot from '../../bot';
 
-export default function reconnectToConversation(botEmulator: BotEmulator) {
-  const { logError, logRequest, logResponse } = botEmulator.facilities.logger;
+export default function reconnectToConversation(bot: Bot) {
+  const { logError, logRequest, logResponse } = bot.facilities.logger;
 
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     logRequest(req.params.conversationId, 'user', req);
 
-    const conversation: Conversation = req['conversation'];
+    const conversation = bot.facilities.conversations.conversationById(req.params.conversationId);
 
     if (conversation) {
       res.json(HttpStatus.OK, {

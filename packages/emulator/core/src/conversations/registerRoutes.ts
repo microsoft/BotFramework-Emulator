@@ -33,7 +33,7 @@
 
 import { RequestHandler, Server } from 'restify';
 
-import BotEmulator from '../botEmulator';
+import Bot from '../bot';
 import createBotFrameworkAuthenticationMiddleware from '../utils/botFrameworkAuthentication';
 import IUser from '../types/user';
 import createJsonBodyParser from '../utils/jsonBodyParser';
@@ -42,28 +42,23 @@ import createConversation from './middleware/createConversation';
 import createFetchConversationMiddleware from './middleware/fetchConversation';
 import deleteActivity from './middleware/deleteActivity';
 import getActivityMembers from './middleware/getActivityMembers';
-import getBotEndpoint from './middleware/getBotEndpoint';
 import getConversationMembers from './middleware/getConversationMembers';
 import replyToActivity from './middleware/replyToActivity';
 import sendToConversation from './middleware/sendToConversation';
 import updateActivity from './middleware/updateActivity';
 import uploadAttachment from './middleware/uploadAttachment';
 
-export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandler[]) {
-  // TODO: Check if it works without MSA App ID
-  const verifyBotFramework = createBotFrameworkAuthenticationMiddleware(botEmulator.options.fetch);
-  // const verifyBotFramework = botEmulator.msaAppId ? createBotFrameworkAuthenticationMiddleware(botEmulator.options.fetch) : [];
-  const botEndpoint = getBotEndpoint(botEmulator);
+export default function registerRoutes(bot: Bot, server: Server, uses: RequestHandler[]) {
+  const verifyBotFramework = bot.msaAppId ? createBotFrameworkAuthenticationMiddleware(bot.botId, bot.options.fetch) : [];
   const jsonBodyParser = createJsonBodyParser();
-  const fetchConversation = createFetchConversationMiddleware(botEmulator);
+  const fetchConversation = createFetchConversationMiddleware(bot);
 
   server.post(
     '/v3/conversations',
     ...uses,
     verifyBotFramework,
     jsonBodyParser,
-    botEndpoint,
-    createConversation(botEmulator)
+    createConversation(bot)
   );
 
   server.post(
@@ -72,7 +67,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     verifyBotFramework,
     jsonBodyParser,
     fetchConversation,
-    sendToConversation(botEmulator)
+    sendToConversation(bot)
   );
 
   server.post(
@@ -81,7 +76,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     verifyBotFramework,
     jsonBodyParser,
     fetchConversation,
-    replyToActivity(botEmulator)
+    replyToActivity(bot)
   );
 
   server.put(
@@ -90,7 +85,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     verifyBotFramework,
     jsonBodyParser,
     fetchConversation,
-    updateActivity(botEmulator)
+    updateActivity(bot)
   );
 
   server.del(
@@ -98,7 +93,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     ...uses,
     verifyBotFramework,
     fetchConversation,
-    deleteActivity(botEmulator)
+    deleteActivity(bot)
   );
 
   server.get(
@@ -106,7 +101,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     ...uses,
     verifyBotFramework,
     fetchConversation,
-    getConversationMembers(botEmulator)
+    getConversationMembers(bot)
   );
 
   server.get(
@@ -114,7 +109,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     ...uses,
     verifyBotFramework,
     fetchConversation,
-    getActivityMembers(botEmulator)
+    getActivityMembers(bot)
   );
 
   server.post(
@@ -122,6 +117,6 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     ...uses,
     verifyBotFramework,
     jsonBodyParser,
-    uploadAttachment(botEmulator)
+    uploadAttachment(bot)
   );
 }

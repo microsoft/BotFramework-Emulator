@@ -33,11 +33,11 @@
 
 import * as Restify from 'restify';
 
-import BotEmulator from '../../botEmulator';
+import Bot from '../../bot';
 
-export default function fetchBotData(botEmulator: BotEmulator) {
+export default function fetchBotData(bot: Bot) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    req['botData'] = botEmulator.facilities.botState.getBotData(
+    req['botData'] = bot.facilities.botState.getBotData(
       req.params.channelId,
       req.params.conversationId,
       req.params.userId

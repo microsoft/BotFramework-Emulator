@@ -33,7 +33,7 @@
 
 import { RequestHandler, Server } from 'restify';
 
-import BotEmulator from '../botEmulator';
+import Bot from '../bot';
 import createBotFrameworkAuthenticationMiddleware from '../utils/botFrameworkAuthentication';
 import jsonBodyParser from '../utils/jsonBodyParser';
 
@@ -46,18 +46,16 @@ import setConversationData from './middleware/setConversationData';
 import setPrivateConversationData from './middleware/setPrivateConversationData';
 import deleteStateForUser from './middleware/deleteStateForUser';
 
-export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandler[]) {
-  // TODO: Check if it works without MSA App ID
-  const verifyBotFramework = createBotFrameworkAuthenticationMiddleware(botEmulator.options.fetch);
-  // const verifyBotFramework = botEmulator.msaAppId ? createBotFrameworkAuthenticationMiddleware(botEmulator.botId, botEmulator.options.fetch) : [];
-  const fetchBotDataMiddleware = createFetchBotDataMiddleware(botEmulator);
+export default function registerRoutes(bot: Bot, server: Server, uses: RequestHandler[]) {
+  const verifyBotFramework = bot.msaAppId ? createBotFrameworkAuthenticationMiddleware(bot.botId, bot.options.fetch) : [];
+  const fetchBotDataMiddleware = createFetchBotDataMiddleware(bot);
 
   server.get(
     '/v3/botstate/:channelId/users/:userId',
     ...uses,
     verifyBotFramework,
     fetchBotDataMiddleware,
-    getUserData(botEmulator)
+    getUserData(bot)
   );
 
   server.get(
@@ -65,7 +63,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     ...uses,
     verifyBotFramework,
     fetchBotDataMiddleware,
-    getConversationData(botEmulator)
+    getConversationData(bot)
   );
 
   server.get(
@@ -73,7 +71,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     ...uses,
     verifyBotFramework,
     fetchBotDataMiddleware,
-    getPrivateConversationData(botEmulator)
+    getPrivateConversationData(bot)
   );
 
   server.post(
@@ -81,7 +79,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     ...uses,
     verifyBotFramework,
     jsonBodyParser(),
-    setUserData(botEmulator)
+    setUserData(bot)
   );
 
   server.post(
@@ -89,7 +87,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     ...uses,
     verifyBotFramework,
     jsonBodyParser(),
-    setConversationData(botEmulator)
+    setConversationData(bot)
   );
 
   server.post(
@@ -97,13 +95,13 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     ...uses,
     verifyBotFramework,
     jsonBodyParser(),
-    setPrivateConversationData(botEmulator)
+    setPrivateConversationData(bot)
   );
 
   server.del(
     '/v3/botstate/:channelId/users/:userId',
     ...uses,
     verifyBotFramework,
-    deleteStateForUser(botEmulator)
+    deleteStateForUser(bot)
   );
 }

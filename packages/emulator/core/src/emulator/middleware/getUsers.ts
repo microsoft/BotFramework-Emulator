@@ -34,10 +34,10 @@
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import BotEmulator from '../../botEmulator';
+import Bot from '../../bot';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
-export default function getUsers(botEmulator: BotEmulator) {
+export default function getUsers(bot: Bot) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     try {
       res.json(HttpStatus.OK, req['conversation'].members);
