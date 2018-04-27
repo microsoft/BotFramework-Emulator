@@ -462,6 +462,7 @@ export function registerCommands() {
   CommandRegistry.registerCommand('oauth:create-oauth-window', async (url: string, conversationId: string) => {
     const conversation = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
     windowManager.createOAuthWindow(url, conversation.codeVerifier);
+  });
 
   CommandRegistry.registerCommand('shell:quit-and-install-update', () => {
     appUpdater.quitAndInstall();
