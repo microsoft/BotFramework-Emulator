@@ -33,7 +33,8 @@
 
 import { EventEmitter } from 'events';
 
-import Bot from '../bot';
+import BotEmulator from '../botEmulator';
+import BotEndpoint from './botEndpoint';
 import Conversation from './conversation';
 import IUser from '../types/user';
 import uniqueId from '../utils/uniqueId';
@@ -45,9 +46,10 @@ export default class ConversationSet extends EventEmitter {
   private conversations: Conversation[] = [];
 
   // TODO: May be we want to move "bot" back to the constructor
-  newConversation(bot: Bot, user: IUser, conversationId: string = uniqueId()): Conversation {
+  newConversation(botEmulator: BotEmulator, botEndpoint: BotEndpoint, user: IUser, conversationId: string = uniqueId()): Conversation {
     const conversation = new Conversation(
-      bot,
+      botEmulator,
+      botEndpoint,
       conversationId,
       user
     );

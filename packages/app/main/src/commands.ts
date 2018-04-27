@@ -103,7 +103,7 @@ export function registerCommands() {
     if (botInfo && botInfo.secret) {
       secret = botInfo.secret;
     }
-    
+
     // load the bot (decrypt with secret if we were able to get it)
     let bot = await loadBotWithRetry(botPath, secret);
     if (!bot) {
@@ -365,13 +365,19 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Get a speech token
   CommandRegistry.registerCommand('speech-token:get', (authIdEvent: string, conversationId: string) => {
-    return emulator.getSpeechToken(false);
+    // TODO: We should get the speech token for a specified endpoint
+    const endpoint = emulator.framework.server.botEmulator.facilities.endpoints.getDefaultEndpoint();
+
+    return endpoint && endpoint.getSpeechToken(false);
   });
 
   //---------------------------------------------------------------------------
   // Refresh a speech token
   CommandRegistry.registerCommand('speech-token:refresh', (authIdEvent: string, conversationId: string) => {
-    return emulator.getSpeechToken(true);
+    // TODO: We should get the speech token for a specified endpoint
+    const endpoint = emulator.framework.server.botEmulator.facilities.endpoints.getDefaultEndpoint();
+
+    return endpoint && endpoint.getSpeechToken(true);
   });
 
   //---------------------------------------------------------------------------
@@ -392,8 +398,13 @@ export function registerCommands() {
 
     // create a conversation object
     conversationId = conversationId || `${uniqueId()}|${mode}`;
+
+    // TODO: We need to find the correct endpoint from this "conversation:new" command
+    const endpoint = emulator.framework.server.botEmulator.facilities.endpoints.getDefaultEndpoint();
+
     // TODO: Move away from the .users state on legacy emulator settings, and towards per-conversation users
-    const conversation = emulator.framework.server.botEmulator.facilities.conversations.newConversation(emulator.framework.server.botEmulator, { id: uniqueId(), name: "User" }, conversationId);
+    const conversation = emulator.framework.server.botEmulator.facilities.conversations.newConversation(emulator.framework.server.botEmulator, endpoint, { id: uniqueId(), name: "User" }, conversationId);
+
     return conversation;
   });
 

@@ -1,4 +1,5 @@
 /.env
+/bots.json
 /coverage
 /lib
 /node_modules

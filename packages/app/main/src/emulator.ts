@@ -53,10 +53,6 @@ export class Emulator {
     await this.framework.startup();
     await this.ngrok.startup();
   }
-  
-  public async getSpeechToken(refresh: boolean): Promise<string> {
-    return await this.framework.server.botEmulator.getSpeechToken(10, refresh);
-  }
 
   /**
    * Loads settings from disk and then creates the emulator.

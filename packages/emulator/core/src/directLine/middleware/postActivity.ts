@@ -34,47 +34,51 @@
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import Bot from '../../bot';
+import BotEmulator from '../../botEmulator';
+import Conversation from '../../facility/conversation';
 import IGenericActivity from '../../types/activity/generic';
 import statusCodeFamily from '../../utils/statusCodeFamily';
 
-export default function postActivity(bot: Bot) {
-  const { logError, logRequest, logResponse } = bot.facilities.logger;
+export default function postActivity(botEmulator: BotEmulator) {
+  const { logError, logRequest, logResponse } = botEmulator.facilities.logger;
 
   return async (req: Restify.Request, res: Restify.Response, next: Restify.Next) => {
     logRequest(req.params.conversationId, 'user', req);
 
-    const conversation = bot.facilities.conversations.conversationById(req.params.conversationId);
+    // const conversation = botEmulator.facilities.conversations.conversationById(req.params.conversationId);
+    const conversation: Conversation = req['conversation'];
 
-    if (conversation) {
-      const activity = <IGenericActivity>req.body;
-
-      try {
-        const { activityId, response, statusCode } = await conversation.postActivityToBot(activity, true);
-
-        //logNetwork(conversation.conversationId, req, res, `[${activity.type}]`);
-        if (!statusCodeFamily(statusCode, 200)) {
-          res.send(statusCode || HttpStatus.INTERNAL_SERVER_ERROR);
-
-          logResponse(req.params.conversationId, 'user', res);
-          logError(req.params.conversationId, { message: await response.text(), statusCode });
-        } else {
-          res.send(statusCode, { id: activityId });
-
-          logResponse(req.params.conversationId, 'user', res);
-        }
-      } catch (err) {
-        logError(req.params.conversationId, err);
-        res.send(HttpStatus.INTERNAL_SERVER_ERROR);
-      }
-
-      res.end();
-    } else {
+    if (!conversation) {
       res.send(HttpStatus.NOT_FOUND, 'conversation not found');
       res.end();
 
       logError(req.params.conversationId, 'Cannot post activity. Conversation not found.');
       logResponse(req.params.conversationId, 'user', res);
+
+      return;
     }
+
+    const activity = <IGenericActivity>req.body;
+
+    try {
+      const { activityId, response, statusCode } = await conversation.postActivityToBot(activity, true);
+
+      //logNetwork(conversation.conversationId, req, res, `[${activity.type}]`);
+      if (!statusCodeFamily(statusCode, 200)) {
+        res.send(statusCode || HttpStatus.INTERNAL_SERVER_ERROR);
+
+        logResponse(req.params.conversationId, 'user', res);
+        logError(req.params.conversationId, { message: await response.text(), statusCode });
+      } else {
+        res.send(statusCode, { id: activityId });
+
+        logResponse(req.params.conversationId, 'user', res);
+      }
+    } catch (err) {
+      logError(req.params.conversationId, err);
+      res.send(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    res.end();
   };
 }

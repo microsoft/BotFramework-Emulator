@@ -34,29 +34,31 @@
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import Bot from '../../bot';
+import BotEmulator from '../../botEmulator';
 import IChannelAccount from '../../types/account/channel';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
-export default function removeUsers(bot: Bot) {
+export default function removeUsers(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    try {
-      let members: IChannelAccount[] = req.body;
+    // try {
+    //   let members: IChannelAccount[] = req.body;
 
-      if (!members) {
-        members = [...req['conversation'].members];
-        members = members.filter(member => member.id !== bot.facilities.users.currentUserId && member.id !== bot.botId);
-        members = members.slice(0);
-      }
+    //   if (!members) {
+    //     members = [...req['conversation'].members];
+    //     members = members.filter(member => member.id !== botEmulator.facilities.users.currentUserId && member.id !== botEmulator.botId);
+    //     members = members.slice(0);
+    //   }
 
-      members.forEach(member => {
-        req['conversation'].removeMember(member.id);
-      });
+    //   members.forEach(member => {
+    //     req['conversation'].removeMember(member.id);
+    //   });
 
-      res.send(HttpStatus.OK);
-      res.end();
-    } catch (err) {
-      sendErrorResponse(req, res, next, err);
-    }
+    //   res.send(HttpStatus.OK);
+    //   res.end();
+    // } catch (err) {
+    //   sendErrorResponse(req, res, next, err);
+    // }
+
+    res.send(HttpStatus.NOT_IMPLEMENTED);
   };
 }

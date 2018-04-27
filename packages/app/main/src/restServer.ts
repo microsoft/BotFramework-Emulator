@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Bot as BotEmulator } from '@bfemulator/emulator-core';
+import { BotEmulator } from '@bfemulator/emulator-core';
 import { getFirstBotEndpoint } from '@bfemulator/app-shared';
 import { IBotConfig, IEndpointService } from '@bfemulator/sdk-shared';
 import * as CORS from 'restify-cors-middleware';
@@ -91,11 +91,7 @@ export class RestServer {
     this._router.use(cors.actual);
 
     this._botEmulator = new BotEmulator(
-      () => this.botId,
-      () => this.botUrl,
-      () => emulator.ngrok.getServiceUrl(this.botUrl),
-      () => this.msaAppId,
-      () => this.msaPassword,
+      botUrl => emulator.ngrok.getServiceUrl(botUrl),
       {
         fetch,
         loggerOrLogService: mainWindow.logService
