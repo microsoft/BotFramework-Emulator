@@ -62,6 +62,13 @@ export function registerCommands() {
   });
 
   //---------------------------------------------------------------------------
+  // Closes the current active bot
+  CommandRegistry.registerCommand('bot:close', () => {
+    ActiveBotHelper.confirmAndCloseBot();
+  });
+
+
+  //---------------------------------------------------------------------------
   // Browse for a .bot file and open it
   CommandRegistry.registerCommand('bot:browse-open', () => {
     ActiveBotHelper.confirmAndOpenBotFromFile();

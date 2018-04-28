@@ -28,6 +28,20 @@ export const ActiveBotHelper = new class {
     }
   }
 
+  confirmCloseBot(): Promise<any> {
+    const hasTabs = hasNonGlobalTabs();
+    if (hasTabs) {
+      return CommandService.remoteCall('shell:show-message-box', true, {
+        type: 'question',
+        buttons: ["Cancel", "OK"],
+        defaultId: 1,
+        message: "Close active bot? All tabs will be closed.",
+        cancelId: 0,
+      });
+    } else {
+      return Promise.resolve(true);
+    }
+  }
   /** Uses a .bot path and perform a read on the server-side to populate the corresponding bot object */
   setActiveBot(botPath: string): Promise<any> {
     return CommandService.remoteCall('bot:set-active', botPath)
@@ -40,6 +54,19 @@ export const ActiveBotHelper = new class {
       .catch(err => {
         console.error('Error while setting active bot: ', err);
         throw new Error(`Error while setting active bot: ${err}`);
+      });
+  }
+
+  /** tell the server-side the active bot is now closed */
+  closeActiveBot(): Promise<any> {
+    return CommandService.remoteCall('bot:close')
+    .then(() => {
+      store.dispatch(BotActions.close());
+      CommandService.remoteCall('electron:set-title-bar', '');
+    } )
+      .catch(err => {
+        console.error('Error while closing active bot: ', err);
+        throw new Error(`Error while closing active bot: ${err}`);
       });
   }
 
@@ -119,4 +146,23 @@ export const ActiveBotHelper = new class {
       })
       .catch(err => console.error('Error while setting active bot: ', err));
   }
+
+  confirmAndCloseBot(): Promise<any> {
+    let activeBot = getActiveBot();
+    if (!activeBot)
+      return Promise.resolve();
+
+    console.log(`Closing active bot`);
+
+    return this.confirmCloseBot()
+      .then((result) => {
+        if (result) {
+          store.dispatch(EditorActions.closeNonGlobalTabs());
+          this.closeActiveBot()
+            .catch(err => new Error(err));
+        }
+      })
+      .catch(err => console.error('Error while closing active bot: ', err));
+  }
+
 }

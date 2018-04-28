@@ -109,6 +109,12 @@ export const AppMenuBuilder = new class AppMenuBuilder implements IAppMenuBuilde
         click: () => {
           mainWindow.commandService.remoteCall('bot:browse-open');
         }
+      },
+      {
+        label: "Close Bot",
+        click: () => {
+          mainWindow.commandService.remoteCall('bot:close');
+        }
       }];
 
     if (recentBots && recentBots.length) {

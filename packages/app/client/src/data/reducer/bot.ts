@@ -32,7 +32,11 @@ export type BotAction = {
   payload: {
     bot: IBotConfig,
     botDirectory: string
-  }
+  } 
+} | {
+  type: 'BOT/CLOSE',
+  payload: {   
+  } 
 };
 
 const DEFAULT_STATE: IBotState = {
@@ -83,6 +87,12 @@ export default function bot(state: IBotState = DEFAULT_STATE, action: BotAction)
       break;
     }
 
+    case BotActions.CLOSE: {
+      // close the ative bot
+      state = setActiveBot(null, state);
+      break;
+    }
+    
     default: break;
   }
   return state;

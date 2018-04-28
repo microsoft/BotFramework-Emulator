@@ -38,6 +38,7 @@ import { BotAction } from '../reducer/bot';
 export const LOAD = 'BOT/LOAD';
 export const PATCH = 'BOT/PATCH';
 export const SET_ACTIVE = 'BOT/SET_ACTIVE';
+export const CLOSE = 'BOT/CLOSE';
 
 export function load(bots: IBotInfo[]): BotAction {
   // prune bad bots
@@ -70,6 +71,14 @@ export function setActive(bot: IBotConfig, botDirectory: string): BotAction {
     }
   };
 }
+
+export function close(): BotAction {
+  return {
+    type: CLOSE,
+    payload: {}
+  };
+}
+
 
 export function mockAndSetActive(mock?: IBotConfig): BotAction {
   const bot = newBot({

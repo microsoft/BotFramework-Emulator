@@ -121,6 +121,13 @@ export function registerCommands() {
   });
 
   //---------------------------------------------------------------------------
+  // Close active bot (called from client-side)
+  CommandRegistry.registerCommand('bot:close', async (): Promise<void> => {
+    BotProjectFileWatcher.dispose();
+    mainWindow.store.dispatch(BotActions.close());
+  });
+
+  //---------------------------------------------------------------------------
   // Adds or updates an msbot service entry.
   CommandRegistry.registerCommand('bot:add-or-update-service', async (serviceType: ServiceType, service: IConnectedService) => {
     const activeBot = getActiveBot();
