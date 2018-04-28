@@ -152,21 +152,13 @@ class WelcomePage extends React.Component<Props, {}> {
           </Column>
           <Column className='right-column'>
             <div className="section">
-              <SmallHeader>Tutorials</SmallHeader>
-              <ul>
-                <li><a href='javascript:void(0);' title=''><TruncateText>VIDEO: Getting started with the Bot Framework Emulator</TruncateText></a></li>
-                <li><a href='javascript:void(0);' title=''><TruncateText>VIDEO: Creating bots with the BotBuilder SDK</TruncateText></a></li>
-              </ul>
-            </div>
-            <div className="section">
               <SmallHeader>Help</SmallHeader>
               <ul>
-                <li><a href='javascript:void(0);' title=''><TruncateText>What is the Bot Framework Emulator?</TruncateText></a></li>
-                <li><a href='javascript:void(0);' title=''><TruncateText>BotBuilder SDK Documentation</TruncateText></a></li>
-                <li><a href='javascript:void(0);' title=''><TruncateText>BotBuilder SDK API Reference</TruncateText></a></li>
-                <li><a href='javascript:void(0);' title=''><TruncateText>Samples</TruncateText></a></li>
-                <li><a href='javascript:void(0);' title=''><TruncateText>GitHub repository</TruncateText></a></li>
-                <li><a href='javascript:void(0);' title=''><TruncateText>Report an issue</TruncateText></a></li>
+                <li><a href='https://aka.ms/BotBuilderOverview'><TruncateText>Overview</TruncateText></a></li>
+                <li><a href='https://aka.ms/bbtools'><TruncateText>GitHub Repository</TruncateText></a></li>
+                <li><a href='https://aka.ms/BotBuilderLocalDev'><TruncateText>Starting with Local Development</TruncateText></a></li>
+                <li><a href='https://aka.ms/BotBuilderAZCLI'><TruncateText>Starting with Azure CLI</TruncateText></a></li>
+                <li><a href='https://aka.ms/BotBuilderIbiza'><TruncateText>Starting with the Azure Portal</TruncateText></a></li>
               </ul>
             </div>
           </Column>
