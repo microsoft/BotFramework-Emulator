@@ -125,6 +125,7 @@ const PRESENTATION_CSS = css({
   },
 
   '& .presentation-playback-dock': {
+    display: 'none',
     position: 'absolute',
     bottom: 0,
     height: '64px',
