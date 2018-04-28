@@ -25,7 +25,7 @@ const CSS = css({
 
   '& .dialog-host-content': {
     height: 'auto',
-    width: 'auto',
+    width: '648px',
     maxWidth: '50%',
     maxHeight: '80%',
     overflow: 'auto',

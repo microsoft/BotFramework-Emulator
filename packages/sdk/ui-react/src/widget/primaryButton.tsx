@@ -13,12 +13,16 @@ const CSS = css({
   display: 'inline-block',
   width: 'auto',
   minWidth: '80px',
-  height: '21px',
+  height: '22px',
   boxSizing: 'border-box',
   fontSize: '11px',
 
   '&:disabled': {
     cursor: 'default'
+  },
+
+  '& > .primary-button-text': {
+    lineHeight: '22px'
   }
 });
 
@@ -85,7 +89,7 @@ export class PrimaryButton extends React.Component<PrimaryButtonProps, {}> {
     const colorClass = this.props.secondary ? SECONDARY_CSS : PRIMARY_CSS;
     return (
       <button className={ [CSS, colorClass, this.props.className].filter(name => !!name).join(' ') } onClick={ this.props.onClick } disabled={ this.props.disabled }>
-        <TruncateText>{ this.props.text }</TruncateText>
+        <TruncateText className="primary-button-text">{ this.props.text }</TruncateText>
       </button>
     );
   }

@@ -210,10 +210,6 @@ export function registerCommands() {
   });
 
   //---------------------------------------------------------------------------
-  // Call path.basename()
-  CommandRegistry.registerCommand('path:basename', (path: string): string => Path.basename(path));
-
-  //---------------------------------------------------------------------------
   // Client notifying us it's initialized and has rendered
   CommandRegistry.registerCommand('client:loaded', () => {
     // Load bots from disk and sync list with client
