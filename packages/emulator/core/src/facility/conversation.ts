@@ -242,7 +242,7 @@ export default class Conversation extends EventEmitter {
 
   //This function turns local contentUrls into dataUrls://
   public async processActivityForDataUrls(activity: IActivity): Promise<IActivity> {
-    const visitor = new DataUrlEncoder(this.bot);
+    const visitor = new DataUrlEncoder(this.botEmulator);
 
     activity = { ...activity };
     await visitor.traverseActivity(activity);
@@ -626,7 +626,7 @@ export default class Conversation extends EventEmitter {
 class DataUrlEncoder  {
 
   constructor(
-    public bot: Bot
+    public bot: BotEmulator
   )
   {
     // the constructor only exists so we can pass in the bot
