@@ -5,17 +5,17 @@
  */
 
 export enum ServiceType {
-  Endpoint = "endpoint",
-  AzureBotService = "abs",
-  Luis = "luis",
-  QnA = "qna",
+  Endpoint = 'endpoint',
+  AzureBotService = 'abs',
+  Luis = 'luis',
+  QnA = 'qna',
   Dispatch = 'dispatch',
-  File = "file"
+  File = 'file'
 }
 
 export interface IConnectedService {
   // ServiceType of the service (LUIS, QnA, etc.)
-  type: string;
+  readonly type: ServiceType;
 
   // Friendly name for the service
   name: string;
@@ -24,9 +24,11 @@ export interface IConnectedService {
   id?: string;
 }
 
+
 export interface IEndpointService extends IConnectedService {
   // type = ServiceTypes.Endpoint
   // id = bot id
+
   // MSA Appid
   appId: string;
 
@@ -40,13 +42,21 @@ export interface IEndpointService extends IConnectedService {
 export interface IAzureBotService extends IConnectedService {
   // type = ServiceTypes.AzureBotService
   // id = bot id
-  // MSA Appid
-  appId: string;
+
+  // tenantId for ABS registration
+  tenantId: string;
+
+  // subscriptionId for ABS registration
+  subscriptionId : string;
+
+  // resourceGroup for ABS registration
+  resourceGroup: string;
 }
 
 export interface ILuisService extends IConnectedService {
   // type = ServiceTypes.Luis
   // id = appid
+
   // luis appid
   appId: string;
 
@@ -63,6 +73,7 @@ export interface ILuisService extends IConnectedService {
 export interface IDispatchService extends IConnectedService {
   // type = ServiceTypes.Dispatch
   // id = appid
+
   // luis appid
   appId: string;
 
@@ -82,16 +93,24 @@ export interface IDispatchService extends IConnectedService {
 export interface IQnAService extends IConnectedService {
   // type=Servicestypes.QnA
   // id = appid for the QnA service
-  // kb id
-  kbid: string;
 
-  // subscriptionkey for calling api
+  // subscriptionkey for calling admin api
   subscriptionKey: string;
+
+  // kb id
+  kbId: string;
+
+  // hostname for private service endpoint Example: https://myqna.azurewebsites.net
+  hostname: string;
+
+  // endpointKey for querying the kb 
+  endpointKey: string;
 }
 
 export interface IFileService extends IConnectedService {
   // type = ServiceTypes.File
   // id = filePath
+
   // filePath
   filePath: string;
 }
@@ -103,9 +122,13 @@ export interface IBotConfig {
   // description of the bot
   description: string;
 
+  // encrypted guid used to validate password is the same,
+  // you need to be able to decrypt this key with passed in secret before we will use the secret to encrypt new values
+  secretKey: string;
+
   // connected services for the bot
   services: IConnectedService[];
 
-  // internal identifier that allows us to map to bots.json entries
+  // ** CUSTOM PROPERTY NOT IN REAL SCHEMA ** internal identifier that allows us to map to bots.json entries
   path?: string;
 }

@@ -3,19 +3,21 @@ import { IQnAService, ServiceType } from '@bfemulator/sdk-shared';
 export class QnaMakerService implements IQnAService {
   public readonly type = ServiceType.QnA;
   public id = '';
-  public kbid = '';
   public name = '';
   public subscriptionKey = '';
+  public kbId = '';
+  public hostname = '';
+  public endpointKey = '';
 
-  constructor(source:Partial<IQnAService> = {}) {
+  constructor(source: Partial<IQnAService> = {}) {
     Object.assign(this, source);
   }
 
-  public toJSON():Partial<IQnAService> {
-    let {kbid, id, name, subscriptionKey, type} = this;
+  public toJSON(): Partial<IQnAService> {
+    let { type, id, name, subscriptionKey, kbId, hostname, endpointKey } = this;
     if (!id) {
-      id = kbid;
+      id = kbId;
     }
-    return {kbid, name, type, subscriptionKey, id};
+    return { type, id, name, subscriptionKey, kbId, hostname, endpointKey };
   }
 }

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { css } from 'glamor';
-import { uniqueId, IBotConfig, IEndpointService } from '@bfemulator/sdk-shared';
+import { uniqueId, IBotConfig, IEndpointService, ServiceType } from '@bfemulator/sdk-shared';
 
 import * as BotActions from '../../data/action/botActions';
 import * as NavBarActions from '../../data/action/navBarActions';
@@ -64,7 +64,7 @@ const CSS = css({
       color: Colors.APP_HYPERLINK_FOREGROUND_DARK
     }
   },
-  
+
   '& .small-input': {
     width: '200px',
     flexShrink: 0
@@ -96,11 +96,12 @@ export default class BotCreationDialog extends React.Component<{}, BotCreationDi
       bot: {
         name: '',
         description: '',
+        secretKey: '',
         services: [],
         path: ''
       },
       endpoint: {
-        type: 'endpoint',
+        type: ServiceType.Endpoint,
         name: '',
         id: uniqueId(),
         appId: '',
@@ -149,7 +150,7 @@ export default class BotCreationDialog extends React.Component<{}, BotCreationDi
 
   private onConnect = (e) => {
     const endpoint: IEndpointService = {
-      type: this.state.endpoint.type.trim(),
+      type: this.state.endpoint.type,
       name: this.state.endpoint.name.trim(),
       id: this.state.endpoint.id.trim(),
       appId: this.state.endpoint.appId.trim(),

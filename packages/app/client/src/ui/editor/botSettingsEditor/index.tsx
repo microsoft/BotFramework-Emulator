@@ -127,12 +127,12 @@ class BotSettingsEditor extends React.Component<BotSettingsEditorProps, BotSetti
   };
 
   private onSave = async (e, connect = false) => {
-    const { appId = '', appPassword = '', endpoint = '', type = '', name = '', id = '' } = this.state.endpoint;
+    const { appId = '', appPassword = '', endpoint = '', type, name = '', id = '' } = this.state.endpoint;
     const endpointService: IEndpointService = {
       appId: appId.trim(),
       appPassword: appPassword.trim(),
       endpoint: endpoint.trim(),
-      type: type.trim(),
+      type: type,
       name: name.trim(),
       id: id.trim()
     };
@@ -141,6 +141,7 @@ class BotSettingsEditor extends React.Component<BotSettingsEditorProps, BotSetti
     const bot: IBotConfig = {
       name: botName.trim(),
       description: description.trim(),
+      secretKey: '',
       path: path.trim(),
       services: [endpointService]
     };
@@ -191,9 +192,9 @@ class BotSettingsEditor extends React.Component<BotSettingsEditorProps, BotSetti
   }
 }
 
-function mapStateToProps(state: IRootState, ownProps: object) : BotSettingsEditorProps {
+function mapStateToProps(state: IRootState, ownProps: object): BotSettingsEditorProps {
   return {
-    bot:  state.bot.activeBot
+    bot: state.bot.activeBot
   };
 }
 

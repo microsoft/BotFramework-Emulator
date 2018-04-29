@@ -24,7 +24,7 @@ const title = 'Connect to Azure Bot Service';
 const detailedDescription = 'Connect your bot to a registration in the Azure Bot Service portal';
 const modalCssOverrides = {
   width: '400px',
-  height: '580px'
+  height: '550px'
 };
 
 export class AzureBotServiceEditor extends Component<AzureBotServiceEditorProps, AzureBotServiceEditorState> {
@@ -44,7 +44,7 @@ export class AzureBotServiceEditor extends Component<AzureBotServiceEditorProps,
 
   public render(): JSX.Element {
     const { azureBotService, idError, nameError, isDirty, tenantIdError, subscriptionIdError, resourceGroupError } = this.state;
-    const { name = '', id = '', appId = '', tenantId = '', subscriptionId = '', resourceGroup = '' } = azureBotService;
+    const { name = '', id = '', tenantId = '', subscriptionId = '', resourceGroup = '' } = azureBotService;
     const valid = !tenantIdError && !subscriptionIdError && !resourceGroupError && !idError && !nameError;
     return (
       <Modal cssOverrides={ modalCssOverrides } title={ title } detailedDescription={ detailedDescription } cancel={ this.onCancelClick }>

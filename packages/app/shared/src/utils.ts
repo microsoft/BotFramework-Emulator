@@ -34,8 +34,8 @@
 // We need to skip Webpack bundler on bundling 'electron':
 // 1. We are using react-scripts, thus, we are not able to configure Webpack
 // 2. To skip bundling, we can hack with window['require']
-
-import { IBotConfig, IEndpointService, ServiceType, uniqueId } from '@bfemulator/sdk-shared';
+import { uniqueId } from '@bfemulator/sdk-shared';
+import { IBotConfig, IEndpointService, ServiceType } from '@bfemulator/sdk-shared';
 
 export function isObject(item: any): boolean {
   return (item && typeof item === 'object' && !Array.isArray(item) && item !== null);
@@ -156,7 +156,7 @@ export const addIdToBotEndpoints = (bot: IBotConfig): IBotConfig => {
 /** Returns the first endpoint service of a bot */
 export const getFirstBotEndpoint = (bot: IBotConfig): IEndpointService => {
   if (bot.services && bot.services.length) {
-    return <IEndpointService> bot.services.find(service => service.type === ServiceType.Endpoint);
+    return <IEndpointService>bot.services.find(service => service.type === ServiceType.Endpoint);
   }
   return null;
 }
