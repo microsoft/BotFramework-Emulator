@@ -47,17 +47,17 @@ export class AzureBotServiceEditor extends Component<AzureBotServiceEditorProps,
     const { name = '', id = '', appId = '', tenantId = '', subscriptionId = '', resourceGroup = '' } = azureBotService;
     const valid = !tenantIdError && !subscriptionIdError && !resourceGroupError && !idError && !nameError;
     return (
-      <Modal cssOverrides={modalCssOverrides} title={title} detailedDescription={detailedDescription} cancel={this.onCancelClick}>
+      <Modal cssOverrides={ modalCssOverrides } title={ title } detailedDescription={ detailedDescription } cancel={ this.onCancelClick }>
         <ModalContent>
-          <TextInputField error={nameError} value={name} onChange={this.onInputChange} label="Bot Name" required={true} inputAttributes={{ 'data-propname': 'name' }} />
-          <TextInputField error={idError} value={id} onChange={this.onInputChange} label="Azure Bot Id" required={true} inputAttributes={{ 'data-propname': 'id' }} />
-          <TextInputField error={tenantIdError} value={tenantId} onChange={this.onInputChange} label="Azure Tenant Id" required={true} inputAttributes={{ 'data-propname': 'tenantId' }} />
-          <TextInputField error={subscriptionIdError} value={subscriptionId} onChange={this.onInputChange} label="Azure Subscription Id" required={true} inputAttributes={{ 'data-propname': 'subscriptionId' }} />
-          <TextInputField error={resourceGroupError} value={resourceGroup} onChange={this.onInputChange} label="Azure Resource Group" required={true} inputAttributes={{ 'data-propname': 'resourceGroup' }} />
+          <TextInputField error={ nameError } value={ name } onChange={ this.onInputChange } label="Bot Name" required={ true } inputAttributes={ { 'data-propname': 'name' } } />
+          <TextInputField error={ idError } value={ id } onChange={ this.onInputChange } label="Azure Bot Id" required={ true } inputAttributes={ { 'data-propname': 'id' } } />
+          <TextInputField error={ tenantIdError } value={ tenantId } onChange={ this.onInputChange } label="Azure Tenant Id" required={ true } inputAttributes={ { 'data-propname': 'tenantId' } } />
+          <TextInputField error={ subscriptionIdError } value={ subscriptionId } onChange={ this.onInputChange } label="Azure Subscription Id" required={ true } inputAttributes={ { 'data-propname': 'subscriptionId' } } />
+          <TextInputField error={ resourceGroupError } value={ resourceGroup } onChange={ this.onInputChange } label="Azure Resource Group" required={ true } inputAttributes={ { 'data-propname': 'resourceGroup' } } />
         </ModalContent>
         <ModalActions>
-          <PrimaryButton text="Cancel" secondary={true} onClick={this.onCancelClick} />
-          <PrimaryButton disabled={!isDirty || !valid} text="Submit" onClick={this.onSubmitClick} />
+          <PrimaryButton text="Cancel" secondary={ true } onClick={ this.onCancelClick } />
+          <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ this.onSubmitClick } />
         </ModalActions>
       </Modal>
     );

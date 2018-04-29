@@ -92,7 +92,7 @@
     "lock": "^0.1.2",
     "mkdirp": "^0.5.1",
     "moment": "^2.20.1",
-    "msbot": "v1.0.39-alpha",
+    "msbot": "1.0.41-alpha",
     "mz": "^2.7.0",
     "node-uuid": "^1.4.8",
     "query-string": "^6.0.0",
