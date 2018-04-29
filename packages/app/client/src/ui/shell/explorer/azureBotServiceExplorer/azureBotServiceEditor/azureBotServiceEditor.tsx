@@ -14,7 +14,9 @@ interface AzureBotServiceEditorState {
   azureBotService: IAzureBotService,
   nameError: string;
   idError: string;
-  appIdError: string;
+  tenantIdError: string;
+  subscriptionIdError: string;
+  resourceGroupError: string;
   isDirty: boolean;
 }
 
@@ -22,7 +24,7 @@ const title = 'Connect to Azure Bot Service';
 const detailedDescription = 'Connect your bot to a registration in the Azure Bot Service portal';
 const modalCssOverrides = {
   width: '400px',
-  height: '400px'
+  height: '580px'
 };
 
 export class AzureBotServiceEditor extends Component<AzureBotServiceEditorProps, AzureBotServiceEditorState> {
@@ -32,7 +34,7 @@ export class AzureBotServiceEditor extends Component<AzureBotServiceEditorProps,
   constructor(props, state) {
     super(props, state);
     const azureBotService = new AzureBotService(props.azureBotService);
-    this.state = { azureBotService, isDirty: false, appIdError: '', idError: '', nameError: '' };
+    this.state = { azureBotService, isDirty: false, idError: '', nameError: '', tenantIdError: '', subscriptionIdError: '', resourceGroupError: '' };
   }
 
   public componentWillReceiveProps(nextProps: Readonly<AzureBotServiceEditorProps>): void {
@@ -41,19 +43,21 @@ export class AzureBotServiceEditor extends Component<AzureBotServiceEditorProps,
   }
 
   public render(): JSX.Element {
-    const { azureBotService, appIdError, idError, nameError, isDirty } = this.state;
-    const { name = '', id = '', appId = '' } = azureBotService;
-    const valid = !appIdError && !idError && !nameError;
+    const { azureBotService, idError, nameError, isDirty, tenantIdError, subscriptionIdError, resourceGroupError } = this.state;
+    const { name = '', id = '', appId = '', tenantId = '', subscriptionId = '', resourceGroup = '' } = azureBotService;
+    const valid = !tenantIdError && !subscriptionIdError && !resourceGroupError && !idError && !nameError;
     return (
       <Modal cssOverrides={ modalCssOverrides } title={ title } detailedDescription={ detailedDescription } cancel={ this.onCancelClick }>
         <ModalContent>
-          <TextInputField error={ nameError } value={ name } onChange={ this.onInputChange } label="Name" required={ true } inputAttributes={ { 'data-propname': 'name' } }/>
-          <TextInputField error={ idError } value={ id } onChange={ this.onInputChange } label="Bot Id" required={ true } inputAttributes={ { 'data-propname': 'id' } }/>
-          <TextInputField error={ appIdError } value={ appId } onChange={ this.onInputChange } label="Application Id" required={ true } inputAttributes={ { 'data-propname': 'appId' } }/>
+          <TextInputField error={ nameError } value={ name } onChange={ this.onInputChange } label="Bot Name" required={ true } inputAttributes={ { 'data-propname': 'name' } } />
+          <TextInputField error={ idError } value={ id } onChange={ this.onInputChange } label="Azure Bot Id" required={ true } inputAttributes={ { 'data-propname': 'id' } } />
+          <TextInputField error={ tenantIdError } value={ tenantId } onChange={ this.onInputChange } label="Azure Tenant Id" required={ true } inputAttributes={ { 'data-propname': 'tenantId' } } />
+          <TextInputField error={ subscriptionIdError } value={ subscriptionId } onChange={ this.onInputChange } label="Azure Subscription Id" required={ true } inputAttributes={ { 'data-propname': 'subscriptionId' } } />
+          <TextInputField error={ resourceGroupError } value={ resourceGroup } onChange={ this.onInputChange } label="Azure Resource Group" required={ true } inputAttributes={ { 'data-propname': 'resourceGroup' } } />
         </ModalContent>
         <ModalActions>
-          <PrimaryButton text="Cancel" secondary={ true } onClick={ this.onCancelClick }/>
-          <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ this.onSubmitClick }/>
+          <PrimaryButton text="Cancel" secondary={ true } onClick={ this.onCancelClick } />
+          <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ this.onSubmitClick } />
         </ModalActions>
       </Modal>
     );
@@ -74,12 +78,12 @@ export class AzureBotServiceEditor extends Component<AzureBotServiceEditorProps,
 
     const { azureBotService: originalAzureBotService } = this.props;
     const propName = input.getAttribute('data-propname');
-    const errorMessage = ( required && !trimmedValue ) ? `The field cannot be empty` : '';
+    const errorMessage = (required && !trimmedValue) ? `The field cannot be empty` : '';
 
     const { azureBotService } = this.state;
     azureBotService[propName] = input.value;
 
-    const isDirty = Object.keys(azureBotService).reduce((isDirty, key) => ( isDirty || azureBotService[key] !== originalAzureBotService[key] ), false);
+    const isDirty = Object.keys(azureBotService).reduce((isDirty, key) => (isDirty || azureBotService[key] !== originalAzureBotService[key]), false);
     this.setState({ azureBotService, [`${propName}Error`]: errorMessage, isDirty } as any);
   };
 }
