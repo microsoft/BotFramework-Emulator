@@ -199,7 +199,7 @@ gulp.task('get-licenses', function () {
     }
     return `${pkgInfo.name}@${pkgInfo.version} (${pkgInfo.license})\n\n${formatLicenseFile()}\n\n`;
   }
-  
+
   const tasks = lerna.packages.map(package => licenses(`../../../${package}`), { dev: false });
 
   return Promise.all(tasks)
@@ -559,12 +559,12 @@ function publishFiles(filelist) {
     pjson.version, {
       publish: "always",
       draft: true,
-      prerelease: true
+      prerelease: false
     });
   const errorlist = [];
 
   const uploads = filelist.map(file => {
-    return publisher.upload(file)
+    return publisher.upload({ file })
       .catch((err) => {
         errorlist.push(err.response ? `Failed to upload ${file}, http status code ${err.response.statusCode}` : err);
         return Promise.resolve();
@@ -618,19 +618,19 @@ function getConfig(platform, target) {
 
 //----------------------------------------------------------------------------
 function getFileList(platform, target, options = {}) {
+  const config = getConfig(platform, target);
   options = extend({}, {
-    basename: pjson.name,
+    basename: config.productName,
     version: pjson.version,
   }, options);
-  const config = getConfig(platform, target);
   const path = './dist';
   const filelist = [];
-  switch (`${target || ''}-${platform}`) {
+  switch (`${platform}-${target || ''}`) {
     case "windows-nsis":
       filelist.push(`${path}/latest.yml`);
       filelist.push(`${path}/${options.basename}-Setup-${options.version}.exe`);
-      filelist.push(`${path}/${options.basename}-${options.version}-win.zip`);
-      filelist.push(`${path}/${options.basename}-${options.version}-ia32-win.zip`);
+      //filelist.push(`${path}/${options.basename}-${options.version}-win.zip`);
+      //filelist.push(`${path}/${options.basename}-${options.version}-ia32-win.zip`);
       break;
 
     case "windows-squirrel":
@@ -643,7 +643,7 @@ function getFileList(platform, target, options = {}) {
       filelist.push(`${path}/latest-mac.yml`);
       filelist.push(`${path}/latest-mac.json`);
       filelist.push(`${path}/${options.basename}-${options.version}-mac.zip`);
-      filelist.push(`${path}/${options.basename}-${options.version}.dmg`);
+      //filelist.push(`${path}/${options.basename}-${options.version}.dmg`);
       break;
 
     case "linux-":
@@ -707,7 +707,7 @@ function replacePackageEnvironmentVars(obj) {
 //----------------------------------------------------------------------------
 function replacePublishEnvironmentVars(obj) {
   let str = JSON.stringify(obj);
-  str = replaceEnvironmentVar(str, "GITHUB_TOKEN");
+  str = replaceEnvironmentVar(str, "GH_TOKEN");
   str = replaceEnvironmentVar(str, "githubAccountName", githubAccountName);
   str = replaceEnvironmentVar(str, "githubRepoName", githubRepoName);
   return JSON.parse(str);
