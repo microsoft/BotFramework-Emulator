@@ -116,7 +116,7 @@ export const BotProjectFileWatcher = new class FileWatcher implements IFileWatch
 
         // update store
         const botDir = Path.dirname(this._botFilePath);
-        mainWindow.store.dispatch(BotActions.setActive(bot, botDir));
+        mainWindow.store.dispatch(BotActions.setActive(bot));
         mainWindow.commandService.remoteCall('bot:set-active', bot, botDir);
         mainWindow.commandService.call('bot:restart-endpoint-service');
       }

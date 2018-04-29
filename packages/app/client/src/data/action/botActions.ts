@@ -73,12 +73,11 @@ export function patch(bot: IBotConfig, secret?: string): BotAction {
     }
   };
 }
-export function setActive(bot: IBotConfig, botDirectory: string): BotAction {
+export function setActive(bot: IBotConfig): BotAction {
   return {
     type: SET_ACTIVE,
     payload: {
-      bot,
-      botDirectory
+      bot
     }
   };
 }

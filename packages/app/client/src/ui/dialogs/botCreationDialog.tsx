@@ -15,6 +15,7 @@ import { GenericDocument } from '../layout';
 const CSS = css({
   backgroundColor: Colors.DIALOG_BACKGROUND_DARK,
   padding: '32px',
+  width: '100%',
 
   '& .multi-input-row > *': {
     marginLeft: '8px'
@@ -80,7 +81,6 @@ const CSS = css({
 
 export interface BotCreationDialogState {
   bot: IBotConfig;
-  botDirectory: string;
   endpoint: IEndpointService;
   secret: string;
   secretEnabled: boolean;
@@ -97,9 +97,9 @@ export default class BotCreationDialog extends React.Component<{}, BotCreationDi
         name: '',
         description: '',
         secretKey: '',
-        services: []
+        services: [],
+        path: ''
       },
-      botDirectory: '',
       endpoint: {
         type: ServiceType.Endpoint,
         name: '',
@@ -135,8 +135,9 @@ export default class BotCreationDialog extends React.Component<{}, BotCreationDi
     this.setState({ bot });
   }
 
-  private onChangeBotDirectory = (e) => {
-    this.setState({ ...this.state, botDirectory: e.target.value });
+  private onChangeBotLocation = (e) => {
+    const bot = { ...this.state.bot, path: e.target.value };
+    this.setState({ bot });
   }
 
   private onCancel = (e) => {
@@ -166,22 +167,30 @@ export default class BotCreationDialog extends React.Component<{}, BotCreationDi
 
     const secret = this.state.secretEnabled && this.state.secret ? this.state.secret : null;
 
-    ActiveBotHelper.confirmAndCreateBot(bot, this.state.botDirectory, secret)
+    ActiveBotHelper.confirmAndCreateBot(bot, secret)
       .then(() => DialogService.hideDialog())
       .catch(err => console.error('Error during confirm and create bot.'));
   }
 
   private onSelectFolder = (e) => {
     const dialogOptions = {
-      title: 'Choose a folder for your bot',
-      buttonLabel: 'Choose folder',
-      properties: ['openDirectory', 'promptToCreate']
+      filters: [
+        {
+          name: "Bot Files",
+          extensions: ['bot']
+        }
+      ],
+      defaultPath: '',
+      showsTagField: false,
+      title: "Save as",
+      buttonLabel: "Save"
     };
 
-    CommandService.remoteCall('shell:showOpenDialog', dialogOptions)
+    CommandService.remoteCall('shell:showSaveDialog', dialogOptions)
       .then(path => {
         if (path) {
-          this.setState({ botDirectory: path });
+          const bot = { ...this.state.bot, path };
+          this.setState({ bot });
         }
       })
       .catch(err => console.log('User cancelled choosing a bot folder: ', err));
@@ -201,7 +210,7 @@ export default class BotCreationDialog extends React.Component<{}, BotCreationDi
     const requiredFieldsCompleted = this.state.bot
       && this.state.endpoint.endpoint
       && this.state.bot.name
-      && this.state.botDirectory
+      && this.state.bot.path
       && secretCriteria;
 
     return (
@@ -210,8 +219,8 @@ export default class BotCreationDialog extends React.Component<{}, BotCreationDi
           <MediumHeader className="bot-create-header">Add a bot</MediumHeader>
           <Row className="multi-input-row" align={ RowAlignment.Center }>
             <TextInputField className="small-input" inputClass="bot-creation-input" value={ this.state.bot.name } onChange={ this.onChangeName } label={ 'Bot name' } required={ true } />
-            <TextInputField inputClass="bot-creation-input" value={ this.state.botDirectory } onChange={ this.onChangeBotDirectory }
-              label={ 'Local folder' } placeholder={ 'Choose a location for your bot configuration' } readOnly={ false } required={ true } />
+            <TextInputField inputClass="bot-creation-input" value={ this.state.bot.path } onChange={ this.onChangeBotLocation }
+              label={ 'Location' } placeholder={ 'Choose a location for your bot configuration' } readOnly={ false } required={ true } />
             <a className="bot-creation-cta" href="javascript:void(0)" onClick={ this.onSelectFolder }>Browse...</a>
           </Row>
           <TextInputField inputClass="bot-creation-input" value={ this.state.endpoint.endpoint } onChange={ this.onChangeEndpoint }

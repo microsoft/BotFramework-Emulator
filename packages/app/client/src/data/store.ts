@@ -35,7 +35,6 @@ import { applyMiddleware, combineReducers, createStore, Store } from 'redux';
 import promiseMiddleware from 'redux-promise-middleware';
 import sagaMiddlewareFactory from 'redux-saga';
 import thunk from 'redux-thunk';
-import assetExplorer, { IAssetExplorerState } from './reducer/assetExplorer';
 import bot, { IBotState } from './reducer/bot';
 import chat, { IChatState } from './reducer/chat';
 import dialog, { IDialogState } from './reducer/dialog';
@@ -56,7 +55,6 @@ const _window = window as any;
 const electron = _window.process && _window.process.versions.electron;
 
 export interface IRootState {
-  assetExplorer?: IAssetExplorerState;
   bot?: IBotState;
   dialog?: IDialogState;
   editor?: IEditorState;
@@ -74,7 +72,6 @@ const DEFAULT_STATE: IRootState = {};
 
 const configureStore = (initialState: IRootState = DEFAULT_STATE): Store<IRootState> => createStore(
   combineReducers({
-    assetExplorer,
     bot,
     dialog,
     editor,

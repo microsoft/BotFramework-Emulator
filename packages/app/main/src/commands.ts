@@ -37,17 +37,14 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Create a bot
-  CommandRegistry.registerCommand('bot:create', async (bot: IBotConfig, botDirectory: string, secret: string): Promise<IBotConfig> => {
-    const botFilePath = Path.join(botDirectory, bot.name + '.bot');
-    bot.path = botFilePath;
-
+  CommandRegistry.registerCommand('bot:create', async (bot: IBotConfig, botDirectory: string, secret: string): Promise<IBotConfig> => {// create and add bot entry to bots.json
     // create and add bot entry to bots.json
     const botsJsonEntry: IBotInfo = {
-      path: botFilePath,
+      path: bot.path,
       displayName: getBotDisplayName(bot),
       secret
     };
-    await patchBotsJson(botFilePath, botsJsonEntry);
+    await patchBotsJson(bot.path, botsJsonEntry);
 
     // save the bot
     try {
@@ -87,9 +84,13 @@ export function registerCommands() {
       // user failed to enter a valid secret for an encrypted bot
       throw new Error('No secret provided to decrypt encrypted bot.');
 
+    // set up file watcher
+    BotProjectFileWatcher.watch(botFilePath);
+
     // set bot as active
     const botDirectory = Path.dirname(botFilePath);
-    mainWindow.store.dispatch(BotActions.setActive(bot, botDirectory));
+    mainWindow.store.dispatch(BotActions.setActive(bot));
+    mainWindow.store.dispatch(BotActions.setDirectory(botDirectory));
 
     return mainWindow.commandService.remoteCall('bot:load', { bot, botDirectory });
   });
@@ -114,8 +115,10 @@ export function registerCommands() {
     // set up the file watcher
     BotProjectFileWatcher.watch(botPath);
 
+    // set active bot and active directory
     const botDirectory = Path.dirname(botPath);
-    mainWindow.store.dispatch(BotActions.setActive(bot, botDirectory));
+    mainWindow.store.dispatch(BotActions.setActive(bot));
+    mainWindow.store.dispatch(BotActions.setDirectory(botDirectory));
     mainWindow.commandService.call('bot:restart-endpoint-service');
 
     return { bot, botDirectory };
@@ -302,15 +305,12 @@ export function registerCommands() {
       throw new Error('save-transcript-to-file: No active bot.');
     }
 
-    const path = Path.resolve(mainWindow.store.getState().bot.currentBotDirectory);
-    if (!path || !path.length) {
-      throw new Error('save-transcript-to-file: Project directory not set');
-    }
-
     const conversation = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
     if (!conversation) {
       throw new Error(`save-transcript-to-file: Conversation ${conversationId} not found.`);
     }
+
+    const path = Path.resolve(mainWindow.store.getState().bot.currentBotDirectory) || '';
 
     const filename = showSaveDialog(mainWindow.browserWindow, {
       filters: [
@@ -324,6 +324,23 @@ export function registerCommands() {
       title: "Save conversation transcript",
       buttonLabel: "Save"
     });
+
+    // If there is no current bot directory, we should set the directory
+    // that the transcript is saved in as the bot directory, copy the botfile over,
+    // change the bots.json entry, and watch the directory.
+    if (!path && filename && filename.length) {
+      const bot = getActiveBot();
+      let botInfo = getBotInfoByPath(bot.path);
+      const saveableBot = toSavableBot(bot, botInfo.secret);
+      const botDirectory = Path.dirname(filename);
+      const botPath = Path.join(botDirectory, `${bot.name}.bot`);
+      botInfo = { ...botInfo, path: botPath };
+
+      await saveableBot.Save(botPath);
+      await patchBotsJson(botPath, botInfo);
+      await BotProjectFileWatcher.watch(botPath);
+      mainWindow.store.dispatch(BotActions.setDirectory(botDirectory));
+    }
 
     if (filename && filename.length) {
       mkdirpSync(Path.dirname(filename));
