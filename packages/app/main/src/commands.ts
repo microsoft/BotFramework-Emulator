@@ -336,7 +336,7 @@ export function registerCommands() {
       const botPath = Path.join(botDirectory, `${bot.name}.bot`);
       botInfo = { ...botInfo, path: botPath };
 
-      await saveableBot.Save(botPath);
+      await saveableBot.save(botPath);
       await patchBotsJson(botPath, botInfo);
       await BotProjectFileWatcher.watch(botPath);
       mainWindow.store.dispatch(BotActions.setDirectory(botDirectory));
