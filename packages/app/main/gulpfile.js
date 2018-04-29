@@ -4,8 +4,8 @@ const pjson = require('./package.json');
 
 const defaultElectronMirror = 'https://github.com/electron/electron/releases/download/v';
 const defaultElectronVersion = pjson.devDependencies["electron"];
-const githubAccountName = "fuselabs";
-const githubRepoName = "BotFramework-Emulator-Dev";
+const githubAccountName = "Microsoft";
+const githubRepoName = "BotFramework-Emulator";
 const appId = "F3C061A6-FE81-4548-82ED-C1171D9856BB";
 
 //============================================================================
@@ -226,16 +226,15 @@ gulp.task('get-licenses', function () {
 });
 
 //============================================================================
-// DIR
-// Packages the application ASAR and prepares a staging folder from which the
-// redistributables are built.
+// STAGE
+// Stages the application folder from which redistributables are built.
 //============================================================================
 
 //============================================================================
-// DIR:WINDOWS
+// STAGE:WINDOWS
 
 //----------------------------------------------------------------------------
-gulp.task('dir:windows', function () {
+gulp.task('stage:windows', function () {
   var builder = require('electron-builder');
   const config = getConfig("windows", "dir");
   console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
@@ -246,10 +245,10 @@ gulp.task('dir:windows', function () {
 });
 
 //============================================================================
-// DIR:MAC
+// STAGE:MAC
 
 //----------------------------------------------------------------------------
-gulp.task('dir:mac', function () {
+gulp.task('stage:mac', function () {
   var builder = require('electron-builder');
   const config = getConfig("mac", "dir");
   console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
@@ -260,10 +259,10 @@ gulp.task('dir:mac', function () {
 });
 
 //============================================================================
-// DIR:LINUX
+// STAGE:LINUX
 
 //----------------------------------------------------------------------------
-gulp.task('dir:linux', function () {
+gulp.task('stage:linux', function () {
   var builder = require('electron-builder');
   const config = getConfig("linux", "dir");
   console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
@@ -275,8 +274,7 @@ gulp.task('dir:linux', function () {
 
 //============================================================================
 // REDIST
-// Builds a redistributable from the packaged application created by the dir:
-// build steps above.
+// Builds a redistributable from the staged application folder.
 //============================================================================
 
 //----------------------------------------------------------------------------
@@ -325,32 +323,23 @@ gulp.task('redist:windows-nsis:binaries', function () {
   const config = getConfig("windows", "nsis");
   console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
   return builder.build({
-    targets: builder.Platform.WINDOWS.createTarget(["nsis", "zip"], builder.Arch.ia32, builder.Arch.x64),
+    targets: builder.Platform.WINDOWS.createTarget(["nsis"], builder.Arch.ia32),
     config,
-    prepackaged: './installer/packaged/windows/win-unpacked'
-  }).then((filenames) => {
-    return gulp.src(filenames, { allowEmpty: true })
-      .pipe(rename(function (path) {
-        path.basename = setReleaseFilename(path.basename);
-      }))
-      .pipe(gulp.dest(config.directories.output))
-  }).then(() => {
-    // Wait for the files to be written to disk and closed.
-    return delay(10000);
+    prepackaged: './dist/win-ia32-unpacked'
   });
 });
 
 //----------------------------------------------------------------------------
 gulp.task('redist:windows-nsis:metadata', gulp.series('redist:windows-nsis:binaries', function () {
   const config = getConfig("windows", "nsis");
-  const releaseFilename = `botframework-emulator-Setup-${pjson.version}.exe`;
-  const sha512 = hashFileAsync(`${config.directories.output}/${releaseFilename}`);
-  const sha2 = hashFileAsync(`${config.directories.output}/${releaseFilename}`, 'sha256', 'hex');
+  const releaseFilename = `${config.productName}-Setup-${pjson.version}.exe`;
+  const sha512 = hashFileAsync(`./dist/${releaseFilename}`);
+  const sha2 = hashFileAsync(`./dist/${releaseFilename}`, 'sha256', 'hex');
   const releaseDate = new Date().toISOString();
 
   return Promise.all([sha512, sha2])
     .then((values) => {
-      writeYamlMetadataFile(releaseFilename, 'latest.yml', config.directories.output, values[0], releaseDate, { sha2: values[1] });
+      writeYamlMetadataFile(releaseFilename, 'latest.yml', './dist', values[0], releaseDate, { sha2: values[1] });
     });
 }));
 
@@ -369,7 +358,7 @@ gulp.task('redist:windows-squirrel', function () {
   return builder.build({
     targets: builder.Platform.WINDOWS.createTarget(["squirrel"], builder.Arch.x64),
     config,
-    prepackaged: './installer/packaged/windows/win-ia32-unpacked'
+    prepackaged: './dist/win-ia32-unpacked'
   }).then((filenames) => {
     return gulp.src(filenames, { allowEmpty: true })
       .pipe(rename(function (path) {
@@ -380,7 +369,7 @@ gulp.task('redist:windows-squirrel', function () {
           dstName: config.squirrelWindows.name
         });
       }))
-      .pipe(gulp.dest(config.directories.output));
+      .pipe(gulp.dest('./dist'));
   }).then(() => {
     // Wait for the files to be written to disk and closed.
     return delay(10000);
@@ -399,29 +388,20 @@ gulp.task('redist:mac:binaries', function () {
   return builder.build({
     targets: builder.Platform.MAC.createTarget(["zip"]),
     config,
-    prepackaged: './installer/packaged/mac/mac'
-  }).then((filenames) => {
-    return gulp.src(filenames, { allowEmpty: true })
-      .pipe(rename(function (path) {
-        path.basename = setReleaseFilename(path.basename);
-      }))
-      .pipe(gulp.dest(config.directories.output));
-  }).then(() => {
-    // Wait for the files to be written to disk and closed.
-    return delay(10000);
+    prepackaged: './dist/mac'
   });
 });
 
 //----------------------------------------------------------------------------
 gulp.task('redist:mac:metadata', gulp.series('redist:mac:binaries', function () {
   const config = getConfig("mac");
-  const releaseFilename = `botframework-emulator-${pjson.version}-mac.zip`;
-  const releaseHash = hashFileAsync(`./${config.directories.output}/${releaseFilename}`);
+  const releaseFilename = `${config.productName}-${pjson.version}-mac.zip`;
+  const releaseHash = hashFileAsync(`./dist/${releaseFilename}`);
   const releaseDate = new Date().toISOString();
 
-  writeJsonMetadataFile(releaseFilename, 'latest-mac.json', config.directories.output, releaseDate);
+  writeJsonMetadataFile(releaseFilename, 'latest-mac.json', './dist', releaseDate);
   return releaseHash.then((hashValue) => {
-    writeYamlMetadataFile(releaseFilename, 'latest-mac.yml', config.directories.output, hashValue, releaseDate);
+    writeYamlMetadataFile(releaseFilename, 'latest-mac.yml', './dist', hashValue, releaseDate);
   });
 }));
 
@@ -440,22 +420,13 @@ gulp.task('redist:linux', function () {
   return builder.build({
     targets: builder.Platform.LINUX.createTarget(["deb", "AppImage"], builder.Arch.ia32, builder.Arch.x64),
     config,
-    prepackaged: './installer/packaged/linux/linux-unpacked'
-  }).then((filenames) => {
-    return gulp.src(filenames, { allowEmpty: true })
-      .pipe(rename(function (path) {
-        path.basename = setReleaseFilename(path.basename);
-      }))
-      .pipe(gulp.dest(config.directories.output));
-  }).then(() => {
-    // Wait for the files to be written to disk and closed.
-    return delay(10000);
+    prepackaged: './dist/linux-unpacked'
   });
 });
 
 //============================================================================
 // PACKAGE
-// Packages and builds a redistributable.
+// Stages and builds redist in a single step. 
 //============================================================================
 
 //============================================================================
@@ -469,31 +440,22 @@ gulp.task('package:windows-nsis:binaries', function () {
   const config = getConfig("windows", "nsis");
   console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
   return builder.build({
-    targets: builder.Platform.WINDOWS.createTarget(["nsis", "zip"], builder.Arch.ia32, builder.Arch.x64),
+    targets: builder.Platform.WINDOWS.createTarget(["nsis"], builder.Arch.ia32, builder.Arch.x64),
     config
-  }).then((filenames) => {
-    return gulp.src(filenames, { allowEmpty: true })
-      .pipe(rename(function (path) {
-        path.basename = setReleaseFilename(path.basename);
-      }))
-      .pipe(gulp.dest(config.directories.output))
-  }).then(() => {
-    // Wait for the files to be written to disk and closed.
-    return delay(10000);
   });
 });
 
 //----------------------------------------------------------------------------
 gulp.task('package:windows-nsis:metadata', gulp.series('package:windows-nsis:binaries', function () {
   const config = getConfig("windows", "nsis");
-  const releaseFilename = `botframework-emulator-Setup-${pjson.version}.exe`;
-  const sha512 = hashFileAsync(`${config.directories.output}/${releaseFilename}`);
-  const sha2 = hashFileAsync(`${config.directories.output}/${releaseFilename}`, 'sha256', 'hex');
+  const releaseFilename = `${config.productName}-Setup-${pjson.version}.exe`;
+  const sha512 = hashFileAsync(`./dist/${releaseFilename}`);
+  const sha2 = hashFileAsync(`./dist/${releaseFilename}`, 'sha256', 'hex');
   const releaseDate = new Date().toISOString();
 
   return Promise.all([sha512, sha2])
     .then((values) => {
-      writeYamlMetadataFile(releaseFilename, 'latest.yml', config.directories.output, values[0], releaseDate, { sha2: values[1] });
+      writeYamlMetadataFile(releaseFilename, 'latest.yml', './dist', values[0], releaseDate, { sha2: values[1] });
     });
 }));
 
@@ -522,7 +484,7 @@ gulp.task('package:windows-squirrel', function () {
           dstName: config.squirrelWindows.name
         });
       }))
-      .pipe(gulp.dest(config.directories.output));
+      .pipe(gulp.dest('./dist'));
   }).then(() => {
     // Wait for the files to be written to disk and closed.
     return delay(10000);
@@ -541,28 +503,19 @@ gulp.task('package:mac:binaries', function () {
   return builder.build({
     targets: builder.Platform.MAC.createTarget(["zip"]),
     config
-  }).then((filenames) => {
-    return gulp.src(filenames, { allowEmpty: true })
-      .pipe(rename(function (path) {
-        path.basename = setReleaseFilename(path.basename);
-      }))
-      .pipe(gulp.dest(config.directories.output));
-  }).then(() => {
-    // Wait for the files to be written to disk and closed.
-    return delay(10000);
   });
 });
 
 //----------------------------------------------------------------------------
 gulp.task('package:mac:metadata', gulp.series('package:mac:binaries', function () {
   const config = getConfig("mac");
-  const releaseFilename = `botframework-emulator-${pjson.version}-mac.zip`;
-  const releaseHash = hashFileAsync(`./${config.directories.output}/${releaseFilename}`);
+  const releaseFilename = `${config.productName}-${pjson.version}-mac.zip`;
+  const releaseHash = hashFileAsync(`./dist/${releaseFilename}`);
   const releaseDate = new Date().toISOString();
 
-  writeJsonMetadataFile(releaseFilename, 'latest-mac.json', config.directories.output, releaseDate);
+  writeJsonMetadataFile(releaseFilename, 'latest-mac.json', './dist', releaseDate);
   return releaseHash.then((hashValue) => {
-    writeYamlMetadataFile(releaseFilename, 'latest-mac.yml', config.directories.output, hashValue, releaseDate);
+    writeYamlMetadataFile(releaseFilename, 'latest-mac.yml', './dist', hashValue, releaseDate);
   });
 }));
 
@@ -581,15 +534,6 @@ gulp.task('package:linux', function () {
   return builder.build({
     targets: builder.Platform.LINUX.createTarget(["deb", "AppImage"], builder.Arch.ia32, builder.Arch.x64),
     config
-  }).then((filenames) => {
-    return gulp.src(filenames, { allowEmpty: true })
-      .pipe(rename(function (path) {
-        path.basename = setReleaseFilename(path.basename);
-      }))
-      .pipe(gulp.dest(config.directories.output));
-  }).then(() => {
-    // Wait for the files to be written to disk and closed.
-    return delay(10000);
   });
 });
 
@@ -679,7 +623,7 @@ function getFileList(platform, target, options = {}) {
     version: pjson.version,
   }, options);
   const config = getConfig(platform, target);
-  const path = config.directories.output;
+  const path = './dist';
   const filelist = [];
   switch (`${target || ''}-${platform}`) {
     case "windows-nsis":

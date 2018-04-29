@@ -3,9 +3,6 @@
     "category": "public.app-category.developer-tools"
   },
   "icon": "./scripts/config/resources/icon.icns",
-  "directories": {
-    "output": "./installer/redist/mac"
-  },
   "dmg": {
     "icon": "./scripts/config/resources/icon.icns",
     "contents": [

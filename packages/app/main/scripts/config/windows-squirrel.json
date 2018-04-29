@@ -1,7 +1,4 @@
 {
-  "directories": {
-    "output": "./installer/redist/windows/squirrel"
-  },
   "extraResources": [
     "app-update.yml"
   ],
