@@ -1,6 +1,6 @@
 import { addIdToBotEndpoints, IFrameworkSettings, newBot, newEndpoint, IBotInfo, getBotDisplayName } from '@bfemulator/app-shared';
 import { Conversation } from '@bfemulator/emulator-core';
-import { CommandRegistry as CommReg, IActivity, IBotConfig, uniqueId, IConnectedService, ServiceType } from '@bfemulator/sdk-shared';
+import { CommandRegistry as CommReg, IActivity, IBotConfig, uniqueId, IConnectedService, ServiceType, IEndpointService } from '@bfemulator/sdk-shared';
 import * as Electron from 'electron';
 import { app, Menu } from 'electron';
 import * as Fs from 'fs';
@@ -116,8 +116,31 @@ export function registerCommands() {
 
     const botDirectory = Path.dirname(botPath);
     mainWindow.store.dispatch(BotActions.setActive(bot, botDirectory));
+    mainWindow.commandService.call('bot:restart-endpoint-service');
 
     return { bot, botDirectory };
+  });
+
+  //---------------------------------------------------------------------------
+  // Restart emulator endpoint service
+  CommandRegistry.registerCommand('bot:restart-endpoint-service', async () => {
+    const bot = getActiveBot();
+
+    emulator.framework.server.botEmulator.facilities.endpoints.reset();
+
+    bot.services.filter(s => s.type === ServiceType.Endpoint).forEach(service => {
+      const endpoint = service as IEndpointService;
+
+      emulator.framework.server.botEmulator.facilities.endpoints.push(
+        endpoint.id,
+        {
+          botId: endpoint.id,
+          botUrl: endpoint.endpoint,
+          msaAppId: endpoint.appId,
+          msaPassword: endpoint.appPassword
+        }
+      );
+    });
   });
 
   //---------------------------------------------------------------------------
@@ -368,46 +391,31 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Get a speech token
-  CommandRegistry.registerCommand('speech-token:get', (authIdEvent: string, conversationId: string) => {
-    // TODO: We should get the speech token for a specified endpoint
-    const endpoint = emulator.framework.server.botEmulator.facilities.endpoints.getDefaultEndpoint();
+  CommandRegistry.registerCommand('speech-token:get', (endpointId: string, refresh: boolean) => {
+    const endpoint = emulator.framework.server.botEmulator.facilities.endpoints.get(endpointId);
 
-    return endpoint && endpoint.getSpeechToken(false);
+    return endpoint && endpoint.getSpeechToken(refresh);
   });
 
   //---------------------------------------------------------------------------
-  // Refresh a speech token
-  CommandRegistry.registerCommand('speech-token:refresh', (authIdEvent: string, conversationId: string) => {
-    // TODO: We should get the speech token for a specified endpoint
-    const endpoint = emulator.framework.server.botEmulator.facilities.endpoints.getDefaultEndpoint();
-
-    return endpoint && endpoint.getSpeechToken(true);
-  });
-
-  //---------------------------------------------------------------------------
-  // Creates a new conversation object
-  CommandRegistry.registerCommand('conversation:new', (mode: string, conversationId?: string): Conversation => {
-    if ((mode !== 'transcript') && (mode !== 'livechat')) {
-      throw new Error('A mode of either "transcript" or "livechat" must be provided to "conversation:new"');
-    }
-
+  // Creates a new conversation object for transcript
+  CommandRegistry.registerCommand('transcript:new', (conversationId: string): Conversation => {
     // get the active bot or mock one
     let bot: IBotConfig = getActiveBot();
+
     if (!bot) {
       bot = newBot();
-      const endpoint = newEndpoint();
-      bot.services.push(endpoint);
+      bot.services.push(newEndpoint());
       mainWindow.store.dispatch(BotActions.mockAndSetActive(bot));
     }
 
-    // create a conversation object
-    conversationId = conversationId || `${uniqueId()}|${mode}`;
-
-    // TODO: We need to find the correct endpoint from this "conversation:new" command
-    const endpoint = emulator.framework.server.botEmulator.facilities.endpoints.getDefaultEndpoint();
-
     // TODO: Move away from the .users state on legacy emulator settings, and towards per-conversation users
-    const conversation = emulator.framework.server.botEmulator.facilities.conversations.newConversation(emulator.framework.server.botEmulator, endpoint, { id: uniqueId(), name: "User" }, conversationId);
+    const conversation = emulator.framework.server.botEmulator.facilities.conversations.newConversation(
+      emulator.framework.server.botEmulator,
+      null,
+      { id: uniqueId(), name: 'User' },
+      conversationId
+    );
 
     return conversation;
   });

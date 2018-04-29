@@ -9,15 +9,9 @@ export default function getBotEndpoint(botEmulator: BotEmulator) {
 
     // TODO: We should not use token as conversation ID
     const tokenMatch = /Bearer\s+(.+)/.exec(auth);
-    const botEndpoint = botEmulator.facilities.endpoints.getEndpoint(tokenMatch[1]) || botEmulator.facilities.endpoints.getDefaultEndpoint();
+    const botEndpoint = botEmulator.facilities.endpoints.get(tokenMatch[1]) || botEmulator.facilities.endpoints.getDefault();
 
-    if (botEndpoint) {
-      req['botEndpoint'] = botEndpoint;
-
-      next();
-    } else {
-      res.status(404);
-      res.end();
-    }
+    req['botEndpoint'] = botEndpoint;
+    next();
   };
 }

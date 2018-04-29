@@ -1,6 +1,6 @@
 import * as Restify from 'restify';
 import * as HttpStatus from 'http-status-codes';
-import { IErrorResponse, APIException, createErrorResponse, ErrorCodes, mergeDeep, IBotInfo, getFirstBotEndpoint } from '@bfemulator/app-shared';
+import { IErrorResponse, APIException, createErrorResponse, ErrorCodes, mergeDeep, IBotInfo } from '@bfemulator/app-shared';
 import { IBotConfig } from '@bfemulator/sdk-shared';
 import { dialog, OpenDialogOptions, SaveDialogOptions, BrowserWindow } from 'electron';
 import { emulator } from './emulator';

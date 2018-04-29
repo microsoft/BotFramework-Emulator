@@ -38,10 +38,7 @@ import ILogger from './logger';
 import ILogService from './log/service';
 
 export interface IBotEmulatorOptions {
-  // TODO: Consider to use IBotEndpoint only, but not instance
-  //       Then we rename instance from BotEndpoint to BotEndpointService
-  defaultEndpoint?: IBotEndpoint | BotEndpoint,
-  fetch?: (string, any) => Promise<any>,
+  fetch?: (string, any) => Promise<any>;
   loggerOrLogService?: (ILogger | ILogService);
   stateSizeLimitKB?: number;
 }

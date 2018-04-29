@@ -1,12 +1,11 @@
 import * as React from 'react';
 
-import { CommandRegistry as CommReg, IBotConfig, IExtensionConfig, uniqueId } from '@bfemulator/sdk-shared';
+import { CommandRegistry as CommReg, IBotConfig, IExtensionConfig, uniqueId, IEndpointService } from '@bfemulator/sdk-shared';
 import { FileInfo, IBotInfo, getBotDisplayName } from '@bfemulator/app-shared';
 import { showWelcomePage } from "./data/editorHelpers";
 import { ActiveBotHelper } from './ui/helpers/activeBotHelper';
 import * as LogService from './platform/log/logService';
 import * as SettingsService from './platform/settings/settingsService';
-import * as LiveChat from './ui/shell/explorer/liveChatExplorer';
 import { ExtensionManager } from './extensions';
 import BotCreationDialog from './ui/dialogs/botCreationDialog';
 import { DialogService } from './ui/dialogs/service';
@@ -137,9 +136,15 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Open a new emulator tabbed document
-  CommandRegistry.registerCommand('livechat:new', () => {
+  CommandRegistry.registerCommand('livechat:new', (endpoint: IEndpointService) => {
     const documentId = uniqueId();
-    store.dispatch(ChatActions.newDocument(documentId, "livechat"));
+
+    store.dispatch(ChatActions.newDocument(
+      documentId,
+      'livechat',
+      { endpointId: endpoint.id }
+    ));
+
     store.dispatch(EditorActions.open(
       Constants.ContentType_LiveChat,
       documentId,

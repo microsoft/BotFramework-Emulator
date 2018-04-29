@@ -1,4 +1,3 @@
-import { createHash } from 'crypto';
 import * as HttpStatus from 'http-status-codes';
 
 import { speech as speechEndpoint, authentication as authenticationEndpoint } from '../authEndpoints';
@@ -10,39 +9,19 @@ import statusCodeFamily from '../utils/statusCodeFamily';
 // We will refresh if the token is going to expire within 5 minutes
 const TIME_TO_REFRESH = 5 * 60 * 1000;
 
-function hashObject(obj, algorithm = 'sha256') {
-  const hash = createHash(algorithm);
-
-  hash.update(JSON.stringify(obj));
-
-  return hash.digest('base64');
-}
-
 export default class BotEndpoint {
   constructor(
+    public id: string,
     public botId: string,
     public botUrl: string,
     public msaAppId: string,
     public msaPassword: string,
     public use10Tokens: boolean,
     private _options: IBotEndpointOptions
-  ) {
-    if (this.msaAppId) {
-      this.endpointId = this.msaAppId;
-    } else {
-      this.endpointId = hashObject({
-        botId,
-        botUrl,
-        msaAppId,
-        msaPassword,
-        use10Tokens
-      });
-    }
-  }
+  ) {}
 
   accessToken: string;
   accessTokenExpires: number;
-  endpointId: string;
   speechToken: string;
 
   async fetchWithAuth(url, fetchOptions: any = {}, forceRefresh: boolean = false) {

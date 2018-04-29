@@ -4,68 +4,78 @@ import onErrorResumeNext from 'on-error-resume-next';
 import BotEmulatorOptions from '../types/botEmulatorOptions';
 import BotEndpoint from './botEndpoint';
 import IBotEndpoint from '../types/botEndpoint';
+import uniqueId from '../utils/uniqueId';
 
 const { decode } = base64Url;
 
-export default class Endpoints {
-  constructor(private _options: BotEmulatorOptions) {
-    let { defaultEndpoint } = this._options;
+function mapMap<T, U>(map: { [key: string]: T }, mapper: (T, string) => U ): { [key: string]: U } {
+  return Object.keys(map).reduce((nextMap, key) => ({
+    ...nextMap,
+    [key]: mapper.call(map, map[key], key)
+  }), {});
+}
 
-    defaultEndpoint && this.addEndpoint(defaultEndpoint);
-  }
+export default class Endpoints {
+  constructor(private _options: BotEmulatorOptions) {}
 
   private _endpoints: { [key: string]: BotEndpoint } = {};
 
-  addEndpoint(botEndpoint: BotEndpoint | IBotEndpoint): BotEndpoint {
-    let botEndpointInstance: BotEndpoint;
+  push(id: string, botEndpoint: IBotEndpoint): BotEndpoint {
+    id = id || botEndpoint.botUrl || uniqueId();
 
-    if (botEndpoint instanceof BotEndpoint) {
-      botEndpointInstance = botEndpoint;
-    } else {
-      botEndpointInstance = new BotEndpoint(
-        botEndpoint.botId,
-        botEndpoint.botUrl,
-        botEndpoint.msaAppId,
-        botEndpoint.msaPassword,
-        botEndpoint.use10Tokens,
-        {
-          fetch: this._options.fetch
-        }
-      );
-    }
+    const botEndpointInstance = new BotEndpoint(
+      id,
+      botEndpoint.botId,
+      botEndpoint.botUrl,
+      botEndpoint.msaAppId,
+      botEndpoint.msaPassword,
+      botEndpoint.use10Tokens,
+      {
+        fetch: this._options.fetch
+      }
+    );
 
-    this._endpoints[botEndpointInstance.endpointId] = botEndpointInstance;
+    this._endpoints[id] = botEndpointInstance;
 
     return botEndpointInstance;
   }
 
-  getDefaultEndpoint(): BotEndpoint {
-    const firstEndpointId = Object.keys(this._endpoints)[0];
-
-    return firstEndpointId && this._endpoints[firstEndpointId];
+  reset() {
+    this._endpoints = {};
   }
 
-  getEndpoint(endpointId: string): BotEndpoint {
-    const savedEndpoint = this._endpoints[endpointId];
+  // TODO: Deprecate this
+  getDefault(): BotEndpoint {
+    return this._endpoints[Object.keys(this._endpoints)[0]];
+  }
+
+  get(id: string): BotEndpoint {
+    // TODO: We need to remove parsing from BASE64, find a better way
+    const savedEndpoint = this._endpoints[id];
 
     if (savedEndpoint) {
       return savedEndpoint;
     }
 
-    const parsedEndpoint = onErrorResumeNext(() => JSON.parse(decode(endpointId)));
+    const token = onErrorResumeNext(() => JSON.parse(decode(id)));
 
-    if (parsedEndpoint) {
-      return this.addEndpoint({
-        botId: parsedEndpoint.botId,
-        botUrl: parsedEndpoint.botUrl,
-        msaAppId: parsedEndpoint.appId,
-        msaPassword: parsedEndpoint.appPassword,
-        use10Tokens: parsedEndpoint.use10Tokens
-      });
+    if (token && token.endpointId) {
+      return this.get(token.endpointId);
     }
   }
 
-  getEndpoints(): { [key: string]: BotEndpoint } {
-    return { ...this._endpoints };
+  // TODO: Check if this can be deprecated, try to deprecate this
+  getByAppId(msaAppId: string): BotEndpoint {
+    return this._endpoints[Object.keys(this._endpoints).find(id => this._endpoints[id].msaAppId === msaAppId)];
+  }
+
+  getAll(): { [key: string]: IBotEndpoint } {
+    return mapMap<BotEndpoint, IBotEndpoint>(this._endpoints, value => ({
+      botId: value.botId,
+      botUrl: value.botUrl,
+      msaAppId: value.msaAppId,
+      msaPassword: value.msaPassword,
+      use10Tokens: value.use10Tokens
+    }));
   }
 }

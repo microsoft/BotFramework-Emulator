@@ -105,11 +105,9 @@ async function main() {
 
     const botEndpoints = JSON.parse(botsJSON);
 
-    botEndpoints.forEach(endpoint => {
-      bot.facilities.endpoints.addEndpoint(endpoint);
-    });
+    botEndpoints.forEach(endpoint => bot.facilities.endpoints.push(endpoint.botUrl, endpoint));
   } else {
-    bot.facilities.endpoints.addEndpoint({
+    bot.facilities.endpoints.push(program.botUrl, {
       botId: program.botId,
       botUrl: program.botUrl,
       msaAppId: program.appId,
@@ -121,7 +119,7 @@ async function main() {
   // Mount bot routes on the server
   bot.mount(server);
 
-  const endpoints = bot.facilities.endpoints.getEndpoints();
+  const endpoints = bot.facilities.endpoints.getAll();
   const urls = Object.keys(endpoints).reduce((urls, key) => [
     ...urls,
     endpoints[key].botUrl

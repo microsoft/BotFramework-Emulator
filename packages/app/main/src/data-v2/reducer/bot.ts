@@ -1,6 +1,6 @@
 import { cloneBot, getBotInfoByPath } from '../../botHelpers';
 import * as BotActions from '../action/bot';
-import { getBotDisplayName, IBotInfo, getFirstBotEndpoint } from '@bfemulator/app-shared';
+import { getBotDisplayName, IBotInfo } from '@bfemulator/app-shared';
 import { IBotConfig, IEndpointService } from '@bfemulator/sdk-shared';
 
 export interface IBotState {
