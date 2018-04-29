@@ -69,7 +69,7 @@ export default function startConversation(botEmulator: BotEmulator) {
       conversation.sendConversationUpdate([currentUser], undefined);
       created = true;
     } else {
-      if (conversation.members.findIndex(user => user.id === botEndpoint.botId) === -1) {
+      if (botEndpoint && conversation.members.findIndex(user => user.id === botEndpoint.botId) === -1) {
         // Sends "bot added to conversation"
         conversation.addMember(botEndpoint.botId, 'Bot');
       }
@@ -83,8 +83,7 @@ export default function startConversation(botEmulator: BotEmulator) {
     // TODO: We should issue a real token, rather than a conversation ID
     res.json(created ? HttpStatus.CREATED : HttpStatus.OK, {
       conversationId: conversation.conversationId,
-      token: botEndpoint.endpointId,
-      // token: conversation.conversationId,
+      token: botEndpoint && botEndpoint.id,
       expires_in: (2 ^ 31) - 1,
       streamUrl: ''
     });

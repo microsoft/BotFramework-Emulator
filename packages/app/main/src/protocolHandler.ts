@@ -143,9 +143,10 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
   */
   private openLiveChat(protocol: IProtocol): void {
     // mock up a bot object
-    let { botUrl, msaAppId, msaPassword } = protocol.parsedArgs;
+    const { botUrl, msaAppId, msaPassword } = protocol.parsedArgs;
     const bot: IBotConfig = newBot();
     const endpoint: IEndpointService = newEndpoint();
+
     endpoint.endpoint = decodeBase64(botUrl);
     endpoint.appId = decodeBase64(msaAppId);
     endpoint.appPassword = decodeBase64(msaPassword);
@@ -153,17 +154,18 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
     mainWindow.store.dispatch(BotActions.mockAndSetActive(bot));
 
     const appSettings: IFrameworkSettings = getSettings().framework;
+
     if (appSettings.ngrokPath) {
       // if ngrok is configured, wait for it to connect and start the livechat
       ngrokEmitter.once('connect', (...args: any[]): void => {
-        mainWindow.commandService.remoteCall('livechat:new');
+        mainWindow.commandService.remoteCall('livechat:new', endpoint);
       });
     } else {
       // try to connect and let the chat log show the user the error
       // TODO: We shouldn't have to wait for welcome to render
       // (we are still within the client:loaded command logic, which will show the welcome page afterwards;
       //  we need to wait for welcome page and then show the emulator tab so it's not unfocused)
-      setTimeout(() => mainWindow.commandService.remoteCall('livechat:new'), 1000);
+      setTimeout(() => mainWindow.commandService.remoteCall('livechat:new', endpoint), 1000);
     }
   }
 

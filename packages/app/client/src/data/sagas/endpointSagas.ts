@@ -41,11 +41,7 @@ function* openEndpointContextMenu(action: EndpointServiceAction<EndpointServiceP
 }
 
 function* openEndpointDeepLink(action: EndpointServiceAction<EndpointServicePayload>): IterableIterator<any> {
-  // TODO Open emulator on link
-
-  // const { kbid } = action.payload.endpointService;
-  // const link = `https://endpointmaker.ai/Edit/KnowledgeBase?kbid=${kbid}`;
-  // yield CommandService.remoteCall('electron:openExternal', link);
+  CommandService.call('livechat:new', action.payload.endpointService);
 }
 
 function* removeEndpointServiceFromActiveBot(endpointService: IEndpointService): IterableIterator<any> {

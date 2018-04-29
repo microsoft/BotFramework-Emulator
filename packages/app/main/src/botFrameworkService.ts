@@ -32,7 +32,7 @@
 //
 
 import { promisify } from 'util';
-import { Settings, getFirstBotEndpoint } from '@bfemulator/app-shared';
+import { Settings } from '@bfemulator/app-shared';
 import { IBotConfig } from '@bfemulator/sdk-shared';
 import * as CORS from 'restify-cors-middleware';
 import * as Restify from 'restify';
@@ -51,7 +51,7 @@ export class BotFrameworkService {
   server: RestServer;
   private _serverUrl: string;
   private _serverPort: number;
-  
+
   public get serverUrl() {
     return this._serverUrl;
   }
@@ -70,7 +70,9 @@ export class BotFrameworkService {
   public async recycle() {
     this.server && this.server.close();
     this.server = new RestServer();
+
     const { url, port } = await this.server.listen();
+
     this._serverUrl = url;
     this._serverPort = port;
   }

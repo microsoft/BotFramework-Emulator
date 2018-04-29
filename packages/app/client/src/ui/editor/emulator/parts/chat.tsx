@@ -31,13 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { connect } from 'react-redux';
 import { css } from 'glamor';
+import { Subscription, BehaviorSubject } from 'rxjs';
 import * as React from 'react';
 import * as WebChat from '@bfemulator/custom-botframework-webchat';
-import { Subscription, BehaviorSubject } from 'rxjs';
 
 import { Colors, PrimaryButton } from '@bfemulator/ui-react';
+import { IConnectedService, IEndpointService } from '@bfemulator/sdk-shared';
 import { ISpeechTokenInfo } from '@bfemulator/app-shared';
+
 import { CommandService } from '../../../../platform/commands/commandService';
 import { EmulatorMode } from '..';
 
@@ -138,15 +141,24 @@ export interface Props {
   mode: EmulatorMode,
   document: any;
   onStartConversation: any;
+  services: IConnectedService[];
 };
 
-export default class Chat extends React.Component<Props> {
-
+class Chat extends React.Component<Props> {
   constructor(props, context) {
     super(props, context);
   }
 
+  getEndpoint() {
+    const { props } = this;
+    const { endpointId } = props.document;
+
+    return (props.services || []).find(s => s.id === endpointId) as IEndpointService;
+  }
+
   render() {
+    const endpoint = this.getEndpoint();
+
     if (this.props.document.directLine) {
       const props: WebChat.ChatProps = {
         adaptiveCardsHostConfig: AdaptiveCardsHostConfig,
@@ -161,13 +173,13 @@ export default class Chat extends React.Component<Props> {
         formatOptions: {
           showHeader: false
         },
-        speechOptions: {
+        speechOptions: (endpoint && endpoint.appId && endpoint.appPassword) ? {
           speechRecognizer: new CognitiveServices.SpeechRecognizer({
             fetchCallback: this.fetchSpeechToken.bind(this),
             fetchOnExpiryCallback: this.fetchSpeechTokenOnExpiry.bind(this)
           }),
           speechSynthesizer: new WebChat.Speech.BrowserSpeechSynthesizer()
-        },
+        } : null,
         selectedActivity: (this.props.document.selectedActivity$ as any),
         botConnection: this.props.document.directLine,
         store: this.props.document.webChatStore,
@@ -175,7 +187,10 @@ export default class Chat extends React.Component<Props> {
       };
       return (
         <div id="webchat-container" { ...CSS }>
-          { <WebChat.Chat { ...props } key={ this.props.document.directLine.token } /> }
+          <WebChat.Chat
+            key={ this.props.document.directLine.token }
+            { ...props }
+          />
         </div>
       );
     } else {
@@ -195,25 +210,42 @@ export default class Chat extends React.Component<Props> {
     return this.getSpeechToken(authIdEvent, true);
   }
 
-  private getSpeechToken(authIdEvent: string, refresh: boolean): Promise<string | void> {
+  private async getSpeechToken(authIdEvent: string, refresh: boolean): Promise<string | void> {
+    const endpoint = this.getEndpoint();
+
+    if (!endpoint) {
+      console.warn('No endpoint for this chat, cannot fetch speech token.');
+      return;
+    }
+
     let command = refresh ? 'speech-token:refresh' : 'speech-token:get';
-    return CommandService.remoteCall(command, authIdEvent, this.props.document.directLine.token)
-      .then((speechToken: ISpeechTokenInfo) => {
-        if (speechToken) {
-          if (speechToken.access_Token) {
-            return speechToken.access_Token;
-          } else {
-            console.warn('Could not retrieve Cognitive Services speech token');
-            if (typeof speechToken.error === 'string')
-              console.warn('Error: ' + speechToken.error);
-            if (typeof speechToken.error_Description === 'string')
-              console.warn('Details: ' + speechToken.error_Description);
-          }
-        } else {
-          console.error('Could not retrieve Cognitive Services speech token.');
+
+    try {
+      const speechToken: ISpeechTokenInfo = await CommandService.remoteCall(command, endpoint.endpoint);
+
+      if (!speechToken) {
+        console.error('Could not retrieve Cognitive Services speech token.');
+      } else if (!speechToken.access_Token) {
+        console.warn('Could not retrieve Cognitive Services speech token');
+
+        if (typeof speechToken.error === 'string') {
+          console.warn('Error: ' + speechToken.error);
         }
-        return undefined;
-      })
-      .catch(err => console.error(err));
+
+        if (typeof speechToken.error_Description === 'string') {
+          console.warn('Details: ' + speechToken.error_Description);
+        }
+      } else {
+        return speechToken.access_Token;
+      }
+
+      return;
+    } catch (err) {
+      console.error(err);
+    }
   }
 }
+
+export default connect(state => ({
+  services: state.bot.activeBot && state.bot.activeBot.services
+}))(Chat);

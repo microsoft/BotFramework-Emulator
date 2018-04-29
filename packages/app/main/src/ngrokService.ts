@@ -46,7 +46,7 @@ export class NgrokService {
   private _localhost: string;
   private _bypass: boolean;
 
-  getServiceUrl({ botUrl }): string {
+  getServiceUrl(botUrl: string): string {
     if (botUrl && isLocalhostUrl(botUrl) && this._bypass) {
       // Do not use ngrok
       const port = emulator.framework.serverPort;

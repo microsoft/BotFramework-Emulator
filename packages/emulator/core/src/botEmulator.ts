@@ -61,7 +61,7 @@ const DEFAULT_OPTIONS: IBotEmulatorOptions = {
 };
 
 export interface ServiceUrlProvider {
-  (botEndpoint: IBotEndpoint): string
+  (botUrl: string): string
 }
 
 export default class BotEmulator {

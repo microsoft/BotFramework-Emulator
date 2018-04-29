@@ -36,6 +36,7 @@ import { BotFrameworkService } from './botFrameworkService';
 import { getActiveBot } from './botHelpers';
 import * as Settings from './settings';
 import { NgrokService } from './ngrokService';
+import IBotEndpoint from '@bfemulator/emulator-core/lib/types/botEndpoint';
 
 interface IQueuedMessage {
   channel: any,
@@ -52,6 +53,16 @@ export class Emulator {
   async startup() {
     await this.framework.startup();
     await this.ngrok.startup();
+  }
+
+  async setEndpoints(endpoints: { [name: string]: IBotEndpoint }) {
+    this.framework.server.botEmulator.facilities.endpoints.reset();
+
+    Object.keys(endpoints).forEach(name => {
+      const endpoint = endpoints[name];
+
+      this.framework.server.botEmulator.facilities.endpoints.push(name, endpoint);
+    });
   }
 
   /**

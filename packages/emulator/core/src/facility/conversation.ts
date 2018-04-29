@@ -93,7 +93,8 @@ export default class Conversation extends EventEmitter {
   ) {
     super();
 
-    this.members.push({ id: botEndpoint.botId, name: 'Bot' });
+    // We should consider hardcoding bot id because we don't really use it
+    this.members.push({ id: botEndpoint && botEndpoint.botId || 'bot-1', name: 'Bot' });
     this.members.push({ id: user.id, name: user.name });
   }
 
@@ -135,6 +136,10 @@ export default class Conversation extends EventEmitter {
    * Sends the activity to the conversation's bot.
    */
   async postActivityToBot(activity: IActivity, recordInConversation: boolean) {
+    if (!this.botEndpoint) {
+      return this.botEmulator.facilities.logger.logError(this.conversationId, `This conversation does not have an endpoint, cannot post "${ activity && activity.type }" activity.`);
+    }
+
     // Do not make a shallow copy here before modifying
     activity = this.postage(this.botEndpoint.botId, activity);
     activity.from = activity.from || this.user;
@@ -148,9 +153,9 @@ export default class Conversation extends EventEmitter {
       activity.recipient.role = 'bot';
     }
 
-    activity.serviceUrl = this.botEmulator.getServiceUrl(this.botEndpoint);
+    activity.serviceUrl = this.botEmulator.getServiceUrl(this.botEndpoint.botUrl);
 
-    if (!this.conversationIsTranscript && !isLocalhostUrl(this.botEndpoint.botUrl) && isLocalhostUrl(this.botEmulator.getServiceUrl(this.botEndpoint))) {
+    if (!this.conversationIsTranscript && !isLocalhostUrl(this.botEndpoint.botUrl) && isLocalhostUrl(this.botEmulator.getServiceUrl(this.botEndpoint.botUrl))) {
       this.botEmulator.facilities.logger.logError(this.conversationId, 'Error: The bot is remote, but the service URL is localhost. Without tunneling software you will not receive replies.');
       this.botEmulator.facilities.logger.logError(this.conversationId, makeExternalLink('Connecting to bots hosted remotely', 'https://aka.ms/cnjvpo'));
       this.botEmulator.facilities.logger.logError(this.conversationId, makeAppSettingsLink('Edit ngrok settings'));
@@ -298,7 +303,12 @@ export default class Conversation extends EventEmitter {
 
     this.members = [...this.members, user];
     this.emit('join', { user });
-    await this.sendConversationUpdate([user], undefined);
+
+    // TODO: A conversation without endpoint is weird, think about it
+    // Don't send "conversationUpdate" if we don't have an endpoint
+    if (this.botEndpoint) {
+      await this.sendConversationUpdate([user], undefined);
+    }
 
     this.transcript = [...this.transcript, {
       type: 'member join', activity: {
@@ -450,6 +460,10 @@ export default class Conversation extends EventEmitter {
     shippingAddress: IPaymentAddress,
     shippingOptionId: string
   ) {
+    if (!this.botEndpoint) {
+      return this.botEmulator.facilities.logger.logError(this.conversationId, 'Error: This conversation does not have an endpoint, cannot send update shipping activity.');
+    }
+
     const updateValue: IPaymentRequestUpdate = {
       id: request.id,
       shippingAddress: shippingAddress,
@@ -467,7 +481,7 @@ export default class Conversation extends EventEmitter {
         bot: { id: this.botEndpoint.botId },
         channelId: 'emulator',
         conversation: { id: this.conversationId },
-        serviceUrl: this.botEmulator.getServiceUrl(this.botEndpoint),
+        serviceUrl: this.botEmulator.getServiceUrl(this.botEndpoint.botUrl),
         user: this.botEmulator.facilities.users.usersById(this.botEmulator.facilities.users.currentUserId)
       },
       value: updateValue
@@ -488,6 +502,10 @@ export default class Conversation extends EventEmitter {
     payerEmail: string,
     payerPhone: string
   ) {
+    if (!this.botEndpoint) {
+      return this.botEmulator.facilities.logger.logError(this.conversationId, 'Error: This conversation does not have an endpoint, cannot send payment complete activity.');
+    }
+
     const paymentTokenHeader = {
       amount: request.details.total.amount,
       expiry: '1/1/2020',
@@ -530,7 +548,7 @@ export default class Conversation extends EventEmitter {
         bot: { id: this.botEndpoint.botId },
         channelId: 'emulator',
         conversation: { id: this.conversationId },
-        serviceUrl: this.botEmulator.getServiceUrl(this.botEndpoint),
+        serviceUrl: this.botEmulator.getServiceUrl(this.botEndpoint.botUrl),
         user: this.botEmulator.facilities.users.usersById(this.botEmulator.facilities.users.currentUserId)
       },
       value: updateValue
@@ -582,7 +600,7 @@ export default class Conversation extends EventEmitter {
     });
 
     // Fixup recipient and from ids
-    if (origUserId && origBotId) {
+    if (this.botEndpoint && origUserId && origBotId) {
       activities.forEach(activity => {
         if (activity.recipient.id === origBotId) {
           activity.recipient.id = this.botEndpoint.botId;

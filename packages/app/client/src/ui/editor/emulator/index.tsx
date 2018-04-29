@@ -31,28 +31,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
-import * as React from 'react';
 import { connect } from 'react-redux';
-import * as _ from 'lodash';
+import { css } from 'glamor';
 import { Subscription, BehaviorSubject } from 'rxjs';
+import * as _ from 'lodash';
+import * as React from 'react';
 import base64Url from 'base64url';
 
 import { ActivityOrID, uniqueId, IEndpointService } from '@bfemulator/sdk-shared';
+import { Splitter, Colors } from '@bfemulator/ui-react';
+import * as BotChat from '@bfemulator/custom-botframework-webchat';
+
+import { CommandService } from '../../../platform/commands/commandService';
+import { getActiveBot } from '../../../data/botHelpers';
+import { SettingsService } from '../../../platform/settings/settingsService';
+import * as ChatActions from '../../../data/action/chatActions';
+import * as PresentationActions from '../../../data/action/presentationActions';
 import ChatPanel from './chatPanel';
 import DetailPanel from './detailPanel';
 import LogPanel from './logPanel';
-import { Splitter, Colors } from '@bfemulator/ui-react';
-import ToolBar, { Button as ToolBarButton, Separator as ToolBarSeparator } from '../toolbar';
-import * as BotChat from '@bfemulator/custom-botframework-webchat';
-import { SettingsService } from '../../../platform/settings/settingsService';
-import { CommandService } from '../../../platform/commands/commandService';
-import * as ChatActions from '../../../data/action/chatActions';
-import store, { IRootState } from '../../../data/store';
-import * as PresentationActions from '../../../data/action/presentationActions';
 import PlaybackBar from './playbackBar';
-import { getActiveBot } from '../../../data/botHelpers';
-import { getFirstBotEndpoint } from '@bfemulator/app-shared';
+import store, { IRootState } from '../../../data/store';
+import ToolBar, { Button as ToolBarButton, Separator as ToolBarSeparator } from '../toolbar';
 
 const { encode } = base64Url;
 
@@ -136,14 +136,15 @@ const PRESENTATION_CSS = css({
 export type EmulatorMode = 'transcript' | 'livechat';
 
 interface IEmulatorProps {
-  document?: any;
   conversationId?: string;
-  pingId?: number;
-  mode?: EmulatorMode;
-  documentId?: string;
   dirty?: boolean;
-  presentationModeEnabled?: boolean;
+  document?: any;
+  documentId?: string;
+  endpointId?: string;
   endpointService?: IEndpointService;
+  mode?: EmulatorMode;
+  pingId?: number;
+  presentationModeEnabled?: boolean;
 }
 
 class Emulator extends React.Component<IEmulatorProps, {}> {
@@ -224,7 +225,7 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
       store.dispatch(PresentationActions.disable());
   }
 
-  startNewConversation(props?: any) {
+  async startNewConversation(props?: any) {
     props = props || this.props;
 
     store.dispatch(ChatActions.clearLog(this.props.document.documentId));
@@ -240,21 +241,16 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
       }
     });
 
-    const activeBot = getActiveBot();
-
-    const endpointService: IEndpointService = props.endpointService || activeBot && getFirstBotEndpoint(activeBot) || {};
+    const { services = [] } = getActiveBot() || {};
+    const endpointService: IEndpointService = services.find(s => s.id === props.document.endpointId) as IEndpointService;
 
     // TODO: Don't append mode
-    const conversationId = `${uniqueId()}|${props.mode}`;
-
-    let options = {
+    const conversationId = `${ uniqueId() }|${ props.mode }`;
+    const options = {
       conversationId,
       conversationMode: props.mode,
-      appId: endpointService.appId,
-      appPassword: endpointService.appPassword,
-      botId: endpointService.id,
-      botUrl: endpointService.endpoint
-    }
+      endpointId: props.endpointId
+    };
 
     if (props.document.directLine) {
       props.document.directLine.end();
@@ -263,24 +259,28 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
     this.initConversation(props, options, selectedActivity$, subscription)
 
     if (props.mode === 'transcript') {
-      CommandService.remoteCall('conversation:new', props.mode, conversationId)
-        .then(conversation => {
-          if (props.document && props.document.deepLink && props.document.activities) {
+      try {
+        const conversation = await CommandService.remoteCall('transcript:new', conversationId);
+
+        if (props.document && props.document.deepLink && props.document.activities) {
+          try {
             // transcript was deep linked via protocol, and should just be fed its own activities attached to the document
-            CommandService.remoteCall('emulator:feed-transcript:deep-link', conversation.conversationId, props.document.activities)
-              .then(() => { })
-              .catch(err => { throw new Error(`Error while feeding deep-linked transcript to conversation: ${err}`) });
-          } else {
-            // the transcript is on disk, so its activities need to be read on the main side and fed in
-            CommandService.remoteCall('emulator:feed-transcript:disk', conversation.conversationId, props.document.documentId)
-              .then(() => { })
-              .catch(err => { throw new Error(`Error while feeding transcript on disk to conversation: ${err}`) });
+            await CommandService.remoteCall('emulator:feed-transcript:deep-link', conversation.conversationId, props.document.activities)
+          } catch (err) {
+            throw new Error(`Error while feeding deep-linked transcript to conversation: ${err}`);
           }
-        })
-        .catch(err => {
-          // TODO: surface error somewhere
-          console.error('Error creating a new conversation for transcript mode: ', err)
-        });
+        } else {
+          try {
+            // the transcript is on disk, so its activities need to be read on the main side and fed in
+            await CommandService.remoteCall('emulator:feed-transcript:disk', conversation.conversationId, props.document.documentId)
+          } catch (err) {
+            throw new Error(`Error while feeding transcript on disk to conversation: ${err}`);
+          }
+        }
+      } catch (err) {
+        // TODO: surface error somewhere
+        console.error('Error creating a new conversation for transcript mode: ', err)
+      }
     }
   }
 
@@ -288,9 +288,10 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
     const webChatStore = BotChat.createStore();
     const encodedOptions = encode(JSON.stringify(options));
 
+    // TODO: We need to use encoded token because we need to pass both endpoint ID and conversation ID
+    //       We should think about a better model to pass conversation ID from Web Chat to emulator core
     const directLine = new BotChat.DirectLine({
       secret: encodedOptions,
-      token: encodedOptions,
       domain: `${ SettingsService.emulator.url }/v3/directline`,
       webSocket: false
     });
@@ -347,17 +348,17 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
           <ToolBar>
             <ToolBarButton visible={ true } title="Presentation" onClick={ () => this.handlePresentationClick(true) } />
             <ToolBarSeparator visible={ true } />
-            <ToolBarButton visible={ this.props.mode === "livechat" } title="Start Over" onClick={ this.handleStartOverClick } />
+            <ToolBarButton visible={ this.props.mode === 'livechat' } title="Start Over" onClick={ this.handleStartOverClick } />
             <ToolBarButton visible={ true } title="Save Transcript As..." onClick={ this.handleExportClick } />
           </ToolBar>
         </div>
         <div className="content vertical">
-          <Splitter orientation={ 'vertical' } primaryPaneIndex={ 0 } minSizes={ { 0: 80, 1: 80 } } initialSizes={ this.getVerticalSplitterSizes } onSizeChange={ this.onVerticalSizeChange } key={ this.props.pingId }>
+          <Splitter orientation="vertical" primaryPaneIndex={ 0 } minSizes={ { 0: 80, 1: 80 } } initialSizes={ this.getVerticalSplitterSizes } onSizeChange={ this.onVerticalSizeChange } key={ this.props.pingId }>
             <div className="content">
               <ChatPanel mode={ this.props.mode } document={ this.props.document } onStartConversation={ this.handleStartOverClick } />
             </div>
             <div className="content">
-              <Splitter orientation={ 'horizontal' } primaryPaneIndex={ 0 } minSizes={ { 0: 80, 1: 80 } } initialSizes={ this.getHorizontalSplitterSizes } onSizeChange={ this.onHorizontalSizeChange } key={ this.props.pingId }>
+              <Splitter orientation="horizontal" primaryPaneIndex={ 0 } minSizes={ { 0: 80, 1: 80 } } initialSizes={ this.getHorizontalSplitterSizes } onSizeChange={ this.onHorizontalSizeChange } key={ this.props.pingId }>
                 <DetailPanel document={ this.props.document } key={ this.props.pingId } />
                 <LogPanel document={ this.props.document } key={ this.props.pingId } />
               </Splitter>
@@ -371,8 +372,9 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
 
 function mapStateToProps(state: IRootState, { documentId }: { documentId: string }): IEmulatorProps {
   return {
-    document: state.chat.chats[documentId],
     conversationId: state.chat.chats[documentId].conversationId,
+    document: state.chat.chats[documentId],
+    endpointId: state.chat.chats[documentId].endpointId,
     pingId: state.chat.chats[documentId].pingId,
     presentationModeEnabled: state.presentation.enabled
   };
