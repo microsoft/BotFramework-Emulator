@@ -76,10 +76,10 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Completes the client side sync of the bot:load command on the server side
   // (NOTE: should NOT be called by itself; call server side instead)
-  CommandRegistry.registerCommand('bot:load', ({ bot, botDirectory }: { bot: IBotConfig, botDirectory: string }): void => {
+  CommandRegistry.registerCommand('bot:load', (bot: IBotConfig): void => {
     if (!pathExistsInRecentBots(bot.path)) {
       // create and switch bots
-      ActiveBotHelper.confirmAndCreateBot(bot, botDirectory, '');
+      ActiveBotHelper.confirmAndCreateBot(bot, '');
       return;
     }
     ActiveBotHelper.confirmAndSwitchBots(bot.path);
@@ -202,7 +202,7 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Sets a bot as active (called from server-side)
   CommandRegistry.registerCommand('bot:set-active', (bot: IBotConfig, botDirectory: string) => {
-    store.dispatch(BotActions.setActive(bot, botDirectory));
+    store.dispatch(BotActions.setActive(bot));
     store.dispatch(FileActions.setRoot(botDirectory));
     CommandService.remoteCall('menu:update-recent-bots');
     CommandService.remoteCall('electron:set-title-bar', getBotDisplayName(bot));

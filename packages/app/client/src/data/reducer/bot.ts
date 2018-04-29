@@ -6,7 +6,6 @@ import { getBotInfoByPath } from '../botHelpers';
 export interface IBotState {
   activeBot: IBotConfig;
   botFiles: IBotInfo[];
-  currentBotDirectory: string;
 }
 
 export type BotAction = {
@@ -30,9 +29,8 @@ export type BotAction = {
 } | {
   type: 'BOT/SET_ACTIVE',
   payload: {
-    bot: IBotConfig,
-    botDirectory: string
-  } 
+    bot: IBotConfig
+  }
 } | {
   type: 'BOT/CLOSE',
   payload: {   
@@ -41,8 +39,7 @@ export type BotAction = {
 
 const DEFAULT_STATE: IBotState = {
   activeBot: null,
-  botFiles: [],
-  currentBotDirectory: ''
+  botFiles: []
 };
 
 export default function bot(state: IBotState = DEFAULT_STATE, action: BotAction) {
@@ -83,7 +80,6 @@ export default function bot(state: IBotState = DEFAULT_STATE, action: BotAction)
       recentBots.unshift(mostRecentBot);
       state = setBotFilesState(recentBots, state);
       state = setActiveBot(action.payload.bot, state);
-      state = setCurrentBotDirectory(action.payload.botDirectory, state);
       break;
     }
 
@@ -109,12 +105,5 @@ function setBotFilesState(botFilesState: IBotInfo[], state: IBotState): IBotStat
   let newState = Object.assign({}, state);
 
   newState.botFiles = botFilesState;
-  return newState;
-}
-
-function setCurrentBotDirectory(botDirectory: string, state: IBotState): IBotState {
-  let newState = Object.assign({}, state);
-
-  newState.currentBotDirectory = botDirectory;
   return newState;
 }

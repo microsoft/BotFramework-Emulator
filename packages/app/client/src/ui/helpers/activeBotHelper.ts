@@ -50,7 +50,7 @@ export const ActiveBotHelper = new class {
     try {
       const { bot, botDirectory }: { bot: IBotConfig, botDirectory: string } = await CommandService.remoteCall('bot:set-active', botPath);
 
-      store.dispatch(BotActions.setActive(bot, botDirectory));
+      store.dispatch(BotActions.setActive(bot));
       store.dispatch(FileActions.setRoot(botDirectory));
 
       CommandService.remoteCall('menu:update-recent-bots');
@@ -74,16 +74,15 @@ export const ActiveBotHelper = new class {
         throw new Error(`Error while closing active bot: ${err}`);
       });
   }
-
-  // TODO: cleanup nested promises
-  async confirmAndCreateBot(botToCreate: IBotConfig, botDirectory: string, secret: string): Promise<any> {
+  
+  async confirmAndCreateBot(botToCreate: IBotConfig, secret: string): Promise<any> {
     const result = await this.confirmSwitchBot();
 
     if (result) {
       store.dispatch(EditorActions.closeNonGlobalTabs());
 
       try {
-        const bot: IBotConfig = await CommandService.remoteCall('bot:create', botToCreate, botDirectory, secret);
+        const bot: IBotConfig = await CommandService.remoteCall('bot:create', botToCreate, secret);
 
         // TODO: What are we achieving with this async function here?
         store.dispatch(async () => {
