@@ -165,11 +165,12 @@ export function registerCommands() {
         botConfig.services[index] = existing;
       } else {
         // Add new service
-        service.type = serviceType;
+        if (service.type != serviceType)
+          throw new Error('serviceType does not match');
         botConfig.connectService(service);
       }
       try {
-        botConfig.Save(botInfo.path);
+        botConfig.save(botInfo.path);
       } catch (e) {
         console.error(`bot:add-or-update-service: Error trying to save bot: ${e}`);
         throw e;
@@ -186,7 +187,7 @@ export function registerCommands() {
       const botConfig = toSavableBot(activeBot, botInfo.secret)
       botConfig.disconnectService(serviceType, serviceId);
       try {
-        botConfig.Save(botInfo.path);
+        botConfig.save(botInfo.path);
       } catch (e) {
         console.error(`bot:remove-service: Error trying to save bot: ${e}`);
         throw e;

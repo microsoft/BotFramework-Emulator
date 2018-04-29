@@ -84,6 +84,7 @@ export function mockAndSetActive(mock?: IBotConfig): BotAction {
   const bot = newBot({
       name: 'Random Bot',
       description: '',
+      secretKey:'',
       services: []
     },
     mock

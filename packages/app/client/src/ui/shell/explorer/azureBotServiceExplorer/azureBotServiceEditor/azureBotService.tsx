@@ -2,10 +2,9 @@ import { IAzureBotService, ServiceType } from '@bfemulator/sdk-shared';
 
 export class AzureBotService implements IAzureBotService {
   public readonly type = ServiceType.AzureBotService;
-  
+
   public name = '';
   public id = '';
-  public appId = '';
   public tenantId = '';
   public subscriptionId = '';
   public resourceGroup = '';
@@ -15,7 +14,7 @@ export class AzureBotService implements IAzureBotService {
   }
 
   public toJSON(): Partial<IAzureBotService> {
-    let { type, name, appId, id, tenantId, subscriptionId, resourceGroup } = this;
-    return { type, name, appId, id, tenantId, subscriptionId, resourceGroup };
+    let { type, name, id, tenantId, subscriptionId, resourceGroup } = this;
+    return { type, name, id, tenantId, subscriptionId, resourceGroup };
   }
 }
