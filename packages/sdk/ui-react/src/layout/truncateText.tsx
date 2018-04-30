@@ -4,6 +4,7 @@ import { css } from 'glamor';
 export interface TruncateTextProps {
   className?: string;
   children?: any;
+  title?: string;
 }
 
 const CSS = css({
@@ -14,7 +15,10 @@ const CSS = css({
   whiteSpace: 'nowrap'
 });
 
+// TODO: Instead of passing children here, we should consider passing a "text" props
+//       This is because this component is named "truncateText", it should not accept
+//       something that is not a text. It also help with eliminating the "title" props.
 export const TruncateText = (props: TruncateTextProps): JSX.Element =>
-  <span className={ 'truncate-text ' + (props.className || '') }  { ...CSS }>
+  <span className={ 'truncate-text ' + (props.className || '') } title={ props.title } { ...CSS }>
     { props.children }
   </span>;
