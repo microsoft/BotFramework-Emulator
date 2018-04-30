@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Component } from 'react';
 import { css } from 'glamor';
-import { Splitter, Colors } from '@bfemulator/ui-react';
+import { Splitter, Colors, Fonts } from '@bfemulator/ui-react';
 import { IInspectorHost } from '@bfemulator/sdk-client';
 import { IActivity, ServiceType, IBotConfig, IDispatchService, IQnAService } from '@bfemulator/sdk-shared';
 import { QnAMakerClient, QnAKbInfo } from './QnAMaker/Client';
@@ -34,6 +34,7 @@ css.global('html, body, #root', {
   whiteSpace: 'nowrap',
   width: '100%',
   color: 'white',
+  fontFamily: Fonts.FONT_FAMILY_DEFAULT,
 });
 
 css.global('div', {
@@ -53,21 +54,17 @@ css.global('::-webkit-scrollbar-thumb', {
   background: Colors.SCROLLBAR_THUMB_BACKGROUND_DARK,
 });
 
-let appCss = {
+const AppCss = css({
   backgroundColor: Colors.APP_BACKGROUND_DARK,
   height: '100%',
-  fontFamily: 'Segoe UI, sans-serif',
   fontSize: '12px',
-  padding: '5px'
-};
-
-let jsonViewerCss = {
+  padding: '5px',
   overflowY: 'auto'
-};
+});
 
-jsonViewerCss = Object.assign({}, appCss, jsonViewerCss);
-
-const APP_CSS = css(appCss);
+const NoServiceCss = css({
+  padding: '20px',
+});
 
 interface AppState {
   id: string;
@@ -104,7 +101,6 @@ class App extends Component<any, AppState> {
       return qnaServices[0];
     }
 
-    console.log('No QnA Service found in the bot config for knowledgebase Id: ' + kbId);
     return null;
   }
 
@@ -176,10 +172,12 @@ class App extends Component<any, AppState> {
 
   render() {
     if (this.state.qnaService === null) {
-      return <div>You gotta add a QnA Service to your bot file!</div>;
+      const text = 'Unable to find a QnA Maker service with Knowledge Base ID ' + this.state.traceInfo.knowledgeBaseId
+        + '. Please add a QnA Maker service to your bot.';
+      return <div className="no-service" {...NoServiceCss}>{text}</div>;
     }
     return (
-      <div {...APP_CSS}>
+      <div {...AppCss}>
         <QnAMakerHeader 
           knowledgeBaseId={this.state.traceInfo.knowledgeBaseId}
           knowledgeBaseName={this.state.qnaService.name}
@@ -206,11 +204,6 @@ class App extends Component<any, AppState> {
     let success = false;
     try {
       if (this.state.qnaService !== null) {
-        const url = QnAApiBasePath + '/knowledgebases/' + this.state.traceInfo.knowledgeBaseId;
-        const headers = new Headers({
-          'Content-Type': 'application/json',
-          'Ocp-Apim-Subscription-Key': this.state.qnaService.subscriptionKey
-        });
         const qnaPairs = this.state.phrasings.map(
           (phrase) => {return {'question': phrase, 'answer': this.state.selectedAnswer}; }
         );
@@ -221,9 +214,15 @@ class App extends Component<any, AppState> {
         };
 
         const response = await this.client.updateKnowledgebase(this.state.traceInfo.knowledgeBaseId, body);
-        // const resp = await fetch(url, {headers, method: 'PATCH', body: JSON.stringify(body)});
         success = response.status === 204;
+        if (success) {
+          $host.logger.log('Successfully trained Knowledge Base ' + this.state.traceInfo.knowledgeBaseId);
+        } else {
+          $host.logger.error('Request to QnA Maker failed. ' + response.statusText);
+        }
       }
+    } catch (err) {
+      $host.logger.error(err.message);
     } finally {
       $host.setAccessoryState(TrainAccessoryId, AccessoryDefaultState);
     }
@@ -237,17 +236,18 @@ class App extends Component<any, AppState> {
     $host.setAccessoryState(PublishAccessoryId, AccessoryWorkingState);
     let success = false;
     try {
-      if (this.state.qnaService !== null) {
-        const url = QnAApiBasePath + '/knowledgebases/' + this.state.traceInfo.knowledgeBaseId;
-        const headers = new Headers({
-          'Ocp-Apim-Subscription-Key': this.state.qnaService.subscriptionKey
-        });
-        
+      if (this.state.qnaService !== null) {        
         const response = await this.client.publish(this.state.traceInfo.knowledgeBaseId);
-        // const response = await fetch(url, {headers, method: 'PUT'});
         success = response.status === 204;
+        if (success) {
+          $host.logger.log('Successfully published Knowledge Base ' + this.state.traceInfo.knowledgeBaseId);
+        } else {
+          $host.logger.error('Request to QnA Maker failed. ' + response.statusText);
+        }
       }
-    } finally {
+    } catch (err) {
+      $host.logger.error(err.message);
+    }  finally {
       $host.setAccessoryState(PublishAccessoryId, AccessoryDefaultState);
     }
     this.setAppPersistentState({
