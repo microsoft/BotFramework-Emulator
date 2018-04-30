@@ -99,7 +99,7 @@ export class RestServer {
       {
         fetch,
         loggerOrLogService: mainWindow.logService,
-        ngrokServerUrl: () => emulator.ngrok.getNgrokServiceUrl()
+        tunnelingServiceUrl: () => emulator.ngrok.getNgrokServiceUrl()
       }
     );
   }

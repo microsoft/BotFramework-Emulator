@@ -68,7 +68,7 @@ export default function replyToActivity(bot: Bot) {
         res.end();
       }
 
-      let visitor = new OAuthLinkEncoder(bot, bot.ngrokServiceUrl, req.headers['authorization'] as string, activity);
+      let visitor = new OAuthLinkEncoder(bot, bot.tunnelingServiceUrl, req.headers['authorization'] as string, activity);
       visitor.resolveOAuthCards(activity).then((value?: any) =>
       {
           continuation();

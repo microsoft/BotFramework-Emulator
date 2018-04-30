@@ -86,7 +86,7 @@ async function main() {
       loggerOrLogService: {
         logToChat: console.log.bind(console)
       },
-      ngrokServerUrl: ''
+      tunnelingServiceUrl: ''
     }
   );
 

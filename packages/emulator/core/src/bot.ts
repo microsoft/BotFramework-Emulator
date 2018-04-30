@@ -64,7 +64,7 @@ const DEFAULT_OPTIONS: BotOptions = {
   stateSizeLimitKB: 64,
   use10Tokens: false,
   useCodeValidation: false,
-  ngrokServerUrl: ''
+  tunnelingServiceUrl: ''
 };
 
 // We will refresh if the token is going to expire within 5 minutes
@@ -93,8 +93,8 @@ export default class Bot {
     return provideString(this._msaPassword);
   }
 
-  public get ngrokServiceUrl(): string {
-    return provideString(this.options.ngrokServerUrl);
+  public get tunnelingServiceUrl(): string {
+    return provideString(this.options.tunnelingServiceUrl);
   }
 
   constructor(

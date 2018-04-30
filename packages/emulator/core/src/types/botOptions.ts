@@ -41,7 +41,7 @@ interface IBotOptions {
   stateSizeLimitKB?: number;
   use10Tokens?: boolean;
   useCodeValidation?: boolean;
-  ngrokServerUrl: string | StringProvider
+  tunnelingServiceUrl?: string | StringProvider
 }
 
 export default IBotOptions
