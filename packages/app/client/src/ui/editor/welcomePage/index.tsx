@@ -153,7 +153,7 @@ class WelcomePage extends React.Component<Props, {}> {
               <SmallHeader>Help</SmallHeader>
               <ul>
                 <li><a href='https://aka.ms/BotBuilderOverview'><TruncateText>Overview</TruncateText></a></li>
-                <li><a href='https://aka.ms/bbtools'><TruncateText>GitHub Repository</TruncateText></a></li>
+                <li><a href='https://aka.ms/Btovso'><TruncateText>GitHub Repository</TruncateText></a></li>
                 <li><a href='https://aka.ms/BotBuilderLocalDev'><TruncateText>Starting with Local Development</TruncateText></a></li>
                 <li><a href='https://aka.ms/BotBuilderAZCLI'><TruncateText>Starting with Azure CLI</TruncateText></a></li>
                 <li><a href='https://aka.ms/BotBuilderIbiza'><TruncateText>Starting with the Azure Portal</TruncateText></a></li>
