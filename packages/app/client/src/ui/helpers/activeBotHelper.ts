@@ -45,6 +45,7 @@ export const ActiveBotHelper = new class {
       return Promise.resolve(true);
     }
   }
+
   /** Uses a .bot path and perform a read on the server-side to populate the corresponding bot object */
   async setActiveBot(botPath: string): Promise<any> {
     try {
@@ -75,6 +76,20 @@ export const ActiveBotHelper = new class {
       });
   }
   
+  async botAlreadyOpen(): Promise<any> {
+    return await CommandService.remoteCall(
+      'shell:show-message-box',
+      true,
+      {
+        buttons: ['OK'],
+        cancelId: 0,
+        defaultId: 0,
+        message: 'This bot is already open. If you\'d like to start a conversation, click on an endpoint from the Bot Explorer pane.',
+        type: 'question'
+      }
+    );
+  }
+
   async confirmAndCreateBot(botToCreate: IBotConfig, secret: string): Promise<any> {
     const result = await this.confirmSwitchBot();
 
@@ -122,6 +137,12 @@ export const ActiveBotHelper = new class {
     try {
       const filename = await this.browseForBotFile()
 
+      let activeBot = getActiveBot();
+      if (activeBot && activeBot.path === filename) {
+        await this.botAlreadyOpen();
+        return;
+      }
+      
       try {
         const result = this.confirmSwitchBot();
 
@@ -141,6 +162,7 @@ export const ActiveBotHelper = new class {
     let activeBot = getActiveBot();
 
     if (activeBot && activeBot.path === botPath) {
+      await this.botAlreadyOpen();
       return;
     }
 
