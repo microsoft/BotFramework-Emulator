@@ -39,7 +39,7 @@ export const ContentType_LiveChat = 'application/vnd.microsoft.bfemulator.docume
 export const ContentType_TestBed = 'application/vnd.microsoft.bfemulator.testbed';
 
 export const NavBar_App = 'navbar.app';
-export const NavBar_Files = 'navbar.files';
+export const NavBar_Bot_Explorer = 'navbar.botExplorer';
 export const NavBar_Assets = 'navbar.assets';
 export const NavBar_Services = 'navbar.services';
 export const NavBar_Analytics = 'navbar.analytics';

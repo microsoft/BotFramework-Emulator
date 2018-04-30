@@ -51,7 +51,7 @@ const CSS = css({
 class ExplorerBar extends React.Component {
   render() {
     let explorer;
-    if (this.props.selectedNavTab === Constants.NavBar_Files)
+    if (this.props.selectedNavTab === Constants.NavBar_Bot_Explorer)
       explorer = (
         <AssetExplorerBar activeBot={this.props.activeBot}/>
       );

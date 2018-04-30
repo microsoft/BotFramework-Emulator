@@ -109,7 +109,7 @@ export const ActiveBotHelper = new class {
 
           endpoint && CommandService.call('livechat:new', endpoint);
 
-          store.dispatch(NavBarActions.select(Constants.NavBar_Files));
+          store.dispatch(NavBarActions.select(Constants.NavBar_Bot_Explorer));
           store.dispatch(ExplorerActions.show(true));
         });
       } catch (err) {
@@ -182,7 +182,7 @@ export const ActiveBotHelper = new class {
 
         endpoint && CommandService.call('livechat:new', endpoint);
 
-        store.dispatch(NavBarActions.select(Constants.NavBar_Files));
+        store.dispatch(NavBarActions.select(Constants.NavBar_Bot_Explorer));
         store.dispatch(ExplorerActions.show(true));
       }
     } catch (err) {

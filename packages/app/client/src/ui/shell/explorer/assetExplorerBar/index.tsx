@@ -30,7 +30,7 @@ export default class AssetExplorerBar extends React.Component<IAssetExplorerBarP
       <>
         <ExplorerBarHeader>
           <Title>
-            { this.props.activeBot ? getBotDisplayName(activeBot) : false }
+            Bot Explorer
           </Title>
           <Accessories>
             { this.props.activeBot ? <span className="accessory bot-settings-icon" onClick={ this.onClickSettings } /> : false }

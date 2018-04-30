@@ -119,7 +119,7 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Switches navbar tab selection to Explorer
   CommandRegistry.registerCommand('shell:show-explorer', (): void => {
-    store.dispatch(NavBarActions.select(Constants.NavBar_Files));
+    store.dispatch(NavBarActions.select(Constants.NavBar_Bot_Explorer));
   });
 
   //---------------------------------------------------------------------------
