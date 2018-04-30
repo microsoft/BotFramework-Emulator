@@ -3,6 +3,8 @@ import { Component } from 'react';
 import { css } from 'glamor';
 import { Splitter, Colors } from '@bfemulator/ui-react';
 import { IInspectorHost } from '@bfemulator/sdk-client';
+import { IActivity, ServiceType, IBotConfig, IDispatchService, IQnAService } from '@bfemulator/sdk-shared';
+import { QnAMakerClient, QnAKbInfo } from './QnAMaker/Client';
 import { QnAMakerTraceInfo, QueryResult } from './Models/QnAMakerTraceInfo';
 import { Answer } from './Models/QnAMakerModels';
 import QnAMakerHeader from './Views/QnAMakerHeader';
@@ -11,7 +13,7 @@ import AnswersView from './Views/AnswersView';
 import AppStateAdapter from './AppStateAdapter';
 
 let $host: IInspectorHost = (window as any).host;
-const QnAApiBasePath = 'https://westus.api.cognitive.microsoft.com/qnamaker/v2.0/';
+const QnAApiBasePath = 'https://westus.api.cognitive.microsoft.com/qnamaker/v2.0';
 const TrainAccessoryId = 'train';
 const PublishAccessoryId = 'publish';
 const AccessoryDefaultState = 'default';
@@ -70,7 +72,7 @@ const APP_CSS = css(appCss);
 interface AppState {
   id: string;
   traceInfo: QnAMakerTraceInfo;
-  subscriptionKey: string;
+  qnaService: IQnAService | null;
   persistentState: { [key: string]: PersistentAppState };
 
   phrasings: string[];
@@ -78,17 +80,40 @@ interface AppState {
   selectedAnswer: string;
 }
 
-export interface PersistentAppState {
+interface PersistentAppState {
   pendingTrain: boolean;
   pendingPublish: boolean;
 }
 
-class App extends Component<{}, AppState> {
+class App extends Component<any, AppState> {
+
+  client: QnAMakerClient;
+
+  static getQnAServiceFromBot(bot: IBotConfig, kbId: string): IQnAService | null {
+    if (!bot || !bot.services || !kbId) {
+      return null;
+    }
+
+    kbId = kbId.toLowerCase();
+    let qnaServices = bot.services.filter(s => s.type === ServiceType.QnA) as IQnAService[];
+    let qnaService = qnaServices.find(ls => ls.kbId.toLowerCase() === kbId);
+    if (qnaService) {
+      return qnaService;
+    }
+    if (qnaServices.length > 0) {
+      return qnaServices[0];
+    }
+
+    console.log('No QnA Service found in the bot config for knowledgebase Id: ' + kbId);
+    return null;
+  }
+
   constructor(props: any, context: any) {
     super(props, context);
     this.state = {
       id: '',
       traceInfo: {
+        message: {},
         queryResults: [],
         knowledgeBaseId: '',
         scoreThreshold: .3,
@@ -96,7 +121,7 @@ class App extends Component<{}, AppState> {
         strictFilters: null,
         metadataBoost: null
       },
-      subscriptionKey: '',
+      qnaService: null,
       persistentState: this.loadAppPersistentState(),
       phrasings: [],
       answers: [],
@@ -108,14 +133,22 @@ class App extends Component<{}, AppState> {
     // Attach a handler to listen on inspect events
     if (!this.runningDetached()) {
       $host.on('inspect', async (obj: any) => {
-        console.log(obj);
         let appState = new AppStateAdapter(obj);
+        appState.qnaService = App.getQnAServiceFromBot($host.bot, appState.traceInfo.knowledgeBaseId);
         this.setState(appState);
-        console.log(this.state);
+        if (appState.qnaService !== null) {
+          this.client = new QnAMakerClient({
+            kbId: appState.traceInfo.knowledgeBaseId,
+            baseUri: QnAApiBasePath,
+            subscriptionKey: appState.qnaService.subscriptionKey
+          } as QnAKbInfo);
+        }
+        $host.setInspectorTitle('QnAMaker');
         $host.setAccessoryState(TrainAccessoryId, AccessoryDefaultState);
         $host.setAccessoryState(PublishAccessoryId, AccessoryDefaultState);
         $host.enableAccessory(TrainAccessoryId, this.state.persistentState[this.state.id] && 
-                                                this.state.persistentState[this.state.id].pendingTrain);
+                                                this.state.persistentState[this.state.id].pendingTrain &&
+                                                this.state.selectedAnswer !== '');
         $host.enableAccessory(PublishAccessoryId, this.state.persistentState[this.state.id] && 
                                                   this.state.persistentState[this.state.id].pendingPublish);
       });
@@ -132,15 +165,24 @@ class App extends Component<{}, AppState> {
             break;
         }
       });
+
+      $host.on('bot-updated', (bot: IBotConfig) => {
+        this.setState({
+          qnaService: App.getQnAServiceFromBot(bot, this.state.traceInfo.knowledgeBaseId),
+        });
+      });
     }
   }
 
   render() {
+    if (this.state.qnaService === null) {
+      return <div>You gotta add a QnA Service to your bot file!</div>;
+    }
     return (
       <div {...APP_CSS}>
         <QnAMakerHeader 
           knowledgeBaseId={this.state.traceInfo.knowledgeBaseId}
-          knowledgeBaseName={'QnAMaker App'}
+          knowledgeBaseName={this.state.qnaService.name}
         />
         <Splitter orientation={'vertical'} primaryPaneIndex={0} minSizes={{ 0: 306, 1: 306 }} initialSizes={{ 0: 306 }}>
           <PhrasingsView 
@@ -161,48 +203,56 @@ class App extends Component<{}, AppState> {
 
   private async train() {
     $host.setAccessoryState(TrainAccessoryId, AccessoryWorkingState);
+    let success = false;
     try {
-      const url = QnAApiBasePath + 'knowledgebases/' + this.state.traceInfo.knowledgeBaseId;
-      const headers = new Headers({
-        'Content-Type': 'application/json',
-        'Ocp-Apim-Subscription-Key': this.state.subscriptionKey
-      });
-      const qnaPairs = this.state.phrasings.map(
-        (phrase) => {return {'question': phrase, 'answer': this.state.selectedAnswer}; }
-      );
-      const body = {
-        'add': {
-          'qnaPairs': qnaPairs
-        }
-      };
+      if (this.state.qnaService !== null) {
+        const url = QnAApiBasePath + '/knowledgebases/' + this.state.traceInfo.knowledgeBaseId;
+        const headers = new Headers({
+          'Content-Type': 'application/json',
+          'Ocp-Apim-Subscription-Key': this.state.qnaService.subscriptionKey
+        });
+        const qnaPairs = this.state.phrasings.map(
+          (phrase) => {return {'question': phrase, 'answer': this.state.selectedAnswer}; }
+        );
+        const body = {
+          'add': {
+            'qnaPairs': qnaPairs
+          }
+        };
 
-      const response = await fetch(url, {headers, method: 'PATCH', body: JSON.stringify(body)});
-      console.log(response);
+        const response = await this.client.updateKnowledgebase(this.state.traceInfo.knowledgeBaseId, body);
+        // const resp = await fetch(url, {headers, method: 'PATCH', body: JSON.stringify(body)});
+        success = response.status === 204;
+      }
     } finally {
       $host.setAccessoryState(TrainAccessoryId, AccessoryDefaultState);
     }
     this.setAppPersistentState({
-      pendingTrain: false,
-      pendingPublish: true
+      pendingTrain: !success,
+      pendingPublish: success
     });
   }
 
   private async publish(): Promise<void> {
     $host.setAccessoryState(PublishAccessoryId, AccessoryWorkingState);
+    let success = false;
     try {
-      const url = QnAApiBasePath + 'knowledgebases/' + this.state.traceInfo.knowledgeBaseId;
-      const headers = new Headers({
-        'Ocp-Apim-Subscription-Key': this.state.subscriptionKey
-      });
-      
-      const response = await fetch(url, {headers, method: 'PUT'});
-      console.log(response);
+      if (this.state.qnaService !== null) {
+        const url = QnAApiBasePath + '/knowledgebases/' + this.state.traceInfo.knowledgeBaseId;
+        const headers = new Headers({
+          'Ocp-Apim-Subscription-Key': this.state.qnaService.subscriptionKey
+        });
+        
+        const response = await this.client.publish(this.state.traceInfo.knowledgeBaseId);
+        // const response = await fetch(url, {headers, method: 'PUT'});
+        success = response.status === 204;
+      }
     } finally {
       $host.setAccessoryState(PublishAccessoryId, AccessoryDefaultState);
     }
     this.setAppPersistentState({
       pendingTrain: false,
-      pendingPublish: false
+      pendingPublish: !success
     });
   }
 
@@ -215,6 +265,10 @@ class App extends Component<{}, AppState> {
       this.setState({
         selectedAnswer: newAnswer
       });
+      this.setAppPersistentState({
+        pendingTrain: true,
+        pendingPublish: false
+      });
     };
   }
 
@@ -224,6 +278,10 @@ class App extends Component<{}, AppState> {
       newPhrases.push(phrase);
       this.setState({
         phrasings: newPhrases
+      });
+      this.setAppPersistentState({
+        pendingTrain: this.state.selectedAnswer !== '',
+        pendingPublish: false
       });
     };
   }
@@ -235,6 +293,10 @@ class App extends Component<{}, AppState> {
       newPhrases.splice(phrasesIndex, 1);
       this.setState({
         phrasings: newPhrases
+      });
+      this.setAppPersistentState({
+        pendingTrain: this.state.selectedAnswer !== '',
+        pendingPublish: false
       });
     };
   }
@@ -249,6 +311,10 @@ class App extends Component<{}, AppState> {
       });
       this.setState({
         answers: newAnswers
+      });
+      this.setAppPersistentState({
+        pendingTrain: this.state.selectedAnswer !== '',
+        pendingPublish: false
       });
     };
   }
@@ -267,11 +333,11 @@ class App extends Component<{}, AppState> {
       return JSON.parse(persisted);
     }
     return { '': {
-      pendingTrain: false,
+      pendingTrain: true,
       pendingPublish: false
     }
    };
   }
 }
 
-export { App, AppState };
+export { App, AppState, PersistentAppState};

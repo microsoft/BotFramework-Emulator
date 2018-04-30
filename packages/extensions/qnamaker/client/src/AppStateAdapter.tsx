@@ -1,7 +1,7 @@
 import { AppState, PersistentAppState } from './App';
 import { QnAMakerTraceInfo, QueryResult } from './Models/QnAMakerTraceInfo';
 import { Answer } from './Models/QnAMakerModels';
-import { ITraceActivity } from '@bfemulator/sdk-shared';
+import { ITraceActivity, IQnAService } from '@bfemulator/sdk-shared';
 
 const TraceActivity = 'trace';
 const QnaMakerTracerType = 'https://www.qnamaker.ai/schemas/trace';
@@ -13,8 +13,8 @@ interface QnaMakerModel {
 
 export default class AppStateAdapter implements AppState {
   id: string;
+  qnaService: IQnAService | null;
   traceInfo: QnAMakerTraceInfo;
-  subscriptionKey: string;
   persistentState: { [key: string]: PersistentAppState; };
   phrasings: string[];
   answers: Answer[];
@@ -49,8 +49,7 @@ export default class AppStateAdapter implements AppState {
     this.traceInfo = traceActivity.value as QnAMakerTraceInfo;
     this.id = traceActivity.id || '';
     
-    this.phrasings = ['How do I make coleslaw?'];
-    this.subscriptionKey = 'get your own sub key you cant have mine';
+    this.phrasings = [this.traceInfo.message.text || ''];
 
     this.answers = this.traceInfo.queryResults.map((result: QueryResult) => ({
       text: result.answer,

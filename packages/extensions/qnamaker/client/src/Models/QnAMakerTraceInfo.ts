@@ -1,5 +1,7 @@
+import { IMessageActivity } from '@bfemulator/sdk-shared';
 
 export interface QnAMakerTraceInfo {
+  message: IMessageActivity;
   queryResults: QueryResult[];
   knowledgeBaseId: string;
   scoreThreshold: number;
