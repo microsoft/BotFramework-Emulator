@@ -31,17 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { promisify } from 'util';
 import { Settings } from '@bfemulator/app-shared';
-import { IBotConfig } from '@bfemulator/sdk-shared';
-import * as CORS from 'restify-cors-middleware';
-import * as Restify from 'restify';
-
-import { getActiveBot } from './botHelpers';
-import { getStore, addSettingsListener, getSettings } from './settings';
-import { isLocalhostUrl } from './utils';
 import { RestServer } from './restServer';
-import { emulator } from './emulator';
 
 
 /**

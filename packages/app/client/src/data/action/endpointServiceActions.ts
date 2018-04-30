@@ -1,4 +1,4 @@
-import { IEndpointService } from '@bfemulator/sdk-shared';
+import { IEndpointService } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
 import { Action } from 'redux';
 import { EndpointEditor } from '../../ui/shell/explorer/endpointExplorer/endpointEditor/endpointEditor';

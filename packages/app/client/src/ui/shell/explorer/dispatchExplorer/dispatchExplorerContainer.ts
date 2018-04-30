@@ -1,4 +1,4 @@
-import { IDispatchService, ServiceType } from '@bfemulator/sdk-shared';
+import { IDispatchService, ServiceType } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
 import { connect } from 'react-redux';
 import { launchDispatchEditor, openDispatchDeepLink, openDispatchExplorerContextMenu } from '../../../../data/action/dispatchServiceActions';

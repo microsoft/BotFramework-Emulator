@@ -48,6 +48,7 @@
     "immutable": "^3.8.2",
     "jsonpath": "^1.0.0",
     "lodash": "^4.17.5",
+    "msbot": "^1.0.42-alpha",
     "office-ui-fabric-react": "^5.43.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",

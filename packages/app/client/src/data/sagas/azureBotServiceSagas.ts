@@ -1,4 +1,4 @@
-import { IAzureBotService, ServiceType } from '@bfemulator/sdk-shared';
+import { IAzureBotService, ServiceType } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
 import { call, ForkEffect, takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandService } from '../../platform/commands/commandService';

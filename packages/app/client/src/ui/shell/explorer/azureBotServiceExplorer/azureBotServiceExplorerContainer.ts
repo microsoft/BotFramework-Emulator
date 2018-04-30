@@ -1,4 +1,4 @@
-import { IAzureBotService, ServiceType } from '@bfemulator/sdk-shared';
+import { IAzureBotService, ServiceType } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
 import { connect } from 'react-redux';
 import { launchAzureBotServiceEditor, openAzureBotServiceDeepLink, openAzureBotServiceExplorerContextMenu } from '../../../../data/action/azureBotServiceActions';

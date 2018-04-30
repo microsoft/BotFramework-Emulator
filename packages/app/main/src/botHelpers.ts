@@ -2,11 +2,12 @@
 import { BotConfig } from 'msbot';
 
 import { IBotInfo, getBotDisplayName } from '@bfemulator/app-shared';
-import { IBotConfig } from '@bfemulator/sdk-shared';
+import { IBotConfigWithPath } from '@bfemulator/sdk-shared';
+import { BotConfigWithPath } from '../../../sdk/shared/src/types/botConfigWithPathTypes';
 import { mainWindow } from './main';
 import * as BotActions from './data-v2/action/bot';
 
-export function getActiveBot(): IBotConfig {
+export function getActiveBot(): IBotConfigWithPath {
   const state = mainWindow && mainWindow.store.getState();
   return state && state.bot.activeBot;
 }
@@ -28,10 +29,10 @@ export function pathExistsInRecentBots(path: string): boolean {
  *  to keep retrying until the correct secret is entered or the popup
  *  is dismissed.
  */
-export async function loadBotWithRetry(botPath: string, secret?: string): Promise<IBotConfig> {
+export async function loadBotWithRetry(botPath: string, secret?: string): Promise<IBotConfigWithPath> {
   try {
     // load the bot and transform it into internal IBotConfig implementation
-    let bot: IBotConfig = await BotConfig.Load(botPath, secret);
+    let bot: IBotConfigWithPath = await BotConfig.Load(botPath, secret);
     bot = cloneBot(bot);
     bot.path = botPath;
 
@@ -74,7 +75,7 @@ export async function loadBotWithRetry(botPath: string, secret?: string): Promis
 }
 
 /** Converts an IBotConfig to a BotConfig */
-export function toSavableBot(bot: IBotConfig, secret?: string): BotConfig {
+export function toSavableBot(bot: IBotConfigWithPath, secret?: string): BotConfig {
   const botCopy = cloneBot(bot);
   const newBot: BotConfig = new BotConfig(secret);
 
@@ -86,8 +87,8 @@ export function toSavableBot(bot: IBotConfig, secret?: string): BotConfig {
 }
 
 /** Clones a bot */
-export function cloneBot(bot: IBotConfig): IBotConfig {
-  return JSON.parse(JSON.stringify(bot));
+export function cloneBot(bot: IBotConfigWithPath): IBotConfigWithPath {
+  return BotConfigWithPath.fromJSON(bot);
 }
 
 /** Patches a bot record in bots.json, and updates the list
@@ -110,7 +111,7 @@ export async function patchBotsJson(botPath: string, bot: IBotInfo): Promise<IBo
 }
 
 /** Saves a bot to disk */
-export async function saveBot(bot: IBotConfig): Promise<void> {
+export async function saveBot(bot: IBotConfigWithPath): Promise<void> {
   const botInfo = getBotInfoByPath(bot.path) || {};
 
   const saveableBot = toSavableBot(bot, botInfo.secret);

@@ -1,4 +1,4 @@
-import { IEndpointService, ServiceType } from '@bfemulator/sdk-shared';
+import { IEndpointService, ServiceType } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
 import { connect } from 'react-redux';
 import { launchEndpointEditor, openEndpointDeepLink, openEndpointExplorerContextMenu } from '../../../../data/action/endpointServiceActions';

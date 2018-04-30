@@ -1,4 +1,4 @@
-import { IDispatchService } from '@bfemulator/sdk-shared';
+import { IDispatchService } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
 import { Action } from 'redux';
 import { DispatchEditor } from '../../ui/shell/explorer/dispatchExplorer/dispatchEditor/dispatchEditor';

@@ -1,14 +1,13 @@
-const { ipcRenderer } = window['require']('electron');
 const crypto = window['require']('crypto'); // Cheating here and pulling in a module from node. Can be easily replaced if we ever move the emulator to the web.
-
-import { css } from 'glamor';
-import * as React from 'react';
-import { SettingsService } from '../../../../platform/settings/settingsService';
-import { Extension, InspectorAPI } from '../../../../extensions';
-import { IBotConfig, IExtensionInspector } from '@bfemulator/sdk-shared';
-import { getActiveBot } from '../../../../data/botHelpers';
-import { LogService } from '../../../../platform/log/logService';
 import { ILogEntry, LogLevel, safeStringify } from '@bfemulator/app-shared';
+import { IExtensionInspector } from '@bfemulator/sdk-shared';
+import { css } from 'glamor';
+import { IBotConfig } from 'msbot/bin/schema';
+import * as React from 'react';
+import { getActiveBot } from '../../../../data/botHelpers';
+import { Extension, InspectorAPI } from '../../../../extensions';
+import { LogService } from '../../../../platform/log/logService';
+import { SettingsService } from '../../../../platform/settings/settingsService';
 
 const CSS = css({
   width: '100%',
@@ -76,7 +75,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   domReadyEventHandler = (ev) => {
     this.botUpdated(getActiveBot());
     this.inspect(this.props.inspectObj);
-  }
+  };
 
   ipcMessageEventHandler = (ev: IpcMessageEvent): void => {
     if (ev.channel === 'enable-accessory') {
@@ -108,7 +107,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     } else {
       console.warn("Unexpected message from inspector", ev.channel, ...ev.args);
     }
-  }
+  };
 
   updateRef = (ref) => {
     if (this.ref) {
@@ -120,7 +119,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
       this.ref.addEventListener('dom-ready', ev => this.domReadyEventHandler(ev));
       this.ref.addEventListener('ipc-message', ev => this.ipcMessageEventHandler(ev));
     }
-  }
+  };
 
   inspect(obj: any) {
     if (this.canInspect(obj)) {

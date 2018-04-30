@@ -1,22 +1,20 @@
+import { IInspectorHost } from '@bfemulator/sdk-client';
+import { Colors, Splitter } from '@bfemulator/ui-react';
+import { css } from 'glamor';
+import { IBotConfig, IDispatchService, ILuisService, ServiceType, IConnectedService } from 'msbot/bin/schema';
 import * as React from 'react';
 import { Component } from 'react';
-import { css } from 'glamor';
-import { Splitter, Colors } from '@bfemulator/ui-react';
-import { IInspectorHost } from '@bfemulator/sdk-client';
-import Editor from './Controls/Editor';
-import { ControlBar, ButtonSelected } from './Controls/ControlBar';
 import ReactJson from 'react-json-view';
-import { RecognizerResult } from './Models/RecognizerResults';
-import { LuisAppInfo } from './Models/LuisAppInfo';
 import AppStateAdapter from './Adapters/AppStateAdapter';
-import LuisClient from './Luis/Client';
-import { AppInfo } from './Luis/AppInfo';
-import { IntentInfo } from './Luis/IntentInfo';
-import { LuisTraceInfo } from './Models/LuisTraceInfo';
+import { ButtonSelected, ControlBar } from './Controls/ControlBar';
+import Editor from './Controls/Editor';
 import Header from './Controls/Header';
 import MockState from './Data/MockData';
-import { IActivity, ServiceType, IBotConfig, IDispatchService, IConnectedService } from '@bfemulator/sdk-shared';
-import { ILuisService } from '@bfemulator/sdk-shared';
+import { AppInfo } from './Luis/AppInfo';
+import LuisClient from './Luis/Client';
+import { IntentInfo } from './Luis/IntentInfo';
+import { LuisAppInfo } from './Models/LuisAppInfo';
+import { LuisTraceInfo } from './Models/LuisTraceInfo';
 
 let $host: IInspectorHost = (window as any).host;
 const LuisApiBasePath = 'https://westus.api.cognitive.microsoft.com/luis/api/v2.0';
@@ -100,7 +98,7 @@ class App extends Component<any, AppState> {
     }
 
     let lcAppId = appId.toLowerCase();
-    let dispatchServices = bot.services.filter((s: IConnectedService) => 
+    let dispatchServices = bot.services.filter((s: IConnectedService) =>
       s.type === ServiceType.Dispatch) as IDispatchService[];
     let dispatchService = dispatchServices.find(ds => ds.appId.toLowerCase() === lcAppId);
     if (dispatchService) {
@@ -247,15 +245,15 @@ class App extends Component<any, AppState> {
         });
       } catch (err) {
         $host.logger.error(err.message);
-      } 
+      }
     }
   }
 
   async reassignIntent(newIntent: string, needsRetrain: boolean): Promise<void> {
     try {
       await this.luisclient.reassignIntent(
-        this.state.appInfo, 
-        this.state.traceInfo.luisResult, 
+        this.state.appInfo,
+        this.state.traceInfo.luisResult,
         newIntent);
       $host.logger.log('Intent reassigned successfully');
       this.setAppPersistentState({

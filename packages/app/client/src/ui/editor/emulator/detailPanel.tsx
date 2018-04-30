@@ -32,15 +32,15 @@
 //
 
 import { css } from 'glamor';
+import { IBotConfig } from 'msbot/bin/schema';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
 import { Detail } from './parts/detail';
 import Panel, { PanelControls, PanelContent } from '../panel';
 import { ExtensionManager, IGetInspectorResult, Extension } from '../../../extensions';
-import { IBotConfig, IExtensionInspector, IInspectorAccessory, IInspectorAccessoryState } from '@bfemulator/sdk-shared';
+import { IExtensionInspector, IInspectorAccessory, IInspectorAccessoryState } from '@bfemulator/sdk-shared';
 import { IRootState } from '../../../data/store';
-import { inspect } from 'util';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 import { Colors } from '@bfemulator/ui-react';
 

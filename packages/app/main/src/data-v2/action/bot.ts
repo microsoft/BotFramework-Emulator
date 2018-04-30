@@ -32,7 +32,7 @@
 //
 
 import { IBotInfo, newBot } from '@bfemulator/app-shared';
-import { IBotConfig, IEndpointService } from '@bfemulator/sdk-shared';
+import { IBotConfig } from 'msbot/bin/schema';
 import { BotAction } from '../reducer/bot';
 
 export const LOAD = 'BOT/LOAD';
@@ -93,8 +93,8 @@ export function mockAndSetActive(mock?: IBotConfig): BotAction {
   const bot = newBot({
       name: 'Random Bot',
       description: '',
-      secretKey:'',
-      services: []
+      services: [],
+      secretKey: ''
     },
     mock
   );

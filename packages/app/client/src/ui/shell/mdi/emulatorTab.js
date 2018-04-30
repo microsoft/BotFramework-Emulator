@@ -34,7 +34,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { ServiceType } from '@bfemulator/sdk-shared';
+import { ServiceType } from 'msbot/bin/schema';
 
 import { getTabGroupForDocument } from '../../../data/editorHelpers';
 import * as ChatActions from '../../../data/action/chatActions';
@@ -63,10 +63,10 @@ export class EmulatorTab extends React.Component {
 }
 
 export default connect((state, { mode, documentId }) => {
-  let title = 'Transcript';
+  let title = "Transcript";
 
   if (mode === 'livechat') {
-    title = 'Live Chat';
+    title = "Live Chat";
 
     const { services = [] } = state.bot.activeBot || {};
     const numEndpointServices = services.filter(s => s.type === ServiceType.Endpoint).length;

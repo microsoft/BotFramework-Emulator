@@ -1,4 +1,4 @@
-import { ServiceType } from '@bfemulator/sdk-shared';
+import { ServiceType } from 'msbot/bin/schema';
 import { connect } from 'react-redux';
 import { IRootState } from '../../../../../data/store';
 import { DialogService } from '../../../../dialogs/service';

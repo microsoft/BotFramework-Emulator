@@ -1,8 +1,8 @@
-import { IAzureBotService } from '@bfemulator/sdk-shared';
 import { Modal, ModalActions, ModalContent, PrimaryButton, TextInputField } from '@bfemulator/ui-react';
+import { AzureBotService } from 'msbot/bin/models';
+import { IAzureBotService } from 'msbot/bin/schema';
 import * as React from 'react';
 import { Component, SyntheticEvent } from 'react';
-import { AzureBotService } from './azureBotService';
 
 interface AzureBotServiceEditorProps {
   azureBotService: IAzureBotService,

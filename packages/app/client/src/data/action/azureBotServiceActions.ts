@@ -1,4 +1,4 @@
-import { IAzureBotService } from '@bfemulator/sdk-shared';
+import { IAzureBotService } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
 import { Action } from 'redux';
 import { AzureBotServiceEditor } from '../../ui/shell/explorer/azureBotServiceExplorer/azureBotServiceEditor/azureBotServiceEditor';

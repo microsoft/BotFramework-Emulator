@@ -1,12 +1,11 @@
-import * as Restify from 'restify';
+import { APIException, createErrorResponse, ErrorCodes, IBotInfo, IErrorResponse, mergeDeep } from '@bfemulator/app-shared';
+import { BrowserWindow, dialog, OpenDialogOptions, SaveDialogOptions } from 'electron';
 import * as HttpStatus from 'http-status-codes';
-import { IErrorResponse, APIException, createErrorResponse, ErrorCodes, mergeDeep, IBotInfo } from '@bfemulator/app-shared';
-import { IBotConfig } from '@bfemulator/sdk-shared';
-import { dialog, OpenDialogOptions, SaveDialogOptions, BrowserWindow } from 'electron';
-import { emulator } from './emulator';
+import * as Restify from 'restify';
+import * as globals from './globals';
 
-const { lstatSync, readdirSync } = require('fs')
-const { join } = require('path')
+const { lstatSync, readdirSync } = require('fs');
+const { join } = require('path');
 const os = require('os');
 
 const electron = require('electron'); // use a lowercase name "electron" to prevent clash with "Electron" namespace
@@ -17,10 +16,7 @@ const Fs = require('fs');
 const Mkdirp = require('mkdirp');
 const url = require('url');
 const path = require('path');
-const sanitize = require("sanitize-filename");
-
-import * as globals from './globals';
-import { mainWindow } from './main';
+const sanitize = require('sanitize-filename');
 
 export function exceptionToAPIException(exception: any): APIException {
   if (exception.error && exception.statusCode) {
@@ -29,7 +25,7 @@ export function exceptionToAPIException(exception: any): APIException {
   return {
     error: createErrorResponse(ErrorCodes.ServiceError, exception.message),
     statusCode: HttpStatus.BAD_REQUEST
-  }
+  };
 }
 
 // send exception as error response
@@ -43,10 +39,10 @@ export function sendErrorResponse(req: Restify.Request, res: Restify.Response, n
 export const ensureStoragePath = (): string => {
   const commandLineArgs = globals.getGlobal('commandlineargs');
   const app = electronApp || electronRemote.app;
-  const storagePath = commandLineArgs.storagepath || path.join(app.getPath("userData"), "botframework-emulator");
+  const storagePath = commandLineArgs.storagepath || path.join(app.getPath('userData'), 'botframework-emulator');
   Mkdirp.sync(storagePath);
   return storagePath;
-}
+};
 
 /**
  * Load JSON object from file.
@@ -64,7 +60,7 @@ export const loadSettings = <T>(filename: string, defaultSettings: T): T => {
     console.error(`Failed to read file: ${filename}`, e);
     return defaultSettings;
   }
-}
+};
 
 /**
  * Save JSON object to file.
@@ -76,43 +72,45 @@ export const saveSettings = <T>(filename: string, settings: T): void => {
   } catch (e) {
     console.error(`Failed to write file: ${filename}`, e);
   }
-}
+};
 
 export const isLocalhostUrl = (urlStr: string): boolean => {
   const parsedUrl = url.parse(urlStr);
-  return (parsedUrl.hostname === 'localhost' || parsedUrl.hostname === '127.0.0.1');
-}
+  return ( parsedUrl.hostname === 'localhost' || parsedUrl.hostname === '127.0.0.1' );
+};
 
 export const isSecuretUrl = (urlStr: string): boolean => {
   const parsedUrl = url.parse(urlStr);
-  return (!!parsedUrl.protocol && parsedUrl.protocol.startsWith('https'));
-}
+  return ( !!parsedUrl.protocol && parsedUrl.protocol.startsWith('https') );
+};
 
 export const directoryExists = (path) => {
   let stat = null;
   try {
     stat = Fs.statSync(path);
-  } catch (e) { }
+  } catch (e) {
+  }
 
   if (!stat || !stat.isDirectory()) {
     return false;
   } else return true;
-}
+};
 
 export const fileExists = (path) => {
   let stat = null;
   try {
     stat = Fs.statSync(path);
-  } catch (e) { }
+  } catch (e) {
+  }
 
   if (!stat || !stat.isFile()) {
     return false;
   } else return true;
-}
+};
 
 export const getFilesInDir = (path) => {
   return Fs.readdirSync(path, 'utf-8');
-}
+};
 
 export const readFileSync = (path: string): string => {
   try {
@@ -120,7 +118,7 @@ export const readFileSync = (path: string): string => {
   } catch (e) {
     return '';
   }
-}
+};
 
 /** Writes contents to a file at path */
 export const writeFile = (filePath: string, contents: object | string): void => {
@@ -133,7 +131,7 @@ export const writeFile = (filePath: string, contents: object | string): void => 
   } catch (e) {
     console.error(`Failed to write file at ${filePath}`, e);
   }
-}
+};
 
 /** Shows a native open file / directory dialog */
 export function showOpenDialog(window: BrowserWindow, options: OpenDialogOptions): string {
@@ -154,7 +152,7 @@ export const getDirectories = source =>
   readdirSync(source).map(name => join(source, name)).filter(source => lstatSync(source).isDirectory());
 
 export function isDev(): boolean {
-  return (process.defaultApp || /node_modules[\\/]electron[\\/]/.test(process.execPath));
+  return ( process.defaultApp || /node_modules[\\/]electron[\\/]/.test(process.execPath) );
 }
 
 export const decodeBase64 = (str: string) =>
@@ -170,4 +168,4 @@ export const getBotsFromDisk = (): IBotInfo[] => {
   } else {
     return [];
   }
-}
+};

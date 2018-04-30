@@ -1,4 +1,4 @@
-import { ILuisService, ServiceType } from '@bfemulator/sdk-shared';
+import { ILuisService, ServiceType } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
 import { connect } from 'react-redux';
 import { launchLuisEditor, openLuisDeepLink, openLuisExplorerContextMenu } from '../../../../data/action/luisServiceActions';

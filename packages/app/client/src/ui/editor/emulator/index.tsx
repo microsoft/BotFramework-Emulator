@@ -31,28 +31,29 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
-import { css } from 'glamor';
-import { Subscription, BehaviorSubject } from 'rxjs';
-import * as _ from 'lodash';
-import * as React from 'react';
-import base64Url from 'base64url';
-
-import { ActivityOrID, uniqueId, IEndpointService } from '@bfemulator/sdk-shared';
-import { Splitter, Colors } from '@bfemulator/ui-react';
 import * as BotChat from '@bfemulator/custom-botframework-webchat';
 
-import { CommandService } from '../../../platform/commands/commandService';
-import { getActiveBot } from '../../../data/botHelpers';
-import { SettingsService } from '../../../platform/settings/settingsService';
+import { uniqueId } from '@bfemulator/sdk-shared';
+import { IEndpointService } from 'msbot/bin/schema';
+import { Colors, Splitter } from '@bfemulator/ui-react';
+import base64Url from 'base64url';
+import { css } from 'glamor';
+import * as _ from 'lodash';
+import * as React from 'react';
+import { connect } from 'react-redux';
+import { BehaviorSubject } from 'rxjs';
 import * as ChatActions from '../../../data/action/chatActions';
 import * as PresentationActions from '../../../data/action/presentationActions';
+import { getActiveBot } from '../../../data/botHelpers';
+import store, { IRootState } from '../../../data/store';
+
+import { CommandService } from '../../../platform/commands/commandService';
+import { SettingsService } from '../../../platform/settings/settingsService';
+import ToolBar, { Button as ToolBarButton, Separator as ToolBarSeparator } from '../toolbar';
 import ChatPanel from './chatPanel';
 import DetailPanel from './detailPanel';
 import LogPanel from './logPanel';
 import PlaybackBar from './playbackBar';
-import store, { IRootState } from '../../../data/store';
-import ToolBar, { Button as ToolBarButton, Separator as ToolBarSeparator } from '../toolbar';
 
 const { encode } = base64Url;
 

@@ -1,6 +1,7 @@
+import { IBotConfigWithPath } from '@bfemulator/sdk-shared';
 import * as BotActions from '../action/botActions';
 import { getBotDisplayName, IBotInfo } from '@bfemulator/app-shared';
-import { IBotConfig } from '@bfemulator/sdk-shared';
+import { IBotConfig } from 'msbot/bin/schema';
 import { getBotInfoByPath } from '../botHelpers';
 
 export interface IBotState {
@@ -23,18 +24,18 @@ export type BotAction = {
 } | {
   type: 'BOT/PATCH',
   payload: {
-    bot: IBotConfig,
+    bot: IBotConfigWithPath,
     secret?: string
   }
 } | {
   type: 'BOT/SET_ACTIVE',
   payload: {
-    bot: IBotConfig
+    bot: IBotConfigWithPath
   }
 } | {
   type: 'BOT/CLOSE',
-  payload: {   
-  } 
+  payload: {
+  }
 };
 
 const DEFAULT_STATE: IBotState = {
@@ -88,7 +89,7 @@ export default function bot(state: IBotState = DEFAULT_STATE, action: BotAction)
       state = setActiveBot(null, state);
       break;
     }
-    
+
     default: break;
   }
   return state;

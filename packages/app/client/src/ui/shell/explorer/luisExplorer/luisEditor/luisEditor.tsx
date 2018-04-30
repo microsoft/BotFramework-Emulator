@@ -1,8 +1,8 @@
-import { ILuisService } from '@bfemulator/sdk-shared';
+import { LuisService } from 'msbot/bin/models';
+import { ILuisService } from 'msbot/bin/schema';
 import { Modal, ModalActions, ModalContent, PrimaryButton, TextInputField } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { Component, SyntheticEvent } from 'react';
-import { LuisService } from './luisService';
 
 interface LuisEditorProps {
   luisService: ILuisService,
@@ -46,7 +46,7 @@ export class LuisEditor extends Component<LuisEditorProps, LuisEditorState> {
     const { onCancelClick, onInputChange, onSubmitClick } = this;
     const { luisService, nameError, appIdError, authoringKeyError, versionError, subscriptionKeyError, isDirty } = this.state;
     const { name = '', appId = '', authoringKey = '', subscriptionKey = '', version = '' } = luisService;
-    const valid = !nameError && !appIdError && !authoringKeyError && !versionError && !subscriptionKeyError;
+    const valid = !!name && !!appId && !!authoringKey && !!version && !!subscriptionKey;
     return (
       <Modal cssOverrides={ modalCssOverrides } title={ title } detailedDescription={ detailedDescription } cancel={ onCancelClick }>
         <ModalContent>

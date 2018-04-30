@@ -1,7 +1,8 @@
+import { IBotConfig } from 'msbot/bin/schema';
+import { IBotConfigWithPath } from '@bfemulator/sdk-shared';
 import { cloneBot, getBotInfoByPath } from '../../botHelpers';
 import * as BotActions from '../action/bot';
 import { getBotDisplayName, IBotInfo } from '@bfemulator/app-shared';
-import { IBotConfig, IEndpointService } from '@bfemulator/sdk-shared';
 
 export interface IBotState {
   activeBot: IBotConfig;
@@ -17,13 +18,13 @@ export type BotAction = {
 } | {
   type: 'BOT/PATCH',
   payload: {
-    bot: IBotConfig,
+    bot: IBotConfigWithPath,
     secret?: string
   }
 } | {
   type: 'BOT/SET_ACTIVE',
   payload: {
-    bot: IBotConfig
+    bot: IBotConfigWithPath
   }
 } | {
   type: 'BOT/SET_DIRECTORY',
@@ -32,7 +33,7 @@ export type BotAction = {
   }
  } | {
     type: 'BOT/CLOSE',
-    payload: {  
+    payload: {
     }
 };
 
@@ -45,7 +46,7 @@ const DEFAULT_STATE: IBotState = {
 export const bot: any = (state: IBotState = DEFAULT_STATE, action: BotAction) => {
   switch(action.type) {
     case BotActions.LOAD: {
-      state = setBotFilesState(action.payload.bots, state);
+        state = setBotFilesState(action.payload.bots, state);
       break;
     }
 
@@ -79,7 +80,7 @@ export const bot: any = (state: IBotState = DEFAULT_STATE, action: BotAction) =>
       state = setCurrentBotDirectory(action.payload.directory, state);
       break;
     }
-    
+
     case BotActions.CLOSE: {
       // close the active bot
       state = setActiveBot(null, state);

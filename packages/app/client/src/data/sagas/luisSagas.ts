@@ -1,4 +1,4 @@
-import { ILuisService, ServiceType } from '@bfemulator/sdk-shared';
+import { ILuisService, ServiceType } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
 import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandService } from '../../platform/commands/commandService';
@@ -56,9 +56,11 @@ function* openLuisContextMenu(action: LuisServiceAction<LuisServicePayload>): It
   ];
   const response = yield call(CommandService.remoteCall.bind(CommandService), 'electron:displayContextMenu', menuItems);
   switch (response.id) {
+
     case 'open':
       yield* openLuisDeepLink(action);
       break;
+
     case 'edit':
       yield* launchLuisEditor(action);
       break;
@@ -75,7 +77,7 @@ function* openLuisContextMenu(action: LuisServiceAction<LuisServicePayload>): It
 function* removeLuisServiceFromActiveBot(luisService: ILuisService): IterableIterator<any> {
   const result = yield CommandService.remoteCall('shell:show-message-box', true, {
     type: 'question',
-    buttons: ['Cancel', 'OK'],
+    buttons: ["Cancel", "OK"],
     defaultId: 1,
     message: `Remove LUIS service ${luisService.name}. Are you sure?`,
     cancelId: 0,

@@ -1,4 +1,4 @@
-import { IConnectedService } from '@bfemulator/sdk-shared';
+import { IConnectedService } from 'msbot/bin/schema';
 import { Colors, ExpandCollapse, ExpandCollapseContent, ExpandCollapseControls } from '@bfemulator/ui-react';
 import { css, StyleAttribute } from 'glamor';
 import * as React from 'react';

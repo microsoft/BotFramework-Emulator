@@ -36,8 +36,6 @@ import * as React from 'react';
 
 import Chat from './parts/chat';
 import { Colors } from '@bfemulator/ui-react';
-import Panel, { PanelControls, PanelContent } from '../panel';
-import { getActiveBot } from '../../../data/botHelpers';
 import { EmulatorMode } from './index';
 import { getFirstBotEndpoint } from '@bfemulator/app-shared';
 

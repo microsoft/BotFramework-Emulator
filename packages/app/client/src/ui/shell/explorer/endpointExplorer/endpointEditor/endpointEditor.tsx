@@ -1,8 +1,8 @@
-import { IEndpointService } from '@bfemulator/sdk-shared';
 import { Modal, ModalActions, ModalContent, PrimaryButton, TextInputField } from '@bfemulator/ui-react';
+import { EndpointService } from 'msbot/bin/models';
+import { IEndpointService } from 'msbot/bin/schema';
 import * as React from 'react';
 import { Component, SyntheticEvent } from 'react';
-import { EndpointService } from './endpointService';
 
 interface EndpointEditorProps {
   endpointService: IEndpointService,
@@ -44,7 +44,7 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
   public render(): JSX.Element {
     const { endpointService, appIdError, appPasswordError, endpointError, nameError, isDirty } = this.state;
     const { name = '', endpoint = '', appId = '', appPassword = '' } = endpointService;
-    const valid = !appIdError && !appPasswordError && !endpointError && !nameError;
+    const valid = !!endpoint && !!name;
     return (
       <Modal cssOverrides={ modalCssOverrides } title={ title } detailedDescription={ detailedDescription } cancel={ this.onCancelClick }>
         <ModalContent>

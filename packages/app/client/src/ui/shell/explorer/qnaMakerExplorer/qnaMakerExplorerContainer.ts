@@ -1,4 +1,4 @@
-import { IQnAService, ServiceType } from '@bfemulator/sdk-shared';
+import { IQnAService, ServiceType } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
 import { connect } from 'react-redux';
 import { launchQnaMakerEditor, openQnAMakerDeepLink, openQnaMakerExplorerContextMenu } from '../../../../data/action/qnaMakerServiceActions';

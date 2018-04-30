@@ -1,25 +1,25 @@
-import * as React from 'react';
+import { getBotDisplayName, IBotInfo } from '@bfemulator/app-shared';
 
-import { CommandRegistry as CommReg, IBotConfig, IExtensionConfig, uniqueId, IEndpointService } from '@bfemulator/sdk-shared';
-import { FileInfo, IBotInfo, getBotDisplayName } from '@bfemulator/app-shared';
-import { showWelcomePage } from "./data/editorHelpers";
-import { ActiveBotHelper } from './ui/helpers/activeBotHelper';
-import * as LogService from './platform/log/logService';
-import * as SettingsService from './platform/settings/settingsService';
-import { ExtensionManager } from './extensions';
-import BotCreationDialog from './ui/dialogs/botCreationDialog';
-import { DialogService } from './ui/dialogs/service';
-import SecretPromptDialog from './ui/dialogs/secretPromptDialog';
-import store from './data/store';
+import { CommandRegistry as CommReg, uniqueId } from '@bfemulator/sdk-shared';
+import { IBotConfig, IEndpointService } from 'msbot/bin/schema';
+import { IBotConfigWithPath } from '@bfemulator/sdk-shared';
+import * as Constants from './constants';
+import * as BotActions from './data/action/botActions';
 import * as ChatActions from './data/action/chatActions';
 import * as EditorActions from './data/action/editorActions';
 import * as FileActions from './data/action/fileActions';
 import * as NavBarActions from './data/action/navBarActions';
-import * as Constants from './constants';
-import { getTabGroupForDocument } from './data/editorHelpers';
-import { CommandService } from './platform/commands/commandService';
-import * as BotActions from './data/action/botActions';
 import { pathExistsInRecentBots } from './data/botHelpers';
+import { getTabGroupForDocument, showWelcomePage } from './data/editorHelpers';
+import store from './data/store';
+import { ExtensionManager } from './extensions';
+import { CommandService } from './platform/commands/commandService';
+import * as LogService from './platform/log/logService';
+import * as SettingsService from './platform/settings/settingsService';
+import BotCreationDialog from './ui/dialogs/botCreationDialog';
+import SecretPromptDialog from './ui/dialogs/secretPromptDialog';
+import { DialogService } from './ui/dialogs/service';
+import { ActiveBotHelper } from './ui/helpers/activeBotHelper';
 
 //=============================================================================
 export const CommandRegistry = new CommReg();
@@ -76,7 +76,7 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Completes the client side sync of the bot:load command on the server side
   // (NOTE: should NOT be called by itself; call server side instead)
-  CommandRegistry.registerCommand('bot:load', (bot: IBotConfig): void => {
+  CommandRegistry.registerCommand('bot:load', (bot: IBotConfigWithPath): void => {
     if (!pathExistsInRecentBots(bot.path)) {
       // create and switch bots
       ActiveBotHelper.confirmAndCreateBot(bot, '');
@@ -157,7 +157,7 @@ export function registerCommands() {
   CommandRegistry.registerCommand('transcript:open', (filename: string, additionalData?: object) => {
     const tabGroup = getTabGroupForDocument(filename);
     if (!tabGroup) {
-      store.dispatch(ChatActions.newDocument(filename, "transcript", additionalData));
+      store.dispatch(ChatActions.newDocument(filename, 'transcript', additionalData));
     }
     store.dispatch(EditorActions.open(
       Constants.ContentType_Transcript,
@@ -175,7 +175,7 @@ export function registerCommands() {
       properties: ['openFile'],
       filters: [
         {
-          name: "Transcript Files",
+          name: 'Transcript Files',
           extensions: ['transcript']
         }
       ],
@@ -218,14 +218,14 @@ export function registerCommands() {
   // An update is ready to install
   CommandRegistry.registerCommand('shell:update-downloaded', (...args: any[]) => {
     // TODO: Show a notification
-    console.log("Update available", ...args);
+    console.log('Update available', ...args);
   });
 
   //---------------------------------------------------------------------------
   // Application is up to date
   CommandRegistry.registerCommand('shell:update-not-available', () => {
     // TODO: Show a notification
-    console.log("Application is up to date");
+    console.log('Application is up to date');
   });
 
   //---------------------------------------------------------------------------

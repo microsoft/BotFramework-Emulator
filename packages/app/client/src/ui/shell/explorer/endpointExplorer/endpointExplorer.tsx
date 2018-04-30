@@ -1,4 +1,4 @@
-import { IEndpointService } from '@bfemulator/sdk-shared';
+import { IEndpointService } from 'msbot/bin/schema';
 import * as React from 'react';
 import { ComponentClass, MouseEventHandler, SyntheticEvent } from 'react';
 import { ServicePane, ServicePaneProps } from '../servicePane';

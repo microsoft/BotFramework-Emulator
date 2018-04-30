@@ -33,7 +33,6 @@
 
 
 import { BotFrameworkService } from './botFrameworkService';
-import { getActiveBot } from './botHelpers';
 import * as Settings from './settings';
 import { NgrokService } from './ngrokService';
 import IBotEndpoint from '@bfemulator/emulator-core/lib/types/botEndpoint';

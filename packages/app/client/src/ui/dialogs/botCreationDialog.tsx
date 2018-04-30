@@ -1,16 +1,15 @@
-import * as React from 'react';
+import { uniqueId } from '@bfemulator/sdk-shared';
+import { Checkbox, Colors, Column, MediumHeader, PrimaryButton, Row, RowAlignment, RowJustification, TextInputField } from '@bfemulator/ui-react';
 import { css } from 'glamor';
-import { uniqueId, IBotConfig, IEndpointService, ServiceType } from '@bfemulator/sdk-shared';
+import {EndpointService} from 'msbot/bin/models';
+import { IEndpointService, ServiceType } from 'msbot/bin/schema';
+import * as React from 'react';
+import { BotConfigWithPath } from '@bfemulator/sdk-shared';
+import { IBotConfigWithPath } from '@bfemulator/sdk-shared';
 
-import * as BotActions from '../../data/action/botActions';
-import * as NavBarActions from '../../data/action/navBarActions';
-import * as Constants from '../../constants';
 import { CommandService } from '../../platform/commands/commandService';
-import store from '../../data/store';
-import { Fonts, Colors, PrimaryButton, TextInputField, MediumHeader, Row, RowAlignment, RowJustification, Column, Checkbox } from '@bfemulator/ui-react';
-import { DialogService } from './service/index';
 import { ActiveBotHelper } from '../helpers/activeBotHelper';
-import { GenericDocument } from '../layout';
+import { DialogService } from './service';
 
 const CSS = css({
   backgroundColor: Colors.DIALOG_BACKGROUND_DARK,
@@ -80,7 +79,7 @@ const CSS = css({
 });
 
 export interface BotCreationDialogState {
-  bot: IBotConfig;
+  bot: IBotConfigWithPath;
   endpoint: IEndpointService;
   secret: string;
   secretEnabled: boolean;
@@ -93,21 +92,21 @@ export default class BotCreationDialog extends React.Component<{}, BotCreationDi
     super(props, context);
 
     this.state = {
-      bot: {
+      bot: BotConfigWithPath.fromJSON({
         name: '',
         description: '',
         secretKey: '',
         services: [],
         path: ''
-      },
-      endpoint: {
+      }),
+      endpoint: new EndpointService({
         type: ServiceType.Endpoint,
         name: '',
         id: uniqueId(),
         appId: '',
         appPassword: '',
         endpoint: ''
-      },
+      }),
       secret: '',
       secretEnabled: false,
       secretsMatch: false,
@@ -118,35 +117,35 @@ export default class BotCreationDialog extends React.Component<{}, BotCreationDi
   private onChangeEndpoint = (e) => {
     const endpoint = { ...this.state.endpoint, endpoint: e.target.value, name: e.target.value };
     this.setState({ endpoint });
-  }
+  };
 
   private onChangeAppId = (e) => {
     const endpoint = { ...this.state.endpoint, appId: e.target.value };
     this.setState({ endpoint });
-  }
+  };
 
   private onChangeAppPw = (e) => {
     const endpoint = { ...this.state.endpoint, appPassword: e.target.value };
     this.setState({ endpoint });
-  }
+  };
 
   private onChangeName = (e) => {
     const bot = { ...this.state.bot, name: e.target.value };
     this.setState({ bot });
-  }
+  };
 
   private onChangeBotLocation = (e) => {
     const bot = { ...this.state.bot, path: e.target.value };
     this.setState({ bot });
-  }
+  };
 
   private onCancel = (e) => {
     DialogService.hideDialog();
-  }
+  };
 
   private onToggleSecret = (e) => {
     this.setState({ secretEnabled: !this.state.secretEnabled, secret: '' });
-  }
+  };
 
   private onConnect = (e) => {
     const endpoint: IEndpointService = {
@@ -158,19 +157,19 @@ export default class BotCreationDialog extends React.Component<{}, BotCreationDi
       endpoint: this.state.endpoint.endpoint.trim()
     };
 
-    const bot: IBotConfig = {
+    const bot: IBotConfigWithPath = BotConfigWithPath.fromJSON({
       ...this.state.bot,
       name: this.state.bot.name.trim(),
       description: this.state.bot.description.trim(),
       services: [endpoint]
-    };
+    });
 
     const secret = this.state.secretEnabled && this.state.secret ? this.state.secret : null;
 
     ActiveBotHelper.confirmAndCreateBot(bot, secret)
       .then(() => DialogService.hideDialog())
       .catch(err => console.error('Error during confirm and create bot.'));
-  }
+  };
 
   private onSelectFolder = (e) => {
     const dialogOptions = {
@@ -194,15 +193,15 @@ export default class BotCreationDialog extends React.Component<{}, BotCreationDi
         }
       })
       .catch(err => console.log('User cancelled choosing a bot folder: ', err));
-  }
+  };
 
   private onChangeSecret = (e) => {
     this.setState({ secret: e.target.value, secretsMatch: e.target.value === this.state.secretConfirmation });
-  }
+  };
 
   private onChangeSecretConfirmation = (e) => {
     this.setState({ secretConfirmation: e.target.value, secretsMatch: e.target.value === this.state.secret });
-  }
+  };
 
   render(): JSX.Element {
     const secretCriteria = this.state.secretEnabled ? this.state.secret && this.state.secretsMatch : true;

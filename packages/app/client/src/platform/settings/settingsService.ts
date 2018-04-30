@@ -1,4 +1,3 @@
-import {lazy} from '@fuselab/ui-shared/lib';
 import { Disposable } from '@bfemulator/sdk-shared';
 import { CommandRegistry } from '../../commands';
 
@@ -43,7 +42,6 @@ class EmulatorSettings implements IEmulatorSettings {
     this._cwd = value;
   }
 
-  @lazy()
   get cwdAsBase() : string {
     let base = this.cwd;
     if (!base.startsWith('/')) {
@@ -66,4 +64,4 @@ export const SettingsService = new class extends Disposable {
     super();
     this._emulator = new EmulatorSettings();
   }
-}
+};

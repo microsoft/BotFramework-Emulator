@@ -32,7 +32,7 @@
 //
 
 import { IBotInfo } from '@bfemulator/app-shared';
-import { IBotConfig } from '@bfemulator/sdk-shared';
+import { IBotConfig } from 'msbot/bin/schema';
 import { BotAction } from '../reducer/bot';
 
 export const CREATE ='BOT/CREATE';

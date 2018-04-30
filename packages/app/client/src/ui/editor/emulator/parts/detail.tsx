@@ -32,13 +32,13 @@
 //
 
 import { css } from 'glamor';
-import * as PropTypes from 'prop-types';
+import { IBotConfig } from 'msbot/bin/schema';
 import * as React from 'react';
 
-import { Colors, Fonts } from '@bfemulator/ui-react';
-import { ExtensionManager, Extension } from '../../../../extensions';
+import { Fonts } from '@bfemulator/ui-react';
+import { Extension } from '../../../../extensions';
 import { Inspector } from './inspector';
-import { IBotConfig, IExtensionInspector } from '@bfemulator/sdk-shared';
+import { IExtensionInspector } from '@bfemulator/sdk-shared';
 
 const CSS = css({
   padding: 0,

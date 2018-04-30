@@ -34,8 +34,8 @@
 // We need to skip Webpack bundler on bundling 'electron':
 // 1. We are using react-scripts, thus, we are not able to configure Webpack
 // 2. To skip bundling, we can hack with window['require']
-import { uniqueId } from '@bfemulator/sdk-shared';
-import { IBotConfig, IEndpointService, ServiceType } from '@bfemulator/sdk-shared';
+import { IBotConfigWithPath, uniqueId } from '@bfemulator/sdk-shared';
+import { IBotConfig, IEndpointService, ServiceType } from 'msbot/bin/schema';
 
 export function isObject(item: any): boolean {
   return (item && typeof item === 'object' && !Array.isArray(item) && item !== null);
@@ -108,7 +108,7 @@ export const approximateObjectSize = (object: any, cache: any[] = []): number =>
 }
 
 /** Tries to scan the bot record for a display string */
-export const getBotDisplayName = (bot: IBotConfig = newBot()): string => {
+export const getBotDisplayName = (bot: IBotConfigWithPath = newBot()): string => {
   return bot.name || bot.path || (getFirstBotEndpoint(bot) ? getFirstBotEndpoint(bot).endpoint : null) || '¯\\_(ツ)_/¯';
 }
 

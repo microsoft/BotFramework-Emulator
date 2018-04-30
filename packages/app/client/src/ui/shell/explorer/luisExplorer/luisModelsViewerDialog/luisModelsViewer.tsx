@@ -1,5 +1,5 @@
 import { Checkbox, Colors, Fonts, PrimaryButton } from '@bfemulator/ui-react';
-import { ILuisService } from '@bfemulator/sdk-shared';
+import { ILuisService } from 'msbot/bin/schema';
 import { css } from 'glamor';
 import * as React from 'react';
 import { ChangeEvent, ChangeEventHandler, Component } from 'react';

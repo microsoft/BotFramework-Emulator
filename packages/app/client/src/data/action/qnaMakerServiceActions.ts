@@ -1,4 +1,4 @@
-import { IQnAService } from '@bfemulator/sdk-shared';
+import { IQnAService } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
 import { Action } from 'redux';
 import { QnaMakerEditor } from '../../ui/shell/explorer/qnaMakerExplorer/qnaMakerEditor/qnaMakerEditor';

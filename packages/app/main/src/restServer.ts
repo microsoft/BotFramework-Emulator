@@ -32,14 +32,12 @@
 //
 
 import { BotEmulator } from '@bfemulator/emulator-core';
-import { IBotConfig, IEndpointService } from '@bfemulator/sdk-shared';
 import * as CORS from 'restify-cors-middleware';
 import * as Restify from 'restify';
 import * as fetch from 'electron-fetch';
 
 import { mainWindow } from './main';
 import * as log from './log';
-import { getActiveBot } from './botHelpers';
 import { emulator } from './emulator';
 
 export class RestServer {

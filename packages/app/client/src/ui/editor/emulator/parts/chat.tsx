@@ -31,18 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
-import { css } from 'glamor';
-import { Subscription, BehaviorSubject } from 'rxjs';
-import * as React from 'react';
+import { ISpeechTokenInfo } from '@bfemulator/app-shared';
 import * as WebChat from '@bfemulator/custom-botframework-webchat';
 
-import { Colors, PrimaryButton } from '@bfemulator/ui-react';
-import { IConnectedService, IEndpointService } from '@bfemulator/sdk-shared';
-import { ISpeechTokenInfo } from '@bfemulator/app-shared';
+import { Colors } from '@bfemulator/ui-react';
+import { css } from 'glamor';
+import { IConnectedService, IEndpointService } from 'msbot/bin/schema';
+import * as React from 'react';
+import { connect } from 'react-redux';
+import { EmulatorMode } from '..';
 
 import { CommandService } from '../../../../platform/commands/commandService';
-import { EmulatorMode } from '..';
 
 const CognitiveServices = require('@bfemulator/custom-botframework-webchat/CognitiveServices');
 const AdaptiveCardsHostConfig = require('@bfemulator/custom-botframework-webchat/adaptivecards-hostconfig.json');

@@ -1,20 +1,18 @@
-import * as React from 'react';
-import PropTypes from 'prop-types';
+import { IBotInfo, newEndpoint } from '@bfemulator/app-shared';
+import { BotConfigWithPath, IBotConfigWithPath } from '@bfemulator/sdk-shared';
+import { Column, MediumHeader, PrimaryButton, Row, TextInputField } from '@bfemulator/ui-react';
 import { css } from 'glamor';
 import { debounce } from 'lodash';
+import { EndpointService } from 'msbot/bin/models';
+import { IEndpointService, ServiceType } from 'msbot/bin/schema';
+import * as React from 'react';
 import { connect } from 'react-redux';
-import { getBotDisplayName, newEndpoint, IBotInfo } from '@bfemulator/app-shared';
-import { IBotConfig, IEndpointService, ServiceType } from '@bfemulator/sdk-shared';
-import { Fonts, Column, Row, RowAlignment, PrimaryButton, TextInputField, MediumHeader } from '@bfemulator/ui-react';
+import * as EditorActions from '../../../data/action/editorActions';
+import { getBotInfoByPath } from '../../../data/botHelpers';
+import store, { IRootState } from '../../../data/store';
 
 import { CommandService } from '../../../platform/commands/commandService';
-import * as BotActions from '../../../data/action/botActions';
-import * as ChatActions from '../../../data/action/chatActions';
-import * as EditorActions from '../../../data/action/editorActions';
-import store, { IRootState } from '../../../data/store';
 import { GenericDocument } from '../../layout';
-import { getBotInfoByPath } from '../../../data/botHelpers';
-import { EndpointEditor } from '../../shell/explorer/endpointExplorer/endpointEditor/endpointEditor';
 
 const CSS = css({
   '& .bot-settings-header': {
@@ -55,13 +53,13 @@ const CSS = css({
 });
 
 interface BotSettingsEditorProps {
-  bot?: IBotConfig;
+  bot?: IBotConfigWithPath;
   dirty?: boolean;
   documentId?: string;
 }
 
 interface BotSettingsEditorState {
-  bot?: IBotConfig;
+  bot?: IBotConfigWithPath;
   endpoint?: IEndpointService;
   secret?: string;
 }
@@ -98,25 +96,25 @@ class BotSettingsEditor extends React.Component<BotSettingsEditorProps, BotSetti
   }
 
   private onChangeEndpoint = (e) => {
-    const endpoint: IEndpointService = { ...this.state.endpoint, endpoint: e.target.value, name: e.target.value };
+    const endpoint: IEndpointService = new EndpointService({ ...this.state.endpoint, endpoint: e.target.value, name: e.target.value });
     this.setState({ endpoint });
     this.setDirtyFlag(true);
   };
 
   private onChangeAppId = (e) => {
-    const endpoint: IEndpointService = { ...this.state.endpoint, appId: e.target.value };
+    const endpoint: IEndpointService = new EndpointService({ ...this.state.endpoint, appId: e.target.value });
     this.setState({ endpoint });
     this.setDirtyFlag(true);
   };
 
   private onChangeAppPw = (e) => {
-    const endpoint: IEndpointService = { ...this.state.endpoint, appPassword: e.target.value };
+    const endpoint: IEndpointService = new EndpointService({ ...this.state.endpoint, appPassword: e.target.value });
     this.setState({ endpoint });
     this.setDirtyFlag(true);
   };
 
   private onChangeName = (e) => {
-    const bot: IBotConfig = { ...this.state.bot, name: e.target.value };
+    const bot: IBotConfigWithPath = BotConfigWithPath.fromJSON({ ...this.state.bot, name: e.target.value });
     this.setState({ bot });
     this.setDirtyFlag(true);
   };
@@ -138,13 +136,13 @@ class BotSettingsEditor extends React.Component<BotSettingsEditorProps, BotSetti
     };
 
     const { name: botName = '', description = '', path } = this.state.bot;
-    const bot: IBotConfig = {
+    const bot: IBotConfigWithPath = BotConfigWithPath.fromJSON({
       name: botName.trim(),
       description: description.trim(),
       secretKey: '',
       path: path.trim(),
       services: [endpointService]
-    };
+    });
 
     // write the bot secret to bots.json
     let botInfo = getBotInfoByPath(path);
@@ -158,19 +156,17 @@ class BotSettingsEditor extends React.Component<BotSettingsEditorProps, BotSetti
     this.setState({ bot });
 
     connect && CommandService.call('livechat:new', endpointService);
-  }
+  };
 
   private onSaveAndConnect = async e => {
     await this.onSave(e, connect);
-  }
+  };
 
   private setDirtyFlag(dirty) {
     store.dispatch(EditorActions.setDirtyFlag(this.props.documentId, dirty));
   }
 
   render() {
-    const botLabel = getBotDisplayName(this.state.bot);
-
     return (
       <GenericDocument style={ CSS }>
         <Column>

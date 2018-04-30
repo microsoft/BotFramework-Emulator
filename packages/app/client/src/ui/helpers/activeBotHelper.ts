@@ -1,9 +1,9 @@
-import { getBotDisplayName, newBot, newEndpoint } from '@bfemulator/app-shared';
-import { IBotConfig, ServiceType, IEndpointService } from '@bfemulator/sdk-shared';
-
+import { getBotDisplayName } from '@bfemulator/app-shared';
+import { IBotConfig, IEndpointService, ServiceType } from 'msbot/bin/schema';
+import { IBotConfigWithPath } from '@bfemulator/sdk-shared';
+import { hasNonGlobalTabs } from '../../data/editorHelpers';
 import { CommandService } from '../../platform/commands/commandService';
 import { getActiveBot } from '../../data/botHelpers';
-import { hasNonGlobalTabs } from '../../data/editorHelpers';
 import * as BotActions from '../../data/action/botActions';
 import * as Constants from '../../constants';
 import * as EditorActions from '../../data/action/editorActions';
@@ -75,7 +75,7 @@ export const ActiveBotHelper = new class {
         throw new Error(`Error while closing active bot: ${err}`);
       });
   }
-  
+
   async botAlreadyOpen(): Promise<any> {
     return await CommandService.remoteCall(
       'shell:show-message-box',
@@ -90,14 +90,14 @@ export const ActiveBotHelper = new class {
     );
   }
 
-  async confirmAndCreateBot(botToCreate: IBotConfig, secret: string): Promise<any> {
+  async confirmAndCreateBot(botToCreate: IBotConfigWithPath, secret: string): Promise<any> {
     const result = await this.confirmSwitchBot();
 
     if (result) {
       store.dispatch(EditorActions.closeNonGlobalTabs());
 
       try {
-        const bot: IBotConfig = await CommandService.remoteCall('bot:create', botToCreate, secret);
+        const bot: IBotConfigWithPath = await CommandService.remoteCall('bot:create', botToCreate, secret);
 
         // TODO: What are we achieving with this async function here?
         store.dispatch(async () => {
@@ -142,7 +142,7 @@ export const ActiveBotHelper = new class {
         await this.botAlreadyOpen();
         return;
       }
-      
+
       try {
         const result = this.confirmSwitchBot();
 

@@ -2,8 +2,8 @@
   "compilerOptions": {
     "outDir": "built",
     "module": "esnext",
-    "target": "es5",
-    "lib": ["es6", "dom"],
+    "target": "es6",
+    "lib": ["es6", "dom", "es2015"],
     "sourceMap": true,
     "jsx": "react",
     "moduleResolution": "node",

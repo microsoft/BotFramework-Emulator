@@ -12,6 +12,7 @@
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-json-view": "1.16.1",
+    "msbot": "^1.0.42-alpha",
     "lscache": "^1.1.0"
   },
   "scripts": {

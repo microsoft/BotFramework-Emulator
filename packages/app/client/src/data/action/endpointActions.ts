@@ -1,4 +1,4 @@
-import { IEndpointService } from '@bfemulator/sdk-shared';
+import { IEndpointService } from 'msbot/bin/schema';
 import { Action } from 'redux';
 
 export const OPEN_ENDPOINT_EXPLORER_CONTEXT_MENU = 'OPEN_ENDPOINT_EXPLORER_CONTEXT_MENU';

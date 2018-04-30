@@ -1,4 +1,4 @@
-import { ILuisService } from '@bfemulator/sdk-shared';
+import { ILuisService } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
 import { Action } from 'redux';
 import { LuisEditor } from '../../ui/shell/explorer/luisExplorer/luisEditor/luisEditor';

@@ -1,4 +1,4 @@
-import { IDispatchService } from '@bfemulator/sdk-shared';
+import { IDispatchService } from 'msbot/bin/schema';
 import { Action } from 'redux';
 
 export const OPEN_DISPATCH_DEEP_LINK = 'OPEN_DISPATCH_DEEP_LINK';

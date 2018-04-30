@@ -1,8 +1,8 @@
-import { IDispatchService } from '@bfemulator/sdk-shared';
 import { Modal, ModalActions, ModalContent, PrimaryButton, TextInputField } from '@bfemulator/ui-react';
+import { DispatchService } from 'msbot/bin/models';
+import { IDispatchService } from 'msbot/bin/schema';
 import * as React from 'react';
 import { Component, SyntheticEvent } from 'react';
-import { DispatchService } from './dispatchService';
 
 interface DispatchEditorProps {
   dispatchService: IDispatchService,

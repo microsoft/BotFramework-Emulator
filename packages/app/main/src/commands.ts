@@ -1,13 +1,14 @@
-import { addIdToBotEndpoints, IFrameworkSettings, newBot, newEndpoint, IBotInfo, getBotDisplayName } from '@bfemulator/app-shared';
+import { getBotDisplayName, IBotInfo, IFrameworkSettings, newBot, newEndpoint } from '@bfemulator/app-shared';
 import { Conversation } from '@bfemulator/emulator-core';
-import { CommandRegistry as CommReg, IActivity, IBotConfig, uniqueId, IConnectedService, ServiceType, IEndpointService } from '@bfemulator/sdk-shared';
+import { CommandRegistry as CommReg, IActivity, IBotConfigWithPath, uniqueId } from '@bfemulator/sdk-shared';
 import * as Electron from 'electron';
 import { app, Menu } from 'electron';
 import * as Fs from 'fs';
 import { sync as mkdirpSync } from 'mkdirp';
+import { IConnectedService, IEndpointService, ServiceType } from 'msbot/bin/schema';
 import * as Path from 'path';
 import { AppMenuBuilder } from './appMenuBuilder';
-import { cloneBot, getActiveBot, getBotInfoByPath, toSavableBot, loadBotWithRetry, pathExistsInRecentBots, saveBot, patchBotsJson } from './botHelpers';
+import { getActiveBot, getBotInfoByPath, loadBotWithRetry, patchBotsJson, pathExistsInRecentBots, saveBot, toSavableBot } from './botHelpers';
 import { BotProjectFileWatcher } from './botProjectFileWatcher';
 import { Protocol } from './constants';
 import * as BotActions from './data-v2/action/bot';
@@ -37,7 +38,7 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Create a bot
-  CommandRegistry.registerCommand('bot:create', async (bot: IBotConfig, botDirectory: string, secret: string): Promise<IBotConfig> => {// create and add bot entry to bots.json
+  CommandRegistry.registerCommand('bot:create', async (bot: IBotConfigWithPath, botDirectory: string, secret: string): Promise<IBotConfigWithPath> => {// create and add bot entry to bots.json
     // create and add bot entry to bots.json
     const botsJsonEntry: IBotInfo = {
       path: bot.path,
@@ -60,7 +61,7 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Save bot file and cause a bots list write
-  CommandRegistry.registerCommand('bot:save', async (bot: IBotConfig) => {
+  CommandRegistry.registerCommand('bot:save', async (bot: IBotConfigWithPath) => {
     try {
       await saveBot(bot);
     } catch (e) {
@@ -71,7 +72,7 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Open a bot project from a .bot path
-  CommandRegistry.registerCommand('bot:load', async (botFilePath: string, secret?: string): Promise<IBotConfig> => {
+  CommandRegistry.registerCommand('bot:load', async (botFilePath: string, secret?: string): Promise<IBotConfigWithPath> => {
     // try to get the bot secret from bots.json
     const botInfo = pathExistsInRecentBots(botFilePath) ? getBotInfoByPath(botFilePath) : null;
     if (botInfo && botInfo.secret) {
@@ -81,7 +82,7 @@ export function registerCommands() {
     // load the bot (decrypt with secret if we were able to get it)
     const bot = await loadBotWithRetry(botFilePath, secret);
     if (!bot)
-      // user failed to enter a valid secret for an encrypted bot
+    // user failed to enter a valid secret for an encrypted bot
       throw new Error('No secret provided to decrypt encrypted bot.');
 
     // set up file watcher
@@ -97,7 +98,7 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Set active bot (called from client-side)
-  CommandRegistry.registerCommand('bot:set-active', async (botPath: string): Promise<{ bot: IBotConfig, botDirectory: string } | void> => {
+  CommandRegistry.registerCommand('bot:set-active', async (botPath: string): Promise<{ bot: IBotConfigWithPath, botDirectory: string } | void> => {
     // try to get the bot secret from bots.json
     let secret;
     const botInfo = pathExistsInRecentBots(botPath) ? getBotInfoByPath(botPath) : null;
@@ -159,7 +160,7 @@ export function registerCommands() {
     const activeBot = getActiveBot();
     const botInfo = activeBot && getBotInfoByPath(activeBot.path);
     if (botInfo) {
-      const botConfig = toSavableBot(activeBot, botInfo.secret)
+      const botConfig = toSavableBot(activeBot, botInfo.secret);
       const index = botConfig.services.findIndex(s => s.id === service.id && s.type === service.type);
       let existing = index >= 0 && botConfig.services[index];
       if (existing) {
@@ -173,7 +174,7 @@ export function registerCommands() {
         botConfig.connectService(service);
       }
       try {
-        botConfig.save(botInfo.path);
+        await botConfig.save(botInfo.path);
       } catch (e) {
         console.error(`bot:add-or-update-service: Error trying to save bot: ${e}`);
         throw e;
@@ -187,7 +188,7 @@ export function registerCommands() {
     const activeBot = getActiveBot();
     const botInfo = activeBot && getBotInfoByPath(activeBot.path);
     if (botInfo) {
-      const botConfig = toSavableBot(activeBot, botInfo.secret)
+      const botConfig = toSavableBot(activeBot, botInfo.secret);
       botConfig.disconnectService(serviceType, serviceId);
       try {
         botConfig.save(botInfo.path);
@@ -315,7 +316,7 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Saves the conversation to a transcript file, with user interaction to set filename.
   CommandRegistry.registerCommand('emulator:save-transcript-to-file', async (conversationId: string): Promise<void> => {
-    const activeBot: IBotConfig = getActiveBot();
+    const activeBot: IBotConfigWithPath = getActiveBot();
     if (!activeBot) {
       throw new Error('save-transcript-to-file: No active bot.');
     }
@@ -367,7 +368,7 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Feeds a transcript from disk to a conversation
   CommandRegistry.registerCommand('emulator:feed-transcript:disk', (conversationId: string, filename: string) => {
-    const activeBot: IBotConfig = getActiveBot();
+    const activeBot: IBotConfigWithPath = getActiveBot();
     if (!activeBot) {
       throw new Error('feed-transcript:disk: No active bot.');
     }
@@ -391,7 +392,7 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Feeds a deep-linked transcript (array of parsed activities) to a conversation
   CommandRegistry.registerCommand('emulator:feed-transcript:deep-link', (conversationId: string, activities: IActivity[]): void => {
-    const activeBot: IBotConfig = getActiveBot();
+    const activeBot: IBotConfigWithPath = getActiveBot();
     if (!activeBot) {
       throw new Error('emulator:feed-transcript:deep-link: No active bot.');
     }
@@ -434,7 +435,7 @@ export function registerCommands() {
   // Creates a new conversation object for transcript
   CommandRegistry.registerCommand('transcript:new', (conversationId: string): Conversation => {
     // get the active bot or mock one
-    let bot: IBotConfig = getActiveBot();
+    let bot: IBotConfigWithPath = getActiveBot();
 
     if (!bot) {
       bot = newBot();
