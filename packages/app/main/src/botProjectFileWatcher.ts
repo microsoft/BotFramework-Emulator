@@ -20,17 +20,10 @@ async function findGitIgnore(directory: string): Promise<string> {
   const gitIgnore = '.gitignore';
   let curDir = directory;
 
-  for (; ;) {
-    const filePath = Path.resolve(curDir, '.gitignore');
-    const found = await callbackToPromise<boolean>(exists, filePath);
-    if (found) {
-      return filePath;
-    }
-    const parent = Path.resolve(curDir, '..');
-    if (parent === curDir || !parent) {
-      break;
-    }
-    curDir = parent;
+  const filePath = Path.resolve(curDir, '.gitignore');
+  const found = await callbackToPromise<boolean>(exists, filePath);
+  if (found) {
+    return filePath;
   }
 
   return null;
@@ -57,23 +50,25 @@ export const BotProjectFileWatcher = new class FileWatcher implements IFileWatch
     // stop watching any other project directory
     this.dispose();
 
-    this._botFilePath = botFilePath;
-    const botProjectDir = Path.dirname(botFilePath);
+    if (botFilePath && botFilePath.length) {
+      this._botFilePath = botFilePath;
+      const botProjectDir = Path.dirname(botFilePath);
 
-    const gitIgnoreFile = await findGitIgnore(botProjectDir);
-    const ignoreGlobs = await readGitIgnore(gitIgnoreFile);
+      const gitIgnoreFile = await findGitIgnore(botProjectDir);
+      const ignoreGlobs = await readGitIgnore(gitIgnoreFile);
 
-    this._fileWatcherInstance = Chokidar.watch(botProjectDir, {
-      ignored: ignoreGlobs,
-      followSymlinks: false
-    });
+      this._fileWatcherInstance = Chokidar.watch(botProjectDir, {
+        ignored: ignoreGlobs,
+        followSymlinks: false
+      });
 
-    this._fileWatcherInstance
-      .on('addDir', this.onFileAdd)
-      .on('unlinkDir', this.onFileRemove)
-      .on('add', this.onFileAdd)
-      .on('unlink', this.onFileRemove)
-      .on('change', this.onFileChange);
+      this._fileWatcherInstance
+        .on('addDir', this.onFileAdd)
+        .on('unlinkDir', this.onFileRemove)
+        .on('add', this.onFileAdd)
+        .on('unlink', this.onFileRemove)
+        .on('change', this.onFileChange);
+    }
 
     return true;
   }
@@ -81,21 +76,25 @@ export const BotProjectFileWatcher = new class FileWatcher implements IFileWatch
   dispose(): void {
     if (this._fileWatcherInstance) {
       this._fileWatcherInstance.close();
+      this._fileWatcherInstance = null;
       this._botFilePath = null;
     }
   }
 
   // TODO: Enable watching more extensions
   onFileAdd = (file: string, fstats?: Stats): void => {
+    const fileInfo: FileInfo = {
+      path: file,
+      type: fstats.isDirectory() ? 'container' : 'leaf',
+      name: Path.basename(file)
+    };
+    
     // only show .transcript files
-    if (Path.extname(file) === '.transcript') {
-      const fileInfo: FileInfo = {
-        path: file,
-        type: fstats.isDirectory() ? 'container' : 'leaf',
-        name: Path.basename(file)
-      };
-      mainWindow.commandService.remoteCall('file:add', fileInfo);
+    if (fileInfo.type === 'leaf' && Path.extname(file) !== '.transcript') {
+      return;
     }
+
+    mainWindow.commandService.remoteCall('file:add', fileInfo);
   }
 
   // TODO: Enable watching more extensions
