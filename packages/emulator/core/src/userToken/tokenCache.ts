@@ -31,13 +31,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { ITokenResponse } from './ITokenResponse';
 
-import { StringProvider } from '../utils/stringProvider';
+export class TokenCache {
+    private static tokenStore: { [key: string]: ITokenResponse } = {};
 
-interface IBotEndpointOptions {
-  fetch?: (string, any) => Promise<any>;
-  use10Tokens?: boolean;
-  useCodeValidation?: boolean;
+    public static addTokenToCache(botId: string, userId: string, connectionName: string, token: string) {
+        this.tokenStore[this.tokenKey(botId, userId, connectionName)] = {
+            connectionName: connectionName,
+            token: token
+        };
+    }
+
+    public static getTokenFromCache(botId: string, userId: string, connectionName: string): ITokenResponse {
+        return this.tokenStore[this.tokenKey(botId, userId, connectionName)];
+    }
+
+    public static deleteTokenFromCache(botId: string, userId: string, connectionName: string) {
+        delete this.tokenStore[this.tokenKey(botId, userId, connectionName)];
+    }
+
+    private static tokenKey(botId: string, userId: string, connectionName: string): string {
+        return `${botId}_${userId}_${connectionName}`;
+    }
 }
-
-export default IBotEndpointOptions

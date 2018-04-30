@@ -47,6 +47,7 @@ import removeUsers from './middleware/removeUsers';
 import typing from './middleware/typing';
 import updateShippingAddress from './middleware/updateShippingAddress';
 import updateShippingOption from './middleware/updateShippingOption';
+import sendTokenResponse from './middleware/sendTokenResponse';
 
 export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandler[]) {
   const fetchConversation = createFetchConversationMiddleware(botEmulator);
@@ -121,4 +122,9 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     fetchConversation,
     paymentComplete(botEmulator)
   );
+
+  server.post(
+    '/emulator/:conversationId/invoke/sendTokenResponse',
+    jsonBodyParser,
+    sendTokenResponse(botEmulator));
 }

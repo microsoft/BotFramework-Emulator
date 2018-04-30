@@ -42,6 +42,8 @@ export interface IFrameworkSettings {
   stateSizeLimit?: number,
   // option for using 2.0 or 1.0 tokens
   use10Tokens?: boolean,
+  // option for using a validation code for OAuthCards
+  useCodeValidation?: boolean,
   // address to use for localhost, default: localhost
   localhost?: string,
   // locale to use across all endpoints
@@ -88,6 +90,7 @@ export const frameworkDefault: IFrameworkSettings = {
   bypassNgrokLocalhost: true,
   stateSizeLimit: 64,
   use10Tokens: false,
+  useCodeValidation: false,
   localhost: 'localhost',
   locale: ''
 }

@@ -31,13 +31,48 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import * as HttpStatus from 'http-status-codes';
+import { RequestHandler, Server } from 'restify';
 
-import { StringProvider } from '../utils/stringProvider';
+import BotEmulator from '../botEmulator';
+import createBotFrameworkAuthenticationMiddleware from '../utils/botFrameworkAuthentication';
+import createJsonBodyParserMiddleware from '../utils/jsonBodyParser';
+import getBotEndpoint from '../middleware/getBotEndpoint';
 
-interface IBotEndpointOptions {
-  fetch?: (string, any) => Promise<any>;
-  use10Tokens?: boolean;
-  useCodeValidation?: boolean;
+import getToken from './middleware/getToken';
+import emulateOAuthCards from './middleware/emulateOAuthCards';
+import signOut from './middleware/signOut';
+import tokenResponse from './middleware/tokenResponse';
+
+export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandler[]) {
+  const jsonBodyParser = createJsonBodyParserMiddleware();
+  const verifyBotFramework = createBotFrameworkAuthenticationMiddleware(botEmulator.options.fetch);
+  const botEndpoint = getBotEndpoint(botEmulator);
+
+  server.get(
+    '/api/usertoken/GetToken',
+    verifyBotFramework,
+    botEndpoint,
+    getToken(botEmulator)
+  );
+
+  server.post(
+    '/api/usertoken/emulateOAuthCards',
+    verifyBotFramework,
+    emulateOAuthCards(botEmulator)
+  );
+
+  server.del(
+    '/api/usertoken/SignOut',
+    verifyBotFramework,
+    botEndpoint,
+    signOut(botEmulator)
+  );
+
+  server.post(
+    '/api/usertoken/tokenResponse',
+    ...uses,
+    jsonBodyParser,
+    tokenResponse(botEmulator)
+  );
 }
-
-export default IBotEndpointOptions

@@ -86,7 +86,7 @@ async function main() {
 
   server.pre(cors.preflight);
   server.use(cors.actual);
-
+  
   // Get a port number, we need this to construct `serviceUrl`
   const port = program.port || await getPort(5000);
 
@@ -94,6 +94,7 @@ async function main() {
   const bot = new BotEmulator(
     program.serviceUrl || `http://localhost:${ port }`,
     {
+      tunnelingServiceUrl: '',
       loggerOrLogService: new NpmLogger()
     }
   );

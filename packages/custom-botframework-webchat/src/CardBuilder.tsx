@@ -43,21 +43,30 @@ export class AdaptiveCardBuilder {
         }
     }
 
-    addButtons(cardActions: CardAction[]) {
+    addButtons(cardActions: CardAction[], includesOAuthButtons?: boolean) {
         if (cardActions) {
             cardActions.forEach(cardAction => {
-                this.card.addAction(AdaptiveCardBuilder.addCardAction(cardAction));
+                this.card.addAction(AdaptiveCardBuilder.addCardAction(cardAction, includesOAuthButtons));
             });
         }
     }
 
-    private static addCardAction(cardAction: CardAction) {
+    private static addCardAction(cardAction: CardAction, includesOAuthButtons?: boolean) {
         if (cardAction.type === 'imBack' || cardAction.type === 'postBack') {
             const action = new SubmitAction();
             const botFrameworkCardAction: BotFrameworkCardAction = { __isBotFrameworkCardAction: true, ...cardAction };
 
             action.data = botFrameworkCardAction;
             action.title = cardAction.title;
+
+            return action;
+        } else if (cardAction.type === 'signin' && includesOAuthButtons) {
+            // Create a button specific for OAuthCard 'signin' actions (cardAction.type == signin and button action is Action.Submit)
+            const action = new SubmitAction();
+            const botFrameworkCardAction: BotFrameworkCardAction = { __isBotFrameworkCardAction: true, ...cardAction };
+
+            action.title = cardAction.title,
+            action.data = botFrameworkCardAction
 
             return action;
         } else {
@@ -70,11 +79,15 @@ export class AdaptiveCardBuilder {
             return action;
         }
     }
-
-    addCommon(content: ICommonContent) {
+    
+    addCommonHeaders(content: ICommonContent) {
         this.addTextBlock(content.title, { size: TextSize.Medium, weight: TextWeight.Bolder });
         this.addTextBlock(content.subtitle, { isSubtle: true, wrap: true });
         this.addTextBlock(content.text, { wrap: true });
+    }
+
+    addCommon(content: ICommonContent) {
+        this.addCommonHeaders(content);
         this.addButtons(content.buttons);
     }
 
@@ -107,5 +120,14 @@ export const buildCommonCard = (content: ICommonContent): AdaptiveCard => {
 
     const cardBuilder = new AdaptiveCardBuilder();
     cardBuilder.addCommon(content)
+    return cardBuilder.card;
+};
+
+export const buildOAuthCard = (content: ICommonContent): AdaptiveCard => {
+    if (!content) return null;
+
+    const cardBuilder = new AdaptiveCardBuilder();
+    cardBuilder.addCommonHeaders(content);
+    cardBuilder.addButtons(content.buttons, true);
     return cardBuilder.card;
 };

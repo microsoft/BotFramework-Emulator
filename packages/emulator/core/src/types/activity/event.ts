@@ -31,13 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import IActivity from './activity';
+import IConversationReference from './invoke';
 
-import { StringProvider } from '../utils/stringProvider';
-
-interface IBotEndpointOptions {
-  fetch?: (string, any) => Promise<any>;
-  use10Tokens?: boolean;
-  useCodeValidation?: boolean;
+interface IEventActivity extends IActivity {
+  name?: string,
+  value?: any,
+  relatesTo?: IConversationReference
 }
 
-export default IBotEndpointOptions
+export default IEventActivity

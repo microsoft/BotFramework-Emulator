@@ -98,6 +98,15 @@ export interface Signin {
     }
 }
 
+export interface OAuth {
+    contentType: "application/vnd.microsoft.card.oauth",
+    content: {
+        text?: string,
+        connectionname: string,
+        buttons?: CardAction[]
+    }
+}
+
 export interface ReceiptItem {
     title?: string,
     subtitle?: string,
@@ -181,7 +190,7 @@ export interface AnimationCard {
     }
 }
 
-export type KnownMedia = Media | HeroCard | Thumbnail | Signin | Receipt | AudioCard | VideoCard | AnimationCard | FlexCard | AdaptiveCard;
+export type KnownMedia = Media | HeroCard | Thumbnail | Signin | OAuth | Receipt | AudioCard | VideoCard | AnimationCard | FlexCard | AdaptiveCard;
 export type Attachment = KnownMedia | UnknownMedia;
 
 export interface ChannelAccount {
@@ -278,7 +287,8 @@ export interface IBotConnection {
     activity$: Observable<Activity>,
     end(): void,
     referenceGrammarId?: string,
-    postActivity(activity: Activity): Observable<string>
+    postActivity(activity: Activity): Observable<string>,
+    getSessionId? : () => Observable<string>
 }
 
 export class DirectLine implements IBotConnection {
@@ -465,6 +475,31 @@ export class DirectLine implements IBotConnection {
         if (this.tokenRefreshSubscription)
             this.tokenRefreshSubscription.unsubscribe();
         this.connectionStatus$.next(ConnectionStatus.Ended);
+    }
+    
+    getSessionId(): Observable<string> {
+        // If we're not connected to the bot, get connected
+        // Will throw an error if we are not connected
+        konsole.log("getSessionId");
+        return this.checkConnection(true)
+            .flatMap(_ =>
+                Observable.ajax({
+                    method: "GET",
+                    url: `${this.domain}/session/getsessionid`, 
+                    withCredentials: true,
+                    timeout,
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${this.token}`
+                    }
+                })
+                .map(ajaxResponse => {
+                    konsole.log("getSessionId response: " + ajaxResponse.response.sessionId);
+                    return ajaxResponse.response.sessionId as string;
+                })
+                .catch(error => this.catchPostError(error))
+            )
+            .catch(error => this.catchExpiredToken(error));
     }
 
     postActivity(activity: Activity) {

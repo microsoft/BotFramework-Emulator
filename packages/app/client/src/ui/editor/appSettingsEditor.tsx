@@ -66,7 +66,8 @@ const defaultAppSettings: IFrameworkSettings = {
   localhost: '',
   ngrokPath: '',
   stateSizeLimit: 64,
-  use10Tokens: false
+  use10Tokens: false,
+  useCodeValidation: false
 }
 
 function shallowEqual(x, y) {
@@ -86,6 +87,7 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
     this.onChangeNgrok = this.onChangeNgrok.bind(this);
     this.onChangeNgrokBypass = this.onChangeNgrokBypass.bind(this);
     this.onChangeAuthTokenVersion = this.onChangeAuthTokenVersion.bind(this);
+    this.onChangeUseValidationToken = this.onChangeUseValidationToken.bind(this);
     this.setDirtyFlag = debounce(this.setDirtyFlag, 300);
     this.onClickDiscard = this.onClickDiscard.bind(this);
     this.onChangeLocalhost = this.onChangeLocalhost.bind(this);
@@ -161,6 +163,7 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
       bypassNgrokLocalhost: uncommitted.bypassNgrokLocalhost,
       stateSizeLimit: +uncommitted.stateSizeLimit,
       use10Tokens: uncommitted.use10Tokens,
+      useCodeValidation: uncommitted.useCodeValidation,
       localhost: uncommitted.localhost.trim(),
       locale: uncommitted.locale.trim()
     };
@@ -172,6 +175,10 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
 
   onChangeAuthTokenVersion(e): void {
     this.setUncommittedState({ use10Tokens: !this.state.uncommitted.use10Tokens });
+  }
+
+  onChangeUseValidationToken(e): void {
+    this.setUncommittedState({ useCodeValidation: !this.state.uncommitted.useCodeValidation });
   }
 
   onChangeNgrok(e): void {
@@ -215,6 +222,7 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
             </Row>
             <Checkbox className="checkboxOverrides" checked={ uncommitted.bypassNgrokLocalhost } onChange={ this.onChangeNgrokBypass } id="ngrok-bypass" label="Bypass ngrok for local addresses" />
             <Checkbox className="checkboxOverrides" checked={ uncommitted.use10Tokens } onChange={ this.onChangeAuthTokenVersion } id="auth-token-version" label="Use version 1.0 authentication tokens" />
+            <Checkbox className="checkboxOverrides" checked={ uncommitted.useCodeValidation } onChange={ this.onChangeUseValidationToken } id="use-validation-code" label="Use a sign-in verification code for OAuthCards" />
             <Row align={ RowAlignment.Center }>
               <TextInputField readOnly={ false } value={ uncommitted.localhost } onChange={ this.onChangeLocalhost } label="localhost override" />
             </Row>

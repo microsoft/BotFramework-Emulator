@@ -39,7 +39,8 @@ export type FrameworkAction = {
         ngrokPath: string,
         bypassNgrokLocalhost: boolean,
         stateSizeLImit: number,
-        use10Tokens: boolean
+        use10Tokens: boolean,
+        useCodeValidation: boolean
     }
 }
 

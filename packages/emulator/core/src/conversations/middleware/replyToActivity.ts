@@ -39,6 +39,7 @@ import IConversationAPIPathParameters from '../conversationAPIPathParameters';
 import IGenericActivity from '../../types/activity/generic';
 import IResourceResponse from '../../types/response/resource';
 import sendErrorResponse from '../../utils/sendErrorResponse';
+import OAuthLinkEncoder from '../../utils/OAuthLinkEncoder';
 
 export default function replyToActivity(botEmulator: BotEmulator) {
   const { logRequest, logResponse } = botEmulator.facilities.logger;
@@ -60,11 +61,21 @@ export default function replyToActivity(botEmulator: BotEmulator) {
       //if (!conversation.activities.find((existingActivity, index, obj) => existingActivity.id == activity.replyToId))
       //    throw createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "replyToId is not a known activity id");
 
-      // post activity
-      const response: IResourceResponse = req['conversation'].postActivityToUser(activity);
+      let continuation = function(): void {
+        const response: IResourceResponse = req['conversation'].postActivityToUser(activity);
 
-      res.send(HttpStatus.OK, response);
-      res.end();
+        res.send(HttpStatus.OK, response);
+        res.end();
+      }
+
+      let visitor = new OAuthLinkEncoder(botEmulator, botEmulator.options.tunnelingServiceUrl, req.headers['authorization'] as string, activity);
+      visitor.resolveOAuthCards(activity).then((value?: any) =>
+      {
+          continuation();
+      }, (reason: any) => {
+          continuation();
+      });
+
       //logNetwork(parms.conversationId, req, res, getActivityText(activity));
     } catch (err) {
       sendErrorResponse(req, res, next, err);

@@ -31,13 +31,36 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import * as HttpStatus from 'http-status-codes';
+import * as Restify from 'restify';
 
-import { StringProvider } from '../utils/stringProvider';
+import BotEmulator from '../../botEmulator';
+import BotEndpoint from '../../facility/botEndpoint';
+import { ITokenResponse } from '../ITokenResponse';
+import { ITokenParams } from '../ITokenParams';
+import { TokenCache } from '../tokenCache';
 
-interface IBotEndpointOptions {
-  fetch?: (string, any) => Promise<any>;
-  use10Tokens?: boolean;
-  useCodeValidation?: boolean;
+
+interface IGetTokenParams extends ITokenParams {
+  code: string;
 }
 
-export default IBotEndpointOptions
+export default function getToken(botEmulator: BotEmulator) {
+  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+    try {
+      let params: IGetTokenParams = req.params;
+      const botEndpoint: BotEndpoint = req['botEndpoint'];
+
+      let tokenResponse: ITokenResponse = TokenCache.getTokenFromCache(botEndpoint.botId, params.userId, params.connectionName);
+      if (tokenResponse) {
+          res.send(HttpStatus.OK, tokenResponse);
+      } else {
+          res.send(HttpStatus.NOT_FOUND); 
+      }
+
+      res.end();
+    } catch (err) {
+      res.send(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  };
+}

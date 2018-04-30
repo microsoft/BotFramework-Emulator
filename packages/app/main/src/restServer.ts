@@ -68,7 +68,8 @@ export class RestServer {
       botUrl => emulator.ngrok.getServiceUrl(botUrl),
       {
         fetch,
-        loggerOrLogService: mainWindow.logService
+        loggerOrLogService: mainWindow.logService,
+        tunnelingServiceUrl: () => emulator.ngrok.getNgrokServiceUrl()
       }
     );
   }

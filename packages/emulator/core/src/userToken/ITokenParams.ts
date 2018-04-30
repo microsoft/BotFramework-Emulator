@@ -31,13 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
-import { StringProvider } from '../utils/stringProvider';
-
-interface IBotEndpointOptions {
-  fetch?: (string, any) => Promise<any>;
-  use10Tokens?: boolean;
-  useCodeValidation?: boolean;
+export interface ITokenParams {
+    userId: string;
+    connectionName: string;
 }
-
-export default IBotEndpointOptions

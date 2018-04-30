@@ -31,13 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import * as HttpStatus from 'http-status-codes';
+import { RequestHandler, Server } from 'restify';
 
-import { StringProvider } from '../utils/stringProvider';
+import BotEmulator from '../botEmulator';
+import createJsonBodyParserMiddleware from '../utils/jsonBodyParser';
 
-interface IBotEndpointOptions {
-  fetch?: (string, any) => Promise<any>;
-  use10Tokens?: boolean;
-  useCodeValidation?: boolean;
+import getSessionId from './middleware/getSessionId';
+
+export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandler[]) {
+  const jsonBodyParser = createJsonBodyParserMiddleware();
+
+  server.get(
+    '/v3/directline/session/getsessionid',
+    getSessionId(botEmulator)
+  );
 }
-
-export default IBotEndpointOptions

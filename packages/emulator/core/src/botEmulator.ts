@@ -51,6 +51,8 @@ import registerAttachmentRoutes from './attachments/registerRoutes';
 import registerBotStateRoutes from './botState/registerRoutes';
 import registerConversationRoutes from './conversations/registerRoutes';
 import registerDirectLineRoutes from './directLine/registerRoutes';
+import registerSessionRoutes from './session/registerRoutes';
+import registerUserTokenRoutes from './userToken/registerRoutes';
 import stripEmptyBearerToken from './utils/stripEmptyBearerToken';
 import Users from './facility/users';
 
@@ -116,6 +118,8 @@ export default class BotEmulator {
     registerBotStateRoutes(this, router, uses);
     registerConversationRoutes(this, router, uses);
     registerDirectLineRoutes(this, router, uses);
+    registerSessionRoutes(this, router, uses);
+    registerUserTokenRoutes(this, router, uses);
 
     return this;
   }

@@ -114,6 +114,12 @@ export interface ISigninCard {
     buttons: ICardAction[];         // Sign in action 
 }
 
+export interface IOAuthCard {
+    text: string;                   // Title of the Card 
+    connectionName: string;         // OAuth connection name
+    buttons: ICardAction[];         // Sign in action 
+}
+
 export interface IKeyboard {
     buttons: ICardAction[];         // Set of actions applicable to the current card. 
 }

@@ -31,13 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import * as HttpStatus from 'http-status-codes';
+import * as Restify from 'restify';
 
-import { StringProvider } from '../utils/stringProvider';
+import BotEmulator from '../../botEmulator';
+import sendErrorResponse from '../../utils/sendErrorResponse';
 
-interface IBotEndpointOptions {
-  fetch?: (string, any) => Promise<any>;
-  use10Tokens?: boolean;
-  useCodeValidation?: boolean;
+export default function sendTokenResponse(botEmulator: BotEmulator) {
+  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+    const body: {
+      token: string,
+      connectionName: string } = req.body[0];
+
+    const { activityId, response, statusCode } = req['conversation'].sendTokenResponse(body.connectionName, body.token, true);
+
+    if (statusCode === HttpStatus.OK) {
+        res.send(HttpStatus.OK, body);
+    } else {
+        res.send(statusCode);
+    }
+    res.end();
+  };
 }
-
-export default IBotEndpointOptions

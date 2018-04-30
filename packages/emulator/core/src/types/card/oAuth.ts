@@ -31,13 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import ICardAction from './cardAction';
 
-import { StringProvider } from '../utils/stringProvider';
-
-interface IBotEndpointOptions {
-  fetch?: (string, any) => Promise<any>;
-  use10Tokens?: boolean;
-  useCodeValidation?: boolean;
+interface IOAuthCard {
+  text: string;                   // Title of the Card 
+  connectionName: string;         // OAuth connection name
+  buttons: ICardAction[];         // Sign in action 
 }
 
-export default IBotEndpointOptions
+export default IOAuthCard

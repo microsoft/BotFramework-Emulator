@@ -36,11 +36,13 @@ import IBotEndpoint from '../types/botEndpoint';
 import IBotEndpointOptions from './botEndpointOptions';
 import ILogger from './logger';
 import ILogService from './log/service';
+import { StringProvider } from '../utils/stringProvider';
 
 export interface IBotEmulatorOptions {
   fetch?: (string, any) => Promise<any>;
   loggerOrLogService?: (ILogger | ILogService);
   stateSizeLimitKB?: number;
+  tunnelingServiceUrl?: string | StringProvider;
 }
 
 export default IBotEmulatorOptions
