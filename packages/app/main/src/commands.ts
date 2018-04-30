@@ -75,7 +75,7 @@ export function registerCommands() {
     // try to get the bot secret from bots.json
     const botInfo = pathExistsInRecentBots(botFilePath) ? getBotInfoByPath(botFilePath) : null;
     if (botInfo && botInfo.secret) {
-      secret = botInfo.secret;
+      secret = secret || botInfo.secret;
     }
 
     // load the bot (decrypt with secret if we were able to get it)
@@ -92,7 +92,7 @@ export function registerCommands() {
     mainWindow.store.dispatch(BotActions.setActive(bot));
     mainWindow.store.dispatch(BotActions.setDirectory(botDirectory));
 
-    return mainWindow.commandService.remoteCall('bot:load', { bot, botDirectory });
+    return mainWindow.commandService.remoteCall('bot:load', bot);
   });
 
   //---------------------------------------------------------------------------
@@ -267,6 +267,21 @@ export function registerCommands() {
     if (args.some(arg => arg.includes(Protocol))) {
       const protocolArg = args.find(arg => arg.includes(Protocol));
       ProtocolHandler.parseProtocolUrlAndDispatch(protocolArg);
+    }
+    // Parse command line args to see if we are opening a .bot or .transcript file
+    if (args.some(arg => /(\.transcript)|(\.bot)$/.test(arg))) {
+      const fileToBeOpened = args.find(arg => /(\.transcript)|(\.bot)$/.test(arg));
+      if (Path.extname(fileToBeOpened) === '.bot') {
+        mainWindow.commandService.call('bot:load', fileToBeOpened);
+      } else if (Path.extname(fileToBeOpened) === '.transcript') {
+        const transcript = readFileSync(fileToBeOpened);
+        const conversationActivities = JSON.parse(transcript);
+        if (!Array.isArray(conversationActivities))
+          throw new Error('Invalid transcript file contents; should be an array of conversation activities.');
+
+        // open a transcript on the client side and pass in some extra info to differentiate it from a transcript on disk
+        mainWindow.commandService.remoteCall('transcript:open', 'deepLinkedTranscript', { activities: conversationActivities, deepLink: true });
+      }
     }
   });
 
