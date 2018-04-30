@@ -139,7 +139,7 @@ class WelcomePage extends React.Component<Props, {}> {
                   this.props.recentBots && this.props.recentBots.length ?
                     this.props.recentBots.slice(0, 10).map(bot => bot &&
                       <li key={ bot.path }>
-                        <a href="javascript:void(0);" onClick={ ev => this.onBotClick(ev, bot.path) } ><TruncateText>{ bot.displayName }</TruncateText></a>
+                        <a href="javascript:void(0);" onClick={ ev => this.onBotClick(ev, bot.path) } title={ bot.path }><TruncateText>{ bot.displayName }</TruncateText></a>
                         <TruncateText className='recent-bot-detail'>{ bot.path }</TruncateText>
                       </li>)
                     :
