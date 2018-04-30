@@ -52,7 +52,7 @@ export interface INavBarState {
 }
 
 const DEFAULT_STATE: INavBarState = {
-  selection: constants.NavBar_Files,
+  selection: constants.NavBar_Bot_Explorer,
   expanded: false
 };
 

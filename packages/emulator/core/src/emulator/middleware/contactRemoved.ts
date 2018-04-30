@@ -34,11 +34,11 @@
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import Bot from '../../bot';
+import BotEmulator from '../../botEmulator';
 import IChannelAccount from '../../types/account/channel';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
-export default function contactRemoved(bot: Bot) {
+export default function contactRemoved(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     try {
       req['conversation'].sendContactRemoved();

@@ -1,12 +1,11 @@
 import * as React from 'react';
 
-import { CommandRegistry as CommReg, IBotConfig, IExtensionConfig, uniqueId } from '@bfemulator/sdk-shared';
+import { CommandRegistry as CommReg, IBotConfig, IExtensionConfig, uniqueId, IEndpointService } from '@bfemulator/sdk-shared';
 import { FileInfo, IBotInfo, getBotDisplayName } from '@bfemulator/app-shared';
 import { showWelcomePage } from "./data/editorHelpers";
 import { ActiveBotHelper } from './ui/helpers/activeBotHelper';
 import * as LogService from './platform/log/logService';
 import * as SettingsService from './platform/settings/settingsService';
-import * as LiveChat from './ui/shell/explorer/liveChatExplorer';
 import { ExtensionManager } from './extensions';
 import BotCreationDialog from './ui/dialogs/botCreationDialog';
 import { DialogService } from './ui/dialogs/service';
@@ -62,6 +61,13 @@ export function registerCommands() {
   });
 
   //---------------------------------------------------------------------------
+  // Closes the current active bot
+  CommandRegistry.registerCommand('bot:close', () => {
+    ActiveBotHelper.confirmAndCloseBot();
+  });
+
+
+  //---------------------------------------------------------------------------
   // Browse for a .bot file and open it
   CommandRegistry.registerCommand('bot:browse-open', () => {
     ActiveBotHelper.confirmAndOpenBotFromFile();
@@ -70,10 +76,10 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Completes the client side sync of the bot:load command on the server side
   // (NOTE: should NOT be called by itself; call server side instead)
-  CommandRegistry.registerCommand('bot:load', ({ bot, botDirectory }: { bot: IBotConfig, botDirectory: string }): void => {
+  CommandRegistry.registerCommand('bot:load', (bot: IBotConfig): void => {
     if (!pathExistsInRecentBots(bot.path)) {
       // create and switch bots
-      ActiveBotHelper.confirmAndCreateBot(bot, botDirectory, '');
+      ActiveBotHelper.confirmAndCreateBot(bot, '');
       return;
     }
     ActiveBotHelper.confirmAndSwitchBots(bot.path);
@@ -113,7 +119,7 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Switches navbar tab selection to Explorer
   CommandRegistry.registerCommand('shell:show-explorer', (): void => {
-    store.dispatch(NavBarActions.select(Constants.NavBar_Files));
+    store.dispatch(NavBarActions.select(Constants.NavBar_Bot_Explorer));
   });
 
   //---------------------------------------------------------------------------
@@ -130,9 +136,15 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Open a new emulator tabbed document
-  CommandRegistry.registerCommand('livechat:new', () => {
+  CommandRegistry.registerCommand('livechat:new', (endpoint: IEndpointService) => {
     const documentId = uniqueId();
-    store.dispatch(ChatActions.newDocument(documentId, "livechat"));
+
+    store.dispatch(ChatActions.newDocument(
+      documentId,
+      'livechat',
+      { endpointId: endpoint.id }
+    ));
+
     store.dispatch(EditorActions.open(
       Constants.ContentType_LiveChat,
       documentId,
@@ -190,7 +202,7 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Sets a bot as active (called from server-side)
   CommandRegistry.registerCommand('bot:set-active', (bot: IBotConfig, botDirectory: string) => {
-    store.dispatch(BotActions.setActive(bot, botDirectory));
+    store.dispatch(BotActions.setActive(bot));
     store.dispatch(FileActions.setRoot(botDirectory));
     CommandService.remoteCall('menu:update-recent-bots');
     CommandService.remoteCall('electron:set-title-bar', getBotDisplayName(bot));

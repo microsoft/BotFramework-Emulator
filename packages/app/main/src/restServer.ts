@@ -31,8 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Bot as BotEmulator } from '@bfemulator/emulator-core';
-import { getFirstBotEndpoint } from '@bfemulator/app-shared';
+import { BotEmulator } from '@bfemulator/emulator-core';
 import { IBotConfig, IEndpointService } from '@bfemulator/sdk-shared';
 import * as CORS from 'restify-cors-middleware';
 import * as Restify from 'restify';
@@ -43,37 +42,12 @@ import * as log from './log';
 import { getActiveBot } from './botHelpers';
 import { emulator } from './emulator';
 
-function getEndpointService(): IEndpointService {
-  const bot = getActiveBot();
-  return bot && getFirstBotEndpoint(bot);
-}
-
 export class RestServer {
   private _botEmulator: BotEmulator;
   private _router: Restify.Server;
 
   public get botEmulator() {
     return this._botEmulator;
-  }
-
-  public get botId(): string {
-    const endpoint = getEndpointService();
-    return endpoint && endpoint.id;
-  }
-
-  public get botUrl(): string {
-    const endpoint = getEndpointService();
-    return endpoint && endpoint.endpoint;
-  }
-
-  public get msaAppId(): string {
-    const endpoint = getEndpointService();
-    return endpoint && endpoint.appId;
-  }
-
-  public get msaPassword(): string {
-    const endpoint = getEndpointService();
-    return endpoint && endpoint.appPassword;
   }
 
   constructor() {
@@ -91,11 +65,7 @@ export class RestServer {
     this._router.use(cors.actual);
 
     this._botEmulator = new BotEmulator(
-      () => this.botId,
-      () => this.botUrl,
-      () => emulator.ngrok.getServiceUrl(this.botUrl),
-      () => this.msaAppId,
-      () => this.msaPassword,
+      botUrl => emulator.ngrok.getServiceUrl(botUrl),
       {
         fetch,
         loggerOrLogService: mainWindow.logService,

@@ -39,6 +39,7 @@ export const CREATE ='BOT/CREATE';
 export const LOAD = 'BOT/LOAD';
 export const PATCH = 'BOT/PATCH';
 export const SET_ACTIVE = 'BOT/SET_ACTIVE';
+export const CLOSE = 'BOT/CLOSE';
 
 export function create(bot: IBotConfig, botFilePath: string, secret: string): BotAction {
   return {
@@ -72,12 +73,18 @@ export function patch(bot: IBotConfig, secret?: string): BotAction {
     }
   };
 }
-export function setActive(bot: IBotConfig, botDirectory: string): BotAction {
+export function setActive(bot: IBotConfig): BotAction {
   return {
     type: SET_ACTIVE,
     payload: {
-      bot,
-      botDirectory
+      bot
     }
+  };
+}
+
+export function close(): BotAction {
+  return {
+    type: CLOSE,
+    payload: {}
   };
 }

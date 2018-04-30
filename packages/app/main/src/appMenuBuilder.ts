@@ -109,6 +109,12 @@ export const AppMenuBuilder = new class AppMenuBuilder implements IAppMenuBuilde
         click: () => {
           mainWindow.commandService.remoteCall('bot:browse-open');
         }
+      },
+      {
+        label: "Close Bot",
+        click: () => {
+          mainWindow.commandService.remoteCall('bot:close');
+        }
       }];
 
     if (recentBots && recentBots.length) {
@@ -219,6 +225,8 @@ export const AppMenuBuilder = new class AppMenuBuilder implements IAppMenuBuilde
   }
 
   getHelpMenu(): Electron.MenuItemConstructorOptions {
+    let appName = Electron.app.getName();
+    let version = Electron.app.getVersion();
     return {
       role: 'help',
       submenu: [
@@ -232,8 +240,13 @@ export const AppMenuBuilder = new class AppMenuBuilder implements IAppMenuBuilde
           click: () => mainWindow.commandService.remoteCall('shell:open-external-link', 'https://go.microsoft.com/fwlink/?LinkId=512132')
         },
         {
-          label: 'Credits',
+          // TODO: Proper link for the license instead of third party credits
+          label: 'License',
           click: () => mainWindow.commandService.remoteCall('shell:open-external-link', 'https://aka.ms/l7si1g')
+        },
+        {
+          label: 'Credits',
+          click: () => mainWindow.commandService.remoteCall('shell:open-external-link',  'https://aka.ms/Ud5ga6')
         },
         { type: 'separator' },
         {
@@ -251,8 +264,11 @@ export const AppMenuBuilder = new class AppMenuBuilder implements IAppMenuBuilde
         { type: 'separator' },
         {
           label: "About",
-          click: () => mainWindow.commandService.remoteCall('shell:about')
-        },
+          click: () =>Electron.dialog.showMessageBox(mainWindow.browserWindow, {
+            type: 'info',
+            title: appName, 
+            message: appName +'\r\nversion: ' + version})
+        }
       ]
     };
   }

@@ -1,7 +1,4 @@
 {
-  "directories": {
-    "output": "./installer/redist/windows/nsis"
-  },
   "nsis": {
     "guid": "${appId}",
     "include": "./scripts/config/resources/nsis/installer.nsh",

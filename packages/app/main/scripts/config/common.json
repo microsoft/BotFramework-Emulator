@@ -41,9 +41,10 @@
     "!src${/*}",
     "!**/{tsconfig.json,gulpfile.js,README.md,getlicenses.cmd}",
     "!**/node_modules/@types",
-    "!**/scripts",
+    "!./scripts",
     "!**/cache",
-    "!**/installer"
+    "!./installer",
+    "!./dist"
   ],
   "electronDownload": {
     "cache": "./installer/cache",

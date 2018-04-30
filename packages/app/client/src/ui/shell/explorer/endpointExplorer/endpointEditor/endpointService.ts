@@ -1,4 +1,4 @@
-import { IEndpointService, ServiceType } from '@bfemulator/sdk-shared';
+import { IEndpointService, ServiceType, uniqueId } from '@bfemulator/sdk-shared';
 
 export class EndpointService implements IEndpointService {
   public readonly type = ServiceType.Endpoint;
@@ -6,7 +6,7 @@ export class EndpointService implements IEndpointService {
   public appId = '';
   public appPassword = '';
   public endpoint = '';
-  public id = '';
+  public id = uniqueId();
   public name = '';
 
   constructor(source: Partial<IEndpointService>) {

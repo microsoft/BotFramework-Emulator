@@ -9,7 +9,7 @@ const CSS = css({
   display: 'flex',
   flexFlow: 'column nowrap',
   width: '100%',
-  paddingBottom: '20px',
+  paddingBottom: '22px',
   fontFamily: Fonts.FONT_FAMILY_DEFAULT,
 
   '& > *': {
@@ -23,6 +23,7 @@ const CSS = css({
     boxSizing: 'border-box',
     border: '1px solid transparent',
     width: '100%',
+    
     '&[aria-invalid="true"]': {
       border: `1px solid ${Colors.C15}`
     }
@@ -32,7 +33,7 @@ const CSS = css({
     fontSize: '12px',
     height: '16px',
     lineHeight: '16px',
-    marginBottom: '12px'
+    marginBottom: '6px'
   },
 
   '& .error': {

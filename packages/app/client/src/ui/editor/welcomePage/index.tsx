@@ -15,7 +15,7 @@ const CSS = css({
   },
 
   '& .section': {
-    marginBottom: '5em',
+    marginBottom: '34px',
     width: 'auto',
     maxWidth: '100%'
   },
@@ -84,19 +84,19 @@ const CSS = css({
   },
 
   '& .open-bot': {
-    marginTop: '8px',
-    marginBottom: '8px'
+    marginTop: '24px',
+    marginBottom: '16px',
+    width: '180px',
+    height: '26px',
+
+    '& .primary-button-text': {
+      lineHeight: '26px'
+    }
   },
 
-  '& .new-bot': {
-    marginBottom: '8px'
-  },
-
-  '& .big-button': {
-    width: '140px',
-    height: '30px'
+  '& .cta-link': {
+    whiteSpace: 'normal'
   }
-
 });
 
 interface Props {
@@ -126,13 +126,11 @@ class WelcomePage extends React.Component<Props, {}> {
           <Column>
             <div className="section">
               <SmallHeader>Start</SmallHeader>
-              <span>Start talking to your bot by connecting to an endpoint or by opening a bot saved locally.</span>
+              <span>Start talking to your bot by connecting to an endpoint or by opening a bot saved locally. More about working locally with a bot.</span>
               <Row>
                 <PrimaryButton className="open-bot big-button" text="Open Bot" onClick={ this.onOpenBotClick } />
               </Row>
-              <Row>
-                <PrimaryButton className="new-bot big-button" text="New Bot" onClick={ this.onNewBotClick } />
-              </Row>
+              <span>If you don’t have a bot configuration, <a className="cta-link" href="javascript:void(0)" onClick={ this.onNewBotClick }>create a new bot configuration.</a></span>
             </div>
             <div className="section">
               <SmallHeader>My Bots</SmallHeader>
@@ -141,7 +139,7 @@ class WelcomePage extends React.Component<Props, {}> {
                   this.props.recentBots && this.props.recentBots.length ?
                     this.props.recentBots.slice(0, 10).map(bot => bot &&
                       <li key={ bot.path }>
-                        <a href="javascript:void(0);" onClick={ ev => this.onBotClick(ev, bot.path) } ><TruncateText>{ bot.displayName }</TruncateText></a>
+                        <a href="javascript:void(0);" onClick={ ev => this.onBotClick(ev, bot.path) } title={ bot.path }><TruncateText>{ bot.displayName }</TruncateText></a>
                         <TruncateText className='recent-bot-detail'>{ bot.path }</TruncateText>
                       </li>)
                     :
@@ -152,21 +150,13 @@ class WelcomePage extends React.Component<Props, {}> {
           </Column>
           <Column className='right-column'>
             <div className="section">
-              <SmallHeader>Tutorials</SmallHeader>
-              <ul>
-                <li><a href='javascript:void(0);' title=''><TruncateText>VIDEO: Getting started with the Bot Framework Emulator</TruncateText></a></li>
-                <li><a href='javascript:void(0);' title=''><TruncateText>VIDEO: Creating bots with the BotBuilder SDK</TruncateText></a></li>
-              </ul>
-            </div>
-            <div className="section">
               <SmallHeader>Help</SmallHeader>
               <ul>
-                <li><a href='javascript:void(0);' title=''><TruncateText>What is the Bot Framework Emulator?</TruncateText></a></li>
-                <li><a href='javascript:void(0);' title=''><TruncateText>BotBuilder SDK Documentation</TruncateText></a></li>
-                <li><a href='javascript:void(0);' title=''><TruncateText>BotBuilder SDK API Reference</TruncateText></a></li>
-                <li><a href='javascript:void(0);' title=''><TruncateText>Samples</TruncateText></a></li>
-                <li><a href='javascript:void(0);' title=''><TruncateText>GitHub repository</TruncateText></a></li>
-                <li><a href='javascript:void(0);' title=''><TruncateText>Report an issue</TruncateText></a></li>
+                <li><a href='https://aka.ms/BotBuilderOverview'><TruncateText>Overview</TruncateText></a></li>
+                <li><a href='https://aka.ms/bbtools'><TruncateText>GitHub Repository</TruncateText></a></li>
+                <li><a href='https://aka.ms/BotBuilderLocalDev'><TruncateText>Starting with Local Development</TruncateText></a></li>
+                <li><a href='https://aka.ms/BotBuilderAZCLI'><TruncateText>Starting with Azure CLI</TruncateText></a></li>
+                <li><a href='https://aka.ms/BotBuilderIbiza'><TruncateText>Starting with the Azure Portal</TruncateText></a></li>
               </ul>
             </div>
           </Column>

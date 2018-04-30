@@ -5,4 +5,5 @@ export interface Entity {
   endIndex: number;
   resolution: any;
   score: number;
+  role: string;
 }

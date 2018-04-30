@@ -1,12 +1,13 @@
 import * as React from 'react';
-import { ExplorerBarHeader, Title, Accessories } from '../explorerBarHeader';
-import { ExplorerBarBody } from '../explorerBarBody';
-import { getBotDisplayName } from '@bfemulator/app-shared';
+
 import { CommandService } from '../../../../platform/commands/commandService';
-import * as botHelpers from '../../../../data/botHelpers';
-import LiveChatExplorer from '../liveChatExplorer';
-import BotNotOpenExplorer from '../botNotOpenExplorer';
+import { EndpointExplorerContainer } from '../endpointExplorer';
+import { ExplorerBarBody } from '../explorerBarBody';
+import { ExplorerBarHeader, Title, Accessories } from '../explorerBarHeader';
+import { getBotDisplayName } from '@bfemulator/app-shared';
 import { TranscriptExplorer } from '../transcriptExplorer';
+import * as botHelpers from '../../../../data/botHelpers';
+import BotNotOpenExplorer from '../botNotOpenExplorer';
 
 export class IAssetExplorerBarProps {
   activeBot: string;
@@ -29,7 +30,7 @@ export default class AssetExplorerBar extends React.Component<IAssetExplorerBarP
       <>
         <ExplorerBarHeader>
           <Title>
-            { this.props.activeBot ? getBotDisplayName(activeBot) : false }
+            Bot Explorer
           </Title>
           <Accessories>
             { this.props.activeBot ? <span className="accessory bot-settings-icon" onClick={ this.onClickSettings } /> : false }
@@ -38,7 +39,7 @@ export default class AssetExplorerBar extends React.Component<IAssetExplorerBarP
         <ExplorerBarBody>
           { this.props.activeBot ? (
             <>
-              <LiveChatExplorer />
+              <EndpointExplorerContainer title="Endpoint" />
               <TranscriptExplorer />
             </>
           )

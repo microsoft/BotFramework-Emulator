@@ -62,6 +62,13 @@ export namespace Colors {
   export const C27 = '#C5C5C5';
   export const C28 = '#D5D5D5';
   export const C29 = '#333333';
+  export const C30 = '#F4F4F4';
+  export const C31 = '#4A4A4A';
+  export const C32 = '#777777';
+  export const C33 = '#EAEAEA';
+  export const C34 = '#A6A6A6';
+  export const C35 = '#BFBFBF';
+  export const C36 = '#C8C8C8';
 
   export const APP_BACKGROUND_DARK = C8;
   export const APP_FOREGROUND_DARK = C2;
@@ -79,11 +86,11 @@ export namespace Colors {
 
   export const BUTTON_SECONDARY_BACKGROUND_DARK = C28;
   export const BUTTON_SECONDARY_FOREGROUND_DARK = C29;
-  export const BUTTON_SECONDARY_HOVER_DARK = C11;
-  export const BUTTON_SECONDARY_FOCUS_DARK = C11;
-  export const BUTTON_SECONDARY_ACTIVE_DARK = C11;
-  export const BUTTON_SECONDARY_DISABLED_BACKGROUND_DARK = C2;
-  export const BUTTON_SECONDARY_DISABLED_FOREGROUND_DARK = C22;
+  export const BUTTON_SECONDARY_HOVER_DARK = C35;
+  export const BUTTON_SECONDARY_FOCUS_DARK = C35;
+  export const BUTTON_SECONDARY_ACTIVE_DARK = C35;
+  export const BUTTON_SECONDARY_DISABLED_BACKGROUND_DARK = C33;
+  export const BUTTON_SECONDARY_DISABLED_FOREGROUND_DARK = C34;
 
   export const SPLITTER_BACKGROUND_DARK = 'transparent';
 
@@ -149,4 +156,11 @@ export namespace Colors {
 
   export const INPUT_ERR_BACKGROUND_DARK = C24;
   export const INPUT_ERR_FOREGROUND_DARK = C25;
+
+  export const INPUT_TEXT_DARK = C31;
+  export const INPUT_PLACEHOLDER_TEXT_DARK = C32;
+
+  export const DIALOG_BACKGROUND_DARK = C30;
+  export const DIALOG_FOREGROUND_DARK = C31;
+  export const DIALOG_INPUT_BORDER_DARK = C36;
 }

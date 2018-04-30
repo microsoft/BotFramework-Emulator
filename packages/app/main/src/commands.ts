@@ -1,6 +1,6 @@
 import { addIdToBotEndpoints, IFrameworkSettings, newBot, newEndpoint, IBotInfo, getBotDisplayName } from '@bfemulator/app-shared';
 import { Conversation } from '@bfemulator/emulator-core';
-import { CommandRegistry as CommReg, IActivity, IBotConfig, uniqueId, IConnectedService, ServiceType } from '@bfemulator/sdk-shared';
+import { CommandRegistry as CommReg, IActivity, IBotConfig, uniqueId, IConnectedService, ServiceType, IEndpointService } from '@bfemulator/sdk-shared';
 import * as Electron from 'electron';
 import { app, Menu } from 'electron';
 import * as Fs from 'fs';
@@ -37,17 +37,14 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Create a bot
-  CommandRegistry.registerCommand('bot:create', async (bot: IBotConfig, botDirectory: string, secret: string): Promise<IBotConfig> => {
-    const botFilePath = Path.join(botDirectory, bot.name + '.bot');
-    bot.path = botFilePath;
-
+  CommandRegistry.registerCommand('bot:create', async (bot: IBotConfig, botDirectory: string, secret: string): Promise<IBotConfig> => {// create and add bot entry to bots.json
     // create and add bot entry to bots.json
     const botsJsonEntry: IBotInfo = {
-      path: botFilePath,
+      path: bot.path,
       displayName: getBotDisplayName(bot),
       secret
     };
-    await patchBotsJson(botFilePath, botsJsonEntry);
+    await patchBotsJson(bot.path, botsJsonEntry);
 
     // save the bot
     try {
@@ -87,9 +84,13 @@ export function registerCommands() {
       // user failed to enter a valid secret for an encrypted bot
       throw new Error('No secret provided to decrypt encrypted bot.');
 
+    // set up file watcher
+    BotProjectFileWatcher.watch(botFilePath);
+
     // set bot as active
     const botDirectory = Path.dirname(botFilePath);
-    mainWindow.store.dispatch(BotActions.setActive(bot, botDirectory));
+    mainWindow.store.dispatch(BotActions.setActive(bot));
+    mainWindow.store.dispatch(BotActions.setDirectory(botDirectory));
 
     return mainWindow.commandService.remoteCall('bot:load', { bot, botDirectory });
   });
@@ -103,7 +104,7 @@ export function registerCommands() {
     if (botInfo && botInfo.secret) {
       secret = botInfo.secret;
     }
-    
+
     // load the bot (decrypt with secret if we were able to get it)
     let bot = await loadBotWithRetry(botPath, secret);
     if (!bot) {
@@ -114,10 +115,42 @@ export function registerCommands() {
     // set up the file watcher
     BotProjectFileWatcher.watch(botPath);
 
+    // set active bot and active directory
     const botDirectory = Path.dirname(botPath);
-    mainWindow.store.dispatch(BotActions.setActive(bot, botDirectory));
+    mainWindow.store.dispatch(BotActions.setActive(bot));
+    mainWindow.store.dispatch(BotActions.setDirectory(botDirectory));
+    mainWindow.commandService.call('bot:restart-endpoint-service');
 
     return { bot, botDirectory };
+  });
+
+  //---------------------------------------------------------------------------
+  // Restart emulator endpoint service
+  CommandRegistry.registerCommand('bot:restart-endpoint-service', async () => {
+    const bot = getActiveBot();
+
+    emulator.framework.server.botEmulator.facilities.endpoints.reset();
+
+    bot.services.filter(s => s.type === ServiceType.Endpoint).forEach(service => {
+      const endpoint = service as IEndpointService;
+
+      emulator.framework.server.botEmulator.facilities.endpoints.push(
+        endpoint.id,
+        {
+          botId: endpoint.id,
+          botUrl: endpoint.endpoint,
+          msaAppId: endpoint.appId,
+          msaPassword: endpoint.appPassword
+        }
+      );
+    });
+  });
+
+  //---------------------------------------------------------------------------
+  // Close active bot (called from client-side)
+  CommandRegistry.registerCommand('bot:close', async (): Promise<void> => {
+    BotProjectFileWatcher.dispose();
+    mainWindow.store.dispatch(BotActions.close());
   });
 
   //---------------------------------------------------------------------------
@@ -135,11 +168,12 @@ export function registerCommands() {
         botConfig.services[index] = existing;
       } else {
         // Add new service
-        service.type = serviceType;
+        if (service.type != serviceType)
+          throw new Error('serviceType does not match');
         botConfig.connectService(service);
       }
       try {
-        botConfig.Save(botInfo.path);
+        botConfig.save(botInfo.path);
       } catch (e) {
         console.error(`bot:add-or-update-service: Error trying to save bot: ${e}`);
         throw e;
@@ -156,7 +190,7 @@ export function registerCommands() {
       const botConfig = toSavableBot(activeBot, botInfo.secret)
       botConfig.disconnectService(serviceType, serviceId);
       try {
-        botConfig.Save(botInfo.path);
+        botConfig.save(botInfo.path);
       } catch (e) {
         console.error(`bot:remove-service: Error trying to save bot: ${e}`);
         throw e;
@@ -208,10 +242,6 @@ export function registerCommands() {
       throw e;
     }
   });
-
-  //---------------------------------------------------------------------------
-  // Call path.basename()
-  CommandRegistry.registerCommand('path:basename', (path: string): string => Path.basename(path));
 
   //---------------------------------------------------------------------------
   // Client notifying us it's initialized and has rendered
@@ -269,21 +299,18 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Saves the conversation to a transcript file, with user interaction to set filename.
-  CommandRegistry.registerCommand('emulator:save-transcript-to-file', (conversationId: string): void => {
+  CommandRegistry.registerCommand('emulator:save-transcript-to-file', async (conversationId: string): Promise<void> => {
     const activeBot: IBotConfig = getActiveBot();
     if (!activeBot) {
       throw new Error('save-transcript-to-file: No active bot.');
-    }
-
-    const path = Path.resolve(mainWindow.store.getState().bot.currentBotDirectory);
-    if (!path || !path.length) {
-      throw new Error('save-transcript-to-file: Project directory not set');
     }
 
     const conversation = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
     if (!conversation) {
       throw new Error(`save-transcript-to-file: Conversation ${conversationId} not found.`);
     }
+
+    const path = Path.resolve(mainWindow.store.getState().bot.currentBotDirectory) || '';
 
     const filename = showSaveDialog(mainWindow.browserWindow, {
       filters: [
@@ -298,9 +325,27 @@ export function registerCommands() {
       buttonLabel: "Save"
     });
 
+    // If there is no current bot directory, we should set the directory
+    // that the transcript is saved in as the bot directory, copy the botfile over,
+    // change the bots.json entry, and watch the directory.
+    if (!path && filename && filename.length) {
+      const bot = getActiveBot();
+      let botInfo = getBotInfoByPath(bot.path);
+      const saveableBot = toSavableBot(bot, botInfo.secret);
+      const botDirectory = Path.dirname(filename);
+      const botPath = Path.join(botDirectory, `${bot.name}.bot`);
+      botInfo = { ...botInfo, path: botPath };
+
+      await saveableBot.save(botPath);
+      await patchBotsJson(botPath, botInfo);
+      await BotProjectFileWatcher.watch(botPath);
+      mainWindow.store.dispatch(BotActions.setDirectory(botDirectory));
+    }
+
     if (filename && filename.length) {
       mkdirpSync(Path.dirname(filename));
-      writeFile(filename, conversation.getTranscript());
+      const transcripts = await conversation.getTranscript();
+      writeFile(filename, transcripts);
     }
   });
 
@@ -364,36 +409,32 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Get a speech token
-  CommandRegistry.registerCommand('speech-token:get', (authIdEvent: string, conversationId: string) => {
-    return emulator.getSpeechToken(false);
+  CommandRegistry.registerCommand('speech-token:get', (endpointId: string, refresh: boolean) => {
+    const endpoint = emulator.framework.server.botEmulator.facilities.endpoints.get(endpointId);
+
+    return endpoint && endpoint.getSpeechToken(refresh);
   });
 
   //---------------------------------------------------------------------------
-  // Refresh a speech token
-  CommandRegistry.registerCommand('speech-token:refresh', (authIdEvent: string, conversationId: string) => {
-    return emulator.getSpeechToken(true);
-  });
-
-  //---------------------------------------------------------------------------
-  // Creates a new conversation object
-  CommandRegistry.registerCommand('conversation:new', (mode: string, conversationId?: string): Conversation => {
-    if ((mode !== 'transcript') && (mode !== 'livechat')) {
-      throw new Error('A mode of either "transcript" or "livechat" must be provided to "conversation:new"');
-    }
-
+  // Creates a new conversation object for transcript
+  CommandRegistry.registerCommand('transcript:new', (conversationId: string): Conversation => {
     // get the active bot or mock one
     let bot: IBotConfig = getActiveBot();
+
     if (!bot) {
       bot = newBot();
-      const endpoint = newEndpoint();
-      bot.services.push(endpoint);
+      bot.services.push(newEndpoint());
       mainWindow.store.dispatch(BotActions.mockAndSetActive(bot));
     }
 
-    // create a conversation object
-    conversationId = conversationId || `${uniqueId()}|${mode}`;
     // TODO: Move away from the .users state on legacy emulator settings, and towards per-conversation users
-    const conversation = emulator.framework.server.botEmulator.facilities.conversations.newConversation(emulator.framework.server.botEmulator, { id: uniqueId(), name: "User" }, conversationId);
+    const conversation = emulator.framework.server.botEmulator.facilities.conversations.newConversation(
+      emulator.framework.server.botEmulator,
+      null,
+      { id: uniqueId(), name: 'User' },
+      conversationId
+    );
+
     return conversation;
   });
 

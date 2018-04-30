@@ -34,9 +34,9 @@
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import Bot from '../../bot';
+import BotEmulator from '../../botEmulator';
 
-export default function options(bot: Bot) {
+export default function options(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     res.send(HttpStatus.OK);
     res.end();

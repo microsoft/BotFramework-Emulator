@@ -40,10 +40,9 @@ function* openAzureBotServiceContextMenu(action: AzureBotServiceAction<AzureBotS
 }
 
 function* openAzureBotServiceDeepLink(action: AzureBotServiceAction<AzureBotServicePayload>): IterableIterator<any> {
-  // TODO figure out deep link to ABS
-  // const { kbid } = action.payload.azureBotService;
-  // const link = `https://qnamaker.ai/Edit/KnowledgeBase?kbid=${kbid}`;
-  // yield CommandService.remoteCall('electron:openExternal', link);
+  const { tenantId, subscriptionId, resourceGroup, id } = action.payload.azureBotService;
+  const link = `https://ms.portal.azure.com/#@${tenantId}/resource/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.BotService/botServices/${id}/channels`;
+  yield CommandService.remoteCall('electron:openExternal', link);
 }
 
 function* removeAzureBotServiceFromActiveBot(azureBotService: IAzureBotService): IterableIterator<any> {

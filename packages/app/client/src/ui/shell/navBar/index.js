@@ -101,8 +101,8 @@ const CSS = css({
       cursor: 'default'
     },
 
-    '& > li.files > div': {
-      backgroundImage: 'url(./external/media/ic_files.svg)'
+    '& > li.bot-explorer > div': {
+      backgroundImage: 'url(./external/media/ic_chat.svg)'
     },
 
     '& > li.assets > div': {
@@ -141,7 +141,7 @@ class NavBar extends React.Component {
     this.handleAnalyticsClick = this.handleClick.bind(this, Constants.NavBar_Analytics);
     this.handleAppClick = this.handleClick.bind(this, Constants.NavBar_App);
     this.handleAssetsClick = this.handleClick.bind(this, Constants.NavBar_Assets);
-    this.handleFilesClick = this.handleClick.bind(this, Constants.NavBar_Files);
+    this.handleFilesClick = this.handleClick.bind(this, Constants.NavBar_Bot_Explorer);
     this.handleNotificationsClick = this.handleClick.bind(this, Constants.NavBar_Notifications);
     this.handleServicesClick = this.handleClick.bind(this, Constants.NavBar_Services);
     this.handleSettingsClick = this.handleSettingsClick.bind(this);
@@ -172,8 +172,8 @@ class NavBar extends React.Component {
     return (
       <nav className={ CSS }>
         <ul className="app">
-          <li role="button" className="files" onClick={ this.handleFilesClick } title="Files">
-            <div className={ classNames({ selected: selection === Constants.NavBar_Files }) } />
+          <li role="button" className="bot-explorer" onClick={ this.handleFilesClick } title="Bot Explorer">
+            <div className={ classNames({ selected: selection === Constants.NavBar_Bot_Explorer }) } />
           </li>
           <li role="button" className="services" onClick={ this.handleServicesClick } title="Services">
             <div className={ classNames({ selected: selection === Constants.NavBar_Services }) } />

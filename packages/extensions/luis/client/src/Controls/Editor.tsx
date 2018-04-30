@@ -4,7 +4,7 @@ import { css } from 'glamor';
 import IntentViewer from './IntentViewer';
 import { IntentEditor, IntentEditorMode } from './IntentEditor';
 import { Intent } from '../Models/Intent';
-import { RecognizerResult } from '../Models/RecognizerResults';
+import { RecognizerResult, RecognizerResultIntent } from '../Models/RecognizerResults';
 import { IntentInfo } from '../Luis/IntentInfo';
 import EntitiesViewer from './EntitiesViewer';
 import { AppInfo } from '../Luis/AppInfo';
@@ -40,11 +40,11 @@ class Editor extends Component<EditorProps, EditorState> {
     if (!this.props.recognizerResult || !this.props.recognizerResult.intents) {
       return { intent: NoneIntent, score: 0.0 };
     }
-    let intents = this.props.recognizerResult.intents;
+    let intents: {[key: string]: RecognizerResultIntent } = this.props.recognizerResult.intents;
     let topIntent = Object.keys(intents).reduce((a, b, i, arr) => {
-      return intents[a] > intents[b] ? a : b;
+      return intents[a].score > intents[b].score ? a : b;
     });
-    return { intent: topIntent, score: intents[topIntent] };
+    return { intent: topIntent, score: intents[topIntent].score };
   }
 
   render() {

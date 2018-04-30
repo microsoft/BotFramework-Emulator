@@ -34,10 +34,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import * as EditorActions from '../../../data/action/editorActions';
-import * as ChatActions from '../../../data/action/chatActions';
-import Tab from './tab';
+import { ServiceType } from '@bfemulator/sdk-shared';
+
 import { getTabGroupForDocument } from '../../../data/editorHelpers';
+import * as ChatActions from '../../../data/action/chatActions';
+import * as EditorActions from '../../../data/action/editorActions';
+import Tab from './tab';
 
 export class EmulatorTab extends React.Component {
   constructor(props, context) {
@@ -60,15 +62,27 @@ export class EmulatorTab extends React.Component {
   }
 }
 
-export default connect((state, { mode, documentId }) => ({
-  title: titleForMode(mode),
-  active: state.editor.editors[state.editor.activeEditor].activeDocumentId === documentId
-}))(EmulatorTab);
+export default connect((state, { mode, documentId }) => {
+  let title = 'Transcript';
 
-function titleForMode(mode) {
-  switch (mode) {
-    case "livechat": return "Live Chat";
-    case "transcript": return "Transcript";
-    default: "???"
+  if (mode === 'livechat') {
+    title = 'Live Chat';
+
+    const { services = [] } = state.bot.activeBot || {};
+    const numEndpointServices = services.filter(s => s.type === ServiceType.Endpoint).length;
+
+    if (numEndpointServices > 1) {
+      const { endpointId } = state.chat.chats[documentId] || {};
+      const botEndpoint = services.find(s => s.id === endpointId);
+
+      if (botEndpoint) {
+        title += ` (${ botEndpoint.name })`;
+      }
+    }
   }
-}
+
+  return {
+    active: state.editor.editors[state.editor.activeEditor].activeDocumentId === documentId,
+    title
+  };
+})(EmulatorTab);

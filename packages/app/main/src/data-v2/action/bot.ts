@@ -38,6 +38,8 @@ import { BotAction } from '../reducer/bot';
 export const LOAD = 'BOT/LOAD';
 export const PATCH = 'BOT/PATCH';
 export const SET_ACTIVE = 'BOT/SET_ACTIVE';
+export const SET_DIRECTORY = 'BOT/SET_DIRECTORY';
+export const CLOSE = 'BOT/CLOSE';
 
 export function load(bots: IBotInfo[]): BotAction {
   // prune bad bots
@@ -61,23 +63,40 @@ export function patch(bot: IBotConfig, secret?: string): BotAction {
   };
 }
 
-export function setActive(bot: IBotConfig, botDirectory: string): BotAction {
+export function setActive(bot: IBotConfig): BotAction {
   return {
     type: SET_ACTIVE,
     payload: {
-      bot,
-      botDirectory
+      bot
     }
   };
 }
+
+export function setDirectory(directory: string): BotAction {
+  return {
+    type: SET_DIRECTORY,
+    payload: {
+      directory
+    }
+  };
+}
+
+export function close(): BotAction {
+  return {
+    type: CLOSE,
+    payload: {}
+  };
+}
+
 
 export function mockAndSetActive(mock?: IBotConfig): BotAction {
   const bot = newBot({
       name: 'Random Bot',
       description: '',
+      secretKey:'',
       services: []
     },
     mock
   );
-  return setActive(bot, '');
+  return setActive(bot);
 }

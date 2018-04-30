@@ -34,14 +34,14 @@
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import Bot from '../../bot';
+import BotEmulator from '../../botEmulator';
 import IAttachmentData from '../../types/attachment/data';
 import IConversationAPIPathParameters from '../conversationAPIPathParameters';
 import IResourceResponse from '../../types/response/resource';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
-export default function uploadAttachment(bot: Bot) {
-  const { logRequest, logResponse } = bot.facilities.logger;
+export default function uploadAttachment(botEmulator: BotEmulator) {
+  const { logRequest, logResponse } = botEmulator.facilities.logger;
 
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const attachmentData = <IAttachmentData>req.body;
@@ -50,7 +50,7 @@ export default function uploadAttachment(bot: Bot) {
     logRequest(conversationParameters.conversationId, 'service', req);
 
     try {
-      const resourceId = bot.facilities.attachments.uploadAttachment(attachmentData);
+      const resourceId = botEmulator.facilities.attachments.uploadAttachment(attachmentData);
       const resourceResponse: IResourceResponse = { id: resourceId };
 
       res.send(HttpStatus.OK, resourceResponse);

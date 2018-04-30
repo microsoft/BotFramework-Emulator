@@ -5,7 +5,6 @@ import BrowserWindow = Electron.BrowserWindow;
 import { mainWindow } from './main';
 var pjson = require('../../package.json');
 import * as semver from 'semver';
-import { auto } from 'async';
 
 export class AppUpdater {
   private _availableUpdateInfo: any = null;
@@ -70,7 +69,6 @@ export class AppUpdater {
   public quitAndInstall() {
     try {
       autoUpdater.quitAndInstall();
-    }
-    catch (e) { }
+    } catch (e) { }
   }
 }

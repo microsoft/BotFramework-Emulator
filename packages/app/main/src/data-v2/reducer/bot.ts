@@ -1,6 +1,6 @@
 import { cloneBot, getBotInfoByPath } from '../../botHelpers';
 import * as BotActions from '../action/bot';
-import { getBotDisplayName, IBotInfo, getFirstBotEndpoint } from '@bfemulator/app-shared';
+import { getBotDisplayName, IBotInfo } from '@bfemulator/app-shared';
 import { IBotConfig, IEndpointService } from '@bfemulator/sdk-shared';
 
 export interface IBotState {
@@ -23,9 +23,17 @@ export type BotAction = {
 } | {
   type: 'BOT/SET_ACTIVE',
   payload: {
-    bot: IBotConfig,
-    botDirectory: string
+    bot: IBotConfig
   }
+} | {
+  type: 'BOT/SET_DIRECTORY',
+  payload: {
+    directory: string
+  }
+ } | {
+    type: 'BOT/CLOSE',
+    payload: {  
+    }
 };
 
 const DEFAULT_STATE: IBotState = {
@@ -64,7 +72,17 @@ export const bot: any = (state: IBotState = DEFAULT_STATE, action: BotAction) =>
       recentBots.unshift(mostRecentBot);
       state = setBotFilesState(recentBots, state);
       state = setActiveBot(action.payload.bot, state);
-      state = setCurrentBotDirectory(action.payload.botDirectory, state);
+      break;
+    }
+
+    case BotActions.SET_DIRECTORY: {
+      state = setCurrentBotDirectory(action.payload.directory, state);
+      break;
+    }
+    
+    case BotActions.CLOSE: {
+      // close the active bot
+      state = setActiveBot(null, state);
       break;
     }
 

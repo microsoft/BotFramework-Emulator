@@ -34,7 +34,7 @@
 import * as HttpStatus from 'http-status-codes';
 
 import approximateObjectSize from '../utils/approximateObjectSize';
-import Bot from '../bot';
+import BotEmulator from '../botEmulator';
 import botDataKey from './botDataKey';
 import Conversation from './conversation';
 import createAPIException from '../utils/createResponse/apiException';
@@ -44,19 +44,19 @@ import { makeExternalLink } from '../utils/linkHelpers';
 
 export default class BotState {
   constructor(
-    public bot: Bot,
+    public botEmulator: BotEmulator,
     public stateSizeLimitKB: number
   ) {}
 
   private botDataStore: { [key: string]: IBotData } = {};
 
   private logBotStateApiDeprecationWarning(conversationId: string) {
-    const conversation: Conversation = this.bot.facilities.conversations.conversationById(conversationId);
+    const conversation: Conversation = this.botEmulator.facilities.conversations.conversationById(conversationId);
 
     if (conversation && !conversation.stateApiDeprecationWarningShown) {
       conversation.stateApiDeprecationWarningShown = true;
 
-      this.bot.facilities.logger.logWarning(
+      this.botEmulator.facilities.logger.logWarning(
         'Warning: The Bot Framework State API is not recommended for production environments, and may be deprecated in a future release.',
         makeExternalLink('Learn how to implement your own storage adapter.', 'https://aka.ms/botframework-state-service')
       );

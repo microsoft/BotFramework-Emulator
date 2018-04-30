@@ -40,8 +40,8 @@ function* openQnaMakerContextMenu(action: QnaMakerServiceAction<QnaMakerServiceP
 }
 
 function* openQnaMakerDeepLink(action: QnaMakerServiceAction<QnaMakerServicePayload>): IterableIterator<any> {
-  const { kbid } = action.payload.qnaMakerService;
-  const link = `https://qnamaker.ai/Edit/KnowledgeBase?kbid=${kbid}`;
+  const { kbId } = action.payload.qnaMakerService;
+  const link = `https://qnamaker.ai/Edit/KnowledgeBase?kbid=${kbId}`;
   yield CommandService.remoteCall('electron:openExternal', link);
 }
 

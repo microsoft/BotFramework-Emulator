@@ -33,50 +33,45 @@
 
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
+import onErrorResumeNext from 'on-error-resume-next';
 
-import Bot from '../../bot';
+import BotEmulator from '../../botEmulator';
+import BotEndpoint from '../../facility/botEndpoint';
 import uniqueId from '../../utils/uniqueId';
 
-export default function startConversation(bot: Bot) {
-  const { logRequest, logResponse } = bot.facilities.logger;
+export default function startConversation(botEmulator: BotEmulator) {
+  const { logRequest, logResponse } = botEmulator.facilities.logger;
 
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const auth = req.header('Authorization');
 
     // TODO: We should not use token as conversation ID
     const tokenMatch = /Bearer\s+(.+)/.exec(auth);
-    let options;
-    if (!tokenMatch || tokenMatch[1] === 'null') {
-      options = {
-        conversationId: uniqueId()
-      }
-    } else {
-      const data = tokenMatch[1];
-      const buffer = new Buffer(data, 'base64');
-      const json = buffer.toString('utf8');
-      options = JSON.parse(json);
-    }
+    const botEndpoint: BotEndpoint = req['botEndpoint'];
+    const conversationId = onErrorResumeNext(() => {
+      const optionsJson = new Buffer(tokenMatch[1], 'base64').toString('utf8');
 
-    const currentUser = bot.facilities.users.usersById(bot.facilities.users.currentUserId);
+      return JSON.parse(optionsJson).conversationId;
+    }) || uniqueId();
 
-    const conversationId = options.conversationId;
+    const currentUser = botEmulator.facilities.users.usersById(botEmulator.facilities.users.currentUserId);
 
     logRequest(conversationId, 'user', req);
 
     let created = false;
-    let conversation = bot.facilities.conversations.conversationById(conversationId);
+    let conversation = botEmulator.facilities.conversations.conversationById(conversationId);
 
     if (!conversation) {
-      conversation = bot.facilities.conversations.newConversation(bot, currentUser, conversationId);
+      conversation = botEmulator.facilities.conversations.newConversation(botEmulator, botEndpoint, currentUser, conversationId);
       // Send "bot added to conversation"
-      conversation.sendConversationUpdate([{ id: bot.botId, name: 'Bot' }], undefined);
+      conversation.sendConversationUpdate([{ id: botEndpoint.botId, name: 'Bot' }], undefined);
       // Send "user added to conversation"
       conversation.sendConversationUpdate([currentUser], undefined);
       created = true;
     } else {
-      if (conversation.members.findIndex(user => user.id === bot.botId) === -1) {
+      if (botEndpoint && conversation.members.findIndex(user => user.id === botEndpoint.botId) === -1) {
         // Sends "bot added to conversation"
-        conversation.addMember(bot.botId, 'Bot');
+        conversation.addMember(botEndpoint.botId, 'Bot');
       }
 
       if (conversation.members.findIndex(user => user.id === currentUser.id) === -1) {
@@ -88,7 +83,7 @@ export default function startConversation(bot: Bot) {
     // TODO: We should issue a real token, rather than a conversation ID
     res.json(created ? HttpStatus.CREATED : HttpStatus.OK, {
       conversationId: conversation.conversationId,
-      token: conversation.conversationId,
+      token: botEndpoint && botEndpoint.id,
       expires_in: (2 ^ 31) - 1,
       streamUrl: ''
     });

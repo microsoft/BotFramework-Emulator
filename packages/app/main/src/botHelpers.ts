@@ -77,7 +77,7 @@ export async function loadBotWithRetry(botPath: string, secret?: string): Promis
 export function toSavableBot(bot: IBotConfig, secret?: string): BotConfig {
   const botCopy = cloneBot(bot);
   const newBot: BotConfig = new BotConfig(secret);
-  
+
   // copy everything over but the internal id
   newBot.description = botCopy.description;
   newBot.name = botCopy.name;
@@ -112,10 +112,10 @@ export async function patchBotsJson(botPath: string, bot: IBotInfo): Promise<IBo
 /** Saves a bot to disk */
 export async function saveBot(bot: IBotConfig): Promise<void> {
   const botInfo = getBotInfoByPath(bot.path) || {};
-  
+
   const saveableBot = toSavableBot(bot, botInfo.secret);
 
   if (botInfo.secret)
     saveableBot.validateSecretKey();
-  return await saveableBot.Save(bot.path);
+  return await saveableBot.save(bot.path);
 }

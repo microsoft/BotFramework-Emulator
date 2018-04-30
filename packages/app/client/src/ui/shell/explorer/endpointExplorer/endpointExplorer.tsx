@@ -11,7 +11,7 @@ export interface EndpointProps extends ServicePaneProps {
 }
 
 export class EndpointExplorer extends ServicePane<EndpointProps> {
-  public state = {} as { expanded?: boolean };
+  public state = { expanded: true } as { expanded?: boolean };
 
   constructor(props, context) {
     super(props, context);
