@@ -122,7 +122,9 @@ export function registerCommands() {
     mainWindow.store.dispatch(BotActions.setDirectory(botDirectory));
     mainWindow.commandService.call('bot:restart-endpoint-service');
 
-    return { bot, botDirectory };
+    // Workaround for a JSON serialization issue in bot.services where they're an array
+    // on the Node side, but deserialize as a dictionary on the renderer side.
+    return { bot: JSON.parse(JSON.stringify(bot)), botDirectory };
   });
 
   //---------------------------------------------------------------------------
