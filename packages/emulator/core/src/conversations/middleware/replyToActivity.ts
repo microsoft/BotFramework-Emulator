@@ -39,7 +39,7 @@ import IConversationAPIPathParameters from '../conversationAPIPathParameters';
 import IGenericActivity from '../../types/activity/generic';
 import IResourceResponse from '../../types/response/resource';
 import sendErrorResponse from '../../utils/sendErrorResponse';
-import OAuthLinkEncoder from '../../utils/OAuthLinkEncoder';
+import OAuthLinkEncoder from '../../utils/oauthLinkEncoder';
 
 export default function replyToActivity(botEmulator: BotEmulator) {
   const { logRequest, logResponse } = botEmulator.facilities.logger;
