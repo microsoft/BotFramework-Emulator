@@ -34,10 +34,10 @@
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import Bot from '../../bot';
+import BotEmulator from '../../botEmulator';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
-export default function sendTokenResponse(bot: Bot) {
+export default function sendTokenResponse(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const body: {
       token: string,

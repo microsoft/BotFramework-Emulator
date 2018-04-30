@@ -34,9 +34,9 @@
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import Bot from '../../bot';
+import BotEmulator from '../../botEmulator';
 
-export default function tokenResponse(bot: Bot) {
+export default function tokenResponse(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const body: {
       token: string,
@@ -44,7 +44,7 @@ export default function tokenResponse(bot: Bot) {
 
     const conversationId = req.query.conversationId;
 
-    const conversation = bot.facilities.conversations.conversationById(conversationId);
+    const conversation = botEmulator.facilities.conversations.conversationById(conversationId);
 
     conversation.sendTokenResponse(body.connectionName, body.token, false).then(response => {
       if (response.statusCode === HttpStatus.OK) {

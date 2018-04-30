@@ -34,16 +34,16 @@
 import * as HttpStatus from 'http-status-codes';
 import { RequestHandler, Server } from 'restify';
 
-import Bot from '../bot';
+import BotEmulator from '../botEmulator';
 import createJsonBodyParserMiddleware from '../utils/jsonBodyParser';
 
 import getSessionId from './middleware/getSessionId';
 
-export default function registerRoutes(bot: Bot, server: Server, uses: RequestHandler[]) {
+export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandler[]) {
   const jsonBodyParser = createJsonBodyParserMiddleware();
 
   server.get(
     '/v3/directline/session/getsessionid',
-    getSessionId(bot)
+    getSessionId(botEmulator)
   );
 }

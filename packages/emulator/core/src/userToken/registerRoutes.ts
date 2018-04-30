@@ -34,41 +34,45 @@
 import * as HttpStatus from 'http-status-codes';
 import { RequestHandler, Server } from 'restify';
 
-import Bot from '../bot';
+import BotEmulator from '../botEmulator';
 import createBotFrameworkAuthenticationMiddleware from '../utils/botFrameworkAuthentication';
 import createJsonBodyParserMiddleware from '../utils/jsonBodyParser';
+import getBotEndpoint from '../middleware/getBotEndpoint';
 
 import getToken from './middleware/getToken';
 import emulateOAuthCards from './middleware/emulateOAuthCards';
 import signOut from './middleware/signOut';
 import tokenResponse from './middleware/tokenResponse';
 
-export default function registerRoutes(bot: Bot, server: Server, uses: RequestHandler[]) {
+export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandler[]) {
   const jsonBodyParser = createJsonBodyParserMiddleware();
-  const verifyBotFramework = bot.msaAppId ? createBotFrameworkAuthenticationMiddleware(bot.botId, bot.options.fetch) : [];
+  const verifyBotFramework = createBotFrameworkAuthenticationMiddleware(botEmulator.options.fetch);
+  const botEndpoint = getBotEndpoint(botEmulator);
 
   server.get(
     '/api/usertoken/GetToken',
     verifyBotFramework,
-    getToken(bot)
+    botEndpoint,
+    getToken(botEmulator)
   );
 
   server.post(
     '/api/usertoken/emulateOAuthCards',
     verifyBotFramework,
-    emulateOAuthCards(bot)
+    emulateOAuthCards(botEmulator)
   );
 
   server.del(
     '/api/usertoken/SignOut',
     verifyBotFramework,
-    signOut(bot)
+    botEndpoint,
+    signOut(botEmulator)
   );
 
   server.post(
     '/api/usertoken/tokenResponse',
     ...uses,
     jsonBodyParser,
-    tokenResponse(bot)
+    tokenResponse(botEmulator)
   );
 }

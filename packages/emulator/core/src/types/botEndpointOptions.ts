@@ -38,7 +38,6 @@ interface IBotEndpointOptions {
   fetch?: (string, any) => Promise<any>;
   use10Tokens?: boolean;
   useCodeValidation?: boolean;
-  tunnelingServiceUrl?: string | StringProvider
 }
 
 export default IBotEndpointOptions

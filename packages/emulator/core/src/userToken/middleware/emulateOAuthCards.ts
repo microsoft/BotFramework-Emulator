@@ -34,10 +34,10 @@
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import Bot from '../../bot';
+import BotEmulator from '../../botEmulator';
 import OAuthLinkEncoder from '../../utils/oauthLinkEncoder';
 
-export default function emulateOAuthCards(bot: Bot) {
+export default function emulateOAuthCards(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     try {
       let emulate: string = req.params['emulate'];

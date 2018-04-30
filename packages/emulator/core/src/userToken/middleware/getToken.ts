@@ -34,7 +34,8 @@
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import Bot from '../../bot';
+import BotEmulator from '../../botEmulator';
+import BotEndpoint from '../../facility/botEndpoint';
 import { ITokenResponse } from '../ITokenResponse';
 import { ITokenParams } from '../ITokenParams';
 import { TokenCache } from '../tokenCache';
@@ -44,12 +45,13 @@ interface IGetTokenParams extends ITokenParams {
   code: string;
 }
 
-export default function getToken(bot: Bot) {
+export default function getToken(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     try {
       let params: IGetTokenParams = req.params;
+      const botEndpoint: BotEndpoint = req['botEndpoint'];
 
-      let tokenResponse: ITokenResponse = TokenCache.getTokenFromCache(bot.botId, params.userId, params.connectionName);
+      let tokenResponse: ITokenResponse = TokenCache.getTokenFromCache(botEndpoint.botId, params.userId, params.connectionName);
       if (tokenResponse) {
           res.send(HttpStatus.OK, tokenResponse);
       } else {

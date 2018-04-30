@@ -68,7 +68,7 @@ export default function replyToActivity(botEmulator: BotEmulator) {
         res.end();
       }
 
-      let visitor = new OAuthLinkEncoder(bot, bot.tunnelingServiceUrl, req.headers['authorization'] as string, activity);
+      let visitor = new OAuthLinkEncoder(botEmulator, botEmulator.options.tunnelingServiceUrl, req.headers['authorization'] as string, activity);
       visitor.resolveOAuthCards(activity).then((value?: any) =>
       {
           continuation();

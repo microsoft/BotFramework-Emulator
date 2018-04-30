@@ -34,9 +34,9 @@
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import Bot from '../../bot';
+import BotEmulator from '../../botEmulator';
 
-export default function getSessionId(bot: Bot) {
+export default function getSessionId(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     res.json(HttpStatus.OK, 'emulatedSession');
   };

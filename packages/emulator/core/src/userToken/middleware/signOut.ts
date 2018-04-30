@@ -34,15 +34,17 @@
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
-import Bot from '../../bot';
+import BotEmulator from '../../botEmulator';
+import BotEndpoint from '../../facility/botEndpoint';
 import { ITokenParams } from '../ITokenParams';
 import { TokenCache } from '../tokenCache';
 
-export default function signOut(bot: Bot) {
+export default function signOut(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     try {
       let params: ITokenParams = req.params;
-      TokenCache.deleteTokenFromCache(bot.botId, params.userId, params.connectionName);
+      const botEndpoint: BotEndpoint = req['botEndpoint'];
+      TokenCache.deleteTokenFromCache(botEndpoint.botId, params.userId, params.connectionName);
 
       res.send(HttpStatus.OK);
       res.end();

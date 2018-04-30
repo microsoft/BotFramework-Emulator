@@ -44,7 +44,8 @@ import IAttachment from '../types/attachment';
 const utf8 = require('utf8');
 const btoa = require('btoa');
 var shajs = require('sha.js');
-import Bot from '../bot';
+import BotEmulator from '../botEmulator';
+import { StringProvider } from './stringProvider';
 
 export default class OAuthLinkEncoder {
     public static OAuthUrlProtocol: string = "oauthlink:";
@@ -53,13 +54,13 @@ export default class OAuthLinkEncoder {
     private emulatorUrl: string;
     private authorizationHeader: string;
     private activity: IGenericActivity; 
-    private bot: Bot;
+    private botEmulator: BotEmulator;
 
-    constructor(bot: Bot, emulatorUrl: string, authorizationHeader: string, activity: IGenericActivity) {
-        this.emulatorUrl = emulatorUrl;
+    constructor(botEmulator: BotEmulator, emulatorUrl: string | StringProvider, authorizationHeader: string, activity: IGenericActivity) {
+        this.emulatorUrl = emulatorUrl ? (typeof emulatorUrl === 'string') ? emulatorUrl : emulatorUrl() : null;;
         this.authorizationHeader = authorizationHeader;
         this.activity = activity;
-        this.bot = bot;
+        this.botEmulator = botEmulator;
     }
 
     public resolveOAuthCards(activity: IGenericActivity): Promise<any> {
@@ -97,7 +98,7 @@ export default class OAuthLinkEncoder {
     public generateCodeVerifier(conversationId: string): string {
         let codeVerifier = uniqueId();
 
-        const conversation = this.bot.facilities.conversations.conversationById(conversationId);
+        const conversation = this.botEmulator.facilities.conversations.conversationById(conversationId);
         conversation.codeVerifier = codeVerifier;
 
         let codeChallenge: string = shajs('sha256').update(codeVerifier).digest('hex');

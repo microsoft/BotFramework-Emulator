@@ -126,5 +126,5 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
   server.post(
     '/emulator/:conversationId/invoke/sendTokenResponse',
     jsonBodyParser,
-    sendTokenResponse(bot));
+    sendTokenResponse(botEmulator));
 }
