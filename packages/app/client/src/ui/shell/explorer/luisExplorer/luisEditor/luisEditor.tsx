@@ -7,7 +7,7 @@ import { LuisService } from './luisService';
 interface LuisEditorProps {
   luisService: ILuisService,
   cancel: () => void,
-  updateService: (updatedLuisService: ILuisService) => void;
+  updateLuisService: (updatedLuisService: ILuisService) => void;
 }
 
 interface LuisEditorState {
@@ -69,7 +69,7 @@ export class LuisEditor extends Component<LuisEditorProps, LuisEditorState> {
   };
 
   private onSubmitClick = (event: SyntheticEvent<HTMLButtonElement>): void => {
-    this.props.updateService(this.state.luisService);
+    this.props.updateLuisService(this.state.luisService);
   };
 
   private onInputChange = (event: SyntheticEvent<HTMLInputElement>): void => {

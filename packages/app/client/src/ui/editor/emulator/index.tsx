@@ -192,7 +192,7 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
   shouldStartNewConversation(props?: any) {
     props = props || this.props;
     return !props.document.directLine ||
-      (props.document.conversationId != props.document.directLine.token);
+      (props.document.conversationId != props.document.directLine.conversationId);
   }
 
   componentWillMount() {
