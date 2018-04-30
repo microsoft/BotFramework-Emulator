@@ -185,7 +185,7 @@ class Chat extends React.Component<Props> {
         showShell: this.props.mode === "livechat"
       };
       return (
-        <div id="webchat-container" { ...CSS }>
+        <div id="webchat-container" className="wc-app" { ...CSS }>
           <WebChat.Chat
             key={ this.props.document.directLine.token }
             { ...props }
