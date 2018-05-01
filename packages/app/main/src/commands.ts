@@ -39,7 +39,7 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Create a bot
-  CommandRegistry.registerCommand('bot:create', async (bot: IBotConfigWithPath, botDirectory: string, secret: string): Promise<IBotConfigWithPath> => {// create and add bot entry to bots.json
+  CommandRegistry.registerCommand('bot:create', async (bot: IBotConfigWithPath, secret: string): Promise<IBotConfigWithPath> => {
     // create and add bot entry to bots.json
     const botsJsonEntry: IBotInfo = {
       path: bot.path,

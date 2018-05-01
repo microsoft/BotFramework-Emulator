@@ -344,14 +344,15 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
   renderDefaultView(): JSX.Element {
     return (
       <div { ...CSS } key={ this.props.pingId }>
-        <div className="header">
-          <ToolBar>
-            <ToolBarButton visible={ true } title="Presentation" onClick={ () => this.handlePresentationClick(true) } />
-            <ToolBarSeparator visible={ true } />
-            <ToolBarButton visible={ this.props.mode === 'livechat' } title="Start Over" onClick={ this.handleStartOverClick } />
-            <ToolBarButton visible={ true } title="Save Transcript As..." onClick={ this.handleExportClick } />
-          </ToolBar>
-        </div>
+        {
+          this.props.mode === 'livechat' &&
+          <div className="header">
+            <ToolBar>
+              <ToolBarButton visible={ true } title="Start Over" onClick={ this.handleStartOverClick } />
+              <ToolBarButton visible={ true } title="Save Transcript As..." onClick={ this.handleExportClick } />
+            </ToolBar>
+          </div>
+        }
         <div className="content vertical">
           <Splitter orientation="vertical" primaryPaneIndex={ 0 } minSizes={ { 0: 80, 1: 80 } } initialSizes={ this.getVerticalSplitterSizes } onSizeChange={ this.onVerticalSizeChange } key={ this.props.pingId }>
             <div className="content">

@@ -41,6 +41,7 @@ import { Colors } from '@bfemulator/ui-react';
 import * as EditorActions from '../../../data/action/editorActions';
 import * as Constants from '../../../constants';
 import { getOtherTabGroup } from '../../../data/editorHelpers';
+import * as PresentationActions from '../../../data/action/presentationActions';
 
 const CSS = css({
   display: 'flex',
@@ -84,19 +85,26 @@ const CSS = css({
       display: 'inline-block',
       cursor: 'pointer',
       height: '16px',
-      marginRight: '16px',
+      marginRight: '12px',
       fontSize: '12px',
 
       '&:first-of-type': {
-        marginLeft: '16px'
+        marginLeft: '12px'
       }
+    },
+
+    '& > .widget': {
+      backgroundSize: '16px',
+      height: '32px',
+      width: '22px'
     },
 
     '& > .split-widget': {
       background: "url('./external/media/ic_split.svg') no-repeat 50% 50%",
-      backgroundSize: '16px',
-      height: '32px',
-      width: '32px'
+    },
+
+    '& > .presentation-widget': {
+      background: "url('./external/media/ic_presentation.svg') no-repeat 50% 50%",
     }
   }
 });
@@ -148,8 +156,14 @@ export class TabBar extends React.Component {
     } catch (e) { }
   }
 
+  onPresentationModeClick = () =>
+    this.props.dispatch(PresentationActions.enable());
+
   render() {
     const splitEnabled = Object.keys(this.props.documents).length > 1;
+    const activeDoc = this.props.documents[this.props.activeDocumentId];
+    const presentationEnabled = activeDoc
+      && (activeDoc.contentType === Constants.ContentType_Transcript || activeDoc.contentType === Constants.ContentType_LiveChat);
 
     const tabBarClassName = this.state.draggedOver ? ' dragged-over-tab-bar' : '';
 
@@ -164,7 +178,8 @@ export class TabBar extends React.Component {
           }
         </ul>
         <div className="tab-bar-widgets">
-          { splitEnabled ? <span className="split-widget" onClick={ this.onSplitClick }></span> : null }
+          { presentationEnabled ? <span className="widget presentation-widget" onClick={ e => this.onPresentationModeClick() }></span> : null }
+          { splitEnabled ? <span className="widget split-widget" onClick={ this.onSplitClick }></span> : null }
         </div>
       </div>
     );
@@ -172,12 +187,14 @@ export class TabBar extends React.Component {
 }
 
 export default connect((state, { owningEditor }) => ({
+  activeDocumentId: state.editor.editors[owningEditor].activeDocumentId,
   activeEditor: state.editor.activeEditor,
   editors: state.editor.editors,
   documents: state.editor.editors[owningEditor].documents
 }))(TabBar);
 
 TabBar.propTypes = {
+  activeDocumentId: PropTypes.string,
   activeEditor: PropTypes.oneOf([
     Constants.EditorKey_Primary,
     Constants.EditorKey_Secondary
