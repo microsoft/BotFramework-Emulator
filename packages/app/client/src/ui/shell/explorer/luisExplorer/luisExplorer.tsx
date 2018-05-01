@@ -1,14 +1,14 @@
+import { ILuisService } from 'msbot/bin/schema';
 import { LuisService } from 'msbot/bin/models';
-import { IQnAService } from 'msbot/bin/schema';
 import * as React from 'react';
 import { ComponentClass, MouseEventHandler, SyntheticEvent } from 'react';
 import { ServicePane, ServicePaneProps } from '../servicePane';
 import { LuisEditorContainer } from './luisEditor';
 
 export interface LuisProps extends ServicePaneProps {
-  luisServices?: IQnAService[];
+  luisServices?: ILuisService[];
   launchLuisEditor: (luisEditor: ComponentClass<any>) => void;
-  openLuisDeepLink: (luisService: IQnAService) => void;
+  openLuisDeepLink: (luisService: ILuisService) => void;
 }
 
 export class LuisExplorer extends ServicePane<LuisProps> {

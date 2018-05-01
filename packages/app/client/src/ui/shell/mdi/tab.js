@@ -34,11 +34,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { css } from 'glamor';
 
 import { TAB_CSS } from './tabStyle';
 import * as EditorActions from './../../../data/action/editorActions';
-import * as Constants from '../../../constants';
 import { getTabGroupForDocument } from '../../../data/editorHelpers';
+import { TruncateText } from '@bfemulator/ui-react';
+
+const truncateTextCss = css({
+  maxWidth: '220px'
+});
 
 class Tab extends React.Component {
   constructor(props, context) {
@@ -105,11 +110,11 @@ class Tab extends React.Component {
     }
 
     return (
-      <div className={ TAB_CSS + tabClassName } draggable
-        onDragOver={ this.onDragOver } onDragEnter={ this.onDragEnter } onDragStart={ this.onDragStart }
-        onDrop={ this.onDrop } onDragLeave={ this.onDragLeave } onDragEnd={ this.onDragEnd }>
+      <div className={TAB_CSS + tabClassName} draggable
+           onDragOver={ this.onDragOver } onDragEnter={this.onDragEnter} onDragStart={ this.onDragStart }
+           onDrop={ this.onDrop } onDragLeave={this.onDragLeave} onDragEnd={ this.onDragEnd }>
         <span className="editor-tab-icon"></span>
-        <span>{ this.props.title }</span>
+        <TruncateText className={ truncateTextCss } title={ this.props.title }>{ this.props.title }</TruncateText>
         { this.props.dirty ? <span>*</span> : null }
         <span className="editor-tab-close" onClick={ this.props.onCloseClick }></span>
       </div>
