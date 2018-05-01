@@ -31,29 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Reducer } from 'redux';
-import { IFrameworkSettings, frameworkDefault } from '../../types/serverSettingsTypes';
+import * as Restify from 'restify';
+import * as HttpStatus from "http-status-codes";
+import { RestServer } from '../../restServer';
 
 
-export type FrameworkAction = {
-    type: 'Framework_Set',
-    state: {
-        ngrokPath: string,
-        bypassNgrokLocalhost: boolean,
-        stateSizeLImit: number,
-        use10Tokens: boolean,
-        useCodeValidation: boolean
+export class SessionController {
+    static registerRoutes(server: RestServer) {
+        server.router.get('/v3/directline/session/getsessionid', this.getSessionId);
     }
-}
 
-export const frameworkReducer: Reducer<IFrameworkSettings> = (
-    state = frameworkDefault,
-    action: FrameworkAction
-) => {
-    switch (action.type) {
-        case 'Framework_Set':
-            return Object.assign({}, state, action.state);
-        default:
-            return state
+    static getSessionId = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+        res.json(HttpStatus.OK, 'emulatedSession');
     }
 }

@@ -1,4 +1,5 @@
 var gulp = require('gulp');
+var typescript = require('gulp-tsc');
 
 gulp.task('clean', function () {
     var clean = require('gulp-clean');
@@ -10,14 +11,15 @@ gulp.task('build-app', function () {
     var tsc = require('gulp-tsc');
     var tsconfig = require('./tsconfig.json');
     return gulp.src(['src/**/*.ts', 'src/**/*.tsx'])
-        .pipe(tsc(tsconfig.compilerOptions))
+        .pipe(typescript(tsconfig.compilerOptions))
         .pipe(gulp.dest('app/'));
 });
 
 gulp.task('build-site', function () {
     return gulp.src([
         './src/**/*.html',
-        './src/**/*.css'])
+        './src/**/*.css',
+        './src/**/adaptivecards-hostconfig.json'])
         .pipe(gulp.dest('app/'));
 });
 

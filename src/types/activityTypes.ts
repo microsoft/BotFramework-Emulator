@@ -116,6 +116,12 @@ export interface IInvokeActivity extends IActivity {
     relatesTo?: IConversationReference
 }
 
+export interface IEventActivity extends IActivity {
+    name?: string,
+    value?: any,
+    relatesTo?: IConversationReference
+}
+
 export interface IGenericActivity extends
     IActivity,
     ITypingActivity,
@@ -125,6 +131,7 @@ export interface IGenericActivity extends
     IActionActivity,
     IEndOfConversationActivity,
     ITriggerActivity,
-    IInvokeActivity {
+    IInvokeActivity,
+    IEventActivity {
 }
 

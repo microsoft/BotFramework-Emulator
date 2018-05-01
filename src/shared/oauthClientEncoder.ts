@@ -31,29 +31,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Reducer } from 'redux';
-import { IFrameworkSettings, frameworkDefault } from '../../types/serverSettingsTypes';
+import * as Attachments from '../types/attachmentTypes';
+import { ActivityVisitor } from './activityVisitor';
 
+export class OAuthClientEncoder extends ActivityVisitor {
+    public static OAuthEmulatorUrlProtocol: string = "oauth:";
 
-export type FrameworkAction = {
-    type: 'Framework_Set',
-    state: {
-        ngrokPath: string,
-        bypassNgrokLocalhost: boolean,
-        stateSizeLImit: number,
-        use10Tokens: boolean,
-        useCodeValidation: boolean
+    protected visitCardAction(cardAction: Attachments.ICardAction) {
+    }
+
+    protected visitOAuthCardAction(connectionName: string, cardAction: Attachments.ICardAction) {
+        if (cardAction && cardAction.type === 'signin' && !cardAction.value) {
+            let url = OAuthClientEncoder.OAuthEmulatorUrlProtocol + '//' + connectionName;
+
+            // change the card action to a special URL for the emulator
+            cardAction.type = 'openUrl';
+            cardAction.value = url;
+        }
     }
 }
 
-export const frameworkReducer: Reducer<IFrameworkSettings> = (
-    state = frameworkDefault,
-    action: FrameworkAction
-) => {
-    switch (action.type) {
-        case 'Framework_Set':
-            return Object.assign({}, state, action.state);
-        default:
-            return state
-    }
-}

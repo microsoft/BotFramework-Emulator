@@ -36,6 +36,7 @@ import * as URL from 'url';
 import * as path from 'path';
 import { getSettings, dispatch } from './settings';
 import { WindowStateAction } from './reducers/windowStateReducer';
+import { OAuthLinkEncoder } from '../shared/oauthLinkEncoder';
 
 export class WindowManager {
     private mainWindow: Electron.BrowserWindow;
@@ -47,8 +48,15 @@ export class WindowManager {
         Electron.ipcMain.on('createCheckoutWindow', (event, args) => {
             this.createCheckoutWindow(args.payload, args.settings, args.serviceUrl);
         });
+        Electron.ipcMain.on('createOAuthWindow', (event, args) => {
+            this.createOAuthWindow(args.url, args.settings, args.serviceUrl);
+        });
         Electron.ipcMain.on('getCheckoutState', (event, args) => {
             let state = event.sender['checkoutState'];
+            event.returnValue = state;
+        });
+        Electron.ipcMain.on('getOAuthState', (event, args) => {
+            let state = event.sender['oauthState'];
             event.returnValue = state;
         });
     }
@@ -127,6 +135,43 @@ export class WindowManager {
         checkoutWindow.loadURL(page);
 
         checkoutWindow.webContents.setZoomLevel(getSettings().windowState.zoomLevel);
+    }
+
+    public createOAuthWindow(url: string, settings: any, serviceUrl: string) {
+        let win = new Electron.BrowserWindow({
+            width: 800,
+            height: 600,
+            title: 'Sign In'
+        });
+        this.add(win);
+        let webContents = win.webContents;
+
+        // webContents.openDevTools();
+        webContents.setZoomLevel(getSettings().windowState.zoomLevel);
+        
+        win.on('closed', () => {
+            this.remove(win);
+        });
+
+        const ses = webContents.session;
+        ses.webRequest.onBeforeRequest((details, callback) => {
+            let url = details.url.toLowerCase();
+            if (url.indexOf('/postsignincallback?') !== -1 && url.indexOf('&code_verifier=') === -1) {
+                let codeVerifier = OAuthLinkEncoder.CodeVerifier;
+                if(getSettings().framework.useCodeValidation) {
+                    codeVerifier = 'emulated';
+                }
+                // final OAuth redirect so augment the call with the code_verifier
+                var newUrl = details.url + '&code_verifier=' + codeVerifier;
+                callback({ redirectURL: newUrl });
+            }
+            else {
+                // let the request happen
+                callback({});
+            }
+        });
+        
+        win.loadURL(url);
     }
 
     public closeAll() {

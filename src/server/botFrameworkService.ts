@@ -36,6 +36,8 @@ import { ConversationsController } from './controllers/connector/conversationsCo
 import { AttachmentsController } from './controllers/connector/attachmentsController';
 import { BotStateController } from './controllers/connector/botStateController';
 import { ConversationsControllerV3 as DirectLineConversationsController } from './controllers/directLine/conversationsControllerV3';
+import { SessionController } from './controllers/directLine/sessionController';
+import { UserTokenController } from './controllers/connector/userTokenController';
 import { EmulatorController } from './controllers/emulator/emulatorController';
 import { RestServer } from './restServer';
 import { getStore, getSettings, addSettingsListener } from './settings';
@@ -66,6 +68,10 @@ export class BotFrameworkService extends RestServer {
         }
     }
 
+    public getNgrokServiceUrl() : string {
+        return this.ngrokServiceUrl;
+    }
+
     authentication = new BotFrameworkAuthentication();
 
     constructor() {
@@ -74,6 +80,8 @@ export class BotFrameworkService extends RestServer {
         AttachmentsController.registerRoutes(this);
         BotStateController.registerRoutes(this, this.authentication);
         DirectLineConversationsController.registerRoutes(this);
+        SessionController.registerRoutes(this);
+        UserTokenController.registerRoutes(this, this.authentication);
         EmulatorController.registerRoutes(this);
         addSettingsListener((settings: Settings) => {
             this.configure(settings);

@@ -41,7 +41,9 @@ export interface IFrameworkSettings {
     bypassNgrokLocalhost?: boolean,
     stateSizeLimit?: number,
     // option for using 2.0 or 1.0 tokens
-    use10Tokens?: boolean
+    use10Tokens?: boolean,
+    // option for using code validation for OAuthCard signins
+    useCodeValidation?: boolean
 }
 
 export interface IWindowStateSettings {
@@ -93,7 +95,8 @@ export const frameworkDefault: IFrameworkSettings = {
     ngrokPath: '',
     bypassNgrokLocalhost: true,
     stateSizeLimit: 64,
-    use10Tokens: false
+    use10Tokens: false,
+    useCodeValidation: false
 }
 
 export const windowStateDefault: IWindowStateSettings = {

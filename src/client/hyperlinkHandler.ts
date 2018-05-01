@@ -39,9 +39,11 @@ import { getSettings, selectedActivity$ } from './settings';
 import { Settings as ServerSettings } from '../types/serverSettingsTypes';
 import { Emulator } from './emulator';
 import { PaymentEncoder } from '../shared/paymentEncoder';
+import { OAuthClientEncoder } from '../shared/oauthClientEncoder';
+import { OAuthLinkEncoder } from '../shared/oauthLinkEncoder';
 import * as log from './log';
 import * as Electron from 'electron';
-
+import { uniqueId } from '../shared/utils';
 
 export function navigate(url: string) {
     try {
@@ -59,6 +61,10 @@ export function navigate(url: string) {
             }
         } else if (parsed.protocol.startsWith(PaymentEncoder.PaymentEmulatorUrlProtocol)) {
             navigatePaymentUrl(parsed.path);
+        } else if (parsed.protocol.startsWith(OAuthClientEncoder.OAuthEmulatorUrlProtocol)) {
+            navigateEmulatedOAuthUrl(url.substring(8));
+        } else if (parsed.protocol.startsWith(OAuthLinkEncoder.OAuthUrlProtocol)) {
+            navigateOAuthUrl(url.substring(12));
         } else if (parsed.protocol.startsWith('file:')) {
             // ignore
         } else if (parsed.protocol.startsWith('javascript:')) {
@@ -137,6 +143,20 @@ function navigatePaymentUrl(payload: string) {
     const settings = getSettings();
     Electron.ipcRenderer.send("createCheckoutWindow", {
         payload: payload,
+        settings: settings,
+        serviceUrl: Emulator.serviceUrl
+    });
+}
+
+function navigateEmulatedOAuthUrl(connectionName: string) {
+    Emulator.sendTokenResponse(connectionName, 'emulatedToken_' + uniqueId(),
+        (result: boolean) => {});
+}
+
+function navigateOAuthUrl(url: string) {
+    const settings = getSettings();
+    Electron.ipcRenderer.send("createOAuthWindow", {
+        url: url,
         settings: settings,
         serviceUrl: Emulator.serviceUrl
     });

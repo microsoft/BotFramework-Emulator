@@ -35,12 +35,14 @@ import * as http from 'http';
 import * as Payment from '../types/paymentTypes';
 import * as got from 'got';
 import { IUser } from '../types/userTypes';
-import { IActivity, IConversationUpdateActivity, IMessageActivity, IContactRelationUpdateActivity, IInvokeActivity } from '../types/activityTypes';
+import { IActivity, IConversationUpdateActivity, IMessageActivity, IContactRelationUpdateActivity, IInvokeActivity, IEventActivity } from '../types/activityTypes';
 import { PaymentEncoder } from '../shared/paymentEncoder';
+import { OAuthClientEncoder } from '../shared/oAuthClientEncoder';
 import { ISpeechTokenInfo } from '../types/speechTypes';
 import { uniqueId } from '../shared/utils';
 import { dispatch, getSettings, authenticationSettings, addSettingsListener, speechSettings } from './settings';
 import { Settings } from '../types/serverSettingsTypes';
+import { UserTokenController } from './controllers/connector/userTokenController';
 import * as HttpStatus from "http-status-codes";
 import * as ResponseTypes from '../types/responseTypes';
 import { ErrorCodes, IResourceResponse } from '../types/responseTypes';
@@ -206,9 +208,9 @@ export class Conversation {
     public postActivityToUser(activity: IActivity): IResourceResponse {
         const settings = getSettings();
         // Make a shallow copy before modifying & queuing
-        let visitor = new PaymentEncoder();
         activity = Object.assign({}, activity);
-        visitor.traverseActivity(activity);
+        let visitors = [new PaymentEncoder(), new OAuthClientEncoder()];
+        visitors.forEach(v => v.traverseActivity(activity));
         this.postage(settings.users.currentUserId, activity);
         if (!activity.from.name) {
             activity.from.name = "Bot";
@@ -424,6 +426,31 @@ export class Conversation {
                 user: this.getCurrentUser()
             },
             value: updateValue
+        };
+        this.postActivityToBot(activity, false, (err, statusCode, activityId, responseBody) => {
+            cb(statusCode, responseBody);
+        });
+    }
+
+    public sendTokenResponse(
+        connectionName: string,
+        token: string,
+        cb: (errCode, body) => void,
+        doNotCache?: boolean) {
+
+        let user = this.getCurrentUser();
+
+        if(!doNotCache) {
+            UserTokenController.addTokenToCache(this.botId, user.id, connectionName, token);
+        }
+        
+        const activity: IEventActivity = {
+            type: 'event',
+            name: 'tokens/response',
+            value: {
+                connectionName: connectionName,
+                token: token
+            }
         };
         this.postActivityToBot(activity, false, (err, statusCode, activityId, responseBody) => {
             cb(statusCode, responseBody);

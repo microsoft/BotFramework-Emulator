@@ -52,6 +52,8 @@ import { ISpeechTokenInfo } from '../types/speechTypes';
 const CognitiveServices = require('../../node_modules/botframework-webchat/CognitiveServices');
 const remote = require('electron').remote;
 const ipcRenderer = require('electron').ipcRenderer;
+const AdaptiveCardsHostConfig = require('./adaptivecards-hostconfig.json');
+
 
 export class MainView extends React.Component<{}, {}> {
     settingsUnsubscribe: any;
@@ -241,6 +243,7 @@ export class MainView extends React.Component<{}, {}> {
             const srvSettings = new ServerSettings(settings.serverSettings);
             const activeBot = srvSettings.getActiveBot();
             const props: BotChat.ChatProps = {
+                adaptiveCardsHostConfig: AdaptiveCardsHostConfig,
                 botConnection: this.directline,
                 locale: activeBot.locale || remote.app.getLocale(),
                 formatOptions: {

@@ -46,7 +46,7 @@ import { Conversation } from '../../conversationManager';
 import * as Payment from '../../../types/paymentTypes';
 
 
-function getConversation(conversationId: string): Conversation {
+export function getConversation(conversationId: string): Conversation {
     const settings = getSettings();
     const activeBot = settings.getActiveBot();
     if (!activeBot) {
@@ -58,7 +58,6 @@ function getConversation(conversationId: string): Conversation {
     }
     return conversation;
 }
-
 
 export class EmulatorController {
     public static registerRoutes(server: RestServer) {
@@ -73,6 +72,7 @@ export class EmulatorController {
         server.router.post('/emulator/:conversationId/invoke/updateShippingAddress', jsonBodyParser(), this.updateShippingAddress);
         server.router.post('/emulator/:conversationId/invoke/updateShippingOption', jsonBodyParser(), this.updateShippingOption);
         server.router.post('/emulator/:conversationId/invoke/paymentComplete', jsonBodyParser(), this.paymentComplete);
+        server.router.post('/emulator/:conversationId/invoke/sendTokenResponse', jsonBodyParser(), this.sendTokenResponse);
         server.router.post('/emulator/window/zoomIn', this.zoomIn);
         server.router.post('/emulator/window/zoomOut', this.zoomOut);
         server.router.post('/emulator/window/zoomReset', this.zoomReset);
@@ -231,6 +231,25 @@ export class EmulatorController {
                 payerEmail: string,
                 payerPhone: string } = req.body[0];
             conversation.sendPaymentCompleteOperation(body.checkoutSession, body.request, body.shippingAddress, body.shippingOptionId, body.payerEmail, body.payerPhone, (statusCode, body) => {
+                if (statusCode === HttpStatus.OK) {
+                    res.send(HttpStatus.OK, body);
+                } else {
+                    res.send(statusCode);
+                }
+                res.end();
+            });
+        } catch (err) {
+            ResponseTypes.sendErrorResponse(req, res, next, err);
+        }
+    }
+
+    static sendTokenResponse = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+        try {
+            const conversation = getConversation(req.params.conversationId);
+            const body: {
+                token: string,
+                connectionName: string } = req.body[0];
+            conversation.sendTokenResponse(body.connectionName, body.token, (statusCode, body) => {
                 if (statusCode === HttpStatus.OK) {
                     res.send(HttpStatus.OK, body);
                 } else {

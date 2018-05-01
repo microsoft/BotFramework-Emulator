@@ -53,6 +53,7 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
     stateSizeLimitInputRef: any;
     bypassNgrokLocalhostInputRef: any;
     use10TokensInputRef: any;
+    useCodeValidationInputRef: any;
     showing: boolean;
     lastFocusRef: any;
 
@@ -78,7 +79,8 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
             ngrokPath: this.ngrokPathInputRef.value,
             bypassNgrokLocalhost: this.bypassNgrokLocalhostInputRef.checked,
             stateSizeLimit: this.stateSizeLimitInputRef.value,
-            use10Tokens: this.use10TokensInputRef.checked
+            use10Tokens: this.use10TokensInputRef.checked,
+            useCodeValidation: this.useCodeValidationInputRef.checked
         });
         AddressBarActions.hideAppSettings();
     }
@@ -221,6 +223,17 @@ export class AppSettingsDialog extends React.Component<{}, AppSettingsDialogStat
                                     className="form-input"
                                     defaultChecked={ serverSettings.framework.use10Tokens } />
                                 Use version 1.0 authentication tokens
+                            </label>
+                        </div>
+                        <div className="input-group appsettings-checkbox-group">
+                            <label className="form-label clickable">
+                                <input
+                                    type="checkbox"
+                                    name="useCodeValidation"
+                                    ref={ref => this.useCodeValidationInputRef = ref}
+                                    className="form-input"
+                                    defaultChecked={ serverSettings.framework.useCodeValidation } />
+                                Use a sign-in verification code for OAuthCards
                             </label>
                         </div>
                     </div>) )}

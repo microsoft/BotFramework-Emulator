@@ -47,7 +47,7 @@ import { BotFrameworkAuthentication } from '../../botFrameworkAuthentication';
 import { error } from '../../log';
 import { jsonBodyParser } from '../../jsonBodyParser';
 import { VersionManager } from '../../versionManager';
-
+import { OAuthLinkEncoder } from '../../../shared/oauthLinkEncoder';
 
 interface IConversationAPIPathParameters {
     conversationId: string;
@@ -184,20 +184,31 @@ export class ConversationsController {
             activity.id = null;
             activity.replyToId = req.params.activityId;
 
-            // look up conversation
-            const conversation = emulator.conversations.conversationById(activeBot.botId, parms.conversationId);
-            if (!conversation)
-                throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "conversation not found");
+            let continuation = function(): void {
+                    // look up conversation
+                const conversation = emulator.conversations.conversationById(activeBot.botId, parms.conversationId);
+                if (!conversation)
+                    throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "conversation not found");
 
-            // if we found the activity to reply to
-            //if (!conversation.activities.find((existingActivity, index, obj) => existingActivity.id == activity.replyToId))
-            //    throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "replyToId is not a known activity id");
+                // if we found the activity to reply to
+                //if (!conversation.activities.find((existingActivity, index, obj) => existingActivity.id == activity.replyToId))
+                //    throw ResponseTypes.createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, "replyToId is not a known activity id");
 
-            // post activity
-            let response: IResourceResponse = conversation.postActivityToUser(activity);
-            res.send(HttpStatus.OK, response);
-            res.end();
-            log.api(`Reply[${activity.type}]`, req, res, activity, response, getActivityText(activity));
+                // post activity
+                let response: IResourceResponse = conversation.postActivityToUser(activity);
+                res.send(HttpStatus.OK, response);
+                res.end();
+                log.api(`Reply[${activity.type}]`, req, res, activity, response, getActivityText(activity));
+            };
+
+            let visitor = new OAuthLinkEncoder(emulator.framework.getNgrokServiceUrl(), req.headers['authorization'], activity);
+            visitor.resolveOAuthCards(activity).then((value?: any) =>
+            {
+                continuation();
+            }, (reason: any) => {
+                log.api(`Failed resolveOAuthCards`, req, res, activity);
+                continuation();
+            });
         } catch (err) {
             let error = ResponseTypes.sendErrorResponse(req, res, next, err);
             log.api(`Reply[${activity.type}]`, req, res, activity, error, getActivityText(activity));
