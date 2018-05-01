@@ -14,7 +14,7 @@ import { DialogService } from './service';
 const CSS = css({
   backgroundColor: Colors.DIALOG_BACKGROUND_DARK,
   padding: '32px',
-  width: '100%',
+  width: '648px',
 
   '& .multi-input-row > *': {
     marginLeft: '8px'
