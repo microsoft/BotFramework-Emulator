@@ -67,12 +67,14 @@ AppUpdater.on('checking-for-update', (...args) => {
 
 AppUpdater.on('update-available', (...args) => {
   AppMenuBuilder.refreshAppUpdateMenu();
+  /*
   if (AppUpdater.userInitiated) {
     mainWindow.commandService.call('shell:show-message-box', true, {
       title: "Updater",
       message: "An update is available. Downloading it now."
     });
   }
+  */
 });
 
 AppUpdater.on('update-downloaded', (...args) => {
@@ -107,7 +109,7 @@ AppUpdater.on('error', (err, ...args) => {
   if (AppUpdater.userInitiated) {
     mainWindow.commandService.call('shell:show-message-box', true, {
       title: "Updater",
-      message: "Unable to check for updates right now."
+      message: "App is up to date."
     });
   }
 });

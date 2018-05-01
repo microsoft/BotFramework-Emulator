@@ -73,7 +73,7 @@ export const AppUpdater = new class extends EventEmitter {
         electronUpdater.autoDownload = true;
         electronUpdater.allowDowngrade = false;
         electronUpdater.autoInstallOnAppQuit = true;
-        electronUpdater.checkForUpdates();
+        electronUpdater.checkForUpdates().catch(err => console.error(err));
       }
     } catch (e) {
       console.error(e);

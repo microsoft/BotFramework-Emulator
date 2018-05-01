@@ -341,8 +341,7 @@ gulp.task('redist:windows-nsis:binaries', function () {
 
 //----------------------------------------------------------------------------
 gulp.task('redist:windows-nsis:metadata', gulp.series('redist:windows-nsis:binaries', function () {
-  const config = getConfig("windows", "nsis");
-  const releaseFilename = `${config.productName}-Setup-${pjson.version}.exe`;
+  const releaseFilename = `${pjson.name}-setup-${pjson.version}.exe`;
   const sha512 = hashFileAsync(`./dist/${releaseFilename}`);
   const sha2 = hashFileAsync(`./dist/${releaseFilename}`, 'sha256', 'hex');
   const releaseDate = new Date().toISOString();
@@ -416,8 +415,7 @@ gulp.task('redist:mac:binaries', function () {
 
 //----------------------------------------------------------------------------
 gulp.task('redist:mac:metadata', gulp.series('redist:mac:binaries', function () {
-  const config = getConfig("mac");
-  const releaseFilename = `${config.productName}-${pjson.version}-mac.zip`;
+  const releaseFilename = `${pjson.name}-${pjson.version}-mac.zip`;
   const releaseHash = hashFileAsync(`./dist/${releaseFilename}`);
   const releaseDate = new Date().toISOString();
 
@@ -685,7 +683,7 @@ function getConfig(platform, target) {
 function getFileList(platform, target, options = {}) {
   const config = getConfig(platform, target);
   options = extend({}, {
-    basename: config.productName,
+    basename: pjson.name,
     version: pjson.version,
   }, options);
   const path = './dist';
@@ -693,7 +691,7 @@ function getFileList(platform, target, options = {}) {
   switch (`${platform}-${target || ''}`) {
     case "windows-nsis":
       filelist.push(`${path}/latest.yml`);
-      filelist.push(`${path}/${options.basename}-Setup-${options.version}.exe`);
+      filelist.push(`${path}/${options.basename}-setup-${options.version}.exe`);
       //filelist.push(`${path}/${options.basename}-${options.version}-win.zip`);
       //filelist.push(`${path}/${options.basename}-${options.version}-ia32-win.zip`);
       break;
@@ -712,10 +710,10 @@ function getFileList(platform, target, options = {}) {
       break;
 
     case "linux-":
-      filelist.push(`${path}/${pjson.name}-${options.version}-i386.AppImage`);
-      filelist.push(`${path}/${pjson.name}-${options.version}-x86_64.AppImage`);
-      filelist.push(`${path}/${pjson.name}_${options.version}_i386.deb`);
-      filelist.push(`${path}/${pjson.name}_${options.version}_amd64.deb`);
+      filelist.push(`${path}/${options.basename}-${options.version}-i386.AppImage`);
+      filelist.push(`${path}/${options.basename}-${options.version}-x86_64.AppImage`);
+      filelist.push(`${path}/${options.basename}_${options.version}_i386.deb`);
+      filelist.push(`${path}/${options.basename}_${options.version}_amd64.deb`);
       break;
   }
   return filelist;
