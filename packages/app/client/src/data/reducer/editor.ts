@@ -209,12 +209,20 @@ export default function editor(state: IEditorState = DEFAULT_STATE, action: Edit
         state = setActiveEditor(otherTabGroup, state);
         break;
       }
-
-      // if the document is new, append it to the tab order
-      const newTabOrder = state.editors[editorKey].documents[action.payload.documentId] ?
-          [...state.editors[editorKey].tabOrder]
-        :
-          [...state.editors[editorKey].tabOrder, action.payload.documentId];
+      //if the document is new, insert it into the tab order after the current active document
+      let newTabOrder; 
+      if (state.editors[editorKey].documents[action.payload.documentId]) {
+        newTabOrder = [...state.editors[editorKey].tabOrder]
+      } else {
+        const activeDocumentId = state.editors[state.activeEditor].activeDocumentId;
+        const activeIndex = state.editors[editorKey].tabOrder.indexOf(activeDocumentId);
+        if (activeIndex != null && activeIndex != -1) {
+          state.editors[editorKey].tabOrder.splice(activeIndex + 1, 0, action.payload.documentId);
+          newTabOrder = [...state.editors[editorKey].tabOrder];
+        } else {
+          newTabOrder =  [...state.editors[editorKey].tabOrder, action.payload.documentId];
+        }
+      }
 
       // move document to top of recent tabs
       const newRecentTabs = [...state.editors[editorKey].recentTabs].filter(docId => docId !== action.payload.documentId);
