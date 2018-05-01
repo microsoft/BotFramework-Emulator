@@ -14,13 +14,14 @@ import { Protocol } from './constants';
 import * as BotActions from './data-v2/action/bot';
 import { emulator } from './emulator';
 import { ExtensionManager } from './extensions';
-import { mainWindow, windowManager, appUpdater } from './main';
+import { mainWindow, windowManager } from './main';
 import { ProtocolHandler } from './protocolHandler';
 import { ContextMenuService } from './services/contextMenuService';
 import { LuisAuthWorkflowService } from './services/luisAuthWorkflowService';
 import { dispatch, getSettings } from './settings';
 import { getBotsFromDisk, readFileSync, showOpenDialog, showSaveDialog, writeFile } from './utils';
 import shell = Electron.shell;
+import { AppUpdater } from './appUpdater';
 
 //=============================================================================
 export const CommandRegistry = new CommReg();
@@ -524,11 +525,11 @@ export function registerCommands() {
   });
 
   CommandRegistry.registerCommand('shell:quit-and-install-update', () => {
-    appUpdater.quitAndInstall();
+    AppUpdater.quitAndInstall();
   });
 
   //---------------------------------------------------------------------------
   CommandRegistry.registerCommand('shell:check-for-updates', () => {
-    appUpdater.checkForUpdates();
+    AppUpdater.checkForUpdates();
   });
 }

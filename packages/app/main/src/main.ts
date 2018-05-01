@@ -57,7 +57,62 @@ import { AppUpdater } from './appUpdater';
 
 export let mainWindow: Window;
 export let windowManager: WindowManager;
-export let appUpdater = new AppUpdater();
+
+//-----------------------------------------------------------------------------
+// App-Updater events
+
+AppUpdater.on('checking-for-update', () => {
+  AppMenuBuilder.refreshAppUpdateMenu();
+});
+
+AppUpdater.on('update-available', () => {
+  AppMenuBuilder.refreshAppUpdateMenu();
+  if (AppUpdater.userInitiated) {
+    mainWindow.commandService.call('shell:show-message-box', true, {
+      title: "Updater",
+      message: "An update is available. Downloading it now."
+    });
+  }
+});
+
+AppUpdater.on('update-downloaded', () => {
+  AppMenuBuilder.refreshAppUpdateMenu();
+  if (AppUpdater.userInitiated) {
+    mainWindow.commandService.call('shell:show-message-box', true, {
+      title: "Updater",
+      message: "Update is ready to install. Quit and install now?",
+      buttons: ["Cancel", "OK"],
+      defaultId: 1,
+      cancelId: 0
+    }).then(result => {
+      if (result) {
+        AppUpdater.quitAndInstall();
+      }
+    })
+  }
+});
+
+AppUpdater.on('up-to-date', () => {
+  AppMenuBuilder.refreshAppUpdateMenu();
+  if (AppUpdater.userInitiated) {
+    mainWindow.commandService.call('shell:show-message-box', true, {
+      title: "Updater",
+      message: "App is up to date."
+    });
+  }
+});
+
+AppUpdater.on('error', () => {
+  AppMenuBuilder.refreshAppUpdateMenu();
+  if (AppUpdater.userInitiated) {
+    mainWindow.commandService.call('shell:show-message-box', true, {
+      title: "Updater",
+      message: "Unable to check for updates right now."
+    });
+  }
+});
+
+//-----------------------------------------------------------------------------
 
 var openUrls = [];
 var onOpenUrl = function (event, url) {
@@ -170,9 +225,9 @@ const createMainWindow = async () => {
 
   mainWindow.browserWindow.setTitle(app.getName());
   windowManager = new WindowManager();
-  
+
   // Start auto-updater
-  appUpdater.startup(mainWindow.browserWindow);
+  AppUpdater.startup();
 
   const template: Electron.MenuItemConstructorOptions[] = AppMenuBuilder.getAppMenuTemplate();
 
@@ -227,6 +282,9 @@ const createMainWindow = async () => {
   mainWindow.browserWindow.once('ready-to-show', () => {
     mainWindow.webContents.setZoomLevel(getSettings().windowState.zoomLevel);
     mainWindow.browserWindow.show();
+    if (process.env.NODE_ENV !== 'development') {
+      AppUpdater.checkForUpdates();
+    }
   });
 }
 
@@ -268,7 +326,7 @@ Electron.app.on('ready', function () {
 
 Electron.app.on('window-all-closed', function () {
   //if (process.platform !== 'darwin') {
-    Electron.app.quit();
+  Electron.app.quit();
   //}
 });
 

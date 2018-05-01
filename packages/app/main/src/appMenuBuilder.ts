@@ -1,7 +1,9 @@
 import * as Electron from 'electron';
 
-import { mainWindow, appUpdater } from './main';
+import { mainWindow } from './main';
+import { AppUpdater, UpdateStatus } from './appUpdater';
 import { IBotInfo } from '@bfemulator/app-shared';
+import * as jsonpath from 'jsonpath';
 
 export interface IAppMenuBuilder {
   menuTemplate: Electron.MenuItemConstructorOptions[];
@@ -274,15 +276,31 @@ export const AppMenuBuilder = new class AppMenuBuilder implements IAppMenuBuilde
   }
   
   getUpdateMenuItem(): Electron.MenuItemConstructorOptions {
-    if (appUpdater.isUpdateAvailable) {
+    if (AppUpdater.status === UpdateStatus.UpdateReadyToInstall) {
       return {
+        id: 'auto-update',
         label: "Restart to Update...",
-        click: () => appUpdater.quitAndInstall()
+        click: () => AppUpdater.quitAndInstall(),
+        enabled: true,
+      }
+    } else if (AppUpdater.status === UpdateStatus.CheckingForUpdate) {
+      return {
+        id: 'auto-update',
+        label: "Checking for update...",
+        enabled: false,
+      }
+    } else if (AppUpdater.status === UpdateStatus.UpdateDownloading || AppUpdater.status === UpdateStatus.UpdateAvailable) {
+      return {
+        id: 'auto-update',
+        label: "Update downloading...",
+        enabled: false,
       }
     } else {
       return {
+        id: 'auto-update',
         label: "Check for Update...",
-        click: () => appUpdater.checkForUpdates()
+        click: () => AppUpdater.checkForUpdates(true),
+        enabled: true,
       }
     }
   }
@@ -295,5 +313,10 @@ export const AppMenuBuilder = new class AppMenuBuilder implements IAppMenuBuilde
       appMenuTemplate[0] = fileMenuTemplate;
     }
     return appMenuTemplate;
+  }
+  
+  refreshAppUpdateMenu() {
+    jsonpath.value(this.menuTemplate, "$..[?(@.role == 'help')].submenu[?(@.id == 'auto-update')]", this.getUpdateMenuItem());
+    Electron.Menu.setApplicationMenu(Electron.Menu.buildFromTemplate(this.menuTemplate));
   }
 }

@@ -1,74 +1,90 @@
-import { autoUpdater } from "electron";
-import * as os from "os";
+import { autoUpdater as electronUpdater } from "electron-updater";
+import * as path from "path";
 import * as process from "process";
-import BrowserWindow = Electron.BrowserWindow;
 import { mainWindow } from './main';
 var pjson = require('../../package.json');
 import * as semver from 'semver';
+import { EventEmitter } from 'events';
 
-export class AppUpdater {
-  private _availableUpdateInfo: any = null;
+export enum UpdateStatus {
+  Idle,
+  CheckingForUpdate,
+  UpdateAvailable,
+  UpdateDownloading,
+  UpdateReadyToInstall,
+}
 
-  public get isUpdateAvailable(): boolean { return this._availableUpdateInfo != null; }
+export const AppUpdater = new class extends EventEmitter {
+  private _userInitiated: boolean;
+  private _status: UpdateStatus = UpdateStatus.Idle;
+  private _allowPrerelease: boolean;
 
-  startup(window: BrowserWindow) {
+  public get userInitiated() { return this._userInitiated; }
+
+  public get status(): UpdateStatus { return this._status; }
+
+  startup() {
     let allowUpdateCheck = (process.argv.indexOf("--no-update") == -1);
-    let allowPrerelease = (process.argv.indexOf('--prerelease') >= 0);
+    this._allowPrerelease = (process.argv.indexOf('--prerelease') >= 0);
 
     // Allow update to prerelease if this is a prerelease
     const rc = semver.prerelease(pjson.version);
     if (rc && rc.length) {
-      allowPrerelease = true;
+      this._allowPrerelease = true;
     }
 
-    autoUpdater.addListener("update-available", () => {
-      //logger.debug("A new version is available. Downloading it now. You will be notified when download completes.");
-    });
-    autoUpdater.addListener("update-downloaded" as any, (event: any, releaseNotes: string, releaseName: string, releaseDate: string, updateURL: string) => {
-      this._availableUpdateInfo = {
-        releaseNotes,
-        releaseName,
-        releaseDate,
-        updateURL
-      };
-      mainWindow.commandService.remoteCall('shell:update-downloaded', releaseNotes, releaseName, releaseDate, updateURL);
-      //logger.debug("Download complete.", logger.makeCommandLink("Restart", 'autoUpdater.quitAndInstall', "Quit and install the update"), "the application to update.");
-    });
-    autoUpdater.addListener("error", (error: any) => {
-      //if (typeof error.message === "string" && !error.message.includes("AggregateException"))
-      //    logger.error(error.message, error);
-    });
-    autoUpdater.addListener("checking-for-update", () => {
-      //logger.debug("Checking for new version...");
-    });
-    autoUpdater.addListener("update-not-available", () => {
-      mainWindow.commandService.remoteCall('shell:update-not-available');
-    });
-
-    if (allowUpdateCheck) {
-      if (allowPrerelease) {
-        autoUpdater.setFeedURL(`https://emulator.botframework.com/update/channel/rc/${os.platform()}/${pjson.version}`);
-      } else {
-        autoUpdater.setFeedURL(`https://emulator.botframework.com/update/${os.platform()}/${pjson.version}`);
-      }
+    electronUpdater.logger = null;
+    if (process.env.NODE_ENV === "development") {
+      electronUpdater.updateConfigPath = path.join(process.cwd(), 'app-update.yml');
     }
 
-    window.once("ready-to-show", (event: any) => {
-      if (allowUpdateCheck) {
-        this.checkForUpdates();
-      }
+    electronUpdater.on('checking-for-update', (ev: Event, ...args: any[]) => {
+      this._status = UpdateStatus.CheckingForUpdate;
+      this.emit('checking-for-update', ev, ...args);
+    });
+    electronUpdater.on('update-available', (ev: Event, ...args: any[]) => {
+      this._status = UpdateStatus.UpdateAvailable;
+      this.emit('update-available', ev, ...args);
+    });
+    electronUpdater.on('update-not-available', (ev: Event, ...args: any[]) => {
+      this._status = UpdateStatus.Idle;
+      this.emit('up-to-date', ev, ...args);
+    });
+    electronUpdater.on('error', (ev: Event, err: Error, ...args: any[]) => {
+      this._status = UpdateStatus.Idle;
+      this.emit('error', ev, err, ...args);
+    });
+    electronUpdater.on('download-progress', (ev: Event, ...args: any[]) => {
+      this._status = UpdateStatus.UpdateDownloading;
+      this.emit('download-progress', ev, ...args);
+    });
+    electronUpdater.on('update-downloaded', (ev: Event, ...args: any[]) => {
+      this._status = UpdateStatus.UpdateReadyToInstall;
+      this.emit('update-downloaded', ev, ...args);
     });
   }
 
-  public checkForUpdates() {
+  public checkForUpdates(userInitiated: boolean = false) {
     try {
-      autoUpdater.checkForUpdates();
-    } catch (e) { }
+      if (electronUpdater) {
+        this._status = UpdateStatus.CheckingForUpdate;
+        this._userInitiated = userInitiated;
+        electronUpdater.allowPrerelease = this._allowPrerelease;
+        electronUpdater.autoDownload = true;
+        electronUpdater.allowDowngrade = false;
+        electronUpdater.autoInstallOnAppQuit = true;
+        electronUpdater.checkForUpdates();
+      }
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   public quitAndInstall() {
     try {
-      autoUpdater.quitAndInstall();
-    } catch (e) { }
+      electronUpdater.quitAndInstall(true, true);
+    } catch (e) {
+      console.error(e);
+    }
   }
 }
