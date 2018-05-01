@@ -40,27 +40,27 @@ export const AppUpdater = new class extends EventEmitter {
 
     electronUpdater.on('checking-for-update', (ev: Event, ...args: any[]) => {
       this._status = UpdateStatus.CheckingForUpdate;
-      this.emit('checking-for-update', ev, ...args);
+      this.emit('checking-for-update', ...args);
     });
     electronUpdater.on('update-available', (ev: Event, ...args: any[]) => {
       this._status = UpdateStatus.UpdateAvailable;
-      this.emit('update-available', ev, ...args);
+      this.emit('update-available', ...args);
     });
     electronUpdater.on('update-not-available', (ev: Event, ...args: any[]) => {
       this._status = UpdateStatus.Idle;
-      this.emit('up-to-date', ev, ...args);
+      this.emit('up-to-date', ...args);
     });
     electronUpdater.on('error', (ev: Event, err: Error, ...args: any[]) => {
       this._status = UpdateStatus.Idle;
-      this.emit('error', ev, err, ...args);
+      this.emit('error', err, ...args);
     });
     electronUpdater.on('download-progress', (ev: Event, ...args: any[]) => {
       this._status = UpdateStatus.UpdateDownloading;
-      this.emit('download-progress', ev, ...args);
+      this.emit('download-progress', ...args);
     });
     electronUpdater.on('update-downloaded', (ev: Event, ...args: any[]) => {
       this._status = UpdateStatus.UpdateReadyToInstall;
-      this.emit('update-downloaded', ev, ...args);
+      this.emit('update-downloaded', ...args);
     });
   }
 

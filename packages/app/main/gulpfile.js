@@ -317,7 +317,6 @@ function writeJsonMetadataFile(releaseFilename, jsonFilename, path, releaseDate)
 
 //----------------------------------------------------------------------------
 gulp.task('redist:windows-nsis:binaries', function () {
-  var wait = require('gulp-wait');
   var rename = require('gulp-rename');
   var builder = require('electron-builder');
   const config = getConfig("windows", "nsis");
@@ -326,6 +325,17 @@ gulp.task('redist:windows-nsis:binaries', function () {
     targets: builder.Platform.WINDOWS.createTarget(["nsis"], builder.Arch.ia32),
     config,
     prepackaged: './dist/win-ia32-unpacked'
+  }).then((filenames) => {
+    return gulp.src(filenames, { allowEmpty: true })
+      .pipe(rename(function (path) {
+        path.basename = setReleaseFilename(path.basename, {
+          replaceWhitespace: true
+        });
+      }))
+      .pipe(gulp.dest('./dist'));
+  }).then(() => {
+    // Wait for the files to be written to disk and closed.
+    return delay(10000);
   });
 });
 
@@ -365,6 +375,7 @@ gulp.task('redist:windows-squirrel', function () {
         path.basename = setReleaseFilename(path.basename, {
           lowerCase: false,
           replaceName: true,
+          replaceWhitespace: true,
           srcName: config.productName,
           dstName: config.squirrelWindows.name
         });
@@ -389,6 +400,17 @@ gulp.task('redist:mac:binaries', function () {
     targets: builder.Platform.MAC.createTarget(["zip"]),
     config,
     prepackaged: './dist/mac'
+  }).then((filenames) => {
+    return gulp.src(filenames, { allowEmpty: true })
+      .pipe(rename(function (path) {
+        path.basename = setReleaseFilename(path.basename, {
+          replaceWhitespace: true
+        });
+      }))
+      .pipe(gulp.dest('./dist'));
+  }).then(() => {
+    // Wait for the files to be written to disk and closed.
+    return delay(10000);
   });
 });
 
@@ -421,6 +443,17 @@ gulp.task('redist:linux', function () {
     targets: builder.Platform.LINUX.createTarget(["deb", "AppImage"], builder.Arch.ia32, builder.Arch.x64),
     config,
     prepackaged: './dist/linux-unpacked'
+  }).then((filenames) => {
+    return gulp.src(filenames, { allowEmpty: true })
+      .pipe(rename(function (path) {
+        path.basename = setReleaseFilename(path.basename, {
+          replaceWhitespace: true
+        });
+      }))
+      .pipe(gulp.dest('./dist'));
+  }).then(() => {
+    // Wait for the files to be written to disk and closed.
+    return delay(10000);
   });
 });
 
@@ -434,7 +467,6 @@ gulp.task('redist:linux', function () {
 
 //----------------------------------------------------------------------------
 gulp.task('package:windows-nsis:binaries', function () {
-  var wait = require('gulp-wait');
   var rename = require('gulp-rename');
   var builder = require('electron-builder');
   const config = getConfig("windows", "nsis");
@@ -442,6 +474,17 @@ gulp.task('package:windows-nsis:binaries', function () {
   return builder.build({
     targets: builder.Platform.WINDOWS.createTarget(["nsis"], builder.Arch.ia32, builder.Arch.x64),
     config
+  }).then((filenames) => {
+    return gulp.src(filenames, { allowEmpty: true })
+      .pipe(rename(function (path) {
+        path.basename = setReleaseFilename(path.basename, {
+          replaceWhitespace: true
+        });
+      }))
+      .pipe(gulp.dest('./dist'));
+  }).then(() => {
+    // Wait for the files to be written to disk and closed.
+    return delay(10000);
   });
 });
 
@@ -480,6 +523,7 @@ gulp.task('package:windows-squirrel', function () {
         path.basename = setReleaseFilename(path.basename, {
           lowerCase: false,
           replaceName: true,
+          replaceWhitespace: true,
           srcName: config.productName,
           dstName: config.squirrelWindows.name
         });
@@ -503,6 +547,17 @@ gulp.task('package:mac:binaries', function () {
   return builder.build({
     targets: builder.Platform.MAC.createTarget(["zip"]),
     config
+  }).then((filenames) => {
+    return gulp.src(filenames, { allowEmpty: true })
+      .pipe(rename(function (path) {
+        path.basename = setReleaseFilename(path.basename, {
+          replaceWhitespace: true
+        });
+      }))
+      .pipe(gulp.dest('./dist'));
+  }).then(() => {
+    // Wait for the files to be written to disk and closed.
+    return delay(10000);
   });
 });
 
@@ -534,6 +589,17 @@ gulp.task('package:linux', function () {
   return builder.build({
     targets: builder.Platform.LINUX.createTarget(["deb", "AppImage"], builder.Arch.ia32, builder.Arch.x64),
     config
+  }).then((filenames) => {
+    return gulp.src(filenames, { allowEmpty: true })
+      .pipe(rename(function (path) {
+        path.basename = setReleaseFilename(path.basename, {
+          replaceWhitespace: true
+        });
+      }))
+      .pipe(gulp.dest('./dist'));
+  }).then(() => {
+    // Wait for the files to be written to disk and closed.
+    return delay(10000);
   });
 });
 

@@ -61,11 +61,11 @@ export let windowManager: WindowManager;
 //-----------------------------------------------------------------------------
 // App-Updater events
 
-AppUpdater.on('checking-for-update', () => {
+AppUpdater.on('checking-for-update', (...args) => {
   AppMenuBuilder.refreshAppUpdateMenu();
 });
 
-AppUpdater.on('update-available', () => {
+AppUpdater.on('update-available', (...args) => {
   AppMenuBuilder.refreshAppUpdateMenu();
   if (AppUpdater.userInitiated) {
     mainWindow.commandService.call('shell:show-message-box', true, {
@@ -75,7 +75,7 @@ AppUpdater.on('update-available', () => {
   }
 });
 
-AppUpdater.on('update-downloaded', () => {
+AppUpdater.on('update-downloaded', (...args) => {
   AppMenuBuilder.refreshAppUpdateMenu();
   if (AppUpdater.userInitiated) {
     mainWindow.commandService.call('shell:show-message-box', true, {
@@ -92,7 +92,7 @@ AppUpdater.on('update-downloaded', () => {
   }
 });
 
-AppUpdater.on('up-to-date', () => {
+AppUpdater.on('up-to-date', (...args) => {
   AppMenuBuilder.refreshAppUpdateMenu();
   if (AppUpdater.userInitiated) {
     mainWindow.commandService.call('shell:show-message-box', true, {
@@ -102,7 +102,7 @@ AppUpdater.on('up-to-date', () => {
   }
 });
 
-AppUpdater.on('error', () => {
+AppUpdater.on('error', (err, ...args) => {
   AppMenuBuilder.refreshAppUpdateMenu();
   if (AppUpdater.userInitiated) {
     mainWindow.commandService.call('shell:show-message-box', true, {
