@@ -1,6 +1,11 @@
+const { join, relative } = require('path');
+const buffer = require('vinyl-buffer');
+const chalk = require('chalk');
 const gulp = require('gulp');
-const shell = require('gulp-shell');
+const log = require('fancy-log');
 const pjson = require('./package.json');
+const shell = require('gulp-shell');
+const through2 = require('through2').obj;
 
 const defaultElectronMirror = 'https://github.com/electron/electron/releases/download/v';
 const defaultElectronVersion = pjson.devDependencies["electron"];
@@ -465,7 +470,7 @@ gulp.task('redist:linux', function () {
 
 //============================================================================
 // PACKAGE
-// Stages and builds redist in a single step. 
+// Stages and builds redist in a single step.
 //============================================================================
 
 //============================================================================
@@ -673,6 +678,32 @@ gulp.task('publish:linux', function () {
   return publishFiles(filelist);
 });
 
+
+//============================================================================
+// VERIFY:COPYRIGHT
+
+//----------------------------------------------------------------------------
+gulp.task('verify:copyright', function () {
+  const lernaRoot = '../../../';
+  const lernaJson = require(join(lernaRoot, 'lerna.json'));
+  const files = lernaJson.packages.map(dir => join(lernaRoot, dir, '!(node_modules)/**/*.@(js|jsx|ts|tsx)'));
+
+  return gulp
+    .src(files)
+    .pipe(buffer())
+    .pipe(through2((file, _, callback) => {
+      const first1000 = file.contents.toString('utf8', 0, 1000);
+
+      if (~first1000.indexOf('Copyright (c) Microsoft Corporation')) {
+        callback(null, file);
+      } else {
+        const filename = relative(process.cwd(), file.history[0]);
+
+        log.error(chalk.red(`Copyright header is missing in ${ chalk.magenta(filename) }`));
+        callback(new Error('missing copyright header'));
+      }
+    }));
+});
 
 //============================================================================
 // UTILS
