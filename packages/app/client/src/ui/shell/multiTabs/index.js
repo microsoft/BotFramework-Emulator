@@ -54,21 +54,28 @@ class MultiTabs extends React.Component {
     super(props, context);
 
     this.handleTabClick = this.handleTabClick.bind(this);
+    this.setRef = this.setRef.bind(this);
+    this.childRefs = [];
   }
 
   handleTabClick(nextValue) {
     this.props.onChange && this.props.onChange(nextValue);
   }
 
+  setRef(input) {
+    this.childRefs.push(input);
+  }
+
+
   render() {
     return (
       <div className={ CSS }>
         {
           !this.props.presentationModeEnabled &&
-          <TabBar owningEditor={ this.props.owningEditor }>
+          <TabBar owningEditor={ this.props.owningEditor } childRefs={ this.childRefs } activeIndex={ this.props.value }>
             {
               React.Children.map(this.props.children, (tabbedDocument, index) =>
-                <TabBarTab onClick={ this.handleTabClick.bind(this, index) }>
+                <TabBarTab onClick={ this.handleTabClick.bind(this, index) } setRef={this.setRef}>
                   { filterChildren(tabbedDocument.props.children, child => child.type === TabbedDocumentTab) }
                 </TabBarTab>
               )

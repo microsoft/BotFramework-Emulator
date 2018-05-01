@@ -34,6 +34,7 @@
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 
 import TabBarTab from './tabBarTab';
@@ -41,6 +42,7 @@ import { Colors } from '@bfemulator/ui-react';
 import * as EditorActions from '../../../data/action/editorActions';
 import * as Constants from '../../../constants';
 import { getOtherTabGroup } from '../../../data/editorHelpers';
+import * as PresentationActions from '../../../data/action/presentationActions';
 
 const CSS = css({
   display: 'flex',
@@ -84,19 +86,26 @@ const CSS = css({
       display: 'inline-block',
       cursor: 'pointer',
       height: '16px',
-      marginRight: '16px',
+      marginRight: '12px',
       fontSize: '12px',
 
       '&:first-of-type': {
-        marginLeft: '16px'
+        marginLeft: '12px'
       }
+    },
+
+    '& > .widget': {
+      backgroundSize: '16px',
+      height: '32px',
+      width: '22px'
     },
 
     '& > .split-widget': {
       background: "url('./external/media/ic_split.svg') no-repeat 50% 50%",
-      backgroundSize: '16px',
-      height: '32px',
-      width: '32px'
+    },
+
+    '& > .presentation-widget': {
+      background: "url('./external/media/ic_presentation.svg') no-repeat 50% 50%",
     }
   }
 });
@@ -111,6 +120,7 @@ export class TabBar extends React.Component {
     this.onDragOver = this.onDragOver.bind(this);
     this.onDragLeave = this.onDragLeave.bind(this);
     this.onDrop = this.onDrop.bind(this);
+    this.saveScrollable = this.saveScrollable.bind(this);
 
     this.state = {};
   }
@@ -148,15 +158,43 @@ export class TabBar extends React.Component {
     } catch (e) { }
   }
 
+  saveScrollable(ref) {
+    this._scrollable = ref;
+  }
+
+  componentDidUpdate(prevProps) {
+    let scrollable = this._scrollable;
+  
+    if (scrollable) {
+      if (this.props.children.length > prevProps.children.length &&
+        scrollable.scrollWidth > scrollable.clientWidth) {
+          let leftOffset = 0;
+          for (let i = 0; i <= this.props.activeIndex; i++) {
+            let ref = this.props.childRefs[i];
+            leftOffset += ref ?  this.props.childRefs[i].offsetWidth : 0;
+          }
+          if (leftOffset >= scrollable.clientWidth) {
+            scrollable.scrollLeft = leftOffset;
+          }
+      }
+    }
+  }
+
+  onPresentationModeClick = () =>
+    this.props.dispatch(PresentationActions.enable());
+
   render() {
     const splitEnabled = Object.keys(this.props.documents).length > 1;
+    const activeDoc = this.props.documents[this.props.activeDocumentId];
+    const presentationEnabled = activeDoc
+      && (activeDoc.contentType === Constants.ContentType_Transcript || activeDoc.contentType === Constants.ContentType_LiveChat);
 
     const tabBarClassName = this.state.draggedOver ? ' dragged-over-tab-bar' : '';
-
+    this.childRefs = [];
     return (
       <div className={ CSS + tabBarClassName } onDragEnter={ this.onDragEnter } onDragOver={ this.onDragOver }
         onDragLeave={ this.onDragLeave } onDrop={ this.onDrop } >
-        <ul>
+        <ul ref={ this.saveScrollable }>
           {
             React.Children.map(this.props.children, child =>
               <li>{child}</li>
@@ -164,7 +202,8 @@ export class TabBar extends React.Component {
           }
         </ul>
         <div className="tab-bar-widgets">
-          { splitEnabled ? <span className="split-widget" onClick={ this.onSplitClick }></span> : null }
+          { presentationEnabled ? <span className="widget presentation-widget" onClick={ e => this.onPresentationModeClick() }></span> : null }
+          { splitEnabled ? <span className="widget split-widget" onClick={ this.onSplitClick }></span> : null }
         </div>
       </div>
     );
@@ -172,12 +211,14 @@ export class TabBar extends React.Component {
 }
 
 export default connect((state, { owningEditor }) => ({
+  activeDocumentId: state.editor.editors[owningEditor].activeDocumentId,
   activeEditor: state.editor.activeEditor,
   editors: state.editor.editors,
   documents: state.editor.editors[owningEditor].documents
 }))(TabBar);
 
 TabBar.propTypes = {
+  activeDocumentId: PropTypes.string,
   activeEditor: PropTypes.oneOf([
     Constants.EditorKey_Primary,
     Constants.EditorKey_Secondary
