@@ -111,12 +111,12 @@ class Tab extends React.Component {
 
     return (
       <div className={TAB_CSS + tabClassName} draggable
-           onDragOver={this.onDragOver} onDragEnter={this.onDragEnter} onDragStart={this.onDragStart}
-           onDrop={this.onDrop} onDragLeave={this.onDragLeave} onDragEnd={this.onDragEnd}>
+           onDragOver={ this.onDragOver } onDragEnter={ this.onDragEnter } onDragStart={ this.onDragStart }
+           onDrop={ this.onDrop } onDragLeave={ this.onDragLeave } onDragEnd={ this.onDragEnd }>
         <span className="editor-tab-icon"></span>
-        <TruncateText className={truncateTextCss}>{this.props.title}</TruncateText>
-        {this.props.dirty ? <span>*</span> : null}
-        <span className="editor-tab-close" onClick={this.props.onCloseClick}></span>
+        <TruncateText className={truncateTextCss}>{ this.props.title }</TruncateText>
+        { this.props.dirty ? <span>*</span> : null }
+        <span className="editor-tab-close" onClick={ this.props.onCloseClick }></span>
       </div>
     );
   }
