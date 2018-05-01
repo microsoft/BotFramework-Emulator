@@ -229,9 +229,6 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
   async startNewConversation(props?: any) {
     props = props || this.props;
 
-    store.dispatch(ChatActions.clearLog(this.props.document.documentId));
-    store.dispatch(ChatActions.setInspectorObjects(props.document.documentId, []));
-
     if (props.document.subscription) {
       props.document.subscription.unsubscribe();
     }
@@ -309,6 +306,8 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
   }
 
   handleStartOverClick() {
+    store.dispatch(ChatActions.clearLog(this.props.document.documentId));
+    store.dispatch(ChatActions.setInspectorObjects(this.props.document.documentId, []));
     this.startNewConversation();
   }
 
