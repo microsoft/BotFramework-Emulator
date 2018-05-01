@@ -1,3 +1,4 @@
+import { LuisService } from 'msbot/bin/models';
 import { IQnAService } from 'msbot/bin/schema';
 import * as React from 'react';
 import { ComponentClass, MouseEventHandler, SyntheticEvent } from 'react';
@@ -36,7 +37,7 @@ export class LuisExplorer extends ServicePane<LuisProps> {
     super.onContextMenuOverLiElement(li);
     const { index } = li.dataset;
     const { [index]: luisService } = this.props.luisServices;
-    this.props.openContextMenu(JSON.parse(JSON.stringify(luisService)), LuisEditorContainer);
+    this.props.openContextMenu(new LuisService(luisService), LuisEditorContainer);
   }
 
   protected onAddIconClick = (event: SyntheticEvent<HTMLButtonElement>): void => {

@@ -1,3 +1,4 @@
+import { EndpointService } from 'msbot/bin/models';
 import { IEndpointService } from 'msbot/bin/schema';
 import * as React from 'react';
 import { ComponentClass, MouseEventHandler, SyntheticEvent } from 'react';
@@ -36,7 +37,7 @@ export class EndpointExplorer extends ServicePane<EndpointProps> {
     super.onContextMenuOverLiElement(li);
     const { index } = li.dataset;
     const { [index]: endpointService } = this.props.endpointServices;
-    this.props.openContextMenu(JSON.parse(JSON.stringify(endpointService)), EndpointEditorContainer);
+    this.props.openContextMenu(new EndpointService(endpointService), EndpointEditorContainer);
   }
 
   protected onAddIconClick = (event: SyntheticEvent<HTMLButtonElement>): void => {

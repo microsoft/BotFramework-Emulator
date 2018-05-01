@@ -15,6 +15,6 @@ export class BotConfigWithPath extends BotConfigModel implements IBotConfigWithP
     const botConfigWithPath = new BotConfigWithPath();
     Object.assign(botConfigWithPath, botConfig, { path });
 
-    return botConfig as BotConfigWithPath;
+    return botConfigWithPath;
   }
 }

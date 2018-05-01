@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@bfemulator/sdk-shared": "^1.0.0",
-    "msbot": "^1.0.42-alpha",
+    "msbot": "^1.0.44",
     "tslib": "^1.9.0"
   }
 }

@@ -125,7 +125,7 @@ export function registerCommands() {
 
     // Workaround for a JSON serialization issue in bot.services where they're an array
     // on the Node side, but deserialize as a dictionary on the renderer side.
-    return { bot: JSON.parse(JSON.stringify(bot)), botDirectory };
+    return { bot, botDirectory };
   });
 
   //---------------------------------------------------------------------------
