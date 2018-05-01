@@ -54,8 +54,8 @@ export class EmulatorTab extends React.Component {
 
   render() {
     return (
-      <Tab active={this.props.active} title={this.props.title} onCloseClick={this.onCloseClick}
-           documentId={this.props.documentId} dirty={this.props.dirty}/>
+      <Tab active={ this.props.active } title={ this.props.title } onCloseClick={ this.onCloseClick }
+           documentId={ this.props.documentId } dirty={ this.props.dirty }/>
     );
   }
 }
