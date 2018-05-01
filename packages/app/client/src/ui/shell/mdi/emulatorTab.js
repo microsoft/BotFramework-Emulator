@@ -34,8 +34,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { ServiceType } from 'msbot/bin/schema';
-
 import { getTabGroupForDocument } from '../../../data/editorHelpers';
 import * as ChatActions from '../../../data/action/chatActions';
 import * as EditorActions from '../../../data/action/editorActions';
@@ -57,7 +55,7 @@ export class EmulatorTab extends React.Component {
   render() {
     return (
       <Tab active={ this.props.active } title={ this.props.title } onCloseClick={ this.onCloseClick }
-        documentId={ this.props.documentId } dirty={ this.props.dirty } />
+           documentId={ this.props.documentId } dirty={ this.props.dirty }/>
     );
   }
 }
@@ -69,15 +67,12 @@ export default connect((state, { mode, documentId }) => {
     title = "Live Chat";
 
     const { services = [] } = state.bot.activeBot || {};
-    const numEndpointServices = services.filter(s => s.type === ServiceType.Endpoint).length;
 
-    if (numEndpointServices > 1) {
-      const { endpointId } = state.chat.chats[documentId] || {};
-      const botEndpoint = services.find(s => s.id === endpointId);
+    const { endpointId } = state.chat.chats[documentId] || {};
+    const botEndpoint = services.find(s => s.id === endpointId);
 
-      if (botEndpoint) {
-        title += ` (${ botEndpoint.name })`;
-      }
+    if (botEndpoint) {
+      title += ` (${ botEndpoint.name })`;
     }
   }
 
