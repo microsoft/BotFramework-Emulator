@@ -1,3 +1,4 @@
+import { QnaMakerService } from 'msbot/bin/models';
 import { IQnAService } from 'msbot/bin/schema';
 import * as React from 'react';
 import { ComponentClass, MouseEventHandler, SyntheticEvent } from 'react';
@@ -36,7 +37,7 @@ export class QnaMakerExplorer extends ServicePane<QnaMakerProps> {
     super.onContextMenuOverLiElement(li);
     const { index } = li.dataset;
     const { [index]: qnaMakerService } = this.props.qnaMakerServices;
-    this.props.openContextMenu(JSON.parse(JSON.stringify(qnaMakerService)), QnaMakerEditorContainer);
+    this.props.openContextMenu(new QnaMakerService(qnaMakerService), QnaMakerEditorContainer);
   }
 
   protected onAddIconClick = (event: SyntheticEvent<HTMLButtonElement>): void => {

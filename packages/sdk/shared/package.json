@@ -18,7 +18,7 @@
     "typescript": "2.7.2"
   },
   "dependencies": {
-    "msbot": "^1.0.42-alpha",
+    "msbot": "^1.0.44",
     "tslib": "^1.9.0",
     "uuid": "^3.2.1"
   }
