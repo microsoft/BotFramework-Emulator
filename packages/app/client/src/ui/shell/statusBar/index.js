@@ -4,8 +4,8 @@ import React from 'react';
 import { Colors } from '@bfemulator/ui-react';
 
 const CSS = css({
-  backgroundColor: Colors.NAVBAR_BACKGROUND_DARK,
-  color: Colors.NAVBAR_FOREGROUND_DARK,
+  backgroundColor: Colors.STATUS_BAR_BACKGROUND_DARK,
+  color: Colors.STATUS_BAR_FOREGROUND_DARK,
   lineHeight: '22px',
   minHeight: '22px',
   width: '100%',

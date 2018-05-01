@@ -69,6 +69,8 @@ export namespace Colors {
   export const C34 = '#A6A6A6';
   export const C35 = '#BFBFBF';
   export const C36 = '#C8C8C8';
+  export const C37 = '#444444';
+  export const C38 = '#0078D7';
 
   export const APP_BACKGROUND_DARK = C8;
   export const APP_FOREGROUND_DARK = C2;
@@ -100,7 +102,7 @@ export namespace Colors {
   export const PANEL_BACKGROUND_DARK = C8;
   export const PANEL_FOREGROUND_DARK = C2;
 
-  export const NAVBAR_BACKGROUND_DARK = '#025CAB';
+  export const NAVBAR_BACKGROUND_DARK = C37;
   export const NAVBAR_FOREGROUND_DARK = C4;
 
   export const EXPLORER_BACKGROUND_DARK = C6;
@@ -163,4 +165,7 @@ export namespace Colors {
   export const DIALOG_BACKGROUND_DARK = C30;
   export const DIALOG_FOREGROUND_DARK = C31;
   export const DIALOG_INPUT_BORDER_DARK = C36;
+
+  export const STATUS_BAR_BACKGROUND_DARK = C38;
+  export const STATUS_BAR_FOREGROUND_DARK = C4;
 }
