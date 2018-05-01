@@ -53,7 +53,8 @@ const CSS = css({
 });
 
 export default props =>
-    <button
+    <button 
+        ref={ props.setRef }
         className={ CSS }
         onClick={ props.onClick }
         type="button"

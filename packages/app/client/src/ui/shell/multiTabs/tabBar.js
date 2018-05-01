@@ -34,6 +34,7 @@
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 
 import TabBarTab from './tabBarTab';
@@ -119,6 +120,7 @@ export class TabBar extends React.Component {
     this.onDragOver = this.onDragOver.bind(this);
     this.onDragLeave = this.onDragLeave.bind(this);
     this.onDrop = this.onDrop.bind(this);
+    this.saveScrollable = this.saveScrollable.bind(this);
 
     this.state = {};
   }
@@ -156,6 +158,28 @@ export class TabBar extends React.Component {
     } catch (e) { }
   }
 
+  saveScrollable(ref) {
+    this._scrollable = ref;
+  }
+
+  componentDidUpdate(prevProps) {
+    let scrollable = this._scrollable;
+  
+    if (scrollable) {
+      if (this.props.children.length > prevProps.children.length &&
+        scrollable.scrollWidth > scrollable.clientWidth) {
+          let leftOffset = 0;
+          for (let i = 0; i <= this.props.activeIndex; i++) {
+            let ref = this.props.childRefs[i];
+            leftOffset += ref ?  this.props.childRefs[i].offsetWidth : 0;
+          }
+          if (leftOffset >= scrollable.clientWidth) {
+            scrollable.scrollLeft = leftOffset;
+          }
+      }
+    }
+  }
+
   onPresentationModeClick = () =>
     this.props.dispatch(PresentationActions.enable());
 
@@ -166,11 +190,11 @@ export class TabBar extends React.Component {
       && (activeDoc.contentType === Constants.ContentType_Transcript || activeDoc.contentType === Constants.ContentType_LiveChat);
 
     const tabBarClassName = this.state.draggedOver ? ' dragged-over-tab-bar' : '';
-
+    this.childRefs = [];
     return (
       <div className={ CSS + tabBarClassName } onDragEnter={ this.onDragEnter } onDragOver={ this.onDragOver }
         onDragLeave={ this.onDragLeave } onDrop={ this.onDrop } >
-        <ul>
+        <ul ref={ this.saveScrollable }>
           {
             React.Children.map(this.props.children, child =>
               <li>{child}</li>
