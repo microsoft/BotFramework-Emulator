@@ -73,7 +73,7 @@
   "dependencies": {
     "async": "2.1.4",
     "base64url": "2.0.0",
-    "botframework-webchat": "^0.13.0",
+    "botframework-webchat": "^0.13.1",
     "btoa": "^1.2.1",
     "command-line-args": "4.0.7",
     "crypto-js": "^3.1.9-1",
