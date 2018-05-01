@@ -1,4 +1,4 @@
-import { autoUpdater as electronUpdater } from "electron-updater";
+import { autoUpdater as electronUpdater, UpdateCheckResult, UpdateInfo } from "electron-updater";
 import * as path from "path";
 import * as process from "process";
 import { mainWindow } from './main';
@@ -16,6 +16,7 @@ export enum UpdateStatus {
 
 export const AppUpdater = new class extends EventEmitter {
   private _userInitiated: boolean;
+  private _autoDownload: boolean;
   private _status: UpdateStatus = UpdateStatus.Idle;
   private _allowPrerelease: boolean;
 
@@ -38,48 +39,55 @@ export const AppUpdater = new class extends EventEmitter {
       electronUpdater.updateConfigPath = path.join(process.cwd(), 'app-update.yml');
     }
 
-    electronUpdater.on('checking-for-update', (ev: Event, ...args: any[]) => {
+    electronUpdater.on('checking-for-update', () => {
       this._status = UpdateStatus.CheckingForUpdate;
-      this.emit('checking-for-update', ...args);
+      this.emit('checking-for-update');
     });
-    electronUpdater.on('update-available', (ev: Event, ...args: any[]) => {
+    electronUpdater.on('update-available', (updateInfo: UpdateInfo) => {
       this._status = UpdateStatus.UpdateAvailable;
-      this.emit('update-available', ...args);
+      if (!this._autoDownload) {
+        this.emit('update-available', updateInfo);
+      }
     });
-    electronUpdater.on('update-not-available', (ev: Event, ...args: any[]) => {
+    electronUpdater.on('update-not-available', (updateInfo: UpdateInfo) => {
       this._status = UpdateStatus.Idle;
-      this.emit('up-to-date', ...args);
+      this.emit('up-to-date', updateInfo);
     });
-    electronUpdater.on('error', (ev: Event, err: Error, ...args: any[]) => {
+    electronUpdater.on('error', (err: Error, message: string) => {
       this._status = UpdateStatus.Idle;
-      this.emit('error', err, ...args);
+      this.emit('error', err, message);
     });
-    electronUpdater.on('download-progress', (ev: Event, ...args: any[]) => {
+    electronUpdater.on('download-progress', (...args: any[]) => {
       this._status = UpdateStatus.UpdateDownloading;
       this.emit('download-progress', ...args);
     });
-    electronUpdater.on('update-downloaded', (ev: Event, ...args: any[]) => {
+    electronUpdater.on('update-downloaded', (updateInfo: UpdateInfo, ...args: any[]) => {
       this._status = UpdateStatus.UpdateReadyToInstall;
-      this.emit('update-downloaded', ...args);
+      this.emit('update-downloaded', updateInfo, ...args);
     });
   }
 
-  public checkForUpdates(userInitiated: boolean = false) {
+  public checkForUpdates(userInitiated: boolean = false, autoDownload: boolean = false) {
     try {
       if (electronUpdater) {
         this._status = UpdateStatus.CheckingForUpdate;
         this._userInitiated = userInitiated;
+        this._autoDownload = autoDownload;
         electronUpdater.allowPrerelease = this._allowPrerelease;
-        electronUpdater.autoDownload = true;
+        electronUpdater.autoDownload = false;
         electronUpdater.allowDowngrade = false;
         electronUpdater.autoInstallOnAppQuit = true;
-        electronUpdater.checkForUpdates().catch(err => console.error(err));
+        (electronUpdater as any).currentVersion = pjson.version;
+        electronUpdater.checkForUpdates()
+          .catch(err => {
+            console.error(err);
+          });
       }
     } catch (e) {
       console.error(e);
     }
   }
-
+  
   public quitAndInstall() {
     try {
       electronUpdater.quitAndInstall(true, true);

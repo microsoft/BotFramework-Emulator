@@ -340,7 +340,7 @@ gulp.task('redist:windows-nsis:binaries', function () {
 });
 
 //----------------------------------------------------------------------------
-gulp.task('redist:windows-nsis:metadata', gulp.series('redist:windows-nsis:binaries', function () {
+gulp.task('redist:windows-nsis:metadata-only', function () {
   const releaseFilename = `${pjson.name}-setup-${pjson.version}.exe`;
   const sha512 = hashFileAsync(`./dist/${releaseFilename}`);
   const sha2 = hashFileAsync(`./dist/${releaseFilename}`, 'sha256', 'hex');
@@ -350,7 +350,11 @@ gulp.task('redist:windows-nsis:metadata', gulp.series('redist:windows-nsis:binar
     .then((values) => {
       writeYamlMetadataFile(releaseFilename, 'latest.yml', './dist', values[0], releaseDate, { sha2: values[1] });
     });
-}));
+});
+
+//----------------------------------------------------------------------------
+gulp.task('redist:windows-nsis:metadata',
+  gulp.series('redist:windows-nsis:binaries', 'redist:windows-nsis:metadata-only'));
 
 //----------------------------------------------------------------------------
 gulp.task('redist:windows-nsis', gulp.series('redist:windows-nsis:metadata'));
@@ -414,7 +418,7 @@ gulp.task('redist:mac:binaries', function () {
 });
 
 //----------------------------------------------------------------------------
-gulp.task('redist:mac:metadata', gulp.series('redist:mac:binaries', function () {
+gulp.task('redist:mac:metadata-only', function () {
   const releaseFilename = `${pjson.name}-${pjson.version}-mac.zip`;
   const releaseHash = hashFileAsync(`./dist/${releaseFilename}`);
   const releaseDate = new Date().toISOString();
@@ -423,7 +427,11 @@ gulp.task('redist:mac:metadata', gulp.series('redist:mac:binaries', function () 
   return releaseHash.then((hashValue) => {
     writeYamlMetadataFile(releaseFilename, 'latest-mac.yml', './dist', hashValue, releaseDate);
   });
-}));
+});
+
+//----------------------------------------------------------------------------
+gulp.task('redist:mac:metadata',
+  gulp.series('redist:mac:binaries', 'redist:mac:metadata-only'));
 
 //----------------------------------------------------------------------------
 gulp.task('redist:mac', gulp.series('redist:mac:metadata'));

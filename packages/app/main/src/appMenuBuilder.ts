@@ -299,7 +299,7 @@ export const AppMenuBuilder = new class AppMenuBuilder implements IAppMenuBuilde
       return {
         id: 'auto-update',
         label: "Check for Update...",
-        click: () => AppUpdater.checkForUpdates(true),
+        click: () => AppUpdater.checkForUpdates(true, false),
         enabled: true,
       }
     }

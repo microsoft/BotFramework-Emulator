@@ -523,13 +523,4 @@ export function registerCommands() {
     const conversation = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
     windowManager.createOAuthWindow(url, conversation.codeVerifier);
   });
-
-  CommandRegistry.registerCommand('shell:quit-and-install-update', () => {
-    AppUpdater.quitAndInstall();
-  });
-
-  //---------------------------------------------------------------------------
-  CommandRegistry.registerCommand('shell:check-for-updates', () => {
-    AppUpdater.checkForUpdates();
-  });
 }
