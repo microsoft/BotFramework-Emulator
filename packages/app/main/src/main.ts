@@ -49,6 +49,7 @@ import * as squirrel from './squirrelEvents';
 import * as Commands from './commands';
 import { AppMenuBuilder } from './appMenuBuilder';
 import { AppUpdater } from './appUpdater';
+import { UpdateInfo } from 'electron-updater';
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
   console.error(error);
@@ -65,19 +66,24 @@ AppUpdater.on('checking-for-update', (...args) => {
   AppMenuBuilder.refreshAppUpdateMenu();
 });
 
-AppUpdater.on('update-available', (...args) => {
+AppUpdater.on('update-available', (update: UpdateInfo) => {
   AppMenuBuilder.refreshAppUpdateMenu();
-  /*
   if (AppUpdater.userInitiated) {
     mainWindow.commandService.call('shell:show-message-box', true, {
       title: "Updater",
-      message: "An update is available. Downloading it now."
-    });
+      message: `A new version is available (v${update.releaseName}). Download it now?`,
+      buttons: ["Cancel", "OK"],
+      defaultId: 1,
+      cancelId: 0
+    }).then(result => {
+      if (result) {
+        AppUpdater.checkForUpdates(true, true);
+      }
+    })
   }
-  */
 });
 
-AppUpdater.on('update-downloaded', (...args) => {
+AppUpdater.on('update-downloaded', (update: UpdateInfo) => {
   AppMenuBuilder.refreshAppUpdateMenu();
   if (AppUpdater.userInitiated) {
     mainWindow.commandService.call('shell:show-message-box', true, {
@@ -94,7 +100,7 @@ AppUpdater.on('update-downloaded', (...args) => {
   }
 });
 
-AppUpdater.on('up-to-date', (...args) => {
+AppUpdater.on('up-to-date', (update: UpdateInfo) => {
   AppMenuBuilder.refreshAppUpdateMenu();
   if (AppUpdater.userInitiated) {
     mainWindow.commandService.call('shell:show-message-box', true, {
@@ -104,7 +110,7 @@ AppUpdater.on('up-to-date', (...args) => {
   }
 });
 
-AppUpdater.on('error', (err, ...args) => {
+AppUpdater.on('error', (err: Error, message: string) => {
   AppMenuBuilder.refreshAppUpdateMenu();
   if (AppUpdater.userInitiated) {
     mainWindow.commandService.call('shell:show-message-box', true, {
@@ -285,7 +291,7 @@ const createMainWindow = async () => {
     mainWindow.webContents.setZoomLevel(getSettings().windowState.zoomLevel);
     mainWindow.browserWindow.show();
     if (process.env.NODE_ENV !== 'development') {
-      AppUpdater.checkForUpdates();
+      AppUpdater.checkForUpdates(false, true);
     }
   });
 }
