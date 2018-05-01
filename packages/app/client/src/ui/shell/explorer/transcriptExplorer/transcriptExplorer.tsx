@@ -166,7 +166,7 @@ class _TranscriptExplorer extends React.Component<TranscriptExplorerProps> {
       <div { ...EXPLORER_CSS }>
         <ExpandCollapse
           expanded={ true }
-          title="File Explorer"
+          title="Transcript Explorer"
         >
           { this.renderFileTree() }
           {/*
