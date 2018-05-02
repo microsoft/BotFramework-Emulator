@@ -34,22 +34,24 @@
 import * as BotChat from '@bfemulator/custom-botframework-webchat';
 
 import { uniqueId } from '@bfemulator/sdk-shared';
-import { IEndpointService } from 'msbot/bin/schema';
 import { Colors, Splitter } from '@bfemulator/ui-react';
 import base64Url from 'base64url';
 import { css } from 'glamor';
 import * as _ from 'lodash';
+import { IEndpointService } from 'msbot/bin/schema';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { BehaviorSubject } from 'rxjs';
 import * as ChatActions from '../../../data/action/chatActions';
+import { updateDocument } from '../../../data/action/editorActions';
 import * as PresentationActions from '../../../data/action/presentationActions';
 import { getActiveBot } from '../../../data/botHelpers';
-import store, { IRootState } from '../../../data/store';
+import { IDocument } from '../../../data/reducer/editor';
+import { IRootState } from '../../../data/store';
 
 import { CommandService } from '../../../platform/commands/commandService';
 import { SettingsService } from '../../../platform/settings/settingsService';
-import ToolBar, { Button as ToolBarButton, Separator as ToolBarSeparator } from '../toolbar';
+import ToolBar, { Button as ToolBarButton } from '../toolbar';
 import ChatPanel from './chatPanel';
 import DetailPanel from './detailPanel';
 import LogPanel from './logPanel';
@@ -146,54 +148,49 @@ interface IEmulatorProps {
   mode?: EmulatorMode;
   pingId?: number;
   presentationModeEnabled?: boolean;
+  pingDocument?: (documentId) => void;
+  enablePresentationMode?: (enabled) => void;
+  setInspectorObjects?: (documentId: string, objects: any) => void;
+  clearLog?: (documentId) => void;
+  newConversation?: (documentId, options) => void;
+  updateDocument?: (documentId, updatedValues) => void;
 }
 
 class Emulator extends React.Component<IEmulatorProps, {}> {
   constructor(props, context) {
-    super(props, context)
-    this.handlePresentationClick = this.handlePresentationClick.bind(this);
-    this.handleStartOverClick = this.handleStartOverClick.bind(this);
-    this.handleExportClick = this.handleExportClick.bind(this);
-    this.handleImportClick = this.handleImportClick.bind(this);
-
-    this.onVerticalSizeChange = _.debounce(this.onVerticalSizeChange.bind(this), 500);
-    this.onHorizontalSizeChange = _.debounce(this.onHorizontalSizeChange.bind(this), 500);
-
-    this.getVerticalSplitterSizes = this.getVerticalSplitterSizes.bind(this);
-
-    this.getHorizontalSplitterSizes = this.getHorizontalSplitterSizes.bind(this);
+    super(props, context);
   }
 
-  getVerticalSplitterSizes() {
+  private getVerticalSplitterSizes = () => {
     return {
       0: `${this.props.document.ui.verticalSplitter[0].percentage}`
-    }
-  }
+    };
+  };
 
-  getHorizontalSplitterSizes() {
+  private getHorizontalSplitterSizes = () => {
     return {
       0: `${this.props.document.ui.horizontalSplitter[0].percentage}`
-    }
-  }
+    };
+  };
 
-  onVerticalSizeChange(sizes) {
+  private readonly onVerticalSizeChange = _.debounce((sizes) => {
     this.props.document.ui = {
       ...this.props.document.ui,
       verticalSplitter: sizes
     };
-  }
+  });
 
-  onHorizontalSizeChange(sizes) {
+  private readonly onHorizontalSizeChange = _.debounce((sizes) => {
     this.props.document.ui = {
       ...this.props.document.ui,
       horizontalSplitter: sizes
     };
-  }
+  });
 
   shouldStartNewConversation(props?: any) {
     props = props || this.props;
     return !props.document.directLine ||
-      (props.document.conversationId != props.document.directLine.conversationId);
+      ( props.document.conversationId != props.document.directLine.conversationId );
   }
 
   componentWillMount() {
@@ -211,20 +208,13 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
       break;
     }
     if (this.props.document.documentId !== nextProps.document.documentId) {
-      store.dispatch(ChatActions.pingDocument(nextProps.document.documentId));
+      this.props.pingDocument(nextProps.document.documentId);
     }
   }
 
-  componentWillUpdate(nextProps, nextState, nextContext) {
-  }
-
-  componentDidUpdate(prevProps, prevState, prevContext) {
-  }
-
-  handlePresentationClick(enable: boolean) {
-    enable ? store.dispatch(PresentationActions.enable()) :
-      store.dispatch(PresentationActions.disable());
-  }
+  private handlePresentationClick = (enabled: boolean) => {
+    this.props.enablePresentationMode(enabled);
+  };
 
   async startNewConversation(props?: any) {
     props = props || this.props;
@@ -235,7 +225,7 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
     const selectedActivity$ = new BehaviorSubject({});
     const subscription = selectedActivity$.subscribe((obj: any) => {
       if (obj && obj.activity) {
-        store.dispatch(ChatActions.setInspectorObjects(props.document.documentId, obj.activity));
+        this.props.setInspectorObjects(props.document.documentId, obj.activity);
       }
     });
 
@@ -254,7 +244,7 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
       props.document.directLine.end();
     }
 
-    this.initConversation(props, options, selectedActivity$, subscription)
+    this.initConversation(props, options, selectedActivity$, subscription);
 
     if (props.mode === 'transcript') {
       try {
@@ -263,21 +253,22 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
         if (props.document && props.document.deepLink && props.document.activities) {
           try {
             // transcript was deep linked via protocol, and should just be fed its own activities attached to the document
-            await CommandService.remoteCall('emulator:feed-transcript:deep-link', conversation.conversationId, props.document.activities)
+            await CommandService.remoteCall('emulator:feed-transcript:deep-link', conversation.conversationId, props.document.activities);
           } catch (err) {
             throw new Error(`Error while feeding deep-linked transcript to conversation: ${err}`);
           }
         } else {
           try {
             // the transcript is on disk, so its activities need to be read on the main side and fed in
-            await CommandService.remoteCall('emulator:feed-transcript:disk', conversation.conversationId, props.document.documentId)
+            const fileInfo: { fileName: string, filePath: string } = await CommandService.remoteCall('emulator:feed-transcript:disk', conversation.conversationId, props.document.documentId);
+            this.props.updateDocument(this.props.documentId, {fileName: fileInfo.fileName});
           } catch (err) {
             throw new Error(`Error while feeding transcript on disk to conversation: ${err}`);
           }
         }
       } catch (err) {
         // TODO: surface error somewhere
-        console.error('Error creating a new conversation for transcript mode: ', err)
+        console.error('Error creating a new conversation for transcript mode: ', err);
       }
     }
   }
@@ -294,31 +285,26 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
       webSocket: false
     });
 
-    props.dispatch(
-      ChatActions.newConversation(props.documentId, {
-        conversationId: options.conversationId,
-        webChatStore,
-        directLine,
-        selectedActivity$,
-        subscription
-      })
-    );
+    this.props.newConversation(props.documentId, {
+      conversationId: options.conversationId,
+      webChatStore,
+      directLine,
+      selectedActivity$,
+      subscription
+    });
   }
 
-  handleStartOverClick() {
-    store.dispatch(ChatActions.clearLog(this.props.document.documentId));
-    store.dispatch(ChatActions.setInspectorObjects(this.props.document.documentId, []));
+  private handleStartOverClick = () => {
+    this.props.clearLog(this.props.document.documentId);
+    this.props.setInspectorObjects(this.props.document.documentId, []);
     this.startNewConversation();
-  }
+  };
 
-  handleExportClick() {
+  private handleExportClick = () => {
     if (this.props.document.directLine) {
       CommandService.remoteCall('emulator:save-transcript-to-file', this.props.document.directLine.conversationId);
     }
-  }
-
-  handleImportClick() {
-  }
+  };
 
   render(): JSX.Element {
     return this.props.presentationModeEnabled ? this.renderPresentationView() : this.renderDefaultView();
@@ -328,10 +314,10 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
     return (
       <div { ...PRESENTATION_CSS }>
         <div className="presentation-content">
-          <ChatPanel mode={ this.props.mode } document={ this.props.document } onStartConversation={ this.handleStartOverClick } />
+          <ChatPanel mode={ this.props.mode } document={ this.props.document } onStartConversation={ this.handleStartOverClick }/>
           {
             this.props.mode === 'transcript' ?
-              <div className="presentation-playback-dock"><PlaybackBar /></div>
+              <div className="presentation-playback-dock"><PlaybackBar/></div>
               :
               null
           }
@@ -348,20 +334,20 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
           this.props.mode === 'livechat' &&
           <div className="header">
             <ToolBar>
-              <ToolBarButton visible={ true } title="Start Over" onClick={ this.handleStartOverClick } />
-              <ToolBarButton visible={ true } title="Save Transcript As..." onClick={ this.handleExportClick } />
+              <ToolBarButton visible={ true } title="Start Over" onClick={ this.handleStartOverClick }/>
+              <ToolBarButton visible={ true } title="Save Transcript As..." onClick={ this.handleExportClick }/>
             </ToolBar>
           </div>
         }
         <div className="content vertical">
           <Splitter orientation="vertical" primaryPaneIndex={ 0 } minSizes={ { 0: 80, 1: 80 } } initialSizes={ this.getVerticalSplitterSizes } onSizeChange={ this.onVerticalSizeChange } key={ this.props.pingId }>
             <div className="content">
-              <ChatPanel mode={ this.props.mode } document={ this.props.document } onStartConversation={ this.handleStartOverClick } />
+              <ChatPanel mode={ this.props.mode } document={ this.props.document } onStartConversation={ this.handleStartOverClick }/>
             </div>
             <div className="content">
               <Splitter orientation="horizontal" primaryPaneIndex={ 0 } minSizes={ { 0: 80, 1: 80 } } initialSizes={ this.getHorizontalSplitterSizes } onSizeChange={ this.onHorizontalSizeChange } key={ this.props.pingId }>
-                <DetailPanel document={ this.props.document } key={ this.props.pingId } />
-                <LogPanel document={ this.props.document } key={ this.props.pingId } />
+                <DetailPanel document={ this.props.document } key={ this.props.pingId }/>
+                <LogPanel document={ this.props.document } key={ this.props.pingId }/>
               </Splitter>
             </div>
           </Splitter>
@@ -381,4 +367,15 @@ function mapStateToProps(state: IRootState, { documentId }: { documentId: string
   };
 }
 
-export default connect(mapStateToProps, null)(Emulator as any);
+function mapDispatchToProps(dispatch) {
+  return {
+    pingDocument: documentId => dispatch(ChatActions.pingDocument(documentId)),
+    enablePresentationMode: enable => enable ? dispatch(PresentationActions.enable()) : dispatch(PresentationActions.disable()),
+    setInspectorObjects: (documentId, objects) => dispatch(ChatActions.setInspectorObjects(documentId, objects)),
+    clearLog: documentId => dispatch(ChatActions.clearLog(documentId)),
+    newConversation: (documentId, options) => dispatch(ChatActions.newConversation(documentId, options)),
+    updateDocument: (documentId, updatedValues: Partial<IDocument>) => dispatch(updateDocument(documentId, updatedValues))
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Emulator as any);

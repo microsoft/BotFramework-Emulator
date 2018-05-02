@@ -413,7 +413,7 @@ export function registerCommands() {
 
   //---------------------------------------------------------------------------
   // Feeds a transcript from disk to a conversation
-  CommandRegistry.registerCommand('emulator:feed-transcript:disk', (conversationId: string, filename: string) => {
+  CommandRegistry.registerCommand('emulator:feed-transcript:disk', (conversationId: string, filePath: string) => {
     const activeBot: IBotConfigWithPath = getActiveBot();
     if (!activeBot) {
       throw new Error('feed-transcript:disk: No active bot.');
@@ -424,15 +424,20 @@ export function registerCommands() {
       throw new Error(`feed-transcript:disk: Conversation ${conversationId} not found.`);
     }
 
-    const path = Path.resolve(filename);
+    const path = Path.resolve(filePath);
     const stat = Fs.statSync(path);
     if (!stat || !stat.isFile()) {
-      throw new Error(`feed-transcript:disk: File ${filename} not found.`);
+      throw new Error(`feed-transcript:disk: File ${filePath} not found.`);
     }
 
     const activities = JSON.parse(readFileSync(path));
 
     conversation.feedActivities(activities);
+
+    const {name, ext} = Path.parse(path);
+    const fileName = `${name}${ext}`;
+
+    return {fileName, filePath};
   });
 
   //---------------------------------------------------------------------------

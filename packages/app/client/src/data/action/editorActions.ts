@@ -43,6 +43,7 @@ export const SET_ACTIVE_EDITOR = 'EDITOR/SET_ACTIVE_EDITOR';
 export const SPLIT_TAB = 'EDITOR/SPLIT_TAB';
 export const SWAP_TABS = 'EDITOR/SWAP_TABS';
 export const TOGGLE_DRAGGING_TAB = 'EDITOR/TOGGLE_DRAGGING_TAB';
+export const UPDATE_DOCUMENT = 'EDITOR/UPDATE_DOCUMENT';
 
 export type EditorAction = {
   type: 'EDITOR/APPEND_TAB',
@@ -70,6 +71,9 @@ export type EditorAction = {
   }
 } | {
   type: 'EDITOR/OPEN',
+  payload: IDocument
+} | {
+  type: 'EDITOR/UPDATE_DOCUMENT',
   payload: IDocument
 } | {
   type: 'EDITOR/SET_ACTIVE_TAB',
@@ -154,6 +158,13 @@ export function open(contentType: string, documentId: string, isGlobal: boolean,
       meta
     }
   };
+}
+
+export function updateDocument(documentId, updatedDocument: Partial<IDocument>) {
+  return {
+    type: UPDATE_DOCUMENT,
+      payload: { documentId, ...updatedDocument }
+  }
 }
 
 export function setActiveTab(documentId: string): EditorAction {
