@@ -50,6 +50,7 @@ import * as Commands from './commands';
 import { AppMenuBuilder } from './appMenuBuilder';
 import { AppUpdater } from './appUpdater';
 import { UpdateInfo } from 'electron-updater';
+import { ProgressInfo } from 'builder-util-runtime';
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
   console.error(error);
@@ -58,6 +59,10 @@ import { UpdateInfo } from 'electron-updater';
 
 export let mainWindow: Window;
 export let windowManager: WindowManager;
+
+//-----------------------------------------------------------------------------
+
+app.setName("Bot Framework Emulator (V4 PREVIEW)");
 
 //-----------------------------------------------------------------------------
 // App-Updater events
@@ -70,8 +75,8 @@ AppUpdater.on('update-available', (update: UpdateInfo) => {
   AppMenuBuilder.refreshAppUpdateMenu();
   if (AppUpdater.userInitiated) {
     mainWindow.commandService.call('shell:show-message-box', true, {
-      title: "Updater",
-      message: `A new version is available (v${update.releaseName}). Download it now?`,
+      title: app.getName(),
+      message: `An update is available. Download it now?`,
       buttons: ["Cancel", "OK"],
       defaultId: 1,
       cancelId: 0
@@ -87,8 +92,8 @@ AppUpdater.on('update-downloaded', (update: UpdateInfo) => {
   AppMenuBuilder.refreshAppUpdateMenu();
   if (AppUpdater.userInitiated) {
     mainWindow.commandService.call('shell:show-message-box', true, {
-      title: "Updater",
-      message: "Update is ready to install. Quit and install now?",
+      title: app.getName(),
+      message: "Finished downloading update. Restart and install now?",
       buttons: ["Cancel", "OK"],
       defaultId: 1,
       cancelId: 0
@@ -104,18 +109,23 @@ AppUpdater.on('up-to-date', (update: UpdateInfo) => {
   AppMenuBuilder.refreshAppUpdateMenu();
   if (AppUpdater.userInitiated) {
     mainWindow.commandService.call('shell:show-message-box', true, {
-      title: "Updater",
-      message: "App is up to date."
+      title: app.getName(),
+      message: "There are no updates currently available."
     });
   }
 });
 
+AppUpdater.on('download-progress', (progress: ProgressInfo) => {
+  AppMenuBuilder.refreshAppUpdateMenu();  
+});
+
 AppUpdater.on('error', (err: Error, message: string) => {
   AppMenuBuilder.refreshAppUpdateMenu();
+  console.error(err, message);
   if (AppUpdater.userInitiated) {
     mainWindow.commandService.call('shell:show-message-box', true, {
-      title: "Updater",
-      message: "App is up to date."
+      title: app.getName(),
+      message: "There are no updates currently available."
     });
   }
 });

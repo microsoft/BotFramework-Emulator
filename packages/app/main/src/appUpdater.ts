@@ -5,6 +5,7 @@ import { mainWindow } from './main';
 var pjson = require('../../package.json');
 import * as semver from 'semver';
 import { EventEmitter } from 'events';
+import { ProgressInfo } from 'builder-util-runtime';
 
 export enum UpdateStatus {
   Idle,
@@ -60,13 +61,13 @@ export const AppUpdater = new class extends EventEmitter {
       this._status = UpdateStatus.Idle;
       this.emit('error', err, message);
     });
-    electronUpdater.on('download-progress', (...args: any[]) => {
+    electronUpdater.on('download-progress', (progress: ProgressInfo) => {
       this._status = UpdateStatus.UpdateDownloading;
-      this.emit('download-progress', ...args);
+      this.emit('download-progress', progress);
     });
-    electronUpdater.on('update-downloaded', (updateInfo: UpdateInfo, ...args: any[]) => {
+    electronUpdater.on('update-downloaded', (updateInfo: UpdateInfo) => {
       this._status = UpdateStatus.UpdateReadyToInstall;
-      this.emit('update-downloaded', updateInfo, ...args);
+      this.emit('update-downloaded', updateInfo);
     });
   }
 
