@@ -61,8 +61,7 @@ export class EmulatorTab extends React.Component {
 }
 
 export default connect((state, { mode, documentId }) => {
-  let title = "Transcript";
-
+  let title;
   if (mode === 'livechat') {
     title = "Live Chat";
 
@@ -73,6 +72,15 @@ export default connect((state, { mode, documentId }) => {
 
     if (botEndpoint) {
       title += ` (${ botEndpoint.name })`;
+    }
+  } else if (mode === 'transcript') {
+    const { editor: editorState } = state;
+    const {editors, activeEditor} = editorState;
+    const editor = editors[activeEditor];
+    const document = editor.documents[documentId];
+    title = 'Transcript';
+    if (document.fileName) {
+      title += ` (${document.fileName})`;
     }
   }
 

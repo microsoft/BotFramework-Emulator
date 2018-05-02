@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as EditorActions from '../action/editorActions';
-import * as Constants from '../../constants';
 import { deepCopySlow } from '@bfemulator/app-shared';
+import * as Constants from '../../constants';
+import * as EditorActions from '../action/editorActions';
 import { EditorAction } from '../action/editorActions';
 import { getOtherTabGroup, tabGroupHasDocuments } from '../editorHelpers';
 
@@ -60,6 +60,7 @@ export interface IDocument {
   contentType?: string;
   dirty?: boolean;
   documentId?: string;
+  fileName?: string;
   isGlobal?: boolean;
   meta?: any;
 }
@@ -199,7 +200,7 @@ export default function editor(state: IEditorState = DEFAULT_STATE, action: Edit
       // if the document is already in another tab group, focus that one
       if (tabGroupHasDocuments(state.editors[otherTabGroup]) && state.editors[otherTabGroup].documents[action.payload.documentId]) {
         const recentTabs = [...state.editors[otherTabGroup].recentTabs].filter(docId => docId !== action.payload.documentId);
-        recentTabs.unshift(action.payload.documentId)
+        recentTabs.unshift(action.payload.documentId);
         const tabGroupState: IEditor = {
           ...state.editors[otherTabGroup],
           activeDocumentId: action.payload.documentId,
@@ -210,9 +211,9 @@ export default function editor(state: IEditorState = DEFAULT_STATE, action: Edit
         break;
       }
       //if the document is new, insert it into the tab order after the current active document
-      let newTabOrder; 
+      let newTabOrder;
       if (state.editors[editorKey].documents[action.payload.documentId]) {
-        newTabOrder = [...state.editors[editorKey].tabOrder]
+        newTabOrder = [...state.editors[editorKey].tabOrder];
       } else {
         const activeDocumentId = state.editors[state.activeEditor].activeDocumentId;
         const activeIndex = state.editors[editorKey].tabOrder.indexOf(activeDocumentId);
@@ -220,7 +221,7 @@ export default function editor(state: IEditorState = DEFAULT_STATE, action: Edit
           state.editors[editorKey].tabOrder.splice(activeIndex + 1, 0, action.payload.documentId);
           newTabOrder = [...state.editors[editorKey].tabOrder];
         } else {
-          newTabOrder =  [...state.editors[editorKey].tabOrder, action.payload.documentId];
+          newTabOrder = [...state.editors[editorKey].tabOrder, action.payload.documentId];
         }
       }
 
@@ -241,6 +242,28 @@ export default function editor(state: IEditorState = DEFAULT_STATE, action: Edit
       };
       state = setEditorState(editorKey, editorState, state);
       state = setActiveEditor(editorKey, state);
+      break;
+    }
+
+    case EditorActions.UPDATE_DOCUMENT: {
+      const { payload: updatedDocument }: { payload: IDocument } = action;
+
+      const { editors } = state;
+      const editorKeys = Object.keys(editors);
+      let i = editorKeys.length;
+      outer:while (i--) {
+        const documents = editors[editorKeys[i]].documents;
+        const documentKeys = Object.keys(documents);
+        let j = documentKeys.length;
+        while (j--) {
+          const document = documents[documentKeys[j]];
+          if (document.documentId === updatedDocument.documentId) {
+            documents[documentKeys[j]] = { ...document, ...updatedDocument };
+            break outer;
+          }
+        }
+      }
+      state = { ...state };
       break;
     }
 
@@ -368,7 +391,8 @@ export default function editor(state: IEditorState = DEFAULT_STATE, action: Edit
       break;
     }
 
-    default: break;
+    default:
+      break;
   }
 
   return state;
