@@ -1,3 +1,36 @@
+//
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license.
+//
+// Microsoft Bot Framework: http://botframework.com
+//
+// Bot Framework Emulator Github:
+// https://github.com/Microsoft/BotFramwork-Emulator
+//
+// Copyright (c) Microsoft Corporation
+// All rights reserved.
+//
+// MIT License:
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
 import { RecognizerResult, RecognizerResultIntent } from '../Models/RecognizerResults';
 import { LuisResponse } from '../Luis/LuisResponse';
 import { Entity } from '../Luis/Entity';
@@ -5,7 +38,7 @@ import { CompositeEntity } from '../Luis/CompositeEntity';
 import { Intent } from '../Models/Intent';
 
 // This adapter adapts the old LUIS Response schema to the the new schema
-// since v3 of the BotBuilder SDKs don't support the new schemas, so this 
+// since v3 of the BotBuilder SDKs don't support the new schemas, so this
 // adapter allows teh extension to give a similar experience for both SDKs
 export class RecognizerResultAdapter implements RecognizerResult {
   text: string;
@@ -37,8 +70,8 @@ export class RecognizerResultAdapter implements RecognizerResult {
 }
 
 private getEntitiesAndMetadata(
-  entities: Entity[], 
-  compositeEntities:  CompositeEntity[] | undefined, 
+  entities: Entity[],
+  compositeEntities:  CompositeEntity[] | undefined,
   verbose: boolean): any {
     let entitiesAndMetadata: any = verbose ? {$instance: {} } : {};
     let compositeEntityTypes: string[] = [];
@@ -60,8 +93,8 @@ private getEntitiesAndMetadata(
         this.addProperty(entitiesAndMetadata, this.getNormalizedEntityType(entity), this.getEntityValue(entity));
         if (verbose) {
             this.addProperty(
-              entitiesAndMetadata.$instance, 
-              this.getNormalizedEntityType(entity), 
+              entitiesAndMetadata.$instance,
+              this.getNormalizedEntityType(entity),
               this.getEntityMetadata(entity));
         }
     });
@@ -145,16 +178,16 @@ private getNormalizedEntityType(entity: Entity): string {
 }
 
 private populateCompositeEntity(
-  compositeEntity: CompositeEntity, 
-  entities: Entity[], entitiesAndMetadata: any, 
+  compositeEntity: CompositeEntity,
+  entities: Entity[], entitiesAndMetadata: any,
   verbose: boolean): Entity[] {
     let childrenEntites: any = verbose ? { $instance: {} } : {};
     let childrenEntitiesMetadata: any = {};
-    
+
     // This is now implemented as O(n^2) search and can be reduced to O(2n) using a map as an optimization if n grows
     let compositeEntityMetadata: Entity | undefined = entities.find(entity => {
-        // For now we are matching by value, which can be ambiguous if the same composite entity 
-        // shows up with the same text multiple times within an utterance, but this is just a 
+        // For now we are matching by value, which can be ambiguous if the same composite entity
+        // shows up with the same text multiple times within an utterance, but this is just a
         // stop gap solution till the indices are included in composite entities
         return entity.type === compositeEntity.parentType && entity.entity === compositeEntity.value;
     });
@@ -165,20 +198,20 @@ private populateCompositeEntity(
         childrenEntitiesMetadata.$instance = {};
     }
 
-    // This is now implemented as O(n*k) search and can be reduced to O(n + k) 
+    // This is now implemented as O(n*k) search and can be reduced to O(n + k)
     // using a map as an optimization if n or k grow
     let coveredSet = new Set();
     compositeEntity.children.forEach(childEntity => {
         for (let i = 0; i < entities.length; i++) {
             let entity = entities[i];
             if (!coveredSet.has(i) &&
-                childEntity.type === entity.type && 
-                compositeEntityMetadata && 
-                entity.startIndex !== undefined && 
-                compositeEntityMetadata.startIndex !== undefined && 
-                entity.startIndex >= compositeEntityMetadata.startIndex && 
-                entity.endIndex !== undefined && 
-                compositeEntityMetadata.endIndex !== undefined && 
+                childEntity.type === entity.type &&
+                compositeEntityMetadata &&
+                entity.startIndex !== undefined &&
+                compositeEntityMetadata.startIndex !== undefined &&
+                entity.startIndex >= compositeEntityMetadata.startIndex &&
+                entity.endIndex !== undefined &&
+                compositeEntityMetadata.endIndex !== undefined &&
                 entity.endIndex <= compositeEntityMetadata.endIndex) {
 
                 // Add to the set to ensure that we don't consider the same child entity more than once per composite
@@ -187,8 +220,8 @@ private populateCompositeEntity(
 
                 if (verbose) {
                   this.addProperty(
-                    childrenEntites.$instance, 
-                    this.getNormalizedEntityType(entity), 
+                    childrenEntites.$instance,
+                    this.getNormalizedEntityType(entity),
                     this.getEntityMetadata(entity));
                 }
             }
@@ -207,7 +240,7 @@ private populateCompositeEntity(
         this.addProperty(entitiesAndMetadata.$instance, compositeEntity.parentType, childrenEntitiesMetadata);
     }
 
-    return filteredEntities;        
+    return filteredEntities;
 }
 
 /**

@@ -1,3 +1,36 @@
+//
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license.
+//
+// Microsoft Bot Framework: http://botframework.com
+//
+// Bot Framework Emulator Github:
+// https://github.com/Microsoft/BotFramwork-Emulator
+//
+// Copyright (c) Microsoft Corporation
+// All rights reserved.
+//
+// MIT License:
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
 import * as React from 'react';
 import { Component } from 'react';
 import { css } from 'glamor';
@@ -142,10 +175,10 @@ class App extends Component<any, AppState> {
         $host.setInspectorTitle('QnAMaker');
         $host.setAccessoryState(TrainAccessoryId, AccessoryDefaultState);
         $host.setAccessoryState(PublishAccessoryId, AccessoryDefaultState);
-        $host.enableAccessory(TrainAccessoryId, this.state.persistentState[this.state.id] && 
+        $host.enableAccessory(TrainAccessoryId, this.state.persistentState[this.state.id] &&
                                                 this.state.persistentState[this.state.id].pendingTrain &&
                                                 this.state.selectedAnswer !== '');
-        $host.enableAccessory(PublishAccessoryId, this.state.persistentState[this.state.id] && 
+        $host.enableAccessory(PublishAccessoryId, this.state.persistentState[this.state.id] &&
                                                   this.state.persistentState[this.state.id].pendingPublish);
       });
 
@@ -178,17 +211,17 @@ class App extends Component<any, AppState> {
     }
     return (
       <div {...AppCss}>
-        <QnAMakerHeader 
+        <QnAMakerHeader
           knowledgeBaseId={this.state.traceInfo.knowledgeBaseId}
           knowledgeBaseName={this.state.qnaService.name}
         />
         <Splitter orientation={'vertical'} primaryPaneIndex={0} minSizes={{ 0: 306, 1: 306 }} initialSizes={{ 0: 306 }}>
-          <PhrasingsView 
+          <PhrasingsView
             phrasings={this.state.phrasings}
             addPhrasing={this.addPhrasing()}
             removePhrasing={this.removePhrasing()}
           />
-          <AnswersView 
+          <AnswersView
             answers={this.state.answers}
             selectedAnswer={this.state.selectedAnswer}
             selectAnswer={this.selectAnswer()}
@@ -236,7 +269,7 @@ class App extends Component<any, AppState> {
     $host.setAccessoryState(PublishAccessoryId, AccessoryWorkingState);
     let success = false;
     try {
-      if (this.state.qnaService !== null) {        
+      if (this.state.qnaService !== null) {
         const response = await this.client.publish(this.state.traceInfo.knowledgeBaseId);
         success = response.status === 204;
         if (success) {
@@ -318,7 +351,7 @@ class App extends Component<any, AppState> {
       });
     };
   }
-  
+
   private setAppPersistentState(persistentState: PersistentAppState) {
     this.state.persistentState[this.state.id] = persistentState;
     this.setState({persistentState: this.state.persistentState});

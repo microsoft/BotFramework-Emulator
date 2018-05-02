@@ -15,7 +15,8 @@
     "start:electron": "./node_modules/.bin/electron --inspect=7777 .",
     "start:electron:dev": "cross-env ELECTRON_TARGET_URL=http://localhost:3000/ npm run start:electron",
     "start:react-app": "cd ../client && npm start",
-    "test": "jest"
+    "test": "jest",
+    "verify": "gulp verify:copyright"
   },
   "keywords": [
     "microsoft",
