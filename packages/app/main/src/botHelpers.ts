@@ -119,6 +119,9 @@ export function toSavableBot(bot: IBotConfigWithPath, secret?: string): BotConfi
 
 /** Clones a bot */
 export function cloneBot(bot: IBotConfigWithPath): IBotConfigWithPath {
+  if (!bot) {
+    return null;
+  }
   return BotConfigWithPath.fromJSON(bot);
 }
 
