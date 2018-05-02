@@ -35,17 +35,20 @@ export const AppUpdater = new class extends EventEmitter {
     }
 
     electronUpdater.logger = null;
-    if (process.env.NODE_ENV === "development") {
-      electronUpdater.updateConfigPath = path.join(process.cwd(), 'app-update.yml');
-    }
-
+    
+    electronUpdater.setFeedURL({
+      repo: "BotFramework-Emulator",
+      owner: "Microsoft",
+      provider: "github"
+    });
+    
     electronUpdater.on('checking-for-update', () => {
       this._status = UpdateStatus.CheckingForUpdate;
       this.emit('checking-for-update');
     });
     electronUpdater.on('update-available', (updateInfo: UpdateInfo) => {
-      this._status = UpdateStatus.UpdateAvailable;
       if (!this._autoDownload) {
+        this._status = UpdateStatus.Idle;
         this.emit('update-available', updateInfo);
       }
     });
@@ -77,7 +80,9 @@ export const AppUpdater = new class extends EventEmitter {
         electronUpdater.autoDownload = autoDownload;
         electronUpdater.allowDowngrade = false;
         electronUpdater.autoInstallOnAppQuit = true;
-        (electronUpdater as any).currentVersion = pjson.version;
+        if (process.env.NODE_ENV === 'development') {
+          (electronUpdater as any).currentVersion = pjson.version;
+        }
         electronUpdater.checkForUpdates()
           .catch(err => {
             console.error(err);
