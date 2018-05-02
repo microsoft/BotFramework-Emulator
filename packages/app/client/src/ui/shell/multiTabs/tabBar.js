@@ -202,8 +202,8 @@ export class TabBar extends React.Component {
           }
         </ul>
         <div className="tab-bar-widgets">
-          { presentationEnabled ? <span className="widget presentation-widget" onClick={ e => this.onPresentationModeClick() }></span> : null }
-          { splitEnabled ? <span className="widget split-widget" onClick={ this.onSplitClick }></span> : null }
+          { presentationEnabled ? <span className="widget presentation-widget" title="Presentation Mode" onClick={ e => this.onPresentationModeClick() }></span> : null }
+          { splitEnabled ? <span className="widget split-widget" title="Split Editor" onClick={ this.onSplitClick }></span> : null }
         </div>
       </div>
     );
