@@ -141,7 +141,17 @@ export function registerCommands() {
     }
 
     // load the bot (decrypt with secret if we were able to get it)
-    let bot = await loadBotWithRetry(botPath, secret);
+    let bot:IBotConfigWithPath;
+    try {
+      bot = await loadBotWithRetry(botPath, secret);
+    } catch (e) {
+      var errMessage = `Failed to open the bot with error: ${e.message}`;
+      await Electron.dialog.showMessageBox(mainWindow.browserWindow,  {
+          type: 'error',
+          message: errMessage,
+        });
+      throw new Error(errMessage);
+    }
     if (!bot) {
       // user couldn't provide correct secret, abort
       throw new Error('No secret provided to decrypt encrypted bot.');
