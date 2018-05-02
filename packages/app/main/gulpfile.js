@@ -1,4 +1,38 @@
+//
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license.
+//
+// Microsoft Bot Framework: http://botframework.com
+//
+// Bot Framework Emulator Github:
+// https://github.com/Microsoft/BotFramwork-Emulator
+//
+// Copyright (c) Microsoft Corporation
+// All rights reserved.
+//
+// MIT License:
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
 const { join, relative } = require('path');
+const { readFile } = require('fs');
 const buffer = require('vinyl-buffer');
 const chalk = require('chalk');
 const gulp = require('gulp');
@@ -686,23 +720,56 @@ gulp.task('publish:linux', function () {
 gulp.task('verify:copyright', function () {
   const lernaRoot = '../../../';
   const lernaJson = require(join(lernaRoot, 'lerna.json'));
-  const files = lernaJson.packages.map(dir => join(lernaRoot, dir, '!(node_modules)/**/*.@(js|jsx|ts|tsx)'));
+  const files = lernaJson.packages.filter(p => !/\/custom-/.test(p)).map(dir => join(lernaRoot, dir, '**/*.@(js|jsx|ts|tsx)'));
+  const filesWithoutCopyright = [];
+  let count = 0;
+  let scanned = 0;
 
   return gulp
-    .src(files)
-    .pipe(buffer())
-    .pipe(through2((file, _, callback) => {
-      const first1000 = file.contents.toString('utf8', 0, 1000);
+    .src(files, { buffer: false })
+    .pipe(through2(
+      (file, _, callback) => {
+        const filename = file.history[0];
 
-      if (~first1000.indexOf('Copyright (c) Microsoft Corporation')) {
-        callback(null, file);
-      } else {
-        const filename = relative(process.cwd(), file.history[0]);
+        count++;
 
-        log.error(chalk.red(`Copyright header is missing in ${ chalk.magenta(filename) }`));
-        callback(new Error('missing copyright header'));
+        if (
+          // TODO: Instead of using pattern, we should use .gitignore
+          !/[\\\/](build|built|lib|node_modules)[\\\/]/.test(filename)
+          && !file.isDirectory()
+        ) {
+          callback(null, file);
+        } else {
+          callback();
+        }
       }
-    }));
+    ))
+    .pipe(buffer())
+    .pipe(through2(
+      (file, _, callback) => {
+        const filename = file.history[0];
+        const first1000 = file.contents.toString('utf8', 0, 1000);
+
+        if (!~first1000.indexOf('Copyright (c) Microsoft Corporation')) {
+          filesWithoutCopyright.push(relative(process.cwd(), filename));
+        }
+
+        scanned++;
+
+        callback();
+      },
+      callback => {
+        log.info(`Verified ${ chalk.magenta(scanned) } out of ${ chalk.magenta(count) } files with copyright header`);
+
+        if (filesWithoutCopyright.length) {
+          log.error(chalk.red('Copyright header is missing from the following files:'));
+          filesWithoutCopyright.forEach(filename => log.error(chalk.magenta(filename)));
+          callback(new Error('missing copyright header'));
+        } else {
+          callback();
+        }
+      }
+    ));
 });
 
 //============================================================================
