@@ -1,6 +1,6 @@
 {
   "name": "botframework-emulator",
-  "version": "4.0.4-alpha",
+  "version": "4.0.5-alpha",
   "private": true,
   "description": "Development tool for the Microsoft Bot Framework. Allows developers to test and debug bots on localhost.",
   "main": "./app/server/main.js",
