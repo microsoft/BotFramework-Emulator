@@ -42,7 +42,7 @@ import { getTabGroupForDocument } from '../../../data/editorHelpers';
 import { TruncateText } from '@bfemulator/ui-react';
 
 const truncateTextCss = css({
-  maxWidth: '220px'
+  maxWidth: '200px'
 });
 
 class Tab extends React.Component {
