@@ -31,12 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import { Component } from 'react';
-import { css } from 'glamor';
-import { Splitter, Colors, Fonts } from '@bfemulator/ui-react';
 import { IInspectorHost } from '@bfemulator/sdk-client';
-import { IActivity, ServiceType, IBotConfig, IDispatchService, IQnAService } from '@bfemulator/sdk-shared';
+import { IActivity } from '@bfemulator/sdk-shared';
+import { Splitter, Colors, Fonts } from '@bfemulator/ui-react';
+import { css } from 'glamor';
+import * as React from 'react';
+import { ServiceType, IBotConfig, IDispatchService, IQnAService } from 'msbot/bin/schema';
 import { QnAMakerClient, QnAKbInfo } from './QnAMaker/Client';
 import { QnAMakerTraceInfo, QueryResult } from './Models/QnAMakerTraceInfo';
 import { Answer } from './Models/QnAMakerModels';
@@ -46,7 +46,7 @@ import AnswersView from './Views/AnswersView';
 import AppStateAdapter from './AppStateAdapter';
 
 let $host: IInspectorHost = (window as any).host;
-const QnAApiBasePath = 'https://westus.api.cognitive.microsoft.com/qnamaker/v2.0';
+const QnAApiBasePath = 'https://westus.api.cognitive.microsoft.com/qnamaker/v4.0';
 const TrainAccessoryId = 'train';
 const PublishAccessoryId = 'publish';
 const AccessoryDefaultState = 'default';
@@ -107,7 +107,7 @@ interface AppState {
 
   phrasings: string[];
   answers: Answer[];
-  selectedAnswer: string;
+  selectedAnswer: Answer | null;
 }
 
 interface PersistentAppState {
@@ -115,7 +115,7 @@ interface PersistentAppState {
   pendingPublish: boolean;
 }
 
-class App extends Component<any, AppState> {
+class App extends React.Component<any, AppState> {
 
   client: QnAMakerClient;
 
@@ -154,7 +154,7 @@ class App extends Component<any, AppState> {
       persistentState: this.loadAppPersistentState(),
       phrasings: [],
       answers: [],
-      selectedAnswer: ''
+      selectedAnswer: null
     };
   }
 
@@ -177,7 +177,7 @@ class App extends Component<any, AppState> {
         $host.setAccessoryState(PublishAccessoryId, AccessoryDefaultState);
         $host.enableAccessory(TrainAccessoryId, this.state.persistentState[this.state.id] &&
                                                 this.state.persistentState[this.state.id].pendingTrain &&
-                                                this.state.selectedAnswer !== '');
+                                                this.state.selectedAnswer !== null);
         $host.enableAccessory(PublishAccessoryId, this.state.persistentState[this.state.id] &&
                                                   this.state.persistentState[this.state.id].pendingPublish);
       });
@@ -237,21 +237,37 @@ class App extends Component<any, AppState> {
     let success = false;
     try {
       if (this.state.qnaService !== null) {
-        const qnaPairs = this.state.phrasings.map(
-          (phrase) => {return {'question': phrase, 'answer': this.state.selectedAnswer}; }
-        );
-        const body = {
-          'add': {
-            'qnaPairs': qnaPairs
+        // const qnaPairs = this.state.phrasings.map(
+        //   (phrase) => {return {'question': phrase, 'answer': this.state.selectedAnswer}; }
+        // );
+        // const body = {
+        //   'add': {
+        //     'qnaPairs': qnaPairs
+        //   }
+        // };
+        if (this.state.selectedAnswer) {
+          let qnaList = { 'qnaList': [
+            {
+              'id': this.state.selectedAnswer.qnaId,
+              'answer': this.state.selectedAnswer.text,
+              'source': 'Editorial',
+              'questions': this.state.phrasings,
+              'metadata': [],
+            }
+          ]};
+          const body = this.state.selectedAnswer.qnaId === 0 
+            ? { 'add': qnaList }
+            : { 'update': qnaList };
+          const response = await this.client.updateKnowledgebase(this.state.traceInfo.knowledgeBaseId, body);
+          success = response.status === 202;
+          
+          if (success) {
+            $host.logger.log('Successfully trained Knowledge Base ' + this.state.traceInfo.knowledgeBaseId);
+          } else {
+            $host.logger.error('Request to QnA Maker failed. ' + response.statusText);
           }
-        };
-
-        const response = await this.client.updateKnowledgebase(this.state.traceInfo.knowledgeBaseId, body);
-        success = response.status === 204;
-        if (success) {
-          $host.logger.log('Successfully trained Knowledge Base ' + this.state.traceInfo.knowledgeBaseId);
         } else {
-          $host.logger.error('Request to QnA Maker failed. ' + response.statusText);
+          $host.logger.error('Select an answer before trying to train.');
         }
       }
     } catch (err) {
@@ -294,7 +310,7 @@ class App extends Component<any, AppState> {
   }
 
   private selectAnswer() {
-    return (newAnswer: string) => {
+    return (newAnswer: Answer) => {
       this.setState({
         selectedAnswer: newAnswer
       });
@@ -313,7 +329,7 @@ class App extends Component<any, AppState> {
         phrasings: newPhrases
       });
       this.setAppPersistentState({
-        pendingTrain: this.state.selectedAnswer !== '',
+        pendingTrain: this.state.selectedAnswer !== null,
         pendingPublish: false
       });
     };
@@ -328,7 +344,7 @@ class App extends Component<any, AppState> {
         phrasings: newPhrases
       });
       this.setAppPersistentState({
-        pendingTrain: this.state.selectedAnswer !== '',
+        pendingTrain: this.state.selectedAnswer !== null,
         pendingPublish: false
       });
     };
@@ -338,6 +354,7 @@ class App extends Component<any, AppState> {
     return (newAnswer: string) => {
       let newAnswers: Answer[] = this.state.answers;
       newAnswers.push({
+        qnaId: 0,
         text: newAnswer,
         score: 0,
         filters: {}
@@ -346,7 +363,7 @@ class App extends Component<any, AppState> {
         answers: newAnswers
       });
       this.setAppPersistentState({
-        pendingTrain: this.state.selectedAnswer !== '',
+        pendingTrain: this.state.selectedAnswer !== null,
         pendingPublish: false
       });
     };

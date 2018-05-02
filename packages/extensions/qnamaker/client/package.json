@@ -8,7 +8,8 @@
     "@bfemulator/sdk-shared": "^1.0.0",
     "@bfemulator/ui-react": "^1.0.0",
     "glamor": "^2.20.40",
-    "qnamaker": "^1.0.18",
+    "msbot": "^1.0.44",
+    "qnamaker": "^1.0.23",
     "react": "^16.2.0",
     "react-dom": "^16.2.0"
   },

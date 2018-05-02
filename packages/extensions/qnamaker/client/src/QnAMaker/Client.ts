@@ -34,8 +34,6 @@
 import { ServiceBase } from 'qnamaker/lib/api/serviceBase';
 const qnamaker: any = require('qnamaker');
 
-// let result = await kb.updateKnowledgeBase({knowledgeBaseID: this.state.traceInfo.knowledgeBaseId}, body);
-
 export interface QnAKbInfo {
   kbId: string;
   subscriptionKey: string;
@@ -43,30 +41,29 @@ export interface QnAKbInfo {
 }
 
 export class QnAMakerClient {
-
   private qnaMakerKbInfo: QnAKbInfo;
-  private knowledgebases: any;
+  private knowledgebase: any;
 
   constructor(qnaMakerKbInfo: QnAKbInfo) {
     this.qnaMakerKbInfo = qnaMakerKbInfo;
-    this.knowledgebases = new qnamaker.knowledgebases();
+    this.knowledgebase = new qnamaker.knowledgebase();
   }
 
-  async updateKnowledgebase(kbId: string, qnaPairs: any): Promise<any> {
+  async updateKnowledgebase(kbId: string, requestBody: any): Promise<any> {
     this.configureClient();
     const params = {
-      knowledgeBaseID: kbId
+      kbId: kbId
     };
-    let result = await this.knowledgebases.updateKnowledgeBase(params, qnaPairs);
+    let result = await this.knowledgebase.updateKnowledgebase(params, requestBody);
     return result;
   }
 
   async publish(kbId: string): Promise<any> {
     this.configureClient();
     const params = {
-      knowledgeBaseID: kbId
+      kbId: kbId
     };
-    let result = await this.knowledgebases.publishKnowledgeBase(params);
+    let result = await this.knowledgebase.publishKnowledgebase(params);
     return result;
   }
 
