@@ -178,14 +178,14 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
       ...this.props.document.ui,
       verticalSplitter: sizes
     };
-  });
+  }, 500);
 
   private readonly onHorizontalSizeChange = _.debounce((sizes) => {
     this.props.document.ui = {
       ...this.props.document.ui,
       horizontalSplitter: sizes
     };
-  });
+  }, 500);
 
   shouldStartNewConversation(props?: any) {
     props = props || this.props;

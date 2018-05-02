@@ -32,6 +32,7 @@
 //
 
 import { IBotConfig, IEndpointService } from 'msbot/bin/schema';
+import * as Path from "path";
 import * as QueryString from 'querystring';
 import * as got from 'got';
 
@@ -219,9 +220,10 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
               const conversationActivities = JSON.parse(transcriptString);
               if (!Array.isArray(conversationActivities))
                 throw new Error('Invalid transcript file contents; should be an array of conversation activities.');
-
+              const {name, ext} = Path.parse(url);
+              const fileName = `${name}${ext}`;
               // open a transcript on the client side and pass in some extra info to differentiate it from a transcript on disk
-              mainWindow.commandService.remoteCall('transcript:open', 'deepLinkedTranscript', { activities: conversationActivities, deepLink: true });
+              mainWindow.commandService.remoteCall('transcript:open', 'deepLinkedTranscript', { activities: conversationActivities, deepLink: true, fileName });
             } catch (e) {
               throw new Error(`Error occured while reading downloaded transcript: ${e}`);
             }
