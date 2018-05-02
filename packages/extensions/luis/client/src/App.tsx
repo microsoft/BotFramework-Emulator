@@ -1,3 +1,36 @@
+//
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license.
+//
+// Microsoft Bot Framework: http://botframework.com
+//
+// Bot Framework Emulator Github:
+// https://github.com/Microsoft/BotFramwork-Emulator
+//
+// Copyright (c) Microsoft Corporation
+// All rights reserved.
+//
+// MIT License:
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
 import { IInspectorHost } from '@bfemulator/sdk-client';
 import { Colors, Splitter } from '@bfemulator/ui-react';
 import { css } from 'glamor';
@@ -110,7 +143,7 @@ class App extends Component<any, AppState> {
     if (luisService) {
       return luisService.authoringKey;
     }
-    
+
     if (luisServices.length > 0) {
       return luisServices[0].authoringKey;
     }
@@ -124,7 +157,7 @@ class App extends Component<any, AppState> {
       controlBarButtonSelected: buttonSelected
     });
   }
- 
+
   constructor(props: any, context: any) {
     super(props, context);
     this.state = {
@@ -157,12 +190,12 @@ class App extends Component<any, AppState> {
         $host.setInspectorTitle(this.state.appInfo.isDispatchApp ? 'Dispatch' : 'LUIS');
         $host.setAccessoryState(TrainAccessoryId, AccessoryDefaultState);
         $host.setAccessoryState(PublichAccessoryId, AccessoryDefaultState);
-        $host.enableAccessory(TrainAccessoryId, this.state.persistentState[this.state.id] && 
+        $host.enableAccessory(TrainAccessoryId, this.state.persistentState[this.state.id] &&
                                                 this.state.persistentState[this.state.id].pendingTrain);
-        $host.enableAccessory(PublichAccessoryId, this.state.persistentState[this.state.id] && 
+        $host.enableAccessory(PublichAccessoryId, this.state.persistentState[this.state.id] &&
                                                   this.state.persistentState[this.state.id].pendingPublish);
       });
-      
+
       $host.on('accessory-click', async (id: string) => {
         switch (id) {
           case TrainAccessoryId:
@@ -189,31 +222,31 @@ class App extends Component<any, AppState> {
   render() {
     return (
       <div {...APP_CSS}>
-        <Header 
+        <Header
           appId={this.state.traceInfo.luisModel.ModelID}
           appName={this.state.appInfo.name}
-          slot={this.state.traceInfo.luisOptions.Staging ? 'Staging' : 'Production'} 
+          slot={this.state.traceInfo.luisOptions.Staging ? 'Staging' : 'Production'}
           version={this.state.appInfo.activeVersion}
         />
-        <ControlBar 
-          setButtonSelected={this.setControlButtonSelected} 
-          buttonSelected={this.state.controlBarButtonSelected} 
+        <ControlBar
+          setButtonSelected={this.setControlButtonSelected}
+          buttonSelected={this.state.controlBarButtonSelected}
         />
         <Splitter orientation={'vertical'} primaryPaneIndex={0} minSizes={{ 0: 306, 1: 306 }} initialSizes={{ 0: 306 }}>
-          <ReactJson 
-            name={this.state.controlBarButtonSelected === ButtonSelected.RecognizerResult ? 
-                  'recognizerResult' : 
+          <ReactJson
+            name={this.state.controlBarButtonSelected === ButtonSelected.RecognizerResult ?
+                  'recognizerResult' :
                   'luisResponse' }
-            src={this.state.controlBarButtonSelected === ButtonSelected.RecognizerResult ? 
-                this.state.traceInfo.recognizerResult : 
-                this.state.traceInfo.luisResult} 
-            theme="monokai" 
-            style={jsonViewerCss} 
+            src={this.state.controlBarButtonSelected === ButtonSelected.RecognizerResult ?
+                this.state.traceInfo.recognizerResult :
+                this.state.traceInfo.luisResult}
+            theme="monokai"
+            style={jsonViewerCss}
           />
-          <Editor 
-            recognizerResult={this.state.traceInfo.recognizerResult} 
-            intentInfo={this.state.intentInfo} 
-            intentReassigner={this.reassignIntent} 
+          <Editor
+            recognizerResult={this.state.traceInfo.recognizerResult}
+            intentInfo={this.state.intentInfo}
+            intentReassigner={this.reassignIntent}
             appInfo={this.state.appInfo}
             traceId={this.state.id}
           />
