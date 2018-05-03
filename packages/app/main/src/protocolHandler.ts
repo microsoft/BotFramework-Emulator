@@ -205,7 +205,7 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
    *  parses out the list of activities, and has the client side open it
    */
   private openTranscript(protocol: IProtocol): void {
-    let { url } = protocol.parsedArgs;
+    const { url } = protocol.parsedArgs;
     const options = { url };
 
     got(options)
@@ -245,7 +245,7 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
 
   /** Opens the bot project associated with the .bot file at the specified path */
   private openBot(protocol: IProtocol): void {
-    let { path, secret }: { path: string, secret: string } = protocol.parsedArgs;
+    const { path, secret }: { path: string, secret: string } = protocol.parsedArgs;
 
     const appSettings: IFrameworkSettings = getSettings().framework;
     if (appSettings.ngrokPath) {
