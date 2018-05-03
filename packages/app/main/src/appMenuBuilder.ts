@@ -277,7 +277,7 @@ export const AppMenuBuilder = new class AppMenuBuilder implements IAppMenuBuilde
         {
           // TODO: Proper link for the license instead of third party credits
           label: 'License',
-          click: () => mainWindow.commandService.remoteCall('shell:open-external-link', 'https://aka.ms/l7si1g')
+          click: () => mainWindow.commandService.remoteCall('shell:open-external-link', 'https://aka.ms/O10ww2')
         },
         {
           label: 'Credits',
