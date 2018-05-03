@@ -185,11 +185,11 @@ export const ActiveBotHelper = new class {
             CommandService.remoteCall('bot:load', filename);
           }
         } catch (err) {
-          console.log('Error while calling confirmSwitchBot: ', err);
+          console.error('Error while calling confirmSwitchBot: ', err);
         }
       }
     } catch (err) {
-      console.log('Error while calling browseForBotFile: ', err);
+      console.error('Error while calling browseForBotFile: ', err);
     }
   }
 
