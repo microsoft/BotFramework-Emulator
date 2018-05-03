@@ -180,7 +180,21 @@ export default class BotCreationDialog extends React.Component<{}, BotCreationDi
     this.setState({ secretEnabled: !this.state.secretEnabled, secret: '' });
   };
 
-  private onConnect = (e) => {
+  private onSaveAndConnect = async (e) => {
+    try {
+      const path = await this.showBotSaveDialog();
+      if (path) {
+        this.performCreate(path);
+      } else {
+        // user cancelled out of the save dialog
+        console.log('Bot creation save dialog was cancelled.');
+      }
+    } catch (e) {
+      console.error('Error while trying to select a bot file location: ', e);
+    }
+  }
+
+  private performCreate = (botPath: string) => {
     const endpoint: IEndpointService = {
       type: this.state.endpoint.type,
       name: this.state.endpoint.name.trim(),
@@ -194,17 +208,20 @@ export default class BotCreationDialog extends React.Component<{}, BotCreationDi
       ...this.state.bot,
       name: this.state.bot.name.trim(),
       description: this.state.bot.description.trim(),
-      services: [endpoint]
+      services: [endpoint],
+      path: botPath.trim()
     });
 
     const secret = this.state.secretEnabled && this.state.secret ? this.state.secret : null;
 
     ActiveBotHelper.confirmAndCreateBot(bot, secret)
       .then(() => DialogService.hideDialog())
-      .catch(err => console.error('Error during confirm and create bot.'));
+      .catch(err => console.error('Error during confirm and create bot: ', err));
   };
 
-  private onSelectFolder = (e) => {
+  private showBotSaveDialog = async (): Promise<any> => {
+    // get a safe bot file name
+    const botFileName = await CommandService.remoteCall('file:sanitize-string', this.state.bot.name);
     const dialogOptions = {
       filters: [
         {
@@ -212,20 +229,13 @@ export default class BotCreationDialog extends React.Component<{}, BotCreationDi
           extensions: ['bot']
         }
       ],
-      defaultPath: '',
+      defaultPath: botFileName,
       showsTagField: false,
       title: "Save as",
       buttonLabel: "Save"
     };
 
-    CommandService.remoteCall('shell:showSaveDialog', dialogOptions)
-      .then(path => {
-        if (path) {
-          const bot = { ...this.state.bot, path };
-          this.setState({ bot });
-        }
-      })
-      .catch(err => console.log('User cancelled choosing a bot folder: ', err));
+    return CommandService.remoteCall('shell:showSaveDialog', dialogOptions);
   };
 
   private onChangeSecret = (e) => {
@@ -242,21 +252,15 @@ export default class BotCreationDialog extends React.Component<{}, BotCreationDi
     const requiredFieldsCompleted = this.state.bot
       && this.state.endpoint.endpoint
       && this.state.bot.name
-      && this.state.bot.path
       && secretCriteria;
 
     return (
       <div { ...CSS }>
         <Column>
-          <MediumHeader className="bot-create-header">Add a bot</MediumHeader>
-          <Row className="multi-input-row" align={ RowAlignment.Center }>
-            <TextInputField className="small-input" inputClass="bot-creation-input" value={ this.state.bot.name } onChange={ this.onChangeName } label={ 'Bot name' } required={ true } />
-            <TextInputField inputClass="bot-creation-input" value={ this.state.bot.path } onChange={ this.onChangeBotLocation }
-              label={ 'Location' } placeholder={ 'Choose a location for your bot configuration' } readOnly={ false } required={ true } />
-            <a className="bot-creation-cta" href="javascript:void(0)" onClick={ this.onSelectFolder }>Browse...</a>
-          </Row>
+          <MediumHeader className="bot-create-header">New bot configuration</MediumHeader>
+          <TextInputField className="small-input" inputClass="bot-creation-input" value={ this.state.bot.name } onChange={ this.onChangeName } label={ 'Bot name' } required={ true } />
           <TextInputField inputClass="bot-creation-input" value={ this.state.endpoint.endpoint } onChange={ this.onChangeEndpoint }
-            placeholder={ 'Enter a URL for your locally running bot' } label={ 'Endpoint URL' } required={ true } />
+            placeholder={ 'Enter a URL for your bot\'s endpoint' } label={ 'Endpoint URL' } required={ true } />
           <Row className="multi-input-row">
             <TextInputField className="small-input" inputClass="bot-creation-input" value={ this.state.endpoint.appId } onChange={ this.onChangeAppId } label={ 'MSA app ID' } placeholder={ 'Optional' } />
             <TextInputField className="small-input" inputClass="bot-creation-input" value={ this.state.endpoint.appPassword } onChange={ this.onChangeAppPw }
@@ -274,7 +278,7 @@ export default class BotCreationDialog extends React.Component<{}, BotCreationDi
           }
           <Row className="multi-input-row button-row" justify={ RowJustification.Right }>
             <PrimaryButton secondary text='Cancel' onClick={ this.onCancel } className="cancel-button" />
-            <PrimaryButton text='Connect' onClick={ this.onConnect } disabled={ !requiredFieldsCompleted } className="connect-button" />
+            <PrimaryButton text='Save and connect' onClick={ this.onSaveAndConnect } disabled={ !requiredFieldsCompleted } className="connect-button" />
           </Row>
         </Column>
       </div>

@@ -40,6 +40,7 @@ import * as Fs from 'fs';
 import { sync as mkdirpSync } from 'mkdirp';
 import { IConnectedService, IEndpointService, ServiceType } from 'msbot/bin/schema';
 import * as Path from 'path';
+
 import { AppMenuBuilder } from './appMenuBuilder';
 import { getActiveBot, getBotInfoByPath, loadBotWithRetry, patchBotsJson, pathExistsInRecentBots, saveBot, toSavableBot } from './botHelpers';
 import { BotProjectFileWatcher } from './botProjectFileWatcher';
@@ -55,6 +56,8 @@ import { dispatch, getSettings } from './settings';
 import { getBotsFromDisk, readFileSync, showOpenDialog, showSaveDialog, writeFile } from './utils';
 import shell = Electron.shell;
 import { AppUpdater } from './appUpdater';
+
+const sanitize = require("sanitize-filename");
 
 //=============================================================================
 export const CommandRegistry = new CommReg();
@@ -288,6 +291,12 @@ export function registerCommands() {
       console.error(`Failure writing to file at ${path}: `, e);
       throw e;
     }
+  });
+
+  //---------------------------------------------------------------------------
+  // Sanitize a string for file name usage
+  CommandRegistry.registerCommand('file:sanitize-string', (path: string): string => {
+    return sanitize(path);
   });
 
   //---------------------------------------------------------------------------
