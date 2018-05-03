@@ -34,22 +34,23 @@
 import ActivityVisitor from './activityVisitor';
 import ICardAction from '../types/card/cardAction';
 import IPaymentRequest from '../types/payment/request';
+import IActivity from '../types/activity/activity';
 
 export default class OAuthClientEncoder extends ActivityVisitor {
   public static OAuthEmulatorUrlProtocol: string = "oauth:";
 
   private _conversationId: string;
 
-  constructor(conversationId: string) {
+  constructor(activity: IActivity) {
       super();
-      this._conversationId = conversationId;
+      this._conversationId = activity && activity.conversation ? activity.conversation.id : undefined;;
   }
 
   protected visitCardAction(cardAction: ICardAction) {
   }
 
   protected visitOAuthCardAction(connectionName: string, cardAction: ICardAction) {
-      if (cardAction && cardAction.type === 'signin' && !cardAction.value) {
+      if (this._conversationId && cardAction && cardAction.type === 'signin' && !cardAction.value) {
           let url = OAuthClientEncoder.OAuthEmulatorUrlProtocol + '//' + connectionName + '&&&' + this._conversationId;
 
           // change the card action to a special URL for the emulator
