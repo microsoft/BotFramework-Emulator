@@ -236,7 +236,7 @@ export const AppMenuBuilder = new class AppMenuBuilder implements IAppMenuBuilde
           click: () => mainWindow.commandService.remoteCall('shell:show-services')
         },
         {
-          label: "App Settings",
+          label: "Emulator Settings",
           click: () => mainWindow.commandService.remoteCall('shell:show-app-settings')
         },
         { type: 'separator' },

@@ -306,7 +306,7 @@ class LogEntry extends React.Component<LogEntryProps> {
 
         case "settings:app": {
           return (
-            <span className="spaced" key={ key }>app settings</span>
+            <span className="spaced" key={ key }>emulator settings</span>
           );
         }
 

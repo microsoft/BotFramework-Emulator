@@ -141,7 +141,7 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
           uncommitted: settings
         }));
       })
-      .catch(err => console.error('Error while loading app settings: ', err));
+      .catch(err => console.error('Error while loading emulator settings: ', err));
   }
 
   setUncommittedState(patch) {
@@ -203,7 +203,7 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
 
     CommandService.remoteCall('app:settings:save', settings)
       .then(() => this.commit(settings))
-      .catch(err => console.error('Error while saving app settings: ', err));
+      .catch(err => console.error('Error while saving emulator settings: ', err));
   }
 
   onChangeAuthTokenVersion(e): void {
@@ -244,7 +244,7 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
 
     return (
       <GenericDocument style={ CSS }>
-        <MediumHeader>App settings</MediumHeader>
+        <MediumHeader>Emulator settings</MediumHeader>
         <Row>
           <Column>
             <SmallHeader>Service settings</SmallHeader>
@@ -261,14 +261,6 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
             </Row>
             <Row align={ RowAlignment.Center }>
               <TextInputField readOnly={ false } value={ uncommitted.locale } onChange={ this.onChangeLocale } label="Locale" />
-            </Row>
-          </Column>
-          <Column className="right-column">
-            <SmallHeader>Bot state settings</SmallHeader>
-            <p>Bots use the <a href="https://docs.microsoft.com/en-us/bot-framework/dotnet/bot-builder-dotnet-state" target="_blank">Bot State service</a> to store and retrieve application data. The Bot Framework's bot state service has a size limit of 64 KB. Custom state services may differ.</p>
-            <Row align={ RowAlignment.Center }>
-              <NumberInputField min={ 0 } value={ uncommitted.stateSizeLimit } onChange={ this.onChangeSizeLimit } label="Size limit (zero for no limit)" />
-              <span className="size-limit-suffix">KB</span>
             </Row>
           </Column>
         </Row>

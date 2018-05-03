@@ -52,7 +52,7 @@ export class AppSettingsTab extends React.Component {
 
   render() {
     return(
-      <GenericTab active={ this.props.active } title='App Settings' onCloseClick={ this.onCloseClick }
+      <GenericTab active={ this.props.active } title='Emulator Settings' onCloseClick={ this.onCloseClick }
         documentId={ this.props.documentId } dirty={ this.props.dirty } />
     );
   }
