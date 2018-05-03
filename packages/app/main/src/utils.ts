@@ -49,7 +49,6 @@ const Fs = require('fs');
 const Mkdirp = require('mkdirp');
 const url = require('url');
 const path = require('path');
-const sanitize = require('sanitize-filename');
 
 export function exceptionToAPIException(exception: any): APIException {
   if (exception.error && exception.statusCode) {
