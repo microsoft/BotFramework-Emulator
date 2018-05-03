@@ -56,6 +56,13 @@ export default function replyToActivity(botEmulator: BotEmulator) {
 
       activity.id = null;
       activity.replyToId = req.params.activityId;
+      if (!activity.conversation)
+      {
+        activity.conversation = {};
+        if(!activity.conversation.id) {
+          activity.conversation.id = conversationParameters.conversationId;
+        }
+      }
 
       // if we found the activity to reply to
       //if (!conversation.activities.find((existingActivity, index, obj) => existingActivity.id == activity.replyToId))
