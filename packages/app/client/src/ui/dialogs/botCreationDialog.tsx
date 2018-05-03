@@ -257,7 +257,7 @@ export default class BotCreationDialog extends React.Component<{}, BotCreationDi
       <div { ...CSS }>
         <Column>
           <MediumHeader className="bot-create-header">New bot configuration</MediumHeader>
-          <TextInputField inputClass="bot-creation-input" value={ this.state.bot.name } onChange={ this.onChangeName } label={ 'Bot name' } required={ true } />
+          <TextInputField className="small-input" inputClass="bot-creation-input" value={ this.state.bot.name } onChange={ this.onChangeName } label={ 'Bot name' } required={ true } />
           <TextInputField inputClass="bot-creation-input" value={ this.state.endpoint.endpoint } onChange={ this.onChangeEndpoint }
             placeholder={ 'Enter a URL for your bot\'s endpoint' } label={ 'Endpoint URL' } required={ true } />
           <Row className="multi-input-row">
