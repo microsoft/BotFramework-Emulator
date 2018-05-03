@@ -95,14 +95,11 @@ gulp.task('build-json-extension', function () {
 
 //----------------------------------------------------------------------------
 gulp.task('build-qnamaker-extension', function () {
-  return Promise.resolve();
-  /*
   return gulp
-    .src('../../extensions/qnamaker/package.json', { read: false })
+    .src('../../extensions/qnamaker/client/package.json', { read: false })
     .pipe(shell([
       'npm run build'
-    ], { cwd: '../../extensions/qnamaker/' }));
-    */
+    ], { cwd: '../../extensions/qnamaker/client' }));
 });
 
 //----------------------------------------------------------------------------

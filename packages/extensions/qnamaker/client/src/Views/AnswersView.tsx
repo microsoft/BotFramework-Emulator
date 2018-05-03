@@ -97,8 +97,8 @@ const AnswerSelectedCSS = css({
 
 interface AnswersViewProps {
   answers: Answer[];
-  selectedAnswer: string;
-  selectAnswer: (answer: string) => void;
+  selectedAnswer: Answer | null;
+  selectAnswer: (answer: Answer) => void;
   addAnswer: (answer: string) => void;
 }
 
@@ -125,7 +125,7 @@ export default class AnswersView extends Component<AnswersViewProps, {}> {
   }
 
   private renderAnswer(answer: Answer) {
-    let selected = answer.text === this.props.selectedAnswer;
+    let selected = this.props.selectedAnswer !== null && answer.text === this.props.selectedAnswer.text;
     let blockClass = 'answer-block';
     if (selected) {
       blockClass += ' selected';
@@ -140,7 +140,7 @@ export default class AnswersView extends Component<AnswersViewProps, {}> {
       : null;
     return (
       <div className="qna-answer" key={answer.text}>
-        <button {...AnswerBlockCSS} className={blockClass} onClick={() => this.props.selectAnswer(answer.text)}>
+        <button {...AnswerBlockCSS} className={blockClass} onClick={() => this.props.selectAnswer(answer)}>
           {answer.text}
         </button>
         {selectedBlock}

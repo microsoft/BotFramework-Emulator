@@ -34,7 +34,8 @@
 import { AppState, PersistentAppState } from './App';
 import { QnAMakerTraceInfo, QueryResult } from './Models/QnAMakerTraceInfo';
 import { Answer } from './Models/QnAMakerModels';
-import { ITraceActivity, IQnAService } from '@bfemulator/sdk-shared';
+import { ITraceActivity } from '@bfemulator/sdk-shared';
+import { IQnAService } from 'msbot/bin/schema' ;
 
 const TraceActivity = 'trace';
 const QnaMakerTracerType = 'https://www.qnamaker.ai/schemas/trace';
@@ -51,7 +52,7 @@ export default class AppStateAdapter implements AppState {
   persistentState: { [key: string]: PersistentAppState; };
   phrasings: string[];
   answers: Answer[];
-  selectedAnswer: string;
+  selectedAnswer: Answer | null;
 
   private static validate(obj: any): boolean {
     if (!obj) {
@@ -85,10 +86,11 @@ export default class AppStateAdapter implements AppState {
     this.phrasings = [this.traceInfo.message.text || ''];
 
     this.answers = this.traceInfo.queryResults.map((result: QueryResult) => ({
+      qnaId: result.qnaId,
       text: result.answer,
       score: result.score,
       filters: null
     }));
-    this.selectedAnswer = this.answers.length > 0 ? this.answers[0].text : '';
+    this.selectedAnswer = this.answers.length > 0 ? this.answers[0] : null;
   }
 }
