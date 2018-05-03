@@ -170,24 +170,26 @@ export const ActiveBotHelper = new class {
     try {
       const filename = await this.browseForBotFile()
 
-      let activeBot = getActiveBot();
-      if (activeBot && activeBot.path === filename) {
-        await this.botAlreadyOpen();
-        return;
-      }
-
-      try {
-        const result = this.confirmSwitchBot();
-
-        if (result) {
-          store.dispatch(EditorActions.closeNonGlobalTabs());
-          CommandService.remoteCall('bot:load', filename);
+      if (filename) {
+        let activeBot = getActiveBot();
+        if (activeBot && activeBot.path === filename) {
+          await this.botAlreadyOpen();
+          return;
         }
-      } catch (err) {
-        console.log('canceled confirmSwitchBot');
+
+        try {
+          const result = this.confirmSwitchBot();
+
+          if (result) {
+            store.dispatch(EditorActions.closeNonGlobalTabs());
+            CommandService.remoteCall('bot:load', filename);
+          }
+        } catch (err) {
+          console.log('Error while calling confirmSwitchBot: ', err);
+        }
       }
     } catch (err) {
-      console.log('canceled browseForBotFile');
+      console.log('Error while calling browseForBotFile: ', err);
     }
   }
 
