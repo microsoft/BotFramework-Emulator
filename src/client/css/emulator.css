@@ -101,13 +101,13 @@
     }
 
     .wc-message-content.selected {
-        color: white;
-        background-color: #555;
+        color: black;
+        background-color: #F4E321;
         box-shadow: 0px 1px 1px 0px rgba(0,0,0,0.2);
     }
 
     .wc-message-content.selected>svg.wc-message-callout>path {
-        fill: #555;
+        fill: #F4E321;
     }
 
     .wc-card {
@@ -1154,7 +1154,7 @@
     }
 
     .wc-logview-timestamp {
-        color: lightgray;
+        color: #47B07F;
         display: inline-block;
     }
 

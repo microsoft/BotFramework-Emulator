@@ -77,7 +77,13 @@ export class LogEntry extends React.Component<ILogEntryElement, {}> {
         const hours = number2(entry.timestamp.getHours());
         const minutes = number2(entry.timestamp.getMinutes());
         const seconds = number2(entry.timestamp.getSeconds());
-        return <span className='wc-logview-timestamp'>{`[${hours}:${minutes}:${seconds}]`}&nbsp;</span>
+        return (
+          <span>
+              <span>[</span>
+              <span className='wc-logview-timestamp'>{`${hours}:${minutes}:${seconds}`}</span>
+              <span>]&nbsp;</span>
+          </span>
+        );
     }
     
     private emit(val: any, className: string) {
