@@ -242,7 +242,7 @@ export default class Conversation extends EventEmitter {
   // TODO: Payment modification is only useful for emulator, but not local mode
   //       This function turns all payment cardAction into openUrl to payment://
   public processActivity(activity: IActivity): IActivity {
-    const visitors = [new PaymentEncoder(), new OAuthClientEncoder(activity.conversation.id)];
+    const visitors = [new PaymentEncoder(), new OAuthClientEncoder(activity)];
 
     activity = { ...activity };
     visitors.forEach(v => v.traverseActivity(activity));

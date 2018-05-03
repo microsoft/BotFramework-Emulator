@@ -64,11 +64,14 @@ export default class OAuthLinkEncoder {
     }
 
     public resolveOAuthCards(activity: IGenericActivity): Promise<any> {
-        let codeChallenge = this.generateCodeVerifier(activity.conversation.id);
+        let codeChallenge:string = undefined; 
+        if (activity && activity.conversation && activity.conversation.id) {
+            codeChallenge = this.generateCodeVerifier(activity.conversation.id);
+        }
         return new Promise<any>((resolve: (value?: any) => void, reject: (reason?: any) => void) =>
         {
             let waiting = false;
-            if (activity && activity.attachments && activity.attachments.length == 1 && activity.attachments[0].contentType === AttachmentContentTypes.oAuthCard) {
+            if (codeChallenge && activity && activity.attachments && activity.attachments.length == 1 && activity.attachments[0].contentType === AttachmentContentTypes.oAuthCard) {
                 let attachment: IAttachment = activity.attachments[0] as IAttachment;
                 let oauthCard: IOAuthCard = attachment.content as IOAuthCard;
                 if(oauthCard.buttons && oauthCard.buttons.length == 1) {
