@@ -31,14 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IBotConfig, IEndpointService } from 'msbot/bin/schema';
-import * as QueryString from 'querystring';
-import * as got from 'got';
-
 import { IFrameworkSettings, newBot, newEndpoint } from '@bfemulator/app-shared';
+import * as got from 'got';
+import { IBotConfig, IEndpointService } from 'msbot/bin/schema';
+import * as Path from 'path';
+import * as QueryString from 'querystring';
 import { Protocol } from './constants';
-import { mainWindow } from './main';
 import * as BotActions from './data-v2/action/bot';
+import { mainWindow } from './main';
 import { ngrokEmitter } from './ngrok';
 import { getSettings } from './settings';
 import { decodeBase64 } from './utils';
@@ -81,7 +81,8 @@ interface IProtocolHandler {
 }
 
 export const ProtocolHandler = new class ProtocolHandler implements IProtocolHandler {
-  constructor() {}
+  constructor() {
+  }
 
   /** Extracts useful information out of a protocol URL */
   parseProtocolUrl(url: string): IProtocol {
@@ -97,9 +98,9 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
     const chunks = restOfUrl.split('?');
     const domainAndAction = chunks[0].split('.');
 
-    const domain = (domainAndAction[0] || '').toLowerCase();
-    const action = (domainAndAction[1] || '').toLowerCase();
-    const args = (chunks[1] || '');
+    const domain = ( domainAndAction[0] || '' ).toLowerCase();
+    const action = ( domainAndAction[1] || '' ).toLowerCase();
+    const args = ( chunks[1] || '' );
     const parsedArgs = QueryString.parse(args);
 
     const info: IProtocol = {
@@ -149,7 +150,7 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
   }
 
   performTranscriptAction(protocol: IProtocol): void {
-    switch(ProtocolTranscriptActions[protocol.action]) {
+    switch (ProtocolTranscriptActions[protocol.action]) {
       case ProtocolTranscriptActions.open:
         this.openTranscript(protocol);
         break;
@@ -160,7 +161,7 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
   }
 
   performBotAction(protocol: IProtocol): void {
-    switch(ProtocolBotActions[protocol.action]) {
+    switch (ProtocolBotActions[protocol.action]) {
       case ProtocolBotActions.open:
         this.openBot(protocol);
         break;
@@ -172,7 +173,7 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
 
   /** Mocks a bot object with any configuration parsed from the
    *  protocol string and starts a live chat session with that bot
-  */
+   */
   private openLiveChat(protocol: IProtocol): void {
     // mock up a bot object
     const { botUrl, msaAppId, msaPassword } = protocol.parsedArgs;
@@ -219,9 +220,10 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
               const conversationActivities = JSON.parse(transcriptString);
               if (!Array.isArray(conversationActivities))
                 throw new Error('Invalid transcript file contents; should be an array of conversation activities.');
-
+              const { name, ext } = Path.parse(url);
+              const fileName = `${name}${ext}`;
               // open a transcript on the client side and pass in some extra info to differentiate it from a transcript on disk
-              mainWindow.commandService.remoteCall('transcript:open', 'deepLinkedTranscript', { activities: conversationActivities, deepLink: true });
+              mainWindow.commandService.remoteCall('transcript:open', 'deepLinkedTranscript', { activities: conversationActivities, deepLink: true, fileName });
             } catch (e) {
               throw new Error(`Error occured while reading downloaded transcript: ${e}`);
             }
@@ -239,7 +241,7 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
       })
       .catch(err => {
         // TODO: surface this error somewhere; native error box?
-        console.error('Error downloading and parsing transcript file: ', err)
+        console.error('Error downloading and parsing transcript file: ', err);
       });
   }
 
@@ -256,7 +258,9 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
         mainWindow.commandService.call('bot:load', path, secret)
           .then(() => console.log('opened bot successfully'))
           // TODO: surface this error somewhere; native error box?
-          .catch(err => { throw new Error(`Error occurred while trying to deep link to bot project at: ${path}`) });
+          .catch(err => {
+            throw new Error(`Error occurred while trying to deep link to bot project at: ${path}`);
+          });
       });
     } else {
       // load the bot and let the chat log show the user the error
@@ -264,11 +268,13 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
       // (we are still within the client:loaded command logic, which will show the welcome page afterwards;
       //  we need to wait for welcome page and then show the emulator tab so it's not unfocused)
       setTimeout(() =>
-        mainWindow.commandService.call('bot:load', path, secret)
-          .then(() => console.log('opened bot successfully'))
-          // TODO: surface this error somewhere; native error box?
-          .catch(err => { throw new Error(`Error occurred while trying to deep link to bot project at: ${path}`) })
-      , 1000);
+          mainWindow.commandService.call('bot:load', path, secret)
+            .then(() => console.log('opened bot successfully'))
+            // TODO: surface this error somewhere; native error box?
+            .catch(err => {
+              throw new Error(`Error occurred while trying to deep link to bot project at: ${path}`);
+            })
+        , 1000);
     }
   }
-}
+};

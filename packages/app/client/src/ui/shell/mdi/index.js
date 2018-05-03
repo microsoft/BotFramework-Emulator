@@ -35,15 +35,11 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import * as constants from '../../../constants';
 import * as EditorActions from '../../../data/action/editorActions';
 import EditorFactory from '../../editor';
 import MultiTabs from '../multiTabs';
 import TabFactory from './tabFactory';
 import TabbedDocument, { Tab as TabbedDocumentTab, Content as TabbedDocumentContent } from '../multiTabs/tabbedDocument';
-import * as Constants from '../../../constants';
-import { getBotDisplayName } from '@bfemulator/app-shared';
-import { CommandRegistry } from '../../../commands';
 
 class MDI extends React.Component {
   constructor(props, context) {
