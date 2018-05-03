@@ -201,7 +201,7 @@ export class ConversationsController {
                 log.api(`Reply[${activity.type}]`, req, res, activity, response, getActivityText(activity));
             };
 
-            let visitor = new OAuthLinkEncoder(emulator.framework.getNgrokServiceUrl(), req.headers['authorization'], activity);
+            let visitor = new OAuthLinkEncoder(emulator.framework.getNgrokServiceUrl(), req.headers['authorization'], activity, parms.conversationId);
             visitor.resolveOAuthCards(activity).then((value?: any) =>
             {
                 continuation();

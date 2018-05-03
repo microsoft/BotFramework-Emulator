@@ -49,11 +49,13 @@ export class OAuthLinkEncoder {
     private emulatorUrl: string;
     private authorizationHeader: string;
     private activity: IGenericActivity; 
+    private conversationId: string;
 
-    constructor(emulatorUrl: string, authorizationHeader: string, activity: IGenericActivity) {
+    constructor(emulatorUrl: string, authorizationHeader: string, activity: IGenericActivity, conversationId: string) {
         this.emulatorUrl = emulatorUrl;
         this.authorizationHeader = authorizationHeader;
         this.activity = activity;
+        this.conversationId = conversationId;
     }
 
     public resolveOAuthCards(activity: IGenericActivity): Promise<any> {
@@ -120,8 +122,8 @@ export class OAuthLinkEncoder {
             {
                 ActivityId: this.activity.id,
                 Bot: this.activity.from,       // Activity is from the bot to the user
-                ChannelId: this.activity.channelId,
-                Conversation: this.activity.conversation,
+                ChannelId: this.activity.channelId ? this.activity.channelId : 'emulator',
+                Conversation: this.activity.conversation ? this.activity.conversation : { id: this.conversationId }, 
                 ServiceUrl: this.activity.serviceUrl,
                 User: this.activity.recipient
             }
