@@ -1,6 +1,6 @@
 {
   "name": "botframework-emulator",
-  "version": "3.5.35",
+  "version": "3.5.36",
   "description": "Emulator for the Microsoft Bot Framework. Allows developers to test and debug bots on localhost.",
   "main": "./app/server/main.js",
   "scripts": {
@@ -66,7 +66,7 @@
     "object-assign": "4.1.0",
     "restify": "5.1.0",
     "tslib": "1.5.0",
-    "typescript": "^2.4.0",
+    "typescript": "2.7.2",
     "vinyl": "2.0.1",
     "vinyl-fs": "2.4.4"
   },
@@ -91,11 +91,11 @@
     "react": "15.6.1",
     "react-dom": "15.6.1",
     "react-split-pane": "0.1.57",
-    "redux": "3.7.1",
+    "redux": "3.7.2",
     "request": "2.79.0",
     "restify": "4.3.0",
     "rsa-pem-from-mod-exp": "0.8.4",
-    "rxjs": "5.4.2",
+    "rxjs": "5.4.3",
     "sha.js": "^2.4.11",
     "utf8": "^3.0.0",
     "xmldom": "0.1.27",
