@@ -203,13 +203,6 @@ class BotSettingsEditor extends React.Component<BotSettingsEditorProps, BotSetti
     return (
       <GenericDocument style={ CSS }>
         <Column>
-          <MediumHeader className="bot-settings-header">Bot Settings</MediumHeader>
-          <TextInputField label="Bot name" value={ this.state.bot.name } required={ true } onChange={ this.onChangeName } />
-          <TextInputField label="Endpoint URL" value={ this.state.endpoint.endpoint } required={ true } onChange={ this.onChangeEndpoint } />
-          <Row className="multiple-input-row">
-            <TextInputField label="MSA App Id" value={ this.state.endpoint.appId } onChange={ this.onChangeAppId } />
-            <TextInputField label="MSA App Password" value={ this.state.endpoint.appPassword } onChange={ this.onChangeAppPw } type="password" />
-          </Row>
           <TextInputField label="Bot secret" value={ this.state.secret } onChange={ this.onChangeSecret } type="password" />
           <Row className="button-row">
             <PrimaryButton text="Save" onClick={ this.onSave } className="save-button" disabled={ !this.props.dirty } />
