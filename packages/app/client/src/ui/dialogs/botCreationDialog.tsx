@@ -220,7 +220,8 @@ export default class BotCreationDialog extends React.Component<{}, BotCreationDi
   };
 
   private showBotSaveDialog = async (): Promise<any> => {
-    const botFileName = await this.getSafeBotFileName(this.state.bot.name);
+    // get a safe bot file name
+    const botFileName = await CommandService.remoteCall('file:sanitize-string', this.state.bot.name);
     const dialogOptions = {
       filters: [
         {
@@ -244,10 +245,6 @@ export default class BotCreationDialog extends React.Component<{}, BotCreationDi
   private onChangeSecretConfirmation = (e) => {
     this.setState({ secretConfirmation: e.target.value, secretsMatch: e.target.value === this.state.secret });
   };
-
-  private getSafeBotFileName = (name: string): Promise<string> => {
-    return CommandService.remoteCall('file:sanitize-string', name);
-  }
 
   render(): JSX.Element {
     const secretCriteria = this.state.secretEnabled ? this.state.secret && this.state.secretsMatch : true;
