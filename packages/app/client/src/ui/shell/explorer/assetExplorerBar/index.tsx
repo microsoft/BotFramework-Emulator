@@ -32,6 +32,7 @@
 //
 
 import * as React from 'react';
+import { css } from 'glamor';
 
 import { CommandService } from '../../../../platform/commands/commandService';
 import { EndpointExplorerContainer } from '../endpointExplorer';
@@ -42,8 +43,20 @@ import { TranscriptExplorer } from '../transcriptExplorer';
 import * as botHelpers from '../../../../data/botHelpers';
 import BotNotOpenExplorer from '../botNotOpenExplorer';
 
+const CSS = css({
+  height: '100%',
+  width: '100%',
+
+  '&.explorer-offscreen': {
+    position: 'absolute',
+    top: '5000px',
+    display: 'none'
+  }
+});
+
 export class IAssetExplorerBarProps {
   activeBot: string;
+  hidden: boolean;
 }
 
 export default class AssetExplorerBar extends React.Component<IAssetExplorerBarProps> {
@@ -59,8 +72,10 @@ export default class AssetExplorerBar extends React.Component<IAssetExplorerBarP
 
   render() {
     const activeBot = botHelpers.getActiveBot();
+    const className = this.props.hidden ? 'explorer-offscreen' : '';
+
     return (
-      <>
+      <div className={ className }  { ...CSS }>
         <ExplorerBarHeader>
           <Title>
             Bot Explorer
@@ -82,7 +97,7 @@ export default class AssetExplorerBar extends React.Component<IAssetExplorerBarP
             )
           }
         </ExplorerBarBody>
-      </>
+      </div>
     );
   }
 }

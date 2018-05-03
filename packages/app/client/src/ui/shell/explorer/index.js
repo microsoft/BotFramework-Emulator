@@ -49,25 +49,28 @@ const CSS = css({
 });
 
 class ExplorerBar extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  
   render() {
-    let explorer;
-    if (this.props.selectedNavTab === Constants.NavBar_Bot_Explorer)
-      explorer = (
-        <AssetExplorerBar activeBot={this.props.activeBot}/>
+    let explorer = [];
+      explorer.push(
+        <AssetExplorerBar key={ 'asset-explorer-bar' } activeBot={ this.props.activeBot } hidden={ this.props.selectedNavTab !== Constants.NavBar_Bot_Explorer } />
       );
-    else if (this.props.selectedNavTab === Constants.NavBar_Services)
-      explorer = (
-        <ServicesExplorerBarContainer/>
+    if (this.props.selectedNavTab === Constants.NavBar_Services)
+      explorer.push(
+        <ServicesExplorerBarContainer key={ 'services-explorer-bar' } />
       );
-    else
+    if (!this.props.selectedNavTab)
       explorer = (
         false
       );
 
     return (
-      <div className={CSS}>
-        {explorer}
-        <InsetShadow right={true}/>
+      <div { ...CSS }>
+        { explorer }
+        <InsetShadow right={ true }/>
       </div>
     );
   }

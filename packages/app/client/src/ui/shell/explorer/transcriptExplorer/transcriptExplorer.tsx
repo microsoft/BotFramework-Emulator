@@ -67,9 +67,7 @@ interface TranscriptExplorerProps {
   activeEditor: string,
   activeDocumentId: string,
   transcripts: any[],
-  changeKey: number,
   files: IFileTreeState
-
 }
 
 function isTranscript(path: string): boolean {
@@ -116,7 +114,7 @@ class _TranscriptExplorer extends React.Component<TranscriptExplorerProps> {
     };
 
     return (
-      <ExpandCollapseContent key={ this.props.changeKey }>
+      <ExpandCollapseContent key={ 'transcript-explorer-tree' }>
         <TreeView { ...props } />
       </ExpandCollapseContent>
     );
@@ -124,7 +122,7 @@ class _TranscriptExplorer extends React.Component<TranscriptExplorerProps> {
 
   private renderTranscriptList(): JSX.Element {
     return (
-      <ExpandCollapseContent key={ this.props.changeKey }>
+      <ExpandCollapseContent key={ 'transcript-explorer-tree' }>
         <ul { ...CONVO_CSS }>
           {
             this.props.transcripts.map(filename =>
@@ -140,7 +138,7 @@ class _TranscriptExplorer extends React.Component<TranscriptExplorerProps> {
 
   private renderEmptyTranscriptList(): JSX.Element {
     return (
-      <ExpandCollapseContent key={ this.props.changeKey }>
+      <ExpandCollapseContent key={ 'transcript-explorer-tree' }>
         <ul { ...CONVO_CSS }>
           <li><span className="empty-list">No transcripts yet</span></li>
           <li>&nbsp;</li>
@@ -186,7 +184,6 @@ function mapStateToProps(state: any): TranscriptExplorerProps {
     activeEditor: state.editor.activeEditor,
     activeDocumentId: state.editor.editors[state.editor.activeEditor].activeDocumentId,
     transcripts: state.chat.transcripts,
-    changeKey: state.chat.changeKey,
     files: state.files
   };
 }
