@@ -85,7 +85,7 @@ const CSS = css({
   width: '100%',
   height: '100%',
   minHeight: '100%',
-  flexDirection: 'column',
+  flexDirection: 'column'
 });
 
 const NAV_CSS = css({
@@ -148,8 +148,7 @@ export class Main extends React.Component {
     // Explorer & TabGroup(s) pane
     const workbenchChildren = [];
 
-    if (this.props.showingExplorer && !this.props.presentationModeEnabled)
-      workbenchChildren.unshift(<ExplorerBar key={'explorer-bar'} />);
+    workbenchChildren.push(<ExplorerBar key={'explorer-bar'} hidden={ !this.props.showingExplorer || this.props.presentationModeEnabled } />);
 
     workbenchChildren.push(
       <Splitter orientation={'vertical'} key={'tab-group-splitter'}>

@@ -45,29 +45,37 @@ const CSS = css({
   height: '100%',
   display: 'flex',
   flexFlow: 'column nowrap',
-  position: 'relative'
+  position: 'relative',
+
+  '&.explorer-bar-hidden': {
+    display: 'none'
+  }
 });
 
 class ExplorerBar extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  
   render() {
-    let explorer;
-    if (this.props.selectedNavTab === Constants.NavBar_Bot_Explorer)
-      explorer = (
-        <AssetExplorerBar activeBot={this.props.activeBot}/>
+    console.log('explorer.index.js rerender');
+    let explorer = [];
+      explorer.push(
+        <AssetExplorerBar key={ 'asset-explorer-bar' } activeBot={ this.props.activeBot } hidden={ this.props.selectedNavTab !== Constants.NavBar_Bot_Explorer } />
       );
-    else if (this.props.selectedNavTab === Constants.NavBar_Services)
-      explorer = (
-        <ServicesExplorerBarContainer/>
+    if (this.props.selectedNavTab === Constants.NavBar_Services)
+      explorer.push(
+        <ServicesExplorerBarContainer key={ 'services-explorer-bar' } />
       );
-    else
+    if (!this.props.selectedNavTab)
       explorer = (
         false
       );
 
     return (
-      <div className={CSS}>
-        {explorer}
-        <InsetShadow right={true}/>
+      <div { ...CSS }>
+        { explorer }
+        <InsetShadow right={ true }/>
       </div>
     );
   }

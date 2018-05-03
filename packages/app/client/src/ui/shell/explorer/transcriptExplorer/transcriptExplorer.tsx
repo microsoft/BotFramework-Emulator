@@ -37,6 +37,7 @@ import { connect } from 'react-redux';
 import { FileInfo } from '@bfemulator/app-shared';
 import { lazy, pathExt } from '@fuselab/ui-shared/lib';
 import { TreeView, TreeViewProps, initFontFaces, ITreeView, ITreeNodeView } from '@fuselab/ui-fabric/lib';
+
 import * as constants from '../../../../constants';
 import { SettingsService } from '../../../../platform/settings/settingsService';
 import * as ChatActions from '../../../../data/action/chatActions';
@@ -67,9 +68,7 @@ interface TranscriptExplorerProps {
   activeEditor: string,
   activeDocumentId: string,
   transcripts: any[],
-  changeKey: number,
   files: IFileTreeState
-
 }
 
 function isTranscript(path: string): boolean {
@@ -79,7 +78,6 @@ function isTranscript(path: string): boolean {
 
 class _TranscriptExplorer extends React.Component<TranscriptExplorerProps> {
   private onItemClick: (name: string) => void;
-  private _treeRef: any;
 
   constructor(props) {
     super(props);
@@ -113,12 +111,11 @@ class _TranscriptExplorer extends React.Component<TranscriptExplorerProps> {
       compact: true,
       readonly: true,
       theme: 'dark',
-      hideRoot: true,
-      componentRef: this.saveTreeViewRef
+      hideRoot: true
     };
 
     return (
-      <ExpandCollapseContent key={ this.props.changeKey }>
+      <ExpandCollapseContent key={ 'transcript-explorer-tree' }>
         <TreeView { ...props } />
       </ExpandCollapseContent>
     );
@@ -126,7 +123,7 @@ class _TranscriptExplorer extends React.Component<TranscriptExplorerProps> {
 
   private renderTranscriptList(): JSX.Element {
     return (
-      <ExpandCollapseContent key={ this.props.changeKey }>
+      <ExpandCollapseContent key={ 'transcript-explorer-tree' }>
         <ul { ...CONVO_CSS }>
           {
             this.props.transcripts.map(filename =>
@@ -142,7 +139,7 @@ class _TranscriptExplorer extends React.Component<TranscriptExplorerProps> {
 
   private renderEmptyTranscriptList(): JSX.Element {
     return (
-      <ExpandCollapseContent key={ this.props.changeKey }>
+      <ExpandCollapseContent key={ 'transcript-explorer-tree' }>
         <ul { ...CONVO_CSS }>
           <li><span className="empty-list">No transcripts yet</span></li>
           <li>&nbsp;</li>
@@ -161,58 +158,6 @@ class _TranscriptExplorer extends React.Component<TranscriptExplorerProps> {
   public componentDidMount() {
     // make sure setiFont is injected
     const font = this.setiFont;
-
-    // try to look at the previous snapshot of the tree's expanded state and restore 
-  }
-
-  public componentWillUnmount(): void {
-    // take snapshot of what tree nodes were expanded
-    // { filePath: expanded }
-    let treeStateSnapshot: { [key: string]: boolean } = {};
-
-    if (this._treeRef) {
-      let treeIterator = this.iterateTreeViewNodes(this._treeRef.root);
-      let treeNode = treeIterator.next();
-      while (!treeNode.done) {
-        if (treeNode.value.expanded)
-          treeStateSnapshot[treeNode.value.node.name] = true;
-        treeNode = treeIterator.next();
-      }
-    }
-
-    // currently, this is giving us the name of the folders that are expanded;
-    // we need to get the full path so that we don't accidentally expand
-    // FolderA/Folder1/Assets instead of FolderC/Folder1/Folder2/Assets
-    console.log(treeStateSnapshot);
-  }
-
-  /** Save a copy of the Fabric Tree's component ref */
-  private saveTreeViewRef = (ref: ITreeView): void => {
-   this._treeRef = ref as any;
-  }
-
-  /** Iterates over all the nodes in the Tree View Component */
-  private * iterateTreeViewNodes(treeRoot: ITreeNodeView): Iterator<ITreeNodeView> {
-    // make a queue with the root at the front
-    const queue = [treeRoot];
-
-    while (queue.length > 0) {
-      // take the first node out of the queue
-      let head: ITreeNodeView = queue.shift();
-
-      // get the children for the node
-      let children = head.children;
-      let child = children.next();
-
-      // loop over children and push any into queue
-      while (!child.done) {
-        queue.push(child.value);
-        child = children.next();
-      }
-
-      // return the node we just inspected before tossing it
-      yield head;
-    }
   }
 
   public render(): JSX.Element {
@@ -240,7 +185,6 @@ function mapStateToProps(state: any): TranscriptExplorerProps {
     activeEditor: state.editor.activeEditor,
     activeDocumentId: state.editor.editors[state.editor.activeEditor].activeDocumentId,
     transcripts: state.chat.transcripts,
-    changeKey: state.chat.changeKey,
     files: state.files
   };
 }
