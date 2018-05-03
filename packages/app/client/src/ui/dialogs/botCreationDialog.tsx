@@ -241,7 +241,7 @@ export default class BotCreationDialog extends React.Component<{}, BotCreationDi
     this.setState({ secretConfirmation: e.target.value, secretsMatch: e.target.value === this.state.secret });
   };
 
-  private getSafeBotFileName = async (name: string): Promise<string> => {
+  private getSafeBotFileName = (name: string): Promise<string> => {
     return CommandService.remoteCall('file:sanitize-string', name);
   }
 
