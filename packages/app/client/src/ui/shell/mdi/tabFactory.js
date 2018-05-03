@@ -50,5 +50,5 @@ export default props =>
   : props.document.contentType === Constants.ContentType_WelcomePage ?
     <GenericTab documentId={ props.document.documentId } title={ "Welcome" } dirty={ props.document.dirty } />
   : props.document.contentType === Constants.ContentType_AppSettings ?
-    <GenericTab documentId={ props.document.documentId } title={ "App Settings" } dirty={ props.document.dirty } />
+    <GenericTab documentId={ props.document.documentId } title={ "Emulator Settings" } dirty={ props.document.dirty } />
   : false
