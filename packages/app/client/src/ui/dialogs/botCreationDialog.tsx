@@ -181,12 +181,16 @@ export default class BotCreationDialog extends React.Component<{}, BotCreationDi
   };
 
   private onSaveAndConnect = async (e) => {
-    const path = await this.showBotSaveDialog();
-    if (path) {
-      this.performCreate(path);
-    } else {
-      // user cancelled out of the save dialog
-      console.log('Bot creation save dialog was cancelled.');
+    try {
+      const path = await this.showBotSaveDialog();
+      if (path) {
+        this.performCreate(path);
+      } else {
+        // user cancelled out of the save dialog
+        console.log('Bot creation save dialog was cancelled.');
+      }
+    } catch (e) {
+      console.error('Error while trying to select a bot file location: ', e);
     }
   }
 
