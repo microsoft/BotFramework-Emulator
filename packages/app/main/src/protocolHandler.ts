@@ -41,7 +41,6 @@ import * as BotActions from './data-v2/action/bot';
 import { mainWindow } from './main';
 import { ngrokEmitter } from './ngrok';
 import { getSettings } from './settings';
-import { decodeBase64 } from './utils';
 
 enum ProtocolDomains {
   livechat,
@@ -180,9 +179,9 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
     const bot: IBotConfig = newBot();
     const endpoint: IEndpointService = newEndpoint();
 
-    endpoint.endpoint = decodeBase64(botUrl);
-    endpoint.appId = decodeBase64(msaAppId);
-    endpoint.appPassword = decodeBase64(msaPassword);
+    endpoint.endpoint = botUrl;
+    endpoint.appId = msaAppId;
+    endpoint.appPassword = msaPassword;
     bot.services.push(endpoint);
     mainWindow.store.dispatch(BotActions.mockAndSetActive(bot));
 
@@ -207,7 +206,6 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
    */
   private openTranscript(protocol: IProtocol): void {
     let { url } = protocol.parsedArgs;
-    url = decodeBase64(url);
     const options = { url };
 
     got(options)
@@ -248,8 +246,6 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
   /** Opens the bot project associated with the .bot file at the specified path */
   private openBot(protocol: IProtocol): void {
     let { path, secret }: { path: string, secret: string } = protocol.parsedArgs;
-    path = decodeBase64(path);
-    secret = secret ? decodeBase64(secret) : null;
 
     const appSettings: IFrameworkSettings = getSettings().framework;
     if (appSettings.ngrokPath) {

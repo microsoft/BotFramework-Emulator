@@ -188,9 +188,6 @@ export function isDev(): boolean {
   return ( process.defaultApp || /node_modules[\\/]electron[\\/]/.test(process.execPath) );
 }
 
-export const decodeBase64 = (str: string) =>
-  Buffer.from(str, 'base64').toString();
-
 export const getBotsFromDisk = (): IBotInfo[] => {
   const botsJsonPath = path.join(ensureStoragePath(), 'bots.json');
   const botsJsonContents = readFileSync(botsJsonPath);
