@@ -147,7 +147,7 @@ export class Main extends React.Component {
 
     // Explorer & TabGroup(s) pane
     const workbenchChildren = [];
-    
+
     if (this.props.showingExplorer && !this.props.presentationModeEnabled)
       workbenchChildren.push(<ExplorerBar key={'explorer-bar'} />);
 
