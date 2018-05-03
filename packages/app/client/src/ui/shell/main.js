@@ -147,8 +147,9 @@ export class Main extends React.Component {
 
     // Explorer & TabGroup(s) pane
     const workbenchChildren = [];
-
-    workbenchChildren.push(<ExplorerBar key={'explorer-bar'} hidden={ !this.props.showingExplorer || this.props.presentationModeEnabled } />);
+    
+    if (this.props.showingExplorer && !this.props.presentationModeEnabled)
+      workbenchChildren.push(<ExplorerBar key={'explorer-bar'} />);
 
     workbenchChildren.push(
       <Splitter orientation={'vertical'} key={'tab-group-splitter'}>
