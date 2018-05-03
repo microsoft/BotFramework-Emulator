@@ -36,8 +36,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { FileInfo } from '@bfemulator/app-shared';
 import { lazy, pathExt } from '@fuselab/ui-shared/lib';
-import { TreeView, TreeViewProps, initFontFaces, ITreeView, ITreeNodeView } from '@fuselab/ui-fabric/lib';
-
+import { TreeView, TreeViewProps, initFontFaces } from '@fuselab/ui-fabric/lib';
 import * as constants from '../../../../constants';
 import { SettingsService } from '../../../../platform/settings/settingsService';
 import * as ChatActions from '../../../../data/action/chatActions';

@@ -45,11 +45,7 @@ const CSS = css({
   height: '100%',
   display: 'flex',
   flexFlow: 'column nowrap',
-  position: 'relative',
-
-  '&.explorer-bar-hidden': {
-    display: 'none'
-  }
+  position: 'relative'
 });
 
 class ExplorerBar extends React.Component {
@@ -58,7 +54,6 @@ class ExplorerBar extends React.Component {
   }
   
   render() {
-    console.log('explorer.index.js rerender');
     let explorer = [];
       explorer.push(
         <AssetExplorerBar key={ 'asset-explorer-bar' } activeBot={ this.props.activeBot } hidden={ this.props.selectedNavTab !== Constants.NavBar_Bot_Explorer } />
