@@ -261,7 +261,7 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
           try {
             // the transcript is on disk, so its activities need to be read on the main side and fed in
             const fileInfo: { fileName: string, filePath: string } = await CommandService.remoteCall('emulator:feed-transcript:disk', conversation.conversationId, props.document.documentId);
-            this.props.updateDocument(this.props.documentId, {fileName: fileInfo.fileName});
+            this.props.updateDocument(this.props.documentId, { fileName: fileInfo.fileName });
           } catch (err) {
             throw new Error(`Error while feeding transcript on disk to conversation: ${err}`);
           }
