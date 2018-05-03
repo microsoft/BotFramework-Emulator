@@ -56,13 +56,6 @@ export default function replyToActivity(botEmulator: BotEmulator) {
 
       activity.id = null;
       activity.replyToId = req.params.activityId;
-      if (!activity.conversation)
-      {
-        activity.conversation = {};
-        if(!activity.conversation.id) {
-          activity.conversation.id = conversationParameters.conversationId;
-        }
-      }
 
       // if we found the activity to reply to
       //if (!conversation.activities.find((existingActivity, index, obj) => existingActivity.id == activity.replyToId))
@@ -75,7 +68,7 @@ export default function replyToActivity(botEmulator: BotEmulator) {
         res.end();
       }
 
-      let visitor = new OAuthLinkEncoder(botEmulator, botEmulator.options.tunnelingServiceUrl, req.headers['authorization'] as string, activity);
+      let visitor = new OAuthLinkEncoder(botEmulator, botEmulator.options.tunnelingServiceUrl, req.headers['authorization'] as string, activity, conversationParameters.conversationId);
       visitor.resolveOAuthCards(activity).then((value?: any) =>
       {
           continuation();

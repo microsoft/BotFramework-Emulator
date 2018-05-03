@@ -54,24 +54,23 @@ export default class OAuthLinkEncoder {
     private emulatorUrl: string;
     private authorizationHeader: string;
     private activity: IGenericActivity; 
+    private conversationId: string;
     private botEmulator: BotEmulator;
 
-    constructor(botEmulator: BotEmulator, emulatorUrl: string | StringProvider, authorizationHeader: string, activity: IGenericActivity) {
+    constructor(botEmulator: BotEmulator, emulatorUrl: string | StringProvider, authorizationHeader: string, activity: IGenericActivity, conversationId: string) {
         this.emulatorUrl = emulatorUrl ? (typeof emulatorUrl === 'string') ? emulatorUrl : emulatorUrl() : null;;
         this.authorizationHeader = authorizationHeader;
         this.activity = activity;
+        this.conversationId = conversationId;
         this.botEmulator = botEmulator;
     }
 
     public resolveOAuthCards(activity: IGenericActivity): Promise<any> {
-        let codeChallenge:string = undefined; 
-        if (activity && activity.conversation && activity.conversation.id) {
-            codeChallenge = this.generateCodeVerifier(activity.conversation.id);
-        }
         return new Promise<any>((resolve: (value?: any) => void, reject: (reason?: any) => void) =>
         {
             let waiting = false;
-            if (codeChallenge && activity && activity.attachments && activity.attachments.length == 1 && activity.attachments[0].contentType === AttachmentContentTypes.oAuthCard) {
+            if (this.conversationId && activity && activity.attachments && activity.attachments.length == 1 && activity.attachments[0].contentType === AttachmentContentTypes.oAuthCard) {
+                let codeChallenge = this.generateCodeVerifier(this.conversationId);
                 let attachment: IAttachment = activity.attachments[0] as IAttachment;
                 let oauthCard: IOAuthCard = attachment.content as IOAuthCard;
                 if(oauthCard.buttons && oauthCard.buttons.length == 1) {
@@ -81,7 +80,7 @@ export default class OAuthLinkEncoder {
                         waiting = true;
                         this.getSignInLink(oauthCard.connectionName, codeChallenge, (link: string) => {
                             if (link) {
-                                cardAction.value =  OAuthLinkEncoder.OAuthUrlProtocol + '//' + link + '&&&' + activity.conversation.id;
+                                cardAction.value =  OAuthLinkEncoder.OAuthUrlProtocol + '//' + link + '&&&' + this.conversationId;
                             }
                             resolve(true);
                         });
@@ -117,8 +116,8 @@ export default class OAuthLinkEncoder {
             {
                 ActivityId: this.activity.id,
                 Bot: this.activity.from,       // Activity is from the bot to the user
-                ChannelId: this.activity.channelId,
-                Conversation: this.activity.conversation,
+                ChannelId: this.activity.channelId ? this.activity.channelId : 'emulator',
+                Conversation: this.activity.conversation ? this.activity.conversation : { id: this.conversationId },
                 ServiceUrl: this.activity.serviceUrl,
                 User: this.activity.recipient
             }
