@@ -86,7 +86,7 @@ export default class AppStateAdapter implements AppState {
     this.phrasings = [this.traceInfo.message.text || ''];
 
     this.answers = this.traceInfo.queryResults.map((result: QueryResult) => ({
-      qnaId: result.qnaId,
+      id: result.id,
       text: result.answer,
       score: result.score,
       filters: null
