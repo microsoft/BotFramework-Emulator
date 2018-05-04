@@ -120,7 +120,7 @@ class BotSettingsEditor extends React.Component<BotSettingsEditorProps, BotSetti
     const { path: newBotPath } = newProps.bot;
     // handling a new bot
     if (newBotPath !== this.state.bot.path) {
-      const newBotInfo: IBotInfo = getBotInfoByPath(newBotPath) || {};
+      const newBotInfo: IBotInfo = getBotInfoByPath(newBotPath);
 
       this.setState({ endpoint: getFirstBotEndpointOrDefault(newProps.bot), secret: newBotInfo.secret });
       this.setDirtyFlag(false);
@@ -149,8 +149,7 @@ class BotSettingsEditor extends React.Component<BotSettingsEditorProps, BotSetti
       id: id.trim()
     };
 
-    const { name: botName = '', description = '' } = this.state.bot;
-    let { path } = this.state.bot;
+    const { name: botName = '', description = '', path } = this.state.bot;
     const bot: IBotConfigWithPath = BotConfigWithPath.fromJSON({
       name: botName.trim(),
       description: description.trim(),
@@ -160,22 +159,10 @@ class BotSettingsEditor extends React.Component<BotSettingsEditorProps, BotSetti
     });
 
     // write the bot secret to bots.json
-    let botInfo: IBotInfo = getBotInfoByPath(path) || { displayName: name };
+    let botInfo = getBotInfoByPath(path);
+
     botInfo.secret = this.state.secret;
 
-    // could be a bot connected via protocol
-    if (!path) {
-      path = await this.showBotSaveDialog();
-      if (!path) {
-        // dialog was cancelled
-        return null;
-      }
-      botInfo.path = path.trim();
-      bot.path = path.trim();
-    } 
-
-    // TODO: merge these two into one code path so we can just add the above
-    // check for 'path' there
     await CommandService.remoteCall('bot:list:patch', path, botInfo);
     await CommandService.remoteCall('bot:save', bot);
 
@@ -192,25 +179,6 @@ class BotSettingsEditor extends React.Component<BotSettingsEditorProps, BotSetti
   private setDirtyFlag(dirty) {
     store.dispatch(EditorActions.setDirtyFlag(this.props.documentId, dirty));
   }
-
-  private showBotSaveDialog = async (): Promise<any> => {
-    // get a safe bot file name
-    const botFileName = await CommandService.remoteCall('file:sanitize-string', this.state.bot.name);
-    const dialogOptions = {
-      filters: [
-        {
-          name: "Bot Files",
-          extensions: ['bot']
-        }
-      ],
-      defaultPath: botFileName,
-      showsTagField: false,
-      title: "Save as",
-      buttonLabel: "Save"
-    };
-
-    return CommandService.remoteCall('shell:showSaveDialog', dialogOptions);
-  };
 
   render() {
     const disabled = !this.state.bot.name || !this.props.dirty;
