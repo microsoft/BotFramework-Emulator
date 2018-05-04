@@ -223,7 +223,7 @@ gulp.task('get-licenses', function () {
   const licenses = require('license-list');
   const source = require('vinyl-source-stream');
   const lerna = require('../../../lerna.json');
-  const stream = source('ThirdPartyLicenses.txt');
+  const stream = source('../../../ThirdPartyLicenses.txt');
 
   const formatLicense = (pkgInfo) => {
     const formatLicenseFile = () => {
