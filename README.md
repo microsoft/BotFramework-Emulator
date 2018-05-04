@@ -1,4 +1,4 @@
-# Microsoft Bot Framework Emulator V4
+# Microsoft Bot Framework Emulator (V4 PREVIEW)
 
 The [Microsoft Bot Framework](https://botframework.com) is a service and [SDK](https://github.com/Microsoft/BotBuilder) that enables organizations to build and deploy intelligent agents, known as bots.
 
