@@ -21,7 +21,6 @@ The Bot Framework Emulator can communicate with your bot wherever it is running;
 * [Connect to a bot running locally](https://github.com/Microsoft/BotFramework-Emulator/wiki/Getting-Started#connect-to-a-bot-running-on-localhost)
 * [Connect to a bot hosted remotely](https://github.com/Microsoft/BotFramework-Emulator/wiki/Getting-Started#connect-to-a-bot-hosted-remotely)
 * [Connect to an Azure Bot Service](https://github.com/Microsoft/BotFramework-Emulator/wiki/Getting-Started#connect-to-an-azure-bot-service)
-* Read the [Wiki](https://github.com/Microsoft/BotFramework-Emulator/wiki)
 
 ## Contributing
 
