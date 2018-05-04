@@ -45,6 +45,7 @@ export class NgrokService {
   private _spawnErr: any;
   private _localhost: string;
   private _bypass: boolean;
+  private _triedToSpawn: boolean;
 
   getServiceUrl(botUrl: string): string {
     if (botUrl && isLocalhostUrl(botUrl) && this._bypass) {
@@ -57,6 +58,8 @@ export class NgrokService {
       return this._serviceUrl;
     }
   }
+
+  public getSpawnStatus = (): { triedToSpawn: boolean, err: any } => ({ triedToSpawn: this._triedToSpawn, err: this._spawnErr });
 
   public getNgrokServiceUrl() : string {
     return this._serviceUrl;
@@ -90,9 +93,11 @@ export class NgrokService {
     this._serviceUrl = `http://${ this._localhost }:${ port }`;
     this._inspectUrl = null;
     this._spawnErr = null;
+    this._triedToSpawn = false;
 
     if (this._ngrokPath && this._ngrokPath.length) {
       try {
+        this._triedToSpawn = true;
         const { inspectUrl, url } = await ngrokConnect({ port, path: this._ngrokPath });
 
         this._serviceUrl = url;
