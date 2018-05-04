@@ -244,24 +244,28 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
 
     return (
       <GenericDocument style={ CSS }>
-        <MediumHeader>Emulator settings</MediumHeader>
+        <MediumHeader>Emulator Settings</MediumHeader>
         <Row>
           <Column>
-            <SmallHeader>Service settings</SmallHeader>
+            <SmallHeader>Service</SmallHeader>
             <p><a href="https://ngrok.com/" target="_blank">ngrok</a> is network tunneling software. The Bot Framework Emulator works with ngrok to communicate with bots hosted remotely. Read the <a href="https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)" target="_blank">wiki page</a> to learn more about using ngrok and to download it.</p>
             <Row align={ RowAlignment.Center }>
               <TextInputField readOnly={ false } value={ uncommitted.ngrokPath } onChange={ this.onChangeNgrok } label={ 'Path to ngrok' } />
               <PrimaryButton onClick={ this.onClickBrowse } text="Browse" className="browse-button" />
             </Row>
             <Checkbox className="checkboxOverrides" checked={ uncommitted.bypassNgrokLocalhost } onChange={ this.onChangeNgrokBypass } id="ngrok-bypass" label="Bypass ngrok for local addresses" />
-            <Checkbox className="checkboxOverrides" checked={ uncommitted.use10Tokens } onChange={ this.onChangeAuthTokenVersion } id="auth-token-version" label="Use version 1.0 authentication tokens" />
-            <Checkbox className="checkboxOverrides" checked={ uncommitted.useCodeValidation } onChange={ this.onChangeUseValidationToken } id="use-validation-code" label="Use a sign-in verification code for OAuthCards" />
             <Row align={ RowAlignment.Center }>
               <TextInputField readOnly={ false } value={ uncommitted.localhost } onChange={ this.onChangeLocalhost } label="localhost override" />
             </Row>
             <Row align={ RowAlignment.Center }>
               <TextInputField readOnly={ false } value={ uncommitted.locale } onChange={ this.onChangeLocale } label="Locale" />
             </Row>
+         </Column>
+         <Column className="right-column">
+            <SmallHeader>Auth</SmallHeader>
+            <Checkbox className="checkboxOverrides" checked={ uncommitted.use10Tokens } onChange={ this.onChangeAuthTokenVersion } id="auth-token-version" label="Use version 1.0 authentication tokens" />
+            <SmallHeader>Sign-in</SmallHeader>
+            <Checkbox className="checkboxOverrides" checked={ uncommitted.useCodeValidation } onChange={ this.onChangeUseValidationToken } id="use-validation-code" label="Use a sign-in verification code for OAuthCards" />
           </Column>
         </Row>
         <Row className="button-row" justify={ RowJustification.Right }>
