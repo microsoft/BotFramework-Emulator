@@ -32,7 +32,7 @@
 //
 
 export interface Answer {
-  qnaId: number;
+  id: number;
   text: string;
   score: number;
   filters: any;

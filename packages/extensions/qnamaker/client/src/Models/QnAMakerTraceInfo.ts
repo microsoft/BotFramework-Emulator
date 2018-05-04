@@ -49,5 +49,5 @@ export interface QueryResult {
   score: number;
   metadata: any;
   source: string;
-  qnaId: number;
+  id: number;
 }

@@ -246,18 +246,19 @@ class App extends React.Component<any, AppState> {
         //   }
         // };
         if (this.state.selectedAnswer) {
+          let newQuestion = this.state.selectedAnswer.id === 0;
+          let questions = newQuestion ? this.state.phrasings : { 'add': this.state.phrasings };
+          let metadata = newQuestion ? [] : {'add': [], 'delete': []};
           let qnaList = { 'qnaList': [
             {
-              'id': this.state.selectedAnswer.qnaId,
+              'id': this.state.selectedAnswer.id,
               'answer': this.state.selectedAnswer.text,
               'source': 'Editorial',
-              'questions': this.state.phrasings,
-              'metadata': [],
+              'questions': questions,
+              'metadata': metadata,
             }
           ]};
-          const body = this.state.selectedAnswer.qnaId === 0 
-            ? { 'add': qnaList }
-            : { 'update': qnaList };
+          const body = newQuestion ? { 'add': qnaList }   : { 'update': qnaList };
           const response = await this.client.updateKnowledgebase(this.state.traceInfo.knowledgeBaseId, body);
           success = response.status === 202;
           
@@ -286,12 +287,15 @@ class App extends React.Component<any, AppState> {
     let success = false;
     try {
       if (this.state.qnaService !== null) {
-        const response = await this.client.publish(this.state.traceInfo.knowledgeBaseId);
-        success = response.status === 204;
+        $host.logger.log('Publishing... this could take a while.');
+        let response1 = await this.client.publish(this.state.traceInfo.knowledgeBaseId);
+        // it only works the second time you publish?!
+        let response2 = await this.client.publish(this.state.traceInfo.knowledgeBaseId);
+        success = response1.status === 204 && response2.status === 204;
         if (success) {
           $host.logger.log('Successfully published Knowledge Base ' + this.state.traceInfo.knowledgeBaseId);
         } else {
-          $host.logger.error('Request to QnA Maker failed. ' + response.statusText);
+          $host.logger.error('Request to QnA Maker failed. ' + response1.statusText);
         }
       }
     } catch (err) {
@@ -301,7 +305,7 @@ class App extends React.Component<any, AppState> {
     }
     this.setAppPersistentState({
       pendingTrain: false,
-      pendingPublish: !success
+      pendingPublish: true
     });
   }
 
@@ -354,7 +358,7 @@ class App extends React.Component<any, AppState> {
     return (newAnswer: string) => {
       let newAnswers: Answer[] = this.state.answers;
       newAnswers.push({
-        qnaId: 0,
+        id: 0,
         text: newAnswer,
         score: 0,
         filters: {}
