@@ -287,7 +287,7 @@ class App extends React.Component<any, AppState> {
     let success = false;
     try {
       if (this.state.qnaService !== null) {
-        $host.logger.log('Publishing... this could take a while.');
+        $host.logger.log('Publishing...');
         let response1 = await this.client.publish(this.state.traceInfo.knowledgeBaseId);
         // it only works the second time you publish?!
         let response2 = await this.client.publish(this.state.traceInfo.knowledgeBaseId);
@@ -305,7 +305,7 @@ class App extends React.Component<any, AppState> {
     }
     this.setAppPersistentState({
       pendingTrain: false,
-      pendingPublish: true
+      pendingPublish: !success
     });
   }
 
