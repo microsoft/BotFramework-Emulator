@@ -1,1 +1,0 @@
-license-list . > ./ThirdPartyLicenses.txt

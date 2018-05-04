@@ -1,16 +1,12 @@
-# Microsoft Bot Framework Emulator
+# Microsoft Bot Framework Emulator V4
 
 The [Microsoft Bot Framework](https://botframework.com) is a service and [SDK](https://github.com/Microsoft/BotBuilder) that enables organizations to build and deploy intelligent agents, known as bots.
 
 The Bot Framework Emulator is a desktop application that allows bot developers to test and debug their bots on localhost or running remotely through a tunnel.
 
-<p align="center">
-    <img alt="Bot Framework Emulator in Action" src="https://github.com/Microsoft/BotFramework-Emulator/wiki/Computers.png" />
-</p>
-
 ## Download
 
-* From the [Bot Framework](https://emulator.botframework.com) site (download will start automatically)
+* From the [Bot Framework](https://emulator.botframework.com) site
 * From the [GitHub releases](https://github.com/Microsoft/BotFramework-Emulator/releases) page
 
 ### Supported platforms
