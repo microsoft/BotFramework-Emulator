@@ -25,21 +25,22 @@ The Bot Framework Emulator can communicate with your bot wherever it is running;
 
 ## Contributing
 
-If you are interested in fixing issues and contributing directly to the code base, please see [How to Contribute](https://github.com/Microsoft/BotFramework-Emulator/wiki/How-to-Contribute), which covers the following:
-* [How to build and run from source](https://github.com/Microsoft/BotFramework-Emulator/wiki/How-to-Contribute#clone-and-build)
-* [Submitting pull requests](https://github.com/Microsoft/BotFramework-Emulator/wiki/How-to-Contribute#pull-requests)
+If you are interested in fixing issues and contributing directly to the code base, please see [How to Contribute](https://github.com/Microsoft/BotFramework-Emulator/blob/v4/CONTRIBUTING.md), which covers the following:
+* [How to build and run from source](https://github.com/Microsoft/BotFramework-Emulator/blob/v4/CONTRIBUTING.md#how-to-build-from-source)
+* [Submitting pull requests](https://github.com/Microsoft/BotFramework-Emulator/blob/v4/CONTRIBUTING.md#pull-requests)
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
 ## Feedback
 
-* File a bug or suggestion in [GitHub Issues](https://github.com/Microsoft/BotFramework-Emulator/wiki/Submitting-Bugs-&-Suggestions)
+* File a bug or suggestion in [GitHub Issues](https://github.com/Microsoft/BotFramework-Emulator/blob/v4/CONTRIBUTING.md#submitting-issues)
 * Ask a question on [Stack Overflow](https://stackoverflow.com/questions/tagged/botframework)
 
 ## Related
 
 * [Microsoft Bot Framework](https://botframework.com)
 * [BotBuilder SDK](https://github.com/Microsoft/BotBuilder)
+* [BotBuilder Tools](https://github.com/Microsoft/BotBuilder-Tools)
 * [BotFramework-WebChat](https://github.com/Microsoft/BotFramework-WebChat)
 
 ## License
