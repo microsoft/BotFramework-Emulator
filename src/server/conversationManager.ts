@@ -37,7 +37,7 @@ import * as got from 'got';
 import { IUser } from '../types/userTypes';
 import { IActivity, IConversationUpdateActivity, IMessageActivity, IContactRelationUpdateActivity, IInvokeActivity, IEventActivity } from '../types/activityTypes';
 import { PaymentEncoder } from '../shared/paymentEncoder';
-import { OAuthClientEncoder } from '../shared/oAuthClientEncoder';
+import { OAuthClientEncoder } from '../shared/oauthClientEncoder';
 import { ISpeechTokenInfo } from '../types/speechTypes';
 import { uniqueId } from '../shared/utils';
 import { dispatch, getSettings, authenticationSettings, addSettingsListener, speechSettings } from './settings';
