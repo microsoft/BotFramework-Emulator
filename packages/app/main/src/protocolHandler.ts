@@ -41,6 +41,7 @@ import * as BotActions from './data-v2/action/bot';
 import { mainWindow } from './main';
 import { ngrokEmitter, running } from './ngrok';
 import { getSettings } from './settings';
+import { emulator } from './emulator';
 
 enum ProtocolDomains {
   livechat,
@@ -192,6 +193,11 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
     const appSettings: IFrameworkSettings = getSettings().framework;
 
     if (appSettings.ngrokPath) {
+      const ngrokSpawnStatus = emulator.ngrok.getSpawnStatus();
+      if (!ngrokSpawnStatus.triedToSpawn || (ngrokSpawnStatus.triedToSpawn && ngrokSpawnStatus.err)) {
+        throw new Error(`Error while trying to spawn ngrok instance: ${ngrokSpawnStatus.err || ''}`);
+      }
+
       // make sure there is an active bot on the client side and the emulator object contains the new endpoint
       await mainWindow.commandService.remoteCall('bot:set-active', bot, '');
       await mainWindow.commandService.call('bot:restart-endpoint-service');
@@ -261,6 +267,11 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
 
     const appSettings: IFrameworkSettings = getSettings().framework;
     if (appSettings.ngrokPath) {
+      const ngrokSpawnStatus = emulator.ngrok.getSpawnStatus();
+      if (!ngrokSpawnStatus.triedToSpawn || (ngrokSpawnStatus.triedToSpawn && ngrokSpawnStatus.err)) {
+        throw new Error(`Error while trying to spawn ngrok instance: ${ngrokSpawnStatus.err || ''}`);
+      }
+
       if (running()) {
         mainWindow.commandService.call('bot:load', path, secret)
           .then(() => console.log('opened bot successfully'))
