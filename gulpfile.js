@@ -1,5 +1,5 @@
 var gulp = require('gulp');
-var typescript = require('gulp-tsc');
+var typescript = require('gulp-typescript');
 
 gulp.task('clean', function () {
     var clean = require('gulp-clean');
@@ -8,7 +8,6 @@ gulp.task('clean', function () {
 });
 
 gulp.task('build-app', function () {
-    var tsc = require('gulp-tsc');
     var tsconfig = require('./tsconfig.json');
     return gulp.src(['src/**/*.ts', 'src/**/*.tsx'])
         .pipe(typescript(tsconfig.compilerOptions))
