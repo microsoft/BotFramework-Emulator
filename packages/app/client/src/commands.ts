@@ -170,7 +170,6 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Open a new emulator tabbed document
   CommandRegistry.registerCommand('livechat:new', (endpoint: IEndpointService) => {
-    console.log('hit livechat:new with endpoint: ', endpoint);
     const documentId = uniqueId();
 
     store.dispatch(ChatActions.newDocument(
