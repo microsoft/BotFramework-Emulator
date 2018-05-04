@@ -130,7 +130,7 @@ export function cloneBot(bot: IBotConfigWithPath): IBotConfigWithPath {
  */
 export async function patchBotsJson(botPath: string, bot: IBotInfo): Promise<IBotInfo[]> {
   const state = mainWindow.store.getState();
-  const bots = [...state.bot.botFiles];
+  const bots = [...state.bot.botFiles].filter(b => !!b);
   const botIndex = bots.findIndex(bot => bot.path === botPath);
   if (botIndex > -1) {
     bots[botIndex] = { ...bots[botIndex], ...bot };

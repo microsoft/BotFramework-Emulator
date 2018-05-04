@@ -178,7 +178,7 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
     // mock up a bot object
     const { botUrl, msaAppId, msaPassword } = protocol.parsedArgs;
     const bot: IBotConfig = newBot();
-    bot.name = 'New bot';
+    bot.name = '';
 
     const endpoint: IEndpointService = newEndpoint();
     endpoint.endpoint = botUrl;
