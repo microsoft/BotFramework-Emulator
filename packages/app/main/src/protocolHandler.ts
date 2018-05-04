@@ -39,7 +39,7 @@ import * as QueryString from 'querystring';
 import { Protocol } from './constants';
 import * as BotActions from './data-v2/action/bot';
 import { mainWindow } from './main';
-import { ngrokEmitter } from './ngrok';
+import { ngrokEmitter, running } from './ngrok';
 import { getSettings } from './settings';
 
 enum ProtocolDomains {
@@ -173,25 +173,36 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
   /** Mocks a bot object with any configuration parsed from the
    *  protocol string and starts a live chat session with that bot
    */
-  private openLiveChat(protocol: IProtocol): void {
+  private async openLiveChat(protocol: IProtocol): Promise<void> {
     // mock up a bot object
     const { botUrl, msaAppId, msaPassword } = protocol.parsedArgs;
     const bot: IBotConfig = newBot();
-    const endpoint: IEndpointService = newEndpoint();
+    bot.name = 'New bot';
 
+    const endpoint: IEndpointService = newEndpoint();
     endpoint.endpoint = botUrl;
     endpoint.appId = msaAppId;
     endpoint.appPassword = msaPassword;
+    endpoint.id = botUrl;
+    endpoint.name = 'New livechat';
+
     bot.services.push(endpoint);
     mainWindow.store.dispatch(BotActions.mockAndSetActive(bot));
 
     const appSettings: IFrameworkSettings = getSettings().framework;
 
     if (appSettings.ngrokPath) {
-      // if ngrok is configured, wait for it to connect and start the livechat
-      ngrokEmitter.once('connect', (...args: any[]): void => {
+      // make sure there is an active bot on the client side and the emulator object contains the new endpoint
+      await mainWindow.commandService.remoteCall('bot:set-active', bot, '');
+      await mainWindow.commandService.call('bot:restart-endpoint-service');
+
+      if (running())
         mainWindow.commandService.remoteCall('livechat:new', endpoint);
-      });
+      else
+        // if ngrok hasn't connected yet, wait for it to connect and start the livechat
+        ngrokEmitter.once('connect', (...args: any[]): void => {
+          mainWindow.commandService.remoteCall('livechat:new', endpoint);
+        });
     } else {
       // try to connect and let the chat log show the user the error
       // TODO: We shouldn't have to wait for welcome to render
@@ -249,15 +260,23 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
 
     const appSettings: IFrameworkSettings = getSettings().framework;
     if (appSettings.ngrokPath) {
-      // if ngrok is configured, wait for it to connect and load the bot
-      ngrokEmitter.once('connect', (...args: any[]): void => {
+      if (running())
         mainWindow.commandService.call('bot:load', path, secret)
           .then(() => console.log('opened bot successfully'))
           // TODO: surface this error somewhere; native error box?
           .catch(err => {
             throw new Error(`Error occurred while trying to deep link to bot project at: ${path}`);
           });
-      });
+      else
+        // if ngrok hasn't connected yet, wait for it to connect and load the bot
+        ngrokEmitter.once('connect', (...args: any[]): void => {
+          mainWindow.commandService.call('bot:load', path, secret)
+            .then(() => console.log('opened bot successfully'))
+            // TODO: surface this error somewhere; native error box?
+            .catch(err => {
+              throw new Error(`Error occurred while trying to deep link to bot project at: ${path}`);
+            });
+        });
     } else {
       // load the bot and let the chat log show the user the error
       // TODO: We shouldn't have to wait for welcome to render

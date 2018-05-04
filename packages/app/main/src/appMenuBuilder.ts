@@ -121,7 +121,7 @@ export const AppMenuBuilder = new class AppMenuBuilder implements IAppMenuBuilde
     // once we allow multiple endpoints per bot
 
     // only list 5 most-recent bots
-    return bots.slice(0, 5).map(bot => ({
+    return bots.slice(0, 5).filter(bot => !!bot).map(bot => ({
       label: bot.displayName,
       click: () => {
         mainWindow.commandService.remoteCall('bot:switch', bot.path)
