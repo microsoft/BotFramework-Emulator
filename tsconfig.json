@@ -12,6 +12,7 @@
         "noEmitOnError": true,
         "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": true,
+        "forceConsistentCasingInFileNames": true,
         "noUnusedLocals": true,
         "outDir": "app",
         "removeComments": true,
