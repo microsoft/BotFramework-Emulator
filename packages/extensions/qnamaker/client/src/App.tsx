@@ -237,14 +237,6 @@ class App extends React.Component<any, AppState> {
     let success = false;
     try {
       if (this.state.qnaService !== null) {
-        // const qnaPairs = this.state.phrasings.map(
-        //   (phrase) => {return {'question': phrase, 'answer': this.state.selectedAnswer}; }
-        // );
-        // const body = {
-        //   'add': {
-        //     'qnaPairs': qnaPairs
-        //   }
-        // };
         if (this.state.selectedAnswer) {
           let newQuestion = this.state.selectedAnswer.id === 0;
           let questions = newQuestion ? this.state.phrasings : { 'add': this.state.phrasings };
@@ -260,13 +252,8 @@ class App extends React.Component<any, AppState> {
           ]};
           const body = newQuestion ? { 'add': qnaList }   : { 'update': qnaList };
           const response = await this.client.updateKnowledgebase(this.state.traceInfo.knowledgeBaseId, body);
-          success = response.status === 202;
-          
-          if (success) {
-            $host.logger.log('Successfully trained Knowledge Base ' + this.state.traceInfo.knowledgeBaseId);
-          } else {
-            $host.logger.error('Request to QnA Maker failed. ' + response.statusText);
-          }
+          success = response.status === 200;
+          $host.logger.log('Successfully trained Knowledge Base ' + this.state.traceInfo.knowledgeBaseId);
         } else {
           $host.logger.error('Select an answer before trying to train.');
         }
@@ -275,11 +262,11 @@ class App extends React.Component<any, AppState> {
       $host.logger.error(err.message);
     } finally {
       $host.setAccessoryState(TrainAccessoryId, AccessoryDefaultState);
+      this.setAppPersistentState({
+        pendingTrain: !success,
+        pendingPublish: success
+      });
     }
-    this.setAppPersistentState({
-      pendingTrain: !success,
-      pendingPublish: success
-    });
   }
 
   private async publish(): Promise<void> {
@@ -288,14 +275,12 @@ class App extends React.Component<any, AppState> {
     try {
       if (this.state.qnaService !== null) {
         $host.logger.log('Publishing...');
-        let response1 = await this.client.publish(this.state.traceInfo.knowledgeBaseId);
-        // it only works the second time you publish?!
-        let response2 = await this.client.publish(this.state.traceInfo.knowledgeBaseId);
-        success = response1.status === 204 && response2.status === 204;
+        let response = await this.client.publish(this.state.traceInfo.knowledgeBaseId);
+        success = response.status === 204;
         if (success) {
           $host.logger.log('Successfully published Knowledge Base ' + this.state.traceInfo.knowledgeBaseId);
         } else {
-          $host.logger.error('Request to QnA Maker failed. ' + response1.statusText);
+          $host.logger.error('Request to QnA Maker failed. ' + response.statusText);
         }
       }
     } catch (err) {
