@@ -206,6 +206,8 @@ export function registerCommands() {
   //---------------------------------------------------------------------------
   // Adds or updates an msbot service entry.
   CommandRegistry.registerCommand('bot:add-or-update-service', async (serviceType: ServiceType, service: IConnectedService) => {
+    if (!service.id || !service.id.length)
+      service.id = uniqueId();
     const activeBot = getActiveBot();
     const botInfo = activeBot && getBotInfoByPath(activeBot.path);
     if (botInfo) {
