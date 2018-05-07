@@ -80,7 +80,7 @@ export class RestServer {
       const facility = req['facility'] || 'network';
       const routeName = req['routeName'] || '';
       
-      let level = LogLevel.Info;
+      let level = LogLevel.Debug;
       if (!/2\d\d/.test(res.statusCode.toString()))
         level = LogLevel.Error;
       
