@@ -46,5 +46,7 @@ export default function deleteUserData(botEmulator: BotEmulator) {
     } catch (err) {
       sendErrorResponse(req, res, next, err);
     }
+
+    next();
   };
 }

@@ -51,5 +51,7 @@ export default function sendTokenResponse(botEmulator: BotEmulator) {
         res.send(statusCode);
     }
     res.end();
+
+    next();
   };
 }

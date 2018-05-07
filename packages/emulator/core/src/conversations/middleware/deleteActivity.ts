@@ -39,24 +39,18 @@ import IConversationAPIPathParameters from '../conversationAPIPathParameters';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function deleteActivity(botEmulator: BotEmulator) {
-  const { logRequest, logResponse } = botEmulator.facilities.logger;
-
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const conversationParameters: IConversationAPIPathParameters = req.params;
-
-    logRequest(conversationParameters.conversationId, 'service', req);
 
     try {
       req['conversation'].deleteActivity(conversationParameters.activityId);
 
       res.send(HttpStatus.OK);
       res.end();
-      //logNetwork(parms.conversationId, req, res);
     } catch (err) {
       sendErrorResponse(req, res, next, err);
-      //logNetwork(parms.conversationId, req, res, getErrorText(error));
     }
-
-    logResponse(conversationParameters.conversationId, 'service', res);
-  };
+ 
+    next();
+ };
 }

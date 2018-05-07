@@ -32,12 +32,11 @@
 //
 
 import LogLevel from './level';
+import ILogItem from './item';
 
 interface ILogEntry {
-  category: string;
-  level: LogLevel;
-  messages: any[];
   timestamp: number;
+  items: ILogItem[];
 }
 
-export default ILogEntry
+export default ILogEntry;

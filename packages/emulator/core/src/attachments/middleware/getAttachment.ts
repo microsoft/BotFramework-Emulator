@@ -39,6 +39,7 @@ import createAPIException from '../../utils/createResponse/apiException';
 import ErrorCodes from '../../types/errorCodes';
 import IAttachmentData from '../../types/attachment/data';
 import IAttachmentParams from '../attachmentParams';
+import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function getAttachment(bot: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
@@ -55,18 +56,17 @@ export default function getAttachment(bot: BotEmulator) {
 
             res.contentType = attachment.type;
             res.send(HttpStatus.OK, buffer);
-            //log.api('getAttachment', req, res, null, buffer.length);
           } else {
-            throw createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, parms.viewId === 'original' ? 'There is no original view' : 'There is no thumbnail view');
+            sendErrorResponse(req, res, next, createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, parms.viewId === 'original' ? 'There is no original view' : 'There is no thumbnail view'));
           }
         }
       } else {
-        throw createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, `attachment[${ parms.attachmentId }] not found`);
+        sendErrorResponse(req, res, next, createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, `attachment[${ parms.attachmentId }] not found`));
       }
     } catch (err) {
-      throw createAPIException(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCodes.ServiceError, err.message);
-      //let error = sendErrorResponse(req, res, next, err);
-      //log.api('getAttachment', req, res, null, error);
+      sendErrorResponse(req, res, next, createAPIException(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCodes.ServiceError, err.message));
     }
+    
+    next();
   };
 }

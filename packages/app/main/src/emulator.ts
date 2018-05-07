@@ -63,6 +63,11 @@ export class Emulator {
       this.framework.server.botEmulator.facilities.endpoints.push(name, endpoint);
     });
   }
+  
+  public report(conversationId: string) {
+    this.framework.report(conversationId);
+    this.ngrok.report(conversationId);
+  }
 
   /**
    * Loads settings from disk and then creates the emulator.

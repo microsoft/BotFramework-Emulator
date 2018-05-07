@@ -32,10 +32,10 @@
 //
 
 enum LogLevel {
-  Error,
+  Debug,
   Info,
-  Trace,
-  Warn
-}
+  Warn,
+  Error
+};
 
-export default LogLevel
+export default LogLevel;

@@ -40,23 +40,17 @@ import sendErrorResponse from '../../utils/sendErrorResponse';
 
 // get members of a conversation
 export default function getConversationMembers(botEmulator: BotEmulator) {
-  const { logRequest, logResponse } = botEmulator.facilities.logger;
-
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const conversationParameters: IConversationAPIPathParameters = req.params;
-
-    logRequest(conversationParameters.conversationId, 'service', req);
 
     try {
       // look up conversation
       res.send(HttpStatus.OK, req['conversation'].members);
       res.end();
-      //logNetwork(parms.conversationId, req, res, conversation.members);
     } catch (err) {
       sendErrorResponse(req, res, next, err);
-      //logNetwork(parms.conversationId, req, res, null, getErrorText(err));
     }
 
-    logResponse(conversationParameters.conversationId, 'service', res);
+    next();
   };
 }

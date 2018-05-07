@@ -40,8 +40,6 @@ import BotEndpoint from '../../facility/botEndpoint';
 import uniqueId from '../../utils/uniqueId';
 
 export default function startConversation(botEmulator: BotEmulator) {
-  const { logRequest, logResponse } = botEmulator.facilities.logger;
-
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const auth = req.header('Authorization');
 
@@ -55,8 +53,6 @@ export default function startConversation(botEmulator: BotEmulator) {
     }) || uniqueId();
 
     const currentUser = botEmulator.facilities.users.usersById(botEmulator.facilities.users.currentUserId);
-
-    logRequest(conversationId, 'user', req);
 
     let created = false;
     let conversation = botEmulator.facilities.conversations.conversationById(conversationId);
@@ -79,6 +75,8 @@ export default function startConversation(botEmulator: BotEmulator) {
         conversation.addMember(currentUser.id, currentUser.name);
       }
     }
+    
+    req['conversation'] = conversation;
 
     // TODO: We should issue a real token, rather than a conversation ID
     res.json(created ? HttpStatus.CREATED : HttpStatus.OK, {
@@ -89,7 +87,7 @@ export default function startConversation(botEmulator: BotEmulator) {
     });
 
     res.end();
-
-    logResponse(conversationId, 'user', res);
+    
+    next();
   };
 }

@@ -34,15 +34,12 @@
 import * as Restify from 'restify';
 
 import IGenericActivity from '../types/activity/generic';
+import ILogItem from '../types/log/item';
 
 interface ILogger {
-  logActivity(conversationId: string, activity: IGenericActivity, destination: string);
-  logError(conversationId: string, err: any, ...messages: any[]);
-  logInfo(conversationId: string, ...messages: any[]);
-  logRequest(conversationId: string, source: string, req: Restify.Request, ...messages: any[]);
-  logResponse(conversationId: string, destination: string, res: Restify.Response, ...messages: any[]);
-  logTrace(conversationId: string, ...messages: any[]);
-  logWarning(conversationId: string, ...messages: any[]);
+  logActivity(conversationId: string, activity: IGenericActivity, role: string);
+  logMessage(conversationId: string, ...items: ILogItem[]);
+  logException(conversationId: string, err: Error);
 }
 
 export default ILogger

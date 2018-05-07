@@ -36,6 +36,7 @@ import { RequestHandler, Server } from 'restify';
 
 import BotEmulator from '../botEmulator';
 import createJsonBodyParserMiddleware from '../utils/jsonBodyParser';
+import getFacility from '../middleware/getFacility';
 
 import getActivities from './middleware/getActivities';
 import getBotEndpoint from '../middleware/getBotEndpoint';
@@ -51,10 +52,12 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
   const jsonBodyParser = createJsonBodyParserMiddleware();
   const botEndpoint = getBotEndpoint(botEmulator);
   const conversation = getConversation(botEmulator);
+  const facility = getFacility('directline');
 
   server.opts(
     '/v3/directline',
     ...uses,
+    facility,
     options(botEmulator)
   );
 
@@ -63,6 +66,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     ...uses,
     botEndpoint,
     jsonBodyParser,
+    facility,
     startConversation(botEmulator)
   );
 
@@ -71,6 +75,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     ...uses,
     botEndpoint,
     conversation,
+    facility,
     reconnectToConversation(botEmulator)
   );
 
@@ -79,6 +84,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     ...uses,
     botEndpoint,
     conversation,
+    facility,
     getActivities(botEmulator)
   );
 
@@ -88,6 +94,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     jsonBodyParser,
     botEndpoint,
     conversation,
+    facility,
     postActivity(botEmulator)
   );
 
@@ -96,12 +103,14 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     ...uses,
     botEndpoint,
     conversation,
+    facility,
     upload(botEmulator)
   );
 
   server.get(
     '/v3/directline/conversations/:conversationId/stream',
     ...uses,
+    facility,
     stream(botEmulator)
   );
 }

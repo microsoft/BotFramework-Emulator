@@ -38,7 +38,6 @@ import * as HttpStatus from 'http-status-codes';
 import updateIn from 'simple-update-in';
 
 import { authentication as authenticationEndpoint } from '../authEndpoints';
-import { makeBotSettingsLink, makeAppSettingsLink, makeExternalLink } from '../utils/linkHelpers';
 import BotEmulator from '../botEmulator';
 import BotEndpoint from './botEndpoint';
 import createAPIException from '../utils/createResponse/apiException';
@@ -67,6 +66,8 @@ import PaymentOperations from '../types/payment/operations';
 import { TokenCache } from '../userToken/tokenCache'
 import IMessageActivity from '../types/activity/message';
 import IAttachment from '../types/attachment'
+import { textItem, externalLinkItem, appSettingsItem } from '../types/log/util';
+import LogLevel from '../types/log/level';
 
 // moment currently does not export callable function
 const moment = require('moment');
@@ -142,7 +143,7 @@ export default class Conversation extends EventEmitter {
    */
   async postActivityToBot(activity: IActivity, recordInConversation: boolean) {
     if (!this.botEndpoint) {
-      return this.botEmulator.facilities.logger.logError(this.conversationId, `This conversation does not have an endpoint, cannot post "${ activity && activity.type }" activity.`);
+      return this.botEmulator.facilities.logger.logMessage(this.conversationId, textItem(LogLevel.Error, `This conversation does not have an endpoint, cannot post "${ activity && activity.type }" activity.`));
     }
 
     // Do not make a shallow copy here before modifying
@@ -161,9 +162,9 @@ export default class Conversation extends EventEmitter {
     activity.serviceUrl = this.botEmulator.getServiceUrl(this.botEndpoint.botUrl);
 
     if (!this.conversationIsTranscript && !isLocalhostUrl(this.botEndpoint.botUrl) && isLocalhostUrl(this.botEmulator.getServiceUrl(this.botEndpoint.botUrl))) {
-      this.botEmulator.facilities.logger.logError(this.conversationId, 'Error: The bot is remote, but the service URL is localhost. Without tunneling software you will not receive replies.');
-      this.botEmulator.facilities.logger.logError(this.conversationId, makeExternalLink('Connecting to bots hosted remotely', 'https://aka.ms/cnjvpo'));
-      this.botEmulator.facilities.logger.logError(this.conversationId, makeAppSettingsLink('Edit ngrok settings'));
+      this.botEmulator.facilities.logger.logMessage(this.conversationId, textItem(LogLevel.Error, 'Error: The bot is remote, but the service URL is localhost. Without tunneling software you will not receive replies.'));
+      this.botEmulator.facilities.logger.logMessage(this.conversationId, externalLinkItem('Connecting to bots hosted remotely', 'https://aka.ms/cnjvpo'));
+      this.botEmulator.facilities.logger.logMessage(this.conversationId, appSettingsItem('Edit ngrok settings'));
     }
 
     const options = {
@@ -208,7 +209,7 @@ export default class Conversation extends EventEmitter {
     try {
       await this.postActivityToBot(activity, false);
     } catch (err) {
-      this.botEmulator.facilities.logger.logError(this.conversationId, err, activity);
+      this.botEmulator.facilities.logger.logException(this.conversationId, err);
     }
   }
 
@@ -358,7 +359,7 @@ export default class Conversation extends EventEmitter {
     try {
       await this.postActivityToBot(activity, false);
     } catch (err) {
-      this.botEmulator.facilities.logger.logError(this.conversationId, err, activity);
+      this.botEmulator.facilities.logger.logException(this.conversationId, err);
     }
 
     this.transcript = [...this.transcript, { type: 'contact update', activity }];
@@ -374,7 +375,7 @@ export default class Conversation extends EventEmitter {
     try {
       await this.postActivityToBot(activity, false);
     } catch (err) {
-      this.botEmulator.facilities.logger.logError(this.conversationId, err, activity);
+      this.botEmulator.facilities.logger.logException(this.conversationId, err);
     }
 
     this.transcript = [...this.transcript, { type: 'contact remove', activity }];
@@ -390,7 +391,7 @@ export default class Conversation extends EventEmitter {
     try {
       await this.postActivityToBot(activity, false);
     } catch (err) {
-      this.botEmulator.facilities.logger.logError(this.conversationId, err, activity);
+      this.botEmulator.facilities.logger.logException(this.conversationId, err);
     }
 
     this.transcript = [...this.transcript, { type: 'typing', activity }];
@@ -406,7 +407,7 @@ export default class Conversation extends EventEmitter {
     try {
       await this.postActivityToBot(activity, false);
     } catch (err) {
-      this.botEmulator.facilities.logger.logError(this.conversationId, err, activity);
+      this.botEmulator.facilities.logger.logException(this.conversationId, err);
     }
 
     this.transcript = [...this.transcript, { type: 'ping', activity }];
@@ -421,7 +422,7 @@ export default class Conversation extends EventEmitter {
     try {
       await this.postActivityToBot(activity, false);
     } catch (err) {
-      this.botEmulator.facilities.logger.logError(this.conversationId, err, activity);
+      this.botEmulator.facilities.logger.logException(this.conversationId, err);
     }
 
     this.transcript = [...this.transcript, { type: 'user data delete', activity }];
@@ -466,7 +467,7 @@ export default class Conversation extends EventEmitter {
     shippingOptionId: string
   ) {
     if (!this.botEndpoint) {
-      return this.botEmulator.facilities.logger.logError(this.conversationId, 'Error: This conversation does not have an endpoint, cannot send update shipping activity.');
+      return this.botEmulator.facilities.logger.logMessage(this.conversationId, textItem(LogLevel.Error, 'Error: This conversation does not have an endpoint, cannot send update shipping activity.'));
     }
 
     const updateValue: IPaymentRequestUpdate = {
@@ -508,7 +509,7 @@ export default class Conversation extends EventEmitter {
     payerPhone: string
   ) {
     if (!this.botEndpoint) {
-      return this.botEmulator.facilities.logger.logError(this.conversationId, 'Error: This conversation does not have an endpoint, cannot send payment complete activity.');
+      return this.botEmulator.facilities.logger.logMessage(this.conversationId, textItem(LogLevel.Error, 'Error: This conversation does not have an endpoint, cannot send payment complete activity.'));
     }
 
     const paymentTokenHeader = {

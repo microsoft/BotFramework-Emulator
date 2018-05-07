@@ -39,6 +39,7 @@ import BotEndpoint from '../../facility/botEndpoint';
 import { ITokenResponse } from '../ITokenResponse';
 import { ITokenParams } from '../ITokenParams';
 import { TokenCache } from '../tokenCache';
+import sendErrorResponse from '../../utils/sendErrorResponse';
 
 
 interface IGetTokenParams extends ITokenParams {
@@ -60,7 +61,7 @@ export default function getToken(botEmulator: BotEmulator) {
 
       res.end();
     } catch (err) {
-      res.send(HttpStatus.INTERNAL_SERVER_ERROR);
+      sendErrorResponse(req, res, next, err);
     }
   };
 }

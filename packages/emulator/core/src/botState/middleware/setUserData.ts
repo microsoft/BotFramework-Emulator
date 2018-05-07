@@ -36,25 +36,19 @@ import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
 import IBotData from '../../types/botData';
+import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function setUserData(botEmulator: BotEmulator) {
-  const { logRequest, logResponse } = botEmulator.facilities.logger;
-
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    logRequest(req.params.conversationId, 'bot', req, 'setUserData');
-
     try {
       const botData = botEmulator.facilities.botState.setBotData(req.params.channelId, req.params.conversationId, req.params.userId, req.body as IBotData);
 
       res.send(HttpStatus.OK, botData);
       res.end();
-
-      //log.api('setUserData', req, res, { key: req.params, state: req.body }, botData);
     } catch (err) {
-      //var error = sendErrorResponse(req, res, next, err);
-      //log.api('setUserData', req, res, { key: req.params, state: req.body }, error);
+      sendErrorResponse(req, res, next, err);
     }
 
-    logResponse(req.params.conversationId, 'bot', res, 'setUserData');
+    next();
   };
 }

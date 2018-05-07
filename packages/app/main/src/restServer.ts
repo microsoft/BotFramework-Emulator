@@ -31,14 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotEmulator } from '@bfemulator/emulator-core';
+import { BotEmulator, Conversation } from '@bfemulator/emulator-core';
 import * as CORS from 'restify-cors-middleware';
 import * as Restify from 'restify';
 import * as fetch from 'electron-fetch';
 
 import { mainWindow } from './main';
-import * as log from './log';
 import { emulator } from './emulator';
+import { textItem, networkRequestItem, networkResponseItem } from '@bfemulator/emulator-core/lib/types/log/util';
+import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
 
 export class RestServer {
   private _botEmulator: BotEmulator;
@@ -59,6 +60,60 @@ export class RestServer {
       name: 'Emulator'
     });
 
+    this._router.on('after', async (req: Restify.Request, res: Restify.Response, route: Restify.Route, error: Error) => {
+      if (req.method === "GET" && route.spec.path === "/v3/directline/conversations/:conversationId/activities") {
+        // Don't log WebChat's polling GET operations
+        return;
+      }
+
+      let conversationId;
+      if (req['conversation']) {
+        conversationId = req['conversation'].conversationId;
+      } else if (req.params.conversationId) {
+        conversationId = req.params.conversationId;
+      }
+      
+      if (!conversationId || !conversationId.length || conversationId.includes('transcript')) {
+        return;
+      }
+      
+      const reqBody = req.body;
+      //const resBody = res;
+
+      //console.log('after', req.method, route.spec.path, error);
+      const facility = req['facility'] || 'network';
+      
+      let trailing = route.spec.path.toString();
+      if (trailing.length > 30)
+        trailing = `...${trailing.substr(-30)}`;
+
+      mainWindow.logService.logToChat(
+        conversationId,
+        textItem(
+          LogLevel.Info,
+          `[${facility}]`
+        ),
+        networkRequestItem(
+          facility,
+          (req as any)._body,
+          req.headers,
+          req.method,
+          req.url
+        ),
+        networkResponseItem(
+          (res as any)._data,
+          res.headers,
+          res.statusCode,
+          res.statusMessage,
+          req.url
+        ),
+        textItem(
+          LogLevel.Debug,
+          trailing
+        ),
+      );
+    });
+
     this._router.pre(cors.preflight);
     this._router.use(cors.actual);
 
@@ -70,6 +125,13 @@ export class RestServer {
         tunnelingServiceUrl: () => emulator.ngrok.getNgrokServiceUrl()
       }
     );
+
+    this._botEmulator.facilities.conversations.on('new', (conversation: Conversation) => {
+      if (!conversation || !conversation.conversationId || !conversation.conversationId.length || conversation.conversationId.includes('transcript')) {
+        return;
+      }
+      emulator.report(conversation.conversationId);
+    });
   }
 
   public listen(port?: number): Promise<{ url: string, port: number }> {
@@ -77,11 +139,7 @@ export class RestServer {
       this._router.once('error', err => reject(err));
 
       this._router.listen(port, () => {
-        log.debug(`${this._router.name} listening on ${this._router.url}`);
-
-        // TODO: Fix "inflightRequests" type not found
         this.botEmulator.mount(this._router as any);
-
         resolve({ url: this._router.url, port: this._router.address().port });
       });
     });

@@ -45,5 +45,7 @@ export default function getUsers(botEmulator: BotEmulator) {
     } catch (err) {
       sendErrorResponse(req, res, next, err);
     }
+
+    next();
   }
 }

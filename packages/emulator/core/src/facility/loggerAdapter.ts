@@ -33,150 +33,36 @@
 
 import * as Restify from 'restify';
 
-import getActivityText from '../utils/getActivityText';
 import IGenericActivity from '../types/activity/generic';
-import ILogEntry from '../types/log/entry';
+import ILogItem from '../types/log/item';
 import ILogService from '../types/log/service';
 import LogLevel from '../types/log/level';
 import ILogger from '../types/logger';
 
-function makeLogEntry(level: LogLevel, category: string, ...messages: any[]): ILogEntry {
-  return {
-    category,
-    level,
-    messages,
-    timestamp: Date.now()
-  };
-}
+import { textItem, inspectableObjectItem, summaryTextItem, exceptionItem } from '../types/log/util';
 
-function makeEnumerableObject(src: any) {
-  if (typeof src !== 'object')
-    return src;
-  const dst = {};
-  const keys = Object.getOwnPropertyNames(src);
-  keys.forEach(key => dst[key] = src[key]);
-  return dst;
-}
 
 export default class LoggerAdapter implements ILogger {
   constructor(public logService: ILogService) {
     this.logActivity = this.logActivity.bind(this);
-    this.logError = this.logError.bind(this);
-    this.logInfo = this.logInfo.bind(this);
-    this.logRequest = this.logRequest.bind(this);
-    this.logResponse = this.logResponse.bind(this);
-    this.logTrace = this.logTrace.bind(this);
-    this.logWarning = this.logWarning.bind(this);
+    this.logMessage = this.logMessage.bind(this);
+    this.logException = this.logException.bind(this);
   }
 
-  public logActivity(conversationId: string, activity: IGenericActivity, destination: string) {
-    const activityText = getActivityText(activity);
-    const entry = makeLogEntry(
-      LogLevel.Info,
-      'conversation',
-      {
-        type: 'activity',
-        payload: {
-          activity,
-          destination,
-          text: activityText
-        }
-      }
-    );
-
-    this.logService.logToChat(conversationId, entry);
+  public logActivity(conversationId: string, activity: IGenericActivity, role: string) {
+    let direction: ILogItem;
+    if (role === "user")
+      direction = textItem(LogLevel.Debug, '<-');
+    else
+      direction = textItem(LogLevel.Debug, '->');
+    this.logService.logToChat(conversationId, direction, inspectableObjectItem(activity.type, activity), summaryTextItem(activity));
   }
 
-  public logRequest(conversationId: string, source: string, req: Restify.Request, ...messages: any[]) {
-    if (conversationId && ~conversationId.indexOf('transcript')) {
-      return;
-    }
-
-    const entry = makeLogEntry(
-      LogLevel.Info,
-      'network',
-      {
-        type: 'request',
-        payload: {
-          body: req.body,
-          headers: req.headers,
-          method: req.method,
-          source,
-          url: req.url
-        }
-      },
-      ...messages
-    );
-
-    this.logService.logToChat(conversationId, entry);
+  public logMessage(conversationId: string, ...items: ILogItem[]) {
+    this.logService.logToChat(conversationId, ...items);
   }
-
-  public logResponse(conversationId: string, destination: string, res: Restify.Response, ...messages: any[]) {
-    if (conversationId && ~conversationId.indexOf('transcript')) {
-      return;
-    }
-
-    const entry = makeLogEntry(
-      res.statusCode >= 400 ? LogLevel.Error : LogLevel.Info,
-      'network',
-      {
-        type: 'response',
-        payload: {
-          body: (res as any)._body,
-          destination,
-          headers: (res as any)._headers,
-          statusCode: res.statusCode,
-          statusMessage: res.statusMessage
-        }
-      },
-      ...messages
-    );
-
-    this.logService.logToChat(conversationId, entry);
-  }
-
-  public logError(conversationId: string, err: any, ...messages: any[]) {
-    err = makeEnumerableObject(err);
-    const entry = makeLogEntry(
-      LogLevel.Error,
-      'network',
-      {
-        type: 'err',
-        payload: err,
-      },
-      ...messages
-    );
-
-    this.logService.logToChat(conversationId, entry);
-  }
-
-  public logInfo(conversationId: string, ...messages: any[]) {
-    const entry = makeLogEntry(
-      LogLevel.Info,
-      'network',
-      ...messages
-    );
-
-    this.logService.logToChat(conversationId, entry);
-  }
-
-  public logTrace(conversationId: string, ...messages: any[]) {
-    const entry = makeLogEntry(
-      LogLevel.Trace,
-      'network',
-      ...messages
-    );
-
-    this.logService.logToChat(conversationId, entry);
-  }
-
-  public logWarning(conversationId: string, ...messages: any[]) {
-    const entry = makeLogEntry(
-      LogLevel.Warn,
-      'network',
-      ...messages
-    );
-
-    this.logService.logToChat(conversationId, entry);
+  
+  public logException(conversationId: string, err: Error) {
+    this.logService.logToChat(conversationId, exceptionItem(err))
   }
 }

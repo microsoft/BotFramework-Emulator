@@ -60,5 +60,7 @@ export default function removeUsers(botEmulator: BotEmulator) {
     // }
 
     res.send(HttpStatus.NOT_IMPLEMENTED);
+
+    next();
   };
 }

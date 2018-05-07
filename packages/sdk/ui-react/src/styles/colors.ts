@@ -71,6 +71,7 @@ export namespace Colors {
   export const C36 = '#C8C8C8';
   export const C37 = '#444444';
   export const C38 = '#0078D7';
+  export const C39 = '#666666';
 
   export const APP_BACKGROUND_DARK = C8;
   export const APP_FOREGROUND_DARK = C2;
@@ -128,6 +129,7 @@ export namespace Colors {
   export const LOG_PANEL_INFO_DARK = C4;
   export const LOG_PANEL_WARN_DARK = C16;
   export const LOG_PANEL_ERROR_DARK = C15;
+  export const LOG_PANEL_DEBUG_DARK = C39;
   export const LOG_PANEL_TIMESTAMP_DARK = C13;
   export const LOG_PANEL_LINK_DARK = C14;
   export const LOG_PANEL_SRC_DST_DARK = C3;

@@ -31,7 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ILogService, ILogEntry } from '@bfemulator/app-shared';
+import ILogService from '@bfemulator/emulator-core/lib/types/log/service';
+import ILogItem from '@bfemulator/emulator-core/lib/types/log/item';
+import { logEntry } from '@bfemulator/emulator-core/lib/types/log/util';
 import { Disposable } from '@bfemulator/sdk-shared';
 import { Window } from '../window';
 
@@ -41,7 +43,7 @@ export class LogService extends Disposable implements ILogService {
     super();
   }
 
-  logToChat(conversationId: string, entry: ILogEntry): void {
-    this._window.commandService.remoteCall("conversation:log:append", conversationId, entry);
+  logToChat(conversationId: string, ...items: ILogItem[]): void {
+    this._window.commandService.remoteCall("conversation:log:append", conversationId, logEntry(...items));
   }
 }

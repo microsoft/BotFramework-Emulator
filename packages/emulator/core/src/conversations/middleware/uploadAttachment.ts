@@ -41,13 +41,9 @@ import IResourceResponse from '../../types/response/resource';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function uploadAttachment(botEmulator: BotEmulator) {
-  const { logRequest, logResponse } = botEmulator.facilities.logger;
-
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const attachmentData = <IAttachmentData>req.body;
     const conversationParameters: IConversationAPIPathParameters = req.params;
-
-    logRequest(conversationParameters.conversationId, 'service', req);
 
     try {
       const resourceId = botEmulator.facilities.attachments.uploadAttachment(attachmentData);
@@ -55,12 +51,10 @@ export default function uploadAttachment(botEmulator: BotEmulator) {
 
       res.send(HttpStatus.OK, resourceResponse);
       res.end();
-      //logNetwork(parms.conversationId, req, res, attachmentData.name);
     } catch (err) {
       sendErrorResponse(req, res, next, err);
-      //logNetwork(parms.conversationId, req, res, getErrorText(err));
     }
 
-    logResponse(conversationParameters.conversationId, 'service', res);
+    next();
   };
 }

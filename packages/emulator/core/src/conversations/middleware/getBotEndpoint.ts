@@ -62,5 +62,7 @@ export default function getBotEndpoint(botEmulator: BotEmulator) {
     //           ver: '1.0' },
 
     req['botEndpoint'] = botEmulator.facilities.endpoints.getByAppId(req['jwt'].payload.appid);
+    
+    return next();
   };
 }

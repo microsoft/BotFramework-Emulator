@@ -33,7 +33,7 @@
 
 import { Store } from 'redux';
 import { BrowserWindow, WebContents } from 'electron';
-import { ILogService } from '@bfemulator/app-shared';
+import ILogService from '@bfemulator/emulator-core/lib/types/log/service';
 import { ICommandService, CommandService, Disposable } from '@bfemulator/sdk-shared';
 import { LogService } from '../log/logService';
 import { ElectronIPC, ElectronIPCServer } from '../../ipc';

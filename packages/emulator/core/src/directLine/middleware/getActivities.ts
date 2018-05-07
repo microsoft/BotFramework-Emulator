@@ -38,8 +38,6 @@ import BotEmulator from '../../botEmulator';
 import Conversation from '../../facility/conversation';
 
 export default function getActivities(botEmulator: BotEmulator) {
-  const { logRequest, logResponse } = botEmulator.facilities.logger;
-
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const conversation: Conversation = req['conversation'];
 
@@ -55,5 +53,7 @@ export default function getActivities(botEmulator: BotEmulator) {
     }
 
     res.end();
+
+    next();
   };
 }
