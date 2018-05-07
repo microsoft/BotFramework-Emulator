@@ -36,6 +36,7 @@ import { RequestHandler, Server } from 'restify';
 import BotEmulator from '../botEmulator';
 import createBotFrameworkAuthenticationMiddleware from '../utils/botFrameworkAuthentication';
 import jsonBodyParser from '../utils/jsonBodyParser';
+import getFacility from '../middleware/getFacility';
 
 import createFetchBotDataMiddleware from './middleware/fetchBotData';
 import getConversationData from './middleware/getConversationData';
@@ -51,12 +52,14 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
   const verifyBotFramework = createBotFrameworkAuthenticationMiddleware(botEmulator.options.fetch);
   // const verifyBotFramework = botEmulator.msaAppId ? createBotFrameworkAuthenticationMiddleware(botEmulator.botId, botEmulator.options.fetch) : [];
   const fetchBotDataMiddleware = createFetchBotDataMiddleware(botEmulator);
+  const facility = getFacility('state');
 
   server.get(
     '/v3/botstate/:channelId/users/:userId',
     ...uses,
     verifyBotFramework,
     fetchBotDataMiddleware,
+    facility,
     getUserData(botEmulator)
   );
 
@@ -65,6 +68,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     ...uses,
     verifyBotFramework,
     fetchBotDataMiddleware,
+    facility,
     getConversationData(botEmulator)
   );
 
@@ -73,6 +77,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     ...uses,
     verifyBotFramework,
     fetchBotDataMiddleware,
+    facility,
     getPrivateConversationData(botEmulator)
   );
 
@@ -81,6 +86,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     ...uses,
     verifyBotFramework,
     jsonBodyParser(),
+    facility,
     setUserData(botEmulator)
   );
 
@@ -89,6 +95,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     ...uses,
     verifyBotFramework,
     jsonBodyParser(),
+    facility,
     setConversationData(botEmulator)
   );
 
@@ -97,6 +104,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     ...uses,
     verifyBotFramework,
     jsonBodyParser(),
+    facility,
     setPrivateConversationData(botEmulator)
   );
 
@@ -104,6 +112,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     '/v3/botstate/:channelId/users/:userId',
     ...uses,
     verifyBotFramework,
+    facility,
     deleteStateForUser(botEmulator)
   );
 }

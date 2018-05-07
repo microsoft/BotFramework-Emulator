@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ILogService, ILogEntry } from '@bfemulator/app-shared';
+import { ILogEntry } from '@bfemulator/app-shared';
 import { Disposable } from '@bfemulator/sdk-shared';
 import * as ChatActions from '../../data/action/chatActions';
 import store from '../../data/store';
@@ -44,14 +44,14 @@ export function registerCommands() {
   });
 }
 
-export const LogService = new class extends Disposable implements ILogService {
+export const LogService = new class extends Disposable {
 
   init() { }
 
   logToChat(conversationId: string, entry: ILogEntry): void {
     const documentId = chatHelpers.documentIdForConversation(conversationId);
     if (documentId) {
-      LogService.logToDocument(documentId,entry);
+      LogService.logToDocument(documentId, entry);
     }
   }
 

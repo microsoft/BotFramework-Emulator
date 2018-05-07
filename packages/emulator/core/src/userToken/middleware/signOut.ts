@@ -38,6 +38,7 @@ import BotEmulator from '../../botEmulator';
 import BotEndpoint from '../../facility/botEndpoint';
 import { ITokenParams } from '../ITokenParams';
 import { TokenCache } from '../tokenCache';
+import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function signOut(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
@@ -49,7 +50,7 @@ export default function signOut(botEmulator: BotEmulator) {
       res.send(HttpStatus.OK);
       res.end();
     } catch (err) {
-      res.send(HttpStatus.INTERNAL_SERVER_ERROR);
+      sendErrorResponse(req, res, next, err);
     }
   };
 }

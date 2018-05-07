@@ -35,23 +35,17 @@ import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
+import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function getUserData(botEmulator: BotEmulator) {
-  const { logRequest, logResponse } = botEmulator.facilities.logger;
-
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    logRequest(req.params.conversationId, 'bot', req, 'getUserData');
-
     try {
       res.send(HttpStatus.OK, req['botData']);
       res.end();
-
-      //log.api('getUserData', req, res, req.params, botData);
     } catch (err) {
-      //var error = sendErrorResponse(req, res, next, err);
-      //log.api('getUserData', req, res, req.params, error);
+      sendErrorResponse(req, res, next, err);
     }
 
-    logResponse(req.params.conversationId, 'bot', res, 'getUserData');
+    next();
   };
 }

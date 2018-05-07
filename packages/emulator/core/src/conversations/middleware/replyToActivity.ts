@@ -42,13 +42,9 @@ import sendErrorResponse from '../../utils/sendErrorResponse';
 import OAuthLinkEncoder from '../../utils/oauthLinkEncoder';
 
 export default function replyToActivity(botEmulator: BotEmulator) {
-  const { logRequest, logResponse } = botEmulator.facilities.logger;
-
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const activity = <IGenericActivity>req.body;
     const conversationParameters: IConversationAPIPathParameters = req.params;
-
-    logRequest(conversationParameters.conversationId, 'service', req);
 
     try {
       // TODO: Need to re-enable
@@ -75,13 +71,10 @@ export default function replyToActivity(botEmulator: BotEmulator) {
       }, (reason: any) => {
           continuation();
       });
-
-      //logNetwork(parms.conversationId, req, res, getActivityText(activity));
     } catch (err) {
       sendErrorResponse(req, res, next, err);
-      //logNetwork(parms.conversationId, req, res, getErrorText(err));
     }
 
-    logResponse(conversationParameters.conversationId, 'service', res);
+    next();
   };
 }

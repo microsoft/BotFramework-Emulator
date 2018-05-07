@@ -32,7 +32,7 @@
 //
 
 const crypto = window['require']('crypto'); // Cheating here and pulling in a module from node. Can be easily replaced if we ever move the emulator to the web.
-import { ILogEntry, LogLevel, safeStringify } from '@bfemulator/app-shared';
+import { ILogEntry, LogLevel, safeStringify, logEntry, textItem } from '@bfemulator/app-shared';
 import { IExtensionInspector } from '@bfemulator/sdk-shared';
 import { css } from 'glamor';
 import { IBotConfig } from 'msbot/bin/schema';
@@ -123,20 +123,10 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
       this.props.setInspectorTitle(ev.args[0]);
     } else if (ev.channel === 'logger.log') {
       const inspectorName = this.state.titleOverride || this.props.inspector.name || "inspector";
-      LogService.logToDocument(this.props.document.documentId, {
-        timestamp: Date.now(),
-        category: "inspector",
-        level: LogLevel.Info,
-        messages: [`[${inspectorName}]`, ev.args[0]]
-      } as ILogEntry);
+      LogService.logToDocument(this.props.document.documentId, logEntry(textItem(LogLevel.Info, `[${inspectorName}] ${ev.args[0]}`)));
     } else if (ev.channel === 'logger.error') {
       const inspectorName = this.state.titleOverride || this.props.inspector.name || "inspector";
-      LogService.logToDocument(this.props.document.documentId, {
-        timestamp: Date.now(),
-        category: "inspector",
-        level: LogLevel.Error,
-        messages: [`[${inspectorName}]`, ev.args[0]]
-      } as ILogEntry);
+      LogService.logToDocument(this.props.document.documentId, logEntry(textItem(LogLevel.Error, `[${inspectorName}] ${ev.args[0]}`)));
     } else {
       console.warn("Unexpected message from inspector", ev.channel, ...ev.args);
     }

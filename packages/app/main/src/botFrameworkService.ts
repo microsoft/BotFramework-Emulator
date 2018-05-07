@@ -33,6 +33,9 @@
 
 import { Settings } from '@bfemulator/app-shared';
 import { RestServer } from './restServer';
+import { mainWindow } from './main';
+import { textItem } from '@bfemulator/emulator-core/lib/types/log/util';
+import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
 
 
 /**
@@ -66,5 +69,10 @@ export class BotFrameworkService {
 
     this._serverUrl = url;
     this._serverPort = port;
+  }
+
+  public report(conversationId: string) {
+    const serverUrl = this.serverUrl.replace('[::]', 'localhost');
+    mainWindow.logService.logToChat(conversationId, textItem(LogLevel.Debug, `Emulator listening on ${serverUrl}`));
   }
 }

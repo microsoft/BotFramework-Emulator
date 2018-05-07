@@ -38,7 +38,6 @@ import { getSettings, dispatch } from './settings';
 import { WindowStateAction } from './reducers/windowStateReducer';
 import * as url from 'url';
 import * as path from 'path';
-import * as log from './log';
 import { Emulator } from './emulator';
 import { WindowManager } from './windowManager';
 import * as commandLine from './commandLine'
@@ -52,13 +51,14 @@ import { AppUpdater } from './appUpdater';
 import { UpdateInfo } from 'electron-updater';
 import { ProgressInfo } from 'builder-util-runtime';
 
-(process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
-  console.error(error);
-  log.error('[err-server]', error.message.toString(), JSON.stringify(error.stack));
-});
-
 export let mainWindow: Window;
 export let windowManager: WindowManager;
+
+//-----------------------------------------------------------------------------
+
+(process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
+  console.error(error);
+});
 
 //-----------------------------------------------------------------------------
 
@@ -320,7 +320,7 @@ function loadMainPage() {
   });
 
   if (/^http:\/\//.test(page)) {
-    log.warn(`Loading emulator code from ${page}`);
+    console.warn(`Loading emulator code from ${page}`);
   }
 
   if (queryString) {

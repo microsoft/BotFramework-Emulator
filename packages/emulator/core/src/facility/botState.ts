@@ -40,7 +40,8 @@ import Conversation from './conversation';
 import createAPIException from '../utils/createResponse/apiException';
 import ErrorCodes from '../types/errorCodes';
 import IBotData from '../types/botData';
-import { makeExternalLink } from '../utils/linkHelpers';
+import { textItem, externalLinkItem } from '../types/log/util';
+import LogLevel from '../types/log/level';
 
 export default class BotState {
   constructor(
@@ -56,9 +57,10 @@ export default class BotState {
     if (conversation && !conversation.stateApiDeprecationWarningShown) {
       conversation.stateApiDeprecationWarningShown = true;
 
-      this.botEmulator.facilities.logger.logWarning(
-        'Warning: The Bot Framework State API is not recommended for production environments, and may be deprecated in a future release.',
-        makeExternalLink('Learn how to implement your own storage adapter.', 'https://aka.ms/botframework-state-service')
+      this.botEmulator.facilities.logger.logMessage(
+        conversationId,
+        textItem(LogLevel.Warn, 'Warning: The Bot Framework State API is not recommended for production environments, and may be deprecated in a future release.'),
+        externalLinkItem('Learn how to implement your own storage adapter.', 'https://aka.ms/botframework-state-service')
       );
     }
   }

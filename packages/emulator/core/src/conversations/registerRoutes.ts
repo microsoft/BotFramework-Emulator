@@ -37,6 +37,7 @@ import BotEmulator from '../botEmulator';
 import createBotFrameworkAuthenticationMiddleware from '../utils/botFrameworkAuthentication';
 import IUser from '../types/user';
 import createJsonBodyParser from '../utils/jsonBodyParser';
+import getFacility from '../middleware/getFacility';
 
 import createConversation from './middleware/createConversation';
 import createFetchConversationMiddleware from './middleware/fetchConversation';
@@ -54,15 +55,17 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
   const verifyBotFramework = createBotFrameworkAuthenticationMiddleware(botEmulator.options.fetch);
   // const verifyBotFramework = botEmulator.msaAppId ? createBotFrameworkAuthenticationMiddleware(botEmulator.options.fetch) : [];
   const botEndpoint = getBotEndpoint(botEmulator);
+  const facility = getFacility('conversations');
   const jsonBodyParser = createJsonBodyParser();
   const fetchConversation = createFetchConversationMiddleware(botEmulator);
-
-  server.post(
+  
+    server.post(
     '/v3/conversations',
     ...uses,
     verifyBotFramework,
     jsonBodyParser,
     botEndpoint,
+    facility,
     createConversation(botEmulator)
   );
 
@@ -72,6 +75,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     verifyBotFramework,
     jsonBodyParser,
     fetchConversation,
+    facility,
     sendToConversation(botEmulator)
   );
 
@@ -81,6 +85,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     verifyBotFramework,
     jsonBodyParser,
     fetchConversation,
+    facility,
     replyToActivity(botEmulator)
   );
 
@@ -90,6 +95,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     verifyBotFramework,
     jsonBodyParser,
     fetchConversation,
+    facility,
     updateActivity(botEmulator)
   );
 
@@ -98,6 +104,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     ...uses,
     verifyBotFramework,
     fetchConversation,
+    facility,
     deleteActivity(botEmulator)
   );
 
@@ -106,6 +113,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     ...uses,
     verifyBotFramework,
     fetchConversation,
+    facility,
     getConversationMembers(botEmulator)
   );
 
@@ -114,6 +122,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     ...uses,
     verifyBotFramework,
     fetchConversation,
+    facility,
     getActivityMembers(botEmulator)
   );
 
@@ -122,6 +131,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     ...uses,
     verifyBotFramework,
     jsonBodyParser,
+    facility,
     uploadAttachment(botEmulator)
   );
 }

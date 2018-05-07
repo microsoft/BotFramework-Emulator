@@ -37,11 +37,11 @@ import * as Restify from 'restify';
 import BotEmulator from '../../botEmulator';
 
 export default function stream(botEmulator: BotEmulator) {
-  const { logError } = botEmulator.facilities.logger;
 
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     res.send(HttpStatus.NOT_IMPLEMENTED);
-    logError(req.params.conversationId, 'Cannot upgrade socket. Not implemented.');
     res.end();
+
+    next();
   };
 }

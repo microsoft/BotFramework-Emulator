@@ -40,5 +40,7 @@ export default function options(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     res.send(HttpStatus.OK);
     res.end();
+
+    next();
   };
 }

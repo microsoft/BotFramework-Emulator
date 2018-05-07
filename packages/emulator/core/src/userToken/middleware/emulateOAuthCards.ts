@@ -36,6 +36,7 @@ import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
 import OAuthLinkEncoder from '../../utils/oauthLinkEncoder';
+import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function emulateOAuthCards(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
@@ -50,7 +51,7 @@ export default function emulateOAuthCards(botEmulator: BotEmulator) {
       
       res.end();
     } catch (err) {
-      res.send(HttpStatus.INTERNAL_SERVER_ERROR);
+      sendErrorResponse(req, res, next, err);
     }
   };
 }

@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ILogEntry from './entry';
+import ILogItem from './item';
 
 interface ILogService {
-  logToChat(conversationId: string, entry: ILogEntry): void;
+  logToChat(conversationId: string, ...items: ILogItem[]): void;
 }
 
 export default ILogService

@@ -33,52 +33,9 @@
 
 import * as Restify from 'restify';
 
-var bodyReader = require('../../node_modules/restify/lib/plugins/body_reader');
-var jsonParser = require('../../node_modules/restify/lib/plugins/json_body_parser');
-
-export function jsonBodyParser(options?): Restify.RequestHandler[] {
-    options = options || { mapParams: false };
-    options.bodyReader = true;
-
-    var read = bodyReader(options);
-    var parseJson = jsonParser(options);
-
-    function parseBody(req, res, next) {
-        if (req.method === 'HEAD') {
-            next();
-            return;
-        }
-
-        if (req.method === 'GET') {
-            if (!options.requestBodyOnGet) {
-                next();
-                return;
-            }
-        }
-
-        if (req.contentLength() === 0 && !req.isChunked()) {
-            next();
-            return;
-        }
-
-        var parser;
-        var type = req.contentType().toLowerCase();
-
-        switch (type) {
-            case 'application/json':
-                parser = parseJson[0];
-                break;
-
-            default:
-                break;
-        }
-
-        if (parser) {
-            parser(req, res, next);
-        } else {
-            next();
-        }
-    }
-
-    return ([read, parseBody]);
+export default function getFacility(facility: string) {
+  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+    req['facility'] = facility;
+    next();
+  };
 }

@@ -36,13 +36,13 @@ import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
 import Conversation from '../../facility/conversation';
+import { textItem } from '../../types/log/util';
+import LogLevel from '../../types/log/level';
 
 export default function reconnectToConversation(botEmulator: BotEmulator) {
-  const { logError, logRequest, logResponse } = botEmulator.facilities.logger;
+  const { logMessage } = botEmulator.facilities.logger;
 
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    logRequest(req.params.conversationId, 'user', req);
-
     const conversation: Conversation = req['conversation'];
 
     if (conversation) {
@@ -54,10 +54,11 @@ export default function reconnectToConversation(botEmulator: BotEmulator) {
       });
     } else {
       res.send(HttpStatus.NOT_FOUND, 'conversation not found');
-      logError(req.params.conversationId, 'Cannot post activity. Conversation not found.');
+      logMessage(req.params.conversationId, textItem(LogLevel.Error, 'Cannot reconnect to conversation. Conversation not found.'));
     }
 
     res.end();
-    logResponse(req.params.conversationId, 'user', res);
+
+    next();
   };
 }

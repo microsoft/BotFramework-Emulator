@@ -44,13 +44,9 @@ import IConversationParameters from '../../types/activity/conversationParameters
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function createConversation(botEmulator: BotEmulator) {
-  const { logRequest, logResponse } = botEmulator.facilities.logger;
-
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const botEndpoint: BotEndpoint = req['botEndpoint'];
     const conversationParameters = <IConversationParameters>req.body;
-
-    logRequest(conversationParameters.conversationId, 'service', req);
 
     try {
       if (conversationParameters.members === null) {
@@ -126,12 +122,10 @@ export default function createConversation(botEmulator: BotEmulator) {
 
       res.send(HttpStatus.OK, response);
       res.end();
-      //logNetwork(newConversation.conversationId, req, res, getActivityText(conversationParameters.activity));
     } catch (err) {
       sendErrorResponse(req, res, next, err);
-      //logNetwork(conversationParameters.conversationId, req, res, getErrorText(err));
     }
 
-    logResponse(conversationParameters.conversationId, 'service', res);
+    next();
   };
 }

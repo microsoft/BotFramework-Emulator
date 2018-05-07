@@ -38,13 +38,14 @@ import BotEmulator from '../../botEmulator';
 import Conversation from '../../facility/conversation';
 import IGenericActivity from '../../types/activity/generic';
 import statusCodeFamily from '../../utils/statusCodeFamily';
+import { textItem } from '../../types/log/util';
+import LogLevel from '../../types/log/level';
+import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function postActivity(botEmulator: BotEmulator) {
-  const { logError, logRequest, logResponse } = botEmulator.facilities.logger;
+  const { logMessage, logException } = botEmulator.facilities.logger;
 
   return async (req: Restify.Request, res: Restify.Response, next: Restify.Next) => {
-    logRequest(req.params.conversationId, 'user', req);
-
     // const conversation = botEmulator.facilities.conversations.conversationById(req.params.conversationId);
     const conversation: Conversation = req['conversation'];
 
@@ -52,9 +53,7 @@ export default function postActivity(botEmulator: BotEmulator) {
       res.send(HttpStatus.NOT_FOUND, 'conversation not found');
       res.end();
 
-      logError(req.params.conversationId, 'Cannot post activity. Conversation not found.');
-      logResponse(req.params.conversationId, 'user', res);
-
+      logMessage(req.params.conversationId, textItem(LogLevel.Error, 'Cannot post activity. Conversation not found.'));
       return;
     }
 
@@ -62,23 +61,18 @@ export default function postActivity(botEmulator: BotEmulator) {
 
     try {
       const { activityId, response, statusCode } = await conversation.postActivityToBot(activity, true);
-
-      //logNetwork(conversation.conversationId, req, res, `[${activity.type}]`);
+      
       if (!statusCodeFamily(statusCode, 200)) {
-        res.send(statusCode || HttpStatus.INTERNAL_SERVER_ERROR);
-
-        logResponse(req.params.conversationId, 'user', res);
-        logError(req.params.conversationId, { message: await response.text(), statusCode });
+        res.send(statusCode || HttpStatus.INTERNAL_SERVER_ERROR, await response.text());
       } else {
         res.send(statusCode, { id: activityId });
-
-        logResponse(req.params.conversationId, 'user', res);
       }
     } catch (err) {
-      logError(req.params.conversationId, err);
-      res.send(HttpStatus.INTERNAL_SERVER_ERROR);
+      sendErrorResponse(req, res, next, err);
     }
 
     res.end();
+    
+    next();
   };
 }

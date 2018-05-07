@@ -40,9 +40,13 @@ import BotEmulator from '../../botEmulator';
 import Conversation from '../../facility/conversation';
 import IAttachment from '../../types/attachment';
 import IAttachmentData from '../../types/attachment/data';
+import { textItem } from '../../types/log/util';
+import LogLevel from '../../types/log/level';
+import BotEndpoint from '../../facility/botEndpoint';
+import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function upload(botEmulator: BotEmulator) {
-  const { logError, logRequest, logResponse } = botEmulator.facilities.logger;
+  const { logMessage, logException } = botEmulator.facilities.logger;
 
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     if (req.params.conversationId.includes('transcript')) {
@@ -50,15 +54,13 @@ export default function upload(botEmulator: BotEmulator) {
       return;
     }
 
-    logRequest(req.params.conversationId, 'user', req);
-
     const conversation: Conversation = req['conversation'];
+    const botEndpoint: BotEndpoint = req['botEndpoint'];
 
     if (!conversation) {
       res.send(HttpStatus.NOT_FOUND, 'conversation not found');
       res.end();
-      logError(req.params.conversationId, 'Cannot upload file. Conversation not found.');
-      logResponse(req.params.conversationId, 'user', res);
+      logMessage(req.params.conversationId, textItem(LogLevel.Error, 'Cannot upload file. Conversation not found.'));
 
       return;
     }
@@ -98,50 +100,35 @@ export default function upload(botEmulator: BotEmulator) {
             const attachment: IAttachment = {
               name,
               contentType: type,
-              contentUrl: `${ botEmulator.getServiceUrl(req['botEndpoint']) }/v3/attachments/${attachmentId}/views/original`
+              contentUrl: `${ botEmulator.getServiceUrl(botEndpoint.botUrl) }/v3/attachments/${attachmentId}/views/original`
             }
 
             activity.attachments.push(attachment);
           });
 
           try {
-            const { activityId, statusCode } = await conversation.postActivityToBot(activity, true);
+            const { activityId, statusCode, response } = await conversation.postActivityToBot(activity, true);
 
             //logNetwork(conversation.conversationId, req, res, `[${activity.type}]`);
             if (!/^2\d\d$/.test(`${statusCode}`)) {
-              res.send(statusCode || HttpStatus.INTERNAL_SERVER_ERROR);
+              res.send(statusCode || HttpStatus.INTERNAL_SERVER_ERROR, await response.text());
               res.end();
-
-              logResponse(req.params.conversationId, 'user', res, {
-                type: 'err'
-              });
             } else {
               res.send(statusCode, { id: activityId });
               res.end();
-
-              logResponse(req.params.conversationId, 'user', res);
             }
           } catch (err) {
-            res.send(HttpStatus.INTERNAL_SERVER_ERROR);
-            res.end();
-
-            logResponse(req.params.conversationId, 'user', res, {
-              type: 'err',
-              err}
-            );
+            sendErrorResponse(req, res, next, err);
           }
         } else {
           res.send(HttpStatus.BAD_REQUEST, 'no file uploaded');
           res.end();
-          logError(req.params.conversationId, 'Upload failed.');
-          logResponse(req.params.conversationId, 'user', res);
         }
       } catch (e) {
-        res.send(HttpStatus.INTERNAL_SERVER_ERROR, 'error processing uploads');
-        res.end();
-        logError(req.params.conversationId, 'Upload failed.');
-        logResponse(req.params.conversationId, 'user', res);
+        sendErrorResponse(req, res, next, e);
       }
+
+      next();
     });
   };
 }

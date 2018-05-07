@@ -35,37 +35,48 @@ import * as log from 'npmlog';
 import * as Restify from 'restify';
 import IGenericActivity from '@bfemulator/emulator-core/lib/types/activity/generic';
 import ILogger from '@bfemulator/emulator-core/lib/types/logger';
+import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
+import ILogItem from '@bfemulator/emulator-core/lib/types/log/item';
 
 function shortId(id) {
   return [id.substr(0, 3), id.substr(-5)].join('...');
 }
 
+function logLevel(logLevel: LogLevel) {
+  switch (logLevel) {
+    case LogLevel.Error:
+      return log.error;
+
+    case LogLevel.Info:
+      return log.info;
+
+    case LogLevel.Warn:
+      return log.warn;
+
+    default:
+      return log.silly;
+  }
+}
+
 export default class NpmLogger implements ILogger {
-  logActivity(conversationId: string, activity: IGenericActivity, destination: string) {
-    log.verbose(shortId(conversationId), `Sending activity to ${ destination }`, activity);
+  public logActivity(conversationId: string, activity: IGenericActivity, role: string) {
+    log.verbose(shortId(conversationId), `Activity to ${ role }`, activity);
   }
 
-  logError(conversationId: string, err: any, ...messages: any[]) {
-    log.error(shortId(conversationId), err, ...messages);
+  public logMessage(conversationId: string, ...items: ILogItem[]) {
+    items.forEach(message => {
+      switch (message.type) {
+        case "text": {
+          logLevel(message.payload.level)(
+            shortId(conversationId),
+            message.payload.text
+          );
+        }
+      }
+    });
   }
 
-  logInfo(conversationId: string, ...messages: any[]) {
-    log.info(shortId(conversationId), ...messages);
-  }
-
-  logRequest(conversationId: string, source: string, req: Restify.Request, ...messages: any[]) {
-    log.http(shortId(conversationId), `Receiving request from ${ source } at ${ req.method } ${ req.url }`, ...messages);
-  }
-
-  logResponse(conversationId: string, destination: string, res: Restify.Response, ...messages: any[]) {
-    log.http(shortId(conversationId), `Sending response to ${ destination } with HTTP ${ res.statusCode }`, ...messages);
-  }
-
-  logTrace(conversationId: string, ...messages: any[]) {
-    log.silly(shortId(conversationId), ...messages);
-  }
-
-  logWarning(conversationId: string, ...messages: any[]) {
-    log.warn(shortId(conversationId), ...messages);
+  public logException(conversationId: string, err: Error) {
+    log.error(shortId(conversationId), err.message);
   }
 }

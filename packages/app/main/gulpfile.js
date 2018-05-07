@@ -131,7 +131,7 @@ gulp.task('build-extensions',
 
 //----------------------------------------------------------------------------
 gulp.task('build-app', gulp.series(
-  'build-emulator',
+  'build-emulator-core',
   gulp.parallel(
     'build-extensions',
     'copy-extension-stubs',
@@ -142,6 +142,17 @@ gulp.task('build-app', gulp.series(
           'npm run build:electron'
         ]));
     })));
+
+//----------------------------------------------------------------------------
+gulp.task('just-build-app', gulp.series(
+  'build-emulator-core',
+  function () {
+    return gulp
+      .src('./package.json', { read: false })
+      .pipe(shell([
+        'npm run build:electron'
+      ]));
+  }));
 
 //----------------------------------------------------------------------------
 gulp.task('build-sdk-shared', function () {
@@ -756,7 +767,7 @@ gulp.task('verify:copyright', function () {
         callback();
       },
       callback => {
-        log.info(`Verified ${ chalk.magenta(scanned) } out of ${ chalk.magenta(count) } files with copyright header`);
+        log.info(`Verified ${chalk.magenta(scanned)} out of ${chalk.magenta(count)} files with copyright header`);
 
         if (filesWithoutCopyright.length) {
           log.error(chalk.red('Copyright header is missing from the following files:'));

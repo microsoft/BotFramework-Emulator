@@ -43,13 +43,9 @@ import IResourceResponse from '../../types/response/resource';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function updateActivity(botEmulator: BotEmulator) {
-  const { logRequest, logResponse } = botEmulator.facilities.logger;
-
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const activity = <IGenericActivity>req.body;
     const conversationParameters: IConversationAPIPathParameters = req.params;
-
-    logRequest(conversationParameters.conversationId, 'service', req);
 
     try {
       activity.replyToId = req.params.activityId;
@@ -62,12 +58,10 @@ export default function updateActivity(botEmulator: BotEmulator) {
 
       res.send(HttpStatus.OK, response);
       res.end();
-      //logNetwork(parms.conversationId, req, res, activity, getActivityText(activity));
     } catch (err) {
       sendErrorResponse(req, res, next, err);
-      //logNetwork(parms.conversationId, req, res, activity, getErrorText(err));
     }
 
-    logResponse(conversationParameters.conversationId, 'service', res);
+    next();
   };
 }

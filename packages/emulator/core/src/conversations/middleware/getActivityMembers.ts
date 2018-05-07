@@ -39,22 +39,16 @@ import IConversationAPIPathParameters from '../conversationAPIPathParameters';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function getActivityMembers(botEmulator: BotEmulator) {
-  const { logRequest, logResponse } = botEmulator.facilities.logger;
-
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const conversationParameters: IConversationAPIPathParameters = req.params;
-
-    logRequest(conversationParameters.conversationId, 'service', req);
 
     try {
       res.send(HttpStatus.OK, req['conversation'].members);
       res.end();
-      //logNetwork(parms.conversationId, req, res, conversation.members);
     } catch (err) {
       sendErrorResponse(req, res, next, err);
-      //logNetwork(parms.conversationId, req, res, getErrorText(err));
     }
 
-    logResponse(conversationParameters.conversationId, 'service', res);
+    next();
   };
 }

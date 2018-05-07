@@ -40,6 +40,7 @@ import ErrorCodes from '../../types/errorCodes';
 import IAttachmentData from '../../types/attachment/data';
 import IAttachmentInfo from '../../types/attachment/info';
 import IAttachmentParams from '../attachmentParams';
+import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function getAttachmentInfo(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
@@ -68,14 +69,13 @@ export default function getAttachmentInfo(botEmulator: BotEmulator) {
 
         res.send(HttpStatus.OK, attachmentInfo);
         res.end();
-        //log.api('getAttachmentInfo', req, res, null, attachmentInfo);
       } else {
-        throw createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, `attachment[${ parms.attachmentId }] not found`);
+        sendErrorResponse(req, res, next, createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, `attachment[${ parms.attachmentId }] not found`));
       }
     } catch (err) {
-      throw createAPIException(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCodes.ServiceError, err.message);
-      //let error = sendErrorResponse(req, res, next, err);
-      //log.api('getAttachmentInfo', req, res, null, error);
+      sendErrorResponse(req, res, next, createAPIException(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCodes.ServiceError, err.message));
     }
+    
+    next();
   };
 }

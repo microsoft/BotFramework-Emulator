@@ -62,5 +62,7 @@ export default function updateShippingOption(botEmulator: BotEmulator) {
     } catch (err) {
       sendErrorResponse(req, res, next, err);
     }
+
+    next();
   };
 }

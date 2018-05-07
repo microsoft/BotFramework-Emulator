@@ -64,5 +64,7 @@ export default function paymentComplete(botEmulator: BotEmulator) {
     } catch (err) {
       sendErrorResponse(req, res, next, err);
     }
+
+    next();
   };
 }

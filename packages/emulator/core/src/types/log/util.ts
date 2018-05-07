@@ -31,80 +31,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import LogLevel from './level';
+import ILogItem from './item';
+import ILogEntry from './entry';
 
-/**
- * DUPLICATED FROM EMULATOR-CORE.
- * NEED TO DEDUPE
- */
-
-export enum LogLevel {
-  Debug,
-  Info,
-  Warn,
-  Error
-};
-
-export type ILogItem = {
-  type: "text",
-  payload: {
-    level: LogLevel,
-    text: string
-  }
-} | {
-  type: "external-link",
-  payload: {
-    text: string,
-    hyperlink: string
-  }
-} | {
-  type: "inspectable-object",
-  payload: {
-    text: string,
-    obj: any
-  }
-} | {
-  type: "network-request",
-  payload: {
-    facility?: string,
-    body?: string,
-    headers?: { [header: string]: number | string | string[] },
-    method?: string,
-    url?: string
-  }
-} | {
-  type: "network-response",
-  payload: {
-    body?: string,
-    headers?: { [header: string]: number | string | string[] },
-    statusCode?: number,
-    statusMessage?: string,
-    srcUrl?: string
-  }
-} | {
-  type: "summary-text",
-  payload: {
-    obj: any
-  }
-} | {
-  type: "open-app-settings",
-  payload: {
-    text: string
-  }
-} | {
-  type: "exception",
-  payload: {
-    err: any  // Shape of `Error`, but enumerable
-  }
+// TODO: Move this to a generally available location and export
+function makeEnumerableObject(src: any) {
+  if (typeof src !== 'object')
+    return src;
+  const dst = {};
+  const keys = Object.getOwnPropertyNames(src);
+  keys.forEach(key => dst[key] = src[key]);
+  return dst;
 }
 
-export interface ILogEntry {
-  timestamp: number;
-  items: ILogItem[];
-}
-
-export interface ILogService {
-  logToChat(conversationId: string, ...items: ILogItem[]): void;
-}
+// TODO: Move this file to a utils location, not a types location
 
 export function textItem(level: LogLevel, text: string): ILogItem {
   return {
@@ -158,7 +99,33 @@ export function exceptionItem(err: any): ILogItem {
   return {
     type: "exception",
     payload: {
-      err
+      err: makeEnumerableObject(err)
+    }
+  };
+}
+
+export function networkRequestItem(facility, body, headers, method, url): ILogItem {
+  return {
+    type: "network-request",
+    payload: {
+      facility,
+      body,
+      headers,
+      method,
+      url
+    }
+  };
+}
+
+export function networkResponseItem(body, headers, statusCode, statusMessage, srcUrl): ILogItem {
+  return {
+    type: "network-response",
+    payload: {
+      body,
+      headers,
+      statusCode,
+      statusMessage,
+      srcUrl
     }
   };
 }
@@ -169,3 +136,4 @@ export function logEntry(...items: ILogItem[]): ILogEntry {
     items: [...items]
   };
 }
+

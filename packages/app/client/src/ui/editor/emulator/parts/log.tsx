@@ -38,6 +38,8 @@ import * as ChatActions from '../../../../data/action/chatActions';
 import store from '../../../../data/store';
 import { Colors, Fonts } from '@bfemulator/ui-react';
 import { ExtensionManager, InspectorAPI } from '../../../../extensions';
+import { ILogEntry, ILogItem, LogLevel } from '@bfemulator/app-shared';
+import { CommandService } from '../../../../platform/commands/commandService';
 
 const CSS = css({
   height: '100%',
@@ -71,9 +73,9 @@ const CSS = css({
     '& .level-0': {
       color: Colors.LOG_PANEL_INFO_DARK,
     },
-    // trace
+    // debug
     '& .level-1': {
-      color: Colors.LOG_PANEL_INFO_DARK,
+      color: Colors.LOG_PANEL_DEBUG_DARK,
     },
     // warn
     '& .level-2': {
@@ -98,12 +100,21 @@ function number2(n) {
   return ('0' + n).slice(-2);
 }
 
-function timestamp(entry) {
-  let timestamp = new Date(entry.timestamp);
+function timestamp(t: number) {
+  let timestamp = new Date(t);
   let hours = number2(timestamp.getHours());
   let minutes = number2(timestamp.getMinutes());
   let seconds = number2(timestamp.getSeconds());
   return `${hours}:${minutes}:${seconds}`;
+}
+
+function logLevelToClassName(level: LogLevel): string {
+  switch (level) {
+    case LogLevel.Debug: return "level-1";
+    case LogLevel.Info: return "level-0";
+    case LogLevel.Warn: return "level-2";
+    case LogLevel.Error: return "level-3";
+  }
 }
 
 export interface LogProps {
@@ -149,7 +160,7 @@ export default class Log extends React.Component<LogProps, LogState> {
 
 export interface LogEntryProps {
   document: any;
-  entry: any;
+  entry: ILogEntry;
 }
 
 class LogEntry extends React.Component<LogEntryProps> {
@@ -169,47 +180,167 @@ class LogEntry extends React.Component<LogEntryProps> {
   render() {
     let key = 0;
     return (
-      <div className="entry">
-        <span className="spaced">
-          [<span className="timestamp">{ timestamp(this.props.entry) }</span>]
-        </span>
-        <span className={ `spaced level-${this.props.entry.level}` }>
-          { this.props.entry.messages.map(message =>
-            this.renderMessage(message, key++)
-          ) }
-        </span>
+      <div key="entry" className="entry">
+        { this.renderTimestamp(this.props.entry.timestamp) }
+        { this.props.entry.items.map(item =>
+          this.renderItem(item, key++)
+        ) }
       </div>
     );
   }
 
-  renderResponseMessage(message) {
+  renderTimestamp(t: number) {
+    return (
+      <span key="timestamp" className="spaced">
+        [<span className="timestamp">{ timestamp(t) }</span>]
+      </span>
+    );
+  }
+
+  renderItem(item: ILogItem, key) {
+    switch (item.type) {
+      case "text": {
+        const { level, text } = item.payload;
+        return this.renderTextItem(level, text, key);
+      }
+      case "external-link": {
+        const { text, hyperlink } = item.payload;
+        return this.renderExternalLinkItem(text, hyperlink, key);
+      }
+      case "open-app-settings": {
+        const { text } = item.payload;
+        return this.renderAppSettingsItem(text, key);
+      }
+      case "exception": {
+        const { err } = item.payload;
+        return this.renderExceptionItem(err, key);
+      }
+      case "inspectable-object": {
+        const { obj } = item.payload;
+        return this.renderInspectableItem(obj, key);
+      }
+      case "network-request": {
+        const { facility, body, headers, method, url } = item.payload;
+        return this.renderNetworkRequestItem(facility, body, headers, method, url, key);
+      }
+      case "network-response": {
+        const { body, headers, statusCode, statusMessage, srcUrl } = item.payload;
+        return this.renderNetworkResponseItem(body, headers, statusCode, statusMessage, srcUrl, key);
+      }
+      default:
+        return false;
+    }
+  }
+
+  renderTextItem(level: LogLevel, text: string, key) {
+    return (
+      <span key={ key } className={ `spaced ${logLevelToClassName(level)}` }>
+        { text }
+      </span>
+    );
+  }
+
+  renderExternalLinkItem(text: string, hyperlink: string, key) {
+    return (
+      <span key={ key } className="spaced">
+        <a onClick={ () => window.open(hyperlink, "_blank") }>{ text }</a>
+      </span>
+    )
+  }
+
+  renderAppSettingsItem(text: string, key) {
+    return (
+      <span key={ key } className="spaced">
+        <a onClick={ () => CommandService.call('shell:show-app-settings') }>{ text }</a>
+      </span>
+    )
+  }
+
+  renderExceptionItem(err: Error, key) {
+    return (
+      <span key={ key } className="spaced level-3">
+        { err && err.message ? err.message : '' }
+      </span>
+    );
+  }
+
+  renderInspectableItem(obj: any, key) {
+    let title = "inspect";
+    if (typeof obj.type === 'string')
+      title = obj.type;
+    let summaryText = this.summaryText(obj) || "";
     return (
       <>
-        { message.payload.body
-          ?
-          <span className="spaced"><a onClick={ () => this.inspect(message) }>{ message.payload.statusCode }</a></span>
-          :
-          <span className="spaced">{ message.payload.statusCode }</span>
-        }
+        <span key={ key } className="spaced level-0">
+          <a onClick={ () => this.inspectAndHighlight(obj) }>{ title }</a>
+        </span>
+        <span key={ `${key}-0` } className="spaced level-0">
+          { summaryText }
+        </span>
       </>
     );
   }
 
-  messageDirection(payload) {
-    if (payload.source) {
-      switch (payload.source) {
-        case "bot": return "<-";
-        case "user": return "->";
-        case "service": return "<-";
+  renderNetworkRequestItem(facility, body, headers, method, url, key) {
+    let obj;
+    if (typeof body === 'string') {
+      try {
+        obj = JSON.parse(body);
+      } catch (e) {
+        obj = body;
       }
-    } else if (payload.destination) {
-      switch (payload.destination) {
-        case "bot": return "->";
-        case "user": return "<-";
-        case "service": return "->";
-      }
+    } else {
+      obj = body;
     }
-    return <>&nbsp;&nbsp;</>
+    if (obj) {
+      return (
+        <span key={ key } className="spaced level-0">
+          <a onClick={ () => this.inspect(obj) }>{ method }</a>
+        </span>
+      );
+    } else {
+      return (
+        <span key={ key } className="spaced level-0">
+          { method }
+        </span>
+      );
+    }
+  }
+
+  renderNetworkResponseItem(body, headers, statusCode, statusMessage, srcUrl, key) {
+    let obj;
+    if (typeof body === 'string') {
+      try {
+        obj = JSON.parse(body);
+      } catch (e) {
+        obj = body;
+      }
+    } else {
+      obj = body;
+    }
+    if (obj) {
+      return (
+        <>
+          <span key={ key } className="spaced level-0">
+            <a onClick={ () => this.inspect(obj) }>{ statusCode }</a>
+          </span>
+          <span key={ `${key}-0` } className="spaced level-0">
+            { statusMessage }
+          </span>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <span key={ key } className="spaced level-0">
+            { statusCode }
+          </span>
+          <span key={ `${key}-0` } className="spaced level-0">
+            { statusMessage }
+          </span>
+        </>
+      );
+    }
   }
 
   summaryText(obj: any): string {
@@ -217,105 +348,7 @@ class LogEntry extends React.Component<LogEntryProps> {
     if (inspResult && inspResult.inspector) {
       return InspectorAPI.summaryText(inspResult.inspector, obj);
     } else {
-      return "";
+      return undefined;
     }
-  }
-
-  renderMessage(message, key) {
-    if (!message) return false;
-    if (Array.isArray(message)) {
-      return <span className="spaced level-3" key={ key }>ARR?</span>;
-    } else if (typeof message === 'object') {
-      switch (message.type) {
-
-        case "activity": {
-          let summaryText = this.summaryText(message.payload.activity);
-          return (
-            <span className="spaced" key={ key }>
-              <span className="spaced">{ this.messageDirection(message.payload) }</span>
-              <span className="spaced"><a onClick={ () => this.inspectAndHighlight(message.payload.activity) }>{ message.payload.activity.type }</a></span>
-              <span className="spaced">{ summaryText }</span>
-            </span>
-          );
-        }
-
-        case "request": {
-          return (
-            <span className="spaced" key={ key }>
-              <span className="spaced">{ this.messageDirection(message.payload) }</span>
-              <span className="spaced"><a onClick={ () => this.inspect(message) }>{ message.payload.method }</a></span>
-            </span>
-          );
-        }
-
-        case "response": {
-          return (
-            <span className="spaced" key={ key }>
-              <span className="spaced">{ this.messageDirection(message.payload) }</span>
-              { this.renderResponseMessage(message) }
-              {
-                message.payload.statusMessage && message.payload.statusMessage.length
-                  ?
-                  <span className="spaced">{ message.payload.statusMessage }</span>
-                  :
-                  false
-              }
-            </span>
-          );
-        }
-
-        case "err": {
-          const payload = message.payload || message.err || {};
-          let msg = payload.message || payload.method || payload || "details";
-          let fullMsg = msg;
-          if (typeof msg !== 'string')
-            msg = '500';
-          if (msg.length > 50)
-            msg = msg.substring(0, 50) + '...';
-          if (msg.startsWith('<!DOCTYPE html>')) {
-            return (
-              <>
-                <span className="spaced" key={ key }><a onClick={ () => this.inspect(message) }>err</a></span>
-                <span className="spaced"><a onClick={ () => this.inspect(fullMsg) }>{ msg }</a></span>
-              </>
-            );
-          } else {
-            return (
-              <span className="spaced"><a onClick={ () => this.inspect(message) }>{ msg }</a></span>
-            );
-          }
-        }
-
-        case "inspector": {
-          return (
-            <span className="spaced" key={ key }><a onClick={ () => this.inspect(message.payload) }>{ message.title }</a></span>
-          );
-        }
-
-        case "url:external": {
-          return (
-            <span className="spaced" key={ key }><a href={ message.url } title={ message.title }>{ message.text }</a></span>
-          );
-        }
-
-        case "settings:bot": {
-          return (
-            <span className="spaced" key={ key }>bot settings</span>
-          );
-        }
-
-        case "settings:app": {
-          return (
-            <span className="spaced" key={ key }>emulator settings</span>
-          );
-        }
-
-        default:
-          return <span className="spaced level-3" key={ key }><a onClick={ () => this.inspect(message) }>UNK?</a></span>
-      }
-    } else if (typeof message === 'string' || typeof message === 'number') {
-      return <span className="spaced" key={ key }>{ message }</span>;
-    }
-    return false;
   }
 }

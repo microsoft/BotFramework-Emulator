@@ -35,6 +35,7 @@ import { RequestHandler, Server } from 'restify';
 import BotEmulator from '../botEmulator';
 import createFetchConversationMiddleware from './middleware/fetchConversation';
 import createJsonBodyParserMiddleware from '../utils/jsonBodyParser';
+import getFacility from '../middleware/getFacility';
 
 import addUsers from './middleware/addUsers';
 import contactAdded from './middleware/contactAdded';
@@ -52,10 +53,12 @@ import sendTokenResponse from './middleware/sendTokenResponse';
 export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandler[]) {
   const fetchConversation = createFetchConversationMiddleware(botEmulator);
   const jsonBodyParser = createJsonBodyParserMiddleware();
+  const facility = getFacility('emulator');
 
   server.get(
     '/emulator/:conversationId/users',
     fetchConversation,
+    facility,
     getUsers(botEmulator)
   );
 
@@ -63,42 +66,49 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     '/emulator/:conversationId/users',
     jsonBodyParser,
     fetchConversation,
+    facility,
     addUsers(botEmulator)
   );
 
   server.del(
     '/emulator/:conversationId/users',
     fetchConversation,
+    facility,
     removeUsers(botEmulator)
   );
 
   server.post(
     '/emulator/:conversationId/contacts',
     fetchConversation,
+    facility,
     contactAdded(botEmulator)
   );
 
   server.del(
     '/emulator/:conversationId/contacts',
     fetchConversation,
+    facility,
     contactRemoved(botEmulator)
   );
 
   server.post(
     '/emulator/:conversationId/typing',
     fetchConversation,
+    facility,
     typing(botEmulator)
   );
 
   server.post(
     '/emulator/:conversationId/ping',
     fetchConversation,
+    facility,
     ping(botEmulator)
   );
 
   server.del(
     '/emulator/:conversationId/userdata',
     fetchConversation,
+    facility,
     deleteUserData(botEmulator)
   );
 
@@ -106,6 +116,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     '/emulator/:conversationId/invoke/updateShippingAddress',
     jsonBodyParser,
     fetchConversation,
+    facility,
     updateShippingAddress(botEmulator)
   );
 
@@ -113,6 +124,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     '/emulator/:conversationId/invoke/updateShippingOption',
     jsonBodyParser,
     fetchConversation,
+    facility,
     updateShippingOption(botEmulator)
   );
 
@@ -120,11 +132,13 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     '/emulator/:conversationId/invoke/paymentComplete',
     jsonBodyParser,
     fetchConversation,
+    facility,
     paymentComplete(botEmulator)
   );
 
   server.post(
     '/emulator/:conversationId/invoke/sendTokenResponse',
     jsonBodyParser,
+    facility,
     sendTokenResponse(botEmulator));
 }

@@ -31,152 +31,153 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as log from './log';
 import * as got from 'got';
 import { DOMParser } from 'xmldom';
+import { mainWindow } from './main';
+import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
+import { textItem } from '@bfemulator/emulator-core/lib/types/log/util';
 
 interface IVersion {
-    type?: string,
-    major: number,
-    minor: number,
-    subminor: number
+  type?: string,
+  major: number,
+  minor: number,
+  subminor: number
 }
 
 export class VersionManager {
-    static hasChecked: boolean = false;
-    static SDKTypes: string[] = ['(BotBuilder .Net/', '(BotBuilder Node.js/'];
-    static currentSdkVersion: IVersion = null;
+  static hasChecked: boolean = false;
+  static SDKTypes: string[] = ['(BotBuilder .Net/', '(BotBuilder Node.js/'];
+  static currentSdkVersion: IVersion = null;
 
-    public static checkVersion(userAgent: string) {
-        if (!VersionManager.hasChecked) {
-            let version = VersionManager.parseUserAgentForVersion(userAgent);
-            VersionManager.checkCurrentSdkVersion(version);
-            VersionManager.hasChecked = true;
-        }
+  public static checkVersion(conversationId: string, userAgent: string) {
+    if (!VersionManager.hasChecked) {
+      let version = VersionManager.parseUserAgentForVersion(userAgent);
+      VersionManager.checkCurrentSdkVersion(conversationId, version);
+      VersionManager.hasChecked = true;
+    }
+  }
+
+  public static checkCurrentSdkVersion(conversationId: string, version: IVersion) {
+    if (!version || version.type === 'node') {
+      VersionManager.checkNodeSdkVersion(conversationId, version);
+    } else {
+      VersionManager.checkDotNetSdkVersion(conversationId, version);
+    }
+  }
+
+  public static checkNodeSdkVersion(conversationId: string, version: IVersion) {
+    let options = {
+      url: 'http://registry.npmjs.org/-/package/botbuilder/dist-tags',
+      method: 'GET',
+      headers: {
+        Accept: 'application/json'
+      },
+      useElectronNet: true
     }
 
-    public static checkCurrentSdkVersion(version: IVersion)
-    {
-        if (!version || version.type === 'node') {
-            VersionManager.checkNodeSdkVersion(version);
-        } else {
-            VersionManager.checkDotNetSdkVersion(version);
-        }
-    }
-
-    public static checkNodeSdkVersion(version: IVersion)
-    {
-        let options = {
-            url: 'http://registry.npmjs.org/-/package/botbuilder/dist-tags',
-            method: 'GET',
-            headers: {
-                Accept: 'application/json'
-            },
-            useElectronNet: true
-        }
-
-        let responseCallback = (resp) => {
-            if (resp.body) {
-                try {
-                    let verObj = JSON.parse(resp.body);
-                    if (verObj.latest) {
-                        let latestVersion: IVersion = VersionManager.parseVersion(verObj.latest);
-                        if(!version || VersionManager.isLess(version, latestVersion)) {
-                            VersionManager.warnAboutNewSdkVersion(version, latestVersion);
-                        }
-                    }
-                } catch(err) {
-                    // do not show the error; relies on 3rd party endpoint
-                }
+    let responseCallback = (resp) => {
+      if (resp.body) {
+        try {
+          let verObj = JSON.parse(resp.body);
+          if (verObj.latest) {
+            let latestVersion: IVersion = VersionManager.parseVersion(verObj.latest);
+            if (!version || VersionManager.isLess(version, latestVersion)) {
+              VersionManager.warnAboutNewSdkVersion(conversationId, version, latestVersion);
             }
+          }
+        } catch (err) {
+          // do not show the error; relies on 3rd party endpoint
         }
-        got(options)
-            .then(responseCallback)
-            .catch(err => {
-                // do not show the error; relies on 3rd party endpoint
-            });
+      }
     }
+    got(options)
+      .then(responseCallback)
+      .catch(err => {
+        // do not show the error; relies on 3rd party endpoint
+      });
+  }
 
-    private static warnAboutNewSdkVersion(botVersion: IVersion, latestVersion: IVersion) {
-        log.warn('Warning: The latest bot SDK version is ' + VersionManager.toString(latestVersion) +
-                (botVersion ? ' but the bot is running SDK version ' + VersionManager.toString(botVersion) : '') + '. Consider upgrading the bot to the latest SDK.');
-    }
+  private static warnAboutNewSdkVersion(conversationId: string, botVersion: IVersion, latestVersion: IVersion) {
+    mainWindow.logService.logToChat(conversationId,
+      textItem(LogLevel.Warn, 'Warning: The latest bot SDK version is ' + VersionManager.toString(latestVersion) +
+      (botVersion ? ' but the bot is running SDK version ' + VersionManager.toString(botVersion) : '') + '. Consider upgrading the bot to the latest SDK.'));
+  }
 
-    public static checkDotNetSdkVersion(version: IVersion) {
-        let options = {
-            url: 'https://www.nuget.org/api/v2/Packages?$filter=IsLatestVersion%20eq%20true%20and%20Id%20eq\'Microsoft.Bot.Builder\'&$select=NormalizedVersion',
-            method: 'GET',
-            useElectronNet: true
-        };
+  public static checkDotNetSdkVersion(conversationId: string, version: IVersion) {
+    let options = {
+      url: 'https://www.nuget.org/api/v2/Packages?$filter=IsLatestVersion%20eq%20true%20and%20Id%20eq\'Microsoft.Bot.Builder\'&$select=NormalizedVersion',
+      method: 'GET',
+      useElectronNet: true
+    };
 
-        let responseCallback = (resp) => {
-            if (resp.body) {
-                try {
-                    let doc = new DOMParser().parseFromString(resp.body, 'text/xml');
-                    let entryElem = doc.documentElement.getElementsByTagName('entry')[0];
-                    let properties = entryElem.getElementsByTagName('m:properties')[0];
-                    let versionElem = properties.getElementsByTagName('d:NormalizedVersion')[0];
-                    if (versionElem.textContent) {
-                        let latestVersion: IVersion = VersionManager.parseVersion(versionElem.textContent);
-                        if(!version || VersionManager.isLess(version, latestVersion)) {
-                            VersionManager.warnAboutNewSdkVersion(version, latestVersion);
-                        }
-                    }
-                } catch(err) {
-                    // do not show the error; relies on 3rd party endpoint
-                }
+    let responseCallback = (resp) => {
+      if (resp.body) {
+        try {
+          let doc = new DOMParser().parseFromString(resp.body, 'text/xml');
+          let entryElem = doc.documentElement.getElementsByTagName('entry')[0];
+          let properties = entryElem.getElementsByTagName('m:properties')[0];
+          let versionElem = properties.getElementsByTagName('d:NormalizedVersion')[0];
+          if (versionElem.textContent) {
+            let latestVersion: IVersion = VersionManager.parseVersion(versionElem.textContent);
+            if (!version || VersionManager.isLess(version, latestVersion)) {
+              VersionManager.warnAboutNewSdkVersion(conversationId, version, latestVersion);
             }
+          }
+        } catch (err) {
+          // do not show the error; relies on 3rd party endpoint
         }
-        got(options)
-            .then(responseCallback)
-            .catch(err => {
-                // do not show the error; relies on 3rd party endpoint
-            });
+      }
     }
+    got(options)
+      .then(responseCallback)
+      .catch(err => {
+        // do not show the error; relies on 3rd party endpoint
+      });
+  }
 
-    private static parseUserAgentForVersion(userAgent: string): IVersion {
-        if (userAgent && userAgent.length) {
-            for (let i = 0; i< VersionManager.SDKTypes.length; i++) {
-                let type = VersionManager.SDKTypes[i];
-                let idx = userAgent.indexOf(type);
-                if (idx !== -1) {
-                    idx += type.length;
-                    let endIdx = userAgent.indexOf(')', idx);
-                    if (endIdx !== -1) {
-                        let versionString = userAgent.substring(idx, endIdx);
-                        let version = VersionManager.parseVersion(versionString);
-                        if (version) {
-                            version.type = i === 0 ? 'dotnet' : 'node';
-                        }
-                        return version;
-                    }
-                }
-            }
-        }
-
-        return undefined;
-    }
-
-    private static parseVersion(versionString: string): IVersion {
-        let parts = versionString.split('.');
-        if (parts.length >= 3) {
-            let version = {
-                major: parseInt(parts[0]),
-                minor: parseInt(parts[1]),
-                subminor: parseInt(parts[2])
+  private static parseUserAgentForVersion(userAgent: string): IVersion {
+    if (userAgent && userAgent.length) {
+      for (let i = 0; i < VersionManager.SDKTypes.length; i++) {
+        let type = VersionManager.SDKTypes[i];
+        let idx = userAgent.indexOf(type);
+        if (idx !== -1) {
+          idx += type.length;
+          let endIdx = userAgent.indexOf(')', idx);
+          if (endIdx !== -1) {
+            let versionString = userAgent.substring(idx, endIdx);
+            let version = VersionManager.parseVersion(versionString);
+            if (version) {
+              version.type = i === 0 ? 'dotnet' : 'node';
             }
             return version;
+          }
         }
-        return undefined;
+      }
     }
 
-    private static toString(version: IVersion): string {
-        return version.major + '.' + version.minor + '.' + version.subminor;
-    }
+    return undefined;
+  }
 
-    private static isLess(a: IVersion, b: IVersion): boolean {
-        return ((a.major < b.major) ||
-                (a.major === b.major && a.minor < b.minor) ||
-                (a.major === b.major && a.minor === b.minor && a.subminor < b.subminor));
+  private static parseVersion(versionString: string): IVersion {
+    let parts = versionString.split('.');
+    if (parts.length >= 3) {
+      let version = {
+        major: parseInt(parts[0]),
+        minor: parseInt(parts[1]),
+        subminor: parseInt(parts[2])
+      }
+      return version;
     }
+    return undefined;
+  }
+
+  private static toString(version: IVersion): string {
+    return version.major + '.' + version.minor + '.' + version.subminor;
+  }
+
+  private static isLess(a: IVersion, b: IVersion): boolean {
+    return ((a.major < b.major) ||
+      (a.major === b.major && a.minor < b.minor) ||
+      (a.major === b.major && a.minor === b.minor && a.subminor < b.subminor));
+  }
 }
