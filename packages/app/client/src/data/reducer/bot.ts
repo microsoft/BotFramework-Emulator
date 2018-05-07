@@ -111,7 +111,9 @@ export default function bot(state: IBotState = DEFAULT_STATE, action: BotAction)
       // move active bot up to the top of the recent bots list
       const mostRecentBot = state.botFiles.find(bot => bot && bot.path === action.payload.bot.path);
       let recentBots = state.botFiles.filter(bot => bot && bot.path !== action.payload.bot.path);
-      recentBots.unshift(mostRecentBot);
+      if (mostRecentBot) {
+        recentBots.unshift(mostRecentBot);
+      }
       state = setBotFilesState(recentBots, state);
       state = setActiveBot(action.payload.bot, state);
       break;
