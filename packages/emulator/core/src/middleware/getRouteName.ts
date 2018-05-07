@@ -31,23 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as HttpStatus from 'http-status-codes';
-import { RequestHandler, Server } from 'restify';
+import * as Restify from 'restify';
 
-import BotEmulator from '../botEmulator';
-import createJsonBodyParserMiddleware from '../utils/jsonBodyParser';
-import getFacility from '../middleware/getFacility';
-import getRouteName from '../middleware/getRouteName';
-import getSessionId from './middleware/getSessionId';
-
-export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandler[]) {
-  const jsonBodyParser = createJsonBodyParserMiddleware();
-  const facility = getFacility('directline');
-
-  server.get(
-    '/v3/directline/session/getsessionid',
-    facility,
-    getRouteName('getSessionId'),
-    getSessionId(botEmulator)
-  );
+export default function getRouteName(routeName: string) {
+  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+    req['routeName'] = routeName;
+    next();
+  };
 }

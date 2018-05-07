@@ -77,22 +77,15 @@ export class RestServer {
         return;
       }
       
-      const reqBody = req.body;
-      //const resBody = res;
-
-      //console.log('after', req.method, route.spec.path, error);
       const facility = req['facility'] || 'network';
+      const routeName = req['routeName'] || '';
       
-      let trailing = route.spec.path.toString();
-      if (trailing.length > 30)
-        trailing = `...${trailing.substr(-30)}`;
-
+      let level = LogLevel.Info;
+      if (!/2\d\d/.test(res.statusCode.toString()))
+        level = LogLevel.Error;
+      
       mainWindow.logService.logToChat(
         conversationId,
-        textItem(
-          LogLevel.Info,
-          `[${facility}]`
-        ),
         networkRequestItem(
           facility,
           (req as any)._body,
@@ -108,8 +101,8 @@ export class RestServer {
           req.url
         ),
         textItem(
-          LogLevel.Debug,
-          trailing
+          level,
+          `${facility}.${routeName}`
         ),
       );
     });

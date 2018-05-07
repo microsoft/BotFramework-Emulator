@@ -35,6 +35,7 @@ import { RequestHandlerType, Server } from 'restify';
 
 import BotEmulator from '../botEmulator';
 import getFacility from '../middleware/getFacility';
+import getRouteName from '../middleware/getRouteName';
 
 import getAttachment from './middleware/getAttachment';
 import getAttachmentInfo from './middleware/getAttachmentInfo';
@@ -46,6 +47,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     '/v3/attachments/:attachmentId',
     ...uses,
     facility,
+    getRouteName('getAttachmentInfo'),
     getAttachmentInfo(botEmulator)
   );
 
@@ -53,6 +55,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     '/v3/attachments/:attachmentId/views/:viewId',
     ...uses,
     facility,
+    getRouteName('getAttachment'),
     getAttachment(botEmulator)
   );
 }
