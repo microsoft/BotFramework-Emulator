@@ -71,7 +71,7 @@ export namespace Colors {
   export const C36 = '#C8C8C8';
   export const C37 = '#444444';
   export const C38 = '#0078D7';
-  export const C39 = '#666666';
+  export const C39 = '#808080';
 
   export const APP_BACKGROUND_DARK = C8;
   export const APP_FOREGROUND_DARK = C2;
