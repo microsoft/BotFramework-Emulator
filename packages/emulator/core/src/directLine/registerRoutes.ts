@@ -37,6 +37,7 @@ import { RequestHandler, Server } from 'restify';
 import BotEmulator from '../botEmulator';
 import createJsonBodyParserMiddleware from '../utils/jsonBodyParser';
 import getFacility from '../middleware/getFacility';
+import getRouteName from '../middleware/getRouteName';
 
 import getActivities from './middleware/getActivities';
 import getBotEndpoint from '../middleware/getBotEndpoint';
@@ -58,6 +59,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     '/v3/directline',
     ...uses,
     facility,
+    getRouteName('options'),
     options(botEmulator)
   );
 
@@ -67,6 +69,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     botEndpoint,
     jsonBodyParser,
     facility,
+    getRouteName('startConversation'),
     startConversation(botEmulator)
   );
 
@@ -76,6 +79,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     botEndpoint,
     conversation,
     facility,
+    getRouteName('reconnectToConversation'),
     reconnectToConversation(botEmulator)
   );
 
@@ -85,6 +89,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     botEndpoint,
     conversation,
     facility,
+    getRouteName('getActivities'),
     getActivities(botEmulator)
   );
 
@@ -95,6 +100,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     botEndpoint,
     conversation,
     facility,
+    getRouteName('postActivity'),
     postActivity(botEmulator)
   );
 
@@ -104,6 +110,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     botEndpoint,
     conversation,
     facility,
+    getRouteName('upload'),
     upload(botEmulator)
   );
 
@@ -111,6 +118,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     '/v3/directline/conversations/:conversationId/stream',
     ...uses,
     facility,
+    getRouteName('stream'),
     stream(botEmulator)
   );
 }

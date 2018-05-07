@@ -320,25 +320,15 @@ class LogEntry extends React.Component<LogEntryProps> {
     }
     if (obj) {
       return (
-        <>
-          <span key={ key } className="spaced level-0">
-            <a onClick={ () => this.inspect(obj) }>{ statusCode }</a>
-          </span>
-          <span key={ `${key}-0` } className="spaced level-0">
-            { statusMessage }
-          </span>
-        </>
+        <span key={ key } className="spaced level-0">
+          <a onClick={ () => this.inspect(obj) }>{ statusCode }</a>
+        </span>
       );
     } else {
       return (
-        <>
-          <span key={ key } className="spaced level-0">
-            { statusCode }
-          </span>
-          <span key={ `${key}-0` } className="spaced level-0">
-            { statusMessage }
-          </span>
-        </>
+        <span key={ key } className="spaced level-0">
+          { statusCode }
+        </span>
       );
     }
   }

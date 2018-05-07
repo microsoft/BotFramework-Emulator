@@ -37,6 +37,7 @@ import BotEmulator from '../botEmulator';
 import createBotFrameworkAuthenticationMiddleware from '../utils/botFrameworkAuthentication';
 import jsonBodyParser from '../utils/jsonBodyParser';
 import getFacility from '../middleware/getFacility';
+import getRouteName from '../middleware/getRouteName';
 
 import createFetchBotDataMiddleware from './middleware/fetchBotData';
 import getConversationData from './middleware/getConversationData';
@@ -60,6 +61,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     verifyBotFramework,
     fetchBotDataMiddleware,
     facility,
+    getRouteName('getUserData'),
     getUserData(botEmulator)
   );
 
@@ -69,6 +71,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     verifyBotFramework,
     fetchBotDataMiddleware,
     facility,
+    getRouteName('getConversationData'),
     getConversationData(botEmulator)
   );
 
@@ -78,6 +81,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     verifyBotFramework,
     fetchBotDataMiddleware,
     facility,
+    getRouteName('getPrivateConversationData'),
     getPrivateConversationData(botEmulator)
   );
 
@@ -87,6 +91,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     verifyBotFramework,
     jsonBodyParser(),
     facility,
+    getRouteName('setUserData'),
     setUserData(botEmulator)
   );
 
@@ -96,6 +101,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     verifyBotFramework,
     jsonBodyParser(),
     facility,
+    getRouteName('setConversationData'),
     setConversationData(botEmulator)
   );
 
@@ -105,6 +111,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     verifyBotFramework,
     jsonBodyParser(),
     facility,
+    getRouteName('setPrivateConversationData'),
     setPrivateConversationData(botEmulator)
   );
 
@@ -113,6 +120,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     ...uses,
     verifyBotFramework,
     facility,
+    getRouteName('deleteStateForUser'),
     deleteStateForUser(botEmulator)
   );
 }

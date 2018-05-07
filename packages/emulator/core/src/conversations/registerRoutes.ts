@@ -38,6 +38,7 @@ import createBotFrameworkAuthenticationMiddleware from '../utils/botFrameworkAut
 import IUser from '../types/user';
 import createJsonBodyParser from '../utils/jsonBodyParser';
 import getFacility from '../middleware/getFacility';
+import getRouteName from '../middleware/getRouteName';
 
 import createConversation from './middleware/createConversation';
 import createFetchConversationMiddleware from './middleware/fetchConversation';
@@ -66,6 +67,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     jsonBodyParser,
     botEndpoint,
     facility,
+    getRouteName('createConversation'),
     createConversation(botEmulator)
   );
 
@@ -76,6 +78,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     jsonBodyParser,
     fetchConversation,
     facility,
+    getRouteName('sendToConversation'),
     sendToConversation(botEmulator)
   );
 
@@ -86,6 +89,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     jsonBodyParser,
     fetchConversation,
     facility,
+    getRouteName('replyToActivity'),
     replyToActivity(botEmulator)
   );
 
@@ -96,6 +100,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     jsonBodyParser,
     fetchConversation,
     facility,
+    getRouteName('updateActivity'),
     updateActivity(botEmulator)
   );
 
@@ -105,6 +110,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     verifyBotFramework,
     fetchConversation,
     facility,
+    getRouteName('deleteActivity'),
     deleteActivity(botEmulator)
   );
 
@@ -114,6 +120,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     verifyBotFramework,
     fetchConversation,
     facility,
+    getRouteName('getConversationMembers'),
     getConversationMembers(botEmulator)
   );
 
@@ -123,6 +130,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     verifyBotFramework,
     fetchConversation,
     facility,
+    getRouteName('getActivityMembers'),
     getActivityMembers(botEmulator)
   );
 
@@ -132,6 +140,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     verifyBotFramework,
     jsonBodyParser,
     facility,
+    getRouteName('uploadAttachment'),
     uploadAttachment(botEmulator)
   );
 }

@@ -36,6 +36,7 @@ import BotEmulator from '../botEmulator';
 import createFetchConversationMiddleware from './middleware/fetchConversation';
 import createJsonBodyParserMiddleware from '../utils/jsonBodyParser';
 import getFacility from '../middleware/getFacility';
+import getRouteName from '../middleware/getRouteName';
 
 import addUsers from './middleware/addUsers';
 import contactAdded from './middleware/contactAdded';
@@ -59,6 +60,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     '/emulator/:conversationId/users',
     fetchConversation,
     facility,
+    getRouteName('getUsers'),
     getUsers(botEmulator)
   );
 
@@ -67,6 +69,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     jsonBodyParser,
     fetchConversation,
     facility,
+    getRouteName('addUsers'),
     addUsers(botEmulator)
   );
 
@@ -74,6 +77,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     '/emulator/:conversationId/users',
     fetchConversation,
     facility,
+    getRouteName('removeUsers'),
     removeUsers(botEmulator)
   );
 
@@ -81,6 +85,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     '/emulator/:conversationId/contacts',
     fetchConversation,
     facility,
+    getRouteName('contactAdded'),
     contactAdded(botEmulator)
   );
 
@@ -88,6 +93,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     '/emulator/:conversationId/contacts',
     fetchConversation,
     facility,
+    getRouteName('contactRemoved'),
     contactRemoved(botEmulator)
   );
 
@@ -95,6 +101,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     '/emulator/:conversationId/typing',
     fetchConversation,
     facility,
+    getRouteName('typing'),
     typing(botEmulator)
   );
 
@@ -102,6 +109,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     '/emulator/:conversationId/ping',
     fetchConversation,
     facility,
+    getRouteName('ping'),
     ping(botEmulator)
   );
 
@@ -109,6 +117,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     '/emulator/:conversationId/userdata',
     fetchConversation,
     facility,
+    getRouteName('deleteUserData'),
     deleteUserData(botEmulator)
   );
 
@@ -117,6 +126,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     jsonBodyParser,
     fetchConversation,
     facility,
+    getRouteName('updateShippingAddress'),
     updateShippingAddress(botEmulator)
   );
 
@@ -125,6 +135,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     jsonBodyParser,
     fetchConversation,
     facility,
+    getRouteName('updateShippingOption'),
     updateShippingOption(botEmulator)
   );
 
@@ -133,6 +144,7 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     jsonBodyParser,
     fetchConversation,
     facility,
+    getRouteName('paymentComplete'),
     paymentComplete(botEmulator)
   );
 
@@ -140,5 +152,6 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     '/emulator/:conversationId/invoke/sendTokenResponse',
     jsonBodyParser,
     facility,
+    getRouteName('sendTokenResponse'),
     sendTokenResponse(botEmulator));
 }

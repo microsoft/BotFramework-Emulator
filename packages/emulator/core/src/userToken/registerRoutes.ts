@@ -38,6 +38,8 @@ import BotEmulator from '../botEmulator';
 import createBotFrameworkAuthenticationMiddleware from '../utils/botFrameworkAuthentication';
 import createJsonBodyParserMiddleware from '../utils/jsonBodyParser';
 import getBotEndpoint from '../middleware/getBotEndpoint';
+import getFacility from '../middleware/getFacility';
+import getRouteName from '../middleware/getRouteName';
 
 import getToken from './middleware/getToken';
 import emulateOAuthCards from './middleware/emulateOAuthCards';
@@ -48,17 +50,22 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
   const jsonBodyParser = createJsonBodyParserMiddleware();
   const verifyBotFramework = createBotFrameworkAuthenticationMiddleware(botEmulator.options.fetch);
   const botEndpoint = getBotEndpoint(botEmulator);
+  const facility = getFacility('api');
 
   server.get(
     '/api/usertoken/GetToken',
     verifyBotFramework,
     botEndpoint,
+    facility,
+    getRouteName('getToken'),
     getToken(botEmulator)
   );
 
   server.post(
     '/api/usertoken/emulateOAuthCards',
     verifyBotFramework,
+    facility,
+    getRouteName('emulateOAuthCards'),
     emulateOAuthCards(botEmulator)
   );
 
@@ -66,6 +73,8 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     '/api/usertoken/SignOut',
     verifyBotFramework,
     botEndpoint,
+    facility,
+    getRouteName('signOut'),
     signOut(botEmulator)
   );
 
@@ -73,6 +82,8 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     '/api/usertoken/tokenResponse',
     ...uses,
     jsonBodyParser,
+    facility,
+    getRouteName('tokenResponse'),
     tokenResponse(botEmulator)
   );
 }
