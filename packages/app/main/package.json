@@ -1,6 +1,6 @@
 {
   "name": "botframework-emulator",
-  "version": "4.0.14-alpha",
+  "version": "4.0.15-alpha",
   "private": true,
   "description": "Development tool for the Microsoft Bot Framework. Allows developers to test and debug bots on localhost.",
   "main": "./app/server/main.js",
@@ -87,6 +87,7 @@
     "@fuselab/ui-shared": "~1.0.13",
     "async": "^2.6.0",
     "base64url": "^2.0.0",
+    "chardet": "^0.5.0",
     "chokidar": "^2.0.2",
     "command-line-args": "^5.0.2",
     "electron-fetch": "^1.1.0",
