@@ -45,6 +45,7 @@ import store, { IRootState } from '../../../data/store';
 
 import { CommandService } from '../../../platform/commands/commandService';
 import { GenericDocument } from '../../layout';
+import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 
 const CSS = css({
   '& .bot-settings-header': {
@@ -165,6 +166,17 @@ class BotSettingsEditor extends React.Component<BotSettingsEditorProps, BotSetti
 
         // write updated bot entry to bots.json
         await CommandService.remoteCall('bot:list:patch', SharedConstants.TEMP_BOT_IN_MEMORY_PATH, botInfo);
+
+        //TEMP
+
+        await CommandService.remoteCall('bot:save', bot);
+        await ActiveBotHelper.setActiveBot(newPath);
+
+        this.setDirtyFlag(false);
+        this.setState({ bot });
+
+        connect && endpointService && CommandService.call('livechat:new', endpointService);
+
       } else {
         // dialog was cancelled
         return null;
@@ -175,14 +187,23 @@ class BotSettingsEditor extends React.Component<BotSettingsEditorProps, BotSetti
 
       // write updated bot entry to bots.json
       await CommandService.remoteCall('bot:list:patch', bot.path, botInfo);
+
+      //TEMP
+
+      await CommandService.remoteCall('bot:save', bot);
+
+      this.setDirtyFlag(false);
+      this.setState({ bot });
+
+      connect && endpointService && CommandService.call('livechat:new', endpointService);
     }
 
-    await CommandService.remoteCall('bot:save', bot);
+    /*await CommandService.remoteCall('bot:save', bot);
 
     this.setDirtyFlag(false);
     this.setState({ bot });
 
-    connect && endpointService && CommandService.call('livechat:new', endpointService);
+    connect && endpointService && CommandService.call('livechat:new', endpointService);*/
   };
 
   private onSaveAndConnect = async e => {
