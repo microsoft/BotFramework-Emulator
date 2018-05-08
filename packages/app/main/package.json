@@ -87,6 +87,7 @@
     "@fuselab/ui-shared": "~1.0.13",
     "async": "^2.6.0",
     "base64url": "^2.0.0",
+    "chardet": "^0.5.0",
     "chokidar": "^2.0.2",
     "command-line-args": "^5.0.2",
     "electron-fetch": "^1.1.0",
