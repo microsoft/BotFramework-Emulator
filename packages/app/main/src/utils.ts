@@ -40,6 +40,7 @@ import * as globals from './globals';
 const { lstatSync, readdirSync } = require('fs');
 const { join } = require('path');
 const os = require('os');
+const chardet = require('chardet');
 
 const electron = require('electron'); // use a lowercase name "electron" to prevent clash with "Electron" namespace
 const electronApp: Electron.App = electron.app;
@@ -49,6 +50,29 @@ const Fs = require('fs');
 const Mkdirp = require('mkdirp');
 const url = require('url');
 const path = require('path');
+
+// from https://nodejs.org/api/buffer.html#buffer_buffers_and_character_encodings &
+// https://github.com/nodejs/node/blob/master/lib/buffer.js
+const SUPPORTED_ENCODINGS_BASE: string[] = [
+  'ascii',
+  'utf8',,
+  'utf-8',
+  'base64',
+  'binary',
+  'hex'
+];
+
+const SUPPORTED_ENCODINGS_UCS2: string[] = [
+  'ucs2',
+  'ucs-2',
+  'utf16le',
+  'utf-16le'
+];
+
+const SUPPORTED_ENCODINGS_LATIN1: string[] = [
+  'latin1',
+  'iso-8859-1'
+];
 
 export function exceptionToAPIException(exception: any): APIException {
   if (exception.error && exception.statusCode) {
@@ -146,7 +170,30 @@ export const getFilesInDir = (path) => {
 
 export const readFileSync = (path: string): string => {
   try {
-    return Fs.readFileSync(path, 'utf-8');
+    let encoding: string = chardet.detectFileSync(path);
+    if (encoding) {
+      encoding = encoding.toLowerCase();
+
+      if (SUPPORTED_ENCODINGS_BASE.findIndex(e => e === encoding) > -1) {
+        return Fs.readFileSync(path, encoding).trim();
+      }
+
+      // special case for ucs-2 / utf-16le
+      if (SUPPORTED_ENCODINGS_UCS2.findIndex(e => e === encoding) > -1) {
+        return Fs.readFileSync(path, 'ucs2').trim();
+      }
+
+      // special case for ISO-8859-1 / latin1
+      if (SUPPORTED_ENCODINGS_LATIN1.findIndex(e => e === encoding) > -1) {
+        return Fs.readFileSync(path, 'latin1').trim();
+      }
+
+      // encoding not supported by Node
+      throw new Error(`Error reading file ${path}: Encoding ${encoding} not supported by Node.`)
+    } else {
+      // bad encoding
+      throw new Error(`Error reading file ${path}: Couldn't detect encoding: ${encoding}`);
+    }
   } catch (e) {
     return '';
   }
