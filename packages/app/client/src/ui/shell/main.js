@@ -170,7 +170,7 @@ export class Main extends React.Component {
         </div>
         {!this.props.presentationModeEnabled && <StatusBar />}
         <DialogHost />
-        <StoreVisualizer enabled={true} />
+        <StoreVisualizer enabled={false} />
       </div>
     );
   }
