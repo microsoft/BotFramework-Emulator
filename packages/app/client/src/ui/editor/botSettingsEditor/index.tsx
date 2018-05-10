@@ -31,19 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IBotInfo, newEndpoint } from '@bfemulator/app-shared';
+import { IBotInfo, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, IBotConfigWithPath } from '@bfemulator/sdk-shared';
 import { Column, MediumHeader, PrimaryButton, Row, TextInputField } from '@bfemulator/ui-react';
 import { css } from 'glamor';
-import { debounce } from 'lodash';
-import { IEndpointService, ServiceType } from 'msbot/bin/schema';
+import { IConnectedService, ServiceType } from 'msbot/bin/schema';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import * as EditorActions from '../../../data/action/editorActions';
 import { getBotInfoByPath } from '../../../data/botHelpers';
 import store, { IRootState } from '../../../data/store';
-
 import { CommandService } from '../../../platform/commands/commandService';
+import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 import { GenericDocument } from '../../layout';
 
 const CSS = css({
@@ -92,13 +91,7 @@ interface BotSettingsEditorProps {
 
 interface BotSettingsEditorState {
   bot?: IBotConfigWithPath;
-  endpoint?: IEndpointService;
   secret?: string;
-}
-
-// TODO: We need to deprecate this function as we move to multiple endpoints
-function getFirstBotEndpointOrDefault(bot) {
-  return (Array.isArray(bot.services) && bot.services.find(service => service.type === ServiceType.Endpoint) as IEndpointService) || newEndpoint();
 }
 
 class BotSettingsEditor extends React.Component<BotSettingsEditorProps, BotSettingsEditorState> {
@@ -107,11 +100,9 @@ class BotSettingsEditor extends React.Component<BotSettingsEditorProps, BotSetti
 
     const { bot } = props;
     const botInfo = getBotInfoByPath(bot.path);
-    const endpoint = getFirstBotEndpointOrDefault(bot);
 
     this.state = {
       bot,
-      endpoint,
       secret: (botInfo && botInfo.secret) || ''
     };
   }
@@ -122,7 +113,7 @@ class BotSettingsEditor extends React.Component<BotSettingsEditorProps, BotSetti
     if (newBotPath !== this.state.bot.path) {
       const newBotInfo: IBotInfo = getBotInfoByPath(newBotPath);
 
-      this.setState({ endpoint: getFirstBotEndpointOrDefault(newProps.bot), secret: newBotInfo.secret });
+      this.setState({ bot: newProps.bot, secret: newBotInfo.secret });
       this.setDirtyFlag(false);
     }
   }
@@ -139,38 +130,74 @@ class BotSettingsEditor extends React.Component<BotSettingsEditorProps, BotSetti
   };
 
   private onSave = async (e, connect = false) => {
-    const { appId = '', appPassword = '', endpoint = '', type, name = '', id = '' } = this.state.endpoint;
-    const endpointService: IEndpointService = {
-      appId: appId.trim(),
-      appPassword: appPassword.trim(),
-      endpoint: endpoint.trim(),
-      type: type,
-      name: name.trim(),
-      id: id.trim()
-    };
-
-    const { name: botName = '', description = '', path } = this.state.bot;
-    const bot: IBotConfigWithPath = BotConfigWithPath.fromJSON({
+    const { name: botName = '', description = '', path, services } = this.state.bot;
+    let bot: IBotConfigWithPath = BotConfigWithPath.fromJSON({
       name: botName.trim(),
       description: description.trim(),
       secretKey: '',
       path: path.trim(),
-      services: [endpointService]
+      services
     });
 
-    // write the bot secret to bots.json
-    let botInfo = getBotInfoByPath(path);
+    const endpointService: IConnectedService = bot.services.find(service => service.type === ServiceType.Endpoint);
 
+    if (bot.path === SharedConstants.TEMP_BOT_IN_MEMORY_PATH) {
+      // we are currently using a mocked bot for livechat opened via protocol URI
+      this.saveBotFromProtocol(bot, endpointService, connect);
+    } else {
+      // using a bot loaded from disk
+      this.saveBotFromDisk(bot, endpointService, connect);
+    }
+  };
+
+  /** Saves a bot config from a mocked bot object used when opening a livechat session via protocol URI  */
+  private saveBotFromProtocol = async (bot: IBotConfigWithPath, endpointService: IConnectedService, connect: boolean): Promise<void> => {
+    // need to establish a location for the .bot file
+    let newPath = await this.showBotSaveDialog();
+    if (newPath) {
+      bot = {
+        ...bot,
+        path: newPath
+      };
+
+      // write new bot entry to bots.json
+      const botInfo: IBotInfo = {
+        displayName: bot.name,
+        path: newPath,
+        secret: this.state.secret
+      };
+      await CommandService.remoteCall('bot:list:patch', SharedConstants.TEMP_BOT_IN_MEMORY_PATH, botInfo);
+
+      await CommandService.remoteCall('bot:save', bot);
+
+      // need to set the new bot as active now that it is no longer a placeholder bot in memory
+      await ActiveBotHelper.setActiveBot(newPath);
+
+      this.setDirtyFlag(false);
+      this.setState({ bot });
+
+      connect && endpointService && CommandService.call('livechat:new', endpointService);
+    } else {
+      // dialog was cancelled
+      return null;
+    }
+  }
+
+  /** Saves a bot config of a bot loaded from disk */
+  private saveBotFromDisk = async (bot: IBotConfigWithPath, endpointService: IConnectedService, connect: boolean): Promise<void> => {
+    const botInfo: IBotInfo = getBotInfoByPath(bot.path);
     botInfo.secret = this.state.secret;
 
-    await CommandService.remoteCall('bot:list:patch', path, botInfo);
+    // write updated bot entry to bots.json
+    await CommandService.remoteCall('bot:list:patch', bot.path, botInfo);
+
     await CommandService.remoteCall('bot:save', bot);
 
     this.setDirtyFlag(false);
     this.setState({ bot });
 
-    connect && CommandService.call('livechat:new', endpointService);
-  };
+    connect && endpointService && CommandService.call('livechat:new', endpointService);
+  }
 
   private onSaveAndConnect = async e => {
     await this.onSave(e, connect);
@@ -179,6 +206,25 @@ class BotSettingsEditor extends React.Component<BotSettingsEditorProps, BotSetti
   private setDirtyFlag(dirty) {
     store.dispatch(EditorActions.setDirtyFlag(this.props.documentId, dirty));
   }
+
+  private showBotSaveDialog = async (): Promise<any> => {
+    // get a safe bot file name
+    const botFileName = await CommandService.remoteCall('file:sanitize-string', this.state.bot.name);
+    const dialogOptions = {
+      filters: [
+        {
+          name: "Bot Files",
+          extensions: ['bot']
+        }
+      ],
+      defaultPath: botFileName,
+      showsTagField: false,
+      title: "Save as",
+      buttonLabel: "Save"
+    };
+
+    return CommandService.remoteCall('shell:showSaveDialog', dialogOptions);
+  };
 
   render() {
     const disabled = !this.state.bot.name || !this.props.dirty;

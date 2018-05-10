@@ -31,9 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IFrameworkSettings, newBot, newEndpoint } from '@bfemulator/app-shared';
+import { IFrameworkSettings, newBot, newEndpoint, SharedConstants } from '@bfemulator/app-shared';
 import * as got from 'got';
 import { IBotConfig, IEndpointService } from 'msbot/bin/schema';
+import { BotConfigWithPath, IBotConfigWithPath } from '@bfemulator/sdk-shared';
 import * as Path from 'path';
 import * as QueryString from 'querystring';
 import { Protocol } from './constants';
@@ -177,8 +178,9 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
   private async openLiveChat(protocol: IProtocol): Promise<void> {
     // mock up a bot object
     const { botUrl, msaAppId, msaPassword } = protocol.parsedArgs;
-    const bot: IBotConfig = newBot();
-    bot.name = 'New bot';
+    const bot: IBotConfigWithPath = BotConfigWithPath.fromJSON(newBot());
+    bot.name = '';
+    bot.path = SharedConstants.TEMP_BOT_IN_MEMORY_PATH;
 
     const endpoint: IEndpointService = newEndpoint();
     endpoint.endpoint = botUrl;
