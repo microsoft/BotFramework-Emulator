@@ -40,7 +40,7 @@ import * as globals from './globals';
 const { lstatSync, readdirSync } = require('fs');
 const { join } = require('path');
 const os = require('os');
-const chardet = require('chardet');
+const readTextFile = require('read-text-file');
 
 const electron = require('electron'); // use a lowercase name "electron" to prevent clash with "Electron" namespace
 const electronApp: Electron.App = electron.app;
@@ -170,31 +170,9 @@ export const getFilesInDir = (path) => {
 
 export const readFileSync = (path: string): string => {
   try {
-    let encoding: string = chardet.detectFileSync(path);
-    if (encoding) {
-      encoding = encoding.toLowerCase();
-
-      if (SUPPORTED_ENCODINGS_BASE.findIndex(e => e === encoding) > -1) {
-        return Fs.readFileSync(path, encoding).trim();
-      }
-
-      // special case for ucs-2 / utf-16le
-      if (SUPPORTED_ENCODINGS_UCS2.findIndex(e => e === encoding) > -1) {
-        return Fs.readFileSync(path, 'ucs2').trim();
-      }
-
-      // special case for ISO-8859-1 / latin1
-      if (SUPPORTED_ENCODINGS_LATIN1.findIndex(e => e === encoding) > -1) {
-        return Fs.readFileSync(path, 'latin1').trim();
-      }
-
-      // encoding not supported by Node
-      throw new Error(`Error reading file ${path}: Encoding ${encoding} not supported by Node.`)
-    } else {
-      // bad encoding
-      throw new Error(`Error reading file ${path}: Couldn't detect encoding: ${encoding}`);
-    }
+    return readTextFile.readSync(path);
   } catch (e) {
+    console.error(`Error reading file ${path}: ${e}`);
     return '';
   }
 };
