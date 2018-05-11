@@ -43,7 +43,7 @@ const CSS = css({
   '& > input[type="checkbox"]': {
     cursor: 'pointer',
     width: '16px',
-    display: 'none'
+    opacity: 0
   },
 
   '& > label': {
@@ -73,7 +73,12 @@ const CSS = css({
     '[data-checked="true"]::after': {
       backgroundColor: Colors.C10,
       backgroundImage: `url('data:image/svg+xml;utf8,<svg width="12px" height="12px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g><polygon fill="#ffffff" id="path-1" points="13.6484375 3.6484375 14.3515625 4.3515625 6 12.7109375 1.6484375 8.3515625 2.3515625 7.6484375 6 11.2890625"/></g></svg>')`,
-    },
+    }
+  },
+
+  // when the hidden checkbox is focused, apply a focus style to the label
+  '& > input[type="checkbox"]:focus + label': {
+    outline: '-webkit-focus-ring-color auto 5px'
   }
 });
 
@@ -84,18 +89,28 @@ export interface CheckboxProps {
   inputClass?: string;
   label?: string;
   onChange?: (...args: any[]) => any;
+  tabIndex?: number;
 }
 
 export class Checkbox extends React.Component<CheckboxProps, {}> {
+  public static defaultProps: Partial<CheckboxProps> = {
+    checked: false,
+    label: '',
+    id: '_' + Math.floor(Math.random() * 99999),
+    className: '',
+    inputClass: '',
+    tabIndex: 0
+  }
+
   constructor(props: CheckboxProps, context) {
     super(props, context);
   }
 
   render(): JSX.Element {
-    const { checked = false, label = '', id = '_' + Math.floor(Math.random() * 99999), onChange, className='', inputClass='' } = this.props;
+    const { checked, label, id, onChange, className, inputClass, tabIndex } = this.props;
     return (
       <div className={ `${className} checkbox-comp` } { ...CSS }>
-        <input type="checkbox" checked={ checked } onChange={ onChange } id={ id } className={className}/>
+        <input className={className} type="checkbox" checked={ checked } onChange={ onChange } id={ id } tabIndex={ tabIndex }/>
         <label htmlFor={ id } data-checked={ checked }>{ label }</label>
       </div>
     );
