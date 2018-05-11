@@ -32,11 +32,10 @@
 //
 
 import { APIException, createErrorResponse, ErrorCodes, IBotInfo, IErrorResponse, mergeDeep } from '@bfemulator/app-shared';
-import { BrowserWindow, dialog, OpenDialogOptions, SaveDialogOptions, MessageBoxOptions } from 'electron';
+import { BrowserWindow, dialog, OpenDialogOptions, SaveDialogOptions } from 'electron';
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 import * as globals from './globals';
-import { mainWindow } from './main';
 
 const { lstatSync, readdirSync } = require('fs');
 const { join } = require('path');
@@ -174,13 +173,7 @@ export const readFileSync = (path: string): string => {
     return readTextFile.readSync(path);
   } catch (e) {
     console.error(`Error reading file ${path}: ${e}`);
-    const options: MessageBoxOptions = {
-      title: 'Error occurred:',
-      message: `Error reading file ${path}: ${e}`,
-      type: 'error'
-    };
-    showMessageBox(mainWindow.browserWindow, options);
-    return null;
+    return '';
   }
 };
 
@@ -206,10 +199,6 @@ export function showOpenDialog(window: BrowserWindow, options: OpenDialogOptions
 
 export function showSaveDialog(window: BrowserWindow, options: SaveDialogOptions): string {
   return dialog.showSaveDialog(window, options);
-}
-
-export function showMessageBox(window: BrowserWindow, options: MessageBoxOptions): number {
-  return dialog.showMessageBox(window, options);
 }
 
 /** Returns a starting name for a bot */
