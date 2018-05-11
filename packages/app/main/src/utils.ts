@@ -32,15 +32,16 @@
 //
 
 import { APIException, createErrorResponse, ErrorCodes, IBotInfo, IErrorResponse, mergeDeep } from '@bfemulator/app-shared';
-import { BrowserWindow, dialog, OpenDialogOptions, SaveDialogOptions } from 'electron';
+import { BrowserWindow, dialog, OpenDialogOptions, SaveDialogOptions, MessageBoxOptions } from 'electron';
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 import * as globals from './globals';
+import { mainWindow } from './main';
 
 const { lstatSync, readdirSync } = require('fs');
 const { join } = require('path');
 const os = require('os');
-const chardet = require('chardet');
+const readTextFile = require('read-text-file');
 
 const electron = require('electron'); // use a lowercase name "electron" to prevent clash with "Electron" namespace
 const electronApp: Electron.App = electron.app;
@@ -170,32 +171,16 @@ export const getFilesInDir = (path) => {
 
 export const readFileSync = (path: string): string => {
   try {
-    let encoding: string = chardet.detectFileSync(path);
-    if (encoding) {
-      encoding = encoding.toLowerCase();
-
-      if (SUPPORTED_ENCODINGS_BASE.findIndex(e => e === encoding) > -1) {
-        return Fs.readFileSync(path, encoding).trim();
-      }
-
-      // special case for ucs-2 / utf-16le
-      if (SUPPORTED_ENCODINGS_UCS2.findIndex(e => e === encoding) > -1) {
-        return Fs.readFileSync(path, 'ucs2').trim();
-      }
-
-      // special case for ISO-8859-1 / latin1
-      if (SUPPORTED_ENCODINGS_LATIN1.findIndex(e => e === encoding) > -1) {
-        return Fs.readFileSync(path, 'latin1').trim();
-      }
-
-      // encoding not supported by Node
-      throw new Error(`Error reading file ${path}: Encoding ${encoding} not supported by Node.`)
-    } else {
-      // bad encoding
-      throw new Error(`Error reading file ${path}: Couldn't detect encoding: ${encoding}`);
-    }
+    return readTextFile.readSync(path);
   } catch (e) {
-    return '';
+    console.error(`Error reading file ${path}: ${e}`);
+    const options: MessageBoxOptions = {
+      title: 'Error occurred:',
+      message: `Error reading file ${path}: ${e}`,
+      type: 'error'
+    };
+    showMessageBox(mainWindow.browserWindow, options);
+    return null;
   }
 };
 
@@ -221,6 +206,10 @@ export function showOpenDialog(window: BrowserWindow, options: OpenDialogOptions
 
 export function showSaveDialog(window: BrowserWindow, options: SaveDialogOptions): string {
   return dialog.showSaveDialog(window, options);
+}
+
+export function showMessageBox(window: BrowserWindow, options: MessageBoxOptions): number {
+  return dialog.showMessageBox(window, options);
 }
 
 /** Returns a starting name for a bot */
