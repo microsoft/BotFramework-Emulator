@@ -70,6 +70,13 @@ const CSS = css({
   }
 });
 
+const FOCUS_SENTINEL_CSS = css({
+  display: 'inline-block',
+  width: 0,
+  height: 0,
+  opacity: 0
+});
+
 class DialogHost extends React.Component<IDialogHostProps, IDialogHostState> {
   private _hostRef: HTMLElement;
 
@@ -102,17 +109,16 @@ class DialogHost extends React.Component<IDialogHostProps, IDialogHostState> {
   private initFocusTrap = () => {
     const allFocusableElements = this.getFocusableElementsInModal();
     if (allFocusableElements.length) {
-      // focus the first child after a delay
+      // focus the first child after a small delay (issue with react where child hasn't yet rendered fully)
       const firstChild: HTMLElement = allFocusableElements[0] as HTMLElement;
-      console.log('FOCUSING ON ', firstChild);
       setTimeout(() => firstChild.focus(), 250);
     }
   }
 
-  // Reached begining of focusable items inside the modal host, so re-focus the last item
+  // Reached begining of focusable items inside the modal host; re-focus the last item
   private onFocusStartingSentinel = (e: SyntheticEvent<any>) => {
-    console.log("FOCUSED START");
     e.preventDefault();
+
     const allFocusableElements = this.getFocusableElementsInModal();
     if (allFocusableElements.length) {
       const lastChild: HTMLElement = allFocusableElements[allFocusableElements.length - 1] as HTMLElement;
@@ -120,10 +126,10 @@ class DialogHost extends React.Component<IDialogHostProps, IDialogHostState> {
     }
   }
 
-  // Reached end of focusable items inside the modal host, so re-focus the first item
+  // Reached end of focusable items inside the modal host; re-focus the first item
   private onFocusEndingSentinel = (e: SyntheticEvent<any>) => {
-    console.log("FOCUSED END");
     e.preventDefault();
+
     const allFocusableElements = this.getFocusableElementsInModal();
     if (allFocusableElements.length) {
       const firstChild: HTMLElement = allFocusableElements[0] as HTMLElement;
@@ -134,15 +140,16 @@ class DialogHost extends React.Component<IDialogHostProps, IDialogHostState> {
   render() {
     const visibilityClass = this.props.showing ? ' dialog-host-visible' : '';
 
-    if (this.props.showing)
+    if (this.props.showing) {
       this.initFocusTrap();
+    }
 
     return (
       <div className={CSS + ' dialog-host-overlay' + visibilityClass} onClick={this.handleOverlayClick}>
-      <span tabIndex={ 0 } onFocus={ this.onFocusStartingSentinel } style={{ display: 'inline-block', width: 0, height: 0, opacity: 0 }}></span>
+      <span tabIndex={ 0 } onFocus={ this.onFocusStartingSentinel } { ...FOCUS_SENTINEL_CSS }></span>
         <div className="dialog-host-content" onClick={this.handleContentClick} ref={this.saveHostRef}>
         </div>
-        <span tabIndex={ 0 } onFocus={ this.onFocusEndingSentinel } style={{ display: 'inline-block', width: 0, height: 0, opacity: 0 }}></span>
+        <span tabIndex={ 0 } onFocus={ this.onFocusEndingSentinel } { ...FOCUS_SENTINEL_CSS }></span>
       </div>
     );
   }
