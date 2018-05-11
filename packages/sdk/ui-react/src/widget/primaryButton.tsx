@@ -109,11 +109,16 @@ export interface PrimaryButtonProps {
   className?: string;
   disabled?: boolean;
   onClick?: (...args: any[]) => any;
+  tabIndex?: number;
   text?: string;
   secondary?: boolean;
 }
 
 export class PrimaryButton extends React.Component<PrimaryButtonProps, {}> {
+  public static defaultProps: Partial<PrimaryButtonProps> = {
+    tabIndex: 0
+  }
+
   constructor(props: any, context: any) {
     super(props, context);
   }
@@ -121,7 +126,7 @@ export class PrimaryButton extends React.Component<PrimaryButtonProps, {}> {
   render(): JSX.Element {
     const colorClass = this.props.secondary ? SECONDARY_CSS : PRIMARY_CSS;
     return (
-      <button className={ [CSS, colorClass, this.props.className].filter(name => !!name).join(' ') } onClick={ this.props.onClick } disabled={ this.props.disabled }>
+      <button className={ [CSS, colorClass, this.props.className].filter(name => !!name).join(' ') } onClick={ this.props.onClick } disabled={ this.props.disabled } tabIndex={ this.props.tabIndex }>
         <TruncateText className="primary-button-text">{ this.props.text }</TruncateText>
       </button>
     );

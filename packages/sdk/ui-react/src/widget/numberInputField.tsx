@@ -96,10 +96,15 @@ export interface NumberInputFieldProps {
   placeholder?: string;
   readOnly?: boolean;
   required?: boolean;
+  tabIndex?: number;
   value?: number;
 }
 
 export class NumberInputField extends React.Component<NumberInputFieldProps, {}> {
+  public static defaultProps: Partial<NumberInputFieldProps> = {
+    tabIndex: 0
+  }
+
   constructor(props: NumberInputFieldProps, context: any) {
     super(props, context);
   }
@@ -124,6 +129,7 @@ export class NumberInputField extends React.Component<NumberInputFieldProps, {}>
       <div className={'number-input-comp ' + (this.props.className || '')} {...CSS}>
         { this.labelElement }
         <input type="number" className={ this.props.inputClass || '' } value={ this.props.value }
+               tabIndex={ this.props.tabIndex }
                aria-invalid={ !!this.props.error }
                onChange={ this.props.onChange }
                placeholder={ this.props.placeholder } readOnly={ this.props.readOnly } required={ this.props.required }

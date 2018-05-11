@@ -99,12 +99,27 @@ export interface TextInputFieldProps {
   placeholder?: string;
   readOnly?: boolean;
   required?: boolean;
+  tabIndex?: number;
   type?: TextInputType;
   value?: string;
   inputAttributes?: {}
 }
 
 export class TextInputField extends React.Component<TextInputFieldProps, {}> {
+  public static defaultProps: Partial<TextInputFieldProps> = {
+    inputClass: '',
+    className: '',
+    required: false,
+    disabled: false,
+    type: 'text',
+    value: '',
+    readOnly: false,
+    error: '',
+    inputAttributes: {},
+    placeholder: '',
+    tabIndex: 0
+  }
+
   constructor(props: TextInputFieldProps, context: any) {
     super(props, context);
   }
@@ -125,19 +140,7 @@ export class TextInputField extends React.Component<TextInputFieldProps, {}> {
   }
 
   public render(): JSX.Element {
-    const {
-      inputClass = '',
-      className = '',
-      required = false,
-      disabled = false,
-      type = 'text',
-      value = '',
-      readOnly = false,
-      error = '',
-      inputAttributes = {},
-      placeholder = '',
-      onChange
-    } = this.props;
+    const { inputClass, className, required, disabled, type, value, readOnly, error, inputAttributes, placeholder, onChange, tabIndex } = this.props;
 
     return (
       <div className={ 'text-input-comp ' + className } { ...CSS }>
@@ -150,7 +153,8 @@ export class TextInputField extends React.Component<TextInputFieldProps, {}> {
                disabled={ disabled }
                placeholder={ placeholder }
                readOnly={ readOnly }
-               required={ required } { ...inputAttributes }/>
+               required={ required } { ...inputAttributes }
+               tabIndex={ tabIndex }/>
         <sub style={ { opacity: +( !!error ) } } className="error">{ error }</sub>
       </div>
     );
