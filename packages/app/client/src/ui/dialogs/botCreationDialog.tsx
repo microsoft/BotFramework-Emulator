@@ -80,7 +80,7 @@ const CSS = css({
   },
 
   '& input::placeholder': {
-    color: Colors.INPUT_PLACEHOLDER_TEXT_DARK
+    color: Colors.INPUT_TEXT_PLACEHOLDER_DARK
   },
 
   '& .bot-creation-cta': {
