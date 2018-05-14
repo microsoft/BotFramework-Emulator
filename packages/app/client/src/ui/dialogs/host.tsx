@@ -121,8 +121,20 @@ class DialogHost extends React.Component<IDialogHostProps, IDialogHostState> {
 
     const allFocusableElements = this.getFocusableElementsInModal();
     if (allFocusableElements.length) {
-      const lastChild: HTMLElement = allFocusableElements[allFocusableElements.length - 1] as HTMLElement;
-      lastChild.focus();
+      let lastChild: HTMLElement = allFocusableElements[allFocusableElements.length - 1] as HTMLElement;
+
+      if (lastChild.hasAttribute('disabled')) {
+        // focus the last element in the list that isn't disabled
+        for (let i = allFocusableElements.length - 2; i >= 0; i--) {
+          lastChild = allFocusableElements[i] as HTMLElement;
+          if (!lastChild.hasAttribute('disabled')) {
+            lastChild.focus();
+            break;
+          }
+        }
+      } else {
+        lastChild.focus();
+      }
     }
   }
 
@@ -132,8 +144,20 @@ class DialogHost extends React.Component<IDialogHostProps, IDialogHostState> {
 
     const allFocusableElements = this.getFocusableElementsInModal();
     if (allFocusableElements.length) {
-      const firstChild: HTMLElement = allFocusableElements[0] as HTMLElement;
-      firstChild.focus();
+      let firstChild: HTMLElement = allFocusableElements[0] as HTMLElement;
+
+      if (firstChild.hasAttribute('disabled')) {
+        // focus the first element in the list that isn't disabled
+        for (let i = 1; i <= allFocusableElements.length - 1; i++) {
+          firstChild = allFocusableElements[i] as HTMLElement;
+          if (!firstChild.hasAttribute('disabled')) {
+            firstChild.focus();
+            break;
+          }
+        }
+      } else {
+        firstChild.focus();
+      }
     }
   }
 
@@ -145,9 +169,9 @@ class DialogHost extends React.Component<IDialogHostProps, IDialogHostState> {
     }
 
     return (
-      <div className={CSS + ' dialog-host-overlay' + visibilityClass} onClick={this.handleOverlayClick}>
+      <div className={ CSS + ' dialog-host-overlay' + visibilityClass } onClick={ this.handleOverlayClick }>
       <span tabIndex={ 0 } onFocus={ this.onFocusStartingSentinel } { ...FOCUS_SENTINEL_CSS }></span>
-        <div className="dialog-host-content" onClick={this.handleContentClick} ref={this.saveHostRef}>
+        <div className="dialog-host-content" onClick={ this.handleContentClick } ref={ this.saveHostRef }>
         </div>
         <span tabIndex={ 0 } onFocus={ this.onFocusEndingSentinel } { ...FOCUS_SENTINEL_CSS }></span>
       </div>
