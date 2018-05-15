@@ -46,15 +46,16 @@ interface IDialogHostState {
 }
 
 const CSS = css({
+  display: 'flex',
   position: 'absolute',
   top: 0,
   left: 0,
   right: 0,
   bottom: 0,
-  display: 'none',
   alignItems: 'center',
   justifyContent: 'center',
   backgroundColor: 'transparent',
+  pointerEvents: 'none',
 
   '& .dialog-host-content': {
     height: 'auto',
@@ -66,7 +67,7 @@ const CSS = css({
   },
 
   '&.dialog-host-visible': {
-    display: 'flex'
+    pointerEvents: 'auto'
   }
 });
 
@@ -82,6 +83,12 @@ class DialogHost extends React.Component<IDialogHostProps, IDialogHostState> {
 
   constructor(props, context) {
     super(props, context);
+  }
+
+  public componentDidMount() {
+    this._hostRef.addEventListener('dialogRendered', () => {
+      this.initFocusTrap();
+    });
   }
 
   private handleOverlayClick: EventHandler<any> = (event: MouseEvent) => {
@@ -109,9 +116,8 @@ class DialogHost extends React.Component<IDialogHostProps, IDialogHostState> {
   private initFocusTrap = () => {
     const allFocusableElements = this.getFocusableElementsInModal();
     if (allFocusableElements.length) {
-      // focus the first child after a small delay (issue with react where child hasn't yet rendered fully)
       const firstChild: HTMLElement = allFocusableElements[0] as HTMLElement;
-      setTimeout(() => firstChild.focus(), 250);
+      firstChild.focus();
     }
   }
 
@@ -163,17 +169,15 @@ class DialogHost extends React.Component<IDialogHostProps, IDialogHostState> {
 
   render() {
     const visibilityClass = this.props.showing ? ' dialog-host-visible' : '';
-
-    if (this.props.showing) {
-      this.initFocusTrap();
-    }
+    // sentinels shouldn't be tab-able when dialog is hidden
+    const sentinelTabIndex = this.props.showing ? 0 : -1;
 
     return (
       <div className={ CSS + ' dialog-host-overlay' + visibilityClass } onClick={ this.handleOverlayClick }>
-      <span tabIndex={ 0 } onFocus={ this.onFocusStartingSentinel } { ...FOCUS_SENTINEL_CSS }></span>
+        <span tabIndex={ sentinelTabIndex } onFocus={ this.onFocusStartingSentinel } { ...FOCUS_SENTINEL_CSS }></span>
         <div className="dialog-host-content" onClick={ this.handleContentClick } ref={ this.saveHostRef }>
         </div>
-        <span tabIndex={ 0 } onFocus={ this.onFocusEndingSentinel } { ...FOCUS_SENTINEL_CSS }></span>
+        <span tabIndex={ sentinelTabIndex } onFocus={ this.onFocusEndingSentinel } { ...FOCUS_SENTINEL_CSS }></span>
       </div>
     );
   }
