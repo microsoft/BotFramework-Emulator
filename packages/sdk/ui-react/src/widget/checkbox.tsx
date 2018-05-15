@@ -43,44 +43,74 @@ const CSS = css({
   '& > input[type="checkbox"]': {
     cursor: 'pointer',
     width: '16px',
-    opacity: 0
-  },
+    height: '16px',
+    margin: 0,
+    opacity: 0,
 
-  '& > label': {
-    fontFamily: Fonts.FONT_FAMILY_DEFAULT,
-    cursor: 'pointer',
-    lineHeight: '1.5',
-    marginLeft: '23px',
-
-    '&::after': {
-      content: '""',
-      position: 'absolute',
-      display: 'inline-block',
-      boxSizing: 'border-box',
-      border: '1px solid #666666',
-      width: '16px',
-      height: '16px',
-      left: 0,
-      top: '50%',
-      transform: 'translateY(calc(-50% - 1px))',
-      backgroundPosition: '1px 1px',
+    '&:focus ~ label': {
+      outline: `1px solid ${Colors.CHECKBOX_BORDER_FOCUS_DARK}`
     },
 
-    '&:hover::after': {
-      border: `1px solid ${Colors.C10}`
+    '&:checked + span.img-unchecked': {
+      display: 'none'
+    },
+
+    '&:checked ~ img.img-checked': {
+      display: 'inline-block'
     },
 
     '[data-checked="true"]::after': {
       backgroundColor: Colors.C10,
       backgroundImage: `url('data:image/svg+xml;utf8,<svg width="12px" height="12px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g><polygon fill="#ffffff" id="path-1" points="13.6484375 3.6484375 14.3515625 4.3515625 6 12.7109375 1.6484375 8.3515625 2.3515625 7.6484375 6 11.2890625"/></g></svg>')`,
+    },
+
+    '&:checked:disabled ~ img.img-checked-disabled': {
+      display: 'inline-block'
+    },
+
+    '&:disabled ~ label': {
+      color: Colors.CHECKBOX_TEXT_DISABLED_DARK
+    },
+
+    '&:disabled + span.img-unchecked': {
+      border: `solid 1px ${Colors.CHECKBOX_UNCHECKED_DISABLED_BORDER_DARK}`
     }
   },
 
-  // when the hidden checkbox is focused, apply a focus style to the label
-  '& > input[type="checkbox"]:focus + label': {
-    outline: '-webkit-focus-ring-color auto 5px'
+  '& > label': {
+    cursor: 'pointer',
+    display: 'inline-block',
+    marginLeft: '8px',
+    fontFamily: Fonts.FONT_FAMILY_DEFAULT,
+    fontSize: '13px',
+    lineHeight: '1.23',
+    color: Colors.CHECKBOX_TEXT_DARK
+  },
+
+  // float the checkbox images over the "real" checkbox input
+  '& > img, & > span.img-unchecked': {
+    position: 'absolute',
+    display: 'none',
+    left: 0,
+    top: 0,
+    height: '16px',
+    width: '16px',
+    objectFit: 'contain',
+    pointerEvents: 'none'
+  },
+
+  '& > span.img-unchecked': {
+    display: 'inline-block',
+    backgroundColor: Colors.CHECKBOX_UNCHECKED_BG_DARK,
+    border: `solid 1px ${Colors.CHECKBOX_UNCHECKED_BORDER_DARK}`,
+    boxSizing: 'border-box'
   }
 });
+
+// TODO: add these to a /media/ folder as .svg files and add a build step to /ui-react/ that copies that folder into /ui-react/built/
+// https://github.com/Microsoft/BotFramework-Emulator/issues/495
+const CHECKED_BOX_URI = `data:image/svg+xml;utf8,<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><polygon id="path-1" points="13.6484375 3.6484375 14.3515625 4.3515625 6 12.7109375 1.6484375 8.3515625 2.3515625 7.6484375 6 11.2890625"></polygon></defs><g id="Symbols" stroke="none" stroke-width="1" fill="${Colors.CHECKBOX_CHECKED_BG_DARK}" fill-rule="evenodd"><g id="Titles" transform="translate(-452.000000, -1266.000000)"></g><g id="Icons/General/check"><rect id="BG" x="0" y="0" width="16" height="16"></rect><mask id="mask-2" fill="white"><use xlink:href="#path-1"></use></mask><use id="check" fill="${Colors.CHECKBOX_CHECKED_FG_DARK}" xlink:href="#path-1"></use><g id="_color/Neutral-13-(333333)" mask="url(#mask-2)" fill="${Colors.CHECKBOX_CHECKED_FG_DARK}"><rect id="Rectangle-9" x="0" y="0" width="16" height="16"></rect></g></g></g></svg>`;
+const CHECKED_BOX_DISABLED_URI = `data:image/svg+xml;utf8,<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><polygon id="path-1" points="13.6484375 3.6484375 14.3515625 4.3515625 6 12.7109375 1.6484375 8.3515625 2.3515625 7.6484375 6 11.2890625"></polygon></defs><g id="Symbols" stroke="none" stroke-width="1" fill="${Colors.CHECKBOX_CHECKED_DISABLED_BG_DARK}" fill-rule="evenodd"><g id="Titles" transform="translate(-452.000000, -1266.000000)"></g><g id="Icons/General/check"><rect id="BG" x="0" y="0" width="16" height="16"></rect><mask id="mask-2" fill="white"><use xlink:href="#path-1"></use></mask><use id="check" fill="${Colors.CHECKBOX_CHECKED_DISABLED_FG_DARK}" xlink:href="#path-1"></use><g id="_color/Neutral-13-(333333)" mask="url(#mask-2)" fill="${Colors.CHECKBOX_CHECKED_DISABLED_FG_DARK}"><rect id="Rectangle-9" x="0" y="0" width="16" height="16"></rect></g></g></g></svg>`;
 
 export interface CheckboxProps {
   checked?: boolean;
@@ -110,7 +140,10 @@ export class Checkbox extends React.Component<CheckboxProps, {}> {
     const { checked, label, id, onChange, className, inputClass, tabIndex } = this.props;
     return (
       <div className={ `${className} checkbox-comp` } { ...CSS }>
-        <input className={className} type="checkbox" checked={ checked } onChange={ onChange } id={ id } tabIndex={ tabIndex }/>
+        <input className={ className } type="checkbox" checked={ checked } onChange={ onChange } id={ id } tabIndex={ tabIndex } />
+        <span className="img-unchecked"></span>
+        <img className="img-checked" src={ CHECKED_BOX_URI } />
+        <img className="img-checked-disabled" src={ CHECKED_BOX_DISABLED_URI } />
         <label htmlFor={ id } data-checked={ checked }>{ label }</label>
       </div>
     );

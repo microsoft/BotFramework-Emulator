@@ -42,7 +42,7 @@ const CSS = css({
   display: 'flex',
   flexFlow: 'column nowrap',
   width: '100%',
-  paddingBottom: '22px',
+  paddingBottom: '21px', // capable of containing 11px high error text with 10px padding
   fontFamily: Fonts.FONT_FAMILY_DEFAULT,
 
   '& > *': {
@@ -51,39 +51,72 @@ const CSS = css({
 
   '& > input': {
     transition: 'border .2s, ease-out',
-    height: '22px',
-    padding: '4px 8px',
+    height: '24px', // 22px input height + 1px border on top and bottom
+    padding: '5px 8px',
     boxSizing: 'border-box',
-    border: '1px solid transparent',
+    border: `1px solid ${Colors.INPUT_BORDER_DARK}`,
+    backgroundColor: Colors.INPUT_BACKGROUND_DARK,
     width: '100%',
+    fontSize: '12px',
+    lineHeight: 1,
+    outline: 0,
 
     '&[aria-invalid="true"]': {
-      border: `1px solid ${Colors.C15}`
+      border: `1px solid ${Colors.INPUT_ERR_DARK}`,
+
+      '&:focus': {
+        border: `1px solid ${Colors.INPUT_ERR_DARK}`
+      }
+    },
+
+    '&:focus': {
+      border: `1px solid ${Colors.INPUT_BORDER_FOCUS_DARK}`,
+      outline: 0
+    },
+
+    '&::placeholder': {
+      color: Colors.INPUT_TEXT_PLACEHOLDER_DARK
+    },
+
+    '&:disabled': {
+      color: Colors.INPUT_TEXT_DISABLED_DARK,
+      backgroundColor: Colors.INPUT_BACKGROUND_DARK
     }
   },
 
   '& > .text-input-label': {
-    fontSize: '12px',
-    height: '16px',
-    lineHeight: '16px',
-    marginBottom: '6px'
+    fontSize: '11px',
+    height: '11px',
+    lineHeight: 1,
+    marginBottom: '4px',
+
+    '&.disabled': {
+      color: Colors.INPUT_TEXT_DISABLED_DARK,
+
+      '&.required::after': {
+        color: Colors.INPUT_TEXT_DISABLED_DARK
+      }
+    },
+
+    '&.required::after': {
+      content: '*',
+      color: Colors.INPUT_ERR_DARK,
+      paddingLeft: '2px'
+    }
   },
 
   '& .error': {
-    color: Colors.C15,
-  },
-
-  '& > .required::after': {
-    content: '*',
-    color: Colors.C15,
-    paddingLeft: '3px'
+    color: Colors.INPUT_ERR_DARK,
   },
 
   '> sub': {
     transition: 'opacity .2s, ease-out',
     opacity: '0',
     position: 'absolute',
-    bottom: '6px'
+    bottom: '6px',
+    lineHeight: 1,
+    fontSize: '11px',
+    height: '11px'
   }
 });
 
@@ -125,7 +158,7 @@ export class TextInputField extends React.Component<TextInputFieldProps, {}> {
   }
 
   protected get labelElement(): JSX.Element {
-    const { label, required, error } = this.props;
+    const { label, required, error, disabled } = this.props;
     if (!label) {
       return null;
     }
@@ -135,6 +168,9 @@ export class TextInputField extends React.Component<TextInputFieldProps, {}> {
     }
     if (error) {
       className += ' error';
+    }
+    if (disabled) {
+      className += ' disabled';
     }
     return ( <TruncateText className={ className }>{ label }</TruncateText> );
   }
