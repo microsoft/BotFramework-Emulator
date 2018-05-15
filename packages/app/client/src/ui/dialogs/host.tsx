@@ -86,9 +86,7 @@ class DialogHost extends React.Component<IDialogHostProps, IDialogHostState> {
   }
 
   public componentDidMount() {
-    this._hostRef.addEventListener('dialogRendered', () => {
-      this.initFocusTrap();
-    });
+    this._hostRef.addEventListener('dialogRendered', this.initFocusTrap);
   }
 
   private handleOverlayClick: EventHandler<any> = (event: MouseEvent) => {
