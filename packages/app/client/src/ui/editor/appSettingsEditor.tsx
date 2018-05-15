@@ -79,7 +79,12 @@ const CSS = css({
   },
 
   '& .checkboxOverrides': {
-    marginBottom: '16px'
+    marginBottom: '16px',
+
+    // TODO: Need light / dark theming
+    '& > label': {
+      color: Colors.APP_FOREGROUND_DARK
+    }
   }
 });
 
