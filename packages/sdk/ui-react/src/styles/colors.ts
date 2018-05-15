@@ -74,8 +74,6 @@ export namespace Colors {
   export const C39 = '#808080';
   export const C40 = '#0E70C4';
   export const C41 = '#D02E00';
-  export const C42 = '#888888';
-  export const C43 = '#C8C8C8';
 
   export const APP_BACKGROUND_DARK = C8;
   export const APP_FOREGROUND_DARK = C2;
@@ -164,9 +162,9 @@ export namespace Colors {
 
   export const INPUT_BACKGROUND_DARK = 'transparent';
   export const INPUT_TEXT_DARK = C31;
-  export const INPUT_TEXT_PLACEHOLDER_DARK = C42;
-  export const INPUT_TEXT_DISABLED_DARK = C42;
-  export const INPUT_BORDER_DARK = C43;
+  export const INPUT_TEXT_PLACEHOLDER_DARK = C26;
+  export const INPUT_TEXT_DISABLED_DARK = C26;
+  export const INPUT_BORDER_DARK = C36;
   export const INPUT_BORDER_FOCUS_DARK = C40;
   export const INPUT_ERR_DARK = C41;
 
