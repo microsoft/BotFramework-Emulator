@@ -74,6 +74,7 @@ export namespace Colors {
   export const C39 = '#808080';
   export const C40 = '#0E70C4';
   export const C41 = '#D02E00';
+  export const C42 = '#666666';
 
   export const APP_BACKGROUND_DARK = C8;
   export const APP_FOREGROUND_DARK = C2;
@@ -174,4 +175,16 @@ export namespace Colors {
 
   export const STATUS_BAR_BACKGROUND_DARK = C38;
   export const STATUS_BAR_FOREGROUND_DARK = C4;
+
+  export const CHECKBOX_TEXT_DARK = C29;
+  export const CHECKBOX_TEXT_DISABLED_DARK = C26;
+
+  export const CHECKBOX_UNCHECKED_BG_DARK = 'transparent';
+  export const CHECKBOX_UNCHECKED_BORDER_DARK = C42;
+  export const CHECKBOX_UNCHECKED_DISABLED_BORDER_DARK = C34;
+
+  export const CHECKBOX_CHECKED_BG_DARK = C38;
+  export const CHECKBOX_CHECKED_FG_DARK = C4;
+  export const CHECKBOX_CHECKED_DISABLED_BG_DARK = C36;
+  export const CHECKBOX_CHECKED_DISABLED_FG_DARK = C26;
 }
