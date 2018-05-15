@@ -52,7 +52,7 @@ const CSS = css({
   '& > input': {
     transition: 'border .2s, ease-out',
     height: '24px', // 22px input height + 1px border on top and bottom
-    padding: '5px 8px 5px 8px',
+    padding: '5px 8px',
     boxSizing: 'border-box',
     border: `1px solid ${Colors.INPUT_BORDER_DARK}`,
     backgroundColor: Colors.INPUT_BACKGROUND_DARK,
