@@ -176,6 +176,7 @@ export namespace Colors {
   export const STATUS_BAR_BACKGROUND_DARK = C38;
   export const STATUS_BAR_FOREGROUND_DARK = C4;
 
+  export const CHECKBOX_BORDER_FOCUS_DARK = C40;
   export const CHECKBOX_TEXT_DARK = C29;
   export const CHECKBOX_TEXT_DISABLED_DARK = C26;
 

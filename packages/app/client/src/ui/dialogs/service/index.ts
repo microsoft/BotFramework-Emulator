@@ -54,7 +54,7 @@ export const DialogService = new class implements IDialogService {
       return new Promise((resolve, reject) => resolve(null));
     }
     const reactElement = React.createElement(Provider, { store }, React.createElement(dialog, props));
-    ReactDOM.render(reactElement, this._hostElement);
+    ReactDOM.render(reactElement, this._hostElement, this.notifyHostOfRender);
     store.dispatch(DialogActions.setShowing(true));
 
     // set up the dialog to return a value from the dialog
@@ -78,4 +78,11 @@ export const DialogService = new class implements IDialogService {
   setHost(hostElement: HTMLElement): void {
     this._hostElement = hostElement;
   }
+
+  /** Notifies the dialog host that the shown dialog has finished rendering */
+  private notifyHostOfRender = (): void => {
+    if (this._hostElement) {
+      this._hostElement.dispatchEvent(new Event('dialogRendered'));
+    }
+  } 
 };

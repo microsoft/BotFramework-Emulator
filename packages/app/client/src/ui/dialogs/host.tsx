@@ -33,7 +33,7 @@
 
 import { css } from 'glamor';
 import * as React from 'react';
-import { EventHandler } from 'react';
+import { EventHandler, SyntheticEvent } from 'react';
 import { connect } from 'react-redux';
 import { DialogService } from './service';
 
@@ -46,15 +46,16 @@ interface IDialogHostState {
 }
 
 const CSS = css({
+  display: 'flex',
   position: 'absolute',
   top: 0,
   left: 0,
   right: 0,
   bottom: 0,
-  display: 'none',
   alignItems: 'center',
   justifyContent: 'center',
   backgroundColor: 'transparent',
+  pointerEvents: 'none',
 
   '& .dialog-host-content': {
     height: 'auto',
@@ -66,13 +67,26 @@ const CSS = css({
   },
 
   '&.dialog-host-visible': {
-    display: 'flex'
+    pointerEvents: 'auto'
   }
 });
 
+const FOCUS_SENTINEL_CSS = css({
+  display: 'inline-block',
+  width: 0,
+  height: 0,
+  opacity: 0
+});
+
 class DialogHost extends React.Component<IDialogHostProps, IDialogHostState> {
+  private _hostRef: HTMLElement;
+
   constructor(props, context) {
     super(props, context);
+  }
+
+  public componentDidMount() {
+    this._hostRef.addEventListener('dialogRendered', this.initFocusTrap);
   }
 
   private handleOverlayClick: EventHandler<any> = (event: MouseEvent) => {
@@ -85,17 +99,83 @@ class DialogHost extends React.Component<IDialogHostProps, IDialogHostState> {
     event.stopPropagation();
   };
 
-  private saveHostRef = (elem) => {
+  private saveHostRef = (elem: HTMLElement) => {
     DialogService.setHost(elem);
+    this._hostRef = elem;
   };
+
+  private getFocusableElementsInModal = (): NodeList => {
+    if (this._hostRef) {
+      return this._hostRef.querySelectorAll('[tabIndex]:not([tabIndex="-1"])');
+    }
+    return new NodeList();
+  }
+
+  private initFocusTrap = () => {
+    const allFocusableElements = this.getFocusableElementsInModal();
+    if (allFocusableElements.length) {
+      const firstChild: HTMLElement = allFocusableElements[0] as HTMLElement;
+      firstChild.focus();
+    }
+  }
+
+  // Reached begining of focusable items inside the modal host; re-focus the last item
+  private onFocusStartingSentinel = (e: SyntheticEvent<any>) => {
+    e.preventDefault();
+
+    const allFocusableElements = this.getFocusableElementsInModal();
+    if (allFocusableElements.length) {
+      let lastChild: HTMLElement = allFocusableElements[allFocusableElements.length - 1] as HTMLElement;
+
+      if (lastChild.hasAttribute('disabled')) {
+        // focus the last element in the list that isn't disabled
+        for (let i = allFocusableElements.length - 2; i >= 0; i--) {
+          lastChild = allFocusableElements[i] as HTMLElement;
+          if (!lastChild.hasAttribute('disabled')) {
+            lastChild.focus();
+            break;
+          }
+        }
+      } else {
+        lastChild.focus();
+      }
+    }
+  }
+
+  // Reached end of focusable items inside the modal host; re-focus the first item
+  private onFocusEndingSentinel = (e: SyntheticEvent<any>) => {
+    e.preventDefault();
+
+    const allFocusableElements = this.getFocusableElementsInModal();
+    if (allFocusableElements.length) {
+      let firstChild: HTMLElement = allFocusableElements[0] as HTMLElement;
+
+      if (firstChild.hasAttribute('disabled')) {
+        // focus the first element in the list that isn't disabled
+        for (let i = 1; i <= allFocusableElements.length - 1; i++) {
+          firstChild = allFocusableElements[i] as HTMLElement;
+          if (!firstChild.hasAttribute('disabled')) {
+            firstChild.focus();
+            break;
+          }
+        }
+      } else {
+        firstChild.focus();
+      }
+    }
+  }
 
   render() {
     const visibilityClass = this.props.showing ? ' dialog-host-visible' : '';
+    // sentinels shouldn't be tab-able when dialog is hidden
+    const sentinelTabIndex = this.props.showing ? 0 : -1;
 
     return (
-      <div className={CSS + ' dialog-host-overlay' + visibilityClass} onClick={this.handleOverlayClick}>
-        <div className="dialog-host-content" onClick={this.handleContentClick} ref={this.saveHostRef}>
+      <div className={ CSS + ' dialog-host-overlay' + visibilityClass } onClick={ this.handleOverlayClick }>
+        <span tabIndex={ sentinelTabIndex } onFocus={ this.onFocusStartingSentinel } { ...FOCUS_SENTINEL_CSS }></span>
+        <div className="dialog-host-content" onClick={ this.handleContentClick } ref={ this.saveHostRef }>
         </div>
+        <span tabIndex={ sentinelTabIndex } onFocus={ this.onFocusEndingSentinel } { ...FOCUS_SENTINEL_CSS }></span>
       </div>
     );
   }
