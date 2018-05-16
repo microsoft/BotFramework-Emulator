@@ -72,6 +72,9 @@ const CSS = css({
       opacity: 0.6
     },
 
+    // TODO: Add focus state
+    // https://github.com/Microsoft/BotFramework-Emulator/issues/571
+
     '&.bot-explorer': {
       backgroundImage: 'url(./external/media/ic_bot_explorer.svg)'
     },
