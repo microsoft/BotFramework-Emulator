@@ -86,6 +86,10 @@ const CSS = css({
     '& > label': {
       color: Colors.APP_FOREGROUND_DARK
     }
+  },
+
+  '& .app-settings-input': {
+    color: Colors.APP_FOREGROUND_DARK
   }
 });
 
@@ -256,15 +260,15 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
             <SmallHeader>Service</SmallHeader>
             <p><a href="https://ngrok.com/" target="_blank">ngrok</a> is network tunneling software. The Bot Framework Emulator works with ngrok to communicate with bots hosted remotely. Read the <a href="https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)" target="_blank">wiki page</a> to learn more about using ngrok and to download it.</p>
             <Row align={ RowAlignment.Center }>
-              <TextInputField readOnly={ false } value={ uncommitted.ngrokPath } onChange={ this.onChangeNgrok } label={ 'Path to ngrok' } />
+              <TextInputField inputClass="app-settings-input" readOnly={ false } value={ uncommitted.ngrokPath } onChange={ this.onChangeNgrok } label={ 'Path to ngrok' } />
               <PrimaryButton onClick={ this.onClickBrowse } text="Browse" className="browse-button" />
             </Row>
             <Checkbox className="checkboxOverrides" checked={ uncommitted.bypassNgrokLocalhost } onChange={ this.onChangeNgrokBypass } id="ngrok-bypass" label="Bypass ngrok for local addresses" />
             <Row align={ RowAlignment.Center }>
-              <TextInputField readOnly={ false } value={ uncommitted.localhost } onChange={ this.onChangeLocalhost } label="localhost override" />
+              <TextInputField inputClass="app-settings-input" readOnly={ false } value={ uncommitted.localhost } onChange={ this.onChangeLocalhost } label="localhost override" />
             </Row>
             <Row align={ RowAlignment.Center }>
-              <TextInputField readOnly={ false } value={ uncommitted.locale } onChange={ this.onChangeLocale } label="Locale" />
+              <TextInputField inputClass="app-settings-input" readOnly={ false } value={ uncommitted.locale } onChange={ this.onChangeLocale } label="Locale" />
             </Row>
          </Column>
          <Column className="right-column">

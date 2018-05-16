@@ -38,14 +38,11 @@ export const ContentType_Transcript = 'application/vnd.microsoft.bfemulator.docu
 export const ContentType_LiveChat = 'application/vnd.microsoft.bfemulator.document.livechat';
 export const ContentType_TestBed = 'application/vnd.microsoft.bfemulator.testbed';
 
-export const NavBar_App = 'navbar.app';
 export const NavBar_Bot_Explorer = 'navbar.botExplorer';
-export const NavBar_Assets = 'navbar.assets';
 export const NavBar_Services = 'navbar.services';
 export const NavBar_Analytics = 'navbar.analytics';
 export const NavBar_Settings = 'navbar.settings';
 export const NavBar_Notifications = 'navbar.notifications';
-export const NavBar_User = 'navbar.user';
 
 export const EditorKey_Primary = 'primary';
 export const EditorKey_Secondary = 'secondary';
