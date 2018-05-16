@@ -58,4 +58,4 @@ const mapDispatchToProps = dispatch => {
 export const QnaMakerExplorerContainer = connect(
   mapStateToProps,
   mapDispatchToProps
-)(QnaMakerExplorer) as any;
+)(QnaMakerExplorer as any) as any;

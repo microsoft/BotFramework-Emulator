@@ -211,7 +211,7 @@ class CognitiveServicesHelper {
         }
         const parser = new DOMParser();
         const dom = parser.parseFromString(ssml, 'text/xml');
-        const nodes = dom.documentElement.childNodes;
+        const nodes = dom.documentElement.childNodes as NodeListOf<HTMLElement>;
 
         // Check if there is a voice node
         for (let i = 0; i < nodes.length; ++i) {
@@ -243,7 +243,7 @@ class CognitiveServicesHelper {
         const serializer = new XMLSerializer();
         if (!processDone) {
             // There is no voice element, add one based on locale
-            const voiceNode = dom.createElement("voice") as Node;
+            const voiceNode = dom.createElement("voice") as HTMLElement;
             const attribute = dom.createAttribute("name");
             attribute.value = (synthesisProperties && synthesisProperties.voiceName) || this.fetchVoiceName(locale, gender);
             voiceNode.attributes.setNamedItem(attribute);

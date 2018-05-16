@@ -1,16 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = require("tslib");
-var React = require("react");
-var ReactDOM = require("react-dom");
-var Chat_1 = require("./Chat");
-var konsole = require("./Konsole");
-exports.App = function (props, container) {
+const React = require("react");
+const ReactDOM = require("react-dom");
+const Chat_1 = require("./Chat");
+const konsole = require("./Konsole");
+exports.App = (props, container) => {
     konsole.log("BotChat.App props", props);
     ReactDOM.render(React.createElement(AppContainer, props), container);
 };
-var AppContainer = function (props) {
-    return React.createElement("div", { className: "wc-app" },
-        React.createElement(Chat_1.Chat, tslib_1.__assign({}, props)));
-};
+const AppContainer = (props) => React.createElement("div", { className: "wc-app" },
+    React.createElement(Chat_1.Chat, Object.assign({}, props)));
 //# sourceMappingURL=App.js.map

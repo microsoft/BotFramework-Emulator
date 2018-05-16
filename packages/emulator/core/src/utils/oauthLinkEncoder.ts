@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import IActivity from '../types/activity/activity';
 import IGenericActivity from '../types/activity/generic';
 
 import AttachmentContentTypes from '../types/attachment/contentTypes';
@@ -39,7 +38,6 @@ import IOAuthCard from '../types/card/oAuth';
 import uniqueId from '../utils/uniqueId';
 import * as request from 'request';
 import * as http from 'http';
-import * as URL from 'url';
 import IAttachment from '../types/attachment';
 const utf8 = require('utf8');
 const btoa = require('btoa');

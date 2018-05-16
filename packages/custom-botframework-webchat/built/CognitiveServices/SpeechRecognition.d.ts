@@ -1,4 +1,4 @@
-import { Speech, Func, Action } from '../SpeechModule';
+import { Action, Func, Speech } from '../SpeechModule';
 export interface ICognitiveServicesSpeechRecognizerProperties {
     locale?: string;
     subscriptionKey?: string;

@@ -35,7 +35,7 @@ import { merge } from 'glamor';
 import * as React from 'react';
 import { Component, SyntheticEvent } from 'react';
 import { Colors, Fonts } from '../styles';
-import { filterChildren } from '../utils';
+import { filterChildren, hmrSafeNameComparison } from '../utils';
 
 export interface ModalProps {
   title?: string;
@@ -58,10 +58,10 @@ export class Modal extends Component<ModalProps, {}> {
         { this.sectionHeader }
         <div className="modalContentContainer">
           <p>{ detailedDescription }</p>
-          { filterChildren(children, child => child.type === ModalContent) }
+          { filterChildren(children, child => hmrSafeNameComparison(child.type, ModalContent)) }
         </div>
         <div className="buttonGroup">
-          { filterChildren(children, child => child.type === ModalActions) }
+          { filterChildren(children, child => hmrSafeNameComparison(child.type, ModalActions)) }
         </div>
       </section>
     );
@@ -74,7 +74,8 @@ export class Modal extends Component<ModalProps, {}> {
         <button tabIndex={ 0 } { ...merge(this.closeButtonCss, closeButtonCssOverrides) } onClick={ cancel }>
           <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='1 1 16 16'>
             <g>
-              <polygon points="14.1015625 2.6015625 8.7109375 8 14.1015625 13.3984375 13.3984375 14.1015625 8 8.7109375 2.6015625 14.1015625 1.8984375 13.3984375 7.2890625 8 1.8984375 2.6015625 2.6015625 1.8984375 8 7.2890625 13.3984375 1.8984375"/>
+              <polygon
+                points="14.1015625 2.6015625 8.7109375 8 14.1015625 13.3984375 13.3984375 14.1015625 8 8.7109375 2.6015625 14.1015625 1.8984375 13.3984375 7.2890625 8 1.8984375 2.6015625 2.6015625 1.8984375 8 7.2890625 13.3984375 1.8984375"/>
             </g>
           </svg>
         </button>

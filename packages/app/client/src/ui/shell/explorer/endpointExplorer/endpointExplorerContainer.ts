@@ -58,4 +58,4 @@ const mapDispatchToProps = dispatch => {
 export const EndpointExplorerContainer = connect(
   mapStateToProps,
   mapDispatchToProps
-)(EndpointExplorer) as any;
+)(EndpointExplorer as any) as any;

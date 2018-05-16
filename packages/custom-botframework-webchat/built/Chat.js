@@ -1,85 +1,82 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = require("tslib");
-var React = require("react");
-var react_dom_1 = require("react-dom");
-var custom_botframework_directlinejs_1 = require("@bfemulator/custom-botframework-directlinejs");
-var Store_1 = require("./Store");
-var react_redux_1 = require("react-redux");
-var SpeechModule_1 = require("./SpeechModule");
-var konsole = require("./Konsole");
-var getTabIndex_1 = require("./getTabIndex");
-var History_1 = require("./History");
-var MessagePane_1 = require("./MessagePane");
-var SuggestedActions_1 = require("./SuggestedActions");
-var Shell_1 = require("./Shell");
-var Chat = /** @class */ (function (_super) {
-    tslib_1.__extends(Chat, _super);
-    function Chat(props) {
-        var _this = _super.call(this, props) || this;
-        _this.resizeListener = function () { return _this.setSize(); };
-        _this._handleCardAction = _this.handleCardAction.bind(_this);
-        _this._handleKeyDownCapture = _this.handleKeyDownCapture.bind(_this);
-        _this._saveChatviewPanelRef = _this.saveChatviewPanelRef.bind(_this);
-        _this._saveHistoryRef = _this.saveHistoryRef.bind(_this);
-        _this._saveShellRef = _this.saveShellRef.bind(_this);
+const React = require("react");
+const react_dom_1 = require("react-dom");
+const custom_botframework_directlinejs_1 = require("@bfemulator/custom-botframework-directlinejs");
+const Store_1 = require("./Store");
+const react_redux_1 = require("react-redux");
+const SpeechModule_1 = require("./SpeechModule");
+const konsole = require("./Konsole");
+const getTabIndex_1 = require("./getTabIndex");
+const History_1 = require("./History");
+const MessagePane_1 = require("./MessagePane");
+const SuggestedActions_1 = require("./SuggestedActions");
+const Shell_1 = require("./Shell");
+class Chat extends React.Component {
+    constructor(props) {
+        super(props);
+        this.resizeListener = () => this.setSize();
+        this._handleCardAction = this.handleCardAction.bind(this);
+        this._handleKeyDownCapture = this.handleKeyDownCapture.bind(this);
+        this._saveChatviewPanelRef = this.saveChatviewPanelRef.bind(this);
+        this._saveHistoryRef = this.saveHistoryRef.bind(this);
+        this._saveShellRef = this.saveShellRef.bind(this);
         konsole.log("BotChat.Chat props", props);
-        _this.store = props.store || Store_1.createStore();
-        _this.store.dispatch({
+        this.store = props.store || Store_1.createStore();
+        this.store.dispatch({
             type: 'Set_Locale',
             locale: props.locale || window.navigator["userLanguage"] || window.navigator.language || 'en'
         });
         if (props.adaptiveCardsHostConfig) {
-            _this.store.dispatch({
+            this.store.dispatch({
                 type: 'Set_AdaptiveCardsHostConfig',
                 payload: props.adaptiveCardsHostConfig
             });
         }
         if (props.formatOptions) {
-            _this.store.dispatch({ type: 'Set_Format_Options', options: props.formatOptions });
+            this.store.dispatch({ type: 'Set_Format_Options', options: props.formatOptions });
         }
         if (props.sendTyping) {
-            _this.store.dispatch({ type: 'Set_Send_Typing', sendTyping: props.sendTyping });
+            this.store.dispatch({ type: 'Set_Send_Typing', sendTyping: props.sendTyping });
         }
         if (typeof props.showShell === 'boolean') {
-            _this.store.dispatch({ type: 'Set_Visible', visible: props.showShell });
+            this.store.dispatch({ type: 'Set_Visible', visible: props.showShell });
         }
         if (props.speechOptions) {
             SpeechModule_1.Speech.SpeechRecognizer.setSpeechRecognizer(props.speechOptions.speechRecognizer);
             SpeechModule_1.Speech.SpeechSynthesizer.setSpeechSynthesizer(props.speechOptions.speechSynthesizer);
         }
-        return _this;
     }
-    Chat.prototype.handleIncomingActivity = function (activity) {
-        var state = this.store.getState();
+    handleIncomingActivity(activity) {
+        let state = this.store.getState();
         switch (activity.type) {
             case "message":
-                this.store.dispatch({ type: activity.from.id === state.connection.user.id ? 'Receive_Sent_Message' : 'Receive_Message', activity: activity });
+                this.store.dispatch({ type: activity.from.id === state.connection.user.id ? 'Receive_Sent_Message' : 'Receive_Message', activity });
                 break;
             case "typing":
                 if (activity.from.id !== state.connection.user.id)
-                    this.store.dispatch({ type: 'Show_Typing', activity: activity });
+                    this.store.dispatch({ type: 'Show_Typing', activity });
                 break;
         }
-    };
-    Chat.prototype.setSize = function () {
+    }
+    setSize() {
         this.store.dispatch({
             type: 'Set_Size',
             width: this.chatviewPanelRef.offsetWidth,
             height: this.chatviewPanelRef.offsetHeight
         });
-    };
-    Chat.prototype.handleCardAction = function () {
+    }
+    handleCardAction() {
         // After the user click on any card action, we will "blur" the focus, by setting focus on message pane
         // This is for after click on card action, the user press "A", it should go into the chat box
-        var historyDOM = react_dom_1.findDOMNode(this.historyRef);
+        const historyDOM = react_dom_1.findDOMNode(this.historyRef);
         if (historyDOM) {
             historyDOM.focus();
         }
-    };
-    Chat.prototype.handleKeyDownCapture = function (evt) {
-        var target = evt.target;
-        var tabIndex = getTabIndex_1.getTabIndex(target);
+    }
+    handleKeyDownCapture(evt) {
+        const target = evt.target;
+        const tabIndex = getTabIndex_1.getTabIndex(target);
         if (evt.altKey
             || evt.ctrlKey
             || evt.metaKey
@@ -93,7 +90,7 @@ var Chat = /** @class */ (function (_super) {
             || typeof tabIndex !== 'number'
             || tabIndex < 0) {
             evt.stopPropagation();
-            var key = void 0;
+            let key;
             // Quirks: onKeyDown we re-focus, but the newly focused element does not receive the subsequent onKeyPress event
             //         It is working in Chrome/Firefox/IE, confirmed not working in Edge/16
             //         So we are manually appending the key if they can be inputted in the box
@@ -102,53 +99,52 @@ var Chat = /** @class */ (function (_super) {
             }
             this.shellRef.focus(key);
         }
-    };
-    Chat.prototype.saveChatviewPanelRef = function (chatviewPanelRef) {
+    }
+    saveChatviewPanelRef(chatviewPanelRef) {
         this.chatviewPanelRef = chatviewPanelRef;
-    };
-    Chat.prototype.saveHistoryRef = function (historyWrapper) {
+    }
+    saveHistoryRef(historyWrapper) {
         if (!historyWrapper) {
             this.historyRef = null;
             return;
         }
         this.historyRef = historyWrapper.getWrappedInstance();
-    };
-    Chat.prototype.saveShellRef = function (shellWrapper) {
+    }
+    saveShellRef(shellWrapper) {
         if (!shellWrapper) {
             this.shellRef = null;
             return;
         }
         this.shellRef = shellWrapper.getWrappedInstance();
-    };
-    Chat.prototype.componentDidMount = function () {
-        var _this = this;
+    }
+    componentDidMount() {
         // Now that we're mounted, we know our dimensions. Put them in the store (this will force a re-render)
         this.setSize();
-        var botConnection = this.props.directLine
+        const botConnection = this.props.directLine
             ? (this.botConnection = new custom_botframework_directlinejs_1.DirectLine(this.props.directLine))
             : this.props.botConnection;
         if (this.props.resize === 'window')
             window.addEventListener('resize', this.resizeListener);
-        this.store.dispatch({ type: 'Start_Connection', user: this.props.user, bot: this.props.bot, botConnection: botConnection, selectedActivity: this.props.selectedActivity });
-        this.connectionStatusSubscription = botConnection.connectionStatus$.subscribe(function (connectionStatus) {
-            if (_this.props.speechOptions && _this.props.speechOptions.speechRecognizer) {
-                var refGrammarId = botConnection.referenceGrammarId;
+        this.store.dispatch({ type: 'Start_Connection', user: this.props.user, bot: this.props.bot, botConnection, selectedActivity: this.props.selectedActivity });
+        this.connectionStatusSubscription = botConnection.connectionStatus$.subscribe(connectionStatus => {
+            if (this.props.speechOptions && this.props.speechOptions.speechRecognizer) {
+                let refGrammarId = botConnection.referenceGrammarId;
                 if (refGrammarId)
-                    _this.props.speechOptions.speechRecognizer.referenceGrammarId = refGrammarId;
+                    this.props.speechOptions.speechRecognizer.referenceGrammarId = refGrammarId;
             }
-            _this.store.dispatch({ type: 'Connection_Change', connectionStatus: connectionStatus });
+            this.store.dispatch({ type: 'Connection_Change', connectionStatus });
         });
-        this.activitySubscription = botConnection.activity$.subscribe(function (activity) { return _this.handleIncomingActivity(activity); }, function (error) { return konsole.log("activity$ error", error); });
+        this.activitySubscription = botConnection.activity$.subscribe(activity => this.handleIncomingActivity(activity), error => konsole.log("activity$ error", error));
         if (this.props.selectedActivity) {
-            this.selectedActivitySubscription = this.props.selectedActivity.subscribe(function (activityOrID) {
-                _this.store.dispatch({
+            this.selectedActivitySubscription = this.props.selectedActivity.subscribe(activityOrID => {
+                this.store.dispatch({
                     type: 'Select_Activity',
-                    selectedActivity: activityOrID.activity || _this.store.getState().history.activities.find(function (activity) { return activity.id === activityOrID.id; })
+                    selectedActivity: activityOrID.activity || this.store.getState().history.activities.find(activity => activity.id === activityOrID.id)
                 });
             });
         }
-    };
-    Chat.prototype.componentWillUnmount = function () {
+    }
+    componentWillUnmount() {
         this.connectionStatusSubscription.unsubscribe();
         this.activitySubscription.unsubscribe();
         if (this.selectedActivitySubscription)
@@ -156,29 +152,29 @@ var Chat = /** @class */ (function (_super) {
         if (this.botConnection)
             this.botConnection.end();
         window.removeEventListener('resize', this.resizeListener);
-    };
-    Chat.prototype.componentWillReceiveProps = function (nextProps) {
+    }
+    componentWillReceiveProps(nextProps) {
         if (this.props.adaptiveCardsHostConfig !== nextProps.adaptiveCardsHostConfig) {
             this.store.dispatch({
                 type: 'Set_AdaptiveCardsHostConfig',
                 payload: nextProps.adaptiveCardsHostConfig
             });
         }
-    };
+    }
     // At startup we do three render passes:
     // 1. To determine the dimensions of the chat panel (nothing needs to actually render here, so we don't)
     // 2. To determine the margins of any given carousel (we just render one mock activity so that we can measure it)
     // 3. (this is also the normal re-render case) To render without the mock activity
-    Chat.prototype.render = function () {
-        var state = this.store.getState();
+    render() {
+        const state = this.store.getState();
         konsole.log("BotChat.Chat state", state);
         // only render real stuff after we know our dimensions
-        var header;
+        let header;
         if (state.format.options.showHeader)
             header =
                 React.createElement("div", { className: "wc-header" },
                     React.createElement("span", null, state.format.strings.title));
-        var resize;
+        let resize;
         if (this.props.resize === 'detect')
             resize =
                 React.createElement(ResizeDetector, { onresize: this.resizeListener });
@@ -190,13 +186,12 @@ var Chat = /** @class */ (function (_super) {
                 React.createElement(SuggestedActions_1.SuggestedActions, null),
                 React.createElement(Shell_1.Shell, { ref: this._saveShellRef }),
                 resize)));
-    };
-    return Chat;
-}(React.Component));
+    }
+}
 exports.Chat = Chat;
-exports.doCardAction = function (botConnection, from, locale, sendMessage) { return function (type, actionValue) {
-    var text = (typeof actionValue === 'string') ? actionValue : undefined;
-    var value = (typeof actionValue === 'object') ? actionValue : undefined;
+exports.doCardAction = (botConnection, from, locale, sendMessage) => (type, actionValue) => {
+    const text = (typeof actionValue === 'string') ? actionValue : undefined;
+    const value = (typeof actionValue === 'object') ? actionValue : undefined;
     switch (type) {
         case "imBack":
             if (typeof text === 'string')
@@ -217,45 +212,40 @@ exports.doCardAction = function (botConnection, from, locale, sendMessage) { ret
         default:
             konsole.log("unknown button type", type);
     }
-}; };
-exports.sendPostBack = function (botConnection, text, value, from, locale) {
+};
+exports.sendPostBack = (botConnection, text, value, from, locale) => {
     botConnection.postActivity({
         type: "message",
-        text: text,
-        value: value,
-        from: from,
-        locale: locale
+        text,
+        value,
+        from,
+        locale
     })
-        .subscribe(function (id) {
+        .subscribe(id => {
         konsole.log("success sending postBack", id);
-    }, function (error) {
+    }, error => {
         konsole.log("failed to send postBack", error);
     });
 };
-exports.renderIfNonempty = function (value, renderer) {
+exports.renderIfNonempty = (value, renderer) => {
     if (value !== undefined && value !== null && (typeof value !== 'string' || value.length > 0))
         return renderer(value);
 };
-exports.classList = function () {
-    var args = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        args[_i] = arguments[_i];
-    }
+exports.classList = (...args) => {
     return args.filter(Boolean).join(' ');
 };
 // note: container of this element must have CSS position of either absolute or relative
-var ResizeDetector = function (props) {
-    // adapted to React from https://github.com/developit/simple-element-resize-detector
-    return React.createElement("iframe", { style: { position: 'absolute', left: '0', top: '-100%', width: '100%', height: '100%', margin: '1px 0 0', border: 'none', opacity: 0, visibility: 'hidden', pointerEvents: 'none' }, ref: function (frame) {
-            if (frame)
-                frame.contentWindow.onresize = props.onresize;
-        } });
-};
+const ResizeDetector = (props) => 
+// adapted to React from https://github.com/developit/simple-element-resize-detector
+React.createElement("iframe", { style: { position: 'absolute', left: '0', top: '-100%', width: '100%', height: '100%', margin: '1px 0 0', border: 'none', opacity: 0, visibility: 'hidden', pointerEvents: 'none' }, ref: frame => {
+        if (frame)
+            frame.contentWindow.onresize = props.onresize;
+    } });
 // For auto-focus in some browsers, we synthetically insert keys into the chatbox.
 // By default, we insert keys when:
 // 1. evt.key.length === 1 (e.g. "1", "A", "=" keys), or
 // 2. evt.key is one of the map keys below (e.g. "Add" will insert "+", "Decimal" will insert ".")
-var INPUTTABLE_KEY = {
+const INPUTTABLE_KEY = {
     Add: '+',
     Decimal: '.',
     Divide: '/',

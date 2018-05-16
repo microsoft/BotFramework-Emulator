@@ -141,7 +141,7 @@ export interface Props {
   document: any;
   onStartConversation: any;
   services: IConnectedService[];
-};
+}
 
 class Chat extends React.Component<Props> {
   constructor(props, context) {
@@ -247,4 +247,4 @@ class Chat extends React.Component<Props> {
 
 export default connect(state => ({
   services: state.bot.activeBot && state.bot.activeBot.services
-}))(Chat);
+}))(Chat as any) as any;

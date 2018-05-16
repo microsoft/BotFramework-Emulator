@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var localizedStrings = {
+const localizedStrings = {
     'en-us': {
         title: "Chat",
         send: "Send",
@@ -471,5 +471,5 @@ function mapLocale(locale) {
     }
     return 'en-us';
 }
-exports.strings = function (locale) { return localizedStrings[mapLocale(locale)]; };
+exports.strings = (locale) => localizedStrings[mapLocale(locale)];
 //# sourceMappingURL=Strings.js.map

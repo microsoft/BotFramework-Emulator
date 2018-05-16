@@ -115,6 +115,7 @@ function logLevelToClassName(level: LogLevel): string {
     case LogLevel.Warn: return "level-2";
     case LogLevel.Error: return "level-3";
   }
+  return '';
 }
 
 export interface LogProps {

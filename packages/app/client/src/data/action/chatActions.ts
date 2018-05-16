@@ -51,6 +51,7 @@ type ChatMode = 'livechat' | 'transcript';
 export type ChatAction = {
   type: 'CHAT/DOCUMENT/NEW',
   payload: {
+    [propName: string]: any,
     documentId: string,
     mode: ChatMode
   }

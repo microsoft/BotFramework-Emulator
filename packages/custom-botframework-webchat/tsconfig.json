@@ -19,6 +19,7 @@
   },
   "files": [
     "src/adaptivecards-hostconfig.d.ts",
-    "src/BotChat.ts"
+    "src/BotChat.ts",
+    "src/CognitiveServices/lib.ts"
   ]
 }

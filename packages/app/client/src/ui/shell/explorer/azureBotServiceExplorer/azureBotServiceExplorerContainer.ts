@@ -34,7 +34,11 @@
 import { IAzureBotService, ServiceType } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
 import { connect } from 'react-redux';
-import { launchAzureBotServiceEditor, openAzureBotServiceDeepLink, openAzureBotServiceExplorerContextMenu } from '../../../../data/action/azureBotServiceActions';
+import {
+  launchAzureBotServiceEditor,
+  openAzureBotServiceDeepLink,
+  openAzureBotServiceExplorerContextMenu
+} from '../../../../data/action/azureBotServiceActions';
 import { IRootState } from '../../../../data/store';
 import { AzureBotServiceEditor } from './azureBotServiceEditor/azureBotServiceEditor';
 import { AzureBotServiceExplorer } from './azureBotServiceExplorer';
@@ -58,4 +62,4 @@ const mapDispatchToProps = dispatch => {
 export const AzureBotServiceExplorerContainer = connect(
   mapStateToProps,
   mapDispatchToProps
-)(AzureBotServiceExplorer) as any;
+)(AzureBotServiceExplorer as any) as any;
