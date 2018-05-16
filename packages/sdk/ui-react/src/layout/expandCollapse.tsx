@@ -35,7 +35,7 @@ import { css } from 'glamor';
 import * as React from 'react';
 import { Colors } from '../styles';
 
-import { filterChildren } from '../utils';
+import { filterChildren, hmrSafeNameComparison } from '../utils';
 import { InsetShadow } from '../widget';
 
 const CSS = css({
@@ -129,14 +129,14 @@ export class ExpandCollapse extends React.Component<IExpandCollapseProps, IExpan
             { this.props.title }
           </div>
           <div className="accessories">
-            { filterChildren(this.props.children, child => child.type === ExpandCollapseControls) }
+            { filterChildren(this.props.children, child => hmrSafeNameComparison(child.type, ExpandCollapseControls)) }
           </div>
         </header>
         <div className="body">
           {
             this.state.expanded &&
             <section>
-              { filterChildren(this.props.children, child => child.type === ExpandCollapseContent) }
+              { filterChildren(this.props.children, child => hmrSafeNameComparison(child.type, ExpandCollapseContent)) }
               <InsetShadow top={ true } />
             </section>
           }

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = require("tslib");
+const tslib_1 = require("tslib");
 var App_1 = require("./App");
 exports.App = App_1.App;
 var Chat_1 = require("./Chat");

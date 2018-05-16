@@ -32,10 +32,9 @@
 //
 
 import { css } from 'glamor';
-import PropTypes from 'prop-types';
 import * as React from 'react';
 
-import { Colors, Decorators, filterChildren } from '@bfemulator/ui-react';
+import { Colors, Decorators, filterChildren, hmrSafeNameComparison } from '@bfemulator/ui-react';
 
 const CSS = css({
   height: '40px',
@@ -87,11 +86,11 @@ export default class ToolBar extends React.Component<{}, {}> {
   }
 
   createClass(child, i) {
-    if (child.type === Button) {
+    if (hmrSafeNameComparison(child.type, Button)) {
       return (
         <li key={ i } className="button"><button onClick={ () => child.props.onClick() }>{ child.props.title }</button></li>
       )
-    } else if (child.type === Separator) {
+    } else if (hmrSafeNameComparison(child.type, Separator)) {
       return (
         <li key={ i } className="separator">|</li>
       )

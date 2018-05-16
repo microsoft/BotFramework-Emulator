@@ -32,7 +32,6 @@
 //
 
 const { join, relative } = require('path');
-const { readFile } = require('fs');
 const buffer = require('vinyl-buffer');
 const chalk = require('chalk');
 const gulp = require('gulp');

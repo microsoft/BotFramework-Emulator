@@ -4,5 +4,5 @@ node_modules
 npm-debug.log
 Thumbs.db
 .idea
-
+generated
 custom-botframework-webchat/dist

@@ -32,10 +32,9 @@
 //
 
 import * as React from 'react';
-import { css } from 'glamor';
-import { Colors, Fonts } from '@bfemulator/ui-react';
 import { Component } from 'react';
-import { Answer } from '../Models/QnAMakerModels';
+import { css } from 'glamor';
+import { Fonts } from '@bfemulator/ui-react';
 
 const QuestionColumnCSS = css({
   padding: '0px 47px 0px 20px',

@@ -32,7 +32,7 @@
 
 import { css } from 'glamor';
 import * as React from 'react';
-import { filterChildren } from '@bfemulator/ui-react';
+import { filterChildren, hmrSafeNameComparison } from '@bfemulator/ui-react';
 
 const CSS = css({
   padding: '8px 16px',
@@ -68,9 +68,9 @@ export class ExplorerBarHeader extends React.Component {
     return (
       <div { ...CSS }>
         <header>
-          { filterChildren(this.props.children, child => child.type === Title) }
+          { filterChildren(this.props.children, child => hmrSafeNameComparison(child.type, Title)) }
         </header>
-        { filterChildren(this.props.children, child => child.type === Accessories) }
+        { filterChildren(this.props.children, child => hmrSafeNameComparison(child.type, Accessories)) }
       </div>
     );
   }

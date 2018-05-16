@@ -34,7 +34,7 @@
 import { css } from 'glamor';
 import * as React from 'react';
 
-import { Colors, filterChildren } from '@bfemulator/ui-react';
+import { Colors, filterChildren, hmrSafeNameComparison } from '@bfemulator/ui-react';
 
 const CSS = css({
   display: 'flex',
@@ -95,11 +95,11 @@ export default class Panel extends React.Component<IPanelProps, {}> {
         <div className="header">
           { this.props.title }
           <div className="accessories">
-            { filterChildren(this.props.children, child => child.type === PanelControls) }
+            { filterChildren(this.props.children, child => hmrSafeNameComparison(child.type, PanelControls)) }
           </div>
         </div>
         <div className="body">
-          { filterChildren(this.props.children, child => child.type === PanelContent) }
+          { filterChildren(this.props.children, child => hmrSafeNameComparison(child.type, PanelContent)) }
         </div>
       </div>
     );

@@ -32,7 +32,8 @@
 //
 
 import { ServiceBase } from 'qnamaker/lib/api/serviceBase';
-const qnamaker: any = require('qnamaker');
+const operations = require('qnamaker/lib/api/operations');
+const knowledgebase = require('qnamaker/lib/api/knowledgebase');
 
 class QnAMakerClientError extends Error {
   private static getMessage(message: string, statusCode: number | undefined): string {
@@ -64,8 +65,8 @@ export class QnAMakerClient {
 
   constructor(qnaMakerKbInfo: QnAKbInfo) {
     this.qnaMakerKbInfo = qnaMakerKbInfo;
-    this.knowledgebase = new qnamaker.knowledgebase();
-    this.operations = new qnamaker.operations();
+    this.knowledgebase = new knowledgebase();
+    this.operations = new operations();
   }
 
   async updateKnowledgebase(kbId: string, requestBody: any): Promise<any> {
@@ -81,7 +82,7 @@ export class QnAMakerClient {
     let resultJson = await result.json();
     let retryCounter = 0;
     return new Promise((resolve, reject) => {
-      let intervalId: NodeJS.Timer;
+      let intervalId: number;
       let callLoop = async () => {
         result = await this.operations.getOperationDetails({
           operationId: resultJson.operationId
@@ -102,7 +103,7 @@ export class QnAMakerClient {
           resolve(result);
         }
       };
-      intervalId = setInterval(callLoop, WaitIntervalInMs);
+      intervalId = window.setInterval(callLoop, WaitIntervalInMs);
     });
   }
 

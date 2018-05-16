@@ -1,14 +1,12 @@
 import * as React from 'react';
-import { findDOMNode } from 'react-dom';
-import { connect } from 'react-redux';
-import { Action, AdaptiveCard, HostConfig, IValidationError, OpenUrlAction, SubmitAction } from 'adaptivecards';
-import { IActionBase, IActionShowCard, IAdaptiveCard } from 'adaptivecards/lib/schema';
-import { CardAction } from '@bfemulator/custom-botframework-directlinejs/built/directLine';
-import { classList, IDoCardAction } from './Chat';
-import { AjaxResponse, AjaxRequest } from 'rxjs/observable/dom/AjaxObservable';
+import {findDOMNode} from 'react-dom';
+import {connect} from 'react-redux';
+import {Action, AdaptiveCard, HostConfig, IValidationError, OpenUrlAction, SubmitAction} from 'adaptivecards';
+import {IAdaptiveCard, IOpenUrlAction, IShowCardAction, ISubmitAction} from 'adaptivecards/lib/schema';
+import {CardAction} from '@bfemulator/custom-botframework-directlinejs/built/directLine';
+import {classList, IDoCardAction} from './Chat';
 import * as adaptivecardsHostConfig from '../adaptivecards-hostconfig.json';
-import * as konsole from './Konsole';
-import { ChatState, AdaptiveCardsState } from './Store';
+import {ChatState} from './Store';
 
 export interface Props {
     className?: string,
@@ -32,12 +30,12 @@ const defaultHostConfig = new HostConfig(adaptivecardsHostConfig);
 
 function cardWithoutHttpActions(card: IAdaptiveCard) {
     if (!card.actions) return card;
-    const actions: IActionBase[] = [];
-    card.actions.forEach(action => {
+    const actions: (ISubmitAction | IOpenUrlAction | IShowCardAction)[] = [];
+    card.actions.forEach((action:any) => {
         //filter out http action buttons
         if (action.type === 'Action.Http') return;
         if (action.type === 'Action.ShowCard') {
-            const showCardAction = action as IActionShowCard;
+            const showCardAction = action as IShowCardAction;
             showCardAction.card = cardWithoutHttpActions(showCardAction.card);
         }
         actions.push(action);
@@ -120,7 +118,7 @@ class AdaptiveCardContainer extends React.Component<Props, State> {
     unmountAdaptiveCards() {
         const divElement = findDOMNode(this.divRef);
 
-        [].forEach.call(divElement.children, (child: any) => divElement.removeChild(child));
+        [].forEach.call((divElement as HTMLElement).children, (child: any) => divElement.removeChild(child));
     }
 
     mountAdaptiveCards() {

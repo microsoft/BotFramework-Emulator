@@ -43,7 +43,7 @@ export interface AzureBotServiceProps extends ServicePaneProps {
   openAzureBotServiceDeepLink: (azureBotServiceService: IAzureBotService) => void;
 }
 
-export class AzureBotServiceExplorer extends ServicePane<AzureBotServiceProps> {
+export class AzureBotServiceExplorer extends ServicePane<AzureBotServiceProps, {}> {
   public state = {} as { expanded?: boolean };
 
   constructor(props, context) {
