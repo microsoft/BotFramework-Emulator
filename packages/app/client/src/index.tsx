@@ -30,7 +30,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+// for hot reloading
+import { hot } from 'react-hot-loader';
 import { Provider } from 'react-redux';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
@@ -42,7 +43,6 @@ import store from './data/store';
 import { CommandService } from './platform/commands/commandService';
 import { SettingsService } from './platform/settings/settingsService';
 import { LogService } from './platform/log/logService';
-import * as BotActions from './data/action/botActions';
 import { showWelcomePage } from './data/editorHelpers';
 import * as Commands from './commands';
 
@@ -68,3 +68,6 @@ CommandService.remoteCall('client:loaded')
     CommandService.remoteCall('menu:update-recent-bots');
   })
   .catch(err => console.error(`Error occured during client:loaded: ${err}`));
+if (module['hot']) {
+  module['hot'].accept();
+}

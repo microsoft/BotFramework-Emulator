@@ -298,7 +298,7 @@ export module Speech {
         // * url which is an audio file 
         private processNodes(nodes: NodeList, output: any[]): void {
             for (let i = 0; i < nodes.length; i++) {
-                const node = nodes[i];
+                const node = nodes[i] as HTMLElement;
                 switch (node.nodeName) {
                     case 'p':
                         this.processNodes(node.childNodes, output);

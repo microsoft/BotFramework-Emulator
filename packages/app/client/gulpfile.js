@@ -36,7 +36,7 @@ var gulp = require('gulp');
 // TODO: We should expose CSS programmatically in Web Chat
 gulp.task('copy:webchat:css', function () {
   return gulp
-    .src('node_modules/@bfemulator/custom-botframework-webchat/botchat.css')
+    .src(require.resolve('@bfemulator/custom-botframework-webchat/botchat.css'))
     .pipe(gulp.dest('./public/external/css'));
 });
 
@@ -49,7 +49,7 @@ gulp.task('copy:media', function () {
 
 gulp.task('copy:fuselab:css', function() {
   return gulp
-    .src('node_modules/@fuselab/ui-fabric/css/fabric.min.css')
+    .src(require.resolve('@fuselab/ui-fabric/css/fabric.min.css'))
     .pipe(gulp.dest('./public/external/css'));
 });
 
@@ -57,7 +57,7 @@ gulp.task('copy:fuselab:css', function() {
 gulp.task('copy:fuselab', function() {
   return gulp
     .src([
-      'node_modules/@fuselab/ui-fabric/themes/seti/seti.woff'
+      require.resolve('@fuselab/ui-fabric/themes/seti/seti.woff')
     ])
     .pipe(gulp.dest('./public/external/media'));
 });

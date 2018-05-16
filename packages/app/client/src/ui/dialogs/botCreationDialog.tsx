@@ -32,9 +32,18 @@
 //
 
 import { uniqueId } from '@bfemulator/sdk-shared';
-import { Checkbox, Colors, Column, MediumHeader, PrimaryButton, Row, RowAlignment, RowJustification, TextInputField } from '@bfemulator/ui-react';
+import {
+  Checkbox,
+  Colors,
+  Column,
+  MediumHeader,
+  PrimaryButton,
+  Row,
+  RowJustification,
+  TextInputField
+} from '@bfemulator/ui-react';
 import { css } from 'glamor';
-import {EndpointService} from 'msbot/bin/models';
+import { EndpointService } from 'msbot/bin/models';
 import { IEndpointService, ServiceType } from 'msbot/bin/schema';
 import * as React from 'react';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
@@ -258,27 +267,37 @@ export default class BotCreationDialog extends React.Component<{}, BotCreationDi
       <div { ...CSS }>
         <Column>
           <MediumHeader className="bot-create-header">New bot configuration</MediumHeader>
-          <TextInputField className="small-input" inputClass="bot-creation-input" value={ this.state.bot.name } onChange={ this.onChangeName } label={ 'Bot name' } required={ true } />
-          <TextInputField inputClass="bot-creation-input" value={ this.state.endpoint.endpoint } onChange={ this.onChangeEndpoint }
-            placeholder={ 'Enter a URL for your bot\'s endpoint' } label={ 'Endpoint URL' } required={ true } />
+          <TextInputField className="small-input" inputClass="bot-creation-input" value={ this.state.bot.name }
+                          onChange={ this.onChangeName } label={ 'Bot name' } required={ true }/>
+          <TextInputField inputClass="bot-creation-input" value={ this.state.endpoint.endpoint }
+                          onChange={ this.onChangeEndpoint }
+                          placeholder={ 'Enter a URL for your bot\'s endpoint' } label={ 'Endpoint URL' }
+                          required={ true }/>
           <Row className="multi-input-row">
-            <TextInputField className="small-input" inputClass="bot-creation-input" value={ this.state.endpoint.appId } onChange={ this.onChangeAppId } label={ 'MSA app ID' } placeholder={ 'Optional' } />
-            <TextInputField className="small-input" inputClass="bot-creation-input" value={ this.state.endpoint.appPassword } onChange={ this.onChangeAppPw }
-              label={ 'MSA app password' } placeholder={ 'Optional' } type={ 'password' } />
+            <TextInputField className="small-input" inputClass="bot-creation-input" value={ this.state.endpoint.appId }
+                            onChange={ this.onChangeAppId } label={ 'MSA app ID' } placeholder={ 'Optional' }/>
+            <TextInputField className="small-input" inputClass="bot-creation-input"
+                            value={ this.state.endpoint.appPassword } onChange={ this.onChangeAppPw }
+                            label={ 'MSA app password' } placeholder={ 'Optional' } type={ 'password' }/>
           </Row>
-          <Checkbox className={ 'secret-checkbox' } checked={ this.state.secretEnabled } onChange={ this.onToggleSecret } label={ 'Encrypt your keys' } id={ 'bot-secret-checkbox' } />
+          <Checkbox className={ 'secret-checkbox' } checked={ this.state.secretEnabled }
+                    onChange={ this.onToggleSecret } label={ 'Encrypt your keys' } id={ 'bot-secret-checkbox' }/>
           {
             this.state.secretEnabled &&
             <Row className="multi-input-row secret-row">
-              <TextInputField className="secret-input" inputClass="bot-creation-input" value={ this.state.secret } onChange={ this.onChangeSecret }
-                required={ this.state.secretEnabled } label={ 'Create a secret' } type={ 'password' } />
-              <TextInputField className="secret-input secret-confirmation" inputClass="bot-creation-input" value={ this.state.secretConfirmation } onChange={ this.onChangeSecretConfirmation }
-                required={ this.state.secretEnabled } label={ 'Confirm your secret' } type={ 'password' } error={ this.state.secret && !this.state.secretsMatch ? 'Secrets do not match' : null } />
+              <TextInputField className="secret-input" inputClass="bot-creation-input" value={ this.state.secret }
+                              onChange={ this.onChangeSecret }
+                              required={ this.state.secretEnabled } label={ 'Create a secret' } type={ 'password' }/>
+              <TextInputField className="secret-input secret-confirmation" inputClass="bot-creation-input"
+                              value={ this.state.secretConfirmation } onChange={ this.onChangeSecretConfirmation }
+                              required={ this.state.secretEnabled } label={ 'Confirm your secret' } type={ 'password' }
+                              error={ this.state.secret && !this.state.secretsMatch ? 'Secrets do not match' : null }/>
             </Row>
           }
           <Row className="multi-input-row button-row" justify={ RowJustification.Right }>
-            <PrimaryButton secondary text='Cancel' onClick={ this.onCancel } className="cancel-button" />
-            <PrimaryButton text='Save and connect' onClick={ this.onSaveAndConnect } disabled={ !requiredFieldsCompleted } className="connect-button" />
+            <PrimaryButton secondary text='Cancel' onClick={ this.onCancel } className="cancel-button"/>
+            <PrimaryButton text='Save and connect' onClick={ this.onSaveAndConnect }
+                           disabled={ !requiredFieldsCompleted } className="connect-button"/>
           </Row>
         </Column>
       </div>

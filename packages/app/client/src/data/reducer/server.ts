@@ -31,8 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { fromJS } from 'immutable';
-
 import * as ServerActions from '../action/serverActions';
 import { ServerAction } from '../action/serverActions';
 
@@ -40,9 +38,9 @@ export interface IServerState {
   connected?: boolean;
 }
 
-const DEFAULT_STATE = fromJS({
+const DEFAULT_STATE = {
   connected: false
-});
+};
 
 export default function server(state: any = DEFAULT_STATE, action: ServerAction): IServerState {
   switch (action.type) {

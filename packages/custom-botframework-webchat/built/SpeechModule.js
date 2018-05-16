@@ -2,18 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var Speech;
 (function (Speech) {
-    var SpeechRecognizer = /** @class */ (function () {
-        function SpeechRecognizer() {
-        }
-        SpeechRecognizer.setSpeechRecognizer = function (recognizer) {
+    class SpeechRecognizer {
+        static setSpeechRecognizer(recognizer) {
             SpeechRecognizer.instance = recognizer;
-        };
-        SpeechRecognizer.startRecognizing = function (locale, onIntermediateResult, onFinalResult, onAudioStreamStarted, onRecognitionFailed) {
-            if (locale === void 0) { locale = 'en-US'; }
-            if (onIntermediateResult === void 0) { onIntermediateResult = null; }
-            if (onFinalResult === void 0) { onFinalResult = null; }
-            if (onAudioStreamStarted === void 0) { onAudioStreamStarted = null; }
-            if (onRecognitionFailed === void 0) { onRecognitionFailed = null; }
+        }
+        static startRecognizing(locale = 'en-US', onIntermediateResult = null, onFinalResult = null, onAudioStreamStarted = null, onRecognitionFailed = null) {
             if (!SpeechRecognizer.speechIsAvailable())
                 return;
             if (locale && SpeechRecognizer.instance.locale !== locale) {
@@ -28,52 +21,45 @@ var Speech;
             SpeechRecognizer.instance.onAudioStreamingToService = onAudioStreamStarted;
             SpeechRecognizer.instance.onRecognitionFailed = onRecognitionFailed;
             SpeechRecognizer.instance.startRecognizing();
-        };
-        SpeechRecognizer.stopRecognizing = function () {
+        }
+        static stopRecognizing() {
             if (!SpeechRecognizer.speechIsAvailable())
                 return;
             SpeechRecognizer.instance.stopRecognizing();
-        };
-        SpeechRecognizer.warmup = function () {
+        }
+        static warmup() {
             if (!SpeechRecognizer.speechIsAvailable())
                 return;
             SpeechRecognizer.instance.warmup();
-        };
-        SpeechRecognizer.speechIsAvailable = function () {
-            return SpeechRecognizer.instance != null && SpeechRecognizer.instance.speechIsAvailable();
-        };
-        SpeechRecognizer.alreadyRecognizing = function () {
-            return SpeechRecognizer.instance ? SpeechRecognizer.instance.isStreamingToService : false;
-        };
-        SpeechRecognizer.instance = null;
-        return SpeechRecognizer;
-    }());
-    Speech.SpeechRecognizer = SpeechRecognizer;
-    var SpeechSynthesizer = /** @class */ (function () {
-        function SpeechSynthesizer() {
         }
-        SpeechSynthesizer.setSpeechSynthesizer = function (speechSynthesizer) {
+        static speechIsAvailable() {
+            return SpeechRecognizer.instance != null && SpeechRecognizer.instance.speechIsAvailable();
+        }
+        static alreadyRecognizing() {
+            return SpeechRecognizer.instance ? SpeechRecognizer.instance.isStreamingToService : false;
+        }
+    }
+    SpeechRecognizer.instance = null;
+    Speech.SpeechRecognizer = SpeechRecognizer;
+    class SpeechSynthesizer {
+        static setSpeechSynthesizer(speechSynthesizer) {
             SpeechSynthesizer.instance = speechSynthesizer;
-        };
-        SpeechSynthesizer.speak = function (text, lang, onSpeakingStarted, onSpeakingFinished) {
-            if (onSpeakingStarted === void 0) { onSpeakingStarted = null; }
-            if (onSpeakingFinished === void 0) { onSpeakingFinished = null; }
+        }
+        static speak(text, lang, onSpeakingStarted = null, onSpeakingFinished = null) {
             if (SpeechSynthesizer.instance == null)
                 return;
             SpeechSynthesizer.instance.speak(text, lang, onSpeakingStarted, onSpeakingFinished);
-        };
-        SpeechSynthesizer.stopSpeaking = function () {
+        }
+        static stopSpeaking() {
             if (SpeechSynthesizer.instance == null)
                 return;
             SpeechSynthesizer.instance.stopSpeaking();
-        };
-        SpeechSynthesizer.instance = null;
-        return SpeechSynthesizer;
-    }());
+        }
+    }
+    SpeechSynthesizer.instance = null;
     Speech.SpeechSynthesizer = SpeechSynthesizer;
-    var BrowserSpeechRecognizer = /** @class */ (function () {
-        function BrowserSpeechRecognizer() {
-            var _this = this;
+    class BrowserSpeechRecognizer {
+        constructor() {
             this.locale = null;
             this.isStreamingToService = false;
             this.onIntermediateResult = null;
@@ -88,92 +74,88 @@ var Speech;
             this.recognizer = new window.webkitSpeechRecognition();
             this.recognizer.lang = 'en-US';
             this.recognizer.interimResults = true;
-            this.recognizer.onaudiostart = function () {
-                if (_this.onAudioStreamingToService) {
-                    _this.onAudioStreamingToService();
+            this.recognizer.onaudiostart = () => {
+                if (this.onAudioStreamingToService) {
+                    this.onAudioStreamingToService();
                 }
             };
-            this.recognizer.onresult = function (srevent) {
+            this.recognizer.onresult = (srevent) => {
                 if (srevent.results == null || srevent.length == 0) {
                     return;
                 }
-                var result = srevent.results[0];
-                if (result.isFinal === true && _this.onFinalResult != null) {
-                    _this.onFinalResult(result[0].transcript);
+                const result = srevent.results[0];
+                if (result.isFinal === true && this.onFinalResult != null) {
+                    this.onFinalResult(result[0].transcript);
                 }
-                else if (result.isFinal === false && _this.onIntermediateResult != null) {
-                    var text = "";
-                    for (var i = 0; i < srevent.results.length; ++i) {
+                else if (result.isFinal === false && this.onIntermediateResult != null) {
+                    let text = "";
+                    for (let i = 0; i < srevent.results.length; ++i) {
                         text += srevent.results[i][0].transcript;
                     }
-                    _this.onIntermediateResult(text);
+                    this.onIntermediateResult(text);
                 }
             };
-            this.recognizer.onerror = function (err) {
-                if (_this.onRecognitionFailed) {
-                    _this.onRecognitionFailed();
+            this.recognizer.onerror = (err) => {
+                if (this.onRecognitionFailed) {
+                    this.onRecognitionFailed();
                 }
                 throw err;
             };
         }
-        BrowserSpeechRecognizer.prototype.speechIsAvailable = function () {
+        speechIsAvailable() {
             return this.recognizer != null;
-        };
-        BrowserSpeechRecognizer.prototype.warmup = function () {
-        };
-        BrowserSpeechRecognizer.prototype.startRecognizing = function () {
+        }
+        warmup() {
+        }
+        startRecognizing() {
             this.recognizer.start();
-        };
-        BrowserSpeechRecognizer.prototype.stopRecognizing = function () {
+        }
+        stopRecognizing() {
             this.recognizer.stop();
-        };
-        return BrowserSpeechRecognizer;
-    }());
+        }
+    }
     Speech.BrowserSpeechRecognizer = BrowserSpeechRecognizer;
-    var BrowserSpeechSynthesizer = /** @class */ (function () {
-        function BrowserSpeechSynthesizer() {
+    class BrowserSpeechSynthesizer {
+        constructor() {
             this.lastOperation = null;
             this.audioElement = null;
             this.speakRequests = [];
         }
-        BrowserSpeechSynthesizer.prototype.speak = function (text, lang, onSpeakingStarted, onSpeakingFinished) {
-            var _this = this;
-            if (onSpeakingStarted === void 0) { onSpeakingStarted = null; }
-            if (onSpeakingFinished === void 0) { onSpeakingFinished = null; }
+        speak(text, lang, onSpeakingStarted = null, onSpeakingFinished = null) {
             if (!('SpeechSynthesisUtterance' in window) || !text)
                 return;
             if (this.audioElement === null) {
-                var audio = document.createElement('audio');
+                const audio = document.createElement('audio');
                 audio.id = 'player';
                 audio.autoplay = true;
                 this.audioElement = audio;
             }
-            var chunks = new Array();
+            const chunks = new Array();
             if (text[0] === '<') {
                 if (text.indexOf('<speak') != 0)
                     text = '<speak>\n' + text + '\n</speak>\n';
-                var parser = new DOMParser();
-                var dom = parser.parseFromString(text, 'text/xml');
-                var nodes = dom.documentElement.childNodes;
+                const parser = new DOMParser();
+                const dom = parser.parseFromString(text, 'text/xml');
+                const nodes = dom.documentElement.childNodes;
                 this.processNodes(nodes, chunks);
             }
             else {
                 chunks.push(text);
             }
-            var onSpeakingFinishedWrapper = function () {
+            const onSpeakingFinishedWrapper = () => {
                 if (onSpeakingFinished !== null)
                     onSpeakingFinished();
                 // remove this from the queue since it's done:
-                if (_this.speakRequests.length) {
-                    _this.speakRequests[0].completed();
-                    _this.speakRequests.splice(0, 1);
+                if (this.speakRequests.length) {
+                    this.speakRequests[0].completed();
+                    this.speakRequests.splice(0, 1);
                 }
                 // If there are other speak operations in the queue, process them
-                if (_this.speakRequests.length) {
-                    _this.playNextTTS(_this.speakRequests[0], 0);
+                if (this.speakRequests.length) {
+                    this.playNextTTS(this.speakRequests[0], 0);
                 }
             };
-            var request = new SpeakRequest(chunks, lang, function (speakOp) { _this.lastOperation = speakOp; }, onSpeakingStarted, onSpeakingFinishedWrapper);
+            const request = new SpeakRequest(chunks, lang, (speakOp) => { this.lastOperation = speakOp; }, onSpeakingStarted, onSpeakingFinishedWrapper);
             if (this.speakRequests.length === 0) {
                 this.speakRequests = [request];
                 this.playNextTTS(this.speakRequests[0], 0);
@@ -181,47 +163,46 @@ var Speech;
             else {
                 this.speakRequests.push(request);
             }
-        };
-        BrowserSpeechSynthesizer.prototype.stopSpeaking = function () {
+        }
+        stopSpeaking() {
             if (('SpeechSynthesisUtterance' in window) === false)
                 return;
             if (this.speakRequests.length) {
                 if (this.audioElement)
                     this.audioElement.pause();
-                this.speakRequests.forEach(function (req) {
+                this.speakRequests.forEach(req => {
                     req.abandon();
                 });
                 this.speakRequests = [];
-                var ss = window.speechSynthesis;
+                const ss = window.speechSynthesis;
                 if (ss.speaking || ss.pending) {
                     if (this.lastOperation)
                         this.lastOperation.onend = null;
                     ss.cancel();
                 }
             }
-        };
+        }
         ;
-        BrowserSpeechSynthesizer.prototype.playNextTTS = function (requestContainer, iCurrent) {
+        playNextTTS(requestContainer, iCurrent) {
             // lang : string, onSpeakQueued: Func<SpeechSynthesisUtterance, void>, onSpeakStarted : Action, onFinishedSpeaking : Action
-            var _this = this;
-            var moveToNext = function () {
-                _this.playNextTTS(requestContainer, iCurrent + 1);
+            const moveToNext = () => {
+                this.playNextTTS(requestContainer, iCurrent + 1);
             };
             if (iCurrent < requestContainer.speakChunks.length) {
-                var current = requestContainer.speakChunks[iCurrent];
+                const current = requestContainer.speakChunks[iCurrent];
                 if (typeof current === 'number') {
                     setTimeout(moveToNext, current);
                 }
                 else {
                     if (current.indexOf('http') === 0) {
-                        var audio = this.audioElement; // document.getElementById('player');
+                        const audio = this.audioElement; // document.getElementById('player');
                         audio.src = current;
                         audio.onended = moveToNext;
                         audio.onerror = moveToNext;
                         audio.play();
                     }
                     else {
-                        var msg = new SpeechSynthesisUtterance();
+                        const msg = new SpeechSynthesisUtterance();
                         // msg.voiceURI = 'native';
                         // msg.volume = 1; // 0 to 1
                         // msg.rate = 1; // 0.1 to 10
@@ -241,14 +222,14 @@ var Speech;
                 if (requestContainer.onSpeakingFinished)
                     requestContainer.onSpeakingFinished();
             }
-        };
+        }
         // process SSML markup into an array of either 
         // * utterenance
         // * number which is delay in msg
         // * url which is an audio file 
-        BrowserSpeechSynthesizer.prototype.processNodes = function (nodes, output) {
-            for (var i = 0; i < nodes.length; i++) {
-                var node = nodes[i];
+        processNodes(nodes, output) {
+            for (let i = 0; i < nodes.length; i++) {
+                const node = nodes[i];
                 switch (node.nodeName) {
                     case 'p':
                         this.processNodes(node.childNodes, output);
@@ -256,7 +237,7 @@ var Speech;
                         break;
                     case 'break':
                         if (node.attributes.getNamedItem('strength')) {
-                            var strength = node.attributes.getNamedItem('strength').nodeValue;
+                            const strength = node.attributes.getNamedItem('strength').nodeValue;
                             if (strength === 'weak') {
                                 // output.push(50);
                             }
@@ -293,15 +274,11 @@ var Speech;
                         break;
                 }
             }
-        };
-        return BrowserSpeechSynthesizer;
-    }());
+        }
+    }
     Speech.BrowserSpeechSynthesizer = BrowserSpeechSynthesizer;
-    var SpeakRequest = /** @class */ (function () {
-        function SpeakRequest(speakChunks, lang, onSpeakQueued, onSpeakingStarted, onSpeakingFinished) {
-            if (onSpeakQueued === void 0) { onSpeakQueued = null; }
-            if (onSpeakingStarted === void 0) { onSpeakingStarted = null; }
-            if (onSpeakingFinished === void 0) { onSpeakingFinished = null; }
+    class SpeakRequest {
+        constructor(speakChunks, lang, onSpeakQueued = null, onSpeakingStarted = null, onSpeakingFinished = null) {
             this._onSpeakQueued = null;
             this._onSpeakingStarted = null;
             this._onSpeakingFinished = null;
@@ -313,38 +290,17 @@ var Speech;
             this._speakChunks = speakChunks;
             this._lang = lang;
         }
-        SpeakRequest.prototype.abandon = function () {
+        abandon() {
             this._speakChunks = [];
-        };
-        SpeakRequest.prototype.completed = function () {
+        }
+        completed() {
             this._speakChunks = [];
-        };
-        Object.defineProperty(SpeakRequest.prototype, "onSpeakQueued", {
-            get: function () { return this._onSpeakQueued; },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(SpeakRequest.prototype, "onSpeakingStarted", {
-            get: function () { return this._onSpeakingStarted; },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(SpeakRequest.prototype, "onSpeakingFinished", {
-            get: function () { return this._onSpeakingFinished; },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(SpeakRequest.prototype, "speakChunks", {
-            get: function () { return this._speakChunks; },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(SpeakRequest.prototype, "lang", {
-            get: function () { return this._lang; },
-            enumerable: true,
-            configurable: true
-        });
-        return SpeakRequest;
-    }());
+        }
+        get onSpeakQueued() { return this._onSpeakQueued; }
+        get onSpeakingStarted() { return this._onSpeakingStarted; }
+        get onSpeakingFinished() { return this._onSpeakingFinished; }
+        get speakChunks() { return this._speakChunks; }
+        get lang() { return this._lang; }
+    }
 })(Speech = exports.Speech || (exports.Speech = {}));
 //# sourceMappingURL=SpeechModule.js.map

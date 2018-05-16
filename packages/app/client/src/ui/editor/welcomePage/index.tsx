@@ -30,7 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+import { hot } from 'react-hot-loader';
 import { css } from 'glamor';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -38,8 +38,6 @@ import { IBotInfo } from '@bfemulator/app-shared';
 
 import { Colors, Column, Row, PrimaryButton, LargeHeader, SmallHeader, TruncateText } from '@bfemulator/ui-react';
 import { CommandService } from '../../../platform/commands/commandService';
-import { DialogService } from '../../dialogs/service/index';
-import BotCreationDialog from '../../dialogs/botCreationDialog';
 import { GenericDocument } from '../../layout';
 
 const CSS = css({
@@ -203,4 +201,4 @@ function mapStateToProps(state: any): any {
   return ({ recentBots: state.bot.botFiles });
 }
 
-export default connect(mapStateToProps, null)(WelcomePage);
+export default connect(mapStateToProps, null)(hot(module)(WelcomePage));

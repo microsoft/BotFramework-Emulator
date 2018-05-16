@@ -1,52 +1,50 @@
-var webpack = require('webpack');
-require("expose-loader");
+const { NodeEnvironmentPlugin } = require('webpack');
+const path = require('path');
+module.exports = {
+  entry: {
+    BotChat: path.resolve('./src/BotChat.ts'),
+    CognitiveServices: path.resolve('./src/CognitiveServices/lib.ts')
+  },
 
-var coreConfig = {
-    devtool: "source-map",
+  module: {
+    rules: [
+      { test: /\.tsx?$/, loader: "awesome-typescript-loader" },
+      {
+        test: require.resolve('adaptivecards'),
+        use: [{ loader: 'expose-loader', options: 'AdaptiveCards' }]
+      }
+    ],
+  },
 
-    resolve: {
-        // Add '.ts' and '.tsx' as resolvable extensions.
-        extensions: [".ts", ".tsx", ".js", ".json"]
+  node: {
+    fs: 'empty'
+  },
+
+  devServer: {
+    hot: true,
+    inline: true,
+    port: 8080,
+    historyApiFallback: false
+  },
+
+  resolve: {
+    extensions: ['.js', '.jsx', '.json', '.ts', '.tsx']
+  },
+
+  output: {
+    path: path.resolve('./dist'),
+    filename: function (info) {
+      const { chunk } = info;
+      const { name } = chunk;
+      return name === 'BotChat' ? 'botchat.js' : `${name}.js`;
     },
+    libraryTarget: "umd",
+    library: "[name]",
+    publicPath: 'http://localhost:8080',
+  },
 
-    module: {
-        rules: [
-            // All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
-            { test: /\.tsx?$/, loader: "awesome-typescript-loader" },
-            // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
-            {
-                enforce: "pre",
-                test: /\.js$/,
-                loader: "source-map-loader",
-                exclude: [/node_modules/]
-            },
-            {
-                test: require.resolve('adaptivecards'),
-                use: [{ loader: 'expose-loader', options: 'AdaptiveCards' }]
-            }
-        ]
-    }
+  externals: {},
+  plugins: [
+    new NodeEnvironmentPlugin()
+  ]
 };
-
-var chatConfig = {
-    entry: "./src/BotChat.ts",
-    output: {
-        libraryTarget: "umd",
-        library: "BotChat",
-        filename: "./botchat.js"
-    }
-}
-
-// Config for addon features
-var featureConfig = {
-    entry: {
-        CognitiveServices: "./src/CognitiveServices/lib.ts"
-    },
-    output: {
-        libraryTarget: "umd",
-        library: "[name]",
-        filename: "./[name].js",
-    }
-}
-
-module.exports = [Object.assign(chatConfig, coreConfig), Object.assign(featureConfig, coreConfig)];

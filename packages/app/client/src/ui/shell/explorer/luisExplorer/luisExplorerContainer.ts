@@ -58,4 +58,4 @@ const mapDispatchToProps = dispatch => {
 export const LuisExplorerContainer = connect(
   mapStateToProps,
   mapDispatchToProps
-)(LuisExplorer) as any;
+)(LuisExplorer as any) as any;

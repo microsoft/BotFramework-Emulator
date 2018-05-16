@@ -43,7 +43,7 @@ import { WindowManager } from './windowManager';
 import * as commandLine from './commandLine'
 import { setTimeout } from 'timers';
 import { Window } from './platform/window';
-import { ensureStoragePath, writeFile, isDev } from './utils';
+import { ensureStoragePath, writeFile } from './utils';
 import * as squirrel from './squirrelEvents';
 import * as Commands from './commands';
 import { AppMenuBuilder } from './appMenuBuilder';

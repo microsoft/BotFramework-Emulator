@@ -35,7 +35,6 @@ import { IBotInfo, newEndpoint } from '@bfemulator/app-shared';
 import { BotConfigWithPath, IBotConfigWithPath } from '@bfemulator/sdk-shared';
 import { Column, MediumHeader, PrimaryButton, Row, TextInputField } from '@bfemulator/ui-react';
 import { css } from 'glamor';
-import { debounce } from 'lodash';
 import { IEndpointService, ServiceType } from 'msbot/bin/schema';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -173,7 +172,7 @@ class BotSettingsEditor extends React.Component<BotSettingsEditorProps, BotSetti
   };
 
   private onSaveAndConnect = async e => {
-    await this.onSave(e, connect);
+    await this.onSave(e, true);
   };
 
   private setDirtyFlag(dirty) {

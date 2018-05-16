@@ -33,7 +33,7 @@
 
 import * as React from 'react';
 import { css } from 'glamor';
-import { Colors, Fonts } from '@bfemulator/ui-react';
+import { Fonts } from '@bfemulator/ui-react';
 import { Component } from 'react';
 
 const HeaderCSS = css({

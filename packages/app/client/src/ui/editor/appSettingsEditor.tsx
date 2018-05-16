@@ -33,17 +33,27 @@
 
 import * as React from 'react';
 import { css } from 'glamor';
-import { debounce } from 'lodash';
 
 import { IFrameworkSettings } from '@bfemulator/app-shared';
 import { CommandService } from '../../platform/commands/commandService';
-import { Colors } from '@bfemulator/ui-react';
+import {
+  Checkbox,
+  Colors,
+  Column,
+  MediumHeader,
+  PrimaryButton,
+  Row,
+  RowAlignment,
+  RowJustification,
+  SmallHeader,
+  TextInputField
+} from '@bfemulator/ui-react';
 import * as EditorActions from '../../data/action/editorActions';
 import * as Constants from '../../constants';
 import store from '../../data/store';
 import { getTabGroupForDocument } from '../../data/editorHelpers';
 import { GenericDocument } from '../layout';
-import { Column, Row, RowAlignment, RowJustification, Checkbox, NumberInputField, TextInputField, PrimaryButton, MediumHeader, SmallHeader } from '@bfemulator/ui-react';
+import { debounce } from "../utils/debounce";
 
 const CSS = css({
   '& .right-column': {
@@ -91,7 +101,7 @@ interface IAppSettingsEditorProps {
 interface IAppSettingsEditorState {
   committed: IFrameworkSettings;
   uncommitted: IFrameworkSettings;
-};
+}
 
 const defaultAppSettings: IFrameworkSettings = {
   bypassNgrokLocalhost: true,
@@ -101,7 +111,7 @@ const defaultAppSettings: IFrameworkSettings = {
   stateSizeLimit: 64,
   use10Tokens: false,
   useCodeValidation: false
-}
+};
 
 function shallowEqual(x, y) {
   return (
@@ -163,7 +173,7 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
   }
 
   commit(committed) {
-    this.setState(state => {
+    this.setState(() => {
       this.setDirtyFlag(false);
 
       return {
@@ -173,7 +183,7 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
     });
   }
 
-  onClickBrowse(e): void {
+  onClickBrowse(): void {
     const dialogOptions = {
       title: 'Browse for ngrok',
       buttonLabel: 'Select ngrok',
@@ -189,7 +199,7 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
     this.setUncommittedState({ stateSizeLimit: e.target.value });
   }
 
-  onClickSave(e): void {
+  onClickSave(): void {
     const { uncommitted } = this.state;
     const settings: IFrameworkSettings = {
       ngrokPath: uncommitted.ngrokPath.trim(),
@@ -206,11 +216,11 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
       .catch(err => console.error('Error while saving emulator settings: ', err));
   }
 
-  onChangeAuthTokenVersion(e): void {
+  onChangeAuthTokenVersion(): void {
     this.setUncommittedState({ use10Tokens: !this.state.uncommitted.use10Tokens });
   }
 
-  onChangeUseValidationToken(e): void {
+  onChangeUseValidationToken(): void {
     this.setUncommittedState({ useCodeValidation: !this.state.uncommitted.useCodeValidation });
   }
 
@@ -218,7 +228,7 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
     this.setUncommittedState({ ngrokPath: e.target.value });
   }
 
-  onChangeNgrokBypass(e): void {
+  onChangeNgrokBypass(): void {
     this.setUncommittedState({ bypassNgrokLocalhost: !this.state.uncommitted.bypassNgrokLocalhost });
   }
 
@@ -234,7 +244,7 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
     store.dispatch(EditorActions.setDirtyFlag(this.props.documentId, dirty));
   }
 
-  onClickDiscard(e): void {
+  onClickDiscard(): void {
     store.dispatch(EditorActions.close(getTabGroupForDocument(this.props.documentId), Constants.DocumentId_AppSettings));
   }
 
@@ -244,7 +254,6 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
 
     return (
       <GenericDocument style={ CSS }>
-        <MediumHeader>Emulator Settings</MediumHeader>
         <Row>
           <Column>
             <SmallHeader>Service</SmallHeader>
