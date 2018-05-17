@@ -316,7 +316,7 @@ function loadMainPage() {
   let page = process.env.ELECTRON_TARGET_URL || url.format({
     protocol: 'file',
     slashes: true,
-    pathname: path.join(__dirname, '../../node_modules/@bfemulator/client/build/index.html')
+    pathname: path.join(__dirname, '../../node_modules/@bfemulator/client/public/index.html')
   });
 
   if (/^http:\/\//.test(page)) {
