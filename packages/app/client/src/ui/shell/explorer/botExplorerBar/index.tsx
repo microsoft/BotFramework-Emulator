@@ -34,7 +34,6 @@
 import * as React from 'react';
 import { css } from 'glamor';
 
-import { CommandService } from '../../../../platform/commands/commandService';
 import { EndpointExplorerContainer } from '../endpointExplorer';
 import { ExplorerBarBody } from '../explorerBarBody';
 import { ExplorerBarHeader, Title, Accessories } from '../explorerBarHeader';
@@ -54,20 +53,15 @@ const CSS = css({
   }
 });
 
-export class IAssetExplorerBarProps {
+export class BotExplorerBarProps {
   activeBot: string;
   hidden: boolean;
 }
 
-export default class AssetExplorerBar extends React.Component<IAssetExplorerBarProps> {
+export default class BotExplorerBar extends React.Component<BotExplorerBarProps> {
 
   constructor(props, context) {
     super(props, context);
-    this.onClickSettings = this.onClickSettings.bind(this);
-  }
-
-  onClickSettings(e) {
-    CommandService.call('bot-settings:open', this.props.activeBot);
   }
 
   render() {
@@ -80,9 +74,6 @@ export default class AssetExplorerBar extends React.Component<IAssetExplorerBarP
           <Title>
             Bot Explorer
           </Title>
-          <Accessories>
-            { this.props.activeBot ? <span className="accessory bot-settings-icon" onClick={ this.onClickSettings } /> : false }
-          </Accessories>
         </ExplorerBarHeader>
         <ExplorerBarBody>
           { this.props.activeBot ? (

@@ -108,6 +108,7 @@ export namespace Colors {
 
   export const NAVBAR_BACKGROUND_DARK = C37;
   export const NAVBAR_FOREGROUND_DARK = C4;
+  export const NAVBAR_FOCUS_DARK = C40;
 
   export const EXPLORER_BACKGROUND_DARK = C6;
   export const EXPLORER_FOREGROUND_DARK = C2;

@@ -33,7 +33,7 @@
 
 import { IBotInfo, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, IBotConfigWithPath } from '@bfemulator/sdk-shared';
-import { Column, MediumHeader, PrimaryButton, Row, TextInputField } from '@bfemulator/ui-react';
+import { Column, MediumHeader, PrimaryButton, Row, TextInputField, Colors } from '@bfemulator/ui-react';
 import { css } from 'glamor';
 import { IConnectedService, ServiceType } from 'msbot/bin/schema';
 import * as React from 'react';
@@ -48,11 +48,6 @@ import { GenericDocument } from '../../layout';
 const CSS = css({
   '& .bot-settings-header': {
     marginBottom: '16px'
-  },
-
-  '& .browse-path-button': {
-    marginLeft: '8px',
-    alignSelf: 'center'
   },
 
   '& .save-button': {
@@ -77,9 +72,8 @@ const CSS = css({
     marginTop: '48px'
   },
 
-  '& .locale-input': {
-    flexShrink: 2,
-    minWidth: '100px'
+  '& .bot-settings-input': {
+    color: Colors.APP_FOREGROUND_DARK
   }
 });
 
@@ -233,8 +227,8 @@ class BotSettingsEditor extends React.Component<BotSettingsEditorProps, BotSetti
       <GenericDocument style={ CSS }>
         <Column>
           <MediumHeader className="bot-settings-header">Bot Settings</MediumHeader>
-          <TextInputField label="Bot name" value={ this.state.bot.name } required={ true } onChange={ this.onChangeName } error={ error }/>
-          <TextInputField label="Bot secret" value={ this.state.secret } onChange={ this.onChangeSecret } type="password"/>
+          <TextInputField inputClass="bot-settings-input" label="Bot name" value={ this.state.bot.name } required={ true } onChange={ this.onChangeName } error={ error }/>
+          <TextInputField inputClass="bot-settings-input" label="Bot secret" value={ this.state.secret } onChange={ this.onChangeSecret } type="password"/>
           <Row className="button-row">
             <PrimaryButton text="Save" onClick={ this.onSave } className="save-button" disabled={ disabled }/>
             <PrimaryButton text="Save & Connect" onClick={ this.onSaveAndConnect } className="save-connect-button" disabled={ disabled }/>
