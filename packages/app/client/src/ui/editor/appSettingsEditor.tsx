@@ -137,7 +137,6 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
     this.onChangeNgrokBypass = this.onChangeNgrokBypass.bind(this);
     this.onChangeAuthTokenVersion = this.onChangeAuthTokenVersion.bind(this);
     this.onChangeUseValidationToken = this.onChangeUseValidationToken.bind(this);
-    this.setDirtyFlag = debounce(this.setDirtyFlag, 300);
     this.onClickDiscard = this.onClickDiscard.bind(this);
     this.onChangeLocalhost = this.onChangeLocalhost.bind(this);
     this.onChangeLocale = this.onChangeLocale.bind(this);
@@ -246,9 +245,9 @@ export default class AppSettingsEditor extends React.Component<IAppSettingsEdito
     this.setUncommittedState({ locale: e.target.value });
   }
 
-  setDirtyFlag(dirty): void {
+  setDirtyFlag = debounce((dirty): void => {
     store.dispatch(EditorActions.setDirtyFlag(this.props.documentId, dirty));
-  }
+  }, 300);
 
   onClickDiscard(): void {
     store.dispatch(EditorActions.close(getTabGroupForDocument(this.props.documentId), Constants.DocumentId_AppSettings));
