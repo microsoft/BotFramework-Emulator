@@ -45,6 +45,7 @@ import { CommandRegistry } from '../../../commands';
 import { IRootState } from '../../../data/store';
 import { IBotConfig } from 'msbot/bin/schema';
 import { CommandService } from '../../../platform/commands/commandService';
+import { NavLink } from './navLink';
 
 const CSS = css({
   backgroundColor: Colors.NAVBAR_BACKGROUND_DARK,
@@ -54,43 +55,20 @@ const CSS = css({
   position: 'relative',
   width: '50px',
 
-  '& > a.nav-link': {
-    display: 'inline-block',
-    width: '50px',
-    height: '50px',
-    boxSizing: 'border-box',
-    backgroundSize: '25px',
-    backgroundPosition: '50% 50%',
-    backgroundRepeat: 'no-repeat',
-    opacity: 0.6,
+  '& .bot-explorer': {
+    backgroundImage: 'url(./external/media/ic_bot_explorer.svg)'
+  },
 
-    '&:hover, &.selected': {
-      opacity: 1
-    },
+  '& .services': {
+    backgroundImage: 'url(./external/media/ic_services.svg)'
+  },
 
-    '&.disabled': {
-      opacity: 0.6
-    },
+  '& .bot-settings': {
+    backgroundImage: 'url(./external/media/ic_bot_settings.svg)'
+  },
 
-    // TODO: Add focus state
-    // https://github.com/Microsoft/BotFramework-Emulator/issues/571
-
-    '&.bot-explorer': {
-      backgroundImage: 'url(./external/media/ic_bot_explorer.svg)'
-    },
-
-    '&.services': {
-      backgroundImage: 'url(./external/media/ic_services.svg)'
-    },
-
-    '&.bot-settings': {
-      backgroundImage: 'url(./external/media/ic_bot_settings.svg)'
-    },
-
-    '&.settings': {
-      marginTop: 'auto',
-      backgroundImage: 'url(./external/media/ic_settings.svg)'
-    }
+  '& .settings': {
+    backgroundImage: 'url(./external/media/ic_settings.svg)'
   }
 });
 
@@ -118,10 +96,10 @@ class NavBar extends React.Component<NavBarProps, {}> {
 
     return (
       <nav { ...CSS }>
-        <a className={ classNames('nav-link bot-explorer', { selected: selection === Constants.NavBar_Bot_Explorer }) } onClick={ evt => handleClick(evt, Constants.NavBar_Bot_Explorer) } href="javascript:void(0);" title="Bot Explorer"></a>
-        <a className={ classNames('nav-link services', { selected: selection === Constants.NavBar_Services }) } onClick={ evt => handleClick(evt, Constants.NavBar_Services) } href="javascript:void(0);" title="Services"></a>
-        <a className={ classNames('nav-link bot-settings', { disabled: !this.props.activeBot }) } onClick={ this.handleBotSettingsClick } href="javascript:void(0);" title="Bot Settings"></a>
-        <a className="nav-link settings" onClick={ handleSettingsClick } href="javascript:void(0);" title="Settings"></a>
+        <NavLink className={ classNames('nav-link bot-explorer', { selected: selection === Constants.NavBar_Bot_Explorer }) } onClick={ evt => handleClick(evt, Constants.NavBar_Bot_Explorer) } title="Bot Explorer" />
+        <NavLink className={ classNames('nav-link services', { selected: selection === Constants.NavBar_Services }) } onClick={ evt => handleClick(evt, Constants.NavBar_Services) } title="Services" />
+        <NavLink className={ classNames('nav-link bot-settings', { disabled: !this.props.activeBot }) } onClick={ this.handleBotSettingsClick } title="Bot Settings" />
+        <NavLink className="nav-link settings" onClick={ handleSettingsClick } title="Settings" justifyEnd={ true } />
         <InsetShadow right={ true } />
       </nav>
     );
