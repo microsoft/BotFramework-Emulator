@@ -116,6 +116,7 @@ interface MainProps {
   secondaryEditor?: IEditor;
   showingExplorer?: boolean;
   presentationModeEnabled?: boolean;
+  navBarSelection?: string;
   exitPresentationMode?: (e) => void;
 }
 
@@ -173,7 +174,7 @@ class Main extends React.Component<MainProps, MainState> {
     return (
       <div { ...CSS }>
         <div { ...NAV_CSS }>
-          { !this.props.presentationModeEnabled && <NavBar /> }
+          { !this.props.presentationModeEnabled && <NavBar selection={ this.props.navBarSelection } showingExplorer={ this.props.showingExplorer } /> }
           <div className="workbench">
             <Splitter orientation={ 'vertical' } primaryPaneIndex={ 0 } minSizes={{ 0: 40, 1: 40 }} initialSizes={{ 0: 210 }}>
               { workbenchChildren }
@@ -193,7 +194,8 @@ const mapStateToProps = (state: IRootState): MainProps => ({
   presentationModeEnabled: state.presentation.enabled,
   primaryEditor: state.editor.editors[Constants.EditorKey_Primary],
   secondaryEditor: state.editor.editors[Constants.EditorKey_Secondary],
-  showingExplorer: state.explorer.showing
+  showingExplorer: state.explorer.showing,
+  navBarSelection: state.navBar.selection
 });
 
 const mapDispatchToProps = (dispatch): MainProps => ({

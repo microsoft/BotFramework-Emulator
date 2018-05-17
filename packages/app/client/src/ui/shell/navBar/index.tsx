@@ -75,7 +75,7 @@ const CSS = css({
 interface NavBarProps {
   activeBot?: IBotConfig;
   selection?: string;
-  explorerShowing?: boolean;
+  showingExplorer?: boolean;
   handleClick?: (evt, selection: string) => void;
   handleSettingsClick?: (evt) => void;
 }
@@ -96,8 +96,8 @@ class NavBar extends React.Component<NavBarProps> {
 
     return (
       <nav { ...CSS }>
-        <NavLink className={ classNames('nav-link bot-explorer', { selected: selection === Constants.NavBar_Bot_Explorer }) } onClick={ evt => handleClick(evt, Constants.NavBar_Bot_Explorer) } title="Bot Explorer" />
-        <NavLink className={ classNames('nav-link services', { selected: selection === Constants.NavBar_Services }) } onClick={ evt => handleClick(evt, Constants.NavBar_Services) } title="Services" />
+        <NavLink className={ classNames('nav-link bot-explorer', { selected: selection === Constants.NavBar_Bot_Explorer }) } onClick={ evt => this.props.handleClick(evt, Constants.NavBar_Bot_Explorer) } title="Bot Explorer" />
+        <NavLink className={ classNames('nav-link services', { selected: selection === Constants.NavBar_Services }) } onClick={ evt => this.props.handleClick(evt, Constants.NavBar_Services) } title="Services" />
         <NavLink className={ classNames('nav-link bot-settings', { disabled: !this.props.activeBot }) } onClick={ this.handleBotSettingsClick } title="Bot Settings" />
         <NavLink className="nav-link settings" onClick={ handleSettingsClick } title="Settings" justifyEnd={ true } />
         <InsetShadow right={ true } />
@@ -107,9 +107,7 @@ class NavBar extends React.Component<NavBarProps> {
 }
 
 const mapStateToProps = (state: IRootState): NavBarProps => ({
-  activeBot: state.bot.activeBot,
-  selection: state.navBar.selection,
-  explorerShowing: state.explorer.showing
+  activeBot: state.bot.activeBot
 });
 
 const mapDispatchToProps = (dispatch, ownProps: NavBarProps): NavBarProps => ({
@@ -117,7 +115,7 @@ const mapDispatchToProps = (dispatch, ownProps: NavBarProps): NavBarProps => ({
   handleClick: (evt, selection: string) => {
     if (ownProps.selection === selection) {
       // toggle explorer when clicking the same navbar icon
-      dispatch(ExplorerActions.show(!ownProps.explorerShowing));
+      dispatch(ExplorerActions.show(!ownProps.showingExplorer));
     } else {
       // switch tabs and show explorer when clicking different navbar icon
       dispatch(() => {
