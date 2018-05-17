@@ -32,32 +32,37 @@
 //
 
 import { css } from 'glamor';
-import React from 'react';
-
+import * as React from 'react';
 import { Colors } from '@bfemulator/ui-react';
 
 const CSS = css({
-    height: '100%',
-    border: 'none',
-    padding: 0,
+  height: '100%',
+  border: 'none',
+  padding: 0,
 
-    '&:active': {
-        border: 0,
-        outline: 0
-    },
+  '&:active': {
+    border: 0,
+    outline: 0
+  },
 
-    '&:focus': {
-        border: 0,
-        outline: 0
-    }
+  '&:focus': {
+    border: 0,
+    outline: 0
+  }
 });
 
-export default props =>
-    <button 
-        ref={ props.setRef }
-        className={ CSS }
-        onClick={ props.onClick }
-        type="button"
-    >
-        { props.children }
-    </button>
+interface TabBarTabProps {
+  setRef?: (input) => any;
+  onClick?: (nextValue) => any;
+  children?: any;
+}
+
+export default (props: TabBarTabProps) =>
+  <button
+    { ...CSS }
+    ref={ props.setRef }
+    onClick={ props.onClick }
+    type="button"
+  >
+    { props.children }
+  </button>

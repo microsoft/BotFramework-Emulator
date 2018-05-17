@@ -94,7 +94,7 @@ const mapStateToProps = (state: IRootState, ownProps: MDIProps): MDIProps => ({
 });
 
 const mapDispatchToProps = (dispatch): MDIProps => ({
-  setActiveTab: (tab: string) => { dispatch(EditorActions.setActiveTab(tab)) }
+  setActiveTab: (tab: string) => dispatch(EditorActions.setActiveTab(tab))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MDI);
