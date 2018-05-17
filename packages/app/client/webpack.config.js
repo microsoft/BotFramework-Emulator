@@ -19,6 +19,8 @@ const defaultConfig = {
     index: path.resolve('./src/index.tsx')
   },
 
+  target: 'electron-renderer',
+
   node: {
     fs: 'empty'
   },
@@ -28,7 +30,7 @@ const defaultConfig = {
       {
         test: /\.(tsx?)|(jsx)$/,
         exclude: [/node_modules/],
-        use: use.slice(1)
+        use: ['awesome-typescript-loader']
       }
     ]
   },
@@ -59,7 +61,7 @@ const defaultConfig = {
   ]
 };
 
-const buildConfig = () => {
+const buildConfig = mode => {
   const config = {
     ...defaultConfig,
 
@@ -69,7 +71,9 @@ const buildConfig = () => {
       new DllReferencePlugin({ manifest: require(path.join(manifestLocation, 'shared-manifest.json')) })
     ]
   };
-  config.module.rules[0].use = use;
+  if (mode === 'development') {
+    config.module.rules[0].use = use;
+  }
   return config;
 };
 
@@ -117,16 +121,16 @@ const vendorsConfig = () => ({
 
 const buildClassification = npm_lifecycle_event.split(':')[1];
 
-switch (buildClassification) {
-  case 'vendors':
-    module.exports = vendorsConfig();
-    break;
+module.exports = function (env, argv) {
+  switch (buildClassification) {
+    case 'vendors':
+      return vendorsConfig();
 
-  case 'shared':
-    module.exports = sharedConfig();
-    break;
+    case 'shared':
+      return sharedConfig();
 
-  default:
-    module.exports = buildConfig();
-    break;
-}
+    default:
+      return buildConfig(argv.mode);
+  }
+};
+
