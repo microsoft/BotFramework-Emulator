@@ -31,13 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import React from 'react';
+import * as React from 'react';
 import { css } from 'glamor';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { Colors } from '@bfemulator/ui-react';
 import * as EditorActions from '../../../data/action/editorActions';
+import { IRootState } from '../../../data/store';
 
 const CSS = css({
   top: 0,
@@ -77,9 +78,24 @@ const CSS = css({
   }
 });
 
-export class TabManager extends React.Component {
-  constructor(props, context) {
-    super(props, context);
+export interface TabManagerProps {
+  disabled?: boolean;
+  recentTabs?: string[];
+  setActiveTab?: (tab: string) => void;
+}
+
+export interface TabManagerState {
+  controlIsPressed: boolean;
+  selectedIndex: number;
+  shiftIsPressed: boolean;
+  showing: boolean;
+}
+
+class TabManager extends React.Component<TabManagerProps, TabManagerState> {
+  private tabRefs: HTMLLIElement[];
+
+  constructor(props: TabManagerProps) {
+    super(props);
 
     this.onKeyDown = this.onKeyDown.bind(this);
     this.onKeyUp = this.onKeyUp.bind(this);
@@ -169,7 +185,7 @@ export class TabManager extends React.Component {
       case 'Control':
         if (this.state.showing) {
           this.setState(({ controlIsPressed: false, showing: false }));
-          this.props.dispatch(EditorActions.setActiveTab(this.props.recentTabs[this.state.selectedIndex]));
+          this.props.setActiveTab(this.props.recentTabs[this.state.selectedIndex]);
         } else {
           this.setState(({ controlIsPressed: false }));
         }
@@ -185,8 +201,9 @@ export class TabManager extends React.Component {
   }
 
   render() {
-    return (this.state.showing && !this.props.disabled) ? (
-      <div className={ CSS }>
+    return (this.state.showing && !this.props.disabled) ?
+    (
+      <div { ...CSS }>
         <ul>
           {
             this.props.recentTabs.map((tabId, index) => {
@@ -202,15 +219,12 @@ export class TabManager extends React.Component {
   }
 }
 
-TabManager.propTypes = {
-  disabled: PropTypes.bool.isRequired
-};
-
-TabManager.defaultProps = {
-  recentTabs: []
-};
-
-export default connect((state, ownProps) => ({
-  activeEditor: state.editor.activeEditor,
+const mapStateToProps = (state: IRootState): TabManagerProps => ({
   recentTabs: state.editor.editors[state.editor.activeEditor].recentTabs
-}))(TabManager);
+});
+
+const mapDispatchToProps = (dispatch): TabManagerProps => ({
+  setActiveTab: (tab: string) => { dispatch(EditorActions.setActiveTab(tab)); }
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(TabManager);
