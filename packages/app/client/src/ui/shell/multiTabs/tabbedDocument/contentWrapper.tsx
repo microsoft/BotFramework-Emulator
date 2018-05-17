@@ -57,7 +57,7 @@ interface TabbedDocumentContentWrapperProps {
   activeEditor?: string;
   primaryEditor?: IEditor;
   secondaryEditor?: IEditor;
-  setActiveEditor?: (editor: string) => any;
+  setActiveEditor?: (editor: string) => void;
 }
 
 interface TabbedDocumentContentWrapperState {

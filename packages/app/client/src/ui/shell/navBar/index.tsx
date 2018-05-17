@@ -72,7 +72,7 @@ const CSS = css({
   }
 });
 
-export interface NavBarProps {
+interface NavBarProps {
   activeBot?: IBotConfig;
   selection?: string;
   explorerShowing?: boolean;
@@ -80,7 +80,7 @@ export interface NavBarProps {
   handleSettingsClick?: (evt) => void;
 }
 
-class NavBar extends React.Component<NavBarProps, {}> {
+class NavBar extends React.Component<NavBarProps> {
   constructor(props: NavBarProps) {
     super(props);
   }

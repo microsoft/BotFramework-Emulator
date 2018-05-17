@@ -64,14 +64,14 @@ const CSS = css({
   },
 });
 
-export interface Props {
+interface ExplorerItemProps {
   active: boolean;
   onClick?: any;
 }
 
-export default class ExplorerItem extends React.Component<Props> {
-  constructor(props, context) {
-    super(props, context);
+export default class ExplorerItem extends React.Component<ExplorerItemProps> {
+  constructor(props: ExplorerItemProps) {
+    super(props);
   }
 
   render() {

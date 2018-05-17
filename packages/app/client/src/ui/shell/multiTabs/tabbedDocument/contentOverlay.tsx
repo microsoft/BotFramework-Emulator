@@ -51,7 +51,7 @@ const CSS = css({
 interface ContentOverlayProps {
   documentId?: string;
   draggingTab?: boolean;
-  appendTab?: (editorKey: string, owningEditor: string, tabId: string) => any;
+  appendTab?: (editorKey: string, owningEditor: string, tabId: string) => void;
 }
 
 interface ContentOverlayState {

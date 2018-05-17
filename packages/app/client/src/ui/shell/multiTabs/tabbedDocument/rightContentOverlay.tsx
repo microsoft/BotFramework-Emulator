@@ -50,7 +50,7 @@ const CSS = css({
 interface RightContentOverlayProps {
   draggingTab?: boolean;
   primaryEditor?: IEditor;
-  splitTab?: (contentType: string, tabId: string) => any;
+  splitTab?: (contentType: string, tabId: string) => void;
 }
 
 interface RightContentOverlayState {
