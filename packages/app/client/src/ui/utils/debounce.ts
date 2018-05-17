@@ -1,5 +1,5 @@
-export const debounce = function (closure: (args?: any[]) => any, timeout: number = 500) {
-  let lastTick = Date.now();
+export const debounce = function (closure: (args?: any) => any, timeout: number = 500) {
+  let lastTick = 0;
   return function (...args) {
     if (Date.now() - lastTick > timeout) {
       lastTick = Date.now();
