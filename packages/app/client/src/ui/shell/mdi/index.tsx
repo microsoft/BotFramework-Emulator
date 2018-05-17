@@ -71,7 +71,7 @@ class MDI extends React.Component<MDIProps> {
       >
         {
           this.props.tabOrder.map(documentId =>
-            <TabbedDocument>
+            <TabbedDocument key={ documentId }>
               <TabbedDocumentTab>
                 <TabFactory document={ this.props.documents[documentId] } />
               </TabbedDocumentTab>

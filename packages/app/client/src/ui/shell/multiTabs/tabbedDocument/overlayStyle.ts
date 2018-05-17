@@ -32,7 +32,6 @@
 //
 
 import { css } from 'glamor';
-
 import { Colors } from '@bfemulator/ui-react';
 
 export const OVERLAY_CSS = css({

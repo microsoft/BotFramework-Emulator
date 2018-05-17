@@ -31,31 +31,54 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
-import PropTypes from 'prop-types';
 
 import { OVERLAY_CSS } from './overlayStyle';
+import * as EditorActions from '../../../../data/action/editorActions';
 import * as Constants from '../../../../constants';
+import { getTabGroupForDocument } from '../../../../data/editorHelpers';
+import { IRootState } from '../../../../data/store';
 
 const CSS = css({
   top: 0,
   left: 0,
-  right: '80%',
+  right: 0,
   bottom: 0
 }, OVERLAY_CSS);
 
-export class ContentOverlay extends React.Component {
-  constructor(props, context) {
-    super(props, context);
+interface ContentOverlayProps {
+  documentId?: string;
+  draggingTab?: boolean;
+  appendTab?: (editorKey: string, owningEditor: string, tabId: string) => any;
+}
+
+interface ContentOverlayState {
+  draggedOver: boolean;
+  owningEditor: string;
+}
+
+class ContentOverlay extends React.Component<ContentOverlayProps, ContentOverlayState> {
+  constructor(props: ContentOverlayProps) {
+    super(props);
 
     this.onDragEnter = this.onDragEnter.bind(this);
     this.onDragLeave = this.onDragLeave.bind(this);
     this.onDragOver = this.onDragOver.bind(this);
     this.onDrop = this.onDrop.bind(this);
 
-    this.state = {};
+    this.state = {
+      draggedOver: false,
+      owningEditor: getTabGroupForDocument(props.documentId)
+    };
+  }
+
+  componentWillReceiveProps(newProps) {
+    const { documentId: newDocumentId } = newProps;
+    if (this.props.documentId && this.props.documentId !== newDocumentId) {
+      this.setState({ owningEditor: getTabGroupForDocument(newDocumentId) });
+    }
   }
 
   onDragEnter(e) {
@@ -74,6 +97,11 @@ export class ContentOverlay extends React.Component {
   }
 
   onDrop(e) {
+    const tabData = JSON.parse(e.dataTransfer.getData('application/json'));
+    if (tabData.editorKey !== this.state.owningEditor) {
+      this.props.appendTab(tabData.editorKey, this.state.owningEditor, tabData.tabId);
+    }
+
     this.setState(({ draggedOver: false }));
     e.preventDefault();
     e.stopPropagation();
@@ -91,11 +119,12 @@ export class ContentOverlay extends React.Component {
   }
 }
 
-export default connect((state, ownProps) => ({
+const mapStateToProps = (state: IRootState): ContentOverlayProps => ({
   draggingTab: state.editor.draggingTab
-}))(ContentOverlay);
+});
 
-ContentOverlay.propTypes = {
-  draggingTab: PropTypes.bool,
-  documentId: PropTypes.string
-};
+const mapDispatchToProps = (dispatch): ContentOverlayProps => ({
+  appendTab: (editorKey: string, owningEditor: string, tabId: string) => dispatch(EditorActions.appendTab(editorKey, owningEditor, tabId))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ContentOverlay);
