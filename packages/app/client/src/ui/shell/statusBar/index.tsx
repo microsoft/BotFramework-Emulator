@@ -32,8 +32,7 @@
 //
 
 import { css } from 'glamor';
-import React from 'react';
-
+import * as React from 'react';
 import { Colors } from '@bfemulator/ui-react';
 
 const CSS = css({
@@ -47,4 +46,4 @@ const CSS = css({
 });
 
 export default props =>
-  <div className={ CSS }></div>
+  <div { ...CSS }></div>
