@@ -34,7 +34,6 @@
 import * as React from 'react';
 import { css } from 'glamor';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 
 import { Colors } from '@bfemulator/ui-react';
 import * as EditorActions from '../../../data/action/editorActions';

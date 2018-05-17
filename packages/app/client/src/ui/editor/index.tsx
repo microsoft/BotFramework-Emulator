@@ -31,41 +31,46 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 
 import * as Constants from '../../constants';
 import AppSettingsEditor from './appSettingsEditor';
 import BotSettingsEditor from './botSettingsEditor';
 import Emulator from './emulator';
 import WelcomePage from './welcomePage';
+import { IDocument } from '../../data/reducer/editor';
 
-export default class EditorFactory extends React.Component {
+export interface EditorFactoryProps {
+  document?: IDocument;
+}
+
+export default class EditorFactory extends React.Component<EditorFactoryProps, {}> {
+  constructor(props: EditorFactoryProps) {
+    super(props);
+  }
+
   render() {
     const { document } = this.props;
     const { contentType } = document;
 
-    return (
-      contentType === Constants.ContentType_LiveChat ?
-        <Emulator mode="livechat" documentId={ document.documentId } dirty={ this.props.document.dirty } />
-        : contentType === Constants.ContentType_Transcript ?
-        <Emulator mode="transcript" documentId={ document.documentId } dirty={ this.props.document.dirty } />
-        : contentType === Constants.ContentType_BotSettings ?
-        <BotSettingsEditor documentId={ document.documentId } dirty={ this.props.document.dirty } />
-        : contentType === Constants.ContentType_AppSettings ?
-        <AppSettingsEditor documentId={ document.documentId } dirty={ this.props.document.dirty } />
-        : contentType === Constants.ContentType_WelcomePage ?
-        <WelcomePage documentId={ document.documentId } />
-        : false
-    );
+    switch (contentType) {
+      case Constants.ContentType_LiveChat:
+        return (<Emulator mode="livechat" documentId={ document.documentId } dirty={ this.props.document.dirty } />);
+      
+      case Constants.ContentType_Transcript:
+        return (<Emulator mode="transcript" documentId={ document.documentId } dirty={ this.props.document.dirty } />);
+
+      case Constants.ContentType_BotSettings:
+        return (<BotSettingsEditor documentId={ document.documentId } dirty={ this.props.document.dirty } />);
+
+      case Constants.ContentType_AppSettings:
+        return (<AppSettingsEditor documentId={ document.documentId } dirty={ this.props.document.dirty } />);
+
+      case Constants.ContentType_WelcomePage:
+        return (<WelcomePage documentId={ document.documentId } />);
+
+      default:
+        return false;
+    }
   }
 }
-
-EditorFactory.propTypes = {
-  document: PropTypes.shape({
-    contentType: PropTypes.string,
-    documentId: PropTypes.string,
-    meta: PropTypes.any,
-    dirty: PropTypes.bool
-  })
-};
