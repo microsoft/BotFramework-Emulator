@@ -50,19 +50,30 @@ const CSS = css({
     display: 'flex',
     fontSize: '11px',
     fontWeight: 700,
-    height: '30px',
-    lineHeight: '30px',
+    height: '22px',
+    lineHeight: '22px',
     textTransform: 'uppercase',
     whiteSpace: 'nowrap',
     flexShrink: 0,
 
     '& > .content': {
+      display: 'flex',
+      alignItems: 'center',
       flex: 1,
       paddingLeft: '8px',
 
       '& > .toggle': {
-        fontSize: '9px',
-        paddingRight: '8px',
+        height: '12px',
+        width: '12px',
+        marginRight: '8px',
+        backgroundImage: `url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath fill='%23e8e8e8' d='M6 4v8l4-4-4-4zm1 2.414L8.586 8 7 9.586V6.414z'/%3E%3C/svg%3E")`,
+        backgroundSize: '18px',
+        backgroundPosition: '50% 50%',
+        backgroundRepeat: 'no-repeat'
+      },
+
+      '& > .toggle.toggle-expanded': {
+        background: `url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath fill='%23e8e8e8' d='M11 10.07H5.344L11 4.414v5.656z'/%3E%3C/svg%3E")`
       }
     },
 
@@ -120,12 +131,14 @@ export class ExpandCollapse extends React.Component<IExpandCollapseProps, IExpan
   }
 
   render() {
+    const toggleClassName = this.state.expanded ? ' toggle-expanded': '';
+    
     // TODO: Consider <input type="checkbox"> instead of <div />
     return (
       <div aria-expanded={ this.state.expanded } className={ CSS + ' expand-collapse-container' }>
         <header>
           <div className="content" onClick={ this.handleTitleClick }>
-            <span className="toggle"> { this.state.expanded ? '◢' : '▷' }</span>
+            <span className={ 'toggle' + toggleClassName }></span>
             { this.props.title }
           </div>
           <div className="accessories">

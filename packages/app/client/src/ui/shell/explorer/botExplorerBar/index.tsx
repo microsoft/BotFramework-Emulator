@@ -34,7 +34,6 @@
 import * as React from 'react';
 import { css } from 'glamor';
 
-import { CommandService } from '../../../../platform/commands/commandService';
 import { EndpointExplorerContainer } from '../endpointExplorer';
 import { ExplorerBarBody } from '../explorerBarBody';
 import { ExplorerBarHeader, Title, Accessories } from '../explorerBarHeader';
@@ -42,6 +41,7 @@ import { getBotDisplayName } from '@bfemulator/app-shared';
 import { TranscriptExplorer } from '../transcriptExplorer';
 import * as botHelpers from '../../../../data/botHelpers';
 import BotNotOpenExplorer from '../botNotOpenExplorer';
+import { IBotConfig } from 'msbot/bin/schema';
 
 const CSS = css({
   height: '100%',
@@ -54,20 +54,14 @@ const CSS = css({
   }
 });
 
-export class IAssetExplorerBarProps {
-  activeBot: any;
+interface BotExplorerBarProps {
+  activeBot: IBotConfig;
   hidden: boolean;
 }
 
-export default class AssetExplorerBar extends React.Component<IAssetExplorerBarProps> {
-
-  constructor(props, context) {
-    super(props, context);
-    this.onClickSettings = this.onClickSettings.bind(this);
-  }
-
-  onClickSettings(e) {
-    CommandService.call('bot-settings:open', this.props.activeBot);
+export default class BotExplorerBar extends React.Component<BotExplorerBarProps> {
+  constructor(props: BotExplorerBarProps) {
+    super(props);
   }
 
   render() {
@@ -80,9 +74,6 @@ export default class AssetExplorerBar extends React.Component<IAssetExplorerBarP
           <Title>
             Bot Explorer
           </Title>
-          <Accessories>
-            { this.props.activeBot ? <span className="accessory bot-settings-icon" onClick={ this.onClickSettings } /> : false }
-          </Accessories>
         </ExplorerBarHeader>
         <ExplorerBarBody>
           { this.props.activeBot ? (

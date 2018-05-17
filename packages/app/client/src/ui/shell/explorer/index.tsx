@@ -35,7 +35,7 @@ import { css } from 'glamor';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import AssetExplorerBar from './assetExplorerBar';
+import BotExplorerBar from './botExplorerBar';
 import { ServicesExplorerBarContainer } from "./servicesExplorerBar";
 import { Colors, InsetShadow } from '@bfemulator/ui-react';
 import * as Constants from '../../../constants';
@@ -63,7 +63,7 @@ class ExplorerBar extends React.Component<ExplorerBarProps> {
   render() {
     let explorer = [];
       explorer.push(
-        <AssetExplorerBar key={ 'asset-explorer-bar' } activeBot={ this.props.activeBot } hidden={ this.props.selectedNavTab !== Constants.NavBar_Bot_Explorer } />
+        <BotExplorerBar key={ 'bot-explorer-bar' } activeBot={ this.props.activeBot } hidden={ this.props.selectedNavTab !== Constants.NavBar_Bot_Explorer } />
       );
     if (this.props.selectedNavTab === Constants.NavBar_Services)
       explorer.push(

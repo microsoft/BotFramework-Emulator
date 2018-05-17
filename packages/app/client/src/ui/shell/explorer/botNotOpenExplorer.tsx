@@ -31,13 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
 import { css } from 'glamor';
-import React from 'react';
+import * as React from 'react';
 
 import { Colors, PrimaryButton, ExpandCollapse, ExpandCollapseControls, ExpandCollapseContent } from '@bfemulator/ui-react';
-import { CommandService } from '../../../platform/commands/commandService';
-import * as Constants from '../../../constants';
 
 const CSS = css({
   backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
@@ -55,20 +52,14 @@ const CSS = css({
   }
 });
 
-class BotNotOpenExplorer extends React.Component {
-  constructor(props, context) {
-    super(props, context);
-
-    this.onOpenBot = this.onOpenBot.bind(this);
-  }
-
-  onOpenBot(e) {
-    CommandService.call('navbar:switchtab', Constants.NavBar_App);
+export default class BotNotOpenExplorer extends React.Component<{}, {}> {
+  constructor(props) {
+    super(props);
   }
 
   render() {
     return (
-      <ul className={ CSS }>
+      <ul { ...CSS }>
         <li>
           <ExpandCollapse
             expanded={ true }
@@ -76,7 +67,6 @@ class BotNotOpenExplorer extends React.Component {
           >
             <ExpandCollapseContent>
               <div className="explorer-empty-state">
-                { false && <PrimaryButton text='Select or Create a bot' onClick={ this.onOpenBot } /> }
               </div>
             </ExpandCollapseContent>
           </ExpandCollapse>
@@ -85,5 +75,3 @@ class BotNotOpenExplorer extends React.Component {
     );
   }
 }
-
-export default connect(state => ({}))(BotNotOpenExplorer)
