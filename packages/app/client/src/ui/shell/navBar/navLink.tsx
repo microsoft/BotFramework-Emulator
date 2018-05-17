@@ -46,7 +46,7 @@ const CSS = css({
     top: 0,
     left: 0,
     opacity: 0,
-    backgroundColor: Colors.C40
+    backgroundColor: Colors.NAVBAR_FOCUS_DARK
   }
 });
 
