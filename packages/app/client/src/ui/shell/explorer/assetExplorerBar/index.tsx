@@ -55,7 +55,7 @@ const CSS = css({
 });
 
 export class IAssetExplorerBarProps {
-  activeBot: string;
+  activeBot: any;
   hidden: boolean;
 }
 

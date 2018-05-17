@@ -40,11 +40,11 @@ import Emulator from './emulator';
 import WelcomePage from './welcomePage';
 import { IDocument } from '../../data/reducer/editor';
 
-export interface EditorFactoryProps {
+interface EditorFactoryProps {
   document?: IDocument;
 }
 
-export default class EditorFactory extends React.Component<EditorFactoryProps, {}> {
+export default class EditorFactory extends React.Component<EditorFactoryProps> {
   constructor(props: EditorFactoryProps) {
     super(props);
   }

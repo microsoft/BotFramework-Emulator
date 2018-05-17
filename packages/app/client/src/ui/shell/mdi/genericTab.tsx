@@ -31,33 +31,47 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 
+import * as Constants from '../../../constants';
 import * as EditorActions from '../../../data/action/editorActions';
-import GenericTab from './genericTab';
+import Tab from './tab';
 import { getTabGroupForDocument } from '../../../data/editorHelpers';
+import { IRootState } from '../../../data/store';
 
-export class AppSettingsTab extends React.Component {
-  constructor(props, context) {
-    super(props, context);
+interface GenericTabProps {
+  active?: boolean;
+  dirty?: boolean;
+  documentId?: string;
+  title?: string;
+  closeTab?: () => void;
+}
 
-    this.onCloseClick = this.onCloseClick.bind(this);
+class GenericTab extends React.Component<GenericTabProps> {
+  constructor(props: GenericTabProps) {
+    super(props);
   }
 
-  onCloseClick(e) {
+  private onCloseClick = (e) => {
     e.stopPropagation();
-    this.props.dispatch(EditorActions.close(getTabGroupForDocument(this.props.documentId), this.props.documentId));
+    this.props.closeTab();
   }
 
   render() {
-    return(
-      <GenericTab active={ this.props.active } title='Emulator Settings' onCloseClick={ this.onCloseClick }
+    return (
+      <Tab active={ this.props.active } title={ this.props.title } onCloseClick={ this.onCloseClick }
         documentId={ this.props.documentId } dirty={ this.props.dirty } />
     );
   }
 }
 
-export default connect((state, { documentId }) => ({
-  active: state.editor.editors[state.editor.activeEditor].activeDocumentId === documentId
-}))(AppSettingsTab);
+const mapStateToProps = (state: IRootState, ownProps: GenericTabProps): GenericTabProps => ({
+  active: state.editor.editors[state.editor.activeEditor].activeDocumentId === ownProps.documentId
+});
+
+const mapDispatchToProps = (dispatch, ownProps: GenericTabProps): GenericTabProps => ({
+  closeTab: () => dispatch(EditorActions.close(getTabGroupForDocument(ownProps.documentId), ownProps.documentId))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(GenericTab);

@@ -77,13 +77,13 @@ const CSS = css({
   }
 });
 
-export interface TabManagerProps {
+interface TabManagerProps {
   disabled?: boolean;
   recentTabs?: string[];
   setActiveTab?: (tab: string) => void;
 }
 
-export interface TabManagerState {
+interface TabManagerState {
   controlIsPressed: boolean;
   selectedIndex: number;
   shiftIsPressed: boolean;

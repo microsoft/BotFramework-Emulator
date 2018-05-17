@@ -32,22 +32,58 @@
 //
 
 import { css } from 'glamor';
-import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
+import { connect } from 'react-redux';
 
-import TabbedDocumentContentWrapper from './contentWrapper';
+import AssetExplorerBar from './assetExplorerBar';
+import { ServicesExplorerBarContainer } from "./servicesExplorerBar";
+import { Colors, InsetShadow } from '@bfemulator/ui-react';
+import * as Constants from '../../../constants';
+import { IBotConfig } from 'msbot/bin/schema';
+import { IRootState } from '../../../data/store';
 
 const CSS = css({
+  backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
+  height: '100%',
   display: 'flex',
-  flex: 1,
-  flexDirection: 'column'
+  flexFlow: 'column nowrap',
+  position: 'relative'
 });
 
-export default class TabbedDocument extends React.Component {
+interface ExplorerBarProps {
+  activeBot?: IBotConfig;
+  selectedNavTab?: string;
+}
+
+class ExplorerBar extends React.Component<ExplorerBarProps> {
+  constructor(props) {
+    super(props);
+  }
+  
   render() {
-    return false;
+    let explorer = [];
+      explorer.push(
+        <AssetExplorerBar key={ 'asset-explorer-bar' } activeBot={ this.props.activeBot } hidden={ this.props.selectedNavTab !== Constants.NavBar_Bot_Explorer } />
+      );
+    if (this.props.selectedNavTab === Constants.NavBar_Services)
+      explorer.push(
+        <ServicesExplorerBarContainer key={ 'services-explorer-bar' } />
+      );
+    if (!this.props.selectedNavTab)
+      explorer = null;
+
+    return (
+      <div { ...CSS }>
+        { explorer }
+        <InsetShadow right={ true }/>
+      </div>
+    );
   }
 }
 
-export const Tab = props => props.children;
-export const Content = props => <TabbedDocumentContentWrapper documentId={ props.documentId }>{ props.children }</TabbedDocumentContentWrapper>;
+const mapStateToProps = (state: IRootState): ExplorerBarProps => ({
+  activeBot: state.bot.activeBot,
+  selectedNavTab: state.navBar.selection
+});
+
+export default connect(mapStateToProps)(ExplorerBar)

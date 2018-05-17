@@ -31,69 +31,72 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import { css } from 'glamor';
 
 import { TAB_CSS } from './tabStyle';
 import * as EditorActions from './../../../data/action/editorActions';
 import { getTabGroupForDocument } from '../../../data/editorHelpers';
 import { TruncateText } from '@bfemulator/ui-react';
 
-const truncateTextCss = css({
-  maxWidth: '200px'
-});
+interface TabProps {
+  active?: boolean;
+  dirty?: boolean;
+  documentId?: string;
+  title?: string;
+  toggleDraggingTab?: (toggle: boolean) => any;
+  onCloseClick?: (evt) => any;
+  swapTabs?: (editorKey: string, owningEditor: string, tabId: string) => any;
+}
 
-class Tab extends React.Component {
-  constructor(props, context) {
-    super(props, context);
+interface TabState {
+  draggedOver: boolean;
+  owningEditor: string;
+}
 
-    this.onDragStart = this.onDragStart.bind(this);
-    this.onDragOver = this.onDragOver.bind(this);
-    this.onDragEnter = this.onDragEnter.bind(this);
-    this.onDragLeave = this.onDragLeave.bind(this);
-    this.onDrop = this.onDrop.bind(this);
-    this.onDragEnd = this.onDragEnd.bind(this);
+class Tab extends React.Component<TabProps, TabState> {
+  constructor(props: TabProps) {
+    super(props);
 
     this.state = {
+      draggedOver: false,
       owningEditor: getTabGroupForDocument(props.documentId)
     };
   }
 
-  onDragStart(e) {
+  private onDragStart = (e) => {
     const dragData = {
       tabId: this.props.documentId,
       editorKey: this.state.owningEditor
     };
     e.dataTransfer.setData('application/json', JSON.stringify(dragData));
-    this.props.dispatch(EditorActions.toggleDraggingTab(true));
+    this.props.toggleDraggingTab(true);
   }
 
-  onDragEnd(e) {
-    this.props.dispatch(EditorActions.toggleDraggingTab(false));
+  private onDragEnd = (e) => {
+    this.props.toggleDraggingTab(false);
   }
 
-  onDragOver(e) {
+  private onDragOver = (e) => {
     e.preventDefault();
     e.stopPropagation();
     this.setState(({ draggedOver: true }));
   }
 
-  onDragEnter(e) {
+  private onDragEnter = (e) => {
     e.preventDefault();
   }
 
-  onDragLeave(e) {
+  private onDragLeave = (e) => {
     this.setState(({ draggedOver: false }));
   }
 
-  onDrop(e) {
+  private onDrop = (e) => {
     const tabData = JSON.parse(e.dataTransfer.getData('application/json'));
 
     // only swap the tabs if they are different
     if (tabData.tabId !== this.props.documentId) {
-      this.props.dispatch(EditorActions.swapTabs(tabData.editorKey, this.state.owningEditor, tabData.tabId, this.props.documentId));
+      this.props.swapTabs(tabData.editorKey, this.state.owningEditor, tabData.tabId);
     }
 
     this.setState(({ draggedOver: false }));
@@ -114,7 +117,7 @@ class Tab extends React.Component {
            onDragOver={ this.onDragOver } onDragEnter={ this.onDragEnter } onDragStart={ this.onDragStart }
            onDrop={ this.onDrop } onDragLeave={ this.onDragLeave } onDragEnd={ this.onDragEnd }>
         <span className="editor-tab-icon"></span>
-        <TruncateText className={ truncateTextCss }>{ this.props.title }</TruncateText>
+        <TruncateText className="truncated-tab-text">{ this.props.title }</TruncateText>
         { this.props.dirty ? <span>*</span> : null }
         <span className="editor-tab-close" onClick={ this.props.onCloseClick }></span>
       </div>
@@ -122,8 +125,9 @@ class Tab extends React.Component {
   }
 }
 
-export default connect((state, ownProps) => ({}))(Tab);
+const mapDispatchToProps = (dispatch, ownProps: TabProps): TabProps => ({
+  toggleDraggingTab: (toggle: boolean) => dispatch(EditorActions.toggleDraggingTab(toggle)),
+  swapTabs: (editorKey: string, owningEditor: string, tabId: string) => dispatch(EditorActions.swapTabs(editorKey, owningEditor, tabId, ownProps.documentId))
+});
 
-Tab.propTypes = {
-  dirty: PropTypes.bool
-};
+export default connect(null, mapDispatchToProps)(Tab);
