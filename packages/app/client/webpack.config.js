@@ -66,10 +66,7 @@ const buildConfig = () => {
     plugins: [
       ...defaultConfig.plugins,
       new DllReferencePlugin({ manifest: require(path.join(manifestLocation, 'vendors-manifest.json')) }),
-      new DllReferencePlugin({ manifest: require(path.join(manifestLocation, 'shared-manifest.json')) }),
-      new DefinePlugin({
-        '__PRELOAD_LOCATION__': JSON.stringify('file:///' + new URL(path.resolve('./public/inspector-preload.js')).href)
-      })
+      new DllReferencePlugin({ manifest: require(path.join(manifestLocation, 'shared-manifest.json')) })
     ]
   };
   config.module.rules[0].use = use;
