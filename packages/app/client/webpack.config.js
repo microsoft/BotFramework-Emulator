@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const { NodeEnvironmentPlugin, DllPlugin, DllReferencePlugin, NamedModulesPlugin, HotModuleReplacementPlugin, DefinePlugin } = webpack;
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
 const { npm_lifecycle_event = '' } = process.env;
 const manifestLocation = path.resolve('./generated');
@@ -57,7 +58,8 @@ const defaultConfig = {
   plugins: [
     new NamedModulesPlugin(),
     new HotModuleReplacementPlugin(),
-    new NodeEnvironmentPlugin()
+    new NodeEnvironmentPlugin(),
+    new HardSourceWebpackPlugin()
   ]
 };
 

@@ -30,6 +30,7 @@
     "css-loader": "^0.28.11",
     "enzyme": "^3.3.0",
     "gulp": "^4.0.0",
+    "hard-source-webpack-plugin": "^0.6.9",
     "mini-css-extract-plugin": "^0.4.0",
     "node-sass": "^4.9.0",
     "npm-run-all": "^4.1.3",

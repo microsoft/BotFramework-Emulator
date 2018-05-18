@@ -245,4 +245,4 @@ function mapStateToProps(state: IRootState, ownProps: object): BotSettingsEditor
   };
 }
 
-export default connect(mapStateToProps)(BotSettingsEditor);
+export default connect(mapStateToProps)(BotSettingsEditor) as any;

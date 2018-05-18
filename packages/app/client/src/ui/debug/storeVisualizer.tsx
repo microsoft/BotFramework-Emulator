@@ -144,4 +144,4 @@ class StoreVisualizer extends React.Component<IStoreVisualizerProps, IStoreVisua
 
 const mapStateToProps = (state: IRootState): IStoreVisualizerProps => ({ rootState: state });
 
-export default connect(mapStateToProps, null)(StoreVisualizer);
+export default connect(mapStateToProps, null)(StoreVisualizer) as any;

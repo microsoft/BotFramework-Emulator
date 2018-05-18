@@ -384,4 +384,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Emulator as any);
+export default connect(mapStateToProps, mapDispatchToProps)(Emulator as any) as any;

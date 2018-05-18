@@ -36,7 +36,7 @@ import { connect } from 'react-redux';
 import { css } from 'glamor';
 
 import * as EditorActions from '../../../../data/action/editorActions';
-import { Colors, InsetShadow } from '@bfemulator/ui-react';
+import { InsetShadow } from '@bfemulator/ui-react';
 import ContentOverlay from './contentOverlay';
 import LeftContentOverlay from './leftContentOverlay';
 import RightContentOverlay from './rightContentOverlay';
@@ -119,4 +119,4 @@ const mapDispatchToProps = (dispatch): TabbedDocumentContentWrapperProps => ({
   setActiveEditor: (editor: string) => dispatch(EditorActions.setActiveEditor(editor))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(TabbedDocumentContentWrapper);
+export default connect(mapStateToProps, mapDispatchToProps)(TabbedDocumentContentWrapper) as any;

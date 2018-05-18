@@ -127,4 +127,4 @@ const mapDispatchToProps = (dispatch): ContentOverlayProps => ({
   appendTab: (editorKey: string, owningEditor: string, tabId: string) => dispatch(EditorActions.appendTab(editorKey, owningEditor, tabId))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ContentOverlay);
+export default connect(mapStateToProps, mapDispatchToProps)(ContentOverlay) as any;

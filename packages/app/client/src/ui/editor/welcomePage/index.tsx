@@ -152,7 +152,7 @@ class WelcomePage extends React.Component<Props, {}> {
   render() {
     return (
       <GenericDocument style={ CSS }>
-        <LargeHeader>Welcome to the Bot Framework Emulator</LargeHeader>
+        <LargeHeader>Welcome to the Bot Framework Emulator!</LargeHeader>
         <Row>
           <Column>
             <div className="section">
@@ -201,4 +201,4 @@ function mapStateToProps(state: any): any {
   return ({ recentBots: state.bot.botFiles });
 }
 
-export default connect(mapStateToProps, null)(hot(module)(WelcomePage));
+export default connect(mapStateToProps, null)(hot(module)(WelcomePage)) as any;
