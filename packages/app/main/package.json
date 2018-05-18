@@ -52,7 +52,7 @@
     "concurrently": "^3.5.1",
     "cross-env": "^5.1.3",
     "del": "^3.0.0",
-    "electron": "1.8.1",
+    "electron": "2.0.x",
     "electron-builder": "^20.10.0",
     "electron-builder-http": "^19.27.5",
     "electron-builder-lib": "^20.11.1",
