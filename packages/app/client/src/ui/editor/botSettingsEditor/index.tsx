@@ -194,7 +194,7 @@ class BotSettingsEditor extends React.Component<BotSettingsEditorProps, BotSetti
   }
 
   private onSaveAndConnect = async e => {
-    await this.onSave(e, connect);
+    await this.onSave(e, true);
   };
 
   private setDirtyFlag(dirty) {
