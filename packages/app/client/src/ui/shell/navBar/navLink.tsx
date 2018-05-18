@@ -50,7 +50,7 @@ const CSS = css({
   }
 });
 
-export interface NavLinkProps {
+interface NavLinkProps {
   className?: string;
   justifyEnd?: boolean;
   onClick?: (evt) => void;

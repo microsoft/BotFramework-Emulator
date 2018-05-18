@@ -32,14 +32,14 @@
 //
 
 import { css } from 'glamor';
-import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 
 import TabBar from './tabBar';
 import TabBarTab from './tabBarTab';
 import TabbedDocument, { Tab as TabbedDocumentTab, Content as TabbedDocumentContent } from './tabbedDocument';
 import { filterChildren } from '@bfemulator/ui-react';
+import { IRootState } from '../../../data/store';
 
 const CSS = css({
   display: 'flex',
@@ -49,32 +49,45 @@ const CSS = css({
   boxSizing: 'border-box'
 });
 
-class MultiTabs extends React.Component {
-  constructor(props, context) {
-    super(props, context);
+interface MultiTabsProps {
+  value?: number;
+  owningEditor?: string;
+  children?: any;
+  presentationModeEnabled?: boolean;
+  onChange?: (tabValue) => any;
+}
 
-    this.handleTabClick = this.handleTabClick.bind(this);
-    this.setRef = this.setRef.bind(this);
+class MultiTabs extends React.Component<MultiTabsProps> {
+  private childRefs: HTMLElement[];
+
+  constructor(props: MultiTabsProps) {
+    super(props);
+
     this.childRefs = [];
   }
 
-  handleTabClick(nextValue) {
+  private handleTabClick = (nextValue) => {
     this.props.onChange && this.props.onChange(nextValue);
   }
 
-  setRef(input) {
+  private setRef = (input) => {
     this.childRefs.push(input);
   }
 
 
   render() {
+    let children: any[] = [];
+    if (!!this.props.children.length) {
+      children = React.Children.toArray(this.props.children);
+    }
+
     return (
-      <div className={ CSS }>
+      <div { ...CSS }>
         {
           !this.props.presentationModeEnabled &&
           <TabBar owningEditor={ this.props.owningEditor } childRefs={ this.childRefs } activeIndex={ this.props.value }>
             {
-              React.Children.map(this.props.children, (tabbedDocument, index) =>
+              React.Children.map(this.props.children, (tabbedDocument: any, index) =>
                 <TabBarTab onClick={ this.handleTabClick.bind(this, index) } setRef={this.setRef}>
                   { filterChildren(tabbedDocument.props.children, child => child.type === TabbedDocumentTab) }
                 </TabBarTab>
@@ -82,18 +95,14 @@ class MultiTabs extends React.Component {
             }
           </TabBar>
         }
-        { !!this.props.children.length && filterChildren(React.Children.toArray(this.props.children)[this.props.value].props.children, child => child.type === TabbedDocumentContent) }
+        { !!this.props.children.length && filterChildren(children[this.props.value].props.children, child => child.type === TabbedDocumentContent) }
       </div>
     );
   }
 }
 
-export default connect((state) => ({
+const mapStateToProps = (state: IRootState): MultiTabsProps => ({
   presentationModeEnabled: state.presentation.enabled
-}))(MultiTabs);
+});
 
-MultiTabs.propTypes = {
-  onChange: PropTypes.func,
-  value: PropTypes.number,
-  owningEditor: PropTypes.string
-};
+export default connect(mapStateToProps)(MultiTabs);

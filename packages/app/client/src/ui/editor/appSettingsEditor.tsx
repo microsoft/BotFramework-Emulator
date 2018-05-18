@@ -93,12 +93,12 @@ const CSS = css({
   }
 });
 
-interface IAppSettingsEditorProps {
+interface AppSettingsEditorProps {
   documentId?: string;
   dirty?: boolean;
 }
 
-interface IAppSettingsEditorState {
+interface AppSettingsEditorState {
   committed: IFrameworkSettings;
   uncommitted: IFrameworkSettings;
 };
@@ -120,8 +120,8 @@ function shallowEqual(x, y) {
   );
 }
 
-export default class AppSettingsEditor extends React.Component<IAppSettingsEditorProps, IAppSettingsEditorState> {
-  constructor(props: IAppSettingsEditorProps, context: any) {
+export default class AppSettingsEditor extends React.Component<AppSettingsEditorProps, AppSettingsEditorState> {
+  constructor(props: AppSettingsEditorProps, context: any) {
     super(props, context);
 
     this.onClickBrowse = this.onClickBrowse.bind(this);

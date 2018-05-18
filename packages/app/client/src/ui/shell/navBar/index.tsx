@@ -72,15 +72,15 @@ const CSS = css({
   }
 });
 
-export interface NavBarProps {
+interface NavBarProps {
   activeBot?: IBotConfig;
   selection?: string;
-  explorerShowing?: boolean;
+  showingExplorer?: boolean;
   handleClick?: (evt, selection: string) => void;
   handleSettingsClick?: (evt) => void;
 }
 
-class NavBar extends React.Component<NavBarProps, {}> {
+class NavBar extends React.Component<NavBarProps> {
   constructor(props: NavBarProps) {
     super(props);
   }
@@ -107,9 +107,7 @@ class NavBar extends React.Component<NavBarProps, {}> {
 }
 
 const mapStateToProps = (state: IRootState): NavBarProps => ({
-  activeBot: state.bot.activeBot,
-  selection: state.navBar.selection,
-  explorerShowing: state.explorer.showing
+  activeBot: state.bot.activeBot
 });
 
 const mapDispatchToProps = (dispatch, ownProps: NavBarProps): NavBarProps => ({
@@ -117,7 +115,7 @@ const mapDispatchToProps = (dispatch, ownProps: NavBarProps): NavBarProps => ({
   handleClick: (evt, selection: string) => {
     if (ownProps.selection === selection) {
       // toggle explorer when clicking the same navbar icon
-      dispatch(ExplorerActions.show(!ownProps.explorerShowing));
+      dispatch(ExplorerActions.show(!ownProps.showingExplorer));
     } else {
       // switch tabs and show explorer when clicking different navbar icon
       dispatch(() => {

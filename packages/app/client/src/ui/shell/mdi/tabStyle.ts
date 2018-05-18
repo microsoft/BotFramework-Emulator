@@ -31,33 +31,72 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import React from 'react';
-import { connect } from 'react-redux';
+import { css } from 'glamor';
+import { Colors } from '@bfemulator/ui-react';
 
-import * as EditorActions from '../../../data/action/editorActions';
-import GenericTab from './genericTab';
-import { getTabGroupForDocument } from '../../../data/editorHelpers';
+export const TAB_CSS = css({
+  display: 'flex',
+  alignItems: 'center',
+  height: '100%',
+  border: 'none',
+  borderRight: `1px solid ${Colors.EDITOR_TAB_BORDER_DARK}`,
+  backgroundColor: Colors.EDITOR_TAB_INACTIVE_BACKGROUND_DARK,
+  color: Colors.EDITOR_TAB_INACTIVE_FOREGROUND_DARK,
+  cursor: 'pointer',
+  padding: '4px 8px',
+  boxSizing: 'border-box',
+  whiteSpace: 'nowrap',
 
-export class AppSettingsTab extends React.Component {
-  constructor(props, context) {
-    super(props, context);
+  '&.active-editor-tab': {
+    backgroundColor: Colors.EDITOR_TAB_ACTIVE_BACKGROUND_DARK,
+    color: Colors.EDITOR_TAB_ACTIVE_FOREGROUND_DARK,
 
-    this.onCloseClick = this.onCloseClick.bind(this);
+    '& > span.editor-tab-close': {
+      opacity: 1
+    }
+  },
+
+  '&.dragged-over-editor-tab': {
+    backgroundColor: Colors.EDITOR_TAB_DRAGGED_OVER_BACKGROUND_DARK
+  },
+
+  '&:hover': {
+    '& > span.editor-tab-close': {
+      opacity: 1
+    }
+  },
+
+  '& > span': {
+    display: 'inline-block',
+    height: 'auto'
+  },
+
+  '& > span.editor-tab-icon': {
+    display: 'inline-block',
+    width: '12px',
+    marginRight: '8px',
+
+    '&:after': {
+      content: '🗋',
+      color: Colors.C5,
+      fontSize: '16px',
+    }
+  },
+
+  '& > span.editor-tab-close': {
+    display: 'inline-block',
+    width: '8px',
+    marginLeft: '8px',
+    opacity: 0,
+
+    '&:after': {
+      content: '✖',
+      color: Colors.C2,
+      fontSize: '12px'
+    }
+  },
+
+  '& .truncated-tab-text': {
+    maxWidth: '200px'
   }
-
-  onCloseClick(e) {
-    e.stopPropagation();
-    this.props.dispatch(EditorActions.close(getTabGroupForDocument(this.props.documentId), this.props.documentId));
-  }
-
-  render() {
-    return(
-      <GenericTab active={ this.props.active } title='Emulator Settings' onCloseClick={ this.onCloseClick }
-        documentId={ this.props.documentId } dirty={ this.props.dirty } />
-    );
-  }
-}
-
-export default connect((state, { documentId }) => ({
-  active: state.editor.editors[state.editor.activeEditor].activeDocumentId === documentId
-}))(AppSettingsTab);
+});

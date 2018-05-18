@@ -31,52 +31,46 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
-import React from 'react';
-import { connect } from 'react-redux';
+import * as React from 'react';
 
-import BotExplorerBar from './botExplorerBar';
-import { ServicesExplorerBarContainer } from "./servicesExplorerBar";
-import { Colors, InsetShadow } from '@bfemulator/ui-react';
-import * as Constants from '../../../constants';
+import * as Constants from '../../constants';
+import AppSettingsEditor from './appSettingsEditor';
+import BotSettingsEditor from './botSettingsEditor';
+import Emulator from './emulator';
+import WelcomePage from './welcomePage';
+import { IDocument } from '../../data/reducer/editor';
 
-const CSS = css({
-  backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
-  height: '100%',
-  display: 'flex',
-  flexFlow: 'column nowrap',
-  position: 'relative'
-});
-
-class ExplorerBar extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-  
-  render() {
-    let explorer = [];
-      explorer.push(
-        <BotExplorerBar key={ 'bot-explorer-bar' } activeBot={ this.props.activeBot } hidden={ this.props.selectedNavTab !== Constants.NavBar_Bot_Explorer } />
-      );
-    if (this.props.selectedNavTab === Constants.NavBar_Services)
-      explorer.push(
-        <ServicesExplorerBarContainer key={ 'services-explorer-bar' } />
-      );
-    if (!this.props.selectedNavTab)
-      explorer = (
-        false
-      );
-
-    return (
-      <div { ...CSS }>
-        { explorer }
-        <InsetShadow right={ true }/>
-      </div>
-    );
-  }
+interface EditorFactoryProps {
+  document?: IDocument;
 }
 
-export default connect(state => ({
-  activeBot: state.bot.activeBot,
-  selectedNavTab: state.navBar.selection
-}))(ExplorerBar)
+export default class EditorFactory extends React.Component<EditorFactoryProps> {
+  constructor(props: EditorFactoryProps) {
+    super(props);
+  }
+
+  render() {
+    const { document } = this.props;
+    const { contentType } = document;
+
+    switch (contentType) {
+      case Constants.ContentType_LiveChat:
+        return (<Emulator mode="livechat" documentId={ document.documentId } dirty={ this.props.document.dirty } />);
+      
+      case Constants.ContentType_Transcript:
+        return (<Emulator mode="transcript" documentId={ document.documentId } dirty={ this.props.document.dirty } />);
+
+      case Constants.ContentType_BotSettings:
+        return (<BotSettingsEditor documentId={ document.documentId } dirty={ this.props.document.dirty } />);
+
+      case Constants.ContentType_AppSettings:
+        return (<AppSettingsEditor documentId={ document.documentId } dirty={ this.props.document.dirty } />);
+
+      case Constants.ContentType_WelcomePage:
+        return (<WelcomePage documentId={ document.documentId } />);
+
+      default:
+        return false;
+    }
+  }
+}

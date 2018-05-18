@@ -31,19 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
-import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 
 import TabbedDocumentContentWrapper from './contentWrapper';
 
-const CSS = css({
-  display: 'flex',
-  flex: 1,
-  flexDirection: 'column'
-});
+export default class TabbedDocument extends React.Component<{}> {
+  constructor(props) {
+    super(props);
+  }
 
-export default class TabbedDocument extends React.Component {
   render() {
     return false;
   }

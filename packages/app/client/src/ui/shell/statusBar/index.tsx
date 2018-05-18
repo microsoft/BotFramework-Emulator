@@ -32,68 +32,18 @@
 //
 
 import { css } from 'glamor';
-
+import * as React from 'react';
 import { Colors } from '@bfemulator/ui-react';
 
-export const TAB_CSS = css({
-  display: 'flex',
-  alignItems: 'center',
-  height: '100%',
-  border: 'none',
-  borderRight: `1px solid ${Colors.EDITOR_TAB_BORDER_DARK}`,
-  backgroundColor: Colors.EDITOR_TAB_INACTIVE_BACKGROUND_DARK,
-  color: Colors.EDITOR_TAB_INACTIVE_FOREGROUND_DARK,
-  cursor: 'pointer',
-  padding: '4px 8px',
-  boxSizing: 'border-box',
-  whiteSpace: 'nowrap',
-
-  '&.active-editor-tab': {
-    backgroundColor: Colors.EDITOR_TAB_ACTIVE_BACKGROUND_DARK,
-    color: Colors.EDITOR_TAB_ACTIVE_FOREGROUND_DARK,
-
-    '& > span.editor-tab-close': {
-      opacity: 1
-    }
-  },
-
-  '&.dragged-over-editor-tab': {
-    backgroundColor: Colors.EDITOR_TAB_DRAGGED_OVER_BACKGROUND_DARK
-  },
-
-  '&:hover': {
-    '& > span.editor-tab-close': {
-      opacity: 1
-    }
-  },
-
-  '& > span': {
-    display: 'inline-block',
-    height: 'auto'
-  },
-
-  '& > span.editor-tab-icon': {
-    display: 'inline-block',
-    width: '12px',
-    marginRight: '8px',
-
-    '&:after': {
-      content: '🗋',
-      color: Colors.C5,
-      fontSize: '16px',
-    }
-  },
-
-  '& > span.editor-tab-close': {
-    display: 'inline-block',
-    width: '8px',
-    marginLeft: '8px',
-    opacity: 0,
-
-    '&:after': {
-      content: '✖',
-      color: Colors.C2,
-      fontSize: '12px'
-    }
-  }
+const CSS = css({
+  backgroundColor: Colors.STATUS_BAR_BACKGROUND_DARK,
+  color: Colors.STATUS_BAR_FOREGROUND_DARK,
+  lineHeight: '22px',
+  minHeight: '22px',
+  width: '100%',
+  alignSelf: 'flex-end',
+  flex: 1
 });
+
+export default props =>
+  <div { ...CSS }></div>

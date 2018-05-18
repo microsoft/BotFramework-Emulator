@@ -31,13 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
-import PropTypes from 'prop-types';
 
 import { OVERLAY_CSS } from './overlayStyle';
 import * as Constants from '../../../../constants';
+import { IRootState } from '../../../../data/store';
 
 const CSS = css({
   top: 0,
@@ -46,34 +46,40 @@ const CSS = css({
   bottom: 0
 }, OVERLAY_CSS);
 
-export class ContentOverlay extends React.Component {
-  constructor(props, context) {
-    super(props, context);
+interface LeftContentOverlayProps {
+  documentId?: string;
+  draggingTab?: boolean;
+}
 
-    this.onDragEnter = this.onDragEnter.bind(this);
-    this.onDragLeave = this.onDragLeave.bind(this);
-    this.onDragOver = this.onDragOver.bind(this);
-    this.onDrop = this.onDrop.bind(this);
+interface LeftContentOverlayState {
+  draggedOver: boolean;
+}
 
-    this.state = {};
+class LeftContentOverlay extends React.Component<LeftContentOverlayProps, LeftContentOverlayState> {
+  constructor(props: LeftContentOverlayProps) {
+    super(props);
+
+    this.state = {
+      draggedOver: false
+    };
   }
 
-  onDragEnter(e) {
+  private onDragEnter = (e) => {
     e.preventDefault();
     e.stopPropagation();
   }
 
-  onDragLeave(e) {
+  private onDragLeave = (e) => {
     this.setState(({ draggedOver: false }));
   }
 
-  onDragOver(e) {
+  private onDragOver = (e) => {
     e.preventDefault();
     e.stopPropagation();
     this.setState(({ draggedOver: true }));
   }
 
-  onDrop(e) {
+  private onDrop = (e) => {
     this.setState(({ draggedOver: false }));
     e.preventDefault();
     e.stopPropagation();
@@ -91,11 +97,8 @@ export class ContentOverlay extends React.Component {
   }
 }
 
-export default connect((state, ownProps) => ({
+const mapStateToProps = (state: IRootState): LeftContentOverlayProps => ({
   draggingTab: state.editor.draggingTab
-}))(ContentOverlay);
+});
 
-ContentOverlay.propTypes = {
-  draggingTab: PropTypes.bool,
-  documentId: PropTypes.string
-};
+export default connect(mapStateToProps)(LeftContentOverlay);

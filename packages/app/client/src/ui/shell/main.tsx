@@ -33,8 +33,7 @@
 
 import { connect } from 'react-redux';
 import { css } from 'glamor';
-import React from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 
 import { Colors, Fonts, Splitter } from '@bfemulator/ui-react';
 import ExplorerBar from './explorer';
@@ -48,6 +47,8 @@ import StoreVisualizer from '../debug/storeVisualizer';
 import store from '../../data/store';
 import { KeyCodes } from '@uifabric/utilities/lib';
 import * as PresentationActions from '../../data/action/presentationActions';
+import { IEditor } from '../../data/reducer/editor';
+import { IRootState } from '../../data/store';
 
 css.global('html, body, #root', {
   backgroundColor: Colors.APP_BACKGROUND_DARK,
@@ -110,9 +111,22 @@ const NAV_CSS = css({
   }
 });
 
-export class Main extends React.Component {
-  constructor(props, context) {
-    super(props, context);
+interface MainProps {
+  primaryEditor?: IEditor;
+  secondaryEditor?: IEditor;
+  showingExplorer?: boolean;
+  presentationModeEnabled?: boolean;
+  navBarSelection?: string;
+  exitPresentationMode?: (e) => void;
+}
+
+interface MainState {
+  tabValue: number;
+}
+
+class Main extends React.Component<MainProps, MainState> {
+  constructor(props: MainProps) {
+    super(props);
 
     this.handleTabChange = this.handleTabChange.bind(this);
 
@@ -135,10 +149,10 @@ export class Main extends React.Component {
 
   render() {
     const tabGroup1 = this.props.primaryEditor &&
-      <div className="mdi-wrapper" key={'primaryEditor'} ><MDI owningEditor={Constants.EditorKey_Primary} /></div>;
+      <div className="mdi-wrapper" key={ 'primaryEditor' } ><MDI owningEditor={ Constants.EditorKey_Primary } /></div>;
 
     const tabGroup2 = this.props.secondaryEditor && Object.keys(this.props.secondaryEditor.documents).length ?
-      <div className="mdi-wrapper secondary-mdi" key={'secondaryEditor'} ><MDI owningEditor={Constants.EditorKey_Secondary} /></div> : null;
+      <div className="mdi-wrapper secondary-mdi" key={ 'secondaryEditor' } ><MDI owningEditor={ Constants.EditorKey_Secondary } /></div> : null;
 
     // If falsy children aren't filtered out, splitter won't recognize change in number of children
     // (i.e. [child1, child2] -> [false, child2] is still seen as 2 children by the splitter)
@@ -149,51 +163,47 @@ export class Main extends React.Component {
     const workbenchChildren = [];
 
     if (this.props.showingExplorer && !this.props.presentationModeEnabled)
-      workbenchChildren.push(<ExplorerBar key={'explorer-bar'} />);
+      workbenchChildren.push(<ExplorerBar key={ 'explorer-bar' } />);
 
     workbenchChildren.push(
-      <Splitter orientation={'vertical'} key={'tab-group-splitter'}>
+      <Splitter orientation={ 'vertical' } key={ 'tab-group-splitter' }>
         {tabGroups}
       </Splitter>
     );
 
     return (
-      <div className={CSS}>
-        <div className={NAV_CSS}>
-          {!this.props.presentationModeEnabled && <NavBar />}
+      <div { ...CSS }>
+        <div { ...NAV_CSS }>
+          { !this.props.presentationModeEnabled && <NavBar selection={ this.props.navBarSelection } showingExplorer={ this.props.showingExplorer } /> }
           <div className="workbench">
-            <Splitter orientation={'vertical'} primaryPaneIndex={0} minSizes={{ 0: 40, 1: 40 }} initialSizes={{ 0: 210 }}>
-              {workbenchChildren}
+            <Splitter orientation={ 'vertical' } primaryPaneIndex={ 0 } minSizes={{ 0: 40, 1: 40 }} initialSizes={{ 0: 210 }}>
+              { workbenchChildren }
             </Splitter>
           </div>
-          <TabManager disabled={false} />
+          <TabManager disabled={ false } />
         </div>
-        {!this.props.presentationModeEnabled && <StatusBar />}
+        { !this.props.presentationModeEnabled && <StatusBar /> }
         <DialogHost />
-        <StoreVisualizer enabled={false} />
+        <StoreVisualizer enabled={ false } />
       </div>
     );
   }
 }
 
-function connectToProps(dispatch) {
-  return {
-    exitPresentationMode: (e) => {
-      if (e.keyCode === KeyCodes.escape) {
-        dispatch(PresentationActions.disable());
-      }
-    }
-  }
-}
-
-export default connect((state, ownProps) => ({
+const mapStateToProps = (state: IRootState): MainProps => ({
   presentationModeEnabled: state.presentation.enabled,
   primaryEditor: state.editor.editors[Constants.EditorKey_Primary],
   secondaryEditor: state.editor.editors[Constants.EditorKey_Secondary],
-  showingExplorer: state.explorer.showing
-}), connectToProps)(Main);
+  showingExplorer: state.explorer.showing,
+  navBarSelection: state.navBar.selection
+});
 
-Main.propTypes = {
-  primaryEditor: PropTypes.object,
-  secondaryEditor: PropTypes.object
-};
+const mapDispatchToProps = (dispatch): MainProps => ({
+  exitPresentationMode: (e) => {
+    if (e.keyCode === KeyCodes.escape) {
+      dispatch(PresentationActions.disable());
+    }
+  }
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Main);

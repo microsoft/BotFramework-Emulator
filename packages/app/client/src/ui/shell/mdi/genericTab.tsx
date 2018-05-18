@@ -31,37 +31,47 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import * as React from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import React from 'react';
 
-class ActionTextBox extends React.Component {
-    constructor(props, context) {
-        super(props, context);
+import * as Constants from '../../../constants';
+import * as EditorActions from '../../../data/action/editorActions';
+import Tab from './tab';
+import { getTabGroupForDocument } from '../../../data/editorHelpers';
+import { IRootState } from '../../../data/store';
 
-        this.handleChange = this.handleChange.bind(this);
-    }
-
-    handleChange(evt) {
-        this.props.dispatch(this.props.actionCreator(evt.target.value));
-    }
-
-    render() {
-        return (
-            <input
-                onChange={ this.handleChange }
-                placeholder={ this.props.placeholder }
-                type="textbox"
-                value={ this.props.value }
-            />
-        );
-    }
+interface GenericTabProps {
+  active?: boolean;
+  dirty?: boolean;
+  documentId?: string;
+  title?: string;
+  closeTab?: () => void;
 }
 
-ActionTextBox.propTypes = {
-    actionCreator: PropTypes.func.isRequired,
-    placeholder: PropTypes.string,
-    value: PropTypes.string
-};
+class GenericTab extends React.Component<GenericTabProps> {
+  constructor(props: GenericTabProps) {
+    super(props);
+  }
 
-export default connect()(ActionTextBox);
+  private onCloseClick = (e) => {
+    e.stopPropagation();
+    this.props.closeTab();
+  }
+
+  render() {
+    return (
+      <Tab active={ this.props.active } title={ this.props.title } onCloseClick={ this.onCloseClick }
+        documentId={ this.props.documentId } dirty={ this.props.dirty } />
+    );
+  }
+}
+
+const mapStateToProps = (state: IRootState, ownProps: GenericTabProps): GenericTabProps => ({
+  active: state.editor.editors[state.editor.activeEditor].activeDocumentId === ownProps.documentId
+});
+
+const mapDispatchToProps = (dispatch, ownProps: GenericTabProps): GenericTabProps => ({
+  closeTab: () => dispatch(EditorActions.close(getTabGroupForDocument(ownProps.documentId), ownProps.documentId))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(GenericTab);

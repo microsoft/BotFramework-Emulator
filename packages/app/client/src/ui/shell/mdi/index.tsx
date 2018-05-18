@@ -33,23 +33,31 @@
 
 import * as React from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 
 import * as EditorActions from '../../../data/action/editorActions';
 import EditorFactory from '../../editor';
 import MultiTabs from '../multiTabs';
 import TabFactory from './tabFactory';
 import TabbedDocument, { Tab as TabbedDocumentTab, Content as TabbedDocumentContent } from '../multiTabs/tabbedDocument';
+import { IDocument } from '../../../data/reducer/editor';
+import { IRootState } from '../../../data/store';
 
-class MDI extends React.Component {
-  constructor(props, context) {
-    super(props, context);
+interface MDIProps {
+  activeDocumentId?: string;
+  activeEditor?: string;
+  documents?: { [documentId: string]: IDocument };
+  tabOrder?: string[];
+  owningEditor?: string;
+  setActiveTab?: (tab: string) => void;
+}
 
-    this.handleTabChange = this.handleTabChange.bind(this);
+class MDI extends React.Component<MDIProps> {
+  constructor(props: MDIProps) {
+    super(props);
   }
 
-  handleTabChange(tabValue) {
-    this.props.dispatch(EditorActions.setActiveTab(this.props.tabOrder[tabValue]));
+  private handleTabChange = (tabValue) => {
+    this.props.setActiveTab(this.props.tabOrder[tabValue]);
   }
 
   render() {
@@ -78,16 +86,15 @@ class MDI extends React.Component {
   }
 }
 
-export default connect((state, { owningEditor }) => ({
-  activeDocumentId: state.editor.editors[owningEditor].activeDocumentId,
-  documents: state.editor.editors[owningEditor].documents,
-  tabOrder: state.editor.editors[owningEditor].tabOrder,
+const mapStateToProps = (state: IRootState, ownProps: MDIProps): MDIProps => ({
+  activeDocumentId: state.editor.editors[ownProps.owningEditor].activeDocumentId,
+  documents: state.editor.editors[ownProps.owningEditor].documents,
+  tabOrder: state.editor.editors[ownProps.owningEditor].tabOrder,
   activeEditor: state.editor.activeEditor
-}))(MDI)
+});
 
-MDI.propTypes = {
-  activeDocumentId: PropTypes.string,
-  documents: PropTypes.object,
-  activeEditor: PropTypes.string,
-  owningEditor: PropTypes.string
-};
+const mapDispatchToProps = (dispatch): MDIProps => ({
+  setActiveTab: (tab: string) => dispatch(EditorActions.setActiveTab(tab))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(MDI);

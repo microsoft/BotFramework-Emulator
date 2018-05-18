@@ -32,9 +32,8 @@
 //
 
 import { css } from 'glamor';
-import PropTypes from 'prop-types';
-import React from 'react';
-import ReactDOM from 'react-dom';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 
 import TabBarTab from './tabBarTab';
@@ -43,6 +42,8 @@ import * as EditorActions from '../../../data/action/editorActions';
 import * as Constants from '../../../constants';
 import { getOtherTabGroup } from '../../../data/editorHelpers';
 import * as PresentationActions from '../../../data/action/presentationActions';
+import { IEditor, IDocument } from '../../../data/reducer/editor';
+import { IRootState } from '../../../data/store';
 
 const CSS = css({
   display: 'flex',
@@ -59,7 +60,6 @@ const CSS = css({
     listStyleType: 'none',
     margin: 0,
     padding: 0,
-    zIndex: 1, // So that the box-shadow will fall onto the document area (sibling div)
     overflowX: 'auto',
 
     '&::-webkit-scrollbar': {
@@ -110,55 +110,69 @@ const CSS = css({
   }
 });
 
-export class TabBar extends React.Component {
-  constructor(props, context) {
-    super(props, context);
+interface TabBarProps {
+  editors?: { [editorKey: string]: IEditor };
+  owningEditor?: string;
+  children?: any;
+  documents?: { [documentId: string]: IDocument };
+  activeIndex?: number;
+  activeDocumentId?: string;
+  childRefs?: HTMLElement[];
+  activeEditor?: string;
+  splitTab?: (contentType: string, documentId: string, srcEditorKey: string, destEditorKey: string) => void;
+  appendTab?: (srcEditorKey: string, destEditorKey: string, tabId: string) => void;
+  enablePresentationMode?: () => void;
+}
 
-    this.onSplitClick = this.onSplitClick.bind(this);
+interface TabBarState {
+  draggedOver: boolean;
+}
 
-    this.onDragEnter = this.onDragEnter.bind(this);
-    this.onDragOver = this.onDragOver.bind(this);
-    this.onDragLeave = this.onDragLeave.bind(this);
-    this.onDrop = this.onDrop.bind(this);
-    this.saveScrollable = this.saveScrollable.bind(this);
+class TabBar extends React.Component<TabBarProps, TabBarState> {
+  private _scrollable: HTMLElement;
 
-    this.state = {};
+  constructor(props: TabBarProps) {
+    super(props);
+
+    this.state = {
+      draggedOver: false
+    };
   }
 
-  onSplitClick() {
+  private onSplitClick = () => {
     const owningEditor = this.props.editors[this.props.owningEditor];
     const docIdToSplit = owningEditor.activeDocumentId;
     const docToSplit = owningEditor.documents[docIdToSplit];
     const destEditorKey = getOtherTabGroup(this.props.owningEditor);
-    this.props.dispatch(EditorActions.splitTab(docToSplit.contentType, docToSplit.documentId, this.props.owningEditor, destEditorKey));
+    this.props.splitTab(docToSplit.contentType, docToSplit.documentId, this.props.owningEditor, destEditorKey);
   }
 
-  onDragEnter(e) {
+  private onDragEnter = (e) => {
     e.preventDefault();
   }
 
-  onDragOver(e) {
+  private onDragOver = (e) => {
     this.setState(({ draggedOver: true }));
     e.preventDefault();
     e.stopPropagation();
   }
 
-  onDragLeave(e) {
+  private onDragLeave = (e) => {
     this.setState(({ draggedOver: false }));
   }
 
-  onDrop(e) {
+  private onDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
     this.setState(({ draggedOver: false }));
     try {
       const tabData = JSON.parse(e.dataTransfer.getData('application/json'));
       const tabId = tabData.tabId;
-      this.props.dispatch(EditorActions.appendTab(tabData.editorKey, this.props.owningEditor, tabId));
+      this.props.appendTab(tabData.editorKey, this.props.owningEditor, tabId);
     } catch (e) { }
   }
 
-  saveScrollable(ref) {
+  private saveScrollable = (ref) => {
     this._scrollable = ref;
   }
 
@@ -181,7 +195,7 @@ export class TabBar extends React.Component {
   }
 
   onPresentationModeClick = () =>
-    this.props.dispatch(PresentationActions.enable());
+    this.props.enablePresentationMode();
 
   render() {
     const splitEnabled = Object.keys(this.props.documents).length > 1;
@@ -190,7 +204,6 @@ export class TabBar extends React.Component {
       && (activeDoc.contentType === Constants.ContentType_Transcript || activeDoc.contentType === Constants.ContentType_LiveChat);
 
     const tabBarClassName = this.state.draggedOver ? ' dragged-over-tab-bar' : '';
-    this.childRefs = [];
     return (
       <div className={ CSS + tabBarClassName } onDragEnter={ this.onDragEnter } onDragOver={ this.onDragOver }
         onDragLeave={ this.onDragLeave } onDrop={ this.onDrop } >
@@ -210,24 +223,21 @@ export class TabBar extends React.Component {
   }
 }
 
-export default connect((state, { owningEditor }) => ({
-  activeDocumentId: state.editor.editors[owningEditor].activeDocumentId,
+const mapStateToProps = (state: IRootState, ownProps: TabBarProps): TabBarProps => ({
+  activeDocumentId: state.editor.editors[ownProps.owningEditor].activeDocumentId,
   activeEditor: state.editor.activeEditor,
   editors: state.editor.editors,
-  documents: state.editor.editors[owningEditor].documents
-}))(TabBar);
+  documents: state.editor.editors[ownProps.owningEditor].documents
+});
 
-TabBar.propTypes = {
-  activeDocumentId: PropTypes.string,
-  activeEditor: PropTypes.oneOf([
-    Constants.EditorKey_Primary,
-    Constants.EditorKey_Secondary
-  ]),
-  editors: PropTypes.object,
-  value: PropTypes.number,
-  owningEditor: PropTypes.oneOf([
-    Constants.EditorKey_Primary,
-    Constants.EditorKey_Secondary
-  ]),
-  splitEnabled: PropTypes.bool
-};
+const mapDispatchToProps = (dispatch): TabBarProps => ({
+  splitTab: (contentType: string, documentId: string, srcEditorKey: string, destEditorKey: string) =>
+    dispatch(EditorActions.splitTab(contentType, documentId, srcEditorKey, destEditorKey)),
+
+  appendTab: (srcEditorKey: string, destEditorKey: string, tabId: string) =>
+    dispatch(EditorActions.appendTab(srcEditorKey, destEditorKey, tabId)),
+
+  enablePresentationMode: () => dispatch(PresentationActions.enable())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(TabBar);

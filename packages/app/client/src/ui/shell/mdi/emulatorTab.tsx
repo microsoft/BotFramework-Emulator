@@ -31,25 +31,33 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 
 import { getTabGroupForDocument } from '../../../data/editorHelpers';
 import * as ChatActions from '../../../data/action/chatActions';
 import * as EditorActions from '../../../data/action/editorActions';
 import Tab from './tab';
+import { IRootState } from '../../../data/store';
+import { EmulatorMode } from '../../editor/emulator/index';
 
-export class EmulatorTab extends React.Component {
-  constructor(props, context) {
-    super(props, context);
+interface EmulatorTabProps {
+  active?: boolean;
+  dirty?: boolean;
+  documentId?: string;
+  mode?: EmulatorMode;
+  title?: string;
+  closeTab?: () => void;
+}
 
-    this.onCloseClick = this.onCloseClick.bind(this);
+class EmulatorTab extends React.Component<EmulatorTabProps> {
+  constructor(props: EmulatorTabProps) {
+    super(props);
   }
 
-  onCloseClick(e) {
+  private onCloseClick = (e) => {
     e.stopPropagation();
-    this.props.dispatch(EditorActions.close(getTabGroupForDocument(this.props.documentId), this.props.documentId));
-    this.props.dispatch(ChatActions.closeDocument(this.props.documentId));
+    this.props.closeTab();
   }
 
   render() {
@@ -60,14 +68,15 @@ export class EmulatorTab extends React.Component {
   }
 }
 
-export default connect((state, { mode, documentId }) => {
+const mapStateToProps = (state: IRootState, ownProps: EmulatorTabProps): EmulatorTabProps => {
+  const { mode, documentId } = ownProps;
   let title;
   if (mode === 'livechat') {
     title = "Live Chat";
 
     const { services = [] } = state.bot.activeBot || {};
 
-    const { endpointId } = state.chat.chats[documentId] || {};
+    const { endpointId = null } = state.chat.chats[documentId] || {};
     const botEndpoint = services.find(s => s.id === endpointId);
 
     if (botEndpoint) {
@@ -88,4 +97,13 @@ export default connect((state, { mode, documentId }) => {
     active: state.editor.editors[state.editor.activeEditor].activeDocumentId === documentId,
     title
   };
-})(EmulatorTab);
+};
+
+const mapDispatchToProps = (dispatch, ownProps: EmulatorTabProps): EmulatorTabProps => ({
+  closeTab: () => {
+    dispatch(EditorActions.close(getTabGroupForDocument(ownProps.documentId), ownProps.documentId));
+    dispatch(ChatActions.closeDocument(ownProps.documentId));
+  }
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(EmulatorTab);

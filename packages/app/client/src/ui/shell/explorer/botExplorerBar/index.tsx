@@ -41,6 +41,7 @@ import { getBotDisplayName } from '@bfemulator/app-shared';
 import { TranscriptExplorer } from '../transcriptExplorer';
 import * as botHelpers from '../../../../data/botHelpers';
 import BotNotOpenExplorer from '../botNotOpenExplorer';
+import { IBotConfig } from 'msbot/bin/schema';
 
 const CSS = css({
   height: '100%',
@@ -53,15 +54,14 @@ const CSS = css({
   }
 });
 
-export class BotExplorerBarProps {
-  activeBot: string;
+interface BotExplorerBarProps {
+  activeBot: IBotConfig;
   hidden: boolean;
 }
 
 export default class BotExplorerBar extends React.Component<BotExplorerBarProps> {
-
-  constructor(props, context) {
-    super(props, context);
+  constructor(props: BotExplorerBarProps) {
+    super(props);
   }
 
   render() {

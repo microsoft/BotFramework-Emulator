@@ -31,18 +31,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export default function fetchJSON(url, options = {}) {
-    const headers = { ...options.headers };
+import { css } from 'glamor';
+import { Colors } from '@bfemulator/ui-react';
 
-    headers['Content-Type'] = 'application/json';
+export const OVERLAY_CSS = css({
+    position: 'absolute',
+    transition: 'background-color 0.1s ease-in-out',
+    backgroundColor: Colors.EDITOR_DRAG_OVERLAY_TRANSPARENT_DARK,
+    pointerEvents: 'none',
 
-    return fetch(url, options).then(res => {
-        const statusFamily = ~~(res.status / 100);
+    '&.dragged-over-overlay': {
+        backgroundColor: Colors.EDITOR_DRAG_OVERLAY_VISIBLE_DARK
+    },
 
-        if (statusFamily === 2) {
-            return res.json();
-        } else {
-            return Promise.reject(new Error(`Server returned ${ res.status }`));
-        }
-    });
-}
+    '&.enabled-for-drop': {
+        pointerEvents: 'auto'
+    }
+});

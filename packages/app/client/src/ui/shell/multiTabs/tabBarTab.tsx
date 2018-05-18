@@ -31,33 +31,38 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import React from 'react';
-import { connect } from 'react-redux';
+import { css } from 'glamor';
+import * as React from 'react';
+import { Colors } from '@bfemulator/ui-react';
 
-import * as EditorActions from '../../../data/action/editorActions';
-import GenericTab from './genericTab';
-import { getTabGroupForDocument } from '../../../data/editorHelpers';
+const CSS = css({
+  height: '100%',
+  border: 'none',
+  padding: 0,
 
-export class BotSettingsTab extends React.Component {
-    constructor(props, context) {
-        super(props, context);
+  '&:active': {
+    border: 0,
+    outline: 0
+  },
 
-        this.onCloseClick = this.onCloseClick.bind(this);
-    }
+  '&:focus': {
+    border: 0,
+    outline: 0
+  }
+});
 
-    onCloseClick(e) {
-        e.stopPropagation();
-        this.props.dispatch(EditorActions.close(getTabGroupForDocument(this.props.documentId), this.props.documentId));
-    }
-
-    render() {
-        return(
-            <GenericTab active={ this.props.active } title={ this.props.documentId } onCloseClick={ this.onCloseClick }
-                documentId={ this.props.documentId } dirty={ this.props.dirty } />
-        );
-    }
+interface TabBarTabProps {
+  setRef?: (input) => any;
+  onClick?: (nextValue) => any;
+  children?: any;
 }
 
-export default connect((state, { documentId }) => ({
-    active: state.editor.editors[state.editor.activeEditor].activeDocumentId === documentId
-}))(BotSettingsTab);
+export default (props: TabBarTabProps) =>
+  <button
+    { ...CSS }
+    ref={ props.setRef }
+    onClick={ props.onClick }
+    type="button"
+  >
+    { props.children }
+  </button>

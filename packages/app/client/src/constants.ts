@@ -36,7 +36,6 @@ export const ContentType_WelcomePage = 'application/vnd.microsoft.bfemulator.doc
 export const ContentType_BotSettings = 'application/vnd.microsoft.bfemulator.document.botsettings';
 export const ContentType_Transcript = 'application/vnd.microsoft.bfemulator.document.transcript';
 export const ContentType_LiveChat = 'application/vnd.microsoft.bfemulator.document.livechat';
-export const ContentType_TestBed = 'application/vnd.microsoft.bfemulator.testbed';
 
 export const NavBar_Bot_Explorer = 'navbar.botExplorer';
 export const NavBar_Services = 'navbar.services';

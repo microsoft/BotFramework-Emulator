@@ -31,39 +31,38 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import React from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 
 import * as Constants from '../../../constants';
-import * as EditorActions from '../../../data/action/editorActions';
-import Tab from './tab';
-import { getTabGroupForDocument } from '../../../data/editorHelpers';
+import GenericTab from './genericTab';
+import EmulatorTab from './emulatorTab';
+import { IDocument } from '../../../data/reducer/editor';
 
-class GenericTab extends React.Component {
-  constructor(props, context) {
-    super(props, context);
-
-    this.onCloseClick = this.onCloseClick.bind(this);
-  }
-
-  onCloseClick(e) {
-    e.stopPropagation();
-    this.props.dispatch(EditorActions.close(getTabGroupForDocument(this.props.documentId), this.props.documentId));
-  }
-
-  render() {
-    return (
-      <Tab active={ this.props.active } title={ this.props.title } onCloseClick={ this.onCloseClick }
-        documentId={ this.props.documentId } dirty={ this.props.dirty } />
-    );
-  }
+interface TabFactoryProps {
+  document?: IDocument;
 }
 
-GenericTab.propTypes = {
-  dirty: PropTypes.bool
-};
+export default (props: TabFactoryProps) => {
+  if (props && props.document) {
+    switch (props.document.contentType) {
+      case Constants.ContentType_LiveChat:
+        return (<EmulatorTab mode="livechat" documentId={ props.document.documentId } dirty={ props.document.dirty } />);
 
-export default connect((state, { documentId }) => ({
-  active: state.editor.editors[state.editor.activeEditor].activeDocumentId === documentId
-}))(GenericTab);
+      case Constants.ContentType_Transcript:
+        return (<EmulatorTab mode="transcript" documentId={ props.document.documentId } dirty={ props.document.dirty } />);
+
+      case Constants.ContentType_BotSettings:
+        return (<GenericTab documentId={ props.document.documentId } title={ "Bot Settings" } dirty={ props.document.dirty } />);
+
+      case Constants.ContentType_WelcomePage:
+        return (<GenericTab documentId={ props.document.documentId } title={ "Welcome" } dirty={ props.document.dirty } />);
+
+      case Constants.ContentType_AppSettings:
+        return (<GenericTab documentId={ props.document.documentId } title={ "Emulator Settings" } dirty={ props.document.dirty } />);
+
+      default:
+        break;
+    }
+  }
+  return null;
+}

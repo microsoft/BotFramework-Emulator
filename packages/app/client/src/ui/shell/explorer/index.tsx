@@ -31,34 +31,59 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import React from 'react';
+import { css } from 'glamor';
+import * as React from 'react';
 import { connect } from 'react-redux';
 
-import * as EditorActions from '../../../data/action/editorActions';
-import Tab from './tab';
-import { getTabGroupForDocument } from '../../../data/editorHelpers';
+import BotExplorerBar from './botExplorerBar';
+import { ServicesExplorerBarContainer } from "./servicesExplorerBar";
+import { Colors, InsetShadow } from '@bfemulator/ui-react';
+import * as Constants from '../../../constants';
+import { IBotConfig } from 'msbot/bin/schema';
+import { IRootState } from '../../../data/store';
 
-export class ConversationTab extends React.Component {
-  constructor(props, context) {
-    super(props, context);
+const CSS = css({
+  backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
+  height: '100%',
+  display: 'flex',
+  flexFlow: 'column nowrap',
+  position: 'relative'
+});
 
-    this.onCloseClick = this.onCloseClick.bind(this);
+interface ExplorerBarProps {
+  activeBot?: IBotConfig;
+  selectedNavTab?: string;
+}
+
+class ExplorerBar extends React.Component<ExplorerBarProps> {
+  constructor(props) {
+    super(props);
   }
-
-  onCloseClick(e) {
-    e.stopPropagation();
-    this.props.dispatch(EditorActions.close(getTabGroupForDocument(this.props.documentId), this.props.documentId));
-  }
-
+  
   render() {
+    let explorer = [];
+      explorer.push(
+        <BotExplorerBar key={ 'bot-explorer-bar' } activeBot={ this.props.activeBot } hidden={ this.props.selectedNavTab !== Constants.NavBar_Bot_Explorer } />
+      );
+    if (this.props.selectedNavTab === Constants.NavBar_Services)
+      explorer.push(
+        <ServicesExplorerBarContainer key={ 'services-explorer-bar' } />
+      );
+    if (!this.props.selectedNavTab)
+      explorer = null;
+
     return (
-      <Tab active={ this.props.active } title={ this.props.title } onCloseClick={ this.onCloseClick }
-        documentId={ this.props.documentId } dirty={ this.props.dirty } />
+      <div { ...CSS }>
+        { explorer }
+        <InsetShadow right={ true }/>
+      </div>
     );
   }
 }
 
-export default connect((state, { documentId }) => ({
-  title: state.conversation.conversations[documentId].name,
-  active: state.editor.editors[state.editor.activeEditor].activeDocumentId === documentId
-}))(ConversationTab);
+const mapStateToProps = (state: IRootState): ExplorerBarProps => ({
+  activeBot: state.bot.activeBot,
+  selectedNavTab: state.navBar.selection
+});
+
+export default connect(mapStateToProps)(ExplorerBar)
