@@ -96,8 +96,8 @@ class NavBar extends React.Component<NavBarProps> {
 
     return (
       <nav { ...CSS }>
-        <NavLink className={ classNames('nav-link bot-explorer', { selected: selection === Constants.NavBar_Bot_Explorer }) } onClick={ evt => this.props.handleClick(evt, Constants.NavBar_Bot_Explorer) } title="Bot Explorer" />
-        <NavLink className={ classNames('nav-link services', { selected: selection === Constants.NavBar_Services }) } onClick={ evt => this.props.handleClick(evt, Constants.NavBar_Services) } title="Services" />
+        <NavLink className={ classNames('nav-link bot-explorer', { selected: selection === Constants.NavBar_Bot_Explorer }) } onClick={ evt => handleClick(evt, Constants.NavBar_Bot_Explorer) } title="Bot Explorer" />
+        <NavLink className={ classNames('nav-link services', { selected: selection === Constants.NavBar_Services }) } onClick={ evt => handleClick(evt, Constants.NavBar_Services) } title="Services" />
         <NavLink className={ classNames('nav-link bot-settings', { disabled: !this.props.activeBot }) } onClick={ this.handleBotSettingsClick } title="Bot Settings" />
         <NavLink className="nav-link settings" onClick={ handleSettingsClick } title="Settings" justifyEnd={ true } />
         <InsetShadow right={ true } />
