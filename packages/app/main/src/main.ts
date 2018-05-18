@@ -43,7 +43,7 @@ import { WindowManager } from './windowManager';
 import * as commandLine from './commandLine'
 import { setTimeout } from 'timers';
 import { Window } from './platform/window';
-import { ensureStoragePath, writeFile, isDev } from './utils';
+import { ensureStoragePath, writeFile } from './utils';
 import * as squirrel from './squirrelEvents';
 import * as Commands from './commands';
 import { AppMenuBuilder } from './appMenuBuilder';
@@ -316,7 +316,7 @@ function loadMainPage() {
   let page = process.env.ELECTRON_TARGET_URL || url.format({
     protocol: 'file',
     slashes: true,
-    pathname: path.join(__dirname, '../../node_modules/@bfemulator/client/build/index.html')
+    pathname: path.join(__dirname, '../../node_modules/@bfemulator/client/public/index.html')
   });
 
   if (/^http:\/\//.test(page)) {

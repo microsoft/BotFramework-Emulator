@@ -32,13 +32,12 @@
 //
 
 import { IInspectorHost } from '@bfemulator/sdk-client';
-import { IActivity } from '@bfemulator/sdk-shared';
-import { Splitter, Colors, Fonts } from '@bfemulator/ui-react';
+import { Colors, Fonts, Splitter } from '@bfemulator/ui-react';
 import { css } from 'glamor';
 import * as React from 'react';
-import { ServiceType, IBotConfig, IDispatchService, IQnAService } from 'msbot/bin/schema';
-import { QnAMakerClient, QnAKbInfo } from './QnAMaker/Client';
-import { QnAMakerTraceInfo, QueryResult } from './Models/QnAMakerTraceInfo';
+import { IBotConfig, IQnAService, ServiceType } from 'msbot/bin/schema';
+import { QnAKbInfo, QnAMakerClient } from './QnAMaker/Client';
+import { QnAMakerTraceInfo } from './Models/QnAMakerTraceInfo';
 import { Answer } from './Models/QnAMakerModels';
 import QnAMakerHeader from './Views/QnAMakerHeader';
 import PhrasingsView from './Views/PhrasingsView';

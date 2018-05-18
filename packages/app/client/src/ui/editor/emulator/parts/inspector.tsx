@@ -32,7 +32,7 @@
 //
 
 const crypto = window['require']('crypto'); // Cheating here and pulling in a module from node. Can be easily replaced if we ever move the emulator to the web.
-import { ILogEntry, LogLevel, safeStringify, logEntry, textItem } from '@bfemulator/app-shared';
+import {  LogLevel, logEntry, textItem } from '@bfemulator/app-shared';
 import { IExtensionInspector } from '@bfemulator/sdk-shared';
 import { css } from 'glamor';
 import { IBotConfig } from 'msbot/bin/schema';
@@ -194,7 +194,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
         webpreferences="webSecurity=no"
         key={ hash }
         partition={ `persist:${hash}` }
-        preload={ `file://${SettingsService.emulator.cwdAsBase}/../../node_modules/@bfemulator/client/build/inspector-preload.js` }
+        preload={ `file://${SettingsService.emulator.cwdAsBase}/../../node_modules/@bfemulator/client/public/inspector-preload.js` }
         ref={ ref => this.updateRef(ref) }
         src={ this.props.inspector.src }
       />

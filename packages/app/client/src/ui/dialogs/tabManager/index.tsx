@@ -226,4 +226,4 @@ const mapDispatchToProps = (dispatch): TabManagerProps => ({
   setActiveTab: (tab: string) => { dispatch(EditorActions.setActiveTab(tab)); }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(TabManager);
+export default connect(mapStateToProps, mapDispatchToProps)(TabManager) as any;

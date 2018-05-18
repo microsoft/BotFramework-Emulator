@@ -37,9 +37,10 @@ import { connect } from 'react-redux';
 
 import TabBar from './tabBar';
 import TabBarTab from './tabBarTab';
-import TabbedDocument, { Tab as TabbedDocumentTab, Content as TabbedDocumentContent } from './tabbedDocument';
+import { Tab as TabbedDocumentTab, Content as TabbedDocumentContent } from './tabbedDocument';
 import { filterChildren } from '@bfemulator/ui-react';
 import { IRootState } from '../../../data/store';
+import { hmrSafeNameComparison } from '@bfemulator/ui-react';
 
 const CSS = css({
   display: 'flex',
@@ -89,13 +90,13 @@ class MultiTabs extends React.Component<MultiTabsProps> {
             {
               React.Children.map(this.props.children, (tabbedDocument: any, index) =>
                 <TabBarTab onClick={ this.handleTabClick.bind(this, index) } setRef={this.setRef}>
-                  { filterChildren(tabbedDocument.props.children, child => child.type === TabbedDocumentTab) }
+                  {filterChildren(tabbedDocument.props.children, child => hmrSafeNameComparison(child.type, TabbedDocumentTab))}
                 </TabBarTab>
               )
             }
           </TabBar>
         }
-        { !!this.props.children.length && filterChildren(children[this.props.value].props.children, child => child.type === TabbedDocumentContent) }
+        { !!this.props.children.length && filterChildren(children[this.props.value].props.children, child => hmrSafeNameComparison(child.type, TabbedDocumentContent)) }
       </div>
     );
   }
@@ -105,4 +106,4 @@ const mapStateToProps = (state: IRootState): MultiTabsProps => ({
   presentationModeEnabled: state.presentation.enabled
 });
 
-export default connect(mapStateToProps)(MultiTabs);
+export default connect(mapStateToProps)(MultiTabs) as any;

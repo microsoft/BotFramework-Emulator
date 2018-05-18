@@ -37,7 +37,6 @@ import { uniqueId } from '@bfemulator/sdk-shared';
 import { Colors, Splitter } from '@bfemulator/ui-react';
 import base64Url from 'base64url';
 import { css } from 'glamor';
-import * as _ from 'lodash';
 import { IEndpointService } from 'msbot/bin/schema';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -56,6 +55,7 @@ import ChatPanel from './chatPanel';
 import DetailPanel from './detailPanel';
 import LogPanel from './logPanel';
 import PlaybackBar from './playbackBar';
+import { debounce } from "../../utils/debounce";
 
 const { encode } = base64Url;
 
@@ -173,14 +173,14 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
     };
   };
 
-  private readonly onVerticalSizeChange = _.debounce((sizes) => {
+  private readonly onVerticalSizeChange = debounce((sizes) => {
     this.props.document.ui = {
       ...this.props.document.ui,
       verticalSplitter: sizes
     };
   }, 500);
 
-  private readonly onHorizontalSizeChange = _.debounce((sizes) => {
+  private readonly onHorizontalSizeChange = debounce((sizes) => {
     this.props.document.ui = {
       ...this.props.document.ui,
       horizontalSplitter: sizes
@@ -190,7 +190,7 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
   shouldStartNewConversation(props?: any) {
     props = props || this.props;
     return !props.document.directLine ||
-      ( props.document.conversationId != props.document.directLine.conversationId );
+      (props.document.conversationId != props.document.directLine.conversationId);
   }
 
   componentWillMount() {
@@ -312,9 +312,10 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
 
   renderPresentationView(): JSX.Element {
     return (
-      <div { ...PRESENTATION_CSS }>
+      <div {...PRESENTATION_CSS}>
         <div className="presentation-content">
-          <ChatPanel mode={ this.props.mode } document={ this.props.document } onStartConversation={ this.handleStartOverClick }/>
+          <ChatPanel mode={this.props.mode} document={this.props.document}
+                     onStartConversation={this.handleStartOverClick}/>
           {
             this.props.mode === 'transcript' ?
               <div className="presentation-playback-dock"><PlaybackBar/></div>
@@ -322,32 +323,37 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
               null
           }
         </div>
-        <span className="close-presentation-icon" onClick={ () => this.handlePresentationClick(false) }></span>
+        <span className="close-presentation-icon" onClick={() => this.handlePresentationClick(false)}></span>
       </div>
     );
   }
 
   renderDefaultView(): JSX.Element {
     return (
-      <div { ...CSS } key={ this.props.pingId }>
+      <div {...CSS} key={this.props.pingId}>
         {
           this.props.mode === 'livechat' &&
           <div className="header">
             <ToolBar>
-              <ToolBarButton visible={ true } title="Start Over" onClick={ this.handleStartOverClick }/>
-              <ToolBarButton visible={ true } title="Save Transcript As..." onClick={ this.handleExportClick }/>
+              <ToolBarButton visible={true} title="Start Over" onClick={this.handleStartOverClick}/>
+              <ToolBarButton visible={true} title="Save Transcript As..." onClick={this.handleExportClick}/>
             </ToolBar>
           </div>
         }
         <div className="content vertical">
-          <Splitter orientation="vertical" primaryPaneIndex={ 0 } minSizes={ { 0: 80, 1: 80 } } initialSizes={ this.getVerticalSplitterSizes } onSizeChange={ this.onVerticalSizeChange } key={ this.props.pingId }>
+          <Splitter orientation="vertical" primaryPaneIndex={0} minSizes={{ 0: 80, 1: 80 }}
+                    initialSizes={this.getVerticalSplitterSizes} onSizeChange={this.onVerticalSizeChange}
+                    key={this.props.pingId}>
             <div className="content">
-              <ChatPanel mode={ this.props.mode } document={ this.props.document } onStartConversation={ this.handleStartOverClick }/>
+              <ChatPanel mode={this.props.mode} document={this.props.document}
+                         onStartConversation={this.handleStartOverClick}/>
             </div>
             <div className="content">
-              <Splitter orientation="horizontal" primaryPaneIndex={ 0 } minSizes={ { 0: 80, 1: 80 } } initialSizes={ this.getHorizontalSplitterSizes } onSizeChange={ this.onHorizontalSizeChange } key={ this.props.pingId }>
-                <DetailPanel document={ this.props.document } key={ this.props.pingId }/>
-                <LogPanel document={ this.props.document } key={ this.props.pingId }/>
+              <Splitter orientation="horizontal" primaryPaneIndex={0} minSizes={{ 0: 80, 1: 80 }}
+                        initialSizes={this.getHorizontalSplitterSizes} onSizeChange={this.onHorizontalSizeChange}
+                        key={this.props.pingId}>
+                <DetailPanel document={this.props.document} key={this.props.pingId}/>
+                <LogPanel document={this.props.document} key={this.props.pingId}/>
               </Splitter>
             </div>
           </Splitter>
@@ -378,4 +384,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Emulator as any);
+export default connect(mapStateToProps, mapDispatchToProps)(Emulator as any) as any;

@@ -1,42 +1,39 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = require("tslib");
-var React = require("react");
-var react_dom_1 = require("react-dom");
-var react_redux_1 = require("react-redux");
-var adaptivecards_1 = require("adaptivecards");
-var Chat_1 = require("./Chat");
-var adaptivecardsHostConfig = require("../adaptivecards-hostconfig.json");
-var defaultHostConfig = new adaptivecards_1.HostConfig(adaptivecardsHostConfig);
+const React = require("react");
+const react_dom_1 = require("react-dom");
+const react_redux_1 = require("react-redux");
+const adaptivecards_1 = require("adaptivecards");
+const Chat_1 = require("./Chat");
+const adaptivecardsHostConfig = require("../adaptivecards-hostconfig.json");
+const defaultHostConfig = new adaptivecards_1.HostConfig(adaptivecardsHostConfig);
 function cardWithoutHttpActions(card) {
     if (!card.actions)
         return card;
-    var actions = [];
-    card.actions.forEach(function (action) {
+    const actions = [];
+    card.actions.forEach((action) => {
         //filter out http action buttons
         if (action.type === 'Action.Http')
             return;
         if (action.type === 'Action.ShowCard') {
-            var showCardAction = action;
+            const showCardAction = action;
             showCardAction.card = cardWithoutHttpActions(showCardAction.card);
         }
         actions.push(action);
     });
-    return tslib_1.__assign({}, card, { actions: actions });
+    return Object.assign({}, card, { actions });
 }
-var AdaptiveCardContainer = /** @class */ (function (_super) {
-    tslib_1.__extends(AdaptiveCardContainer, _super);
-    function AdaptiveCardContainer(props) {
-        var _this = _super.call(this, props) || this;
-        _this.handleImageLoad = _this.handleImageLoad.bind(_this);
-        _this.onClick = _this.onClick.bind(_this);
-        _this.saveDiv = _this.saveDiv.bind(_this);
-        return _this;
+class AdaptiveCardContainer extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleImageLoad = this.handleImageLoad.bind(this);
+        this.onClick = this.onClick.bind(this);
+        this.saveDiv = this.saveDiv.bind(this);
     }
-    AdaptiveCardContainer.prototype.saveDiv = function (divRef) {
+    saveDiv(divRef) {
         this.divRef = divRef;
-    };
-    AdaptiveCardContainer.prototype.onClick = function (e) {
+    }
+    onClick(e) {
         if (!this.props.onClick) {
             return;
         }
@@ -54,15 +51,15 @@ var AdaptiveCardContainer = /** @class */ (function (_super) {
             default:
                 this.props.onClick(e);
         }
-    };
-    AdaptiveCardContainer.prototype.onExecuteAction = function (action) {
+    }
+    onExecuteAction(action) {
         if (action instanceof adaptivecards_1.OpenUrlAction) {
             window.open(action.url);
         }
         else if (action instanceof adaptivecards_1.SubmitAction) {
             if (action.data !== undefined) {
                 if (typeof action.data === 'object' && action.data.__isBotFrameworkCardAction) {
-                    var cardAction = action.data;
+                    const cardAction = action.data;
                     this.props.onCardAction(cardAction.type, cardAction.value);
                 }
                 else {
@@ -70,43 +67,42 @@ var AdaptiveCardContainer = /** @class */ (function (_super) {
                 }
             }
         }
-    };
-    AdaptiveCardContainer.prototype.componentDidMount = function () {
+    }
+    componentDidMount() {
         this.mountAdaptiveCards();
-    };
-    AdaptiveCardContainer.prototype.componentDidUpdate = function (prevProps) {
+    }
+    componentDidUpdate(prevProps) {
         if (prevProps.hostConfig !== this.props.hostConfig
             || prevProps.jsonCard !== this.props.jsonCard
             || prevProps.nativeCard !== this.props.nativeCard) {
             this.unmountAdaptiveCards();
             this.mountAdaptiveCards();
         }
-    };
-    AdaptiveCardContainer.prototype.handleImageLoad = function () {
+    }
+    handleImageLoad() {
         this.props.onImageLoad && this.props.onImageLoad.apply(this, arguments);
-    };
-    AdaptiveCardContainer.prototype.unmountAdaptiveCards = function () {
-        var divElement = react_dom_1.findDOMNode(this.divRef);
-        [].forEach.call(divElement.children, function (child) { return divElement.removeChild(child); });
-    };
-    AdaptiveCardContainer.prototype.mountAdaptiveCards = function () {
-        var _this = this;
-        var adaptiveCard = this.props.nativeCard || new adaptivecards_1.AdaptiveCard();
+    }
+    unmountAdaptiveCards() {
+        const divElement = react_dom_1.findDOMNode(this.divRef);
+        [].forEach.call(divElement.children, (child) => divElement.removeChild(child));
+    }
+    mountAdaptiveCards() {
+        const adaptiveCard = this.props.nativeCard || new adaptivecards_1.AdaptiveCard();
         adaptiveCard.hostConfig = this.props.hostConfig || defaultHostConfig;
-        var errors = [];
+        let errors = [];
         if (!this.props.nativeCard && this.props.jsonCard) {
             this.props.jsonCard.version = this.props.jsonCard.version || '0.5';
             adaptiveCard.parse(cardWithoutHttpActions(this.props.jsonCard));
             errors = adaptiveCard.validate();
         }
-        adaptiveCard.onExecuteAction = function (action) { return _this.onExecuteAction(action); };
+        adaptiveCard.onExecuteAction = (action) => this.onExecuteAction(action);
         if (errors.length === 0) {
-            var renderedCard = void 0;
+            let renderedCard;
             try {
                 renderedCard = adaptiveCard.render();
             }
             catch (e) {
-                var ve = {
+                const ve = {
                     error: -1,
                     message: e
                 };
@@ -119,8 +115,8 @@ var AdaptiveCardContainer = /** @class */ (function (_super) {
                 if (this.props.onImageLoad) {
                     var imgs = renderedCard.querySelectorAll('img');
                     if (imgs && imgs.length > 0) {
-                        Array.prototype.forEach.call(imgs, function (img) {
-                            img.addEventListener('load', _this.handleImageLoad);
+                        Array.prototype.forEach.call(imgs, (img) => {
+                            img.addEventListener('load', this.handleImageLoad);
                         });
                     }
                 }
@@ -130,13 +126,13 @@ var AdaptiveCardContainer = /** @class */ (function (_super) {
         }
         if (errors.length > 0) {
             console.log('Error(s) rendering AdaptiveCard:');
-            errors.forEach(function (e) { return console.log(e.message); });
-            this.setState({ errors: errors.map(function (e) { return e.message; }) });
+            errors.forEach(e => console.log(e.message));
+            this.setState({ errors: errors.map(e => e.message) });
         }
-    };
-    AdaptiveCardContainer.prototype.render = function () {
-        var wrappedChildren;
-        var hasErrors = this.state && this.state.errors && this.state.errors.length > 0;
+    }
+    render() {
+        let wrappedChildren;
+        const hasErrors = this.state && this.state.errors && this.state.errors.length > 0;
         if (hasErrors) {
             wrappedChildren = (React.createElement("div", null,
                 React.createElement("svg", { className: "error-icon", viewBox: "0 0 15 12.01" },
@@ -152,10 +148,9 @@ var AdaptiveCardContainer = /** @class */ (function (_super) {
         return (React.createElement("div", { className: Chat_1.classList('wc-card', 'wc-adaptive-card', this.props.className, hasErrors && 'error'), onClick: this.onClick },
             wrappedChildren,
             React.createElement("div", { ref: this.saveDiv })));
-    };
-    return AdaptiveCardContainer;
-}(React.Component));
-exports.default = react_redux_1.connect(function (state) { return ({
+    }
+}
+exports.default = react_redux_1.connect((state) => ({
     hostConfig: state.adaptiveCards.hostConfig
-}); }, {}, function (stateProps, dispatchProps, ownProps) { return (tslib_1.__assign({}, ownProps, stateProps)); })(AdaptiveCardContainer);
+}), {}, (stateProps, dispatchProps, ownProps) => (Object.assign({}, ownProps, stateProps)))(AdaptiveCardContainer);
 //# sourceMappingURL=AdaptiveCardContainer.js.map

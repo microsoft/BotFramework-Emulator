@@ -32,7 +32,6 @@
 //
 
 const { join, relative } = require('path');
-const { readFile } = require('fs');
 const buffer = require('vinyl-buffer');
 const chalk = require('chalk');
 const gulp = require('gulp');
@@ -795,7 +794,6 @@ function getConfig(platform, target) {
 
 //----------------------------------------------------------------------------
 function getFileList(platform, target, options = {}) {
-  const config = getConfig(platform, target);
   options = extend({}, {
     basename: pjson.name,
     version: pjson.version,
@@ -867,7 +865,7 @@ function getEnvironmentVar(name, defaultValue = undefined) {
 //----------------------------------------------------------------------------
 function replaceEnvironmentVar(str, name, defaultValue = undefined) {
   let value = getEnvironmentVar(name, defaultValue);
-  if (value == undefined)
+  if (value === undefined)
     throw new Error(`Required environment variable missing: ${name}`);
   return str.replace(new RegExp('\\${' + name + '}', 'g'), value);
 }
