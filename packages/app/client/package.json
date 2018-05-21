@@ -17,20 +17,44 @@
     "prepare": "npm run clean && npm run build",
     "start": "run-s copy:external build:vendors:dev build:shared:dev webpackdevServer:dev",
     "webpackdevServer:dev": "webpack-dev-server --mode development --hot --inline --progress --colors --content-base ./public",
-    "test": ""
+    "test": "jest"
+  },
+  "jest": {
+    "setupTestFrameworkScriptFile": "./testSetup.js",
+    "transform": {
+      "^.+\\.(tsx?|jsx?)$": "ts-jest"
+    },
+    "testMatch": [
+      "**/?(*.)(spec|test).(ts)?(x)"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
   },
   "devDependencies": {
+    "@types/enzyme": "^3.1.10",
+    "@types/jest": "^22.2.3",
     "@types/jsonpath": "^0.2.0",
     "@types/react": "^16.3.14",
     "@types/react-dom": "^16.0.4",
     "@types/request": "^2.47.0",
     "babel-loader": "^7.1.4",
     "babel-preset-react-app": "^3.1.1",
+    "coveralls": "^3.0.1",
     "cross-env": "^5.1.3",
     "css-loader": "^0.28.11",
     "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
     "gulp": "^4.0.0",
     "hard-source-webpack-plugin": "^0.6.9",
+    "jest": "^22.4.4",
+    "jest-enzyme": "^6.0.0",
+    "jsdom-global": "^3.0.2",
     "mini-css-extract-plugin": "^0.4.0",
     "node-sass": "^4.9.0",
     "npm-run-all": "^4.1.3",
@@ -41,6 +65,7 @@
     "rimraf": "^2.6.2",
     "sass-loader": "^7.0.1",
     "style-loader": "^0.21.0",
+    "ts-jest": "^22.4.6",
     "typescript": "2.7.2",
     "tslint": "^5.10.0",
     "tslint-loader": "^3.6.0",
