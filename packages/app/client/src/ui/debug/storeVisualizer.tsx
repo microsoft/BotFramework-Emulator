@@ -71,20 +71,20 @@ const CSS = css({
 
 type StateSlice = 'assetExplorer' | 'bot' | 'chat' | 'dialog' | 'editor' | 'explorer' | 'navBar' | 'presentation' | 'server';
 
-interface IStoreVisualizerProps {
+interface StoreVisualizerProps {
   enabled?: boolean;
   rootState?: IRootState;
 }
 
-interface IStoreVisualizerState {
+interface StoreVisualizerState {
   showing?: boolean;
   selectedSlice?: StateSlice;
 }
 
 /** Transparent overlay that helps visualize a selected slice of the state */
-class StoreVisualizer extends React.Component<IStoreVisualizerProps, IStoreVisualizerState> {
-  constructor(context, props) {
-    super(context, props);
+class StoreVisualizerComponent extends React.Component<StoreVisualizerProps, StoreVisualizerState> {
+  constructor(props: StoreVisualizerProps) {
+    super(props);
 
     this.toggleShowing = this.toggleShowing.bind(this);
     this.onSelectSlice = this.onSelectSlice.bind(this);
@@ -142,6 +142,6 @@ class StoreVisualizer extends React.Component<IStoreVisualizerProps, IStoreVisua
   }
 }
 
-const mapStateToProps = (state: IRootState): IStoreVisualizerProps => ({ rootState: state });
+const mapStateToProps = (state: IRootState): StoreVisualizerProps => ({ rootState: state });
 
-export default connect(mapStateToProps, null)(StoreVisualizer) as any;
+export const StoreVisualizer = connect(mapStateToProps, null)(StoreVisualizerComponent) as any;
