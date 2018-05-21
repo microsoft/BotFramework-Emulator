@@ -83,7 +83,7 @@ const NAV_CSS = css({
   }
 });
 
-interface MainProps {
+export interface MainProps {
   primaryEditor?: IEditor;
   secondaryEditor?: IEditor;
   showingExplorer?: boolean;
@@ -92,11 +92,11 @@ interface MainProps {
   exitPresentationMode?: (e) => void;
 }
 
-interface MainState {
+export interface MainState {
   tabValue: number;
 }
 
-class Main extends React.Component<MainProps, MainState> {
+export class Main extends React.Component<MainProps, MainState> {
   constructor(props: MainProps) {
     super(props);
 

@@ -38,7 +38,7 @@ import * as ReactDOM from 'react-dom';
 
 import interceptError from './interceptError';
 import interceptHyperlink from './interceptHyperlink';
-import Main from './ui/shell/main';
+import Main from './ui/shell/mainContainer';
 import store from './data/store';
 import { CommandService } from './platform/commands/commandService';
 import { SettingsService } from './platform/settings/settingsService';

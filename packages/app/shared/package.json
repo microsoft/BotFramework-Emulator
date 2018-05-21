@@ -14,8 +14,10 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "jest": "^22.4.2",
+    "@types/jest": "^22.2.3",
+    "jest": "^22.4.4",
     "rimraf": "^2.6.2",
+    "ts-jest": "^22.4.6",
     "typescript": "2.7.2",
     "tslint": "^5.10.0"
   },
