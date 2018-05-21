@@ -233,7 +233,7 @@ gulp.task('build-react', function () {
 //----------------------------------------------------------------------------
 gulp.task('build',
   gulp.series('clean', 'build-shared',
-    gulp.parallel(
+    gulp.series(
       'build-app',
       'build-react'))
 );
