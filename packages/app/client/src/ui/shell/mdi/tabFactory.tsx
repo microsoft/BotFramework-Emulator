@@ -34,15 +34,17 @@
 import * as React from 'react';
 
 import * as Constants from '../../../constants';
-import GenericTab from './genericTab';
-import EmulatorTab from './emulatorTab';
+import {
+  GenericTab,
+  EmulatorTab
+} from './index';
 import { IDocument } from '../../../data/reducer/editor';
 
 interface TabFactoryProps {
   document?: IDocument;
 }
 
-export default (props: TabFactoryProps) => {
+export const TabFactory = (props: TabFactoryProps) => {
   if (props && props.document) {
     switch (props.document.contentType) {
       case Constants.ContentType_LiveChat:

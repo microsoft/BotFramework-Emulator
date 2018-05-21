@@ -31,19 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-
-import { TabbedDocumentContentWrapper } from './contentWrapper';
-
-export class TabbedDocument extends React.Component<{}> {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    return false;
-  }
-}
-
-export const Tab = props => props.children;
-export const Content = props => <TabbedDocumentContentWrapper documentId={ props.documentId }>{ props.children }</TabbedDocumentContentWrapper>;
+export * from './emulatorTab';
+export * from './genericTab';
+export * from './mdi';
+export * from './tab';
+export * from './tabFactory';
+export * from './tabStyle';

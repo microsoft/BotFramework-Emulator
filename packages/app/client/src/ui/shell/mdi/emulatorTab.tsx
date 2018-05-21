@@ -37,7 +37,7 @@ import { connect } from 'react-redux';
 import { getTabGroupForDocument } from '../../../data/editorHelpers';
 import * as ChatActions from '../../../data/action/chatActions';
 import * as EditorActions from '../../../data/action/editorActions';
-import Tab from './tab';
+import { Tab } from './tab';
 import { IRootState } from '../../../data/store';
 import { EmulatorMode } from '../../editor/emulator/index';
 
@@ -50,7 +50,7 @@ interface EmulatorTabProps {
   closeTab?: () => void;
 }
 
-class EmulatorTab extends React.Component<EmulatorTabProps> {
+class EmulatorTabComponent extends React.Component<EmulatorTabProps> {
   constructor(props: EmulatorTabProps) {
     super(props);
   }
@@ -106,4 +106,4 @@ const mapDispatchToProps = (dispatch, ownProps: EmulatorTabProps): EmulatorTabPr
   }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(EmulatorTab);
+export const EmulatorTab = connect(mapStateToProps, mapDispatchToProps)(EmulatorTabComponent);

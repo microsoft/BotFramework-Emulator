@@ -54,7 +54,7 @@ interface TabState {
   owningEditor: string;
 }
 
-class Tab extends React.Component<TabProps, TabState> {
+class TabComponent extends React.Component<TabProps, TabState> {
   constructor(props: TabProps) {
     super(props);
 
@@ -130,4 +130,4 @@ const mapDispatchToProps = (dispatch, ownProps: TabProps): TabProps => ({
   swapTabs: (editorKey: string, owningEditor: string, tabId: string) => dispatch(EditorActions.swapTabs(editorKey, owningEditor, tabId, ownProps.documentId))
 });
 
-export default connect(null, mapDispatchToProps)(Tab);
+export const Tab = connect(null, mapDispatchToProps)(TabComponent);
