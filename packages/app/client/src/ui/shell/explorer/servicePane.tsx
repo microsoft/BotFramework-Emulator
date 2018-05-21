@@ -123,10 +123,10 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
         '> svg': {
           width: '12px',
           height: '12px',
-          fill: '#c5c5c5', //c27
+          fill: Colors.SERVICES_PANE_BUTTON_DARK,
 
           '&:hover': {
-            fill: Colors.C14
+            fill: Colors.SERVICES_PANE_BUTTON_HOVER_DARK
           }
         }
       }
@@ -160,7 +160,7 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
         },
 
         '& span': {
-          color: 'rgba(255, 255, 255, 0.5)'
+          color: Colors.SERVICES_PANE_FG_DARK
         },
 
         '&::before': {
@@ -178,7 +178,7 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
     return css({
       margin: '12px 25px',
       fontSize: '13px',
-      color: 'rgba(255, 255, 255, .5)'
+      color: Colors.SERVICES_PANE_FG_DARK
     });
   }
 
@@ -206,7 +206,7 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
 
   public render(): JSX.Element {
     const { expandCollapseCss } = this;
-    
+
     return (
       <ExpandCollapse className="service-pane-explorer" style={ expandCollapseCss } key={ this.props.title } title={ this.props.title } expanded={ this.state.expanded }>
         { this.controls }
