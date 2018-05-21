@@ -55,8 +55,8 @@ interface ExplorerBarProps {
   selectedNavTab?: string;
 }
 
-class ExplorerBar extends React.Component<ExplorerBarProps> {
-  constructor(props) {
+class ExplorerBarComponent extends React.Component<ExplorerBarProps> {
+  constructor(props: ExplorerBarProps) {
     super(props);
   }
   
@@ -86,4 +86,4 @@ const mapStateToProps = (state: IRootState): ExplorerBarProps => ({
   selectedNavTab: state.navBar.selection
 });
 
-export default connect(mapStateToProps)(ExplorerBar)
+export const ExplorerBar = connect(mapStateToProps)(ExplorerBarComponent)

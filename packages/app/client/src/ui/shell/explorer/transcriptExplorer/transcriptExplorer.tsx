@@ -38,7 +38,7 @@ import { FileInfo } from '@bfemulator/app-shared';
 import { lazy, pathExt } from '@fuselab/ui-shared/lib';
 import { TreeView, TreeViewProps, initFontFaces } from '@fuselab/ui-fabric/lib';
 import { ExpandCollapse, ExpandCollapseContent } from '@bfemulator/ui-react';
-import ExplorerItem from '../explorerItem';
+import { ExplorerItem } from '../explorerItem';
 import { IFileTreeState } from '../../../../data/reducer/files';
 import { EXPLORER_CSS } from '../explorerStyle';
 import { CommandService } from '../../../../platform/commands/commandService';
@@ -70,7 +70,7 @@ function isTranscript(path: string): boolean {
   return ext === 'transcript';
 }
 
-class _TranscriptExplorer extends React.Component<TranscriptExplorerProps> {
+class TranscriptExplorerComponent extends React.Component<TranscriptExplorerProps> {
   private onItemClick: (name: string) => void;
 
   constructor(props) {
@@ -183,4 +183,4 @@ function mapStateToProps(state: any): TranscriptExplorerProps {
   };
 }
 
-export const TranscriptExplorer = (connect(mapStateToProps, null)(_TranscriptExplorer)) as any;
+export const TranscriptExplorer = (connect(mapStateToProps, null)(TranscriptExplorerComponent)) as any;

@@ -36,7 +36,7 @@ import { css } from 'glamor';
 import * as React from 'react';
 
 import { Colors, Fonts, Splitter } from '@bfemulator/ui-react';
-import ExplorerBar from './explorer';
+import { ExplorerBar } from './explorer';
 import { MDI } from './mdi';
 import { NavBar } from './navBar';
 import { TabManager, DialogHost } from '../dialogs';
