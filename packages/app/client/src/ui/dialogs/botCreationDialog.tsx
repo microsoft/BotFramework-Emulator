@@ -129,7 +129,7 @@ export interface BotCreationDialogState {
   secretConfirmation: string;
 }
 
-export default class BotCreationDialog extends React.Component<{}, BotCreationDialogState> {
+export class BotCreationDialog extends React.Component<{}, BotCreationDialogState> {
   constructor(props, context) {
     super(props, context);
 
