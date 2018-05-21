@@ -32,6 +32,10 @@ module.exports = {
     publicPath: 'http://localhost:8080',
   },
 
+  stats: {
+    warnings: false
+  },
+
   externals: {},
   plugins: [
     new NodeEnvironmentPlugin()

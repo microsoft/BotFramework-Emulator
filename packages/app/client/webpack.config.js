@@ -26,6 +26,10 @@ const defaultConfig = {
     fs: 'empty'
   },
 
+  stats: {
+    warnings: false
+  },
+
   module: {
     rules: [
       {

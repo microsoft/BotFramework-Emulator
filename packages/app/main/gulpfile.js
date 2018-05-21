@@ -219,7 +219,7 @@ gulp.task('build-react', function () {
 //----------------------------------------------------------------------------
 gulp.task('build',
   gulp.series('clean', 'build-shared',
-    gulp.series(
+    gulp.parallel(
       'build-app',
       'build-react'))
 );
