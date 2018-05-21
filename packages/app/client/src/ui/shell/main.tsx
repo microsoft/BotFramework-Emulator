@@ -166,7 +166,7 @@ class Main extends React.Component<MainProps, MainState> {
       workbenchChildren.push(<ExplorerBar key={ 'explorer-bar' } />);
 
     workbenchChildren.push(
-      <Splitter orientation={ 'vertical' } key={ 'tab-group-splitter' }>
+      <Splitter orientation={ 'vertical' } key={ 'tab-group-splitter' } minSizes={{ 0: 160, 1: 160 }}>
         {tabGroups}
       </Splitter>
     );
