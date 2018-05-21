@@ -21,11 +21,13 @@
     "test": ""
   },
   "devDependencies": {
-    "awesome-typescript-loader":"^5.0.0",
+    "@types/lscache": "^1.0.29",
     "@types/react": "^16.3.14",
     "@types/react-dom": "^16.0.4",
-    "@types/lscache": "^1.0.29",
-    "css-loader":"^0.28.11",
+    "awesome-typescript-loader": "^5.0.0",
+    "css-loader": "^0.28.11",
+    "tslint": "^5.10.0",
+    "tslint-loader": "^3.6.0",
     "typescript": "2.7.2",
     "webpack": "^4.8.2",
     "webpack-dev-server": "^3.1.4"

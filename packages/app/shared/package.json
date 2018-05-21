@@ -6,7 +6,7 @@
   "main": "built/index.js",
   "types": "built/index.d.ts",
   "scripts": {
-    "build": "npm run clean && tsc --pretty",
+    "build": "npm run clean && tsc --pretty && tslint --project tsconfig.json --force",
     "clean": "rimraf ./built",
     "prepare": "npm run clean && npm run build",
     "test": "jest"
@@ -16,7 +16,8 @@
   "devDependencies": {
     "jest": "^22.4.2",
     "rimraf": "^2.6.2",
-    "typescript": "2.7.2"
+    "typescript": "2.7.2",
+    "tslint": "^5.10.0"
   },
   "dependencies": {
     "@bfemulator/sdk-shared": "^1.0.0",
