@@ -152,7 +152,7 @@ class WelcomePage extends React.Component<Props, {}> {
   render() {
     return (
       <GenericDocument style={ CSS }>
-        <LargeHeader>Welcome to the Bot Framework Emulator!</LargeHeader>
+        <LargeHeader>Welcome to the Bot Framework Emulator</LargeHeader>
         <Row>
           <Column>
             <div className="section">
