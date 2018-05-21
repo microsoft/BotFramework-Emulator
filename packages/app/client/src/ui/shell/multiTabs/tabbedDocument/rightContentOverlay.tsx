@@ -57,7 +57,7 @@ interface RightContentOverlayState {
   draggedOver: boolean;
 }
 
-class RightContentOverlay extends React.Component<RightContentOverlayProps, RightContentOverlayState> {
+class RightContentOverlayComponent extends React.Component<RightContentOverlayProps, RightContentOverlayState> {
   constructor(props: RightContentOverlayProps) {
     super(props);
 
@@ -113,4 +113,4 @@ const mapDispatchToProps = (dispatch): RightContentOverlayProps => ({
   splitTab: (contentType: string, tabId: string) => dispatch(EditorActions.splitTab(contentType, tabId, Constants.EditorKey_Primary, Constants.EditorKey_Secondary))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(RightContentOverlay);
+export const RightContentOverlay = connect(mapStateToProps, mapDispatchToProps)(RightContentOverlayComponent);

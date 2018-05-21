@@ -31,38 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
 import * as React from 'react';
-import { Colors } from '@bfemulator/ui-react';
 
-const CSS = css({
-  height: '100%',
-  border: 'none',
-  padding: 0,
+import { TabbedDocumentContentWrapper } from './contentWrapper';
 
-  '&:active': {
-    border: 0,
-    outline: 0
-  },
-
-  '&:focus': {
-    border: 0,
-    outline: 0
+export default class TabbedDocument extends React.Component<{}> {
+  constructor(props) {
+    super(props);
   }
-});
 
-interface TabBarTabProps {
-  setRef?: (input) => any;
-  onClick?: (nextValue) => any;
-  children?: any;
+  render() {
+    return false;
+  }
 }
 
-export const TabBarTab = (props: TabBarTabProps) =>
-  <button
-    { ...CSS }
-    ref={ props.setRef }
-    onClick={ props.onClick }
-    type="button"
-  >
-    { props.children }
-  </button>
+export const Tab = props => props.children;
+export const Content = props => <TabbedDocumentContentWrapper documentId={ props.documentId }>{ props.children }</TabbedDocumentContentWrapper>;

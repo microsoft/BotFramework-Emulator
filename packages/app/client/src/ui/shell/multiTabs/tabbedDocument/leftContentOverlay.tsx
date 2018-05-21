@@ -55,7 +55,7 @@ interface LeftContentOverlayState {
   draggedOver: boolean;
 }
 
-class LeftContentOverlay extends React.Component<LeftContentOverlayProps, LeftContentOverlayState> {
+class LeftContentOverlayComponent extends React.Component<LeftContentOverlayProps, LeftContentOverlayState> {
   constructor(props: LeftContentOverlayProps) {
     super(props);
 
@@ -101,4 +101,4 @@ const mapStateToProps = (state: IRootState): LeftContentOverlayProps => ({
   draggingTab: state.editor.draggingTab
 });
 
-export default connect(mapStateToProps)(LeftContentOverlay);
+export const LeftContentOverlay = connect(mapStateToProps)(LeftContentOverlayComponent);
