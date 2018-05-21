@@ -35,7 +35,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import * as EditorActions from '../../../data/action/editorActions';
-import EditorFactory from '../../editor';
+import { EditorFactory } from '../../editor';
 import MultiTabs from '../multiTabs';
 import TabFactory from './tabFactory';
 import TabbedDocument, { Tab as TabbedDocumentTab, Content as TabbedDocumentContent } from '../multiTabs/tabbedDocument';

@@ -34,17 +34,19 @@
 import * as React from 'react';
 
 import * as Constants from '../../constants';
-import AppSettingsEditor from './appSettingsEditor';
-import BotSettingsEditor from './botSettingsEditor';
-import Emulator from './emulator';
-import WelcomePage from './welcomePage';
+import {
+  AppSettingsEditor,
+  BotSettingsEditor,
+  Emulator,
+  WelcomePage
+} from './index';
 import { IDocument } from '../../data/reducer/editor';
 
 interface EditorFactoryProps {
   document?: IDocument;
 }
 
-export default class EditorFactory extends React.Component<EditorFactoryProps> {
+export class EditorFactory extends React.Component<EditorFactoryProps> {
   constructor(props: EditorFactoryProps) {
     super(props);
   }

@@ -38,12 +38,12 @@ import { css } from 'glamor';
 import { IConnectedService, ServiceType } from 'msbot/bin/schema';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import * as EditorActions from '../../../data/action/editorActions';
-import { getBotInfoByPath } from '../../../data/botHelpers';
-import store, { IRootState } from '../../../data/store';
-import { CommandService } from '../../../platform/commands/commandService';
-import { ActiveBotHelper } from '../../helpers/activeBotHelper';
-import { GenericDocument } from '../../layout';
+import * as EditorActions from '../../data/action/editorActions';
+import { getBotInfoByPath } from '../../data/botHelpers';
+import store, { IRootState } from '../../data/store';
+import { CommandService } from '../../platform/commands/commandService';
+import { ActiveBotHelper } from '../helpers/activeBotHelper';
+import { GenericDocument } from '../layout';
 
 const CSS = css({
   '& .bot-settings-header': {
@@ -88,7 +88,7 @@ interface BotSettingsEditorState {
   secret?: string;
 }
 
-class BotSettingsEditor extends React.Component<BotSettingsEditorProps, BotSettingsEditorState> {
+class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps, BotSettingsEditorState> {
   constructor(props: BotSettingsEditorProps, context) {
     super(props, context);
 
@@ -245,4 +245,4 @@ function mapStateToProps(state: IRootState, ownProps: object): BotSettingsEditor
   };
 }
 
-export default connect(mapStateToProps)(BotSettingsEditor) as any;
+export const BotSettingsEditor = connect(mapStateToProps)(BotSettingsEditorComponent) as any;
