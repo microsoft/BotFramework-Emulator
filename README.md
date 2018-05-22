@@ -1,4 +1,4 @@
-# Microsoft Bot Framework Emulator (V4 PREVIEW) ![Build Status](https://fuselabs.visualstudio.com/BotFramework-Emulator/_apis/build/repos/Github/badge?repoId=Microsoft/BotFramework-Emulator&branchName=v4&api-version=4.1-preview.1)
+# Microsoft Bot Framework Emulator (V4 PREVIEW) ![Build Status](https://fuselabs.visualstudio.com/BotFramework-Emulator/_apis/build/repos/Github/badge?repoId=Microsoft/BotFramework-Emulator&branchName=v4&api-version=4.1-preview.1) [![Coverage Status](https://coveralls.io/repos/github/Microsoft/BotFramework-Emulator/badge.svg?branch=)](https://coveralls.io/github/Microsoft/BotFramework-Emulator?branch=)
 
 The [Microsoft Bot Framework](https://botframework.com) is a service and [SDK](https://github.com/Microsoft/BotBuilder) that enables organizations to build and deploy intelligent agents, known as bots.
 
