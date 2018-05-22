@@ -17,7 +17,8 @@
     "noImplicitAny": false,
     // "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     // Should disable this when RxJS 6 release, and it should play nice with TS >= 2.4.1
     "skipLibCheck": true,
     "typeRoots": [

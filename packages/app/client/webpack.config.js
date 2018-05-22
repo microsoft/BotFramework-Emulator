@@ -32,6 +32,11 @@ const defaultConfig = {
         test: /\.(tsx?)|(jsx)$/,
         exclude: [/node_modules/],
         use: ['awesome-typescript-loader']
+      },
+      {
+        test: /\.tsx?$/,
+        loader: 'tslint-loader',
+        options: { }
       }
     ]
   },
