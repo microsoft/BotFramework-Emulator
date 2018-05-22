@@ -107,6 +107,7 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
       display: 'inline-block',
       height: '100%',
       width: '100%',
+
       '& .addIconButton': {
         background: 'transparent',
         cursor: 'pointer',
@@ -122,10 +123,10 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
         '> svg': {
           width: '12px',
           height: '12px',
+          fill: Colors.SERVICES_PANE_BUTTON_DARK,
 
-          fill: '#c5c5c5',
           '&:hover': {
-            fill: Colors.C14
+            fill: Colors.SERVICES_PANE_BUTTON_HOVER_DARK
           }
         }
       }
@@ -140,12 +141,12 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
       overflow: 'hidden',
 
       '> li': {
-        color: '#CCCCCC',
+        color: Colors.EXPLORER_FOREGROUND_DARK,
         cursor: 'pointer',
         display: 'block',
         whiteSpace: 'nowrap',
-        lineHeight: '30px',
-        minHeight: '30px',
+        lineHeight: '22px',
+        minHeight: '22px',
         fontSize: ' 13px',
 
         '&:hover': {
@@ -159,7 +160,7 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
         },
 
         '& span': {
-          color: 'rgba(255, 255, 255, 0.5)'
+          color: Colors.SERVICES_PANE_FG_DARK
         },
 
         '&::before': {
@@ -177,7 +178,16 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
     return css({
       margin: '12px 25px',
       fontSize: '13px',
-      color: 'rgba(255, 255, 255, .5)'
+      color: Colors.SERVICES_PANE_FG_DARK
+    });
+  }
+
+  protected get expandCollapseCss(): StyleAttribute {
+    // used to prevent explorer squishing caused by flexbox
+    return css({
+      '&.service-pane-explorer.container-expanded': {
+          minHeight: '44px'
+        }
     });
   }
 
@@ -195,8 +205,10 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
   }
 
   public render(): JSX.Element {
+    const { expandCollapseCss } = this;
+
     return (
-      <ExpandCollapse key={ this.props.title } title={ this.props.title } expanded={ this.state.expanded }>
+      <ExpandCollapse className="service-pane-explorer" style={ expandCollapseCss } key={ this.props.title } title={ this.props.title } expanded={ this.state.expanded }>
         { this.controls }
         { this.content }
       </ExpandCollapse>

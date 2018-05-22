@@ -189,4 +189,8 @@ export namespace Colors {
   export const CHECKBOX_CHECKED_FG_DARK = C4;
   export const CHECKBOX_CHECKED_DISABLED_BG_DARK = C36;
   export const CHECKBOX_CHECKED_DISABLED_FG_DARK = C26;
+
+  export const SERVICES_PANE_FG_DARK = 'rgba(255, 255, 255, 0.5)';
+  export const SERVICES_PANE_BUTTON_DARK = C27;
+  export const SERVICES_PANE_BUTTON_HOVER_DARK = C14;
 }

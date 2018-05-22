@@ -31,17 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
+import { css, StyleAttribute } from 'glamor';
 import * as React from 'react';
 import { Colors } from '../styles';
 
 import { filterChildren, hmrSafeNameComparison } from '../utils';
 import { InsetShadow } from '../widget';
 
-const CSS = css({
+const BASE_CSS = css({
   display: 'flex',
   flexFlow: 'column nowrap',
   height: '100%',
+  minHeight: '22px',
   overflow: 'hidden',
 
   '& > header': {
@@ -104,18 +105,20 @@ const CSS = css({
   }
 });
 
-export interface IExpandCollapseProps {
+export interface ExpandCollapseProps {
   expanded?: boolean;
   title?: string;
+  className?: string;
+  style?: StyleAttribute;
 }
 
-export interface IExpandCollapseState {
+export interface ExpandCollapseState {
   expanded: boolean;
 }
 
-export class ExpandCollapse extends React.Component<IExpandCollapseProps, IExpandCollapseState> {
-  constructor(props, context) {
-    super(props, context);
+export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandCollapseState> {
+  constructor(props: ExpandCollapseProps) {
+    super(props);
     this.state = { expanded: !!props.expanded };
   }
 
@@ -131,25 +134,31 @@ export class ExpandCollapse extends React.Component<IExpandCollapseProps, IExpan
   }
 
   render() {
-    const toggleClassName = this.state.expanded ? ' toggle-expanded': '';
+    const { expanded } = this.state;
+    const { className, title, children, style = {} } = this.props;
+
+    let containerClassName = expanded ? ' container-expanded' : '';
+    containerClassName += className ? ` ${className}` : '';
+    const toggleClassName = expanded ? ' toggle-expanded': '';
+    const CSS = css(BASE_CSS, style);
     
     // TODO: Consider <input type="checkbox"> instead of <div />
     return (
-      <div aria-expanded={ this.state.expanded } className={ CSS + ' expand-collapse-container' }>
+      <div { ...CSS } aria-expanded={ expanded } className={ 'expand-collapse-container' + containerClassName }>
         <header>
           <div className="content" onClick={ this.handleTitleClick }>
             <span className={ 'toggle' + toggleClassName }></span>
-            { this.props.title }
+            { title }
           </div>
           <div className="accessories">
-            { filterChildren(this.props.children, child => hmrSafeNameComparison(child.type, ExpandCollapseControls)) }
+            { filterChildren(children, child => hmrSafeNameComparison(child.type, ExpandCollapseControls)) }
           </div>
         </header>
         <div className="body">
           {
-            this.state.expanded &&
+            expanded &&
             <section>
-              { filterChildren(this.props.children, child => hmrSafeNameComparison(child.type, ExpandCollapseContent)) }
+              { filterChildren(children, child => hmrSafeNameComparison(child.type, ExpandCollapseContent)) }
               <InsetShadow top={ true } />
             </section>
           }
