@@ -37,18 +37,26 @@ import { call, ForkEffect, takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandService } from '../../platform/commands/commandService';
 import { DialogService } from '../../ui/dialogs/service';
 import { EndpointEditor } from '../../ui/shell/explorer/endpointExplorer/endpointEditor/endpointEditor';
-import { EndpointEditorPayload, EndpointServiceAction, EndpointServicePayload, LAUNCH_ENDPOINT_EDITOR, OPEN_ENDPOINT_CONTEXT_MENU, OPEN_ENDPOINT_DEEP_LINK } from '../action/endpointServiceActions';
-
+import {
+  EndpointEditorPayload,
+  EndpointServiceAction,
+  EndpointServicePayload,
+  LAUNCH_ENDPOINT_EDITOR,
+  OPEN_ENDPOINT_CONTEXT_MENU,
+  OPEN_ENDPOINT_DEEP_LINK
+} from '../action/endpointServiceActions';
 
 function* launchEndpointEditor(action: EndpointServiceAction<EndpointEditorPayload>): IterableIterator<any> {
   const { endpointEditorComponent, endpointService = {} } = action.payload;
-  const result = yield DialogService.showDialog<ComponentClass<EndpointEditor>>(endpointEditorComponent, { endpointService });
+  const result = yield DialogService
+    .showDialog<ComponentClass<EndpointEditor>>(endpointEditorComponent, { endpointService });
   if (result) {
     yield CommandService.remoteCall('bot:add-or-update-service', ServiceType.Endpoint, result);
   }
 }
 
-function* openEndpointContextMenu(action: EndpointServiceAction<EndpointServicePayload | EndpointEditorPayload>): IterableIterator<any> {
+function* openEndpointContextMenu(action: EndpointServiceAction<EndpointServicePayload | EndpointEditorPayload>)
+  : IterableIterator<any> {
   const menuItems = [
     { label: 'Edit settings', id: 'edit' },
     { label: 'Open in emulator', id: 'open' },
@@ -74,7 +82,7 @@ function* openEndpointContextMenu(action: EndpointServiceAction<EndpointServiceP
 }
 
 function* openEndpointDeepLink(action: EndpointServiceAction<EndpointServicePayload>): IterableIterator<any> {
-  CommandService.call('livechat:new', action.payload.endpointService);
+  CommandService.call('livechat:new', action.payload.endpointService).catch();
 }
 
 function* removeEndpointServiceFromActiveBot(endpointService: IEndpointService): IterableIterator<any> {

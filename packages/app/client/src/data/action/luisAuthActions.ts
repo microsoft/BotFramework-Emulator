@@ -39,15 +39,15 @@ export const LUIS_AUTHORING_DATA_CHANGED = 'LUIS_AUTHORING_DATA_CHANGED';
 export const LUIS_AUTH_STATUS_CHANGED = 'LUIS_AUTH_STATUS_CHANGED';
 
 export interface LuisAuthAction<T> extends Action {
-  payload: T
+  payload: T;
 }
 
 export interface LuisAuthData {
-  luisAuthData: { key: string, BaseUrl: string },
+  luisAuthData: { key: string, BaseUrl: string };
 }
 
 export interface LuisAuthWorkflowStatus {
-  luisAuthWorkflowStatus: 'inProgress' | 'ended' | 'notStarted' | 'canceled',
+  luisAuthWorkflowStatus: 'inProgress' | 'ended' | 'notStarted' | 'canceled';
 }
 
 export interface LuisModelViewer {
@@ -68,7 +68,8 @@ export function luisAuthoringDataChanged(luisAuthData: { key: string, BaseUrl: s
   };
 }
 
-export function luisAuthStatusChanged(luisAuthWorkflowStatus: 'inProgress' | 'ended' | 'notStarted' | 'canceled'): LuisAuthAction<LuisAuthWorkflowStatus> {
+export function luisAuthStatusChanged(luisAuthWorkflowStatus: 'inProgress' | 'ended' | 'notStarted' | 'canceled')
+  : LuisAuthAction<LuisAuthWorkflowStatus> {
   return {
     type: LUIS_AUTH_STATUS_CHANGED,
     payload: { luisAuthWorkflowStatus }

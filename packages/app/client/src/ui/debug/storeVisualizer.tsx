@@ -68,7 +68,8 @@ const CSS = css({
   }
 });
 
-type StateSlice = 'assetExplorer' | 'bot' | 'chat' | 'dialog' | 'editor' | 'explorer' | 'navBar' | 'presentation' | 'server';
+type StateSlice = 'assetExplorer' | 'bot' | 'chat' | 'dialog' | 'editor'
+  | 'explorer' | 'navBar' | 'presentation' | 'server';
 
 interface StoreVisualizerProps {
   enabled?: boolean;
@@ -137,7 +138,9 @@ class StoreVisualizerComponent extends React.Component<StoreVisualizerProps, Sto
           }
         </div>
       );
-    } else return null;
+    } else {
+      return null;
+    }
   }
 }
 

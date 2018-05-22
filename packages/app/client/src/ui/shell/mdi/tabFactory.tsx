@@ -38,28 +38,28 @@ import {
   GenericTab,
   EmulatorTab
 } from './index';
-import { IDocument } from '../../../data/reducer/editor';
+import { Document } from '../../../data/reducer/editor';
 
 interface TabFactoryProps {
-  document?: IDocument;
+  document?: Document;
 }
 
 export const TabFactory = (props: TabFactoryProps) => {
   if (props && props.document) {
     switch (props.document.contentType) {
-      case Constants.ContentType_LiveChat:
+      case Constants.CONTENT_TYPE_LIVE_CHAT:
         return (<EmulatorTab mode="livechat" documentId={ props.document.documentId } dirty={ props.document.dirty } />);
 
-      case Constants.ContentType_Transcript:
+      case Constants.CONTENT_TYPE_TRANSCRIPT:
         return (<EmulatorTab mode="transcript" documentId={ props.document.documentId } dirty={ props.document.dirty } />);
 
-      case Constants.ContentType_BotSettings:
+      case Constants.CONTENT_TYPE_BOT_SETTINGS:
         return (<GenericTab documentId={ props.document.documentId } title={ "Bot Settings" } dirty={ props.document.dirty } />);
 
-      case Constants.ContentType_WelcomePage:
+      case Constants.CONTENT_TYPE_WELCOME_PAGE:
         return (<GenericTab documentId={ props.document.documentId } title={ "Welcome" } dirty={ props.document.dirty } />);
 
-      case Constants.ContentType_AppSettings:
+      case Constants.CONTENT_TYPE_APP_SETTINGS:
         return (<GenericTab documentId={ props.document.documentId } title={ "Emulator Settings" } dirty={ props.document.dirty } />);
 
       default:

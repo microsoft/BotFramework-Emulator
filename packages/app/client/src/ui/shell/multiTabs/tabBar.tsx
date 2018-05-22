@@ -42,7 +42,7 @@ import * as EditorActions from '../../../data/action/editorActions';
 import * as Constants from '../../../constants';
 import { getOtherTabGroup } from '../../../data/editorHelpers';
 import * as PresentationActions from '../../../data/action/presentationActions';
-import { IEditor, IDocument } from '../../../data/reducer/editor';
+import { IEditor, Document } from '../../../data/reducer/editor';
 import { RootState } from '../../../data/store';
 
 const CSS = css({
@@ -114,7 +114,7 @@ interface TabBarProps {
   editors?: { [editorKey: string]: IEditor };
   owningEditor?: string;
   children?: any;
-  documents?: { [documentId: string]: IDocument };
+  documents?: { [documentId: string]: Document };
   activeIndex?: number;
   activeDocumentId?: string;
   childRefs?: HTMLElement[];
@@ -201,7 +201,7 @@ class TabBarComponent extends React.Component<TabBarProps, TabBarState> {
     const splitEnabled = Object.keys(this.props.documents).length > 1;
     const activeDoc = this.props.documents[this.props.activeDocumentId];
     const presentationEnabled = activeDoc
-      && (activeDoc.contentType === Constants.ContentType_Transcript || activeDoc.contentType === Constants.ContentType_LiveChat);
+      && (activeDoc.contentType === Constants.CONTENT_TYPE_TRANSCRIPT || activeDoc.contentType === Constants.CONTENT_TYPE_LIVE_CHAT);
 
     const tabBarClassName = this.state.draggedOver ? ' dragged-over-tab-bar' : '';
     return (

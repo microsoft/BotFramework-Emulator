@@ -49,10 +49,11 @@ export interface QnaMakerServicePayload {
 }
 
 export interface QnaMakerEditorPayload extends QnaMakerServicePayload {
-  qnaMakerEditorComponent?: ComponentClass<QnaMakerEditor>,
+  qnaMakerEditorComponent?: ComponentClass<QnaMakerEditor>;
 }
 
-export function launchQnaMakerEditor(qnaMakerEditorComponent: ComponentClass<QnaMakerEditor>, qnaMakerService?: IQnAService): QnaMakerServiceAction<QnaMakerEditorPayload> {
+export function launchQnaMakerEditor(qnaMakerEditorComponent: ComponentClass<QnaMakerEditor>,
+                                     qnaMakerService?: IQnAService): QnaMakerServiceAction<QnaMakerEditorPayload> {
   return {
     type: LAUNCH_QNA_MAKER_EDITOR,
     payload: { qnaMakerEditorComponent, qnaMakerService }
@@ -66,7 +67,9 @@ export function openQnAMakerDeepLink(qnaMakerService: IQnAService): QnaMakerServ
   };
 }
 
-export function openQnaMakerExplorerContextMenu(qnaMakerEditorComponent: ComponentClass<QnaMakerEditor>, qnaMakerService?: IQnAService): QnaMakerServiceAction<QnaMakerEditorPayload> {
+export function openQnaMakerExplorerContextMenu(qnaMakerEditorComponent: ComponentClass<QnaMakerEditor>,
+                                                qnaMakerService?: IQnAService)
+  : QnaMakerServiceAction<QnaMakerEditorPayload> {
   return {
     type: OPEN_QNA_MAKER_CONTEXT_MENU,
     payload: { qnaMakerEditorComponent, qnaMakerService }

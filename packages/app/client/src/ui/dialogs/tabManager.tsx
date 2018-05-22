@@ -120,7 +120,7 @@ class TabManagerComponent extends React.Component<TabManagerProps, TabManagerSta
     window.removeEventListener('keyup', this.onKeyUp);
   }
 
-  saveTabRef(element, index) {
+  saveTabRef(element: HTMLLIElement, index: number) {
     this.tabRefs[index] = element;
   }
 
@@ -132,7 +132,7 @@ class TabManagerComponent extends React.Component<TabManagerProps, TabManagerSta
     return this.state.selectedIndex === 0 ? this.props.recentTabs.length - 1 : this.state.selectedIndex - 1;
   }
 
-  onKeyDown(e) {
+  onKeyDown(e: KeyboardEvent) {
     if (!this.props.recentTabs.length) {
       return;
     }
@@ -179,7 +179,7 @@ class TabManagerComponent extends React.Component<TabManagerProps, TabManagerSta
     }
   }
 
-  onKeyUp(e) {
+  onKeyUp(e: KeyboardEvent) {
     switch (e.key) {
       case 'Control':
         if (this.state.showing) {
@@ -201,20 +201,21 @@ class TabManagerComponent extends React.Component<TabManagerProps, TabManagerSta
 
   render() {
     return (this.state.showing && !this.props.disabled) ?
-    (
-      <div { ...CSS }>
-        <ul>
-          {
-            this.props.recentTabs.map((tabId, index) => {
-              // TODO: Come up with a simple way to retrieve document
-              // name from store using documentId
-              const tabClassName = index === this.state.selectedIndex ? 'selected-tab' : '';
-              return (<li className={ tabClassName } ref={ x => this.saveTabRef(x, index) } key={ tabId } tabIndex={ 0 }>{ tabId }</li>);
-            })
-          }
-        </ul>
-      </div>
-    ) : null;
+      (
+        <div { ...CSS }>
+          <ul>
+            {
+              this.props.recentTabs.map((tabId, index) => {
+                // TODO: Come up with a simple way to retrieve document
+                // name from store using documentId
+                const tabClassName = index === this.state.selectedIndex ? 'selected-tab' : '';
+                return (<li className={ tabClassName } ref={ x => this.saveTabRef(x, index) } key={ tabId }
+                            tabIndex={ 0 }>{ tabId }</li>);
+              })
+            }
+          </ul>
+        </div>
+      ) : null;
   }
 }
 
@@ -223,7 +224,9 @@ const mapStateToProps = (state: RootState): TabManagerProps => ({
 });
 
 const mapDispatchToProps = (dispatch): TabManagerProps => ({
-  setActiveTab: (tab: string) => { dispatch(EditorActions.setActiveTab(tab)); }
+  setActiveTab: (tab: string) => {
+    dispatch(EditorActions.setActiveTab(tab));
+  }
 });
 
-export const TabManager =  connect(mapStateToProps, mapDispatchToProps)(TabManagerComponent) as any;
+export const TabManager = connect(mapStateToProps, mapDispatchToProps)(TabManagerComponent) as any;

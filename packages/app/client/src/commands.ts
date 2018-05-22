@@ -141,7 +141,7 @@ export function registerCommands() {
   // ---------------------------------------------------------------------------
   // Opens up bot settings page for a bot
   CommandRegistry.registerCommand('bot-settings:open', (_bot: IBotConfig): void => {
-    store.dispatch(EditorActions.open(Constants.ContentType_BotSettings, Constants.DocumentId_BotSettings, false));
+    store.dispatch(EditorActions.open(Constants.CONTENT_TYPE_BOT_SETTINGS, Constants.DOCUMENT_ID_BOT_SETTINGS, false));
   });
 
   // ---------------------------------------------------------------------------
@@ -153,19 +153,20 @@ export function registerCommands() {
   // ---------------------------------------------------------------------------
   // Switches navbar tab selection to Explorer
   CommandRegistry.registerCommand('shell:show-explorer', (): void => {
-    store.dispatch(NavBarActions.select(Constants.NavBar_Bot_Explorer));
+    store.dispatch(NavBarActions.select(Constants.NAVBAR_BOT_EXPLORER));
   });
 
   // ---------------------------------------------------------------------------
   // Switches navbar tab selection to Services
   CommandRegistry.registerCommand('shell:show-services', (): void => {
-    store.dispatch(NavBarActions.select(Constants.NavBar_Services));
+    store.dispatch(NavBarActions.select(Constants.NAVBAR_SERVICES));
   });
 
   // ---------------------------------------------------------------------------
   // Open App Settings
   CommandRegistry.registerCommand('shell:show-app-settings', (): void => {
-    store.dispatch(EditorActions.open(Constants.ContentType_AppSettings, Constants.DocumentId_AppSettings, true, null));
+    const { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } = Constants;
+    store.dispatch(EditorActions.open(CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS, true, null));
   });
 
   // ---------------------------------------------------------------------------
@@ -180,7 +181,7 @@ export function registerCommands() {
     ));
 
     store.dispatch(EditorActions.open(
-      Constants.ContentType_LiveChat,
+      Constants.CONTENT_TYPE_LIVE_CHAT,
       documentId,
       false
     ));
@@ -194,7 +195,7 @@ export function registerCommands() {
       store.dispatch(ChatActions.newDocument(filename, 'transcript', additionalData));
     }
     store.dispatch(EditorActions.open(
-      Constants.ContentType_Transcript,
+      Constants.CONTENT_TYPE_TRANSCRIPT,
       filename,
       false
     ));

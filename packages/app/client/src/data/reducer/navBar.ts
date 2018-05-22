@@ -46,17 +46,17 @@ type NavBarAction = {
   }
 };
 
-export interface INavBarState {
+export interface NavBarState {
   selection: string;
   expanded: boolean;
 }
 
-const DEFAULT_STATE: INavBarState = {
-  selection: constants.NavBar_Bot_Explorer,
+const DEFAULT_STATE: NavBarState = {
+  selection: constants.NAVBAR_BOT_EXPLORER,
   expanded: false
 };
 
-export default function navBar(state: INavBarState = DEFAULT_STATE, action: NavBarAction): INavBarState {
+export default function navBar(state: NavBarState = DEFAULT_STATE, action: NavBarAction): NavBarState {
   switch (action.type) {
     case NavBarActions.SELECT_OR_TOGGLE: {
       if (state.selection === action.payload.selection) {

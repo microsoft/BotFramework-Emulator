@@ -143,10 +143,10 @@ export class Main extends React.Component<MainProps, MainState> {
 
   render() {
     const tabGroup1 = this.props.primaryEditor &&
-      <div className="mdi-wrapper" key={ 'primaryEditor' } ><MDI owningEditor={ Constants.EditorKey_Primary } /></div>;
+      <div className="mdi-wrapper" key={ 'primaryEditor' } ><MDI owningEditor={ Constants.EDITOR_KEY_PRIMARY } /></div>;
 
     const tabGroup2 = this.props.secondaryEditor && Object.keys(this.props.secondaryEditor.documents).length ?
-      <div className="mdi-wrapper secondary-mdi" key={ 'secondaryEditor' } ><MDI owningEditor={ Constants.EditorKey_Secondary } /></div> : null;
+      <div className="mdi-wrapper secondary-mdi" key={ 'secondaryEditor' } ><MDI owningEditor={ Constants.EDITOR_KEY_SECONDARY } /></div> : null;
 
     // If falsy children aren't filtered out, splitter won't recognize change in number of children
     // (i.e. [child1, child2] -> [false, child2] is still seen as 2 children by the splitter)

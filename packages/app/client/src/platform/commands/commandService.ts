@@ -45,7 +45,7 @@ export const CommandService = new class extends Disposable implements ICommandSe
 
   private _service: InternalSharedService;
 
-  init() { }
+  init() { return null; }
 
   public get registry() { return this._service.registry; }
 
@@ -63,7 +63,7 @@ export const CommandService = new class extends Disposable implements ICommandSe
     return this._service.remoteCall(commandName, ...args);
   }
 
-  on(event: string, handler?: ICommandHandler): IDisposable
+  on(event: string, handler?: ICommandHandler): IDisposable;
   on(event: 'command-not-found', handler?: (commandName: string, ...args: any[]) => any) {
     return this._service.on(event, handler);
   }

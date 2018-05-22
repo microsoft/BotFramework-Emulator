@@ -57,7 +57,7 @@ const CSS = css({
   }
 });
 
-interface IPlaybackBarState {
+interface PlaybackBarState {
   playing?: boolean;
 }
 
@@ -69,9 +69,9 @@ interface IPlaybackBarState {
  * component? (index.tsx in this case)
  *
  * Also needs icons
- * */
-export default class PlaybackBar extends React.Component<{}, IPlaybackBarState> {
-  constructor(props, context) {
+ */
+export default class PlaybackBar extends React.Component<{}, PlaybackBarState> {
+  constructor(props: {}, context: PlaybackBarState) {
     super(props, context);
 
     this.onClickStartOver = this.onClickStartOver.bind(this);
@@ -84,13 +84,21 @@ export default class PlaybackBar extends React.Component<{}, IPlaybackBarState> 
     this.state = { playing: false };
   }
 
-  onClickStartOver(): void {}
+  onClickStartOver(): void {
+    return null;
+  }
 
-  onClickStepBack(): void {}
+  onClickStepBack(): void {
+    return null;
+  }
 
-  onClickStepForward(): void {}
+  onClickStepForward(): void {
+    return null;
+  }
 
-  onClickJumpToEnd(): void {}
+  onClickJumpToEnd(): void {
+    return null;
+  }
 
   onClickPlay(): void {
     this.setState({ playing: true });
@@ -108,7 +116,7 @@ export default class PlaybackBar extends React.Component<{}, IPlaybackBarState> 
         {
           this.state.playing ?
             <span onClick={ this.onClickPause }>||</span>
-          :
+            :
             <span className="play-icon" onClick={ this.onClickPlay }></span>
         }
         <span onClick={ this.onClickStepForward }>&gt;|</span>

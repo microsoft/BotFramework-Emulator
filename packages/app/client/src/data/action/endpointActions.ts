@@ -44,7 +44,8 @@ export interface EndpointServicePayload {
   endpointService?: IEndpointService;
 }
 
-export function openEndpointExplorerContextMenu(endpointService: IEndpointService): EndpointServiceAction<EndpointServicePayload> {
+export function openEndpointExplorerContextMenu(endpointService: IEndpointService)
+  : EndpointServiceAction<EndpointServicePayload> {
   return {
     type: OPEN_ENDPOINT_EXPLORER_CONTEXT_MENU,
     payload: { endpointService }

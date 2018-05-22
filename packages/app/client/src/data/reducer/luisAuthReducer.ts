@@ -40,7 +40,7 @@ import {
   LuisAuthWorkflowStatus
 } from '../action/luisAuthActions';
 
-export interface ILuisAuthState {
+export interface LuisAuthState {
   /**
    * The current status of the luis auth frame
    */
@@ -52,12 +52,14 @@ export interface ILuisAuthState {
   luisAuthData: { key: string, BaseUrl: string };
 }
 
-const initialState: ILuisAuthState = {
+const initialState: LuisAuthState = {
   luisAuthWorkflowStatus: 'notStarted',
   luisAuthData: null
 };
 
-export default function luisAuth(state: ILuisAuthState = initialState, action: LuisAuthAction<LuisAuthData> | LuisAuthAction<LuisAuthWorkflowStatus>): ILuisAuthState {
+export default function luisAuth(state: LuisAuthState = initialState,
+                                 action: LuisAuthAction<LuisAuthData> | LuisAuthAction<LuisAuthWorkflowStatus>)
+  : LuisAuthState {
   const { payload = {}, type } = action;
   const { luisAuthData: luisAuthoringKey } = payload as LuisAuthData;
   const { luisAuthWorkflowStatus } = payload as LuisAuthWorkflowStatus;

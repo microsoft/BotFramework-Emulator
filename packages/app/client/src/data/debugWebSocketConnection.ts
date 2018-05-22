@@ -47,19 +47,25 @@ class DebugConnection extends EventEmitter {
     this._connection.onmessage = event => {
       console.info(`WS.recv: ${ event.data }`);
       this.emit('message', event);
-      this.onmessage && this.onmessage(event);
+      if (this.onmessage) {
+        this.onmessage(event);
+      }
     };
 
     this._connection.onopen = () => {
       console.info(`WS.open`);
       this.emit('open');
-      this.onopen && this.onopen();
+      if (this.onopen) {
+        this.onopen();
+      }
     };
 
     this._connection.onclose = () => {
       console.info(`WS.close`);
       this.emit('close');
-      this.onclose && this.onclose();
+      if (this.onclose) {
+        this.onclose();
+      }
     };
   }
 
@@ -71,10 +77,10 @@ class DebugConnection extends EventEmitter {
     this._connection.end();
   }
 
-  send(data) {
+  send(data: any) {
     console.info(`WS.send: ${ data }`);
     this._connection.send(data);
   }
 }
 
-export default DebugConnection
+export default DebugConnection;

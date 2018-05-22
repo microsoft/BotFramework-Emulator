@@ -86,20 +86,35 @@ class DialogHostComponent extends React.Component<DialogHostComponentProps, {}> 
     this._hostRef.addEventListener('dialogRendered', this.initFocusTrap);
   }
 
+  public render() {
+    const visibilityClass = this.props.showing ? ' dialog-host-visible' : '';
+    // sentinels shouldn't be tab-able when dialog is hidden
+    const sentinelTabIndex = this.props.showing ? 0 : -1;
+
+    return (
+      <div className={ CSS + ' dialog-host-overlay' + visibilityClass } onClick={ this.handleOverlayClick }>
+        <span tabIndex={ sentinelTabIndex } onFocus={ this.onFocusStartingSentinel } { ...FOCUS_SENTINEL_CSS }></span>
+        <div className="dialog-host-content" onClick={ this.handleContentClick } ref={ this.saveHostRef }>
+        </div>
+        <span tabIndex={ sentinelTabIndex } onFocus={ this.onFocusEndingSentinel } { ...FOCUS_SENTINEL_CSS }></span>
+      </div>
+    );
+  }
+
   private handleOverlayClick: EventHandler<any> = (event: MouseEvent) => {
     event.stopPropagation();
     DialogService.hideDialog();
-  };
+  }
 
   private handleContentClick: EventHandler<any> = (event: MouseEvent) => {
     // need to stop clicks inside the dialog from bubbling up to the overlay
     event.stopPropagation();
-  };
+  }
 
   private saveHostRef = (elem: HTMLElement) => {
     DialogService.setHost(elem);
     this._hostRef = elem;
-  };
+  }
 
   private getFocusableElementsInModal = (): NodeList => {
     if (this._hostRef) {
@@ -160,21 +175,6 @@ class DialogHostComponent extends React.Component<DialogHostComponentProps, {}> 
         firstChild.focus();
       }
     }
-  }
-
-  render() {
-    const visibilityClass = this.props.showing ? ' dialog-host-visible' : '';
-    // sentinels shouldn't be tab-able when dialog is hidden
-    const sentinelTabIndex = this.props.showing ? 0 : -1;
-
-    return (
-      <div className={ CSS + ' dialog-host-overlay' + visibilityClass } onClick={ this.handleOverlayClick }>
-        <span tabIndex={ sentinelTabIndex } onFocus={ this.onFocusStartingSentinel } { ...FOCUS_SENTINEL_CSS }></span>
-        <div className="dialog-host-content" onClick={ this.handleContentClick } ref={ this.saveHostRef }>
-        </div>
-        <span tabIndex={ sentinelTabIndex } onFocus={ this.onFocusEndingSentinel } { ...FOCUS_SENTINEL_CSS }></span>
-      </div>
-    );
   }
 }
 

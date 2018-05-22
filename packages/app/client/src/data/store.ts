@@ -35,32 +35,32 @@ import { applyMiddleware, combineReducers, createStore, Store } from 'redux';
 import promiseMiddleware from 'redux-promise-middleware';
 import sagaMiddlewareFactory from 'redux-saga';
 import thunk from 'redux-thunk';
-import bot, { IBotState } from './reducer/bot';
+import bot, { BotState } from './reducer/bot';
 import chat, { ChatState } from './reducer/chat';
 import dialog, { DialogState } from './reducer/dialog';
-import editor, { IEditorState } from './reducer/editor';
-import explorer, { IExplorerState } from './reducer/explorer';
+import editor, { EditorState } from './reducer/editor';
+import explorer, { ExplorerState } from './reducer/explorer';
 import files, { IFileTreeState } from './reducer/files';
-import luisAuth, { ILuisAuthState } from './reducer/luisAuthReducer';
-import navBar, { INavBarState } from './reducer/navBar';
+import luisAuth, { LuisAuthState } from './reducer/luisAuthReducer';
+import navBar, { NavBarState } from './reducer/navBar';
 
-import presentation, { IPresentationState } from './reducer/presentation';
-import server, { IServerState } from './reducer/server';
+import presentation, { PresentationState } from './reducer/presentation';
+import server, { ServerState } from './reducer/server';
 import { applicationSagas } from './sagas';
 
 // TODO: Remove this when we no longer need to debug the WebSocket connection
 // import DebugWebSocketConnection from './debugWebSocketConnection';
 
 export interface RootState {
-  bot?: IBotState;
+  bot?: BotState;
   dialog?: DialogState;
-  editor?: IEditorState;
-  explorer?: IExplorerState;
+  editor?: EditorState;
+  explorer?: ExplorerState;
   chat?: ChatState;
-  navBar?: INavBarState;
-  presentation?: IPresentationState;
-  server?: IServerState;
-  luisAuth?: ILuisAuthState;
+  navBar?: NavBarState;
+  presentation?: PresentationState;
+  server?: ServerState;
+  luisAuth?: LuisAuthState;
   files?: IFileTreeState;
 }
 

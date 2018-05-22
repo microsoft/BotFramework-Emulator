@@ -38,9 +38,16 @@ import { Provider } from 'react-redux';
 import * as DialogActions from '../../../data/action/dialogActions';
 
 import store from '../../../data/store';
-import { IDialogService } from './IDialogService';
 
-export const DialogService = new class implements IDialogService {
+export interface DialogService {
+  showDialog(dialog: ComponentClass<any> | StatelessComponent<any>, props: { [propName: string]: any }): any;
+
+  hideDialog(): any;
+
+  setHost(hostElement: HTMLElement): void;
+}
+
+export const DialogService = new class implements DialogService {
   private _hostElement: HTMLElement;
   private _dialogReturnValue: Promise<any>;
   private _resolve: (value?: any) => void;

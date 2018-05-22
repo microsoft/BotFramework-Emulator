@@ -49,10 +49,11 @@ export interface EndpointServicePayload {
 }
 
 export interface EndpointEditorPayload extends EndpointServicePayload {
-  endpointEditorComponent?: ComponentClass<EndpointEditor>,
+  endpointEditorComponent?: ComponentClass<EndpointEditor>;
 }
 
-export function launchEndpointEditor(endpointEditorComponent: ComponentClass<EndpointEditor>, endpointService?: IEndpointService): EndpointServiceAction<EndpointEditorPayload> {
+export function launchEndpointEditor(endpointEditorComponent: ComponentClass<EndpointEditor>,
+                                     endpointService?: IEndpointService): EndpointServiceAction<EndpointEditorPayload> {
   return {
     type: LAUNCH_ENDPOINT_EDITOR,
     payload: { endpointEditorComponent, endpointService }
@@ -66,7 +67,9 @@ export function openEndpointDeepLink(endpointService: IEndpointService): Endpoin
   };
 }
 
-export function openEndpointExplorerContextMenu(endpointEditorComponent: ComponentClass<EndpointEditor>, endpointService?: IEndpointService): EndpointServiceAction<EndpointEditorPayload> {
+export function openEndpointExplorerContextMenu(endpointEditorComponent: ComponentClass<EndpointEditor>,
+                                                endpointService?: IEndpointService)
+  : EndpointServiceAction<EndpointEditorPayload> {
   return {
     type: OPEN_ENDPOINT_CONTEXT_MENU,
     payload: { endpointEditorComponent, endpointService }

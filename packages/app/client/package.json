@@ -15,6 +15,7 @@
     "clean": "rimraf build",
     "copy:external": "gulp copy",
     "prepare": "npm run clean && npm run build",
+    "lint": "tslint --project tsconfig.json",
     "start": "run-s copy:external build:vendors:dev build:shared:dev webpackdevServer:dev",
     "webpackdevServer:dev": "webpack-dev-server --mode development --hot --inline --progress --colors --content-base ./public",
     "test": "jest"

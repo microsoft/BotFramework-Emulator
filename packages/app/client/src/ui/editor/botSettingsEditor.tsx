@@ -89,7 +89,7 @@ interface BotSettingsEditorState {
 }
 
 class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps, BotSettingsEditorState> {
-  constructor(props: BotSettingsEditorProps, context) {
+  constructor(props: BotSettingsEditorProps, context: BotSettingsEditorState) {
     super(props, context);
 
     const { bot } = props;
@@ -112,18 +112,39 @@ class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps,
     }
   }
 
+  render() {
+    const disabled = !this.state.bot.name || !this.props.dirty;
+    const error = !this.state.bot.name ? 'The bot name is required' : '';
+    return (
+      <GenericDocument style={ CSS }>
+        <Column>
+          <MediumHeader className="bot-settings-header">Bot Settings</MediumHeader>
+          <TextInputField inputClass="bot-settings-input" label="Bot name" value={ this.state.bot.name }
+                          required={ true } onChange={ this.onChangeName } error={ error }/>
+          <TextInputField inputClass="bot-settings-input" label="Bot secret" value={ this.state.secret }
+                          onChange={ this.onChangeSecret } type="password"/>
+          <Row className="button-row">
+            <PrimaryButton text="Save" onClick={ this.onSave } className="save-button" disabled={ disabled }/>
+            <PrimaryButton text="Save & Connect" onClick={ this.onSaveAndConnect } className="save-connect-button"
+                           disabled={ disabled }/>
+          </Row>
+        </Column>
+      </GenericDocument>
+    );
+  }
+
   private onChangeName = (e) => {
     const bot: IBotConfigWithPath = BotConfigWithPath.fromJSON({ ...this.state.bot, name: e.target.value });
     this.setState({ bot });
     this.setDirtyFlag(true);
-  };
+  }
 
   private onChangeSecret = (e) => {
     this.setState({ secret: e.target.value });
     this.setDirtyFlag(true);
-  };
+  }
 
-  private onSave = async (e, connect = false) => {
+  private onSave = async (_e, connectArg = false) => {
     const { name: botName = '', description = '', path, services } = this.state.bot;
     let bot: IBotConfigWithPath = BotConfigWithPath.fromJSON({
       name: botName.trim(),
@@ -137,15 +158,16 @@ class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps,
 
     if (bot.path === SharedConstants.TEMP_BOT_IN_MEMORY_PATH) {
       // we are currently using a mocked bot for livechat opened via protocol URI
-      this.saveBotFromProtocol(bot, endpointService, connect);
+      await this.saveBotFromProtocol(bot, endpointService, connectArg);
     } else {
       // using a bot loaded from disk
-      this.saveBotFromDisk(bot, endpointService, connect);
+      await this.saveBotFromDisk(bot, endpointService, connectArg);
     }
-  };
+  }
 
   /** Saves a bot config from a mocked bot object used when opening a livechat session via protocol URI  */
-  private saveBotFromProtocol = async (bot: IBotConfigWithPath, endpointService: IConnectedService, connect: boolean): Promise<void> => {
+  private saveBotFromProtocol = async (bot: IBotConfigWithPath, endpointService: IConnectedService, connectArg: boolean)
+    : Promise<void> => {
     // need to establish a location for the .bot file
     let newPath = await this.showBotSaveDialog();
     if (newPath) {
@@ -170,7 +192,9 @@ class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps,
       this.setDirtyFlag(false);
       this.setState({ bot });
 
-      connect && endpointService && CommandService.call('livechat:new', endpointService);
+      if (connectArg && endpointService) {
+        CommandService.call('livechat:new', endpointService);
+      }
     } else {
       // dialog was cancelled
       return null;
@@ -178,7 +202,8 @@ class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps,
   }
 
   /** Saves a bot config of a bot loaded from disk */
-  private saveBotFromDisk = async (bot: IBotConfigWithPath, endpointService: IConnectedService, connect: boolean): Promise<void> => {
+  private saveBotFromDisk = async (bot: IBotConfigWithPath, endpointService: IConnectedService, connectArg: boolean)
+    : Promise<void> => {
     const botInfo: IBotInfo = getBotInfoByPath(bot.path);
     botInfo.secret = this.state.secret;
 
@@ -190,56 +215,41 @@ class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps,
     this.setDirtyFlag(false);
     this.setState({ bot });
 
-    connect && endpointService && CommandService.call('livechat:new', endpointService);
+    if (connectArg && endpointService) {
+      CommandService.call('livechat:new', endpointService);
+    }
   }
 
   private onSaveAndConnect = async e => {
     await this.onSave(e, true);
-  };
+  }
 
-  private setDirtyFlag(dirty) {
+  private setDirtyFlag(dirty: boolean) {
     store.dispatch(EditorActions.setDirtyFlag(this.props.documentId, dirty));
   }
 
   private showBotSaveDialog = async (): Promise<any> => {
     // get a safe bot file name
+    // TODO - localization
     const botFileName = await CommandService.remoteCall('file:sanitize-string', this.state.bot.name);
     const dialogOptions = {
       filters: [
         {
-          name: "Bot Files",
+          name: 'Bot Files',
           extensions: ['bot']
         }
       ],
       defaultPath: botFileName,
       showsTagField: false,
-      title: "Save as",
-      buttonLabel: "Save"
+      title: 'Save as',
+      buttonLabel: 'Save'
     };
 
     return CommandService.remoteCall('shell:showSaveDialog', dialogOptions);
-  };
-
-  render() {
-    const disabled = !this.state.bot.name || !this.props.dirty;
-    const error = !this.state.bot.name ? 'The bot name is required' : '';
-    return (
-      <GenericDocument style={ CSS }>
-        <Column>
-          <MediumHeader className="bot-settings-header">Bot Settings</MediumHeader>
-          <TextInputField inputClass="bot-settings-input" label="Bot name" value={ this.state.bot.name } required={ true } onChange={ this.onChangeName } error={ error }/>
-          <TextInputField inputClass="bot-settings-input" label="Bot secret" value={ this.state.secret } onChange={ this.onChangeSecret } type="password"/>
-          <Row className="button-row">
-            <PrimaryButton text="Save" onClick={ this.onSave } className="save-button" disabled={ disabled }/>
-            <PrimaryButton text="Save & Connect" onClick={ this.onSaveAndConnect } className="save-connect-button" disabled={ disabled }/>
-          </Row>
-        </Column>
-      </GenericDocument>
-    );
   }
 }
 
-function mapStateToProps(state: RootState, ownProps: object): BotSettingsEditorProps {
+function mapStateToProps(state: RootState, _ownProps: {}): BotSettingsEditorProps {
   return {
     bot: state.bot.activeBot
   };

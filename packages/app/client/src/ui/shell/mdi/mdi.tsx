@@ -43,13 +43,13 @@ import {
   Content as TabbedDocumentContent
 } from '../multiTabs';
 import { TabFactory } from './tabFactory';
-import { IDocument } from '../../../data/reducer/editor';
+import { Document } from '../../../data/reducer/editor';
 import { RootState } from '../../../data/store';
 
 interface MDIProps {
   activeDocumentId?: string;
   activeEditor?: string;
-  documents?: { [documentId: string]: IDocument };
+  documents?: { [documentId: string]: Document };
   tabOrder?: string[];
   owningEditor?: string;
   setActiveTab?: (tab: string) => void;

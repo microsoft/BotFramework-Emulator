@@ -63,9 +63,9 @@ class ExplorerBarComponent extends React.Component<ExplorerBarProps> {
   render() {
     let explorer = [];
       explorer.push(
-        <BotExplorerBar key={ 'bot-explorer-bar' } activeBot={ this.props.activeBot } hidden={ this.props.selectedNavTab !== Constants.NavBar_Bot_Explorer } />
+        <BotExplorerBar key={ 'bot-explorer-bar' } activeBot={ this.props.activeBot } hidden={ this.props.selectedNavTab !== Constants.NAVBAR_BOT_EXPLORER } />
       );
-    if (this.props.selectedNavTab === Constants.NavBar_Services)
+    if (this.props.selectedNavTab === Constants.NAVBAR_SERVICES)
       explorer.push(
         <ServicesExplorerBarContainer key={ 'services-explorer-bar' } />
       );

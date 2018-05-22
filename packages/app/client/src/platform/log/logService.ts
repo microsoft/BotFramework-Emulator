@@ -39,7 +39,7 @@ import { CommandRegistry } from '../../commands';
 import * as chatHelpers from '../../data/chatHelpers';
 
 export function registerCommands() {
-  CommandRegistry.registerCommand("conversation:log:append", (conversationId: string, entry: ILogEntry): any => {
+  CommandRegistry.registerCommand('conversation:log:append', (conversationId: string, entry: ILogEntry): any => {
     LogService.logToChat(conversationId, entry);
   });
 }

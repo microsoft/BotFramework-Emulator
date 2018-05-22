@@ -113,8 +113,8 @@ class TabbedDocumentContentWrapperComponent extends React.Component<TabbedDocume
 
 const mapStateToProps = (state: RootState): TabbedDocumentContentWrapperProps => ({
   activeEditor: state.editor.activeEditor,
-  primaryEditor: state.editor.editors[Constants.EditorKey_Primary],
-  secondaryEditor: state.editor.editors[Constants.EditorKey_Secondary]
+  primaryEditor: state.editor.editors[Constants.EDITOR_KEY_PRIMARY],
+  secondaryEditor: state.editor.editors[Constants.EDITOR_KEY_SECONDARY]
 });
 
 const mapDispatchToProps = (dispatch): TabbedDocumentContentWrapperProps => ({

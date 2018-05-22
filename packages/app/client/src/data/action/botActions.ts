@@ -35,7 +35,7 @@ import { IBotInfo } from '@bfemulator/app-shared';
 import { IBotConfig } from 'msbot/bin/schema';
 import { BotAction } from '../reducer/bot';
 
-export const CREATE ='BOT/CREATE';
+export const CREATE = 'BOT/CREATE';
 export const LOAD = 'BOT/LOAD';
 export const PATCH = 'BOT/PATCH';
 export const SET_ACTIVE = 'BOT/SET_ACTIVE';

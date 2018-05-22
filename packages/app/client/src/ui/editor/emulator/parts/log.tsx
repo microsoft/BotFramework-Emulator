@@ -96,26 +96,31 @@ const CSS = css({
   },
 });
 
-function number2(n) {
+function number2(n: number) {
   return ('0' + n).slice(-2);
 }
 
 function timestamp(t: number) {
-  let timestamp = new Date(t);
-  let hours = number2(timestamp.getHours());
-  let minutes = number2(timestamp.getMinutes());
-  let seconds = number2(timestamp.getSeconds());
+  let timestamp1 = new Date(t);
+  let hours = number2(timestamp1.getHours());
+  let minutes = number2(timestamp1.getMinutes());
+  let seconds = number2(timestamp1.getSeconds());
   return `${hours}:${minutes}:${seconds}`;
 }
 
 function logLevelToClassName(level: LogLevel): string {
   switch (level) {
-    case LogLevel.Debug: return "level-1";
-    case LogLevel.Info: return "level-0";
-    case LogLevel.Warn: return "level-2";
-    case LogLevel.Error: return "level-3";
+    case LogLevel.Debug:
+      return 'level-1';
+    case LogLevel.Info:
+      return 'level-0';
+    case LogLevel.Warn:
+      return 'level-2';
+    case LogLevel.Error:
+      return 'level-3';
+    default:
+      return '';
   }
-  return '';
 }
 
 export interface LogProps {
@@ -129,14 +134,14 @@ export interface LogState {
 export default class Log extends React.Component<LogProps, LogState> {
   scrollMe: Element;
 
-  constructor(props, context) {
+  constructor(props: LogProps, context: LogState) {
     super(props, context);
     this.state = {
       count: 0
     };
   }
 
-  componentDidUpdate(prevProps: LogProps, prevState: any, prevContext: any): void {
+  componentDidUpdate(): void {
     if (this.props.document.log.entries.length !== this.state.count) {
       this.scrollMe.scrollTop = this.scrollMe.scrollHeight;
       this.setState({
@@ -151,7 +156,7 @@ export default class Log extends React.Component<LogProps, LogState> {
       <div { ...CSS } ref={ ref => this.scrollMe = ref }>
         {
           this.props.document.log.entries.map(entry =>
-            <LogEntry key={ `entry-${key++}` } entry={ entry } document={ this.props.document } />
+            <LogEntry key={ `entry-${key++}` } entry={ entry } document={ this.props.document }/>
           )
         }
       </div>
@@ -166,12 +171,12 @@ export interface LogEntryProps {
 
 class LogEntry extends React.Component<LogEntryProps> {
 
-  inspect(obj) {
+  inspect(obj: {}) {
     this.props.document.selectedActivity$.next({});
     store.dispatch(ChatActions.setInspectorObjects(this.props.document.documentId, obj));
   }
 
-  inspectAndHighlight(obj) {
+  inspectAndHighlight(obj: any) {
     this.inspect(obj);
     if (obj.id) {
       this.props.document.selectedActivity$.next(obj);
@@ -184,7 +189,7 @@ class LogEntry extends React.Component<LogEntryProps> {
       <div key="entry" className="entry">
         { this.renderTimestamp(this.props.entry.timestamp) }
         { this.props.entry.items.map(item =>
-          this.renderItem(item, key++)
+          this.renderItem(item, '' + key++)
         ) }
       </div>
     );
@@ -198,33 +203,33 @@ class LogEntry extends React.Component<LogEntryProps> {
     );
   }
 
-  renderItem(item: ILogItem, key) {
+  renderItem(item: ILogItem, key: string) {
     switch (item.type) {
-      case "text": {
+      case 'text': {
         const { level, text } = item.payload;
         return this.renderTextItem(level, text, key);
       }
-      case "external-link": {
+      case 'external-link': {
         const { text, hyperlink } = item.payload;
         return this.renderExternalLinkItem(text, hyperlink, key);
       }
-      case "open-app-settings": {
+      case 'open-app-settings': {
         const { text } = item.payload;
         return this.renderAppSettingsItem(text, key);
       }
-      case "exception": {
+      case 'exception': {
         const { err } = item.payload;
         return this.renderExceptionItem(err, key);
       }
-      case "inspectable-object": {
+      case 'inspectable-object': {
         const { obj } = item.payload;
         return this.renderInspectableItem(obj, key);
       }
-      case "network-request": {
+      case 'network-request': {
         const { facility, body, headers, method, url } = item.payload;
         return this.renderNetworkRequestItem(facility, body, headers, method, url, key);
       }
-      case "network-response": {
+      case 'network-response': {
         const { body, headers, statusCode, statusMessage, srcUrl } = item.payload;
         return this.renderNetworkResponseItem(body, headers, statusCode, statusMessage, srcUrl, key);
       }
@@ -233,7 +238,7 @@ class LogEntry extends React.Component<LogEntryProps> {
     }
   }
 
-  renderTextItem(level: LogLevel, text: string, key) {
+  renderTextItem(level: LogLevel, text: string, key: string) {
     return (
       <span key={ key } className={ `spaced ${logLevelToClassName(level)}` }>
         { text }
@@ -241,23 +246,23 @@ class LogEntry extends React.Component<LogEntryProps> {
     );
   }
 
-  renderExternalLinkItem(text: string, hyperlink: string, key) {
+  renderExternalLinkItem(text: string, hyperlink: string, key: string) {
     return (
       <span key={ key } className="spaced">
-        <a onClick={ () => window.open(hyperlink, "_blank") }>{ text }</a>
+        <a onClick={ () => window.open(hyperlink, '_blank') }>{ text }</a>
       </span>
-    )
+    );
   }
 
-  renderAppSettingsItem(text: string, key) {
+  renderAppSettingsItem(text: string, key: string) {
     return (
       <span key={ key } className="spaced">
         <a onClick={ () => CommandService.call('shell:show-app-settings') }>{ text }</a>
       </span>
-    )
+    );
   }
 
-  renderExceptionItem(err: Error, key) {
+  renderExceptionItem(err: Error, key: string) {
     return (
       <span key={ key } className="spaced level-3">
         { err && err.message ? err.message : '' }
@@ -265,11 +270,12 @@ class LogEntry extends React.Component<LogEntryProps> {
     );
   }
 
-  renderInspectableItem(obj: any, key) {
-    let title = "inspect";
-    if (typeof obj.type === 'string')
+  renderInspectableItem(obj: any, key: string) {
+    let title = 'inspect';
+    if (typeof obj.type === 'string') {
       title = obj.type;
-    let summaryText = this.summaryText(obj) || "";
+    }
+    let summaryText = this.summaryText(obj) || '';
     return (
       <>
         <span key={ key } className="spaced level-0">
@@ -282,7 +288,7 @@ class LogEntry extends React.Component<LogEntryProps> {
     );
   }
 
-  renderNetworkRequestItem(facility, body, headers, method, url, key) {
+  renderNetworkRequestItem(_facility: any, body: any, _headers: any, method: any, _url: string, key: string) {
     let obj;
     if (typeof body === 'string') {
       try {
@@ -308,7 +314,8 @@ class LogEntry extends React.Component<LogEntryProps> {
     }
   }
 
-  renderNetworkResponseItem(body, headers, statusCode, statusMessage, srcUrl, key) {
+  renderNetworkResponseItem(body: any, _headers: any, statusCode: number,
+                            _statusMessage: string, _srcUrl: string, key: string) {
     let obj;
     if (typeof body === 'string') {
       try {

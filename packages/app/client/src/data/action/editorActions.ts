@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IDocument } from '../reducer/editor';
+import { Document } from '../reducer/editor';
 
 export const APPEND_TAB = 'EDITOR/APPEND_TAB';
 export const CLOSE = 'EDITOR/CLOSE';
@@ -60,7 +60,7 @@ export type EditorAction = {
   }
 } | {
   type: 'EDITOR/CLOSE_ALL',
-  payload : {
+  payload: {
     includeGlobal: boolean
   }
 } | {
@@ -71,10 +71,10 @@ export type EditorAction = {
   }
 } | {
   type: 'EDITOR/OPEN',
-  payload: IDocument
+  payload: Document
 } | {
   type: 'EDITOR/UPDATE_DOCUMENT',
-  payload: IDocument
+  payload: Document
 } | {
   type: 'EDITOR/SET_ACTIVE_TAB',
   payload: {
@@ -160,11 +160,11 @@ export function open(contentType: string, documentId: string, isGlobal: boolean,
   };
 }
 
-export function updateDocument(documentId, updatedDocument: Partial<IDocument>) {
+export function updateDocument(documentId: string, updatedDocument: Partial<Document>) {
   return {
     type: UPDATE_DOCUMENT,
       payload: { documentId, ...updatedDocument }
-  }
+  };
 }
 
 export function setActiveTab(documentId: string): EditorAction {
@@ -182,10 +182,11 @@ export function setActiveEditor(editorKey: string): EditorAction {
     payload: {
       editorKey
     }
-  }
+  };
 }
 
-export function splitTab(contentType: string, documentId: string, srcEditorKey: string, destEditorKey: string): EditorAction {
+export function splitTab(contentType: string, documentId: string, srcEditorKey: string, destEditorKey: string)
+  : EditorAction {
   return {
     type: SPLIT_TAB,
     payload: {
@@ -197,7 +198,8 @@ export function splitTab(contentType: string, documentId: string, srcEditorKey: 
   };
 }
 
-export function swapTabs(srcEditorKey: string, destEditorKey: string, srcTabId: string, destTabId: string): EditorAction {
+export function swapTabs(srcEditorKey: string, destEditorKey: string, srcTabId: string, destTabId: string)
+  : EditorAction {
   return {
     type: SWAP_TABS,
     payload: {
