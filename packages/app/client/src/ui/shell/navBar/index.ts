@@ -31,19 +31,5 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
-import * as React from 'react';
-import { Colors } from '@bfemulator/ui-react';
-
-const CSS = css({
-  backgroundColor: Colors.STATUS_BAR_BACKGROUND_DARK,
-  color: Colors.STATUS_BAR_FOREGROUND_DARK,
-  lineHeight: '22px',
-  minHeight: '22px',
-  width: '100%',
-  alignSelf: 'flex-end',
-  flex: 1
-});
-
-export default props =>
-  <div { ...CSS }></div>
+export * from './navBar';
+export * from './navLink';

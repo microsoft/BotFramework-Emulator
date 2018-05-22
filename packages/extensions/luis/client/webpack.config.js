@@ -12,6 +12,12 @@ module.exports = {
         use: ['style-loader', 'css-loader']
       },
       { test: /\.tsx?$/, loader: "awesome-typescript-loader" },
+      {
+        test: /\.tsx$/,
+        enforce: 'pre',
+        loader: 'tslint-loader',
+        options: { /* Loader options go here */ }
+      },
     ],
   },
 

@@ -22,7 +22,12 @@ module.exports = {
           },
           'awesome-typescript-loader',
         ],
-      }
+      },
+      {
+        test: /\.tsx?$/,
+        loader: 'tslint-loader',
+        options: { /* Loader options go here */ }
+      },
     ]
   },
 

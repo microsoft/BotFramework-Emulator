@@ -130,7 +130,7 @@ function shallowEqual(x, y) {
   );
 }
 
-export default class AppSettingsEditor extends React.Component<AppSettingsEditorProps, AppSettingsEditorState> {
+export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, AppSettingsEditorState> {
   constructor(props: AppSettingsEditorProps, context: any) {
     super(props, context);
 

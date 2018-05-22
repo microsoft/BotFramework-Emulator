@@ -33,10 +33,10 @@
 
 import { ServiceBase } from 'luis-apis/lib/api/serviceBase';
 import { Apps, Publish, ApplicationPublishRequest } from 'luis-apis/lib/api/apps';
-import { Train, ModelTrainStatus, ModelTrainStatusDetails } from 'luis-apis/lib/api/train';
+import { Train, ModelTrainStatus } from 'luis-apis/lib/api/train';
 import Intents from 'luis-apis/lib/api/models/intents';
 import { LuisAppInfo } from '../Models/LuisAppInfo';
-import { Example, EntityLabel, ExampleLabelObject, AddLabelParams } from 'luis-apis/lib/api/examples';
+import { Example, ExampleLabelObject, AddLabelParams } from 'luis-apis/lib/api/examples';
 import { AppInfo } from './AppInfo';
 import { IntentInfo } from './IntentInfo';
 import { LuisResponse } from './LuisResponse';
@@ -81,7 +81,7 @@ class LuisClient {
   private luisAppInfo: LuisAppInfo;
 
   private static getCacheKey(apiName: string, appId: string, versionId: string | undefined= undefined): string {
-    let key: string = appId + '_' + appId;
+    let key: string = apiName + '_' + appId;
     if (versionId) {
       key += '_';
       key += versionId;

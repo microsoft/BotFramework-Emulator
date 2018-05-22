@@ -74,7 +74,7 @@ class Editor extends Component<EditorProps, EditorState> {
       return { intent: NoneIntent, score: 0.0 };
     }
     let intents: {[key: string]: RecognizerResultIntent } = this.props.recognizerResult.intents;
-    let topIntent = Object.keys(intents).reduce((a, b, i, arr) => {
+    let topIntent = Object.keys(intents).reduce((a, b) => {
       return intents[a].score > intents[b].score ? a : b;
     });
     return { intent: topIntent, score: intents[topIntent].score };

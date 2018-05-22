@@ -39,6 +39,7 @@ const log = require('fancy-log');
 const pjson = require('./package.json');
 const shell = require('gulp-shell');
 const through2 = require('through2').obj;
+const tslint = require("gulp-tslint");
 
 const defaultElectronMirror = 'https://github.com/electron/electron/releases/download/v';
 const defaultElectronVersion = pjson.devDependencies["electron"];
@@ -129,11 +130,24 @@ gulp.task('build-extensions',
 );
 
 //----------------------------------------------------------------------------
+gulp.task("tslint-app", () =>
+  gulp.src("./src/**/*.ts")
+    .pipe(tslint({
+      formatter: "verbose"
+    }))
+    .pipe(tslint.report({
+      emitError: false,
+      allowWarnings: true,
+    }))
+);
+
+//----------------------------------------------------------------------------
 gulp.task('build-app', gulp.series(
   'build-emulator-core',
   gulp.parallel(
     'build-extensions',
     'copy-extension-stubs',
+    'tslint-app',
     function () {
       return gulp
         .src('./package.json', { read: false })

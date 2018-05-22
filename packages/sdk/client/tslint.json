@@ -21,7 +21,7 @@
       ],
       "interface-name": [
         true,
-        "never-prefix"
+        "always-prefix"
       ],
       "jsdoc-format": true,
       "jsx-no-lambda": false,

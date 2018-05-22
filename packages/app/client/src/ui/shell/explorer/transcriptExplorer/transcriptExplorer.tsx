@@ -68,7 +68,7 @@ function isTranscript(path: string): boolean {
   return ext === 'transcript';
 }
 
-class _TranscriptExplorer extends React.Component<TranscriptExplorerProps> {
+class TranscriptExplorerComponent extends React.Component<TranscriptExplorerProps> {
   private onItemClick: (name: string) => void;
 
   constructor(props) {
@@ -135,4 +135,4 @@ function mapStateToProps(state: any): TranscriptExplorerProps {
   };
 }
 
-export const TranscriptExplorer = (connect(mapStateToProps, null)(_TranscriptExplorer)) as any;
+export const TranscriptExplorer = connect(mapStateToProps)(TranscriptExplorerComponent) as any;

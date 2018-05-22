@@ -33,36 +33,57 @@
 
 import { css } from 'glamor';
 import * as React from 'react';
-import { Colors } from '@bfemulator/ui-react';
+import { connect } from 'react-redux';
+
+import BotExplorerBar from './botExplorerBar';
+import { ServicesExplorerBarContainer } from "./servicesExplorerBar";
+import { Colors, InsetShadow } from '@bfemulator/ui-react';
+import * as Constants from '../../../constants';
+import { IBotConfig } from 'msbot/bin/schema';
+import { IRootState } from '../../../data/store';
 
 const CSS = css({
+  backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
   height: '100%',
-  border: 'none',
-  padding: 0,
-
-  '&:active': {
-    border: 0,
-    outline: 0
-  },
-
-  '&:focus': {
-    border: 0,
-    outline: 0
-  }
+  display: 'flex',
+  flexFlow: 'column nowrap',
+  position: 'relative'
 });
 
-interface TabBarTabProps {
-  setRef?: (input) => any;
-  onClick?: (nextValue) => any;
-  children?: any;
+interface ExplorerBarProps {
+  activeBot?: IBotConfig;
+  selectedNavTab?: string;
 }
 
-export const TabBarTab = (props: TabBarTabProps) =>
-  <button
-    { ...CSS }
-    ref={ props.setRef }
-    onClick={ props.onClick }
-    type="button"
-  >
-    { props.children }
-  </button>
+class ExplorerBarComponent extends React.Component<ExplorerBarProps> {
+  constructor(props: ExplorerBarProps) {
+    super(props);
+  }
+  
+  render() {
+    let explorer = [];
+      explorer.push(
+        <BotExplorerBar key={ 'bot-explorer-bar' } activeBot={ this.props.activeBot } hidden={ this.props.selectedNavTab !== Constants.NavBar_Bot_Explorer } />
+      );
+    if (this.props.selectedNavTab === Constants.NavBar_Services)
+      explorer.push(
+        <ServicesExplorerBarContainer key={ 'services-explorer-bar' } />
+      );
+    if (!this.props.selectedNavTab)
+      explorer = null;
+
+    return (
+      <div { ...CSS }>
+        { explorer }
+        <InsetShadow right={ true }/>
+      </div>
+    );
+  }
+}
+
+const mapStateToProps = (state: IRootState): ExplorerBarProps => ({
+  activeBot: state.bot.activeBot,
+  selectedNavTab: state.navBar.selection
+});
+
+export const ExplorerBar = connect(mapStateToProps)(ExplorerBarComponent)

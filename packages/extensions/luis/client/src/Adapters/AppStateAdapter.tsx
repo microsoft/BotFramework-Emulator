@@ -32,8 +32,6 @@
 //
 
 import { AppState, PersistentAppState } from '../App';
-import { RecognizerResult } from '../Models/RecognizerResults';
-import { LuisAppInfo } from '../Models/LuisAppInfo';
 import { LuisTraceInfo } from '../Models/LuisTraceInfo';
 import { AppInfo } from '../Luis/AppInfo';
 import { IntentInfo } from '../Luis/IntentInfo';
@@ -43,11 +41,6 @@ import { RecognizerResultAdapter } from '../Adapters/RecognizerResultAdapter';
 
 const TraceActivity = 'trace';
 const LuisTraceType = 'https://www.luis.ai/schemas/trace';
-
-interface LuisModel {
-  ModelID: string;
-  SubscriptionKey: string;
-}
 
 export default class AppStateAdapter implements AppState {
   authoringKey: string;

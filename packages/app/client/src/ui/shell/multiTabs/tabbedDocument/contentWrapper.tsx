@@ -37,9 +37,11 @@ import { css } from 'glamor';
 
 import * as EditorActions from '../../../../data/action/editorActions';
 import { InsetShadow } from '@bfemulator/ui-react';
-import ContentOverlay from './contentOverlay';
-import LeftContentOverlay from './leftContentOverlay';
-import RightContentOverlay from './rightContentOverlay';
+import {
+  ContentOverlay,
+  LeftContentOverlay,
+  RightContentOverlay
+} from './index';
 import * as Constants from '../../../../constants';
 import { getTabGroupForDocument, tabGroupHasDocuments } from '../../../../data/editorHelpers';
 import { IEditor } from '../../../../data/reducer/editor';
@@ -64,7 +66,7 @@ interface TabbedDocumentContentWrapperState {
   owningEditor: string;
 }
 
-class TabbedDocumentContentWrapper extends React.Component<TabbedDocumentContentWrapperProps, TabbedDocumentContentWrapperState> {
+class TabbedDocumentContentWrapperComponent extends React.Component<TabbedDocumentContentWrapperProps, TabbedDocumentContentWrapperState> {
   constructor(props: TabbedDocumentContentWrapperProps) {
     super(props);
 
@@ -119,4 +121,4 @@ const mapDispatchToProps = (dispatch): TabbedDocumentContentWrapperProps => ({
   setActiveEditor: (editor: string) => dispatch(EditorActions.setActiveEditor(editor))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(TabbedDocumentContentWrapper) as any;
+export const TabbedDocumentContentWrapper = connect(mapStateToProps, mapDispatchToProps)(TabbedDocumentContentWrapperComponent) as any;

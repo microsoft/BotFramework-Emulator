@@ -214,10 +214,7 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
       }
     } else {
       // try to connect and let the chat log show the user the error
-      // TODO: We shouldn't have to wait for welcome to render
-      // (we are still within the client:loaded command logic, which will show the welcome page afterwards;
-      //  we need to wait for welcome page and then show the emulator tab so it's not unfocused)
-      setTimeout(() => mainWindow.commandService.remoteCall('livechat:new', endpoint), 1000);
+      mainWindow.commandService.remoteCall('livechat:new', endpoint);
     }
   }
 
@@ -294,17 +291,12 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
       }
     } else {
       // load the bot and let the chat log show the user the error
-      // TODO: We shouldn't have to wait for welcome to render
-      // (we are still within the client:loaded command logic, which will show the welcome page afterwards;
-      //  we need to wait for welcome page and then show the emulator tab so it's not unfocused)
-      setTimeout(() =>
-          mainWindow.commandService.call('bot:load', path, secret)
-            .then(() => console.log('opened bot successfully'))
-            // TODO: surface this error somewhere; native error box?
-            .catch(err => {
-              throw new Error(`Error occurred while trying to deep link to bot project at: ${path}`);
-            })
-        , 1000);
+      mainWindow.commandService.call('bot:load', path, secret)
+        .then(() => console.log('opened bot successfully'))
+        // TODO: surface this error somewhere; native error box?
+        .catch(err => {
+          throw new Error(`Error occurred while trying to deep link to bot project at: ${path}`);
+        });
     }
   }
 };

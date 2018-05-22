@@ -37,8 +37,9 @@ import { connect } from 'react-redux';
 import { IBotInfo } from '@bfemulator/app-shared';
 
 import { Colors, Column, Row, PrimaryButton, LargeHeader, SmallHeader, TruncateText } from '@bfemulator/ui-react';
-import { CommandService } from '../../../platform/commands/commandService';
-import { GenericDocument } from '../../layout';
+import { CommandService } from '../../platform/commands/commandService';
+import { GenericDocument } from '../layout';
+import { IRootState } from '../../data/store';
 
 const CSS = css({
   '& .right-column': {
@@ -130,13 +131,12 @@ const CSS = css({
   }
 });
 
-interface Props {
+interface WelcomePageProps {
   documentId?: string;
   recentBots?: IBotInfo[];
 }
 
-class WelcomePage extends React.Component<Props, {}> {
-
+class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
   onNewBotClick = () => {
     CommandService.call('bot-creation:show');
   }
@@ -197,8 +197,8 @@ class WelcomePage extends React.Component<Props, {}> {
   }
 }
 
-function mapStateToProps(state: any): any {
-  return ({ recentBots: state.bot.botFiles });
-}
+const mapStateToProps = (state: IRootState): WelcomePageProps => ({
+  recentBots: state.bot.botFiles
+});
 
-export default connect(mapStateToProps, null)(hot(module)(WelcomePage)) as any;
+export const WelcomePage = connect(mapStateToProps)(hot(module)(WelcomePageComponent)) as any;

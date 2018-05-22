@@ -36,8 +36,8 @@ import { css } from 'glamor';
 import { connect } from 'react-redux';
 
 import { Colors } from '@bfemulator/ui-react';
-import * as EditorActions from '../../../data/action/editorActions';
-import { IRootState } from '../../../data/store';
+import * as EditorActions from '../../data/action/editorActions';
+import { IRootState } from '../../data/store';
 
 const CSS = css({
   top: 0,
@@ -90,7 +90,7 @@ interface TabManagerState {
   showing: boolean;
 }
 
-class TabManager extends React.Component<TabManagerProps, TabManagerState> {
+class TabManagerComponent extends React.Component<TabManagerProps, TabManagerState> {
   private tabRefs: HTMLLIElement[];
 
   constructor(props: TabManagerProps) {
@@ -226,4 +226,4 @@ const mapDispatchToProps = (dispatch): TabManagerProps => ({
   setActiveTab: (tab: string) => { dispatch(EditorActions.setActiveTab(tab)); }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(TabManager) as any;
+export const TabManager =  connect(mapStateToProps, mapDispatchToProps)(TabManagerComponent) as any;

@@ -35,9 +35,12 @@ import { css } from 'glamor';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import TabBar from './tabBar';
-import TabBarTab from './tabBarTab';
-import { Tab as TabbedDocumentTab, Content as TabbedDocumentContent } from './tabbedDocument';
+import {
+  TabBar,
+  TabBarTab,
+  Tab as TabbedDocumentTab,
+  Content as TabbedDocumentContent
+} from './index';
 import { filterChildren } from '@bfemulator/ui-react';
 import { IRootState } from '../../../data/store';
 import { hmrSafeNameComparison } from '@bfemulator/ui-react';
@@ -58,7 +61,7 @@ interface MultiTabsProps {
   onChange?: (tabValue) => any;
 }
 
-class MultiTabs extends React.Component<MultiTabsProps> {
+class MultiTabsComponent extends React.Component<MultiTabsProps> {
   private childRefs: HTMLElement[];
 
   constructor(props: MultiTabsProps) {
@@ -106,4 +109,4 @@ const mapStateToProps = (state: IRootState): MultiTabsProps => ({
   presentationModeEnabled: state.presentation.enabled
 });
 
-export default connect(mapStateToProps)(MultiTabs) as any;
+export const MultiTabs = connect(mapStateToProps)(MultiTabsComponent) as any;

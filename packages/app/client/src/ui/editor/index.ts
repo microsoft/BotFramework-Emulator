@@ -31,38 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
-import * as React from 'react';
-import { Colors } from '@bfemulator/ui-react';
-
-const CSS = css({
-  height: '100%',
-  border: 'none',
-  padding: 0,
-
-  '&:active': {
-    border: 0,
-    outline: 0
-  },
-
-  '&:focus': {
-    border: 0,
-    outline: 0
-  }
-});
-
-interface TabBarTabProps {
-  setRef?: (input) => any;
-  onClick?: (nextValue) => any;
-  children?: any;
-}
-
-export const TabBarTab = (props: TabBarTabProps) =>
-  <button
-    { ...CSS }
-    ref={ props.setRef }
-    onClick={ props.onClick }
-    type="button"
-  >
-    { props.children }
-  </button>
+export * from './appSettingsEditor';
+export * from './botSettingsEditor';
+export * from './editor';
+export * from './panel';
+export * from './toolbar';
+export * from './emulator';
+export * from './welcomePage';

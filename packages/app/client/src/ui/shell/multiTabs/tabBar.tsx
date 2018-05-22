@@ -36,7 +36,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 
-import TabBarTab from './tabBarTab';
+import { TabBarTab } from './tabBarTab';
 import { Colors } from '@bfemulator/ui-react';
 import * as EditorActions from '../../../data/action/editorActions';
 import * as Constants from '../../../constants';
@@ -128,7 +128,7 @@ interface TabBarState {
   draggedOver: boolean;
 }
 
-class TabBar extends React.Component<TabBarProps, TabBarState> {
+class TabBarComponent extends React.Component<TabBarProps, TabBarState> {
   private _scrollable: HTMLElement;
 
   constructor(props: TabBarProps) {
@@ -240,4 +240,4 @@ const mapDispatchToProps = (dispatch): TabBarProps => ({
   enablePresentationMode: () => dispatch(PresentationActions.enable())
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(TabBar);
+export const TabBar = connect(mapStateToProps, mapDispatchToProps)(TabBarComponent);

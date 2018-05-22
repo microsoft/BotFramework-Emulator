@@ -65,9 +65,11 @@ ReactDOM.render(
 CommandService.remoteCall('client:loaded')
   .then(() => {
     showWelcomePage();
-    CommandService.remoteCall('menu:update-recent-bots');
+    // do actions on main side that might open a document, so that they will be active over the welcome screen
+    CommandService.remoteCall('client:post-welcome-screen');
   })
   .catch(err => console.error(`Error occured during client:loaded: ${err}`));
+
 if (module['hot']) {
   module['hot'].accept();
 }

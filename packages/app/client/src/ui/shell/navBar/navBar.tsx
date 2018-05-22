@@ -80,7 +80,7 @@ interface NavBarProps {
   handleSettingsClick?: (evt) => void;
 }
 
-class NavBar extends React.Component<NavBarProps> {
+class NavBarComponent extends React.Component<NavBarProps> {
   constructor(props: NavBarProps) {
     super(props);
   }
@@ -126,4 +126,4 @@ const mapDispatchToProps = (dispatch, ownProps: NavBarProps): NavBarProps => ({
   }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(NavBar);
+export const NavBar = connect(mapStateToProps, mapDispatchToProps)(NavBarComponent);

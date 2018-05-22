@@ -52,7 +52,7 @@ const CSS = css({
   }
 });
 
-export default class BotNotOpenExplorer extends React.Component<{}, {}> {
+export class BotNotOpenExplorer extends React.Component<{}, {}> {
   constructor(props) {
     super(props);
   }
