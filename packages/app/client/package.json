@@ -17,8 +17,7 @@
     "prepare": "npm run clean && npm run build",
     "start": "run-s copy:external build:vendors:dev build:shared:dev webpackdevServer:dev",
     "webpackdevServer:dev": "webpack-dev-server --mode development --hot --inline --progress --colors --content-base ./public",
-    "test": "jest",
-    "test:coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls"
+    "test": "jest"
   },
   "jest": {
     "setupTestFrameworkScriptFile": "./testSetup.js",
