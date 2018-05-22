@@ -31,25 +31,48 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
 import { css } from 'glamor';
 import * as React from 'react';
 
-import { Colors, Fonts, Splitter, GlobalCss } from '@bfemulator/ui-react';
-import { ExplorerBar } from './explorer';
-import { MDI } from './mdi';
-import { NavBar } from './navBar';
-import { TabManager, DialogHost } from '../dialogs';
+import { Colors, Fonts, Splitter } from '@bfemulator/ui-react';
+import ExplorerBar from './explorer';
+import MDI from './mdi';
+import NavBar from './navBar';
+import TabManager from '../dialogs/tabManager';
 import * as Constants from '../../constants';
-import { StatusBar } from './statusBar';
-import { StoreVisualizer } from '../debug/storeVisualizer';
-import store from '../../data/store';
-import { KeyCodes } from '@uifabric/utilities/lib';
-import * as PresentationActions from '../../data/action/presentationActions';
+import StatusBar from './statusBar';
+import DialogHost from '../dialogs/host';
+import StoreVisualizer from '../debug/storeVisualizer';
 import { IEditor } from '../../data/reducer/editor';
-import { IRootState } from '../../data/store';
 
-GlobalCss.setCss({});
+css.global('html, body, #root', {
+  backgroundColor: Colors.APP_BACKGROUND_DARK,
+  cursor: 'default',
+  fontFamily: Fonts.FONT_FAMILY_DEFAULT,
+  fontSize: '13px',
+  height: '100%',
+  margin: 0,
+  minHeight: '100%',
+  overflow: 'hidden',
+  userSelect: 'none',
+});
+
+css.global('div', {
+  boxSizing: 'border-box',
+});
+
+css.global('::-webkit-scrollbar', {
+  width: '10px',
+  height: '10px',
+});
+
+css.global('::-webkit-scrollbar-track', {
+  background: Colors.SCROLLBAR_TRACK_BACKGROUND_DARK,
+});
+
+css.global('::-webkit-scrollbar-thumb', {
+  background: Colors.SCROLLBAR_THUMB_BACKGROUND_DARK,
+});
 
 const CSS = css({
   backgroundColor: Colors.APP_BACKGROUND_DARK,
@@ -138,7 +161,7 @@ export class Main extends React.Component<MainProps, MainState> {
       workbenchChildren.push(<ExplorerBar key={ 'explorer-bar' } />);
 
     workbenchChildren.push(
-      <Splitter orientation={ 'vertical' } key={ 'tab-group-splitter' } minSizes={{ 0: 160, 1: 160 }}>
+      <Splitter orientation={ 'vertical' } key={ 'tab-group-splitter' }>
         {tabGroups}
       </Splitter>
     );
@@ -161,21 +184,3 @@ export class Main extends React.Component<MainProps, MainState> {
     );
   }
 }
-
-const mapStateToProps = (state: IRootState): MainProps => ({
-  presentationModeEnabled: state.presentation.enabled,
-  primaryEditor: state.editor.editors[Constants.EditorKey_Primary],
-  secondaryEditor: state.editor.editors[Constants.EditorKey_Secondary],
-  showingExplorer: state.explorer.showing,
-  navBarSelection: state.navBar.selection
-});
-
-const mapDispatchToProps = (dispatch): MainProps => ({
-  exitPresentationMode: (e) => {
-    if (e.keyCode === KeyCodes.escape) {
-      dispatch(PresentationActions.disable());
-    }
-  }
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Main);
