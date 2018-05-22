@@ -37,12 +37,9 @@ import { EventHandler, SyntheticEvent } from 'react';
 import { connect } from 'react-redux';
 import { DialogService } from './service';
 
-interface IDialogHostProps {
+interface DialogHostComponentProps {
   saveHostRef?: (elem: HTMLElement) => void;
   showing?: boolean;
-}
-
-interface IDialogHostState {
 }
 
 const CSS = css({
@@ -78,11 +75,11 @@ const FOCUS_SENTINEL_CSS = css({
   opacity: 0
 });
 
-class DialogHost extends React.Component<IDialogHostProps, IDialogHostState> {
+class DialogHostComponent extends React.Component<DialogHostComponentProps, {}> {
   private _hostRef: HTMLElement;
 
-  constructor(props, context) {
-    super(props, context);
+  constructor(props: DialogHostComponentProps) {
+    super(props);
   }
 
   public componentDidMount() {
@@ -185,4 +182,4 @@ function mapStateToProps(state: any): any {
   return ({ showing: state.dialog.showing });
 }
 
-export default connect(mapStateToProps, null)(DialogHost);
+export const DialogHost = connect(mapStateToProps)(DialogHostComponent);

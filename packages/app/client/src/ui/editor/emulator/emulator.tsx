@@ -138,7 +138,7 @@ const PRESENTATION_CSS = css({
 
 export type EmulatorMode = 'transcript' | 'livechat';
 
-interface IEmulatorProps {
+interface EmulatorProps {
   conversationId?: string;
   dirty?: boolean;
   document?: any;
@@ -156,9 +156,9 @@ interface IEmulatorProps {
   updateDocument?: (documentId, updatedValues) => void;
 }
 
-class Emulator extends React.Component<IEmulatorProps, {}> {
-  constructor(props, context) {
-    super(props, context);
+class EmulatorComponent extends React.Component<EmulatorProps, {}> {
+  constructor(props: EmulatorProps) {
+    super(props);
   }
 
   private getVerticalSplitterSizes = () => {
@@ -363,25 +363,21 @@ class Emulator extends React.Component<IEmulatorProps, {}> {
   }
 }
 
-function mapStateToProps(state: IRootState, { documentId }: { documentId: string }): IEmulatorProps {
-  return {
-    conversationId: state.chat.chats[documentId].conversationId,
-    document: state.chat.chats[documentId],
-    endpointId: state.chat.chats[documentId].endpointId,
-    pingId: state.chat.chats[documentId].pingId,
-    presentationModeEnabled: state.presentation.enabled
-  };
-}
+const mapStateToProps = (state: IRootState, { documentId }: { documentId: string }): EmulatorProps => ({
+  conversationId: state.chat.chats[documentId].conversationId,
+  document: state.chat.chats[documentId],
+  endpointId: state.chat.chats[documentId].endpointId,
+  pingId: state.chat.chats[documentId].pingId,
+  presentationModeEnabled: state.presentation.enabled
+});
 
-function mapDispatchToProps(dispatch) {
-  return {
-    pingDocument: documentId => dispatch(ChatActions.pingDocument(documentId)),
-    enablePresentationMode: enable => enable ? dispatch(PresentationActions.enable()) : dispatch(PresentationActions.disable()),
-    setInspectorObjects: (documentId, objects) => dispatch(ChatActions.setInspectorObjects(documentId, objects)),
-    clearLog: documentId => dispatch(ChatActions.clearLog(documentId)),
-    newConversation: (documentId, options) => dispatch(ChatActions.newConversation(documentId, options)),
-    updateDocument: (documentId, updatedValues: Partial<IDocument>) => dispatch(updateDocument(documentId, updatedValues))
-  };
-}
+const mapDispatchToProps = (dispatch): EmulatorProps => ({
+  pingDocument: documentId => dispatch(ChatActions.pingDocument(documentId)),
+  enablePresentationMode: enable => enable ? dispatch(PresentationActions.enable()) : dispatch(PresentationActions.disable()),
+  setInspectorObjects: (documentId, objects) => dispatch(ChatActions.setInspectorObjects(documentId, objects)),
+  clearLog: documentId => dispatch(ChatActions.clearLog(documentId)),
+  newConversation: (documentId, options) => dispatch(ChatActions.newConversation(documentId, options)),
+  updateDocument: (documentId, updatedValues: Partial<IDocument>) => dispatch(updateDocument(documentId, updatedValues))
+});
 
-export default connect(mapStateToProps, mapDispatchToProps)(Emulator as any) as any;
+export const Emulator = connect(mapStateToProps, mapDispatchToProps)(EmulatorComponent as any) as any;

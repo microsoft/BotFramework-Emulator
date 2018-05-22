@@ -36,7 +36,7 @@ import { connect } from 'react-redux';
 
 import * as Constants from '../../../constants';
 import * as EditorActions from '../../../data/action/editorActions';
-import Tab from './tab';
+import { Tab } from './tab';
 import { getTabGroupForDocument } from '../../../data/editorHelpers';
 import { IRootState } from '../../../data/store';
 
@@ -48,7 +48,7 @@ interface GenericTabProps {
   closeTab?: () => void;
 }
 
-class GenericTab extends React.Component<GenericTabProps> {
+class GenericTabComponent extends React.Component<GenericTabProps> {
   constructor(props: GenericTabProps) {
     super(props);
   }
@@ -74,4 +74,4 @@ const mapDispatchToProps = (dispatch, ownProps: GenericTabProps): GenericTabProp
   closeTab: () => dispatch(EditorActions.close(getTabGroupForDocument(ownProps.documentId), ownProps.documentId))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(GenericTab);
+export const GenericTab = connect(mapStateToProps, mapDispatchToProps)(GenericTabComponent);

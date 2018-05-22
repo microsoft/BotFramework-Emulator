@@ -55,7 +55,7 @@ interface SecretPromptDialogState {
   secret: string;
 }
 
-export default class SecretPromptDialog extends React.Component<{}, SecretPromptDialogState> {
+export class SecretPromptDialog extends React.Component<{}, SecretPromptDialogState> {
   constructor(props, context) {
     super(props, context);
 

@@ -69,7 +69,7 @@ interface ExplorerItemProps {
   onClick?: any;
 }
 
-export default class ExplorerItem extends React.Component<ExplorerItemProps> {
+export class ExplorerItem extends React.Component<ExplorerItemProps> {
   constructor(props: ExplorerItemProps) {
     super(props);
   }

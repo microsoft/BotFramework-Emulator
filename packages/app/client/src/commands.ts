@@ -49,9 +49,11 @@ import { ExtensionManager } from './extensions';
 import { CommandService } from './platform/commands/commandService';
 import * as LogService from './platform/log/logService';
 import * as SettingsService from './platform/settings/settingsService';
-import BotCreationDialog from './ui/dialogs/botCreationDialog';
-import SecretPromptDialog from './ui/dialogs/secretPromptDialog';
-import { DialogService } from './ui/dialogs/service';
+import {
+  BotCreationDialog,
+  SecretPromptDialog,
+  DialogService
+} from './ui/dialogs';
 import { ActiveBotHelper } from './ui/helpers/activeBotHelper';
 
 //=============================================================================

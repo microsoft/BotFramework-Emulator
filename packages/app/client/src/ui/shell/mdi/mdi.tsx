@@ -35,10 +35,14 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import * as EditorActions from '../../../data/action/editorActions';
-import EditorFactory from '../../editor';
-import MultiTabs from '../multiTabs';
-import TabFactory from './tabFactory';
-import TabbedDocument, { Tab as TabbedDocumentTab, Content as TabbedDocumentContent } from '../multiTabs/tabbedDocument';
+import { EditorFactory } from '../../editor';
+import {
+  MultiTabs,
+  TabbedDocument,
+  Tab as TabbedDocumentTab,
+  Content as TabbedDocumentContent
+} from '../multiTabs';
+import { TabFactory } from './tabFactory';
 import { IDocument } from '../../../data/reducer/editor';
 import { IRootState } from '../../../data/store';
 
@@ -51,7 +55,7 @@ interface MDIProps {
   setActiveTab?: (tab: string) => void;
 }
 
-class MDI extends React.Component<MDIProps> {
+class MDIComponent extends React.Component<MDIProps> {
   constructor(props: MDIProps) {
     super(props);
   }
@@ -97,4 +101,4 @@ const mapDispatchToProps = (dispatch): MDIProps => ({
   setActiveTab: (tab: string) => dispatch(EditorActions.setActiveTab(tab))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(MDI);
+export const MDI = connect(mapStateToProps, mapDispatchToProps)(MDIComponent);

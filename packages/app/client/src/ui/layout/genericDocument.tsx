@@ -32,7 +32,7 @@
 //
 
 import * as React from 'react';
-import { css } from 'glamor';
+import { css, StyleAttribute } from 'glamor';
 
 const CSS = css({
   boxSizing: 'border-box',
@@ -51,15 +51,15 @@ const CSS = css({
   }
 });
 
-interface IGenericDocumentProps {
+interface GenericDocumentProps {
   // Allows glamor style objects to be passed in (ex. <GenericDocument style={ CSS } />)
   // NOTE: Do not use spread operator!!!
-  style?: any;
+  style?: StyleAttribute;
 }
 
-export default class GenericDocument extends React.Component<IGenericDocumentProps, {}> {
-  constructor(props, context) {
-    super(props, context);
+export class GenericDocument extends React.Component<GenericDocumentProps, {}> {
+  constructor(props: GenericDocumentProps) {
+    super(props);
   }
 
   render(): JSX.Element {

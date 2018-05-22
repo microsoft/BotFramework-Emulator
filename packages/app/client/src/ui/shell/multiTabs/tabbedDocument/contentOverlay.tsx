@@ -59,7 +59,7 @@ interface ContentOverlayState {
   owningEditor: string;
 }
 
-class ContentOverlay extends React.Component<ContentOverlayProps, ContentOverlayState> {
+class ContentOverlayComponent extends React.Component<ContentOverlayProps, ContentOverlayState> {
   constructor(props: ContentOverlayProps) {
     super(props);
 
@@ -127,4 +127,4 @@ const mapDispatchToProps = (dispatch): ContentOverlayProps => ({
   appendTab: (editorKey: string, owningEditor: string, tabId: string) => dispatch(EditorActions.appendTab(editorKey, owningEditor, tabId))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ContentOverlay) as any;
+export const ContentOverlay = connect(mapStateToProps, mapDispatchToProps)(ContentOverlayComponent) as any;

@@ -31,59 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
 import * as React from 'react';
-import { connect } from 'react-redux';
 
-import BotExplorerBar from './botExplorerBar';
-import { ServicesExplorerBarContainer } from "./servicesExplorerBar";
-import { Colors, InsetShadow } from '@bfemulator/ui-react';
-import * as Constants from '../../../constants';
-import { IBotConfig } from 'msbot/bin/schema';
-import { IRootState } from '../../../data/store';
+import { TabbedDocumentContentWrapper } from './contentWrapper';
 
-const CSS = css({
-  backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
-  height: '100%',
-  display: 'flex',
-  flexFlow: 'column nowrap',
-  position: 'relative'
-});
-
-interface ExplorerBarProps {
-  activeBot?: IBotConfig;
-  selectedNavTab?: string;
-}
-
-class ExplorerBar extends React.Component<ExplorerBarProps> {
+export class TabbedDocument extends React.Component<{}> {
   constructor(props) {
     super(props);
   }
-  
-  render() {
-    let explorer = [];
-      explorer.push(
-        <BotExplorerBar key={ 'bot-explorer-bar' } activeBot={ this.props.activeBot } hidden={ this.props.selectedNavTab !== Constants.NavBar_Bot_Explorer } />
-      );
-    if (this.props.selectedNavTab === Constants.NavBar_Services)
-      explorer.push(
-        <ServicesExplorerBarContainer key={ 'services-explorer-bar' } />
-      );
-    if (!this.props.selectedNavTab)
-      explorer = null;
 
-    return (
-      <div { ...CSS }>
-        { explorer }
-        <InsetShadow right={ true }/>
-      </div>
-    );
+  render() {
+    return false;
   }
 }
 
-const mapStateToProps = (state: IRootState): ExplorerBarProps => ({
-  activeBot: state.bot.activeBot,
-  selectedNavTab: state.navBar.selection
-});
-
-export default connect(mapStateToProps)(ExplorerBar)
+export const Tab = props => props.children;
+export const Content = props => <TabbedDocumentContentWrapper documentId={ props.documentId }>{ props.children }</TabbedDocumentContentWrapper>;
