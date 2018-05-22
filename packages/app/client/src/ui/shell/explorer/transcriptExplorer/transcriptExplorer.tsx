@@ -183,4 +183,4 @@ function mapStateToProps(state: any): TranscriptExplorerProps {
   };
 }
 
-export const TranscriptExplorer = (connect(mapStateToProps, null)(TranscriptExplorerComponent)) as any;
+export const TranscriptExplorer = connect(mapStateToProps)(TranscriptExplorerComponent) as any;

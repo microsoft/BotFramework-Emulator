@@ -182,4 +182,4 @@ function mapStateToProps(state: any): any {
   return ({ showing: state.dialog.showing });
 }
 
-export const DialogHost = connect(mapStateToProps, null)(DialogHostComponent);
+export const DialogHost = connect(mapStateToProps)(DialogHostComponent);

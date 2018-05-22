@@ -144,4 +144,4 @@ class StoreVisualizerComponent extends React.Component<StoreVisualizerProps, Sto
 
 const mapStateToProps = (state: IRootState): StoreVisualizerProps => ({ rootState: state });
 
-export const StoreVisualizer = connect(mapStateToProps, null)(StoreVisualizerComponent) as any;
+export const StoreVisualizer = connect(mapStateToProps)(StoreVisualizerComponent) as any;
