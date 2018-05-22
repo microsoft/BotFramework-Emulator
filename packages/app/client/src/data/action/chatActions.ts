@@ -112,9 +112,8 @@ export function pingDocument(documentId: string): ChatAction {
     payload: {
       documentId
     }
-  }
+  };
 }
-
 
 export function addTranscript(filename: string): ChatAction {
   return {
@@ -179,7 +178,7 @@ export function newDocument(documentId: string, mode: ChatMode, additionalData?:
       },
       ...additionalData
     }
-  }
+  };
 }
 
 export function closeDocument(documentId: string): ChatAction {
@@ -188,7 +187,7 @@ export function closeDocument(documentId: string): ChatAction {
     payload: {
       documentId,
     }
-  }
+  };
 }
 
 export function newConversation(documentId: string, options: any): ChatAction {
@@ -198,7 +197,7 @@ export function newConversation(documentId: string, options: any): ChatAction {
       documentId,
       options
     }
-  }
+  };
 }
 
 export function appendToLog(documentId: string, entry: ILogEntry): ChatAction {
@@ -208,7 +207,7 @@ export function appendToLog(documentId: string, entry: ILogEntry): ChatAction {
       documentId,
       entry
     }
-  }
+  };
 }
 
 export function clearLog(documentId: string): ChatAction {
@@ -217,7 +216,7 @@ export function clearLog(documentId: string): ChatAction {
     payload: {
       documentId,
     }
-  }
+  };
 }
 
 export function setInspectorObjects(documentId: string, objs: any): ChatAction {
@@ -228,5 +227,5 @@ export function setInspectorObjects(documentId: string, objs: any): ChatAction {
       documentId,
       objs
     }
-  }
+  };
 }

@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // for hot reloading
-import { hot } from 'react-hot-loader';
 import { Provider } from 'react-redux';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
@@ -70,6 +69,6 @@ CommandService.remoteCall('client:loaded')
   })
   .catch(err => console.error(`Error occured during client:loaded: ${err}`));
 
-if (module['hot']) {
-  module['hot'].accept();
+if (module.hasOwnProperty('hot')) {
+  (module as any).hot.accept();
 }

@@ -34,7 +34,7 @@
 import * as ServerActions from '../action/serverActions';
 import { ServerAction } from '../action/serverActions';
 
-export interface IServerState {
+export interface ServerState {
   connected?: boolean;
 }
 
@@ -42,7 +42,7 @@ const DEFAULT_STATE = {
   connected: false
 };
 
-export default function server(state: any = DEFAULT_STATE, action: ServerAction): IServerState {
+export default function server(state: any = DEFAULT_STATE, action: ServerAction): ServerState {
   switch (action.type) {
     case ServerActions.ALIVE:
       const { payload } = action;

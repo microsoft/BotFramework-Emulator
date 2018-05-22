@@ -36,11 +36,11 @@ import { IBotConfig } from 'msbot/bin/schema';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { Detail } from './parts/detail';
+import { Detail } from './parts';
 import Panel, { PanelControls, PanelContent } from '../panel';
-import { ExtensionManager, IGetInspectorResult, Extension } from '../../../extensions';
+import { ExtensionManager, GetInspectorResult, Extension } from '../../../extensions';
 import { IExtensionInspector, IInspectorAccessory, IInspectorAccessoryState } from '@bfemulator/sdk-shared';
-import { IRootState } from '../../../data/store';
+import { RootState } from '../../../data/store';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 import { Colors } from '@bfemulator/ui-react';
 
@@ -70,7 +70,7 @@ const CSS = css({
 });
 
 interface DetailPanelProps {
-  bot?: IBotConfig,
+  bot?: IBotConfig;
   document: any;
 }
 
@@ -88,8 +88,8 @@ interface DetailPanelState {
   title: string;
 }
 
-interface GetInspectorResult {
-  response: IGetInspectorResult;
+interface GetInspectorResultInternal {
+  response: GetInspectorResult;
   inspectObj: any;
 }
 
@@ -97,29 +97,18 @@ class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
 
   detailRef: any;
 
-  constructor(props: DetailPanelProps, context) {
+  constructor(props: DetailPanelProps, context: DetailPanelState) {
     super(props, context);
     this.state = {
       extension: null,
       inspector: null,
       buttons: [],
       inspectObj: null,
-      title: ""
+      title: ''
     };
   }
 
-  private getInspector(): GetInspectorResult {
-    let obj = this.props.document.inspectorObjects && this.props.document.inspectorObjects.length ?
-      this.props.document.inspectorObjects[0] : null;
-
-    return {
-      inspectObj: obj,
-      // Find an inspector for this object.
-      response: obj ? ExtensionManager.inspectorForObject(obj, true) : null
-    }
-  }
-
-  componentDidUpdate(prevProps: DetailPanelProps, prevState: DetailPanelState, prevContext: any): void {
+  componentDidUpdate(): void {
     let inspector: IExtensionInspector = null;
     let extension: Extension = null;
 
@@ -130,9 +119,9 @@ class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
       extension = getInsp.response.extension;
     }
 
-    if (this.state.inspector != inspector || this.state.inspectObj != getInsp.inspectObj) {
+    if (this.state.inspector !== inspector || this.state.inspectObj !== getInsp.inspectObj) {
       const accessories = inspector ? inspector.accessories || [] : [];
-      const title = inspector ? inspector.name || "" : "";
+      const title = inspector ? inspector.name || '' : '';
       this.setState({
         inspectObj: getInsp.inspectObj,
         title,
@@ -141,10 +130,10 @@ class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
         // Copy the accessories from the new inspector to this.state
         buttons: accessories.map(config => {
           // Accessory must have a "default" state to be added
-          if (config && config.states["default"]) {
+          if (config && config.states.default) {
             return {
               config,
-              state: "default",
+              state: 'default',
               enabled: true
             };
           } else {
@@ -168,9 +157,9 @@ class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
   }
 
   enableAccessory = (id: string, enable: boolean) => {
-    const button = this.state.buttons.find(button => button.config.id === id);
+    const button = this.state.buttons.find(buttonArg => buttonArg.config.id === id);
     if (button) {
-      if (button.enabled != enable) {
+      if (button.enabled !== enable) {
         button.enabled = enable;
         this.setState(this.state);
       }
@@ -178,7 +167,7 @@ class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
   }
 
   setAccessoryState = (id: string, state: string) => {
-    const button = this.state.buttons.find(button => button.config.id === id);
+    const button = this.state.buttons.find(buttonArg => buttonArg.config.id === id);
     if (button && button.state !== state) {
       const { config } = button;
       if (config.states[state]) {
@@ -196,7 +185,7 @@ class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
   }
 
   renderAccessoryIcon(config: IInspectorAccessoryState) {
-    if (config.icon === "Spinner") {
+    if (config.icon === 'Spinner') {
       return (
         <Spinner className="accessory-button-icon" size={ SpinnerSize.xSmall } />
       );
@@ -214,17 +203,17 @@ class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
     const currentState = config.states[state] || {};
     return (
       <button
-        className='accessory-button'
+        className="accessory-button"
         key={ config.id }
         disabled={ !enabled }
-        onClick={ ev => handler(config.id) }>
+        onClick={ () => handler(config.id) }>
         { this.renderAccessoryIcon(currentState) }
         { currentState.label }
       </button>
     );
   }
 
-  renderAccessoryButtons(inspector: IExtensionInspector) {
+  renderAccessoryButtons(_inspector: IExtensionInspector) {
     return (
       <PanelControls>
         { this.state.buttons.map(a => this.renderAccessoryButton(a, this.onAccessoryClick)) }
@@ -234,9 +223,10 @@ class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
 
   render() {
     if (this.state.inspector) {
+      // TODO - localization
       return (
         <div { ...CSS }>
-          <Panel title={ ["inspector", this.state.title].filter(s => s && s.length).join(" - ") }>
+          <Panel title={ ['inspector', this.state.title].filter(s => s && s.length).join(' - ') }>
             { this.renderAccessoryButtons(this.state.inspector) }
             <PanelContent>
               <Detail
@@ -264,9 +254,20 @@ class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
       );
     }
   }
+
+  private getInspector(): GetInspectorResultInternal {
+    let obj = this.props.document.inspectorObjects && this.props.document.inspectorObjects.length ?
+      this.props.document.inspectorObjects[0] : null;
+
+    return {
+      inspectObj: obj,
+      // Find an inspector for this object.
+      response: obj ? ExtensionManager.inspectorForObject(obj, true) : null
+    };
+  }
 }
 
-function mapStateToProps(state: IRootState, ownProps: DetailPanelProps): DetailPanelProps {
+function mapStateToProps(state: RootState, ownProps: DetailPanelProps): DetailPanelProps {
   return {
     ...ownProps,
     bot: state.bot.activeBot

@@ -54,8 +54,9 @@ export function getTabGroupForDocument(documentId: string, tabGroups?: { [editor
   tabGroups = tabGroups || store.getState().editor.editors;
   for (let key in tabGroups) {
     if (tabGroups[key] && tabGroups[key].documents) {
-      if (tabGroups[key].documents[documentId])
+      if (tabGroups[key].documents[documentId]) {
         return key;
+      }
     }
   }
   return undefined;
@@ -63,15 +64,15 @@ export function getTabGroupForDocument(documentId: string, tabGroups?: { [editor
 
 /** Takes a tab group key and returns the key of the other tab group */
 export function getOtherTabGroup(tabGroup: string): string {
-  return tabGroup === Constants.EditorKey_Primary ? Constants.EditorKey_Secondary : Constants.EditorKey_Primary;
+  return tabGroup === Constants.EDITOR_KEY_PRIMARY ? Constants.EDITOR_KEY_SECONDARY : Constants.EDITOR_KEY_PRIMARY;
 }
 
 export function showWelcomePage(): void {
-  store.dispatch(EditorActions.open(Constants.ContentType_WelcomePage, Constants.DocumentId_WelcomePage, true));
+  store.dispatch(EditorActions.open(Constants.CONTENT_TYPE_WELCOME_PAGE, Constants.DOCUMENT_ID_WELCOME_PAGE, true));
 }
 
 export function showAppSettingsPage(): void {
-  store.dispatch(EditorActions.open(Constants.ContentType_AppSettings, Constants.DocumentId_AppSettings, true));
+  store.dispatch(EditorActions.open(Constants.CONTENT_TYPE_APP_SETTINGS, Constants.DOCUMENT_ID_APP_SETTINGS, true));
 }
 
 export function tabGroupHasDocuments(tabGroup: IEditor): boolean {

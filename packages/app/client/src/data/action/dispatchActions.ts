@@ -52,7 +52,8 @@ export function openDispatchDeepLink(dispatchService: IDispatchService): Dispatc
 };
 }
 
-export function openDispatchExplorerContextMenu(dispatchService: IDispatchService): DispatchServiceAction<DispatchServicePayload> {
+export function openDispatchExplorerContextMenu(dispatchService: IDispatchService)
+  : DispatchServiceAction<DispatchServicePayload> {
   return {
     type: OPEN_DISPATCH_EXPLORER_CONTEXT_MENU,
     payload: { dispatchService }

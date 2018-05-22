@@ -37,17 +37,26 @@ import { call, ForkEffect, takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandService } from '../../platform/commands/commandService';
 import { DialogService } from '../../ui/dialogs/service';
 import { QnaMakerEditor } from '../../ui/shell/explorer/qnaMakerExplorer/qnaMakerEditor/qnaMakerEditor';
-import { LAUNCH_QNA_MAKER_EDITOR, OPEN_QNA_MAKER_CONTEXT_MENU, OPEN_QNA_MAKER_DEEP_LINK, QnaMakerEditorPayload, QnaMakerServiceAction, QnaMakerServicePayload } from '../action/qnaMakerServiceActions';
+import {
+  LAUNCH_QNA_MAKER_EDITOR,
+  OPEN_QNA_MAKER_CONTEXT_MENU,
+  OPEN_QNA_MAKER_DEEP_LINK,
+  QnaMakerEditorPayload,
+  QnaMakerServiceAction,
+  QnaMakerServicePayload
+} from '../action/qnaMakerServiceActions';
 
 function* launchQnaMakerEditor(action: QnaMakerServiceAction<QnaMakerEditorPayload>): IterableIterator<any> {
   const { qnaMakerEditorComponent, qnaMakerService = {} } = action.payload;
-  const result = yield DialogService.showDialog<ComponentClass<QnaMakerEditor>>(qnaMakerEditorComponent, { qnaMakerService });
+  const result = yield DialogService
+    .showDialog<ComponentClass<QnaMakerEditor>>(qnaMakerEditorComponent, { qnaMakerService });
   if (result) {
     yield CommandService.remoteCall('bot:add-or-update-service', ServiceType.QnA, result);
   }
 }
 
-function* openQnaMakerContextMenu(action: QnaMakerServiceAction<QnaMakerServicePayload | QnaMakerEditorPayload>): IterableIterator<any> {
+function* openQnaMakerContextMenu(action: QnaMakerServiceAction<QnaMakerServicePayload | QnaMakerEditorPayload>)
+  : IterableIterator<any> {
   const menuItems = [
     { label: 'Edit settings', id: 'edit' },
     { label: 'Open in web portal', id: 'open' },

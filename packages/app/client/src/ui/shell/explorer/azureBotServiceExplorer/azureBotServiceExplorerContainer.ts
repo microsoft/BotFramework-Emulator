@@ -53,9 +53,14 @@ const mapStateToProps = (state: IRootState) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    launchAzureBotServiceEditor: (azureBotServiceEditor: ComponentClass<AzureBotServiceEditor>, azureBotService: IAzureBotService) => dispatch(launchAzureBotServiceEditor(azureBotServiceEditor, azureBotService)),
-    openAzureBotServiceDeepLink: (azureBotService: IAzureBotService) => dispatch(openAzureBotServiceDeepLink(azureBotService)),
-    openContextMenu: (azureBotService: IAzureBotService, azureBotServiceEditor: ComponentClass<AzureBotServiceEditor>) => dispatch(openAzureBotServiceExplorerContextMenu(azureBotServiceEditor, azureBotService)),
+    launchAzureBotServiceEditor: (azureBotServiceEditor: ComponentClass<AzureBotServiceEditor>,
+                                  azureBotService: IAzureBotService) =>
+      dispatch(launchAzureBotServiceEditor(azureBotServiceEditor, azureBotService)),
+    openAzureBotServiceDeepLink: (azureBotService: IAzureBotService) =>
+      dispatch(openAzureBotServiceDeepLink(azureBotService)),
+    openContextMenu: (azureBotService: IAzureBotService,
+                      azureBotServiceEditor: ComponentClass<AzureBotServiceEditor>) =>
+      dispatch(openAzureBotServiceExplorerContextMenu(azureBotServiceEditor, azureBotService)),
   };
 };
 

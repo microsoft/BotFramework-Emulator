@@ -40,10 +40,10 @@ import {
   Emulator,
   WelcomePage
 } from './index';
-import { IDocument } from '../../data/reducer/editor';
+import { Document } from '../../data/reducer/editor';
 
 interface EditorFactoryProps {
-  document?: IDocument;
+  document?: Document;
 }
 
 export class EditorFactory extends React.Component<EditorFactoryProps> {
@@ -56,19 +56,19 @@ export class EditorFactory extends React.Component<EditorFactoryProps> {
     const { contentType } = document;
 
     switch (contentType) {
-      case Constants.ContentType_LiveChat:
+      case Constants.CONTENT_TYPE_LIVE_CHAT:
         return (<Emulator mode="livechat" documentId={ document.documentId } dirty={ this.props.document.dirty } />);
       
-      case Constants.ContentType_Transcript:
+      case Constants.CONTENT_TYPE_TRANSCRIPT:
         return (<Emulator mode="transcript" documentId={ document.documentId } dirty={ this.props.document.dirty } />);
 
-      case Constants.ContentType_BotSettings:
+      case Constants.CONTENT_TYPE_BOT_SETTINGS:
         return (<BotSettingsEditor documentId={ document.documentId } dirty={ this.props.document.dirty } />);
 
-      case Constants.ContentType_AppSettings:
+      case Constants.CONTENT_TYPE_APP_SETTINGS:
         return (<AppSettingsEditor documentId={ document.documentId } dirty={ this.props.document.dirty } />);
 
-      case Constants.ContentType_WelcomePage:
+      case Constants.CONTENT_TYPE_WELCOME_PAGE:
         return (<WelcomePage documentId={ document.documentId } />);
 
       default:

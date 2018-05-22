@@ -34,7 +34,7 @@
 import { css } from 'glamor';
 import * as React from 'react';
 
-import { Colors, PrimaryButton, ExpandCollapse, ExpandCollapseControls, ExpandCollapseContent } from '@bfemulator/ui-react';
+import { Colors, ExpandCollapse, ExpandCollapseContent } from '@bfemulator/ui-react';
 
 const CSS = css({
   backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
@@ -53,7 +53,7 @@ const CSS = css({
 });
 
 export class BotNotOpenExplorer extends React.Component<{}, {}> {
-  constructor(props) {
+  constructor(props: {}) {
     super(props);
   }
 

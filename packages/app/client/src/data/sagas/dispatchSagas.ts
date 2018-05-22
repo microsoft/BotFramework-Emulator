@@ -37,7 +37,14 @@ import { call, ForkEffect, takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandService } from '../../platform/commands/commandService';
 import { DialogService } from '../../ui/dialogs/service';
 import { DispatchEditor } from '../../ui/shell/explorer/dispatchExplorer/dispatchEditor/dispatchEditor';
-import { DispatchEditorPayload, DispatchServiceAction, DispatchServicePayload, LAUNCH_DISPATCH_EDITOR, OPEN_DISPATCH_CONTEXT_MENU, OPEN_DISPATCH_DEEP_LINK } from '../action/dispatchServiceActions';
+import {
+  DispatchEditorPayload,
+  DispatchServiceAction,
+  DispatchServicePayload,
+  LAUNCH_DISPATCH_EDITOR,
+  OPEN_DISPATCH_CONTEXT_MENU,
+  OPEN_DISPATCH_DEEP_LINK
+} from '../action/dispatchServiceActions';
 
 function* openDispatchDeepLink(action: DispatchServiceAction<DispatchServicePayload>): IterableIterator<any> {
   const { appId, version } = action.payload.dispatchService;
@@ -85,7 +92,8 @@ function* removeDispatchServiceFromActiveBot(dispatchService: IDispatchService):
 
 function* launchDispatchEditor(action: DispatchServiceAction<DispatchEditorPayload>): IterableIterator<any> {
   const { dispatchEditorComponent, dispatchService = {} } = action.payload;
-  const result = yield DialogService.showDialog<ComponentClass<DispatchEditor>>(dispatchEditorComponent, { dispatchService });
+  const result = yield DialogService
+    .showDialog<ComponentClass<DispatchEditor>>(dispatchEditorComponent, { dispatchService });
   if (result) {
     yield CommandService.remoteCall('bot:add-or-update-service', ServiceType.Dispatch, result);
   }
@@ -95,5 +103,4 @@ export function* dispatchSagas(): IterableIterator<ForkEffect> {
   yield takeLatest(LAUNCH_DISPATCH_EDITOR, launchDispatchEditor);
   yield takeEvery(OPEN_DISPATCH_DEEP_LINK, openDispatchDeepLink);
   yield takeEvery(OPEN_DISPATCH_CONTEXT_MENU, openDispatchContextMenu);
-
 }

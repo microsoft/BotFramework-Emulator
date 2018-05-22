@@ -35,7 +35,7 @@ import { Disposable } from '@bfemulator/sdk-shared';
 import { CommandRegistry } from '../../commands';
 
 export function registerCommands() {
-  CommandRegistry.registerCommand("receive-global-settings", (settings: {
+  CommandRegistry.registerCommand('receive-global-settings', (settings: {
     url: string,
     cwd: string
   }): any => {
@@ -44,19 +44,19 @@ export function registerCommands() {
   });
 }
 
-export interface IEmulatorSettings {
+export interface EmulatorSettings {
   url?: string;
   cwd?: string;
   readonly cwdAsBase: string;
 }
 
-class EmulatorSettings implements IEmulatorSettings {
+class EmulatorSettingsImpl implements EmulatorSettings {
   private _url: string;
   private _cwd: string;
 
   get url(): string {
     if (!this._url || !this._url.length) {
-      throw new Error("Emulator url not set");
+      throw new Error('Emulator url not set');
     }
     return this._url;
   }
@@ -66,7 +66,7 @@ class EmulatorSettings implements IEmulatorSettings {
 
   get cwd(): string {
     if (!this._cwd || !this._cwd.length) {
-      throw new Error("Emulator cwd not set");
+      throw new Error('Emulator cwd not set');
     }
     return this._cwd;
   }
@@ -75,7 +75,7 @@ class EmulatorSettings implements IEmulatorSettings {
     this._cwd = value;
   }
 
-  get cwdAsBase() : string {
+  get cwdAsBase(): string {
     let base = this.cwd;
     if (!base.startsWith('/')) {
       base = `/${base}`;
@@ -87,14 +87,14 @@ class EmulatorSettings implements IEmulatorSettings {
 
 export const SettingsService = new class extends Disposable {
 
-  private _emulator: EmulatorSettings;
+  private _emulator: EmulatorSettingsImpl;
 
-  get emulator(): IEmulatorSettings { return this._emulator; }
+  get emulator(): EmulatorSettingsImpl { return this._emulator; }
 
-  init() { }
+  init() { return null; }
 
   constructor() {
     super();
-    this._emulator = new EmulatorSettings();
+    this._emulator = new EmulatorSettingsImpl();
   }
 };

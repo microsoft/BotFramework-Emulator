@@ -30,8 +30,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-const crypto = window['require']('crypto'); // Cheating here and pulling in a module from node. Can be easily replaced if we ever move the emulator to the web.
+// Cheating here and pulling in a module from node. Can be easily replaced if we ever move the emulator to the web.
+const crypto = (window as any).require('crypto');
 import {  LogLevel, logEntry, textItem } from '@bfemulator/app-shared';
 import { IExtensionInspector } from '@bfemulator/sdk-shared';
 import { css } from 'glamor';
@@ -70,9 +70,9 @@ interface InspectorState {
 
 export class Inspector extends React.Component<InspectorProps, InspectorState> {
 
-  ref: any; //HTMLWebViewElement;
+  ref: any; // HTMLWebViewElement;
 
-  constructor(props, context) {
+  constructor(props: InspectorProps, context: InspectorState) {
     super(props, context);
     this.state = {
       botHash: this.hash(getActiveBot())
@@ -105,12 +105,14 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     return this.props.inspector.name === 'JSON' || InspectorAPI.canInspect(this.props.inspector, inspectObj);
   }
 
-  domReadyEventHandler = (ev) => {
+  domReadyEventHandler = () => {
     this.botUpdated(getActiveBot());
     this.inspect(this.props.inspectObj);
-  };
+  }
 
   ipcMessageEventHandler = (ev: IpcMessageEvent): void => {
+
+    // TODO - localization
     if (ev.channel === 'enable-accessory') {
       this.props.enableAccessory(ev.args[0], ev.args[1]);
     } else if (ev.channel === 'set-accessory-state') {
@@ -122,27 +124,29 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
       });
       this.props.setInspectorTitle(ev.args[0]);
     } else if (ev.channel === 'logger.log') {
-      const inspectorName = this.state.titleOverride || this.props.inspector.name || "inspector";
-      LogService.logToDocument(this.props.document.documentId, logEntry(textItem(LogLevel.Info, `[${inspectorName}] ${ev.args[0]}`)));
+      const inspectorName = this.state.titleOverride || this.props.inspector.name || 'inspector';
+      LogService.logToDocument(this.props.document.documentId,
+        logEntry(textItem(LogLevel.Info, `[${inspectorName}] ${ev.args[0]}`)));
     } else if (ev.channel === 'logger.error') {
-      const inspectorName = this.state.titleOverride || this.props.inspector.name || "inspector";
-      LogService.logToDocument(this.props.document.documentId, logEntry(textItem(LogLevel.Error, `[${inspectorName}] ${ev.args[0]}`)));
+      const inspectorName = this.state.titleOverride || this.props.inspector.name || 'inspector';
+      LogService.logToDocument(this.props.document.documentId,
+        logEntry(textItem(LogLevel.Error, `[${inspectorName}] ${ev.args[0]}`)));
     } else {
-      console.warn("Unexpected message from inspector", ev.channel, ...ev.args);
+      console.warn('Unexpected message from inspector', ev.channel, ...ev.args);
     }
-  };
+  }
 
   updateRef = (ref) => {
     if (this.ref) {
-      this.ref.removeEventListener('dom-ready', ev => this.domReadyEventHandler(ev));
+      this.ref.removeEventListener('dom-ready', () => this.domReadyEventHandler());
       this.ref.removeEventListener('ipc-message', ev => this.ipcMessageEventHandler(ev));
     }
     this.ref = ref;
     if (this.ref) {
-      this.ref.addEventListener('dom-ready', ev => this.domReadyEventHandler(ev));
+      this.ref.addEventListener('dom-ready', () => this.domReadyEventHandler());
       this.ref.addEventListener('ipc-message', ev => this.ipcMessageEventHandler(ev));
     }
-  };
+  }
 
   inspect(obj: any) {
     if (this.canInspect(obj)) {
@@ -154,7 +158,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     this.sendToInspector('bot-updated', bot);
   }
 
-  sendToInspector(channel, ...args) {
+  sendToInspector(channel: any, ...args: any[]) {
     if (this.ref) {
       try {
         this.ref.send(channel, ...args);
@@ -168,9 +172,9 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     return this.props.inspectObj !== nextProps.inspectObj;
   }
 
-  componentDidUpdate(prevProps: InspectorProps, prevState: any, prevContext: any): void {
+  componentDidUpdate(prevProps: InspectorProps): void {
     const botHash = this.hash(getActiveBot());
-    if (botHash != this.state.botHash) {
+    if (botHash !== this.state.botHash) {
       this.setState({
         botHash
       });
@@ -189,12 +193,14 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     const md5 = crypto.createHash('md5');
     md5.update(this.props.inspector.src);
     const hash = md5.digest('base64');
+    const { cwdAsBase } = SettingsService.emulator;
+    const fileLocation = `file://${cwdAsBase}/../../node_modules/@bfemulator/client/public/inspector-preload.js`;
     return (
       <webview { ...CSS }
         webpreferences="webSecurity=no"
         key={ hash }
         partition={ `persist:${hash}` }
-        preload={ `file://${SettingsService.emulator.cwdAsBase}/../../node_modules/@bfemulator/client/public/inspector-preload.js` }
+        preload={ fileLocation }
         ref={ ref => this.updateRef(ref) }
         src={ this.props.inspector.src }
       />

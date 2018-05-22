@@ -50,10 +50,11 @@ export interface DispatchServicePayload {
 }
 
 export interface DispatchEditorPayload extends DispatchServicePayload {
-  dispatchEditorComponent?: ComponentClass<DispatchEditor>,
+  dispatchEditorComponent?: ComponentClass<DispatchEditor>;
 }
 
-export function launchDispatchEditor(dispatchEditorComponent: ComponentClass<DispatchEditor>, dispatchService?: IDispatchService): DispatchServiceAction<DispatchEditorPayload> {
+export function launchDispatchEditor(dispatchEditorComponent: ComponentClass<DispatchEditor>,
+                                     dispatchService?: IDispatchService): DispatchServiceAction<DispatchEditorPayload> {
   return {
     type: LAUNCH_DISPATCH_EDITOR,
     payload: { dispatchEditorComponent, dispatchService }
@@ -67,7 +68,9 @@ export function openDispatchDeepLink(dispatchService: IDispatchService): Dispatc
   };
 }
 
-export function openDispatchExplorerContextMenu(dispatchEditorComponent: ComponentClass<DispatchEditor>, dispatchService?: IDispatchService): DispatchServiceAction<DispatchEditorPayload> {
+export function openDispatchExplorerContextMenu(dispatchEditorComponent: ComponentClass<DispatchEditor>,
+                                                dispatchService?: IDispatchService)
+  : DispatchServiceAction<DispatchEditorPayload> {
   return {
     type: OPEN_DISPATCH_CONTEXT_MENU,
     payload: { dispatchEditorComponent, dispatchService }

@@ -37,7 +37,6 @@ import * as React from 'react';
 import Chat from './parts/chat';
 import { Colors } from '@bfemulator/ui-react';
 import { EmulatorMode } from './index';
-import { getFirstBotEndpoint } from '@bfemulator/app-shared';
 
 const CSS = css({
   height: '100%',
@@ -56,14 +55,14 @@ const CSS = css({
   }
 });
 
-interface IChatPanelProps {
+interface ChatPanelProps {
   document: any;
   mode?: EmulatorMode;
   onStartConversation?: () => any;
 }
 
-export default class ChatPanel extends React.Component<IChatPanelProps, {}> {
-  constructor(props: IChatPanelProps, context) {
+export default class ChatPanel extends React.Component<ChatPanelProps, {}> {
+  constructor(props: ChatPanelProps, context: {}) {
     super(props, context);
   }
 
@@ -73,7 +72,8 @@ export default class ChatPanel extends React.Component<IChatPanelProps, {}> {
     return (
       <div className="chat-panel" { ...CSS }>
         <header>{ botUrl }</header>
-        <Chat mode={ this.props.mode } document={ this.props.document } onStartConversation={ this.props.onStartConversation } key={ this.props.document.pingId } />
+        <Chat mode={ this.props.mode } document={ this.props.document }
+              onStartConversation={ this.props.onStartConversation } key={ this.props.document.pingId }/>
       </div>
     );
   }

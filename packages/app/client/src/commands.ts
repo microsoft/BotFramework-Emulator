@@ -56,59 +56,58 @@ import {
 } from './ui/dialogs';
 import { ActiveBotHelper } from './ui/helpers/activeBotHelper';
 
-//=============================================================================
+// =============================================================================
 export const CommandRegistry = new CommReg();
 
-//=============================================================================
+// =============================================================================
 export function registerCommands() {
 
   LogService.registerCommands();
   SettingsService.registerCommands();
   ExtensionManager.registerCommands();
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   CommandRegistry.registerCommand('ping', () => {
     return 'pong';
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Shows the welcome page
   CommandRegistry.registerCommand('welcome-page:show', () => {
     showWelcomePage();
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Shows a bot creation dialog
   CommandRegistry.registerCommand('bot-creation:show', () => {
     DialogService.showDialog(BotCreationDialog);
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Shows a dialog prompting the user for a bot secret
   CommandRegistry.registerCommand('secret-prompt:show', async () => {
     return await DialogService.showDialog(SecretPromptDialog);
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Switches the current active bot
   CommandRegistry.registerCommand('bot:switch', (botPath: string) => {
     ActiveBotHelper.confirmAndSwitchBots(botPath);
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Closes the current active bot
   CommandRegistry.registerCommand('bot:close', () => {
     ActiveBotHelper.confirmAndCloseBot();
   });
 
-
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Browse for a .bot file and open it
   CommandRegistry.registerCommand('bot:browse-open', () => {
     ActiveBotHelper.confirmAndOpenBotFromFile();
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Completes the client side sync of the bot:load command on the server side
   // (NOTE: should NOT be called by itself; call server side instead)
   CommandRegistry.registerCommand('bot:load', (bot: IBotConfigWithPath): void => {
@@ -120,56 +119,57 @@ export function registerCommands() {
     ActiveBotHelper.confirmAndSwitchBots(bot.path);
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Syncs the client side list of bots with bots arg (usually called from server side)
   CommandRegistry.registerCommand('bot:list:sync', async (bots: IBotInfo[]): Promise<void> => {
     store.dispatch(BotActions.load(bots));
     CommandService.remoteCall('menu:update-recent-bots');
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Adds a transcript
   CommandRegistry.registerCommand('transcript:add', (filename: string): void => {
     store.dispatch(ChatActions.addTranscript(filename));
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Removes a transcript
   CommandRegistry.registerCommand('transcript:remove', (filename: string): void => {
     store.dispatch(ChatActions.removeTranscript(filename));
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Opens up bot settings page for a bot
-  CommandRegistry.registerCommand('bot-settings:open', (bot: IBotConfig): void => {
-    store.dispatch(EditorActions.open(Constants.ContentType_BotSettings, Constants.DocumentId_BotSettings, false));
+  CommandRegistry.registerCommand('bot-settings:open', (_bot: IBotConfig): void => {
+    store.dispatch(EditorActions.open(Constants.CONTENT_TYPE_BOT_SETTINGS, Constants.DOCUMENT_ID_BOT_SETTINGS, false));
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Switches navbar tab selection
   CommandRegistry.registerCommand('navbar:switchtab', (tabName: string): void => {
     store.dispatch(NavBarActions.select(tabName));
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Switches navbar tab selection to Explorer
   CommandRegistry.registerCommand('shell:show-explorer', (): void => {
-    store.dispatch(NavBarActions.select(Constants.NavBar_Bot_Explorer));
+    store.dispatch(NavBarActions.select(Constants.NAVBAR_BOT_EXPLORER));
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Switches navbar tab selection to Services
   CommandRegistry.registerCommand('shell:show-services', (): void => {
-    store.dispatch(NavBarActions.select(Constants.NavBar_Services));
+    store.dispatch(NavBarActions.select(Constants.NAVBAR_SERVICES));
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Open App Settings
   CommandRegistry.registerCommand('shell:show-app-settings', (): void => {
-    store.dispatch(EditorActions.open(Constants.ContentType_AppSettings, Constants.DocumentId_AppSettings, true, null));
+    const { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } = Constants;
+    store.dispatch(EditorActions.open(CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS, true, null));
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Open a new emulator tabbed document
   CommandRegistry.registerCommand('livechat:new', (endpoint: IEndpointService) => {
     const documentId = uniqueId();
@@ -181,13 +181,13 @@ export function registerCommands() {
     ));
 
     store.dispatch(EditorActions.open(
-      Constants.ContentType_LiveChat,
+      Constants.CONTENT_TYPE_LIVE_CHAT,
       documentId,
       false
     ));
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Open the transcript file in a tabbed document
   CommandRegistry.registerCommand('transcript:open', (filename: string, additionalData?: object) => {
     const tabGroup = getTabGroupForDocument(filename);
@@ -195,13 +195,13 @@ export function registerCommands() {
       store.dispatch(ChatActions.newDocument(filename, 'transcript', additionalData));
     }
     store.dispatch(EditorActions.open(
-      Constants.ContentType_Transcript,
+      Constants.CONTENT_TYPE_TRANSCRIPT,
       filename,
       false
     ));
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Prompt to open a transcript file, then open it
   CommandRegistry.registerCommand('transcript:prompt-open', () => {
     const dialogOptions = {
@@ -224,17 +224,17 @@ export function registerCommands() {
       .catch(err => console.error(err));
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   CommandRegistry.registerCommand('file:add', (payload) => {
     store.dispatch(FileActions.addFile(payload));
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   CommandRegistry.registerCommand('file:remove', (path) => {
     store.dispatch(FileActions.removeFile(path));
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Sets a bot as active (called from server-side)
   CommandRegistry.registerCommand('bot:set-active', (bot: IBotConfig, botDirectory: string) => {
     store.dispatch(BotActions.setActive(bot));
@@ -243,33 +243,33 @@ export function registerCommands() {
     CommandService.remoteCall('electron:set-title-bar', getBotDisplayName(bot));
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Toggle inspector dev tools for all open inspectors
   CommandRegistry.registerCommand('shell:toggle-inspector-devtools', () => {
     window.dispatchEvent(new Event('toggle-inspector-devtools'));
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // An update is ready to install
   CommandRegistry.registerCommand('shell:update-downloaded', (...args: any[]) => {
     // TODO: Show a notification
     console.log('Update available', ...args);
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Application is up to date
   CommandRegistry.registerCommand('shell:update-not-available', () => {
     // TODO: Show a notification
     console.log('Application is up to date');
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Open the link in the default browser
   CommandRegistry.registerCommand('shell:open-external-link', (url: string) => {
     window.open(url);
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Open About dialog
   CommandRegistry.registerCommand('shell:about', () => {
     // TODO: Show about dialog (native dialog box)

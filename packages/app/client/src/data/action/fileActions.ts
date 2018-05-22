@@ -50,12 +50,12 @@ export function removeFile(path: string) {
   return {
     type: FileActions.remove,
     payload: { path }
-  }
+  };
 }
 
 export function setRoot(path: string) {
   return {
     type: FileActions.setRoot,
     payload: { path }
-  }
+  };
 }

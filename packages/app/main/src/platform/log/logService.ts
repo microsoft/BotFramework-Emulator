@@ -44,6 +44,6 @@ export class LogService extends Disposable implements ILogService {
   }
 
   logToChat(conversationId: string, ...items: ILogItem[]): void {
-    this._window.commandService.remoteCall("conversation:log:append", conversationId, logEntry(...items));
+    this._window.commandService.remoteCall('conversation:log:append', conversationId, logEntry(...items));
   }
 }

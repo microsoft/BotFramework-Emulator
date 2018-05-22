@@ -44,9 +44,8 @@ import { BehaviorSubject } from 'rxjs';
 import * as ChatActions from '../../../data/action/chatActions';
 import { updateDocument } from '../../../data/action/editorActions';
 import * as PresentationActions from '../../../data/action/presentationActions';
-import { getActiveBot } from '../../../data/botHelpers';
-import { IDocument } from '../../../data/reducer/editor';
-import { IRootState } from '../../../data/store';
+import { Document } from '../../../data/reducer/editor';
+import { RootState } from '../../../data/store';
 
 import { CommandService } from '../../../platform/commands/commandService';
 import { SettingsService } from '../../../platform/settings/settingsService';
@@ -55,7 +54,7 @@ import ChatPanel from './chatPanel';
 import DetailPanel from './detailPanel';
 import LogPanel from './logPanel';
 import PlaybackBar from './playbackBar';
-import { debounce } from "../../utils/debounce";
+import { debounce } from '../../utils/debounce';
 
 const { encode } = base64Url;
 
@@ -148,31 +147,15 @@ interface EmulatorProps {
   mode?: EmulatorMode;
   pingId?: number;
   presentationModeEnabled?: boolean;
-  pingDocument?: (documentId) => void;
-  enablePresentationMode?: (enabled) => void;
+  pingDocument?: (documentId: string) => void;
+  enablePresentationMode?: (enabled: boolean) => void;
   setInspectorObjects?: (documentId: string, objects: any) => void;
-  clearLog?: (documentId) => void;
-  newConversation?: (documentId, options) => void;
-  updateDocument?: (documentId, updatedValues) => void;
+  clearLog?: (documentId: string) => void;
+  newConversation?: (documentId: string, options: any) => void;
+  updateDocument?: (documentId: string, updatedValues: any) => void;
 }
 
 class EmulatorComponent extends React.Component<EmulatorProps, {}> {
-  constructor(props: EmulatorProps) {
-    super(props);
-  }
-
-  private getVerticalSplitterSizes = () => {
-    return {
-      0: `${this.props.document.ui.verticalSplitter[0].percentage}`
-    };
-  };
-
-  private getHorizontalSplitterSizes = () => {
-    return {
-      0: `${this.props.document.ui.horizontalSplitter[0].percentage}`
-    };
-  };
-
   private readonly onVerticalSizeChange = debounce((sizes) => {
     this.props.document.ui = {
       ...this.props.document.ui,
@@ -187,10 +170,14 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     };
   }, 500);
 
+  constructor(props: EmulatorProps) {
+    super(props);
+  }
+
   shouldStartNewConversation(props?: any) {
     props = props || this.props;
     return !props.document.directLine ||
-      (props.document.conversationId != props.document.directLine.conversationId);
+      (props.document.conversationId !== props.document.directLine.conversationId);
   }
 
   componentWillMount() {
@@ -199,22 +186,18 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     }
   }
 
-  componentWillReceiveProps(nextProps, nextContext) {
+  componentWillReceiveProps(nextProps: any) {
     for (; ;) {
       if (nextProps.document.directLine || this.props.document.documentId === nextProps.document.documentId) {
         break;
       }
-      this.startNewConversation(nextProps);
+      this.startNewConversation(nextProps).catch();
       break;
     }
     if (this.props.document.documentId !== nextProps.document.documentId) {
       this.props.pingDocument(nextProps.document.documentId);
     }
   }
-
-  private handlePresentationClick = (enabled: boolean) => {
-    this.props.enablePresentationMode(enabled);
-  };
 
   async startNewConversation(props?: any) {
     props = props || this.props;
@@ -228,9 +211,6 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
         this.props.setInspectorObjects(props.document.documentId, obj.activity);
       }
     });
-
-    const { services = [] } = getActiveBot() || {};
-    const endpointService: IEndpointService = services.find(s => s.id === props.document.endpointId) as IEndpointService;
 
     // TODO: Don't append mode
     const conversationId = `${ uniqueId() }|${ props.mode }`;
@@ -252,15 +232,18 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
 
         if (props.document && props.document.deepLink && props.document.activities) {
           try {
-            // transcript was deep linked via protocol, and should just be fed its own activities attached to the document
-            await CommandService.remoteCall('emulator:feed-transcript:deep-link', conversation.conversationId, props.document.activities);
+            // transcript was deep linked via protocol,
+            // and should just be fed its own activities attached to the document
+            await CommandService
+              .remoteCall('emulator:feed-transcript:deep-link', conversation.conversationId, props.document.activities);
           } catch (err) {
             throw new Error(`Error while feeding deep-linked transcript to conversation: ${err}`);
           }
         } else {
           try {
             // the transcript is on disk, so its activities need to be read on the main side and fed in
-            const fileInfo: { fileName: string, filePath: string } = await CommandService.remoteCall('emulator:feed-transcript:disk', conversation.conversationId, props.document.documentId);
+            const fileInfo: { fileName: string, filePath: string } = await CommandService
+              .remoteCall('emulator:feed-transcript:disk', conversation.conversationId, props.document.documentId);
             this.props.updateDocument(this.props.documentId, { fileName: fileInfo.fileName });
           } catch (err) {
             throw new Error(`Error while feeding transcript on disk to conversation: ${err}`);
@@ -273,7 +256,7 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     }
   }
 
-  initConversation(props, options, selectedActivity$, subscription) {
+  initConversation(props: any, options: any, selectedActivity$: any, subscription: any) {
     const webChatStore = BotChat.createStore();
     const encodedOptions = encode(JSON.stringify(options));
 
@@ -294,28 +277,16 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     });
   }
 
-  private handleStartOverClick = () => {
-    this.props.clearLog(this.props.document.documentId);
-    this.props.setInspectorObjects(this.props.document.documentId, []);
-    this.startNewConversation();
-  };
-
-  private handleExportClick = () => {
-    if (this.props.document.directLine) {
-      CommandService.remoteCall('emulator:save-transcript-to-file', this.props.document.directLine.conversationId);
-    }
-  };
-
   render(): JSX.Element {
     return this.props.presentationModeEnabled ? this.renderPresentationView() : this.renderDefaultView();
   }
 
   renderPresentationView(): JSX.Element {
     return (
-      <div {...PRESENTATION_CSS}>
+      <div { ...PRESENTATION_CSS }>
         <div className="presentation-content">
-          <ChatPanel mode={this.props.mode} document={this.props.document}
-                     onStartConversation={this.handleStartOverClick}/>
+          <ChatPanel mode={ this.props.mode } document={ this.props.document }
+                     onStartConversation={ this.handleStartOverClick }/>
           {
             this.props.mode === 'transcript' ?
               <div className="presentation-playback-dock"><PlaybackBar/></div>
@@ -323,37 +294,37 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
               null
           }
         </div>
-        <span className="close-presentation-icon" onClick={() => this.handlePresentationClick(false)}></span>
+        <span className="close-presentation-icon" onClick={ () => this.handlePresentationClick(false) }></span>
       </div>
     );
   }
 
   renderDefaultView(): JSX.Element {
     return (
-      <div {...CSS} key={this.props.pingId}>
+      <div { ...CSS } key={ this.props.pingId }>
         {
           this.props.mode === 'livechat' &&
           <div className="header">
             <ToolBar>
-              <ToolBarButton visible={true} title="Start Over" onClick={this.handleStartOverClick}/>
-              <ToolBarButton visible={true} title="Save Transcript As..." onClick={this.handleExportClick}/>
+              <ToolBarButton visible={ true } title="Start Over" onClick={ this.handleStartOverClick }/>
+              <ToolBarButton visible={ true } title="Save Transcript As..." onClick={ this.handleExportClick }/>
             </ToolBar>
           </div>
         }
         <div className="content vertical">
-          <Splitter orientation="vertical" primaryPaneIndex={0} minSizes={{ 0: 80, 1: 80 }}
-                    initialSizes={this.getVerticalSplitterSizes} onSizeChange={this.onVerticalSizeChange}
-                    key={this.props.pingId}>
+          <Splitter orientation="vertical" primaryPaneIndex={ 0 } minSizes={ { 0: 80, 1: 80 } }
+                    initialSizes={ this.getVerticalSplitterSizes } onSizeChange={ this.onVerticalSizeChange }
+                    key={ this.props.pingId }>
             <div className="content">
-              <ChatPanel mode={this.props.mode} document={this.props.document}
-                         onStartConversation={this.handleStartOverClick}/>
+              <ChatPanel mode={ this.props.mode } document={ this.props.document }
+                         onStartConversation={ this.handleStartOverClick }/>
             </div>
             <div className="content">
-              <Splitter orientation="horizontal" primaryPaneIndex={0} minSizes={{ 0: 80, 1: 80 }}
-                        initialSizes={this.getHorizontalSplitterSizes} onSizeChange={this.onHorizontalSizeChange}
-                        key={this.props.pingId}>
-                <DetailPanel document={this.props.document} key={this.props.pingId}/>
-                <LogPanel document={this.props.document} key={this.props.pingId}/>
+              <Splitter orientation="horizontal" primaryPaneIndex={ 0 } minSizes={ { 0: 80, 1: 80 } }
+                        initialSizes={ this.getHorizontalSplitterSizes } onSizeChange={ this.onHorizontalSizeChange }
+                        key={ this.props.pingId }>
+                <DetailPanel document={ this.props.document } key={ this.props.pingId }/>
+                <LogPanel document={ this.props.document } key={ this.props.pingId }/>
               </Splitter>
             </div>
           </Splitter>
@@ -361,9 +332,37 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
       </div>
     );
   }
+
+  private getVerticalSplitterSizes = () => {
+    return {
+      0: `${this.props.document.ui.verticalSplitter[0].percentage}`
+    };
+  }
+
+  private getHorizontalSplitterSizes = () => {
+    return {
+      0: `${this.props.document.ui.horizontalSplitter[0].percentage}`
+    };
+  }
+
+  private handlePresentationClick = (enabled: boolean) => {
+    this.props.enablePresentationMode(enabled);
+  }
+
+  private handleStartOverClick = () => {
+    this.props.clearLog(this.props.document.documentId);
+    this.props.setInspectorObjects(this.props.document.documentId, []);
+    this.startNewConversation();
+  }
+
+  private handleExportClick = () => {
+    if (this.props.document.directLine) {
+      CommandService.remoteCall('emulator:save-transcript-to-file', this.props.document.directLine.conversationId);
+    }
+  }
 }
 
-const mapStateToProps = (state: IRootState, { documentId }: { documentId: string }): EmulatorProps => ({
+const mapStateToProps = (state: RootState, { documentId }: { documentId: string }): EmulatorProps => ({
   conversationId: state.chat.chats[documentId].conversationId,
   document: state.chat.chats[documentId],
   endpointId: state.chat.chats[documentId].endpointId,
@@ -373,11 +372,12 @@ const mapStateToProps = (state: IRootState, { documentId }: { documentId: string
 
 const mapDispatchToProps = (dispatch): EmulatorProps => ({
   pingDocument: documentId => dispatch(ChatActions.pingDocument(documentId)),
-  enablePresentationMode: enable => enable ? dispatch(PresentationActions.enable()) : dispatch(PresentationActions.disable()),
+  enablePresentationMode: enable => enable ? dispatch(PresentationActions.enable())
+    : dispatch(PresentationActions.disable()),
   setInspectorObjects: (documentId, objects) => dispatch(ChatActions.setInspectorObjects(documentId, objects)),
   clearLog: documentId => dispatch(ChatActions.clearLog(documentId)),
   newConversation: (documentId, options) => dispatch(ChatActions.newConversation(documentId, options)),
-  updateDocument: (documentId, updatedValues: Partial<IDocument>) => dispatch(updateDocument(documentId, updatedValues))
+  updateDocument: (documentId, updatedValues: Partial<Document>) => dispatch(updateDocument(documentId, updatedValues))
 });
 
 export const Emulator = connect(mapStateToProps, mapDispatchToProps)(EmulatorComponent as any) as any;

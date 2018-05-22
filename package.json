@@ -1,6 +1,7 @@
 {
   "scripts": {
     "bootstrap": "lerna bootstrap --hoist",
+    "test": "jest",
     "test:coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls"
   },
   "jest": {

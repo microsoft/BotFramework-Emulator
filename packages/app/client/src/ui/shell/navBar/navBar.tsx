@@ -96,8 +96,8 @@ class NavBarComponent extends React.Component<NavBarProps> {
 
     return (
       <nav { ...CSS }>
-        <NavLink className={ classNames('nav-link bot-explorer', { selected: selection === Constants.NavBar_Bot_Explorer }) } onClick={ evt => handleClick(evt, Constants.NavBar_Bot_Explorer) } title="Bot Explorer" />
-        <NavLink className={ classNames('nav-link services', { selected: selection === Constants.NavBar_Services }) } onClick={ evt => handleClick(evt, Constants.NavBar_Services) } title="Services" />
+        <NavLink className={ classNames('nav-link bot-explorer', { selected: selection === Constants.NAVBAR_BOT_EXPLORER }) } onClick={ evt => handleClick(evt, Constants.NAVBAR_BOT_EXPLORER) } title="Bot Explorer" />
+        <NavLink className={ classNames('nav-link services', { selected: selection === Constants.NAVBAR_SERVICES }) } onClick={ evt => handleClick(evt, Constants.NAVBAR_SERVICES) } title="Services" />
         <NavLink className={ classNames('nav-link bot-settings', { disabled: !this.props.activeBot }) } onClick={ this.handleBotSettingsClick } title="Bot Settings" />
         <NavLink className="nav-link settings" onClick={ handleSettingsClick } title="Settings" justifyEnd={ true } />
         <InsetShadow right={ true } />
@@ -111,7 +111,7 @@ const mapStateToProps = (state: IRootState): NavBarProps => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps: NavBarProps): NavBarProps => ({
-  handleSettingsClick: (evt) => dispatch(EditorActions.open(Constants.ContentType_AppSettings, Constants.DocumentId_AppSettings, true, null)),
+  handleSettingsClick: (evt) => dispatch(EditorActions.open(Constants.CONTENT_TYPE_APP_SETTINGS, Constants.DOCUMENT_ID_APP_SETTINGS, true, null)),
   handleClick: (evt, selection: string) => {
     if (ownProps.selection === selection) {
       // toggle explorer when clicking the same navbar icon

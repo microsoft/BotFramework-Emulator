@@ -106,11 +106,11 @@ class RightContentOverlayComponent extends React.Component<RightContentOverlayPr
 
 const mapStateToProps = (state: IRootState): RightContentOverlayProps => ({
   draggingTab: state.editor.draggingTab,
-  primaryEditor: state.editor.editors[Constants.EditorKey_Primary]
+  primaryEditor: state.editor.editors[Constants.EDITOR_KEY_PRIMARY]
 });
 
 const mapDispatchToProps = (dispatch): RightContentOverlayProps => ({
-  splitTab: (contentType: string, tabId: string) => dispatch(EditorActions.splitTab(contentType, tabId, Constants.EditorKey_Primary, Constants.EditorKey_Secondary))
+  splitTab: (contentType: string, tabId: string) => dispatch(EditorActions.splitTab(contentType, tabId, Constants.EDITOR_KEY_PRIMARY, Constants.EDITOR_KEY_SECONDARY))
 });
 
 export const RightContentOverlay = connect(mapStateToProps, mapDispatchToProps)(RightContentOverlayComponent);
