@@ -35,11 +35,11 @@ import { IDispatchService, ServiceType } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
 import { connect } from 'react-redux';
 import { launchDispatchEditor, openDispatchDeepLink, openDispatchExplorerContextMenu } from '../../../../data/action/dispatchServiceActions';
-import { IRootState } from '../../../../data/store';
+import { RootState } from '../../../../data/store';
 import { DispatchEditor } from './dispatchEditor/dispatchEditor';
 import { DispatchExplorer } from './dispatchExplorer';
 
-const mapStateToProps = (state: IRootState) => {
+const mapStateToProps = (state: RootState) => {
   const { services } = state.bot.activeBot;
   return {
     dispatchServices: services.filter(service => service.type === ServiceType.Dispatch),

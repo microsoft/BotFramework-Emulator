@@ -36,8 +36,8 @@ import promiseMiddleware from 'redux-promise-middleware';
 import sagaMiddlewareFactory from 'redux-saga';
 import thunk from 'redux-thunk';
 import bot, { IBotState } from './reducer/bot';
-import chat, { IChatState } from './reducer/chat';
-import dialog, { IDialogState } from './reducer/dialog';
+import chat, { ChatState } from './reducer/chat';
+import dialog, { DialogState } from './reducer/dialog';
 import editor, { IEditorState } from './reducer/editor';
 import explorer, { IExplorerState } from './reducer/explorer';
 import files, { IFileTreeState } from './reducer/files';
@@ -51,15 +51,12 @@ import { applicationSagas } from './sagas';
 // TODO: Remove this when we no longer need to debug the WebSocket connection
 // import DebugWebSocketConnection from './debugWebSocketConnection';
 
-const _window = window as any;
-const electron = _window.process && _window.process.versions.electron;
-
-export interface IRootState {
+export interface RootState {
   bot?: IBotState;
-  dialog?: IDialogState;
+  dialog?: DialogState;
   editor?: IEditorState;
   explorer?: IExplorerState;
-  chat?: IChatState;
+  chat?: ChatState;
   navBar?: INavBarState;
   presentation?: IPresentationState;
   server?: IServerState;
@@ -68,9 +65,9 @@ export interface IRootState {
 }
 
 const sagaMiddleWare = sagaMiddlewareFactory();
-const DEFAULT_STATE: IRootState = {};
+const DEFAULT_STATE: RootState = {};
 
-const configureStore = (initialState: IRootState = DEFAULT_STATE): Store<IRootState> => createStore(
+const configureStore = (initialState: RootState = DEFAULT_STATE): Store<RootState> => createStore(
   combineReducers({
     bot,
     dialog,

@@ -49,7 +49,6 @@ import {
   settingsDefault
 } from '@bfemulator/app-shared';
 
-
 export class PersistentSettings implements IPersistentSettings {
   public framework: IFrameworkSettings;
   public bots: IBot[];
@@ -75,22 +74,22 @@ export const getStore = (): Store<ISettings> => {
     // Create the settings store with initial settings from disk.
     const initialSettings = loadSettings('server.json', settingsDefault);
     // TODO: Validate the settings still apply.
-
-    store = createStore(combineReducers<ISettings>({
+    const reducers = {
       framework: frameworkReducer,
       bots: botsReducer,
       windowState: windowStateReducer,
       users: usersReducer
-    }), initialSettings);
+    };
+    store = createStore(combineReducers<ISettings>(reducers), initialSettings);
   }
   return store;
-}
+};
 
 export const dispatch = <T extends Action>(obj: any) => getStore().dispatch<T>(obj);
 
 export const getSettings = () => {
   return new Settings(getStore().getState());
-}
+};
 
 export type SettingsActor = (settings: Settings) => void;
 
@@ -99,7 +98,7 @@ let actors: SettingsActor[] = [];
 
 export const addSettingsListener = (actor: SettingsActor) => {
   actors.push(actor);
-  var isSubscribed = true;
+  let isSubscribed = true;
   return function unsubscribe() {
     if (!isSubscribed) {
       return;
@@ -107,9 +106,8 @@ export const addSettingsListener = (actor: SettingsActor) => {
     isSubscribed = false;
     let index = actors.indexOf(actor);
     actors.splice(index, 1);
-  }
-}
-
+  };
+};
 
 export const startup = () => {
   // Listen for settings change requests from the client.
@@ -132,28 +130,25 @@ export const startup = () => {
       acting = false;
     }
     clearTimeout(saveTimer);
-    saveTimer = setTimeout(() => {
-      saveSettings('server.json', new PersistentSettings(getStore().getState()));
-    }, 1000);
+    saveTimer = setTimeout(() => saveSettings('server.json', new PersistentSettings(getStore().getState())), 1000);
   });
-}
-
+};
 
 export const authenticationSettings = {
   tokenEndpoint: 'https://login.microsoftonline.com/botframework.com/oauth2/v2.0/token',
   openIdMetadata: 'https://login.microsoftonline.com/botframework.com/v2.0/.well-known/openid-configuration',
   botTokenAudience: 'https://api.botframework.com',
-}
+};
 
 export const v31AuthenticationSettings = {
   tokenIssuer: 'https://sts.windows.net/d6d49420-f39b-4df7-a1dc-d59a935871db/',
-}
+};
 
 export const v32AuthenticationSettings = {
   tokenIssuerV1: 'https://sts.windows.net/f8cdef31-a31e-4b4a-93e4-5f571e91255a/',
   tokenIssuerV2: 'https://login.microsoftonline.com/f8cdef31-a31e-4b4a-93e4-5f571e91255a/v2.0'
-}
+};
 
 export const speechSettings = {
   tokenEndpoint: 'https://login.botframework.com/v3/speechtoken'
-}
+};

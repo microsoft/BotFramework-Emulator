@@ -31,14 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-const electron = window['require']('electron');
+const electron = (window as any).require('electron');
 
 import { IPC, Channel, IDisposable } from '@bfemulator/sdk-shared';
 
 export const ElectronIPC = new class extends IPC {
   constructor() {
     super();
-    electron.ipcRenderer.on('ipc:message', (sender: any, ...args: any[]) => {
+    electron.ipcRenderer.on('ipc:message', (_sender: any, ...args: any[]) => {
       const channelName = args.shift();
       const channel = super.getChannel(channelName);
       if (channel) {
@@ -54,4 +54,4 @@ export const ElectronIPC = new class extends IPC {
   registerChannel(channel: Channel): IDisposable {
     return super.registerChannel(channel);
   }
-}
+};

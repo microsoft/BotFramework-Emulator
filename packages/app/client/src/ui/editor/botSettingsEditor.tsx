@@ -40,7 +40,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import * as EditorActions from '../../data/action/editorActions';
 import { getBotInfoByPath } from '../../data/botHelpers';
-import store, { IRootState } from '../../data/store';
+import store, { RootState } from '../../data/store';
 import { CommandService } from '../../platform/commands/commandService';
 import { ActiveBotHelper } from '../helpers/activeBotHelper';
 import { GenericDocument } from '../layout';
@@ -239,7 +239,7 @@ class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps,
   }
 }
 
-function mapStateToProps(state: IRootState, ownProps: object): BotSettingsEditorProps {
+function mapStateToProps(state: RootState, ownProps: object): BotSettingsEditorProps {
   return {
     bot: state.bot.activeBot
   };

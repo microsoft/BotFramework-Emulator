@@ -33,11 +33,11 @@
 
 import { ServiceType } from 'msbot/bin/schema';
 import { connect } from 'react-redux';
-import { IRootState } from '../../../../../data/store';
+import { RootState } from '../../../../../data/store';
 import { DialogService } from '../../../../dialogs/service';
 import { LuisModelsViewer } from './luisModelsViewer';
 
-const mapStateToProps = (state: IRootState, ownProps: { [propName: string]: any }) => {
+const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }) => {
   const { services } = state.bot.activeBot;
   return {
     luisServices: services.filter(service => service.type === ServiceType.Luis),

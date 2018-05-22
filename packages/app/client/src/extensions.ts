@@ -31,17 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IExtensionConfig, Channel, IDisposable, CommandService, IExtensionInspector, IActivity } from '@bfemulator/sdk-shared';
+import { CommandService, IExtensionConfig, IExtensionInspector } from '@bfemulator/sdk-shared';
 import { ElectronIPC } from './ipc';
 import { CommandRegistry } from './commands';
 import * as jsonpath from 'jsonpath';
 
-//=============================================================================
+// =============================================================================
 export class Extension {
   private _ext: CommandService;
 
-  get unid(): string { return this._unid; }
-  get config(): IExtensionConfig { return this._config; }
+  get unid(): string {
+    return this._unid;
+  }
+
+  get config(): IExtensionConfig {
+    return this._config;
+  }
 
   constructor(private _config: IExtensionConfig, private _unid: string) {
     this._ext = new CommandService(ElectronIPC, `ext-${this._unid}`);
@@ -52,9 +57,9 @@ export class Extension {
     */
   }
 
-  public inspectorForObject(obj: any): IGetInspectorResult | null {
+  public inspectorForObject(obj: any): GetInspectorResult | null {
     const inspectors = this.config.client.inspectors || [];
-    const inspector = inspectors.find(inspector => InspectorAPI.canInspect(inspector, obj));
+    const inspector = inspectors.find(inspectorArg => InspectorAPI.canInspect(inspectorArg, obj));
     return inspector ? {
       extension: this,
       inspector
@@ -66,15 +71,20 @@ export class Extension {
   }
 }
 
-//=============================================================================
+// =============================================================================
 export class InspectorAPI {
   public static canInspect(inspector: IExtensionInspector, obj: any): boolean {
-    if (!obj) return false;
-    if (typeof obj !== 'object') return false;
+    if (!obj) {
+      return false;
+    }
+    if (typeof obj !== 'object') {
+      return false;
+    }
     // Check the activity against the inspector's set of criteria
     let criterias = inspector.criteria || [];
-    if (!Array.isArray(criterias))
+    if (!Array.isArray(criterias)) {
       criterias = [criterias];
+    }
     let canInspect = true;
     criterias.forEach(criteria => {
       // Path is a json-path
@@ -96,8 +106,9 @@ export class InspectorAPI {
 
   public static summaryText(inspector: IExtensionInspector, obj: any): string {
     let summaryTexts = inspector.summaryText || [];
-    if (!Array.isArray(summaryTexts))
-    summaryTexts = [summaryTexts];
+    if (!Array.isArray(summaryTexts)) {
+      summaryTexts = [summaryTexts];
+    }
     let ret: any;
     for (let i = 0; i < summaryTexts.length; ++i) {
       const results = jsonpath.query(obj, summaryTexts[i]);
@@ -112,36 +123,42 @@ export class InspectorAPI {
     }
 
     let text;
-    if (typeof ret == 'string')
+    if (typeof ret === 'string') {
       text = ret;
-    else if (ret)
+    } else if (ret) {
       text = JSON.stringify(ret);
-    else
-      text = "";
+    } else {
+      text = '';
+    }
 
-    if (text.length > 50)
-      text = text.substring(0, 50) + "...";
+    if (text.length > 50) {
+      text = text.substring(0, 50) + '...';
+    }
     return text;
   }
 }
 
-//=============================================================================
-export interface IGetInspectorResult {
+// =============================================================================
+export interface GetInspectorResult {
   extension: Extension;
   inspector: IExtensionInspector;
 }
 
-//=============================================================================
-export interface IExtensionManager {
+// =============================================================================
+export interface ExtensionManager {
   registerCommands();
+
   addExtension(config: IExtensionConfig, unid: string);
+
   removeExtension(unid: string);
+
   getExtensions(): Extension[];
-  inspectorForObject(obj: any, defaultToJson: boolean): IGetInspectorResult | null;
+
+  inspectorForObject(obj: any, defaultToJson: boolean): GetInspectorResult | null;
 }
 
-//=============================================================================
-export const ExtensionManager = new class implements IExtensionManager {
+// =============================================================================
+export const ExtensionManager = new class implements ExtensionManager {
   private extensions: { [unid: string]: Extension } = {};
 
   public addExtension(config: IExtensionConfig, unid: string) {
@@ -166,8 +183,10 @@ export const ExtensionManager = new class implements IExtensionManager {
     return Object.keys(this.extensions).map(key => this.extensions[key]) || [];
   }
 
-  public inspectorForObject(obj: any, defaultToJson: boolean): IGetInspectorResult | null {
-    let result = this.getExtensions().map(extension => extension.inspectorForObject(obj)).filter(result => !!result).shift();
+  public inspectorForObject(obj: any, defaultToJson: boolean): GetInspectorResult | null {
+    let result = this.getExtensions()
+      .map(extension => extension.inspectorForObject(obj))
+      .filter(resultArg => !!resultArg).shift();
     if (!result && defaultToJson) {
       // Default to the JSON inspector
       const jsonExtension = ExtensionManager.findExtension('JSON');
@@ -175,7 +194,7 @@ export const ExtensionManager = new class implements IExtensionManager {
         result = {
           extension: jsonExtension,
           inspector: jsonExtension.config.client.inspectors ? jsonExtension.config.client.inspectors[0] : null
-        }
+        };
       }
     }
     return result;
@@ -190,4 +209,4 @@ export const ExtensionManager = new class implements IExtensionManager {
       ExtensionManager.removeExtension(unid);
     });
   }
-}
+};

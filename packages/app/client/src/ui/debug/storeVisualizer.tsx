@@ -35,8 +35,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
 
-import { IRootState } from '../../data/store';
-import * as Constants from '../../constants';
+import { RootState } from '../../data/store';
 import { PrimaryButton } from '@bfemulator/ui-react';
 
 const CSS = css({
@@ -73,7 +72,7 @@ type StateSlice = 'assetExplorer' | 'bot' | 'chat' | 'dialog' | 'editor' | 'expl
 
 interface StoreVisualizerProps {
   enabled?: boolean;
-  rootState?: IRootState;
+  rootState?: RootState;
 }
 
 interface StoreVisualizerState {
@@ -142,6 +141,6 @@ class StoreVisualizerComponent extends React.Component<StoreVisualizerProps, Sto
   }
 }
 
-const mapStateToProps = (state: IRootState): StoreVisualizerProps => ({ rootState: state });
+const mapStateToProps = (state: RootState): StoreVisualizerProps => ({ rootState: state });
 
 export const StoreVisualizer = connect(mapStateToProps)(StoreVisualizerComponent) as any;

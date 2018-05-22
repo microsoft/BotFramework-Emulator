@@ -46,7 +46,7 @@ import { updateDocument } from '../../../data/action/editorActions';
 import * as PresentationActions from '../../../data/action/presentationActions';
 import { getActiveBot } from '../../../data/botHelpers';
 import { IDocument } from '../../../data/reducer/editor';
-import { IRootState } from '../../../data/store';
+import { RootState } from '../../../data/store';
 
 import { CommandService } from '../../../platform/commands/commandService';
 import { SettingsService } from '../../../platform/settings/settingsService';
@@ -363,7 +363,7 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
   }
 }
 
-const mapStateToProps = (state: IRootState, { documentId }: { documentId: string }): EmulatorProps => ({
+const mapStateToProps = (state: RootState, { documentId }: { documentId: string }): EmulatorProps => ({
   conversationId: state.chat.chats[documentId].conversationId,
   document: state.chat.chats[documentId],
   endpointId: state.chat.chats[documentId].endpointId,

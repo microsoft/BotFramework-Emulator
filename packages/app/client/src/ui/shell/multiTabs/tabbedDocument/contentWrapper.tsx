@@ -45,7 +45,7 @@ import {
 import * as Constants from '../../../../constants';
 import { getTabGroupForDocument, tabGroupHasDocuments } from '../../../../data/editorHelpers';
 import { IEditor } from '../../../../data/reducer/editor';
-import { IRootState } from '../../../../data/store';
+import { RootState } from '../../../../data/store';
 
 const CSS = css({
   position: 'relative',
@@ -111,7 +111,7 @@ class TabbedDocumentContentWrapperComponent extends React.Component<TabbedDocume
   }
 }
 
-const mapStateToProps = (state: IRootState): TabbedDocumentContentWrapperProps => ({
+const mapStateToProps = (state: RootState): TabbedDocumentContentWrapperProps => ({
   activeEditor: state.editor.activeEditor,
   primaryEditor: state.editor.editors[Constants.EditorKey_Primary],
   secondaryEditor: state.editor.editors[Constants.EditorKey_Secondary]

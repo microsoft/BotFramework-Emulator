@@ -33,7 +33,7 @@
 
 import * as DialogActions from '../action/dialogActions';
 
-export interface IDialogState {
+export interface DialogState {
   showing: boolean;
 }
 
@@ -44,12 +44,12 @@ type IDialogAction = {
   };
 };
 
-const DEFAULT_STATE: IDialogState = {
+const DEFAULT_STATE: DialogState = {
   showing: false
 };
 
-export default function dialog(state: IDialogState = DEFAULT_STATE, action: IDialogAction): IDialogState {
-  switch(action.type) {
+export default function dialog(state: DialogState = DEFAULT_STATE, action: IDialogAction): DialogState {
+  switch (action.type) {
     case DialogActions.SET_SHOWING: {
       state = setShowing(action.payload.showing, state);
       break;
@@ -61,6 +61,6 @@ export default function dialog(state: IDialogState = DEFAULT_STATE, action: IDia
   return state;
 }
 
-function setShowing(showing: boolean, state: IDialogState): IDialogState {
+function setShowing(showing: boolean, _state: DialogState): DialogState {
   return { showing: showing };
 }

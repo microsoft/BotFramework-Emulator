@@ -39,7 +39,7 @@ import { OVERLAY_CSS } from './overlayStyle';
 import * as EditorActions from '../../../../data/action/editorActions';
 import * as Constants from '../../../../constants';
 import { getTabGroupForDocument } from '../../../../data/editorHelpers';
-import { IRootState } from '../../../../data/store';
+import { RootState } from '../../../../data/store';
 
 const CSS = css({
   top: 0,
@@ -119,7 +119,7 @@ class ContentOverlayComponent extends React.Component<ContentOverlayProps, Conte
   }
 }
 
-const mapStateToProps = (state: IRootState): ContentOverlayProps => ({
+const mapStateToProps = (state: RootState): ContentOverlayProps => ({
   draggingTab: state.editor.draggingTab
 });
 

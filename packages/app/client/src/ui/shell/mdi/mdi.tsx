@@ -44,7 +44,7 @@ import {
 } from '../multiTabs';
 import { TabFactory } from './tabFactory';
 import { IDocument } from '../../../data/reducer/editor';
-import { IRootState } from '../../../data/store';
+import { RootState } from '../../../data/store';
 
 interface MDIProps {
   activeDocumentId?: string;
@@ -90,7 +90,7 @@ class MDIComponent extends React.Component<MDIProps> {
   }
 }
 
-const mapStateToProps = (state: IRootState, ownProps: MDIProps): MDIProps => ({
+const mapStateToProps = (state: RootState, ownProps: MDIProps): MDIProps => ({
   activeDocumentId: state.editor.editors[ownProps.owningEditor].activeDocumentId,
   documents: state.editor.editors[ownProps.owningEditor].documents,
   tabOrder: state.editor.editors[ownProps.owningEditor].tabOrder,

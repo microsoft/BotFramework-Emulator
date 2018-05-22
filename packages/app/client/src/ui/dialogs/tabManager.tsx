@@ -37,7 +37,7 @@ import { connect } from 'react-redux';
 
 import { Colors } from '@bfemulator/ui-react';
 import * as EditorActions from '../../data/action/editorActions';
-import { IRootState } from '../../data/store';
+import { RootState } from '../../data/store';
 
 const CSS = css({
   top: 0,
@@ -218,7 +218,7 @@ class TabManagerComponent extends React.Component<TabManagerProps, TabManagerSta
   }
 }
 
-const mapStateToProps = (state: IRootState): TabManagerProps => ({
+const mapStateToProps = (state: RootState): TabManagerProps => ({
   recentTabs: state.editor.editors[state.editor.activeEditor].recentTabs
 });
 

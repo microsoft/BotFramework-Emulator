@@ -38,7 +38,7 @@ import { getTabGroupForDocument } from '../../../data/editorHelpers';
 import * as ChatActions from '../../../data/action/chatActions';
 import * as EditorActions from '../../../data/action/editorActions';
 import { Tab } from './tab';
-import { IRootState } from '../../../data/store';
+import { RootState } from '../../../data/store';
 import { EmulatorMode } from '../../editor/emulator/index';
 
 interface EmulatorTabProps {
@@ -68,7 +68,7 @@ class EmulatorTabComponent extends React.Component<EmulatorTabProps> {
   }
 }
 
-const mapStateToProps = (state: IRootState, ownProps: EmulatorTabProps): EmulatorTabProps => {
+const mapStateToProps = (state: RootState, ownProps: EmulatorTabProps): EmulatorTabProps => {
   const { mode, documentId } = ownProps;
   let title;
   if (mode === 'livechat') {

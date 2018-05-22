@@ -40,7 +40,7 @@ import { ServicesExplorerBarContainer } from "./servicesExplorerBar";
 import { Colors, InsetShadow } from '@bfemulator/ui-react';
 import * as Constants from '../../../constants';
 import { IBotConfig } from 'msbot/bin/schema';
-import { IRootState } from '../../../data/store';
+import { RootState } from '../../../data/store';
 
 const CSS = css({
   backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
@@ -81,7 +81,7 @@ class ExplorerBarComponent extends React.Component<ExplorerBarProps> {
   }
 }
 
-const mapStateToProps = (state: IRootState): ExplorerBarProps => ({
+const mapStateToProps = (state: RootState): ExplorerBarProps => ({
   activeBot: state.bot.activeBot,
   selectedNavTab: state.navBar.selection
 });

@@ -42,7 +42,7 @@ import {
   Content as TabbedDocumentContent
 } from './index';
 import { filterChildren } from '@bfemulator/ui-react';
-import { IRootState } from '../../../data/store';
+import { RootState } from '../../../data/store';
 import { hmrSafeNameComparison } from '@bfemulator/ui-react';
 
 const CSS = css({
@@ -105,7 +105,7 @@ class MultiTabsComponent extends React.Component<MultiTabsProps> {
   }
 }
 
-const mapStateToProps = (state: IRootState): MultiTabsProps => ({
+const mapStateToProps = (state: RootState): MultiTabsProps => ({
   presentationModeEnabled: state.presentation.enabled
 });
 

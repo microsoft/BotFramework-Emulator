@@ -37,7 +37,7 @@ import { css } from 'glamor';
 
 import { OVERLAY_CSS } from './overlayStyle';
 import * as Constants from '../../../../constants';
-import { IRootState } from '../../../../data/store';
+import { RootState } from '../../../../data/store';
 
 const CSS = css({
   top: 0,
@@ -97,7 +97,7 @@ class LeftContentOverlayComponent extends React.Component<LeftContentOverlayProp
   }
 }
 
-const mapStateToProps = (state: IRootState): LeftContentOverlayProps => ({
+const mapStateToProps = (state: RootState): LeftContentOverlayProps => ({
   draggingTab: state.editor.draggingTab
 });
 

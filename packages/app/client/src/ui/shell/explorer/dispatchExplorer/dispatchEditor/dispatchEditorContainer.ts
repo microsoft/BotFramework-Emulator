@@ -32,11 +32,11 @@
 //
 
 import { connect } from 'react-redux';
-import { IRootState } from '../../../../../data/store';
+import { RootState } from '../../../../../data/store';
 import { DialogService } from '../../../../dialogs/service';
 import { DispatchEditor } from './dispatchEditor';
 
-const mapStateToProps = (state: IRootState, ownProps: { [propName: string]: any }) => {
+const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }) => {
   return {
     ...ownProps
   };

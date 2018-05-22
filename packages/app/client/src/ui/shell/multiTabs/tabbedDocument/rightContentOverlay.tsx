@@ -37,7 +37,7 @@ import { connect } from 'react-redux';
 import * as Constants from '../../../../constants';
 import * as EditorActions from '../../../../data/action/editorActions';
 import { IEditor } from '../../../../data/reducer/editor';
-import { IRootState } from '../../../../data/store';
+import { RootState } from '../../../../data/store';
 import { OVERLAY_CSS } from './overlayStyle';
 
 const CSS = css({
@@ -104,7 +104,7 @@ class RightContentOverlayComponent extends React.Component<RightContentOverlayPr
   }
 }
 
-const mapStateToProps = (state: IRootState): RightContentOverlayProps => ({
+const mapStateToProps = (state: RootState): RightContentOverlayProps => ({
   draggingTab: state.editor.draggingTab,
   primaryEditor: state.editor.editors[Constants.EditorKey_Primary]
 });

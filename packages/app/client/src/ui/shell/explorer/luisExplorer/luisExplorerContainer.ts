@@ -35,11 +35,11 @@ import { ILuisService, ServiceType } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
 import { connect } from 'react-redux';
 import { launchLuisEditor, openLuisDeepLink, openLuisExplorerContextMenu } from '../../../../data/action/luisServiceActions';
-import { IRootState } from '../../../../data/store';
+import { RootState } from '../../../../data/store';
 import { LuisEditor } from './luisEditor/luisEditor';
 import { LuisExplorer } from './luisExplorer';
 
-const mapStateToProps = (state: IRootState) => {
+const mapStateToProps = (state: RootState) => {
   const { services } = state.bot.activeBot;
   return {
     luisServices: services.filter(service => service.type === ServiceType.Luis),

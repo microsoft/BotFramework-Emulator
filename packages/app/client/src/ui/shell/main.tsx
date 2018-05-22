@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
 import { css } from 'glamor';
 import * as React from 'react';
 
@@ -43,11 +42,7 @@ import { TabManager, DialogHost } from '../dialogs';
 import * as Constants from '../../constants';
 import { StatusBar } from './statusBar';
 import { StoreVisualizer } from '../debug/storeVisualizer';
-import store from '../../data/store';
-import { KeyCodes } from '@uifabric/utilities/lib';
-import * as PresentationActions from '../../data/action/presentationActions';
 import { IEditor } from '../../data/reducer/editor';
-import { IRootState } from '../../data/store';
 
 css.global('html, body, #root', {
   backgroundColor: Colors.APP_BACKGROUND_DARK,
@@ -188,21 +183,3 @@ export class Main extends React.Component<MainProps, MainState> {
     );
   }
 }
-
-const mapStateToProps = (state: IRootState): MainProps => ({
-  presentationModeEnabled: state.presentation.enabled,
-  primaryEditor: state.editor.editors[Constants.EditorKey_Primary],
-  secondaryEditor: state.editor.editors[Constants.EditorKey_Secondary],
-  showingExplorer: state.explorer.showing,
-  navBarSelection: state.navBar.selection
-});
-
-const mapDispatchToProps = (dispatch): MainProps => ({
-  exitPresentationMode: (e) => {
-    if (e.keyCode === KeyCodes.escape) {
-      dispatch(PresentationActions.disable());
-    }
-  }
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Main);

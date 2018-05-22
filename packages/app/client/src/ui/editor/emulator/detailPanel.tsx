@@ -38,9 +38,9 @@ import { connect } from 'react-redux';
 
 import { Detail } from './parts/detail';
 import Panel, { PanelControls, PanelContent } from '../panel';
-import { ExtensionManager, IGetInspectorResult, Extension } from '../../../extensions';
+import { ExtensionManager, GetInspectorResult, Extension } from '../../../extensions';
 import { IExtensionInspector, IInspectorAccessory, IInspectorAccessoryState } from '@bfemulator/sdk-shared';
-import { IRootState } from '../../../data/store';
+import { RootState } from '../../../data/store';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 import { Colors } from '@bfemulator/ui-react';
 
@@ -89,7 +89,7 @@ interface DetailPanelState {
 }
 
 interface GetInspectorResult {
-  response: IGetInspectorResult;
+  response: GetInspectorResult;
   inspectObj: any;
 }
 
@@ -266,7 +266,7 @@ class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
   }
 }
 
-function mapStateToProps(state: IRootState, ownProps: DetailPanelProps): DetailPanelProps {
+function mapStateToProps(state: RootState, ownProps: DetailPanelProps): DetailPanelProps {
   return {
     ...ownProps,
     bot: state.bot.activeBot

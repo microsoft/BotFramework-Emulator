@@ -42,7 +42,7 @@ import * as NavBarActions from '../../../data/action/navBarActions';
 import * as EditorActions from '../../../data/action/editorActions';
 import * as ExplorerActions from '../../../data/action/explorerActions';
 import { CommandRegistry } from '../../../commands';
-import { IRootState } from '../../../data/store';
+import { RootState } from '../../../data/store';
 import { IBotConfig } from 'msbot/bin/schema';
 import { CommandService } from '../../../platform/commands/commandService';
 import { NavLink } from './navLink';
@@ -106,7 +106,7 @@ class NavBarComponent extends React.Component<NavBarProps> {
   }
 }
 
-const mapStateToProps = (state: IRootState): NavBarProps => ({
+const mapStateToProps = (state: RootState): NavBarProps => ({
   activeBot: state.bot.activeBot
 });
 

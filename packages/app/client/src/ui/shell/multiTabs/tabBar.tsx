@@ -43,7 +43,7 @@ import * as Constants from '../../../constants';
 import { getOtherTabGroup } from '../../../data/editorHelpers';
 import * as PresentationActions from '../../../data/action/presentationActions';
 import { IEditor, IDocument } from '../../../data/reducer/editor';
-import { IRootState } from '../../../data/store';
+import { RootState } from '../../../data/store';
 
 const CSS = css({
   display: 'flex',
@@ -223,7 +223,7 @@ class TabBarComponent extends React.Component<TabBarProps, TabBarState> {
   }
 }
 
-const mapStateToProps = (state: IRootState, ownProps: TabBarProps): TabBarProps => ({
+const mapStateToProps = (state: RootState, ownProps: TabBarProps): TabBarProps => ({
   activeDocumentId: state.editor.editors[ownProps.owningEditor].activeDocumentId,
   activeEditor: state.editor.activeEditor,
   editors: state.editor.editors,

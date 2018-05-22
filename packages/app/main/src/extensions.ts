@@ -31,17 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IPC, IDisposable, Disposable, CommandService, IExtensionConfig, uniqueId, NoopIPC } from '@bfemulator/sdk-shared';
+import { CommandService, Disposable, IExtensionConfig, IPC, NoopIPC } from '@bfemulator/sdk-shared';
 import { ProcessIPC, WebSocketIPC, WebSocketServer } from '@bfemulator/sdk-main';
-import { getDirectories, readFileSync, isDev } from './utils';
-import { fork, ChildProcess } from 'child_process';
+import { getDirectories, readFileSync } from './utils';
+import { ChildProcess, fork } from 'child_process';
 import * as path from 'path';
 import { mainWindow } from './main';
-import { CommandRegistry } from './commands';
-import { ElectronIPC } from './ipc';
 import * as WebSocket from 'ws';
 
-//=============================================================================
+// =============================================================================
 export interface IExtension {
   readonly unid: string;
   readonly config: IExtensionConfig;
@@ -51,7 +49,7 @@ export interface IExtension {
   disconnect();
 }
 
-//=============================================================================
+// =============================================================================
 export abstract class Extension extends Disposable implements IExtension {
   protected _ext: CommandService;
   protected _cli: CommandService;
@@ -66,25 +64,25 @@ export abstract class Extension extends Disposable implements IExtension {
     this.toDispose(this._ipc);
     this.toDispose(this._ext);
 
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     // Methods callable by extension
     this._ext.on('ext-ping', () => {
       return 'ext-pong';
     });
 
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     // Methods callable by client interface
     this._cli.on('cli-ping', () => {
       return 'cli-pong';
     });
 
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     // Pass unknown commands from client to extension
     this._cli.on('command-not-found', (commandName: string, ...args: any[]): Promise<any> => {
       return this._ext.remoteCall(commandName, ...args);
     });
 
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     // Pass unknown commands from extension to shell
     this._ext.on('command-not-found', (commandName: string, ...args: any[]): Promise<any> => {
       return mainWindow.commandService.call(commandName, ...args);
@@ -108,7 +106,7 @@ export abstract class Extension extends Disposable implements IExtension {
   }
 }
 
-//=============================================================================
+// =============================================================================
 export class ChildExtension extends Extension {
 
   constructor(config: IExtensionConfig, private _process: ChildProcess) {
@@ -120,16 +118,16 @@ export class ChildExtension extends Extension {
   }
 
   public connect() {
-    this.call('connect').catch(() => { });
+    this.call('connect').catch(() => null);
   }
 
   public disconnect() {
-    this.call('disconnect').catch(() => { });
+    this.call('disconnect').catch(() => null);
     this._process.disconnect();
   }
 }
 
-//=============================================================================
+// =============================================================================
 export class PeerExtension extends Extension {
   constructor(config: IExtensionConfig, private _wsipc: WebSocketIPC) {
     super(config, _wsipc);
@@ -140,26 +138,26 @@ export class PeerExtension extends Extension {
   }
 
   public connect() {
-    this.call('connect').catch(() => { });
+    this.call('connect').catch(() => null);
   }
 
   public disconnect() {
-    this.call('disconnect').catch(() => { });
+    this.call('disconnect').catch(() => null);
   }
 }
 
-//=============================================================================
+// =============================================================================
 export class ClientExtension extends Extension {
   static counter: number = 0;
   constructor(config: IExtensionConfig) {
     super(config, new NoopIPC(--ClientExtension.counter));
   }
-  on(event: 'exit', listener: NodeJS.ExitListener) { }
-  connect() { }
-  disconnect() { }
+  on() { return null; }
+  connect() { return null; }
+  disconnect() { return null; }
 }
 
-//=============================================================================
+// =============================================================================
 export interface IExtensionManager {
   findExtension(name: string): IExtension;
   addExtension(extension: IExtension, configPath: string);
@@ -167,28 +165,10 @@ export interface IExtensionManager {
   unloadExtensions();
 }
 
-//=============================================================================
+// =============================================================================
 export const ExtensionManager = new class extends Disposable implements IExtensionManager {
 
   private extensions: { [unid: string]: IExtension } = {};
-
-  // Check whether we're running from an 'app.asar' packfile. If so, it means we were installed
-  // using an installer (as opposed to running a developer build).
-  private isPacked(): boolean {
-    return /[\\/]app.asar[\\/]/.test(__dirname);
-  }
-
-  // Most source files of the installed application exist in a packed archive called 'app.asar'.
-  // The emulator is configured to unpack extensions out of the asar file onto disk in a folder
-  // called 'app.asar.unpacked'. Electron doesn't support an automatic way to remap file paths
-  // from packed to unpacked locations, so we're doing that manually here.
-  private unpackedFolder(filename: string) {
-    if (path.isAbsolute(filename) && this.isPacked()) {
-      return filename.replace('app.asar', 'app.asar.unpacked');
-    } else {
-      return filename;
-    }
-  }
 
   public findExtension(name: string): IExtension {
     for (let unid in this.extensions) {
@@ -203,9 +183,11 @@ export const ExtensionManager = new class extends Disposable implements IExtensi
     let folders = [];
     try {
       // Get all subdirectories under ../extensions
-      const folder = this.unpackedFolder(path.resolve(path.join(__dirname, "..", "extensions")));
+      const folder = this.unpackedFolder(path.resolve(path.join(__dirname, '..', 'extensions')));
       folders = getDirectories(folder);
-    } catch (err) { }
+    } catch {
+      // do nothing
+    }
     // Load each extension
     folders.forEach(folder => {
       try {
@@ -218,7 +200,9 @@ export const ExtensionManager = new class extends Disposable implements IExtensi
 
   public unloadExtensions() {
     for (let unid in this.extensions) {
-      this.unloadExtension(unid);
+      if (this.extensions.hasOwnProperty(unid)) {
+        this.unloadExtension(unid);
+      }
     }
   }
 
@@ -253,27 +237,27 @@ export const ExtensionManager = new class extends Disposable implements IExtensi
     extension.config.client = extension.config.client || {};
     extension.config.node = extension.config.node || {};
     // Cleanup basePath (root of webpack-dev-server, where index.html would live)
-    extension.config.client.basePath = (extension.config.client.basePath || "").replace(/\\/g, '/');
+    extension.config.client.basePath = (extension.config.client.basePath || '').replace(/\\/g, '/');
     // Get the list of inspectors
     const inspectors = extension.config.client.inspectors || [];
     // Cleanup inspector paths
     inspectors.forEach(inspector => {
-      inspector.src = (inspector.src || "").replace(/\\/g, '/');
+      inspector.src = (inspector.src || '').replace(/\\/g, '/');
     });
     if (extension.config.client.debug
       && extension.config.client.debug.enabled
       && extension.config.client.debug.webpack) {
       // If running in debug mode, rewrite inspector paths as http URLs for webpack-dev-server.
       const port = extension.config.client.debug.webpack.port || 3030;
-      const host = extension.config.client.debug.webpack.host || "localhost";
+      const host = extension.config.client.debug.webpack.host || 'localhost';
       inspectors.forEach(inspector => {
-        inspector.src = `http://${host}:${port}/${inspector.src}`.replace(extension.config.client.basePath, "");
+        inspector.src = `http://${host}:${port}/${inspector.src}`.replace(extension.config.client.basePath, '');
       });
     } else {
       // If not in debug mode, rewrite paths as file path URLs.
       inspectors.forEach(inspector => {
         let folder = path.resolve(configPath).replace(/\\/g, '/');
-        if (folder[0] != '/') {
+        if (folder[0] !== '/') {
           folder = `/${folder}`;
         }
         inspector.src = `file://${folder}/` + inspector.src;
@@ -283,6 +267,24 @@ export const ExtensionManager = new class extends Disposable implements IExtensi
     extension.connect();
     // Notify the client of the new extension.
     mainWindow.commandService.remoteCall('shell:extension-connect', extension.config, extension.unid);
+  }
+
+  // Check whether we're running from an 'app.asar' packfile. If so, it means we were installed
+  // using an installer (as opposed to running a developer build).
+  private isPacked(): boolean {
+    return /[\\/]app.asar[\\/]/.test(__dirname);
+  }
+
+  // Most source files of the installed application exist in a packed archive called 'app.asar'.
+  // The emulator is configured to unpack extensions out of the asar file onto disk in a folder
+  // called 'app.asar.unpacked'. Electron doesn't support an automatic way to remap file paths
+  // from packed to unpacked locations, so we're doing that manually here.
+  private unpackedFolder(filename: string) {
+    if (path.isAbsolute(filename) && this.isPacked()) {
+      return filename.replace('app.asar', 'app.asar.unpacked');
+    } else {
+      return filename;
+    }
   }
 
   private spawnExtension(folder: string) {
@@ -312,10 +314,12 @@ export const ExtensionManager = new class extends Disposable implements IExtensi
               try {
                 // This extension is going to connect to us over websocket. Once that
                 // connection is established we'll add the extension.
-                const wss = new ExtensionServer(port);
+                // const wss = new ExtensionServer(port);
                 console.log(`Waiting for extension ${config.name} to connect on port ${port}`);
               } catch (err) {
-                console.log(`Failed to spawn WebSocketServer on port ${port}. Extension ${config.name} will be unable to connect.`, err);
+                const msg = `Failed to spawn WebSocketServer on port ${port}. 
+                Extension ${config.name} will be unable to connect.`;
+                console.log(msg, err);
               }
             }
           } else if (config.node.main) {
@@ -340,20 +344,22 @@ export const ExtensionManager = new class extends Disposable implements IExtensi
       }
     } catch (err) {
       // Something went wrong. If we still have a child process, try to kill it.
-      console.log("Failed to spawn extension", folder, err);
+      console.log('Failed to spawn extension', folder, err);
       try {
         if (child) {
           child.kill();
         }
-      } catch (ex) { }
+      } catch {
+        // do nothing
+      }
     }
   }
-}
+};
 
-//=============================================================================
+// =============================================================================
 class PendingExtension extends Disposable {
-  private _ipc: WebSocketIPC;
-  private _ext: CommandService;
+  private readonly _ipc: WebSocketIPC;
+  private readonly _ext: CommandService;
 
   constructor(private _ws: WebSocket) {
     super();
@@ -376,14 +382,14 @@ class PendingExtension extends Disposable {
       });
   }
 }
-//=============================================================================
+// =============================================================================
 class ExtensionServer extends WebSocketServer {
 
   constructor(port: number) {
     super(port);
   }
 
-  public onConnection(ws: WebSocket): void {
-    new PendingExtension(ws);
+  public onConnection(ws: WebSocket): PendingExtension {
+    return new PendingExtension(ws);
   }
 }
