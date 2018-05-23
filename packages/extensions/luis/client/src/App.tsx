@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IInspectorHost } from '@bfemulator/sdk-client';
+import { InspectorHost } from '@bfemulator/sdk-client';
 import { Colors, Splitter } from '@bfemulator/ui-react';
 import { css } from 'glamor';
 import { IBotConfig, IDispatchService, ILuisService, ServiceType, IConnectedService } from 'msbot/bin/schema';
@@ -49,7 +49,7 @@ import { IntentInfo } from './Luis/IntentInfo';
 import { LuisAppInfo } from './Models/LuisAppInfo';
 import { LuisTraceInfo } from './Models/LuisTraceInfo';
 
-let $host: IInspectorHost = (window as any).host;
+let $host: InspectorHost = (window as any).host;
 const LuisApiBasePath = 'https://westus.api.cognitive.microsoft.com/luis/api/v2.0';
 const TrainAccessoryId = 'train';
 const PublichAccessoryId = 'publish';

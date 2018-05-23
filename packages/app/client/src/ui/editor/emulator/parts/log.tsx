@@ -38,8 +38,8 @@ import * as ChatActions from '../../../../data/action/chatActions';
 import store from '../../../../data/store';
 import { Colors, Fonts } from '@bfemulator/ui-react';
 import { ExtensionManager, InspectorAPI } from '../../../../extensions';
-import { ILogEntry, ILogItem, LogLevel } from '@bfemulator/app-shared';
-import { CommandService } from '../../../../platform/commands/commandService';
+import { LogEntry, LogItem, LogLevel } from '@bfemulator/app-shared';
+import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
 
 const CSS = css({
   height: '100%',
@@ -156,7 +156,7 @@ export default class Log extends React.Component<LogProps, LogState> {
       <div { ...CSS } ref={ ref => this.scrollMe = ref }>
         {
           this.props.document.log.entries.map(entry =>
-            <LogEntry key={ `entry-${key++}` } entry={ entry } document={ this.props.document }/>
+            <LogEntryComponent key={ `entry-${key++}` } entry={ entry } document={ this.props.document }/>
           )
         }
       </div>
@@ -166,10 +166,10 @@ export default class Log extends React.Component<LogProps, LogState> {
 
 export interface LogEntryProps {
   document: any;
-  entry: ILogEntry;
+  entry: LogEntry;
 }
 
-class LogEntry extends React.Component<LogEntryProps> {
+class LogEntryComponent extends React.Component<LogEntryProps> {
 
   inspect(obj: {}) {
     this.props.document.selectedActivity$.next({});
@@ -203,7 +203,7 @@ class LogEntry extends React.Component<LogEntryProps> {
     );
   }
 
-  renderItem(item: ILogItem, key: string) {
+  renderItem(item: LogItem, key: string) {
     switch (item.type) {
       case 'text': {
         const { level, text } = item.payload;
@@ -257,7 +257,7 @@ class LogEntry extends React.Component<LogEntryProps> {
   renderAppSettingsItem(text: string, key: string) {
     return (
       <span key={ key } className="spaced">
-        <a onClick={ () => CommandService.call('shell:show-app-settings') }>{ text }</a>
+        <a onClick={ () => CommandServiceImpl.call('shell:show-app-settings') }>{ text }</a>
       </span>
     );
   }

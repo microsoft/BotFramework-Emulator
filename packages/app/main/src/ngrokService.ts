@@ -34,13 +34,17 @@
 import { promisify } from 'util';
 
 import { emulator } from './emulator';
-import { getStore, addSettingsListener, getSettings } from './settings';
+import { addSettingsListener, getStore } from './settings';
 import { isLocalhostUrl } from './utils';
 import * as ngrok from './ngrok';
 import { mainWindow } from './main';
 import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
-import { textItem, exceptionItem, externalLinkItem, appSettingsItem } from '@bfemulator/emulator-core/lib/types/log/util';
-
+import {
+  appSettingsItem,
+  exceptionItem,
+  externalLinkItem,
+  textItem
+} from '@bfemulator/emulator-core/lib/types/log/util';
 
 export class NgrokService {
   private _ngrokPath: string;
@@ -63,9 +67,12 @@ export class NgrokService {
     }
   }
 
-  public getSpawnStatus = (): { triedToSpawn: boolean, err: any } => ({ triedToSpawn: this._triedToSpawn, err: this._spawnErr });
+  public getSpawnStatus = (): { triedToSpawn: boolean, err: any } => ({
+    triedToSpawn: this._triedToSpawn,
+    err: this._spawnErr
+  })
 
-  public getNgrokServiceUrl() : string {
+  public getNgrokServiceUrl(): string {
     return this._serviceUrl;
   }
 
@@ -114,23 +121,33 @@ export class NgrokService {
   }
 
   public report(conversationId: string): void {
+    // TODO - localization
     if (this._spawnErr) {
-      mainWindow.logService.logToChat(conversationId, textItem(LogLevel.Error, "Failed to spawn ngrok"), exceptionItem(this._spawnErr));
+      mainWindow.logService.logToChat(conversationId,
+        textItem(LogLevel.Error, 'Failed to spawn ngrok'), exceptionItem(this._spawnErr));
     } else if (!this._ngrokPath || !this._ngrokPath.length) {
-      mainWindow.logService.logToChat(conversationId, textItem(LogLevel.Debug, "ngrok not configured (only needed when connecting to remotely hosted bots)"));
-      mainWindow.logService.logToChat(conversationId, externalLinkItem("Connecting to bots hosted remotely", 'https://aka.ms/cnjvpo'));
-      mainWindow.logService.logToChat(conversationId, appSettingsItem("Edit ngrok settings"));
+      mainWindow.logService.logToChat(conversationId,
+        textItem(LogLevel.Debug, 'ngrok not configured (only needed when connecting to remotely hosted bots)'));
+      mainWindow.logService.logToChat(conversationId,
+        externalLinkItem('Connecting to bots hosted remotely', 'https://aka.ms/cnjvpo'));
+      mainWindow.logService.logToChat(conversationId, appSettingsItem('Edit ngrok settings'));
     } else if (ngrok.running()) {
       const bypassNgrokLocalhost = getStore().getState().framework.bypassNgrokLocalhost;
-      mainWindow.logService.logToChat(conversationId, textItem(LogLevel.Debug, `ngrok listening on ${this._serviceUrl}`));
-      mainWindow.logService.logToChat(conversationId, textItem(LogLevel.Debug, "ngrok traffic inspector:"), externalLinkItem(this._inspectUrl, this._inspectUrl));
+      mainWindow.logService.logToChat(conversationId,
+        textItem(LogLevel.Debug, `ngrok listening on ${this._serviceUrl}`));
+      mainWindow.logService.logToChat(conversationId,
+        textItem(LogLevel.Debug, 'ngrok traffic inspector:'),
+        externalLinkItem(this._inspectUrl, this._inspectUrl));
       if (bypassNgrokLocalhost) {
-        mainWindow.logService.logToChat(conversationId, textItem(LogLevel.Debug, "Will bypass ngrok for local addresses"));
+        mainWindow.logService.logToChat(conversationId,
+          textItem(LogLevel.Debug, 'Will bypass ngrok for local addresses'));
       } else {
-        mainWindow.logService.logToChat(conversationId, textItem(LogLevel.Debug, "Will use ngrok for local addresses"));
+        mainWindow.logService.logToChat(conversationId,
+          textItem(LogLevel.Debug, 'Will use ngrok for local addresses'));
       }
     } else {
-      mainWindow.logService.logToChat(conversationId, textItem(LogLevel.Debug, "ngrok configured but not running"));
+      mainWindow.logService.logToChat(conversationId,
+        textItem(LogLevel.Debug, 'ngrok configured but not running'));
     }
   }
 
@@ -143,12 +160,11 @@ export class NgrokService {
     }
     if (parts.length > 1) {
       // Ignore port, for now
-      //port = +parts[1].trim();
+      // port = +parts[1].trim();
     }
     this._localhost = hostname;
   }
 }
-
 
 function ngrokConnect({ path, port }: { path: string, port: number }): Promise<{ inspectUrl: string, url: string }> {
   return new Promise((resolve, reject) => {
@@ -160,14 +176,14 @@ function ngrokConnect({ path, port }: { path: string, port: number }): Promise<{
 
 async function killNgrok() {
   const killNgrokInternal = (cb) => {
-    ngrok.kill(wasRunning => {
-      cb(null, wasRunning);
+    ngrok.kill(wasRunning1 => {
+      cb(null, wasRunning1);
     });
-  }
+  };
 
   const wasRunning = await promisify(killNgrokInternal)();
 
   if (wasRunning) {
-    //log.debug('ngrok stopped');
+    // log.debug('ngrok stopped');
   }
 }

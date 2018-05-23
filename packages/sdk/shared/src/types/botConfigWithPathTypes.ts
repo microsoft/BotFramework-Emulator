@@ -34,18 +34,18 @@
 import { BotConfigModel } from 'msbot/bin/models';
 import { IBotConfig } from 'msbot/bin/schema';
 
-export interface IBotConfigWithPath extends IBotConfig {
+export interface BotConfigWithPath extends IBotConfig {
   path?: string;
 }
 
-export class BotConfigWithPath extends BotConfigModel implements IBotConfigWithPath {
+export class BotConfigWithPathImpl extends BotConfigModel implements BotConfigWithPath {
   public path = '';
 
-  static fromJSON(source: Partial<BotConfigWithPath>): BotConfigWithPath {
+  static fromJSON(source: Partial<BotConfigWithPathImpl>): BotConfigWithPathImpl {
 
-    const botConfig = super.fromJSON(source) as Partial<BotConfigWithPath>;
+    const botConfig = super.fromJSON(source) as Partial<BotConfigWithPathImpl>;
     const { path = '' } = source;
-    const botConfigWithPath = new BotConfigWithPath();
+    const botConfigWithPath = new BotConfigWithPathImpl();
     Object.assign(botConfigWithPath, botConfig, { path });
 
     return botConfigWithPath;

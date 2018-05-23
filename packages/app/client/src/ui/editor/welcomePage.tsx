@@ -34,10 +34,10 @@ import { hot } from 'react-hot-loader';
 import { css } from 'glamor';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { IBotInfo } from '@bfemulator/app-shared';
+import { BotInfo } from '@bfemulator/app-shared';
 
 import { Colors, Column, Row, PrimaryButton, LargeHeader, SmallHeader, TruncateText } from '@bfemulator/ui-react';
-import { CommandService } from '../../platform/commands/commandService';
+import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { GenericDocument } from '../layout';
 import { RootState } from '../../data/store';
 
@@ -133,20 +133,20 @@ const CSS = css({
 
 interface WelcomePageProps {
   documentId?: string;
-  recentBots?: IBotInfo[];
+  recentBots?: BotInfo[];
 }
 
 class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
   onNewBotClick = () => {
-    CommandService.call('bot-creation:show');
+    CommandServiceImpl.call('bot-creation:show');
   }
 
   onOpenBotClick = () => {
-    CommandService.call('bot:browse-open');
+    CommandServiceImpl.call('bot:browse-open');
   }
 
   onBotClick = (_e: any, path) => {
-    CommandService.call('bot:switch', path);
+    CommandServiceImpl.call('bot:switch', path);
   }
 
   render() {

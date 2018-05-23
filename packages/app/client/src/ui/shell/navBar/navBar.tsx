@@ -42,8 +42,9 @@ import * as NavBarActions from '../../../data/action/navBarActions';
 import * as ExplorerActions from '../../../data/action/explorerActions';
 import { RootState } from '../../../data/store';
 import { IBotConfig } from 'msbot/bin/schema';
-import { CommandService } from '../../../platform/commands/commandService';
+import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { NavLink } from './navLink';
+import { MouseEvent } from 'react';
 
 const CSS = css({
   backgroundColor: Colors.NAVBAR_BACKGROUND_DARK,
@@ -74,8 +75,8 @@ interface NavBarProps {
   activeBot?: IBotConfig;
   selection?: string;
   showingExplorer?: boolean;
-  handleClick?: (evt: Event, selection: string) => void;
-  handleSettingsClick?: (evt: Event) => void;
+  handleClick?: (evt: MouseEvent<HTMLAnchorElement>, selection: string) => void;
+  handleSettingsClick?: (evt: MouseEvent<HTMLAnchorElement>) => void;
 }
 
 class NavBarComponent extends React.Component<NavBarProps> {
@@ -103,7 +104,7 @@ class NavBarComponent extends React.Component<NavBarProps> {
 
   private handleBotSettingsClick = () => {
     if (this.props.activeBot) {
-      CommandService.call('bot-settings:open', this.props.activeBot);
+      CommandServiceImpl.call('bot-settings:open', this.props.activeBot);
     }
   }
 }
@@ -115,7 +116,7 @@ const mapStateToProps = (state: RootState): NavBarProps => ({
 const mapDispatchToProps = (dispatch, ownProps: NavBarProps): NavBarProps => ({
   // handleSettingsClick: () => dispatch(EditorActions.open(Constants.CONTENT_TYPE_APP_SETTINGS,
   // Constants.DOCUMENT_ID_APP_SETTINGS, true, null)),
-  handleClick: (_evt: Event, selection: string) => {
+  handleClick: (_evt: MouseEvent<HTMLAnchorElement>, selection: string) => {
     if (ownProps.selection === selection) {
       // toggle explorer when clicking the same navbar icon
       dispatch(ExplorerActions.show(!ownProps.showingExplorer));

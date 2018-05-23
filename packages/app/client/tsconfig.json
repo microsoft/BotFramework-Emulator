@@ -18,7 +18,7 @@
     // "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedParameters": false,
     // Should disable this when RxJS 6 release, and it should play nice with TS >= 2.4.1
     "skipLibCheck": true
   },
@@ -29,7 +29,8 @@
     "./build",
     "./built",
     "./scripts",
-    "node_modules",
+    "**/spec.ts*",
+    "**/node_modules",
     "./packages",
     "./public"
   ]

@@ -31,51 +31,51 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-//=============================================================================
-export interface IExtensionPortal {
+// =============================================================================
+export interface ExtensionPortal {
   title?: string;
   url?: string;
 }
 
-//=============================================================================
-export interface IExtensionFile {
+// =============================================================================
+export interface ExtensionFile {
   type?: string;
   value?: string;
 }
 
-//=============================================================================
-export interface IInspectorCriteria {
+// =============================================================================
+export interface InspectorCriteria {
   path?: string;
   value?: string;
 }
 
-//=============================================================================
-export interface IInspectorAccessory {
+// =============================================================================
+export interface InspectorAccessory {
   id?: string;
-  states?: { [id: string]: IInspectorAccessoryState };
+  states?: { [id: string]: InspectorAccessoryState };
 }
 
-//=============================================================================
-export interface IInspectorAccessoryState {
+// =============================================================================
+export interface InspectorAccessoryState {
   label?: string;
   icon?: string;
 }
 
-//=============================================================================
-export interface IExtensionInspector {
+// =============================================================================
+export interface ExtensionInspector {
   name?: string;
   src?: string;
-  criteria?: IInspectorCriteria | IInspectorCriteria[];
+  criteria?: InspectorCriteria | InspectorCriteria[];
   summaryText?: string | string[];
-  accessories?: IInspectorAccessory[];
+  accessories?: InspectorAccessory[];
 }
 
-//=============================================================================
-export interface IExtensionConfigClient {
+// =============================================================================
+export interface ExtensionConfigClient {
   basePath?: string;
-  portals?: IExtensionPortal[];
-  files?: IExtensionFile[];
-  inspectors?: IExtensionInspector[];
+  portals?: ExtensionPortal[];
+  files?: ExtensionFile[];
+  inspectors?: ExtensionInspector[];
   debug?: {
     enabled?: boolean;
     webpack?: {
@@ -85,8 +85,8 @@ export interface IExtensionConfigClient {
   };
 }
 
-//=============================================================================
-export interface IExtensionConfigNode {
+// =============================================================================
+export interface ExtensionConfigNode {
   main?: string;
   debug?: {
     enabled?: boolean,
@@ -97,10 +97,10 @@ export interface IExtensionConfigNode {
   };
 }
 
-//=============================================================================
-export interface IExtensionConfig {
+// =============================================================================
+export interface ExtensionConfig {
   name?: string;
   location?: string;
-  node?: IExtensionConfigNode;
-  client?: IExtensionConfigClient;
+  node?: ExtensionConfigNode;
+  client?: ExtensionConfigClient;
 }

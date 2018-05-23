@@ -34,7 +34,7 @@
 const Electron = (window as any).require('electron');
 const { shell } = Electron;
 import { uniqueId } from '@bfemulator/sdk-shared';
-import { CommandService } from './platform/commands/commandService';
+import { CommandServiceImpl } from './platform/commands/commandServiceImpl';
 import * as URL from 'url';
 
 export function navigate(url: string) {
@@ -54,13 +54,13 @@ export function navigate(url: string) {
 
 function navigateEmulatedOAuthUrl(oauthParam: string) {
   let parts = oauthParam.split('&&&');
-  CommandService.remoteCall('oauth:send-token-response', parts[0], parts[1], 'emulatedToken_' + uniqueId())
+  CommandServiceImpl.remoteCall('oauth:send-token-response', parts[0], parts[1], 'emulatedToken_' + uniqueId())
     .catch();
 }
 
 function navigateOAuthUrl(oauthParam: string) {
   let parts = oauthParam.split('&&&');
-  CommandService.remoteCall('oauth:create-oauth-window', parts[0], parts[1]).catch();
+  CommandServiceImpl.remoteCall('oauth:create-oauth-window', parts[0], parts[1]).catch();
 }
 
 // import * as URL from 'url';

@@ -31,7 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { APIException, createErrorResponse, ErrorCodes, IBotInfo, IErrorResponse, mergeDeep } from '@bfemulator/app-shared';
+import {
+  APIException,
+  BotInfo,
+  createErrorResponse,
+  ErrorCodes,
+  ErrorResponse,
+  mergeDeep
+} from '@bfemulator/app-shared';
 import { BrowserWindow, dialog, OpenDialogOptions, SaveDialogOptions } from 'electron';
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
@@ -55,7 +62,7 @@ const path = require('path');
 // https://github.com/nodejs/node/blob/master/lib/buffer.js
 const SUPPORTED_ENCODINGS_BASE: string[] = [
   'ascii',
-  'utf8',,
+  'utf8',
   'utf-8',
   'base64',
   'binary',
@@ -85,7 +92,8 @@ export function exceptionToAPIException(exception: any): APIException {
 }
 
 // send exception as error response
-export function sendErrorResponse(req: Restify.Request, res: Restify.Response, next: Restify.Next, exception: any): IErrorResponse {
+export function sendErrorResponse(req: Restify.Request, res: Restify.Response, next: Restify.Next, exception: any)
+  : ErrorResponse {
   let apiException = exceptionToAPIException(exception);
   res.send(apiException.statusCode, apiException.error);
   res.end();
@@ -140,39 +148,45 @@ export const isSecuretUrl = (urlStr: string): boolean => {
   return ( !!parsedUrl.protocol && parsedUrl.protocol.startsWith('https') );
 };
 
-export const directoryExists = (path) => {
+export const directoryExists = (path1: string) => {
   let stat = null;
   try {
-    stat = Fs.statSync(path);
-  } catch (e) {
+    stat = Fs.statSync(path1);
+  } catch {
+    // do nothing
   }
 
   if (!stat || !stat.isDirectory()) {
     return false;
-  } else return true;
+  } else {
+    return true;
+  }
 };
 
-export const fileExists = (path) => {
+export const fileExists = (path2: string) => {
   let stat = null;
   try {
-    stat = Fs.statSync(path);
-  } catch (e) {
+    stat = Fs.statSync(path2);
+  } catch {
+    // do nothing
   }
 
   if (!stat || !stat.isFile()) {
     return false;
-  } else return true;
+  } else {
+    return true;
+  }
 };
 
-export const getFilesInDir = (path) => {
-  return Fs.readdirSync(path, 'utf-8');
+export const getFilesInDir = (path3: string) => {
+  return Fs.readdirSync(path3, 'utf-8');
 };
 
-export const readFileSync = (path: string): string => {
+export const readFileSync = (path4: string): string => {
   try {
-    return readTextFile.readSync(path);
+    return readTextFile.readSync(path4);
   } catch (e) {
-    console.error(`Error reading file ${path}: ${e}`);
+    console.error(`Error reading file ${path4}: ${e}`);
     return '';
   }
 };
@@ -206,13 +220,13 @@ export const getSafeBotName = (): string => 'My Bot';
 
 /** Returns a list of subfolders */
 export const getDirectories = source =>
-  readdirSync(source).map(name => join(source, name)).filter(source => lstatSync(source).isDirectory());
+  readdirSync(source).map(name => join(source, name)).filter((sourceArg: any) => lstatSync(sourceArg).isDirectory());
 
 export function isDev(): boolean {
   return ( process.defaultApp || /node_modules[\\/]electron[\\/]/.test(process.execPath) );
 }
 
-export const getBotsFromDisk = (): IBotInfo[] => {
+export const getBotsFromDisk = (): BotInfo[] => {
   const botsJsonPath = path.join(ensureStoragePath(), 'bots.json');
   const botsJsonContents = readFileSync(botsJsonPath);
   const botsJson = botsJsonContents ? JSON.parse(botsJsonContents) : null;

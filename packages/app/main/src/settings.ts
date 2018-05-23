@@ -39,23 +39,22 @@ import { windowStateReducer } from './reducers/windowStateReducer';
 import { usersReducer } from './reducers/usersReducer';
 import { loadSettings, saveSettings } from './utils';
 import {
-  IBot,
-  IFrameworkSettings,
-  IWindowStateSettings,
-  IUserSettings,
-  IPersistentSettings,
-  ISettings,
+  Bot,
+  FrameworkSettings,
+  WindowStateSettings,
+  UserSettings,
+  PersistentSettings,
   Settings,
   settingsDefault
 } from '@bfemulator/app-shared';
 
-export class PersistentSettings implements IPersistentSettings {
-  public framework: IFrameworkSettings;
-  public bots: IBot[];
-  public windowState: IWindowStateSettings;
-  public users: IUserSettings;
+export class PersistentSettingsImpl implements PersistentSettings {
+  public framework: FrameworkSettings;
+  public bots: Bot[];
+  public windowState: WindowStateSettings;
+  public users: UserSettings;
 
-  constructor(settings: ISettings) {
+  constructor(settings: Settings) {
     Object.assign(this, {
       framework: settings.framework,
       bots: settings.bots,
@@ -66,9 +65,9 @@ export class PersistentSettings implements IPersistentSettings {
 }
 
 let started = false;
-let store: Store<ISettings>;
+let store: Store<Settings>;
 
-export const getStore = (): Store<ISettings> => {
+export const getStore = (): Store<Settings> => {
   console.assert(started, 'getStore() called before startup!');
   if (!store) {
     // Create the settings store with initial settings from disk.
@@ -80,7 +79,7 @@ export const getStore = (): Store<ISettings> => {
       windowState: windowStateReducer,
       users: usersReducer
     };
-    store = createStore(combineReducers<ISettings>(reducers), initialSettings);
+    store = createStore(combineReducers<Settings>(reducers), initialSettings);
   }
   return store;
 };
@@ -130,7 +129,7 @@ export const startup = () => {
       acting = false;
     }
     clearTimeout(saveTimer);
-    saveTimer = setTimeout(() => saveSettings('server.json', new PersistentSettings(getStore().getState())), 1000);
+    saveTimer = setTimeout(() => saveSettings('server.json', new PersistentSettingsImpl(getStore().getState())), 1000);
   });
 };
 

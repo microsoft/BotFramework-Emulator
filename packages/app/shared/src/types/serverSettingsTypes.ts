@@ -31,61 +31,61 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IBot } from './botTypes';
-import { IUser } from '@bfemulator/sdk-shared';
+import { Bot } from './botTypes';
+import { User } from '@bfemulator/sdk-shared';
 
-export interface IFrameworkSettings {
+export interface FrameworkSettings {
   // path to use for ngrok
-  ngrokPath?: string,
+  ngrokPath?: string;
   // option for deciding whether to bypass ngrok for bots on localhost
-  bypassNgrokLocalhost?: boolean,
-  stateSizeLimit?: number,
+  bypassNgrokLocalhost?: boolean;
+  stateSizeLimit?: number;
   // option for using 2.0 or 1.0 tokens
-  use10Tokens?: boolean,
+  use10Tokens?: boolean;
   // option for using a validation code for OAuthCards
-  useCodeValidation?: boolean,
-  // address to use for localhost, default: localhost
-  localhost?: string,
+  useCodeValidation?: boolean;
+  // address to use for localhost; default: localhost
+  localhost?: string;
   // locale to use across all endpoints
-  locale?: string
+  locale?: string;
 }
 
-export interface IWindowStateSettings {
-  displayId?: number,
-  zoomLevel?: number,
-  top?: number,
-  left?: number,
-  width?: number,
-  height?: number,
+export interface WindowStateSettings {
+  displayId?: number;
+  zoomLevel?: number;
+  top?: number;
+  left?: number;
+  width?: number;
+  height?: number;
 }
 
-export interface IUserSettings {
-  currentUserId?: string,
-  usersById?: { [id: string]: IUser }
+export interface UserSettings {
+  currentUserId?: string;
+  usersById?: { [id: string]: User };
 }
 
-export interface IPersistentSettings {
-  framework?: IFrameworkSettings,
-  bots?: IBot[],
-  windowState?: IWindowStateSettings,
-  users?: IUserSettings
+export interface PersistentSettings {
+  framework?: FrameworkSettings;
+  bots?: Bot[];
+  windowState?: WindowStateSettings;
+  users?: UserSettings;
 }
 
-export interface ISettings extends IPersistentSettings {
+export interface Settings extends PersistentSettings {
 }
 
-export class Settings implements ISettings {
-  public framework: IFrameworkSettings;
-  public bots: IBot[];
-  public windowState: IWindowStateSettings;
-  public users: IUserSettings;
+export class Settings implements Settings {
+  public framework: FrameworkSettings;
+  public bots: Bot[];
+  public windowState: WindowStateSettings;
+  public users: UserSettings;
 
-  constructor(settings?: ISettings) {
+  constructor(settings?: Settings) {
     Object.assign(this, settings);
   }
 }
 
-export const frameworkDefault: IFrameworkSettings = {
+export const frameworkDefault: FrameworkSettings = {
   ngrokPath: '',
   bypassNgrokLocalhost: true,
   stateSizeLimit: 64,
@@ -93,17 +93,17 @@ export const frameworkDefault: IFrameworkSettings = {
   useCodeValidation: false,
   localhost: 'localhost',
   locale: ''
-}
+};
 
-export const windowStateDefault: IWindowStateSettings = {
+export const windowStateDefault: WindowStateSettings = {
   zoomLevel: 0,
   width: 800,
   height: 600,
   left: 100,
   top: 50
-}
+};
 
-export const usersDefault: IUserSettings = {
+export const usersDefault: UserSettings = {
   currentUserId: 'default-user',
   usersById: {
     'default-user': {
@@ -111,19 +111,19 @@ export const usersDefault: IUserSettings = {
       name: 'User'
     }
   }
-}
+};
 
-export const settingsDefault: ISettings = {
+export const settingsDefault: Settings = {
   framework: frameworkDefault,
   bots: [
     {
-      "botId": "default-bot",
-      "botUrl": "http://localhost:3978/api/messages",
-      "msaAppId": "",
-      "msaPassword": "",
-      "locale": ""
+      'botId': 'default-bot',
+      'botUrl': 'http://localhost:3978/api/messages',
+      'msaAppId': '',
+      'msaPassword': '',
+      'locale': ''
     }
   ],
   windowState: windowStateDefault,
   users: usersDefault
-}
+};

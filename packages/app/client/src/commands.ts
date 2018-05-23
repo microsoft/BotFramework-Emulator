@@ -31,11 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { getBotDisplayName, IBotInfo } from '@bfemulator/app-shared';
+import { getBotDisplayName, BotInfo } from '@bfemulator/app-shared';
 
-import { CommandRegistry as CommReg, uniqueId } from '@bfemulator/sdk-shared';
+import { BotConfigWithPath, CommandRegistryImpl as CommReg, uniqueId } from '@bfemulator/sdk-shared';
 import { IBotConfig, IEndpointService } from 'msbot/bin/schema';
-import { IBotConfigWithPath } from '@bfemulator/sdk-shared';
 import * as Constants from './constants';
 import * as BotActions from './data/action/botActions';
 import * as ChatActions from './data/action/chatActions';
@@ -46,14 +45,10 @@ import { pathExistsInRecentBots } from './data/botHelpers';
 import { getTabGroupForDocument, showWelcomePage } from './data/editorHelpers';
 import store from './data/store';
 import { ExtensionManager } from './extensions';
-import { CommandService } from './platform/commands/commandService';
+import { CommandServiceImpl } from './platform/commands/commandServiceImpl';
 import * as LogService from './platform/log/logService';
 import * as SettingsService from './platform/settings/settingsService';
-import {
-  BotCreationDialog,
-  SecretPromptDialog,
-  DialogService
-} from './ui/dialogs';
+import { BotCreationDialog, DialogService, SecretPromptDialog } from './ui/dialogs';
 import { ActiveBotHelper } from './ui/helpers/activeBotHelper';
 
 // =============================================================================
@@ -110,7 +105,7 @@ export function registerCommands() {
   // ---------------------------------------------------------------------------
   // Completes the client side sync of the bot:load command on the server side
   // (NOTE: should NOT be called by itself; call server side instead)
-  CommandRegistry.registerCommand('bot:load', (bot: IBotConfigWithPath): void => {
+  CommandRegistry.registerCommand('bot:load', (bot: BotConfigWithPath): void => {
     if (!pathExistsInRecentBots(bot.path)) {
       // create and switch bots
       ActiveBotHelper.confirmAndCreateBot(bot, '');
@@ -121,9 +116,9 @@ export function registerCommands() {
 
   // ---------------------------------------------------------------------------
   // Syncs the client side list of bots with bots arg (usually called from server side)
-  CommandRegistry.registerCommand('bot:list:sync', async (bots: IBotInfo[]): Promise<void> => {
+  CommandRegistry.registerCommand('bot:list:sync', async (bots: BotInfo[]): Promise<void> => {
     store.dispatch(BotActions.load(bots));
-    CommandService.remoteCall('menu:update-recent-bots');
+    CommandServiceImpl.remoteCall('menu:update-recent-bots');
   });
 
   // ---------------------------------------------------------------------------
@@ -215,10 +210,10 @@ export function registerCommands() {
         }
       ],
     };
-    CommandService.remoteCall('shell:showOpenDialog', dialogOptions)
+    CommandServiceImpl.remoteCall('shell:showOpenDialog', dialogOptions)
       .then(filename => {
         if (filename && filename.length) {
-          CommandService.call('transcript:open', filename);
+          CommandServiceImpl.call('transcript:open', filename);
         }
       })
       .catch(err => console.error(err));
@@ -239,8 +234,8 @@ export function registerCommands() {
   CommandRegistry.registerCommand('bot:set-active', (bot: IBotConfig, botDirectory: string) => {
     store.dispatch(BotActions.setActive(bot));
     store.dispatch(FileActions.setRoot(botDirectory));
-    CommandService.remoteCall('menu:update-recent-bots');
-    CommandService.remoteCall('electron:set-title-bar', getBotDisplayName(bot));
+    CommandServiceImpl.remoteCall('menu:update-recent-bots');
+    CommandServiceImpl.remoteCall('electron:set-title-bar', getBotDisplayName(bot));
   });
 
   // ---------------------------------------------------------------------------

@@ -34,7 +34,7 @@
 import { IQnAService, ServiceType } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
 import { call, ForkEffect, takeEvery, takeLatest } from 'redux-saga/effects';
-import { CommandService } from '../../platform/commands/commandService';
+import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { DialogService } from '../../ui/dialogs/service';
 import { QnaMakerEditor } from '../../ui/shell/explorer/qnaMakerExplorer/qnaMakerEditor/qnaMakerEditor';
 import {
@@ -51,7 +51,7 @@ function* launchQnaMakerEditor(action: QnaMakerServiceAction<QnaMakerEditorPaylo
   const result = yield DialogService
     .showDialog<ComponentClass<QnaMakerEditor>>(qnaMakerEditorComponent, { qnaMakerService });
   if (result) {
-    yield CommandService.remoteCall('bot:add-or-update-service', ServiceType.QnA, result);
+    yield CommandServiceImpl.remoteCall('bot:add-or-update-service', ServiceType.QnA, result);
   }
 }
 
@@ -62,7 +62,7 @@ function* openQnaMakerContextMenu(action: QnaMakerServiceAction<QnaMakerServiceP
     { label: 'Open in web portal', id: 'open' },
     { label: 'Remove', id: 'forget' }
   ];
-  const response = yield call(CommandService.remoteCall.bind(CommandService), 'electron:displayContextMenu', menuItems);
+  const response = yield call(CommandServiceImpl.remoteCall.bind(CommandServiceImpl), 'electron:displayContextMenu', menuItems);
   switch (response.id) {
     case 'edit':
       yield* launchQnaMakerEditor(action);
@@ -84,11 +84,11 @@ function* openQnaMakerContextMenu(action: QnaMakerServiceAction<QnaMakerServiceP
 function* openQnaMakerDeepLink(action: QnaMakerServiceAction<QnaMakerServicePayload>): IterableIterator<any> {
   const { kbId } = action.payload.qnaMakerService;
   const link = `https://qnamaker.ai/Edit/KnowledgeBase?kbid=${kbId}`;
-  yield CommandService.remoteCall('electron:openExternal', link);
+  yield CommandServiceImpl.remoteCall('electron:openExternal', link);
 }
 
 function* removeQnaMakerServiceFromActiveBot(qnaService: IQnAService): IterableIterator<any> {
-  const result = yield CommandService.remoteCall('shell:show-message-box', true, {
+  const result = yield CommandServiceImpl.remoteCall('shell:show-message-box', true, {
     type: 'question',
     buttons: ['Cancel', 'OK'],
     defaultId: 1,
@@ -96,7 +96,7 @@ function* removeQnaMakerServiceFromActiveBot(qnaService: IQnAService): IterableI
     cancelId: 0,
   });
   if (result) {
-    yield CommandService.remoteCall('bot:remove-service', ServiceType.QnA, qnaService.id);
+    yield CommandServiceImpl.remoteCall('bot:remove-service', ServiceType.QnA, qnaService.id);
   }
 }
 

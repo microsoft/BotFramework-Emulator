@@ -33,7 +33,7 @@
 // Cheating here and pulling in a module from node. Can be easily replaced if we ever move the emulator to the web.
 const crypto = (window as any).require('crypto');
 import {  LogLevel, logEntry, textItem } from '@bfemulator/app-shared';
-import { IExtensionInspector } from '@bfemulator/sdk-shared';
+import { ExtensionInspector } from '@bfemulator/sdk-shared';
 import { css } from 'glamor';
 import { IBotConfig } from 'msbot/bin/schema';
 import * as React from 'react';
@@ -55,7 +55,7 @@ interface IpcMessageEvent extends Event {
 interface InspectorProps {
   bot: IBotConfig;
   extension: Extension;
-  inspector: IExtensionInspector;
+  inspector: ExtensionInspector;
   document: any;
   inspectObj: any;
   enableAccessory: (id: string, enable: boolean) => void;

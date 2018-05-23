@@ -45,7 +45,7 @@ const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (_dispatch: () => void) => {
   return {
     addLuisModels: updatedLuisModels => DialogService.hideDialog(updatedLuisModels),
     cancel: () => DialogService.hideDialog()

@@ -31,7 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CommandService, Disposable, IExtensionConfig, IPC, NoopIPC } from '@bfemulator/sdk-shared';
+import {
+  CommandService,
+  CommandServiceImpl,
+  DisposableImpl,
+  ExtensionConfig,
+  IPC,
+  NoopIPC
+} from '@bfemulator/sdk-shared';
 import { ProcessIPC, WebSocketIPC, WebSocketServer } from '@bfemulator/sdk-main';
 import { getDirectories, readFileSync } from './utils';
 import { ChildProcess, fork } from 'child_process';
@@ -40,27 +47,36 @@ import { mainWindow } from './main';
 import * as WebSocket from 'ws';
 
 // =============================================================================
-export interface IExtension {
+export interface Extension {
   readonly unid: string;
-  readonly config: IExtensionConfig;
+  readonly config: ExtensionConfig;
+
   on(event: 'exit', listener: NodeJS.ExitListener);
+
   call(commandName: string, ...args: any[]): Promise<any>;
+
   connect();
+
   disconnect();
 }
 
 // =============================================================================
-export abstract class Extension extends Disposable implements IExtension {
+export abstract class ExtensionImpl extends DisposableImpl implements Extension {
   protected _ext: CommandService;
   protected _cli: CommandService;
 
-  get unid(): string { return this._ipc.id.toString(); }
-  get config(): IExtensionConfig { return this._config; }
+  get unid(): string {
+    return this._ipc.id.toString();
+  }
 
-  constructor(private _config: IExtensionConfig, protected _ipc: IPC) {
+  get config(): ExtensionConfig {
+    return this._config;
+  }
+
+  constructor(private _config: ExtensionConfig, protected _ipc: IPC) {
     super();
-    this._ext = new CommandService(this._ipc, `ext-${this._ipc.id}`);
-    this._cli = new CommandService(mainWindow.ipc, `ext-${this._ipc.id}`);
+    this._ext = new CommandServiceImpl(this._ipc, `ext-${this._ipc.id}`);
+    this._cli = new CommandServiceImpl(mainWindow.ipc, `ext-${this._ipc.id}`);
     this.toDispose(this._ipc);
     this.toDispose(this._ext);
 
@@ -98,7 +114,9 @@ export abstract class Extension extends Disposable implements IExtension {
   }
 
   abstract on(event: 'exit', listener: NodeJS.ExitListener);
+
   abstract connect();
+
   abstract disconnect();
 
   toDispose(obj: any) {
@@ -107,9 +125,9 @@ export abstract class Extension extends Disposable implements IExtension {
 }
 
 // =============================================================================
-export class ChildExtension extends Extension {
+export class ChildExtension extends ExtensionImpl {
 
-  constructor(config: IExtensionConfig, private _process: ChildProcess) {
+  constructor(config: ExtensionConfig, private _process: ChildProcess) {
     super(config, new ProcessIPC(_process));
   }
 
@@ -128,8 +146,8 @@ export class ChildExtension extends Extension {
 }
 
 // =============================================================================
-export class PeerExtension extends Extension {
-  constructor(config: IExtensionConfig, private _wsipc: WebSocketIPC) {
+export class PeerExtension extends ExtensionImpl {
+  constructor(config: ExtensionConfig, private _wsipc: WebSocketIPC) {
     super(config, _wsipc);
   }
 
@@ -147,30 +165,43 @@ export class PeerExtension extends Extension {
 }
 
 // =============================================================================
-export class ClientExtension extends Extension {
+export class ClientExtension extends ExtensionImpl {
   static counter: number = 0;
-  constructor(config: IExtensionConfig) {
+
+  constructor(config: ExtensionConfig) {
     super(config, new NoopIPC(--ClientExtension.counter));
   }
-  on() { return null; }
-  connect() { return null; }
-  disconnect() { return null; }
+
+  on() {
+    return null;
+  }
+
+  connect() {
+    return null;
+  }
+
+  disconnect() {
+    return null;
+  }
 }
 
 // =============================================================================
-export interface IExtensionManager {
-  findExtension(name: string): IExtension;
-  addExtension(extension: IExtension, configPath: string);
+export interface ExtensionManager {
+  findExtension(name: string): ExtensionImpl;
+
+  addExtension(extension: ExtensionImpl, configPath: string);
+
   loadExtensions();
+
   unloadExtensions();
 }
 
 // =============================================================================
-export const ExtensionManager = new class extends Disposable implements IExtensionManager {
+export const ExtensionManagerImpl = new class extends DisposableImpl implements ExtensionManager {
 
-  private extensions: { [unid: string]: IExtension } = {};
+  private extensions: { [unid: string]: ExtensionImpl } = {};
 
-  public findExtension(name: string): IExtension {
+  public findExtension(name: string): ExtensionImpl {
     for (let unid in this.extensions) {
       if (this.extensions[unid].config.name === name) {
         return this.extensions[unid];
@@ -218,7 +249,7 @@ export const ExtensionManager = new class extends Disposable implements IExtensi
     }
   }
 
-  public addExtension(extension: IExtension, configPath: string) {
+  public addExtension(extension: ExtensionImpl, configPath: string) {
     // Cleanup configPath
     configPath = configPath.replace(/\\/g, '/');
     // Remove any previous extension with matching name.
@@ -357,31 +388,32 @@ export const ExtensionManager = new class extends Disposable implements IExtensi
 };
 
 // =============================================================================
-class PendingExtension extends Disposable {
+class PendingExtension extends DisposableImpl {
   private readonly _ipc: WebSocketIPC;
   private readonly _ext: CommandService;
 
   constructor(private _ws: WebSocket) {
     super();
     this._ipc = new WebSocketIPC(this._ws);
-    this._ext = new CommandService(this._ipc, 'connector');
+    this._ext = new CommandServiceImpl(this._ipc, 'connector');
     super.toDispose(this._ipc);
     super.toDispose(this._ext);
     this._ext.remoteCall('hello')
       .then((reply: {
         id: number,
         configPath: string,
-        config: IExtensionConfig
+        config: ExtensionConfig
       }) => {
         const ipc = new WebSocketIPC(this._ws);
         ipc.id = reply.id;
         const configPath = reply.configPath;
         const extension = new PeerExtension(reply.config, ipc);
-        ExtensionManager.addExtension(extension, configPath);
+        ExtensionManagerImpl.addExtension(extension, configPath);
         super.dispose();
       });
   }
 }
+
 // =============================================================================
 class ExtensionServer extends WebSocketServer {
 

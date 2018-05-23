@@ -31,31 +31,31 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ILogEntry } from '@bfemulator/app-shared';
-import { Disposable } from '@bfemulator/sdk-shared';
+import { LogEntry } from '@bfemulator/app-shared';
+import { DisposableImpl } from '@bfemulator/sdk-shared';
 import * as ChatActions from '../../data/action/chatActions';
 import store from '../../data/store';
 import { CommandRegistry } from '../../commands';
 import * as chatHelpers from '../../data/chatHelpers';
 
 export function registerCommands() {
-  CommandRegistry.registerCommand('conversation:log:append', (conversationId: string, entry: ILogEntry): any => {
+  CommandRegistry.registerCommand('conversation:log:append', (conversationId: string, entry: LogEntry): any => {
     LogService.logToChat(conversationId, entry);
   });
 }
 
-export const LogService = new class extends Disposable {
+export const LogService = new class extends DisposableImpl {
 
   init() { return null; }
 
-  logToChat(conversationId: string, entry: ILogEntry): void {
+  logToChat(conversationId: string, entry: LogEntry): void {
     const documentId = chatHelpers.documentIdForConversation(conversationId);
     if (documentId) {
       LogService.logToDocument(documentId, entry);
     }
   }
 
-  logToDocument(documentId: string, entry: ILogEntry): void {
+  logToDocument(documentId: string, entry: LogEntry): void {
     store.dispatch(ChatActions.appendToLog(documentId, entry));
   }
 };

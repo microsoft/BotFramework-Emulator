@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ILogEntry } from '@bfemulator/app-shared';
+import { LogEntry } from '@bfemulator/app-shared';
 import { createStore as createWebChatStore } from '@bfemulator/custom-botframework-webchat';
 
 export const NEW_CHAT_DOCUMENT = 'CHAT/DOCUMENT/NEW';
@@ -73,7 +73,7 @@ export type ChatAction = {
   type: 'CHAT/LOG/APPEND',
   payload: {
     documentId: string,
-    entry: ILogEntry
+    entry: LogEntry
   }
 } | {
   type: 'CHAT/LOG/CLEAR',
@@ -200,7 +200,7 @@ export function newConversation(documentId: string, options: any): ChatAction {
   };
 }
 
-export function appendToLog(documentId: string, entry: ILogEntry): ChatAction {
+export function appendToLog(documentId: string, entry: LogEntry): ChatAction {
   return {
     type: LOG_APPEND,
     payload: {

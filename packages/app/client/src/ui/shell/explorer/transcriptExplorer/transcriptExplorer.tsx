@@ -39,7 +39,7 @@ import { TreeView, TreeViewProps } from '@fuselab/ui-fabric/lib';
 import { ExpandCollapse, ExpandCollapseContent } from '@bfemulator/ui-react';
 import { IFileTreeState } from '../../../../data/reducer/files';
 import { EXPLORER_CSS } from '../explorerStyle';
-import { CommandService } from '../../../../platform/commands/commandService';
+import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
 import { FileTreeDataProvider } from './fileTreeProvider';
 
 // const CONVO_CSS = css({
@@ -101,7 +101,7 @@ class TranscriptExplorerComponent extends React.Component<TranscriptExplorerProp
   }
 
   private handleItemClick(filename: string) {
-    CommandService.call('transcript:open', filename).catch();
+    CommandServiceImpl.call('transcript:open', filename).catch();
   }
 
   private renderFileTree(): JSX.Element {

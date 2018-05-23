@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { uniqueId } from '@bfemulator/sdk-shared';
+import { BotConfigWithPath, BotConfigWithPathImpl, uniqueId } from '@bfemulator/sdk-shared';
 import {
   Checkbox,
   Colors,
@@ -46,10 +46,8 @@ import { css } from 'glamor';
 import { EndpointService } from 'msbot/bin/models';
 import { IEndpointService, ServiceType } from 'msbot/bin/schema';
 import * as React from 'react';
-import { BotConfigWithPath } from '@bfemulator/sdk-shared';
-import { IBotConfigWithPath } from '@bfemulator/sdk-shared';
 
-import { CommandService } from '../../platform/commands/commandService';
+import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { ActiveBotHelper } from '../helpers/activeBotHelper';
 import { DialogService } from './service';
 
@@ -121,7 +119,7 @@ const CSS = css({
 });
 
 export interface BotCreationDialogState {
-  bot: IBotConfigWithPath;
+  bot: BotConfigWithPath;
   endpoint: IEndpointService;
   secret: string;
   secretEnabled: boolean;
@@ -134,7 +132,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
     super(props, context);
 
     this.state = {
-      bot: BotConfigWithPath.fromJSON({
+      bot: BotConfigWithPathImpl.fromJSON({
         name: '',
         description: '',
         secretKey: '',
@@ -257,7 +255,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
       endpoint: this.state.endpoint.endpoint.trim()
     };
 
-    const bot: IBotConfigWithPath = BotConfigWithPath.fromJSON({
+    const bot: BotConfigWithPath = BotConfigWithPathImpl.fromJSON({
       ...this.state.bot,
       name: this.state.bot.name.trim(),
       description: this.state.bot.description.trim(),
@@ -274,7 +272,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
 
   private showBotSaveDialog = async (): Promise<any> => {
     // get a safe bot file name
-    const botFileName = await CommandService.remoteCall('file:sanitize-string', this.state.bot.name);
+    const botFileName = await CommandServiceImpl.remoteCall('file:sanitize-string', this.state.bot.name);
     // TODO - Localization
     const dialogOptions = {
       filters: [
@@ -289,7 +287,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
       buttonLabel: 'Save'
     };
 
-    return CommandService.remoteCall('shell:showSaveDialog', dialogOptions);
+    return CommandServiceImpl.remoteCall('shell:showSaveDialog', dialogOptions);
   }
 
   private onChangeSecret = (e) => {

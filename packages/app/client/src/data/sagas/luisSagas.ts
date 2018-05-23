@@ -34,7 +34,7 @@
 import { ILuisService, ServiceType } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
 import { call, ForkEffect, select, takeEvery, takeLatest } from 'redux-saga/effects';
-import { CommandService } from '../../platform/commands/commandService';
+import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { DialogService } from '../../ui/dialogs/service';
 import { LuisEditor } from '../../ui/shell/explorer/luisExplorer/luisEditor/luisEditor';
 import {
@@ -55,7 +55,7 @@ const getLuisAuthFromState = (state: RootState) => state.luisAuth.luisAuthData;
 // function* launchLuisModelsViewer(action: LuisAuthAction<LuisModelViewer>): IterableIterator<any> {
 //   let luisAuth = yield select(getLuisAuthFromState);
 //   if (!luisAuth) {
-//     luisAuth = yield call(CommandService.remoteCall.bind(CommandService), 'luis:retrieve-authoring-key');
+//     luisAuth = yield call(CommandServiceImpl.remoteCall.bind(CommandServiceImpl), 'luis:retrieve-authoring-key');
 //     yield put(luisAuthoringDataChanged(luisAuth));
 //   }
 //   const luisModels = yield* retrieveLuisModels();
@@ -87,7 +87,7 @@ function* retrieveLuisModels(): IterableIterator<any> {
 function* openLuisDeepLink(action: LuisServiceAction<LuisServicePayload>): IterableIterator<any> {
   const { appId, version } = action.payload.luisService;
   const link = `https://www.luis.ai/applications/${appId}/versions/${version}/build`;
-  yield CommandService.remoteCall('electron:openExternal', link);
+  yield CommandServiceImpl.remoteCall('electron:openExternal', link);
 }
 
 function* openLuisContextMenu(action: LuisServiceAction<LuisServicePayload>): IterableIterator<any> {
@@ -96,7 +96,7 @@ function* openLuisContextMenu(action: LuisServiceAction<LuisServicePayload>): It
     { label: 'Edit settings', id: 'edit' },
     { label: 'Remove', id: 'forget' }
   ];
-  const response = yield call(CommandService.remoteCall.bind(CommandService), 'electron:displayContextMenu', menuItems);
+  const response = yield call(CommandServiceImpl.remoteCall.bind(CommandServiceImpl), 'electron:displayContextMenu', menuItems);
   switch (response.id) {
 
     case 'open':
@@ -118,7 +118,7 @@ function* openLuisContextMenu(action: LuisServiceAction<LuisServicePayload>): It
 
 function* removeLuisServiceFromActiveBot(luisService: ILuisService): IterableIterator<any> {
   // TODO - localization
-  const result = yield CommandService.remoteCall('shell:show-message-box', true, {
+  const result = yield CommandServiceImpl.remoteCall('shell:show-message-box', true, {
     type: 'question',
     buttons: ['Cancel', 'OK'],
     defaultId: 1,
@@ -126,7 +126,7 @@ function* removeLuisServiceFromActiveBot(luisService: ILuisService): IterableIte
     cancelId: 0,
   });
   if (result) {
-    yield CommandService.remoteCall('bot:remove-service', ServiceType.Luis, luisService.id);
+    yield CommandServiceImpl.remoteCall('bot:remove-service', ServiceType.Luis, luisService.id);
   }
 }
 
@@ -134,7 +134,7 @@ function* launchLuisEditor(action: LuisServiceAction<LuisEditorPayload>): Iterab
   const { luisEditorComponent, luisService = {} } = action.payload;
   const result = yield DialogService.showDialog<ComponentClass<LuisEditor>>(luisEditorComponent, { luisService });
   if (result) {
-    yield CommandService.remoteCall('bot:add-or-update-service', ServiceType.Luis, result);
+    yield CommandServiceImpl.remoteCall('bot:add-or-update-service', ServiceType.Luis, result);
   }
 }
 

@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CommandService, IExtensionConfig, IExtensionInspector } from '@bfemulator/sdk-shared';
+import { CommandService, CommandServiceImpl, ExtensionConfig, ExtensionInspector } from '@bfemulator/sdk-shared';
 import { ElectronIPC } from './ipc';
 import { CommandRegistry } from './commands';
 import * as jsonpath from 'jsonpath';
@@ -44,12 +44,12 @@ export class Extension {
     return this._unid;
   }
 
-  get config(): IExtensionConfig {
+  get config(): ExtensionConfig {
     return this._config;
   }
 
-  constructor(private _config: IExtensionConfig, private _unid: string) {
-    this._ext = new CommandService(ElectronIPC, `ext-${this._unid}`);
+  constructor(private _config: ExtensionConfig, private _unid: string) {
+    this._ext = new CommandServiceImpl(ElectronIPC, `ext-${this._unid}`);
     /*
     this._ext.remoteCall('ext-ping')
       .then(reply => console.log(reply))
@@ -73,7 +73,7 @@ export class Extension {
 
 // =============================================================================
 export class InspectorAPI {
-  public static canInspect(inspector: IExtensionInspector, obj: any): boolean {
+  public static canInspect(inspector: ExtensionInspector, obj: any): boolean {
     if (!obj) {
       return false;
     }
@@ -104,7 +104,7 @@ export class InspectorAPI {
     return canInspect;
   }
 
-  public static summaryText(inspector: IExtensionInspector, obj: any): string {
+  public static summaryText(inspector: ExtensionInspector, obj: any): string {
     let summaryTexts = inspector.summaryText || [];
     if (!Array.isArray(summaryTexts)) {
       summaryTexts = [summaryTexts];
@@ -141,14 +141,14 @@ export class InspectorAPI {
 // =============================================================================
 export interface GetInspectorResult {
   extension: Extension;
-  inspector: IExtensionInspector;
+  inspector: ExtensionInspector;
 }
 
 // =============================================================================
 export interface ExtensionManager {
   registerCommands();
 
-  addExtension(config: IExtensionConfig, unid: string);
+  addExtension(config: ExtensionConfig, unid: string);
 
   removeExtension(unid: string);
 
@@ -161,7 +161,7 @@ export interface ExtensionManager {
 export const ExtensionManager = new class implements ExtensionManager {
   private extensions: { [unid: string]: Extension } = {};
 
-  public addExtension(config: IExtensionConfig, unid: string) {
+  public addExtension(config: ExtensionConfig, unid: string) {
     this.removeExtension(unid);
     console.log(`adding extension ${config.name}`);
     const ext = new Extension(config, unid);
@@ -201,7 +201,7 @@ export const ExtensionManager = new class implements ExtensionManager {
   }
 
   public registerCommands() {
-    CommandRegistry.registerCommand('shell:extension-connect', (config: IExtensionConfig, unid: string) => {
+    CommandRegistry.registerCommand('shell:extension-connect', (config: ExtensionConfig, unid: string) => {
       ExtensionManager.addExtension(config, unid);
     });
 

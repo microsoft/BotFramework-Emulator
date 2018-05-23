@@ -40,7 +40,7 @@ const mapStateToProps = (state: RootState) => {
   return { activeBotExists };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (_dispatch: () => void) => {
   return {};
 };
 

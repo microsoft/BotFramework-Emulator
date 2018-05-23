@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Disposable } from '@bfemulator/sdk-shared';
+import { DisposableImpl } from '@bfemulator/sdk-shared';
 import { CommandRegistry } from '../../commands';
 
 export function registerCommands() {
@@ -85,7 +85,7 @@ class EmulatorSettingsImpl implements EmulatorSettings {
   }
 }
 
-export const SettingsService = new class extends Disposable {
+export const SettingsService = new class extends DisposableImpl {
 
   private _emulator: EmulatorSettingsImpl;
 

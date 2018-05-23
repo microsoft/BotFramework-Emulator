@@ -34,9 +34,9 @@
 import store from './store';
 import * as EditorActions from './action/editorActions';
 import * as Constants from '../constants';
-import { IEditor } from '../data/reducer/editor';
+import { Editor } from '../data/reducer/editor';
 
-export function hasNonGlobalTabs(tabGroups?: { [editorKey: string]: IEditor }): number {
+export function hasNonGlobalTabs(tabGroups?: { [editorKey: string]: Editor }): number {
   tabGroups = tabGroups || store.getState().editor.editors;
   let count = 0;
   for (let key in tabGroups) {
@@ -50,7 +50,7 @@ export function hasNonGlobalTabs(tabGroups?: { [editorKey: string]: IEditor }): 
 }
 
 // @returns: name of editor group, or undefined if doc is not open.
-export function getTabGroupForDocument(documentId: string, tabGroups?: { [editorKey: string]: IEditor }): string {
+export function getTabGroupForDocument(documentId: string, tabGroups?: { [editorKey: string]: Editor }): string {
   tabGroups = tabGroups || store.getState().editor.editors;
   for (let key in tabGroups) {
     if (tabGroups[key] && tabGroups[key].documents) {
@@ -75,6 +75,6 @@ export function showAppSettingsPage(): void {
   store.dispatch(EditorActions.open(Constants.CONTENT_TYPE_APP_SETTINGS, Constants.DOCUMENT_ID_APP_SETTINGS, true));
 }
 
-export function tabGroupHasDocuments(tabGroup: IEditor): boolean {
+export function tabGroupHasDocuments(tabGroup: Editor): boolean {
   return Object.keys(tabGroup.documents).length ? true : false;
 }

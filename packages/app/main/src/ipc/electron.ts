@@ -32,7 +32,7 @@
 //
 
 import { ipcMain, WebContents, Event } from 'electron';
-import { IPC, IDisposable } from '@bfemulator/sdk-shared';
+import { IPC, Disposable } from '@bfemulator/sdk-shared';
 
 export class ElectronIPC extends IPC {
   get id(): number { return this._webContents.id; }
@@ -66,12 +66,12 @@ export const ElectronIPCServer = new class {
     });
   }
 
-  registerIPC(ipc: ElectronIPC): IDisposable {
+  registerIPC(ipc: ElectronIPC): Disposable {
     this._ipcs[ipc.id] = ipc;
     return {
       dispose: () => {
         delete this._ipcs[ipc.id];
       }
-    }
+    };
   }
-}
+};

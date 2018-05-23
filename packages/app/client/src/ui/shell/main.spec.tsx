@@ -1,18 +1,3 @@
-(window as any).require = function () {
-  return {
-    ipcRenderer: {
-      on() {
-        return null;
-      },
-      send() {
-        return null;
-      }
-    }
-  };
-};
-(window as any).define = function () {
-  return null;
-};
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { Main } from './main';

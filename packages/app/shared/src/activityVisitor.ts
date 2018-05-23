@@ -31,18 +31,29 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { AttachmentContentTypes, IActivity, IMessageActivity, IAttachment, IMediaCard, IThumbnailCard, IReceiptCard, ISigninCard, ICardAction, ICardImage } from '@bfemulator/sdk-shared';
+import {
+  Activity,
+  Attachment,
+  AttachmentContentTypes,
+  CardAction,
+  CardImage,
+  MediaCard,
+  MessageActivity,
+  ReceiptCard,
+  SigninCard,
+  ThumbnailCard
+} from '@bfemulator/sdk-shared';
 
 export abstract class ActivityVisitor {
 
-    public traverseActivity(activity: IActivity) {
-        let messageActivity = activity as IMessageActivity;
+    public traverseActivity(activity: Activity) {
+        let messageActivity = activity as MessageActivity;
         if (messageActivity) {
             this.traverseMessageActivity(messageActivity);
         }
     }
 
-    public traverseMessageActivity(messageActivity: IMessageActivity) {
+    public traverseMessageActivity(messageActivity: MessageActivity) {
         if (messageActivity) {
             if (messageActivity.attachments) {
                 messageActivity.attachments.forEach(attachment =>
@@ -51,69 +62,72 @@ export abstract class ActivityVisitor {
         }
     }
 
-    public traverseAttachment(attachment: IAttachment) {
+    public traverseAttachment(attachment: Attachment) {
         if (attachment) {
-            switch(attachment.contentType) {
+            switch (attachment.contentType) {
                 case AttachmentContentTypes.animationCard:
                 case AttachmentContentTypes.videoCard:
                 case AttachmentContentTypes.audioCard:
-                    this.traverseMediaCard(attachment.content as IMediaCard);
+                    this.traverseMediaCard(attachment.content as MediaCard);
                     break;
                 case AttachmentContentTypes.heroCard:
                 case AttachmentContentTypes.thumbnailCard:
-                    this.traverseThumbnailCard(attachment.content as IThumbnailCard);
+                    this.traverseThumbnailCard(attachment.content as ThumbnailCard);
                     break;
                 case AttachmentContentTypes.receiptCard:
-                    this.traverseReceiptCard(attachment.content as IReceiptCard);
+                    this.traverseReceiptCard(attachment.content as ReceiptCard);
                     break;
                 case AttachmentContentTypes.signInCard:
-                    this.traverseSignInCard(attachment.content as ISigninCard);
+                    this.traverseSignInCard(attachment.content as SigninCard);
                     break;
+
+              default:
+                break;
             }
         }
     }
 
-    public traverseMediaCard(mediaCard: IMediaCard) {
+    public traverseMediaCard(mediaCard: MediaCard) {
         if (mediaCard) {
             this.traverseCardImage(mediaCard.image);
             this.traverseButtons(mediaCard.buttons);
         }
     }
 
-    public traverseThumbnailCard(thumbnailCard: IThumbnailCard) {
+    public traverseThumbnailCard(thumbnailCard: ThumbnailCard) {
         this.visitCardAction(thumbnailCard.tap);
         this.traverseButtons(thumbnailCard.buttons);
         this.traverseCardImages(thumbnailCard.images);
     }
 
-    public traverseSignInCard(signInCard: ISigninCard) {
+    public traverseSignInCard(signInCard: SigninCard) {
         this.traverseButtons(signInCard.buttons);
     }
 
-    public traverseReceiptCard(receiptCard: IReceiptCard) {
+    public traverseReceiptCard(receiptCard: ReceiptCard) {
         this.visitCardAction(receiptCard.tap);
         this.traverseButtons(receiptCard.buttons);
     }
 
-    public traverseButtons(buttons: ICardAction[]) {
+    public traverseButtons(buttons: CardAction[]) {
         if (buttons) {
             buttons.forEach(cardAction => this.visitCardAction(cardAction));
         }
     }
 
-    public traverseCardImages(cardImages: ICardImage[]) {
+    public traverseCardImages(cardImages: CardImage[]) {
         if (cardImages) {
             cardImages.forEach(image => {
                 this.traverseCardImage(image);
-            })
+            });
         }
     }
 
-    public traverseCardImage(cardImage: ICardImage) {
+    public traverseCardImage(cardImage: CardImage) {
         if (cardImage) {
             this.visitCardAction(cardImage.tap);
         }
     }
 
-    protected abstract visitCardAction(cardAction: ICardAction);
+    protected abstract visitCardAction(cardAction: CardAction);
 }

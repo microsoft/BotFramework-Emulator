@@ -34,24 +34,24 @@
 import { frameworkDefault } from '@bfemulator/app-shared';
 
 export type FrameworkAction = {
-    type: 'Framework_Set',
-    state: {
-        ngrokPath: string,
-        bypassNgrokLocalhost: boolean,
-        stateSizeLImit: number,
-        use10Tokens: boolean,
-        useCodeValidation: boolean
-    }
-}
+  type: 'Framework_Set',
+  state: {
+    ngrokPath: string,
+    bypassNgrokLocalhost: boolean,
+    stateSizeLImit: number,
+    use10Tokens: boolean,
+    useCodeValidation: boolean
+  }
+};
 
-export const frameworkReducer: /*Reducer<IFrameworkSettings>*/ any = (
-    state = frameworkDefault,
-    action: FrameworkAction
+export const frameworkReducer: /*Reducer<FrameworkSettings>*/ any = (
+  state = frameworkDefault,
+  action: FrameworkAction
 ) => {
-    switch (action.type) {
-        case 'Framework_Set':
-            return Object.assign({}, state, action.state);
-        default:
-            return state
-    }
-}
+  switch (action.type) {
+    case 'Framework_Set':
+      return Object.assign({}, state, action.state);
+    default:
+      return state;
+  }
+};

@@ -31,28 +31,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Disposable, IDisposable } from '../lifecycle';
+import { DisposableImpl, Disposable } from '../lifecycle';
 import { Channel, IPC } from '../ipc';
 import { uniqueId } from '../utils';
-import { CommandRegistry, ICommandRegistry } from '..';
-import { ICommandHandler } from '.';
+import { CommandRegistry, CommandRegistryImpl } from '..';
+import { CommandHandler } from '.';
 
-export interface ICommandService extends IDisposable {
-  registry: ICommandRegistry;
+export interface CommandService extends DisposableImpl {
+  registry: CommandRegistry;
 
   call(commandName: string, ...args: any[]): Promise<any>;
 
   remoteCall(commandName: string, ...args: any[]): Promise<any>;
 
-  on(commandName: string, handler?: ICommandHandler): IDisposable;
+  on(commandName: string, handler?: CommandHandler): Disposable;
 
   on(event: 'command-not-found', notFoundHandler?: (commandName: string, ...args: any[]) => any);
 }
 
-export class CommandService extends Disposable implements ICommandService {
+export class CommandServiceImpl extends DisposableImpl implements CommandService {
 
   private readonly _channel: Channel;
-  private readonly _registry: ICommandRegistry;
+  private readonly _registry: CommandRegistryImpl;
   private readonly _channelName: string;
   private readonly _ipc: IPC;
   private _notFoundHandler: (commandName: string, ...args: any[]) => any;
@@ -61,11 +61,11 @@ export class CommandService extends Disposable implements ICommandService {
     return this._registry;
   }
 
-  constructor(_ipc: IPC, _channelName: string = 'command-service', _registry: ICommandRegistry = null) {
+  constructor(_ipc: IPC, _channelName: string = 'command-service', _registry: CommandRegistry = null) {
     super();
     this._ipc = _ipc;
     this._channelName = _channelName;
-    this._registry = this._registry || new CommandRegistry();
+    this._registry = this._registry || new CommandRegistryImpl();
     this._channel = new Channel(this._channelName, this._ipc);
     super.toDispose(
       this._ipc.registerChannel(this._channel));
@@ -83,7 +83,7 @@ export class CommandService extends Disposable implements ICommandService {
       }));
   }
 
-  on(event: string, handler?: ICommandHandler): IDisposable;
+  on(event: string, handler?: CommandHandler): Disposable;
   on(event: 'command-not-found', handler?: (commandName: string, ...args: any[]) => any) {
     if (event === 'command-not-found') {
       this._notFoundHandler = handler;

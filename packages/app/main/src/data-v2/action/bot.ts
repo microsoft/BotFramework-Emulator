@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IBotInfo, newBot } from '@bfemulator/app-shared';
+import { BotInfo, newBot } from '@bfemulator/app-shared';
 import { IBotConfig } from 'msbot/bin/schema';
 import { BotAction } from '../reducer/bot';
 
@@ -41,7 +41,7 @@ export const SET_ACTIVE = 'BOT/SET_ACTIVE';
 export const SET_DIRECTORY = 'BOT/SET_DIRECTORY';
 export const CLOSE = 'BOT/CLOSE';
 
-export function load(bots: IBotInfo[]): BotAction {
+export function load(bots: BotInfo[]): BotAction {
   // prune bad bots
   bots = bots.filter(bot => !!bot);
 
@@ -87,7 +87,6 @@ export function close(): BotAction {
     payload: {}
   };
 }
-
 
 export function mockAndSetActive(mock?: IBotConfig): BotAction {
   const bot = newBot({

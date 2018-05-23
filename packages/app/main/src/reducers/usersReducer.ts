@@ -32,48 +32,50 @@
 //
 
 import { usersDefault } from '@bfemulator/app-shared';
-import { IUser } from '@bfemulator/sdk-shared';
-
+import { User } from '@bfemulator/sdk-shared';
 
 export type UsersAction = {
-    type: 'Users_SetCurrentUser',
-    state: {
-       user: IUser
-    }
+  type: 'Users_SetCurrentUser',
+  state: {
+    user: User
+  }
 } | {
-    type: 'Users_AddUsers',
-    state: {
-        users: IUser[]
-    }
+  type: 'Users_AddUsers',
+  state: {
+    users: User[]
+  }
 } | {
-    type: 'Users_RemoveUsers',
-    state: {
-        users: IUser[]
-    }
-}
+  type: 'Users_RemoveUsers',
+  state: {
+    users: User[]
+  }
+};
 
-export const usersReducer: /*Reducer<IUserSettings>*/ any = (
-    state = usersDefault,
-    action: UsersAction
+export const usersReducer: /*Reducer<UserSettings>*/ any = (
+  state = usersDefault,
+  action: UsersAction
 ) => {
-    switch (action.type) {
-        case 'Users_SetCurrentUser':
-            const usersById = Object.assign({}, state.usersById );
-            usersById[action.state.user.id] = action.state.user;
-            return Object.assign({}, { currentUserId: action.state.user.id, usersById });
-        case 'Users_AddUsers': {
-            let newUsersById = {};
-            for(let key in action.state.users) {
-                let user = action.state.users[key];
-                newUsersById[user.id] = user;
-            }
-            return Object.assign({}, state, { usersById: newUsersById });
+  switch (action.type) {
+    case 'Users_SetCurrentUser':
+      const usersById = Object.assign({}, state.usersById);
+      usersById[action.state.user.id] = action.state.user;
+      return Object.assign({}, { currentUserId: action.state.user.id, usersById });
+    case 'Users_AddUsers': {
+      let newUsersById = {};
+      for (let key in action.state.users) {
+        if (!action.state.users.hasOwnProperty(key)) {
+          continue;
         }
-        case 'Users_RemoveUsers': {
-            //Object.assign({}, state, { }
-            return state;
-        }
-        default:
-            return state;
+        let user = action.state.users[key];
+        newUsersById[user.id] = user;
+      }
+      return Object.assign({}, state, { usersById: newUsersById });
     }
-}
+    case 'Users_RemoveUsers': {
+      // Object.assign({}, state, { }
+      return state;
+    }
+    default:
+      return state;
+  }
+};

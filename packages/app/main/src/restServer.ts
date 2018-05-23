@@ -42,8 +42,8 @@ import { textItem, networkRequestItem, networkResponseItem } from '@bfemulator/e
 import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
 
 export class RestServer {
-  private _botEmulator: BotEmulator;
-  private _router: Restify.Server;
+  private readonly _botEmulator: BotEmulator;
+  private readonly _router: Restify.Server;
 
   public get botEmulator() {
     return this._botEmulator;
@@ -60,30 +60,32 @@ export class RestServer {
       name: 'Emulator'
     });
 
-    this._router.on('after', async (req: Restify.Request, res: Restify.Response, route: Restify.Route, error: Error) => {
-      if (req.method === "GET" && route.spec.path === "/v3/directline/conversations/:conversationId/activities") {
+    this._router.on('after', async (req: Restify.Request, res: Restify.Response,
+                                    route: Restify.Route, error: Error) => {
+      if (req.method === 'GET' && route.spec.path === '/v3/directline/conversations/:conversationId/activities') {
         // Don't log WebChat's polling GET operations
         return;
       }
 
       let conversationId;
-      if (req['conversation']) {
-        conversationId = req['conversation'].conversationId;
+      if ((req as any).conversation) {
+        conversationId = (req as any).conversation.conversationId;
       } else if (req.params.conversationId) {
         conversationId = req.params.conversationId;
       }
-      
+
       if (!conversationId || !conversationId.length || conversationId.includes('transcript')) {
         return;
       }
-      
-      const facility = req['facility'] || 'network';
-      const routeName = req['routeName'] || '';
-      
+
+      const facility = (req as any).facility || 'network';
+      const routeName = (req as any).routeName || '';
+
       let level = LogLevel.Debug;
-      if (!/2\d\d/.test(res.statusCode.toString()))
+      if (!/2\d\d/.test(res.statusCode.toString())) {
         level = LogLevel.Error;
-      
+      }
+
       mainWindow.logService.logToChat(
         conversationId,
         networkRequestItem(
@@ -120,7 +122,10 @@ export class RestServer {
     );
 
     this._botEmulator.facilities.conversations.on('new', (conversation: Conversation) => {
-      if (!conversation || !conversation.conversationId || !conversation.conversationId.length || conversation.conversationId.includes('transcript')) {
+      if (!conversation ||
+        !conversation.conversationId ||
+        !conversation.conversationId.length ||
+        conversation.conversationId.includes('transcript')) {
         return;
       }
       emulator.report(conversation.conversationId);

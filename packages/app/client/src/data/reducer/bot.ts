@@ -31,15 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IBotConfigWithPath } from '@bfemulator/sdk-shared';
+import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 import * as BotActions from '../action/botActions';
-import { getBotDisplayName, IBotInfo } from '@bfemulator/app-shared';
+import { getBotDisplayName, BotInfo } from '@bfemulator/app-shared';
 import { IBotConfig } from 'msbot/bin/schema';
 import { getBotInfoByPath } from '../botHelpers';
 
 export interface BotState {
   activeBot: IBotConfig;
-  botFiles: IBotInfo[];
+  botFiles: BotInfo[];
 }
 
 export type BotAction = {
@@ -52,18 +52,18 @@ export type BotAction = {
 } | {
   type: 'BOT/LOAD',
   payload: {
-    bots: IBotInfo[]
+    bots: BotInfo[]
   }
 } | {
   type: 'BOT/PATCH',
   payload: {
-    bot: IBotConfigWithPath,
+    bot: BotConfigWithPath,
     secret?: string
   }
 } | {
   type: 'BOT/SET_ACTIVE',
   payload: {
-    bot: IBotConfigWithPath
+    bot: BotConfigWithPath
   }
 } | {
   type: 'BOT/CLOSE',
@@ -79,7 +79,7 @@ const DEFAULT_STATE: BotState = {
 export default function bot(state: BotState = DEFAULT_STATE, action: BotAction) {
   switch (action.type) {
     case BotActions.CREATE: {
-      const newBot: IBotInfo = {
+      const newBot: BotInfo = {
         path: action.payload.botFilePath,
         displayName: getBotDisplayName(action.payload.bot),
         secret: action.payload.secret
@@ -142,7 +142,7 @@ function setActiveBot(botConfig: IBotConfig, state: BotState): BotState {
   return newState;
 }
 
-function setBotFilesState(botFilesState: IBotInfo[], state: BotState): BotState {
+function setBotFilesState(botFilesState: BotInfo[], state: BotState): BotState {
   let newState = Object.assign({}, state);
 
   newState.botFiles = botFilesState;

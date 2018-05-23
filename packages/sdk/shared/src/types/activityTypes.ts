@@ -31,113 +31,112 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IChannelAccount, IConversationAccount } from './accountTypes';
-import { IAttachment } from './attachmentTypes';
-import { IEntity } from './entityTypes';
-import { IETagObject } from './eTagTypes';
-
+import { ChannelAccount, ConversationAccount } from './accountTypes';
+import { Attachment } from './attachmentTypes';
+import { Entity } from './entityTypes';
+import { ETagObject } from './eTagTypes';
 
 export type ActivityOrID = {
-  activity?: IGenericActivity
+  activity?: GenericActivity
   id?: string
-}
-
-export interface IActivity extends IETagObject {
-  type?: string,
-  id?: string,
-  serviceUrl?: string,
-  timestamp?: string,
-  localTimestamp?: string,
-  channelId?: string,
-  from?: IChannelAccount,
-  conversation?: IConversationAccount,
-  recipient?: IChannelAccount,
-  replyToId?: string,
-  channelData?: any,
 };
 
-export interface ITypingActivity extends IActivity {
+export interface Activity extends ETagObject {
+  type?: string;
+  id?: string;
+  serviceUrl?: string;
+  timestamp?: string;
+  localTimestamp?: string;
+  channelId?: string;
+  from?: ChannelAccount;
+  conversation?: ConversationAccount;
+  recipient?: ChannelAccount;
+  replyToId?: string;
+  channelData?: any;
 }
 
-export interface IConversationUpdateActivity extends IActivity {
-  membersAdded?: IChannelAccount[],
-  membersRemoved?: IChannelAccount[],
-  topicName?: string,
-  historyDisclosed?: boolean,
+export interface TypingActivity extends Activity {
 }
 
-export interface IConversationParameters extends IActivity {
-  isGroup: boolean,
-  bot: IChannelAccount,
-  members?: IChannelAccount[],
-  membersRemoved?: IChannelAccount[],
-  topicName?: string,
-  activity?: IActivity,
-  channelData?: any,
-  conversationId?: string
+export interface ConversationUpdateActivity extends Activity {
+  membersAdded?: ChannelAccount[];
+  membersRemoved?: ChannelAccount[];
+  topicName?: string;
+  historyDisclosed?: boolean;
 }
 
-export interface IContactRelationUpdateActivity extends IActivity {
-  action?: string
+export interface ConversationParameters extends Activity {
+  isGroup: boolean;
+  bot: ChannelAccount;
+  members?: ChannelAccount[];
+  membersRemoved?: ChannelAccount[];
+  topicName?: string;
+  activity?: Activity;
+  channelData?: any;
+  conversationId?: string;
 }
 
-export interface IMessageActivity extends IActivity {
-  locale?: string,
-  text?: string,
-  summary?: string,
-  textFormat?: string,
-  attachmentLayout?: string,
-  attachments?: IAttachment[],
-  entities?: IEntity[],
+export interface ContactRelationUpdateActivity extends Activity {
+  action?: string;
 }
 
-export interface IActionActivity extends IActivity {
+export interface MessageActivity extends Activity {
+  locale?: string;
+  text?: string;
+  summary?: string;
+  textFormat?: string;
+  attachmentLayout?: string;
+  attachments?: Attachment[];
+  entities?: Entity[];
 }
 
-export interface IEndOfConversationActivity extends IActivity {
+export interface ActionActivity extends Activity {
 }
 
-export interface ITriggerActivity extends IActivity {
+export interface EndOfConversationActivity extends Activity {
+}
+
+export interface TriggerActivity extends Activity {
   value?: any;
 }
 
-export interface IConversationReference {
-  activityId: string,
-  bot: IChannelAccount,
-  channelId: string,
-  conversation: IConversationAccount,
-  serviceUrl: string,
-  user: IChannelAccount
+export interface ConversationReference {
+  activityId: string;
+  bot: ChannelAccount;
+  channelId: string;
+  conversation: ConversationAccount;
+  serviceUrl: string;
+  user: ChannelAccount;
 }
 
-export interface IInvokeActivity extends IActivity {
-  name?: string,
-  value?: any,
-  relatesTo?: IConversationReference
+export interface InvokeActivity extends Activity {
+  name?: string;
+  value?: any;
+  relatesTo?: ConversationReference;
 }
 
-export interface IEventActivity extends IActivity {
-  name?: string,
-  value?: any,
-  relatesTo?: IConversationReference
+export interface EventActivity extends Activity {
+  name?: string;
+  value?: any;
+  relatesTo?: ConversationReference;
 }
 
-export interface IGenericActivity extends
-  IActivity,
-  ITypingActivity,
-  IConversationUpdateActivity,
-  IContactRelationUpdateActivity,
-  IMessageActivity,
-  IActionActivity,
-  IEndOfConversationActivity,
-  ITriggerActivity,
-  IEventActivity,
-  IInvokeActivity {
+export interface GenericActivity extends
+  Activity,
+  TypingActivity,
+  ConversationUpdateActivity,
+  ContactRelationUpdateActivity,
+  MessageActivity,
+  ActionActivity,
+  EndOfConversationActivity,
+  TriggerActivity,
+  EventActivity,
+  InvokeActivity {
 }
 
-export interface ITraceActivity extends IActivity {
-  name?: string,
-  value?: any,
-  label?: string,
-  valueType?: string
+export interface TraceActivity extends Activity {
+  name?: string;
+  value?: any;
+  label?: string;
+  valueType?: string;
 }

@@ -32,7 +32,7 @@
 //
 
 import * as commandLineArgs from 'command-line-args';
-import { ICommandLineArgs } from '@bfemulator/app-shared';
+import { CommandLineArgs } from '@bfemulator/app-shared';
 import * as globals from './globals';
 
 const optionDefinitions = [
@@ -40,6 +40,6 @@ const optionDefinitions = [
 ];
 
 export function parseArgs(): void {
-    const parsedCommandLineArgs: ICommandLineArgs = commandLineArgs(optionDefinitions, { partial: true });
+    const parsedCommandLineArgs: CommandLineArgs = commandLineArgs(optionDefinitions, { partial: true });
     globals.setGlobal('commandlineargs', parsedCommandLineArgs);
 }

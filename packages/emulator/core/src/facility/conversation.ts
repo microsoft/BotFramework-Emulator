@@ -82,7 +82,7 @@ interface IActivityBucket {
  * Stores and propagates conversation messages.
  */
 export default class Conversation extends EventEmitter {
-  // private speechToken: ISpeechTokenInfo;
+  // private speechToken: SpeechTokenInfo;
 
   private get conversationIsTranscript() { return this.conversationId.includes('transcript') };
 
@@ -495,7 +495,7 @@ export default class Conversation extends EventEmitter {
 
     const { response } = await this.postActivityToBot(activity, false);
 
-    // TODO: Should we record this in transcript? It looks like normal IInvokeActivity
+    // TODO: Should we record this in transcript? It looks like normal InvokeActivity
 
     return response;
   }

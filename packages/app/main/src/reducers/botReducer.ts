@@ -31,23 +31,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-//import { Reducer } from 'redux';
-import { IBot } from '@bfemulator/app-shared';
-
+import { Bot } from '@bfemulator/app-shared';
 
 export type BotsAction = {
   type: 'Bots_AddOrUpdateBot',
   state: {
-    bot: IBot
+    bot: Bot
   }
-}
+};
 
-export const botsReducer: /*Reducer<IBot[]>*/ any = (
-  state: IBot[] = [],
+export const botsReducer: /*Reducer<Bot[]>*/ any = (
+  state: Bot[] = [],
   action: BotsAction
 ) => {
   switch (action.type) {
     default:
       return state;
   }
-}
+};
