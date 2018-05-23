@@ -31,63 +31,63 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export interface IError {
-  code?: string,
-  message?: string,
+export interface NativeError {
+  code?: string;
+  message?: string;
 }
 
-export interface IErrorResponse {
-  error: IError,
+export interface ErrorResponse {
+  error: NativeError;
 }
 
-export interface IResourceResponse {
-  id: string
+export interface ResourceResponse {
+  id: string;
 }
 
-export interface IConversationResourceResponse {
-  id: string,
-  activityId?: string
+export interface ConversationResourceResponse {
+  id: string;
+  activityId?: string;
 }
-
 
 export const ErrorCodes = {
   /// unknown service error
-  ServiceError: "ServiceError",
+  ServiceError: 'ServiceError',
 
   /// Bad argument
-  BadArgument: "BadArgument",
+  BadArgument: 'BadArgument',
 
   /// Error parsing request
-  BadSyntax: "BadSyntax",
+  BadSyntax: 'BadSyntax',
 
   /// Mandatory property was not specified
-  MissingProperty: "MissingProperty",
+  MissingProperty: 'MissingProperty',
 
   /// Message exceeded size limits
-  MessageSizeTooBig: "MessageSizeTooBig"
-}
+  MessageSizeTooBig: 'MessageSizeTooBig'
+};
 
 export interface APIException {
   statusCode: number;
-  error: IErrorResponse;
+  error: ErrorResponse;
 }
 
 //
 // Create IResourceResponse object
 //
-export function createResourceResponse(id: string): IResourceResponse {
+export function createResourceResponse(id: string): ResourceResponse {
   return { id: id };
 }
 
-export function createConversationResponse(id: string, activityId: string): IConversationResourceResponse {
-  let response: IConversationResourceResponse = { id: id };
-  if (activityId != null)
+export function createConversationResponse(id: string, activityId: string): ConversationResourceResponse {
+  let response: ConversationResourceResponse = { id: id };
+  if (activityId != null) {
     response.activityId = activityId;
+  }
   return response;
 }
 
-// Create IErrorResponse object
-export function createErrorResponse(code: string, message: string): IErrorResponse {
+// Create ErrorResponse object
+export function createErrorResponse(code: string, message: string): ErrorResponse {
   return {
     error: {
       code: code,

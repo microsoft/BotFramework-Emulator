@@ -37,7 +37,6 @@ import { mainWindow } from './main';
 import { textItem } from '@bfemulator/emulator-core/lib/types/log/util';
 import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
 
-
 /**
  * Communicates with the bot.
  */
@@ -62,7 +61,10 @@ export class BotFrameworkService {
    * Applies configuration changes.
    */
   public async recycle() {
-    this.server && this.server.close();
+    if (this.server) {
+      await this.server.close();
+    }
+
     this.server = new RestServer();
 
     const { url, port } = await this.server.listen();

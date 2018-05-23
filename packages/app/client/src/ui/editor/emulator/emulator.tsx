@@ -47,7 +47,7 @@ import * as PresentationActions from '../../../data/action/presentationActions';
 import { Document } from '../../../data/reducer/editor';
 import { RootState } from '../../../data/store';
 
-import { CommandService } from '../../../platform/commands/commandService';
+import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { SettingsService } from '../../../platform/settings/settingsService';
 import ToolBar, { Button as ToolBarButton } from '../toolbar';
 import ChatPanel from './chatPanel';
@@ -228,13 +228,13 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
 
     if (props.mode === 'transcript') {
       try {
-        const conversation = await CommandService.remoteCall('transcript:new', conversationId);
+        const conversation = await CommandServiceImpl.remoteCall('transcript:new', conversationId);
 
         if (props.document && props.document.deepLink && props.document.activities) {
           try {
             // transcript was deep linked via protocol,
             // and should just be fed its own activities attached to the document
-            await CommandService
+            await CommandServiceImpl
               .remoteCall('emulator:feed-transcript:deep-link', conversation.conversationId, props.document.activities);
           } catch (err) {
             throw new Error(`Error while feeding deep-linked transcript to conversation: ${err}`);
@@ -242,7 +242,7 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
         } else {
           try {
             // the transcript is on disk, so its activities need to be read on the main side and fed in
-            const fileInfo: { fileName: string, filePath: string } = await CommandService
+            const fileInfo: { fileName: string, filePath: string } = await CommandServiceImpl
               .remoteCall('emulator:feed-transcript:disk', conversation.conversationId, props.document.documentId);
             this.props.updateDocument(this.props.documentId, { fileName: fileInfo.fileName });
           } catch (err) {
@@ -357,7 +357,7 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
 
   private handleExportClick = () => {
     if (this.props.document.directLine) {
-      CommandService.remoteCall('emulator:save-transcript-to-file', this.props.document.directLine.conversationId);
+      CommandServiceImpl.remoteCall('emulator:save-transcript-to-file', this.props.document.directLine.conversationId);
     }
   }
 }

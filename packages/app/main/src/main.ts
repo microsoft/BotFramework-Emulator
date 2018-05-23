@@ -34,13 +34,13 @@
 import * as Electron from 'electron';
 import { app, Menu } from 'electron';
 
-import { getSettings, dispatch } from './settings';
+import { dispatch, getSettings } from './settings';
 import { WindowStateAction } from './reducers/windowStateReducer';
 import * as url from 'url';
 import * as path from 'path';
 import { Emulator } from './emulator';
 import { WindowManager } from './windowManager';
-import * as commandLine from './commandLine'
+import * as commandLine from './commandLine';
 import { setTimeout } from 'timers';
 import { Window } from './platform/window';
 import { ensureStoragePath, writeFile } from './utils';
@@ -54,17 +54,17 @@ import { ProgressInfo } from 'builder-util-runtime';
 export let mainWindow: Window;
 export let windowManager: WindowManager;
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 (process as NodeJS.EventEmitter).on('uncaughtException', (error: Error) => {
   console.error(error);
 });
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// TODO - localization
+app.setName('Bot Framework Emulator (V4 PREVIEW)');
 
-app.setName("Bot Framework Emulator (V4 PREVIEW)");
-
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // App-Updater events
 
 AppUpdater.on('checking-for-update', (...args) => {
@@ -74,43 +74,46 @@ AppUpdater.on('checking-for-update', (...args) => {
 AppUpdater.on('update-available', (update: UpdateInfo) => {
   AppMenuBuilder.refreshAppUpdateMenu();
   if (AppUpdater.userInitiated) {
+    // TODO - localization
     mainWindow.commandService.call('shell:show-message-box', true, {
       title: app.getName(),
       message: `An update is available. Download it now?`,
-      buttons: ["Cancel", "OK"],
+      buttons: ['Cancel', 'OK'],
       defaultId: 1,
       cancelId: 0
     }).then(result => {
       if (result) {
         AppUpdater.checkForUpdates(true, true);
       }
-    })
+    });
   }
 });
 
 AppUpdater.on('update-downloaded', (update: UpdateInfo) => {
   AppMenuBuilder.refreshAppUpdateMenu();
+  // TODO - localization
   if (AppUpdater.userInitiated) {
     mainWindow.commandService.call('shell:show-message-box', true, {
       title: app.getName(),
-      message: "Finished downloading update. Restart and install now?",
-      buttons: ["Cancel", "OK"],
+      message: 'Finished downloading update. Restart and install now?',
+      buttons: ['Cancel', 'OK'],
       defaultId: 1,
       cancelId: 0
     }).then(result => {
       if (result) {
         AppUpdater.quitAndInstall();
       }
-    })
+    });
   }
 });
 
 AppUpdater.on('up-to-date', (update: UpdateInfo) => {
+  // TODO - localization
   AppMenuBuilder.refreshAppUpdateMenu();
   if (AppUpdater.userInitiated) {
     mainWindow.commandService.call('shell:show-message-box', true, {
       title: app.getName(),
-      message: "There are no updates currently available."
+      message: 'There are no updates currently available.'
     });
   }
 });
@@ -120,28 +123,29 @@ AppUpdater.on('download-progress', (progress: ProgressInfo) => {
 });
 
 AppUpdater.on('error', (err: Error, message: string) => {
+  // TODO - localization
   AppMenuBuilder.refreshAppUpdateMenu();
   console.error(err, message);
   if (AppUpdater.userInitiated) {
     mainWindow.commandService.call('shell:show-message-box', true, {
       title: app.getName(),
-      message: "There are no updates currently available."
+      message: 'There are no updates currently available.'
     });
   }
 });
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 var openUrls = [];
-var onOpenUrl = function (event, url) {
+var onOpenUrl = function (event: any, url1: any) {
   event.preventDefault();
   if (process.platform === 'darwin') {
     if (mainWindow && mainWindow.webContents) {
       // the app is already running, send a message containing the url to the renderer process
-      mainWindow.webContents.send('botemulator', url);
+      mainWindow.webContents.send('botemulator', url1);
     } else {
       // the app is not yet running, so store the url so the UI can request it later
-      openUrls.push(url);
+      openUrls.push(url1);
     }
   }
 };
@@ -152,9 +156,9 @@ Commands.registerCommands();
 // PARSE COMMAND LINE
 commandLine.parseArgs();
 
-Electron.app.on('will-finish-launching', (event, args) => {
-  Electron.ipcMain.on('getUrls', (event, arg) => {
-    openUrls.forEach(url => mainWindow.webContents.send('botemulator', url));
+Electron.app.on('will-finish-launching', () => {
+  Electron.ipcMain.on('getUrls', (event: any, arg) => {
+    openUrls.forEach(url2 => mainWindow.webContents.send('botemulator', url2));
     openUrls = [];
   });
 
@@ -170,7 +174,7 @@ var windowIsOffScreen = function (windowBounds: Electron.Rectangle): boolean {
     windowBounds.y > (nearestDisplay.y + nearestDisplay.height) ||
     (windowBounds.y + windowBounds.height) < nearestDisplay.y
   );
-}
+};
 
 const createMainWindow = async () => {
   if (squirrel.handleStartupEvent()) {
@@ -263,7 +267,7 @@ const createMainWindow = async () => {
         top: bounds.y
       }
     });
-  }
+  };
 
   mainWindow.browserWindow.on('resize', () => {
     rememberBounds();
@@ -281,7 +285,8 @@ const createMainWindow = async () => {
   mainWindow.browserWindow.on('restore', () => {
     if (windowIsOffScreen(mainWindow.browserWindow.getBounds())) {
       const bounds = mainWindow.browserWindow.getBounds();
-      let display = Electron.screen.getAllDisplays().find(display => display.id === getSettings().windowState.displayId);
+      let display = Electron.screen.getAllDisplays().find(displayArg =>
+        displayArg.id === getSettings().windowState.displayId);
       display = display || Electron.screen.getDisplayMatching(bounds);
       mainWindow.browserWindow.setPosition(display.workArea.x, display.workArea.y);
       dispatch<WindowStateAction>({
@@ -304,7 +309,7 @@ const createMainWindow = async () => {
       AppUpdater.checkForUpdates(false, true);
     }
   });
-}
+};
 
 function loadMainPage() {
   let queryString = '';
@@ -335,7 +340,7 @@ Electron.app.on('ready', function () {
     if (process.argv.find(val => val.includes('--vscode-debugger'))) {
       // workaround for delay in vscode debugger attach
       setTimeout(createMainWindow, 5000);
-      //createMainWindow();
+      // createMainWindow();
     } else {
       createMainWindow();
     }
@@ -343,13 +348,13 @@ Electron.app.on('ready', function () {
 });
 
 Electron.app.on('window-all-closed', function () {
-  //if (process.platform !== 'darwin') {
+  // if (process.platform !== 'darwin') {
   Electron.app.quit();
-  //}
+  // }
 });
 
-Electron.app.on('activate', function () {
+Electron.app.on('activate', async function () {
   if (!mainWindow) {
-    createMainWindow();
+    await createMainWindow();
   }
 });

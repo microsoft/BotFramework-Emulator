@@ -39,7 +39,7 @@ import { connect } from 'react-redux';
 import { Detail } from './parts';
 import Panel, { PanelControls, PanelContent } from '../panel';
 import { ExtensionManager, GetInspectorResult, Extension } from '../../../extensions';
-import { IExtensionInspector, IInspectorAccessory, IInspectorAccessoryState } from '@bfemulator/sdk-shared';
+import { ExtensionInspector, InspectorAccessory, InspectorAccessoryState } from '@bfemulator/sdk-shared';
 import { RootState } from '../../../data/store';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 import { Colors } from '@bfemulator/ui-react';
@@ -75,14 +75,14 @@ interface DetailPanelProps {
 }
 
 interface AccessoryButton {
-  config: IInspectorAccessory;
+  config: InspectorAccessory;
   state: string;
   enabled: boolean;
 }
 
 interface DetailPanelState {
   extension: Extension;
-  inspector: IExtensionInspector;
+  inspector: ExtensionInspector;
   buttons: AccessoryButton[];
   inspectObj: any;
   title: string;
@@ -109,7 +109,7 @@ class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
   }
 
   componentDidUpdate(): void {
-    let inspector: IExtensionInspector = null;
+    let inspector: ExtensionInspector = null;
     let extension: Extension = null;
 
     const getInsp = this.getInspector();
@@ -184,7 +184,7 @@ class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
     });
   }
 
-  renderAccessoryIcon(config: IInspectorAccessoryState) {
+  renderAccessoryIcon(config: InspectorAccessoryState) {
     if (config.icon === 'Spinner') {
       return (
         <Spinner className="accessory-button-icon" size={ SpinnerSize.xSmall } />
@@ -213,7 +213,7 @@ class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
     );
   }
 
-  renderAccessoryButtons(_inspector: IExtensionInspector) {
+  renderAccessoryButtons(_inspector: ExtensionInspector) {
     return (
       <PanelControls>
         { this.state.buttons.map(a => this.renderAccessoryButton(a, this.onAccessoryClick)) }

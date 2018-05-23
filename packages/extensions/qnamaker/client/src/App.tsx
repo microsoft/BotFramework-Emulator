@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IInspectorHost } from '@bfemulator/sdk-client';
-import { GlobalCss, Splitter } from '@bfemulator/ui-react';
+import { InspectorHost } from '@bfemulator/sdk-client';
+import { Colors, Fonts, Splitter } from '@bfemulator/ui-react';
 import { css } from 'glamor';
 import * as React from 'react';
 import { IBotConfig, IQnAService, ServiceType } from 'msbot/bin/schema';
@@ -44,7 +44,7 @@ import PhrasingsView from './Views/PhrasingsView';
 import AnswersView from './Views/AnswersView';
 import AppStateAdapter from './AppStateAdapter';
 
-let $host: IInspectorHost = (window as any).host;
+let $host: InspectorHost = (window as any).host;
 const QnAApiBasePath = 'https://westus.api.cognitive.microsoft.com/qnamaker/v4.0';
 const TrainAccessoryId = 'train';
 const PublishAccessoryId = 'publish';

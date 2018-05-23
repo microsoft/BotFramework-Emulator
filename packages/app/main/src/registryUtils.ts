@@ -33,91 +33,98 @@
 
 import * as winreg from 'winreg';
 
-export function deleteKey(hive: string, path: string) : Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
-        try {
-            let regKey = new winreg({hive: hive, key: path});
-            regKey.keyExists((err, result) => {
-                if (!err && result) {
-                    regKey.destroy((destroyErr) => {
-                        if (destroyErr) {
-                            reject(destroyErr);
-                        } else {
-                            resolve(true);
-                        }
-                    });
-                }
-                resolve(true);
-            });
-        } catch(err) {
-            reject(err);
+export function deleteKey(hive: string, path: string): Promise<boolean> {
+  return new Promise<boolean>((resolve, reject) => {
+    try {
+      let regKey = new winreg({ hive: hive, key: path });
+      regKey.keyExists((err, result) => {
+        if (!err && result) {
+          regKey.destroy((destroyErr) => {
+            if (destroyErr) {
+              reject(destroyErr);
+            } else {
+              resolve(true);
+            }
+          });
         }
-    }).then(undefined, err => { return undefined });
+        resolve(true);
+      });
+    } catch (err) {
+      reject(err);
+    }
+  }).then(undefined, err => {
+    return undefined;
+  });
 }
 
-export function createKey(hive: string, path: string) : Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
-        try {
-            let regKey = new winreg({hive: hive, key: path});
-            regKey.keyExists((err, result) => {
-                if (err || !result) {
-                    regKey.create((err) => {
-                        if (err) {
-                            reject(err);
-                        } else {
-                            resolve(true);
-                        }
-                    });
-                }
-                resolve(true);
-            });
-        } catch(err) {
-            reject(err);
+export function createKey(hive: string, path: string): Promise<boolean> {
+  return new Promise<boolean>((resolve, reject) => {
+    try {
+      let regKey = new winreg({ hive: hive, key: path });
+      regKey.keyExists((err, result) => {
+        if (err || !result) {
+          regKey.create((err1) => {
+            if (err1) {
+              reject(err1);
+            } else {
+              resolve(true);
+            }
+          });
         }
-    }).then(undefined, err => { return false });
+        resolve(true);
+      });
+    } catch (err) {
+      reject(err);
+    }
+  }).then(undefined, err => {
+    return false;
+  });
 }
 
-export function setStringValue(hive: string, path: string, name: string, value: string) : Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
-        try {
-            let regKey = new winreg({hive: hive, key: path});
-            regKey.set(name, winreg.REG_SZ, value, (err) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(true);
-                }
-            })
-        } catch(err) {
-            reject(err);
+export function setStringValue(hive: string, path: string, name: string, value: string): Promise<boolean> {
+  return new Promise<boolean>((resolve, reject) => {
+    try {
+      let regKey = new winreg({ hive: hive, key: path });
+      regKey.set(name, winreg.REG_SZ, value, (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(true);
         }
-    }).then(undefined, err => { return false });
+      });
+    } catch (err) {
+      reject(err);
+    }
+  }).then(undefined, err => {
+    return false;
+  });
 }
 
 // Add registry entries for the scheme:// URI handler
-export function registerProtocolHandler(scheme: string, name: string) : Promise<boolean> {
-    // Add registry entries for the ${scheme}:// URI handler
-    return deleteKey(winreg.HKCU, `\\SOFTWARE\\Classes\\${scheme}`).then(_ => {
-        return createKey(winreg.HKCU, `\\SOFTWARE\\Classes\\${scheme}`);
-    }).then(_ => {
-        return setStringValue(winreg.HKCU, `\\SOFTWARE\\Classes\\${scheme}`, '', `URL:${name}`);
-    }).then(_ => {
-        return setStringValue(winreg.HKCU, `\\SOFTWARE\\Classes\\${scheme}`, 'URL Protocol', '');
-    }).then(_ => {
-        return createKey(winreg.HKCU, `\\SOFTWARE\\Classes\\${scheme}\\DefaultIcon`);
-    }).then(_ => {
-        return setStringValue(winreg.HKCU, `\\SOFTWARE\\Classes\\${scheme}\\DefaultIcon`, '', process.execPath + ',1');
-    }).then(_ => {
-        return createKey(winreg.HKCU, `\\SOFTWARE\\Classes\\${scheme}\\shell`);
-    }).then(_ => {
-        return createKey(winreg.HKCU, `\\SOFTWARE\\Classes\\${scheme}\\shell\\open`);
-    }).then(_ => {
-        return createKey(winreg.HKCU, `\\SOFTWARE\\Classes\\${scheme}\\shell\\open\\command`);
-    }).then(_ => {
-        return setStringValue(winreg.HKCU, `\\SOFTWARE\\Classes\\${scheme}\\shell\\open\\command`, '', '"' + process.execPath + '" "%1"');
-    });
+export function registerProtocolHandler(scheme: string, name: string): Promise<boolean> {
+  // Add registry entries for the ${scheme}:// URI handler
+  return deleteKey(winreg.HKCU, `\\SOFTWARE\\Classes\\${scheme}`).then(_ => {
+    return createKey(winreg.HKCU, `\\SOFTWARE\\Classes\\${scheme}`);
+  }).then(_ => {
+    return setStringValue(winreg.HKCU, `\\SOFTWARE\\Classes\\${scheme}`, '', `URL:${name}`);
+  }).then(_ => {
+    return setStringValue(winreg.HKCU, `\\SOFTWARE\\Classes\\${scheme}`, 'URL Protocol', '');
+  }).then(_ => {
+    return createKey(winreg.HKCU, `\\SOFTWARE\\Classes\\${scheme}\\DefaultIcon`);
+  }).then(_ => {
+    return setStringValue(winreg.HKCU, `\\SOFTWARE\\Classes\\${scheme}\\DefaultIcon`, '', process.execPath + ',1');
+  }).then(_ => {
+    return createKey(winreg.HKCU, `\\SOFTWARE\\Classes\\${scheme}\\shell`);
+  }).then(_ => {
+    return createKey(winreg.HKCU, `\\SOFTWARE\\Classes\\${scheme}\\shell\\open`);
+  }).then(_ => {
+    return createKey(winreg.HKCU, `\\SOFTWARE\\Classes\\${scheme}\\shell\\open\\command`);
+  }).then(_ => {
+    return setStringValue(winreg.HKCU, `\\SOFTWARE\\Classes\\${scheme}\\shell\\open\\command`, '',
+      '"' + process.execPath + '" "%1"');
+  });
 }
 
-export function unregisterProtocolHandler(scheme: string) : Promise<boolean> {
-    return deleteKey(winreg.HKCU, `\\SOFTWARE\\Classes\\${scheme}`);
+export function unregisterProtocolHandler(scheme: string): Promise<boolean> {
+  return deleteKey(winreg.HKCU, `\\SOFTWARE\\Classes\\${scheme}`);
 }

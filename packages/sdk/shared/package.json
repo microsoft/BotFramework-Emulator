@@ -5,9 +5,9 @@
   "main": "built/index.js",
   "types": "built/index.d.ts",
   "scripts": {
-    "build": "npm run clean && tsc && tslint --project tsconfig.json --force",
+    "build": "tslint --project tsconfig.json && npm run clean && tsc",
     "clean": "rimraf ./built",
-    "prepare": "npm run clean && npm run build",
+    "prepare": "npm run clean",
     "test": "jest"
   },
   "author": "",

@@ -31,15 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IBotInfo } from '@bfemulator/app-shared';
-import { IBotConfigWithPath } from '@bfemulator/sdk-shared';
+import { BotInfo } from '@bfemulator/app-shared';
+import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 import store from './store';
 
-export function getActiveBot(): IBotConfigWithPath {
+export function getActiveBot(): BotConfigWithPath {
   return store.getState().bot.activeBot;
 }
 
-export function getBotInfoByPath(path: string): IBotInfo {
+export function getBotInfoByPath(path: string): BotInfo {
   const state = store.getState();
   return state.bot.botFiles.find(bot => bot && bot.path === path);
 }

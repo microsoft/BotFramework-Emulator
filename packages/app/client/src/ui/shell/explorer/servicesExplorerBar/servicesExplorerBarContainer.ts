@@ -40,7 +40,7 @@ const mapStateToProps = (state: IRootState) => {
   return { activeBotExists };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (_dispatch: () => void) => {
   return {};
 };
 

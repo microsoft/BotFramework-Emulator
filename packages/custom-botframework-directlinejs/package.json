@@ -11,7 +11,6 @@
     "tsc-watch": "tsc -w",
     "webpack-watch": "webpack -w",
     "clean": "rm -rf built",
-    "prepublish": "tsc && webpack --mode production",
     "test": "mocha test"
   },
   "repository": {

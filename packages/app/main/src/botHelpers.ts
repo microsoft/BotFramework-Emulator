@@ -33,17 +33,17 @@
 
 import { BotConfig } from 'msbot';
 
-import { IBotInfo, getBotDisplayName } from '@bfemulator/app-shared';
-import { BotConfigWithPath, IBotConfigWithPath } from '@bfemulator/sdk-shared';
+import { BotInfo, getBotDisplayName } from '@bfemulator/app-shared';
+import { BotConfigWithPathImpl, BotConfigWithPath } from '@bfemulator/sdk-shared';
 import { mainWindow } from './main';
 import * as BotActions from './data-v2/action/bot';
 
-export function getActiveBot(): IBotConfigWithPath {
+export function getActiveBot(): BotConfigWithPath {
   const state = mainWindow && mainWindow.store.getState();
   return state && state.bot.activeBot;
 }
 
-export function getBotInfoByPath(path: string): IBotInfo {
+export function getBotInfoByPath(path: string): BotInfo {
   const state = mainWindow.store.getState();
   return state.bot.botFiles.find(bot => bot && bot.path === path);
 }
@@ -60,10 +60,10 @@ export function pathExistsInRecentBots(path: string): boolean {
  *  to keep retrying until the correct secret is entered or the popup
  *  is dismissed.
  */
-export async function loadBotWithRetry(botPath: string, secret?: string): Promise<IBotConfigWithPath> {
+export async function loadBotWithRetry(botPath: string, secret?: string): Promise<BotConfigWithPath> {
   try {
-    // load the bot and transform it into internal IBotConfig implementation
-    let bot: IBotConfigWithPath = await BotConfig.Load(botPath, secret);
+    // load the bot and transform it into internal BotConfig implementation
+    let bot: BotConfigWithPath = await BotConfig.Load(botPath, secret);
     bot = cloneBot(bot);
     bot.path = botPath;
 
@@ -79,7 +79,7 @@ export async function loadBotWithRetry(botPath: string, secret?: string): Promis
       }
     } else {
       // bot does not have an entry in recent bots so create one
-      const botInfo: IBotInfo = {
+      const botInfo: BotInfo = {
         path: botPath,
         displayName: getBotDisplayName(bot),
         secret
@@ -89,14 +89,16 @@ export async function loadBotWithRetry(botPath: string, secret?: string): Promis
 
     return bot;
   } catch (e) {
-    // TODO: Only prompt for password if we know for a fact we need it. Lots of different errors can arrive here, like ENOENT, if the file wasn't found.
+    // TODO: Only prompt for password if we know for a fact we need it.
+    // Lots of different errors can arrive here, like ENOENT, if the file wasn't found.
     // Add easily discernable errors / error codes to msbot package
     if (typeof e === 'string' && (e.includes('secret') || e.includes('crypt'))) {
       // bot requires a secret to decrypt properties
       const newSecret = await mainWindow.commandService.remoteCall('secret-prompt:show');
-      if (newSecret === null)
+      if (newSecret === null) {
         // pop-up was dismissed; stop trying to prompt for secret
         return null;
+      }
       // try again with new secret
       return await loadBotWithRetry(botPath, newSecret);
     } else {
@@ -105,8 +107,8 @@ export async function loadBotWithRetry(botPath: string, secret?: string): Promis
   }
 }
 
-/** Converts an IBotConfig to a BotConfig */
-export function toSavableBot(bot: IBotConfigWithPath, secret?: string): BotConfig {
+/** Converts an BotConfig to a BotConfig */
+export function toSavableBot(bot: BotConfigWithPath, secret?: string): BotConfig {
   const botCopy = cloneBot(bot);
   const newBot: BotConfig = new BotConfig(secret);
 
@@ -118,20 +120,20 @@ export function toSavableBot(bot: IBotConfigWithPath, secret?: string): BotConfi
 }
 
 /** Clones a bot */
-export function cloneBot(bot: IBotConfigWithPath): IBotConfigWithPath {
+export function cloneBot(bot: BotConfigWithPath): BotConfigWithPath {
   if (!bot) {
     return null;
   }
-  return BotConfigWithPath.fromJSON(bot);
+  return BotConfigWithPathImpl.fromJSON(bot);
 }
 
 /** Patches a bot record in bots.json, and updates the list
  *  in the store and on disk.
  */
-export async function patchBotsJson(botPath: string, bot: IBotInfo): Promise<IBotInfo[]> {
+export async function patchBotsJson(botPath: string, bot: BotInfo): Promise<BotInfo[]> {
   const state = mainWindow.store.getState();
   const bots = [...state.bot.botFiles];
-  const botIndex = bots.findIndex(bot => bot.path === botPath);
+  const botIndex = bots.findIndex(bot1 => bot1.path === botPath);
   if (botIndex > -1) {
     bots[botIndex] = { ...bots[botIndex], ...bot };
   } else {
@@ -145,12 +147,13 @@ export async function patchBotsJson(botPath: string, bot: IBotInfo): Promise<IBo
 }
 
 /** Saves a bot to disk */
-export async function saveBot(bot: IBotConfigWithPath): Promise<void> {
+export async function saveBot(bot: BotConfigWithPath): Promise<void> {
   const botInfo = getBotInfoByPath(bot.path) || {};
 
   const saveableBot = toSavableBot(bot, botInfo.secret);
 
-  if (botInfo.secret)
+  if (botInfo.secret) {
     saveableBot.validateSecretKey();
+  }
   return await saveableBot.save(bot.path);
 }

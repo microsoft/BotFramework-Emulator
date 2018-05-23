@@ -35,7 +35,7 @@ import IError from '../../types/error';
 import IErrorResponse from '../../types/response/error';
 import APIException from '../../types/apiException';
 
-// Create IErrorResponse object
+// Create ErrorResponse object
 function createErrorResponse(code: string, message: string): IErrorResponse {
   return {
     error: {

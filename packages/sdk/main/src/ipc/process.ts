@@ -33,7 +33,7 @@
 
 import { IPC, isObject } from '@bfemulator/sdk-shared';
 
-export interface IProcess {
+export interface Process {
   pid: number;
   send?(message: any);
   on(event: 'message', listener: NodeJS.MessageListener);
@@ -43,7 +43,7 @@ export interface IProcess {
 export class ProcessIPC extends IPC {
   get id(): number { return this._process.pid; }
 
-  constructor(private _process: IProcess) {
+  constructor(private _process: Process) {
     super();
     this._process.on('message', message => {
       if (isObject(message) && message.type === 'ipc:message' && Array.isArray(message.args)) {

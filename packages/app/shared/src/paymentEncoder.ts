@@ -31,15 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Payment, ICardAction } from '@bfemulator/sdk-shared';
+import { Payment, CardAction } from '@bfemulator/sdk-shared';
 import { ActivityVisitor } from './activityVisitor';
 
 export class PaymentEncoder extends ActivityVisitor {
-    public static PaymentEmulatorUrlProtocol: string = "payment:";
+    public static PaymentEmulatorUrlProtocol: string = 'payment:';
 
-    protected visitCardAction(cardAction: ICardAction) {
+    protected visitCardAction(cardAction: CardAction) {
         if (cardAction && cardAction.type === 'payment') {
-            let paymentRequest = cardAction.value as Payment.IPaymentRequest;
+            let paymentRequest = cardAction.value as Payment.PaymentRequest;
             let url = PaymentEncoder.PaymentEmulatorUrlProtocol + '//' + JSON.stringify(paymentRequest);
 
             // change the card action to a special URL for the emulator

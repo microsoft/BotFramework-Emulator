@@ -33,114 +33,114 @@
 
 export namespace Payment {
 
-  export interface ICheckoutConversationSession {
+  export interface CheckoutConversationSession {
     paymentActivityId: string;
     checkoutConversationId: string;
     checkoutFromId: string;
   }
 
-  export interface IPaymentMethodData {
-    supportedMethods: string[],
-    data: any
+  export interface PaymentMethodData {
+    supportedMethods: string[];
+    data: any;
   }
 
-  export interface IPaymentDetails {
-    total: IPaymentItem,
-    displayItems: IPaymentItem[],
-    shippingOptions: IPaymentShippingOption[],
-    modifiers: IPaymentDetailsModifier[],
-    error: string
+  export interface PaymentDetails {
+    total: PaymentItem;
+    displayItems: PaymentItem[];
+    shippingOptions: PaymentShippingOption[];
+    modifiers: PaymentDetailsModifier[];
+    error: string;
   }
 
-  export interface IPaymentItem {
-    label: string,
-    pending?: boolean,
-    amount: IPaymentCurrencyAmount
+  export interface PaymentItem {
+    label: string;
+    pending?: boolean;
+    amount: PaymentCurrencyAmount;
   }
 
-  export interface IPaymentCurrencyAmount {
-    currency: string,
-    currencySystem: string,
-    value: string
+  export interface PaymentCurrencyAmount {
+    currency: string;
+    currencySystem: string;
+    value: string;
   }
 
-  export interface IPaymentDetailsModifier {
-    additionalDisplayItems: IPaymentItem[],
-    data: any,
-    supportedMethods: string[],
-    total: IPaymentItem
+  export interface PaymentDetailsModifier {
+    additionalDisplayItems: PaymentItem[];
+    data: any;
+    supportedMethods: string[];
+    total: PaymentItem;
   }
 
-  export interface IPaymentShippingOption {
-    id: string,
-    label: string,
-    selected?: boolean,
-    amount: IPaymentCurrencyAmount
+  export interface PaymentShippingOption {
+    id: string;
+    label: string;
+    selected?: boolean;
+    amount: PaymentCurrencyAmount;
   }
 
-  export interface IPaymentOptions {
-    requestPayerEmail?: boolean,
-    requestPayerName?: boolean,
-    requestPayerPhone?: boolean,
-    requestShipping?: boolean,
-    shippingType: string
+  export interface PaymentOptions {
+    requestPayerEmail?: boolean;
+    requestPayerName?: boolean;
+    requestPayerPhone?: boolean;
+    requestShipping?: boolean;
+    shippingType: string;
   }
 
-  export interface IPaymentRequest {
-    details: IPaymentDetails,
-    expires: string,
-    id: string,
-    methodData: IPaymentMethodData[],
-    options: IPaymentOptions
+  export interface PaymentRequest {
+    details: PaymentDetails;
+    expires: string;
+    id: string;
+    methodData: PaymentMethodData[];
+    options: PaymentOptions;
   }
 
   export const PaymentOperations = {
     PaymentCompleteOperationName: 'payments/complete',
     UpdateShippingAddressOperationName: 'payments/update/shippingAddress',
     UpdateShippingOptionOperationName: 'payments/update/shippingOption'
+  };
+
+  export interface PaymentAddress {
+    addressLine: string[];
+    city: string;
+    country: string;
+    dependentLocality: string;
+    languageCode: string;
+    organization: string;
+    phone: string;
+    postalCode: string;
+    recipient: string;
+    region: string;
+    sortingCode: string;
   }
 
-  export interface IPaymentAddress {
-    addressLine: string[],
-    city: string,
-    country: string,
-    dependentLocality: string,
-    languageCode: string,
-    organization: string,
-    phone: string,
-    postalCode: string,
-    recipient: string,
-    region: string,
-    sortingCode: string
+  export interface PaymentRequestUpdate {
+    details: PaymentDetails;
+    id: string;
+    shippingAddress: PaymentAddress;
+    shippingOption: string;
   }
 
-  export interface IPaymentRequestUpdate {
-    details: IPaymentDetails,
-    id: string,
-    shippingAddress: IPaymentAddress,
-    shippingOption: string
+  export interface PaymentRequestUpdateResult {
+    details: PaymentDetails;
   }
 
-  export interface IPaymentRequestUpdateResult {
-    details: IPaymentDetails
+  export interface PaymentRequestComplete {
+    id: string;
+    paymentRequest: PaymentRequest;
+    paymentResponse: PaymentResponse;
   }
 
-  export interface IPaymentRequestComplete {
-    id: string,
-    paymentRequest: IPaymentRequest,
-    paymentResponse: IPaymentResponse
-  }
-
-  export interface IPaymentRequestCompleteResult {
+  export interface PaymentRequestCompleteResult {
     result: string;
   }
 
-  export interface IPaymentResponse {
-    details: any,
-    methodName: string,
-    payerEmail: string,
-    payerPhone: string,
-    shippingAddress: IPaymentAddress,
-    shippingOption: string
+  export interface PaymentResponse {
+    details: any;
+    methodName: string;
+    payerEmail: string;
+    payerPhone: string;
+    shippingAddress: PaymentAddress;
+    shippingOption: string;
   }
 }

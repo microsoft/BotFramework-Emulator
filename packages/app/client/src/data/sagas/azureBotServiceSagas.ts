@@ -34,7 +34,7 @@
 import { IAzureBotService, ServiceType } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
 import { call, ForkEffect, takeEvery, takeLatest } from 'redux-saga/effects';
-import { CommandService } from '../../platform/commands/commandService';
+import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { DialogService } from '../../ui/dialogs/service';
 import {
   AzureBotServiceEditor
@@ -54,7 +54,7 @@ function* launchAzureBotServiceEditor(action: AzureBotServiceAction<AzureBotServ
   const result = yield DialogService
     .showDialog<ComponentClass<AzureBotServiceEditor>>(azureBotServiceEditorComponent, { azureBotService });
   if (result) {
-    yield CommandService.remoteCall('bot:add-or-update-service', ServiceType.AzureBotService, result);
+    yield CommandServiceImpl.remoteCall('bot:add-or-update-service', ServiceType.AzureBotService, result);
   }
 }
 
@@ -65,7 +65,7 @@ function* openAzureBotServiceContextMenu
     { label: 'Open in web portal', id: 'open' },
     { label: 'Remove', id: 'forget' }
   ];
-  const response = yield call(CommandService.remoteCall.bind(CommandService), 'electron:displayContextMenu', menuItems);
+  const response = yield call(CommandServiceImpl.remoteCall.bind(CommandServiceImpl), 'electron:displayContextMenu', menuItems);
   switch (response.id) {
     case 'edit':
       yield* launchAzureBotServiceEditor(action);
@@ -88,12 +88,12 @@ function* openAzureBotServiceDeepLink(action: AzureBotServiceAction<AzureBotServ
   const { tenantId, subscriptionId, resourceGroup, id } = action.payload.azureBotService;
   const thankYouTsLint = `https://ms.portal.azure.com/#@${tenantId}/resource/subscriptions/${subscriptionId}`;
   const link = `${thankYouTsLint}/resourceGroups/${resourceGroup}/providers/Microsoft.BotService/botServices/${id}`;
-  yield CommandService.remoteCall('electron:openExternal', link + '/channels');
+  yield CommandServiceImpl.remoteCall('electron:openExternal', link + '/channels');
 }
 
 function* removeAzureBotServiceFromActiveBot(azureBotService: IAzureBotService): IterableIterator<any> {
   // TODO - localization
-  const result = yield CommandService.remoteCall('shell:show-message-box', true, {
+  const result = yield CommandServiceImpl.remoteCall('shell:show-message-box', true, {
     type: 'question',
     buttons: ['Cancel', 'OK'],
     defaultId: 1,
@@ -101,7 +101,7 @@ function* removeAzureBotServiceFromActiveBot(azureBotService: IAzureBotService):
     cancelId: 0,
   });
   if (result) {
-    yield CommandService.remoteCall('bot:remove-service', ServiceType.AzureBotService, azureBotService.id);
+    yield CommandServiceImpl.remoteCall('bot:remove-service', ServiceType.AzureBotService, azureBotService.id);
   }
 }
 

@@ -14,7 +14,7 @@
     "build": "run-s build:vendors build:shared build:app copy:external",
     "clean": "rimraf build",
     "copy:external": "gulp copy",
-    "prepare": "npm run clean && npm run build",
+    "prepare": "npm run clean",
     "lint": "tslint --project tsconfig.json",
     "start": "run-s copy:external build:vendors:dev build:shared:dev webpackdevServer:dev",
     "webpackdevServer:dev": "webpack-dev-server --mode development --hot --inline --progress --colors --content-base ./public",

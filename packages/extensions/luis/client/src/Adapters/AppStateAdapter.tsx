@@ -35,7 +35,7 @@ import { AppState, PersistentAppState } from '../App';
 import { LuisTraceInfo } from '../Models/LuisTraceInfo';
 import { AppInfo } from '../Luis/AppInfo';
 import { IntentInfo } from '../Luis/IntentInfo';
-import { ITraceActivity } from '@bfemulator/sdk-shared';
+import { TraceActivity } from '@bfemulator/sdk-shared';
 import { ButtonSelected } from '../Controls/ControlBar';
 import { RecognizerResultAdapter } from '../Adapters/RecognizerResultAdapter';
 
@@ -55,7 +55,7 @@ export default class AppStateAdapter implements AppState {
     if (!obj) {
       return false;
     }
-    const trace = obj as ITraceActivity;
+    const trace = obj as TraceActivity;
     if (trace.type !== TraceActivity || trace.valueType !== LuisTraceType) {
       return false;
     }
@@ -76,7 +76,7 @@ export default class AppStateAdapter implements AppState {
     if (!AppStateAdapter.validate(obj)) {
       return;
     }
-    let traceActivity = (obj as ITraceActivity);
+    let traceActivity = (obj as TraceActivity);
     this.traceInfo = traceActivity.value as LuisTraceInfo;
     this.controlBarButtonSelected = this.traceInfo.recognizerResult ?
                                       ButtonSelected.RecognizerResult :

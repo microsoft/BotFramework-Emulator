@@ -33,6 +33,7 @@
 
 import { IInspectorHost } from '@bfemulator/sdk-client';
 import { Colors, Fonts, GlobalCss, Splitter } from '@bfemulator/ui-react';
+import { InspectorHost } from '@bfemulator/sdk-client';
 import { css } from 'glamor';
 import { IBotConfig, IDispatchService, ILuisService, ServiceType, IConnectedService } from 'msbot/bin/schema';
 import * as React from 'react';
@@ -49,7 +50,7 @@ import { IntentInfo } from './Luis/IntentInfo';
 import { LuisAppInfo } from './Models/LuisAppInfo';
 import { LuisTraceInfo } from './Models/LuisTraceInfo';
 
-let $host: IInspectorHost = (window as any).host;
+let $host: InspectorHost = (window as any).host;
 const LuisApiBasePath = 'https://westus.api.cognitive.microsoft.com/luis/api/v2.0';
 const TrainAccessoryId = 'train';
 const PublichAccessoryId = 'publish';
@@ -208,9 +209,9 @@ class App extends Component<any, AppState> {
           setButtonSelected={this.setControlButtonSelected}
           buttonSelected={this.state.controlBarButtonSelected}
         />
-          <Splitter orientation={'vertical'} 
-                    primaryPaneIndex={0} 
-                    minSizes={{ 0: 306, 1: 306 }} 
+          <Splitter orientation={'vertical'}
+                    primaryPaneIndex={0}
+                    minSizes={{ 0: 306, 1: 306 }}
                     initialSizes={{ 0: 306 }}>
             <ReactJson
               name={this.state.controlBarButtonSelected === ButtonSelected.RecognizerResult ?

@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IBotInfo } from '@bfemulator/app-shared';
+import { BotInfo } from '@bfemulator/app-shared';
 import { IBotConfig } from 'msbot/bin/schema';
 import { BotAction } from '../reducer/bot';
 
@@ -52,7 +52,7 @@ export function create(bot: IBotConfig, botFilePath: string, secret: string): Bo
   };
 }
 
-export function load(bots: IBotInfo[]): BotAction {
+export function load(bots: BotInfo[]): BotAction {
   // prune bad bots
   bots = bots.filter(bot => !!bot);
 

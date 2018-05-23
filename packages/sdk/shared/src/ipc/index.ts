@@ -34,26 +34,28 @@
 export * from './channel';
 export * from './sender';
 
-import { Disposable, IDisposable } from '../lifecycle';
+import { DisposableImpl, Disposable } from '../lifecycle';
 import { Channel } from './channel';
-import { ISender } from './sender';
+import { Sender } from './sender';
 
-export abstract class IPC extends Disposable implements ISender {
+export abstract class IPC extends DisposableImpl implements Sender {
   protected _channels: { [id: string]: Channel } = {};
 
   public id: number;
 
-  registerChannel(channel: Channel): IDisposable {
-    if (!channel)
-      throw new Error("channel cannot be null");
-    if (this._channels[channel.name])
+  registerChannel(channel: Channel): Disposable {
+    if (!channel) {
+      throw new Error('channel cannot be null');
+    }
+    if (this._channels[channel.name]) {
       throw new Error(`channel ${channel.name} already exists`);
+    }
     this._channels[channel.name] = channel;
     return {
       dispose: () => {
         delete this._channels[channel.name];
       }
-    }
+    };
   }
 
   getChannel(name: string): Channel {
@@ -67,6 +69,12 @@ export class NoopIPC extends IPC {
   constructor(private _id: number) {
     super();
   }
-  get id(): number { return this._id; }
-  send(...args: any[]): void { }
+
+  get id(): number {
+    return this._id;
+  }
+
+  send(...args: any[]): void {
+    return null;
+  }
 }

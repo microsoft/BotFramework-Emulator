@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ISpeechTokenInfo } from '@bfemulator/app-shared';
+import { SpeechTokenInfo } from '@bfemulator/app-shared';
 import * as WebChat from '@bfemulator/custom-botframework-webchat';
 
 import { Colors } from '@bfemulator/ui-react';
@@ -41,7 +41,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { EmulatorMode } from '..';
 
-import { CommandService } from '../../../../platform/commands/commandService';
+import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
 
 const CognitiveServices = require('@bfemulator/custom-botframework-webchat/CognitiveServices');
 const AdaptiveCardsHostConfig = require('@bfemulator/custom-botframework-webchat/adaptivecards-hostconfig.json');
@@ -220,7 +220,7 @@ class Chat extends React.Component<Props> {
     let command = refresh ? 'speech-token:refresh' : 'speech-token:get';
 
     try {
-      const speechToken: ISpeechTokenInfo = await CommandService.remoteCall(command, endpoint.endpoint);
+      const speechToken: SpeechTokenInfo = await CommandServiceImpl.remoteCall(command, endpoint.endpoint);
 
       if (!speechToken) {
         console.error('Could not retrieve Cognitive Services speech token.');

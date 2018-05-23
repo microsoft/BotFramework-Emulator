@@ -32,29 +32,29 @@
 //
 
 import * as React from 'react';
-import { css } from 'glamor';
 import { connect } from 'react-redux';
 import { FileInfo } from '@bfemulator/app-shared';
 import { pathExt } from '@fuselab/ui-shared/lib';
 import { TreeView, TreeViewProps } from '@fuselab/ui-fabric/lib';
 import { ExpandCollapse, ExpandCollapseContent } from '@bfemulator/ui-react';
 import { IFileTreeState } from '../../../../data/reducer/files';
-import { CommandService } from '../../../../platform/commands/commandService';
+import { EXPLORER_CSS } from '../explorerStyle';
+import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
 import { FileTreeDataProvider } from './fileTreeProvider';
 
-const CSS = css({
-  // tree comp overrides to match services pane style
-  '& div[class*="root-"]': {
-    height: '22px',
-    lineHeight: '22px',
-    whiteSpace: 'nowrap'
-  },
-
-  '& div[class*="level_"]': {
-    height: '14px',
-    lineHeight: '14px'
-  }
-});
+// const CONVO_CSS = css({
+//   display: 'flex',
+//   flexDirection: 'column',
+//   listStyleType: 'none',
+//   margin: 0,
+//   padding: 0,
+//   overflowY: 'auto',
+//   overflowX: 'hidden',
+//
+//   '& .empty-list': {
+//     fontStyle: 'italic',
+//   }
+// });
 
 interface TranscriptExplorerProps {
   activeEditor: string;
@@ -101,7 +101,7 @@ class TranscriptExplorerComponent extends React.Component<TranscriptExplorerProp
   }
 
   private handleItemClick(filename: string) {
-    CommandService.call('transcript:open', filename).catch();
+    CommandServiceImpl.call('transcript:open', filename).catch();
   }
 
   private renderFileTree(): JSX.Element {

@@ -31,29 +31,32 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ICommand, ICommandHandler, ICommandMap } from './';
-import { IDisposable } from '../lifecycle';
+import { Command, CommandHandler, CommandMap } from './';
+import { Disposable } from '../lifecycle';
 
-export interface ICommandRegistry {
-	registerCommand(id: string, command: ICommandHandler): IDisposable;
-	registerCommand(command: ICommand): IDisposable;
-	getCommand(id: string): ICommand;
-	getCommands(): ICommandMap;
+export interface CommandRegistry {
+  registerCommand(id: string, command: CommandHandler): Disposable;
+
+  registerCommand(command: Command): Disposable;
+
+  getCommand(id: string): Command;
+
+  getCommands(): CommandMap;
 }
 
-export class CommandRegistry implements ICommandRegistry {
+export class CommandRegistryImpl implements CommandRegistry {
 
-  private _commands: ICommandMap = {};
+  private _commands: CommandMap = {};
 
-  registerCommand(idOrCommand: string | ICommand, handler?: ICommandHandler): IDisposable {
+  registerCommand(idOrCommand: string | Command, handler?: CommandHandler): Disposable {
 
     if (!idOrCommand) {
-      throw new Error("invalid command");
+      throw new Error('invalid command');
     }
 
     if (typeof idOrCommand === 'string') {
       if (!handler) {
-        throw new Error("invalid command");
+        throw new Error('invalid command');
       }
       return this.registerCommand({ id: idOrCommand, handler });
     }
@@ -67,11 +70,11 @@ export class CommandRegistry implements ICommandRegistry {
     };
   }
 
-  getCommand(id: string): ICommand {
+  getCommand(id: string): Command {
     return this._commands[id];
   }
 
-  getCommands(): ICommandMap {
+  getCommands(): CommandMap {
     return this._commands;
   }
 }

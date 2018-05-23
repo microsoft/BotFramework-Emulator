@@ -31,18 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export interface IBot {
-  id?: string,
-  botId?: string,
-  botName?: string,
-  botUrl?: string,
-  locale?: string,
-  msaAppId?: string,
-  msaPassword?: string
+export interface Bot {
+  id?: string;
+  botId?: string;
+  botName?: string;
+  botUrl?: string;
+  locale?: string;
+  msaAppId?: string;
+  msaPassword?: string;
 }
 
 /** Represents a recently-used bot that isn't currently loaded */
-export interface IBotInfo {
+export interface BotInfo {
   /** Path to corresponding .bot file */
   path?: string;
   /** Display name of bot */

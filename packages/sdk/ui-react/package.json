@@ -7,7 +7,7 @@
   "scripts": {
     "build": "npm run clean && tsc",
     "clean": "rimraf ./built",
-    "prepare": "npm run clean && npm run build",
+    "prepare": "npm run clean",
     "test": "jest"
   },
   "author": "",

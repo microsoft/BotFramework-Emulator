@@ -33,9 +33,9 @@
 
 import { getBotDisplayName } from '@bfemulator/app-shared';
 import { IBotConfig, IEndpointService, ServiceType } from 'msbot/bin/schema';
-import { IBotConfigWithPath } from '@bfemulator/sdk-shared';
+import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 import { hasNonGlobalTabs } from '../../data/editorHelpers';
-import { CommandService } from '../../platform/commands/commandService';
+import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { getActiveBot } from '../../data/botHelpers';
 import * as BotActions from '../../data/action/botActions';
 import * as Constants from '../../constants';
@@ -48,7 +48,7 @@ import store from '../../data/store';
 export const ActiveBotHelper = new class {
   async confirmSwitchBot(): Promise<any> {
     if (hasNonGlobalTabs()) {
-      return await CommandService.remoteCall(
+      return await CommandServiceImpl.remoteCall(
         'shell:show-message-box',
         true,
         {
@@ -68,7 +68,7 @@ export const ActiveBotHelper = new class {
     const hasTabs = hasNonGlobalTabs();
     // TODO - localization
     if (hasTabs) {
-      return CommandService.remoteCall('shell:show-message-box', true, {
+      return CommandServiceImpl.remoteCall('shell:show-message-box', true, {
         type: 'question',
         buttons: ['Cancel', 'OK'],
         defaultId: 1,
@@ -87,13 +87,13 @@ export const ActiveBotHelper = new class {
         bot,
         botDirectory
       }: { bot: IBotConfig, botDirectory: string }
-        = await CommandService.remoteCall('bot:set-active', botPath);
+        = await CommandServiceImpl.remoteCall('bot:set-active', botPath);
 
       store.dispatch(BotActions.setActive(bot));
       store.dispatch(FileActions.setRoot(botDirectory));
 
-      CommandService.remoteCall('menu:update-recent-bots');
-      CommandService.remoteCall('electron:set-title-bar', getBotDisplayName(bot));
+      CommandServiceImpl.remoteCall('menu:update-recent-bots');
+      CommandServiceImpl.remoteCall('electron:set-title-bar', getBotDisplayName(bot));
     } catch (err) {
       console.error('Error while setting active bot: ', err);
 
@@ -103,10 +103,10 @@ export const ActiveBotHelper = new class {
 
   /** tell the server-side the active bot is now closed */
   closeActiveBot(): Promise<any> {
-    return CommandService.remoteCall('bot:close')
+    return CommandServiceImpl.remoteCall('bot:close')
       .then(() => {
         store.dispatch(BotActions.close());
-        CommandService.remoteCall('electron:set-title-bar', '');
+        CommandServiceImpl.remoteCall('electron:set-title-bar', '');
       })
       .catch(err => {
         console.error('Error while closing active bot: ', err);
@@ -116,7 +116,7 @@ export const ActiveBotHelper = new class {
 
   async botAlreadyOpen(): Promise<any> {
     // TODO - localization
-    return await CommandService.remoteCall(
+    return await CommandServiceImpl.remoteCall(
       'shell:show-message-box',
       true,
       {
@@ -130,14 +130,14 @@ export const ActiveBotHelper = new class {
     );
   }
 
-  async confirmAndCreateBot(botToCreate: IBotConfigWithPath, secret: string): Promise<any> {
+  async confirmAndCreateBot(botToCreate: BotConfigWithPath, secret: string): Promise<any> {
     const result = await this.confirmSwitchBot();
 
     if (result) {
       store.dispatch(EditorActions.closeNonGlobalTabs());
 
       try {
-        const bot: IBotConfigWithPath = await CommandService.remoteCall('bot:create', botToCreate, secret);
+        const bot: BotConfigWithPath = await CommandServiceImpl.remoteCall('bot:create', botToCreate, secret);
 
         // TODO: What are we achieving with this async function here?
         store.dispatch(async () => {
@@ -149,7 +149,7 @@ export const ActiveBotHelper = new class {
             .find(service => service.type === ServiceType.Endpoint) as IEndpointService;
 
           if (endpoint) {
-            CommandService.call('livechat:new', endpoint);
+            CommandServiceImpl.call('livechat:new', endpoint);
           }
 
           store.dispatch(NavBarActions.select(Constants.NAVBAR_BOT_EXPLORER));
@@ -162,7 +162,7 @@ export const ActiveBotHelper = new class {
   }
 
   browseForBotFile(): Promise<any> {
-    return CommandService.remoteCall(
+    return CommandServiceImpl.remoteCall(
       'shell:showOpenDialog',
       {
         buttonLabel: 'Choose file',
@@ -192,7 +192,7 @@ export const ActiveBotHelper = new class {
 
           if (result) {
             store.dispatch(EditorActions.closeNonGlobalTabs());
-            await CommandService.remoteCall('bot:load', filename);
+            await CommandServiceImpl.remoteCall('bot:load', filename);
           }
         } catch (err) {
           console.error('Error while calling confirmSwitchBot: ', err);
@@ -227,7 +227,7 @@ export const ActiveBotHelper = new class {
           .find(service => service.type === ServiceType.Endpoint) as IEndpointService;
 
         if (endpoint) {
-          await CommandService.call('livechat:new', endpoint);
+          await CommandServiceImpl.call('livechat:new', endpoint);
         }
 
         store.dispatch(NavBarActions.select(Constants.NAVBAR_BOT_EXPLORER));

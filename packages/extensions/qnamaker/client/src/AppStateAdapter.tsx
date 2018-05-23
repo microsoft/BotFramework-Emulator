@@ -34,7 +34,7 @@
 import { AppState, PersistentAppState } from './App';
 import { QnAMakerTraceInfo, QueryResult } from './Models/QnAMakerTraceInfo';
 import { Answer } from './Models/QnAMakerModels';
-import { ITraceActivity } from '@bfemulator/sdk-shared';
+import { TraceActivity } from '@bfemulator/sdk-shared';
 import { IQnAService } from 'msbot/bin/schema' ;
 
 const TraceActivity = 'trace';
@@ -58,7 +58,7 @@ export default class AppStateAdapter implements AppState {
     if (!obj) {
       return false;
     }
-    const trace = obj as ITraceActivity;
+    const trace = obj as TraceActivity;
     if (trace.type !== TraceActivity || trace.valueType !== QnaMakerTracerType) {
       return false;
     }
@@ -79,7 +79,7 @@ export default class AppStateAdapter implements AppState {
     if (!AppStateAdapter.validate(obj)) {
       return;
     }
-    let traceActivity = (obj as ITraceActivity);
+    let traceActivity = (obj as TraceActivity);
     this.traceInfo = traceActivity.value as QnAMakerTraceInfo;
     this.id = traceActivity.id || '';
 

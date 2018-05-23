@@ -1,5 +1,5 @@
 {
-  "name": "botframework-emulator",
+  "name": "@bfemulator/main",
   "version": "4.0.15-alpha",
   "private": true,
   "description": "Development tool for the Microsoft Bot Framework. Allows developers to test and debug bots on localhost.",
@@ -10,6 +10,7 @@
     "build:electron": "tsc --version && tsc -p . --outdir app/server",
     "pack": "build --dir",
     "dist": "build",
+    "lint": "tslint --project tsconfig.json",
     "release": "build",
     "start": "concurrently --kill-others --names \"electron,react-app\" --success first \"npm run start:electron:dev\" \"npm run start:react-app\"",
     "start:electron": "./node_modules/.bin/electron --inspect=7777 .",

@@ -41,7 +41,7 @@ import sendErrorResponse from '../../utils/sendErrorResponse';
 export default function removeUsers(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     // try {
-    //   let members: IChannelAccount[] = req.body;
+    //   let members: ChannelAccount[] = req.body;
 
     //   if (!members) {
     //     members = [...req['conversation'].members];

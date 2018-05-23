@@ -33,7 +33,7 @@
 
 import * as PresentationActions from '../action/presentationActions';
 import { PresentationAction } from '../action/presentationActions';
-import { CommandService } from '../../platform/commands/commandService';
+import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 
 export interface PresentationState {
   enabled: boolean;
@@ -65,7 +65,7 @@ function setEnabled(enabled: boolean, state: PresentationState): PresentationSta
   let newState = Object.assign({}, state);
   newState.enabled = enabled;
 
-  CommandService.remoteCall('electron:set-fullscreen', enabled);
+  CommandServiceImpl.remoteCall('electron:set-fullscreen', enabled);
 
   return newState;
 }
