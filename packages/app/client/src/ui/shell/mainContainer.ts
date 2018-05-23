@@ -1,10 +1,10 @@
 import * as PresentationActions from '../../data/action/presentationActions';
 import * as Constants from '../../constants';
 import { connect } from 'react-redux';
-import { IRootState } from "../../data/store";
+import { RootState } from '../../data/store';
 import { Main, MainProps } from './main';
 
-const mapStateToProps = (state: IRootState): MainProps => ({
+const mapStateToProps = (state: RootState): MainProps => ({
   presentationModeEnabled: state.presentation.enabled,
   primaryEditor: state.editor.editors[Constants.EDITOR_KEY_PRIMARY],
   secondaryEditor: state.editor.editors[Constants.EDITOR_KEY_SECONDARY],
@@ -13,7 +13,7 @@ const mapStateToProps = (state: IRootState): MainProps => ({
 });
 
 const mapDispatchToProps = (dispatch): MainProps => ({
-  exitPresentationMode: (e:KeyboardEvent) => {
+  exitPresentationMode: (e: KeyboardEvent) => {
     if (e.key === 'Escape') {
       dispatch(PresentationActions.disable());
     }

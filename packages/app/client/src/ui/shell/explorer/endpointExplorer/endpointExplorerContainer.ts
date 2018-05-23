@@ -34,12 +34,16 @@
 import { IEndpointService, ServiceType } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
 import { connect } from 'react-redux';
-import { launchEndpointEditor, openEndpointDeepLink, openEndpointExplorerContextMenu } from '../../../../data/action/endpointServiceActions';
-import { IRootState } from '../../../../data/store';
+import {
+  launchEndpointEditor,
+  openEndpointDeepLink,
+  openEndpointExplorerContextMenu
+} from '../../../../data/action/endpointServiceActions';
+import { RootState } from '../../../../data/store';
 import { EndpointEditor } from './endpointEditor/endpointEditor';
 import { EndpointExplorer } from './endpointExplorer';
 
-const mapStateToProps = (state: IRootState) => {
+const mapStateToProps = (state: RootState) => {
   const { services } = state.bot.activeBot;
   return {
     endpointServices: services.filter(service => service.type === ServiceType.Endpoint),
@@ -49,9 +53,11 @@ const mapStateToProps = (state: IRootState) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    launchEndpointEditor: (endpointEditor: ComponentClass<EndpointEditor>, endpointService: IEndpointService) => dispatch(launchEndpointEditor(endpointEditor, endpointService)),
+    launchEndpointEditor: (endpointEditor: ComponentClass<EndpointEditor>, endpointService: IEndpointService) =>
+      dispatch(launchEndpointEditor(endpointEditor, endpointService)),
     openEndpointDeepLink: (endpointService: IEndpointService) => dispatch(openEndpointDeepLink(endpointService)),
-    openContextMenu: (endpointService: IEndpointService, endpointEditor: ComponentClass<EndpointEditor>) => dispatch(openEndpointExplorerContextMenu(endpointEditor, endpointService)),
+    openContextMenu: (endpointService: IEndpointService, endpointEditor: ComponentClass<EndpointEditor>) =>
+      dispatch(openEndpointExplorerContextMenu(endpointEditor, endpointService)),
   };
 };
 

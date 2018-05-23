@@ -45,26 +45,31 @@ interface TabFactoryProps {
 }
 
 export const TabFactory = (props: TabFactoryProps) => {
+  // TODO - localization
   if (props && props.document) {
     switch (props.document.contentType) {
       case Constants.CONTENT_TYPE_LIVE_CHAT:
-        return (<EmulatorTab mode="livechat" documentId={ props.document.documentId } dirty={ props.document.dirty } />);
+        return (<EmulatorTab mode="livechat" documentId={ props.document.documentId } dirty={ props.document.dirty }/>);
 
       case Constants.CONTENT_TYPE_TRANSCRIPT:
-        return (<EmulatorTab mode="transcript" documentId={ props.document.documentId } dirty={ props.document.dirty } />);
+        return (
+          <EmulatorTab mode="transcript" documentId={ props.document.documentId } dirty={ props.document.dirty }/>);
 
       case Constants.CONTENT_TYPE_BOT_SETTINGS:
-        return (<GenericTab documentId={ props.document.documentId } title={ "Bot Settings" } dirty={ props.document.dirty } />);
+        return (<GenericTab documentId={ props.document.documentId } title={ 'Bot Settings' }
+                            dirty={ props.document.dirty }/>);
 
       case Constants.CONTENT_TYPE_WELCOME_PAGE:
-        return (<GenericTab documentId={ props.document.documentId } title={ "Welcome" } dirty={ props.document.dirty } />);
+        return (
+          <GenericTab documentId={ props.document.documentId } title={ 'Welcome' } dirty={ props.document.dirty }/>);
 
       case Constants.CONTENT_TYPE_APP_SETTINGS:
-        return (<GenericTab documentId={ props.document.documentId } title={ "Emulator Settings" } dirty={ props.document.dirty } />);
+        return (<GenericTab documentId={ props.document.documentId } title={ 'Emulator Settings' }
+                            dirty={ props.document.dirty }/>);
 
       default:
         break;
     }
   }
   return null;
-}
+};

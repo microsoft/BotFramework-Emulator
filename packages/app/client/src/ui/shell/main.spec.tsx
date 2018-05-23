@@ -1,21 +1,27 @@
-window['require'] = function(){
+(window as any).require = function () {
   return {
     ipcRenderer: {
-      on() {},
-      send() {}
+      on() {
+        return null;
+      },
+      send() {
+        return null;
+      }
     }
-  }
+  };
 };
-window['define'] = function() {}
+(window as any).define = function () {
+  return null;
+};
 import * as React from 'react';
-import { shallow, mount, render } from 'enzyme';
+import { shallow } from 'enzyme';
 import { Main } from './main';
 
 describe('The Main component should', () => {
 
   it('should pass an empty test', () => {
     const parent = shallow(<Main/>);
-    expect(parent.find(Main)).not.toBe(null)
+    expect(parent.find(Main)).not.toBe(null);
   });
 
 });

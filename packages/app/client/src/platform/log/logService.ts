@@ -46,7 +46,7 @@ export function registerCommands() {
 
 export const LogService = new class extends Disposable {
 
-  init() { }
+  init() { return null; }
 
   logToChat(conversationId: string, entry: ILogEntry): void {
     const documentId = chatHelpers.documentIdForConversation(conversationId);
@@ -58,4 +58,4 @@ export const LogService = new class extends Disposable {
   logToDocument(documentId: string, entry: ILogEntry): void {
     store.dispatch(ChatActions.appendToLog(documentId, entry));
   }
-}
+};

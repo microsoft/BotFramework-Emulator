@@ -31,22 +31,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
 import { css } from 'glamor';
 import * as React from 'react';
 
 import Log from './parts/log';
-import Panel, { PanelControls, PanelContent } from '../panel';
+import Panel, { PanelContent } from '../panel';
 
 const CSS = css({
   height: '100%'
 });
 
-interface ILogPanelProps {
+interface LogPanelProps {
   document: any;
 }
 
-export default class LogPanel extends React.Component<ILogPanelProps, {}> {
+export default class LogPanel extends React.Component<LogPanelProps, {}> {
   render() {
     return (
       <div { ...CSS }>

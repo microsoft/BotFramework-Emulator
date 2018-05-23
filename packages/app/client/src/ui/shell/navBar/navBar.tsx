@@ -39,10 +39,8 @@ import * as React from 'react';
 import { Colors, InsetShadow } from '@bfemulator/ui-react';
 import * as Constants from '../../../constants';
 import * as NavBarActions from '../../../data/action/navBarActions';
-import * as EditorActions from '../../../data/action/editorActions';
 import * as ExplorerActions from '../../../data/action/explorerActions';
-import { CommandRegistry } from '../../../commands';
-import { IRootState } from '../../../data/store';
+import { RootState } from '../../../data/store';
 import { IBotConfig } from 'msbot/bin/schema';
 import { CommandService } from '../../../platform/commands/commandService';
 import { NavLink } from './navLink';
@@ -76,8 +74,8 @@ interface NavBarProps {
   activeBot?: IBotConfig;
   selection?: string;
   showingExplorer?: boolean;
-  handleClick?: (evt, selection: string) => void;
-  handleSettingsClick?: (evt) => void;
+  handleClick?: (evt: Event, selection: string) => void;
+  handleSettingsClick?: (evt: Event) => void;
 }
 
 class NavBarComponent extends React.Component<NavBarProps> {
@@ -85,34 +83,39 @@ class NavBarComponent extends React.Component<NavBarProps> {
     super(props);
   }
 
-  private handleBotSettingsClick = () => {
-    if (this.props.activeBot) {
-      CommandService.call('bot-settings:open', this.props.activeBot);
-    }
-  }
-
   render() {
     const { selection, handleClick, handleSettingsClick } = this.props;
 
     return (
       <nav { ...CSS }>
-        <NavLink className={ classNames('nav-link bot-explorer', { selected: selection === Constants.NAVBAR_BOT_EXPLORER }) } onClick={ evt => handleClick(evt, Constants.NAVBAR_BOT_EXPLORER) } title="Bot Explorer" />
-        <NavLink className={ classNames('nav-link services', { selected: selection === Constants.NAVBAR_SERVICES }) } onClick={ evt => handleClick(evt, Constants.NAVBAR_SERVICES) } title="Services" />
-        <NavLink className={ classNames('nav-link bot-settings', { disabled: !this.props.activeBot }) } onClick={ this.handleBotSettingsClick } title="Bot Settings" />
-        <NavLink className="nav-link settings" onClick={ handleSettingsClick } title="Settings" justifyEnd={ true } />
-        <InsetShadow right={ true } />
+        <NavLink
+          className={ classNames('nav-link bot-explorer', { selected: selection === Constants.NAVBAR_BOT_EXPLORER }) }
+          onClick={ evt => handleClick(evt, Constants.NAVBAR_BOT_EXPLORER) } title="Bot Explorer"/>
+        <NavLink className={ classNames('nav-link services', { selected: selection === Constants.NAVBAR_SERVICES }) }
+                 onClick={ evt => handleClick(evt, Constants.NAVBAR_SERVICES) } title="Services"/>
+        <NavLink className={ classNames('nav-link bot-settings', { disabled: !this.props.activeBot }) }
+                 onClick={ this.handleBotSettingsClick } title="Bot Settings"/>
+        <NavLink className="nav-link settings" onClick={ handleSettingsClick } title="Settings" justifyEnd={ true }/>
+        <InsetShadow right={ true }/>
       </nav>
     );
   }
+
+  private handleBotSettingsClick = () => {
+    if (this.props.activeBot) {
+      CommandService.call('bot-settings:open', this.props.activeBot);
+    }
+  }
 }
 
-const mapStateToProps = (state: IRootState): NavBarProps => ({
+const mapStateToProps = (state: RootState): NavBarProps => ({
   activeBot: state.bot.activeBot
 });
 
 const mapDispatchToProps = (dispatch, ownProps: NavBarProps): NavBarProps => ({
-  handleSettingsClick: (evt) => dispatch(EditorActions.open(Constants.CONTENT_TYPE_APP_SETTINGS, Constants.DOCUMENT_ID_APP_SETTINGS, true, null)),
-  handleClick: (evt, selection: string) => {
+  // handleSettingsClick: () => dispatch(EditorActions.open(Constants.CONTENT_TYPE_APP_SETTINGS,
+  // Constants.DOCUMENT_ID_APP_SETTINGS, true, null)),
+  handleClick: (_evt: Event, selection: string) => {
     if (ownProps.selection === selection) {
       // toggle explorer when clicking the same navbar icon
       dispatch(ExplorerActions.show(!ownProps.showingExplorer));

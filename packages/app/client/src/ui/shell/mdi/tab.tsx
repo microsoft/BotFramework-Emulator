@@ -38,6 +38,7 @@ import { TAB_CSS } from './tabStyle';
 import * as EditorActions from './../../../data/action/editorActions';
 import { getTabGroupForDocument } from '../../../data/editorHelpers';
 import { TruncateText } from '@bfemulator/ui-react';
+import { DragEvent, SyntheticEvent } from 'react';
 
 interface TabProps {
   active?: boolean;
@@ -45,7 +46,7 @@ interface TabProps {
   documentId?: string;
   title?: string;
   toggleDraggingTab?: (toggle: boolean) => any;
-  onCloseClick?: (evt) => any;
+  onCloseClick?: (evt: SyntheticEvent<HTMLElement>) => any;
   swapTabs?: (editorKey: string, owningEditor: string, tabId: string) => any;
 }
 
@@ -62,46 +63,6 @@ class TabComponent extends React.Component<TabProps, TabState> {
       draggedOver: false,
       owningEditor: getTabGroupForDocument(props.documentId)
     };
-  }
-
-  private onDragStart = (e) => {
-    const dragData = {
-      tabId: this.props.documentId,
-      editorKey: this.state.owningEditor
-    };
-    e.dataTransfer.setData('application/json', JSON.stringify(dragData));
-    this.props.toggleDraggingTab(true);
-  }
-
-  private onDragEnd = (e) => {
-    this.props.toggleDraggingTab(false);
-  }
-
-  private onDragOver = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    this.setState(({ draggedOver: true }));
-  }
-
-  private onDragEnter = (e) => {
-    e.preventDefault();
-  }
-
-  private onDragLeave = (e) => {
-    this.setState(({ draggedOver: false }));
-  }
-
-  private onDrop = (e) => {
-    const tabData = JSON.parse(e.dataTransfer.getData('application/json'));
-
-    // only swap the tabs if they are different
-    if (tabData.tabId !== this.props.documentId) {
-      this.props.swapTabs(tabData.editorKey, this.state.owningEditor, tabData.tabId);
-    }
-
-    this.setState(({ draggedOver: false }));
-    e.preventDefault();
-    e.stopPropagation();
   }
 
   render() {
@@ -123,11 +84,52 @@ class TabComponent extends React.Component<TabProps, TabState> {
       </div>
     );
   }
+
+  private onDragStart = (e) => {
+    const dragData = {
+      tabId: this.props.documentId,
+      editorKey: this.state.owningEditor
+    };
+    e.dataTransfer.setData('application/json', JSON.stringify(dragData));
+    this.props.toggleDraggingTab(true);
+  }
+
+  private onDragEnd = () => {
+    this.props.toggleDraggingTab(false);
+  }
+
+  private onDragOver = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    this.setState(({ draggedOver: true }));
+  }
+
+  private onDragEnter = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  }
+
+  private onDragLeave = () => {
+    this.setState(({ draggedOver: false }));
+  }
+
+  private onDrop = (e: DragEvent<HTMLDivElement>) => {
+    const tabData = JSON.parse(e.dataTransfer.getData('application/json'));
+
+    // only swap the tabs if they are different
+    if (tabData.tabId !== this.props.documentId) {
+      this.props.swapTabs(tabData.editorKey, this.state.owningEditor, tabData.tabId);
+    }
+
+    this.setState(({ draggedOver: false }));
+    e.preventDefault();
+    e.stopPropagation();
+  }
 }
 
 const mapDispatchToProps = (dispatch, ownProps: TabProps): TabProps => ({
   toggleDraggingTab: (toggle: boolean) => dispatch(EditorActions.toggleDraggingTab(toggle)),
-  swapTabs: (editorKey: string, owningEditor: string, tabId: string) => dispatch(EditorActions.swapTabs(editorKey, owningEditor, tabId, ownProps.documentId))
+  swapTabs: (editorKey: string, owningEditor: string, tabId: string) =>
+    dispatch(EditorActions.swapTabs(editorKey, owningEditor, tabId, ownProps.documentId))
 });
 
 export const Tab = connect(mapDispatchToProps)(TabComponent);

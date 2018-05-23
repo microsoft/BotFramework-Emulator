@@ -58,7 +58,7 @@ const CSS = css({
   },
 
   '& > span.bot-settings-icon': {
-    background: "url('./external/media/ic_settings.svg') no-repeat 50% 50%",
+    background: 'url("./external/media/ic_settings.svg") no-repeat 50% 50%',
     backgroundSize: '16px',
   }
 });

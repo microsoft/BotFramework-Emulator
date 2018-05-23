@@ -35,8 +35,8 @@ import * as React from 'react';
 import { css } from 'glamor';
 import { connect } from 'react-redux';
 import { FileInfo } from '@bfemulator/app-shared';
-import { lazy, pathExt } from '@fuselab/ui-shared/lib';
-import { TreeView, TreeViewProps, initFontFaces } from '@fuselab/ui-fabric/lib';
+import { pathExt } from '@fuselab/ui-shared/lib';
+import { TreeView, TreeViewProps } from '@fuselab/ui-fabric/lib';
 import { ExpandCollapse, ExpandCollapseContent } from '@bfemulator/ui-react';
 import { IFileTreeState } from '../../../../data/reducer/files';
 import { CommandService } from '../../../../platform/commands/commandService';
@@ -57,10 +57,10 @@ const CSS = css({
 });
 
 interface TranscriptExplorerProps {
-  activeEditor: string,
-  activeDocumentId: string,
-  transcripts: any[],
-  files: IFileTreeState
+  activeEditor: string;
+  activeDocumentId: string;
+  transcripts: any[];
+  files: IFileTreeState;
 }
 
 function isTranscript(path: string): boolean {
@@ -69,15 +69,39 @@ function isTranscript(path: string): boolean {
 }
 
 class TranscriptExplorerComponent extends React.Component<TranscriptExplorerProps> {
-  private onItemClick: (name: string) => void;
+  // private onItemClick: (name: string) => void;
 
-  constructor(props) {
+  constructor(props: TranscriptExplorerProps) {
     super(props);
-    this.onItemClick = this.handleItemClick.bind(this);
+    // this.onItemClick = this.handleItemClick.bind(this);
   }
 
-  private handleItemClick(filename) {
-    CommandService.call("transcript:open", filename);
+  public componentDidMount() {
+    // make sure setiFont is injected
+    // const font = this.setiFont;
+  }
+
+  public render(): JSX.Element {
+    return (
+      <div { ...EXPLORER_CSS }>
+        <ExpandCollapse
+          expanded={ true }
+          title="Transcript Explorer"
+        >
+          { this.renderFileTree() }
+          { /*
+            this.props.transcripts.length
+              ? this.renderTranscriptList()
+              : this.renderEmptyTranscriptList()
+          */
+          }
+        </ExpandCollapse>
+      </div>
+    );
+  }
+
+  private handleItemClick(filename: string) {
+    CommandService.call('transcript:open', filename).catch();
   }
 
   private renderFileTree(): JSX.Element {
@@ -113,17 +137,40 @@ class TranscriptExplorerComponent extends React.Component<TranscriptExplorerProp
     );
   }
 
-  public render(): JSX.Element {
-    return (
-      <ExpandCollapse
-        expanded={ true }
-        title="Transcript Explorer"
-        style={ CSS }
-      >
-        { this.renderFileTree() }
-      </ExpandCollapse>
-    );
-  }
+  // private renderTranscriptList(): JSX.Element {
+  //   return (
+  //     <ExpandCollapseContent key={ 'transcript-explorer-tree' }>
+  //       <ul { ...CONVO_CSS }>
+  //         {
+  //           this.props.transcripts.map(filename =>
+  //             <ExplorerItem key={ filename } active={ this.props.activeDocumentId === filename }
+  // onClick={ () => this.onItemClick(filename) }>
+  //               <span>{ filename.replace(/\\$/, '').split('\\').pop() }</span>
+  //             </ExplorerItem>
+  //           )
+  //         }
+  //       </ul>
+  //     </ExpandCollapseContent>
+  //   );
+  // }
+
+  // private renderEmptyTranscriptList(): JSX.Element {
+  //   return (
+  //     <ExpandCollapseContent key={ 'transcript-explorer-tree' }>
+  //       <ul { ...CONVO_CSS }>
+  //         <li><span className="empty-list">No transcripts yet</span></li>
+  //         <li>&nbsp;</li>
+  //       </ul>
+  //     </ExpandCollapseContent>
+  //   );
+  // }
+
+  // @lazy()
+  // private get setiFont(): string {
+  //   const fontCalc = x => `url(./external/media${x})`;
+  //   initFontFaces(fontCalc);
+  //   return './external/media';
+  // }
 }
 
 function mapStateToProps(state: any): TranscriptExplorerProps {

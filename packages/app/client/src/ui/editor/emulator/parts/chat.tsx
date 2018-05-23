@@ -137,14 +137,14 @@ const DISCONNECTED_CSS = css({
 });
 
 export interface Props {
-  mode: EmulatorMode,
+  mode: EmulatorMode;
   document: any;
   onStartConversation: any;
   services: IConnectedService[];
 }
 
 class Chat extends React.Component<Props> {
-  constructor(props, context) {
+  constructor(props: Props, context: {}) {
     super(props, context);
   }
 
@@ -157,17 +157,17 @@ class Chat extends React.Component<Props> {
 
   render() {
     const endpoint = this.getEndpoint();
-
+    // TODO - localization
     if (this.props.document.directLine) {
       const props: WebChat.ChatProps = {
         adaptiveCardsHostConfig: AdaptiveCardsHostConfig,
         user: {
-          id: "default-user",
-          name: "User"
+          id: 'default-user',
+          name: 'User'
         },
         bot: {
-          id: "WXYZ",
-          name: "Bot"
+          id: 'WXYZ',
+          name: 'Bot'
         },
         formatOptions: {
           showHeader: false
@@ -182,7 +182,7 @@ class Chat extends React.Component<Props> {
         selectedActivity: (this.props.document.selectedActivity$ as any),
         botConnection: this.props.document.directLine,
         store: this.props.document.webChatStore,
-        showShell: this.props.mode === "livechat"
+        showShell: this.props.mode === 'livechat'
       };
       return (
         <div id="webchat-container" className="wc-app" { ...CSS }>
@@ -209,7 +209,7 @@ class Chat extends React.Component<Props> {
     return this.getSpeechToken(authIdEvent, true);
   }
 
-  private async getSpeechToken(authIdEvent: string, refresh: boolean): Promise<string | void> {
+  private async getSpeechToken(_authIdEvent: string, refresh: boolean): Promise<string | void> {
     const endpoint = this.getEndpoint();
 
     if (!endpoint) {

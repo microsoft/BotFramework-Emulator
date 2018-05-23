@@ -42,7 +42,7 @@ import { AzureBotServiceExplorerContainer } from '../azureBotServiceExplorer';
 
 export default class ServicesExplorerBar extends Component<{ activeBotExists: boolean }> {
 
-  constructor(props, context) {
+  constructor(props: { activeBotExists: boolean }, context: {}) {
     super(props, context);
   }
 
