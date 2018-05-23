@@ -201,7 +201,12 @@ export class ConversationsController {
                 log.api(`Reply[${activity.type}]`, req, res, activity, response, getActivityText(activity));
             };
 
-            let visitor = new OAuthLinkEncoder(emulator.framework.getNgrokServiceUrl(), req.headers['authorization'], activity, parms.conversationId);
+            let visitor = new OAuthLinkEncoder(
+                emulator.framework.getNgrokServiceUrl(),
+                req.headers['authorization'],
+                activity, parms.conversationId, 
+                ConversationsController.displayNoTunnelingError);
+         
             visitor.resolveOAuthCards(activity).then((value?: any) =>
             {
                 continuation();
@@ -344,6 +349,12 @@ export class ConversationsController {
             let error = ResponseTypes.sendErrorResponse(req, res, next, err);
             log.api('UploadAttachment()', req, res, attachmentData, error, attachmentData.name);
         }
+    }
+
+    private static displayNoTunnelingError() {
+        log.error('Error: OAuthCards require connecting to remote services. Without tunneling software you will not receive replies or tokens.');
+        log.error(log.makeLinkMessage('Using tunneling software', 'https://aka.ms/cnjvpo'));
+        log.error(log.ngrokConfigurationLink('Edit ngrok settings'));
     }
 }
 

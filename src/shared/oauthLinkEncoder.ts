@@ -50,12 +50,14 @@ export class OAuthLinkEncoder {
     private authorizationHeader: string;
     private activity: IGenericActivity; 
     private conversationId: string;
+    private displayNoTunnelingError: () => void;
 
-    constructor(emulatorUrl: string, authorizationHeader: string, activity: IGenericActivity, conversationId: string) {
+    constructor(emulatorUrl: string, authorizationHeader: string, activity: IGenericActivity, conversationId: string, displayNoTunnelingError: () => void) {
         this.emulatorUrl = emulatorUrl;
         this.authorizationHeader = authorizationHeader;
         this.activity = activity;
         this.conversationId = conversationId;
+        this.displayNoTunnelingError = displayNoTunnelingError;
     }
 
     public resolveOAuthCards(activity: IGenericActivity): Promise<any> {
@@ -115,6 +117,10 @@ export class OAuthLinkEncoder {
     }
 
     private getSignInLink(connectionName: string, codeChallenge:string, cb: (link: string) => void) {
+        if (!this.emulatorUrl) {
+            this.displayNoTunnelingError();
+        }
+
         let tokenExchangeState =
         {
             ConnectionName: connectionName,
@@ -135,7 +141,6 @@ export class OAuthLinkEncoder {
         
         let options: request.OptionsWithUrl = {
             url: `https://api.botframework.com/api/botsignin/GetSignInUrl?state=${state}&emulatorUrl=${this.emulatorUrl}&code_challenge=${codeChallenge}`,
-            //url: `https://api.scratch.botframework.com/api/botsignin/GetSignInUrl?state=${state}&emulatorUrl=${this.emulatorUrl}&code_challenge=${codeChallenge}`,
             method: "GET",
             headers: {
                 'Authorization': this.authorizationHeader
