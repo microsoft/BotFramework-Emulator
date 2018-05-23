@@ -36,7 +36,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import BotExplorerBar from './botExplorerBar';
-import { ServicesExplorerBarContainer } from "./servicesExplorerBar";
+import { ServicesExplorerBarContainer } from './servicesExplorerBar';
 import { Colors, InsetShadow } from '@bfemulator/ui-react';
 import * as Constants from '../../../constants';
 import { IBotConfig } from 'msbot/bin/schema';
@@ -59,18 +59,21 @@ class ExplorerBarComponent extends React.Component<ExplorerBarProps> {
   constructor(props: ExplorerBarProps) {
     super(props);
   }
-  
+
   render() {
     let explorer = [];
+    explorer.push(
+      <BotExplorerBar key={ 'bot-explorer-bar' } activeBot={ this.props.activeBot }
+                      hidden={ this.props.selectedNavTab !== Constants.NAVBAR_BOT_EXPLORER }/>
+    );
+    if (this.props.selectedNavTab === Constants.NAVBAR_SERVICES) {
       explorer.push(
-        <BotExplorerBar key={ 'bot-explorer-bar' } activeBot={ this.props.activeBot } hidden={ this.props.selectedNavTab !== Constants.NAVBAR_BOT_EXPLORER } />
+        <ServicesExplorerBarContainer key={ 'services-explorer-bar' }/>
       );
-    if (this.props.selectedNavTab === Constants.NAVBAR_SERVICES)
-      explorer.push(
-        <ServicesExplorerBarContainer key={ 'services-explorer-bar' } />
-      );
-    if (!this.props.selectedNavTab)
+    }
+    if (!this.props.selectedNavTab) {
       explorer = null;
+    }
 
     return (
       <div { ...CSS }>
@@ -86,4 +89,4 @@ const mapStateToProps = (state: RootState): ExplorerBarProps => ({
   selectedNavTab: state.navBar.selection
 });
 
-export const ExplorerBar = connect(mapStateToProps)(ExplorerBarComponent)
+export const ExplorerBar = connect(mapStateToProps)(ExplorerBarComponent);

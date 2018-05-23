@@ -47,15 +47,16 @@ export class FileTreeDataProvider implements TreeDataProvider<FileInfo> {
   constructor(private _tree: IFileTreeState) {
   }
 
-  public async loadContainer(container: Container<FileInfo>): Promise<TreeNode<FileInfo>[]> {
+  public async loadContainer(_container: Container<FileInfo>): Promise<TreeNode<FileInfo>[]> {
     return Promise.reject(new Error('nyi'));
   }
 
-  public insertAt(container: Container<FileInfo>, node: TreeNode<FileInfo>) {
+  public insertAt(_container: Container<FileInfo>, _node: TreeNode<FileInfo>) {
+    return null;
   }
 
-  public remove(node: TreeNode<FileInfo>): Promise<TreeNode<FileInfo>> {
-    return Promise.reject(new Error('file tree node removal NYI'))
+  public remove(_node: TreeNode<FileInfo>): Promise<TreeNode<FileInfo>> {
+    return Promise.reject(new Error('file tree node removal NYI'));
   }
 
   public selectNode(node: TreeNode<FileInfo>) {
@@ -63,7 +64,7 @@ export class FileTreeDataProvider implements TreeDataProvider<FileInfo> {
   }
 
   public get root(): Container<FileInfo> {
-    return <Container<FileInfo>>this.tree.root;
+    return <Container<FileInfo>> this.tree.root;
   }
 
   public get tree(): IFileTreeState {

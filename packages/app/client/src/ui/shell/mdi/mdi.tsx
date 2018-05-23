@@ -60,17 +60,13 @@ class MDIComponent extends React.Component<MDIProps> {
     super(props);
   }
 
-  private handleTabChange = (tabValue) => {
-    this.props.setActiveTab(this.props.tabOrder[tabValue]);
-  }
-
   render() {
     const activeIndex = this.props.tabOrder.findIndex(documentId => documentId === this.props.activeDocumentId);
 
     return (
       <MultiTabs
         onChange={ this.handleTabChange }
-        value={ ~activeIndex ? activeIndex : 0 }
+        value={ activeIndex ? activeIndex : 0 }
         owningEditor={ this.props.owningEditor }
       >
         {
@@ -87,6 +83,10 @@ class MDIComponent extends React.Component<MDIProps> {
         }
       </MultiTabs>
     );
+  }
+
+  private handleTabChange = (tabValue) => {
+    this.props.setActiveTab(this.props.tabOrder[tabValue]);
   }
 }
 

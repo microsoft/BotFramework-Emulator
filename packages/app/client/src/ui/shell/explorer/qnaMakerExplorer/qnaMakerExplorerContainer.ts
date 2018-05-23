@@ -34,7 +34,11 @@
 import { IQnAService, ServiceType } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
 import { connect } from 'react-redux';
-import { launchQnaMakerEditor, openQnAMakerDeepLink, openQnaMakerExplorerContextMenu } from '../../../../data/action/qnaMakerServiceActions';
+import {
+  launchQnaMakerEditor,
+  openQnAMakerDeepLink,
+  openQnaMakerExplorerContextMenu
+} from '../../../../data/action/qnaMakerServiceActions';
 import { RootState } from '../../../../data/store';
 import { QnaMakerEditor } from './qnaMakerEditor/qnaMakerEditor';
 import { QnaMakerExplorer } from './qnaMakerExplorer';
@@ -49,9 +53,11 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    launchQnaMakerEditor: (qnaMakerEditor: ComponentClass<QnaMakerEditor>, qnaMakerService: IQnAService) => dispatch(launchQnaMakerEditor(qnaMakerEditor, qnaMakerService)),
+    launchQnaMakerEditor: (qnaMakerEditor: ComponentClass<QnaMakerEditor>, qnaMakerService: IQnAService) =>
+      dispatch(launchQnaMakerEditor(qnaMakerEditor, qnaMakerService)),
     openQnaMakerDeepLink: (qnaService: IQnAService) => dispatch(openQnAMakerDeepLink(qnaService)),
-    openContextMenu: (qnaMakerService: IQnAService, qnaMakerEditor: ComponentClass<QnaMakerEditor>) => dispatch(openQnaMakerExplorerContextMenu(qnaMakerEditor, qnaMakerService)),
+    openContextMenu: (qnaMakerService: IQnAService, qnaMakerEditor: ComponentClass<QnaMakerEditor>) =>
+      dispatch(openQnaMakerExplorerContextMenu(qnaMakerEditor, qnaMakerService)),
   };
 };
 

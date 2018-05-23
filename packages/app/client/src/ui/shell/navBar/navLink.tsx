@@ -1,6 +1,7 @@
 import { Colors } from '@bfemulator/ui-react';
 import { css } from 'glamor';
 import * as React from 'react';
+import { MouseEvent } from 'react';
 
 const CSS = css({
   position: 'relative',
@@ -24,7 +25,7 @@ const CSS = css({
     '&:hover, &.selected': {
       opacity: 1
     },
-    
+
     '&:focus': {
       outline: 0,
 
@@ -53,7 +54,7 @@ const CSS = css({
 interface NavLinkProps {
   className?: string;
   justifyEnd?: boolean;
-  onClick?: (evt) => void;
+  onClick?: (evt: MouseEvent<HTMLAnchorElement>) => void;
   title?: string;
 }
 
@@ -66,7 +67,8 @@ export class NavLink extends React.Component<NavLinkProps> {
     const className = this.props.justifyEnd ? 'justify-end' : '';
     return (
       <div className={ className } { ...CSS }>
-        <a className={ this.props.className } onClick={ this.props.onClick } href="javascript:void(0);" title={ this.props.title }></a>
+        <a className={ this.props.className } onClick={ this.props.onClick } href="javascript:void(0);"
+           title={ this.props.title }></a>
         <span></span>
       </div>
     );

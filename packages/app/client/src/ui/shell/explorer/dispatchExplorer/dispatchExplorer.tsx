@@ -46,7 +46,7 @@ export interface DispatchProps extends ServicePaneProps {
 export class DispatchExplorer extends ServicePane<DispatchProps> {
   public state = {} as { expanded?: boolean };
 
-  constructor(props, context) {
+  constructor(props: DispatchProps, context: {}) {
     super(props, context);
   }
 
@@ -63,7 +63,7 @@ export class DispatchExplorer extends ServicePane<DispatchProps> {
     const { index } = currentTarget.dataset;
     const { [index]: dispatchService } = this.props.dispatchServices;
     this.props.openDispatchDeepLink(dispatchService);
-  };
+  }
 
   protected onContextMenuOverLiElement(li: HTMLLIElement) {
     super.onContextMenuOverLiElement(li);
@@ -72,7 +72,7 @@ export class DispatchExplorer extends ServicePane<DispatchProps> {
     this.props.openContextMenu(dispatchService, DispatchEditorContainer);
   }
 
-  protected onAddIconClick = (event: SyntheticEvent<HTMLButtonElement>): void => {
+  protected onAddIconClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
     this.props.launchDispatchEditor(DispatchEditorContainer);
-  };
+  }
 }

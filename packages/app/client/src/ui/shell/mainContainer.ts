@@ -1,7 +1,7 @@
 import * as PresentationActions from '../../data/action/presentationActions';
 import * as Constants from '../../constants';
 import { connect } from 'react-redux';
-import { RootState } from "../../data/store";
+import { RootState } from '../../data/store';
 import { Main, MainProps } from './main';
 
 const mapStateToProps = (state: RootState): MainProps => ({
@@ -13,7 +13,7 @@ const mapStateToProps = (state: RootState): MainProps => ({
 });
 
 const mapDispatchToProps = (dispatch): MainProps => ({
-  exitPresentationMode: (e:KeyboardEvent) => {
+  exitPresentationMode: (e: KeyboardEvent) => {
     if (e.key === 'Escape') {
       dispatch(PresentationActions.disable());
     }

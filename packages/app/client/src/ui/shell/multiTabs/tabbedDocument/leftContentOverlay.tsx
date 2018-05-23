@@ -36,8 +36,8 @@ import { connect } from 'react-redux';
 import { css } from 'glamor';
 
 import { OVERLAY_CSS } from './overlayStyle';
-import * as Constants from '../../../../constants';
 import { RootState } from '../../../../data/store';
+import { DragEvent } from 'react';
 
 const CSS = css({
   top: 0,
@@ -64,36 +64,36 @@ class LeftContentOverlayComponent extends React.Component<LeftContentOverlayProp
     };
   }
 
-  private onDragEnter = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-  }
-
-  private onDragLeave = (e) => {
-    this.setState(({ draggedOver: false }));
-  }
-
-  private onDragOver = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    this.setState(({ draggedOver: true }));
-  }
-
-  private onDrop = (e) => {
-    this.setState(({ draggedOver: false }));
-    e.preventDefault();
-    e.stopPropagation();
-  }
-
   render() {
     let overlayClassName = this.state.draggedOver ? ' dragged-over-overlay' : '';
     overlayClassName += (this.props.draggingTab ? ' enabled-for-drop' : '');
 
     return (
       <div className={ CSS + overlayClassName }
-        onDragEnterCapture={ this.onDragEnter } onDragLeave={ this.onDragLeave }
-        onDragOverCapture={ this.onDragOver } onDropCapture={ this.onDrop } />
+           onDragEnterCapture={ this.onDragEnter } onDragLeave={ this.onDragLeave }
+           onDragOverCapture={ this.onDragOver } onDropCapture={ this.onDrop } />
     );
+  }
+
+  private onDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  private onDragLeave = (_e: DragEvent<HTMLDivElement>) => {
+    this.setState(({ draggedOver: false }));
+  }
+
+  private onDragOver = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    this.setState(({ draggedOver: true }));
+  }
+
+  private onDrop = (e: DragEvent<HTMLDivElement>) => {
+    this.setState(({ draggedOver: false }));
+    e.preventDefault();
+    e.stopPropagation();
   }
 }
 

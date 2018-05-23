@@ -39,7 +39,7 @@ import * as ChatActions from '../../../data/action/chatActions';
 import * as EditorActions from '../../../data/action/editorActions';
 import { Tab } from './tab';
 import { RootState } from '../../../data/store';
-import { EmulatorMode } from '../../editor/emulator/index';
+import { EmulatorMode } from '../../editor/emulator';
 
 interface EmulatorTabProps {
   active?: boolean;
@@ -55,24 +55,25 @@ class EmulatorTabComponent extends React.Component<EmulatorTabProps> {
     super(props);
   }
 
-  private onCloseClick = (e) => {
-    e.stopPropagation();
-    this.props.closeTab();
-  }
-
   render() {
     return (
       <Tab active={ this.props.active } title={ this.props.title } onCloseClick={ this.onCloseClick }
            documentId={ this.props.documentId } dirty={ this.props.dirty }/>
     );
   }
+
+  private onCloseClick = (e) => {
+    e.stopPropagation();
+    this.props.closeTab();
+  }
 }
 
 const mapStateToProps = (state: RootState, ownProps: EmulatorTabProps): EmulatorTabProps => {
   const { mode, documentId } = ownProps;
+  // TODO - localization
   let title;
   if (mode === 'livechat') {
-    title = "Live Chat";
+    title = 'Live Chat';
 
     const { services = [] } = state.bot.activeBot || {};
 

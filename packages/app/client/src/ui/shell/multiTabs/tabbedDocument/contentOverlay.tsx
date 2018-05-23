@@ -37,9 +37,9 @@ import { css } from 'glamor';
 
 import { OVERLAY_CSS } from './overlayStyle';
 import * as EditorActions from '../../../../data/action/editorActions';
-import * as Constants from '../../../../constants';
 import { getTabGroupForDocument } from '../../../../data/editorHelpers';
 import { RootState } from '../../../../data/store';
+import { DragEvent } from 'react';
 
 const CSS = css({
   top: 0,
@@ -74,29 +74,29 @@ class ContentOverlayComponent extends React.Component<ContentOverlayProps, Conte
     };
   }
 
-  componentWillReceiveProps(newProps) {
+  componentWillReceiveProps(newProps: ContentOverlayProps) {
     const { documentId: newDocumentId } = newProps;
     if (this.props.documentId && this.props.documentId !== newDocumentId) {
       this.setState({ owningEditor: getTabGroupForDocument(newDocumentId) });
     }
   }
 
-  onDragEnter(e) {
+  onDragEnter(e: DragEvent<HTMLDivElement>) {
     e.preventDefault();
     e.stopPropagation();
   }
 
-  onDragLeave(e) {
+  onDragLeave(_e: DragEvent<HTMLDivElement>) {
     this.setState(({ draggedOver: false }));
   }
 
-  onDragOver(e) {
+  onDragOver(e: DragEvent<HTMLDivElement>) {
     e.preventDefault();
     e.stopPropagation();
     this.setState(({ draggedOver: true }));
   }
 
-  onDrop(e) {
+  onDrop(e: DragEvent<HTMLDivElement>) {
     const tabData = JSON.parse(e.dataTransfer.getData('application/json'));
     if (tabData.editorKey !== this.state.owningEditor) {
       this.props.appendTab(tabData.editorKey, this.state.owningEditor, tabData.tabId);
@@ -124,7 +124,8 @@ const mapStateToProps = (state: RootState): ContentOverlayProps => ({
 });
 
 const mapDispatchToProps = (dispatch): ContentOverlayProps => ({
-  appendTab: (editorKey: string, owningEditor: string, tabId: string) => dispatch(EditorActions.appendTab(editorKey, owningEditor, tabId))
+  appendTab: (editorKey: string, owningEditor: string, tabId: string) =>
+    dispatch(EditorActions.appendTab(editorKey, owningEditor, tabId))
 });
 
 export const ContentOverlay = connect(mapStateToProps, mapDispatchToProps)(ContentOverlayComponent) as any;

@@ -42,7 +42,7 @@ import { TabManager, DialogHost } from '../dialogs';
 import * as Constants from '../../constants';
 import { StatusBar } from './statusBar';
 import { StoreVisualizer } from '../debug/storeVisualizer';
-import { IEditor } from '../../data/reducer/editor';
+import { Editor } from '../../data/reducer/editor';
 
 css.global('html, body, #root', {
   backgroundColor: Colors.APP_BACKGROUND_DARK,
@@ -106,12 +106,12 @@ const NAV_CSS = css({
 });
 
 export interface MainProps {
-  primaryEditor?: IEditor;
-  secondaryEditor?: IEditor;
+  primaryEditor?: Editor;
+  secondaryEditor?: Editor;
   showingExplorer?: boolean;
   presentationModeEnabled?: boolean;
   navBarSelection?: string;
-  exitPresentationMode?: (e) => void;
+  exitPresentationMode?: (e: Event) => void;
 }
 
 export interface MainState {
@@ -129,24 +129,25 @@ export class Main extends React.Component<MainProps, MainState> {
     };
   }
 
-  componentWillReceiveProps(newProps) {
+  componentWillReceiveProps(newProps: any) {
     if (newProps.presentationModeEnabled) {
-      window.addEventListener("keydown", this.props.exitPresentationMode);
+      window.addEventListener('keydown', this.props.exitPresentationMode);
     } else {
-      window.removeEventListener("keydown", this.props.exitPresentationMode);
+      window.removeEventListener('keydown', this.props.exitPresentationMode);
     }
   }
 
-  handleTabChange(nextTabValue) {
+  handleTabChange(nextTabValue: any) {
     this.setState(() => ({ tabValue: nextTabValue }));
   }
 
   render() {
     const tabGroup1 = this.props.primaryEditor &&
-      <div className="mdi-wrapper" key={ 'primaryEditor' } ><MDI owningEditor={ Constants.EDITOR_KEY_PRIMARY } /></div>;
+      <div className="mdi-wrapper" key={ 'primaryEditor' }><MDI owningEditor={ Constants.EDITOR_KEY_PRIMARY }/></div>;
 
     const tabGroup2 = this.props.secondaryEditor && Object.keys(this.props.secondaryEditor.documents).length ?
-      <div className="mdi-wrapper secondary-mdi" key={ 'secondaryEditor' } ><MDI owningEditor={ Constants.EDITOR_KEY_SECONDARY } /></div> : null;
+      <div className="mdi-wrapper secondary-mdi" key={ 'secondaryEditor' }><MDI
+        owningEditor={ Constants.EDITOR_KEY_SECONDARY }/></div> : null;
 
     // If falsy children aren't filtered out, splitter won't recognize change in number of children
     // (i.e. [child1, child2] -> [false, child2] is still seen as 2 children by the splitter)
@@ -156,29 +157,32 @@ export class Main extends React.Component<MainProps, MainState> {
     // Explorer & TabGroup(s) pane
     const workbenchChildren = [];
 
-    if (this.props.showingExplorer && !this.props.presentationModeEnabled)
-      workbenchChildren.push(<ExplorerBar key={ 'explorer-bar' } />);
+    if (this.props.showingExplorer && !this.props.presentationModeEnabled) {
+      workbenchChildren.push(<ExplorerBar key={ 'explorer-bar' }/>);
+    }
 
     workbenchChildren.push(
-      <Splitter orientation={ 'vertical' } key={ 'tab-group-splitter' } minSizes={{ 0: 160, 1: 160 }}>
-        {tabGroups}
+      <Splitter orientation={ 'vertical' } key={ 'tab-group-splitter' } minSizes={ { 0: 160, 1: 160 } }>
+        { tabGroups }
       </Splitter>
     );
 
     return (
       <div { ...CSS }>
         <div { ...NAV_CSS }>
-          { !this.props.presentationModeEnabled && <NavBar selection={ this.props.navBarSelection } showingExplorer={ this.props.showingExplorer } /> }
+          { !this.props.presentationModeEnabled &&
+          <NavBar selection={ this.props.navBarSelection } showingExplorer={ this.props.showingExplorer }/> }
           <div className="workbench">
-            <Splitter orientation={ 'vertical' } primaryPaneIndex={ 0 } minSizes={{ 0: 40, 1: 40 }} initialSizes={{ 0: 210 }}>
+            <Splitter orientation={ 'vertical' } primaryPaneIndex={ 0 } minSizes={ { 0: 40, 1: 40 } }
+                      initialSizes={ { 0: 210 } }>
               { workbenchChildren }
             </Splitter>
           </div>
-          <TabManager disabled={ false } />
+          <TabManager disabled={ false }/>
         </div>
-        { !this.props.presentationModeEnabled && <StatusBar /> }
-        <DialogHost />
-        <StoreVisualizer enabled={ false } />
+        { !this.props.presentationModeEnabled && <StatusBar/> }
+        <DialogHost/>
+        <StoreVisualizer enabled={ false }/>
       </div>
     );
   }

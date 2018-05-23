@@ -34,7 +34,11 @@
 import { IDispatchService, ServiceType } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
 import { connect } from 'react-redux';
-import { launchDispatchEditor, openDispatchDeepLink, openDispatchExplorerContextMenu } from '../../../../data/action/dispatchServiceActions';
+import {
+  launchDispatchEditor,
+  openDispatchDeepLink,
+  openDispatchExplorerContextMenu
+} from '../../../../data/action/dispatchServiceActions';
 import { RootState } from '../../../../data/store';
 import { DispatchEditor } from './dispatchEditor/dispatchEditor';
 import { DispatchExplorer } from './dispatchExplorer';
@@ -49,9 +53,11 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    launchDispatchEditor: (dispatchEditor: ComponentClass<DispatchEditor>, dispatchService: IDispatchService) => dispatch(launchDispatchEditor(dispatchEditor, dispatchService)),
+    launchDispatchEditor: (dispatchEditor: ComponentClass<DispatchEditor>, dispatchService: IDispatchService) =>
+      dispatch(launchDispatchEditor(dispatchEditor, dispatchService)),
     openDispatchDeepLink: (dispatchService: IDispatchService) => dispatch(openDispatchDeepLink(dispatchService)),
-    openContextMenu: (dispatchService: IDispatchService, dispatchEditor: ComponentClass<DispatchEditor>) => dispatch(openDispatchExplorerContextMenu(dispatchEditor, dispatchService)),
+    openContextMenu: (dispatchService: IDispatchService, dispatchEditor: ComponentClass<DispatchEditor>) =>
+      dispatch(openDispatchExplorerContextMenu(dispatchEditor, dispatchService)),
   };
 };
 

@@ -36,7 +36,7 @@ import * as React from 'react';
 import { TabbedDocumentContentWrapper } from './contentWrapper';
 
 export class TabbedDocument extends React.Component<{}> {
-  constructor(props) {
+  constructor(props: {}) {
     super(props);
   }
 
@@ -46,4 +46,5 @@ export class TabbedDocument extends React.Component<{}> {
 }
 
 export const Tab = props => props.children;
-export const Content = props => <TabbedDocumentContentWrapper documentId={ props.documentId }>{ props.children }</TabbedDocumentContentWrapper>;
+export const Content = props =>
+  <TabbedDocumentContentWrapper documentId={ props.documentId }>{ props.children }</TabbedDocumentContentWrapper>;
