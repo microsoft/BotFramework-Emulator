@@ -35,7 +35,7 @@ import { connect } from 'react-redux';
 import { css } from 'glamor';
 import * as React from 'react';
 
-import { Colors, Fonts, Splitter } from '@bfemulator/ui-react';
+import { Colors, Fonts, Splitter, GlobalCss } from '@bfemulator/ui-react';
 import { ExplorerBar } from './explorer';
 import { MDI } from './mdi';
 import { NavBar } from './navBar';
@@ -49,34 +49,7 @@ import * as PresentationActions from '../../data/action/presentationActions';
 import { IEditor } from '../../data/reducer/editor';
 import { IRootState } from '../../data/store';
 
-css.global('html, body, #root', {
-  backgroundColor: Colors.APP_BACKGROUND_DARK,
-  cursor: 'default',
-  fontFamily: Fonts.FONT_FAMILY_DEFAULT,
-  fontSize: '13px',
-  height: '100%',
-  margin: 0,
-  minHeight: '100%',
-  overflow: 'hidden',
-  userSelect: 'none',
-});
-
-css.global('div', {
-  boxSizing: 'border-box',
-});
-
-css.global('::-webkit-scrollbar', {
-  width: '10px',
-  height: '10px',
-});
-
-css.global('::-webkit-scrollbar-track', {
-  background: Colors.SCROLLBAR_TRACK_BACKGROUND_DARK,
-});
-
-css.global('::-webkit-scrollbar-thumb', {
-  background: Colors.SCROLLBAR_THUMB_BACKGROUND_DARK,
-});
+GlobalCss.setCss({});
 
 const CSS = css({
   backgroundColor: Colors.APP_BACKGROUND_DARK,
