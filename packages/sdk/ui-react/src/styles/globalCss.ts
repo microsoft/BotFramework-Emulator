@@ -31,8 +31,43 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './colors';
-export * from './decorators';
-export * from './fonts';
-export * from './shadows';
-export * from './globalCss';
+import { css } from 'glamor';
+import { Colors } from './colors';
+import { Fonts } from './fonts';
+
+export class GlobalCss {
+  static setCss(rootCssAdditions: object) {
+
+    let rootCss = {
+      backgroundColor: Colors.APP_BACKGROUND_DARK,
+      cursor: 'default',
+      fontSize: '13px',
+      fontFamily: Fonts.FONT_FAMILY_DEFAULT,
+      height: '100%',
+      margin: 0,
+      minHeight: '100%',
+      overflow: 'hidden',
+      userSelect: 'none',
+    };
+    Object.assign(rootCss, rootCssAdditions);
+
+    css.global('html, body, #root', rootCss);
+    
+    css.global('div', {
+      boxSizing: 'border-box',
+    });
+    
+    css.global('::-webkit-scrollbar', {
+      width: '10px',
+      height: '10px',
+    });
+    
+    css.global('::-webkit-scrollbar-track', {
+      background: Colors.SCROLLBAR_TRACK_BACKGROUND_DARK,
+    });
+    
+    css.global('::-webkit-scrollbar-thumb', {
+      background: Colors.SCROLLBAR_THUMB_BACKGROUND_DARK,
+    });
+  }
+}
