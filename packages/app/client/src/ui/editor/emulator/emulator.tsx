@@ -257,7 +257,6 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
   }
 
   initConversation(props: any, options: any, selectedActivity$: any, subscription: any) {
-    const webChatStore = BotChat.createStore();
     const encodedOptions = encode(JSON.stringify(options));
 
     // TODO: We need to use encoded token because we need to pass both endpoint ID and conversation ID
@@ -270,7 +269,7 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
 
     this.props.newConversation(props.documentId, {
       conversationId: options.conversationId,
-      webChatStore,
+      // webChatStore,
       directLine,
       selectedActivity$,
       subscription

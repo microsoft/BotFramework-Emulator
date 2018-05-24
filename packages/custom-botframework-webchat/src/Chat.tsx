@@ -26,7 +26,7 @@ export interface ChatProps {
     sendTyping?: boolean,
     formatOptions?: FormatOptions,
     resize?: 'none' | 'window' | 'detect',
-    store?: ChatStore,
+    // store?: ChatStore,
     showShell?: boolean
 }
 
@@ -61,7 +61,8 @@ export class Chat extends React.Component<ChatProps, {}> {
 
         konsole.log("BotChat.Chat props", props);
 
-        this.store = props.store || createStore();
+        this.store = createStore();
+        // this.store = props.store || createStore();
 
         this.store.dispatch<ChatActions>({
             type: 'Set_Locale',
@@ -82,7 +83,7 @@ export class Chat extends React.Component<ChatProps, {}> {
         if (props.sendTyping) {
             this.store.dispatch<ChatActions>({ type: 'Set_Send_Typing', sendTyping: props.sendTyping });
         }
-        
+
         if (typeof props.showShell === 'boolean') {
           this.store.dispatch<ChatActions>({ type: 'Set_Visible', visible: props.showShell });
         }

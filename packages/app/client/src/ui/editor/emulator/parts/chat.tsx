@@ -181,7 +181,6 @@ class Chat extends React.Component<Props> {
         } : null,
         selectedActivity: (this.props.document.selectedActivity$ as any),
         botConnection: this.props.document.directLine,
-        store: this.props.document.webChatStore,
         showShell: this.props.mode === 'livechat'
       };
       return (
