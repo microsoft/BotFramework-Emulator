@@ -15,7 +15,7 @@
     "clean": "rimraf lib",
     "lint": "tslint --project tslint.json",
     "start": "node-dev .",
-    "test": "jest --coverage",
+    "test": "jest",
     "typecheck": "tsc"
   },
   "repository": {
