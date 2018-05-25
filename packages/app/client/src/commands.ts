@@ -86,32 +86,25 @@ export function registerCommands() {
 
   // ---------------------------------------------------------------------------
   // Switches the current active bot
-  CommandRegistry.registerCommand('bot:switch', (botPath: string) => {
-    ActiveBotHelper.confirmAndSwitchBots(botPath);
-  });
+  CommandRegistry.registerCommand('bot:switch', (botPath: string) => ActiveBotHelper.confirmAndSwitchBots(botPath));
 
   // ---------------------------------------------------------------------------
   // Closes the current active bot
-  CommandRegistry.registerCommand('bot:close', () => {
-    ActiveBotHelper.confirmAndCloseBot();
-  });
+  CommandRegistry.registerCommand('bot:close', () => ActiveBotHelper.confirmAndCloseBot());
 
   // ---------------------------------------------------------------------------
   // Browse for a .bot file and open it
-  CommandRegistry.registerCommand('bot:browse-open', () => {
-    ActiveBotHelper.confirmAndOpenBotFromFile();
-  });
+  CommandRegistry.registerCommand('bot:browse-open', () => ActiveBotHelper.confirmAndOpenBotFromFile());
 
   // ---------------------------------------------------------------------------
   // Completes the client side sync of the bot:load command on the server side
   // (NOTE: should NOT be called by itself; call server side instead)
-  CommandRegistry.registerCommand('bot:load', (bot: BotConfigWithPath): void => {
+  CommandRegistry.registerCommand('bot:load', (bot: BotConfigWithPath): Promise<any> => {
     if (!pathExistsInRecentBots(bot.path)) {
       // create and switch bots
-      ActiveBotHelper.confirmAndCreateBot(bot, '');
-      return;
+      return ActiveBotHelper.confirmAndCreateBot(bot, '');
     }
-    ActiveBotHelper.confirmAndSwitchBots(bot.path);
+    return ActiveBotHelper.confirmAndSwitchBots(bot.path);
   });
 
   // ---------------------------------------------------------------------------

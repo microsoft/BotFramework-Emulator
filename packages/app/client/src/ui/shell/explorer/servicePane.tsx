@@ -210,7 +210,12 @@ export abstract class ServicePane<T extends ServicePaneProps,
     const { expandCollapseCss } = this;
 
     return (
-      <ExpandCollapse className="service-pane-explorer" style={ expandCollapseCss } key={ this.props.title } title={ this.props.title } expanded={ this.state.expanded }>
+      <ExpandCollapse
+        className="service-pane-explorer"
+        style={ expandCollapseCss }
+        key={ this.props.title }
+        title={ this.props.title }
+        expanded={ this.state.expanded }>
         { this.controls }
         { this.content }
       </ExpandCollapse>

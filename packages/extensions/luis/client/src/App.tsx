@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IInspectorHost } from '@bfemulator/sdk-client';
 import { Colors, Fonts, GlobalCss, Splitter } from '@bfemulator/ui-react';
 import { InspectorHost } from '@bfemulator/sdk-client';
 import { css } from 'glamor';

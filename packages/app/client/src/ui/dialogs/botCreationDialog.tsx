@@ -161,7 +161,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
       && this.state.endpoint.endpoint
       && this.state.bot.name
       && secretCriteria;
-
+    // TODO - localization
     return (
       <div { ...CSS }>
         <Column>
@@ -194,8 +194,8 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
             </Row>
           }
           <Row className="multi-input-row button-row" justify={ RowJustification.Right }>
-            <PrimaryButton secondary text='Cancel' onClick={ this.onCancel } className="cancel-button"/>
-            <PrimaryButton text='Save and connect' onClick={ this.onSaveAndConnect }
+            <PrimaryButton secondary text="Cancel" onClick={ this.onCancel } className="cancel-button"/>
+            <PrimaryButton text="Save and connect" onClick={ this.onSaveAndConnect }
                            disabled={ !requiredFieldsCompleted } className="connect-button"/>
           </Row>
         </Column>
@@ -220,11 +220,6 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
 
   private onChangeName = (e) => {
     const bot = { ...this.state.bot, name: e.target.value };
-    this.setState({ bot });
-  }
-
-  private onChangeBotLocation = (e) => {
-    const bot = { ...this.state.bot, path: e.target.value };
     this.setState({ bot });
   }
 

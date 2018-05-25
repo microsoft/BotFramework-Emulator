@@ -32,7 +32,7 @@
 //
 
 import { InspectorHost } from '@bfemulator/sdk-client';
-import { Colors, Fonts, Splitter } from '@bfemulator/ui-react';
+import { Colors, Fonts, GlobalCss, Splitter } from '@bfemulator/ui-react';
 import { css } from 'glamor';
 import * as React from 'react';
 import { IBotConfig, IQnAService, ServiceType } from 'msbot/bin/schema';
