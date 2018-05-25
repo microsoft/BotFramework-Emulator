@@ -11,7 +11,7 @@
     "build:vendors:dev": "webpack --mode development --progress --colors",
     "build:shared:dev": "webpack --mode development --progress --colors",
     "build:app:dev": "webpack --mode development --progress --colors",
-    "build": "run-s build:vendors build:shared build:app copy:external",
+    "build": "run-s lint build:vendors build:shared build:app copy:external",
     "clean": "rimraf build",
     "copy:external": "gulp copy",
     "prepare": "npm run clean",

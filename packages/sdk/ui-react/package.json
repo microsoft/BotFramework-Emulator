@@ -5,8 +5,9 @@
   "main": "built/index.js",
   "types": "built/index.d.ts",
   "scripts": {
-    "build": "npm run clean && tsc",
+    "build": "npm run lint && npm run clean && tsc",
     "clean": "rimraf ./built",
+    "lint": "tslint --project tslint.json",
     "prepare": "npm run clean",
     "test": "jest"
   },

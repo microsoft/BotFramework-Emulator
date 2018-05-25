@@ -6,7 +6,7 @@
   "main": "built/index.js",
   "types": "built/index.d.ts",
   "scripts": {
-    "build": "tslint --project tsconfig.json && npm run clean && tsc --pretty",
+    "build": "npm run lint && npm run clean && tsc --pretty",
     "clean": "rimraf ./built",
     "lint": "tslint --project tsconfig.json",
     "prepare": "npm run clean",
