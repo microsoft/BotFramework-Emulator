@@ -35,7 +35,7 @@ import * as Restify from 'restify';
 
 export default function getFacility(facility: string) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    req['facility'] = facility;
+    (req as any).facility = facility;
     next();
   };
 }

@@ -21,7 +21,7 @@
     "test": "jest"
   },
   "jest": {
-    "setupTestFrameworkScriptFile": "./testSetup.js",
+    "setupTestFrameworkScriptFile": "../../../testSetup.js",
     "transform": {
       "^.+\\.(tsx?|jsx?)$": "ts-jest"
     },

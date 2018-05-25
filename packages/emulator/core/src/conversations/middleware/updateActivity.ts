@@ -37,24 +37,26 @@ import * as Restify from 'restify';
 import BotEmulator from '../../botEmulator';
 import createAPIException from '../../utils/createResponse/apiException';
 import ErrorCodes from '../../types/errorCodes';
-import IConversationAPIPathParameters from '../conversationAPIPathParameters';
-import IGenericActivity from '../../types/activity/generic';
-import IResourceResponse from '../../types/response/resource';
+import ConversationAPIPathParameters from '../conversationAPIPathParameters';
+import GenericActivity from '../../types/activity/generic';
+import ResourceResponse from '../../types/response/resource';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function updateActivity(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    const activity = <IGenericActivity>req.body;
-    const conversationParameters: IConversationAPIPathParameters = req.params;
+    const activity = <GenericActivity> req.body;
+    const conversationParameters: ConversationAPIPathParameters = req.params;
 
     try {
       activity.replyToId = req.params.activityId;
 
-      if (activity.id != conversationParameters.activityId)
-        throw createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.BadArgument, 'uri activity id does not match payload activity id');
+      if (activity.id !== conversationParameters.activityId) {
+        throw createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.BadArgument,
+          'uri activity id does not match payload activity id');
+      }
 
       // post activity
-      const response: IResourceResponse = req['conversation'].updateActivity(activity);
+      const response: ResourceResponse = (req as any).conversation.updateActivity(activity);
 
       res.send(HttpStatus.OK, response);
       res.end();

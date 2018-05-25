@@ -37,10 +37,10 @@ import * as Restify from 'restify';
 import BotEmulator from '../../botEmulator';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
-export default function getConversationData(botEmulator: BotEmulator) {
+export default function getConversationData(_botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     try {
-      res.send(HttpStatus.OK, req['botData']);
+      res.send(HttpStatus.OK, (req as any).botData);
       res.end();
     } catch (err) {
       sendErrorResponse(req, res, next, err);

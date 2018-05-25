@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-interface IAttachmentData {
+interface AttachmentData {
     /// content type of the attachmnet
     type: string;
 
@@ -45,4 +45,4 @@ interface IAttachmentData {
     thumbnailBase64: string;
 }
 
-export default IAttachmentData
+export default AttachmentData;

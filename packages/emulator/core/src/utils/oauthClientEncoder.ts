@@ -32,24 +32,24 @@
 //
 
 import ActivityVisitor from './activityVisitor';
-import ICardAction from '../types/card/cardAction';
-import IPaymentRequest from '../types/payment/request';
-import IActivity from '../types/activity/activity';
+import CardAction from '../types/card/cardAction';
+import Activity from '../types/activity/activity';
 
 export default class OAuthClientEncoder extends ActivityVisitor {
-  public static OAuthEmulatorUrlProtocol: string = "oauth:";
+  public static OAuthEmulatorUrlProtocol: string = 'oauth:';
 
   private _conversationId: string;
 
-  constructor(activity: IActivity) {
+  constructor(activity: Activity) {
       super();
-      this._conversationId = activity && activity.conversation ? activity.conversation.id : undefined;;
+      this._conversationId = activity && activity.conversation ? activity.conversation.id : undefined;
   }
 
-  protected visitCardAction(cardAction: ICardAction) {
+  protected visitCardAction(cardAction: CardAction) {
+    return null;
   }
 
-  protected visitOAuthCardAction(connectionName: string, cardAction: ICardAction) {
+  protected visitOAuthCardAction(connectionName: string, cardAction: CardAction) {
       if (this._conversationId && cardAction && cardAction.type === 'signin' && !cardAction.value) {
           let url = OAuthClientEncoder.OAuthEmulatorUrlProtocol + '//' + connectionName + '&&&' + this._conversationId;
 

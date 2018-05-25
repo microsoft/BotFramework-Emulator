@@ -31,14 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import IActivity from './activity';
-import IChannelAccount from '../account/channel';
+import Activity from './activity';
+import ChannelAccount from '../account/channel';
 
-interface IConversationUpdateActivity extends IActivity {
+interface ConversationUpdateActivity extends Activity {
   historyDisclosed?: boolean;
-  membersAdded?: IChannelAccount[];
-  membersRemoved?: IChannelAccount[];
+  membersAdded?: ChannelAccount[];
+  membersRemoved?: ChannelAccount[];
   topicName?: string;
 }
 
-export default IConversationUpdateActivity
+export default ConversationUpdateActivity;

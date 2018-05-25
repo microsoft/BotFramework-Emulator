@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-interface IError {
+interface Error {
   code?: string;
   message?: string;
 }
 
-export default IError
+export default Error;

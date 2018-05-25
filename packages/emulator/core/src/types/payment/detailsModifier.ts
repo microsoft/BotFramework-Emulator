@@ -31,13 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import IPaymentItem from './item';
+import PaymentItem from './item';
 
-interface IPaymentDetailsModifier {
-  additionalDisplayItems: IPaymentItem[],
-  data: any,
-  supportedMethods: string[],
-  total: IPaymentItem
+interface PaymentDetailsModifier {
+  additionalDisplayItems: PaymentItem[];
+  data: any;
+  supportedMethods: string[];
+  total: PaymentItem;
 }
 
-export default IPaymentDetailsModifier
+export default PaymentDetailsModifier;

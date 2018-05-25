@@ -31,14 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import IPaymentAddress from './address';
-import IPaymentDetails from './details';
+import PaymentAddress from './address';
+import PaymentDetails from './details';
 
-interface IPaymentRequestUpdate {
-  details: IPaymentDetails,
-  id: string,
-  shippingAddress: IPaymentAddress,
-  shippingOption: string
+interface PaymentRequestUpdate {
+  details: PaymentDetails;
+  id: string;
+  shippingAddress: PaymentAddress;
+  shippingOption: string;
 }
 
-export default IPaymentRequestUpdate
+export default PaymentRequestUpdate;

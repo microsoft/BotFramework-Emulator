@@ -103,7 +103,7 @@ const CSS = css({
     },
 
     '& > .presentation-widget': {
-      background: 'url("./external/media/ic_presentation.svg"") no-repeat 50% 50%',
+      background: 'url("./external/media/ic_presentation.svg") no-repeat 50% 50%',
     }
   }
 });

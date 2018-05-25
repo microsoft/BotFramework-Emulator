@@ -35,23 +35,25 @@ import * as HttpStatus from 'http-status-codes';
 
 import createAPIException from '../utils/createResponse/apiException';
 import ErrorCodes from '../types/errorCodes';
-import IAttachmentData from '../types/attachment/data';
+import AttachmentData from '../types/attachment/data';
 import uniqueId from '../utils/uniqueId';
 
 export default class Attachments {
-  private attachments: { [key: string]: IAttachmentData } = {};
+  private attachments: { [key: string]: AttachmentData } = {};
 
-  public getAttachmentData(id): IAttachmentData {
+  public getAttachmentData(id: string): AttachmentData {
     return this.attachments[id];
   }
 
-  public uploadAttachment(attachmentData: IAttachmentData): string {
+  public uploadAttachment(attachmentData: AttachmentData): string {
     if (!attachmentData.type) {
-      throw createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.MissingProperty, 'You must specify type property for the attachment');
+      throw createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.MissingProperty,
+        'You must specify type property for the attachment');
     }
 
     if (!attachmentData.originalBase64) {
-      throw createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.MissingProperty, 'You must specify originalBase64 byte[] for the attachment');
+      throw createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.MissingProperty,
+        'You must specify originalBase64 byte[] for the attachment');
     }
 
     const attachment: any = { ...attachmentData, id: uniqueId() };

@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export interface ITokenParams {
+export interface TokenParams {
     userId: string;
     connectionName: string;
 }

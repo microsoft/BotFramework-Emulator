@@ -35,8 +35,6 @@ import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
-import IChannelAccount from '../../types/account/channel';
-import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function removeUsers(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
@@ -45,7 +43,8 @@ export default function removeUsers(botEmulator: BotEmulator) {
 
     //   if (!members) {
     //     members = [...req['conversation'].members];
-    //     members = members.filter(member => member.id !== botEmulator.facilities.users.currentUserId && member.id !== botEmulator.botId);
+    //     members = members.filter(member => member.id !==
+    // botEmulator.facilities.users.currentUserId && member.id !== botEmulator.botId);
     //     members = members.slice(0);
     //   }
 

@@ -34,4 +34,4 @@
 import BotEmulator from './botEmulator';
 import Conversation from './facility/conversation';
 
-export { BotEmulator, Conversation }
+export { BotEmulator, Conversation };

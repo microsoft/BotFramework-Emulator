@@ -31,18 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-interface IPaymentAddress {
-  addressLine: string[],
-  city: string,
-  country: string,
-  dependentLocality: string,
-  languageCode: string,
-  organization: string,
-  phone: string,
-  postalCode: string,
-  recipient: string,
-  region: string,
-  sortingCode: string
+interface PaymentAddress {
+  addressLine: string[];
+  city: string;
+  country: string;
+  dependentLocality: string;
+  languageCode: string;
+  organization: string;
+  phone: string;
+  postalCode: string;
+  recipient: string;
+  region: string;
+  sortingCode: string;
 }
 
-export default IPaymentAddress
+export default PaymentAddress;

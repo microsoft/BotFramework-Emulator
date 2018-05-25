@@ -31,12 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import LogLevel from './level';
 import ILogItem from './item';
 
-interface ILogEntry {
+interface LogEntry {
   timestamp: number;
   items: ILogItem[];
 }
 
-export default ILogEntry;
+export default LogEntry;

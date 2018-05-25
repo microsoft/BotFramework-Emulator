@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-interface IChannelAccount {
+interface ChannelAccount {
   id?: string;
   name?: string;
 
@@ -39,4 +39,4 @@ interface IChannelAccount {
   role?: string;
 }
 
-export default IChannelAccount
+export default ChannelAccount;

@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-interface IEntity {
-  type?: string,
+interface Entity {
+  type?: string;
 }
 
-export default IEntity
+export default Entity;

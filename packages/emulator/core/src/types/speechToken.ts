@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-interface ISpeechTokenInfo {
+interface SpeechTokenInfo {
   access_Token: string;
   error: string;
   error_Description: string;
 }
 
-export default ISpeechTokenInfo
+export default SpeechTokenInfo;

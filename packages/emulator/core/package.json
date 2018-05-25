@@ -13,6 +13,7 @@
     "build:babel": "concurrently --names \"babel,typecheck\" \"babel --extensions .js,.ts --ignore **/*.spec.js,**/*.spec.ts,**/*.test.js/,**/*.test.ts/,__test__/**/*.js,__test__/**/*.ts --out-dir lib --source-maps inline --verbose src\" \"tsc\"",
     "build:babel:watch": "concurrently --kill-others --names \"babel,typecheck\" \"babel --extensions .js,.ts --ignore **/*.spec.js,**/*.spec.ts,**/*.test.js/,**/*.test.ts/,__test__/**/*.js,__test__/**/*.ts --out-dir lib --source-maps inline --verbose src --watch\" \"tsc --preserveWatchOutput --watch\"",
     "clean": "rimraf lib",
+    "lint": "tslint --project tslint.json",
     "start": "node-dev .",
     "test": "jest --coverage",
     "typecheck": "tsc"

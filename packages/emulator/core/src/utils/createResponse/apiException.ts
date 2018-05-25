@@ -31,12 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import IError from '../../types/error';
-import IErrorResponse from '../../types/response/error';
+import Error from '../../types/error';
+import ErrorResponse from '../../types/response/error';
 import APIException from '../../types/apiException';
 
 // Create ErrorResponse object
-function createErrorResponse(code: string, message: string): IErrorResponse {
+function createErrorResponse(code: string, message: string): ErrorResponse {
   return {
     error: {
       code: code,

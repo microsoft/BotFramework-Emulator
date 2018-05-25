@@ -48,4 +48,4 @@ class ErrorCodes {
   public static MessageSizeTooBig = 'MessageSizeTooBig';
 }
 
-export default ErrorCodes
+export default ErrorCodes;

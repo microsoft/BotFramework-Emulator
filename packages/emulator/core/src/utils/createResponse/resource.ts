@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import IResourceResponse from '../../types/response/resource';
+import ResourceResponse from '../../types/response/resource';
 
 //
-// Create IResourceResponse object
+// Create ResourceResponse object
 //
-export default function createResourceResponse(id: string): IResourceResponse {
+export default function createResourceResponse(id: string): ResourceResponse {
   return { id };
 }

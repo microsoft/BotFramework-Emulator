@@ -72,7 +72,7 @@ export interface APIException {
 }
 
 //
-// Create IResourceResponse object
+// Create ResourceResponse object
 //
 export function createResourceResponse(id: string): ResourceResponse {
   return { id: id };

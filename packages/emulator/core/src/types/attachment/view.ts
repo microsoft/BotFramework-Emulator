@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-interface IAttachmentView {
+interface AttachmentView {
   /// content type of the attachmnet
   viewId: string;
 
@@ -39,4 +39,4 @@ interface IAttachmentView {
   size: number;
 }
 
-export default IAttachmentView
+export default AttachmentView;

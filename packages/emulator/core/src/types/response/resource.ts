@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-interface IResourceResponse {
+interface ResourceResponse {
   id: string;
 }
 
-export default IResourceResponse
+export default ResourceResponse;

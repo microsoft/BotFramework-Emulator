@@ -34,25 +34,25 @@
 import LogLevel from './level';
 
 export type ILogItem = {
-  type: "text",
+  type: 'text',
   payload: {
     level: LogLevel,
     text: string
   }
 } | {
-  type: "external-link",
+  type: 'external-link',
   payload: {
     text: string,
     hyperlink: string
   }
 } | {
-  type: "inspectable-object",
+  type: 'inspectable-object',
   payload: {
     text: string,
     obj: any
   }
 } | {
-  type: "network-request",
+  type: 'network-request',
   payload: {
     facility?: string,
     body?: string,
@@ -61,7 +61,7 @@ export type ILogItem = {
     url?: string
   }
 } | {
-  type: "network-response",
+  type: 'network-response',
   payload: {
     body?: string,
     headers?: { [header: string]: number | string | string[] },
@@ -70,20 +70,20 @@ export type ILogItem = {
     srcUrl?: string
   }
 } | {
-  type: "summary-text",
+  type: 'summary-text',
   payload: {
     obj: any
   }
 } | {
-  type: "open-app-settings",
+  type: 'open-app-settings',
   payload: {
     text: string
   }
 } | {
-  type: "exception",
+  type: 'exception',
   payload: {
     err: any  // Shape of `Error`, but enumerable
   }
-}
+};
 
 export default ILogItem;

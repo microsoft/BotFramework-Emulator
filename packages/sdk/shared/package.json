@@ -7,6 +7,7 @@
   "scripts": {
     "build": "tslint --project tsconfig.json && npm run clean && tsc",
     "clean": "rimraf ./built",
+    "lint": "tslint --project tsconfig.json",
     "prepare": "npm run clean",
     "test": "jest"
   },

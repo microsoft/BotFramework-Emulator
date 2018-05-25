@@ -31,18 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import BotEndpoint from '../facility/botEndpoint';
-import IBotEndpoint from '../types/botEndpoint';
-import IBotEndpointOptions from './botEndpointOptions';
-import ILogger from './logger';
-import ILogService from './log/service';
+import Logger from './logger';
+import LogService from './log/service';
 import { StringProvider } from '../utils/stringProvider';
 
-export interface IBotEmulatorOptions {
-  fetch?: (string, any) => Promise<any>;
-  loggerOrLogService?: (ILogger | ILogService);
+export interface BotEmulatorOptions {
+  fetch?: (url: string, options: any) => Promise<any>;
+  loggerOrLogService?: (Logger | LogService);
   stateSizeLimitKB?: number;
   tunnelingServiceUrl?: string | StringProvider;
 }
 
-export default IBotEmulatorOptions
+export default BotEmulatorOptions;

@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import IError from '../error';
+import Error from '../error';
 
-interface IErrorResponse {
-  error: IError;
+interface ErrorResponse {
+  error: Error;
 }
 
-export default IErrorResponse
+export default ErrorResponse;

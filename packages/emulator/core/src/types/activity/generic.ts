@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import IActivity from './activity';;
+import Activity from './activity';
 
-interface IGenericActivity extends IActivity {
+interface GenericActivity extends Activity {
   attachments: { contentType: string }[];
   text: string;
 }
 
-export default IGenericActivity
+export default GenericActivity;

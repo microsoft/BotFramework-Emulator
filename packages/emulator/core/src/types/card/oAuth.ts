@@ -31,12 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ICardAction from './cardAction';
+import CardAction from './cardAction';
 
-interface IOAuthCard {
+interface OAuthCard {
   text: string;                   // Title of the Card 
   connectionName: string;         // OAuth connection name
-  buttons: ICardAction[];         // Sign in action 
+  buttons: CardAction[];         // Sign in action
 }
 
-export default IOAuthCard
+export default OAuthCard;

@@ -35,20 +35,20 @@ import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
-import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function sendTokenResponse(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const body: {
       token: string,
-      connectionName: string } = req.body[0];
+      connectionName: string
+    } = req.body[0];
 
-    const { activityId, response, statusCode } = req['conversation'].sendTokenResponse(body.connectionName, body.token, true);
+    const { statusCode } = (req as any).conversation.sendTokenResponse(body.connectionName, body.token, !!1);
 
     if (statusCode === HttpStatus.OK) {
-        res.send(HttpStatus.OK, body);
+      res.send(HttpStatus.OK, body);
     } else {
-        res.send(statusCode);
+      res.send(statusCode);
     }
     res.end();
 

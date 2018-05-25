@@ -35,19 +35,17 @@ import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
-import IAttachmentData from '../../types/attachment/data';
-import IConversationAPIPathParameters from '../conversationAPIPathParameters';
-import IResourceResponse from '../../types/response/resource';
+import AttachmentData from '../../types/attachment/data';
+import ResourceResponse from '../../types/response/resource';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function uploadAttachment(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    const attachmentData = <IAttachmentData>req.body;
-    const conversationParameters: IConversationAPIPathParameters = req.params;
+    const attachmentData = <AttachmentData> req.body;
 
     try {
       const resourceId = botEmulator.facilities.attachments.uploadAttachment(attachmentData);
-      const resourceResponse: IResourceResponse = { id: resourceId };
+      const resourceResponse: ResourceResponse = { id: resourceId };
 
       res.send(HttpStatus.OK, resourceResponse);
       res.end();

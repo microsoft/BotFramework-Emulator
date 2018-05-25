@@ -35,16 +35,16 @@ import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
-import IChannelAccount from '../../types/account/channel';
+import ChannelAccount from '../../types/account/channel';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function addUsers(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     try {
-      const members: IChannelAccount[] = req.body;
+      const members: ChannelAccount[] = req.body;
 
       members.forEach(member => {
-        req['conversation'].addMember(member.id, member.name);
+        (req as any).conversation.addMember(member.id, member.name);
       });
 
       res.send(HttpStatus.OK);

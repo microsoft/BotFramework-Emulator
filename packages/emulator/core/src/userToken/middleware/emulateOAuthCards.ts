@@ -41,7 +41,7 @@ import sendErrorResponse from '../../utils/sendErrorResponse';
 export default function emulateOAuthCards(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     try {
-      let emulate: string = req.params['emulate'];
+      let emulate: string = req.params.emulate;
       if (emulate) {
           OAuthLinkEncoder.EmulateOAuthCards = (emulate.toLowerCase() === 'true');
       } else {

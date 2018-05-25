@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-interface IConversationResourceResponse {
+interface ConversationResourceResponse {
   id: string;
   activityId?: string;
 }
 
-export default IConversationResourceResponse
+export default ConversationResourceResponse;
