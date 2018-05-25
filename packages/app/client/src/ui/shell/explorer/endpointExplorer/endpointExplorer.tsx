@@ -47,7 +47,7 @@ export interface EndpointProps extends ServicePaneProps {
 export class EndpointExplorer extends ServicePane<EndpointProps> {
   public state = { expanded: true } as { expanded?: boolean };
 
-  constructor(props, context) {
+  constructor(props: EndpointProps, context: {}) {
     super(props, context);
   }
 
@@ -64,7 +64,7 @@ export class EndpointExplorer extends ServicePane<EndpointProps> {
     const { index } = currentTarget.dataset;
     const { [index]: endpointService } = this.props.endpointServices;
     this.props.openEndpointDeepLink(endpointService);
-  };
+  }
 
   protected onContextMenuOverLiElement(li: HTMLLIElement) {
     super.onContextMenuOverLiElement(li);
@@ -73,7 +73,7 @@ export class EndpointExplorer extends ServicePane<EndpointProps> {
     this.props.openContextMenu(new EndpointService(endpointService), EndpointEditorContainer);
   }
 
-  protected onAddIconClick = (event: SyntheticEvent<HTMLButtonElement>): void => {
+  protected onAddIconClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
     this.props.launchEndpointEditor(EndpointEditorContainer);
-  };
+  }
 }

@@ -39,11 +39,11 @@ import {
   openAzureBotServiceDeepLink,
   openAzureBotServiceExplorerContextMenu
 } from '../../../../data/action/azureBotServiceActions';
-import { IRootState } from '../../../../data/store';
+import { RootState } from '../../../../data/store';
 import { AzureBotServiceEditor } from './azureBotServiceEditor/azureBotServiceEditor';
 import { AzureBotServiceExplorer } from './azureBotServiceExplorer';
 
-const mapStateToProps = (state: IRootState) => {
+const mapStateToProps = (state: RootState) => {
   const { services } = state.bot.activeBot;
   return {
     azureBotServices: services.filter(service => service.type === ServiceType.AzureBotService),

@@ -37,7 +37,7 @@ import { connect } from 'react-redux';
 import * as EditorActions from '../../../data/action/editorActions';
 import { Tab } from './tab';
 import { getTabGroupForDocument } from '../../../data/editorHelpers';
-import { IRootState } from '../../../data/store';
+import { RootState } from '../../../data/store';
 
 interface GenericTabProps {
   active?: boolean;
@@ -65,7 +65,7 @@ class GenericTabComponent extends React.Component<GenericTabProps> {
   }
 }
 
-const mapStateToProps = (state: IRootState, ownProps: GenericTabProps): GenericTabProps => ({
+const mapStateToProps = (state: RootState, ownProps: GenericTabProps): GenericTabProps => ({
   active: state.editor.editors[state.editor.activeEditor].activeDocumentId === ownProps.documentId
 });
 

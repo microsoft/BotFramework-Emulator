@@ -39,7 +39,7 @@ import { BotInfo } from '@bfemulator/app-shared';
 import { Colors, Column, Row, PrimaryButton, LargeHeader, SmallHeader, TruncateText } from '@bfemulator/ui-react';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { GenericDocument } from '../layout';
-import { IRootState } from '../../data/store';
+import { RootState } from '../../data/store';
 
 const CSS = css({
   '& .right-column': {
@@ -207,7 +207,7 @@ class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
   }
 }
 
-const mapStateToProps = (state: IRootState): WelcomePageProps => ({
+const mapStateToProps = (state: RootState): WelcomePageProps => ({
   recentBots: state.bot.botFiles
 });
 
