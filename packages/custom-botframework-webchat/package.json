@@ -48,7 +48,7 @@
     "awesome-typescript-loader": "^5.0.0",
     "babel-plugin-module-resolver": "^3.1.1",
     "expose-loader": "^0.7.5",
-    "jest": "^22.4.4",
+    "jest": "^23.0.0",
     "microsoft-adaptivecards-scss-to-json": "^1.2.0",
     "node-sass": "^4.9.0",
     "npm-run-all": "^4.1.3",
