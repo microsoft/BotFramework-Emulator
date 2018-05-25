@@ -66,7 +66,7 @@ export class QnaMakerEditor extends Component<QnaMakerEditorProps, QnaMakerEdito
 
   constructor(props: QnaMakerEditorProps, state: QnaMakerEditorState) {
     super(props, state);
-    const qnaMakerService = new QnaMakerService(props.qnaMakerService);
+    const qnaMakerService = new QnaMakerService(Object.assign({ hostname: '' }, props.qnaMakerService));
     this.state = {
       qnaMakerService,
       nameError: '',
@@ -79,7 +79,7 @@ export class QnaMakerEditor extends Component<QnaMakerEditorProps, QnaMakerEdito
   }
 
   public componentWillReceiveProps(nextProps: Readonly<QnaMakerEditorProps>): void {
-    const qnaMakerService = new QnaMakerService(nextProps.qnaMakerService);
+    const qnaMakerService = new QnaMakerService(Object.assign({ hostname: '' }, nextProps.qnaMakerService));
     this.setState({ qnaMakerService });
   }
 
