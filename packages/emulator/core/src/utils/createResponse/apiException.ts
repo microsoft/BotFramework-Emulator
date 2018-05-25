@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import Error from '../../types/error';
 import ErrorResponse from '../../types/response/error';
 import APIException from '../../types/apiException';
 

@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { getBotDisplayName, BotInfo } from '@bfemulator/app-shared';
+import { BotInfo, getBotDisplayName } from '@bfemulator/app-shared';
 
 import { BotConfigWithPath, CommandRegistryImpl as CommReg, uniqueId } from '@bfemulator/sdk-shared';
 import { IBotConfig, IEndpointService } from 'msbot/bin/schema';

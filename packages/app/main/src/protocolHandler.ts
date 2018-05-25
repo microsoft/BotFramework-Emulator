@@ -34,7 +34,7 @@
 import { FrameworkSettings, newBot, newEndpoint, SharedConstants } from '@bfemulator/app-shared';
 import * as got from 'got';
 import { IEndpointService } from 'msbot/bin/schema';
-import { BotConfigWithPathImpl, BotConfigWithPath } from '@bfemulator/sdk-shared';
+import { BotConfigWithPath, BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import * as Path from 'path';
 import * as QueryString from 'querystring';
 import { Protocol } from './constants';

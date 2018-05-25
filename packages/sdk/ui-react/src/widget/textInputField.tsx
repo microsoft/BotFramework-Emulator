@@ -135,7 +135,7 @@ export interface TextInputFieldProps {
   tabIndex?: number;
   type?: TextInputType;
   value?: string;
-  inputAttributes?: {}
+  inputAttributes?: {};
 }
 
 export class TextInputField extends React.Component<TextInputFieldProps, {}> {
@@ -151,7 +151,7 @@ export class TextInputField extends React.Component<TextInputFieldProps, {}> {
     inputAttributes: {},
     placeholder: '',
     tabIndex: 0
-  }
+  };
 
   constructor(props: TextInputFieldProps, context: any) {
     super(props, context);
@@ -172,11 +172,12 @@ export class TextInputField extends React.Component<TextInputFieldProps, {}> {
     if (disabled) {
       className += ' disabled';
     }
-    return ( <TruncateText className={ className }>{ label }</TruncateText> );
+    return (<TruncateText className={ className }>{ label }</TruncateText>);
   }
 
   public render(): JSX.Element {
-    const { inputClass, className, required, disabled, type, value, readOnly, error, inputAttributes, placeholder, onChange, tabIndex } = this.props;
+    const { inputClass, className, required, disabled, type, value, readOnly, error,
+      inputAttributes, placeholder, onChange, tabIndex } = this.props;
 
     return (
       <div className={ 'text-input-comp ' + className } { ...CSS }>
@@ -191,7 +192,7 @@ export class TextInputField extends React.Component<TextInputFieldProps, {}> {
                readOnly={ readOnly }
                required={ required } { ...inputAttributes }
                tabIndex={ tabIndex }/>
-        <sub style={ { opacity: +( !!error ) } } className="error">{ error }</sub>
+        <sub style={ { opacity: +(!!error) } } className="error">{ error }</sub>
       </div>
     );
   }

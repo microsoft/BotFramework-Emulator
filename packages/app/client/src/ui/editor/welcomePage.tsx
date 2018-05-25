@@ -36,7 +36,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { BotInfo } from '@bfemulator/app-shared';
 
-import { Colors, Column, Row, PrimaryButton, LargeHeader, SmallHeader, TruncateText } from '@bfemulator/ui-react';
+import { Colors, Column, LargeHeader, PrimaryButton, Row, SmallHeader, TruncateText } from '@bfemulator/ui-react';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { GenericDocument } from '../layout';
 import { RootState } from '../../data/store';

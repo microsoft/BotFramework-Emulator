@@ -33,11 +33,11 @@
 
 import * as React from 'react';
 
-export function filterChildren(children, predicate) {
+export function filterChildren(children: any, predicate: any) {
   return React.Children.map(children, child => child && predicate(child) ? child : false);
 }
 let uid = Date.now();
-export function hmrSafeNameComparison(child1, child2) {
+export function hmrSafeNameComparison(child1: any, child2: any) {
   const { name: name1 = uid++, displayName: displayName1 = uid++ } = child1;
   const { name: name2 = uid++, displayName: displayName2 = uid++ } = child2;
 

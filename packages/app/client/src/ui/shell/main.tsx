@@ -38,7 +38,7 @@ import { Colors, Fonts, Splitter } from '@bfemulator/ui-react';
 import { ExplorerBar } from './explorer';
 import { MDI } from './mdi';
 import { NavBar } from './navBar';
-import { TabManager, DialogHost } from '../dialogs';
+import { DialogHost, TabManager } from '../dialogs';
 import * as Constants from '../../constants';
 import { StatusBar } from './statusBar';
 import { StoreVisualizer } from '../debug/storeVisualizer';

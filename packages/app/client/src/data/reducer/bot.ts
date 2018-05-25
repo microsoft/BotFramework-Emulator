@@ -33,7 +33,7 @@
 
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 import * as BotActions from '../action/botActions';
-import { getBotDisplayName, BotInfo } from '@bfemulator/app-shared';
+import { BotInfo, getBotDisplayName } from '@bfemulator/app-shared';
 import { IBotConfig } from 'msbot/bin/schema';
 import { getBotInfoByPath } from '../botHelpers';
 

@@ -35,15 +35,9 @@ import { css } from 'glamor';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import {
-  TabBar,
-  TabBarTab,
-  Tab as TabbedDocumentTab,
-  Content as TabbedDocumentContent
-} from './index';
-import { filterChildren } from '@bfemulator/ui-react';
+import { Content as TabbedDocumentContent, Tab as TabbedDocumentTab, TabBar, TabBarTab } from './index';
+import { filterChildren, hmrSafeNameComparison } from '@bfemulator/ui-react';
 import { RootState } from '../../../data/store';
-import { hmrSafeNameComparison } from '@bfemulator/ui-react';
 
 const CSS = css({
   display: 'flex',

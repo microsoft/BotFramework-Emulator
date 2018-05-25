@@ -32,7 +32,7 @@
 //
 
 import * as Electron from 'electron';
-import { Store, createStore, combineReducers, Action } from 'redux';
+import { Action, combineReducers, createStore, Store } from 'redux';
 import { frameworkReducer } from './reducers/frameworkReducer';
 import { botsReducer } from './reducers/botReducer';
 import { windowStateReducer } from './reducers/windowStateReducer';
@@ -41,11 +41,11 @@ import { loadSettings, saveSettings } from './utils';
 import {
   Bot,
   FrameworkSettings,
-  WindowStateSettings,
-  UserSettings,
   PersistentSettings,
   Settings,
-  settingsDefault
+  settingsDefault,
+  UserSettings,
+  WindowStateSettings
 } from '@bfemulator/app-shared';
 
 export class PersistentSettingsImpl implements PersistentSettings {

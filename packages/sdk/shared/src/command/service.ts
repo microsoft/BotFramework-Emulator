@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { DisposableImpl, Disposable } from '../lifecycle';
+import { Disposable, DisposableImpl } from '../lifecycle';
 import { Channel, IPC } from '../ipc';
 import { uniqueId } from '../utils';
 import { CommandRegistry, CommandRegistryImpl } from '..';

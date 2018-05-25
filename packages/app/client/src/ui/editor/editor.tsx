@@ -34,12 +34,7 @@
 import * as React from 'react';
 
 import * as Constants from '../../constants';
-import {
-  AppSettingsEditor,
-  BotSettingsEditor,
-  Emulator,
-  WelcomePage
-} from './index';
+import { AppSettingsEditor, BotSettingsEditor, Emulator, WelcomePage } from './index';
 import { Document } from '../../data/reducer/editor';
 
 interface EditorFactoryProps {

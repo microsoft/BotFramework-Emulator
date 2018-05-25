@@ -35,7 +35,7 @@ import { IBotConfig } from 'msbot/bin/schema';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 import { cloneBot, getBotInfoByPath } from '../../botHelpers';
 import * as BotActions from '../action/bot';
-import { getBotDisplayName, BotInfo } from '@bfemulator/app-shared';
+import { BotInfo, getBotDisplayName } from '@bfemulator/app-shared';
 
 export interface BotState {
   activeBot: IBotConfig;

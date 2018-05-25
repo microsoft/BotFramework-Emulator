@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Settings } from '@bfemulator/app-shared';
 import { RestServer } from './restServer';
 import { mainWindow } from './main';
 import { textItem } from '@bfemulator/emulator-core/lib/types/log/util';

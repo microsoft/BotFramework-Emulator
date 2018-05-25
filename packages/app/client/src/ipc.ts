@@ -33,7 +33,7 @@
 
 const electron = (window as any).require('electron');
 
-import { IPC, Channel, Disposable } from '@bfemulator/sdk-shared';
+import { Channel, Disposable, IPC } from '@bfemulator/sdk-shared';
 
 export const ElectronIPC = new class extends IPC {
   constructor() {

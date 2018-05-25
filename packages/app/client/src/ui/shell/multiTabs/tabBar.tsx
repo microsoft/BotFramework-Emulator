@@ -33,6 +33,7 @@
 
 import { css } from 'glamor';
 import * as React from 'react';
+import { DragEvent } from 'react';
 import { connect } from 'react-redux';
 import { Colors } from '@bfemulator/ui-react';
 import * as EditorActions from '../../../data/action/editorActions';
@@ -41,7 +42,6 @@ import { getOtherTabGroup } from '../../../data/editorHelpers';
 import * as PresentationActions from '../../../data/action/presentationActions';
 import { Document, Editor } from '../../../data/reducer/editor';
 import { RootState } from '../../../data/store';
-import { DragEvent } from 'react';
 
 const CSS = css({
   display: 'flex',

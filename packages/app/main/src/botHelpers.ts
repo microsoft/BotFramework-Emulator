@@ -34,7 +34,7 @@
 import { BotConfig } from 'msbot';
 
 import { BotInfo, getBotDisplayName } from '@bfemulator/app-shared';
-import { BotConfigWithPathImpl, BotConfigWithPath } from '@bfemulator/sdk-shared';
+import { BotConfigWithPath, BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import { mainWindow } from './main';
 import * as BotActions from './data-v2/action/bot';
 

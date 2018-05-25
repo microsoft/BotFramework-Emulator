@@ -62,9 +62,6 @@ export interface RowProps {
 }
 
 export class Row extends React.Component<RowProps, {}> {
-  constructor(props, context) {
-    super(props, context);
-  }
 
   render(): JSX.Element {
     const ALIGNMENT_CSS = css({

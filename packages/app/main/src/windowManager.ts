@@ -34,7 +34,7 @@
 import * as Electron from 'electron';
 import * as URL from 'url';
 import * as path from 'path';
-import { getSettings, dispatch } from './settings';
+import { dispatch, getSettings } from './settings';
 import { WindowStateAction } from './reducers/windowStateReducer';
 
 export class WindowManager {

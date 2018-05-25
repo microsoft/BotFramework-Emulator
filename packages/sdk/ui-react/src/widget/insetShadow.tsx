@@ -53,27 +53,32 @@ export interface Props {
 }
 
 export class InsetShadow extends React.Component<Props> {
-  constructor(props, context) {
-    super(props, context);
-  }
 
   render() {
     const shadowStyles = [];
-    this.props.top ? shadowStyles.push(Shadows.INSET_TOP) : null;
-    this.props.left ? shadowStyles.push(Shadows.INSET_LEFT) : null;
-    this.props.bottom ? shadowStyles.push(Shadows.INSET_BOTTOM) : null;
-    this.props.right ? shadowStyles.push(Shadows.INSET_RIGHT) : null;
+    if (this.props.top) {
+      shadowStyles.push(Shadows.INSET_TOP);
+    }
+    if (this.props.left) {
+      shadowStyles.push(Shadows.INSET_LEFT);
+    }
+    if (this.props.bottom) {
+      shadowStyles.push(Shadows.INSET_BOTTOM);
+    }
+    if (this.props.right) {
+      shadowStyles.push(Shadows.INSET_RIGHT);
+    }
 
     // combine multiple shadows into one boxShadow property (ex. boxShadow: shadowTop, shadowBottom, shadowRight, etc.)
     const shadowRule = shadowStyles.reduce((rule, currentStyle) =>
-      rule ? `${rule}, ${currentStyle}` : currentStyle
-    , '');
+        rule ? `${rule}, ${currentStyle}` : currentStyle
+      , '');
 
     const SHADOW_CSS = css({ boxShadow: shadowRule || null });
     const CSS = css(BASE_CSS, SHADOW_CSS);
 
     return (
-      <div className="inset-shadow-component" { ...CSS } aria-hidden="true" />
+      <div className="inset-shadow-component" { ...CSS } aria-hidden="true"/>
     );
   }
 }

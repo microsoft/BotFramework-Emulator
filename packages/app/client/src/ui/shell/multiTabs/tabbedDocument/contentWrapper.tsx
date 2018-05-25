@@ -32,9 +32,9 @@
 //
 
 import * as React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
-import { Component } from 'react';
 
 import * as EditorActions from '../../../../data/action/editorActions';
 import { InsetShadow } from '@bfemulator/ui-react';

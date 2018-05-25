@@ -32,11 +32,11 @@
 //
 
 import {
-  CommandServiceImpl as InternalSharedService,
-  DisposableImpl,
   CommandHandler,
   CommandService,
-  Disposable
+  CommandServiceImpl as InternalSharedService,
+  Disposable,
+  DisposableImpl
 } from '@bfemulator/sdk-shared';
 import { CommandRegistry } from '../../commands';
 import { ElectronIPC } from '../../ipc';

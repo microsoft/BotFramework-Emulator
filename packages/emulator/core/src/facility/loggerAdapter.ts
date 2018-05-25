@@ -31,15 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Restify from 'restify';
-
 import GenericActivity from '../types/activity/generic';
 import ILogItem from '../types/log/item';
 import LogService from '../types/log/service';
 import LogLevel from '../types/log/level';
 import Logger from '../types/logger';
 
-import { textItem, inspectableObjectItem, summaryTextItem, exceptionItem } from '../types/log/util';
+import { exceptionItem, inspectableObjectItem, summaryTextItem, textItem } from '../types/log/util';
 
 export default class LoggerAdapter implements Logger {
   constructor(public logService: LogService) {

@@ -32,6 +32,7 @@
 //
 
 import * as got from 'got';
+
 let getPem = require('rsa-pem-from-mod-exp');
 let base64url = require('base64url');
 

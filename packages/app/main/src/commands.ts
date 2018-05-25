@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { getBotDisplayName, BotInfo, FrameworkSettings, newBot, newEndpoint } from '@bfemulator/app-shared';
+import { BotInfo, FrameworkSettings, getBotDisplayName, newBot, newEndpoint } from '@bfemulator/app-shared';
 import { Conversation } from '@bfemulator/emulator-core';
-import { BotConfigWithPath, CommandRegistryImpl as CommReg, Activity, uniqueId } from '@bfemulator/sdk-shared';
+import { Activity, BotConfigWithPath, CommandRegistryImpl as CommReg, uniqueId } from '@bfemulator/sdk-shared';
 import * as Electron from 'electron';
 import { app, Menu } from 'electron';
 import * as Fs from 'fs';

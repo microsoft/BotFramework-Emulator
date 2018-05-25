@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as HttpStatus from 'http-status-codes';
 import { RequestHandler, Server } from 'restify';
 
 import BotEmulator from '../botEmulator';

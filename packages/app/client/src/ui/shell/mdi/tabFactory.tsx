@@ -34,10 +34,7 @@
 import * as React from 'react';
 
 import * as Constants from '../../../constants';
-import {
-  GenericTab,
-  EmulatorTab
-} from './index';
+import { EmulatorTab, GenericTab } from './index';
 import { Document } from '../../../data/reducer/editor';
 
 interface TabFactoryProps {

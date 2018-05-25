@@ -32,8 +32,8 @@
 //
 
 import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
-import { BotConfigWithPathImpl, BotConfigWithPath } from '@bfemulator/sdk-shared';
-import { Column, MediumHeader, PrimaryButton, Row, TextInputField, Colors } from '@bfemulator/ui-react';
+import { BotConfigWithPath, BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
+import { Colors, Column, MediumHeader, PrimaryButton, Row, TextInputField } from '@bfemulator/ui-react';
 import { css } from 'glamor';
 import { IConnectedService, ServiceType } from 'msbot/bin/schema';
 import * as React from 'react';

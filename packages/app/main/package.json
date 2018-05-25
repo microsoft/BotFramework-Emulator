@@ -6,7 +6,7 @@
   "main": "./app/server/main.js",
   "homepage": "https://github.com/Microsoft/BotFramework-Emulator",
   "scripts": {
-    "build": "lint gulp build",
+    "build": "npm run lint && gulp build",
     "build:electron": "tsc --version && tsc -p . --outdir app/server",
     "pack": "build --dir",
     "dist": "build",

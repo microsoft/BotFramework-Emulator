@@ -31,10 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { FileInfo }  from '@bfemulator/app-shared';
+import { FileInfo } from '@bfemulator/app-shared';
 import { baseName } from '@fuselab/ui-shared/lib/path';
-import { TreeNode, TreeState, Leaf, Container } from '@fuselab/ui-fabric/lib/tree';
+import { Container, Leaf, TreeNode, TreeState } from '@fuselab/ui-fabric/lib/tree';
 import { FileActions } from '../action/fileActions';
+
 export type IFileTreeState = TreeState<FileInfo>;
 export type FileTreeNode = TreeNode<FileInfo>;
 

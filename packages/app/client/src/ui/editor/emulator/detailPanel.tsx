@@ -37,8 +37,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import { Detail } from './parts';
-import Panel, { PanelControls, PanelContent } from '../panel';
-import { ExtensionManager, GetInspectorResult, Extension } from '../../../extensions';
+import Panel, { PanelContent, PanelControls } from '../panel';
+import { Extension, ExtensionManager, GetInspectorResult } from '../../../extensions';
 import { ExtensionInspector, InspectorAccessory, InspectorAccessoryState } from '@bfemulator/sdk-shared';
 import { RootState } from '../../../data/store';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';

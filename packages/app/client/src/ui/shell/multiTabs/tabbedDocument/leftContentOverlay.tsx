@@ -32,12 +32,12 @@
 //
 
 import * as React from 'react';
+import { DragEvent } from 'react';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
 
 import { OVERLAY_CSS } from './overlayStyle';
 import { RootState } from '../../../../data/store';
-import { DragEvent } from 'react';
 
 const CSS = css({
   top: 0,

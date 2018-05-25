@@ -34,7 +34,7 @@
 import { applyMiddleware, createStore, Store } from 'redux';
 import createPromiseMiddleware from 'redux-promise-middleware';
 import reducers from './reducer';
-import { State, DEFAULT_STATE } from './state';
+import { DEFAULT_STATE, State } from './state';
 import thunk from 'redux-thunk';
 
 export default function create(_window: any): Promise<Store<State>> {

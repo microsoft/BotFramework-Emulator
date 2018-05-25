@@ -32,13 +32,13 @@
 //
 
 import * as React from 'react';
+import { DragEvent, SyntheticEvent } from 'react';
 import { connect } from 'react-redux';
 
 import { TAB_CSS } from './tabStyle';
 import * as EditorActions from './../../../data/action/editorActions';
 import { getTabGroupForDocument } from '../../../data/editorHelpers';
 import { TruncateText } from '@bfemulator/ui-react';
-import { DragEvent, SyntheticEvent } from 'react';
 
 interface TabProps {
   active?: boolean;

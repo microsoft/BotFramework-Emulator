@@ -32,7 +32,6 @@
 //
 
 import * as React from 'react';
-import PropTypes from 'prop-types';
 
 import { SplitterOrientation } from './index';
 
@@ -42,9 +41,6 @@ export interface SplitterPaneProps {
 }
 
 export class SplitterPane extends React.Component<SplitterPaneProps, {}> {
-  constructor(props, context) {
-    super(props, context);
-  }
 
   render() {
     const style: any = {

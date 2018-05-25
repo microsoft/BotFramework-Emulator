@@ -34,7 +34,7 @@
 export * from './channel';
 export * from './sender';
 
-import { DisposableImpl, Disposable } from '../lifecycle';
+import { Disposable, DisposableImpl } from '../lifecycle';
 import { Channel } from './channel';
 import { Sender } from './sender';
 

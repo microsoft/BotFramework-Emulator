@@ -36,13 +36,13 @@ import { css } from 'glamor';
 
 import {
   Colors,
-  PrimaryButton,
-  TextInputField,
-  Row,
-  RowJustification,
   Column,
   MediumHeader,
-  SmallHeader
+  PrimaryButton,
+  Row,
+  RowJustification,
+  SmallHeader,
+  TextInputField
 } from '@bfemulator/ui-react';
 import { DialogService } from './service';
 

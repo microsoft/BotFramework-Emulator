@@ -34,9 +34,7 @@
 import { IAzureBotService } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
 import { Action } from 'redux';
-import {
-  AzureBotServiceEditor
-} from '../../ui/shell/explorer/azureBotServiceExplorer/azureBotServiceEditor/azureBotServiceEditor';
+import { AzureBotServiceEditor } from '../../ui/shell/explorer/azureBotServiceExplorer/azureBotServiceEditor';
 
 export const OPEN_AZURE_BOT_SERVICE_DEEP_LINK = 'OPEN_AZURE_BOT_SERVICE_DEEP_LINK';
 export const OPEN_AZURE_BOT_SERVICE_CONTEXT_MENU = 'OPEN_AZURE_BOT_SERVICE_CONTEXT_MENU';

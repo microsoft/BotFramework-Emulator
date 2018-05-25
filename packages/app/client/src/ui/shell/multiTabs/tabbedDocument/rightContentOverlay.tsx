@@ -33,13 +33,13 @@
 
 import { css } from 'glamor';
 import * as React from 'react';
+import { DragEvent } from 'react';
 import { connect } from 'react-redux';
 import * as Constants from '../../../../constants';
 import * as EditorActions from '../../../../data/action/editorActions';
 import { Editor } from '../../../../data/reducer/editor';
 import { RootState } from '../../../../data/store';
 import { OVERLAY_CSS } from './overlayStyle';
-import { DragEvent } from 'react';
 
 const CSS = css({
     top: 0,

@@ -40,7 +40,7 @@ import Conversation from './conversation';
 import createAPIException from '../utils/createResponse/apiException';
 import ErrorCodes from '../types/errorCodes';
 import BotData from '../types/botData';
-import { textItem, externalLinkItem } from '../types/log/util';
+import { externalLinkItem, textItem } from '../types/log/util';
 import LogLevel from '../types/log/level';
 
 export default class BotState {

@@ -35,6 +35,7 @@ import { connect } from 'react-redux';
 import { css } from 'glamor';
 import classNames from 'classnames';
 import * as React from 'react';
+import { MouseEvent } from 'react';
 
 import { Colors, InsetShadow } from '@bfemulator/ui-react';
 import * as Constants from '../../../constants';
@@ -44,7 +45,6 @@ import { RootState } from '../../../data/store';
 import { IBotConfig } from 'msbot/bin/schema';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { NavLink } from './navLink';
-import { MouseEvent } from 'react';
 
 const CSS = css({
   backgroundColor: Colors.NAVBAR_BACKGROUND_DARK,

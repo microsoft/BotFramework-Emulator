@@ -39,12 +39,12 @@ import uniqueId from '../utils/uniqueId';
 import * as request from 'request';
 import * as http from 'http';
 import Attachment from '../types/attachment';
+import BotEmulator from '../botEmulator';
+import { StringProvider } from './stringProvider';
 
 const utf8 = require('utf8');
 const btoa = require('btoa');
 const shajs = require('sha.js');
-import BotEmulator from '../botEmulator';
-import { StringProvider } from './stringProvider';
 
 export default class OAuthLinkEncoder {
   public static OAuthUrlProtocol: string = 'oauthlink:';

@@ -32,8 +32,8 @@
 //
 
 import * as ChatActions from '../action/chatActions';
-import * as EditorActions from '../action/editorActions';
 import { ChatAction } from '../action/chatActions';
+import * as EditorActions from '../action/editorActions';
 import { EditorAction } from '../action/editorActions';
 
 export interface ChatState {

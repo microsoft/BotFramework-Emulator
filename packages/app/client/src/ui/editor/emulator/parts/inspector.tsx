@@ -32,7 +32,7 @@
 //
 // Cheating here and pulling in a module from node. Can be easily replaced if we ever move the emulator to the web.
 const crypto = (window as any).require('crypto');
-import {  LogLevel, logEntry, textItem } from '@bfemulator/app-shared';
+import { logEntry, LogLevel, textItem } from '@bfemulator/app-shared';
 import { ExtensionInspector } from '@bfemulator/sdk-shared';
 import { css } from 'glamor';
 import { IBotConfig } from 'msbot/bin/schema';

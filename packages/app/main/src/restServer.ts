@@ -38,7 +38,7 @@ import * as fetch from 'electron-fetch';
 
 import { mainWindow } from './main';
 import { emulator } from './emulator';
-import { textItem, networkRequestItem, networkResponseItem } from '@bfemulator/emulator-core/lib/types/log/util';
+import { networkRequestItem, networkResponseItem, textItem } from '@bfemulator/emulator-core/lib/types/log/util';
 import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
 
 export class RestServer {
