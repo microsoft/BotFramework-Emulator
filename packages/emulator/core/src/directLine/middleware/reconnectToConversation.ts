@@ -43,18 +43,19 @@ export default function reconnectToConversation(botEmulator: BotEmulator) {
   const { logMessage } = botEmulator.facilities.logger;
 
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    const conversation: Conversation = req['conversation'];
+    const conversation: Conversation = (req as any).conversation;
 
     if (conversation) {
       res.json(HttpStatus.OK, {
         conversationId: conversation.conversationId,
         token: conversation.conversationId,
-        expires_in: (2 ^ 31) - 1,
+        expires_in: Math.pow(2, 31) - 1,
         streamUrl: ''
       });
     } else {
       res.send(HttpStatus.NOT_FOUND, 'conversation not found');
-      logMessage(req.params.conversationId, textItem(LogLevel.Error, 'Cannot reconnect to conversation. Conversation not found.'));
+      logMessage(req.params.conversationId, textItem(LogLevel.Error,
+        'Cannot reconnect to conversation. Conversation not found.'));
     }
 
     res.end();

@@ -62,6 +62,53 @@ export default class MockState implements AppState {
               'score': null,
               'startIndex': 20,
               'text': 'delta'
+            },
+            {
+              'endIndex': 24,
+              'score': null,
+              'startIndex': 20,
+              'text': 'delta'
+            },
+            {
+              'endIndex': 24,
+              'score': null,
+              'startIndex': 20,
+              'text': 'delta'
+            },
+            {
+              'endIndex': 24,
+              'score': null,
+              'startIndex': 20,
+              'text': 'delta'
+            },
+            {
+              'endIndex': 24,
+              'score': null,
+              'startIndex': 20,
+              'text': 'delta'
+            },
+            {
+              'endIndex': 24,
+              'score': null,
+              'startIndex': 20,
+              'text': 'delta'
+            },
+            {
+              'endIndex': 24,
+              'score': null,
+              'startIndex': 20,
+              'text': 'delta'
+            },
+            {
+              'endIndex': 24,
+              'score': null,
+              'startIndex': 20,
+              'text': 'delta'
+            },            {
+              'endIndex': 24,
+              'score': null,
+              'startIndex': 20,
+              'text': 'delta'
             }
           ]
         },

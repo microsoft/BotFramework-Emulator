@@ -32,15 +32,15 @@
 //
 
 import { connect } from 'react-redux';
-import { IRootState } from '../../../../data/store';
+import { RootState } from '../../../../data/store';
 import ServicesExplorerBar from './servicesExporerBar';
 
-const mapStateToProps = (state: IRootState) => {
+const mapStateToProps = (state: RootState) => {
   const activeBotExists = !!state.bot.activeBot;
   return { activeBotExists };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (_dispatch: () => void) => {
   return {};
 };
 

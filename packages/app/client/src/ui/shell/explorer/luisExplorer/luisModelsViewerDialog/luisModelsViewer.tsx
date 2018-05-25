@@ -70,7 +70,7 @@ const luisModelViewerCss = css({
       margin: 0,
       padding: '5px 0 0 0',
       maxHeight: '96px',
-      overflow:'auto',
+      overflow: 'auto',
       '> li': {
         padding: '1px 11px',
         backgroundColor: '#efefef',
@@ -81,7 +81,7 @@ const luisModelViewerCss = css({
           '&:last-child': {
             textAlign: 'right',
             width: '75%',
-            paddingRight:'9px'
+            paddingRight: '9px'
           }
         },
         '&:nth-child(odd)': {
@@ -136,16 +136,6 @@ const closeButtonCss = css({
   }
 });
 
-const smallHeaderCssOverrides = css({
-  margin: 0,
-  marginTop: 0,
-  marginBottom: 0,
-  marginLeft: 0,
-  marginRight: 0
-});
-
-const mediumHeaderOverrides = css({});
-
 const secondaryButton = css({
   backgroundColor: '#d4d4d4 !important',
   color: `${Colors.C0} !important`,
@@ -160,27 +150,25 @@ interface LuisModelsViewerProps {
   luisServices: ILuisService[];
   luisModels: LuisModel[];
   addLuisModels: (models: LuisModel[]) => void;
-  cancel: () => void
+  cancel: () => void;
 }
 
 interface LuisModelsViewerState {
-  [selectedLuisModelId: string]: LuisModel | false
+  [selectedLuisModelId: string]: LuisModel | false;
 }
 
 export class LuisModelsViewer extends Component<LuisModelsViewerProps, LuisModelsViewerState> {
   public state: LuisModelsViewerState = {};
 
-  constructor(props, context) {
+  constructor(props: LuisModelsViewerProps, context: LuisModelsViewerState) {
     super(props, context);
   }
 
-  public componentWillReceiveProps(nextProps = {} as any): void {
+  public componentWillReceiveProps(nextProps: LuisModelsViewerProps = {} as any): void {
     const { luisServices = [] as ILuisService[] } = nextProps;
 
-    const state = luisServices.reduce((agg, luisService: ILuisService) => {
-      agg[luisService.appId] = luisService;
-      return agg;
-    }, {});
+    const state = luisServices
+      .reduce((agg, luisService: ILuisService) => { agg[luisService.appId] = luisService; return agg; }, {});
 
     this.setState(state);
   }
@@ -188,14 +176,16 @@ export class LuisModelsViewer extends Component<LuisModelsViewerProps, LuisModel
   public render(): JSX.Element {
     const { state, props } = this;
     const keys = Object.keys(state);
-    const checkAllChecked = props.luisModels.reduce((isTrue, luisModel) => state[luisModel.id] && isTrue, !!keys.length);
+    const checkAllChecked = props.luisModels
+      .reduce((isTrue, luisModel) => state[luisModel.id] && isTrue, !!keys.length);
     return (
       <section { ...luisModelViewerCss }>
         { this.sectionHeader }
         <div className="listContainer">
           <p>Selecting a LUIS app below will store the app ID in your bot file.</p>
           <div className="selectAll">
-            <Checkbox onChange={ this.onSelectAllChange } checked={ checkAllChecked } id="select-all-luis-models" label="Select all"/>
+            <Checkbox onChange={ this.onSelectAllChange } checked={ checkAllChecked } id="select-all-luis-models"
+                      label="Select all"/>
           </div>
           <ul>
             { ...this.luisModelElements }
@@ -213,9 +203,12 @@ export class LuisModelsViewer extends Component<LuisModelsViewerProps, LuisModel
     return (
       <header>
         <button { ...closeButtonCss } onClick={ this.onCancelClick }>
-          <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='1 1 16 16'>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="1 1 16 16">
             <g>
-              <polygon points="14.1015625 2.6015625 8.7109375 8 14.1015625 13.3984375 13.3984375 14.1015625 8 8.7109375 2.6015625 14.1015625 1.8984375 13.3984375 7.2890625 8 1.8984375 2.6015625 2.6015625 1.8984375 8 7.2890625 13.3984375 1.8984375"/>
+              <polygon
+                points="14.1015625 2.6015625 8.7109375 8 14.1015625 13.3984375 13.3984375 14.1015625 8 8.7109375
+                2.6015625 14.1015625 1.8984375 13.3984375 7.2890625 8 1.8984375 2.6015625 2.6015625 1.8984375 8
+                7.2890625 13.3984375 1.8984375"/>
             </g>
           </svg>
         </button>
@@ -237,7 +230,7 @@ export class LuisModelsViewer extends Component<LuisModelsViewerProps, LuisModel
       };
       return (
         <li key={ id }>
-          <Checkbox { ...checkboxProps } className='checkboxOverride'/>
+          <Checkbox { ...checkboxProps } className="checkboxOverride"/>
           <span>&nbsp;-&nbsp;version { activeVersion }</span>
           <span>{ culture }</span>
         </li>
@@ -258,20 +251,21 @@ export class LuisModelsViewer extends Component<LuisModelsViewerProps, LuisModel
       newState[luisModel.id] = target.checked ? luisModel : false;
     });
     this.setState(newState);
-  };
+  }
 
-  private onAddClick: ChangeEventHandler<any> = (event: ChangeEvent<any>) => {
+  private onAddClick: ChangeEventHandler<any> = (_event: ChangeEvent<any>) => {
     const { state } = this;
-    const addedModels: LuisModel[] = Object.keys(state).reduce((models, luisModelId) => {
+    const reducer = (models, luisModelId) => {
       if (state[luisModelId]) {
         models.push(state[luisModelId]);
       }
       return models;
-    }, []);
+    };
+    const addedModels: LuisModel[] = Object.keys(state).reduce(reducer, []);
     this.props.addLuisModels(addedModels);
-  };
+  }
 
-  private onCancelClick: ChangeEventHandler<any> = (event: ChangeEvent<any>) => {
+  private onCancelClick: ChangeEventHandler<any> = (_event: ChangeEvent<any>) => {
     this.props.cancel();
-  };
+  }
 }

@@ -36,10 +36,8 @@ import { css } from 'glamor';
 
 import { EndpointExplorerContainer } from './endpointExplorer';
 import { ExplorerBarBody } from './explorerBarBody';
-import { ExplorerBarHeader, Title, Accessories } from './explorerBarHeader';
-import { getBotDisplayName } from '@bfemulator/app-shared';
+import { ExplorerBarHeader, Title } from './explorerBarHeader';
 import { TranscriptExplorer } from './transcriptExplorer';
-import * as botHelpers from '../../../data/botHelpers';
 import { BotNotOpenExplorer } from './botNotOpenExplorer';
 import { IBotConfig } from 'msbot/bin/schema';
 
@@ -65,7 +63,6 @@ export default class BotExplorerBar extends React.Component<BotExplorerBarProps>
   }
 
   render() {
-    const activeBot = botHelpers.getActiveBot();
     const className = this.props.hidden ? 'explorer-offscreen' : '';
 
     return (

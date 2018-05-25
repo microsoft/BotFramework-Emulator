@@ -33,9 +33,13 @@ module.exports = {
   },
 
   output: {
-    path: path.resolve('./build/dist'),
+    path: path.resolve('./public'),
     filename: '[name].js',
     publicPath: 'http://localhost:8080',
+  },
+
+  stats: {
+    warnings: false
   },
 
   externals: {},

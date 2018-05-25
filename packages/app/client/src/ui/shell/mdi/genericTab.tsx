@@ -34,11 +34,10 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import * as Constants from '../../../constants';
 import * as EditorActions from '../../../data/action/editorActions';
 import { Tab } from './tab';
 import { getTabGroupForDocument } from '../../../data/editorHelpers';
-import { IRootState } from '../../../data/store';
+import { RootState } from '../../../data/store';
 
 interface GenericTabProps {
   active?: boolean;
@@ -53,20 +52,20 @@ class GenericTabComponent extends React.Component<GenericTabProps> {
     super(props);
   }
 
-  private onCloseClick = (e) => {
-    e.stopPropagation();
-    this.props.closeTab();
-  }
-
   render() {
     return (
       <Tab active={ this.props.active } title={ this.props.title } onCloseClick={ this.onCloseClick }
         documentId={ this.props.documentId } dirty={ this.props.dirty } />
     );
   }
+
+  private onCloseClick = (e) => {
+    e.stopPropagation();
+    this.props.closeTab();
+  }
 }
 
-const mapStateToProps = (state: IRootState, ownProps: GenericTabProps): GenericTabProps => ({
+const mapStateToProps = (state: RootState, ownProps: GenericTabProps): GenericTabProps => ({
   active: state.editor.editors[state.editor.activeEditor].activeDocumentId === ownProps.documentId
 });
 

@@ -31,12 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-interface IPaymentOptions {
-  requestPayerEmail?: boolean,
-  requestPayerName?: boolean,
-  requestPayerPhone?: boolean,
-  requestShipping?: boolean,
-  shippingType: string
+interface PaymentOptions {
+  requestPayerEmail?: boolean;
+  requestPayerName?: boolean;
+  requestPayerPhone?: boolean;
+  requestShipping?: boolean;
+  shippingType: string;
 }
 
-export default IPaymentOptions
+export default PaymentOptions;

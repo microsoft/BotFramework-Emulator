@@ -31,19 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ICardAction from './cardAction';
-import IFact from './fact';
-import IReceiptItem from './receiptItem';
+import CardAction from './cardAction';
+import Fact from './fact';
+import ReceiptItem from './receiptItem';
 
-interface IReceiptCard {
+interface ReceiptCard {
   title: string;                  // Title of the Card
-  items: IReceiptItem[];          // Array of receipt items.
-  facts: IFact[];                 // Array of key-value pairs.
-  tap: ICardAction;                   // This action will be activated when user taps on the section bubble.
+  items: ReceiptItem[];          // Array of receipt items.
+  facts: Fact[];                 // Array of key-value pairs.
+  tap: CardAction;                   // This action will be activated when user taps on the section bubble.
   total: string;                  // Total amount of money paid (or should be paid)
   tax: string;                    // Total amount of TAX paid (or should be paid)
   vat: string;                    // Total amount of VAT paid (or should be paid)
-  buttons: ICardAction[];             // Set of actions applicable to the current card.
+  buttons: CardAction[];             // Set of actions applicable to the current card.
 }
 
-export default IReceiptCard
+export default ReceiptCard;

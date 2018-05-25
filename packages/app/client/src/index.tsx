@@ -31,16 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // for hot reloading
-import { hot } from 'react-hot-loader';
 import { Provider } from 'react-redux';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 import interceptError from './interceptError';
 import interceptHyperlink from './interceptHyperlink';
-import Main from './ui/shell/main';
+import Main from './ui/shell/mainContainer';
 import store from './data/store';
-import { CommandService } from './platform/commands/commandService';
+import { CommandServiceImpl } from './platform/commands/commandServiceImpl';
 import { SettingsService } from './platform/settings/settingsService';
 import { LogService } from './platform/log/logService';
 import { showWelcomePage } from './data/editorHelpers';
@@ -49,7 +48,7 @@ import * as Commands from './commands';
 interceptError();
 interceptHyperlink();
 
-CommandService.init();
+CommandServiceImpl.init();
 SettingsService.init();
 LogService.init();
 
@@ -62,14 +61,14 @@ ReactDOM.render(
 );
 
 // Tell the main process we're loaded
-CommandService.remoteCall('client:loaded')
+CommandServiceImpl.remoteCall('client:loaded')
   .then(() => {
     showWelcomePage();
     // do actions on main side that might open a document, so that they will be active over the welcome screen
-    CommandService.remoteCall('client:post-welcome-screen');
+    CommandServiceImpl.remoteCall('client:post-welcome-screen');
   })
   .catch(err => console.error(`Error occured during client:loaded: ${err}`));
 
-if (module['hot']) {
-  module['hot'].accept();
+if (module.hasOwnProperty('hot')) {
+  (module as any).hot.accept();
 }

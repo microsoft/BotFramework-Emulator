@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
 /**
  * DUPLICATED FROM EMULATOR-CORE.
  * NEED TO DEDUPE
@@ -42,28 +41,28 @@ export enum LogLevel {
   Info,
   Warn,
   Error
-};
+}
 
-export type ILogItem = {
-  type: "text",
+export type LogItem = {
+  type: 'text',
   payload: {
     level: LogLevel,
     text: string
   }
 } | {
-  type: "external-link",
+  type: 'external-link',
   payload: {
     text: string,
     hyperlink: string
   }
 } | {
-  type: "inspectable-object",
+  type: 'inspectable-object',
   payload: {
     text: string,
     obj: any
   }
 } | {
-  type: "network-request",
+  type: 'network-request',
   payload: {
     facility?: string,
     body?: string,
@@ -72,7 +71,7 @@ export type ILogItem = {
     url?: string
   }
 } | {
-  type: "network-response",
+  type: 'network-response',
   payload: {
     body?: string,
     headers?: { [header: string]: number | string | string[] },
@@ -81,34 +80,34 @@ export type ILogItem = {
     srcUrl?: string
   }
 } | {
-  type: "summary-text",
+  type: 'summary-text',
   payload: {
     obj: any
   }
 } | {
-  type: "open-app-settings",
+  type: 'open-app-settings',
   payload: {
     text: string
   }
 } | {
-  type: "exception",
+  type: 'exception',
   payload: {
     err: any  // Shape of `Error`, but enumerable
   }
-}
+};
 
-export interface ILogEntry {
+export interface LogEntry {
   timestamp: number;
-  items: ILogItem[];
+  items: LogItem[];
 }
 
-export interface ILogService {
-  logToChat(conversationId: string, ...items: ILogItem[]): void;
+export interface LogService {
+  logToChat(conversationId: string, ...items: LogItem[]): void;
 }
 
-export function textItem(level: LogLevel, text: string): ILogItem {
+export function textItem(level: LogLevel, text: string): LogItem {
   return {
-    type: "text",
+    type: 'text',
     payload: {
       level,
       text
@@ -116,9 +115,9 @@ export function textItem(level: LogLevel, text: string): ILogItem {
   };
 }
 
-export function externalLinkItem(text: string, hyperlink: string): ILogItem {
+export function externalLinkItem(text: string, hyperlink: string): LogItem {
   return {
-    type: "external-link",
+    type: 'external-link',
     payload: {
       text,
       hyperlink
@@ -126,9 +125,9 @@ export function externalLinkItem(text: string, hyperlink: string): ILogItem {
   };
 }
 
-export function inspectableObjectItem(text: string, obj: any): ILogItem {
+export function inspectableObjectItem(text: string, obj: any): LogItem {
   return {
-    type: "inspectable-object",
+    type: 'inspectable-object',
     payload: {
       text,
       obj
@@ -136,34 +135,34 @@ export function inspectableObjectItem(text: string, obj: any): ILogItem {
   };
 }
 
-export function summaryTextItem(obj: any): ILogItem {
+export function summaryTextItem(obj: any): LogItem {
   return {
-    type: "summary-text",
+    type: 'summary-text',
     payload: {
       obj
     }
   };
 }
 
-export function appSettingsItem(text: string): ILogItem {
+export function appSettingsItem(text: string): LogItem {
   return {
-    type: "open-app-settings",
+    type: 'open-app-settings',
     payload: {
       text
     }
   };
 }
 
-export function exceptionItem(err: any): ILogItem {
+export function exceptionItem(err: any): LogItem {
   return {
-    type: "exception",
+    type: 'exception',
     payload: {
       err
     }
   };
 }
 
-export function logEntry(...items: ILogItem[]): ILogEntry {
+export function logEntry(...items: LogItem[]): LogEntry {
   return {
     timestamp: Date.now(),
     items: [...items]

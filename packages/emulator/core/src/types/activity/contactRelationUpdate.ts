@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import IActivity from './activity';
+import Activity from './activity';
 
-interface IContactRelationUpdateActivity extends IActivity {
+interface ContactRelationUpdateActivity extends Activity {
   action?: string;
 }
 
-export default IContactRelationUpdateActivity
+export default ContactRelationUpdateActivity;

@@ -35,15 +35,13 @@ import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
-import IConversationAPIPathParameters from '../conversationAPIPathParameters';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function getActivityMembers(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    const conversationParameters: IConversationAPIPathParameters = req.params;
 
     try {
-      res.send(HttpStatus.OK, req['conversation'].members);
+      res.send(HttpStatus.OK, (req as any).conversation.members);
       res.end();
     } catch (err) {
       sendErrorResponse(req, res, next, err);

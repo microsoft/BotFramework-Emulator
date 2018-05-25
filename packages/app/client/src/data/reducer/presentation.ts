@@ -33,17 +33,18 @@
 
 import * as PresentationActions from '../action/presentationActions';
 import { PresentationAction } from '../action/presentationActions';
-import { CommandService } from '../../platform/commands/commandService';
+import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 
-export interface IPresentationState {
+export interface PresentationState {
   enabled: boolean;
 }
 
-const DEFAULT_STATE: IPresentationState = {
+const DEFAULT_STATE: PresentationState = {
   enabled: false
 };
 
-export default function presentation(state: IPresentationState = DEFAULT_STATE, action: PresentationAction): IPresentationState {
+export default function presentation(state: PresentationState = DEFAULT_STATE, action: PresentationAction)
+  : PresentationState {
   switch (action.type) {
     case PresentationActions.DISABLE:
       state = setEnabled(false, state);
@@ -60,11 +61,11 @@ export default function presentation(state: IPresentationState = DEFAULT_STATE, 
   return state;
 }
 
-function setEnabled(enabled: boolean, state: IPresentationState): IPresentationState {
+function setEnabled(enabled: boolean, state: PresentationState): PresentationState {
   let newState = Object.assign({}, state);
   newState.enabled = enabled;
 
-  CommandService.remoteCall('electron:set-fullscreen', enabled);
+  CommandServiceImpl.remoteCall('electron:set-fullscreen', enabled);
 
   return newState;
 }

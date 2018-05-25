@@ -33,8 +33,8 @@
 
 import ILogItem from './item';
 
-interface ILogService {
+interface LogService {
   logToChat(conversationId: string, ...items: ILogItem[]): void;
 }
 
-export default ILogService
+export default LogService;

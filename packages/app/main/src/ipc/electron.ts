@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ipcMain, WebContents, Event } from 'electron';
-import { IPC, IDisposable } from '@bfemulator/sdk-shared';
+import { Event, ipcMain, WebContents } from 'electron';
+import { Disposable, IPC } from '@bfemulator/sdk-shared';
 
 export class ElectronIPC extends IPC {
   get id(): number { return this._webContents.id; }
@@ -66,12 +66,12 @@ export const ElectronIPCServer = new class {
     });
   }
 
-  registerIPC(ipc: ElectronIPC): IDisposable {
+  registerIPC(ipc: ElectronIPC): Disposable {
     this._ipcs[ipc.id] = ipc;
     return {
       dispose: () => {
         delete this._ipcs[ipc.id];
       }
-    }
+    };
   }
-}
+};

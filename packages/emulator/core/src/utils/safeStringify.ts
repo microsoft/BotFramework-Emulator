@@ -39,7 +39,7 @@ export default function safeStringify(o: any, space: string | number = undefined
   } else {
     return JSON.stringify(o, (key, value) => {
       if (typeof value === 'object' && value !== null) {
-        if (~cache.indexOf(value)) {
+        if (cache.indexOf(value)) {
           return;
         }
 

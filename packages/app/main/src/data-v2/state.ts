@@ -31,13 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IBotState } from './reducer/bot';
+import { BotState } from './reducer/bot';
 
-export interface IState {
-  bot: IBotState;
+export interface State {
+  bot: BotState;
 }
 
-export const DEFAULT_STATE: IState = {
+export const DEFAULT_STATE: State = {
   bot: {
     activeBot: null,
     botFiles: [],

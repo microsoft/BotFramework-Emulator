@@ -31,50 +31,39 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { FileInfo }  from '@bfemulator/app-shared';
+import { FileInfo } from '@bfemulator/app-shared';
 import { baseName } from '@fuselab/ui-shared/lib/path';
-import { TreeNode, TreeState, Leaf, Container } from '@fuselab/ui-fabric/lib/tree';
+import { Container, Leaf, TreeNode, TreeState } from '@fuselab/ui-fabric/lib/tree';
 import { FileActions } from '../action/fileActions';
+
 export type IFileTreeState = TreeState<FileInfo>;
 export type FileTreeNode = TreeNode<FileInfo>;
 
-interface ISetRootAction {
+interface SetRootAction {
   type: FileActions.setRoot;
   payload: {
     path: string;
-  }
+  };
 }
 
-interface IAddFileAction {
+interface AddFileAction {
   type: FileActions.add;
   payload: FileInfo;
 }
 
-interface IRemoveFileAction {
+interface RemoveFileAction {
   type: FileActions.remove;
   payload: {
     path: string;
   };
 }
 
-type IFileAction = ISetRootAction | IAddFileAction | IRemoveFileAction;
+type IFileAction = SetRootAction | AddFileAction | RemoveFileAction;
 
 const seps = /[\/\\]/;
-let detectedSep = null;
-
-function detectSep(path: string) {
-  if (detectedSep) {
-    return detectedSep;
-  }
-  const parts = path.split(seps);
-  if (parts.length > 1) {
-    detectedSep = path.substr(parts[0].length, 1);
-  }
-  return '/';
-}
 
 function ensureAncestors(state: IFileTreeState, path: string): { state: IFileTreeState, parent: Container<FileInfo> } {
-  let cur = <Container<FileInfo>>state.root;
+  let cur = <Container<FileInfo>> state.root;
   if (!cur) {
     return { state, parent: null };
   }
@@ -83,7 +72,7 @@ function ensureAncestors(state: IFileTreeState, path: string): { state: IFileTre
   const ancestors = sub.split(seps).filter(x => x).slice(0, -1);
 
   for (const ancestor of ancestors) {
-    let next = <Container<FileInfo>>cur.children.find(x => x.name === ancestor);
+    let next = <Container<FileInfo>> cur.children.find(x => x.name === ancestor);
     if (!next) {
       next = {
         name: ancestor,
@@ -111,7 +100,7 @@ function addFile(state: IFileTreeState, file: FileInfo): IFileTreeState {
   if (!parent) {
     return state;
   }
-  const cur: FileTreeNode = <Leaf<FileInfo> | Container<FileInfo>>{
+  const cur: FileTreeNode = <Leaf<FileInfo> | Container<FileInfo>> {
     type: file.type,
     name: file.name,
     data: file,
@@ -134,15 +123,16 @@ function removeFile(state: IFileTreeState, path: string): IFileTreeState {
   if (parent && parent.type === 'container') {
     parent.children = parent.children.filter(x => x.data.path !== path);
   }
-  return { ...state }
+  return { ...state };
 }
 
-export default function files(state: IFileTreeState = { root: null, selected: null }, action: IFileAction): IFileTreeState {
+function files(state: IFileTreeState = { root: null, selected: null }, action: IFileAction): IFileTreeState {
   switch (action.type) {
     case FileActions.setRoot: {
       // don't set the root again if it's the same
-      if (state.root && state.root.data.path === action.payload.path)
+      if (state.root && state.root.data.path === action.payload.path) {
         break;
+      }
 
       const { path } = action.payload;
       const rootInfo: FileInfo = {
@@ -172,3 +162,4 @@ export default function files(state: IFileTreeState = { root: null, selected: nu
 
   return state;
 }
+export default files;

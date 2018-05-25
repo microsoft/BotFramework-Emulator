@@ -34,27 +34,36 @@
 import { IEndpointService, ServiceType } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
 import { call, ForkEffect, takeEvery, takeLatest } from 'redux-saga/effects';
-import { CommandService } from '../../platform/commands/commandService';
+import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { DialogService } from '../../ui/dialogs/service';
 import { EndpointEditor } from '../../ui/shell/explorer/endpointExplorer/endpointEditor/endpointEditor';
-import { EndpointEditorPayload, EndpointServiceAction, EndpointServicePayload, LAUNCH_ENDPOINT_EDITOR, OPEN_ENDPOINT_CONTEXT_MENU, OPEN_ENDPOINT_DEEP_LINK } from '../action/endpointServiceActions';
-
+import {
+  EndpointEditorPayload,
+  EndpointServiceAction,
+  EndpointServicePayload,
+  LAUNCH_ENDPOINT_EDITOR,
+  OPEN_ENDPOINT_CONTEXT_MENU,
+  OPEN_ENDPOINT_DEEP_LINK
+} from '../action/endpointServiceActions';
 
 function* launchEndpointEditor(action: EndpointServiceAction<EndpointEditorPayload>): IterableIterator<any> {
   const { endpointEditorComponent, endpointService = {} } = action.payload;
-  const result = yield DialogService.showDialog<ComponentClass<EndpointEditor>>(endpointEditorComponent, { endpointService });
+  const result = yield DialogService
+    .showDialog<ComponentClass<EndpointEditor>>(endpointEditorComponent, { endpointService });
   if (result) {
-    yield CommandService.remoteCall('bot:add-or-update-service', ServiceType.Endpoint, result);
+    yield CommandServiceImpl.remoteCall('bot:add-or-update-service', ServiceType.Endpoint, result);
   }
 }
 
-function* openEndpointContextMenu(action: EndpointServiceAction<EndpointServicePayload | EndpointEditorPayload>): IterableIterator<any> {
+function* openEndpointContextMenu(action: EndpointServiceAction<EndpointServicePayload | EndpointEditorPayload>)
+  : IterableIterator<any> {
   const menuItems = [
     { label: 'Edit settings', id: 'edit' },
     { label: 'Open in emulator', id: 'open' },
     { label: 'Remove', id: 'forget' }
   ];
-  const response = yield call(CommandService.remoteCall.bind(CommandService), 'electron:displayContextMenu', menuItems);
+  const response = yield call(CommandServiceImpl
+    .remoteCall.bind(CommandServiceImpl), 'electron:displayContextMenu', menuItems);
   switch (response.id) {
     case 'edit':
       yield* launchEndpointEditor(action);
@@ -74,11 +83,11 @@ function* openEndpointContextMenu(action: EndpointServiceAction<EndpointServiceP
 }
 
 function* openEndpointDeepLink(action: EndpointServiceAction<EndpointServicePayload>): IterableIterator<any> {
-  CommandService.call('livechat:new', action.payload.endpointService);
+  CommandServiceImpl.call('livechat:new', action.payload.endpointService).catch();
 }
 
 function* removeEndpointServiceFromActiveBot(endpointService: IEndpointService): IterableIterator<any> {
-  const result = yield CommandService.remoteCall('shell:show-message-box', true, {
+  const result = yield CommandServiceImpl.remoteCall('shell:show-message-box', true, {
     type: 'question',
     buttons: ['Cancel', 'OK'],
     defaultId: 1,
@@ -86,7 +95,7 @@ function* removeEndpointServiceFromActiveBot(endpointService: IEndpointService):
     cancelId: 0,
   });
   if (result) {
-    yield CommandService.remoteCall('bot:remove-service', ServiceType.Endpoint, endpointService.id);
+    yield CommandServiceImpl.remoteCall('bot:remove-service', ServiceType.Endpoint, endpointService.id);
   }
 }
 

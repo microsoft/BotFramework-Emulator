@@ -36,7 +36,7 @@ import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
 
-export default function options(botEmulator: BotEmulator) {
+export default function options(_botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     res.send(HttpStatus.OK);
     res.end();

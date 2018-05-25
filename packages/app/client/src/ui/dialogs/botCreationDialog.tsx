@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { uniqueId } from '@bfemulator/sdk-shared';
+import { BotConfigWithPath, BotConfigWithPathImpl, uniqueId } from '@bfemulator/sdk-shared';
 import {
   Checkbox,
   Colors,
@@ -46,10 +46,8 @@ import { css } from 'glamor';
 import { EndpointService } from 'msbot/bin/models';
 import { IEndpointService, ServiceType } from 'msbot/bin/schema';
 import * as React from 'react';
-import { BotConfigWithPath } from '@bfemulator/sdk-shared';
-import { IBotConfigWithPath } from '@bfemulator/sdk-shared';
 
-import { CommandService } from '../../platform/commands/commandService';
+import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { ActiveBotHelper } from '../helpers/activeBotHelper';
 import { DialogService } from './service';
 
@@ -121,7 +119,7 @@ const CSS = css({
 });
 
 export interface BotCreationDialogState {
-  bot: IBotConfigWithPath;
+  bot: BotConfigWithPath;
   endpoint: IEndpointService;
   secret: string;
   secretEnabled: boolean;
@@ -130,11 +128,11 @@ export interface BotCreationDialogState {
 }
 
 export class BotCreationDialog extends React.Component<{}, BotCreationDialogState> {
-  constructor(props, context) {
+  constructor(props: {}, context: BotCreationDialogState) {
     super(props, context);
 
     this.state = {
-      bot: BotConfigWithPath.fromJSON({
+      bot: BotConfigWithPathImpl.fromJSON({
         name: '',
         description: '',
         secretKey: '',
@@ -156,105 +154,6 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
     };
   }
 
-  private onChangeEndpoint = (e) => {
-    const endpoint = { ...this.state.endpoint, endpoint: e.target.value, name: e.target.value };
-    this.setState({ endpoint });
-  };
-
-  private onChangeAppId = (e) => {
-    const endpoint = { ...this.state.endpoint, appId: e.target.value };
-    this.setState({ endpoint });
-  };
-
-  private onChangeAppPw = (e) => {
-    const endpoint = { ...this.state.endpoint, appPassword: e.target.value };
-    this.setState({ endpoint });
-  };
-
-  private onChangeName = (e) => {
-    const bot = { ...this.state.bot, name: e.target.value };
-    this.setState({ bot });
-  };
-
-  private onChangeBotLocation = (e) => {
-    const bot = { ...this.state.bot, path: e.target.value };
-    this.setState({ bot });
-  };
-
-  private onCancel = (e) => {
-    DialogService.hideDialog();
-  };
-
-  private onToggleSecret = (e) => {
-    this.setState({ secretEnabled: !this.state.secretEnabled, secret: '' });
-  };
-
-  private onSaveAndConnect = async (e) => {
-    try {
-      const path = await this.showBotSaveDialog();
-      if (path) {
-        this.performCreate(path);
-      } else {
-        // user cancelled out of the save dialog
-        console.log('Bot creation save dialog was cancelled.');
-      }
-    } catch (e) {
-      console.error('Error while trying to select a bot file location: ', e);
-    }
-  }
-
-  private performCreate = (botPath: string) => {
-    const endpoint: IEndpointService = {
-      type: this.state.endpoint.type,
-      name: this.state.endpoint.name.trim(),
-      id: this.state.endpoint.id.trim(),
-      appId: this.state.endpoint.appId.trim(),
-      appPassword: this.state.endpoint.appPassword.trim(),
-      endpoint: this.state.endpoint.endpoint.trim()
-    };
-
-    const bot: IBotConfigWithPath = BotConfigWithPath.fromJSON({
-      ...this.state.bot,
-      name: this.state.bot.name.trim(),
-      description: this.state.bot.description.trim(),
-      services: [endpoint],
-      path: botPath.trim()
-    });
-
-    const secret = this.state.secretEnabled && this.state.secret ? this.state.secret : null;
-
-    ActiveBotHelper.confirmAndCreateBot(bot, secret)
-      .then(() => DialogService.hideDialog())
-      .catch(err => console.error('Error during confirm and create bot: ', err));
-  };
-
-  private showBotSaveDialog = async (): Promise<any> => {
-    // get a safe bot file name
-    const botFileName = await CommandService.remoteCall('file:sanitize-string', this.state.bot.name);
-    const dialogOptions = {
-      filters: [
-        {
-          name: "Bot Files",
-          extensions: ['bot']
-        }
-      ],
-      defaultPath: botFileName,
-      showsTagField: false,
-      title: "Save as",
-      buttonLabel: "Save"
-    };
-
-    return CommandService.remoteCall('shell:showSaveDialog', dialogOptions);
-  };
-
-  private onChangeSecret = (e) => {
-    this.setState({ secret: e.target.value, secretsMatch: e.target.value === this.state.secretConfirmation });
-  };
-
-  private onChangeSecretConfirmation = (e) => {
-    this.setState({ secretConfirmation: e.target.value, secretsMatch: e.target.value === this.state.secret });
-  };
-
   render(): JSX.Element {
     const secretCriteria = this.state.secretEnabled ? this.state.secret && this.state.secretsMatch : true;
 
@@ -262,7 +161,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
       && this.state.endpoint.endpoint
       && this.state.bot.name
       && secretCriteria;
-
+    // TODO - localization
     return (
       <div { ...CSS }>
         <Column>
@@ -295,12 +194,107 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
             </Row>
           }
           <Row className="multi-input-row button-row" justify={ RowJustification.Right }>
-            <PrimaryButton secondary text='Cancel' onClick={ this.onCancel } className="cancel-button"/>
-            <PrimaryButton text='Save and connect' onClick={ this.onSaveAndConnect }
+            <PrimaryButton secondary text="Cancel" onClick={ this.onCancel } className="cancel-button"/>
+            <PrimaryButton text="Save and connect" onClick={ this.onSaveAndConnect }
                            disabled={ !requiredFieldsCompleted } className="connect-button"/>
           </Row>
         </Column>
       </div>
     );
+  }
+
+  private onChangeEndpoint = (e) => {
+    const endpoint = { ...this.state.endpoint, endpoint: e.target.value, name: e.target.value };
+    this.setState({ endpoint });
+  }
+
+  private onChangeAppId = (e) => {
+    const endpoint = { ...this.state.endpoint, appId: e.target.value };
+    this.setState({ endpoint });
+  }
+
+  private onChangeAppPw = (e) => {
+    const endpoint = { ...this.state.endpoint, appPassword: e.target.value };
+    this.setState({ endpoint });
+  }
+
+  private onChangeName = (e) => {
+    const bot = { ...this.state.bot, name: e.target.value };
+    this.setState({ bot });
+  }
+
+  private onCancel = (e) => {
+    DialogService.hideDialog();
+  }
+
+  private onToggleSecret = (e) => {
+    this.setState({ secretEnabled: !this.state.secretEnabled, secret: '' });
+  }
+
+  private onSaveAndConnect = async (e) => {
+    try {
+      const path = await this.showBotSaveDialog();
+      if (path) {
+        this.performCreate(path);
+      } else {
+        // user cancelled out of the save dialog
+        console.log('Bot creation save dialog was cancelled.');
+      }
+    } catch (e) {
+      console.error('Error while trying to select a bot file location: ', e);
+    }
+  }
+
+  private performCreate = (botPath: string) => {
+    const endpoint: IEndpointService = {
+      type: this.state.endpoint.type,
+      name: this.state.endpoint.name.trim(),
+      id: this.state.endpoint.id.trim(),
+      appId: this.state.endpoint.appId.trim(),
+      appPassword: this.state.endpoint.appPassword.trim(),
+      endpoint: this.state.endpoint.endpoint.trim()
+    };
+
+    const bot: BotConfigWithPath = BotConfigWithPathImpl.fromJSON({
+      ...this.state.bot,
+      name: this.state.bot.name.trim(),
+      description: this.state.bot.description.trim(),
+      services: [endpoint],
+      path: botPath.trim()
+    });
+
+    const secret = this.state.secretEnabled && this.state.secret ? this.state.secret : null;
+
+    ActiveBotHelper.confirmAndCreateBot(bot, secret)
+      .then(() => DialogService.hideDialog())
+      .catch(err => console.error('Error during confirm and create bot: ', err));
+  }
+
+  private showBotSaveDialog = async (): Promise<any> => {
+    // get a safe bot file name
+    const botFileName = await CommandServiceImpl.remoteCall('file:sanitize-string', this.state.bot.name);
+    // TODO - Localization
+    const dialogOptions = {
+      filters: [
+        {
+          name: 'Bot Files',
+          extensions: ['bot']
+        }
+      ],
+      defaultPath: botFileName,
+      showsTagField: false,
+      title: 'Save as',
+      buttonLabel: 'Save'
+    };
+
+    return CommandServiceImpl.remoteCall('shell:showSaveDialog', dialogOptions);
+  }
+
+  private onChangeSecret = (e) => {
+    this.setState({ secret: e.target.value, secretsMatch: e.target.value === this.state.secretConfirmation });
+  }
+
+  private onChangeSecretConfirmation = (e) => {
+    this.setState({ secretConfirmation: e.target.value, secretsMatch: e.target.value === this.state.secret });
   }
 }

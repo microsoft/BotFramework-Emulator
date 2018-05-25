@@ -47,7 +47,7 @@ export interface QnaMakerProps extends ServicePaneProps {
 export class QnaMakerExplorer extends ServicePane<QnaMakerProps> {
   public state = {} as { expanded?: boolean };
 
-  constructor(props, context) {
+  constructor(props: QnaMakerProps, context: {}) {
     super(props, context);
   }
 
@@ -64,7 +64,7 @@ export class QnaMakerExplorer extends ServicePane<QnaMakerProps> {
     const { index } = currentTarget.dataset;
     const { [index]: qnaMakerService } = this.props.qnaMakerServices;
     this.props.openQnaMakerDeepLink(qnaMakerService);
-  };
+  }
 
   protected onContextMenuOverLiElement(li: HTMLLIElement) {
     super.onContextMenuOverLiElement(li);
@@ -73,7 +73,7 @@ export class QnaMakerExplorer extends ServicePane<QnaMakerProps> {
     this.props.openContextMenu(new QnaMakerService(qnaMakerService), QnaMakerEditorContainer);
   }
 
-  protected onAddIconClick = (event: SyntheticEvent<HTMLButtonElement>): void => {
+  protected onAddIconClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
     this.props.launchQnaMakerEditor(QnaMakerEditorContainer);
-  };
+  }
 }

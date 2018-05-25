@@ -33,14 +33,14 @@
 
 import { FileInfo } from '@bfemulator/app-shared';
 import { callbackToPromise } from '@fuselab/ui-shared/lib/asyncUtils';
-import { FSWatcher, Stats, exists, readFile } from 'fs';
+import { exists, FSWatcher, readFile, Stats } from 'fs';
 import * as Path from 'path';
 import * as Chokidar from 'chokidar';
 import { mainWindow } from './main';
-import { loadBotWithRetry, getActiveBot, getBotInfoByPath } from './botHelpers';
+import { getActiveBot, getBotInfoByPath, loadBotWithRetry } from './botHelpers';
 import * as BotActions from './data-v2/action/bot';
 
-interface IFileWatcher {
+interface FileWatcher {
   watch: (botProjectDir: string) => void;
   dispose: () => void;
   onFileAdd: (file: string, fstats?: any) => void;
@@ -72,11 +72,9 @@ async function readGitIgnore(filePath: string): Promise<string[]> {
 }
 
 /** Singleton class that will watch one bot project directory at a time */
-export const BotProjectFileWatcher = new class FileWatcher implements IFileWatcher {
+export const BotProjectFileWatcher = new class FileWatcherImpl implements FileWatcher {
   private _botFilePath: string;
   private _fileWatcherInstance: FSWatcher;
-
-  constructor() { }
 
   async watch(botFilePath: string): Promise<boolean> {
     // stop watching any other project directory
@@ -141,9 +139,10 @@ export const BotProjectFileWatcher = new class FileWatcher implements IFileWatch
       if (activeBot) {
         const botInfo = getBotInfoByPath(this._botFilePath) || {};
         const bot = await loadBotWithRetry(this._botFilePath, botInfo.secret);
-        if (!bot)
+        if (!bot) {
           // user dismissed the secret prompt dialog (if it was shown)
           throw new Error('No secret provided to decrypt encrypted bot.');
+        }
 
         // update store
         const botDir = Path.dirname(this._botFilePath);
@@ -153,4 +152,4 @@ export const BotProjectFileWatcher = new class FileWatcher implements IFileWatch
       }
     }
   }
-}
+};

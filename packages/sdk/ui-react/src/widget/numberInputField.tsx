@@ -103,7 +103,7 @@ export interface NumberInputFieldProps {
 export class NumberInputField extends React.Component<NumberInputFieldProps, {}> {
   public static defaultProps: Partial<NumberInputFieldProps> = {
     tabIndex: 0
-  }
+  };
 
   constructor(props: NumberInputFieldProps, context: any) {
     super(props, context);

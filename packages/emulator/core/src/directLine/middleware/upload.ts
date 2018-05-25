@@ -38,15 +38,15 @@ import * as Restify from 'restify';
 import * as Formidable from 'formidable';
 import BotEmulator from '../../botEmulator';
 import Conversation from '../../facility/conversation';
-import IAttachment from '../../types/attachment';
-import IAttachmentData from '../../types/attachment/data';
+import Attachment from '../../types/attachment';
+import AttachmentData from '../../types/attachment/data';
 import { textItem } from '../../types/log/util';
 import LogLevel from '../../types/log/level';
 import BotEndpoint from '../../facility/botEndpoint';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function upload(botEmulator: BotEmulator) {
-  const { logMessage, logException } = botEmulator.facilities.logger;
+  const { logMessage } = botEmulator.facilities.logger;
 
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     if (req.params.conversationId.includes('transcript')) {
@@ -54,8 +54,8 @@ export default function upload(botEmulator: BotEmulator) {
       return;
     }
 
-    const conversation: Conversation = req['conversation'];
-    const botEndpoint: BotEndpoint = req['botEndpoint'];
+    const conversation: Conversation = (req as any).conversation;
+    const botEndpoint: BotEndpoint = (req as any).botEndpoint;
 
     if (!conversation) {
       res.send(HttpStatus.NOT_FOUND, 'conversation not found');
@@ -80,28 +80,30 @@ export default function upload(botEmulator: BotEmulator) {
         const activity = JSON.parse(fs.readFileSync(files.activity.path, 'utf8'));
         let uploads = files.file;
 
-        if (!Array.isArray(uploads))
+        if (!Array.isArray(uploads)) {
           uploads = [uploads];
+        }
         if (uploads && uploads.length) {
           activity.attachments = [];
-          uploads.forEach((upload) => {
-            const name = (upload as any).name || 'file.dat';
-            const type = upload.type;
-            const path = upload.path;
+          uploads.forEach((upload1) => {
+            const name = (upload1 as any).name || 'file.dat';
+            const type = upload1.type;
+            const path = upload1.path;
             const buf: Buffer = fs.readFileSync(path);
             const contentBase64 = buf.toString('base64');
-            const attachmentData: IAttachmentData = {
+            const attachmentData: AttachmentData = {
               type,
               name,
               originalBase64: contentBase64,
               thumbnailBase64: contentBase64
-            }
+            };
             const attachmentId = botEmulator.facilities.attachments.uploadAttachment(attachmentData);
-            const attachment: IAttachment = {
+            const serviceUrl = botEmulator.getServiceUrl(botEndpoint.botUrl);
+            const attachment: Attachment = {
               name,
               contentType: type,
-              contentUrl: `${ botEmulator.getServiceUrl(botEndpoint.botUrl) }/v3/attachments/${attachmentId}/views/original`
-            }
+              contentUrl: `${ serviceUrl }/v3/attachments/${attachmentId}/views/original`
+            };
 
             activity.attachments.push(attachment);
           });
@@ -109,7 +111,7 @@ export default function upload(botEmulator: BotEmulator) {
           try {
             const { activityId, statusCode, response } = await conversation.postActivityToBot(activity, true);
 
-            //logNetwork(conversation.conversationId, req, res, `[${activity.type}]`);
+            // logNetwork(conversation.conversationId, req, res, `[${activity.type}]`);
             if (!/^2\d\d$/.test(`${statusCode}`)) {
               res.send(statusCode || HttpStatus.INTERNAL_SERVER_ERROR, await response.text());
               res.end();

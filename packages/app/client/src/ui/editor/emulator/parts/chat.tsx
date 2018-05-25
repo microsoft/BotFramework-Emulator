@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ISpeechTokenInfo } from '@bfemulator/app-shared';
+import { SpeechTokenInfo } from '@bfemulator/app-shared';
 import * as WebChat from '@bfemulator/custom-botframework-webchat';
 
 import { Colors } from '@bfemulator/ui-react';
@@ -41,7 +41,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { EmulatorMode } from '..';
 
-import { CommandService } from '../../../../platform/commands/commandService';
+import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
 
 const CognitiveServices = require('@bfemulator/custom-botframework-webchat/CognitiveServices');
 const AdaptiveCardsHostConfig = require('@bfemulator/custom-botframework-webchat/adaptivecards-hostconfig.json');
@@ -137,14 +137,14 @@ const DISCONNECTED_CSS = css({
 });
 
 export interface Props {
-  mode: EmulatorMode,
+  mode: EmulatorMode;
   document: any;
   onStartConversation: any;
   services: IConnectedService[];
 }
 
 class Chat extends React.Component<Props> {
-  constructor(props, context) {
+  constructor(props: Props, context: {}) {
     super(props, context);
   }
 
@@ -157,17 +157,17 @@ class Chat extends React.Component<Props> {
 
   render() {
     const endpoint = this.getEndpoint();
-
+    // TODO - localization
     if (this.props.document.directLine) {
       const props: WebChat.ChatProps = {
         adaptiveCardsHostConfig: AdaptiveCardsHostConfig,
         user: {
-          id: "default-user",
-          name: "User"
+          id: 'default-user',
+          name: 'User'
         },
         bot: {
-          id: "WXYZ",
-          name: "Bot"
+          id: 'WXYZ',
+          name: 'Bot'
         },
         formatOptions: {
           showHeader: false
@@ -182,7 +182,7 @@ class Chat extends React.Component<Props> {
         selectedActivity: (this.props.document.selectedActivity$ as any),
         botConnection: this.props.document.directLine,
         store: this.props.document.webChatStore,
-        showShell: this.props.mode === "livechat"
+        showShell: this.props.mode === 'livechat'
       };
       return (
         <div id="webchat-container" className="wc-app" { ...CSS }>
@@ -209,7 +209,7 @@ class Chat extends React.Component<Props> {
     return this.getSpeechToken(authIdEvent, true);
   }
 
-  private async getSpeechToken(authIdEvent: string, refresh: boolean): Promise<string | void> {
+  private async getSpeechToken(_authIdEvent: string, refresh: boolean): Promise<string | void> {
     const endpoint = this.getEndpoint();
 
     if (!endpoint) {
@@ -220,7 +220,7 @@ class Chat extends React.Component<Props> {
     let command = refresh ? 'speech-token:refresh' : 'speech-token:get';
 
     try {
-      const speechToken: ISpeechTokenInfo = await CommandService.remoteCall(command, endpoint.endpoint);
+      const speechToken: SpeechTokenInfo = await CommandServiceImpl.remoteCall(command, endpoint.endpoint);
 
       if (!speechToken) {
         console.error('Could not retrieve Cognitive Services speech token.');

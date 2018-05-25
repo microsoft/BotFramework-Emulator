@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import IErrorResponse from './response/error';
+import ErrorResponse from './response/error';
 
 interface APIException {
-  error: IErrorResponse;
+  error: ErrorResponse;
   statusCode: number;
 }
 
-export default APIException
+export default APIException;

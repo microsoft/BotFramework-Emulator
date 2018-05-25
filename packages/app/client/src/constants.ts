@@ -31,26 +31,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export const ContentType_AppSettings = 'application/vnd.microsoft.bfemulator.document.appsettings';
-export const ContentType_WelcomePage = 'application/vnd.microsoft.bfemulator.document.welcome';
-export const ContentType_BotSettings = 'application/vnd.microsoft.bfemulator.document.botsettings';
-export const ContentType_Transcript = 'application/vnd.microsoft.bfemulator.document.transcript';
-export const ContentType_LiveChat = 'application/vnd.microsoft.bfemulator.document.livechat';
+export const CONTENT_TYPE_APP_SETTINGS = 'application/vnd.microsoft.bfemulator.document.appsettings';
+export const CONTENT_TYPE_WELCOME_PAGE = 'application/vnd.microsoft.bfemulator.document.welcome';
+export const CONTENT_TYPE_BOT_SETTINGS = 'application/vnd.microsoft.bfemulator.document.botsettings';
+export const CONTENT_TYPE_TRANSCRIPT = 'application/vnd.microsoft.bfemulator.document.transcript';
+export const CONTENT_TYPE_LIVE_CHAT = 'application/vnd.microsoft.bfemulator.document.livechat';
 
-export const NavBar_Bot_Explorer = 'navbar.botExplorer';
-export const NavBar_Services = 'navbar.services';
-export const NavBar_Analytics = 'navbar.analytics';
-export const NavBar_Settings = 'navbar.settings';
-export const NavBar_Notifications = 'navbar.notifications';
+export const NAVBAR_BOT_EXPLORER = 'navbar.botExplorer';
+export const NAVBAR_SERVICES = 'navbar.services';
+export const NAVBAR_ANALYTICS = 'navbar.analytics';
+export const NAVBAR_SETTINGS = 'navbar.settings';
+export const NAVBAR_NOTIFICATIONS = 'navbar.notifications';
 
-export const EditorKey_Primary = 'primary';
-export const EditorKey_Secondary = 'secondary';
+export const EDITOR_KEY_PRIMARY = 'primary';
+export const EDITOR_KEY_SECONDARY = 'secondary';
 
 export const EditorKeys = [
-  EditorKey_Primary,
-  EditorKey_Secondary
+  EDITOR_KEY_PRIMARY,
+  EDITOR_KEY_SECONDARY
 ];
 
-export const DocumentId_AppSettings = 'app:settings';
-export const DocumentId_BotSettings = 'bot:settings';
-export const DocumentId_WelcomePage = 'welcome-page';
+export const DOCUMENT_ID_APP_SETTINGS = 'app:settings';
+export const DOCUMENT_ID_BOT_SETTINGS = 'bot:settings';
+export const DOCUMENT_ID_WELCOME_PAGE = 'welcome-page';

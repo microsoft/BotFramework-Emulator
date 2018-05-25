@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-interface IBotData {
+interface BotData {
   eTag: string;
   data: any;
 }
 
-export default IBotData
+export default BotData;

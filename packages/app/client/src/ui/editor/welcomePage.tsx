@@ -34,12 +34,12 @@ import { hot } from 'react-hot-loader';
 import { css } from 'glamor';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { IBotInfo } from '@bfemulator/app-shared';
+import { BotInfo } from '@bfemulator/app-shared';
 
-import { Colors, Column, Row, PrimaryButton, LargeHeader, SmallHeader, TruncateText } from '@bfemulator/ui-react';
-import { CommandService } from '../../platform/commands/commandService';
+import { Colors, Column, LargeHeader, PrimaryButton, Row, SmallHeader, TruncateText } from '@bfemulator/ui-react';
+import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { GenericDocument } from '../layout';
-import { IRootState } from '../../data/store';
+import { RootState } from '../../data/store';
 
 const CSS = css({
   '& .right-column': {
@@ -133,20 +133,20 @@ const CSS = css({
 
 interface WelcomePageProps {
   documentId?: string;
-  recentBots?: IBotInfo[];
+  recentBots?: BotInfo[];
 }
 
 class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
   onNewBotClick = () => {
-    CommandService.call('bot-creation:show');
+    CommandServiceImpl.call('bot-creation:show');
   }
 
   onOpenBotClick = () => {
-    CommandService.call('bot:browse-open');
+    CommandServiceImpl.call('bot:browse-open');
   }
 
-  onBotClick = (e, path) => {
-    CommandService.call('bot:switch', path);
+  onBotClick = (_e: any, path) => {
+    CommandServiceImpl.call('bot:switch', path);
   }
 
   render() {
@@ -157,11 +157,15 @@ class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
           <Column>
             <div className="section">
               <SmallHeader>Start</SmallHeader>
-              <span>Start talking to your bot by connecting to an endpoint or by opening a bot saved locally. More about working locally with a bot.</span>
+              <span>Start talking to your bot by connecting to an endpoint or by opening a
+                bot saved locally. More about working locally with a bot.</span>
               <Row>
-                <PrimaryButton className="open-bot big-button" text="Open Bot" onClick={ this.onOpenBotClick } />
+                <PrimaryButton className="open-bot big-button" text="Open Bot" onClick={ this.onOpenBotClick }/>
               </Row>
-              <span>If you don’t have a bot configuration, <a className="cta-link" href="javascript:void(0)" onClick={ this.onNewBotClick }>create a new bot configuration.</a></span>
+              <span>If you don’t have a bot configuration, 
+                <a className="cta-link" href="javascript:void(0)" 
+                   onClick={ this.onNewBotClick }>create a new bot configuration.</a>
+              </span>
             </div>
             <div className="section">
               <SmallHeader>My Bots</SmallHeader>
@@ -170,7 +174,8 @@ class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
                   this.props.recentBots && this.props.recentBots.length ?
                     this.props.recentBots.slice(0, 10).map(bot => bot &&
                       <li key={ bot.path }>
-                        <a href="javascript:void(0);" onClick={ ev => this.onBotClick(ev, bot.path) } title={ bot.path }><TruncateText>{ bot.displayName }</TruncateText></a>
+                        <a href="javascript:void(0);" onClick={ ev => this.onBotClick(ev, bot.path) }
+                           title={ bot.path }><TruncateText>{ bot.displayName }</TruncateText></a>
                         <TruncateText className="recent-bot-detail" title={ bot.path }>{ bot.path }</TruncateText>
                       </li>)
                     :
@@ -179,15 +184,20 @@ class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
               </ul>
             </div>
           </Column>
-          <Column className='right-column'>
+          <Column className="right-column">
             <div className="section">
               <SmallHeader>Help</SmallHeader>
               <ul>
-                <li><a href='https://aka.ms/BotBuilderOverview'><TruncateText>Overview</TruncateText></a></li>
-                <li><a href='https://aka.ms/Btovso'><TruncateText>GitHub Repository</TruncateText></a></li>
-                <li><a href='https://aka.ms/BotBuilderLocalDev'><TruncateText>Starting with Local Development</TruncateText></a></li>
-                <li><a href='https://aka.ms/BotBuilderAZCLI'><TruncateText>Starting with Azure CLI</TruncateText></a></li>
-                <li><a href='https://aka.ms/BotBuilderIbiza'><TruncateText>Starting with the Azure Portal</TruncateText></a></li>
+                <li><a href="https://aka.ms/BotBuilderOverview"><TruncateText>Overview</TruncateText></a></li>
+                <li><a href="https://aka.ms/Btovso"><TruncateText>GitHub Repository</TruncateText></a></li>
+                <li><a href="https://aka.ms/BotBuilderLocalDev"><TruncateText>Starting with Local
+                  Development</TruncateText></a></li>
+                <li><a href="https://aka.ms/BotBuilderAZCLI"><TruncateText>Starting with Azure CLI</TruncateText></a>
+                </li>
+                <li><a href="https://aka.ms/BotBuilderIbiza">
+                  <TruncateText>Starting with the Azure Portal</TruncateText>
+                </a>
+                </li>
               </ul>
             </div>
           </Column>
@@ -197,7 +207,7 @@ class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
   }
 }
 
-const mapStateToProps = (state: IRootState): WelcomePageProps => ({
+const mapStateToProps = (state: RootState): WelcomePageProps => ({
   recentBots: state.bot.botFiles
 });
 

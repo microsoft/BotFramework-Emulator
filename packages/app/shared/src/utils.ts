@@ -34,7 +34,7 @@
 // We need to skip Webpack bundler on bundling 'electron':
 // 1. We are using react-scripts, thus, we are not able to configure Webpack
 // 2. To skip bundling, we can hack with window['require']
-import { IBotConfigWithPath, uniqueId } from '@bfemulator/sdk-shared';
+import { BotConfigWithPath, uniqueId } from '@bfemulator/sdk-shared';
 import { IBotConfig, IEndpointService, ServiceType } from 'msbot/bin/schema';
 
 export function isObject(item: any): boolean {
@@ -43,14 +43,15 @@ export function isObject(item: any): boolean {
 
 export function mergeDeep(target: any, source: any): any {
   let output = Object.assign({}, target);
-  //if (isObject(target) && isObject(source)) {
+  // if (isObject(target) && isObject(source)) {
   {
     Object.keys(source).forEach(key => {
       if (isObject(source[key])) {
-        if (!(key in target))
+        if (!(key in target)) {
           Object.assign(output, { [key]: source[key] });
-        else
+        } else {
           output[key] = mergeDeep(target[key], source[key]);
+        }
       } else {
         Object.assign(output, { [key]: source[key] });
       }
@@ -65,9 +66,10 @@ export function deepCopySlow(obj: any): any {
 
 export const safeStringify = (o: any, space: string | number = undefined): string => {
   let cache = [];
-  if (typeof o !== 'object')
+  if (typeof o !== 'object') {
     return `${o}`;
-  return JSON.stringify(o, function (key, value) {
+  }
+  return JSON.stringify(o, function (key: string, value: any) {
     if (typeof value === 'object' && value !== null) {
       if (cache.indexOf(value) !== -1) {
         return;
@@ -76,7 +78,7 @@ export const safeStringify = (o: any, space: string | number = undefined): strin
     }
     return value;
   }, space);
-}
+};
 
 export const approximateObjectSize = (object: any, cache: any[] = []): number => {
   switch (typeof object) {
@@ -90,8 +92,11 @@ export const approximateObjectSize = (object: any, cache: any[] = []): number =>
       let bytes = 0;
       cache.push(object);
       for (let i in object) {
+        if (!object.hasOwnProperty(i)) {
+          continue;
+        }
         let value = object[i];
-        //check for infinite recursion
+        // check for infinite recursion
         if (typeof value === 'object' && value !== null) {
           if (cache.indexOf(value) !== -1) {
             continue;
@@ -102,15 +107,15 @@ export const approximateObjectSize = (object: any, cache: any[] = []): number =>
       }
       return bytes;
     default:
-      //value is null, undefined, or a function
+      // value is null, undefined, or a function
       return 0;
   }
-}
+};
 
 /** Tries to scan the bot record for a display string */
-export const getBotDisplayName = (bot: IBotConfigWithPath = newBot()): string => {
+export const getBotDisplayName = (bot: BotConfigWithPath = newBot()): string => {
   return bot.name || bot.path || (getFirstBotEndpoint(bot) ? getFirstBotEndpoint(bot).endpoint : null) || '¯\\_(ツ)_/¯';
-}
+};
 
 /** Creates a new bot */
 export const newBot = (...bots: IBotConfig[]): IBotConfig => {
@@ -123,7 +128,7 @@ export const newBot = (...bots: IBotConfig[]): IBotConfig => {
     },
     ...bots
   );
-}
+};
 
 /** Creates a new endpoint */
 export const newEndpoint = (...endpoints: IEndpointService[]): IEndpointService => {
@@ -139,7 +144,7 @@ export const newEndpoint = (...endpoints: IEndpointService[]): IEndpointService 
     },
     ...endpoints
   );
-}
+};
 
 /** Adds -- if missing -- an id to all of a bot's endpoint services */
 export const addIdToBotEndpoints = (bot: IBotConfig): IBotConfig => {
@@ -151,12 +156,12 @@ export const addIdToBotEndpoints = (bot: IBotConfig): IBotConfig => {
     return service;
   });
   return bot;
-}
+};
 
 /** Returns the first endpoint service of a bot */
 export const getFirstBotEndpoint = (bot: IBotConfig): IEndpointService => {
   if (bot.services && bot.services.length) {
-    return <IEndpointService>bot.services.find(service => service.type === ServiceType.Endpoint);
+    return <IEndpointService> bot.services.find(service => service.type === ServiceType.Endpoint);
   }
   return null;
-}
+};

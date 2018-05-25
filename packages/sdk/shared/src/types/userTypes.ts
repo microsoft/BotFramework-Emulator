@@ -31,8 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
-export interface IUser {
-    id: string,
-    name: string
+export interface User {
+    id: string;
+    name: string;
 }

@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import IActivity from './activity/activity';
+import Activity from './activity/activity';
 
-interface ITranscriptRecord {
+interface TranscriptRecord {
   type: string;
-  activity: IActivity;
+  activity: Activity;
 }
 
-export default ITranscriptRecord
+export default TranscriptRecord;

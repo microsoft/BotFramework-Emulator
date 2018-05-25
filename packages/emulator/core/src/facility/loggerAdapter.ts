@@ -31,31 +31,30 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Restify from 'restify';
-
-import IGenericActivity from '../types/activity/generic';
+import GenericActivity from '../types/activity/generic';
 import ILogItem from '../types/log/item';
-import ILogService from '../types/log/service';
+import LogService from '../types/log/service';
 import LogLevel from '../types/log/level';
-import ILogger from '../types/logger';
+import Logger from '../types/logger';
 
-import { textItem, inspectableObjectItem, summaryTextItem, exceptionItem } from '../types/log/util';
+import { exceptionItem, inspectableObjectItem, summaryTextItem, textItem } from '../types/log/util';
 
-
-export default class LoggerAdapter implements ILogger {
-  constructor(public logService: ILogService) {
+export default class LoggerAdapter implements Logger {
+  constructor(public logService: LogService) {
     this.logActivity = this.logActivity.bind(this);
     this.logMessage = this.logMessage.bind(this);
     this.logException = this.logException.bind(this);
   }
 
-  public logActivity(conversationId: string, activity: IGenericActivity, role: string) {
+  public logActivity(conversationId: string, activity: GenericActivity, role: string) {
     let direction: ILogItem;
-    if (role === "user")
+    if (role === 'user') {
       direction = textItem(LogLevel.Debug, '<-');
-    else
+    } else {
       direction = textItem(LogLevel.Debug, '->');
-    this.logService.logToChat(conversationId, direction, inspectableObjectItem(activity.type, activity), summaryTextItem(activity));
+    }
+    this.logService.logToChat(conversationId, direction, inspectableObjectItem(activity.type, activity),
+      summaryTextItem(activity));
   }
 
   public logMessage(conversationId: string, ...items: ILogItem[]) {
@@ -63,6 +62,6 @@ export default class LoggerAdapter implements ILogger {
   }
   
   public logException(conversationId: string, err: Error) {
-    this.logService.logToChat(conversationId, exceptionItem(err))
+    this.logService.logToChat(conversationId, exceptionItem(err));
   }
 }

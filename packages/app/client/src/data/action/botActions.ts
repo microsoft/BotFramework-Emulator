@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IBotInfo } from '@bfemulator/app-shared';
+import { BotInfo } from '@bfemulator/app-shared';
 import { IBotConfig } from 'msbot/bin/schema';
 import { BotAction } from '../reducer/bot';
 
-export const CREATE ='BOT/CREATE';
+export const CREATE = 'BOT/CREATE';
 export const LOAD = 'BOT/LOAD';
 export const PATCH = 'BOT/PATCH';
 export const SET_ACTIVE = 'BOT/SET_ACTIVE';
@@ -52,7 +52,7 @@ export function create(bot: IBotConfig, botFilePath: string, secret: string): Bo
   };
 }
 
-export function load(bots: IBotInfo[]): BotAction {
+export function load(bots: BotInfo[]): BotAction {
   // prune bad bots
   bots = bots.filter(bot => !!bot);
 

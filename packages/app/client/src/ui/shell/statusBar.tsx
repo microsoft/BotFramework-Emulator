@@ -45,5 +45,4 @@ const CSS = css({
   flex: 1
 });
 
-export const StatusBar = props =>
-  <div { ...CSS }></div>
+export const StatusBar = () => (<div { ...CSS }></div>);

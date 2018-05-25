@@ -34,16 +34,16 @@
 import ILogService from '@bfemulator/emulator-core/lib/types/log/service';
 import ILogItem from '@bfemulator/emulator-core/lib/types/log/item';
 import { logEntry } from '@bfemulator/emulator-core/lib/types/log/util';
-import { Disposable } from '@bfemulator/sdk-shared';
+import { DisposableImpl } from '@bfemulator/sdk-shared';
 import { Window } from '../window';
 
-export class LogService extends Disposable implements ILogService {
+export class LogService extends DisposableImpl implements ILogService {
 
   constructor(private _window: Window) {
     super();
   }
 
   logToChat(conversationId: string, ...items: ILogItem[]): void {
-    this._window.commandService.remoteCall("conversation:log:append", conversationId, logEntry(...items));
+    this._window.commandService.remoteCall('conversation:log:append', conversationId, logEntry(...items));
   }
 }

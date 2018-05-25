@@ -35,22 +35,23 @@ import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
-import ICheckoutConversationSession from '../../types/payment/checkoutConversationSession';
-import IPaymentAddress from '../../types/payment/address';
-import IPaymentRequest from '../../types/payment/request';
+import CheckoutConversationSession from '../../types/payment/checkoutConversationSession';
+import PaymentAddress from '../../types/payment/address';
+import PaymentRequest from '../../types/payment/request';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
-export default function updateShippingAddress(botEmulator: BotEmulator) {
+export default function updateShippingAddress(_botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     try {
       const body: {
-        checkoutSession: ICheckoutConversationSession,
-        request: IPaymentRequest,
-        shippingAddress: IPaymentAddress,
+        checkoutSession: CheckoutConversationSession,
+        request: PaymentRequest,
+        shippingAddress: PaymentAddress,
         shippingOptionId: string
       } = req.body[0];
 
-      req['conversation'].sendUpdateShippingAddressOperation(body.checkoutSession, body.request, body.shippingAddress, body.shippingOptionId, async (statusCode, resp) => {
+      (req as any).conversation.sendUpdateShippingAddressOperation(body.checkoutSession, body.request,
+        body.shippingAddress, body.shippingOptionId, async (statusCode, resp) => {
         if (statusCode === HttpStatus.OK) {
           res.send(HttpStatus.OK, await resp.json());
         } else {

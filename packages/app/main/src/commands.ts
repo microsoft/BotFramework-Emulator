@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { getBotDisplayName, IBotInfo, IFrameworkSettings, newBot, newEndpoint } from '@bfemulator/app-shared';
+import { BotInfo, FrameworkSettings, getBotDisplayName, newBot, newEndpoint } from '@bfemulator/app-shared';
 import { Conversation } from '@bfemulator/emulator-core';
-import { CommandRegistry as CommReg, IActivity, IBotConfigWithPath, uniqueId } from '@bfemulator/sdk-shared';
+import { Activity, BotConfigWithPath, CommandRegistryImpl as CommReg, uniqueId } from '@bfemulator/sdk-shared';
 import * as Electron from 'electron';
 import { app, Menu } from 'electron';
 import * as Fs from 'fs';
@@ -42,12 +42,20 @@ import { IConnectedService, IEndpointService, ServiceType } from 'msbot/bin/sche
 import * as Path from 'path';
 
 import { AppMenuBuilder } from './appMenuBuilder';
-import { getActiveBot, getBotInfoByPath, loadBotWithRetry, patchBotsJson, pathExistsInRecentBots, saveBot, toSavableBot } from './botHelpers';
+import {
+  getActiveBot,
+  getBotInfoByPath,
+  loadBotWithRetry,
+  patchBotsJson,
+  pathExistsInRecentBots,
+  saveBot,
+  toSavableBot
+} from './botHelpers';
 import { BotProjectFileWatcher } from './botProjectFileWatcher';
 import { Protocol } from './constants';
 import * as BotActions from './data-v2/action/bot';
 import { emulator } from './emulator';
-import { ExtensionManager } from './extensions';
+import { ExtensionManagerImpl } from './extensions';
 import { mainWindow, windowManager } from './main';
 import { ProtocolHandler } from './protocolHandler';
 import { ContextMenuService } from './services/contextMenuService';
@@ -55,29 +63,29 @@ import { LuisAuthWorkflowService } from './services/luisAuthWorkflowService';
 import { dispatch, getSettings } from './settings';
 import { getBotsFromDisk, readFileSync, showOpenDialog, showSaveDialog, writeFile } from './utils';
 import shell = Electron.shell;
-import { AppUpdater } from './appUpdater';
 
-const sanitize = require("sanitize-filename");
+const sanitize = require('sanitize-filename');
 
-//=============================================================================
+// =============================================================================
 export const CommandRegistry = new CommReg();
 
-//=============================================================================
+// =============================================================================
 export function registerCommands() {
   //
   // TODO: Move related commands out to own files.
   //
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   CommandRegistry.registerCommand('ping', () => {
     return 'pong';
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Create a bot
-  CommandRegistry.registerCommand('bot:create', async (bot: IBotConfigWithPath, secret: string): Promise<IBotConfigWithPath> => {
+  CommandRegistry.registerCommand('bot:create', async (bot: BotConfigWithPath,
+                                                       secret: string): Promise<BotConfigWithPath> => {
     // create and add bot entry to bots.json
-    const botsJsonEntry: IBotInfo = {
+    const botsJsonEntry: BotInfo = {
       path: bot.path,
       displayName: getBotDisplayName(bot),
       secret
@@ -96,9 +104,9 @@ export function registerCommands() {
     return bot;
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Save bot file and cause a bots list write
-  CommandRegistry.registerCommand('bot:save', async (bot: IBotConfigWithPath) => {
+  CommandRegistry.registerCommand('bot:save', async (bot: BotConfigWithPath) => {
     try {
       await saveBot(bot);
     } catch (e) {
@@ -107,9 +115,10 @@ export function registerCommands() {
     }
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Open a bot project from a .bot path
-  CommandRegistry.registerCommand('bot:load', async (botFilePath: string, secret?: string): Promise<IBotConfigWithPath> => {
+  CommandRegistry.registerCommand('bot:load', async (botFilePath: string,
+                                                     secret?: string): Promise<BotConfigWithPath> => {
     // try to get the bot secret from bots.json
     const botInfo = pathExistsInRecentBots(botFilePath) ? getBotInfoByPath(botFilePath) : null;
     if (botInfo && botInfo.secret) {
@@ -118,9 +127,10 @@ export function registerCommands() {
 
     // load the bot (decrypt with secret if we were able to get it)
     const bot = await loadBotWithRetry(botFilePath, secret);
-    if (!bot)
-    // user failed to enter a valid secret for an encrypted bot
+    if (!bot) {
+      // user failed to enter a valid secret for an encrypted bot
       throw new Error('No secret provided to decrypt encrypted bot.');
+    }
 
     // set up file watcher
     BotProjectFileWatcher.watch(botFilePath);
@@ -133,9 +143,12 @@ export function registerCommands() {
     return mainWindow.commandService.remoteCall('bot:load', bot);
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Set active bot (called from client-side)
-  CommandRegistry.registerCommand('bot:set-active', async (botPath: string): Promise<{ bot: IBotConfigWithPath, botDirectory: string } | void> => {
+  CommandRegistry.registerCommand('bot:set-active', async (botPath: string): Promise<{
+    bot: BotConfigWithPath,
+    botDirectory: string
+  } | void> => {
     // try to get the bot secret from bots.json
     let secret;
     const botInfo = pathExistsInRecentBots(botPath) ? getBotInfoByPath(botPath) : null;
@@ -144,15 +157,15 @@ export function registerCommands() {
     }
 
     // load the bot (decrypt with secret if we were able to get it)
-    let bot:IBotConfigWithPath;
+    let bot: BotConfigWithPath;
     try {
       bot = await loadBotWithRetry(botPath, secret);
     } catch (e) {
-      var errMessage = `Failed to open the bot with error: ${e.message}`;
-      await Electron.dialog.showMessageBox(mainWindow.browserWindow,  {
-          type: 'error',
-          message: errMessage,
-        });
+      const errMessage = `Failed to open the bot with error: ${e.message}`;
+      await Electron.dialog.showMessageBox(mainWindow.browserWindow, {
+        type: 'error',
+        message: errMessage,
+      });
       throw new Error(errMessage);
     }
     if (!bot) {
@@ -161,7 +174,7 @@ export function registerCommands() {
     }
 
     // set up the file watcher
-    BotProjectFileWatcher.watch(botPath);
+    await BotProjectFileWatcher.watch(botPath);
 
     // set active bot and active directory
     const botDirectory = Path.dirname(botPath);
@@ -174,7 +187,7 @@ export function registerCommands() {
     return { bot, botDirectory };
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Restart emulator endpoint service
   CommandRegistry.registerCommand('bot:restart-endpoint-service', async () => {
     const bot = getActiveBot();
@@ -196,18 +209,20 @@ export function registerCommands() {
     });
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Close active bot (called from client-side)
   CommandRegistry.registerCommand('bot:close', async (): Promise<void> => {
     BotProjectFileWatcher.dispose();
     mainWindow.store.dispatch(BotActions.close());
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Adds or updates an msbot service entry.
-  CommandRegistry.registerCommand('bot:add-or-update-service', async (serviceType: ServiceType, service: IConnectedService) => {
-    if (!service.id || !service.id.length)
+  CommandRegistry.registerCommand('bot:add-or-update-service', async (serviceType: ServiceType,
+                                                                      service: IConnectedService) => {
+    if (!service.id || !service.id.length) {
       service.id = uniqueId();
+    }
     const activeBot = getActiveBot();
     const botInfo = activeBot && getBotInfoByPath(activeBot.path);
     if (botInfo) {
@@ -220,8 +235,9 @@ export function registerCommands() {
         botConfig.services[index] = existing;
       } else {
         // Add new service
-        if (service.type != serviceType)
+        if (service.type !== serviceType) {
           throw new Error('serviceType does not match');
+        }
         botConfig.connectService(service);
       }
       try {
@@ -233,7 +249,7 @@ export function registerCommands() {
     }
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Removes an msbot service entry.
   CommandRegistry.registerCommand('bot:remove-service', async (serviceType: ServiceType, serviceId: string) => {
     const activeBot = getActiveBot();
@@ -250,29 +266,26 @@ export function registerCommands() {
     }
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Patches a bot record in bots.json
-  CommandRegistry.registerCommand('bot:list:patch', async (botPath: string, bot: IBotInfo): Promise<void> => {
+  CommandRegistry.registerCommand('bot:list:patch', async (botPath: string, bot: BotInfo): Promise<void> => {
     // patch bots.json and update the store
     await patchBotsJson(botPath, bot);
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Show OS-native messsage box
   CommandRegistry.registerCommand('shell:show-message-box', (modal: boolean, options: Electron.MessageBoxOptions) => {
     options = {
-      message: "",
+      message: '',
       title: app.getName(),
       ...options
     };
-
-    if (modal)
-      return Electron.dialog.showMessageBox(mainWindow.browserWindow, options);
-    else
-      return Electron.dialog.showMessageBox(options);
+    const args = modal ? [mainWindow.browserWindow, options] : [options];
+    return Electron.dialog.showMessageBox.apply(Electron.dialog, args);
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Read file
   CommandRegistry.registerCommand('file:read', (path: string): any => {
     try {
@@ -284,7 +297,7 @@ export function registerCommands() {
     }
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Write file
   CommandRegistry.registerCommand('file:write', (path: string, contents: object | string) => {
     try {
@@ -295,13 +308,13 @@ export function registerCommands() {
     }
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Sanitize a string for file name usage
   CommandRegistry.registerCommand('file:sanitize-string', (path: string): string => {
     return sanitize(path);
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Client notifying us it's initialized and has rendered
   CommandRegistry.registerCommand('client:loaded', () => {
     // Load bots from disk and sync list with client
@@ -318,11 +331,11 @@ export function registerCommands() {
       cwd: __dirname
     });
     // Load extensions
-    ExtensionManager.unloadExtensions();
-    ExtensionManager.loadExtensions();
+    ExtensionManagerImpl.unloadExtensions();
+    ExtensionManagerImpl.loadExtensions();
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Client notifying us the welcome screen has been rendered
   CommandRegistry.registerCommand('client:post-welcome-screen', () => {
     mainWindow.commandService.call('menu:update-recent-bots');
@@ -342,68 +355,74 @@ export function registerCommands() {
       } else if (Path.extname(fileToBeOpened) === '.transcript') {
         const transcript = readFileSync(fileToBeOpened);
         const conversationActivities = JSON.parse(transcript);
-        if (!Array.isArray(conversationActivities))
+        if (!Array.isArray(conversationActivities)) {
           throw new Error('Invalid transcript file contents; should be an array of conversation activities.');
+        }
 
-        // open a transcript on the client side and pass in some extra info to differentiate it from a transcript on disk
-        mainWindow.commandService.remoteCall('transcript:open', 'deepLinkedTranscript', { activities: conversationActivities, deepLink: true });
+        // open a transcript on the client side and pass in
+        // some extra info to differentiate it from a transcript on disk
+        mainWindow.commandService.remoteCall('transcript:open', 'deepLinkedTranscript', {
+          activities: conversationActivities,
+          deepLink: true
+        });
       }
     }
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Saves global app settings
-  CommandRegistry.registerCommand('app:settings:save', (settings: IFrameworkSettings): any => {
+  CommandRegistry.registerCommand('app:settings:save', (settings: FrameworkSettings): any => {
     dispatch({
       type: 'Framework_Set',
       state: settings
     });
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Get and return app settings from store
-  CommandRegistry.registerCommand('app:settings:load', (...args: any[]): IFrameworkSettings => {
+  CommandRegistry.registerCommand('app:settings:load', (...args: any[]): FrameworkSettings => {
     return getSettings().framework;
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Shows an open dialog and returns a path
   CommandRegistry.registerCommand('shell:showOpenDialog', (dialogOptions: Electron.OpenDialogOptions = {}): string => {
     return showOpenDialog(mainWindow.browserWindow, dialogOptions);
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Shows a save dialog and returns a path + filename
   CommandRegistry.registerCommand('shell:showSaveDialog', (dialogOptions: Electron.SaveDialogOptions = {}): string => {
     return showSaveDialog(mainWindow.browserWindow, dialogOptions);
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Saves the conversation to a transcript file, with user interaction to set filename.
   CommandRegistry.registerCommand('emulator:save-transcript-to-file', async (conversationId: string): Promise<void> => {
-    const activeBot: IBotConfigWithPath = getActiveBot();
+    const activeBot: BotConfigWithPath = getActiveBot();
     if (!activeBot) {
       throw new Error('save-transcript-to-file: No active bot.');
     }
 
-    const conversation = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
-    if (!conversation) {
+    const convo = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
+    if (!convo) {
       throw new Error(`save-transcript-to-file: Conversation ${conversationId} not found.`);
     }
 
     const path = Path.resolve(mainWindow.store.getState().bot.currentBotDirectory) || '';
 
     const filename = showSaveDialog(mainWindow.browserWindow, {
+      // TODO - Localization
       filters: [
         {
-          name: "Transcript Files",
+          name: 'Transcript Files',
           extensions: ['transcript']
         }
       ],
       defaultPath: path,
       showsTagField: false,
-      title: "Save conversation transcript",
-      buttonLabel: "Save"
+      title: 'Save conversation transcript',
+      buttonLabel: 'Save'
     });
 
     // If there is no current bot directory, we should set the directory
@@ -425,21 +444,21 @@ export function registerCommands() {
 
     if (filename && filename.length) {
       mkdirpSync(Path.dirname(filename));
-      const transcripts = await conversation.getTranscript();
+      const transcripts = await convo.getTranscript();
       writeFile(filename, transcripts);
     }
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Feeds a transcript from disk to a conversation
   CommandRegistry.registerCommand('emulator:feed-transcript:disk', (conversationId: string, filePath: string) => {
-    const activeBot: IBotConfigWithPath = getActiveBot();
+    const activeBot: BotConfigWithPath = getActiveBot();
     if (!activeBot) {
       throw new Error('feed-transcript:disk: No active bot.');
     }
 
-    const conversation = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
-    if (!conversation) {
+    const convo = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
+    if (!convo) {
       throw new Error(`feed-transcript:disk: Conversation ${conversationId} not found.`);
     }
 
@@ -451,31 +470,32 @@ export function registerCommands() {
 
     const activities = JSON.parse(readFileSync(path));
 
-    conversation.feedActivities(activities);
+    convo.feedActivities(activities);
 
-    const {name, ext} = Path.parse(path);
+    const { name, ext } = Path.parse(path);
     const fileName = `${name}${ext}`;
 
-    return {fileName, filePath};
+    return { fileName, filePath };
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Feeds a deep-linked transcript (array of parsed activities) to a conversation
-  CommandRegistry.registerCommand('emulator:feed-transcript:deep-link', (conversationId: string, activities: IActivity[]): void => {
-    const activeBot: IBotConfigWithPath = getActiveBot();
+  CommandRegistry.registerCommand('emulator:feed-transcript:deep-link', (conversationId: string,
+                                                                         activities: Activity[]): void => {
+    const activeBot: BotConfigWithPath = getActiveBot();
     if (!activeBot) {
       throw new Error('emulator:feed-transcript:deep-link: No active bot.');
     }
 
-    const conversation = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
-    if (!conversation) {
+    const convo = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
+    if (!convo) {
       throw new Error(`emulator:feed-transcript:deep-link: Conversation ${conversationId} not found.`);
     }
 
-    conversation.feedActivities(activities);
+    convo.feedActivities(activities);
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Builds a new app menu to reflect the updated recent bots list
   CommandRegistry.registerCommand('menu:update-recent-bots', (): void => {
     // get previous app menu template
@@ -493,7 +513,7 @@ export function registerCommands() {
     Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Get a speech token
   CommandRegistry.registerCommand('speech-token:get', (endpointId: string, refresh: boolean) => {
     const endpoint = emulator.framework.server.botEmulator.facilities.endpoints.get(endpointId);
@@ -501,11 +521,11 @@ export function registerCommands() {
     return endpoint && endpoint.getSpeechToken(refresh);
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Creates a new conversation object for transcript
   CommandRegistry.registerCommand('transcript:new', (conversationId: string): Conversation => {
     // get the active bot or mock one
-    let bot: IBotConfigWithPath = getActiveBot();
+    let bot: BotConfigWithPath = getActiveBot();
 
     if (!bot) {
       bot = newBot();
@@ -524,7 +544,7 @@ export function registerCommands() {
     return conversation;
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Toggles app fullscreen mode
   CommandRegistry.registerCommand('electron:set-fullscreen', (fullscreen: boolean): void => {
     mainWindow.browserWindow.setFullScreen(fullscreen);
@@ -535,29 +555,30 @@ export function registerCommands() {
     }
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Sets the app's title bar
   CommandRegistry.registerCommand('electron:set-title-bar', (text: string) => {
-    if (text && text.length)
+    if (text && text.length) {
       mainWindow.browserWindow.setTitle(`${app.getName()} - ${text}`);
-    else
+    } else {
       mainWindow.browserWindow.setTitle(app.getName());
+    }
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Retrieve the LUIS authoring key
   CommandRegistry.registerCommand('luis:retrieve-authoring-key', async () => {
     const workflow = LuisAuthWorkflowService.enterAuthWorkflow();
-    const { dispatch } = mainWindow.store;
+    const { dispatch: storeDispatch } = mainWindow.store;
     const type = 'LUIS_AUTH_STATUS_CHANGED';
-    dispatch({ type, luisAuthWorkflowStatus: 'inProgress' });
+    storeDispatch({ type, luisAuthWorkflowStatus: 'inProgress' });
     let result = undefined;
     while (true) {
       const next = workflow.next(result);
       if (next.done) {
-        dispatch({ type, luisAuthWorkflowStatus: 'ended' });
+        storeDispatch({ type, luisAuthWorkflowStatus: 'ended' });
         if (!result) {
-          dispatch({ type, luisAuthWorkflowStatus: 'canceled' });
+          storeDispatch({ type, luisAuthWorkflowStatus: 'canceled' });
         }
         break;
       }
@@ -566,28 +587,29 @@ export function registerCommands() {
     return result;
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Displays the context menu for a given element
   CommandRegistry.registerCommand('electron:displayContextMenu', ContextMenuService.showMenuAndWaitForInput);
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Opens an external link
   CommandRegistry.registerCommand('electron:openExternal', shell.openExternal.bind(shell));
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Sends an OAuth TokenResponse
-  CommandRegistry.registerCommand('oauth:send-token-response', async (connectionName: string, conversationId: string, token: string) => {
-    const conversation = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
-    if (!conversation) {
+  CommandRegistry.registerCommand('oauth:send-token-response', async (connectionName: string,
+                                                                      conversationId: string, token: string) => {
+    const convo = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
+    if (!convo) {
       throw new Error(`emulator:feed-transcript:deep-link: Conversation ${conversationId} not found.`);
     }
-    conversation.sendTokenResponse(connectionName, conversationId, false);
+    await convo.sendTokenResponse(connectionName, conversationId, false);
   });
 
-  //---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Opens an OAuth login window
   CommandRegistry.registerCommand('oauth:create-oauth-window', async (url: string, conversationId: string) => {
-    const conversation = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
-    windowManager.createOAuthWindow(url, conversation.codeVerifier);
+    const convo = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
+    windowManager.createOAuthWindow(url, convo.codeVerifier);
   });
 }

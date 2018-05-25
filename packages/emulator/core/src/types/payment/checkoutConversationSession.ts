@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-interface ICheckoutConversationSession {
+interface CheckoutConversationSession {
     paymentActivityId: string;
     checkoutConversationId: string;
     checkoutFromId: string;
 }
 
-export default ICheckoutConversationSession
+export default CheckoutConversationSession;

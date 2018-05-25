@@ -31,16 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import IPaymentDetailsModifier from './detailsModifier';
-import IPaymentItem from './item';
-import IPaymentShippingOption from './shippingOption';;
+import PaymentDetailsModifier from './detailsModifier';
+import PaymentItem from './item';
+import PaymentShippingOption from './shippingOption';
 
-interface IPaymentDetails {
-  total: IPaymentItem,
-  displayItems: IPaymentItem[],
-  shippingOptions: IPaymentShippingOption[],
-  modifiers: IPaymentDetailsModifier[],
-  error: string
+interface PaymentDetails {
+  total: PaymentItem;
+  displayItems: PaymentItem[];
+  shippingOptions: PaymentShippingOption[];
+  modifiers: PaymentDetailsModifier[];
+  error: string;
 }
 
-export default IPaymentDetails
+export default PaymentDetails;

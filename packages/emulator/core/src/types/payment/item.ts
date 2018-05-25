@@ -31,12 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import IPaymentCurrencyAmount from './currencyAmount';
+import PaymentCurrencyAmount from './currencyAmount';
 
-interface IPaymentItem {
-  label: string,
-  pending?: boolean,
-  amount: IPaymentCurrencyAmount
+interface PaymentItem {
+  label: string;
+  pending?: boolean;
+  amount: PaymentCurrencyAmount;
 }
 
-export default IPaymentItem
+export default PaymentItem;

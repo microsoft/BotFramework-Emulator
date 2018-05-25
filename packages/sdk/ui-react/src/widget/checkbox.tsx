@@ -1,3 +1,4 @@
+/* tslint:disable:max-line-length */
 //
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
@@ -120,20 +121,17 @@ export class Checkbox extends React.Component<CheckboxProps, {}> {
     className: '',
     inputClass: '',
     tabIndex: 0
-  }
-
-  constructor(props: CheckboxProps, context) {
-    super(props, context);
-  }
+  };
 
   render(): JSX.Element {
     const { checked, label, id, onChange, className, inputClass, tabIndex } = this.props;
     return (
       <div className={ `${className} checkbox-comp` } { ...CSS }>
-        <input className={ className } type="checkbox" checked={ checked } onChange={ onChange } id={ id } tabIndex={ tabIndex } />
+        <input className={ className } type="checkbox" checked={ checked } onChange={ onChange } id={ id }
+               tabIndex={ tabIndex }/>
         <span className="img-unchecked"></span>
-        <img className="img-checked" src={ require('../media/ic_checkbox_checked.svg') } />
-        <img className="img-checked-disabled" src={ require('../media/ic_checkbox_checked_disabled.svg') } />
+        <img className="img-checked" src={ require('../media/ic_checkbox_checked.svg') }/>
+        <img className="img-checked-disabled" src={ require('../media/ic_checkbox_checked_disabled.svg') }/>
         <label htmlFor={ id } data-checked={ checked }>{ label }</label>
       </div>
     );

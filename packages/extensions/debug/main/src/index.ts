@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IPC, CommandService, IActivity } from '@bfemulator/sdk-shared';
+import { IPC, CommandServiceImpl, Activity } from '@bfemulator/sdk-shared';
 import { ProcessIPC, WebSocketIPC, stayAlive } from '@bfemulator/sdk-main';
 import * as path from 'path';
 const config = require('../../bf-extension.json');
@@ -59,7 +59,7 @@ if (process.send) {
   config.node.debug.webpack.host = config.node.debug.websocket.host || "localhost";
   ipc = new WebSocketIPC(`http://${config.node.debug.websocket.host}:${config.node.debug.websocket.port}`);
   ipc.id = process.pid;
-  const connector = new CommandService(ipc, 'connector');
+  const connector = new CommandServiceImpl(ipc, 'connector');
   connector.on('hello', () => {
     return {
       id: ipc.id,
@@ -68,7 +68,7 @@ if (process.send) {
     }});
 }
 
-const commands = new CommandService(ipc, `ext-${ipc.id}`);
+const commands = new CommandServiceImpl(ipc, `ext-${ipc.id}`);
 
 //commands.remoteCall('ext-ping')
 //  .then(reply => console.log(reply))
@@ -87,7 +87,7 @@ commands.on('ext-ping', () => {
   return '[Debug Ext] ext-pong';
 });
 
-commands.on('get-inspector-url', (activities: IActivity[]): string => {
+commands.on('get-inspector-url', (activities: Activity[]): string => {
   const encodedActivities = encodeURIComponent(JSON.stringify(activities));
   return `client/inspect.html?activities=${encodedActivities}`;
 });

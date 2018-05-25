@@ -31,17 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ICardAction from './cardAction';
-import ICardImage from './cardImage';
+import CardAction from './cardAction';
+import CardImage from './cardImage';
 
-interface IReceiptItem {
+interface ReceiptItem {
   title: string;                  // Title of the Card
   subtitle: string;               // Subtitle appears just below Title field, differs from Title in font styling only
   text: string;                   // Text field appears just below subtitle, differs from Subtitle in font styling only
-  image: ICardImage;
+  image: CardImage;
   price: string;                  // Amount with currency
   quantity: string;               // Number of items of given kind
-  tap: ICardAction;                   // This action will be activated when user taps on the Item bubble.
+  tap: CardAction;                   // This action will be activated when user taps on the Item bubble.
 }
 
-export default IReceiptItem
+export default ReceiptItem;

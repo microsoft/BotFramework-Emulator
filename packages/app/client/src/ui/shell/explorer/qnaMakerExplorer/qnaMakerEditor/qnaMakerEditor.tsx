@@ -38,8 +38,8 @@ import * as React from 'react';
 import { Component, SyntheticEvent } from 'react';
 
 interface QnaMakerEditorProps {
-  qnaMakerService: IQnAService,
-  cancel: () => void,
+  qnaMakerService: IQnAService;
+  cancel: () => void;
   updateQnaMakerService: (updatedQnaMakerService: IQnAService) => void;
 }
 
@@ -50,7 +50,7 @@ interface QnaMakerEditorState {
   hostnameError: string;
   endpointKeyError: string;
   kbIdError: string;
-  isDirty: boolean
+  isDirty: boolean;
 }
 
 const title = 'Add a QnA Maker knowledge base';
@@ -64,29 +64,53 @@ export class QnaMakerEditor extends Component<QnaMakerEditorProps, QnaMakerEdito
 
   public state: QnaMakerEditorState = {} as QnaMakerEditorState;
 
-  constructor(props, state) {
+  constructor(props: QnaMakerEditorProps, state: QnaMakerEditorState) {
     super(props, state);
-    const qnaMakerService = new QnaMakerService(props.qnaMakerService);
-    this.state = { qnaMakerService, nameError: '', kbIdError: '', subscriptionKeyError: '', endpointKeyError: '', hostnameError: '', isDirty: false };
+    const qnaMakerService = new QnaMakerService(Object.assign({ hostname: '' }, props.qnaMakerService));
+    this.state = {
+      qnaMakerService,
+      nameError: '',
+      kbIdError: '',
+      subscriptionKeyError: '',
+      endpointKeyError: '',
+      hostnameError: '',
+      isDirty: false
+    };
   }
 
   public componentWillReceiveProps(nextProps: Readonly<QnaMakerEditorProps>): void {
-    const qnaMakerService = new QnaMakerService(nextProps.qnaMakerService);
+    const qnaMakerService = new QnaMakerService(Object.assign({ hostname: '' }, nextProps.qnaMakerService));
     this.setState({ qnaMakerService });
   }
 
   public render(): JSX.Element {
-    const { qnaMakerService, kbIdError, nameError, subscriptionKeyError, hostnameError, endpointKeyError, isDirty } = this.state;
+    const {
+      qnaMakerService,
+      kbIdError,
+      nameError,
+      subscriptionKeyError,
+      hostnameError,
+      endpointKeyError,
+      isDirty
+    } = this.state;
     const { name = '', subscriptionKey = '', hostname = '', endpointKey = '', kbId = '' } = qnaMakerService;
     const valid = !!kbId && !!name && !!subscriptionKey && !!hostname && !!endpointKey;
     return (
-      <Modal cssOverrides={ modalCssOverrides } title={ title } detailedDescription={ detailedDescription } cancel={ this.onCancelClick }>
+      <Modal cssOverrides={ modalCssOverrides } title={ title } detailedDescription={ detailedDescription }
+             cancel={ this.onCancelClick }>
         <ModalContent>
-          <TextInputField error={ nameError } value={ name } onChange={ this.onInputChange } label="Name" required={ true } inputAttributes={ { 'data-propname': 'name' } }/>
-          <TextInputField error={ subscriptionKeyError } value={ subscriptionKey } onChange={ this.onInputChange } label="Subscription key" required={ true } inputAttributes={ { 'data-propname': 'subscriptionKey' } }/>
-          <TextInputField error={ hostnameError } value={ hostname } onChange={ this.onInputChange } label="Host name" required={ true } inputAttributes={ { 'data-propname': 'hostname' } }/>
-          <TextInputField error={ endpointKeyError } value={ endpointKey } onChange={ this.onInputChange } label="Endpoint Key" required={ true } inputAttributes={ { 'data-propname': 'endpointKey' } }/>
-          <TextInputField error={ kbIdError } value={ kbId } onChange={ this.onInputChange } label="Knowledge base Id" required={ true } inputAttributes={ { 'data-propname': 'kbId' } }/>
+          <TextInputField error={ nameError } value={ name } onChange={ this.onInputChange } label="Name"
+                          required={ true } inputAttributes={ { 'data-propname': 'name' } }/>
+          <TextInputField error={ subscriptionKeyError } value={ subscriptionKey } onChange={ this.onInputChange }
+                          label="Subscription key" required={ true }
+                          inputAttributes={ { 'data-propname': 'subscriptionKey' } }/>
+          <TextInputField error={ hostnameError } value={ hostname } onChange={ this.onInputChange } label="Host name"
+                          required={ true } inputAttributes={ { 'data-propname': 'hostname' } }/>
+          <TextInputField error={ endpointKeyError } value={ endpointKey } onChange={ this.onInputChange }
+                          label="Endpoint Key" required={ true }
+                          inputAttributes={ { 'data-propname': 'endpointKey' } }/>
+          <TextInputField error={ kbIdError } value={ kbId } onChange={ this.onInputChange } label="Knowledge base Id"
+                          required={ true } inputAttributes={ { 'data-propname': 'kbId' } }/>
         </ModalContent>
         <ModalActions>
           <PrimaryButton text="Cancel" secondary={ true } onClick={ this.onCancelClick }/>
@@ -96,13 +120,13 @@ export class QnaMakerEditor extends Component<QnaMakerEditorProps, QnaMakerEdito
     );
   }
 
-  private onCancelClick = (event: SyntheticEvent<HTMLButtonElement>): void => {
+  private onCancelClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
     this.props.cancel();
-  };
+  }
 
-  private onSubmitClick = (event: SyntheticEvent<HTMLButtonElement>): void => {
+  private onSubmitClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
     this.props.updateQnaMakerService(this.state.qnaMakerService);
-  };
+  }
 
   private onInputChange = (event: SyntheticEvent<HTMLInputElement>): void => {
     const { currentTarget: input } = event;
@@ -111,12 +135,13 @@ export class QnaMakerEditor extends Component<QnaMakerEditorProps, QnaMakerEdito
 
     const { qnaMakerService: originalQnaMakerService } = this.props;
     const propName = input.getAttribute('data-propname');
-    const errorMessage = ( required && !trimmedValue ) ? `The field cannot be empty` : '';
+    const errorMessage = (required && !trimmedValue) ? `The field cannot be empty` : '';
 
     const { qnaMakerService } = this.state;
     qnaMakerService[propName] = trimmedValue;
 
-    const isDirty = Object.keys(qnaMakerService).reduce((isDirty, key) => ( isDirty || qnaMakerService[key] !== originalQnaMakerService[key] ), false);
+    const isDirty = Object.keys(qnaMakerService)
+      .reduce((dirty, key) => (dirty || qnaMakerService[key] !== originalQnaMakerService[key]), false);
     this.setState({ qnaMakerService, [`${propName}Error`]: errorMessage, isDirty } as any);
-  };
+  }
 }

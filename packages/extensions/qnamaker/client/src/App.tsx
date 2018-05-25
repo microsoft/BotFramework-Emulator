@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IInspectorHost } from '@bfemulator/sdk-client';
-import { Colors, Fonts, Splitter } from '@bfemulator/ui-react';
+import { InspectorHost } from '@bfemulator/sdk-client';
+import { Colors, Fonts, GlobalCss, Splitter } from '@bfemulator/ui-react';
 import { css } from 'glamor';
 import * as React from 'react';
 import { IBotConfig, IQnAService, ServiceType } from 'msbot/bin/schema';
@@ -44,7 +44,7 @@ import PhrasingsView from './Views/PhrasingsView';
 import AnswersView from './Views/AnswersView';
 import AppStateAdapter from './AppStateAdapter';
 
-let $host: IInspectorHost = (window as any).host;
+let $host: InspectorHost = (window as any).host;
 const QnAApiBasePath = 'https://westus.api.cognitive.microsoft.com/qnamaker/v4.0';
 const TrainAccessoryId = 'train';
 const PublishAccessoryId = 'publish';
@@ -53,41 +53,15 @@ const AccessoryWorkingState = 'working';
 
 let persistentStateKey = Symbol('persistentState').toString();
 
-// TODO: Get these from @bfemulator/react-ui once they're available
-css.global('html, body, #root', {
-  backgroundColor: Colors.APP_BACKGROUND_DARK,
-  cursor: 'default',
-  fontSize: '13px',
-  height: '100%',
-  margin: 0,
-  minHeight: '100%',
-  overflow: 'hidden',
-  userSelect: 'none',
+let globalCss = {
   whiteSpace: 'nowrap',
   width: '100%',
   color: 'white',
-  fontFamily: Fonts.FONT_FAMILY_DEFAULT,
-});
+};
 
-css.global('div', {
-  boxSizing: 'border-box',
-});
-
-css.global('::-webkit-scrollbar', {
-  width: '10px',
-  height: '10px',
-});
-
-css.global('::-webkit-scrollbar-track', {
-  background: Colors.SCROLLBAR_TRACK_BACKGROUND_DARK,
-});
-
-css.global('::-webkit-scrollbar-thumb', {
-  background: Colors.SCROLLBAR_THUMB_BACKGROUND_DARK,
-});
+GlobalCss.setCss(globalCss);
 
 const AppCss = css({
-  backgroundColor: Colors.APP_BACKGROUND_DARK,
   height: '100%',
   fontSize: '12px',
   padding: '5px',

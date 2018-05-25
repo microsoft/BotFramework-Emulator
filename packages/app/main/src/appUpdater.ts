@@ -31,14 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { autoUpdater as electronUpdater, UpdateCheckResult, UpdateInfo } from "electron-updater";
-import * as path from "path";
-import * as process from "process";
-import { mainWindow } from './main';
-var pjson = require('../../package.json');
+import { autoUpdater as electronUpdater, UpdateInfo } from 'electron-updater';
+import * as process from 'process';
 import * as semver from 'semver';
 import { EventEmitter } from 'events';
 import { ProgressInfo } from 'builder-util-runtime';
+
+const pjson = require('../../package.json');
 
 export enum UpdateStatus {
   Idle,
@@ -59,7 +58,7 @@ export const AppUpdater = new class extends EventEmitter {
   public get status(): UpdateStatus { return this._status; }
 
   startup() {
-    let allowUpdateCheck = (process.argv.indexOf("--no-update") == -1);
+    let allowUpdateCheck = (process.argv.indexOf('--no-update') === -1);
     this._allowPrerelease = (process.argv.indexOf('--prerelease') >= 0);
 
     // Allow update to prerelease if this is a prerelease
@@ -71,9 +70,9 @@ export const AppUpdater = new class extends EventEmitter {
     electronUpdater.logger = null;
 
     electronUpdater.setFeedURL({
-      repo: "BotFramework-Emulator",
-      owner: "Microsoft",
-      provider: "github"
+      repo: 'BotFramework-Emulator',
+      owner: 'Microsoft',
+      provider: 'github'
     });
 
     electronUpdater.on('checking-for-update', () => {
@@ -134,4 +133,4 @@ export const AppUpdater = new class extends EventEmitter {
       console.error(e);
     }
   }
-}
+};

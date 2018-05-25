@@ -1,3 +1,4 @@
+/* tslint:disable:max-line-length */
 //
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
@@ -42,14 +43,10 @@ export interface ModalProps {
   cssOverrides?: {};
   closeButtonCssOverrides?: {};
   detailedDescription?: string;
-  cancel: (event: SyntheticEvent<HTMLButtonElement>) => void
+  cancel: (event: SyntheticEvent<HTMLButtonElement>) => void;
 }
 
 export class Modal extends Component<ModalProps, {}> {
-
-  constructor(props, context) {
-    super(props, context);
-  }
 
   public render(): JSX.Element {
     const { cssOverrides = {}, children, detailedDescription = '' } = this.props;
@@ -72,7 +69,7 @@ export class Modal extends Component<ModalProps, {}> {
     return (
       <header>
         <button tabIndex={ 0 } { ...merge(this.closeButtonCss, closeButtonCssOverrides) } onClick={ cancel }>
-          <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='1 1 16 16'>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="1 1 16 16">
             <g>
               <polygon
                 points="14.1015625 2.6015625 8.7109375 8 14.1015625 13.3984375 13.3984375 14.1015625 8 8.7109375 2.6015625 14.1015625 1.8984375 13.3984375 7.2890625 8 1.8984375 2.6015625 2.6015625 1.8984375 8 7.2890625 13.3984375 1.8984375"/>

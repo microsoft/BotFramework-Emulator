@@ -47,7 +47,7 @@ export interface LuisProps extends ServicePaneProps {
 export class LuisExplorer extends ServicePane<LuisProps> {
   public state = {} as { expanded?: boolean };
 
-  constructor(props, context) {
+  constructor(props: LuisProps, context: {}) {
     super(props, context);
   }
 
@@ -64,7 +64,7 @@ export class LuisExplorer extends ServicePane<LuisProps> {
     const { index } = currentTarget.dataset;
     const { [index]: luisService } = this.props.luisServices;
     this.props.openLuisDeepLink(luisService);
-  };
+  }
 
   protected onContextMenuOverLiElement(li: HTMLLIElement) {
     super.onContextMenuOverLiElement(li);
@@ -73,7 +73,7 @@ export class LuisExplorer extends ServicePane<LuisProps> {
     this.props.openContextMenu(new LuisService(luisService), LuisEditorContainer);
   }
 
-  protected onAddIconClick = (event: SyntheticEvent<HTMLButtonElement>): void => {
+  protected onAddIconClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
     this.props.launchLuisEditor(LuisEditorContainer);
-  };
+  }
 }

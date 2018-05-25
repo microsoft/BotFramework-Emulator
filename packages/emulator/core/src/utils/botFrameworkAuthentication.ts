@@ -35,7 +35,6 @@ import * as jwt from 'jsonwebtoken';
 import * as Restify from 'restify';
 
 import { authentication, v31Authentication, v32Authentication } from '../authEndpoints';
-import BotEmulator from '../botEmulator';
 import OpenIdMetadata from './openIdMetadata';
 
 export default function createBotFrameworkAuthenticationMiddleware(fetch: any) {
@@ -89,7 +88,7 @@ export default function createBotFrameworkAuthenticationMiddleware(fetch: any) {
     try {
       // TODO: Turn jwt.verify into async call for better performance
       // first try 3.2 token characteristics
-      req['jwt'] = jwt.verify(token, key, {
+      (req as any).jwt = jwt.verify(token, key, {
         audience: authentication.botTokenAudience,
         clockTolerance: 300,
         issuer,
@@ -104,7 +103,7 @@ export default function createBotFrameworkAuthenticationMiddleware(fetch: any) {
     } catch (err) {
       try {
         // then try v3.1 token characteristics
-        req['jwt'] = jwt.verify(token, key, {
+        (req as any).jwt = jwt.verify(token, key, {
           audience: authentication.botTokenAudience,
           clockTolerance: 300,
           issuer: v31Authentication.tokenIssuer,

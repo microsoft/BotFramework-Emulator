@@ -33,9 +33,9 @@
 
 import { getBotDisplayName } from '@bfemulator/app-shared';
 import { IBotConfig, IEndpointService, ServiceType } from 'msbot/bin/schema';
-import { IBotConfigWithPath } from '@bfemulator/sdk-shared';
+import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 import { hasNonGlobalTabs } from '../../data/editorHelpers';
-import { CommandService } from '../../platform/commands/commandService';
+import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { getActiveBot } from '../../data/botHelpers';
 import * as BotActions from '../../data/action/botActions';
 import * as Constants from '../../constants';
@@ -48,7 +48,7 @@ import store from '../../data/store';
 export const ActiveBotHelper = new class {
   async confirmSwitchBot(): Promise<any> {
     if (hasNonGlobalTabs()) {
-      return await CommandService.remoteCall(
+      return await CommandServiceImpl.remoteCall(
         'shell:show-message-box',
         true,
         {
@@ -66,12 +66,13 @@ export const ActiveBotHelper = new class {
 
   confirmCloseBot(): Promise<any> {
     const hasTabs = hasNonGlobalTabs();
+    // TODO - localization
     if (hasTabs) {
-      return CommandService.remoteCall('shell:show-message-box', true, {
+      return CommandServiceImpl.remoteCall('shell:show-message-box', true, {
         type: 'question',
-        buttons: ["Cancel", "OK"],
+        buttons: ['Cancel', 'OK'],
         defaultId: 1,
-        message: "Close active bot? All tabs will be closed.",
+        message: 'Close active bot? All tabs will be closed.',
         cancelId: 0,
       });
     } else {
@@ -82,13 +83,17 @@ export const ActiveBotHelper = new class {
   /** Uses a .bot path and perform a read on the server-side to populate the corresponding bot object */
   async setActiveBot(botPath: string): Promise<any> {
     try {
-      const { bot, botDirectory }: { bot: IBotConfig, botDirectory: string } = await CommandService.remoteCall('bot:set-active', botPath);
+      const {
+        bot,
+        botDirectory
+      }: { bot: IBotConfig, botDirectory: string }
+        = await CommandServiceImpl.remoteCall('bot:set-active', botPath);
 
       store.dispatch(BotActions.setActive(bot));
       store.dispatch(FileActions.setRoot(botDirectory));
 
-      CommandService.remoteCall('menu:update-recent-bots');
-      CommandService.remoteCall('electron:set-title-bar', getBotDisplayName(bot));
+      CommandServiceImpl.remoteCall('menu:update-recent-bots');
+      CommandServiceImpl.remoteCall('electron:set-title-bar', getBotDisplayName(bot));
     } catch (err) {
       console.error('Error while setting active bot: ', err);
 
@@ -98,11 +103,11 @@ export const ActiveBotHelper = new class {
 
   /** tell the server-side the active bot is now closed */
   closeActiveBot(): Promise<any> {
-    return CommandService.remoteCall('bot:close')
-    .then(() => {
-      store.dispatch(BotActions.close());
-      CommandService.remoteCall('electron:set-title-bar', '');
-    } )
+    return CommandServiceImpl.remoteCall('bot:close')
+      .then(() => {
+        store.dispatch(BotActions.close());
+        CommandServiceImpl.remoteCall('electron:set-title-bar', '');
+      })
       .catch(err => {
         console.error('Error while closing active bot: ', err);
         throw new Error(`Error while closing active bot: ${err}`);
@@ -110,27 +115,29 @@ export const ActiveBotHelper = new class {
   }
 
   async botAlreadyOpen(): Promise<any> {
-    return await CommandService.remoteCall(
+    // TODO - localization
+    return await CommandServiceImpl.remoteCall(
       'shell:show-message-box',
       true,
       {
         buttons: ['OK'],
         cancelId: 0,
         defaultId: 0,
-        message: 'This bot is already open. If you\'d like to start a conversation, click on an endpoint from the Bot Explorer pane.',
+        message: 'This bot is already open. If you\'d like to start a conversation, ' +
+        'click on an endpoint from the Bot Explorer pane.',
         type: 'question'
       }
     );
   }
 
-  async confirmAndCreateBot(botToCreate: IBotConfigWithPath, secret: string): Promise<any> {
+  async confirmAndCreateBot(botToCreate: BotConfigWithPath, secret: string): Promise<any> {
     const result = await this.confirmSwitchBot();
 
     if (result) {
       store.dispatch(EditorActions.closeNonGlobalTabs());
 
       try {
-        const bot: IBotConfigWithPath = await CommandService.remoteCall('bot:create', botToCreate, secret);
+        const bot: BotConfigWithPath = await CommandServiceImpl.remoteCall('bot:create', botToCreate, secret);
 
         // TODO: What are we achieving with this async function here?
         store.dispatch(async () => {
@@ -138,11 +145,14 @@ export const ActiveBotHelper = new class {
 
           await this.setActiveBot(bot.path);
 
-          const endpoint: IEndpointService = bot.services.find(service => service.type === ServiceType.Endpoint) as IEndpointService;
+          const endpoint: IEndpointService = bot.services
+            .find(service => service.type === ServiceType.Endpoint) as IEndpointService;
 
-          endpoint && CommandService.call('livechat:new', endpoint);
+          if (endpoint) {
+            CommandServiceImpl.call('livechat:new', endpoint);
+          }
 
-          store.dispatch(NavBarActions.select(Constants.NavBar_Bot_Explorer));
+          store.dispatch(NavBarActions.select(Constants.NAVBAR_BOT_EXPLORER));
           store.dispatch(ExplorerActions.show(true));
         });
       } catch (err) {
@@ -152,7 +162,7 @@ export const ActiveBotHelper = new class {
   }
 
   browseForBotFile(): Promise<any> {
-    return CommandService.remoteCall(
+    return CommandServiceImpl.remoteCall(
       'shell:showOpenDialog',
       {
         buttonLabel: 'Choose file',
@@ -168,7 +178,7 @@ export const ActiveBotHelper = new class {
 
   async confirmAndOpenBotFromFile(): Promise<any> {
     try {
-      const filename = await this.browseForBotFile()
+      const filename = await this.browseForBotFile();
 
       if (filename) {
         let activeBot = getActiveBot();
@@ -182,7 +192,7 @@ export const ActiveBotHelper = new class {
 
           if (result) {
             store.dispatch(EditorActions.closeNonGlobalTabs());
-            CommandService.remoteCall('bot:load', filename);
+            await CommandServiceImpl.remoteCall('bot:load', filename);
           }
         } catch (err) {
           console.error('Error while calling confirmSwitchBot: ', err);
@@ -213,11 +223,14 @@ export const ActiveBotHelper = new class {
         await this.setActiveBot(botPath);
 
         const bot = getActiveBot();
-        const endpoint: IEndpointService = bot.services.find(service => service.type === ServiceType.Endpoint) as IEndpointService;
+        const endpoint: IEndpointService = bot.services
+          .find(service => service.type === ServiceType.Endpoint) as IEndpointService;
 
-        endpoint && CommandService.call('livechat:new', endpoint);
+        if (endpoint) {
+          await CommandServiceImpl.call('livechat:new', endpoint);
+        }
 
-        store.dispatch(NavBarActions.select(Constants.NavBar_Bot_Explorer));
+        store.dispatch(NavBarActions.select(Constants.NAVBAR_BOT_EXPLORER));
         store.dispatch(ExplorerActions.show(true));
       }
     } catch (err) {
@@ -227,8 +240,9 @@ export const ActiveBotHelper = new class {
 
   confirmAndCloseBot(): Promise<any> {
     let activeBot = getActiveBot();
-    if (!activeBot)
+    if (!activeBot) {
       return Promise.resolve();
+    }
 
     console.log(`Closing active bot`);
 
@@ -242,5 +256,4 @@ export const ActiveBotHelper = new class {
       })
       .catch(err => console.error('Error while closing active bot: ', err));
   }
-
-}
+};

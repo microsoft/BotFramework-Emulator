@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IInspectorHost } from '@bfemulator/sdk-client';
-import { Colors, Splitter } from '@bfemulator/ui-react';
+import { Colors, Fonts, GlobalCss, Splitter } from '@bfemulator/ui-react';
+import { InspectorHost } from '@bfemulator/sdk-client';
 import { css } from 'glamor';
 import { IBotConfig, IDispatchService, ILuisService, ServiceType, IConnectedService } from 'msbot/bin/schema';
 import * as React from 'react';
@@ -49,7 +49,7 @@ import { IntentInfo } from './Luis/IntentInfo';
 import { LuisAppInfo } from './Models/LuisAppInfo';
 import { LuisTraceInfo } from './Models/LuisTraceInfo';
 
-let $host: IInspectorHost = (window as any).host;
+let $host: InspectorHost = (window as any).host;
 const LuisApiBasePath = 'https://westus.api.cognitive.microsoft.com/luis/api/v2.0';
 const TrainAccessoryId = 'train';
 const PublichAccessoryId = 'publish';
@@ -58,51 +58,27 @@ const AccessoryWorkingState = 'working';
 
 let persistentStateKey = Symbol('persistentState').toString();
 
-// TODO: Get these from @bfemulator/react-ui once they're available
-css.global('html, body, #root', {
-  backgroundColor: Colors.APP_BACKGROUND_DARK,
-  cursor: 'default',
-  fontSize: '13px',
-  height: '100%',
-  margin: 0,
-  minHeight: '100%',
-  overflow: 'hidden',
-  userSelect: 'none',
+let globalCss = {
   whiteSpace: 'nowrap',
   width: '622px'
-});
+};
 
-css.global('div', {
-  boxSizing: 'border-box',
-});
-
-css.global('::-webkit-scrollbar', {
-  width: '10px',
-  height: '10px',
-});
-
-css.global('::-webkit-scrollbar-track', {
-  background: Colors.SCROLLBAR_TRACK_BACKGROUND_DARK,
-});
-
-css.global('::-webkit-scrollbar-thumb', {
-  background: Colors.SCROLLBAR_THUMB_BACKGROUND_DARK,
-});
+GlobalCss.setCss(globalCss);
 
 let appCss = {
-  backgroundColor: Colors.APP_BACKGROUND_DARK,
   height: '100%',
-  fontFamily: 'Segoe UI, sans-serif',
   fontSize: '12px',
   padding: '5px'
 };
 
 let jsonViewerCss = {
-  overflowY: 'auto',
-  paddingTop: '10px'
-};
-
-jsonViewerCss = Object.assign({}, appCss, jsonViewerCss);
+    overflowY: 'auto',
+    paddingTop: '10px',
+    paddingBottom: '10px',
+    height: '95%',
+    backgroundColor: Colors.APP_BACKGROUND_DARK,
+    fontFamily: Fonts.FONT_FAMILY_DEFAULT,
+  };
 
 const APP_CSS = css(appCss);
 
@@ -232,25 +208,28 @@ class App extends Component<any, AppState> {
           setButtonSelected={this.setControlButtonSelected}
           buttonSelected={this.state.controlBarButtonSelected}
         />
-        <Splitter orientation={'vertical'} primaryPaneIndex={0} minSizes={{ 0: 306, 1: 306 }} initialSizes={{ 0: 306 }}>
-          <ReactJson
-            name={this.state.controlBarButtonSelected === ButtonSelected.RecognizerResult ?
-                  'recognizerResult' :
-                  'luisResponse' }
-            src={this.state.controlBarButtonSelected === ButtonSelected.RecognizerResult ?
-                this.state.traceInfo.recognizerResult :
-                this.state.traceInfo.luisResult}
-            theme="monokai"
-            style={jsonViewerCss}
-          />
-          <Editor
-            recognizerResult={this.state.traceInfo.recognizerResult}
-            intentInfo={this.state.intentInfo}
-            intentReassigner={this.reassignIntent}
-            appInfo={this.state.appInfo}
-            traceId={this.state.id}
-          />
-        </Splitter>
+          <Splitter orientation={'vertical'}
+                    primaryPaneIndex={0}
+                    minSizes={{ 0: 306, 1: 306 }}
+                    initialSizes={{ 0: 306 }}>
+            <ReactJson
+              name={this.state.controlBarButtonSelected === ButtonSelected.RecognizerResult ?
+                    'recognizerResult' :
+                    'luisResponse' }
+              src={this.state.controlBarButtonSelected === ButtonSelected.RecognizerResult ?
+                  this.state.traceInfo.recognizerResult :
+                  this.state.traceInfo.luisResult}
+              theme="monokai"
+              style={jsonViewerCss}
+            />
+            <Editor
+              recognizerResult={this.state.traceInfo.recognizerResult}
+              intentInfo={this.state.intentInfo}
+              intentReassigner={this.reassignIntent}
+              appInfo={this.state.appInfo}
+              traceId={this.state.id}
+            />
+          </Splitter>
       </div>
     );
   }

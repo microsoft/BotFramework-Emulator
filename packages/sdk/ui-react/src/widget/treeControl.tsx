@@ -34,7 +34,7 @@
 import * as React from 'react';
 import { Component } from 'react';
 
-export interface HierarchicalDataProps<T={}, R={}> {
+export interface HierarchicalDataProps<T= {}, R= {}> {
   items: IterableIterator<T> | Array<T>;
   dataProvider: NodeListDataProvider<T>;
   getChildren: (parent: any) => Promise<R> | IterableIterator<R>;
@@ -48,7 +48,7 @@ export interface HierarchicalDataProps<T={}, R={}> {
 export abstract class TreeControl<P extends HierarchicalDataProps, S = {}> extends Component<P, S> {
   private roots: Map<any, HTMLElement> = new Map();
 
-  protected constructor(props, context) {
+  protected constructor(props: P, context: S) {
     super(props, context);
   }
 
@@ -62,7 +62,7 @@ export abstract class TreeControl<P extends HierarchicalDataProps, S = {}> exten
 }
 
 export class NodeListDataProvider<T> extends Array<T> {
-  public childrenFunction?: (parent) => Array<T>;
+  public childrenFunction?: (parent: any) => Array<T>;
   public childrenField?: PropertyKey;
 
   private childNodes: Map<any, NodeListDataProvider<T>> = new Map();
@@ -76,7 +76,7 @@ export class NodeListDataProvider<T> extends Array<T> {
     return Array;
   }
 
-  constructor(source: Array<T>, childrenField?: PropertyKey, childrenFunction?: (parent) => Array<T>) {
+  constructor(source: Array<T>, childrenField?: PropertyKey, childrenFunction?: (parent: any) => Array<T>) {
     super();
     Object.assign(this, { childrenField, childrenFunction });
 
@@ -86,24 +86,24 @@ export class NodeListDataProvider<T> extends Array<T> {
     return new Proxy(this, this as any);
   }
 
-  public addChangeHandler = (handler: (changes) => void): () => void => {
+  public addChangeHandler = (handler: (changes: any) => void): () => void => {
     const { changeHandlers } = this;
     changeHandlers.set(handler, true);
 
     return function () {
       changeHandlers.delete(handler);
     };
-  };
+  }
 
   public getPrototypeOf(): {} {
     return NodeListDataProvider.prototype;
   }
 
-  public removeChangeHandler = (handler: (changes) => void): void => {
+  public removeChangeHandler = (handler: (changes: any) => void): void => {
     this.changeHandlers.delete(handler);
-  };
+  }
 
-  public getChildren(parent): NodeListDataProvider<T> {
+  public getChildren(parent: any): NodeListDataProvider<T> {
     const { childNodes } = this;
     if (childNodes.has(parent)) {
       return childNodes.get(parent);
@@ -122,7 +122,7 @@ export class NodeListDataProvider<T> extends Array<T> {
     return provider;
   }
 
-  public openNode(parent): NodeListDataProvider<T> {
+  public openNode(parent: any): NodeListDataProvider<T> {
     const { openNodes } = this;
     if (openNodes.has(parent)) {
       return openNodes.get(parent);
@@ -134,12 +134,13 @@ export class NodeListDataProvider<T> extends Array<T> {
     return children;
   }
 
-  public closeNode(parent):void {
-
+  public closeNode(parent: any): void {
+    return null;
   }
 
   private internalChangeHandler = (changes: Array<T>) => {
-  };
+    return null;
+  }
 
   private queueNotification(type: string, change: any): void {
     this.queuedChanges.push({ type, change });
@@ -158,7 +159,8 @@ export class NodeListDataProvider<T> extends Array<T> {
     });
   }
 
-  private set(target: Array<T>, prop: PropertyKey, value: ProxyConstructor, receiver: any): Function[] | Function | any {
+  private set(target: Array<T>, prop: PropertyKey, value: ProxyConstructor, receiver: any)
+    : Function[] | Function | any {
     target[prop] = value;
     this.queueNotification('nodeAdded', { position: prop, value });
   }

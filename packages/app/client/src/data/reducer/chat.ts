@@ -32,27 +32,24 @@
 //
 
 import * as ChatActions from '../action/chatActions';
-import * as EditorActions from '../action/editorActions';
 import { ChatAction } from '../action/chatActions';
+import * as EditorActions from '../action/editorActions';
 import { EditorAction } from '../action/editorActions';
 
-// TODO: Should be defined and maybe added to shared
-interface IChat {}
-
-export interface IChatState {
+export interface ChatState {
   changeKey?: number;
-  // TODO: keys should map to an IChat
+  // TODO: keys should map to an Chat
   chats?: { [chatId: string]: any };
   transcripts?: string[];
 }
 
-const DEFAULT_STATE: IChatState = {
+const DEFAULT_STATE: ChatState = {
   changeKey: 0,
   chats: {},
   transcripts: [],
-}
+};
 
-export default function chat(state: IChatState = DEFAULT_STATE, action: ChatAction | EditorAction): IChatState {
+export default function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | EditorAction): ChatState {
   switch (action.type) {
     case ChatActions.PING_CHAT_DOCUMENT: {
       const { payload } = action;
@@ -66,7 +63,7 @@ export default function chat(state: IChatState = DEFAULT_STATE, action: ChatActi
             pingId: state.chats[payload.documentId].pingId + 1
           }
         }
-      }
+      };
       break;
     }
 
@@ -101,7 +98,7 @@ export default function chat(state: IChatState = DEFAULT_STATE, action: ChatActi
           ...state.chats,
           [payload.documentId]: { ...payload }
         }
-      }
+      };
       break;
     }
 
@@ -121,7 +118,7 @@ export default function chat(state: IChatState = DEFAULT_STATE, action: ChatActi
         document = {
           ...document,
           ...payload.options
-        }
+        };
         state = {
           ...state,
           chats: {
@@ -130,7 +127,7 @@ export default function chat(state: IChatState = DEFAULT_STATE, action: ChatActi
               ...document
             }
           }
-        }
+        };
       }
       break;
     }
@@ -148,7 +145,7 @@ export default function chat(state: IChatState = DEFAULT_STATE, action: ChatActi
               payload.entry
             ]
           }
-        }
+        };
         state = {
           ...state,
           chats: {
@@ -157,7 +154,7 @@ export default function chat(state: IChatState = DEFAULT_STATE, action: ChatActi
               ...document
             }
           }
-        }
+        };
       }
       break;
     }
@@ -171,7 +168,7 @@ export default function chat(state: IChatState = DEFAULT_STATE, action: ChatActi
           log: {
             entries: []
           }
-        }
+        };
         state = {
           ...state,
           chats: {
@@ -180,7 +177,7 @@ export default function chat(state: IChatState = DEFAULT_STATE, action: ChatActi
               ...document
             }
           }
-        }
+        };
       }
       break;
     }
@@ -192,7 +189,7 @@ export default function chat(state: IChatState = DEFAULT_STATE, action: ChatActi
         document = {
           ...document,
           inspectorObjects: payload.objs
-        }
+        };
       }
       state = {
         ...state,
@@ -202,7 +199,7 @@ export default function chat(state: IChatState = DEFAULT_STATE, action: ChatActi
             ...document
           }
         }
-      }
+      };
       break;
     }
 
@@ -217,7 +214,7 @@ export default function chat(state: IChatState = DEFAULT_STATE, action: ChatActi
   return state;
 }
 
-function setTranscriptsState(transcripts: string[], state: IChatState): IChatState {
+function setTranscriptsState(transcripts: string[], state: ChatState): ChatState {
   let newState = Object.assign({}, state);
 
   newState.transcripts = transcripts;

@@ -36,7 +36,7 @@ let getPem = require('rsa-pem-from-mod-exp');
 
 export default class OpenIdMetadata {
   private lastUpdated = 0;
-  private keys: IKey[];
+  private keys: Key[];
 
   constructor(
     public fetch: any,
@@ -50,20 +50,22 @@ export default class OpenIdMetadata {
     if (this.lastUpdated < (now - 1000 * 60 * 60 * 24 * 5)) {
       try {
         await this.refreshCache();
-      } catch (err) {}
+      } catch {
+        // Do nothing
+      }
     }
 
     return this.findKey(keyId);
   }
 
   private async refreshCache() {
-    const resp1 = await this.fetch(this.url)
+    const resp1 = await this.fetch(this.url);
 
     if (resp1.status >= 400) {
       throw new Error(`Failed to load openID config: ${ resp1.statusCode }`);
     }
 
-    const openIdConfig = <IOpenIdConfig>await resp1.json();
+    const openIdConfig = <OpenIdConfig> await resp1.json();
     const resp2 = await this.fetch(openIdConfig.jwks_uri);
 
     if (resp2.status >= 400) {
@@ -71,7 +73,7 @@ export default class OpenIdMetadata {
     }
 
     this.lastUpdated = new Date().getTime();
-    this.keys = <IKey[]>(await resp2.json()).keys;
+    this.keys = <Key[]> (await resp2.json()).keys;
   }
 
   private findKey(keyId: string): string {
@@ -80,7 +82,7 @@ export default class OpenIdMetadata {
     }
 
     for (let i = 0; i < this.keys.length; i++) {
-      if (this.keys[i].kid == keyId) {
+      if (this.keys[i].kid === keyId) {
         const key = this.keys[i];
 
         if (!key.n || !key.e) {
@@ -96,7 +98,7 @@ export default class OpenIdMetadata {
   }
 }
 
-interface IOpenIdConfig {
+interface OpenIdConfig {
   issuer: string;
   authorization_endpoint: string;
   jwks_uri: string;
@@ -104,7 +106,7 @@ interface IOpenIdConfig {
   token_endpoint_auth_methods_supported: string[];
 }
 
-interface IKey {
+interface Key {
   kty: string;
   use: string;
   kid: string;

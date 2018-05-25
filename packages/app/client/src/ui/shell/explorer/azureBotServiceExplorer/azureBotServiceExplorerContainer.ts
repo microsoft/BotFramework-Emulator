@@ -39,11 +39,11 @@ import {
   openAzureBotServiceDeepLink,
   openAzureBotServiceExplorerContextMenu
 } from '../../../../data/action/azureBotServiceActions';
-import { IRootState } from '../../../../data/store';
+import { RootState } from '../../../../data/store';
 import { AzureBotServiceEditor } from './azureBotServiceEditor/azureBotServiceEditor';
 import { AzureBotServiceExplorer } from './azureBotServiceExplorer';
 
-const mapStateToProps = (state: IRootState) => {
+const mapStateToProps = (state: RootState) => {
   const { services } = state.bot.activeBot;
   return {
     azureBotServices: services.filter(service => service.type === ServiceType.AzureBotService),
@@ -53,9 +53,14 @@ const mapStateToProps = (state: IRootState) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    launchAzureBotServiceEditor: (azureBotServiceEditor: ComponentClass<AzureBotServiceEditor>, azureBotService: IAzureBotService) => dispatch(launchAzureBotServiceEditor(azureBotServiceEditor, azureBotService)),
-    openAzureBotServiceDeepLink: (azureBotService: IAzureBotService) => dispatch(openAzureBotServiceDeepLink(azureBotService)),
-    openContextMenu: (azureBotService: IAzureBotService, azureBotServiceEditor: ComponentClass<AzureBotServiceEditor>) => dispatch(openAzureBotServiceExplorerContextMenu(azureBotServiceEditor, azureBotService)),
+    launchAzureBotServiceEditor: (azureBotServiceEditor: ComponentClass<AzureBotServiceEditor>,
+                                  azureBotService: IAzureBotService) =>
+      dispatch(launchAzureBotServiceEditor(azureBotServiceEditor, azureBotService)),
+    openAzureBotServiceDeepLink: (azureBotService: IAzureBotService) =>
+      dispatch(openAzureBotServiceDeepLink(azureBotService)),
+    openContextMenu: (azureBotService: IAzureBotService,
+                      azureBotServiceEditor: ComponentClass<AzureBotServiceEditor>) =>
+      dispatch(openAzureBotServiceExplorerContextMenu(azureBotServiceEditor, azureBotService)),
   };
 };
 

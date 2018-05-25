@@ -31,5 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export const FONT_FAMILY_DEFAULT = '-apple-system,BlinkMacSystemFont,Segoe WPC,Segoe UI,HelveticaNeue-Light,Ubuntu,Droid Sans,sans-serif';
-export const FONT_FAMILY_MONOSPACE = 'Menlo,Monaco,Consolas,Droid Sans Mono,Courier New,monospace,Droid Sans Fallback';
+export const FONT_FAMILY_DEFAULT = '-apple-system,BlinkMacSystemFont,Segoe WPC,Segoe UI,' +
+  'HelveticaNeue-Light,Ubuntu,Droid Sans,sans-serif';
+export const FONT_FAMILY_MONOSPACE = 'Menlo,Monaco,Consolas,Droid Sans Mono,' +
+  'Courier New,monospace,Droid Sans Fallback';

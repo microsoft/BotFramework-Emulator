@@ -46,7 +46,7 @@ export interface AzureBotServiceProps extends ServicePaneProps {
 export class AzureBotServiceExplorer extends ServicePane<AzureBotServiceProps, {}> {
   public state = {} as { expanded?: boolean };
 
-  constructor(props, context) {
+  constructor(props: AzureBotServiceProps, context: {}) {
     super(props, context);
   }
 
@@ -63,7 +63,7 @@ export class AzureBotServiceExplorer extends ServicePane<AzureBotServiceProps, {
     const { index } = currentTarget.dataset;
     const { [index]: azureBotServiceService } = this.props.azureBotServices;
     this.props.openAzureBotServiceDeepLink(azureBotServiceService);
-  };
+  }
 
   protected onContextMenuOverLiElement(li: HTMLLIElement) {
     super.onContextMenuOverLiElement(li);
@@ -72,7 +72,7 @@ export class AzureBotServiceExplorer extends ServicePane<AzureBotServiceProps, {
     this.props.openContextMenu(azureBotServiceService, AzureBotServiceEditorContainer);
   }
 
-  protected onAddIconClick = (event: SyntheticEvent<HTMLButtonElement>): void => {
+  protected onAddIconClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
     this.props.launchAzureBotServiceEditor(AzureBotServiceEditorContainer);
-  };
+  }
 }

@@ -35,15 +35,9 @@ import { css } from 'glamor';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import {
-  TabBar,
-  TabBarTab,
-  Tab as TabbedDocumentTab,
-  Content as TabbedDocumentContent
-} from './index';
-import { filterChildren } from '@bfemulator/ui-react';
-import { IRootState } from '../../../data/store';
-import { hmrSafeNameComparison } from '@bfemulator/ui-react';
+import { Content as TabbedDocumentContent, Tab as TabbedDocumentTab, TabBar, TabBarTab } from './index';
+import { filterChildren, hmrSafeNameComparison } from '@bfemulator/ui-react';
+import { RootState } from '../../../data/store';
 
 const CSS = css({
   display: 'flex',
@@ -58,26 +52,15 @@ interface MultiTabsProps {
   owningEditor?: string;
   children?: any;
   presentationModeEnabled?: boolean;
-  onChange?: (tabValue) => any;
+  onChange?: (tabValue: any) => any;
 }
 
 class MultiTabsComponent extends React.Component<MultiTabsProps> {
-  private childRefs: HTMLElement[];
+  private readonly childRefs: HTMLElement[] = [];
 
   constructor(props: MultiTabsProps) {
     super(props);
-
-    this.childRefs = [];
   }
-
-  private handleTabClick = (nextValue) => {
-    this.props.onChange && this.props.onChange(nextValue);
-  }
-
-  private setRef = (input) => {
-    this.childRefs.push(input);
-  }
-
 
   render() {
     let children: any[] = [];
@@ -89,23 +72,36 @@ class MultiTabsComponent extends React.Component<MultiTabsProps> {
       <div { ...CSS }>
         {
           !this.props.presentationModeEnabled &&
-          <TabBar owningEditor={ this.props.owningEditor } childRefs={ this.childRefs } activeIndex={ this.props.value }>
+          <TabBar owningEditor={ this.props.owningEditor } childRefs={ this.childRefs }
+                  activeIndex={ this.props.value }>
             {
               React.Children.map(this.props.children, (tabbedDocument: any, index) =>
-                <TabBarTab onClick={ this.handleTabClick.bind(this, index) } setRef={this.setRef}>
-                  {filterChildren(tabbedDocument.props.children, child => hmrSafeNameComparison(child.type, TabbedDocumentTab))}
+                <TabBarTab onClick={ this.handleTabClick.bind(this, index) } setRef={ this.setRef }>
+                  { filterChildren(tabbedDocument.props.children, child =>
+                    hmrSafeNameComparison(child.type, TabbedDocumentTab)) }
                 </TabBarTab>
               )
             }
           </TabBar>
         }
-        { !!this.props.children.length && filterChildren(children[this.props.value].props.children, child => hmrSafeNameComparison(child.type, TabbedDocumentContent)) }
+        { !!this.props.children.length && filterChildren(children[this.props.value].props.children, child =>
+          hmrSafeNameComparison(child.type, TabbedDocumentContent)) }
       </div>
     );
   }
+
+  private handleTabClick = (nextValue: any) => {
+    if (this.props.onChange) {
+      this.props.onChange(nextValue);
+    }
+  }
+
+  private setRef = (input) => {
+    this.childRefs.push(input);
+  }
 }
 
-const mapStateToProps = (state: IRootState): MultiTabsProps => ({
+const mapStateToProps = (state: RootState): MultiTabsProps => ({
   presentationModeEnabled: state.presentation.enabled
 });
 

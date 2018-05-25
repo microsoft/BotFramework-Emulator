@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IMessageActivity } from '@bfemulator/sdk-shared';
+import { MessageActivity } from '@bfemulator/sdk-shared';
 
 export interface QnAMakerTraceInfo {
-  message: IMessageActivity;
+  message: MessageActivity;
   queryResults: QueryResult[];
   knowledgeBaseId: string;
   scoreThreshold: number;

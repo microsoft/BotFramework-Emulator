@@ -34,13 +34,12 @@
 import * as React from 'react';
 import { css } from 'glamor';
 
-import { IFrameworkSettings } from '@bfemulator/app-shared';
-import { CommandService } from '../../platform/commands/commandService';
+import { FrameworkSettings } from '@bfemulator/app-shared';
+import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import {
   Checkbox,
   Colors,
   Column,
-  MediumHeader,
   PrimaryButton,
   Row,
   RowAlignment,
@@ -53,7 +52,7 @@ import * as Constants from '../../constants';
 import store from '../../data/store';
 import { getTabGroupForDocument } from '../../data/editorHelpers';
 import { GenericDocument } from '../layout';
-import { debounce } from "../utils/debounce";
+import { debounce } from '../utils/debounce';
 
 const CSS = css({
   '& .right-column': {
@@ -109,11 +108,11 @@ interface AppSettingsEditorProps {
 }
 
 interface AppSettingsEditorState {
-  committed: IFrameworkSettings;
-  uncommitted: IFrameworkSettings;
+  committed: FrameworkSettings;
+  uncommitted: FrameworkSettings;
 }
 
-const defaultAppSettings: IFrameworkSettings = {
+const defaultAppSettings: FrameworkSettings = {
   bypassNgrokLocalhost: true,
   locale: '',
   localhost: '',
@@ -123,7 +122,7 @@ const defaultAppSettings: IFrameworkSettings = {
   useCodeValidation: false
 };
 
-function shallowEqual(x, y) {
+function shallowEqual(x: any, y: any) {
   return (
     Object.keys(x).length === Object.keys(y).length
     && Object.keys(x).every(key => key in y && x[key] === y[key])
@@ -131,6 +130,8 @@ function shallowEqual(x, y) {
 }
 
 export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, AppSettingsEditorState> {
+  setDirtyFlag = debounce((dirty) => store.dispatch(EditorActions.setDirtyFlag(this.props.documentId, dirty)), 300);
+
   constructor(props: AppSettingsEditorProps, context: any) {
     super(props, context);
 
@@ -153,7 +154,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
 
   componentWillMount(): void {
     // load settings from main and populate form
-    CommandService.remoteCall('app:settings:load')
+    CommandServiceImpl.remoteCall('app:settings:load')
       .then(settings => {
         this.setState(() => ({
           committed: settings,
@@ -163,7 +164,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
       .catch(err => console.error('Error while loading emulator settings: ', err));
   }
 
-  setUncommittedState(patch) {
+  setUncommittedState(patch: any) {
     this.setState(state => {
       const nextUncommitted = {
         ...state.uncommitted,
@@ -181,7 +182,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     });
   }
 
-  commit(committed) {
+  commit(committed: any) {
     this.setState(() => {
       this.setDirtyFlag(false);
 
@@ -199,18 +200,18 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
       properties: ['openFile']
     };
 
-    CommandService.remoteCall('shell:showOpenDialog', dialogOptions)
+    CommandServiceImpl.remoteCall('shell:showOpenDialog', dialogOptions)
       .then(ngrokPath => this.setUncommittedState({ ngrokPath }))
       .catch(err => console.log('User cancelled browsing for ngrok: ', err));
   }
 
-  onChangeSizeLimit(e): void {
+  onChangeSizeLimit(e: any): void {
     this.setUncommittedState({ stateSizeLimit: e.target.value });
   }
 
   onClickSave(): void {
     const { uncommitted } = this.state;
-    const settings: IFrameworkSettings = {
+    const settings: FrameworkSettings = {
       ngrokPath: uncommitted.ngrokPath.trim(),
       bypassNgrokLocalhost: uncommitted.bypassNgrokLocalhost,
       stateSizeLimit: +uncommitted.stateSizeLimit,
@@ -220,7 +221,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
       locale: uncommitted.locale.trim()
     };
 
-    CommandService.remoteCall('app:settings:save', settings)
+    CommandServiceImpl.remoteCall('app:settings:save', settings)
       .then(() => this.commit(settings))
       .catch(err => console.error('Error while saving emulator settings: ', err));
   }
@@ -233,7 +234,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     this.setUncommittedState({ useCodeValidation: !this.state.uncommitted.useCodeValidation });
   }
 
-  onChangeNgrok(e): void {
+  onChangeNgrok(e: any): void {
     this.setUncommittedState({ ngrokPath: e.target.value });
   }
 
@@ -241,20 +242,17 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     this.setUncommittedState({ bypassNgrokLocalhost: !this.state.uncommitted.bypassNgrokLocalhost });
   }
 
-  onChangeLocalhost(e): void {
+  onChangeLocalhost(e: any): void {
     this.setUncommittedState({ localhost: e.target.value });
   }
 
-  onChangeLocale(e): void {
+  onChangeLocale(e: any): void {
     this.setUncommittedState({ locale: e.target.value });
   }
 
-  setDirtyFlag = debounce((dirty): void => {
-    store.dispatch(EditorActions.setDirtyFlag(this.props.documentId, dirty));
-  }, 300);
-
   onClickDiscard(): void {
-    store.dispatch(EditorActions.close(getTabGroupForDocument(this.props.documentId), Constants.DocumentId_AppSettings));
+    const { DOCUMENT_ID_APP_SETTINGS } = Constants;
+    store.dispatch(EditorActions.close(getTabGroupForDocument(this.props.documentId), DOCUMENT_ID_APP_SETTINGS));
   }
 
   render(): JSX.Element {
@@ -266,29 +264,40 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
         <Row>
           <Column>
             <SmallHeader>Service</SmallHeader>
-            <p><a href="https://ngrok.com/" target="_blank">ngrok</a> is network tunneling software. The Bot Framework Emulator works with ngrok to communicate with bots hosted remotely. Read the <a href="https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)" target="_blank">wiki page</a> to learn more about using ngrok and to download it.</p>
+            <p><a href="https://ngrok.com/" target="_blank">ngrok</a> is network tunneling software. The Bot Framework
+              Emulator works with ngrok to communicate with bots hosted remotely. Read the <a
+                href="https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)" target="_blank">wiki
+                page</a> to learn more about using ngrok and to download it.</p>
             <Row align={ RowAlignment.Center }>
-              <TextInputField inputClass="app-settings-input" readOnly={ false } value={ uncommitted.ngrokPath } onChange={ this.onChangeNgrok } label={ 'Path to ngrok' } />
-              <PrimaryButton onClick={ this.onClickBrowse } text="Browse" className="browse-button" />
+              <TextInputField inputClass="app-settings-input" readOnly={ false } value={ uncommitted.ngrokPath }
+                              onChange={ this.onChangeNgrok } label={ 'Path to ngrok' }/>
+              <PrimaryButton onClick={ this.onClickBrowse } text="Browse" className="browse-button"/>
             </Row>
-            <Checkbox className="checkboxOverrides" checked={ uncommitted.bypassNgrokLocalhost } onChange={ this.onChangeNgrokBypass } id="ngrok-bypass" label="Bypass ngrok for local addresses" />
+            <Checkbox className="checkboxOverrides" checked={ uncommitted.bypassNgrokLocalhost }
+                      onChange={ this.onChangeNgrokBypass } id="ngrok-bypass" label="Bypass ngrok for local addresses"/>
             <Row align={ RowAlignment.Center }>
-              <TextInputField inputClass="app-settings-input" readOnly={ false } value={ uncommitted.localhost } onChange={ this.onChangeLocalhost } label="localhost override" />
+              <TextInputField inputClass="app-settings-input" readOnly={ false } value={ uncommitted.localhost }
+                              onChange={ this.onChangeLocalhost } label="localhost override"/>
             </Row>
             <Row align={ RowAlignment.Center }>
-              <TextInputField inputClass="app-settings-input" readOnly={ false } value={ uncommitted.locale } onChange={ this.onChangeLocale } label="Locale" />
+              <TextInputField inputClass="app-settings-input" readOnly={ false } value={ uncommitted.locale }
+                              onChange={ this.onChangeLocale } label="Locale"/>
             </Row>
-         </Column>
-         <Column className="right-column">
+          </Column>
+          <Column className="right-column">
             <SmallHeader>Auth</SmallHeader>
-            <Checkbox className="checkboxOverrides" checked={ uncommitted.use10Tokens } onChange={ this.onChangeAuthTokenVersion } id="auth-token-version" label="Use version 1.0 authentication tokens" />
+            <Checkbox className="checkboxOverrides" checked={ uncommitted.use10Tokens }
+                      onChange={ this.onChangeAuthTokenVersion } id="auth-token-version"
+                      label="Use version 1.0 authentication tokens"/>
             <SmallHeader>Sign-in</SmallHeader>
-            <Checkbox className="checkboxOverrides" checked={ uncommitted.useCodeValidation } onChange={ this.onChangeUseValidationToken } id="use-validation-code" label="Use a sign-in verification code for OAuthCards" />
+            <Checkbox className="checkboxOverrides" checked={ uncommitted.useCodeValidation }
+                      onChange={ this.onChangeUseValidationToken } id="use-validation-code"
+                      label="Use a sign-in verification code for OAuthCards"/>
           </Column>
         </Row>
         <Row className="button-row" justify={ RowJustification.Right }>
-          <PrimaryButton text="Cancel" onClick={ this.onClickDiscard } />
-          <PrimaryButton text="Save" onClick={ this.onClickSave } className="save-button" disabled={ clean } />
+          <PrimaryButton text="Cancel" onClick={ this.onClickDiscard }/>
+          <PrimaryButton text="Save" onClick={ this.onClickSave } className="save-button" disabled={ clean }/>
         </Row>
       </GenericDocument>
     );

@@ -31,13 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import IPaymentCurrencyAmount from './currencyAmount';
+import PaymentCurrencyAmount from './currencyAmount';
 
-interface IPaymentShippingOption {
-  id: string,
-  label: string,
-  selected?: boolean,
-  amount: IPaymentCurrencyAmount
+interface PaymentShippingOption {
+  id: string;
+  label: string;
+  selected?: boolean;
+  amount: PaymentCurrencyAmount;
 }
 
-export default IPaymentShippingOption
+export default PaymentShippingOption;

@@ -39,19 +39,24 @@ import { Component, SyntheticEvent } from 'react';
 
 export interface ServicePaneProps {
   openContextMenu: (service: IConnectedService, ...rest: any[]) => void;
-  window: Window,
-  title: string
+  window: Window;
+  title: string;
 }
 
 export interface ServicePaneState {
   expanded?: boolean;
 }
 
-export abstract class ServicePane<T extends ServicePaneProps, S extends ServicePaneState = ServicePaneState> extends Component<T, S> {
+export abstract class ServicePane<T extends ServicePaneProps,
+  S extends ServicePaneState = ServicePaneState> extends Component<T, S> {
+
+  protected abstract onLinkClick: (event: SyntheticEvent<HTMLLIElement>) => void; // bound
+  protected onAddIconClick: (event: SyntheticEvent<HTMLButtonElement>) => void; // bound
+
   public state = {} as Readonly<S>;
   private _listRef: HTMLUListElement;
 
-  protected constructor(props, context) {
+  protected constructor(props: T, context: S) {
     super(props, context);
   }
 
@@ -72,9 +77,6 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
   }
 
   protected abstract get links(): JSX.Element[];
-
-  protected abstract onLinkClick: (event: SyntheticEvent<HTMLLIElement>) => void; // bound
-  protected onAddIconClick: (event: SyntheticEvent<HTMLButtonElement>) => void; // bound
 
   protected get content(): JSX.Element {
     const { links, listCss, emptyContent } = this;
@@ -99,7 +101,6 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
       <p { ...this.emptyContentCss }>You have not saved any { this.props.title } apps to this bot.</p>
     );
   }
-
 
   protected get componentCss(): StyleAttribute {
     return css({
@@ -134,6 +135,7 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
   }
 
   protected get listCss(): StyleAttribute {
+    const {EXPLORER_ITEM_ACTIVE_BACKGROUND_DARK: C1, EXPLORER_ITEM_ACTIVE_BACKGROUND_DARK: C2} = Colors;
     return css({
       listStyle: 'none',
       padding: 0,
@@ -150,7 +152,7 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
         fontSize: ' 13px',
 
         '&:hover': {
-          backgroundImage: `linear-gradient(to bottom, ${Colors.EXPLORER_ITEM_ACTIVE_BACKGROUND_DARK} 0%,${Colors.EXPLORER_ITEM_ACTIVE_BACKGROUND_DARK} 100%)`,
+          backgroundImage: `linear-gradient(to bottom, ${C1} 0%,${C2} 100%)`,
           backgroundSize: '100% 30px',
           backgroundRepeat: 'no-repeat'
         },
@@ -208,7 +210,12 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
     const { expandCollapseCss } = this;
 
     return (
-      <ExpandCollapse className="service-pane-explorer" style={ expandCollapseCss } key={ this.props.title } title={ this.props.title } expanded={ this.state.expanded }>
+      <ExpandCollapse
+        className="service-pane-explorer"
+        style={ expandCollapseCss }
+        key={ this.props.title }
+        title={ this.props.title }
+        expanded={ this.state.expanded }>
         { this.controls }
         { this.content }
       </ExpandCollapse>
@@ -227,7 +234,7 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
     event.preventDefault();
     event.stopPropagation();
     this.onContextMenuOverLiElement(target as HTMLLIElement);
-  };
+  }
 
   protected onContextMenuOverLiElement(li: HTMLLIElement): void {
     const { window } = this.props;

@@ -31,12 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Settings } from '@bfemulator/app-shared';
 import { RestServer } from './restServer';
 import { mainWindow } from './main';
 import { textItem } from '@bfemulator/emulator-core/lib/types/log/util';
 import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
-
 
 /**
  * Communicates with the bot.
@@ -62,7 +60,10 @@ export class BotFrameworkService {
    * Applies configuration changes.
    */
   public async recycle() {
-    this.server && this.server.close();
+    if (this.server) {
+      await this.server.close();
+    }
+
     this.server = new RestServer();
 
     const { url, port } = await this.server.listen();

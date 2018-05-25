@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IActivity } from '@bfemulator/sdk-shared';
+import { Activity } from '@bfemulator/sdk-shared';
 import { IBotConfig } from 'msbot/bin/schema';
 
-export interface IInspectorHost {
+export interface InspectorHost {
   // The current bot (msbot schema)
   readonly bot: IBotConfig;
   readonly logger: {
@@ -42,7 +42,7 @@ export interface IInspectorHost {
     error(message: string): () => void;
   };
   // Each "on" function returns a method that when called, will unregister the handler.
-  on(event: 'inspect', handler: (activity: IActivity) => void): () => void;
+  on(event: 'inspect', handler: (activity: Activity) => void): () => void;
 
   on(event: 'bot-updated', handler: (bot: IBotConfig) => void): () => void;
 

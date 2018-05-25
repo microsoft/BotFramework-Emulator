@@ -31,15 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Restify from 'restify';
-
-import IGenericActivity from '../types/activity/generic';
+import GenericActivity from '../types/activity/generic';
 import ILogItem from '../types/log/item';
 
-interface ILogger {
-  logActivity(conversationId: string, activity: IGenericActivity, role: string);
+interface Logger {
+  logActivity(conversationId: string, activity: GenericActivity, role: string);
   logMessage(conversationId: string, ...items: ILogItem[]);
   logException(conversationId: string, err: Error);
 }
 
-export default ILogger
+export default Logger;

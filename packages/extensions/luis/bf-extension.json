@@ -4,7 +4,7 @@
     "inspectors": [
       {
         "name": "LUIS",
-        "src": "client/build/index.html",
+        "src": "client/public/index.html",
         "criteria": [
           {
             "path": "$.type",

@@ -36,18 +36,18 @@ import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
 import Conversation from '../../facility/conversation';
-import IGenericActivity from '../../types/activity/generic';
+import GenericActivity from '../../types/activity/generic';
 import statusCodeFamily from '../../utils/statusCodeFamily';
 import { textItem } from '../../types/log/util';
 import LogLevel from '../../types/log/level';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function postActivity(botEmulator: BotEmulator) {
-  const { logMessage, logException } = botEmulator.facilities.logger;
+  const { logMessage } = botEmulator.facilities.logger;
 
   return async (req: Restify.Request, res: Restify.Response, next: Restify.Next) => {
     // const conversation = botEmulator.facilities.conversations.conversationById(req.params.conversationId);
-    const conversation: Conversation = req['conversation'];
+    const conversation: Conversation = (req as any).conversation;
 
     if (!conversation) {
       res.send(HttpStatus.NOT_FOUND, 'conversation not found');
@@ -57,7 +57,7 @@ export default function postActivity(botEmulator: BotEmulator) {
       return;
     }
 
-    const activity = <IGenericActivity>req.body;
+    const activity = <GenericActivity> req.body;
 
     try {
       const { activityId, response, statusCode } = await conversation.postActivityToBot(activity, true);

@@ -1,5 +1,25 @@
 {
   "scripts": {
-    "bootstrap": "lerna bootstrap"
+    "bootstrap": "lerna bootstrap --hoist",
+    "build": "lerna run --scope @bfemulator/**shared build && lerna run --scope !@bfemulator/**shared build",
+    "test": "jest",
+    "test:coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls"
+  },
+  "jest": {
+    "setupTestFrameworkScriptFile": "./testSetup.js",
+    "transform": {
+      "^.+\\.(tsx?|jsx?)$": "ts-jest"
+    },
+    "testMatch": [
+      "<rootDir>/packages/**/src/**/?(*.)(spec|test).(ts)?(x)"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
   }
 }
