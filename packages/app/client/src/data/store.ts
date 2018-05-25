@@ -35,42 +35,39 @@ import { applyMiddleware, combineReducers, createStore, Store } from 'redux';
 import promiseMiddleware from 'redux-promise-middleware';
 import sagaMiddlewareFactory from 'redux-saga';
 import thunk from 'redux-thunk';
-import bot, { IBotState } from './reducer/bot';
-import chat, { IChatState } from './reducer/chat';
-import dialog, { IDialogState } from './reducer/dialog';
-import editor, { IEditorState } from './reducer/editor';
-import explorer, { IExplorerState } from './reducer/explorer';
+import bot, { BotState } from './reducer/bot';
+import chat, { ChatState } from './reducer/chat';
+import dialog, { DialogState } from './reducer/dialog';
+import editor, { EditorState } from './reducer/editor';
+import explorer, { ExplorerState } from './reducer/explorer';
 import files, { IFileTreeState } from './reducer/files';
-import luisAuth, { ILuisAuthState } from './reducer/luisAuthReducer';
-import navBar, { INavBarState } from './reducer/navBar';
+import luisAuth, { LuisAuthState } from './reducer/luisAuthReducer';
+import navBar, { NavBarState } from './reducer/navBar';
 
-import presentation, { IPresentationState } from './reducer/presentation';
-import server, { IServerState } from './reducer/server';
+import presentation, { PresentationState } from './reducer/presentation';
+import server, { ServerState } from './reducer/server';
 import { applicationSagas } from './sagas';
 
 // TODO: Remove this when we no longer need to debug the WebSocket connection
 // import DebugWebSocketConnection from './debugWebSocketConnection';
 
-const _window = window as any;
-const electron = _window.process && _window.process.versions.electron;
-
-export interface IRootState {
-  bot?: IBotState;
-  dialog?: IDialogState;
-  editor?: IEditorState;
-  explorer?: IExplorerState;
-  chat?: IChatState;
-  navBar?: INavBarState;
-  presentation?: IPresentationState;
-  server?: IServerState;
-  luisAuth?: ILuisAuthState;
+export interface RootState {
+  bot?: BotState;
+  dialog?: DialogState;
+  editor?: EditorState;
+  explorer?: ExplorerState;
+  chat?: ChatState;
+  navBar?: NavBarState;
+  presentation?: PresentationState;
+  server?: ServerState;
+  luisAuth?: LuisAuthState;
   files?: IFileTreeState;
 }
 
 const sagaMiddleWare = sagaMiddlewareFactory();
-const DEFAULT_STATE: IRootState = {};
+const DEFAULT_STATE: RootState = {};
 
-const configureStore = (initialState: IRootState = DEFAULT_STATE): Store<IRootState> => createStore(
+const configureStore = (initialState: RootState = DEFAULT_STATE): Store<RootState> => createStore(
   combineReducers({
     bot,
     dialog,

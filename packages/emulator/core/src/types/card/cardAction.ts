@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-interface ICardAction {
+interface CardAction {
   /// URL to a picture that will appear on the button, next to text label.
   image: string;
 
@@ -45,4 +45,4 @@ interface ICardAction {
   value?: any;
 }
 
-export default ICardAction
+export default CardAction;

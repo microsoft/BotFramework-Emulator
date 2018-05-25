@@ -13,8 +13,11 @@
     "test": ""
   },
   "devDependencies": {
+    "@types/jest": "^22.2.3",
     "awesome-typescript-loader": "^5.0.0",
     "css-loader": "^0.28.11",
+    "jest": "^23.0.0",
+    "ts-jest": "^22.4.6",
     "url-loader": "^1.0.1"
   }
 }

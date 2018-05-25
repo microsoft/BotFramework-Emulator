@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import IAttachmentView from './view';
+import AttachmentView from './view';
 
-interface IAttachmentInfo {
+interface AttachmentInfo {
   /// Name of the attachment
   name: string;
 
@@ -41,7 +41,7 @@ interface IAttachmentInfo {
   type: string;
 
   /// attachment views
-  views: IAttachmentView[];
+  views: AttachmentView[];
 }
 
-export default IAttachmentInfo
+export default AttachmentInfo;

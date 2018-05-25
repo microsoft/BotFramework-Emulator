@@ -38,9 +38,16 @@ import { Provider } from 'react-redux';
 import * as DialogActions from '../../../data/action/dialogActions';
 
 import store from '../../../data/store';
-import { IDialogService } from './IDialogService';
 
-export const DialogService = new class implements IDialogService {
+export interface DialogService {
+  showDialog(dialog: ComponentClass<any> | StatelessComponent<any>, props: { [propName: string]: any }): any;
+
+  hideDialog(): any;
+
+  setHost(hostElement: HTMLElement): void;
+}
+
+export const DialogService = new class implements DialogService {
   private _hostElement: HTMLElement;
   private _dialogReturnValue: Promise<any>;
   private _resolve: (value?: any) => void;
@@ -48,17 +55,17 @@ export const DialogService = new class implements IDialogService {
   /** Returns a thenable that can return a value using hideDialog(value)
    *
    * Ex. DialogService.showDialog(PasswordPromptDialog).then(pw => // do something with password from dialog)
-  */
-  showDialog<T extends ComponentClass | StatelessComponent>(dialog: T, props: { [propName: string]: any} = {}): Promise<any> {
+   */
+  showDialog<T extends ComponentClass | StatelessComponent>(dialog: T, props: {} = {}): Promise<any> {
     if (!this._hostElement) {
-      return new Promise((resolve, reject) => resolve(null));
+      return new Promise((resolve) => resolve(null));
     }
     const reactElement = React.createElement(Provider, { store }, React.createElement(dialog, props));
     ReactDOM.render(reactElement, this._hostElement, this.notifyHostOfRender);
     store.dispatch(DialogActions.setShowing(true));
 
     // set up the dialog to return a value from the dialog
-    this._dialogReturnValue = new Promise((resolve, reject) => {
+    this._dialogReturnValue = new Promise((resolve) => {
       this._resolve = resolve;
     });
     return this._dialogReturnValue;

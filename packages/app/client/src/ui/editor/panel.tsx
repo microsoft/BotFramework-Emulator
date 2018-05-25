@@ -79,13 +79,13 @@ const CSS = css({
   }
 });
 
-interface IPanelProps {
+interface PanelProps {
   children?: any;
   title?: string;
 }
 
-export default class Panel extends React.Component<IPanelProps, {}> {
-  constructor(props: IPanelProps, context) {
+export default class Panel extends React.Component<PanelProps, {}> {
+  constructor(props: PanelProps, context: {}) {
     super(props, context);
   }
 

@@ -31,34 +31,34 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ISender } from './sender';
-import { IDisposable } from '../lifecycle';
+import { Sender } from './sender';
+import { Disposable } from '../lifecycle';
 
-export interface IListener {
+export interface Listener {
   (...args: any[]);
 }
 
 export class Channel {
 
-  private _listeners: { [id: string]: IListener } = {};
+  private _listeners: { [id: string]: Listener } = {};
 
   get name(): string { return this._name; }
 
-  constructor(private _name: string, private _sender: ISender) {
+  constructor(private _name: string, private _sender: Sender) {
   }
 
   send(messageName: string, ...args: any[]): any {
     return this._sender.send(this._name, messageName, ...args);
   }
 
-  setListener(messageName: string, listener: IListener): IDisposable {
+  setListener(messageName: string, listener: Listener): Disposable {
     this.clearListener(messageName);
     this._listeners[messageName] = listener;
     return {
       dispose: () => {
         this.clearListener(messageName);
       }
-    }
+    };
   }
 
   clearListener(messageName: string) {

@@ -31,18 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import IActivity from './activity';
-import IChannelAccount from '../account/channel';
+import Activity from './activity';
+import ChannelAccount from '../account/channel';
 
-interface IConversationParameters extends IActivity {
-  activity?: IActivity;
-  bot: IChannelAccount;
+interface ConversationParameters extends Activity {
+  activity?: Activity;
+  bot: ChannelAccount;
   channelData?: any;
   conversationId?: string;
   isGroup: boolean;
-  members?: IChannelAccount[];
-  membersRemoved?: IChannelAccount[];
+  members?: ChannelAccount[];
+  membersRemoved?: ChannelAccount[];
   topicName?: string;
 }
 
-export default IConversationParameters;
+export default ConversationParameters;

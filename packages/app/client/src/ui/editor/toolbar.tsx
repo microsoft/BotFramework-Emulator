@@ -79,21 +79,24 @@ export default class ToolBar extends React.Component<{}, {}> {
     return (
       <div { ...CSS }>
         <ul>
-          { filterChildren(this.props.children, child => child && child.props.visible).map((child, i) => this.createClass(child, i)) }
+          { filterChildren(this.props.children,
+            child => child && child.props.visible).map((child, i) => this.createClass(child, i)) }
         </ul>
       </div>
     );
   }
 
-  createClass(child, i) {
+  createClass(child: any, i: number) {
     if (hmrSafeNameComparison(child.type, Button)) {
       return (
-        <li key={ i } className="button"><button onClick={ () => child.props.onClick() }>{ child.props.title }</button></li>
-      )
+        <li key={ i } className="button">
+          <button onClick={ () => child.props.onClick() }>{ child.props.title }</button>
+        </li>
+      );
     } else if (hmrSafeNameComparison(child.type, Separator)) {
       return (
         <li key={ i } className="separator">|</li>
-      )
+      );
     } else {
       return false;
     }

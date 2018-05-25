@@ -32,17 +32,17 @@
 //
 
 import { connect } from 'react-redux';
-import { IRootState } from '../../../../../data/store';
+import { RootState } from '../../../../../data/store';
 import { DialogService } from '../../../../dialogs/service';
 import { DispatchEditor } from './dispatchEditor';
 
-const mapStateToProps = (state: IRootState, ownProps: { [propName: string]: any }) => {
+const mapStateToProps = (_state: RootState, ownProps: { [propName: string]: any }) => {
   return {
     ...ownProps
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (_dispatch: () => void) => {
   return {
     updateDispatchService: updatedDispatchService => DialogService.hideDialog(updatedDispatchService),
     cancel: () => DialogService.hideDialog()

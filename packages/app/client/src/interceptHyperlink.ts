@@ -34,24 +34,24 @@
 import { navigate } from './hyperlinkHandler';
 
 export default function interceptHyperlink() {
-    const interceptClickEvent = (e: Event) => {
-        let target: any = e.target;
+  const interceptClickEvent = (e: Event) => {
+    let target: any = e.target;
 
-        while (target) {
-            if (target.href) {
-                e.preventDefault();
-                navigate(target.href);
-                return;
-            }
+    while (target) {
+      if (target.href) {
+        e.preventDefault();
+        navigate(target.href);
+        return;
+      }
 
-            target = target.parentNode;
-        }
+      target = target.parentNode;
     }
+  };
 
-    document.addEventListener('click', interceptClickEvent);
+  document.addEventListener('click', interceptClickEvent);
 
-    // Monkey patch window.open
-    window.open = (url: string): any => {
-        navigate(url);
-    }
+  // Monkey patch window.open
+  window.open = (url: string): any => {
+    navigate(url);
+  };
 }

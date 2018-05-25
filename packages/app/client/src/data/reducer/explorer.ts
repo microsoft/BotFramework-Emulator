@@ -40,15 +40,15 @@ type ExplorerAction = {
   }
 };
 
-export interface IExplorerState {
+export interface ExplorerState {
   showing: boolean;
 }
 
-const DEFAULT_STATE: IExplorerState = {
+const DEFAULT_STATE: ExplorerState = {
   showing: true
 };
 
-export default function explorer(state: IExplorerState = DEFAULT_STATE, action: ExplorerAction): IExplorerState {
+export default function explorer(state: ExplorerState = DEFAULT_STATE, action: ExplorerAction): ExplorerState {
   switch (action.type) {
     case ExplorerActions.SHOW: {
       state = setShowing(action.payload.show, state);
@@ -61,7 +61,7 @@ export default function explorer(state: IExplorerState = DEFAULT_STATE, action: 
   return state;
 }
 
-function setShowing(showing: boolean, state: IExplorerState): IExplorerState {
+function setShowing(showing: boolean, state: ExplorerState): ExplorerState {
   let newState = Object.assign({}, state);
 
   newState.showing = showing;

@@ -31,16 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import IPaymentDetails from './details';
-import IPaymentMethodData from './methodData';
-import IPaymentOptions from './options';
+import PaymentDetails from './details';
+import PaymentMethodData from './methodData';
+import PaymentOptions from './options';
 
-interface IPaymentRequest {
-  details: IPaymentDetails,
-  expires: string,
-  id: string,
-  methodData: IPaymentMethodData[],
-  options: IPaymentOptions
+interface PaymentRequest {
+  details: PaymentDetails;
+  expires: string;
+  id: string;
+  methodData: PaymentMethodData[];
+  options: PaymentOptions;
 }
 
-export default IPaymentRequest
+export default PaymentRequest;

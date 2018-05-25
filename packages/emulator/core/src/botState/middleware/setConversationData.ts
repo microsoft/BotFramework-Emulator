@@ -35,13 +35,14 @@ import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
-import IBotData from '../../types/botData';
+import BotData from '../../types/botData';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function setConversationData(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     try {
-      const botData = botEmulator.facilities.botState.setBotData(req.params.channelId, req.params.conversationId, req.params.userId, req.body as IBotData);
+      const botData = botEmulator.facilities.botState.setBotData(req.params.channelId, req.params.conversationId,
+        req.params.userId, req.body as BotData);
 
       res.send(HttpStatus.OK, botData);
       res.end();

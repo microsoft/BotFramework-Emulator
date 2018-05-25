@@ -31,20 +31,40 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import statusCodeFamily from './statusCodeFamily';
+import {
+  CommandHandler,
+  CommandService,
+  CommandServiceImpl as InternalSharedService,
+  Disposable,
+  DisposableImpl
+} from '@bfemulator/sdk-shared';
+import { CommandRegistry } from '../../commands';
+import { ElectronIPC } from '../../ipc';
 
-test('200 on 200', () => {
-  expect(statusCodeFamily(200, 200)).toBe(true);
-});
+export const CommandServiceImpl = new class extends DisposableImpl implements CommandService {
 
-test('204 on 200', () => {
-  expect(statusCodeFamily(204, 200)).toBe(true);
-});
+  private _service: InternalSharedService;
 
-test('299 on 200', () => {
-  expect(statusCodeFamily(299, 200)).toBe(true);
-});
+  init() { return null; }
 
-test('404 on 200', () => {
-  expect(statusCodeFamily(404, 200)).toBe(false);
-});
+  public get registry() { return this._service.registry; }
+
+  constructor() {
+    super();
+    this._service = new InternalSharedService(ElectronIPC, 'command-service', CommandRegistry);
+    super.toDispose(this._service);
+  }
+
+  call(commandName: string, ...args: any[]): Promise<any> {
+    return this._service.call(commandName, ...args);
+  }
+
+  remoteCall(commandName: string, ...args: any[]): Promise<any> {
+    return this._service.remoteCall(commandName, ...args);
+  }
+
+  on(event: string, handler?: CommandHandler): Disposable;
+  on(event: 'command-not-found', handler?: (commandName: string, ...args: any[]) => any) {
+    return this._service.on(event, handler);
+  }
+};

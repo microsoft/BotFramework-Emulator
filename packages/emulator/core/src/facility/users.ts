@@ -31,18 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import IUser from '../types/user';
+import User from '../types/user';
 
 export default class Users {
   public currentUserId: string = 'default-user';
-  private users: { [userId: string]: IUser } = {
+  private users: { [userId: string]: User } = {
     'default-user': {
       id: 'default-user',
       name: 'User'
     }
-  }
+  };
 
-  usersById(userId): IUser {
+  usersById(userId: string): User {
     return this.users[userId];
   }
 }

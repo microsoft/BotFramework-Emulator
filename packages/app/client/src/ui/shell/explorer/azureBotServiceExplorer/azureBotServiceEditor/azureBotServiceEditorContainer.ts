@@ -32,17 +32,17 @@
 //
 
 import { connect } from 'react-redux';
-import { IRootState } from '../../../../../data/store';
+import { RootState } from '../../../../../data/store';
 import { DialogService } from '../../../../dialogs/service';
 import { AzureBotServiceEditor } from './azureBotServiceEditor';
 
-const mapStateToProps = (state: IRootState, ownProps: { [propName: string]: any }) => {
+const mapStateToProps = (_state: RootState, ownProps: { [propName: string]: any }) => {
   return {
     ...ownProps
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = _dispatch => {
   return {
     updateAzureBotService: updatedAzureBotService => DialogService.hideDialog(updatedAzureBotService),
     cancel: () => DialogService.hideDialog()

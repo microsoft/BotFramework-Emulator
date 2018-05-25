@@ -34,21 +34,21 @@
 export * from './registry';
 export * from './service';
 
-export interface ICommand {
+export interface Command {
   id: string;
-  handler: ICommandHandler;
-  description?: ICommandDescription;
+  handler: CommandHandler;
+  description?: CommandDescription;
 }
 
-export interface ICommandMap {
-	[id: string]: ICommand;
+export interface CommandMap {
+  [id: string]: Command;
 }
 
-export interface ICommandHandler {
+export interface CommandHandler {
   (...args: any[]): any;
 }
 
-export interface ICommandDescription {
+export interface CommandDescription {
   description: string;
   args: { name: string; description?: string; }[];
   returns?: string;

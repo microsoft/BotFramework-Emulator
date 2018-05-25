@@ -33,11 +33,12 @@
 
 import { css } from 'glamor';
 import * as React from 'react';
+import { DragEvent } from 'react';
 import { connect } from 'react-redux';
 import * as Constants from '../../../../constants';
 import * as EditorActions from '../../../../data/action/editorActions';
-import { IEditor } from '../../../../data/reducer/editor';
-import { IRootState } from '../../../../data/store';
+import { Editor } from '../../../../data/reducer/editor';
+import { RootState } from '../../../../data/store';
 import { OVERLAY_CSS } from './overlayStyle';
 
 const CSS = css({
@@ -49,7 +50,7 @@ const CSS = css({
 
 interface RightContentOverlayProps {
   draggingTab?: boolean;
-  primaryEditor?: IEditor;
+  primaryEditor?: Editor;
   splitTab?: (contentType: string, tabId: string) => void;
 }
 
@@ -66,22 +67,33 @@ class RightContentOverlayComponent extends React.Component<RightContentOverlayPr
     };
   }
 
+  render() {
+    let overlayClassName = this.state.draggedOver ? ' dragged-over-overlay' : '';
+    overlayClassName += (this.props.draggingTab ? ' enabled-for-drop' : '');
+
+    return (
+      <div className={ CSS + overlayClassName }
+           onDragEnterCapture={ this.onDragEnter } onDragLeave={ this.onDragLeave }
+           onDragOverCapture={ this.onDragOver } onDropCapture={ this.onDrop } />
+    );
+  }
+
   private onDragEnter = (e) => {
     e.preventDefault();
     e.stopPropagation();
   }
 
-  private onDragLeave = (e) => {
+  private onDragLeave = () => {
     this.setState(({ draggedOver: false }));
   }
 
-  private onDragOver = (e) => {
+  private onDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
     this.setState(({ draggedOver: true }));
   }
 
-  private onDrop = (e) => {
+  private onDrop = (e: DragEvent<HTMLDivElement>) => {
     const tabData = JSON.parse(e.dataTransfer.getData('application/json'));
     const tabId = tabData.tabId;
     const docToSplit = this.props.primaryEditor.documents[tabId];
@@ -91,26 +103,16 @@ class RightContentOverlayComponent extends React.Component<RightContentOverlayPr
     e.preventDefault();
     e.stopPropagation();
   }
-
-  render() {
-    let overlayClassName = this.state.draggedOver ? ' dragged-over-overlay' : '';
-    overlayClassName += (this.props.draggingTab ? ' enabled-for-drop' : '');
-
-    return (
-      <div className={ CSS + overlayClassName }
-        onDragEnterCapture={ this.onDragEnter } onDragLeave={ this.onDragLeave }
-        onDragOverCapture={ this.onDragOver } onDropCapture={ this.onDrop } />
-    );
-  }
 }
 
-const mapStateToProps = (state: IRootState): RightContentOverlayProps => ({
+const mapStateToProps = (state: RootState): RightContentOverlayProps => ({
   draggingTab: state.editor.draggingTab,
-  primaryEditor: state.editor.editors[Constants.EditorKey_Primary]
+  primaryEditor: state.editor.editors[Constants.EDITOR_KEY_PRIMARY]
 });
 
 const mapDispatchToProps = (dispatch): RightContentOverlayProps => ({
-  splitTab: (contentType: string, tabId: string) => dispatch(EditorActions.splitTab(contentType, tabId, Constants.EditorKey_Primary, Constants.EditorKey_Secondary))
+  splitTab: (contentType: string, tabId: string) =>
+    dispatch(EditorActions.splitTab(contentType, tabId, Constants.EDITOR_KEY_PRIMARY, Constants.EDITOR_KEY_SECONDARY))
 });
 
 export const RightContentOverlay = connect(mapStateToProps, mapDispatchToProps)(RightContentOverlayComponent);

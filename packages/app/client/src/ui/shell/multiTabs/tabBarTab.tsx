@@ -33,7 +33,6 @@
 
 import { css } from 'glamor';
 import * as React from 'react';
-import { Colors } from '@bfemulator/ui-react';
 
 const CSS = css({
   height: '100%',
@@ -52,17 +51,17 @@ const CSS = css({
 });
 
 interface TabBarTabProps {
-  setRef?: (input) => any;
-  onClick?: (nextValue) => any;
+  setRef?: (input: HTMLInputElement) => any;
+  onClick?: (nextValue: any) => any;
   children?: any;
 }
 
 export const TabBarTab = (props: TabBarTabProps) =>
-  <button
+  (<button
     { ...CSS }
     ref={ props.setRef }
     onClick={ props.onClick }
     type="button"
   >
     { props.children }
-  </button>
+  </button>);

@@ -31,15 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
 import { BotFrameworkService } from './botFrameworkService';
 import * as Settings from './settings';
 import { NgrokService } from './ngrokService';
 import IBotEndpoint from '@bfemulator/emulator-core/lib/types/botEndpoint';
 
-interface IQueuedMessage {
-  channel: any,
-  args: any[]
+interface QueuedMessage {
+  channel: any;
+  args: any[];
 }
 
 /**
@@ -48,6 +47,15 @@ interface IQueuedMessage {
 export class Emulator {
   ngrok = new NgrokService();
   framework = new BotFrameworkService();
+
+  /**
+   * Loads settings from disk and then creates the emulator.
+   */
+  static async startup() {
+    Settings.startup();
+    emulator = new Emulator();
+    await emulator.startup();
+  }
 
   async startup() {
     await this.framework.startup();
@@ -63,19 +71,10 @@ export class Emulator {
       this.framework.server.botEmulator.facilities.endpoints.push(name, endpoint);
     });
   }
-  
+
   public report(conversationId: string) {
     this.framework.report(conversationId);
     this.ngrok.report(conversationId);
-  }
-
-  /**
-   * Loads settings from disk and then creates the emulator.
-   */
-  static async startup() {
-    Settings.startup();
-    emulator = new Emulator();
-    await emulator.startup();
   }
 }
 

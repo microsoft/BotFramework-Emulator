@@ -36,12 +36,12 @@ import onErrorResumeNext from 'on-error-resume-next';
 
 import BotEmulatorOptions from '../types/botEmulatorOptions';
 import BotEndpoint from './botEndpoint';
-import IBotEndpoint from '../types/botEndpoint';
+import BotEndpointType from '../types/botEndpoint';
 import uniqueId from '../utils/uniqueId';
 
 const { decode } = base64Url;
 
-function mapMap<T, U>(map: { [key: string]: T }, mapper: (T, string) => U ): { [key: string]: U } {
+function mapMap<T, U>(map: { [key: string]: T }, mapper: (arg: T, val: string) => U ): { [key: string]: U } {
   return Object.keys(map).reduce((nextMap, key) => ({
     ...nextMap,
     [key]: mapper.call(map, map[key], key)
@@ -49,11 +49,10 @@ function mapMap<T, U>(map: { [key: string]: T }, mapper: (T, string) => U ): { [
 }
 
 export default class Endpoints {
+  private _endpoints: { [key: string]: BotEndpoint } = {};
   constructor(private _options: BotEmulatorOptions) {}
 
-  private _endpoints: { [key: string]: BotEndpoint } = {};
-
-  push(id: string, botEndpoint: IBotEndpoint): BotEndpoint {
+  push(id: string, botEndpoint: BotEndpointType): BotEndpoint {
     id = id || botEndpoint.botUrl || uniqueId();
 
     const botEndpointInstance = new BotEndpoint(
@@ -102,8 +101,8 @@ export default class Endpoints {
     return this._endpoints[Object.keys(this._endpoints).find(id => this._endpoints[id].msaAppId === msaAppId)];
   }
 
-  getAll(): { [key: string]: IBotEndpoint } {
-    return mapMap<BotEndpoint, IBotEndpoint>(this._endpoints, value => ({
+  getAll(): { [key: string]: BotEndpointType } {
+    return mapMap<BotEndpoint, BotEndpointType>(this._endpoints, value => ({
       botId: value.botId,
       botUrl: value.botUrl,
       msaAppId: value.msaAppId,

@@ -38,13 +38,13 @@ import * as React from 'react';
 import { Component, SyntheticEvent } from 'react';
 
 interface EndpointEditorProps {
-  endpointService: IEndpointService,
-  cancel: () => void,
+  endpointService: IEndpointService;
+  cancel: () => void;
   updateEndpointService: (updatedEndpointService: IEndpointService) => void;
 }
 
 interface EndpointEditorState {
-  endpointService: IEndpointService,
+  endpointService: IEndpointService;
   nameError: string;
   endpointError: string;
   appIdError: string;
@@ -63,10 +63,17 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
 
   public state: EndpointEditorState = {} as EndpointEditorState;
 
-  constructor(props, state) {
+  constructor(props: EndpointEditorProps, state: EndpointEditorState) {
     super(props, state);
     const endpointService = new EndpointService(props.endpointService);
-    this.state = { endpointService, nameError: '', endpointError: '', appPasswordError: '', appIdError: '', isDirty: false };
+    this.state = {
+      endpointService,
+      nameError: '',
+      endpointError: '',
+      appPasswordError: '',
+      appIdError: '',
+      isDirty: false
+    };
   }
 
   public componentWillReceiveProps(nextProps: Readonly<EndpointEditorProps>): void {
@@ -79,12 +86,18 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
     const { name = '', endpoint = '', appId = '', appPassword = '' } = endpointService;
     const valid = !!endpoint && !!name;
     return (
-      <Modal cssOverrides={ modalCssOverrides } title={ title } detailedDescription={ detailedDescription } cancel={ this.onCancelClick }>
+      <Modal cssOverrides={ modalCssOverrides } title={ title } detailedDescription={ detailedDescription }
+             cancel={ this.onCancelClick }>
         <ModalContent>
-          <TextInputField error={ nameError } value={ name } onChange={ this.onInputChange } label="Name" required={ true } inputAttributes={ { 'data-propname': 'name' } }/>
-          <TextInputField error={ endpointError } value={ endpoint } onChange={ this.onInputChange } label="Endpoint url" required={ true } inputAttributes={ { 'data-propname': 'endpoint' } }/>
-          <TextInputField error={ appIdError } value={ appId } onChange={ this.onInputChange } label="Application Id" required={ false } inputAttributes={ { 'data-propname': 'appId' } }/>
-          <TextInputField error={ appPasswordError } value={ appPassword } onChange={ this.onInputChange } label="Application Password" required={ false } inputAttributes={ { 'data-propname': 'appPassword' } }/>
+          <TextInputField error={ nameError } value={ name } onChange={ this.onInputChange } label="Name"
+                          required={ true } inputAttributes={ { 'data-propname': 'name' } }/>
+          <TextInputField error={ endpointError } value={ endpoint } onChange={ this.onInputChange }
+                          label="Endpoint url" required={ true } inputAttributes={ { 'data-propname': 'endpoint' } }/>
+          <TextInputField error={ appIdError } value={ appId } onChange={ this.onInputChange } label="Application Id"
+                          required={ false } inputAttributes={ { 'data-propname': 'appId' } }/>
+          <TextInputField error={ appPasswordError } value={ appPassword } onChange={ this.onInputChange }
+                          label="Application Password" required={ false }
+                          inputAttributes={ { 'data-propname': 'appPassword' } }/>
         </ModalContent>
         <ModalActions>
           <PrimaryButton text="Cancel" secondary={ true } onClick={ this.onCancelClick }/>
@@ -94,13 +107,13 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
     );
   }
 
-  private onCancelClick = (event: SyntheticEvent<HTMLButtonElement>): void => {
+  private onCancelClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
     this.props.cancel();
-  };
+  }
 
-  private onSubmitClick = (event: SyntheticEvent<HTMLButtonElement>): void => {
+  private onSubmitClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
     this.props.updateEndpointService(this.state.endpointService);
-  };
+  }
 
   private onInputChange = (event: SyntheticEvent<HTMLInputElement>): void => {
     const { currentTarget: input } = event;
@@ -109,12 +122,13 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
 
     const { endpointService: originalEndpointService } = this.props;
     const propName = input.getAttribute('data-propname');
-    const errorMessage = ( required && !trimmedValue ) ? `The field cannot be empty` : '';
+    const errorMessage = (required && !trimmedValue) ? `The field cannot be empty` : '';
 
     const { endpointService } = this.state;
     endpointService[propName] = input.value;
 
-    const isDirty = Object.keys(endpointService).reduce((isDirty, key) => ( isDirty || endpointService[key] !== originalEndpointService[key] ), false);
+    const isDirty = Object.keys(endpointService)
+      .reduce((dirty, key) => (dirty || endpointService[key] !== originalEndpointService[key]), false);
     this.setState({ endpointService, [`${propName}Error`]: errorMessage, isDirty } as any);
-  };
+  }
 }

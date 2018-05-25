@@ -34,15 +34,16 @@
 // We need to skip Webpack bundler on bundling 'electron':
 // 1. We are using react-scripts, thus, we are not able to configure Webpack
 // 2. To skip bundling, we can hack with window['require']
-// 3. We cannot make a helper function to simplify the spaghetti code on require(), because TypeScript would complain it cannot statically extract it
-const remote: Electron.Remote = (typeof window === 'undefined' ? require('electron') : window['require']('electron')).remote;
-
+// 3. We cannot make a helper function to simplify the spaghetti code on require(),
+// because TypeScript would complain it cannot statically extract it
+const remote: Electron.Remote = (typeof window === 'undefined' ? require('electron')
+  : (window as any).require('electron')).remote;
 
 export function getGlobal(attributeName: string, defaultValue?: any): any {
     if (global[attributeName]) {
         return global[attributeName];
     } else if (remote && remote.getGlobal(attributeName)) {
-        return remote.getGlobal(attributeName)
+        return remote.getGlobal(attributeName);
     } else {
         return defaultValue;
     }

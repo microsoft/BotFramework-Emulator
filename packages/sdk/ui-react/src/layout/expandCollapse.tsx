@@ -1,3 +1,4 @@
+/* tslint:disable:max-line-length */
 //
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
@@ -122,26 +123,15 @@ export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandC
     this.state = { expanded: !!props.expanded };
   }
 
-  private handleTitleClick = () => {
-    this.setState(state => ({ expanded: !state.expanded }));
-  };
-
-  public componentWillReceiveProps(newProps) {
-    if (typeof newProps.expanded != 'undefined') {
-      const { expanded } = newProps;
-      this.setState({ expanded });
-    }
-  }
-
   render() {
     const { expanded } = this.state;
     const { className, title, children, style = {} } = this.props;
 
     let containerClassName = expanded ? ' container-expanded' : '';
     containerClassName += className ? ` ${className}` : '';
-    const toggleClassName = expanded ? ' toggle-expanded': '';
+    const toggleClassName = expanded ? ' toggle-expanded' : '';
     const CSS = css(BASE_CSS, style);
-    
+
     // TODO: Consider <input type="checkbox"> instead of <div />
     return (
       <div { ...CSS } aria-expanded={ expanded } className={ 'expand-collapse-container' + containerClassName }>
@@ -159,12 +149,23 @@ export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandC
             expanded &&
             <section>
               { filterChildren(children, child => hmrSafeNameComparison(child.type, ExpandCollapseContent)) }
-              <InsetShadow top={ true } />
+              <InsetShadow top={ true }/>
             </section>
           }
         </div>
       </div>
     );
+  }
+
+  public componentWillReceiveProps(newProps: ExpandCollapseProps) {
+    if (typeof newProps.expanded !== 'undefined') {
+      const { expanded } = newProps;
+      this.setState({ expanded });
+    }
+  }
+
+  private handleTitleClick = () => {
+    this.setState(state => ({ expanded: !state.expanded }));
   }
 }
 

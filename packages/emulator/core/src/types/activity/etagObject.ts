@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-interface IETagObject {
+interface ETagObject {
   eTag?: string;
 }
 
-export default IETagObject
+export default ETagObject;

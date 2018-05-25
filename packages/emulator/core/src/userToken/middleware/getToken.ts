@@ -36,23 +36,23 @@ import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
 import BotEndpoint from '../../facility/botEndpoint';
-import { ITokenResponse } from '../ITokenResponse';
-import { ITokenParams } from '../ITokenParams';
+import { TokenResponse } from '../TokenResponse';
+import { TokenParams } from '../TokenParams';
 import { TokenCache } from '../tokenCache';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
-
-interface IGetTokenParams extends ITokenParams {
+interface GetTokenParams extends TokenParams {
   code: string;
 }
 
-export default function getToken(botEmulator: BotEmulator) {
+export default function getToken(_botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     try {
-      let params: IGetTokenParams = req.params;
-      const botEndpoint: BotEndpoint = req['botEndpoint'];
+      let params: GetTokenParams = req.params;
+      const botEndpoint: BotEndpoint = (req as any).botEndpoint;
 
-      let tokenResponse: ITokenResponse = TokenCache.getTokenFromCache(botEndpoint.botId, params.userId, params.connectionName);
+      let tokenResponse: TokenResponse = TokenCache
+        .getTokenFromCache(botEndpoint.botId, params.userId, params.connectionName);
       if (tokenResponse) {
           res.send(HttpStatus.OK, tokenResponse);
       } else {

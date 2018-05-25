@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import IErrorResponse from '../../types/response/error';
+import ErrorResponse from '../../types/response/error';
 
-export default function createErrorResponse(code: string, message: string): IErrorResponse {
+export default function createErrorResponse(code: string, message: string): ErrorResponse {
   return {
     error: {
       code: code,

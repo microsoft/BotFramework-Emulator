@@ -32,99 +32,102 @@
 //
 
 import AttachmentContentTypes from '../types/attachment/contentTypes';
-import IActivity from '../types/activity/activity';
-import IAttachment from '../types/attachment';
-import ICardAction from '../types/card/cardAction';
-import ICardImage from '../types/card/cardImage';
-import IMediaCard from '../types/card/media';
-import IMessageActivity from '../types/activity/message';
-import IReceiptCard from '../types/card/receipt';
-import ISigninCard from '../types/card/signIn';
-import IOAuthCard from '../types/card/oAuth';
-import IThumbnailCard from '../types/card/thumbnail';
+import Activity from '../types/activity/activity';
+import Attachment from '../types/attachment';
+import CardAction from '../types/card/cardAction';
+import CardImage from '../types/card/cardImage';
+import MediaCard from '../types/card/media';
+import MessageActivity from '../types/activity/message';
+import ReceiptCard from '../types/card/receipt';
+import SigninCard from '../types/card/signIn';
+import OAuthCard from '../types/card/oAuth';
+import ThumbnailCard from '../types/card/thumbnail';
 
 export default abstract class ActivityVisitor {
-  public traverseActivity(activity: IActivity) {
-    const messageActivity = activity as IMessageActivity;
+  public traverseActivity(activity: Activity) {
+    const messageActivity = activity as MessageActivity;
 
     if (messageActivity) {
       this.traverseMessageActivity(messageActivity);
     }
   }
 
-  public traverseMessageActivity(messageActivity: IMessageActivity) {
+  public traverseMessageActivity(messageActivity: MessageActivity) {
     if (messageActivity && messageActivity.attachments) {
       messageActivity.attachments.forEach(attachment => {
-        this.traverseAttachment(attachment)
+        this.traverseAttachment(attachment);
       });
     }
   }
 
-  public traverseAttachment(attachment: IAttachment) {
+  public traverseAttachment(attachment: Attachment) {
     if (attachment) {
-      switch(attachment.contentType) {
+      switch (attachment.contentType) {
         case AttachmentContentTypes.animationCard:
         case AttachmentContentTypes.videoCard:
         case AttachmentContentTypes.audioCard:
-          this.traverseMediaCard(attachment.content as IMediaCard);
+          this.traverseMediaCard(attachment.content as MediaCard);
           break;
 
         case AttachmentContentTypes.heroCard:
         case AttachmentContentTypes.thumbnailCard:
-          this.traverseThumbnailCard(attachment.content as IThumbnailCard);
+          this.traverseThumbnailCard(attachment.content as ThumbnailCard);
           break;
 
         case AttachmentContentTypes.receiptCard:
-          this.traverseReceiptCard(attachment.content as IReceiptCard);
+          this.traverseReceiptCard(attachment.content as ReceiptCard);
           break;
 
         case AttachmentContentTypes.signInCard:
-          this.traverseSignInCard(attachment.content as ISigninCard);
+          this.traverseSignInCard(attachment.content as SigninCard);
           break;
 
         case AttachmentContentTypes.oAuthCard:
-          this.traverseOAuthCard(attachment.content as IOAuthCard);
+          this.traverseOAuthCard(attachment.content as OAuthCard);
+          break;
+
+        default:
           break;
       }
     }
   }
 
-  public traverseMediaCard(mediaCard: IMediaCard) {
+  public traverseMediaCard(mediaCard: MediaCard) {
     if (mediaCard) {
       this.traverseCardImage(mediaCard.image);
       this.traverseButtons(mediaCard.buttons);
     }
   }
 
-  public traverseThumbnailCard(thumbnailCard: IThumbnailCard) {
+  public traverseThumbnailCard(thumbnailCard: ThumbnailCard) {
     this.visitCardAction(thumbnailCard.tap);
     this.traverseButtons(thumbnailCard.buttons);
     this.traverseCardImages(thumbnailCard.images);
   }
 
-  public traverseSignInCard(signInCard: ISigninCard) {
+  public traverseSignInCard(signInCard: SigninCard) {
     this.traverseButtons(signInCard.buttons);
   }
 
-  public traverseOAuthCard(oauthCard: IOAuthCard) {
+  public traverseOAuthCard(oauthCard: OAuthCard) {
       let buttons = oauthCard.buttons;
       if (buttons) {
           buttons.forEach(cardAction => this.visitOAuthCardAction(oauthCard.connectionName, cardAction));
       }
   }
 
-  public traverseReceiptCard(receiptCard: IReceiptCard) {
+  public traverseReceiptCard(receiptCard: ReceiptCard) {
     this.visitCardAction(receiptCard.tap);
     this.traverseButtons(receiptCard.buttons);
   }
 
-  public traverseButtons(buttons: ICardAction[]) {
+  public traverseButtons(buttons: CardAction[]) {
     if (buttons) {
       buttons.forEach(cardAction => this.visitCardAction(cardAction));
     }
   }
 
-  public traverseCardImages(cardImages: ICardImage[]) {
+  public traverseCardImages(cardImages: CardImage[]) {
     if (cardImages) {
       cardImages.forEach(image => {
         this.traverseCardImage(image);
@@ -132,15 +135,15 @@ export default abstract class ActivityVisitor {
     }
   }
 
-  public traverseCardImage(cardImage: ICardImage) {
+  public traverseCardImage(cardImage: CardImage) {
     if (cardImage) {
       this.visitCardAction(cardImage.tap);
     }
   }
 
-  protected abstract visitCardAction(cardAction: ICardAction);
+  protected abstract visitCardAction(cardAction: CardAction);
 
-  protected visitOAuthCardAction(connectionName: string, cardAction: ICardAction) {
+  protected visitOAuthCardAction(connectionName: string, cardAction: CardAction) {
       this.visitCardAction(cardAction);
   }
 }

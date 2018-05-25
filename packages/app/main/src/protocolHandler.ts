@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IFrameworkSettings, newBot, newEndpoint, SharedConstants } from '@bfemulator/app-shared';
+import { FrameworkSettings, newBot, newEndpoint, SharedConstants } from '@bfemulator/app-shared';
 import * as got from 'got';
-import { IBotConfig, IEndpointService } from 'msbot/bin/schema';
-import { BotConfigWithPath, IBotConfigWithPath } from '@bfemulator/sdk-shared';
+import { IEndpointService } from 'msbot/bin/schema';
+import { BotConfigWithPath, BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import * as Path from 'path';
 import * as QueryString from 'querystring';
 import { Protocol } from './constants';
@@ -62,7 +62,7 @@ enum ProtocolBotActions {
   open
 }
 
-interface IProtocol {
+interface Protocol {
   // the 'controller'
   domain?: string;
   // the 'action' or 'route' within the controller
@@ -73,20 +73,18 @@ interface IProtocol {
   parsedArgs?: { [key: string]: string } | any;
 }
 
-interface IProtocolHandler {
-  parseProtocolUrl: (url: string) => IProtocol;
-  dispatchProtocolAction: (protocol: IProtocol) => void;
-  performLiveChatAction: (protocol: IProtocol) => void;
-  performTranscriptAction: (protocol: IProtocol) => void;
-  performBotAction: (protocol: IProtocol) => void;
+interface ProtocolHandler {
+  parseProtocolUrl: (url: string) => Protocol;
+  dispatchProtocolAction: (protocol: Protocol) => void;
+  performLiveChatAction: (protocol: Protocol) => void;
+  performTranscriptAction: (protocol: Protocol) => void;
+  performBotAction: (protocol: Protocol) => void;
 }
 
-export const ProtocolHandler = new class ProtocolHandler implements IProtocolHandler {
-  constructor() {
-  }
+export const ProtocolHandler = new class ProtocolHandlerImpl implements ProtocolHandler {
 
   /** Extracts useful information out of a protocol URL */
-  parseProtocolUrl(url: string): IProtocol {
+  parseProtocolUrl(url: string): Protocol {
     const validProtocol = /^bfemulator:\/\//;
     if (!validProtocol.test(url)) {
       throw new Error(`Invalid protocol url. Must start with '${Protocol}'`);
@@ -99,12 +97,12 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
     const chunks = restOfUrl.split('?');
     const domainAndAction = chunks[0].split('.');
 
-    const domain = ( domainAndAction[0] || '' ).toLowerCase();
-    const action = ( domainAndAction[1] || '' ).toLowerCase();
-    const args = ( chunks[1] || '' );
+    const domain = (domainAndAction[0] || '').toLowerCase();
+    const action = (domainAndAction[1] || '').toLowerCase();
+    const args = (chunks[1] || '');
     const parsedArgs = QueryString.parse(args);
 
-    const info: IProtocol = {
+    const info: Protocol = {
       domain,
       action,
       args,
@@ -115,7 +113,7 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
   }
 
   /** Uses information from a protocol URL and carries out the corresponding action */
-  dispatchProtocolAction(protocol: IProtocol): void {
+  dispatchProtocolAction(protocol: Protocol): void {
     switch (ProtocolDomains[protocol.domain]) {
       case ProtocolDomains.bot:
         this.performBotAction(protocol);
@@ -139,7 +137,7 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
     this.dispatchProtocolAction(this.parseProtocolUrl(url));
   }
 
-  performLiveChatAction(protocol: IProtocol): void {
+  performLiveChatAction(protocol: Protocol): void {
     switch (ProtocolLiveChatActions[protocol.action]) {
       case ProtocolLiveChatActions.open:
         this.openLiveChat(protocol);
@@ -150,7 +148,7 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
     }
   }
 
-  performTranscriptAction(protocol: IProtocol): void {
+  performTranscriptAction(protocol: Protocol): void {
     switch (ProtocolTranscriptActions[protocol.action]) {
       case ProtocolTranscriptActions.open:
         this.openTranscript(protocol);
@@ -161,7 +159,7 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
     }
   }
 
-  performBotAction(protocol: IProtocol): void {
+  performBotAction(protocol: Protocol): void {
     switch (ProtocolBotActions[protocol.action]) {
       case ProtocolBotActions.open:
         this.openBot(protocol);
@@ -175,10 +173,10 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
   /** Mocks a bot object with any configuration parsed from the
    *  protocol string and starts a live chat session with that bot
    */
-  private async openLiveChat(protocol: IProtocol): Promise<void> {
+  private async openLiveChat(protocol: Protocol): Promise<void> {
     // mock up a bot object
     const { botUrl, msaAppId, msaPassword } = protocol.parsedArgs;
-    const bot: IBotConfigWithPath = BotConfigWithPath.fromJSON(newBot());
+    const bot: BotConfigWithPath = BotConfigWithPathImpl.fromJSON(newBot());
     bot.name = '';
     bot.path = SharedConstants.TEMP_BOT_IN_MEMORY_PATH;
 
@@ -192,7 +190,7 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
     bot.services.push(endpoint);
     mainWindow.store.dispatch(BotActions.mockAndSetActive(bot));
 
-    const appSettings: IFrameworkSettings = getSettings().framework;
+    const appSettings: FrameworkSettings = getSettings().framework;
 
     if (appSettings.ngrokPath) {
       const ngrokSpawnStatus = emulator.ngrok.getSpawnStatus();
@@ -221,7 +219,7 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
   /** Downloads a transcript from a URL provided in the protocol string,
    *  parses out the list of activities, and has the client side open it
    */
-  private openTranscript(protocol: IProtocol): void {
+  private openTranscript(protocol: Protocol): void {
     const { url } = protocol.parsedArgs;
     const options = { url };
 
@@ -233,12 +231,15 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
               // parse the activities from the downloaded transcript
               const transcriptString = res.body;
               const conversationActivities = JSON.parse(transcriptString);
-              if (!Array.isArray(conversationActivities))
+              if (!Array.isArray(conversationActivities)) {
                 throw new Error('Invalid transcript file contents; should be an array of conversation activities.');
+              }
               const { name, ext } = Path.parse(url);
               const fileName = `${name}${ext}`;
-              // open a transcript on the client side and pass in some extra info to differentiate it from a transcript on disk
-              mainWindow.commandService.remoteCall('transcript:open', 'deepLinkedTranscript', { activities: conversationActivities, deepLink: true, fileName });
+              // open a transcript on the client side and pass in some
+              // extra info to differentiate it from a transcript on disk
+              mainWindow.commandService.remoteCall('transcript:open', 'deepLinkedTranscript',
+                { activities: conversationActivities, deepLink: true, fileName });
             } catch (e) {
               throw new Error(`Error occured while reading downloaded transcript: ${e}`);
             }
@@ -246,7 +247,8 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
         } else {
           if (res.statusCode === 401) {
             // auth failed
-            throw new Error(`Authorization error while trying to download transcript: ${res.body || res.statusText || ''}`);
+            const stat = res.body || res.statusText || '';
+            throw new Error(`Authorization error while trying to download transcript: ${stat}`);
           }
           if (res.statusCode === 404) {
             // transcript link is broken / doesn't exist anymore
@@ -261,10 +263,10 @@ export const ProtocolHandler = new class ProtocolHandler implements IProtocolHan
   }
 
   /** Opens the bot project associated with the .bot file at the specified path */
-  private openBot(protocol: IProtocol): void {
+  private openBot(protocol: Protocol): void {
     const { path, secret }: { path: string, secret: string } = protocol.parsedArgs;
 
-    const appSettings: IFrameworkSettings = getSettings().framework;
+    const appSettings: FrameworkSettings = getSettings().framework;
     if (appSettings.ngrokPath) {
       const ngrokSpawnStatus = emulator.ngrok.getSpawnStatus();
       if (!ngrokSpawnStatus.triedToSpawn || (ngrokSpawnStatus.triedToSpawn && ngrokSpawnStatus.err)) {

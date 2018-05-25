@@ -32,7 +32,6 @@
 //
 
 import * as log from 'npmlog';
-import * as Restify from 'restify';
 import IGenericActivity from '@bfemulator/emulator-core/lib/types/activity/generic';
 import ILogger from '@bfemulator/emulator-core/lib/types/logger';
 import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';

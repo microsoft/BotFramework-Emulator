@@ -31,22 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 import fetch from 'node-fetch';
-
-import { StringProvider } from './utils/stringProvider';
 import Attachments from './facility/attachments';
 import BotState from './facility/botState';
 import ConsoleLogService from './facility/consoleLogService';
 import ConversationSet from './facility/conversationSet';
 import EndpointSet from './facility/endpointSet';
-import IBotEmulatorOptions from './types/botEmulatorOptions';
-import IBotEndpoint from './types/botEndpoint';
-import ILogger from './types/logger';
-import ILogService from './types/log/service';
+import BotEmulatorOptions from './types/botEmulatorOptions';
+import Logger from './types/logger';
+import LogService from './types/log/service';
 import LoggerAdapter from './facility/loggerAdapter';
-import LogLevel from './types/log/level';
 import registerAttachmentRoutes from './attachments/registerRoutes';
 import registerBotStateRoutes from './botState/registerRoutes';
 import registerConversationRoutes from './conversations/registerRoutes';
@@ -56,20 +51,34 @@ import registerUserTokenRoutes from './userToken/registerRoutes';
 import stripEmptyBearerToken from './utils/stripEmptyBearerToken';
 import Users from './facility/users';
 
-const DEFAULT_OPTIONS: IBotEmulatorOptions = {
+const DEFAULT_OPTIONS: BotEmulatorOptions = {
   fetch,
   loggerOrLogService: new ConsoleLogService(),
   stateSizeLimitKB: 64
 };
 
 export interface ServiceUrlProvider {
-  (botUrl: string): string
+  (botUrl: string): string;
 }
 
 export default class BotEmulator {
+  // TODO: Instead of providing a getter for serviceUrl, we should let the upstream to set the serviceUrl
+  //       Currently, the upstreamer doesn't really know when the serviceUrl change (ngrok), they need to do their job
+  public getServiceUrl: ServiceUrlProvider;
+  public options: BotEmulatorOptions;
+
+  public facilities: {
+    attachments: Attachments,
+    botState: BotState,
+    conversations: ConversationSet,
+    endpoints: EndpointSet,
+    logger: Logger,
+    users: Users
+  };
+
   constructor(
     public serviceUrlOrProvider: string | ServiceUrlProvider,
-    options: IBotEmulatorOptions = DEFAULT_OPTIONS
+    options: BotEmulatorOptions = DEFAULT_OPTIONS
   ) {
     if (typeof serviceUrlOrProvider === 'string') {
       this.getServiceUrl = () => serviceUrlOrProvider;
@@ -79,8 +88,9 @@ export default class BotEmulator {
 
     this.options = { ...DEFAULT_OPTIONS, ...options };
 
-    const logService = this.options.loggerOrLogService as ILogService;
-    const logger: ILogger = (logService && logService.logToChat) ? new LoggerAdapter(logService as ILogService) : (this.options.loggerOrLogService as ILogger);
+    const logService = this.options.loggerOrLogService as LogService;
+    const logger: Logger = (logService && logService.logToChat) ? new LoggerAdapter(logService as LogService)
+      : (this.options.loggerOrLogService as Logger);
 
     this.facilities = {
       attachments: new Attachments(),
@@ -90,20 +100,6 @@ export default class BotEmulator {
       logger,
       users: new Users()
     };
-  }
-
-  // TODO: Instead of providing a getter for serviceUrl, we should let the upstream to set the serviceUrl
-  //       Currently, the upstreamer doesn't really know when the serviceUrl change (ngrok), they need to do their job
-  getServiceUrl: ServiceUrlProvider;
-  options: IBotEmulatorOptions;
-
-  facilities: {
-    attachments: Attachments,
-    botState: BotState,
-    conversations: ConversationSet,
-    endpoints: EndpointSet,
-    logger: ILogger,
-    users: Users
   }
 
   mount(router: Restify.Server): BotEmulator {

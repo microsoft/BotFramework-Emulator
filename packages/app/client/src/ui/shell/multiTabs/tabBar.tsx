@@ -33,17 +33,15 @@
 
 import { css } from 'glamor';
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { DragEvent } from 'react';
 import { connect } from 'react-redux';
-
-import { TabBarTab } from './tabBarTab';
 import { Colors } from '@bfemulator/ui-react';
 import * as EditorActions from '../../../data/action/editorActions';
 import * as Constants from '../../../constants';
 import { getOtherTabGroup } from '../../../data/editorHelpers';
 import * as PresentationActions from '../../../data/action/presentationActions';
-import { IEditor, IDocument } from '../../../data/reducer/editor';
-import { IRootState } from '../../../data/store';
+import { Document, Editor } from '../../../data/reducer/editor';
+import { RootState } from '../../../data/store';
 
 const CSS = css({
   display: 'flex',
@@ -101,20 +99,20 @@ const CSS = css({
     },
 
     '& > .split-widget': {
-      background: "url('./external/media/ic_split.svg') no-repeat 50% 50%",
+      background: 'url("./external/media/ic_split.svg") no-repeat 50% 50%',
     },
 
     '& > .presentation-widget': {
-      background: "url('./external/media/ic_presentation.svg') no-repeat 50% 50%",
+      background: 'url("./external/media/ic_presentation.svg") no-repeat 50% 50%',
     }
   }
 });
 
 interface TabBarProps {
-  editors?: { [editorKey: string]: IEditor };
+  editors?: { [editorKey: string]: Editor };
   owningEditor?: string;
   children?: any;
-  documents?: { [documentId: string]: IDocument };
+  documents?: { [documentId: string]: Document };
   activeIndex?: number;
   activeDocumentId?: string;
   childRefs?: HTMLElement[];
@@ -139,6 +137,54 @@ class TabBarComponent extends React.Component<TabBarProps, TabBarState> {
     };
   }
 
+  componentDidUpdate(prevProps: any) {
+    let scrollable = this._scrollable;
+
+    if (scrollable) {
+      if (this.props.children.length > prevProps.children.length &&
+        scrollable.scrollWidth > scrollable.clientWidth) {
+        let leftOffset = 0;
+        for (let i = 0; i <= this.props.activeIndex; i++) {
+          let ref = this.props.childRefs[i];
+          leftOffset += ref ? this.props.childRefs[i].offsetWidth : 0;
+        }
+        if (leftOffset >= scrollable.clientWidth) {
+          scrollable.scrollLeft = leftOffset;
+        }
+      }
+    }
+  }
+
+  onPresentationModeClick = () => this.props.enablePresentationMode();
+
+  render() {
+    const splitEnabled = Object.keys(this.props.documents).length > 1;
+    const activeDoc = this.props.documents[this.props.activeDocumentId];
+    const presentationEnabled = activeDoc
+      && (activeDoc.contentType === Constants.CONTENT_TYPE_TRANSCRIPT ||
+        activeDoc.contentType === Constants.CONTENT_TYPE_LIVE_CHAT);
+
+    const tabBarClassName = this.state.draggedOver ? ' dragged-over-tab-bar' : '';
+    return (
+      <div className={ CSS + tabBarClassName } onDragEnter={ this.onDragEnter } onDragOver={ this.onDragOver }
+           onDragLeave={ this.onDragLeave } onDrop={ this.onDrop }>
+        <ul ref={ this.saveScrollable }>
+          {
+            React.Children.map(this.props.children, child =>
+              <li>{ child }</li>
+            )
+          }
+        </ul>
+        <div className="tab-bar-widgets">
+          { presentationEnabled ? <span className="widget presentation-widget" title="Presentation Mode"
+                                        onClick={ () => this.onPresentationModeClick() }></span> : null }
+          { splitEnabled ?
+            <span className="widget split-widget" title="Split Editor" onClick={ this.onSplitClick }></span> : null }
+        </div>
+      </div>
+    );
+  }
+
   private onSplitClick = () => {
     const owningEditor = this.props.editors[this.props.owningEditor];
     const docIdToSplit = owningEditor.activeDocumentId;
@@ -147,21 +193,21 @@ class TabBarComponent extends React.Component<TabBarProps, TabBarState> {
     this.props.splitTab(docToSplit.contentType, docToSplit.documentId, this.props.owningEditor, destEditorKey);
   }
 
-  private onDragEnter = (e) => {
+  private onDragEnter = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
   }
 
-  private onDragOver = (e) => {
+  private onDragOver = (e: DragEvent<HTMLDivElement>) => {
     this.setState(({ draggedOver: true }));
     e.preventDefault();
     e.stopPropagation();
   }
 
-  private onDragLeave = (e) => {
+  private onDragLeave = (_e: DragEvent<HTMLDivElement>) => {
     this.setState(({ draggedOver: false }));
   }
 
-  private onDrop = (e) => {
+  private onDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
     this.setState(({ draggedOver: false }));
@@ -169,61 +215,17 @@ class TabBarComponent extends React.Component<TabBarProps, TabBarState> {
       const tabData = JSON.parse(e.dataTransfer.getData('application/json'));
       const tabId = tabData.tabId;
       this.props.appendTab(tabData.editorKey, this.props.owningEditor, tabId);
-    } catch (e) { }
+    } catch {
+      // Do nothing
+    }
   }
 
   private saveScrollable = (ref) => {
     this._scrollable = ref;
   }
-
-  componentDidUpdate(prevProps) {
-    let scrollable = this._scrollable;
-  
-    if (scrollable) {
-      if (this.props.children.length > prevProps.children.length &&
-        scrollable.scrollWidth > scrollable.clientWidth) {
-          let leftOffset = 0;
-          for (let i = 0; i <= this.props.activeIndex; i++) {
-            let ref = this.props.childRefs[i];
-            leftOffset += ref ?  this.props.childRefs[i].offsetWidth : 0;
-          }
-          if (leftOffset >= scrollable.clientWidth) {
-            scrollable.scrollLeft = leftOffset;
-          }
-      }
-    }
-  }
-
-  onPresentationModeClick = () =>
-    this.props.enablePresentationMode();
-
-  render() {
-    const splitEnabled = Object.keys(this.props.documents).length > 1;
-    const activeDoc = this.props.documents[this.props.activeDocumentId];
-    const presentationEnabled = activeDoc
-      && (activeDoc.contentType === Constants.ContentType_Transcript || activeDoc.contentType === Constants.ContentType_LiveChat);
-
-    const tabBarClassName = this.state.draggedOver ? ' dragged-over-tab-bar' : '';
-    return (
-      <div className={ CSS + tabBarClassName } onDragEnter={ this.onDragEnter } onDragOver={ this.onDragOver }
-        onDragLeave={ this.onDragLeave } onDrop={ this.onDrop } >
-        <ul ref={ this.saveScrollable }>
-          {
-            React.Children.map(this.props.children, child =>
-              <li>{child}</li>
-            )
-          }
-        </ul>
-        <div className="tab-bar-widgets">
-          { presentationEnabled ? <span className="widget presentation-widget" title="Presentation Mode" onClick={ e => this.onPresentationModeClick() }></span> : null }
-          { splitEnabled ? <span className="widget split-widget" title="Split Editor" onClick={ this.onSplitClick }></span> : null }
-        </div>
-      </div>
-    );
-  }
 }
 
-const mapStateToProps = (state: IRootState, ownProps: TabBarProps): TabBarProps => ({
+const mapStateToProps = (state: RootState, ownProps: TabBarProps): TabBarProps => ({
   activeDocumentId: state.editor.editors[ownProps.owningEditor].activeDocumentId,
   activeEditor: state.editor.activeEditor,
   editors: state.editor.editors,

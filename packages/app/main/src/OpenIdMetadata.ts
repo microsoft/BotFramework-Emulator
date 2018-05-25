@@ -32,14 +32,14 @@
 //
 
 import * as got from 'got';
+
 let getPem = require('rsa-pem-from-mod-exp');
 let base64url = require('base64url');
-
 
 export class OpenIdMetadata {
     private url: string;
     private lastUpdated = 0;
-    private keys: IKey[];
+    private keys: Key[];
 
     constructor(url: string) {
         this.url = url;
@@ -80,9 +80,9 @@ export class OpenIdMetadata {
                     throw new Error('Failed to load openID config: ' + resp.statusCode);
                 }
 
-                let openIdConfig = <IOpenIdConfig>resp.body;
+                let openIdConfig = <OpenIdConfig> resp.body;
 
-                let options = {
+                let options1 = {
                     method: 'GET',
                     url: openIdConfig.jwks_uri,
                     json: true,
@@ -90,14 +90,14 @@ export class OpenIdMetadata {
                     useElectronNet: true
                 };
 
-                got(options)
-                    .then((resp) => {
-                        if (resp.statusCode >= 400 || !resp.body) {
-                            throw new Error("Failed to load Keys: " + resp.statusCode);
+                got(options1)
+                    .then((resp1: any) => {
+                        if (resp1.statusCode >= 400 || !resp1.body) {
+                            throw new Error('Failed to load Keys: ' + resp1.statusCode);
                         }
 
                         this.lastUpdated = new Date().getTime();
-                        this.keys = <IKey[]>resp.body.keys;
+                        this.keys = <Key[]> resp1.body.keys;
 
                         cb(null);
                     })
@@ -116,7 +116,7 @@ export class OpenIdMetadata {
         }
 
         for (let i = 0; i < this.keys.length; i++) {
-            if (this.keys[i].kid == keyId) {
+            if (this.keys[i].kid === keyId) {
                 let key = this.keys[i];
 
                 if (!key.n || !key.e) {
@@ -135,7 +135,7 @@ export class OpenIdMetadata {
     }
 }
 
-interface IOpenIdConfig {
+interface OpenIdConfig {
     issuer: string;
     authorization_endpoint: string;
     jwks_uri: string;
@@ -143,7 +143,7 @@ interface IOpenIdConfig {
     token_endpoint_auth_methods_supported: string[];
 }
 
-interface IKey {
+interface Key {
     kty: string;
     use: string;
     kid: string;

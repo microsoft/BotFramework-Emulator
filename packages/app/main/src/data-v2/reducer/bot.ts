@@ -32,54 +32,53 @@
 //
 
 import { IBotConfig } from 'msbot/bin/schema';
-import { IBotConfigWithPath } from '@bfemulator/sdk-shared';
+import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 import { cloneBot, getBotInfoByPath } from '../../botHelpers';
 import * as BotActions from '../action/bot';
-import { getBotDisplayName, IBotInfo } from '@bfemulator/app-shared';
+import { BotInfo, getBotDisplayName } from '@bfemulator/app-shared';
 
-export interface IBotState {
+export interface BotState {
   activeBot: IBotConfig;
-  botFiles: IBotInfo[];
+  botFiles: BotInfo[];
   currentBotDirectory: string;
 }
 
 export type BotAction = {
   type: 'BOT/LOAD',
   payload: {
-    bots: IBotInfo[]
+    bots: BotInfo[]
   }
 } | {
   type: 'BOT/PATCH',
   payload: {
-    bot: IBotConfigWithPath,
+    bot: BotConfigWithPath,
     secret?: string
   }
 } | {
   type: 'BOT/SET_ACTIVE',
   payload: {
-    bot: IBotConfigWithPath
+    bot: BotConfigWithPath
   }
 } | {
   type: 'BOT/SET_DIRECTORY',
   payload: {
     directory: string
   }
- } | {
-    type: 'BOT/CLOSE',
-    payload: {
-    }
+} | {
+  type: 'BOT/CLOSE',
+  payload: {}
 };
 
-const DEFAULT_STATE: IBotState = {
+const DEFAULT_STATE: BotState = {
   activeBot: null,
   botFiles: [],
   currentBotDirectory: ''
 };
 
-export const bot: any = (state: IBotState = DEFAULT_STATE, action: BotAction) => {
-  switch(action.type) {
+export const bot: any = (state: BotState = DEFAULT_STATE, action: BotAction) => {
+  switch (action.type) {
     case BotActions.LOAD: {
-        state = setBotFilesState(action.payload.bots, state);
+      state = setBotFilesState(action.payload.bots, state);
       break;
     }
 
@@ -89,11 +88,12 @@ export const bot: any = (state: IBotState = DEFAULT_STATE, action: BotAction) =>
         ...action.payload.bot
       };
       // update the bot display name in the list if it was changed
-      const bot = getBotInfoByPath(action.payload.bot.path);
-      if (bot) {
-        bot.displayName = getBotDisplayName(action.payload.bot);
-        if (action.payload.secret)
-          bot.secret = action.payload.secret;
+      const bot1 = getBotInfoByPath(action.payload.bot.path);
+      if (bot1) {
+        bot1.displayName = getBotDisplayName(action.payload.bot);
+        if (action.payload.secret) {
+          bot1.secret = action.payload.secret;
+        }
       }
       state = setActiveBot(patchedBot, state);
       break;
@@ -101,8 +101,8 @@ export const bot: any = (state: IBotState = DEFAULT_STATE, action: BotAction) =>
 
     case BotActions.SET_ACTIVE: {
       // move active bot up to the top of the recent bots list
-      const mostRecentBot = state.botFiles.find(bot => bot && bot.path === action.payload.bot.path);
-      let recentBots = state.botFiles.filter(bot => bot && bot.path !== action.payload.bot.path);
+      const mostRecentBot = state.botFiles.find(bot2 => bot2 && bot2.path === action.payload.bot.path);
+      let recentBots = state.botFiles.filter(bot3 => bot3 && bot3.path !== action.payload.bot.path);
       if (mostRecentBot) {
         recentBots.unshift(mostRecentBot);
       }
@@ -122,27 +122,28 @@ export const bot: any = (state: IBotState = DEFAULT_STATE, action: BotAction) =>
       break;
     }
 
-    default: break;
+    default:
+      break;
   }
   return state;
-}
+};
 
-function setActiveBot(bot: IBotConfig, state: IBotState): IBotState {
+function setActiveBot(bot4: IBotConfig, state: BotState): BotState {
   return Object.assign({}, state, {
     get activeBot() {
-      return cloneBot(bot); // Clones only - this guarantees only pristine bots will exist in the store
+      return cloneBot(bot4); // Clones only - this guarantees only pristine bots will exist in the store
     }
   });
 }
 
-function setBotFilesState(botFilesState: IBotInfo[], state: IBotState): IBotState {
+function setBotFilesState(botFilesState: BotInfo[], state: BotState): BotState {
   let newState = Object.assign({}, state);
 
   newState.botFiles = botFilesState;
   return newState;
 }
 
-function setCurrentBotDirectory(botDirectory: string, state: IBotState): IBotState {
+function setCurrentBotDirectory(botDirectory: string, state: BotState): BotState {
   let newState = Object.assign({}, state);
 
   newState.currentBotDirectory = botDirectory;

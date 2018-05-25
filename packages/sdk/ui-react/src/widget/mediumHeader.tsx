@@ -51,4 +51,5 @@ export interface MediumHeaderProps {
 }
 
 export const MediumHeader = (props: MediumHeaderProps): JSX.Element =>
-   <h2 className={ 'medium-header-comp ' + (props.className || '') } { ...CSS }><TruncateText>{ props.children }</TruncateText></h2>
+  <h2 className={ 'medium-header-comp ' + (props.className || '') } { ...CSS }>
+    <TruncateText>{ props.children }</TruncateText></h2>;

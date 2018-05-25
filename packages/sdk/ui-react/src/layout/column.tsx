@@ -62,9 +62,6 @@ export interface ColumnProps {
 }
 
 export class Column extends React.Component<ColumnProps, {}> {
-  constructor(props, context) {
-    super(props, context);
-  }
 
   render(): JSX.Element {
     const ALIGNMENT_CSS = css({

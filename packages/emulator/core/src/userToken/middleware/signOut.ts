@@ -36,15 +36,15 @@ import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
 import BotEndpoint from '../../facility/botEndpoint';
-import { ITokenParams } from '../ITokenParams';
+import { TokenParams } from '../TokenParams';
 import { TokenCache } from '../tokenCache';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function signOut(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     try {
-      let params: ITokenParams = req.params;
-      const botEndpoint: BotEndpoint = req['botEndpoint'];
+      let params: TokenParams = req.params;
+      const botEndpoint: BotEndpoint = (req as any).botEndpoint;
       TokenCache.deleteTokenFromCache(botEndpoint.botId, params.userId, params.connectionName);
 
       res.send(HttpStatus.OK);

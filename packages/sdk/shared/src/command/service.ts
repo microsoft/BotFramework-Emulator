@@ -31,35 +31,47 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Disposable, IDisposable } from '../lifecycle/disposable';
-import { Channel } from '../ipc/channel';
-import { IPC } from '../ipc/index';
+import { Disposable, DisposableImpl } from '../lifecycle';
+import { Channel, IPC } from '../ipc';
 import { uniqueId } from '../utils';
-import { ICommandRegistry, CommandRegistry } from '..';
-import { ICommandHandler } from '.';
+import { CommandRegistry, CommandRegistryImpl } from '..';
+import { CommandHandler } from '.';
 
-export interface ICommandService extends IDisposable {
-  registry: ICommandRegistry;
+export interface CommandService extends DisposableImpl {
+  registry: CommandRegistry;
+
   call(commandName: string, ...args: any[]): Promise<any>;
+
   remoteCall(commandName: string, ...args: any[]): Promise<any>;
-  on(commandName: string, handler?: ICommandHandler): IDisposable;
+
+  on(commandName: string, handler?: CommandHandler): Disposable;
+
   on(event: 'command-not-found', notFoundHandler?: (commandName: string, ...args: any[]) => any);
 }
 
-export class CommandService extends Disposable implements ICommandService {
+export class CommandServiceImpl extends DisposableImpl implements CommandService {
 
-  private _channel: Channel;
+  private readonly _channel: Channel;
+  private readonly _registry: CommandRegistry;
+  private readonly _channelName: string;
+  private readonly _ipc: IPC;
   private _notFoundHandler: (commandName: string, ...args: any[]) => any;
 
-  public get registry() { return this._registry; }
+  public get registry() {
+    return this._registry;
+  }
 
-  constructor(private _ipc: IPC, private _channelName: string = 'command-service', private _registry: ICommandRegistry = null) {
+  constructor(_ipc: IPC,
+              _channelName: string = 'command-service',
+              _registry: CommandRegistry = new CommandRegistryImpl()) {
     super();
-    this._registry = this._registry || new CommandRegistry();
+
+    this._ipc = _ipc;
+    this._channelName = _channelName;
+    this._registry = _registry;
     this._channel = new Channel(this._channelName, this._ipc);
-    super.toDispose(
-      this._ipc.registerChannel(this._channel));
-    super.toDispose(
+    this.toDispose(this._ipc.registerChannel(this._channel));
+    this.toDispose(
       this._channel.setListener('call', (commandName: string, transactionId: string, ...args: any[]) => {
         this.call(commandName, ...args)
           .then(result => {
@@ -69,11 +81,11 @@ export class CommandService extends Disposable implements ICommandService {
           .catch(err => {
             err = err.message ? err.message : err;
             this._channel.send(transactionId, false, err);
-          })
+          });
       }));
   }
 
-  on(event: string, handler?: ICommandHandler): IDisposable
+  on(event: string, handler?: CommandHandler): Disposable;
   on(event: 'command-not-found', handler?: (commandName: string, ...args: any[]) => any) {
     if (event === 'command-not-found') {
       this._notFoundHandler = handler;
@@ -111,8 +123,7 @@ export class CommandService extends Disposable implements ICommandService {
         if (success) {
           let result = responseArgs.length ? responseArgs.shift() : undefined;
           resolve(result);
-        }
-        else {
+        } else {
           reject(responseArgs.shift());
         }
       });

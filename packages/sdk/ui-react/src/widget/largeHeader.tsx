@@ -51,4 +51,5 @@ export interface LargeHeaderProps {
 }
 
 export const LargeHeader = (props: LargeHeaderProps): JSX.Element =>
-   <h1 className={ 'large-header-comp ' + (props.className || '') } { ...CSS }><TruncateText>{ props.children }</TruncateText></h1>
+  <h1 className={ 'large-header-comp ' + (props.className || '') } { ...CSS }>
+    <TruncateText>{ props.children }</TruncateText></h1>;

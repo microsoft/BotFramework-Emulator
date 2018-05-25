@@ -31,12 +31,37 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ComponentClass, StatelessComponent } from 'react';
+export interface Disposable {
+  dispose(): void;
+}
 
-export interface IDialogService {
-  showDialog(dialog: ComponentClass<any> | StatelessComponent<any>, props: { [propName: string]: any }): any;
+export function isDisposable(obj: any): boolean {
+  return obj && typeof obj.dispose === 'function';
+}
 
-  hideDialog(): any;
+export function dispose<T extends Disposable>(obj: T): T;
+export function dispose<T extends Disposable>(...arr: T[]): T[];
+export function dispose<T extends Disposable>(arr: T[]): T[];
+export function dispose<T extends Disposable>(arg: T | T[]): T | T[] {
+  if (Array.isArray(arg)) {
+    arg.forEach(elem => elem && elem.dispose());
+    return [];
+  } else {
+    if (arg) {
+      arg.dispose();
+    }
+    return undefined;
+  }
+}
 
-  setHost(hostElement: HTMLElement): void;
+export abstract class DisposableImpl implements Disposable {
+  private _toDispose: Disposable[] = [];
+
+  public dispose(): void {
+    this._toDispose = dispose(this._toDispose);
+  }
+
+  public toDispose(...objs: Disposable[]): void {
+    this._toDispose.push(...objs);
+  }
 }

@@ -46,7 +46,7 @@ export enum ServiceType {
   File = 'file'
 }
 
-export interface IConnectedService {
+export interface ConnectedService {
   // ServiceType of the service (LUIS, QnA, etc.)
   readonly type: ServiceType;
 
@@ -57,8 +57,7 @@ export interface IConnectedService {
   id?: string;
 }
 
-
-export interface IEndpointService extends IConnectedService {
+export interface EndpointService extends ConnectedService {
   // type = ServiceTypes.Endpoint
   // id = bot id
 
@@ -72,7 +71,7 @@ export interface IEndpointService extends IConnectedService {
   endpoint: string;
 }
 
-export interface IAzureBotService extends IConnectedService {
+export interface AzureBotService extends ConnectedService {
   // type = ServiceTypes.AzureBotService
   // id = bot id
 
@@ -80,13 +79,13 @@ export interface IAzureBotService extends IConnectedService {
   tenantId: string;
 
   // subscriptionId for ABS registration
-  subscriptionId : string;
+  subscriptionId: string;
 
   // resourceGroup for ABS registration
   resourceGroup: string;
 }
 
-export interface ILuisService extends IConnectedService {
+export interface LuisService extends ConnectedService {
   // type = ServiceTypes.Luis
   // id = appid
 
@@ -103,7 +102,7 @@ export interface ILuisService extends IConnectedService {
   version: string;
 }
 
-export interface IDispatchService extends IConnectedService {
+export interface DispatchService extends ConnectedService {
   // type = ServiceTypes.Dispatch
   // id = appid
 
@@ -123,7 +122,7 @@ export interface IDispatchService extends IConnectedService {
   serviceIds: string[];
 }
 
-export interface IQnAService extends IConnectedService {
+export interface QnAService extends ConnectedService {
   // type=Servicestypes.QnA
   // id = appid for the QnA service
 
@@ -140,7 +139,7 @@ export interface IQnAService extends IConnectedService {
   endpointKey: string;
 }
 
-export interface IFileService extends IConnectedService {
+export interface FileService extends ConnectedService {
   // type = ServiceTypes.File
   // id = filePath
 
@@ -148,7 +147,7 @@ export interface IFileService extends IConnectedService {
   filePath: string;
 }
 
-export interface IBotConfig {
+export interface BotConfig {
   // name of the bot
   name: string;
 
@@ -160,7 +159,7 @@ export interface IBotConfig {
   secretKey: string;
 
   // connected services for the bot
-  services: IConnectedService[];
+  services: ConnectedService[];
 
   // ** CUSTOM PROPERTY NOT IN REAL SCHEMA ** internal identifier that allows us to map to bots.json entries
   path?: string;

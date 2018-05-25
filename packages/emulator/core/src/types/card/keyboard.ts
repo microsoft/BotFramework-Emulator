@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ICardAction from './cardAction';
+import CardAction from './cardAction';
 
-interface IKeyboard {
-  buttons: ICardAction[];         // Set of actions applicable to the current card.
+interface Keyboard {
+  buttons: CardAction[];         // Set of actions applicable to the current card.
 }
 
-export default IKeyboard
+export default Keyboard;

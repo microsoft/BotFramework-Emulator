@@ -33,7 +33,7 @@
 
 export const SET_SHOWING = 'DIALOG/SET_SHOWING';
 
-export function setShowing(showing) {
+export function setShowing(showing: boolean = false) {
   return {
     type: SET_SHOWING,
     payload: {

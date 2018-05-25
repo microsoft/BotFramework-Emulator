@@ -40,7 +40,7 @@ import sendErrorResponse from '../../utils/sendErrorResponse';
 export default function typing(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     try {
-      req['conversation'].sendTyping();
+      (req as any).conversation.sendTyping();
       res.send(HttpStatus.OK);
       res.end();
     } catch (err) {

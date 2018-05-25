@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ITokenResponse } from './ITokenResponse';
+import { TokenResponse } from './TokenResponse';
 
 export class TokenCache {
-    private static tokenStore: { [key: string]: ITokenResponse } = {};
+    private static tokenStore: { [key: string]: TokenResponse } = {};
 
     public static addTokenToCache(botId: string, userId: string, connectionName: string, token: string) {
         this.tokenStore[this.tokenKey(botId, userId, connectionName)] = {
@@ -43,7 +43,7 @@ export class TokenCache {
         };
     }
 
-    public static getTokenFromCache(botId: string, userId: string, connectionName: string): ITokenResponse {
+    public static getTokenFromCache(botId: string, userId: string, connectionName: string): TokenResponse {
         return this.tokenStore[this.tokenKey(botId, userId, connectionName)];
     }
 

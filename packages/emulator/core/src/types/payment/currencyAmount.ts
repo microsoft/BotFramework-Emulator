@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-interface IPaymentCurrencyAmount {
-  currency: string,
-  currencySystem: string,
-  value: string
+interface PaymentCurrencyAmount {
+  currency: string;
+  currencySystem: string;
+  value: string;
 }
 
-export default IPaymentCurrencyAmount
+export default PaymentCurrencyAmount;

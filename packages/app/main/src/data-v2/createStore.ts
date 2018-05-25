@@ -34,25 +34,25 @@
 import { applyMiddleware, createStore, Store } from 'redux';
 import createPromiseMiddleware from 'redux-promise-middleware';
 import reducers from './reducer';
-import { IState, DEFAULT_STATE } from './state';
+import { DEFAULT_STATE, State } from './state';
 import thunk from 'redux-thunk';
 
-export default function create(window): Promise<Store<IState>> {
-  return new Promise<Store<IState>>((resolve, reject) => {
-    const store: Store<IState> = applyMiddleware(
-      store => next => action => {
-        //console.log(action);
+export default function create(_window: any): Promise<Store<State>> {
+  return new Promise<Store<State>>((resolve, reject) => {
+    const store: Store<State> = applyMiddleware(
+      _store1 => next => action => {
+        // console.log(action);
 
         return next(action);
       },
       createPromiseMiddleware(),
       thunk,
-      store => next => action => {
-        //console.log(action);
+      _store2 => next => action => {
+        // console.log(action);
 
         return next(action);
       }
-    )(createStore)(reducers, DEFAULT_STATE) as Store<IState>;
+    )(createStore)(reducers, DEFAULT_STATE) as Store<State>;
 
     resolve(store);
   });

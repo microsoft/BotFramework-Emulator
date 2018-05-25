@@ -34,142 +34,143 @@
 import * as Electron from 'electron';
 import * as URL from 'url';
 import * as path from 'path';
-import { getSettings, dispatch } from './settings';
+import { dispatch, getSettings } from './settings';
 import { WindowStateAction } from './reducers/windowStateReducer';
 
 export class WindowManager {
-    private mainWindow: Electron.BrowserWindow;
-    private windows: Electron.BrowserWindow[];
+  private mainWindow: Electron.BrowserWindow;
+  private windows: Electron.BrowserWindow[];
 
-    constructor() {
-        this.windows = [];
+  constructor() {
+    this.windows = [];
 
-        Electron.ipcMain.on('createCheckoutWindow', (event, args) => {
-            this.createCheckoutWindow(args.payload, args.settings, args.serviceUrl);
-        });
-        Electron.ipcMain.on('getCheckoutState', (event, args) => {
-            let state = event.sender['checkoutState'];
-            event.returnValue = state;
-        });
+    Electron.ipcMain.on('createCheckoutWindow', (event, args) => {
+      this.createCheckoutWindow(args.payload, args.settings, args.serviceUrl);
+    });
+    Electron.ipcMain.on('getCheckoutState', (event, args) => {
+      let state = event.sender.checkoutState;
+      event.returnValue = state;
+    });
+  }
+
+  public addMainWindow(window: Electron.BrowserWindow) {
+    this.mainWindow = window;
+  }
+
+  public hasMainWindow(): boolean {
+    return this.mainWindow !== undefined;
+  }
+
+  public getMainWindow(): Electron.BrowserWindow {
+    return this.mainWindow;
+  }
+
+  public add(window: Electron.BrowserWindow) {
+    this.windows.push(window);
+  }
+
+  public remove(window: Electron.BrowserWindow) {
+    let idx = this.windows.indexOf(window);
+    if (idx !== -1) {
+      this.windows.splice(idx, 1);
     }
+  }
 
-    public addMainWindow(window: Electron.BrowserWindow) {
-        this.mainWindow = window;
-    }
+  public zoomIn() {
+    let zoomLevel = getSettings().windowState.zoomLevel;
+    zoomLevel = Math.min(zoomLevel + 1, 8);
+    this.zoomTo(zoomLevel);
+  }
 
-    public hasMainWindow(): boolean {
-        return this.mainWindow !== undefined;
-    }
+  public zoomOut() {
+    let zoomLevel = getSettings().windowState.zoomLevel;
+    zoomLevel = Math.max(zoomLevel - 1, -4);
+    this.zoomTo(zoomLevel);
+  }
 
-    public getMainWindow(): Electron.BrowserWindow {
-        return this.mainWindow;
-    }
+  public zoomTo(zoomLevel: number) {
+    this.mainWindow.webContents.setZoomLevel(zoomLevel);
+    this.windows.forEach(win => win.webContents.setZoomLevel(zoomLevel));
+    dispatch<WindowStateAction>({
+      type: 'Window_RememberZoomLevel',
+      state: {
+        zoomLevel: zoomLevel
+      }
+    });
+  }
 
-    public add(window: Electron.BrowserWindow) {
-        this.windows.push(window);
-    }
+  public createCheckoutWindow(payload: string, settings: any, serviceUrl: string) {
+    let page = URL.format({
+      protocol: 'file',
+      slashes: true,
+      pathname: path.join(__dirname, '../client/payments/index.html')
+    });
+    page += '?' + payload;
 
-    public remove(window: Electron.BrowserWindow) {
-        let idx = this.windows.indexOf(window);
-        if (idx !== -1) {
-            this.windows.splice(idx, 1);
+    let checkoutWindow = new Electron.BrowserWindow({
+      width: 1000,
+      height: 620,
+      title: 'Checkout with Microsoft Emulator'
+    });
+    this.add(checkoutWindow);
+
+    (checkoutWindow.webContents as any).checkoutState = {
+      settings: settings,
+      serviceUrl: serviceUrl
+    };
+
+    checkoutWindow.on('closed', () => {
+      this.remove(checkoutWindow);
+    });
+
+    // checkoutWindow.webContents.openDevTools();
+
+    // Load a remote URL
+    checkoutWindow.loadURL(page);
+
+    checkoutWindow.webContents.setZoomLevel(getSettings().windowState.zoomLevel);
+  }
+
+  public createOAuthWindow(url: string, codeVerifier: string) {
+    let win = new Electron.BrowserWindow({
+      width: 800,
+      height: 600,
+      title: 'Sign In'
+    });
+    this.add(win);
+    let webContents = win.webContents;
+
+    // webContents.openDevTools();
+    webContents.setZoomLevel(getSettings().windowState.zoomLevel);
+
+    win.on('closed', () => {
+      this.remove(win);
+    });
+
+    const ses = webContents.session;
+    ses.webRequest.onBeforeRequest((details, callback) => {
+      let url1 = details.url.toLowerCase();
+      if (url1.indexOf('/postsignincallback?') !== -1 && url1.indexOf('&code_verifier=') === -1) {
+        if (getSettings().framework.useCodeValidation) {
+          codeVerifier = 'emulated';
         }
-    }
+        // final OAuth redirect so augment the call with the code_verifier
+        const newUrl = details.url + '&code_verifier=' + codeVerifier;
+        callback({ redirectURL: newUrl });
+      } else {
+        // let the request happen
+        callback({});
+      }
+    });
 
-    public zoomIn() {
-        let zoomLevel = getSettings().windowState.zoomLevel;
-        zoomLevel = Math.min(zoomLevel + 1, 8);
-        this.zoomTo(zoomLevel);
-    }
-    public zoomOut() {
-        let zoomLevel = getSettings().windowState.zoomLevel;
-        zoomLevel = Math.max(zoomLevel - 1, -4);
-        this.zoomTo(zoomLevel);
-    }
-    public zoomTo(zoomLevel: number) {
-        this.mainWindow.webContents.setZoomLevel(zoomLevel);
-        this.windows.forEach(win => win.webContents.setZoomLevel(zoomLevel));
-        dispatch<WindowStateAction>({
-            type: 'Window_RememberZoomLevel',
-            state: {
-                zoomLevel: zoomLevel
-            }
-        });
-    }
+    win.loadURL(url);
+  }
 
-    public createCheckoutWindow(payload: string, settings: any, serviceUrl: string) {
-        let page = URL.format({
-            protocol: 'file',
-            slashes: true,
-            pathname: path.join(__dirname, '../client/payments/index.html')
-        });
-        page += '?' + payload;
-
-        let checkoutWindow = new Electron.BrowserWindow({
-            width: 1000,
-            height: 620,
-            title: 'Checkout with Microsoft Emulator'
-        });
-        this.add(checkoutWindow);
-
-        checkoutWindow.webContents['checkoutState'] = {
-            settings: settings,
-            serviceUrl: serviceUrl
-        };
-
-        checkoutWindow.on('closed', () => {
-            this.remove(checkoutWindow);
-        });
-
-        // checkoutWindow.webContents.openDevTools();
-
-        // Load a remote URL
-        checkoutWindow.loadURL(page);
-
-        checkoutWindow.webContents.setZoomLevel(getSettings().windowState.zoomLevel);
-    }
-
-    public createOAuthWindow(url: string, codeVerifier: string) {
-        let win = new Electron.BrowserWindow({
-            width: 800,
-            height: 600,
-            title: 'Sign In'
-        });
-        this.add(win);
-        let webContents = win.webContents;
-
-        // webContents.openDevTools();
-        webContents.setZoomLevel(getSettings().windowState.zoomLevel);
-        
-        win.on('closed', () => {
-            this.remove(win);
-        });
-
-        const ses = webContents.session;
-        ses.webRequest.onBeforeRequest((details, callback) => {
-            let url = details.url.toLowerCase();
-            if (url.indexOf('/postsignincallback?') !== -1 && url.indexOf('&code_verifier=') === -1) {
-                if(getSettings().framework.useCodeValidation) {
-                    codeVerifier = 'emulated';
-                }
-                // final OAuth redirect so augment the call with the code_verifier
-                var newUrl = details.url + '&code_verifier=' + codeVerifier;
-                callback({ redirectURL: newUrl });
-            }
-            else {
-                // let the request happen
-                callback({});
-            }
-        });
-        
-        win.loadURL(url);
-    }
-
-    public closeAll() {
-        let openWindows = [];
-        this.windows.forEach(win => openWindows.push(win));
-        openWindows.forEach(win => win.close());
-        this.windows = [];
-        this.mainWindow = undefined;
-    }
+  public closeAll() {
+    let openWindows = [];
+    this.windows.forEach(win => openWindows.push(win));
+    openWindows.forEach(win => win.close());
+    this.windows = [];
+    this.mainWindow = undefined;
+  }
 }

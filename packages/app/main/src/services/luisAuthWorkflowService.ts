@@ -35,11 +35,8 @@ import { BrowserWindow } from 'electron';
 
 export class LuisAuthWorkflowService {
 
-  constructor() {
-    throw new ReferenceError('The LuisAuthWorkflowService cannot be constructed.');
-  }
-
-  public static* enterAuthWorkflow(): IterableIterator<Promise<BrowserWindow> | Promise<{ key: string, BaseUrl: string } | boolean>> {
+  public static* enterAuthWorkflow()
+    : IterableIterator<Promise<BrowserWindow> | Promise<{ key: string, BaseUrl: string } | boolean>> {
     const authWindow = yield LuisAuthWorkflowService.launchAuthWindow();
     authWindow.show();
     // We're always getting the v1.0 endpoint
@@ -56,7 +53,8 @@ export class LuisAuthWorkflowService {
     yield result;
   }
 
-  private static async waitForLuisDataFromWindow(browserWindow: BrowserWindow): Promise<{ key: string, BaseUrl: string } | boolean> {
+  private static async waitForLuisDataFromWindow(browserWindow: BrowserWindow)
+    : Promise<{ key: string, BaseUrl: string } | boolean> {
     const script = `
       (function(window) {
         const nav = document.querySelector('.global-navigation');
@@ -112,5 +110,9 @@ export class LuisAuthWorkflowService {
     return new Promise<BrowserWindow>(resolve => {
       browserWindow.once('ready-to-show', () => resolve(browserWindow));
     });
+  }
+
+  constructor() {
+    throw new ReferenceError('The LuisAuthWorkflowService cannot be constructed.');
   }
 }

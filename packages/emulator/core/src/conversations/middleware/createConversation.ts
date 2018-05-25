@@ -40,13 +40,13 @@ import Conversation from '../../facility/conversation';
 import createAPIException from '../../utils/createResponse/apiException';
 import createConversationResponse from '../../utils/createResponse/conversation';
 import ErrorCodes from '../../types/errorCodes';
-import IConversationParameters from '../../types/activity/conversationParameters';
+import ConversationParameters from '../../types/activity/conversationParameters';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function createConversation(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    const botEndpoint: BotEndpoint = req['botEndpoint'];
-    const conversationParameters = <IConversationParameters>req.body;
+    const botEndpoint: BotEndpoint = (req as any).botEndpoint;
+    const conversationParameters = req.body as ConversationParameters;
 
     try {
       if (conversationParameters.members === null) {
@@ -54,11 +54,13 @@ export default function createConversation(botEmulator: BotEmulator) {
       }
 
       if (conversationParameters.members.length !== 1) {
-        throw createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.BadSyntax, 'emulator only supports creating conversation with 1 user');
+        throw createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.BadSyntax,
+          'emulator only supports creating conversation with 1 user');
       }
 
       if (conversationParameters.members[0].id !== botEmulator.facilities.users.currentUserId) {
-        throw createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.BadSyntax, 'Emulator only supports creating conversation with the current user');
+        throw createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.BadSyntax,
+          'Emulator only supports creating conversation with the current user');
       }
 
       if (conversationParameters.bot === null) {
@@ -66,14 +68,16 @@ export default function createConversation(botEmulator: BotEmulator) {
       }
 
       if (conversationParameters.bot.id !== this.botId) {
-        throw createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.BadArgument, 'conversationParameters.bot.id doesn\'t match security bot id');
+        throw createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.BadArgument,
+          'conversationParameters.bot.id doesn\'t match security bot id');
       }
 
       if (!botEndpoint) {
-        throw createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.MissingProperty, 'Emulator only supports bot-created conversation with AppID-bearing bot');
+        throw createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.MissingProperty,
+          'Emulator only supports bot-created conversation with AppID-bearing bot');
       }
 
-      // let newUsers: IUser[] = [];
+      // let newUsers: User[] = [];
 
       // // merge users in
       // for (let key in conversationParameters.members) {
@@ -113,9 +117,9 @@ export default function createConversation(botEmulator: BotEmulator) {
         conversationParameters.activity.from = { id: botEndpoint.botId };
         conversationParameters.activity.recipient = { id: conversationParameters.members[0].id };
 
-        const response = newConversation.postActivityToUser(conversationParameters.activity);
+        const response1 = newConversation.postActivityToUser(conversationParameters.activity);
 
-        activityId = response.id;
+        activityId = response1.id;
       }
 
       const response = createConversationResponse(newConversation.conversationId, activityId);

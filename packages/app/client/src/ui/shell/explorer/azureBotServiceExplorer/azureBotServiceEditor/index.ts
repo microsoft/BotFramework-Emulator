@@ -32,3 +32,4 @@
 //
 
 export { AzureBotServiceEditorContainer } from './azureBotServiceEditorContainer';
+export { AzureBotServiceEditor } from './azureBotServiceEditor';

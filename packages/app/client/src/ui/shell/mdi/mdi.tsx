@@ -36,20 +36,15 @@ import { connect } from 'react-redux';
 
 import * as EditorActions from '../../../data/action/editorActions';
 import { EditorFactory } from '../../editor';
-import {
-  MultiTabs,
-  TabbedDocument,
-  Tab as TabbedDocumentTab,
-  Content as TabbedDocumentContent
-} from '../multiTabs';
+import { Content as TabbedDocumentContent, MultiTabs, Tab as TabbedDocumentTab, TabbedDocument } from '../multiTabs';
 import { TabFactory } from './tabFactory';
-import { IDocument } from '../../../data/reducer/editor';
-import { IRootState } from '../../../data/store';
+import { Document } from '../../../data/reducer/editor';
+import { RootState } from '../../../data/store';
 
 interface MDIProps {
   activeDocumentId?: string;
   activeEditor?: string;
-  documents?: { [documentId: string]: IDocument };
+  documents?: { [documentId: string]: Document };
   tabOrder?: string[];
   owningEditor?: string;
   setActiveTab?: (tab: string) => void;
@@ -60,17 +55,13 @@ class MDIComponent extends React.Component<MDIProps> {
     super(props);
   }
 
-  private handleTabChange = (tabValue) => {
-    this.props.setActiveTab(this.props.tabOrder[tabValue]);
-  }
-
   render() {
     const activeIndex = this.props.tabOrder.findIndex(documentId => documentId === this.props.activeDocumentId);
 
     return (
       <MultiTabs
         onChange={ this.handleTabChange }
-        value={ ~activeIndex ? activeIndex : 0 }
+        value={ activeIndex ? activeIndex : 0 }
         owningEditor={ this.props.owningEditor }
       >
         {
@@ -88,9 +79,13 @@ class MDIComponent extends React.Component<MDIProps> {
       </MultiTabs>
     );
   }
+
+  private handleTabChange = (tabValue) => {
+    this.props.setActiveTab(this.props.tabOrder[tabValue]);
+  }
 }
 
-const mapStateToProps = (state: IRootState, ownProps: MDIProps): MDIProps => ({
+const mapStateToProps = (state: RootState, ownProps: MDIProps): MDIProps => ({
   activeDocumentId: state.editor.editors[ownProps.owningEditor].activeDocumentId,
   documents: state.editor.editors[ownProps.owningEditor].documents,
   tabOrder: state.editor.editors[ownProps.owningEditor].tabOrder,

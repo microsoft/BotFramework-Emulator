@@ -31,16 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ICardAction from './cardAction';
-import ICardImage from './cardImage';
-import IKeyboard from './keyboard';
+import CardAction from './cardAction';
+import CardImage from './cardImage';
+import Keyboard from './keyboard';
 
-interface IThumbnailCard extends IKeyboard {
+interface ThumbnailCard extends Keyboard {
   title: string;                  // Title of the Card
   subtitle: string;               // Subtitle appears just below Title field, differs from Title in font styling only
   text: string;                   // Text field appears just below subtitle, differs from Subtitle in font styling only
-  images: ICardImage[];           // Messaging supports all media formats: audio, video, images and thumbnails as well to optimize content download.
-  tap: ICardAction;               // This action will be activated when user taps on the section bubble.
+  images: CardImage[];           // Messaging supports all media formats: audio, video, images and thumbnails as well
+                                  // to optimize content download.
+  tap: CardAction;               // This action will be activated when user taps on the section bubble.
 }
 
-export default IThumbnailCard
+export default ThumbnailCard;

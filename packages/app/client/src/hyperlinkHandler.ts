@@ -31,152 +31,151 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-const Electron = window['require']('electron');
+const Electron = (window as any).require('electron');
 const { shell } = Electron;
 import { uniqueId } from '@bfemulator/sdk-shared';
-import { CommandService } from './platform/commands/commandService';
+import { CommandServiceImpl } from './platform/commands/commandServiceImpl';
 import * as URL from 'url';
 
 export function navigate(url: string) {
-    try {
-        const parsed = URL.parse(url);
-        if (parsed.protocol.startsWith('oauth:')) {
-            navigateEmulatedOAuthUrl(url.substring(8));
-        } else if (parsed.protocol.startsWith('oauthlink:')) {
-            navigateOAuthUrl(url.substring(12));
-        } else {
-            shell.openExternal(url, { activate: true });
-        }
-    } catch (e) {
-        shell.openExternal(url, { activate: true });
+  try {
+    const parsed = URL.parse(url);
+    if (parsed.protocol.startsWith('oauth:')) {
+      navigateEmulatedOAuthUrl(url.substring(8));
+    } else if (parsed.protocol.startsWith('oauthlink:')) {
+      navigateOAuthUrl(url.substring(12));
+    } else {
+      shell.openExternal(url, { activate: true });
     }
+  } catch (e) {
+    shell.openExternal(url, { activate: true });
+  }
 }
 
 function navigateEmulatedOAuthUrl(oauthParam: string) {
-    let parts = oauthParam.split('&&&');
-    CommandService.remoteCall('oauth:send-token-response', parts[0], parts[1], 'emulatedToken_' + uniqueId()).then(() => {});
+  let parts = oauthParam.split('&&&');
+  CommandServiceImpl.remoteCall('oauth:send-token-response', parts[0], parts[1], 'emulatedToken_' + uniqueId())
+    .catch();
 }
 
 function navigateOAuthUrl(oauthParam: string) {
-    let parts = oauthParam.split('&&&');
-    CommandService.remoteCall('oauth:create-oauth-window', parts[0], parts[1]).then(() => {});
+  let parts = oauthParam.split('&&&');
+  CommandServiceImpl.remoteCall('oauth:create-oauth-window', parts[0], parts[1]).catch();
 }
 
-/*
-import * as URL from 'url';
-import * as QueryString from 'querystring';
-import { InspectorActions, AddressBarActions } from './reducers';
-import { getSettings, selectedActivity$ } from './settings';
-import { Settings as ServerSettings } from '../external/types/serverSettingsTypes';
-import { Emulator } from './emulator';
-import { PaymentEncoder } from '../external/shared/paymentEncoder';
-import * as log from './log';
-
-// import * as Electron from 'electron';
-// import { shell } from 'electron';
-
-const Electron = window['require']('electron');
-const { shell } = Electron;
-
-
-export function navigate(url: string) {
-    try {
-        const parsed = URL.parse(url);
-        if (parsed.protocol === "emulator:") {
-            const params = ((QueryString.parse(parsed.query as string) as any) as string[]);
-            if (parsed.host === 'inspect') {
-                navigateInspectUrl(params);
-            } else if (parsed.host === 'appsettings') {
-                navigateAppSettingsUrl(params);
-            } else if (parsed.host === 'botcreds') {
-                navigateBotCredsUrl(params);
-            } else if (parsed.host === 'command') {
-                navigateCommandUrl(params);
-            }
-        } else if (parsed.protocol) {
-            if (parsed.protocol.startsWith(PaymentEncoder.PaymentEmulatorUrlProtocol)) {
-                navigatePaymentUrl(parsed.path);
-            } else if (parsed.protocol.startsWith('file:')) {
-                // ignore
-            } else if (parsed.protocol.startsWith('javascript:')) {
-                // ignore
-            }
-        } else {
-            shell.openExternal(url, { activate: true });
-        }
-    } catch (e) {
-        log.error(e.message);
-    }
-}
-
-function navigateInspectUrl(params: string[]) {
-    try {
-        const encoded = params['obj'];
-        let json;
-        let obj;
-        try {
-            json = decodeURIComponent(encoded);
-        } catch (e) {
-            json = encoded;
-        }
-        try {
-            obj = JSON.parse(json);
-        } catch (e) {
-            obj = json;
-        }
-        if (obj) {
-            if (obj.id) {
-                selectedActivity$().next({ id: obj.id });
-            } else if (obj.replyToId) {
-                selectedActivity$().next({ id: obj.replyToId });
-            } else {
-                selectedActivity$().next({});
-            }
-            InspectorActions.setSelectedObject({ activity: obj });
-        } else {
-            selectedActivity$().next({});
-        }
-    } catch (e) {
-        selectedActivity$().next({});
-        throw e;
-    }
-}
-
-function navigateAppSettingsUrl(args: string[]) {
-    AddressBarActions.showAppSettings();
-}
-
-function navigateBotCredsUrl(args: string[]) {
-    args = args || [];
-    if (!args.length) {
-        const settings = getSettings();
-        const activeBotId = settings.serverSettings.activeBot;
-        if (activeBotId) {
-            const activeBot = new ServerSettings(settings.serverSettings).botById(activeBotId);
-            AddressBarActions.selectBot(activeBot);
-        }
-    } else {
-        // todo
-    }
-    AddressBarActions.showBotCreds();
-}
-
-function navigateCommandUrl(params: string[]) {
-    if (!params || !params['args'])
-        return;
-    const json = decodeURIComponent(params['args']);
-    const args = JSON.parse(json);
-    if (typeof args ==='string' && args.includes('autoUpdater.quitAndInstall')) {
-        Emulator.quitAndInstall();
-    }
-}
-
-function navigatePaymentUrl(payload?: string) {
-    const settings = getSettings();
-    Electron.ipcRenderer.send("createCheckoutWindow", {
-        payload: payload,
-        settings: settings,
-        serviceUrl: Emulator.serviceUrl
-    });
-}
-*/
+// import * as URL from 'url';
+// import * as QueryString from 'querystring';
+// import { InspectorActions, AddressBarActions } from './reducers';
+// import { getSettings, selectedActivity$ } from './settings';
+// import { Settings as ServerSettings } from '../external/types/serverSettingsTypes';
+// import { Emulator } from './emulator';
+// import { PaymentEncoder } from '../external/shared/paymentEncoder';
+// import * as log from './log';
+//
+// // import * as Electron from 'electron';
+// // import { shell } from 'electron';
+//
+// const Electron = window['require']('electron');
+// const { shell } = Electron;
+//
+//
+// export function navigate(url: string) {
+//     try {
+//         const parsed = URL.parse(url);
+//         if (parsed.protocol === "emulator:") {
+//             const params = ((QueryString.parse(parsed.query as string) as any) as string[]);
+//             if (parsed.host === 'inspect') {
+//                 navigateInspectUrl(params);
+//             } else if (parsed.host === 'appsettings') {
+//                 navigateAppSettingsUrl(params);
+//             } else if (parsed.host === 'botcreds') {
+//                 navigateBotCredsUrl(params);
+//             } else if (parsed.host === 'command') {
+//                 navigateCommandUrl(params);
+//             }
+//         } else if (parsed.protocol) {
+//             if (parsed.protocol.startsWith(PaymentEncoder.PaymentEmulatorUrlProtocol)) {
+//                 navigatePaymentUrl(parsed.path);
+//             } else if (parsed.protocol.startsWith('file:')) {
+//                 // ignore
+//             } else if (parsed.protocol.startsWith('javascript:')) {
+//                 // ignore
+//             }
+//         } else {
+//             shell.openExternal(url, { activate: true });
+//         }
+//     } catch (e) {
+//         log.error(e.message);
+//     }
+// }
+//
+// function navigateInspectUrl(params: string[]) {
+//     try {
+//         const encoded = params['obj'];
+//         let json;
+//         let obj;
+//         try {
+//             json = decodeURIComponent(encoded);
+//         } catch (e) {
+//             json = encoded;
+//         }
+//         try {
+//             obj = JSON.parse(json);
+//         } catch (e) {
+//             obj = json;
+//         }
+//         if (obj) {
+//             if (obj.id) {
+//                 selectedActivity$().next({ id: obj.id });
+//             } else if (obj.replyToId) {
+//                 selectedActivity$().next({ id: obj.replyToId });
+//             } else {
+//                 selectedActivity$().next({});
+//             }
+//             InspectorActions.setSelectedObject({ activity: obj });
+//         } else {
+//             selectedActivity$().next({});
+//         }
+//     } catch (e) {
+//         selectedActivity$().next({});
+//         throw e;
+//     }
+// }
+//
+// function navigateAppSettingsUrl(args: string[]) {
+//     AddressBarActions.showAppSettings();
+// }
+//
+// function navigateBotCredsUrl(args: string[]) {
+//     args = args || [];
+//     if (!args.length) {
+//         const settings = getSettings();
+//         const activeBotId = settings.serverSettings.activeBot;
+//         if (activeBotId) {
+//             const activeBot = new ServerSettings(settings.serverSettings).botById(activeBotId);
+//             AddressBarActions.selectBot(activeBot);
+//         }
+//     } else {
+//         // todo
+//     }
+//     AddressBarActions.showBotCreds();
+// }
+//
+// function navigateCommandUrl(params: string[]) {
+//     if (!params || !params['args'])
+//         return;
+//     const json = decodeURIComponent(params['args']);
+//     const args = JSON.parse(json);
+//     if (typeof args ==='string' && args.includes('autoUpdater.quitAndInstall')) {
+//         Emulator.quitAndInstall();
+//     }
+// }
+//
+// function navigatePaymentUrl(payload?: string) {
+//     const settings = getSettings();
+//     Electron.ipcRenderer.send("createCheckoutWindow", {
+//         payload: payload,
+//         settings: settings,
+//         serviceUrl: Emulator.serviceUrl
+//     });
+// }

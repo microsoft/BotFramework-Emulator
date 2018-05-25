@@ -31,18 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import IActivity from './activity';
-import IAttachment from '../attachment';
-import IEntity from '../entity';
+import Activity from './activity';
+import Attachment from '../attachment';
+import Entity from '../entity';
 
-interface IMessageActivity extends IActivity {
-  locale?: string,
-  text?: string,
-  summary?: string,
-  textFormat?: string,
-  attachmentLayout?: string,
-  attachments?: IAttachment[],
-  entities?: IEntity[],
+interface MessageActivity extends Activity {
+  locale?: string;
+  text?: string;
+  summary?: string;
+  textFormat?: string;
+  attachmentLayout?: string;
+  attachments?: Attachment[];
+  entities?: Entity[];
 }
 
-export default IMessageActivity
+export default MessageActivity;

@@ -38,7 +38,7 @@ import * as React from 'react';
 import { Fonts } from '@bfemulator/ui-react';
 import { Extension } from '../../../../extensions';
 import { Inspector } from './inspector';
-import { IExtensionInspector } from '@bfemulator/sdk-shared';
+import { ExtensionInspector } from '@bfemulator/sdk-shared';
 
 const CSS = css({
   padding: 0,
@@ -56,7 +56,7 @@ export interface DetailProps {
   document: any;
   inspectObj: any;
   extension: Extension;
-  inspector: IExtensionInspector;
+  inspector: ExtensionInspector;
   enableAccessory: (id: string, enable: boolean) => void;
   setAccessoryState: (id: string, state: string) => void;
   setInspectorTitle: (title: string) => void;

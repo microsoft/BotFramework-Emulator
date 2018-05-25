@@ -14,7 +14,5 @@ import 'msbot/bin/schema';
 import 'msbot/bin/models';
 import 'rxjs';
 
-import 'office-ui-fabric-react';
-
 import '@fuselab/ui-fabric/lib';
 import '@fuselab/ui-shared/lib';

@@ -31,23 +31,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import IActivity from './activity';
-import IChannelAccount from '../account/channel';
-import IConversationAccount from '../account/conversation';
+import Activity from './activity';
+import ChannelAccount from '../account/channel';
+import ConversationAccount from '../account/conversation';
 
-export interface IConversationReference {
+export interface ConversationReference {
   activityId: string;
-  bot: IChannelAccount;
+  bot: ChannelAccount;
   channelId: string;
-  conversation: IConversationAccount;
+  conversation: ConversationAccount;
   serviceUrl: string;
-  user: IChannelAccount;
+  user: ChannelAccount;
 }
 
-interface IInvokeActivity extends IActivity {
+interface InvokeActivity extends Activity {
   name?: string;
-  relatesTo?: IConversationReference;
+  relatesTo?: ConversationReference;
   value?: any;
 }
 
-export default IInvokeActivity
+export default InvokeActivity;

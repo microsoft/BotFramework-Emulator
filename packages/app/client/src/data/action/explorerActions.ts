@@ -33,11 +33,11 @@
 
 export const SHOW = 'EXPLORER/SHOW';
 
-export function show(show: boolean) {
+export function show(_show: boolean) {
   return {
     type: SHOW,
     payload: {
-      show
+      show: _show
     }
   };
 }

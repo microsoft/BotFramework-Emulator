@@ -50,10 +50,11 @@ export interface LuisServicePayload {
 }
 
 export interface LuisEditorPayload extends LuisServicePayload {
-  luisEditorComponent?: ComponentClass<LuisEditor>,
+  luisEditorComponent?: ComponentClass<LuisEditor>;
 }
 
-export function launchLuisEditor(luisEditorComponent: ComponentClass<LuisEditor>, luisService?: ILuisService): LuisServiceAction<LuisEditorPayload> {
+export function launchLuisEditor(luisEditorComponent: ComponentClass<LuisEditor>, luisService?: ILuisService)
+  : LuisServiceAction<LuisEditorPayload> {
   return {
     type: LAUNCH_LUIS_EDITOR,
     payload: { luisEditorComponent, luisService }
@@ -67,7 +68,8 @@ export function openLuisDeepLink(luisService: ILuisService): LuisServiceAction<L
   };
 }
 
-export function openLuisExplorerContextMenu(luisEditorComponent: ComponentClass<LuisEditor>, luisService?: ILuisService): LuisServiceAction<LuisEditorPayload> {
+export function openLuisExplorerContextMenu(luisEditorComponent: ComponentClass<LuisEditor>, luisService?: ILuisService)
+  : LuisServiceAction<LuisEditorPayload> {
   return {
     type: OPEN_LUIS_CONTEXT_MENU,
     payload: { luisEditorComponent, luisService }

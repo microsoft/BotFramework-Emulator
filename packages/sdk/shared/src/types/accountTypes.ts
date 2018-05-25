@@ -31,12 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export interface IChannelAccount {
-    id?: string,
-    name?: string,
-    role?: string,
+export interface ChannelAccount {
+    id?: string;
+    name?: string;
+    role?: string;
 }
 
-export interface IConversationAccount extends IChannelAccount {
-    isGroup?: boolean,
+export interface ConversationAccount extends ChannelAccount {
+    isGroup?: boolean;
 }

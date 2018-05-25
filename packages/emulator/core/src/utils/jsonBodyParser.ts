@@ -35,14 +35,14 @@ import * as Restify from 'restify';
 
 const { bodyReader, jsonBodyParser: restifyJsonBodyParser } = Restify.plugins;
 
-export default function jsonBodyParser(options?): Restify.RequestHandler[] {
+export default function jsonBodyParser(options?: any): Restify.RequestHandler[] {
   options = options || { mapParams: false };
   options.bodyReader = true;
 
   const read = bodyReader(options);
   const parseJson = restifyJsonBodyParser(options);
 
-  function parseBody(req, res, next) {
+  function parseBody(req: any, res: any, next: any) {
     if (req.method === 'HEAD') {
       next();
       return;

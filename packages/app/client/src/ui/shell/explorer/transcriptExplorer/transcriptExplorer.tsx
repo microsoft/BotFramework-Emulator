@@ -35,11 +35,11 @@ import * as React from 'react';
 import { css } from 'glamor';
 import { connect } from 'react-redux';
 import { FileInfo } from '@bfemulator/app-shared';
-import { lazy, pathExt } from '@fuselab/ui-shared/lib';
-import { TreeView, TreeViewProps, initFontFaces } from '@fuselab/ui-fabric/lib';
+import { pathExt } from '@fuselab/ui-shared/lib';
+import { TreeView, TreeViewProps } from '@fuselab/ui-fabric/lib';
 import { ExpandCollapse, ExpandCollapseContent } from '@bfemulator/ui-react';
 import { IFileTreeState } from '../../../../data/reducer/files';
-import { CommandService } from '../../../../platform/commands/commandService';
+import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
 import { FileTreeDataProvider } from './fileTreeProvider';
 
 const CSS = css({
@@ -57,10 +57,10 @@ const CSS = css({
 });
 
 interface TranscriptExplorerProps {
-  activeEditor: string,
-  activeDocumentId: string,
-  transcripts: any[],
-  files: IFileTreeState
+  activeEditor: string;
+  activeDocumentId: string;
+  transcripts: any[];
+  files: IFileTreeState;
 }
 
 function isTranscript(path: string): boolean {
@@ -69,15 +69,21 @@ function isTranscript(path: string): boolean {
 }
 
 class TranscriptExplorerComponent extends React.Component<TranscriptExplorerProps> {
-  private onItemClick: (name: string) => void;
 
-  constructor(props) {
-    super(props);
-    this.onItemClick = this.handleItemClick.bind(this);
+  public render(): JSX.Element {
+    return (
+      <ExpandCollapse
+        expanded={ true }
+        title="Transcript Explorer"
+        style={ CSS }
+      >
+        { this.renderFileTree() }
+      </ExpandCollapse>
+    );
   }
 
-  private handleItemClick(filename) {
-    CommandService.call("transcript:open", filename);
+  private handleItemClick(filename: string) {
+    CommandServiceImpl.call('transcript:open', filename);
   }
 
   private renderFileTree(): JSX.Element {
@@ -110,18 +116,6 @@ class TranscriptExplorerComponent extends React.Component<TranscriptExplorerProp
       <ExpandCollapseContent key={ 'transcript-explorer-tree' }>
         <TreeView { ...props } />
       </ExpandCollapseContent>
-    );
-  }
-
-  public render(): JSX.Element {
-    return (
-      <ExpandCollapse
-        expanded={ true }
-        title="Transcript Explorer"
-        style={ CSS }
-      >
-        { this.renderFileTree() }
-      </ExpandCollapse>
     );
   }
 }
