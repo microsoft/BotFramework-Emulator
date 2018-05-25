@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import IChannelAccount from './channel';
+import ChannelAccount from './channel';
 
-interface IConversationAccount extends IChannelAccount {
+interface ConversationAccount extends ChannelAccount {
   isGroup?: boolean;
 }
 
-export default IConversationAccount
+export default ConversationAccount;

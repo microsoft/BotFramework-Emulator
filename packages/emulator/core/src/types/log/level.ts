@@ -36,6 +36,6 @@ enum LogLevel {
   Info,
   Warn,
   Error
-};
+}
 
 export default LogLevel;

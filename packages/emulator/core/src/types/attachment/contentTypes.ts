@@ -42,4 +42,4 @@ class AttachmentContentTypes {
   public static videoCard = 'application/vnd.microsoft.card.video';
 }
 
-export default AttachmentContentTypes
+export default AttachmentContentTypes;

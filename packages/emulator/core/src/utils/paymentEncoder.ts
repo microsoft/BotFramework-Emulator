@@ -32,15 +32,15 @@
 //
 
 import ActivityVisitor from './activityVisitor';
-import ICardAction from '../types/card/cardAction';
-import IPaymentRequest from '../types/payment/request';
+import CardAction from '../types/card/cardAction';
+import PaymentRequest from '../types/payment/request';
 
 export default class PaymentEncoder extends ActivityVisitor {
-  public static PaymentEmulatorUrlProtocol: string = "payment:";
+  public static PaymentEmulatorUrlProtocol: string = 'payment:';
 
-  protected visitCardAction(cardAction: ICardAction) {
+  protected visitCardAction(cardAction: CardAction) {
     if (cardAction && cardAction.type === 'payment') {
-      const paymentRequest = cardAction.value as IPaymentRequest;
+      const paymentRequest = cardAction.value as PaymentRequest;
       const url = PaymentEncoder.PaymentEmulatorUrlProtocol + '//' + JSON.stringify(paymentRequest);
 
       // change the card action to a special URL for the emulator

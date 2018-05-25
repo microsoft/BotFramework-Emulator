@@ -58,7 +58,8 @@ function* openDispatchContextMenu(action: DispatchServiceAction<DispatchServiceP
     { label: 'Edit settings', id: 'edit' },
     { label: 'Remove', id: 'forget' }
   ];
-  const response = yield call(CommandServiceImpl.remoteCall.bind(CommandServiceImpl), 'electron:displayContextMenu', menuItems);
+  const response = yield call(CommandServiceImpl
+    .remoteCall.bind(CommandServiceImpl), 'electron:displayContextMenu', menuItems);
   switch (response.id) {
     case 'open':
       yield* openDispatchDeepLink(action);

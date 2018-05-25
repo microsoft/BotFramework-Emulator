@@ -37,10 +37,10 @@ import * as Restify from 'restify';
 import BotEmulator from '../../botEmulator';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
-export default function deleteUserData(botEmulator: BotEmulator) {
+export default function deleteUserData(_botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     try {
-      req['conversation'].sendDeleteUserData();
+      (req as any).conversation.sendDeleteUserData();
       res.send(HttpStatus.OK);
       res.end();
     } catch (err) {

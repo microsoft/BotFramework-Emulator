@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ICardAction from './cardAction';
+import CardAction from './cardAction';
 
-interface ISigninCard {
+interface SigninCard {
   text: string;                   // Title of the Card
-  buttons: ICardAction[];         // Sign in action
+  buttons: CardAction[];         // Sign in action
 }
 
-export default ISigninCard
+export default SigninCard;

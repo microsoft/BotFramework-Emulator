@@ -35,22 +35,19 @@ import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
-import IConversationAPIPathParameters from '../conversationAPIPathParameters';
-import IGenericActivity from '../../types/activity/generic';
-import IResourceResponse from '../../types/response/resource';
+import GenericActivity from '../../types/activity/generic';
+import ResourceResponse from '../../types/response/resource';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function sendToConversation(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    const activity = <IGenericActivity>req.body;
-    const conversationParameters: IConversationAPIPathParameters = req.params;
-
+    const activity = <GenericActivity> req.body;
     try {
       activity.id = null;
       activity.replyToId = req.params.activityId;
 
       // post activity
-      const response: IResourceResponse = req['conversation'].postActivityToUser(activity);
+      const response: ResourceResponse = (req as any).conversation.postActivityToUser(activity);
 
       res.send(HttpStatus.OK, response);
       res.end();

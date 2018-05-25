@@ -37,10 +37,10 @@ import * as Restify from 'restify';
 import BotEmulator from '../../botEmulator';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
-export default function ping(botEmulator: BotEmulator) {
+export default function ping(_botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     try {
-      req['conversation'].sendPing();
+      (req as any).conversation.sendPing();
       res.send(HttpStatus.OK);
       res.end();
     } catch (err) {

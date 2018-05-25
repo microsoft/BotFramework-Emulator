@@ -31,9 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-interface ICardMediaUrl {
-  url: string,                    // Url to audio, video or animation media
-  profile: string                 // Optional profile hint to the client to differentiate multiple MediaUrl objects from each other
+interface CardMediaUrl {
+  url: string;                    // Url to audio, video or animation media
+  profile: string;                // Optional profile hint to the client to differentiate
+                                  // multiple MediaUrl objects from each other
 }
 
-export default ICardMediaUrl
+export default CardMediaUrl;

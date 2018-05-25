@@ -35,13 +35,12 @@ import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
-import IChannelAccount from '../../types/account/channel';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function contactAdded(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     try {
-      req['conversation'].sendContactAdded();
+      (req as any).conversation.sendContactAdded();
       res.send(HttpStatus.OK);
       res.end();
     } catch (err) {

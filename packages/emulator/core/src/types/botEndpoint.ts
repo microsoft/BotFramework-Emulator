@@ -31,9 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import IBotEndpointOptions from './botEndpointOptions';
-
-interface IBotEndpoint {
+interface BotEndpoint {
   botId: string;
   botUrl: string;
   msaAppId: string;
@@ -41,4 +39,4 @@ interface IBotEndpoint {
   use10Tokens?: boolean;
 }
 
-export default IBotEndpoint;
+export default BotEndpoint;

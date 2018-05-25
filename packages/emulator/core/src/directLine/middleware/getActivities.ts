@@ -37,9 +37,9 @@ import * as Restify from 'restify';
 import BotEmulator from '../../botEmulator';
 import Conversation from '../../facility/conversation';
 
-export default function getActivities(botEmulator: BotEmulator) {
+export default function getActivities(_botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    const conversation: Conversation = req['conversation'];
+    const conversation: Conversation = (req as any).conversation;
 
     if (conversation) {
       const { activities, watermark } = conversation.getActivitiesSince(Number(req.query.watermark || 0) || 0);

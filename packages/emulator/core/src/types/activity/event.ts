@@ -31,13 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import IActivity from './activity';
+import Activity from './activity';
 import IConversationReference from './invoke';
 
-interface IEventActivity extends IActivity {
-  name?: string,
-  value?: any,
-  relatesTo?: IConversationReference
+interface EventActivity extends Activity {
+  name?: string;
+  value?: any;
+  relatesTo?: IConversationReference;
 }
 
-export default IEventActivity
+export default EventActivity;

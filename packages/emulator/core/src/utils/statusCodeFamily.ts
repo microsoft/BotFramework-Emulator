@@ -36,5 +36,5 @@ export default function statusCodeFamily(statusCode: number | string, expectedFa
     statusCode = +statusCode;
   }
 
-  return ~~(statusCode / 100) === ~~(expectedFamily / 100);
+  return Math.floor(statusCode / 100) === Math.floor(expectedFamily / 100);
 }

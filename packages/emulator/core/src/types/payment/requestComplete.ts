@@ -31,13 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import IPaymentRequest from './request';
-import IPaymentResponse from './response';
+import PaymentRequest from './request';
+import PaymentResponse from './response';
 
-interface IPaymentRequestComplete {
-  id: string,
-  paymentRequest: IPaymentRequest,
-  paymentResponse: IPaymentResponse
+interface PaymentRequestComplete {
+  id: string;
+  paymentRequest: PaymentRequest;
+  paymentResponse: PaymentResponse;
 }
 
-export default IPaymentRequestComplete
+export default PaymentRequestComplete;

@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-interface IAttachment {
+interface Attachment {
   contentType?: string;
   contentUrl?: string;
   content?: any;
@@ -39,4 +39,4 @@ interface IAttachment {
   thumbnailUrl?: string;
 }
 
-export default IAttachment
+export default Attachment;

@@ -62,7 +62,8 @@ function* openQnaMakerContextMenu(action: QnaMakerServiceAction<QnaMakerServiceP
     { label: 'Open in web portal', id: 'open' },
     { label: 'Remove', id: 'forget' }
   ];
-  const response = yield call(CommandServiceImpl.remoteCall.bind(CommandServiceImpl), 'electron:displayContextMenu', menuItems);
+  const response = yield call(CommandServiceImpl
+    .remoteCall.bind(CommandServiceImpl), 'electron:displayContextMenu', menuItems);
   switch (response.id) {
     case 'edit':
       yield* launchQnaMakerEditor(action);

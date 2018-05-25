@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-interface IPaymentMethodData {
-  supportedMethods: string[],
-  data: any
+interface PaymentMethodData {
+  supportedMethods: string[];
+  data: any;
 }
 
-export default IPaymentMethodData
+export default PaymentMethodData;

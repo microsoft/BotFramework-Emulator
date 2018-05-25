@@ -46,7 +46,7 @@ export default function fetchConversation(botEmulator: BotEmulator) {
       throw createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, 'conversation not found');
     }
 
-    req['conversation'] = conversation;
+    (req as any).conversation = conversation;
 
     return next();
   };

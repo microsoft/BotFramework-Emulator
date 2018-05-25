@@ -37,7 +37,7 @@ import * as Restify from 'restify';
 import APIException from '../types/apiException';
 import createErrorResponse from './createResponse/error';
 import ErrorCodes from '../types/errorCodes';
-import IErrorResponse from '../types/response/error';
+import ErrorResponse from '../types/response/error';
 
 function exceptionToAPIException(exception: any): APIException {
   if (exception.error && exception.statusCode) {
@@ -50,7 +50,8 @@ function exceptionToAPIException(exception: any): APIException {
   }
 }
 
-export default function sendErrorResponse(req: Restify.Request, res: Restify.Response, next: Restify.Next, exception: any): IErrorResponse {
+export default function sendErrorResponse(req: Restify.Request, res: Restify.Response,
+                                          next: Restify.Next, exception: any): ErrorResponse {
   const apiException = exceptionToAPIException(exception);
 
   res.send(apiException.statusCode, apiException.error);

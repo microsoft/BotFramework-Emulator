@@ -52,7 +52,7 @@ export interface CommandService extends DisposableImpl {
 export class CommandServiceImpl extends DisposableImpl implements CommandService {
 
   private readonly _channel: Channel;
-  private readonly _registry: CommandRegistryImpl;
+  private readonly _registry: CommandRegistry;
   private readonly _channelName: string;
   private readonly _ipc: IPC;
   private _notFoundHandler: (commandName: string, ...args: any[]) => any;
@@ -61,15 +61,17 @@ export class CommandServiceImpl extends DisposableImpl implements CommandService
     return this._registry;
   }
 
-  constructor(_ipc: IPC, _channelName: string = 'command-service', _registry: CommandRegistry = null) {
+  constructor(_ipc: IPC,
+              _channelName: string = 'command-service',
+              _registry: CommandRegistry = new CommandRegistryImpl()) {
     super();
+
     this._ipc = _ipc;
     this._channelName = _channelName;
-    this._registry = this._registry || new CommandRegistryImpl();
+    this._registry = _registry;
     this._channel = new Channel(this._channelName, this._ipc);
-    super.toDispose(
-      this._ipc.registerChannel(this._channel));
-    super.toDispose(
+    this.toDispose(this._ipc.registerChannel(this._channel));
+    this.toDispose(
       this._channel.setListener('call', (commandName: string, transactionId: string, ...args: any[]) => {
         this.call(commandName, ...args)
           .then(result => {

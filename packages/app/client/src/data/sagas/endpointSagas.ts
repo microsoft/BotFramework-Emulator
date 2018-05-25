@@ -62,7 +62,8 @@ function* openEndpointContextMenu(action: EndpointServiceAction<EndpointServiceP
     { label: 'Open in emulator', id: 'open' },
     { label: 'Remove', id: 'forget' }
   ];
-  const response = yield call(CommandServiceImpl.remoteCall.bind(CommandServiceImpl), 'electron:displayContextMenu', menuItems);
+  const response = yield call(CommandServiceImpl
+    .remoteCall.bind(CommandServiceImpl), 'electron:displayContextMenu', menuItems);
   switch (response.id) {
     case 'edit':
       yield* launchEndpointEditor(action);

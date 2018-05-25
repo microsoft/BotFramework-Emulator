@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-interface IConversationAPIPathParameters {
+interface ConversationAPIPathParameters {
   conversationId: string;
   activityId: string;
 }
 
-export default IConversationAPIPathParameters
+export default ConversationAPIPathParameters;

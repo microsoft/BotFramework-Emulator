@@ -35,26 +35,27 @@ import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
-import ICheckoutConversationSession from '../../types/payment/checkoutConversationSession';
-import IPaymentRequest from '../../types/payment/request';
-import IPaymentAddress from '../../types/payment/address';
+import CheckoutConversationSession from '../../types/payment/checkoutConversationSession';
+import PaymentRequest from '../../types/payment/request';
+import PaymentAddress from '../../types/payment/address';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function paymentComplete(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     try {
       const body: {
-        checkoutSession: ICheckoutConversationSession,
-        request: IPaymentRequest,
-        shippingAddress: IPaymentAddress,
+        checkoutSession: CheckoutConversationSession,
+        request: PaymentRequest,
+        shippingAddress: PaymentAddress,
         shippingOptionId: string,
         payerEmail: string,
         payerPhone: string
       } = req.body[0];
 
-      req['conversation'].sendPaymentCompleteOperation(body.checkoutSession, body.request, body.shippingAddress, body.shippingOptionId, body.payerEmail, body.payerPhone, (statusCode, body) => {
+      (req as any).conversation.sendPaymentCompleteOperation(body.checkoutSession, body.request, body.shippingAddress,
+        body.shippingOptionId, body.payerEmail, body.payerPhone, (statusCode, body1) => {
         if (statusCode === HttpStatus.OK) {
-          res.send(HttpStatus.OK, body);
+          res.send(HttpStatus.OK, body1);
         } else {
           res.send(statusCode);
         }

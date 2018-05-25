@@ -31,22 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import IChannelAccount from '../account/channel';
-import IConversationAccount from '../account/conversation';
-import IETagObject from './etagObject';
+import ChannelAccount from '../account/channel';
+import ConversationAccount from '../account/conversation';
+import ETagObject from './etagObject';
 
-interface IActivity extends IETagObject {
+interface Activity extends ETagObject {
   channelData?: any;
   channelId?: string;
-  conversation?: IConversationAccount;
-  from?: IChannelAccount;
+  conversation?: ConversationAccount;
+  from?: ChannelAccount;
   id?: string;
   localTimestamp?: string;
-  recipient?: IChannelAccount;
+  recipient?: ChannelAccount;
   replyToId?: string;
   serviceUrl?: string;
   timestamp?: string;
   type?: string;
-};
+}
 
-export default IActivity
+export default Activity;

@@ -35,15 +35,15 @@ import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
-import IConversationAPIPathParameters from '../conversationAPIPathParameters';
+import ConversationAPIPathParameters from '../conversationAPIPathParameters';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function deleteActivity(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    const conversationParameters: IConversationAPIPathParameters = req.params;
+    const conversationParameters: ConversationAPIPathParameters = req.params;
 
     try {
-      req['conversation'].deleteActivity(conversationParameters.activityId);
+      (req as any).conversation.deleteActivity(conversationParameters.activityId);
 
       res.send(HttpStatus.OK);
       res.end();

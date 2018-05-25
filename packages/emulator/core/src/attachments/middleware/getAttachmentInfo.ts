@@ -37,23 +37,23 @@ import * as Restify from 'restify';
 import BotEmulator from '../../botEmulator';
 import createAPIException from '../../utils/createResponse/apiException';
 import ErrorCodes from '../../types/errorCodes';
-import IAttachmentData from '../../types/attachment/data';
-import IAttachmentInfo from '../../types/attachment/info';
-import IAttachmentParams from '../attachmentParams';
+import AttachmentData from '../../types/attachment/data';
+import AttachmentInfo from '../../types/attachment/info';
+import AttachmentParams from '../attachmentParams';
 import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function getAttachmentInfo(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     try {
-      const parms: IAttachmentParams = req.params;
-      const attachment: IAttachmentData = botEmulator.facilities.attachments.getAttachmentData(parms.attachmentId);
+      const parms: AttachmentParams = req.params;
+      const attachment: AttachmentData = botEmulator.facilities.attachments.getAttachmentData(parms.attachmentId);
 
       if (attachment) {
-        const attachmentInfo: IAttachmentInfo = {
+        const attachmentInfo: AttachmentInfo = {
           name: attachment.name,
           type: attachment.type,
           views: []
-        }
+        };
 
         if (attachment.originalBase64) {
           attachmentInfo.views.push({
@@ -70,10 +70,12 @@ export default function getAttachmentInfo(botEmulator: BotEmulator) {
         res.send(HttpStatus.OK, attachmentInfo);
         res.end();
       } else {
-        sendErrorResponse(req, res, next, createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, `attachment[${ parms.attachmentId }] not found`));
+        sendErrorResponse(req, res, next, createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument,
+          `attachment[${ parms.attachmentId }] not found`));
       }
     } catch (err) {
-      sendErrorResponse(req, res, next, createAPIException(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCodes.ServiceError, err.message));
+      sendErrorResponse(req, res, next, createAPIException(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCodes.ServiceError,
+        err.message));
     }
     
     next();

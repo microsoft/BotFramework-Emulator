@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-interface IAttachmentParams {
+interface AttachmentParams {
   attachmentId: string;
   viewId: string;
 }
 
-export default IAttachmentParams
+export default AttachmentParams;

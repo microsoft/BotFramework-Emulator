@@ -33,12 +33,13 @@
 
 import LogLevel from './level';
 import ILogItem from './item';
-import ILogEntry from './entry';
+import LogEntry from './entry';
 
 // TODO: Move this to a generally available location and export
 function makeEnumerableObject(src: any) {
-  if (typeof src !== 'object')
+  if (typeof src !== 'object') {
     return src;
+  }
   const dst = {};
   const keys = Object.getOwnPropertyNames(src);
   keys.forEach(key => dst[key] = src[key]);
@@ -49,7 +50,7 @@ function makeEnumerableObject(src: any) {
 
 export function textItem(level: LogLevel, text: string): ILogItem {
   return {
-    type: "text",
+    type: 'text',
     payload: {
       level,
       text
@@ -59,7 +60,7 @@ export function textItem(level: LogLevel, text: string): ILogItem {
 
 export function externalLinkItem(text: string, hyperlink: string): ILogItem {
   return {
-    type: "external-link",
+    type: 'external-link',
     payload: {
       text,
       hyperlink
@@ -69,7 +70,7 @@ export function externalLinkItem(text: string, hyperlink: string): ILogItem {
 
 export function inspectableObjectItem(text: string, obj: any): ILogItem {
   return {
-    type: "inspectable-object",
+    type: 'inspectable-object',
     payload: {
       text,
       obj
@@ -79,7 +80,7 @@ export function inspectableObjectItem(text: string, obj: any): ILogItem {
 
 export function summaryTextItem(obj: any): ILogItem {
   return {
-    type: "summary-text",
+    type: 'summary-text',
     payload: {
       obj
     }
@@ -88,7 +89,7 @@ export function summaryTextItem(obj: any): ILogItem {
 
 export function appSettingsItem(text: string): ILogItem {
   return {
-    type: "open-app-settings",
+    type: 'open-app-settings',
     payload: {
       text
     }
@@ -97,16 +98,16 @@ export function appSettingsItem(text: string): ILogItem {
 
 export function exceptionItem(err: any): ILogItem {
   return {
-    type: "exception",
+    type: 'exception',
     payload: {
       err: makeEnumerableObject(err)
     }
   };
 }
 
-export function networkRequestItem(facility, body, headers, method, url): ILogItem {
+export function networkRequestItem(facility: any, body: any, headers: any, method: any, url: any): ILogItem {
   return {
-    type: "network-request",
+    type: 'network-request',
     payload: {
       facility,
       body,
@@ -117,9 +118,10 @@ export function networkRequestItem(facility, body, headers, method, url): ILogIt
   };
 }
 
-export function networkResponseItem(body, headers, statusCode, statusMessage, srcUrl): ILogItem {
+export function networkResponseItem(body: any, headers: any, statusCode: any, statusMessage: any, srcUrl: any)
+  : ILogItem {
   return {
-    type: "network-response",
+    type: 'network-response',
     payload: {
       body,
       headers,
@@ -130,10 +132,9 @@ export function networkResponseItem(body, headers, statusCode, statusMessage, sr
   };
 }
 
-export function logEntry(...items: ILogItem[]): ILogEntry {
+export function logEntry(...items: ILogItem[]): LogEntry {
   return {
     timestamp: Date.now(),
     items: [...items]
   };
 }
-

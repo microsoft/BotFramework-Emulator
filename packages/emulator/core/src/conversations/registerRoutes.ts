@@ -35,7 +35,6 @@ import { RequestHandler, Server } from 'restify';
 
 import BotEmulator from '../botEmulator';
 import createBotFrameworkAuthenticationMiddleware from '../utils/botFrameworkAuthentication';
-import IUser from '../types/user';
 import createJsonBodyParser from '../utils/jsonBodyParser';
 import getFacility from '../middleware/getFacility';
 import getRouteName from '../middleware/getRouteName';
@@ -54,13 +53,14 @@ import uploadAttachment from './middleware/uploadAttachment';
 export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandler[]) {
   // TODO: Check if it works without MSA App ID
   const verifyBotFramework = createBotFrameworkAuthenticationMiddleware(botEmulator.options.fetch);
-  // const verifyBotFramework = botEmulator.msaAppId ? createBotFrameworkAuthenticationMiddleware(botEmulator.options.fetch) : [];
+  // const verifyBotFramework = botEmulator.msaAppId ?
+  // createBotFrameworkAuthenticationMiddleware(botEmulator.options.fetch) : [];
   const botEndpoint = getBotEndpoint(botEmulator);
   const facility = getFacility('conversations');
   const jsonBodyParser = createJsonBodyParser();
   const fetchConversation = createFetchConversationMiddleware(botEmulator);
   
-    server.post(
+  server.post(
     '/v3/conversations',
     ...uses,
     verifyBotFramework,

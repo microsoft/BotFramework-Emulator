@@ -48,11 +48,14 @@ export default function approximateObjectSize(object: any, cache: any[] = []): n
       cache.push(object);
 
       for (let i in object) {
+        if (!object.hasOwnProperty(i)) {
+          continue;
+        }
         const value = object[i];
 
-        //check for infinite recursion
+        // check for infinite recursion
         if (typeof value === 'object' && value !== null) {
-          if (~cache.indexOf(value)) {
+          if (cache.indexOf(value)) {
             continue;
           }
 
@@ -65,7 +68,7 @@ export default function approximateObjectSize(object: any, cache: any[] = []): n
       return bytes;
 
     default:
-      //value is null, undefined, or a function
+      // value is null, undefined, or a function
       return 0;
   }
 }

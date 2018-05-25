@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-interface IFact {
+interface Fact {
   key: string;                    // Name of parameter
   value: string;                  // Value of parameter
 }
 
-export default IFact
+export default Fact;
