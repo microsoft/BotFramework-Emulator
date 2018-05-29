@@ -3,7 +3,7 @@
     "bootstrap": "lerna bootstrap --hoist",
     "build": "lerna run --scope @bfemulator/**shared build && lerna run --scope !@bfemulator/**shared build",
     "test": "jest",
-    "test:coveralls": "jest --coverage --coverageReporters=text-lcov | node -r dotenv/config node_modules/coveralls/bin/coveralls"
+    "test:coveralls": "jest --coverage --coverageReporters=text-lcov | node -r env.js node_modules/coveralls/bin/coveralls"
   },
   "jest": {
     "setupTestFrameworkScriptFile": "./testSetup.js",
@@ -21,8 +21,5 @@
       "json",
       "node"
     ]
-  },
-  "devDependencies": {
-    "dotenv": "^5.0.1"
   }
 }
