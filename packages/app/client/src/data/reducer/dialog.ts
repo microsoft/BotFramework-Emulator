@@ -31,26 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as DialogActions from '../action/dialogActions';
+import { DialogAction, DialogActions } from '../action/dialogActions';
 
 export interface DialogState {
   showing: boolean;
 }
 
-type IDialogAction = {
-  type: 'DIALOG/SET_SHOWING';
-  payload: {
-    showing: boolean
-  };
-};
-
 const DEFAULT_STATE: DialogState = {
   showing: false
 };
 
-export default function dialog(state: DialogState = DEFAULT_STATE, action: IDialogAction): DialogState {
+export default function dialog(state: DialogState = DEFAULT_STATE, action: DialogAction): DialogState {
   switch (action.type) {
-    case DialogActions.SET_SHOWING: {
+    case DialogActions.setShowing: {
       state = setShowing(action.payload.showing, state);
       break;
     }
@@ -61,6 +54,6 @@ export default function dialog(state: DialogState = DEFAULT_STATE, action: IDial
   return state;
 }
 
-function setShowing(showing: boolean, _state: DialogState): DialogState {
+export function setShowing(showing: boolean, _state: DialogState): DialogState {
   return { showing: showing };
 }
