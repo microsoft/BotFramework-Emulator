@@ -184,13 +184,13 @@ export abstract class ServicePane<T extends ServicePaneProps,
     });
   }
 
-  protected get expandCollapseCss(): StyleAttribute {
+  protected get expandCollapseCss(): object {
     // used to prevent explorer squishing caused by flexbox
-    return css({
+    return {
       '&.service-pane-explorer.container-expanded': {
           minHeight: '44px'
         }
-    });
+    };
   }
 
   protected get listRef(): HTMLUListElement {

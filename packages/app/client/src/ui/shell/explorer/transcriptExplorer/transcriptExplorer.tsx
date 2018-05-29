@@ -32,7 +32,6 @@
 //
 
 import * as React from 'react';
-import { css } from 'glamor';
 import { connect } from 'react-redux';
 import { FileInfo } from '@bfemulator/app-shared';
 import { pathExt } from '@fuselab/ui-shared/lib';
@@ -42,7 +41,7 @@ import { IFileTreeState } from '../../../../data/reducer/files';
 import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
 import { FileTreeDataProvider } from './fileTreeProvider';
 
-const CSS = css({
+const CSS = {
   // tree comp overrides to match services pane style
   '& div[class*="root-"]': {
     height: '22px',
@@ -54,7 +53,7 @@ const CSS = css({
     height: '14px',
     lineHeight: '14px'
   }
-});
+};
 
 interface TranscriptExplorerProps {
   activeEditor: string;

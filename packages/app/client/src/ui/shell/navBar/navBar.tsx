@@ -41,6 +41,7 @@ import { Colors, InsetShadow } from '@bfemulator/ui-react';
 import * as Constants from '../../../constants';
 import * as NavBarActions from '../../../data/action/navBarActions';
 import * as ExplorerActions from '../../../data/action/explorerActions';
+import * as EditorActions from '../../../data/action/editorActions';
 import { RootState } from '../../../data/store';
 import { IBotConfig } from 'msbot/bin/schema';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
@@ -114,8 +115,11 @@ const mapStateToProps = (state: RootState): NavBarProps => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps: NavBarProps): NavBarProps => ({
-  // handleSettingsClick: () => dispatch(EditorActions.open(Constants.CONTENT_TYPE_APP_SETTINGS,
-  // Constants.DOCUMENT_ID_APP_SETTINGS, true, null)),
+  handleSettingsClick: () => dispatch(EditorActions.open(
+    Constants.CONTENT_TYPE_APP_SETTINGS,
+    Constants.DOCUMENT_ID_APP_SETTINGS,
+    true,
+    null)),
   handleClick: (_evt: MouseEvent<HTMLAnchorElement>, selection: string) => {
     if (ownProps.selection === selection) {
       // toggle explorer when clicking the same navbar icon

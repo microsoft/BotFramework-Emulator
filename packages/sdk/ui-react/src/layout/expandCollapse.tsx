@@ -110,7 +110,7 @@ export interface ExpandCollapseProps {
   expanded?: boolean;
   title?: string;
   className?: string;
-  style?: StyleAttribute;
+  style?: object;
 }
 
 export interface ExpandCollapseState {
