@@ -62,16 +62,6 @@ export class Emulator {
     await this.ngrok.startup();
   }
 
-  async setEndpoints(endpoints: { [name: string]: IBotEndpoint }) {
-    this.framework.server.botEmulator.facilities.endpoints.reset();
-
-    Object.keys(endpoints).forEach(name => {
-      const endpoint = endpoints[name];
-
-      this.framework.server.botEmulator.facilities.endpoints.push(name, endpoint);
-    });
-  }
-
   public report(conversationId: string) {
     this.framework.report(conversationId);
     this.ngrok.report(conversationId);
