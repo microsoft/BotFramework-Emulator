@@ -52,8 +52,9 @@ const CSS = css({
 });
 
 interface TabbedDocumentContentProps {
-  documentId?: string;
   activeEditor?: string;
+  documentId?: string;
+  hidden?: boolean;
   primaryEditor?: Editor;
   secondaryEditor?: Editor;
   setActiveEditor?: (editor: string) => void;
@@ -81,7 +82,11 @@ class TabbedDocumentContentWrapperComponent extends Component<TabbedDocumentCont
       Object.keys(this.props.primaryEditor.documents).length > 1;
 
     return (
-      <div { ...CSS } onClickCapture={ this.onClick }>
+      <div
+        { ...CSS }
+        hidden={ this.props.hidden }
+        onClickCapture={ this.onClick }
+      >
         { this.props.children }
         <ContentOverlay documentId={ this.props.documentId } />
         {

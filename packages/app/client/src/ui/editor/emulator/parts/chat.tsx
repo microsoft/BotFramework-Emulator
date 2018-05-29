@@ -31,17 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { SpeechTokenInfo } from '@bfemulator/app-shared';
-import * as WebChat from '@bfemulator/custom-botframework-webchat';
-
 import { Colors } from '@bfemulator/ui-react';
+import { connect } from 'react-redux';
 import { css } from 'glamor';
 import { IConnectedService, IEndpointService } from 'msbot/bin/schema';
+import { SpeechTokenInfo } from '@bfemulator/app-shared';
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { EmulatorMode } from '..';
+import * as WebChat from '@bfemulator/custom-botframework-webchat';
 
 import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
+import { EmulatorMode } from '..';
+import memoize from '../../../helpers/memoize';
 
 const CognitiveServices = require('@bfemulator/custom-botframework-webchat/CognitiveServices');
 const AdaptiveCardsHostConfig = require('@bfemulator/custom-botframework-webchat/adaptivecards-hostconfig.json');
@@ -143,18 +143,18 @@ export interface Props {
   onStartConversation: any;
 }
 
-function createWebChatProps(document, endpoint: IEndpointService, mode: string): WebChat.ChatProps {
+function createWebChatProps(botId, userId, directLine, selectedActivity$, endpoint: IEndpointService, mode: string): WebChat.ChatProps {
   return {
     adaptiveCardsHostConfig: AdaptiveCardsHostConfig,
     bot: {
-      id: document.botID || 'bot',
+      id: botId || 'bot',
       name: 'Bot'
     },
-    botConnection: document.directLine,
+    botConnection: directLine,
     formatOptions: {
       showHeader: false
     },
-    selectedActivity: document.selectedActivity$,
+    selectedActivity: selectedActivity$,
     showShell: mode === 'livechat',
     speechOptions:
       (endpoint && endpoint.appId && endpoint.appPassword) ? {
@@ -165,26 +165,9 @@ function createWebChatProps(document, endpoint: IEndpointService, mode: string):
         speechSynthesizer: new WebChat.Speech.BrowserSpeechSynthesizer()
       } : null,
     user: {
-      id: document.userID || 'default-user',
+      id: userId || 'default-user',
       name: 'User'
     }
-  };
-}
-
-function memoize(fn) {
-  let lastArgs = [];
-  let result;
-
-  return function () {
-    if (
-      lastArgs.length === arguments.length
-      && lastArgs.some((arg, index) => arg !== arguments[index])
-    ) {
-      result = fn.apply(null, arguments);
-      lastArgs = [].slice.call(arguments);
-    }
-
-    return result;
   };
 }
 
@@ -201,7 +184,14 @@ class Chat extends React.Component<Props> {
     const { document, endpoint } = this.props;
 
     if (document.directLine) {
-      const webChatProps = this.createWebChatPropsMemoized(document, endpoint, this.props.mode);
+      const webChatProps = this.createWebChatPropsMemoized(
+        document.botId,
+        document.userId,
+        document.directLine,
+        document.selectedActivity$,
+        endpoint,
+        this.props.mode
+      );
 
       return (
         <div id="webchat-container" className="wc-app" { ...CSS }>
