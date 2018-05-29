@@ -28,6 +28,11 @@ module.exports = {
         loader: 'tslint-loader',
         options: { /* Loader options go here */ }
       },
+      {
+        test: /\.svg$/,
+        loader: 'svg-url-loader',
+        options: { noquotes: true }
+      }
     ]
   },
 
