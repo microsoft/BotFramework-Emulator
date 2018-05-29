@@ -593,7 +593,7 @@ export function registerCommands() {
 
   // ---------------------------------------------------------------------------
   // Opens an external link
-  CommandRegistry.registerCommand('electron:openExternal', shell.openExternal.bind(shell));
+  CommandRegistry.registerCommand('electron:openExternal', shell.openExternal.bind(shell, { activate: true }));
 
   // ---------------------------------------------------------------------------
   // Sends an OAuth TokenResponse
