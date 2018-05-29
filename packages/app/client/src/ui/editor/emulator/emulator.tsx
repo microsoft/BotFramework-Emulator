@@ -138,20 +138,20 @@ const PRESENTATION_CSS = css({
 export type EmulatorMode = 'transcript' | 'livechat';
 
 interface EmulatorProps {
+  clearLog?: (documentId: string) => void;
   conversationId?: string;
   dirty?: boolean;
   document?: any;
   documentId?: string;
+  enablePresentationMode?: (enabled: boolean) => void;
   endpointId?: string;
   endpointService?: IEndpointService;
   mode?: EmulatorMode;
+  newConversation?: (documentId: string, options: any) => void;
+  pingDocument?: (documentId: string) => void;
   pingId?: number;
   presentationModeEnabled?: boolean;
-  pingDocument?: (documentId: string) => void;
-  enablePresentationMode?: (enabled: boolean) => void;
   setInspectorObjects?: (documentId: string, objects: any) => void;
-  clearLog?: (documentId: string) => void;
-  newConversation?: (documentId: string, options: any) => void;
   updateDocument?: (documentId: string, updatedValues: any) => void;
 }
 
@@ -234,16 +234,27 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
           try {
             // transcript was deep linked via protocol,
             // and should just be fed its own activities attached to the document
-            await CommandServiceImpl
-              .remoteCall('emulator:feed-transcript:deep-link', conversation.conversationId, props.document.activities);
+            await CommandServiceImpl.remoteCall(
+              'emulator:feed-transcript:deep-link',
+              conversation.conversationId,
+              props.document.botId,
+              props.document.userId,
+              props.document.activities
+            );
           } catch (err) {
             throw new Error(`Error while feeding deep-linked transcript to conversation: ${err}`);
           }
         } else {
           try {
             // the transcript is on disk, so its activities need to be read on the main side and fed in
-            const fileInfo: { fileName: string, filePath: string } = await CommandServiceImpl
-              .remoteCall('emulator:feed-transcript:disk', conversation.conversationId, props.document.documentId);
+            const fileInfo: { fileName: string, filePath: string } = await CommandServiceImpl.remoteCall(
+              'emulator:feed-transcript:disk',
+              conversation.conversationId,
+              props.document.botId,
+              props.document.userId,
+              props.document.documentId
+            );
+
             this.props.updateDocument(this.props.documentId, { fileName: fileInfo.fileName });
           } catch (err) {
             throw new Error(`Error while feeding transcript on disk to conversation: ${err}`);

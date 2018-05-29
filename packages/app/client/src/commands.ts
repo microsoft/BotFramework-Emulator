@@ -165,7 +165,11 @@ export function registerCommands() {
     store.dispatch(ChatActions.newDocument(
       documentId,
       'livechat',
-      { endpointId: endpoint.id }
+      {
+        botId: 'bot',
+        endpointId: endpoint.id,
+        userId: 'default-user'
+      }
     ));
 
     store.dispatch(EditorActions.open(
@@ -180,7 +184,15 @@ export function registerCommands() {
   CommandRegistry.registerCommand('transcript:open', (filename: string, additionalData?: object) => {
     const tabGroup = getTabGroupForDocument(filename);
     if (!tabGroup) {
-      store.dispatch(ChatActions.newDocument(filename, 'transcript', additionalData));
+      store.dispatch(ChatActions.newDocument(
+        filename,
+        'transcript',
+        {
+          ...additionalData,
+          botId: 'bot',
+          userId: 'default-user'
+        }
+      ));
     }
     store.dispatch(EditorActions.open(
       Constants.CONTENT_TYPE_TRANSCRIPT,

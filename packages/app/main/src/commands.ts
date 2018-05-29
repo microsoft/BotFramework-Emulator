@@ -40,6 +40,7 @@ import * as Fs from 'fs';
 import { sync as mkdirpSync } from 'mkdirp';
 import { IConnectedService, IEndpointService, ServiceType } from 'msbot/bin/schema';
 import * as Path from 'path';
+import { promisify } from 'util';
 
 import { AppMenuBuilder } from './appMenuBuilder';
 import {
@@ -63,6 +64,7 @@ import { LuisAuthWorkflowService } from './services/luisAuthWorkflowService';
 import { dispatch, getSettings } from './settings';
 import { getBotsFromDisk, readFileSync, showOpenDialog, showSaveDialog, writeFile } from './utils';
 import shell = Electron.shell;
+import { cleanupId as cleanupActivityChannelAccountId } from './utils/conversation';
 
 const sanitize = require('sanitize-filename');
 
@@ -451,38 +453,32 @@ export function registerCommands() {
 
   // ---------------------------------------------------------------------------
   // Feeds a transcript from disk to a conversation
-  CommandRegistry.registerCommand('emulator:feed-transcript:disk', (conversationId: string, filePath: string) => {
-    const activeBot: BotConfigWithPath = getActiveBot();
-    if (!activeBot) {
-      throw new Error('feed-transcript:disk: No active bot.');
-    }
-
-    const convo = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
-    if (!convo) {
-      throw new Error(`feed-transcript:disk: Conversation ${conversationId} not found.`);
-    }
-
+  CommandRegistry.registerCommand('emulator:feed-transcript:disk', async (conversationId: string, botId: string, userId: string, filePath: string) => {
     const path = Path.resolve(filePath);
-    const stat = Fs.statSync(path);
+    const stat = await promisify(Fs.stat)(path);
+
     if (!stat || !stat.isFile()) {
       throw new Error(`feed-transcript:disk: File ${filePath} not found.`);
     }
 
-    const activities = JSON.parse(readFileSync(path));
+    const activities = JSON.parse(await promisify(Fs.readFile)(path, 'utf-8'));
 
-    convo.feedActivities(activities);
+    mainWindow.commandService.call('emulator:feed-transcript:deep-link', conversationId, botId, userId, activities);
 
     const { name, ext } = Path.parse(path);
     const fileName = `${name}${ext}`;
 
-    return { fileName, filePath };
+    return {
+      fileName,
+      filePath
+    };
   });
 
   // ---------------------------------------------------------------------------
   // Feeds a deep-linked transcript (array of parsed activities) to a conversation
-  CommandRegistry.registerCommand('emulator:feed-transcript:deep-link', (conversationId: string,
-                                                                         activities: Activity[]): void => {
+  CommandRegistry.registerCommand('emulator:feed-transcript:deep-link', (conversationId: string, botId: string, userId: string, activities: IActivity[]): void => {
     const activeBot: BotConfigWithPath = getActiveBot();
+
     if (!activeBot) {
       throw new Error('emulator:feed-transcript:deep-link: No active bot.');
     }
@@ -492,6 +488,7 @@ export function registerCommands() {
       throw new Error(`emulator:feed-transcript:deep-link: Conversation ${conversationId} not found.`);
     }
 
+    activities = cleanupActivityChannelAccountId(activities, botId, userId);
     convo.feedActivities(activities);
   });
 

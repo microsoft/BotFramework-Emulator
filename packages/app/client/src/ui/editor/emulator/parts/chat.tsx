@@ -137,57 +137,77 @@ const DISCONNECTED_CSS = css({
 });
 
 export interface Props {
-  mode: EmulatorMode;
   document: any;
+  endpoint: IEndpointService;
+  mode: EmulatorMode;
   onStartConversation: any;
-  services: IConnectedService[];
+}
+
+function createWebChatProps(document, endpoint: IEndpointService, mode: string): WebChat.ChatProps {
+  return {
+    adaptiveCardsHostConfig: AdaptiveCardsHostConfig,
+    bot: {
+      id: document.botID || 'bot',
+      name: 'Bot'
+    },
+    botConnection: document.directLine,
+    formatOptions: {
+      showHeader: false
+    },
+    selectedActivity: document.selectedActivity$,
+    showShell: mode === 'livechat',
+    speechOptions:
+      (endpoint && endpoint.appId && endpoint.appPassword) ? {
+        speechRecognizer: new CognitiveServices.SpeechRecognizer({
+          fetchCallback: this.fetchSpeechToken.bind(this),
+          fetchOnExpiryCallback: this.fetchSpeechTokenOnExpiry.bind(this)
+        }),
+        speechSynthesizer: new WebChat.Speech.BrowserSpeechSynthesizer()
+      } : null,
+    user: {
+      id: document.userID || 'default-user',
+      name: 'User'
+    }
+  };
+}
+
+function memoize(fn) {
+  let lastArgs = [];
+  let result;
+
+  return function () {
+    if (
+      lastArgs.length === arguments.length
+      && lastArgs.some((arg, index) => arg !== arguments[index])
+    ) {
+      result = fn.apply(null, arguments);
+      lastArgs = [].slice.call(arguments);
+    }
+
+    return result;
+  };
 }
 
 class Chat extends React.Component<Props> {
   constructor(props: Props, context: {}) {
     super(props, context);
+
+    this.createWebChatPropsMemoized = memoize(createWebChatProps);
   }
 
-  getEndpoint() {
-    const { props } = this;
-    const { endpointId } = props.document;
-
-    return (props.services || []).find(s => s.id === endpointId) as IEndpointService;
-  }
+  createWebChatPropsMemoized: (...args) => any;
 
   render() {
-    const endpoint = this.getEndpoint();
-    // TODO - localization
-    if (this.props.document.directLine) {
-      const props: WebChat.ChatProps = {
-        adaptiveCardsHostConfig: AdaptiveCardsHostConfig,
-        user: {
-          id: 'default-user',
-          name: 'User'
-        },
-        bot: {
-          id: 'WXYZ',
-          name: 'Bot'
-        },
-        formatOptions: {
-          showHeader: false
-        },
-        speechOptions: (endpoint && endpoint.appId && endpoint.appPassword) ? {
-          speechRecognizer: new CognitiveServices.SpeechRecognizer({
-            fetchCallback: this.fetchSpeechToken.bind(this),
-            fetchOnExpiryCallback: this.fetchSpeechTokenOnExpiry.bind(this)
-          }),
-          speechSynthesizer: new WebChat.Speech.BrowserSpeechSynthesizer()
-        } : null,
-        selectedActivity: (this.props.document.selectedActivity$ as any),
-        botConnection: this.props.document.directLine,
-        showShell: this.props.mode === 'livechat'
-      };
+    const { document, endpoint } = this.props;
+
+    if (document.directLine) {
+      const webChatProps = this.createWebChatPropsMemoized(document, endpoint, this.props.mode);
+
       return (
         <div id="webchat-container" className="wc-app" { ...CSS }>
           <WebChat.Chat
-            key={ this.props.document.directLine.token }
-            { ...props }
+            key={ document.directLine.token }
+            { ...webChatProps }
           />
         </div>
       );
@@ -209,7 +229,7 @@ class Chat extends React.Component<Props> {
   }
 
   private async getSpeechToken(_authIdEvent: string, refresh: boolean): Promise<string | void> {
-    const endpoint = this.getEndpoint();
+    const { endpoint } = this.props;
 
     if (!endpoint) {
       console.warn('No endpoint for this chat, cannot fetch speech token.');
@@ -244,6 +264,6 @@ class Chat extends React.Component<Props> {
   }
 }
 
-export default connect(state => ({
-  services: state.bot.activeBot && state.bot.activeBot.services
+export default connect((state, { document }) => ({
+  endpoint: ((state.bot.activeBot && state.bot.activeBot.services) || []).find(s => s.id === document.endpointId) as IEndpointService
 }))(Chat as any) as any;
