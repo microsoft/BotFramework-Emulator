@@ -34,15 +34,23 @@
 import { FileInfo } from '@bfemulator/app-shared';
 
 export enum FileActions {
-  setRoot = 'file/setRoot',
-  add = 'file/add',
-  remove = 'file/remove'
+  setRoot = 'FILE/SET_ROOT',
+  add = 'FILE/ADD',
+  remove = 'FILE/REMOVE',
+  clear = 'FILE/CLEAR'
 }
 
 export function addFile(payload: FileInfo) {
   return {
     type: FileActions.add,
     payload
+  };
+}
+
+export function clear() {
+  return {
+    type: FileActions.clear,
+    payload: {}
   };
 }
 

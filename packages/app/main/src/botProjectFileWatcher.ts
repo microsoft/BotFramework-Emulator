@@ -79,6 +79,8 @@ export const BotProjectFileWatcher = new class FileWatcherImpl implements FileWa
   async watch(botFilePath: string): Promise<boolean> {
     // stop watching any other project directory
     this.dispose();
+    // wipe the transcript explorer store
+    await mainWindow.commandService.remoteCall('file:clear');
 
     if (botFilePath && botFilePath.length) {
       this._botFilePath = botFilePath;
