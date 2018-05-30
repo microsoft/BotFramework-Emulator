@@ -37,14 +37,14 @@ import { css } from 'glamor';
 import { IConnectedService, IEndpointService } from 'msbot/bin/schema';
 import { SpeechTokenInfo } from '@bfemulator/app-shared';
 import * as React from 'react';
-import * as WebChat from '@bfemulator/custom-botframework-webchat';
+import * as WebChat from 'botframework-webchat';
 
 import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
 import { EmulatorMode } from '..';
 import memoize from '../../../helpers/memoize';
 
-const CognitiveServices = require('@bfemulator/custom-botframework-webchat/CognitiveServices');
-const AdaptiveCardsHostConfig = require('@bfemulator/custom-botframework-webchat/adaptivecards-hostconfig.json');
+const CognitiveServices = require('botframework-webchat/CognitiveServices');
+const AdaptiveCardsHostConfig = require('botframework-webchat/adaptivecards-hostconfig.json');
 
 const CSS = css({
   backgroundColor: 'white',

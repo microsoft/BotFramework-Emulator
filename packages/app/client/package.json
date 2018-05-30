@@ -76,7 +76,6 @@
   },
   "dependencies": {
     "@bfemulator/app-shared": "^1.0.0",
-    "@bfemulator/custom-botframework-webchat": "^0.11.5-c0",
     "@bfemulator/sdk-client": "^1.0.0",
     "@bfemulator/sdk-shared": "^1.0.0",
     "@bfemulator/ui-react": "^1.0.0",
@@ -87,6 +86,7 @@
     "@uifabric/styling": "^5.20.0",
     "@uifabric/utilities": "^5.19.0",
     "base64url": "^2.0.0",
+    "botframework-webchat": "^0.13.1",
     "classnames": "^2.2.5",
     "glamor": "^2.20.40",
     "jsonpath": "^1.0.0",

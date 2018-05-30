@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as BotChat from '@bfemulator/custom-botframework-webchat';
+import * as BotChat from 'botframework-webchat';
 
 import { uniqueId } from '@bfemulator/sdk-shared';
 import { Colors, Splitter } from '@bfemulator/ui-react';

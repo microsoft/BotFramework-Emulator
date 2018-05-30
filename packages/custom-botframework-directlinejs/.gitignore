@@ -1,8 +1,0 @@
-node_modules
-
-built
-.vscode
-/directLine.js
-/directLine.js.map
-
-npm-debug.log

@@ -36,7 +36,7 @@ var gulp = require('gulp');
 // TODO: We should expose CSS programmatically in Web Chat
 gulp.task('copy:webchat:css', function () {
   return gulp
-    .src(require.resolve('@bfemulator/custom-botframework-webchat/botchat.css'))
+    .src(require.resolve('botframework-webchat/botchat.css'))
     .pipe(gulp.dest('./public/external/css'));
 });
 
