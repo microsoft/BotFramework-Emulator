@@ -37,6 +37,7 @@ import { ExtensionInspector } from '@bfemulator/sdk-shared';
 import { css } from 'glamor';
 import { IBotConfig } from 'msbot/bin/schema';
 import * as React from 'react';
+import { DragEvent } from 'react';
 import { getActiveBot } from '../../../../data/botHelpers';
 import { Extension, InspectorAPI } from '../../../../extensions';
 import { LogService } from '../../../../platform/log/logService';
@@ -168,6 +169,11 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     }
   }
 
+  handleDrag = (event: DragEvent<HTMLWebViewElement>): void => {
+    // prevent drag & drops inside of the inspector panel
+    event.stopPropagation();
+  }
+
   shouldComponentUpdate(nextProps: InspectorProps): boolean {
     return this.props.inspectObj !== nextProps.inspectObj;
   }
@@ -190,6 +196,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   }
 
   render() {
+    const { updateRef, handleDrag } = this;
     const md5 = crypto.createHash('md5');
     md5.update(this.props.inspector.src);
     const hash = md5.digest('base64');
@@ -201,8 +208,10 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
         key={ hash }
         partition={ `persist:${hash}` }
         preload={ fileLocation }
-        ref={ ref => this.updateRef(ref) }
+        ref={ ref => updateRef(ref) }
         src={ this.props.inspector.src }
+        onDragEnterCapture={ handleDrag }
+        onDragOverCapture={ handleDrag }
       />
     );
   }
