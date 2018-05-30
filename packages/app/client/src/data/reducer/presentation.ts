@@ -31,9 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as PresentationActions from '../action/presentationActions';
-import { PresentationAction } from '../action/presentationActions';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
+import { PresentationAction, PresentationActions } from '../action/presentationActions';
 
 export interface PresentationState {
   enabled: boolean;
@@ -46,11 +45,11 @@ const DEFAULT_STATE: PresentationState = {
 export default function presentation(state: PresentationState = DEFAULT_STATE, action: PresentationAction)
   : PresentationState {
   switch (action.type) {
-    case PresentationActions.DISABLE:
+    case PresentationActions.disable:
       state = setEnabled(false, state);
       break;
 
-    case PresentationActions.ENABLE:
+    case PresentationActions.enable:
       state = setEnabled(true, state);
       break;
 

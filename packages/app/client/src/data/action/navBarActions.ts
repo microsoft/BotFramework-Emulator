@@ -44,7 +44,7 @@ export interface SelectNavBarAction {
 
 export type NavBarAction = SelectNavBarAction;
 
-export function select(selection: string): NavBarAction {
+export function select(selection: string): SelectNavBarAction {
   return {
     type: NavBarActions.select,
     payload: {

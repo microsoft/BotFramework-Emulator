@@ -39,9 +39,14 @@ export function getActiveBot(): BotConfigWithPath {
   return store.getState().bot.activeBot;
 }
 
+/** Returns a copy of the matching BotInfo in the store */
 export function getBotInfoByPath(path: string): BotInfo {
   const state = store.getState();
-  return state.bot.botFiles.find(bot => bot && bot.path === path);
+  const result = state.bot.botFiles.find(bot => bot && bot.path === path);
+  if (result) {
+    return { ...result };
+  }
+  return result;
 }
 
 export function pathExistsInRecentBots(path: string): boolean {
