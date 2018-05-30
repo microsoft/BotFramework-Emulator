@@ -45,7 +45,6 @@ import luisAuth, { LuisAuthState } from './reducer/luisAuthReducer';
 import navBar, { NavBarState } from './reducer/navBar';
 
 import presentation, { PresentationState } from './reducer/presentation';
-import server, { ServerState } from './reducer/server';
 import { applicationSagas } from './sagas';
 
 // TODO: Remove this when we no longer need to debug the WebSocket connection
@@ -59,7 +58,6 @@ export interface RootState {
   chat?: ChatState;
   navBar?: NavBarState;
   presentation?: PresentationState;
-  server?: ServerState;
   luisAuth?: LuisAuthState;
   files?: IFileTreeState;
 }
@@ -77,7 +75,6 @@ const configureStore = (initialState: RootState = DEFAULT_STATE): Store<RootStat
     chat,
     navBar,
     presentation,
-    server,
     luisAuth
   }),
   initialState,
