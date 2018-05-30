@@ -34,115 +34,150 @@
 import { LogEntry } from '@bfemulator/app-shared';
 import { createStore as createWebChatStore } from '@bfemulator/custom-botframework-webchat';
 
-export const NEW_CHAT_DOCUMENT = 'CHAT/DOCUMENT/NEW';
-export const OPEN_CHAT_DOCUMENT = 'CHAT/DOCUMENT/OPEN';
-export const CLOSE_CHAT_DOCUMENT = 'CHAT/DOCUMENT/CLOSE';
-export const PING_CHAT_DOCUMENT = 'CHAT/DOCUMENT/PING';
-export const NEW_CONVERSATION = 'CHAT/CONVERSATION/NEW';
-export const LOG_APPEND = 'CHAT/LOG/APPEND';
-export const LOG_CLEAR = 'CHAT/LOG/CLEAR';
-export const SET_INSPECTOR_OBJECTS = 'CHAT/INSPECTOR/OBJECTS/SET';
-export const ADD_TRANSCRIPT = 'CHAT/TRANSCRIPT/ADD';
-export const CLEAR_TRANSCRIPTS = 'CHAT/TRANSCRIPT/CLEAR';
-export const REMOVE_TRANSCRIPT = 'CHAT/TRANSCRIPT/REMOVE';
+export enum ChatActions {
+  newChat = 'CHAT/DOCUMENT/NEW',
+  openChat = 'CHAT/DOCUMENT/OPEN',
+  closeChat = 'CHAT/DOCUMENT/CLOSE',
+  pingChat = 'CHAT/DOCUMENT/PING',
+  newConversation = 'CHAT/CONVERSATION/NEW',
+  appendLog = 'CHAT/LOG/APPEND',
+  clearLog = 'CHAT/LOG/CLEAR',
+  setInspectorObjects = 'CHAT/INSPECTOR/OBJECTS/SET',
+  addTranscript = 'CHAT/TRANSCRIPT/ADD',
+  clearTranscripts = 'CHAT/TRANSCRIPT/CLEAR',
+  removeTranscript = 'CHAT/TRANSCRIPT/REMOVE'
+}
 
-type ChatMode = 'livechat' | 'transcript';
-
-export type ChatAction = {
-  type: 'CHAT/DOCUMENT/NEW',
+export interface NewChatAction {
+  type: ChatActions.newChat;
   payload: {
     [propName: string]: any,
     documentId: string,
     mode: ChatMode
-  }
-} | {
-  type: 'CHAT/DOCUMENT/OPEN',
-  payload: {}
-} | {
-  type: 'CHAT/DOCUMENT/CLOSE',
+  };
+}
+
+export interface OpenChatAction {
+  type: ChatActions.openChat;
+  payload: {};
+}
+
+export interface CloseChatAction {
+  type: ChatActions.closeChat;
   payload: {
     documentId: string
-  }
-} | {
-  type: 'CHAT/CONVERSATION/NEW',
+  };
+}
+
+export interface PingChatAction {
+  type: ChatActions.pingChat;
+  payload: {
+    documentId: string
+  };
+}
+
+export interface NewConversationAction {
+  type: ChatActions.newConversation;
   payload: {
     documentId: string,
     options: any
-  }
-} | {
-  type: 'CHAT/LOG/APPEND',
+  };
+}
+
+export interface AppendLogAction {
+  type: ChatActions.appendLog;
   payload: {
     documentId: string,
     entry: LogEntry
-  }
-} | {
-  type: 'CHAT/LOG/CLEAR',
+  };
+}
+
+export interface ClearLogAction {
+  type: ChatActions.clearLog;
   payload: {
     documentId: string
-  }
-} | {
-  type: 'CHAT/INSPECTOR/OBJECTS/SET',
+  };
+}
+
+export interface SetInspectorObjectsAction {
+  type: ChatActions.setInspectorObjects;
   payload: {
     documentId: string,
     objs: any
-  }
-} | {
-  type: 'CHAT/TRANSCRIPT/ADD',
-  payload: {
-    filename: string
-  }
-} | {
-  type: 'CHAT/TRANSCRIPT/CLEAR',
-  payload: {}
-} | {
-  type: 'CHAT/TRANSCRIPT/REMOVE',
-  payload: {
-    filename: string
-  }
-} | {
-  type: 'CHAT/DOCUMENT/PING',
-  payload: {
-    documentId: string
-  }
-};
+  };
+}
 
-export function pingDocument(documentId: string): ChatAction {
+export interface AddTranscriptAction {
+  type: ChatActions.addTranscript;
+  payload: {
+    filename: string
+  };
+}
+
+export interface ClearTranscriptsAction {
+  type: ChatActions.clearTranscripts;
+  payload: {};
+}
+
+export interface RemoveTranscriptAction {
+  type: ChatActions.removeTranscript;
+  payload: {
+    filename: string
+  };
+}
+
+export type ChatAction =
+  NewChatAction |
+  OpenChatAction |
+  CloseChatAction |
+  PingChatAction |
+  NewConversationAction |
+  AppendLogAction |
+  ClearLogAction |
+  SetInspectorObjectsAction |
+  AddTranscriptAction |
+  ClearTranscriptsAction |
+  RemoveTranscriptAction;
+
+type ChatMode = 'livechat' | 'transcript';
+
+export function pingDocument(documentId: string): PingChatAction {
   return {
-    type: PING_CHAT_DOCUMENT,
+    type: ChatActions.pingChat,
     payload: {
       documentId
     }
   };
 }
 
-export function addTranscript(filename: string): ChatAction {
+export function addTranscript(filename: string): AddTranscriptAction {
   return {
-    type: ADD_TRANSCRIPT,
+    type: ChatActions.addTranscript,
     payload: {
       filename
     }
   };
 }
 
-export function clearTranscripts(): ChatAction {
+export function clearTranscripts(): ClearTranscriptsAction {
   return {
-    type: CLEAR_TRANSCRIPTS,
+    type: ChatActions.clearTranscripts,
     payload: {}
   };
 }
 
-export function removeTranscript(filename: string): ChatAction {
+export function removeTranscript(filename: string): RemoveTranscriptAction {
   return {
-    type: REMOVE_TRANSCRIPT,
+    type: ChatActions.removeTranscript,
     payload: {
       filename
     }
   };
 }
 
-export function newDocument(documentId: string, mode: ChatMode, additionalData?: object): ChatAction {
+export function newDocument(documentId: string, mode: ChatMode, additionalData?: object): NewChatAction {
   return {
-    type: NEW_CHAT_DOCUMENT,
+    type: ChatActions.newChat,
     payload: {
       pingId: 0,
       mode,
@@ -181,18 +216,18 @@ export function newDocument(documentId: string, mode: ChatMode, additionalData?:
   };
 }
 
-export function closeDocument(documentId: string): ChatAction {
+export function closeDocument(documentId: string): CloseChatAction {
   return {
-    type: CLOSE_CHAT_DOCUMENT,
+    type: ChatActions.closeChat,
     payload: {
       documentId,
     }
   };
 }
 
-export function newConversation(documentId: string, options: any): ChatAction {
+export function newConversation(documentId: string, options: any): NewConversationAction {
   return {
-    type: NEW_CONVERSATION,
+    type: ChatActions.newConversation,
     payload: {
       documentId,
       options
@@ -200,9 +235,9 @@ export function newConversation(documentId: string, options: any): ChatAction {
   };
 }
 
-export function appendToLog(documentId: string, entry: LogEntry): ChatAction {
+export function appendToLog(documentId: string, entry: LogEntry): AppendLogAction {
   return {
-    type: LOG_APPEND,
+    type: ChatActions.appendLog,
     payload: {
       documentId,
       entry
@@ -210,19 +245,19 @@ export function appendToLog(documentId: string, entry: LogEntry): ChatAction {
   };
 }
 
-export function clearLog(documentId: string): ChatAction {
+export function clearLog(documentId: string): ClearLogAction {
   return {
-    type: LOG_CLEAR,
+    type: ChatActions.clearLog,
     payload: {
       documentId,
     }
   };
 }
 
-export function setInspectorObjects(documentId: string, objs: any): ChatAction {
+export function setInspectorObjects(documentId: string, objs: any): SetInspectorObjectsAction {
   objs = Array.isArray(objs) ? objs : [objs];
   return {
-    type: SET_INSPECTOR_OBJECTS,
+    type: ChatActions.setInspectorObjects,
     payload: {
       documentId,
       objs
