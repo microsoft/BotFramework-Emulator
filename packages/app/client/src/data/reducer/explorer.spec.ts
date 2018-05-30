@@ -16,7 +16,7 @@ describe('Explorer reducer tests', () => {
   it('should toggle the "showing state"', () => {
     const action: ExplorerAction = show(true);
 
-    const endingState = explorer(DEFAULT_STATE, action);
-    expect(endingState.showing).toBe(true);
+    const state = explorer(DEFAULT_STATE, action);
+    expect(state.showing).toBe(true);
   });
 });

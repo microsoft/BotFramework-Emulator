@@ -32,47 +32,28 @@
 //
 
 import * as constants from '../../constants';
-import * as NavBarActions from '../action/navBarActions';
-
-type NavBarAction = {
-  type: 'NAVBAR/SELECT',
-  payload: {
-    selection: string
-  }
-} | {
-  type: 'NAVBAR/SELECT_OR_TOGGLE',
-  payload: {
-    selection: string
-  }
-};
+import { NavBarAction, NavBarActions } from '../action/navBarActions';
 
 export interface NavBarState {
   selection: string;
-  expanded: boolean;
 }
 
 const DEFAULT_STATE: NavBarState = {
-  selection: constants.NAVBAR_BOT_EXPLORER,
-  expanded: false
+  selection: constants.NAVBAR_BOT_EXPLORER
 };
 
 export default function navBar(state: NavBarState = DEFAULT_STATE, action: NavBarAction): NavBarState {
   switch (action.type) {
-    case NavBarActions.SELECT_OR_TOGGLE: {
-      if (state.selection === action.payload.selection) {
-        state = { ...state, expanded: !state.expanded };
-      } else {
-        state = { ...state, expanded: true, selection: action.payload.selection };
-      }
+    case NavBarActions.select: {
+      state = {
+        ...state,
+        selection: action.payload.selection
+      };
       break;
     }
 
-    case NavBarActions.SELECT: {
-      state = { ...state, expanded: true, selection: action.payload.selection };
+    default:
       break;
-    }
-
-    default: break;
   }
 
   return state;

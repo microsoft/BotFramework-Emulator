@@ -16,7 +16,7 @@ describe('Dialog reducer tests', () => {
   it('should toggle the "showing" state', () => {
     const action: DialogAction = setShowing(true);
 
-    const endingState = dialog(DEFAULT_STATE, action);
-    expect(endingState.showing).toBe(true);
+    const state = dialog(DEFAULT_STATE, action);
+    expect(state.showing).toBe(true);
   });
 });

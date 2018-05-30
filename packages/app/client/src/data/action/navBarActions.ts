@@ -31,21 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export const SELECT_OR_TOGGLE = 'NAVBAR/SELECT_OR_TOGGLE';
-export const SELECT = 'NAVBAR/SELECT';
+export enum NavBarActions {
+  select = 'NAVBAR/SELECT'
+}
 
-export function selectOrToggle(selection: string) {
-  return {
-    type: SELECT_OR_TOGGLE,
-    payload: {
-      selection
-    }
+export interface SelectNavBarAction {
+  type: NavBarActions.select;
+  payload: {
+    selection: string
   };
 }
 
-export function select(selection: string) {
+export type NavBarAction = SelectNavBarAction;
+
+export function select(selection: string): NavBarAction {
   return {
-    type: SELECT,
+    type: NavBarActions.select,
     payload: {
       selection
     }
