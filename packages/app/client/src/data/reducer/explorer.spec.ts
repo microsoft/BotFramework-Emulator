@@ -1,6 +1,5 @@
-import { ExplorerState } from './explorer';
-import explorer from './explorer';
-import { ExplorerAction, ExplorerActions } from '../action/explorerActions';
+import { ExplorerAction, show } from '../action/explorerActions';
+import explorer, { ExplorerState } from './explorer';
 
 describe('Explorer reducer tests', () => {
   const DEFAULT_STATE: ExplorerState = {
@@ -15,12 +14,7 @@ describe('Explorer reducer tests', () => {
   });
 
   it('should toggle the "showing state"', () => {
-    const action: ExplorerAction = {
-      type: ExplorerActions.show,
-      payload: {
-        show: true
-      }
-    };
+    const action: ExplorerAction = show(true);
 
     const endingState = explorer(DEFAULT_STATE, action);
     expect(endingState.showing).toBe(true);

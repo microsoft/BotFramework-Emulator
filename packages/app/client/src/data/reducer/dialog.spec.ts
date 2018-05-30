@@ -1,6 +1,5 @@
-import { DialogState } from './dialog';
-import dialog from './dialog';
-import { DialogAction, DialogActions } from '../action/dialogActions';
+import { DialogAction, setShowing } from '../action/dialogActions';
+import dialog, { DialogState } from './dialog';
 
 describe('Dialog reducer tests', () => {
   const DEFAULT_STATE: DialogState = {
@@ -15,12 +14,7 @@ describe('Dialog reducer tests', () => {
   });
 
   it('should toggle the "showing" state', () => {
-    const action: DialogAction = {
-      type: DialogActions.setShowing,
-      payload: {
-        showing: true
-      }
-    };
+    const action: DialogAction = setShowing(true);
 
     const endingState = dialog(DEFAULT_STATE, action);
     expect(endingState.showing).toBe(true);
