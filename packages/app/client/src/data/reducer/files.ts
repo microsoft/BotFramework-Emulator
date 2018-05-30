@@ -58,7 +58,12 @@ interface RemoveFileAction {
   };
 }
 
-type IFileAction = SetRootAction | AddFileAction | RemoveFileAction;
+interface ClearFilesAction {
+  type: FileActions.clear;
+  payload: {};
+}
+
+type IFileAction = SetRootAction | AddFileAction | RemoveFileAction | ClearFilesAction;
 
 const seps = /[\/\\]/;
 
@@ -126,6 +131,15 @@ function removeFile(state: IFileTreeState, path: string): IFileTreeState {
   return { ...state };
 }
 
+function clearFiles(state: IFileTreeState): IFileTreeState {
+  const newState: IFileTreeState = {
+    ...state,
+    root: null,
+    selected: null
+  };
+  return newState;
+}
+
 function files(state: IFileTreeState = { root: null, selected: null }, action: IFileAction): IFileTreeState {
   switch (action.type) {
     case FileActions.setRoot: {
@@ -151,15 +165,24 @@ function files(state: IFileTreeState = { root: null, selected: null }, action: I
       state = { root, selected: root };
       break;
     }
+
     case FileActions.add:
       state = addFile(state, action.payload);
       break;
+      
     case FileActions.remove:
       state = removeFile(state, action.payload.path);
       break;
+
+    case FileActions.clear:
+      state = clearFiles(state);
+      break;
+
     default:
+      break;
   }
 
   return state;
 }
+
 export default files;

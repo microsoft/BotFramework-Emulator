@@ -213,13 +213,21 @@ export function registerCommands() {
   });
 
   // ---------------------------------------------------------------------------
+  // Adds a file to the file store
   CommandRegistry.registerCommand('file:add', (payload) => {
     store.dispatch(FileActions.addFile(payload));
   });
 
   // ---------------------------------------------------------------------------
+  // Removes a file from the file store
   CommandRegistry.registerCommand('file:remove', (path) => {
     store.dispatch(FileActions.removeFile(path));
+  });
+
+  // ---------------------------------------------------------------------------
+  // Clears the file store 
+  CommandRegistry.registerCommand('file:clear', () => {
+    store.dispatch(FileActions.clear());
   });
 
   // ---------------------------------------------------------------------------
