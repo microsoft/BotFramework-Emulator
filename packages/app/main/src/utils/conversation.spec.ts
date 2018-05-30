@@ -1,7 +1,7 @@
-import { cleanupId, __testables } from './conversation';
+import { cleanupId, __TESTABLES } from './conversation';
 
 const { expect, test } = global as any;
-const { findIdWithRole } = __testables;
+const { findIdWithRole } = __TESTABLES;
 
 test('find ID with role "bot"', () => {
   const activities = [{

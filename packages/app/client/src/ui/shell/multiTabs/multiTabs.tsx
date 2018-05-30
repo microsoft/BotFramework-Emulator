@@ -63,11 +63,6 @@ class MultiTabsComponent extends React.Component<MultiTabsProps> {
   }
 
   render() {
-    let children: any[] = [];
-    if (!!this.props.children.length) {
-      children = React.Children.toArray(this.props.children);
-    }
-
     return (
       <div { ...CSS }>
         {
@@ -85,11 +80,13 @@ class MultiTabsComponent extends React.Component<MultiTabsProps> {
           </TabBar>
         }
         {
-          !!this.props.children.length && React.Children.map(this.props.children, (tabbedDocument: any, index: number) =>
-            filterChildren(
-              tabbedDocument.props.children,
-              child => hmrSafeNameComparison(child.type, TabbedDocumentContent)
-            ).map(child => child && React.cloneElement(child as any, { hidden: index !== this.props.value }))
+          !!this.props.children.length && React.Children.map(
+            this.props.children,
+            (tabbedDocument: any, index: number) =>
+              filterChildren(
+                tabbedDocument.props.children,
+                child => hmrSafeNameComparison(child.type, TabbedDocumentContent)
+              ).map(child => child && React.cloneElement(child as any, { hidden: index !== this.props.value }))
           )
         }
       </div>

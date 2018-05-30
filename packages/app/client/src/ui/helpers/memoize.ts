@@ -1,8 +1,8 @@
-export default function memoize(fn) {
-  let lastArgs = [];
-  let result;
+export default function memoize<T>(fn: (...args: any[]) => T) {
+  let lastArgs: any[] = [];
+  let result: T;
 
-  return function () {
+  return function (): T {
     if (
       lastArgs.length !== arguments.length
       || lastArgs.some((arg, index) => arg !== arguments[index])

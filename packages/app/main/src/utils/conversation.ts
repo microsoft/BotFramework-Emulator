@@ -1,5 +1,20 @@
+import { Activity } from 'botframework-directlinejs';
+
+interface CustomActivityProperties {
+  from: {
+    role?: string
+  };
+
+  recipient?: {
+    id?: string,
+    role?: string
+  };
+}
+
+export type CustomActivity = Activity & CustomActivityProperties;
+
 export function cleanupId(
-  activities: any[],
+  activities: CustomActivity[],
   botId: string = findIdWithRole(activities, 'bot'),
   userId: string = findIdWithRole(activities, 'user')
 ) {
@@ -20,11 +35,19 @@ export function cleanupId(
   return activities;
 }
 
-function findIdWithRole(activities, role) {
+function findIdWithRole(activities: CustomActivity[], role: string): string {
   return activities.reduce(
-    (id, { recipient }) => id || (recipient && recipient.role === role && recipient.id),
+    (id: string, { recipient }) => {
+      if (id) {
+        return id;
+      } else if (recipient && recipient.role === role) {
+        return recipient.id;
+      } else {
+        return null;
+      }
+    },
     null
   );
 }
 
-export const __testables = { findIdWithRole };
+export const __TESTABLES = { findIdWithRole };
