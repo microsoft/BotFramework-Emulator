@@ -31,14 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as ExplorerActions from '../action/explorerActions';
-
-type ExplorerAction = {
-  type: 'EXPLORER/SHOW',
-  payload: {
-    show: boolean
-  }
-};
+import { ExplorerAction, ExplorerActions } from '../action/explorerActions';
 
 export interface ExplorerState {
   showing: boolean;
@@ -50,7 +43,7 @@ const DEFAULT_STATE: ExplorerState = {
 
 export default function explorer(state: ExplorerState = DEFAULT_STATE, action: ExplorerAction): ExplorerState {
   switch (action.type) {
-    case ExplorerActions.SHOW: {
+    case ExplorerActions.show: {
       state = setShowing(action.payload.show, state);
       break;
     }

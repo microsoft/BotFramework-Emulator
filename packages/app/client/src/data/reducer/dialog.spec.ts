@@ -7,10 +7,10 @@ describe('Dialog reducer tests', () => {
     showing: false
   };
 
-  it('should return state for non-matching action type', () => {
+  it('should return unaltered state for non-matching action type', () => {
     const emptyAction: DialogAction = { type: null, payload: null };
     const startingState = { ...DEFAULT_STATE };
-    let endingState = dialog(DEFAULT_STATE, emptyAction);
+    const endingState = dialog(DEFAULT_STATE, emptyAction);
     expect(endingState).toEqual(startingState);
   });
 
@@ -22,7 +22,7 @@ describe('Dialog reducer tests', () => {
       }
     };
 
-    let endingState = dialog(DEFAULT_STATE, action);
+    const endingState = dialog(DEFAULT_STATE, action);
     expect(endingState.showing).toBe(true);
   });
 });
