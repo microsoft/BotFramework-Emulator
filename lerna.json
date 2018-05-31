@@ -4,8 +4,6 @@
     "packages/app/client",
     "packages/app/main",
     "packages/app/shared",
-    "packages/custom-botframework-webchat",
-    "packages/custom-botframework-directlinejs",
     "packages/emulator/cli",
     "packages/emulator/core",
     "packages/sdk/client",

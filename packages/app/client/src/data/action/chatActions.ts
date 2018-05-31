@@ -32,7 +32,6 @@
 //
 
 import { LogEntry } from '@bfemulator/app-shared';
-import { createStore as createWebChatStore } from '@bfemulator/custom-botframework-webchat';
 
 export const NEW_CHAT_DOCUMENT = 'CHAT/DOCUMENT/NEW';
 export const OPEN_CHAT_DOCUMENT = 'CHAT/DOCUMENT/OPEN';
@@ -148,7 +147,6 @@ export function newDocument(documentId: string, mode: ChatMode, additionalData?:
       mode,
       documentId,
       conversationId: null,
-      webChatStore: createWebChatStore(),
       directLine: null,
       log: {
         entries: []

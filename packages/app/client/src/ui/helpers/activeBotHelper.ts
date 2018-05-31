@@ -139,22 +139,19 @@ export const ActiveBotHelper = new class {
       try {
         const bot: BotConfigWithPath = await CommandServiceImpl.remoteCall('bot:create', botToCreate, secret);
 
-        // TODO: What are we achieving with this async function here?
-        store.dispatch(async () => {
-          store.dispatch(BotActions.create(bot, bot.path, secret));
+        store.dispatch(BotActions.create(bot, bot.path, secret));
 
-          await this.setActiveBot(bot.path);
+        await this.setActiveBot(bot.path);
 
-          const endpoint: IEndpointService = bot.services
-            .find(service => service.type === ServiceType.Endpoint) as IEndpointService;
+        const endpoint: IEndpointService = bot.services
+          .find(service => service.type === ServiceType.Endpoint) as IEndpointService;
 
-          if (endpoint) {
-            CommandServiceImpl.call('livechat:new', endpoint);
-          }
+        if (endpoint) {
+          CommandServiceImpl.call('livechat:new', endpoint);
+        }
 
-          store.dispatch(NavBarActions.select(Constants.NAVBAR_BOT_EXPLORER));
-          store.dispatch(ExplorerActions.show(true));
-        });
+        store.dispatch(NavBarActions.select(Constants.NAVBAR_BOT_EXPLORER));
+        store.dispatch(ExplorerActions.show(true));
       } catch (err) {
         console.error('Error during bot create: ', err);
       }
