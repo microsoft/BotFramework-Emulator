@@ -147,7 +147,6 @@ export function newDocument(documentId: string, mode: ChatMode, additionalData?:
       mode,
       documentId,
       conversationId: null,
-      // webChatStore: createWebChatStore(),
       directLine: null,
       log: {
         entries: []
