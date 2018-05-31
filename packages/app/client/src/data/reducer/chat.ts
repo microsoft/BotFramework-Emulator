@@ -32,8 +32,8 @@
 //
 
 import { ChatAction, ChatActions, newConversation } from '../action/chatActions';
-import * as EditorActions from '../action/editorActions';
-import { EditorAction } from '../action/editorActions';
+import { EditorAction, EditorActions } from '../action/editorActions';
+import { deepCopySlow } from '@bfemulator/app-shared';
 
 export interface ChatState {
   changeKey?: number;
@@ -103,7 +103,7 @@ export default function chat(state: ChatState = DEFAULT_STATE, action: ChatActio
 
     case ChatActions.closeChat: {
       const { payload } = action;
-      const copy = { ...state };
+      const copy = deepCopySlow(state);
       copy.changeKey += 1;
       delete copy.chats[payload.documentId];
       state = { ...copy };
@@ -202,7 +202,7 @@ export default function chat(state: ChatState = DEFAULT_STATE, action: ChatActio
       break;
     }
 
-    case EditorActions.CLOSE_ALL: {
+    case EditorActions.closeAll: {
       // HACK. Need a better system.
       return DEFAULT_STATE;
     }

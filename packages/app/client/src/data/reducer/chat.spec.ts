@@ -12,7 +12,7 @@ import {
   removeTranscript,
   setInspectorObjects
 } from '../action/chatActions';
-import * as EditorActions from '../action/editorActions';
+import { closeNonGlobalTabs } from '../action/editorActions';
 import chat, { ChatState } from './chat';
 
 describe('Chat reducer tests', () => {
@@ -79,11 +79,10 @@ describe('Chat reducer tests', () => {
   });
 
   it('should close a chat', () => {
-    const idOfChatToDelete = 'deleteme';
-    let state = chat(DEFAULT_STATE, newDocument(idOfChatToDelete, 'livechat'));
-    const action = closeDocument(idOfChatToDelete);
+    let state = chat(DEFAULT_STATE, newDocument(testChatId, 'livechat'));
+    const action = closeDocument(testChatId);
     state = chat(DEFAULT_STATE, action);
-    expect(state.chats[idOfChatToDelete]).toBeFalsy();
+    expect(state.chats[testChatId]).toBeFalsy();
   });
 
   it('should create a new conversation', () => {
@@ -155,7 +154,7 @@ describe('Chat reducer tests', () => {
       },
       transcripts: ['xs1', 'xs2', 'xs3']
     };
-    const action = EditorActions.closeNonGlobalTabs();
+    const action = closeNonGlobalTabs();
     const state = chat(alteredState, action);
     expect(state.changeKey).toBe(0);
     expect(state.transcripts.length).toBe(0);
