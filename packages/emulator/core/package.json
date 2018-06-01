@@ -83,6 +83,7 @@
     "restify": "^4.3.3",
     "rimraf": "^2.6.2",
     "ts-jest": "^22.4.6",
+    "tslint": "^5.10.0",
     "typescript": "2.7.2"
   }
 }
