@@ -31,25 +31,37 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ExplorerAction, show } from '../action/explorerActions';
-import explorer, { ExplorerState } from './explorer';
+import {
+  luisAuthoringDataChanged,
+  luisAuthStatusChanged
+} from '../action/luisAuthActions';
+import luisAuth, { LuisAuthState } from './luisAuthReducer';
 
-describe('Explorer reducer tests', () => {
-  const DEFAULT_STATE: ExplorerState = {
-    showing: false
-  };
+describe('Luis auth reducer tests', () => {
+  let startingState: LuisAuthState;
+
+  beforeEach(() => {
+    startingState = {
+      luisAuthWorkflowStatus: null,
+      luisAuthData: null
+    };
+  });
 
   it('should return unaltered state for non-matching action type', () => {
-    const emptyAction: ExplorerAction = { type: null, payload: null };
-    const startingState = { ...DEFAULT_STATE };
-    const endingState = explorer(DEFAULT_STATE, emptyAction);
+    const emptyAction = { type: null, payload: undefined };
+    const endingState = luisAuth(startingState, emptyAction);
     expect(endingState).toEqual(startingState);
   });
 
-  it('should toggle the "showing state"', () => {
-    const action: ExplorerAction = show(true);
+  it('should change workflow status', () => {
+    const action = luisAuthStatusChanged('inProgress');
+    const state = luisAuth(startingState, action);
+    expect(state.luisAuthWorkflowStatus).toBe('inProgress');
+  });
 
-    const state = explorer(DEFAULT_STATE, action);
-    expect(state.showing).toBe(true);
+  it('should change auth data', () => {
+    const action = luisAuthoringDataChanged({ key: 'someKey', BaseUrl: 'someBaseUrl' });
+    const state = luisAuth(startingState, action);
+    expect(state.luisAuthData).toEqual({ key: 'someKey', BaseUrl: 'someBaseUrl' });
   });
 });

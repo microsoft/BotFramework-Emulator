@@ -65,8 +65,8 @@ export default function luisAuth(state: LuisAuthState = initialState,
   const { luisAuthWorkflowStatus } = payload as LuisAuthWorkflowStatus;
 
   switch (type) {
-    case LUIS_LAUNCH_MODELS_VIEWER:
-      return { ...state, luisAuthWorkflowStatus: 'notStarted' };
+    /*case LUIS_LAUNCH_MODELS_VIEWER:
+      return { ...state, luisAuthWorkflowStatus: 'notStarted' };*/
 
     case LUIS_AUTH_STATUS_CHANGED:
       return { ...state, luisAuthWorkflowStatus };
