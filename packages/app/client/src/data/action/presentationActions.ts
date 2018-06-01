@@ -42,7 +42,7 @@ export interface EnablePresentationAction {
 }
 
 export interface DisablePresentationAction {
-  type: PresentationActions.disable,
+  type: PresentationActions.disable;
   payload: {};
 }
 
