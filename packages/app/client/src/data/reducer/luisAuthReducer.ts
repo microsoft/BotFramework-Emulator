@@ -34,7 +34,6 @@
 import {
   LUIS_AUTH_STATUS_CHANGED,
   LUIS_AUTHORING_DATA_CHANGED,
-  LUIS_LAUNCH_MODELS_VIEWER,
   LuisAuthAction,
   LuisAuthData,
   LuisAuthWorkflowStatus

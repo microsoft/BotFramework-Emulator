@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ComponentClass } from 'react';
 import { Action } from 'redux';
 
 export const LUIS_LAUNCH_MODELS_VIEWER = 'LUIS_LAUNCH_MODELS_VIEWER';

@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ChatAction, ChatActions, newConversation } from '../action/chatActions';
+import { ChatAction, ChatActions } from '../action/chatActions';
 import { EditorAction, EditorActions } from '../action/editorActions';
 import { deepCopySlow } from '@bfemulator/app-shared';
 
