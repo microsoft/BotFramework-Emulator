@@ -163,7 +163,7 @@ export default class Conversation extends EventEmitter {
     this.emit('transcriptupdate');
 
     let status = 200;
-    let resp: any = {};
+    let resp: any = {json: async() => ({})};
 
     // If a message to the bot was triggered from a transcript, don't actually send it.
     // This can happen when clicking a button in an adaptive card, for instance.

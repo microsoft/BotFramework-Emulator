@@ -67,7 +67,7 @@ export interface RootState {
 const sagaMiddleWare = sagaMiddlewareFactory();
 const DEFAULT_STATE: RootState = {};
 
-const configureStore = (initialState: RootState = DEFAULT_STATE): Store<RootState> => createStore(
+const configureStore = (initialState: RootState = DEFAULT_STATE): Store<RootState> => createStore<RootState>(
   combineReducers({
     bot,
     dialog,

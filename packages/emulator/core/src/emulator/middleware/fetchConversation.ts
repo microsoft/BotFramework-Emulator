@@ -32,21 +32,27 @@
 //
 
 import * as HttpStatus from 'http-status-codes';
-import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
 import createAPIException from '../../utils/createResponse/apiException';
 import ErrorCodes from '../../types/errorCodes';
+import Conversation from '../../facility/conversation';
+
+import { Request, Response, Next } from 'restify';
+
+export interface ConversationAware extends Request {
+  conversation: Conversation;
+}
 
 export default function fetchConversation(botEmulator: BotEmulator) {
-  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+  return (req: ConversationAware, res: Response, next: Next): any => {
     const conversation = botEmulator.facilities.conversations.conversationById(req.params.conversationId);
 
     if (!conversation) {
       throw createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, 'conversation not found');
     }
 
-    (req as any).conversation = conversation;
+    req.conversation = conversation;
 
     return next();
   };
