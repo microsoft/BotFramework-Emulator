@@ -4,7 +4,7 @@
     "inspectors": [
       {
         "name": "QNAMaker",
-        "src": "client/build/index.html",
+        "src": "client/public/index.html",
         "criteria": [
           {
             "path": "$.type",
@@ -38,6 +38,10 @@
               "default": {
                 "label": "Publish",
                 "icon": "Share"
+              }, 
+              "working": {
+                "label": "Publishing",
+                "icon": "Spinner"
               }
             }
           }

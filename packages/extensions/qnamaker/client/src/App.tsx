@@ -33,6 +33,7 @@
 
 import { InspectorHost } from '@bfemulator/sdk-client';
 import { Colors, Fonts, GlobalCss, Splitter } from '@bfemulator/ui-react';
+import { hot } from 'react-hot-loader';
 import { css } from 'glamor';
 import * as React from 'react';
 import { IBotConfig, IQnAService, ServiceType } from 'msbot/bin/schema';
@@ -70,6 +71,7 @@ const AppCss = css({
 
 const NoServiceCss = css({
   padding: '20px',
+  whiteSpace: 'normal',
 });
 
 interface AppState {
@@ -102,9 +104,6 @@ class App extends React.Component<any, AppState> {
     let qnaService = qnaServices.find(ls => ls.kbId.toLowerCase() === kbId);
     if (qnaService) {
       return qnaService;
-    }
-    if (qnaServices.length > 0) {
-      return qnaServices[0];
     }
 
     return null;
@@ -180,7 +179,10 @@ class App extends React.Component<any, AppState> {
     if (this.state.qnaService === null) {
       const text = 'Unable to find a QnA Maker service with Knowledge Base ID ' + this.state.traceInfo.knowledgeBaseId
         + '. Please add a QnA Maker service to your bot.';
-      return <div className="no-service" {...NoServiceCss}>{text}</div>;
+      return (
+        <div className="no-service" {...NoServiceCss}>
+          <p>{text}</p>
+        </div>);
     }
     return (
       <div {...AppCss}>
@@ -314,15 +316,17 @@ class App extends React.Component<any, AppState> {
 
   private addAnswer() {
     return (newAnswer: string) => {
-      let newAnswers: Answer[] = this.state.answers;
-      newAnswers.push({
+      let answerObj = {
         id: 0,
         text: newAnswer,
         score: 0,
         filters: {}
-      });
+      };
+      let newAnswers: Answer[] = this.state.answers;
+      newAnswers.push(answerObj);
       this.setState({
-        answers: newAnswers
+        answers: newAnswers,
+        selectedAnswer: answerObj
       });
       this.setAppPersistentState({
         pendingTrain: this.state.selectedAnswer !== null,
@@ -352,4 +356,5 @@ class App extends React.Component<any, AppState> {
   }
 }
 
+// export const App = hot(module)(App);
 export { App, AppState, PersistentAppState};

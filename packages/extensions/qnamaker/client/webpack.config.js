@@ -9,24 +9,20 @@ module.exports = {
     rules: [
       {
         test: /\.css$/,
-        exclude: [/node_modules/],
         use: ['style-loader', 'css-loader']
       },
       {
         test: /\.tsx?$/,
-        exclude: [/node_modules/],
         loader: 'awesome-typescript-loader'
+      },
+      {
+        test: /\.tsx$/,
+        enforce: 'pre',
+        loader: 'tslint-loader',
+        options: { /* Loader options go here */ }
       },
     ],
   },
-
-  devtool: 'source-map',
-
-  // node: {
-  //   fs: 'empty',
-  //   net: 'empty',
-  //   tls: 'empty'
-  // },
 
   devServer: {
     hot: true,
@@ -40,9 +36,13 @@ module.exports = {
   },
 
   output: {
-    path: path.resolve('./build/dist'),
+    path: path.resolve('./public'),
     filename: '[name].js',
     publicPath: 'http://localhost:8080',
+  },
+
+  stats: {
+    warnings: false
   },
 
   externals: {},
