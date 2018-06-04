@@ -35,7 +35,9 @@ import { Event, ipcMain, WebContents } from 'electron';
 import { Disposable, IPC } from '@bfemulator/sdk-shared';
 
 export class ElectronIPC extends IPC {
-  get id(): number { return this._webContents.id; }
+  get id(): number {
+    return this._webContents.id;
+  }
 
   constructor(private _webContents: WebContents) {
     super();
@@ -56,22 +58,28 @@ export class ElectronIPC extends IPC {
 
 export const ElectronIPCServer = new class {
   private _ipcs: { [id: number]: ElectronIPC } = {};
+  private initialized = false;
 
-  constructor() {
+  registerIPC(ipc: ElectronIPC): Disposable {
+    this._ipcs[ipc.id] = ipc;
+    this.initialize();
+    return {
+      dispose: () => {
+        delete this._ipcs[ipc.id];
+      }
+    };
+  }
+
+  private initialize(): void {
+    if (this.initialized) {
+      return;
+    }
     ipcMain.on('ipc:message', (event: Event, ...args) => {
       const ipc = this._ipcs[event.sender.id];
       if (ipc) {
         ipc.onMessage(event, ...args);
       }
     });
-  }
-
-  registerIPC(ipc: ElectronIPC): Disposable {
-    this._ipcs[ipc.id] = ipc;
-    return {
-      dispose: () => {
-        delete this._ipcs[ipc.id];
-      }
-    };
+    this.initialized = true;
   }
 };

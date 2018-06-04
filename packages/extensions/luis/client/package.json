@@ -10,7 +10,7 @@
     "@bfemulator/ui-react": "^1.0.0",
     "glamor": "^2.20.40",
     "lscache": "^1.1.0",
-    "luis-apis": "^1.0.7",
+    "luis-apis": "1.0.7",
     "msbot": "^1.0.44",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",

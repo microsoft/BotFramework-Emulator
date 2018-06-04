@@ -33,7 +33,7 @@
 
 import { BotInfo, FrameworkSettings, getBotDisplayName, newBot, newEndpoint } from '@bfemulator/app-shared';
 import { Conversation } from '@bfemulator/emulator-core';
-import { Activity, BotConfigWithPath, CommandRegistryImpl as CommReg, uniqueId } from '@bfemulator/sdk-shared';
+import { BotConfigWithPath, CommandRegistryImpl as CommReg, uniqueId } from '@bfemulator/sdk-shared';
 import * as Electron from 'electron';
 import { app, Menu } from 'electron';
 import * as Fs from 'fs';
@@ -63,9 +63,11 @@ import { ContextMenuService } from './services/contextMenuService';
 import { LuisAuthWorkflowService } from './services/luisAuthWorkflowService';
 import { dispatch, getSettings } from './settings';
 import { getBotsFromDisk, readFileSync, showOpenDialog, showSaveDialog, writeFile } from './utils';
-import shell = Electron.shell;
 import { cleanupId as cleanupActivityChannelAccountId, CustomActivity } from './utils/conversation';
+import shell = Electron.shell;
+import { getStore } from './data-v2/store';
 
+const store = getStore();
 const sanitize = require('sanitize-filename');
 
 // =============================================================================
@@ -86,7 +88,7 @@ export function registerCommands() {
   // Create a bot
   CommandRegistry.registerCommand('bot:create', async (bot: BotConfigWithPath,
                                                        secret: string): Promise<BotConfigWithPath> => {
-    // create and add bot entry to bots.json
+    // getStore and add bot entry to bots.json
     const botsJsonEntry: BotInfo = {
       path: bot.path,
       displayName: getBotDisplayName(bot),
@@ -139,8 +141,9 @@ export function registerCommands() {
 
     // set bot as active
     const botDirectory = Path.dirname(botFilePath);
-    mainWindow.store.dispatch(BotActions.setActive(bot));
-    mainWindow.store.dispatch(BotActions.setDirectory(botDirectory));
+
+    store.dispatch(BotActions.setActive(bot));
+    store.dispatch(BotActions.setDirectory(botDirectory));
 
     return mainWindow.commandService.remoteCall('bot:load', bot);
   });
@@ -180,8 +183,8 @@ export function registerCommands() {
 
     // set active bot and active directory
     const botDirectory = Path.dirname(botPath);
-    mainWindow.store.dispatch(BotActions.setActive(bot));
-    mainWindow.store.dispatch(BotActions.setDirectory(botDirectory));
+    store.dispatch(BotActions.setActive(bot));
+    store.dispatch(BotActions.setDirectory(botDirectory));
     mainWindow.commandService.call('bot:restart-endpoint-service');
 
     // Workaround for a JSON serialization issue in bot.services where they're an array
@@ -215,7 +218,7 @@ export function registerCommands() {
   // Close active bot (called from client-side)
   CommandRegistry.registerCommand('bot:close', async (): Promise<void> => {
     BotProjectFileWatcher.dispose();
-    mainWindow.store.dispatch(BotActions.close());
+    store.dispatch(BotActions.close());
   });
 
   // ---------------------------------------------------------------------------
@@ -321,7 +324,7 @@ export function registerCommands() {
   CommandRegistry.registerCommand('client:loaded', () => {
     // Load bots from disk and sync list with client
     const bots = getBotsFromDisk();
-    mainWindow.store.dispatch(BotActions.load(bots));
+    store.dispatch(BotActions.load(bots));
     mainWindow.commandService.remoteCall('bot:list:sync', bots);
     // Reset the app title bar
     mainWindow.commandService.call('electron:set-title-bar');
@@ -411,7 +414,7 @@ export function registerCommands() {
       throw new Error(`save-transcript-to-file: Conversation ${conversationId} not found.`);
     }
 
-    const path = Path.resolve(mainWindow.store.getState().bot.currentBotDirectory) || '';
+    const path = Path.resolve(store.getState().bot.currentBotDirectory) || '';
 
     const filename = showSaveDialog(mainWindow.browserWindow, {
       // TODO - Localization
@@ -441,7 +444,7 @@ export function registerCommands() {
       await saveableBot.save(botPath);
       await patchBotsJson(botPath, botInfo);
       await BotProjectFileWatcher.watch(botPath);
-      mainWindow.store.dispatch(BotActions.setDirectory(botDirectory));
+      store.dispatch(BotActions.setDirectory(botDirectory));
     }
 
     if (filename && filename.length) {
@@ -505,7 +508,7 @@ export function registerCommands() {
     let menu = AppMenuBuilder.menuTemplate;
 
     // get a file menu template with recent bots added
-    const state = mainWindow.store.getState();
+    const state = store.getState();
     const recentBots = state.bot && state.bot.botFiles ? state.bot.botFiles : [];
     const newFileMenu = AppMenuBuilder.getFileMenu(recentBots);
 
@@ -533,7 +536,7 @@ export function registerCommands() {
     if (!bot) {
       bot = newBot();
       bot.services.push(newEndpoint());
-      mainWindow.store.dispatch(BotActions.mockAndSetActive(bot));
+      store.dispatch(BotActions.mockAndSetActive(bot));
     }
 
     // TODO: Move away from the .users state on legacy emulator settings, and towards per-conversation users
@@ -572,7 +575,7 @@ export function registerCommands() {
   // Retrieve the LUIS authoring key
   CommandRegistry.registerCommand('luis:retrieve-authoring-key', async () => {
     const workflow = LuisAuthWorkflowService.enterAuthWorkflow();
-    const { dispatch: storeDispatch } = mainWindow.store;
+    const { dispatch: storeDispatch } = store;
     const type = 'LUIS_AUTH_STATUS_CHANGED';
     storeDispatch({ type, luisAuthWorkflowStatus: 'inProgress' });
     let result = undefined;
@@ -611,7 +614,7 @@ export function registerCommands() {
 
   // ---------------------------------------------------------------------------
   // Opens an OAuth login window
-  CommandRegistry.registerCommand('oauth:create-oauth-window', async (url: string, conversationId: string) => {
+  CommandRegistry.registerCommand('oauth:getStore-oauth-window', async (url: string, conversationId: string) => {
     const convo = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
     windowManager.createOAuthWindow(url, convo.codeVerifier);
   });

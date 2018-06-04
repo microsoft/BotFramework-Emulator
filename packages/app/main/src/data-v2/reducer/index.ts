@@ -34,7 +34,9 @@
 import { combineReducers } from 'redux';
 
 import { bot } from './bot';
+import { serviceUrlReducer as serviceUrl } from './serviceUrl';
 
 export default combineReducers({
   bot,
+  serviceUrl
 });

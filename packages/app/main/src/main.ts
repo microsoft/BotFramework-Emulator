@@ -50,9 +50,12 @@ import { AppMenuBuilder } from './appMenuBuilder';
 import { AppUpdater } from './appUpdater';
 import { UpdateInfo } from 'electron-updater';
 import { ProgressInfo } from 'builder-util-runtime';
+import { getStore } from './data-v2/store';
 
 export let mainWindow: Window;
 export let windowManager: WindowManager;
+
+const store = getStore();
 
 // -----------------------------------------------------------------------------
 
@@ -62,7 +65,9 @@ export let windowManager: WindowManager;
 
 // -----------------------------------------------------------------------------
 // TODO - localization
-app.setName('Bot Framework Emulator (V4 PREVIEW)');
+if (app) {
+  app.setName('Bot Framework Emulator (V4 PREVIEW)');
+}
 
 // -----------------------------------------------------------------------------
 // App-Updater events
@@ -119,7 +124,7 @@ AppUpdater.on('up-to-date', (update: UpdateInfo) => {
 });
 
 AppUpdater.on('download-progress', (progress: ProgressInfo) => {
-  AppMenuBuilder.refreshAppUpdateMenu();  
+  AppMenuBuilder.refreshAppUpdateMenu();
 });
 
 AppUpdater.on('error', (err: Error, message: string) => {
@@ -212,38 +217,37 @@ const createMainWindow = async () => {
         width: 1400,
         height: 920
       }));
+  store.subscribe(() => {
+    const state = store.getState();
+    const botsJson = { bots: state.bot.botFiles.filter(botFile => !!botFile) };
+    const botsJsonPath = path.join(ensureStoragePath(), 'bots.json');
 
-  mainWindow.initStore()
-    .then(async store => {
-      store.subscribe(() => {
-        const state = store.getState();
-        const botsJson = { bots: state.bot.botFiles.filter(botFile => !!botFile) };
-        const botsJsonPath = path.join(ensureStoragePath(), 'bots.json');
+    try {
+      // write bots list
+      writeFile(botsJsonPath, botsJson);
+    } catch (e) {
+      console.error('Error writing bot list to disk: ', e);
+    }
 
-        try {
-          // write bots list
-          writeFile(botsJsonPath, botsJson);
-        } catch (e) { console.error('Error writing bot list to disk: ', e); }
+    /* Timeout's are currently busted in Electron; will write on every store change until fix is made.
+    // Issue: https://github.com/electron/electron/issues/7079
 
-        /* Timeout's are currently busted in Electron; will write on every store change until fix is made.
-        // Issue: https://github.com/electron/electron/issues/7079
+    clearTimeout(botSettingsTimer);
 
-        clearTimeout(botSettingsTimer);
+    // wait 5 seconds after updates to bots list to write to disk
+    botSettingsTimer = setTimeout(() => {
+      const botsJsonPath = `${ensureStoragePath()}/bots.json`;
+      try {
+        writeFile(botsJsonPath, botsJson);
+        console.log('Wrote bot settings to desk.');
+      } catch (e) { console.error('Error writing bot settings to disk: ', e); }
+    }, 1000);*/
+  });
 
-        // wait 5 seconds after updates to bots list to write to disk
-        botSettingsTimer = setTimeout(() => {
-          const botsJsonPath = `${ensureStoragePath()}/bots.json`;
-          try {
-            writeFile(botsJsonPath, botsJson);
-            console.log('Wrote bot settings to desk.');
-          } catch (e) { console.error('Error writing bot settings to disk: ', e); }
-        }, 1000);*/
-      });
+  const serverUrl = await Emulator.startup();
+  store.dispatch({ type: 'updateServiceUrl', payload: serverUrl.replace('[::]', 'localHost') });
 
-      await Emulator.startup();
-
-      loadMainPage();
-    });
+  loadMainPage();
 
   mainWindow.browserWindow.setTitle(app.getName());
   windowManager = new WindowManager();

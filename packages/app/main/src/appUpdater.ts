@@ -37,8 +37,6 @@ import * as semver from 'semver';
 import { EventEmitter } from 'events';
 import { ProgressInfo } from 'builder-util-runtime';
 
-const pjson = require('../../package.json');
-
 export enum UpdateStatus {
   Idle,
   CheckingForUpdate,
@@ -46,25 +44,34 @@ export enum UpdateStatus {
   UpdateDownloading,
   UpdateReadyToInstall,
 }
-
+let pjson;
 export const AppUpdater = new class extends EventEmitter {
   private _userInitiated: boolean;
   private _autoDownload: boolean;
   private _status: UpdateStatus = UpdateStatus.Idle;
   private _allowPrerelease: boolean;
 
-  public get userInitiated() { return this._userInitiated; }
+  public get userInitiated() {
+    return this._userInitiated;
+  }
 
-  public get status(): UpdateStatus { return this._status; }
+  public get status(): UpdateStatus {
+    return this._status;
+  }
 
   startup() {
     let allowUpdateCheck = (process.argv.indexOf('--no-update') === -1);
     this._allowPrerelease = (process.argv.indexOf('--prerelease') >= 0);
 
     // Allow update to prerelease if this is a prerelease
-    const rc = semver.prerelease(pjson.version);
-    if (rc && rc.length) {
-      this._allowPrerelease = true;
+    try {
+      pjson = require('../../package.json');
+      const rc = semver.prerelease(pjson.version);
+      if (rc && rc.length) {
+        this._allowPrerelease = true;
+      }
+    } catch (err) {
+      console.error(err);
     }
 
     electronUpdater.logger = null;
@@ -114,7 +121,7 @@ export const AppUpdater = new class extends EventEmitter {
         electronUpdater.allowDowngrade = false;
         electronUpdater.autoInstallOnAppQuit = true;
         if (process.env.NODE_ENV === 'development') {
-          (electronUpdater as any).currentVersion = pjson.version;
+          (electronUpdater as any).currentVersion = (pjson || {}).version;
         }
         electronUpdater.checkForUpdates()
           .catch(err => {
