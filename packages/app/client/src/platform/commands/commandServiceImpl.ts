@@ -43,7 +43,7 @@ import { ElectronIPC } from '../../ipc';
 
 export const CommandServiceImpl = new class extends DisposableImpl implements CommandService {
 
-  private _service: InternalSharedService;
+  private readonly _service: InternalSharedService;
 
   init() { return null; }
 

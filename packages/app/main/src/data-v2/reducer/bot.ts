@@ -33,7 +33,6 @@
 
 import { IBotConfig } from 'msbot/bin/schema';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
-import { cloneBot, getBotInfoByPath } from '../../botHelpers';
 import * as BotActions from '../action/bot';
 import { BotInfo, getBotDisplayName } from '@bfemulator/app-shared';
 
@@ -88,7 +87,8 @@ export const bot: any = (state: BotState = DEFAULT_STATE, action: BotAction) => 
         ...action.payload.bot
       };
       // update the bot display name in the list if it was changed
-      const bot1 = getBotInfoByPath(action.payload.bot.path);
+      const { path } = action.payload.bot;
+      const bot1 = state.botFiles.find(botArg => botArg && botArg.path === path);
       if (bot1) {
         bot1.displayName = getBotDisplayName(action.payload.bot);
         if (action.payload.secret) {
@@ -131,7 +131,8 @@ export const bot: any = (state: BotState = DEFAULT_STATE, action: BotAction) => 
 function setActiveBot(bot4: IBotConfig, state: BotState): BotState {
   return Object.assign({}, state, {
     get activeBot() {
-      return cloneBot(bot4); // Clones only - this guarantees only pristine bots will exist in the store
+      // Clones only - this guarantees only pristine bots will exist in the store
+      return JSON.parse(JSON.stringify(bot4));
     }
   });
 }

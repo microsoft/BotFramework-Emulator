@@ -35,36 +35,29 @@ import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
-import CheckoutConversationSession from '../../types/payment/checkoutConversationSession';
-import PaymentRequest from '../../types/payment/request';
-import PaymentAddress from '../../types/payment/address';
 import sendErrorResponse from '../../utils/sendErrorResponse';
+import { ConversationAware } from './fetchConversation';
 
-export default function paymentComplete(botEmulator: BotEmulator) {
-  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+export default function paymentComplete(_botEmulator: BotEmulator) {
+  return async (req: ConversationAware, res: Restify.Response, next: Restify.Next): Promise<any> => {
+    const {
+      checkoutSession,
+      request,
+      shippingAddress,
+      shippingOptionId,
+      payerPhone,
+      payerEmail,
+    } = req.body[0];
+    const args = [checkoutSession, request, shippingAddress, shippingOptionId, payerEmail, payerPhone];
+
     try {
-      const body: {
-        checkoutSession: CheckoutConversationSession,
-        request: PaymentRequest,
-        shippingAddress: PaymentAddress,
-        shippingOptionId: string,
-        payerEmail: string,
-        payerPhone: string
-      } = req.body[0];
-
-      (req as any).conversation.sendPaymentCompleteOperation(body.checkoutSession, body.request, body.shippingAddress,
-        body.shippingOptionId, body.payerEmail, body.payerPhone, (statusCode, body1) => {
-        if (statusCode === HttpStatus.OK) {
-          res.send(HttpStatus.OK, body1);
-        } else {
-          res.send(statusCode);
-        }
-
-        res.end();
-      });
+      const response = await req.conversation.sendPaymentCompleteOperation.apply(req.conversation, args);
+      res.send(HttpStatus.OK, response);
     } catch (err) {
       sendErrorResponse(req, res, next, err);
+      res.send(HttpStatus.INTERNAL_SERVER_ERROR);
     }
+    res.end();
 
     next();
   };

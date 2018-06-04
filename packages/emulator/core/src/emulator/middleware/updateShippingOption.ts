@@ -35,35 +35,25 @@ import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
-import CheckoutConversationSession from '../../types/payment/checkoutConversationSession';
-import PaymentAddress from '../../types/payment/address';
-import PaymentRequest from '../../types/payment/request';
 import sendErrorResponse from '../../utils/sendErrorResponse';
+import { ConversationAware } from './fetchConversation';
 
-export default function updateShippingOption(botEmulator: BotEmulator) {
-  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+export default function updateShippingOption(_botEmulator: BotEmulator) {
+  return async (req: ConversationAware, res: Restify.Response, next: Restify.Next): Promise<any> => {
+    const {
+      checkoutSession,
+      request,
+      shippingAddress,
+      shippingOptionId
+    } = req.body[0];
+    const args = [checkoutSession, request, shippingAddress, shippingOptionId];
     try {
-      const body: {
-        checkoutSession: CheckoutConversationSession,
-        request: PaymentRequest,
-        shippingAddress: PaymentAddress,
-        shippingOptionId: string
-      } = req.body[0];
-
-      (req as any).conversation.sendUpdateShippingOptionOperation(body.checkoutSession, body.request,
-        body.shippingAddress, body.shippingOptionId, async (statusCode, resp) => {
-        if (statusCode === HttpStatus.OK) {
-          res.send(HttpStatus.OK, await resp.json());
-        } else {
-          res.send(statusCode);
-        }
-
-        res.end();
-      });
+      const response = await req.conversation.sendUpdateShippingOptionOperation.apply(req.conversation, args);
+      const json = await response.json();
+      res.send(HttpStatus.OK, json);
     } catch (err) {
       sendErrorResponse(req, res, next, err);
     }
-
     next();
   };
 }

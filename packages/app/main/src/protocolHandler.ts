@@ -43,6 +43,7 @@ import { mainWindow } from './main';
 import { ngrokEmitter, running } from './ngrok';
 import { getSettings } from './settings';
 import { emulator } from './emulator';
+import { getStore } from './data-v2/store';
 
 enum ProtocolDomains {
   livechat,
@@ -188,7 +189,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
     endpoint.name = 'New livechat';
 
     bot.services.push(endpoint);
-    mainWindow.store.dispatch(BotActions.mockAndSetActive(bot));
+    getStore().dispatch(BotActions.mockAndSetActive(bot));
 
     const appSettings: FrameworkSettings = getSettings().framework;
 
