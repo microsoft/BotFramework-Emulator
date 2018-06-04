@@ -31,11 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export const SHOW = 'EXPLORER/SHOW';
+export enum ExplorerActions {
+  show = 'EXPLORER/SHOW'
+}
 
-export function show(_show: boolean) {
+export interface ShowExplorerAction {
+  type: ExplorerActions.show;
+  payload: {
+    show: boolean
+  };
+}
+
+export type ExplorerAction = ShowExplorerAction;
+
+export function show(_show: boolean): ExplorerAction {
   return {
-    type: SHOW,
+    type: ExplorerActions.show,
     payload: {
       show: _show
     }

@@ -31,10 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as ChatActions from '../action/chatActions';
-import { ChatAction } from '../action/chatActions';
-import * as EditorActions from '../action/editorActions';
-import { EditorAction } from '../action/editorActions';
+import { ChatAction, ChatActions } from '../action/chatActions';
+import { EditorAction, EditorActions } from '../action/editorActions';
+import { deepCopySlow } from '@bfemulator/app-shared';
 
 export interface ChatState {
   changeKey?: number;
@@ -51,7 +50,7 @@ const DEFAULT_STATE: ChatState = {
 
 export default function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | EditorAction): ChatState {
   switch (action.type) {
-    case ChatActions.PING_CHAT_DOCUMENT: {
+    case ChatActions.pingChat: {
       const { payload } = action;
       state = {
         ...state,
@@ -67,7 +66,7 @@ export default function chat(state: ChatState = DEFAULT_STATE, action: ChatActio
       break;
     }
 
-    case ChatActions.ADD_TRANSCRIPT: {
+    case ChatActions.addTranscript: {
       const { payload } = action;
       const transcriptsCopy = [...state.transcripts];
       const transcripts = transcriptsCopy.filter(xs => xs !== payload.filename);
@@ -76,12 +75,12 @@ export default function chat(state: ChatState = DEFAULT_STATE, action: ChatActio
       break;
     }
 
-    case ChatActions.CLEAR_TRANSCRIPTS: {
+    case ChatActions.clearTranscripts: {
       state = setTranscriptsState([], state);
       break;
     }
 
-    case ChatActions.REMOVE_TRANSCRIPT: {
+    case ChatActions.removeTranscript: {
       const { payload } = action;
       const transcriptsCopy = [...state.transcripts];
       const transcripts = transcriptsCopy.filter(xs => xs !== payload.filename);
@@ -89,7 +88,7 @@ export default function chat(state: ChatState = DEFAULT_STATE, action: ChatActio
       break;
     }
 
-    case ChatActions.NEW_CHAT_DOCUMENT: {
+    case ChatActions.newChat: {
       const { payload } = action;
       state = {
         ...state,
@@ -102,16 +101,16 @@ export default function chat(state: ChatState = DEFAULT_STATE, action: ChatActio
       break;
     }
 
-    case ChatActions.CLOSE_CHAT_DOCUMENT: {
+    case ChatActions.closeChat: {
       const { payload } = action;
-      const copy = { ...state };
+      const copy = deepCopySlow(state);
       copy.changeKey += 1;
       delete copy.chats[payload.documentId];
       state = { ...copy };
       break;
     }
 
-    case ChatActions.NEW_CONVERSATION: {
+    case ChatActions.newConversation: {
       const { payload } = action;
       let document = state.chats[payload.documentId];
       if (document) {
@@ -132,7 +131,7 @@ export default function chat(state: ChatState = DEFAULT_STATE, action: ChatActio
       break;
     }
 
-    case ChatActions.LOG_APPEND: {
+    case ChatActions.appendLog: {
       const { payload } = action;
       let document = state.chats[payload.documentId];
       if (document) {
@@ -159,7 +158,7 @@ export default function chat(state: ChatState = DEFAULT_STATE, action: ChatActio
       break;
     }
 
-    case ChatActions.LOG_CLEAR: {
+    case ChatActions.clearLog: {
       const { payload } = action;
       let document = state.chats[payload.documentId];
       if (document) {
@@ -182,7 +181,7 @@ export default function chat(state: ChatState = DEFAULT_STATE, action: ChatActio
       break;
     }
 
-    case ChatActions.SET_INSPECTOR_OBJECTS: {
+    case ChatActions.setInspectorObjects: {
       const { payload } = action;
       let document = state.chats[payload.documentId];
       if (document) {
@@ -203,12 +202,13 @@ export default function chat(state: ChatState = DEFAULT_STATE, action: ChatActio
       break;
     }
 
-    case EditorActions.CLOSE_ALL: {
+    case EditorActions.closeAll: {
       // HACK. Need a better system.
       return DEFAULT_STATE;
     }
 
-    default: break;
+    default:
+      break;
   }
 
   return state;

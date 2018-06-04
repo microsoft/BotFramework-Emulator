@@ -31,25 +31,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotInfo } from '@bfemulator/app-shared';
-import { BotConfigWithPath } from '@bfemulator/sdk-shared';
-import store from './store';
+import { NavBarAction, select } from '../action/navBarActions';
+import navBar, { NavBarState } from './navBar';
 
-export function getActiveBot(): BotConfigWithPath {
-  return store.getState().bot.activeBot;
-}
+describe('NavBar reducer unit tests', () => {
+  const DEFAULT_STATE: NavBarState = {
+    selection: null
+  };
 
-/** Returns a copy of the matching BotInfo in the store */
-export function getBotInfoByPath(path: string): BotInfo {
-  const state = store.getState();
-  const result = state.bot.botFiles.find(bot => bot && bot.path === path);
-  if (result) {
-    return { ...result };
-  }
-  return result;
-}
+  it('should return unaltered state for non-matching action type', () => {
+    const emptyAction: NavBarAction = { type: null, payload: null };
+    const startingState = { ...DEFAULT_STATE };
+    const endingState = navBar(DEFAULT_STATE, emptyAction);
+    expect(endingState).toEqual(startingState);
+  });
 
-export function pathExistsInRecentBots(path: string): boolean {
-  const state = store.getState();
-  return state.bot.botFiles.some(bot => bot && bot.path === path);
-}
+  it('should change the "selection" state', () => {
+    const action: NavBarAction = select('test-selection');
+    const state = navBar(DEFAULT_STATE, action);
+    expect(state.selection).toBe('test-selection');
+  });
+});

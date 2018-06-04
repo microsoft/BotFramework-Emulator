@@ -31,25 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export const ALIVE = 'SERVER/ALIVE';
-export const PING = 'SERVER/PING';
+import { ExplorerAction, show } from '../action/explorerActions';
+import explorer, { ExplorerState } from './explorer';
 
-export type ServerAction = {
-  type: 'SERVER/PING',
-  meta: { send: boolean }
-} | {
-  type: 'SERVER/ALIVE',
-  meta: { send: boolean },
-  payload: {
-    host: string,
-    now: string,
-    version: string
-  }
-};
-
-export function ping(): ServerAction {
-  return {
-    type: PING,
-    meta: { send: true }
+describe('Explorer reducer tests', () => {
+  const DEFAULT_STATE: ExplorerState = {
+    showing: false
   };
-}
+
+  it('should return unaltered state for non-matching action type', () => {
+    const emptyAction: ExplorerAction = { type: null, payload: null };
+    const startingState = { ...DEFAULT_STATE };
+    const endingState = explorer(DEFAULT_STATE, emptyAction);
+    expect(endingState).toEqual(startingState);
+  });
+
+  it('should toggle the "showing state"', () => {
+    const action: ExplorerAction = show(true);
+
+    const state = explorer(DEFAULT_STATE, action);
+    expect(state.showing).toBe(true);
+  });
+});

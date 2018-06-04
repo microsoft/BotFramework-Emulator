@@ -31,11 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export const SET_SHOWING = 'DIALOG/SET_SHOWING';
+export enum DialogActions {
+  setShowing = 'DIALOG/SET_SHOWING'
+}
 
-export function setShowing(showing: boolean = false) {
+export interface SetShowingDialogAction {
+  type: DialogActions.setShowing;
+  payload: {
+    showing: boolean
+  };
+}
+
+export type DialogAction = SetShowingDialogAction;
+
+export function setShowing(showing: boolean = false): SetShowingDialogAction {
   return {
-    type: SET_SHOWING,
+    type: DialogActions.setShowing,
     payload: {
       showing
     }

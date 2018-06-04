@@ -31,25 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotInfo } from '@bfemulator/app-shared';
-import { BotConfigWithPath } from '@bfemulator/sdk-shared';
-import store from './store';
+import { DialogAction, setShowing } from '../action/dialogActions';
+import dialog, { DialogState } from './dialog';
 
-export function getActiveBot(): BotConfigWithPath {
-  return store.getState().bot.activeBot;
-}
+describe('Dialog reducer tests', () => {
+  const DEFAULT_STATE: DialogState = {
+    showing: false
+  };
 
-/** Returns a copy of the matching BotInfo in the store */
-export function getBotInfoByPath(path: string): BotInfo {
-  const state = store.getState();
-  const result = state.bot.botFiles.find(bot => bot && bot.path === path);
-  if (result) {
-    return { ...result };
-  }
-  return result;
-}
+  it('should return unaltered state for non-matching action type', () => {
+    const emptyAction: DialogAction = { type: null, payload: null };
+    const startingState = { ...DEFAULT_STATE };
+    const endingState = dialog(DEFAULT_STATE, emptyAction);
+    expect(endingState).toEqual(startingState);
+  });
 
-export function pathExistsInRecentBots(path: string): boolean {
-  const state = store.getState();
-  return state.bot.botFiles.some(bot => bot && bot.path === path);
-}
+  it('should toggle the "showing" state', () => {
+    const action: DialogAction = setShowing(true);
+
+    const state = dialog(DEFAULT_STATE, action);
+    expect(state.showing).toBe(true);
+  });
+});

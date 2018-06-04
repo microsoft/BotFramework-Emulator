@@ -32,18 +32,62 @@
 //
 
 import { BotInfo } from '@bfemulator/app-shared';
-import { IBotConfig } from 'msbot/bin/schema';
-import { BotAction } from '../reducer/bot';
+import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 
-export const CREATE = 'BOT/CREATE';
-export const LOAD = 'BOT/LOAD';
-export const PATCH = 'BOT/PATCH';
-export const SET_ACTIVE = 'BOT/SET_ACTIVE';
-export const CLOSE = 'BOT/CLOSE';
+export enum BotActions {
+  create = 'BOT/CREATE',
+  load = 'BOT/LOAD',
+  patch = 'BOT/PATCH',
+  setActive = 'BOT/SET_ACTIVE',
+  close = 'BOT/CLOSE'
+}
 
-export function create(bot: IBotConfig, botFilePath: string, secret: string): BotAction {
+export interface CreateBotAction {
+  type: BotActions.create;
+  payload: {
+    bot: BotConfigWithPath,
+    botFilePath: string,
+    secret: string
+  };
+}
+
+export interface LoadBotAction {
+  type: BotActions.load;
+  payload: {
+    bots: BotInfo[]
+  };
+}
+
+export interface PatchBotAction {
+  type: BotActions.patch;
+  payload: {
+    bot: BotConfigWithPath,
+    secret: string
+  };
+}
+
+export interface SetActiveBotAction {
+  type: BotActions.setActive;
+  payload: {
+    bot: BotConfigWithPath
+  };
+}
+
+export interface CloseBotAction {
+  type: BotActions.close;
+  payload: {};
+}
+
+export type BotAction =
+  CreateBotAction |
+  LoadBotAction |
+  PatchBotAction |
+  SetActiveBotAction |
+  CloseBotAction;
+
+export function create(bot: BotConfigWithPath, botFilePath: string, secret: string): CreateBotAction {
   return {
-    type: CREATE,
+    type: BotActions.create,
     payload: {
       bot,
       botFilePath,
@@ -52,39 +96,39 @@ export function create(bot: IBotConfig, botFilePath: string, secret: string): Bo
   };
 }
 
-export function load(bots: BotInfo[]): BotAction {
+export function load(bots: BotInfo[]): LoadBotAction {
   // prune bad bots
   bots = bots.filter(bot => !!bot);
 
   return {
-    type: LOAD,
+    type: BotActions.load,
     payload: {
       bots
     }
   };
 }
 
-export function patch(bot: IBotConfig, secret?: string): BotAction {
+export function patch(bot: BotConfigWithPath, secret?: string): PatchBotAction {
   return {
-    type: PATCH,
+    type: BotActions.patch,
     payload: {
       bot,
       secret
     }
   };
 }
-export function setActive(bot: IBotConfig): BotAction {
+export function setActive(bot: BotConfigWithPath): SetActiveBotAction {
   return {
-    type: SET_ACTIVE,
+    type: BotActions.setActive,
     payload: {
       bot
     }
   };
 }
 
-export function close(): BotAction {
+export function close(): CloseBotAction {
   return {
-    type: CLOSE,
+    type: BotActions.close,
     payload: {}
   };
 }

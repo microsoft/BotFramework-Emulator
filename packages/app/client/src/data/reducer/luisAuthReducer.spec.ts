@@ -31,30 +31,37 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as ServerActions from '../action/serverActions';
-import { ServerAction } from '../action/serverActions';
+import {
+  luisAuthoringDataChanged,
+  luisAuthStatusChanged
+} from '../action/luisAuthActions';
+import luisAuth, { LuisAuthState } from './luisAuthReducer';
 
-export interface ServerState {
-  connected?: boolean;
-}
+describe('Luis auth reducer tests', () => {
+  let startingState: LuisAuthState;
 
-const DEFAULT_STATE = {
-  connected: false
-};
+  beforeEach(() => {
+    startingState = {
+      luisAuthWorkflowStatus: null,
+      luisAuthData: null
+    };
+  });
 
-export default function server(state: any = DEFAULT_STATE, action: ServerAction): ServerState {
-  switch (action.type) {
-    case ServerActions.ALIVE:
-      const { payload } = action;
-      state = state.set('connected', true).set('host', payload.host).set('version', payload.version);
-      break;
+  it('should return unaltered state for non-matching action type', () => {
+    const emptyAction = { type: null, payload: undefined };
+    const endingState = luisAuth(startingState, emptyAction);
+    expect(endingState).toEqual(startingState);
+  });
 
-    case ServerActions.PING:
-      state = state.set('connected', null);
-      break;
+  it('should change workflow status', () => {
+    const action = luisAuthStatusChanged('inProgress');
+    const state = luisAuth(startingState, action);
+    expect(state.luisAuthWorkflowStatus).toBe('inProgress');
+  });
 
-    default: break;
-  }
-
-  return state;
-}
+  it('should change auth data', () => {
+    const action = luisAuthoringDataChanged({ key: 'someKey', BaseUrl: 'someBaseUrl' });
+    const state = luisAuth(startingState, action);
+    expect(state.luisAuthData).toEqual({ key: 'someKey', BaseUrl: 'someBaseUrl' });
+  });
+});

@@ -31,27 +31,35 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export type PresentationAction = {
-  type: 'PRESENTATION/ENABLE',
-  payload: {}
-} | {
-  type: 'PRESENTATION/DISABLE',
-  payload: {}
-};
+export enum PresentationActions {
+  disable = 'PRESENTATION/DISABLE',
+  enable = 'PRESENTATION/ENABLE'
+}
 
-export const ENABLE = 'PRESENTATION/ENABLE';
-export const DISABLE = 'PRESENTATION/DISABLE';
+export interface EnablePresentationAction {
+  type: PresentationActions.enable;
+  payload: {};
+}
 
-export function enable(): PresentationAction {
+export interface DisablePresentationAction {
+  type: PresentationActions.disable;
+  payload: {};
+}
+
+export type PresentationAction =
+  EnablePresentationAction |
+  DisablePresentationAction;
+
+export function enable(): EnablePresentationAction {
   return {
-    type: 'PRESENTATION/ENABLE',
+    type: PresentationActions.enable,
     payload: {}
   };
 }
 
-export function disable(): PresentationAction {
+export function disable(): DisablePresentationAction {
   return {
-    type: 'PRESENTATION/DISABLE',
+    type: PresentationActions.disable,
     payload: {}
   };
 }

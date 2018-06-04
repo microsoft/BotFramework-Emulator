@@ -31,45 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotConfigWithPath } from '@bfemulator/sdk-shared';
-import * as BotActions from '../action/botActions';
 import { BotInfo, getBotDisplayName } from '@bfemulator/app-shared';
-import { IBotConfig } from 'msbot/bin/schema';
+import { BotConfigWithPath } from '@bfemulator/sdk-shared';
+import { BotAction, BotActions } from '../action/botActions';
 import { getBotInfoByPath } from '../botHelpers';
 
 export interface BotState {
-  activeBot: IBotConfig;
+  activeBot: BotConfigWithPath;
   botFiles: BotInfo[];
 }
-
-export type BotAction = {
-  type: 'BOT/CREATE',
-  payload: {
-    bot: IBotConfig,
-    botFilePath: string,
-    secret: string
-  }
-} | {
-  type: 'BOT/LOAD',
-  payload: {
-    bots: BotInfo[]
-  }
-} | {
-  type: 'BOT/PATCH',
-  payload: {
-    bot: BotConfigWithPath,
-    secret?: string
-  }
-} | {
-  type: 'BOT/SET_ACTIVE',
-  payload: {
-    bot: BotConfigWithPath
-  }
-} | {
-  type: 'BOT/CLOSE',
-  payload: {
-  }
-};
 
 const DEFAULT_STATE: BotState = {
   activeBot: null,
@@ -78,7 +48,7 @@ const DEFAULT_STATE: BotState = {
 
 export default function bot(state: BotState = DEFAULT_STATE, action: BotAction) {
   switch (action.type) {
-    case BotActions.CREATE: {
+    case BotActions.create: {
       const newBot: BotInfo = {
         path: action.payload.botFilePath,
         displayName: getBotDisplayName(action.payload.bot),
@@ -90,12 +60,12 @@ export default function bot(state: BotState = DEFAULT_STATE, action: BotAction) 
       break;
     }
 
-    case BotActions.LOAD: {
+    case BotActions.load: {
       state = setBotFilesState(action.payload.bots, state);
       break;
     }
 
-    case BotActions.PATCH: {
+    case BotActions.patch: {
       const patchedBot = {
         ...state.activeBot,
         ...action.payload.bot
@@ -107,12 +77,16 @@ export default function bot(state: BotState = DEFAULT_STATE, action: BotAction) 
         if (action.payload.secret) {
           botInfo.secret = action.payload.secret;
         }
+        const botInfoIndex = state.botFiles.findIndex(bf => bf.path === action.payload.bot.path);
+        let patchedBots = [...state.botFiles];
+        patchedBots.splice(botInfoIndex, 1, botInfo);
+        state = setBotFilesState(patchedBots, state);
       }
       state = setActiveBot(patchedBot, state);
       break;
     }
 
-    case BotActions.SET_ACTIVE: {
+    case BotActions.setActive: {
       // move active bot up to the top of the recent bots list
       const mostRecentBot = state.botFiles.find(botArg => botArg && botArg.path === action.payload.bot.path);
       let recentBots = state.botFiles.filter(botArg => botArg && botArg.path !== action.payload.bot.path);
@@ -124,18 +98,19 @@ export default function bot(state: BotState = DEFAULT_STATE, action: BotAction) 
       break;
     }
 
-    case BotActions.CLOSE: {
+    case BotActions.close: {
       // close the ative bot
       state = setActiveBot(null, state);
       break;
     }
 
-    default: break;
+    default:
+      break;
   }
   return state;
 }
 
-function setActiveBot(botConfig: IBotConfig, state: BotState): BotState {
+function setActiveBot(botConfig: BotConfigWithPath, state: BotState): BotState {
   let newState = Object.assign({}, state);
 
   newState.activeBot = botConfig;
