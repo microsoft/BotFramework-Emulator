@@ -37,9 +37,11 @@ export { DialogContent as ModalContent, DialogFooter as ModalActions } from 'off
 import { modalTheme } from '../styles/colors';
 
 export interface ModalProps extends React.Props<any> {
+  cancel: (event: any) => void;
   title?: string;
   detailedDescription?: string;
-  cancel: (event: any) => void;
+  maxWidth?: number;
+  className?: string;
 }
 
 export function Modal(props: ModalProps): JSX.Element {
@@ -55,7 +57,7 @@ export function Modal(props: ModalProps): JSX.Element {
     main: {
       selectors: {
         '@media(min-width: 640px)': {
-          maxWidth: 420
+          maxWidth: props.maxWidth || 420
         }
       }
     }
@@ -63,6 +65,7 @@ export function Modal(props: ModalProps): JSX.Element {
 
   return (
     <Dialog
+      className={props.className}
       hidden={false}
       dialogContentProps={content}
       modalProps={{ isBlocking: true }}

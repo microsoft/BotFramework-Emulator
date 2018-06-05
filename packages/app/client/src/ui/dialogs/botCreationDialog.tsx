@@ -34,15 +34,14 @@
 import { BotConfigWithPath, BotConfigWithPathImpl, uniqueId } from '@bfemulator/sdk-shared';
 import {
   Checkbox,
-  Colors,
-  Column,
-  MediumHeader,
+  Modal,
+  ModalActions,
+  ModalContent,
   PrimaryButton,
   Row,
-  RowJustification,
   TextInputField
 } from '@bfemulator/ui-react';
-import { css } from 'glamor';
+import { mergeStyleSets } from '@uifabric/merge-styles';
 import { EndpointService } from 'msbot/bin/models';
 import { IEndpointService, ServiceType } from 'msbot/bin/schema';
 import * as React from 'react';
@@ -51,71 +50,26 @@ import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { ActiveBotHelper } from '../helpers/activeBotHelper';
 import { DialogService } from './service';
 
-const CSS = css({
-  backgroundColor: Colors.DIALOG_BACKGROUND_DARK,
-  padding: '32px',
-  width: '648px',
-
-  '& .multi-input-row > *': {
-    marginLeft: '8px'
-  },
-
-  '& .multi-input-row > *:first-child': {
-    marginLeft: 0
-  },
-
-  '& .button-row': {
-    marginTop: '48px'
-  },
-
-  '& .bot-create-header': {
-    color: Colors.DIALOG_FOREGROUND_DARK,
-    marginBottom: '16px'
-  },
-
-  '& .secret-checkbox': {
-    paddingBottom: '8px',
-    color: Colors.DIALOG_FOREGROUND_DARK
-  },
-
-  '& .bot-creation-input': {
-    border: `solid 1px ${Colors.DIALOG_INPUT_BORDER_DARK}`
-  },
-
-  /*
-  '& .text-input-label, & input': {
-    color: Colors.INPUT_TEXT_DARK
-  },
-
-  '& input::placeholder': {
-    color: Colors.INPUT_TEXT_PLACEHOLDER_DARK
-  },
-  */
-
-  '& .bot-creation-cta': {
-    minWidth: 0,
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
-    overflow: 'hidden',
-    textDecoration: 'none',
-    color: Colors.APP_HYPERLINK_FOREGROUND_DARK,
-    flexShrink: 0,
-
-    ':hover': {
-      color: Colors.APP_HYPERLINK_FOREGROUND_DARK
-    }
-  },
-
-  '& .small-input': {
-    width: '200px',
-    flexShrink: 0
-  },
-
-  '& .secret-row': {
-    paddingLeft: '24px',
-
-    '& > .secret-input': {
-      width: '176px'  // 200 - 24px
+const dialogClasses = mergeStyleSets({
+  main: {
+    width: 648,
+    selectors: {
+      '.multi-input-row': {
+        width: 420,
+        justifyContent: 'space-between'
+      },
+      '.small-input input': {
+        width: 200
+      },
+      '.secret-input input': {
+        width: 200
+      },
+      '.bot-create-form .ms-Dialog-header': {
+        display: 'none'
+      },
+      '.bot-create-form .bot-create-form > *': {
+        marginBottom: 16
+      }
     }
   }
 });
@@ -165,9 +119,8 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
       && secretCriteria;
     // TODO - localization
     return (
-      <div {...CSS}>
-        <Column>
-          <MediumHeader className="bot-create-header">New bot configuration</MediumHeader>
+      <Modal className={dialogClasses.main} title="New bot configuration" cancel={this.onCancel} maxWidth={648}>
+        <ModalContent className="bot-create-form">
           <TextInputField className="c" inputClassName="bot-creation-input" value={this.state.bot.name}
             onChanged={this.onChangeName} label={'Bot name'} required={true} />
           <TextInputField inputClassName="bot-creation-input" value={this.state.endpoint.endpoint}
@@ -197,13 +150,13 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
                 errorMessage={this.state.secret && !this.state.secretsMatch ? 'Secrets do not match' : null} />
             </Row>
           }
-          <Row className="multi-input-row button-row" justify={RowJustification.Right}>
-            <PrimaryButton secondary={true} text="Cancel" onClick={this.onCancel} className="cancel-button" />
-            <PrimaryButton text="Save and connect" onClick={this.onSaveAndConnect}
-              disabled={!requiredFieldsCompleted} className="connect-button" />
-          </Row>
-        </Column>
-      </div>
+        </ModalContent>
+        <ModalActions>
+          <PrimaryButton secondary={true} text="Cancel" onClick={this.onCancel} className="cancel-button" />
+          <PrimaryButton text="Save and connect" onClick={this.onSaveAndConnect}
+            disabled={!requiredFieldsCompleted} className="connect-button" />
+        </ModalActions>
+      </Modal>
     );
   }
 
