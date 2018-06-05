@@ -62,7 +62,7 @@ enum ProtocolBotActions {
   open
 }
 
-interface Protocol {
+export interface Protocol {
   // the 'controller'
   domain?: string;
   // the 'action' or 'route' within the controller
@@ -73,7 +73,7 @@ interface Protocol {
   parsedArgs?: { [key: string]: string } | any;
 }
 
-interface ProtocolHandler {
+export interface ProtocolHandler {
   parseProtocolUrl: (url: string) => Protocol;
   dispatchProtocolAction: (protocol: Protocol) => void;
   performLiveChatAction: (protocol: Protocol) => void;
@@ -173,7 +173,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
   /** Mocks a bot object with any configuration parsed from the
    *  protocol string and starts a live chat session with that bot
    */
-  private async openLiveChat(protocol: Protocol): Promise<void> {
+  async openLiveChat(protocol: Protocol): Promise<void> {
     // mock up a bot object
     const { botUrl, msaAppId, msaPassword } = protocol.parsedArgs;
     const bot: BotConfigWithPath = BotConfigWithPathImpl.fromJSON(newBot());
@@ -219,7 +219,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
   /** Downloads a transcript from a URL provided in the protocol string,
    *  parses out the list of activities, and has the client side open it
    */
-  private openTranscript(protocol: Protocol): void {
+  openTranscript(protocol: Protocol): void {
     const { url } = protocol.parsedArgs;
     const options = { url };
 
@@ -263,7 +263,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
   }
 
   /** Opens the bot project associated with the .bot file at the specified path */
-  private openBot(protocol: Protocol): void {
+  openBot(protocol: Protocol): void {
     const { path, secret }: { path: string, secret: string } = protocol.parsedArgs;
 
     const appSettings: FrameworkSettings = getSettings().framework;
