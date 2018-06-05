@@ -119,9 +119,9 @@ class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps,
       <GenericDocument style={CSS}>
         <Column>
           <MediumHeader className="bot-settings-header">Bot Settings</MediumHeader>
-          <TextInputField inputClassName="bot-settings-input" label="Bot name" value={this.state.bot.name}
+          <TextInputField className="bot-settings-input" label="Bot name" value={this.state.bot.name}
             required={true} onChanged={this.onChangeName} errorMessage={error} />
-          <TextInputField inputClassName="bot-settings-input" label="Bot secret" value={this.state.secret}
+          <TextInputField className="bot-settings-input" label="Bot secret" value={this.state.secret}
             onChanged={this.onChangeSecret} type="password" />
           <Row className="button-row">
             <PrimaryButton text="Save" onClick={this.onSave} className="save-button" disabled={disabled} />
