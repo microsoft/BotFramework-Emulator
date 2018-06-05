@@ -30,7 +30,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+import { invertTheme } from '@fuselab/ui-fabric/lib/themes';
+import { loadTheme, getTheme } from '@uifabric/styling';
 export namespace Colors {
 
   export const C0 = '#2B2B2B';
@@ -81,7 +82,7 @@ export namespace Colors {
   export const APP_HYPERLINK_FOREGROUND_DARK = C23;
   export const APP_HYPERLINK_HOVER_DARK = C23;
   export const APP_HYPERLINK_DETAIL_DARK = 'rgba(204, 204, 204, 0.7)';
-  
+
   export const BUTTON_PRIMARY_BACKGROUND_DARK = C10;
   export const BUTTON_PRIMARY_FOREGROUND_DARK = C4;
   export const BUTTON_PRIMARY_HOVER_DARK = C11;
@@ -193,4 +194,17 @@ export namespace Colors {
   export const SERVICES_PANE_FG_DARK = 'rgba(255, 255, 255, 0.5)';
   export const SERVICES_PANE_BUTTON_DARK = C27;
   export const SERVICES_PANE_BUTTON_HOVER_DARK = C14;
+}
+
+export function initializeTheme(themeOption: 'dark' | 'light') {
+  console.log('initializeTheme with', themeOption);
+  if (themeOption === 'dark') {
+    loadTheme({
+      semanticColors: {
+        bodyText: Colors.APP_FOREGROUND_DARK,
+        inputBackground: Colors.EXPLORER_BACKGROUND_DARK
+      },
+      isInverted: true
+    });
+  }
 }

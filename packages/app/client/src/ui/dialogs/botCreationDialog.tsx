@@ -82,6 +82,7 @@ const CSS = css({
     border: `solid 1px ${Colors.DIALOG_INPUT_BORDER_DARK}`
   },
 
+  /*
   '& .text-input-label, & input': {
     color: Colors.INPUT_TEXT_DARK
   },
@@ -89,6 +90,7 @@ const CSS = css({
   '& input::placeholder': {
     color: Colors.INPUT_TEXT_PLACEHOLDER_DARK
   },
+  */
 
   '& .bot-creation-cta': {
     minWidth: 0,
@@ -163,63 +165,65 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
       && secretCriteria;
     // TODO - localization
     return (
-      <div { ...CSS }>
+      <div {...CSS}>
         <Column>
           <MediumHeader className="bot-create-header">New bot configuration</MediumHeader>
-          <TextInputField className="small-input" inputClass="bot-creation-input" value={ this.state.bot.name }
-                          onChange={ this.onChangeName } label={ 'Bot name' } required={ true }/>
-          <TextInputField inputClass="bot-creation-input" value={ this.state.endpoint.endpoint }
-                          onChange={ this.onChangeEndpoint }
-                          placeholder={ 'Enter a URL for your bot\'s endpoint' } label={ 'Endpoint URL' }
-                          required={ true }/>
+          <TextInputField className="c" inputClassName="bot-creation-input" value={this.state.bot.name}
+            onChanged={this.onChangeName} label={'Bot name'} required={true} />
+          <TextInputField inputClassName="bot-creation-input" value={this.state.endpoint.endpoint}
+            onChanged={this.onChangeEndpoint}
+            placeholder={'Enter a URL for your bot\'s endpoint'} label={'Endpoint URL'}
+            required={true} />
           <Row className="multi-input-row">
-            <TextInputField className="small-input" inputClass="bot-creation-input" value={ this.state.endpoint.appId }
-                            onChange={ this.onChangeAppId } label={ 'MSA app ID' } placeholder={ 'Optional' }/>
-            <TextInputField className="small-input" inputClass="bot-creation-input"
-                            value={ this.state.endpoint.appPassword } onChange={ this.onChangeAppPw }
-                            label={ 'MSA app password' } placeholder={ 'Optional' } type={ 'password' }/>
+            <TextInputField
+              className="small-input" inputClassName="bot-creation-input" value={this.state.endpoint.appId}
+              onChanged={this.onChangeAppId} label={'MSA app ID'} placeholder={'Optional'} />
+            <TextInputField className="small-input" inputClassName="bot-creation-input"
+              value={this.state.endpoint.appPassword}
+              onChanged={this.onChangeAppPw}
+              label={'MSA app password'} placeholder={'Optional'} type={'password'} />
           </Row>
-          <Checkbox className={ 'secret-checkbox' } checked={ this.state.secretEnabled }
-                    onChange={ this.onToggleSecret } label={ 'Encrypt your keys' } id={ 'bot-secret-checkbox' }/>
+          <Checkbox className={'secret-checkbox'} checked={this.state.secretEnabled}
+            onChange={this.onToggleSecret} label={'Encrypt your keys'} id={'bot-secret-checkbox'} />
           {
             this.state.secretEnabled &&
             <Row className="multi-input-row secret-row">
-              <TextInputField className="secret-input" inputClass="bot-creation-input" value={ this.state.secret }
-                              onChange={ this.onChangeSecret }
-                              required={ this.state.secretEnabled } label={ 'Create a secret' } type={ 'password' }/>
-              <TextInputField className="secret-input secret-confirmation" inputClass="bot-creation-input"
-                              value={ this.state.secretConfirmation } onChange={ this.onChangeSecretConfirmation }
-                              required={ this.state.secretEnabled } label={ 'Confirm your secret' } type={ 'password' }
-                              error={ this.state.secret && !this.state.secretsMatch ? 'Secrets do not match' : null }/>
+              <TextInputField className="secret-input" inputClassName="bot-creation-input" value={this.state.secret}
+                onChanged={this.onChangeSecret}
+                required={this.state.secretEnabled} label={'Create a secret'} type={'password'} />
+              <TextInputField className="secret-input secret-confirmation" inputClassName="bot-creation-input"
+                value={this.state.secretConfirmation} onChanged={this.onChangeSecretConfirmation}
+                required={this.state.secretEnabled} label={'Confirm your secret'} type={'password'}
+                errorMessage={this.state.secret && !this.state.secretsMatch ? 'Secrets do not match' : null} />
             </Row>
           }
-          <Row className="multi-input-row button-row" justify={ RowJustification.Right }>
-            <PrimaryButton secondary text="Cancel" onClick={ this.onCancel } className="cancel-button"/>
-            <PrimaryButton text="Save and connect" onClick={ this.onSaveAndConnect }
-                           disabled={ !requiredFieldsCompleted } className="connect-button"/>
+          <Row className="multi-input-row button-row" justify={RowJustification.Right}>
+            <PrimaryButton secondary={true} text="Cancel" onClick={this.onCancel} className="cancel-button" />
+            <PrimaryButton text="Save and connect" onClick={this.onSaveAndConnect}
+              disabled={!requiredFieldsCompleted} className="connect-button" />
           </Row>
         </Column>
       </div>
     );
   }
 
-  private onChangeEndpoint = (e) => {
-    const endpoint = { ...this.state.endpoint, endpoint: e.target.value, name: e.target.value };
+  private onChangeEndpoint = (ep) => {
+    const endpoint = { ...this.state.endpoint, endpoint: ep };
     this.setState({ endpoint });
   }
 
-  private onChangeAppId = (e) => {
-    const endpoint = { ...this.state.endpoint, appId: e.target.value };
+  private onChangeAppId = (appId) => {
+    const endpoint = { ...this.state.endpoint, appId };
     this.setState({ endpoint });
   }
 
-  private onChangeAppPw = (e) => {
-    const endpoint = { ...this.state.endpoint, appPassword: e.target.value };
+  private onChangeAppPw = (appPassword) => {
+    const endpoint = { ...this.state.endpoint, appPassword };
     this.setState({ endpoint });
   }
 
-  private onChangeName = (e) => {
-    const bot = { ...this.state.bot, name: e.target.value };
+  private onChangeName = (name) => {
+    const bot = { ...this.state.bot, name };
     this.setState({ bot });
   }
 
@@ -290,11 +294,11 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
     return CommandServiceImpl.remoteCall('shell:showSaveDialog', dialogOptions);
   }
 
-  private onChangeSecret = (e) => {
-    this.setState({ secret: e.target.value, secretsMatch: e.target.value === this.state.secretConfirmation });
+  private onChangeSecret = (secret) => {
+    this.setState({ secret: secret, secretsMatch: secret === this.state.secretConfirmation });
   }
 
-  private onChangeSecretConfirmation = (e) => {
-    this.setState({ secretConfirmation: e.target.value, secretsMatch: e.target.value === this.state.secret });
+  private onChangeSecretConfirmation = (confirm) => {
+    this.setState({ secretConfirmation: confirm, secretsMatch: confirm === this.state.secret });
   }
 }

@@ -97,35 +97,36 @@ export class LuisEditor extends Component<LuisEditorProps, LuisEditorState> {
     const { name = '', appId = '', authoringKey = '', subscriptionKey = '', version = '' } = luisService;
     const valid = !!name && !!appId && !!authoringKey && !!version && !!subscriptionKey;
     return (
-      <Modal cssOverrides={ modalCssOverrides } title={ title } detailedDescription={ detailedDescription }
-             cancel={ onCancelClick }>
+      <Modal cssOverrides={modalCssOverrides} title={title} detailedDescription={detailedDescription}
+        cancel={onCancelClick}>
         <ModalContent>
-          <TextInputField error={ nameError } value={ name } onChange={ onInputChange } label="Name" required={ true }
-                          inputAttributes={ { 'data-propname': 'name' } }/>
-          <TextInputField error={ appIdError } value={ appId } onChange={ onInputChange } label="Application Id"
-                          required={ true } inputAttributes={ { 'data-propname': 'appId' } }/>
-          <TextInputField error={ authoringKeyError } value={ authoringKey } onChange={ onInputChange }
-                          label="Authoring key" required={ true }
-                          inputAttributes={ { 'data-propname': 'authoringKey' } }/>
-          <TextInputField error={ versionError } value={ version } onChange={ onInputChange } label="Version"
-                          required={ true } inputAttributes={ { 'data-propname': 'version' } }/>
-          <TextInputField error={ subscriptionKeyError } value={ subscriptionKey } onChange={ onInputChange }
-                          label="Subscription key" required={ false }
-                          inputAttributes={ { 'data-propname': 'subscriptionKey' } }/>
+          <TextInputField errorMessage={nameError} value={name} onChange={onInputChange}
+            label="Name" required={true}
+            data-propname="name" />
+          <TextInputField errorMessage={appIdError} value={appId} onChange={onInputChange} label="Application Id"
+            required={true} data-propname="appId" />
+          <TextInputField errorMessage={authoringKeyError} value={authoringKey} onChange={onInputChange}
+            label="Authoring key" required={true}
+            data-propname="authoringKey" />
+          <TextInputField errorMessage={versionError} value={version} onChange={onInputChange} label="Version"
+            required={true} data-propname="version" />
+          <TextInputField errorMessage={subscriptionKeyError} value={subscriptionKey} onChange={onInputChange}
+            label="Subscription key" required={false}
+            data-propname="subscriptionKey" />
         </ModalContent>
         <ModalActions>
-          <PrimaryButton text="Cancel" secondary={ true } onClick={ onCancelClick }/>
-          <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ onSubmitClick }/>
+          <PrimaryButton text="Cancel" secondary={true} onClick={onCancelClick} />
+          <PrimaryButton disabled={!isDirty || !valid} text="Submit" onClick={onSubmitClick} />
         </ModalActions>
       </Modal>
     );
   }
 
-  private onCancelClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
+  private onCancelClick = (): void => {
     this.props.cancel();
   }
 
-  private onSubmitClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
+  private onSubmitClick = (): void => {
     this.props.updateLuisService(this.state.luisService);
   }
 

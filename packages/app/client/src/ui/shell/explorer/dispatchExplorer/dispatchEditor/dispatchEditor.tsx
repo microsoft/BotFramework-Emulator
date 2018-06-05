@@ -35,7 +35,7 @@ import { Modal, ModalActions, ModalContent, PrimaryButton, TextInputField } from
 import { DispatchService } from 'msbot/bin/models';
 import { IDispatchService } from 'msbot/bin/schema';
 import * as React from 'react';
-import { Component, SyntheticEvent } from 'react';
+import { Component } from 'react';
 
 interface DispatchEditorProps {
   dispatchService: IDispatchService;
@@ -63,6 +63,7 @@ const modalCssOverrides = {
 export class DispatchEditor extends Component<DispatchEditorProps, DispatchEditorState> {
 
   public state: DispatchEditorState = {} as DispatchEditorState;
+  private _textFieldHandlers: { [key: string]: (x: string) => void } = {};
 
   constructor(props: DispatchEditorProps, state: DispatchEditorState) {
     super(props, state);
@@ -75,6 +76,13 @@ export class DispatchEditor extends Component<DispatchEditorProps, DispatchEdito
       versionError: '',
       subscriptionKeyError: '',
       isDirty: false
+    };
+    this._textFieldHandlers = {
+      'name': this.onInputChange.bind(this, 'name', true),
+      'appId': this.onInputChange.bind(this, 'appId', true),
+      'authoringKey': this.onInputChange.bind(this, 'authoringKey', true),
+      'version': this.onInputChange.bind(this, 'version', true),
+      'subscriptionKey': this.onInputChange.bind(this, 'subscriptionKey', false)
     };
   }
 
@@ -97,49 +105,51 @@ export class DispatchEditor extends Component<DispatchEditorProps, DispatchEdito
     const valid = !nameError && !appIdError && !authoringKeyError && !versionError && !subscriptionKeyError;
 
     return (
-      <Modal cssOverrides={ modalCssOverrides } title={ title } detailedDescription={ detailedDescription }
-             cancel={ this.onCancelClick }>
+      <Modal cssOverrides={modalCssOverrides} title={title} detailedDescription={detailedDescription}
+        cancel={this.onCancelClick}>
         <ModalContent>
-          <TextInputField value={ name } onChange={ this.onInputChange } label="Name" required={ true }
-                          inputAttributes={ { 'data-propname': 'name' } }/>
-          <TextInputField value={ appId } onChange={ this.onInputChange } label="Application Id" required={ true }
-                          inputAttributes={ { 'data-propname': 'appId' } }/>
-          <TextInputField value={ authoringKey } onChange={ this.onInputChange } label="Authoring key" required={ true }
-                          inputAttributes={ { 'data-propname': 'authoringKey' } }/>
-          <TextInputField value={ version } onChange={ this.onInputChange } label="Version" required={ true }
-                          inputAttributes={ { 'data-propname': 'version' } }/>
-          <TextInputField value={ subscriptionKey } onChange={ this.onInputChange } label="Subscription key"
-                          required={ false } inputAttributes={ { 'data-propname': 'subscriptionKey' } }/>
+          <TextInputField value={name}
+            onChanged={this._textFieldHandlers.name} label="Name" required={true}
+          />
+          <TextInputField value={appId}
+            onChanged={this._textFieldHandlers.appId} label="Application Id" required={true}
+          />
+          <TextInputField value={authoringKey}
+            onChanged={this._textFieldHandlers.authoringKey} label="Authoring key" required={true}
+          />
+          <TextInputField value={version}
+            onChanged={this._textFieldHandlers.version} label="Version" required={true}
+          />
+          <TextInputField value={subscriptionKey}
+            onChanged={this._textFieldHandlers.subscriptionKey} label="Subscription key"
+          />
         </ModalContent>
         <ModalActions>
-          <PrimaryButton text="Cancel" secondary={ true } onClick={ this.onCancelClick }/>
-          <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ this.onSubmitClick }/>
+          <PrimaryButton text="Cancel" secondary={true} onClick={this.onCancelClick} />
+          <PrimaryButton disabled={!isDirty || !valid} text="Submit" onClick={this.onSubmitClick} />
         </ModalActions>
       </Modal>
     );
   }
 
-  private onCancelClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
+  private onCancelClick = (): void => {
     this.props.cancel();
   }
 
-  private onSubmitClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
+  private onSubmitClick = (): void => {
     const { dispatchService } = this.state;
     dispatchService.id = dispatchService.appId;
     this.props.updateDispatchService(dispatchService);
   }
 
-  private onInputChange = (event: SyntheticEvent<HTMLInputElement>): void => {
-    const { currentTarget: input } = event;
-    const { required, value } = input;
+  private onInputChange = (propName: string, required: boolean, value: string): void => {
     const trimmedValue = value.trim();
 
     const { dispatchService: originalDispatchService } = this.props;
-    const propName = input.getAttribute('data-propname');
     const errorMessage = (required && !trimmedValue) ? `The field cannot be empty` : '';
 
     const { dispatchService } = this.state;
-    dispatchService[propName] = input.value;
+    dispatchService[propName] = value;
 
     const isDirty = Object.keys(dispatchService)
       .reduce((dirty, key) => (dirty || dispatchService[key] !== originalDispatchService[key]), false);
