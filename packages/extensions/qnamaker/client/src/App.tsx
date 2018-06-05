@@ -33,7 +33,6 @@
 
 import { InspectorHost } from '@bfemulator/sdk-client';
 import { Colors, Fonts, GlobalCss, Splitter } from '@bfemulator/ui-react';
-import { hot } from 'react-hot-loader';
 import { css } from 'glamor';
 import * as React from 'react';
 import { IBotConfig, IQnAService, ServiceType } from 'msbot/bin/schema';
@@ -356,5 +355,4 @@ class App extends React.Component<any, AppState> {
   }
 }
 
-// export const App = hot(module)(App);
 export { App, AppState, PersistentAppState};
