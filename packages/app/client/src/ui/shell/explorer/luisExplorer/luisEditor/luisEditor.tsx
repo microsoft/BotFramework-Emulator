@@ -55,10 +55,6 @@ interface LuisEditorState {
 
 const title = 'Connect to a Luis Application';
 const detailedDescription = 'You can connect your bot to a Luis.ai application';
-const modalCssOverrides = {
-  width: '400px',
-  height: '525px'
-};
 
 export class LuisEditor extends Component<LuisEditorProps, LuisEditorState> {
 
@@ -97,7 +93,7 @@ export class LuisEditor extends Component<LuisEditorProps, LuisEditorState> {
     const { name = '', appId = '', authoringKey = '', subscriptionKey = '', version = '' } = luisService;
     const valid = !!name && !!appId && !!authoringKey && !!version && !!subscriptionKey;
     return (
-      <Modal cssOverrides={modalCssOverrides} title={title} detailedDescription={detailedDescription}
+      <Modal title={title} detailedDescription={detailedDescription}
         cancel={onCancelClick}>
         <ModalContent>
           <TextInputField errorMessage={nameError} value={name} onChange={onInputChange}

@@ -55,10 +55,6 @@ interface QnaMakerEditorState {
 
 const title = 'Add a QnA Maker knowledge base';
 const detailedDescription = 'You can find your knowledge base subscription key in QnaMaker.ai';
-const modalCssOverrides = {
-  width: '400px',
-  height: '530px'
-};
 
 export class QnaMakerEditor extends Component<QnaMakerEditorProps, QnaMakerEditorState> {
 
@@ -105,7 +101,7 @@ export class QnaMakerEditor extends Component<QnaMakerEditorProps, QnaMakerEdito
     const { name = '', subscriptionKey = '', hostname = '', endpointKey = '', kbId = '' } = qnaMakerService;
     const valid = !!kbId && !!name && !!subscriptionKey && !!hostname && !!endpointKey;
     return (
-      <Modal cssOverrides={modalCssOverrides} title={title} detailedDescription={detailedDescription}
+      <Modal title={title} detailedDescription={detailedDescription}
         cancel={this.onCancelClick} >
         <ModalContent>
           <TextInputField

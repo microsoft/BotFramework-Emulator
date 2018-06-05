@@ -31,7 +31,51 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { Dialog, DialogType, IDialogContentProps, IDialogStyles } from 'office-ui-fabric-react/lib-commonjs/Dialog';
+import * as React from 'react';
+export { DialogContent as ModalContent, DialogFooter as ModalActions } from 'office-ui-fabric-react/lib-commonjs/Dialog';
+import { modalTheme } from '../styles/colors';
 
+export interface ModalProps extends React.Props<any> {
+  title?: string;
+  detailedDescription?: string;
+  cancel: (event: any) => void;
+}
+
+export function Modal(props: ModalProps): JSX.Element {
+  const content: IDialogContentProps = {
+    type: DialogType.normal,
+    title: props.title,
+    subText: props.detailedDescription
+  };
+  const theme = modalTheme() as any;
+  const styles: IDialogStyles = {
+    root: {
+    },
+    main: {
+      selectors: {
+        '@media(min-width: 640px)': {
+          maxWidth: 420
+        }
+      }
+    }
+  };
+
+  return (
+    <Dialog
+      hidden={false}
+      dialogContentProps={content}
+      modalProps={{ isBlocking: true }}
+      onDismiss={props.cancel}
+      styles={styles}
+      theme={theme}
+    >
+      {props.children}
+    </Dialog>
+  );
+}
+
+/*
 import { merge } from 'glamor';
 import * as React from 'react';
 import { Component, SyntheticEvent } from 'react';
@@ -197,3 +241,4 @@ export class Modal extends Component<ModalProps, {}> {
 
 export const ModalContent = props => props.children;
 export const ModalActions = props => props.children;
+*/

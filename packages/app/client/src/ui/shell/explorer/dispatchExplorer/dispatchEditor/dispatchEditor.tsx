@@ -55,10 +55,6 @@ interface DispatchEditorState {
 
 const title = 'Connect to a Dispatch Application';
 const detailedDescription = 'You can connect your bot to a Dispatch.ai application';
-const modalCssOverrides = {
-  width: '400px',
-  height: '525px'
-};
 
 export class DispatchEditor extends Component<DispatchEditorProps, DispatchEditorState> {
 
@@ -105,7 +101,7 @@ export class DispatchEditor extends Component<DispatchEditorProps, DispatchEdito
     const valid = !nameError && !appIdError && !authoringKeyError && !versionError && !subscriptionKeyError;
 
     return (
-      <Modal cssOverrides={modalCssOverrides} title={title} detailedDescription={detailedDescription}
+      <Modal title={title} detailedDescription={detailedDescription}
         cancel={this.onCancelClick}>
         <ModalContent>
           <TextInputField value={name}

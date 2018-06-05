@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { invertTheme } from '@fuselab/ui-fabric/lib/themes';
-import { loadTheme, getTheme } from '@uifabric/styling';
+import { loadTheme, getTheme, ITheme } from '@uifabric/styling';
 export namespace Colors {
 
   export const C0 = '#2B2B2B';
@@ -197,7 +197,6 @@ export namespace Colors {
 }
 
 export function initializeTheme(themeOption: 'dark' | 'light') {
-  console.log('initializeTheme with', themeOption);
   if (themeOption === 'dark') {
     loadTheme({
       semanticColors: {
@@ -207,4 +206,13 @@ export function initializeTheme(themeOption: 'dark' | 'light') {
       isInverted: true
     });
   }
+}
+
+export function modalTheme(): ITheme {
+  return loadTheme({
+    semanticColors: {
+      bodyText: Colors.C0,
+      inputBackground: Colors.INPUT_BACKGROUND_DARK
+    }
+  });
 }

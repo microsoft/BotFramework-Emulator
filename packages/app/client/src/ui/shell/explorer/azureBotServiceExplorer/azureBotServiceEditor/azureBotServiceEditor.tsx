@@ -55,10 +55,6 @@ interface AzureBotServiceEditorState {
 
 const title = 'Connect to Azure Bot Service';
 const detailedDescription = 'Connect your bot to a registration in the Azure Bot Service portal';
-const modalCssOverrides = {
-  width: '400px',
-  height: '550px'
-};
 
 export class AzureBotServiceEditor extends Component<AzureBotServiceEditorProps, AzureBotServiceEditorState> {
 
@@ -103,7 +99,7 @@ export class AzureBotServiceEditor extends Component<AzureBotServiceEditorProps,
     const { name = '', id = '', tenantId = '', subscriptionId = '', resourceGroup = '' } = azureBotService;
     const valid = !tenantIdError && !subscriptionIdError && !resourceGroupError && !idError && !nameError;
     return (
-      <Modal cssOverrides={modalCssOverrides} title={title} detailedDescription={detailedDescription}
+      <Modal title={title} detailedDescription={detailedDescription}
         cancel={this.onCancelClick}>
         <ModalContent>
           <TextInputField errorMessage={nameError} value={name}

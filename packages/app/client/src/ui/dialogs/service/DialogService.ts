@@ -91,5 +91,5 @@ export const DialogService = new class implements DialogService {
     if (this._hostElement) {
       this._hostElement.dispatchEvent(new Event('dialogRendered'));
     }
-  } 
+  }
 };

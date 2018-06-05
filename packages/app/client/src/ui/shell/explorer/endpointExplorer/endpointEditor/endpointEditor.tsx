@@ -54,10 +54,6 @@ interface EndpointEditorState {
 
 const title = 'Add a Endpoint for your bot';
 const detailedDescription = 'You can add a endpoint that you use to communicate to an instance of your bot';
-const modalCssOverrides = {
-  width: '400px',
-  height: '500px'
-};
 
 export class EndpointEditor extends Component<EndpointEditorProps, EndpointEditorState> {
 
@@ -92,7 +88,7 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
     const { name = '', endpoint = '', appId = '', appPassword = '' } = endpointService;
     const valid = !!endpoint && !!name;
     return (
-      <Modal cssOverrides={modalCssOverrides} title={title} detailedDescription={detailedDescription}
+      <Modal title={title} detailedDescription={detailedDescription}
         cancel={this.onCancelClick}>
         <ModalContent>
           <TextInputField errorMessage={nameError} value={name}
