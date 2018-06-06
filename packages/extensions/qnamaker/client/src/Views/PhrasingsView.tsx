@@ -79,6 +79,7 @@ const QuestionColumnCSS = css({
     padding: '4px 8px',
     color: '#4a4a4a',
     fontSize: '13px',
+    whiteSpace: 'normal',
 
     '& .close-btn': {
       float: 'right',
