@@ -234,20 +234,20 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     this.setUncommittedState({ useCodeValidation: !this.state.uncommitted.useCodeValidation });
   }
 
-  onChangeNgrok(e: any): void {
-    this.setUncommittedState({ ngrokPath: e.target.value });
+  onChangeNgrok(ngrokPath: string): void {
+    this.setUncommittedState({ ngrokPath });
   }
 
   onChangeNgrokBypass(): void {
     this.setUncommittedState({ bypassNgrokLocalhost: !this.state.uncommitted.bypassNgrokLocalhost });
   }
 
-  onChangeLocalhost(e: any): void {
-    this.setUncommittedState({ localhost: e.target.value });
+  onChangeLocalhost(localhost: string): void {
+    this.setUncommittedState({ localhost });
   }
 
-  onChangeLocale(e: any): void {
-    this.setUncommittedState({ locale: e.target.value });
+  onChangeLocale(locale: string): void {
+    this.setUncommittedState({ locale });
   }
 
   onClickDiscard(): void {
@@ -260,7 +260,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     const clean = shallowEqual(this.state.committed, uncommitted);
 
     return (
-      <GenericDocument style={ CSS }>
+      <GenericDocument style={CSS}>
         <Row>
           <Column>
             <SmallHeader>Service</SmallHeader>
@@ -268,36 +268,36 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
               Emulator works with ngrok to communicate with bots hosted remotely. Read the <a
                 href="https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)" target="_blank">wiki
                 page</a> to learn more about using ngrok and to download it.</p>
-            <Row align={ RowAlignment.Center }>
-              <TextInputField inputClass="app-settings-input" readOnly={ false } value={ uncommitted.ngrokPath }
-                              onChange={ this.onChangeNgrok } label={ 'Path to ngrok' }/>
-              <PrimaryButton onClick={ this.onClickBrowse } text="Browse" className="browse-button"/>
+            <Row align={RowAlignment.Center}>
+              <TextInputField className="app-settings-input" readOnly={false} value={uncommitted.ngrokPath}
+                onChanged={this.onChangeNgrok} label={'Path to ngrok'} />
+              <PrimaryButton onClick={this.onClickBrowse} text="Browse" className="browse-button" />
             </Row>
-            <Checkbox className="checkboxOverrides" checked={ uncommitted.bypassNgrokLocalhost }
-                      onChange={ this.onChangeNgrokBypass } id="ngrok-bypass" label="Bypass ngrok for local addresses"/>
-            <Row align={ RowAlignment.Center }>
-              <TextInputField inputClass="app-settings-input" readOnly={ false } value={ uncommitted.localhost }
-                              onChange={ this.onChangeLocalhost } label="localhost override"/>
+            <Checkbox className="checkboxOverrides" checked={uncommitted.bypassNgrokLocalhost}
+              onChange={this.onChangeNgrokBypass} id="ngrok-bypass" label="Bypass ngrok for local addresses" />
+            <Row align={RowAlignment.Center}>
+              <TextInputField className="app-settings-input" readOnly={false} value={uncommitted.localhost}
+                onChanged={this.onChangeLocalhost} label="localhost override" />
             </Row>
-            <Row align={ RowAlignment.Center }>
-              <TextInputField inputClass="app-settings-input" readOnly={ false } value={ uncommitted.locale }
-                              onChange={ this.onChangeLocale } label="Locale"/>
+            <Row align={RowAlignment.Center}>
+              <TextInputField className="app-settings-input" readOnly={false} value={uncommitted.locale}
+                onChanged={this.onChangeLocale} label="Locale" />
             </Row>
           </Column>
           <Column className="right-column">
             <SmallHeader>Auth</SmallHeader>
-            <Checkbox className="checkboxOverrides" checked={ uncommitted.use10Tokens }
-                      onChange={ this.onChangeAuthTokenVersion } id="auth-token-version"
-                      label="Use version 1.0 authentication tokens"/>
+            <Checkbox className="checkboxOverrides" checked={uncommitted.use10Tokens}
+              onChange={this.onChangeAuthTokenVersion} id="auth-token-version"
+              label="Use version 1.0 authentication tokens" />
             <SmallHeader>Sign-in</SmallHeader>
-            <Checkbox className="checkboxOverrides" checked={ uncommitted.useCodeValidation }
-                      onChange={ this.onChangeUseValidationToken } id="use-validation-code"
-                      label="Use a sign-in verification code for OAuthCards"/>
+            <Checkbox className="checkboxOverrides" checked={uncommitted.useCodeValidation}
+              onChange={this.onChangeUseValidationToken} id="use-validation-code"
+              label="Use a sign-in verification code for OAuthCards" />
           </Column>
         </Row>
-        <Row className="button-row" justify={ RowJustification.Right }>
-          <PrimaryButton text="Cancel" onClick={ this.onClickDiscard }/>
-          <PrimaryButton text="Save" onClick={ this.onClickSave } className="save-button" disabled={ clean }/>
+        <Row className="button-row" justify={RowJustification.Right}>
+          <PrimaryButton text="Cancel" onClick={this.onClickDiscard} />
+          <PrimaryButton text="Save" onClick={this.onClickSave} className="save-button" disabled={clean} />
         </Row>
       </GenericDocument>
     );

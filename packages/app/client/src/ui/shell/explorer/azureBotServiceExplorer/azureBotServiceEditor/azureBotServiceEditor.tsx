@@ -35,7 +35,7 @@ import { Modal, ModalActions, ModalContent, PrimaryButton, TextInputField } from
 import { AzureBotService } from 'msbot/bin/models';
 import { IAzureBotService } from 'msbot/bin/schema';
 import * as React from 'react';
-import { Component, SyntheticEvent } from 'react';
+import { Component } from 'react';
 
 interface AzureBotServiceEditorProps {
   azureBotService: IAzureBotService;
@@ -55,15 +55,11 @@ interface AzureBotServiceEditorState {
 
 const title = 'Connect to Azure Bot Service';
 const detailedDescription = 'Connect your bot to a registration in the Azure Bot Service portal';
-const modalCssOverrides = {
-  width: '400px',
-  height: '550px'
-};
 
 export class AzureBotServiceEditor extends Component<AzureBotServiceEditorProps, AzureBotServiceEditorState> {
 
   public state: AzureBotServiceEditorState = {} as AzureBotServiceEditorState;
-
+  private _textFieldHandlers: { [key: string]: (x: string) => void } = {};
   constructor(props: AzureBotServiceEditorProps, state: AzureBotServiceEditorState) {
     super(props, state);
     const azureBotService = new AzureBotService(props.azureBotService);
@@ -75,6 +71,13 @@ export class AzureBotServiceEditor extends Component<AzureBotServiceEditorProps,
       tenantIdError: '',
       subscriptionIdError: '',
       resourceGroupError: ''
+    };
+    this._textFieldHandlers = {
+      'name': this.onInputChange.bind(this, 'name', true),
+      'id': this.onInputChange.bind(this, 'id', true),
+      'tenantId': this.onInputChange.bind(this, 'tenantId', true),
+      'subscriptionId': this.onInputChange.bind(this, 'subscriptionId', true),
+      'resourceGroup': this.onInputChange.bind(this, 'resourceGroup', true)
     };
   }
 
@@ -96,50 +99,55 @@ export class AzureBotServiceEditor extends Component<AzureBotServiceEditorProps,
     const { name = '', id = '', tenantId = '', subscriptionId = '', resourceGroup = '' } = azureBotService;
     const valid = !tenantIdError && !subscriptionIdError && !resourceGroupError && !idError && !nameError;
     return (
-      <Modal cssOverrides={ modalCssOverrides } title={ title } detailedDescription={ detailedDescription }
-             cancel={ this.onCancelClick }>
+      <Modal title={title} detailedDescription={detailedDescription}
+        cancel={this.onCancelClick}>
         <ModalContent>
-          <TextInputField error={ nameError } value={ name } onChange={ this.onInputChange } label="Bot Name"
-                          required={ true } inputAttributes={ { 'data-propname': 'name' } }/>
-          <TextInputField error={ idError } value={ id } onChange={ this.onInputChange } label="Azure Bot Id"
-                          required={ true } inputAttributes={ { 'data-propname': 'id' } }/>
-          <TextInputField error={ tenantIdError } value={ tenantId } onChange={ this.onInputChange }
-                          label="Azure Tenant Id" required={ true }
-                          inputAttributes={ { 'data-propname': 'tenantId' } }/>
-          <TextInputField error={ subscriptionIdError } value={ subscriptionId } onChange={ this.onInputChange }
-                          label="Azure Subscription Id" required={ true }
-                          inputAttributes={ { 'data-propname': 'subscriptionId' } }/>
-          <TextInputField error={ resourceGroupError } value={ resourceGroup } onChange={ this.onInputChange }
-                          label="Azure Resource Group" required={ true }
-                          inputAttributes={ { 'data-propname': 'resourceGroup' } }/>
+          <TextInputField errorMessage={nameError} value={name}
+            onChanged={this._textFieldHandlers.name} label="Bot Name"
+            required={true}
+          />
+          <TextInputField errorMessage={idError} value={id}
+            onChanged={this._textFieldHandlers.id} label="Azure Bot Id"
+            required={true}
+          />
+          <TextInputField errorMessage={tenantIdError} value={tenantId}
+            onChanged={this._textFieldHandlers.tenantId}
+            label="Azure Tenant Id" required={true}
+            data-propname="tenantId"
+          />
+          <TextInputField errorMessage={subscriptionIdError} value={subscriptionId}
+            onChanged={this._textFieldHandlers.subscriptionId}
+            label="Azure Subscription Id" required={true}
+          />
+          <TextInputField errorMessage={resourceGroupError} value={resourceGroup}
+            onChanged={this._textFieldHandlers.resourceGroup}
+            label="Azure Resource Group" required={true}
+          />
         </ModalContent>
         <ModalActions>
-          <PrimaryButton text="Cancel" secondary={ true } onClick={ this.onCancelClick }/>
-          <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ this.onSubmitClick }/>
+          <PrimaryButton text="Cancel" secondary={true} onClick={this.onCancelClick} />
+          <PrimaryButton disabled={!isDirty || !valid} text="Submit" onClick={this.onSubmitClick} />
         </ModalActions>
       </Modal>
     );
   }
 
-  private onCancelClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
+  private onCancelClick = (): void => {
     this.props.cancel();
   }
 
-  private onSubmitClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
+  private onSubmitClick = (): void => {
     this.props.updateAzureBotService(this.state.azureBotService);
   }
 
-  private onInputChange = (event: SyntheticEvent<HTMLInputElement>): void => {
-    const { currentTarget: input } = event;
-    const { required, value } = input;
+  private onInputChange = (propName: string, required: boolean, value: string): void => {
     const trimmedValue = value.trim();
 
     const { azureBotService: originalAzureBotService } = this.props;
-    const propName = input.getAttribute('data-propname');
     const errorMessage = (required && !trimmedValue) ? `The field cannot be empty` : '';
 
     const { azureBotService } = this.state;
-    azureBotService[propName] = input.value;
+    azureBotService[propName] = value;
 
     const isDirty = Object.keys(azureBotService)
       .reduce((dirty, key) => (dirty || azureBotService[key] !== originalAzureBotService[key]), false);

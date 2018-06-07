@@ -30,6 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+export { initializeIcons } from '@uifabric/icons';
 
 export namespace Fonts {
   export const FONT_FAMILY_DEFAULT = '-apple-system,BlinkMacSystemFont,Segoe WPC,Segoe UI,' +

@@ -30,7 +30,20 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import * as React from 'react';
+import { DefaultButton, IButtonProps } from 'office-ui-fabric-react/lib-commonjs/Button';
+export { IButtonProps } from 'office-ui-fabric-react/lib-commonjs/Button';
 
+export interface PrimaryButtonProps extends IButtonProps {
+  secondary?: boolean;
+}
+
+export function PrimaryButton(props: PrimaryButtonProps): JSX.Element {
+  const p = { ...props, ...{ primary: !props.secondary } };
+  return <DefaultButton {...p} />;
+}
+
+/*
 import { css } from 'glamor';
 import * as React from 'react';
 import { TruncateText } from '../layout';
@@ -133,3 +146,4 @@ export class PrimaryButton extends React.Component<PrimaryButtonProps, {}> {
     );
   }
 }
+*/
