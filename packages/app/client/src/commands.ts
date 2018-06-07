@@ -282,4 +282,10 @@ export function registerCommands() {
   CommandRegistry.registerCommand('shell:about', () => {
     // TODO: Show about dialog (native dialog box)
   });
+
+  // ---------------------------------------------------------------------------
+  // Returns the store's state
+  CommandRegistry.registerCommand('store:getState', () => {
+    return store.getState();
+  });
 }

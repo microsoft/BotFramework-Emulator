@@ -37,6 +37,8 @@ import { mainWindow } from './main';
 import { AppUpdater, UpdateStatus } from './appUpdater';
 import { BotInfo } from '@bfemulator/app-shared';
 import * as jsonpath from 'jsonpath';
+import { ConversationService } from './services/conversationService';
+import { getStore } from './data-v2/store';
 
 export interface AppMenuBuilder {
   menuTemplate: Electron.MenuItemConstructorOptions[];
@@ -49,7 +51,7 @@ export interface AppMenuBuilder {
   getViewMenu: () => Electron.MenuItemConstructorOptions;
   getWindowMenuMac: () => Electron.MenuItemConstructorOptions[];
   getHelpMenu: () => Electron.MenuItemConstructorOptions;
-  setFileMenu: (fileMenuTemplate: Electron.MenuItemConstructorOptions, 
+  setFileMenu: (fileMenuTemplate: Electron.MenuItemConstructorOptions,
                 appMenuTemplate: Electron.MenuItemConstructorOptions[]) => Electron.MenuItemConstructorOptions[];
 }
 
@@ -71,6 +73,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
       this.getFileMenu(),
       this.getEditMenu(),
       this.getViewMenu(),
+      this.getConversationMenu(),
       this.getHelpMenu()
     ];
 
@@ -284,7 +287,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
         },
         {
           label: 'Credits',
-          click: () => mainWindow.commandService.remoteCall('shell:open-external-link',  'https://aka.ms/Ud5ga6')
+          click: () => mainWindow.commandService.remoteCall('shell:open-external-link', 'https://aka.ms/Ud5ga6')
         },
         { type: 'separator' },
         {
@@ -305,7 +308,8 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
           click: () => Electron.dialog.showMessageBox(mainWindow.browserWindow, {
             type: 'info',
             title: appName,
-            message: appName + '\r\nversion: ' + version})
+            message: appName + '\r\nversion: ' + version
+          })
         }
       ]
     };
@@ -343,8 +347,64 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     }
   }
 
+  getConversationMenu(): Electron.MenuItemConstructorOptions {
+    const getState = () => mainWindow.commandService.remoteCall('store:getState');
+    const getConversationId = async () => {
+      const state = await getState();
+      const { editors, activeEditor } = state.editor;
+      const { activeDocumentId } = editors[activeEditor];
+      return state.chat.chats[activeDocumentId].conversationId;
+    };
+
+    const getServiceUrl = () => getStore().getState().serviceUrl;
+    const createClickHandler = serviceFunction => {
+      return () => {
+        getConversationId()
+          .then(conversationId => serviceFunction(getServiceUrl(), conversationId));
+      };
+    };
+    return {
+      label: 'Conversation',
+      submenu: [
+        {
+          label: 'Send System Activity',
+          submenu: [
+            {
+              label: 'conversationUpdate ( user added )',
+              click: createClickHandler(ConversationService.addUser)
+            },
+            {
+              label: 'conversationUpdate ( user removed )',
+              click: createClickHandler(ConversationService.removeUser)
+            },
+            {
+              label: 'contactRelationUpdate ( bot added )',
+              click: createClickHandler(ConversationService.botContactAdded)
+            },
+            {
+              label: 'contactRelationUpdate ( bot removed )',
+              click: createClickHandler(ConversationService.botContactRemoved)
+            },
+            {
+              label: 'typing',
+              click: createClickHandler(ConversationService.typing)
+            },
+            {
+              label: 'ping',
+              click: createClickHandler(ConversationService.ping)
+            },
+            {
+              label: 'deleteUserData',
+              click: createClickHandler(ConversationService.deleteUserData)
+            }
+          ]
+        },
+      ]
+    };
+  }
+
   /** Takes a file menu template and places it at the right position in the app menu template according to platform */
-  setFileMenu(fileMenuTemplate: Electron.MenuItemConstructorOptions, 
+  setFileMenu(fileMenuTemplate: Electron.MenuItemConstructorOptions,
               appMenuTemplate: Electron.MenuItemConstructorOptions[]): Electron.MenuItemConstructorOptions[] {
     if (process.platform === 'darwin') {
       appMenuTemplate[1] = fileMenuTemplate;
@@ -355,7 +415,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
   }
 
   refreshAppUpdateMenu() {
-    jsonpath.value(this.menuTemplate, 
+    jsonpath.value(this.menuTemplate,
       '$..[?(@.role == "help")].submenu[?(@.id == "auto-update")]', this.getUpdateMenuItem());
     Electron.Menu.setApplicationMenu(Electron.Menu.buildFromTemplate(this.menuTemplate));
   }

@@ -37,20 +37,19 @@ import { BotInfo, getBotDisplayName } from '@bfemulator/app-shared';
 import { BotConfigWithPath, BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import { mainWindow } from './main';
 import * as BotActions from './data-v2/action/bot';
+import { getStore } from './data-v2/store';
+const store = getStore();
 
 export function getActiveBot(): BotConfigWithPath {
-  const state = mainWindow && mainWindow.store.getState();
-  return state && state.bot.activeBot;
+  return store.getState().bot.activeBot;
 }
 
 export function getBotInfoByPath(path: string): BotInfo {
-  const state = mainWindow.store.getState();
-  return state.bot.botFiles.find(bot => bot && bot.path === path);
+  return store.getState().bot.botFiles.find(bot => bot && bot.path === path);
 }
 
 export function pathExistsInRecentBots(path: string): boolean {
-  const state = mainWindow.store.getState();
-  return state.bot.botFiles.some(bot => bot && bot.path === path);
+  return store.getState().bot.botFiles.some(bot => bot && bot.path === path);
 }
 
 /** Will attempt to load the bot, using the secret if specified.
@@ -131,7 +130,7 @@ export function cloneBot(bot: BotConfigWithPath): BotConfigWithPath {
  *  in the store and on disk.
  */
 export async function patchBotsJson(botPath: string, bot: BotInfo): Promise<BotInfo[]> {
-  const state = mainWindow.store.getState();
+  const state = store.getState();
   const bots = [...state.bot.botFiles];
   const botIndex = bots.findIndex(bot1 => bot1.path === botPath);
   if (botIndex > -1) {
@@ -139,8 +138,7 @@ export async function patchBotsJson(botPath: string, bot: BotInfo): Promise<BotI
   } else {
     bots.unshift(bot);
   }
-
-  mainWindow.store.dispatch(BotActions.load(bots));
+  store.dispatch(BotActions.load(bots));
   await mainWindow.commandService.remoteCall('bot:list:sync', bots);
 
   return bots;
@@ -148,7 +146,7 @@ export async function patchBotsJson(botPath: string, bot: BotInfo): Promise<BotI
 
 /** Saves a bot to disk */
 export async function saveBot(bot: BotConfigWithPath): Promise<void> {
-  const botInfo = getBotInfoByPath(bot.path) || {};
+  const botInfo = await getBotInfoByPath(bot.path) || {};
 
   const saveableBot = toSavableBot(bot, botInfo.secret);
 

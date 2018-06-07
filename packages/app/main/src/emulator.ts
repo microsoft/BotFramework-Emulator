@@ -34,7 +34,6 @@
 import { BotFrameworkService } from './botFrameworkService';
 import * as Settings from './settings';
 import { NgrokService } from './ngrokService';
-import IBotEndpoint from '@bfemulator/emulator-core/lib/types/botEndpoint';
 
 interface QueuedMessage {
   channel: any;
@@ -55,6 +54,7 @@ export class Emulator {
     Settings.startup();
     emulator = new Emulator();
     await emulator.startup();
+    return emulator.framework.serverUrl;
   }
 
   async startup() {

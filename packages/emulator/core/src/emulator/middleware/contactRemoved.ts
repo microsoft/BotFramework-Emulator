@@ -36,11 +36,12 @@ import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
 import sendErrorResponse from '../../utils/sendErrorResponse';
+import { ConversationAware } from './fetchConversation';
 
-export default function contactRemoved(botEmulator: BotEmulator) {
-  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+export default function contactRemoved(_botEmulator: BotEmulator) {
+  return async (req: ConversationAware, res: Restify.Response, next: Restify.Next): Promise<any> => {
     try {
-      (req as any).conversation.sendContactRemoved();
+      await req.conversation.sendContactRemoved();
       res.send(HttpStatus.OK);
       res.end();
     } catch (err) {

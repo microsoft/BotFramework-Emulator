@@ -31,28 +31,37 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Store } from 'redux';
 import { BrowserWindow, WebContents } from 'electron';
 import ILogService from '@bfemulator/emulator-core/lib/types/log/service';
 import { CommandService, CommandServiceImpl, DisposableImpl } from '@bfemulator/sdk-shared';
 import { LogService } from '../log/logService';
 import { ElectronIPC, ElectronIPCServer } from '../../ipc';
-import createStore from '../../data-v2/createStore';
-import { State } from '../../data-v2/state';
 import { CommandRegistry } from '../../commands';
 
 export class Window extends DisposableImpl {
-  private _commandService: CommandService;
-  private _logService: ILogService;
-  private _ipc: ElectronIPC;
-  private _store: Store<State>;
+  private readonly _commandService: CommandService;
+  private readonly _logService: ILogService;
+  private readonly _ipc: ElectronIPC;
 
-  get browserWindow(): BrowserWindow { return this._browserWindow; }
-  get webContents(): WebContents { return this._browserWindow.webContents; }
-  get commandService(): CommandService { return this._commandService; }
-  get logService(): ILogService { return this._logService; }
-  get ipc(): ElectronIPC { return this._ipc; }
-  get store(): Store<State> { return this._store; }
+  get browserWindow(): BrowserWindow {
+    return this._browserWindow;
+  }
+
+  get webContents(): WebContents {
+    return this._browserWindow.webContents;
+  }
+
+  get commandService(): CommandService {
+    return this._commandService;
+  }
+
+  get logService(): ILogService {
+    return this._logService;
+  }
+
+  get ipc(): ElectronIPC {
+    return this._ipc;
+  }
 
   constructor(private _browserWindow: BrowserWindow) {
     super();
@@ -62,14 +71,5 @@ export class Window extends DisposableImpl {
     super.toDispose(ElectronIPCServer.registerIPC(this._ipc));
     super.toDispose(commandService);
     super.toDispose(logService);
-  }
-
-  initStore(): Promise<Store<State>> {
-    return new Promise((resolve, reject) => {
-      createStore(this._browserWindow).then(store => {
-        this._store = store;
-        resolve(this.store);
-      });
-    });
   }
 }
