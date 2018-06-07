@@ -32,7 +32,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export {Checkbox} from 'office-ui-fabric-react/lib-commonjs/Checkbox';
+export { Checkbox } from 'office-ui-fabric-react/lib-commonjs/Checkbox';
 
 /*
 import { css } from 'glamor';
