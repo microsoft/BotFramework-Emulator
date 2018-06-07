@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { invertTheme } from '@fuselab/ui-fabric/lib/themes';
-import { loadTheme, getTheme, ITheme } from '@uifabric/styling';
+import { createTheme, getTheme, ITheme, loadTheme } from '@uifabric/styling';
 export namespace Colors {
 
   export const C0 = '#2B2B2B';
@@ -209,7 +209,7 @@ export function initializeTheme(themeOption: 'dark' | 'light') {
 }
 
 export function modalTheme(): ITheme {
-  return loadTheme({
+  return createTheme({
     semanticColors: {
       bodyText: Colors.C0,
       inputBackground: Colors.INPUT_BACKGROUND_DARK

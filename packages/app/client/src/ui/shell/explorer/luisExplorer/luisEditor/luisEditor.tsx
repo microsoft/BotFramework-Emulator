@@ -35,7 +35,7 @@ import { LuisService } from 'msbot/bin/models';
 import { ILuisService } from 'msbot/bin/schema';
 import { Modal, ModalActions, ModalContent, PrimaryButton, TextInputField } from '@bfemulator/ui-react';
 import * as React from 'react';
-import { Component, SyntheticEvent } from 'react';
+import { Component } from 'react';
 
 interface LuisEditorProps {
   luisService: ILuisService;
@@ -60,6 +60,8 @@ export class LuisEditor extends Component<LuisEditorProps, LuisEditorState> {
 
   public state: LuisEditorState = {} as LuisEditorState;
 
+  private _textFieldHandlers: { [key: string]: (x: string) => void } = {};
+
   constructor(props: LuisEditorProps, state: LuisEditorState) {
     super(props, state);
     const luisService = new LuisService(props.luisService);
@@ -72,6 +74,14 @@ export class LuisEditor extends Component<LuisEditorProps, LuisEditorState> {
       subscriptionKeyError: '',
       isDirty: false
     };
+
+    this._textFieldHandlers = {
+      name: this.onInputChange.bind(this, 'name', true),
+      appId: this.onInputChange.bind(this, 'appId', true),
+      authoringKey: this.onInputChange.bind(this, 'authoringKey', true),
+      version: this.onInputChange.bind(this, 'version', true),
+      subscriptionKey: this.onInputChange.bind(this, 'subscriptionKey', false)
+    };
   }
 
   public componentWillReceiveProps(nextProps: Readonly<LuisEditorProps>): void {
@@ -80,7 +90,7 @@ export class LuisEditor extends Component<LuisEditorProps, LuisEditorState> {
   }
 
   public render(): JSX.Element {
-    const { onCancelClick, onInputChange, onSubmitClick } = this;
+    const { onCancelClick, onSubmitClick } = this;
     const {
       luisService,
       nameError,
@@ -91,24 +101,45 @@ export class LuisEditor extends Component<LuisEditorProps, LuisEditorState> {
       isDirty
     } = this.state;
     const { name = '', appId = '', authoringKey = '', subscriptionKey = '', version = '' } = luisService;
-    const valid = !!name && !!appId && !!authoringKey && !!version && !!subscriptionKey;
+    const valid = !!name && !!appId && !!authoringKey && !!version;
     return (
       <Modal title={title} detailedDescription={detailedDescription}
         cancel={onCancelClick}>
         <ModalContent>
-          <TextInputField errorMessage={nameError} value={name} onChange={onInputChange}
+          <TextInputField
+            errorMessage={nameError}
+            value={name}
+            onChanged={this._textFieldHandlers.name}
             label="Name" required={true}
-            data-propname="name" />
-          <TextInputField errorMessage={appIdError} value={appId} onChange={onInputChange} label="Application Id"
-            required={true} data-propname="appId" />
-          <TextInputField errorMessage={authoringKeyError} value={authoringKey} onChange={onInputChange}
+          />
+          <TextInputField
+            errorMessage={appIdError}
+            value={appId}
+            onChanged={this._textFieldHandlers.appId}
+            label="Application Id"
+            required={true}
+          />
+          <TextInputField
+            errorMessage={authoringKeyError}
+            value={authoringKey}
+            onChanged={this._textFieldHandlers.authoringKey}
             label="Authoring key" required={true}
-            data-propname="authoringKey" />
-          <TextInputField errorMessage={versionError} value={version} onChange={onInputChange} label="Version"
-            required={true} data-propname="version" />
-          <TextInputField errorMessage={subscriptionKeyError} value={subscriptionKey} onChange={onInputChange}
-            label="Subscription key" required={false}
-            data-propname="subscriptionKey" />
+            data-propname="authoringKey"
+          />
+          <TextInputField
+            errorMessage={versionError}
+            value={version}
+            onChanged={this._textFieldHandlers.version}
+            label="Version"
+            required={true}
+          />
+          <TextInputField
+            errorMessage={subscriptionKeyError}
+            value={subscriptionKey}
+            onChanged={this._textFieldHandlers.subscriptionKey}
+            label="Subscription key"
+            required={false}
+          />
         </ModalContent>
         <ModalActions>
           <PrimaryButton text="Cancel" secondary={true} onClick={onCancelClick} />
@@ -126,17 +157,14 @@ export class LuisEditor extends Component<LuisEditorProps, LuisEditorState> {
     this.props.updateLuisService(this.state.luisService);
   }
 
-  private onInputChange = (event: SyntheticEvent<HTMLInputElement>): void => {
-    const { currentTarget: input } = event;
-    const { required, value } = input;
+  private onInputChange = (propName: string, required: boolean, value: string): void => {
     const trimmedValue = value.trim();
 
     const { luisService: originalLuisService } = this.props;
-    const propName = input.getAttribute('data-propname');
     const errorMessage = (required && !trimmedValue) ? `The field cannot be empty` : '';
 
     const { luisService } = this.state;
-    luisService[propName] = input.value;
+    luisService[propName] = value;
 
     const isDirty = Object.keys(luisService)
       .reduce((dirty, key) => (dirty || luisService[key] !== originalLuisService[key]), false);

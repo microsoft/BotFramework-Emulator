@@ -1,5 +1,3 @@
-import { IButtonProps, Button } from '.';
-
 //
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
@@ -33,7 +31,8 @@ import { IButtonProps, Button } from '.';
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import * as React from 'react';
-export { Button, IButtonProps } from 'office-ui-fabric-react/lib-commonjs/Button';
+import { DefaultButton, IButtonProps } from 'office-ui-fabric-react/lib-commonjs/Button';
+export { IButtonProps } from 'office-ui-fabric-react/lib-commonjs/Button';
 
 export interface PrimaryButtonProps extends IButtonProps {
   secondary?: boolean;
@@ -41,7 +40,7 @@ export interface PrimaryButtonProps extends IButtonProps {
 
 export function PrimaryButton(props: PrimaryButtonProps): JSX.Element {
   const p = { ...props, ...{ primary: !props.secondary } };
-  return <Button {...p} />;
+  return <DefaultButton {...p} />;
 }
 
 /*
