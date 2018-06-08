@@ -57,12 +57,15 @@ export default function postActivity(botEmulator: BotEmulator) {
       return;
     }
 
-    const activity = <GenericActivity> req.body;
+    const activity = <GenericActivity>req.body;
 
     try {
       const { activityId, response, statusCode } = await conversation.postActivityToBot(activity, true);
-      
+
       if (!statusCodeFamily(statusCode, 200)) {
+        if (statusCode === HttpStatus.UNAUTHORIZED || statusCode === HttpStatus.FORBIDDEN) {
+          logMessage(req.params.conversationId, textItem(LogLevel.Error, 'Cannot post activity. Unauthorized.'));
+        }
         res.send(statusCode || HttpStatus.INTERNAL_SERVER_ERROR, await response.text());
       } else {
         res.send(statusCode, { id: activityId });
@@ -72,7 +75,6 @@ export default function postActivity(botEmulator: BotEmulator) {
     }
 
     res.end();
-    
     next();
   };
 }
