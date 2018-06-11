@@ -47,9 +47,10 @@ import {
 } from '../action/dispatchServiceActions';
 
 function* openDispatchDeepLink(action: DispatchServiceAction<DispatchServicePayload>): IterableIterator<any> {
-  const { appId, version } = action.payload.dispatchService;
+  // TODO: Hook up proper deep link location once available
+  /*const { appId, version } = action.payload.dispatchService;
   const link = `https://www.dispatch.ai/applications/${appId}/versions/${version}/build`;
-  yield CommandServiceImpl.remoteCall('electron:openExternal', link);
+  yield CommandServiceImpl.remoteCall('electron:openExternal', link);*/
 }
 
 function* openDispatchContextMenu(action: DispatchServiceAction<DispatchServicePayload>): IterableIterator<any> {
