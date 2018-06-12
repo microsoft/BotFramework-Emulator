@@ -37,23 +37,7 @@ import reducers from './reducer';
 import { DEFAULT_STATE, State } from './state';
 import thunk from 'redux-thunk';
 
-export default function create(_window: any): Promise<Store<State>> {
-  return new Promise<Store<State>>((resolve, reject) => {
-    const store: Store<State> = applyMiddleware(
-      _store1 => next => action => {
-        // console.log(action);
-
-        return next(action);
-      },
-      createPromiseMiddleware(),
-      thunk,
-      _store2 => next => action => {
-        // console.log(action);
-
-        return next(action);
-      }
-    )(createStore)(reducers, DEFAULT_STATE) as Store<State>;
-
-    resolve(store);
-  });
-}
+let store;
+export const getStore = (): Store<State> => {
+  return store || (store = applyMiddleware(createPromiseMiddleware(), thunk)(createStore)(reducers, DEFAULT_STATE));
+};

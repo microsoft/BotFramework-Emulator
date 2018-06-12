@@ -35,6 +35,7 @@ import { BotState } from './reducer/bot';
 
 export interface State {
   bot: BotState;
+  serviceUrl: string;
 }
 
 export const DEFAULT_STATE: State = {
@@ -42,5 +43,6 @@ export const DEFAULT_STATE: State = {
     activeBot: null,
     botFiles: [],
     currentBotDirectory: ''
-  }
+  },
+  serviceUrl: ''
 };

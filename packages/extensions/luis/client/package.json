@@ -10,10 +10,10 @@
     "@bfemulator/ui-react": "^1.0.0",
     "glamor": "^2.20.40",
     "lscache": "^1.1.0",
-    "luis-apis": "^1.0.7",
+    "luis-apis": "1.0.7",
     "msbot": "^1.0.44",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
+    "react": "~16.3.2",
+    "react-dom": "~16.3.2",
     "react-json-view": "1.16.1"
   },
   "scripts": {
@@ -33,7 +33,7 @@
     "tslint": "^5.10.0",
     "tslint-loader": "^3.6.0",
     "typescript": "2.7.2",
-    "webpack": "^4.8.2",
+    "webpack": "^4.10.2",
     "webpack-dev-server": "^3.1.4"
   }
 }

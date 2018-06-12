@@ -37,16 +37,17 @@ import * as Restify from 'restify';
 import BotEmulator from '../../botEmulator';
 import ChannelAccount from '../../types/account/channel';
 import sendErrorResponse from '../../utils/sendErrorResponse';
+import { ConversationAware } from './fetchConversation';
 
-export default function addUsers(botEmulator: BotEmulator) {
-  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+export default function addUsers(_botEmulator: BotEmulator) {
+  return async (req: ConversationAware, res: Restify.Response, next: Restify.Next): Promise<any> => {
     try {
       const members: ChannelAccount[] = req.body;
-
-      members.forEach(member => {
-        (req as any).conversation.addMember(member.id, member.name);
-      });
-
+      const it = members[Symbol.iterator](); // Node does not support array.values() :(
+      let member;
+      while (member = it.next().value) {
+        await req.conversation.addMember(member.id, member.name);
+      }
       res.send(HttpStatus.OK);
       res.end();
     } catch (err) {

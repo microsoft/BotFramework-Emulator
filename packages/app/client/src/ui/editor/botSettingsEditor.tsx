@@ -116,31 +116,31 @@ class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps,
     const disabled = !this.state.bot.name || !this.props.dirty;
     const error = !this.state.bot.name ? 'The bot name is required' : '';
     return (
-      <GenericDocument style={ CSS }>
+      <GenericDocument style={CSS}>
         <Column>
           <MediumHeader className="bot-settings-header">Bot Settings</MediumHeader>
-          <TextInputField inputClass="bot-settings-input" label="Bot name" value={ this.state.bot.name }
-                          required={ true } onChange={ this.onChangeName } error={ error }/>
-          <TextInputField inputClass="bot-settings-input" label="Bot secret" value={ this.state.secret }
-                          onChange={ this.onChangeSecret } type="password"/>
+          <TextInputField className="bot-settings-input" label="Bot name" value={this.state.bot.name}
+            required={true} onChanged={this.onChangeName} errorMessage={error} />
+          <TextInputField className="bot-settings-input" label="Bot secret" value={this.state.secret}
+            onChanged={this.onChangeSecret} type="password" />
           <Row className="button-row">
-            <PrimaryButton text="Save" onClick={ this.onSave } className="save-button" disabled={ disabled }/>
-            <PrimaryButton text="Save & Connect" onClick={ this.onSaveAndConnect } className="save-connect-button"
-                           disabled={ disabled }/>
+            <PrimaryButton text="Save" onClick={this.onSave} className="save-button" disabled={disabled} />
+            <PrimaryButton text="Save & Connect" onClick={this.onSaveAndConnect} className="save-connect-button"
+              disabled={disabled} />
           </Row>
         </Column>
       </GenericDocument>
     );
   }
 
-  private onChangeName = (e) => {
-    const bot: BotConfigWithPath = BotConfigWithPathImpl.fromJSON({ ...this.state.bot, name: e.target.value });
+  private onChangeName = (name) => {
+    const bot: BotConfigWithPath = BotConfigWithPathImpl.fromJSON({ ...this.state.bot, name });
     this.setState({ bot });
     this.setDirtyFlag(true);
   }
 
-  private onChangeSecret = (e) => {
-    this.setState({ secret: e.target.value });
+  private onChangeSecret = (secret) => {
+    this.setState({ secret });
     this.setDirtyFlag(true);
   }
 

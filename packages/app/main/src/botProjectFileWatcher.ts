@@ -39,6 +39,7 @@ import * as Chokidar from 'chokidar';
 import { mainWindow } from './main';
 import { getActiveBot, getBotInfoByPath, loadBotWithRetry } from './botHelpers';
 import * as BotActions from './data-v2/action/bot';
+import { getStore } from './data-v2/store';
 
 interface FileWatcher {
   watch: (botProjectDir: string) => void;
@@ -148,7 +149,7 @@ export const BotProjectFileWatcher = new class FileWatcherImpl implements FileWa
 
         // update store
         const botDir = Path.dirname(this._botFilePath);
-        mainWindow.store.dispatch(BotActions.setActive(bot));
+        getStore().dispatch(BotActions.setActive(bot));
         mainWindow.commandService.remoteCall('bot:set-active', bot, botDir);
         mainWindow.commandService.call('bot:restart-endpoint-service');
       }

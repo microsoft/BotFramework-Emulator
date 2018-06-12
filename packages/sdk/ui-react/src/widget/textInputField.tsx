@@ -30,7 +30,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+export { TextField as TextInputField} from 'office-ui-fabric-react/lib-commonjs/TextField';
+/*
 import { css } from 'glamor';
 import * as React from 'react';
 
@@ -197,3 +198,4 @@ export class TextInputField extends React.Component<TextInputFieldProps, {}> {
     );
   }
 }
+*/

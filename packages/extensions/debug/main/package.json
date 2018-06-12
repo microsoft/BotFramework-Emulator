@@ -24,8 +24,8 @@
   "dependencies": {
     "@bfemulator/sdk-main": "^1.0.0",
     "@bfemulator/sdk-shared": "^1.0.0",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
+    "react": "~16.3.2",
+    "react-dom": "~16.3.2",
     "tslib": "^1.9.0"
   }
 }

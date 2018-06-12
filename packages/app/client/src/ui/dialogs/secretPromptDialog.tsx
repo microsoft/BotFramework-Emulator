@@ -73,15 +73,15 @@ export class SecretPromptDialog extends React.Component<{}, SecretPromptDialogSt
 
   render(): JSX.Element {
     return (
-      <div { ...CSS }>
+      <div {...CSS}>
         <Column>
           <MediumHeader>Bot secret required!</MediumHeader>
           <SmallHeader>Please enter your bot's secret</SmallHeader>
-          <TextInputField value={ this.state.secret } onChange={ this.onChangeSecret } label={ 'Bot secret' }
-                          type={ 'password' }/>
-          <Row className="button-row" justify={ RowJustification.Right }>
-            <PrimaryButton secondary text={ 'Dismiss' } onClick={ this.onClickDismiss }/>
-            <PrimaryButton className="save-button" text={ 'Save' } onClick={ this.onClickSave }/>
+          <TextInputField value={this.state.secret} onChanged={this.onChangeSecret} label={'Bot secret'}
+            type={'password'} />
+          <Row className="button-row" justify={RowJustification.Right}>
+            <PrimaryButton secondary text={'Dismiss'} onClick={this.onClickDismiss} />
+            <PrimaryButton className="save-button" text={'Save'} onClick={this.onClickSave} />
           </Row>
         </Column>
       </div>
@@ -97,7 +97,7 @@ export class SecretPromptDialog extends React.Component<{}, SecretPromptDialogSt
     DialogService.hideDialog(this.state.secret);
   }
 
-  private onChangeSecret = (e) => {
-    this.setState({ secret: e.target.value });
+  private onChangeSecret = (secret) => {
+    this.setState({ secret });
   }
 }

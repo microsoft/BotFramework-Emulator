@@ -34,15 +34,14 @@
 import { BotConfigWithPath, BotConfigWithPathImpl, uniqueId } from '@bfemulator/sdk-shared';
 import {
   Checkbox,
-  Colors,
-  Column,
-  MediumHeader,
+  Modal,
+  ModalActions,
+  ModalContent,
   PrimaryButton,
   Row,
-  RowJustification,
   TextInputField
 } from '@bfemulator/ui-react';
-import { css } from 'glamor';
+import { mergeStyleSets } from '@uifabric/merge-styles';
 import { EndpointService } from 'msbot/bin/models';
 import { IEndpointService, ServiceType } from 'msbot/bin/schema';
 import * as React from 'react';
@@ -51,69 +50,26 @@ import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { ActiveBotHelper } from '../helpers/activeBotHelper';
 import { DialogService } from './service';
 
-const CSS = css({
-  backgroundColor: Colors.DIALOG_BACKGROUND_DARK,
-  padding: '32px',
-  width: '648px',
-
-  '& .multi-input-row > *': {
-    marginLeft: '8px'
-  },
-
-  '& .multi-input-row > *:first-child': {
-    marginLeft: 0
-  },
-
-  '& .button-row': {
-    marginTop: '48px'
-  },
-
-  '& .bot-create-header': {
-    color: Colors.DIALOG_FOREGROUND_DARK,
-    marginBottom: '16px'
-  },
-
-  '& .secret-checkbox': {
-    paddingBottom: '8px',
-    color: Colors.DIALOG_FOREGROUND_DARK
-  },
-
-  '& .bot-creation-input': {
-    border: `solid 1px ${Colors.DIALOG_INPUT_BORDER_DARK}`
-  },
-
-  '& .text-input-label, & input': {
-    color: Colors.INPUT_TEXT_DARK
-  },
-
-  '& input::placeholder': {
-    color: Colors.INPUT_TEXT_PLACEHOLDER_DARK
-  },
-
-  '& .bot-creation-cta': {
-    minWidth: 0,
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
-    overflow: 'hidden',
-    textDecoration: 'none',
-    color: Colors.APP_HYPERLINK_FOREGROUND_DARK,
-    flexShrink: 0,
-
-    ':hover': {
-      color: Colors.APP_HYPERLINK_FOREGROUND_DARK
-    }
-  },
-
-  '& .small-input': {
-    width: '200px',
-    flexShrink: 0
-  },
-
-  '& .secret-row': {
-    paddingLeft: '24px',
-
-    '& > .secret-input': {
-      width: '176px'  // 200 - 24px
+const dialogClasses = mergeStyleSets({
+  main: {
+    width: 648,
+    selectors: {
+      '.multi-input-row': {
+        width: 420,
+        justifyContent: 'space-between'
+      },
+      '.small-input input': {
+        width: 200
+      },
+      '.secret-input input': {
+        width: 200
+      },
+      '.bot-create-form .ms-Dialog-header': {
+        display: 'none'
+      },
+      '.bot-create-form .bot-create-form > *': {
+        marginBottom: 16
+      }
     }
   }
 });
@@ -163,63 +119,64 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
       && secretCriteria;
     // TODO - localization
     return (
-      <div { ...CSS }>
-        <Column>
-          <MediumHeader className="bot-create-header">New bot configuration</MediumHeader>
-          <TextInputField className="small-input" inputClass="bot-creation-input" value={ this.state.bot.name }
-                          onChange={ this.onChangeName } label={ 'Bot name' } required={ true }/>
-          <TextInputField inputClass="bot-creation-input" value={ this.state.endpoint.endpoint }
-                          onChange={ this.onChangeEndpoint }
-                          placeholder={ 'Enter a URL for your bot\'s endpoint' } label={ 'Endpoint URL' }
-                          required={ true }/>
+      <Modal className={dialogClasses.main} title="New bot configuration" cancel={this.onCancel} maxWidth={648}>
+        <ModalContent className="bot-create-form">
+          <TextInputField className="c" inputClassName="bot-creation-input" value={this.state.bot.name}
+            onChanged={this.onChangeName} label={'Bot name'} required={true} />
+          <TextInputField inputClassName="bot-creation-input" value={this.state.endpoint.endpoint}
+            onChanged={this.onChangeEndpoint}
+            placeholder={'Enter a URL for your bot\'s endpoint'} label={'Endpoint URL'}
+            required={true} />
           <Row className="multi-input-row">
-            <TextInputField className="small-input" inputClass="bot-creation-input" value={ this.state.endpoint.appId }
-                            onChange={ this.onChangeAppId } label={ 'MSA app ID' } placeholder={ 'Optional' }/>
-            <TextInputField className="small-input" inputClass="bot-creation-input"
-                            value={ this.state.endpoint.appPassword } onChange={ this.onChangeAppPw }
-                            label={ 'MSA app password' } placeholder={ 'Optional' } type={ 'password' }/>
+            <TextInputField
+              className="small-input" inputClassName="bot-creation-input" value={this.state.endpoint.appId}
+              onChanged={this.onChangeAppId} label={'MSA app ID'} placeholder={'Optional'} />
+            <TextInputField className="small-input" inputClassName="bot-creation-input"
+              value={this.state.endpoint.appPassword}
+              onChanged={this.onChangeAppPw}
+              label={'MSA app password'} placeholder={'Optional'} type={'password'} />
           </Row>
-          <Checkbox className={ 'secret-checkbox' } checked={ this.state.secretEnabled }
-                    onChange={ this.onToggleSecret } label={ 'Encrypt your keys' } id={ 'bot-secret-checkbox' }/>
+          <Checkbox className={'secret-checkbox'} checked={this.state.secretEnabled}
+            onChange={this.onToggleSecret} label={'Encrypt your keys'} id={'bot-secret-checkbox'} />
           {
             this.state.secretEnabled &&
             <Row className="multi-input-row secret-row">
-              <TextInputField className="secret-input" inputClass="bot-creation-input" value={ this.state.secret }
-                              onChange={ this.onChangeSecret }
-                              required={ this.state.secretEnabled } label={ 'Create a secret' } type={ 'password' }/>
-              <TextInputField className="secret-input secret-confirmation" inputClass="bot-creation-input"
-                              value={ this.state.secretConfirmation } onChange={ this.onChangeSecretConfirmation }
-                              required={ this.state.secretEnabled } label={ 'Confirm your secret' } type={ 'password' }
-                              error={ this.state.secret && !this.state.secretsMatch ? 'Secrets do not match' : null }/>
+              <TextInputField className="secret-input" inputClassName="bot-creation-input" value={this.state.secret}
+                onChanged={this.onChangeSecret}
+                required={this.state.secretEnabled} label={'Create a secret'} type={'password'} />
+              <TextInputField className="secret-input secret-confirmation" inputClassName="bot-creation-input"
+                value={this.state.secretConfirmation} onChanged={this.onChangeSecretConfirmation}
+                required={this.state.secretEnabled} label={'Confirm your secret'} type={'password'}
+                errorMessage={this.state.secret && !this.state.secretsMatch ? 'Secrets do not match' : null} />
             </Row>
           }
-          <Row className="multi-input-row button-row" justify={ RowJustification.Right }>
-            <PrimaryButton secondary text="Cancel" onClick={ this.onCancel } className="cancel-button"/>
-            <PrimaryButton text="Save and connect" onClick={ this.onSaveAndConnect }
-                           disabled={ !requiredFieldsCompleted } className="connect-button"/>
-          </Row>
-        </Column>
-      </div>
+        </ModalContent>
+        <ModalActions>
+          <PrimaryButton secondary={true} text="Cancel" onClick={this.onCancel} className="cancel-button" />
+          <PrimaryButton text="Save and connect" onClick={this.onSaveAndConnect}
+            disabled={!requiredFieldsCompleted} className="connect-button" />
+        </ModalActions>
+      </Modal>
     );
   }
 
-  private onChangeEndpoint = (e) => {
-    const endpoint = { ...this.state.endpoint, endpoint: e.target.value, name: e.target.value };
+  private onChangeEndpoint = (ep) => {
+    const endpoint = { ...this.state.endpoint, endpoint: ep };
     this.setState({ endpoint });
   }
 
-  private onChangeAppId = (e) => {
-    const endpoint = { ...this.state.endpoint, appId: e.target.value };
+  private onChangeAppId = (appId) => {
+    const endpoint = { ...this.state.endpoint, appId };
     this.setState({ endpoint });
   }
 
-  private onChangeAppPw = (e) => {
-    const endpoint = { ...this.state.endpoint, appPassword: e.target.value };
+  private onChangeAppPw = (appPassword) => {
+    const endpoint = { ...this.state.endpoint, appPassword };
     this.setState({ endpoint });
   }
 
-  private onChangeName = (e) => {
-    const bot = { ...this.state.bot, name: e.target.value };
+  private onChangeName = (name) => {
+    const bot = { ...this.state.bot, name };
     this.setState({ bot });
   }
 
@@ -290,11 +247,11 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
     return CommandServiceImpl.remoteCall('shell:showSaveDialog', dialogOptions);
   }
 
-  private onChangeSecret = (e) => {
-    this.setState({ secret: e.target.value, secretsMatch: e.target.value === this.state.secretConfirmation });
+  private onChangeSecret = (secret) => {
+    this.setState({ secret: secret, secretsMatch: secret === this.state.secretConfirmation });
   }
 
-  private onChangeSecretConfirmation = (e) => {
-    this.setState({ secretConfirmation: e.target.value, secretsMatch: e.target.value === this.state.secret });
+  private onChangeSecretConfirmation = (confirm) => {
+    this.setState({ secretConfirmation: confirm, secretsMatch: confirm === this.state.secret });
   }
 }

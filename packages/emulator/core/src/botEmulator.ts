@@ -49,6 +49,8 @@ import registerDirectLineRoutes from './directLine/registerRoutes';
 import registerSessionRoutes from './session/registerRoutes';
 import registerUserTokenRoutes from './userToken/registerRoutes';
 import stripEmptyBearerToken from './utils/stripEmptyBearerToken';
+import registerEmulatorRoutes from './emulator/registerRoutes';
+
 import Users from './facility/users';
 
 const DEFAULT_OPTIONS: BotEmulatorOptions = {
@@ -116,6 +118,7 @@ export default class BotEmulator {
     registerDirectLineRoutes(this, router, uses);
     registerSessionRoutes(this, router, uses);
     registerUserTokenRoutes(this, router, uses);
+    registerEmulatorRoutes(this, router, uses);
 
     return this;
   }

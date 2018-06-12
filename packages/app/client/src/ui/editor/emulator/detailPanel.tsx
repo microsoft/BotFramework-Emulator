@@ -41,7 +41,7 @@ import Panel, { PanelContent, PanelControls } from '../panel';
 import { Extension, ExtensionManager, GetInspectorResult } from '../../../extensions';
 import { ExtensionInspector, InspectorAccessory, InspectorAccessoryState } from '@bfemulator/sdk-shared';
 import { RootState } from '../../../data/store';
-import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
+import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib-commonjs/Spinner';
 import { Colors } from '@bfemulator/ui-react';
 
 const CSS = css({
@@ -187,11 +187,11 @@ class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
   renderAccessoryIcon(config: InspectorAccessoryState) {
     if (config.icon === 'Spinner') {
       return (
-        <Spinner className="accessory-button-icon" size={ SpinnerSize.xSmall } />
+        <Spinner className="accessory-button-icon" size={SpinnerSize.xSmall} />
       );
     } else if (config.icon) {
       return (
-        <i className={ `accessory-button-icon ms-Icon ms-Icon--${config.icon}` } aria-hidden="true"></i>
+        <i className={`accessory-button-icon ms-Icon ms-Icon--${config.icon}`} aria-hidden="true"></i>
       );
     } else {
       return false;
@@ -204,11 +204,11 @@ class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
     return (
       <button
         className="accessory-button"
-        key={ config.id }
-        disabled={ !enabled }
-        onClick={ () => handler(config.id) }>
-        { this.renderAccessoryIcon(currentState) }
-        { currentState.label }
+        key={config.id}
+        disabled={!enabled}
+        onClick={() => handler(config.id)}>
+        {this.renderAccessoryIcon(currentState)}
+        {currentState.label}
       </button>
     );
   }
@@ -216,7 +216,7 @@ class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
   renderAccessoryButtons(_inspector: ExtensionInspector) {
     return (
       <PanelControls>
-        { this.state.buttons.map(a => this.renderAccessoryButton(a, this.onAccessoryClick)) }
+        {this.state.buttons.map(a => this.renderAccessoryButton(a, this.onAccessoryClick))}
       </PanelControls>
     );
   }
@@ -225,20 +225,20 @@ class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
     if (this.state.inspector) {
       // TODO - localization
       return (
-        <div { ...CSS }>
-          <Panel title={ ['inspector', this.state.title].filter(s => s && s.length).join(' - ') }>
-            { this.renderAccessoryButtons(this.state.inspector) }
+        <div {...CSS}>
+          <Panel title={['inspector', this.state.title].filter(s => s && s.length).join(' - ')}>
+            {this.renderAccessoryButtons(this.state.inspector)}
             <PanelContent>
               <Detail
-                ref={ ref => this.detailRef = ref }
-                bot={ this.props.bot }
-                document={ this.props.document }
-                inspectObj={ this.state.inspectObj }
-                extension={ this.state.extension }
-                inspector={ this.state.inspector }
-                enableAccessory={ this.enableAccessory }
-                setAccessoryState={ this.setAccessoryState }
-                setInspectorTitle={ this.setInspectortitle }
+                ref={ref => this.detailRef = ref}
+                bot={this.props.bot}
+                document={this.props.document}
+                inspectObj={this.state.inspectObj}
+                extension={this.state.extension}
+                inspector={this.state.inspector}
+                enableAccessory={this.enableAccessory}
+                setAccessoryState={this.setAccessoryState}
+                setInspectorTitle={this.setInspectortitle}
               />
             </PanelContent>
           </Panel>
@@ -247,8 +247,8 @@ class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
     } else {
       return (
         // No inspector was found.
-        <div { ...CSS }>
-          <Panel title={ `inspector` }>
+        <div {...CSS}>
+          <Panel title={`inspector`}>
           </Panel>
         </div>
       );

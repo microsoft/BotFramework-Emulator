@@ -35,7 +35,7 @@ import { Modal, ModalActions, ModalContent, PrimaryButton, TextInputField } from
 import { QnaMakerService } from 'msbot/bin/models';
 import { IQnAService } from 'msbot/bin/schema';
 import * as React from 'react';
-import { Component, SyntheticEvent } from 'react';
+import { Component } from 'react';
 
 interface QnaMakerEditorProps {
   qnaMakerService: IQnAService;
@@ -55,14 +55,12 @@ interface QnaMakerEditorState {
 
 const title = 'Add a QnA Maker knowledge base';
 const detailedDescription = 'You can find your knowledge base subscription key in QnaMaker.ai';
-const modalCssOverrides = {
-  width: '400px',
-  height: '530px'
-};
 
 export class QnaMakerEditor extends Component<QnaMakerEditorProps, QnaMakerEditorState> {
 
   public state: QnaMakerEditorState = {} as QnaMakerEditorState;
+
+  private _textFieldHandlers: { [key: string]: (x: string) => void } = {};
 
   constructor(props: QnaMakerEditorProps, state: QnaMakerEditorState) {
     super(props, state);
@@ -75,6 +73,13 @@ export class QnaMakerEditor extends Component<QnaMakerEditorProps, QnaMakerEdito
       endpointKeyError: '',
       hostnameError: '',
       isDirty: false
+    };
+    this._textFieldHandlers = {
+      'name': this.onInputChange.bind(this, 'name', true),
+      'subscriptionKey': this.onInputChange.bind(this, 'subscriptionKey', true),
+      'hostname': this.onInputChange.bind(this, 'hostname', true),
+      'endpointKey': this.onInputChange.bind(this, 'endpointKey', true),
+      'kbId': this.onInputChange.bind(this, 'kbId', true)
     };
   }
 
@@ -96,45 +101,53 @@ export class QnaMakerEditor extends Component<QnaMakerEditorProps, QnaMakerEdito
     const { name = '', subscriptionKey = '', hostname = '', endpointKey = '', kbId = '' } = qnaMakerService;
     const valid = !!kbId && !!name && !!subscriptionKey && !!hostname && !!endpointKey;
     return (
-      <Modal cssOverrides={ modalCssOverrides } title={ title } detailedDescription={ detailedDescription }
-             cancel={ this.onCancelClick }>
+      <Modal title={title} detailedDescription={detailedDescription}
+        cancel={this.onCancelClick} >
         <ModalContent>
-          <TextInputField error={ nameError } value={ name } onChange={ this.onInputChange } label="Name"
-                          required={ true } inputAttributes={ { 'data-propname': 'name' } }/>
-          <TextInputField error={ subscriptionKeyError } value={ subscriptionKey } onChange={ this.onInputChange }
-                          label="Subscription key" required={ true }
-                          inputAttributes={ { 'data-propname': 'subscriptionKey' } }/>
-          <TextInputField error={ hostnameError } value={ hostname } onChange={ this.onInputChange } label="Host name"
-                          required={ true } inputAttributes={ { 'data-propname': 'hostname' } }/>
-          <TextInputField error={ endpointKeyError } value={ endpointKey } onChange={ this.onInputChange }
-                          label="Endpoint Key" required={ true }
-                          inputAttributes={ { 'data-propname': 'endpointKey' } }/>
-          <TextInputField error={ kbIdError } value={ kbId } onChange={ this.onInputChange } label="Knowledge base Id"
-                          required={ true } inputAttributes={ { 'data-propname': 'kbId' } }/>
+          <TextInputField
+            onChanged={this._textFieldHandlers.name}
+            errorMessage={nameError}
+            value={name}
+            label="Name"
+            required={true}
+          />
+          <TextInputField errorMessage={subscriptionKeyError} value={subscriptionKey}
+            onChanged={this._textFieldHandlers.subscriptionKey}
+            label="Subscription key" required={true}
+          />
+          <TextInputField errorMessage={hostnameError} value={hostname}
+            onChanged={this._textFieldHandlers.hostname} label="Host name"
+            required={true}
+          />
+          <TextInputField errorMessage={endpointKeyError} value={endpointKey}
+            onChanged={this._textFieldHandlers.endpointKey}
+            label="Endpoint Key" required={true}
+          />
+          <TextInputField errorMessage={kbIdError} value={kbId}
+            onChanged={this._textFieldHandlers.kbId} label="Knowledge base Id"
+            required={true}
+          />
         </ModalContent>
         <ModalActions>
-          <PrimaryButton text="Cancel" secondary={ true } onClick={ this.onCancelClick }/>
-          <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ this.onSubmitClick }/>
+          <PrimaryButton text="Cancel" secondary={true} onClick={this.onCancelClick} />
+          <PrimaryButton disabled={!isDirty || !valid} text="Submit" onClick={this.onSubmitClick} />
         </ModalActions>
       </Modal>
     );
   }
 
-  private onCancelClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
+  private onCancelClick = (): void => {
     this.props.cancel();
   }
 
-  private onSubmitClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
+  private onSubmitClick = (): void => {
     this.props.updateQnaMakerService(this.state.qnaMakerService);
   }
 
-  private onInputChange = (event: SyntheticEvent<HTMLInputElement>): void => {
-    const { currentTarget: input } = event;
-    const { required, value } = input;
+  private onInputChange = (propName: string, required: boolean, value: string): void => {
     const trimmedValue = value.trim();
 
     const { qnaMakerService: originalQnaMakerService } = this.props;
-    const propName = input.getAttribute('data-propname');
     const errorMessage = (required && !trimmedValue) ? `The field cannot be empty` : '';
 
     const { qnaMakerService } = this.state;
