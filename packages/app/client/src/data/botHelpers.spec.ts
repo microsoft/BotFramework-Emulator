@@ -54,7 +54,6 @@ import {
   getBotInfoByPath,
   pathExistsInRecentBots
 } from './botHelpers';
-import { active } from 'glamor';
 
 describe('Bot helpers tests', () => {
   it('should get the active bot', () => {

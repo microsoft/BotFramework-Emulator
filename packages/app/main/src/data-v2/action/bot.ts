@@ -36,7 +36,6 @@ import { IBotConfig } from 'msbot/bin/schema';
 import { BotAction } from '../reducer/bot';
 
 export const LOAD = 'BOT/LOAD';
-export const PATCH = 'BOT/PATCH';
 export const SET_ACTIVE = 'BOT/SET_ACTIVE';
 export const SET_DIRECTORY = 'BOT/SET_DIRECTORY';
 export const CLOSE = 'BOT/CLOSE';
@@ -49,16 +48,6 @@ export function load(bots: BotInfo[]): BotAction {
     type: LOAD,
     payload: {
       bots
-    }
-  };
-}
-
-export function patch(bot: IBotConfig, secret?: string): BotAction {
-  return {
-    type: PATCH,
-    payload: {
-      bot,
-      secret
     }
   };
 }

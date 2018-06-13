@@ -34,7 +34,7 @@
 import { IBotConfig } from 'msbot/bin/schema';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 import * as BotActions from '../action/bot';
-import { BotInfo, getBotDisplayName } from '@bfemulator/app-shared';
+import { BotInfo } from '@bfemulator/app-shared';
 
 export interface BotState {
   activeBot: IBotConfig;
@@ -46,12 +46,6 @@ export type BotAction = {
   type: 'BOT/LOAD',
   payload: {
     bots: BotInfo[]
-  }
-} | {
-  type: 'BOT/PATCH',
-  payload: {
-    bot: BotConfigWithPath,
-    secret?: string
   }
 } | {
   type: 'BOT/SET_ACTIVE',
@@ -78,24 +72,6 @@ export const bot: any = (state: BotState = DEFAULT_STATE, action: BotAction) => 
   switch (action.type) {
     case BotActions.LOAD: {
       state = setBotFilesState(action.payload.bots, state);
-      break;
-    }
-
-    case BotActions.PATCH: {
-      const patchedBot = {
-        ...state.activeBot,
-        ...action.payload.bot
-      };
-      // update the bot display name in the list if it was changed
-      const { path } = action.payload.bot;
-      const bot1 = state.botFiles.find(botArg => botArg && botArg.path === path);
-      if (bot1) {
-        bot1.displayName = getBotDisplayName(action.payload.bot);
-        if (action.payload.secret) {
-          bot1.secret = action.payload.secret;
-        }
-      }
-      state = setActiveBot(patchedBot, state);
       break;
     }
 

@@ -37,7 +37,6 @@ import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 export enum BotActions {
   create = 'BOT/CREATE',
   load = 'BOT/LOAD',
-  patch = 'BOT/PATCH',
   setActive = 'BOT/SET_ACTIVE',
   close = 'BOT/CLOSE'
 }
@@ -58,18 +57,11 @@ export interface LoadBotAction {
   };
 }
 
-export interface PatchBotAction {
-  type: BotActions.patch;
-  payload: {
-    bot: BotConfigWithPath,
-    secret: string
-  };
-}
-
 export interface SetActiveBotAction {
   type: BotActions.setActive;
   payload: {
-    bot: BotConfigWithPath
+    bot: BotConfigWithPath,
+    preserveOverrides: boolean
   };
 }
 
@@ -81,7 +73,6 @@ export interface CloseBotAction {
 export type BotAction =
   CreateBotAction |
   LoadBotAction |
-  PatchBotAction |
   SetActiveBotAction |
   CloseBotAction;
 
@@ -108,20 +99,12 @@ export function load(bots: BotInfo[]): LoadBotAction {
   };
 }
 
-export function patch(bot: BotConfigWithPath, secret?: string): PatchBotAction {
-  return {
-    type: BotActions.patch,
-    payload: {
-      bot,
-      secret
-    }
-  };
-}
-export function setActive(bot: BotConfigWithPath): SetActiveBotAction {
+export function setActive(bot: BotConfigWithPath, preserveOverrides: boolean = false): SetActiveBotAction {
   return {
     type: BotActions.setActive,
     payload: {
-      bot
+      bot,
+      preserveOverrides
     }
   };
 }
