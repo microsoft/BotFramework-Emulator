@@ -31,5 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './misc';
-export * from './bot';
+import { BotConfigWithPath, BotConfigWithPathImpl, BotConfigOverrides } from '../types';
+
+export function applyBotConfigOverrides
+  (targetBot: BotConfigWithPath, overrides: BotConfigOverrides): BotConfigWithPath {
+  return BotConfigWithPathImpl.fromJSON({
+    ...targetBot,
+    ...{ overrides }
+  });
+}

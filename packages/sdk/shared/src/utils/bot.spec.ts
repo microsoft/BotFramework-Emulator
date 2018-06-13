@@ -31,5 +31,32 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './misc';
-export * from './bot';
+import { applyBotConfigOverrides } from './bot';
+import { BotConfigWithPath, BotConfigOverrides } from '../types';
+
+describe('Bot utility function tests', () => {
+  it('should apply bot config overrides', () => {
+    const bot: BotConfigWithPath = {
+      name: 'someBot',
+      description: 'someDescription',
+      secretKey: null,
+      services: [],
+      overrides: null
+    };
+    const overrides: BotConfigOverrides = {
+      endpoint: {
+        endpoint: 'someEndpoint',
+        appId: 'someAppId',
+        appPassword: 'someAppPw',
+        id: 'someEndpoint'
+      }
+    };
+    const overriddenBot = applyBotConfigOverrides(bot, overrides);
+    
+    expect(overriddenBot.overrides).not.toBe(null);
+    expect(overriddenBot.overrides.endpoint.endpoint).toBe('someEndpoint');
+    expect(overriddenBot.overrides.endpoint.appId).toBe('someAppId');
+    expect(overriddenBot.overrides.endpoint.appPassword).toBe('someAppPw');
+    expect(overriddenBot.overrides.endpoint.id).toBe('someEndpoint');
+  });
+});
