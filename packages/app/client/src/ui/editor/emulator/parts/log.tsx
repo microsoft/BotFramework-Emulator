@@ -187,13 +187,10 @@ class LogEntryComponent extends React.Component<LogEntryProps> {
   }
 
   render() {
-    let key = 0;
     return (
       <div key="entry" className="entry">
         { this.renderTimestamp(this.props.entry.timestamp) }
-        { this.props.entry.items.map(item =>
-          this.renderItem(item, '' + key++)
-        ) }
+        { this.props.entry.items.map((item, key) => this.renderItem(item, '' + key)) }
       </div>
     );
   }
@@ -280,14 +277,14 @@ class LogEntryComponent extends React.Component<LogEntryProps> {
     }
     let summaryText = this.summaryText(obj) || '';
     return (
-      <>
-        <span key={ key } className="spaced level-0">
+      <span key={ key }>
+        <span className="spaced level-0">
           <a onClick={ () => this.inspectAndHighlight(obj) }>{ title }</a>
         </span>
-        <span key={ `${key}-0` } className="spaced level-0">
+        <span className="spaced level-0">
           { summaryText }
         </span>
-      </>
+      </span>
     );
   }
 
