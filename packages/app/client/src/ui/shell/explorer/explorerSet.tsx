@@ -31,13 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 import * as React from 'react';
 
-import { Colors } from '@bfemulator/ui-react';
+import { ThemeVariables } from '@bfemulator/ui-react';
 
-const CSS = css({
-  backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
+const css = mergeStyles({
+  displayName: 'explorerSet',
+  backgroundColor: `var(${ThemeVariables.neutral15})`,
   display: 'flex',
   flexFlow: 'column nowrap',
   height: '100%',
@@ -45,20 +46,21 @@ const CSS = css({
   listStyleType: 'none',
   margin: 0,
   padding: 0,
-
-  '& > li': {
-    display: 'flex',
-    flexDirection: 'column',
-    overflow: 'hidden',
-    flex: '0 1 auto',
-    maxHeight: '100%'
+  selectors: {
+    '& > li': {
+      display: 'flex',
+      flexDirection: 'column',
+      overflow: 'hidden',
+      flex: '0 1 auto',
+      maxHeight: '100%'
+    }
   }
 });
 
 export class ExplorerSet extends React.Component {
   render() {
     return (
-      <ul className={ CSS + ' explorer-set' }>
+      <ul className={ `${css} explorer-set` }>
         {
           React.Children.map(this.props.children, child =>
             <li>{ child }</li>

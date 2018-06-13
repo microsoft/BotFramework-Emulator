@@ -32,28 +32,30 @@
 //
 
 import * as React from 'react';
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 
-const CSS = css({
+const css = mergeStyles({
+  displayName: 'playbackBar',
   display: 'flex',
   height: '64px',
   width: '400px',
   padding: '16px 0',
   justifyContent: 'space-between',
+  selectors: {
+    '& > span': {
+      display: 'inline-block',
+      width: '32px',
+      lineHeight: '32px',
+      textAlign: 'center',
+      cursor: 'pointer'
+    },
 
-  '& > span': {
-    display: 'inline-block',
-    width: '32px',
-    lineHeight: '32px',
-    textAlign: 'center',
-    cursor: 'pointer'
-  },
-
-  '& .play-icon': {
-    backgroundImage: 'url(./external/media/ic_play.svg)',
-    backgroundSize: '32px',
-    BackgroundPosition: '50% 50%',
-    backgroundRepeat: 'no-repeat'
+    '& .play-icon': {
+      backgroundImage: 'url(./external/media/ic_play.svg)',
+      backgroundSize: '32px',
+      BackgroundPosition: '50% 50%',
+      backgroundRepeat: 'no-repeat'
+    }
   }
 });
 
@@ -110,7 +112,7 @@ export default class PlaybackBar extends React.Component<{}, PlaybackBarState> {
 
   render(): JSX.Element {
     return (
-      <div { ...CSS }>
+      <div className={ css }>
         <span onClick={ this.onClickStartOver }>|&lt;&lt;</span>
         <span onClick={ this.onClickStepBack }>|&lt;</span>
         {

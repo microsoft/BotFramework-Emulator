@@ -32,12 +32,13 @@
 //
 
 import * as React from 'react';
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 
 import { TruncateText } from '../layout';
 import { Fonts } from '../styles';
 
-const CSS = css({
+const css = mergeStyles({
+  displayName: 'smallHeader',
   fontFamily: Fonts.FONT_FAMILY_DEFAULT,
   fontSize: '19px',
   fontWeight: 200,
@@ -53,5 +54,5 @@ export interface SmallIHeaderProps {
 }
 
 export const SmallHeader = (props: SmallIHeaderProps): JSX.Element =>
-  <h3 className={ 'small-header-comp ' + (props.className || '') } { ...CSS }>
+  <h3 className={ `${css} small-header-comp ${props.className || ''}` }>
     <TruncateText>{ props.children }</TruncateText></h3>;

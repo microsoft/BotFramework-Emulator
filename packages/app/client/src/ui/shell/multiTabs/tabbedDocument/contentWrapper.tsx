@@ -34,7 +34,7 @@
 import * as React from 'react';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 
 import * as EditorActions from '../../../../data/action/editorActions';
 import { InsetShadow } from '@bfemulator/ui-react';
@@ -44,7 +44,8 @@ import { getTabGroupForDocument, tabGroupHasDocuments } from '../../../../data/e
 import { Editor } from '../../../../data/reducer/editor';
 import { RootState } from '../../../../data/store';
 
-const CSS = css({
+const css = mergeStyles({
+  displayName: 'contentWrapper',
   position: 'relative',
   height: '100%',
   width: '100%',
@@ -83,22 +84,22 @@ class TabbedDocumentContentWrapperComponent extends Component<TabbedDocumentCont
 
     return (
       <div
-        { ...CSS }
+        className={ css }
         hidden={ this.props.hidden }
         onClickCapture={ this.onClick }
       >
         { this.props.children }
-        <ContentOverlay documentId={ this.props.documentId } />
+        <ContentOverlay documentId={ this.props.documentId }/>
         {
           splittingEnabled ?
             <>
-              <LeftContentOverlay />
-              <RightContentOverlay />
+              <LeftContentOverlay/>
+              <RightContentOverlay/>
             </>
             :
             null
         }
-        <InsetShadow top={ true } />
+        <InsetShadow top={ true }/>
       </div>
     );
   }

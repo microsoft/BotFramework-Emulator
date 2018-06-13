@@ -33,60 +33,63 @@
 
 import * as React from 'react';
 import { Component } from 'react';
-import { css } from 'glamor';
-import { Fonts } from '@bfemulator/ui-react';
+import { mergeStyles } from '@uifabric/merge-styles';
+import { Fonts, ThemeVariables } from '@bfemulator/ui-react';
 
-const QuestionColumnCSS = css({
+const questionColumnCSS = mergeStyles({
+  displayName: 'phrasingView',
   padding: '0px 47px 0px 20px',
   overflowY: 'auto',
   height: '100%',
   fontFamily: Fonts.FONT_FAMILY_DEFAULT,
-  borderRight: 'solid 1px #333',
+  borderRight: `solid 1px var(${ThemeVariables.neutral14})`,
+  selectors: {
+    '& input': {
+      marginTop: '5px',
+      marginBottom: '8px',
+      background: 'transparent',
+      width: '100%',
+      borderRadius: '2px',
+      border: `solid 1px var(${ThemeVariables.neutral9})`,
+      padding: '4px 8px',
+      color: `var(${ThemeVariables.neutral1})`,
+      boxSizing: 'border-box'
+    },
 
-  '& input': {
-    marginTop: '5px',
-    marginBottom: '8px',
-    background: 'transparent',
-    width: '100%',
-    borderRadius: '2px',
-    border: 'solid 1px #777',
-    padding: '4px 8px',
-    color: 'white',
-    boxSizing: 'border-box'
-  },
+    '& button': {
+      background: 'transparent',
+      border: 'none',
+      color: 'white',
+      cursor: 'pointer',
+    },
 
-  '& button': {
-    background: 'transparent',
-    border: 'none',
-    color: 'white',
-    cursor: 'pointer',
-  },
-
-  '& .plus-btn': {
-    background: 'url("./media/ic_add_thin.svg") no-repeat 50% 50%',
-    backgroundSize: '16px',
-    height: '16px',
-    width: '16px',
-    position: 'relative',
-    left: '12px',
-    top: '2px',
-  },
-
-  '& .phrasing-block': {
-    marginBottom: '8px',
-    borderRadius: '2px',
-    backgroundColor: 'white',
-    padding: '4px 8px',
-    color: '#4a4a4a',
-    fontSize: '13px',
-    whiteSpace: 'normal',
-
-    '& .close-btn': {
-      float: 'right',
-      color: '#0e639c',
-      background: 'url("./media/ic_cancel.svg") no-repeat 50% 50%',
+    '& .plus-btn': {
+      background: 'url("./media/ic_add_thin.svg") no-repeat 50% 50%',
       backgroundSize: '16px',
-      height: '19px',
+      height: '16px',
+      width: '16px',
+      position: 'relative',
+      left: '12px',
+      top: '2px',
+    },
+
+    '& .phrasing-block': {
+      marginBottom: '8px',
+      borderRadius: '2px',
+      backgroundColor: `var(${ThemeVariables.neutral1})`,
+      padding: '4px 8px',
+      color: `var(${ThemeVariables.neutral12})`,
+      fontSize: '13px',
+      whiteSpace: 'normal',
+      selectors: {
+        '& .close-btn': {
+          float: 'right',
+          color: `var(${ThemeVariables.infoOutline})`,
+          background: 'url("./media/ic_cancel.svg") no-repeat 50% 50%',
+          backgroundSize: '16px',
+          height: '19px',
+        }
+      }
     }
   }
 });
@@ -107,20 +110,24 @@ export default class PhrasingsView extends Component<PhrasingsViewProps, {}> {
       (phrasing, index) => this.renderPhrasing(phrasing, index !== 0)
     );
     return (
-      <div {...QuestionColumnCSS} className="questions-column">
+      <div className={ `${questionColumnCSS} questions-column` }>
         <h3>Alternative phrasing</h3>
-        {phrasingsElems}
-        <input id="phrasing-input" placeholder="Add alternative here" onKeyPress={(e) => this.phraseInputKeyPress(e)}/>
-        <button id="add-phrase-btn" className="plus-btn" onClick={() => this.handleAddPhraseClick()} />
+        { phrasingsElems }
+        <input
+          id="phrasing-input"
+          placeholder="Add alternative here"
+          onKeyPress={ (e) => this.phraseInputKeyPress(e) }
+        />
+        <button id="add-phrase-btn" className="plus-btn" onClick={ () => this.handleAddPhraseClick() }/>
       </div>
     );
   }
 
   private renderPhrasing(phrasing: string, allowRemove: boolean): JSX.Element {
     return (
-      <div className="phrasing-block" key={phrasing}>
-        {phrasing}
-        {allowRemove ? <button className="close-btn" onClick={() => this.removePhrasing(phrasing)} /> : null}
+      <div className="phrasing-block" key={ phrasing }>
+        { phrasing }
+        { allowRemove ? <button className="close-btn" onClick={ () => this.removePhrasing(phrasing) }/> : null }
       </div>
     );
   }

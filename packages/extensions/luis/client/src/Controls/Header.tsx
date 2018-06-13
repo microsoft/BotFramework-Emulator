@@ -33,12 +33,8 @@
 
 import * as React from 'react';
 import { Component } from 'react';
-import { css } from 'glamor';
-import { Colors } from '@bfemulator/ui-react';
-
-interface HeaderState {
-
-}
+import { mergeStyles } from '@uifabric/merge-styles';
+import { ThemeVariables } from '@bfemulator/ui-react';
 
 interface HeaderProps {
   appName: string;
@@ -47,7 +43,8 @@ interface HeaderProps {
   slot: string;
 }
 
-const HEADER_CSS = css({
+const headerCss = mergeStyles({
+  displayName: 'header',
   color: 'white',
   fontFamily: 'Segoe UI, sans-serif',
   fontSize: '12px',
@@ -55,53 +52,51 @@ const HEADER_CSS = css({
   userSelect: 'text',
   display: 'inline-block',
   width: '100%',
+  selectors: {
+    '& #left': {
+      display: 'block',
+      float: 'left',
+      selectors: {
+        '& #appName': {
+          fontWeight: 'bold'
+        },
 
-  '& #left': {
-    display: 'block',
-    float: 'left',
-
-    '& #appName': {
-      fontWeight: 'bold'
+        '& #appId': {
+          paddingLeft: '16px',
+          color: `var(${ThemeVariables.neutral3})`,
+        }
+      }
     },
 
-    '& #appId': {
-      paddingLeft: '16px',
-      color: Colors.APP_HYPERLINK_DETAIL_DARK
-    },
-  },
+    '& #right': {
+      float: 'right',
+      display: 'block',
+      selectors: {
+        '& #appVersion': {
+          paddingRight: '16px',
+          color: `var(${ThemeVariables.neutral3})`,
+        },
 
-  '& #right' : {
-    float: 'right',
-    display: 'block',
-
-    '& #appVersion': {
-      paddingRight: '16px',
-      color: Colors.APP_HYPERLINK_DETAIL_DARK
-    },
-
-    '& #appSlot': {
-      paddingRight: '6px',
-      color: Colors.APP_HYPERLINK_DETAIL_DARK
+        '& #appSlot': {
+          paddingRight: '6px',
+          color: `var(${ThemeVariables.neutral3})`,
+        }
+      }
     }
   }
 });
 
-class Header extends Component<HeaderProps, HeaderState> {
-
-  constructor(props: any, context: any) {
-    super(props, context);
-  }
-
+class Header extends Component<HeaderProps, {}> {
   render() {
     return (
-      <div {...HEADER_CSS}>
+      <div className={ headerCss }>
         <div id="left">
-          <span id="appName">{this.props.appName}</span>
-          <span id="appId">App ID: {this.props.appId}</span>
+          <span id="appName">{ this.props.appName }</span>
+          <span id="appId">App ID: { this.props.appId }</span>
         </div>
         <div id="right">
-          <span id="appVersion">Version: {this.props.version}</span>
-          <span id="appSlot">Slot: {this.props.slot}</span>
+          <span id="appVersion">Version: { this.props.version }</span>
+          <span id="appSlot">Slot: { this.props.slot }</span>
         </div>
       </div>
     );

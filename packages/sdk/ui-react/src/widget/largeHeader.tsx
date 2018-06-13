@@ -32,12 +32,13 @@
 //
 
 import * as React from 'react';
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 
 import { TruncateText } from '../layout';
 import { Fonts } from '../styles';
 
-const CSS = css({
+const css = mergeStyles({
+  displayName: 'largeHeader',
   fontFamily: Fonts.FONT_FAMILY_DEFAULT,
   fontSize: '36px',
   fontWeight: 400,
@@ -51,5 +52,5 @@ export interface LargeHeaderProps {
 }
 
 export const LargeHeader = (props: LargeHeaderProps): JSX.Element =>
-  <h1 className={ 'large-header-comp ' + (props.className || '') } { ...CSS }>
+  <h1 className={ `${css} large-header-comp ${props.className || ''}` } >
     <TruncateText>{ props.children }</TruncateText></h1>;

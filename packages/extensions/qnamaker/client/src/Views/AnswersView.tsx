@@ -32,31 +32,34 @@
 //
 
 import * as React from 'react';
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 import { Fonts } from '@bfemulator/ui-react';
 import { Component } from 'react';
 import { Answer } from '../Models/QnAMakerModels';
 
-const AnswerColumnCSS = css({
+const answerColumnCss = mergeStyles({
+  displayName: 'answerColumn',
   paddingRight: '6px',
   overflowY: 'auto',
   height: '100%',
   padding: '0px 20px',
   fontFamily: Fonts.FONT_FAMILY_DEFAULT,
-
-  '& input': {
-    marginTop: '5px',
-    background: 'transparent',
-    width: '100%',
-    borderRadius: '2px',
-    border: 'solid 1px #777',
-    padding: '4px 9px',
-    color: 'white',
-    boxSizing: 'border-box'
+  selectors: {
+    '& input': {
+      marginTop: '5px',
+      background: 'transparent',
+      width: '100%',
+      borderRadius: '2px',
+      border: 'solid 1px #777',
+      padding: '4px 9px',
+      color: 'white',
+      boxSizing: 'border-box'
+    }
   }
 });
 
-const AnswerBlockCSS = css({
+const answerBlockCss = mergeStyles({
+  displayName: 'answerBlock',
   borderRadius: '2px',
   border: 'solid 1px #777',
   backgroundColor: 'transparent',
@@ -70,28 +73,34 @@ const AnswerBlockCSS = css({
   margin: '5px 0px',
   width: '100%',
 
-  '.selected': {
-    backgroundColor: '#1177bb',
-    borderColor: '#1177bb',
-  },
+  selectors: {
+    ':focus': {
+      outline: 'none'
+    },
 
-  ':focus': {
-    outline: 'none'
-  },
-  ':hover': {
-    borderColor: '#1177bb',
+    ':hover': {
+      borderColor: '#1177bb',
+    },
+
+    '& .selected': {
+      backgroundColor: '#1177bb',
+      borderColor: '#1177bb',
+    },
   }
 });
 
-const AnswerSelectedCSS = css({
+const answerSelectedCss = mergeStyles({
+  displayName: 'answerSelected',
   fontFamily: 'Segoe UI',
 
-  '& h4': {
-    marginTop: '10px',
-    marginBottom: '0px'
-  },
-  '& p': {
-    marginTop: '0px'
+  selectors: {
+    '& h4': {
+      marginTop: '10px',
+      marginBottom: '0px'
+    },
+    '& p': {
+      marginTop: '0px'
+    }
   }
 });
 
@@ -110,15 +119,15 @@ export default class AnswersView extends Component<AnswersViewProps, {}> {
   render(): JSX.Element {
     let answersRendered: JSX.Element[] = this.props.answers.map((answer) => this.renderAnswer(answer));
     return (
-      <div {...AnswerColumnCSS} className="answers-column">
+      <div className={ `${answerColumnCss} answers-column` }>
         <h3>Answer</h3>
         <p>Choose the most appropriate answer:</p>
-        {answersRendered}
+        { answersRendered }
         <input
           type="text"
           id="new-answer"
           placeholder="Enter a new answer here"
-          onKeyPress={(e) => this.answerInputKeyPress(e)}
+          onKeyPress={ (e) => this.answerInputKeyPress(e) }
         />
       </div>
     );
@@ -132,18 +141,18 @@ export default class AnswersView extends Component<AnswersViewProps, {}> {
     }
     let selectedBlock = selected
       ? (
-        <div {...AnswerSelectedCSS}>
+        <div className={ answerSelectedCss }>
           <h4>Confidence score</h4>
-          <p>{answer.score.toFixed(2)}</p>
+          <p>{ answer.score.toFixed(2) }</p>
         </div>
       )
       : null;
     return (
-      <div className="qna-answer" key={answer.text}>
-        <button {...AnswerBlockCSS} className={blockClass} onClick={() => this.props.selectAnswer(answer)}>
-          {answer.text}
+      <div className="qna-answer" key={ answer.text }>
+        <button className={ `${answerBlockCss} ${blockClass}` } onClick={ () => this.props.selectAnswer(answer) }>
+          { answer.text }
         </button>
-        {selectedBlock}
+        { selectedBlock }
       </div>
     );
   }

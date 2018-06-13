@@ -32,13 +32,13 @@
 //
 
 import * as React from 'react';
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 
 import { FrameworkSettings } from '@bfemulator/app-shared';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import {
   Checkbox,
-  Colors,
+  ThemeVariables,
   Column,
   PrimaryButton,
   Row,
@@ -54,51 +54,56 @@ import { getTabGroupForDocument } from '../../data/editorHelpers';
 import { GenericDocument } from '../layout';
 import { debounce } from '../utils/debounce';
 
-const CSS = css({
-  '& .right-column': {
-    marginLeft: '48px'
-  },
+const css = mergeStyles({
+  displayName: 'appSettingsEditor',
+  selectors: {
+    '& .right-column': {
+      marginLeft: '48px'
+    },
 
-  '& p': {
-    margin: 0,
-    marginBottom: '16px'
-  },
+    '& p': {
+      margin: 0,
+      marginBottom: '16px'
+    },
 
-  '& a': {
-    textDecoration: 'none',
-    color: Colors.APP_HYPERLINK_FOREGROUND_DARK,
+    '& a': {
+      textDecoration: 'none',
+      color: `var(${ThemeVariables.focusedSelectedListItemBg})`,
+      selectors: {
+        ':hover': {
+          color: `var(${ThemeVariables.focusedSelectedListItemBg})`,
+        }
+      }
+    },
 
-    ':hover': {
-      color: Colors.APP_HYPERLINK_FOREGROUND_DARK
+    '& .button-row': {
+      marginTop: '48px'
+    },
+
+    '& .browse-button, .save-button': {
+      marginLeft: '8px'
+    },
+
+    '& .size-limit-suffix': {
+      display: 'inline-block',
+      lineHeight: '32px',
+      marginLeft: '8px'
+    },
+
+    '& .checkboxOverrides': {
+      marginBottom: '16px',
+      selectors: {
+        // TODO: Need light / dark theming
+        // https://github.com/Microsoft/BotFramework-Emulator/issues/496
+        '& > label': {
+          color: `var(${ThemeVariables.neutral5})`,
+        }
+      }
+    },
+
+    '& .app-settings-input': {
+      color: `var(${ThemeVariables.neutral5})`,
     }
-  },
-
-  '& .button-row': {
-    marginTop: '48px'
-  },
-
-  '& .browse-button, & .save-button': {
-    marginLeft: '8px'
-  },
-
-  '& .size-limit-suffix': {
-    display: 'inline-block',
-    lineHeight: '32px',
-    marginLeft: '8px'
-  },
-
-  '& .checkboxOverrides': {
-    marginBottom: '16px',
-
-    // TODO: Need light / dark theming
-    // https://github.com/Microsoft/BotFramework-Emulator/issues/496
-    '& > label': {
-      color: Colors.APP_FOREGROUND_DARK
-    }
-  },
-
-  '& .app-settings-input': {
-    color: Colors.APP_FOREGROUND_DARK
   }
 });
 
@@ -260,7 +265,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     const clean = shallowEqual(this.state.committed, uncommitted);
 
     return (
-      <GenericDocument style={CSS}>
+      <GenericDocument style={ css }>
         <Row>
           <Column>
             <SmallHeader>Service</SmallHeader>

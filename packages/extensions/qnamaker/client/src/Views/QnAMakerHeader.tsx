@@ -32,18 +32,20 @@
 //
 
 import * as React from 'react';
-import { css } from 'glamor';
-import { Fonts } from '@bfemulator/ui-react';
 import { Component } from 'react';
+import { mergeStyles } from '@uifabric/merge-styles';
+import { Fonts } from '@bfemulator/ui-react';
 
-const HeaderCSS = css({
+const headerCSS = mergeStyles({
+  displayName: 'qnaMakerHeader',
   fontSize: '11px',
   fontFamily: Fonts.FONT_FAMILY_DEFAULT,
   padding: '0px 20px',
-
-  '& .knowledgebase-name': {
-    fontWeight: 'bold',
-    marginRight: '16px'
+  selectors: {
+    '& .knowledgebase-name': {
+      fontWeight: 'bold',
+      marginRight: '16px'
+    }
   }
 });
 
@@ -62,9 +64,9 @@ export default class QnAMakerHeader extends Component<QnAMakerHeaderProps, QnAMa
 
   render() {
     return (
-      <div {...HeaderCSS} className="qnamaker-header">
-        <span className="knowledgebase-name">{this.props.knowledgeBaseName}</span>
-        <span className="appid">Knowledgebase Id: {this.props.knowledgeBaseId}</span>
+      <div className={ `${headerCSS} qnamaker-header` }>
+        <span className="knowledgebase-name">{ this.props.knowledgeBaseName }</span>
+        <span className="appid">Knowledgebase Id: { this.props.knowledgeBaseId }</span>
       </div>
     );
   }

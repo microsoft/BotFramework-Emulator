@@ -31,72 +31,78 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
-import { Colors } from '@bfemulator/ui-react';
+import { IStyle } from '@uifabric/merge-styles';
+import { ThemeVariables } from '@bfemulator/ui-react';
 
-export const TAB_CSS = css({
+export const TAB_CSS: IStyle = {
   display: 'flex',
   alignItems: 'center',
   height: '100%',
   border: 'none',
-  borderRight: `1px solid ${Colors.EDITOR_TAB_BORDER_DARK}`,
-  backgroundColor: Colors.EDITOR_TAB_INACTIVE_BACKGROUND_DARK,
-  color: Colors.EDITOR_TAB_INACTIVE_FOREGROUND_DARK,
+  borderRight: `1px solid ${ThemeVariables.neutral15}`,
+  backgroundColor: `${ThemeVariables.neutral15}`,
+  color: `${ThemeVariables.neutral7}`,
   cursor: 'pointer',
   padding: '4px 8px',
   boxSizing: 'border-box',
   whiteSpace: 'nowrap',
+  selectors: {
+    '&.active-editor-tab': {
+      backgroundColor: `${ThemeVariables.neutral15}`,
+      color: `${ThemeVariables.neutral1}`,
+      selectors: {
+        '& > span.editor-tab-close': {
+          opacity: 1
+        }
+      }
+    },
 
-  '&.active-editor-tab': {
-    backgroundColor: Colors.EDITOR_TAB_ACTIVE_BACKGROUND_DARK,
-    color: Colors.EDITOR_TAB_ACTIVE_FOREGROUND_DARK,
+    '&.dragged-over-editor-tab': {
+      backgroundColor: `${ThemeVariables.neutral14}`
+    },
+
+    ':hover': {
+      selectors: {
+        '& > span.editor-tab-close': {
+          opacity: 1
+        }
+      }
+    },
+
+    '& > span': {
+      display: 'inline-block',
+      height: 'auto'
+    },
+
+    '& > span.editor-tab-icon': {
+      display: 'inline-block',
+      width: '12px',
+      marginRight: '8px',
+      selectors: {
+        '::after': {
+          content: '🗋',
+          color: `${ThemeVariables.warningOutline}`,
+          fontSize: '16px',
+        }
+      }
+    },
 
     '& > span.editor-tab-close': {
-      opacity: 1
+      display: 'inline-block',
+      width: '8px',
+      marginLeft: '8px',
+      opacity: 0,
+      selectors: {
+        '::after': {
+          content: '✖',
+          color: `${ThemeVariables.neutral5}`,
+          fontSize: '12px'
+        }
+      }
+    },
+
+    '& .truncated-tab-text': {
+      maxWidth: '200px'
     }
-  },
-
-  '&.dragged-over-editor-tab': {
-    backgroundColor: Colors.EDITOR_TAB_DRAGGED_OVER_BACKGROUND_DARK
-  },
-
-  '&:hover': {
-    '& > span.editor-tab-close': {
-      opacity: 1
-    }
-  },
-
-  '& > span': {
-    display: 'inline-block',
-    height: 'auto'
-  },
-
-  '& > span.editor-tab-icon': {
-    display: 'inline-block',
-    width: '12px',
-    marginRight: '8px',
-
-    '&:after': {
-      content: '🗋',
-      color: Colors.C5,
-      fontSize: '16px',
-    }
-  },
-
-  '& > span.editor-tab-close': {
-    display: 'inline-block',
-    width: '8px',
-    marginLeft: '8px',
-    opacity: 0,
-
-    '&:after': {
-      content: '✖',
-      color: Colors.C2,
-      fontSize: '12px'
-    }
-  },
-
-  '& .truncated-tab-text': {
-    maxWidth: '200px'
   }
-});
+};

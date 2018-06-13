@@ -31,15 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
-import { Colors } from './colors';
+import { mergeStyles, IStyle } from '@uifabric/merge-styles';
+import { ThemeVariables } from './themeVariables';
 import { Fonts } from './fonts';
 
 export class GlobalCss {
-  static setCss(rootCssAdditions: object) {
 
-    let rootCss = {
-      backgroundColor: Colors.APP_BACKGROUND_DARK,
+  static setCss(rootCssAdditions: IStyle) {
+
+    const rootCss: IStyle = {
+      backgroundColor: `var(${ThemeVariables.neutral15})`,
       cursor: 'default',
       fontSize: '13px',
       fontFamily: Fonts.FONT_FAMILY_DEFAULT,
@@ -51,23 +52,30 @@ export class GlobalCss {
     };
     Object.assign(rootCss, rootCssAdditions);
 
-    css.global('html, body, #root', rootCss);
-    
-    css.global('div', {
-      boxSizing: 'border-box',
+    mergeStyles({
+      selectors: {
+        ':global(html)': rootCss,
+        ':global(body)': rootCss,
+        ':global(#root)': rootCss
+      }
     });
-    
-    css.global('::-webkit-scrollbar', {
-      width: '10px',
-      height: '10px',
-    });
-    
-    css.global('::-webkit-scrollbar-track', {
-      background: Colors.SCROLLBAR_TRACK_BACKGROUND_DARK,
-    });
-    
-    css.global('::-webkit-scrollbar-thumb', {
-      background: Colors.SCROLLBAR_THUMB_BACKGROUND_DARK,
+
+    mergeStyles({
+      selectors: {
+        ':global(div)': {
+          boxSizing: 'border-box',
+        },
+        ':global(::-webkit-scrollbar)': {
+          width: '10px',
+          height: '10px',
+        },
+        ':global(::-webkit-scrollbar-track)': {
+          background: 'transparent',
+        },
+        ':global(::-webkit-scrollbar-thumb)': {
+          background: 'transparent',
+        }
+      }
     });
   }
 }

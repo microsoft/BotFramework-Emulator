@@ -34,7 +34,7 @@
 const crypto = (window as any).require('crypto');
 import { logEntry, LogLevel, textItem } from '@bfemulator/app-shared';
 import { ExtensionInspector } from '@bfemulator/sdk-shared';
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 import { IBotConfig } from 'msbot/bin/schema';
 import * as React from 'react';
 import { DragEvent } from 'react';
@@ -43,7 +43,8 @@ import { Extension, InspectorAPI } from '../../../../extensions';
 import { LogService } from '../../../../platform/log/logService';
 import { SettingsService } from '../../../../platform/settings/settingsService';
 
-const CSS = css({
+const css = mergeStyles({
+  displayName: 'inspector',
   width: '100%',
   height: '100%'
 });
@@ -203,7 +204,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     const { cwdAsBase } = SettingsService.emulator;
     const fileLocation = `file://${cwdAsBase}/../../node_modules/@bfemulator/client/public/inspector-preload.js`;
     return (
-      <webview { ...CSS }
+      <webview className={ css }
         webpreferences="webSecurity=no"
         key={ hash }
         partition={ `persist:${hash}` }

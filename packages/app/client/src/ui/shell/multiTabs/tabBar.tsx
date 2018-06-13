@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 import * as React from 'react';
 import { DragEvent } from 'react';
 import { connect } from 'react-redux';
-import { Colors } from '@bfemulator/ui-react';
+import { ThemeVariables } from '@bfemulator/ui-react';
 import * as EditorActions from '../../../data/action/editorActions';
 import * as Constants from '../../../constants';
 import { getOtherTabGroup } from '../../../data/editorHelpers';
@@ -43,67 +43,72 @@ import * as PresentationActions from '../../../data/action/presentationActions';
 import { Document, Editor } from '../../../data/reducer/editor';
 import { RootState } from '../../../data/store';
 
-const CSS = css({
+const css = mergeStyles({
+  displayName: 'tabBar',
   display: 'flex',
-  backgroundColor: Colors.EDITOR_TAB_BACKGROUND_DARK,
+  backgroundColor: `var(${ThemeVariables.neutral15})`,
   minHeight: '32px',
-
-  '&.dragged-over-tab-bar': {
-    backgroundColor: Colors.EDITOR_TAB_DRAGGED_OVER_BACKGROUND_DARK
-  },
-
-  '& > ul': {
-    display: 'flex',
-    backgroundColor: Colors.EDITOR_TAB_BACKGROUND_DARK,
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0,
-    overflowX: 'auto',
-
-    '&::-webkit-scrollbar': {
-      height: '2px'
+  selectors: {
+    '&.dragged-over-tab-bar': {
+      backgroundColor: `var(${ThemeVariables.neutral14})`,
     },
 
-    '&::-webkit-scrollbar-thumb': {
-      background: Colors.SCROLLBAR_THUMB_BACKGROUND_DARK
-    },
+    '& > ul': {
+      display: 'flex',
+      backgroundColor: `var(${ThemeVariables.neutral15})`,
+      listStyleType: 'none',
+      margin: 0,
+      padding: 0,
+      overflowX: 'auto',
+      selectors: {
+        '::-webkit-scrollbar': {
+          height: '2px'
+        },
 
-    '&::-webkit-scrollbar-track': {
-      background: Colors.SCROLLBAR_TRACK_BACKGROUND_DARK
-    }
-  },
+        '::-webkit-scrollbar-thumb': {
+          background: `var(${ThemeVariables.neutral10})`,
+        },
 
-  '& > div.tab-bar-widgets': {
-    display: 'flex',
-    alignItems: 'center',
-    width: 'auto',
-    marginLeft: 'auto',
-    flexShrink: 0,
-
-    '& > span': {
-      display: 'inline-block',
-      cursor: 'pointer',
-      height: '16px',
-      marginRight: '12px',
-      fontSize: '12px',
-
-      '&:first-of-type': {
-        marginLeft: '12px'
+        '::-webkit-scrollbar-track': {
+          background: 'transparent'
+        }
       }
     },
 
-    '& > .widget': {
-      backgroundSize: '16px',
-      height: '32px',
-      width: '22px'
-    },
+    '& > div.tab-bar-widgets': {
+      display: 'flex',
+      alignItems: 'center',
+      width: 'auto',
+      marginLeft: 'auto',
+      flexShrink: 0,
+      selectors: {
+        '& > span': {
+          display: 'inline-block',
+          cursor: 'pointer',
+          height: '16px',
+          marginRight: '12px',
+          fontSize: '12px',
+          selectors: {
+            ':first-of-type': {
+              marginLeft: '12px'
+            }
+          }
+        },
 
-    '& > .split-widget': {
-      background: 'url("./external/media/ic_split.svg") no-repeat 50% 50%',
-    },
+        '& > .widget': {
+          backgroundSize: '16px',
+          height: '32px',
+          width: '22px'
+        },
 
-    '& > .presentation-widget': {
-      background: 'url("./external/media/ic_presentation.svg") no-repeat 50% 50%',
+        '& > .split-widget': {
+          background: 'url("./external/media/ic_split.svg") no-repeat 50% 50%',
+        },
+
+        '& > .presentation-widget': {
+          background: 'url("./external/media/ic_presentation.svg") no-repeat 50% 50%',
+        }
+      }
     }
   }
 });
@@ -166,7 +171,7 @@ class TabBarComponent extends React.Component<TabBarProps, TabBarState> {
 
     const tabBarClassName = this.state.draggedOver ? ' dragged-over-tab-bar' : '';
     return (
-      <div className={ CSS + tabBarClassName } onDragEnter={ this.onDragEnter } onDragOver={ this.onDragOver }
+      <div className={ `${css} ${tabBarClassName}` } onDragEnter={ this.onDragEnter } onDragOver={ this.onDragOver }
            onDragLeave={ this.onDragLeave } onDrop={ this.onDrop }>
         <ul ref={ this.saveScrollable }>
           {

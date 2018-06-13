@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
@@ -39,7 +39,8 @@ import { Content as TabbedDocumentContent, Tab as TabbedDocumentTab, TabBar, Tab
 import { filterChildren, hmrSafeNameComparison } from '@bfemulator/ui-react';
 import { RootState } from '../../../data/store';
 
-const CSS = css({
+const css = mergeStyles({
+  displayName: 'multiTabs',
   display: 'flex',
   flex: 1,
   flexDirection: 'column',
@@ -64,7 +65,7 @@ class MultiTabsComponent extends React.Component<MultiTabsProps> {
 
   render() {
     return (
-      <div { ...CSS }>
+      <div className={ css }>
         {
           !this.props.presentationModeEnabled &&
           <TabBar owningEditor={ this.props.owningEditor } childRefs={ this.childRefs }

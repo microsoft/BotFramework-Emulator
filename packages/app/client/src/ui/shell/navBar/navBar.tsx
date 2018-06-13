@@ -32,12 +32,12 @@
 //
 
 import { connect } from 'react-redux';
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 import classNames from 'classnames';
 import * as React from 'react';
 import { MouseEvent } from 'react';
 
-import { Colors, InsetShadow } from '@bfemulator/ui-react';
+import { ThemeVariables, InsetShadow } from '@bfemulator/ui-react';
 import * as Constants from '../../../constants';
 import * as NavBarActions from '../../../data/action/navBarActions';
 import * as ExplorerActions from '../../../data/action/explorerActions';
@@ -47,28 +47,30 @@ import { IBotConfig } from 'msbot/bin/schema';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { NavLink } from './navLink';
 
-const CSS = css({
-  backgroundColor: Colors.NAVBAR_BACKGROUND_DARK,
+const css = mergeStyles({
+  displayName: 'navBar',
+  backgroundColor: `var(${ThemeVariables.neutral13})`,
   display: 'flex',
   flexDirection: 'column',
   overflow: 'hidden',
   position: 'relative',
   width: '50px',
+  selectors: {
+    '& .bot-explorer': {
+      backgroundImage: 'url(./external/media/ic_bot_explorer.svg)'
+    },
 
-  '& .bot-explorer': {
-    backgroundImage: 'url(./external/media/ic_bot_explorer.svg)'
-  },
+    '& .services': {
+      backgroundImage: 'url(./external/media/ic_services.svg)'
+    },
 
-  '& .services': {
-    backgroundImage: 'url(./external/media/ic_services.svg)'
-  },
+    '& .bot-settings': {
+      backgroundImage: 'url(./external/media/ic_bot_settings.svg)'
+    },
 
-  '& .bot-settings': {
-    backgroundImage: 'url(./external/media/ic_bot_settings.svg)'
-  },
-
-  '& .settings': {
-    backgroundImage: 'url(./external/media/ic_settings.svg)'
+    '& .settings': {
+      backgroundImage: 'url(./external/media/ic_settings.svg)'
+    }
   }
 });
 
@@ -89,7 +91,7 @@ class NavBarComponent extends React.Component<NavBarProps> {
     const { selection, handleClick, handleSettingsClick } = this.props;
 
     return (
-      <nav { ...CSS }>
+      <nav className={ css }>
         <NavLink
           className={ classNames('nav-link bot-explorer', { selected: selection === Constants.NAVBAR_BOT_EXPLORER }) }
           onClick={ evt => handleClick(evt, Constants.NAVBAR_BOT_EXPLORER) } title="Bot Explorer"/>

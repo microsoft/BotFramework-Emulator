@@ -32,7 +32,7 @@
 //
 
 import * as React from 'react';
-import { css } from 'glamor';
+import { mergeStyles, IStyle } from '@uifabric/merge-styles';
 
 export enum ColumnAlignment {
   Left,
@@ -46,14 +46,15 @@ export enum ColumnJustification {
   Bottom
 }
 
-const BASE_CSS = css({
+const baseCss: IStyle = {
+  displayName: 'column',
   boxSizing: 'border-box',
   display: 'flex',
   flexFlow: 'column nowrap',
   maxWidth: '100%',
   width: '100%',
   overflow: 'hidden'
-});
+};
 
 export interface ColumnProps {
   align?: ColumnAlignment;
@@ -64,14 +65,13 @@ export interface ColumnProps {
 export class Column extends React.Component<ColumnProps, {}> {
 
   render(): JSX.Element {
-    const ALIGNMENT_CSS = css({
+    const css = mergeStyles(baseCss, {
       alignItems: getColumnAlignment(this.props.align),
       justifyContent: getColumnJustification(this.props.justify)
-    });
-    const CSS = css(BASE_CSS, ALIGNMENT_CSS);
+    } as IStyle);
 
     return (
-      <div className={ 'column-comp ' + (this.props.className || '') } { ...CSS }>
+      <div className={ `${css} column-comp column-comp ${this.props.className || ''}` }>
         { this.props.children }
       </div>
     );

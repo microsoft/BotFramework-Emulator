@@ -34,43 +34,39 @@
 import * as React from 'react';
 import { Component } from 'react';
 import { Intent } from '../Models/Intent';
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 
-const INTENT_VIEWER_CSS = css({
+const intentViewerCss = mergeStyles({
+  displayName: 'intentViewer',
   color: 'white',
   fontFamily: 'Segoe UI, sans-serif',
   fontSize: '12px',
   userSelect: 'text',
+  selectors: {
+    '& #topScoreIntentLabel': {
+      fontWeight: 'bold',
+    },
 
-  '& #topScoreIntentLabel': {
-    fontWeight: 'bold',
-  },
-
-  '& #topScoringIntentValue': {
-    paddingTop: '8px',
+    '& #topScoringIntentValue': {
+      paddingTop: '8px',
+    }
   }
 });
-
-interface IntentViewerState {
-
-}
 
 interface IntentViewerProps {
   topScoringIntent: Intent;
 }
 
-class IntentViewer extends Component<IntentViewerProps, IntentViewerState> {
-
-  constructor(props: any, context: any) {
-    super(props, context);
-    this.state = {};
-  }
+class IntentViewer extends Component<IntentViewerProps, {}> {
+  public state = {};
 
   render() {
+    const { intent, score } = this.props.topScoringIntent;
     return (
-      <div {...INTENT_VIEWER_CSS}>
+      <div className={ intentViewerCss }>
         <div id="topScoreIntentLabel">Top-Scoring Intent</div>
-        <div id="topScoringIntentValue">{this.props.topScoringIntent.intent} ({this.props.topScoringIntent.score})</div>
+        <div id="topScoringIntentValue">{ intent } ({ score })
+        </div>
       </div>
     );
   }

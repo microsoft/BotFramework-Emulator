@@ -33,24 +33,26 @@
 
 import * as React from 'react';
 import { Component, MouseEventHandler } from 'react';
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 
 enum ButtonSelected {
   RecognizerResult,
   RawResponse
 }
 
-const CONTROLBAR_CSS = css({
+const controlBarCss = mergeStyles({
+  displayName: 'controlBar',
   padding: '6px 3px 6px 3px',
-  '& a': {
-    color: 'white',
-    textDecoration: 'none'
-  },
+  selectors: {
+    '& a': {
+      color: 'white',
+      textDecoration: 'none'
+    },
 
-  '& #rawResponseButton': {
-    paddingLeft: '8px'
+    '& #rawResponseButton': {
+      paddingLeft: '8px'
+    }
   }
-
 });
 
 interface ControlBarState {
@@ -75,7 +77,7 @@ class ControlBar extends Component<ControlBarProps, ControlBarState> {
 
   render() {
     return (
-      <div {...CONTROLBAR_CSS}>
+      <div className={ controlBarCss }>
         <span id="recognizerResultButton">
           <a
             id={ButtonSelected[ButtonSelected.RecognizerResult]}

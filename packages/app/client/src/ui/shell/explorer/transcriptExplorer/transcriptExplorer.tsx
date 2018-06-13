@@ -37,21 +37,24 @@ import { FileInfo } from '@bfemulator/app-shared';
 import { pathExt } from '@fuselab/ui-shared/lib';
 import { TreeView, TreeViewProps } from '@fuselab/ui-fabric/lib';
 import { ExpandCollapse, ExpandCollapseContent } from '@bfemulator/ui-react';
+import { IStyle } from '@uifabric/merge-styles';
 import { IFileTreeState } from '../../../../data/reducer/files';
 import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
 import { FileTreeDataProvider } from './fileTreeProvider';
 
-const CSS = {
+const css: IStyle = {
   // tree comp overrides to match services pane style
-  '& div[class*="root-"]': {
-    height: '22px',
-    lineHeight: '22px',
-    whiteSpace: 'nowrap'
-  },
+  selectors: {
+    '& div[class*="root-"]': {
+      height: '22px',
+      lineHeight: '22px',
+      whiteSpace: 'nowrap'
+    },
 
-  '& div[class*="level_"]': {
-    height: '14px',
-    lineHeight: '14px'
+    '& div[class*="level_"]': {
+      height: '14px',
+      lineHeight: '14px'
+    }
   }
 };
 
@@ -74,7 +77,7 @@ class TranscriptExplorerComponent extends React.Component<TranscriptExplorerProp
       <ExpandCollapse
         expanded={ true }
         title="Transcript Explorer"
-        style={ CSS }
+        style={ css }
       >
         { this.renderFileTree() }
       </ExpandCollapse>
@@ -82,7 +85,7 @@ class TranscriptExplorerComponent extends React.Component<TranscriptExplorerProp
   }
 
   private handleItemClick(filename: string) {
-    CommandServiceImpl.call('transcript:open', filename);
+    CommandServiceImpl.call('transcript:open', filename).catch();
   }
 
   private renderFileTree(): JSX.Element {

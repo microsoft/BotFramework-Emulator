@@ -33,7 +33,7 @@
   "dependencies": {
     "@fuselab/ui-fabric": "~1.1.0",
     "@fuselab/ui-shared": "~1.1.0",
-    "glamor": "^2.20.40",
+    "@uifabric/merge-styles": "^6.2.0",
     "office-ui-fabric-react": "~6.1.2"
   }
 }

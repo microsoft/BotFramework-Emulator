@@ -33,12 +33,13 @@
 
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 
 import { RootState } from '../../data/store';
 import { PrimaryButton } from '@bfemulator/ui-react';
 
-const CSS = css({
+const css = mergeStyles({
+  displayName: 'storeVisualizer',
   position: 'absolute',
   maxWidth: '400px',
   display: 'flex',
@@ -47,24 +48,25 @@ const CSS = css({
   left: 0,
   opacity: '0.9',
   pointerEvents: 'none',
+  selectors: {
+    '& pre': {
+      maxHeight: '500px',
+      overflowY: 'auto',
+      pointerEvents: 'auto'
+    },
 
-  '& pre': {
-    maxHeight: '500px',
-    overflowY: 'auto',
-    pointerEvents: 'auto'
-  },
+    '& select': {
+      width: '120px'
+    },
 
-  '& select': {
-    width: '120px'
-  },
+    '& select, & option': {
+      pointerEvents: 'auto'
+    },
 
-  '& select, & option': {
-    pointerEvents: 'auto'
-  },
-
-  '& .visualizer-button': {
-    width: '120px',
-    pointerEvents: 'auto'
+    '& .visualizer-button': {
+      width: '120px',
+      pointerEvents: 'auto'
+    }
   }
 });
 
@@ -108,7 +110,7 @@ class StoreVisualizerComponent extends React.Component<StoreVisualizerProps, Sto
 
     if (this.props.enabled) {
       return (
-        <div { ...CSS }>
+        <div className={ css }>
           {
             this.state.showing ?
 

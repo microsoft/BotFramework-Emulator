@@ -31,68 +31,71 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 import * as React from 'react';
 
 import * as ChatActions from '../../../../data/action/chatActions';
 import store from '../../../../data/store';
-import { Colors, Fonts } from '@bfemulator/ui-react';
+import { ThemeVariables, Fonts } from '@bfemulator/ui-react';
 import { ExtensionManager, InspectorAPI } from '../../../../extensions';
 import { LogEntry, LogItem, LogLevel } from '@bfemulator/app-shared';
 import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
 
-const CSS = css({
+const css = mergeStyles({
+  displayName: 'log',
   height: '100%',
   overflow: 'auto',
   userSelect: 'text',
   padding: '0 16px 0 16px',
   boxSizing: 'border-box',
+  selectors: {
+    '& > .entry': {
+      fontFamily: Fonts.FONT_FAMILY_MONOSPACE,
+      selecors: {
+        '& > .source': {
+          color: `var(${ThemeVariables.neutral6})`,
+        },
 
-  '& > .entry': {
-    fontFamily: Fonts.FONT_FAMILY_MONOSPACE,
+        '& .timestamp': {
+          color: `var(${ThemeVariables.logPanelTimestamp})`,
+        },
 
-    '& > .source': {
-      color: Colors.LOG_PANEL_SOURCE_DARK,
-    },
+        '& .src-dst': {
+          color: `var(${ThemeVariables.neutral9})`,
+        },
 
-    '& .timestamp': {
-      color: Colors.LOG_PANEL_TIMESTAMP_DARK,
-    },
+        '& a': {
+          color: `var(${ThemeVariables.logPanelLink})`,
+          textDecoration: 'underline',
+          cursor: 'pointer',
+        },
 
-    '& .src-dst': {
-      color: Colors.LOG_PANEL_SRC_DST_DARK,
-    },
+        // info
+        '& .level-0': {
+          color: `var(${ThemeVariables.neutral1})`,
+        },
+        // debug
+        '& .level-1': {
+          color: `var(${ThemeVariables.neutral7})`,
+        },
+        // warn
+        '& .level-2': {
+          color: `var(${ThemeVariables.warningOutline})`,
+        },
+        // error
+        '& .level-3': {
+          color: `var(${ThemeVariables.errorText})`,
+        },
 
-    '& a': {
-      color: Colors.LOG_PANEL_LINK_DARK,
-      textDecoration: 'underline',
-      cursor: 'pointer',
-    },
+        '& .spaced': {
+          marginLeft: '8px',
+        },
 
-    // info
-    '& .level-0': {
-      color: Colors.LOG_PANEL_INFO_DARK,
-    },
-    // debug
-    '& .level-1': {
-      color: Colors.LOG_PANEL_DEBUG_DARK,
-    },
-    // warn
-    '& .level-2': {
-      color: Colors.LOG_PANEL_WARN_DARK,
-    },
-    // error
-    '& .level-3': {
-      color: Colors.LOG_PANEL_ERROR_DARK,
-    },
-
-    '& .spaced': {
-      marginLeft: '8px',
-    },
-
-    '& .spaced:first-child': {
-      marginLeft: 0
-    },
+        '& .spaced:first-child': {
+          marginLeft: 0
+        }
+      }
+    }
   },
 });
 
@@ -153,7 +156,7 @@ export default class Log extends React.Component<LogProps, LogState> {
   render() {
     let key = 0;
     return (
-      <div { ...CSS } ref={ ref => this.scrollMe = ref }>
+      <div className={ css } ref={ ref => this.scrollMe = ref }>
         {
           this.props.document.log.entries.map(entry =>
             <LogEntryComponent key={ `entry-${key++}` } entry={ entry } document={ this.props.document }/>

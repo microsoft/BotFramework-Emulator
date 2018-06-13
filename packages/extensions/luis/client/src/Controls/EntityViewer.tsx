@@ -33,28 +33,30 @@
 
 import * as React from 'react';
 import { Component } from 'react';
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 
 const InstanceKey = '$instance';
 
-const CSS = css({
+const css = mergeStyles({
+  displayName: 'entityViewer',
   display: 'block',
+  selectors: {
+    '& #entityName': {
+      display: 'inline-block',
+      overflow: 'hidden'
+    },
 
-  '& #entityName': {
-    display: 'inline-block',
-    overflow: 'hidden'
-  },
+    '& #arrow': {
+      display: 'inline-block',
+      overflow: 'hidden'
+    },
 
-  '& #arrow': {
-    display: 'inline-block',
-    overflow: 'hidden'
-  },
-
-  '& #entityValue': {
-    display: 'inline-block',
-    maxWidth: '150px',
-    textOverflow: 'ellipsis',
-    overflow: 'hidden'
+    '& #entityValue': {
+      display: 'inline-block',
+      maxWidth: '150px',
+      textOverflow: 'ellipsis',
+      overflow: 'hidden'
+    }
   }
 });
 
@@ -79,19 +81,20 @@ class EntityViewer extends Component<EntityViwerProps, EntityViewerState> {
     }
     return JSON.stringify(entityValue);
   }
+
   static renderEntityValue(entityValue: any): string {
     if (Array.isArray(entityValue)) {
       entityValue = EntityViewer.flattenEntityValue(entityValue);
     }
 
     if (Array.isArray(entityValue)) {
-      if ( typeof entityValue[0] === 'object') {
+      if (typeof entityValue[0] === 'object') {
         entityValue = entityValue.map(ev => EntityViewer.renderEntityValueObject(ev));
       }
       return entityValue.join(', ');
     }
 
-    if ( typeof entityValue === 'object' ) {
+    if (typeof entityValue === 'object') {
       return EntityViewer.renderEntityValueObject(entityValue);
     }
 
@@ -110,13 +113,13 @@ class EntityViewer extends Component<EntityViwerProps, EntityViewerState> {
 
   render() {
     return (
-      <div {...CSS}>
-        <div id="entityName">{this.props.entity.name}</div>
+      <div className={ css }>
+        <div id="entityName">{ this.props.entity.name }</div>
         <div id="arrow">&nbsp; -->&nbsp; </div>
-        <div id="entityValue">{EntityViewer.renderEntityValue(this.props.entity.value)}</div>
+        <div id="entityValue">{ EntityViewer.renderEntityValue(this.props.entity.value) }</div>
       </div>
     );
   }
 }
 
-export {EntityViewer, EntityInfo};
+export { EntityViewer, EntityInfo };

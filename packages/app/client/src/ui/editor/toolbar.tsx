@@ -31,45 +31,49 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 import * as React from 'react';
 
-import { Colors, Decorators, filterChildren, hmrSafeNameComparison } from '@bfemulator/ui-react';
+import { ThemeVariables, filterChildren, hmrSafeNameComparison } from '@bfemulator/ui-react';
 
-const CSS = css({
+const css = mergeStyles({
+  displayName: 'toolBar',
   height: '40px',
-  backgroundColor: Colors.TOOLBAR_BACKGROUND_DARK,
+  backgroundColor: `var(${ThemeVariables.neutral15})`,
   lineHeight: '40px',
-
-  '& > ul': {
-    display: 'flex',
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0,
-
-    '& > li': {
-      padding: '0 8px 0 8px',
-    },
-
-    '& > .button > button': {
-      cursor: 'pointer',
+  selectors: {
+    '& > ul': {
+      display: 'flex',
+      listStyleType: 'none',
       margin: 0,
-      border: 'none',
-      height: '30px',
-      backgroundColor: Colors.TOOLBAR_BUTTON_BACKGROUND_DARK,
-      color: Colors.TOOLBAR_BUTTON_FOREGROUND_DARK,
-      whiteSpace: 'nowrap',
+      padding: 0,
+      selectors: {
+        '& > li': {
+          padding: '0 8px 0 8px',
+        },
 
-      ':hover': {
-        backgroundColor: Colors.TOOLBAR_BUTTON_HOVER_BACKGROUND_DARK,
-        color: Colors.TOOLBAR_BUTTON_HOVER_FOREGROUND_DARK,
-        textDecoration: Decorators.TOOLBAR_BUTTON_HOVER_TEXTDECORATION,
+        '& > .button > button': {
+          cursor: 'pointer',
+          margin: 0,
+          border: 'none',
+          height: '30px',
+          backgroundColor: 'transparent',
+          color: `var(${ThemeVariables.neutral5})`,
+          whiteSpace: 'nowrap',
+          selectors: {
+            ':hover': {
+              backgroundColor: 'transparent',
+              color: `var(${ThemeVariables.neutral5})`,
+              textDecoration: 'underline',
+            }
+          }
+        },
+      },
+
+      '& > .separator': {
+        backgroundColor: 'transparent',
+        color: `var(${ThemeVariables.neutral5})`,
       }
-    },
-
-    '& > .separator': {
-      backgroundColor: Colors.TOOLBAR_BUTTON_BACKGROUND_DARK,
-      color: Colors.TOOLBAR_BUTTON_FOREGROUND_DARK,
     }
   }
 });
@@ -77,7 +81,7 @@ const CSS = css({
 export default class ToolBar extends React.Component<{}, {}> {
   render() {
     return (
-      <div { ...CSS }>
+      <div className={ css }>
         <ul>
           { filterChildren(this.props.children,
             child => child && child.props.visible).map((child, i) => this.createClass(child, i)) }

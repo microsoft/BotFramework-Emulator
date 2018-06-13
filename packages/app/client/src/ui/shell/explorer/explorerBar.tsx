@@ -31,19 +31,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
 import BotExplorerBar from './botExplorerBar';
 import { ServicesExplorerBarContainer } from './servicesExplorerBar';
-import { Colors, InsetShadow } from '@bfemulator/ui-react';
+import { ThemeVariables, InsetShadow } from '@bfemulator/ui-react';
 import * as Constants from '../../../constants';
 import { IBotConfig } from 'msbot/bin/schema';
 import { RootState } from '../../../data/store';
 
-const CSS = css({
-  backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
+const css = mergeStyles({
+  displayName: 'explorerBar',
+  backgroundColor: `var(${ThemeVariables.neutral15})`,
   height: '100%',
   display: 'flex',
   flexFlow: 'column nowrap',
@@ -63,7 +64,8 @@ class ExplorerBarComponent extends React.Component<ExplorerBarProps> {
   render() {
     let explorer = [];
     explorer.push(
-      <BotExplorerBar key={ 'bot-explorer-bar' } activeBot={ this.props.activeBot }
+      <BotExplorerBar key={ 'bot-explorer-bar' }
+                      activeBot={ this.props.activeBot }
                       hidden={ this.props.selectedNavTab !== Constants.NAVBAR_BOT_EXPLORER }/>
     );
     if (this.props.selectedNavTab === Constants.NAVBAR_SERVICES) {
@@ -76,7 +78,7 @@ class ExplorerBarComponent extends React.Component<ExplorerBarProps> {
     }
 
     return (
-      <div { ...CSS }>
+      <div className={ css }>
         { explorer }
         <InsetShadow right={ true }/>
       </div>

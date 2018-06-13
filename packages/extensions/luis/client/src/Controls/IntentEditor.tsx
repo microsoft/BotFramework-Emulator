@@ -35,36 +35,40 @@ import * as React from 'react';
 import { Component } from 'react';
 import { Intent } from '../Models/Intent';
 import { IntentInfo } from '../Luis/IntentInfo';
-import { css } from 'glamor';
-import { Colors } from '@bfemulator/ui-react';
+import { mergeStyles } from '@uifabric/merge-styles';
+import { ThemeVariables } from '@bfemulator/ui-react';
 
 const TraceIntentStatesKey: string = Symbol('PersistedTraceIntentStates').toString();
 
-const INTENT_EDITOR_CSS = css({
+const indentEditorCss = mergeStyles({
+  displayName: 'intentEditor',
   color: 'white',
   fontFamily: 'Segoe UI, sans-serif',
   fontSize: '12px',
   userSelect: 'text',
   paddingTop: '16px',
+  selectors: {
+    '& #selectorContainer': {
+      paddingLeft: '16px'
+    },
 
-  '& #selectorContainer': {
-    paddingLeft: '16px'
-  },
-
-  '& #selector': {
-    width: '190px',
-    fontFamily: 'Segoe UI, sans-serif',
-    fontSize: '12px'
+    '& #selector': {
+      width: '190px',
+      fontFamily: 'Segoe UI, sans-serif',
+      fontSize: '12px'
+    }
   }
 });
 
-const INTENT_EDITOR_HIDDEN_CSS = css({
+const intentEditorHiddenCss = mergeStyles({
+  displayName: 'intentEditorHidden',
   display: 'none'
 });
 
-const INTENT_EDITOR_DISABLED_CSS = css({
+const intentEditorDisabledCss = mergeStyles({
+  displayName: 'intentEditorDisabled',
   paddingTop: '10px',
-  color: Colors.APP_HYPERLINK_DETAIL_DARK
+  color: `var(${ThemeVariables.neutral3})`
 });
 
 enum IntentEditorMode {
@@ -122,27 +126,27 @@ class IntentEditor extends Component<IntentEditorProps, IntentEditorState> {
 
   render() {
     if (!this.props.intentInfo || this.props.mode === IntentEditorMode.Hidden) {
-      return (<div id="hidden" {...INTENT_EDITOR_HIDDEN_CSS} />);
+      return (<div id="hidden" className={ intentEditorHiddenCss } />);
     } else if (this.props.mode === IntentEditorMode.Disabled) {
       return (
-        <div id="disabled" {...INTENT_EDITOR_DISABLED_CSS}>
+        <div id="disabled" className={ intentEditorDisabledCss }>
           Please add your LUIS service to enable reassigning.
         </div>
       );
     }
     let options = this.props.intentInfo.map(i => {
-      return <option key={i.id} value={i.name} label={i.name}>{i.name}</option>;
+      return <option key={ i.id } value={ i.name } label={ i.name }>{ i.name }</option>;
     });
 
     let currentIntent = this.state.traceIntentStates[this.props.traceId].currentIntent ||
-                        this.state.traceIntentStates[this.props.traceId].originalIntent;
+      this.state.traceIntentStates[this.props.traceId].originalIntent;
     return (
-      <div {...INTENT_EDITOR_CSS}>
+      <div className={ indentEditorCss }>
         <form>
           <label>Reassign Intent</label>
-          <span id="selectorContainer" >
-            <select id="selector" value={currentIntent} onChange={this.handleChange}>
-              {options}
+          <span id="selectorContainer">
+            <select id="selector" value={ currentIntent } onChange={ this.handleChange }>
+              { options }
             </select>
           </span>
         </form>
@@ -165,7 +169,7 @@ class IntentEditor extends Component<IntentEditorProps, IntentEditorState> {
 
     this.setAndPersistTraceIntentStates(currentTraceIntentStates);
     if (this.props.intentReassigner) {
-      this.props.intentReassigner(newIntent, needsRetrain);
+      this.props.intentReassigner(newIntent, needsRetrain).catch();
     }
   }
 

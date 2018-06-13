@@ -31,24 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
+import { ExpandCollapse, ExpandCollapseContent, ThemeVariables } from '@bfemulator/ui-react';
 import * as React from 'react';
 
-import { Colors, ExpandCollapse, ExpandCollapseContent } from '@bfemulator/ui-react';
-
-const CSS = css({
-  backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
-  color: Colors.EXPLORER_FOREGROUND_DARK,
+const css = mergeStyles({
+  displayName: 'botNotOpenExplorer',
+  backgroundColor: `var(${ThemeVariables.neutral15})`,
+  color: `var(${ThemeVariables.neutral5})`,
   display: 'flex',
   flex: 1,
   flexDirection: 'column',
   listStyleType: 'none',
   margin: 0,
   padding: 0,
-
-  '& .explorer-empty-state': {
-    padding: '16px',
-    overflow: 'hidden',
+  selectors: {
+    '& .explorer-empty-state': {
+      padding: '16px',
+      overflow: 'hidden',
+    }
   }
 });
 
@@ -59,7 +60,7 @@ export class BotNotOpenExplorer extends React.Component<{}, {}> {
 
   render() {
     return (
-      <ul { ...CSS }>
+      <ul className={ css }>
         <li>
           <ExpandCollapse
             expanded={ true }

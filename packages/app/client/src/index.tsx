@@ -35,7 +35,6 @@ import { Provider } from 'react-redux';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { initializeIcons, initializeTheme } from '@bfemulator/ui-react';
-
 import interceptError from './interceptError';
 import interceptHyperlink from './interceptHyperlink';
 import Main from './ui/shell/mainContainer';

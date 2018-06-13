@@ -34,19 +34,21 @@
 import * as React from 'react';
 import { Component } from 'react';
 import { EntityViewer, EntityInfo } from './EntityViewer';
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 
 const INSTANCE_KEY = '$instance';
 
-const ENTITIES_VIWER_CSS = css({
+const entitiesViewerCss = mergeStyles({
+  displayName: 'entitiesViewer',
   paddingTop: '32px',
+  selectors: {
+    '& #header': {
+      fontWeight: 'bold'
+    },
 
-  '& #header': {
-    fontWeight: 'bold'
-  },
-
-  '& #entities': {
-    paddingTop: '8px'
+    '& #entities': {
+      paddingTop: '8px'
+    }
   }
 });
 
@@ -76,16 +78,16 @@ class EntitiesViewer extends Component<EntitiesViewerProps, EntitiesViewerState>
           name: entityKey,
           value: this.props.entities[entityKey]
         };
-        return <EntityViewer key={entityKey} entity={entity} />;
+        return <EntityViewer key={ entityKey } entity={ entity }/>;
       });
     } else {
       entities = [<span key="no-entities">No Entities</span>];
     }
     return (
-      <div {...ENTITIES_VIWER_CSS}>
+      <div className={ entitiesViewerCss }>
         <div id="header">Entities</div>
         <div id="entities">
-          {entities}
+          { entities }
         </div>
       </div>
     );

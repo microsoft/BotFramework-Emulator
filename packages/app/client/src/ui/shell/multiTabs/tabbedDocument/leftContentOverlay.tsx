@@ -34,12 +34,13 @@
 import * as React from 'react';
 import { DragEvent } from 'react';
 import { connect } from 'react-redux';
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 
 import { OVERLAY_CSS } from './overlayStyle';
 import { RootState } from '../../../../data/store';
 
-const CSS = css({
+const css = mergeStyles({
+  displayName: 'leftContentOverlay',
   top: 0,
   left: 0,
   right: '80%',
@@ -56,22 +57,18 @@ interface LeftContentOverlayState {
 }
 
 class LeftContentOverlayComponent extends React.Component<LeftContentOverlayProps, LeftContentOverlayState> {
-  constructor(props: LeftContentOverlayProps) {
-    super(props);
-
-    this.state = {
-      draggedOver: false
-    };
-  }
+  public state = {
+    draggedOver: false
+  };
 
   render() {
     let overlayClassName = this.state.draggedOver ? ' dragged-over-overlay' : '';
     overlayClassName += (this.props.draggingTab ? ' enabled-for-drop' : '');
 
     return (
-      <div className={ CSS + overlayClassName }
+      <div className={ `${css} ${overlayClassName}` }
            onDragEnterCapture={ this.onDragEnter } onDragLeave={ this.onDragLeave }
-           onDragOverCapture={ this.onDragOver } onDropCapture={ this.onDrop } />
+           onDragOverCapture={ this.onDragOver } onDropCapture={ this.onDrop }/>
     );
   }
 

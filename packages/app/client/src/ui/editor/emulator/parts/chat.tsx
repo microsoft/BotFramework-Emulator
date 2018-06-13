@@ -30,15 +30,14 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-import { Colors } from '@bfemulator/ui-react';
+import * as React from 'react';
+import { ThemeVariables } from '@bfemulator/ui-react';
 import { connect } from 'react-redux';
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 import { IEndpointService } from 'msbot/bin/schema';
 import { SpeechTokenInfo } from '@bfemulator/app-shared';
-import * as React from 'react';
-import * as WebChat from 'botframework-webchat';
-
+import { Speech, Chat as WebChat } from 'botframework-webchat';
+import { Component } from 'react';
 import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
 import { EmulatorMode } from '..';
 import memoize from '../../../helpers/memoize';
@@ -46,94 +45,98 @@ import memoize from '../../../helpers/memoize';
 const CognitiveServices = require('botframework-webchat/CognitiveServices');
 const AdaptiveCardsHostConfig = require('botframework-webchat/adaptivecards-hostconfig.json');
 
-const CSS = css({
+const css = mergeStyles({
+  displayName: 'chat',
   backgroundColor: 'white',
   height: '100%',
   display: 'flex',
+  selectors: {
+    '& .wc-chatview-panel': {
+      flex: 1,
+      position: 'relative',
+      selectors: {
+        '::-webkit-scrollbar-thumb': {
+          backgroundColor: 'blue',
+          color: 'red',
+        },
 
-  '& .wc-chatview-panel': {
-    flex: 1,
-    position: 'relative',
+        '& p': {
+          marginBottom: 0,
+          marginTop: 0,
+        },
 
-    '&::-webkit-scrollbar-thumb': {
-      backgroundColor: 'blue',
-      color: 'red',
-    },
+        '& h1, & h2, & h3, & h4': {
+          marginTop: '8px',
+          marginBottom: '4px',
+        },
 
-    '& p': {
-      marginBottom: 0,
-      marginTop: 0,
-    },
+        '& br': {
+          content: ' ',
+          display: 'block',
+          fontSize: '50%',
+        },
 
-    '& h1, & h2, & h3, & h4': {
-      marginTop: '8px',
-      marginBottom: '4px',
-    },
+        '& ol, & ul': {
+          marginTop: 0,
+        },
 
-    '& br': {
-      content: ' ',
-      display: 'block',
-      fontSize: '50%',
-    },
+        '& .wc-message-content *': {
+          userSelect: 'text',
+        },
 
-    '& ol, & ul': {
-      marginTop: 0,
-    },
+        '& .wc-message-content.selected': {
+          color: 'black',
+          backgroundColor: 'var(--webchat-selected-text-bg)',
+          boxShadow: '0px 1px 1px 0px rgba(0,0,0,0.2)',
+        },
 
-    '& .wc-message-content *': {
-      userSelect: 'text',
-    },
+        '& .wc-message-content.selected>svg.wc-message-callout>path': {
+          fill: `var(${ThemeVariables.webchatSelectedTextBg})`,
+        },
 
-    '& .wc-message-content.selected': {
-      color: 'black',
-      backgroundColor: Colors.WEBCHAT_SELECTED_BACKGROUND_DARK,
-      boxShadow: '0px 1px 1px 0px rgba(0,0,0,0.2)',
-    },
+        '& .wc-card': {
+          color: '#000',
+        },
 
-    '& .wc-message-content.selected>svg.wc-message-callout>path': {
-      fill: Colors.WEBCHAT_SELECTED_BACKGROUND_DARK,
-    },
+        '& .wc-card button': {
+          border: '1px solid #ccc',
+          borderRadius: '1px',
+          cursor: 'pointer',
+          outline: 'none',
+          transition: 'color .2s ease, background-color .2s ease',
+          backgroundColor: 'transparent',
+          color: `var(${ThemeVariables.infoOutline})`,
+          minHeight: '32px',
+          width: '100%',
+          padding: '0 16px',
+        },
 
-    '& .wc-card': {
-      color: '#000',
-    },
+        '& .wc-list ul': {
+          padding: 0,
+        },
 
-    '& .wc-card button': {
-      border: '1px solid #ccc',
-      borderRadius: '1px',
-      cursor: 'pointer',
-      outline: 'none',
-      transition: 'color .2s ease, background-color .2s ease',
-      backgroundColor: 'transparent',
-      color: '#0078D7',
-      minHeight: '32px',
-      width: '100%',
-      padding: '0 16px',
-    },
-
-    '& .wc-list ul': {
-      padding: 0,
-    },
-
-    '& .clickable:hover': {
-      cursor: 'pointer'
-    },
+        '& .clickable:hover': {
+          cursor: 'pointer'
+        },
+      }
+    }
   }
 });
 
-const DISCONNECTED_CSS = css({
+const disconnectedCss = mergeStyles({
+  displayName: 'chatDisconnected',
   padding: '16px',
   backgroundColor: 'white',
   height: '100%',
   display: 'flex',
   alignItems: 'flex-start',
-  flexAlign: 'center',
-
-  '& .start-button': {
-    flexGrow: 1,
-    flexShrink: 1,
-    flexBasis: '0px',
-  },
+  selectors: {
+    '& .start-button': {
+      flexGrow: 1,
+      flexShrink: 1,
+      flexBasis: '0px',
+    }
+  }
 });
 
 export interface Props {
@@ -169,7 +172,7 @@ function createWebChatProps(
           fetchCallback: getSpeechToken.bind(null, endpoint, false),
           fetchOnExpiryCallback: getSpeechToken.bind(null, endpoint, true)
         }),
-        speechSynthesizer: new WebChat.Speech.BrowserSpeechSynthesizer()
+        speechSynthesizer: new Speech.BrowserSpeechSynthesizer()
       } : null,
     user: {
       id: userId || 'default-user',
@@ -211,8 +214,8 @@ async function getSpeechToken(endpoint: IEndpointService, refresh: boolean): Pro
   }
 }
 
-class Chat extends React.Component<Props> {
-    createWebChatPropsMemoized: (
+class Chat extends Component<Props> {
+  createWebChatPropsMemoized: (
     botId: string,
     userId: string,
     directLine: any,
@@ -241,8 +244,8 @@ class Chat extends React.Component<Props> {
       );
 
       return (
-        <div id="webchat-container" className="wc-app" { ...CSS }>
-          <WebChat.Chat
+        <div id="webchat-container" className={ `${css} wc-app` }>
+          <WebChat
             key={ document.directLine.token }
             { ...webChatProps }
           />
@@ -250,7 +253,7 @@ class Chat extends React.Component<Props> {
       );
     } else {
       return (
-        <div { ...DISCONNECTED_CSS }>
+        <div className={ disconnectedCss }>
           Not Connected
         </div>
       );

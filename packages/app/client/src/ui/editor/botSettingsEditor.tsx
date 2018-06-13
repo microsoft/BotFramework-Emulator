@@ -33,8 +33,8 @@
 
 import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
-import { Colors, Column, MediumHeader, PrimaryButton, Row, TextInputField } from '@bfemulator/ui-react';
-import { css } from 'glamor';
+import { ThemeVariables, Column, MediumHeader, PrimaryButton, Row, TextInputField } from '@bfemulator/ui-react';
+import { IStyle } from '@uifabric/merge-styles';
 import { IConnectedService, ServiceType } from 'msbot/bin/schema';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -45,37 +45,40 @@ import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { ActiveBotHelper } from '../helpers/activeBotHelper';
 import { GenericDocument } from '../layout';
 
-const CSS = css({
-  '& .bot-settings-header': {
-    marginBottom: '16px'
-  },
+const css: IStyle = {
+  selectors: {
+    '& .bot-settings-header': {
+      marginBottom: '16px'
+    },
 
-  '& .save-button': {
-    marginLeft: 'auto'
-  },
+    '& .save-button': {
+      marginLeft: 'auto'
+    },
 
-  '& .save-connect-button': {
-    marginLeft: '8px'
-  },
-
-  '& .multiple-input-row': {
-    '& > div': {
+    '& .save-connect-button': {
       marginLeft: '8px'
     },
 
-    '& > div:first-child': {
-      marginLeft: 0
+    '& .multiple-input-row': {
+      selectors: {
+        '& > div': {
+          marginLeft: '8px'
+        },
+
+        '& > div:first-child': {
+          marginLeft: 0
+        }
+      }
+    },
+    '& .button-row': {
+      marginTop: '48px'
+    },
+
+    '& .bot-settings-input': {
+      color: `var(${ThemeVariables.neutral5})`
     }
-  },
-
-  '& .button-row': {
-    marginTop: '48px'
-  },
-
-  '& .bot-settings-input': {
-    color: Colors.APP_FOREGROUND_DARK
   }
-});
+};
 
 interface BotSettingsEditorProps {
   bot?: BotConfigWithPath;
@@ -116,7 +119,7 @@ class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps,
     const disabled = !this.state.bot.name || !this.props.dirty;
     const error = !this.state.bot.name ? 'The bot name is required' : '';
     return (
-      <GenericDocument style={CSS}>
+      <GenericDocument style={ css }>
         <Column>
           <MediumHeader className="bot-settings-header">Bot Settings</MediumHeader>
           <TextInputField className="bot-settings-input" label="Bot name" value={this.state.bot.name}

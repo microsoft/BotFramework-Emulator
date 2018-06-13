@@ -33,7 +33,7 @@
 
 import * as React from 'react';
 import { Component } from 'react';
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 import IntentViewer from './IntentViewer';
 import { IntentEditor, IntentEditorMode } from './IntentEditor';
 import { Intent } from '../Models/Intent';
@@ -56,7 +56,8 @@ interface EditorProps {
   traceId: string;
 }
 
-const EDITOR_CSS = css({
+const editorCss = mergeStyles({
+  displayName: 'editor',
   color: 'white',
   overflowY: 'auto',
   height: '100%',
@@ -73,7 +74,7 @@ class Editor extends Component<EditorProps, EditorState> {
     if (!this.props.recognizerResult || !this.props.recognizerResult.intents) {
       return { intent: NoneIntent, score: 0.0 };
     }
-    let intents: {[key: string]: RecognizerResultIntent } = this.props.recognizerResult.intents;
+    let intents: { [key: string]: RecognizerResultIntent } = this.props.recognizerResult.intents;
     let topIntent = Object.keys(intents).reduce((a, b) => {
       return intents[a].score > intents[b].score ? a : b;
     });
@@ -91,16 +92,16 @@ class Editor extends Component<EditorProps, EditorState> {
       mode = IntentEditorMode.Disabled;
     }
     return (
-      <div {...EDITOR_CSS}>
-        <IntentViewer topScoringIntent={topScoringIntent} />
+      <div className={ editorCss }>
+        < IntentViewer topScoringIntent={ topScoringIntent }/>
         <IntentEditor
-          currentIntent={topScoringIntent}
-          intentInfo={this.props.intentInfo}
-          intentReassigner={this.props.intentReassigner}
-          mode={mode}
-          traceId={this.props.traceId}
+          currentIntent={ topScoringIntent }
+          intentInfo={ this.props.intentInfo }
+          intentReassigner={ this.props.intentReassigner }
+          mode={ mode }
+          traceId={ this.props.traceId }
         />
-        <EntitiesViewer entities={this.props.recognizerResult.entities} />
+        <EntitiesViewer entities={ this.props.recognizerResult.entities }/>
       </div>
     );
   }

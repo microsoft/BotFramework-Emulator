@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 import * as React from 'react';
 import { DragEvent } from 'react';
 import { connect } from 'react-redux';
@@ -41,11 +41,12 @@ import { Editor } from '../../../../data/reducer/editor';
 import { RootState } from '../../../../data/store';
 import { OVERLAY_CSS } from './overlayStyle';
 
-const CSS = css({
-    top: 0,
-    left: '80%',
-    right: 0,
-    bottom: 0
+const css = mergeStyles({
+  displayName: 'rightContentOverlay',
+  top: 0,
+  left: '80%',
+  right: 0,
+  bottom: 0
 }, OVERLAY_CSS);
 
 interface RightContentOverlayProps {
@@ -72,9 +73,9 @@ class RightContentOverlayComponent extends React.Component<RightContentOverlayPr
     overlayClassName += (this.props.draggingTab ? ' enabled-for-drop' : '');
 
     return (
-      <div className={ CSS + overlayClassName }
+      <div className={ `${css} ${overlayClassName}` }
            onDragEnterCapture={ this.onDragEnter } onDragLeave={ this.onDragLeave }
-           onDragOverCapture={ this.onDragOver } onDropCapture={ this.onDrop } />
+           onDragOverCapture={ this.onDragOver } onDropCapture={ this.onDrop }/>
     );
   }
 

@@ -31,105 +31,120 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { hot } from 'react-hot-loader';
-import { css } from 'glamor';
+import { IStyle } from '@uifabric/merge-styles';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { BotInfo } from '@bfemulator/app-shared';
 
-import { Colors, Column, LargeHeader, PrimaryButton, Row, SmallHeader, TruncateText } from '@bfemulator/ui-react';
+import {
+  Column,
+  LargeHeader,
+  PrimaryButton,
+  Row,
+  SmallHeader,
+  ThemeVariables,
+  TruncateText
+} from '@bfemulator/ui-react';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { GenericDocument } from '../layout';
 import { RootState } from '../../data/store';
 
-const CSS = css({
-  '& .right-column': {
-    marginLeft: '48px'
-  },
-
-  '& .section': {
-    marginBottom: '34px',
-    width: 'auto',
-    maxWidth: '100%'
-  },
-
-  '& .well': {
-    padding: '12px 10px',
-    background: 'rgba(0,0,0,.2)',
-    transition: 'background 0.05s',
-
-    '&::-webkit-scrollbar-thumb': {
-      backgroundColor: 'transparent'
+const css: IStyle = {
+  selectors: {
+    '& .right-column': {
+      marginLeft: '48px'
     },
 
-    '&:hover': {
-      background: 'rgba(200,235,255,.072)',
+    '& .section': {
+      marginBottom: '34px',
+      width: 'auto',
+      maxWidth: '100%'
+    },
 
-      '&::-webkit-scrollbar-thumb': {
-        backgroundColor: Colors.SCROLLBAR_THUMB_BACKGROUND_DARK
+    '& .well': {
+      padding: '12px 10px',
+      background: 'rgba(0,0,0,.2)',
+      transition: 'background 0.05s',
+
+      '::-webkit-scrollbar-thumb': {
+        backgroundColor: 'transparent'
+      },
+
+      selectors: {
+        ':hover': {
+          background: 'rgba(200,235,255,.072)',
+
+          '::-webkit-scrollbar-thumb': {
+            backgroundColor: `var(${ThemeVariables.neutral10})`
+          }
+        }
       }
-    }
-  },
-
-  '& .no-bots': {
-    fontStyle: 'italic',
-  },
-
-  '& .recent-bots-list': {
-    maxHeight: '100px',
-    overflowY: 'auto',
-    overflowX: 'hidden',
-
-    '& > li': {
-      display: 'flex'
     },
 
-    '& a': {
-      flexShrink: 0
+    '& .no-bots': {
+      fontStyle: 'italic',
+    },
+
+    '& .recent-bots-list': {
+      maxHeight: '100px',
+      overflowY: 'auto',
+      overflowX: 'hidden',
+      selectors: {
+        '& > li': {
+          display: 'flex'
+        },
+
+        'a': {
+          flexShrink: 0
+        }
+      }
+    },
+
+    '& .recent-bot-detail': {
+      display: 'inline-block',
+      marginLeft: '8px',
+      color: `var(${ThemeVariables.neutral4})`,
+      userSelect: 'text',
+      cursor: 'text'
+    },
+
+    'a': {
+      minWidth: 0,
+      whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis',
+      overflow: 'hidden',
+      textDecoration: 'none',
+      color: `var(${ThemeVariables.focusedSelectedListItemBg})`,
+      selectors: {
+        ':hover': {
+          color: `var(${ThemeVariables.focusedSelectedListItemBg})`,
+        }
+      }
+    },
+
+    'ul': {
+      margin: 0,
+      listStyle: 'none',
+      padding: 0,
+    },
+
+    '& .open-bot': {
+      marginTop: '24px',
+      marginBottom: '16px',
+      width: '180px',
+      height: '26px',
+      selectors: {
+        '& .primary-button-text': {
+          lineHeight: '26px'
+        }
+      }
+    },
+
+    '& .cta-link': {
+      whiteSpace: 'normal'
     }
-  },
-
-  '& .recent-bot-detail': {
-    display: 'inline-block',
-    marginLeft: '8px',
-    color: Colors.APP_HYPERLINK_DETAIL_DARK,
-    userSelect: 'text',
-    cursor: 'text'
-  },
-
-  '& a': {
-    minWidth: 0,
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
-    overflow: 'hidden',
-    textDecoration: 'none',
-    color: Colors.APP_HYPERLINK_FOREGROUND_DARK,
-
-    ':hover': {
-      color: Colors.APP_HYPERLINK_FOREGROUND_DARK
-    }
-  },
-
-  '& ul': {
-    margin: 0,
-    listStyle: 'none',
-    padding: 0,
-  },
-
-  '& .open-bot': {
-    marginTop: '24px',
-    marginBottom: '16px',
-    width: '180px',
-    height: '26px',
-
-    '& .primary-button-text': {
-      lineHeight: '26px'
-    }
-  },
-
-  '& .cta-link': {
-    whiteSpace: 'normal'
   }
-});
+};
 
 interface WelcomePageProps {
   documentId?: string;
@@ -151,7 +166,7 @@ class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
 
   render() {
     return (
-      <GenericDocument style={ CSS }>
+      <GenericDocument style={ css }>
         <LargeHeader>Welcome to the Bot Framework Emulator!</LargeHeader>
         <Row>
           <Column>
