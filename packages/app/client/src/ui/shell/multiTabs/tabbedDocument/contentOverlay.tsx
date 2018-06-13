@@ -34,14 +34,15 @@
 import * as React from 'react';
 import { DragEvent } from 'react';
 import { connect } from 'react-redux';
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 
 import { OVERLAY_CSS } from './overlayStyle';
 import * as EditorActions from '../../../../data/action/editorActions';
 import { getTabGroupForDocument } from '../../../../data/editorHelpers';
 import { RootState } from '../../../../data/store';
 
-const CSS = css({
+const css = mergeStyles({
+  displayName: 'contentOverlay',
   top: 0,
   left: 0,
   right: 0,
@@ -86,7 +87,7 @@ class ContentOverlayComponent extends React.Component<ContentOverlayProps, Conte
     e.stopPropagation();
   }
 
-  onDragLeave(_e: DragEvent<HTMLDivElement>) {
+  onDragLeave() {
     this.setState(({ draggedOver: false }));
   }
 
@@ -112,7 +113,7 @@ class ContentOverlayComponent extends React.Component<ContentOverlayProps, Conte
     overlayClassName += (this.props.draggingTab ? ' enabled-for-drop' : '');
 
     return (
-      <div className={ CSS + overlayClassName }
+      <div className={ `${css} ${overlayClassName}` }
         onDragEnterCapture={ this.onDragEnter } onDragLeave={ this.onDragLeave }
         onDragOverCapture={ this.onDragOver } onDropCapture={ this.onDrop } />
     );

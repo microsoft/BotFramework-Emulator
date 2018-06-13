@@ -31,13 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 import * as React from 'react';
 
 import Log from './parts/log';
 import Panel, { PanelContent } from '../panel';
 
-const CSS = css({
+const css = mergeStyles({
+  displayName: 'logPanel',
   height: '100%'
 });
 
@@ -48,7 +49,7 @@ interface LogPanelProps {
 export default class LogPanel extends React.Component<LogPanelProps, {}> {
   render() {
     return (
-      <div { ...CSS }>
+      <div className={ css }>
         <Panel title="Log">
           <PanelContent>
             <Log document={ this.props.document } key={ this.props.document.pingId } />

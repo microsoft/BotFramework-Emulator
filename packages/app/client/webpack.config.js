@@ -1,6 +1,14 @@
 const path = require('path');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
-const { NodeEnvironmentPlugin, DllPlugin, DllReferencePlugin, NamedModulesPlugin, HotModuleReplacementPlugin, DefinePlugin } = webpack;
+const {
+  NodeEnvironmentPlugin,
+  DllPlugin,
+  DllReferencePlugin,
+  NamedModulesPlugin,
+  HotModuleReplacementPlugin,
+  DefinePlugin
+} = webpack;
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
 const { npm_lifecycle_event = '' } = process.env;
@@ -17,14 +25,11 @@ const use = [
 ];
 const defaultConfig = {
   entry: {
-    index: path.resolve('./src/index.tsx')
+    mergeStylesConfig: require.resolve('./src/mergeStylesConfig.ts'),
+    index: require.resolve('./src/index.tsx')
   },
 
   target: 'electron-renderer',
-
-  node: {
-    fs: 'empty'
-  },
 
   stats: {
     warnings: false
@@ -40,7 +45,7 @@ const defaultConfig = {
       {
         test: /\.tsx?$/,
         loader: 'tslint-loader',
-        options: { }
+        options: {}
       }
     ]
   },
@@ -68,7 +73,17 @@ const defaultConfig = {
     new NamedModulesPlugin(),
     new HotModuleReplacementPlugin(),
     new NodeEnvironmentPlugin(),
-    new HardSourceWebpackPlugin()
+    new HardSourceWebpackPlugin(),
+    new CopyWebpackPlugin([
+      { from: './src/ui/styles/themes', to: 'themes/' },
+      { from: require.resolve('botframework-webchat/botchat.css'), to: 'external/css/botchat.css' },
+      { from: require.resolve('@fuselab/ui-fabric/css/fabric.min.css'), to: 'external/css/fabric.min.css' },
+      { from: require.resolve('@fuselab/ui-fabric/themes/seti/seti.woff'), to: 'external/media' },
+      { from: './src/ui/media', to: 'external/media' }
+    ]),
+    new DefinePlugin({
+      DEV: JSON.stringify((npm_lifecycle_event.includes("dev")))
+    })
   ]
 };
 

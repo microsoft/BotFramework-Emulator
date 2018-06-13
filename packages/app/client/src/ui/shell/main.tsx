@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
+import { mergeStyles, IStyle } from '@uifabric/merge-styles';
 import * as React from 'react';
 
-import { Colors, Fonts, Splitter } from '@bfemulator/ui-react';
+import { ThemeVariables, Fonts, Splitter } from '@bfemulator/ui-react';
 import { ExplorerBar } from './explorer';
 import { MDI } from './mdi';
 import { NavBar } from './navBar';
@@ -44,8 +44,8 @@ import { StatusBar } from './statusBar';
 import { StoreVisualizer } from '../debug/storeVisualizer';
 import { Editor } from '../../data/reducer/editor';
 
-css.global('html, body, #root', {
-  backgroundColor: Colors.APP_BACKGROUND_DARK,
+const rootCss: IStyle = {
+  backgroundColor: `var(${ThemeVariables.neutral15})`,
   cursor: 'default',
   fontFamily: Fonts.FONT_FAMILY_DEFAULT,
   fontSize: '13px',
@@ -54,28 +54,38 @@ css.global('html, body, #root', {
   minHeight: '100%',
   overflow: 'hidden',
   userSelect: 'none',
+};
+
+mergeStyles({
+  selectors: {
+    ':global(html)': rootCss,
+    ':global(body)': rootCss,
+    ':global(#root)': rootCss
+  }
 });
 
-css.global('div', {
-  boxSizing: 'border-box',
+mergeStyles({
+  selectors: {
+    ':global(div)': {
+      boxSizing: 'border-box',
+    },
+    ':global(::-webkit-scrollbar)': {
+      width: '10px',
+      height: '10px',
+    },
+    ':global(::-webkit-scrollbar-track)': {
+      background: 'transparent',
+    },
+    ':global(::-webkit-scrollbar-thumb)': {
+      background: 'transparent',
+    }
+  }
 });
 
-css.global('::-webkit-scrollbar', {
-  width: '10px',
-  height: '10px',
-});
-
-css.global('::-webkit-scrollbar-track', {
-  background: Colors.SCROLLBAR_TRACK_BACKGROUND_DARK,
-});
-
-css.global('::-webkit-scrollbar-thumb', {
-  background: Colors.SCROLLBAR_THUMB_BACKGROUND_DARK,
-});
-
-const CSS = css({
-  backgroundColor: Colors.APP_BACKGROUND_DARK,
-  color: Colors.APP_FOREGROUND_DARK,
+const css = mergeStyles({
+  displayName: 'main',
+  backgroundColor: `var(${ThemeVariables.neutral15})`,
+  color: `var(${ThemeVariables.neutral5})`,
   display: 'flex',
   width: '100%',
   height: '100%',
@@ -83,25 +93,27 @@ const CSS = css({
   flexDirection: 'column'
 });
 
-const NAV_CSS = css({
+const navCss = mergeStyles({
+  displayName: 'mainNav',
   display: 'flex',
   flexDirection: 'row',
   width: '100%',
   height: '100%',
+  selectors: {
+    '& > .workbench': {
+      display: 'flex',
+      flex: 1,
+      flexDirection: 'column',
+    },
 
-  '& > .workbench': {
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-  },
+    '& .mdi-wrapper': {
+      height: '100%',
+      width: '100%',
+    },
 
-  '& .mdi-wrapper': {
-    height: '100%',
-    width: '100%',
-  },
-
-  '& .secondary-mdi': {
-    borderLeft: `1px solid ${Colors.C3}`
+    '& .secondary-mdi': {
+      borderLeft: `1px solid var(${ThemeVariables.neutral9})`
+    }
   }
 });
 
@@ -168,8 +180,8 @@ export class Main extends React.Component<MainProps, MainState> {
     );
 
     return (
-      <div { ...CSS }>
-        <div { ...NAV_CSS }>
+      <div className={ css }>
+        <div className={ navCss }>
           { !this.props.presentationModeEnabled &&
           <NavBar selection={ this.props.navBarSelection } showingExplorer={ this.props.showingExplorer }/> }
           <div className="workbench">

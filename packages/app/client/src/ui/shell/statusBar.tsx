@@ -31,13 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 import * as React from 'react';
-import { Colors } from '@bfemulator/ui-react';
+import { ThemeVariables } from '@bfemulator/ui-react';
 
-const CSS = css({
-  backgroundColor: Colors.STATUS_BAR_BACKGROUND_DARK,
-  color: Colors.STATUS_BAR_FOREGROUND_DARK,
+const css = mergeStyles({
+  displayName: 'statusBar',
+  backgroundColor: `var(${ThemeVariables.infoBg})`,
+  color: `var(${ThemeVariables.neutral1})`,
   lineHeight: '22px',
   minHeight: '22px',
   width: '100%',
@@ -45,4 +46,4 @@ const CSS = css({
   flex: 1
 });
 
-export const StatusBar = () => (<div { ...CSS }></div>);
+export const StatusBar = () => (<div className={ css }></div>);

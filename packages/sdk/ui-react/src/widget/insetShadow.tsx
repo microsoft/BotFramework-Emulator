@@ -32,18 +32,19 @@
 //
 
 import * as React from 'react';
-import { css } from 'glamor';
+import { mergeStyles, IStyle } from '@uifabric/merge-styles';
 
 import { Shadows } from '../styles';
 
-const BASE_CSS = css({
+const baseCss: IStyle = {
+  displayName: 'insetShadow',
   position: 'absolute',
   top: 0,
   left: 0,
   right: 0,
   bottom: 0,
   pointerEvents: 'none'
-});
+};
 
 export interface Props {
   top?: boolean;
@@ -74,11 +75,10 @@ export class InsetShadow extends React.Component<Props> {
         rule ? `${rule}, ${currentStyle}` : currentStyle
       , '');
 
-    const SHADOW_CSS = css({ boxShadow: shadowRule || null });
-    const CSS = css(BASE_CSS, SHADOW_CSS);
+    const css = mergeStyles(baseCss, { boxShadow: shadowRule || '' });
 
     return (
-      <div className="inset-shadow-component" { ...CSS } aria-hidden="true"/>
+      <div className={`${css} inset-shadow-component`} aria-hidden="true"/>
     );
   }
 }

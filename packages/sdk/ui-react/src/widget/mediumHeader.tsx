@@ -32,12 +32,13 @@
 //
 
 import * as React from 'react';
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 
 import { TruncateText } from '../layout';
 import { Fonts } from '../styles';
 
-const CSS = css({
+const css = mergeStyles({
+  displayName: 'mediumHeader',
   fontFamily: Fonts.FONT_FAMILY_DEFAULT,
   fontSize: '26px',
   fontWeight: 'normal',
@@ -51,5 +52,5 @@ export interface MediumHeaderProps {
 }
 
 export const MediumHeader = (props: MediumHeaderProps): JSX.Element =>
-  <h2 className={ 'medium-header-comp ' + (props.className || '') } { ...CSS }>
+  <h2 className={ `${css} medium-header-comp ${props.className || ''}` } >
     <TruncateText>{ props.children }</TruncateText></h2>;

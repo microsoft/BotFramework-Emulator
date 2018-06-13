@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 import { IBotConfig } from 'msbot/bin/schema';
 import * as React from 'react';
 
@@ -40,7 +40,8 @@ import { Extension } from '../../../../extensions';
 import { Inspector } from './inspector';
 import { ExtensionInspector } from '@bfemulator/sdk-shared';
 
-const CSS = css({
+const css = mergeStyles({
+  displayName: 'detail',
   padding: 0,
   height: '100%',
   fontFamily: Fonts.FONT_FAMILY_MONOSPACE,
@@ -80,7 +81,7 @@ export class Detail extends React.Component<DetailProps> {
 
   render() {
     return (
-      <div { ...CSS } >
+      <div className={ css }>
         <Inspector
           ref={ ref => this.inspectorRef = ref }
           bot={ this.props.bot }

@@ -32,10 +32,10 @@
 //
 
 import { IConnectedService } from 'msbot/bin/schema';
-import { Colors, ExpandCollapse, ExpandCollapseContent, ExpandCollapseControls } from '@bfemulator/ui-react';
-import { css, StyleAttribute } from 'glamor';
+import { ExpandCollapse, ExpandCollapseContent, ExpandCollapseControls, ThemeVariables } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { Component, SyntheticEvent } from 'react';
+import { mergeStyles, IStyle } from '@uifabric/merge-styles';
 
 export interface ServicePaneProps {
   openContextMenu: (service: IConnectedService, ...rest: any[]) => void;
@@ -55,15 +55,19 @@ export abstract class ServicePane<T extends ServicePaneProps,
 
   public state = {} as Readonly<S>;
   private _listRef: HTMLUListElement;
+  private readonly componentClassName: string;
+  private readonly listClassName: string;
 
   protected constructor(props: T, context: S) {
     super(props, context);
+    this.componentClassName = mergeStyles(this.componentCss);
+    this.listClassName = mergeStyles(this.listCss);
   }
 
   protected get controls(): JSX.Element {
     return (
       <ExpandCollapseControls>
-        <span { ...this.componentCss }>
+        <span className={ this.componentClassName }>
           <button onClick={ this.onAddIconClick } className="addIconButton">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25">
               <g>
@@ -79,7 +83,7 @@ export abstract class ServicePane<T extends ServicePaneProps,
   protected abstract get links(): JSX.Element[];
 
   protected get content(): JSX.Element {
-    const { links, listCss, emptyContent } = this;
+    const { links, listClassName, emptyContent } = this;
     if (!links || !links.length) {
       return (
         <ExpandCollapseContent>
@@ -89,7 +93,7 @@ export abstract class ServicePane<T extends ServicePaneProps,
     }
     return (
       <ExpandCollapseContent>
-        <ul { ...listCss } ref={ ul => this.listRef = ul }>
+        <ul className={ listClassName } ref={ ul => this.listRef = ul }>
           { links }
         </ul>
       </ExpandCollapseContent>
@@ -102,94 +106,103 @@ export abstract class ServicePane<T extends ServicePaneProps,
     );
   }
 
-  protected get componentCss(): StyleAttribute {
-    return css({
+  protected get componentCss(): IStyle {
+    return {
+      displayName: 'servicePane',
       position: 'relative',
       display: 'inline-block',
       height: '100%',
       width: '100%',
-
-      '& .addIconButton': {
-        background: 'transparent',
-        cursor: 'pointer',
-        border: 'none',
-        outline: 'none',
-        position: 'absolute',
-        transform: 'translateY(-50%)',
-        top: '50%',
-        right: '10px',
-        padding: '0',
-        margin: '0',
-
-        '> svg': {
-          width: '12px',
-          height: '12px',
-          fill: Colors.SERVICES_PANE_BUTTON_DARK,
-
-          '&:hover': {
-            fill: Colors.SERVICES_PANE_BUTTON_HOVER_DARK
+      selectors: {
+        '& .addIconButton': {
+          background: 'transparent',
+          cursor: 'pointer',
+          border: 'none',
+          outline: 'none',
+          position: 'absolute',
+          transform: 'translateY(-50%)',
+          top: '50%',
+          right: '10px',
+          padding: '0',
+          margin: '0',
+          selectors: {
+            '> svg': {
+              width: '12px',
+              height: '12px',
+              fill: `var(${ThemeVariables.neutral5})`,
+              selectors: {
+                ':hover': {
+                  fill: `var(${ThemeVariables.logPanelLink})`
+                }
+              }
+            }
           }
         }
       }
-    });
+    };
   }
 
-  protected get listCss(): StyleAttribute {
-    const {EXPLORER_ITEM_ACTIVE_BACKGROUND_DARK: C1, EXPLORER_ITEM_ACTIVE_BACKGROUND_DARK: C2} = Colors;
-    return css({
+  protected get listCss(): IStyle {
+    const { neutral13, neutral7, focusedListItem, webchatSelectedTextBg } = ThemeVariables;
+    return {
+      displayName: 'servicePaneList',
       listStyle: 'none',
       padding: 0,
       margin: 0,
       overflow: 'hidden',
+      selectors: {
+        '> li': {
+          color: `var(${ThemeVariables.neutral5})`,
+          cursor: 'pointer',
+          display: 'block',
+          whiteSpace: 'nowrap',
+          lineHeight: '22px',
+          minHeight: '22px',
+          fontSize: ' 13px',
+          selectors: {
+            ':hover': {
+              backgroundImage: `linear-gradient(to bottom, ${neutral13} 0%,${neutral13} 100%)`,
+              backgroundSize: '100% 30px',
+              backgroundRepeat: 'no-repeat'
+            },
 
-      '> li': {
-        color: Colors.EXPLORER_FOREGROUND_DARK,
-        cursor: 'pointer',
-        display: 'block',
-        whiteSpace: 'nowrap',
-        lineHeight: '22px',
-        minHeight: '22px',
-        fontSize: ' 13px',
+            '[data-selected]': {
+              backgroundImage: `linear-gradient(to bottom, var(${focusedListItem}) 0%,var(${focusedListItem}) 100%)`
+            },
 
-        '&:hover': {
-          backgroundImage: `linear-gradient(to bottom, ${C1} 0%,${C2} 100%)`,
-          backgroundSize: '100% 30px',
-          backgroundRepeat: 'no-repeat'
-        },
+            '& span': {
+              color: `var(${neutral7})`
+            },
 
-        '&[data-selected]': {
-          backgroundImage: `linear-gradient(to bottom, ${Colors.C12} 0%,${Colors.C12} 100%)`
-        },
-
-        '& span': {
-          color: Colors.SERVICES_PANE_FG_DARK
-        },
-
-        '&::before': {
-          content: '🔗',
-          display: 'inline-block',
-          color: Colors.C5,
-          paddingRight: '5px',
-          paddingLeft: '13px',
+            '::before': {
+              content: '🔗',
+              display: 'inline-block',
+              color: `var(${webchatSelectedTextBg})`,
+              paddingRight: '5px',
+              paddingLeft: '13px',
+            }
+          }
         }
       }
-    });
+    };
   }
 
-  protected get emptyContentCss(): StyleAttribute {
-    return css({
+  protected get emptyContentCss(): IStyle {
+    return {
       margin: '12px 25px',
       fontSize: '13px',
-      color: Colors.SERVICES_PANE_FG_DARK
-    });
+      color: `var(${ThemeVariables.neutral7})`
+    };
   }
 
-  protected get expandCollapseCss(): object {
+  protected get expandCollapseCss(): IStyle {
     // used to prevent explorer squishing caused by flexbox
     return {
-      '&.service-pane-explorer.container-expanded': {
+      selectors: {
+        '&.service-pane-explorer.container-expanded': {
           minHeight: '44px'
         }
+      }
     };
   }
 

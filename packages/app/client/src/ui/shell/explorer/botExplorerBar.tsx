@@ -32,7 +32,7 @@
 //
 
 import * as React from 'react';
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 
 import { EndpointExplorerContainer } from './endpointExplorer';
 import { ExplorerBarBody } from './explorerBarBody';
@@ -41,14 +41,16 @@ import { TranscriptExplorer } from './transcriptExplorer';
 import { BotNotOpenExplorer } from './botNotOpenExplorer';
 import { IBotConfig } from 'msbot/bin/schema';
 
-const CSS = css({
+const css = mergeStyles({
+  displayName: 'botExplorerBar',
   height: '100%',
   width: '100%',
-
-  '&.explorer-offscreen': {
-    position: 'absolute',
-    top: '5000px',
-    display: 'none'
+  selectors: {
+    '&.explorer-offscreen': {
+      position: 'absolute',
+      top: '5000px',
+      display: 'none'
+    }
   }
 });
 
@@ -62,28 +64,31 @@ export default class BotExplorerBar extends React.Component<BotExplorerBarProps>
     super(props);
   }
 
+  private get activeBotJsx(): JSX.Element {
+    return (
+      <>
+        <EndpointExplorerContainer title="Endpoint" />
+        <TranscriptExplorer />
+      </>
+    );
+  }
+
+  private get botNotOpenJsx(): JSX.Element {
+    return <BotNotOpenExplorer/>;
+  }
+
   render() {
     const className = this.props.hidden ? 'explorer-offscreen' : '';
-
+    const explorerBody = this.props.activeBot ? this.activeBotJsx : this.botNotOpenJsx;
     return (
-      <div className={ className }  { ...CSS }>
+      <div className={ `${css} ${className}` }>
         <ExplorerBarHeader>
           <Title>
             Bot Explorer
           </Title>
         </ExplorerBarHeader>
         <ExplorerBarBody>
-          { this.props.activeBot ? (
-            <>
-              <EndpointExplorerContainer title="Endpoint" />
-              <TranscriptExplorer />
-            </>
-          )
-            :
-            (
-              <BotNotOpenExplorer />
-            )
-          }
+          { explorerBody }
         </ExplorerBarBody>
       </div>
     );

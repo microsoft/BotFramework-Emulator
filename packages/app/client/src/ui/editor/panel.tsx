@@ -31,51 +31,56 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 import * as React from 'react';
 
-import { Colors, filterChildren, hmrSafeNameComparison } from '@bfemulator/ui-react';
+import { filterChildren, hmrSafeNameComparison, ThemeVariables } from '@bfemulator/ui-react';
 
-const CSS = css({
+const css = mergeStyles({
+  displayName: 'panel',
   display: 'flex',
   flex: 1,
   flexDirection: 'column',
   height: '100%',
   position: 'relative',
 
-  '& > .header': {
-    backgroundColor: Colors.SECTION_HEADER_BACKGROUND_DARK,
-    color: Colors.SECTION_HEADER_FOREGROUND_DARK,
-    lineHeight: '36px',
-    minHeight: '36px',
-    textTransform: 'uppercase',
-    paddingLeft: '16px',
-    display: 'flex',
-    whiteSpace: 'nowrap',
-
-    '& > .accessories': {
-      margin: '0 0 0 auto',
-      height: '100%',
-      width: 'auto',
+  selectors: {
+    '& > .header': {
+      backgroundColor: `var(${ThemeVariables.neutral13})`,
+      color: `var(${ThemeVariables.neutral5})`,
+      lineHeight: '36px',
+      minHeight: '36px',
+      textTransform: 'uppercase',
+      paddingLeft: '16px',
       display: 'flex',
-      alignItems: 'center',
-
-      '& > button': {
-        backgroundColor: 'transparent',
-        color: Colors.SECTION_HEADER_FOREGROUND_DARK,
-        border: 0,
-        cursor: 'pointer',
-        whiteSpace: 'nowrap'
+      whiteSpace: 'nowrap',
+      selectors: {
+        '& > .accessories': {
+          margin: '0 0 0 auto',
+          height: '100%',
+          width: 'auto',
+          display: 'flex',
+          alignItems: 'center',
+          selectors: {
+            '& > button': {
+              backgroundColor: 'transparent',
+              color: `var(${ThemeVariables.neutral5})`,
+              border: 0,
+              cursor: 'pointer',
+              whiteSpace: 'nowrap'
+            }
+          }
+        }
       }
-    }
-  },
+    },
 
-  '& > .body': {
-    backgroundColor: Colors.PANEL_BACKGROUND_DARK,
-    color: Colors.PANEL_FOREGROUND_DARK,
-    flex: 1,
-    overflow: 'auto',
-    padding: 0,
+    '& > .body': {
+      backgroundColor: `var(${ThemeVariables.neutral15})`,
+      color: `var(${ThemeVariables.neutral5})`,
+      flex: 1,
+      overflow: 'auto',
+      padding: 0,
+    }
   }
 });
 
@@ -91,7 +96,7 @@ export default class Panel extends React.Component<PanelProps, {}> {
 
   render() {
     return (
-      <div { ...CSS }>
+      <div className={ css }>
         <div className="header">
           { this.props.title }
           <div className="accessories">

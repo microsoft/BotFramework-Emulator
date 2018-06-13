@@ -32,10 +32,10 @@
 //
 
 import * as React from 'react';
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 
 import {
-  Colors,
+  ThemeVariables,
   Column,
   MediumHeader,
   PrimaryButton,
@@ -46,16 +46,19 @@ import {
 } from '@bfemulator/ui-react';
 import { DialogService } from './service';
 
-const CSS = css({
-  backgroundColor: Colors.EDITOR_TAB_BACKGROUND_DARK,
+const css = mergeStyles({
+  displayName: 'secretPromptDialog',
+  backgroundColor: `var(${ThemeVariables.neutral15})`,
   padding: '32px',
   width: '480px',
-
-  '& .button-row': {
-    marginTop: '48px',
-
-    '& > .save-button': {
-      marginLeft: '8px'
+  selectors: {
+    '& .button-row': {
+      marginTop: '48px',
+      selectors: {
+        '& > .save-button': {
+          marginLeft: '8px'
+        }
+      }
     }
   }
 });
@@ -73,15 +76,15 @@ export class SecretPromptDialog extends React.Component<{}, SecretPromptDialogSt
 
   render(): JSX.Element {
     return (
-      <div {...CSS}>
+      <div className={ css }>
         <Column>
           <MediumHeader>Bot secret required!</MediumHeader>
           <SmallHeader>Please enter your bot's secret</SmallHeader>
-          <TextInputField value={this.state.secret} onChanged={this.onChangeSecret} label={'Bot secret'}
-            type={'password'} />
-          <Row className="button-row" justify={RowJustification.Right}>
-            <PrimaryButton secondary text={'Dismiss'} onClick={this.onClickDismiss} />
-            <PrimaryButton className="save-button" text={'Save'} onClick={this.onClickSave} />
+          <TextInputField value={ this.state.secret } onChanged={ this.onChangeSecret } label={ 'Bot secret' }
+                          type={ 'password' }/>
+          <Row className="button-row" justify={ RowJustification.Right }>
+            <PrimaryButton secondary text={ 'Dismiss' } onClick={ this.onClickDismiss }/>
+            <PrimaryButton className="save-button" text={ 'Save' } onClick={ this.onClickSave }/>
           </Row>
         </Column>
       </div>

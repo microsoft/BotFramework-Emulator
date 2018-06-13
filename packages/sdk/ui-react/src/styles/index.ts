@@ -36,3 +36,4 @@ export * from './decorators';
 export * from './fonts';
 export * from './shadows';
 export * from './globalCss';
+export * from './themeVariables';

@@ -32,9 +32,10 @@
 //
 
 import * as React from 'react';
-import { css, StyleAttribute } from 'glamor';
+import { mergeStyles, IStyle } from '@uifabric/merge-styles';
 
-const CSS = css({
+const baseCss: IStyle = {
+  displayName: 'genericDocument',
   boxSizing: 'border-box',
   display: 'flex',
   justifyContent: 'center',
@@ -44,27 +45,26 @@ const CSS = css({
   minWidth: '480px',
   overflowX: 'hidden',
   overflowY: 'auto',
-
-  '& > .generic-doc-content': {
-    width: '90%',
-    maxWidth: '1200px'
+  selectors: {
+    '& > .generic-doc-content': {
+      width: '90%',
+      maxWidth: '1200px'
+    }
   }
-});
+};
 
 interface GenericDocumentProps {
   // Allows glamor style objects to be passed in (ex. <GenericDocument style={ CSS } />)
   // NOTE: Do not use spread operator!!!
-  style?: StyleAttribute;
+  style?: IStyle;
 }
 
 export class GenericDocument extends React.Component<GenericDocumentProps, {}> {
-  constructor(props: GenericDocumentProps) {
-    super(props);
-  }
 
   render(): JSX.Element {
+    const style = mergeStyles(baseCss, this.props.style);
     return (
-      <div className="generic-doc" { ...CSS } { ...this.props.style }>
+      <div className={ `${style} generic-doc` } >
         <div className="generic-doc-content">
           { this.props.children }
         </div>

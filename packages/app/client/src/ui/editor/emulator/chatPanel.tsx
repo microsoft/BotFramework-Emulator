@@ -31,27 +31,29 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 import * as React from 'react';
 
 import Chat from './parts/chat';
-import { Colors } from '@bfemulator/ui-react';
+import { ThemeVariables } from '@bfemulator/ui-react';
 import { EmulatorMode } from './index';
 
-const CSS = css({
+const css = mergeStyles({
+  displayName: 'chatPanel',
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
-
-  '& > header': {
-    backgroundColor: Colors.SECTION_HEADER_BACKGROUND_DARK,
-    color: Colors.SECTION_HEADER_FOREGROUND_DARK,
-    lineHeight: '30px',
-    minHeight: '30px',
-    paddingLeft: '16px',
-    textTransform: 'lowercase',
-    userSelect: 'text',
-    whiteSpace: 'nowrap'
+  selectors: {
+    '& > header': {
+      backgroundColor: `var(${ThemeVariables.neutral15})`,
+      color: `var(${ThemeVariables.neutral5})`,
+      lineHeight: '30px',
+      minHeight: '30px',
+      paddingLeft: '16px',
+      textTransform: 'lowercase',
+      userSelect: 'text',
+      whiteSpace: 'nowrap'
+    }
   }
 });
 
@@ -70,7 +72,7 @@ export default class ChatPanel extends React.Component<ChatPanelProps, {}> {
     const { botUrl } = this.props.document.endpoint || { botUrl: '' };
 
     return (
-      <div className="chat-panel" { ...CSS }>
+      <div className={ `${css} chat-panel` }>
         <header>{ botUrl }</header>
         <Chat mode={ this.props.mode } document={ this.props.document }
               onStartConversation={ this.props.onStartConversation } key={ this.props.document.pingId }/>

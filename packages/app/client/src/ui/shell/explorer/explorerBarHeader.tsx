@@ -30,43 +30,45 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 import * as React from 'react';
 import { filterChildren, hmrSafeNameComparison } from '@bfemulator/ui-react';
 
-const CSS = css({
+const css = mergeStyles({
+  displayName: 'explorerBarHeader',
   padding: '8px 16px',
   display: 'flex',
   flexFlow: 'row nowrap',
   alignItems: 'center',
   flexShrink: 0,
+  selectors: {
+    '& > header': {
+      fontSize: '13px',
+      lineHeight: '24px',
+      height: '24px',
+      textTransform: 'uppercase',
+      whiteSpace: 'nowrap',
+    },
 
-  '& > header': {
-    fontSize: '13px',
-    lineHeight: '24px',
-    height: '24px',
-    textTransform: 'uppercase',
-    whiteSpace: 'nowrap',
-  },
+    '& > span.accessory': {
+      display: 'inline-block',
+      marginLeft: 'auto',
+      width: '24px',
+      height: '24px',
+      cursor: 'pointer'
+    },
 
-  '& > span.accessory': {
-    display: 'inline-block',
-    marginLeft: 'auto',
-    width: '24px',
-    height: '24px',
-    cursor: 'pointer'
-  },
-
-  '& > span.bot-settings-icon': {
-    background: 'url("./external/media/ic_settings.svg") no-repeat 50% 50%',
-    backgroundSize: '16px',
+    '& > span.bot-settings-icon': {
+      background: 'url("./external/media/ic_settings.svg") no-repeat 50% 50%',
+      backgroundSize: '16px',
+    }
   }
 });
 
 export class ExplorerBarHeader extends React.Component {
   render() {
     return (
-      <div { ...CSS }>
+      <div className={ css }>
         <header>
           { filterChildren(this.props.children, child => hmrSafeNameComparison(child.type, Title)) }
         </header>

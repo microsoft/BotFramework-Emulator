@@ -31,20 +31,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
-import { Colors } from '@bfemulator/ui-react';
+import { IStyle } from '@uifabric/merge-styles';
+import { ThemeVariables } from '@bfemulator/ui-react';
 
-export const OVERLAY_CSS = css({
-    position: 'absolute',
-    transition: 'background-color 0.1s ease-in-out',
-    backgroundColor: Colors.EDITOR_DRAG_OVERLAY_TRANSPARENT_DARK,
-    pointerEvents: 'none',
-
+export const OVERLAY_CSS: IStyle = {
+  position: 'absolute',
+  transition: 'background-color 0.1s ease-in-out',
+  backgroundColor: 'transparent',
+  pointerEvents: 'none',
+  selectors: {
     '&.dragged-over-overlay': {
-        backgroundColor: Colors.EDITOR_DRAG_OVERLAY_VISIBLE_DARK
+      backgroundColor: `var(${ThemeVariables.neutral9})`
     },
 
     '&.enabled-for-drop': {
-        pointerEvents: 'auto'
+      pointerEvents: 'auto'
     }
-});
+  }
+};

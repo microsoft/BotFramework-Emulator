@@ -31,22 +31,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 import * as React from 'react';
 
-const CSS = css({
+const css = mergeStyles({
+  displayName: 'tabBarTab',
   height: '100%',
   border: 'none',
   padding: 0,
+  selectors: {
+    ':active': {
+      border: 0,
+      outline: 0
+    },
 
-  '&:active': {
-    border: 0,
-    outline: 0
-  },
-
-  '&:focus': {
-    border: 0,
-    outline: 0
+    ':focus': {
+      border: 0,
+      outline: 0
+    }
   }
 });
 
@@ -58,7 +60,7 @@ interface TabBarTabProps {
 
 export const TabBarTab = (props: TabBarTabProps) =>
   (<button
-    { ...CSS }
+    className={ css }
     ref={ props.setRef }
     onClick={ props.onClick }
     type="button"

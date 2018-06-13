@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 import * as React from 'react';
 import { EventHandler, SyntheticEvent } from 'react';
 import { connect } from 'react-redux';
@@ -42,7 +42,8 @@ interface DialogHostComponentProps {
   showing?: boolean;
 }
 
-const CSS = css({
+const css = mergeStyles({
+  displayName: 'host',
   display: 'flex',
   position: 'absolute',
   top: 0,
@@ -53,22 +54,24 @@ const CSS = css({
   justifyContent: 'center',
   backgroundColor: 'transparent',
   pointerEvents: 'none',
+  selectors: {
+    '& .dialog-host-content': {
+      height: 'auto',
+      width: 'auto',
+      maxWidth: '648px',
+      maxHeight: '80%',
+      overflow: 'auto',
+      boxShadow: '0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)'
+    },
 
-  '& .dialog-host-content': {
-    height: 'auto',
-    width: 'auto',
-    maxWidth: '648px',
-    maxHeight: '80%',
-    overflow: 'auto',
-    boxShadow: '0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)'
-  },
-
-  '&.dialog-host-visible': {
-    pointerEvents: 'auto'
+    '&.dialog-host-visible': {
+      pointerEvents: 'auto'
+    }
   }
 });
 
-const FOCUS_SENTINEL_CSS = css({
+const focusSentinelCss = mergeStyles({
+  displayName: 'focusSentinel',
   display: 'inline-block',
   width: 0,
   height: 0,
@@ -92,11 +95,19 @@ class DialogHostComponent extends React.Component<DialogHostComponentProps, {}> 
     const sentinelTabIndex = this.props.showing ? 0 : -1;
 
     return (
-      <div className={ CSS + ' dialog-host-overlay' + visibilityClass } onClick={ this.handleOverlayClick }>
-        <span tabIndex={ sentinelTabIndex } onFocus={ this.onFocusStartingSentinel } { ...FOCUS_SENTINEL_CSS }></span>
+      <div className={ `${css} dialog-host-overlay ${visibilityClass}` } onClick={ this.handleOverlayClick }>
+        <span
+          tabIndex={ sentinelTabIndex }
+          onFocus={ this.onFocusStartingSentinel }
+          className={ focusSentinelCss }>
+        </span>
         <div className="dialog-host-content" onClick={ this.handleContentClick } ref={ this.saveHostRef }>
         </div>
-        <span tabIndex={ sentinelTabIndex } onFocus={ this.onFocusEndingSentinel } { ...FOCUS_SENTINEL_CSS }></span>
+        <span
+          tabIndex={ sentinelTabIndex }
+          onFocus={ this.onFocusEndingSentinel }
+          className={ focusSentinelCss }>
+        </span>
       </div>
     );
   }

@@ -32,7 +32,7 @@
 //
 
 import * as React from 'react';
-import { css } from 'glamor';
+import { mergeStyles, IStyle } from '@uifabric/merge-styles';
 
 export enum RowJustification {
   Left,
@@ -46,14 +46,15 @@ export enum RowAlignment {
   Bottom
 }
 
-const BASE_CSS = css({
+const baseCss: IStyle = {
+  displayName: 'row',
   boxSizing: 'border-box',
   display: 'flex',
   flexFlow: 'row nowrap',
   flexShrink: 0,
   overflow: 'hidden',
   width: '100%'
-});
+};
 
 export interface RowProps {
   align?: RowAlignment;
@@ -64,14 +65,14 @@ export interface RowProps {
 export class Row extends React.Component<RowProps, {}> {
 
   render(): JSX.Element {
-    const ALIGNMENT_CSS = css({
+    const alignmentCss = {
       alignItems: getRowAlignment(this.props.align),
       justifyContent: getRowJustification(this.props.justify)
-    });
-    const CSS = css(BASE_CSS, ALIGNMENT_CSS);
+    };
+    const css = mergeStyles(baseCss, alignmentCss as IStyle);
 
     return (
-      <div className={ 'row-comp ' + (this.props.className || '') } { ...CSS }>
+      <div className={ `${css} row-comp ${this.props.className || ''}` }>
         { this.props.children }
       </div>
     );

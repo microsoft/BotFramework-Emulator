@@ -32,14 +32,15 @@
 //
 
 import * as React from 'react';
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 import { connect } from 'react-redux';
 
-import { Colors } from '@bfemulator/ui-react';
+import { ThemeVariables } from '@bfemulator/ui-react';
 import * as EditorActions from '../../data/action/editorActions';
 import { RootState } from '../../data/store';
 
-const CSS = css({
+const css = mergeStyles({
+  displayName: 'tabManager',
   top: 0,
   left: 0,
   bottom: 0,
@@ -50,30 +51,32 @@ const CSS = css({
   alignItems: 'center',
   justifyContent: 'center',
   backgroundColor: 'rgba(0, 0, 0, 0)',
+  selectors: {
+    '& > ul': {
+      height: 'auto',
+      width: 'auto',
+      maxHeight: '30%',
+      overflowY: 'auto',
+      margin: '0',
+      padding: '24px 64px',
+      listStyle: 'none',
+      backgroundColor: `var(${ThemeVariables.neutral15})`,
+      color: `var(${ThemeVariables.neutral16})`,
+      boxShadow: '0px 2px 2px 0px rgba(0,0,0,0.2), 2px 0px 2px 0px rgba(0,0,0,0.2), -2px 0px 2px 0px rgba(0,0,0,0.2)'
+    },
 
-  '& > ul': {
-    height: 'auto',
-    width: 'auto',
-    maxHeight: '30%',
-    overflowY: 'auto',
-    margin: '0',
-    padding: '24px 64px',
-    listStyle: 'none',
-    backgroundColor: Colors.EDITOR_TAB_INACTIVE_BACKGROUND_DARK,
-    color: Colors.EDITOR_TAB_INACTIVE_FOREGROUND_DARK,
-    boxShadow: '0px 2px 2px 0px rgba(0,0,0,0.2), 2px 0px 2px 0px rgba(0,0,0,0.2), -2px 0px 2px 0px rgba(0,0,0,0.2)'
-  },
+    '& > ul > li': {
+      padding: '4px 0',
+      textAlign: 'center',
+      selectors: {
+        ':focus': { outline: '0' }
+      }
+    },
 
-  '& > ul > li': {
-    padding: '4px 0',
-    textAlign: 'center',
-
-    '&:focus': { outline: '0' }
-  },
-
-  '& > ul > .selected-tab': {
-    color: Colors.EDITOR_TAB_HOVER_FOREGROUND_DARK,
-    textDecoration: 'underline'
+    '& > ul > .selected-tab': {
+      color: `var(${ThemeVariables.neutral1})`,
+      textDecoration: 'underline'
+    }
   }
 });
 
@@ -202,7 +205,7 @@ class TabManagerComponent extends React.Component<TabManagerProps, TabManagerSta
   render() {
     return (this.state.showing && !this.props.disabled) ?
       (
-        <div { ...CSS }>
+        <div className={ css }>
           <ul>
             {
               this.props.recentTabs.map((tabId, index) => {

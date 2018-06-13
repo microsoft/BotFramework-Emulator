@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 import { IBotConfig } from 'msbot/bin/schema';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -42,29 +42,35 @@ import { Extension, ExtensionManager, GetInspectorResult } from '../../../extens
 import { ExtensionInspector, InspectorAccessory, InspectorAccessoryState } from '@bfemulator/sdk-shared';
 import { RootState } from '../../../data/store';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib-commonjs/Spinner';
-import { Colors } from '@bfemulator/ui-react';
+import { ThemeVariables } from '@bfemulator/ui-react';
 
-const CSS = css({
+const css = mergeStyles({
+  displayName: 'detailPanel',
   height: '100%',
-
-  '& .accessories': {
-    '& .accessory-button': {
-      height: '30px',
-      whiteSpace: 'nowrap',
-      display: 'flex',
-      color: Colors.TOOLBAR_BUTTON_FOREGROUND_DARK,
-      backgroundColor: Colors.TOOLBAR_BUTTON_BACKGROUND_DARK,
-
-      '& .accessory-button-icon': {
-        width: '30px'
-      }
-    },
+  selectors: {
     '& .accessory-button:disabled': {
       cursor: 'default',
-      color: Colors.TOOLBAR_BUTTON_DISABLED_FOREGROUND_DARK
+      color: `var(${ThemeVariables.neutral7})`
     },
     '& .accessory-button:active': {
-      color: Colors.TOOLBAR_BUTTON_ACTIVE_FOREGROUND_DARK
+      color: `var(${ThemeVariables.neutral1})`
+    },
+
+    '& .accessories': {
+      selectors: {
+        '& .accessory-button': {
+          height: '30px',
+          whiteSpace: 'nowrap',
+          display: 'flex',
+          color: `var(${ThemeVariables.neutral5})`,
+          backgroundColor: 'transparent',
+          selectors: {
+            '& .accessory-button-icon': {
+              width: '30px'
+            }
+          }
+        }
+      }
     }
   }
 });
@@ -187,11 +193,11 @@ class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
   renderAccessoryIcon(config: InspectorAccessoryState) {
     if (config.icon === 'Spinner') {
       return (
-        <Spinner className="accessory-button-icon" size={SpinnerSize.xSmall} />
+        <Spinner className="accessory-button-icon" size={ SpinnerSize.xSmall }/>
       );
     } else if (config.icon) {
       return (
-        <i className={`accessory-button-icon ms-Icon ms-Icon--${config.icon}`} aria-hidden="true"></i>
+        <i className={ `accessory-button-icon ms-Icon ms-Icon--${config.icon}` } aria-hidden="true"></i>
       );
     } else {
       return false;
@@ -204,11 +210,11 @@ class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
     return (
       <button
         className="accessory-button"
-        key={config.id}
-        disabled={!enabled}
-        onClick={() => handler(config.id)}>
-        {this.renderAccessoryIcon(currentState)}
-        {currentState.label}
+        key={ config.id }
+        disabled={ !enabled }
+        onClick={ () => handler(config.id) }>
+        { this.renderAccessoryIcon(currentState) }
+        { currentState.label }
       </button>
     );
   }
@@ -216,7 +222,7 @@ class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
   renderAccessoryButtons(_inspector: ExtensionInspector) {
     return (
       <PanelControls>
-        {this.state.buttons.map(a => this.renderAccessoryButton(a, this.onAccessoryClick))}
+        { this.state.buttons.map(a => this.renderAccessoryButton(a, this.onAccessoryClick)) }
       </PanelControls>
     );
   }
@@ -225,20 +231,20 @@ class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
     if (this.state.inspector) {
       // TODO - localization
       return (
-        <div {...CSS}>
-          <Panel title={['inspector', this.state.title].filter(s => s && s.length).join(' - ')}>
-            {this.renderAccessoryButtons(this.state.inspector)}
+        <div className={ css }>
+          <Panel title={ ['inspector', this.state.title].filter(s => s && s.length).join(' - ') }>
+            { this.renderAccessoryButtons(this.state.inspector) }
             <PanelContent>
               <Detail
-                ref={ref => this.detailRef = ref}
-                bot={this.props.bot}
-                document={this.props.document}
-                inspectObj={this.state.inspectObj}
-                extension={this.state.extension}
-                inspector={this.state.inspector}
-                enableAccessory={this.enableAccessory}
-                setAccessoryState={this.setAccessoryState}
-                setInspectorTitle={this.setInspectortitle}
+                ref={ ref => this.detailRef = ref }
+                bot={ this.props.bot }
+                document={ this.props.document }
+                inspectObj={ this.state.inspectObj }
+                extension={ this.state.extension }
+                inspector={ this.state.inspector }
+                enableAccessory={ this.enableAccessory }
+                setAccessoryState={ this.setAccessoryState }
+                setInspectorTitle={ this.setInspectortitle }
               />
             </PanelContent>
           </Panel>
@@ -247,8 +253,8 @@ class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
     } else {
       return (
         // No inspector was found.
-        <div {...CSS}>
-          <Panel title={`inspector`}>
+        <div className={ css }>
+          <Panel title={ `inspector` }>
           </Panel>
         </div>
       );
