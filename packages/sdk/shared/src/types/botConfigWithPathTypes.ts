@@ -32,21 +32,27 @@
 //
 
 import { BotConfigModel } from 'msbot/bin/models';
-import { IBotConfig } from 'msbot/bin/schema';
+import { IBotConfig, IEndpointService } from 'msbot/bin/schema';
+
+export interface BotConfigOverrides {
+  readonly endpoint?: Partial<IEndpointService>;
+}
 
 export interface BotConfigWithPath extends IBotConfig {
   path?: string;
+  overrides?: BotConfigOverrides;
 }
 
 export class BotConfigWithPathImpl extends BotConfigModel implements BotConfigWithPath {
   public path = '';
+  public overrides = null;
 
   static fromJSON(source: Partial<BotConfigWithPathImpl>): BotConfigWithPathImpl {
 
     const botConfig = super.fromJSON(source) as Partial<BotConfigWithPathImpl>;
-    const { path = '' } = source;
+    const { path = '', overrides = null } = source;
     const botConfigWithPath = new BotConfigWithPathImpl();
-    Object.assign(botConfigWithPath, botConfig, { path });
+    Object.assign(botConfigWithPath, botConfig, { path, overrides });
 
     return botConfigWithPath;
   }
