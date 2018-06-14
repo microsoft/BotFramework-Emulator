@@ -31,18 +31,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { applyBotConfigOverrides } from './bot';
+import { applyBotConfigOverrides, botsAreTheSame } from './bot';
 import { BotConfigWithPath, BotConfigOverrides } from '../types';
 
 describe('Bot utility function tests', () => {
+  const bot: BotConfigWithPath = {
+    name: 'someBot',
+    description: 'someDescription',
+    path: 'somePath',
+    secretKey: null,
+    services: [],
+    overrides: null
+  };
+
   it('should apply bot config overrides', () => {
-    const bot: BotConfigWithPath = {
-      name: 'someBot',
-      description: 'someDescription',
-      secretKey: null,
-      services: [],
-      overrides: null
-    };
     const overrides: BotConfigOverrides = {
       endpoint: {
         endpoint: 'someEndpoint',
@@ -52,11 +54,46 @@ describe('Bot utility function tests', () => {
       }
     };
     const overriddenBot = applyBotConfigOverrides(bot, overrides);
-    
+
     expect(overriddenBot.overrides).not.toBe(null);
     expect(overriddenBot.overrides.endpoint.endpoint).toBe('someEndpoint');
     expect(overriddenBot.overrides.endpoint.appId).toBe('someAppId');
     expect(overriddenBot.overrides.endpoint.appPassword).toBe('someAppPw');
     expect(overriddenBot.overrides.endpoint.id).toBe('someEndpoint');
+  });
+
+  describe('Comparing two bots', () => {
+    it('should return false when one of the bots is falsy', () => {
+      const falsyBot: BotConfigWithPath = null;
+      const result1 = botsAreTheSame(bot, falsyBot);
+      const result2 = botsAreTheSame(falsyBot, bot);
+
+      expect(result1).toBe(false);
+      expect(result2).toBe(false);
+    });
+
+    it('should return false when the bots don\'t have matching paths', () => {
+      const nonMatchingBot: BotConfigWithPath = {
+        name: 'someName',
+        description: '',
+        secretKey: null,
+        services: []
+      };
+      const result = botsAreTheSame(bot, nonMatchingBot);
+
+      expect(result).toBe(false);
+    });
+
+    it('should return true when the bots do have matching paths', () => {
+      const matchingBot: BotConfigWithPath = {
+        name: 'someOtherName',
+        description: '',
+        secretKey: null,
+        services: [],
+        path: 'somePath'
+      };
+      const result = botsAreTheSame(bot, matchingBot);
+      expect(result).toBe(true);
+    });
   });
 });

@@ -33,11 +33,31 @@
 
 import { BotConfigWithPath, BotConfigWithPathImpl, BotConfigOverrides } from '../types';
 
-export function applyBotConfigOverrides
-  (targetBot: BotConfigWithPath, overrides: BotConfigOverrides): BotConfigWithPath {
+/**
+ * Takes bot config overrides and applies them to the target bot
+ * @param targetBot The bot that the overrides will be applied to
+ * @param overrides The overrides to apply to the target bot
+ */
+export function applyBotConfigOverrides(
+  targetBot: BotConfigWithPath,
+  overrides: BotConfigOverrides
+): BotConfigWithPath {
+
   const botConfig: BotConfigWithPath = BotConfigWithPathImpl.fromJSON({
     ...targetBot,
     ...{ overrides }
   });
   return botConfig;
+}
+
+/**
+ * Returns true if the two bots have the same path, otherwise false
+ * @param bot1 First bot to be compared
+ * @param bot2 Second bot to be compared
+ */
+export function botsAreTheSame(bot1: BotConfigWithPath, bot2: BotConfigWithPath): boolean {
+  if (bot1 && bot2) {
+    return bot1.path === bot2.path;
+  }
+  return false;
 }
