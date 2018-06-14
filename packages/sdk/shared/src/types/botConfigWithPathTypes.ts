@@ -48,12 +48,17 @@ export class BotConfigWithPathImpl extends BotConfigModel implements BotConfigWi
   public overrides = null;
 
   static fromJSON(source: Partial<BotConfigWithPathImpl>): BotConfigWithPathImpl {
-
     const botConfig = super.fromJSON(source) as Partial<BotConfigWithPathImpl>;
     const { path = '', overrides = null } = source;
     const botConfigWithPath = new BotConfigWithPathImpl();
     Object.assign(botConfigWithPath, botConfig, { path, overrides });
 
     return botConfigWithPath;
+  }
+
+  public toJSON(): Partial<BotConfigWithPath> {
+    const botConfig = super.toJSON();
+    const { path, overrides } = this;
+    return { ...botConfig, path, overrides };
   }
 }

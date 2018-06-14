@@ -48,7 +48,7 @@ describe('Bot reducer tests', () => {
     const endingState = bot(DEFAULT_STATE, emptyAction);
     expect(endingState).toEqual(startingState);
   });
-  
+
   it('should create a bot', () => {
     const testbot: BotConfigWithPath = {
       name: 'bot1',
@@ -78,7 +78,7 @@ describe('Bot reducer tests', () => {
     it('should set a bot as active', () => {
       const action = setActive(testbot);
       const state = bot(DEFAULT_STATE, action);
-      expect(state.activeBot).toBe(testbot);
+      expect(state.activeBot).toEqual(testbot);
     });
 
     it('should move the bot to the top of the recently used bots list', () => {
@@ -104,7 +104,7 @@ describe('Bot reducer tests', () => {
         ...DEFAULT_STATE,
         botFiles: testbots
       };
-      
+
       const action = setActive(testbot);
       const endingState = bot(startingState, action);
       expect(endingState.botFiles[0].path).toBe('testpath');
@@ -161,11 +161,30 @@ describe('Bot reducer tests', () => {
         displayName: 'bot3',
         path: 'path3',
         secret: null
-      }
+      },
+      null
     ];
     const action = load(bots);
     const state = bot(DEFAULT_STATE, action);
-    expect(state.botFiles).toEqual(bots);
+    expect(state.botFiles).not.toEqual(bots);
+    expect(state.botFiles.length).toBe(3);
+    expect(state.botFiles).toEqual([
+      {
+        displayName: 'bot1',
+        path: 'path1',
+        secret: null
+      },
+      {
+        displayName: 'bot2',
+        path: 'path2',
+        secret: 'test-secret'
+      },
+      {
+        displayName: 'bot3',
+        path: 'path3',
+        secret: null
+      }
+    ]);
   });
 
   it('should close a bot', () => {

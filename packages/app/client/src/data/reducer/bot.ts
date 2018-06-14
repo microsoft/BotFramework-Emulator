@@ -71,12 +71,12 @@ export default function bot(state: BotState = DEFAULT_STATE, action: BotAction) 
       if (mostRecentBot) {
         recentBots.unshift(mostRecentBot);
       }
-      let activeBot = action.payload.bot;
+      let newActiveBot = action.payload.bot;
       if (action.payload.preserveOverrides && state.activeBot) {
-        activeBot = applyBotConfigOverrides(activeBot, state.activeBot.overrides);
+        newActiveBot = applyBotConfigOverrides(newActiveBot, state.activeBot.overrides);
       }
       state = setBotFilesState(recentBots, state);
-      state = setActiveBot(activeBot, state);
+      state = setActiveBot(newActiveBot, state);
       break;
     }
 
@@ -84,7 +84,7 @@ export default function bot(state: BotState = DEFAULT_STATE, action: BotAction) 
       // close the ative bot
       state = setActiveBot(null, state);
       break;
-    }
+    }b
 
     default:
       break;
@@ -93,10 +93,12 @@ export default function bot(state: BotState = DEFAULT_STATE, action: BotAction) 
 }
 
 function setActiveBot(botConfig: BotConfigWithPath, state: BotState): BotState {
-  let newState = Object.assign({}, state);
-
-  newState.activeBot = botConfig;
-  return newState;
+  return Object.assign({}, state, {
+    get activeBot() {
+      // Clones only - this guarantees only pristine bots will exist in the store
+      return JSON.parse(JSON.stringify(botConfig));
+    }
+  });
 }
 
 function setBotFilesState(botFilesState: BotInfo[], state: BotState): BotState {

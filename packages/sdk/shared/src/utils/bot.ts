@@ -35,8 +35,9 @@ import { BotConfigWithPath, BotConfigWithPathImpl, BotConfigOverrides } from '..
 
 export function applyBotConfigOverrides
   (targetBot: BotConfigWithPath, overrides: BotConfigOverrides): BotConfigWithPath {
-  return BotConfigWithPathImpl.fromJSON({
+  const botConfig: BotConfigWithPath = BotConfigWithPathImpl.fromJSON({
     ...targetBot,
     ...{ overrides }
   });
+  return botConfig;
 }

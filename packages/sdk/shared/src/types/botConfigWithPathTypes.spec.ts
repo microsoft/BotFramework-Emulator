@@ -59,7 +59,7 @@ describe('BotConfigWithPathTypes tests', () => {
           }
         }
       });
-  
+
       expect(constructedBotConfig.name).toBe('someBotName');
       expect(constructedBotConfig.description).toBe('some bot description');
       expect(constructedBotConfig.path).toBe('somePath');
@@ -88,9 +88,9 @@ describe('BotConfigWithPathTypes tests', () => {
         },
         extraneousProp: true
       };
-  
+
       const constructedBotConfig = BotConfigWithPathImpl.fromJSON(botConfigVariable);
-  
+
       expect(constructedBotConfig.name).toBe('someBotName');
       expect(constructedBotConfig.description).toBe('some bot description');
       expect(constructedBotConfig.path).toBe('somePath');
@@ -103,6 +103,20 @@ describe('BotConfigWithPathTypes tests', () => {
         }
       });
       expect(Object.keys(constructedBotConfig)).not.toContain('extraneousProp');
+    });
+
+    it('should serialize correctly', () => {
+      const botConfig = BotConfigWithPathImpl.fromJSON({
+        name: 'someBotName',
+        description: 'some description',
+        path: 'somePath',
+        secretKey: null,
+        services: [],
+        overrides: {}
+      });
+
+      const serializedVersion = JSON.stringify(botConfig);
+      expect(serializedVersion.includes('path')).toBe(true);
     });
   });
 });
