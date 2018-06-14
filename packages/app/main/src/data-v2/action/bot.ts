@@ -51,8 +51,7 @@ export interface LoadBotAction {
 export interface SetActiveBotAction {
   type: BotActions.setActive;
   payload: {
-    bot: BotConfigWithPath,
-    preserveOverrides: boolean
+    bot: BotConfigWithPath
   };
 }
 
@@ -86,12 +85,11 @@ export function load(bots: BotInfo[]): LoadBotAction {
   };
 }
 
-export function setActive(bot: BotConfigWithPath, preserveOverrides: boolean = false): SetActiveBotAction {
+export function setActive(bot: BotConfigWithPath): SetActiveBotAction {
   return {
     type: BotActions.setActive,
     payload: {
-      bot,
-      preserveOverrides
+      bot
     }
   };
 }

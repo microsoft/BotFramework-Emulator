@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotConfigWithPath, applyBotConfigOverrides } from '@bfemulator/sdk-shared';
+import { BotConfigWithPath, applyBotConfigOverrides, botsAreTheSame } from '@bfemulator/sdk-shared';
 import { BotAction, BotActions } from '../action/bot';
 import { BotInfo } from '@bfemulator/app-shared';
 
@@ -62,7 +62,7 @@ export const bot = (state: BotState = DEFAULT_STATE, action: BotAction): BotStat
         recentBots.unshift(mostRecentBot);
       }
       let newActiveBot = action.payload.bot;
-      if (action.payload.preserveOverrides && state.activeBot) {
+      if (botsAreTheSame(state.activeBot, newActiveBot) && action.payload.preserveOverrides) {
         newActiveBot = applyBotConfigOverrides(newActiveBot, state.activeBot.overrides);
       }
       state = setBotFilesState(recentBots, state);

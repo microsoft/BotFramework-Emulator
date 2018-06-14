@@ -55,14 +55,14 @@ describe('Bot reducer tests', () => {
       description: '',
       secretKey: null,
       services: [],
-      path: 'testpath'
+      path: 'somePath'
     };
 
     const action = create(testbot, testbot.path, 'testsecret');
     const state = bot(DEFAULT_STATE, action);
     expect(state.botFiles[0]).toBeTruthy();
     expect(state.botFiles[0].displayName).toBe('bot1');
-    expect(state.botFiles[0].path).toBe('testpath');
+    expect(state.botFiles[0].path).toBe('somePath');
     expect(state.botFiles[0].secret).toBe('testsecret');
   });
 
@@ -72,7 +72,7 @@ describe('Bot reducer tests', () => {
       description: '',
       secretKey: null,
       services: [],
-      path: 'testpath'
+      path: 'somePath'
     };
 
     it('should set a bot as active', () => {
@@ -95,7 +95,7 @@ describe('Bot reducer tests', () => {
         },
         {
           displayName: 'bot1',
-          path: 'testpath',
+          path: 'somePath',
           secret: null
         },
       ];
@@ -107,17 +107,17 @@ describe('Bot reducer tests', () => {
 
       const action = setActive(testbot);
       const endingState = bot(startingState, action);
-      expect(endingState.botFiles[0].path).toBe('testpath');
+      expect(endingState.botFiles[0].path).toBe('somePath');
     });
 
-    it('should preserve overrides from the previous bot', () => {
+    it('should preserve overrides from the previous bot if they have the same path', () => {
       const startingState: BotState = {
         ...DEFAULT_STATE,
         activeBot: {
           name: 'someActiveBot',
           description: '',
           services: [],
-          path: 'someActiveBotPath',
+          path: 'somePath',
           secretKey: null,
           overrides: {
             endpoint: {
@@ -142,6 +142,34 @@ describe('Bot reducer tests', () => {
       expect(endpointOverrides.id).toBe('someEndpointOverride');
       expect(endpointOverrides.appId).toBe('someAppId');
       expect(endpointOverrides.appPassword).toBe('someAppPw');
+    });
+
+    it('should throw away overrides from the previous bot if they don\'t have the same path', () => {
+      const startingState: BotState = {
+        ...DEFAULT_STATE,
+        activeBot: {
+          name: 'someActiveBot',
+          description: '',
+          services: [],
+          path: 'someOtherPath',
+          secretKey: null,
+          overrides: {
+            endpoint: {
+              endpoint: 'someEndpointOverride',
+              appId: 'someAppId',
+              appPassword: 'someAppPw',
+              id: 'someEndpointOverride'
+            }
+          }
+        }
+      };
+
+      const action = setActive(testbot, true);
+      const endingState = bot(startingState, action);
+      const activeBot = endingState.activeBot;
+
+      expect(activeBot.name).not.toBe('someActiveBot');
+      expect(activeBot.overrides).toBeFalsy();
     });
   });
 

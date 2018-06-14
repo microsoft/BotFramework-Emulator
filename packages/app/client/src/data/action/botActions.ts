@@ -60,8 +60,7 @@ export interface LoadBotAction {
 export interface SetActiveBotAction {
   type: BotActions.setActive;
   payload: {
-    bot: BotConfigWithPath,
-    preserveOverrides: boolean
+    bot: BotConfigWithPath
   };
 }
 
@@ -100,17 +99,14 @@ export function load(bots: BotInfo[]): LoadBotAction {
 }
 
 /**
- * 
+ *
  * @param bot The new active bot
- * @param preserveOverrides If set to true, the overrides from the previous active bot will be applied to
- * the new active bot, otherwise the new active bot's overrides are used
  */
-export function setActive(bot: BotConfigWithPath, preserveOverrides: boolean = false): SetActiveBotAction {
+export function setActive(bot: BotConfigWithPath): SetActiveBotAction {
   return {
     type: BotActions.setActive,
     payload: {
-      bot,
-      preserveOverrides
+      bot
     }
   };
 }

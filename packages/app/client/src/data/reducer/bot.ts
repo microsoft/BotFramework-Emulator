@@ -32,7 +32,7 @@
 //
 
 import { BotInfo, getBotDisplayName } from '@bfemulator/app-shared';
-import { BotConfigWithPath, applyBotConfigOverrides } from '@bfemulator/sdk-shared';
+import { BotConfigWithPath, applyBotConfigOverrides, botsAreTheSame } from '@bfemulator/sdk-shared';
 import { BotAction, BotActions } from '../action/botActions';
 
 export interface BotState {
@@ -72,7 +72,7 @@ export default function bot(state: BotState = DEFAULT_STATE, action: BotAction) 
         recentBots.unshift(mostRecentBot);
       }
       let newActiveBot = action.payload.bot;
-      if (action.payload.preserveOverrides && state.activeBot) {
+      if (botsAreTheSame(state.activeBot, newActiveBot) && action.payload.preserveOverrides) {
         newActiveBot = applyBotConfigOverrides(newActiveBot, state.activeBot.overrides);
       }
       state = setBotFilesState(recentBots, state);
@@ -84,7 +84,7 @@ export default function bot(state: BotState = DEFAULT_STATE, action: BotAction) 
       // close the ative bot
       state = setActiveBot(null, state);
       break;
-    }b
+    }
 
     default:
       break;

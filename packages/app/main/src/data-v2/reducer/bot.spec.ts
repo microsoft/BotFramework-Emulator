@@ -141,13 +141,13 @@ describe('Bot reducer tests', () => {
     expect(state.activeBot.path).toBe('somePath');
   });
 
-  it('should preserve overrides from the previous bot', () => {
+  it('should preserve overrides from the previous bot if they have the same path', () => {
     const activeBot: BotConfigWithPath = {
       name: 'someActiveBot',
       description: 'testing',
       secretKey: null,
       services: [],
-      path: 'someActivePath',
+      path: 'somePath',
       overrides: {
         endpoint: {
           endpoint: 'someEndpointOverride',
@@ -173,7 +173,6 @@ describe('Bot reducer tests', () => {
     const endingState = bot(startingState, action);
 
     expect(endingState.activeBot.name).toBe('someBot');
-    expect(endingState.activeBot.path).toBe('somePath');
 
     expect(endingState.activeBot.overrides).toBeTruthy();
     const endpointOverrides = endingState.activeBot.overrides.endpoint;
@@ -181,6 +180,41 @@ describe('Bot reducer tests', () => {
     expect(endpointOverrides.id).toBe('someEndpointOverride');
     expect(endpointOverrides.appId).toBe('someAppIdOverride');
     expect(endpointOverrides.appPassword).toBe('someAppPwOverride');
+  });
+
+  it('should throw away overrides from the previous bot if they don\'t have the same path', () => {
+    const activeBot: BotConfigWithPath = {
+      name: 'someActiveBot',
+      description: 'testing',
+      secretKey: null,
+      services: [],
+      path: 'somePath',
+      overrides: {
+        endpoint: {
+          endpoint: 'someEndpointOverride',
+          id: 'someEndpointOverride',
+          appId: 'someAppIdOverride',
+          appPassword: 'someAppPwOverride'
+        }
+      }
+    };
+    const startingState: BotState = {
+      ...defaultState,
+      activeBot
+    };
+    const newActiveBot: BotConfigWithPath = {
+      name: 'someBot',
+      description: 'some description',
+      secretKey: null,
+      services: [],
+      path: 'someOtherPath'
+    };
+
+    const action = setActive(newActiveBot, true);
+    const endingState = bot(startingState, action);
+
+    expect(endingState.activeBot.name).toBe('someBot');
+    expect(endingState.activeBot.overrides).toBeFalsy();
   });
 
   it('should mock a bot and set as active', () => {
