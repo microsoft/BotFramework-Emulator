@@ -32,7 +32,7 @@
 //
 
 import { getBotDisplayName } from '@bfemulator/app-shared';
-import { IBotConfig, IEndpointService, ServiceType } from 'msbot/bin/schema';
+import { IEndpointService, ServiceType } from 'msbot/bin/schema';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 import { hasNonGlobalTabs } from '../../data/editorHelpers';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
@@ -80,13 +80,25 @@ export const ActiveBotHelper = new class {
     }
   }
 
-  /** Uses a .bot path and perform a read on the server-side to populate the corresponding bot object */
-  async setActiveBot(botPath: string): Promise<any> {
+  /** Sets a bot as active
+   *  @param bot Bot set as active
+   */
+  async setActiveBot(bot: BotConfigWithPath): Promise<any> {
     try {
-      const {
-        bot,
-        botDirectory
-      }: { bot: IBotConfig, botDirectory: string }
+      // set the bot as active on the server side
+      const botDirectory = await CommandServiceImpl.remoteCall('bot:set-active', bot);
+      store.dispatch(BotActions.setActive(bot));
+      store.dispatch(FileActions.setRoot(botDirectory));
+
+      // update the app file menu and title bar
+      CommandServiceImpl.remoteCall('menu:update-recent-bots');
+      CommandServiceImpl.remoteCall('electron:set-title-bar', getBotDisplayName(bot));
+    } catch (e) {
+      throw new Error(`Error while setting active bot: ${e}`);
+    }
+
+      /*
+      const { bot, botDirectory }: { bot: BotConfigWithPath, botDirectory: string }
         = await CommandServiceImpl.remoteCall('bot:set-active', botPath);
 
       store.dispatch(BotActions.setActive(bot));
@@ -97,8 +109,8 @@ export const ActiveBotHelper = new class {
     } catch (err) {
       console.error('Error while setting active bot: ', err);
 
-      throw new Error(`Error while setting active bot: ${ err }`);
-    }
+      throw new Error(`Error while setting active bot: ${err}`);
+    }*/
   }
 
   /** tell the server-side the active bot is now closed */
@@ -124,25 +136,28 @@ export const ActiveBotHelper = new class {
         cancelId: 0,
         defaultId: 0,
         message: 'This bot is already open. If you\'d like to start a conversation, ' +
-        'click on an endpoint from the Bot Explorer pane.',
+          'click on an endpoint from the Bot Explorer pane.',
         type: 'question'
       }
     );
   }
 
   async confirmAndCreateBot(botToCreate: BotConfigWithPath, secret: string): Promise<any> {
+    // prompt the user to confirm the switch
     const result = await this.confirmSwitchBot();
 
     if (result) {
       store.dispatch(EditorActions.closeNonGlobalTabs());
 
       try {
+        // create the bot and save to disk
         const bot: BotConfigWithPath = await CommandServiceImpl.remoteCall('bot:create', botToCreate, secret);
-
         store.dispatch(BotActions.create(bot, bot.path, secret));
 
-        await this.setActiveBot(bot.path);
+        // set the bot as active
+        await this.setActiveBot(botToCreate);
 
+        // open a livechat session with the bot
         const endpoint: IEndpointService = bot.services
           .find(service => service.type === ServiceType.Endpoint) as IEndpointService;
 
@@ -188,8 +203,16 @@ export const ActiveBotHelper = new class {
           const result = this.confirmSwitchBot();
 
           if (result) {
-            store.dispatch(EditorActions.closeNonGlobalTabs());
-            await CommandServiceImpl.remoteCall('bot:load', filename);
+            try {
+              store.dispatch(EditorActions.closeNonGlobalTabs());
+              // await CommandServiceImpl.remoteCall('bot:load', filename);
+              const bot = await CommandServiceImpl.remoteCall('bot:open', filename);
+              await CommandServiceImpl.remoteCall('bot:set-active', bot);
+              // name 'load' is really ambiguous
+              await CommandServiceImpl.call('bot:load', bot);
+            } catch (err) {
+              console.error('Error while trying to open bot from file: ', err);
+            }
           }
         } catch (err) {
           console.error('Error while calling confirmSwitchBot: ', err);
@@ -200,17 +223,63 @@ export const ActiveBotHelper = new class {
     }
   }
 
-  async confirmAndSwitchBots(botPath: string): Promise<any> {
-    let activeBot = getActiveBot();
+  /**
+   * Prompts the user to switch bots if necessary, and then sets the bot as active and opens
+   * a live chat session.
+   * @param bot The bot to be switched to. Can be a bot object with a path, or the bot path itself
+   */
+  async confirmAndSwitchBots(bot: BotConfigWithPath | string): Promise<any> {
+    let currentActiveBot = getActiveBot();
+    let botPath: string;
+    botPath = typeof bot === 'object' ? bot.path : bot;
 
-    if (activeBot && activeBot.path === botPath) {
+    if (currentActiveBot && currentActiveBot.path === botPath) {
       await this.botAlreadyOpen();
       return;
     }
 
     // TODO: We need to think about merging this with confirmAndCreateBot
-    console.log(`Switching to bot ${ botPath }`);
+    console.log(`Switching to bot ${botPath}`);
 
+    try {
+      // prompt the user to confirm the switch
+      const result = await this.confirmSwitchBot();
+
+      if (result) {
+        store.dispatch(EditorActions.closeNonGlobalTabs());
+
+        let newActiveBot: BotConfigWithPath;
+
+        // if we only have the bot path, we first need to open the bot file
+        if (typeof bot === 'string') {
+          try {
+            newActiveBot = await CommandServiceImpl.remoteCall('bot:open', bot);
+          } catch (e) {
+            // err
+          }
+        } else {
+          newActiveBot = bot;
+        }
+
+        // set the bot as active
+        await this.setActiveBot(newActiveBot);
+
+        // open a livechat with the bot if an endpoint is configured
+        const endpoint: IEndpointService = newActiveBot.services
+          .find(service => service.type === ServiceType.Endpoint) as IEndpointService;
+
+        if (endpoint) {
+          await CommandServiceImpl.call('livechat:new', endpoint);
+        }
+
+        store.dispatch(NavBarActions.select(Constants.NAVBAR_BOT_EXPLORER));
+        store.dispatch(ExplorerActions.show(true));
+      }
+    } catch (e) {
+      // err
+    }
+
+    /*
     try {
       const result = await this.confirmSwitchBot();
 
@@ -232,7 +301,7 @@ export const ActiveBotHelper = new class {
       }
     } catch (err) {
       console.error('Error while setting active bot: ', err);
-    }
+    }*/
   }
 
   confirmAndCloseBot(): Promise<any> {

@@ -169,7 +169,7 @@ describe('Bot reducer tests', () => {
       path: 'somePath'
     };
 
-    const action = setActive(newActiveBot, true);
+    const action = setActive(newActiveBot);
     const endingState = bot(startingState, action);
 
     expect(endingState.activeBot.name).toBe('someBot');
@@ -210,7 +210,7 @@ describe('Bot reducer tests', () => {
       path: 'someOtherPath'
     };
 
-    const action = setActive(newActiveBot, true);
+    const action = setActive(newActiveBot);
     const endingState = bot(startingState, action);
 
     expect(endingState.activeBot.name).toBe('someBot');

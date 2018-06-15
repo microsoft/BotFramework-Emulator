@@ -62,7 +62,7 @@ export const bot = (state: BotState = DEFAULT_STATE, action: BotAction): BotStat
         recentBots.unshift(mostRecentBot);
       }
       let newActiveBot = action.payload.bot;
-      if (botsAreTheSame(state.activeBot, newActiveBot) && action.payload.preserveOverrides) {
+      if (botsAreTheSame(state.activeBot, newActiveBot)) {
         newActiveBot = applyBotConfigOverrides(newActiveBot, state.activeBot.overrides);
       }
       state = setBotFilesState(recentBots, state);

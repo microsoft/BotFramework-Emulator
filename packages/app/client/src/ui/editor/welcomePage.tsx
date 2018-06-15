@@ -144,8 +144,8 @@ class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
   onOpenBotClick = () => {
     CommandServiceImpl.call('bot:browse-open');
   }
-
-  onBotClick = (_e: any, path) => {
+  
+  onBotClick = (_e: any, path: string) => {
     CommandServiceImpl.call('bot:switch', path);
   }
 
@@ -162,8 +162,8 @@ class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
               <Row>
                 <PrimaryButton className="open-bot big-button" text="Open Bot" onClick={ this.onOpenBotClick }/>
               </Row>
-              <span>If you don’t have a bot configuration, 
-                <a className="cta-link" href="javascript:void(0)" 
+              <span>If you don’t have a bot configuration,
+                <a className="cta-link" href="javascript:void(0)"
                    onClick={ this.onNewBotClick }>create a new bot configuration.</a>
               </span>
             </div>

@@ -130,7 +130,7 @@ describe('Bot reducer tests', () => {
         }
       };
 
-      const action = setActive(testbot, true);
+      const action = setActive(testbot);
       const endingState = bot(startingState, action);
       const activeBot = endingState.activeBot;
 
@@ -164,7 +164,7 @@ describe('Bot reducer tests', () => {
         }
       };
 
-      const action = setActive(testbot, true);
+      const action = setActive(testbot);
       const endingState = bot(startingState, action);
       const activeBot = endingState.activeBot;
 

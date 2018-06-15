@@ -187,7 +187,7 @@ class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps,
       await CommandServiceImpl.remoteCall('bot:save', bot);
 
       // need to set the new bot as active now that it is no longer a placeholder bot in memory
-      await ActiveBotHelper.setActiveBot(newPath);
+      await ActiveBotHelper.setActiveBot(bot);
 
       this.setDirtyFlag(false);
       this.setState({ bot });
