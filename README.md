@@ -10,8 +10,7 @@ The Bot Framework Emulator is a desktop application that allows bot developers t
 
 ## Download
 
-* From the [Bot Framework](https://emulator.botframework.com) site (download will start automatically)
-* From the [GitHub releases](https://github.com/Microsoft/BotFramework-Emulator/releases) page
+From the [GitHub releases](https://github.com/Microsoft/BotFramework-Emulator/releases) page
 
 ### Supported platforms
 
