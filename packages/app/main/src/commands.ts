@@ -37,8 +37,7 @@ import {
   BotConfigWithPath,
   CommandRegistryImpl as CommReg,
   uniqueId,
-  BotConfigOverrides,
-  applyBotConfigOverrides
+  mergeEndpoints
 } from '@bfemulator/sdk-shared';
 import * as Electron from 'electron';
 import { app, Menu } from 'electron';
@@ -240,8 +239,23 @@ export function registerCommands() {
 
     emulator.framework.server.botEmulator.facilities.endpoints.reset();
 
+    const overridesArePresent = bot.overrides && bot.overrides.endpoint;
+    let appliedOverrides = false;
+
     bot.services.filter(s => s.type === ServiceType.Endpoint).forEach(service => {
-      const endpoint = service as IEndpointService;
+      let endpoint = service as IEndpointService;
+      
+      if (overridesArePresent && !appliedOverrides) {
+        // if an endpoint id was not specified, apply overrides to first endpoint;
+        // otherwise, apply overrides to the matching endpoint
+        if (!bot.overrides.endpoint.id) {
+          endpoint = mergeEndpoints(endpoint, bot.overrides.endpoint);
+          appliedOverrides = true;
+        } else if (bot.overrides.endpoint.id === service.id) {
+          endpoint = mergeEndpoints(endpoint, bot.overrides.endpoint);
+          appliedOverrides = true;
+        }
+      }
 
       emulator.framework.server.botEmulator.facilities.endpoints.push(
         endpoint.id,
@@ -392,20 +406,15 @@ export function registerCommands() {
 
     // Parse command line args for a protocol url
     const args = process.argv.length ? process.argv.slice(1) : [];
-    /*if (args.some(arg => arg.includes(Protocol))) {
+    if (args.some(arg => arg.includes(Protocol))) {
       const protocolArg = args.find(arg => arg.includes(Protocol));
       ProtocolHandler.parseProtocolUrlAndDispatch(protocolArg);
-    }*/
-
-    ProtocolHandler.parseProtocolUrlAndDispatch(
-      'bfemulator://bot.open?path=C%3A%5CUsers%5Ctoanzian%5CDocuments%5CMy%20Bots%5CFromProtocol%5CTS_Bot1.bot&appId=b'
-    );
+    }
 
     // Parse command line args to see if we are opening a .bot or .transcript file
     if (args.some(arg => /(\.transcript)|(\.bot)$/.test(arg))) {
       const fileToBeOpened = args.find(arg => /(\.transcript)|(\.bot)$/.test(arg));
       if (Path.extname(fileToBeOpened) === '.bot') {
-        // mainWindow.commandService.call('bot:load', fileToBeOpened);
         try {
           const bot = await mainWindow.commandService.call('bot:open', fileToBeOpened);
           await mainWindow.commandService.call('bot:set-active', bot);
@@ -668,7 +677,7 @@ export function registerCommands() {
 
       const convo = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
       if (!convo) {
-        throw new Error(`emulator:feed-transcript:deep-link: Conversation ${conversationId} not found.`);
+        throw new Error(`oauth:send-token-response: Conversation ${conversationId} not found.`);
       }
       await convo.sendTokenResponse(connectionName, conversationId, false);
     });

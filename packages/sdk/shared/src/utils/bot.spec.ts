@@ -31,7 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { applyBotConfigOverrides, botsAreTheSame } from './bot';
+import { IEndpointService, ServiceType } from 'msbot/bin/schema';
+import { applyBotConfigOverrides, botsAreTheSame, mergeEndpoints } from './bot';
 import { BotConfigWithPath, BotConfigOverrides } from '../types';
 
 describe('Bot utility function tests', () => {
@@ -95,5 +96,31 @@ describe('Bot utility function tests', () => {
       const result = botsAreTheSame(bot, matchingBot);
       expect(result).toBe(true);
     });
+  });
+
+  describe('Merging two endpoint services', () => {
+    const endpoint1: IEndpointService = {
+      type: ServiceType.Endpoint,
+      name: 'endpoint1',
+      id: 'http://www.endpoint1.com/api/messages',
+      endpoint: 'http://www.endpoint1.com/api/messages',
+      appId: 'someAppId1',
+      appPassword: 'someAppPw1'
+    };
+    
+    const endpoint2: Partial<IEndpointService> = {
+      id: 'http://www.endpoint2.com/api/messages',
+      endpoint: 'http://www.endpoint2.com/api/messages',
+      appId: 'someAppId2',
+      appPassword: null
+    };
+
+    const result = mergeEndpoints(endpoint1, endpoint2);
+
+    expect(result.name).toBe('endpoint1');
+    expect(result.endpoint).toBe('http://www.endpoint2.com/api/messages');
+    expect(result.id).toBe('http://www.endpoint2.com/api/messages');
+    expect(result.appId).toBe('someAppId2');
+    expect(result.appPassword).toBe(null);
   });
 });

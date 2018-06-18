@@ -33,7 +33,7 @@
 
 import { getBotDisplayName } from '@bfemulator/app-shared';
 import { IEndpointService, ServiceType } from 'msbot/bin/schema';
-import { BotConfigWithPath } from '@bfemulator/sdk-shared';
+import { BotConfigWithPath, mergeEndpoints } from '@bfemulator/sdk-shared';
 import { hasNonGlobalTabs } from '../../data/editorHelpers';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { getActiveBot } from '../../data/botHelpers';
@@ -225,7 +225,7 @@ export const ActiveBotHelper = new class {
 
   /**
    * Prompts the user to switch bots if necessary, and then sets the bot as active and opens
-   * a live chat session.
+   * a livechat session.
    * @param bot The bot to be switched to. Can be a bot object with a path, or the bot path itself
    */
   async confirmAndSwitchBots(bot: BotConfigWithPath | string): Promise<any> {
@@ -248,9 +248,8 @@ export const ActiveBotHelper = new class {
       if (result) {
         store.dispatch(EditorActions.closeNonGlobalTabs());
 
-        let newActiveBot: BotConfigWithPath;
-
         // if we only have the bot path, we first need to open the bot file
+        let newActiveBot: BotConfigWithPath;
         if (typeof bot === 'string') {
           try {
             newActiveBot = await CommandServiceImpl.remoteCall('bot:open', bot);
@@ -264,10 +263,28 @@ export const ActiveBotHelper = new class {
         // set the bot as active
         await this.setActiveBot(newActiveBot);
 
-        // open a livechat with the bot if an endpoint is configured
-        const endpoint: IEndpointService = newActiveBot.services
-          .find(service => service.type === ServiceType.Endpoint) as IEndpointService;
+        // find a suitable endpoint configuration
+        let endpoint: IEndpointService;
+        const overridesArePresent = newActiveBot.overrides && newActiveBot.overrides.endpoint;
 
+        // if an endpoint id was specified, use that endpoint, otherwise use the first endpoint found
+        if (overridesArePresent && newActiveBot.overrides.endpoint.id) {
+          endpoint = newActiveBot.services
+            .find(service => 
+              service.type === ServiceType.Endpoint
+              && service.id === newActiveBot.overrides.endpoint.id
+            ) as IEndpointService;
+        } else {
+          endpoint = newActiveBot.services
+            .find(service => service.type === ServiceType.Endpoint) as IEndpointService;
+        }
+
+        // apply endpoint overrides here
+        if (endpoint && overridesArePresent) {
+          endpoint = mergeEndpoints(endpoint, newActiveBot.overrides.endpoint);
+        }
+
+        // open a livechat with the configured endpoint
         if (endpoint) {
           await CommandServiceImpl.call('livechat:new', endpoint);
         }
@@ -276,32 +293,8 @@ export const ActiveBotHelper = new class {
         store.dispatch(ExplorerActions.show(true));
       }
     } catch (e) {
-      // err
+      console.error(`Error while trying to switch to bot: ${botPath}`);
     }
-
-    /*
-    try {
-      const result = await this.confirmSwitchBot();
-
-      if (result) {
-        store.dispatch(EditorActions.closeNonGlobalTabs());
-
-        await this.setActiveBot(botPath);
-
-        const bot = getActiveBot();
-        const endpoint: IEndpointService = bot.services
-          .find(service => service.type === ServiceType.Endpoint) as IEndpointService;
-
-        if (endpoint) {
-          await CommandServiceImpl.call('livechat:new', endpoint);
-        }
-
-        store.dispatch(NavBarActions.select(Constants.NAVBAR_BOT_EXPLORER));
-        store.dispatch(ExplorerActions.show(true));
-      }
-    } catch (err) {
-      console.error('Error while setting active bot: ', err);
-    }*/
   }
 
   confirmAndCloseBot(): Promise<any> {

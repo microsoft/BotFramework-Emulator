@@ -32,6 +32,7 @@
 //
 
 import { BotConfigWithPath, BotConfigWithPathImpl, BotConfigOverrides } from '../types';
+import { IEndpointService } from 'msbot/bin/schema';
 
 /**
  * Takes bot config overrides and applies them to the target bot
@@ -60,4 +61,15 @@ export function botsAreTheSame(bot1: BotConfigWithPath, bot2: BotConfigWithPath)
     return bot1.path === bot2.path;
   }
   return false;
+}
+
+/**
+ * Takes two endpoints, merges them together, and returns the result. Any shared properties
+ * between the endpoints will be taken from the second endpoint.
+ * @param endpoint1 First endpoint
+ * @param endpoint2 Second endpoint (will overwrite properties from first endpoint)
+ * @returns The result of the merge
+ */
+export function mergeEndpoints(endpoint1: IEndpointService, endpoint2: Partial<IEndpointService>): IEndpointService {
+  return { ...endpoint1, ...endpoint2 }; 
 }

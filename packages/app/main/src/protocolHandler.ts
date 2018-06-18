@@ -274,7 +274,6 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
 
     const endpointOverrides: Partial<IEndpointService> = parseEndpointOverrides(protocol.parsedArgs);
     const overrides: BotConfigOverrides = endpointOverrides ? { endpoint: endpointOverrides } : null;
-    const botLoadOptions = { secret, overrides };
 
     let bot: BotConfigWithPath;
     try {
@@ -305,13 +304,6 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
         } catch (e) {
           throw new Error(`(ngrok running) Error occurred while trying to deep link to bot project at: ${path}.`);
         }
-
-        /*mainWindow.commandService.call('bot:load', path, botLoadOptions)
-          .then(() => console.log('opened bot successfully'))
-          // TODO: surface this error somewhere; native error box?
-          .catch(err => {
-            throw new Error(`Error occurred while trying to deep link to bot project at: ${path}`);
-          });*/
       } else {
         // if ngrok hasn't connected yet, wait for it to connect and load the bot
         ngrokEmitter.once('connect', async (...args: any[]): Promise<void> => {
@@ -323,13 +315,6 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
               `(ngrok running but not connected) Error occurred while trying to deep link to bot project at: ${path}.`
             );
           }
-
-          /*mainWindow.commandService.call('bot:load', path, botLoadOptions)
-            .then(() => console.log('opened bot successfully'))
-            // TODO: surface this error somewhere; native error box?
-            .catch(err => {
-              throw new Error(`Error occurred while trying to deep link to bot project at: ${path}`);
-            });*/
         });
       }
     } else {
@@ -339,25 +324,22 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
       } catch (e) {
         throw new Error(`(ngrok not configured) Error occurred while trying to deep link to bot project at: ${path}`);
       }
-
-      // load the bot and let the chat log show the user the error
-      /*mainWindow.commandService.call('bot:load', path, botLoadOptions)
-        .then(() => console.log('opened bot successfully'))
-        // TODO: surface this error somewhere; native error box?
-        .catch(err => {
-          throw new Error(`Error occurred while trying to deep link to bot project at: ${path}`);
-        });*/
     }
   }
 };
 
+/**
+ * Takes the list of parsed protocol URI query params and constructs an endpoint service
+ * override object if there are appropriate parameters
+ * @param parsedArgs Parsed protocol URI query parameters
+ */
 export function parseEndpointOverrides(parsedArgs: { [key: string]: string }): Partial<IEndpointService> {
   if (!parsedArgs || !Object.keys(parsedArgs).length) {
     return null;
   }
 
   const endpointOverrides: Partial<IEndpointService> = {};
-  const { appId = null, appPassword = null, endpoint = null } = parsedArgs;
+  const { appId = null, appPassword = null, endpoint = null, id = null } = parsedArgs;
 
   if (appId) {
     endpointOverrides.appId = appId;
@@ -367,6 +349,9 @@ export function parseEndpointOverrides(parsedArgs: { [key: string]: string }): P
   }
   if (endpoint) {
     endpointOverrides.endpoint = endpoint;
+  }
+  if (id) {
+    endpointOverrides.id = id;
   }
   // if no overrides were parsed, then return null
   if (!Object.keys(endpointOverrides).length) {
