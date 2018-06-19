@@ -161,63 +161,8 @@ export function registerCommands() {
     });
 
   // ---------------------------------------------------------------------------
-  // LOAD BOT FROM PROTOCOL
-  /*CommandRegistry.registerCommand('bot:load',
-    async (
-      botFilePath: string,
-      options: {
-        secret?: string,
-        overrides?: BotConfigOverrides
-      } = {}
-    ): Promise<BotConfigWithPath> => {
-
-      // get bot
-      let bot = await mainWindow.commandService.call('bot:open', botFilePath, options.secret);
-
-      // set up file watcher
-      BotProjectFileWatcher.watch(botFilePath);
-
-      // set bot as active
-      const botDirectory = Path.dirname(botFilePath);
-
-      // if overrides were passed in, apply them to the bot
-      if (options.overrides) {
-        bot = applyBotConfigOverrides(bot, options.overrides);
-      }
-
-      store.dispatch(BotActions.setActive(bot));
-      store.dispatch(BotActions.setDirectory(botDirectory));
-
-      return mainWindow.commandService.remoteCall('bot:load', bot);
-    });*/
-
-  // ---------------------------------------------------------------------------
   // Set active bot
   CommandRegistry.registerCommand('bot:set-active', async (bot: BotConfigWithPath): Promise<string> => {
-    /*// try to get the bot secret from bots.json
-    let secret;
-    const botInfo = pathExistsInRecentBots(botPath) ? getBotInfoByPath(botPath) : null;
-    if (botInfo && botInfo.secret) {
-      secret = botInfo.secret;
-    }
-
-    // load the bot (decrypt with secret if we were able to get it)
-    let bot: BotConfigWithPath;
-    try {
-      bot = await loadBotWithRetry(botPath, secret);
-    } catch (e) {
-      const errMessage = `Failed to open the bot with error: ${e.message}`;
-      await Electron.dialog.showMessageBox(mainWindow.browserWindow, {
-        type: 'error',
-        message: errMessage,
-      });
-      throw new Error(errMessage);
-    }
-    if (!bot) {
-      // user couldn't provide correct secret, abort
-      throw new Error('No secret provided to decrypt encrypted bot.');
-    }*/
-
     // set up the file watcher
     await BotProjectFileWatcher.watch(bot.path);
 

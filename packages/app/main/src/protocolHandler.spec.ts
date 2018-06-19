@@ -1,8 +1,16 @@
-jest.mock('./main', () => ({}));
+// Allows us to bypass all the setup required in ./main
+//
+// NOTE: A significant part of protocolHandler is not testable
+// because of call to "jest.mock('./main', ...)" which is needed
+// to bypass setup of all ./main dependencies. To test the remaineder
+// of the protocol handler, we need to mock the CommandService which is
+// a property of main. However, any mocks written for the CommandService
+// will be overwritten due to the call to "jest.mock('./main', ...)"
 
-// some dependency un ./utils will try to invoke getGlobal in ./globals
+jest.mock('./main', () => ({}));
 jest.mock('./globals', () => ({
-  getGlobal: () => ({})
+  getGlobal: () => ({}),
+  setGlobal: () => null
 }));
 
 import {
@@ -10,10 +18,6 @@ import {
   ProtocolHandler,
   parseEndpointOverrides
 } from './protocolHandler';
-import { mainWindow } from './main';
-import { running, ngrokEmitter } from './ngrok';
-import { getSettings } from './settings';
-import { emulator } from './emulator';
 
 describe('Protocol handler tests', () => {
 
@@ -113,147 +117,6 @@ describe('Protocol handler tests', () => {
       expect(mockPerformTranscriptAction).toHaveBeenCalledTimes(1);
     });
   });
-
-  /*describe('opening a bot', () => {
-    const commandServiceProperty = 'commandService';
-    const openBotProtocol: Protocol = {
-      parsedArgs: {
-        path: 'somePath',
-        secret: 'someSecret'
-      }
-    };
-
-    let tmpCommandService;
-    let tmpRunning;
-    let tmpGetSettings;
-    let tmpEmulator;
-
-    beforeEach(() => {
-      // perserve original functionality
-      tmpCommandService = mainWindow[commandServiceProperty];
-      tmpRunning = running;
-      tmpGetSettings = getSettings;
-      tmpEmulator = emulator;
-    });
-
-    afterEach(() => {
-      // restore original functionality
-      // (mainWindow as any)[commandServiceProperty] = tmpCommandService;
-      (running as any) = tmpRunning;
-      (getSettings as any) = tmpGetSettings;
-      (emulator as any) = tmpEmulator;
-    });
-
-    describe('loading the bot if ngrok is not configured', () => {
-      beforeEach(() => {
-        (getSettings as any) = jest.fn(() => ({ framework: { ngrokPath: null } }));
-      });
-
-      it('should load the bot with the supplied path and secret', () => {
-        const mockCall = jest.fn()
-          // satisfy call to bot:open
-          // .mockResolvedValueOnce({})
-          .mockResolvedValue({}); // jest.fn((...args: any[]) => Promise.resolve());
-        const mockRemoteCall = jest.fn().mockResolvedValue({});
-        (mainWindow as any)[commandServiceProperty] = { call: mockCall, remoteCall: mockRemoteCall };
-
-        expect(() => ProtocolHandler.openBot(openBotProtocol)).not.toThrow();
-        expect(mockCall).toHaveBeenCalledTimes(2);
-        expect(mockCall).toHaveBeenCalledWith('bot:open', 'somePath', null);
-        expect(mockCall).toHaveBeenCalledWith('bot:set-active', {});
-        expect(mockRemoteCall).toHaveBeenCalledTimes(1);
-        expect(mockRemoteCall).toHaveBeenCalledWith('bot:load', {});
-      });
-
-      it('should throw if the "bot:load" command throws', () => {
-        (emulator as any) = {
-          ngrok: {
-            getSpawnStatus: () => ({ triedToSpawn: true })
-          }
-        };
-        const mockCall = jest.fn((...args: any[]) => { throw new Error(); });
-        (mainWindow as any)[commandServiceProperty] = ({ call: mockCall });
-        expect(() => ProtocolHandler.openBot(openBotProtocol)).toThrow();
-      });
-    });
-
-    describe('loading the bot if ngrok is configured', () => {
-      beforeEach(() => {
-        (getSettings as any) = jest.fn(() => ({ framework: { ngrokPath: 'someNgrokPath' } }));
-        (emulator as any) = {
-          ngrok: {
-            getSpawnStatus: () => ({ triedToSpawn: true })
-          }
-        };
-      });
-
-      it('should throw an error if the emulator did not try to spawn or if it failed to spawn', () => {
-        (emulator as any) = {
-          ngrok: {
-            getSpawnStatus: () => ({ triedToSpawn: false })
-          }
-        };
-        expect(() => ProtocolHandler.openBot(openBotProtocol)).toThrow();
-
-        (emulator as any) = {
-          ngrok: {
-            getSpawnStatus: () => ({ triedToSpawn: true, err: 'someError' })
-          }
-        };
-        expect(() => ProtocolHandler.openBot(openBotProtocol)).toThrow();
-      });
-
-      it('should load the bot immediately if ngrok is running', () => {
-        (running as any) = () => true;
-        const mockCall = jest.fn((...args: any[]) => Promise.resolve());
-        (mainWindow as any)[commandServiceProperty] = { call: mockCall };
-
-        expect(() => ProtocolHandler.openBot(openBotProtocol)).not.toThrow();
-        expect(mockCall).toHaveBeenCalledTimes(3);
-        expect(mockCall).toHaveBeenCalledWith('bot:open', 'somePath', null);
-      });
-
-      it('should throw if ngrok is running and loading the bot immediately throws', () => {
-        (running as any) = () => true;
-        const mockCall = jest.fn((...args: any[]) => { throw new Error(); });
-        (mainWindow as any)[commandServiceProperty] = ({ call: mockCall });
-
-        expect(() => ProtocolHandler.openBot(openBotProtocol)).toThrow();
-        expect(mockCall).toHaveBeenCalledTimes(1);
-      });
-
-      it('should wait for ngrok to connect and then load the bot', () => {
-        (running as any) = () => false;
-        let tmpNgrokEmitter = ngrokEmitter;
-        (ngrokEmitter as any) = {
-          once: (eventName: string, cb: (...args: any[]) => any) => cb()
-        };
-        const mockCall = jest.fn((...args: any[]) => Promise.resolve());
-        (mainWindow as any)[commandServiceProperty] = { call: mockCall };
-
-        expect(() => ProtocolHandler.openBot(openBotProtocol)).not.toThrow();
-        expect(mockCall).toHaveBeenCalledTimes(3);
-        expect(mockCall).toHaveBeenCalledWith('bot:open', 'somePath', null);
-
-        (ngrokEmitter as any) = tmpNgrokEmitter;
-      });
-
-      it('should throw if after waiting for ngrok to connect and loading the bot throws', () => {
-        (running as any) = () => false;
-        let tmpNgrokEmitter = ngrokEmitter;
-        (ngrokEmitter as any) = {
-          once: (eventName: string, cb: (...args: any[]) => any) => cb()
-        };
-        const mockCall = jest.fn((...args: any[]) => { throw new Error(); });
-        (mainWindow as any)[commandServiceProperty] = ({ call: mockCall });
-
-        expect(() => ProtocolHandler.openBot(openBotProtocol)).toThrow();
-        expect(mockCall).toHaveBeenCalledTimes(1);
-
-        (ngrokEmitter as any) = tmpNgrokEmitter;
-      });
-    });
-  });*/
 
   describe('parseEndpointOverrides() functionality', () => {
     it('should return null when passed a falsy object', () => {

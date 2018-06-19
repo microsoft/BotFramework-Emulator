@@ -81,7 +81,7 @@ export const ActiveBotHelper = new class {
   }
 
   /** Sets a bot as active
-   *  @param bot Bot set as active
+   *  @param bot Bot to set as active
    */
   async setActiveBot(bot: BotConfigWithPath): Promise<any> {
     try {
@@ -96,21 +96,6 @@ export const ActiveBotHelper = new class {
     } catch (e) {
       throw new Error(`Error while setting active bot: ${e}`);
     }
-
-      /*
-      const { bot, botDirectory }: { bot: BotConfigWithPath, botDirectory: string }
-        = await CommandServiceImpl.remoteCall('bot:set-active', botPath);
-
-      store.dispatch(BotActions.setActive(bot));
-      store.dispatch(FileActions.setRoot(botDirectory));
-
-      CommandServiceImpl.remoteCall('menu:update-recent-bots');
-      CommandServiceImpl.remoteCall('electron:set-title-bar', getBotDisplayName(bot));
-    } catch (err) {
-      console.error('Error while setting active bot: ', err);
-
-      throw new Error(`Error while setting active bot: ${err}`);
-    }*/
   }
 
   /** tell the server-side the active bot is now closed */
@@ -169,6 +154,7 @@ export const ActiveBotHelper = new class {
         store.dispatch(ExplorerActions.show(true));
       } catch (err) {
         console.error('Error during bot create: ', err);
+        throw new Error(`Error during bot create: ${err}`);
       }
     }
   }
@@ -205,21 +191,22 @@ export const ActiveBotHelper = new class {
           if (result) {
             try {
               store.dispatch(EditorActions.closeNonGlobalTabs());
-              // await CommandServiceImpl.remoteCall('bot:load', filename);
               const bot = await CommandServiceImpl.remoteCall('bot:open', filename);
               await CommandServiceImpl.remoteCall('bot:set-active', bot);
-              // name 'load' is really ambiguous
               await CommandServiceImpl.call('bot:load', bot);
             } catch (err) {
               console.error('Error while trying to open bot from file: ', err);
+              throw new Error(`[confirmAndOpenBotFromFile] Error while trying to open bot from file: ${err}`);
             }
           }
         } catch (err) {
           console.error('Error while calling confirmSwitchBot: ', err);
+          throw new Error(`[confirmAndOpenBotFromFile] Error while calling confirmSwitchBot: ${err}`);
         }
       }
     } catch (err) {
       console.error('Error while calling browseForBotFile: ', err);
+      throw new Error(`[confirmAndOpenBotFromFile] Error while calling browseForBotFile: ${err}`);
     }
   }
 
@@ -254,7 +241,7 @@ export const ActiveBotHelper = new class {
           try {
             newActiveBot = await CommandServiceImpl.remoteCall('bot:open', bot);
           } catch (e) {
-            // err
+            throw new Error(`[confirmAndSwitchBots] Error while trying to open bot at ${botPath}: ${e}`);
           }
         } else {
           newActiveBot = bot;
@@ -294,6 +281,7 @@ export const ActiveBotHelper = new class {
       }
     } catch (e) {
       console.error(`Error while trying to switch to bot: ${botPath}`);
+      throw new Error(`[confirmAndSwitchBots] Error while trying to switch to bot ${botPath}: ${e}`);
     }
   }
 
@@ -313,6 +301,9 @@ export const ActiveBotHelper = new class {
             .catch(err => new Error(err));
         }
       })
-      .catch(err => console.error('Error while closing active bot: ', err));
+      .catch(err => {
+        console.error('Error while closing active bot: ', err);
+        throw new Error(`Error while closing active bot: ${err}`);
+      });
   }
 };
