@@ -54,7 +54,7 @@ interface DispatchEditorState {
 }
 
 const title = 'Connect to a Dispatch Application';
-const detailedDescription = 'You can connect your bot to a Dispatch.ai application';
+const detailedDescription = 'You can connect your bot to a Dispatch application';
 
 export class DispatchEditor extends Component<DispatchEditorProps, DispatchEditorState> {
 
