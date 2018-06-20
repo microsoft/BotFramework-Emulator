@@ -32,11 +32,11 @@
 //
 
 import { FileInfo } from '@bfemulator/app-shared';
+import { CommandService } from '@bfemulator/sdk-shared';
 import { callbackToPromise } from '@fuselab/ui-shared/lib/asyncUtils';
 import { exists, FSWatcher, readFile, Stats } from 'fs';
 import * as Path from 'path';
 import * as Chokidar from 'chokidar';
-import { mainWindow } from './main';
 import { getActiveBot, getBotInfoByPath, loadBotWithRetry } from './botHelpers';
 import * as BotActions from './data-v2/action/bot';
 import { getStore } from './data-v2/store';
@@ -47,6 +47,18 @@ interface FileWatcher {
   onFileAdd: (file: string, fstats?: any) => void;
   onFileRemove: (file: string, fstats?: any) => void;
   onFileChange: (file: string, fstats?: any) => void;
+}
+
+const VALID_FILE_EXTENSIONS = [
+  '.transcript',
+  '.chat'
+];
+
+function isValidFileType(fileExtension: string): boolean {
+  if (!fileExtension) {
+    return false;
+  }
+  return VALID_FILE_EXTENSIONS.some(ext => ext === fileExtension);
 }
 
 async function findGitIgnore(directory: string): Promise<string> {
@@ -73,15 +85,36 @@ async function readGitIgnore(filePath: string): Promise<string[]> {
 }
 
 /** Singleton class that will watch one bot project directory at a time */
-export const BotProjectFileWatcher = new class FileWatcherImpl implements FileWatcher {
+export class FileWatcherImpl implements FileWatcher {
+  private static _instance: FileWatcherImpl;
   private _botFilePath: string;
-  private _fileWatcherInstance: FSWatcher;
+  private _chokidarWatcherInstance: FSWatcher;
+  private _commandService: CommandService;
+
+  private get commandService(): CommandService {
+    if (this._commandService) {
+      return this._commandService;
+    }
+    throw Error('FileWatcher has not yet been initialized with a command service! Try calling "initialize(cmdSvc)"');
+  }
+
+  public static getInstance(): FileWatcherImpl {
+    if (!this._instance) {
+      this._instance = new FileWatcherImpl();
+    }
+    return this._instance;
+  }
+
+  public initialize(_commandService: CommandService): FileWatcherImpl {
+    this._commandService = _commandService;
+    return this;
+  }
 
   async watch(botFilePath: string): Promise<boolean> {
     // stop watching any other project directory
     this.dispose();
     // wipe the transcript explorer store
-    await mainWindow.commandService.remoteCall('file:clear');
+    await this.commandService.remoteCall('file:clear');
 
     if (botFilePath && botFilePath.length) {
       this._botFilePath = botFilePath;
@@ -90,12 +123,12 @@ export const BotProjectFileWatcher = new class FileWatcherImpl implements FileWa
       const gitIgnoreFile = await findGitIgnore(botProjectDir);
       const ignoreGlobs = await readGitIgnore(gitIgnoreFile);
 
-      this._fileWatcherInstance = Chokidar.watch(botProjectDir, {
+      this._chokidarWatcherInstance = Chokidar.watch(botProjectDir, {
         ignored: ignoreGlobs,
         followSymlinks: false
       });
 
-      this._fileWatcherInstance
+      this._chokidarWatcherInstance
         .on('addDir', this.onFileAdd)
         .on('unlinkDir', this.onFileRemove)
         .on('add', this.onFileAdd)
@@ -107,9 +140,9 @@ export const BotProjectFileWatcher = new class FileWatcherImpl implements FileWa
   }
 
   dispose(): void {
-    if (this._fileWatcherInstance) {
-      this._fileWatcherInstance.close();
-      this._fileWatcherInstance = null;
+    if (this._chokidarWatcherInstance) {
+      this._chokidarWatcherInstance.close();
+      this._chokidarWatcherInstance = null;
       this._botFilePath = null;
     }
   }
@@ -123,16 +156,16 @@ export const BotProjectFileWatcher = new class FileWatcherImpl implements FileWa
     };
 
     // only show .transcript files
-    if (fileInfo.type === 'leaf' && Path.extname(file) !== '.transcript') {
+    if (fileInfo.type === 'leaf' && !isValidFileType(Path.extname(file))) {
       return;
     }
 
-    mainWindow.commandService.remoteCall('file:add', fileInfo);
+    this.commandService.remoteCall('file:add', fileInfo);
   }
 
   // TODO: Enable watching more extensions
   onFileRemove = (file: string, fstats?: Stats): void => {
-    mainWindow.commandService.remoteCall('file:remove', file);
+    this.commandService.remoteCall('file:remove', file);
   }
 
   onFileChange = async (file: string, fstats?: Stats): Promise<void> => {
@@ -150,9 +183,14 @@ export const BotProjectFileWatcher = new class FileWatcherImpl implements FileWa
         // update store
         const botDir = Path.dirname(this._botFilePath);
         getStore().dispatch(BotActions.setActive(bot));
-        mainWindow.commandService.remoteCall('bot:set-active', bot, botDir);
-        mainWindow.commandService.call('bot:restart-endpoint-service');
+        this.commandService.remoteCall('bot:set-active', bot, botDir);
+        this.commandService.call('bot:restart-endpoint-service');
       }
     }
   }
-};
+
+  // ensures singleton
+  private constructor() {
+    this._instance = this;
+  }
+}
