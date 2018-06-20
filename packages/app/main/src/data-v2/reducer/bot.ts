@@ -31,42 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IBotConfig } from 'msbot/bin/schema';
-import { BotConfigWithPath } from '@bfemulator/sdk-shared';
-import * as BotActions from '../action/bot';
-import { BotInfo, getBotDisplayName } from '@bfemulator/app-shared';
+import { BotConfigWithPath, applyBotConfigOverrides, botsAreTheSame } from '@bfemulator/sdk-shared';
+import { BotAction, BotActions } from '../action/bot';
+import { BotInfo } from '@bfemulator/app-shared';
 
 export interface BotState {
-  activeBot: IBotConfig;
+  activeBot: BotConfigWithPath;
   botFiles: BotInfo[];
   currentBotDirectory: string;
 }
-
-export type BotAction = {
-  type: 'BOT/LOAD',
-  payload: {
-    bots: BotInfo[]
-  }
-} | {
-  type: 'BOT/PATCH',
-  payload: {
-    bot: BotConfigWithPath,
-    secret?: string
-  }
-} | {
-  type: 'BOT/SET_ACTIVE',
-  payload: {
-    bot: BotConfigWithPath
-  }
-} | {
-  type: 'BOT/SET_DIRECTORY',
-  payload: {
-    directory: string
-  }
-} | {
-  type: 'BOT/CLOSE',
-  payload: {}
-};
 
 const DEFAULT_STATE: BotState = {
   activeBot: null,
@@ -74,49 +47,35 @@ const DEFAULT_STATE: BotState = {
   currentBotDirectory: ''
 };
 
-export const bot: any = (state: BotState = DEFAULT_STATE, action: BotAction) => {
+export const bot = (state: BotState = DEFAULT_STATE, action: BotAction): BotState => {
   switch (action.type) {
-    case BotActions.LOAD: {
+    case BotActions.load: {
       state = setBotFilesState(action.payload.bots, state);
       break;
     }
 
-    case BotActions.PATCH: {
-      const patchedBot = {
-        ...state.activeBot,
-        ...action.payload.bot
-      };
-      // update the bot display name in the list if it was changed
-      const { path } = action.payload.bot;
-      const bot1 = state.botFiles.find(botArg => botArg && botArg.path === path);
-      if (bot1) {
-        bot1.displayName = getBotDisplayName(action.payload.bot);
-        if (action.payload.secret) {
-          bot1.secret = action.payload.secret;
-        }
-      }
-      state = setActiveBot(patchedBot, state);
-      break;
-    }
-
-    case BotActions.SET_ACTIVE: {
+    case BotActions.setActive: {
       // move active bot up to the top of the recent bots list
       const mostRecentBot = state.botFiles.find(bot2 => bot2 && bot2.path === action.payload.bot.path);
       let recentBots = state.botFiles.filter(bot3 => bot3 && bot3.path !== action.payload.bot.path);
       if (mostRecentBot) {
         recentBots.unshift(mostRecentBot);
       }
+      let newActiveBot = action.payload.bot;
+      if (botsAreTheSame(state.activeBot, newActiveBot)) {
+        newActiveBot = applyBotConfigOverrides(newActiveBot, state.activeBot.overrides);
+      }
       state = setBotFilesState(recentBots, state);
-      state = setActiveBot(action.payload.bot, state);
+      state = setActiveBot(newActiveBot, state);
       break;
     }
 
-    case BotActions.SET_DIRECTORY: {
+    case BotActions.setDirectory: {
       state = setCurrentBotDirectory(action.payload.directory, state);
       break;
     }
 
-    case BotActions.CLOSE: {
+    case BotActions.close: {
       // close the active bot
       state = setActiveBot(null, state);
       break;
@@ -128,7 +87,7 @@ export const bot: any = (state: BotState = DEFAULT_STATE, action: BotAction) => 
   return state;
 };
 
-function setActiveBot(bot4: IBotConfig, state: BotState): BotState {
+function setActiveBot(bot4: BotConfigWithPath, state: BotState): BotState {
   return Object.assign({}, state, {
     get activeBot() {
       // Clones only - this guarantees only pristine bots will exist in the store

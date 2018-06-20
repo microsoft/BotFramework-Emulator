@@ -32,63 +32,85 @@
 //
 
 import { BotInfo, newBot } from '@bfemulator/app-shared';
-import { IBotConfig } from 'msbot/bin/schema';
-import { BotAction } from '../reducer/bot';
+import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 
-export const LOAD = 'BOT/LOAD';
-export const PATCH = 'BOT/PATCH';
-export const SET_ACTIVE = 'BOT/SET_ACTIVE';
-export const SET_DIRECTORY = 'BOT/SET_DIRECTORY';
-export const CLOSE = 'BOT/CLOSE';
+export enum BotActions {
+  load = 'BOT/LOAD',
+  setActive = 'BOT/SET_ACTIVE',
+  setDirectory = 'BOT/SET_DIRECTORY',
+  close = 'BOT/CLOSE'
+}
 
-export function load(bots: BotInfo[]): BotAction {
+export interface LoadBotAction {
+  type: BotActions.load;
+  payload: {
+    bots: BotInfo[]
+  };
+}
+
+export interface SetActiveBotAction {
+  type: BotActions.setActive;
+  payload: {
+    bot: BotConfigWithPath
+  };
+}
+
+export interface SetDirectoryBotAction {
+  type: BotActions.setDirectory;
+  payload: {
+    directory: string
+  };
+}
+
+export interface CloseBotAction {
+  type: BotActions.close;
+  payload: {};
+}
+
+export type BotAction =
+  LoadBotAction |
+  SetActiveBotAction |
+  SetDirectoryBotAction |
+  CloseBotAction;
+
+export function load(bots: BotInfo[]): LoadBotAction {
   // prune bad bots
   bots = bots.filter(bot => !!bot);
 
   return {
-    type: LOAD,
+    type: BotActions.load,
     payload: {
       bots
     }
   };
 }
 
-export function patch(bot: IBotConfig, secret?: string): BotAction {
+export function setActive(bot: BotConfigWithPath): SetActiveBotAction {
   return {
-    type: PATCH,
-    payload: {
-      bot,
-      secret
-    }
-  };
-}
-
-export function setActive(bot: IBotConfig): BotAction {
-  return {
-    type: SET_ACTIVE,
+    type: BotActions.setActive,
     payload: {
       bot
     }
   };
 }
 
-export function setDirectory(directory: string): BotAction {
+export function setDirectory(directory: string): SetDirectoryBotAction {
   return {
-    type: SET_DIRECTORY,
+    type: BotActions.setDirectory,
     payload: {
       directory
     }
   };
 }
 
-export function close(): BotAction {
+export function close(): CloseBotAction {
   return {
-    type: CLOSE,
+    type: BotActions.close,
     payload: {}
   };
 }
 
-export function mockAndSetActive(mock?: IBotConfig): BotAction {
+export function mockAndSetActive(mock?: BotConfigWithPath): BotAction {
   const bot = newBot({
       name: 'Random Bot',
       description: '',

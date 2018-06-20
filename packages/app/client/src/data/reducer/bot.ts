@@ -32,9 +32,8 @@
 //
 
 import { BotInfo, getBotDisplayName } from '@bfemulator/app-shared';
-import { BotConfigWithPath } from '@bfemulator/sdk-shared';
+import { BotConfigWithPath, applyBotConfigOverrides, botsAreTheSame } from '@bfemulator/sdk-shared';
 import { BotAction, BotActions } from '../action/botActions';
-import { getBotInfoByPath } from '../botHelpers';
 
 export interface BotState {
   activeBot: BotConfigWithPath;
@@ -65,27 +64,6 @@ export default function bot(state: BotState = DEFAULT_STATE, action: BotAction) 
       break;
     }
 
-    case BotActions.patch: {
-      const patchedBot = {
-        ...state.activeBot,
-        ...action.payload.bot
-      };
-      // update the bot display name in the list if it was changed
-      const botInfo = getBotInfoByPath(action.payload.bot.path);
-      if (botInfo) {
-        botInfo.displayName = getBotDisplayName(action.payload.bot);
-        if (action.payload.secret) {
-          botInfo.secret = action.payload.secret;
-        }
-        const botInfoIndex = state.botFiles.findIndex(bf => bf.path === action.payload.bot.path);
-        let patchedBots = [...state.botFiles];
-        patchedBots.splice(botInfoIndex, 1, botInfo);
-        state = setBotFilesState(patchedBots, state);
-      }
-      state = setActiveBot(patchedBot, state);
-      break;
-    }
-
     case BotActions.setActive: {
       // move active bot up to the top of the recent bots list
       const mostRecentBot = state.botFiles.find(botArg => botArg && botArg.path === action.payload.bot.path);
@@ -93,8 +71,12 @@ export default function bot(state: BotState = DEFAULT_STATE, action: BotAction) 
       if (mostRecentBot) {
         recentBots.unshift(mostRecentBot);
       }
+      let newActiveBot = action.payload.bot;
+      if (botsAreTheSame(state.activeBot, newActiveBot)) {
+        newActiveBot = applyBotConfigOverrides(newActiveBot, state.activeBot.overrides);
+      }
       state = setBotFilesState(recentBots, state);
-      state = setActiveBot(action.payload.bot, state);
+      state = setActiveBot(newActiveBot, state);
       break;
     }
 
@@ -111,10 +93,12 @@ export default function bot(state: BotState = DEFAULT_STATE, action: BotAction) 
 }
 
 function setActiveBot(botConfig: BotConfigWithPath, state: BotState): BotState {
-  let newState = Object.assign({}, state);
-
-  newState.activeBot = botConfig;
-  return newState;
+  return Object.assign({}, state, {
+    get activeBot() {
+      // Clones only - this guarantees only pristine bots will exist in the store
+      return JSON.parse(JSON.stringify(botConfig));
+    }
+  });
 }
 
 function setBotFilesState(botFilesState: BotInfo[], state: BotState): BotState {

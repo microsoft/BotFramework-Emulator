@@ -32,8 +32,8 @@
 //
 
 import { getBotDisplayName } from '@bfemulator/app-shared';
-import { IBotConfig, IEndpointService, ServiceType } from 'msbot/bin/schema';
-import { BotConfigWithPath } from '@bfemulator/sdk-shared';
+import { IEndpointService, ServiceType } from 'msbot/bin/schema';
+import { BotConfigWithPath, mergeEndpoints } from '@bfemulator/sdk-shared';
 import { hasNonGlobalTabs } from '../../data/editorHelpers';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { getActiveBot } from '../../data/botHelpers';
@@ -80,24 +80,21 @@ export const ActiveBotHelper = new class {
     }
   }
 
-  /** Uses a .bot path and perform a read on the server-side to populate the corresponding bot object */
-  async setActiveBot(botPath: string): Promise<any> {
+  /** Sets a bot as active
+   *  @param bot Bot to set as active
+   */
+  async setActiveBot(bot: BotConfigWithPath): Promise<any> {
     try {
-      const {
-        bot,
-        botDirectory
-      }: { bot: IBotConfig, botDirectory: string }
-        = await CommandServiceImpl.remoteCall('bot:set-active', botPath);
-
+      // set the bot as active on the server side
+      const botDirectory = await CommandServiceImpl.remoteCall('bot:set-active', bot);
       store.dispatch(BotActions.setActive(bot));
       store.dispatch(FileActions.setRoot(botDirectory));
 
+      // update the app file menu and title bar
       CommandServiceImpl.remoteCall('menu:update-recent-bots');
       CommandServiceImpl.remoteCall('electron:set-title-bar', getBotDisplayName(bot));
-    } catch (err) {
-      console.error('Error while setting active bot: ', err);
-
-      throw new Error(`Error while setting active bot: ${ err }`);
+    } catch (e) {
+      throw new Error(`Error while setting active bot: ${e}`);
     }
   }
 
@@ -124,25 +121,28 @@ export const ActiveBotHelper = new class {
         cancelId: 0,
         defaultId: 0,
         message: 'This bot is already open. If you\'d like to start a conversation, ' +
-        'click on an endpoint from the Bot Explorer pane.',
+          'click on an endpoint from the Bot Explorer pane.',
         type: 'question'
       }
     );
   }
 
   async confirmAndCreateBot(botToCreate: BotConfigWithPath, secret: string): Promise<any> {
+    // prompt the user to confirm the switch
     const result = await this.confirmSwitchBot();
 
     if (result) {
       store.dispatch(EditorActions.closeNonGlobalTabs());
 
       try {
+        // create the bot and save to disk
         const bot: BotConfigWithPath = await CommandServiceImpl.remoteCall('bot:create', botToCreate, secret);
-
         store.dispatch(BotActions.create(bot, bot.path, secret));
 
-        await this.setActiveBot(bot.path);
+        // set the bot as active
+        await this.setActiveBot(botToCreate);
 
+        // open a livechat session with the bot
         const endpoint: IEndpointService = bot.services
           .find(service => service.type === ServiceType.Endpoint) as IEndpointService;
 
@@ -154,6 +154,7 @@ export const ActiveBotHelper = new class {
         store.dispatch(ExplorerActions.show(true));
       } catch (err) {
         console.error('Error during bot create: ', err);
+        throw new Error(`Error during bot create: ${err}`);
       }
     }
   }
@@ -188,41 +189,89 @@ export const ActiveBotHelper = new class {
           const result = this.confirmSwitchBot();
 
           if (result) {
-            store.dispatch(EditorActions.closeNonGlobalTabs());
-            await CommandServiceImpl.remoteCall('bot:load', filename);
+            try {
+              store.dispatch(EditorActions.closeNonGlobalTabs());
+              const bot = await CommandServiceImpl.remoteCall('bot:open', filename);
+              await CommandServiceImpl.remoteCall('bot:set-active', bot);
+              await CommandServiceImpl.call('bot:load', bot);
+            } catch (err) {
+              console.error('Error while trying to open bot from file: ', err);
+              throw new Error(`[confirmAndOpenBotFromFile] Error while trying to open bot from file: ${err}`);
+            }
           }
         } catch (err) {
           console.error('Error while calling confirmSwitchBot: ', err);
+          throw new Error(`[confirmAndOpenBotFromFile] Error while calling confirmSwitchBot: ${err}`);
         }
       }
     } catch (err) {
       console.error('Error while calling browseForBotFile: ', err);
+      throw new Error(`[confirmAndOpenBotFromFile] Error while calling browseForBotFile: ${err}`);
     }
   }
 
-  async confirmAndSwitchBots(botPath: string): Promise<any> {
-    let activeBot = getActiveBot();
+  /**
+   * Prompts the user to switch bots if necessary, and then sets the bot as active and opens
+   * a livechat session.
+   * @param bot The bot to be switched to. Can be a bot object with a path, or the bot path itself
+   */
+  async confirmAndSwitchBots(bot: BotConfigWithPath | string): Promise<any> {
+    let currentActiveBot = getActiveBot();
+    let botPath: string;
+    botPath = typeof bot === 'object' ? bot.path : bot;
 
-    if (activeBot && activeBot.path === botPath) {
+    if (currentActiveBot && currentActiveBot.path === botPath) {
       await this.botAlreadyOpen();
       return;
     }
 
     // TODO: We need to think about merging this with confirmAndCreateBot
-    console.log(`Switching to bot ${ botPath }`);
+    console.log(`Switching to bot ${botPath}`);
 
     try {
+      // prompt the user to confirm the switch
       const result = await this.confirmSwitchBot();
 
       if (result) {
         store.dispatch(EditorActions.closeNonGlobalTabs());
 
-        await this.setActiveBot(botPath);
+        // if we only have the bot path, we first need to open the bot file
+        let newActiveBot: BotConfigWithPath;
+        if (typeof bot === 'string') {
+          try {
+            newActiveBot = await CommandServiceImpl.remoteCall('bot:open', bot);
+          } catch (e) {
+            throw new Error(`[confirmAndSwitchBots] Error while trying to open bot at ${botPath}: ${e}`);
+          }
+        } else {
+          newActiveBot = bot;
+        }
 
-        const bot = getActiveBot();
-        const endpoint: IEndpointService = bot.services
-          .find(service => service.type === ServiceType.Endpoint) as IEndpointService;
+        // set the bot as active
+        await this.setActiveBot(newActiveBot);
 
+        // find a suitable endpoint configuration
+        let endpoint: IEndpointService;
+        const overridesArePresent = newActiveBot.overrides && newActiveBot.overrides.endpoint;
+
+        // if an endpoint id was specified, use that endpoint, otherwise use the first endpoint found
+        if (overridesArePresent && newActiveBot.overrides.endpoint.id) {
+          endpoint = newActiveBot.services
+            .find(service => 
+              service.type === ServiceType.Endpoint
+              && service.id === newActiveBot.overrides.endpoint.id
+            ) as IEndpointService;
+        } else {
+          endpoint = newActiveBot.services
+            .find(service => service.type === ServiceType.Endpoint) as IEndpointService;
+        }
+
+        // apply endpoint overrides here
+        if (endpoint && overridesArePresent) {
+          endpoint = mergeEndpoints(endpoint, newActiveBot.overrides.endpoint);
+        }
+
+        // open a livechat with the configured endpoint
         if (endpoint) {
           await CommandServiceImpl.call('livechat:new', endpoint);
         }
@@ -230,8 +279,9 @@ export const ActiveBotHelper = new class {
         store.dispatch(NavBarActions.select(Constants.NAVBAR_BOT_EXPLORER));
         store.dispatch(ExplorerActions.show(true));
       }
-    } catch (err) {
-      console.error('Error while setting active bot: ', err);
+    } catch (e) {
+      console.error(`Error while trying to switch to bot: ${botPath}`);
+      throw new Error(`[confirmAndSwitchBots] Error while trying to switch to bot ${botPath}: ${e}`);
     }
   }
 
@@ -251,6 +301,9 @@ export const ActiveBotHelper = new class {
             .catch(err => new Error(err));
         }
       })
-      .catch(err => console.error('Error while closing active bot: ', err));
+      .catch(err => {
+        console.error('Error while closing active bot: ', err);
+        throw new Error(`Error while closing active bot: ${err}`);
+      });
   }
 };

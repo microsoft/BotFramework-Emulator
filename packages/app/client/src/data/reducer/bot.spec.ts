@@ -31,27 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-// Jest mock statements need to be placed above imports
-// as they are not hoisted above them automatically
-// (Makes tests that use getBotInfoByPath() very fragile -- order matters)
-// https://github.com/kulshekhar/ts-jest/issues/90
-jest.mock('../botHelpers', () => {
-  const testBotInfo: BotInfo = {
-    displayName: 'testname',
-    path: 'testpath',
-    secret: null
-  };
-
-  return {
-    getBotInfoByPath: jest.fn()
-                          .mockReturnValue(null)
-                          .mockReturnValueOnce(null)
-                          .mockReturnValueOnce(testBotInfo)
-  };
-});
-
 import bot, { BotState } from './bot';
-import { BotAction, create, load, patch, setActive, close } from '../action/botActions';
+import { BotAction, create, load, setActive, close } from '../action/botActions';
 import { BotInfo } from '@bfemulator/app-shared';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 
@@ -67,21 +48,21 @@ describe('Bot reducer tests', () => {
     const endingState = bot(DEFAULT_STATE, emptyAction);
     expect(endingState).toEqual(startingState);
   });
-  
+
   it('should create a bot', () => {
     const testbot: BotConfigWithPath = {
       name: 'bot1',
       description: '',
       secretKey: null,
       services: [],
-      path: 'testpath'
+      path: 'somePath'
     };
 
     const action = create(testbot, testbot.path, 'testsecret');
     const state = bot(DEFAULT_STATE, action);
     expect(state.botFiles[0]).toBeTruthy();
     expect(state.botFiles[0].displayName).toBe('bot1');
-    expect(state.botFiles[0].path).toBe('testpath');
+    expect(state.botFiles[0].path).toBe('somePath');
     expect(state.botFiles[0].secret).toBe('testsecret');
   });
 
@@ -91,13 +72,13 @@ describe('Bot reducer tests', () => {
       description: '',
       secretKey: null,
       services: [],
-      path: 'testpath'
+      path: 'somePath'
     };
 
     it('should set a bot as active', () => {
       const action = setActive(testbot);
       const state = bot(DEFAULT_STATE, action);
-      expect(state.activeBot).toBe(testbot);
+      expect(state.activeBot).toEqual(testbot);
     });
 
     it('should move the bot to the top of the recently used bots list', () => {
@@ -114,7 +95,7 @@ describe('Bot reducer tests', () => {
         },
         {
           displayName: 'bot1',
-          path: 'testpath',
+          path: 'somePath',
           secret: null
         },
       ];
@@ -123,62 +104,73 @@ describe('Bot reducer tests', () => {
         ...DEFAULT_STATE,
         botFiles: testbots
       };
-      
+
       const action = setActive(testbot);
       const endingState = bot(startingState, action);
-      expect(endingState.botFiles[0].path).toBe('testpath');
+      expect(endingState.botFiles[0].path).toBe('somePath');
     });
-  });
 
-  describe('patching a bot', () => {
-    const activeBot: BotConfigWithPath = {
-      name: '',
-      description: '',
-      secretKey: null,
-      services: [],
-      path: 'testpath'
-    };
+    it('should preserve overrides from the previous bot if they have the same path', () => {
+      const startingState: BotState = {
+        ...DEFAULT_STATE,
+        activeBot: {
+          name: 'someActiveBot',
+          description: '',
+          services: [],
+          path: 'somePath',
+          secretKey: null,
+          overrides: {
+            endpoint: {
+              endpoint: 'someEndpointOverride',
+              appId: 'someAppId',
+              appPassword: 'someAppPw',
+              id: 'someEndpointOverride'
+            }
+          }
+        }
+      };
 
-    const testBots: BotInfo[] = [
-      {
-        displayName: '',
-        path: 'testpath',
-        secret: null
-      }
-    ];
-    
-    const startingState: BotState = {
-      ...DEFAULT_STATE,
-      activeBot,
-      botFiles: testBots
-    };
-
-    const updatedBot: BotConfigWithPath = {
-      name: 'testbot',
-      description: '',
-      secretKey: null,
-      services: [],
-      path: 'testpath'
-    };
-
-    it('should patch the active bot', () => {
-      const action = patch(updatedBot);
+      const action = setActive(testbot);
       const endingState = bot(startingState, action);
-      expect(endingState.activeBot).not.toEqual(activeBot);
-      expect(endingState.activeBot.name).toBe('testbot');
+      const activeBot = endingState.activeBot;
+
+      expect(activeBot.name).not.toBe('someActiveBot');
+
+      expect(activeBot.overrides).toBeTruthy();
+      const endpointOverrides = activeBot.overrides.endpoint;
+      expect(endpointOverrides.endpoint).toBe('someEndpointOverride');
+      expect(endpointOverrides.id).toBe('someEndpointOverride');
+      expect(endpointOverrides.appId).toBe('someAppId');
+      expect(endpointOverrides.appPassword).toBe('someAppPw');
     });
 
-    it('should update the recent bots list entry', () => {
-      const action = patch(updatedBot, 'testsecret');
+    it('should throw away overrides from the previous bot if they don\'t have the same path', () => {
+      const startingState: BotState = {
+        ...DEFAULT_STATE,
+        activeBot: {
+          name: 'someActiveBot',
+          description: '',
+          services: [],
+          path: 'someOtherPath',
+          secretKey: null,
+          overrides: {
+            endpoint: {
+              endpoint: 'someEndpointOverride',
+              appId: 'someAppId',
+              appPassword: 'someAppPw',
+              id: 'someEndpointOverride'
+            }
+          }
+        }
+      };
+
+      const action = setActive(testbot);
       const endingState = bot(startingState, action);
-      expect(endingState.botFiles.length).toBeGreaterThan(0);
-      expect(endingState.botFiles[0].path).toBe('testpath');
-      expect(endingState.botFiles[0].displayName).toBe('testbot');
-      expect(endingState.botFiles[0].secret).toBe('testsecret');
-    });
+      const activeBot = endingState.activeBot;
 
-    // clear mocks
-    jest.unmock('../botHelpers');
+      expect(activeBot.name).not.toBe('someActiveBot');
+      expect(activeBot.overrides).toBeFalsy();
+    });
   });
 
   it('should load an array of bots', () => {
@@ -197,11 +189,30 @@ describe('Bot reducer tests', () => {
         displayName: 'bot3',
         path: 'path3',
         secret: null
-      }
+      },
+      null
     ];
     const action = load(bots);
     const state = bot(DEFAULT_STATE, action);
-    expect(state.botFiles).toEqual(bots);
+    expect(state.botFiles).not.toEqual(bots);
+    expect(state.botFiles.length).toBe(3);
+    expect(state.botFiles).toEqual([
+      {
+        displayName: 'bot1',
+        path: 'path1',
+        secret: null
+      },
+      {
+        displayName: 'bot2',
+        path: 'path2',
+        secret: 'test-secret'
+      },
+      {
+        displayName: 'bot3',
+        path: 'path3',
+        secret: null
+      }
+    ]);
   });
 
   it('should close a bot', () => {

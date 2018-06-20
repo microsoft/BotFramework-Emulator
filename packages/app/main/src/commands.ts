@@ -33,7 +33,12 @@
 
 import { BotInfo, FrameworkSettings, getBotDisplayName, newBot, newEndpoint } from '@bfemulator/app-shared';
 import { Conversation } from '@bfemulator/emulator-core';
-import { BotConfigWithPath, CommandRegistryImpl as CommReg, uniqueId } from '@bfemulator/sdk-shared';
+import {
+  BotConfigWithPath,
+  CommandRegistryImpl as CommReg,
+  uniqueId,
+  mergeEndpoints
+} from '@bfemulator/sdk-shared';
 import * as Electron from 'electron';
 import { app, Menu } from 'electron';
 import * as Fs from 'fs';
@@ -86,27 +91,30 @@ export function registerCommands() {
 
   // ---------------------------------------------------------------------------
   // Create a bot
-  CommandRegistry.registerCommand('bot:create', async (bot: BotConfigWithPath,
-                                                       secret: string): Promise<BotConfigWithPath> => {
-    // getStore and add bot entry to bots.json
-    const botsJsonEntry: BotInfo = {
-      path: bot.path,
-      displayName: getBotDisplayName(bot),
-      secret
-    };
-    await patchBotsJson(bot.path, botsJsonEntry);
+  CommandRegistry.registerCommand('bot:create',
+    async (
+      bot: BotConfigWithPath,
+      secret: string
+    ): Promise<BotConfigWithPath> => {
+      // getStore and add bot entry to bots.json
+      const botsJsonEntry: BotInfo = {
+        path: bot.path,
+        displayName: getBotDisplayName(bot),
+        secret
+      };
+      await patchBotsJson(bot.path, botsJsonEntry);
 
-    // save the bot
-    try {
-      await saveBot(bot);
-    } catch (e) {
-      // TODO: make sure these are surfaced on the client side and caught so we can act on them
-      console.error(`bot:create: Error trying to save bot: ${e}`);
-      throw e;
-    }
+      // save the bot
+      try {
+        await saveBot(bot);
+      } catch (e) {
+        // TODO: make sure these are surfaced on the client side and caught so we can act on them
+        console.error(`bot:create: Error trying to save bot: ${e}`);
+        throw e;
+      }
 
-    return bot;
-  });
+      return bot;
+    });
 
   // ---------------------------------------------------------------------------
   // Save bot file and cause a bots list write
@@ -120,76 +128,53 @@ export function registerCommands() {
   });
 
   // ---------------------------------------------------------------------------
-  // Open a bot project from a .bot path
-  CommandRegistry.registerCommand('bot:load', async (botFilePath: string,
-                                                     secret?: string): Promise<BotConfigWithPath> => {
-    // try to get the bot secret from bots.json
-    const botInfo = pathExistsInRecentBots(botFilePath) ? getBotInfoByPath(botFilePath) : null;
-    if (botInfo && botInfo.secret) {
-      secret = secret || botInfo.secret;
-    }
+  // Opens a bot file at specified path and returns the bot
+  CommandRegistry.registerCommand('bot:open',
+    async (
+      botPath: string,
+      secret?: string
+    ): Promise<BotConfigWithPath> => {
+      // try to get the bot secret from bots.json
+      const botInfo = pathExistsInRecentBots(botPath) ? getBotInfoByPath(botPath) : null;
+      if (botInfo && botInfo.secret) {
+        secret = botInfo.secret;
+      }
 
-    // load the bot (decrypt with secret if we were able to get it)
-    const bot = await loadBotWithRetry(botFilePath, secret);
-    if (!bot) {
-      // user failed to enter a valid secret for an encrypted bot
-      throw new Error('No secret provided to decrypt encrypted bot.');
-    }
+      // load the bot (decrypt with secret if we were able to get it)
+      let bot: BotConfigWithPath;
+      try {
+        bot = await loadBotWithRetry(botPath, secret);
+      } catch (e) {
+        const errMessage = `Failed to open the bot with error: ${e.message}`;
+        await Electron.dialog.showMessageBox(mainWindow.browserWindow, {
+          type: 'error',
+          message: errMessage,
+        });
+        throw new Error(errMessage);
+      }
+      if (!bot) {
+        // user couldn't provide correct secret, abort
+        throw new Error('No secret provided to decrypt encrypted bot.');
+      }
 
-    // set up file watcher
-    BotProjectFileWatcher.watch(botFilePath);
-
-    // set bot as active
-    const botDirectory = Path.dirname(botFilePath);
-
-    store.dispatch(BotActions.setActive(bot));
-    store.dispatch(BotActions.setDirectory(botDirectory));
-
-    return mainWindow.commandService.remoteCall('bot:load', bot);
-  });
+      return bot;
+    });
 
   // ---------------------------------------------------------------------------
-  // Set active bot (called from client-side)
-  CommandRegistry.registerCommand('bot:set-active', async (botPath: string): Promise<{
-    bot: BotConfigWithPath,
-    botDirectory: string
-  } | void> => {
-    // try to get the bot secret from bots.json
-    let secret;
-    const botInfo = pathExistsInRecentBots(botPath) ? getBotInfoByPath(botPath) : null;
-    if (botInfo && botInfo.secret) {
-      secret = botInfo.secret;
-    }
-
-    // load the bot (decrypt with secret if we were able to get it)
-    let bot: BotConfigWithPath;
-    try {
-      bot = await loadBotWithRetry(botPath, secret);
-    } catch (e) {
-      const errMessage = `Failed to open the bot with error: ${e.message}`;
-      await Electron.dialog.showMessageBox(mainWindow.browserWindow, {
-        type: 'error',
-        message: errMessage,
-      });
-      throw new Error(errMessage);
-    }
-    if (!bot) {
-      // user couldn't provide correct secret, abort
-      throw new Error('No secret provided to decrypt encrypted bot.');
-    }
-
+  // Set active bot
+  CommandRegistry.registerCommand('bot:set-active', async (bot: BotConfigWithPath): Promise<string> => {
     // set up the file watcher
-    await BotProjectFileWatcher.watch(botPath);
+    await BotProjectFileWatcher.watch(bot.path);
 
     // set active bot and active directory
-    const botDirectory = Path.dirname(botPath);
+    const botDirectory = Path.dirname(bot.path);
     store.dispatch(BotActions.setActive(bot));
     store.dispatch(BotActions.setDirectory(botDirectory));
     mainWindow.commandService.call('bot:restart-endpoint-service');
 
     // Workaround for a JSON serialization issue in bot.services where they're an array
     // on the Node side, but deserialize as a dictionary on the renderer side.
-    return { bot, botDirectory };
+    return botDirectory;
   });
 
   // ---------------------------------------------------------------------------
@@ -199,8 +184,23 @@ export function registerCommands() {
 
     emulator.framework.server.botEmulator.facilities.endpoints.reset();
 
+    const overridesArePresent = bot.overrides && bot.overrides.endpoint;
+    let appliedOverrides = false;
+
     bot.services.filter(s => s.type === ServiceType.Endpoint).forEach(service => {
-      const endpoint = service as IEndpointService;
+      let endpoint = service as IEndpointService;
+      
+      if (overridesArePresent && !appliedOverrides) {
+        // if an endpoint id was not specified, apply overrides to first endpoint;
+        // otherwise, apply overrides to the matching endpoint
+        if (!bot.overrides.endpoint.id) {
+          endpoint = mergeEndpoints(endpoint, bot.overrides.endpoint);
+          appliedOverrides = true;
+        } else if (bot.overrides.endpoint.id === service.id) {
+          endpoint = mergeEndpoints(endpoint, bot.overrides.endpoint);
+          appliedOverrides = true;
+        }
+      }
 
       emulator.framework.server.botEmulator.facilities.endpoints.push(
         endpoint.id,
@@ -223,36 +223,40 @@ export function registerCommands() {
 
   // ---------------------------------------------------------------------------
   // Adds or updates an msbot service entry.
-  CommandRegistry.registerCommand('bot:add-or-update-service', async (serviceType: ServiceType,
-                                                                      service: IConnectedService) => {
-    if (!service.id || !service.id.length) {
-      service.id = uniqueId();
-    }
-    const activeBot = getActiveBot();
-    const botInfo = activeBot && getBotInfoByPath(activeBot.path);
-    if (botInfo) {
-      const botConfig = toSavableBot(activeBot, botInfo.secret);
-      const index = botConfig.services.findIndex(s => s.id === service.id && s.type === service.type);
-      let existing = index >= 0 && botConfig.services[index];
-      if (existing) {
-        // Patch existing service
-        existing = { ...existing, ...service };
-        botConfig.services[index] = existing;
-      } else {
-        // Add new service
-        if (service.type !== serviceType) {
-          throw new Error('serviceType does not match');
+  CommandRegistry.registerCommand('bot:add-or-update-service',
+    async (
+      serviceType: ServiceType,
+      service: IConnectedService
+    ) => {
+
+      if (!service.id || !service.id.length) {
+        service.id = uniqueId();
+      }
+      const activeBot = getActiveBot();
+      const botInfo = activeBot && getBotInfoByPath(activeBot.path);
+      if (botInfo) {
+        const botConfig = toSavableBot(activeBot, botInfo.secret);
+        const index = botConfig.services.findIndex(s => s.id === service.id && s.type === service.type);
+        let existing = index >= 0 && botConfig.services[index];
+        if (existing) {
+          // Patch existing service
+          existing = { ...existing, ...service };
+          botConfig.services[index] = existing;
+        } else {
+          // Add new service
+          if (service.type !== serviceType) {
+            throw new Error('serviceType does not match');
+          }
+          botConfig.connectService(service);
         }
-        botConfig.connectService(service);
+        try {
+          await botConfig.save(botInfo.path);
+        } catch (e) {
+          console.error(`bot:add-or-update-service: Error trying to save bot: ${e}`);
+          throw e;
+        }
       }
-      try {
-        await botConfig.save(botInfo.path);
-      } catch (e) {
-        console.error(`bot:add-or-update-service: Error trying to save bot: ${e}`);
-        throw e;
-      }
-    }
-  });
+    });
 
   // ---------------------------------------------------------------------------
   // Removes an msbot service entry.
@@ -342,7 +346,7 @@ export function registerCommands() {
 
   // ---------------------------------------------------------------------------
   // Client notifying us the welcome screen has been rendered
-  CommandRegistry.registerCommand('client:post-welcome-screen', () => {
+  CommandRegistry.registerCommand('client:post-welcome-screen', async (): Promise<void> => {
     mainWindow.commandService.call('menu:update-recent-bots');
 
     // Parse command line args for a protocol url
@@ -356,7 +360,13 @@ export function registerCommands() {
     if (args.some(arg => /(\.transcript)|(\.bot)$/.test(arg))) {
       const fileToBeOpened = args.find(arg => /(\.transcript)|(\.bot)$/.test(arg));
       if (Path.extname(fileToBeOpened) === '.bot') {
-        mainWindow.commandService.call('bot:load', fileToBeOpened);
+        try {
+          const bot = await mainWindow.commandService.call('bot:open', fileToBeOpened);
+          await mainWindow.commandService.call('bot:set-active', bot);
+          await mainWindow.commandService.remoteCall('bot:load', bot);
+        } catch (e) {
+          throw new Error(`Error while trying to open a .bot file via double click at: ${fileToBeOpened}`);
+        }
       } else if (Path.extname(fileToBeOpened) === '.transcript') {
         const transcript = readFileSync(fileToBeOpened);
         const conversationActivities = JSON.parse(transcript);
@@ -603,14 +613,19 @@ export function registerCommands() {
 
   // ---------------------------------------------------------------------------
   // Sends an OAuth TokenResponse
-  CommandRegistry.registerCommand('oauth:send-token-response', async (connectionName: string,
-                                                                      conversationId: string, token: string) => {
-    const convo = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
-    if (!convo) {
-      throw new Error(`emulator:feed-transcript:deep-link: Conversation ${conversationId} not found.`);
-    }
-    await convo.sendTokenResponse(connectionName, conversationId, false);
-  });
+  CommandRegistry.registerCommand('oauth:send-token-response',
+    async (
+      connectionName: string,
+      conversationId: string,
+      token: string
+    ) => {
+
+      const convo = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
+      if (!convo) {
+        throw new Error(`oauth:send-token-response: Conversation ${conversationId} not found.`);
+      }
+      await convo.sendTokenResponse(connectionName, conversationId, false);
+    });
 
   // ---------------------------------------------------------------------------
   // Opens an OAuth login window

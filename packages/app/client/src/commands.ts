@@ -86,7 +86,8 @@ export function registerCommands() {
 
   // ---------------------------------------------------------------------------
   // Switches the current active bot
-  CommandRegistry.registerCommand('bot:switch', (botPath: string) => ActiveBotHelper.confirmAndSwitchBots(botPath));
+  CommandRegistry.registerCommand('bot:switch',
+    (bot: BotConfigWithPath | string) => ActiveBotHelper.confirmAndSwitchBots(bot));
 
   // ---------------------------------------------------------------------------
   // Closes the current active bot
@@ -97,14 +98,13 @@ export function registerCommands() {
   CommandRegistry.registerCommand('bot:browse-open', () => ActiveBotHelper.confirmAndOpenBotFromFile());
 
   // ---------------------------------------------------------------------------
-  // Completes the client side sync of the bot:load command on the server side
-  // (NOTE: should NOT be called by itself; call server side instead)
+  // Loads the bot on the client side using the activeBotHelper
   CommandRegistry.registerCommand('bot:load', (bot: BotConfigWithPath): Promise<any> => {
     if (!pathExistsInRecentBots(bot.path)) {
       // create and switch bots
       return ActiveBotHelper.confirmAndCreateBot(bot, '');
     }
-    return ActiveBotHelper.confirmAndSwitchBots(bot.path);
+    return ActiveBotHelper.confirmAndSwitchBots(bot);
   });
 
   // ---------------------------------------------------------------------------
@@ -237,7 +237,7 @@ export function registerCommands() {
   });
 
   // ---------------------------------------------------------------------------
-  // Clears the file store 
+  // Clears the file store
   CommandRegistry.registerCommand('file:clear', () => {
     store.dispatch(FileActions.clear());
   });
