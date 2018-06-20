@@ -1,0 +1,32 @@
+.column {
+  box-sizing: border-box;
+  display: flex;
+  flex-flow: column nowrap;
+  max-width: 100%;
+  width: 100%;
+  overflow: hidden
+}
+
+.justifyCenter {
+  justify-content: center;
+}
+
+.justifyBottom {
+  justify-content: flex-end;
+}
+
+.justifyTop {
+  justify-content: flex-start;
+}
+
+.alignCenter {
+  align-items: center;
+}
+
+.alignRight {
+  align-items: right;
+}
+
+.alignLeft {
+  align-items: left;
+}

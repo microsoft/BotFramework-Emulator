@@ -1,0 +1,32 @@
+.row {
+  box-sizing: border-box;
+  display: flex;
+  flex-flow: row nowrap;
+  flex-shrink: 0;
+  overflow: hidden;
+  width: 100%;
+}
+
+.justifyCenter {
+  justify-content: center;
+}
+
+.justifyRight {
+  justify-content: right;
+}
+
+.justifyLeft {
+  justify-content: left;
+}
+
+.alignCenter {
+  align-items: center;
+}
+
+.alignBottom {
+  align-items: flex-end;
+}
+
+.alignTop {
+  align-items: flex-start;
+}

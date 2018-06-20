@@ -31,62 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { mergeStyles } from '@uifabric/merge-styles';
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
-
 import { SplitterPane } from './pane';
+
+import * as styles from './splitter.scss';
 
 const DEFAULT_PANE_SIZE = 200;
 const MIN_PANE_SIZE = 0;
 const SPLITTER_SIZE = 0;
-const SPLITTER_HIT_TARGET = 8;
 const event = new Event('splitterResize');
 
 export type SplitterOrientation = 'horizontal' | 'vertical';
-
-const horizontalCss = mergeStyles({
-  displayName: 'horizontalSplitter',
-  position: 'relative',
-  height: SPLITTER_SIZE,
-  width: '100%',
-  backgroundColor: 'transparent',
-  flexShrink: 0,
-  zIndex: 1,
-  selectors: {
-    // inivisible hit target floating on top of splitter
-    '& > div': {
-      position: 'absolute',
-      height: SPLITTER_HIT_TARGET,
-      width: '100%',
-      top: SPLITTER_HIT_TARGET / 2 * -1,
-      left: 0,
-      backgroundColor: 'transparent',
-      cursor: 'ns-resize'
-    }
-  }
-});
-
-const verticalCss = mergeStyles({
-  displayName: 'verticalSplitter',
-  position: 'relative',
-  height: '100%',
-  width: SPLITTER_SIZE,
-  backgroundColor: 'transparent',
-  flexShrink: 0,
-  zIndex: 1,
-  selectors: {
-    '& > div': {
-      position: 'absolute',
-      height: '100%',
-      width: SPLITTER_HIT_TARGET,
-      top: 0,
-      left: SPLITTER_HIT_TARGET / 2 * -1,
-      backgroundColor: 'transparent',
-      cursor: 'ew-resize'
-    }
-  }
-});
 
 export interface SplitterProps {
   children?: any;
@@ -114,10 +70,6 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
   private paneNum: number;
   private containerSize: number;
   private containerRef: HTMLElement;
-
-  private splitterCss: any;
-  private containerCss: any;
-  private floatingCanvasCss: any;
 
   constructor(props: SplitterProps, context: SplitterState) {
     super(props, context);
@@ -153,27 +105,6 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
     document.addEventListener('mouseup', this.onMouseUp);
     document.addEventListener('splitterResize', this.checkForContainerResize);
     window.addEventListener('resize', this.checkForContainerResize);
-
-    this.splitterCss = this.props.orientation === 'horizontal' ? horizontalCss : verticalCss;
-
-    this.containerCss = mergeStyles({
-      height: '100%',
-      width: '100%',
-      position: 'relative'
-    });
-
-    // float a canvas within the splitter container to deal with overflow issues
-    const flexDir = this.props.orientation === 'horizontal' ? 'column' : 'row';
-    this.floatingCanvasCss = mergeStyles({
-      displayName: 'floatingCanvas',
-      position: 'absolute',
-      top: 0,
-      bottom: 0,
-      right: 0,
-      left: 0,
-      display: 'flex',
-      flexFlow: `${flexDir} nowrap`,
-    });
   }
 
   componentDidMount() {
@@ -411,9 +342,11 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
           this.splitters[splitIndex] = {};
         }
 
+        const splitterCss = this.props.orientation === 'horizontal' ?
+          styles.horizontalSplitter : styles.verticalSplitter;
         // add a splitter
         const splitter = (
-          <div className={ this.splitterCss } key={ `splitter${splitIndex}` }
+          <div className={ splitterCss } key={ `splitter${splitIndex}` }
                ref={ x => this.saveSplitterRef(x, splitIndex) }>
             <div onMouseDown={ (e) => this.onGrabSplitter(e, splitIndex) }/>
           </div>
@@ -424,10 +357,10 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
 
       this.paneNum++;
     });
-
+    const flexDir = this.props.orientation === 'horizontal' ? styles.canvasCol : styles.canvasRow;
     return (
-      <div ref={ this.saveContainerRef } className={ this.containerCss + ' split-container' }>
-        <div className={ this.floatingCanvasCss }>
+      <div ref={ this.saveContainerRef } className={ styles.container }>
+        <div className={ `${styles.floatingCanvas} ${flexDir}` }>
           { splitChildren }
         </div>
       </div>

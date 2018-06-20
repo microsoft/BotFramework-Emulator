@@ -1,0 +1,29 @@
+.main {
+  width: 648px;
+
+  .multiInputRow {
+    width: 420px;
+    justify-content: space-between
+  }
+
+  .smallInput input {
+    width: 200px;
+  }
+
+  .secretInput input {
+    width: 200px;
+  }
+
+  .botCreateForm :global {
+    .ms-Dialog-header {
+      display: none;
+    }
+  }
+
+  .botCreateForm .botCreateForm > * {
+    margin-bottom: 16px;
+  }
+}
+
+
+

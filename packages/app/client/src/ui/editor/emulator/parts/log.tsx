@@ -51,7 +51,7 @@ const css = mergeStyles({
   selectors: {
     '& > .entry': {
       fontFamily: Fonts.FONT_FAMILY_MONOSPACE,
-      selecors: {
+      selectors: {
         '& > .source': {
           color: `var(${ThemeVariables.neutral6})`,
         },
