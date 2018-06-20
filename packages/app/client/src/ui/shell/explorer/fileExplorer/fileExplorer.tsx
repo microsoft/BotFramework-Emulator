@@ -97,6 +97,7 @@ class FileExplorerComponent extends React.Component<FileExplorerProps> {
 
   private handleChatClick(filename: string) {
     console.log('clicked a chat file: ', filename);
+    CommandServiceImpl.call('chat:open', filename);
   }
 
   private renderFileTree(): JSX.Element {

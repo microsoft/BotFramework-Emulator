@@ -225,6 +225,17 @@ export function registerCommands() {
   });
 
   // ---------------------------------------------------------------------------
+  // Open the chat file in a tabbed document as a transcript
+  CommandRegistry.registerCommand('chat:open', async (filename: string) => {
+    try {
+      const { activities }: { activities: any[] } = await CommandServiceImpl.remoteCall('chat:open', filename);
+      console.log(activities);
+    } catch (err) {
+      console.error('Error while retrieving activities from main side: ', err);
+    }
+  });
+
+  // ---------------------------------------------------------------------------
   // Adds a file to the file store
   CommandRegistry.registerCommand('file:add', (payload) => {
     store.dispatch(FileActions.addFile(payload));
@@ -237,7 +248,7 @@ export function registerCommands() {
   });
 
   // ---------------------------------------------------------------------------
-  // Clears the file store 
+  // Clears the file store
   CommandRegistry.registerCommand('file:clear', () => {
     store.dispatch(FileActions.clear());
   });

@@ -69,6 +69,7 @@ import { getStore } from './data-v2/store';
 
 const store = getStore();
 const sanitize = require('sanitize-filename');
+const chatdown = require('chatdown');
 
 // =============================================================================
 export const CommandRegistry = new CommReg();
@@ -620,5 +621,27 @@ export function registerCommands() {
   CommandRegistry.registerCommand('oauth:getStore-oauth-window', async (url: string, conversationId: string) => {
     const convo = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
     windowManager.createOAuthWindow(url, convo.codeVerifier);
+  });
+
+  // ---------------------------------------------------------------------------
+  // Open the chat file in a tabbed document as a transcript
+  CommandRegistry.registerCommand('chat:open', async (filename: string): Promise<any> => {
+    let conversation;
+    let activities;
+
+    // read conversation from chat file
+    try {
+      conversation = readFileSync(filename);
+    } catch (err) {
+      throw new Error(`Error while trying to read conversation from chat file: ${err}`);
+    }
+    // convert conversation to list of activities using chatdown
+    try {
+      activities = await chatdown(conversation, {});
+    } catch (err) {
+      throw new Error(`Error while converting .chat file to list of activites: ${err}`);
+    }
+
+    return { activities };
   });
 }
