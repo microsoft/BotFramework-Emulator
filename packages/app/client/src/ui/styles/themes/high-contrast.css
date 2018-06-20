@@ -1,0 +1,105 @@
+html {
+  /* Highlight colors */
+  --list-item-color: var(--neutral-1);
+  --list-item-selected-color: var(--neutral-2);
+  --list-item-hover-bg: transparent;
+  --list-item-hover-border: 1px dashed #F38518;
+  --selected-list-item: #CCCEDB;
+  --focused-list-item: transparent;
+  --focused-outline: var(--list-item-hover-border);
+  --focused-selected-highlighted-list-item: #3062D6;
+  --focused-selected-list-item-bg: #4672DA;
+
+  /* Alert colors */
+  --info-bg: #D6ECF2;
+  --info-outline: #007ACC;
+
+  --warning-bg: #F6F5D2;
+  --warning-outline: #b89500;
+
+  --error-text: #A1260D;
+  --error-bg: #F2DEDE;
+  --error-outline: #BE1100;
+
+  /* webchat overridden colors */
+  --webchat-selected-text-bg: #F4E321;
+
+  /* Log panel custom colors */
+  --log-panel-timestamp: #47B07F;
+  --log-panel-link: #9CDCFE;
+
+  /* nav bar custom colors */
+  --nav-bar-bg: var(--neutral-16);
+  --nav-icon-color: var(--neutral-1);
+  --nav-icon-opacity: 1;
+  --nav-icon-color-hover-opacity: 1;
+  --nav-focused-tag-bg: #F38518;
+  --nav-focused-tag-bg-opacity: .6;
+  --nav-link-selected-border: 1px solid #F38518;
+  --nav-link-hover-border: var(--list-item-hover-border);
+
+  /* input[type="text"] */
+  --input-bg: var(--neutral-15);
+  --input-label-color: #c8c8c8;
+  --input-label-color-disabled: var(--neutral-7);
+  --input-border: 1px solid #c8c8c8;
+  --input-border-focus: 1px solid #72c3df;
+  --input-border-error: 1px solid #d02e00;
+  --input-placeholder-color: var(--neutral-7);
+  --input-border-disabled: 1px solid var(--neutral-7);
+
+  /* primary button */
+  --p-button-color: var(--neutral-2);
+  --p-button-border: 1px solid #72c3df;
+  --p-button-border-focus: 1px solid #f38518;
+  --p-button-border-hover: 1px solid #72c3df;
+  --p-button-border-active: var(--p-button-border);
+  --p-button-border-disabled: var(--p-button-border);
+  --p-button-opacity-disabled: .4;
+  --p-button-bg: transparent;
+  --p-button-bg-focus: transparent;
+  --p-button-bg-hover: transparent;
+  --p-button-bg-active: transparent;
+  --p-button-bg-disabled: transparent;
+
+  /* secondary button */
+  --s-button-color: var(--p-button-color);
+  --s-button-color-disabled:  var(--p-button-color);
+  --s-button-border: var(--p-button-border);
+  --s-button-border-focused: var(--p-button-border-focus);
+  --s-button-border-hover: var(--p-button-border-hover);
+  --s-button-border-active: var(--s-button-border-active);
+  --s-button-border-disabled: var(--p-button-border-disabled);
+  --s-button-opacity-disabled: var(--p-button-border-disabled);
+  --s-button-bg: transparent;
+  --s-button-bg-focus: transparent;
+  --s-button-bg-hover: transparent;
+  --s-button-bg-active: transparent;
+  --s-button-bg-disabled: transparent;
+
+  /* Dialog a.k.a. Modal and panels */
+  --dialog-bg: var(--neutral-16);
+
+  /* Services Explorer */
+  --explorer-panel-bg: var(--neutral-16);
+  --explorer-panel-name-color: var(--neutral-1);
+  --explorer-panel-icon-color: var(--neutral-1);
+  --explorer-panel-group-title-bg: var(--neutral-16);
+  --explorer-panel-group-title-color: var(--neutral-1);
+  --explorer-panel-group-border: 1px solid #00BCF2;
+  --explorer-panel-empty-message-color: var(--neutral-4);
+
+  /* Tabs */
+  --tab-bar-bg: var(--neutral-16);
+  --tab-bg: var(--neutral-16);
+  --tab-border: 1px solid transparent;
+  --tab-hover-border: var(--list-item-hover-border);
+  --tab-active-tab-bg: var(--neutral-16);
+  --tab-focus-border: var(--p-button-border-focus);
+  --tab-seperator-bg: #00BCF2;
+  --tab-icon-color: var(--explorer-panel-group-title-color);
+
+  /* toolbar */
+  --toolbar-bg: var(--neutral-16);
+  --toolbar-border: var(--explorer-panel-group-border);
+}

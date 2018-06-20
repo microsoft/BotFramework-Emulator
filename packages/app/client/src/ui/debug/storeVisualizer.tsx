@@ -33,40 +33,11 @@
 
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { css } from 'glamor';
+import * as styles from './storeVisualizer.scss';
 
 import { RootState } from '../../data/store';
 import { PrimaryButton } from '@bfemulator/ui-react';
 
-const CSS = css({
-  position: 'absolute',
-  maxWidth: '400px',
-  display: 'flex',
-  flexFlow: 'column nowrap',
-  bottom: 0,
-  left: 0,
-  opacity: '0.9',
-  pointerEvents: 'none',
-
-  '& pre': {
-    maxHeight: '500px',
-    overflowY: 'auto',
-    pointerEvents: 'auto'
-  },
-
-  '& select': {
-    width: '120px'
-  },
-
-  '& select, & option': {
-    pointerEvents: 'auto'
-  },
-
-  '& .visualizer-button': {
-    width: '120px',
-    pointerEvents: 'auto'
-  }
-});
 
 type StateSlice = 'assetExplorer' | 'bot' | 'chat' | 'dialog' | 'editor'
   | 'explorer' | 'navBar' | 'presentation' | 'server';
@@ -103,44 +74,45 @@ class StoreVisualizerComponent extends React.Component<StoreVisualizerProps, Sto
     this.setState({ selectedSlice: e.target.value });
   }
 
-  render(): JSX.Element {
-    const prettyState = JSON.stringify(this.props.rootState[this.state.selectedSlice], null, 2);
+  private get content(): JSX.Element {
+    const { showing, selectedSlice } = this.state;
+    const { rootState } = this.props;
 
-    if (this.props.enabled) {
+    if (showing) {
+      const prettyState = JSON.stringify(rootState[selectedSlice], null, 2);
       return (
-        <div { ...CSS }>
-          {
-            this.state.showing ?
-
-            <>
-              <select value={ this.state.selectedSlice } onChange={ this.onSelectSlice } >
-                <option value="assetExplorer">Asset Explorer</option>
-                <option value="bot">Bot</option>
-                <option value="chat">Chat</option>
-                <option value="dialog">Dialog</option>
-                <option value="editor">Editor</option>
-                <option value="explorer">Explorer</option>
-                <option value="navBar">NavBar</option>
-                <option value="presentation">Presentation</option>
-                <option value="server">Server</option>
-              </select>
-
-              <pre>
-                { prettyState }
-              </pre>
-
-              <PrimaryButton text="Hide Visualizer" className="visualizer-button" onClick={ this.toggleShowing } />
-            </>
-
-            :
-
-            <PrimaryButton text="Show visualizer" className="visualizer-button" onClick={ this.toggleShowing } />
-          }
-        </div>
+        <>
+          <select value={ selectedSlice } onChange={ this.onSelectSlice }>
+            <option value="assetExplorer">Asset Explorer</option>
+            <option value="bot">Bot</option>
+            <option value="chat">Chat</option>
+            <option value="dialog">Dialog</option>
+            <option value="editor">Editor</option>
+            <option value="explorer">Explorer</option>
+            <option value="navBar">NavBar</option>
+            <option value="presentation">Presentation</option>
+            <option value="server">Server</option>
+          </select>
+          <pre>{ prettyState }</pre>
+          <PrimaryButton
+            text="Hide Visualizer"
+            className={ styles.visualizerButton }
+            onClick={ this.toggleShowing }/>
+        </>
       );
     } else {
-      return null;
+      return (
+        <PrimaryButton
+          text="Show visualizer"
+          className={ styles.visualizerButton }
+          onClick={ this.toggleShowing }
+        />
+      );
     }
+  }
+
+  render(): JSX.Element {
+    return this.props.enabled ? (<div className={ styles.storeVisualizer }> { this.content }</div>) : null;
   }
 }
 

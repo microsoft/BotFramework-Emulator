@@ -32,10 +32,9 @@
 //
 
 export * from './checkbox';
-export * from './largeHeader';
-export * from './mediumHeader';
+export * from './largeHeader/largeHeader';
+export * from './mediumHeader/mediumHeader';
 export * from './primaryButton';
-export * from './smallHeader';
+export * from './smallHeader/smallHeader';
 export * from './textInputField';
-export * from './insetShadow';
 export * from './modal';

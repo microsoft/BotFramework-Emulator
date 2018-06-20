@@ -33,7 +33,7 @@
 
 import * as React from 'react';
 
-import { TabbedDocumentContentWrapper } from './contentWrapper';
+import { TabbedDocumentContentWrapper } from './contentWrapper/contentWrapper';
 
 export class TabbedDocument extends React.Component<{}> {
   constructor(props: {}) {

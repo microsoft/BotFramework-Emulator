@@ -34,8 +34,12 @@
 import { loadTheme } from '@uifabric/styling';
 import { Dialog, DialogType, IDialogContentProps, IDialogStyles } from 'office-ui-fabric-react/lib-commonjs/Dialog';
 import * as React from 'react';
-export { DialogContent as ModalContent, DialogFooter as ModalActions } from 'office-ui-fabric-react/lib-commonjs/Dialog';
-import { initializeTheme, modalTheme } from '../styles/colors';
+import { modalTheme } from '../styles';
+
+export {
+  DialogContent as ModalContent,
+  DialogFooter as ModalActions
+} from 'office-ui-fabric-react/lib-commonjs/Dialog';
 
 export interface ModalProps extends React.Props<any> {
   cancel: (event: any) => void;

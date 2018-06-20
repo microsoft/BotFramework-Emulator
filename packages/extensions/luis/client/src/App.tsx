@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Colors, Fonts, GlobalCss, Splitter } from '@bfemulator/ui-react';
+import { Fonts, GlobalCss, Splitter, ThemeVariables } from '@bfemulator/ui-react';
 import { InspectorHost } from '@bfemulator/sdk-client';
-import { css } from 'glamor';
+import { mergeStyles } from '@uifabric/merge-styles';
 import { IBotConfig, IDispatchService, ILuisService, ServiceType, IConnectedService } from 'msbot/bin/schema';
 import * as React from 'react';
 import { Component } from 'react';
@@ -63,24 +63,21 @@ let globalCss = {
   width: '622px'
 };
 
-GlobalCss.setCss(globalCss);
+let jsonViewerCss = {
+  overflowY: 'auto',
+  paddingTop: '10px',
+  paddingBottom: '10px',
+  height: '95%',
+  backgroundColor: `var(${ThemeVariables.neutral15})`,
+  fontFamily: Fonts.FONT_FAMILY_DEFAULT,
+};
 
-let appCss = {
+const appCss = mergeStyles({
+  displayName: 'luisApp',
   height: '100%',
   fontSize: '12px',
   padding: '5px'
-};
-
-let jsonViewerCss = {
-    overflowY: 'auto',
-    paddingTop: '10px',
-    paddingBottom: '10px',
-    height: '95%',
-    backgroundColor: Colors.APP_BACKGROUND_DARK,
-    fontFamily: Fonts.FONT_FAMILY_DEFAULT,
-  };
-
-const APP_CSS = css(appCss);
+});
 
 interface AppState {
   traceInfo: LuisTraceInfo;
@@ -167,9 +164,9 @@ class App extends Component<any, AppState> {
         $host.setAccessoryState(TrainAccessoryId, AccessoryDefaultState);
         $host.setAccessoryState(PublichAccessoryId, AccessoryDefaultState);
         $host.enableAccessory(TrainAccessoryId, this.state.persistentState[this.state.id] &&
-                                                this.state.persistentState[this.state.id].pendingTrain);
+          this.state.persistentState[this.state.id].pendingTrain);
         $host.enableAccessory(PublichAccessoryId, this.state.persistentState[this.state.id] &&
-                                                  this.state.persistentState[this.state.id].pendingPublish);
+          this.state.persistentState[this.state.id].pendingPublish);
       });
 
       $host.on('accessory-click', async (id: string) => {
@@ -197,39 +194,39 @@ class App extends Component<any, AppState> {
 
   render() {
     return (
-      <div {...APP_CSS}>
+      <div className={ appCss }>
         <Header
-          appId={this.state.traceInfo.luisModel.ModelID}
-          appName={this.state.appInfo.name}
-          slot={this.state.traceInfo.luisOptions.Staging ? 'Staging' : 'Production'}
-          version={this.state.appInfo.activeVersion}
+          appId={ this.state.traceInfo.luisModel.ModelID }
+          appName={ this.state.appInfo.name }
+          slot={ this.state.traceInfo.luisOptions.Staging ? 'Staging' : 'Production' }
+          version={ this.state.appInfo.activeVersion }
         />
         <ControlBar
-          setButtonSelected={this.setControlButtonSelected}
-          buttonSelected={this.state.controlBarButtonSelected}
+          setButtonSelected={ this.setControlButtonSelected }
+          buttonSelected={ this.state.controlBarButtonSelected }
         />
-          <Splitter orientation={'vertical'}
-                    primaryPaneIndex={0}
-                    minSizes={{ 0: 306, 1: 306 }}
-                    initialSizes={{ 0: 306 }}>
-            <ReactJson
-              name={this.state.controlBarButtonSelected === ButtonSelected.RecognizerResult ?
-                    'recognizerResult' :
-                    'luisResponse' }
-              src={this.state.controlBarButtonSelected === ButtonSelected.RecognizerResult ?
-                  this.state.traceInfo.recognizerResult :
-                  this.state.traceInfo.luisResult}
-              theme="monokai"
-              style={jsonViewerCss}
-            />
-            <Editor
-              recognizerResult={this.state.traceInfo.recognizerResult}
-              intentInfo={this.state.intentInfo}
-              intentReassigner={this.reassignIntent}
-              appInfo={this.state.appInfo}
-              traceId={this.state.id}
-            />
-          </Splitter>
+        <Splitter orientation={ 'vertical' }
+                  primaryPaneIndex={ 0 }
+                  minSizes={ { 0: 306, 1: 306 } }
+                  initialSizes={ { 0: 306 } }>
+          <ReactJson
+            name={ this.state.controlBarButtonSelected === ButtonSelected.RecognizerResult ?
+              'recognizerResult' :
+              'luisResponse' }
+            src={ this.state.controlBarButtonSelected === ButtonSelected.RecognizerResult ?
+              this.state.traceInfo.recognizerResult :
+              this.state.traceInfo.luisResult }
+            theme="monokai"
+            style={ jsonViewerCss }
+          />
+          <Editor
+            recognizerResult={ this.state.traceInfo.recognizerResult }
+            intentInfo={ this.state.intentInfo }
+            intentReassigner={ this.reassignIntent }
+            appInfo={ this.state.appInfo }
+            traceId={ this.state.id }
+          />
+        </Splitter>
       </div>
     );
   }
@@ -301,7 +298,7 @@ class App extends Component<any, AppState> {
       this.setAppPersistentState({
         pendingPublish: false,
         pendingTrain: false
-    });
+      });
     } catch (err) {
       $host.logger.error(err.message);
     }
@@ -309,22 +306,23 @@ class App extends Component<any, AppState> {
 
   private setAppPersistentState(persistentState: PersistentAppState) {
     this.state.persistentState[this.state.id] = persistentState;
-    this.setState({persistentState: this.state.persistentState});
+    this.setState({ persistentState: this.state.persistentState });
     localStorage.setItem(persistentStateKey, JSON.stringify(this.state.persistentState));
     $host.enableAccessory(TrainAccessoryId, persistentState.pendingTrain);
     $host.enableAccessory(PublichAccessoryId, persistentState.pendingPublish);
   }
 
-  private loadAppPersistentState(): {[key: string]: PersistentAppState} {
+  private loadAppPersistentState(): { [key: string]: PersistentAppState } {
     let persisted = localStorage.getItem(persistentStateKey);
     if (persisted !== null) {
       return JSON.parse(persisted);
     }
-    return { '': {
-      pendingTrain: false,
-      pendingPublish: false
-    }
-   };
+    return {
+      '': {
+        pendingTrain: false,
+        pendingPublish: false
+      }
+    };
   }
 }
 

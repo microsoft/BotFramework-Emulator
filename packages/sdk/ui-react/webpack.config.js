@@ -1,4 +1,4 @@
-const { NodeEnvironmentPlugin } = require('webpack');
+const { NodeEnvironmentPlugin, WatchIgnorePlugin } = require('webpack');
 const path = require('path');
 module.exports = {
   entry: {
@@ -9,6 +9,25 @@ module.exports = {
 
   module: {
     rules: [
+      {
+        test: /\.scss$/,
+        use: [
+          'style-loader',
+          {
+            loader: 'typings-for-css-modules-loader',
+            options: {
+              localIdentName: '[local]__[hash:base64:5]',
+              modules: true,
+              sass: true,
+              namedExport: true,
+              sourcemaps:true,
+              banner: '// This is a generated file. Changes are likely to result in being overwritten'
+            }
+          },
+          'resolve-url-loader',
+          'sass-loader'
+        ]
+      },
       {
         test: /\.(tsx?)|(jsx)$/,
         exclude: [/node_modules/],
@@ -29,10 +48,9 @@ module.exports = {
         options: { /* Loader options go here */ }
       },
       {
-        test: /\.svg$/,
-        loader: 'svg-url-loader',
-        options: { noquotes: true }
-      }
+        test: /\.(png|jpg|gif|svg)$/,
+        use: [ 'file-loader' ]
+      },
     ]
   },
 
@@ -41,7 +59,7 @@ module.exports = {
   },
 
   resolve: {
-    extensions: ['.js', '.jsx', '.json', '.ts', '.tsx']
+    extensions: ['.js', '.jsx', '.json', '.ts', '.tsx', '.scss']
   },
 
   output: {
@@ -53,6 +71,9 @@ module.exports = {
 
   externals: {},
   plugins: [
-    new NodeEnvironmentPlugin()
+    new NodeEnvironmentPlugin(),
+    new WatchIgnorePlugin([
+      './src/**/*.d.ts'
+    ])
   ]
 };

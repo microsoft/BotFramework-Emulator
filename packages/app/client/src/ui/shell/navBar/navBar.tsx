@@ -31,107 +31,49 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
-import { css } from 'glamor';
-import classNames from 'classnames';
 import * as React from 'react';
-import { MouseEvent } from 'react';
-
-import { Colors, InsetShadow } from '@bfemulator/ui-react';
-import * as Constants from '../../../constants';
-import * as NavBarActions from '../../../data/action/navBarActions';
-import * as ExplorerActions from '../../../data/action/explorerActions';
-import * as EditorActions from '../../../data/action/editorActions';
-import { RootState } from '../../../data/store';
+import { MouseEvent, SyntheticEvent } from 'react';
 import { IBotConfig } from 'msbot/bin/schema';
-import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
-import { NavLink } from './navLink';
+import * as styles from './navBar.scss';
 
-const CSS = css({
-  backgroundColor: Colors.NAVBAR_BACKGROUND_DARK,
-  display: 'flex',
-  flexDirection: 'column',
-  overflow: 'hidden',
-  position: 'relative',
-  width: '50px',
-
-  '& .bot-explorer': {
-    backgroundImage: 'url(./external/media/ic_bot_explorer.svg)'
-  },
-
-  '& .services': {
-    backgroundImage: 'url(./external/media/ic_services.svg)'
-  },
-
-  '& .bot-settings': {
-    backgroundImage: 'url(./external/media/ic_bot_settings.svg)'
-  },
-
-  '& .settings': {
-    backgroundImage: 'url(./external/media/ic_settings.svg)'
-  }
-});
-
-interface NavBarProps {
+export interface NavBarProps {
   activeBot?: IBotConfig;
   selection?: string;
   showingExplorer?: boolean;
-  handleClick?: (evt: MouseEvent<HTMLAnchorElement>, selection: string) => void;
+  handleClick?: (evt: SyntheticEvent<HTMLAnchorElement>) => void;
   handleSettingsClick?: (evt: MouseEvent<HTMLAnchorElement>) => void;
 }
 
-class NavBarComponent extends React.Component<NavBarProps> {
+export class NavBarComponent extends React.Component<NavBarProps> {
   constructor(props: NavBarProps) {
     super(props);
   }
 
   render() {
-    const { selection, handleClick, handleSettingsClick } = this.props;
+    // const { selection, handleClick, handleSettingsClick } = this.props;
 
     return (
-      <nav { ...CSS }>
-        <NavLink
-          className={ classNames('nav-link bot-explorer', { selected: selection === Constants.NAVBAR_BOT_EXPLORER }) }
-          onClick={ evt => handleClick(evt, Constants.NAVBAR_BOT_EXPLORER) } title="Bot Explorer"/>
-        <NavLink className={ classNames('nav-link services', { selected: selection === Constants.NAVBAR_SERVICES }) }
-                 onClick={ evt => handleClick(evt, Constants.NAVBAR_SERVICES) } title="Services"/>
-        <NavLink className={ classNames('nav-link bot-settings', { disabled: !this.props.activeBot }) }
-                 onClick={ this.handleBotSettingsClick } title="Bot Settings"/>
-        <NavLink className="nav-link settings" onClick={ handleSettingsClick } title="Settings" justifyEnd={ true }/>
-        <InsetShadow right={ true }/>
+      <nav className={ styles.navBar }>
+        { ...this.links }
       </nav>
     );
   }
 
-  private handleBotSettingsClick = () => {
-    if (this.props.activeBot) {
-      CommandServiceImpl.call('bot-settings:open', this.props.activeBot);
-    }
+  private get links(): JSX.Element[] {
+    return [
+      'Bot Explorer',
+      'Services',
+      'Bot Settings',
+      'Settings'
+    ].map((title, index) => {
+      return (
+        <a
+          key={ index }
+          href="javascript:void(0);"
+          title={ title }
+          className={ styles.navLink }
+          onClick={ this.props.handleClick }/>
+      );
+    });
   }
 }
-
-const mapStateToProps = (state: RootState): NavBarProps => ({
-  activeBot: state.bot.activeBot
-});
-
-const mapDispatchToProps = (dispatch, ownProps: NavBarProps): NavBarProps => ({
-  handleSettingsClick: () => dispatch(EditorActions.open(
-    Constants.CONTENT_TYPE_APP_SETTINGS,
-    Constants.DOCUMENT_ID_APP_SETTINGS,
-    true,
-    null)),
-  handleClick: (_evt: MouseEvent<HTMLAnchorElement>, selection: string) => {
-    if (ownProps.selection === selection) {
-      // toggle explorer when clicking the same navbar icon
-      dispatch(ExplorerActions.show(!ownProps.showingExplorer));
-    } else {
-      // switch tabs and show explorer when clicking different navbar icon
-      dispatch(() => {
-        dispatch(NavBarActions.select(selection));
-        dispatch(ExplorerActions.show(true));
-      });
-    }
-  }
-});
-
-export const NavBar = connect(mapStateToProps, mapDispatchToProps)(NavBarComponent);
