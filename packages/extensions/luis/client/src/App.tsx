@@ -63,8 +63,6 @@ let globalCss = {
   width: '622px'
 };
 
-GlobalCss.setCss(globalCss);
-
 let jsonViewerCss = {
   overflowY: 'auto',
   paddingTop: '10px',

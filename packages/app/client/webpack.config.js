@@ -7,7 +7,8 @@ const {
   DllReferencePlugin,
   NamedModulesPlugin,
   HotModuleReplacementPlugin,
-  DefinePlugin
+  DefinePlugin,
+  WatchIgnorePlugin
 } = webpack;
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
@@ -21,7 +22,7 @@ const use = [
       plugins: ['react-hot-loader/babel'],
     },
   },
-  'awesome-typescript-loader',
+  'awesome-typescript-loader'
 ];
 const defaultConfig = {
   entry: {
@@ -41,6 +42,29 @@ const defaultConfig = {
         test: /\.(tsx?)|(jsx)$/,
         exclude: [/node_modules/],
         use: ['awesome-typescript-loader']
+      },
+      {
+        test: /\.scss$/,
+        use: [
+          'style-loader',
+          {
+            loader: 'typings-for-css-modules-loader',
+            options: {
+              localIdentName: '[local]__[hash:base64:5]',
+              modules: true,
+              sass: false,
+              namedExport: true,
+              sourcemaps:true,
+              banner: '// This is a generated file. Changes are likely to result in being overwritten'
+            }
+          },
+          'resolve-url-loader',
+          'sass-loader'
+        ]
+      },
+      {
+        test: /\.(png|jpg|gif|svg)$/,
+        use: [ 'file-loader' ]
       },
       {
         test: /\.tsx?$/,
@@ -83,7 +107,10 @@ const defaultConfig = {
     ]),
     new DefinePlugin({
       DEV: JSON.stringify((npm_lifecycle_event.includes("dev")))
-    })
+    }),
+    new WatchIgnorePlugin([
+      './src/**/*.d.ts'
+    ])
   ]
 };
 
@@ -143,6 +170,10 @@ const vendorsConfig = () => ({
       name: '[name]_[hash]'
     })
   ]
+});
+
+const stylesConfig = () => ({
+
 });
 
 const buildClassification = npm_lifecycle_event.split(':')[1];

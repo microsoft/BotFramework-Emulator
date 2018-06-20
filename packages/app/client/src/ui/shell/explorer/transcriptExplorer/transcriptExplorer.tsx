@@ -37,26 +37,25 @@ import { FileInfo } from '@bfemulator/app-shared';
 import { pathExt } from '@fuselab/ui-shared/lib';
 import { TreeView, TreeViewProps } from '@fuselab/ui-fabric/lib';
 import { ExpandCollapse, ExpandCollapseContent } from '@bfemulator/ui-react';
-import { IStyle } from '@uifabric/merge-styles';
 import { IFileTreeState } from '../../../../data/reducer/files';
 import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
 import { FileTreeDataProvider } from './fileTreeProvider';
 
-const css: IStyle = {
-  // tree comp overrides to match services pane style
-  selectors: {
-    '& div[class*="root-"]': {
-      height: '22px',
-      lineHeight: '22px',
-      whiteSpace: 'nowrap'
-    },
-
-    '& div[class*="level_"]': {
-      height: '14px',
-      lineHeight: '14px'
-    }
-  }
-};
+// const css: IStyle = {
+//   // tree comp overrides to match services pane style
+//   selectors: {
+//     '& div[class*="root-"]': {
+//       height: '22px',
+//       lineHeight: '22px',
+//       whiteSpace: 'nowrap'
+//     },
+//
+//     '& div[class*="level_"]': {
+//       height: '14px',
+//       lineHeight: '14px'
+//     }
+//   }
+// };
 
 interface TranscriptExplorerProps {
   activeEditor: string;
@@ -77,7 +76,7 @@ class TranscriptExplorerComponent extends React.Component<TranscriptExplorerProp
       <ExpandCollapse
         expanded={ true }
         title="Transcript Explorer"
-        style={ css }
+        // style={ css }
       >
         { this.renderFileTree() }
       </ExpandCollapse>

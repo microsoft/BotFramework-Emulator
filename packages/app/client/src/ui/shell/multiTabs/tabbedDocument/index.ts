@@ -32,7 +32,7 @@
 //
 
 export * from './contentOverlay';
-export * from './contentWrapper';
+export * from './contentWrapper/contentWrapper';
 export * from './leftContentOverlay';
 export * from './overlayStyle';
 export * from './rightContentOverlay';
