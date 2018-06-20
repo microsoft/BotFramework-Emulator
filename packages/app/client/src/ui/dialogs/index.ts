@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './botCreationDialog';
-export * from './host';
-export * from './secretPromptDialog';
-export * from './tabManager';
+export * from './botCreationDialog/botCreationDialog';
+export * from './host/host';
+export * from './secretPromptDialog/secretPromptDialog';
+export * from './tabManager/tabManager';
 export * from './service';

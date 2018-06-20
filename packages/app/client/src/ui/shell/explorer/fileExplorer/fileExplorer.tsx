@@ -41,19 +41,21 @@ import { CommandServiceImpl } from '../../../../platform/commands/commandService
 import { FileTreeDataProvider } from './fileTreeProvider';
 import { isChatFile, isTranscriptFile } from '../../../../utils';
 
-const CSS = {
-  // tree comp overrides to match services pane style
-  '& div[class*="root-"]': {
-    height: '22px',
-    lineHeight: '22px',
-    whiteSpace: 'nowrap'
-  },
-
-  '& div[class*="level_"]': {
-    height: '14px',
-    lineHeight: '14px'
-  }
-};
+// const css: IStyle = {
+//   // tree comp overrides to match services pane style
+//   selectors: {
+//     '& div[class*="root-"]': {
+//       height: '22px',
+//       lineHeight: '22px',
+//       whiteSpace: 'nowrap'
+//     },
+//
+//     '& div[class*="level_"]': {
+//       height: '14px',
+//       lineHeight: '14px'
+//     }
+//   }
+// };
 
 interface FileExplorerProps {
   activeEditor: string;
@@ -67,8 +69,8 @@ class FileExplorerComponent extends React.Component<FileExplorerProps> {
     return (
       <ExpandCollapse
         expanded={ true }
+        // style={ css }
         title="File Explorer"
-        style={ CSS }
       >
         { this.renderFileTree() }
       </ExpandCollapse>

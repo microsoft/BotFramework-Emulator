@@ -59,7 +59,6 @@ let globalCss = {
   color: 'white',
 };
 
-GlobalCss.setCss(globalCss);
 
 const AppCss = css({
   height: '100%',
