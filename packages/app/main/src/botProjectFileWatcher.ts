@@ -85,8 +85,8 @@ async function readGitIgnore(filePath: string): Promise<string[]> {
 }
 
 /** Singleton class that will watch one bot project directory at a time */
-export class FileWatcherImpl implements FileWatcher {
-  private static _instance: FileWatcherImpl;
+export class BotProjectFileWatcher implements FileWatcher {
+  private static _instance: BotProjectFileWatcher;
   private _botFilePath: string;
   private _chokidarWatcherInstance: FSWatcher;
   private _commandService: CommandService;
@@ -98,14 +98,14 @@ export class FileWatcherImpl implements FileWatcher {
     throw Error('FileWatcher has not yet been initialized with a command service! Try calling "initialize(cmdSvc)"');
   }
 
-  public static getInstance(): FileWatcherImpl {
+  public static getInstance(): BotProjectFileWatcher {
     if (!this._instance) {
-      this._instance = new FileWatcherImpl();
+      this._instance = new BotProjectFileWatcher();
     }
     return this._instance;
   }
 
-  public initialize(_commandService: CommandService): FileWatcherImpl {
+  public initialize(_commandService: CommandService): BotProjectFileWatcher {
     this._commandService = _commandService;
     return this;
   }
@@ -190,7 +190,5 @@ export class FileWatcherImpl implements FileWatcher {
   }
 
   // ensures singleton
-  private constructor() {
-    this._instance = this;
-  }
+  private constructor() {}
 }

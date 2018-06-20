@@ -52,7 +52,7 @@ import {
   saveBot,
   toSavableBot
 } from './botHelpers';
-import { FileWatcherImpl } from './botProjectFileWatcher';
+import { BotProjectFileWatcher } from './botProjectFileWatcher';
 import { Protocol } from './constants';
 import * as BotActions from './data-v2/action/bot';
 import { emulator } from './emulator';
@@ -137,7 +137,7 @@ export function registerCommands() {
     }
 
     // set up file watcher
-    const watcher = FileWatcherImpl.getInstance().initialize(mainWindow.commandService);
+    const watcher = BotProjectFileWatcher.getInstance().initialize(mainWindow.commandService);
     watcher.watch(botFilePath);
 
     // set bot as active
@@ -180,7 +180,7 @@ export function registerCommands() {
     }
 
     // set up the file watcher
-    const watcher = FileWatcherImpl.getInstance().initialize(mainWindow.commandService);
+    const watcher = BotProjectFileWatcher.getInstance().initialize(mainWindow.commandService);
     await watcher.watch(botPath);
 
     // set active bot and active directory
@@ -219,7 +219,7 @@ export function registerCommands() {
   // ---------------------------------------------------------------------------
   // Close active bot (called from client-side)
   CommandRegistry.registerCommand('bot:close', async (): Promise<void> => {
-    FileWatcherImpl.getInstance().dispose();
+    BotProjectFileWatcher.getInstance().dispose();
     store.dispatch(BotActions.close());
   });
 
@@ -445,7 +445,7 @@ export function registerCommands() {
 
       await saveableBot.save(botPath);
       await patchBotsJson(botPath, botInfo);
-      const watcher = FileWatcherImpl.getInstance().initialize(mainWindow.commandService);
+      const watcher = BotProjectFileWatcher.getInstance().initialize(mainWindow.commandService);
       await watcher.watch(botPath);
       store.dispatch(BotActions.setDirectory(botDirectory));
     }

@@ -31,4 +31,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './transcriptExplorer';
+import { isChat, isTranscript } from './fileExplorer';
+
+describe('FileExplorer tests', () => {
+  it('isChat() functionality', () => {
+    const file1 = 'testing.chat';
+    const file2 = 'Testing.CHAT';
+    const file3 = null;
+
+    expect(isChat(file1)).toBe(true);
+    expect(isChat(file2)).toBe(true);
+    expect(isChat(file3)).toBe(false);
+  });
+
+  it('isTranscript() functionality', () => {
+    const file1 = 'testing.transcript';
+    const file2 = 'Testing.TRANSCRIPT';
+    const file3 = null;
+
+    expect(isTranscript(file1)).toBe(true);
+    expect(isTranscript(file2)).toBe(true);
+    expect(isTranscript(file3)).toBe(false);
+  });
+});

@@ -55,25 +55,35 @@ const CSS = {
   }
 };
 
-interface TranscriptExplorerProps {
+interface FileExplorerProps {
   activeEditor: string;
   activeDocumentId: string;
   transcripts: any[];
   files: IFileTreeState;
 }
 
-function isTranscript(path: string): boolean {
+export function isTranscript(path: string): boolean {
+  if (!path) {
+    return false;
+  }
   const ext = (pathExt(path) || '').toLowerCase();
   return ext === 'transcript';
 }
 
-class TranscriptExplorerComponent extends React.Component<TranscriptExplorerProps> {
+export function isChat(path: string): boolean {
+  if (!path) {
+    return false;
+  }
+  const ext = (pathExt(path) || '').toLowerCase();
+  return ext === 'chat';
+}
 
+class FileExplorerComponent extends React.Component<FileExplorerProps> {
   public render(): JSX.Element {
     return (
       <ExpandCollapse
         expanded={ true }
-        title="Transcript Explorer"
+        title="File Explorer"
         style={ CSS }
       >
         { this.renderFileTree() }
@@ -81,8 +91,12 @@ class TranscriptExplorerComponent extends React.Component<TranscriptExplorerProp
     );
   }
 
-  private handleItemClick(filename: string) {
+  private handleTranscriptClick(filename: string) {
     CommandServiceImpl.call('transcript:open', filename);
+  }
+
+  private handleChatClick(filename: string) {
+    console.log('clicked a chat file: ', filename);
   }
 
   private renderFileTree(): JSX.Element {
@@ -96,7 +110,9 @@ class TranscriptExplorerComponent extends React.Component<TranscriptExplorerProp
       insertAt: provider.insertAt.bind(provider),
       selectNode: node => {
         if (isTranscript(node.data.path)) {
-          this.handleItemClick(node.data.path);
+          this.handleTranscriptClick(node.data.path);
+        } else if (isChat(node.data.path)) {
+          this.handleChatClick(node.data.path);
         }
         provider.selectNode.bind(provider);
       },
@@ -119,7 +135,7 @@ class TranscriptExplorerComponent extends React.Component<TranscriptExplorerProp
   }
 }
 
-function mapStateToProps(state: any): TranscriptExplorerProps {
+function mapStateToProps(state: any): FileExplorerProps {
   return {
     activeEditor: state.editor.activeEditor,
     activeDocumentId: state.editor.editors[state.editor.activeEditor].activeDocumentId,
@@ -128,4 +144,4 @@ function mapStateToProps(state: any): TranscriptExplorerProps {
   };
 }
 
-export const TranscriptExplorer = connect(mapStateToProps)(TranscriptExplorerComponent) as any;
+export const FileExplorer = connect(mapStateToProps)(FileExplorerComponent) as any;

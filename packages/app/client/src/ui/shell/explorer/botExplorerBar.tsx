@@ -37,7 +37,7 @@ import { css } from 'glamor';
 import { EndpointExplorerContainer } from './endpointExplorer';
 import { ExplorerBarBody } from './explorerBarBody';
 import { ExplorerBarHeader, Title } from './explorerBarHeader';
-import { TranscriptExplorer } from './transcriptExplorer';
+import { FileExplorer } from './fileExplorer';
 import { BotNotOpenExplorer } from './botNotOpenExplorer';
 import { IBotConfig } from 'msbot/bin/schema';
 
@@ -76,7 +76,7 @@ export default class BotExplorerBar extends React.Component<BotExplorerBarProps>
           { this.props.activeBot ? (
             <>
               <EndpointExplorerContainer title="Endpoint" />
-              <TranscriptExplorer />
+              <FileExplorer />
             </>
           )
             :
