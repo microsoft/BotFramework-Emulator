@@ -43,7 +43,15 @@ const defaultConfig = {
         use: ['awesome-typescript-loader']
       },
       {
-        test: /\.(s)?css$/,
+        test: /\.css$/,
+        use: [
+          'style-loader',
+          'resolve-url-loader',
+          'css-loader'
+        ]
+      },
+      {
+        test: /\.scss$/,
         use: [
           'style-loader',
           {

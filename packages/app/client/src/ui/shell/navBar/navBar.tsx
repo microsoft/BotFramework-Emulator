@@ -32,26 +32,40 @@
 //
 
 import * as React from 'react';
-import { MouseEvent, SyntheticEvent } from 'react';
+import { SyntheticEvent } from 'react';
 import { IBotConfig } from 'msbot/bin/schema';
 import * as styles from './navBar.scss';
+import * as Constants from '../../../constants';
 
 export interface NavBarProps {
   activeBot?: IBotConfig;
   selection?: string;
-  showingExplorer?: boolean;
-  handleClick?: (evt: SyntheticEvent<HTMLAnchorElement>) => void;
-  handleSettingsClick?: (evt: MouseEvent<HTMLAnchorElement>) => void;
+  showBotExplorer?: (show: boolean) => void;
+  navBarSelectionChanged?: (newSection: string) => void;
+  openBotSettings?: () => void;
+  openEmulatorSettings?: () => void;
 }
 
-export class NavBarComponent extends React.Component<NavBarProps> {
-  constructor(props: NavBarProps) {
-    super(props);
+export interface NavBarState {
+  selection?: string;
+  selectionActive?: boolean;
+}
+
+const selectionMap = [
+  Constants.NAVBAR_BOT_EXPLORER,
+  Constants.NAVBAR_SERVICES
+];
+
+export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
+  state: NavBarState = {};
+
+  constructor(props: NavBarProps, context: NavBarState) {
+    super(props, context);
+    this.state.selection = props.selection;
+    this.state.selectionActive = !!props.selection;
   }
 
   render() {
-    // const { selection, handleClick, handleSettingsClick } = this.props;
-
     return (
       <nav className={ styles.navBar }>
         { ...this.links }
@@ -59,7 +73,43 @@ export class NavBarComponent extends React.Component<NavBarProps> {
     );
   }
 
+  public onLinkClick = (event: SyntheticEvent<HTMLAnchorElement>): void => {
+    const { selection: currentSelection } = this.props;
+    const { currentTarget: anchor } = event;
+    const index = Array.prototype.indexOf.call(anchor.parentElement.children, anchor);
+    switch (index) {
+      // Bot Explorer
+      case 0:
+      // Services
+      case 1:
+        if (currentSelection === selectionMap[index]) {
+          // toggle explorer when clicking the same navbar icon
+          this.props.showBotExplorer(!this.state.selectionActive);
+          this.setState({selectionActive: !this.state.selectionActive});
+        } else {
+          // switch tabs and show explorer when clicking different navbar icon
+          this.props.showBotExplorer(true);
+          this.props.navBarSelectionChanged(selectionMap[index]);
+          this.setState({selection: selectionMap[index], selectionActive: true});
+        }
+        break;
+
+      // Bot Settings
+      case 3:
+        if (this.props.activeBot) {
+          this.props.openBotSettings();
+        }
+        break;
+
+      // Settings
+      default:
+        this.props.openEmulatorSettings();
+        break;
+    }
+  }
+
   private get links(): JSX.Element[] {
+    const {selectionActive, selection} = this.state;
     return [
       'Bot Explorer',
       'Services',
@@ -68,11 +118,12 @@ export class NavBarComponent extends React.Component<NavBarProps> {
     ].map((title, index) => {
       return (
         <a
+          aria-selected={ selectionActive && selection === selectionMap[index] }
           key={ index }
           href="javascript:void(0);"
           title={ title }
           className={ styles.navLink }
-          onClick={ this.props.handleClick }/>
+          onClick={ this.onLinkClick }/>
       );
     });
   }
