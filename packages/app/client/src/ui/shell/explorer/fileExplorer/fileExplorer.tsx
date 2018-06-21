@@ -37,7 +37,7 @@ import { FileInfo } from '@bfemulator/app-shared';
 import { pathExt } from '@fuselab/ui-shared/lib';
 import { TreeView, TreeViewProps } from '@fuselab/ui-fabric/lib';
 import { ExpandCollapse, ExpandCollapseContent } from '@bfemulator/ui-react';
-import { IFileTreeState } from '../../../../data/reducer/files';
+import { FileTreeState } from '../../../../data/reducer/files';
 import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
 import { FileTreeDataProvider } from './fileTreeProvider';
 
@@ -59,7 +59,7 @@ interface FileExplorerProps {
   activeEditor: string;
   activeDocumentId: string;
   transcripts: any[];
-  files: IFileTreeState;
+  files: FileTreeState;
 }
 
 export function isTranscript(path: string): boolean {

@@ -50,6 +50,7 @@ import * as LogService from './platform/log/logService';
 import * as SettingsService from './platform/settings/settingsService';
 import { BotCreationDialog, DialogService, SecretPromptDialog } from './ui/dialogs';
 import { ActiveBotHelper } from './ui/helpers/activeBotHelper';
+import { isChatFile, isTranscriptFile } from './ui/utils';
 
 // =============================================================================
 export const CommandRegistry = new CommReg();
@@ -202,6 +203,30 @@ export function registerCommands() {
   });
 
   // ---------------------------------------------------------------------------
+  // Same as open transcript, except that it closes the transcript first, before reopening it
+  CommandRegistry.registerCommand('transcript:reload', (filename: string, additionalData?: object) => {
+    const tabGroup = getTabGroupForDocument(filename);
+    if (tabGroup) {
+      store.dispatch(EditorActions.close(getTabGroupForDocument(filename), filename));
+      store.dispatch(ChatActions.closeDocument(filename));
+    }
+    store.dispatch(ChatActions.newDocument(
+      filename,
+      'transcript',
+      {
+        ...additionalData,
+        botId: 'bot',
+        userId: 'default-user'
+      }
+    ));
+    store.dispatch(EditorActions.open(
+      Constants.CONTENT_TYPE_TRANSCRIPT,
+      filename,
+      false
+    ));
+  });
+
+  // ---------------------------------------------------------------------------
   // Prompt to open a transcript file, then open it
   CommandRegistry.registerCommand('transcript:prompt-open', () => {
     const dialogOptions = {
@@ -226,55 +251,22 @@ export function registerCommands() {
 
   // ---------------------------------------------------------------------------
   // Open the chat file in a tabbed document as a transcript
-  CommandRegistry.registerCommand('chat:open', async (filename: string) => {
+  CommandRegistry.registerCommand('chat:open', async (filename: string, reload?: boolean) => {
     try {
-      // wait for the main side to use the chatdown library to parse the activities out of the .chat file
+      // wait for the main side to use the chatdown library to parse the activities (transcript) out of the .chat file
       const { activities }: { activities: any[] } = await CommandServiceImpl.remoteCall('chat:open', filename);
-      console.log(activities);
 
-      // open the transcript
-      CommandServiceImpl.call('transcript:open', filename,
-        { activities, inMemory: true, fileName: filename });
-    } catch (err) {
-      throw new Error(`Error while retrieving activities from main side: ${err}`);
-    }
-  });
-
-  // ---------------------------------------------------------------------------
-  // Open the chat file in a tabbed document as a transcript
-  CommandRegistry.registerCommand('chat:reload', async (filename: string) => {
-    try {
-      // wait for the main side to use the chatdown library to parse the activities out of the .chat file
-      const { activities }: { activities: any[] } = await CommandServiceImpl.remoteCall('chat:open', filename);
-      console.log(activities);
-
-      // open the transcript
-      CommandServiceImpl.call('transcript:reload', filename,
-        { activities, inMemory: true, fileName: filename });
-    } catch (err) {
-      throw new Error(`Error while retrieving activities from main side: ${err}`);
-    }
-  });
-
-  // ---------------------------------------------------------------------------
-  // Open the transcript file in a tabbed document
-  CommandRegistry.registerCommand('transcript:reload', (filename: string, additionalData?: object) => {
-    store.dispatch(EditorActions.close(getTabGroupForDocument(filename), filename));
-    store.dispatch(ChatActions.closeDocument(filename));
-    store.dispatch(ChatActions.newDocument(
-      filename,
-      'transcript',
-      {
-        ...additionalData,
-        botId: 'bot',
-        userId: 'default-user'
+      // open or reload the transcript
+      if (reload) {
+        CommandServiceImpl.call('transcript:reload', filename,
+          { activities, inMemory: true, fileName: filename });
+      } else {
+        CommandServiceImpl.call('transcript:open', filename,
+          { activities, inMemory: true, fileName: filename });
       }
-    ));
-    store.dispatch(EditorActions.open(
-      Constants.CONTENT_TYPE_TRANSCRIPT,
-      filename,
-      false
-    ));
+    } catch (err) {
+      throw new Error(`Error while retrieving activities from main side: ${err}`);
+    }
   });
 
   CommandRegistry.registerCommand('file:changed', async (filename: string) => {
@@ -287,12 +279,19 @@ export function registerCommands() {
       };
       const confirmation = await CommandServiceImpl.remoteCall('shell:showMessageBox', options);
       if (confirmation) {
-        // reload the chat file
-        await CommandServiceImpl.call('chat:reload', filename);
+        // reload the file
+        if (isChatFile(filename)) {
+          const reload = true;
+          await CommandServiceImpl.call('chat:open', filename, reload);
+        } else if (isTranscriptFile(filename)) {
+          await CommandServiceImpl.call('transcript:reload', filename);
+        }
       }
     } else {
       // add the filename to pending updates and prompt the user once the document is focused again
-      console.log('FILE PENDING CHANGE: ', filename);
+      if (isChatFile(filename) || isTranscriptFile(filename)) {
+        store.dispatch(EditorActions.addDocPendingChange(filename));
+      }
     }
   });
 

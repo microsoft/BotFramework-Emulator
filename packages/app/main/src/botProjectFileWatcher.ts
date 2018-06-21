@@ -188,7 +188,7 @@ export class BotProjectFileWatcher implements FileWatcher {
         this.commandService.remoteCall('bot:set-active', bot, botDir);
         this.commandService.call('bot:restart-endpoint-service');
       }
-    } else if (Path.extname(file) === '.chat') {
+    } else if (Path.extname(file) === '.chat' || Path.extname(file) === '.transcript') {
       // notify client side of the change
       this.commandService.remoteCall('file:changed', file);
     }

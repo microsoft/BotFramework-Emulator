@@ -54,7 +54,10 @@ import {
   updateDocument,
   open,
   splitTab,
-  swapTabs
+  swapTabs,
+  addDocPendingChange,
+  removeDocPendingChange,
+  clearDocsPendingChange
 } from '../action/editorActions';
 import * as Constants from '../../constants';
 import { deepCopySlow } from '@bfemulator/app-shared';
@@ -80,7 +83,7 @@ describe('Editor reducer tests', () => {
           ...defaultState.editors,
           [Constants.EDITOR_KEY_PRIMARY]: {
             ...defaultState.editors[Constants.EDITOR_KEY_PRIMARY],
-            tabOrder: ['doc1', 'doc2']  
+            tabOrder: ['doc1', 'doc2']
           }
         }
       };
@@ -117,7 +120,7 @@ describe('Editor reducer tests', () => {
               'doc3': {}
             },
             tabOrder: ['doc3'],
-            recentTabs: ['doc3'] 
+            recentTabs: ['doc3']
           }
         }
       };
@@ -130,7 +133,7 @@ describe('Editor reducer tests', () => {
       expect(Object.keys(destEditor.documents)).toContain('doc2');
       expect(destEditor.tabOrder).toEqual(['doc3', 'doc2']);
       expect(destEditor.recentTabs).toEqual(['doc3', 'doc2']);
-      
+
       expect(Object.keys(srcEditor.documents)).not.toContain('doc2');
       expect(srcEditor.tabOrder).toEqual(['doc1']);
       expect(srcEditor.recentTabs).toEqual(['doc1']);
@@ -158,7 +161,7 @@ describe('Editor reducer tests', () => {
               'doc2': {}
             },
             tabOrder: ['doc2'],
-            recentTabs: ['doc2'] 
+            recentTabs: ['doc2']
           }
         }
       };
@@ -166,7 +169,7 @@ describe('Editor reducer tests', () => {
       const destEditorKey = Constants.EDITOR_KEY_PRIMARY;
       const action = appendTab(srcEditorKey, destEditorKey, 'doc2');
       const endingState = editor(startingState, action);
-      
+
       // because secondary editor is now empty, the active editor should be set to primary
       expect(endingState.activeEditor).toBe(Constants.EDITOR_KEY_PRIMARY);
     });
@@ -190,7 +193,7 @@ describe('Editor reducer tests', () => {
               'doc2': {}
             },
             tabOrder: ['doc2'],
-            recentTabs: ['doc2'] 
+            recentTabs: ['doc2']
           }
         }
       };
@@ -731,7 +734,7 @@ describe('Editor reducer tests', () => {
       const primaryEditor = endingState.editors[Constants.EDITOR_KEY_PRIMARY];
       const secondaryEditor = endingState.editors[Constants.EDITOR_KEY_SECONDARY];
       expect(endingState.activeEditor).toBe(Constants.EDITOR_KEY_PRIMARY);
-      
+
       expect(primaryEditor.activeDocumentId).toBe('doc2');
       expect(Object.keys(primaryEditor.documents)).toHaveLength(2);
       expect(primaryEditor.recentTabs).toEqual(['doc2', 'doc1']);
@@ -741,6 +744,59 @@ describe('Editor reducer tests', () => {
       expect(Object.keys(secondaryEditor.documents)).toHaveLength(0);
       expect(secondaryEditor.recentTabs).toEqual([]);
       expect(secondaryEditor.tabOrder).toEqual([]);
+    });
+  });
+
+  describe('modifying the list of docs pending changes', () => {
+    it('should add a doc to the list', () => {
+      const startingState: EditorState = {
+        ...defaultState,
+        docsWithPendingChanges: [
+          'doc1',
+          'doc2',
+          'doc3'
+        ]
+      };
+      const action1 = addDocPendingChange('doc4');
+      const endingState1 = editor(startingState, action1);
+
+      expect(endingState1.docsWithPendingChanges).toEqual(['doc1', 'doc2', 'doc3', 'doc4']);
+
+      // shouldn't allow duplicates
+      const action2 = addDocPendingChange('doc4');
+      const endingState2 = editor(endingState1, action2);
+
+      expect(endingState2.docsWithPendingChanges).toEqual(['doc1', 'doc2', 'doc3', 'doc4']);
+    });
+
+    it('should remove a doc from the list', () => {
+      const startingState: EditorState = {
+        ...defaultState,
+        docsWithPendingChanges: [
+          'doc1',
+          'doc2',
+          'doc3'
+        ]
+      };
+      const action = removeDocPendingChange('doc2');
+      const endingState = editor(startingState, action);
+
+      expect(endingState.docsWithPendingChanges).toEqual(['doc1', 'doc3']);
+    });
+
+    it('should clear the list', () => {
+      const startingState: EditorState = {
+        ...defaultState,
+        docsWithPendingChanges: [
+          'doc1',
+          'doc2',
+          'doc3'
+        ]
+      };
+      const action = clearDocsPendingChange();
+      const endingState = editor(startingState, action);
+
+      expect(endingState.docsWithPendingChanges).toEqual([]);
     });
   });
 });
@@ -897,7 +953,7 @@ describe('Editor reducer utility function tests', () => {
       expect(primaryEditor.activeDocumentId).toBe('doc2');
       expect(primaryEditor.tabOrder).toEqual(['doc2']);
       expect(primaryEditor.recentTabs).toEqual(['doc2']);
-      
+
       expect(Object.keys(secondaryEditor.documents)).toHaveLength(0);
       expect(secondaryEditor.activeDocumentId).toBe(null);
       expect(secondaryEditor.tabOrder).toEqual([]);
@@ -981,7 +1037,8 @@ function initializeDefaultState() {
         tabOrder: [],
         recentTabs: []
       }
-    }
+    },
+    docsWithPendingChanges: []
   };
   defaultState = deepCopySlow(DEFAULT_STATE);
 }
