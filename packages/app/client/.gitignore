@@ -18,4 +18,4 @@
 npm-debug.log*
 lerna-debug.log*
 
-/public/external
+/public
