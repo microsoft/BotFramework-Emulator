@@ -31,29 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { expandFlatTree } from './expandFlatTree';
+export function expandFlatTree(flattened: any[], delimiter: string = '/') {
+    if (Array.isArray(flattened)) {
+        flattened = flattened.reduce((map, path) => {
+            map[path] = path;
 
-// TODO: Should write more tests
-test('expandFlatTree should expand', () => {
-    const actual = expandFlatTree([
-        'abc.txt',
-        'abc/def.txt',
-        'abc/def/ghi.txt',
-        'xyz.txt',
-        'abc/ghi/xyz.txt'
-    ]);
+            return map;
+        }, {});
+    }
 
-    expect(actual).toEqual({
-        'abc.txt': 'abc.txt',
-        'abc': {
-            'def': {
-                'ghi.txt': 'abc/def/ghi.txt'
-            },
-            'ghi': {
-                'xyz.txt': 'abc/ghi/xyz.txt'
-            },
-            'def.txt': 'abc/def.txt'
-        },
-        'xyz.txt': 'xyz.txt'
-    });
-});
+    return Object.keys(flattened).reduce((expanded, path) => {
+        const segments = path.split(delimiter);
+        const filename = segments.pop();
+        const parent = segments.reduce((p, segment) => p[segment] || (p[segment] = {}), expanded);
+
+        parent[filename] = flattened[path];
+
+        return expanded;
+    }, {});
+}

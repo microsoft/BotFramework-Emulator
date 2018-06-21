@@ -31,8 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import expandFlatTree from './expandFlatTree';
+import { isTranscriptFile } from './isTranscriptFile';
 
-export {
-    expandFlatTree
-}
+describe('isTranscriptFile() test', () => {
+  it('should return whether a file ends with .transcript or not', () => {
+    const filename1 = 'test.transcript';
+    const filename2 = 'test.transcript.txt';
+    const filename3 = 'test.txt';
+
+    expect(isTranscriptFile(filename1)).toBe(true);
+    expect(isTranscriptFile(filename2)).toBe(false);
+    expect(isTranscriptFile(filename3)).toBe(false);
+  });
+});
