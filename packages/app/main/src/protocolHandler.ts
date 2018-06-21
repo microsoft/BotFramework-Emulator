@@ -240,7 +240,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
               // open a transcript on the client side and pass in some
               // extra info to differentiate it from a transcript on disk
               mainWindow.commandService.remoteCall('transcript:open', 'deepLinkedTranscript',
-                { activities: conversationActivities, deepLink: true, fileName });
+                { activities: conversationActivities, inMemory: true, fileName });
             } catch (e) {
               throw new Error(`Error occured while reading downloaded transcript: ${e}`);
             }

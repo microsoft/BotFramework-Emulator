@@ -62,14 +62,21 @@ import { ProtocolHandler } from './protocolHandler';
 import { ContextMenuService } from './services/contextMenuService';
 import { LuisAuthWorkflowService } from './services/luisAuthWorkflowService';
 import { dispatch, getSettings } from './settings';
-import { getBotsFromDisk, readFileSync, showOpenDialog, showSaveDialog, writeFile } from './utils';
+import {
+  getBotsFromDisk,
+  readFileSync,
+  showOpenDialog,
+  showSaveDialog,
+  writeFile,
+  showMessageBox,
+  parseActivitiesFromChatFile
+} from './utils';
 import { cleanupId as cleanupActivityChannelAccountId, CustomActivity } from './utils/conversation';
 import shell = Electron.shell;
 import { getStore } from './data-v2/store';
 
 const store = getStore();
 const sanitize = require('sanitize-filename');
-const chatdown = require('chatdown');
 
 // =============================================================================
 export const CommandRegistry = new CommReg();
@@ -405,6 +412,12 @@ export function registerCommands() {
   });
 
   // ---------------------------------------------------------------------------
+  // Shows a message box dialog and returns the index of the selected button as a number
+  CommandRegistry.registerCommand('shell:showMessageBox', (dialogOptions: Electron.MessageBoxOptions) => {
+    return showMessageBox(mainWindow.browserWindow, dialogOptions);
+  });
+
+  // ---------------------------------------------------------------------------
   // Saves the conversation to a transcript file, with user interaction to set filename.
   CommandRegistry.registerCommand('emulator:save-transcript-to-file', async (conversationId: string): Promise<void> => {
     const activeBot: BotConfigWithPath = getActiveBot();
@@ -472,7 +485,7 @@ export function registerCommands() {
 
       const activities = JSON.parse(await promisify(Fs.readFile)(path, 'utf-8'));
 
-      mainWindow.commandService.call('emulator:feed-transcript:deep-link', conversationId, botId, userId, activities);
+      mainWindow.commandService.call('emulator:feed-transcript:in-memory', conversationId, botId, userId, activities);
 
       const { name, ext } = Path.parse(path);
       const fileName = `${name}${ext}`;
@@ -485,14 +498,14 @@ export function registerCommands() {
   );
 
   // ---------------------------------------------------------------------------
-  // Feeds a deep-linked transcript (array of parsed activities) to a conversation
+  // Feeds an in-memory transcript (array of parsed activities) to a conversation
   CommandRegistry.registerCommand(
-    'emulator:feed-transcript:deep-link',
+    'emulator:feed-transcript:in-memory',
     (conversationId: string, botId: string, userId: string, activities: CustomActivity[]): void => {
       const activeBot: BotConfigWithPath = getActiveBot();
 
       if (!activeBot) {
-        throw new Error('emulator:feed-transcript:deep-link: No active bot.');
+        throw new Error('emulator:feed-transcript:in-memory: No active bot.');
       }
 
       const convo = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
@@ -625,23 +638,12 @@ export function registerCommands() {
 
   // ---------------------------------------------------------------------------
   // Open the chat file in a tabbed document as a transcript
-  CommandRegistry.registerCommand('chat:open', async (filename: string): Promise<any> => {
-    let conversation;
-    let activities;
-
-    // read conversation from chat file
+  CommandRegistry.registerCommand('chat:open', async (filename: string): Promise<{ activities: CustomActivity[] }> => {
     try {
-      conversation = readFileSync(filename);
+      const activities = await parseActivitiesFromChatFile(filename);
+      return { activities };
     } catch (err) {
-      throw new Error(`Error while trying to read conversation from chat file: ${err}`);
+      throw new Error(`chat:open: Error calling parseActivitiesFromChatFile(): ${err}`);
     }
-    // convert conversation to list of activities using chatdown
-    try {
-      activities = await chatdown(conversation, {});
-    } catch (err) {
-      throw new Error(`Error while converting .chat file to list of activites: ${err}`);
-    }
-
-    return { activities };
   });
 }

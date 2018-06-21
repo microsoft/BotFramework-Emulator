@@ -40,6 +40,8 @@ import * as Chokidar from 'chokidar';
 import { getActiveBot, getBotInfoByPath, loadBotWithRetry } from './botHelpers';
 import * as BotActions from './data-v2/action/bot';
 import { getStore } from './data-v2/store';
+import { MessageBoxOptions } from 'electron';
+import { parseActivitiesFromChatFile } from './utils';
 
 interface FileWatcher {
   watch: (botProjectDir: string) => void;
@@ -186,6 +188,9 @@ export class BotProjectFileWatcher implements FileWatcher {
         this.commandService.remoteCall('bot:set-active', bot, botDir);
         this.commandService.call('bot:restart-endpoint-service');
       }
+    } else if (Path.extname(file) === '.chat') {
+      // notify client side of the change
+      this.commandService.remoteCall('file:changed', file);
     }
   }
 

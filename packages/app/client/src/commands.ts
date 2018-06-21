@@ -42,7 +42,7 @@ import * as EditorActions from './data/action/editorActions';
 import * as FileActions from './data/action/fileActions';
 import * as NavBarActions from './data/action/navBarActions';
 import { pathExistsInRecentBots } from './data/botHelpers';
-import { getTabGroupForDocument, showWelcomePage } from './data/editorHelpers';
+import { getTabGroupForDocument, showWelcomePage, isActiveDocument } from './data/editorHelpers';
 import store from './data/store';
 import { ExtensionManager } from './extensions';
 import { CommandServiceImpl } from './platform/commands/commandServiceImpl';
@@ -228,10 +228,71 @@ export function registerCommands() {
   // Open the chat file in a tabbed document as a transcript
   CommandRegistry.registerCommand('chat:open', async (filename: string) => {
     try {
+      // wait for the main side to use the chatdown library to parse the activities out of the .chat file
       const { activities }: { activities: any[] } = await CommandServiceImpl.remoteCall('chat:open', filename);
       console.log(activities);
+
+      // open the transcript
+      CommandServiceImpl.call('transcript:open', filename,
+        { activities, inMemory: true, fileName: filename });
     } catch (err) {
-      console.error('Error while retrieving activities from main side: ', err);
+      throw new Error(`Error while retrieving activities from main side: ${err}`);
+    }
+  });
+
+  // ---------------------------------------------------------------------------
+  // Open the chat file in a tabbed document as a transcript
+  CommandRegistry.registerCommand('chat:reload', async (filename: string) => {
+    try {
+      // wait for the main side to use the chatdown library to parse the activities out of the .chat file
+      const { activities }: { activities: any[] } = await CommandServiceImpl.remoteCall('chat:open', filename);
+      console.log(activities);
+
+      // open the transcript
+      CommandServiceImpl.call('transcript:reload', filename,
+        { activities, inMemory: true, fileName: filename });
+    } catch (err) {
+      throw new Error(`Error while retrieving activities from main side: ${err}`);
+    }
+  });
+
+  // ---------------------------------------------------------------------------
+  // Open the transcript file in a tabbed document
+  CommandRegistry.registerCommand('transcript:reload', (filename: string, additionalData?: object) => {
+    store.dispatch(EditorActions.close(getTabGroupForDocument(filename), filename));
+    store.dispatch(ChatActions.closeDocument(filename));
+    store.dispatch(ChatActions.newDocument(
+      filename,
+      'transcript',
+      {
+        ...additionalData,
+        botId: 'bot',
+        userId: 'default-user'
+      }
+    ));
+    store.dispatch(EditorActions.open(
+      Constants.CONTENT_TYPE_TRANSCRIPT,
+      filename,
+      false
+    ));
+  });
+
+  CommandRegistry.registerCommand('file:changed', async (filename: string) => {
+    if (isActiveDocument(filename)) {
+      // prompt the user for a reload
+      const options = {
+        buttons: ['Cancel', 'Reload'],
+        title: 'File change detected',
+        message: 'We have detected a change in this file on disk. Would you like to reload it in the Emulator?'
+      };
+      const confirmation = await CommandServiceImpl.remoteCall('shell:showMessageBox', options);
+      if (confirmation) {
+        // reload the chat file
+        await CommandServiceImpl.call('chat:reload', filename);
+      }
+    } else {
+      // add the filename to pending updates and prompt the user once the document is focused again
+      console.log('FILE PENDING CHANGE: ', filename);
     }
   });
 

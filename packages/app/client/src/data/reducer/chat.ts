@@ -33,7 +33,7 @@
 
 import { ChatAction, ChatActions } from '../action/chatActions';
 import { EditorAction, EditorActions } from '../action/editorActions';
-import { deepCopySlow } from '@bfemulator/app-shared';
+// import { deepCopySlow } from '@bfemulator/app-shared';
 
 export interface ChatState {
   changeKey?: number;
@@ -103,7 +103,10 @@ export default function chat(state: ChatState = DEFAULT_STATE, action: ChatActio
 
     case ChatActions.closeChat: {
       const { payload } = action;
-      const copy = deepCopySlow(state);
+      // can't use the JSON.parse(JSON.stringify())
+      // trick with chats because Subscribers are circular
+      // const copy = deepCopySlow(state);
+      let copy = { ...state };
       copy.changeKey += 1;
       delete copy.chats[payload.documentId];
       state = { ...copy };
