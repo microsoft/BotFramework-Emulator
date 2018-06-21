@@ -34,7 +34,7 @@
 import * as React from 'react';
 import { Component } from 'react';
 import { ExplorerBarBody } from '../explorerBarBody';
-import { ExplorerBarHeader, Title } from '../explorerBarHeader';
+import { ExplorerBarHeader, Title } from '../explorerBarHeader/explorerBarHeader';
 import { LuisExplorerContainer } from '../luisExplorer';
 import { DispatchExplorerContainer } from '../dispatchExplorer';
 import { QnaMakerExplorerContainer } from '../qnaMakerExplorer';

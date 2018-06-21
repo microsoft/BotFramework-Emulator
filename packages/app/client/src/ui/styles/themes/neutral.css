@@ -26,4 +26,7 @@ html {
   --box-shadow-left: inset 3px 0 var(--blur-radius) var(--spread-radius) var(--neutral-6);
   --box-shadow-bottom: inset 0 -3px var(--blur-radius) var(--spread-radius) var(--neutral-6);
   --box-shadow-right: inset -3px 0px var(--blur-radius) var(--spread-radius) var(--neutral-6);
+
+  --default-font-family: -apple-system,BlinkMacSystemFont,Segoe WPC,Segoe UI,HelveticaNeue-Light,Ubuntu,Droid Sans,sans-serif;
+  --monospace-font-family: Menlo,Monaco,Consolas,Droid Sans Mono, Courier New,monospace,Droid Sans Fallback;
 }

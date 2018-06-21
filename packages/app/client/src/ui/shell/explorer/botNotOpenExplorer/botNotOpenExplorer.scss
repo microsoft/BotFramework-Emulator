@@ -1,0 +1,14 @@
+.botNotOpenExplorer {
+  background-color: var(--neutral-15);
+  color: var(--neutral-5);
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  & .explorerEmptyState {
+    padding: 16px;
+    overflow: hidden;
+  }
+}

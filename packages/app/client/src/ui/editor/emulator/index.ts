@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './chatPanel';
-export * from './detailPanel';
+export * from './chatPanel/chatPanel';
+export * from './detailPanel/detailPanel';
 export * from './emulator';
-export * from './logPanel';
-export * from './playbackBar';
+export * from './logPanel/logPanel';
+export * from './playbackBar/playbackBar';
 export * from './parts';

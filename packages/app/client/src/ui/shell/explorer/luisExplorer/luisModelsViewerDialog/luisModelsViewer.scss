@@ -1,0 +1,105 @@
+.luisModelViewer {
+  box-sizing: border-box;
+  width: 400px;
+  height: 355px;
+  color: #333;
+  background: var(--neutral-2);
+  position: relative;
+  & > header {
+    & > h3 {
+      font-family: var(--default-font-family);
+      font-size: 19px;
+      font-weight: 200;
+      margin: 0;
+      padding: 28px 24px 24px;
+    }
+  }
+
+  & .listContainer {
+    padding: 0 24px;
+    & > p {
+      font-size: 13px;
+      margin: 0;
+      padding-bottom: 20px;
+    }
+
+    & > ul {
+      list-style: none;
+      margin: 0;
+      padding: 5px 0 0 0;
+      max-height: 96px;
+      overflow: auto;
+      > li {
+        padding: 1px 11px;
+        background-color: #efefef;
+        display: flex;
+        & span {
+          color: #777;
+          width: 100%;
+          :last-child {
+            text-align: right;
+            width: 75%;
+            padding-right: 9px;
+          }
+        }
+        :nth-child(odd) {
+          background-color: white;
+        }
+      }
+    }
+  }
+
+  & .buttonGroup {
+    position: absolute;
+    right: 24px;
+    bottom: 32px;
+    & > button:first-child {
+      margin-right: 8px;
+    }
+  }
+  & .selectAll {
+    padding: 5px 11px;
+  }
+
+  & .checkboxOverride {
+    display: inline-block;
+    width: 150px;
+    & > label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 130px;
+      display: inline-block;
+    }
+  }
+}
+
+.closeButton {
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  outline: none;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  width: 16px;
+  height: 16px;
+  & > svg {
+    fill: var(--neutral-9);
+    &:hover {
+      fill: var(--info-bg);
+    }
+  }
+}
+
+.secondaryButton {
+  background-color: #d4d4d4 !important;
+  color: var(--neutral-15) !important;
+  padding-right: 4px;
+  :hover {
+    background-color: var(--neutral-9) !important;
+    color: var(--neutral-1) !important;
+  }
+}

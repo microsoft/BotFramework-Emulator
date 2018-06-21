@@ -1,0 +1,82 @@
+.rightColumn {
+  margin-left: 48px
+}
+
+.section {
+  margin-bottom: 34px;
+  width: auto;
+  max-width: 100%;
+  a {
+    min-width: 0;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    text-decoration: none;
+    color: var(--focused-selected-list-item-bg);
+    :hover {
+      color: var(--focused-selected-list-item-bg);
+    }
+  }
+
+  ul {
+    margin: 0;
+    list-style: none;
+    padding: 0;
+  }
+}
+
+.well {
+  padding: 12px 10px;
+  background: rgba(0, 0, 0, .2);
+  transition: background 0.05s;
+
+  &::-webkit-scrollbar-thumb {
+    background-color: transparent
+  }
+
+  &:hover {
+    background: rgba(200, 235, 255, .072);
+
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--neutral-10);
+    }
+  }
+}
+
+.noBots {
+  font-style: italic;
+}
+
+.recentBotsList {
+  max-height: 100px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  & > li {
+    display: flex;
+  }
+  a {
+    flex-shrink: 0;
+  }
+}
+
+.recentBotDetail {
+  display: inline-block;
+  margin-left: 8px;
+  color: var(--neitral-14);
+  user-select: text;
+  cursor: text;
+}
+
+.openBot {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  width: 180px;
+  height: 26px;
+  & .primaryButtonText {
+    line-height: 26px;
+  }
+}
+
+.ctaLink {
+  white-space: normal;
+}

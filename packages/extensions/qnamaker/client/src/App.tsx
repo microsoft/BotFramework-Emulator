@@ -32,7 +32,7 @@
 //
 
 import { InspectorHost } from '@bfemulator/sdk-client';
-import { Colors, Fonts, GlobalCss, Splitter } from '@bfemulator/ui-react';
+import { Splitter } from '@bfemulator/ui-react';
 import { mergeStyles } from '@uifabric/merge-styles';
 import * as React from 'react';
 import { IBotConfig, IQnAService, ServiceType } from 'msbot/bin/schema';
@@ -58,7 +58,6 @@ let globalCss = {
   width: '100%',
   color: 'white',
 };
-
 
 const appCss = mergeStyles({
   displayName: 'qnaMakerApp',

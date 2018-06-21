@@ -63,7 +63,7 @@
 /******/ 	}
 /******/
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "e39a2cf30f11c0263770"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "9a924167d1ed994ae55d"; // eslint-disable-line no-unused-vars
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
@@ -1052,64 +1052,6 @@ module.exports = (__webpack_require__(/*! dll-reference vendors_6dc1bf031c792a36
 
 /***/ }),
 
-/***/ "../../../node_modules/classnames/index.js":
-/*!**********************************************************************************************!*\
-  !*** C:/Users/juwilaby/Documents/dev/BotFramework-Emulator/node_modules/classnames/index.js ***!
-  \**********************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
-  Copyright (c) 2016 Jed Watson.
-  Licensed under the MIT License (MIT), see
-  http://jedwatson.github.io/classnames
-*/
-/* global define */
-
-(function () {
-	'use strict';
-
-	var hasOwn = {}.hasOwnProperty;
-
-	function classNames () {
-		var classes = [];
-
-		for (var i = 0; i < arguments.length; i++) {
-			var arg = arguments[i];
-			if (!arg) continue;
-
-			var argType = typeof arg;
-
-			if (argType === 'string' || argType === 'number') {
-				classes.push(arg);
-			} else if (Array.isArray(arg)) {
-				classes.push(classNames.apply(null, arg));
-			} else if (argType === 'object') {
-				for (var key in arg) {
-					if (hasOwn.call(arg, key) && arg[key]) {
-						classes.push(key);
-					}
-				}
-			}
-		}
-
-		return classes.join(' ');
-	}
-
-	if (typeof module !== 'undefined' && module.exports) {
-		module.exports = classNames;
-	} else if (true) {
-		// register as 'classnames', consistent with npm package name
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = (function () {
-			return classNames;
-		}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {}
-}());
-
-
-/***/ }),
-
 /***/ "../../../node_modules/css-loader/lib/css-base.js":
 /*!*****************************************************************************************************!*\
   !*** C:/Users/juwilaby/Documents/dev/BotFramework-Emulator/node_modules/css-loader/lib/css-base.js ***!
@@ -1397,23 +1339,23 @@ module.exports = (__webpack_require__(/*! dll-reference vendors_6dc1bf031c792a36
 
 /***/ "../../../node_modules/msbot/bin/models/index.js":
 /*!****************************************************************************************************************!*\
-  !*** delegated ../../../node_modules/msbot/bin/models/index.js from dll-reference shared_0ea425449d17d1d3ca97 ***!
+  !*** delegated ../../../node_modules/msbot/bin/models/index.js from dll-reference shared_8a0ca44227a5cb364b97 ***!
   \****************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = (__webpack_require__(/*! dll-reference shared_0ea425449d17d1d3ca97 */ "dll-reference shared_0ea425449d17d1d3ca97"))("../../../node_modules/msbot/bin/models/index.js");
+module.exports = (__webpack_require__(/*! dll-reference shared_8a0ca44227a5cb364b97 */ "dll-reference shared_8a0ca44227a5cb364b97"))("../../../node_modules/msbot/bin/models/index.js");
 
 /***/ }),
 
 /***/ "../../../node_modules/msbot/bin/schema.js":
 /*!**********************************************************************************************************!*\
-  !*** delegated ../../../node_modules/msbot/bin/schema.js from dll-reference shared_0ea425449d17d1d3ca97 ***!
+  !*** delegated ../../../node_modules/msbot/bin/schema.js from dll-reference shared_8a0ca44227a5cb364b97 ***!
   \**********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = (__webpack_require__(/*! dll-reference shared_0ea425449d17d1d3ca97 */ "dll-reference shared_0ea425449d17d1d3ca97"))("../../../node_modules/msbot/bin/schema.js");
+module.exports = (__webpack_require__(/*! dll-reference shared_8a0ca44227a5cb364b97 */ "dll-reference shared_8a0ca44227a5cb364b97"))("../../../node_modules/msbot/bin/schema.js");
 
 /***/ }),
 
@@ -25187,12 +25129,12 @@ module.exports = function (css) {
 
 /***/ "../../../node_modules/tslib/tslib.es6.js":
 /*!*********************************************************************************************************!*\
-  !*** delegated ../../../node_modules/tslib/tslib.es6.js from dll-reference shared_0ea425449d17d1d3ca97 ***!
+  !*** delegated ../../../node_modules/tslib/tslib.es6.js from dll-reference shared_8a0ca44227a5cb364b97 ***!
   \*********************************************************************************************************/
 /*! exports provided: __extends, __assign, __rest, __decorate, __param, __metadata, __awaiter, __generator, __exportStar, __values, __read, __spread, __await, __asyncGenerator, __asyncDelegator, __asyncValues, __makeTemplateObject, __importStar, __importDefault */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = (__webpack_require__(/*! dll-reference shared_0ea425449d17d1d3ca97 */ "dll-reference shared_0ea425449d17d1d3ca97"))("../../../node_modules/tslib/tslib.es6.js");
+module.exports = (__webpack_require__(/*! dll-reference shared_8a0ca44227a5cb364b97 */ "dll-reference shared_8a0ca44227a5cb364b97"))("../../../node_modules/tslib/tslib.es6.js");
 
 /***/ }),
 
@@ -25290,6 +25232,184 @@ exports.locals = {
 
 /***/ }),
 
+/***/ "../../../node_modules/typings-for-css-modules-loader/lib/index.js??ref--5-1!../../../node_modules/resolve-url-loader/index.js!../../../node_modules/sass-loader/lib/loader.js!./src/ui/dialogs/tabManager/tabManager.scss":
+/*!******************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** C:/Users/juwilaby/Documents/dev/BotFramework-Emulator/node_modules/typings-for-css-modules-loader/lib??ref--5-1!C:/Users/juwilaby/Documents/dev/BotFramework-Emulator/node_modules/resolve-url-loader!C:/Users/juwilaby/Documents/dev/BotFramework-Emulator/node_modules/sass-loader/lib/loader.js!./src/ui/dialogs/tabManager/tabManager.scss ***!
+  \******************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../../../../../node_modules/css-loader/lib/css-base.js */ "../../../node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, ".tabManager__2fT2a {\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  position: absolute;\n  display: flex;\n  flex-flow: row nowrap;\n  align-items: center;\n  justify-content: center;\n  background-color: transparent;\n}\n\n.tabManager__2fT2a > ul {\n  height: auto;\n  width: auto;\n  max-height: 30%;\n  overflow-y: auto;\n  margin: 0;\n  padding: 24px 64px;\n  list-style: none;\n  background-color: var(--neutral-15);\n  color: var(--neutral-16);\n  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2), 2px 0 2px 0 rgba(0, 0, 0, 0.2), -2px 0 2px 0 rgba(0, 0, 0, 0.2);\n}\n\n.tabManager__2fT2a > ul > .selectedTab__1SjeM {\n  color: var(--neutral-1);\n  text-decoration: underline;\n}\n\n.tabManager__2fT2a > ul > li {\n  padding: 4px 0;\n  text-align: center;\n}\n\n.tabManager__2fT2a > ul > li:focus {\n  outline: 0;\n}", ""]);
+
+// exports
+exports.locals = {
+	"tabManager": "tabManager__2fT2a",
+	"selectedTab": "selectedTab__1SjeM"
+};
+
+/***/ }),
+
+/***/ "../../../node_modules/typings-for-css-modules-loader/lib/index.js??ref--5-1!../../../node_modules/resolve-url-loader/index.js!../../../node_modules/sass-loader/lib/loader.js!./src/ui/editor/appSettingsEditor/appSettingsEditor.scss":
+/*!*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** C:/Users/juwilaby/Documents/dev/BotFramework-Emulator/node_modules/typings-for-css-modules-loader/lib??ref--5-1!C:/Users/juwilaby/Documents/dev/BotFramework-Emulator/node_modules/resolve-url-loader!C:/Users/juwilaby/Documents/dev/BotFramework-Emulator/node_modules/sass-loader/lib/loader.js!./src/ui/editor/appSettingsEditor/appSettingsEditor.scss ***!
+  \*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../../../../../node_modules/css-loader/lib/css-base.js */ "../../../node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, ".appSettingsEditor__3B5h6 p {\n  margin: 0;\n  margin-bottom: 16px;\n}\n\n.appSettingsEditor__3B5h6 a {\n  text-decoration: none;\n  color: var(--focused-selected-list-item-bg);\n}\n\n.appSettingsEditor__3B5h6 a:hover {\n  color: var(--focused-selected-list-item-bg);\n}\n\n.rightColumn__2OW2u {\n  margin-left: 48px;\n}\n\n.buttonRow__3oltk {\n  margin-top: 48px;\n}\n\n.browseButton__3N7P4,\n.saveButton__1i4m5 {\n  margin-left: 8px;\n}\n\n.sizeLimitSuffix__2pMGw {\n  display: inline-block;\n  line-height: 32px;\n  margin-left: 8px;\n}\n\n.checkboxOverrides__3Madr {\n  margin-bottom: 16px;\n}\n\n.checkboxOverrides__3Madr > label {\n  color: var(--neutral-5);\n}\n\n.appSettingsInput__YX09C {\n  color: var(--neutral-5);\n}", ""]);
+
+// exports
+exports.locals = {
+	"appSettingsEditor": "appSettingsEditor__3B5h6",
+	"rightColumn": "rightColumn__2OW2u",
+	"buttonRow": "buttonRow__3oltk",
+	"browseButton": "browseButton__3N7P4",
+	"saveButton": "saveButton__1i4m5",
+	"sizeLimitSuffix": "sizeLimitSuffix__2pMGw",
+	"checkboxOverrides": "checkboxOverrides__3Madr",
+	"appSettingsInput": "appSettingsInput__YX09C"
+};
+
+/***/ }),
+
+/***/ "../../../node_modules/typings-for-css-modules-loader/lib/index.js??ref--5-1!../../../node_modules/resolve-url-loader/index.js!../../../node_modules/sass-loader/lib/loader.js!./src/ui/editor/botSettingsEditor/botSettingsEditor.scss":
+/*!*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** C:/Users/juwilaby/Documents/dev/BotFramework-Emulator/node_modules/typings-for-css-modules-loader/lib??ref--5-1!C:/Users/juwilaby/Documents/dev/BotFramework-Emulator/node_modules/resolve-url-loader!C:/Users/juwilaby/Documents/dev/BotFramework-Emulator/node_modules/sass-loader/lib/loader.js!./src/ui/editor/botSettingsEditor/botSettingsEditor.scss ***!
+  \*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../../../../../node_modules/css-loader/lib/css-base.js */ "../../../node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, ".botSettingsHeader__26CfI {\n  margin-bottom: 16px;\n}\n\n.saveButton__1LyFm {\n  margin-left: auto;\n}\n\n.saveConnectButton__1VQF6 {\n  margin-left: 8px;\n}\n\n.multipleInputRow__1dfTQ > div {\n  margin-left: 8px;\n}\n\n.multipleInputRow__1dfTQ > div:first-child {\n  margin-left: 0;\n}\n\n.buttonRow__XxclX {\n  margin-top: 48px;\n}\n\n.botSettingsInput__3T-vk {\n  color: var(--neutral-5);\n}", ""]);
+
+// exports
+exports.locals = {
+	"botSettingsHeader": "botSettingsHeader__26CfI",
+	"saveButton": "saveButton__1LyFm",
+	"saveConnectButton": "saveConnectButton__1VQF6",
+	"multipleInputRow": "multipleInputRow__1dfTQ",
+	"buttonRow": "buttonRow__XxclX",
+	"botSettingsInput": "botSettingsInput__3T-vk"
+};
+
+/***/ }),
+
+/***/ "../../../node_modules/typings-for-css-modules-loader/lib/index.js??ref--5-1!../../../node_modules/resolve-url-loader/index.js!../../../node_modules/sass-loader/lib/loader.js!./src/ui/editor/emulator/parts/chat/chat.scss":
+/*!********************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** C:/Users/juwilaby/Documents/dev/BotFramework-Emulator/node_modules/typings-for-css-modules-loader/lib??ref--5-1!C:/Users/juwilaby/Documents/dev/BotFramework-Emulator/node_modules/resolve-url-loader!C:/Users/juwilaby/Documents/dev/BotFramework-Emulator/node_modules/sass-loader/lib/loader.js!./src/ui/editor/emulator/parts/chat/chat.scss ***!
+  \********************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../../../../../../../node_modules/css-loader/lib/css-base.js */ "../../../node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, ".chat__1e4nD {\n  background-color: white;\n  height: 100%;\n  display: flex;\n}\n\n.chat__1e4nD .wc-chatview-panel {\n  flex: 1;\n  position: relative;\n}\n\n.chat__1e4nD .wc-chatview-panel ::-webkit-scrollbar-thumb {\n  background-color: blue;\n  color: red;\n}\n\n.chat__1e4nD .wc-chatview-panel p {\n  margin-bottom: 0;\n  margin-top: 0;\n}\n\n.chat__1e4nD .wc-chatview-panel h1,\n.chat__1e4nD .wc-chatview-panel h2,\n.chat__1e4nD .wc-chatview-panel h3,\n.chat__1e4nD .wc-chatview-panel h4 {\n  margin-top: 8px;\n  margin-bottom: 4px;\n}\n\n.chat__1e4nD .wc-chatview-panel br {\n  content: \"\";\n  display: block;\n  font-size: 50%;\n}\n\n.chat__1e4nD .wc-chatview-panel ol,\n.chat__1e4nD .wc-chatview-panel ul {\n  margin-top: 0;\n}\n\n.chat__1e4nD .wc-chatview-panel .wc-message-content * {\n  user-select: text;\n}\n\n.chat__1e4nD .wc-chatview-panel .wc-message-content.selected {\n  color: black;\n  background-color: var(--webchat-selected-text-bg);\n  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.2);\n}\n\n.chat__1e4nD .wc-chatview-panel .wc-message-content.selected > svg.wc-message-callout > path {\n  fill: var(--webchat-selected-text-bg);\n}\n\n.chat__1e4nD .wc-chatview-panel .wc-card {\n  color: #000;\n}\n\n.chat__1e4nD .wc-chatview-panel .wc-card button {\n  border: 1px solid #ccc;\n  border-radius: 1px;\n  cursor: pointer;\n  outline: none;\n  transition: color .2s ease, background-color .2s ease;\n  background-color: transparent;\n  color: var(--info-outline);\n  min-height: 32px;\n  width: 100%;\n  padding: 0 16px;\n}\n\n.chat__1e4nD .wc-chatview-panel .wc-list ul {\n  padding: 0;\n}\n\n.chat__1e4nD .wc-chatview-panel .clickable:hover {\n  cursor: pointer;\n}", ""]);
+
+// exports
+exports.locals = {
+	"chat": "chat__1e4nD"
+};
+
+/***/ }),
+
+/***/ "../../../node_modules/typings-for-css-modules-loader/lib/index.js??ref--5-1!../../../node_modules/resolve-url-loader/index.js!../../../node_modules/sass-loader/lib/loader.js!./src/ui/editor/emulator/parts/log/log.scss":
+/*!******************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** C:/Users/juwilaby/Documents/dev/BotFramework-Emulator/node_modules/typings-for-css-modules-loader/lib??ref--5-1!C:/Users/juwilaby/Documents/dev/BotFramework-Emulator/node_modules/resolve-url-loader!C:/Users/juwilaby/Documents/dev/BotFramework-Emulator/node_modules/sass-loader/lib/loader.js!./src/ui/editor/emulator/parts/log/log.scss ***!
+  \******************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../../../../../../../node_modules/css-loader/lib/css-base.js */ "../../../node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, ".log__25Xhn {\n  height: 100%;\n  overflow: auto;\n  user-select: text;\n  padding: 0 16px 0 16px;\n  box-sizing: border-box;\n}\n\n.log__25Xhn > .entry__2Boyz {\n  font-family: var(--monospace-font-family);\n}\n\n.log__25Xhn > .entry__2Boyz > .source__3CL5Q {\n  color: var(--neutral-6);\n}\n\n.log__25Xhn > .entry__2Boyz .timestamp__3gE5u {\n  color: var(--log-panel-timestamp);\n}\n\n.log__25Xhn > .entry__2Boyz .srcDst__1z-d5 {\n  color: var(--neutral-9);\n}\n\n.log__25Xhn > .entry__2Boyz a {\n  color: var(--log-panel-link);\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.log__25Xhn > .entry__2Boyz .level0__3uYnw {\n  color: var(--neutral-1);\n}\n\n.log__25Xhn > .entry__2Boyz .level1__U6GnC {\n  color: var(--neutral-7);\n}\n\n.log__25Xhn > .entry__2Boyz .level2__22iCI {\n  color: var(--warning-outline);\n}\n\n.log__25Xhn > .entry__2Boyz .level3__-J5hc {\n  color: var(--error-text);\n}\n\n.log__25Xhn > .entry__2Boyz .spaced__XI5co {\n  margin-left: 8px;\n}\n\n.log__25Xhn > .entry__2Boyz .spaced__XI5co:first-child {\n  margin-left: 0;\n}", ""]);
+
+// exports
+exports.locals = {
+	"log": "log__25Xhn",
+	"entry": "entry__2Boyz",
+	"source": "source__3CL5Q",
+	"timestamp": "timestamp__3gE5u",
+	"srcDst": "srcDst__1z-d5",
+	"level0": "level0__3uYnw",
+	"level1": "level1__U6GnC",
+	"level2": "level2__22iCI",
+	"level3": "level3__-J5hc",
+	"spaced": "spaced__XI5co"
+};
+
+/***/ }),
+
+/***/ "../../../node_modules/typings-for-css-modules-loader/lib/index.js??ref--5-1!../../../node_modules/resolve-url-loader/index.js!../../../node_modules/sass-loader/lib/loader.js!./src/ui/editor/welcomePage/welcomePage.scss":
+/*!*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** C:/Users/juwilaby/Documents/dev/BotFramework-Emulator/node_modules/typings-for-css-modules-loader/lib??ref--5-1!C:/Users/juwilaby/Documents/dev/BotFramework-Emulator/node_modules/resolve-url-loader!C:/Users/juwilaby/Documents/dev/BotFramework-Emulator/node_modules/sass-loader/lib/loader.js!./src/ui/editor/welcomePage/welcomePage.scss ***!
+  \*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../../../../../node_modules/css-loader/lib/css-base.js */ "../../../node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, ".rightColumn__3EZER {\n  margin-left: 48px;\n}\n\n.section__26YAE {\n  margin-bottom: 34px;\n  width: auto;\n  max-width: 100%;\n}\n\n.well__1al51 {\n  padding: 12px 10px;\n  background: rgba(0, 0, 0, 0.2);\n  transition: background 0.05s;\n}\n\n.well__1al51::-webkit-scrollbar-thumb {\n  background-color: transparent;\n}\n\n.well__1al51:hover {\n  background: rgba(200, 235, 255, 0.072);\n}\n\n.well__1al51:hover::-webkit-scrollbar-thumb {\n  background-color: var(--neutral-10);\n}\n\n.well__1al51 .noBots__mY68q {\n  font-style: italic;\n}\n\n.well__1al51 .recentBotsList__2tUn9 {\n  max-height: 100px;\n  overflow-y: auto;\n  overflow-x: hidden;\n}\n\n.well__1al51 .recentBotsList__2tUn9 > li {\n  display: flex;\n}\n\n.well__1al51 .recentBotsList__2tUn9 a {\n  flex-shrink: 0;\n}\n\n.well__1al51 .recentBotDetail__3Gj7v {\n  display: inline-block;\n  margin-left: 8px;\n  color: var(--neitral-14);\n  user-select: text;\n  cursor: text;\n}\n\n.well__1al51 a {\n  min-width: 0;\n  white-space: nowrap;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  text-decoration: none;\n  color: var(--focused-selected-list-item-bg);\n}\n\n.well__1al51 a :hover {\n  color: var(--focused-selected-list-item-bg);\n}\n\n.well__1al51 ul {\n  margin: 0;\n  list-style: none;\n  padding: 0;\n}\n\n.well__1al51 .openBot__3uauR {\n  margin-top: 24px;\n  margin-bottom: 16px;\n  width: 180px;\n  height: 26px;\n}\n\n.well__1al51 .openBot__3uauR .primaryButtonText__3UxcX {\n  line-height: 26px;\n}\n\n.well__1al51 .ctaLink__k5TsI {\n  white-space: normal;\n}", ""]);
+
+// exports
+exports.locals = {
+	"rightColumn": "rightColumn__3EZER",
+	"section": "section__26YAE",
+	"well": "well__1al51",
+	"noBots": "noBots__mY68q",
+	"recentBotsList": "recentBotsList__2tUn9",
+	"recentBotDetail": "recentBotDetail__3Gj7v",
+	"openBot": "openBot__3uauR",
+	"primaryButtonText": "primaryButtonText__3UxcX",
+	"ctaLink": "ctaLink__k5TsI"
+};
+
+/***/ }),
+
+/***/ "../../../node_modules/typings-for-css-modules-loader/lib/index.js??ref--5-1!../../../node_modules/resolve-url-loader/index.js!../../../node_modules/sass-loader/lib/loader.js!./src/ui/layout/genericDocument.scss":
+/*!***********************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** C:/Users/juwilaby/Documents/dev/BotFramework-Emulator/node_modules/typings-for-css-modules-loader/lib??ref--5-1!C:/Users/juwilaby/Documents/dev/BotFramework-Emulator/node_modules/resolve-url-loader!C:/Users/juwilaby/Documents/dev/BotFramework-Emulator/node_modules/sass-loader/lib/loader.js!./src/ui/layout/genericDocument.scss ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../../../../node_modules/css-loader/lib/css-base.js */ "../../../node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, ".genericDocument__3ZYXz {\n  box-sizing: border-box;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  height: 100%;\n  width: 100%;\n  min-width: 480px;\n  overflow-x: hidden;\n  overflow-y: auto;\n}\n\n.genericDocument__3ZYXz > .genericDocContent__yhaML {\n  width: 90%;\n  max-width: 1200px;\n}", ""]);
+
+// exports
+exports.locals = {
+	"genericDocument": "genericDocument__3ZYXz",
+	"genericDocContent": "genericDocContent__yhaML"
+};
+
+/***/ }),
+
 /***/ "../../../node_modules/typings-for-css-modules-loader/lib/index.js??ref--5-1!../../../node_modules/resolve-url-loader/index.js!../../../node_modules/sass-loader/lib/loader.js!./src/ui/shell/explorer/explorerBar/explorerBar.scss":
 /*!***************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** C:/Users/juwilaby/Documents/dev/BotFramework-Emulator/node_modules/typings-for-css-modules-loader/lib??ref--5-1!C:/Users/juwilaby/Documents/dev/BotFramework-Emulator/node_modules/resolve-url-loader!C:/Users/juwilaby/Documents/dev/BotFramework-Emulator/node_modules/sass-loader/lib/loader.js!./src/ui/shell/explorer/explorerBar/explorerBar.scss ***!
@@ -25371,15 +25491,17 @@ exports = module.exports = __webpack_require__(/*! ../../../../../../../node_mod
 
 
 // module
-exports.push([module.i, ".navBar___dotX {\n  background-color: var(--neutral-13);\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n  position: relative;\n  width: 50px;\n  box-shadow: var(--box-shadow-right);\n}\n\n.navBar___dotX .botExplorer__3AiJY {\n  background-image: url(" + escape(__webpack_require__(/*! ../../media/ic_bot_explorer.svg */ "./src/ui/media/ic_bot_explorer.svg")) + ");\n}\n\n.navBar___dotX .services__3vOSd {\n  background-image: url(" + escape(__webpack_require__(/*! ../../media/ic_services.svg */ "./src/ui/media/ic_services.svg")) + ");\n}\n\n.navBar___dotX .botSettings__joYki {\n  background-image: url(" + escape(__webpack_require__(/*! ../../media/ic_bot_settings.svg */ "./src/ui/media/ic_bot_settings.svg")) + ");\n}\n\n.navBar___dotX .settings__1VaQn {\n  background-image: url(" + escape(__webpack_require__(/*! ../../media/ic_settings.svg */ "./src/ui/media/ic_settings.svg")) + ");\n}", ""]);
+exports.push([module.i, ".navBar___dotX {\n  background-color: var(--neutral-13);\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n  position: relative;\n  width: 50px;\n  box-shadow: var(--box-shadow-right);\n}\n\n.navBar___dotX .services__3vOSd {\n  background-image: url(" + escape(__webpack_require__(/*! ../../media/ic_services.svg */ "./src/ui/media/ic_services.svg")) + ");\n}\n\n.navBar___dotX .botSettings__joYki {\n  background-image: url(" + escape(__webpack_require__(/*! ../../media/ic_bot_settings.svg */ "./src/ui/media/ic_bot_settings.svg")) + ");\n}\n\n.navBar___dotX .settings__1VaQn {\n  background-image: url(" + escape(__webpack_require__(/*! ../../media/ic_settings.svg */ "./src/ui/media/ic_settings.svg")) + ");\n}\n\n.navLink__QNwpP {\n  position: relative;\n  display: inline-block;\n  width: 50px;\n  height: 50px;\n  box-sizing: border-box;\n  background: no-repeat 50% 50%;\n  background-size: 25px;\n  opacity: 0.6;\n}\n\n.navLink__QNwpP:nth-child(1) {\n  background-image: url(" + escape(__webpack_require__(/*! ../../media/ic_bot_explorer.svg */ "./src/ui/media/ic_bot_explorer.svg")) + ");\n}\n\n.navLink__QNwpP:nth-child(2) {\n  background-image: url(" + escape(__webpack_require__(/*! ../../media/ic_services.svg */ "./src/ui/media/ic_services.svg")) + ");\n}\n\n.navLink__QNwpP:nth-child(3) {\n  background-image: url(" + escape(__webpack_require__(/*! ../../media/ic_bot_settings.svg */ "./src/ui/media/ic_bot_settings.svg")) + ");\n}\n\n.navLink__QNwpP:nth-child(4) {\n  background-image: url(" + escape(__webpack_require__(/*! ../../media/ic_settings.svg */ "./src/ui/media/ic_settings.svg")) + ");\n  margin-top: auto;\n}\n\n.navLink__QNwpP:hover::before,\n.navLink__QNwpP.selected__3dQNE::before {\n  opacity: 1;\n}\n\n.navLink__QNwpP:focus {\n  outline: 0;\n}\n\n.navLink__QNwpP:focus::before {\n  opacity: 1;\n}\n\n.navLink__QNwpP.disabled__Zn2QJ,\n.navLink__QNwpP[aria-disabled] {\n  opacity: 0.6;\n}\n\n.navLink__QNwpP::before {\n  content: \"\";\n  position: absolute;\n  display: inline-block;\n  width: 2px;\n  height: 50px;\n  top: 0;\n  left: 0;\n  opacity: 0;\n  background-color: var(--focused-selected-list-item-bg);\n}", ""]);
 
 // exports
 exports.locals = {
 	"navBar": "navBar___dotX",
-	"botExplorer": "botExplorer__3AiJY",
 	"services": "services__3vOSd",
 	"botSettings": "botSettings__joYki",
-	"settings": "settings__1VaQn"
+	"settings": "settings__1VaQn",
+	"navLink": "navLink__QNwpP",
+	"selected": "selected__3dQNE",
+	"disabled": "disabled__Zn2QJ"
 };
 
 /***/ }),
@@ -25436,34 +25558,34 @@ module.exports = (__webpack_require__(/*! dll-reference vendors_6dc1bf031c792a36
 
 /***/ "../../sdk/shared/built/index.js":
 /*!************************************************************************************************!*\
-  !*** delegated ../../sdk/shared/built/index.js from dll-reference shared_0ea425449d17d1d3ca97 ***!
+  !*** delegated ../../sdk/shared/built/index.js from dll-reference shared_8a0ca44227a5cb364b97 ***!
   \************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = (__webpack_require__(/*! dll-reference shared_0ea425449d17d1d3ca97 */ "dll-reference shared_0ea425449d17d1d3ca97"))("../../sdk/shared/built/index.js");
+module.exports = (__webpack_require__(/*! dll-reference shared_8a0ca44227a5cb364b97 */ "dll-reference shared_8a0ca44227a5cb364b97"))("../../sdk/shared/built/index.js");
 
 /***/ }),
 
 /***/ "../../sdk/ui-react/built/index.js":
 /*!**************************************************************************************************!*\
-  !*** delegated ../../sdk/ui-react/built/index.js from dll-reference shared_0ea425449d17d1d3ca97 ***!
+  !*** delegated ../../sdk/ui-react/built/index.js from dll-reference shared_8a0ca44227a5cb364b97 ***!
   \**************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = (__webpack_require__(/*! dll-reference shared_0ea425449d17d1d3ca97 */ "dll-reference shared_0ea425449d17d1d3ca97"))("../../sdk/ui-react/built/index.js");
+module.exports = (__webpack_require__(/*! dll-reference shared_8a0ca44227a5cb364b97 */ "dll-reference shared_8a0ca44227a5cb364b97"))("../../sdk/ui-react/built/index.js");
 
 /***/ }),
 
 /***/ "../shared/built/index.js":
 /*!*****************************************************************************************!*\
-  !*** delegated ../shared/built/index.js from dll-reference shared_0ea425449d17d1d3ca97 ***!
+  !*** delegated ../shared/built/index.js from dll-reference shared_8a0ca44227a5cb364b97 ***!
   \*****************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = (__webpack_require__(/*! dll-reference shared_0ea425449d17d1d3ca97 */ "dll-reference shared_0ea425449d17d1d3ca97"))("../shared/built/index.js");
+module.exports = (__webpack_require__(/*! dll-reference shared_8a0ca44227a5cb364b97 */ "dll-reference shared_8a0ca44227a5cb364b97"))("../shared/built/index.js");
 
 /***/ }),
 
@@ -25608,15 +25730,14 @@ function registerCommands() {
   })); // ---------------------------------------------------------------------------
   // Switches the current active bot
 
-  CommandRegistry.registerCommand('bot:switch', botPath => _ui_helpers_activeBotHelper__WEBPACK_IMPORTED_MODULE_16__["ActiveBotHelper"].confirmAndSwitchBots(botPath)); // ---------------------------------------------------------------------------
+  CommandRegistry.registerCommand('bot:switch', bot => _ui_helpers_activeBotHelper__WEBPACK_IMPORTED_MODULE_16__["ActiveBotHelper"].confirmAndSwitchBots(bot)); // ---------------------------------------------------------------------------
   // Closes the current active bot
 
   CommandRegistry.registerCommand('bot:close', () => _ui_helpers_activeBotHelper__WEBPACK_IMPORTED_MODULE_16__["ActiveBotHelper"].confirmAndCloseBot()); // ---------------------------------------------------------------------------
   // Browse for a .bot file and open it
 
   CommandRegistry.registerCommand('bot:browse-open', () => _ui_helpers_activeBotHelper__WEBPACK_IMPORTED_MODULE_16__["ActiveBotHelper"].confirmAndOpenBotFromFile()); // ---------------------------------------------------------------------------
-  // Completes the client side sync of the bot:load command on the server side
-  // (NOTE: should NOT be called by itself; call server side instead)
+  // Loads the bot on the client side using the activeBotHelper
 
   CommandRegistry.registerCommand('bot:load', bot => {
     if (!Object(_data_botHelpers__WEBPACK_IMPORTED_MODULE_8__["pathExistsInRecentBots"])(bot.path)) {
@@ -25624,7 +25745,7 @@ function registerCommands() {
       return _ui_helpers_activeBotHelper__WEBPACK_IMPORTED_MODULE_16__["ActiveBotHelper"].confirmAndCreateBot(bot, '');
     }
 
-    return _ui_helpers_activeBotHelper__WEBPACK_IMPORTED_MODULE_16__["ActiveBotHelper"].confirmAndSwitchBots(bot.path);
+    return _ui_helpers_activeBotHelper__WEBPACK_IMPORTED_MODULE_16__["ActiveBotHelper"].confirmAndSwitchBots(bot);
   }); // ---------------------------------------------------------------------------
   // Syncs the client side list of bots with bots arg (usually called from server side)
 
@@ -25724,7 +25845,7 @@ function registerCommands() {
   CommandRegistry.registerCommand('file:remove', path => {
     _data_store__WEBPACK_IMPORTED_MODULE_10__["default"].dispatch(_data_action_fileActions__WEBPACK_IMPORTED_MODULE_6__["removeFile"](path));
   }); // ---------------------------------------------------------------------------
-  // Clears the file store 
+  // Clears the file store
 
   CommandRegistry.registerCommand('file:clear', () => {
     _data_store__WEBPACK_IMPORTED_MODULE_10__["default"].dispatch(_data_action_fileActions__WEBPACK_IMPORTED_MODULE_6__["clear"]());
@@ -26016,7 +26137,7 @@ function openAzureBotServiceExplorerContextMenu(azureBotServiceEditorComponent, 
 /*!***************************************!*\
   !*** ./src/data/action/botActions.ts ***!
   \***************************************/
-/*! exports provided: BotActions, create, load, patch, setActive, close */
+/*! exports provided: BotActions, create, load, setActive, close */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -26024,7 +26145,6 @@ __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(module) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BotActions", function() { return BotActions; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "create", function() { return create; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "load", function() { return load; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "patch", function() { return patch; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setActive", function() { return setActive; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "close", function() { return close; });
 (function () {
@@ -26070,7 +26190,6 @@ var BotActions;
 (function (BotActions) {
   BotActions["create"] = "BOT/CREATE";
   BotActions["load"] = "BOT/LOAD";
-  BotActions["patch"] = "BOT/PATCH";
   BotActions["setActive"] = "BOT/SET_ACTIVE";
   BotActions["close"] = "BOT/CLOSE";
 })(BotActions || (BotActions = {}));
@@ -26095,15 +26214,11 @@ function load(bots) {
     }
   };
 }
-function patch(bot, secret) {
-  return {
-    type: BotActions.patch,
-    payload: {
-      bot,
-      secret
-    }
-  };
-}
+/**
+ *
+ * @param bot The new active bot
+ */
+
 function setActive(bot) {
   return {
     type: BotActions.setActive,
@@ -26132,7 +26247,6 @@ function close() {
   reactHotLoader.register(BotActions, "BotActions", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\data\\action\\botActions.ts");
   reactHotLoader.register(create, "create", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\data\\action\\botActions.ts");
   reactHotLoader.register(load, "load", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\data\\action\\botActions.ts");
-  reactHotLoader.register(patch, "patch", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\data\\action\\botActions.ts");
   reactHotLoader.register(setActive, "setActive", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\data\\action\\botActions.ts");
   reactHotLoader.register(close, "close", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\data\\action\\botActions.ts");
   leaveModule(module);
@@ -28011,8 +28125,9 @@ __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(module) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return bot; });
 /* harmony import */ var _bfemulator_app_shared__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @bfemulator/app-shared */ "../shared/built/index.js");
 /* harmony import */ var _bfemulator_app_shared__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_bfemulator_app_shared__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _action_botActions__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../action/botActions */ "./src/data/action/botActions.ts");
-/* harmony import */ var _botHelpers__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../botHelpers */ "./src/data/botHelpers.ts");
+/* harmony import */ var _bfemulator_sdk_shared__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @bfemulator/sdk-shared */ "../../sdk/shared/built/index.js");
+/* harmony import */ var _bfemulator_sdk_shared__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_bfemulator_sdk_shared__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _action_botActions__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../action/botActions */ "./src/data/action/botActions.ts");
 (function () {
   var enterModule = __webpack_require__(/*! react-hot-loader */ "../../../node_modules/react-hot-loader/index.js").enterModule;
 
@@ -28060,7 +28175,7 @@ const DEFAULT_STATE = {
 };
 function bot(state = DEFAULT_STATE, action) {
   switch (action.type) {
-    case _action_botActions__WEBPACK_IMPORTED_MODULE_1__["BotActions"].create:
+    case _action_botActions__WEBPACK_IMPORTED_MODULE_2__["BotActions"].create:
       {
         const newBot = {
           path: action.payload.botFilePath,
@@ -28073,36 +28188,13 @@ function bot(state = DEFAULT_STATE, action) {
         break;
       }
 
-    case _action_botActions__WEBPACK_IMPORTED_MODULE_1__["BotActions"].load:
+    case _action_botActions__WEBPACK_IMPORTED_MODULE_2__["BotActions"].load:
       {
         state = setBotFilesState(action.payload.bots, state);
         break;
       }
 
-    case _action_botActions__WEBPACK_IMPORTED_MODULE_1__["BotActions"].patch:
-      {
-        const patchedBot = Object.assign({}, state.activeBot, action.payload.bot); // update the bot display name in the list if it was changed
-
-        const botInfo = Object(_botHelpers__WEBPACK_IMPORTED_MODULE_2__["getBotInfoByPath"])(action.payload.bot.path);
-
-        if (botInfo) {
-          botInfo.displayName = Object(_bfemulator_app_shared__WEBPACK_IMPORTED_MODULE_0__["getBotDisplayName"])(action.payload.bot);
-
-          if (action.payload.secret) {
-            botInfo.secret = action.payload.secret;
-          }
-
-          const botInfoIndex = state.botFiles.findIndex(bf => bf.path === action.payload.bot.path);
-          let patchedBots = [...state.botFiles];
-          patchedBots.splice(botInfoIndex, 1, botInfo);
-          state = setBotFilesState(patchedBots, state);
-        }
-
-        state = setActiveBot(patchedBot, state);
-        break;
-      }
-
-    case _action_botActions__WEBPACK_IMPORTED_MODULE_1__["BotActions"].setActive:
+    case _action_botActions__WEBPACK_IMPORTED_MODULE_2__["BotActions"].setActive:
       {
         // move active bot up to the top of the recent bots list
         const mostRecentBot = state.botFiles.find(botArg => botArg && botArg.path === action.payload.bot.path);
@@ -28112,12 +28204,18 @@ function bot(state = DEFAULT_STATE, action) {
           recentBots.unshift(mostRecentBot);
         }
 
+        let newActiveBot = action.payload.bot;
+
+        if (Object(_bfemulator_sdk_shared__WEBPACK_IMPORTED_MODULE_1__["botsAreTheSame"])(state.activeBot, newActiveBot)) {
+          newActiveBot = Object(_bfemulator_sdk_shared__WEBPACK_IMPORTED_MODULE_1__["applyBotConfigOverrides"])(newActiveBot, state.activeBot.overrides);
+        }
+
         state = setBotFilesState(recentBots, state);
-        state = setActiveBot(action.payload.bot, state);
+        state = setActiveBot(newActiveBot, state);
         break;
       }
 
-    case _action_botActions__WEBPACK_IMPORTED_MODULE_1__["BotActions"].close:
+    case _action_botActions__WEBPACK_IMPORTED_MODULE_2__["BotActions"].close:
       {
         // close the ative bot
         state = setActiveBot(null, state);
@@ -28132,9 +28230,13 @@ function bot(state = DEFAULT_STATE, action) {
 }
 
 function setActiveBot(botConfig, state) {
-  let newState = Object.assign({}, state);
-  newState.activeBot = botConfig;
-  return newState;
+  return Object.assign({}, state, {
+    get activeBot() {
+      // Clones only - this guarantees only pristine bots will exist in the store
+      return JSON.parse(JSON.stringify(botConfig));
+    }
+
+  });
 }
 
 function setBotFilesState(botFilesState, state) {
@@ -29859,13 +29961,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function* openDispatchDeepLink(action) {
-  const {
-    appId,
-    version
-  } = action.payload.dispatchService;
+function* openDispatchDeepLink(action) {// TODO: Hook up proper deep link location once available
+
+  /*const { appId, version } = action.payload.dispatchService;
   const link = `https://www.dispatch.ai/applications/${appId}/versions/${version}/build`;
-  yield _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_2__["CommandServiceImpl"].remoteCall('electron:openExternal', link);
+  yield CommandServiceImpl.remoteCall('electron:openExternal', link);*/
 }
 
 function* openDispatchContextMenu(action) {
@@ -33231,6 +33331,61 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./src/ui/dialogs/tabManager/tabManager.scss":
+/*!***************************************************!*\
+  !*** ./src/ui/dialogs/tabManager/tabManager.scss ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../../../../../node_modules/typings-for-css-modules-loader/lib??ref--5-1!../../../../../../../node_modules/resolve-url-loader!../../../../../../../node_modules/sass-loader/lib/loader.js!./tabManager.scss */ "../../../node_modules/typings-for-css-modules-loader/lib/index.js??ref--5-1!../../../node_modules/resolve-url-loader/index.js!../../../node_modules/sass-loader/lib/loader.js!./src/ui/dialogs/tabManager/tabManager.scss");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../../../../../node_modules/style-loader/lib/addStyles.js */ "../../../node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(true) {
+	module.hot.accept(/*! !../../../../../../../node_modules/typings-for-css-modules-loader/lib??ref--5-1!../../../../../../../node_modules/resolve-url-loader!../../../../../../../node_modules/sass-loader/lib/loader.js!./tabManager.scss */ "../../../node_modules/typings-for-css-modules-loader/lib/index.js??ref--5-1!../../../node_modules/resolve-url-loader/index.js!../../../node_modules/sass-loader/lib/loader.js!./src/ui/dialogs/tabManager/tabManager.scss", function(__WEBPACK_OUTDATED_DEPENDENCIES__) { (function() {
+		var newContent = __webpack_require__(/*! !../../../../../../../node_modules/typings-for-css-modules-loader/lib??ref--5-1!../../../../../../../node_modules/resolve-url-loader!../../../../../../../node_modules/sass-loader/lib/loader.js!./tabManager.scss */ "../../../node_modules/typings-for-css-modules-loader/lib/index.js??ref--5-1!../../../node_modules/resolve-url-loader/index.js!../../../node_modules/sass-loader/lib/loader.js!./src/ui/dialogs/tabManager/tabManager.scss");
+
+		if(typeof newContent === 'string') newContent = [[module.i, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	})(__WEBPACK_OUTDATED_DEPENDENCIES__); });
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
 /***/ "./src/ui/dialogs/tabManager/tabManager.tsx":
 /*!**************************************************!*\
   !*** ./src/ui/dialogs/tabManager/tabManager.tsx ***!
@@ -33243,11 +33398,10 @@ __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(module) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TabManager", function() { return TabManager; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _uifabric_merge_styles__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @uifabric/merge-styles */ "../../../node_modules/@uifabric/merge-styles/lib/index.js");
-/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-redux */ "../../../node_modules/react-redux/es/index.js");
-/* harmony import */ var _sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../../../sdk/ui-react/built/index */ "../../sdk/ui-react/built/index.js");
-/* harmony import */ var _sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _data_action_editorActions__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../data/action/editorActions */ "./src/data/action/editorActions.ts");
+/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-redux */ "../../../node_modules/react-redux/es/index.js");
+/* harmony import */ var _data_action_editorActions__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../data/action/editorActions */ "./src/data/action/editorActions.ts");
+/* harmony import */ var _tabManager_scss__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./tabManager.scss */ "./src/ui/dialogs/tabManager/tabManager.scss");
+/* harmony import */ var _tabManager_scss__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_tabManager_scss__WEBPACK_IMPORTED_MODULE_3__);
 (function () {
   var enterModule = __webpack_require__(/*! react-hot-loader */ "../../../node_modules/react-hot-loader/index.js").enterModule;
 
@@ -33291,60 +33445,114 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const css = Object(_uifabric_merge_styles__WEBPACK_IMPORTED_MODULE_1__["mergeStyles"])({
-  displayName: 'tabManager',
-  top: 0,
-  left: 0,
-  bottom: 0,
-  right: 0,
-  position: 'absolute',
-  display: 'flex',
-  flexFlow: 'row nowrap',
-  alignItems: 'center',
-  justifyContent: 'center',
-  backgroundColor: 'rgba(0, 0, 0, 0)',
-  selectors: {
-    '& > ul': {
-      height: 'auto',
-      width: 'auto',
-      maxHeight: '30%',
-      overflowY: 'auto',
-      margin: '0',
-      padding: '24px 64px',
-      listStyle: 'none',
-      backgroundColor: `var(${_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_3__["ThemeVariables"].neutral15})`,
-      color: `var(${_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_3__["ThemeVariables"].neutral16})`,
-      boxShadow: '0px 2px 2px 0px rgba(0,0,0,0.2), 2px 0px 2px 0px rgba(0,0,0,0.2), -2px 0px 2px 0px rgba(0,0,0,0.2)'
-    },
-    '& > ul > li': {
-      padding: '4px 0',
-      textAlign: 'center',
-      selectors: {
-        ':focus': {
-          outline: '0'
-        }
-      }
-    },
-    '& > ul > .selected-tab': {
-      color: `var(${_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_3__["ThemeVariables"].neutral1})`,
-      textDecoration: 'underline'
-    }
-  }
-});
-
 class TabManagerComponent extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
   constructor(props) {
     super(props);
-    this.onKeyDown = this.onKeyDown.bind(this);
-    this.onKeyUp = this.onKeyUp.bind(this);
-    this.saveTabRef = this.saveTabRef.bind(this);
+    this.tabRefs = [];
+
+    this.saveTabRef = (element, index) => {
+      this.tabRefs[index] = element;
+    };
+
+    this.onKeyDown = e => {
+      if (!this.props.recentTabs.length) {
+        return;
+      }
+
+      switch (e.key) {
+        case 'ArrowUp':
+          if (this.state.showing) {
+            this.setState({
+              selectedIndex: this.moveIndexUp()
+            });
+          }
+
+          break;
+
+        case 'ArrowDown':
+          if (this.state.showing) {
+            this.setState({
+              selectedIndex: this.moveIndexDown()
+            });
+          }
+
+          break;
+
+        case 'Control':
+          this.setState({
+            controlIsPressed: true
+          });
+          break;
+
+        case 'Tab':
+          if (this.state.controlIsPressed) {
+            if (this.state.showing && !this.state.shiftIsPressed) {
+              this.setState({
+                selectedIndex: this.moveIndexDown()
+              });
+            } else if (this.state.showing && this.state.shiftIsPressed) {
+              this.setState({
+                selectedIndex: this.moveIndexUp()
+              });
+            } else {
+              this.setState({
+                showing: true,
+                selectedIndex: 0
+              });
+            }
+          }
+
+          break;
+
+        case 'Shift':
+          this.setState({
+            shiftIsPressed: true
+          });
+          break;
+
+        default:
+          break;
+      }
+
+      if (this.tabRefs[this.state.selectedIndex]) {
+        this.tabRefs[this.state.selectedIndex].focus();
+      }
+    };
+
+    this.onKeyUp = e => {
+      switch (e.key) {
+        case 'Control':
+          if (this.state.showing) {
+            this.setState({
+              controlIsPressed: false,
+              showing: false
+            });
+            this.props.setActiveTab(this.props.recentTabs[this.state.selectedIndex]);
+          } else {
+            this.setState({
+              controlIsPressed: false
+            });
+          }
+
+          break;
+
+        case 'Shift':
+          this.setState({
+            shiftIsPressed: false
+          });
+          break;
+
+        default:
+          break;
+      }
+    };
+
     this.state = {
       controlIsPressed: false,
       selectedIndex: 0,
       shiftIsPressed: false,
       showing: false
     };
-    this.tabRefs = [];
   }
 
   componentWillMount() {
@@ -33357,8 +33565,20 @@ class TabManagerComponent extends react__WEBPACK_IMPORTED_MODULE_0__["Component"
     window.removeEventListener('keyup', this.onKeyUp);
   }
 
-  saveTabRef(element, index) {
-    this.tabRefs[index] = element;
+  render() {
+    return this.state.showing && !this.props.disabled ? react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", {
+      className: _tabManager_scss__WEBPACK_IMPORTED_MODULE_3__["tabManager"]
+    }, react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("ul", null, this.props.recentTabs.map((tabId, index) => {
+      // TODO: Come up with a simple way to retrieve document
+      // name from store using documentId
+      const tabClassName = index === this.state.selectedIndex ? _tabManager_scss__WEBPACK_IMPORTED_MODULE_3__["selectedTab"] : '';
+      return react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("li", {
+        className: tabClassName,
+        ref: x => this.saveTabRef(x, index),
+        key: tabId,
+        tabIndex: 0
+      }, tabId);
+    }))) : null;
   }
 
   moveIndexDown() {
@@ -33367,115 +33587,6 @@ class TabManagerComponent extends react__WEBPACK_IMPORTED_MODULE_0__["Component"
 
   moveIndexUp() {
     return this.state.selectedIndex === 0 ? this.props.recentTabs.length - 1 : this.state.selectedIndex - 1;
-  }
-
-  onKeyDown(e) {
-    if (!this.props.recentTabs.length) {
-      return;
-    }
-
-    switch (e.key) {
-      case 'ArrowUp':
-        if (this.state.showing) {
-          this.setState({
-            selectedIndex: this.moveIndexUp()
-          });
-        }
-
-        break;
-
-      case 'ArrowDown':
-        if (this.state.showing) {
-          this.setState({
-            selectedIndex: this.moveIndexDown()
-          });
-        }
-
-        break;
-
-      case 'Control':
-        this.setState({
-          controlIsPressed: true
-        });
-        break;
-
-      case 'Tab':
-        if (this.state.controlIsPressed) {
-          if (this.state.showing && !this.state.shiftIsPressed) {
-            this.setState({
-              selectedIndex: this.moveIndexDown()
-            });
-          } else if (this.state.showing && this.state.shiftIsPressed) {
-            this.setState({
-              selectedIndex: this.moveIndexUp()
-            });
-          } else {
-            this.setState({
-              showing: true,
-              selectedIndex: 0
-            });
-          }
-        }
-
-        break;
-
-      case 'Shift':
-        this.setState({
-          shiftIsPressed: true
-        });
-        break;
-
-      default:
-        break;
-    }
-
-    if (this.tabRefs[this.state.selectedIndex]) {
-      this.tabRefs[this.state.selectedIndex].focus();
-    }
-  }
-
-  onKeyUp(e) {
-    switch (e.key) {
-      case 'Control':
-        if (this.state.showing) {
-          this.setState({
-            controlIsPressed: false,
-            showing: false
-          });
-          this.props.setActiveTab(this.props.recentTabs[this.state.selectedIndex]);
-        } else {
-          this.setState({
-            controlIsPressed: false
-          });
-        }
-
-        break;
-
-      case 'Shift':
-        this.setState({
-          shiftIsPressed: false
-        });
-        break;
-
-      default:
-        break;
-    }
-  }
-
-  render() {
-    return this.state.showing && !this.props.disabled ? react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", {
-      className: css
-    }, react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("ul", null, this.props.recentTabs.map((tabId, index) => {
-      // TODO: Come up with a simple way to retrieve document
-      // name from store using documentId
-      const tabClassName = index === this.state.selectedIndex ? 'selected-tab' : '';
-      return react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("li", {
-        className: tabClassName,
-        ref: x => this.saveTabRef(x, index),
-        key: tabId,
-        tabIndex: 0
-      }, tabId);
-    }))) : null;
   }
 
   // @ts-ignore
@@ -33492,11 +33603,11 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   setActiveTab: tab => {
-    dispatch(_data_action_editorActions__WEBPACK_IMPORTED_MODULE_4__["setActiveTab"](tab));
+    dispatch(_data_action_editorActions__WEBPACK_IMPORTED_MODULE_2__["setActiveTab"](tab));
   }
 });
 
-const TabManager = Object(react_redux__WEBPACK_IMPORTED_MODULE_2__["connect"])(mapStateToProps, mapDispatchToProps)(TabManagerComponent);
+const TabManager = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["connect"])(mapStateToProps, mapDispatchToProps)(TabManagerComponent);
 ;
 
 (function () {
@@ -33508,7 +33619,6 @@ const TabManager = Object(react_redux__WEBPACK_IMPORTED_MODULE_2__["connect"])(m
     return;
   }
 
-  reactHotLoader.register(css, "css", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\dialogs\\tabManager\\tabManager.tsx");
   reactHotLoader.register(TabManagerComponent, "TabManagerComponent", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\dialogs\\tabManager\\tabManager.tsx");
   reactHotLoader.register(mapStateToProps, "mapStateToProps", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\dialogs\\tabManager\\tabManager.tsx");
   reactHotLoader.register(mapDispatchToProps, "mapDispatchToProps", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\dialogs\\tabManager\\tabManager.tsx");
@@ -33521,10 +33631,65 @@ const TabManager = Object(react_redux__WEBPACK_IMPORTED_MODULE_2__["connect"])(m
 
 /***/ }),
 
-/***/ "./src/ui/editor/appSettingsEditor.tsx":
-/*!*********************************************!*\
-  !*** ./src/ui/editor/appSettingsEditor.tsx ***!
-  \*********************************************/
+/***/ "./src/ui/editor/appSettingsEditor/appSettingsEditor.scss":
+/*!****************************************************************!*\
+  !*** ./src/ui/editor/appSettingsEditor/appSettingsEditor.scss ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../../../../../node_modules/typings-for-css-modules-loader/lib??ref--5-1!../../../../../../../node_modules/resolve-url-loader!../../../../../../../node_modules/sass-loader/lib/loader.js!./appSettingsEditor.scss */ "../../../node_modules/typings-for-css-modules-loader/lib/index.js??ref--5-1!../../../node_modules/resolve-url-loader/index.js!../../../node_modules/sass-loader/lib/loader.js!./src/ui/editor/appSettingsEditor/appSettingsEditor.scss");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../../../../../node_modules/style-loader/lib/addStyles.js */ "../../../node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(true) {
+	module.hot.accept(/*! !../../../../../../../node_modules/typings-for-css-modules-loader/lib??ref--5-1!../../../../../../../node_modules/resolve-url-loader!../../../../../../../node_modules/sass-loader/lib/loader.js!./appSettingsEditor.scss */ "../../../node_modules/typings-for-css-modules-loader/lib/index.js??ref--5-1!../../../node_modules/resolve-url-loader/index.js!../../../node_modules/sass-loader/lib/loader.js!./src/ui/editor/appSettingsEditor/appSettingsEditor.scss", function(__WEBPACK_OUTDATED_DEPENDENCIES__) { (function() {
+		var newContent = __webpack_require__(/*! !../../../../../../../node_modules/typings-for-css-modules-loader/lib??ref--5-1!../../../../../../../node_modules/resolve-url-loader!../../../../../../../node_modules/sass-loader/lib/loader.js!./appSettingsEditor.scss */ "../../../node_modules/typings-for-css-modules-loader/lib/index.js??ref--5-1!../../../node_modules/resolve-url-loader/index.js!../../../node_modules/sass-loader/lib/loader.js!./src/ui/editor/appSettingsEditor/appSettingsEditor.scss");
+
+		if(typeof newContent === 'string') newContent = [[module.i, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	})(__WEBPACK_OUTDATED_DEPENDENCIES__); });
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ "./src/ui/editor/appSettingsEditor/appSettingsEditor.tsx":
+/*!***************************************************************!*\
+  !*** ./src/ui/editor/appSettingsEditor/appSettingsEditor.tsx ***!
+  \***************************************************************/
 /*! exports provided: AppSettingsEditor */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -33533,16 +33698,17 @@ __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(module) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AppSettingsEditor", function() { return AppSettingsEditor; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _uifabric_merge_styles__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @uifabric/merge-styles */ "../../../node_modules/@uifabric/merge-styles/lib/index.js");
-/* harmony import */ var _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../platform/commands/commandServiceImpl */ "./src/platform/commands/commandServiceImpl.ts");
-/* harmony import */ var _bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @bfemulator/ui-react */ "../../sdk/ui-react/built/index.js");
-/* harmony import */ var _bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _data_action_editorActions__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../data/action/editorActions */ "./src/data/action/editorActions.ts");
-/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../constants */ "./src/constants.ts");
-/* harmony import */ var _data_store__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../data/store */ "./src/data/store.ts");
-/* harmony import */ var _data_editorHelpers__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../data/editorHelpers */ "./src/data/editorHelpers.ts");
-/* harmony import */ var _layout__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../layout */ "./src/ui/layout/index.ts");
-/* harmony import */ var _utils_debounce__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../utils/debounce */ "./src/ui/utils/debounce.ts");
+/* harmony import */ var _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../platform/commands/commandServiceImpl */ "./src/platform/commands/commandServiceImpl.ts");
+/* harmony import */ var _sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../../sdk/ui-react/built/index */ "../../sdk/ui-react/built/index.js");
+/* harmony import */ var _sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _data_action_editorActions__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../data/action/editorActions */ "./src/data/action/editorActions.ts");
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../constants */ "./src/constants.ts");
+/* harmony import */ var _data_store__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../data/store */ "./src/data/store.ts");
+/* harmony import */ var _data_editorHelpers__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../data/editorHelpers */ "./src/data/editorHelpers.ts");
+/* harmony import */ var _layout__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../layout */ "./src/ui/layout/index.ts");
+/* harmony import */ var _utils_debounce__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../utils/debounce */ "./src/ui/utils/debounce.ts");
+/* harmony import */ var _appSettingsEditor_scss__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./appSettingsEditor.scss */ "./src/ui/editor/appSettingsEditor/appSettingsEditor.scss");
+/* harmony import */ var _appSettingsEditor_scss__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_appSettingsEditor_scss__WEBPACK_IMPORTED_MODULE_9__);
 (function () {
   var enterModule = __webpack_require__(/*! react-hot-loader */ "../../../node_modules/react-hot-loader/index.js").enterModule;
 
@@ -33591,51 +33757,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const css = Object(_uifabric_merge_styles__WEBPACK_IMPORTED_MODULE_1__["mergeStyles"])({
-  displayName: 'appSettingsEditor',
-  selectors: {
-    '& .right-column': {
-      marginLeft: '48px'
-    },
-    '& p': {
-      margin: 0,
-      marginBottom: '16px'
-    },
-    '& a': {
-      textDecoration: 'none',
-      color: `var(${_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["ThemeVariables"].focusedSelectedListItemBg})`,
-      selectors: {
-        ':hover': {
-          color: `var(${_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["ThemeVariables"].focusedSelectedListItemBg})`
-        }
-      }
-    },
-    '& .button-row': {
-      marginTop: '48px'
-    },
-    '& .browse-button, .save-button': {
-      marginLeft: '8px'
-    },
-    '& .size-limit-suffix': {
-      display: 'inline-block',
-      lineHeight: '32px',
-      marginLeft: '8px'
-    },
-    '& .checkboxOverrides': {
-      marginBottom: '16px',
-      selectors: {
-        // TODO: Need light / dark theming
-        // https://github.com/Microsoft/BotFramework-Emulator/issues/496
-        '& > label': {
-          color: `var(${_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["ThemeVariables"].neutral5})`
-        }
-      }
-    },
-    '& .app-settings-input': {
-      color: `var(${_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["ThemeVariables"].neutral5})`
-    }
-  }
-});
 const defaultAppSettings = {
   bypassNgrokLocalhost: true,
   locale: '',
@@ -33653,7 +33774,7 @@ function shallowEqual(x, y) {
 class AppSettingsEditor extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
   constructor(props, context) {
     super(props, context);
-    this.setDirtyFlag = Object(_utils_debounce__WEBPACK_IMPORTED_MODULE_9__["debounce"])(dirty => _data_store__WEBPACK_IMPORTED_MODULE_6__["default"].dispatch(_data_action_editorActions__WEBPACK_IMPORTED_MODULE_4__["setDirtyFlag"](this.props.documentId, dirty)), 300);
+    this.setDirtyFlag = Object(_utils_debounce__WEBPACK_IMPORTED_MODULE_8__["debounce"])(dirty => _data_store__WEBPACK_IMPORTED_MODULE_5__["default"].dispatch(_data_action_editorActions__WEBPACK_IMPORTED_MODULE_3__["setDirtyFlag"](this.props.documentId, dirty)), 300);
     this.onClickBrowse = this.onClickBrowse.bind(this);
     this.onChangeSizeLimit = this.onChangeSizeLimit.bind(this);
     this.onClickSave = this.onClickSave.bind(this);
@@ -33672,7 +33793,7 @@ class AppSettingsEditor extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] 
 
   componentWillMount() {
     // load settings from main and populate form
-    _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_2__["CommandServiceImpl"].remoteCall('app:settings:load').then(settings => {
+    _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_1__["CommandServiceImpl"].remoteCall('app:settings:load').then(settings => {
       this.setState(() => ({
         committed: settings,
         uncommitted: settings
@@ -33712,7 +33833,7 @@ class AppSettingsEditor extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] 
       buttonLabel: 'Select ngrok',
       properties: ['openFile']
     };
-    _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_2__["CommandServiceImpl"].remoteCall('shell:showOpenDialog', dialogOptions).then(ngrokPath => this.setUncommittedState({
+    _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_1__["CommandServiceImpl"].remoteCall('shell:showOpenDialog', dialogOptions).then(ngrokPath => this.setUncommittedState({
       ngrokPath
     })).catch(err => console.log('User cancelled browsing for ngrok: ', err));
   }
@@ -33736,7 +33857,7 @@ class AppSettingsEditor extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] 
       localhost: uncommitted.localhost.trim(),
       locale: uncommitted.locale.trim()
     };
-    _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_2__["CommandServiceImpl"].remoteCall('app:settings:save', settings).then(() => this.commit(settings)).catch(err => console.error('Error while saving emulator settings: ', err));
+    _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_1__["CommandServiceImpl"].remoteCall('app:settings:save', settings).then(() => this.commit(settings)).catch(err => console.error('Error while saving emulator settings: ', err));
   }
 
   onChangeAuthTokenVersion() {
@@ -33778,8 +33899,8 @@ class AppSettingsEditor extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] 
   onClickDiscard() {
     const {
       DOCUMENT_ID_APP_SETTINGS
-    } = _constants__WEBPACK_IMPORTED_MODULE_5__;
-    _data_store__WEBPACK_IMPORTED_MODULE_6__["default"].dispatch(_data_action_editorActions__WEBPACK_IMPORTED_MODULE_4__["close"](Object(_data_editorHelpers__WEBPACK_IMPORTED_MODULE_7__["getTabGroupForDocument"])(this.props.documentId), DOCUMENT_ID_APP_SETTINGS));
+    } = _constants__WEBPACK_IMPORTED_MODULE_4__;
+    _data_store__WEBPACK_IMPORTED_MODULE_5__["default"].dispatch(_data_action_editorActions__WEBPACK_IMPORTED_MODULE_3__["close"](Object(_data_editorHelpers__WEBPACK_IMPORTED_MODULE_6__["getTabGroupForDocument"])(this.props.documentId), DOCUMENT_ID_APP_SETTINGS));
   }
 
   render() {
@@ -33787,72 +33908,72 @@ class AppSettingsEditor extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] 
       uncommitted
     } = this.state;
     const clean = shallowEqual(this.state.committed, uncommitted);
-    return react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_layout__WEBPACK_IMPORTED_MODULE_8__["GenericDocument"], {
-      style: css
-    }, react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["Row"], null, react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["Column"], null, react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["SmallHeader"], null, "Service"), react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("p", null, react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("a", {
+    return react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_layout__WEBPACK_IMPORTED_MODULE_7__["GenericDocument"], {
+      className: _appSettingsEditor_scss__WEBPACK_IMPORTED_MODULE_9__["appSettingsEditor"]
+    }, react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["Row"], null, react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["Column"], null, react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["SmallHeader"], null, "Service"), react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("p", null, react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("a", {
       href: "https://ngrok.com/",
       target: "_blank"
     }, "ngrok"), " is network tunneling software. The Bot Framework Emulator works with ngrok to communicate with bots hosted remotely. Read the ", react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("a", {
       href: "https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)",
       target: "_blank"
-    }, "wiki page"), " to learn more about using ngrok and to download it."), react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["Row"], {
-      align: _bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["RowAlignment"].Center
-    }, react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["TextInputField"], {
-      className: "app-settings-input",
+    }, "wiki page"), " to learn more about using ngrok and to download it."), react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["Row"], {
+      align: _sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["RowAlignment"].Center
+    }, react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["TextInputField"], {
+      className: _appSettingsEditor_scss__WEBPACK_IMPORTED_MODULE_9__["appSettingsInput"],
       readOnly: false,
       value: uncommitted.ngrokPath,
       onChanged: this.onChangeNgrok,
       label: 'Path to ngrok'
-    }), react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["PrimaryButton"], {
+    }), react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["PrimaryButton"], {
       onClick: this.onClickBrowse,
       text: "Browse",
-      className: "browse-button"
-    })), react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["Checkbox"], {
-      className: "checkboxOverrides",
+      className: _appSettingsEditor_scss__WEBPACK_IMPORTED_MODULE_9__["browseButton"]
+    })), react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["Checkbox"], {
+      className: _appSettingsEditor_scss__WEBPACK_IMPORTED_MODULE_9__["checkboxOverrides"],
       checked: uncommitted.bypassNgrokLocalhost,
       onChange: this.onChangeNgrokBypass,
       id: "ngrok-bypass",
       label: "Bypass ngrok for local addresses"
-    }), react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["Row"], {
-      align: _bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["RowAlignment"].Center
-    }, react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["TextInputField"], {
-      className: "app-settings-input",
+    }), react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["Row"], {
+      align: _sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["RowAlignment"].Center
+    }, react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["TextInputField"], {
+      className: _appSettingsEditor_scss__WEBPACK_IMPORTED_MODULE_9__["appSettingsInput"],
       readOnly: false,
       value: uncommitted.localhost,
       onChanged: this.onChangeLocalhost,
       label: "localhost override"
-    })), react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["Row"], {
-      align: _bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["RowAlignment"].Center
-    }, react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["TextInputField"], {
-      className: "app-settings-input",
+    })), react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["Row"], {
+      align: _sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["RowAlignment"].Center
+    }, react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["TextInputField"], {
+      className: _appSettingsEditor_scss__WEBPACK_IMPORTED_MODULE_9__["appSettingsInput"],
       readOnly: false,
       value: uncommitted.locale,
       onChanged: this.onChangeLocale,
       label: "Locale"
-    }))), react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["Column"], {
-      className: "right-column"
-    }, react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["SmallHeader"], null, "Auth"), react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["Checkbox"], {
-      className: "checkboxOverrides",
+    }))), react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["Column"], {
+      className: _appSettingsEditor_scss__WEBPACK_IMPORTED_MODULE_9__["rightColumn"]
+    }, react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["SmallHeader"], null, "Auth"), react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["Checkbox"], {
+      className: _appSettingsEditor_scss__WEBPACK_IMPORTED_MODULE_9__["checkboxOverrides"],
       checked: uncommitted.use10Tokens,
       onChange: this.onChangeAuthTokenVersion,
       id: "auth-token-version",
       label: "Use version 1.0 authentication tokens"
-    }), react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["SmallHeader"], null, "Sign-in"), react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["Checkbox"], {
-      className: "checkboxOverrides",
+    }), react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["SmallHeader"], null, "Sign-in"), react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["Checkbox"], {
+      className: _appSettingsEditor_scss__WEBPACK_IMPORTED_MODULE_9__["checkbosOverrides"],
       checked: uncommitted.useCodeValidation,
       onChange: this.onChangeUseValidationToken,
       id: "use-validation-code",
       label: "Use a sign-in verification code for OAuthCards"
-    }))), react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["Row"], {
-      className: "button-row",
-      justify: _bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["RowJustification"].Right
-    }, react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["PrimaryButton"], {
+    }))), react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["Row"], {
+      className: _appSettingsEditor_scss__WEBPACK_IMPORTED_MODULE_9__["buttonRow"],
+      justify: _sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["RowJustification"].Right
+    }, react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["PrimaryButton"], {
       text: "Cancel",
       onClick: this.onClickDiscard
-    }), react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["PrimaryButton"], {
+    }), react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["PrimaryButton"], {
       text: "Save",
       onClick: this.onClickSave,
-      className: "save-button",
+      className: _appSettingsEditor_scss__WEBPACK_IMPORTED_MODULE_9__["saveButton"],
       disabled: clean
     })));
   }
@@ -33875,45 +33996,101 @@ class AppSettingsEditor extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] 
     return;
   }
 
-  reactHotLoader.register(css, "css", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\appSettingsEditor.tsx");
-  reactHotLoader.register(defaultAppSettings, "defaultAppSettings", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\appSettingsEditor.tsx");
-  reactHotLoader.register(shallowEqual, "shallowEqual", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\appSettingsEditor.tsx");
-  reactHotLoader.register(AppSettingsEditor, "AppSettingsEditor", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\appSettingsEditor.tsx");
+  reactHotLoader.register(defaultAppSettings, "defaultAppSettings", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\appSettingsEditor\\appSettingsEditor.tsx");
+  reactHotLoader.register(shallowEqual, "shallowEqual", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\appSettingsEditor\\appSettingsEditor.tsx");
+  reactHotLoader.register(AppSettingsEditor, "AppSettingsEditor", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\appSettingsEditor\\appSettingsEditor.tsx");
   leaveModule(module);
 })();
 
 ;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../../node_modules/webpack/buildin/harmony-module.js */ "../../../node_modules/webpack/buildin/harmony-module.js")(module)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../../../node_modules/webpack/buildin/harmony-module.js */ "../../../node_modules/webpack/buildin/harmony-module.js")(module)))
 
 /***/ }),
 
-/***/ "./src/ui/editor/botSettingsEditor.tsx":
-/*!*********************************************!*\
-  !*** ./src/ui/editor/botSettingsEditor.tsx ***!
-  \*********************************************/
+/***/ "./src/ui/editor/botSettingsEditor/botSettingsEditor.scss":
+/*!****************************************************************!*\
+  !*** ./src/ui/editor/botSettingsEditor/botSettingsEditor.scss ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../../../../../node_modules/typings-for-css-modules-loader/lib??ref--5-1!../../../../../../../node_modules/resolve-url-loader!../../../../../../../node_modules/sass-loader/lib/loader.js!./botSettingsEditor.scss */ "../../../node_modules/typings-for-css-modules-loader/lib/index.js??ref--5-1!../../../node_modules/resolve-url-loader/index.js!../../../node_modules/sass-loader/lib/loader.js!./src/ui/editor/botSettingsEditor/botSettingsEditor.scss");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../../../../../node_modules/style-loader/lib/addStyles.js */ "../../../node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(true) {
+	module.hot.accept(/*! !../../../../../../../node_modules/typings-for-css-modules-loader/lib??ref--5-1!../../../../../../../node_modules/resolve-url-loader!../../../../../../../node_modules/sass-loader/lib/loader.js!./botSettingsEditor.scss */ "../../../node_modules/typings-for-css-modules-loader/lib/index.js??ref--5-1!../../../node_modules/resolve-url-loader/index.js!../../../node_modules/sass-loader/lib/loader.js!./src/ui/editor/botSettingsEditor/botSettingsEditor.scss", function(__WEBPACK_OUTDATED_DEPENDENCIES__) { (function() {
+		var newContent = __webpack_require__(/*! !../../../../../../../node_modules/typings-for-css-modules-loader/lib??ref--5-1!../../../../../../../node_modules/resolve-url-loader!../../../../../../../node_modules/sass-loader/lib/loader.js!./botSettingsEditor.scss */ "../../../node_modules/typings-for-css-modules-loader/lib/index.js??ref--5-1!../../../node_modules/resolve-url-loader/index.js!../../../node_modules/sass-loader/lib/loader.js!./src/ui/editor/botSettingsEditor/botSettingsEditor.scss");
+
+		if(typeof newContent === 'string') newContent = [[module.i, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	})(__WEBPACK_OUTDATED_DEPENDENCIES__); });
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ "./src/ui/editor/botSettingsEditor/botSettingsEditor.tsx":
+/*!***************************************************************!*\
+  !*** ./src/ui/editor/botSettingsEditor/botSettingsEditor.tsx ***!
+  \***************************************************************/
 /*! exports provided: BotSettingsEditor */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(module) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BotSettingsEditor", function() { return BotSettingsEditor; });
-/* harmony import */ var _bfemulator_app_shared__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @bfemulator/app-shared */ "../shared/built/index.js");
-/* harmony import */ var _bfemulator_app_shared__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_bfemulator_app_shared__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _bfemulator_sdk_shared__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @bfemulator/sdk-shared */ "../../sdk/shared/built/index.js");
-/* harmony import */ var _bfemulator_sdk_shared__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_bfemulator_sdk_shared__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @bfemulator/ui-react */ "../../sdk/ui-react/built/index.js");
-/* harmony import */ var _bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _shared_built_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../../shared/built/index */ "../shared/built/index.js");
+/* harmony import */ var _shared_built_index__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_shared_built_index__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _sdk_shared_built_index__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../../../sdk/shared/built/index */ "../../sdk/shared/built/index.js");
+/* harmony import */ var _sdk_shared_built_index__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_sdk_shared_built_index__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../../sdk/ui-react/built/index */ "../../sdk/ui-react/built/index.js");
+/* harmony import */ var _sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var msbot_bin_schema__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! msbot/bin/schema */ "../../../node_modules/msbot/bin/schema.js");
 /* harmony import */ var msbot_bin_schema__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(msbot_bin_schema__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react-redux */ "../../../node_modules/react-redux/es/index.js");
-/* harmony import */ var _data_action_editorActions__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../data/action/editorActions */ "./src/data/action/editorActions.ts");
-/* harmony import */ var _data_botHelpers__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../data/botHelpers */ "./src/data/botHelpers.ts");
-/* harmony import */ var _data_store__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../data/store */ "./src/data/store.ts");
-/* harmony import */ var _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../platform/commands/commandServiceImpl */ "./src/platform/commands/commandServiceImpl.ts");
-/* harmony import */ var _helpers_activeBotHelper__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../helpers/activeBotHelper */ "./src/ui/helpers/activeBotHelper.ts");
-/* harmony import */ var _layout__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../layout */ "./src/ui/layout/index.ts");
+/* harmony import */ var _data_action_editorActions__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../data/action/editorActions */ "./src/data/action/editorActions.ts");
+/* harmony import */ var _data_botHelpers__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../data/botHelpers */ "./src/data/botHelpers.ts");
+/* harmony import */ var _data_store__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../data/store */ "./src/data/store.ts");
+/* harmony import */ var _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../platform/commands/commandServiceImpl */ "./src/platform/commands/commandServiceImpl.ts");
+/* harmony import */ var _helpers_activeBotHelper__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../helpers/activeBotHelper */ "./src/ui/helpers/activeBotHelper.ts");
+/* harmony import */ var _layout_index__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../layout/index */ "./src/ui/layout/index.ts");
+/* harmony import */ var _botSettingsEditor_scss__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./botSettingsEditor.scss */ "./src/ui/editor/botSettingsEditor/botSettingsEditor.scss");
+/* harmony import */ var _botSettingsEditor_scss__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(_botSettingsEditor_scss__WEBPACK_IMPORTED_MODULE_12__);
 (function () {
   var enterModule = __webpack_require__(/*! react-hot-loader */ "../../../node_modules/react-hot-loader/index.js").enterModule;
 
@@ -33992,42 +34169,14 @@ var __awaiter = undefined && undefined.__awaiter || function (thisArg, _argument
 
 
 
-const css = {
-  selectors: {
-    '& .bot-settings-header': {
-      marginBottom: '16px'
-    },
-    '& .save-button': {
-      marginLeft: 'auto'
-    },
-    '& .save-connect-button': {
-      marginLeft: '8px'
-    },
-    '& .multiple-input-row': {
-      selectors: {
-        '& > div': {
-          marginLeft: '8px'
-        },
-        '& > div:first-child': {
-          marginLeft: 0
-        }
-      }
-    },
-    '& .button-row': {
-      marginTop: '48px'
-    },
-    '& .bot-settings-input': {
-      color: `var(${_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_2__["ThemeVariables"].neutral5})`
-    }
-  }
-};
+
 
 class BotSettingsEditorComponent extends react__WEBPACK_IMPORTED_MODULE_4__["Component"] {
   constructor(props, context) {
     super(props, context);
 
     this.onChangeName = name => {
-      const bot = _bfemulator_sdk_shared__WEBPACK_IMPORTED_MODULE_1__["BotConfigWithPathImpl"].fromJSON(Object.assign({}, this.state.bot, {
+      const bot = _sdk_shared_built_index__WEBPACK_IMPORTED_MODULE_1__["BotConfigWithPathImpl"].fromJSON(Object.assign({}, this.state.bot, {
         name
       }));
       this.setState({
@@ -34050,7 +34199,7 @@ class BotSettingsEditorComponent extends react__WEBPACK_IMPORTED_MODULE_4__["Com
         path,
         services
       } = this.state.bot;
-      let bot = _bfemulator_sdk_shared__WEBPACK_IMPORTED_MODULE_1__["BotConfigWithPathImpl"].fromJSON({
+      let bot = _sdk_shared_built_index__WEBPACK_IMPORTED_MODULE_1__["BotConfigWithPathImpl"].fromJSON({
         name: botName.trim(),
         description: description.trim(),
         secretKey: '',
@@ -34059,7 +34208,7 @@ class BotSettingsEditorComponent extends react__WEBPACK_IMPORTED_MODULE_4__["Com
       });
       const endpointService = bot.services.find(service => service.type === msbot_bin_schema__WEBPACK_IMPORTED_MODULE_3__["ServiceType"].Endpoint);
 
-      if (bot.path === _bfemulator_app_shared__WEBPACK_IMPORTED_MODULE_0__["SharedConstants"].TEMP_BOT_IN_MEMORY_PATH) {
+      if (bot.path === _shared_built_index__WEBPACK_IMPORTED_MODULE_0__["SharedConstants"].TEMP_BOT_IN_MEMORY_PATH) {
         // we are currently using a mocked bot for livechat opened via protocol URI
         yield this.saveBotFromProtocol(bot, endpointService, connectArg);
       } else {
@@ -34084,10 +34233,10 @@ class BotSettingsEditorComponent extends react__WEBPACK_IMPORTED_MODULE_4__["Com
           path: newPath,
           secret: this.state.secret
         };
-        yield _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_9__["CommandServiceImpl"].remoteCall('bot:list:patch', _bfemulator_app_shared__WEBPACK_IMPORTED_MODULE_0__["SharedConstants"].TEMP_BOT_IN_MEMORY_PATH, botInfo);
+        yield _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_9__["CommandServiceImpl"].remoteCall('bot:list:patch', _shared_built_index__WEBPACK_IMPORTED_MODULE_0__["SharedConstants"].TEMP_BOT_IN_MEMORY_PATH, botInfo);
         yield _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_9__["CommandServiceImpl"].remoteCall('bot:save', bot); // need to set the new bot as active now that it is no longer a placeholder bot in memory
 
-        yield _helpers_activeBotHelper__WEBPACK_IMPORTED_MODULE_10__["ActiveBotHelper"].setActiveBot(newPath);
+        yield _helpers_activeBotHelper__WEBPACK_IMPORTED_MODULE_10__["ActiveBotHelper"].setActiveBot(bot);
         this.setDirtyFlag(false);
         this.setState({
           bot
@@ -34169,34 +34318,32 @@ class BotSettingsEditorComponent extends react__WEBPACK_IMPORTED_MODULE_4__["Com
   render() {
     const disabled = !this.state.bot.name || !this.props.dirty;
     const error = !this.state.bot.name ? 'The bot name is required' : '';
-    return react__WEBPACK_IMPORTED_MODULE_4__["createElement"](_layout__WEBPACK_IMPORTED_MODULE_11__["GenericDocument"], {
-      style: css
-    }, react__WEBPACK_IMPORTED_MODULE_4__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_2__["Column"], null, react__WEBPACK_IMPORTED_MODULE_4__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_2__["MediumHeader"], {
-      className: "bot-settings-header"
-    }, "Bot Settings"), react__WEBPACK_IMPORTED_MODULE_4__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_2__["TextInputField"], {
-      className: "bot-settings-input",
+    return react__WEBPACK_IMPORTED_MODULE_4__["createElement"](_layout_index__WEBPACK_IMPORTED_MODULE_11__["GenericDocument"], null, react__WEBPACK_IMPORTED_MODULE_4__["createElement"](_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["Column"], null, react__WEBPACK_IMPORTED_MODULE_4__["createElement"](_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["MediumHeader"], {
+      className: _botSettingsEditor_scss__WEBPACK_IMPORTED_MODULE_12__["botSettingsHeader"]
+    }, "Bot Settings"), react__WEBPACK_IMPORTED_MODULE_4__["createElement"](_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["TextInputField"], {
+      className: _botSettingsEditor_scss__WEBPACK_IMPORTED_MODULE_12__["botSettingsInput"],
       label: "Bot name",
       value: this.state.bot.name,
       required: true,
       onChanged: this.onChangeName,
       errorMessage: error
-    }), react__WEBPACK_IMPORTED_MODULE_4__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_2__["TextInputField"], {
-      className: "bot-settings-input",
+    }), react__WEBPACK_IMPORTED_MODULE_4__["createElement"](_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["TextInputField"], {
+      className: _botSettingsEditor_scss__WEBPACK_IMPORTED_MODULE_12__["botSettingsInput"],
       label: "Bot secret",
       value: this.state.secret,
       onChanged: this.onChangeSecret,
       type: "password"
-    }), react__WEBPACK_IMPORTED_MODULE_4__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_2__["Row"], {
-      className: "button-row"
-    }, react__WEBPACK_IMPORTED_MODULE_4__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_2__["PrimaryButton"], {
+    }), react__WEBPACK_IMPORTED_MODULE_4__["createElement"](_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["Row"], {
+      className: _botSettingsEditor_scss__WEBPACK_IMPORTED_MODULE_12__["buttonRow"]
+    }, react__WEBPACK_IMPORTED_MODULE_4__["createElement"](_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["PrimaryButton"], {
       text: "Save",
       onClick: this.onSave,
-      className: "save-button",
+      className: _botSettingsEditor_scss__WEBPACK_IMPORTED_MODULE_12__["buttonRow"],
       disabled: disabled
-    }), react__WEBPACK_IMPORTED_MODULE_4__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_2__["PrimaryButton"], {
+    }), react__WEBPACK_IMPORTED_MODULE_4__["createElement"](_sdk_ui_react_built_index__WEBPACK_IMPORTED_MODULE_2__["PrimaryButton"], {
       text: "Save & Connect",
       onClick: this.onSaveAndConnect,
-      className: "save-connect-button",
+      className: _botSettingsEditor_scss__WEBPACK_IMPORTED_MODULE_12__["saveConnectButton"],
       disabled: disabled
     }))));
   }
@@ -34231,16 +34378,15 @@ const BotSettingsEditor = Object(react_redux__WEBPACK_IMPORTED_MODULE_5__["conne
     return;
   }
 
-  reactHotLoader.register(__awaiter, "__awaiter", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\botSettingsEditor.tsx");
-  reactHotLoader.register(css, "css", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\botSettingsEditor.tsx");
-  reactHotLoader.register(BotSettingsEditorComponent, "BotSettingsEditorComponent", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\botSettingsEditor.tsx");
-  reactHotLoader.register(mapStateToProps, "mapStateToProps", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\botSettingsEditor.tsx");
-  reactHotLoader.register(BotSettingsEditor, "BotSettingsEditor", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\botSettingsEditor.tsx");
+  reactHotLoader.register(__awaiter, "__awaiter", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\botSettingsEditor\\botSettingsEditor.tsx");
+  reactHotLoader.register(BotSettingsEditorComponent, "BotSettingsEditorComponent", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\botSettingsEditor\\botSettingsEditor.tsx");
+  reactHotLoader.register(mapStateToProps, "mapStateToProps", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\botSettingsEditor\\botSettingsEditor.tsx");
+  reactHotLoader.register(BotSettingsEditor, "BotSettingsEditor", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\botSettingsEditor\\botSettingsEditor.tsx");
   leaveModule(module);
 })();
 
 ;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../../node_modules/webpack/buildin/harmony-module.js */ "../../../node_modules/webpack/buildin/harmony-module.js")(module)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../../../node_modules/webpack/buildin/harmony-module.js */ "../../../node_modules/webpack/buildin/harmony-module.js")(module)))
 
 /***/ }),
 
@@ -34389,7 +34535,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _uifabric_merge_styles__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @uifabric/merge-styles */ "../../../node_modules/@uifabric/merge-styles/lib/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _parts_chat__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./parts/chat */ "./src/ui/editor/emulator/parts/chat.tsx");
+/* harmony import */ var _parts_chat_chat__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./parts/chat/chat */ "./src/ui/editor/emulator/parts/chat/chat.tsx");
 /* harmony import */ var _bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @bfemulator/ui-react */ "../../sdk/ui-react/built/index.js");
 /* harmony import */ var _bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__);
 (function () {
@@ -34465,7 +34611,7 @@ class ChatPanel extends react__WEBPACK_IMPORTED_MODULE_1__["Component"] {
     };
     return react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("div", {
       className: `${css} chat-panel`
-    }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("header", null, botUrl), react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_parts_chat__WEBPACK_IMPORTED_MODULE_2__["default"], {
+    }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("header", null, botUrl), react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_parts_chat_chat__WEBPACK_IMPORTED_MODULE_2__["default"], {
       mode: this.props.mode,
       document: this.props.document,
       onStartConversation: this.props.onStartConversation,
@@ -35347,7 +35493,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _uifabric_merge_styles__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @uifabric/merge-styles */ "../../../node_modules/@uifabric/merge-styles/lib/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _parts_log__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./parts/log */ "./src/ui/editor/emulator/parts/log.tsx");
+/* harmony import */ var _parts_log_log__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./parts/log/log */ "./src/ui/editor/emulator/parts/log/log.tsx");
 /* harmony import */ var _panel__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../panel */ "./src/ui/editor/panel.tsx");
 (function () {
   var enterModule = __webpack_require__(/*! react-hot-loader */ "../../../node_modules/react-hot-loader/index.js").enterModule;
@@ -35401,7 +35547,7 @@ class LogPanel extends react__WEBPACK_IMPORTED_MODULE_1__["Component"] {
       className: css
     }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_panel__WEBPACK_IMPORTED_MODULE_3__["default"], {
       title: "Log"
-    }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_panel__WEBPACK_IMPORTED_MODULE_3__["PanelContent"], null, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_parts_log__WEBPACK_IMPORTED_MODULE_2__["default"], {
+    }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_panel__WEBPACK_IMPORTED_MODULE_3__["PanelContent"], null, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_parts_log_log__WEBPACK_IMPORTED_MODULE_2__["default"], {
       document: this.props.document,
       key: this.props.document.pingId
     }))));
@@ -35435,10 +35581,65 @@ class LogPanel extends react__WEBPACK_IMPORTED_MODULE_1__["Component"] {
 
 /***/ }),
 
-/***/ "./src/ui/editor/emulator/parts/chat.tsx":
-/*!***********************************************!*\
-  !*** ./src/ui/editor/emulator/parts/chat.tsx ***!
-  \***********************************************/
+/***/ "./src/ui/editor/emulator/parts/chat/chat.scss":
+/*!*****************************************************!*\
+  !*** ./src/ui/editor/emulator/parts/chat/chat.scss ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../../../../../../../node_modules/typings-for-css-modules-loader/lib??ref--5-1!../../../../../../../../../node_modules/resolve-url-loader!../../../../../../../../../node_modules/sass-loader/lib/loader.js!./chat.scss */ "../../../node_modules/typings-for-css-modules-loader/lib/index.js??ref--5-1!../../../node_modules/resolve-url-loader/index.js!../../../node_modules/sass-loader/lib/loader.js!./src/ui/editor/emulator/parts/chat/chat.scss");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../../../../../../../node_modules/style-loader/lib/addStyles.js */ "../../../node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(true) {
+	module.hot.accept(/*! !../../../../../../../../../node_modules/typings-for-css-modules-loader/lib??ref--5-1!../../../../../../../../../node_modules/resolve-url-loader!../../../../../../../../../node_modules/sass-loader/lib/loader.js!./chat.scss */ "../../../node_modules/typings-for-css-modules-loader/lib/index.js??ref--5-1!../../../node_modules/resolve-url-loader/index.js!../../../node_modules/sass-loader/lib/loader.js!./src/ui/editor/emulator/parts/chat/chat.scss", function(__WEBPACK_OUTDATED_DEPENDENCIES__) { (function() {
+		var newContent = __webpack_require__(/*! !../../../../../../../../../node_modules/typings-for-css-modules-loader/lib??ref--5-1!../../../../../../../../../node_modules/resolve-url-loader!../../../../../../../../../node_modules/sass-loader/lib/loader.js!./chat.scss */ "../../../node_modules/typings-for-css-modules-loader/lib/index.js??ref--5-1!../../../node_modules/resolve-url-loader/index.js!../../../node_modules/sass-loader/lib/loader.js!./src/ui/editor/emulator/parts/chat/chat.scss");
+
+		if(typeof newContent === 'string') newContent = [[module.i, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	})(__WEBPACK_OUTDATED_DEPENDENCIES__); });
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ "./src/ui/editor/emulator/parts/chat/chat.tsx":
+/*!****************************************************!*\
+  !*** ./src/ui/editor/emulator/parts/chat/chat.tsx ***!
+  \****************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -35446,14 +35647,14 @@ class LogPanel extends react__WEBPACK_IMPORTED_MODULE_1__["Component"] {
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(module) {/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @bfemulator/ui-react */ "../../sdk/ui-react/built/index.js");
-/* harmony import */ var _bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-redux */ "../../../node_modules/react-redux/es/index.js");
-/* harmony import */ var _uifabric_merge_styles__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @uifabric/merge-styles */ "../../../node_modules/@uifabric/merge-styles/lib/index.js");
-/* harmony import */ var botframework_webchat__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! botframework-webchat */ "../../../node_modules/botframework-webchat/built/BotChat.js");
-/* harmony import */ var botframework_webchat__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(botframework_webchat__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../platform/commands/commandServiceImpl */ "./src/platform/commands/commandServiceImpl.ts");
-/* harmony import */ var _helpers_memoize__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../helpers/memoize */ "./src/ui/helpers/memoize.ts");
+/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-redux */ "../../../node_modules/react-redux/es/index.js");
+/* harmony import */ var _uifabric_merge_styles__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @uifabric/merge-styles */ "../../../node_modules/@uifabric/merge-styles/lib/index.js");
+/* harmony import */ var botframework_webchat__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! botframework-webchat */ "../../../node_modules/botframework-webchat/built/BotChat.js");
+/* harmony import */ var botframework_webchat__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(botframework_webchat__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../../../platform/commands/commandServiceImpl */ "./src/platform/commands/commandServiceImpl.ts");
+/* harmony import */ var _helpers_memoize__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../helpers/memoize */ "./src/ui/helpers/memoize.ts");
+/* harmony import */ var _chat_scss__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./chat.scss */ "./src/ui/editor/emulator/parts/chat/chat.scss");
+/* harmony import */ var _chat_scss__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_chat_scss__WEBPACK_IMPORTED_MODULE_6__);
 (function () {
   var enterModule = __webpack_require__(/*! react-hot-loader */ "../../../node_modules/react-hot-loader/index.js").enterModule;
 
@@ -35531,75 +35732,86 @@ var __awaiter = undefined && undefined.__awaiter || function (thisArg, _argument
 
 const CognitiveServices = __webpack_require__(/*! botframework-webchat/CognitiveServices */ "../../../node_modules/botframework-webchat/CognitiveServices.js");
 
-const AdaptiveCardsHostConfig = __webpack_require__(/*! botframework-webchat/adaptivecards-hostconfig.json */ "../../../node_modules/botframework-webchat/adaptivecards-hostconfig.json");
+const AdaptiveCardsHostConfig = __webpack_require__(/*! botframework-webchat/adaptivecards-hostconfig.json */ "../../../node_modules/botframework-webchat/adaptivecards-hostconfig.json"); // const css = mergeStyles({
+//   displayName: 'chat',
+//   backgroundColor: 'white',
+//   height: '100%',
+//   display: 'flex',
+//   selectors: {
+//     '& .wc-chatview-panel': {
+//       flex: 1,
+//       position: 'relative',
+//       selectors: {
+//         '::-webkit-scrollbar-thumb': {
+//           backgroundColor: 'blue',
+//           color: 'red',
+//         },
+//
+//         '& p': {
+//           marginBottom: 0,
+//           marginTop: 0,
+//         },
+//
+//         '& h1, & h2, & h3, & h4': {
+//           marginTop: '8px',
+//           marginBottom: '4px',
+//         },
+//
+//         '& br': {
+//           content: ' ',
+//           display: 'block',
+//           fontSize: '50%',
+//         },
+//
+//         '& ol, & ul': {
+//           marginTop: 0,
+//         },
+//
+//         '& .wc-message-content *': {
+//           userSelect: 'text',
+//         },
+//
+//         '& .wc-message-content.selected': {
+//           color: 'black',
+//           backgroundColor: 'var(--webchat-selected-text-bg)',
+//           boxShadow: '0px 1px 1px 0px rgba(0,0,0,0.2)',
+//         },
+//
+//         '& .wc-message-content.selected>svg.wc-message-callout>path': {
+//           fill: `var(${ThemeVariables.webchatSelectedTextBg})`,
+//         },
+//
+//         '& .wc-card': {
+//           color: '#000',
+//         },
+//
+//         '& .wc-card button': {
+//           border: '1px solid #ccc',
+//           borderRadius: '1px',
+//           cursor: 'pointer',
+//           outline: 'none',
+//           transition: 'color .2s ease, background-color .2s ease',
+//           backgroundColor: 'transparent',
+//           color: `var(${ThemeVariables.infoOutline})`,
+//           minHeight: '32px',
+//           width: '100%',
+//           padding: '0 16px',
+//         },
+//
+//         '& .wc-list ul': {
+//           padding: 0,
+//         },
+//
+//         '& .clickable:hover': {
+//           cursor: 'pointer'
+//         },
+//       }
+//     }
+//   }
+// });
 
-const css = Object(_uifabric_merge_styles__WEBPACK_IMPORTED_MODULE_3__["mergeStyles"])({
-  displayName: 'chat',
-  backgroundColor: 'white',
-  height: '100%',
-  display: 'flex',
-  selectors: {
-    '& .wc-chatview-panel': {
-      flex: 1,
-      position: 'relative',
-      selectors: {
-        '::-webkit-scrollbar-thumb': {
-          backgroundColor: 'blue',
-          color: 'red'
-        },
-        '& p': {
-          marginBottom: 0,
-          marginTop: 0
-        },
-        '& h1, & h2, & h3, & h4': {
-          marginTop: '8px',
-          marginBottom: '4px'
-        },
-        '& br': {
-          content: ' ',
-          display: 'block',
-          fontSize: '50%'
-        },
-        '& ol, & ul': {
-          marginTop: 0
-        },
-        '& .wc-message-content *': {
-          userSelect: 'text'
-        },
-        '& .wc-message-content.selected': {
-          color: 'black',
-          backgroundColor: 'var(--webchat-selected-text-bg)',
-          boxShadow: '0px 1px 1px 0px rgba(0,0,0,0.2)'
-        },
-        '& .wc-message-content.selected>svg.wc-message-callout>path': {
-          fill: `var(${_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_1__["ThemeVariables"].webchatSelectedTextBg})`
-        },
-        '& .wc-card': {
-          color: '#000'
-        },
-        '& .wc-card button': {
-          border: '1px solid #ccc',
-          borderRadius: '1px',
-          cursor: 'pointer',
-          outline: 'none',
-          transition: 'color .2s ease, background-color .2s ease',
-          backgroundColor: 'transparent',
-          color: `var(${_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_1__["ThemeVariables"].infoOutline})`,
-          minHeight: '32px',
-          width: '100%',
-          padding: '0 16px'
-        },
-        '& .wc-list ul': {
-          padding: 0
-        },
-        '& .clickable:hover': {
-          cursor: 'pointer'
-        }
-      }
-    }
-  }
-});
-const disconnectedCss = Object(_uifabric_merge_styles__WEBPACK_IMPORTED_MODULE_3__["mergeStyles"])({
+
+const disconnectedCss = Object(_uifabric_merge_styles__WEBPACK_IMPORTED_MODULE_2__["mergeStyles"])({
   displayName: 'chatDisconnected',
   padding: '16px',
   backgroundColor: 'white',
@@ -35633,7 +35845,7 @@ function createWebChatProps(botId, userId, directLine, selectedActivity$, endpoi
         fetchCallback: getSpeechToken.bind(null, endpoint, false),
         fetchOnExpiryCallback: getSpeechToken.bind(null, endpoint, true)
       }),
-      speechSynthesizer: new botframework_webchat__WEBPACK_IMPORTED_MODULE_4__["Speech"].BrowserSpeechSynthesizer()
+      speechSynthesizer: new botframework_webchat__WEBPACK_IMPORTED_MODULE_3__["Speech"].BrowserSpeechSynthesizer()
     } : null,
     user: {
       id: userId || 'default-user',
@@ -35652,7 +35864,7 @@ function getSpeechToken(endpoint, refresh) {
     let command = refresh ? 'speech-token:refresh' : 'speech-token:get';
 
     try {
-      const speechToken = yield _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_5__["CommandServiceImpl"].remoteCall(command, endpoint.endpoint);
+      const speechToken = yield _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_4__["CommandServiceImpl"].remoteCall(command, endpoint.endpoint);
 
       if (!speechToken) {
         console.error('Could not retrieve Cognitive Services speech token.');
@@ -35680,7 +35892,7 @@ function getSpeechToken(endpoint, refresh) {
 class Chat extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
   constructor(props, context) {
     super(props, context);
-    this.createWebChatPropsMemoized = Object(_helpers_memoize__WEBPACK_IMPORTED_MODULE_6__["default"])(createWebChatProps);
+    this.createWebChatPropsMemoized = Object(_helpers_memoize__WEBPACK_IMPORTED_MODULE_5__["default"])(createWebChatProps);
   }
 
   render() {
@@ -35693,8 +35905,8 @@ class Chat extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
       const webChatProps = this.createWebChatPropsMemoized(document.botId, document.userId, document.directLine, document.selectedActivity$, endpoint, this.props.mode);
       return react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", {
         id: "webchat-container",
-        className: `${css} wc-app`
-      }, react__WEBPACK_IMPORTED_MODULE_0__["createElement"](botframework_webchat__WEBPACK_IMPORTED_MODULE_4__["Chat"], Object.assign({
+        className: `${_chat_scss__WEBPACK_IMPORTED_MODULE_6__["chat"]} wc-app`
+      }, react__WEBPACK_IMPORTED_MODULE_0__["createElement"](botframework_webchat__WEBPACK_IMPORTED_MODULE_3__["Chat"], Object.assign({
         key: document.directLine.token
       }, webChatProps)));
     } else {
@@ -35712,7 +35924,7 @@ class Chat extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
 
 }
 
-const _default = Object(react_redux__WEBPACK_IMPORTED_MODULE_2__["connect"])((state, {
+const _default = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["connect"])((state, {
   document
 }) => ({
   endpoint: (state.bot.activeBot && state.bot.activeBot.services || []).find(s => s.id === document.endpointId)
@@ -35730,18 +35942,17 @@ const _default = Object(react_redux__WEBPACK_IMPORTED_MODULE_2__["connect"])((st
     return;
   }
 
-  reactHotLoader.register(__awaiter, "__awaiter", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\emulator\\parts\\chat.tsx");
-  reactHotLoader.register(css, "css", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\emulator\\parts\\chat.tsx");
-  reactHotLoader.register(disconnectedCss, "disconnectedCss", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\emulator\\parts\\chat.tsx");
-  reactHotLoader.register(createWebChatProps, "createWebChatProps", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\emulator\\parts\\chat.tsx");
-  reactHotLoader.register(getSpeechToken, "getSpeechToken", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\emulator\\parts\\chat.tsx");
-  reactHotLoader.register(Chat, "Chat", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\emulator\\parts\\chat.tsx");
-  reactHotLoader.register(_default, "default", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\emulator\\parts\\chat.tsx");
+  reactHotLoader.register(__awaiter, "__awaiter", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\emulator\\parts\\chat\\chat.tsx");
+  reactHotLoader.register(disconnectedCss, "disconnectedCss", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\emulator\\parts\\chat\\chat.tsx");
+  reactHotLoader.register(createWebChatProps, "createWebChatProps", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\emulator\\parts\\chat\\chat.tsx");
+  reactHotLoader.register(getSpeechToken, "getSpeechToken", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\emulator\\parts\\chat\\chat.tsx");
+  reactHotLoader.register(Chat, "Chat", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\emulator\\parts\\chat\\chat.tsx");
+  reactHotLoader.register(_default, "default", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\emulator\\parts\\chat\\chat.tsx");
   leaveModule(module);
 })();
 
 ;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../../../../node_modules/webpack/buildin/harmony-module.js */ "../../../node_modules/webpack/buildin/harmony-module.js")(module)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../../../../../node_modules/webpack/buildin/harmony-module.js */ "../../../node_modules/webpack/buildin/harmony-module.js")(module)))
 
 /***/ }),
 
@@ -35880,14 +36091,14 @@ class Detail extends react__WEBPACK_IMPORTED_MODULE_1__["Component"] {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _chat__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./chat */ "./src/ui/editor/emulator/parts/chat.tsx");
+/* harmony import */ var _chat_chat__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./chat/chat */ "./src/ui/editor/emulator/parts/chat/chat.tsx");
 /* empty/unused harmony star reexport *//* harmony import */ var _detail__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./detail */ "./src/ui/editor/emulator/parts/detail.tsx");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Detail", function() { return _detail__WEBPACK_IMPORTED_MODULE_1__["Detail"]; });
 
 /* harmony import */ var _inspector__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./inspector */ "./src/ui/editor/emulator/parts/inspector.tsx");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Inspector", function() { return _inspector__WEBPACK_IMPORTED_MODULE_2__["Inspector"]; });
 
-/* harmony import */ var _log__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./log */ "./src/ui/editor/emulator/parts/log.tsx");
+/* harmony import */ var _log_log__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./log/log */ "./src/ui/editor/emulator/parts/log/log.tsx");
 /* empty/unused harmony star reexport *///
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
@@ -36177,27 +36388,81 @@ class Inspector extends react__WEBPACK_IMPORTED_MODULE_2__["Component"] {
 
 /***/ }),
 
-/***/ "./src/ui/editor/emulator/parts/log.tsx":
-/*!**********************************************!*\
-  !*** ./src/ui/editor/emulator/parts/log.tsx ***!
-  \**********************************************/
+/***/ "./src/ui/editor/emulator/parts/log/log.scss":
+/*!***************************************************!*\
+  !*** ./src/ui/editor/emulator/parts/log/log.scss ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../../../../../../../node_modules/typings-for-css-modules-loader/lib??ref--5-1!../../../../../../../../../node_modules/resolve-url-loader!../../../../../../../../../node_modules/sass-loader/lib/loader.js!./log.scss */ "../../../node_modules/typings-for-css-modules-loader/lib/index.js??ref--5-1!../../../node_modules/resolve-url-loader/index.js!../../../node_modules/sass-loader/lib/loader.js!./src/ui/editor/emulator/parts/log/log.scss");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../../../../../../../node_modules/style-loader/lib/addStyles.js */ "../../../node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(true) {
+	module.hot.accept(/*! !../../../../../../../../../node_modules/typings-for-css-modules-loader/lib??ref--5-1!../../../../../../../../../node_modules/resolve-url-loader!../../../../../../../../../node_modules/sass-loader/lib/loader.js!./log.scss */ "../../../node_modules/typings-for-css-modules-loader/lib/index.js??ref--5-1!../../../node_modules/resolve-url-loader/index.js!../../../node_modules/sass-loader/lib/loader.js!./src/ui/editor/emulator/parts/log/log.scss", function(__WEBPACK_OUTDATED_DEPENDENCIES__) { (function() {
+		var newContent = __webpack_require__(/*! !../../../../../../../../../node_modules/typings-for-css-modules-loader/lib??ref--5-1!../../../../../../../../../node_modules/resolve-url-loader!../../../../../../../../../node_modules/sass-loader/lib/loader.js!./log.scss */ "../../../node_modules/typings-for-css-modules-loader/lib/index.js??ref--5-1!../../../node_modules/resolve-url-loader/index.js!../../../node_modules/sass-loader/lib/loader.js!./src/ui/editor/emulator/parts/log/log.scss");
+
+		if(typeof newContent === 'string') newContent = [[module.i, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	})(__WEBPACK_OUTDATED_DEPENDENCIES__); });
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ "./src/ui/editor/emulator/parts/log/log.tsx":
+/*!**************************************************!*\
+  !*** ./src/ui/editor/emulator/parts/log/log.tsx ***!
+  \**************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(module) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Log; });
-/* harmony import */ var _uifabric_merge_styles__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @uifabric/merge-styles */ "../../../node_modules/@uifabric/merge-styles/lib/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _data_action_chatActions__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../data/action/chatActions */ "./src/data/action/chatActions.ts");
-/* harmony import */ var _data_store__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../data/store */ "./src/data/store.ts");
-/* harmony import */ var _bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @bfemulator/ui-react */ "../../sdk/ui-react/built/index.js");
-/* harmony import */ var _bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _extensions__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../extensions */ "./src/extensions.ts");
-/* harmony import */ var _bfemulator_app_shared__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @bfemulator/app-shared */ "../shared/built/index.js");
-/* harmony import */ var _bfemulator_app_shared__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_bfemulator_app_shared__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../platform/commands/commandServiceImpl */ "./src/platform/commands/commandServiceImpl.ts");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _data_action_chatActions__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../../data/action/chatActions */ "./src/data/action/chatActions.ts");
+/* harmony import */ var _log_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./log.scss */ "./src/ui/editor/emulator/parts/log/log.scss");
+/* harmony import */ var _log_scss__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_log_scss__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _data_store__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../../data/store */ "./src/data/store.ts");
+/* harmony import */ var _extensions__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../../../extensions */ "./src/extensions.ts");
+/* harmony import */ var _shared_built_index__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../../../../shared/built/index */ "../shared/built/index.js");
+/* harmony import */ var _shared_built_index__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_shared_built_index__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../../platform/commands/commandServiceImpl */ "./src/platform/commands/commandServiceImpl.ts");
 (function () {
   var enterModule = __webpack_require__(/*! react-hot-loader */ "../../../node_modules/react-hot-loader/index.js").enterModule;
 
@@ -36244,58 +36509,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const css = Object(_uifabric_merge_styles__WEBPACK_IMPORTED_MODULE_0__["mergeStyles"])({
-  displayName: 'log',
-  height: '100%',
-  overflow: 'auto',
-  userSelect: 'text',
-  padding: '0 16px 0 16px',
-  boxSizing: 'border-box',
-  selectors: {
-    '& > .entry': {
-      fontFamily: _bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__["Fonts"].FONT_FAMILY_MONOSPACE,
-      selectors: {
-        '& > .source': {
-          color: `var(${_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__["ThemeVariables"].neutral6})`
-        },
-        '& .timestamp': {
-          color: `var(${_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__["ThemeVariables"].logPanelTimestamp})`
-        },
-        '& .src-dst': {
-          color: `var(${_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__["ThemeVariables"].neutral9})`
-        },
-        '& a': {
-          color: `var(${_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__["ThemeVariables"].logPanelLink})`,
-          textDecoration: 'underline',
-          cursor: 'pointer'
-        },
-        // info
-        '& .level-0': {
-          color: `var(${_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__["ThemeVariables"].neutral1})`
-        },
-        // debug
-        '& .level-1': {
-          color: `var(${_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__["ThemeVariables"].neutral7})`
-        },
-        // warn
-        '& .level-2': {
-          color: `var(${_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__["ThemeVariables"].warningOutline})`
-        },
-        // error
-        '& .level-3': {
-          color: `var(${_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__["ThemeVariables"].errorText})`
-        },
-        '& .spaced': {
-          marginLeft: '8px'
-        },
-        '& .spaced:first-child': {
-          marginLeft: 0
-        }
-      }
-    }
-  }
-});
-
 function number2(n) {
   return ('0' + n).slice(-2);
 }
@@ -36310,24 +36523,24 @@ function timestamp(t) {
 
 function logLevelToClassName(level) {
   switch (level) {
-    case _bfemulator_app_shared__WEBPACK_IMPORTED_MODULE_6__["LogLevel"].Debug:
-      return 'level-1';
+    case _shared_built_index__WEBPACK_IMPORTED_MODULE_5__["LogLevel"].Debug:
+      return _log_scss__WEBPACK_IMPORTED_MODULE_2__["level1"];
 
-    case _bfemulator_app_shared__WEBPACK_IMPORTED_MODULE_6__["LogLevel"].Info:
-      return 'level-0';
+    case _shared_built_index__WEBPACK_IMPORTED_MODULE_5__["LogLevel"].Info:
+      return _log_scss__WEBPACK_IMPORTED_MODULE_2__["level0"];
 
-    case _bfemulator_app_shared__WEBPACK_IMPORTED_MODULE_6__["LogLevel"].Warn:
-      return 'level-2';
+    case _shared_built_index__WEBPACK_IMPORTED_MODULE_5__["LogLevel"].Warn:
+      return _log_scss__WEBPACK_IMPORTED_MODULE_2__["level2"];
 
-    case _bfemulator_app_shared__WEBPACK_IMPORTED_MODULE_6__["LogLevel"].Error:
-      return 'level-3';
+    case _shared_built_index__WEBPACK_IMPORTED_MODULE_5__["LogLevel"].Error:
+      return _log_scss__WEBPACK_IMPORTED_MODULE_2__["level3"];
 
     default:
       return '';
   }
 }
 
-class Log extends react__WEBPACK_IMPORTED_MODULE_1__["Component"] {
+class Log extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
   constructor(props, context) {
     super(props, context);
     this.state = {
@@ -36346,10 +36559,10 @@ class Log extends react__WEBPACK_IMPORTED_MODULE_1__["Component"] {
 
   render() {
     let key = 0;
-    return react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("div", {
-      className: css,
+    return react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", {
+      className: _log_scss__WEBPACK_IMPORTED_MODULE_2__["log"],
       ref: ref => this.scrollMe = ref
-    }, this.props.document.log.entries.map(entry => react__WEBPACK_IMPORTED_MODULE_1__["createElement"](LogEntryComponent, {
+    }, this.props.document.log.entries.map(entry => react__WEBPACK_IMPORTED_MODULE_0__["createElement"](LogEntryComponent, {
       key: `entry-${key++}`,
       entry: entry,
       document: this.props.document
@@ -36364,10 +36577,10 @@ class Log extends react__WEBPACK_IMPORTED_MODULE_1__["Component"] {
 
 }
 
-class LogEntryComponent extends react__WEBPACK_IMPORTED_MODULE_1__["Component"] {
+class LogEntryComponent extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
   inspect(obj) {
     this.props.document.selectedActivity$.next({});
-    _data_store__WEBPACK_IMPORTED_MODULE_3__["default"].dispatch(_data_action_chatActions__WEBPACK_IMPORTED_MODULE_2__["setInspectorObjects"](this.props.document.documentId, obj));
+    _data_store__WEBPACK_IMPORTED_MODULE_3__["default"].dispatch(_data_action_chatActions__WEBPACK_IMPORTED_MODULE_1__["setInspectorObjects"](this.props.document.documentId, obj));
   }
 
   inspectAndHighlight(obj) {
@@ -36379,17 +36592,17 @@ class LogEntryComponent extends react__WEBPACK_IMPORTED_MODULE_1__["Component"] 
   }
 
   render() {
-    return react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("div", {
+    return react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", {
       key: "entry",
       className: "entry"
     }, this.renderTimestamp(this.props.entry.timestamp), this.props.entry.items.map((item, key) => this.renderItem(item, '' + key)));
   }
 
   renderTimestamp(t) {
-    return react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("span", {
+    return react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("span", {
       key: "timestamp",
       className: "spaced"
-    }, "[", react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("span", {
+    }, "[", react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("span", {
       className: "timestamp"
     }, timestamp(t)), "]");
   }
@@ -36468,34 +36681,34 @@ class LogEntryComponent extends react__WEBPACK_IMPORTED_MODULE_1__["Component"] 
   }
 
   renderTextItem(level, text, key) {
-    return react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("span", {
+    return react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("span", {
       key: key,
       className: `spaced ${logLevelToClassName(level)}`
     }, text);
   }
 
   renderExternalLinkItem(text, hyperlink, key) {
-    return react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("span", {
+    return react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("span", {
       key: key,
-      className: "spaced"
-    }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("a", {
+      className: _log_scss__WEBPACK_IMPORTED_MODULE_2__["spaced"]
+    }, react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("a", {
       onClick: () => window.open(hyperlink, '_blank')
     }, text));
   }
 
   renderAppSettingsItem(text, key) {
-    return react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("span", {
+    return react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("span", {
       key: key,
-      className: "spaced"
-    }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("a", {
-      onClick: () => _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_7__["CommandServiceImpl"].call('shell:show-app-settings')
+      className: _log_scss__WEBPACK_IMPORTED_MODULE_2__["spaced"]
+    }, react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("a", {
+      onClick: () => _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_6__["CommandServiceImpl"].call('shell:show-app-settings')
     }, text));
   }
 
   renderExceptionItem(err, key) {
-    return react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("span", {
+    return react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("span", {
       key: key,
-      className: "spaced level-3"
+      className: `${_log_scss__WEBPACK_IMPORTED_MODULE_2__["spaced"]} ${_log_scss__WEBPACK_IMPORTED_MODULE_2__["level3"]}`
     }, err && err.message ? err.message : '');
   }
 
@@ -36507,14 +36720,14 @@ class LogEntryComponent extends react__WEBPACK_IMPORTED_MODULE_1__["Component"] 
     }
 
     let summaryText = this.summaryText(obj) || '';
-    return react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("span", {
+    return react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("span", {
       key: key
-    }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("span", {
-      className: "spaced level-0"
-    }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("a", {
+    }, react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("span", {
+      className: `${_log_scss__WEBPACK_IMPORTED_MODULE_2__["spaced"]} ${_log_scss__WEBPACK_IMPORTED_MODULE_2__["level0"]}`
+    }, react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("a", {
       onClick: () => this.inspectAndHighlight(obj)
-    }, title)), react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("span", {
-      className: "spaced level-0"
+    }, title)), react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("span", {
+      className: `${_log_scss__WEBPACK_IMPORTED_MODULE_2__["spaced"]} ${_log_scss__WEBPACK_IMPORTED_MODULE_2__["level0"]}`
     }, summaryText));
   }
 
@@ -36532,16 +36745,16 @@ class LogEntryComponent extends react__WEBPACK_IMPORTED_MODULE_1__["Component"] 
     }
 
     if (obj) {
-      return react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("span", {
+      return react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("span", {
         key: key,
-        className: "spaced level-0"
-      }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("a", {
+        className: `${_log_scss__WEBPACK_IMPORTED_MODULE_2__["spaced"]} ${_log_scss__WEBPACK_IMPORTED_MODULE_2__["level0"]}`
+      }, react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("a", {
         onClick: () => this.inspect(obj)
       }, method));
     } else {
-      return react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("span", {
+      return react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("span", {
         key: key,
-        className: "spaced level-0"
+        className: `${_log_scss__WEBPACK_IMPORTED_MODULE_2__["spaced"]} ${_log_scss__WEBPACK_IMPORTED_MODULE_2__["level0"]}`
       }, method);
     }
   }
@@ -36560,25 +36773,25 @@ class LogEntryComponent extends react__WEBPACK_IMPORTED_MODULE_1__["Component"] 
     }
 
     if (obj) {
-      return react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("span", {
+      return react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("span", {
         key: key,
-        className: "spaced level-0"
-      }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("a", {
+        className: `${_log_scss__WEBPACK_IMPORTED_MODULE_2__["spaced"]} ${_log_scss__WEBPACK_IMPORTED_MODULE_2__["level0"]}`
+      }, react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("a", {
         onClick: () => this.inspect(obj)
       }, statusCode));
     } else {
-      return react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("span", {
+      return react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("span", {
         key: key,
-        className: "spaced level-0"
+        className: `${_log_scss__WEBPACK_IMPORTED_MODULE_2__["spaced"]} ${_log_scss__WEBPACK_IMPORTED_MODULE_2__["level0"]}`
       }, statusCode);
     }
   }
 
   summaryText(obj) {
-    const inspResult = _extensions__WEBPACK_IMPORTED_MODULE_5__["ExtensionManager"].inspectorForObject(obj, true);
+    const inspResult = _extensions__WEBPACK_IMPORTED_MODULE_4__["ExtensionManager"].inspectorForObject(obj, true);
 
     if (inspResult && inspResult.inspector) {
-      return _extensions__WEBPACK_IMPORTED_MODULE_5__["InspectorAPI"].summaryText(inspResult.inspector, obj);
+      return _extensions__WEBPACK_IMPORTED_MODULE_4__["InspectorAPI"].summaryText(inspResult.inspector, obj);
     } else {
       return undefined;
     }
@@ -36603,17 +36816,16 @@ class LogEntryComponent extends react__WEBPACK_IMPORTED_MODULE_1__["Component"] 
     return;
   }
 
-  reactHotLoader.register(css, "css", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\emulator\\parts\\log.tsx");
-  reactHotLoader.register(number2, "number2", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\emulator\\parts\\log.tsx");
-  reactHotLoader.register(timestamp, "timestamp", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\emulator\\parts\\log.tsx");
-  reactHotLoader.register(logLevelToClassName, "logLevelToClassName", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\emulator\\parts\\log.tsx");
-  reactHotLoader.register(Log, "Log", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\emulator\\parts\\log.tsx");
-  reactHotLoader.register(LogEntryComponent, "LogEntryComponent", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\emulator\\parts\\log.tsx");
+  reactHotLoader.register(number2, "number2", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\emulator\\parts\\log\\log.tsx");
+  reactHotLoader.register(timestamp, "timestamp", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\emulator\\parts\\log\\log.tsx");
+  reactHotLoader.register(logLevelToClassName, "logLevelToClassName", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\emulator\\parts\\log\\log.tsx");
+  reactHotLoader.register(Log, "Log", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\emulator\\parts\\log\\log.tsx");
+  reactHotLoader.register(LogEntryComponent, "LogEntryComponent", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\emulator\\parts\\log\\log.tsx");
   leaveModule(module);
 })();
 
 ;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../../../../node_modules/webpack/buildin/harmony-module.js */ "../../../node_modules/webpack/buildin/harmony-module.js")(module)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../../../../../node_modules/webpack/buildin/harmony-module.js */ "../../../node_modules/webpack/buildin/harmony-module.js")(module)))
 
 /***/ }),
 
@@ -36796,16 +37008,16 @@ class PlaybackBar extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
 /*!********************************!*\
   !*** ./src/ui/editor/index.ts ***!
   \********************************/
-/*! exports provided: AppSettingsEditor, BotSettingsEditor, EditorFactory, PanelControls, PanelContent, Button, Separator, WelcomePage, Emulator, Detail, Inspector */
+/*! exports provided: PanelControls, PanelContent, Button, Separator, Emulator, Detail, Inspector, WelcomePage, AppSettingsEditor, BotSettingsEditor, EditorFactory */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _appSettingsEditor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./appSettingsEditor */ "./src/ui/editor/appSettingsEditor.tsx");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AppSettingsEditor", function() { return _appSettingsEditor__WEBPACK_IMPORTED_MODULE_0__["AppSettingsEditor"]; });
+/* harmony import */ var _appSettingsEditor_appSettingsEditor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./appSettingsEditor/appSettingsEditor */ "./src/ui/editor/appSettingsEditor/appSettingsEditor.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AppSettingsEditor", function() { return _appSettingsEditor_appSettingsEditor__WEBPACK_IMPORTED_MODULE_0__["AppSettingsEditor"]; });
 
-/* harmony import */ var _botSettingsEditor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./botSettingsEditor */ "./src/ui/editor/botSettingsEditor.tsx");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "BotSettingsEditor", function() { return _botSettingsEditor__WEBPACK_IMPORTED_MODULE_1__["BotSettingsEditor"]; });
+/* harmony import */ var _botSettingsEditor_botSettingsEditor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./botSettingsEditor/botSettingsEditor */ "./src/ui/editor/botSettingsEditor/botSettingsEditor.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "BotSettingsEditor", function() { return _botSettingsEditor_botSettingsEditor__WEBPACK_IMPORTED_MODULE_1__["BotSettingsEditor"]; });
 
 /* harmony import */ var _editor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./editor */ "./src/ui/editor/editor.tsx");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "EditorFactory", function() { return _editor__WEBPACK_IMPORTED_MODULE_2__["EditorFactory"]; });
@@ -36827,8 +37039,8 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Inspector", function() { return _emulator__WEBPACK_IMPORTED_MODULE_5__["Inspector"]; });
 
-/* harmony import */ var _welcomePage__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./welcomePage */ "./src/ui/editor/welcomePage.tsx");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "WelcomePage", function() { return _welcomePage__WEBPACK_IMPORTED_MODULE_6__["WelcomePage"]; });
+/* harmony import */ var _welcomePage_welcomePage__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./welcomePage/welcomePage */ "./src/ui/editor/welcomePage/welcomePage.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "WelcomePage", function() { return _welcomePage_welcomePage__WEBPACK_IMPORTED_MODULE_6__["WelcomePage"]; });
 
 //
 // Copyright (c) Microsoft. All rights reserved.
@@ -37178,10 +37390,65 @@ const Separator = props => props.children;
 
 /***/ }),
 
-/***/ "./src/ui/editor/welcomePage.tsx":
-/*!***************************************!*\
-  !*** ./src/ui/editor/welcomePage.tsx ***!
-  \***************************************/
+/***/ "./src/ui/editor/welcomePage/welcomePage.scss":
+/*!****************************************************!*\
+  !*** ./src/ui/editor/welcomePage/welcomePage.scss ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../../../../../node_modules/typings-for-css-modules-loader/lib??ref--5-1!../../../../../../../node_modules/resolve-url-loader!../../../../../../../node_modules/sass-loader/lib/loader.js!./welcomePage.scss */ "../../../node_modules/typings-for-css-modules-loader/lib/index.js??ref--5-1!../../../node_modules/resolve-url-loader/index.js!../../../node_modules/sass-loader/lib/loader.js!./src/ui/editor/welcomePage/welcomePage.scss");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../../../../../node_modules/style-loader/lib/addStyles.js */ "../../../node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(true) {
+	module.hot.accept(/*! !../../../../../../../node_modules/typings-for-css-modules-loader/lib??ref--5-1!../../../../../../../node_modules/resolve-url-loader!../../../../../../../node_modules/sass-loader/lib/loader.js!./welcomePage.scss */ "../../../node_modules/typings-for-css-modules-loader/lib/index.js??ref--5-1!../../../node_modules/resolve-url-loader/index.js!../../../node_modules/sass-loader/lib/loader.js!./src/ui/editor/welcomePage/welcomePage.scss", function(__WEBPACK_OUTDATED_DEPENDENCIES__) { (function() {
+		var newContent = __webpack_require__(/*! !../../../../../../../node_modules/typings-for-css-modules-loader/lib??ref--5-1!../../../../../../../node_modules/resolve-url-loader!../../../../../../../node_modules/sass-loader/lib/loader.js!./welcomePage.scss */ "../../../node_modules/typings-for-css-modules-loader/lib/index.js??ref--5-1!../../../node_modules/resolve-url-loader/index.js!../../../node_modules/sass-loader/lib/loader.js!./src/ui/editor/welcomePage/welcomePage.scss");
+
+		if(typeof newContent === 'string') newContent = [[module.i, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	})(__WEBPACK_OUTDATED_DEPENDENCIES__); });
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ "./src/ui/editor/welcomePage/welcomePage.tsx":
+/*!***************************************************!*\
+  !*** ./src/ui/editor/welcomePage/welcomePage.tsx ***!
+  \***************************************************/
 /*! exports provided: WelcomePage */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -37193,10 +37460,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-redux */ "../../../node_modules/react-redux/es/index.js");
-/* harmony import */ var _bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @bfemulator/ui-react */ "../../sdk/ui-react/built/index.js");
-/* harmony import */ var _bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../platform/commands/commandServiceImpl */ "./src/platform/commands/commandServiceImpl.ts");
-/* harmony import */ var _layout__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../layout */ "./src/ui/layout/index.ts");
+/* harmony import */ var _welcomePage_scss__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./welcomePage.scss */ "./src/ui/editor/welcomePage/welcomePage.scss");
+/* harmony import */ var _welcomePage_scss__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_welcomePage_scss__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @bfemulator/ui-react */ "../../sdk/ui-react/built/index.js");
+/* harmony import */ var _bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../platform/commands/commandServiceImpl */ "./src/platform/commands/commandServiceImpl.ts");
+/* harmony import */ var _layout__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../layout */ "./src/ui/layout/index.ts");
 (function () {
   var enterModule = __webpack_require__(/*! react-hot-loader */ "../../../node_modules/react-hot-loader/index.js").enterModule;
 
@@ -37241,150 +37510,66 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const css = {
-  selectors: {
-    '& .right-column': {
-      marginLeft: '48px'
-    },
-    '& .section': {
-      marginBottom: '34px',
-      width: 'auto',
-      maxWidth: '100%'
-    },
-    '& .well': {
-      padding: '12px 10px',
-      background: 'rgba(0,0,0,.2)',
-      transition: 'background 0.05s',
-      '::-webkit-scrollbar-thumb': {
-        backgroundColor: 'transparent'
-      },
-      selectors: {
-        ':hover': {
-          background: 'rgba(200,235,255,.072)',
-          '::-webkit-scrollbar-thumb': {
-            backgroundColor: `var(${_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["ThemeVariables"].neutral10})`
-          }
-        }
-      }
-    },
-    '& .no-bots': {
-      fontStyle: 'italic'
-    },
-    '& .recent-bots-list': {
-      maxHeight: '100px',
-      overflowY: 'auto',
-      overflowX: 'hidden',
-      selectors: {
-        '& > li': {
-          display: 'flex'
-        },
-        'a': {
-          flexShrink: 0
-        }
-      }
-    },
-    '& .recent-bot-detail': {
-      display: 'inline-block',
-      marginLeft: '8px',
-      color: `var(${_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["ThemeVariables"].neutral4})`,
-      userSelect: 'text',
-      cursor: 'text'
-    },
-    'a': {
-      minWidth: 0,
-      whiteSpace: 'nowrap',
-      textOverflow: 'ellipsis',
-      overflow: 'hidden',
-      textDecoration: 'none',
-      color: `var(${_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["ThemeVariables"].focusedSelectedListItemBg})`,
-      selectors: {
-        ':hover': {
-          color: `var(${_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["ThemeVariables"].focusedSelectedListItemBg})`
-        }
-      }
-    },
-    'ul': {
-      margin: 0,
-      listStyle: 'none',
-      padding: 0
-    },
-    '& .open-bot': {
-      marginTop: '24px',
-      marginBottom: '16px',
-      width: '180px',
-      height: '26px',
-      selectors: {
-        '& .primary-button-text': {
-          lineHeight: '26px'
-        }
-      }
-    },
-    '& .cta-link': {
-      whiteSpace: 'normal'
-    }
-  }
-};
+
 
 class WelcomePageComponent extends react__WEBPACK_IMPORTED_MODULE_1__["Component"] {
   constructor() {
     super(...arguments);
 
     this.onNewBotClick = () => {
-      _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_4__["CommandServiceImpl"].call('bot-creation:show');
+      _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_5__["CommandServiceImpl"].call('bot-creation:show').catch();
     };
 
     this.onOpenBotClick = () => {
-      _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_4__["CommandServiceImpl"].call('bot:browse-open');
+      _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_5__["CommandServiceImpl"].call('bot:browse-open').catch();
     };
 
     this.onBotClick = (_e, path) => {
-      _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_4__["CommandServiceImpl"].call('bot:switch', path);
+      _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_5__["CommandServiceImpl"].call('bot:switch', path).catch();
     };
   }
 
   render() {
-    return react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_layout__WEBPACK_IMPORTED_MODULE_5__["GenericDocument"], {
-      style: css
-    }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["LargeHeader"], null, "Welcome to the Bot Framework Emulator!"), react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["Row"], null, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["Column"], null, react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("div", {
-      className: "section"
-    }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["SmallHeader"], null, "Start"), react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("span", null, "Start talking to your bot by connecting to an endpoint or by opening a bot saved locally. More about working locally with a bot."), react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["Row"], null, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["PrimaryButton"], {
-      className: "open-bot big-button",
+    return react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_layout__WEBPACK_IMPORTED_MODULE_6__["GenericDocument"], null, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__["LargeHeader"], null, "Welcome to the Bot Framework Emulator!"), react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__["Row"], null, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__["Column"], null, react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("div", {
+      className: _welcomePage_scss__WEBPACK_IMPORTED_MODULE_3__["section"]
+    }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__["SmallHeader"], null, "Start"), react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("span", null, "Start talking to your bot by connecting to an endpoint or by opening a bot saved locally. More about working locally with a bot."), react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__["Row"], null, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__["PrimaryButton"], {
+      className: _welcomePage_scss__WEBPACK_IMPORTED_MODULE_3__["openBot"],
       text: "Open Bot",
       onClick: this.onOpenBotClick
     })), react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("span", null, "If you don\u2019t have a bot configuration,", react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("a", {
-      className: "cta-link",
+      className: _welcomePage_scss__WEBPACK_IMPORTED_MODULE_3__["ctaLink"],
       href: "javascript:void(0)",
       onClick: this.onNewBotClick
     }, "create a new bot configuration."))), react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("div", {
-      className: "section"
-    }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["SmallHeader"], null, "My Bots"), react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("ul", {
-      className: "recent-bots-list well"
+      className: _welcomePage_scss__WEBPACK_IMPORTED_MODULE_3__["section"]
+    }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__["SmallHeader"], null, "My Bots"), react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("ul", {
+      className: `${_welcomePage_scss__WEBPACK_IMPORTED_MODULE_3__["recentBotsList"]} ${_welcomePage_scss__WEBPACK_IMPORTED_MODULE_3__["well"]}`
     }, this.props.recentBots && this.props.recentBots.length ? this.props.recentBots.slice(0, 10).map(bot => bot && react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("li", {
       key: bot.path
     }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("a", {
       href: "javascript:void(0);",
       onClick: ev => this.onBotClick(ev, bot.path),
       title: bot.path
-    }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["TruncateText"], null, bot.displayName)), react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["TruncateText"], {
-      className: "recent-bot-detail",
+    }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__["TruncateText"], null, bot.displayName)), react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__["TruncateText"], {
+      className: _welcomePage_scss__WEBPACK_IMPORTED_MODULE_3__["recentBotDetail"],
       title: bot.path
     }, bot.path))) : react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("li", null, react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("span", {
-      className: "no-bots"
-    }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["TruncateText"], null, "No recent bots")))))), react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["Column"], {
-      className: "right-column"
+      className: _welcomePage_scss__WEBPACK_IMPORTED_MODULE_3__["noBots"]
+    }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__["TruncateText"], null, "No recent bots")))))), react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__["Column"], {
+      className: _welcomePage_scss__WEBPACK_IMPORTED_MODULE_3__["rightColumn"]
     }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("div", {
-      className: "section"
-    }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["SmallHeader"], null, "Help"), react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("ul", null, react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("li", null, react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("a", {
+      className: _welcomePage_scss__WEBPACK_IMPORTED_MODULE_3__["section"]
+    }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__["SmallHeader"], null, "Help"), react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("ul", null, react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("li", null, react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("a", {
       href: "https://aka.ms/BotBuilderOverview"
-    }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["TruncateText"], null, "Overview"))), react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("li", null, react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("a", {
+    }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__["TruncateText"], null, "Overview"))), react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("li", null, react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("a", {
       href: "https://aka.ms/Btovso"
-    }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["TruncateText"], null, "GitHub Repository"))), react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("li", null, react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("a", {
+    }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__["TruncateText"], null, "GitHub Repository"))), react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("li", null, react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("a", {
       href: "https://aka.ms/BotBuilderLocalDev"
-    }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["TruncateText"], null, "Starting with Local Development"))), react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("li", null, react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("a", {
+    }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__["TruncateText"], null, "Starting with Local Development"))), react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("li", null, react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("a", {
       href: "https://aka.ms/BotBuilderAZCLI"
-    }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["TruncateText"], null, "Starting with Azure CLI"))), react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("li", null, react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("a", {
+    }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__["TruncateText"], null, "Starting with Azure CLI"))), react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("li", null, react__WEBPACK_IMPORTED_MODULE_1__["createElement"]("a", {
       href: "https://aka.ms/BotBuilderIbiza"
-    }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_3__["TruncateText"], null, "Starting with the Azure Portal"))))))));
+    }, react__WEBPACK_IMPORTED_MODULE_1__["createElement"](_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_4__["TruncateText"], null, "Starting with the Azure Portal"))))))));
   }
 
   // @ts-ignore
@@ -37411,15 +37596,14 @@ const WelcomePage = Object(react_redux__WEBPACK_IMPORTED_MODULE_2__["connect"])(
     return;
   }
 
-  reactHotLoader.register(css, "css", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\welcomePage.tsx");
-  reactHotLoader.register(WelcomePageComponent, "WelcomePageComponent", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\welcomePage.tsx");
-  reactHotLoader.register(mapStateToProps, "mapStateToProps", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\welcomePage.tsx");
-  reactHotLoader.register(WelcomePage, "WelcomePage", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\welcomePage.tsx");
+  reactHotLoader.register(WelcomePageComponent, "WelcomePageComponent", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\welcomePage\\welcomePage.tsx");
+  reactHotLoader.register(mapStateToProps, "mapStateToProps", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\welcomePage\\welcomePage.tsx");
+  reactHotLoader.register(WelcomePage, "WelcomePage", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\editor\\welcomePage\\welcomePage.tsx");
   leaveModule(module);
 })();
 
 ;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../../node_modules/webpack/buildin/harmony-module.js */ "../../../node_modules/webpack/buildin/harmony-module.js")(module)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../../../node_modules/webpack/buildin/harmony-module.js */ "../../../node_modules/webpack/buildin/harmony-module.js")(module)))
 
 /***/ }),
 
@@ -37437,16 +37621,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _bfemulator_app_shared__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_bfemulator_app_shared__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var msbot_bin_schema__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! msbot/bin/schema */ "../../../node_modules/msbot/bin/schema.js");
 /* harmony import */ var msbot_bin_schema__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(msbot_bin_schema__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _data_editorHelpers__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../data/editorHelpers */ "./src/data/editorHelpers.ts");
-/* harmony import */ var _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../platform/commands/commandServiceImpl */ "./src/platform/commands/commandServiceImpl.ts");
-/* harmony import */ var _data_botHelpers__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../data/botHelpers */ "./src/data/botHelpers.ts");
-/* harmony import */ var _data_action_botActions__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../data/action/botActions */ "./src/data/action/botActions.ts");
-/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../constants */ "./src/constants.ts");
-/* harmony import */ var _data_action_editorActions__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../data/action/editorActions */ "./src/data/action/editorActions.ts");
-/* harmony import */ var _data_action_explorerActions__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../data/action/explorerActions */ "./src/data/action/explorerActions.ts");
-/* harmony import */ var _data_action_fileActions__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../data/action/fileActions */ "./src/data/action/fileActions.ts");
-/* harmony import */ var _data_action_navBarActions__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../data/action/navBarActions */ "./src/data/action/navBarActions.ts");
-/* harmony import */ var _data_store__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../data/store */ "./src/data/store.ts");
+/* harmony import */ var _bfemulator_sdk_shared__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @bfemulator/sdk-shared */ "../../sdk/shared/built/index.js");
+/* harmony import */ var _bfemulator_sdk_shared__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_bfemulator_sdk_shared__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _data_editorHelpers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../data/editorHelpers */ "./src/data/editorHelpers.ts");
+/* harmony import */ var _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../platform/commands/commandServiceImpl */ "./src/platform/commands/commandServiceImpl.ts");
+/* harmony import */ var _data_botHelpers__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../data/botHelpers */ "./src/data/botHelpers.ts");
+/* harmony import */ var _data_action_botActions__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../data/action/botActions */ "./src/data/action/botActions.ts");
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../constants */ "./src/constants.ts");
+/* harmony import */ var _data_action_editorActions__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../data/action/editorActions */ "./src/data/action/editorActions.ts");
+/* harmony import */ var _data_action_explorerActions__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../data/action/explorerActions */ "./src/data/action/explorerActions.ts");
+/* harmony import */ var _data_action_fileActions__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../data/action/fileActions */ "./src/data/action/fileActions.ts");
+/* harmony import */ var _data_action_navBarActions__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../data/action/navBarActions */ "./src/data/action/navBarActions.ts");
+/* harmony import */ var _data_store__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../data/store */ "./src/data/store.ts");
 (function () {
   var enterModule = __webpack_require__(/*! react-hot-loader */ "../../../node_modules/react-hot-loader/index.js").enterModule;
 
@@ -37525,11 +37711,12 @@ var __awaiter = undefined && undefined.__awaiter || function (thisArg, _argument
 
 
 
+
 const ActiveBotHelper = new class {
   confirmSwitchBot() {
     return __awaiter(this, void 0, void 0, function* () {
-      if (Object(_data_editorHelpers__WEBPACK_IMPORTED_MODULE_2__["hasNonGlobalTabs"])()) {
-        return yield _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_3__["CommandServiceImpl"].remoteCall('shell:show-message-box', true, {
+      if (Object(_data_editorHelpers__WEBPACK_IMPORTED_MODULE_3__["hasNonGlobalTabs"])()) {
+        return yield _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_4__["CommandServiceImpl"].remoteCall('shell:show-message-box', true, {
           buttons: ['Cancel', 'OK'],
           cancelId: 0,
           defaultId: 1,
@@ -37543,10 +37730,10 @@ const ActiveBotHelper = new class {
   }
 
   confirmCloseBot() {
-    const hasTabs = Object(_data_editorHelpers__WEBPACK_IMPORTED_MODULE_2__["hasNonGlobalTabs"])(); // TODO - localization
+    const hasTabs = Object(_data_editorHelpers__WEBPACK_IMPORTED_MODULE_3__["hasNonGlobalTabs"])(); // TODO - localization
 
     if (hasTabs) {
-      return _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_3__["CommandServiceImpl"].remoteCall('shell:show-message-box', true, {
+      return _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_4__["CommandServiceImpl"].remoteCall('shell:show-message-box', true, {
         type: 'question',
         buttons: ['Cancel', 'OK'],
         defaultId: 1,
@@ -37557,23 +37744,23 @@ const ActiveBotHelper = new class {
       return Promise.resolve(true);
     }
   }
-  /** Uses a .bot path and perform a read on the server-side to populate the corresponding bot object */
+  /** Sets a bot as active
+   *  @param bot Bot to set as active
+   */
 
 
-  setActiveBot(botPath) {
+  setActiveBot(bot) {
     return __awaiter(this, void 0, void 0, function* () {
       try {
-        const {
-          bot,
-          botDirectory
-        } = yield _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_3__["CommandServiceImpl"].remoteCall('bot:set-active', botPath);
-        _data_store__WEBPACK_IMPORTED_MODULE_11__["default"].dispatch(_data_action_botActions__WEBPACK_IMPORTED_MODULE_5__["setActive"](bot));
-        _data_store__WEBPACK_IMPORTED_MODULE_11__["default"].dispatch(_data_action_fileActions__WEBPACK_IMPORTED_MODULE_9__["setRoot"](botDirectory));
-        _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_3__["CommandServiceImpl"].remoteCall('menu:update-recent-bots');
-        _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_3__["CommandServiceImpl"].remoteCall('electron:set-title-bar', Object(_bfemulator_app_shared__WEBPACK_IMPORTED_MODULE_0__["getBotDisplayName"])(bot));
-      } catch (err) {
-        console.error('Error while setting active bot: ', err);
-        throw new Error(`Error while setting active bot: ${err}`);
+        // set the bot as active on the server side
+        const botDirectory = yield _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_4__["CommandServiceImpl"].remoteCall('bot:set-active', bot);
+        _data_store__WEBPACK_IMPORTED_MODULE_12__["default"].dispatch(_data_action_botActions__WEBPACK_IMPORTED_MODULE_6__["setActive"](bot));
+        _data_store__WEBPACK_IMPORTED_MODULE_12__["default"].dispatch(_data_action_fileActions__WEBPACK_IMPORTED_MODULE_10__["setRoot"](botDirectory)); // update the app file menu and title bar
+
+        _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_4__["CommandServiceImpl"].remoteCall('menu:update-recent-bots');
+        _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_4__["CommandServiceImpl"].remoteCall('electron:set-title-bar', Object(_bfemulator_app_shared__WEBPACK_IMPORTED_MODULE_0__["getBotDisplayName"])(bot));
+      } catch (e) {
+        throw new Error(`Error while setting active bot: ${e}`);
       }
     });
   }
@@ -37581,9 +37768,9 @@ const ActiveBotHelper = new class {
 
 
   closeActiveBot() {
-    return _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_3__["CommandServiceImpl"].remoteCall('bot:close').then(() => {
-      _data_store__WEBPACK_IMPORTED_MODULE_11__["default"].dispatch(_data_action_botActions__WEBPACK_IMPORTED_MODULE_5__["close"]());
-      _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_3__["CommandServiceImpl"].remoteCall('electron:set-title-bar', '');
+    return _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_4__["CommandServiceImpl"].remoteCall('bot:close').then(() => {
+      _data_store__WEBPACK_IMPORTED_MODULE_12__["default"].dispatch(_data_action_botActions__WEBPACK_IMPORTED_MODULE_6__["close"]());
+      _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_4__["CommandServiceImpl"].remoteCall('electron:set-title-bar', '');
     }).catch(err => {
       console.error('Error while closing active bot: ', err);
       throw new Error(`Error while closing active bot: ${err}`);
@@ -37593,7 +37780,7 @@ const ActiveBotHelper = new class {
   botAlreadyOpen() {
     return __awaiter(this, void 0, void 0, function* () {
       // TODO - localization
-      return yield _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_3__["CommandServiceImpl"].remoteCall('shell:show-message-box', true, {
+      return yield _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_4__["CommandServiceImpl"].remoteCall('shell:show-message-box', true, {
         buttons: ['OK'],
         cancelId: 0,
         defaultId: 0,
@@ -37605,32 +37792,37 @@ const ActiveBotHelper = new class {
 
   confirmAndCreateBot(botToCreate, secret) {
     return __awaiter(this, void 0, void 0, function* () {
+      // prompt the user to confirm the switch
       const result = yield this.confirmSwitchBot();
 
       if (result) {
-        _data_store__WEBPACK_IMPORTED_MODULE_11__["default"].dispatch(_data_action_editorActions__WEBPACK_IMPORTED_MODULE_7__["closeNonGlobalTabs"]());
+        _data_store__WEBPACK_IMPORTED_MODULE_12__["default"].dispatch(_data_action_editorActions__WEBPACK_IMPORTED_MODULE_8__["closeNonGlobalTabs"]());
 
         try {
-          const bot = yield _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_3__["CommandServiceImpl"].remoteCall('bot:create', botToCreate, secret);
-          _data_store__WEBPACK_IMPORTED_MODULE_11__["default"].dispatch(_data_action_botActions__WEBPACK_IMPORTED_MODULE_5__["create"](bot, bot.path, secret));
-          yield this.setActiveBot(bot.path);
+          // create the bot and save to disk
+          const bot = yield _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_4__["CommandServiceImpl"].remoteCall('bot:create', botToCreate, secret);
+          _data_store__WEBPACK_IMPORTED_MODULE_12__["default"].dispatch(_data_action_botActions__WEBPACK_IMPORTED_MODULE_6__["create"](bot, bot.path, secret)); // set the bot as active
+
+          yield this.setActiveBot(botToCreate); // open a livechat session with the bot
+
           const endpoint = bot.services.find(service => service.type === msbot_bin_schema__WEBPACK_IMPORTED_MODULE_1__["ServiceType"].Endpoint);
 
           if (endpoint) {
-            _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_3__["CommandServiceImpl"].call('livechat:new', endpoint);
+            _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_4__["CommandServiceImpl"].call('livechat:new', endpoint);
           }
 
-          _data_store__WEBPACK_IMPORTED_MODULE_11__["default"].dispatch(_data_action_navBarActions__WEBPACK_IMPORTED_MODULE_10__["select"](_constants__WEBPACK_IMPORTED_MODULE_6__["NAVBAR_BOT_EXPLORER"]));
-          _data_store__WEBPACK_IMPORTED_MODULE_11__["default"].dispatch(_data_action_explorerActions__WEBPACK_IMPORTED_MODULE_8__["show"](true));
+          _data_store__WEBPACK_IMPORTED_MODULE_12__["default"].dispatch(_data_action_navBarActions__WEBPACK_IMPORTED_MODULE_11__["select"](_constants__WEBPACK_IMPORTED_MODULE_7__["NAVBAR_BOT_EXPLORER"]));
+          _data_store__WEBPACK_IMPORTED_MODULE_12__["default"].dispatch(_data_action_explorerActions__WEBPACK_IMPORTED_MODULE_9__["show"](true));
         } catch (err) {
           console.error('Error during bot create: ', err);
+          throw new Error(`Error during bot create: ${err}`);
         }
       }
     });
   }
 
   browseForBotFile() {
-    return _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_3__["CommandServiceImpl"].remoteCall('shell:showOpenDialog', {
+    return _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_4__["CommandServiceImpl"].remoteCall('shell:showOpenDialog', {
       buttonLabel: 'Choose file',
       filters: [{
         extensions: ['bot'],
@@ -37647,7 +37839,7 @@ const ActiveBotHelper = new class {
         const filename = yield this.browseForBotFile();
 
         if (filename) {
-          let activeBot = Object(_data_botHelpers__WEBPACK_IMPORTED_MODULE_4__["getActiveBot"])();
+          let activeBot = Object(_data_botHelpers__WEBPACK_IMPORTED_MODULE_5__["getActiveBot"])();
 
           if (activeBot && activeBot.path === filename) {
             yield this.botAlreadyOpen();
@@ -37658,24 +37850,41 @@ const ActiveBotHelper = new class {
             const result = this.confirmSwitchBot();
 
             if (result) {
-              _data_store__WEBPACK_IMPORTED_MODULE_11__["default"].dispatch(_data_action_editorActions__WEBPACK_IMPORTED_MODULE_7__["closeNonGlobalTabs"]());
-              yield _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_3__["CommandServiceImpl"].remoteCall('bot:load', filename);
+              try {
+                _data_store__WEBPACK_IMPORTED_MODULE_12__["default"].dispatch(_data_action_editorActions__WEBPACK_IMPORTED_MODULE_8__["closeNonGlobalTabs"]());
+                const bot = yield _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_4__["CommandServiceImpl"].remoteCall('bot:open', filename);
+                yield _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_4__["CommandServiceImpl"].remoteCall('bot:set-active', bot);
+                yield _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_4__["CommandServiceImpl"].call('bot:load', bot);
+              } catch (err) {
+                console.error('Error while trying to open bot from file: ', err);
+                throw new Error(`[confirmAndOpenBotFromFile] Error while trying to open bot from file: ${err}`);
+              }
             }
           } catch (err) {
             console.error('Error while calling confirmSwitchBot: ', err);
+            throw new Error(`[confirmAndOpenBotFromFile] Error while calling confirmSwitchBot: ${err}`);
           }
         }
       } catch (err) {
         console.error('Error while calling browseForBotFile: ', err);
+        throw new Error(`[confirmAndOpenBotFromFile] Error while calling browseForBotFile: ${err}`);
       }
     });
   }
+  /**
+   * Prompts the user to switch bots if necessary, and then sets the bot as active and opens
+   * a livechat session.
+   * @param bot The bot to be switched to. Can be a bot object with a path, or the bot path itself
+   */
 
-  confirmAndSwitchBots(botPath) {
+
+  confirmAndSwitchBots(bot) {
     return __awaiter(this, void 0, void 0, function* () {
-      let activeBot = Object(_data_botHelpers__WEBPACK_IMPORTED_MODULE_4__["getActiveBot"])();
+      let currentActiveBot = Object(_data_botHelpers__WEBPACK_IMPORTED_MODULE_5__["getActiveBot"])();
+      let botPath;
+      botPath = typeof bot === 'object' ? bot.path : bot;
 
-      if (activeBot && activeBot.path === botPath) {
+      if (currentActiveBot && currentActiveBot.path === botPath) {
         yield this.botAlreadyOpen();
         return;
       } // TODO: We need to think about merging this with confirmAndCreateBot
@@ -37684,29 +37893,58 @@ const ActiveBotHelper = new class {
       console.log(`Switching to bot ${botPath}`);
 
       try {
+        // prompt the user to confirm the switch
         const result = yield this.confirmSwitchBot();
 
         if (result) {
-          _data_store__WEBPACK_IMPORTED_MODULE_11__["default"].dispatch(_data_action_editorActions__WEBPACK_IMPORTED_MODULE_7__["closeNonGlobalTabs"]());
-          yield this.setActiveBot(botPath);
-          const bot = Object(_data_botHelpers__WEBPACK_IMPORTED_MODULE_4__["getActiveBot"])();
-          const endpoint = bot.services.find(service => service.type === msbot_bin_schema__WEBPACK_IMPORTED_MODULE_1__["ServiceType"].Endpoint);
+          _data_store__WEBPACK_IMPORTED_MODULE_12__["default"].dispatch(_data_action_editorActions__WEBPACK_IMPORTED_MODULE_8__["closeNonGlobalTabs"]()); // if we only have the bot path, we first need to open the bot file
+
+          let newActiveBot;
+
+          if (typeof bot === 'string') {
+            try {
+              newActiveBot = yield _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_4__["CommandServiceImpl"].remoteCall('bot:open', bot);
+            } catch (e) {
+              throw new Error(`[confirmAndSwitchBots] Error while trying to open bot at ${botPath}: ${e}`);
+            }
+          } else {
+            newActiveBot = bot;
+          } // set the bot as active
+
+
+          yield this.setActiveBot(newActiveBot); // find a suitable endpoint configuration
+
+          let endpoint;
+          const overridesArePresent = newActiveBot.overrides && newActiveBot.overrides.endpoint; // if an endpoint id was specified, use that endpoint, otherwise use the first endpoint found
+
+          if (overridesArePresent && newActiveBot.overrides.endpoint.id) {
+            endpoint = newActiveBot.services.find(service => service.type === msbot_bin_schema__WEBPACK_IMPORTED_MODULE_1__["ServiceType"].Endpoint && service.id === newActiveBot.overrides.endpoint.id);
+          } else {
+            endpoint = newActiveBot.services.find(service => service.type === msbot_bin_schema__WEBPACK_IMPORTED_MODULE_1__["ServiceType"].Endpoint);
+          } // apply endpoint overrides here
+
+
+          if (endpoint && overridesArePresent) {
+            endpoint = Object(_bfemulator_sdk_shared__WEBPACK_IMPORTED_MODULE_2__["mergeEndpoints"])(endpoint, newActiveBot.overrides.endpoint);
+          } // open a livechat with the configured endpoint
+
 
           if (endpoint) {
-            yield _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_3__["CommandServiceImpl"].call('livechat:new', endpoint);
+            yield _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_4__["CommandServiceImpl"].call('livechat:new', endpoint);
           }
 
-          _data_store__WEBPACK_IMPORTED_MODULE_11__["default"].dispatch(_data_action_navBarActions__WEBPACK_IMPORTED_MODULE_10__["select"](_constants__WEBPACK_IMPORTED_MODULE_6__["NAVBAR_BOT_EXPLORER"]));
-          _data_store__WEBPACK_IMPORTED_MODULE_11__["default"].dispatch(_data_action_explorerActions__WEBPACK_IMPORTED_MODULE_8__["show"](true));
+          _data_store__WEBPACK_IMPORTED_MODULE_12__["default"].dispatch(_data_action_navBarActions__WEBPACK_IMPORTED_MODULE_11__["select"](_constants__WEBPACK_IMPORTED_MODULE_7__["NAVBAR_BOT_EXPLORER"]));
+          _data_store__WEBPACK_IMPORTED_MODULE_12__["default"].dispatch(_data_action_explorerActions__WEBPACK_IMPORTED_MODULE_9__["show"](true));
         }
-      } catch (err) {
-        console.error('Error while setting active bot: ', err);
+      } catch (e) {
+        console.error(`Error while trying to switch to bot: ${botPath}`);
+        throw new Error(`[confirmAndSwitchBots] Error while trying to switch to bot ${botPath}: ${e}`);
       }
     });
   }
 
   confirmAndCloseBot() {
-    let activeBot = Object(_data_botHelpers__WEBPACK_IMPORTED_MODULE_4__["getActiveBot"])();
+    let activeBot = Object(_data_botHelpers__WEBPACK_IMPORTED_MODULE_5__["getActiveBot"])();
 
     if (!activeBot) {
       return Promise.resolve();
@@ -37715,10 +37953,13 @@ const ActiveBotHelper = new class {
     console.log(`Closing active bot`);
     return this.confirmCloseBot().then(result => {
       if (result) {
-        _data_store__WEBPACK_IMPORTED_MODULE_11__["default"].dispatch(_data_action_editorActions__WEBPACK_IMPORTED_MODULE_7__["closeNonGlobalTabs"]());
+        _data_store__WEBPACK_IMPORTED_MODULE_12__["default"].dispatch(_data_action_editorActions__WEBPACK_IMPORTED_MODULE_8__["closeNonGlobalTabs"]());
         this.closeActiveBot().catch(err => new Error(err));
       }
-    }).catch(err => console.error('Error while closing active bot: ', err));
+    }).catch(err => {
+      console.error('Error while closing active bot: ', err);
+      throw new Error(`Error while closing active bot: ${err}`);
+    });
   }
 
   // @ts-ignore
@@ -37797,6 +38038,61 @@ function memoize(fn) {
 
 /***/ }),
 
+/***/ "./src/ui/layout/genericDocument.scss":
+/*!********************************************!*\
+  !*** ./src/ui/layout/genericDocument.scss ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../../../../node_modules/typings-for-css-modules-loader/lib??ref--5-1!../../../../../../node_modules/resolve-url-loader!../../../../../../node_modules/sass-loader/lib/loader.js!./genericDocument.scss */ "../../../node_modules/typings-for-css-modules-loader/lib/index.js??ref--5-1!../../../node_modules/resolve-url-loader/index.js!../../../node_modules/sass-loader/lib/loader.js!./src/ui/layout/genericDocument.scss");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../../../../node_modules/style-loader/lib/addStyles.js */ "../../../node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(true) {
+	module.hot.accept(/*! !../../../../../../node_modules/typings-for-css-modules-loader/lib??ref--5-1!../../../../../../node_modules/resolve-url-loader!../../../../../../node_modules/sass-loader/lib/loader.js!./genericDocument.scss */ "../../../node_modules/typings-for-css-modules-loader/lib/index.js??ref--5-1!../../../node_modules/resolve-url-loader/index.js!../../../node_modules/sass-loader/lib/loader.js!./src/ui/layout/genericDocument.scss", function(__WEBPACK_OUTDATED_DEPENDENCIES__) { (function() {
+		var newContent = __webpack_require__(/*! !../../../../../../node_modules/typings-for-css-modules-loader/lib??ref--5-1!../../../../../../node_modules/resolve-url-loader!../../../../../../node_modules/sass-loader/lib/loader.js!./genericDocument.scss */ "../../../node_modules/typings-for-css-modules-loader/lib/index.js??ref--5-1!../../../node_modules/resolve-url-loader/index.js!../../../node_modules/sass-loader/lib/loader.js!./src/ui/layout/genericDocument.scss");
+
+		if(typeof newContent === 'string') newContent = [[module.i, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	})(__WEBPACK_OUTDATED_DEPENDENCIES__); });
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
 /***/ "./src/ui/layout/genericDocument.tsx":
 /*!*******************************************!*\
   !*** ./src/ui/layout/genericDocument.tsx ***!
@@ -37809,7 +38105,8 @@ __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(module) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GenericDocument", function() { return GenericDocument; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _uifabric_merge_styles__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @uifabric/merge-styles */ "../../../node_modules/@uifabric/merge-styles/lib/index.js");
+/* harmony import */ var _genericDocument_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./genericDocument.scss */ "./src/ui/layout/genericDocument.scss");
+/* harmony import */ var _genericDocument_scss__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_genericDocument_scss__WEBPACK_IMPORTED_MODULE_1__);
 (function () {
   var enterModule = __webpack_require__(/*! react-hot-loader */ "../../../node_modules/react-hot-loader/index.js").enterModule;
 
@@ -37850,31 +38147,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 
 
-const baseCss = {
-  displayName: 'genericDocument',
-  boxSizing: 'border-box',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  height: '100%',
-  width: '100%',
-  minWidth: '480px',
-  overflowX: 'hidden',
-  overflowY: 'auto',
-  selectors: {
-    '& > .generic-doc-content': {
-      width: '90%',
-      maxWidth: '1200px'
-    }
-  }
-};
 class GenericDocument extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
   render() {
-    const style = Object(_uifabric_merge_styles__WEBPACK_IMPORTED_MODULE_1__["mergeStyles"])(baseCss, this.props.style);
+    const {
+      className = ''
+    } = this.props;
     return react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", {
-      className: `${style} generic-doc`
+      className: `${_genericDocument_scss__WEBPACK_IMPORTED_MODULE_1__["genericDocument"]} ${className}`
     }, react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", {
-      className: "generic-doc-content"
+      className: _genericDocument_scss__WEBPACK_IMPORTED_MODULE_1__["genericDocContent"]
     }, this.props.children));
   }
 
@@ -37896,7 +38177,6 @@ class GenericDocument extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
     return;
   }
 
-  reactHotLoader.register(baseCss, "baseCss", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\layout\\genericDocument.tsx");
   reactHotLoader.register(GenericDocument, "GenericDocument", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\layout\\genericDocument.tsx");
   leaveModule(module);
 })();
@@ -38928,7 +39208,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const title = 'Connect to a Dispatch Application';
-const detailedDescription = 'You can connect your bot to a Dispatch.ai application';
+const detailedDescription = 'You can connect your bot to a Dispatch application';
 class DispatchEditor extends react__WEBPACK_IMPORTED_MODULE_2__["Component"] {
   constructor(props, state) {
     super(props, state);
@@ -40617,7 +40897,7 @@ class ExplorerSet extends react__WEBPACK_IMPORTED_MODULE_1__["Component"] {
 /*!****************************************!*\
   !*** ./src/ui/shell/explorer/index.ts ***!
   \****************************************/
-/*! exports provided: AzureBotServiceExplorerContainer, DispatchExplorerContainer, EndpointExplorerContainer, LuisExplorerContainer, ServicesExplorerBarContainer, BotNotOpenExplorer, ExplorerBar, ExplorerBarBody, ExplorerBarHeader, Title, Accessories, ExplorerSet, ServicePane, QnaMakerExplorerContainer, TranscriptExplorer */
+/*! exports provided: BotNotOpenExplorer, ExplorerBarBody, ExplorerBarHeader, Title, Accessories, ExplorerSet, AzureBotServiceExplorerContainer, DispatchExplorerContainer, EndpointExplorerContainer, LuisExplorerContainer, ServicesExplorerBarContainer, ExplorerBar, ServicePane, QnaMakerExplorerContainer, TranscriptExplorer */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -43443,7 +43723,7 @@ const GenericTab = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["connect"])(m
 /*!***********************************!*\
   !*** ./src/ui/shell/mdi/index.ts ***!
   \***********************************/
-/*! exports provided: EmulatorTab, GenericTab, MDI, Tab, TabFactory, TAB_CSS */
+/*! exports provided: EmulatorTab, GenericTab, Tab, TAB_CSS, MDI, TabFactory */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -44082,7 +44362,7 @@ const TAB_CSS = {
 /*!*****************************************!*\
   !*** ./src/ui/shell/multiTabs/index.ts ***!
   \*****************************************/
-/*! exports provided: TabBarTab, MultiTabs, TabBar, ContentOverlay, TabbedDocumentContentWrapper, LeftContentOverlay, OVERLAY_CSS, RightContentOverlay, TabbedDocument, Tab, Content */
+/*! exports provided: TabBarTab, MultiTabs, TabBar, OVERLAY_CSS, ContentOverlay, TabbedDocumentContentWrapper, LeftContentOverlay, RightContentOverlay, TabbedDocument, Tab, Content */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -44097,13 +44377,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TabBarTab", function() { return _tabBarTab__WEBPACK_IMPORTED_MODULE_2__["TabBarTab"]; });
 
 /* harmony import */ var _tabbedDocument__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./tabbedDocument */ "./src/ui/shell/multiTabs/tabbedDocument/index.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "OVERLAY_CSS", function() { return _tabbedDocument__WEBPACK_IMPORTED_MODULE_3__["OVERLAY_CSS"]; });
+
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ContentOverlay", function() { return _tabbedDocument__WEBPACK_IMPORTED_MODULE_3__["ContentOverlay"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TabbedDocumentContentWrapper", function() { return _tabbedDocument__WEBPACK_IMPORTED_MODULE_3__["TabbedDocumentContentWrapper"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "LeftContentOverlay", function() { return _tabbedDocument__WEBPACK_IMPORTED_MODULE_3__["LeftContentOverlay"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "OVERLAY_CSS", function() { return _tabbedDocument__WEBPACK_IMPORTED_MODULE_3__["OVERLAY_CSS"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "RightContentOverlay", function() { return _tabbedDocument__WEBPACK_IMPORTED_MODULE_3__["RightContentOverlay"]; });
 
@@ -45046,7 +45326,7 @@ const TabbedDocumentContentWrapper = Object(react_redux__WEBPACK_IMPORTED_MODULE
 /*!********************************************************!*\
   !*** ./src/ui/shell/multiTabs/tabbedDocument/index.ts ***!
   \********************************************************/
-/*! exports provided: ContentOverlay, TabbedDocumentContentWrapper, LeftContentOverlay, OVERLAY_CSS, RightContentOverlay, TabbedDocument, Tab, Content */
+/*! exports provided: OVERLAY_CSS, ContentOverlay, TabbedDocumentContentWrapper, LeftContentOverlay, RightContentOverlay, TabbedDocument, Tab, Content */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -45612,16 +45892,13 @@ const Content = props => react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_co
 /*!**************************************!*\
   !*** ./src/ui/shell/navBar/index.ts ***!
   \**************************************/
-/*! exports provided: NavBar, NavLink */
+/*! exports provided: NavBar */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _navBar__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./navBar */ "./src/ui/shell/navBar/navBar.tsx");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "NavBar", function() { return _navBar__WEBPACK_IMPORTED_MODULE_0__["NavBar"]; });
-
-/* harmony import */ var _navLink__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./navLink */ "./src/ui/shell/navBar/navLink.tsx");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "NavLink", function() { return _navLink__WEBPACK_IMPORTED_MODULE_1__["NavLink"]; });
+/* harmony import */ var _navBarContainer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./navBarContainer */ "./src/ui/shell/navBar/navBarContainer.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "NavBar", function() { return _navBarContainer__WEBPACK_IMPORTED_MODULE_0__["NavBar"]; });
 
 //
 // Copyright (c) Microsoft. All rights reserved.
@@ -45655,7 +45932,6 @@ __webpack_require__.r(__webpack_exports__);
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 
 
 /***/ }),
@@ -45719,25 +45995,16 @@ if(true) {
 /*!****************************************!*\
   !*** ./src/ui/shell/navBar/navBar.tsx ***!
   \****************************************/
-/*! exports provided: NavBar */
+/*! exports provided: NavBarComponent */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* WEBPACK VAR INJECTION */(function(module) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NavBar", function() { return NavBar; });
-/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react-redux */ "../../../node_modules/react-redux/es/index.js");
-/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "../../../node_modules/classnames/index.js");
-/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../constants */ "./src/constants.ts");
-/* harmony import */ var _data_action_navBarActions__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../data/action/navBarActions */ "./src/data/action/navBarActions.ts");
-/* harmony import */ var _data_action_explorerActions__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../data/action/explorerActions */ "./src/data/action/explorerActions.ts");
-/* harmony import */ var _data_action_editorActions__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../data/action/editorActions */ "./src/data/action/editorActions.ts");
-/* harmony import */ var _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../platform/commands/commandServiceImpl */ "./src/platform/commands/commandServiceImpl.ts");
-/* harmony import */ var _navBar_scss__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./navBar.scss */ "./src/ui/shell/navBar/navBar.scss");
-/* harmony import */ var _navBar_scss__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_navBar_scss__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var _navLink__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./navLink */ "./src/ui/shell/navBar/navLink.tsx");
+/* WEBPACK VAR INJECTION */(function(module) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NavBarComponent", function() { return NavBarComponent; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _navBar_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./navBar.scss */ "./src/ui/shell/navBar/navBar.scss");
+/* harmony import */ var _navBar_scss__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_navBar_scss__WEBPACK_IMPORTED_MODULE_1__);
 (function () {
   var enterModule = __webpack_require__(/*! react-hot-loader */ "../../../node_modules/react-hot-loader/index.js").enterModule;
 
@@ -45778,58 +46045,28 @@ __webpack_require__.r(__webpack_exports__);
 //
 
 
-
-
-
-
-
-
-
-
-
-class NavBarComponent extends react__WEBPACK_IMPORTED_MODULE_2__["Component"] {
+class NavBarComponent extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
   constructor(props) {
     super(props);
-
-    this.handleBotSettingsClick = () => {
-      if (this.props.activeBot) {
-        _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_7__["CommandServiceImpl"].call('bot-settings:open', this.props.activeBot);
-      }
-    };
   }
 
   render() {
-    const {
-      selection,
-      handleClick,
-      handleSettingsClick
-    } = this.props;
-    return react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("nav", {
-      className: _navBar_scss__WEBPACK_IMPORTED_MODULE_8__["navBar"]
-    }, react__WEBPACK_IMPORTED_MODULE_2__["createElement"](_navLink__WEBPACK_IMPORTED_MODULE_9__["NavLink"], {
-      className: classnames__WEBPACK_IMPORTED_MODULE_1___default()('nav-link bot-explorer', {
-        selected: selection === _constants__WEBPACK_IMPORTED_MODULE_3__["NAVBAR_BOT_EXPLORER"]
-      }),
-      onClick: evt => handleClick(evt, _constants__WEBPACK_IMPORTED_MODULE_3__["NAVBAR_BOT_EXPLORER"]),
-      title: "Bot Explorer"
-    }), react__WEBPACK_IMPORTED_MODULE_2__["createElement"](_navLink__WEBPACK_IMPORTED_MODULE_9__["NavLink"], {
-      className: classnames__WEBPACK_IMPORTED_MODULE_1___default()('nav-link services', {
-        selected: selection === _constants__WEBPACK_IMPORTED_MODULE_3__["NAVBAR_SERVICES"]
-      }),
-      onClick: evt => handleClick(evt, _constants__WEBPACK_IMPORTED_MODULE_3__["NAVBAR_SERVICES"]),
-      title: "Services"
-    }), react__WEBPACK_IMPORTED_MODULE_2__["createElement"](_navLink__WEBPACK_IMPORTED_MODULE_9__["NavLink"], {
-      className: classnames__WEBPACK_IMPORTED_MODULE_1___default()('nav-link bot-settings', {
-        disabled: !this.props.activeBot
-      }),
-      onClick: this.handleBotSettingsClick,
-      title: "Bot Settings"
-    }), react__WEBPACK_IMPORTED_MODULE_2__["createElement"](_navLink__WEBPACK_IMPORTED_MODULE_9__["NavLink"], {
-      className: "nav-link settings",
-      onClick: handleSettingsClick,
-      title: "Settings",
-      justifyEnd: true
-    }));
+    // const { selection, handleClick, handleSettingsClick } = this.props;
+    return react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("nav", {
+      className: _navBar_scss__WEBPACK_IMPORTED_MODULE_1__["navBar"]
+    }, this.links);
+  }
+
+  get links() {
+    return ['Bot Explorer', 'Services', 'Bot Settings', 'Settings'].map((title, index) => {
+      return react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("a", {
+        key: index,
+        href: "javascript:void(0);",
+        title: title,
+        className: _navBar_scss__WEBPACK_IMPORTED_MODULE_1__["navLink"],
+        onClick: this.props.handleClick
+      });
+    });
   }
 
   // @ts-ignore
@@ -45839,28 +46076,6 @@ class NavBarComponent extends react__WEBPACK_IMPORTED_MODULE_2__["Component"] {
   }
 
 }
-
-const mapStateToProps = state => ({
-  activeBot: state.bot.activeBot
-});
-
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  handleSettingsClick: () => dispatch(_data_action_editorActions__WEBPACK_IMPORTED_MODULE_6__["open"](_constants__WEBPACK_IMPORTED_MODULE_3__["CONTENT_TYPE_APP_SETTINGS"], _constants__WEBPACK_IMPORTED_MODULE_3__["DOCUMENT_ID_APP_SETTINGS"], true, null)),
-  handleClick: (_evt, selection) => {
-    if (ownProps.selection === selection) {
-      // toggle explorer when clicking the same navbar icon
-      dispatch(_data_action_explorerActions__WEBPACK_IMPORTED_MODULE_5__["show"](!ownProps.showingExplorer));
-    } else {
-      // switch tabs and show explorer when clicking different navbar icon
-      dispatch(() => {
-        dispatch(_data_action_navBarActions__WEBPACK_IMPORTED_MODULE_4__["select"](selection));
-        dispatch(_data_action_explorerActions__WEBPACK_IMPORTED_MODULE_5__["show"](true));
-      });
-    }
-  }
-});
-
-const NavBar = Object(react_redux__WEBPACK_IMPORTED_MODULE_0__["connect"])(mapStateToProps, mapDispatchToProps)(NavBarComponent);
 ;
 
 (function () {
@@ -45873,9 +46088,6 @@ const NavBar = Object(react_redux__WEBPACK_IMPORTED_MODULE_0__["connect"])(mapSt
   }
 
   reactHotLoader.register(NavBarComponent, "NavBarComponent", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\shell\\navBar\\navBar.tsx");
-  reactHotLoader.register(mapStateToProps, "mapStateToProps", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\shell\\navBar\\navBar.tsx");
-  reactHotLoader.register(mapDispatchToProps, "mapDispatchToProps", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\shell\\navBar\\navBar.tsx");
-  reactHotLoader.register(NavBar, "NavBar", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\shell\\navBar\\navBar.tsx");
   leaveModule(module);
 })();
 
@@ -45884,21 +46096,23 @@ const NavBar = Object(react_redux__WEBPACK_IMPORTED_MODULE_0__["connect"])(mapSt
 
 /***/ }),
 
-/***/ "./src/ui/shell/navBar/navLink.tsx":
-/*!*****************************************!*\
-  !*** ./src/ui/shell/navBar/navLink.tsx ***!
-  \*****************************************/
-/*! exports provided: NavLink */
+/***/ "./src/ui/shell/navBar/navBarContainer.ts":
+/*!************************************************!*\
+  !*** ./src/ui/shell/navBar/navBarContainer.ts ***!
+  \************************************************/
+/*! exports provided: NavBar */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* WEBPACK VAR INJECTION */(function(module) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NavLink", function() { return NavLink; });
-/* harmony import */ var _bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @bfemulator/ui-react */ "../../sdk/ui-react/built/index.js");
-/* harmony import */ var _bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _uifabric_merge_styles__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @uifabric/merge-styles */ "../../../node_modules/@uifabric/merge-styles/lib/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
+/* WEBPACK VAR INJECTION */(function(module) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NavBar", function() { return NavBar; });
+/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react-redux */ "../../../node_modules/react-redux/es/index.js");
+/* harmony import */ var _navBar__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./navBar */ "./src/ui/shell/navBar/navBar.tsx");
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../constants */ "./src/constants.ts");
+/* harmony import */ var _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../platform/commands/commandServiceImpl */ "./src/platform/commands/commandServiceImpl.ts");
+/* harmony import */ var _data_action_navBarActions__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../data/action/navBarActions */ "./src/data/action/navBarActions.ts");
+/* harmony import */ var _data_action_explorerActions__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../data/action/explorerActions */ "./src/data/action/explorerActions.ts");
+/* harmony import */ var _data_action_editorActions__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../data/action/editorActions */ "./src/data/action/editorActions.ts");
 (function () {
   var enterModule = __webpack_require__(/*! react-hot-loader */ "../../../node_modules/react-hot-loader/index.js").enterModule;
 
@@ -45908,77 +46122,72 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const css = Object(_uifabric_merge_styles__WEBPACK_IMPORTED_MODULE_1__["mergeStyles"])({
-  displayName: 'navLink',
-  position: 'relative',
-  height: '50px',
-  width: '50px',
-  selectors: {
-    '&.justify-end': {
-      marginTop: 'auto'
-    },
-    '& > a.nav-link': {
-      display: 'inline-block',
-      width: '50px',
-      height: '50px',
-      boxSizing: 'border-box',
-      backgroundSize: '25px',
-      backgroundPosition: '50% 50%',
-      backgroundRepeat: 'no-repeat',
-      opacity: 0.6,
-      selectors: {
-        ':hover, & .selected': {
-          opacity: 1
-        },
-        ':focus': {
-          outline: 0,
-          selectors: {
-            '& + span': {
-              opacity: 1
-            }
-          }
-        },
-        '&.disabled': {
-          opacity: 0.6
+
+
+
+
+const selectionMap = [_constants__WEBPACK_IMPORTED_MODULE_2__["NAVBAR_BOT_EXPLORER"], _constants__WEBPACK_IMPORTED_MODULE_2__["NAVBAR_SERVICES"]];
+
+const mapStateToProps = state => ({
+  activeBot: state.bot.activeBot
+});
+
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  handleClick: event => {
+    const {
+      selection: currentSelection
+    } = ownProps;
+    const {
+      currentTarget: anchor
+    } = event;
+    const previousSelection = anchor.parentElement.querySelector('[aria-selected]');
+
+    if (previousSelection) {
+      previousSelection.removeAttribute('aria-selected');
+    }
+
+    const index = Array.prototype.indexOf.call(anchor.parentElement.children, anchor);
+
+    switch (index) {
+      // Bot Explorer
+      case 0: // Services
+
+      case 1:
+        if (currentSelection === selectionMap[index]) {
+          // toggle explorer when clicking the same navbar icon
+          dispatch(_data_action_explorerActions__WEBPACK_IMPORTED_MODULE_5__["show"](!ownProps.showingExplorer));
+        } else {
+          // switch tabs and show explorer when clicking different navbar icon
+          dispatch(() => {
+            dispatch(_data_action_navBarActions__WEBPACK_IMPORTED_MODULE_4__["select"](selectionMap[index]));
+            dispatch(_data_action_explorerActions__WEBPACK_IMPORTED_MODULE_5__["show"](true));
+          });
+          anchor.setAttributeNode(document.createAttribute('aria-selected')); // boolean attr
         }
-      }
-    },
-    '& > span': {
-      position: 'absolute',
-      display: 'inline-block',
-      width: '2px',
-      height: '50px',
-      top: 0,
-      left: 0,
-      opacity: 0,
-      backgroundColor: `var(${_bfemulator_ui_react__WEBPACK_IMPORTED_MODULE_0__["ThemeVariables"].focusedSelectedListItemBg})`
+
+        break;
+      // Bot Settings
+
+      case 3:
+        if (ownProps.activeBot) {
+          _platform_commands_commandServiceImpl__WEBPACK_IMPORTED_MODULE_3__["CommandServiceImpl"].call('bot-settings:open', ownProps.activeBot).catch();
+        }
+
+        break;
+      // Settings
+
+      default:
+        const {
+          CONTENT_TYPE_APP_SETTINGS,
+          DOCUMENT_ID_APP_SETTINGS
+        } = _constants__WEBPACK_IMPORTED_MODULE_2__;
+        dispatch(_data_action_editorActions__WEBPACK_IMPORTED_MODULE_6__["open"](CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS, true, null));
+        break;
     }
   }
 });
-class NavLink extends react__WEBPACK_IMPORTED_MODULE_2__["Component"] {
-  constructor(props) {
-    super(props);
-  }
 
-  render() {
-    const className = this.props.justifyEnd ? 'justify-end' : '';
-    return react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("div", {
-      className: `${className} ${css}`
-    }, react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("a", {
-      className: this.props.className,
-      onClick: this.props.onClick,
-      href: "javascript:void(0);",
-      title: this.props.title
-    }), react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("span", null));
-  }
-
-  // @ts-ignore
-  __reactstandin__regenerateByEval(key, code) {
-    // @ts-ignore
-    this[key] = eval(code);
-  }
-
-}
+const NavBar = Object(react_redux__WEBPACK_IMPORTED_MODULE_0__["connect"])(mapStateToProps, mapDispatchToProps)(_navBar__WEBPACK_IMPORTED_MODULE_1__["NavBarComponent"]);
 ;
 
 (function () {
@@ -45990,8 +46199,10 @@ class NavLink extends react__WEBPACK_IMPORTED_MODULE_2__["Component"] {
     return;
   }
 
-  reactHotLoader.register(css, "css", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\shell\\navBar\\navLink.tsx");
-  reactHotLoader.register(NavLink, "NavLink", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\shell\\navBar\\navLink.tsx");
+  reactHotLoader.register(selectionMap, "selectionMap", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\shell\\navBar\\navBarContainer.ts");
+  reactHotLoader.register(mapStateToProps, "mapStateToProps", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\shell\\navBar\\navBarContainer.ts");
+  reactHotLoader.register(mapDispatchToProps, "mapDispatchToProps", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\shell\\navBar\\navBarContainer.ts");
+  reactHotLoader.register(NavBar, "NavBar", "C:\\Users\\juwilaby\\Documents\\dev\\BotFramework-Emulator\\packages\\app\\client\\src\\ui\\shell\\navBar\\navBarContainer.ts");
   leaveModule(module);
 })();
 
@@ -46135,14 +46346,14 @@ const debounce = function (closure, timeout = 500) {
 
 /***/ }),
 
-/***/ "dll-reference shared_0ea425449d17d1d3ca97":
+/***/ "dll-reference shared_8a0ca44227a5cb364b97":
 /*!**********************************************!*\
-  !*** external "shared_0ea425449d17d1d3ca97" ***!
+  !*** external "shared_8a0ca44227a5cb364b97" ***!
   \**********************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = shared_0ea425449d17d1d3ca97;
+module.exports = shared_8a0ca44227a5cb364b97;
 
 /***/ }),
 

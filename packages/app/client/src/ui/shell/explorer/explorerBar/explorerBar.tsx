@@ -34,7 +34,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import BotExplorerBar from '../botExplorerBar';
+import BotExplorerBar from '../botExplorerBar/botExplorerBar';
 import { ServicesExplorerBarContainer } from '../servicesExplorerBar';
 import * as Constants from '../../../../constants';
 import { IBotConfig } from 'msbot/bin/schema';
