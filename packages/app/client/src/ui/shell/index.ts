@@ -32,4 +32,4 @@
 //
 
 export * from './main';
-export * from './statusBar';
+export * from './statusBar/statusBar';

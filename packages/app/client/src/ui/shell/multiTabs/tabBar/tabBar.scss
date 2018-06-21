@@ -1,0 +1,61 @@
+.tabBar {
+  display: flex;
+  background-color: var(--neutral-15);
+  min-height: 32px;
+  &.draggedOver {
+    background-color: var(--neutral-14);
+  }
+
+  & > ul {
+    display: flex;
+    background-color: var(--neutral-15);
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow-x: auto;
+
+    &::-webkit-scrollbar {
+      height: 2px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--neutral-10);
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+  }
+
+  & > div.tabBarWidgets {
+    display: flex;
+    align-items: center;
+    width: auto;
+    margin-left: auto;
+    flex-shrink: 0;
+    & > span {
+      display: inline-block;
+      cursor: pointer;
+      height: 16px;
+      margin-right: 12px;
+      font-size: 12px;
+      :first-of-type {
+        margin-left: 12px;
+      }
+    }
+
+    & > .widget {
+      background-size: 16px;
+      height: 32px;
+      width: 22px
+    }
+
+    & > .splitWidget {
+      background: url("../../../media/ic_split.svg") no-repeat 50% 50%;
+    }
+
+    & > .presentationWidget {
+      background: url("../../../media/ic_presentation.svg") no-repeat 50% 50%;
+    }
+  }
+}

@@ -13,16 +13,16 @@
   div {
     box-sizing: border-box;
   }
-  ::-webkit-scrollbar {
+  &::-webkit-scrollbar {
     width: 10px;
     height: 10px;
   }
 
-  ::-webkit-scrollbar-track {
+  &::-webkit-scrollbar-track {
     background: transparent;
   }
 
-  ::-webkit-scrollbar-thumb {
+  &::-webkit-scrollbar-thumb {
     background: transparent;
   }
 }

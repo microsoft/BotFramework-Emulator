@@ -32,6 +32,6 @@
 //
 
 export * from './multiTabs';
-export * from './tabBar';
-export * from './tabBarTab';
+export * from './tabBar/tabBar';
+export * from './tabBar/tabBarTab';
 export * from './tabbedDocument';

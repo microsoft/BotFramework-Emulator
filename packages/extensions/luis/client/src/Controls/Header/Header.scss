@@ -1,0 +1,38 @@
+.header {
+  color: white;
+  font-family: var(--default-font-family);
+  font-size: 12px;
+  padding: 6px 3px;
+  user-select: text;
+  display: inline-block;
+  width: 100%;
+}
+:global{
+  #right {
+    float: right;
+    display: block;
+  }
+  #appVersion {
+    padding-right: 16px;
+    color: var(--neutral-3);
+  }
+  #appSlot {
+    padding-right: 6px;
+    color: var(--neutral-3);
+  }
+
+  #appName {
+    font-weight: bold;
+  }
+
+  #appId {
+    padding-left: 16px;
+    color: var(--neutral-3);
+  }
+
+  #left {
+    display: block;
+    float: left;
+
+  }
+}

@@ -31,23 +31,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Fonts, GlobalCss, Splitter, ThemeVariables } from '@bfemulator/ui-react';
+import { Splitter } from '@bfemulator/ui-react';
 import { InspectorHost } from '@bfemulator/sdk-client';
-import { mergeStyles } from '@uifabric/merge-styles';
 import { IBotConfig, IDispatchService, ILuisService, ServiceType, IConnectedService } from 'msbot/bin/schema';
 import * as React from 'react';
 import { Component } from 'react';
 import ReactJson from 'react-json-view';
 import AppStateAdapter from './Adapters/AppStateAdapter';
-import { ButtonSelected, ControlBar } from './Controls/ControlBar';
-import Editor from './Controls/Editor';
-import Header from './Controls/Header';
+import { ButtonSelected, ControlBar } from './Controls/ControlBar/ControlBar';
+import Editor from './Controls/Editor/Editor';
+import Header from './Controls/Header/Header';
 import MockState from './Data/MockData';
 import { AppInfo } from './Luis/AppInfo';
 import LuisClient from './Luis/Client';
 import { IntentInfo } from './Luis/IntentInfo';
 import { LuisAppInfo } from './Models/LuisAppInfo';
 import { LuisTraceInfo } from './Models/LuisTraceInfo';
+import { ThemeVariables } from '@bfemulator/ui-react';
+import { Fonts } from '@bfemulator/ui-react';
+
+import * as styles from './App.scss';
 
 let $host: InspectorHost = (window as any).host;
 const LuisApiBasePath = 'https://westus.api.cognitive.microsoft.com/luis/api/v2.0';
@@ -57,27 +60,6 @@ const AccessoryDefaultState = 'default';
 const AccessoryWorkingState = 'working';
 
 let persistentStateKey = Symbol('persistentState').toString();
-
-let globalCss = {
-  whiteSpace: 'nowrap',
-  width: '622px'
-};
-
-let jsonViewerCss = {
-  overflowY: 'auto',
-  paddingTop: '10px',
-  paddingBottom: '10px',
-  height: '95%',
-  backgroundColor: `var(${ThemeVariables.neutral15})`,
-  fontFamily: Fonts.FONT_FAMILY_DEFAULT,
-};
-
-const appCss = mergeStyles({
-  displayName: 'luisApp',
-  height: '100%',
-  fontSize: '12px',
-  padding: '5px'
-});
 
 interface AppState {
   traceInfo: LuisTraceInfo;
@@ -93,6 +75,15 @@ interface PersistentAppState {
   pendingTrain: boolean;
   pendingPublish: boolean;
 }
+
+let jsonViewerCss = {
+  overflowY: 'auto',
+  paddingTop: '10px',
+  paddingBottom: '10px',
+  height: '95%',
+  backgroundColor: `var(${ThemeVariables.neutral15})`,
+  fontFamily: Fonts.FONT_FAMILY_DEFAULT,
+};
 
 class App extends Component<any, AppState> {
 
@@ -194,7 +185,7 @@ class App extends Component<any, AppState> {
 
   render() {
     return (
-      <div className={ appCss }>
+      <div className={ styles.app }>
         <Header
           appId={ this.state.traceInfo.luisModel.ModelID }
           appName={ this.state.appInfo.name }
