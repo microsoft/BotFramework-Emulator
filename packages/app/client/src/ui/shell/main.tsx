@@ -31,91 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { mergeStyles, IStyle } from '@uifabric/merge-styles';
 import * as React from 'react';
+import * as styles from './main.scss';
 
-import { ThemeVariables, Fonts, Splitter } from '@bfemulator/ui-react';
+import { Splitter } from '@bfemulator/ui-react';
 import { ExplorerBar } from './explorer';
 import { MDI } from './mdi';
 import { NavBar } from './navBar';
 import { DialogHost, TabManager } from '../dialogs';
 import * as Constants from '../../constants';
-import { StatusBar } from './statusBar';
+import { StatusBar } from './statusBar/statusBar';
 import { StoreVisualizer } from '../debug/storeVisualizer';
 import { Editor } from '../../data/reducer/editor';
-
-const rootCss: IStyle = {
-  backgroundColor: `var(${ThemeVariables.neutral15})`,
-  cursor: 'default',
-  fontFamily: Fonts.FONT_FAMILY_DEFAULT,
-  fontSize: '13px',
-  height: '100%',
-  margin: 0,
-  minHeight: '100%',
-  overflow: 'hidden',
-  userSelect: 'none',
-};
-
-mergeStyles({
-  selectors: {
-    ':global(html)': rootCss,
-    ':global(body)': rootCss,
-    ':global(#root)': rootCss
-  }
-});
-
-mergeStyles({
-  selectors: {
-    ':global(div)': {
-      boxSizing: 'border-box',
-    },
-    ':global(::-webkit-scrollbar)': {
-      width: '10px',
-      height: '10px',
-    },
-    ':global(::-webkit-scrollbar-track)': {
-      background: 'transparent',
-    },
-    ':global(::-webkit-scrollbar-thumb)': {
-      background: 'transparent',
-    }
-  }
-});
-
-const css = mergeStyles({
-  displayName: 'main',
-  backgroundColor: `var(${ThemeVariables.neutral15})`,
-  color: `var(${ThemeVariables.neutral5})`,
-  display: 'flex',
-  width: '100%',
-  height: '100%',
-  minHeight: '100%',
-  flexDirection: 'column'
-});
-
-const navCss = mergeStyles({
-  displayName: 'mainNav',
-  display: 'flex',
-  flexDirection: 'row',
-  width: '100%',
-  height: '100%',
-  selectors: {
-    '& > .workbench': {
-      display: 'flex',
-      flex: 1,
-      flexDirection: 'column',
-    },
-
-    '& .mdi-wrapper': {
-      height: '100%',
-      width: '100%',
-    },
-
-    '& .secondary-mdi': {
-      borderLeft: `1px solid var(${ThemeVariables.neutral9})`
-    }
-  }
-});
 
 export interface MainProps {
   primaryEditor?: Editor;
@@ -155,10 +82,12 @@ export class Main extends React.Component<MainProps, MainState> {
 
   render() {
     const tabGroup1 = this.props.primaryEditor &&
-      <div className="mdi-wrapper" key={ 'primaryEditor' }><MDI owningEditor={ Constants.EDITOR_KEY_PRIMARY }/></div>;
+      <div className={styles.mdiWrapper} key={ 'primaryEditor' }>
+        <MDI owningEditor={ Constants.EDITOR_KEY_PRIMARY }/>
+      </div>;
 
     const tabGroup2 = this.props.secondaryEditor && Object.keys(this.props.secondaryEditor.documents).length ?
-      <div className="mdi-wrapper secondary-mdi" key={ 'secondaryEditor' }><MDI
+      <div className={`${styles.mdiWrapper} ${styles.secondaryMdi}`} key={ 'secondaryEditor' }><MDI
         owningEditor={ Constants.EDITOR_KEY_SECONDARY }/></div> : null;
 
     // If falsy children aren't filtered out, splitter won't recognize change in number of children
@@ -180,13 +109,16 @@ export class Main extends React.Component<MainProps, MainState> {
     );
 
     return (
-      <div className={ css }>
-        <div className={ navCss }>
+      <div className={ styles.main }>
+        <div className={ styles.nav }>
           { !this.props.presentationModeEnabled &&
           <NavBar selection={ this.props.navBarSelection } showingExplorer={ this.props.showingExplorer }/> }
-          <div className="workbench">
-            <Splitter orientation={ 'vertical' } primaryPaneIndex={ 0 } minSizes={ { 0: 40, 1: 40 } }
-                      initialSizes={ { 0: 210 } }>
+          <div className={styles.workbench}>
+            <Splitter
+              orientation={ 'vertical' }
+              primaryPaneIndex={ 0 }
+              minSizes={ { 0: 40, 1: 40 } }
+              initialSizes={ { 0: 210 } }>
               { workbenchChildren }
             </Splitter>
           </div>

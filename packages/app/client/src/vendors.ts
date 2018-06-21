@@ -1,3 +1,6 @@
+import 'botframework-webchat/botchat.css';
+import '@fuselab/ui-fabric/css/fabric.min.css';
+
 import 'react';
 import 'redux';
 import 'redux-thunk';

@@ -35,5 +35,5 @@ export * from './colors';
 export * from './decorators';
 export * from './fonts';
 export * from './shadows';
-export * from './globalCss';
+export * from './globalCss.scss';
 export * from './themeVariables';

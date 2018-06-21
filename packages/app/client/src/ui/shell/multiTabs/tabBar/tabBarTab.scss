@@ -1,0 +1,14 @@
+.tab {
+  height: 100%;
+  border: none;
+  padding: 0;
+  &:active {
+    border: 0;
+    outline: 0;
+  }
+
+  &:focus {
+    border: 0;
+    outline: 0;
+  }
+}

@@ -33,15 +33,15 @@
 
 import { InspectorHost } from '@bfemulator/sdk-client';
 import { Splitter } from '@bfemulator/ui-react';
-import { mergeStyles } from '@uifabric/merge-styles';
 import * as React from 'react';
+import * as styles from './App.scss';
 import { IBotConfig, IQnAService, ServiceType } from 'msbot/bin/schema';
 import { QnAKbInfo, QnAMakerClient } from './QnAMaker/Client';
 import { QnAMakerTraceInfo } from './Models/QnAMakerTraceInfo';
 import { Answer } from './Models/QnAMakerModels';
-import QnAMakerHeader from './Views/QnAMakerHeader';
-import PhrasingsView from './Views/PhrasingsView';
-import AnswersView from './Views/AnswersView';
+import QnAMakerHeader from './Views/QnAMakerHeader/QnAMakerHeader';
+import PhrasingsView from './Views/PhrasingsView/PhrasingsView';
+import AnswersView from './Views/AnswersView/AnswersView';
 import AppStateAdapter from './AppStateAdapter';
 
 let $host: InspectorHost = (window as any).host;
@@ -52,26 +52,6 @@ const AccessoryDefaultState = 'default';
 const AccessoryWorkingState = 'working';
 
 let persistentStateKey = Symbol('persistentState').toString();
-
-let globalCss = {
-  whiteSpace: 'nowrap',
-  width: '100%',
-  color: 'white',
-};
-
-const appCss = mergeStyles({
-  displayName: 'qnaMakerApp',
-  height: '100%',
-  fontSize: '12px',
-  padding: '5px',
-  overflowY: 'auto'
-});
-
-const noServiceCss = mergeStyles({
-  displayName: 'noService',
-  padding: '20px',
-  whiteSpace: 'normal',
-});
 
 interface AppState {
   id: string;
@@ -179,12 +159,12 @@ class App extends React.Component<any, AppState> {
       const text = 'Unable to find a QnA Maker service with Knowledge Base ID ' + this.state.traceInfo.knowledgeBaseId
         + '. Please add a QnA Maker service to your bot.';
       return (
-        <div className={ `${noServiceCss} no-service` }>
+        <div className={ styles.noService }>
           <p>{ text }</p>
         </div>);
     }
     return (
-      <div className={ appCss }>
+      <div className={ styles.app }>
         <QnAMakerHeader
           knowledgeBaseId={ this.state.traceInfo.knowledgeBaseId }
           knowledgeBaseName={ this.state.qnaService.name }
