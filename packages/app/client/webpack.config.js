@@ -26,7 +26,6 @@ const use = [
 ];
 const defaultConfig = {
   entry: {
-    mergeStylesConfig: require.resolve('./src/mergeStylesConfig.ts'),
     index: require.resolve('./src/index.tsx')
   },
 
@@ -44,7 +43,7 @@ const defaultConfig = {
         use: ['awesome-typescript-loader']
       },
       {
-        test: /\.scss$/,
+        test: /\.(s)?css$/,
         use: [
           'style-loader',
           {
@@ -100,10 +99,7 @@ const defaultConfig = {
     new HardSourceWebpackPlugin(),
     new CopyWebpackPlugin([
       { from: './src/ui/styles/themes', to: 'themes/' },
-      { from: require.resolve('botframework-webchat/botchat.css'), to: 'external/css/botchat.css' },
-      { from: require.resolve('@fuselab/ui-fabric/css/fabric.min.css'), to: 'external/css/fabric.min.css' },
       { from: require.resolve('@fuselab/ui-fabric/themes/seti/seti.woff'), to: 'external/media' },
-      { from: './src/ui/media', to: 'external/media' }
     ]),
     new DefinePlugin({
       DEV: JSON.stringify((npm_lifecycle_event.includes("dev")))
@@ -170,10 +166,6 @@ const vendorsConfig = () => ({
       name: '[name]_[hash]'
     })
   ]
-});
-
-const stylesConfig = () => ({
-
 });
 
 const buildClassification = npm_lifecycle_event.split(':')[1];

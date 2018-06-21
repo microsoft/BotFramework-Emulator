@@ -52,7 +52,7 @@
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "file-loader": "^1.1.11",
-    "hard-source-webpack-plugin": "^0.6.9",
+    "hard-source-webpack-plugin": "^0.8.1",
     "jest": "^23.0.0",
     "jest-enzyme": "^6.0.0",
     "jsdom-global": "^3.0.2",

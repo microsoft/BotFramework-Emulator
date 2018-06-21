@@ -31,21 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
 import * as React from 'react';
 import { connect } from 'react-redux';
+import * as styles from './multiTabs.scss';
 
 import { Content as TabbedDocumentContent, Tab as TabbedDocumentTab, TabBar, TabBarTab } from './index';
 import { filterChildren, hmrSafeNameComparison } from '@bfemulator/ui-react';
 import { RootState } from '../../../data/store';
-
-const CSS = css({
-  display: 'flex',
-  flex: 1,
-  flexDirection: 'column',
-  height: '100%',
-  boxSizing: 'border-box'
-});
 
 interface MultiTabsProps {
   value?: number;
@@ -64,7 +56,7 @@ class MultiTabsComponent extends React.Component<MultiTabsProps> {
 
   render() {
     return (
-      <div { ...CSS }>
+      <div className={ styles.multiTabs }>
         {
           !this.props.presentationModeEnabled &&
           <TabBar owningEditor={ this.props.owningEditor } childRefs={ this.childRefs }

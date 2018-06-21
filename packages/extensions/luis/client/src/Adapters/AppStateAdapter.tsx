@@ -36,7 +36,7 @@ import { LuisTraceInfo } from '../Models/LuisTraceInfo';
 import { AppInfo } from '../Luis/AppInfo';
 import { IntentInfo } from '../Luis/IntentInfo';
 import { TraceActivity } from '@bfemulator/sdk-shared';
-import { ButtonSelected } from '../Controls/ControlBar';
+import { ButtonSelected } from '../Controls/ControlBar/ControlBar';
 import { RecognizerResultAdapter } from '../Adapters/RecognizerResultAdapter';
 
 const TraceActivity = 'trace';
