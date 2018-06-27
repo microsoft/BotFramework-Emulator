@@ -42,7 +42,7 @@ import * as EditorActions from './data/action/editorActions';
 import * as FileActions from './data/action/fileActions';
 import * as NavBarActions from './data/action/navBarActions';
 import { pathExistsInRecentBots } from './data/botHelpers';
-import { getTabGroupForDocument, showWelcomePage, isActiveDocument } from './data/editorHelpers';
+import { getTabGroupForDocument, showWelcomePage } from './data/editorHelpers';
 import store from './data/store';
 import { ExtensionManager } from './extensions';
 import { CommandServiceImpl } from './platform/commands/commandServiceImpl';
@@ -50,7 +50,7 @@ import * as LogService from './platform/log/logService';
 import * as SettingsService from './platform/settings/settingsService';
 import { BotCreationDialog, DialogService, SecretPromptDialog } from './ui/dialogs';
 import { ActiveBotHelper } from './ui/helpers/activeBotHelper';
-import { isChatFile, isTranscriptFile } from './ui/utils';
+import { isChatFile, isTranscriptFile } from './utils';
 
 // =============================================================================
 export const CommandRegistry = new CommReg();
@@ -269,29 +269,12 @@ export function registerCommands() {
     }
   });
 
-  CommandRegistry.registerCommand('file:changed', async (filename: string) => {
-    if (isActiveDocument(filename)) {
-      // prompt the user for a reload
-      const options = {
-        buttons: ['Cancel', 'Reload'],
-        title: 'File change detected',
-        message: 'We have detected a change in this file on disk. Would you like to reload it in the Emulator?'
-      };
-      const confirmation = await CommandServiceImpl.remoteCall('shell:showMessageBox', options);
-      if (confirmation) {
-        // reload the file
-        if (isChatFile(filename)) {
-          const reload = true;
-          await CommandServiceImpl.call('chat:open', filename, reload);
-        } else if (isTranscriptFile(filename)) {
-          await CommandServiceImpl.call('transcript:reload', filename);
-        }
-      }
-    } else {
-      // add the filename to pending updates and prompt the user once the document is focused again
-      if (isChatFile(filename) || isTranscriptFile(filename)) {
-        store.dispatch(EditorActions.addDocPendingChange(filename));
-      }
+  // ---------------------------------------------------------------------------
+  // Called for files in the bot's directory whose contents have changed on disk
+  CommandRegistry.registerCommand('file:changed', (filename: string) => {
+    // add the filename to pending updates and prompt the user once the document is focused again
+    if (isChatFile(filename) || isTranscriptFile(filename)) {
+      store.dispatch(EditorActions.addDocPendingChange(filename));
     }
   });
 

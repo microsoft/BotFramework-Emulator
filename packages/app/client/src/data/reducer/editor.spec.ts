@@ -56,8 +56,7 @@ import {
   splitTab,
   swapTabs,
   addDocPendingChange,
-  removeDocPendingChange,
-  clearDocsPendingChange
+  removeDocPendingChange
 } from '../action/editorActions';
 import * as Constants from '../../constants';
 import { deepCopySlow } from '@bfemulator/app-shared';
@@ -377,7 +376,8 @@ describe('Editor reducer tests', () => {
           recentTabs: ['doc6', 'doc4', 'doc5'],
           tabOrder: ['doc4', 'doc5', 'doc6']
         }
-      }
+      },
+      docsWithPendingChanges: ['doc2', 'doc3']
     };
     const action = closeNonGlobalTabs();
     const endingState = editor(startingState, action);
@@ -393,6 +393,7 @@ describe('Editor reducer tests', () => {
     expect(Object.keys(secondaryEditor.documents)).toHaveLength(2);
     expect(secondaryEditor.recentTabs).toEqual(['doc6', 'doc5']);
     expect(secondaryEditor.tabOrder).toEqual(['doc5', 'doc6']);
+    expect(endingState.docsWithPendingChanges).toEqual([]);
   });
 
   it('should update a document', () => {
@@ -782,21 +783,6 @@ describe('Editor reducer tests', () => {
       const endingState = editor(startingState, action);
 
       expect(endingState.docsWithPendingChanges).toEqual(['doc1', 'doc3']);
-    });
-
-    it('should clear the list', () => {
-      const startingState: EditorState = {
-        ...defaultState,
-        docsWithPendingChanges: [
-          'doc1',
-          'doc2',
-          'doc3'
-        ]
-      };
-      const action = clearDocsPendingChange();
-      const endingState = editor(startingState, action);
-
-      expect(endingState.docsWithPendingChanges).toEqual([]);
     });
   });
 });

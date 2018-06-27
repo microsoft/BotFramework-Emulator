@@ -54,7 +54,7 @@ import ChatPanel from './chatPanel';
 import DetailPanel from './detailPanel';
 import LogPanel from './logPanel';
 import PlaybackBar from './playbackBar';
-import { debounce } from '../../utils/debounce';
+import { debounce } from '../../../utils';
 
 const { encode } = base64Url;
 

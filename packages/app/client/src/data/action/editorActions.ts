@@ -37,7 +37,6 @@ export enum EditorActions {
   appendTab = 'EDITOR/APPEND_TAB',
   addDocPendingChange = 'EDITOR/ADD_DOC_PENDING_CHANGE',
   removeDocPendingChange = 'EDITOR/REMOVE_DOC_PENDING_CHANGE',
-  clearDocsPendingChange = 'EDITOR/CLEAR_DOCS_PENDING_CHANGE',
   close = 'EDITOR/CLOSE',
   closeAll = 'EDITOR/CLOSE_ALL',
   setDirtyFlag = 'EDITOR/SET_DIRTY_FLAG',
@@ -147,11 +146,6 @@ export interface RemoveDocPendingChangeAction {
   };
 }
 
-export interface ClearDocsPendingChangeAction {
-  type: EditorActions.clearDocsPendingChange;
-  payload: {};
-}
-
 export type EditorAction =
 AppendTabAction |
 CloseEditorAction |
@@ -165,8 +159,7 @@ SplitTabAction |
 SwapTabsAction |
 ToggleDraggingTabAction |
 AddDocPendingChangeAction |
-RemoveDocPendingChangeAction |
-ClearDocsPendingChangeAction;
+RemoveDocPendingChangeAction;
 
 export function appendTab(srcEditorKey: string, destEditorKey: string, documentId: string): AppendTabAction {
   return {
@@ -194,13 +187,6 @@ export function removeDocPendingChange(documentId: string): RemoveDocPendingChan
     payload: {
       documentId
     }
-  };
-}
-
-export function clearDocsPendingChange(): ClearDocsPendingChangeAction {
-  return {
-    type: EditorActions.clearDocsPendingChange,
-    payload: {}
   };
 }
 

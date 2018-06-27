@@ -34,6 +34,7 @@
 import { deepCopySlow } from '@bfemulator/app-shared';
 import * as Constants from '../../constants';
 import { EditorAction, EditorActions } from '../action/editorActions';
+import { BotAction } from '../action/botActions';
 import { getOtherTabGroup, tabGroupHasDocuments } from '../editorHelpers';
 
 export interface EditorState {
@@ -75,7 +76,7 @@ const DEFAULT_STATE: EditorState = {
   docsWithPendingChanges: []
 };
 
-export default function editor(state: EditorState = DEFAULT_STATE, action: EditorAction): EditorState {
+export default function editor(state: EditorState = DEFAULT_STATE, action: EditorAction | BotAction): EditorState {
   Object.freeze(state);
 
   switch (action.type) {
@@ -195,6 +196,7 @@ export default function editor(state: EditorState = DEFAULT_STATE, action: Edito
             };
           }
         }
+        newState = setDocsWithPendingChanges([], newState);
         state = fixupTabGroups(newState);
       }
       break;
@@ -415,11 +417,6 @@ export default function editor(state: EditorState = DEFAULT_STATE, action: Edito
     case EditorActions.removeDocPendingChange: {
       let docsPendingChange = [...state.docsWithPendingChanges].filter(d => d !== action.payload.documentId);
       state = setDocsWithPendingChanges(docsPendingChange, state);
-      break;
-    }
-
-    case EditorActions.clearDocsPendingChange: {
-      state = setDocsWithPendingChanges([], state);
       break;
     }
 
