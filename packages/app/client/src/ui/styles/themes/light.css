@@ -33,4 +33,47 @@ html {
   --nav-focused-tag-bg-opacity: 1;
   --nav-link-selected-border: 1px solid transparent;
   --nav-link-hover-border: 1px solid transparent;
+
+  /* input[type="text"] */
+  --input-bg: var(--neutral-1);
+  --input-label-color: var(--neutral-14);
+  --input-label-color-disabled: #c8c8c8;
+  --input-border: 1px solid #c8c8c8;
+  --input-border-focus: 1px solid #00bcf2;
+  --input-border-error: 1px solid var(--error-outline);
+  --input-placeholder-color: var(--neutral-9);
+  --input-border-disabled: 1px solid #c8c8c8;
+
+  /* primary button */
+  --p-button-color: var(--neutral-2);
+  --p-button-color-disabled: var(--neutral-6);
+  --p-button-border: 1px solid transparent;
+  --p-button-border-focus: 1px solid #00bcf2;
+  --p-button-border-hover: 1px solid transparent;
+  --p-button-border-active: 1px solid transparent;
+  --p-button-border-disabled: 1px solid transparent;
+  --p-button-opacity-disabled: 1;
+  --p-button-bg: #3062d6;
+  --p-button-bg-focus: #3062d6;
+  --p-button-bg-hover: #2852b2;
+  --p-button-bg-active: #214494;
+  --p-button-bg-disabled: var(--neutral-3);
+
+  /* secondary button */
+  --s-button-color: var(--neutral-15);
+  --s-button-color-disabled: var(--neutral-3);
+  --s-button-border: 1px solid transparent;
+  --s-button-border-focused: var(--p-button-border-focus);
+  --s-button-border-hover: 1px solid transparent;
+  --s-button-border-active: 1px solid transparent;
+  --s-button-border-disabled: 1px solid transparent;
+  --s-button-opacity-disabled: 1;
+  --s-button-bg: var(--neutral-3);
+  --s-button-bg-focus: var(--neutral-3);
+  --s-button-bg-hover: var(--neutral-4);
+  --s-button-bg-active: var(--neutral-5);
+  --s-button-bg-disabled: var(--neutral-2);
+
+  /* Dialog a.k.a. Modal */
+  --dialog-bg: var(--neutral-2);
 }

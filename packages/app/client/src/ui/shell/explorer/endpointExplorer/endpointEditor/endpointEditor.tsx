@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Modal, ModalActions, ModalContent, PrimaryButton, TextInputField } from '@bfemulator/ui-react';
+import { DefaultButton, Dialog, DialogContent, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
 import { EndpointService } from 'msbot/bin/models';
 import { IEndpointService } from 'msbot/bin/schema';
 import * as React from 'react';
@@ -88,32 +88,32 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
     const { name = '', endpoint = '', appId = '', appPassword = '' } = endpointService;
     const valid = !!endpoint && !!name;
     return (
-      <Modal title={title} detailedDescription={detailedDescription}
+      <Dialog title={title} detailedDescription={detailedDescription}
         cancel={this.onCancelClick}>
-        <ModalContent>
-          <TextInputField errorMessage={nameError} value={name}
+        <DialogContent>
+          <TextField errorMessage={nameError} value={name}
             onChanged={this._textFieldHandler.name} label="Name"
             required={true}
           />
-          <TextInputField errorMessage={endpointError} value={endpoint}
+          <TextField errorMessage={endpointError} value={endpoint}
             onChanged={this._textFieldHandler.endpoint}
             label="Endpoint url" required={true}
           />
-          <TextInputField errorMessage={appIdError} value={appId}
+          <TextField errorMessage={appIdError} value={appId}
             onChanged={this._textFieldHandler.appId}
             label="Application Id"
             required={false}
           />
-          <TextInputField errorMessage={appPasswordError} value={appPassword}
+          <TextField errorMessage={appPasswordError} value={appPassword}
             onChanged={this._textFieldHandler.appPassword}
             label="Application Password" required={false}
           />
-        </ModalContent>
-        <ModalActions>
-          <PrimaryButton text="Cancel" secondary={true} onClick={this.onCancelClick} />
+        </DialogContent>
+        <DialogFooter>
+          <DefaultButton text="Cancel" onClick={this.onCancelClick} />
           <PrimaryButton disabled={!isDirty || !valid} text="Submit" onClick={this.onSubmitClick} />
-        </ModalActions>
-      </Modal>
+        </DialogFooter>
+      </Dialog>
     );
   }
 

@@ -37,7 +37,7 @@ import { connect } from 'react-redux';
 import { getTabGroupForDocument } from '../../../data/editorHelpers';
 import * as ChatActions from '../../../data/action/chatActions';
 import * as EditorActions from '../../../data/action/editorActions';
-import { Tab } from './tab';
+import { Tab } from './tab/tab';
 import { RootState } from '../../../data/store';
 import { EmulatorMode } from '../../editor/emulator';
 

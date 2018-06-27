@@ -34,6 +34,5 @@
 export * from './emulatorTab';
 export * from './genericTab';
 export * from './mdi';
-export * from './tab';
+export * from './tab/tab';
 export * from './tabFactory';
-export * from './tabStyle';

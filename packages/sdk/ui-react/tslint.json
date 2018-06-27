@@ -51,7 +51,7 @@
       ],
       "no-consecutive-blank-lines": true,
       "no-construct": true,
-      "no-debugger": true,
+      "no-debugger": false,
       "no-duplicate-variable": true,
       "no-empty": true,
       "no-eval": true,

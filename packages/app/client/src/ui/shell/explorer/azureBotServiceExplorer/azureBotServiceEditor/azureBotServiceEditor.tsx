@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Modal, ModalActions, ModalContent, PrimaryButton, TextInputField } from '@bfemulator/ui-react';
+import { DefaultButton, Dialog, DialogContent, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
 import { AzureBotService } from 'msbot/bin/models';
 import { IAzureBotService } from 'msbot/bin/schema';
 import * as React from 'react';
@@ -99,36 +99,36 @@ export class AzureBotServiceEditor extends Component<AzureBotServiceEditorProps,
     const { name = '', id = '', tenantId = '', subscriptionId = '', resourceGroup = '' } = azureBotService;
     const valid = !tenantIdError && !subscriptionIdError && !resourceGroupError && !idError && !nameError;
     return (
-      <Modal title={title} detailedDescription={detailedDescription}
+      <Dialog title={title} detailedDescription={detailedDescription}
         cancel={this.onCancelClick}>
-        <ModalContent>
-          <TextInputField errorMessage={nameError} value={name}
+        <DialogContent>
+          <TextField errorMessage={nameError} value={name}
             onChanged={this._textFieldHandlers.name} label="Bot Name"
             required={true}
           />
-          <TextInputField errorMessage={idError} value={id}
+          <TextField errorMessage={idError} value={id}
             onChanged={this._textFieldHandlers.id} label="Azure Bot Id"
             required={true}
           />
-          <TextInputField errorMessage={tenantIdError} value={tenantId}
+          <TextField errorMessage={tenantIdError} value={tenantId}
             onChanged={this._textFieldHandlers.tenantId}
             label="Azure Tenant Id" required={true}
             data-propname="tenantId"
           />
-          <TextInputField errorMessage={subscriptionIdError} value={subscriptionId}
+          <TextField errorMessage={subscriptionIdError} value={subscriptionId}
             onChanged={this._textFieldHandlers.subscriptionId}
             label="Azure Subscription Id" required={true}
           />
-          <TextInputField errorMessage={resourceGroupError} value={resourceGroup}
+          <TextField errorMessage={resourceGroupError} value={resourceGroup}
             onChanged={this._textFieldHandlers.resourceGroup}
             label="Azure Resource Group" required={true}
           />
-        </ModalContent>
-        <ModalActions>
-          <PrimaryButton text="Cancel" secondary={true} onClick={this.onCancelClick} />
+        </DialogContent>
+        <DialogFooter>
+          <DefaultButton text="Cancel" onClick={this.onCancelClick} />
           <PrimaryButton disabled={!isDirty || !valid} text="Submit" onClick={this.onSubmitClick} />
-        </ModalActions>
-      </Modal>
+        </DialogFooter>
+      </Dialog>
     );
   }
 

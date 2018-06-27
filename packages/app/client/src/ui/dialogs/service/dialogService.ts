@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { initializeTheme } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { ComponentClass, StatelessComponent } from 'react';
 import * as ReactDOM from 'react-dom';
@@ -76,10 +75,6 @@ export const DialogService = new class implements DialogService {
     if (!this._hostElement) {
       return;
     }
-
-    // remove the following once office ui fabric finishes
-    // adding theme support to all components
-    initializeTheme('dark');
 
     ReactDOM.render(null, this._hostElement);
     store.dispatch(DialogActions.setShowing(false));

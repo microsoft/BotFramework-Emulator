@@ -31,120 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Checkbox, Colors, Fonts, PrimaryButton } from '@bfemulator/ui-react';
+import { Checkbox } from '@bfemulator/ui-react';
+import { PrimaryButton, DefaultButton } from '@bfemulator/ui-react';
 import { ILuisService } from 'msbot/bin/schema';
-import { css } from 'glamor';
 import * as React from 'react';
 import { ChangeEvent, ChangeEventHandler, Component } from 'react';
 import { LuisModel } from '../../../../../data/http/luisApi';
 
-const luisModelViewerCss = css({
-  boxSizing: 'border-box',
-  width: '400px',
-  height: '355px',
-  color: '#333',
-  background: '#f4f4f4',
-  position: 'relative',
-
-  '> header': {
-    '> h3': {
-      fontFamily: Fonts.FONT_FAMILY_DEFAULT,
-      fontSize: '19px',
-      fontWeight: 200,
-      margin: 0,
-      padding: '28px 24px 24px'
-    }
-  },
-
-  '& .listContainer': {
-    padding: '0 24px',
-
-    '> p': {
-      fontSize: '13px',
-      margin: '0',
-      paddingBottom: '20px'
-    },
-
-    ' > ul': {
-      listStyle: 'none',
-      margin: 0,
-      padding: '5px 0 0 0',
-      maxHeight: '96px',
-      overflow: 'auto',
-      '> li': {
-        padding: '1px 11px',
-        backgroundColor: '#efefef',
-        display: 'flex',
-        '& span': {
-          color: '#777',
-          width: '100%',
-          '&:last-child': {
-            textAlign: 'right',
-            width: '75%',
-            paddingRight: '9px'
-          }
-        },
-        '&:nth-child(odd)': {
-          backgroundColor: 'white'
-        },
-      }
-    }
-  },
-
-  '& .buttonGroup': {
-    position: 'absolute',
-    right: '24px',
-    bottom: '32px',
-    '> button:first-child': {
-      marginRight: '8px'
-    }
-  },
-  '& .selectAll': {
-    padding: '5px 11px',
-  },
-
-  '& .checkboxOverride': {
-    display: 'inline-block',
-    width: '150px',
-    '> label': {
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      whiteSpace: 'nowrap',
-      maxWidth: '130px',
-      display: 'inline-block'
-    }
-  }
-});
-
-const closeButtonCss = css({
-  cursor: 'pointer',
-  background: 'transparent',
-  border: 'none',
-  outline: 'none',
-  margin: 0,
-  padding: 0,
-  position: 'absolute',
-  right: '12px',
-  top: '12px',
-  width: '16px',
-  height: '16px',
-  '> svg': {
-    fill: Colors.C3,
-    '&:hover': {
-      fill: Colors.C12
-    }
-  }
-});
-
-const secondaryButton = css({
-  backgroundColor: '#d4d4d4 !important',
-  color: `${Colors.C0} !important`,
-  '&:hover': {
-    backgroundColor: `${Colors.C3} !important`,
-    color: `${Colors.C4} !important`,
-  },
-  paddingRight: '4px'
-});
+import * as styles from './luisModelsViewer.scss';
 
 interface LuisModelsViewerProps {
   luisServices: ILuisService[];
@@ -168,7 +62,10 @@ export class LuisModelsViewer extends Component<LuisModelsViewerProps, LuisModel
     const { luisServices = [] as ILuisService[] } = nextProps;
 
     const state = luisServices
-      .reduce((agg, luisService: ILuisService) => { agg[luisService.appId] = luisService; return agg; }, {});
+      .reduce((agg, luisService: ILuisService) => {
+        agg[luisService.appId] = luisService;
+        return agg;
+      }, {});
 
     this.setState(state);
   }
@@ -179,7 +76,7 @@ export class LuisModelsViewer extends Component<LuisModelsViewerProps, LuisModel
     const checkAllChecked = props.luisModels
       .reduce((isTrue, luisModel) => state[luisModel.id] && isTrue, !!keys.length);
     return (
-      <section { ...luisModelViewerCss }>
+      <section className={ styles.luisModelsViewer }>
         { this.sectionHeader }
         <div className="listContainer">
           <p>Selecting a LUIS app below will store the app ID in your bot file.</p>
@@ -192,7 +89,7 @@ export class LuisModelsViewer extends Component<LuisModelsViewerProps, LuisModel
           </ul>
         </div>
         <div className="buttonGroup">
-          <PrimaryButton text="Cancel" onClick={ this.onCancelClick } className={ secondaryButton.toString() }/>
+          <DefaultButton text="Cancel" onClick={ this.onCancelClick }/>
           <PrimaryButton text="Add" onClick={ this.onAddClick }/>
         </div>
       </section>
@@ -202,7 +99,7 @@ export class LuisModelsViewer extends Component<LuisModelsViewerProps, LuisModel
   private get sectionHeader(): JSX.Element {
     return (
       <header>
-        <button { ...closeButtonCss } onClick={ this.onCancelClick }>
+        <button className={ styles.closeButton } onClick={ this.onCancelClick }>
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="1 1 16 16">
             <g>
               <polygon

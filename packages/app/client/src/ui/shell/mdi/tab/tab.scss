@@ -1,0 +1,62 @@
+.tab {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  border: none;
+  border-right: 1px solid var(--neutral-15);
+  background-color: var(--neutral-15);
+  color: var(--neutral-7);
+  cursor: pointer;
+  padding: 4px 8px;
+  box-sizing: border-box;
+  white-space: nowrap;
+
+  &:hover > .editorTabClose {
+    opacity: 1
+  }
+
+  & > span {
+    display: inline-block;
+    height: auto
+  }
+
+  & > .editorTabIcon {
+    display: inline-block;
+    width: 12px;
+    margin-right: 8px;
+    &::after {
+      content: "🗋";
+      color: var(--warning-outline);
+      font-size: 16px;
+    }
+  }
+
+  & > .editorTabClose {
+    display: inline-block;
+    width: 8px;
+    margin-left: 8px;
+    opacity: 0;
+    &::after {
+      content: "✖";
+      color: var((--neutral-5));
+      font-size: 12px;
+    }
+  }
+}
+
+.truncatedTabText {
+  max-width: 200px;
+}
+
+.draggedOverEditorTab {
+  background-color: var(--neutral-14)
+}
+
+.activeEditorTab {
+  background-color: var(--neutral-15);
+  color: var(--neutral-11);
+
+  & > .editorTabClose {
+    opacity: 1
+  }
+}

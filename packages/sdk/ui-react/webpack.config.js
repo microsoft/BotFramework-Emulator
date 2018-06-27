@@ -18,7 +18,7 @@ module.exports = {
             options: {
               localIdentName: '[local]__[hash:base64:5]',
               modules: true,
-              sass: true,
+              sass: false,
               namedExport: true,
               sourcemaps:true,
               banner: '// This is a generated file. Changes are likely to result in being overwritten'
@@ -54,8 +54,9 @@ module.exports = {
     ]
   },
 
-  node: {
-    fs: 'empty'
+  externals: {
+    react: 'umd react',
+    'react-dom' : 'umd react-dom'
   },
 
   resolve: {
@@ -69,7 +70,6 @@ module.exports = {
     library: "[name]",
   },
 
-  externals: {},
   plugins: [
     new NodeEnvironmentPlugin(),
     new WatchIgnorePlugin([
