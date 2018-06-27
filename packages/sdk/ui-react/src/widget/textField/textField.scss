@@ -1,0 +1,61 @@
+/* fabric TextField
+
+<div class="ms-TextField">
+  <div class="ms-TextField-wrapper"> // border, hover, focused, etc represented on this element
+    <label for="TextField1812" class="ms-Label">
+      My Label
+    </label>
+    <div class="ms-TextField-fieldGroup ">
+      <input type="text" id="TextField1812" value="" class="ms-TextField-field " aria-invalid="false">
+    </div>
+  </div>
+</div>
+// optional error message
+<span id="TextFieldDescription1819">
+  <div aria-live="assertive">
+    <p class="ms-TextField-errorMessage">
+      <span data-automation-id="error-message" class="x-hidden-focus">
+        Error message
+      </span>
+    </p>
+  </div>
+</span>
+*/
+.styledTextFieldContainer {
+  :global {
+    .is-active .ms-TextField-fieldGroup:hover {
+      border: var(--input-border-focus);
+    }
+
+    .ms-Label {
+      color: var(--input-label-color);
+    }
+
+    .is-disabled {
+      & .ms-Label {
+        color: var(--input-label-disabled);
+      }
+    }
+
+    .ms-TextField-fieldGroup {
+      border: var(--input-border);
+      &:hover {
+        border: var(--input-border);
+      }
+    }
+  }
+}
+
+.styledTextFieldInput {
+  &::placeholder {
+    color: var(--input-placeholder-color);
+  }
+}
+
+:global {
+  .ms-Dialog {
+    .ms-TextField-field, .ms-TextField-fieldGroup {
+      background-color: transparent;
+    }
+  }
+}

@@ -34,11 +34,11 @@
 import * as React from 'react';
 import { DragEvent, SyntheticEvent } from 'react';
 import { connect } from 'react-redux';
+import * as styles from './tab.scss';
 
-import { TAB_CSS } from './tabStyle';
-import * as EditorActions from './../../../data/action/editorActions';
-import { getTabGroupForDocument } from '../../../data/editorHelpers';
-import { TruncateText } from '@bfemulator/ui-react';
+import * as EditorActions from '../../../../data/action/editorActions';
+import { getTabGroupForDocument } from '../../../../data/editorHelpers';
+import { TruncateText } from '../../../../../../../sdk/ui-react/built/index';
 
 interface TabProps {
   active?: boolean;
@@ -66,21 +66,16 @@ class TabComponent extends React.Component<TabProps, TabState> {
   }
 
   render() {
-    let tabClassName = '';
-    if (this.props.active) {
-      tabClassName += ' active-editor-tab';
-    } else if (this.state.draggedOver) {
-      tabClassName += ' dragged-over-editor-tab';
-    }
-
+    const activeClassName = this.props.active ? styles.activeEditorTab : '';
+    const draggedOverClassName = this.state.draggedOver ? styles.draggedOverEditorTab : '';
     return (
-      <div className={ TAB_CSS + tabClassName } draggable
+      <div className={ `${styles.tab} ${activeClassName} ${draggedOverClassName}` } draggable
            onDragOver={ this.onDragOver } onDragEnter={ this.onDragEnter } onDragStart={ this.onDragStart }
            onDrop={ this.onDrop } onDragLeave={ this.onDragLeave } onDragEnd={ this.onDragEnd }>
-        <span className="editor-tab-icon"></span>
-        <TruncateText className="truncated-tab-text">{ this.props.title }</TruncateText>
+        <span className={styles.editorTabIcon}> </span>
+        <TruncateText className={styles.truncatedTabText}>{ this.props.title }</TruncateText>
         { this.props.dirty ? <span>*</span> : null }
-        <span className="editor-tab-close" onClick={ this.props.onCloseClick }></span>
+        <span className={styles.editorTabClose} onClick={ this.props.onCloseClick }> </span>
       </div>
     );
   }

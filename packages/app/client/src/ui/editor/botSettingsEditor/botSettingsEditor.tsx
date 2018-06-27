@@ -33,7 +33,8 @@
 
 import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
-import { Column, MediumHeader, PrimaryButton, Row, TextInputField } from '@bfemulator/ui-react';
+import { Column, MediumHeader, Row } from '@bfemulator/ui-react';
+import { PrimaryButton, TextField } from '@bfemulator/ui-react';
 import { IConnectedService, ServiceType } from 'msbot/bin/schema';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -86,15 +87,16 @@ class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps,
     return (
       <GenericDocument>
         <Column>
-          <MediumHeader className={styles.botSettingsHeader}>Bot Settings</MediumHeader>
-          <TextInputField className={styles.botSettingsInput} label="Bot name" value={this.state.bot.name}
-            required={true} onChanged={this.onChangeName} errorMessage={error} />
-          <TextInputField className={styles.botSettingsInput} label="Bot secret" value={this.state.secret}
-            onChanged={this.onChangeSecret} type="password" />
-          <Row className={styles.buttonRow}>
-            <PrimaryButton text="Save" onClick={this.onSave} className={styles.buttonRow} disabled={disabled} />
-            <PrimaryButton text="Save & Connect" onClick={this.onSaveAndConnect} className={styles.saveConnectButton}
-              disabled={disabled} />
+          <MediumHeader className={ styles.botSettingsHeader }>Bot Settings</MediumHeader>
+          <TextField className={ styles.botSettingsInput } label="Bot name" value={ this.state.bot.name }
+                     required={ true } onChanged={ this.onChangeName } errorMessage={ error }/>
+          <TextField className={ styles.botSettingsInput } label="Bot secret" value={ this.state.secret }
+                     onChanged={ this.onChangeSecret } type="password"/>
+          <Row className={ styles.buttonRow }>
+            <PrimaryButton text="Save" onClick={ this.onSave } className={ styles.saveButton } disabled={ disabled }/>
+            <PrimaryButton text="Save & Connect" onClick={ this.onSaveAndConnect }
+                           className={ styles.saveConnectButton }
+                           disabled={ disabled }/>
           </Row>
         </Column>
       </GenericDocument>

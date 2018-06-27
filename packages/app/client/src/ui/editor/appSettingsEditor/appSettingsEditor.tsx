@@ -32,19 +32,10 @@
 //
 
 import * as React from 'react';
-
+import { PrimaryButton, TextField } from '@bfemulator/ui-react';
 import { FrameworkSettings } from '@bfemulator/app-shared';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
-import {
-  Checkbox,
-  Column,
-  PrimaryButton,
-  Row,
-  RowAlignment,
-  RowJustification,
-  SmallHeader,
-  TextInputField
-} from '@bfemulator/ui-react';
+import { Checkbox, Column, Row, RowAlignment, RowJustification, SmallHeader, } from '@bfemulator/ui-react';
 import * as EditorActions from '../../../data/action/editorActions';
 import * as Constants from '../../../constants';
 import store from '../../../data/store';
@@ -211,7 +202,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     const clean = shallowEqual(this.state.committed, uncommitted);
 
     return (
-      <GenericDocument className={styles.appSettingsEditor}>
+      <GenericDocument className={ styles.appSettingsEditor }>
         <Row>
           <Column>
             <SmallHeader>Service</SmallHeader>
@@ -219,36 +210,36 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
               Emulator works with ngrok to communicate with bots hosted remotely. Read the <a
                 href="https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)" target="_blank">wiki
                 page</a> to learn more about using ngrok and to download it.</p>
-            <Row align={RowAlignment.Center}>
-              <TextInputField className={styles.appSettingsInput} readOnly={false} value={uncommitted.ngrokPath}
-                onChanged={this.onChangeNgrok} label={'Path to ngrok'} />
-              <PrimaryButton onClick={this.onClickBrowse} text="Browse" className={styles.browseButton} />
+            <Row align={ RowAlignment.Center }>
+              <TextField className={ styles.appSettingsInput } readOnly={ false } value={ uncommitted.ngrokPath }
+                              onChanged={ this.onChangeNgrok } label={ 'Path to ngrok' }/>
+              <PrimaryButton onClick={ this.onClickBrowse } text="Browse" className={ styles.browseButton }/>
             </Row>
-            <Checkbox className={styles.checkboxOverrides} checked={uncommitted.bypassNgrokLocalhost}
-              onChange={this.onChangeNgrokBypass} id="ngrok-bypass" label="Bypass ngrok for local addresses" />
-            <Row align={RowAlignment.Center}>
-              <TextInputField className={styles.appSettingsInput} readOnly={false} value={uncommitted.localhost}
-                onChanged={this.onChangeLocalhost} label="localhost override" />
+            <Checkbox className={ styles.checkboxOverrides } checked={ uncommitted.bypassNgrokLocalhost }
+                      onChange={ this.onChangeNgrokBypass } id="ngrok-bypass" label="Bypass ngrok for local addresses"/>
+            <Row align={ RowAlignment.Center }>
+              <TextField className={ styles.appSettingsInput } readOnly={ false } value={ uncommitted.localhost }
+                              onChanged={ this.onChangeLocalhost } label="localhost override"/>
             </Row>
-            <Row align={RowAlignment.Center}>
-              <TextInputField className={styles.appSettingsInput} readOnly={false} value={uncommitted.locale}
-                onChanged={this.onChangeLocale} label="Locale" />
+            <Row align={ RowAlignment.Center }>
+              <TextField className={ styles.appSettingsInput } readOnly={ false } value={ uncommitted.locale }
+                              onChanged={ this.onChangeLocale } label="Locale"/>
             </Row>
           </Column>
-          <Column className={styles.rightColumn}>
+          <Column className={ styles.rightColumn }>
             <SmallHeader>Auth</SmallHeader>
-            <Checkbox className={styles.checkboxOverrides} checked={uncommitted.use10Tokens}
-              onChange={this.onChangeAuthTokenVersion} id="auth-token-version"
-              label="Use version 1.0 authentication tokens" />
+            <Checkbox className={ styles.checkboxOverrides } checked={ uncommitted.use10Tokens }
+                      onChange={ this.onChangeAuthTokenVersion } id="auth-token-version"
+                      label="Use version 1.0 authentication tokens"/>
             <SmallHeader>Sign-in</SmallHeader>
-            <Checkbox className={styles.checkboxOverrides} checked={uncommitted.useCodeValidation}
-              onChange={this.onChangeUseValidationToken} id="use-validation-code"
-              label="Use a sign-in verification code for OAuthCards" />
+            <Checkbox className={ styles.checkboxOverrides } checked={ uncommitted.useCodeValidation }
+                      onChange={ this.onChangeUseValidationToken } id="use-validation-code"
+                      label="Use a sign-in verification code for OAuthCards"/>
           </Column>
         </Row>
-        <Row className={styles.buttonRow} justify={RowJustification.Right}>
-          <PrimaryButton text="Cancel" onClick={this.onClickDiscard} />
-          <PrimaryButton text="Save" onClick={this.onClickSave} className={styles.saveButton} disabled={clean} />
+        <Row className={ styles.buttonRow } justify={ RowJustification.Right }>
+          <PrimaryButton text="Cancel" onClick={ this.onClickDiscard }/>
+          <PrimaryButton text="Save" onClick={ this.onClickSave } className={ styles.saveButton } disabled={ clean }/>
         </Row>
       </GenericDocument>
     );

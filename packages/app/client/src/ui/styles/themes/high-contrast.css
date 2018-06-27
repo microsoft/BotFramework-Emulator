@@ -2,13 +2,13 @@ html {
   /* Highlight colors */
   --selected-list-item: #CCCEDB;
   --focused-list-item: #DCEBFC;
-  --focused-outline: #00bcf2;
-  --focused-selected-highlighted-list-item: #3062d6;
-  --focused-selected-list-item-bg: #4672da;
+  --focused-outline: #00BCF2;
+  --focused-selected-highlighted-list-item: #3062D6;
+  --focused-selected-list-item-bg: #4672DA;
 
   /* Alert colors */
   --info-bg: #D6ECF2;
-  --info-outline: #007acc;
+  --info-outline: #007ACC;
 
   --warning-bg: #F6F5D2;
   --warning-outline: #b89500;
@@ -33,4 +33,43 @@ html {
   --nav-focused-tag-bg-opacity: .6;
   --nav-link-selected-border: 1px solid #F38518;
   --nav-link-hover-border: 1px dashed #F38518;
+
+  /* input[type="text"] */
+  --input-bg: var(--neutral-15);
+  --input-label-color: #c8c8c8;
+  --input-label-color-disabled: var(--neutral-7);
+  --input-border: 1px solid #c8c8c8;
+  --input-border-focus: 1px solid #72c3df;
+  --input-border-error: 1px solid #d02e00;
+  --input-placeholder-color: var(--neutral-7);
+  --input-border-disabled: 1px solid var(--neutral-7);
+
+  /* primary button */
+  --p-button-color: var(--neutral-2);
+  --p-button-border: 1px solid #72c3df;
+  --p-button-border-focus: 1px solid #f38518;
+  --p-button-border-hover: 1px solid #72c3df;
+  --p-button-border-active: var(--p-button-border);
+  --p-button-border-disabled: var(--p-button-border);
+  --p-button-opacity-disabled: .4;
+  --p-button-bg: transparent;
+  --p-button-bg-focus: transparent;
+  --p-button-bg-hover: transparent;
+  --p-button-bg-active: transparent;
+  --p-button-bg-disabled: transparent;
+
+  /* secondary button */
+  --s-button-color: var(--p-button-color);
+  --s-button-color-disabled:  var(--p-button-color);
+  --s-button-border: var(--p-button-border);
+  --s-button-border-focused: var(--p-button-border-focus);
+  --s-button-border-hover: var(--p-button-border-hover);
+  --s-button-border-active: var(--s-button-border-active);
+  --s-button-border-disabled: var(--p-button-border-disabled);
+  --s-button-opacity-disabled: var(--p-button-border-disabled);
+  --s-button-bg: transparent;
+  --s-button-bg-focus: transparent;
+  --s-button-bg-hover: transparent;
+  --s-button-bg-active: transparent;
+  --s-button-bg-disabled: transparent;
 }

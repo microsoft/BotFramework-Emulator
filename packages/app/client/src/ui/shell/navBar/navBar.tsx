@@ -95,7 +95,7 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
         break;
 
       // Bot Settings
-      case 3:
+      case 2:
         if (this.props.activeBot) {
           this.props.openBotSettings();
         }

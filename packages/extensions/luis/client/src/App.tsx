@@ -47,8 +47,6 @@ import LuisClient from './Luis/Client';
 import { IntentInfo } from './Luis/IntentInfo';
 import { LuisAppInfo } from './Models/LuisAppInfo';
 import { LuisTraceInfo } from './Models/LuisTraceInfo';
-import { ThemeVariables } from '@bfemulator/ui-react';
-import { Fonts } from '@bfemulator/ui-react';
 
 import * as styles from './App.scss';
 
@@ -81,8 +79,8 @@ let jsonViewerCss = {
   paddingTop: '10px',
   paddingBottom: '10px',
   height: '95%',
-  backgroundColor: `var(${ThemeVariables.neutral15})`,
-  fontFamily: Fonts.FONT_FAMILY_DEFAULT,
+  backgroundColor: 'var(--neutral-15)',
+  fontFamily: 'var(--default-font-family)'
 };
 
 class App extends Component<any, AppState> {

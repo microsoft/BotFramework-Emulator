@@ -31,7 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Checkbox, PrimaryButton } from '@bfemulator/ui-react';
+import { Checkbox } from '@bfemulator/ui-react';
+import { PrimaryButton, DefaultButton } from '@bfemulator/ui-react';
 import { ILuisService } from 'msbot/bin/schema';
 import * as React from 'react';
 import { ChangeEvent, ChangeEventHandler, Component } from 'react';
@@ -88,7 +89,7 @@ export class LuisModelsViewer extends Component<LuisModelsViewerProps, LuisModel
           </ul>
         </div>
         <div className="buttonGroup">
-          <PrimaryButton text="Cancel" onClick={ this.onCancelClick } className={ styles.secondaryButton }/>
+          <DefaultButton text="Cancel" onClick={ this.onCancelClick }/>
           <PrimaryButton text="Add" onClick={ this.onAddClick }/>
         </div>
       </section>

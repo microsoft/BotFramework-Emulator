@@ -72,8 +72,10 @@
   margin-bottom: 16px;
   width: 180px;
   height: 26px;
-  & .primaryButtonText {
-    line-height: 26px;
+  :global {
+    .ms-Button-label {
+      line-height: 26px;
+    }
   }
 }
 

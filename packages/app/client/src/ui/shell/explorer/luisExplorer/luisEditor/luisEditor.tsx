@@ -33,7 +33,7 @@
 
 import { LuisService } from 'msbot/bin/models';
 import { ILuisService } from 'msbot/bin/schema';
-import { Modal, ModalActions, ModalContent, PrimaryButton, TextInputField } from '@bfemulator/ui-react';
+import { DefaultButton, Dialog, DialogContent, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { Component } from 'react';
 
@@ -103,49 +103,49 @@ export class LuisEditor extends Component<LuisEditorProps, LuisEditorState> {
     const { name = '', appId = '', authoringKey = '', subscriptionKey = '', version = '' } = luisService;
     const valid = !!name && !!appId && !!authoringKey && !!version;
     return (
-      <Modal title={title} detailedDescription={detailedDescription}
+      <Dialog title={title} detailedDescription={detailedDescription}
         cancel={onCancelClick}>
-        <ModalContent>
-          <TextInputField
+        <DialogContent>
+          <TextField
             errorMessage={nameError}
             value={name}
             onChanged={this._textFieldHandlers.name}
             label="Name" required={true}
           />
-          <TextInputField
+          <TextField
             errorMessage={appIdError}
             value={appId}
             onChanged={this._textFieldHandlers.appId}
             label="Application Id"
             required={true}
           />
-          <TextInputField
+          <TextField
             errorMessage={authoringKeyError}
             value={authoringKey}
             onChanged={this._textFieldHandlers.authoringKey}
             label="Authoring key" required={true}
             data-propname="authoringKey"
           />
-          <TextInputField
+          <TextField
             errorMessage={versionError}
             value={version}
             onChanged={this._textFieldHandlers.version}
             label="Version"
             required={true}
           />
-          <TextInputField
+          <TextField
             errorMessage={subscriptionKeyError}
             value={subscriptionKey}
             onChanged={this._textFieldHandlers.subscriptionKey}
             label="Subscription key"
             required={false}
           />
-        </ModalContent>
-        <ModalActions>
-          <PrimaryButton text="Cancel" secondary={true} onClick={onCancelClick} />
+        </DialogContent>
+        <DialogFooter>
+          <DefaultButton text="Cancel" onClick={onCancelClick} />
           <PrimaryButton disabled={!isDirty || !valid} text="Submit" onClick={onSubmitClick} />
-        </ModalActions>
-      </Modal>
+        </DialogFooter>
+      </Dialog>
     );
   }
 

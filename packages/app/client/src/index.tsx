@@ -34,7 +34,6 @@
 import { Provider } from 'react-redux';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { initializeIcons, initializeTheme } from '@bfemulator/ui-react';
 import interceptError from './interceptError';
 import interceptHyperlink from './interceptHyperlink';
 import Main from './ui/shell/mainContainer';
@@ -45,8 +44,9 @@ import { LogService } from './platform/log/logService';
 import { showWelcomePage } from './data/editorHelpers';
 import * as Commands from './commands';
 
-initializeTheme('dark');
-initializeIcons();
+import 'botframework-webchat/botchat.css';
+import './ui/styles/globals.scss';
+
 interceptError();
 interceptHyperlink();
 

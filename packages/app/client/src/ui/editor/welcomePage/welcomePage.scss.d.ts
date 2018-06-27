@@ -6,5 +6,4 @@ export const noBots: string;
 export const recentBotsList: string;
 export const recentBotDetail: string;
 export const openBot: string;
-export const primaryButtonText: string;
 export const ctaLink: string;
