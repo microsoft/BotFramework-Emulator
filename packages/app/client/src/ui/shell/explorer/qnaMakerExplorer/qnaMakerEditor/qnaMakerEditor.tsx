@@ -31,7 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Modal, ModalActions, ModalContent, PrimaryButton, TextInputField } from '@bfemulator/ui-react';
+import { Dialog, DialogFooter, DialogContent } from '@bfemulator/ui-react';
+import { PrimaryButton, DefaultButton, TextField } from '@bfemulator/ui-react';
 import { QnaMakerService } from 'msbot/bin/models';
 import { IQnAService } from 'msbot/bin/schema';
 import * as React from 'react';
@@ -101,38 +102,38 @@ export class QnaMakerEditor extends Component<QnaMakerEditorProps, QnaMakerEdito
     const { name = '', subscriptionKey = '', hostname = '', endpointKey = '', kbId = '' } = qnaMakerService;
     const valid = !!kbId && !!name && !!subscriptionKey && !!hostname && !!endpointKey;
     return (
-      <Modal title={title} detailedDescription={detailedDescription}
+      <Dialog title={title} detailedDescription={detailedDescription}
         cancel={this.onCancelClick} >
-        <ModalContent>
-          <TextInputField
+        <DialogContent>
+          <TextField
             onChanged={this._textFieldHandlers.name}
             errorMessage={nameError}
             value={name}
             label="Name"
             required={true}
           />
-          <TextInputField errorMessage={subscriptionKeyError} value={subscriptionKey}
+          <TextField errorMessage={subscriptionKeyError} value={subscriptionKey}
             onChanged={this._textFieldHandlers.subscriptionKey}
             label="Subscription key" required={true}
           />
-          <TextInputField errorMessage={hostnameError} value={hostname}
+          <TextField errorMessage={hostnameError} value={hostname}
             onChanged={this._textFieldHandlers.hostname} label="Host name"
             required={true}
           />
-          <TextInputField errorMessage={endpointKeyError} value={endpointKey}
+          <TextField errorMessage={endpointKeyError} value={endpointKey}
             onChanged={this._textFieldHandlers.endpointKey}
             label="Endpoint Key" required={true}
           />
-          <TextInputField errorMessage={kbIdError} value={kbId}
+          <TextField errorMessage={kbIdError} value={kbId}
             onChanged={this._textFieldHandlers.kbId} label="Knowledge base Id"
             required={true}
           />
-        </ModalContent>
-        <ModalActions>
-          <PrimaryButton text="Cancel" secondary={true} onClick={this.onCancelClick} />
+        </DialogContent>
+        <DialogFooter>
+          <DefaultButton text="Cancel" onClick={this.onCancelClick} />
           <PrimaryButton disabled={!isDirty || !valid} text="Submit" onClick={this.onSubmitClick} />
-        </ModalActions>
-      </Modal>
+        </DialogFooter>
+      </Dialog>
     );
   }
 

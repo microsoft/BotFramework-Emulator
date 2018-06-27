@@ -33,49 +33,18 @@
 
 import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
-import { Colors, Column, MediumHeader, PrimaryButton, Row, TextInputField } from '@bfemulator/ui-react';
-import { css } from 'glamor';
+import { Column, MediumHeader, Row } from '@bfemulator/ui-react';
+import { PrimaryButton, TextField } from '@bfemulator/ui-react';
 import { IConnectedService, ServiceType } from 'msbot/bin/schema';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import * as EditorActions from '../../data/action/editorActions';
-import { getBotInfoByPath } from '../../data/botHelpers';
-import store, { RootState } from '../../data/store';
-import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
-import { ActiveBotHelper } from '../helpers/activeBotHelper';
-import { GenericDocument } from '../layout';
-
-const CSS = css({
-  '& .bot-settings-header': {
-    marginBottom: '16px'
-  },
-
-  '& .save-button': {
-    marginLeft: 'auto'
-  },
-
-  '& .save-connect-button': {
-    marginLeft: '8px'
-  },
-
-  '& .multiple-input-row': {
-    '& > div': {
-      marginLeft: '8px'
-    },
-
-    '& > div:first-child': {
-      marginLeft: 0
-    }
-  },
-
-  '& .button-row': {
-    marginTop: '48px'
-  },
-
-  '& .bot-settings-input': {
-    color: Colors.APP_FOREGROUND_DARK
-  }
-});
+import * as EditorActions from '../../../data/action/editorActions';
+import { getBotInfoByPath } from '../../../data/botHelpers';
+import store, { RootState } from '../../../data/store';
+import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
+import { ActiveBotHelper } from '../../helpers/activeBotHelper';
+import { GenericDocument } from '../../layout';
+import * as styles from './botSettingsEditor.scss';
 
 interface BotSettingsEditorProps {
   bot?: BotConfigWithPath;
@@ -116,17 +85,18 @@ class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps,
     const disabled = !this.state.bot.name || !this.props.dirty;
     const error = !this.state.bot.name ? 'The bot name is required' : '';
     return (
-      <GenericDocument style={CSS}>
+      <GenericDocument>
         <Column>
-          <MediumHeader className="bot-settings-header">Bot Settings</MediumHeader>
-          <TextInputField className="bot-settings-input" label="Bot name" value={this.state.bot.name}
-            required={true} onChanged={this.onChangeName} errorMessage={error} />
-          <TextInputField className="bot-settings-input" label="Bot secret" value={this.state.secret}
-            onChanged={this.onChangeSecret} type="password" />
-          <Row className="button-row">
-            <PrimaryButton text="Save" onClick={this.onSave} className="save-button" disabled={disabled} />
-            <PrimaryButton text="Save & Connect" onClick={this.onSaveAndConnect} className="save-connect-button"
-              disabled={disabled} />
+          <MediumHeader className={ styles.botSettingsHeader }>Bot Settings</MediumHeader>
+          <TextField className={ styles.botSettingsInput } label="Bot name" value={ this.state.bot.name }
+                     required={ true } onChanged={ this.onChangeName } errorMessage={ error }/>
+          <TextField className={ styles.botSettingsInput } label="Bot secret" value={ this.state.secret }
+                     onChanged={ this.onChangeSecret } type="password"/>
+          <Row className={ styles.buttonRow }>
+            <PrimaryButton text="Save" onClick={ this.onSave } className={ styles.saveButton } disabled={ disabled }/>
+            <PrimaryButton text="Save & Connect" onClick={ this.onSaveAndConnect }
+                           className={ styles.saveConnectButton }
+                           disabled={ disabled }/>
           </Row>
         </Column>
       </GenericDocument>

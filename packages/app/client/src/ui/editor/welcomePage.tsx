@@ -31,105 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { hot } from 'react-hot-loader';
-import { css } from 'glamor';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
-
-import { Colors, Column, LargeHeader, PrimaryButton, Row, SmallHeader, TruncateText } from '@bfemulator/ui-react';
-import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
-import { GenericDocument } from '../layout';
-import { RootState } from '../../data/store';
-
-const CSS = css({
-  '& .right-column': {
-    marginLeft: '48px'
-  },
-
-  '& .section': {
-    marginBottom: '34px',
-    width: 'auto',
-    maxWidth: '100%'
-  },
-
-  '& .well': {
-    padding: '12px 10px',
-    background: 'rgba(0,0,0,.2)',
-    transition: 'background 0.05s',
-
-    '&::-webkit-scrollbar-thumb': {
-      backgroundColor: 'transparent'
-    },
-
-    '&:hover': {
-      background: 'rgba(200,235,255,.072)',
-
-      '&::-webkit-scrollbar-thumb': {
-        backgroundColor: Colors.SCROLLBAR_THUMB_BACKGROUND_DARK
-      }
-    }
-  },
-
-  '& .no-bots': {
-    fontStyle: 'italic',
-  },
-
-  '& .recent-bots-list': {
-    maxHeight: '100px',
-    overflowY: 'auto',
-    overflowX: 'hidden',
-
-    '& > li': {
-      display: 'flex'
-    },
-
-    '& a': {
-      flexShrink: 0
-    }
-  },
-
-  '& .recent-bot-detail': {
-    display: 'inline-block',
-    marginLeft: '8px',
-    color: Colors.APP_HYPERLINK_DETAIL_DARK,
-    userSelect: 'text',
-    cursor: 'text'
-  },
-
-  '& a': {
-    minWidth: 0,
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
-    overflow: 'hidden',
-    textDecoration: 'none',
-    color: Colors.APP_HYPERLINK_FOREGROUND_DARK,
-
-    ':hover': {
-      color: Colors.APP_HYPERLINK_FOREGROUND_DARK
-    }
-  },
-
-  '& ul': {
-    margin: 0,
-    listStyle: 'none',
-    padding: 0,
-  },
-
-  '& .open-bot': {
-    marginTop: '24px',
-    marginBottom: '16px',
-    width: '180px',
-    height: '26px',
-
-    '& .primary-button-text': {
-      lineHeight: '26px'
-    }
-  },
-
-  '& .cta-link': {
-    whiteSpace: 'normal'
-  }
-});
+import * as styles from './welcomePage.scss';
+import { Column, LargeHeader, PrimaryButton, Row, SmallHeader, TruncateText } from '@bfemulator/ui-react';
+import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
+import { GenericDocument } from '../../layout';
+import { RootState } from '../../../data/store';
 
 interface WelcomePageProps {
   documentId?: string;
@@ -138,54 +47,55 @@ interface WelcomePageProps {
 
 class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
   onNewBotClick = () => {
-    CommandServiceImpl.call(SharedConstants.Commands.UI.ShowBotCreationDialog);
+    CommandServiceImpl.call(SharedConstants.Commands.UI.ShowBotCreationDialog).catch();
   }
 
   onOpenBotClick = () => {
-    CommandServiceImpl.call(SharedConstants.Commands.Bot.OpenBrowse);
+    CommandServiceImpl.call(SharedConstants.Commands.Bot.OpenBrowse).catch();
   }
-  
-  onBotClick = (_e: any, path: string) => {
-    CommandServiceImpl.call(SharedConstants.Commands.Bot.Switch, path);
+
+  onBotClick = (_e: any, path) => {
+    CommandServiceImpl.call(SharedConstants.Commands.Bot.Switch, path).catch();
   }
 
   render() {
     return (
-      <GenericDocument style={ CSS }>
+      <GenericDocument>
         <LargeHeader>Welcome to the Bot Framework Emulator!</LargeHeader>
         <Row>
           <Column>
-            <div className="section">
+            <div className={ styles.section }>
               <SmallHeader>Start</SmallHeader>
               <span>Start talking to your bot by connecting to an endpoint or by opening a
                 bot saved locally. More about working locally with a bot.</span>
               <Row>
-                <PrimaryButton className="open-bot big-button" text="Open Bot" onClick={ this.onOpenBotClick }/>
+                <PrimaryButton className={ styles.openBot } text="Open Bot" onClick={ this.onOpenBotClick }/>
               </Row>
               <span>If you don’t have a bot configuration,
-                <a className="cta-link" href="javascript:void(0)"
+                <a className={ styles.ctaLink } href="javascript:void(0)"
                    onClick={ this.onNewBotClick }>create a new bot configuration.</a>
               </span>
             </div>
-            <div className="section">
+            <div className={ styles.section }>
               <SmallHeader>My Bots</SmallHeader>
-              <ul className="recent-bots-list well">
+              <ul className={ `${styles.recentBotsList} ${styles.well}` }>
                 {
                   this.props.recentBots && this.props.recentBots.length ?
                     this.props.recentBots.slice(0, 10).map(bot => bot &&
                       <li key={ bot.path }>
                         <a href="javascript:void(0);" onClick={ ev => this.onBotClick(ev, bot.path) }
                            title={ bot.path }><TruncateText>{ bot.displayName }</TruncateText></a>
-                        <TruncateText className="recent-bot-detail" title={ bot.path }>{ bot.path }</TruncateText>
+                        <TruncateText className={ styles.recentBotDetail }
+                                      title={ bot.path }>{ bot.path }</TruncateText>
                       </li>)
                     :
-                    <li><span className="no-bots"><TruncateText>No recent bots</TruncateText></span></li>
+                    <li><span className={ styles.noBots }><TruncateText>No recent bots</TruncateText></span></li>
                 }
               </ul>
             </div>
           </Column>
-          <Column className="right-column">
-            <div className="section">
+          <Column className={ styles.rightColumn }>
+            <div className={ styles.section }>
               <SmallHeader>Help</SmallHeader>
               <ul>
                 <li><a href="https://aka.ms/BotBuilderOverview"><TruncateText>Overview</TruncateText></a></li>

@@ -92,12 +92,6 @@ class TabBarComponent extends React.Component<TabBarProps, TabBarState> {
   onPresentationModeClick = () => this.props.enablePresentationMode();
 
   render() {
-    const splitEnabled = Object.keys(this.props.documents).length > 1;
-    const activeDoc = this.props.documents[this.props.activeDocumentId];
-    const presentationEnabled = activeDoc
-      && (activeDoc.contentType === Constants.CONTENT_TYPE_TRANSCRIPT ||
-        activeDoc.contentType === Constants.CONTENT_TYPE_LIVE_CHAT);
-
     const tabBarClassName = this.state.draggedOver ? styles.draggedOver : '';
     return (
       <div
@@ -108,19 +102,47 @@ class TabBarComponent extends React.Component<TabBarProps, TabBarState> {
         onDrop={ this.onDrop }>
         <ul ref={ this.saveScrollable }>
           {
-            React.Children.map(this.props.children, child =>
-              <li>{ child }</li>
+            React.Children.map(this.props.children, (child, index) =>
+              <li key={ index }>{ child }</li>
             )
           }
         </ul>
-        <div className="tab-bar-widgets">
-          { presentationEnabled ? <span className="widget presentation-widget" title="Presentation Mode"
-                                        onClick={ () => this.onPresentationModeClick() }></span> : null }
-          { splitEnabled ?
-            <span className="widget split-widget" title="Split Editor" onClick={ this.onSplitClick }></span> : null }
+        <div className={ styles.tabBarWidgets }>
+          { ...this.widgets }
         </div>
       </div>
     );
+  }
+
+  private get widgets(): JSX.Element[] {
+    const activeDoc = this.props.documents[this.props.activeDocumentId];
+    const presentationEnabled = activeDoc
+      && (activeDoc.contentType === Constants.CONTENT_TYPE_TRANSCRIPT ||
+        activeDoc.contentType === Constants.CONTENT_TYPE_LIVE_CHAT);
+    const splitEnabled = Object.keys(this.props.documents).length > 1;
+
+    let widgets: JSX.Element[] = [];
+
+    if (presentationEnabled) {
+      widgets.push(
+        <span
+          key={ 0 }
+          className={ `${styles.widget} ${styles.presentationWidget}` }
+          title="Presentation Mode"
+          onClick={ () => this.onPresentationModeClick() }>
+          </span>
+      );
+    } else if (splitEnabled) {
+      widgets.push(
+        <span
+          key={ 0 }
+          className={ `${styles.widget} ${styles.splitWidget}` }
+          title="Split Editor"
+          onClick={ this.onSplitClick }>
+        </span>
+      );
+    }
+    return widgets;
   }
 
   private onSplitClick = () => {

@@ -31,25 +31,25 @@
         margin-top: 0;
       }
 
-      & .wc-message-content * {
+      .wc-message-content * {
         user-select: text;
       }
 
-      & .wc-message-content.selected {
+      .wc-message-content.selected {
         color: black;
         background-color: var(--webchat-selected-text-bg);
         box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.2);
       }
 
-      & .wc-message-content.selected > svg.wc-message-callout > path {
+      .wc-message-content.selected > svg.wc-message-callout > path {
         fill: var(--webchat-selected-text-bg);
       }
 
-      & .wc-card {
+      .wc-card {
         color: #000;
       }
 
-      & .wc-card button {
+      .wc-card button {
         border: 1px solid #ccc;
         border-radius: 1px;
         cursor: pointer;
@@ -62,11 +62,11 @@
         padding: 0 16px;
       }
 
-      & .wc-list ul {
+      .wc-list ul {
         padding: 0;
       }
 
-      & .clickable:hover {
+      .clickable:hover {
         cursor: pointer;
       }
     }

@@ -33,8 +33,7 @@
     "typings-for-css-modules-loader": "^1.7.0"
   },
   "dependencies": {
-    "@fuselab/ui-fabric": "~1.1.0",
-    "@fuselab/ui-shared": "~1.1.0",
+    "@uifabric/utilities": "^6.7.1",
     "office-ui-fabric-react": "~6.1.2"
   }
 }

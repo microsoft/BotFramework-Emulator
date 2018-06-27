@@ -1,3 +1,4 @@
+/* tslint:disable:max-line-length */
 //
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
@@ -30,17 +31,39 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { Dialog as FabricDialog, DialogType, IDialogContentProps } from 'office-ui-fabric-react';
 import * as React from 'react';
-import { DefaultButton, IButtonProps } from 'office-ui-fabric-react/lib-commonjs/Button';
-export { IButtonProps } from 'office-ui-fabric-react/lib-commonjs/Button';
+import { dialogStyles } from './dialog.styles';
+import { dialogContentStyles } from './dialogContent.styles';
 
-export interface PrimaryButtonProps extends IButtonProps {
-  secondary?: boolean;
+export interface ModalProps extends JSX.ElementChildrenAttribute {
+  cancel: (event: any) => void;
+  title?: string;
+  detailedDescription?: string;
+  maxWidth?: number;
+  className?: string;
 }
 
-export function PrimaryButton(props: PrimaryButtonProps): JSX.Element {
-  const p = { ...props, ...{ primary: !props.secondary } };
-  return <DefaultButton {...p} />;
+export function Dialog(props: ModalProps): JSX.Element {
+  const content: IDialogContentProps = {
+    type: DialogType.normal,
+    title: props.title,
+    subText: props.detailedDescription,
+    showCloseButton: true,
+    styles: dialogContentStyles
+  };
+
+  return (
+    <FabricDialog
+      hidden={ false }
+      styles={ dialogStyles }
+      dialogContentProps={ content }
+      modalProps={ { isBlocking: true, className: props.className } }
+      onDismiss={ props.cancel }
+    >
+      { props.children }
+    </FabricDialog>
+  );
 }
 
 /*

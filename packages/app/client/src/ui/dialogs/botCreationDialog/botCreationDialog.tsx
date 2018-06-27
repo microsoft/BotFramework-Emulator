@@ -34,12 +34,13 @@
 import { BotConfigWithPath, BotConfigWithPathImpl, uniqueId } from '@bfemulator/sdk-shared';
 import {
   Checkbox,
-  Modal,
-  ModalActions,
-  ModalContent,
+  DefaultButton,
+  Dialog,
+  DialogContent,
+  DialogFooter,
   PrimaryButton,
   Row,
-  TextInputField
+  TextField,
 } from '@bfemulator/ui-react';
 import { EndpointService } from 'msbot/bin/models';
 import { IEndpointService, ServiceType } from 'msbot/bin/schema';
@@ -97,26 +98,26 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
       && secretCriteria;
     // TODO - localization
     return (
-      <Modal className={ styles.main } title="New bot configuration" cancel={ this.onCancel } maxWidth={ 648 }>
-        <ModalContent className={ styles.botCreateForm }>
-          <TextInputField
+      <Dialog className={ styles.main } title="New bot configuration" cancel={ this.onCancel } maxWidth={ 648 }>
+        <DialogContent className={ styles.botCreateForm }>
+          <TextField
             className="c"
             inputClassName="bot-creation-input"
             value={ this.state.bot.name }
             onChanged={ this.onChangeName }
             label={ 'Bot name' }
             required={ true }/>
-          <TextInputField
+          <TextField
             inputClassName="bot-creation-input"
             value={ this.state.endpoint.endpoint }
             onChanged={ this.onChangeEndpoint }
             placeholder={ 'Enter a URL for your bot\'s endpoint' } label={ 'Endpoint URL' }
             required={ true }/>
           <Row className={ styles.multiInputRow }>
-            <TextInputField
+            <TextField
               className={ styles.smallInput } inputClassName="bot-creation-input" value={ endpoint.appId }
               onChanged={ this.onChangeAppId } label={ 'MSA app ID' } placeholder={ 'Optional' }/>
-            <TextInputField
+            <TextField
               className={ styles.smallInput }
               inputClassName="bot-creation-input"
               value={ endpoint.appPassword }
@@ -131,7 +132,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
           {
             secretEnabled &&
             <Row className={ `${styles.multiInputRow} secret-row` }>
-              <TextInputField
+              <TextField
                 className={ styles.secretInput }
                 inputClassName="bot-creation-input"
                 value={ secret }
@@ -140,7 +141,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
                 label={ 'Create a secret' }
                 type={ 'password' }
               />
-              <TextInputField
+              <TextField
                 className={ `${styles.secretInput} secret-confirmation` }
                 inputClassName="bot-creation-input"
                 value={ secretConfirmation }
@@ -151,10 +152,9 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
               />
             </Row>
           }
-        </ModalContent>
-        <ModalActions>
-          <PrimaryButton
-            secondary={ true }
+        </DialogContent>
+        <DialogFooter>
+          <DefaultButton
             text="Cancel"
             onClick={ this.onCancel }
             className="cancel-button"
@@ -165,8 +165,8 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
             disabled={ !requiredFieldsCompleted }
             className="connect-button"
           />
-        </ModalActions>
-      </Modal>
+        </DialogFooter>
+      </Dialog>
     );
   }
 
