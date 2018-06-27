@@ -145,7 +145,7 @@ export function registerCommands() {
     }
 
     // set up file watcher
-    const watcher = BotProjectFileWatcher.getInstance().initialize(mainWindow.commandService);
+    const watcher = BotProjectFileWatcher.getInstance();
     watcher.watch(botFilePath);
 
     // set bot as active
@@ -188,7 +188,7 @@ export function registerCommands() {
     }
 
     // set up the file watcher
-    const watcher = BotProjectFileWatcher.getInstance().initialize(mainWindow.commandService);
+    const watcher = BotProjectFileWatcher.getInstance();
     await watcher.watch(botPath);
 
     // set active bot and active directory
@@ -459,7 +459,7 @@ export function registerCommands() {
 
       await saveableBot.save(botPath);
       await patchBotsJson(botPath, botInfo);
-      const watcher = BotProjectFileWatcher.getInstance().initialize(mainWindow.commandService);
+      const watcher = BotProjectFileWatcher.getInstance();
       await watcher.watch(botPath);
       store.dispatch(BotActions.setDirectory(botDirectory));
     }

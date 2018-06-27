@@ -34,12 +34,12 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { FileInfo } from '@bfemulator/app-shared';
-import { pathExt } from '@fuselab/ui-shared/lib';
 import { TreeView, TreeViewProps } from '@fuselab/ui-fabric/lib';
 import { ExpandCollapse, ExpandCollapseContent } from '@bfemulator/ui-react';
 import { FileTreeState } from '../../../../data/reducer/files';
 import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
 import { FileTreeDataProvider } from './fileTreeProvider';
+import { isChatFile, isTranscriptFile } from '../../../../utils';
 
 const CSS = {
   // tree comp overrides to match services pane style
@@ -62,22 +62,6 @@ interface FileExplorerProps {
   files: FileTreeState;
 }
 
-export function isTranscript(path: string): boolean {
-  if (!path) {
-    return false;
-  }
-  const ext = (pathExt(path) || '').toLowerCase();
-  return ext === 'transcript';
-}
-
-export function isChat(path: string): boolean {
-  if (!path) {
-    return false;
-  }
-  const ext = (pathExt(path) || '').toLowerCase();
-  return ext === 'chat';
-}
-
 class FileExplorerComponent extends React.Component<FileExplorerProps> {
   public render(): JSX.Element {
     return (
@@ -96,7 +80,6 @@ class FileExplorerComponent extends React.Component<FileExplorerProps> {
   }
 
   private handleChatClick(filename: string) {
-    console.log('clicked a chat file: ', filename);
     CommandServiceImpl.call('chat:open', filename);
   }
 
@@ -110,9 +93,9 @@ class FileExplorerComponent extends React.Component<FileExplorerProps> {
       remove: provider.remove.bind(provider),
       insertAt: provider.insertAt.bind(provider),
       selectNode: node => {
-        if (isTranscript(node.data.path)) {
+        if (isTranscriptFile(node.data.path)) {
           this.handleTranscriptClick(node.data.path);
-        } else if (isChat(node.data.path)) {
+        } else if (isChatFile(node.data.path)) {
           this.handleChatClick(node.data.path);
         }
         provider.selectNode.bind(provider);
