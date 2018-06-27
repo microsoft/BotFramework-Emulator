@@ -34,7 +34,12 @@
 import { FrameworkSettings, newBot, newEndpoint, SharedConstants } from '@bfemulator/app-shared';
 import * as got from 'got';
 import { IEndpointService } from 'msbot/bin/schema';
-import { BotConfigWithPath, BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
+import {
+  BotConfigWithPath,
+  BotConfigWithPathImpl,
+  BotConfigOverrides,
+  applyBotConfigOverrides
+} from '@bfemulator/sdk-shared';
 import * as Path from 'path';
 import * as QueryString from 'querystring';
 import { Protocol } from './constants';
@@ -63,7 +68,7 @@ enum ProtocolBotActions {
   open
 }
 
-interface Protocol {
+export interface Protocol {
   // the 'controller'
   domain?: string;
   // the 'action' or 'route' within the controller
@@ -74,7 +79,7 @@ interface Protocol {
   parsedArgs?: { [key: string]: string } | any;
 }
 
-interface ProtocolHandler {
+export interface ProtocolHandler {
   parseProtocolUrl: (url: string) => Protocol;
   dispatchProtocolAction: (protocol: Protocol) => void;
   performLiveChatAction: (protocol: Protocol) => void;
@@ -174,7 +179,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
   /** Mocks a bot object with any configuration parsed from the
    *  protocol string and starts a live chat session with that bot
    */
-  private async openLiveChat(protocol: Protocol): Promise<void> {
+  async openLiveChat(protocol: Protocol): Promise<void> {
     // mock up a bot object
     const { botUrl, msaAppId, msaPassword } = protocol.parsedArgs;
     const bot: BotConfigWithPath = BotConfigWithPathImpl.fromJSON(newBot());
@@ -220,7 +225,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
   /** Downloads a transcript from a URL provided in the protocol string,
    *  parses out the list of activities, and has the client side open it
    */
-  private openTranscript(protocol: Protocol): void {
+  openTranscript(protocol: Protocol): void {
     const { url } = protocol.parsedArgs;
     const options = { url };
 
@@ -264,8 +269,26 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
   }
 
   /** Opens the bot project associated with the .bot file at the specified path */
-  private openBot(protocol: Protocol): void {
+  async openBot(protocol: Protocol): Promise<void> {
     const { path, secret }: { path: string, secret: string } = protocol.parsedArgs;
+
+    const endpointOverrides: Partial<IEndpointService> = parseEndpointOverrides(protocol.parsedArgs);
+    const overrides: BotConfigOverrides = endpointOverrides ? { endpoint: endpointOverrides } : null;
+
+    let bot: BotConfigWithPath;
+    try {
+      bot = await mainWindow.commandService.call('bot:open', path, secret);
+      if (!bot) {
+        throw new Error(`Error occurred while trying to open bot at: ${path} inside of protocol handler.`);
+      }
+    } catch (e) {
+      throw new Error(`Error occurred while trying to open bot at: ${path} inside of protocol handler.`);
+    }
+
+    // apply any overrides
+    if (overrides) {
+      bot = applyBotConfigOverrides(bot, overrides);
+    }
 
     const appSettings: FrameworkSettings = getSettings().framework;
     if (appSettings.ngrokPath) {
@@ -275,31 +298,64 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
       }
 
       if (running()) {
-        mainWindow.commandService.call('bot:load', path, secret)
-          .then(() => console.log('opened bot successfully'))
-          // TODO: surface this error somewhere; native error box?
-          .catch(err => {
-            throw new Error(`Error occurred while trying to deep link to bot project at: ${path}`);
-          });
+        try {
+          await mainWindow.commandService.call('bot:set-active', bot);
+          await mainWindow.commandService.remoteCall('bot:load', bot);
+        } catch (e) {
+          throw new Error(`(ngrok running) Error occurred while trying to deep link to bot project at: ${path}.`);
+        }
       } else {
         // if ngrok hasn't connected yet, wait for it to connect and load the bot
-        ngrokEmitter.once('connect', (...args: any[]): void => {
-          mainWindow.commandService.call('bot:load', path, secret)
-            .then(() => console.log('opened bot successfully'))
-            // TODO: surface this error somewhere; native error box?
-            .catch(err => {
-              throw new Error(`Error occurred while trying to deep link to bot project at: ${path}`);
-            });
+        ngrokEmitter.once('connect', async (...args: any[]): Promise<void> => {
+          try {
+            await mainWindow.commandService.call('bot:set-active', bot);
+            await mainWindow.commandService.remoteCall('bot:load', bot);
+          } catch (e) {
+            throw new Error(
+              `(ngrok running but not connected) Error occurred while trying to deep link to bot project at: ${path}.`
+            );
+          }
         });
       }
     } else {
-      // load the bot and let the chat log show the user the error
-      mainWindow.commandService.call('bot:load', path, secret)
-        .then(() => console.log('opened bot successfully'))
-        // TODO: surface this error somewhere; native error box?
-        .catch(err => {
-          throw new Error(`Error occurred while trying to deep link to bot project at: ${path}`);
-        });
+      try {
+        await mainWindow.commandService.call('bot:set-active', bot);
+        await mainWindow.commandService.remoteCall('bot:load', bot);
+      } catch (e) {
+        throw new Error(`(ngrok not configured) Error occurred while trying to deep link to bot project at: ${path}`);
+      }
     }
   }
 };
+
+/**
+ * Takes the list of parsed protocol URI query params and constructs an endpoint service
+ * override object if there are appropriate parameters
+ * @param parsedArgs Parsed protocol URI query parameters
+ */
+export function parseEndpointOverrides(parsedArgs: { [key: string]: string }): Partial<IEndpointService> {
+  if (!parsedArgs || !Object.keys(parsedArgs).length) {
+    return null;
+  }
+
+  const endpointOverrides: Partial<IEndpointService> = {};
+  const { appId = null, appPassword = null, endpoint = null, id = null } = parsedArgs;
+
+  if (appId) {
+    endpointOverrides.appId = appId;
+  }
+  if (appPassword) {
+    endpointOverrides.appPassword = appPassword;
+  }
+  if (endpoint) {
+    endpointOverrides.endpoint = endpoint;
+  }
+  if (id) {
+    endpointOverrides.id = id;
+  }
+  // if no overrides were parsed, then return null
+  if (!Object.keys(endpointOverrides).length) {
+    return null;
+  }
+  return endpointOverrides;
+}

@@ -31,5 +31,32 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './misc';
-export * from './bot';
+import { uniqueId, isObject } from './misc';
+
+describe('Misc utility function tests', () => {
+  it('uniqueId() functionality', () => {
+    const id1 = uniqueId();
+    const id2 = uniqueId();
+    const id3 = uniqueId();
+
+    expect(id1).not.toEqual(id2);
+    expect(id1).not.toEqual(id3);
+    expect(id2).not.toEqual(id3);
+  });
+
+  it('isObject() functionality', () => {
+    const nonObj1 = 1;
+    const nonObj2 = 'notAnObject';
+    const nonObj3 = true;
+    const nonObj4 = [3, 'someString', false];
+
+    expect(isObject(nonObj1)).toBe(false);
+    expect(isObject(nonObj2)).toBe(false);
+    expect(isObject(nonObj3)).toBe(false);
+    expect(isObject(nonObj4)).toBe(false);
+
+    const obj = { someProp: 123 };
+
+    expect(isObject(obj)).toBe(true);
+  });
+});
