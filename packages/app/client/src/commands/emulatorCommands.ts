@@ -31,33 +31,32 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CommandRegistry } from './commandRegistry';
 import store from '../data/store';
 import * as ChatActions from '../data/action/chatActions';
 import * as EditorActions from '../data/action/editorActions';
 import * as Constants from '../constants';
 import { IEndpointService } from 'msbot/bin/schema';
-import { uniqueId } from '@bfemulator/sdk-shared';
+import { uniqueId, CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
 import { getTabGroupForDocument } from '../data/editorHelpers';
 
 /** Registers emulator (actual conversation emulation logic) commands */
-export const registerCommands = () => {
+export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Adds a transcript
-  CommandRegistry.registerCommand('transcript:add', (filename: string): void => {
+  commandRegistry.registerCommand('transcript:add', (filename: string): void => {
     store.dispatch(ChatActions.addTranscript(filename));
   });
 
   // ---------------------------------------------------------------------------
   // Removes a transcript
-  CommandRegistry.registerCommand('transcript:remove', (filename: string): void => {
+  commandRegistry.registerCommand('transcript:remove', (filename: string): void => {
     store.dispatch(ChatActions.removeTranscript(filename));
   });
 
   // ---------------------------------------------------------------------------
   // Open a new emulator tabbed document
-  CommandRegistry.registerCommand('livechat:new', (endpoint: IEndpointService) => {
+  commandRegistry.registerCommand('livechat:new', (endpoint: IEndpointService) => {
     const documentId = uniqueId();
 
     store.dispatch(ChatActions.newDocument(
@@ -79,7 +78,7 @@ export const registerCommands = () => {
 
   // ---------------------------------------------------------------------------
   // Open the transcript file in a tabbed document
-  CommandRegistry.registerCommand('transcript:open', (filename: string, additionalData?: object) => {
+  commandRegistry.registerCommand('transcript:open', (filename: string, additionalData?: object) => {
     const tabGroup = getTabGroupForDocument(filename);
     if (!tabGroup) {
       store.dispatch(ChatActions.newDocument(
@@ -101,7 +100,7 @@ export const registerCommands = () => {
 
   // ---------------------------------------------------------------------------
   // Prompt to open a transcript file, then open it
-  CommandRegistry.registerCommand('transcript:prompt-open', () => {
+  commandRegistry.registerCommand('transcript:prompt-open', () => {
     const dialogOptions = {
       title: 'Open transcript file',
       buttonLabel: 'Choose file',
@@ -121,4 +120,4 @@ export const registerCommands = () => {
       })
       .catch(err => console.error(err));
   });
-};
+}

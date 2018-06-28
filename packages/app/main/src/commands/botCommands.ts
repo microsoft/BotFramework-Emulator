@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CommandRegistry } from './commandRegistry';
 import {
   getActiveBot,
   getBotInfoByPath,
@@ -45,7 +44,8 @@ import * as BotActions from '../data-v2/action/bot';
 import {
   BotConfigWithPath,
   uniqueId,
-  mergeEndpoints
+  mergeEndpoints,
+  CommandRegistryImpl
 } from '@bfemulator/sdk-shared';
 import { BotInfo, getBotDisplayName } from '@bfemulator/app-shared';
 import { mainWindow } from '../main';
@@ -58,10 +58,10 @@ import { getStore } from '../data-v2/store';
 const store = getStore();
 
 /** Registers bot commands */
-export const registerCommands = () => {
+export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Create a bot
-  CommandRegistry.registerCommand('bot:create',
+  commandRegistry.registerCommand('bot:create',
     async (
       bot: BotConfigWithPath,
       secret: string
@@ -88,7 +88,7 @@ export const registerCommands = () => {
 
   // ---------------------------------------------------------------------------
   // Save bot file and cause a bots list write
-  CommandRegistry.registerCommand('bot:save', async (bot: BotConfigWithPath) => {
+  commandRegistry.registerCommand('bot:save', async (bot: BotConfigWithPath) => {
     try {
       await saveBot(bot);
     } catch (e) {
@@ -99,7 +99,7 @@ export const registerCommands = () => {
 
   // ---------------------------------------------------------------------------
   // Opens a bot file at specified path and returns the bot
-  CommandRegistry.registerCommand('bot:open',
+  commandRegistry.registerCommand('bot:open',
     async (
       botPath: string,
       secret?: string
@@ -132,7 +132,7 @@ export const registerCommands = () => {
 
   // ---------------------------------------------------------------------------
   // Set active bot
-  CommandRegistry.registerCommand('bot:set-active', async (bot: BotConfigWithPath): Promise<string> => {
+  commandRegistry.registerCommand('bot:set-active', async (bot: BotConfigWithPath): Promise<string> => {
     // set up the file watcher
     await BotProjectFileWatcher.watch(bot.path);
 
@@ -149,7 +149,7 @@ export const registerCommands = () => {
 
   // ---------------------------------------------------------------------------
   // Restart emulator endpoint service
-  CommandRegistry.registerCommand('bot:restart-endpoint-service', async () => {
+  commandRegistry.registerCommand('bot:restart-endpoint-service', async () => {
     const bot = getActiveBot();
 
     emulator.framework.server.botEmulator.facilities.endpoints.reset();
@@ -159,7 +159,7 @@ export const registerCommands = () => {
 
     bot.services.filter(s => s.type === ServiceType.Endpoint).forEach(service => {
       let endpoint = service as IEndpointService;
-      
+
       if (overridesArePresent && !appliedOverrides) {
         // if an endpoint id was not specified, apply overrides to first endpoint;
         // otherwise, apply overrides to the matching endpoint
@@ -186,14 +186,14 @@ export const registerCommands = () => {
 
   // ---------------------------------------------------------------------------
   // Close active bot (called from client-side)
-  CommandRegistry.registerCommand('bot:close', (): void => {
+  commandRegistry.registerCommand('bot:close', (): void => {
     BotProjectFileWatcher.dispose();
     store.dispatch(BotActions.close());
   });
 
   // ---------------------------------------------------------------------------
   // Adds or updates an msbot service entry.
-  CommandRegistry.registerCommand('bot:add-or-update-service',
+  commandRegistry.registerCommand('bot:add-or-update-service',
     async (
       serviceType: ServiceType,
       service: IConnectedService
@@ -230,7 +230,7 @@ export const registerCommands = () => {
 
   // ---------------------------------------------------------------------------
   // Removes an msbot service entry.
-  CommandRegistry.registerCommand('bot:remove-service', async (serviceType: ServiceType, serviceId: string) => {
+  commandRegistry.registerCommand('bot:remove-service', async (serviceType: ServiceType, serviceId: string) => {
     const activeBot = getActiveBot();
     const botInfo = activeBot && getBotInfoByPath(activeBot.path);
     if (botInfo) {
@@ -247,8 +247,8 @@ export const registerCommands = () => {
 
   // ---------------------------------------------------------------------------
   // Patches a bot record in bots.json
-  CommandRegistry.registerCommand('bot:list:patch', async (botPath: string, bot: BotInfo): Promise<void> => {
+  commandRegistry.registerCommand('bot:list:patch', async (botPath: string, bot: BotInfo): Promise<void> => {
     // patch bots.json and update the store
     await patchBotsJson(botPath, bot);
   });
-};
+}

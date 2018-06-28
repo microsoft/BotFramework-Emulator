@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CommandRegistry } from './commandRegistry';
 import { app, Menu } from 'electron';
 import { mainWindow } from '../main';
 import { showOpenDialog, showSaveDialog } from '../utils';
@@ -40,14 +39,15 @@ import * as Electron from 'electron';
 import shell = Electron.shell;
 import { ContextMenuService } from '../services/contextMenuService';
 import { getStore } from '../data-v2/store';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
 const store = getStore();
 
 /** Registers electron commands */
-export const registerCommands = () => {
+export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Show OS-native messsage box
-  CommandRegistry.registerCommand('shell:show-message-box', (modal: boolean, options: Electron.MessageBoxOptions) => {
+  commandRegistry.registerCommand('shell:show-message-box', (modal: boolean, options: Electron.MessageBoxOptions) => {
     options = {
       message: '',
       title: app.getName(),
@@ -59,19 +59,19 @@ export const registerCommands = () => {
 
   // ---------------------------------------------------------------------------
   // Shows an open dialog and returns a path
-  CommandRegistry.registerCommand('shell:showOpenDialog', (dialogOptions: Electron.OpenDialogOptions = {}): string => {
+  commandRegistry.registerCommand('shell:showOpenDialog', (dialogOptions: Electron.OpenDialogOptions = {}): string => {
     return showOpenDialog(mainWindow.browserWindow, dialogOptions);
   });
 
   // ---------------------------------------------------------------------------
   // Shows a save dialog and returns a path + filename
-  CommandRegistry.registerCommand('shell:showSaveDialog', (dialogOptions: Electron.SaveDialogOptions = {}): string => {
+  commandRegistry.registerCommand('shell:showSaveDialog', (dialogOptions: Electron.SaveDialogOptions = {}): string => {
     return showSaveDialog(mainWindow.browserWindow, dialogOptions);
   });
 
   // ---------------------------------------------------------------------------
   // Builds a new app menu to reflect the updated recent bots list
-  CommandRegistry.registerCommand('menu:update-recent-bots', (): void => {
+  commandRegistry.registerCommand('menu:update-recent-bots', (): void => {
     // get previous app menu template
     let menu = AppMenuBuilder.menuTemplate;
 
@@ -89,7 +89,7 @@ export const registerCommands = () => {
 
   // ---------------------------------------------------------------------------
   // Toggles app fullscreen mode
-  CommandRegistry.registerCommand('electron:set-fullscreen', (fullscreen: boolean): void => {
+  commandRegistry.registerCommand('electron:set-fullscreen', (fullscreen: boolean): void => {
     mainWindow.browserWindow.setFullScreen(fullscreen);
     if (fullscreen) {
       Menu.setApplicationMenu(null);
@@ -100,7 +100,7 @@ export const registerCommands = () => {
 
   // ---------------------------------------------------------------------------
   // Sets the app's title bar
-  CommandRegistry.registerCommand('electron:set-title-bar', (text: string) => {
+  commandRegistry.registerCommand('electron:set-title-bar', (text: string) => {
     if (text && text.length) {
       mainWindow.browserWindow.setTitle(`${app.getName()} - ${text}`);
     } else {
@@ -110,9 +110,9 @@ export const registerCommands = () => {
 
   // ---------------------------------------------------------------------------
   // Displays the context menu for a given element
-  CommandRegistry.registerCommand('electron:displayContextMenu', ContextMenuService.showMenuAndWaitForInput);
+  commandRegistry.registerCommand('electron:displayContextMenu', ContextMenuService.showMenuAndWaitForInput);
 
   // ---------------------------------------------------------------------------
   // Opens an external link
-  CommandRegistry.registerCommand('electron:openExternal', shell.openExternal.bind(shell, { activate: true }));
-};
+  commandRegistry.registerCommand('electron:openExternal', shell.openExternal.bind(shell, { activate: true }));
+}

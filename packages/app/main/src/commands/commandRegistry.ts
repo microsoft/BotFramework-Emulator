@@ -31,6 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CommandRegistryImpl as CmdReg } from '@bfemulator/sdk-shared';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
-export const CommandRegistry = new CmdReg();
+export const CommandRegistry = new CommandRegistryImpl();

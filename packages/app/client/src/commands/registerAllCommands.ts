@@ -40,16 +40,17 @@ import { registerCommands as registerEmulatorCommands } from './emulatorCommands
 import { registerCommands as registerFileCommands } from './fileCommands';
 import { registerCommands as registerMiscCommands } from './miscCommands';
 import { registerCommands as registerUICommands } from './uiCommands';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
 /** Registers all commands */
-export const registerAllCommands = () => {
-  LogService.registerCommands();
-  SettingsService.registerCommands();
-  ExtensionManager.registerCommands();
-  registerBotCommands();
-  registerElectronCommands();
-  registerEmulatorCommands();
-  registerFileCommands();
-  registerMiscCommands();
-  registerUICommands();
-};
+export function registerAllCommands(commandRegistry: CommandRegistryImpl) {
+  LogService.registerCommands(commandRegistry);
+  SettingsService.registerCommands(commandRegistry);
+  ExtensionManager.registerCommands(commandRegistry);
+  registerBotCommands(commandRegistry);
+  registerElectronCommands(commandRegistry);
+  registerEmulatorCommands(commandRegistry);
+  registerFileCommands(commandRegistry);
+  registerMiscCommands(commandRegistry);
+  registerUICommands(commandRegistry);
+}

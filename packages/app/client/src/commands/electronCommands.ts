@@ -31,39 +31,39 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CommandRegistry } from './commandRegistry';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
 /** Registers electron commands */
-export const registerCommands = () => {
+export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Toggle inspector dev tools for all open inspectors
-  CommandRegistry.registerCommand('shell:toggle-inspector-devtools', () => {
+  commandRegistry.registerCommand('shell:toggle-inspector-devtools', () => {
     window.dispatchEvent(new Event('toggle-inspector-devtools'));
   });
 
   // ---------------------------------------------------------------------------
   // An update is ready to install
-  CommandRegistry.registerCommand('shell:update-downloaded', (...args: any[]) => {
+  commandRegistry.registerCommand('shell:update-downloaded', (...args: any[]) => {
     // TODO: Show a notification
     console.log('Update available', ...args);
   });
 
   // ---------------------------------------------------------------------------
   // Application is up to date
-  CommandRegistry.registerCommand('shell:update-not-available', () => {
+  commandRegistry.registerCommand('shell:update-not-available', () => {
     // TODO: Show a notification
     console.log('Application is up to date');
   });
 
   // ---------------------------------------------------------------------------
   // Open the link in the default browser
-  CommandRegistry.registerCommand('shell:open-external-link', (url: string) => {
+  commandRegistry.registerCommand('shell:open-external-link', (url: string) => {
     window.open(url);
   });
 
   // ---------------------------------------------------------------------------
   // Open About dialog
-  CommandRegistry.registerCommand('shell:about', () => {
+  commandRegistry.registerCommand('shell:about', () => {
     // TODO: Show about dialog (native dialog box)
   });
-};
+}

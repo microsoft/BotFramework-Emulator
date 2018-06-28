@@ -31,15 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CommandRegistry } from './commandRegistry';
 import { emulator } from '../emulator';
 import { windowManager } from '../main';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
 /** Registers OAuth commands */
-export const registerCommands = () => {
+export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Sends an OAuth TokenResponse
-  CommandRegistry.registerCommand('oauth:send-token-response',
+  commandRegistry.registerCommand('oauth:send-token-response',
     async (
       connectionName: string,
       conversationId: string,
@@ -55,8 +55,8 @@ export const registerCommands = () => {
 
   // ---------------------------------------------------------------------------
   // Opens an OAuth login window
-  CommandRegistry.registerCommand('oauth:getStore-oauth-window', async (url: string, conversationId: string) => {
+  commandRegistry.registerCommand('oauth:getStore-oauth-window', async (url: string, conversationId: string) => {
     const convo = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
     windowManager.createOAuthWindow(url, convo.codeVerifier);
   });
-};
+}

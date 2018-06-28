@@ -32,14 +32,13 @@
 //
 
 import { LogEntry } from '@bfemulator/app-shared';
-import { DisposableImpl } from '@bfemulator/sdk-shared';
+import { DisposableImpl, CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import * as ChatActions from '../../data/action/chatActions';
 import store from '../../data/store';
-import { CommandRegistry } from '../../commands';
 import * as chatHelpers from '../../data/chatHelpers';
 
-export function registerCommands() {
-  CommandRegistry.registerCommand('conversation:log:append', (conversationId: string, entry: LogEntry): any => {
+export function registerCommands(commandRegistry: CommandRegistryImpl) {
+  commandRegistry.registerCommand('conversation:log:append', (conversationId: string, entry: LogEntry): any => {
     LogService.logToChat(conversationId, entry);
   });
 }

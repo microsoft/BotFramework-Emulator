@@ -31,8 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CommandRegistry } from './commandRegistry';
-import { BotConfigWithPath } from '@bfemulator/sdk-shared';
+import { BotConfigWithPath, CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { ActiveBotHelper } from '../ui/helpers/activeBotHelper';
 import { pathExistsInRecentBots } from '../data/botHelpers';
 import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
@@ -44,23 +43,23 @@ import * as Constants from '../constants';
 import { BotInfo, getBotDisplayName } from '@bfemulator/app-shared';
 
 /** Registers bot commands */
-export const registerCommands = () => {
+export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Switches the current active bot
-  CommandRegistry.registerCommand('bot:switch',
+  commandRegistry.registerCommand('bot:switch',
     (bot: BotConfigWithPath | string) => ActiveBotHelper.confirmAndSwitchBots(bot));
 
   // ---------------------------------------------------------------------------
   // Closes the current active bot
-  CommandRegistry.registerCommand('bot:close', () => ActiveBotHelper.confirmAndCloseBot());
+  commandRegistry.registerCommand('bot:close', () => ActiveBotHelper.confirmAndCloseBot());
 
   // ---------------------------------------------------------------------------
   // Browse for a .bot file and open it
-  CommandRegistry.registerCommand('bot:browse-open', () => ActiveBotHelper.confirmAndOpenBotFromFile());
+  commandRegistry.registerCommand('bot:browse-open', () => ActiveBotHelper.confirmAndOpenBotFromFile());
 
   // ---------------------------------------------------------------------------
   // Loads the bot on the client side using the activeBotHelper
-  CommandRegistry.registerCommand('bot:load', (bot: BotConfigWithPath): Promise<any> => {
+  commandRegistry.registerCommand('bot:load', (bot: BotConfigWithPath): Promise<any> => {
     if (!pathExistsInRecentBots(bot.path)) {
       // create and switch bots
       return ActiveBotHelper.confirmAndCreateBot(bot, '');
@@ -70,14 +69,14 @@ export const registerCommands = () => {
 
   // ---------------------------------------------------------------------------
   // Syncs the client side list of bots with bots arg (usually called from server side)
-  CommandRegistry.registerCommand('bot:list:sync', async (bots: BotInfo[]): Promise<void> => {
+  commandRegistry.registerCommand('bot:list:sync', async (bots: BotInfo[]): Promise<void> => {
     store.dispatch(BotActions.load(bots));
     CommandServiceImpl.remoteCall('menu:update-recent-bots');
   });
 
   // ---------------------------------------------------------------------------
   // Sets a bot as active (called from server-side)
-  CommandRegistry.registerCommand('bot:set-active', (bot: BotConfigWithPath, botDirectory: string) => {
+  commandRegistry.registerCommand('bot:set-active', (bot: BotConfigWithPath, botDirectory: string) => {
     store.dispatch(BotActions.setActive(bot));
     store.dispatch(FileActions.setRoot(botDirectory));
     CommandServiceImpl.remoteCall('menu:update-recent-bots');
@@ -86,7 +85,7 @@ export const registerCommands = () => {
 
   // ---------------------------------------------------------------------------
   // Opens up bot settings page for a bot
-  CommandRegistry.registerCommand('bot-settings:open', (_bot: BotConfigWithPath): void => {
+  commandRegistry.registerCommand('bot-settings:open', (_bot: BotConfigWithPath): void => {
     store.dispatch(EditorActions.open(Constants.CONTENT_TYPE_BOT_SETTINGS, Constants.DOCUMENT_ID_BOT_SETTINGS, false));
   });
-};
+}

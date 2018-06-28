@@ -39,15 +39,16 @@ import { registerCommands as registerFileCommands } from './fileCommands';
 import { registerCommands as registerLuisCommands } from './luisCommands';
 import { registerCommands as registerOAuthCommands } from './oauthCommands';
 import { registerCommands as registerSettingsCommands } from './settingsCommands';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
 /** Registers all commands */
-export const registerAllCommands = () => {
-  registerBotCommands();
-  registerClientInitCommands();
-  registerElectronCommands();
-  registerEmulatorCommands();
-  registerFileCommands();
-  registerLuisCommands();
-  registerOAuthCommands();
-  registerSettingsCommands();
-};
+export function registerAllCommands(commandRegistry: CommandRegistryImpl) {
+  registerBotCommands(commandRegistry);
+  registerClientInitCommands(commandRegistry);
+  registerElectronCommands(commandRegistry);
+  registerEmulatorCommands(commandRegistry);
+  registerFileCommands(commandRegistry);
+  registerLuisCommands(commandRegistry);
+  registerOAuthCommands(commandRegistry);
+  registerSettingsCommands(commandRegistry);
+}

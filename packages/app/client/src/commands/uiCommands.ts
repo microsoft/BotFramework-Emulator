@@ -31,56 +31,56 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CommandRegistry } from './commandRegistry';
 import { showWelcomePage } from '../data/editorHelpers';
 import { BotCreationDialog, DialogService, SecretPromptDialog } from '../ui/dialogs';
 import store from '../data/store';
 import * as EditorActions from '../data/action/editorActions';
 import * as NavBarActions from '../data/action/navBarActions';
 import * as Constants from '../constants';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
 /** Register UI commands (toggling UI) */
-export const registerCommands = () => {
+export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Shows the welcome page
-  CommandRegistry.registerCommand('welcome-page:show', () => {
+  commandRegistry.registerCommand('welcome-page:show', () => {
     showWelcomePage();
   });
 
   // ---------------------------------------------------------------------------
   // Shows a bot creation dialog
-  CommandRegistry.registerCommand('bot-creation:show', () => {
+  commandRegistry.registerCommand('bot-creation:show', () => {
     DialogService.showDialog(BotCreationDialog);
   });
 
   // ---------------------------------------------------------------------------
   // Shows a dialog prompting the user for a bot secret
-  CommandRegistry.registerCommand('secret-prompt:show', async () => {
+  commandRegistry.registerCommand('secret-prompt:show', async () => {
     return await DialogService.showDialog(SecretPromptDialog);
   });
 
   // ---------------------------------------------------------------------------
   // Switches navbar tab selection
-  CommandRegistry.registerCommand('navbar:switchtab', (tabName: string): void => {
+  commandRegistry.registerCommand('navbar:switchtab', (tabName: string): void => {
     store.dispatch(NavBarActions.select(tabName));
   });
 
   // ---------------------------------------------------------------------------
   // Switches navbar tab selection to Explorer
-  CommandRegistry.registerCommand('shell:show-explorer', (): void => {
+  commandRegistry.registerCommand('shell:show-explorer', (): void => {
     store.dispatch(NavBarActions.select(Constants.NAVBAR_BOT_EXPLORER));
   });
 
   // ---------------------------------------------------------------------------
   // Switches navbar tab selection to Services
-  CommandRegistry.registerCommand('shell:show-services', (): void => {
+  commandRegistry.registerCommand('shell:show-services', (): void => {
     store.dispatch(NavBarActions.select(Constants.NAVBAR_SERVICES));
   });
 
   // ---------------------------------------------------------------------------
   // Open App Settings
-  CommandRegistry.registerCommand('shell:show-app-settings', (): void => {
+  commandRegistry.registerCommand('shell:show-app-settings', (): void => {
     const { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } = Constants;
     store.dispatch(EditorActions.open(CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS, true, null));
   });
-};
+}

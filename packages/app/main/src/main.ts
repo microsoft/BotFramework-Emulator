@@ -45,12 +45,13 @@ import { setTimeout } from 'timers';
 import { Window } from './platform/window';
 import { ensureStoragePath, writeFile } from './utils';
 import * as squirrel from './squirrelEvents';
-import { registerAllCommands } from './commands';
+import { registerAllCommands } from './commands/registerAllCommands';
 import { AppMenuBuilder } from './appMenuBuilder';
 import { AppUpdater } from './appUpdater';
 import { UpdateInfo } from 'electron-updater';
 import { ProgressInfo } from 'builder-util-runtime';
 import { getStore } from './data-v2/store';
+import { CommandRegistry } from './commands';
 
 export let mainWindow: Window;
 export let windowManager: WindowManager;
@@ -156,7 +157,8 @@ var onOpenUrl = function (event: any, url1: any) {
 };
 
 // REGISTER ALL COMMANDS
-registerAllCommands();
+const registry = CommandRegistry;
+registerAllCommands(registry);
 
 // PARSE COMMAND LINE
 commandLine.parseArgs();
@@ -187,7 +189,7 @@ const createMainWindow = async () => {
   }
 
   /*
-  // TODO: Read window size AFTER store is initialized (how did this ever work?) 
+  // TODO: Read window size AFTER store is initialized (how did this ever work?)
   const settings = getSettings();
   let initBounds: Electron.Rectangle = {
     width: settings.windowState.width || 0,

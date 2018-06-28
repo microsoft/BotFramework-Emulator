@@ -31,14 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CommandRegistry } from './commandRegistry';
 import store from '../data/store';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
 /** Registers miscellaneous commands */
-export const registerCommands = () => {
+export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Returns the store's state
-  CommandRegistry.registerCommand('store:getState', () => {
+  commandRegistry.registerCommand('store:getState', () => {
     return store.getState();
   });
-};
+}

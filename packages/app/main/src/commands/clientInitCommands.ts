@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CommandRegistry } from './commandRegistry';
 import { mainWindow } from '../main';
 import * as BotActions from '../data-v2/action/bot';
 import { emulator } from '../emulator';
@@ -41,14 +40,15 @@ import { ProtocolHandler } from '../protocolHandler';
 import { getStore } from '../data-v2/store';
 import { getBotsFromDisk, readFileSync } from '../utils';
 import * as Path from 'path';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
 const store = getStore();
 
 /** Registers client initialization commands */
-export const registerCommands = () => {
+export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Client notifying us it's initialized and has rendered
-  CommandRegistry.registerCommand('client:loaded', () => {
+  commandRegistry.registerCommand('client:loaded', () => {
     // Load bots from disk and sync list with client
     const bots = getBotsFromDisk();
     store.dispatch(BotActions.load(bots));
@@ -69,7 +69,7 @@ export const registerCommands = () => {
 
   // ---------------------------------------------------------------------------
   // Client notifying us the welcome screen has been rendered
-  CommandRegistry.registerCommand('client:post-welcome-screen', async (): Promise<void> => {
+  commandRegistry.registerCommand('client:post-welcome-screen', async (): Promise<void> => {
     mainWindow.commandService.call('menu:update-recent-bots');
 
     // Parse command line args for a protocol url
@@ -106,4 +106,4 @@ export const registerCommands = () => {
       }
     }
   });
-};
+}

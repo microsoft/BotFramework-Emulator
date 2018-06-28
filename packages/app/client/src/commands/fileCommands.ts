@@ -31,27 +31,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CommandRegistry } from './commandRegistry';
 import store from '../data/store';
 import * as FileActions from '../data/action/fileActions';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
 /** Registers file commands */
-export const registerCommands = () => {
+export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Adds a file to the file store
-  CommandRegistry.registerCommand('file:add', (payload) => {
+  commandRegistry.registerCommand('file:add', (payload) => {
     store.dispatch(FileActions.addFile(payload));
   });
 
   // ---------------------------------------------------------------------------
   // Removes a file from the file store
-  CommandRegistry.registerCommand('file:remove', (path) => {
+  commandRegistry.registerCommand('file:remove', (path) => {
     store.dispatch(FileActions.removeFile(path));
   });
 
   // ---------------------------------------------------------------------------
   // Clears the file store
-  CommandRegistry.registerCommand('file:clear', () => {
+  commandRegistry.registerCommand('file:clear', () => {
     store.dispatch(FileActions.clear());
   });
-};
+}

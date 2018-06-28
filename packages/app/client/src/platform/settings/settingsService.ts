@@ -31,11 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { DisposableImpl } from '@bfemulator/sdk-shared';
-import { CommandRegistry } from '../../commands';
+import { DisposableImpl, CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
-export function registerCommands() {
-  CommandRegistry.registerCommand('receive-global-settings', (settings: {
+export function registerCommands(commandRegistry: CommandRegistryImpl) {
+  commandRegistry.registerCommand('receive-global-settings', (settings: {
     url: string,
     cwd: string
   }): any => {

@@ -44,7 +44,8 @@ import { CommandServiceImpl } from './platform/commands/commandServiceImpl';
 import { SettingsService } from './platform/settings/settingsService';
 import { LogService } from './platform/log/logService';
 import { showWelcomePage } from './data/editorHelpers';
-import { registerAllCommands } from './commands';
+import { registerAllCommands } from './commands/registerAllCommands';
+import { CommandRegistry } from './commands';
 
 initializeTheme('dark');
 initializeIcons();
@@ -55,7 +56,8 @@ CommandServiceImpl.init();
 SettingsService.init();
 LogService.init();
 
-registerAllCommands();
+const registry = CommandRegistry;
+registerAllCommands(registry);
 
 // Start rendering the UI
 ReactDOM.render(

@@ -31,17 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CommandRegistry } from './commandRegistry';
 import { LuisAuthWorkflowService } from '../services/luisAuthWorkflowService';
 import { getStore } from '../data-v2/store';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
 const store = getStore();
 
 /** Registers LUIS commands */
-export const registerCommands = () => {
+export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Retrieve the LUIS authoring key
-  CommandRegistry.registerCommand('luis:retrieve-authoring-key', async () => {
+  commandRegistry.registerCommand('luis:retrieve-authoring-key', async () => {
     const workflow = LuisAuthWorkflowService.enterAuthWorkflow();
     const { dispatch: storeDispatch } = store;
     const type = 'LUIS_AUTH_STATUS_CHANGED';
@@ -60,4 +60,4 @@ export const registerCommands = () => {
     }
     return result;
   });
-};
+}

@@ -31,15 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CommandRegistry } from './commandRegistry';
 import { readFileSync, writeFile } from '../utils';
 import sanitize from 'sanitize-filename';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
 /** Registers file commands */
-export const registerCommands = () => {
+export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Read file
-  CommandRegistry.registerCommand('file:read', (path: string): any => {
+  commandRegistry.registerCommand('file:read', (path: string): any => {
     try {
       const contents = readFileSync(path);
       return contents;
@@ -51,7 +51,7 @@ export const registerCommands = () => {
 
   // ---------------------------------------------------------------------------
   // Write file
-  CommandRegistry.registerCommand('file:write', (path: string, contents: object | string) => {
+  commandRegistry.registerCommand('file:write', (path: string, contents: object | string) => {
     try {
       writeFile(path, contents);
     } catch (e) {
@@ -62,7 +62,7 @@ export const registerCommands = () => {
 
   // ---------------------------------------------------------------------------
   // Sanitize a string for file name usage
-  CommandRegistry.registerCommand('file:sanitize-string', (path: string): string => {
+  commandRegistry.registerCommand('file:sanitize-string', (path: string): string => {
     return sanitize(path);
   });
-};
+}
