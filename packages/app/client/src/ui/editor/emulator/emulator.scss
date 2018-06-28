@@ -1,0 +1,71 @@
+.emulator {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+  & .vertical {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  & .header {
+    flex-grow: 0;
+    flex-shrink: 1;
+    flex-basis: 0;
+  }
+
+  & .content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    flex-basis: 0;
+    height: 100%
+  }
+}
+
+.presentation {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--dialog-bg);
+  color: var(--input-label-color);
+  & .chatPanel {
+    position: absolute;
+    top: 50%;
+    height: 75%;
+    max-height: 800px;
+    width: 100%;
+    transform: translateY(-50%);
+  }
+
+  & > .presentationContent {
+    position: relative;
+    height: 100%;
+    padding: 64px 0;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  & > .closePresentationIcon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: inline-block;
+    width: 64px;
+    height: 64px;
+    background: no-repeat 50% 50% url('../../media/ic_close.svg');
+    background-size: 32px;
+    cursor: pointer;
+  }
+
+  & .presentationPlaybackDock {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    height: 64px;
+    width: 400px;
+  }
+}

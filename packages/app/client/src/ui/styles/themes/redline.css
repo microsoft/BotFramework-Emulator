@@ -5,4 +5,5 @@ html {
   --box-shadow-left: inset 3px 0 var(--blur-radius) var(--spread-radius) var(--neutral-6);
   --box-shadow-bottom: inset 0 -3px var(--blur-radius) var(--spread-radius) var(--neutral-6);
   --box-shadow-right: inset -3px 0px var(--blur-radius) var(--spread-radius) var(--neutral-6);
+  --border-window-clip-path: polygon(0 0, 0% 100%, 3px 100%, 2px 2px, calc(100% - 2px) 2px, calc(100% - 2px) calc(100% - 2px), 2px calc(100% - 2px), 0px 100%, 100% 100%, 100% 0%);
 }

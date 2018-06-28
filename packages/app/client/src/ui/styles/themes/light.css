@@ -1,8 +1,11 @@
 html {
-  /* Highlight colors */
+  /* List item colors */
+  --list-item-color: var(--neutral-9);
+  --list-item-selected-color: var(--neutral-2);
+  --list-item-hover-bg: var(--neutral-4);
   --selected-list-item: #CCCEDB;
   --focused-list-item: #DCEBFC;
-  --focused-outline: #00bcf2;
+  --focused-outline: 1px solid #0e369c;
   --focused-selected-highlighted-list-item: #3062d6;
   --focused-selected-list-item-bg: #4672da;
 
@@ -74,6 +77,23 @@ html {
   --s-button-bg-active: var(--neutral-5);
   --s-button-bg-disabled: var(--neutral-2);
 
-  /* Dialog a.k.a. Modal */
+  /* Dialog a.k.a. Modal and panels */
   --dialog-bg: var(--neutral-2);
+
+  /* Services Explorer */
+  --explorer-panel-bg: var(--neutral-3);
+  --explorer-panel-name-color: var(--neutral-9);
+  --explorer-panel-icon-color: var(--neutral-14);
+  --explorer-panel-group-title-bg: var(--neutral-5);
+  --explorer-panel-group-title-color: var(--neutral-14);
+  --explorer-panel-empty-message-color: var(--neutral-15);
+
+  /* Tabs */
+  --tab-bg: var(--neutral-2);
+  --tab-active-tab-bg: var(--neutral-1);
+  --tab-hover-border: var(--p-button-border-focus);
+  --tab-seperator-bg: var(--neutral-4);
+
+  /* toolbar */
+  --toolbar-bg: var(--neutral-1);
 }

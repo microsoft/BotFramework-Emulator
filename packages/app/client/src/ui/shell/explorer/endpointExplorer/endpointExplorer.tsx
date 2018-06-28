@@ -55,7 +55,13 @@ export class EndpointExplorer extends ServicePane<EndpointProps> {
     const { endpointServices = [] } = this.props;
     return endpointServices
       .map((model, index) => {
-        return <li key={ index } onClick={ this.onLinkClick } data-index={ index }>{ model.name }</li>;
+        return (
+          <li
+            key={ index }
+            onClick={ this.onLinkClick }
+            data-index={ index }
+            tabIndex={ index }>{ model.name }
+          </li>);
       });
   }
 

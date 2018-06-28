@@ -10,15 +10,14 @@
     outline: none;
     position: absolute;
     transform: translateY(-50%);
-    top: 50%;
+    top: calc(50% + 2px);
     right: 10px;
     padding: 0;
     margin: 0;
     & > svg {
       width: 12px;
       height: 12px;
-      fill: var(--neutral-5);
-
+      fill: var(--explorer-panel-group-title-color);
       &:hover {
         fill: var(--log-panel-link);
       }
@@ -38,20 +37,22 @@
   margin: 0;
   overflow: hidden;
   & > li {
-    color: var(--neutral-5);
+    color: var(--list-item-color);
     cursor: pointer;
     display: block;
     white-space: nowrap;
     line-height: 22px;
     min-height: 22px;
     font-size: 13px;
-    :hover {
-      background-image: no-repeat linear-gradient(to bottom, var(--neutral-13) 0%, var(--neutral-13) 100%);
-      background-size: 100% 30px;
+    &:hover {
+      background-color: var(--list-item-hover-bg);
     }
-
-    [data-selected] {
-      background-image: linear-gradient(to bottom, var(--focused-list-item) 0%, var(--focused-list-item) 100%);
+    &:focus {
+      background-color: var(--focused-list-item);
+    }
+    &[data-selected], &:active {
+      color: var(--list-item-selected-color);
+      background-color: var(--focused-selected-list-item-bg);
     }
 
     & span {
@@ -59,11 +60,12 @@
     }
 
     &::before {
-      content: "🔗";
+      content: "💬";
+      opacity: .5;
       display: inline-block;
-      color: var(--webchat-selected-text-bg);
-      padding-right: 5px;
+      color: var(--explorer-panel-group-title-color);
       padding-left: 13px;
+      padding-right: 5px;
     }
   }
 }

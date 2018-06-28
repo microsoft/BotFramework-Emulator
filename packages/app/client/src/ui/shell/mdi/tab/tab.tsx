@@ -32,7 +32,7 @@
 //
 
 import * as React from 'react';
-import { DragEvent, SyntheticEvent } from 'react';
+import { DragEvent, KeyboardEvent, SyntheticEvent } from 'react';
 import { connect } from 'react-redux';
 import * as styles from './tab.scss';
 
@@ -75,9 +75,19 @@ class TabComponent extends React.Component<TabProps, TabState> {
         <span className={styles.editorTabIcon}> </span>
         <TruncateText className={styles.truncatedTabText}>{ this.props.title }</TruncateText>
         { this.props.dirty ? <span>*</span> : null }
-        <span className={styles.editorTabClose} onClick={ this.props.onCloseClick }> </span>
+        <button
+          className={styles.editorTabClose}
+          onKeyPress={this.onCloseButtonKeyPress}
+          onClick={ this.props.onCloseClick }>
+        </button>
       </div>
     );
+  }
+
+  private onCloseButtonKeyPress = (event: KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key === ' ' || event.keyCode === 13) {
+      this.props.onCloseClick(event);
+    }
   }
 
   private onDragStart = (e) => {

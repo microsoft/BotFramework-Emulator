@@ -1,6 +1,7 @@
 .tabBar {
   display: flex;
-  background-color: var(--neutral-15);
+  background-color: var(--dialog-bg);
+  color: var(--input-label-color);
   min-height: 32px;
   &.draggedOver {
     background-color: var(--neutral-14);
@@ -24,6 +25,34 @@
 
     &::-webkit-scrollbar-track {
       background: transparent;
+    }
+
+    li {
+      > button:focus {
+        position: relative;
+        &::before {
+          content: '';
+          border: var(--tab-hover-border);
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          clip-path: var(--border-window-clip-path);
+        }
+      }
+      + li {
+        position: relative;
+        padding-left: 1px;
+        &::after {
+          content: '';
+          position: absolute;
+          height: 100%;
+          width: 1px;
+          left: 0;
+          background: var(--tab-seperator-bg);
+        }
+      }
     }
   }
 

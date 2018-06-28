@@ -18,8 +18,8 @@
     margin: 0;
     padding: 24px 64px;
     list-style: none;
-    background-color: var(--neutral-15);
-    color: var(--neutral-16);
+    background-color: var(--dialog-bg);
+    color: var(--input-label-color);
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2), 2px 0 2px 0 rgba(0, 0, 0, 0.2), -2px 0 2px 0 rgba(0, 0, 0, 0.2);
 
     & > .selectedTab {

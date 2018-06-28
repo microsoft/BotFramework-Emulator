@@ -36,6 +36,7 @@ import * as React from 'react';
 
 import { filterChildren, hmrSafeNameComparison } from '../../utils';
 import * as styles from './expandCollapse.scss';
+import { KeyboardEvent } from 'react';
 
 export interface ExpandCollapseProps {
   expanded?: boolean;
@@ -61,9 +62,10 @@ export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandC
     // TODO: Consider <input type="checkbox"> instead of <div />
     return (
       <div aria-expanded={ expanded } className={ `${styles.expandCollapse} ${className}` }>
-        <header>
+        <header onKeyPress={ this.onHeaderKeyPress }>
           <div className={ styles.content } onClick={ this.handleTitleClick }>
-            <span className={ toggleClassName }></span>
+            <span className={ toggleClassName }>
+            </span>
             { title }
           </div>
           <div className={ styles.accessories }>
@@ -91,6 +93,12 @@ export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandC
 
   private handleTitleClick = () => {
     this.setState(state => ({ expanded: !state.expanded }));
+  }
+
+  private onHeaderKeyPress = (event: KeyboardEvent<HTMLHtmlElement>) => {
+    if (event.key === ' ') {
+      this.handleTitleClick();
+    }
   }
 }
 
