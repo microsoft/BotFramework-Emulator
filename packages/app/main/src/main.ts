@@ -228,14 +228,13 @@ const createMainWindow = async () => {
     // if the bots list changed, write it to disk
     const bots = state.bot.botFiles.filter(botFile => !!botFile);
     if (botListsAreDifferent(botsRef, bots)) {
-      botsRef = bots;
-
       const botsJson = { bots };
       const botsJsonPath = path.join(ensureStoragePath(), 'bots.json');
 
       try {
         // write bots list
         writeFile(botsJsonPath, botsJson);
+        botsRef = bots;
       } catch (e) {
         console.error('Error writing bot list to disk: ', e);
       }
