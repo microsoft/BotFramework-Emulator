@@ -45,7 +45,7 @@ import { setTimeout } from 'timers';
 import { Window } from './platform/window';
 import { ensureStoragePath, writeFile } from './utils';
 import * as squirrel from './squirrelEvents';
-import * as Commands from './commands';
+import { registerAllCommands } from './commands';
 import { AppMenuBuilder } from './appMenuBuilder';
 import { AppUpdater } from './appUpdater';
 import { UpdateInfo } from 'electron-updater';
@@ -156,7 +156,7 @@ var onOpenUrl = function (event: any, url1: any) {
 };
 
 // REGISTER ALL COMMANDS
-Commands.registerCommands();
+registerAllCommands();
 
 // PARSE COMMAND LINE
 commandLine.parseArgs();
