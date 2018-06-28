@@ -234,6 +234,7 @@ const createMainWindow = async () => {
       try {
         // write bots list
         writeFile(botsJsonPath, botsJson);
+        // update cached version to check against for changes
         botsRef = bots;
       } catch (e) {
         console.error('Error writing bot list to disk: ', e);
