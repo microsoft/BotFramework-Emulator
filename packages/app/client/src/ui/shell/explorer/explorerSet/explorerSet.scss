@@ -1,5 +1,6 @@
 .explorerSet {
-  background-color: var(--neutral-15);
+  background-color: var(--dialog-bg);
+  color: var(--input-label-color);
   display: flex;
   flex-flow: column nowrap;
   height: 100%;

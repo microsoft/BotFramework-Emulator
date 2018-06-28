@@ -6,8 +6,8 @@
   position: relative;
 
   & > .header {
-    background-color: var(--neutral-13);
-    color: var(--neutral-5);
+    background-color: var(--dialog-bg);
+    color: var(--input-label-color);
     line-height: 36px;
     min-height: 36px;
     text-transform: uppercase;

@@ -2,7 +2,7 @@ html {
   /* Highlight colors */
   --selected-list-item: #CCCEDB;
   --focused-list-item: #DCEBFC;
-  --focused-outline: #00BCF2;
+  --focused-outline: 1px solid #00BCF2;
   --focused-selected-highlighted-list-item: #3062D6;
   --focused-selected-list-item-bg: #4672DA;
 
@@ -72,4 +72,7 @@ html {
   --s-button-bg-hover: transparent;
   --s-button-bg-active: transparent;
   --s-button-bg-disabled: transparent;
+
+  /* Dialog a.k.a. Modal and panels */
+  --dialog-bg: var(--neutral-15);
 }

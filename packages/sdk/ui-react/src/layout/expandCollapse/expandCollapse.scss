@@ -4,9 +4,13 @@
   height: 100%;
   min-height: 22px;
   overflow: hidden;
+  &[aria-expanded="true"] {
+    margin-bottom: 15px;
+  }
 
   & > header {
-    background-color: var(--neutral-13);
+    background-color: var(--explorer-panel-group-title-bg);
+    color: var(--explorer-panel-group-title-color);
     cursor: pointer;
     display: flex;
     font-size: 11px;
@@ -16,6 +20,18 @@
     text-transform: uppercase;
     white-space: nowrap;
     flex-shrink: 0;
+    &:focus {
+      position: relative;
+      &::after {
+        content: '';
+        position: absolute;
+        border: var(--focused-outline);
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+    }
     & > .content {
       display: flex;
       align-items: center;
@@ -25,10 +41,11 @@
         height: 12px;
         width: 12px;
         margin-right: 8px;
-        background: no-repeat 50% 50% url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath fill='%23e8e8e8' d='M6 4v8l4-4-4-4zm1 2.414L8.586 8 7 9.586V6.414z'/%3E%3C/svg%3E");
+        background: no-repeat 50% 50% url("../../media/toggle-collapsed.svg");
         background-size: 18px;
+        fill: var(--explorer-panel-group-title-color);
         &.toggleExpanded {
-          background: no-repeat 50% 50% url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath fill='%23e8e8e8' d='M11 10.07H5.344L11 4.414v5.656z'/%3E%3C/svg%3E")
+          background: no-repeat 50% 50% url("../../media/toggle-expanded.svg");
         }
       }
 

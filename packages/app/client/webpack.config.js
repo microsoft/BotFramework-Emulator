@@ -51,6 +51,17 @@ const defaultConfig = {
         ]
       },
       {
+        test: /\.(png|jpg|gif|svg)$/,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 8192
+            }
+          }
+        ]
+      },
+      {
         test: /\.scss$/,
         use: [
           'style-loader',
@@ -68,10 +79,6 @@ const defaultConfig = {
           'resolve-url-loader',
           'sass-loader'
         ]
-      },
-      {
-        test: /\.(png|jpg|gif|svg)$/,
-        use: [ 'file-loader' ]
       },
       {
         test: /\.tsx?$/,

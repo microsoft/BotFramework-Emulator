@@ -4,7 +4,8 @@
   flex-flow: row nowrap;
   align-items: center;
   flex-shrink: 0;
-  background: var(--neutral-15);
+  background-color: var(--dialog-bg);
+  color: var(--input-label-color);
   & > header {
     font-size: 13px;
     line-height: 24px;
