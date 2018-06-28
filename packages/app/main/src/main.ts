@@ -51,6 +51,7 @@ import { AppUpdater } from './appUpdater';
 import { UpdateInfo } from 'electron-updater';
 import { ProgressInfo } from 'builder-util-runtime';
 import { getStore } from './data-v2/store';
+import { botListsAreDifferent } from './utils/botListsAreDifferent';
 
 export let mainWindow: Window;
 export let windowManager: WindowManager;
@@ -187,7 +188,7 @@ const createMainWindow = async () => {
   }
 
   /*
-  // TODO: Read window size AFTER store is initialized (how did this ever work?) 
+  // TODO: Read window size AFTER store is initialized (how did this ever work?)
   const settings = getSettings();
   let initBounds: Electron.Rectangle = {
     width: settings.windowState.width || 0,
@@ -217,31 +218,42 @@ const createMainWindow = async () => {
         width: 1400,
         height: 920
       }));
+
+  // get reference to bots list in state for comparison against state changes
+  let botsRef = store.getState().bot.botFiles;
+
   store.subscribe(() => {
     const state = store.getState();
-    const botsJson = { bots: state.bot.botFiles.filter(botFile => !!botFile) };
-    const botsJsonPath = path.join(ensureStoragePath(), 'bots.json');
 
-    try {
-      // write bots list
-      writeFile(botsJsonPath, botsJson);
-    } catch (e) {
-      console.error('Error writing bot list to disk: ', e);
-    }
+    // if the bots list changed, write it to disk
+    const bots = state.bot.botFiles.filter(botFile => !!botFile);
+    if (botListsAreDifferent(botsRef, bots)) {
+      botsRef = bots;
 
-    /* Timeout's are currently busted in Electron; will write on every store change until fix is made.
-    // Issue: https://github.com/electron/electron/issues/7079
+      const botsJson = { bots };
+      const botsJsonPath = path.join(ensureStoragePath(), 'bots.json');
 
-    clearTimeout(botSettingsTimer);
-
-    // wait 5 seconds after updates to bots list to write to disk
-    botSettingsTimer = setTimeout(() => {
-      const botsJsonPath = `${ensureStoragePath()}/bots.json`;
       try {
+        // write bots list
         writeFile(botsJsonPath, botsJson);
-        console.log('Wrote bot settings to desk.');
-      } catch (e) { console.error('Error writing bot settings to disk: ', e); }
-    }, 1000);*/
+      } catch (e) {
+        console.error('Error writing bot list to disk: ', e);
+      }
+
+      /* Timeout's are currently busted in Electron; will write on every store change until fix is made.
+      // Issue: https://github.com/electron/electron/issues/7079
+
+      clearTimeout(botSettingsTimer);
+
+      // wait 5 seconds after updates to bots list to write to disk
+      botSettingsTimer = setTimeout(() => {
+        const botsJsonPath = `${ensureStoragePath()}/bots.json`;
+        try {
+          writeFile(botsJsonPath, botsJson);
+          console.log('Wrote bot settings to desk.');
+        } catch (e) { console.error('Error writing bot settings to disk: ', e); }
+      }, 1000);*/
+    }
   });
 
   const serverUrl = await Emulator.startup();

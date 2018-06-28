@@ -189,7 +189,7 @@ export function registerCommands() {
 
     bot.services.filter(s => s.type === ServiceType.Endpoint).forEach(service => {
       let endpoint = service as IEndpointService;
-      
+
       if (overridesArePresent && !appliedOverrides) {
         // if an endpoint id was not specified, apply overrides to first endpoint;
         // otherwise, apply overrides to the matching endpoint
