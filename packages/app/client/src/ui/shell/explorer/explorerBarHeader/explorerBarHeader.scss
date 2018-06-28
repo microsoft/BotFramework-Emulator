@@ -1,0 +1,29 @@
+.explorerBarHeader {
+  padding: 8px 16px;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  flex-shrink: 0;
+  background-color: var(--dialog-bg);
+  color: var(--input-label-color);
+  & > header {
+    font-size: 13px;
+    line-height: 24px;
+    height: 24px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  & > span.accessory {
+    display: inline-block;
+    margin-left: auto;
+    width: 24px;
+    height: 24px;
+    cursor: pointer
+  }
+
+  & > span.botSettingsIcon {
+    background: url("../../../media/ic_settings.svg") no-repeat 50% 50%;
+    background-size: 16px;
+  }
+}

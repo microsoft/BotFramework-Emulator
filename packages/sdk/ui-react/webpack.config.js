@@ -29,6 +29,17 @@ module.exports = {
         ]
       },
       {
+        test: /\.(png|jpg|gif|svg)$/,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 8192
+            }
+          }
+        ]
+      },
+      {
         test: /\.(tsx?)|(jsx)$/,
         exclude: [/node_modules/],
         use: [
@@ -46,11 +57,7 @@ module.exports = {
         test: /\.tsx?$/,
         loader: 'tslint-loader',
         options: { /* Loader options go here */ }
-      },
-      {
-        test: /\.(png|jpg|gif|svg)$/,
-        use: [ 'file-loader' ]
-      },
+      }
     ]
   },
 

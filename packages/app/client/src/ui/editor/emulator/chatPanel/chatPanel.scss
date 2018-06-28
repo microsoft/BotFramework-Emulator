@@ -1,0 +1,15 @@
+.chatPanel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  & > header {
+    background-color: var(--dialog-bg);
+    color: var(--input-label-color);
+    line-height: 30px;
+    min-height: 30px;
+    padding-left: 16px;
+    text-transform: lowercase;
+    user-select: text;
+    white-space: nowrap;
+  }
+}

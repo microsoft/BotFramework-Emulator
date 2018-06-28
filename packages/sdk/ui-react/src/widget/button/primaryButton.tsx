@@ -3,9 +3,8 @@ import { IButtonProps, PrimaryButton as FabricPrimaryButton } from 'office-ui-fa
 import { primaryButtonStyles } from './primaryButton.styles';
 
 export function PrimaryButton<P extends IButtonProps, C>(props: P): JSX.Element {
-  let { styles = {} } = props;
-  styles = { ...primaryButtonStyles, ...styles };
-  const theseProps = Object.assign({}, props, { styles });
+  let { styles = {}, ...p } = props as any;
+  p.styles = { ...primaryButtonStyles, ...styles };
 
-  return <FabricPrimaryButton { ...theseProps }/>;
+  return <FabricPrimaryButton { ...p }/>;
 }

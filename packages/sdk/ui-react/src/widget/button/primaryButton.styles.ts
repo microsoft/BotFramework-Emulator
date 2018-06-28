@@ -71,7 +71,7 @@ export const primaryButtonStyles: IButtonStyles = {
     backgroundColor: 'var(--p-button-bg-focus)',
     selectors: {
       '::after': {
-        border: 'var(--p-button-border-focus)',
+        border: 'var(--p-button-border-focus) !important',
         outline: 'none'
       }
     }

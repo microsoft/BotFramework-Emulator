@@ -1,6 +1,7 @@
 .toolbar {
   height: 40px;
-  background-color: var(--neutral-15);
+  background-color: var(--toolbar-bg);
+  color: var(--input-label-color);
   line-height: 40px;
   & > ul {
     display: flex;
@@ -17,11 +18,9 @@
       border: none;
       height: 30px;
       background-color: transparent;
-      color: var(--neutral-5);
       white-space: nowrap;
       &:hover {
         background-color: transparent;
-        color: var(--neutral-5);
         text-decoration: underline;
       }
     }
