@@ -4,6 +4,7 @@
   height: 100%;
   min-height: 22px;
   overflow: hidden;
+
   &[aria-expanded="true"] {
     margin-bottom: 15px;
   }
@@ -20,33 +21,30 @@
     text-transform: uppercase;
     white-space: nowrap;
     flex-shrink: 0;
-    &:focus {
-      position: relative;
-      &::after {
-        content: '';
-        position: absolute;
-        border: var(--focused-outline);
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-      }
-    }
-    & > .content {
+    & > .actuator {
       display: flex;
       align-items: center;
       flex: 1;
       padding-left: 8px;
-      & > .toggle {
+      text-decoration: none;
+      color: inherit;
+      &:focus {
+        position: relative;
+        &::after {
+          content: '';
+          position: absolute;
+          border: var(--focused-outline);
+          top: 0;
+          bottom: 0;
+          left: 0;
+          right: 0;
+        }
+      }
+      & > svg {
         height: 12px;
         width: 12px;
         margin-right: 8px;
-        background: no-repeat 50% 50% url("../../media/toggle-collapsed.svg");
-        background-size: 18px;
         fill: var(--explorer-panel-group-title-color);
-        &.toggleExpanded {
-          background: no-repeat 50% 50% url("../../media/toggle-expanded.svg");
-        }
       }
 
       & .accessories {
@@ -74,8 +72,4 @@
       flex-flow: column nowrap
     }
   }
-}
-
-.shadow {
-  box-shadow: var(--box-shadow-top);
 }

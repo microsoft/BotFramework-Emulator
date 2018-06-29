@@ -18,6 +18,10 @@
     box-sizing: border-box;
   }
 
+  *:focus {
+    outline: var(--p-button-border-focus);
+  }
+
   ::-webkit-scrollbar {
     width: 10px;
     height: 10px;

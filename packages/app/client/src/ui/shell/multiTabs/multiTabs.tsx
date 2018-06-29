@@ -35,7 +35,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import * as styles from './multiTabs.scss';
 
-import { Content as TabbedDocumentContent, Tab as TabbedDocumentTab, TabBar, TabBarTab } from './index';
+import { Content as TabbedDocumentContent, Tab as TabbedDocumentTab, TabBar } from './index';
 import { filterChildren, hmrSafeNameComparison } from '@bfemulator/ui-react';
 import { RootState } from '../../../data/store';
 
@@ -63,10 +63,10 @@ class MultiTabsComponent extends React.Component<MultiTabsProps> {
                   activeIndex={ this.props.value }>
             {
               React.Children.map(this.props.children, (tabbedDocument: any, index) =>
-                <TabBarTab onClick={ this.handleTabClick.bind(this, index) } setRef={ this.setRef }>
+                <button className={ styles.tab } onClick={ this.handleTabClick.bind(this, index) } ref={ this.setRef }>
                   { filterChildren(tabbedDocument.props.children, child =>
                     hmrSafeNameComparison(child.type, TabbedDocumentTab)) }
-                </TabBarTab>
+                </button>
               )
             }
           </TabBar>

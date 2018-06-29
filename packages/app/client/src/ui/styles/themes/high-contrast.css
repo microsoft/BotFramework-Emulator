@@ -1,8 +1,12 @@
 html {
   /* Highlight colors */
+  --list-item-color: var(--neutral-1);
+  --list-item-selected-color: var(--neutral-2);
+  --list-item-hover-bg: transparent;
+  --list-item-hover-border: 1px dashed #F38518;
   --selected-list-item: #CCCEDB;
-  --focused-list-item: #DCEBFC;
-  --focused-outline: 1px solid #00BCF2;
+  --focused-list-item: transparent;
+  --focused-outline: var(--list-item-hover-border);
   --focused-selected-highlighted-list-item: #3062D6;
   --focused-selected-list-item-bg: #4672DA;
 
@@ -32,7 +36,7 @@ html {
   --nav-focused-tag-bg: #F38518;
   --nav-focused-tag-bg-opacity: .6;
   --nav-link-selected-border: 1px solid #F38518;
-  --nav-link-hover-border: 1px dashed #F38518;
+  --nav-link-hover-border: var(--list-item-hover-border);
 
   /* input[type="text"] */
   --input-bg: var(--neutral-15);
@@ -74,5 +78,29 @@ html {
   --s-button-bg-disabled: transparent;
 
   /* Dialog a.k.a. Modal and panels */
-  --dialog-bg: var(--neutral-15);
+  --dialog-bg: var(--neutral-16);
+
+  /* Services Explorer */
+  --explorer-panel-bg: var(--neutral-16);
+  --explorer-panel-name-color: var(--neutral-1);
+  --explorer-panel-icon-color: var(--neutral-1);
+  --explorer-panel-group-title-bg: var(--neutral-16);
+  --explorer-panel-group-title-color: var(--neutral-1);
+  --explorer-panel-group-border: 1px solid #00BCF2;
+  --explorer-panel-empty-message-color: var(--neutral-4);
+
+  /* Tabs */
+  --tab-color: var(--p-button-color);
+  --tab-bar-bg: var(--neutral-16);
+  --tab-bg: var(--neutral-16);
+  --tab-border: 1px solid transparent;
+  --tab-hover-border: var(--list-item-hover-border);
+  --tab-active-tab-bg: var(--neutral-16);
+  --tab-focus-border: var(--p-button-border-focus);
+  --tab-seperator-bg: #00BCF2;
+  --tab-icon-color: var(--explorer-panel-group-title-color);
+
+  /* toolbar */
+  --toolbar-bg: var(--neutral-16);
+  --toolbar-border: var(--explorer-panel-group-border);
 }
