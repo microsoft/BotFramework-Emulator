@@ -75,16 +75,17 @@ class TabComponent extends React.Component<TabProps, TabState> {
         <span className={styles.editorTabIcon}> </span>
         <TruncateText className={styles.truncatedTabText}>{ this.props.title }</TruncateText>
         { this.props.dirty ? <span>*</span> : null }
-        <button
+        <a
+          href="javascript:void(0)"
           className={styles.editorTabClose}
           onKeyPress={this.onCloseButtonKeyPress}
           onClick={ this.props.onCloseClick }>
-        </button>
+        </a>
       </div>
     );
   }
 
-  private onCloseButtonKeyPress = (event: KeyboardEvent<HTMLButtonElement>) => {
+  private onCloseButtonKeyPress = (event: KeyboardEvent<HTMLAnchorElement>) => {
     if (event.key === ' ' || event.keyCode === 13) {
       this.props.onCloseClick(event);
     }

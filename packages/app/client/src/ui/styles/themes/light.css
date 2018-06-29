@@ -1,8 +1,9 @@
 html {
-  /* List item colors */
+  /* Highlight colors */
   --list-item-color: var(--neutral-9);
   --list-item-selected-color: var(--neutral-2);
   --list-item-hover-bg: var(--neutral-4);
+  --list-item-hover-border: 1px dashed transparent;
   --selected-list-item: #CCCEDB;
   --focused-list-item: #DCEBFC;
   --focused-outline: 1px solid #0e369c;
@@ -25,7 +26,7 @@ html {
 
   /* Log panel custom colors */
   --log-panel-timestamp: #47B07F;
-  --log-panel-link: #9CDCFE;
+  --log-panel-link: #007acc;
 
   /* nav bar custom colors */
   --nav-bar-bg: var(--neutral-15);
@@ -86,14 +87,25 @@ html {
   --explorer-panel-icon-color: var(--neutral-14);
   --explorer-panel-group-title-bg: var(--neutral-5);
   --explorer-panel-group-title-color: var(--neutral-14);
+  --explorer-panel-group-border: 1px solid transparent;
   --explorer-panel-empty-message-color: var(--neutral-15);
 
   /* Tabs */
+  --tab-color: var(--explorer-panel-group-title-color);
+  --tab-bar-bg: var(--neutral-2);
   --tab-bg: var(--neutral-2);
+  --tab-border: 1px solid trasparent;
+  --tab-hover-border: 1px solid trasparent;
   --tab-active-tab-bg: var(--neutral-1);
-  --tab-hover-border: var(--p-button-border-focus);
+  --tab-focus-border: var(--p-button-border-focus);
   --tab-seperator-bg: var(--neutral-4);
+  --tab-icon-color: var(--explorer-panel-group-title-color);
 
   /* toolbar */
-  --toolbar-bg: var(--neutral-1);
+  --toolbar-bg: var(--tab-active-tab-bg);
+  --toolbar-border: none;
+}
+
+.ms-Modal {
+  --dialog-bg: var(--neutral-2);
 }

@@ -44,7 +44,9 @@
     line-height: 22px;
     min-height: 22px;
     font-size: 13px;
+    border: 1px solid transparent;
     &:hover {
+      border: var(--list-item-hover-border);
       background-color: var(--list-item-hover-bg);
     }
     &:focus {
@@ -53,6 +55,7 @@
     &[data-selected], &:active {
       color: var(--list-item-selected-color);
       background-color: var(--focused-selected-list-item-bg);
+      border: var(--list-item-hover-border);
     }
 
     & span {

@@ -26,6 +26,9 @@
 
 .botSettingsInput {
   color: var(--neutral-5);
+  label {
+    color: var(--input-label-color);
+  }
   :global {
     .ms-TextField-fieldGroup:hover {
       border: inherit;
