@@ -158,9 +158,7 @@ function createWebChatProps(
       name: 'Bot'
     },
     botConnection: directLine,
-    formatOptions: {
-      showHeader: false
-    },
+    chatTitle: false,
     selectedActivity: selectedActivity$,
     showShell: mode === 'livechat',
     speechOptions:

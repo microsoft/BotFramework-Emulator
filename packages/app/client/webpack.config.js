@@ -51,7 +51,7 @@ const defaultConfig = {
         ]
       },
       {
-        test: /\.(png|jpg|gif|svg)$/,
+        test: /\.(png|jpg|gif|svg|woff)$/,
         use: [
           {
             loader: 'url-loader',

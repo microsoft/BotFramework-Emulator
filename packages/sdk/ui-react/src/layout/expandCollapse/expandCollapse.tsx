@@ -33,10 +33,10 @@
 //
 
 import * as React from 'react';
+import { KeyboardEvent } from 'react';
 
 import { filterChildren, hmrSafeNameComparison } from '../../utils';
 import * as styles from './expandCollapse.scss';
-import { KeyboardEvent } from 'react';
 
 export interface ExpandCollapseProps {
   expanded?: boolean;
@@ -56,18 +56,19 @@ export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandC
 
   render() {
     const { expanded } = this.state;
-    const { className, title, children } = this.props;
-    const toggleClassName = !expanded ? styles.toggle : `${styles.toggle} ${styles.toggleExpanded}`;
+    const { className = '', title, children } = this.props;
 
     // TODO: Consider <input type="checkbox"> instead of <div />
     return (
       <div aria-expanded={ expanded } className={ `${styles.expandCollapse} ${className}` }>
         <header onKeyPress={ this.onHeaderKeyPress }>
-          <div className={ styles.content } onClick={ this.handleTitleClick }>
-            <span className={ toggleClassName }>
-            </span>
+          <a
+            className={ styles.actuator }
+            href="javascript:void(0);"
+            onClick={ this.onActuatorClick }>
+            { this.toggleIcon }
             { title }
-          </div>
+          </a>
           <div className={ styles.accessories }>
             { filterChildren(children, child => hmrSafeNameComparison(child.type, ExpandCollapseControls)) }
           </div>
@@ -75,12 +76,27 @@ export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandC
         <div className={ styles.body }>
           {
             expanded &&
-            <section className={ styles.shadow }>
+            <section>
               { filterChildren(children, child => hmrSafeNameComparison(child.type, ExpandCollapseContent)) }
             </section>
           }
         </div>
       </div>
+    );
+  }
+
+  private get toggleIcon(): JSX.Element {
+    if (this.state.expanded) {
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+          <path d="M11 10.07H5.344L11 4.414v5.656z"/>
+        </svg>
+      );
+    }
+    return (
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+        <path d="M6 4v8l4-4-4-4zm1 2.414L8.586 8 7 9.586V6.414z"/>
+      </svg>
     );
   }
 
@@ -91,13 +107,13 @@ export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandC
     }
   }
 
-  private handleTitleClick = () => {
+  private onActuatorClick = () => {
     this.setState(state => ({ expanded: !state.expanded }));
   }
 
   private onHeaderKeyPress = (event: KeyboardEvent<HTMLHtmlElement>) => {
     if (event.key === ' ') {
-      this.handleTitleClick();
+      this.onActuatorClick();
     }
   }
 }

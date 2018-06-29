@@ -2,13 +2,26 @@
   display: flex;
   align-items: center;
   height: 100%;
-  border: none;
   background-color: var(--tab-bg);
-  color: var(--input-label-color);
+  color: var(--tab-color);
   cursor: pointer;
   padding: 4px 8px;
   box-sizing: border-box;
   white-space: nowrap;
+  position: relative;
+  &::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    right: 3px;
+    bottom: 3px;
+    left: 2px;
+    border: var(--tab-border);
+    clip-path: var(--border-window-clip-path);
+  }
+  &:hover::after {
+    border: var(--tab-hover-border);
+  }
 
   & > span {
     display: inline-block;
@@ -23,16 +36,17 @@
       content: "🗋";
       transform: rotate(180deg) skewX(180deg) scaleX(1.3);
       display: inline-block;
-      color: var(--explorer-panel-group-title-color);
+      color: var(--tab-icon-color);
       padding-right: 5px;
       padding-left: 8px;
     }
   }
   &:hover > .editorTabClose {
-     opacity: 1;
+    opacity: 1;
   }
 
   & > .editorTabClose {
+    text-decoration: none;
     display: inline-block;
     width: 8px;
     margin-left: 8px;
@@ -55,8 +69,10 @@
     }
     &::after {
       content: "✖";
-      color: var(--input-label-color);
+      color: var(--tab-icon-color);
       font-size: 12px;
+    }
+    &:hover::after {
     }
   }
 }
@@ -71,7 +87,7 @@
 
 .activeEditorTab {
   background-color: var(--tab-active-tab-bg);
-  color: var(--neutral-11);
+  color: var(--tab-color);
 
   & > .editorTabClose {
     opacity: 1;

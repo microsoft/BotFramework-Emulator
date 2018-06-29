@@ -31,53 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
 import * as React from 'react';
-
-import { Colors, filterChildren, hmrSafeNameComparison } from '@bfemulator/ui-react';
-
-const CSS = css({
-  display: 'flex',
-  flex: 1,
-  flexDirection: 'column',
-  height: '100%',
-  position: 'relative',
-
-  '& > .header': {
-    backgroundColor: Colors.SECTION_HEADER_BACKGROUND_DARK,
-    color: Colors.SECTION_HEADER_FOREGROUND_DARK,
-    lineHeight: '36px',
-    minHeight: '36px',
-    textTransform: 'uppercase',
-    paddingLeft: '16px',
-    display: 'flex',
-    whiteSpace: 'nowrap',
-
-    '& > .accessories': {
-      margin: '0 0 0 auto',
-      height: '100%',
-      width: 'auto',
-      display: 'flex',
-      alignItems: 'center',
-
-      '& > button': {
-        backgroundColor: 'transparent',
-        color: Colors.SECTION_HEADER_FOREGROUND_DARK,
-        border: 0,
-        cursor: 'pointer',
-        whiteSpace: 'nowrap'
-      }
-    }
-  },
-
-  '& > .body': {
-    backgroundColor: Colors.PANEL_BACKGROUND_DARK,
-    color: Colors.PANEL_FOREGROUND_DARK,
-    flex: 1,
-    overflow: 'auto',
-    padding: 0,
-  }
-});
+import * as styles from './panel.scss';
+import { filterChildren, hmrSafeNameComparison } from '@bfemulator/ui-react';
 
 interface PanelProps {
   children?: any;
@@ -91,14 +47,14 @@ export default class Panel extends React.Component<PanelProps, {}> {
 
   render() {
     return (
-      <div { ...CSS }>
-        <div className="header">
+      <div className={ styles.panel }>
+        <div className={ styles.panelHeader }>
           { this.props.title }
-          <div className="accessories">
+          <div className={ styles.accessories }>
             { filterChildren(this.props.children, child => hmrSafeNameComparison(child.type, PanelControls)) }
           </div>
         </div>
-        <div className="body">
+        <div className={ styles.panelBody }>
           { filterChildren(this.props.children, child => hmrSafeNameComparison(child.type, PanelContent)) }
         </div>
       </div>

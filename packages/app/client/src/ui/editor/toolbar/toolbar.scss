@@ -1,6 +1,7 @@
 .toolbar {
   height: 40px;
   background-color: var(--toolbar-bg);
+  border-top: var(--toolbar-border);
   color: var(--input-label-color);
   line-height: 40px;
   & > ul {
@@ -19,6 +20,7 @@
       height: 30px;
       background-color: transparent;
       white-space: nowrap;
+      color: inherit;
       &:hover {
         background-color: transparent;
         text-decoration: underline;

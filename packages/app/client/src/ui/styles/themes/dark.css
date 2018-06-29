@@ -1,5 +1,9 @@
 html {
   /* Highlight colors */
+  --list-item-color: var(--neutral-3);
+  --list-item-selected-color: var(--neutral-2);
+  --list-item-hover-bg: var(--neutral-13);
+  --list-item-hover-border: 1px dashed #transparent;
   --selected-list-item: #3F3F46;
   --focused-list-item: #073655;
   --focused-outline: 1px solid #0E369C;
@@ -46,11 +50,12 @@ html {
 
   /* primary button */
   --p-button-color: var(--neutral-2);
-  --p-button-border: none;
+  --p-button-color-disabled: var(--neutral-6);
+  --p-button-border: 1px solid transparent;
   --p-button-border-focus: 1px solid #00bcf2;
-  --p-button-border-hover: none;
-  --p-button-border-active: none;
-  --p-button-border-disabled: none;
+  --p-button-border-hover: 1px solid transparent;
+  --p-button-border-active: 1px solid transparent;
+  --p-button-border-disabled: 1px solid transparent;
   --p-button-opacity-disabled: 1;
   --p-button-bg: #3062d6;
   --p-button-bg-focus: #3062d6;
@@ -61,12 +66,12 @@ html {
   /* secondary button */
   --s-button-color: var(--neutral-15);
   --s-button-color-disabled: var(--neutral-3);
-  --s-button-border: none;
+  --s-button-border: 1px solid transparent;
   --s-button-border-focused: var(--p-button-border-focus);
-  --s-button-border-hover: none;
-  --s-button-border-active: none;
-  --s-button-border-disabled: none;
-  --s-button-opacity-disabled: none;
+  --s-button-border-hover: 1px solid transparent;
+  --s-button-border-active: 1px solid transparent;
+  --s-button-border-disabled: 1px solid transparent;
+  --s-button-opacity-disabled: 1;
   --s-button-bg: var(--neutral-3);
   --s-button-bg-focus: var(--neutral-3);
   --s-button-bg-hover: var(--neutral-4);
@@ -74,5 +79,41 @@ html {
   --s-button-bg-disabled: var(--neutral-2);
 
   /* Dialog a.k.a. Modal and panels */
-  --dialog-bg: var(--neutral-15);
+  --dialog-bg: var(--neutral-14);
+
+  /* Services Explorer */
+  --explorer-panel-bg: var(--neutral-14);
+  --explorer-panel-name-color: var(--neutral-2);
+  --explorer-panel-icon-color: var(--neutral-7);
+  --explorer-panel-group-title-bg: var(--neutral-13);
+  --explorer-panel-group-title-color: var(--neutral-4);
+  --explorer-panel-group-border: 1px solid transparent;
+  --explorer-panel-empty-message-color: var(--neutral-5);
+
+  /* Tabs */
+  --tab-color: var(--p-button-color);
+  --tab-bar-bg: var(--explorer-panel-group-title-bg);
+  --tab-bg: var(--neutral-13);
+  --tab-border: 1px solid trasparent;
+  --tab-hover-border: 1px solid transparent;
+  --tab-active-tab-bg: var(--neutral-15);
+  --tab-focus-border: var(--p-button-border-focus);
+  --tab-seperator-bg: var(--neutral-11);
+  --tab-icon-color: var(--explorer-panel-group-title-color);
+
+  /* toolbar */
+  --toolbar-bg: var(--tab-active-tab-bg);
+  --toolbar-border: none;
+}
+
+.ms-Modal {
+  --dialog-bg: var(--neutral-2);
+  --input-bg: var(--neutral-1);
+  --input-label-color: var(--neutral-14);
+  --input-label-color-disabled: #c8c8c8;
+  --input-border: 1px solid #c8c8c8;
+  --input-border-focus: 1px solid #00bcf2;
+  --input-border-error: 1px solid var(--error-outline);
+  --input-placeholder-color: var(--neutral-9);
+  --input-border-disabled: 1px solid #c8c8c8;
 }

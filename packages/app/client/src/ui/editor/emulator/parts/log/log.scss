@@ -1,0 +1,52 @@
+.log {
+  height: 100%;
+  overflow: auto;
+  user-select: text;
+  padding: 0 16px 0 16px;
+  box-sizing: border-box;
+  & > .entry {
+    font-family: var(--monospace-font-family);
+    & > .source {
+      color: var(--neutral-6);
+    }
+
+    & .timestamp {
+      color: var(--log-panel-timestamp);
+    }
+
+    & .srcDst {
+      color: var(--neutral-9);
+    }
+
+    & a {
+      color: var(--log-panel-link);
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+      // info
+    & .level0 {
+      color: var(--neutral-16);
+    }
+      // debug
+    & .level1 {
+      color: var(--neutral-7);
+    }
+      // warn
+    & .level2 {
+      color: var(--warning-outline);
+    }
+      // error
+    & .level3 {
+      color: var(--error-text);
+    }
+
+    & .spaced {
+      margin-left: 8px;
+    }
+
+    & .spaced:first-child {
+      margin-left: 0;
+    }
+  }
+}
