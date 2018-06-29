@@ -5,6 +5,7 @@ import store from '../../data/store';
 import { getActiveBot } from '../../data/botHelpers';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 import { IEndpointService, ServiceType } from 'msbot/bin/schema';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 describe('ActiveBotHelper tests', () => {
   let backupCommandServiceImpl;
@@ -132,7 +133,7 @@ describe('ActiveBotHelper tests', () => {
     await ActiveBotHelper.setActiveBot(bot);
     expect(mockDispatch).toHaveBeenCalledTimes(2);
     expect(mockRemoteCall).toHaveBeenCalledTimes(3);
-    expect(mockRemoteCall).toHaveBeenCalledWith('bot:set-active', bot);
+    expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.SetActive, bot);
 
     mockRemoteCall = jest.fn().mockRejectedValueOnce('error');
     (CommandServiceImpl as any) = ({ remoteCall: mockRemoteCall });
@@ -171,7 +172,7 @@ describe('ActiveBotHelper tests', () => {
     await ActiveBotHelper.confirmAndCreateBot(bot, 'someSecret');
     expect(mockDispatch).toHaveBeenCalledTimes(4);
     expect(mockCall).toHaveBeenCalledWith('livechat:new', endpoint);
-    expect(mockRemoteCall).toHaveBeenCalledWith('bot:create', bot, 'someSecret');
+    expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.Create, bot, 'someSecret');
 
     mockRemoteCall = jest.fn().mockRejectedValue('err');
     (CommandServiceImpl as any) = ({ remoteCall: mockRemoteCall, call: mockCall });
@@ -218,8 +219,8 @@ describe('ActiveBotHelper tests', () => {
     await ActiveBotHelper.confirmAndOpenBotFromFile();
     expect(mockDispatch).toHaveBeenCalledTimes(1);
     expect(mockCall).toHaveBeenCalledWith('bot:load', bot);
-    expect(mockRemoteCall).toHaveBeenCalledWith('bot:open', 'someOtherPath');
-    expect(mockRemoteCall).toHaveBeenCalledWith('bot:set-active', bot);
+    expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.Open, 'someOtherPath');
+    expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.SetActive, bot);
 
     ActiveBotHelper.browseForBotFile = backupBrowseForBotFile;
     ActiveBotHelper.botAlreadyOpen = backupBotAlreadyOpen;
@@ -274,7 +275,7 @@ describe('ActiveBotHelper tests', () => {
 
     // switching to a bot with only the bot path available
     await ActiveBotHelper.confirmAndSwitchBots('someBotPath');
-    expect(mockRemoteCall).toHaveBeenCalledWith('bot:open', 'someBotPath');
+    expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.Open, 'someBotPath');
     mockCall.mockClear();
     mockDispatch.mockClear();
 

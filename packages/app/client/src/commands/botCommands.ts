@@ -40,22 +40,24 @@ import * as BotActions from '../data/action/botActions';
 import * as EditorActions from '../data/action/editorActions';
 import * as FileActions from '../data/action/fileActions';
 import * as Constants from '../constants';
-import { BotInfo, getBotDisplayName } from '@bfemulator/app-shared';
+import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
 
 /** Registers bot commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
+  const Commands = SharedConstants.Commands;
+
   // ---------------------------------------------------------------------------
   // Switches the current active bot
-  commandRegistry.registerCommand('bot:switch',
+  commandRegistry.registerCommand(Commands.Bot.Switch,
     (bot: BotConfigWithPath | string) => ActiveBotHelper.confirmAndSwitchBots(bot));
 
   // ---------------------------------------------------------------------------
   // Closes the current active bot
-  commandRegistry.registerCommand('bot:close', () => ActiveBotHelper.confirmAndCloseBot());
+  commandRegistry.registerCommand(Commands.Bot.Close, () => ActiveBotHelper.confirmAndCloseBot());
 
   // ---------------------------------------------------------------------------
   // Browse for a .bot file and open it
-  commandRegistry.registerCommand('bot:browse-open', () => ActiveBotHelper.confirmAndOpenBotFromFile());
+  commandRegistry.registerCommand(Commands.Bot.OpenBrowse, () => ActiveBotHelper.confirmAndOpenBotFromFile());
 
   // ---------------------------------------------------------------------------
   // Loads the bot on the client side using the activeBotHelper
@@ -69,23 +71,23 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Syncs the client side list of bots with bots arg (usually called from server side)
-  commandRegistry.registerCommand('bot:list:sync', async (bots: BotInfo[]): Promise<void> => {
+  commandRegistry.registerCommand(Commands.Bot.SyncBotList, async (bots: BotInfo[]): Promise<void> => {
     store.dispatch(BotActions.load(bots));
-    CommandServiceImpl.remoteCall('menu:update-recent-bots');
+    CommandServiceImpl.remoteCall(Commands.Electron.UpdateRecentBotsInMenu);
   });
 
   // ---------------------------------------------------------------------------
   // Sets a bot as active (called from server-side)
-  commandRegistry.registerCommand('bot:set-active', (bot: BotConfigWithPath, botDirectory: string) => {
+  commandRegistry.registerCommand(Commands.Bot.SetActive, (bot: BotConfigWithPath, botDirectory: string) => {
     store.dispatch(BotActions.setActive(bot));
     store.dispatch(FileActions.setRoot(botDirectory));
-    CommandServiceImpl.remoteCall('menu:update-recent-bots');
-    CommandServiceImpl.remoteCall('electron:set-title-bar', getBotDisplayName(bot));
+    CommandServiceImpl.remoteCall(Commands.Electron.UpdateRecentBotsInMenu);
+    CommandServiceImpl.remoteCall(Commands.Electron.SetTitleBar, getBotDisplayName(bot));
   });
 
   // ---------------------------------------------------------------------------
   // Opens up bot settings page for a bot
-  commandRegistry.registerCommand('bot-settings:open', (_bot: BotConfigWithPath): void => {
+  commandRegistry.registerCommand(Commands.Bot.OpenSettings, (_bot: BotConfigWithPath): void => {
     store.dispatch(EditorActions.open(Constants.CONTENT_TYPE_BOT_SETTINGS, Constants.DOCUMENT_ID_BOT_SETTINGS, false));
   });
 }

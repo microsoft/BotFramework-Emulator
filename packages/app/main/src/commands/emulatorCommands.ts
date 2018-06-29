@@ -50,23 +50,25 @@ import * as BotActions from '../data-v2/action/bot';
 import { promisify } from 'util';
 import * as Fs from 'fs';
 import { cleanupId as cleanupActivityChannelAccountId, CustomActivity } from '../utils/conversation';
-import { newBot, newEndpoint } from '@bfemulator/app-shared';
+import { newBot, newEndpoint, SharedConstants } from '@bfemulator/app-shared';
 
 const store = getStore();
 
 /** Registers emulator (actual conversation emulation logic) commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
+  const Commands = SharedConstants.Commands.Emulator;
+
   // ---------------------------------------------------------------------------
   // Saves the conversation to a transcript file, with user interaction to set filename.
-  commandRegistry.registerCommand('emulator:save-transcript-to-file', async (conversationId: string): Promise<void> => {
+  commandRegistry.registerCommand(Commands.SaveTranscriptToFile, async (conversationId: string): Promise<void> => {
     const activeBot: BotConfigWithPath = getActiveBot();
     if (!activeBot) {
-      throw new Error('save-transcript-to-file: No active bot.');
+      throw new Error(`${Commands.SaveTranscriptToFile}: No active bot.`);
     }
 
     const convo = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
     if (!convo) {
-      throw new Error(`save-transcript-to-file: Conversation ${conversationId} not found.`);
+      throw new Error(`${Commands.SaveTranscriptToFile}: Conversation ${conversationId} not found.`);
     }
 
     const path = Path.resolve(store.getState().bot.currentBotDirectory) || '';
@@ -112,19 +114,19 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Feeds a transcript from disk to a conversation
   commandRegistry.registerCommand(
-    'emulator:feed-transcript:disk',
+    Commands.FeedTranscriptFromDisk,
     async (conversationId: string, botId: string, userId: string, filePath: string) => {
 
       const path = Path.resolve(filePath);
       const stat = await promisify(Fs.stat)(path);
 
       if (!stat || !stat.isFile()) {
-        throw new Error(`feed-transcript:disk: File ${filePath} not found.`);
+        throw new Error(`${Commands.FeedTranscriptFromDisk}: File ${filePath} not found.`);
       }
 
       const activities = JSON.parse(await promisify(Fs.readFile)(path, 'utf-8'));
 
-      mainWindow.commandService.call('emulator:feed-transcript:deep-link', conversationId, botId, userId, activities);
+      mainWindow.commandService.call(Commands.FeedTranscriptFromMemory, conversationId, botId, userId, activities);
 
       const { name, ext } = Path.parse(path);
       const fileName = `${name}${ext}`;
@@ -139,7 +141,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Feeds a deep-linked transcript (array of parsed activities) to a conversation
   commandRegistry.registerCommand(
-    'emulator:feed-transcript:deep-link',
+    Commands.FeedTranscriptFromMemory,
     (conversationId: string, botId: string, userId: string, activities: CustomActivity[]): void => {
 
       const activeBot: BotConfigWithPath = getActiveBot();
@@ -160,7 +162,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Get a speech token
-  commandRegistry.registerCommand('speech-token:get', (endpointId: string, refresh: boolean) => {
+  commandRegistry.registerCommand(Commands.GetSpeechToken, (endpointId: string, refresh: boolean) => {
     const endpoint = emulator.framework.server.botEmulator.facilities.endpoints.get(endpointId);
 
     return endpoint && endpoint.getSpeechToken(refresh);
@@ -168,7 +170,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Creates a new conversation object for transcript
-  commandRegistry.registerCommand('transcript:new', (conversationId: string): Conversation => {
+  commandRegistry.registerCommand(Commands.NewTranscript, (conversationId: string): Conversation => {
     // get the active bot or mock one
     let bot: BotConfigWithPath = getActiveBot();
 

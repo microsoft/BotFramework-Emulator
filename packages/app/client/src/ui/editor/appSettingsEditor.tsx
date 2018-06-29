@@ -34,7 +34,7 @@
 import * as React from 'react';
 import { css } from 'glamor';
 
-import { FrameworkSettings } from '@bfemulator/app-shared';
+import { FrameworkSettings, SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import {
   Checkbox,
@@ -200,7 +200,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
       properties: ['openFile']
     };
 
-    CommandServiceImpl.remoteCall('shell:showOpenDialog', dialogOptions)
+    CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.ShowOpenDialog, dialogOptions)
       .then(ngrokPath => this.setUncommittedState({ ngrokPath }))
       .catch(err => console.log('User cancelled browsing for ngrok: ', err));
   }

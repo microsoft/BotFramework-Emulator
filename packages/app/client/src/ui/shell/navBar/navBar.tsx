@@ -46,6 +46,7 @@ import { RootState } from '../../../data/store';
 import { IBotConfig } from 'msbot/bin/schema';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { NavLink } from './navLink';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 const CSS = css({
   backgroundColor: Colors.NAVBAR_BACKGROUND_DARK,
@@ -105,7 +106,7 @@ class NavBarComponent extends React.Component<NavBarProps> {
 
   private handleBotSettingsClick = () => {
     if (this.props.activeBot) {
-      CommandServiceImpl.call('bot-settings:open', this.props.activeBot);
+      CommandServiceImpl.call(SharedConstants.Commands.Bot.OpenSettings, this.props.activeBot);
     }
   }
 }

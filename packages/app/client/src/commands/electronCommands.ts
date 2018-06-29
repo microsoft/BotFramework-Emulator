@@ -32,38 +32,40 @@
 //
 
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 /** Registers electron commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
+  const Commands = SharedConstants.Commands.Electron;
   // ---------------------------------------------------------------------------
   // Toggle inspector dev tools for all open inspectors
-  commandRegistry.registerCommand('shell:toggle-inspector-devtools', () => {
+  commandRegistry.registerCommand(Commands.ToggleDevTools, () => {
     window.dispatchEvent(new Event('toggle-inspector-devtools'));
   });
 
   // ---------------------------------------------------------------------------
   // An update is ready to install
-  commandRegistry.registerCommand('shell:update-downloaded', (...args: any[]) => {
+  commandRegistry.registerCommand(Commands.UpdateAvailable, (...args: any[]) => {
     // TODO: Show a notification
     console.log('Update available', ...args);
   });
 
   // ---------------------------------------------------------------------------
   // Application is up to date
-  commandRegistry.registerCommand('shell:update-not-available', () => {
+  commandRegistry.registerCommand(Commands.UpdateNotAvailable, () => {
     // TODO: Show a notification
     console.log('Application is up to date');
   });
 
   // ---------------------------------------------------------------------------
   // Open the link in the default browser
-  commandRegistry.registerCommand('shell:open-external-link', (url: string) => {
+  commandRegistry.registerCommand(Commands.OpenExternal, (url: string) => {
     window.open(url);
   });
 
   // ---------------------------------------------------------------------------
   // Open About dialog
-  commandRegistry.registerCommand('shell:about', () => {
+  commandRegistry.registerCommand(Commands.ShowAboutDialog, () => {
     // TODO: Show about dialog (native dialog box)
   });
 }

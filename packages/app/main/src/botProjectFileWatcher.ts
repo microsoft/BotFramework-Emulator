@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { FileInfo } from '@bfemulator/app-shared';
+import { FileInfo, SharedConstants } from '@bfemulator/app-shared';
 import { callbackToPromise } from '@fuselab/ui-shared/lib/asyncUtils';
 import { exists, FSWatcher, readFile, Stats } from 'fs';
 import * as Path from 'path';
@@ -81,7 +81,7 @@ export const BotProjectFileWatcher = new class FileWatcherImpl implements FileWa
     // stop watching any other project directory
     this.dispose();
     // wipe the transcript explorer store
-    await mainWindow.commandService.remoteCall('file:clear');
+    await mainWindow.commandService.remoteCall(SharedConstants.Commands.File.Clear);
 
     if (botFilePath && botFilePath.length) {
       this._botFilePath = botFilePath;
@@ -127,12 +127,12 @@ export const BotProjectFileWatcher = new class FileWatcherImpl implements FileWa
       return;
     }
 
-    mainWindow.commandService.remoteCall('file:add', fileInfo);
+    mainWindow.commandService.remoteCall(SharedConstants.Commands.File.Add, fileInfo);
   }
 
   // TODO: Enable watching more extensions
   onFileRemove = (file: string, fstats?: Stats): void => {
-    mainWindow.commandService.remoteCall('file:remove', file);
+    mainWindow.commandService.remoteCall(SharedConstants.Commands.File.Remove, file);
   }
 
   onFileChange = async (file: string, fstats?: Stats): Promise<void> => {
@@ -150,8 +150,8 @@ export const BotProjectFileWatcher = new class FileWatcherImpl implements FileWa
         // update store
         const botDir = Path.dirname(this._botFilePath);
         getStore().dispatch(BotActions.setActive(bot));
-        mainWindow.commandService.remoteCall('bot:set-active', bot, botDir);
-        mainWindow.commandService.call('bot:restart-endpoint-service');
+        mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.SetActive, bot, botDir);
+        mainWindow.commandService.call(SharedConstants.Commands.Bot.RestartEndpointService);
       }
     }
   }

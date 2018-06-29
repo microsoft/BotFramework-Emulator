@@ -55,6 +55,7 @@ import DetailPanel from './detailPanel';
 import LogPanel from './logPanel';
 import PlaybackBar from './playbackBar';
 import { debounce } from '../../utils/debounce';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 const { encode } = base64Url;
 
@@ -228,14 +229,17 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
 
     if (props.mode === 'transcript') {
       try {
-        const conversation = await CommandServiceImpl.remoteCall('transcript:new', conversationId);
+        const conversation = await CommandServiceImpl.remoteCall(
+          SharedConstants.Commands.Emulator.NewTranscript,
+          conversationId
+        );
 
         if (props.document && props.document.deepLink && props.document.activities) {
           try {
             // transcript was deep linked via protocol,
             // and should just be fed its own activities attached to the document
             await CommandServiceImpl.remoteCall(
-              'emulator:feed-transcript:deep-link',
+              SharedConstants.Commands.Emulator.FeedTranscriptFromMemory,
               conversation.conversationId,
               props.document.botId,
               props.document.userId,
@@ -248,7 +252,7 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
           try {
             // the transcript is on disk, so its activities need to be read on the main side and fed in
             const fileInfo: { fileName: string, filePath: string } = await CommandServiceImpl.remoteCall(
-              'emulator:feed-transcript:disk',
+              SharedConstants.Commands.Emulator.FeedTranscriptFromDisk,
               conversation.conversationId,
               props.document.botId,
               props.document.userId,
@@ -367,7 +371,10 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
 
   private handleExportClick = () => {
     if (this.props.document.directLine) {
-      CommandServiceImpl.remoteCall('emulator:save-transcript-to-file', this.props.document.directLine.conversationId);
+      CommandServiceImpl.remoteCall(
+        SharedConstants.Commands.Emulator.SaveTranscriptToFile, 
+        this.props.document.directLine.conversationId
+      );
     }
   }
 }

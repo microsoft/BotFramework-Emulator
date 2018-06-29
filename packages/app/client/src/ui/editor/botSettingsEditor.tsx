@@ -182,9 +182,10 @@ class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps,
         path: newPath,
         secret: this.state.secret
       };
-      await CommandServiceImpl.remoteCall('bot:list:patch', SharedConstants.TEMP_BOT_IN_MEMORY_PATH, botInfo);
+      await CommandServiceImpl
+        .remoteCall(SharedConstants.Commands.Bot.PatchBotList, SharedConstants.TEMP_BOT_IN_MEMORY_PATH, botInfo);
 
-      await CommandServiceImpl.remoteCall('bot:save', bot);
+      await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.Save, bot);
 
       // need to set the new bot as active now that it is no longer a placeholder bot in memory
       await ActiveBotHelper.setActiveBot(bot);
@@ -208,9 +209,9 @@ class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps,
     botInfo.secret = this.state.secret;
 
     // write updated bot entry to bots.json
-    await CommandServiceImpl.remoteCall('bot:list:patch', bot.path, botInfo);
+    await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.PatchBotList, bot.path, botInfo);
 
-    await CommandServiceImpl.remoteCall('bot:save', bot);
+    await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.Save, bot);
 
     this.setDirtyFlag(false);
     this.setState({ bot });
@@ -231,7 +232,11 @@ class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps,
   private showBotSaveDialog = async (): Promise<any> => {
     // get a safe bot file name
     // TODO - localization
-    const botFileName = await CommandServiceImpl.remoteCall('file:sanitize-string', this.state.bot.name);
+    const botFileName = await CommandServiceImpl.remoteCall(
+      SharedConstants.Commands.File.SanitizeString,
+      this.state.bot.name
+    );
+
     const dialogOptions = {
       filters: [
         {
@@ -245,7 +250,7 @@ class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps,
       buttonLabel: 'Save'
     };
 
-    return CommandServiceImpl.remoteCall('shell:showSaveDialog', dialogOptions);
+    return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.ShowSaveDialog, dialogOptions);
   }
 }
 

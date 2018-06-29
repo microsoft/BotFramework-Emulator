@@ -48,6 +48,7 @@ import {
 } from '../action/luisServiceActions';
 import { LuisApi } from '../http/luisApi';
 import { RootState } from '../store';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 const getLuisAuthFromState = (state: RootState) => state.luisAuth.luisAuthData;
 // const isModalServiceBusy = (state: RootState) => state.dialog.showing;
@@ -87,7 +88,7 @@ function* retrieveLuisModels(): IterableIterator<any> {
 function* openLuisDeepLink(action: LuisServiceAction<LuisServicePayload>): IterableIterator<any> {
   const { appId, version } = action.payload.luisService;
   const link = `https://www.luis.ai/applications/${appId}/versions/${version}/build`;
-  yield CommandServiceImpl.remoteCall('electron:openExternal', link);
+  yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, link);
 }
 
 function* openLuisContextMenu(action: LuisServiceAction<LuisServicePayload>): IterableIterator<any> {
@@ -97,7 +98,7 @@ function* openLuisContextMenu(action: LuisServiceAction<LuisServicePayload>): It
     { label: 'Remove', id: 'forget' }
   ];
   const response = yield call(CommandServiceImpl
-    .remoteCall.bind(CommandServiceImpl), 'electron:displayContextMenu', menuItems);
+    .remoteCall.bind(CommandServiceImpl), SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);
   switch (response.id) {
 
     case 'open':
@@ -119,7 +120,7 @@ function* openLuisContextMenu(action: LuisServiceAction<LuisServicePayload>): It
 
 function* removeLuisServiceFromActiveBot(luisService: ILuisService): IterableIterator<any> {
   // TODO - localization
-  const result = yield CommandServiceImpl.remoteCall('shell:show-message-box', true, {
+  const result = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.ShowMessageBox, true, {
     type: 'question',
     buttons: ['Cancel', 'OK'],
     defaultId: 1,
@@ -127,7 +128,7 @@ function* removeLuisServiceFromActiveBot(luisService: ILuisService): IterableIte
     cancelId: 0,
   });
   if (result) {
-    yield CommandServiceImpl.remoteCall('bot:remove-service', ServiceType.Luis, luisService.id);
+    yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.RemoveService, ServiceType.Luis, luisService.id);
   }
 }
 
@@ -135,7 +136,7 @@ function* launchLuisEditor(action: LuisServiceAction<LuisEditorPayload>): Iterab
   const { luisEditorComponent, luisService = {} } = action.payload;
   const result = yield DialogService.showDialog<ComponentClass<LuisEditor>>(luisEditorComponent, { luisService });
   if (result) {
-    yield CommandServiceImpl.remoteCall('bot:add-or-update-service', ServiceType.Luis, result);
+    yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.AddOrUpdateService, ServiceType.Luis, result);
   }
 }
 

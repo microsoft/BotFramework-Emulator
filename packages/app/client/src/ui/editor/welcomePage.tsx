@@ -34,7 +34,7 @@ import { hot } from 'react-hot-loader';
 import { css } from 'glamor';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { BotInfo } from '@bfemulator/app-shared';
+import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
 
 import { Colors, Column, LargeHeader, PrimaryButton, Row, SmallHeader, TruncateText } from '@bfemulator/ui-react';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
@@ -142,11 +142,11 @@ class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
   }
 
   onOpenBotClick = () => {
-    CommandServiceImpl.call('bot:browse-open');
+    CommandServiceImpl.call(SharedConstants.Commands.Bot.OpenBrowse);
   }
   
   onBotClick = (_e: any, path: string) => {
-    CommandServiceImpl.call('bot:switch', path);
+    CommandServiceImpl.call(SharedConstants.Commands.Bot.Switch, path);
   }
 
   render() {

@@ -34,24 +34,26 @@
 import store from '../data/store';
 import * as FileActions from '../data/action/fileActions';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 /** Registers file commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
+  const Commands = SharedConstants.Commands.File;
   // ---------------------------------------------------------------------------
   // Adds a file to the file store
-  commandRegistry.registerCommand('file:add', (payload) => {
+  commandRegistry.registerCommand(Commands.Add, (payload) => {
     store.dispatch(FileActions.addFile(payload));
   });
 
   // ---------------------------------------------------------------------------
   // Removes a file from the file store
-  commandRegistry.registerCommand('file:remove', (path) => {
+  commandRegistry.registerCommand(Commands.Remove, (path) => {
     store.dispatch(FileActions.removeFile(path));
   });
 
   // ---------------------------------------------------------------------------
   // Clears the file store
-  commandRegistry.registerCommand('file:clear', () => {
+  commandRegistry.registerCommand(Commands.Clear, () => {
     store.dispatch(FileActions.clear());
   });
 }

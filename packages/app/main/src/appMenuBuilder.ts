@@ -35,7 +35,7 @@ import * as Electron from 'electron';
 
 import { mainWindow } from './main';
 import { AppUpdater, UpdateStatus } from './appUpdater';
-import { BotInfo } from '@bfemulator/app-shared';
+import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
 import * as jsonpath from 'jsonpath';
 import { ConversationService } from './services/conversationService';
 import { getStore } from './data-v2/store';
@@ -126,7 +126,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     return bots.slice(0, 5).filter(bot => !!bot).map(bot => ({
       label: bot.displayName,
       click: () => {
-        mainWindow.commandService.remoteCall('bot:switch', bot.path)
+        mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.Switch, bot.path)
           .catch(err => console.error('Error while switching bots from file menu recent bots list: ', err));
       }
     }));
@@ -145,13 +145,13 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
       {
         label: 'Open Bot',
         click: () => {
-          mainWindow.commandService.remoteCall('bot:browse-open');
+          mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.OpenBrowse);
         }
       },
       {
         label: 'Close Bot',
         click: () => {
-          mainWindow.commandService.remoteCall('bot:close');
+          mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.Close);
         }
       }];
 
@@ -298,7 +298,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
         { role: 'toggledevtools' },
         {
           label: 'Toggle Developer Tools (Inspector)',
-          click: () => mainWindow.commandService.remoteCall('shell:toggle-inspector-devtools')
+          click: () => mainWindow.commandService.remoteCall(SharedConstants.Commands.Electron.ToggleDevTools)
         },
         { type: 'separator' },
         this.getUpdateMenuItem(),

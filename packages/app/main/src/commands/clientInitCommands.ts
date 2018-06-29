@@ -41,22 +41,25 @@ import { getStore } from '../data-v2/store';
 import { getBotsFromDisk, readFileSync } from '../utils';
 import * as Path from 'path';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 const store = getStore();
 
 /** Registers client initialization commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
+  const Commands = SharedConstants.Commands;
+
   // ---------------------------------------------------------------------------
   // Client notifying us it's initialized and has rendered
-  commandRegistry.registerCommand('client:loaded', () => {
+  commandRegistry.registerCommand(Commands.ClientInit.Loaded, () => {
     // Load bots from disk and sync list with client
     const bots = getBotsFromDisk();
     store.dispatch(BotActions.load(bots));
-    mainWindow.commandService.remoteCall('bot:list:sync', bots);
+    mainWindow.commandService.remoteCall(Commands.Bot.SyncBotList, bots);
     // Reset the app title bar
-    mainWindow.commandService.call('electron:set-title-bar');
+    mainWindow.commandService.call(Commands.Electron.SetTitleBar);
     // Un-fullscreen the screen
-    mainWindow.commandService.call('electron:set-fullscreen', false);
+    mainWindow.commandService.call(Commands.Electron.SetFullscreen, false);
     // Send app settings to client
     mainWindow.commandService.remoteCall('receive-global-settings', {
       url: emulator.framework.serverUrl,
@@ -69,8 +72,8 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Client notifying us the welcome screen has been rendered
-  commandRegistry.registerCommand('client:post-welcome-screen', async (): Promise<void> => {
-    mainWindow.commandService.call('menu:update-recent-bots');
+  commandRegistry.registerCommand(Commands.ClientInit.PostWelcomeScreen, async (): Promise<void> => {
+    mainWindow.commandService.call(Commands.Electron.UpdateRecentBotsInMenu);
 
     // Parse command line args for a protocol url
     const args = process.argv.length ? process.argv.slice(1) : [];
@@ -84,8 +87,8 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       const fileToBeOpened = args.find(arg => /(\.transcript)|(\.bot)$/.test(arg));
       if (Path.extname(fileToBeOpened) === '.bot') {
         try {
-          const bot = await mainWindow.commandService.call('bot:open', fileToBeOpened);
-          await mainWindow.commandService.call('bot:set-active', bot);
+          const bot = await mainWindow.commandService.call(Commands.Bot.Open, fileToBeOpened);
+          await mainWindow.commandService.call(Commands.Bot.SetActive, bot);
           await mainWindow.commandService.remoteCall('bot:load', bot);
         } catch (e) {
           throw new Error(`Error while trying to open a .bot file via double click at: ${fileToBeOpened}`);

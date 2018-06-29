@@ -46,6 +46,7 @@ import { LogService } from './platform/log/logService';
 import { showWelcomePage } from './data/editorHelpers';
 import { registerAllCommands } from './commands/registerAllCommands';
 import { CommandRegistry } from './commands';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 initializeTheme('dark');
 initializeIcons();
@@ -66,11 +67,11 @@ ReactDOM.render(
 );
 
 // Tell the main process we're loaded
-CommandServiceImpl.remoteCall('client:loaded')
+CommandServiceImpl.remoteCall(SharedConstants.Commands.ClientInit.Loaded)
   .then(() => {
     showWelcomePage();
     // do actions on main side that might open a document, so that they will be active over the welcome screen
-    CommandServiceImpl.remoteCall('client:post-welcome-screen');
+    CommandServiceImpl.remoteCall(SharedConstants.Commands.ClientInit.PostWelcomeScreen);
   })
   .catch(err => console.error(`Error occured during client:loaded: ${err}`));
 

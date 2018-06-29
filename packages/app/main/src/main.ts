@@ -52,6 +52,7 @@ import { UpdateInfo } from 'electron-updater';
 import { ProgressInfo } from 'builder-util-runtime';
 import { getStore } from './data-v2/store';
 import { CommandRegistry } from './commands';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 export let mainWindow: Window;
 export let windowManager: WindowManager;
@@ -81,7 +82,7 @@ AppUpdater.on('update-available', (update: UpdateInfo) => {
   AppMenuBuilder.refreshAppUpdateMenu();
   if (AppUpdater.userInitiated) {
     // TODO - localization
-    mainWindow.commandService.call('shell:show-message-box', true, {
+    mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
       title: app.getName(),
       message: `An update is available. Download it now?`,
       buttons: ['Cancel', 'OK'],
@@ -99,7 +100,7 @@ AppUpdater.on('update-downloaded', (update: UpdateInfo) => {
   AppMenuBuilder.refreshAppUpdateMenu();
   // TODO - localization
   if (AppUpdater.userInitiated) {
-    mainWindow.commandService.call('shell:show-message-box', true, {
+    mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
       title: app.getName(),
       message: 'Finished downloading update. Restart and install now?',
       buttons: ['Cancel', 'OK'],
@@ -117,7 +118,7 @@ AppUpdater.on('up-to-date', (update: UpdateInfo) => {
   // TODO - localization
   AppMenuBuilder.refreshAppUpdateMenu();
   if (AppUpdater.userInitiated) {
-    mainWindow.commandService.call('shell:show-message-box', true, {
+    mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
       title: app.getName(),
       message: 'There are no updates currently available.'
     });
@@ -133,7 +134,7 @@ AppUpdater.on('error', (err: Error, message: string) => {
   AppMenuBuilder.refreshAppUpdateMenu();
   console.error(err, message);
   if (AppUpdater.userInitiated) {
-    mainWindow.commandService.call('shell:show-message-box', true, {
+    mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
       title: app.getName(),
       message: 'There are no updates currently available.'
     });

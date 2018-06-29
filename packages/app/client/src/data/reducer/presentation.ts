@@ -33,6 +33,7 @@
 
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { PresentationAction, PresentationActions } from '../action/presentationActions';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 export interface PresentationState {
   enabled: boolean;
@@ -64,7 +65,7 @@ function setEnabled(enabled: boolean, state: PresentationState): PresentationSta
   let newState = Object.assign({}, state);
   newState.enabled = enabled;
 
-  CommandServiceImpl.remoteCall('electron:set-fullscreen', enabled);
+  CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.SetFullscreen, enabled);
 
   return newState;
 }

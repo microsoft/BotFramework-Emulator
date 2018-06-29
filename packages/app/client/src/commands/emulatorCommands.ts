@@ -39,6 +39,7 @@ import { IEndpointService } from 'msbot/bin/schema';
 import { uniqueId, CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
 import { getTabGroupForDocument } from '../data/editorHelpers';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 /** Registers emulator (actual conversation emulation logic) commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
@@ -112,7 +113,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         }
       ],
     };
-    CommandServiceImpl.remoteCall('shell:showOpenDialog', dialogOptions)
+    CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.ShowOpenDialog, dialogOptions)
       .then(filename => {
         if (filename && filename.length) {
           CommandServiceImpl.call('transcript:open', filename);

@@ -33,7 +33,7 @@
 
 import { BotConfig } from 'msbot';
 
-import { BotInfo, getBotDisplayName } from '@bfemulator/app-shared';
+import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import { mainWindow } from './main';
 import * as BotActions from './data-v2/action/bot';
@@ -139,7 +139,7 @@ export async function patchBotsJson(botPath: string, bot: BotInfo): Promise<BotI
     bots.unshift(bot);
   }
   store.dispatch(BotActions.load(bots));
-  await mainWindow.commandService.remoteCall('bot:list:sync', bots);
+  await mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.SyncBotList, bots);
 
   return bots;
 }

@@ -32,14 +32,16 @@
 //
 
 import { readFileSync, writeFile } from '../utils';
-import sanitize from 'sanitize-filename';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
+const sanitize = require('sanitize-filename');
 
 /** Registers file commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
+  const Commands = SharedConstants.Commands.File;
   // ---------------------------------------------------------------------------
   // Read file
-  commandRegistry.registerCommand('file:read', (path: string): any => {
+  commandRegistry.registerCommand(Commands.Read, (path: string): any => {
     try {
       const contents = readFileSync(path);
       return contents;
@@ -51,7 +53,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Write file
-  commandRegistry.registerCommand('file:write', (path: string, contents: object | string) => {
+  commandRegistry.registerCommand(Commands.Write, (path: string, contents: object | string) => {
     try {
       writeFile(path, contents);
     } catch (e) {
@@ -62,7 +64,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Sanitize a string for file name usage
-  commandRegistry.registerCommand('file:sanitize-string', (path: string): string => {
+  commandRegistry.registerCommand(Commands.SanitizeString, (path: string): string => {
     return sanitize(path);
   });
 }
