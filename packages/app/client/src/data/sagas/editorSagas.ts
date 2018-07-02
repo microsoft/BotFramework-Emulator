@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ForkEffect, takeLatest, select, put } from 'redux-saga/effects';
+import { ForkEffect, takeEvery, select, put } from 'redux-saga/effects';
 import { EditorActions, removeDocPendingChange } from '../action/editorActions';
 import { RootState } from '../store';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
@@ -73,7 +73,7 @@ export function* checkActiveDocForPendingChanges(): IterableIterator<any> {
 export function* editorSagas(): IterableIterator<ForkEffect> {
   // Whenever a doc is added to the list of docs pending changes, or and editor / tab
   // is focused, check to see if the active document has pending changes
-  yield takeLatest([
+  yield takeEvery([
       EditorActions.addDocPendingChange,
       EditorActions.setActiveEditor,
       EditorActions.setActiveTab,
