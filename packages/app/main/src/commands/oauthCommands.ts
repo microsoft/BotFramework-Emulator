@@ -34,12 +34,15 @@
 import { emulator } from '../emulator';
 import { windowManager } from '../main';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 /** Registers OAuth commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
+  const Commands = SharedConstants.Commands.OAuth;
+
   // ---------------------------------------------------------------------------
   // Sends an OAuth TokenResponse
-  commandRegistry.registerCommand('oauth:send-token-response',
+  commandRegistry.registerCommand(Commands.SendTokenResponse,
     async (
       connectionName: string,
       conversationId: string,
@@ -55,7 +58,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Opens an OAuth login window
-  commandRegistry.registerCommand('oauth:getStore-oauth-window', async (url: string, conversationId: string) => {
+  commandRegistry.registerCommand(Commands.GetStoreOAuthWindow, async (url: string, conversationId: string) => {
     const convo = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
     windowManager.createOAuthWindow(url, convo.codeVerifier);
   });

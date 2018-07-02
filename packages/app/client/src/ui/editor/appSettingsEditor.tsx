@@ -154,7 +154,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
 
   componentWillMount(): void {
     // load settings from main and populate form
-    CommandServiceImpl.remoteCall('app:settings:load')
+    CommandServiceImpl.remoteCall(SharedConstants.Commands.Settings.LoadAppSettings)
       .then(settings => {
         this.setState(() => ({
           committed: settings,
@@ -221,7 +221,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
       locale: uncommitted.locale.trim()
     };
 
-    CommandServiceImpl.remoteCall('app:settings:save', settings)
+    CommandServiceImpl.remoteCall(SharedConstants.Commands.Settings.SaveAppSettings, settings)
       .then(() => this.commit(settings))
       .catch(err => console.error('Error while saving emulator settings: ', err));
   }

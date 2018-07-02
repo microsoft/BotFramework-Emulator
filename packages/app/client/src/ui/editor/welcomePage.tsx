@@ -138,7 +138,7 @@ interface WelcomePageProps {
 
 class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
   onNewBotClick = () => {
-    CommandServiceImpl.call('bot-creation:show');
+    CommandServiceImpl.call(SharedConstants.Commands.UI.ShowBotCreationDialog);
   }
 
   onOpenBotClick = () => {

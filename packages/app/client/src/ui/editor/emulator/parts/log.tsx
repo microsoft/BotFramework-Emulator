@@ -38,7 +38,7 @@ import * as ChatActions from '../../../../data/action/chatActions';
 import store from '../../../../data/store';
 import { Colors, Fonts } from '@bfemulator/ui-react';
 import { ExtensionManager, InspectorAPI } from '../../../../extensions';
-import { LogEntry, LogItem, LogLevel } from '@bfemulator/app-shared';
+import { LogEntry, LogItem, LogLevel, SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
 
 const CSS = css({
@@ -257,7 +257,7 @@ class LogEntryComponent extends React.Component<LogEntryProps> {
   renderAppSettingsItem(text: string, key: string) {
     return (
       <span key={ key } className="spaced">
-        <a onClick={ () => CommandServiceImpl.call('shell:show-app-settings') }>{ text }</a>
+        <a onClick={ () => CommandServiceImpl.call(SharedConstants.Commands.UI.ShowAppSettings) }>{ text }</a>
       </span>
     );
   }

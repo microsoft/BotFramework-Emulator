@@ -32,14 +32,16 @@
 //
 
 import { dispatch, getSettings } from '../settings';
-import { FrameworkSettings } from '@bfemulator/app-shared';
+import { FrameworkSettings, SharedConstants } from '@bfemulator/app-shared';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
 /** Registers settings commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
+  const Commands = SharedConstants.Commands.Settings;
+
   // ---------------------------------------------------------------------------
   // Saves global app settings
-  commandRegistry.registerCommand('app:settings:save', (settings: FrameworkSettings): any => {
+  commandRegistry.registerCommand(Commands.SaveAppSettings, (settings: FrameworkSettings): any => {
     dispatch({
       type: 'Framework_Set',
       state: settings
@@ -48,7 +50,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Get and return app settings from store
-  commandRegistry.registerCommand('app:settings:load', (...args: any[]): FrameworkSettings => {
+  commandRegistry.registerCommand(Commands.LoadAppSettings, (...args: any[]): FrameworkSettings => {
     return getSettings().framework;
   });
 }

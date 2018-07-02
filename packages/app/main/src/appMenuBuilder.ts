@@ -139,7 +139,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
       {
         label: 'New Bot',
         click: () => {
-          mainWindow.commandService.remoteCall('bot-creation:show');
+          mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ShowBotCreationDialog);
         }
       },
       {
@@ -233,15 +233,15 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
       submenu: [
         {
           label: 'Explorer',
-          click: () => mainWindow.commandService.remoteCall('shell:show-explorer')
+          click: () => mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ShowExplorer)
         },
         {
           label: 'Services',
-          click: () => mainWindow.commandService.remoteCall('shell:show-services')
+          click: () => mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ShowServices)
         },
         {
           label: 'Emulator Settings',
-          click: () => mainWindow.commandService.remoteCall('shell:show-app-settings')
+          click: () => mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ShowAppSettings)
         },
         { type: 'separator' },
         { role: 'resetzoom' },
@@ -272,7 +272,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
       submenu: [
         {
           label: 'Welcome',
-          click: () => mainWindow.commandService.remoteCall('welcome-page:show')
+          click: () => mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ShowWelcomePage)
         },
         { type: 'separator' },
         {
@@ -348,7 +348,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
   }
 
   getConversationMenu(): Electron.MenuItemConstructorOptions {
-    const getState = () => mainWindow.commandService.remoteCall('store:getState');
+    const getState = () => mainWindow.commandService.remoteCall(SharedConstants.Commands.Misc.GetStoreState);
     const getConversationId = async () => {
       const state = await getState();
       const { editors, activeEditor } = state.editor;

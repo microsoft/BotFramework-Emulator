@@ -93,7 +93,7 @@ export async function loadBotWithRetry(botPath: string, secret?: string): Promis
     // Add easily discernable errors / error codes to msbot package
     if (typeof e === 'string' && (e.includes('secret') || e.includes('crypt'))) {
       // bot requires a secret to decrypt properties
-      const newSecret = await mainWindow.commandService.remoteCall('secret-prompt:show');
+      const newSecret = await mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ShowSecretPromptDialog);
       if (newSecret === null) {
         // pop-up was dismissed; stop trying to prompt for secret
         return null;

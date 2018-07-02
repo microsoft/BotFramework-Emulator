@@ -56,7 +56,10 @@ const getLuisAuthFromState = (state: RootState) => state.luisAuth.luisAuthData;
 // function* launchLuisModelsViewer(action: LuisAuthAction<LuisModelViewer>): IterableIterator<any> {
 //   let luisAuth = yield select(getLuisAuthFromState);
 //   if (!luisAuth) {
-//     luisAuth = yield call(CommandServiceImpl.remoteCall.bind(CommandServiceImpl), 'luis:retrieve-authoring-key');
+//     luisAuth = yield call(
+//      CommandServiceImpl.remoteCall.bind(CommandServiceImpl),
+//      SharedConstants.Commands.Luis.RetrieveAuthoringKey
+//    );
 //     yield put(luisAuthoringDataChanged(luisAuth));
 //   }
 //   const luisModels = yield* retrieveLuisModels();

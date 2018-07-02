@@ -34,6 +34,7 @@
 import { LuisAuthWorkflowService } from '../services/luisAuthWorkflowService';
 import { getStore } from '../data-v2/store';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 const store = getStore();
 
@@ -41,7 +42,7 @@ const store = getStore();
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Retrieve the LUIS authoring key
-  commandRegistry.registerCommand('luis:retrieve-authoring-key', async () => {
+  commandRegistry.registerCommand(SharedConstants.Commands.Luis.RetrieveAuthoringKey, async () => {
     const workflow = LuisAuthWorkflowService.enterAuthWorkflow();
     const { dispatch: storeDispatch } = store;
     const type = 'LUIS_AUTH_STATUS_CHANGED';
