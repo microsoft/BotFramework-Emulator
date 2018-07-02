@@ -165,7 +165,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     subMenu.push({
       label: 'Open Transcript File...',
       click: () => {
-        mainWindow.commandService.remoteCall('transcript:prompt-open')
+        mainWindow.commandService.remoteCall(SharedConstants.Commands.Emulator.PromptToOpenTranscript)
           .catch(err => console.error('Error opening transcript file from menu: ', err));
       }
     });

@@ -209,16 +209,16 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
       await mainWindow.commandService.call(SharedConstants.Commands.Bot.RestartEndpointService);
 
       if (running()) {
-        mainWindow.commandService.remoteCall('livechat:new', endpoint);
+        mainWindow.commandService.remoteCall(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
       } else {
         // if ngrok hasn't connected yet, wait for it to connect and start the livechat
         ngrokEmitter.once('connect', (...args: any[]): void => {
-          mainWindow.commandService.remoteCall('livechat:new', endpoint);
+          mainWindow.commandService.remoteCall(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
         });
       }
     } else {
       // try to connect and let the chat log show the user the error
-      mainWindow.commandService.remoteCall('livechat:new', endpoint);
+      mainWindow.commandService.remoteCall(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
     }
   }
 
@@ -244,8 +244,10 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
               const fileName = `${name}${ext}`;
               // open a transcript on the client side and pass in some
               // extra info to differentiate it from a transcript on disk
-              mainWindow.commandService.remoteCall('transcript:open', 'deepLinkedTranscript',
-                { activities: conversationActivities, deepLink: true, fileName });
+              mainWindow.commandService.remoteCall(
+                SharedConstants.Commands.Emulator.OpenTranscript, 'deepLinkedTranscript',
+                { activities: conversationActivities, deepLink: true, fileName }
+              );
             } catch (e) {
               throw new Error(`Error occured while reading downloaded transcript: ${e}`);
             }

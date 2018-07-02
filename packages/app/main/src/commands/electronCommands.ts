@@ -76,7 +76,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Builds a new app menu to reflect the updated recent bots list
-  commandRegistry.registerCommand(SharedConstants.Commands.Electron.UpdateRecentBotsInMenu, (): void => {
+  commandRegistry.registerCommand(Commands.UpdateRecentBotsInMenu, (): void => {
     // get previous app menu template
     let menu = AppMenuBuilder.menuTemplate;
 
@@ -94,7 +94,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Toggles app fullscreen mode
-  commandRegistry.registerCommand(SharedConstants.Commands.Electron.SetFullscreen, (fullscreen: boolean): void => {
+  commandRegistry.registerCommand(Commands.SetFullscreen, (fullscreen: boolean): void => {
     mainWindow.browserWindow.setFullScreen(fullscreen);
     if (fullscreen) {
       Menu.setApplicationMenu(null);
@@ -105,7 +105,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Sets the app's title bar
-  commandRegistry.registerCommand(SharedConstants.Commands.Electron.SetTitleBar, (text: string) => {
+  commandRegistry.registerCommand(Commands.SetTitleBar, (text: string) => {
     if (text && text.length) {
       mainWindow.browserWindow.setTitle(`${app.getName()} - ${text}`);
     } else {

@@ -194,7 +194,7 @@ class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps,
       this.setState({ bot });
 
       if (connectArg && endpointService) {
-        CommandServiceImpl.call('livechat:new', endpointService);
+        CommandServiceImpl.call(SharedConstants.Commands.Emulator.NewLiveChat, endpointService);
       }
     } else {
       // dialog was cancelled
@@ -217,7 +217,7 @@ class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps,
     this.setState({ bot });
 
     if (connectArg && endpointService) {
-      CommandServiceImpl.call('livechat:new', endpointService);
+      CommandServiceImpl.call(SharedConstants.Commands.Emulator.NewLiveChat, endpointService);
     }
   }
 

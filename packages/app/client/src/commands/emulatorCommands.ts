@@ -43,21 +43,11 @@ import { SharedConstants } from '@bfemulator/app-shared';
 
 /** Registers emulator (actual conversation emulation logic) commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  // ---------------------------------------------------------------------------
-  // Adds a transcript
-  commandRegistry.registerCommand('transcript:add', (filename: string): void => {
-    store.dispatch(ChatActions.addTranscript(filename));
-  });
-
-  // ---------------------------------------------------------------------------
-  // Removes a transcript
-  commandRegistry.registerCommand('transcript:remove', (filename: string): void => {
-    store.dispatch(ChatActions.removeTranscript(filename));
-  });
+  const Commands = SharedConstants.Commands;
 
   // ---------------------------------------------------------------------------
   // Open a new emulator tabbed document
-  commandRegistry.registerCommand('livechat:new', (endpoint: IEndpointService) => {
+  commandRegistry.registerCommand(Commands.Emulator.NewLiveChat, (endpoint: IEndpointService) => {
     const documentId = uniqueId();
 
     store.dispatch(ChatActions.newDocument(
@@ -79,7 +69,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Open the transcript file in a tabbed document
-  commandRegistry.registerCommand('transcript:open', (filename: string, additionalData?: object) => {
+  commandRegistry.registerCommand(Commands.Emulator.OpenTranscript, (filename: string, additionalData?: object) => {
     const tabGroup = getTabGroupForDocument(filename);
     if (!tabGroup) {
       store.dispatch(ChatActions.newDocument(
@@ -101,7 +91,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Prompt to open a transcript file, then open it
-  commandRegistry.registerCommand('transcript:prompt-open', () => {
+  commandRegistry.registerCommand(Commands.Emulator.PromptToOpenTranscript, () => {
     const dialogOptions = {
       title: 'Open transcript file',
       buttonLabel: 'Choose file',
@@ -113,10 +103,10 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         }
       ],
     };
-    CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.ShowOpenDialog, dialogOptions)
+    CommandServiceImpl.remoteCall(Commands.Electron.ShowOpenDialog, dialogOptions)
       .then(filename => {
         if (filename && filename.length) {
-          CommandServiceImpl.call('transcript:open', filename);
+          CommandServiceImpl.call(Commands.Emulator.OpenTranscript, filename);
         }
       })
       .catch(err => console.error(err));

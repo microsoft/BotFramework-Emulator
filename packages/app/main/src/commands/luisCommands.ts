@@ -40,9 +40,11 @@ const store = getStore();
 
 /** Registers LUIS commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
+  const Commands = SharedConstants.Commands.Luis;
+
   // ---------------------------------------------------------------------------
   // Retrieve the LUIS authoring key
-  commandRegistry.registerCommand(SharedConstants.Commands.Luis.RetrieveAuthoringKey, async () => {
+  commandRegistry.registerCommand(Commands.RetrieveAuthoringKey, async () => {
     const workflow = LuisAuthWorkflowService.enterAuthWorkflow();
     const { dispatch: storeDispatch } = store;
     const type = 'LUIS_AUTH_STATUS_CHANGED';

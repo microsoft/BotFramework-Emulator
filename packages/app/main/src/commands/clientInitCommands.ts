@@ -102,7 +102,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
         // open a transcript on the client side and pass in
         // some extra info to differentiate it from a transcript on disk
-        mainWindow.commandService.remoteCall('transcript:open', 'deepLinkedTranscript', {
+        mainWindow.commandService.remoteCall(Commands.Emulator.OpenTranscript, 'deepLinkedTranscript', {
           activities: conversationActivities,
           deepLink: true
         });

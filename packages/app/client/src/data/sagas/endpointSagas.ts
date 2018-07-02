@@ -84,7 +84,7 @@ function* openEndpointContextMenu(action: EndpointServiceAction<EndpointServiceP
 }
 
 function* openEndpointDeepLink(action: EndpointServiceAction<EndpointServicePayload>): IterableIterator<any> {
-  CommandServiceImpl.call('livechat:new', action.payload.endpointService).catch();
+  CommandServiceImpl.call(SharedConstants.Commands.Emulator.NewLiveChat, action.payload.endpointService).catch();
 }
 
 function* removeEndpointServiceFromActiveBot(endpointService: IEndpointService): IterableIterator<any> {

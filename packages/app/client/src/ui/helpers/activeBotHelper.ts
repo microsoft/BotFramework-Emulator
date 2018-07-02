@@ -148,7 +148,7 @@ export const ActiveBotHelper = new class {
           .find(service => service.type === ServiceType.Endpoint) as IEndpointService;
 
         if (endpoint) {
-          CommandServiceImpl.call('livechat:new', endpoint);
+          CommandServiceImpl.call(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
         }
 
         store.dispatch(NavBarActions.select(Constants.NAVBAR_BOT_EXPLORER));
@@ -274,7 +274,7 @@ export const ActiveBotHelper = new class {
 
         // open a livechat with the configured endpoint
         if (endpoint) {
-          await CommandServiceImpl.call('livechat:new', endpoint);
+          await CommandServiceImpl.call(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
         }
 
         store.dispatch(NavBarActions.select(Constants.NAVBAR_BOT_EXPLORER));

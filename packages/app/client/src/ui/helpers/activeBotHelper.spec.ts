@@ -171,7 +171,7 @@ describe('ActiveBotHelper tests', () => {
 
     await ActiveBotHelper.confirmAndCreateBot(bot, 'someSecret');
     expect(mockDispatch).toHaveBeenCalledTimes(4);
-    expect(mockCall).toHaveBeenCalledWith('livechat:new', endpoint);
+    expect(mockCall).toHaveBeenCalledWith(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
     expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.Create, bot, 'someSecret');
 
     mockRemoteCall = jest.fn().mockRejectedValue('err');
@@ -268,7 +268,7 @@ describe('ActiveBotHelper tests', () => {
     ActiveBotHelper.setActiveBot = (arg: any) => new Promise((resolve, reject) => resolve(null));
 
     await ActiveBotHelper.confirmAndSwitchBots(bot);
-    expect(mockCall).toHaveBeenCalledWith('livechat:new', endpoint);
+    expect(mockCall).toHaveBeenCalledWith(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
     expect(mockDispatch).toHaveBeenCalledTimes(3);
     mockDispatch.mockClear();
     mockCall.mockClear();
@@ -286,7 +286,10 @@ describe('ActiveBotHelper tests', () => {
       }
     };
     await ActiveBotHelper.confirmAndSwitchBots(bot);
-    expect(mockCall).toHaveBeenCalledWith('livechat:new', { ...endpoint, endpoint: 'someOverride' });
+    expect(mockCall).toHaveBeenCalledWith(
+      SharedConstants.Commands.Emulator.NewLiveChat,
+      { ...endpoint, endpoint: 'someOverride' }
+    );
     mockCall.mockClear();
 
     // switching to a bot with multiple endpoints, with endpoint overrides including an endpoint id
@@ -299,7 +302,7 @@ describe('ActiveBotHelper tests', () => {
       }
     };
     await ActiveBotHelper.confirmAndSwitchBots(bot);
-    expect(mockCall).toHaveBeenCalledWith('livechat:new', { ...secondEndpoint, endpoint: 'someOtherOverride', });
+    expect(mockCall).toHaveBeenCalledWith(SharedConstants.Commands.Emulator.NewLiveChat, { ...secondEndpoint, endpoint: 'someOtherOverride', });
 
     ActiveBotHelper.botAlreadyOpen = backupBotAlreadyOpen;
     ActiveBotHelper.confirmSwitchBot = backupConfirmSwitchBot;

@@ -78,6 +78,9 @@ export namespace SharedConstants {
       export const FeedTranscriptFromMemory: string = 'emulator:feed-transcript:deep-link';
       export const GetSpeechToken: string = 'speech-token:get';
       export const NewTranscript: string = 'transcript:new';
+      export const NewLiveChat: string = 'livechat:new';
+      export const OpenTranscript: string = 'transcript:open';
+      export const PromptToOpenTranscript: string = 'transcript:prompt-open';
     }
 
     export namespace File {
