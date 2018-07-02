@@ -31,25 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './botListsAreDifferent';
-export * from './conversation';
-export * from './directoryExists';
-export * from './ensureStoragePath';
-export * from './exceptionToAPIException';
-export * from './fileExists';
-export * from './getBotsFromDisk';
-export * from './getDirectories';
-export * from './getFilesInDir';
-export * from './getSafeBotName';
-export * from './isDev';
-export * from './isLocalhostUrl';
-export * from './isSecureUrl';
-export * from './loadSettings';
-export * from './parseActivitiesFromChatFile';
-export * from './readFileSync';
-export * from './saveSettings';
-export * from './sendErrorResponse';
-export * from './showMessageBox';
-export * from './showOpenDialog';
-export * from './showSaveDialog';
-export * from './writeFile';
+import { BrowserWindow, MessageBoxOptions, dialog } from 'electron';
+
+/** Shows a native message box */
+export function showMessageBox(window: BrowserWindow, options: MessageBoxOptions): number {
+  return dialog.showMessageBox(window, options);
+}
+

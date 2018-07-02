@@ -31,25 +31,39 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './botListsAreDifferent';
-export * from './conversation';
-export * from './directoryExists';
-export * from './ensureStoragePath';
-export * from './exceptionToAPIException';
-export * from './fileExists';
-export * from './getBotsFromDisk';
-export * from './getDirectories';
-export * from './getFilesInDir';
-export * from './getSafeBotName';
-export * from './isDev';
-export * from './isLocalhostUrl';
-export * from './isSecureUrl';
-export * from './loadSettings';
-export * from './parseActivitiesFromChatFile';
-export * from './readFileSync';
-export * from './saveSettings';
-export * from './sendErrorResponse';
-export * from './showMessageBox';
-export * from './showOpenDialog';
-export * from './showSaveDialog';
-export * from './writeFile';
+import * as Path from 'path';
+import { readFileSync } from './readFileSync';
+import { CustomActivity } from './conversation';
+const chatdown = require('chatdown');
+
+/**
+ * Uses the chatdown library to convert a .chat file into a list of conversation activities
+ * @param file The .chat file to parse
+ */
+export const parseActivitiesFromChatFile = async (file: string): Promise<CustomActivity[]> => {
+  let conversation: string;
+  let activities: CustomActivity[];
+
+  if (Path.extname(file) !== '.chat') {
+    throw new Error('Can only use chatdown on .chat files.');
+  }
+
+  // read conversation from chat file
+  try {
+    conversation = readFileSync(file);
+  } catch (err) {
+    throw new Error(`Error while trying to read conversation from chat file: ${err}`);
+  }
+  // convert conversation to list of activities using chatdown
+  try {
+    activities = await chatdown(conversation, {});
+  } catch (err) {
+    throw new Error(`Error while converting .chat file to list of activites: ${err}`);
+  }
+
+  if (!activities) {
+    return [];
+  }
+
+  return activities;
+};
