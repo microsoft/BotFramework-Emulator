@@ -52,7 +52,7 @@ import * as Constants from '../../constants';
 import store from '../../data/store';
 import { getTabGroupForDocument } from '../../data/editorHelpers';
 import { GenericDocument } from '../layout';
-import { debounce } from '../utils/debounce';
+import { debounce } from '../../utils';
 
 const CSS = css({
   '& .right-column': {

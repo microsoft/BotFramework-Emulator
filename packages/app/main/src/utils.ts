@@ -39,14 +39,15 @@ import {
   ErrorResponse,
   mergeDeep
 } from '@bfemulator/app-shared';
-import { BrowserWindow, dialog, OpenDialogOptions, SaveDialogOptions } from 'electron';
+import { BrowserWindow, dialog, OpenDialogOptions, SaveDialogOptions, MessageBoxOptions } from 'electron';
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 import * as globals from './globals';
+import * as Path from 'path';
+import { CustomActivity } from './utils/conversation';
 
 const { lstatSync, readdirSync } = require('fs');
 const { join } = require('path');
-const os = require('os');
 const readTextFile = require('read-text-file');
 
 const electron = require('electron'); // use a lowercase name "electron" to prevent clash with "Electron" namespace
@@ -56,30 +57,7 @@ const electronRemote: Electron.Remote = electron.remote;
 const Fs = require('fs');
 const Mkdirp = require('mkdirp');
 const url = require('url');
-const path = require('path');
-
-// from https://nodejs.org/api/buffer.html#buffer_buffers_and_character_encodings &
-// https://github.com/nodejs/node/blob/master/lib/buffer.js
-const SUPPORTED_ENCODINGS_BASE: string[] = [
-  'ascii',
-  'utf8',
-  'utf-8',
-  'base64',
-  'binary',
-  'hex'
-];
-
-const SUPPORTED_ENCODINGS_UCS2: string[] = [
-  'ucs2',
-  'ucs-2',
-  'utf16le',
-  'utf-16le'
-];
-
-const SUPPORTED_ENCODINGS_LATIN1: string[] = [
-  'latin1',
-  'iso-8859-1'
-];
+const chatdown = require('chatdown');
 
 export function exceptionToAPIException(exception: any): APIException {
   if (exception.error && exception.statusCode) {
@@ -103,7 +81,7 @@ export function sendErrorResponse(req: Restify.Request, res: Restify.Response, n
 export const ensureStoragePath = (): string => {
   const commandLineArgs = globals.getGlobal('commandlineargs');
   const app = electronApp || electronRemote.app;
-  const storagePath = commandLineArgs.storagepath || path.join(app.getPath('userData'), 'botframework-emulator');
+  const storagePath = commandLineArgs.storagepath || Path.join(app.getPath('userData'), 'botframework-emulator');
   Mkdirp.sync(storagePath);
   return storagePath;
 };
@@ -197,11 +175,43 @@ export const writeFile = (filePath: string, contents: object | string): void => 
     const contentsToWrite = typeof contents === 'object' ? JSON.stringify(contents, null, 2) : contents;
 
     // write parent director(y | ies) if non-existent
-    Mkdirp.sync(path.dirname(filePath));
+    Mkdirp.sync(Path.dirname(filePath));
     Fs.writeFileSync(filePath, contentsToWrite, { encoding: 'utf8' });
   } catch (e) {
     console.error(`Failed to write file at ${filePath}`, e);
   }
+};
+
+/**
+ * Uses the chatdown library to convert a .chat file into a list of conversation activities
+ * @param file The .chat file to parse
+ */
+export const parseActivitiesFromChatFile = async (file: string): Promise<CustomActivity[]> => {
+  let conversation: string;
+  let activities: CustomActivity[];
+
+  if (Path.extname(file) !== '.chat') {
+    throw new Error('Can only use chatdown on .chat files.');
+  }
+
+  // read conversation from chat file
+  try {
+    conversation = readFileSync(file);
+  } catch (err) {
+    throw new Error(`Error while trying to read conversation from chat file: ${err}`);
+  }
+  // convert conversation to list of activities using chatdown
+  try {
+    activities = await chatdown(conversation, {});
+  } catch (err) {
+    throw new Error(`Error while converting .chat file to list of activites: ${err}`);
+  }
+
+  if (!activities) {
+    return [];
+  }
+
+  return activities;
 };
 
 /** Shows a native open file / directory dialog */
@@ -213,6 +223,10 @@ export function showOpenDialog(window: BrowserWindow, options: OpenDialogOptions
 
 export function showSaveDialog(window: BrowserWindow, options: SaveDialogOptions): string {
   return dialog.showSaveDialog(window, options);
+}
+
+export function showMessageBox(window: BrowserWindow, options: MessageBoxOptions): number {
+  return dialog.showMessageBox(window, options);
 }
 
 /** Returns a starting name for a bot */
@@ -227,7 +241,7 @@ export function isDev(): boolean {
 }
 
 export const getBotsFromDisk = (): BotInfo[] => {
-  const botsJsonPath = path.join(ensureStoragePath(), 'bots.json');
+  const botsJsonPath = Path.join(ensureStoragePath(), 'bots.json');
   const botsJsonContents = readFileSync(botsJsonPath);
   const botsJson = botsJsonContents ? JSON.parse(botsJsonContents) : null;
 
