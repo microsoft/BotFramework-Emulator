@@ -241,7 +241,7 @@ class Chat extends React.Component<Props> {
       );
 
       return (
-        <div id="webchat-container" className="wc-app" { ...CSS }>
+        <div id="webchat-container" className="wc-app wc-wide" { ...CSS }>
           <WebChat.Chat
             key={ document.directLine.token }
             { ...webChatProps }
