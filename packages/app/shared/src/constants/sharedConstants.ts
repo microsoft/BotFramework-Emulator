@@ -59,13 +59,13 @@ export namespace SharedConstants {
 
     export namespace Electron {
       export const ShowMessageBox: string = 'shell:show-message-box';
-      export const ShowOpenDialog: string = 'shell:showOpenDialog';
-      export const ShowSaveDialog: string = 'shell:showSaveDialog';
+      export const ShowOpenDialog: string = 'shell:show-open-dialog';
+      export const ShowSaveDialog: string = 'shell:show-save-dialog';
       export const UpdateRecentBotsInMenu: string = 'menu:update-recent-bots';
       export const SetFullscreen: string = 'electron:set-fullscreen';
       export const SetTitleBar: string = 'electron:set-title-bar';
-      export const DisplayContextMenu: string = 'electron:displayContextMenu';
-      export const OpenExternal: string = 'electron:openExternal';
+      export const DisplayContextMenu: string = 'electron:display-context-menu';
+      export const OpenExternal: string = 'electron:open-external';
       export const ToggleDevTools: string = 'shell:toggle-inspector-devtools';
       export const UpdateAvailable: string = 'shell:update-downloaded';
       export const UpdateNotAvailable: string = 'shell:update-not-available';
@@ -97,12 +97,12 @@ export namespace SharedConstants {
     }
 
     export namespace Misc {
-      export const GetStoreState: string = 'store:getState';
+      export const GetStoreState: string = 'store:get-state';
     }
 
     export namespace OAuth {
       export const SendTokenResponse: string = 'oauth:send-token-response';
-      export const GetStoreOAuthWindow: string = 'oauth:getStore-oauth-window';
+      export const GetStoreOAuthWindow: string = 'oauth:get-store-oauth-window';
     }
 
     export namespace Settings {
@@ -114,7 +114,7 @@ export namespace SharedConstants {
       export const ShowWelcomePage: string = 'welcome-page:show';
       export const ShowBotCreationDialog: string = 'bot-creation:show';
       export const ShowSecretPromptDialog: string = 'secret-prompt:show';
-      export const SwitchNavBarTab: string = 'navbar:switchtab';
+      export const SwitchNavBarTab: string = 'navbar:switch-tab';
       export const ShowExplorer: string = 'shell:show-explorer';
       export const ShowServices: string = 'shell:show-services';
       export const ShowAppSettings: string = 'shell:show-app-settings';
