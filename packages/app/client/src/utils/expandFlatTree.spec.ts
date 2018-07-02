@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import expandFlatTree from './expandFlatTree';
+import { expandFlatTree } from './expandFlatTree';
 
 // TODO: Should write more tests
 test('expandFlatTree should expand', () => {

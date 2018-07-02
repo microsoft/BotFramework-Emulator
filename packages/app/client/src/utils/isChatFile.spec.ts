@@ -31,8 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import expandFlatTree from './expandFlatTree';
+import { isChatFile } from './isChatFile';
 
-export {
-    expandFlatTree
-}
+describe('isChatFile() test', () => {
+  it('should return whether a file ends with .chat or not', () => {
+    const filename1 = 'test.chat';
+    const filename2 = 'test.chat.txt';
+    const filename3 = 'test.txt';
+
+    expect(isChatFile(filename1)).toBe(true);
+    expect(isChatFile(filename2)).toBe(false);
+    expect(isChatFile(filename3)).toBe(false);
+  });
+});

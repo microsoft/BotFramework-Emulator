@@ -52,6 +52,7 @@ import { UpdateInfo } from 'electron-updater';
 import { ProgressInfo } from 'builder-util-runtime';
 import { getStore } from './data-v2/store';
 import { botListsAreDifferent } from './utils/botListsAreDifferent';
+import { BotProjectFileWatcher } from './botProjectFileWatcher';
 
 export let mainWindow: Window;
 export let windowManager: WindowManager;
@@ -156,10 +157,10 @@ var onOpenUrl = function (event: any, url1: any) {
   }
 };
 
-// REGISTER ALL COMMANDS
+// Register all commands
 Commands.registerCommands();
 
-// PARSE COMMAND LINE
+// Parse command line
 commandLine.parseArgs();
 
 Electron.app.on('will-finish-launching', () => {
@@ -270,6 +271,9 @@ const createMainWindow = async () => {
   const template: Electron.MenuItemConstructorOptions[] = AppMenuBuilder.getAppMenuTemplate();
 
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+
+  // initialize bot project watcher
+  BotProjectFileWatcher.getInstance().initialize(mainWindow.commandService);
 
   const rememberBounds = () => {
     const bounds = mainWindow.browserWindow.getBounds();

@@ -40,15 +40,12 @@ import chat, { ChatState } from './reducer/chat';
 import dialog, { DialogState } from './reducer/dialog';
 import editor, { EditorState } from './reducer/editor';
 import explorer, { ExplorerState } from './reducer/explorer';
-import files, { IFileTreeState } from './reducer/files';
+import files, { FileTreeState } from './reducer/files';
 import luisAuth, { LuisAuthState } from './reducer/luisAuthReducer';
 import navBar, { NavBarState } from './reducer/navBar';
 
 import presentation, { PresentationState } from './reducer/presentation';
 import { applicationSagas } from './sagas';
-
-// TODO: Remove this when we no longer need to debug the WebSocket connection
-// import DebugWebSocketConnection from './debugWebSocketConnection';
 
 export interface RootState {
   bot?: BotState;
@@ -59,7 +56,7 @@ export interface RootState {
   navBar?: NavBarState;
   presentation?: PresentationState;
   luisAuth?: LuisAuthState;
-  files?: IFileTreeState;
+  files?: FileTreeState;
 }
 
 const sagaMiddleWare = sagaMiddlewareFactory();
