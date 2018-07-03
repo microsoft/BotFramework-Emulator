@@ -136,8 +136,8 @@ export const ActiveBotHelper = new class {
 
       try {
         // create the bot and save to disk
-        const bot: BotConfigWithPath = await CommandServiceImpl.remoteCall(
-          SharedConstants.Commands.Bot.Create, botToCreate, secret);
+        const bot: BotConfigWithPath
+          = await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.Create, botToCreate, secret);
         store.dispatch(BotActions.create(bot, bot.path, secret));
 
         // set the bot as active

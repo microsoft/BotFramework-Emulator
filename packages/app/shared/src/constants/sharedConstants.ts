@@ -87,6 +87,11 @@ export namespace SharedConstants {
       export const AppendToLog: string = 'log:append';
     }
 
+    export namespace Extension {
+      export const Connect: string = 'shell:extension-connect';
+      export const Disconnect: string = 'shell:extension-disconnect';
+    }
+
     export namespace File {
       export const Read: string = 'file:read';
       export const Write: string = 'file:write';
@@ -113,6 +118,7 @@ export namespace SharedConstants {
     export namespace Settings {
       export const SaveAppSettings: string = 'app:settings:save';
       export const LoadAppSettings: string = 'app:settings:load';
+      export const ReceiveGlobalSettings: string = 'receive-global-settings';
     }
 
     export namespace UI {

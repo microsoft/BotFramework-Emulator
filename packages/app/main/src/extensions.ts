@@ -45,6 +45,7 @@ import { ChildProcess, fork } from 'child_process';
 import * as path from 'path';
 import { mainWindow } from './main';
 import * as WebSocket from 'ws';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 // =============================================================================
 export interface Extension {
@@ -243,7 +244,7 @@ export const ExtensionManagerImpl = new class extends DisposableImpl implements 
       // Disconnect from the extension process
       this.extensions[unid].disconnect();
       // Notify the client that the extension is gone.
-      mainWindow.commandService.remoteCall('shell:extension-disconnect', unid);
+      mainWindow.commandService.remoteCall(SharedConstants.Commands.Extension.Disconnect, unid);
       // Cleanup
       delete this.extensions[unid];
     }
@@ -297,7 +298,7 @@ export const ExtensionManagerImpl = new class extends DisposableImpl implements 
     // Connect to the extension's node process (if any).
     extension.connect();
     // Notify the client of the new extension.
-    mainWindow.commandService.remoteCall('shell:extension-connect', extension.config, extension.unid);
+    mainWindow.commandService.remoteCall(SharedConstants.Commands.Extension.Connect, extension.config, extension.unid);
   }
 
   // Check whether we're running from an 'app.asar' packfile. If so, it means we were installed

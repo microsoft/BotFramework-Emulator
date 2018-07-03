@@ -69,7 +69,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Shows a save dialog and returns a path + filename
   commandRegistry.registerCommand(
-    SharedConstants.Commands.Electron.ShowSaveDialog,
+    Commands.ShowSaveDialog,
     (dialogOptions: Electron.SaveDialogOptions = {}): string => {
       return showSaveDialog(mainWindow.browserWindow, dialogOptions);
   });

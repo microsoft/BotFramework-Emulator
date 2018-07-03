@@ -40,6 +40,7 @@ import {
 } from '@bfemulator/sdk-shared';
 import { ElectronIPC } from './ipc';
 import * as jsonpath from 'jsonpath';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 // =============================================================================
 export class Extension {
@@ -206,12 +207,16 @@ export const ExtensionManager = new class implements ExtensionManager {
   }
 
   public registerCommands(commandRegistry: CommandRegistryImpl) {
-    commandRegistry.registerCommand('shell:extension-connect', (config: ExtensionConfig, unid: string) => {
-      ExtensionManager.addExtension(config, unid);
-    });
+    commandRegistry.registerCommand(
+      SharedConstants.Commands.Extension.Connect,
+      (config: ExtensionConfig, unid: string) => {
+        ExtensionManager.addExtension(config, unid);
+      });
 
-    commandRegistry.registerCommand('shell:extension-disconnect', (unid: string) => {
-      ExtensionManager.removeExtension(unid);
-    });
+    commandRegistry.registerCommand(
+      SharedConstants.Commands.Extension.Disconnect,
+      (unid: string) => {
+        ExtensionManager.removeExtension(unid);
+      });
   }
 };

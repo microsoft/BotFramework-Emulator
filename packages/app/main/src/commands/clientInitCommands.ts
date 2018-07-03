@@ -61,7 +61,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     // Un-fullscreen the screen
     mainWindow.commandService.call(Commands.Electron.SetFullscreen, false);
     // Send app settings to client
-    mainWindow.commandService.remoteCall('receive-global-settings', {
+    mainWindow.commandService.remoteCall(Commands.Settings.ReceiveGlobalSettings, {
       url: emulator.framework.serverUrl,
       cwd: __dirname
     });

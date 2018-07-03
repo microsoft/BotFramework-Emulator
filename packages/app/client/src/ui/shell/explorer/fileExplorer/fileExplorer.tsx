@@ -75,7 +75,7 @@ class FileExplorerComponent extends React.Component<FileExplorerProps> {
     );
   }
 
-  private handleItemClick(filename: string) {
+  private handleTranscriptClick(filename: string) {
     CommandServiceImpl.call(SharedConstants.Commands.Emulator.OpenTranscript, filename);
   }
 
@@ -94,7 +94,7 @@ class FileExplorerComponent extends React.Component<FileExplorerProps> {
       insertAt: provider.insertAt.bind(provider),
       selectNode: node => {
         if (isTranscriptFile(node.data.path)) {
-          this.handleItemClick(node.data.path);
+          this.handleTranscriptClick(node.data.path);
         } else if (isChatFile(node.data.path)) {
           this.handleChatClick(node.data.path);
         }

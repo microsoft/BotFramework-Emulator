@@ -32,15 +32,18 @@
 //
 
 import { DisposableImpl, CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  commandRegistry.registerCommand('receive-global-settings', (settings: {
-    url: string,
-    cwd: string
-  }): any => {
-    SettingsService.emulator.url = (settings.url || '').replace('[::]', '127.0.0.1');
-    SettingsService.emulator.cwd = (settings.cwd || '').replace(/\\/g, '/');
-  });
+  commandRegistry.registerCommand(
+    SharedConstants.Commands.Settings.ReceiveGlobalSettings,
+    (settings: {
+      url: string,
+      cwd: string
+    }): any => {
+      SettingsService.emulator.url = (settings.url || '').replace('[::]', '127.0.0.1');
+      SettingsService.emulator.cwd = (settings.cwd || '').replace(/\\/g, '/');
+    });
 }
 
 export interface EmulatorSettings {
