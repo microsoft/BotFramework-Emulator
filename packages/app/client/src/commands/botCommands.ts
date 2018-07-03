@@ -61,7 +61,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Loads the bot on the client side using the activeBotHelper
-  commandRegistry.registerCommand('bot:load', (bot: BotConfigWithPath): Promise<any> => {
+  commandRegistry.registerCommand(Commands.Bot.Load, (bot: BotConfigWithPath): Promise<any> => {
     if (!pathExistsInRecentBots(bot.path)) {
       // create and switch bots
       return ActiveBotHelper.confirmAndCreateBot(bot, '');

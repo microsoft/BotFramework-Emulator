@@ -31,17 +31,29 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './azureBotServiceExplorer';
-export * from './botExplorerBar';
-export * from './dispatchExplorer';
-export * from './endpointExplorer';
-export * from './luisExplorer';
-export * from './qnaMakerExplorer';
-export * from './servicesExplorerBar';
-export * from './fileExplorer';
-export * from './botNotOpenExplorer';
-export * from './explorerBar';
-export * from './explorerBarBody';
-export * from './explorerBarHeader';
-export * from './explorerSet';
-export * from './servicePane';
+import { expandFlatTree } from './expandFlatTree';
+
+// TODO: Should write more tests
+test('expandFlatTree should expand', () => {
+    const actual = expandFlatTree([
+        'abc.txt',
+        'abc/def.txt',
+        'abc/def/ghi.txt',
+        'xyz.txt',
+        'abc/ghi/xyz.txt'
+    ]);
+
+    expect(actual).toEqual({
+        'abc.txt': 'abc.txt',
+        'abc': {
+            'def': {
+                'ghi.txt': 'abc/def/ghi.txt'
+            },
+            'ghi': {
+                'xyz.txt': 'abc/ghi/xyz.txt'
+            },
+            'def.txt': 'abc/def.txt'
+        },
+        'xyz.txt': 'xyz.txt'
+    });
+});

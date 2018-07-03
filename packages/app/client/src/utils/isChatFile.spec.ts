@@ -31,17 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './azureBotServiceExplorer';
-export * from './botExplorerBar';
-export * from './dispatchExplorer';
-export * from './endpointExplorer';
-export * from './luisExplorer';
-export * from './qnaMakerExplorer';
-export * from './servicesExplorerBar';
-export * from './fileExplorer';
-export * from './botNotOpenExplorer';
-export * from './explorerBar';
-export * from './explorerBarBody';
-export * from './explorerBarHeader';
-export * from './explorerSet';
-export * from './servicePane';
+import { isChatFile } from './isChatFile';
+
+describe('isChatFile() test', () => {
+  it('should return whether a file ends with .chat or not', () => {
+    const filename1 = 'test.chat';
+    const filename2 = 'test.chat.txt';
+    const filename3 = 'test.txt';
+
+    expect(isChatFile(filename1)).toBe(true);
+    expect(isChatFile(filename2)).toBe(false);
+    expect(isChatFile(filename3)).toBe(false);
+  });
+});

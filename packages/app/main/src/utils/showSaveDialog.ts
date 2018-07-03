@@ -31,17 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './azureBotServiceExplorer';
-export * from './botExplorerBar';
-export * from './dispatchExplorer';
-export * from './endpointExplorer';
-export * from './luisExplorer';
-export * from './qnaMakerExplorer';
-export * from './servicesExplorerBar';
-export * from './fileExplorer';
-export * from './botNotOpenExplorer';
-export * from './explorerBar';
-export * from './explorerBarBody';
-export * from './explorerBarHeader';
-export * from './explorerSet';
-export * from './servicePane';
+import { BrowserWindow, dialog, SaveDialogOptions } from 'electron';
+
+/** Shows a native save dialog */
+export const showSaveDialog = (window: BrowserWindow, options: SaveDialogOptions): string => {
+  return dialog.showSaveDialog(window, options);
+};

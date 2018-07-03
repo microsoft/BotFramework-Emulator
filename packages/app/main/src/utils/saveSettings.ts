@@ -31,22 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export default function expandFlatTree(flattened, delimiter = '/') {
-    if (Array.isArray(flattened)) {
-        flattened = flattened.reduce((map, path) => {
-            map[path] = path;
+import { ensureStoragePath } from './ensureStoragePath';
+import * as Fs from 'fs';
 
-            return map;
-        }, {});
-    }
-
-    return Object.keys(flattened).reduce((expanded, path) => {
-        const segments = path.split(delimiter);
-        const filename = segments.pop();
-        const parent = segments.reduce((parent, segment) => parent[segment] || (parent[segment] = {}), expanded);
-
-        parent[filename] = flattened[path];
-
-        return expanded;
-    }, {});
-}
+/** Save JSON object to file. */
+export const saveSettings = <T>(filename: string, settings: T): void => {
+  try {
+    filename = `${ensureStoragePath()}/${filename}`;
+    Fs.writeFileSync(filename, JSON.stringify(settings, null, 2), { encoding: 'utf8' });
+  } catch (e) {
+    console.error(`Failed to write file: ${filename}`, e);
+  }
+};

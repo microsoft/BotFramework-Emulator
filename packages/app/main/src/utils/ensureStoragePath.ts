@@ -31,17 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './azureBotServiceExplorer';
-export * from './botExplorerBar';
-export * from './dispatchExplorer';
-export * from './endpointExplorer';
-export * from './luisExplorer';
-export * from './qnaMakerExplorer';
-export * from './servicesExplorerBar';
-export * from './fileExplorer';
-export * from './botNotOpenExplorer';
-export * from './explorerBar';
-export * from './explorerBarBody';
-export * from './explorerBarHeader';
-export * from './explorerSet';
-export * from './servicePane';
+import * as path from 'path';
+import * as Mkdirp from 'mkdirp';
+import * as globals from '../globals';
+import * as electron from 'electron'; // use a lowercase name "electron" to prevent clash with "Electron" namespace
+const electronApp: Electron.App = electron.app;
+const electronRemote: Electron.Remote = electron.remote;
+
+/** Returns the app storage path, and creates the directory if it doesn't exist */
+export const ensureStoragePath = (): string => {
+  const commandLineArgs = globals.getGlobal('commandlineargs');
+  const app = electronApp || electronRemote.app;
+  const storagePath = commandLineArgs.storagepath || path.join(app.getPath('userData'), 'botframework-emulator');
+  Mkdirp.sync(storagePath);
+  return storagePath;
+};

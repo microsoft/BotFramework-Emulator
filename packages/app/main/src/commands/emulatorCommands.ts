@@ -42,7 +42,7 @@ import {
   patchBotsJson,
   toSavableBot
 } from '../botHelpers';
-import { showSaveDialog, writeFile } from '../utils';
+import { showSaveDialog, writeFile, parseActivitiesFromChatFile } from '../utils';
 import { emulator } from '../emulator';
 import { sync as mkdirpSync } from 'mkdirp';
 import { BotProjectFileWatcher } from '../botProjectFileWatcher';
@@ -189,5 +189,18 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     );
 
     return conversation;
+  });
+
+  // ---------------------------------------------------------------------------
+  // Open the chat file in a tabbed document as a transcript
+  commandRegistry.registerCommand(
+    Commands.OpenChatFile,
+    async (filename: string): Promise<{ activities: CustomActivity[] }> => {
+      try {
+        const activities = await parseActivitiesFromChatFile(filename);
+        return { activities };
+      } catch (err) {
+        throw new Error(`${Commands.OpenChatFile}: Error calling parseActivitiesFromChatFile(): ${err}`);
+      }
   });
 }

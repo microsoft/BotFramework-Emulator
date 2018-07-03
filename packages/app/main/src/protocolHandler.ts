@@ -302,7 +302,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
       if (running()) {
         try {
           await mainWindow.commandService.call(SharedConstants.Commands.Bot.SetActive, bot);
-          await mainWindow.commandService.remoteCall('bot:load', bot);
+          await mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.Load, bot);
         } catch (e) {
           throw new Error(`(ngrok running) Error occurred while trying to deep link to bot project at: ${path}.`);
         }
@@ -311,7 +311,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
         ngrokEmitter.once('connect', async (...args: any[]): Promise<void> => {
           try {
             await mainWindow.commandService.call(SharedConstants.Commands.Bot.SetActive, bot);
-            await mainWindow.commandService.remoteCall('bot:load', bot);
+            await mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.Load, bot);
           } catch (e) {
             throw new Error(
               `(ngrok running but not connected) Error occurred while trying to deep link to bot project at: ${path}.`
@@ -322,7 +322,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
     } else {
       try {
         await mainWindow.commandService.call(SharedConstants.Commands.Bot.SetActive, bot);
-        await mainWindow.commandService.remoteCall('bot:load', bot);
+        await mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.Load, bot);
       } catch (e) {
         throw new Error(`(ngrok not configured) Error occurred while trying to deep link to bot project at: ${path}`);
       }

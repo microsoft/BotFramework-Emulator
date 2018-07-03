@@ -31,17 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './azureBotServiceExplorer';
-export * from './botExplorerBar';
-export * from './dispatchExplorer';
-export * from './endpointExplorer';
-export * from './luisExplorer';
-export * from './qnaMakerExplorer';
-export * from './servicesExplorerBar';
-export * from './fileExplorer';
-export * from './botNotOpenExplorer';
-export * from './explorerBar';
-export * from './explorerBarBody';
-export * from './explorerBarHeader';
-export * from './explorerSet';
-export * from './servicePane';
+import { BrowserWindow, MessageBoxOptions, dialog } from 'electron';
+
+/** Shows a native message box */
+export function showMessageBox(window: BrowserWindow, options: MessageBoxOptions): number {
+  return dialog.showMessageBox(window, options);
+}

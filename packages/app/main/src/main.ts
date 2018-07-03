@@ -53,6 +53,8 @@ import { ProgressInfo } from 'builder-util-runtime';
 import { getStore } from './data-v2/store';
 import { CommandRegistry } from './commands';
 import { SharedConstants } from '@bfemulator/app-shared';
+import { botListsAreDifferent } from './utils/botListsAreDifferent';
+import { BotProjectFileWatcher } from './botProjectFileWatcher';
 
 export let mainWindow: Window;
 export let windowManager: WindowManager;
@@ -157,11 +159,11 @@ var onOpenUrl = function (event: any, url1: any) {
   }
 };
 
-// REGISTER ALL COMMANDS
+// Register all commands
 const registry = CommandRegistry;
 registerAllCommands(registry);
 
-// PARSE COMMAND LINE
+// Parse command line
 commandLine.parseArgs();
 
 Electron.app.on('will-finish-launching', () => {
@@ -220,31 +222,42 @@ const createMainWindow = async () => {
         width: 1400,
         height: 920
       }));
+
+  // get reference to bots list in state for comparison against state changes
+  let botsRef = store.getState().bot.botFiles;
+
   store.subscribe(() => {
     const state = store.getState();
-    const botsJson = { bots: state.bot.botFiles.filter(botFile => !!botFile) };
-    const botsJsonPath = path.join(ensureStoragePath(), 'bots.json');
 
-    try {
-      // write bots list
-      writeFile(botsJsonPath, botsJson);
-    } catch (e) {
-      console.error('Error writing bot list to disk: ', e);
-    }
+    // if the bots list changed, write it to disk
+    const bots = state.bot.botFiles.filter(botFile => !!botFile);
+    if (botListsAreDifferent(botsRef, bots)) {
+      const botsJson = { bots };
+      const botsJsonPath = path.join(ensureStoragePath(), 'bots.json');
 
-    /* Timeout's are currently busted in Electron; will write on every store change until fix is made.
-    // Issue: https://github.com/electron/electron/issues/7079
-
-    clearTimeout(botSettingsTimer);
-
-    // wait 5 seconds after updates to bots list to write to disk
-    botSettingsTimer = setTimeout(() => {
-      const botsJsonPath = `${ensureStoragePath()}/bots.json`;
       try {
+        // write bots list
         writeFile(botsJsonPath, botsJson);
-        console.log('Wrote bot settings to desk.');
-      } catch (e) { console.error('Error writing bot settings to disk: ', e); }
-    }, 1000);*/
+        // update cached version to check against for changes
+        botsRef = bots;
+      } catch (e) {
+        console.error('Error writing bot list to disk: ', e);
+      }
+
+      /* Timeout's are currently busted in Electron; will write on every store change until fix is made.
+      // Issue: https://github.com/electron/electron/issues/7079
+
+      clearTimeout(botSettingsTimer);
+
+      // wait 5 seconds after updates to bots list to write to disk
+      botSettingsTimer = setTimeout(() => {
+        const botsJsonPath = `${ensureStoragePath()}/bots.json`;
+        try {
+          writeFile(botsJsonPath, botsJson);
+          console.log('Wrote bot settings to desk.');
+        } catch (e) { console.error('Error writing bot settings to disk: ', e); }
+      }, 1000);*/
+    }
   });
 
   const serverUrl = await Emulator.startup();
@@ -261,6 +274,9 @@ const createMainWindow = async () => {
   const template: Electron.MenuItemConstructorOptions[] = AppMenuBuilder.getAppMenuTemplate();
 
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+
+  // initialize bot project watcher
+  BotProjectFileWatcher.getInstance().initialize(mainWindow.commandService);
 
   const rememberBounds = () => {
     const bounds = mainWindow.browserWindow.getBounds();

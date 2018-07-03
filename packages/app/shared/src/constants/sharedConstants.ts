@@ -50,6 +50,7 @@ export namespace SharedConstants {
       export const OpenBrowse: string = 'bot:browse-open';
       export const SyncBotList: string = 'bot:list:sync';
       export const OpenSettings: string = 'bot-settings:open';
+      export const Load: string = 'bot:load';
     }
 
     export namespace ClientInit {
@@ -81,6 +82,9 @@ export namespace SharedConstants {
       export const NewLiveChat: string = 'livechat:new';
       export const OpenTranscript: string = 'transcript:open';
       export const PromptToOpenTranscript: string = 'transcript:prompt-open';
+      export const ReloadTranscript: string = 'transcript:reload';
+      export const OpenChatFile: string = 'chat:open';
+      export const AppendToLog: string = 'log:append';
     }
 
     export namespace File {
@@ -90,6 +94,7 @@ export namespace SharedConstants {
       export const Clear: string = 'file:clear';
       export const Add: string = 'file:add';
       export const Remove: string = 'file:remove';
+      export const Changed: string = 'file:changed';
     }
 
     export namespace Luis {

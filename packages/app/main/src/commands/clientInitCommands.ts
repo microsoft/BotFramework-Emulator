@@ -89,7 +89,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         try {
           const bot = await mainWindow.commandService.call(Commands.Bot.Open, fileToBeOpened);
           await mainWindow.commandService.call(Commands.Bot.SetActive, bot);
-          await mainWindow.commandService.remoteCall('bot:load', bot);
+          await mainWindow.commandService.remoteCall(Commands.Bot.Load, bot);
         } catch (e) {
           throw new Error(`Error while trying to open a .bot file via double click at: ${fileToBeOpened}`);
         }

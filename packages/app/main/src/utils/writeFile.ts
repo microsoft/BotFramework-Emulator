@@ -31,17 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './azureBotServiceExplorer';
-export * from './botExplorerBar';
-export * from './dispatchExplorer';
-export * from './endpointExplorer';
-export * from './luisExplorer';
-export * from './qnaMakerExplorer';
-export * from './servicesExplorerBar';
-export * from './fileExplorer';
-export * from './botNotOpenExplorer';
-export * from './explorerBar';
-export * from './explorerBarBody';
-export * from './explorerBarHeader';
-export * from './explorerSet';
-export * from './servicePane';
+import * as Fs from 'fs';
+import * as Mkdirp from 'mkdirp';
+import * as Path from 'path';
+
+/** Writes contents to a file at path */
+export const writeFile = (filePath: string, contents: object | string): void => {
+  try {
+    const contentsToWrite = typeof contents === 'object' ? JSON.stringify(contents, null, 2) : contents;
+
+    // write parent director(y | ies) if non-existent
+    Mkdirp.sync(Path.dirname(filePath));
+    Fs.writeFileSync(filePath, contentsToWrite, { encoding: 'utf8' });
+  } catch (e) {
+    console.error(`Failed to write file at ${filePath}`, e);
+  }
+};

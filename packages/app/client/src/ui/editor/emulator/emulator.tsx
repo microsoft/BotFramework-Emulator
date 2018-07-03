@@ -54,8 +54,8 @@ import ChatPanel from './chatPanel';
 import DetailPanel from './detailPanel';
 import LogPanel from './logPanel';
 import PlaybackBar from './playbackBar';
-import { debounce } from '../../utils/debounce';
 import { SharedConstants } from '@bfemulator/app-shared';
+import { debounce } from '../../../utils';
 
 const { encode } = base64Url;
 
@@ -234,9 +234,9 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
           conversationId
         );
 
-        if (props.document && props.document.deepLink && props.document.activities) {
+        if (props.document && props.document.inMemory && props.document.activities) {
           try {
-            // transcript was deep linked via protocol,
+            // transcript was deep linked via protocol or is generated in-memory via chatdown,
             // and should just be fed its own activities attached to the document
             await CommandServiceImpl.remoteCall(
               SharedConstants.Commands.Emulator.FeedTranscriptFromMemory,

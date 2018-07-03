@@ -31,17 +31,39 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './azureBotServiceExplorer';
-export * from './botExplorerBar';
-export * from './dispatchExplorer';
-export * from './endpointExplorer';
-export * from './luisExplorer';
-export * from './qnaMakerExplorer';
-export * from './servicesExplorerBar';
-export * from './fileExplorer';
-export * from './botNotOpenExplorer';
-export * from './explorerBar';
-export * from './explorerBarBody';
-export * from './explorerBarHeader';
-export * from './explorerSet';
-export * from './servicePane';
+import { BotInfo } from '@bfemulator/app-shared';
+import { botListsAreDifferent } from './botListsAreDifferent';
+
+test('botListsAreDifferent() tests', () => {
+  let list1: BotInfo[] = [
+    {
+      path: 'path1',
+      displayName: 'bot1',
+      secret: null
+    },
+    {
+      path: 'path2',
+      displayName: 'bot2',
+      secret: null
+    },
+    {
+      path: 'path3',
+      displayName: 'bot3',
+      secret: null
+    }
+  ];
+
+  let list2: BotInfo[] = [];
+
+  expect(botListsAreDifferent(list1, list2)).toBe(true);
+
+  list2[0] = { path: 'path1', displayName: 'bot1', secret: null };
+  list2[1] = { path: 'path2', displayName: 'bot2', secret: null };
+  list2[2] = { path: 'path3', displayName: 'bot3', secret: null };
+
+  expect(botListsAreDifferent(list1, list2)).toBe(false);
+
+  list2[1] = { path: 'path2', displayName: 'bot2', secret: 'someSecret' };
+
+  expect(botListsAreDifferent(list1, list2)).toBe(true);
+});

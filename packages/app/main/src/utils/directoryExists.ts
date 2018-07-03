@@ -31,17 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './azureBotServiceExplorer';
-export * from './botExplorerBar';
-export * from './dispatchExplorer';
-export * from './endpointExplorer';
-export * from './luisExplorer';
-export * from './qnaMakerExplorer';
-export * from './servicesExplorerBar';
-export * from './fileExplorer';
-export * from './botNotOpenExplorer';
-export * from './explorerBar';
-export * from './explorerBarBody';
-export * from './explorerBarHeader';
-export * from './explorerSet';
-export * from './servicePane';
+import * as Fs from 'fs';
+
+export const directoryExists = (path1: string) => {
+  let stat = null;
+  try {
+    stat = Fs.statSync(path1);
+  } catch {
+    // do nothing
+  }
+
+  if (!stat || !stat.isDirectory()) {
+    return false;
+  } else {
+    return true;
+  }
+};

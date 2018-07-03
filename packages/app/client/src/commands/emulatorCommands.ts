@@ -111,4 +111,49 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       })
       .catch(err => console.error(err));
   });
+
+  // ---------------------------------------------------------------------------
+  // Same as open transcript, except that it closes the transcript first, before reopening it
+  commandRegistry.registerCommand(Commands.Emulator.ReloadTranscript, (filename: string, additionalData?: object) => {
+    const tabGroup = getTabGroupForDocument(filename);
+    if (tabGroup) {
+      store.dispatch(EditorActions.close(getTabGroupForDocument(filename), filename));
+      store.dispatch(ChatActions.closeDocument(filename));
+    }
+    store.dispatch(ChatActions.newDocument(
+      filename,
+      'transcript',
+      {
+        ...additionalData,
+        botId: 'bot',
+        userId: 'default-user'
+      }
+    ));
+    store.dispatch(EditorActions.open(
+      Constants.CONTENT_TYPE_TRANSCRIPT,
+      filename,
+      false
+    ));
+  });
+
+  // ---------------------------------------------------------------------------
+  // Open the chat file in a tabbed document as a transcript
+  commandRegistry.registerCommand(Commands.Emulator.OpenChatFile, async (filename: string, reload?: boolean) => {
+    try {
+      // wait for the main side to use the chatdown library to parse the activities (transcript) out of the .chat file
+      const { activities }: { activities: any[] }
+        = await CommandServiceImpl.remoteCall(Commands.Emulator.OpenChatFile, filename);
+
+      // open or reload the transcript
+      if (reload) {
+        CommandServiceImpl.call(Commands.Emulator.ReloadTranscript, filename,
+          { activities, inMemory: true, fileName: filename });
+      } else {
+        CommandServiceImpl.call(Commands.Emulator.OpenTranscript, filename,
+          { activities, inMemory: true, fileName: filename });
+      }
+    } catch (err) {
+      throw new Error(`Error while retrieving activities from main side: ${err}`);
+    }
+  });
 }

@@ -31,17 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './azureBotServiceExplorer';
-export * from './botExplorerBar';
-export * from './dispatchExplorer';
-export * from './endpointExplorer';
-export * from './luisExplorer';
-export * from './qnaMakerExplorer';
-export * from './servicesExplorerBar';
-export * from './fileExplorer';
-export * from './botNotOpenExplorer';
-export * from './explorerBar';
-export * from './explorerBarBody';
-export * from './explorerBarHeader';
-export * from './explorerSet';
-export * from './servicePane';
+import { isTranscriptFile } from './isTranscriptFile';
+
+describe('isTranscriptFile() test', () => {
+  it('should return whether a file ends with .transcript or not', () => {
+    const filename1 = 'test.transcript';
+    const filename2 = 'test.transcript.txt';
+    const filename3 = 'test.txt';
+
+    expect(isTranscriptFile(filename1)).toBe(true);
+    expect(isTranscriptFile(filename2)).toBe(false);
+    expect(isTranscriptFile(filename3)).toBe(false);
+  });
+});

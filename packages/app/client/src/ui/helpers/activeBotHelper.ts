@@ -194,7 +194,7 @@ export const ActiveBotHelper = new class {
               store.dispatch(EditorActions.closeNonGlobalTabs());
               const bot = await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.Open, filename);
               await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.SetActive, bot);
-              await CommandServiceImpl.call('bot:load', bot);
+              await CommandServiceImpl.call(SharedConstants.Commands.Bot.Load, bot);
             } catch (err) {
               console.error('Error while trying to open bot from file: ', err);
               throw new Error(`[confirmAndOpenBotFromFile] Error while trying to open bot from file: ${err}`);

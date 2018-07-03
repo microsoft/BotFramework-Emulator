@@ -31,8 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import expandFlatTree from './expandFlatTree';
+import * as Fs from 'fs';
+import { ensureStoragePath } from './ensureStoragePath';
+import { mergeDeep } from '@bfemulator/app-shared';
 
-export {
-    expandFlatTree
-}
+/** Load JSON object from file. */
+export const loadSettings = <T>(filename: string, defaultSettings: T): T => {
+  try {
+    filename = `${ensureStoragePath()}/${filename}`;
+    const stat = Fs.statSync(filename);
+    if (stat.isFile()) {
+      const loaded = JSON.parse(Fs.readFileSync(filename, 'utf8'));
+      return mergeDeep(defaultSettings, loaded);
+    }
+    return defaultSettings;
+  } catch (e) {
+    console.error(`Failed to read file: ${filename}`, e);
+    return defaultSettings;
+  }
+};

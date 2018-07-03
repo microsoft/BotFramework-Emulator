@@ -218,7 +218,7 @@ describe('ActiveBotHelper tests', () => {
 
     await ActiveBotHelper.confirmAndOpenBotFromFile();
     expect(mockDispatch).toHaveBeenCalledTimes(1);
-    expect(mockCall).toHaveBeenCalledWith('bot:load', bot);
+    expect(mockCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.Load, bot);
     expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.Open, 'someOtherPath');
     expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.SetActive, bot);
 

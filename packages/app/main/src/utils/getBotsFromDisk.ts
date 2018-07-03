@@ -31,17 +31,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './azureBotServiceExplorer';
-export * from './botExplorerBar';
-export * from './dispatchExplorer';
-export * from './endpointExplorer';
-export * from './luisExplorer';
-export * from './qnaMakerExplorer';
-export * from './servicesExplorerBar';
-export * from './fileExplorer';
-export * from './botNotOpenExplorer';
-export * from './explorerBar';
-export * from './explorerBarBody';
-export * from './explorerBarHeader';
-export * from './explorerSet';
-export * from './servicePane';
+import { BotInfo } from '@bfemulator/app-shared';
+import { join } from 'path';
+import { readFileSync } from './readFileSync';
+import { ensureStoragePath } from './ensureStoragePath';
+
+/** Reads and returns list of bots from %APPSTORAGEPATH%/bots.json */
+export const getBotsFromDisk = (): BotInfo[] => {
+  const botsJsonPath = join(ensureStoragePath(), 'bots.json');
+  const botsJsonContents = readFileSync(botsJsonPath);
+  const botsJson = botsJsonContents ? JSON.parse(botsJsonContents) : null;
+
+  if (botsJson && botsJson.bots && Array.isArray(botsJson.bots)) {
+    return botsJson.bots;
+  } else {
+    return [];
+  }
+};

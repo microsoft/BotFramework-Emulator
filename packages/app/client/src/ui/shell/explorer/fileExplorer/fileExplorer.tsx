@@ -34,12 +34,12 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { FileInfo, SharedConstants } from '@bfemulator/app-shared';
-import { pathExt } from '@fuselab/ui-shared/lib';
 import { TreeView, TreeViewProps } from '@fuselab/ui-fabric/lib';
 import { ExpandCollapse, ExpandCollapseContent } from '@bfemulator/ui-react';
-import { IFileTreeState } from '../../../../data/reducer/files';
+import { FileTreeState } from '../../../../data/reducer/files';
 import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
 import { FileTreeDataProvider } from './fileTreeProvider';
+import { isChatFile, isTranscriptFile } from '../../../../utils';
 
 const CSS = {
   // tree comp overrides to match services pane style
@@ -55,25 +55,19 @@ const CSS = {
   }
 };
 
-interface TranscriptExplorerProps {
+interface FileExplorerProps {
   activeEditor: string;
   activeDocumentId: string;
   transcripts: any[];
-  files: IFileTreeState;
+  files: FileTreeState;
 }
 
-function isTranscript(path: string): boolean {
-  const ext = (pathExt(path) || '').toLowerCase();
-  return ext === 'transcript';
-}
-
-class TranscriptExplorerComponent extends React.Component<TranscriptExplorerProps> {
-
+class FileExplorerComponent extends React.Component<FileExplorerProps> {
   public render(): JSX.Element {
     return (
       <ExpandCollapse
         expanded={ true }
-        title="Transcript Explorer"
+        title="File Explorer"
         style={ CSS }
       >
         { this.renderFileTree() }
@@ -83,6 +77,10 @@ class TranscriptExplorerComponent extends React.Component<TranscriptExplorerProp
 
   private handleItemClick(filename: string) {
     CommandServiceImpl.call(SharedConstants.Commands.Emulator.OpenTranscript, filename);
+  }
+
+  private handleChatClick(filename: string) {
+    CommandServiceImpl.call(SharedConstants.Commands.Emulator.OpenChatFile, filename);
   }
 
   private renderFileTree(): JSX.Element {
@@ -95,8 +93,10 @@ class TranscriptExplorerComponent extends React.Component<TranscriptExplorerProp
       remove: provider.remove.bind(provider),
       insertAt: provider.insertAt.bind(provider),
       selectNode: node => {
-        if (isTranscript(node.data.path)) {
+        if (isTranscriptFile(node.data.path)) {
           this.handleItemClick(node.data.path);
+        } else if (isChatFile(node.data.path)) {
+          this.handleChatClick(node.data.path);
         }
         provider.selectNode.bind(provider);
       },
@@ -119,7 +119,7 @@ class TranscriptExplorerComponent extends React.Component<TranscriptExplorerProp
   }
 }
 
-function mapStateToProps(state: any): TranscriptExplorerProps {
+function mapStateToProps(state: any): FileExplorerProps {
   return {
     activeEditor: state.editor.activeEditor,
     activeDocumentId: state.editor.editors[state.editor.activeEditor].activeDocumentId,
@@ -128,4 +128,4 @@ function mapStateToProps(state: any): TranscriptExplorerProps {
   };
 }
 
-export const TranscriptExplorer = connect(mapStateToProps)(TranscriptExplorerComponent) as any;
+export const FileExplorer = connect(mapStateToProps)(FileExplorerComponent) as any;

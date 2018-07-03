@@ -31,17 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './azureBotServiceExplorer';
-export * from './botExplorerBar';
-export * from './dispatchExplorer';
-export * from './endpointExplorer';
-export * from './luisExplorer';
-export * from './qnaMakerExplorer';
-export * from './servicesExplorerBar';
-export * from './fileExplorer';
-export * from './botNotOpenExplorer';
-export * from './explorerBar';
-export * from './explorerBarBody';
-export * from './explorerBarHeader';
-export * from './explorerSet';
-export * from './servicePane';
+import * as Restify from 'restify';
+import { exceptionToAPIException } from './exceptionToAPIException';
+import { ErrorResponse } from '@bfemulator/app-shared';
+
+/** Send exception as error response */
+export const sendErrorResponse = (req: Restify.Request, res: Restify.Response, next: Restify.Next, exception: any)
+  : ErrorResponse => {
+  let apiException = exceptionToAPIException(exception);
+  res.send(apiException.statusCode, apiException.error);
+  res.end();
+  return apiException.error;
+};

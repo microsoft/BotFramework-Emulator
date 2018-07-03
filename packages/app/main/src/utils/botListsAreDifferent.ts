@@ -31,4 +31,30 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './transcriptExplorer';
+import { BotInfo } from '@bfemulator/app-shared';
+
+/**
+ * Compares two bot lists against each other and returns whether they are different or not
+ * @param list1 First bot list to compare
+ * @param list2 Second bot list to compare
+ */
+export const botListsAreDifferent = (list1: BotInfo[], list2: BotInfo[]): boolean => {
+  if (list1.length !== list2.length) {
+    return true;
+  }
+  for (let i = 0; i < list1.length; i++) {
+    const bot1 = list1[i];
+    const bot2 = list2[i];
+
+    if (bot1.displayName !== bot2.displayName) {
+      return true;
+    }
+    if (bot1.path !== bot2.path) {
+      return true;
+    }
+    if (bot1.secret !== bot2.secret) {
+      return true;
+    }
+  }
+  return false;
+};

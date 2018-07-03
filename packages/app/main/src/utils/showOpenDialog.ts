@@ -31,17 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './azureBotServiceExplorer';
-export * from './botExplorerBar';
-export * from './dispatchExplorer';
-export * from './endpointExplorer';
-export * from './luisExplorer';
-export * from './qnaMakerExplorer';
-export * from './servicesExplorerBar';
-export * from './fileExplorer';
-export * from './botNotOpenExplorer';
-export * from './explorerBar';
-export * from './explorerBarBody';
-export * from './explorerBarHeader';
-export * from './explorerSet';
-export * from './servicePane';
+import { BrowserWindow, OpenDialogOptions, dialog } from 'electron';
+
+/** Shows a native open file / directory dialog */
+export const showOpenDialog = (window: BrowserWindow, options: OpenDialogOptions): string => {
+  const filePaths = dialog.showOpenDialog(window, options);
+  const filePath = filePaths && filePaths[0];
+  return filePath;
+};

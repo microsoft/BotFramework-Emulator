@@ -106,6 +106,7 @@
     "@fuselab/ui-shared": "~1.1.0",
     "async": "^2.6.0",
     "base64url": "^2.0.0",
+    "chatdown": "^1.0.2",
     "chokidar": "^2.0.2",
     "command-line-args": "^5.0.2",
     "electron-fetch": "^1.1.0",

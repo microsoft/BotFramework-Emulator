@@ -31,29 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import expandFlatTree from './expandFlatTree';
-
-// TODO: Should write more tests
-test('expandFlatTree should expand', () => {
-    const actual = expandFlatTree([
-        'abc.txt',
-        'abc/def.txt',
-        'abc/def/ghi.txt',
-        'xyz.txt',
-        'abc/ghi/xyz.txt'
-    ]);
-
-    expect(actual).toEqual({
-        'abc.txt': 'abc.txt',
-        'abc': {
-            'def': {
-                'ghi.txt': 'abc/def/ghi.txt'
-            },
-            'ghi': {
-                'xyz.txt': 'abc/ghi/xyz.txt'
-            },
-            'def.txt': 'abc/def.txt'
-        },
-        'xyz.txt': 'xyz.txt'
-    });
-});
+export * from './botListsAreDifferent';
+export * from './conversation';
+export * from './directoryExists';
+export * from './ensureStoragePath';
+export * from './exceptionToAPIException';
+export * from './fileExists';
+export * from './getBotsFromDisk';
+export * from './getDirectories';
+export * from './getFilesInDir';
+export * from './getSafeBotName';
+export * from './isDev';
+export * from './isLocalhostUrl';
+export * from './isSecureUrl';
+export * from './loadSettings';
+export * from './parseActivitiesFromChatFile';
+export * from './readFileSync';
+export * from './saveSettings';
+export * from './sendErrorResponse';
+export * from './showMessageBox';
+export * from './showOpenDialog';
+export * from './showSaveDialog';
+export * from './writeFile';
