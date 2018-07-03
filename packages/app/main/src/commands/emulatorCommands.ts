@@ -100,7 +100,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
       await saveableBot.save(botPath);
       await patchBotsJson(botPath, botInfo);
-      await BotProjectFileWatcher.watch(botPath);
+      await BotProjectFileWatcher.getInstance().watch(botPath);
       store.dispatch(BotActions.setDirectory(botDirectory));
     }
 

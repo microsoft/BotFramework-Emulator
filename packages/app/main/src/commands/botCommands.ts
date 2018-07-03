@@ -136,7 +136,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // Set active bot
   commandRegistry.registerCommand(Commands.SetActive, async (bot: BotConfigWithPath): Promise<string> => {
     // set up the file watcher
-    await BotProjectFileWatcher.watch(bot.path);
+    await BotProjectFileWatcher.getInstance().watch(bot.path);
 
     // set active bot and active directory
     const botDirectory = Path.dirname(bot.path);
@@ -189,7 +189,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Close active bot (called from client-side)
   commandRegistry.registerCommand(Commands.Close, (): void => {
-    BotProjectFileWatcher.dispose();
+    BotProjectFileWatcher.getInstance().dispose();
     store.dispatch(BotActions.close());
   });
 
