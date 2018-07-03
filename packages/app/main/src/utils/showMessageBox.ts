@@ -37,4 +37,3 @@ import { BrowserWindow, MessageBoxOptions, dialog } from 'electron';
 export function showMessageBox(window: BrowserWindow, options: MessageBoxOptions): number {
   return dialog.showMessageBox(window, options);
 }
-
