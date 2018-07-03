@@ -43,7 +43,7 @@ import explorer, { ExplorerState } from './reducer/explorer';
 import files, { FileTreeState } from './reducer/files';
 import luisAuth, { LuisAuthState } from './reducer/luisAuthReducer';
 import navBar, { NavBarState } from './reducer/navBar';
-
+import notification, { NotificationState } from './reducer/notification';
 import presentation, { PresentationState } from './reducer/presentation';
 import { applicationSagas } from './sagas';
 
@@ -57,6 +57,7 @@ export interface RootState {
   presentation?: PresentationState;
   luisAuth?: LuisAuthState;
   files?: FileTreeState;
+  notification?: NotificationState;
 }
 
 const sagaMiddleWare = sagaMiddlewareFactory();
@@ -72,7 +73,8 @@ const configureStore = (initialState: RootState = DEFAULT_STATE): Store<RootStat
     chat,
     navBar,
     presentation,
-    luisAuth
+    luisAuth,
+    notification
   }),
   initialState,
   applyMiddleware(
