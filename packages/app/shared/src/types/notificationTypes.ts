@@ -48,8 +48,7 @@ export interface Notification {
   type: NotificationType;
   message: string;
   timestamp: number;
-  okButton?: NotificationCTAButton;
-  cancelButton?: NotificationCTAButton;
+  buttons?: NotificationCTAButton[];
 }
 
 export class NotificationImpl implements Notification {
@@ -58,6 +57,5 @@ export class NotificationImpl implements Notification {
   type: NotificationType;
   message: string;
   timestamp: number;
-  okButton?: NotificationCTAButton;
-  cancelButton?: NotificationCTAButton;
+  buttons?: NotificationCTAButton[];
 }

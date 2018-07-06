@@ -55,15 +55,20 @@ export class NotificationManager {
     }
   }
 
-  /** Adds a notification to the notification cache */
+  /** Adds a notification to the notification store */
   public addNotification(notification: Notification): void {
     const { id } = notification;
     this.notificationStore[id] = notification;
   }
 
-  /** Removes a notification from the notification cache */
+  /** Removes a notification from the notification store */
   public removeNotification(id: string): void {
     delete this.notificationStore[id];
+  }
+
+  /** Clears all notifications from the notification store */
+  public clearNotifications(): void {
+    this.notificationStore = {};
   }
 
   private constructor() {

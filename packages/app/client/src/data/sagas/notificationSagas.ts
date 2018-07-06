@@ -42,6 +42,13 @@ export function* addNotification(action: AddNotificationAction) {
   yield call(instance.addNotification.bind(instance), notification);
 }
 
+/** Clears all notifications from the notification manager's store */
+export function* clearNotifications() {
+  const instance = yield call(NotificationManager.getInstance.bind(NotificationManager));
+  yield call(instance.clearNotifications.bind(instance));
+}
+
 export function* notificationSagas(): IterableIterator<ForkEffect> {
   yield takeEvery(NotificationActions.add, addNotification);
+  yield takeEvery(NotificationActions.clear, clearNotifications);
 }

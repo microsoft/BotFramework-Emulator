@@ -36,9 +36,11 @@ import { connect } from 'react-redux';
 import { RootState } from '../../../../data/store';
 import { Notification } from './notification';
 import { NotificationManager } from '../../../../notificationManager';
+import * as NotificationActions from '../../../../data/action/notificationActions';
 
 interface NotificationExplorerProps {
   notifications?: string[];
+  clearNotifications?: () => void;
 }
 
 class NotificationsExplorerComp extends React.Component<NotificationExplorerProps, {}> {
@@ -51,27 +53,36 @@ class NotificationsExplorerComp extends React.Component<NotificationExplorerProp
 
   render() {
     const { notifications = [] } = this.props;
+    const clearAllButton = notifications.length ? this.renderClearAllButton() : null;
+
     return (
-      <ul>
+      <ul style={{ padding: 0 }}>
         {
           notifications.map(n => {
             const notification = this._notificationManager.notificationStore[n];
             return <Notification key={ notification.id } notification={ notification } />;
           })
         }
+        { clearAllButton }
       </ul>
     );
   }
+
+  private renderClearAllButton = (): JSX.Element => {
+    return <span onClick={ () => this.props.clearNotifications() }>Clear all</span>;
+  }
 }
 
-function mapStateToProps(state: RootState): NotificationExplorerProps {
+const mapStateToProps = (state: RootState): NotificationExplorerProps => {
   return {
     notifications: state.notification.allIds
   };
-}
+};
 
-function mapDispatchToProps(): NotificationExplorerProps {
-  return {};
-}
+const mapDispatchToProps = (dispatch): NotificationExplorerProps => {
+  return {
+    clearNotifications: () => { dispatch(NotificationActions.clear()); }
+  };
+};
 
 export const NotificationsExplorer = connect(mapStateToProps, mapDispatchToProps)(NotificationsExplorerComp);

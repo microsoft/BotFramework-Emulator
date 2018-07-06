@@ -33,25 +33,54 @@
 
 import * as React from 'react';
 import { Notification as NotificationType } from '@bfemulator/app-shared';
+import { css } from 'glamor';
+import { connect } from 'react-redux';
+import * as NotificationActions from '../../../../data/action/notificationActions';
+
+const CSS = css({
+  position: 'relative',
+  backgroundColor: 'slategray',
+
+  '& > .close-icon': {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    height: '32px',
+    width: '32px',
+    cursor: 'pointer',
+    color: 'black'
+  }
+});
 
 export interface NotificationProps {
   notification?: NotificationType;
+  removeNotification?: (id: string) => void;
 }
 
-export class Notification extends React.Component<NotificationProps, {}> {
+class NotificationComp extends React.Component<NotificationProps, {}> {
   constructor(props: NotificationProps) {
     super(props);
   }
 
   render(): JSX.Element {
-    const { title = '', message = '', timestamp = '' } = this.props.notification;
+    const { title = '', message = '', timestamp = 123456784, id = '' } = this.props.notification;
+    const { removeNotification } = this.props;
 
     return (
-      <div>
+      <li { ...CSS }>
+        <div className="close-icon" onClick={ () => removeNotification(id) }>X</div>
         <h3>{ title }</h3>
         <p>{ message }</p>
         <span>{ timestamp }</span>
-      </div>
+      </li>
     );
   }
 }
+
+const mapDispatchToProps = (dispatch): NotificationProps => ({
+  removeNotification: (id: string) => { dispatch(NotificationActions.remove(id)); }
+});
+
+const mapStateToProps = () => ({});
+
+export const Notification = connect(mapStateToProps, mapDispatchToProps)(NotificationComp);
