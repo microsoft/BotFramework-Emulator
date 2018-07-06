@@ -302,7 +302,10 @@ describe('ActiveBotHelper tests', () => {
       }
     };
     await ActiveBotHelper.confirmAndSwitchBots(bot);
-    expect(mockCall).toHaveBeenCalledWith(SharedConstants.Commands.Emulator.NewLiveChat, { ...secondEndpoint, endpoint: 'someOtherOverride', });
+    expect(mockCall).toHaveBeenCalledWith(
+      SharedConstants.Commands.Emulator.NewLiveChat,
+      { ...secondEndpoint, endpoint: 'someOtherOverride', }
+    );
 
     ActiveBotHelper.botAlreadyOpen = backupBotAlreadyOpen;
     ActiveBotHelper.confirmSwitchBot = backupConfirmSwitchBot;
