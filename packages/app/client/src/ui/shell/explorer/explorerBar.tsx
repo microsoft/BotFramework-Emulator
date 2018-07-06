@@ -41,6 +41,7 @@ import { Colors, InsetShadow } from '@bfemulator/ui-react';
 import * as Constants from '../../../constants';
 import { IBotConfig } from 'msbot/bin/schema';
 import { RootState } from '../../../data/store';
+import { NotificationsExplorerBar } from './notificationsExplorer/notificationsExplorerBar';
 
 const CSS = css({
   backgroundColor: Colors.EXPLORER_BACKGROUND_DARK,
@@ -69,6 +70,11 @@ class ExplorerBarComponent extends React.Component<ExplorerBarProps> {
     if (this.props.selectedNavTab === Constants.NAVBAR_SERVICES) {
       explorer.push(
         <ServicesExplorerBarContainer key={ 'services-explorer-bar' }/>
+      );
+    }
+    if (this.props.selectedNavTab === Constants.NAVBAR_NOTIFICATIONS) {
+      explorer.push(
+        <NotificationsExplorerBar key={ 'notifications-explorer-bar' } />
       );
     }
     if (!this.props.selectedNavTab) {

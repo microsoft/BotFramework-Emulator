@@ -69,6 +69,10 @@ const CSS = css({
 
   '& .settings': {
     backgroundImage: 'url(./external/media/ic_settings.svg)'
+  },
+
+  '& .notifications': {
+    backgroundImage: 'url(./external/media/ic_notification.svg)'
   }
 });
 
@@ -97,7 +101,11 @@ class NavBarComponent extends React.Component<NavBarProps> {
                  onClick={ evt => handleClick(evt, Constants.NAVBAR_SERVICES) } title="Services"/>
         <NavLink className={ classNames('nav-link bot-settings', { disabled: !this.props.activeBot }) }
                  onClick={ this.handleBotSettingsClick } title="Bot Settings"/>
-        <NavLink className="nav-link settings" onClick={ handleSettingsClick } title="Settings" justifyEnd={ true }/>
+        <NavLink
+          className={ classNames('nav-link notifications', { selected: selection === Constants.NAVBAR_NOTIFICATIONS }) }
+          onClick={ evt => handleClick(evt, Constants.NAVBAR_NOTIFICATIONS) } title="Notifications"
+          justifyEnd={ true }/>
+        <NavLink className="nav-link settings" onClick={ handleSettingsClick } title="Settings"/>
         <InsetShadow right={ true }/>
       </nav>
     );

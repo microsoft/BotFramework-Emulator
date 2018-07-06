@@ -31,20 +31,44 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { azureBotServiceSagas } from './azureBotServiceSagas';
-import { dispatchSagas } from './dispatchSagas';
-import { editorSagas } from './editorSagas';
-import { endpointSagas } from './endpointSagas';
-import { luisSagas } from './luisSagas';
-import { notificationSagas } from './notificationSagas';
-import { qnaMakerSagas } from './qnaMakerSagas';
+import * as React from 'react';
+import { css } from 'glamor';
 
-export const applicationSagas = [
-  luisSagas,
-  qnaMakerSagas,
-  dispatchSagas,
-  endpointSagas,
-  azureBotServiceSagas,
-  editorSagas,
-  notificationSagas
-];
+import { NotificationsExplorer } from './notificationsExplorer';
+import { ExplorerBarBody } from '../explorerBarBody';
+import { ExplorerBarHeader, Title } from '../explorerBarHeader';
+
+const CSS = css({
+  height: '100%',
+  width: '100%',
+
+  '&.explorer-offscreen': {
+    position: 'absolute',
+    top: '5000px',
+    display: 'none'
+  }
+});
+
+interface NotificationExplorerBarProps {
+}
+
+export class NotificationsExplorerBar extends React.Component<NotificationExplorerBarProps> {
+  constructor(props: NotificationExplorerBarProps) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <div { ...CSS }>
+        <ExplorerBarHeader>
+          <Title>
+            Notifications
+          </Title>
+        </ExplorerBarHeader>
+        <ExplorerBarBody>
+          <NotificationsExplorer />
+        </ExplorerBarBody>
+      </div>
+    );
+  }
+}

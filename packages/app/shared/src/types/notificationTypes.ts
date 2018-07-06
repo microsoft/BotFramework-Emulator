@@ -31,20 +31,33 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { azureBotServiceSagas } from './azureBotServiceSagas';
-import { dispatchSagas } from './dispatchSagas';
-import { editorSagas } from './editorSagas';
-import { endpointSagas } from './endpointSagas';
-import { luisSagas } from './luisSagas';
-import { notificationSagas } from './notificationSagas';
-import { qnaMakerSagas } from './qnaMakerSagas';
+export enum NotificationType {
+  Info,
+  Error,
+  Warning
+}
 
-export const applicationSagas = [
-  luisSagas,
-  qnaMakerSagas,
-  dispatchSagas,
-  endpointSagas,
-  azureBotServiceSagas,
-  editorSagas,
-  notificationSagas
-];
+export interface NotificationCTAButton {
+  text: string;
+  onClick?: (...args: any[]) => any;
+}
+
+export interface Notification {
+  id: string;
+  title: string;
+  type: NotificationType;
+  message: string;
+  timestamp: number;
+  okButton?: NotificationCTAButton;
+  cancelButton?: NotificationCTAButton;
+}
+
+export class NotificationImpl implements Notification {
+  id: string;
+  title: string;
+  type: NotificationType;
+  message: string;
+  timestamp: number;
+  okButton?: NotificationCTAButton;
+  cancelButton?: NotificationCTAButton;
+}

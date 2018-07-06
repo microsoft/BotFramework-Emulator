@@ -31,6 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { Notification } from '@bfemulator/app-shared';
+
 export enum NotificationActions {
   add = 'NOTIFICATION/ADD',
   remove = 'NOTIFICATION/REMOVE',
@@ -47,7 +49,7 @@ export type NotificationAction =
 export interface AddNotificationAction {
   type: NotificationActions.add;
   payload: {
-    id: string,
+    notification: Notification,
     read: boolean
   };
 }
@@ -71,11 +73,11 @@ export interface ClearNotificationAction {
   payload: {};
 }
 
-export function add(id: string, read: boolean = false): NotificationAction {
+export function add(notification: Notification, read: boolean = false): NotificationAction {
   return {
     type: NotificationActions.add,
     payload: {
-      id,
+      notification,
       read
     }
   };

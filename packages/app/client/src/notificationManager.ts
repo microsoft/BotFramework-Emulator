@@ -31,20 +31,42 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { azureBotServiceSagas } from './azureBotServiceSagas';
-import { dispatchSagas } from './dispatchSagas';
-import { editorSagas } from './editorSagas';
-import { endpointSagas } from './endpointSagas';
-import { luisSagas } from './luisSagas';
-import { notificationSagas } from './notificationSagas';
-import { qnaMakerSagas } from './qnaMakerSagas';
+import { Notification } from '@bfemulator/app-shared';
 
-export const applicationSagas = [
-  luisSagas,
-  qnaMakerSagas,
-  dispatchSagas,
-  endpointSagas,
-  azureBotServiceSagas,
-  editorSagas,
-  notificationSagas
-];
+/** Singleton that will keep track of all active notifications that we can't put in the store */
+export class NotificationManager {
+  private static _instance: NotificationManager;
+
+  // will be used to store notifications by id since they won't be able to
+  // be serialized in the state store due to button handlers (functions)
+  public notificationStore: { [key: string]: any };
+
+  public static getInstance(): NotificationManager {
+    if (!this._instance) {
+      // throw new Error('Notification manager not yet initialized! Please use ".init()" first.');
+      this._instance = new NotificationManager();
+    }
+    return this._instance;
+  }
+
+  public static init(): void {
+    if (this._instance) {
+      this._instance = new NotificationManager();
+    }
+  }
+
+  /** Adds a notification to the notification cache */
+  public addNotification(notification: Notification): void {
+    const { id } = notification;
+    this.notificationStore[id] = notification;
+  }
+
+  /** Removes a notification from the notification cache */
+  public removeNotification(id: string): void {
+    delete this.notificationStore[id];
+  }
+
+  private constructor() {
+    this.notificationStore = {};
+  }
+}

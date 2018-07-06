@@ -34,26 +34,42 @@
 import { NotificationAction, NotificationActions } from '../action/notificationActions';
 
 export interface NotificationState {
-  [notificationId: string]: { read: boolean };
+  byId: {
+    [notificationId: string]: { read: boolean };
+  };
+  allIds: string[];
 }
 
-const DEFAULT_STATE: NotificationState = {};
+const DEFAULT_STATE: NotificationState = {
+  byId: {},
+  allIds: []
+};
 
 export function notification(state: NotificationState = DEFAULT_STATE, action: NotificationAction): NotificationState {
   switch (action.type) {
     case NotificationActions.add: {
+      const { id: idToAdd } = action.payload.notification;
+      let allIds;
+      if (!state.byId[idToAdd]) {
+        allIds = [...state.allIds, idToAdd];
+      } else {
+        allIds = state.allIds;
+      }
       state = {
         ...state,
-        [action.payload.id]: { read: action.payload.read }
+        [action.payload.notification.id]: { read: action.payload.read },
+        allIds
       };
       break;
     }
 
     case NotificationActions.remove: {
+      const { id: idToRemove } = action.payload;
       state = {
         ...state,
+        allIds: state.allIds.filter(id => id !== idToRemove)
       };
-      delete state[action.payload.id];
+      delete state.byId[idToRemove];
       break;
     }
 
@@ -66,7 +82,10 @@ export function notification(state: NotificationState = DEFAULT_STATE, action: N
     }
 
     case NotificationActions.clear: {
-      state = {};
+      state = {
+        byId: {},
+        allIds: []
+      };
       break;
     }
 

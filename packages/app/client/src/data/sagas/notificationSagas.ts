@@ -31,20 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { azureBotServiceSagas } from './azureBotServiceSagas';
-import { dispatchSagas } from './dispatchSagas';
-import { editorSagas } from './editorSagas';
-import { endpointSagas } from './endpointSagas';
-import { luisSagas } from './luisSagas';
-import { notificationSagas } from './notificationSagas';
-import { qnaMakerSagas } from './qnaMakerSagas';
+import { NotificationManager } from '../../notificationManager';
+import { AddNotificationAction, NotificationActions } from '../action/notificationActions';
+import { ForkEffect, takeEvery, call } from 'redux-saga/effects';
 
-export const applicationSagas = [
-  luisSagas,
-  qnaMakerSagas,
-  dispatchSagas,
-  endpointSagas,
-  azureBotServiceSagas,
-  editorSagas,
-  notificationSagas
-];
+/** Adds a notification to the notification manager's store */
+export function* addNotification(action: AddNotificationAction) {
+  const { notification } = action.payload;
+  const instance = yield call(NotificationManager.getInstance.bind(NotificationManager));
+  yield call(instance.addNotification.bind(instance), notification);
+}
+
+export function* notificationSagas(): IterableIterator<ForkEffect> {
+  yield takeEvery(NotificationActions.add, addNotification);
+}

@@ -31,20 +31,47 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { azureBotServiceSagas } from './azureBotServiceSagas';
-import { dispatchSagas } from './dispatchSagas';
-import { editorSagas } from './editorSagas';
-import { endpointSagas } from './endpointSagas';
-import { luisSagas } from './luisSagas';
-import { notificationSagas } from './notificationSagas';
-import { qnaMakerSagas } from './qnaMakerSagas';
+import * as React from 'react';
+import { connect } from 'react-redux';
+import { RootState } from '../../../../data/store';
+import { Notification } from './notification';
+import { NotificationManager } from '../../../../notificationManager';
 
-export const applicationSagas = [
-  luisSagas,
-  qnaMakerSagas,
-  dispatchSagas,
-  endpointSagas,
-  azureBotServiceSagas,
-  editorSagas,
-  notificationSagas
-];
+interface NotificationExplorerProps {
+  notifications?: string[];
+}
+
+class NotificationsExplorerComp extends React.Component<NotificationExplorerProps, {}> {
+  private _notificationManager: NotificationManager;
+
+  constructor(props: NotificationExplorerProps) {
+    super(props);
+    this._notificationManager = NotificationManager.getInstance();
+  }
+
+  render() {
+    const { notifications = [] } = this.props;
+    return (
+      <ul>
+        {
+          notifications.map(n => {
+            const notification = this._notificationManager.notificationStore[n];
+            return <Notification key={ notification.id } notification={ notification } />;
+          })
+        }
+      </ul>
+    );
+  }
+}
+
+function mapStateToProps(state: RootState): NotificationExplorerProps {
+  return {
+    notifications: state.notification.allIds
+  };
+}
+
+function mapDispatchToProps(): NotificationExplorerProps {
+  return {};
+}
+
+export const NotificationsExplorer = connect(mapStateToProps, mapDispatchToProps)(NotificationsExplorerComp);

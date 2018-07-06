@@ -31,20 +31,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { azureBotServiceSagas } from './azureBotServiceSagas';
-import { dispatchSagas } from './dispatchSagas';
-import { editorSagas } from './editorSagas';
-import { endpointSagas } from './endpointSagas';
-import { luisSagas } from './luisSagas';
-import { notificationSagas } from './notificationSagas';
-import { qnaMakerSagas } from './qnaMakerSagas';
+import * as React from 'react';
+import { Notification as NotificationType } from '@bfemulator/app-shared';
 
-export const applicationSagas = [
-  luisSagas,
-  qnaMakerSagas,
-  dispatchSagas,
-  endpointSagas,
-  azureBotServiceSagas,
-  editorSagas,
-  notificationSagas
-];
+export interface NotificationProps {
+  notification?: NotificationType;
+}
+
+export class Notification extends React.Component<NotificationProps, {}> {
+  constructor(props: NotificationProps) {
+    super(props);
+  }
+
+  render(): JSX.Element {
+    const { title = '', message = '', timestamp = '' } = this.props.notification;
+
+    return (
+      <div>
+        <h3>{ title }</h3>
+        <p>{ message }</p>
+        <span>{ timestamp }</span>
+      </div>
+    );
+  }
+}
