@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './appSettingsEditor';
-export * from './botSettingsEditor';
+export * from './appSettingsEditor/appSettingsEditor';
+export * from './botSettingsEditor/botSettingsEditor';
 export * from './editor';
-export * from './panel';
-export * from './toolbar';
+export * from './panel/panel';
+export * from './toolbar/toolbar';
 export * from './emulator';
-export * from './welcomePage';
+export * from './welcomePage/welcomePage';

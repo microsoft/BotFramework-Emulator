@@ -36,7 +36,7 @@ import { baseName } from '@fuselab/ui-shared/lib/path';
 import { Container, Leaf, TreeNode, TreeState } from '@fuselab/ui-fabric/lib/tree';
 import { FileActions } from '../action/fileActions';
 
-export type FileTreeState = TreeState<FileInfo>;
+export type IFileTreeState = TreeState<FileInfo>;
 export type FileTreeNode = TreeNode<FileInfo>;
 
 interface SetRootAction {
@@ -63,11 +63,11 @@ interface ClearFilesAction {
   payload: {};
 }
 
-type FileAction = SetRootAction | AddFileAction | RemoveFileAction | ClearFilesAction;
+type IFileAction = SetRootAction | AddFileAction | RemoveFileAction | ClearFilesAction;
 
 const seps = /[\/\\]/;
 
-function ensureAncestors(state: FileTreeState, path: string): { state: FileTreeState, parent: Container<FileInfo> } {
+function ensureAncestors(state: IFileTreeState, path: string): { state: IFileTreeState, parent: Container<FileInfo> } {
   let cur = <Container<FileInfo>> state.root;
   if (!cur) {
     return { state, parent: null };
@@ -93,7 +93,7 @@ function ensureAncestors(state: FileTreeState, path: string): { state: FileTreeS
   return { state, parent: cur };
 }
 
-function addFile(state: FileTreeState, file: FileInfo): FileTreeState {
+function addFile(state: IFileTreeState, file: FileInfo): IFileTreeState {
   if (!state.root || state.root.data.path === file.path) {
     return state;
   }
@@ -121,7 +121,7 @@ function addFile(state: FileTreeState, file: FileInfo): FileTreeState {
   return { ...state };
 }
 
-function removeFile(state: FileTreeState, path: string): FileTreeState {
+function removeFile(state: IFileTreeState, path: string): IFileTreeState {
   const r = ensureAncestors(state, path);
   state = r.state;
   const parent = r.parent;
@@ -131,8 +131,8 @@ function removeFile(state: FileTreeState, path: string): FileTreeState {
   return { ...state };
 }
 
-function clearFiles(state: FileTreeState): FileTreeState {
-  const newState: FileTreeState = {
+function clearFiles(state: IFileTreeState): IFileTreeState {
+  const newState: IFileTreeState = {
     ...state,
     root: null,
     selected: null
@@ -140,7 +140,7 @@ function clearFiles(state: FileTreeState): FileTreeState {
   return newState;
 }
 
-function files(state: FileTreeState = { root: null, selected: null }, action: FileAction): FileTreeState {
+function files(state: IFileTreeState = { root: null, selected: null }, action: IFileAction): IFileTreeState {
   switch (action.type) {
     case FileActions.setRoot: {
       // don't set the root again if it's the same
@@ -169,7 +169,7 @@ function files(state: FileTreeState = { root: null, selected: null }, action: Fi
     case FileActions.add:
       state = addFile(state, action.payload);
       break;
-
+      
     case FileActions.remove:
       state = removeFile(state, action.payload.path);
       break;

@@ -1,0 +1,15 @@
+.genericDocument {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  min-width: 480px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  & > .genericDocContent {
+    width: 90%;
+    max-width: 1200px;
+  }
+}
