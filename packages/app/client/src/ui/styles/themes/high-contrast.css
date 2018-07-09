@@ -64,7 +64,7 @@ html {
 
   /* secondary button */
   --s-button-color: var(--p-button-color);
-  --s-button-color-disabled:  var(--p-button-color);
+  --s-button-color-disabled: var(--p-button-color);
   --s-button-border: var(--p-button-border);
   --s-button-border-focused: var(--p-button-border-focus);
   --s-button-border-hover: var(--p-button-border-hover);

@@ -85,12 +85,12 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
         if (currentSelection === selectionMap[index]) {
           // toggle explorer when clicking the same navbar icon
           this.props.showBotExplorer(!this.state.selectionActive);
-          this.setState({selectionActive: !this.state.selectionActive});
+          this.setState({ selectionActive: !this.state.selectionActive });
         } else {
           // switch tabs and show explorer when clicking different navbar icon
           this.props.showBotExplorer(true);
           this.props.navBarSelectionChanged(selectionMap[index]);
-          this.setState({selection: selectionMap[index], selectionActive: true});
+          this.setState({ selection: selectionMap[index], selectionActive: true });
         }
         break;
 
@@ -109,7 +109,7 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
   }
 
   private get links(): JSX.Element[] {
-    const {selectionActive, selection} = this.state;
+    const { selectionActive, selection } = this.state;
     return [
       'Bot Explorer',
       'Services',

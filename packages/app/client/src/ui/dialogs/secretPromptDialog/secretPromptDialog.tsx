@@ -36,12 +36,14 @@ import * as styles from './secretPromptDialog.scss';
 
 import {
   Column,
+  DefaultButton,
   MediumHeader,
+  PrimaryButton,
   Row,
   RowJustification,
   SmallHeader,
+  TextField,
 } from '@bfemulator/ui-react';
-import { PrimaryButton, DefaultButton, TextField } from '@bfemulator/ui-react';
 import { DialogService } from '../service';
 
 interface SecretPromptDialogState {
@@ -66,9 +68,9 @@ export class SecretPromptDialog extends React.Component<{}, SecretPromptDialogSt
             onChanged={ this.onChangeSecret }
             label={ 'Bot secret' }
             type={ 'password' }/>
-          <Row className={styles.buttonRow} justify={ RowJustification.Right }>
+          <Row className={ styles.buttonRow } justify={ RowJustification.Right }>
             <DefaultButton text={ 'Dismiss' } onClick={ this.onClickDismiss }/>
-            <PrimaryButton className={styles.saveButton} text={ 'Save' } onClick={ this.onClickSave }/>
+            <PrimaryButton className={ styles.saveButton } text={ 'Save' } onClick={ this.onClickSave }/>
           </Row>
         </Column>
       </div>

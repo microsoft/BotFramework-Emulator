@@ -49,7 +49,7 @@ export class BotNotOpenExplorer extends React.Component<{}, {}> {
             title="No Bot Selected"
           >
             <ExpandCollapseContent>
-              <div className={styles.explorerEmptyState}>
+              <div className={ styles.explorerEmptyState }>
               </div>
             </ExpandCollapseContent>
           </ExpandCollapse>

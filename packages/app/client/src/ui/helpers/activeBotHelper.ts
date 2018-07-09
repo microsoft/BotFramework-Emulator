@@ -121,7 +121,7 @@ export const ActiveBotHelper = new class {
         cancelId: 0,
         defaultId: 0,
         message: 'This bot is already open. If you\'d like to start a conversation, ' +
-          'click on an endpoint from the Bot Explorer pane.',
+        'click on an endpoint from the Bot Explorer pane.',
         type: 'question'
       }
     );
@@ -257,7 +257,7 @@ export const ActiveBotHelper = new class {
         // if an endpoint id was specified, use that endpoint, otherwise use the first endpoint found
         if (overridesArePresent && newActiveBot.overrides.endpoint.id) {
           endpoint = newActiveBot.services
-            .find(service => 
+            .find(service =>
               service.type === ServiceType.Endpoint
               && service.id === newActiveBot.overrides.endpoint.id
             ) as IEndpointService;

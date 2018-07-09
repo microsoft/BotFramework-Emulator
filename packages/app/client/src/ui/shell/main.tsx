@@ -82,12 +82,12 @@ export class Main extends React.Component<MainProps, MainState> {
 
   render() {
     const tabGroup1 = this.props.primaryEditor &&
-      <div className={styles.mdiWrapper} key={ 'primaryEditor' }>
+      <div className={ styles.mdiWrapper } key={ 'primaryEditor' }>
         <MDI owningEditor={ Constants.EDITOR_KEY_PRIMARY }/>
       </div>;
 
     const tabGroup2 = this.props.secondaryEditor && Object.keys(this.props.secondaryEditor.documents).length ?
-      <div className={`${styles.mdiWrapper} ${styles.secondaryMdi}`} key={ 'secondaryEditor' }><MDI
+      <div className={ `${styles.mdiWrapper} ${styles.secondaryMdi}` } key={ 'secondaryEditor' }><MDI
         owningEditor={ Constants.EDITOR_KEY_SECONDARY }/></div> : null;
 
     // If falsy children aren't filtered out, splitter won't recognize change in number of children
@@ -113,7 +113,7 @@ export class Main extends React.Component<MainProps, MainState> {
         <div className={ styles.nav }>
           { !this.props.presentationModeEnabled &&
           <NavBar selection={ this.props.navBarSelection } showingExplorer={ this.props.showingExplorer }/> }
-          <div className={styles.workbench}>
+          <div className={ styles.workbench }>
             <Splitter
               orientation={ 'vertical' }
               primaryPaneIndex={ 0 }

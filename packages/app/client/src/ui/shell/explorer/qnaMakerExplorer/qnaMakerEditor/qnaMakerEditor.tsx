@@ -31,8 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Dialog, DialogFooter, DialogContent } from '@bfemulator/ui-react';
-import { PrimaryButton, DefaultButton, TextField } from '@bfemulator/ui-react';
+import { DefaultButton, Dialog, DialogContent, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
 import { QnaMakerService } from 'msbot/bin/models';
 import { IQnAService } from 'msbot/bin/schema';
 import * as React from 'react';
@@ -102,36 +101,36 @@ export class QnaMakerEditor extends Component<QnaMakerEditorProps, QnaMakerEdito
     const { name = '', subscriptionKey = '', hostname = '', endpointKey = '', kbId = '' } = qnaMakerService;
     const valid = !!kbId && !!name && !!subscriptionKey && !!hostname && !!endpointKey;
     return (
-      <Dialog title={title} detailedDescription={detailedDescription}
-        cancel={this.onCancelClick} >
+      <Dialog title={ title } detailedDescription={ detailedDescription }
+              cancel={ this.onCancelClick }>
         <DialogContent>
           <TextField
-            onChanged={this._textFieldHandlers.name}
-            errorMessage={nameError}
-            value={name}
+            onChanged={ this._textFieldHandlers.name }
+            errorMessage={ nameError }
+            value={ name }
             label="Name"
-            required={true}
+            required={ true }
           />
-          <TextField errorMessage={subscriptionKeyError} value={subscriptionKey}
-            onChanged={this._textFieldHandlers.subscriptionKey}
-            label="Subscription key" required={true}
+          <TextField errorMessage={ subscriptionKeyError } value={ subscriptionKey }
+                     onChanged={ this._textFieldHandlers.subscriptionKey }
+                     label="Subscription key" required={ true }
           />
-          <TextField errorMessage={hostnameError} value={hostname}
-            onChanged={this._textFieldHandlers.hostname} label="Host name"
-            required={true}
+          <TextField errorMessage={ hostnameError } value={ hostname }
+                     onChanged={ this._textFieldHandlers.hostname } label="Host name"
+                     required={ true }
           />
-          <TextField errorMessage={endpointKeyError} value={endpointKey}
-            onChanged={this._textFieldHandlers.endpointKey}
-            label="Endpoint Key" required={true}
+          <TextField errorMessage={ endpointKeyError } value={ endpointKey }
+                     onChanged={ this._textFieldHandlers.endpointKey }
+                     label="Endpoint Key" required={ true }
           />
-          <TextField errorMessage={kbIdError} value={kbId}
-            onChanged={this._textFieldHandlers.kbId} label="Knowledge base Id"
-            required={true}
+          <TextField errorMessage={ kbIdError } value={ kbId }
+                     onChanged={ this._textFieldHandlers.kbId } label="Knowledge base Id"
+                     required={ true }
           />
         </DialogContent>
         <DialogFooter>
-          <DefaultButton text="Cancel" onClick={this.onCancelClick} />
-          <PrimaryButton disabled={!isDirty || !valid} text="Submit" onClick={this.onSubmitClick} />
+          <DefaultButton text="Cancel" onClick={ this.onCancelClick }/>
+          <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ this.onSubmitClick }/>
         </DialogFooter>
       </Dialog>
     );

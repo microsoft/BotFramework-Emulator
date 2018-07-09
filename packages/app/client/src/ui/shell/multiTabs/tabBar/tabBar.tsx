@@ -32,8 +32,8 @@
 //
 
 import * as React from 'react';
-import * as styles from './tabBar.scss';
 import { DragEvent } from 'react';
+import * as styles from './tabBar.scss';
 import { connect } from 'react-redux';
 import * as EditorActions from '../../../../data/action/editorActions';
 import * as Constants from '../../../../constants';

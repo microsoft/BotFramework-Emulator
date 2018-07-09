@@ -55,7 +55,7 @@ class GenericTabComponent extends React.Component<GenericTabProps> {
   render() {
     return (
       <Tab active={ this.props.active } title={ this.props.title } onCloseClick={ this.onCloseClick }
-        documentId={ this.props.documentId } dirty={ this.props.dirty } />
+           documentId={ this.props.documentId } dirty={ this.props.dirty }/>
     );
   }
 

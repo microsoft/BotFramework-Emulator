@@ -34,5 +34,5 @@
 import expandFlatTree from './expandFlatTree';
 
 export {
-    expandFlatTree
+  expandFlatTree
 }

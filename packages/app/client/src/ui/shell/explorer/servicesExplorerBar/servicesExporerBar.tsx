@@ -51,10 +51,10 @@ export default class ServicesExplorerBar extends Component<{ activeBotExists: bo
     if (activeBotExists) {
       return (
         <>
-          <AzureBotServiceExplorerContainer title="Azure Bot Service" />
-          <DispatchExplorerContainer title="Dispatch" />
-          <LuisExplorerContainer title="LUIS" />
-          <QnaMakerExplorerContainer title="QnA Maker" />
+          <AzureBotServiceExplorerContainer title="Azure Bot Service"/>
+          <DispatchExplorerContainer title="Dispatch"/>
+          <LuisExplorerContainer title="LUIS"/>
+          <QnaMakerExplorerContainer title="QnA Maker"/>
         </>
       );
     }
@@ -70,7 +70,7 @@ export default class ServicesExplorerBar extends Component<{ activeBotExists: bo
           </Title>
         </ExplorerBarHeader>
         <ExplorerBarBody>
-          {this.explorerBodyChildren}
+          { this.explorerBodyChildren }
         </ExplorerBarBody>
       </>
     );

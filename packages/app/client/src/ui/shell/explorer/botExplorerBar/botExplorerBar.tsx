@@ -54,8 +54,8 @@ export default class BotExplorerBar extends React.Component<BotExplorerBarProps>
   private get activeBotJsx(): JSX.Element {
     return (
       <>
-        <EndpointExplorerContainer title="Endpoint" />
-        <TranscriptExplorer />
+        <EndpointExplorerContainer title="Endpoint"/>
+        <TranscriptExplorer/>
       </>
     );
   }
