@@ -85,7 +85,7 @@ const mapStateToProps = (state: RootState, ownProps: EmulatorTabProps): Emulator
     }
   } else if (mode === 'transcript') {
     const { editor: editorState } = state;
-    const {editors, activeEditor} = editorState;
+    const { editors, activeEditor } = editorState;
     const editor = editors[activeEditor];
     const document = editor.documents[documentId];
     title = 'Transcript';

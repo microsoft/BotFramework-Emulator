@@ -101,28 +101,28 @@ export class DispatchEditor extends Component<DispatchEditorProps, DispatchEdito
     const valid = !nameError && !appIdError && !authoringKeyError && !versionError && !subscriptionKeyError;
 
     return (
-      <Dialog title={title} detailedDescription={detailedDescription}
-        cancel={this.onCancelClick}>
+      <Dialog title={ title } detailedDescription={ detailedDescription }
+              cancel={ this.onCancelClick }>
         <DialogContent>
-          <TextField value={name}
-            onChanged={this._textFieldHandlers.name} label="Name" required={true}
+          <TextField value={ name }
+                     onChanged={ this._textFieldHandlers.name } label="Name" required={ true }
           />
-          <TextField value={appId}
-            onChanged={this._textFieldHandlers.appId} label="Application Id" required={true}
+          <TextField value={ appId }
+                     onChanged={ this._textFieldHandlers.appId } label="Application Id" required={ true }
           />
-          <TextField value={authoringKey}
-            onChanged={this._textFieldHandlers.authoringKey} label="Authoring key" required={true}
+          <TextField value={ authoringKey }
+                     onChanged={ this._textFieldHandlers.authoringKey } label="Authoring key" required={ true }
           />
-          <TextField value={version}
-            onChanged={this._textFieldHandlers.version} label="Version" required={true}
+          <TextField value={ version }
+                     onChanged={ this._textFieldHandlers.version } label="Version" required={ true }
           />
-          <TextField value={subscriptionKey}
-            onChanged={this._textFieldHandlers.subscriptionKey} label="Subscription key"
+          <TextField value={ subscriptionKey }
+                     onChanged={ this._textFieldHandlers.subscriptionKey } label="Subscription key"
           />
         </DialogContent>
         <DialogFooter>
-          <DefaultButton text="Cancel" onClick={this.onCancelClick} />
-          <PrimaryButton disabled={!isDirty || !valid} text="Submit" onClick={this.onSubmitClick} />
+          <DefaultButton text="Cancel" onClick={ this.onCancelClick }/>
+          <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ this.onSubmitClick }/>
         </DialogFooter>
       </Dialog>
     );

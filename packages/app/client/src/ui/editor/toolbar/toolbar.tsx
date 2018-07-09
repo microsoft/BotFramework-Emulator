@@ -51,13 +51,13 @@ export default class ToolBar extends React.Component<{}, {}> {
   createClass(child: any, i: number) {
     if (hmrSafeNameComparison(child.type, Button)) {
       return (
-        <li key={ i } className={styles.button}>
+        <li key={ i } className={ styles.button }>
           <button onClick={ () => child.props.onClick() }>{ child.props.title }</button>
         </li>
       );
     } else if (hmrSafeNameComparison(child.type, Separator)) {
       return (
-        <li key={ i } className={styles.separator}>|</li>
+        <li key={ i } className={ styles.separator }>|</li>
       );
     } else {
       return false;

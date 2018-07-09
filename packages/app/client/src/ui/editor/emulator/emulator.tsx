@@ -216,17 +216,17 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
   renderPresentationView(): JSX.Element {
     const transcriptMode = this.props.mode === 'transcript';
     const chatPanelChild = transcriptMode ? (
-      <div className={styles.presentationPlaybackDock}>
+      <div className={ styles.presentationPlaybackDock }>
         <PlaybackBar/>
       </div>) : null;
     return (
       <div className={ styles.presentation }>
-        <div className={styles.presentationContent}>
+        <div className={ styles.presentationContent }>
           <ChatPanel mode={ this.props.mode } document={ this.props.document }
                      onStartConversation={ this.handleStartOverClick }/>
           { chatPanelChild }
         </div>
-        <span className={styles.closePresentationIcon} onClick={ () => this.handlePresentationClick(false) }></span>
+        <span className={ styles.closePresentationIcon } onClick={ () => this.handlePresentationClick(false) }></span>
       </div>
     );
   }
@@ -236,26 +236,26 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
       <div className={ styles.emulator } key={ this.props.pingId }>
         {
           this.props.mode === 'livechat' &&
-          <div className={styles.header}>
+          <div className={ styles.header }>
             <ToolBar>
               <ToolBarButton visible={ true } title="Start Over" onClick={ this.handleStartOverClick }/>
               <ToolBarButton visible={ true } title="Save Transcript As..." onClick={ this.handleExportClick }/>
             </ToolBar>
           </div>
         }
-        <div className={`${styles.content} ${styles.vertical}`}>
+        <div className={ `${styles.content} ${styles.vertical}` }>
           <Splitter orientation="vertical" primaryPaneIndex={ 0 }
                     minSizes={ { 0: 80, 1: 80 } }
                     initialSizes={ this.getVerticalSplitterSizes }
                     onSizeChange={ this.onVerticalSizeChange }
                     key={ this.props.pingId }>
-            <div className={styles.content}>
+            <div className={ styles.content }>
               <ChatPanel mode={ this.props.mode }
-                         className={styles.chatPanel}
+                         className={ styles.chatPanel }
                          document={ this.props.document }
                          onStartConversation={ this.handleStartOverClick }/>
             </div>
-            <div className={styles.content}>
+            <div className={ styles.content }>
               <Splitter orientation="horizontal" primaryPaneIndex={ 0 }
                         minSizes={ { 0: 80, 1: 80 } }
                         initialSizes={ this.getHorizontalSplitterSizes }

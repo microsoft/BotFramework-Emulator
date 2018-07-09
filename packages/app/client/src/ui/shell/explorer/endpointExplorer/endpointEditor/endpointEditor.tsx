@@ -59,6 +59,7 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
 
   public state: EndpointEditorState = {} as EndpointEditorState;
   private _textFieldHandler: { [key: string]: (x: string) => void } = {};
+
   constructor(props: EndpointEditorProps, state: EndpointEditorState) {
     super(props, state);
     const endpointService = new EndpointService(props.endpointService);
@@ -88,30 +89,30 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
     const { name = '', endpoint = '', appId = '', appPassword = '' } = endpointService;
     const valid = !!endpoint && !!name;
     return (
-      <Dialog title={title} detailedDescription={detailedDescription}
-        cancel={this.onCancelClick}>
+      <Dialog title={ title } detailedDescription={ detailedDescription }
+              cancel={ this.onCancelClick }>
         <DialogContent>
-          <TextField errorMessage={nameError} value={name}
-            onChanged={this._textFieldHandler.name} label="Name"
-            required={true}
+          <TextField errorMessage={ nameError } value={ name }
+                     onChanged={ this._textFieldHandler.name } label="Name"
+                     required={ true }
           />
-          <TextField errorMessage={endpointError} value={endpoint}
-            onChanged={this._textFieldHandler.endpoint}
-            label="Endpoint url" required={true}
+          <TextField errorMessage={ endpointError } value={ endpoint }
+                     onChanged={ this._textFieldHandler.endpoint }
+                     label="Endpoint url" required={ true }
           />
-          <TextField errorMessage={appIdError} value={appId}
-            onChanged={this._textFieldHandler.appId}
-            label="Application Id"
-            required={false}
+          <TextField errorMessage={ appIdError } value={ appId }
+                     onChanged={ this._textFieldHandler.appId }
+                     label="Application Id"
+                     required={ false }
           />
-          <TextField errorMessage={appPasswordError} value={appPassword}
-            onChanged={this._textFieldHandler.appPassword}
-            label="Application Password" required={false}
+          <TextField errorMessage={ appPasswordError } value={ appPassword }
+                     onChanged={ this._textFieldHandler.appPassword }
+                     label="Application Password" required={ false }
           />
         </DialogContent>
         <DialogFooter>
-          <DefaultButton text="Cancel" onClick={this.onCancelClick} />
-          <PrimaryButton disabled={!isDirty || !valid} text="Submit" onClick={this.onSubmitClick} />
+          <DefaultButton text="Cancel" onClick={ this.onCancelClick }/>
+          <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ this.onSubmitClick }/>
         </DialogFooter>
       </Dialog>
     );

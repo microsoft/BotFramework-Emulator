@@ -68,10 +68,10 @@ class MDIComponent extends React.Component<MDIProps> {
           this.props.tabOrder.map(documentId =>
             <TabbedDocument key={ documentId }>
               <TabbedDocumentTab>
-                <TabFactory document={ this.props.documents[documentId] } />
+                <TabFactory document={ this.props.documents[documentId] }/>
               </TabbedDocumentTab>
               <TabbedDocumentContent documentId={ documentId }>
-                <EditorFactory document={ this.props.documents[documentId] } />
+                <EditorFactory document={ this.props.documents[documentId] }/>
               </TabbedDocumentContent>
             </TabbedDocument>
           )

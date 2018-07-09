@@ -94,7 +94,7 @@ export default class PlaybackBar extends React.Component<{}, PlaybackBarState> {
           this.state.playing ?
             <span onClick={ this.onClickPause }>||</span>
             :
-            <span className={styles.playIcon} onClick={ this.onClickPlay }></span>
+            <span className={ styles.playIcon } onClick={ this.onClickPlay }></span>
         }
         <span onClick={ this.onClickStepForward }>&gt;|</span>
         <span onClick={ this.onClickJumpToEnd }>&gt;&gt;|</span>

@@ -199,14 +199,14 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     const fileLocation = `file://${cwdAsBase}/../../node_modules/@bfemulator/client/public/inspector-preload.js`;
     return (
       <webview className={ styles.inspector }
-        webpreferences="webSecurity=no"
-        key={ hash }
-        partition={ `persist:${hash}` }
-        preload={ fileLocation }
-        ref={ ref => updateRef(ref) }
-        src={ this.props.inspector.src }
-        onDragEnterCapture={ handleDrag }
-        onDragOverCapture={ handleDrag }
+               webpreferences="webSecurity=no"
+               key={ hash }
+               partition={ `persist:${hash}` }
+               preload={ fileLocation }
+               ref={ ref => updateRef(ref) }
+               src={ this.props.inspector.src }
+               onDragEnterCapture={ handleDrag }
+               onDragOverCapture={ handleDrag }
       />
     );
   }

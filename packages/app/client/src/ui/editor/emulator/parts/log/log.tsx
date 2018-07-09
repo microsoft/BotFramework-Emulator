@@ -129,7 +129,7 @@ class LogEntryComponent extends React.Component<LogEntryProps> {
 
   render() {
     return (
-      <div key="entry" className={styles.entry}>
+      <div key="entry" className={ styles.entry }>
         { this.renderTimestamp(this.props.entry.timestamp) }
         { this.props.entry.items.map((item, key) => this.renderItem(item, '' + key)) }
       </div>
@@ -189,7 +189,7 @@ class LogEntryComponent extends React.Component<LogEntryProps> {
 
   renderExternalLinkItem(text: string, hyperlink: string, key: string) {
     return (
-      <span key={ key } className={styles.spaced}>
+      <span key={ key } className={ styles.spaced }>
         <a onClick={ () => window.open(hyperlink, '_blank') }>{ text }</a>
       </span>
     );
@@ -197,7 +197,7 @@ class LogEntryComponent extends React.Component<LogEntryProps> {
 
   renderAppSettingsItem(text: string, key: string) {
     return (
-      <span key={ key } className={styles.spaced}>
+      <span key={ key } className={ styles.spaced }>
         <a onClick={ () => CommandServiceImpl.call(SharedConstants.Commands.UI.ShowAppSettings) }>{ text }</a>
       </span>
     );
@@ -205,7 +205,7 @@ class LogEntryComponent extends React.Component<LogEntryProps> {
 
   renderExceptionItem(err: Error, key: string) {
     return (
-      <span key={ key } className={`${styles.spaced} ${styles.level3}`}>
+      <span key={ key } className={ `${styles.spaced} ${styles.level3}` }>
         { err && err.message ? err.message : '' }
       </span>
     );
@@ -219,10 +219,10 @@ class LogEntryComponent extends React.Component<LogEntryProps> {
     let summaryText = this.summaryText(obj) || '';
     return (
       <span key={ key }>
-        <span className={`${styles.spaced} ${styles.level0}`}>
+        <span className={ `${styles.spaced} ${styles.level0}` }>
           <a onClick={ () => this.inspectAndHighlight(obj) }>{ title }</a>
         </span>
-        <span className={`${styles.spaced} ${styles.level0}`}>
+        <span className={ `${styles.spaced} ${styles.level0}` }>
           { summaryText }
         </span>
       </span>
@@ -242,13 +242,13 @@ class LogEntryComponent extends React.Component<LogEntryProps> {
     }
     if (obj) {
       return (
-        <span key={ key } className={`${styles.spaced} ${styles.level0}`}>
+        <span key={ key } className={ `${styles.spaced} ${styles.level0}` }>
           <a onClick={ () => this.inspect(obj) }>{ method }</a>
         </span>
       );
     } else {
       return (
-        <span key={ key } className={`${styles.spaced} ${styles.level0}`}>
+        <span key={ key } className={ `${styles.spaced} ${styles.level0}` }>
           { method }
         </span>
       );
@@ -269,13 +269,13 @@ class LogEntryComponent extends React.Component<LogEntryProps> {
     }
     if (obj) {
       return (
-        <span key={ key } className={`${styles.spaced} ${styles.level0}`}>
+        <span key={ key } className={ `${styles.spaced} ${styles.level0}` }>
           <a onClick={ () => this.inspect(obj) }>{ statusCode }</a>
         </span>
       );
     } else {
       return (
-        <span key={ key } className={`${styles.spaced} ${styles.level0}`}>
+        <span key={ key } className={ `${styles.spaced} ${styles.level0}` }>
           { statusCode }
         </span>
       );

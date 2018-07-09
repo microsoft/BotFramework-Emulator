@@ -65,7 +65,7 @@ class DialogHostComponent extends React.Component<DialogHostComponentProps, {}> 
           onFocus={ this.onFocusStartingSentinel }
           className={ styles.focusSentinel }>
         </span>
-        <div className={styles.dialogHostContent} onClick={ this.handleContentClick } ref={ this.saveHostRef }>
+        <div className={ styles.dialogHostContent } onClick={ this.handleContentClick } ref={ this.saveHostRef }>
         </div>
         <span
           tabIndex={ sentinelTabIndex }

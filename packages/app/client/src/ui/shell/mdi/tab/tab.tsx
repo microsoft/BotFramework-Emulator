@@ -72,13 +72,13 @@ class TabComponent extends React.Component<TabProps, TabState> {
       <div className={ `${styles.tab} ${activeClassName} ${draggedOverClassName}` } draggable
            onDragOver={ this.onDragOver } onDragEnter={ this.onDragEnter } onDragStart={ this.onDragStart }
            onDrop={ this.onDrop } onDragLeave={ this.onDragLeave } onDragEnd={ this.onDragEnd }>
-        <span className={styles.editorTabIcon}> </span>
-        <TruncateText className={styles.truncatedTabText}>{ this.props.title }</TruncateText>
+        <span className={ styles.editorTabIcon }> </span>
+        <TruncateText className={ styles.truncatedTabText }>{ this.props.title }</TruncateText>
         { this.props.dirty ? <span>*</span> : null }
         <a
           href="javascript:void(0)"
-          className={styles.editorTabClose}
-          onKeyPress={this.onCloseButtonKeyPress}
+          className={ styles.editorTabClose }
+          onKeyPress={ this.onCloseButtonKeyPress }
           onClick={ this.props.onCloseClick }>
         </a>
       </div>
