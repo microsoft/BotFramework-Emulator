@@ -43,16 +43,9 @@ export class NotificationManager {
 
   public static getInstance(): NotificationManager {
     if (!this._instance) {
-      // throw new Error('Notification manager not yet initialized! Please use ".init()" first.');
       this._instance = new NotificationManager();
     }
     return this._instance;
-  }
-
-  public static init(): void {
-    if (this._instance) {
-      this._instance = new NotificationManager();
-    }
   }
 
   /** Adds a notification to the notification store */

@@ -48,6 +48,25 @@ const CSS = css({
     left: 0,
     opacity: 0,
     backgroundColor: Colors.NAVBAR_FOCUS_DARK
+  },
+
+  '& .badge': {
+    position: 'absolute',
+
+    /* 12.5px would align the top-right corner of the badge with the top-right
+     * corner of the link icon. So then we need to subtract 1/2 of the badge's
+     * height & length (0.5 * 16px = 8px) from that to center the badge on the top-right corner
+     * of the link icon. 12.5px - 8px = 4.5px
+     */
+    top: '4.5px',
+    right: '4.5px',
+    width: '16px',
+    height: '16px',
+    borderRadius: '16px',
+    lineHeight: '16px',
+    textAlign: 'center',
+    color: 'white',
+    backgroundColor: 'red'
   }
 });
 
@@ -56,6 +75,7 @@ interface NavLinkProps {
   justifyEnd?: boolean;
   onClick?: (evt: MouseEvent<HTMLAnchorElement>) => void;
   title?: string;
+  badgeText?: number | string;
 }
 
 export class NavLink extends React.Component<NavLinkProps> {
@@ -65,12 +85,26 @@ export class NavLink extends React.Component<NavLinkProps> {
 
   render(): JSX.Element {
     const className = this.props.justifyEnd ? 'justify-end' : '';
+
+    const badge = this.renderBadge();
+
     return (
       <div className={ className } { ...CSS }>
         <a className={ this.props.className } onClick={ this.props.onClick } href="javascript:void(0);"
            title={ this.props.title }></a>
         <span></span>
+        { badge }
       </div>
     );
+  }
+
+  /** Renders a circular badge over the top-right corner of the nav link (notification indicator) */
+  private renderBadge(): JSX.Element {
+    const { badgeText } = this.props;
+    if (badgeText) {
+      const badgeCss = css({ '&:after': { content: badgeText.toString() }});
+      return <div className="badge" { ...badgeCss }></div>;
+    }
+    return null;
   }
 }

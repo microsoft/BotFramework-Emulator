@@ -36,19 +36,23 @@ import { Notification as NotificationType } from '@bfemulator/app-shared';
 import { css } from 'glamor';
 import { connect } from 'react-redux';
 import * as NotificationActions from '../../../../data/action/notificationActions';
+import { hot } from 'react-hot-loader';
 
 const CSS = css({
   position: 'relative',
-  backgroundColor: 'slategray',
+  backgroundColor: 'steelblue',
+  padding: '16px',
+  marginBottom: '4px',
 
   '& > .close-icon': {
     position: 'absolute',
-    top: 0,
-    right: 0,
+    top: 4,
+    right: 4,
     height: '32px',
     width: '32px',
     cursor: 'pointer',
-    color: 'black'
+    color: 'black',
+    backgroundColor: 'coral'
   }
 });
 
@@ -68,7 +72,7 @@ class NotificationComp extends React.Component<NotificationProps, {}> {
 
     return (
       <li { ...CSS }>
-        <div className="close-icon" onClick={ () => removeNotification(id) }>X</div>
+        <div className="close-icon" onClick={ () => removeNotification(id) }></div>
         <h3>{ title }</h3>
         <p>{ message }</p>
         <span>{ timestamp }</span>
@@ -83,4 +87,4 @@ const mapDispatchToProps = (dispatch): NotificationProps => ({
 
 const mapStateToProps = () => ({});
 
-export const Notification = connect(mapStateToProps, mapDispatchToProps)(NotificationComp);
+export const Notification = connect(mapStateToProps, mapDispatchToProps)(hot(module)(NotificationComp));
