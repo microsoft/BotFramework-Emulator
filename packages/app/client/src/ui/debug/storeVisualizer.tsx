@@ -38,7 +38,6 @@ import * as styles from './storeVisualizer.scss';
 import { RootState } from '../../data/store';
 import { PrimaryButton } from '@bfemulator/ui-react';
 
-
 type StateSlice = 'assetExplorer' | 'bot' | 'chat' | 'dialog' | 'editor'
   | 'explorer' | 'navBar' | 'presentation' | 'server';
 

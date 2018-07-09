@@ -34,7 +34,6 @@
 import { deepCopySlow } from '@bfemulator/app-shared';
 import * as Constants from '../../constants';
 import { EditorAction, EditorActions } from '../action/editorActions';
-import { BotAction } from '../action/botActions';
 import { getOtherTabGroup, tabGroupHasDocuments } from '../editorHelpers';
 
 export interface EditorState {
@@ -42,7 +41,6 @@ export interface EditorState {
   activeEditor?: string;
   draggingTab?: boolean;
   editors?: { [editorKey: string]: Editor };
-  docsWithPendingChanges?: string[];
 }
 
 // TODO: rename all mentions of editor to tab group
@@ -72,11 +70,10 @@ const DEFAULT_STATE: EditorState = {
   editors: {
     [Constants.EDITOR_KEY_PRIMARY]: getNewEditor(),
     [Constants.EDITOR_KEY_SECONDARY]: getNewEditor()
-  },
-  docsWithPendingChanges: []
+  }
 };
 
-export default function editor(state: EditorState = DEFAULT_STATE, action: EditorAction | BotAction): EditorState {
+export default function editor(state: EditorState = DEFAULT_STATE, action: EditorAction): EditorState {
   Object.freeze(state);
 
   switch (action.type) {
@@ -196,7 +193,6 @@ export default function editor(state: EditorState = DEFAULT_STATE, action: Edito
             };
           }
         }
-        newState = setDocsWithPendingChanges([], newState);
         state = fixupTabGroups(newState);
       }
       break;
@@ -405,21 +401,6 @@ export default function editor(state: EditorState = DEFAULT_STATE, action: Edito
       break;
     }
 
-    case EditorActions.addDocPendingChange: {
-      let docsPendingChange = [
-        ...state.docsWithPendingChanges.filter(d => d !== action.payload.documentId),
-        action.payload.documentId
-      ];
-      state = setDocsWithPendingChanges(docsPendingChange, state);
-      break;
-    }
-
-    case EditorActions.removeDocPendingChange: {
-      let docsPendingChange = [...state.docsWithPendingChanges].filter(d => d !== action.payload.documentId);
-      state = setDocsWithPendingChanges(docsPendingChange, state);
-      break;
-    }
-
     default:
       break;
   }
@@ -500,12 +481,4 @@ export function fixupTabGroups(state: EditorState): EditorState {
   }
 
   return state;
-}
-
-/** Sets the list of docs with pending changes */
-export function setDocsWithPendingChanges(docs: string[], state: EditorState): EditorState {
-  let newState: EditorState = deepCopySlow(state);
-
-  newState.docsWithPendingChanges = docs;
-  return newState;
 }

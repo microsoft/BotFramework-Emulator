@@ -49,9 +49,7 @@ export function hasNonGlobalTabs(tabGroups?: { [editorKey: string]: Editor }): n
   return count;
 }
 
-/**
- * Returns name of editor group, or undefined if doc is not open
- */
+// @returns: name of editor group, or undefined if doc is not open.
 export function getTabGroupForDocument(documentId: string, tabGroups?: { [editorKey: string]: Editor }): string {
   tabGroups = tabGroups || store.getState().editor.editors;
   for (let key in tabGroups) {
@@ -62,18 +60,6 @@ export function getTabGroupForDocument(documentId: string, tabGroups?: { [editor
     }
   }
   return undefined;
-}
-/**
- * Checks all tab groups to see if the specified document is active in one of them
- * @param documentId The document to check for
- */
-export function isActiveDocument(documentId: string): boolean {
-  const tabGroup = getTabGroupForDocument(documentId);
-  if (!tabGroup) {
-    return false;
-  }
-
-  return store.getState().editor.editors[tabGroup].activeDocumentId === documentId;
 }
 
 /** Takes a tab group key and returns the key of the other tab group */
