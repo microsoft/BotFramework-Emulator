@@ -53,7 +53,7 @@ import ChatPanel from './chatPanel/chatPanel';
 import DetailPanel from './detailPanel/detailPanel';
 import LogPanel from './logPanel/logPanel';
 import PlaybackBar from './playbackBar/playbackBar';
-import { debounce } from '../../utils/debounce';
+import { debounce } from '../../../utils';
 import * as styles from './emulator.scss';
 
 const { encode } = base64Url;

@@ -31,22 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export default function expandFlatTree(flattened, delimiter = '/') {
-    if (Array.isArray(flattened)) {
-        flattened = flattened.reduce((map, path) => {
-            map[path] = path;
+import { isTranscriptFile } from './isTranscriptFile';
 
-            return map;
-        }, {});
-    }
+describe('isTranscriptFile() test', () => {
+  it('should return whether a file ends with .transcript or not', () => {
+    const filename1 = 'test.transcript';
+    const filename2 = 'test.transcript.txt';
+    const filename3 = 'test.txt';
 
-    return Object.keys(flattened).reduce((expanded, path) => {
-        const segments = path.split(delimiter);
-        const filename = segments.pop();
-        const parent = segments.reduce((parent, segment) => parent[segment] || (parent[segment] = {}), expanded);
-
-        parent[filename] = flattened[path];
-
-        return expanded;
-    }, {});
-}
+    expect(isTranscriptFile(filename1)).toBe(true);
+    expect(isTranscriptFile(filename2)).toBe(false);
+    expect(isTranscriptFile(filename3)).toBe(false);
+  });
+});

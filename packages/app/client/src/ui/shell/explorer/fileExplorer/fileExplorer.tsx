@@ -34,57 +34,40 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { FileInfo } from '@bfemulator/app-shared';
-import { pathExt } from '@fuselab/ui-shared/lib';
 import { TreeView, TreeViewProps } from '@fuselab/ui-fabric/lib';
 import { ExpandCollapse, ExpandCollapseContent } from '@bfemulator/ui-react';
-import { IFileTreeState } from '../../../../data/reducer/files';
+import { FileTreeState } from '../../../../data/reducer/files';
 import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
 import { FileTreeDataProvider } from './fileTreeProvider';
+import { isChatFile, isTranscriptFile } from '../../../../utils';
+import * as styles from './fileTreeExplorer.scss';
 
-// const css: IStyle = {
-//   // tree comp overrides to match services pane style
-//   selectors: {
-//     '& div[class*="root-"]': {
-//       height: '22px',
-//       lineHeight: '22px',
-//       whiteSpace: 'nowrap'
-//     },
-//
-//     '& div[class*="level_"]': {
-//       height: '14px',
-//       lineHeight: '14px'
-//     }
-//   }
-// };
-
-interface TranscriptExplorerProps {
+interface FileExplorerProps {
   activeEditor: string;
   activeDocumentId: string;
   transcripts: any[];
-  files: IFileTreeState;
+  files: FileTreeState;
 }
 
-function isTranscript(path: string): boolean {
-  const ext = (pathExt(path) || '').toLowerCase();
-  return ext === 'transcript';
-}
-
-class TranscriptExplorerComponent extends React.Component<TranscriptExplorerProps> {
-
+class FileExplorerComponent extends React.Component<FileExplorerProps> {
   public render(): JSX.Element {
     return (
       <ExpandCollapse
         expanded={ true }
-        title="Transcript Explorer"
-        // style={ css }
+        title="File Explorer"
+        className={ styles.fileTreeExplorer }
       >
         { this.renderFileTree() }
       </ExpandCollapse>
     );
   }
 
-  private handleItemClick(filename: string) {
-    CommandServiceImpl.call('transcript:open', filename).catch();
+  private handleTranscriptClick(filename: string) {
+    CommandServiceImpl.call('transcript:open', filename);
+  }
+
+  private handleChatClick(filename: string) {
+    CommandServiceImpl.call('chat:open', filename);
   }
 
   private renderFileTree(): JSX.Element {
@@ -97,8 +80,10 @@ class TranscriptExplorerComponent extends React.Component<TranscriptExplorerProp
       remove: provider.remove.bind(provider),
       insertAt: provider.insertAt.bind(provider),
       selectNode: node => {
-        if (isTranscript(node.data.path)) {
-          this.handleItemClick(node.data.path);
+        if (isTranscriptFile(node.data.path)) {
+          this.handleTranscriptClick(node.data.path);
+        } else if (isChatFile(node.data.path)) {
+          this.handleChatClick(node.data.path);
         }
         provider.selectNode.bind(provider);
       },
@@ -121,7 +106,7 @@ class TranscriptExplorerComponent extends React.Component<TranscriptExplorerProp
   }
 }
 
-function mapStateToProps(state: any): TranscriptExplorerProps {
+function mapStateToProps(state: any): FileExplorerProps {
   return {
     activeEditor: state.editor.activeEditor,
     activeDocumentId: state.editor.editors[state.editor.activeEditor].activeDocumentId,
@@ -130,4 +115,4 @@ function mapStateToProps(state: any): TranscriptExplorerProps {
   };
 }
 
-export const TranscriptExplorer = connect(mapStateToProps)(TranscriptExplorerComponent) as any;
+export const FileExplorer = connect(mapStateToProps)(FileExplorerComponent) as any;

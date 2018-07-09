@@ -113,6 +113,7 @@ const defaultConfig = {
     new NodeEnvironmentPlugin(),
     new HardSourceWebpackPlugin(),
     new CopyWebpackPlugin([
+      { from: './src/inspector-preload.js', to: './' },
       { from: './src/ui/styles/themes', to: 'themes/' },
       { from: require.resolve('@fuselab/ui-fabric/themes/seti/seti.woff'), to: 'external/media' },
     ]),
