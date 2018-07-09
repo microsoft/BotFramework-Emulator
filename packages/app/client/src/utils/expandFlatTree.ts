@@ -31,17 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './azureBotServiceExplorer';
-export * from './botExplorerBar/botExplorerBar';
-export * from './dispatchExplorer';
-export * from './endpointExplorer';
-export * from './luisExplorer';
-export * from './qnaMakerExplorer';
-export * from './servicesExplorerBar';
-export * from './fileExplorer';
-export * from './botNotOpenExplorer/botNotOpenExplorer';
-export * from './explorerBar/explorerBar';
-export * from './explorerBarBody';
-export * from './explorerBarHeader/explorerBarHeader';
-export * from './explorerSet/explorerSet';
-export * from './servicePane/servicePane';
+export function expandFlatTree(flattened: any[], delimiter: string = '/') {
+    if (Array.isArray(flattened)) {
+        flattened = flattened.reduce((map, path) => {
+            map[path] = path;
+
+            return map;
+        }, {});
+    }
+
+    return Object.keys(flattened).reduce((expanded, path) => {
+        const segments = path.split(delimiter);
+        const filename = segments.pop();
+        const parent = segments.reduce((p, segment) => p[segment] || (p[segment] = {}), expanded);
+
+        parent[filename] = flattened[path];
+
+        return expanded;
+    }, {});
+}

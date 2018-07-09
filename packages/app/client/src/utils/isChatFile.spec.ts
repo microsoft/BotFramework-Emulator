@@ -31,29 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import expandFlatTree from './expandFlatTree';
+import { isChatFile } from './isChatFile';
 
-// TODO: Should write more tests
-test('expandFlatTree should expand', () => {
-    const actual = expandFlatTree([
-        'abc.txt',
-        'abc/def.txt',
-        'abc/def/ghi.txt',
-        'xyz.txt',
-        'abc/ghi/xyz.txt'
-    ]);
+describe('isChatFile() test', () => {
+  it('should return whether a file ends with .chat or not', () => {
+    const filename1 = 'test.chat';
+    const filename2 = 'test.chat.txt';
+    const filename3 = 'test.txt';
 
-    expect(actual).toEqual({
-        'abc.txt': 'abc.txt',
-        'abc': {
-            'def': {
-                'ghi.txt': 'abc/def/ghi.txt'
-            },
-            'ghi': {
-                'xyz.txt': 'abc/ghi/xyz.txt'
-            },
-            'def.txt': 'abc/def.txt'
-        },
-        'xyz.txt': 'xyz.txt'
-    });
+    expect(isChatFile(filename1)).toBe(true);
+    expect(isChatFile(filename2)).toBe(false);
+    expect(isChatFile(filename3)).toBe(false);
+  });
 });

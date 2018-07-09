@@ -169,6 +169,17 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
           .catch(err => console.error('Error opening transcript file from menu: ', err));
       }
     });
+    subMenu.push.apply(subMenu, [
+      { type: 'separator' },
+      {
+        label: 'Theme',
+        submenu: [
+          { label: 'Light', type: 'radio', checked: true },
+          { label: 'Dark', type: 'radio', click: (...args) => {debugger;} },
+          { label: 'High contrast', type: 'radio' }
+        ]
+      }
+    ]);
     subMenu.push({ type: 'separator' });
     subMenu.push({ role: 'quit' });
 

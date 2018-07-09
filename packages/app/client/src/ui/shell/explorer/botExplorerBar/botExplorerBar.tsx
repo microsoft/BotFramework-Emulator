@@ -37,7 +37,7 @@ import * as styles from './botExplorerBar.scss';
 import { EndpointExplorerContainer } from '../endpointExplorer';
 import { ExplorerBarBody } from '../explorerBarBody';
 import { ExplorerBarHeader, Title } from '../explorerBarHeader/explorerBarHeader';
-import { TranscriptExplorer } from '../transcriptExplorer';
+import { FileExplorer } from '../fileExplorer';
 import { BotNotOpenExplorer } from '../botNotOpenExplorer/botNotOpenExplorer';
 import { IBotConfig } from 'msbot/bin/schema';
 
@@ -54,8 +54,8 @@ export default class BotExplorerBar extends React.Component<BotExplorerBarProps>
   private get activeBotJsx(): JSX.Element {
     return (
       <>
-        <EndpointExplorerContainer title="Endpoint" />
-        <TranscriptExplorer />
+        <EndpointExplorerContainer title="Endpoint"/>
+        <FileExplorer/>
       </>
     );
   }

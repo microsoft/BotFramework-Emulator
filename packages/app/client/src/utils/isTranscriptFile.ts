@@ -31,8 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import expandFlatTree from './expandFlatTree';
-
-export {
-    expandFlatTree
+export function isTranscriptFile(file: string) {
+  return /\.transcript$/.test(file);
 }

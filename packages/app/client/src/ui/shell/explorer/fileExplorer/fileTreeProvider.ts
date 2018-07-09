@@ -36,7 +36,7 @@ import { Container, ITreeNodeView, TreeDataProvider, TreeNode } from '@fuselab/u
 import { fileExtensionToIcon, iconDefinitionToStyle } from '@fuselab/ui-fabric/lib/themes';
 import { IStyleSet } from '@uifabric/styling/lib';
 
-import { IFileTreeState } from '../../../../data/reducer/files';
+import { FileTreeState } from '../../../../data/reducer/files';
 
 /**
  * File tree data provider
@@ -44,7 +44,7 @@ import { IFileTreeState } from '../../../../data/reducer/files';
 export class FileTreeDataProvider implements TreeDataProvider<FileInfo> {
   private _selected: TreeNode<FileInfo>;
 
-  constructor(private _tree: IFileTreeState) {
+  constructor(private _tree: FileTreeState) {
   }
 
   public async loadContainer(_container: Container<FileInfo>): Promise<TreeNode<FileInfo>[]> {
@@ -67,7 +67,7 @@ export class FileTreeDataProvider implements TreeDataProvider<FileInfo> {
     return <Container<FileInfo>> this.tree.root;
   }
 
-  public get tree(): IFileTreeState {
+  public get tree(): FileTreeState {
     return this._tree;
   }
 
