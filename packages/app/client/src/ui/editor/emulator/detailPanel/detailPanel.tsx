@@ -38,11 +38,7 @@ import { connect } from 'react-redux';
 import { Detail } from '../parts';
 import Panel, { PanelContent, PanelControls } from '../../panel/panel';
 import { Extension, ExtensionManager, GetInspectorResult } from '../../../../extensions';
-import {
-  ExtensionInspector,
-  InspectorAccessory,
-  InspectorAccessoryState
-} from '@bfemulator/sdk-shared';
+import { ExtensionInspector, InspectorAccessory, InspectorAccessoryState } from '@bfemulator/sdk-shared';
 import { RootState } from '../../../../data/store';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib-commonjs/Spinner';
 import * as styles from './detailPanel.scss';
@@ -165,7 +161,7 @@ class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
   renderAccessoryIcon(config: InspectorAccessoryState) {
     if (config.icon === 'Spinner') {
       return (
-        <Spinner className={styles.accessoryButtonIcon} size={ SpinnerSize.xSmall }/>
+        <Spinner className={ styles.accessoryButtonIcon } size={ SpinnerSize.xSmall }/>
       );
     } else if (config.icon) {
       return (
@@ -181,7 +177,7 @@ class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
     const currentState = config.states[state] || {};
     return (
       <button
-        className={styles.accessoryButton}
+        className={ styles.accessoryButton }
         key={ config.id }
         disabled={ !enabled }
         onClick={ () => handler(config.id) }>

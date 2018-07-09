@@ -103,47 +103,47 @@ export class LuisEditor extends Component<LuisEditorProps, LuisEditorState> {
     const { name = '', appId = '', authoringKey = '', subscriptionKey = '', version = '' } = luisService;
     const valid = !!name && !!appId && !!authoringKey && !!version;
     return (
-      <Dialog title={title} detailedDescription={detailedDescription}
-        cancel={onCancelClick}>
+      <Dialog title={ title } detailedDescription={ detailedDescription }
+              cancel={ onCancelClick }>
         <DialogContent>
           <TextField
-            errorMessage={nameError}
-            value={name}
-            onChanged={this._textFieldHandlers.name}
-            label="Name" required={true}
+            errorMessage={ nameError }
+            value={ name }
+            onChanged={ this._textFieldHandlers.name }
+            label="Name" required={ true }
           />
           <TextField
-            errorMessage={appIdError}
-            value={appId}
-            onChanged={this._textFieldHandlers.appId}
+            errorMessage={ appIdError }
+            value={ appId }
+            onChanged={ this._textFieldHandlers.appId }
             label="Application Id"
-            required={true}
+            required={ true }
           />
           <TextField
-            errorMessage={authoringKeyError}
-            value={authoringKey}
-            onChanged={this._textFieldHandlers.authoringKey}
-            label="Authoring key" required={true}
+            errorMessage={ authoringKeyError }
+            value={ authoringKey }
+            onChanged={ this._textFieldHandlers.authoringKey }
+            label="Authoring key" required={ true }
             data-propname="authoringKey"
           />
           <TextField
-            errorMessage={versionError}
-            value={version}
-            onChanged={this._textFieldHandlers.version}
+            errorMessage={ versionError }
+            value={ version }
+            onChanged={ this._textFieldHandlers.version }
             label="Version"
-            required={true}
+            required={ true }
           />
           <TextField
-            errorMessage={subscriptionKeyError}
-            value={subscriptionKey}
-            onChanged={this._textFieldHandlers.subscriptionKey}
+            errorMessage={ subscriptionKeyError }
+            value={ subscriptionKey }
+            onChanged={ this._textFieldHandlers.subscriptionKey }
             label="Subscription key"
-            required={false}
+            required={ false }
           />
         </DialogContent>
         <DialogFooter>
-          <DefaultButton text="Cancel" onClick={onCancelClick} />
-          <PrimaryButton disabled={!isDirty || !valid} text="Submit" onClick={onSubmitClick} />
+          <DefaultButton text="Cancel" onClick={ onCancelClick }/>
+          <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ onSubmitClick }/>
         </DialogFooter>
       </Dialog>
     );

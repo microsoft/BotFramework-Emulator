@@ -64,7 +64,7 @@ export abstract class ServicePane<T extends ServicePaneProps,
     return (
       <ExpandCollapseControls>
         <span className={ styles.servicePane }>
-          <button onClick={ this.onAddIconClick } className={styles.addIconButton}>
+          <button onClick={ this.onAddIconClick } className={ styles.addIconButton }>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25">
               <g>
                 <path d="M0 10L10 10 10 0 15 0 15 10 25 10 25 15 15 15 15 25 10 25 10 15 0 15"/>
@@ -119,7 +119,7 @@ export abstract class ServicePane<T extends ServicePaneProps,
 
     return (
       <ExpandCollapse
-        className={styles.servicePane}
+        className={ styles.servicePane }
         key={ this.props.title }
         title={ this.props.title }
         expanded={ this.state.expanded }>

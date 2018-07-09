@@ -31,8 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Checkbox } from '@bfemulator/ui-react';
-import { PrimaryButton, DefaultButton } from '@bfemulator/ui-react';
+import { Checkbox, DefaultButton, PrimaryButton } from '@bfemulator/ui-react';
 import { ILuisService } from 'msbot/bin/schema';
 import * as React from 'react';
 import { ChangeEvent, ChangeEventHandler, Component } from 'react';

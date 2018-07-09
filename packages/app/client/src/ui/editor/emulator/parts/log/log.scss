@@ -24,19 +24,19 @@
       cursor: pointer;
     }
 
-      // info
+    // info
     & .level0 {
       color: var(--neutral-16);
     }
-      // debug
+    // debug
     & .level1 {
       color: var(--neutral-7);
     }
-      // warn
+    // warn
     & .level2 {
       color: var(--warning-outline);
     }
-      // error
+    // error
     & .level3 {
       color: var(--error-text);
     }

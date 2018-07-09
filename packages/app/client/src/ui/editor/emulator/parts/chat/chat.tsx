@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import * as React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { IEndpointService } from 'msbot/bin/schema';
 import { SpeechTokenInfo } from '@bfemulator/app-shared';
-import { Speech, Chat as WebChat } from 'botframework-webchat';
-import { Component } from 'react';
+import { Chat as WebChat, Speech } from 'botframework-webchat';
 import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
 import { EmulatorMode } from '../../index';
 import memoize from '../../../../helpers/memoize';

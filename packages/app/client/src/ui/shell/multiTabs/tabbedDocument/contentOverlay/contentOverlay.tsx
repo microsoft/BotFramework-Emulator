@@ -106,8 +106,8 @@ class ContentOverlayComponent extends React.Component<ContentOverlayProps, Conte
 
     return (
       <div className={ `${overlay.overlay} ${styles.contentOverlay} ${overlayClassName}` }
-        onDragEnterCapture={ this.onDragEnter } onDragLeave={ this.onDragLeave }
-        onDragOverCapture={ this.onDragOver } onDropCapture={ this.onDrop } />
+           onDragEnterCapture={ this.onDragEnter } onDragLeave={ this.onDragLeave }
+           onDragOverCapture={ this.onDragOver } onDropCapture={ this.onDrop }/>
     );
   }
 }

@@ -30,7 +30,7 @@ describe('ActiveBotHelper tests', () => {
   afterEach(restoreImports);
 
   it('confirmSwitchBot() functionality', async () => {
-    
+
     (hasNonGlobalTabs as any) = jest.fn().mockReturnValueOnce(true).mockReturnValueOnce(false);
     (CommandServiceImpl as any) = ({ remoteCall: jest.fn().mockResolvedValue('done') });
 
@@ -136,7 +136,7 @@ describe('ActiveBotHelper tests', () => {
 
     mockRemoteCall = jest.fn().mockRejectedValueOnce('error');
     (CommandServiceImpl as any) = ({ remoteCall: mockRemoteCall });
-    expect(ActiveBotHelper.setActiveBot(bot)).rejects.toEqual( new Error('Error while setting active bot: error'));
+    expect(ActiveBotHelper.setActiveBot(bot)).rejects.toEqual(new Error('Error while setting active bot: error'));
   });
 
   it('confirmAndCreateBot() functionality', async () => {
