@@ -35,40 +35,20 @@ import * as React from 'react';
 import { css } from 'glamor';
 
 import { NotificationsExplorer } from './notificationsExplorer';
-import { ExplorerBarBody } from '../explorerBarBody';
 import { ExplorerBarHeader, Title } from '../explorerBarHeader';
 
 const CSS = css({
   height: '100%',
-  width: '100%',
-
-  '&.explorer-offscreen': {
-    position: 'absolute',
-    top: '5000px',
-    display: 'none'
-  }
+  width: '100%'
 });
 
-interface NotificationExplorerBarProps {
-}
-
-export class NotificationsExplorerBar extends React.Component<NotificationExplorerBarProps> {
-  constructor(props: NotificationExplorerBarProps) {
-    super(props);
-  }
-
-  render() {
-    return (
-      <div { ...CSS }>
-        <ExplorerBarHeader>
-          <Title>
-            Notifications
-          </Title>
-        </ExplorerBarHeader>
-        <ExplorerBarBody>
-          <NotificationsExplorer />
-        </ExplorerBarBody>
-      </div>
-    );
-  }
-}
+export const NotificationsExplorerBar = (props: any) => (
+  <div { ...CSS }>
+    <ExplorerBarHeader>
+      <Title>
+        Notifications
+      </Title>
+    </ExplorerBarHeader>
+    <NotificationsExplorer />
+  </div>
+);

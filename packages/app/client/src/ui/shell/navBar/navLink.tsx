@@ -85,7 +85,6 @@ export class NavLink extends React.Component<NavLinkProps> {
 
   render(): JSX.Element {
     const className = this.props.justifyEnd ? 'justify-end' : '';
-
     const badge = this.renderBadge();
 
     return (

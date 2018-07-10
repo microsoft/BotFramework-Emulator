@@ -68,17 +68,23 @@ export function notification(state: NotificationState = DEFAULT_STATE, action: N
 
     case NotificationActions.finishRemove: {
       const { id: idToRemove } = action.payload;
+      const byId = {};
+      Object.keys(state.byId).forEach(notifId => {
+        if (notifId !== idToRemove) {
+          byId[notifId] = state.byId[notifId];
+        }
+      });
       state = {
         ...state,
+        byId,
         allIds: state.allIds.filter(id => id !== idToRemove)
       };
-      delete state.byId[idToRemove];
       break;
     }
 
     case NotificationActions.markAllAsRead: {
       const readNotifications = {};
-      Object.keys(state.byId).map(notifId => {
+      Object.keys(state.byId).forEach(notifId => {
         readNotifications[notifId] = { read: true };
       });
       state = {

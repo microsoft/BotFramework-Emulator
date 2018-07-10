@@ -37,6 +37,8 @@ import { RootState } from '../../../../data/store';
 import { Notification } from './notification';
 import { NotificationManager } from '../../../../notificationManager';
 import * as NotificationActions from '../../../../data/action/notificationActions';
+import { Colors } from '@bfemulator/ui-react';
+import { css } from 'glamor';
 
 interface NotificationExplorerProps {
   notifications?: string[];
@@ -55,21 +57,44 @@ class NotificationsExplorerComp extends React.Component<NotificationExplorerProp
     const { notifications = [] } = this.props;
     const clearAllButton = notifications.length ? this.renderClearAllButton() : null;
 
+    // max-height: 100% of explorer pane - 20px (Clear all button height) - 40px (Explorer title height)
     return (
-      <ul style={{ padding: 0 }}>
-        {
-          notifications.map(n => {
-            const notification = this._notificationManager.notificationStore[n];
-            return <Notification key={ notification.id } notification={ notification } />;
-          })
-        }
+      <>
+        <ul style={{ padding: 0, maxHeight: 'calc(100% - 60px)', overflowY: 'auto', margin: 0 }}>
+          {
+            notifications.map(n => {
+              const notification = this._notificationManager.notificationStore[n];
+              return <Notification key={ notification.id } notification={ notification } />;
+            })
+          }
+        </ul>
         { clearAllButton }
-      </ul>
+      </>
     );
   }
 
   private renderClearAllButton = (): JSX.Element => {
-    return <span onClick={ () => this.props.clearNotifications() }>Clear all</span>;
+    const CSS = css({
+      display: 'block',
+      textAlign: 'right',
+      marginRight: '8px',
+      minWidth: 0,
+      whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis',
+      overflow: 'hidden',
+      textDecoration: 'none',
+      color: Colors.APP_HYPERLINK_FOREGROUND_DARK,
+
+      ':hover': {
+        color: Colors.APP_HYPERLINK_FOREGROUND_DARK
+      }
+    });
+
+    return <a { ...CSS }
+              onClick={ () => this.props.clearNotifications() }
+              href="javascript:void(0);">
+              Clear all
+            </a>;
   }
 }
 
