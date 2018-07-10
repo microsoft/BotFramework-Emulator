@@ -45,13 +45,14 @@ import {
   OPEN_ENDPOINT_CONTEXT_MENU,
   OPEN_ENDPOINT_DEEP_LINK
 } from '../action/endpointServiceActions';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 function* launchEndpointEditor(action: EndpointServiceAction<EndpointEditorPayload>): IterableIterator<any> {
   const { endpointEditorComponent, endpointService = {} } = action.payload;
   const result = yield DialogService
     .showDialog<ComponentClass<EndpointEditor>>(endpointEditorComponent, { endpointService });
   if (result) {
-    yield CommandServiceImpl.remoteCall('bot:add-or-update-service', ServiceType.Endpoint, result);
+    yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.AddOrUpdateService, ServiceType.Endpoint, result);
   }
 }
 
@@ -63,7 +64,7 @@ function* openEndpointContextMenu(action: EndpointServiceAction<EndpointServiceP
     { label: 'Remove', id: 'forget' }
   ];
   const response = yield call(CommandServiceImpl
-    .remoteCall.bind(CommandServiceImpl), 'electron:displayContextMenu', menuItems);
+    .remoteCall.bind(CommandServiceImpl), SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);
   switch (response.id) {
     case 'edit':
       yield* launchEndpointEditor(action);
@@ -83,11 +84,11 @@ function* openEndpointContextMenu(action: EndpointServiceAction<EndpointServiceP
 }
 
 function* openEndpointDeepLink(action: EndpointServiceAction<EndpointServicePayload>): IterableIterator<any> {
-  CommandServiceImpl.call('livechat:new', action.payload.endpointService).catch();
+  CommandServiceImpl.call(SharedConstants.Commands.Emulator.NewLiveChat, action.payload.endpointService).catch();
 }
 
 function* removeEndpointServiceFromActiveBot(endpointService: IEndpointService): IterableIterator<any> {
-  const result = yield CommandServiceImpl.remoteCall('shell:show-message-box', true, {
+  const result = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.ShowMessageBox, true, {
     type: 'question',
     buttons: ['Cancel', 'OK'],
     defaultId: 1,
@@ -95,7 +96,8 @@ function* removeEndpointServiceFromActiveBot(endpointService: IEndpointService):
     cancelId: 0,
   });
   if (result) {
-    yield CommandServiceImpl.remoteCall('bot:remove-service', ServiceType.Endpoint, endpointService.id);
+    yield CommandServiceImpl
+      .remoteCall(SharedConstants.Commands.Bot.RemoveService, ServiceType.Endpoint, endpointService.id);
   }
 }
 

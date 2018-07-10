@@ -31,23 +31,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ILogService from '@bfemulator/emulator-core/lib/types/log/service';
-import ILogItem from '@bfemulator/emulator-core/lib/types/log/item';
-import { logEntry } from '@bfemulator/emulator-core/lib/types/log/util';
-import { DisposableImpl } from '@bfemulator/sdk-shared';
-import { Window } from '../window';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { ExtensionManager } from '../extensions';
+import * as LogService from '../platform/log/logService';
+import * as SettingsService from '../platform/settings/settingsService';
+import { registerCommands as registerBotCommands } from './botCommands';
+import { registerCommands as registerElectronCommands } from './electronCommands';
+import { registerCommands as registerEmulatorCommands } from './emulatorCommands';
+import { registerCommands as registerFileCommands } from './fileCommands';
+import { registerCommands as registerMiscCommands } from './miscCommands';
+import { registerCommands as registerUICommands } from './uiCommands';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
-export class LogService extends DisposableImpl implements ILogService {
-
-  constructor(private _window: Window) {
-    super();
-  }
-
-  logToChat(conversationId: string, ...items: ILogItem[]): void {
-    this._window.commandService.remoteCall(
-      SharedConstants.Commands.Emulator.AppendToLog,
-      conversationId, logEntry(...items)
-    );
-  }
+/** Registers all commands */
+export function registerAllCommands(commandRegistry: CommandRegistryImpl) {
+  LogService.registerCommands(commandRegistry);
+  SettingsService.registerCommands(commandRegistry);
+  ExtensionManager.registerCommands(commandRegistry);
+  registerBotCommands(commandRegistry);
+  registerElectronCommands(commandRegistry);
+  registerEmulatorCommands(commandRegistry);
+  registerFileCommands(commandRegistry);
+  registerMiscCommands(commandRegistry);
+  registerUICommands(commandRegistry);
 }

@@ -31,72 +31,35 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { DisposableImpl, CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { emulator } from '../emulator';
+import { windowManager } from '../main';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
 
+/** Registers OAuth commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  commandRegistry.registerCommand(
-    SharedConstants.Commands.Settings.ReceiveGlobalSettings,
-    (settings: {
-      url: string,
-      cwd: string
-    }): any => {
-      SettingsService.emulator.url = (settings.url || '').replace('[::]', '127.0.0.1');
-      SettingsService.emulator.cwd = (settings.cwd || '').replace(/\\/g, '/');
+  const Commands = SharedConstants.Commands.OAuth;
+
+  // ---------------------------------------------------------------------------
+  // Sends an OAuth TokenResponse
+  commandRegistry.registerCommand(Commands.SendTokenResponse,
+    async (
+      connectionName: string,
+      conversationId: string,
+      token: string
+    ) => {
+
+      const convo = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
+      if (!convo) {
+        throw new Error(`oauth:send-token-response: Conversation ${conversationId} not found.`);
+      }
+      await convo.sendTokenResponse(connectionName, conversationId, false);
     });
+
+  // ---------------------------------------------------------------------------
+  // Opens an OAuth login window
+  commandRegistry.registerCommand(Commands.GetStoreOAuthWindow, async (url: string, conversationId: string) => {
+    const convo = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
+    windowManager.createOAuthWindow(url, convo.codeVerifier);
+  });
 }
-
-export interface EmulatorSettings {
-  url?: string;
-  cwd?: string;
-  readonly cwdAsBase: string;
-}
-
-class EmulatorSettingsImpl implements EmulatorSettings {
-  private _url: string;
-  private _cwd: string;
-
-  get url(): string {
-    if (!this._url || !this._url.length) {
-      throw new Error('Emulator url not set');
-    }
-    return this._url;
-  }
-  set url(value: string) {
-    this._url = value;
-  }
-
-  get cwd(): string {
-    if (!this._cwd || !this._cwd.length) {
-      throw new Error('Emulator cwd not set');
-    }
-    return this._cwd;
-  }
-
-  set cwd(value: string) {
-    this._cwd = value;
-  }
-
-  get cwdAsBase(): string {
-    let base = this.cwd;
-    if (!base.startsWith('/')) {
-      base = `/${base}`;
-    }
-
-    return base;
-  }
-}
-
-export const SettingsService = new class extends DisposableImpl {
-
-  private _emulator: EmulatorSettingsImpl;
-
-  get emulator(): EmulatorSettingsImpl { return this._emulator; }
-
-  init() { return null; }
-
-  constructor() {
-    super();
-    this._emulator = new EmulatorSettingsImpl();
-  }
-};

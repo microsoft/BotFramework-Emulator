@@ -33,7 +33,7 @@
 
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { FileInfo } from '@bfemulator/app-shared';
+import { FileInfo, SharedConstants } from '@bfemulator/app-shared';
 import { TreeView, TreeViewProps } from '@fuselab/ui-fabric/lib';
 import { ExpandCollapse, ExpandCollapseContent } from '@bfemulator/ui-react';
 import { FileTreeState } from '../../../../data/reducer/files';
@@ -76,11 +76,11 @@ class FileExplorerComponent extends React.Component<FileExplorerProps> {
   }
 
   private handleTranscriptClick(filename: string) {
-    CommandServiceImpl.call('transcript:open', filename);
+    CommandServiceImpl.call(SharedConstants.Commands.Emulator.OpenTranscript, filename);
   }
 
   private handleChatClick(filename: string) {
-    CommandServiceImpl.call('chat:open', filename);
+    CommandServiceImpl.call(SharedConstants.Commands.Emulator.OpenChatFile, filename);
   }
 
   private renderFileTree(): JSX.Element {

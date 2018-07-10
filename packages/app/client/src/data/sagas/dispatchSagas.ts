@@ -45,12 +45,13 @@ import {
   OPEN_DISPATCH_CONTEXT_MENU,
   OPEN_DISPATCH_DEEP_LINK
 } from '../action/dispatchServiceActions';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 function* openDispatchDeepLink(action: DispatchServiceAction<DispatchServicePayload>): IterableIterator<any> {
   // TODO: Hook up proper deep link location once available
   /*const { appId, version } = action.payload.dispatchService;
   const link = `https://www.dispatch.ai/applications/${appId}/versions/${version}/build`;
-  yield CommandServiceImpl.remoteCall('electron:openExternal', link);*/
+  yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, link);*/
 }
 
 function* openDispatchContextMenu(action: DispatchServiceAction<DispatchServicePayload>): IterableIterator<any> {
@@ -60,7 +61,7 @@ function* openDispatchContextMenu(action: DispatchServiceAction<DispatchServiceP
     { label: 'Remove', id: 'forget' }
   ];
   const response = yield call(CommandServiceImpl
-    .remoteCall.bind(CommandServiceImpl), 'electron:displayContextMenu', menuItems);
+    .remoteCall.bind(CommandServiceImpl), SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);
   switch (response.id) {
     case 'open':
       yield* openDispatchDeepLink(action);
@@ -80,7 +81,7 @@ function* openDispatchContextMenu(action: DispatchServiceAction<DispatchServiceP
 }
 
 function* removeDispatchServiceFromActiveBot(dispatchService: IDispatchService): IterableIterator<any> {
-  const result = yield CommandServiceImpl.remoteCall('shell:show-message-box', true, {
+  const result = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.ShowMessageBox, true, {
     type: 'question',
     buttons: ['Cancel', 'OK'],
     defaultId: 1,
@@ -88,7 +89,8 @@ function* removeDispatchServiceFromActiveBot(dispatchService: IDispatchService):
     cancelId: 0,
   });
   if (result) {
-    yield CommandServiceImpl.remoteCall('bot:remove-service', ServiceType.Dispatch, dispatchService.id);
+    yield CommandServiceImpl
+      .remoteCall(SharedConstants.Commands.Bot.RemoveService, ServiceType.Dispatch, dispatchService.id);
   }
 }
 
@@ -97,7 +99,7 @@ function* launchDispatchEditor(action: DispatchServiceAction<DispatchEditorPaylo
   const result = yield DialogService
     .showDialog<ComponentClass<DispatchEditor>>(dispatchEditorComponent, { dispatchService });
   if (result) {
-    yield CommandServiceImpl.remoteCall('bot:add-or-update-service', ServiceType.Dispatch, result);
+    yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.AddOrUpdateService, ServiceType.Dispatch, result);
   }
 }
 

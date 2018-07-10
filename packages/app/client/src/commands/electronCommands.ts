@@ -31,72 +31,41 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { DisposableImpl, CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
 
+/** Registers electron commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  commandRegistry.registerCommand(
-    SharedConstants.Commands.Settings.ReceiveGlobalSettings,
-    (settings: {
-      url: string,
-      cwd: string
-    }): any => {
-      SettingsService.emulator.url = (settings.url || '').replace('[::]', '127.0.0.1');
-      SettingsService.emulator.cwd = (settings.cwd || '').replace(/\\/g, '/');
-    });
+  const Commands = SharedConstants.Commands.Electron;
+  // ---------------------------------------------------------------------------
+  // Toggle inspector dev tools for all open inspectors
+  commandRegistry.registerCommand(Commands.ToggleDevTools, () => {
+    window.dispatchEvent(new Event('toggle-inspector-devtools'));
+  });
+
+  // ---------------------------------------------------------------------------
+  // An update is ready to install
+  commandRegistry.registerCommand(Commands.UpdateAvailable, (...args: any[]) => {
+    // TODO: Show a notification
+    console.log('Update available', ...args);
+  });
+
+  // ---------------------------------------------------------------------------
+  // Application is up to date
+  commandRegistry.registerCommand(Commands.UpdateNotAvailable, () => {
+    // TODO: Show a notification
+    console.log('Application is up to date');
+  });
+
+  // ---------------------------------------------------------------------------
+  // Open the link in the default browser
+  commandRegistry.registerCommand(Commands.OpenExternal, (url: string) => {
+    window.open(url);
+  });
+
+  // ---------------------------------------------------------------------------
+  // Open About dialog
+  commandRegistry.registerCommand(Commands.ShowAboutDialog, () => {
+    // TODO: Show about dialog (native dialog box)
+  });
 }
-
-export interface EmulatorSettings {
-  url?: string;
-  cwd?: string;
-  readonly cwdAsBase: string;
-}
-
-class EmulatorSettingsImpl implements EmulatorSettings {
-  private _url: string;
-  private _cwd: string;
-
-  get url(): string {
-    if (!this._url || !this._url.length) {
-      throw new Error('Emulator url not set');
-    }
-    return this._url;
-  }
-  set url(value: string) {
-    this._url = value;
-  }
-
-  get cwd(): string {
-    if (!this._cwd || !this._cwd.length) {
-      throw new Error('Emulator cwd not set');
-    }
-    return this._cwd;
-  }
-
-  set cwd(value: string) {
-    this._cwd = value;
-  }
-
-  get cwdAsBase(): string {
-    let base = this.cwd;
-    if (!base.startsWith('/')) {
-      base = `/${base}`;
-    }
-
-    return base;
-  }
-}
-
-export const SettingsService = new class extends DisposableImpl {
-
-  private _emulator: EmulatorSettingsImpl;
-
-  get emulator(): EmulatorSettingsImpl { return this._emulator; }
-
-  init() { return null; }
-
-  constructor() {
-    super();
-    this._emulator = new EmulatorSettingsImpl();
-  }
-};

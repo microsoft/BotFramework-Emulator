@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { FileInfo } from '@bfemulator/app-shared';
+import { FileInfo, SharedConstants } from '@bfemulator/app-shared';
 import { CommandService } from '@bfemulator/sdk-shared';
 import { callbackToPromise } from '@fuselab/ui-shared/lib/asyncUtils';
 import { exists, FSWatcher, readFile, Stats } from 'fs';
@@ -40,8 +40,6 @@ import * as Chokidar from 'chokidar';
 import { getActiveBot, getBotInfoByPath, loadBotWithRetry } from './botHelpers';
 import * as BotActions from './data-v2/action/bot';
 import { getStore } from './data-v2/store';
-import { MessageBoxOptions } from 'electron';
-import { parseActivitiesFromChatFile } from './utils';
 
 interface FileWatcher {
   watch: (botProjectDir: string) => void;
@@ -116,7 +114,7 @@ export class BotProjectFileWatcher implements FileWatcher {
     // stop watching any other project directory
     this.dispose();
     // wipe the transcript explorer store
-    await this.commandService.remoteCall('file:clear');
+    await this.commandService.remoteCall(SharedConstants.Commands.File.Clear);
 
     if (botFilePath && botFilePath.length) {
       this._botFilePath = botFilePath;
@@ -162,12 +160,12 @@ export class BotProjectFileWatcher implements FileWatcher {
       return;
     }
 
-    this.commandService.remoteCall('file:add', fileInfo);
+    this.commandService.remoteCall(SharedConstants.Commands.File.Add, fileInfo);
   }
 
   // TODO: Enable watching more extensions
   onFileRemove = (file: string, fstats?: Stats): void => {
-    this.commandService.remoteCall('file:remove', file);
+    this.commandService.remoteCall(SharedConstants.Commands.File.Remove, file);
   }
 
   onFileChange = async (file: string, fstats?: Stats): Promise<void> => {
@@ -185,12 +183,12 @@ export class BotProjectFileWatcher implements FileWatcher {
         // update store
         const botDir = Path.dirname(this._botFilePath);
         getStore().dispatch(BotActions.setActive(bot));
-        this.commandService.remoteCall('bot:set-active', bot, botDir);
-        this.commandService.call('bot:restart-endpoint-service');
+        this.commandService.remoteCall(SharedConstants.Commands.Bot.SetActive, bot, botDir);
+        this.commandService.call(SharedConstants.Commands.Bot.RestartEndpointService);
       }
     } else if (Path.extname(file) === '.chat' || Path.extname(file) === '.transcript') {
       // notify client side of the change
-      this.commandService.remoteCall('file:changed', file);
+      this.commandService.remoteCall(SharedConstants.Commands.File.Changed, file);
     }
   }
 

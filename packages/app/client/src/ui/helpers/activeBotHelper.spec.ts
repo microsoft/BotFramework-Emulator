@@ -5,6 +5,7 @@ import store from '../../data/store';
 import { getActiveBot } from '../../data/botHelpers';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 import { IEndpointService, ServiceType } from 'msbot/bin/schema';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 describe('ActiveBotHelper tests', () => {
   let backupCommandServiceImpl;
@@ -132,7 +133,7 @@ describe('ActiveBotHelper tests', () => {
     await ActiveBotHelper.setActiveBot(bot);
     expect(mockDispatch).toHaveBeenCalledTimes(2);
     expect(mockRemoteCall).toHaveBeenCalledTimes(3);
-    expect(mockRemoteCall).toHaveBeenCalledWith('bot:set-active', bot);
+    expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.SetActive, bot);
 
     mockRemoteCall = jest.fn().mockRejectedValueOnce('error');
     (CommandServiceImpl as any) = ({ remoteCall: mockRemoteCall });
@@ -170,8 +171,8 @@ describe('ActiveBotHelper tests', () => {
 
     await ActiveBotHelper.confirmAndCreateBot(bot, 'someSecret');
     expect(mockDispatch).toHaveBeenCalledTimes(4);
-    expect(mockCall).toHaveBeenCalledWith('livechat:new', endpoint);
-    expect(mockRemoteCall).toHaveBeenCalledWith('bot:create', bot, 'someSecret');
+    expect(mockCall).toHaveBeenCalledWith(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
+    expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.Create, bot, 'someSecret');
 
     mockRemoteCall = jest.fn().mockRejectedValue('err');
     (CommandServiceImpl as any) = ({ remoteCall: mockRemoteCall, call: mockCall });
@@ -217,9 +218,9 @@ describe('ActiveBotHelper tests', () => {
 
     await ActiveBotHelper.confirmAndOpenBotFromFile();
     expect(mockDispatch).toHaveBeenCalledTimes(1);
-    expect(mockCall).toHaveBeenCalledWith('bot:load', bot);
-    expect(mockRemoteCall).toHaveBeenCalledWith('bot:open', 'someOtherPath');
-    expect(mockRemoteCall).toHaveBeenCalledWith('bot:set-active', bot);
+    expect(mockCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.Load, bot);
+    expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.Open, 'someOtherPath');
+    expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.SetActive, bot);
 
     ActiveBotHelper.browseForBotFile = backupBrowseForBotFile;
     ActiveBotHelper.botAlreadyOpen = backupBotAlreadyOpen;
@@ -267,14 +268,14 @@ describe('ActiveBotHelper tests', () => {
     ActiveBotHelper.setActiveBot = (arg: any) => new Promise((resolve, reject) => resolve(null));
 
     await ActiveBotHelper.confirmAndSwitchBots(bot);
-    expect(mockCall).toHaveBeenCalledWith('livechat:new', endpoint);
+    expect(mockCall).toHaveBeenCalledWith(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
     expect(mockDispatch).toHaveBeenCalledTimes(3);
     mockDispatch.mockClear();
     mockCall.mockClear();
 
     // switching to a bot with only the bot path available
     await ActiveBotHelper.confirmAndSwitchBots('someBotPath');
-    expect(mockRemoteCall).toHaveBeenCalledWith('bot:open', 'someBotPath');
+    expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.Open, 'someBotPath');
     mockCall.mockClear();
     mockDispatch.mockClear();
 
@@ -285,7 +286,10 @@ describe('ActiveBotHelper tests', () => {
       }
     };
     await ActiveBotHelper.confirmAndSwitchBots(bot);
-    expect(mockCall).toHaveBeenCalledWith('livechat:new', { ...endpoint, endpoint: 'someOverride' });
+    expect(mockCall).toHaveBeenCalledWith(
+      SharedConstants.Commands.Emulator.NewLiveChat,
+      { ...endpoint, endpoint: 'someOverride' }
+    );
     mockCall.mockClear();
 
     // switching to a bot with multiple endpoints, with endpoint overrides including an endpoint id
@@ -298,7 +302,10 @@ describe('ActiveBotHelper tests', () => {
       }
     };
     await ActiveBotHelper.confirmAndSwitchBots(bot);
-    expect(mockCall).toHaveBeenCalledWith('livechat:new', { ...secondEndpoint, endpoint: 'someOtherOverride', });
+    expect(mockCall).toHaveBeenCalledWith(
+      SharedConstants.Commands.Emulator.NewLiveChat,
+      { ...secondEndpoint, endpoint: 'someOtherOverride', }
+    );
 
     ActiveBotHelper.botAlreadyOpen = backupBotAlreadyOpen;
     ActiveBotHelper.confirmSwitchBot = backupConfirmSwitchBot;

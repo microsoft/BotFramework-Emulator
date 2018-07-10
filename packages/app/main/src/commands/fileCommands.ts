@@ -31,72 +31,40 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { DisposableImpl, CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { readFileSync, writeFile } from '../utils';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
+const sanitize = require('sanitize-filename');
 
+/** Registers file commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  commandRegistry.registerCommand(
-    SharedConstants.Commands.Settings.ReceiveGlobalSettings,
-    (settings: {
-      url: string,
-      cwd: string
-    }): any => {
-      SettingsService.emulator.url = (settings.url || '').replace('[::]', '127.0.0.1');
-      SettingsService.emulator.cwd = (settings.cwd || '').replace(/\\/g, '/');
-    });
-}
-
-export interface EmulatorSettings {
-  url?: string;
-  cwd?: string;
-  readonly cwdAsBase: string;
-}
-
-class EmulatorSettingsImpl implements EmulatorSettings {
-  private _url: string;
-  private _cwd: string;
-
-  get url(): string {
-    if (!this._url || !this._url.length) {
-      throw new Error('Emulator url not set');
+  const Commands = SharedConstants.Commands.File;
+  // ---------------------------------------------------------------------------
+  // Read file
+  commandRegistry.registerCommand(Commands.Read, (path: string): any => {
+    try {
+      const contents = readFileSync(path);
+      return contents;
+    } catch (e) {
+      console.error(`Failure reading file at ${path}: `, e);
+      throw e;
     }
-    return this._url;
-  }
-  set url(value: string) {
-    this._url = value;
-  }
+  });
 
-  get cwd(): string {
-    if (!this._cwd || !this._cwd.length) {
-      throw new Error('Emulator cwd not set');
+  // ---------------------------------------------------------------------------
+  // Write file
+  commandRegistry.registerCommand(Commands.Write, (path: string, contents: object | string) => {
+    try {
+      writeFile(path, contents);
+    } catch (e) {
+      console.error(`Failure writing to file at ${path}: `, e);
+      throw e;
     }
-    return this._cwd;
-  }
+  });
 
-  set cwd(value: string) {
-    this._cwd = value;
-  }
-
-  get cwdAsBase(): string {
-    let base = this.cwd;
-    if (!base.startsWith('/')) {
-      base = `/${base}`;
-    }
-
-    return base;
-  }
+  // ---------------------------------------------------------------------------
+  // Sanitize a string for file name usage
+  commandRegistry.registerCommand(Commands.SanitizeString, (path: string): string => {
+    return sanitize(path);
+  });
 }
-
-export const SettingsService = new class extends DisposableImpl {
-
-  private _emulator: EmulatorSettingsImpl;
-
-  get emulator(): EmulatorSettingsImpl { return this._emulator; }
-
-  init() { return null; }
-
-  constructor() {
-    super();
-    this._emulator = new EmulatorSettingsImpl();
-  }
-};

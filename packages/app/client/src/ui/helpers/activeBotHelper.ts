@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { getBotDisplayName } from '@bfemulator/app-shared';
+import { getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
 import { IEndpointService, ServiceType } from 'msbot/bin/schema';
 import { BotConfigWithPath, mergeEndpoints } from '@bfemulator/sdk-shared';
 import { hasNonGlobalTabs } from '../../data/editorHelpers';
@@ -49,7 +49,7 @@ export const ActiveBotHelper = new class {
   async confirmSwitchBot(): Promise<any> {
     if (hasNonGlobalTabs()) {
       return await CommandServiceImpl.remoteCall(
-        'shell:show-message-box',
+        SharedConstants.Commands.Electron.ShowMessageBox,
         true,
         {
           buttons: ['Cancel', 'OK'],
@@ -68,7 +68,7 @@ export const ActiveBotHelper = new class {
     const hasTabs = hasNonGlobalTabs();
     // TODO - localization
     if (hasTabs) {
-      return CommandServiceImpl.remoteCall('shell:show-message-box', true, {
+      return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.ShowMessageBox, true, {
         type: 'question',
         buttons: ['Cancel', 'OK'],
         defaultId: 1,
@@ -86,13 +86,13 @@ export const ActiveBotHelper = new class {
   async setActiveBot(bot: BotConfigWithPath): Promise<any> {
     try {
       // set the bot as active on the server side
-      const botDirectory = await CommandServiceImpl.remoteCall('bot:set-active', bot);
+      const botDirectory = await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.SetActive, bot);
       store.dispatch(BotActions.setActive(bot));
       store.dispatch(FileActions.setRoot(botDirectory));
 
       // update the app file menu and title bar
-      CommandServiceImpl.remoteCall('menu:update-recent-bots');
-      CommandServiceImpl.remoteCall('electron:set-title-bar', getBotDisplayName(bot));
+      CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.UpdateRecentBotsInMenu);
+      CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.SetTitleBar, getBotDisplayName(bot));
     } catch (e) {
       throw new Error(`Error while setting active bot: ${e}`);
     }
@@ -100,10 +100,10 @@ export const ActiveBotHelper = new class {
 
   /** tell the server-side the active bot is now closed */
   closeActiveBot(): Promise<any> {
-    return CommandServiceImpl.remoteCall('bot:close')
+    return CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.Close)
       .then(() => {
         store.dispatch(BotActions.close());
-        CommandServiceImpl.remoteCall('electron:set-title-bar', '');
+        CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.SetTitleBar, '');
       })
       .catch(err => {
         console.error('Error while closing active bot: ', err);
@@ -114,7 +114,7 @@ export const ActiveBotHelper = new class {
   async botAlreadyOpen(): Promise<any> {
     // TODO - localization
     return await CommandServiceImpl.remoteCall(
-      'shell:show-message-box',
+      SharedConstants.Commands.Electron.ShowMessageBox,
       true,
       {
         buttons: ['OK'],
@@ -136,7 +136,8 @@ export const ActiveBotHelper = new class {
 
       try {
         // create the bot and save to disk
-        const bot: BotConfigWithPath = await CommandServiceImpl.remoteCall('bot:create', botToCreate, secret);
+        const bot: BotConfigWithPath
+          = await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.Create, botToCreate, secret);
         store.dispatch(BotActions.create(bot, bot.path, secret));
 
         // set the bot as active
@@ -147,7 +148,7 @@ export const ActiveBotHelper = new class {
           .find(service => service.type === ServiceType.Endpoint) as IEndpointService;
 
         if (endpoint) {
-          CommandServiceImpl.call('livechat:new', endpoint);
+          CommandServiceImpl.call(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
         }
 
         store.dispatch(NavBarActions.select(Constants.NAVBAR_BOT_EXPLORER));
@@ -161,7 +162,7 @@ export const ActiveBotHelper = new class {
 
   browseForBotFile(): Promise<any> {
     return CommandServiceImpl.remoteCall(
-      'shell:showOpenDialog',
+      SharedConstants.Commands.Electron.ShowOpenDialog,
       {
         buttonLabel: 'Choose file',
         filters: [{
@@ -191,9 +192,9 @@ export const ActiveBotHelper = new class {
           if (result) {
             try {
               store.dispatch(EditorActions.closeNonGlobalTabs());
-              const bot = await CommandServiceImpl.remoteCall('bot:open', filename);
-              await CommandServiceImpl.remoteCall('bot:set-active', bot);
-              await CommandServiceImpl.call('bot:load', bot);
+              const bot = await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.Open, filename);
+              await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.SetActive, bot);
+              await CommandServiceImpl.call(SharedConstants.Commands.Bot.Load, bot);
             } catch (err) {
               console.error('Error while trying to open bot from file: ', err);
               throw new Error(`[confirmAndOpenBotFromFile] Error while trying to open bot from file: ${err}`);
@@ -239,7 +240,7 @@ export const ActiveBotHelper = new class {
         let newActiveBot: BotConfigWithPath;
         if (typeof bot === 'string') {
           try {
-            newActiveBot = await CommandServiceImpl.remoteCall('bot:open', bot);
+            newActiveBot = await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.Open, bot);
           } catch (e) {
             throw new Error(`[confirmAndSwitchBots] Error while trying to open bot at ${botPath}: ${e}`);
           }
@@ -273,7 +274,7 @@ export const ActiveBotHelper = new class {
 
         // open a livechat with the configured endpoint
         if (endpoint) {
-          await CommandServiceImpl.call('livechat:new', endpoint);
+          await CommandServiceImpl.call(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
         }
 
         store.dispatch(NavBarActions.select(Constants.NAVBAR_BOT_EXPLORER));

@@ -31,23 +31,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ILogService from '@bfemulator/emulator-core/lib/types/log/service';
-import ILogItem from '@bfemulator/emulator-core/lib/types/log/item';
-import { logEntry } from '@bfemulator/emulator-core/lib/types/log/util';
-import { DisposableImpl } from '@bfemulator/sdk-shared';
-import { Window } from '../window';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { dispatch, getSettings } from '../settings';
+import { FrameworkSettings, SharedConstants } from '@bfemulator/app-shared';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
-export class LogService extends DisposableImpl implements ILogService {
+/** Registers settings commands */
+export function registerCommands(commandRegistry: CommandRegistryImpl) {
+  const Commands = SharedConstants.Commands.Settings;
 
-  constructor(private _window: Window) {
-    super();
-  }
+  // ---------------------------------------------------------------------------
+  // Saves global app settings
+  commandRegistry.registerCommand(Commands.SaveAppSettings, (settings: FrameworkSettings): any => {
+    dispatch({
+      type: 'Framework_Set',
+      state: settings
+    });
+  });
 
-  logToChat(conversationId: string, ...items: ILogItem[]): void {
-    this._window.commandService.remoteCall(
-      SharedConstants.Commands.Emulator.AppendToLog,
-      conversationId, logEntry(...items)
-    );
-  }
+  // ---------------------------------------------------------------------------
+  // Get and return app settings from store
+  commandRegistry.registerCommand(Commands.LoadAppSettings, (...args: any[]): FrameworkSettings => {
+    return getSettings().framework;
+  });
 }

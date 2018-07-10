@@ -45,12 +45,14 @@ import { setTimeout } from 'timers';
 import { Window } from './platform/window';
 import { ensureStoragePath, writeFile } from './utils';
 import * as squirrel from './squirrelEvents';
-import * as Commands from './commands';
+import { registerAllCommands } from './commands/registerAllCommands';
 import { AppMenuBuilder } from './appMenuBuilder';
 import { AppUpdater } from './appUpdater';
 import { UpdateInfo } from 'electron-updater';
 import { ProgressInfo } from 'builder-util-runtime';
 import { getStore } from './data-v2/store';
+import { CommandRegistry } from './commands';
+import { SharedConstants } from '@bfemulator/app-shared';
 import { botListsAreDifferent } from './utils/botListsAreDifferent';
 import { BotProjectFileWatcher } from './botProjectFileWatcher';
 
@@ -82,7 +84,7 @@ AppUpdater.on('update-available', (update: UpdateInfo) => {
   AppMenuBuilder.refreshAppUpdateMenu();
   if (AppUpdater.userInitiated) {
     // TODO - localization
-    mainWindow.commandService.call('shell:show-message-box', true, {
+    mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
       title: app.getName(),
       message: `An update is available. Download it now?`,
       buttons: ['Cancel', 'OK'],
@@ -100,7 +102,7 @@ AppUpdater.on('update-downloaded', (update: UpdateInfo) => {
   AppMenuBuilder.refreshAppUpdateMenu();
   // TODO - localization
   if (AppUpdater.userInitiated) {
-    mainWindow.commandService.call('shell:show-message-box', true, {
+    mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
       title: app.getName(),
       message: 'Finished downloading update. Restart and install now?',
       buttons: ['Cancel', 'OK'],
@@ -118,7 +120,7 @@ AppUpdater.on('up-to-date', (update: UpdateInfo) => {
   // TODO - localization
   AppMenuBuilder.refreshAppUpdateMenu();
   if (AppUpdater.userInitiated) {
-    mainWindow.commandService.call('shell:show-message-box', true, {
+    mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
       title: app.getName(),
       message: 'There are no updates currently available.'
     });
@@ -134,7 +136,7 @@ AppUpdater.on('error', (err: Error, message: string) => {
   AppMenuBuilder.refreshAppUpdateMenu();
   console.error(err, message);
   if (AppUpdater.userInitiated) {
-    mainWindow.commandService.call('shell:show-message-box', true, {
+    mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
       title: app.getName(),
       message: 'There are no updates currently available.'
     });
@@ -158,7 +160,8 @@ var onOpenUrl = function (event: any, url1: any) {
 };
 
 // Register all commands
-Commands.registerCommands();
+const registry = CommandRegistry;
+registerAllCommands(registry);
 
 // Parse command line
 commandLine.parseArgs();

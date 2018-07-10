@@ -31,23 +31,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ILogService from '@bfemulator/emulator-core/lib/types/log/service';
-import ILogItem from '@bfemulator/emulator-core/lib/types/log/item';
-import { logEntry } from '@bfemulator/emulator-core/lib/types/log/util';
-import { DisposableImpl } from '@bfemulator/sdk-shared';
-import { Window } from '../window';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { registerCommands as registerBotCommands } from './botCommands';
+import { registerCommands as registerClientInitCommands } from './clientInitCommands';
+import { registerCommands as registerElectronCommands } from './electronCommands';
+import { registerCommands as registerEmulatorCommands } from './emulatorCommands';
+import { registerCommands as registerFileCommands } from './fileCommands';
+import { registerCommands as registerLuisCommands } from './luisCommands';
+import { registerCommands as registerOAuthCommands } from './oauthCommands';
+import { registerCommands as registerSettingsCommands } from './settingsCommands';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
-export class LogService extends DisposableImpl implements ILogService {
-
-  constructor(private _window: Window) {
-    super();
-  }
-
-  logToChat(conversationId: string, ...items: ILogItem[]): void {
-    this._window.commandService.remoteCall(
-      SharedConstants.Commands.Emulator.AppendToLog,
-      conversationId, logEntry(...items)
-    );
-  }
+/** Registers all commands */
+export function registerAllCommands(commandRegistry: CommandRegistryImpl) {
+  registerBotCommands(commandRegistry);
+  registerClientInitCommands(commandRegistry);
+  registerElectronCommands(commandRegistry);
+  registerEmulatorCommands(commandRegistry);
+  registerFileCommands(commandRegistry);
+  registerLuisCommands(commandRegistry);
+  registerOAuthCommands(commandRegistry);
+  registerSettingsCommands(commandRegistry);
 }
