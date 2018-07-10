@@ -34,7 +34,7 @@ import * as React from 'react';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { IEndpointService } from 'msbot/bin/schema';
-import { SpeechTokenInfo, SharedConstants } from '@bfemulator/app-shared';
+import { SpeechTokenInfo } from '@bfemulator/app-shared';
 import { Chat as WebChat, Speech } from 'botframework-webchat';
 import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
 import { EmulatorMode } from '../../index';
@@ -90,7 +90,7 @@ async function getSpeechToken(endpoint: IEndpointService, refresh: boolean): Pro
     return;
   }
 
-  let command = refresh ? 'speech-token:refresh' : SharedConstants.Commands.Emulator.GetSpeechToken;
+  let command = refresh ? 'speech-token:refresh' : 'speech-token:get';
 
   try {
     const speechToken: SpeechTokenInfo = await CommandServiceImpl.remoteCall(command, endpoint.endpoint);

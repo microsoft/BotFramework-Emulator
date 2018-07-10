@@ -147,17 +147,14 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
 
     if (props.mode === 'transcript') {
       try {
-        const conversation = await CommandServiceImpl.remoteCall(
-          SharedConstants.Commands.Emulator.NewTranscript,
-          conversationId
-        );
+        const conversation = await CommandServiceImpl.remoteCall('transcript:new', conversationId);
 
-        if (props.document && props.document.inMemory && props.document.activities) {
+        if (props.document && props.document.deepLink && props.document.activities) {
           try {
-            // transcript was deep linked via protocol or is generated in-memory via chatdown,
+            // transcript was deep linked via protocol,
             // and should just be fed its own activities attached to the document
             await CommandServiceImpl.remoteCall(
-              SharedConstants.Commands.Emulator.FeedTranscriptFromMemory,
+              'emulator:feed-transcript:deep-link',
               conversation.conversationId,
               props.document.botId,
               props.document.userId,
@@ -170,7 +167,7 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
           try {
             // the transcript is on disk, so its activities need to be read on the main side and fed in
             const fileInfo: { fileName: string, filePath: string } = await CommandServiceImpl.remoteCall(
-              SharedConstants.Commands.Emulator.FeedTranscriptFromDisk,
+              'emulator:feed-transcript:disk',
               conversation.conversationId,
               props.document.botId,
               props.document.userId,
@@ -295,10 +292,7 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
 
   private handleExportClick = () => {
     if (this.props.document.directLine) {
-      CommandServiceImpl.remoteCall(
-        SharedConstants.Commands.Emulator.SaveTranscriptToFile,
-        this.props.document.directLine.conversationId
-      );
+      CommandServiceImpl.remoteCall('emulator:save-transcript-to-file', this.props.document.directLine.conversationId);
     }
   }
 }

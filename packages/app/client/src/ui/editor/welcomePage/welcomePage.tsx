@@ -33,7 +33,7 @@
 import { hot } from 'react-hot-loader';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
+import { BotInfo } from '@bfemulator/app-shared';
 import * as styles from './welcomePage.scss';
 import { Column, LargeHeader, PrimaryButton, Row, SmallHeader, TruncateText } from '@bfemulator/ui-react';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
@@ -47,15 +47,15 @@ interface WelcomePageProps {
 
 class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
   onNewBotClick = () => {
-    CommandServiceImpl.call(SharedConstants.Commands.UI.ShowBotCreationDialog).catch();
+    CommandServiceImpl.call('bot-creation:show').catch();
   }
 
   onOpenBotClick = () => {
-    CommandServiceImpl.call(SharedConstants.Commands.Bot.OpenBrowse).catch();
+    CommandServiceImpl.call('bot:browse-open').catch();
   }
 
   onBotClick = (_e: any, path) => {
-    CommandServiceImpl.call(SharedConstants.Commands.Bot.Switch, path).catch();
+    CommandServiceImpl.call('bot:switch', path).catch();
   }
 
   render() {

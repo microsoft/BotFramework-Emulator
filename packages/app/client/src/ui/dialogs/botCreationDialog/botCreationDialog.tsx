@@ -50,7 +50,6 @@ import * as styles from './botCreationDialog.scss';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 import { DialogService } from '../service';
-import { SharedConstants } from '@bfemulator/app-shared';
 
 export interface BotCreationDialogState {
   bot: BotConfigWithPath;
@@ -239,11 +238,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
 
   private showBotSaveDialog = async (): Promise<any> => {
     // get a safe bot file name
-    const botFileName = await CommandServiceImpl.remoteCall(
-      SharedConstants.Commands.File.SanitizeString,
-      this.state.bot.name
-    );
-
+    const botFileName = await CommandServiceImpl.remoteCall('file:sanitize-string', this.state.bot.name);
     // TODO - Localization
     const dialogOptions = {
       filters: [
@@ -258,7 +253,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
       buttonLabel: 'Save'
     };
 
-    return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.ShowSaveDialog, dialogOptions);
+    return CommandServiceImpl.remoteCall('shell:showSaveDialog', dialogOptions);
   }
 
   private onChangeSecret = (secret) => {

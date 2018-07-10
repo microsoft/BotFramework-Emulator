@@ -37,7 +37,7 @@ import * as ChatActions from '../../../../../data/action/chatActions';
 import * as styles from './log.scss';
 import store from '../../../../../data/store';
 import { ExtensionManager, InspectorAPI } from '../../../../../extensions';
-import { LogEntry, LogItem, LogLevel, SharedConstants } from '@bfemulator/app-shared';
+import { LogEntry, LogItem, LogLevel } from '@bfemulator/app-shared';
 import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
 
 function number2(n: number) {
@@ -198,7 +198,7 @@ class LogEntryComponent extends React.Component<LogEntryProps> {
   renderAppSettingsItem(text: string, key: string) {
     return (
       <span key={ key } className={ styles.spaced }>
-        <a onClick={ () => CommandServiceImpl.call(SharedConstants.Commands.UI.ShowAppSettings) }>{ text }</a>
+        <a onClick={ () => CommandServiceImpl.call('shell:show-app-settings') }>{ text }</a>
       </span>
     );
   }

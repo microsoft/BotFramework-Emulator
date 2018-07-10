@@ -42,9 +42,7 @@ import { CommandServiceImpl } from './platform/commands/commandServiceImpl';
 import { SettingsService } from './platform/settings/settingsService';
 import { LogService } from './platform/log/logService';
 import { showWelcomePage } from './data/editorHelpers';
-import { registerAllCommands } from './commands/registerAllCommands';
-import { CommandRegistry } from './commands';
-import { SharedConstants } from '@bfemulator/app-shared';
+import * as Commands from './commands';
 
 import 'botframework-webchat/botchat.css';
 import './ui/styles/globals.scss';
@@ -56,8 +54,7 @@ CommandServiceImpl.init();
 SettingsService.init();
 LogService.init();
 
-const registry = CommandRegistry;
-registerAllCommands(registry);
+Commands.registerCommands();
 
 // Start rendering the UI
 ReactDOM.render(
@@ -66,11 +63,11 @@ ReactDOM.render(
 );
 
 // Tell the main process we're loaded
-CommandServiceImpl.remoteCall(SharedConstants.Commands.ClientInit.Loaded)
+CommandServiceImpl.remoteCall('client:loaded')
   .then(() => {
     showWelcomePage();
     // do actions on main side that might open a document, so that they will be active over the welcome screen
-    CommandServiceImpl.remoteCall(SharedConstants.Commands.ClientInit.PostWelcomeScreen);
+    CommandServiceImpl.remoteCall('client:post-welcome-screen');
   })
   .catch(err => console.error(`Error occured during client:loaded: ${err}`));
 

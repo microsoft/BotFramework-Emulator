@@ -33,29 +33,14 @@
 
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { FileInfo, SharedConstants } from '@bfemulator/app-shared';
+import { FileInfo } from '@bfemulator/app-shared';
 import { TreeView, TreeViewProps } from '@fuselab/ui-fabric/lib';
 import { ExpandCollapse, ExpandCollapseContent } from '@bfemulator/ui-react';
 import { FileTreeState } from '../../../../data/reducer/files';
 import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
 import { FileTreeDataProvider } from './fileTreeProvider';
 import { isChatFile, isTranscriptFile } from '../../../../utils';
-
-// const css: IStyle = {
-//   // tree comp overrides to match services pane style
-//   selectors: {
-//     '& div[class*="root-"]': {
-//       height: '22px',
-//       lineHeight: '22px',
-//       whiteSpace: 'nowrap'
-//     },
-//
-//     '& div[class*="level_"]': {
-//       height: '14px',
-//       lineHeight: '14px'
-//     }
-//   }
-// };
+import * as styles from './fileTreeExplorer.scss';
 
 interface FileExplorerProps {
   activeEditor: string;
@@ -69,8 +54,8 @@ class FileExplorerComponent extends React.Component<FileExplorerProps> {
     return (
       <ExpandCollapse
         expanded={ true }
-        // style={ css }
         title="File Explorer"
+        className={ styles.fileTreeExplorer }
       >
         { this.renderFileTree() }
       </ExpandCollapse>
@@ -78,11 +63,11 @@ class FileExplorerComponent extends React.Component<FileExplorerProps> {
   }
 
   private handleTranscriptClick(filename: string) {
-    CommandServiceImpl.call(SharedConstants.Commands.Emulator.OpenTranscript, filename);
+    CommandServiceImpl.call('transcript:open', filename);
   }
 
   private handleChatClick(filename: string) {
-    CommandServiceImpl.call(SharedConstants.Commands.Emulator.OpenChatFile, filename);
+    CommandServiceImpl.call('chat:open', filename);
   }
 
   private renderFileTree(): JSX.Element {

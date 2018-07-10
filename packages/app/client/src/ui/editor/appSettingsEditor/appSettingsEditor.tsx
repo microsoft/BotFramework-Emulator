@@ -42,7 +42,7 @@ import {
   SmallHeader,
   TextField
 } from '@bfemulator/ui-react';
-import { FrameworkSettings, SharedConstants } from '@bfemulator/app-shared';
+import { FrameworkSettings } from '@bfemulator/app-shared';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import * as EditorActions from '../../../data/action/editorActions';
 import * as Constants from '../../../constants';
@@ -104,7 +104,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
 
   componentWillMount(): void {
     // load settings from main and populate form
-    CommandServiceImpl.remoteCall(SharedConstants.Commands.Settings.LoadAppSettings)
+    CommandServiceImpl.remoteCall('app:settings:load')
       .then(settings => {
         this.setState(() => ({
           committed: settings,
@@ -150,7 +150,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
       properties: ['openFile']
     };
 
-    CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.ShowOpenDialog, dialogOptions)
+    CommandServiceImpl.remoteCall('shell:showOpenDialog', dialogOptions)
       .then(ngrokPath => this.setUncommittedState({ ngrokPath }))
       .catch(err => console.log('User cancelled browsing for ngrok: ', err));
   }
@@ -171,7 +171,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
       locale: uncommitted.locale.trim()
     };
 
-    CommandServiceImpl.remoteCall(SharedConstants.Commands.Settings.SaveAppSettings, settings)
+    CommandServiceImpl.remoteCall('app:settings:save', settings)
       .then(() => this.commit(settings))
       .catch(err => console.error('Error while saving emulator settings: ', err));
   }

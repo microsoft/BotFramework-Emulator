@@ -34,7 +34,6 @@
 import * as React from 'react';
 import { SyntheticEvent } from 'react';
 import { IBotConfig } from 'msbot/bin/schema';
-import { SharedConstants } from '@bfemulator/app-shared';
 import * as styles from './navBar.scss';
 import * as Constants from '../../../constants';
 
