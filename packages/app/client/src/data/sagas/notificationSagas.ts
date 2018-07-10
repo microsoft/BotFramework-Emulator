@@ -32,23 +32,47 @@
 //
 
 import { NotificationManager } from '../../notificationManager';
-import { AddNotificationAction, NotificationActions } from '../action/notificationActions';
-import { ForkEffect, takeEvery, call } from 'redux-saga/effects';
+import {
+  BeginAddNotificationAction,
+  NotificationActions,
+  BeginRemoveNotificationAction,
+  finishAdd,
+  finishClear,
+  finishRemove
+} from '../action/notificationActions';
+import { ForkEffect, takeEvery, call, put } from 'redux-saga/effects';
 
-/** Adds a notification to the notification manager's store */
-export function* addNotification(action: AddNotificationAction) {
+/** Adds a notification to the notification manager's store then
+ *  adds it to the state store
+ */
+export function* addNotification(action: BeginAddNotificationAction) {
   const { notification } = action.payload;
   const instance = yield call(NotificationManager.getInstance.bind(NotificationManager));
   yield call(instance.addNotification.bind(instance), notification);
+  yield put(finishAdd(notification));
 }
 
-/** Clears all notifications from the notification manager's store */
+/** Clears all notifications from the notification manager's store then
+ *  clears all notifications from the state store
+ */
 export function* clearNotifications() {
   const instance = yield call(NotificationManager.getInstance.bind(NotificationManager));
   yield call(instance.clearNotifications.bind(instance));
+  yield put(finishClear());
+}
+
+/** Removes a single notification from the notification manager's store then
+ *  removes it from the state store
+ */
+export function* removeNotification(action: BeginRemoveNotificationAction) {
+  const { id: notificationId } = action.payload;
+  const instance = yield call(NotificationManager.getInstance.bind(NotificationManager));
+  yield call(instance.removeNotification.bind(instance), notificationId);
+  yield put(finishRemove(notificationId));
 }
 
 export function* notificationSagas(): IterableIterator<ForkEffect> {
-  yield takeEvery(NotificationActions.add, addNotification);
-  yield takeEvery(NotificationActions.clear, clearNotifications);
+  yield takeEvery(NotificationActions.beginAdd, addNotification);
+  yield takeEvery(NotificationActions.beginClear, clearNotifications);
+  yield takeEvery(NotificationActions.beginRemove, removeNotification);
 }

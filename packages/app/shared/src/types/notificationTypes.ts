@@ -31,6 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { uniqueId } from '@bfemulator/sdk-shared';
+
 export enum NotificationType {
   Info,
   Error,
@@ -49,6 +51,7 @@ export interface Notification {
   message: string;
   timestamp: number;
   buttons?: NotificationCTAButton[];
+  addButton: (text: string, onClick?: (...args: any[]) => any) => void;
 }
 
 export class NotificationImpl implements Notification {
@@ -58,4 +61,16 @@ export class NotificationImpl implements Notification {
   message: string;
   timestamp: number;
   buttons?: NotificationCTAButton[];
+
+  constructor() {
+    this.id = uniqueId();
+    this.timestamp = Date.now();
+    this.buttons = [];
+  }
+
+  /** Adds a CTA button to the notification */
+  public addButton(text: string, onClick?: (...args: any[]) => any): void {
+    const button: NotificationCTAButton = { text, onClick };
+    this.buttons.push(button);
+  }
 }

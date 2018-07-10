@@ -83,7 +83,6 @@ interface NavBarProps {
   handleClick?: (evt: MouseEvent<HTMLAnchorElement>, selection: string) => void;
   handleSettingsClick?: (evt: MouseEvent<HTMLAnchorElement>) => void;
   notifications?: { [id: string]: { read: boolean }};
-  numOfNotifications?: number;
 }
 
 class NavBarComponent extends React.Component<NavBarProps> {
@@ -92,12 +91,11 @@ class NavBarComponent extends React.Component<NavBarProps> {
   }
 
   render() {
-    const { selection, handleClick, handleSettingsClick, numOfNotifications } = this.props;
-
-    /*const numberOfUnreadNotifications = Object.keys(notifications)
+    const { selection, handleClick, handleSettingsClick, notifications } = this.props;
+    const numberOfUnreadNotifications = Object.keys(notifications)
                                               .map(notificationId => notifications[notificationId].read)
                                               .filter(notificationHasBeenRead => !notificationHasBeenRead)
-                                              .length;*/
+                                              .length;
 
     return (
       <nav { ...CSS }>
@@ -111,7 +109,7 @@ class NavBarComponent extends React.Component<NavBarProps> {
         <NavLink
           className={ classNames('nav-link notifications', { selected: selection === Constants.NAVBAR_NOTIFICATIONS }) }
           onClick={ evt => handleClick(evt, Constants.NAVBAR_NOTIFICATIONS) } title="Notifications"
-          justifyEnd={ true } badgeText={ numOfNotifications } />
+          justifyEnd={ true } badgeText={ numberOfUnreadNotifications } />
         <NavLink className="nav-link settings" onClick={ handleSettingsClick } title="Settings"/>
         <InsetShadow right={ true }/>
       </nav>
@@ -127,8 +125,7 @@ class NavBarComponent extends React.Component<NavBarProps> {
 
 const mapStateToProps = (state: RootState): NavBarProps => ({
   activeBot: state.bot.activeBot,
-  notifications: state.notification.byId,
-  numOfNotifications: state.notification.allIds.length
+  notifications: state.notification.byId
 });
 
 const mapDispatchToProps = (dispatch, ownProps: NavBarProps): NavBarProps => ({

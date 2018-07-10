@@ -127,7 +127,8 @@ const CSS = css({
   },
 
   '& .cta-link': {
-    whiteSpace: 'normal'
+    whiteSpace: 'normal',
+    marginLeft: '8px'
   }
 });
 
@@ -144,7 +145,7 @@ class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
   onOpenBotClick = () => {
     CommandServiceImpl.call('bot:browse-open');
   }
-  
+
   onBotClick = (_e: any, path: string) => {
     CommandServiceImpl.call('bot:switch', path);
   }

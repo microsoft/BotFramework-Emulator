@@ -31,8 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotInfo, getBotDisplayName } from '@bfemulator/app-shared';
-
+import { BotInfo, getBotDisplayName, Notification, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, CommandRegistryImpl as CommReg, uniqueId } from '@bfemulator/sdk-shared';
 import { IBotConfig, IEndpointService } from 'msbot/bin/schema';
 import * as Constants from './constants';
@@ -51,6 +50,8 @@ import * as SettingsService from './platform/settings/settingsService';
 import { BotCreationDialog, DialogService, SecretPromptDialog } from './ui/dialogs';
 import { ActiveBotHelper } from './ui/helpers/activeBotHelper';
 import { isChatFile, isTranscriptFile } from './utils';
+import { getGlobal } from './utils/getGlobal';
+import * as NotificationActions from './data/action/notificationActions';
 
 // =============================================================================
 export const CommandRegistry = new CommReg();
@@ -341,5 +342,11 @@ export function registerCommands() {
   // Returns the store's state
   CommandRegistry.registerCommand('store:getState', () => {
     return store.getState();
+  });
+
+  // This is going to need to be integrated with new commands refactoring
+  CommandRegistry.registerCommand('add-notification', () => {
+    const notification: Notification = getGlobal(SharedConstants.NOTIFICATION_FROM_MAIN);
+    store.dispatch(NotificationActions.beginAdd(notification));
   });
 }

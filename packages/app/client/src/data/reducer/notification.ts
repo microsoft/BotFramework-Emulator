@@ -47,7 +47,7 @@ const DEFAULT_STATE: NotificationState = {
 
 export function notification(state: NotificationState = DEFAULT_STATE, action: NotificationAction): NotificationState {
   switch (action.type) {
-    case NotificationActions.add: {
+    case NotificationActions.finishAdd: {
       const { id: idToAdd } = action.payload.notification;
       let allIds;
       if (!state.byId[idToAdd]) {
@@ -57,13 +57,16 @@ export function notification(state: NotificationState = DEFAULT_STATE, action: N
       }
       state = {
         ...state,
-        [action.payload.notification.id]: { read: action.payload.read },
+        byId: {
+          ...state.byId,
+          [action.payload.notification.id]: { read: action.payload.read }
+        },
         allIds
       };
       break;
     }
 
-    case NotificationActions.remove: {
+    case NotificationActions.finishRemove: {
       const { id: idToRemove } = action.payload;
       state = {
         ...state,
@@ -73,15 +76,19 @@ export function notification(state: NotificationState = DEFAULT_STATE, action: N
       break;
     }
 
-    case NotificationActions.markAsRead: {
+    case NotificationActions.markAllAsRead: {
+      const readNotifications = {};
+      Object.keys(state.byId).map(notifId => {
+        readNotifications[notifId] = { read: true };
+      });
       state = {
         ...state,
-        [action.payload.id]: { read: true }
+        byId: readNotifications
       };
       break;
     }
 
-    case NotificationActions.clear: {
+    case NotificationActions.finishClear: {
       state = {
         byId: {},
         allIds: []

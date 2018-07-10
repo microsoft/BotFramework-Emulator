@@ -34,48 +34,72 @@
 import { Notification } from '@bfemulator/app-shared';
 
 export enum NotificationActions {
-  add = 'NOTIFICATION/ADD',
-  remove = 'NOTIFICATION/REMOVE',
-  markAsRead = 'NOTIFICATION/MARK_AS_READ',
-  clear = 'NOTIFICATION/CLEAR'
+  beginAdd = 'NOTIFICATION/BEGIN_ADD',
+  finishAdd = 'NOTIFICATION/FINISH_ADD',
+  beginRemove = 'NOTIFICATION/BEGIN_REMOVE',
+  finishRemove = 'NOTIFICATION/FINISH_REMOVE',
+  markAllAsRead = 'NOTIFICATION/MARK_ALL_AS_READ',
+  beginClear = 'NOTIFICATION/BEGIN_CLEAR',
+  finishClear = 'NOTIFICATION/FINISH_CLEAR'
 }
 
 export type NotificationAction =
-  AddNotificationAction |
-  RemoveNotificationAction |
-  MarkAsReadNotificationAction |
-  ClearNotificationAction;
+  BeginAddNotificationAction |
+  FinishAddNotificationAction |
+  BeginRemoveNotificationAction |
+  FinishRemoveNotificationAction |
+  MarkAllAsReadNotificationAction |
+  BeginClearNotificationAction |
+  FinishClearNotificationAction;
 
-export interface AddNotificationAction {
-  type: NotificationActions.add;
+export interface BeginAddNotificationAction {
+  type: NotificationActions.beginAdd;
   payload: {
     notification: Notification,
     read: boolean
   };
 }
 
-export interface RemoveNotificationAction {
-  type: NotificationActions.remove;
+export interface FinishAddNotificationAction {
+  type: NotificationActions.finishAdd;
+  payload: {
+    notification: Notification,
+    read: boolean
+  };
+}
+
+export interface BeginRemoveNotificationAction {
+  type: NotificationActions.beginRemove;
   payload: {
     id: string
   };
 }
 
-export interface MarkAsReadNotificationAction {
-  type: NotificationActions.markAsRead;
+export interface FinishRemoveNotificationAction {
+  type: NotificationActions.finishRemove;
   payload: {
     id: string
   };
 }
 
-export interface ClearNotificationAction {
-  type: NotificationActions.clear;
+export interface MarkAllAsReadNotificationAction {
+  type: NotificationActions.markAllAsRead;
   payload: {};
 }
 
-export function add(notification: Notification, read: boolean = false): NotificationAction {
+export interface BeginClearNotificationAction {
+  type: NotificationActions.beginClear;
+  payload: {};
+}
+
+export interface FinishClearNotificationAction {
+  type: NotificationActions.finishClear;
+  payload: {};
+}
+
+export function beginAdd(notification: Notification, read: boolean = false): BeginAddNotificationAction {
   return {
-    type: NotificationActions.add,
+    type: NotificationActions.beginAdd,
     payload: {
       notification,
       read
@@ -83,27 +107,51 @@ export function add(notification: Notification, read: boolean = false): Notifica
   };
 }
 
-export function remove(id: string): NotificationAction {
+export function finishAdd(notification: Notification, read: boolean = false): FinishAddNotificationAction {
   return {
-    type: NotificationActions.remove,
+    type: NotificationActions.finishAdd,
+    payload: {
+      notification,
+      read
+    }
+  };
+}
+
+export function beginRemove(id: string): BeginRemoveNotificationAction {
+  return {
+    type: NotificationActions.beginRemove,
     payload: {
       id
     }
   };
 }
 
-export function markAsRead(id: string): NotificationAction {
+export function finishRemove(id: string): FinishRemoveNotificationAction {
   return {
-    type: NotificationActions.markAsRead,
+    type: NotificationActions.finishRemove,
     payload: {
       id
     }
   };
 }
 
-export function clear(): NotificationAction {
+export function markAllAsRead(): MarkAllAsReadNotificationAction {
   return {
-    type: NotificationActions.clear,
+    type: NotificationActions.markAllAsRead,
+    payload: {}
+  };
+}
+
+export function beginClear(): BeginClearNotificationAction {
+  return {
+    type: NotificationActions.beginClear,
+    payload: {}
+  };
+}
+
+export function finishClear(): FinishClearNotificationAction {
+  return {
+    type: NotificationActions.finishClear,
     payload: {}
   };
 }

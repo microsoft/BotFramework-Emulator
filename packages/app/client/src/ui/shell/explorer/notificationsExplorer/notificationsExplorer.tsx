@@ -81,7 +81,7 @@ const mapStateToProps = (state: RootState): NotificationExplorerProps => {
 
 const mapDispatchToProps = (dispatch): NotificationExplorerProps => {
   return {
-    clearNotifications: () => { dispatch(NotificationActions.clear()); }
+    clearNotifications: () => { dispatch(NotificationActions.beginClear()); }
   };
 };
 

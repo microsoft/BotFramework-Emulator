@@ -46,10 +46,6 @@ import { LogService } from './platform/log/logService';
 import { showWelcomePage } from './data/editorHelpers';
 import * as Commands from './commands';
 
-// TEMP REMOVE
-import * as NotificationActions from './data/action/notificationActions';
-import { NotificationImpl } from '@bfemulator/app-shared';
-
 initializeTheme('dark');
 initializeIcons();
 interceptError();
@@ -73,18 +69,6 @@ CommandServiceImpl.remoteCall('client:loaded')
     showWelcomePage();
     // do actions on main side that might open a document, so that they will be active over the welcome screen
     CommandServiceImpl.remoteCall('client:post-welcome-screen');
-    
-    // TEMP: REMOVE
-    const notif1: NotificationImpl = new NotificationImpl();
-    notif1.id = 'notif123';
-    notif1.title = 'Some notification';
-    notif1.message = 'Some notifcation message';
-    const notif2: NotificationImpl = new NotificationImpl();
-    notif2.id = 'notif1234';
-    notif2.title = 'Some other notification';
-    notif2.message = 'Some other notifcation message';
-    store.dispatch(NotificationActions.add(notif1));
-    store.dispatch(NotificationActions.add(notif2));
   })
   .catch(err => console.error(`Error occured during client:loaded: ${err}`));
 

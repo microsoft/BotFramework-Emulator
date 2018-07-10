@@ -67,22 +67,40 @@ class NotificationComp extends React.Component<NotificationProps, {}> {
   }
 
   render(): JSX.Element {
-    const { title = '', message = '', timestamp = 123456784, id = '' } = this.props.notification;
+    const { title = '', message = '', timestamp = null, id = '' } = this.props.notification;
     const { removeNotification } = this.props;
+    const timestampEle = timestamp ? <span>{ new Date(timestamp).toUTCString() }</span> : null;
+    const buttonRow = this.renderButtonRow();
 
     return (
       <li { ...CSS }>
         <div className="close-icon" onClick={ () => removeNotification(id) }></div>
         <h3>{ title }</h3>
         <p>{ message }</p>
-        <span>{ timestamp }</span>
+        { timestampEle }
+        { buttonRow }
       </li>
     );
+  }
+
+  private renderButtonRow(): JSX.Element {
+    const { buttons = [] } = this.props.notification;
+    if (buttons.length) {
+      let renderedButtons = buttons.map((btn, i) =>
+        <button key={ `button${i}` } onClick={ () => btn.onClick() }>{ btn.text }</button>
+      );
+      return (
+        <div>
+          { renderedButtons }
+        </div>
+      );
+    }
+    return null;
   }
 }
 
 const mapDispatchToProps = (dispatch): NotificationProps => ({
-  removeNotification: (id: string) => { dispatch(NotificationActions.remove(id)); }
+  removeNotification: (id: string) => { dispatch(NotificationActions.beginRemove(id)); }
 });
 
 const mapStateToProps = () => ({});
