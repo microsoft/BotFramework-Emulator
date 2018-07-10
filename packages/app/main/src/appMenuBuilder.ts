@@ -175,7 +175,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
         label: 'Theme',
         submenu: [
           { label: 'Light', type: 'radio', checked: true },
-          { label: 'Dark', type: 'radio', click: (...args) => {debugger;} },
+          { label: 'Dark', type: 'radio' },
           { label: 'High contrast', type: 'radio' }
         ]
       }
