@@ -33,11 +33,12 @@
 
 import * as fse from 'fs-extra';
 
-export const readFileSync = (path4: string): string => {
+export const readFileSync = (path: string): string => {
   try {
-    return fse.readFileSync(path4, 'utf-8');
+    const contents = fse.readFileSync(path, 'utf-8');
+    return contents.replace('\uFEFF', '');
   } catch (e) {
-    console.error(`Error reading file ${path4}: ${e}`);
+    console.error(`Error reading file ${path}: ${e}`);
     return '';
   }
 };
