@@ -33,7 +33,6 @@
 
 import { css } from 'glamor';
 import * as React from 'react';
-
 import { Colors, Fonts, Splitter } from '@bfemulator/ui-react';
 import { ExplorerBar } from './explorer';
 import { MDI } from './mdi';
@@ -43,6 +42,8 @@ import * as Constants from '../../constants';
 import { StatusBar } from './statusBar';
 import { StoreVisualizer } from '../debug/storeVisualizer';
 import { Editor } from '../../data/reducer/editor';
+import store from '../../data/store';
+import * as ExplorerActions from '../../data/action/explorerActions';
 
 css.global('html, body, #root', {
   backgroundColor: Colors.APP_BACKGROUND_DARK,
@@ -174,7 +175,7 @@ export class Main extends React.Component<MainProps, MainState> {
           <NavBar selection={ this.props.navBarSelection } showingExplorer={ this.props.showingExplorer }/> }
           <div className="workbench">
             <Splitter orientation={ 'vertical' } primaryPaneIndex={ 0 } minSizes={ { 0: 40, 1: 40 } }
-                      initialSizes={ { 0: 210 } }>
+                      initialSizes={ { 0: 210 } } onSizeChange={ this.checkExplorerSize }>
               { workbenchChildren }
             </Splitter>
           </div>
@@ -185,5 +186,16 @@ export class Main extends React.Component<MainProps, MainState> {
         <StoreVisualizer enabled={ false }/>
       </div>
     );
+  }
+
+  /** Called when the splitter between the editor and explorer panes is moved */
+  private checkExplorerSize(sizes: { absolute: number, percentage: number }[]): void {
+    if (sizes.length) {
+      const explorerSize = sizes[0];
+      const minExplorerWidth = 50;
+      if (explorerSize.absolute < minExplorerWidth) {
+        store.dispatch(ExplorerActions.show(false));
+      }
+    }
   }
 }
