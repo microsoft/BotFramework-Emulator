@@ -47,7 +47,7 @@ export async function sendNotificationToClient(
 
   // invoke command on client side that grabs notification from the client side and adds
   // it to the notification manager
-  await commandService.remoteCall('add-notification');
+  await commandService.remoteCall(SharedConstants.Commands.Notifications.Add);
 
   // remove the notification from the global object
   deleteGlobal(SharedConstants.NOTIFICATION_FROM_MAIN);

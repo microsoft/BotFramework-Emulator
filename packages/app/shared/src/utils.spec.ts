@@ -132,5 +132,5 @@ describe('utility function tests', () => {
     expect(notif.title).toBe('someNotification');
     expect(notif.message).toBe('someMessage');
     expect(notif.type).toBe(NotificationType.Info);
-  })
+  });
 });

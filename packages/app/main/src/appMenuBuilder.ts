@@ -35,10 +35,11 @@ import * as Electron from 'electron';
 
 import { mainWindow } from './main';
 import { AppUpdater, UpdateStatus } from './appUpdater';
-import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
+import { BotInfo, SharedConstants, newNotification, NotificationType } from '@bfemulator/app-shared';
 import * as jsonpath from 'jsonpath';
 import { ConversationService } from './services/conversationService';
 import { getStore } from './data-v2/store';
+import { sendNotificationToClient } from './utils/sendNotificationToClient';
 
 export interface AppMenuBuilder {
   menuTemplate: Electron.MenuItemConstructorOptions[];
@@ -152,6 +153,14 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
         label: 'Close Bot',
         click: () => {
           mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.Close);
+        }
+      },
+      {
+        label: 'Add notification',
+        click: () => {
+          const notification = newNotification('I am a notification!', 'This is my message!', NotificationType.Info);
+          notification.addButton('Make cat noise', () => console.log('meow :3'));
+          sendNotificationToClient(notification, mainWindow.commandService);
         }
       }];
 

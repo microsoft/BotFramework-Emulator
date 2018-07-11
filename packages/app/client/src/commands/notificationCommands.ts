@@ -31,28 +31,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ExtensionManager } from '../extensions';
-import * as LogService from '../platform/log/logService';
-import * as SettingsService from '../platform/settings/settingsService';
-import { registerCommands as registerBotCommands } from './botCommands';
-import { registerCommands as registerElectronCommands } from './electronCommands';
-import { registerCommands as registerEmulatorCommands } from './emulatorCommands';
-import { registerCommands as registerFileCommands } from './fileCommands';
-import { registerCommands as registerMiscCommands } from './miscCommands';
-import { registerCommands as registerNotificationCommands } from './notificationCommands';
-import { registerCommands as registerUICommands } from './uiCommands';
+import store from '../data/store';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
+import { Notification } from '@bfemulator/app-shared';
+import { getGlobal } from '../utils/getGlobal';
+import * as NotificationActions from '../data/action/notificationActions';
 
-/** Registers all commands */
-export function registerAllCommands(commandRegistry: CommandRegistryImpl) {
-  LogService.registerCommands(commandRegistry);
-  SettingsService.registerCommands(commandRegistry);
-  ExtensionManager.registerCommands(commandRegistry);
-  registerBotCommands(commandRegistry);
-  registerElectronCommands(commandRegistry);
-  registerEmulatorCommands(commandRegistry);
-  registerFileCommands(commandRegistry);
-  registerMiscCommands(commandRegistry);
-  registerNotificationCommands(commandRegistry);
-  registerUICommands(commandRegistry);
+/** Registers notification commands */
+export function registerCommands(commandRegistry: CommandRegistryImpl) {
+  const Commands = SharedConstants.Commands.Notifications;
+  // ---------------------------------------------------------------------------
+  // Adds a notification to the store / notification manager
+  commandRegistry.registerCommand(Commands.Add, () => {
+    const notification: Notification = getGlobal(SharedConstants.NOTIFICATION_FROM_MAIN);
+    store.dispatch(NotificationActions.beginAdd(notification));
+  });
 }

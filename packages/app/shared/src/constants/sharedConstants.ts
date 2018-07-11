@@ -33,6 +33,7 @@
 
 export namespace SharedConstants {
   export const TEMP_BOT_IN_MEMORY_PATH: string = 'TEMP_BOT_IN_MEMORY';
+  export const NOTIFICATION_FROM_MAIN = 'NOTIFICATION_FROM_MAIN';
 
   /** Names of commands used in both main and client */
   export namespace Commands {
@@ -108,6 +109,10 @@ export namespace SharedConstants {
 
     export namespace Misc {
       export const GetStoreState: string = 'store:get-state';
+    }
+
+    export namespace Notifications {
+      export const Add: string = 'notification:add';
     }
 
     export namespace OAuth {
