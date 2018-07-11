@@ -39,6 +39,7 @@ import { Column, LargeHeader, PrimaryButton, Row, SmallHeader, TruncateText } fr
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { GenericDocument } from '../../layout';
 import { RootState } from '../../../data/store';
+import { SharedConstants } from '../../../../../shared/src/constants';
 
 interface WelcomePageProps {
   documentId?: string;
@@ -47,15 +48,15 @@ interface WelcomePageProps {
 
 class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
   onNewBotClick = () => {
-    CommandServiceImpl.call('bot-creation:show').catch();
+    CommandServiceImpl.call(SharedConstants.Commands.UI.ShowBotCreationDialog).catch();
   }
 
   onOpenBotClick = () => {
-    CommandServiceImpl.call('bot:browse-open').catch();
+    CommandServiceImpl.call(SharedConstants.Commands.Bot.OpenBrowse).catch();
   }
 
   onBotClick = (_e: any, path) => {
-    CommandServiceImpl.call('bot:switch', path).catch();
+    CommandServiceImpl.call(SharedConstants.Commands.Bot.Switch, path).catch();
   }
 
   render() {
