@@ -7,15 +7,18 @@
   display: inline-block;
   width: 100%;
 }
-:global{
+
+:global {
   #right {
     float: right;
     display: block;
   }
+
   #appVersion {
     padding-right: 16px;
     color: var(--neutral-3);
   }
+
   #appSlot {
     padding-right: 6px;
     color: var(--neutral-3);
@@ -33,6 +36,5 @@
   #left {
     display: block;
     float: left;
-
   }
 }
