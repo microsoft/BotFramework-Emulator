@@ -120,12 +120,19 @@ describe('Chat reducer tests', () => {
 
   it('should create a new conversation', () => {
     const action = newConversation(testChatId, { testing: true });
-    const state = chat(DEFAULT_STATE, action);
+    const startingState = {
+      ...DEFAULT_STATE,
+      chats: {
+        ...DEFAULT_STATE.chats,
+        [testChatId]: {}
+      }
+    };
+    const endingState = chat(startingState, action);
     const expectedDoc = {
-      ...state.chats[testChatId],
+      ...endingState.chats[testChatId],
       testing: true
     };
-    expect(state.chats[testChatId]).toEqual(expectedDoc);
+    expect(endingState.chats[testChatId]).toEqual(expectedDoc);
   });
 
   it('should append to the log', () => {
@@ -141,11 +148,21 @@ describe('Chat reducer tests', () => {
         }
       ]
     };
-
     const action = appendToLog(testChatId, logEntry);
-    const state = chat(DEFAULT_STATE, action);
-    expect(state.chats[testChatId].log.entries[0]).toBeTruthy();
-    expect(state.chats[testChatId].log.entries[0]).toEqual(logEntry);
+    const startingState = {
+      ...DEFAULT_STATE,
+      chats: {
+        ...DEFAULT_STATE.chats,
+        [testChatId]: {
+          log: {
+            entries: []
+          }
+        }
+      }
+    };
+    const endingState = chat(startingState, action);
+    expect(endingState.chats[testChatId].log.entries[0]).toBeTruthy();
+    expect(endingState.chats[testChatId].log.entries[0]).toEqual(logEntry);
   });
 
   it('should clear the log', () => {
@@ -161,8 +178,19 @@ describe('Chat reducer tests', () => {
         }
       ]
     };
+    const startingState = {
+      ...DEFAULT_STATE,
+      chats: {
+        ...DEFAULT_STATE.chats,
+        [testChatId]: {
+          log: {
+            entries: []
+          }
+        }
+      }
+    };
 
-    let state = chat(DEFAULT_STATE, appendToLog(testChatId, logEntry));
+    let state = chat(startingState, appendToLog(testChatId, logEntry));
     expect(state.chats[testChatId].log.entries.length).toBeGreaterThan(0);
     const action = clearLog(testChatId);
     state = chat(state, action);
@@ -171,9 +199,16 @@ describe('Chat reducer tests', () => {
 
   it('should set inspector objects', () => {
     const action = setInspectorObjects(testChatId, { testing: true });
-    const state = chat(DEFAULT_STATE, action);
-    expect(state.chats[testChatId].inspectorObjects.length).toBeGreaterThan(0);
-    expect(state.chats[testChatId].inspectorObjects[0]).toEqual({ testing: true });
+    const startingState = {
+      ...DEFAULT_STATE,
+      chats: {
+        ...DEFAULT_STATE.chats,
+        [testChatId]: {}
+      }
+    };
+    const endingState = chat(startingState, action);
+    expect(endingState.chats[testChatId].inspectorObjects.length).toBeGreaterThan(0);
+    expect(endingState.chats[testChatId].inspectorObjects[0]).toEqual({ testing: true });
   });
 
   it('should reset state on a "close all" editor action', () => {

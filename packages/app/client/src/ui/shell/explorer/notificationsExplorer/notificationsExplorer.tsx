@@ -40,6 +40,13 @@ import * as NotificationActions from '../../../../data/action/notificationAction
 import { Colors } from '@bfemulator/ui-react';
 import { css } from 'glamor';
 
+const CSS = css({
+  padding: 0,
+  maxHeight: 'calc(100% - 60px)',
+  overflowY: 'auto',
+  margin: 0
+});
+
 interface NotificationExplorerProps {
   notifications?: string[];
   clearNotifications?: () => void;
@@ -60,7 +67,7 @@ class NotificationsExplorerComp extends React.Component<NotificationExplorerProp
     // max-height: 100% of explorer pane - 20px (Clear all button height) - 40px (Explorer title height)
     return (
       <>
-        <ul style={{ padding: 0, maxHeight: 'calc(100% - 60px)', overflowY: 'auto', margin: 0 }}>
+        <ul { ...CSS }>
           {
             notifications.map(n => {
               const notification = this._notificationManager.notificationStore[n];
@@ -74,7 +81,7 @@ class NotificationsExplorerComp extends React.Component<NotificationExplorerProp
   }
 
   private renderClearAllButton = (): JSX.Element => {
-    const CSS = css({
+    const clearCss = css({
       display: 'block',
       textAlign: 'right',
       marginRight: '8px',
@@ -90,7 +97,7 @@ class NotificationsExplorerComp extends React.Component<NotificationExplorerProp
       }
     });
 
-    return <a { ...CSS }
+    return <a { ...clearCss }
               onClick={ () => this.props.clearNotifications() }
               href="javascript:void(0);">
               Clear all

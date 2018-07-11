@@ -31,19 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ForkEffect, takeEvery, put } from 'redux-saga/effects';
-import { NavBarActions, SelectNavBarAction } from '../action/navBarActions';
-import { markAllAsRead } from '../action/notificationActions';
+import { markNotificationsAsRead } from './navBarSagas';
+import { select } from '../action/navBarActions';
 import * as Constants from '../../constants';
+import { markAllAsRead } from '../action/notificationActions';
+import { put } from 'redux-saga/effects';
 
-/** Marks all notifications as read if the notifications pane is opened */
-export function* markNotificationsAsRead(action: SelectNavBarAction): IterableIterator<any> {
-  const navBarSelection = action.payload.selection;
-  if (navBarSelection === Constants.NAVBAR_NOTIFICATIONS) {
-    yield put(markAllAsRead());
-  }
-}
-
-export function* navBarSagas(): IterableIterator<ForkEffect> {
-  yield takeEvery(NavBarActions.select, markNotificationsAsRead);
-}
+describe('Nav bar sagas', () => {
+  test('markNotificationsAsRead()', () => {
+    const gen = markNotificationsAsRead(select(Constants.NAVBAR_NOTIFICATIONS));
+    expect(gen.next().value).toEqual(put(markAllAsRead()));
+  });
+});

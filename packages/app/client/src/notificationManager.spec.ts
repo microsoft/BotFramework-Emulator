@@ -31,19 +31,42 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ForkEffect, takeEvery, put } from 'redux-saga/effects';
-import { NavBarActions, SelectNavBarAction } from '../action/navBarActions';
-import { markAllAsRead } from '../action/notificationActions';
-import * as Constants from '../../constants';
+import { NotificationManager } from './notificationManager';
+import { NotificationImpl } from '@bfemulator/app-shared';
 
-/** Marks all notifications as read if the notifications pane is opened */
-export function* markNotificationsAsRead(action: SelectNavBarAction): IterableIterator<any> {
-  const navBarSelection = action.payload.selection;
-  if (navBarSelection === Constants.NAVBAR_NOTIFICATIONS) {
-    yield put(markAllAsRead());
-  }
-}
+describe('NotificationManager class', () => {
+  test('initialization', () => {
+    const manager = NotificationManager.getInstance();
+    expect(manager).toBeTruthy();
+    expect(manager.notificationStore).toEqual({});
+  });
 
-export function* navBarSagas(): IterableIterator<ForkEffect> {
-  yield takeEvery(NavBarActions.select, markNotificationsAsRead);
-}
+  test('adding a notification', () => {
+    const manager = NotificationManager.getInstance();
+    const notification = new NotificationImpl();
+    manager.addNotification(notification);
+
+    expect(manager.notificationStore[notification.id]).toBe(notification);
+  });
+
+  test('removing a notification', () => {
+    const manager = NotificationManager.getInstance();
+    const notification = new NotificationImpl();
+    manager.addNotification(notification);
+
+    expect(manager.notificationStore[notification.id]).toBe(notification);
+
+    manager.removeNotification(notification.id);
+
+    expect(manager.notificationStore[notification.id]).toBeFalsy();
+  });
+
+  test('clearing notifications', () => {
+    const manager = NotificationManager.getInstance();
+    const notification = new NotificationImpl();
+    manager.addNotification(notification);
+    manager.clearNotifications();
+
+    expect(manager.notificationStore).toEqual({});
+  });
+});

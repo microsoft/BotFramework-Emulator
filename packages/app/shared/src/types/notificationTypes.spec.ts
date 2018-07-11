@@ -31,19 +31,30 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ForkEffect, takeEvery, put } from 'redux-saga/effects';
-import { NavBarActions, SelectNavBarAction } from '../action/navBarActions';
-import { markAllAsRead } from '../action/notificationActions';
-import * as Constants from '../../constants';
+import { NotificationImpl } from './notificationTypes';
 
-/** Marks all notifications as read if the notifications pane is opened */
-export function* markNotificationsAsRead(action: SelectNavBarAction): IterableIterator<any> {
-  const navBarSelection = action.payload.selection;
-  if (navBarSelection === Constants.NAVBAR_NOTIFICATIONS) {
-    yield put(markAllAsRead());
-  }
-}
+describe('NotificationImpl class', () => {
+  test('initialization', () => {
+    const notif1 = new NotificationImpl();
+    const notif2 = new NotificationImpl();
 
-export function* navBarSagas(): IterableIterator<ForkEffect> {
-  yield takeEvery(NavBarActions.select, markNotificationsAsRead);
-}
+    expect(notif1.id).not.toBeFalsy();
+    expect(notif1.timestamp).not.toBeFalsy();
+    expect(notif1.buttons).not.toBeFalsy();
+    expect(notif1.buttons).toHaveLength(0);
+
+    expect(notif1.id).not.toBe(notif2.id);
+  });
+
+  test('addButton()', () => {
+    const notif = new NotificationImpl();
+    notif.addButton('button1');
+    notif.addButton('button2', (a: number, b: number) => a + b);
+
+    expect(notif.buttons).toHaveLength(2);
+    expect(notif.buttons[0].text).toBe('button1');
+    expect(notif.buttons[0].onClick).toBeFalsy();
+    expect(notif.buttons[1].text).toBe('button2');
+    expect(notif.buttons[1].onClick(1, 2)).toBe(3);
+  });
+});

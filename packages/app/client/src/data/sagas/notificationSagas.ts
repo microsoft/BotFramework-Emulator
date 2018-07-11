@@ -45,29 +45,29 @@ import { ForkEffect, takeEvery, call, put } from 'redux-saga/effects';
 /** Adds a notification to the notification manager's store then
  *  adds it to the state store
  */
-export function* addNotification(action: BeginAddNotificationAction) {
+export function* addNotification(action: BeginAddNotificationAction): IterableIterator<any> {
   const { notification } = action.payload;
-  const instance = yield call(NotificationManager.getInstance.bind(NotificationManager));
-  yield call(instance.addNotification.bind(instance), notification);
+  const instance = yield call([NotificationManager, NotificationManager.getInstance]);
+  yield call([instance, instance.addNotification], notification);
   yield put(finishAdd(notification));
 }
 
 /** Clears all notifications from the notification manager's store then
  *  clears all notifications from the state store
  */
-export function* clearNotifications() {
-  const instance = yield call(NotificationManager.getInstance.bind(NotificationManager));
-  yield call(instance.clearNotifications.bind(instance));
+export function* clearNotifications(): IterableIterator<any> {
+  const instance = yield call([NotificationManager, NotificationManager.getInstance]);
+  yield call([instance, instance.clearNotifications]);
   yield put(finishClear());
 }
 
 /** Removes a single notification from the notification manager's store then
  *  removes it from the state store
  */
-export function* removeNotification(action: BeginRemoveNotificationAction) {
+export function* removeNotification(action: BeginRemoveNotificationAction): IterableIterator<any> {
   const { id: notificationId } = action.payload;
-  const instance = yield call(NotificationManager.getInstance.bind(NotificationManager));
-  yield call(instance.removeNotification.bind(instance), notificationId);
+  const instance = yield call([NotificationManager, NotificationManager.getInstance]);
+  yield call([instance, instance.removeNotification], notificationId);
   yield put(finishRemove(notificationId));
 }
 
