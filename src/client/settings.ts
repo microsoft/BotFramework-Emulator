@@ -81,6 +81,7 @@ export interface IAddressBarState {
     selectedBot: IBot,
     showAbout: boolean,
     showAppSettings: boolean,
+    showCustomEventDialog: boolean,
     showConversationSettings: boolean,
     showSearchResults: boolean,
     showBotCreds: boolean,
@@ -162,6 +163,7 @@ export const addressBarDefault: IAddressBarState = {
     showAbout: false,
     showAppSettings: false,
     showConversationSettings: false,
+    showCustomEventDialog: false,
     showSearchResults: false,
     showBotCreds: false,
     hasFocus: false

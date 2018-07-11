@@ -68,6 +68,7 @@ export class EmulatorController {
         server.router.del('/emulator/:conversationId/contacts', this.contactRemoved);
         server.router.post('/emulator/:conversationId/typing', this.typing);
         server.router.post('/emulator/:conversationId/ping', this.ping);
+        server.router.post('/emulator/:conversationId/customEvent', jsonBodyParser(), this.customEvent);
         server.router.del('/emulator/:conversationId/userdata', this.deleteUserData);
         server.router.post('/emulator/:conversationId/invoke/updateShippingAddress', jsonBodyParser(), this.updateShippingAddress);
         server.router.post('/emulator/:conversationId/invoke/updateShippingOption', jsonBodyParser(), this.updateShippingOption);
@@ -162,6 +163,18 @@ export class EmulatorController {
             conversation.sendPing();
             res.send(HttpStatus.OK);
             res.end();
+        } catch (err) {
+            ResponseTypes.sendErrorResponse(req, res, next, err);
+        }
+    }
+
+    static customEvent = (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+        try {
+            const conversation = getConversation(req.params.conversationId);
+            conversation.postActivityToBot(req.body, true, () => {
+                res.send(HttpStatus.OK);
+                res.end();
+            });
         } catch (err) {
             ResponseTypes.sendErrorResponse(req, res, next, err);
         }

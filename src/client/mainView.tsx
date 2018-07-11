@@ -41,7 +41,7 @@ import { AddressBar } from './addressBar/addressBar';
 import { InspectorView } from './inspectorView'
 import { LogView } from './logView';
 import { IUser } from '../types/userTypes';
-import { AppSettingsDialog } from './dialogs/appSettingsDialog';
+import { AppSettingsDialog, CustomEventDialog } from './dialogs';
 import * as Constants from './constants';
 import { Emulator } from './emulator';
 import { BotEmulatorContext } from './botEmulatorContext';
@@ -345,6 +345,7 @@ export class MainView extends React.Component<{}, {}> {
                     </Splitter>
                 </div>
                 <AppSettingsDialog />
+                <CustomEventDialog />
             </div>
         );
     }

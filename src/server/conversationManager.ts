@@ -109,7 +109,6 @@ export class Conversation {
         activity.conversation = activity.conversation || { id: this.conversationId };
     }
 
-
     /**
      * Sends the activity to the conversation's bot.
      */
@@ -171,6 +170,7 @@ export class Conversation {
                     }
                 }
             }
+            
             let handleError = (err) => {
                 log.error('->', log.makeInspectorLink("POST", activity), err.message);
             }

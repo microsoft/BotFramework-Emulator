@@ -35,6 +35,7 @@ import * as request from 'request';
 import * as http from 'http';
 import { getSettings } from './settings';
 import * as Payment from '../types/paymentTypes';
+import { IEventActivity } from '../types/activityTypes';
 
 export class Emulator {
     public static serviceUrl: string;
@@ -45,6 +46,16 @@ export class Emulator {
             url: `${this.serviceUrl}/emulator/${settings.conversation.conversationId}/users`,
             method: "POST",
             json: [{ name, id }]
+        };
+        request(options);
+    }
+
+    public static customEvent(eventActivity: IEventActivity) {
+        const settings = getSettings();
+        let options: request.OptionsWithUrl = {
+            url: `${this.serviceUrl}/emulator/${settings.conversation.conversationId}/customEvent`,
+            method: "POST",
+            json: eventActivity
         };
         request(options);
     }
