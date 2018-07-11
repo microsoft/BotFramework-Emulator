@@ -31,27 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { frameworkDefault } from '@bfemulator/app-shared';
+import { Bot } from '@bfemulator/app-shared';
+import { BotAction } from '../actions/botActions';
 
-export type FrameworkAction = {
-  type: 'Framework_Set',
-  state: {
-    ngrokPath: string,
-    bypassNgrokLocalhost: boolean,
-    stateSizeLImit: number,
-    use10Tokens: boolean,
-    useCodeValidation: boolean
-  }
-};
-
-export const frameworkReducer: /*Reducer<FrameworkSettings>*/ any = (
-  state = frameworkDefault,
-  action: FrameworkAction
-) => {
+export function botsReducer(state: Bot[] = [], action: BotAction<Bot[]>) {
   switch (action.type) {
-    case 'Framework_Set':
-      return Object.assign({}, state, action.state);
     default:
       return state;
   }
-};
+}

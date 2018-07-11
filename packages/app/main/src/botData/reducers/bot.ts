@@ -32,7 +32,7 @@
 //
 
 import { BotConfigWithPath, applyBotConfigOverrides, botsAreTheSame } from '@bfemulator/sdk-shared';
-import { BotAction, BotActions } from '../action/bot';
+import { BotAction, BotActions } from '../actions/botActions';
 import { BotInfo } from '@bfemulator/app-shared';
 
 export interface BotState {

@@ -55,8 +55,7 @@ CommandServiceImpl.init();
 SettingsService.init();
 LogService.init();
 
-const registry = CommandRegistry;
-registerAllCommands(registry);
+registerAllCommands(CommandRegistry);
 
 // Start rendering the UI
 ReactDOM.render(

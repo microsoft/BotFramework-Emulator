@@ -72,7 +72,7 @@ const defaultConfig = {
               modules: true,
               sass: false,
               namedExport: true,
-              sourcemaps:true,
+              sourcemaps: true,
               banner: '// This is a generated file. Changes are likely to result in being overwritten'
             }
           },
@@ -114,7 +114,13 @@ const defaultConfig = {
     new HardSourceWebpackPlugin(),
     new CopyWebpackPlugin([
       { from: './src/inspector-preload.js', to: './' },
-      { from: './src/ui/styles/themes', to: 'themes/' },
+      { from: './src/index.html', to: './index.html' },
+      { from: './src/ui/styles/themes/light.css', to: 'themes/light.css' },
+      { from: './src/ui/styles/themes/dark.css', to: 'themes/dark.css' },
+      { from: './src/ui/styles/themes/high-contrast.css', to: 'themes/high-contrast.css' },
+      { from: './src/ui/styles/themes/neutral.css', to: 'css/neutral.css' },
+      { from: './src/ui/styles/themes/fonts.css', to: 'css/fonts.css' },
+      { from: './src/ui/styles/themes/redline.css', to: 'css/redline.css' },
       { from: require.resolve('@fuselab/ui-fabric/themes/seti/seti.woff'), to: 'external/media' },
     ]),
     new DefinePlugin({

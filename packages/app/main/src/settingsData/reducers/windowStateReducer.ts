@@ -31,51 +31,43 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { usersDefault } from '@bfemulator/app-shared';
-import { User } from '@bfemulator/sdk-shared';
+import { windowStateDefault, WindowStateSettings } from '@bfemulator/app-shared';
+import {
+  REMEMBER_BOUNDS,
+  REMEMBER_THEME,
+  REMEMBER_ZOOM_LEVEL,
+  RememberBoundsPayload,
+  RememberThemePayload,
+  RememberZoomLevelPayload,
+  WindowStateAction,
+  WindowStatePayload
+} from '../actions/windowStateActions';
 
-export type UsersAction = {
-  type: 'Users_SetCurrentUser',
-  state: {
-    user: User
-  }
-} | {
-  type: 'Users_AddUsers',
-  state: {
-    users: User[]
-  }
-} | {
-  type: 'Users_RemoveUsers',
-  state: {
-    users: User[]
-  }
-};
-
-export const usersReducer: /*Reducer<UserSettings>*/ any = (
-  state = usersDefault,
-  action: UsersAction
-) => {
+export function windowStateReducer
+(state: WindowStateSettings = windowStateDefault, action: WindowStateAction<WindowStatePayload>) {
   switch (action.type) {
-    case 'Users_SetCurrentUser':
-      const usersById = Object.assign({}, state.usersById);
-      usersById[action.state.user.id] = action.state.user;
-      return Object.assign({}, { currentUserId: action.state.user.id, usersById });
-    case 'Users_AddUsers': {
-      let newUsersById = {};
-      for (let key in action.state.users) {
-        if (!action.state.users.hasOwnProperty(key)) {
-          continue;
-        }
-        let user = action.state.users[key];
-        newUsersById[user.id] = user;
-      }
-      return Object.assign({}, state, { usersById: newUsersById });
-    }
-    case 'Users_RemoveUsers': {
-      // Object.assign({}, state, { }
-      return state;
-    }
+
+    case REMEMBER_BOUNDS:
+      const bounds = action.state as RememberBoundsPayload;
+      return Object.assign({}, state, {
+        displayId: bounds.displayId,
+        top: bounds.top,
+        left: bounds.left,
+        width: bounds.width,
+        height: bounds.height
+      });
+
+    case REMEMBER_ZOOM_LEVEL:
+      const { zoomLevel } = action.state as RememberZoomLevelPayload;
+      return Object.assign({}, state, {
+        zoomLevel,
+      });
+
+    case REMEMBER_THEME:
+      const { theme } = action.payload as RememberThemePayload;
+      return Object.assign({}, state, { theme });
+
     default:
       return state;
   }
-};
+}

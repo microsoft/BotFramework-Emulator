@@ -40,7 +40,7 @@ import {
   saveBot,
   toSavableBot
 } from '../botHelpers';
-import * as BotActions from '../data-v2/action/bot';
+import * as BotActions from '../botData/actions/botActions';
 import {
   BotConfigWithPath,
   uniqueId,
@@ -53,7 +53,7 @@ import { emulator } from '../emulator';
 import { BotProjectFileWatcher } from '../botProjectFileWatcher';
 import { IConnectedService, IEndpointService, ServiceType } from 'msbot/bin/schema';
 import * as Path from 'path';
-import { getStore } from '../data-v2/store';
+import { getStore } from '../botData/store';
 
 const store = getStore();
 

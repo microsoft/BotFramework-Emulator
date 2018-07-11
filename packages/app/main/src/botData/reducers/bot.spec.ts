@@ -32,7 +32,7 @@
 //
 
 import { BotState, bot } from './bot';
-import { BotAction, load, setActive, setDirectory, close, mockAndSetActive } from '../action/bot';
+import { BotAction, load, setActive, setDirectory, close, mockAndSetActive } from '../actions/botActions';
 import { BotInfo } from '@bfemulator/app-shared';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 

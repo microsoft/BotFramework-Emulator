@@ -31,13 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { applyMiddleware, createStore, Store } from 'redux';
-import createPromiseMiddleware from 'redux-promise-middleware';
-import reducers from './reducer';
-import { DEFAULT_STATE, State } from './state';
-import thunk from 'redux-thunk';
+import { frameworkDefault, FrameworkSettings } from '@bfemulator/app-shared';
+import { FrameworkAction, SET_FRAMEWORK } from '../actions/frameworkActions';
 
-let store;
-export const getStore = (): Store<State> => {
-  return store || (store = applyMiddleware(createPromiseMiddleware(), thunk)(createStore)(reducers, DEFAULT_STATE));
-};
+export function frameworkReducer
+(state: FrameworkSettings = frameworkDefault, action: FrameworkAction<FrameworkSettings>) {
+  switch (action.type) {
+
+    case SET_FRAMEWORK:
+      return Object.assign({}, state, action.state);
+
+    default:
+      return state;
+  }
+}

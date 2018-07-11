@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as readTextFile from 'read-text-file';
+import * as fse from 'fs-extra';
 
 export const readFileSync = (path4: string): string => {
   try {
-    return readTextFile.readSync(path4);
+    return fse.readFileSync(path4, 'utf-8');
   } catch (e) {
     console.error(`Error reading file ${path4}: ${e}`);
     return '';

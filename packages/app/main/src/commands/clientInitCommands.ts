@@ -32,12 +32,12 @@
 //
 
 import { mainWindow } from '../main';
-import * as BotActions from '../data-v2/action/bot';
+import * as BotActions from '../botData/actions/botActions';
 import { emulator } from '../emulator';
 import { ExtensionManagerImpl } from '../extensions';
 import { Protocol } from '../constants';
 import { ProtocolHandler } from '../protocolHandler';
-import { getStore } from '../data-v2/store';
+import { getStore } from '../botData/store';
 import { getBotsFromDisk, readFileSync } from '../utils';
 import * as Path from 'path';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';

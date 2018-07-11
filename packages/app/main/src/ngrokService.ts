@@ -34,7 +34,7 @@
 import { promisify } from 'util';
 
 import { emulator } from './emulator';
-import { addSettingsListener, getStore } from './settings';
+import { getStore } from './settingsData/store';
 import { isLocalhostUrl } from './utils';
 import * as ngrok from './ngrok';
 import { mainWindow } from './main';
@@ -45,6 +45,8 @@ import {
   externalLinkItem,
   textItem
 } from '@bfemulator/emulator-core/lib/types/log/util';
+import { FrameworkSettings } from '@bfemulator/app-shared';
+let ngrokInstance: NgrokService;
 
 export class NgrokService {
   private _ngrokPath: string;
@@ -54,6 +56,10 @@ export class NgrokService {
   private _localhost: string;
   private _bypass: boolean;
   private _triedToSpawn: boolean;
+
+  constructor() {
+    return ngrokInstance || (ngrokInstance = this); // Singleton
+  }
 
   getServiceUrl(botUrl: string): string {
     if (botUrl && isLocalhostUrl(botUrl) && this._bypass) {
@@ -80,15 +86,15 @@ export class NgrokService {
     this.cacheHostAndPortSettings();
 
     await this.recycle();
+  }
 
-    addSettingsListener(async ({ framework: { bypassNgrokLocalhost, ngrokPath, localhost } }) => {
-      this.cacheHostAndPortSettings();
-      this._bypass = bypassNgrokLocalhost;
+  public async updateNgrokFromSettings(framework: FrameworkSettings) {
+    this.cacheHostAndPortSettings();
+    this._bypass = framework.bypassNgrokLocalhost;
 
-      if (this._ngrokPath !== ngrokPath) {
-        await this.recycle();
-      }
-    });
+    if (this._ngrokPath !== framework.ngrokPath) {
+      await this.recycle();
+    }
   }
 
   public async recycle() {

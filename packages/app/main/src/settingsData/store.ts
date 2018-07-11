@@ -32,37 +32,12 @@
 //
 
 import * as Electron from 'electron';
-import { Action, combineReducers, createStore, Store } from 'redux';
-import { frameworkReducer } from './reducers/frameworkReducer';
-import { botsReducer } from './reducers/botReducer';
-import { windowStateReducer } from './reducers/windowStateReducer';
-import { usersReducer } from './reducers/usersReducer';
-import { loadSettings, saveSettings } from './utils';
-import {
-  Bot,
-  FrameworkSettings,
-  PersistentSettings,
-  Settings,
-  settingsDefault,
-  UserSettings,
-  WindowStateSettings
-} from '@bfemulator/app-shared';
-
-export class PersistentSettingsImpl implements PersistentSettings {
-  public framework: FrameworkSettings;
-  public bots: Bot[];
-  public windowState: WindowStateSettings;
-  public users: UserSettings;
-
-  constructor(settings: Settings) {
-    Object.assign(this, {
-      framework: settings.framework,
-      bots: settings.bots,
-      windowState: settings.windowState,
-      users: settings.users
-    });
-  }
-}
+import { Action, applyMiddleware, createStore, Store } from 'redux';
+import { getThemes, loadSettings, saveSettings } from '../utils';
+import sagaMiddlewareFactory from 'redux-saga';
+import { PersistentSettings, Settings, settingsDefault, } from '@bfemulator/app-shared';
+import reducers from './reducers';
+import { settingsSagas } from './sagas/settingsSagas';
 
 let started = false;
 let store: Store<Settings>;
@@ -70,42 +45,32 @@ let store: Store<Settings>;
 export const getStore = (): Store<Settings> => {
   console.assert(started, 'getStore() called before startup!');
   if (!store) {
+    const sagaMiddleWare = sagaMiddlewareFactory();
     // Create the settings store with initial settings from disk.
-    const initialSettings = loadSettings('server.json', settingsDefault);
-    // TODO: Validate the settings still apply.
-    const reducers = {
-      framework: frameworkReducer,
-      bots: botsReducer,
-      windowState: windowStateReducer,
-      users: usersReducer
-    };
-    store = createStore(combineReducers<Settings>(reducers), initialSettings);
+    const initialSettings = loadSettings<Settings>('server.json', settingsDefault);
+    initialSettings.windowState.availableThemes = getThemes();
+
+    store = createStore(reducers, initialSettings, applyMiddleware(saveSettingsMiddleware, sagaMiddleWare));
+    sagaMiddleWare.run(settingsSagas);
   }
   return store;
+};
+
+let saveTimer;
+const saveSettingsMiddleware = s => next => action => {
+  const result = next(action);
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(function () {
+    saveSettings<PersistentSettings>('server.json', s.getState());
+  }, 1000);
+
+  return result;
 };
 
 export const dispatch = <T extends Action>(obj: any) => getStore().dispatch<T>(obj);
 
 export const getSettings = () => {
   return new Settings(getStore().getState());
-};
-
-export type SettingsActor = (settings: Settings) => void;
-
-let acting = false;
-let actors: SettingsActor[] = [];
-
-export const addSettingsListener = (actor: SettingsActor) => {
-  actors.push(actor);
-  let isSubscribed = true;
-  return function unsubscribe() {
-    if (!isSubscribed) {
-      return;
-    }
-    isSubscribed = false;
-    let index = actors.indexOf(actor);
-    actors.splice(index, 1);
-  };
 };
 
 export const startup = () => {
@@ -120,17 +85,6 @@ export const startup = () => {
 
   // Guard against calling getSettings before startup.
   started = true;
-  // When changes to settings are made, save to disk.
-  let saveTimer;
-  getStore().subscribe(() => {
-    if (!acting) {
-      acting = true;
-      actors.forEach(actor => actor(getSettings()));
-      acting = false;
-    }
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(() => saveSettings('server.json', new PersistentSettingsImpl(getStore().getState())), 1000);
-  });
 };
 
 export const authenticationSettings = {
