@@ -31,23 +31,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Colors, Fonts, GlobalCss, Splitter } from '@bfemulator/ui-react';
+import { Splitter } from '@bfemulator/ui-react';
 import { InspectorHost } from '@bfemulator/sdk-client';
-import { css } from 'glamor';
 import { IBotConfig, IDispatchService, ILuisService, ServiceType, IConnectedService } from 'msbot/bin/schema';
 import * as React from 'react';
 import { Component } from 'react';
 import ReactJson from 'react-json-view';
 import AppStateAdapter from './Adapters/AppStateAdapter';
-import { ButtonSelected, ControlBar } from './Controls/ControlBar';
-import Editor from './Controls/Editor';
-import Header from './Controls/Header';
+import { ButtonSelected, ControlBar } from './Controls/ControlBar/ControlBar';
+import Editor from './Controls/Editor/Editor';
+import Header from './Controls/Header/Header';
 import MockState from './Data/MockData';
 import { AppInfo } from './Luis/AppInfo';
 import LuisClient from './Luis/Client';
 import { IntentInfo } from './Luis/IntentInfo';
 import { LuisAppInfo } from './Models/LuisAppInfo';
 import { LuisTraceInfo } from './Models/LuisTraceInfo';
+
+import * as styles from './App.scss';
 
 let $host: InspectorHost = (window as any).host;
 const LuisApiBasePath = 'https://westus.api.cognitive.microsoft.com/luis/api/v2.0';
@@ -57,30 +58,6 @@ const AccessoryDefaultState = 'default';
 const AccessoryWorkingState = 'working';
 
 let persistentStateKey = Symbol('persistentState').toString();
-
-let globalCss = {
-  whiteSpace: 'nowrap',
-  width: '622px'
-};
-
-GlobalCss.setCss(globalCss);
-
-let appCss = {
-  height: '100%',
-  fontSize: '12px',
-  padding: '5px'
-};
-
-let jsonViewerCss = {
-    overflowY: 'auto',
-    paddingTop: '10px',
-    paddingBottom: '10px',
-    height: '95%',
-    backgroundColor: Colors.APP_BACKGROUND_DARK,
-    fontFamily: Fonts.FONT_FAMILY_DEFAULT,
-  };
-
-const APP_CSS = css(appCss);
 
 interface AppState {
   traceInfo: LuisTraceInfo;
@@ -96,6 +73,15 @@ interface PersistentAppState {
   pendingTrain: boolean;
   pendingPublish: boolean;
 }
+
+let jsonViewerCss = {
+  overflowY: 'auto',
+  paddingTop: '10px',
+  paddingBottom: '10px',
+  height: '95%',
+  backgroundColor: 'var(--neutral-15)',
+  fontFamily: 'var(--default-font-family)'
+};
 
 class App extends Component<any, AppState> {
 
@@ -167,9 +153,9 @@ class App extends Component<any, AppState> {
         $host.setAccessoryState(TrainAccessoryId, AccessoryDefaultState);
         $host.setAccessoryState(PublichAccessoryId, AccessoryDefaultState);
         $host.enableAccessory(TrainAccessoryId, this.state.persistentState[this.state.id] &&
-                                                this.state.persistentState[this.state.id].pendingTrain);
+          this.state.persistentState[this.state.id].pendingTrain);
         $host.enableAccessory(PublichAccessoryId, this.state.persistentState[this.state.id] &&
-                                                  this.state.persistentState[this.state.id].pendingPublish);
+          this.state.persistentState[this.state.id].pendingPublish);
       });
 
       $host.on('accessory-click', async (id: string) => {
@@ -197,39 +183,39 @@ class App extends Component<any, AppState> {
 
   render() {
     return (
-      <div {...APP_CSS}>
+      <div className={ styles.app }>
         <Header
-          appId={this.state.traceInfo.luisModel.ModelID}
-          appName={this.state.appInfo.name}
-          slot={this.state.traceInfo.luisOptions.Staging ? 'Staging' : 'Production'}
-          version={this.state.appInfo.activeVersion}
+          appId={ this.state.traceInfo.luisModel.ModelID }
+          appName={ this.state.appInfo.name }
+          slot={ this.state.traceInfo.luisOptions.Staging ? 'Staging' : 'Production' }
+          version={ this.state.appInfo.activeVersion }
         />
         <ControlBar
-          setButtonSelected={this.setControlButtonSelected}
-          buttonSelected={this.state.controlBarButtonSelected}
+          setButtonSelected={ this.setControlButtonSelected }
+          buttonSelected={ this.state.controlBarButtonSelected }
         />
-          <Splitter orientation={'vertical'}
-                    primaryPaneIndex={0}
-                    minSizes={{ 0: 306, 1: 306 }}
-                    initialSizes={{ 0: 306 }}>
-            <ReactJson
-              name={this.state.controlBarButtonSelected === ButtonSelected.RecognizerResult ?
-                    'recognizerResult' :
-                    'luisResponse' }
-              src={this.state.controlBarButtonSelected === ButtonSelected.RecognizerResult ?
-                  this.state.traceInfo.recognizerResult :
-                  this.state.traceInfo.luisResult}
-              theme="monokai"
-              style={jsonViewerCss}
-            />
-            <Editor
-              recognizerResult={this.state.traceInfo.recognizerResult}
-              intentInfo={this.state.intentInfo}
-              intentReassigner={this.reassignIntent}
-              appInfo={this.state.appInfo}
-              traceId={this.state.id}
-            />
-          </Splitter>
+        <Splitter orientation={ 'vertical' }
+                  primaryPaneIndex={ 0 }
+                  minSizes={ { 0: 306, 1: 306 } }
+                  initialSizes={ { 0: 306 } }>
+          <ReactJson
+            name={ this.state.controlBarButtonSelected === ButtonSelected.RecognizerResult ?
+              'recognizerResult' :
+              'luisResponse' }
+            src={ this.state.controlBarButtonSelected === ButtonSelected.RecognizerResult ?
+              this.state.traceInfo.recognizerResult :
+              this.state.traceInfo.luisResult }
+            theme="monokai"
+            style={ jsonViewerCss }
+          />
+          <Editor
+            recognizerResult={ this.state.traceInfo.recognizerResult }
+            intentInfo={ this.state.intentInfo }
+            intentReassigner={ this.reassignIntent }
+            appInfo={ this.state.appInfo }
+            traceId={ this.state.id }
+          />
+        </Splitter>
       </div>
     );
   }
@@ -301,7 +287,7 @@ class App extends Component<any, AppState> {
       this.setAppPersistentState({
         pendingPublish: false,
         pendingTrain: false
-    });
+      });
     } catch (err) {
       $host.logger.error(err.message);
     }
@@ -309,22 +295,23 @@ class App extends Component<any, AppState> {
 
   private setAppPersistentState(persistentState: PersistentAppState) {
     this.state.persistentState[this.state.id] = persistentState;
-    this.setState({persistentState: this.state.persistentState});
+    this.setState({ persistentState: this.state.persistentState });
     localStorage.setItem(persistentStateKey, JSON.stringify(this.state.persistentState));
     $host.enableAccessory(TrainAccessoryId, persistentState.pendingTrain);
     $host.enableAccessory(PublichAccessoryId, persistentState.pendingPublish);
   }
 
-  private loadAppPersistentState(): {[key: string]: PersistentAppState} {
+  private loadAppPersistentState(): { [key: string]: PersistentAppState } {
     let persisted = localStorage.getItem(persistentStateKey);
     if (persisted !== null) {
       return JSON.parse(persisted);
     }
-    return { '': {
-      pendingTrain: false,
-      pendingPublish: false
-    }
-   };
+    return {
+      '': {
+        pendingTrain: false,
+        pendingPublish: false
+      }
+    };
   }
 }
 

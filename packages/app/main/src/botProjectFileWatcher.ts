@@ -38,8 +38,8 @@ import { exists, FSWatcher, readFile, Stats } from 'fs';
 import * as Path from 'path';
 import * as Chokidar from 'chokidar';
 import { getActiveBot, getBotInfoByPath, loadBotWithRetry } from './botHelpers';
-import * as BotActions from './data-v2/action/bot';
-import { getStore } from './data-v2/store';
+import * as BotActions from './botData/actions/botActions';
+import { getStore } from './botData/store';
 
 interface FileWatcher {
   watch: (botProjectDir: string) => void;

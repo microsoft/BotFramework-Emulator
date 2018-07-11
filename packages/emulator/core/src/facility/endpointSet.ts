@@ -94,6 +94,7 @@ export default class Endpoints {
     if (token && token.endpointId) {
       return this.get(token.endpointId);
     }
+    return null;
   }
 
   // TODO: Check if this can be deprecated, try to deprecate this

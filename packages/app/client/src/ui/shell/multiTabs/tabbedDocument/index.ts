@@ -31,9 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './contentOverlay';
-export * from './contentWrapper';
-export * from './leftContentOverlay';
-export * from './overlayStyle';
-export * from './rightContentOverlay';
+export * from './contentOverlay/contentOverlay';
+export * from './contentWrapper/contentWrapper';
+export * from './leftContentOverlay/leftContentOverlay';
+export * from './rightContentOverlay/rightContentOverlay';
 export * from './tabbedDocument';

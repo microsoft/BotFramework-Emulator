@@ -1,0 +1,75 @@
+.expandCollapse {
+  display: flex;
+  flex-flow: column nowrap;
+  height: 100%;
+  min-height: 22px;
+  overflow: hidden;
+
+  &[aria-expanded="true"] {
+    margin-bottom: 15px;
+  }
+
+  & > header {
+    background-color: var(--explorer-panel-group-title-bg);
+    color: var(--explorer-panel-group-title-color);
+    cursor: pointer;
+    display: flex;
+    font-size: 11px;
+    font-weight: 700;
+    height: 22px;
+    line-height: 22px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+    & > .actuator {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      padding-left: 8px;
+      text-decoration: none;
+      color: inherit;
+      &:focus {
+        position: relative;
+        &::after {
+          content: '';
+          position: absolute;
+          border: var(--focused-outline);
+          top: 0;
+          bottom: 0;
+          left: 0;
+          right: 0;
+        }
+      }
+      & > svg {
+        height: 12px;
+        width: 12px;
+        margin-right: 8px;
+        fill: var(--explorer-panel-group-title-color);
+      }
+
+      & .accessories {
+        margin: 0 0 0 auto;
+        height: 100%;
+        width: auto;
+
+        & > button {
+          background-color: transparent;
+          color: var(--neutral-5);
+          border: 0;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  & .body {
+    height: 100%;
+    overflow: auto;
+    position: relative;
+    & > section {
+      height: 100%;
+      display: flex;
+      flex-flow: column nowrap
+    }
+  }
+}

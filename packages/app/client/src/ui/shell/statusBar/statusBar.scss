@@ -1,0 +1,9 @@
+.statusBar {
+  background-color: var(--infoBg);
+  color: var(--neutral-11);
+  line-height: 22px;
+  min-height: 22px;
+  width: 100%;
+  align-self: flex-end;
+  flex: 1;
+}

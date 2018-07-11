@@ -35,7 +35,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import * as EditorActions from '../../../data/action/editorActions';
-import { Tab } from './tab';
+import { Tab } from './tab/tab';
 import { getTabGroupForDocument } from '../../../data/editorHelpers';
 import { RootState } from '../../../data/store';
 
@@ -55,7 +55,7 @@ class GenericTabComponent extends React.Component<GenericTabProps> {
   render() {
     return (
       <Tab active={ this.props.active } title={ this.props.title } onCloseClick={ this.onCloseClick }
-        documentId={ this.props.documentId } dirty={ this.props.dirty } />
+           documentId={ this.props.documentId } dirty={ this.props.dirty }/>
     );
   }
 

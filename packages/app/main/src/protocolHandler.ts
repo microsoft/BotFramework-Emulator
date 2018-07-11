@@ -43,12 +43,12 @@ import {
 import * as Path from 'path';
 import * as QueryString from 'querystring';
 import { Protocol } from './constants';
-import * as BotActions from './data-v2/action/bot';
+import * as BotActions from './botData/actions/botActions';
 import { mainWindow } from './main';
 import { ngrokEmitter, running } from './ngrok';
-import { getSettings } from './settings';
+import { getSettings } from './settingsData/store';
 import { emulator } from './emulator';
-import { getStore } from './data-v2/store';
+import { getStore } from './botData/store';
 
 enum ProtocolDomains {
   livechat,

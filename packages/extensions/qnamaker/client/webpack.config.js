@@ -1,15 +1,41 @@
-const { NodeEnvironmentPlugin } = require('webpack');
+const {
+  NodeEnvironmentPlugin,
+  NamedModulesPlugin,
+  HotModuleReplacementPlugin,
+  WatchIgnorePlugin } = require('webpack');
 const path = require('path');
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 module.exports = {
   entry: {
     qna: path.resolve('./src/index.tsx')
   },
 
+  target: 'electron-renderer',
+
   module: {
     rules: [
       {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader']
+        test: /\.scss$/,
+        use: [
+          'style-loader',
+          {
+            loader: 'typings-for-css-modules-loader',
+            options: {
+              localIdentName: '[local]__[hash:base64:5]',
+              modules: true,
+              sass: false,
+              namedExport: true,
+              sourcemaps:true,
+              banner: '// This is a generated file. Changes are likely to result in being overwritten'
+            }
+          },
+          'resolve-url-loader',
+          'sass-loader'
+        ]
+      },
+      {
+        test: /\.(png|jpg|gif|svg)$/,
+        use: [ 'file-loader' ]
       },
       {
         test: /\.tsx?$/,
@@ -47,6 +73,15 @@ module.exports = {
 
   externals: {},
   plugins: [
-    new NodeEnvironmentPlugin()
+    new NamedModulesPlugin(),
+    new HotModuleReplacementPlugin(),
+    new NodeEnvironmentPlugin(),
+    new HardSourceWebpackPlugin(),
+    new NodeEnvironmentPlugin(),
+    new WatchIgnorePlugin([
+      './build/**/*.*',
+      './public/**/*.*',
+      './src/**/*.d.ts',
+    ])
   ]
 };

@@ -1,6 +1,15 @@
 const path = require('path');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
-const { NodeEnvironmentPlugin, DllPlugin, DllReferencePlugin, NamedModulesPlugin, HotModuleReplacementPlugin, DefinePlugin } = webpack;
+const {
+  NodeEnvironmentPlugin,
+  DllPlugin,
+  DllReferencePlugin,
+  NamedModulesPlugin,
+  HotModuleReplacementPlugin,
+  DefinePlugin,
+  WatchIgnorePlugin
+} = webpack;
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
 const { npm_lifecycle_event = '' } = process.env;
@@ -13,18 +22,14 @@ const use = [
       plugins: ['react-hot-loader/babel'],
     },
   },
-  'awesome-typescript-loader',
+  'awesome-typescript-loader'
 ];
 const defaultConfig = {
   entry: {
-    index: path.resolve('./src/index.tsx')
+    index: require.resolve('./src/index.tsx')
   },
 
   target: 'electron-renderer',
-
-  node: {
-    fs: 'empty'
-  },
 
   stats: {
     warnings: false
@@ -38,9 +43,47 @@ const defaultConfig = {
         use: ['awesome-typescript-loader']
       },
       {
+        test: /\.css$/,
+        use: [
+          'style-loader',
+          'resolve-url-loader',
+          'css-loader'
+        ]
+      },
+      {
+        test: /\.(png|jpg|gif|svg|woff)$/,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 8192
+            }
+          }
+        ]
+      },
+      {
+        test: /\.scss$/,
+        use: [
+          'style-loader',
+          {
+            loader: 'typings-for-css-modules-loader',
+            options: {
+              localIdentName: '[local]__[hash:base64:5]',
+              modules: true,
+              sass: false,
+              namedExport: true,
+              sourcemaps: true,
+              banner: '// This is a generated file. Changes are likely to result in being overwritten'
+            }
+          },
+          'resolve-url-loader',
+          'sass-loader'
+        ]
+      },
+      {
         test: /\.tsx?$/,
         loader: 'tslint-loader',
-        options: { }
+        options: {}
       }
     ]
   },
@@ -68,7 +111,24 @@ const defaultConfig = {
     new NamedModulesPlugin(),
     new HotModuleReplacementPlugin(),
     new NodeEnvironmentPlugin(),
-    new HardSourceWebpackPlugin()
+    new HardSourceWebpackPlugin(),
+    new CopyWebpackPlugin([
+      { from: './src/inspector-preload.js', to: './' },
+      { from: './src/index.html', to: './index.html' },
+      { from: './src/ui/styles/themes/light.css', to: 'themes/light.css' },
+      { from: './src/ui/styles/themes/dark.css', to: 'themes/dark.css' },
+      { from: './src/ui/styles/themes/high-contrast.css', to: 'themes/high-contrast.css' },
+      { from: './src/ui/styles/themes/neutral.css', to: 'css/neutral.css' },
+      { from: './src/ui/styles/themes/fonts.css', to: 'css/fonts.css' },
+      { from: './src/ui/styles/themes/redline.css', to: 'css/redline.css' },
+      { from: require.resolve('@fuselab/ui-fabric/themes/seti/seti.woff'), to: 'external/media' },
+    ]),
+    new DefinePlugin({
+      DEV: JSON.stringify((npm_lifecycle_event.includes("dev")))
+    }),
+    new WatchIgnorePlugin([
+      './src/**/*.d.ts'
+    ])
   ]
 };
 

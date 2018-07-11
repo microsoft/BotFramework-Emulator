@@ -1,0 +1,8 @@
+.explorerBar {
+  background-color: var(--neutral-5);
+  height: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  position: relative;
+  box-shadow: var(--box-shadow-right);
+}

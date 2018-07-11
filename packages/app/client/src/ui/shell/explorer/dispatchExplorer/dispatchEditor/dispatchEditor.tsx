@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Modal, ModalActions, ModalContent, PrimaryButton, TextInputField } from '@bfemulator/ui-react';
+import { DefaultButton, Dialog, DialogContent, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
 import { DispatchService } from 'msbot/bin/models';
 import { IDispatchService } from 'msbot/bin/schema';
 import * as React from 'react';
@@ -101,30 +101,30 @@ export class DispatchEditor extends Component<DispatchEditorProps, DispatchEdito
     const valid = !nameError && !appIdError && !authoringKeyError && !versionError && !subscriptionKeyError;
 
     return (
-      <Modal title={title} detailedDescription={detailedDescription}
-        cancel={this.onCancelClick}>
-        <ModalContent>
-          <TextInputField value={name}
-            onChanged={this._textFieldHandlers.name} label="Name" required={true}
+      <Dialog title={ title } detailedDescription={ detailedDescription }
+              cancel={ this.onCancelClick }>
+        <DialogContent>
+          <TextField value={ name }
+                     onChanged={ this._textFieldHandlers.name } label="Name" required={ true }
           />
-          <TextInputField value={appId}
-            onChanged={this._textFieldHandlers.appId} label="Application Id" required={true}
+          <TextField value={ appId }
+                     onChanged={ this._textFieldHandlers.appId } label="Application Id" required={ true }
           />
-          <TextInputField value={authoringKey}
-            onChanged={this._textFieldHandlers.authoringKey} label="Authoring key" required={true}
+          <TextField value={ authoringKey }
+                     onChanged={ this._textFieldHandlers.authoringKey } label="Authoring key" required={ true }
           />
-          <TextInputField value={version}
-            onChanged={this._textFieldHandlers.version} label="Version" required={true}
+          <TextField value={ version }
+                     onChanged={ this._textFieldHandlers.version } label="Version" required={ true }
           />
-          <TextInputField value={subscriptionKey}
-            onChanged={this._textFieldHandlers.subscriptionKey} label="Subscription key"
+          <TextField value={ subscriptionKey }
+                     onChanged={ this._textFieldHandlers.subscriptionKey } label="Subscription key"
           />
-        </ModalContent>
-        <ModalActions>
-          <PrimaryButton text="Cancel" secondary={true} onClick={this.onCancelClick} />
-          <PrimaryButton disabled={!isDirty || !valid} text="Submit" onClick={this.onSubmitClick} />
-        </ModalActions>
-      </Modal>
+        </DialogContent>
+        <DialogFooter>
+          <DefaultButton text="Cancel" onClick={ this.onCancelClick }/>
+          <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ this.onSubmitClick }/>
+        </DialogFooter>
+      </Dialog>
     );
   }
 

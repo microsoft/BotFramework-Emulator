@@ -1,0 +1,22 @@
+.entityViewer {
+  display: block;
+}
+
+:global {
+  #entityName {
+    display: inline-block;
+    overflow: hidden
+  }
+
+  #arrow {
+    display: inline-block;
+    overflow: hidden
+  }
+
+  #entityValue {
+    display: inline-block;
+    max-width: 150px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}

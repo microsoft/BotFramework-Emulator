@@ -32,7 +32,7 @@
 //
 
 import { BotFrameworkService } from './botFrameworkService';
-import * as Settings from './settings';
+import * as Settings from './settingsData/store';
 import { NgrokService } from './ngrokService';
 
 interface QueuedMessage {

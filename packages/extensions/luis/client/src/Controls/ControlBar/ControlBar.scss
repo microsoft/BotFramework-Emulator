@@ -1,0 +1,13 @@
+.controlBar {
+  padding: 6px 3px;
+  & a {
+    color: white;
+    text-decoration: none;
+  }
+}
+
+:global {
+  #rawResponseButton {
+    padding-left: 8px;
+  }
+}

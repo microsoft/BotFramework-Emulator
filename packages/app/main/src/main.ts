@@ -34,8 +34,7 @@
 import * as Electron from 'electron';
 import { app, Menu } from 'electron';
 
-import { dispatch, getSettings } from './settings';
-import { WindowStateAction } from './reducers/windowStateReducer';
+import { dispatch, getSettings } from './settingsData/store';
 import * as url from 'url';
 import * as path from 'path';
 import { Emulator } from './emulator';
@@ -43,18 +42,17 @@ import { WindowManager } from './windowManager';
 import * as commandLine from './commandLine';
 import { setTimeout } from 'timers';
 import { Window } from './platform/window';
-import { ensureStoragePath, writeFile } from './utils';
+import { botListsAreDifferent, ensureStoragePath, writeFile } from './utils';
 import * as squirrel from './squirrelEvents';
-import { registerAllCommands } from './commands/registerAllCommands';
+import { CommandRegistry, registerAllCommands } from './commands';
 import { AppMenuBuilder } from './appMenuBuilder';
 import { AppUpdater } from './appUpdater';
 import { UpdateInfo } from 'electron-updater';
 import { ProgressInfo } from 'builder-util-runtime';
-import { getStore } from './data-v2/store';
-import { CommandRegistry } from './commands';
+import { getStore } from './botData/store';
 import { SharedConstants } from '@bfemulator/app-shared';
-import { botListsAreDifferent } from './utils/botListsAreDifferent';
 import { BotProjectFileWatcher } from './botProjectFileWatcher';
+import { rememberBounds } from './settingsData/actions/windowStateActions';
 
 export let mainWindow: Window;
 export let windowManager: WindowManager;
@@ -145,8 +143,8 @@ AppUpdater.on('error', (err: Error, message: string) => {
 
 // -----------------------------------------------------------------------------
 
-var openUrls = [];
-var onOpenUrl = function (event: any, url1: any) {
+let openUrls = [];
+const onOpenUrl = function (event: any, url1: any) {
   event.preventDefault();
   if (process.platform === 'darwin') {
     if (mainWindow && mainWindow.webContents) {
@@ -160,14 +158,13 @@ var onOpenUrl = function (event: any, url1: any) {
 };
 
 // Register all commands
-const registry = CommandRegistry;
-registerAllCommands(registry);
+registerAllCommands(CommandRegistry);
 
 // Parse command line
 commandLine.parseArgs();
 
 Electron.app.on('will-finish-launching', () => {
-  Electron.ipcMain.on('getUrls', (event: any, arg) => {
+  Electron.ipcMain.on('getUrls', () => {
     openUrls.forEach(url2 => mainWindow.webContents.send('botemulator', url2));
     openUrls = [];
   });
@@ -176,7 +173,7 @@ Electron.app.on('will-finish-launching', () => {
   Electron.app.on('open-url', onOpenUrl);
 });
 
-var windowIsOffScreen = function (windowBounds: Electron.Rectangle): boolean {
+const windowIsOffScreen = function (windowBounds: Electron.Rectangle): boolean {
   const nearestDisplay = Electron.screen.getDisplayMatching(windowBounds).workArea;
   return (
     windowBounds.x > (nearestDisplay.x + nearestDisplay.width) ||
@@ -272,32 +269,30 @@ const createMainWindow = async () => {
   AppUpdater.startup();
 
   const template: Electron.MenuItemConstructorOptions[] = AppMenuBuilder.getAppMenuTemplate();
-
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
   // initialize bot project watcher
   BotProjectFileWatcher.getInstance().initialize(mainWindow.commandService);
 
-  const rememberBounds = () => {
-    const bounds = mainWindow.browserWindow.getBounds();
-    dispatch<WindowStateAction>({
-      type: 'Window_RememberBounds',
-      state: {
-        displayId: Electron.screen.getDisplayMatching(bounds).id,
-        width: bounds.width,
-        height: bounds.height,
-        left: bounds.x,
-        top: bounds.y
-      }
-    });
+  const rememberCurrentBounds = () => {
+    const currentBounds = mainWindow.browserWindow.getBounds();
+    const bounds = {
+      displayId: Electron.screen.getDisplayMatching(currentBounds).id,
+      width: currentBounds.width,
+      height: currentBounds.height,
+      left: currentBounds.x,
+      top: currentBounds.y
+    };
+
+    dispatch(rememberBounds(bounds));
   };
 
   mainWindow.browserWindow.on('resize', () => {
-    rememberBounds();
+    rememberCurrentBounds();
   });
 
   mainWindow.browserWindow.on('move', () => {
-    rememberBounds();
+    rememberCurrentBounds();
   });
 
   mainWindow.browserWindow.on('closed', function () {
@@ -307,26 +302,34 @@ const createMainWindow = async () => {
 
   mainWindow.browserWindow.on('restore', () => {
     if (windowIsOffScreen(mainWindow.browserWindow.getBounds())) {
-      const bounds = mainWindow.browserWindow.getBounds();
+      const currentBounds = mainWindow.browserWindow.getBounds();
       let display = Electron.screen.getAllDisplays().find(displayArg =>
         displayArg.id === getSettings().windowState.displayId);
-      display = display || Electron.screen.getDisplayMatching(bounds);
+      display = display || Electron.screen.getDisplayMatching(currentBounds);
       mainWindow.browserWindow.setPosition(display.workArea.x, display.workArea.y);
-      dispatch<WindowStateAction>({
-        type: 'Window_RememberBounds',
-        state: {
-          displayId: display.id,
-          width: bounds.width,
-          height: bounds.height,
-          left: display.workArea.x,
-          top: display.workArea.y
-        }
-      });
+      const bounds = {
+        displayId: display.id,
+        width: currentBounds.width,
+        height: currentBounds.height,
+        left: display.workArea.x,
+        top: display.workArea.y
+      };
+      dispatch(rememberBounds(bounds));
     }
   });
 
   mainWindow.browserWindow.once('ready-to-show', () => {
-    mainWindow.webContents.setZoomLevel(getSettings().windowState.zoomLevel);
+    const { zoomLevel, theme, availableThemes } = getSettings().windowState;
+    const themeInfo = availableThemes.find(availableTheme => availableTheme.name === theme);
+    if (themeInfo) {
+      mainWindow.browserWindow.webContents.executeJavaScript(`
+      const themeTag = document.getElementById('themeVars');
+      if (themeTag) {
+        themeTag.href = "${themeInfo.href}";
+      }
+    `);
+    }
+    mainWindow.webContents.setZoomLevel(zoomLevel);
     mainWindow.browserWindow.show();
     if (process.env.NODE_ENV !== 'development') {
       AppUpdater.checkForUpdates(false, true);
@@ -344,7 +347,7 @@ function loadMainPage() {
   let page = process.env.ELECTRON_TARGET_URL || url.format({
     protocol: 'file',
     slashes: true,
-    pathname: path.join(__dirname, '../../node_modules/@bfemulator/client/public/index.html')
+    pathname: require.resolve('@bfemulator/client/public/index.html')
   });
 
   if (/^http:\/\//.test(page)) {
@@ -354,7 +357,6 @@ function loadMainPage() {
   if (queryString) {
     page = page + queryString;
   }
-
   mainWindow.browserWindow.loadURL(page);
 }
 
