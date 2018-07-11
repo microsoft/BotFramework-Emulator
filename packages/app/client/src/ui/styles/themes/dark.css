@@ -3,7 +3,7 @@ html {
   --list-item-color: var(--neutral-3);
   --list-item-selected-color: var(--neutral-2);
   --list-item-hover-bg: var(--neutral-13);
-  --list-item-hover-border: 1px dashed #transparent;
+  --list-item-hover-border: 1px dashed transparent;
   --selected-list-item: #3F3F46;
   --focused-list-item: #073655;
   --focused-outline: 1px solid #0E369C;
