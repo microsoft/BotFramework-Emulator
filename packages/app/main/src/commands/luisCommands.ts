@@ -31,9 +31,36 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-"use strict";
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+import { LuisAuthWorkflowService } from '../services/luisAuthWorkflowService';
+import { getStore } from '../data-v2/store';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
+
+const store = getStore();
+
+/** Registers LUIS commands */
+export function registerCommands(commandRegistry: CommandRegistryImpl) {
+  const Commands = SharedConstants.Commands.Luis;
+
+  // ---------------------------------------------------------------------------
+  // Retrieve the LUIS authoring key
+  commandRegistry.registerCommand(Commands.RetrieveAuthoringKey, async () => {
+    const workflow = LuisAuthWorkflowService.enterAuthWorkflow();
+    const { dispatch: storeDispatch } = store;
+    const type = 'LUIS_AUTH_STATUS_CHANGED';
+    storeDispatch({ type, luisAuthWorkflowStatus: 'inProgress' });
+    let result = undefined;
+    while (true) {
+      const next = workflow.next(result);
+      if (next.done) {
+        storeDispatch({ type, luisAuthWorkflowStatus: 'ended' });
+        if (!result) {
+          storeDispatch({ type, luisAuthWorkflowStatus: 'canceled' });
+        }
+        break;
+      }
+      result = await next.value;
+    }
+    return result;
+  });
 }
-Object.defineProperty(exports, "__esModule", { value: true });
-__export(require("./built"));

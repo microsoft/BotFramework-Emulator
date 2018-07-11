@@ -31,10 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CommandService, CommandServiceImpl, ExtensionConfig, ExtensionInspector } from '@bfemulator/sdk-shared';
+import {
+  CommandService,
+  CommandServiceImpl,
+  ExtensionConfig,
+  ExtensionInspector,
+  CommandRegistryImpl
+} from '@bfemulator/sdk-shared';
 import { ElectronIPC } from './ipc';
-import { CommandRegistry } from './commands';
 import * as jsonpath from 'jsonpath';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 // =============================================================================
 export class Extension {
@@ -146,7 +152,7 @@ export interface GetInspectorResult {
 
 // =============================================================================
 export interface ExtensionManager {
-  registerCommands();
+  registerCommands(commandRegistry: CommandRegistryImpl);
 
   addExtension(config: ExtensionConfig, unid: string);
 
@@ -200,13 +206,17 @@ export const ExtensionManager = new class implements ExtensionManager {
     return result;
   }
 
-  public registerCommands() {
-    CommandRegistry.registerCommand('shell:extension-connect', (config: ExtensionConfig, unid: string) => {
-      ExtensionManager.addExtension(config, unid);
-    });
+  public registerCommands(commandRegistry: CommandRegistryImpl) {
+    commandRegistry.registerCommand(
+      SharedConstants.Commands.Extension.Connect,
+      (config: ExtensionConfig, unid: string) => {
+        ExtensionManager.addExtension(config, unid);
+      });
 
-    CommandRegistry.registerCommand('shell:extension-disconnect', (unid: string) => {
-      ExtensionManager.removeExtension(unid);
-    });
+    commandRegistry.registerCommand(
+      SharedConstants.Commands.Extension.Disconnect,
+      (unid: string) => {
+        ExtensionManager.removeExtension(unid);
+      });
   }
 };

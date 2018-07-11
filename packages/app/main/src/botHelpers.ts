@@ -33,7 +33,7 @@
 
 import { BotConfig } from 'msbot';
 
-import { BotInfo, getBotDisplayName } from '@bfemulator/app-shared';
+import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import { mainWindow } from './main';
 import * as BotActions from './data-v2/action/bot';
@@ -93,7 +93,7 @@ export async function loadBotWithRetry(botPath: string, secret?: string): Promis
     // Add easily discernable errors / error codes to msbot package
     if (typeof e === 'string' && (e.includes('secret') || e.includes('crypt'))) {
       // bot requires a secret to decrypt properties
-      const newSecret = await mainWindow.commandService.remoteCall('secret-prompt:show');
+      const newSecret = await mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ShowSecretPromptDialog);
       if (newSecret === null) {
         // pop-up was dismissed; stop trying to prompt for secret
         return null;
@@ -139,7 +139,7 @@ export async function patchBotsJson(botPath: string, bot: BotInfo): Promise<BotI
     bots.unshift(bot);
   }
   store.dispatch(BotActions.load(bots));
-  await mainWindow.commandService.remoteCall('bot:list:sync', bots);
+  await mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.SyncBotList, bots);
 
   return bots;
 }

@@ -36,6 +36,7 @@ const { shell } = Electron;
 import { uniqueId } from '@bfemulator/sdk-shared';
 import { CommandServiceImpl } from './platform/commands/commandServiceImpl';
 import * as URL from 'url';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 export function navigate(url: string) {
   try {
@@ -54,7 +55,8 @@ export function navigate(url: string) {
 
 function navigateEmulatedOAuthUrl(oauthParam: string) {
   let parts = oauthParam.split('&&&');
-  CommandServiceImpl.remoteCall('oauth:send-token-response', parts[0], parts[1], 'emulatedToken_' + uniqueId())
+  CommandServiceImpl
+    .remoteCall(SharedConstants.Commands.OAuth.SendTokenResponse, parts[0], parts[1], 'emulatedToken_' + uniqueId())
     .catch();
 }
 

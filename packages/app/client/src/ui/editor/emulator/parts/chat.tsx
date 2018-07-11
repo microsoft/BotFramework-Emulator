@@ -35,7 +35,7 @@ import { Colors } from '@bfemulator/ui-react';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
 import { IEndpointService } from 'msbot/bin/schema';
-import { SpeechTokenInfo } from '@bfemulator/app-shared';
+import { SpeechTokenInfo, SharedConstants } from '@bfemulator/app-shared';
 import * as React from 'react';
 import * as WebChat from 'botframework-webchat';
 
@@ -184,7 +184,7 @@ async function getSpeechToken(endpoint: IEndpointService, refresh: boolean): Pro
     return;
   }
 
-  let command = refresh ? 'speech-token:refresh' : 'speech-token:get';
+  let command = refresh ? 'speech-token:refresh' : SharedConstants.Commands.Emulator.GetSpeechToken;
 
   try {
     const speechToken: SpeechTokenInfo = await CommandServiceImpl.remoteCall(command, endpoint.endpoint);

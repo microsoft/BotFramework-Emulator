@@ -31,72 +31,40 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { DisposableImpl, CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import store from '../data/store';
+import * as FileActions from '../data/action/fileActions';
+import * as EditorActions from '../data/action/editorActions';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
+import { isChatFile, isTranscriptFile } from '../utils';
 
+/** Registers file commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  commandRegistry.registerCommand(
-    SharedConstants.Commands.Settings.ReceiveGlobalSettings,
-    (settings: {
-      url: string,
-      cwd: string
-    }): any => {
-      SettingsService.emulator.url = (settings.url || '').replace('[::]', '127.0.0.1');
-      SettingsService.emulator.cwd = (settings.cwd || '').replace(/\\/g, '/');
-    });
-}
+  const Commands = SharedConstants.Commands.File;
+  // ---------------------------------------------------------------------------
+  // Adds a file to the file store
+  commandRegistry.registerCommand(Commands.Add, (payload) => {
+    store.dispatch(FileActions.addFile(payload));
+  });
 
-export interface EmulatorSettings {
-  url?: string;
-  cwd?: string;
-  readonly cwdAsBase: string;
-}
+  // ---------------------------------------------------------------------------
+  // Removes a file from the file store
+  commandRegistry.registerCommand(Commands.Remove, (path) => {
+    store.dispatch(FileActions.removeFile(path));
+  });
 
-class EmulatorSettingsImpl implements EmulatorSettings {
-  private _url: string;
-  private _cwd: string;
+  // ---------------------------------------------------------------------------
+  // Clears the file store
+  commandRegistry.registerCommand(Commands.Clear, () => {
+    store.dispatch(FileActions.clear());
+  });
 
-  get url(): string {
-    if (!this._url || !this._url.length) {
-      throw new Error('Emulator url not set');
+  // ---------------------------------------------------------------------------
+  // Called for files in the bot's directory whose contents have changed on disk
+  commandRegistry.registerCommand(Commands.Changed, (filename: string) => {
+    // add the filename to pending updates and prompt the user once the document is focused again
+    if (isChatFile(filename) || isTranscriptFile(filename)) {
+      store.dispatch(EditorActions.addDocPendingChange(filename));
     }
-    return this._url;
-  }
-  set url(value: string) {
-    this._url = value;
-  }
-
-  get cwd(): string {
-    if (!this._cwd || !this._cwd.length) {
-      throw new Error('Emulator cwd not set');
-    }
-    return this._cwd;
-  }
-
-  set cwd(value: string) {
-    this._cwd = value;
-  }
-
-  get cwdAsBase(): string {
-    let base = this.cwd;
-    if (!base.startsWith('/')) {
-      base = `/${base}`;
-    }
-
-    return base;
-  }
+  });
 }
-
-export const SettingsService = new class extends DisposableImpl {
-
-  private _emulator: EmulatorSettingsImpl;
-
-  get emulator(): EmulatorSettingsImpl { return this._emulator; }
-
-  init() { return null; }
-
-  constructor() {
-    super();
-    this._emulator = new EmulatorSettingsImpl();
-  }
-};

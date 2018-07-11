@@ -31,23 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import ILogService from '@bfemulator/emulator-core/lib/types/log/service';
-import ILogItem from '@bfemulator/emulator-core/lib/types/log/item';
-import { logEntry } from '@bfemulator/emulator-core/lib/types/log/util';
-import { DisposableImpl } from '@bfemulator/sdk-shared';
-import { Window } from '../window';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
-export class LogService extends DisposableImpl implements ILogService {
-
-  constructor(private _window: Window) {
-    super();
-  }
-
-  logToChat(conversationId: string, ...items: ILogItem[]): void {
-    this._window.commandService.remoteCall(
-      SharedConstants.Commands.Emulator.AppendToLog,
-      conversationId, logEntry(...items)
-    );
-  }
-}
+export const CommandRegistry = new CommandRegistryImpl();

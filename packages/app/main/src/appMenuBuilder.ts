@@ -35,7 +35,7 @@ import * as Electron from 'electron';
 
 import { mainWindow } from './main';
 import { AppUpdater, UpdateStatus } from './appUpdater';
-import { BotInfo } from '@bfemulator/app-shared';
+import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
 import * as jsonpath from 'jsonpath';
 import { ConversationService } from './services/conversationService';
 import { getStore } from './data-v2/store';
@@ -126,7 +126,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     return bots.slice(0, 5).filter(bot => !!bot).map(bot => ({
       label: bot.displayName,
       click: () => {
-        mainWindow.commandService.remoteCall('bot:switch', bot.path)
+        mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.Switch, bot.path)
           .catch(err => console.error('Error while switching bots from file menu recent bots list: ', err));
       }
     }));
@@ -139,19 +139,19 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
       {
         label: 'New Bot',
         click: () => {
-          mainWindow.commandService.remoteCall('bot-creation:show');
+          mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ShowBotCreationDialog);
         }
       },
       {
         label: 'Open Bot',
         click: () => {
-          mainWindow.commandService.remoteCall('bot:browse-open');
+          mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.OpenBrowse);
         }
       },
       {
         label: 'Close Bot',
         click: () => {
-          mainWindow.commandService.remoteCall('bot:close');
+          mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.Close);
         }
       }];
 
@@ -165,7 +165,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     subMenu.push({
       label: 'Open Transcript File...',
       click: () => {
-        mainWindow.commandService.remoteCall('transcript:prompt-open')
+        mainWindow.commandService.remoteCall(SharedConstants.Commands.Emulator.PromptToOpenTranscript)
           .catch(err => console.error('Error opening transcript file from menu: ', err));
       }
     });
@@ -233,15 +233,15 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
       submenu: [
         {
           label: 'Explorer',
-          click: () => mainWindow.commandService.remoteCall('shell:show-explorer')
+          click: () => mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ShowExplorer)
         },
         {
           label: 'Services',
-          click: () => mainWindow.commandService.remoteCall('shell:show-services')
+          click: () => mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ShowServices)
         },
         {
           label: 'Emulator Settings',
-          click: () => mainWindow.commandService.remoteCall('shell:show-app-settings')
+          click: () => mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ShowAppSettings)
         },
         { type: 'separator' },
         { role: 'resetzoom' },
@@ -272,33 +272,44 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
       submenu: [
         {
           label: 'Welcome',
-          click: () => mainWindow.commandService.remoteCall('welcome-page:show')
+          click: () => mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ShowWelcomePage)
         },
         { type: 'separator' },
         {
           label: 'Privacy',
-          click: () => mainWindow.commandService
-            .remoteCall('shell:open-external-link', 'https://go.microsoft.com/fwlink/?LinkId=512132')
+          click: () => mainWindow.commandService.remoteCall(
+            SharedConstants.Commands.Electron.OpenExternal,
+            'https://go.microsoft.com/fwlink/?LinkId=512132'
+          )
         },
         {
           // TODO: Proper link for the license instead of third party credits
           label: 'License',
-          click: () => mainWindow.commandService.remoteCall('shell:open-external-link', 'https://aka.ms/O10ww2')
+          click: () => mainWindow.commandService.remoteCall(
+            SharedConstants.Commands.Electron.OpenExternal,
+            'https://aka.ms/O10ww2'
+          )
         },
         {
           label: 'Credits',
-          click: () => mainWindow.commandService.remoteCall('shell:open-external-link', 'https://aka.ms/Ud5ga6')
+          click: () => mainWindow.commandService.remoteCall(
+            SharedConstants.Commands.Electron.OpenExternal,
+            'https://aka.ms/Ud5ga6'
+          )
         },
         { type: 'separator' },
         {
           label: 'Report an issue',
-          click: () => mainWindow.commandService.remoteCall('shell:open-external-link', 'https://aka.ms/cy106f')
+          click: () => mainWindow.commandService.remoteCall(
+            SharedConstants.Commands.Electron.OpenExternal,
+            'https://aka.ms/cy106f'
+          )
         },
         { type: 'separator' },
         { role: 'toggledevtools' },
         {
           label: 'Toggle Developer Tools (Inspector)',
-          click: () => mainWindow.commandService.remoteCall('shell:toggle-inspector-devtools')
+          click: () => mainWindow.commandService.remoteCall(SharedConstants.Commands.Electron.ToggleDevTools)
         },
         { type: 'separator' },
         this.getUpdateMenuItem(),
@@ -348,7 +359,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
   }
 
   getConversationMenu(): Electron.MenuItemConstructorOptions {
-    const getState = () => mainWindow.commandService.remoteCall('store:getState');
+    const getState = () => mainWindow.commandService.remoteCall(SharedConstants.Commands.Misc.GetStoreState);
     const getConversationId = async () => {
       const state = await getState();
       const { editors, activeEditor } = state.editor;

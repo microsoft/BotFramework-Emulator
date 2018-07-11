@@ -205,20 +205,20 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
       }
 
       // make sure there is an active bot on the client side and the emulator object contains the new endpoint
-      await mainWindow.commandService.remoteCall('bot:set-active', bot, '');
-      await mainWindow.commandService.call('bot:restart-endpoint-service');
+      await mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.SetActive, bot, '');
+      await mainWindow.commandService.call(SharedConstants.Commands.Bot.RestartEndpointService);
 
       if (running()) {
-        mainWindow.commandService.remoteCall('livechat:new', endpoint);
+        mainWindow.commandService.remoteCall(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
       } else {
         // if ngrok hasn't connected yet, wait for it to connect and start the livechat
         ngrokEmitter.once('connect', (...args: any[]): void => {
-          mainWindow.commandService.remoteCall('livechat:new', endpoint);
+          mainWindow.commandService.remoteCall(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
         });
       }
     } else {
       // try to connect and let the chat log show the user the error
-      mainWindow.commandService.remoteCall('livechat:new', endpoint);
+      mainWindow.commandService.remoteCall(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
     }
   }
 
@@ -244,8 +244,10 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
               const fileName = `${name}${ext}`;
               // open a transcript on the client side and pass in some
               // extra info to differentiate it from a transcript on disk
-              mainWindow.commandService.remoteCall('transcript:open', 'deepLinkedTranscript',
-                { activities: conversationActivities, inMemory: true, fileName });
+              mainWindow.commandService.remoteCall(
+                SharedConstants.Commands.Emulator.OpenTranscript, 'deepLinkedTranscript',
+                { activities: conversationActivities, deepLink: true, fileName }
+              );
             } catch (e) {
               throw new Error(`Error occured while reading downloaded transcript: ${e}`);
             }
@@ -277,7 +279,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
 
     let bot: BotConfigWithPath;
     try {
-      bot = await mainWindow.commandService.call('bot:open', path, secret);
+      bot = await mainWindow.commandService.call(SharedConstants.Commands.Bot.Open, path, secret);
       if (!bot) {
         throw new Error(`Error occurred while trying to open bot at: ${path} inside of protocol handler.`);
       }
@@ -299,8 +301,8 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
 
       if (running()) {
         try {
-          await mainWindow.commandService.call('bot:set-active', bot);
-          await mainWindow.commandService.remoteCall('bot:load', bot);
+          await mainWindow.commandService.call(SharedConstants.Commands.Bot.SetActive, bot);
+          await mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.Load, bot);
         } catch (e) {
           throw new Error(`(ngrok running) Error occurred while trying to deep link to bot project at: ${path}.`);
         }
@@ -308,8 +310,8 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
         // if ngrok hasn't connected yet, wait for it to connect and load the bot
         ngrokEmitter.once('connect', async (...args: any[]): Promise<void> => {
           try {
-            await mainWindow.commandService.call('bot:set-active', bot);
-            await mainWindow.commandService.remoteCall('bot:load', bot);
+            await mainWindow.commandService.call(SharedConstants.Commands.Bot.SetActive, bot);
+            await mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.Load, bot);
           } catch (e) {
             throw new Error(
               `(ngrok running but not connected) Error occurred while trying to deep link to bot project at: ${path}.`
@@ -319,8 +321,8 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
       }
     } else {
       try {
-        await mainWindow.commandService.call('bot:set-active', bot);
-        await mainWindow.commandService.remoteCall('bot:load', bot);
+        await mainWindow.commandService.call(SharedConstants.Commands.Bot.SetActive, bot);
+        await mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.Load, bot);
       } catch (e) {
         throw new Error(`(ngrok not configured) Error occurred while trying to deep link to bot project at: ${path}`);
       }

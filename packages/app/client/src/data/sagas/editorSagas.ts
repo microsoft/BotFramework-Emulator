@@ -36,6 +36,7 @@ import { EditorActions, removeDocPendingChange } from '../action/editorActions';
 import { RootState } from '../store';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { isChatFile, isTranscriptFile } from '../../utils';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 export function* promptUserToReloadDocument(filename: string): IterableIterator<any> {
   const options = {
@@ -52,9 +53,9 @@ export function* promptUserToReloadDocument(filename: string): IterableIterator<
   if (confirmation) {
     if (isChatFile(filename)) {
       const reload = true;
-      yield CommandServiceImpl.call('chat:open', filename, reload);
+      yield CommandServiceImpl.call(SharedConstants.Commands.Emulator.OpenChatFile, filename, reload);
     } else if (isTranscriptFile(filename)) {
-      yield CommandServiceImpl.call('transcript:reload', filename);
+      yield CommandServiceImpl.call(SharedConstants.Commands.Emulator.ReloadTranscript, filename);
     }
   }
 }
