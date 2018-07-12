@@ -1,0 +1,22 @@
+.notifications-explorer {
+  padding: 0;
+  max-height: calc(100% - 60px);
+  overflow-y: auto;
+  margin: 0;
+}
+
+.clear-all-notifications-btn {
+  display: block;
+  text-align: right;
+  margin-right: 8px;
+  min-width: 0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--notifications-clear-all-btn-color);
+
+  &:hover {
+    color: var(--notifications-clear-all-btn-hover-color);
+  }
+}

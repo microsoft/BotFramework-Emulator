@@ -36,8 +36,8 @@ import { BotConfig } from 'msbot';
 import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import { mainWindow } from './main';
-import * as BotActions from './data-v2/action/bot';
-import { getStore } from './data-v2/store';
+import * as BotActions from './botData/actions/botActions';
+import { getStore } from './botData/store';
 const store = getStore();
 
 export function getActiveBot(): BotConfigWithPath {

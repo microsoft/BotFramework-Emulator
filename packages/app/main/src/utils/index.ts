@@ -53,3 +53,4 @@ export * from './showMessageBox';
 export * from './showOpenDialog';
 export * from './showSaveDialog';
 export * from './writeFile';
+export * from './getThemes';

@@ -33,28 +33,10 @@
 
 import * as React from 'react';
 import { Notification as NotificationType } from '@bfemulator/app-shared';
-import { css } from 'glamor';
 import { connect } from 'react-redux';
 import * as NotificationActions from '../../../../data/action/notificationActions';
-import { hot } from 'react-hot-loader';
-
-const CSS = css({
-  position: 'relative',
-  backgroundColor: 'steelblue',
-  padding: '16px',
-  marginBottom: '4px',
-
-  '& > .close-icon': {
-    position: 'absolute',
-    top: 4,
-    right: 4,
-    height: '32px',
-    width: '32px',
-    cursor: 'pointer',
-    color: 'black',
-    backgroundColor: 'coral'
-  }
-});
+import * as styles from './notification.scss';
+import { PrimaryButton } from '@bfemulator/ui-react';
 
 export interface NotificationProps {
   notification?: NotificationType;
@@ -67,33 +49,41 @@ class NotificationComp extends React.Component<NotificationProps, {}> {
   }
 
   render(): JSX.Element {
-    const { title = '', message = '', timestamp = null, id = '' } = this.props.notification;
+    const { title = '', message = '', id = '' } = this.props.notification;
     const { removeNotification } = this.props;
-    const timestampEle = timestamp ? <span>{ new Date(timestamp).toUTCString() }</span> : null;
-    const buttonRow = this.renderButtonRow();
 
     return (
-      <li { ...CSS }>
-        <div className="close-icon" onClick={ () => removeNotification(id) }></div>
-        <h3>{ title }</h3>
-        <p>{ message }</p>
-        { timestampEle }
-        { buttonRow }
+      <li className={ styles.notification }>
+        <div className={ styles.closeIcon } onClick={ () => removeNotification(id) }></div>
+        <h3 className={ styles.notificationTitle }>{ title }</h3>
+        <p className={ styles.notificationMessage }>{ message }</p>
+        { this.timestamp }
+        { this.buttonRow }
       </li>
     );
   }
 
-  private renderButtonRow(): JSX.Element {
+  /** Renders notification buttons */
+  private get buttonRow(): JSX.Element {
     const { buttons = [] } = this.props.notification;
     if (buttons.length) {
       let renderedButtons = buttons.map((btn, i) =>
-        <button key={ `button${i}` } onClick={ () => btn.onClick() }>{ btn.text }</button>
+        <PrimaryButton key={ `button${i}` } onClick={ () => btn.onClick() } text={ btn.text }/>
       );
       return (
-        <div>
+        <div className={ styles.notificationButtonRow }>
           { renderedButtons }
         </div>
       );
+    }
+    return null;
+  }
+
+  /** Renders notification timestamp */
+  private get timestamp(): JSX.Element {
+    const { timestamp = null } = this.props.notification;
+    if (timestamp) {
+      return <span className={ styles.notificationTimestamp }>{ new Date(timestamp).toUTCString() }</span>;
     }
     return null;
   }
@@ -105,4 +95,4 @@ const mapDispatchToProps = (dispatch): NotificationProps => ({
 
 const mapStateToProps = () => ({});
 
-export const Notification = connect(mapStateToProps, mapDispatchToProps)(hot(module)(NotificationComp));
+export const Notification = connect(mapStateToProps, mapDispatchToProps)(NotificationComp);

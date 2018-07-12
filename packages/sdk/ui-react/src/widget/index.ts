@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './checkbox';
-export * from './largeHeader';
-export * from './mediumHeader';
-export * from './primaryButton';
-export * from './smallHeader';
-export * from './textInputField';
-export * from './insetShadow';
-export * from './modal';
+export * from './largeHeader/largeHeader';
+export * from './mediumHeader/mediumHeader';
+export * from './smallHeader/smallHeader';
+export * from './dialog';
+export * from './button/primaryButton';
+export * from './button/defaultButton';
+export * from './textField/textField';
+export * from './checkbox/checkbox';

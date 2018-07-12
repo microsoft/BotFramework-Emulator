@@ -37,15 +37,7 @@ import { RootState } from '../../../../data/store';
 import { Notification } from './notification';
 import { NotificationManager } from '../../../../notificationManager';
 import * as NotificationActions from '../../../../data/action/notificationActions';
-import { Colors } from '@bfemulator/ui-react';
-import { css } from 'glamor';
-
-const CSS = css({
-  padding: 0,
-  maxHeight: 'calc(100% - 60px)',
-  overflowY: 'auto',
-  margin: 0
-});
+import * as styles from './notificationsExplorer.scss';
 
 interface NotificationExplorerProps {
   notifications?: string[];
@@ -67,7 +59,7 @@ class NotificationsExplorerComp extends React.Component<NotificationExplorerProp
     // max-height: 100% of explorer pane - 20px (Clear all button height) - 40px (Explorer title height)
     return (
       <>
-        <ul { ...CSS }>
+        <ul className={ styles.notificationsExplorer }>
           {
             notifications.map(n => {
               const notification = this._notificationManager.notificationStore[n];
@@ -81,23 +73,7 @@ class NotificationsExplorerComp extends React.Component<NotificationExplorerProp
   }
 
   private renderClearAllButton = (): JSX.Element => {
-    const clearCss = css({
-      display: 'block',
-      textAlign: 'right',
-      marginRight: '8px',
-      minWidth: 0,
-      whiteSpace: 'nowrap',
-      textOverflow: 'ellipsis',
-      overflow: 'hidden',
-      textDecoration: 'none',
-      color: Colors.APP_HYPERLINK_FOREGROUND_DARK,
-
-      ':hover': {
-        color: Colors.APP_HYPERLINK_FOREGROUND_DARK
-      }
-    });
-
-    return <a { ...clearCss }
+    return <a className={ styles.clearAllNotificationsBtn }
               onClick={ () => this.props.clearNotifications() }
               href="javascript:void(0);">
               Clear all

@@ -32,7 +32,7 @@
 //
 
 import { LuisAuthWorkflowService } from '../services/luisAuthWorkflowService';
-import { getStore } from '../data-v2/store';
+import { getStore } from '../botData/store';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
 

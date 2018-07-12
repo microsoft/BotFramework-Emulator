@@ -1,0 +1,25 @@
+.detailPanel {
+  height: 100%;
+
+  & .accessoryButton:disabled {
+    cursor: default;
+    color: var(--neutral-7);
+  }
+
+  & .accessoryButton:active {
+    color: var(--neutral-1);
+  }
+
+  & .accessories {
+    & .accessoryButton {
+      height: 30px;
+      white-space: nowrap;
+      display: flex;
+      color: var(--neutral-5);
+      background-color: transparent;
+      & .accessoryButtonIcon {
+        width: 30px;
+      }
+    }
+  }
+}

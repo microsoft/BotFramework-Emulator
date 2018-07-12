@@ -35,7 +35,7 @@ import { AppState } from '../App';
 import { LuisTraceInfo } from '../Models/LuisTraceInfo';
 import { AppInfo } from '../Luis/AppInfo';
 import { IntentInfo } from '../Luis/IntentInfo';
-import { ButtonSelected } from '../Controls/ControlBar';
+import { ButtonSelected } from '../Controls/ControlBar/ControlBar';
 
 export default class MockState implements AppState {
   traceInfo: LuisTraceInfo = {

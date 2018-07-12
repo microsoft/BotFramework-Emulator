@@ -8,7 +8,7 @@ const mapStateToProps = (state: RootState): MainProps => ({
   presentationModeEnabled: state.presentation.enabled,
   primaryEditor: state.editor.editors[Constants.EDITOR_KEY_PRIMARY],
   secondaryEditor: state.editor.editors[Constants.EDITOR_KEY_SECONDARY],
-  showingExplorer: state.explorer.showing,
+  explorerIsVisible: state.explorer.showing,
   navBarSelection: state.navBar.selection
 });
 

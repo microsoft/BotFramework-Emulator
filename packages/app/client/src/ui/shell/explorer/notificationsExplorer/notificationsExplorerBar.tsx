@@ -32,18 +32,12 @@
 //
 
 import * as React from 'react';
-import { css } from 'glamor';
-
+import * as styles from './notificationsExplorerBar.scss';
 import { NotificationsExplorer } from './notificationsExplorer';
-import { ExplorerBarHeader, Title } from '../explorerBarHeader';
-
-const CSS = css({
-  height: '100%',
-  width: '100%'
-});
+import { ExplorerBarHeader, Title } from '../explorerBarHeader/explorerBarHeader';
 
 export const NotificationsExplorerBar = (props: any) => (
-  <div { ...CSS }>
+  <div className={ styles.notificationsExplorerBar }>
     <ExplorerBarHeader>
       <Title>
         Notifications

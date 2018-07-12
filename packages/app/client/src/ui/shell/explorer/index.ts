@@ -32,16 +32,16 @@
 //
 
 export * from './azureBotServiceExplorer';
-export * from './botExplorerBar';
+export * from './botExplorerBar/botExplorerBar';
 export * from './dispatchExplorer';
 export * from './endpointExplorer';
 export * from './luisExplorer';
 export * from './qnaMakerExplorer';
 export * from './servicesExplorerBar';
 export * from './fileExplorer';
-export * from './botNotOpenExplorer';
-export * from './explorerBar';
+export * from './botNotOpenExplorer/botNotOpenExplorer';
+export * from './explorerBar/explorerBar';
 export * from './explorerBarBody';
-export * from './explorerBarHeader';
-export * from './explorerSet';
-export * from './servicePane';
+export * from './explorerBarHeader/explorerBarHeader';
+export * from './explorerSet/explorerSet';
+export * from './servicePane/servicePane';

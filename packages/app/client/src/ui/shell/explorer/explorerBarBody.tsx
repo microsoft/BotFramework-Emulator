@@ -32,7 +32,7 @@
 
 import * as React from 'react';
 
-import { ExplorerSet } from './explorerSet';
+import { ExplorerSet } from './explorerSet/explorerSet';
 
 export class ExplorerBarBody extends React.Component {
   render() {

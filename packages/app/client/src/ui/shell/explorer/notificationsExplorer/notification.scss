@@ -1,0 +1,55 @@
+.notification {
+  position: relative;
+  background-color: var(--notification-bg);
+  padding: 16px;
+  margin-bottom: 4px;
+
+  & > .notification-title {
+    margin: 0;
+    color: var(--notification-title-color);
+  }
+
+  & > .notification-message {
+    color: var(--notification-message-color);
+  }
+
+  & > .notification-timestamp {
+    color: var(--notification-timestamp-color);
+  }
+
+  & > .notification-button-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 16px;
+
+    & * {
+      flex-shrink: 0;
+    }
+
+    & > button {
+      margin-right: 8px;
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+
+  & > .close-icon {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    height: 32px;
+    width: 32px;
+    color: var(--notification-close-icon-color);
+    background-color: transparent;
+    font-size: 16px;
+    line-height: 32px;
+    text-align: center;
+    cursor: pointer;
+
+    &:after {
+      content: "\2716";
+    }
+  }
+}

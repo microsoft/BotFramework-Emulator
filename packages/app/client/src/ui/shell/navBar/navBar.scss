@@ -1,0 +1,135 @@
+.navBar {
+  background-color: var(--nav-bar-bg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  width: 50px;
+  box-shadow: var(--box-shadow-right);
+}
+
+.navLink {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  right: 2px; // Compensation for ::after padding
+
+  & .badge {
+    position: absolute;
+
+    /* The icon background, which is on the ::after element will always come after the .badge
+     * in the DOM, so we need to overlay the .badge on top of the icon background by bumping
+     * the z-index by 1. (Shouldn't have any adverse effects because it is restricted to the <a.navLink>'s structure)
+     */
+    z-index: 1;
+
+    /* 12.5px would align the top-right corner of the badge with the top-right
+     * corner of the link icon. So then we need to subtract 1/2 of the badges
+     * height & length (0.5 * 16px = 8px) from that to center the badge on the top-right corner
+     * of the link icon. 12.5px - 8px = 4.5px
+     */
+    top: 4.5px;
+    right: 4.5px;
+    width: 16px;
+    height: 16px;
+    border-radius: 16px;
+    line-height: 16px;
+    text-align: center;
+    color: var(--nav-link-badge-color);
+    background-color: var(--nav-link-badge-bg);
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    display: inline-block;
+    width: 2px;
+    height: 70%;
+    top: 15%;
+    left: 2px;
+    opacity: 0;
+    background-color: var(--nav-focused-tag-bg);
+  }
+
+  &.selected, &[aria-selected="true"] {
+    &::after {
+      border: var(--nav-link-selected-border);
+      opacity: var(--nav-icon-color-hover-opacity);
+    }
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    padding: 2px;
+    background: no-repeat 2px 2px;
+    opacity: var(--nav-icon-opacity);
+    border: 1px solid transparent;
+  }
+
+  &:hover {
+    &::after {
+      border: var(--nav-link-hover-border);
+      opacity: var(--nav-icon-color-hover-opacity);
+    }
+  }
+
+  &:nth-child(1) {
+    // Bot Explorer
+    &::after {
+      background-size: 25px;
+      background-image: url('../../media/ic_bot_explorer.svg');
+    }
+  }
+  &:nth-child(2) {
+    // Services
+    &::after {
+      background-size: 25px;
+      background-image: url('../../media/ic_services.svg');
+    }
+  }
+  &:nth-child(3) {
+    // Bot Settings
+    &::after {
+      background-size: 25px;
+      background-image: url('../../media/ic_bot_settings.svg');
+    }
+  }
+  &:nth-child(4) {
+    // Notifications
+    &::after {
+      background-size: 25px;
+      background-image: url('../../media/ic_notification.svg');
+    }
+    margin-top: auto;
+  }
+  &:nth-child(5) {
+    // Settings
+    &::after {
+      background-size: 25px;
+      background-image: url('../../media/ic_settings.svg');
+    }
+  }
+
+  &:focus {
+    outline: none;
+    &::after {
+      opacity: var(--nav-icon-color-hover-opacity);
+    }
+    &::before {
+      opacity: var(--nav-focused-tag-bg-opacity);
+    }
+  }
+
+  &.disabled, &[aria-disabled] {
+    opacity: 0.6;
+  }
+}

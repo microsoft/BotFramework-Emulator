@@ -35,7 +35,7 @@ import { EndpointService } from 'msbot/bin/models';
 import { IEndpointService } from 'msbot/bin/schema';
 import * as React from 'react';
 import { ComponentClass, MouseEventHandler, SyntheticEvent } from 'react';
-import { ServicePane, ServicePaneProps } from '../servicePane';
+import { ServicePane, ServicePaneProps } from '../servicePane/servicePane';
 import { EndpointEditorContainer } from './endpointEditor';
 
 export interface EndpointProps extends ServicePaneProps {
@@ -55,7 +55,13 @@ export class EndpointExplorer extends ServicePane<EndpointProps> {
     const { endpointServices = [] } = this.props;
     return endpointServices
       .map((model, index) => {
-        return <li key={ index } onClick={ this.onLinkClick } data-index={ index }>{ model.name }</li>;
+        return (
+          <li
+            key={ index }
+            onClick={ this.onLinkClick }
+            data-index={ index }
+            tabIndex={ index }>{ model.name }
+          </li>);
       });
   }
 

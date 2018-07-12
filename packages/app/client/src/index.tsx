@@ -34,8 +34,6 @@
 import { Provider } from 'react-redux';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { initializeIcons, initializeTheme } from '@bfemulator/ui-react';
-
 import interceptError from './interceptError';
 import interceptHyperlink from './interceptHyperlink';
 import Main from './ui/shell/mainContainer';
@@ -44,12 +42,12 @@ import { CommandServiceImpl } from './platform/commands/commandServiceImpl';
 import { SettingsService } from './platform/settings/settingsService';
 import { LogService } from './platform/log/logService';
 import { showWelcomePage } from './data/editorHelpers';
-import { registerAllCommands } from './commands/registerAllCommands';
-import { CommandRegistry } from './commands';
+import { CommandRegistry, registerAllCommands } from './commands';
 import { SharedConstants } from '@bfemulator/app-shared';
 
-initializeTheme('dark');
-initializeIcons();
+import 'botframework-webchat/botchat.css';
+import './ui/styles/globals.scss';
+
 interceptError();
 interceptHyperlink();
 
@@ -57,8 +55,7 @@ CommandServiceImpl.init();
 SettingsService.init();
 LogService.init();
 
-const registry = CommandRegistry;
-registerAllCommands(registry);
+registerAllCommands(CommandRegistry);
 
 // Start rendering the UI
 ReactDOM.render(

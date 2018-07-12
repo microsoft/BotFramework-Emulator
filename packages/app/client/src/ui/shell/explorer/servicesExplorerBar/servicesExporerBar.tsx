@@ -34,7 +34,7 @@
 import * as React from 'react';
 import { Component } from 'react';
 import { ExplorerBarBody } from '../explorerBarBody';
-import { ExplorerBarHeader, Title } from '../explorerBarHeader';
+import { ExplorerBarHeader, Title } from '../explorerBarHeader/explorerBarHeader';
 import { LuisExplorerContainer } from '../luisExplorer';
 import { DispatchExplorerContainer } from '../dispatchExplorer';
 import { QnaMakerExplorerContainer } from '../qnaMakerExplorer';
@@ -51,10 +51,10 @@ export default class ServicesExplorerBar extends Component<{ activeBotExists: bo
     if (activeBotExists) {
       return (
         <>
-          <AzureBotServiceExplorerContainer title="Azure Bot Service" />
-          <DispatchExplorerContainer title="Dispatch" />
-          <LuisExplorerContainer title="LUIS" />
-          <QnaMakerExplorerContainer title="QnA Maker" />
+          <AzureBotServiceExplorerContainer title="Azure Bot Service"/>
+          <DispatchExplorerContainer title="Dispatch"/>
+          <LuisExplorerContainer title="LUIS"/>
+          <QnaMakerExplorerContainer title="QnA Maker"/>
         </>
       );
     }
@@ -70,7 +70,7 @@ export default class ServicesExplorerBar extends Component<{ activeBotExists: bo
           </Title>
         </ExplorerBarHeader>
         <ExplorerBarBody>
-          {this.explorerBodyChildren}
+          { this.explorerBodyChildren }
         </ExplorerBarBody>
       </>
     );

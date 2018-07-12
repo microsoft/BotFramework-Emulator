@@ -32,40 +32,19 @@
 //
 
 import * as React from 'react';
-import { css, StyleAttribute } from 'glamor';
-
-const CSS = css({
-  boxSizing: 'border-box',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  height: '100%',
-  width: '100%',
-  minWidth: '480px',
-  overflowX: 'hidden',
-  overflowY: 'auto',
-
-  '& > .generic-doc-content': {
-    width: '90%',
-    maxWidth: '1200px'
-  }
-});
+import * as styles from './genericDocument.scss';
 
 interface GenericDocumentProps {
-  // Allows glamor style objects to be passed in (ex. <GenericDocument style={ CSS } />)
-  // NOTE: Do not use spread operator!!!
-  style?: StyleAttribute;
+  className?: string; // overrides
 }
 
 export class GenericDocument extends React.Component<GenericDocumentProps, {}> {
-  constructor(props: GenericDocumentProps) {
-    super(props);
-  }
 
   render(): JSX.Element {
+    const { className = '' } = this.props;
     return (
-      <div className="generic-doc" { ...CSS } { ...this.props.style }>
-        <div className="generic-doc-content">
+      <div className={ `${styles.genericDocument} ${className}` }>
+        <div className={ styles.genericDocContent }>
           { this.props.children }
         </div>
       </div>

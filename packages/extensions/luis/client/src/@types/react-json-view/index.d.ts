@@ -35,7 +35,7 @@
 
 declare module 'react-json-view' {
 
-  import { Component } from "react";
+  import { Component } from 'react';
 
   export default class ReactJson extends Component<any, any> { }
 }

@@ -57,6 +57,8 @@ export interface WindowStateSettings {
   left?: number;
   width?: number;
   height?: number;
+  theme?: string;
+  availableThemes?: {name: string, href: string}[];
 }
 
 export interface UserSettings {
@@ -100,7 +102,9 @@ export const windowStateDefault: WindowStateSettings = {
   width: 800,
   height: 600,
   left: 100,
-  top: 50
+  top: 50,
+  theme: 'Light',
+  availableThemes: []
 };
 
 export const usersDefault: UserSettings = {

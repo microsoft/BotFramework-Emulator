@@ -134,6 +134,7 @@ export namespace SharedConstants {
       export const ShowExplorer: string = 'shell:show-explorer';
       export const ShowServices: string = 'shell:show-services';
       export const ShowAppSettings: string = 'shell:show-app-settings';
+      export const SwitchTheme: string = 'shell:switchTheme';
     }
   }
 }

@@ -38,7 +38,9 @@ import { AppUpdater, UpdateStatus } from './appUpdater';
 import { BotInfo, SharedConstants, newNotification, NotificationType } from '@bfemulator/app-shared';
 import * as jsonpath from 'jsonpath';
 import { ConversationService } from './services/conversationService';
-import { getStore } from './data-v2/store';
+import { getStore } from './botData/store';
+import { getStore as getSettingsStore } from './settingsData/store';
+import { rememberTheme } from './settingsData/actions/windowStateActions';
 import { sendNotificationToClient } from './utils/sendNotificationToClient';
 
 export interface AppMenuBuilder {
@@ -178,6 +180,22 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
           .catch(err => console.error('Error opening transcript file from menu: ', err));
       }
     });
+    const settingsStore = getSettingsStore();
+    const { availableThemes, theme } = settingsStore.getState().windowState;
+    subMenu.push.apply(subMenu, [
+      { type: 'separator' },
+      {
+        label: 'Theme',
+        submenu: availableThemes.map(t => (
+          {
+            label: t.name,
+            type: 'radio',
+            checked: theme === t.name,
+            click: settingsStore.dispatch.bind(settingsStore, rememberTheme(t.name))
+          }
+        ))
+      }
+    ]);
     subMenu.push({ type: 'separator' });
     subMenu.push({ role: 'quit' });
 

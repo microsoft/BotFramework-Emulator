@@ -34,7 +34,7 @@
 import { IQnAService } from 'msbot/bin/schema';
 import * as React from 'react';
 import { ComponentClass, MouseEventHandler, SyntheticEvent } from 'react';
-import { ServicePane, ServicePaneProps } from '../servicePane';
+import { ServicePane, ServicePaneProps } from '../servicePane/servicePane';
 import { DispatchEditorContainer } from './dispatchEditor';
 
 export interface DispatchProps extends ServicePaneProps {
