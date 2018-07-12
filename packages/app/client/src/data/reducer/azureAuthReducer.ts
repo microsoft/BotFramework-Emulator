@@ -32,36 +32,38 @@
 //
 
 import {
-  luisAuthoringDataChanged,
-  luisAuthStatusChanged
-} from '../action/luisAuthActions';
-import luisAuth, { LuisAuthState } from './luisAuthReducer';
+  AZURE_AUTH_STATUS_CHANGED,
+  AZURE_ARM_TOKEN_DATA_CHANGED,
+  AzureAuthAction,
+  ArmTokenData,
+  AzureAuthWorkflowStatus
+} from '../action/azureAuthActions';
 
-describe('Luis auth reducer tests', () => {
-  let startingState: LuisAuthState;
+export interface AzureAuthState {
+  azureAuthWorkflowStatus: 'notStarted' | 'inProgress' | 'ended' | 'canceled';
+  armToken: string;
+}
 
-  beforeEach(() => {
-    startingState = {
-      luisAuthWorkflowStatus: null,
-      luisAuthData: null
-    };
-  });
+const initialState: AzureAuthState = {
+  azureAuthWorkflowStatus: 'notStarted',
+  armToken: null
+};
 
-  it('should return unaltered state for non-matching action type', () => {
-    const emptyAction = { type: null, payload: undefined };
-    const endingState = luisAuth(startingState, emptyAction);
-    expect(endingState).toEqual(startingState);
-  });
+export default function azureAuth(state: AzureAuthState = initialState,
+                                  action: AzureAuthAction<ArmTokenData> | AzureAuthAction<AzureAuthWorkflowStatus>)
+  : AzureAuthState {
+  const { payload = {}, type } = action;
+  const { armToken } = payload as ArmTokenData;
+  const { azureAuthWorkflowStatus } = payload as AzureAuthWorkflowStatus;
 
-  it('should change workflow status', () => {
-    const action = luisAuthStatusChanged('inProgress');
-    const state = luisAuth(startingState, action);
-    expect(state.luisAuthWorkflowStatus).toBe('inProgress');
-  });
+  switch (type) {
+    case AZURE_AUTH_STATUS_CHANGED:
+      return { ...state, azureAuthWorkflowStatus };
 
-  it('should change auth data', () => {
-    const action = luisAuthoringDataChanged({ key: 'someKey', BaseUrl: 'someBaseUrl' });
-    const state = luisAuth(startingState, action);
-    expect(state.luisAuthData).toEqual({ key: 'someKey', BaseUrl: 'someBaseUrl' });
-  });
-});
+    case AZURE_ARM_TOKEN_DATA_CHANGED:
+      return { ...state, armToken };
+
+    default:
+      return state;
+  }
+}

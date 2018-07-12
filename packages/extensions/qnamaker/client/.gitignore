@@ -23,4 +23,4 @@ yarn-error.log*
 # visual studio
 /.vs
 
-public/*.js
+public/

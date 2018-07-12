@@ -32,18 +32,17 @@
 //
 
 import { BrowserWindow } from 'electron';
+declare type AzureAuthWorkflowType = IterableIterator<Promise<BrowserWindow> | Promise<{ armToken: string } | boolean>>;
+export class AzureAuthWorkflowService {
 
-export class LuisAuthWorkflowService {
-
-  public static* enterAuthWorkflow()
-    : IterableIterator<Promise<BrowserWindow> | Promise<{ key: string, BaseUrl: string } | boolean>> {
-    const authWindow = yield LuisAuthWorkflowService.launchAuthWindow();
+  public static* enterAuthWorkflow(): AzureAuthWorkflowType  {
+    const authWindow = yield AzureAuthWorkflowService.launchAuthWindow();
     authWindow.show();
     // We're always getting the v1.0 endpoint
     // which we do not want to support. Pull out the region
     // and include it in a custom object the we'll build the
     // endpoint ourselves
-    let result = yield LuisAuthWorkflowService.waitForLuisDataFromWindow(authWindow);
+    let result = yield AzureAuthWorkflowService.waitForDataFromWindow(authWindow);
     if (result) {
       const { BaseUrl: url, key } = result;
       const [, region] = /(?:https:\/\/)([\w]+)/.exec(url);
@@ -53,8 +52,7 @@ export class LuisAuthWorkflowService {
     yield result;
   }
 
-  private static async waitForLuisDataFromWindow(browserWindow: BrowserWindow)
-    : Promise<{ key: string, BaseUrl: string } | boolean> {
+  private static async waitForDataFromWindow(browserWindow: BrowserWindow): Promise<{ armToken: string} | boolean> {
     const script = `
       (function(window) {
         const nav = document.querySelector('.global-navigation');

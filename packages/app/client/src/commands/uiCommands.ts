@@ -95,4 +95,8 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       themeTag.href = themeHref;
     }
   });
+
+  // ---------------------------------------------------------------------------
+  // Azure sign in
+  commandRegistry.registerCommand(Commands.SignInToAzure, () => store.dispatch(null));
 }

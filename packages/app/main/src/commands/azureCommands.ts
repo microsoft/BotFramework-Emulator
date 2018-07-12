@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { LuisAuthWorkflowService } from '../services/luisAuthWorkflowService';
+import { AzureAuthWorkflowService } from '../services/azureAuthWorkflowService';
 import { getStore } from '../botData/store';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
@@ -45,9 +45,9 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Retrieve the LUIS authoring key
   commandRegistry.registerCommand(Commands.RetrieveAuthoringKey, async () => {
-    const workflow = LuisAuthWorkflowService.enterAuthWorkflow();
+    const workflow = AzureAuthWorkflowService.enterAuthWorkflow();
     const { dispatch: storeDispatch } = store;
-    const type = 'LUIS_AUTH_STATUS_CHANGED';
+    const type = 'AZURE_AUTH_STATUS_CHANGED';
     storeDispatch({ type, luisAuthWorkflowStatus: 'inProgress' });
     let result = undefined;
     while (true) {
