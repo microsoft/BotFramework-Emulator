@@ -41,7 +41,7 @@ import dialog, { DialogState } from './reducer/dialog';
 import editor, { EditorState } from './reducer/editor';
 import explorer, { ExplorerState } from './reducer/explorer';
 import files, { FileTreeState } from './reducer/files';
-import luisAuth, { LuisAuthState } from './reducer/luisAuthReducer';
+import azureAuth, { AzureAuthState } from './reducer/azureAuthReducer';
 import navBar, { NavBarState } from './reducer/navBar';
 
 import presentation, { PresentationState } from './reducer/presentation';
@@ -55,7 +55,7 @@ export interface RootState {
   chat?: ChatState;
   navBar?: NavBarState;
   presentation?: PresentationState;
-  luisAuth?: LuisAuthState;
+  azureAuth?: AzureAuthState;
   files?: FileTreeState;
 }
 
@@ -72,7 +72,7 @@ const configureStore = (initialState: RootState = DEFAULT_STATE): Store<RootStat
     chat,
     navBar,
     presentation,
-    luisAuth
+    azureAuth
   }),
   initialState,
   applyMiddleware(

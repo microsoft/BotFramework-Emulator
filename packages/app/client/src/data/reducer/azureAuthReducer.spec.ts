@@ -31,46 +31,37 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Action } from 'redux';
+import {
+  azureArmTokenDataChanged,
+  azureAuthStatusChanged
+} from '../action/azureAuthActions';
+import azureAuth, { AzureAuthState } from './azureAuthReducer';
 
-export const LUIS_LAUNCH_MODELS_VIEWER = 'LUIS_LAUNCH_MODELS_VIEWER';
-export const LUIS_AUTHORING_DATA_CHANGED = 'LUIS_AUTHORING_DATA_CHANGED';
-export const LUIS_AUTH_STATUS_CHANGED = 'LUIS_AUTH_STATUS_CHANGED';
+describe('Azure auth reducer tests', () => {
+  let startingState: AzureAuthState;
 
-export interface LuisAuthAction<T> extends Action {
-  payload: T;
-}
+  beforeEach(() => {
+    startingState = {
+      azureAuthWorkflowStatus: null,
+      armToken: null
+    };
+  });
 
-export interface LuisAuthData {
-  luisAuthData: { key: string, BaseUrl: string };
-}
+  it('should return unaltered state for non-matching action type', () => {
+    const emptyAction = { type: null, payload: undefined };
+    const endingState = azureAuth(startingState, emptyAction);
+    expect(endingState).toEqual(startingState);
+  });
 
-export interface LuisAuthWorkflowStatus {
-  luisAuthWorkflowStatus: 'inProgress' | 'ended' | 'notStarted' | 'canceled';
-}
+  it('should change workflow status', () => {
+    const action = azureAuthStatusChanged('inProgress');
+    const state = azureAuth(startingState, action);
+    expect(state.azureAuthWorkflowStatus).toBe('inProgress');
+  });
 
-/*export interface LuisModelViewer {
-  luisModelViewer: ComponentClass<any>;
-}
-
-export function launchLuisModelsViewer(luisModelViewer: ComponentClass<any>): LuisAuthAction<LuisModelViewer> {
-  return {
-    type: LUIS_LAUNCH_MODELS_VIEWER,
-    payload: { luisModelViewer }
-  };
-}*/
-
-export function luisAuthoringDataChanged(luisAuthData: { key: string, BaseUrl: string }): LuisAuthAction<LuisAuthData> {
-  return {
-    type: LUIS_AUTHORING_DATA_CHANGED,
-    payload: { luisAuthData }
-  };
-}
-
-export function luisAuthStatusChanged(luisAuthWorkflowStatus: 'inProgress' | 'ended' | 'notStarted' | 'canceled')
-  : LuisAuthAction<LuisAuthWorkflowStatus> {
-  return {
-    type: LUIS_AUTH_STATUS_CHANGED,
-    payload: { luisAuthWorkflowStatus }
-  };
-}
+  it('should change auth data', () => {
+    const action = azureArmTokenDataChanged('someKey');
+    const state = azureAuth(startingState, action);
+    expect(state.armToken).toEqual({ armToken: 'someKey'});
+  });
+});

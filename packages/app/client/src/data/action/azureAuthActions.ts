@@ -31,49 +31,42 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  LUIS_AUTH_STATUS_CHANGED,
-  LUIS_AUTHORING_DATA_CHANGED,
-  LuisAuthAction,
-  LuisAuthData,
-  LuisAuthWorkflowStatus
-} from '../action/luisAuthActions';
+import { Action } from 'redux';
 
-export interface LuisAuthState {
-  /**
-   * The current status of the luis auth frame
-   */
-  luisAuthWorkflowStatus: 'notStarted' | 'inProgress' | 'ended' | 'canceled';
-  /**
-   * The luis authoring key for
-   * communicating with the LUIS api
-   */
-  luisAuthData: { key: string, BaseUrl: string };
+export const AZURE_ARM_TOKEN_DATA_CHANGED = 'AZURE_ARM_TOKEN_DATA_CHANGED';
+export const AZURE_AUTH_STATUS_CHANGED = 'AZURE_AUTH_STATUS_CHANGED';
+export const AZURE_BEGIN_AUTH_WORKFLOW = 'AZURE_BEGIN_AUTH_WORKFLOW';
+
+export interface AzureAuthAction<T> extends Action {
+  payload: T;
 }
 
-const initialState: LuisAuthState = {
-  luisAuthWorkflowStatus: 'notStarted',
-  luisAuthData: null
-};
+export interface ArmTokenData {
+  armToken: string;
+}
 
-export default function luisAuth(state: LuisAuthState = initialState,
-                                 action: LuisAuthAction<LuisAuthData> | LuisAuthAction<LuisAuthWorkflowStatus>)
-  : LuisAuthState {
-  const { payload = {}, type } = action;
-  const { luisAuthData: luisAuthoringKey } = payload as LuisAuthData;
-  const { luisAuthWorkflowStatus } = payload as LuisAuthWorkflowStatus;
+export interface AzureAuthWorkflowStatus {
+  azureAuthWorkflowStatus: 'inProgress' | 'ended' | 'notStarted' | 'canceled';
+}
 
-  switch (type) {
-    /*case LUIS_LAUNCH_MODELS_VIEWER:
-      return { ...state, luisAuthWorkflowStatus: 'notStarted' };*/
+export function beginAzureAuthWorkflow(): AzureAuthAction<any> {
+  return {
+    type: AZURE_BEGIN_AUTH_WORKFLOW,
+    payload: {}
+  };
+}
 
-    case LUIS_AUTH_STATUS_CHANGED:
-      return { ...state, luisAuthWorkflowStatus };
+export function azureArmTokenDataChanged(armToken: string): AzureAuthAction<ArmTokenData> {
+  return {
+    type: AZURE_ARM_TOKEN_DATA_CHANGED,
+    payload: { armToken }
+  };
+}
 
-    case LUIS_AUTHORING_DATA_CHANGED:
-      return { ...state, luisAuthData: luisAuthoringKey };
-
-    default:
-      return state;
-  }
+export function azureAuthStatusChanged(azureAuthWorkflowStatus: 'inProgress' | 'ended' | 'notStarted' | 'canceled')
+  : AzureAuthAction<AzureAuthWorkflowStatus> {
+  return {
+    type: AZURE_AUTH_STATUS_CHANGED,
+    payload: { azureAuthWorkflowStatus }
+  };
 }

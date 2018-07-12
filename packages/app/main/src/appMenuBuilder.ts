@@ -187,6 +187,12 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
         ))
       }
     ]);
+
+    subMenu.push({
+      label: 'Sign in to Azure',
+      click: () => mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.SignInToAzure)
+    });
+
     subMenu.push({ type: 'separator' });
     subMenu.push({ role: 'quit' });
 
