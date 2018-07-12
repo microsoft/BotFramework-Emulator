@@ -1,0 +1,80 @@
+.servicePane {
+  position: relative;
+  display: inline-block;
+  height: 100%;
+  width: 100%;
+  & > .addIconButton {
+    background: transparent;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    position: absolute;
+    transform: translateY(-50%);
+    top: calc(50% + 2px);
+    right: 10px;
+    padding: 0;
+    margin: 0;
+    & > svg {
+      width: 12px;
+      height: 12px;
+      fill: var(--explorer-panel-group-title-color);
+      &:hover {
+        fill: var(--log-panel-link);
+      }
+    }
+  }
+}
+
+.emptyContent {
+  margin: 12px 25px;
+  font-size: 13px;
+  color: var(--neutral-7);
+}
+
+.servicePaneList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  & > li {
+    color: var(--list-item-color);
+    cursor: pointer;
+    display: block;
+    white-space: nowrap;
+    line-height: 22px;
+    min-height: 22px;
+    font-size: 13px;
+    border: 1px solid transparent;
+    &:hover {
+      border: var(--list-item-hover-border);
+      background-color: var(--list-item-hover-bg);
+    }
+    &:focus {
+      background-color: var(--focused-list-item);
+    }
+    &[data-selected], &:active {
+      color: var(--list-item-selected-color);
+      background-color: var(--focused-selected-list-item-bg);
+      border: var(--list-item-hover-border);
+    }
+
+    & span {
+      color: var(--neutral-7);
+    }
+
+    &::before {
+      content: "💬";
+      opacity: .5;
+      display: inline-block;
+      color: var(--explorer-panel-group-title-color);
+      padding-left: 13px;
+      padding-right: 5px;
+    }
+  }
+}
+
+.servicePaneExplorer {
+  &.containerExpanded {
+    min-height: 44px;
+  }
+}

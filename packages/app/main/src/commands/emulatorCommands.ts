@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { getStore } from '../data-v2/store';
+import { getStore } from '../botData/store';
 import { BotConfigWithPath, uniqueId, CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { Conversation } from '@bfemulator/emulator-core';
 import * as Path from 'path';
@@ -46,7 +46,7 @@ import { showSaveDialog, writeFile, parseActivitiesFromChatFile } from '../utils
 import { emulator } from '../emulator';
 import { sync as mkdirpSync } from 'mkdirp';
 import { BotProjectFileWatcher } from '../botProjectFileWatcher';
-import * as BotActions from '../data-v2/action/bot';
+import * as BotActions from '../botData/actions/botActions';
 import { promisify } from 'util';
 import * as Fs from 'fs';
 import { cleanupId as cleanupActivityChannelAccountId, CustomActivity } from '../utils/conversation';

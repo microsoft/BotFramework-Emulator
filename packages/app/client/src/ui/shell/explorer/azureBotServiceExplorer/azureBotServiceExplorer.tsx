@@ -34,7 +34,7 @@
 import { IAzureBotService } from 'msbot/bin/schema';
 import * as React from 'react';
 import { ComponentClass, MouseEventHandler, SyntheticEvent } from 'react';
-import { ServicePane, ServicePaneProps } from '../servicePane';
+import { ServicePane, ServicePaneProps } from '../servicePane/servicePane';
 import { AzureBotServiceEditorContainer } from './azureBotServiceEditor';
 
 export interface AzureBotServiceProps extends ServicePaneProps {

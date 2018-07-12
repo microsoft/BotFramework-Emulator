@@ -52,8 +52,8 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Shows a bot creation dialog
-  commandRegistry.registerCommand(Commands.ShowBotCreationDialog, () => {
-    DialogService.showDialog(BotCreationDialog);
+  commandRegistry.registerCommand(Commands.ShowBotCreationDialog, async () => {
+    return await DialogService.showDialog(BotCreationDialog);
   });
 
   // ---------------------------------------------------------------------------
@@ -85,5 +85,14 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   commandRegistry.registerCommand(Commands.ShowAppSettings, (): void => {
     const { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } = Constants;
     store.dispatch(EditorActions.open(CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS, true, null));
+  });
+
+  // ---------------------------------------------------------------------------
+  // Theme switching from main
+  commandRegistry.registerCommand(Commands.SwitchTheme, themeHref => {
+    const themeTag = document.getElementById('themeVars') as HTMLLinkElement;
+    if (themeTag) {
+      themeTag.href = themeHref;
+    }
   });
 }

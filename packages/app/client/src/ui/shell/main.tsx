@@ -31,80 +31,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { css } from 'glamor';
 import * as React from 'react';
-import { Colors, Fonts, Splitter } from '@bfemulator/ui-react';
+import * as styles from './main.scss';
+
+import { Splitter } from '@bfemulator/ui-react';
 import { ExplorerBar } from './explorer';
 import { MDI } from './mdi';
 import { NavBar } from './navBar';
 import { DialogHost, TabManager } from '../dialogs';
 import * as Constants from '../../constants';
-import { StatusBar } from './statusBar';
+import { StatusBar } from './statusBar/statusBar';
 import { StoreVisualizer } from '../debug/storeVisualizer';
 import { Editor } from '../../data/reducer/editor';
 import store from '../../data/store';
 import * as ExplorerActions from '../../data/action/explorerActions';
-
-css.global('html, body, #root', {
-  backgroundColor: Colors.APP_BACKGROUND_DARK,
-  cursor: 'default',
-  fontFamily: Fonts.FONT_FAMILY_DEFAULT,
-  fontSize: '13px',
-  height: '100%',
-  margin: 0,
-  minHeight: '100%',
-  overflow: 'hidden',
-  userSelect: 'none',
-});
-
-css.global('div', {
-  boxSizing: 'border-box',
-});
-
-css.global('::-webkit-scrollbar', {
-  width: '10px',
-  height: '10px',
-});
-
-css.global('::-webkit-scrollbar-track', {
-  background: Colors.SCROLLBAR_TRACK_BACKGROUND_DARK,
-});
-
-css.global('::-webkit-scrollbar-thumb', {
-  background: Colors.SCROLLBAR_THUMB_BACKGROUND_DARK,
-});
-
-const CSS = css({
-  backgroundColor: Colors.APP_BACKGROUND_DARK,
-  color: Colors.APP_FOREGROUND_DARK,
-  display: 'flex',
-  width: '100%',
-  height: '100%',
-  minHeight: '100%',
-  flexDirection: 'column'
-});
-
-const NAV_CSS = css({
-  display: 'flex',
-  flexDirection: 'row',
-  width: '100%',
-  height: '100%',
-
-  '& > .workbench': {
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-  },
-
-  '& .mdi-wrapper': {
-    height: '100%',
-    width: '100%',
-  },
-
-  '& .secondary-mdi': {
-    borderLeft: `1px solid ${Colors.C3}`
-  }
-});
 
 export interface MainProps {
   primaryEditor?: Editor;
@@ -144,10 +84,12 @@ export class Main extends React.Component<MainProps, MainState> {
 
   render() {
     const tabGroup1 = this.props.primaryEditor &&
-      <div className="mdi-wrapper" key={ 'primaryEditor' }><MDI owningEditor={ Constants.EDITOR_KEY_PRIMARY }/></div>;
+      <div className={ styles.mdiWrapper } key={ 'primaryEditor' }>
+        <MDI owningEditor={ Constants.EDITOR_KEY_PRIMARY }/>
+      </div>;
 
     const tabGroup2 = this.props.secondaryEditor && Object.keys(this.props.secondaryEditor.documents).length ?
-      <div className="mdi-wrapper secondary-mdi" key={ 'secondaryEditor' }><MDI
+      <div className={ `${styles.mdiWrapper} ${styles.secondaryMdi}` } key={ 'secondaryEditor' }><MDI
         owningEditor={ Constants.EDITOR_KEY_SECONDARY }/></div> : null;
 
     // If falsy children aren't filtered out, splitter won't recognize change in number of children
@@ -169,13 +111,17 @@ export class Main extends React.Component<MainProps, MainState> {
     );
 
     return (
-      <div { ...CSS }>
-        <div { ...NAV_CSS }>
+      <div className={ styles.main }>
+        <div className={ styles.nav }>
           { !this.props.presentationModeEnabled &&
           <NavBar selection={ this.props.navBarSelection } showingExplorer={ this.props.showingExplorer }/> }
-          <div className="workbench">
-            <Splitter orientation={ 'vertical' } primaryPaneIndex={ 0 } minSizes={ { 0: 40, 1: 40 } }
-                      initialSizes={ { 0: 210 } } onSizeChange={ this.checkExplorerSize }>
+          <div className={ styles.workbench }>
+            <Splitter
+              orientation={ 'vertical' }
+              primaryPaneIndex={ 0 }
+              minSizes={ { 0: 40, 1: 40 } }
+              initialSizes={ { 0: 210 } }
+              onSizeChange={ this.checkExplorerSize }>
               { workbenchChildren }
             </Splitter>
           </div>

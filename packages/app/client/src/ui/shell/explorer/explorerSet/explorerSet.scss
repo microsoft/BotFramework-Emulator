@@ -1,0 +1,21 @@
+.explorerSet {
+  background-color: var(--dialog-bg);
+  color: var(--input-label-color);
+  display: flex;
+  flex-flow: column nowrap;
+  height: 100%;
+  overflow: hidden;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  & > li {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex: 0 1 auto;
+    max-height: 100%;
+    div + div {
+      border-top: var(--explorer-panel-group-border);
+    }
+  }
+}

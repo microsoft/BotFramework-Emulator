@@ -1,0 +1,103 @@
+.navBar {
+  background-color: var(--nav-bar-bg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  width: 50px;
+  box-shadow: var(--box-shadow-right);
+}
+
+.navLink {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  right: 2px; // Compensation for ::after padding
+
+  &::before {
+    content: "";
+    position: absolute;
+    display: inline-block;
+    width: 2px;
+    height: 70%;
+    top: 15%;
+    left: 2px;
+    opacity: 0;
+    background-color: var(--nav-focused-tag-bg);
+  }
+
+  &.selected, &[aria-selected="true"] {
+    &::after {
+      border: var(--nav-link-selected-border);
+      opacity: var(--nav-icon-color-hover-opacity);
+    }
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    padding: 2px;
+    background: no-repeat 2px 2px;
+    opacity: var(--nav-icon-opacity);
+    border: 1px solid transparent;
+  }
+
+  &:hover {
+    &::after {
+      border: var(--nav-link-hover-border);
+      opacity: var(--nav-icon-color-hover-opacity);
+    }
+  }
+
+  &:nth-child(1) {
+    // Bot Explorer
+    &::after {
+      background-size: 25px;
+      background-image: url('../../media/ic_bot_explorer.svg');
+    }
+  }
+  &:nth-child(2) {
+    // Services
+    &::after {
+      background-size: 25px;
+      background-image: url('../../media/ic_services.svg');
+    }
+  }
+  &:nth-child(3) {
+    // Bot Settings
+    &::after {
+      background-size: 25px;
+      background-image: url('../../media/ic_bot_settings.svg');
+    }
+  }
+  &:nth-child(4) {
+    // Settings
+    &::after {
+      background-size: 25px;
+      background-image: url('../../media/ic_settings.svg');
+    }
+    margin-top: auto;
+  }
+
+  &:focus {
+    outline: none;
+    &::after {
+      opacity: var(--nav-icon-color-hover-opacity);
+    }
+    &::before {
+      opacity: var(--nav-focused-tag-bg-opacity);
+    }
+  }
+
+  &.disabled, &[aria-disabled] {
+    opacity: 0.6;
+  }
+}

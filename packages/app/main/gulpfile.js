@@ -345,7 +345,7 @@ function hashFileAsync(filename, algo = 'sha512', encoding = 'base64') {
 
 //----------------------------------------------------------------------------
 function writeYamlMetadataFile(releaseFilename, yamlFilename, path, fileHash, releaseDate, extra = {}) {
-  var fsp = require('fs-extra-p');
+  var fsp = require('fs-extra');
   var yaml = require('js-yaml');
 
   const ymlInfo = {
@@ -362,7 +362,7 @@ function writeYamlMetadataFile(releaseFilename, yamlFilename, path, fileHash, re
 
 //----------------------------------------------------------------------------
 function writeJsonMetadataFile(releaseFilename, jsonFilename, path, releaseDate) {
-  var fsp = require('fs-extra-p');
+  var fsp = require('fs-extra');
 
   const jsonInfo = {
     version: pjson.version,

@@ -38,7 +38,7 @@ import { AppMenuBuilder } from '../appMenuBuilder';
 import * as Electron from 'electron';
 import shell = Electron.shell;
 import { ContextMenuService } from '../services/contextMenuService';
-import { getStore } from '../data-v2/store';
+import { getStore } from '../botData/store';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
 

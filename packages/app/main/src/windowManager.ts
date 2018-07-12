@@ -34,8 +34,8 @@
 import * as Electron from 'electron';
 import * as URL from 'url';
 import * as path from 'path';
-import { dispatch, getSettings } from './settings';
-import { WindowStateAction } from './reducers/windowStateReducer';
+import { dispatch, getSettings } from './settingsData/store';
+import { rememberZoomLevel } from './settingsData/actions/windowStateActions';
 
 export class WindowManager {
   private mainWindow: Electron.BrowserWindow;
@@ -91,12 +91,7 @@ export class WindowManager {
   public zoomTo(zoomLevel: number) {
     this.mainWindow.webContents.setZoomLevel(zoomLevel);
     this.windows.forEach(win => win.webContents.setZoomLevel(zoomLevel));
-    dispatch<WindowStateAction>({
-      type: 'Window_RememberZoomLevel',
-      state: {
-        zoomLevel: zoomLevel
-      }
-    });
+    dispatch(rememberZoomLevel({zoomLevel}));
   }
 
   public createCheckoutWindow(payload: string, settings: any, serviceUrl: string) {

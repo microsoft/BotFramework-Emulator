@@ -1,0 +1,35 @@
+.toolbar {
+  height: 40px;
+  background-color: var(--toolbar-bg);
+  border-top: var(--toolbar-border);
+  color: var(--input-label-color);
+  line-height: 40px;
+  & > ul {
+    display: flex;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    & > li {
+      padding: 0 8px 0 8px;
+    }
+
+    & > .button > button {
+      cursor: pointer;
+      margin: 0;
+      border: none;
+      height: 30px;
+      background-color: transparent;
+      white-space: nowrap;
+      color: inherit;
+      &:hover {
+        background-color: transparent;
+        text-decoration: underline;
+      }
+    }
+
+    & > .separator {
+      background-color: transparent;
+      color: var(--neutral-5);
+    }
+  }
+}
