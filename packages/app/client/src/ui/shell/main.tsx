@@ -43,6 +43,8 @@ import * as Constants from '../../constants';
 import { StatusBar } from './statusBar/statusBar';
 import { StoreVisualizer } from '../debug/storeVisualizer';
 import { Editor } from '../../data/reducer/editor';
+import store from '../../data/store';
+import * as ExplorerActions from '../../data/action/explorerActions';
 
 export interface MainProps {
   primaryEditor?: Editor;
@@ -118,7 +120,8 @@ export class Main extends React.Component<MainProps, MainState> {
               orientation={ 'vertical' }
               primaryPaneIndex={ 0 }
               minSizes={ { 0: 40, 1: 40 } }
-              initialSizes={ { 0: 210 } }>
+              initialSizes={ { 0: 210 } }
+              onSizeChange={ this.checkExplorerSize }>
               { workbenchChildren }
             </Splitter>
           </div>
@@ -129,5 +132,16 @@ export class Main extends React.Component<MainProps, MainState> {
         <StoreVisualizer enabled={ false }/>
       </div>
     );
+  }
+
+  /** Called when the splitter between the editor and explorer panes is moved */
+  private checkExplorerSize(sizes: { absolute: number, percentage: number }[]): void {
+    if (sizes.length) {
+      const explorerSize = sizes[0];
+      const minExplorerWidth = 50;
+      if (explorerSize.absolute < minExplorerWidth) {
+        store.dispatch(ExplorerActions.show(false));
+      }
+    }
   }
 }
