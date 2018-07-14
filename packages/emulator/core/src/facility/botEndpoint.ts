@@ -69,14 +69,18 @@ export default class BotEndpoint {
     }
 
     const query = new URLSearchParams({ goodForInMinutes: duration } as any);
-    const res = this.fetchWithAuth(new URL(`?${query.toString()}`, speechEndpoint.tokenEndpoint).toString());
+    const res = await this.fetchWithAuth(new URL(`?${query.toString()}`, speechEndpoint.tokenEndpoint).toString());
 
     if (statusCodeFamily(res.status, 200)) {
-      const body = res.json() as SpeechTokenInfo;
+      const body = await res.json() as SpeechTokenInfo;
 
-      this.speechToken = body.access_Token;
+      if (body.access_Token) {
+        this.speechToken = body.access_Token;
 
-      return this.speechToken;
+        return this.speechToken;
+      } else {
+        throw new Error(body.error || 'could not retrieve speech token');
+      }
     } else if (res.status === 401) {
       throw new Error('not authorized to use Cognitive Services Speech API');
     } else {
@@ -116,7 +120,7 @@ export default class BotEndpoint {
         grant_type: 'client_credentials',
         client_id: this.msaAppId,
         client_secret: this.msaPassword,
-        scope: `${ this.msaAppId }/.default`,
+        scope: `${this.msaAppId}/.default`,
         // flag to request a version 1.0 token
         ...this.use10Tokens ? { atver: 1 } : {}
       } as { [key: string]: string }).toString(),
