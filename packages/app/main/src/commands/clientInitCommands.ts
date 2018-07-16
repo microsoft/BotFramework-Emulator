@@ -104,7 +104,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         // some extra info to differentiate it from a transcript on disk
         mainWindow.commandService.remoteCall(Commands.Emulator.OpenTranscript, 'deepLinkedTranscript', {
           activities: conversationActivities,
-          deepLink: true
+          inMemory: true
         });
       }
     }
