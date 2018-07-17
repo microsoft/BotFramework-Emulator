@@ -54,15 +54,17 @@ export function navigate(url: string) {
 }
 
 function navigateEmulatedOAuthUrl(oauthParam: string) {
+  const { Commands } = SharedConstants;
   let parts = oauthParam.split('&&&');
   CommandServiceImpl
-    .remoteCall(SharedConstants.Commands.OAuth.SendTokenResponse, parts[0], parts[1], 'emulatedToken_' + uniqueId())
+    .remoteCall(Commands.OAuth.SendTokenResponse, parts[0], parts[1], 'emulatedToken_' + uniqueId())
     .catch();
 }
 
 function navigateOAuthUrl(oauthParam: string) {
+  const { Commands } = SharedConstants;
   let parts = oauthParam.split('&&&');
-  CommandServiceImpl.remoteCall('oauth:create-oauth-window', parts[0], parts[1]).catch();
+  CommandServiceImpl.remoteCall(Commands.OAuth.CreateOAuthWindow, parts[0], parts[1]).catch();
 }
 
 // import * as URL from 'url';

@@ -246,7 +246,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
               // extra info to differentiate it from a transcript on disk
               mainWindow.commandService.remoteCall(
                 SharedConstants.Commands.Emulator.OpenTranscript, 'deepLinkedTranscript',
-                { activities: conversationActivities, deepLink: true, fileName }
+                { activities: conversationActivities, inMemory: true, fileName }
               );
             } catch (e) {
               throw new Error(`Error occured while reading downloaded transcript: ${e}`);

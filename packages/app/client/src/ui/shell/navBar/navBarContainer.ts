@@ -6,6 +6,7 @@ import * as NavBarActions from '../../../data/action/navBarActions';
 import { RootState } from '../../../data/store';
 import * as ExplorerActions from '../../../data/action/explorerActions';
 import * as EditorActions from '../../../data/action/editorActions';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 const mapStateToProps = (state: RootState): NavBarProps => ({
   activeBot: state.bot.activeBot
@@ -14,7 +15,10 @@ const mapStateToProps = (state: RootState): NavBarProps => ({
 const mapDispatchToProps = (dispatch, ownProps: NavBarProps): NavBarProps => ({
   showBotExplorer: show => dispatch(ExplorerActions.show(show)),
   navBarSelectionChanged: newSelection => dispatch(NavBarActions.select(newSelection)),
-  openBotSettings: () => CommandServiceImpl.call('bot-settings:open', ownProps.activeBot),
+  openBotSettings: () => {
+    const { Commands } = SharedConstants;
+    CommandServiceImpl.call(Commands.Bot.OpenSettings, ownProps.activeBot);
+  },
   openEmulatorSettings: () => {
     const { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } = Constants;
     dispatch(EditorActions.open(CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS, true, null));

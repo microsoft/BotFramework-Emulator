@@ -112,7 +112,7 @@ export namespace SharedConstants {
 
     export namespace OAuth {
       export const SendTokenResponse: string = 'oauth:send-token-response';
-      export const GetStoreOAuthWindow: string = 'oauth:get-store-oauth-window';
+      export const CreateOAuthWindow: string = 'oauth:create-oauth-window';
     }
 
     export namespace Settings {
