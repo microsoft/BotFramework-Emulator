@@ -196,7 +196,8 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     md5.update(this.props.inspector.src);
     const hash = md5.digest('base64');
     const { cwdAsBase } = SettingsService.emulator;
-    const fileLocation = `file://${cwdAsBase}/../../node_modules/@bfemulator/client/public/inspector-preload.js`;
+    const fileLocation = `file://${cwdAsBase}/../../../node_modules/@bfemulator/client/public/inspector-preload.js`;
+    
     return (
       <webview className={ styles.inspector }
                webpreferences="webSecurity=no"
