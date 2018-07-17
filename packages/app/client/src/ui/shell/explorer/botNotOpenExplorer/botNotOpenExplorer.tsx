@@ -31,13 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ExpandCollapse, ExpandCollapseContent } from '@bfemulator/ui-react';
+import { ExpandCollapse, ExpandCollapseContent, PrimaryButton } from '@bfemulator/ui-react';
 import * as React from 'react';
 import * as styles from './botNotOpenExplorer.scss';
+import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 export class BotNotOpenExplorer extends React.Component<{}, {}> {
   constructor(props: {}) {
     super(props);
+  }
+
+  onOpenBotClick = () => {
+    CommandServiceImpl.call(SharedConstants.Commands.Bot.OpenBrowse).catch();
   }
 
   render() {
@@ -46,10 +52,12 @@ export class BotNotOpenExplorer extends React.Component<{}, {}> {
         <li>
           <ExpandCollapse
             expanded={ true }
-            title="No Bot Selected"
+            title="No Bot Opened"
           >
             <ExpandCollapseContent>
               <div className={ styles.explorerEmptyState }>
+                <span className={ styles.emptyStateText }>You have not yet opened a bot.</span>
+                <PrimaryButton text={ 'Open Bot' } className={ styles.openBot } onClick={ this.onOpenBotClick }/>
               </div>
             </ExpandCollapseContent>
           </ExpandCollapse>

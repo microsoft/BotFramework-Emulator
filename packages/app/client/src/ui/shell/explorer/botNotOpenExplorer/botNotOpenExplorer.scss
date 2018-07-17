@@ -7,8 +7,26 @@
   list-style-type: none;
   margin: 0;
   padding: 0;
+
   & .explorerEmptyState {
     padding: 16px;
     overflow: hidden;
+  }
+
+  & .openBot {
+    margin-top: 13px;
+    margin-bottom: 26px;
+    width: 180px;
+    height: 26px;
+
+    :global {
+      .ms-Button-label {
+        line-height: 26px;
+      }
+    }
+  }
+
+  & .empty-state-text {
+    margin-top: 13px;
   }
 }
