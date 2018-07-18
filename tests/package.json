@@ -37,6 +37,5 @@
     "spectron": "3.7.2",
     "ts-node": "3.0.6"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }
