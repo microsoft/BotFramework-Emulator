@@ -68,7 +68,6 @@ AppUpdater.on('checking-for-update', () => {
 });
 
 AppUpdater.on('update-available', (updateInfo: UpdateInfo) => {
-  console.log(updateInfo);
   if (updateInfo.version.startsWith('4')) {
     const options: Electron.MessageBoxOptions = {
       buttons: ['Cancel', 'Ok'],
@@ -89,7 +88,6 @@ AppUpdater.on('downloading-update', () => {
 });
 
 AppUpdater.on('update-downloaded', (updateInfo: UpdateInfo) => {
-  console.log('downloaded update!', updateInfo)
   if (updateInfo.version.startsWith('4')) {
     const options: Electron.MessageBoxOptions = {
       buttons: ['Cancel', 'Ok'],
@@ -99,14 +97,19 @@ AppUpdater.on('update-downloaded', (updateInfo: UpdateInfo) => {
     dialog.showMessageBox(mainWindow, options, (response: number) => {
       if (response) {
         // pressed 'Ok'
-        AppUpdater.installUpdate();
+        try {
+          Migrator.migrateV3Bots();
+          AppUpdater.installUpdate();
+        } catch (err) {
+          dialog.showErrorBox('Error while upgrading', `There was an error while upgrading the emulator to version 4: \n\n${err}`);
+        }
       }
     });
   }
 });
 
 AppUpdater.on('error', (err: Error, message: string) => {
-  console.error('There was an error while using the app updater: ', message);
+  dialog.showErrorBox('Error updating app', `'There was an error while using the app updater: \n\n${message}`);
 });
 
 var openUrls = [];
@@ -305,9 +308,6 @@ const createMainWindow = () => {
     }
 
     mainWindow.loadURL(page);
-
-    const mig = new Migrator();
-    mig.migrateV3Bots();
 }
 
 Emulator.startup();

@@ -45,7 +45,7 @@ import { ensureStoragePath } from '../shared/utils';
 /** Migrates V3 bots to V4 bots */
 export class Migrator {
   /** Carries out the migration process from V3 bots to V4 bots */
-  public migrateV3Bots(): void {
+  public static migrateV3Bots(): void {
     const bots: IBot[] = this.getV3Bots();
     if (bots.length) {
       this.convertBotsToBotFiles(bots);
@@ -55,7 +55,7 @@ export class Migrator {
   }
 
   /** Gets list of v3 bots from server.json */
-  private getV3Bots(): IBot[] {
+  private static getV3Bots(): IBot[] {
     const settings: Settings = getSettings();
     if (!settings.bots || !settings.bots.length) {
       return [];
@@ -64,7 +64,7 @@ export class Migrator {
   }
 
   /** Converts V3 bot configs to V4 bot files */
-  private convertBotsToBotFiles(bots: IBot[]): void {
+  private static convertBotsToBotFiles(bots: IBot[]): void {
     // if there is no /migration/ folder, create it
     const migrationDirPath = Path.join(ensureStoragePath(), 'migration');
     Mkdirp.sync(migrationDirPath);
@@ -106,7 +106,7 @@ export class Migrator {
   }
 
   /** Maps a V3 bot config to a V4 bot file and saves it at path */
-  private populateAndSaveBotFile(bot: IBot, path: string, botName: string): void {
+  private static populateAndSaveBotFile(bot: IBot, path: string, botName: string): void {
     const botFile = new BotConfig();
     const endpoint: IEndpointService = {
       id: bot.botUrl,
@@ -122,19 +122,19 @@ export class Migrator {
   }
 
   /** Returns true if the bot has a localhost url */
-  private isLocalhostBot(bot: IBot): boolean {
+  private static isLocalhostBot(bot: IBot): boolean {
     const localhostRegex = /^https?:\/\/localhost:/;
     return localhostRegex.test(bot.botUrl);
   }
 
   /** Extracts the port number from a localhost url */
-  private extractLocalhostPort(url: string): string {
+  private static extractLocalhostPort(url: string): string {
     const parsedUrl = Url.parse(url);
     return parsedUrl.port;
   }
 
   /** Extracts the host name from a remote url */
-  private extractRemoteHostName(url: string): string {
+  private static extractRemoteHostName(url: string): string {
     const parsedUrl = Url.parse(url);
     return parsedUrl.host;
   }
