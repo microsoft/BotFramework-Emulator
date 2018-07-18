@@ -32,7 +32,7 @@
 //
 
 import * as Electron from 'electron';
-import { Menu } from 'electron';
+import { Menu, dialog } from 'electron';
 import { Subject} from 'rxjs';
 import { getSettings, dispatch } from './settings';
 import { WindowStateAction } from './reducers/windowStateReducer';
@@ -44,6 +44,8 @@ import { WindowManager } from './windowManager';
 import * as commandLine from './commandLine'
 import * as electronLocalShortcut from 'electron-localshortcut';
 import { Migrator } from './migrator';
+import { AppUpdater } from './appUpdater';
+import { UpdateInfo } from 'electron-updater';
 
 // Ensure further options aren't passed to Chromium
 Electron.app.setAsDefaultProtocolClient('botemulator', process.execPath, [
@@ -59,6 +61,53 @@ Electron.app.setAsDefaultProtocolClient('botemulator', process.execPath, [
 
 export let mainWindow: Electron.BrowserWindow;
 export let windowManager: WindowManager;
+
+// Set up AppUpdater events
+AppUpdater.on('checking-for-update', () => {
+  console.log('checking for update...');
+});
+
+AppUpdater.on('update-available', (updateInfo: UpdateInfo) => {
+  console.log(updateInfo);
+  if (updateInfo.version.startsWith('4')) {
+    const options: Electron.MessageBoxOptions = {
+      buttons: ['Cancel', 'Ok'],
+      title: 'Update available',
+      message: `A new version of the emulator is available for download (${updateInfo.version}). Would you like to download the new version?`,
+    };
+    dialog.showMessageBox(mainWindow, options, (response: number) => {
+      if (response) {
+        // pressed 'Ok'
+        AppUpdater.downloadUpdate();
+      }
+    });
+  }
+});
+
+AppUpdater.on('downloading-update', () => {
+  console.log('downloading update...');
+});
+
+AppUpdater.on('update-downloaded', (updateInfo: UpdateInfo) => {
+  console.log('downloaded update!', updateInfo)
+  if (updateInfo.version.startsWith('4')) {
+    const options: Electron.MessageBoxOptions = {
+      buttons: ['Cancel', 'Ok'],
+      title: 'Install update?',
+      message: `The new version of the emulator (${updateInfo.version}) has been downloaded and is ready to be installed. Would you like to install the new version?`,
+    };
+    dialog.showMessageBox(mainWindow, options, (response: number) => {
+      if (response) {
+        // pressed 'Ok'
+        AppUpdater.installUpdate();
+      }
+    });
+  }
+});
+
+AppUpdater.on('error', (err: Error, message: string) => {
+  console.error('There was an error while using the app updater: ', message);
+});
 
 var openUrls = [];
 var onOpenUrl = function (event, url) {
@@ -125,6 +174,9 @@ const createMainWindow = () => {
         });
     mainWindow.setTitle(windowTitle);
     windowManager = new WindowManager();
+
+    // Start up app updater
+    AppUpdater.startup();
 
     // mainWindow.webContents.openDevTools();
 
