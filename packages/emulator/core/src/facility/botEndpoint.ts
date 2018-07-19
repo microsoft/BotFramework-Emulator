@@ -120,7 +120,7 @@ export default class BotEndpoint {
         grant_type: 'client_credentials',
         client_id: this.msaAppId,
         client_secret: this.msaPassword,
-        scope: `${this.msaAppId}/.default`,
+        scope: `${ this.msaAppId }/.default`,
         // flag to request a version 1.0 token
         ...this.use10Tokens ? { atver: 1 } : {}
       } as { [key: string]: string }).toString(),
