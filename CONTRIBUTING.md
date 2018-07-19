@@ -87,10 +87,10 @@ Open 3 terminals:
    `packages/app/shared` and rebuild the `shared` package
 
  - One in `packages/app/main` (will be used to watch for changes on the main side and auto-compile the TypeScript)
-   - run `npm build:electron -- --watch`
+   - run `npm run build:electron -- --watch`
    - don't have to worry about this terminal anymore
  - Another in `packages/app/main` (will be used to start and restart the main side after changes have been recompiled)
-   - run `npm start:electron:dev`
+   - run `npm run start:electron:dev`
    - this starts a new instance of the electron app with the most recently compiled `packages/app/main` files
    - **To see app/main file changes:** `Ctrl + C` to kill the electron app, then `npm start:electron:dev` to restart it with your reflected changes
 
