@@ -128,16 +128,16 @@ class Chat extends Component<Props> {
       );
 
       return (
-        <div id="webchat-container" className={`${styles.chat} wc-app wc-wide`}>
+        <div id="webchat-container" className={ `${ styles.chat } wc-app wc-wide` }>
           <WebChat
-            key={document.directLine.token}
-            {...webChatProps}
+            key={ document.directLine.token }
+            { ...webChatProps }
           />
         </div>
       );
     } else {
       return (
-        <div className={styles.disconnected}>
+        <div className={ styles.disconnected }>
           Not Connected
         </div>
       );
