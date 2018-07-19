@@ -33,6 +33,6 @@
 
 import * as Fs from 'fs';
 
-export const getFilesInDir = (path3: string) => {
-  return Fs.readdirSync(path3, 'utf-8');
+export const getFilesInDir = (path: string) => {
+  return Fs.readdirSync(path, 'utf-8');
 };
