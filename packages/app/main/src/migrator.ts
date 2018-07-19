@@ -84,6 +84,8 @@ export class Migrator {
       const store = getStore();
       store.dispatch(BotActions.load(recentBotsList));
       mainWindow.commandService.remoteCall(SyncBotList, recentBotsList);
+
+      // SHOW POST-MIGRATION OVERVIEW PAGE
     }
   }
 
