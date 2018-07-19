@@ -69,7 +69,7 @@ export default class BotEndpoint {
     }
 
     const query = new URLSearchParams({ goodForInMinutes: duration } as any);
-    const res = await this.fetchWithAuth(new URL(`?${query.toString()}`, speechEndpoint.tokenEndpoint).toString());
+    const res = await this.fetchWithAuth(new URL(`?${ query.toString() }`, speechEndpoint.tokenEndpoint).toString());
 
     if (statusCodeFamily(res.status, 200)) {
       const body = await res.json() as SpeechTokenInfo;
