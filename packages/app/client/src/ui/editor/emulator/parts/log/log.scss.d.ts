@@ -1,6 +1,7 @@
 // This is a generated file. Changes are likely to result in being overwritten
 export const log: string;
 export const entry: string;
+export const inspected: string;
 export const source: string;
 export const timestamp: string;
 export const srcDst: string;
