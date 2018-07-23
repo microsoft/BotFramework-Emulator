@@ -35,7 +35,7 @@ import * as Electron from 'electron';
 import { Action, applyMiddleware, createStore, Store } from 'redux';
 import { getThemes, loadSettings, saveSettings } from '../utils';
 import sagaMiddlewareFactory from 'redux-saga';
-import { PersistentSettings, Settings, settingsDefault, } from '@bfemulator/app-shared';
+import { PersistentSettings, Settings, settingsDefault, SettingsImpl, } from '@bfemulator/app-shared';
 import reducers from './reducers';
 import { settingsSagas } from './sagas/settingsSagas';
 
@@ -60,9 +60,7 @@ let saveTimer;
 const saveSettingsMiddleware = s => next => action => {
   const result = next(action);
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(function () {
-    saveSettings<PersistentSettings>('server.json', s.getState());
-  }, 1000);
+  saveTimer = setTimeout(() => saveSettings<PersistentSettings>('server.json', getSettings()), 1000);
 
   return result;
 };
@@ -70,7 +68,7 @@ const saveSettingsMiddleware = s => next => action => {
 export const dispatch = <T extends Action>(obj: any) => getStore().dispatch<T>(obj);
 
 export const getSettings = () => {
-  return new Settings(getStore().getState());
+  return new SettingsImpl(getStore().getState());
 };
 
 export const startup = () => {

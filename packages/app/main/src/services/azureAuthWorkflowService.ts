@@ -32,64 +32,61 @@
 //
 
 import { BrowserWindow } from 'electron';
+import * as uuidv3 from 'uuid/v3';
+import * as uuidv4 from 'uuid/v4';
+
 declare type AzureAuthWorkflowType = IterableIterator<Promise<BrowserWindow> | Promise<{ armToken: string } | boolean>>;
+
 export class AzureAuthWorkflowService {
 
-  public static* enterAuthWorkflow(): AzureAuthWorkflowType  {
+  public static* enterAuthWorkflow(): AzureAuthWorkflowType {
     const authWindow = yield AzureAuthWorkflowService.launchAuthWindow();
     authWindow.show();
-    // We're always getting the v1.0 endpoint
-    // which we do not want to support. Pull out the region
-    // and include it in a custom object the we'll build the
-    // endpoint ourselves
     let result = yield AzureAuthWorkflowService.waitForDataFromWindow(authWindow);
-    if (result) {
-      const { BaseUrl: url, key } = result;
-      const [, region] = /(?:https:\/\/)([\w]+)/.exec(url);
-      result = { key, region };
-    }
     authWindow.close();
     yield result;
   }
 
-  private static async waitForDataFromWindow(browserWindow: BrowserWindow): Promise<{ armToken: string} | boolean> {
+  private static async waitForDataFromWindow(browserWindow: BrowserWindow): Promise<{ armToken: string } | false> {
+    let canceled = false;
+    browserWindow.addListener('close', () => canceled = true);
+
     const script = `
       (function(window) {
-        const nav = document.querySelector('.global-navigation');
-        const bf = document.querySelector('bf-login');
-        if (nav) {
-          nav.style.display = 'none';
-          const h2 = nav.appendChild(document.createElement('h2'));
-          h2.textContent = 'Sign-in Required to Display LUIS Models';
-        }
-        if (bf) {
-          bf.style.position = 'absolute';
-          bf.style.top = '50%';
-          bf.style.transform = 'translateY(-50%)';
+        if (window.location.hash) {
+          return Promise.resolve(window.location.hash);
         }
         return new Promise(resolve => {
-          const messages = [];
-          window.parent.addEventListener('message', message => messages.push(message.data));
-          window.addEventListener('beforeunload', () => resolve(messages));
+          const idTokenHandler = () => {
+            if (window.location.hash.includes('id_token')) {
+              resolve(window.location.hash);
+            }
+          }
+          window.addEventListener('hashchange', idTokenHandler);
+          setTimeout(resolve.bind(null, 'waiting'), 500);
         });
       })(window);
     `;
     while (true) {
-      const messages = await browserWindow.webContents.executeJavaScript(script);
-      let canceled;
-      for (let i = 0; i < messages.length; i++) {
-        if ('key' in messages[i]) {
-          return messages[i];
-        }
-        // This could be brittle since this message
-        // may or may not be dispatched intentionally
-        // when the user cancels
-        if ('programmaticKey' in messages[i]) {
-          canceled = true;
-        }
-      }
+      let response = await browserWindow.webContents.executeJavaScript(script);
+
       if (canceled) {
         return false;
+      }
+
+      if (response === 'waiting') {
+        continue;
+      }
+      const values = response.split('&');
+      let len = values.length;
+      for (let i = 0; i < len; i++) {
+        const [key, value] = values[i].split(/[=]/);
+        if (key.includes('id_token')) {
+          return { armToken: value };
+        }
+        if (key.includes('error')) {
+          return false;
+        }
       }
     }
   }
@@ -100,17 +97,29 @@ export class AzureAuthWorkflowService {
       show: false,
       frame: false,
       transparent: true,
-      width: 540,
-      height: 475,
+      width: 500,
+      height: 550,
       webPreferences: { contextIsolation: true, nativeWindowOpen: true }
     });
-    browserWindow.loadURL('https://www.luis.ai/home/subkey?callback=http://luis.ai');
+    const clientId = '4f28e5eb-6b7f-49e6-ac0e-f992b622da57';
+    const redirectUri = 'http://localhost:3000/botframework-emulator';
+    const state = uuidv4();
+    const requestId = uuidv4();
+    const nonce = uuidv3('https://github.com/Microsoft/BotFramework-Emulator', uuidv3.URL);
+    const bits = [
+      'https://login.microsoftonline.com/common/oauth2/authorize?response_type=id_token',
+      `client_id=${clientId}`,
+      `redirect_uri=${redirectUri}`,
+      `state=${state}`,
+      `client-request-id=${requestId}`,
+      'x-client-SKU=Js',
+      'x-client-Ver=1.0.17',
+      `nonce=${nonce}`
+    ];
+    const url = bits.join('&');
+    browserWindow.loadURL(url);
     return new Promise<BrowserWindow>(resolve => {
       browserWindow.once('ready-to-show', () => resolve(browserWindow));
     });
-  }
-
-  constructor() {
-    throw new ReferenceError('The LuisAuthWorkflowService cannot be constructed.');
   }
 }

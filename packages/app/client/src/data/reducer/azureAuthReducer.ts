@@ -32,33 +32,31 @@
 //
 
 import {
-  AZURE_AUTH_STATUS_CHANGED,
-  AZURE_ARM_TOKEN_DATA_CHANGED,
-  AzureAuthAction,
   ArmTokenData,
-  AzureAuthWorkflowStatus
+  AZURE_ARM_TOKEN_DATA_CHANGED,
+  AZURE_BEGIN_AUTH_WORKFLOW,
+  AzureAuthAction,
 } from '../action/azureAuthActions';
 
 export interface AzureAuthState {
-  azureAuthWorkflowStatus: 'notStarted' | 'inProgress' | 'ended' | 'canceled';
   armToken: string;
+  persistLogin: boolean;
 }
 
 const initialState: AzureAuthState = {
-  azureAuthWorkflowStatus: 'notStarted',
-  armToken: null
+  armToken: null,
+  persistLogin: false
 };
 
-export default function azureAuth(state: AzureAuthState = initialState,
-                                  action: AzureAuthAction<ArmTokenData> | AzureAuthAction<AzureAuthWorkflowStatus>)
+export default function azureAuth(state: AzureAuthState = initialState, action: AzureAuthAction<ArmTokenData>)
   : AzureAuthState {
   const { payload = {}, type } = action;
   const { armToken } = payload as ArmTokenData;
-  const { azureAuthWorkflowStatus } = payload as AzureAuthWorkflowStatus;
 
   switch (type) {
-    case AZURE_AUTH_STATUS_CHANGED:
-      return { ...state, azureAuthWorkflowStatus };
+
+    case AZURE_BEGIN_AUTH_WORKFLOW:
+      return { ...state, armToken: 'invalid__' + Math.floor(Math.random() * 9999) };
 
     case AZURE_ARM_TOKEN_DATA_CHANGED:
       return { ...state, armToken };

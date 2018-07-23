@@ -33,7 +33,6 @@
 
 import {
   azureArmTokenDataChanged,
-  azureAuthStatusChanged
 } from '../action/azureAuthActions';
 import azureAuth, { AzureAuthState } from './azureAuthReducer';
 
@@ -42,8 +41,8 @@ describe('Azure auth reducer tests', () => {
 
   beforeEach(() => {
     startingState = {
-      azureAuthWorkflowStatus: null,
-      armToken: null
+      armToken: null,
+      persistLogin: false
     };
   });
 
@@ -51,12 +50,6 @@ describe('Azure auth reducer tests', () => {
     const emptyAction = { type: null, payload: undefined };
     const endingState = azureAuth(startingState, emptyAction);
     expect(endingState).toEqual(startingState);
-  });
-
-  it('should change workflow status', () => {
-    const action = azureAuthStatusChanged('inProgress');
-    const state = azureAuth(startingState, action);
-    expect(state.azureAuthWorkflowStatus).toBe('inProgress');
   });
 
   it('should change auth data', () => {

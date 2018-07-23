@@ -105,6 +105,7 @@ export namespace SharedConstants {
 
     export namespace Azure {
       export const RetrieveArmToken = 'azure:retrieve-arm-token';
+      export const PersistAzureLoginChanged = 'azure:persist-azure-login-changed';
     }
 
     export namespace Misc {
