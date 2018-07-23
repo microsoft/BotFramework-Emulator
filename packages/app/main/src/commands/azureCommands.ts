@@ -32,35 +32,37 @@
 //
 
 import { AzureAuthWorkflowService } from '../services/azureAuthWorkflowService';
-import { getStore } from '../botData/store';
+import { getStore } from '../settingsData/store';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
-
-const store = getStore();
+import { azureAuthStatusChanged, azurePersistLoginChanged } from '../settingsData/actions/azureAuthActions';
 
 /** Registers LUIS commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  const Commands = SharedConstants.Commands.Luis;
+  const Commands = SharedConstants.Commands.Azure;
 
   // ---------------------------------------------------------------------------
   // Retrieve the LUIS authoring key
-  commandRegistry.registerCommand(Commands.RetrieveAuthoringKey, async () => {
+  commandRegistry.registerCommand(Commands.RetrieveArmToken, async () => {
+    const store = getStore();
     const workflow = AzureAuthWorkflowService.enterAuthWorkflow();
-    const { dispatch: storeDispatch } = store;
-    const type = 'AZURE_AUTH_STATUS_CHANGED';
-    storeDispatch({ type, luisAuthWorkflowStatus: 'inProgress' });
+    store.dispatch(azureAuthStatusChanged('inProgress'));
     let result = undefined;
     while (true) {
       const next = workflow.next(result);
       if (next.done) {
-        storeDispatch({ type, luisAuthWorkflowStatus: 'ended' });
+        store.dispatch(azureAuthStatusChanged('ended'));
         if (!result) {
-          storeDispatch({ type, luisAuthWorkflowStatus: 'canceled' });
+          store.dispatch(azureAuthStatusChanged('canceled'));
         }
         break;
       }
       result = await next.value;
     }
     return result;
+  });
+
+  commandRegistry.registerCommand(Commands.PersistAzureLoginChanged, persistLogin => {
+    getStore().dispatch(azurePersistLoginChanged(persistLogin));
   });
 }

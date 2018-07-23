@@ -31,18 +31,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { combineReducers } from 'redux';
-import { frameworkReducer } from './frameworkReducer';
-import { usersReducer } from './usersReducer';
-import { botsReducer } from './botReducer';
-import { windowStateReducer } from './windowStateReducer';
-import { azureAuth } from './azureAuthReducer';
-import { Settings } from '@bfemulator/app-shared';
+import { connect } from 'react-redux';
+import { RootState } from '../../../data/store';
+import { DialogService } from '../service';
+import { AzureLoginSuccessDialog } from './azureLoginSuccessDialog';
 
-export default combineReducers<Settings>({
-  azure: azureAuth,
-  framework: frameworkReducer,
-  bots: botsReducer,
-  windowState: windowStateReducer,
-  users: usersReducer
-});
+const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }) => {
+  const { persistLogin } = state.azureAuth;
+  return {
+    rememberMe: persistLogin,
+    ...ownProps
+  };
+};
+
+const mapDispatchToProps = (_dispatch: () => void) => {
+  return {
+    cancel: persistLogin => DialogService.hideDialog(persistLogin)
+  };
+};
+
+export const AzureLoginSuccessDialogContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AzureLoginSuccessDialog as any) as any;

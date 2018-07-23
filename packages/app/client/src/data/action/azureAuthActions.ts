@@ -34,7 +34,6 @@
 import { Action } from 'redux';
 
 export const AZURE_ARM_TOKEN_DATA_CHANGED = 'AZURE_ARM_TOKEN_DATA_CHANGED';
-export const AZURE_AUTH_STATUS_CHANGED = 'AZURE_AUTH_STATUS_CHANGED';
 export const AZURE_BEGIN_AUTH_WORKFLOW = 'AZURE_BEGIN_AUTH_WORKFLOW';
 
 export interface AzureAuthAction<T> extends Action {
@@ -45,14 +44,10 @@ export interface ArmTokenData {
   armToken: string;
 }
 
-export interface AzureAuthWorkflowStatus {
-  azureAuthWorkflowStatus: 'inProgress' | 'ended' | 'notStarted' | 'canceled';
-}
-
 export function beginAzureAuthWorkflow(): AzureAuthAction<any> {
   return {
     type: AZURE_BEGIN_AUTH_WORKFLOW,
-    payload: {}
+    payload: { azureAuthWorkflowStatus: 'inProgress' }
   };
 }
 
@@ -60,13 +55,5 @@ export function azureArmTokenDataChanged(armToken: string): AzureAuthAction<ArmT
   return {
     type: AZURE_ARM_TOKEN_DATA_CHANGED,
     payload: { armToken }
-  };
-}
-
-export function azureAuthStatusChanged(azureAuthWorkflowStatus: 'inProgress' | 'ended' | 'notStarted' | 'canceled')
-  : AzureAuthAction<AzureAuthWorkflowStatus> {
-  return {
-    type: AZURE_AUTH_STATUS_CHANGED,
-    payload: { azureAuthWorkflowStatus }
   };
 }

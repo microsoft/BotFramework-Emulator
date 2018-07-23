@@ -39,6 +39,7 @@ import * as NavBarActions from '../data/action/navBarActions';
 import * as Constants from '../constants';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
+import { beginAzureAuthWorkflow } from '../data/action/azureAuthActions';
 
 /** Register UI commands (toggling UI) */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
@@ -98,5 +99,5 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Azure sign in
-  commandRegistry.registerCommand(Commands.SignInToAzure, () => store.dispatch(null));
+  commandRegistry.registerCommand(Commands.SignInToAzure, () => store.dispatch(beginAzureAuthWorkflow()));
 }
