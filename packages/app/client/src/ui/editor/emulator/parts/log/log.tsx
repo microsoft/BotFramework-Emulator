@@ -133,6 +133,13 @@ export default class Log extends React.Component<LogProps, LogState> {
     }
   }
 
+  componentWillUnmount(): void {
+    // clean up activity subscription
+    if (this.selectedActivitySubscription) {
+      this.selectedActivitySubscription.unsubscribe();
+    }
+  }
+
   render() {
     let key = 0;
     return (
@@ -157,7 +164,7 @@ export interface LogEntryProps {
 }
 
 class LogEntryComponent extends React.Component<LogEntryProps> {
-  /** Allows <LogEntry />'s to highlight themselves based on their <LogItem /> children */
+  /** Allows <LogEntry />'s to highlight themselves based on their log item children */
   private inspectableObjects: { [id: string]: boolean };
 
   /** Sends obj to the inspector panel
@@ -212,7 +219,7 @@ class LogEntryComponent extends React.Component<LogEntryProps> {
     this.inspectableObjects = {};
 
     // render the timestamp and any items to be displayed within the entry;
-    // any rendered inspectable items will add themselves to the inspectable objects lookup
+    // any rendered inspectable items will add themselves to this.inspectableObjects
     const innerJsx = (
       <>
         { this.renderTimestamp(this.props.entry.timestamp) }
@@ -221,7 +228,7 @@ class LogEntryComponent extends React.Component<LogEntryProps> {
     );
 
     // if the currently selected activity matches any of this item's inner inspectable
-    // objects, append an 'inspected' classname to the log entry to highlight it
+    // objects, append an 'inspected' class name to the log entry to highlight it
     const { currentlyInspectedActivity } = this.props;
     let inspectedActivityClass = '';
     if (currentlyInspectedActivity && currentlyInspectedActivity.id) {
