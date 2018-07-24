@@ -91,6 +91,9 @@ html {
   --explorer-panel-group-border: 1px solid #00BCF2;
   --explorer-panel-empty-message-color: var(--neutral-4);
 
+  /* Explorer Bar */
+  --explorer-bar-header-bg: var(--neutral-16);
+
   /* Tabs */
   --tab-color: var(--p-button-color);
   --tab-bar-bg: var(--neutral-16);
@@ -104,12 +107,13 @@ html {
 
   /* Notifications */
   --notification-bg: var(--neutral-16);
-  --notification-title-color: var(--neutral-1);
   --notification-message-color: var(--neutral-1);
   --notification-timestamp-color: var(--neutral-1);
   --notification-close-icon-color: var(--neutral-1);
-  --notifications-clear-all-btn-color: #3062d6;
-  --notifications-clear-all-btn-hover-color: #4672da;
+  --notification-border: 1px solid #00BCF2;
+  --notifications-clear-all-btn-color: var(--neutral-1);
+  --notification-inner-border-display: block;
+  --notification-inner-border: 1px dashed #F38518;
 
   /* toolbar */
   --toolbar-bg: var(--neutral-16);

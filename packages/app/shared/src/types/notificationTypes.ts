@@ -46,7 +46,6 @@ export interface NotificationCTAButton {
 
 export interface Notification {
   id: string;
-  title: string;
   type: NotificationType;
   message: string;
   timestamp: number;
@@ -56,7 +55,6 @@ export interface Notification {
 
 export class NotificationImpl implements Notification {
   id: string;
-  title: string;
   type: NotificationType;
   message: string;
   timestamp: number;

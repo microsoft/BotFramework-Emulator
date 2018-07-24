@@ -59,6 +59,7 @@ class NotificationsExplorerComp extends React.Component<NotificationExplorerProp
     // max-height: 100% of explorer pane - 20px (Clear all button height) - 40px (Explorer title height)
     return (
       <>
+        { clearAllButton }
         <ul className={ styles.notificationsExplorer }>
           {
             notifications.map(n => {
@@ -67,7 +68,6 @@ class NotificationsExplorerComp extends React.Component<NotificationExplorerProp
             })
           }
         </ul>
-        { clearAllButton }
       </>
     );
   }

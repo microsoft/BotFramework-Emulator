@@ -49,16 +49,16 @@ class NotificationComp extends React.Component<NotificationProps, {}> {
   }
 
   render(): JSX.Element {
-    const { title = '', message = '', id = '' } = this.props.notification;
+    const { message = '', id = '' } = this.props.notification;
     const { removeNotification } = this.props;
 
     return (
       <li className={ styles.notification }>
         <div className={ styles.closeIcon } onClick={ () => removeNotification(id) }></div>
-        <h3 className={ styles.notificationTitle }>{ title }</h3>
         <p className={ styles.notificationMessage }>{ message }</p>
         { this.timestamp }
         { this.buttonRow }
+        <div className={ styles.innerBorder } ></div>
       </li>
     );
   }
@@ -83,7 +83,19 @@ class NotificationComp extends React.Component<NotificationProps, {}> {
   private get timestamp(): JSX.Element {
     const { timestamp = null } = this.props.notification;
     if (timestamp) {
-      return <span className={ styles.notificationTimestamp }>{ new Date(timestamp).toUTCString() }</span>;
+      const dateOptions = {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric'
+      };
+      return (
+        <span className={ styles.notificationTimestamp }>
+          { new Date(timestamp).toLocaleString('en-US', dateOptions) }
+        </span>
+      );
     }
     return null;
   }
@@ -93,6 +105,6 @@ const mapDispatchToProps = (dispatch): NotificationProps => ({
   removeNotification: (id: string) => { dispatch(NotificationActions.beginRemove(id)); }
 });
 
-const mapStateToProps = () => ({});
+const mapStateToProps = (): NotificationProps => ({});
 
 export const Notification = connect(mapStateToProps, mapDispatchToProps)(NotificationComp);
