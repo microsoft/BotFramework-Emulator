@@ -41,6 +41,7 @@ import { IBotConfig } from 'msbot/bin/schema';
 import { RootState } from '../../../../data/store';
 import * as styles from './explorerBar.scss';
 import { NotificationsExplorerBar } from '../notificationsExplorer/notificationsExplorerBar';
+import { InsetShadow } from '@bfemulator/ui-react';
 
 interface ExplorerBarProps {
   activeBot?: IBotConfig;
@@ -85,6 +86,7 @@ class ExplorerBarComponent extends React.Component<ExplorerBarProps> {
     return (
       <div className={ styles.explorerBar }>
         { explorer }
+        <InsetShadow orientation={ 'right' } />
       </div>
     );
   }

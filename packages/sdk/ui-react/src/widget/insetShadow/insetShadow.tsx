@@ -32,40 +32,45 @@
 //
 
 import * as React from 'react';
+import * as styles from './insetShadow.scss';
 
-import { SplitterOrientation } from '.';
+export type InsetShadowOrientation = 'top' | 'bottom' | 'left' | 'right';
 
-export interface SplitterPaneProps {
-  orientation?: SplitterOrientation;
-  size?: number;
+export interface Props {
+  orientation: InsetShadowOrientation;
 }
 
-export class SplitterPane extends React.Component<SplitterPaneProps, {}> {
-
+export class InsetShadow extends React.Component<Props> {
   render() {
-    const style: any = {
-      overflow: 'hidden',
-      flexShrink: 1,
-      flexGrow: 1,
-      flexBasis: this.props.size,
-      boxSizing: 'border-box',
-      zIndex: 0
-    };
+    const { orientation } = this.props;
+    if (!orientation) {
+      throw new Error('<InsetShadow /> requires an "orientation" prop to be passed in!');
+    }
 
-    if (this.props.orientation === 'horizontal') {
-      style.maxWidth = '100%';
-      style.left = 0;
-      style.right = 0;
-    } else {
-      style.maxHeight = '100%';
-      style.top = 0;
-      style.bottom = 0;
+    let shadowClassName = '';
+    switch (orientation) {
+      case 'top':
+        shadowClassName = styles.top;
+        break;
+
+      case 'bottom':
+        shadowClassName = styles.bottom;
+        break;
+
+      case 'left':
+        shadowClassName = styles.left;
+        break;
+
+      case 'right':
+        shadowClassName = styles.right;
+        break;
+
+      default:
+        return null;
     }
 
     return (
-      <div className={ 'splitter-pane' } style={ style } >
-        { this.props.children }
-      </div>
+      <div className={ [styles.insetShadow, shadowClassName].join(' ') } aria-hidden="true"/>
     );
   }
 }

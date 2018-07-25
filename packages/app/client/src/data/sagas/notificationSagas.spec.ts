@@ -49,7 +49,7 @@ import {
 
 describe('Notification sagas', () => {
   test('addNotification()', () => {
-    const notification = newNotification('notification1', 'someMessage', NotificationType.Info);
+    const notification = newNotification('someMessage', NotificationType.Info);
     const action = beginAdd(notification, false);
     const gen = addNotification(action);
 
