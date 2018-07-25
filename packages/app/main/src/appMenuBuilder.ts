@@ -54,7 +54,7 @@ export interface AppMenuBuilder {
   getWindowMenuMac: () => Electron.MenuItemConstructorOptions[];
   getHelpMenu: () => Electron.MenuItemConstructorOptions;
   setFileMenu: (fileMenuTemplate: Electron.MenuItemConstructorOptions,
-                appMenuTemplate: Electron.MenuItemConstructorOptions[]) => Electron.MenuItemConstructorOptions[];
+    appMenuTemplate: Electron.MenuItemConstructorOptions[]) => Electron.MenuItemConstructorOptions[];
 }
 
 export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBuilder {
@@ -121,9 +121,6 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
 
   /** Creates a file menu item for each bot that will set the bot as active when clicked */
   createRecentBotsList(bots: BotInfo[]): Electron.MenuItemConstructorOptions[] {
-    // TODO: will need to change this to recent endpoints instead of bots
-    // once we allow multiple endpoints per bot
-
     // only list 5 most-recent bots
     return bots.slice(0, 5).filter(bot => !!bot).map(bot => ({
       label: bot.displayName,
@@ -434,7 +431,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
 
   /** Takes a file menu template and places it at the right position in the app menu template according to platform */
   setFileMenu(fileMenuTemplate: Electron.MenuItemConstructorOptions,
-              appMenuTemplate: Electron.MenuItemConstructorOptions[]): Electron.MenuItemConstructorOptions[] {
+    appMenuTemplate: Electron.MenuItemConstructorOptions[]): Electron.MenuItemConstructorOptions[] {
     if (process.platform === 'darwin') {
       appMenuTemplate[1] = fileMenuTemplate;
     } else {

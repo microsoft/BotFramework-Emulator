@@ -53,12 +53,9 @@ describe('Notification sagas', () => {
     const action = beginAdd(notification, false);
     const gen = addNotification(action);
 
-    // getting a notification manager instance
-    expect(gen.next().value).toEqual(call([NotificationManager, NotificationManager.getInstance]));
-
     // adding a notification to the manager
     const instance = NotificationManager.getInstance();
-    expect(gen.next(instance).value).toEqual(call([instance, instance.addNotification], notification));
+    expect(gen.next().value).toEqual(call([instance, instance.addNotification], notification));
 
     // dispatching a finishAdd notification action
     expect(gen.next().value).toEqual(put(finishAdd(notification)));
@@ -67,12 +64,9 @@ describe('Notification sagas', () => {
   test('clearNotifications()', () => {
     const gen = clearNotifications();
 
-    // getting a notification manager instance
-    expect(gen.next().value).toEqual(call([NotificationManager, NotificationManager.getInstance]));
-
     // clearing the manager's notifications
     const instance = NotificationManager.getInstance();
-    expect(gen.next(instance).value).toEqual(call([instance, instance.clearNotifications]));
+    expect(gen.next().value).toEqual(call([instance, instance.clearNotifications]));
 
     // dispatching a finishClear notification action
     expect(gen.next().value).toEqual(put(finishClear()));
@@ -82,12 +76,9 @@ describe('Notification sagas', () => {
     const action = beginRemove('someId');
     const gen = removeNotification(action);
 
-    // getting a notification manager instance
-    expect(gen.next().value).toEqual(call([NotificationManager, NotificationManager.getInstance]));
-
     // removing a notification from the manager
     const instance = NotificationManager.getInstance();
-    expect(gen.next(instance).value).toEqual(call([instance, instance.removeNotification], 'someId'));
+    expect(gen.next().value).toEqual(call([instance, instance.removeNotification], 'someId'));
 
     // dispatching a finishRemove notification action
     expect(gen.next().value).toEqual(put(finishRemove('someId')));
