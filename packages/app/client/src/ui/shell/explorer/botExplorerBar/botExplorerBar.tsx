@@ -38,7 +38,7 @@ import { EndpointExplorerContainer } from '../endpointExplorer';
 import { ExplorerBarBody } from '../explorerBarBody';
 import { ExplorerBarHeader, Title } from '../explorerBarHeader/explorerBarHeader';
 import { FileExplorer } from '../fileExplorer';
-import { BotNotOpenExplorer } from '../botNotOpenExplorer/botNotOpenExplorer';
+import { BotNotOpenExplorer } from '../botNotOpenExplorer';
 import { IBotConfig } from 'msbot/bin/schema';
 
 interface BotExplorerBarProps {

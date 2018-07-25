@@ -39,7 +39,7 @@ export * from './luisExplorer';
 export * from './qnaMakerExplorer';
 export * from './servicesExplorerBar';
 export * from './fileExplorer';
-export * from './botNotOpenExplorer/botNotOpenExplorer';
+export * from './botNotOpenExplorer';
 export * from './explorerBar/explorerBar';
 export * from './explorerBarBody';
 export * from './explorerBarHeader/explorerBarHeader';

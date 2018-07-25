@@ -31,38 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ExpandCollapse, ExpandCollapseContent, PrimaryButton } from '@bfemulator/ui-react';
-import * as React from 'react';
-import * as styles from './botNotOpenExplorer.scss';
+import { BotNotOpenExplorer as BotNotOpenExplorerComp, BotNotOpenExplorerProps } from './botNotOpenExplorer';
+import { connect } from 'react-redux';
+import * as BotActions from '../../../../data/action/botActions';
 
-export interface BotNotOpenExplorerProps {
-  onOpenBotClick: () => any;
-}
-
-export class BotNotOpenExplorer extends React.Component<BotNotOpenExplorerProps, {}> {
-  constructor(props: BotNotOpenExplorerProps) {
-    super(props);
+const mapStateToProps = (): any => ({});
+const mapDispatchToProps = (dispatch): BotNotOpenExplorerProps => ({
+  onOpenBotClick: () => {
+    dispatch(BotActions.browse());
   }
+});
 
-  render() {
-    const { onOpenBotClick } = this.props;
-
-    return (
-      <ul className={ styles.botNotOpenExplorer }>
-        <li>
-          <ExpandCollapse
-            expanded={ true }
-            title="No Bot Opened"
-          >
-            <ExpandCollapseContent>
-              <div className={ styles.explorerEmptyState }>
-                <span className={ styles.emptyStateText }>You have not yet opened a bot.</span>
-                <PrimaryButton text={ 'Open Bot' } className={ styles.openBot } onClick={ onOpenBotClick }/>
-              </div>
-            </ExpandCollapseContent>
-          </ExpandCollapse>
-        </li>
-      </ul>
-    );
-  }
-}
+export const BotNotOpenExplorer = connect(mapStateToProps, mapDispatchToProps)(BotNotOpenExplorerComp);
