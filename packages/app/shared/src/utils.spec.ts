@@ -127,9 +127,8 @@ describe('utility function tests', () => {
   });
 
   test('newNotification()', () => {
-    const notif = newNotification('someNotification', 'someMessage', NotificationType.Info);
+    const notif = newNotification('someMessage');
 
-    expect(notif.title).toBe('someNotification');
     expect(notif.message).toBe('someMessage');
     expect(notif.type).toBe(NotificationType.Info);
   });

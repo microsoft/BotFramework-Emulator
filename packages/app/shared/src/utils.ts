@@ -108,9 +108,8 @@ export const getFirstBotEndpoint = (bot: BotConfigWithPath): IEndpointService =>
 };
 
 /** Creates and returns a new notification */
-export const newNotification = (title: string, message: string, type: NotificationType): Notification => {
+export const newNotification = (message: string, type: NotificationType = NotificationType.Info): Notification => {
   const notification = new NotificationImpl();
-  notification.title = title;
   notification.message = message;
   notification.type = type;
   return notification;
