@@ -58,7 +58,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Opens an OAuth login window
-  commandRegistry.registerCommand(Commands.GetStoreOAuthWindow, async (url: string, conversationId: string) => {
+  commandRegistry.registerCommand(Commands.CreateOAuthWindow, async (url: string, conversationId: string) => {
     const convo = emulator.framework.server.botEmulator.facilities.conversations.conversationById(conversationId);
     windowManager.createOAuthWindow(url, convo.codeVerifier);
   });

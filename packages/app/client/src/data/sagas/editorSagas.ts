@@ -39,12 +39,13 @@ import { isChatFile, isTranscriptFile } from '../../utils';
 import { SharedConstants } from '@bfemulator/app-shared';
 
 export function* promptUserToReloadDocument(filename: string): IterableIterator<any> {
+  const { Commands } = SharedConstants;
   const options = {
     buttons: ['Cancel', 'Reload'],
     title: 'File change detected',
     message: 'We have detected a change in this file on disk. Would you like to reload it in the Emulator?'
   };
-  const confirmation = yield CommandServiceImpl.remoteCall('shell:showMessageBox', options);
+  const confirmation = yield CommandServiceImpl.remoteCall(Commands.Electron.ShowMessageBox, options);
 
   // clear the doc of pending changes
   yield put(removeDocPendingChange(filename));
@@ -53,9 +54,9 @@ export function* promptUserToReloadDocument(filename: string): IterableIterator<
   if (confirmation) {
     if (isChatFile(filename)) {
       const reload = true;
-      yield CommandServiceImpl.call(SharedConstants.Commands.Emulator.OpenChatFile, filename, reload);
+      yield CommandServiceImpl.call(Commands.Emulator.OpenChatFile, filename, reload);
     } else if (isTranscriptFile(filename)) {
-      yield CommandServiceImpl.call(SharedConstants.Commands.Emulator.ReloadTranscript, filename);
+      yield CommandServiceImpl.call(Commands.Emulator.ReloadTranscript, filename);
     }
   }
 }
