@@ -40,7 +40,7 @@ export class AzureLoginSuccessDialog extends Component<AzureLoginSuccessDialogPr
     );
   }
 
-  private onDialogCancel = (event: MouseEvent<HTMLDivElement | HTMLButtonElement>) => {
+  private onDialogCancel = () => {
     this.props.cancel(this.state.rememberMeChecked);
   }
 
