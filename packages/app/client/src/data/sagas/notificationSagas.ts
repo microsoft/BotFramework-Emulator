@@ -42,37 +42,42 @@ import {
 } from '../action/notificationActions';
 import { ForkEffect, takeEvery, put } from 'redux-saga/effects';
 
-/** Adds a notification to the notification manager's store then
+/** Adds a notification to the notification manager then
  *  adds it to the state store
  */
 export function* addNotification(action: BeginAddNotificationAction): IterableIterator<any> {
   const { notification } = action.payload;
-  // yield call([instance, instance.addNotification], notification);
   NotificationManager.set(notification.id, notification);
   yield put(finishAdd(notification));
 }
 
-/** Clears all notifications from the notification manager's store then
+/** Clears all notifications from the notification manager then
  *  clears all notifications from the state store
  */
 export function* clearNotifications(): IterableIterator<any> {
-  // yield call([instance, instance.clearNotifications]);
   NotificationManager.clear();
   yield put(finishClear());
 }
 
-/** Removes a single notification from the notification manager's store then
+/** Removes a single notification from the notification manager then
  *  removes it from the state store
  */
 export function* removeNotification(action: BeginRemoveNotificationAction): IterableIterator<any> {
   const { id: notificationId } = action.payload;
-  // yield call([instance, instance.removeNotification], notificationId);
   NotificationManager.delete(notificationId);
   yield put(finishRemove(notificationId));
+}
+
+/** Marks all notifications as read */
+export function markAllAsRead(): void {
+  NotificationManager.forEach(notification => {
+    notification.read = true;
+  });
 }
 
 export function* notificationSagas(): IterableIterator<ForkEffect> {
   yield takeEvery(NotificationActions.beginAdd, addNotification);
   yield takeEvery(NotificationActions.beginClear, clearNotifications);
   yield takeEvery(NotificationActions.beginRemove, removeNotification);
+  yield takeEvery(NotificationActions.markAllAsRead, markAllAsRead);
 }

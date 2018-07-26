@@ -34,14 +34,10 @@
 import { NotificationAction, NotificationActions } from '../action/notificationActions';
 
 export interface NotificationState {
-  byId: {
-    [notificationId: string]: { read: boolean };
-  };
   allIds: string[];
 }
 
 const DEFAULT_STATE: NotificationState = {
-  byId: {},
   allIds: []
 };
 
@@ -50,17 +46,12 @@ export function notification(state: NotificationState = DEFAULT_STATE, action: N
     case NotificationActions.finishAdd: {
       const { id: idToAdd } = action.payload.notification;
       let allIds;
-      if (!state.byId[idToAdd]) {
+      if (!state.allIds.some(id => id === idToAdd)) {
         allIds = [...state.allIds, idToAdd];
       } else {
         allIds = state.allIds;
       }
       state = {
-        ...state,
-        byId: {
-          ...state.byId,
-          [action.payload.notification.id]: { read: action.payload.read }
-        },
         allIds
       };
       break;
@@ -68,35 +59,19 @@ export function notification(state: NotificationState = DEFAULT_STATE, action: N
 
     case NotificationActions.finishRemove: {
       const { id: idToRemove } = action.payload;
-      const byId = {};
-      Object.keys(state.byId).forEach(notifId => {
-        if (notifId !== idToRemove) {
-          byId[notifId] = state.byId[notifId];
-        }
-      });
+      const allIds = state.allIds.filter(id => id !== idToRemove);
       state = {
-        ...state,
-        byId,
-        allIds: state.allIds.filter(id => id !== idToRemove)
+        allIds
       };
       break;
     }
 
     case NotificationActions.markAllAsRead: {
-      const readNotifications = {};
-      Object.keys(state.byId).forEach(notifId => {
-        readNotifications[notifId] = { read: true };
-      });
-      state = {
-        ...state,
-        byId: readNotifications
-      };
       break;
     }
 
     case NotificationActions.finishClear: {
       state = {
-        byId: {},
         allIds: []
       };
       break;

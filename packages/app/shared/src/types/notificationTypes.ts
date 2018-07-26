@@ -49,6 +49,7 @@ export interface Notification {
   type: NotificationType;
   message: string;
   timestamp: number;
+  read: boolean;
   buttons?: NotificationCTAButton[];
   addButton: (text: string, onClick?: (...args: any[]) => any) => void;
 }
@@ -58,11 +59,13 @@ export class NotificationImpl implements Notification {
   type: NotificationType;
   message: string;
   timestamp: number;
+  read: boolean;
   buttons?: NotificationCTAButton[];
 
   constructor() {
     this.id = uniqueId();
     this.timestamp = Date.now();
+    this.read = false;
     this.buttons = [];
   }
 

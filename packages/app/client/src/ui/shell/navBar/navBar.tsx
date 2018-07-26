@@ -36,6 +36,7 @@ import { SyntheticEvent } from 'react';
 import { IBotConfig } from 'msbot/bin/schema';
 import * as styles from './navBar.scss';
 import * as Constants from '../../../constants';
+import { NotificationManager } from '../../../notificationManager';
 
 export interface NavBarProps {
   activeBot?: IBotConfig;
@@ -44,7 +45,7 @@ export interface NavBarProps {
   navBarSelectionChanged?: (selection: string) => void;
   openBotSettings?: () => void;
   openEmulatorSettings?: () => void;
-  notifications?: { [id: string]: { read: boolean }};
+  notifications?: string[];
   explorerIsVisible?: boolean;
 }
 
@@ -143,8 +144,9 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
   private renderNotificationBadge(navSelection: string): JSX.Element {
     if (navSelection === 'Notifications') {
       const { notifications } = this.props;
-      const numUnreadNotifications = Object.keys(notifications)
-                                           .map(notificationId => notifications[notificationId].read)
+      const numUnreadNotifications = notifications
+                                           .map(notificationId => NotificationManager.get(notificationId))
+                                           .map(notification => notification.read)
                                            .filter(notificationHasBeenRead => !notificationHasBeenRead)
                                            .length;
 

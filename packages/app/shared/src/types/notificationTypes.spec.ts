@@ -40,6 +40,7 @@ describe('NotificationImpl class', () => {
 
     expect(notif1.id).not.toBeFalsy();
     expect(notif1.timestamp).not.toBeFalsy();
+    expect(notif1.read).toBe(false);
     expect(notif1.buttons).not.toBeFalsy();
     expect(notif1.buttons).toHaveLength(0);
 

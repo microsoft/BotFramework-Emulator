@@ -57,12 +57,12 @@ class NotificationsExplorerComp extends React.Component<NotificationExplorerProp
     // max-height: 100% of explorer pane - 20px (Clear all button height) - 40px (Explorer title height)
     return (
       <>
-        {clearAllButton}
-        <ul className={styles.notificationsExplorer}>
+        { clearAllButton }
+        <ul className={ styles.notificationsExplorer }>
           {
             notifications.map(n => {
               const notification = NotificationManager.get(n);
-              return <Notification key={notification.id} notification={notification} />;
+              return <Notification key={ notification.id } notification={ notification } />;
             })
           }
         </ul>
@@ -71,7 +71,7 @@ class NotificationsExplorerComp extends React.Component<NotificationExplorerProp
   }
 
   private renderClearAllButton = (): JSX.Element => {
-    return <a className={styles.clearAllNotificationsBtn}
+    return <a className={ styles.clearAllNotificationsBtn }
       onClick={() => this.props.clearNotifications()}
       href="javascript:void(0);">
       Clear all

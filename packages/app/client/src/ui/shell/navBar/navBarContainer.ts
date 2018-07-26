@@ -10,7 +10,7 @@ import { SharedConstants } from '@bfemulator/app-shared';
 
 const mapStateToProps = (state: RootState): NavBarProps => ({
   activeBot: state.bot.activeBot,
-  notifications: state.notification.byId
+  notifications: state.notification.allIds
 });
 
 const mapDispatchToProps = (dispatch, ownProps: NavBarProps): NavBarProps => ({

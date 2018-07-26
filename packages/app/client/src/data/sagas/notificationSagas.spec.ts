@@ -33,6 +33,7 @@
 
 import { put } from 'redux-saga/effects';
 import { newNotification, NotificationType } from '@bfemulator/app-shared';
+import { NotificationManager } from '../../notificationManager';
 import {
   beginAdd,
   finishAdd,
@@ -43,7 +44,8 @@ import {
 import {
   addNotification,
   clearNotifications,
-  removeNotification
+  removeNotification,
+  markAllAsRead
 } from './notificationSagas';
 
 describe('Notification sagas', () => {
@@ -69,5 +71,20 @@ describe('Notification sagas', () => {
 
     // dispatching a finishRemove notification action
     expect(gen.next().value).toEqual(put(finishRemove('someId')));
+  });
+
+  test('markAllAsRead()', () => {
+    NotificationManager.clear();
+    const notification1 = newNotification('someMessage', NotificationType.Info);
+    const notification2 = newNotification('someMessage', NotificationType.Info);
+    expect(notification1.read).toBe(false);
+    expect(notification2.read).toBe(false);
+    NotificationManager.set(notification1.id, notification1);
+    NotificationManager.set(notification2.id, notification2);
+
+    markAllAsRead();
+
+    expect(NotificationManager.get(notification1.id).read).toBe(true);
+    expect(NotificationManager.get(notification2.id).read).toBe(true);
   });
 });
