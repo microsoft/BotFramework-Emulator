@@ -31,24 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { azureBotServiceSagas } from './azureBotServiceSagas';
-import { botSagas } from './botSagas';
-import { dispatchSagas } from './dispatchSagas';
-import { editorSagas } from './editorSagas';
-import { endpointSagas } from './endpointSagas';
-import { luisSagas } from './luisSagas';
-import { navBarSagas } from './navBarSagas';
-import { notificationSagas } from './notificationSagas';
-import { qnaMakerSagas } from './qnaMakerSagas';
+import { Notification } from '@bfemulator/app-shared';
 
-export const applicationSagas = [
-  luisSagas,
-  botSagas,
-  qnaMakerSagas,
-  dispatchSagas,
-  endpointSagas,
-  azureBotServiceSagas,
-  editorSagas,
-  navBarSagas,
-  notificationSagas
-];
+/** Singleton that will keep track of all active notifications that we can't put in the store */
+export const NotificationManager = new Map<string, Notification>();

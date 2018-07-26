@@ -33,5 +33,6 @@
 
 export * from './debounce';
 export * from './expandFlatTree';
+export * from './getGlobal';
 export * from './isChatFile';
 export * from './isTranscriptFile';

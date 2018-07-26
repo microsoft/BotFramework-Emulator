@@ -35,10 +35,11 @@
 // 1. We are using react-scripts, thus, we are not able to configure Webpack
 // 2. To skip bundling, we can hack with window['require']
 import { BotConfigWithPath, uniqueId } from '@bfemulator/sdk-shared';
-import { IBotConfig, IEndpointService, ServiceType } from 'msbot/bin/schema';
+import { IEndpointService, ServiceType } from 'msbot/bin/schema';
+import { NotificationType, Notification, NotificationImpl } from './types';
 
 export function isObject(item: any): boolean {
-  return (item && typeof item === 'object' && !Array.isArray(item) && item !== null);
+  return !!(item && typeof item === 'object' && !Array.isArray(item) && item !== null);
 }
 
 export function mergeDeep(target: any, source: any): any {
@@ -64,61 +65,13 @@ export function deepCopySlow(obj: any): any {
   return JSON.parse(JSON.stringify(obj));
 }
 
-export const safeStringify = (o: any, space: string | number = undefined): string => {
-  let cache = [];
-  if (typeof o !== 'object') {
-    return `${o}`;
-  }
-  return JSON.stringify(o, function (key: string, value: any) {
-    if (typeof value === 'object' && value !== null) {
-      if (cache.indexOf(value) !== -1) {
-        return;
-      }
-      cache.push(value);
-    }
-    return value;
-  }, space);
-};
-
-export const approximateObjectSize = (object: any, cache: any[] = []): number => {
-  switch (typeof object) {
-    case 'boolean':
-      return 4;
-    case 'number':
-      return 8;
-    case 'string':
-      return object.length * 2;
-    case 'object':
-      let bytes = 0;
-      cache.push(object);
-      for (let i in object) {
-        if (!object.hasOwnProperty(i)) {
-          continue;
-        }
-        let value = object[i];
-        // check for infinite recursion
-        if (typeof value === 'object' && value !== null) {
-          if (cache.indexOf(value) !== -1) {
-            continue;
-          }
-          cache.push(value);
-        }
-        bytes += approximateObjectSize(value, cache);
-      }
-      return bytes;
-    default:
-      // value is null, undefined, or a function
-      return 0;
-  }
-};
-
 /** Tries to scan the bot record for a display string */
 export const getBotDisplayName = (bot: BotConfigWithPath = newBot()): string => {
   return bot.name || bot.path || (getFirstBotEndpoint(bot) ? getFirstBotEndpoint(bot).endpoint : null) || '¯\\_(ツ)_/¯';
 };
 
 /** Creates a new bot */
-export const newBot = (...bots: IBotConfig[]): IBotConfig => {
+export const newBot = (...bots: BotConfigWithPath[]): BotConfigWithPath => {
   return Object.assign(
     {},
     {
@@ -146,22 +99,18 @@ export const newEndpoint = (...endpoints: IEndpointService[]): IEndpointService 
   );
 };
 
-/** Adds -- if missing -- an id to all of a bot's endpoint services */
-export const addIdToBotEndpoints = (bot: IBotConfig): IBotConfig => {
-  bot.services.map(service => {
-    if (service.type === ServiceType.Endpoint && !service.id) {
-      service.id = uniqueId();
-      return service;
-    }
-    return service;
-  });
-  return bot;
-};
-
 /** Returns the first endpoint service of a bot */
-export const getFirstBotEndpoint = (bot: IBotConfig): IEndpointService => {
+export const getFirstBotEndpoint = (bot: BotConfigWithPath): IEndpointService => {
   if (bot.services && bot.services.length) {
     return <IEndpointService> bot.services.find(service => service.type === ServiceType.Endpoint);
   }
   return null;
+};
+
+/** Creates and returns a new notification */
+export const newNotification = (message: string, type: NotificationType = NotificationType.Info): Notification => {
+  const notification = new NotificationImpl();
+  notification.message = message;
+  notification.type = type;
+  return notification;
 };

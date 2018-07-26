@@ -33,7 +33,7 @@
 
 import * as React from 'react';
 
-import { SplitterOrientation } from './index';
+import { SplitterOrientation } from '.';
 
 export interface SplitterPaneProps {
   orientation?: SplitterOrientation;

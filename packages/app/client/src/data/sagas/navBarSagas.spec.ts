@@ -31,24 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { azureBotServiceSagas } from './azureBotServiceSagas';
-import { botSagas } from './botSagas';
-import { dispatchSagas } from './dispatchSagas';
-import { editorSagas } from './editorSagas';
-import { endpointSagas } from './endpointSagas';
-import { luisSagas } from './luisSagas';
-import { navBarSagas } from './navBarSagas';
-import { notificationSagas } from './notificationSagas';
-import { qnaMakerSagas } from './qnaMakerSagas';
+import { markNotificationsAsRead } from './navBarSagas';
+import { select } from '../action/navBarActions';
+import * as Constants from '../../constants';
+import { markAllAsRead } from '../action/notificationActions';
+import { put } from 'redux-saga/effects';
 
-export const applicationSagas = [
-  luisSagas,
-  botSagas,
-  qnaMakerSagas,
-  dispatchSagas,
-  endpointSagas,
-  azureBotServiceSagas,
-  editorSagas,
-  navBarSagas,
-  notificationSagas
-];
+describe('Nav bar sagas', () => {
+  test('markNotificationsAsRead()', () => {
+    const gen = markNotificationsAsRead(select(Constants.NAVBAR_NOTIFICATIONS));
+    expect(gen.next().value).toEqual(put(markAllAsRead()));
+  });
+});

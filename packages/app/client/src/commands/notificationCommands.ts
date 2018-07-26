@@ -31,24 +31,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { azureBotServiceSagas } from './azureBotServiceSagas';
-import { botSagas } from './botSagas';
-import { dispatchSagas } from './dispatchSagas';
-import { editorSagas } from './editorSagas';
-import { endpointSagas } from './endpointSagas';
-import { luisSagas } from './luisSagas';
-import { navBarSagas } from './navBarSagas';
-import { notificationSagas } from './notificationSagas';
-import { qnaMakerSagas } from './qnaMakerSagas';
+import store from '../data/store';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
+import { Notification } from '@bfemulator/app-shared';
+import { getGlobal } from '../utils/getGlobal';
+import * as NotificationActions from '../data/action/notificationActions';
 
-export const applicationSagas = [
-  luisSagas,
-  botSagas,
-  qnaMakerSagas,
-  dispatchSagas,
-  endpointSagas,
-  azureBotServiceSagas,
-  editorSagas,
-  navBarSagas,
-  notificationSagas
-];
+/** Registers notification commands */
+export function registerCommands(commandRegistry: CommandRegistryImpl) {
+  const Commands = SharedConstants.Commands.Notifications;
+  // ---------------------------------------------------------------------------
+  // Adds a notification to the store / notification manager
+  commandRegistry.registerCommand(Commands.Add, () => {
+    const notification: Notification = getGlobal(SharedConstants.NOTIFICATION_FROM_MAIN);
+    store.dispatch(NotificationActions.beginAdd(notification));
+  });
+}

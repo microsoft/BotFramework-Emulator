@@ -31,24 +31,47 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { azureBotServiceSagas } from './azureBotServiceSagas';
-import { botSagas } from './botSagas';
-import { dispatchSagas } from './dispatchSagas';
-import { editorSagas } from './editorSagas';
-import { endpointSagas } from './endpointSagas';
-import { luisSagas } from './luisSagas';
-import { navBarSagas } from './navBarSagas';
-import { notificationSagas } from './notificationSagas';
-import { qnaMakerSagas } from './qnaMakerSagas';
+import { uniqueId } from '@bfemulator/sdk-shared';
 
-export const applicationSagas = [
-  luisSagas,
-  botSagas,
-  qnaMakerSagas,
-  dispatchSagas,
-  endpointSagas,
-  azureBotServiceSagas,
-  editorSagas,
-  navBarSagas,
-  notificationSagas
-];
+export enum NotificationType {
+  Info,
+  Error,
+  Warning
+}
+
+export interface NotificationCTAButton {
+  text: string;
+  onClick?: (...args: any[]) => any;
+}
+
+export interface Notification {
+  id: string;
+  type: NotificationType;
+  message: string;
+  timestamp: number;
+  read: boolean;
+  buttons?: NotificationCTAButton[];
+  addButton: (text: string, onClick?: (...args: any[]) => any) => void;
+}
+
+export class NotificationImpl implements Notification {
+  id: string;
+  type: NotificationType;
+  message: string;
+  timestamp: number;
+  read: boolean;
+  buttons?: NotificationCTAButton[];
+
+  constructor() {
+    this.id = uniqueId();
+    this.timestamp = Date.now();
+    this.read = false;
+    this.buttons = [];
+  }
+
+  /** Adds a CTA button to the notification */
+  public addButton(text: string, onClick?: (...args: any[]) => any): void {
+    const button: NotificationCTAButton = { text, onClick };
+    this.buttons.push(button);
+  }
+}

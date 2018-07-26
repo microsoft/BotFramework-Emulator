@@ -31,24 +31,31 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { azureBotServiceSagas } from './azureBotServiceSagas';
-import { botSagas } from './botSagas';
-import { dispatchSagas } from './dispatchSagas';
-import { editorSagas } from './editorSagas';
-import { endpointSagas } from './endpointSagas';
-import { luisSagas } from './luisSagas';
-import { navBarSagas } from './navBarSagas';
-import { notificationSagas } from './notificationSagas';
-import { qnaMakerSagas } from './qnaMakerSagas';
+import { NotificationImpl } from './notificationTypes';
 
-export const applicationSagas = [
-  luisSagas,
-  botSagas,
-  qnaMakerSagas,
-  dispatchSagas,
-  endpointSagas,
-  azureBotServiceSagas,
-  editorSagas,
-  navBarSagas,
-  notificationSagas
-];
+describe('NotificationImpl class', () => {
+  test('initialization', () => {
+    const notif1 = new NotificationImpl();
+    const notif2 = new NotificationImpl();
+
+    expect(notif1.id).not.toBeFalsy();
+    expect(notif1.timestamp).not.toBeFalsy();
+    expect(notif1.read).toBe(false);
+    expect(notif1.buttons).not.toBeFalsy();
+    expect(notif1.buttons).toHaveLength(0);
+
+    expect(notif1.id).not.toBe(notif2.id);
+  });
+
+  test('addButton()', () => {
+    const notif = new NotificationImpl();
+    notif.addButton('button1');
+    notif.addButton('button2', (a: number, b: number) => a + b);
+
+    expect(notif.buttons).toHaveLength(2);
+    expect(notif.buttons[0].text).toBe('button1');
+    expect(notif.buttons[0].onClick).toBeFalsy();
+    expect(notif.buttons[1].text).toBe('button2');
+    expect(notif.buttons[1].onClick(1, 2)).toBe(3);
+  });
+});

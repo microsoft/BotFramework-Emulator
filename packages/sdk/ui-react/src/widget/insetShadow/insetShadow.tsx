@@ -31,24 +31,46 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { azureBotServiceSagas } from './azureBotServiceSagas';
-import { botSagas } from './botSagas';
-import { dispatchSagas } from './dispatchSagas';
-import { editorSagas } from './editorSagas';
-import { endpointSagas } from './endpointSagas';
-import { luisSagas } from './luisSagas';
-import { navBarSagas } from './navBarSagas';
-import { notificationSagas } from './notificationSagas';
-import { qnaMakerSagas } from './qnaMakerSagas';
+import * as React from 'react';
+import * as styles from './insetShadow.scss';
 
-export const applicationSagas = [
-  luisSagas,
-  botSagas,
-  qnaMakerSagas,
-  dispatchSagas,
-  endpointSagas,
-  azureBotServiceSagas,
-  editorSagas,
-  navBarSagas,
-  notificationSagas
-];
+export type InsetShadowOrientation = 'top' | 'bottom' | 'left' | 'right';
+
+export interface Props {
+  orientation: InsetShadowOrientation;
+}
+
+export class InsetShadow extends React.Component<Props> {
+  render() {
+    const { orientation } = this.props;
+    if (!orientation) {
+      throw new Error('<InsetShadow /> requires an "orientation" prop to be passed in!');
+    }
+
+    let shadowClassName = '';
+    switch (orientation) {
+      case 'top':
+        shadowClassName = styles.top;
+        break;
+
+      case 'bottom':
+        shadowClassName = styles.bottom;
+        break;
+
+      case 'left':
+        shadowClassName = styles.left;
+        break;
+
+      case 'right':
+        shadowClassName = styles.right;
+        break;
+
+      default:
+        return null;
+    }
+
+    return (
+      <div className={ [styles.insetShadow, shadowClassName].join(' ') } aria-hidden="true"/>
+    );
+  }
+}

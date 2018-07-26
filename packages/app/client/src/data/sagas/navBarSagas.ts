@@ -31,24 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { azureBotServiceSagas } from './azureBotServiceSagas';
-import { botSagas } from './botSagas';
-import { dispatchSagas } from './dispatchSagas';
-import { editorSagas } from './editorSagas';
-import { endpointSagas } from './endpointSagas';
-import { luisSagas } from './luisSagas';
-import { navBarSagas } from './navBarSagas';
-import { notificationSagas } from './notificationSagas';
-import { qnaMakerSagas } from './qnaMakerSagas';
+import { ForkEffect, takeEvery, put } from 'redux-saga/effects';
+import { NavBarActions, SelectNavBarAction } from '../action/navBarActions';
+import { markAllAsRead } from '../action/notificationActions';
+import * as Constants from '../../constants';
 
-export const applicationSagas = [
-  luisSagas,
-  botSagas,
-  qnaMakerSagas,
-  dispatchSagas,
-  endpointSagas,
-  azureBotServiceSagas,
-  editorSagas,
-  navBarSagas,
-  notificationSagas
-];
+/** Marks all notifications as read if the notifications pane is opened */
+export function* markNotificationsAsRead(action: SelectNavBarAction): IterableIterator<any> {
+  const navBarSelection = action.payload.selection;
+  if (navBarSelection === Constants.NAVBAR_NOTIFICATIONS) {
+    yield put(markAllAsRead());
+  }
+}
+
+export function* navBarSagas(): IterableIterator<ForkEffect> {
+  yield takeEvery(NavBarActions.select, markNotificationsAsRead);
+}

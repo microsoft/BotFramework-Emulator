@@ -9,11 +9,12 @@ import * as EditorActions from '../../../data/action/editorActions';
 import { SharedConstants } from '@bfemulator/app-shared';
 
 const mapStateToProps = (state: RootState): NavBarProps => ({
-  activeBot: state.bot.activeBot
+  activeBot: state.bot.activeBot,
+  notifications: state.notification.allIds
 });
 
 const mapDispatchToProps = (dispatch, ownProps: NavBarProps): NavBarProps => ({
-  showBotExplorer: show => dispatch(ExplorerActions.show(show)),
+  showExplorer: show => dispatch(ExplorerActions.show(show)),
   navBarSelectionChanged: newSelection => dispatch(NavBarActions.select(newSelection)),
   openBotSettings: () => {
     const { Commands } = SharedConstants;

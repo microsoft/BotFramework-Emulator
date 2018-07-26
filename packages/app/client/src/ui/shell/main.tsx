@@ -49,7 +49,7 @@ import * as ExplorerActions from '../../data/action/explorerActions';
 export interface MainProps {
   primaryEditor?: Editor;
   secondaryEditor?: Editor;
-  showingExplorer?: boolean;
+  explorerIsVisible?: boolean;
   presentationModeEnabled?: boolean;
   navBarSelection?: string;
   exitPresentationMode?: (e: Event) => void;
@@ -100,7 +100,7 @@ export class Main extends React.Component<MainProps, MainState> {
     // Explorer & TabGroup(s) pane
     const workbenchChildren = [];
 
-    if (this.props.showingExplorer && !this.props.presentationModeEnabled) {
+    if (this.props.explorerIsVisible && !this.props.presentationModeEnabled) {
       workbenchChildren.push(<ExplorerBar key={ 'explorer-bar' }/>);
     }
 
@@ -114,7 +114,7 @@ export class Main extends React.Component<MainProps, MainState> {
       <div className={ styles.main }>
         <div className={ styles.nav }>
           { !this.props.presentationModeEnabled &&
-          <NavBar selection={ this.props.navBarSelection } showingExplorer={ this.props.showingExplorer }/> }
+          <NavBar selection={ this.props.navBarSelection } explorerIsVisible={ this.props.explorerIsVisible }/> }
           <div className={ styles.workbench }>
             <Splitter
               orientation={ 'vertical' }

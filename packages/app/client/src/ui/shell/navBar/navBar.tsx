@@ -36,24 +36,29 @@ import { SyntheticEvent } from 'react';
 import { IBotConfig } from 'msbot/bin/schema';
 import * as styles from './navBar.scss';
 import * as Constants from '../../../constants';
+import { NotificationManager } from '../../../notificationManager';
 
 export interface NavBarProps {
   activeBot?: IBotConfig;
   selection?: string;
-  showBotExplorer?: (show: boolean) => void;
-  navBarSelectionChanged?: (newSection: string) => void;
+  showExplorer?: (show: boolean) => void;
+  navBarSelectionChanged?: (selection: string) => void;
   openBotSettings?: () => void;
   openEmulatorSettings?: () => void;
+  notifications?: string[];
+  explorerIsVisible?: boolean;
 }
 
 export interface NavBarState {
   selection?: string;
-  selectionActive?: boolean;
 }
 
 const selectionMap = [
   Constants.NAVBAR_BOT_EXPLORER,
-  Constants.NAVBAR_SERVICES
+  Constants.NAVBAR_SERVICES,
+  Constants.NAVBAR_BOT_SETTINGS,
+  Constants.NAVBAR_NOTIFICATIONS,
+  Constants.NAVBAR_SETTINGS
 ];
 
 export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
@@ -62,7 +67,6 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
   constructor(props: NavBarProps, context: NavBarState) {
     super(props, context);
     this.state.selection = props.selection;
-    this.state.selectionActive = !!props.selection;
   }
 
   render() {
@@ -74,23 +78,26 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
   }
 
   public onLinkClick = (event: SyntheticEvent<HTMLAnchorElement>): void => {
-    const { selection: currentSelection } = this.props;
+    const { selection: currentSelection, explorerIsVisible } = this.props;
     const { currentTarget: anchor } = event;
     const index = Array.prototype.indexOf.call(anchor.parentElement.children, anchor);
+
     switch (index) {
       // Bot Explorer
       case 0:
       // Services
       case 1:
+      // Notifications
+      case 3:
         if (currentSelection === selectionMap[index]) {
           // toggle explorer when clicking the same navbar icon
-          this.props.showBotExplorer(!this.state.selectionActive);
-          this.setState({ selectionActive: !this.state.selectionActive });
+          const showExplorer = !explorerIsVisible;
+          this.props.showExplorer(showExplorer);
         } else {
           // switch tabs and show explorer when clicking different navbar icon
-          this.props.showBotExplorer(true);
+          this.props.showExplorer(true);
           this.props.navBarSelectionChanged(selectionMap[index]);
-          this.setState({ selection: selectionMap[index], selectionActive: true });
+          this.setState({ selection: selectionMap[index] });
         }
         break;
 
@@ -109,22 +116,42 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
   }
 
   private get links(): JSX.Element[] {
-    const { selectionActive, selection } = this.state;
+    const { selection } = this.state;
+    const { explorerIsVisible } = this.props;
+
     return [
       'Bot Explorer',
       'Services',
       'Bot Settings',
+      'Notifications',
       'Settings'
     ].map((title, index) => {
       return (
         <a
-          aria-selected={ selectionActive && selection === selectionMap[index] }
+          aria-selected={ explorerIsVisible && selection === selectionMap[index] }
           key={ index }
           href="javascript:void(0);"
           title={ title }
           className={ styles.navLink }
-          onClick={ this.onLinkClick }/>
+          onClick={ this.onLinkClick }>
+          { this.renderNotificationBadge(title) }
+        </a>
       );
     });
+  }
+
+  /** Renders a circular counter badge in the corner of the notification icon */
+  private renderNotificationBadge(navSelection: string): JSX.Element {
+    if (navSelection === 'Notifications') {
+      const { notifications } = this.props;
+      const numUnreadNotifications = notifications
+                                           .map(notificationId => NotificationManager.get(notificationId))
+                                           .map(notification => notification.read)
+                                           .filter(notificationHasBeenRead => !notificationHasBeenRead)
+                                           .length;
+
+      return numUnreadNotifications ? <span className={ styles.badge }>{ numUnreadNotifications }</span> : null;
+    }
+    return null;
   }
 }

@@ -31,24 +31,53 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { azureBotServiceSagas } from './azureBotServiceSagas';
-import { botSagas } from './botSagas';
-import { dispatchSagas } from './dispatchSagas';
-import { editorSagas } from './editorSagas';
-import { endpointSagas } from './endpointSagas';
-import { luisSagas } from './luisSagas';
-import { navBarSagas } from './navBarSagas';
-import { notificationSagas } from './notificationSagas';
-import { qnaMakerSagas } from './qnaMakerSagas';
+import { NotificationAction, NotificationActions } from '../action/notificationActions';
 
-export const applicationSagas = [
-  luisSagas,
-  botSagas,
-  qnaMakerSagas,
-  dispatchSagas,
-  endpointSagas,
-  azureBotServiceSagas,
-  editorSagas,
-  navBarSagas,
-  notificationSagas
-];
+export interface NotificationState {
+  allIds: string[];
+}
+
+const DEFAULT_STATE: NotificationState = {
+  allIds: []
+};
+
+export function notification(state: NotificationState = DEFAULT_STATE, action: NotificationAction): NotificationState {
+  switch (action.type) {
+    case NotificationActions.finishAdd: {
+      const { id: idToAdd } = action.payload.notification;
+      let allIds;
+      if (!state.allIds.some(id => id === idToAdd)) {
+        allIds = [...state.allIds, idToAdd];
+      } else {
+        allIds = state.allIds;
+      }
+      state = {
+        allIds
+      };
+      break;
+    }
+
+    case NotificationActions.finishRemove: {
+      const { id: idToRemove } = action.payload;
+      const allIds = state.allIds.filter(id => id !== idToRemove);
+      state = {
+        allIds
+      };
+      break;
+    }
+
+    case NotificationActions.finishClear: {
+      state = {
+        allIds: []
+      };
+      break;
+    }
+
+    default:
+      break;
+  }
+
+  return state;
+}
+
+export default notification;

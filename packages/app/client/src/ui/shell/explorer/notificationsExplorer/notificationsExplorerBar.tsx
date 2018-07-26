@@ -31,24 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { azureBotServiceSagas } from './azureBotServiceSagas';
-import { botSagas } from './botSagas';
-import { dispatchSagas } from './dispatchSagas';
-import { editorSagas } from './editorSagas';
-import { endpointSagas } from './endpointSagas';
-import { luisSagas } from './luisSagas';
-import { navBarSagas } from './navBarSagas';
-import { notificationSagas } from './notificationSagas';
-import { qnaMakerSagas } from './qnaMakerSagas';
+import * as React from 'react';
+import * as styles from './notificationsExplorerBar.scss';
+import { NotificationsExplorer } from './notificationsExplorer';
+import { ExplorerBarHeader, Title } from '../explorerBarHeader/explorerBarHeader';
 
-export const applicationSagas = [
-  luisSagas,
-  botSagas,
-  qnaMakerSagas,
-  dispatchSagas,
-  endpointSagas,
-  azureBotServiceSagas,
-  editorSagas,
-  navBarSagas,
-  notificationSagas
-];
+export const NotificationsExplorerBar = (props: any) => (
+  <div className={ styles.notificationsExplorerBar }>
+    <ExplorerBarHeader>
+      <Title>
+        Notifications
+      </Title>
+    </ExplorerBarHeader>
+    <NotificationsExplorer />
+  </div>
+);

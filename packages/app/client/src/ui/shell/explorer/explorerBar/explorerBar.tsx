@@ -40,6 +40,8 @@ import * as Constants from '../../../../constants';
 import { IBotConfig } from 'msbot/bin/schema';
 import { RootState } from '../../../../data/store';
 import * as styles from './explorerBar.scss';
+import { NotificationsExplorerBar } from '../notificationsExplorer/notificationsExplorerBar';
+import { InsetShadow } from '@bfemulator/ui-react';
 
 interface ExplorerBarProps {
   activeBot?: IBotConfig;
@@ -51,25 +53,40 @@ class ExplorerBarComponent extends React.Component<ExplorerBarProps> {
     super(props);
   }
 
-  render() {
+  render(): JSX.Element {
+    const { activeBot = null, selectedNavTab = null } = this.props;
+
     let explorer = [];
     explorer.push(
       <BotExplorerBar key={ 'bot-explorer-bar' }
-                      activeBot={ this.props.activeBot }
-                      hidden={ this.props.selectedNavTab !== Constants.NAVBAR_BOT_EXPLORER }/>
+                      activeBot={ activeBot }
+                      hidden={ selectedNavTab !== Constants.NAVBAR_BOT_EXPLORER }/>
     );
-    if (this.props.selectedNavTab === Constants.NAVBAR_SERVICES) {
-      explorer.push(
-        <ServicesExplorerBarContainer key={ 'services-explorer-bar' }/>
-      );
-    }
-    if (!this.props.selectedNavTab) {
-      explorer = null;
+
+    switch (selectedNavTab) {
+      case Constants.NAVBAR_SERVICES:
+        explorer.push(
+          <ServicesExplorerBarContainer key={ 'services-explorer-bar' }/>
+        );
+        break;
+
+      case Constants.NAVBAR_NOTIFICATIONS:
+        explorer.push(
+          <NotificationsExplorerBar key={ 'notifications-explorer-bar' }/>
+        );
+        break;
+
+      default:
+        if (!selectedNavTab) {
+          explorer = null;
+        }
+        break;
     }
 
     return (
       <div className={ styles.explorerBar }>
         { explorer }
+        <InsetShadow orientation={ 'right' } />
       </div>
     );
   }

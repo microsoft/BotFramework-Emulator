@@ -17,6 +17,31 @@
   border: 1px solid transparent;
   right: 2px; // Compensation for ::after padding
 
+  & .badge {
+    position: absolute;
+
+    /* The icon background, which is on the ::after element will always come after the .badge
+     * in the DOM, so we need to overlay the .badge on top of the icon background by bumping
+     * the z-index by 1. (Shouldn't have any adverse effects because it is restricted to the <a.navLink>'s structure)
+     */
+    z-index: 1;
+
+    /* 12.5px would align the top-right corner of the badge with the top-right
+     * corner of the link icon. So then we need to subtract 1/2 of the badges
+     * height & length (0.5 * 16px = 8px) from that to center the badge on the top-right corner
+     * of the link icon. 12.5px - 8px = 4.5px
+     */
+    top: 4.5px;
+    right: 4.5px;
+    width: 16px;
+    height: 16px;
+    border-radius: 16px;
+    line-height: 16px;
+    text-align: center;
+    color: var(--nav-link-badge-color);
+    background-color: var(--nav-link-badge-bg);
+  }
+
   &::before {
     content: "";
     position: absolute;
@@ -79,12 +104,19 @@
     }
   }
   &:nth-child(4) {
+    // Notifications
+    &::after {
+      background-size: 25px;
+      background-image: url('../../media/ic_notification.svg');
+    }
+    margin-top: auto;
+  }
+  &:nth-child(5) {
     // Settings
     &::after {
       background-size: 25px;
       background-image: url('../../media/ic_settings.svg');
     }
-    margin-top: auto;
   }
 
   &:focus {

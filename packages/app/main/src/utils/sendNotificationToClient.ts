@@ -31,24 +31,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { azureBotServiceSagas } from './azureBotServiceSagas';
-import { botSagas } from './botSagas';
-import { dispatchSagas } from './dispatchSagas';
-import { editorSagas } from './editorSagas';
-import { endpointSagas } from './endpointSagas';
-import { luisSagas } from './luisSagas';
-import { navBarSagas } from './navBarSagas';
-import { notificationSagas } from './notificationSagas';
-import { qnaMakerSagas } from './qnaMakerSagas';
+import { setGlobal, deleteGlobal } from '../globals';
+import { Notification, SharedConstants } from '@bfemulator/app-shared';
+import { CommandService } from '@bfemulator/sdk-shared';
 
-export const applicationSagas = [
-  luisSagas,
-  botSagas,
-  qnaMakerSagas,
-  dispatchSagas,
-  endpointSagas,
-  azureBotServiceSagas,
-  editorSagas,
-  navBarSagas,
-  notificationSagas
-];
+/** Sends a notification to the client side using the Electron 'global' object
+ *  (need to use global object because functions can't be sent over IPC)
+ */
+export async function sendNotificationToClient(
+  notification: Notification,
+  commandService: CommandService
+): Promise<void> {
+  // attach the notification to the global object
+  setGlobal(SharedConstants.NOTIFICATION_FROM_MAIN, notification);
+
+  // invoke command on client side that grabs notification from the client side and adds
+  // it to the notification manager
+  await commandService.remoteCall(SharedConstants.Commands.Notifications.Add);
+
+  // remove the notification from the global object
+  deleteGlobal(SharedConstants.NOTIFICATION_FROM_MAIN);
+}

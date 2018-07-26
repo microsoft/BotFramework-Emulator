@@ -43,6 +43,8 @@ html {
   --nav-focused-tag-bg-opacity: 1;
   --nav-link-selected-border: 1px solid transparent;
   --nav-link-hover-border: 1px solid transparent;
+  --nav-link-badge-color: var(--neutral-1);
+  --nav-link-badge-bg: #ff0000;
 
   /* input[type="text"] */
   --input-bg: var(--neutral-1);
@@ -96,6 +98,9 @@ html {
   --explorer-panel-group-border: 1px solid transparent;
   --explorer-panel-empty-message-color: var(--neutral-15);
 
+  /* Explorer Bar */
+  --explorer-bar-header-bg: var(--neutral-3);
+
   /* Tabs */
   --tab-color: var(--explorer-panel-group-title-color);
   --tab-bar-bg: var(--neutral-2);
@@ -106,6 +111,16 @@ html {
   --tab-focus-border: var(--p-button-border-focus);
   --tab-seperator-bg: var(--neutral-4);
   --tab-icon-color: var(--explorer-panel-group-title-color);
+
+  /* Notifications */
+  --notification-bg: rgba(128,128,128,0.2);
+  --notification-message-color: var(--neutral-12);
+  --notification-timestamp-color: var(--neutral-8);
+  --notification-close-icon-color: var(--neutral-13);
+  --notification-border: 1px solid transparent;
+  --notifications-clear-all-btn-color: #3062d6;
+  --notification-inner-border-display: none;
+  --notification-inner-border: 1px solid transparent;
 
   /* toolbar */
   --toolbar-bg: var(--tab-active-tab-bg);

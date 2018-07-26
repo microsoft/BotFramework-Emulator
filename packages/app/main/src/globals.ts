@@ -40,15 +40,19 @@ const remote: Electron.Remote = (typeof window === 'undefined' ? require('electr
   : (window as any).require('electron')).remote;
 
 export function getGlobal(attributeName: string, defaultValue?: any): any {
-    if (global[attributeName]) {
-        return global[attributeName];
-    } else if (remote && remote.getGlobal(attributeName)) {
-        return remote.getGlobal(attributeName);
-    } else {
-        return defaultValue;
-    }
+  if (global[attributeName]) {
+      return global[attributeName];
+  } else if (remote && remote.getGlobal(attributeName)) {
+      return remote.getGlobal(attributeName);
+  } else {
+      return defaultValue;
+  }
 }
 
 export function setGlobal(attributeName: string, value: any): void {
-    global[attributeName] = value;
+  global[attributeName] = value;
+}
+
+export function deleteGlobal(attributeName: string): void {
+  delete global[attributeName];
 }
