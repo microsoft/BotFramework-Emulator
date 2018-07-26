@@ -91,7 +91,7 @@ export const ActiveBotHelper = new class {
       store.dispatch(FileActions.setRoot(botDirectory));
 
       // update the app file menu and title bar
-      CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.UpdateRecentBotsInMenu);
+      CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.UpdateFileMenu);
       CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.SetTitleBar, getBotDisplayName(bot));
     } catch (e) {
       throw new Error(`Error while setting active bot: ${e}`);

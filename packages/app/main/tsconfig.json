@@ -4,7 +4,7 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "preserveConstEnums": true,
-    "target": "es6",
+    "target": "es2017",
     "jsx": "react",
     "rootDir": "src",
     "sourceMap": true,

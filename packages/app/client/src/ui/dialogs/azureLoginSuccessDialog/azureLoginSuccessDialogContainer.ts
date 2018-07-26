@@ -39,7 +39,7 @@ import { AzureLoginSuccessDialog } from './azureLoginSuccessDialog';
 const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }) => {
   const { persistLogin } = state.azureAuth;
   return {
-    rememberMe: persistLogin,
+    persistLogin,
     ...ownProps
   };
 };

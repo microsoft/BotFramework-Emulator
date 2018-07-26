@@ -63,7 +63,7 @@ export namespace SharedConstants {
       export const ShowMessageBox = 'shell:show-message-box';
       export const ShowOpenDialog = 'shell:show-open-dialog';
       export const ShowSaveDialog = 'shell:show-save-dialog';
-      export const UpdateRecentBotsInMenu = 'menu:update-recent-bots';
+      export const UpdateFileMenu = 'menu:update-file-menu';
       export const SetFullscreen = 'electron:set-fullscreen';
       export const SetTitleBar = 'electron:set-title-bar';
       export const DisplayContextMenu = 'electron:display-context-menu';
@@ -106,6 +106,7 @@ export namespace SharedConstants {
     export namespace Azure {
       export const RetrieveArmToken = 'azure:retrieve-arm-token';
       export const PersistAzureLoginChanged = 'azure:persist-azure-login-changed';
+      export const SignUserOutOfAzure = 'azure:sign-user-out';
     }
 
     export namespace Misc {

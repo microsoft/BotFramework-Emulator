@@ -67,9 +67,9 @@ export interface UserSettings {
 }
 
 export interface AzureSettings {
-  authStatus: string;
-  armToken: string;
-  persistLogin: boolean;
+  signedInUser?: string;
+  armToken?: string;
+  persistLogin?: boolean;
 }
 
 export interface PersistentSettings {
@@ -100,9 +100,10 @@ export class SettingsImpl implements Settings {
    * @returns {Partial<Settings>}
    */
   public toJSON(): Partial<Settings> {
-    const { framework, bots, windowState, users, azure } = this;
-    // Do not write all of AzureSettings to disk
-    return { framework, bots, windowState, users, azure: { persistLogin: azure.persistLogin } };
+    const { framework, bots, windowState, users, azure = {} } = this;
+    // Do not write the armToken to disk
+    const { armToken, ...azureProps } = azure;
+    return { framework, bots, windowState, users, azure: azureProps };
   }
 }
 

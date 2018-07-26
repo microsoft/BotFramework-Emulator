@@ -42,7 +42,7 @@ import { WindowManager } from './windowManager';
 import * as commandLine from './commandLine';
 import { setTimeout } from 'timers';
 import { Window } from './platform/window';
-import { botListsAreDifferent, ensureStoragePath, writeFile } from './utils';
+import { botListsAreDifferent, ensureStoragePath, saveSettings, writeFile } from './utils';
 import * as squirrel from './squirrelEvents';
 import { CommandRegistry, registerAllCommands } from './commands';
 import { AppMenuBuilder } from './appMenuBuilder';
@@ -50,7 +50,7 @@ import { AppUpdater } from './appUpdater';
 import { UpdateInfo } from 'electron-updater';
 import { ProgressInfo } from 'builder-util-runtime';
 import { getStore } from './botData/store';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { PersistentSettings, SharedConstants } from '@bfemulator/app-shared';
 import { BotProjectFileWatcher } from './botProjectFileWatcher';
 import { rememberBounds } from './settingsData/actions/windowStateActions';
 
@@ -372,8 +372,14 @@ Electron.app.on('ready', function () {
   }
 });
 
-Electron.app.on('window-all-closed', function () {
+Electron.app.on('window-all-closed', async function (event: Event) {
   // if (process.platform !== 'darwin') {
+  const { azure } = getSettings();
+  if (azure.signedInUser && !azure.persistLogin) {
+    event.preventDefault();
+    await mainWindow.commandService.call(SharedConstants.Commands.Azure.SignUserOutOfAzure);
+  }
+  saveSettings<PersistentSettings>('server.json', getSettings());
   Electron.app.quit();
   // }
 });

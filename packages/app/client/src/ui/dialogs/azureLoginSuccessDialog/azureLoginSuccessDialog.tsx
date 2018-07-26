@@ -5,18 +5,18 @@ import * as styles from './azureLoginSuccessDialog.scss';
 
 export interface AzureLoginSuccessDialogState {
   rememberMeChecked: boolean;
-  cancel: (persistLogin: boolean) => void;
 }
 
 export interface AzureLoginSuccessDialogProps {
-  rememberMe: boolean;
+  cancel: (persistLogin: boolean) => void;
+  persistLogin: boolean;
 }
 
-export class AzureLoginSuccessDialog extends Component<AzureLoginSuccessDialogState, AzureLoginSuccessDialogState> {
-  public state = { rememberMeChecked: false } as AzureLoginSuccessDialogState;
+export class AzureLoginSuccessDialog extends Component<AzureLoginSuccessDialogProps, AzureLoginSuccessDialogState> {
 
-  constructor(props: AzureLoginSuccessDialogProps, state: AzureLoginSuccessDialogState) {
-    super(state, props);
+  constructor(props: AzureLoginSuccessDialogProps = {} as any, state: AzureLoginSuccessDialogState) {
+    super(props, state);
+    this.state = { rememberMeChecked: !!props.persistLogin };
   }
 
   public render() {
@@ -25,6 +25,7 @@ export class AzureLoginSuccessDialog extends Component<AzureLoginSuccessDialogSt
         <DialogContent>
           <p>You are now signed in with your Azure account</p>
           <Checkbox
+            checked={ this.state.rememberMeChecked }
             label="Keep me signed in to the Bot Framework Emulator."
             onChange={ this.checkBoxChanged }
           />
@@ -33,7 +34,6 @@ export class AzureLoginSuccessDialog extends Component<AzureLoginSuccessDialogSt
           <PrimaryButton
             text="Close"
             onClick={ this.onDialogCancel }
-            className="connect-button"
           />
         </DialogFooter>
       </Dialog>

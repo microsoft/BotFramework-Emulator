@@ -73,7 +73,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // Syncs the client side list of bots with bots arg (usually called from server side)
   commandRegistry.registerCommand(Commands.Bot.SyncBotList, async (bots: BotInfo[]): Promise<void> => {
     store.dispatch(BotActions.load(bots));
-    CommandServiceImpl.remoteCall(Commands.Electron.UpdateRecentBotsInMenu);
+    CommandServiceImpl.remoteCall(Commands.Electron.UpdateFileMenu);
   });
 
   // ---------------------------------------------------------------------------
@@ -81,7 +81,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   commandRegistry.registerCommand(Commands.Bot.SetActive, (bot: BotConfigWithPath, botDirectory: string) => {
     store.dispatch(BotActions.setActive(bot));
     store.dispatch(FileActions.setRoot(botDirectory));
-    CommandServiceImpl.remoteCall(Commands.Electron.UpdateRecentBotsInMenu);
+    CommandServiceImpl.remoteCall(Commands.Electron.UpdateFileMenu);
     CommandServiceImpl.remoteCall(Commands.Electron.SetTitleBar, getBotDisplayName(bot));
   });
 

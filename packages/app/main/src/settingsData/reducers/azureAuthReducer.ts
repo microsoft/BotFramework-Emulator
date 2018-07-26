@@ -1,22 +1,18 @@
 import { AzureSettings } from '@bfemulator/app-shared';
 import {
-  ArmToken,
-  AuthStatus,
-  AZURE_AUTH_STATUS_CHANGED,
+  AZURE_LOGGED_IN_USER_CHANGED,
   AZURE_PERSIST_LOGIN_CHANGED,
   AzureAuthAction,
-  AzureAuthWorkflowStatus
 } from '../actions/azureAuthActions';
 
-export function azureAuth(state: AzureSettings = {} as AzureSettings,
-                          action: AzureAuthAction<AzureAuthWorkflowStatus | ArmToken | AuthStatus | boolean>)
-  : AzureSettings {
+export function azureAuth(state: AzureSettings = {}, action: AzureAuthAction<string | boolean>): AzureSettings {
   switch (action.type) {
-    case AZURE_AUTH_STATUS_CHANGED:
-      return { ...state, azureAuthWorkflowStatus: action.payload as AuthStatus } as AzureSettings;
 
     case AZURE_PERSIST_LOGIN_CHANGED:
       return { ...state, persistLogin: action.payload as boolean };
+
+    case AZURE_LOGGED_IN_USER_CHANGED:
+      return { ...state, signedInUser: action.payload as string };
 
     default:
       return state;

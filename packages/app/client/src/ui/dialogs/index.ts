@@ -37,3 +37,4 @@ export * from './secretPromptDialog/secretPromptDialog';
 export * from './tabManager/tabManager';
 export * from './service';
 export * from './azureLoginSuccessDialog/azureLoginSuccessDialogContainer';
+export * from './azureLoginPromptDialog/azureLoginPromptDialogContainer';

@@ -76,7 +76,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Builds a new app menu to reflect the updated recent bots list
-  commandRegistry.registerCommand(Commands.UpdateRecentBotsInMenu, (): void => {
+  commandRegistry.registerCommand(Commands.UpdateFileMenu, (): void => {
     // get previous app menu template
     let menu = AppMenuBuilder.menuTemplate;
 
