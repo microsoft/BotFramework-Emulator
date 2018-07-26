@@ -199,7 +199,7 @@ class LogEntryComponent extends React.Component<LogEntryProps> {
   /** Removes an activity's highlighting in webchat */
   removeHighlightInWebchat(obj: any) {
     if (obj.id) {
-      // re-highlight last-selected activity if possible
+      // re-highlight last-inspected activity if possible
       const { currentlyInspectedActivity } = this.props;
       if (currentlyInspectedActivity && currentlyInspectedActivity.id) {
         const fromLog: ActivitySelectionFromLog = { clicked: true };
@@ -227,7 +227,7 @@ class LogEntryComponent extends React.Component<LogEntryProps> {
       </>
     );
 
-    // if the currently selected activity matches any of this item's inner inspectable
+    // if the currently inspected activity matches any of this item's inner inspectable
     // objects, append an 'inspected' class name to the log entry to highlight it
     const { currentlyInspectedActivity } = this.props;
     let inspectedActivityClass = '';
