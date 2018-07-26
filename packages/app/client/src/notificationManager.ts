@@ -34,37 +34,4 @@
 import { Notification } from '@bfemulator/app-shared';
 
 /** Singleton that will keep track of all active notifications that we can't put in the store */
-export class NotificationManager {
-  private static _instance: NotificationManager;
-
-  // will be used to store notifications by id since they won't be able to
-  // be serialized in the state store due to button handlers (functions)
-  public notificationStore: { [key: string]: any };
-
-  public static getInstance(): NotificationManager {
-    if (!this._instance) {
-      this._instance = new NotificationManager();
-    }
-    return this._instance;
-  }
-
-  /** Adds a notification to the notification store */
-  public addNotification(notification: Notification): void {
-    const { id } = notification;
-    this.notificationStore[id] = notification;
-  }
-
-  /** Removes a notification from the notification store */
-  public removeNotification(id: string): void {
-    delete this.notificationStore[id];
-  }
-
-  /** Clears all notifications from the notification store */
-  public clearNotifications(): void {
-    this.notificationStore = {};
-  }
-
-  private constructor() {
-    this.notificationStore = {};
-  }
-}
+export const NotificationManager = new Map<string, Notification>();

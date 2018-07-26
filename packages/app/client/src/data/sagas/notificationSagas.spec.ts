@@ -31,8 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { call, put } from 'redux-saga/effects';
-import { NotificationManager } from '../../notificationManager';
+import { put } from 'redux-saga/effects';
 import { newNotification, NotificationType } from '@bfemulator/app-shared';
 import {
   beginAdd,
@@ -53,20 +52,12 @@ describe('Notification sagas', () => {
     const action = beginAdd(notification, false);
     const gen = addNotification(action);
 
-    // adding a notification to the manager
-    const instance = NotificationManager.getInstance();
-    expect(gen.next().value).toEqual(call([instance, instance.addNotification], notification));
-
     // dispatching a finishAdd notification action
     expect(gen.next().value).toEqual(put(finishAdd(notification)));
   });
 
   test('clearNotifications()', () => {
     const gen = clearNotifications();
-
-    // clearing the manager's notifications
-    const instance = NotificationManager.getInstance();
-    expect(gen.next().value).toEqual(call([instance, instance.clearNotifications]));
 
     // dispatching a finishClear notification action
     expect(gen.next().value).toEqual(put(finishClear()));
@@ -75,10 +66,6 @@ describe('Notification sagas', () => {
   test('removeNotification()', () => {
     const action = beginRemove('someId');
     const gen = removeNotification(action);
-
-    // removing a notification from the manager
-    const instance = NotificationManager.getInstance();
-    expect(gen.next().value).toEqual(call([instance, instance.removeNotification], 'someId'));
 
     // dispatching a finishRemove notification action
     expect(gen.next().value).toEqual(put(finishRemove('someId')));

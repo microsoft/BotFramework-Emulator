@@ -40,16 +40,15 @@ import {
   finishClear,
   finishRemove
 } from '../action/notificationActions';
-import { ForkEffect, takeEvery, call, put } from 'redux-saga/effects';
+import { ForkEffect, takeEvery, put } from 'redux-saga/effects';
 
 /** Adds a notification to the notification manager's store then
  *  adds it to the state store
  */
 export function* addNotification(action: BeginAddNotificationAction): IterableIterator<any> {
   const { notification } = action.payload;
-  const instance = NotificationManager.getInstance();
-  // yield call([NotificationManager, NotificationManager.getInstance]);
-  yield call([instance, instance.addNotification], notification);
+  // yield call([instance, instance.addNotification], notification);
+  NotificationManager.set(notification.id, notification);
   yield put(finishAdd(notification));
 }
 
@@ -57,9 +56,8 @@ export function* addNotification(action: BeginAddNotificationAction): IterableIt
  *  clears all notifications from the state store
  */
 export function* clearNotifications(): IterableIterator<any> {
-  const instance = NotificationManager.getInstance();
-  // yield call([NotificationManager, NotificationManager.getInstance]);
-  yield call([instance, instance.clearNotifications]);
+  // yield call([instance, instance.clearNotifications]);
+  NotificationManager.clear();
   yield put(finishClear());
 }
 
@@ -68,9 +66,8 @@ export function* clearNotifications(): IterableIterator<any> {
  */
 export function* removeNotification(action: BeginRemoveNotificationAction): IterableIterator<any> {
   const { id: notificationId } = action.payload;
-  const instance = NotificationManager.getInstance();
-  // yield call([NotificationManager, NotificationManager.getInstance]);
-  yield call([instance, instance.removeNotification], notificationId);
+  // yield call([instance, instance.removeNotification], notificationId);
+  NotificationManager.delete(notificationId);
   yield put(finishRemove(notificationId));
 }
 
