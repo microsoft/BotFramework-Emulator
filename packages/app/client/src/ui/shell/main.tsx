@@ -138,7 +138,7 @@ export class Main extends React.Component<MainProps, MainState> {
   private checkExplorerSize(sizes: { absolute: number, percentage: number }[]): void {
     if (sizes.length) {
       const explorerSize = sizes[0];
-      const minExplorerWidth = 50;
+      const minExplorerWidth = 175;
       if (explorerSize.absolute < minExplorerWidth) {
         store.dispatch(ExplorerActions.show(false));
       }

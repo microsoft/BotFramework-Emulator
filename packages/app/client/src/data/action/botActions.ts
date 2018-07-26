@@ -38,7 +38,8 @@ export enum BotActions {
   create = 'BOT/CREATE',
   load = 'BOT/LOAD',
   setActive = 'BOT/SET_ACTIVE',
-  close = 'BOT/CLOSE'
+  close = 'BOT/CLOSE',
+  browse = 'BOT/BROWSE'
 }
 
 export interface CreateBotAction {
@@ -69,11 +70,17 @@ export interface CloseBotAction {
   payload: {};
 }
 
+export interface BrowseBotAction {
+  type: BotActions.browse;
+  payload: {};
+}
+
 export type BotAction =
   CreateBotAction |
   LoadBotAction |
   SetActiveBotAction |
-  CloseBotAction;
+  CloseBotAction |
+  BrowseBotAction;
 
 export function create(bot: BotConfigWithPath, botFilePath: string, secret: string): CreateBotAction {
   return {
@@ -114,6 +121,13 @@ export function setActive(bot: BotConfigWithPath): SetActiveBotAction {
 export function close(): CloseBotAction {
   return {
     type: BotActions.close,
+    payload: {}
+  };
+}
+
+export function browse(): BrowseBotAction {
+  return {
+    type: BotActions.browse,
     payload: {}
   };
 }

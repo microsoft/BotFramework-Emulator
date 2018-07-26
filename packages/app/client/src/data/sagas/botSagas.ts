@@ -31,38 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ExpandCollapse, ExpandCollapseContent, PrimaryButton } from '@bfemulator/ui-react';
-import * as React from 'react';
-import * as styles from './botNotOpenExplorer.scss';
+import { ForkEffect, takeEvery } from 'redux-saga/effects';
+import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
+import { SharedConstants } from '@bfemulator/app-shared';
+import { BotActions } from '../action/botActions';
 
-export interface BotNotOpenExplorerProps {
-  onOpenBotClick: () => any;
+/** Opens up native open file dialog to browse for a .bot file */
+export function* browseForBot(): IterableIterator<any> {
+  yield CommandServiceImpl.call(SharedConstants.Commands.Bot.OpenBrowse);
 }
 
-export class BotNotOpenExplorer extends React.Component<BotNotOpenExplorerProps, {}> {
-  constructor(props: BotNotOpenExplorerProps) {
-    super(props);
-  }
-
-  render() {
-    const { onOpenBotClick } = this.props;
-
-    return (
-      <ul className={ styles.botNotOpenExplorer }>
-        <li>
-          <ExpandCollapse
-            expanded={ true }
-            title="No Bot Opened"
-          >
-            <ExpandCollapseContent>
-              <div className={ styles.explorerEmptyState }>
-                <span className={ styles.emptyStateText }>You have not yet opened a bot.</span>
-                <PrimaryButton text={ 'Open Bot' } className={ styles.openBot } onClick={ onOpenBotClick }/>
-              </div>
-            </ExpandCollapseContent>
-          </ExpandCollapse>
-        </li>
-      </ul>
-    );
-  }
+export function* botSagas(): IterableIterator<ForkEffect> {
+  yield takeEvery(BotActions.browse, browseForBot);
 }

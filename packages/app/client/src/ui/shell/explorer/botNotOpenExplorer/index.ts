@@ -31,38 +31,4 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ExpandCollapse, ExpandCollapseContent, PrimaryButton } from '@bfemulator/ui-react';
-import * as React from 'react';
-import * as styles from './botNotOpenExplorer.scss';
-
-export interface BotNotOpenExplorerProps {
-  onOpenBotClick: () => any;
-}
-
-export class BotNotOpenExplorer extends React.Component<BotNotOpenExplorerProps, {}> {
-  constructor(props: BotNotOpenExplorerProps) {
-    super(props);
-  }
-
-  render() {
-    const { onOpenBotClick } = this.props;
-
-    return (
-      <ul className={ styles.botNotOpenExplorer }>
-        <li>
-          <ExpandCollapse
-            expanded={ true }
-            title="No Bot Opened"
-          >
-            <ExpandCollapseContent>
-              <div className={ styles.explorerEmptyState }>
-                <span className={ styles.emptyStateText }>You have not yet opened a bot.</span>
-                <PrimaryButton text={ 'Open Bot' } className={ styles.openBot } onClick={ onOpenBotClick }/>
-              </div>
-            </ExpandCollapseContent>
-          </ExpandCollapse>
-        </li>
-      </ul>
-    );
-  }
-}
+export * from './botNotOpenExplorerContainer';

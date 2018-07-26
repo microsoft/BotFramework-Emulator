@@ -32,6 +32,7 @@
 //
 
 import { azureBotServiceSagas } from './azureBotServiceSagas';
+import { botSagas } from './botSagas';
 import { dispatchSagas } from './dispatchSagas';
 import { editorSagas } from './editorSagas';
 import { endpointSagas } from './endpointSagas';
@@ -40,6 +41,7 @@ import { qnaMakerSagas } from './qnaMakerSagas';
 
 export const applicationSagas = [
   luisSagas,
+  botSagas,
   qnaMakerSagas,
   dispatchSagas,
   endpointSagas,
