@@ -50,19 +50,10 @@ export const getStore = (): Store<Settings> => {
     const initialSettings = loadSettings<Settings>('server.json', settingsDefault);
     initialSettings.windowState.availableThemes = getThemes();
 
-    store = createStore(reducers, initialSettings, applyMiddleware(saveSettingsMiddleware, sagaMiddleWare));
+    store = createStore(reducers, initialSettings, applyMiddleware(sagaMiddleWare));
     sagaMiddleWare.run(settingsSagas);
   }
   return store;
-};
-
-let saveTimer;
-const saveSettingsMiddleware = s => next => action => {
-  const result = next(action);
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => saveSettings<PersistentSettings>('server.json', getSettings()), 1000);
-
-  return result;
 };
 
 export const dispatch = <T extends Action>(obj: any) => getStore().dispatch<T>(obj);
@@ -83,23 +74,4 @@ export const startup = () => {
 
   // Guard against calling getSettings before startup.
   started = true;
-};
-
-export const authenticationSettings = {
-  tokenEndpoint: 'https://login.microsoftonline.com/botframework.com/oauth2/v2.0/token',
-  openIdMetadata: 'https://login.microsoftonline.com/botframework.com/v2.0/.well-known/openid-configuration',
-  botTokenAudience: 'https://api.botframework.com',
-};
-
-export const v31AuthenticationSettings = {
-  tokenIssuer: 'https://sts.windows.net/d6d49420-f39b-4df7-a1dc-d59a935871db/',
-};
-
-export const v32AuthenticationSettings = {
-  tokenIssuerV1: 'https://sts.windows.net/f8cdef31-a31e-4b4a-93e4-5f571e91255a/',
-  tokenIssuerV2: 'https://login.microsoftonline.com/f8cdef31-a31e-4b4a-93e4-5f571e91255a/v2.0'
-};
-
-export const speechSettings = {
-  tokenEndpoint: 'https://login.botframework.com/v3/speechtoken'
 };

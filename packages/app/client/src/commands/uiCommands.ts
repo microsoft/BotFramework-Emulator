@@ -32,7 +32,13 @@
 //
 
 import { showWelcomePage } from '../data/editorHelpers';
-import { BotCreationDialog, DialogService, SecretPromptDialog } from '../ui/dialogs';
+import {
+  AzureLoginPromptDialogContainer,
+  AzureLoginSuccessDialogContainer,
+  BotCreationDialog,
+  DialogService,
+  SecretPromptDialog
+} from '../ui/dialogs';
 import store from '../data/store';
 import * as EditorActions from '../data/action/editorActions';
 import * as NavBarActions from '../data/action/navBarActions';
@@ -99,5 +105,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Azure sign in
-  commandRegistry.registerCommand(Commands.SignInToAzure, () => store.dispatch(beginAzureAuthWorkflow()));
+  commandRegistry.registerCommand(Commands.SignInToAzure, () => {
+    store.dispatch(beginAzureAuthWorkflow(AzureLoginPromptDialogContainer, AzureLoginSuccessDialogContainer));
+  });
 }

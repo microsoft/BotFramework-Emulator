@@ -36,59 +36,48 @@ import * as uuidv3 from 'uuid/v3';
 import * as uuidv4 from 'uuid/v4';
 
 declare type AzureAuthWorkflowType = IterableIterator<Promise<BrowserWindow> | Promise<{ armToken: string } | boolean>>;
+declare type AzureSignoutWorkflowType = IterableIterator<Promise<BrowserWindow | boolean>>;
 
 export class AzureAuthWorkflowService {
-
   public static* enterAuthWorkflow(): AzureAuthWorkflowType {
     const authWindow = yield AzureAuthWorkflowService.launchAuthWindow();
     authWindow.show();
-    let result = yield AzureAuthWorkflowService.waitForDataFromWindow(authWindow);
+    const result = yield AzureAuthWorkflowService.waitForDataFromAuthWindow(authWindow);
     authWindow.close();
     yield result;
   }
 
-  private static async waitForDataFromWindow(browserWindow: BrowserWindow): Promise<{ armToken: string } | false> {
-    let canceled = false;
-    browserWindow.addListener('close', () => canceled = true);
+  public static* enterSignOutWorkflow(): AzureSignoutWorkflowType {
+    const signOutWindow = yield AzureAuthWorkflowService.launchSignOutWindow();
+    signOutWindow.show();
 
-    const script = `
-      (function(window) {
-        if (window.location.hash) {
-          return Promise.resolve(window.location.hash);
+    const result = yield AzureAuthWorkflowService.waitForDataFromSignOutWindow(signOutWindow);
+    signOutWindow.close();
+    yield result;
+  }
+
+  private static waitForDataFromAuthWindow(browserWindow: BrowserWindow): Promise<{ armToken: string } | boolean> {
+    return new Promise((resolve, reject) => {
+      browserWindow.addListener('close', reject);
+      browserWindow.addListener('page-title-updated', event => {
+        const uri: string = (event.sender as any).history.pop();
+        if (!uri.includes('localhost')) {
+          return;
         }
-        return new Promise(resolve => {
-          const idTokenHandler = () => {
-            if (window.location.hash.includes('id_token')) {
-              resolve(window.location.hash);
-            }
+        const idx = uri.indexOf('#');
+        const values = uri.substring(idx).split('&');
+        let len = values.length;
+        for (let i = 0; i < len; i++) {
+          const [key, value] = values[i].split(/[=]/);
+          if (key.includes('id_token')) {
+            resolve({ armToken: value });
           }
-          window.addEventListener('hashchange', idTokenHandler);
-          setTimeout(resolve.bind(null, 'waiting'), 500);
-        });
-      })(window);
-    `;
-    while (true) {
-      let response = await browserWindow.webContents.executeJavaScript(script);
-
-      if (canceled) {
-        return false;
-      }
-
-      if (response === 'waiting') {
-        continue;
-      }
-      const values = response.split('&');
-      let len = values.length;
-      for (let i = 0; i < len; i++) {
-        const [key, value] = values[i].split(/[=]/);
-        if (key.includes('id_token')) {
-          return { armToken: value };
+          if (key.includes('error')) {
+            reject();
+          }
         }
-        if (key.includes('error')) {
-          return false;
-        }
-      }
-    }
+      });
+    });
   }
 
   private static async launchAuthWindow(): Promise<BrowserWindow> {
@@ -97,8 +86,9 @@ export class AzureAuthWorkflowService {
       show: false,
       frame: false,
       transparent: true,
-      width: 500,
-      height: 550,
+      alwaysOnTop: true,
+      width: 490,
+      height: 366,
       webPreferences: { contextIsolation: true, nativeWindowOpen: true }
     });
     const clientId = '4f28e5eb-6b7f-49e6-ac0e-f992b622da57';
@@ -120,6 +110,54 @@ export class AzureAuthWorkflowService {
     browserWindow.loadURL(url);
     return new Promise<BrowserWindow>(resolve => {
       browserWindow.once('ready-to-show', () => resolve(browserWindow));
+    });
+  }
+
+  private static async launchSignOutWindow(): Promise<BrowserWindow> {
+    const browserWindow = new BrowserWindow({
+      modal: true,
+      show: false,
+      frame: false,
+      transparent: true,
+      alwaysOnTop: true,
+      width: 440,
+      height: 367,
+      webPreferences: { contextIsolation: true, nativeWindowOpen: true }
+    });
+    const redirectUri = 'http://localhost:3000/botframework-emulator';
+    const bits = [
+      `https://login.microsoftonline.com/common/oauth2/logout/?post_logout_redirect_uri=${redirectUri}`,
+      // `client_id=c44b4083-3bb0-49c1-b47d-974e53cbdf3c`,
+      // `redirect_uri=https://ms.portal.azure.com/signin/index/`,
+      // 'site_id=501430',
+      // 'prompt=select_account',
+      // 'client-request-id=c5b68b24-26c9-4e35-99f3-7fc745309d55',
+      'x-client-SKU=Js',
+      'x-client-Ver=1.0.17',
+    ];
+    const url = bits.join('&');
+    browserWindow.loadURL(url);
+    return new Promise<BrowserWindow>(resolve => {
+      browserWindow.once('ready-to-show', () => resolve(browserWindow));
+    });
+  }
+
+  private static waitForDataFromSignOutWindow(browserWindow: BrowserWindow): Promise<boolean> {
+    return new Promise(resolve => {
+      // Since redirects to localhost are not reliable,
+      // if signing out does not succeed after
+      // 5 seconds, treat it as a successful logout
+      // so the emulator will not attempt to auth
+      // on the next startup
+      let timeout = setTimeout(resolve.bind(null, true), 5000);
+      browserWindow.addListener('page-title-updated', event => {
+        const uri: string = (event.sender as any).history.pop();
+        if (!uri.includes('localhost')) {
+          return;
+        }
+        clearTimeout(timeout);
+        resolve(true);
+      });
     });
   }
 }
