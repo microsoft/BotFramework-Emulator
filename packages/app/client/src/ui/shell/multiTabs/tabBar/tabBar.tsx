@@ -132,7 +132,8 @@ class TabBarComponent extends React.Component<TabBarProps, TabBarState> {
           onClick={ () => this.onPresentationModeClick() }>
           </span>
       );
-    } else if (splitEnabled) {
+    }
+    if (splitEnabled) {
       widgets.push(
         <span
           key={ 0 }
