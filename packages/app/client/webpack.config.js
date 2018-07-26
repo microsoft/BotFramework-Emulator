@@ -73,6 +73,7 @@ const defaultConfig = {
               sass: false,
               namedExport: true,
               sourcemaps: true,
+              camelCase: true,
               banner: '// This is a generated file. Changes are likely to result in being overwritten'
             }
           },
@@ -204,4 +205,3 @@ module.exports = function (env, argv) {
       return buildConfig(argv.mode);
   }
 };
-

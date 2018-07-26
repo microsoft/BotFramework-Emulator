@@ -2,10 +2,22 @@
   height: 100%;
   overflow: auto;
   user-select: text;
-  padding: 0 16px 0 16px;
+  padding: 0;
   box-sizing: border-box;
+
   & > .entry {
+    padding: 0 16px;
     font-family: var(--monospace-font-family);
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--log-panel-entry-hover-bg);
+    }
+
+    &.inspected {
+      background-color: var(--log-panel-entry-inspected-bg);
+    }
+
     & > .source {
       color: var(--neutral-6);
     }
@@ -26,19 +38,22 @@
 
     // info
     & .level0 {
-      color: var(--neutral-16);
+      color: var(--log-panel-item-info);
     }
+
     // debug
     & .level1 {
-      color: var(--neutral-7);
+      color: var(--log-panel-item-debug);
     }
+
     // warn
     & .level2 {
-      color: var(--warning-outline);
+      color: var(--log-panel-item-warn);
     }
+
     // error
     & .level3 {
-      color: var(--error-text);
+      color: var(--log-panel-item-error);
     }
 
     & .spaced {

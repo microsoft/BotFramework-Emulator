@@ -39,6 +39,7 @@ import store from '../../../../../data/store';
 import { ExtensionManager, InspectorAPI } from '../../../../../extensions';
 import { LogEntry, LogItem, LogLevel, SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
+import { Subscription } from 'rxjs';
 
 function number2(n: number) {
   return ('0' + n).slice(-2);
@@ -67,6 +68,14 @@ function logLevelToClassName(level: LogLevel): string {
   }
 }
 
+/** One of these will always be "nexted" to the selectedActivity$
+ *  subscription when called from within the log
+ */
+export interface ActivitySelectionFromLog {
+  /** Differentiates between just hovering an activity or clicking to inspect */
+  clicked: boolean;
+}
+
 export interface LogProps {
   document: any;
 }
@@ -76,7 +85,10 @@ export interface LogState {
 }
 
 export default class Log extends React.Component<LogProps, LogState> {
-  scrollMe: Element;
+  public scrollMe: Element;
+  public selectedActivitySubscription: Subscription;
+  public selectedActivity: any;
+  public currentlyInspectedActivity: any;
 
   constructor(props: LogProps, context: LogState) {
     super(props, context);
@@ -86,11 +98,45 @@ export default class Log extends React.Component<LogProps, LogState> {
   }
 
   componentDidUpdate(): void {
-    if (this.props.document.log.entries.length !== this.state.count) {
-      this.scrollMe.scrollTop = this.scrollMe.scrollHeight;
+    let { props, scrollMe, selectedActivitySubscription, state } = this;
+    // set up selected activity subscription once it's available
+    if (props.document && props.document.selectedActivity$ && !selectedActivitySubscription) {
+      selectedActivitySubscription =
+        props.document.selectedActivity$.subscribe(obj => {
+          if (obj) {
+            if (obj.activity) {
+              // this activity came from webchat (activities from webchat are wrapped)
+              // ex: { activity: { id: , from: , ... } }
+              const { activity } = obj;
+              this.selectedActivity = activity;
+              this.currentlyInspectedActivity = activity;
+            } else {
+              // this activity came from the log (activities from the log are raw)
+              // ex: { id: , from: , to: , ... }
+              const activity = obj;
+              this.selectedActivity = activity;
+              const { fromLog = {} } = activity;
+              // check if it was clicked or hovered
+              const { clicked } = fromLog;
+              if (clicked) {
+                this.currentlyInspectedActivity = activity;
+              }
+            }
+          }
+        });
+    }
+    if (props.document.log.entries.length !== state.count) {
+      scrollMe.scrollTop = scrollMe.scrollHeight;
       this.setState({
-        count: this.props.document.log.entries.length
+        count: props.document.log.entries.length
       });
+    }
+  }
+
+  componentWillUnmount(): void {
+    // clean up activity subscription
+    if (this.selectedActivitySubscription) {
+      this.selectedActivitySubscription.unsubscribe();
     }
   }
 
@@ -100,7 +146,9 @@ export default class Log extends React.Component<LogProps, LogState> {
       <div className={ styles.log } ref={ ref => this.scrollMe = ref }>
         {
           this.props.document.log.entries.map(entry =>
-            <LogEntryComponent key={ `entry-${key++}` } entry={ entry } document={ this.props.document }/>
+            <LogEntryComponent key={ `entry-${key++}` } entry={ entry } document={ this.props.document }
+              selectedActivity={ this.selectedActivity }
+              currentlyInspectedActivity={ this.currentlyInspectedActivity }/>
           )
         }
       </div>
@@ -111,27 +159,87 @@ export default class Log extends React.Component<LogProps, LogState> {
 export interface LogEntryProps {
   document: any;
   entry: LogEntry;
+  selectedActivity?: any;
+  currentlyInspectedActivity?: any;
 }
 
 class LogEntryComponent extends React.Component<LogEntryProps> {
+  /** Allows <LogEntry />'s to highlight themselves based on their log item children */
+  private inspectableObjects: { [id: string]: boolean };
 
+  /** Sends obj to the inspector panel
+   * @param obj Can be a conversation activity or network request
+   */
   inspect(obj: {}) {
-    this.props.document.selectedActivity$.next({});
+    const fromLog: ActivitySelectionFromLog = { clicked: true };
+    this.props.document.selectedActivity$.next({ fromLog });
     store.dispatch(ChatActions.setInspectorObjects(this.props.document.documentId, obj));
   }
 
-  inspectAndHighlight(obj: any) {
+  /** Sends obj to the inspector panel and highlights the activity in Webchat
+   *  (triggered by click in log)
+   * @param obj Conversation activity to be highlighted in the WebChat control
+   */
+  inspectAndHighlightInWebchat(obj: any) {
     this.inspect(obj);
     if (obj.id) {
-      this.props.document.selectedActivity$.next(obj);
+      const fromLog: ActivitySelectionFromLog = { clicked: true };
+      this.props.document.selectedActivity$.next({ ...obj, fromLog });
+    }
+  }
+
+  /** Highlights an activity in webchat (triggered by hover in log) */
+  highlightInWebchat(obj: any) {
+    if (obj.id) {
+      const fromLog: ActivitySelectionFromLog = { clicked: false };
+      this.props.document.selectedActivity$.next({ ...obj, fromLog });
+    }
+  }
+
+  /** Removes an activity's highlighting in webchat */
+  removeHighlightInWebchat(obj: any) {
+    if (obj.id) {
+      // re-highlight last-inspected activity if possible
+      const { currentlyInspectedActivity } = this.props;
+      if (currentlyInspectedActivity && currentlyInspectedActivity.id) {
+        const fromLog: ActivitySelectionFromLog = { clicked: true };
+        this.props.document.selectedActivity$.next({
+          ...currentlyInspectedActivity,
+          fromLog
+        });
+      } else {
+        const fromLog: ActivitySelectionFromLog = { clicked: false };
+        this.props.document.selectedActivity$.next({ fromLog });
+      }
     }
   }
 
   render() {
-    return (
-      <div key="entry" className={ styles.entry }>
+    // reset the inspectable objects lookup
+    this.inspectableObjects = {};
+
+    // render the timestamp and any items to be displayed within the entry;
+    // any rendered inspectable items will add themselves to this.inspectableObjects
+    const innerJsx = (
+      <>
         { this.renderTimestamp(this.props.entry.timestamp) }
         { this.props.entry.items.map((item, key) => this.renderItem(item, '' + key)) }
+      </>
+    );
+
+    // if the currently inspected activity matches any of this item's inner inspectable
+    // objects, append an 'inspected' class name to the log entry to highlight it
+    const { currentlyInspectedActivity } = this.props;
+    let inspectedActivityClass = '';
+    if (currentlyInspectedActivity && currentlyInspectedActivity.id) {
+      if (this.inspectableObjects[currentlyInspectedActivity.id]) {
+        inspectedActivityClass = styles.inspected;
+      }
+    }
+
+    return (
+      <div key="entry" className={[styles.entry, inspectedActivityClass].join(' ')}>
+        { innerJsx }
       </div>
     );
   }
@@ -213,15 +321,22 @@ class LogEntryComponent extends React.Component<LogEntryProps> {
   }
 
   renderInspectableItem(obj: any, key: string) {
+    // add self to inspectable object lookup
+    if (obj.id) {
+      this.inspectableObjects[obj.id] = true;
+    }
+
     let title = 'inspect';
     if (typeof obj.type === 'string') {
       title = obj.type;
     }
     let summaryText = this.summaryText(obj) || '';
     return (
-      <span key={ key }>
+      <span key={ key }
+            onMouseOver={ () => this.highlightInWebchat(obj) }
+            onMouseLeave={ () => this.removeHighlightInWebchat(obj) }>
         <span className={ `${styles.spaced} ${styles.level0}` }>
-          <a onClick={ () => this.inspectAndHighlight(obj) }>{ title }</a>
+          <a onClick={ () => this.inspectAndHighlightInWebchat(obj) }>{ title }</a>
         </span>
         <span className={ `${styles.spaced} ${styles.level0}` }>
           { summaryText }
