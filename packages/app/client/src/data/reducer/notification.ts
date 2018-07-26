@@ -66,10 +66,6 @@ export function notification(state: NotificationState = DEFAULT_STATE, action: N
       break;
     }
 
-    case NotificationActions.markAllAsRead: {
-      break;
-    }
-
     case NotificationActions.finishClear: {
       state = {
         allIds: []

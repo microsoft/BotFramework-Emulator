@@ -63,8 +63,7 @@ export interface BeginAddNotificationAction {
 export interface FinishAddNotificationAction {
   type: NotificationActions.finishAdd;
   payload: {
-    notification: Notification,
-    read: boolean
+    notification: Notification
   };
 }
 
@@ -107,12 +106,11 @@ export function beginAdd(notification: Notification, read: boolean = false): Beg
   };
 }
 
-export function finishAdd(notification: Notification, read: boolean = false): FinishAddNotificationAction {
+export function finishAdd(notification: Notification): FinishAddNotificationAction {
   return {
     type: NotificationActions.finishAdd,
     payload: {
-      notification,
-      read
+      notification
     }
   };
 }
