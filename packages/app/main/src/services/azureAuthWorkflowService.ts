@@ -39,6 +39,7 @@ declare type AzureAuthWorkflowType = IterableIterator<Promise<BrowserWindow> | P
 declare type AzureSignoutWorkflowType = IterableIterator<Promise<BrowserWindow | boolean>>;
 
 export class AzureAuthWorkflowService {
+
   public static* enterAuthWorkflow(): AzureAuthWorkflowType {
     const authWindow = yield AzureAuthWorkflowService.launchAuthWindow();
     authWindow.show();
@@ -127,13 +128,8 @@ export class AzureAuthWorkflowService {
     const redirectUri = 'http://localhost:3000/botframework-emulator';
     const bits = [
       `https://login.microsoftonline.com/common/oauth2/logout/?post_logout_redirect_uri=${redirectUri}`,
-      // `client_id=c44b4083-3bb0-49c1-b47d-974e53cbdf3c`,
-      // `redirect_uri=https://ms.portal.azure.com/signin/index/`,
-      // 'site_id=501430',
-      // 'prompt=select_account',
-      // 'client-request-id=c5b68b24-26c9-4e35-99f3-7fc745309d55',
       'x-client-SKU=Js',
-      'x-client-Ver=1.0.17',
+      'x-client-Ver=1.0.17'
     ];
     const url = bits.join('&');
     browserWindow.loadURL(url);

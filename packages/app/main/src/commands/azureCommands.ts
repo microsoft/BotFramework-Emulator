@@ -64,10 +64,10 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       const payloadJson = JSON.parse(Buffer.from(payload, 'base64').toString());
       store.dispatch(azureLoggedInUserChanged(payloadJson.upn));
       await mainWindow.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
+      // Add the current persistLogin value which the UI can use
+      // to bind to without retrieving the entire store
+      result.persistLogin = store.getState().azure.persistLogin;
     }
-    // Add the current persistLogin value which the UI can use
-    // to bind to without retrieving the entire store
-    result.persistLogin = store.getState().azure.persistLogin;
     return result;
   });
 

@@ -33,9 +33,9 @@
 
 import * as Electron from 'electron';
 import { Action, applyMiddleware, createStore, Store } from 'redux';
-import { getThemes, loadSettings, saveSettings } from '../utils';
+import { getThemes, loadSettings } from '../utils';
 import sagaMiddlewareFactory from 'redux-saga';
-import { PersistentSettings, Settings, settingsDefault, SettingsImpl, } from '@bfemulator/app-shared';
+import { Settings, settingsDefault, SettingsImpl, } from '@bfemulator/app-shared';
 import reducers from './reducers';
 import { settingsSagas } from './sagas/settingsSagas';
 

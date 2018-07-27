@@ -8,7 +8,7 @@ import {
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { RootState } from '../store';
-import { DialogService } from '../../ui/dialogs/service';
+import { DialogService } from '../../ui/dialogs';
 import { AzureAuthState } from '../reducer/azureAuthReducer';
 
 const getArmTokenFromState = (state: RootState) => state.azureAuth;
