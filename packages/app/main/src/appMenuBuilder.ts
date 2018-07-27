@@ -55,8 +55,7 @@ export interface AppMenuBuilder {
   getViewMenu: () => MenuOpts;
   getWindowMenuMac: () => MenuOpts[];
   getHelpMenu: () => MenuOpts;
-  setFileMenu: (fileMenuTemplate: MenuOpts,
-                appMenuTemplate: MenuOpts[]) => MenuOpts[];
+  setFileMenu: (fileMenuTemplate: MenuOpts, appMenuTemplate: MenuOpts[]) => MenuOpts[];
 }
 
 export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBuilder {
@@ -123,9 +122,6 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
 
   /** Creates a file menu item for each bot that will set the bot as active when clicked */
   createRecentBotsList(bots: BotInfo[]): MenuOpts[] {
-    // TODO: will need to change this to recent endpoints instead of bots
-    // once we allow multiple endpoints per bot
-
     // only list 5 most-recent bots
     return bots.slice(0, 5).filter(bot => !!bot).map(bot => ({
       label: bot.displayName,
