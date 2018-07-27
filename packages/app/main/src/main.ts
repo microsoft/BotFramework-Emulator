@@ -34,7 +34,7 @@
 import * as Electron from 'electron';
 import { app, Menu } from 'electron';
 
-import { dispatch, getSettings } from './settingsData/store';
+import { dispatch, getSettings, getStore as getSettingsStore } from './settingsData/store';
 import * as url from 'url';
 import * as path from 'path';
 import { Emulator } from './emulator';
@@ -50,9 +50,11 @@ import { AppUpdater } from './appUpdater';
 import { UpdateInfo } from 'electron-updater';
 import { ProgressInfo } from 'builder-util-runtime';
 import { getStore } from './botData/store';
-import { PersistentSettings, SharedConstants } from '@bfemulator/app-shared';
+import { PersistentSettings, Settings, SharedConstants } from '@bfemulator/app-shared';
 import { BotProjectFileWatcher } from './botProjectFileWatcher';
 import { rememberBounds } from './settingsData/actions/windowStateActions';
+import { Store } from 'redux';
+import { azureLoggedInUserChanged } from './settingsData/actions/azureAuthActions';
 
 export let mainWindow: Window;
 export let windowManager: WindowManager;
@@ -318,7 +320,7 @@ const createMainWindow = async () => {
     }
   });
 
-  mainWindow.browserWindow.once('ready-to-show', () => {
+  mainWindow.browserWindow.once('ready-to-show', async () => {
     const { zoomLevel, theme, availableThemes } = getSettings().windowState;
     const themeInfo = availableThemes.find(availableTheme => availableTheme.name === theme);
     if (themeInfo) {
@@ -333,6 +335,17 @@ const createMainWindow = async () => {
     mainWindow.browserWindow.show();
     if (process.env.NODE_ENV !== 'development') {
       AppUpdater.checkForUpdates(false, true);
+    }
+    // Renew arm token
+    const settingsStore: Store<Settings> = getSettingsStore();
+    const { persistLogin, signedInUser } = settingsStore.getState().azure;
+    if (persistLogin && signedInUser) {
+      const result = await CommandRegistry.getCommand(SharedConstants.Commands.Azure.RetrieveArmToken).handler(true);
+      if ('armToken' in result) {
+        CommandRegistry.getCommand(SharedConstants.Commands.UI.ArmTokenReceivedOnStartup).handler(result);
+      } else if (!result) {
+        settingsStore.dispatch(azureLoggedInUserChanged(''));
+      }
     }
   });
 };

@@ -45,7 +45,8 @@ import * as NavBarActions from '../data/action/navBarActions';
 import * as Constants from '../constants';
 import { CommandRegistry } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
-import { beginAzureAuthWorkflow } from '../data/action/azureAuthActions';
+import { azureArmTokenDataChanged, beginAzureAuthWorkflow } from '../data/action/azureAuthActions';
+import { AzureAuthState } from '../data/reducer/azureAuthReducer';
 
 /** Register UI commands (toggling UI) */
 export function registerCommands(commandRegistry: CommandRegistry) {
@@ -107,5 +108,9 @@ export function registerCommands(commandRegistry: CommandRegistry) {
   // Azure sign in
   commandRegistry.registerCommand(Commands.SignInToAzure, () => {
     store.dispatch(beginAzureAuthWorkflow(AzureLoginPromptDialogContainer, AzureLoginSuccessDialogContainer));
+  });
+
+  commandRegistry.registerCommand(Commands.ArmTokenReceivedOnStartup, (azureAuth: AzureAuthState) => {
+    store.dispatch(azureArmTokenDataChanged(azureAuth.armToken));
   });
 }

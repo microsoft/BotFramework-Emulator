@@ -12,22 +12,6 @@
     "prepare": "npm run clean",
     "test": "jest"
   },
-  "jest": {
-    "transform": {
-      "^.+\\.tsx?$": "ts-jest"
-    },
-    "testMatch": [
-      "**/?(*.)(spec|test).(ts)?(x)"
-    ],
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx",
-      "json",
-      "node"
-    ]
-  },
   "author": "",
   "license": "ISC",
   "devDependencies": {
@@ -49,7 +33,9 @@
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "testMatch": [
+      "**/?(*.)(spec|test).(ts)?(x)"
+    ],
     "moduleFileExtensions": [
       "ts",
       "tsx",

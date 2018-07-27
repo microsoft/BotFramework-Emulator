@@ -44,9 +44,9 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Retrieve the Azure ARM Token
-  commandRegistry.registerCommand(Azure.RetrieveArmToken, async () => {
+  commandRegistry.registerCommand(Azure.RetrieveArmToken, async (renew: boolean = false) => {
     const store = getStore();
-    const workflow = AzureAuthWorkflowService.enterAuthWorkflow();
+    const workflow = AzureAuthWorkflowService.enterAuthWorkflow(renew);
     let result = undefined;
     while (true) {
       const next = workflow.next(result);

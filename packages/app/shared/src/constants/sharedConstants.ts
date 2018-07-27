@@ -138,6 +138,7 @@ export namespace SharedConstants {
       export const ShowAppSettings = 'shell:show-app-settings';
       export const SwitchTheme = 'shell:switchTheme';
       export const SignInToAzure = 'shell:signInToAzure';
+      export const ArmTokenReceivedOnStartup = 'shell:armTokenReceivedOnStartup';
     }
   }
 }

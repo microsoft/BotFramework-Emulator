@@ -40,8 +40,8 @@ declare type AzureSignoutWorkflowType = IterableIterator<Promise<BrowserWindow |
 
 export class AzureAuthWorkflowService {
 
-  public static* enterAuthWorkflow(): AzureAuthWorkflowType {
-    const authWindow = yield AzureAuthWorkflowService.launchAuthWindow();
+  public static* enterAuthWorkflow(renew: boolean = false): AzureAuthWorkflowType {
+    const authWindow = yield AzureAuthWorkflowService.launchAuthWindow(renew);
     authWindow.show();
     const result = yield AzureAuthWorkflowService.waitForDataFromAuthWindow(authWindow);
     authWindow.close();
@@ -58,8 +58,8 @@ export class AzureAuthWorkflowService {
   }
 
   private static waitForDataFromAuthWindow(browserWindow: BrowserWindow): Promise<{ armToken: string } | boolean> {
-    return new Promise((resolve, reject) => {
-      browserWindow.addListener('close', reject);
+    return new Promise(resolve => {
+      browserWindow.addListener('close', () => resolve(false));
       browserWindow.addListener('page-title-updated', event => {
         const uri: string = (event.sender as any).history.pop();
         if (!uri.includes('localhost')) {
@@ -74,14 +74,14 @@ export class AzureAuthWorkflowService {
             resolve({ armToken: value });
           }
           if (key.includes('error')) {
-            reject();
+            resolve(false);
           }
         }
       });
     });
   }
 
-  private static async launchAuthWindow(): Promise<BrowserWindow> {
+  private static async launchAuthWindow(renew: boolean): Promise<BrowserWindow> {
     const browserWindow = new BrowserWindow({
       modal: true,
       show: false,
@@ -103,10 +103,13 @@ export class AzureAuthWorkflowService {
       `redirect_uri=${redirectUri}`,
       `state=${state}`,
       `client-request-id=${requestId}`,
+      `nonce=${nonce}`,
       'x-client-SKU=Js',
       'x-client-Ver=1.0.17',
-      `nonce=${nonce}`
     ];
+    if (renew) {
+      bits.push('prompt=none');
+    }
     const url = bits.join('&');
     browserWindow.loadURL(url);
     return new Promise<BrowserWindow>(resolve => {
