@@ -32,7 +32,7 @@
 //
 
 import { Action } from 'redux';
-import { ComponentClass } from 'enzyme';
+import { ComponentClass } from 'react';
 
 export const AZURE_ARM_TOKEN_DATA_CHANGED = 'AZURE_ARM_TOKEN_DATA_CHANGED';
 export const AZURE_BEGIN_AUTH_WORKFLOW = 'AZURE_BEGIN_AUTH_WORKFLOW';
@@ -51,7 +51,7 @@ export interface AzureAuthWorkflow {
 }
 
 export function beginAzureAuthWorkflow(promptDialog: ComponentClass<any>, loginSuccessDialog: ComponentClass<any>)
-  : AzureAuthAction<any> {
+  : AzureAuthAction<AzureAuthWorkflow> {
   return {
     type: AZURE_BEGIN_AUTH_WORKFLOW,
     payload: { promptDialog, loginSuccessDialog }
