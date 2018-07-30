@@ -1,0 +1,21 @@
+language: node_js
+
+node_js:
+- "lts/*"
+
+notifications:
+  email: false
+
+before_install:
+- npm install -g lerna@2.11.x webpack@4.8.x jest
+
+install:
+- lerna bootstrap --hoist
+
+script:
+- npm run test:coveralls
+- npm run build
+
+cache:
+  directories:
+  - "node_modules"
