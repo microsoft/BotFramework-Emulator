@@ -1,9 +1,9 @@
 {
   "scripts": {
     "bootstrap": "lerna bootstrap --hoist",
-    "build": "lerna run --scope @bfemulator/**shared build && lerna run --scope !@bfemulator/**shared build",
-    "test": "jest",
-    "test:coveralls": "jest --coverage --coverageReporters=text-lcov | node -r ./env node_modules/coveralls/bin/coveralls"
+    "build": "lerna run --scope \"@bfemulator/@(**shared|sdk**)\" build && lerna run --scope \"!@bfemulator/@(**shared|sdk**)\" build",
+    "test": "jest --runInBand",
+    "test:coveralls": "jest --runInBand --coverage --coverageReporters=text-lcov | coveralls"
   },
   "jest": {
     "setupTestFrameworkScriptFile": "./testSetup.js",

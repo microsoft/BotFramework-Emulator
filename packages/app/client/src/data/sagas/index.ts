@@ -40,6 +40,7 @@ import { luisSagas } from './luisSagas';
 import { navBarSagas } from './navBarSagas';
 import { notificationSagas } from './notificationSagas';
 import { qnaMakerSagas } from './qnaMakerSagas';
+import { azureAuthSagas } from './azureAuthSaga';
 
 export const applicationSagas = [
   luisSagas,
@@ -48,6 +49,7 @@ export const applicationSagas = [
   dispatchSagas,
   endpointSagas,
   azureBotServiceSagas,
+  azureAuthSagas,
   editorSagas,
   navBarSagas,
   notificationSagas

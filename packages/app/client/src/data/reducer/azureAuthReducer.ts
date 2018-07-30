@@ -31,46 +31,37 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Action } from 'redux';
+import {
+  ArmTokenData,
+  AZURE_ARM_TOKEN_DATA_CHANGED,
+  AZURE_BEGIN_AUTH_WORKFLOW,
+  AzureAuthAction,
+} from '../action/azureAuthActions';
 
-export const LUIS_LAUNCH_MODELS_VIEWER = 'LUIS_LAUNCH_MODELS_VIEWER';
-export const LUIS_AUTHORING_DATA_CHANGED = 'LUIS_AUTHORING_DATA_CHANGED';
-export const LUIS_AUTH_STATUS_CHANGED = 'LUIS_AUTH_STATUS_CHANGED';
-
-export interface LuisAuthAction<T> extends Action {
-  payload: T;
+export interface AzureAuthState {
+  armToken: string;
+  persistLogin: boolean;
 }
 
-export interface LuisAuthData {
-  luisAuthData: { key: string, BaseUrl: string };
-}
+const initialState: AzureAuthState = {
+  armToken: null,
+  persistLogin: false
+};
 
-export interface LuisAuthWorkflowStatus {
-  luisAuthWorkflowStatus: 'inProgress' | 'ended' | 'notStarted' | 'canceled';
-}
+export default function azureAuth(state: AzureAuthState = initialState, action: AzureAuthAction<ArmTokenData>)
+  : AzureAuthState {
+  const { payload = {}, type } = action;
+  const { armToken } = payload as ArmTokenData;
 
-/*export interface LuisModelViewer {
-  luisModelViewer: ComponentClass<any>;
-}
+  switch (type) {
 
-export function launchLuisModelsViewer(luisModelViewer: ComponentClass<any>): LuisAuthAction<LuisModelViewer> {
-  return {
-    type: LUIS_LAUNCH_MODELS_VIEWER,
-    payload: { luisModelViewer }
-  };
-}*/
+    case AZURE_BEGIN_AUTH_WORKFLOW:
+      return { ...state, armToken: 'invalid__' + Math.floor(Math.random() * 9999) };
 
-export function luisAuthoringDataChanged(luisAuthData: { key: string, BaseUrl: string }): LuisAuthAction<LuisAuthData> {
-  return {
-    type: LUIS_AUTHORING_DATA_CHANGED,
-    payload: { luisAuthData }
-  };
-}
+    case AZURE_ARM_TOKEN_DATA_CHANGED:
+      return { ...state, armToken };
 
-export function luisAuthStatusChanged(luisAuthWorkflowStatus: 'inProgress' | 'ended' | 'notStarted' | 'canceled')
-  : LuisAuthAction<LuisAuthWorkflowStatus> {
-  return {
-    type: LUIS_AUTH_STATUS_CHANGED,
-    payload: { luisAuthWorkflowStatus }
-  };
+    default:
+      return state;
+  }
 }

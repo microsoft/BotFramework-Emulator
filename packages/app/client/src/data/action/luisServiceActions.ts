@@ -40,6 +40,7 @@ export const OPEN_LUIS_DEEP_LINK = 'OPEN_LUIS_DEEP_LINK';
 export const OPEN_LUIS_CONTEXT_MENU = 'OPEN_LUIS_CONTEXT_MENU';
 export const LAUNCH_LUIS_EDITOR = 'LAUNCH_LUIS_EDITOR';
 export const RETRIEVE_LUIS_MODELS = 'RETRIEVE_LUIS_MODELS';
+export const LAUNCH_LUIS_MODELS_VIEWER = 'LAUNCH_LUIS_MODELS_VIEWER';
 
 export interface LuisServiceAction<T> extends Action {
   payload: T;
@@ -60,6 +61,17 @@ export function launchLuisEditor(luisEditorComponent: ComponentClass<LuisEditor>
     payload: { luisEditorComponent, luisService }
   };
 }
+
+/*export interface LuisModelViewer {
+  luisModelViewer: ComponentClass<any>;
+}
+
+export function launchLuisModelsViewer(luisModelViewer: ComponentClass<any>): AzureAuthAction<LuisModelViewer> {
+  return {
+    type: LAUNCH_LUIS_MODELS_VIEWER,
+    payload: { luisModelViewer }
+  };
+}*/
 
 export function openLuisDeepLink(luisService: ILuisService): LuisServiceAction<LuisServicePayload> {
   return {

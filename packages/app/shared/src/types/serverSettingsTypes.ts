@@ -58,12 +58,18 @@ export interface WindowStateSettings {
   width?: number;
   height?: number;
   theme?: string;
-  availableThemes?: {name: string, href: string}[];
+  availableThemes?: { name: string, href: string }[];
 }
 
 export interface UserSettings {
   currentUserId?: string;
   usersById?: { [id: string]: User };
+}
+
+export interface AzureSettings {
+  signedInUser?: string;
+  armToken?: string;
+  persistLogin?: boolean;
 }
 
 export interface PersistentSettings {
@@ -74,16 +80,30 @@ export interface PersistentSettings {
 }
 
 export interface Settings extends PersistentSettings {
+  azure?: Partial<AzureSettings>;
 }
 
-export class Settings implements Settings {
+export class SettingsImpl implements Settings {
   public framework: FrameworkSettings;
   public bots: Bot[];
   public windowState: WindowStateSettings;
   public users: UserSettings;
+  public azure: AzureSettings;
 
-  constructor(settings?: Settings) {
-    Object.assign(this, settings);
+  constructor(source?: Settings) {
+    const { framework, bots, windowState, users, azure } = source || {} as Settings;
+    Object.assign(this, { framework, bots, windowState, users, azure });
+  }
+
+  /**
+   * Overridden to control which data is written to file
+   * @returns {Partial<Settings>}
+   */
+  public toJSON(): Partial<Settings> {
+    const { framework, bots, windowState, users, azure = {} } = this;
+    // Do not write the armToken to disk
+    const { armToken, ...azureProps } = azure;
+    return { framework, bots, windowState, users, azure: azureProps };
   }
 }
 
@@ -117,7 +137,7 @@ export const usersDefault: UserSettings = {
   }
 };
 
-export const settingsDefault: Settings = {
+export const settingsDefault: Settings = new SettingsImpl({
   framework: frameworkDefault,
   bots: [
     {
@@ -129,5 +149,6 @@ export const settingsDefault: Settings = {
     }
   ],
   windowState: windowStateDefault,
-  users: usersDefault
-};
+  users: usersDefault,
+  azure: {} as AzureSettings
+});

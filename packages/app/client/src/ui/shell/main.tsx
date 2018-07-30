@@ -63,8 +63,6 @@ export class Main extends React.Component<MainProps, MainState> {
   constructor(props: MainProps) {
     super(props);
 
-    this.handleTabChange = this.handleTabChange.bind(this);
-
     this.state = {
       tabValue: 0
     };
@@ -76,10 +74,6 @@ export class Main extends React.Component<MainProps, MainState> {
     } else {
       window.removeEventListener('keydown', this.props.exitPresentationMode);
     }
-  }
-
-  handleTabChange(nextTabValue: any) {
-    this.setState(() => ({ tabValue: nextTabValue }));
   }
 
   render() {

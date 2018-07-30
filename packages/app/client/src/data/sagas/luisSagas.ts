@@ -33,7 +33,7 @@
 
 import { ILuisService, ServiceType } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
-import { call, ForkEffect, select, takeEvery, takeLatest } from 'redux-saga/effects';
+import { call, ForkEffect, takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { DialogService } from '../../ui/dialogs/service';
 import { LuisEditor } from '../../ui/shell/explorer/luisExplorer/luisEditor/luisEditor';
@@ -43,30 +43,27 @@ import {
   LuisServiceAction,
   LuisServicePayload,
   OPEN_LUIS_CONTEXT_MENU,
-  OPEN_LUIS_DEEP_LINK,
-  RETRIEVE_LUIS_MODELS
+  OPEN_LUIS_DEEP_LINK
 } from '../action/luisServiceActions';
-import { LuisApi } from '../http/luisApi';
-import { RootState } from '../store';
+// import { LuisApi } from '../http/luisApi';
 import { SharedConstants } from '@bfemulator/app-shared';
 
-const getLuisAuthFromState = (state: RootState) => state.luisAuth.luisAuthData;
 // const isModalServiceBusy = (state: RootState) => state.dialog.showing;
 
-// function* launchLuisModelsViewer(action: LuisAuthAction<LuisModelViewer>): IterableIterator<any> {
-//   let luisAuth = yield select(getLuisAuthFromState);
-//   if (!luisAuth) {
-//     luisAuth = yield call(
+// function* launchLuisModelsViewer(action: AzureAuthAction<LuisModelViewer>): IterableIterator<any> {
+//   let azureAuth = yield select(getLuisAuthFromState);
+//   if (!azureAuth) {
+//     azureAuth = yield call(
 //      CommandServiceImpl.remoteCall.bind(CommandServiceImpl),
-//      SharedConstants.Commands.Luis.RetrieveAuthoringKey
+//      SharedConstants.Commands.Azure.RetrieveArmToken
 //    );
-//     yield put(luisAuthoringDataChanged(luisAuth));
+//     yield put(azureArmTokenDataChanged(azureAuth));
 //   }
 //   const luisModels = yield* retrieveLuisModels();
 //   yield* beginModelViewLifeCycle(action, luisModels);
 // }
 
-// function* beginModelViewLifeCycle(action: LuisAuthAction<LuisModelViewer>,
+// function* beginModelViewLifeCycle(action: AzureAuthAction<LuisModelViewer>,
 //                                   luisModels: LuisModel[]): IterableIterator<any> {
 //   const isBusy = yield select(isModalServiceBusy);
 //   if (isBusy) {
@@ -78,15 +75,15 @@ const getLuisAuthFromState = (state: RootState) => state.luisAuth.luisAuthData;
 //   // TODO - write this to the bot file
 //   return result;
 // }
-
-function* retrieveLuisModels(): IterableIterator<any> {
-  const luisAuth = yield select(getLuisAuthFromState);
-  if (!luisAuth) {
-    throw new Error('Auth credentials do not exist.');
-  }
-  const luisModels = yield LuisApi.getApplicationsList(luisAuth);
-  return yield luisModels;
-}
+//
+// function* retrieveLuisModels(): IterableIterator<any> {
+//   const luisAuth = yield select(getLuisAuthFromState);
+//   if (!luisAuth) {
+//     throw new Error('Auth credentials do not exist.');
+//   }
+//   const luisModels = yield LuisApi.getApplicationsList(luisAuth);
+//   return yield luisModels;
+// }
 
 function* openLuisDeepLink(action: LuisServiceAction<LuisServicePayload>): IterableIterator<any> {
   const { appId, version } = action.payload.luisService;
@@ -146,7 +143,7 @@ function* launchLuisEditor(action: LuisServiceAction<LuisEditorPayload>): Iterab
 export function* luisSagas(): IterableIterator<ForkEffect> {
   //  yield takeLatest(LUIS_LAUNCH_MODELS_VIEWER, launchLuisModelsViewer);
   yield takeLatest(LAUNCH_LUIS_EDITOR, launchLuisEditor);
-  yield takeEvery(RETRIEVE_LUIS_MODELS, retrieveLuisModels);
+  // yield takeEvery(RETRIEVE_LUIS_MODELS, retrieveLuisModels);
   yield takeEvery(OPEN_LUIS_DEEP_LINK, openLuisDeepLink);
   yield takeEvery(OPEN_LUIS_CONTEXT_MENU, openLuisContextMenu);
 }

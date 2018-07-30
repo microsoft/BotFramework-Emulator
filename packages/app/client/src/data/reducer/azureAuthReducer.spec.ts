@@ -31,18 +31,30 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { combineReducers } from 'redux';
-import { frameworkReducer } from './frameworkReducer';
-import { usersReducer } from './usersReducer';
-import { botsReducer } from './botReducer';
-import { windowStateReducer } from './windowStateReducer';
-import { azureAuth } from './azureAuthReducer';
-import { Settings } from '@bfemulator/app-shared';
+import {
+  azureArmTokenDataChanged,
+} from '../action/azureAuthActions';
+import azureAuth, { AzureAuthState } from './azureAuthReducer';
 
-export default combineReducers<Settings>({
-  azure: azureAuth,
-  framework: frameworkReducer,
-  bots: botsReducer,
-  windowState: windowStateReducer,
-  users: usersReducer
+describe('Azure auth reducer tests', () => {
+  let startingState: AzureAuthState;
+
+  beforeEach(() => {
+    startingState = {
+      armToken: null,
+      persistLogin: false
+    };
+  });
+
+  it('should return unaltered state for non-matching action type', () => {
+    const emptyAction = { type: null, payload: undefined };
+    const endingState = azureAuth(startingState, emptyAction);
+    expect(endingState).toEqual(startingState);
+  });
+
+  it('should change auth data', () => {
+    const action = azureArmTokenDataChanged('someKey');
+    const state = azureAuth(startingState, action);
+    expect(state.armToken).toEqual('someKey');
+  });
 });
