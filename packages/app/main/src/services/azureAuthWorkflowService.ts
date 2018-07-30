@@ -67,7 +67,7 @@ export class AzureAuthWorkflowService {
         }
         const idx = uri.indexOf('#');
         const values = uri.substring(idx).split('&');
-        let len = values.length;
+        const len = values.length;
         for (let i = 0; i < len; i++) {
           const [key, value] = values[i].split(/[=]/);
           if (key.includes('id_token')) {
