@@ -66,7 +66,7 @@ describe('The azureAuthWorkflowService', () => {
     let reportedValues = [];
     let reporter = v => reportedValues.push(v);
     (BrowserWindow as any).reporters.push(reporter);
-    const it = AzureAuthWorkflowService.enterAuthWorkflow();
+    const it = AzureAuthWorkflowService.enterAuthWorkflow(false, '');
     let value = undefined;
     let ct = 0;
     while (true) {

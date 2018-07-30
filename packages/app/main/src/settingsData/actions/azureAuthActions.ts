@@ -14,9 +14,9 @@ export function azurePersistLoginChanged(persistLogin: boolean): AzureAuthAction
   };
 }
 
-export function azureLoggedInUserChanged(loggedInUser: string): AzureAuthAction<string> {
+export function azureLoggedInUserChanged(signedInUser: string): AzureAuthAction<string> {
   return {
     type: AZURE_LOGGED_IN_USER_CHANGED,
-    payload: loggedInUser
-  };
+    payload: signedInUser
+};
 }

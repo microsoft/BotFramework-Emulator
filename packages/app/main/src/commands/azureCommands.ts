@@ -32,11 +32,12 @@
 //
 
 import { AzureAuthWorkflowService } from '../services/azureAuthWorkflowService';
-import { getStore } from '../settingsData/store';
+import { getStore as getSettingsStore } from '../settingsData/store';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { azureLoggedInUserChanged, azurePersistLoginChanged } from '../settingsData/actions/azureAuthActions';
 import { mainWindow } from '../main';
+import { getStore } from '../botData/store';
 
 /** Registers LUIS commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
@@ -45,8 +46,9 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Retrieve the Azure ARM Token
   commandRegistry.registerCommand(Azure.RetrieveArmToken, async (renew: boolean = false) => {
-    const store = getStore();
-    const workflow = AzureAuthWorkflowService.enterAuthWorkflow(renew);
+    const settingsStore = getSettingsStore();
+    const { serviceUrl } = getStore().getState();
+    const workflow = AzureAuthWorkflowService.enterAuthWorkflow(renew, `${serviceUrl}/v4/token`);
     let result = undefined;
     while (true) {
       const next = workflow.next(result);
@@ -62,19 +64,19 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     if (result) {
       const [, payload] = result.armToken.split('.');
       const payloadJson = JSON.parse(Buffer.from(payload, 'base64').toString());
-      store.dispatch(azureLoggedInUserChanged(payloadJson.upn));
+      settingsStore.dispatch(azureLoggedInUserChanged(payloadJson.upn));
       await mainWindow.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
       // Add the current persistLogin value which the UI can use
-      // to bind to without retrieving the entire store
-      result.persistLogin = store.getState().azure.persistLogin;
+      // to bind to without retrieving the entire settingsStore
+      result.persistLogin = settingsStore.getState().azure.persistLogin;
     }
     return result;
   });
 
   // ---------------------------------------------------------------------------
   // Sign the user out of Azure
-  commandRegistry.registerCommand(Azure.SignUserOutOfAzure, async () => {
-    const workflow = AzureAuthWorkflowService.enterSignOutWorkflow();
+  commandRegistry.registerCommand(Azure.SignUserOutOfAzure, async (prompt: boolean = true) => {
+    const workflow = AzureAuthWorkflowService.enterSignOutWorkflow(prompt);
     let result = undefined;
     while (true) {
       const next = workflow.next(result);
@@ -88,7 +90,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       }
     }
     if (result) {
-      const store = getStore();
+      const store = getSettingsStore();
       store.dispatch(azureLoggedInUserChanged(''));
       try {
         await mainWindow.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
@@ -102,6 +104,6 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // User has changed the "Keep me signed in" selection after a successful login
   commandRegistry.registerCommand(Azure.PersistAzureLoginChanged, persistLogin => {
-    getStore().dispatch(azurePersistLoginChanged(persistLogin));
+    getSettingsStore().dispatch(azurePersistLoginChanged(persistLogin));
   });
 }

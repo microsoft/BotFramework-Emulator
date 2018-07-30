@@ -31,16 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import * as Restify from 'restify';
 import { RequestHandler, Server } from 'restify';
 
 import BotEmulator from '../botEmulator';
-import createJsonBodyParserMiddleware from '../utils/jsonBodyParser';
 import getFacility from '../middleware/getFacility';
 import getRouteName from '../middleware/getRouteName';
 import getSessionId from './middleware/getSessionId';
+import * as HttpStatus from 'http-status-codes';
 
 export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandler[]) {
-  const jsonBodyParser = createJsonBodyParserMiddleware();
   const facility = getFacility('directline');
 
   server.get(
@@ -49,4 +49,19 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     getRouteName('getSessionId'),
     getSessionId(botEmulator)
   );
+
+  server.get('v4/token', (req: Restify.Request, res: Restify.Response) => {
+    res.send(HttpStatus.OK, `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Botframework Emulator</title>
+    </head>
+    <body>
+    <!--This page is used as the redirect from the AAD auth for ABS and is required-->
+    </body>
+    </html>
+`, {'Content-Type': 'text/html'});
+  });
 }

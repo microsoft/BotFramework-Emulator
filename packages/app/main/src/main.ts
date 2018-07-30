@@ -390,7 +390,7 @@ Electron.app.on('window-all-closed', async function (event: Event) {
   const { azure } = getSettings();
   if (azure.signedInUser && !azure.persistLogin) {
     event.preventDefault();
-    await mainWindow.commandService.call(SharedConstants.Commands.Azure.SignUserOutOfAzure);
+    await mainWindow.commandService.call(SharedConstants.Commands.Azure.SignUserOutOfAzure, false);
   }
   saveSettings<PersistentSettings>('server.json', getSettings());
   Electron.app.quit();

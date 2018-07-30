@@ -55,6 +55,6 @@ describe('Azure auth reducer tests', () => {
   it('should change auth data', () => {
     const action = azureArmTokenDataChanged('someKey');
     const state = azureAuth(startingState, action);
-    expect(state.armToken).toEqual({ armToken: 'someKey'});
+    expect(state.armToken).toEqual('someKey');
   });
 });

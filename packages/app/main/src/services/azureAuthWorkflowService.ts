@@ -40,16 +40,16 @@ declare type AzureSignoutWorkflowType = IterableIterator<Promise<BrowserWindow |
 
 export class AzureAuthWorkflowService {
 
-  public static* enterAuthWorkflow(renew: boolean = false): AzureAuthWorkflowType {
-    const authWindow = yield AzureAuthWorkflowService.launchAuthWindow(renew);
+  public static* enterAuthWorkflow(renew: boolean = false, redirectUri: string): AzureAuthWorkflowType {
+    const authWindow = yield AzureAuthWorkflowService.launchAuthWindow(renew, redirectUri);
     authWindow.show();
     const result = yield AzureAuthWorkflowService.waitForDataFromAuthWindow(authWindow);
     authWindow.close();
     yield result;
   }
 
-  public static* enterSignOutWorkflow(): AzureSignoutWorkflowType {
-    const signOutWindow = yield AzureAuthWorkflowService.launchSignOutWindow();
+  public static* enterSignOutWorkflow(prompt: boolean): AzureSignoutWorkflowType {
+    const signOutWindow = yield AzureAuthWorkflowService.launchSignOutWindow(prompt);
     signOutWindow.show();
 
     const result = yield AzureAuthWorkflowService.waitForDataFromSignOutWindow(signOutWindow);
@@ -61,8 +61,8 @@ export class AzureAuthWorkflowService {
     return new Promise(resolve => {
       browserWindow.addListener('close', () => resolve(false));
       browserWindow.addListener('page-title-updated', event => {
-        const uri: string = (event.sender as any).history.pop();
-        if (!uri.includes('localhost')) {
+        const uri: string = (event.sender as any).history.pop() || '';
+        if (!uri.toLowerCase().includes('localhost')) {
           return;
         }
         const idx = uri.indexOf('#');
@@ -81,7 +81,7 @@ export class AzureAuthWorkflowService {
     });
   }
 
-  private static async launchAuthWindow(renew: boolean): Promise<BrowserWindow> {
+  private static async launchAuthWindow(renew: boolean, redirectUri: string): Promise<BrowserWindow> {
     const browserWindow = new BrowserWindow({
       modal: true,
       show: false,
@@ -93,7 +93,6 @@ export class AzureAuthWorkflowService {
       webPreferences: { contextIsolation: true, nativeWindowOpen: true }
     });
     const clientId = '4f28e5eb-6b7f-49e6-ac0e-f992b622da57';
-    const redirectUri = 'http://localhost:3000/botframework-emulator';
     const state = uuidv4();
     const requestId = uuidv4();
     const nonce = uuidv3('https://github.com/Microsoft/BotFramework-Emulator', uuidv3.URL);
@@ -117,7 +116,7 @@ export class AzureAuthWorkflowService {
     });
   }
 
-  private static async launchSignOutWindow(): Promise<BrowserWindow> {
+  private static async launchSignOutWindow(prompt: boolean): Promise<BrowserWindow> {
     const browserWindow = new BrowserWindow({
       modal: true,
       show: false,
@@ -134,6 +133,9 @@ export class AzureAuthWorkflowService {
       'x-client-SKU=Js',
       'x-client-Ver=1.0.17'
     ];
+    if (!prompt) {
+      bits.push('prompt=none');
+    }
     const url = bits.join('&');
     browserWindow.loadURL(url);
     return new Promise<BrowserWindow>(resolve => {
@@ -150,8 +152,8 @@ export class AzureAuthWorkflowService {
       // on the next startup
       let timeout = setTimeout(resolve.bind(null, true), 5000);
       browserWindow.addListener('page-title-updated', event => {
-        const uri: string = (event.sender as any).history.pop();
-        if (!uri.includes('localhost')) {
+        const uri: string = (event.sender as any).history.pop() || '';
+        if (!uri.toLowerCase().includes('localhost')) {
           return;
         }
         clearTimeout(timeout);
