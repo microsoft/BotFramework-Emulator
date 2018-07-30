@@ -13,8 +13,8 @@ install:
 - lerna bootstrap --hoist
 
 script:
-- npm run test:coveralls
 - npm run build
+- npm run test:coveralls
 
 cache:
   directories:
