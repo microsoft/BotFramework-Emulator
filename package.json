@@ -1,7 +1,7 @@
 {
   "scripts": {
     "bootstrap": "lerna bootstrap --hoist",
-    "build": "lerna run --scope @bfemulator/**shared build && lerna run --scope !@bfemulator/**shared build",
+    "build": "lerna run build",
     "test": "jest --runInBand",
     "test:coveralls": "jest --runInBand --coverage --coverageReporters=text-lcov | coveralls"
   },
