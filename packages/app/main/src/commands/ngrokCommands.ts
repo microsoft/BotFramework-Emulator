@@ -31,4 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './log';
+import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { emulator } from '../emulator';
+
+/** Registers ngrok commands */
+export function registerCommands(commandRegistry: CommandRegistryImpl) {
+  const Commands = SharedConstants.Commands.Ngrok;
+
+  // ---------------------------------------------------------------------------
+  // Attempts to reconnect to a new ngrok tunnel
+  commandRegistry.registerCommand(Commands.Reconnect, async (): Promise<any> => {
+    await emulator.ngrok.recycle();
+    emulator.ngrok.broadcastNgrokReconnected();
+  });
+}

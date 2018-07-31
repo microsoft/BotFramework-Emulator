@@ -126,17 +126,17 @@ class TabBarComponent extends React.Component<TabBarProps, TabBarState> {
     if (presentationEnabled) {
       widgets.push(
         <span
-          key={ 0 }
+          key={ 'presentation-widget' }
           className={ `${styles.widget} ${styles.presentationWidget}` }
           title="Presentation Mode"
           onClick={ () => this.onPresentationModeClick() }>
-          </span>
+        </span>
       );
     }
     if (splitEnabled) {
       widgets.push(
         <span
-          key={ 0 }
+          key={ 'split-widget' }
           className={ `${styles.widget} ${styles.splitWidget}` }
           title="Split Editor"
           onClick={ this.onSplitClick }>

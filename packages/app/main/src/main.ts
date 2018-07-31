@@ -37,7 +37,7 @@ import { app, Menu } from 'electron';
 import { dispatch, getSettings } from './settingsData/store';
 import * as url from 'url';
 import * as path from 'path';
-import { Emulator } from './emulator';
+import { Emulator, emulator } from './emulator';
 import { WindowManager } from './windowManager';
 import * as commandLine from './commandLine';
 import { setTimeout } from 'timers';
@@ -50,9 +50,11 @@ import { AppUpdater } from './appUpdater';
 import { UpdateInfo } from 'electron-updater';
 import { ProgressInfo } from 'builder-util-runtime';
 import { getStore } from './botData/store';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants, newNotification, Notification } from '@bfemulator/app-shared';
 import { BotProjectFileWatcher } from './botProjectFileWatcher';
 import { rememberBounds } from './settingsData/actions/windowStateActions';
+import { ngrokEmitter } from './ngrok';
+import { sendNotificationToClient } from './utils/sendNotificationToClient';
 
 export let mainWindow: Window;
 export let windowManager: WindowManager;
@@ -273,6 +275,30 @@ const createMainWindow = async () => {
 
   // initialize bot project watcher
   BotProjectFileWatcher.getInstance().initialize(mainWindow.commandService);
+
+  // TEMP NGROK STUFF
+  ngrokEmitter.on('expired', () => {
+    // when ngrok expires, spawn notification to reconnect
+    const ngrokNotification: Notification = newNotification(
+      'Your ngrok tunnel instance has expired. Would you like to reconnect?'
+    );
+    ngrokNotification.addButton('Dismiss', () => {
+      const { Commands } = SharedConstants;
+      mainWindow.commandService.remoteCall(Commands.Notifications.Remove, ngrokNotification.id);
+    });
+    ngrokNotification.addButton('Reconnect', async () => {
+      // reconnect to ngrok using the service
+      try {
+        const { Commands } = SharedConstants;
+        await mainWindow.commandService.call(Commands.Ngrok.Reconnect);
+        mainWindow.commandService.remoteCall(Commands.Notifications.Remove, ngrokNotification.id);
+      } catch (e) {
+        sendNotificationToClient(newNotification(e), mainWindow.commandService);
+      }
+    });
+    sendNotificationToClient(ngrokNotification, mainWindow.commandService);
+    emulator.ngrok.broadcastNgrokExpired();
+  });
 
   const rememberCurrentBounds = () => {
     const currentBounds = mainWindow.browserWindow.getBounds();

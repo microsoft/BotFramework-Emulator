@@ -32,7 +32,8 @@
 //
 // Cheating here and pulling in a module from node. Can be easily replaced if we ever move the emulator to the web.
 const crypto = (window as any).require('crypto');
-import { logEntry, LogLevel, textItem } from '@bfemulator/app-shared';
+import { logEntry, textItem } from '@bfemulator/emulator-core/lib/types/log/util';
+import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
 import { ExtensionInspector } from '@bfemulator/sdk-shared';
 import { IBotConfig } from 'msbot/bin/schema';
 import * as React from 'react';
@@ -197,17 +198,17 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     const hash = md5.digest('base64');
     const { cwdAsBase } = SettingsService.emulator;
     const fileLocation = `file://${cwdAsBase}/../../../node_modules/@bfemulator/client/public/inspector-preload.js`;
-    
+
     return (
       <webview className={ styles.inspector }
-               webpreferences="webSecurity=no"
-               key={ hash }
-               partition={ `persist:${hash}` }
-               preload={ fileLocation }
-               ref={ ref => updateRef(ref) }
-               src={ this.props.inspector.src }
-               onDragEnterCapture={ handleDrag }
-               onDragOverCapture={ handleDrag }
+        webpreferences="webSecurity=no"
+        key={ hash }
+        partition={ `persist:${hash}` }
+        preload={ fileLocation }
+        ref={ ref => updateRef(ref) }
+        src={ this.props.inspector.src }
+        onDragEnterCapture={ handleDrag }
+        onDragOverCapture={ handleDrag }
       />
     );
   }

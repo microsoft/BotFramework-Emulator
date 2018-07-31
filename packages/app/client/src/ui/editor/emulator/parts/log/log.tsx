@@ -37,7 +37,10 @@ import * as ChatActions from '../../../../../data/action/chatActions';
 import * as styles from './log.scss';
 import store from '../../../../../data/store';
 import { ExtensionManager, InspectorAPI } from '../../../../../extensions';
-import { LogEntry, LogItem, LogLevel, SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
+import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
+import LogEntry from '@bfemulator/emulator-core/lib/types/log/entry';
+import { ILogItem } from '@bfemulator/emulator-core/lib/types/log/item';
 import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
 import { Subscription } from 'rxjs';
 
@@ -148,7 +151,7 @@ export default class Log extends React.Component<LogProps, LogState> {
           this.props.document.log.entries.map(entry =>
             <LogEntryComponent key={ `entry-${key++}` } entry={ entry } document={ this.props.document }
               selectedActivity={ this.selectedActivity }
-              currentlyInspectedActivity={ this.currentlyInspectedActivity }/>
+              currentlyInspectedActivity={ this.currentlyInspectedActivity } />
           )
         }
       </div>
@@ -238,7 +241,7 @@ class LogEntryComponent extends React.Component<LogEntryProps> {
     }
 
     return (
-      <div key="entry" className={[styles.entry, inspectedActivityClass].join(' ')}>
+      <div key="entry" className={ [styles.entry, inspectedActivityClass].join(' ') }>
         { innerJsx }
       </div>
     );
@@ -252,7 +255,7 @@ class LogEntryComponent extends React.Component<LogEntryProps> {
     );
   }
 
-  renderItem(item: LogItem, key: string) {
+  renderItem(item: ILogItem, key: string) {
     switch (item.type) {
       case 'text': {
         const { level, text } = item.payload;
@@ -281,6 +284,10 @@ class LogEntryComponent extends React.Component<LogEntryProps> {
       case 'network-response': {
         const { body, headers, statusCode, statusMessage, srcUrl } = item.payload;
         return this.renderNetworkResponseItem(body, headers, statusCode, statusMessage, srcUrl, key);
+      }
+      case 'ngrok-expiration': {
+        const { text } = item.payload;
+        return this.renderNgrokExpirationItem(text, key);
       }
       default:
         return false;
@@ -333,8 +340,8 @@ class LogEntryComponent extends React.Component<LogEntryProps> {
     let summaryText = this.summaryText(obj) || '';
     return (
       <span key={ key }
-            onMouseOver={ () => this.highlightInWebchat(obj) }
-            onMouseLeave={ () => this.removeHighlightInWebchat(obj) }>
+        onMouseOver={ () => this.highlightInWebchat(obj) }
+        onMouseLeave={ () => this.removeHighlightInWebchat(obj) }>
         <span className={ `${styles.spaced} ${styles.level0}` }>
           <a onClick={ () => this.inspectAndHighlightInWebchat(obj) }>{ title }</a>
         </span>
@@ -371,8 +378,10 @@ class LogEntryComponent extends React.Component<LogEntryProps> {
     }
   }
 
-  renderNetworkResponseItem(body: any, _headers: any, statusCode: number,
-                            _statusMessage: string, _srcUrl: string, key: string) {
+  renderNetworkResponseItem(
+    body: any, _headers: any, statusCode: number,
+    _statusMessage: string, _srcUrl: string, key: string
+  ) {
     let obj;
     if (typeof body === 'string') {
       try {
@@ -396,6 +405,16 @@ class LogEntryComponent extends React.Component<LogEntryProps> {
         </span>
       );
     }
+  }
+
+  renderNgrokExpirationItem(text: string, key: string): JSX.Element {
+    const { Ngrok } = SharedConstants.Commands;
+    return (
+      <span key={ key } className={ `${styles.spaced} ${styles.level3}` }>
+        { text + ' ' }
+        <a onClick={ () => CommandServiceImpl.remoteCall(Ngrok.Reconnect) }>Please reconnect.</a>
+      </span>
+    );
   }
 
   summaryText(obj: any): string {

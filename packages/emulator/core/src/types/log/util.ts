@@ -138,3 +138,12 @@ export function logEntry(...items: ILogItem[]): LogEntry {
     items: [...items]
   };
 }
+
+export function ngrokExpirationItem(text: string): ILogItem {
+  return {
+    type: 'ngrok-expiration',
+    payload: {
+      text
+    }
+  };
+}

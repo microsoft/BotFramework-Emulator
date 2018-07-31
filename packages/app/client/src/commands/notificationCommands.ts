@@ -47,4 +47,10 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     const notification: Notification = getGlobal(SharedConstants.NOTIFICATION_FROM_MAIN);
     store.dispatch(NotificationActions.beginAdd(notification));
   });
+
+  // ---------------------------------------------------------------------------
+  // Removes a notification from the store / notification manager
+  commandRegistry.registerCommand(Commands.Remove, (id: string) => {
+    store.dispatch(NotificationActions.beginRemove(id));
+  });
 }

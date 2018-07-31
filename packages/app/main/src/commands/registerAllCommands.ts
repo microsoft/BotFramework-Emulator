@@ -37,6 +37,7 @@ import { registerCommands as registerElectronCommands } from './electronCommands
 import { registerCommands as registerEmulatorCommands } from './emulatorCommands';
 import { registerCommands as registerFileCommands } from './fileCommands';
 import { registerCommands as registerLuisCommands } from './luisCommands';
+import { registerCommands as registerNgrokCommands } from './ngrokCommands';
 import { registerCommands as registerOAuthCommands } from './oauthCommands';
 import { registerCommands as registerSettingsCommands } from './settingsCommands';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
@@ -49,6 +50,7 @@ export function registerAllCommands(commandRegistry: CommandRegistryImpl) {
   registerEmulatorCommands(commandRegistry);
   registerFileCommands(commandRegistry);
   registerLuisCommands(commandRegistry);
+  registerNgrokCommands(commandRegistry);
   registerOAuthCommands(commandRegistry);
   registerSettingsCommands(commandRegistry);
 }

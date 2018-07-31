@@ -53,7 +53,8 @@ export interface AppMenuBuilder {
   getViewMenu: () => Electron.MenuItemConstructorOptions;
   getWindowMenuMac: () => Electron.MenuItemConstructorOptions[];
   getHelpMenu: () => Electron.MenuItemConstructorOptions;
-  setFileMenu: (fileMenuTemplate: Electron.MenuItemConstructorOptions,
+  setFileMenu: (
+    fileMenuTemplate: Electron.MenuItemConstructorOptions,
     appMenuTemplate: Electron.MenuItemConstructorOptions[]) => Electron.MenuItemConstructorOptions[];
 }
 
@@ -430,8 +431,10 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
   }
 
   /** Takes a file menu template and places it at the right position in the app menu template according to platform */
-  setFileMenu(fileMenuTemplate: Electron.MenuItemConstructorOptions,
-    appMenuTemplate: Electron.MenuItemConstructorOptions[]): Electron.MenuItemConstructorOptions[] {
+  setFileMenu(
+    fileMenuTemplate: Electron.MenuItemConstructorOptions,
+    appMenuTemplate: Electron.MenuItemConstructorOptions[]
+  ): Electron.MenuItemConstructorOptions[] {
     if (process.platform === 'darwin') {
       appMenuTemplate[1] = fileMenuTemplate;
     } else {
