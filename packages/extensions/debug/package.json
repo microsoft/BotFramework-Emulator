@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "build": "run-s build:main build:client",
+    "build": "npm run build:main && npm run build:client",
     "build:main": "cd ./main && npm run build",
     "build:client": "cd ./client && npm run build"
   },

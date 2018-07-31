@@ -31,36 +31,36 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { LuisAuthWorkflowService } from '../services/luisAuthWorkflowService';
-import { getStore } from '../botData/store';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { Action } from 'redux';
+import { ComponentClass } from 'react';
 
-const store = getStore();
+export const AZURE_ARM_TOKEN_DATA_CHANGED = 'AZURE_ARM_TOKEN_DATA_CHANGED';
+export const AZURE_BEGIN_AUTH_WORKFLOW = 'AZURE_BEGIN_AUTH_WORKFLOW';
 
-/** Registers LUIS commands */
-export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  const Commands = SharedConstants.Commands.Luis;
+export interface AzureAuthAction<T> extends Action {
+  payload: T;
+}
 
-  // ---------------------------------------------------------------------------
-  // Retrieve the LUIS authoring key
-  commandRegistry.registerCommand(Commands.RetrieveAuthoringKey, async () => {
-    const workflow = LuisAuthWorkflowService.enterAuthWorkflow();
-    const { dispatch: storeDispatch } = store;
-    const type = 'LUIS_AUTH_STATUS_CHANGED';
-    storeDispatch({ type, luisAuthWorkflowStatus: 'inProgress' });
-    let result = undefined;
-    while (true) {
-      const next = workflow.next(result);
-      if (next.done) {
-        storeDispatch({ type, luisAuthWorkflowStatus: 'ended' });
-        if (!result) {
-          storeDispatch({ type, luisAuthWorkflowStatus: 'canceled' });
-        }
-        break;
-      }
-      result = await next.value;
-    }
-    return result;
-  });
+export interface ArmTokenData {
+  armToken: string;
+}
+
+export interface AzureAuthWorkflow {
+  promptDialog: ComponentClass<any>;
+  loginSuccessDialog: ComponentClass<any>;
+}
+
+export function beginAzureAuthWorkflow(promptDialog: ComponentClass<any>, loginSuccessDialog: ComponentClass<any>)
+  : AzureAuthAction<AzureAuthWorkflow> {
+  return {
+    type: AZURE_BEGIN_AUTH_WORKFLOW,
+    payload: { promptDialog, loginSuccessDialog }
+  };
+}
+
+export function azureArmTokenDataChanged(armToken: string): AzureAuthAction<ArmTokenData> {
+  return {
+    type: AZURE_ARM_TOKEN_DATA_CHANGED,
+    payload: { armToken }
+  };
 }

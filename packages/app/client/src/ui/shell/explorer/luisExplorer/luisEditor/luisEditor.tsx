@@ -53,8 +53,8 @@ interface LuisEditorState {
   isDirty: boolean;
 }
 
-const title = 'Connect to a Luis Application';
-const detailedDescription = 'You can connect your bot to a Luis.ai application';
+const title = 'Connect to a Azure Application';
+const detailedDescription = 'You can connect your bot to a Azure.ai application';
 
 export class LuisEditor extends Component<LuisEditorProps, LuisEditorState> {
 

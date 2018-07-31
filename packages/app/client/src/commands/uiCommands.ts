@@ -32,16 +32,24 @@
 //
 
 import { showWelcomePage } from '../data/editorHelpers';
-import { BotCreationDialog, DialogService, SecretPromptDialog } from '../ui/dialogs';
+import {
+  AzureLoginPromptDialogContainer,
+  AzureLoginSuccessDialogContainer,
+  BotCreationDialog,
+  DialogService,
+  SecretPromptDialog
+} from '../ui/dialogs';
 import store from '../data/store';
 import * as EditorActions from '../data/action/editorActions';
 import * as NavBarActions from '../data/action/navBarActions';
 import * as Constants from '../constants';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { CommandRegistry } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
+import { azureArmTokenDataChanged, beginAzureAuthWorkflow } from '../data/action/azureAuthActions';
+import { AzureAuthState } from '../data/reducer/azureAuthReducer';
 
 /** Register UI commands (toggling UI) */
-export function registerCommands(commandRegistry: CommandRegistryImpl) {
+export function registerCommands(commandRegistry: CommandRegistry) {
   const Commands = SharedConstants.Commands.UI;
 
   // ---------------------------------------------------------------------------
@@ -94,5 +102,15 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     if (themeTag) {
       themeTag.href = themeHref;
     }
+  });
+
+  // ---------------------------------------------------------------------------
+  // Azure sign in
+  commandRegistry.registerCommand(Commands.SignInToAzure, () => {
+    store.dispatch(beginAzureAuthWorkflow(AzureLoginPromptDialogContainer, AzureLoginSuccessDialogContainer));
+  });
+
+  commandRegistry.registerCommand(Commands.ArmTokenReceivedOnStartup, (azureAuth: AzureAuthState) => {
+    store.dispatch(azureArmTokenDataChanged(azureAuth.armToken));
   });
 }

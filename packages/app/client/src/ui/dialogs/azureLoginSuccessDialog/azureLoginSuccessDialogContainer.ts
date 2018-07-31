@@ -31,37 +31,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  luisAuthoringDataChanged,
-  luisAuthStatusChanged
-} from '../action/luisAuthActions';
-import luisAuth, { LuisAuthState } from './luisAuthReducer';
+import { connect } from 'react-redux';
+import { RootState } from '../../../data/store';
+import { DialogService } from '../service';
+import { AzureLoginSuccessDialog } from './azureLoginSuccessDialog';
 
-describe('Luis auth reducer tests', () => {
-  let startingState: LuisAuthState;
+const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }) => {
+  const { persistLogin } = state.azureAuth;
+  return {
+    persistLogin,
+    ...ownProps
+  };
+};
 
-  beforeEach(() => {
-    startingState = {
-      luisAuthWorkflowStatus: null,
-      luisAuthData: null
-    };
-  });
+const mapDispatchToProps = (_dispatch: () => void) => {
+  return {
+    cancel: persistLogin => DialogService.hideDialog(persistLogin)
+  };
+};
 
-  it('should return unaltered state for non-matching action type', () => {
-    const emptyAction = { type: null, payload: undefined };
-    const endingState = luisAuth(startingState, emptyAction);
-    expect(endingState).toEqual(startingState);
-  });
-
-  it('should change workflow status', () => {
-    const action = luisAuthStatusChanged('inProgress');
-    const state = luisAuth(startingState, action);
-    expect(state.luisAuthWorkflowStatus).toBe('inProgress');
-  });
-
-  it('should change auth data', () => {
-    const action = luisAuthoringDataChanged({ key: 'someKey', BaseUrl: 'someBaseUrl' });
-    const state = luisAuth(startingState, action);
-    expect(state.luisAuthData).toEqual({ key: 'someKey', BaseUrl: 'someBaseUrl' });
-  });
-});
+export const AzureLoginSuccessDialogContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AzureLoginSuccessDialog as any) as any;

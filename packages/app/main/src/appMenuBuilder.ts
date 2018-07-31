@@ -42,37 +42,37 @@ import { getStore } from './botData/store';
 import { getStore as getSettingsStore } from './settingsData/store';
 import { rememberTheme } from './settingsData/actions/windowStateActions';
 
+declare type MenuOpts = Electron.MenuItemConstructorOptions;
+
 export interface AppMenuBuilder {
-  menuTemplate: Electron.MenuItemConstructorOptions[];
-  getAppMenuTemplate: () => Electron.MenuItemConstructorOptions[];
-  createRecentBotsList: (bots: BotInfo[]) => Electron.MenuItemConstructorOptions[];
-  getFileMenu: (recentBots?: BotInfo[]) => Electron.MenuItemConstructorOptions;
-  getAppMenuMac: () => Electron.MenuItemConstructorOptions;
-  getEditMenu: () => Electron.MenuItemConstructorOptions;
-  getEditMenuMac: () => Electron.MenuItemConstructorOptions[];
-  getViewMenu: () => Electron.MenuItemConstructorOptions;
-  getWindowMenuMac: () => Electron.MenuItemConstructorOptions[];
-  getHelpMenu: () => Electron.MenuItemConstructorOptions;
-  setFileMenu: (
-    fileMenuTemplate: Electron.MenuItemConstructorOptions,
-    appMenuTemplate: Electron.MenuItemConstructorOptions[]) => Electron.MenuItemConstructorOptions[];
+  menuTemplate: MenuOpts[];
+  getAppMenuTemplate: () => MenuOpts[];
+  createRecentBotsList: (bots: BotInfo[]) => MenuOpts[];
+  getFileMenu: (recentBots?: BotInfo[]) => MenuOpts;
+  getAppMenuMac: () => MenuOpts;
+  getEditMenu: () => MenuOpts;
+  getEditMenuMac: () => MenuOpts[];
+  getViewMenu: () => MenuOpts;
+  getWindowMenuMac: () => MenuOpts[];
+  getHelpMenu: () => MenuOpts;
+  setFileMenu: (fileMenuTemplate: MenuOpts, appMenuTemplate: MenuOpts[]) => MenuOpts[];
 }
 
 export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBuilder {
-  private _menuTemplate: Electron.MenuItemConstructorOptions[];
+  private _menuTemplate: MenuOpts[];
 
   /** Allows preservation of menu state without having to completely rebuild the menu template */
-  get menuTemplate(): Electron.MenuItemConstructorOptions[] {
+  get menuTemplate(): MenuOpts[] {
     return this._menuTemplate ? this._menuTemplate : this.getAppMenuTemplate();
   }
 
-  set menuTemplate(template: Electron.MenuItemConstructorOptions[]) {
+  set menuTemplate(template: MenuOpts[]) {
     this._menuTemplate = template;
   }
 
   /** Constructs the initial app menu template */
-  getAppMenuTemplate(): Electron.MenuItemConstructorOptions[] {
-    const template: Electron.MenuItemConstructorOptions[] = [
+  getAppMenuTemplate(): MenuOpts[] {
+    const template: MenuOpts[] = [
       this.getFileMenu(),
       this.getEditMenu(),
       this.getViewMenu(),
@@ -83,7 +83,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     if (process.platform === 'darwin') {
       /*
       // Create the Application's main menu
-      var template2: Electron.MenuItemConstructorOptions[] = [
+      var template2: MenuOpts[] = [
         {
           label: windowTitle,
           submenu: [
@@ -121,7 +121,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
   }
 
   /** Creates a file menu item for each bot that will set the bot as active when clicked */
-  createRecentBotsList(bots: BotInfo[]): Electron.MenuItemConstructorOptions[] {
+  createRecentBotsList(bots: BotInfo[]): MenuOpts[] {
     // only list 5 most-recent bots
     return bots.slice(0, 5).filter(bot => !!bot).map(bot => ({
       label: bot.displayName,
@@ -133,25 +133,26 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
   }
 
   /** Constructs a file menu template. If recentBots is passed in, will add recent bots list to menu */
-  getFileMenu(recentBots?: BotInfo[]): Electron.MenuItemConstructorOptions {
+  getFileMenu(recentBots?: BotInfo[]): MenuOpts {
+    const { Azure, UI, Bot, Emulator } = SharedConstants.Commands;
     // TODO - localization
-    let subMenu: Electron.MenuItemConstructorOptions[] = [
+    let subMenu: MenuOpts[] = [
       {
         label: 'New Bot',
         click: () => {
-          mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ShowBotCreationDialog);
+          mainWindow.commandService.remoteCall(UI.ShowBotCreationDialog);
         }
       },
       {
         label: 'Open Bot',
         click: () => {
-          mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.OpenBrowse);
+          mainWindow.commandService.remoteCall(Bot.OpenBrowse);
         }
       },
       {
         label: 'Close Bot',
         click: () => {
-          mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.Close);
+          mainWindow.commandService.remoteCall(Bot.Close);
         }
       }];
 
@@ -165,12 +166,13 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     subMenu.push({
       label: 'Open Transcript File...',
       click: () => {
-        mainWindow.commandService.remoteCall(SharedConstants.Commands.Emulator.PromptToOpenTranscript)
+        mainWindow.commandService.remoteCall(Emulator.PromptToOpenTranscript)
           .catch(err => console.error('Error opening transcript file from menu: ', err));
       }
     });
     const settingsStore = getSettingsStore();
-    const { availableThemes, theme } = settingsStore.getState().windowState;
+    const settingsState = settingsStore.getState();
+    const { availableThemes, theme } = settingsState.windowState;
     subMenu.push.apply(subMenu, [
       { type: 'separator' },
       {
@@ -185,10 +187,25 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
         ))
       }
     ]);
+
+    const { signedInUser } = settingsState.azure;
+    const azureMenuItemLabel = signedInUser ? `Sign out (${signedInUser})` : 'Sign in to Azure';
+    subMenu.push({ type: 'separator' });
+    subMenu.push({
+      label: azureMenuItemLabel,
+      click: () => {
+        if (signedInUser) {
+          return mainWindow.commandService.call(Azure.SignUserOutOfAzure);
+        } else {
+          return mainWindow.commandService.remoteCall(UI.SignInToAzure);
+        }
+      }
+    });
+
     subMenu.push({ type: 'separator' });
     subMenu.push({ role: 'quit' });
 
-    const template: Electron.MenuItemConstructorOptions = {
+    const template: MenuOpts = {
       label: 'File',
       submenu: subMenu
     };
@@ -196,7 +213,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     return template;
   }
 
-  getAppMenuMac(): Electron.MenuItemConstructorOptions {
+  getAppMenuMac(): MenuOpts {
     return {
       label: Electron.app.getName(),
       submenu: [
@@ -213,7 +230,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     };
   }
 
-  getEditMenu(): Electron.MenuItemConstructorOptions {
+  getEditMenu(): MenuOpts {
     return {
       label: 'Edit',
       submenu: [
@@ -229,7 +246,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     };
   }
 
-  getEditMenuMac(): Electron.MenuItemConstructorOptions[] {
+  getEditMenuMac(): MenuOpts[] {
     return [
       { type: 'separator' },
       {
@@ -242,7 +259,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     ];
   }
 
-  getViewMenu(): Electron.MenuItemConstructorOptions {
+  getViewMenu(): MenuOpts {
     // TODO - localization
     return {
       label: 'View',
@@ -269,7 +286,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     };
   }
 
-  getWindowMenuMac(): Electron.MenuItemConstructorOptions[] {
+  getWindowMenuMac(): MenuOpts[] {
     return [
       { role: 'close' },
       { role: 'minimize' },
@@ -279,7 +296,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     ];
   }
 
-  getHelpMenu(): Electron.MenuItemConstructorOptions {
+  getHelpMenu(): MenuOpts {
     let appName = Electron.app.getName();
     let version = Electron.app.getVersion();
     // TODO - localization
@@ -342,7 +359,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     };
   }
 
-  getUpdateMenuItem(): Electron.MenuItemConstructorOptions {
+  getUpdateMenuItem(): MenuOpts {
     // TODO - localization
     if (AppUpdater.status === UpdateStatus.UpdateReadyToInstall) {
       return {
@@ -374,7 +391,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     }
   }
 
-  getConversationMenu(): Electron.MenuItemConstructorOptions {
+  getConversationMenu(): MenuOpts {
     const getState = () => mainWindow.commandService.remoteCall(SharedConstants.Commands.Misc.GetStoreState);
     const getConversationId = async () => {
       const state = await getState();
@@ -430,11 +447,11 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     };
   }
 
-  /** Takes a file menu template and places it at the right position in the app menu template according to platform */
-  setFileMenu(
-    fileMenuTemplate: Electron.MenuItemConstructorOptions,
-    appMenuTemplate: Electron.MenuItemConstructorOptions[]
-  ): Electron.MenuItemConstructorOptions[] {
+  /**
+   * Takes a file menu template and places it at the
+   * right position in the app menu template according to platform
+   */
+  setFileMenu(fileMenuTemplate: MenuOpts, appMenuTemplate: MenuOpts[]): MenuOpts[] {
     if (process.platform === 'darwin') {
       appMenuTemplate[1] = fileMenuTemplate;
     } else {

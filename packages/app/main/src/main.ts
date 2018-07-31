@@ -34,7 +34,7 @@
 import * as Electron from 'electron';
 import { app, Menu } from 'electron';
 
-import { dispatch, getSettings } from './settingsData/store';
+import { dispatch, getSettings, getStore as getSettingsStore } from './settingsData/store';
 import * as url from 'url';
 import * as path from 'path';
 import { Emulator, emulator } from './emulator';
@@ -42,7 +42,7 @@ import { WindowManager } from './windowManager';
 import * as commandLine from './commandLine';
 import { setTimeout } from 'timers';
 import { Window } from './platform/window';
-import { botListsAreDifferent, ensureStoragePath, writeFile } from './utils';
+import { botListsAreDifferent, ensureStoragePath, saveSettings, writeFile } from './utils';
 import * as squirrel from './squirrelEvents';
 import { CommandRegistry, registerAllCommands } from './commands';
 import { AppMenuBuilder } from './appMenuBuilder';
@@ -50,9 +50,11 @@ import { AppUpdater } from './appUpdater';
 import { UpdateInfo } from 'electron-updater';
 import { ProgressInfo } from 'builder-util-runtime';
 import { getStore } from './botData/store';
-import { SharedConstants, newNotification, Notification } from '@bfemulator/app-shared';
+import { PersistentSettings, Settings, SharedConstants, newNotification, Notification } from '@bfemulator/app-shared';
 import { BotProjectFileWatcher } from './botProjectFileWatcher';
 import { rememberBounds } from './settingsData/actions/windowStateActions';
+import { Store } from 'redux';
+import { azureLoggedInUserChanged } from './settingsData/actions/azureAuthActions';
 import { ngrokEmitter } from './ngrok';
 import { sendNotificationToClient } from './utils/sendNotificationToClient';
 
@@ -344,7 +346,7 @@ const createMainWindow = async () => {
     }
   });
 
-  mainWindow.browserWindow.once('ready-to-show', () => {
+  mainWindow.browserWindow.once('ready-to-show', async () => {
     const { zoomLevel, theme, availableThemes } = getSettings().windowState;
     const themeInfo = availableThemes.find(availableTheme => availableTheme.name === theme);
     if (themeInfo) {
@@ -359,6 +361,17 @@ const createMainWindow = async () => {
     mainWindow.browserWindow.show();
     if (process.env.NODE_ENV !== 'development') {
       AppUpdater.checkForUpdates(false, true);
+    }
+    // Renew arm token
+    const settingsStore: Store<Settings> = getSettingsStore();
+    const { persistLogin, signedInUser } = settingsStore.getState().azure;
+    if (persistLogin && signedInUser) {
+      const result = await CommandRegistry.getCommand(SharedConstants.Commands.Azure.RetrieveArmToken).handler(true);
+      if (result && 'armToken' in result) {
+        CommandRegistry.getCommand(SharedConstants.Commands.UI.ArmTokenReceivedOnStartup).handler(result);
+      } else if (!result) {
+        settingsStore.dispatch(azureLoggedInUserChanged(''));
+      }
     }
   });
 };
@@ -398,8 +411,14 @@ Electron.app.on('ready', function () {
   }
 });
 
-Electron.app.on('window-all-closed', function () {
+Electron.app.on('window-all-closed', async function (event: Event) {
   // if (process.platform !== 'darwin') {
+  const { azure } = getSettings();
+  if (azure.signedInUser && !azure.persistLogin) {
+    event.preventDefault();
+    await mainWindow.commandService.call(SharedConstants.Commands.Azure.SignUserOutOfAzure, false);
+  }
+  saveSettings<PersistentSettings>('server.json', getSettings());
   Electron.app.quit();
   // }
 });
