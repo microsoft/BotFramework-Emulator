@@ -36,17 +36,18 @@
   },
   "homepage": "https://github.com/microsoft/botframework-localmode#readme",
   "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "ts"
-    ],
-    "testMatch": [
-      "**/__tests__/**/*.[jt]s?(x)",
-      "**/?(*.)(spec|test).[jt]s?(x)"
-    ],
     "transform": {
-      "^.+\\.[jt]sx?$": "babel-jest"
-    }
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
   },
   "dependencies": {
     "base64url": "^2.0.0",
