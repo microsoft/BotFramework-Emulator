@@ -146,6 +146,31 @@ AppUpdater.on('error', (err: Error, message: string) => {
 });
 
 // -----------------------------------------------------------------------------
+// Ngrok events
+
+ngrokEmitter.on('expired', () => {
+  // when ngrok expires, spawn notification to reconnect
+  const ngrokNotification: Notification = newNotification(
+    'Your ngrok tunnel instance has expired. Would you like to reconnect to a new tunnel?'
+  );
+  ngrokNotification.addButton('Dismiss', () => {
+    const { Commands } = SharedConstants;
+    mainWindow.commandService.remoteCall(Commands.Notifications.Remove, ngrokNotification.id);
+  });
+  ngrokNotification.addButton('Reconnect', async () => {
+    try {
+      const { Commands } = SharedConstants;
+      await mainWindow.commandService.call(Commands.Ngrok.Reconnect);
+      mainWindow.commandService.remoteCall(Commands.Notifications.Remove, ngrokNotification.id);
+    } catch (e) {
+      sendNotificationToClient(newNotification(e), mainWindow.commandService);
+    }
+  });
+  sendNotificationToClient(ngrokNotification, mainWindow.commandService);
+  emulator.ngrok.broadcastNgrokExpired();
+});
+
+// -----------------------------------------------------------------------------
 
 let openUrls = [];
 const onOpenUrl = function (event: any, url1: any) {
@@ -277,30 +302,6 @@ const createMainWindow = async () => {
 
   // initialize bot project watcher
   BotProjectFileWatcher.getInstance().initialize(mainWindow.commandService);
-
-  // TEMP NGROK STUFF
-  ngrokEmitter.on('expired', () => {
-    // when ngrok expires, spawn notification to reconnect
-    const ngrokNotification: Notification = newNotification(
-      'Your ngrok tunnel instance has expired. Would you like to reconnect?'
-    );
-    ngrokNotification.addButton('Dismiss', () => {
-      const { Commands } = SharedConstants;
-      mainWindow.commandService.remoteCall(Commands.Notifications.Remove, ngrokNotification.id);
-    });
-    ngrokNotification.addButton('Reconnect', async () => {
-      // reconnect to ngrok using the service
-      try {
-        const { Commands } = SharedConstants;
-        await mainWindow.commandService.call(Commands.Ngrok.Reconnect);
-        mainWindow.commandService.remoteCall(Commands.Notifications.Remove, ngrokNotification.id);
-      } catch (e) {
-        sendNotificationToClient(newNotification(e), mainWindow.commandService);
-      }
-    });
-    sendNotificationToClient(ngrokNotification, mainWindow.commandService);
-    emulator.ngrok.broadcastNgrokExpired();
-  });
 
   const rememberCurrentBounds = () => {
     const currentBounds = mainWindow.browserWindow.getBounds();
