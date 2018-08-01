@@ -8,8 +8,7 @@ notifications:
 
 before_install:
 - npm install -g lerna@2.11.x webpack@4.8.x jest
-- npm prune
-- lerna clean
+- lerna clean --yes
 
 install:
 - lerna bootstrap --hoist
