@@ -10,6 +10,7 @@
     "transform": {
       "^.+\\.(tsx?|jsx?)$": "ts-jest"
     },
+    "testURL": "http://localhost",
     "testMatch": [
       "<rootDir>/packages/**/src/**/?(*.)(spec|test).(ts)?(x)"
     ],

@@ -2,7 +2,7 @@
   "compilerOptions": {
     "outDir": "built",
     "module": "esnext",
-    "target": "es6",
+    "target": "es2017",
     "lib": ["es6", "dom", "es2015"],
     "sourceMap": true,
     "jsx": "react",
