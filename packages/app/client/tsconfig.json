@@ -29,7 +29,9 @@
     "./build",
     "./built",
     "./scripts",
-    "**/spec.ts*",
+    "./__tests__/**/*",
+    "./**/*.spec.ts",
+    "./**/*.test.ts",
     "**/node_modules",
     "./packages",
     "./public"

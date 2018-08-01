@@ -23,7 +23,12 @@ jest.mock('../../platform/commands/commandServiceImpl', () => ({
 import store from '../store';
 import { azureArmTokenDataChanged, beginAzureAuthWorkflow } from '../action/azureAuthActions';
 import { azureAuthSagas } from './azureAuthSaga';
-import { AzureLoginPromptDialogContainer, AzureLoginSuccessDialogContainer, DialogService } from '../../ui/dialogs';
+import {
+  AzureLoginFailedDialogContainer,
+  AzureLoginPromptDialogContainer,
+  AzureLoginSuccessDialogContainer,
+  DialogService
+} from '../../ui/dialogs';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { SharedConstants } from '@bfemulator/app-shared';
@@ -64,7 +69,10 @@ describe('The azureAuthSaga', () => {
         .next()
         .value
         .FORK
-        .args[1](beginAzureAuthWorkflow(AzureLoginPromptDialogContainer, AzureLoginSuccessDialogContainer));
+        .args[1](beginAzureAuthWorkflow(
+        AzureLoginPromptDialogContainer,
+        AzureLoginSuccessDialogContainer,
+        AzureLoginFailedDialogContainer));
       let val = undefined;
       let ct = 0;
       while (true) {
@@ -94,7 +102,10 @@ describe('The azureAuthSaga', () => {
         .next()
         .value
         .FORK
-        .args[1](beginAzureAuthWorkflow(AzureLoginPromptDialogContainer, AzureLoginSuccessDialogContainer));
+        .args[1](beginAzureAuthWorkflow(
+        AzureLoginPromptDialogContainer,
+        AzureLoginSuccessDialogContainer,
+        AzureLoginFailedDialogContainer));
       let val = undefined;
       let ct = 0;
       const remoteCallSpy = jest.spyOn(CommandServiceImpl, 'remoteCall');
@@ -126,7 +137,7 @@ describe('The azureAuthSaga', () => {
         }
         ct++;
       }
-      expect(ct).toBe(4);
+      expect(ct).toBe(5);
     });
 
     it('should contain 6 steps when the Azure login dialog prompt is confirmed and auth succeeds', async () => {
@@ -148,7 +159,10 @@ describe('The azureAuthSaga', () => {
         .next()
         .value
         .FORK
-        .args[1](beginAzureAuthWorkflow(AzureLoginPromptDialogContainer, AzureLoginSuccessDialogContainer));
+        .args[1](beginAzureAuthWorkflow(
+        AzureLoginPromptDialogContainer,
+        AzureLoginSuccessDialogContainer,
+        AzureLoginFailedDialogContainer));
       let val = undefined;
       let ct = 0;
       const remoteCallSpy = jest.spyOn(CommandServiceImpl, 'remoteCall');

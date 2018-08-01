@@ -342,7 +342,7 @@ const createMainWindow = async () => {
     if (persistLogin && signedInUser) {
       const result = await CommandRegistry.getCommand(SharedConstants.Commands.Azure.RetrieveArmToken).handler(true);
       if (result && 'armToken' in result) {
-        CommandRegistry.getCommand(SharedConstants.Commands.UI.ArmTokenReceivedOnStartup).handler(result);
+        await mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ArmTokenReceivedOnStartup, result);
       } else if (!result) {
         settingsStore.dispatch(azureLoggedInUserChanged(''));
       }

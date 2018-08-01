@@ -22,7 +22,7 @@
     "src/**/*.test.js",
     "src/**/*.test.ts",
     "src/__tests__/**/*.js",
-    "src/__tests__/**/*.ts",
+    "src/__tests__/**/*.ts"
   ],
   "include": [
     "src/**/*"

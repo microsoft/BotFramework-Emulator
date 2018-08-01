@@ -27,6 +27,8 @@ export function* getArmToken(action: AzureAuthAction<AzureAuthWorkflow>): Iterab
   if (azureAuth) {
     const persistLogin = yield DialogService.showDialog(action.payload.loginSuccessDialog, azureAuth);
     yield call(CommandServiceImpl.remoteCall.bind(CommandServiceImpl), PersistAzureLoginChanged, persistLogin);
+  } else {
+    yield DialogService.showDialog(action.payload.loginFailedDialog);
   }
   yield put(azureArmTokenDataChanged(azureAuth.armToken));
 }

@@ -33,6 +33,7 @@
 
 import { showWelcomePage } from '../data/editorHelpers';
 import {
+  AzureLoginFailedDialogContainer,
   AzureLoginPromptDialogContainer,
   AzureLoginSuccessDialogContainer,
   BotCreationDialog,
@@ -107,7 +108,10 @@ export function registerCommands(commandRegistry: CommandRegistry) {
   // ---------------------------------------------------------------------------
   // Azure sign in
   commandRegistry.registerCommand(Commands.SignInToAzure, () => {
-    store.dispatch(beginAzureAuthWorkflow(AzureLoginPromptDialogContainer, AzureLoginSuccessDialogContainer));
+    store.dispatch(beginAzureAuthWorkflow(
+      AzureLoginPromptDialogContainer,
+      AzureLoginSuccessDialogContainer,
+      AzureLoginFailedDialogContainer));
   });
 
   commandRegistry.registerCommand(Commands.ArmTokenReceivedOnStartup, (azureAuth: AzureAuthState) => {

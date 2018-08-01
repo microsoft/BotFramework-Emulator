@@ -33,6 +33,9 @@
     "./scripts",
     "node_modules",
     "./packages",
-    "./public"
+    "./public",
+    "./__tests__/**/*",
+    "./**/*.spec.ts",
+    "./**/*.test.ts"
   ]
 }

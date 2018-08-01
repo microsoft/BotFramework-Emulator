@@ -2,9 +2,18 @@ import { AzureAuthWorkflowService } from './azureAuthWorkflowService';
 import { BrowserWindow } from 'electron';
 
 const mockEvent = Event; // this is silly but required by jest
-const mockArmToken = 'dGhpcyBpcyBhIHRlc3QgdG9rZW4gaGVhZGVyLiBQbGVhc2UgZGlzcmVnYXJk.' +
+const mockArmToken = 'eyJhbGciOiJSU0EyNTYiLCJraWQiOiJmZGtqc2FoamdmIiwieDV0IjoiZiJ9.' +
   'eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.' +
   '7gjdshgfdsk98458205jfds9843fjds';
+jest.mock('jsonwebtoken', () => ({
+  verify: () => true
+}));
+jest.mock('electron-fetch', () => ({
+  default: async () => ({
+    json: async () => ({ jwks_uri: 'http://localhost', keys: { find: () => ({}) } })
+  })
+}));
+jest.mock('rsa-pem-from-mod-exp', () => () => ({}));
 jest.mock('electron', () => ({
   BrowserWindow: class MockBrowserWindow {
     public static reporters = [];
@@ -107,7 +116,7 @@ describe('The azureAuthWorkflowService', () => {
     let reportedValues = [];
     let reporter = v => reportedValues.push(v);
     (BrowserWindow as any).reporters.push(reporter);
-    const it = AzureAuthWorkflowService.enterSignOutWorkflow();
+    const it = AzureAuthWorkflowService.enterSignOutWorkflow(false);
     let value = undefined;
     let ct = 0;
     while (true) {
