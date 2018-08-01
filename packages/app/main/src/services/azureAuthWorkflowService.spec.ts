@@ -31,10 +31,12 @@ jest.mock('electron', () => ({
       this.listeners.push({ type, handler });
       MockBrowserWindow.report('addListener', type, handler);
       if (type === 'page-title-updated') {
-        let evt = new mockEvent('page-title-updated');
-        (evt as any).sender = { history: [`http://localhost/#t=13&id_token=${mockArmToken}`] };
-        setTimeout(() => {
-          this.listeners.forEach(l => l.type === evt.type && l.handler(evt));
+        [['http://someotherUrl'], [`http://localhost/#t=13&id_token=${mockArmToken}`]].forEach((url, index) => {
+          let evt = new mockEvent('page-title-updated');
+          (evt as any).sender = { history: [`http://localhost/#t=13&id_token=${mockArmToken}`] };
+          setTimeout(() => {
+            this.listeners.forEach(l => l.type === evt.type && l.handler(evt));
+          }, 25 * index);
         });
       }
     }

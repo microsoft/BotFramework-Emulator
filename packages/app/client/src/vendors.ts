@@ -13,4 +13,11 @@ import 'botframework-webchat/built/Chat';
 
 import 'msbot/bin/schema';
 import 'msbot/bin/models';
-import 'rxjs/BehaviorSubject';
+import 'rxjs';
+import '@uifabric/merge-styles';
+import '@fuselab/ui-fabric';
+import '@fuselab/ui-shared';
+import 'botframework-webchat';
+import 'office-ui-fabric-react';
+import 'msbot';
+import 'base64url';
