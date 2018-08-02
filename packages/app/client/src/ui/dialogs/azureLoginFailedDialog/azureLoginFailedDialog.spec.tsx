@@ -32,10 +32,10 @@ describe('The AzureLoginFailedDialogContainer component should', () => {
     expect(typeof (node.props() as any).cancel).toBe('function');
   });
 
-  it ('should call the cancel function with the checked state when the onDialogCancel function is called', () => {
+  it('should call the cancel function with the checked state when the onDialogCancel function is called', () => {
     const instance = node.instance();
     const currentCheckedValue = instance.state.rememberMeChecked;
-    const {cancel} = instance.props;
+    const { cancel } = instance.props;
     Object.defineProperty(instance, 'props', {
       value: {
         cancel
