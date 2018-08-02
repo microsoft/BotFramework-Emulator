@@ -64,7 +64,7 @@ describe('the uiCommands', () => {
   describe('should dispatch the apporpriate action to the store', () => {
     it('when the SwitchNavBarTab command is dispatched', () => {
       let arg: SelectNavBarAction = {} as SelectNavBarAction;
-      store.dispatch = action => arg = action;
+      store.dispatch = action => (arg as any) = action;
       registry.getCommand(Commands.SwitchNavBarTab).handler('Do it Nauuuw!');
       expect(arg.type).toBe(NavBarActions.select);
       expect(arg.payload.selection).toBe('Do it Nauuuw!');
@@ -72,7 +72,7 @@ describe('the uiCommands', () => {
 
     it('when the ShowExplorer command is dispatched', () => {
       let arg: SelectNavBarAction = {} as SelectNavBarAction;
-      store.dispatch = action => arg = action;
+      store.dispatch = action => (arg as any)  = action;
       registry.getCommand(Commands.ShowExplorer).handler();
       expect(arg.type).toBe(NavBarActions.select);
       expect(arg.payload.selection).toBe(Constants.NAVBAR_BOT_EXPLORER);
@@ -80,7 +80,7 @@ describe('the uiCommands', () => {
 
     it('when the ShowServices command is dispatched', () => {
       let arg: SelectNavBarAction = {} as SelectNavBarAction;
-      store.dispatch = action => arg = action;
+      store.dispatch = action => (arg as any)  = action;
       registry.getCommand(Commands.ShowServices).handler();
       expect(arg.type).toBe(NavBarActions.select);
       expect(arg.payload.selection).toBe(Constants.NAVBAR_SERVICES);
@@ -88,7 +88,7 @@ describe('the uiCommands', () => {
 
     it('when the ShowAppSettings command is dispatched', () => {
       let arg: OpenEditorAction = {} as OpenEditorAction;
-      store.dispatch = action => arg = action;
+      store.dispatch = action => (arg as any) = action;
       registry.getCommand(Commands.ShowAppSettings).handler();
       expect(arg.type).toBe(EditorActions.open);
       expect(arg.payload.contentType).toBe(CONTENT_TYPE_APP_SETTINGS);
@@ -98,7 +98,7 @@ describe('the uiCommands', () => {
 
     it('when the SignInToAzure command is dispatched', async () => {
       let arg: AzureAuthAction<AzureAuthWorkflow> = {} as AzureAuthAction<AzureAuthWorkflow>;
-      store.dispatch = action => arg = action;
+      store.dispatch = action => (arg as any) = action;
       registry.getCommand(Commands.SignInToAzure).handler();
       expect(arg.payload.loginSuccessDialog).toBe(AzureLoginSuccessDialogContainer);
       expect(arg.payload.promptDialog).toBe(AzureLoginPromptDialogContainer);
@@ -110,6 +110,6 @@ describe('the uiCommands', () => {
     link.id = 'themeVars';
     document.querySelector('head').appendChild(link);
     registry.getCommand(Commands.SwitchTheme).handler('./light.css');
-    expect(link.href).toBe('./light.css');
+    expect(link.href).toBe('http://localhost/light.css');
   });
 });

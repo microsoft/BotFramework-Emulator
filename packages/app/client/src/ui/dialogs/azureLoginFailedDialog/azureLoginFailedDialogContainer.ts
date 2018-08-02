@@ -31,40 +31,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Action } from 'redux';
-import { ComponentClass } from 'react';
+import { connect } from 'react-redux';
+import { RootState } from '../../../data/store';
+import { DialogService } from '../service';
+import { AzureLoginFailedDialog } from './azureLoginFailedDialog';
 
-export const AZURE_ARM_TOKEN_DATA_CHANGED = 'AZURE_ARM_TOKEN_DATA_CHANGED';
-export const AZURE_BEGIN_AUTH_WORKFLOW = 'AZURE_BEGIN_AUTH_WORKFLOW';
-
-export interface AzureAuthAction<T> extends Action {
-  payload: T;
-}
-
-export interface ArmTokenData {
-  armToken: string;
-}
-
-export interface AzureAuthWorkflow {
-  promptDialog: ComponentClass<any>;
-  loginSuccessDialog: ComponentClass<any>;
-  loginFailedDialog: ComponentClass<any>;
-}
-
-export function beginAzureAuthWorkflow(
-  promptDialog: ComponentClass<any>,
-  loginSuccessDialog: ComponentClass<any>,
-  loginFailedDialog: ComponentClass<any>
-): AzureAuthAction<AzureAuthWorkflow> {
+const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }) => {
   return {
-    type: AZURE_BEGIN_AUTH_WORKFLOW,
-    payload: { promptDialog, loginSuccessDialog, loginFailedDialog }
+    ...ownProps
   };
-}
+};
 
-export function azureArmTokenDataChanged(armToken: string): AzureAuthAction<ArmTokenData> {
+const mapDispatchToProps = (_dispatch: () => void) => {
   return {
-    type: AZURE_ARM_TOKEN_DATA_CHANGED,
-    payload: { armToken }
+    cancel: persistLogin => DialogService.hideDialog(persistLogin)
   };
-}
+};
+
+export const AzureLoginFailedDialogContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AzureLoginFailedDialog as any) as any;
