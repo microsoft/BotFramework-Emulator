@@ -31,26 +31,31 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
+import { connect } from 'react-redux';
+import { LogEntry as LogEntryComponent, LogEntryProps } from './logEntry';
+import { RootState } from '../../../../../data/store';
+import * as ChatActions from '../../../../../data/action/chatActions';
+import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
 
-import { Log } from '../parts/log';
-import Panel, { PanelContent } from '../../panel/panel';
-import * as styles from './logPanel.scss';
-
-interface LogPanelProps {
-  document: any;
+function mapStateToProps(_state: RootState): Partial<LogEntryProps> {
+  return {};
 }
 
-export default class LogPanel extends React.Component<LogPanelProps, {}> {
-  render() {
-    return (
-      <div className={ styles.logPanel }>
-        <Panel title="Log">
-          <PanelContent>
-            <Log document={ this.props.document } key={ this.props.document.pingId } />
-          </PanelContent>
-        </Panel>
-      </div>
-    );
-  }
+function mapDispatchToProps(dispatch: any): Partial<LogEntryProps> {
+  return {
+    setInspectorObjects: (documentId: string, obj: any) => {
+      dispatch(ChatActions.setInspectorObjects(documentId, obj));
+    },
+    reconnectNgrok: () => {
+      const { Ngrok } = SharedConstants.Commands;
+      CommandServiceImpl.remoteCall(Ngrok.Reconnect);
+    },
+    showAppSettings: () => {
+      const { UI } = SharedConstants.Commands;
+      CommandServiceImpl.call(UI.ShowAppSettings);
+    }
+  };
 }
+
+export const LogEntry = connect(mapStateToProps, mapDispatchToProps)(LogEntryComponent);

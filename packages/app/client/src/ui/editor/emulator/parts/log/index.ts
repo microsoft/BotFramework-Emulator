@@ -31,26 +31,4 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-
-import { Log } from '../parts/log';
-import Panel, { PanelContent } from '../../panel/panel';
-import * as styles from './logPanel.scss';
-
-interface LogPanelProps {
-  document: any;
-}
-
-export default class LogPanel extends React.Component<LogPanelProps, {}> {
-  render() {
-    return (
-      <div className={ styles.logPanel }>
-        <Panel title="Log">
-          <PanelContent>
-            <Log document={ this.props.document } key={ this.props.document.pingId } />
-          </PanelContent>
-        </Panel>
-      </div>
-    );
-  }
-}
+export * from './log';
