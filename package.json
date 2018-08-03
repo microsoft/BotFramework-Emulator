@@ -10,6 +10,7 @@
     "transform": {
       "^.+\\.(tsx?|jsx?)$": "ts-jest"
     },
+    "testURL": "http://localhost",
     "testMatch": [
       "<rootDir>/packages/**/src/**/?(*.)(spec|test).(ts)?(x)"
     ],
@@ -21,5 +22,8 @@
       "json",
       "node"
     ]
+  },
+  "dependencies": {
+    "node-rsa": "^1.0.0"
   }
 }

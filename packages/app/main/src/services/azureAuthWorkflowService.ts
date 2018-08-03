@@ -32,35 +32,42 @@
 //
 
 import { BrowserWindow } from 'electron';
+import * as fetch from 'electron-fetch';
 import * as uuidv3 from 'uuid/v3';
 import * as uuidv4 from 'uuid/v4';
+import * as jwt from 'jsonwebtoken';
+
+let getPem = require('rsa-pem-from-mod-exp');
 
 declare type AzureAuthWorkflowType = IterableIterator<Promise<BrowserWindow> | Promise<{ armToken: string } | boolean>>;
 declare type AzureSignoutWorkflowType = IterableIterator<Promise<BrowserWindow | boolean>>;
+declare type Config = { authorization_endpoint: string, jwks_uri: string };
 
 export class AzureAuthWorkflowService {
 
+  private static config: Config;
+
   public static* enterAuthWorkflow(renew: boolean = false, redirectUri: string): AzureAuthWorkflowType {
-    const authWindow = yield AzureAuthWorkflowService.launchAuthWindow(renew, redirectUri);
+    const authWindow = yield this.launchAuthWindow(renew, redirectUri);
     authWindow.show();
-    const result = yield AzureAuthWorkflowService.waitForDataFromAuthWindow(authWindow);
+    const result = yield this.waitForDataFromAuthWindow(authWindow);
     authWindow.close();
     yield result;
   }
 
   public static* enterSignOutWorkflow(prompt: boolean): AzureSignoutWorkflowType {
-    const signOutWindow = yield AzureAuthWorkflowService.launchSignOutWindow(prompt);
+    const signOutWindow = yield this.launchSignOutWindow(prompt);
     signOutWindow.show();
 
-    const result = yield AzureAuthWorkflowService.waitForDataFromSignOutWindow(signOutWindow);
+    const result = yield this.waitForDataFromSignOutWindow(signOutWindow);
     signOutWindow.close();
     yield result;
   }
 
-  private static waitForDataFromAuthWindow(browserWindow: BrowserWindow): Promise<{ armToken: string } | boolean> {
-    return new Promise(resolve => {
-      browserWindow.addListener('close', () => resolve(false));
-      browserWindow.addListener('page-title-updated', event => {
+  private static async waitForDataFromAuthWindow(bWindow: BrowserWindow): Promise<{ armToken: string } | boolean> {
+    const armToken: string | boolean = await new Promise<string | boolean>(resolve => {
+      bWindow.addListener('close', () => resolve(false));
+      bWindow.addListener('page-title-updated', event => {
         const uri: string = (event.sender as any).history.pop() || '';
         if (!uri.toLowerCase().includes('localhost')) {
           return;
@@ -71,14 +78,21 @@ export class AzureAuthWorkflowService {
         for (let i = 0; i < len; i++) {
           const [key, value] = values[i].split(/[=]/);
           if (key.includes('id_token')) {
-            resolve({ armToken: value });
+            resolve(value);
+            break;
           }
           if (key.includes('error')) {
             resolve(false);
+            break;
           }
         }
       });
     });
+    if (!armToken) {
+      return false;
+    }
+    const isValid = await this.validateJWT(armToken as string);
+    return isValid ? { armToken: armToken as string } : false;
   }
 
   private static async launchAuthWindow(renew: boolean, redirectUri: string): Promise<BrowserWindow> {
@@ -92,12 +106,13 @@ export class AzureAuthWorkflowService {
       height: 366,
       webPreferences: { contextIsolation: true, nativeWindowOpen: true }
     });
+    const { authorization_endpoint: endpoint } = await this.getConfig();
     const clientId = '4f28e5eb-6b7f-49e6-ac0e-f992b622da57';
     const state = uuidv4();
     const requestId = uuidv4();
     const nonce = uuidv3('https://github.com/Microsoft/BotFramework-Emulator', uuidv3.URL);
     const bits = [
-      'https://login.microsoftonline.com/common/oauth2/authorize?response_type=id_token',
+      `${endpoint}?response_type=id_token`,
       `client_id=${clientId}`,
       `redirect_uri=${redirectUri}`,
       `state=${state}`,
@@ -160,5 +175,31 @@ export class AzureAuthWorkflowService {
         resolve(true);
       });
     });
+  }
+
+  private static async getConfig(): Promise<Config> {
+    if (this.config) {
+      return this.config;
+    }
+    const configUrl = 'https://login.microsoftonline.com/common/.well-known/openid-configuration';
+    const configResponse = await (fetch as any).default(configUrl);
+    this.config = await configResponse.json();
+    return this.config;
+  }
+
+  private static async validateJWT(token: string): Promise<boolean> {
+    const [header] = token.split('.');
+    const headers: { alg: string, kid: string, x5t: string } = JSON.parse(Buffer.from(header, 'base64').toString());
+
+    try {
+      const { jwks_uri } = await this.getConfig();
+      const jwksResponse = await (fetch as any).default(jwks_uri);
+      const responseJson: { keys: { x5t: string, n: string, e: string, x5c: string[] }[] } = await jwksResponse.json();
+      const jwk = responseJson.keys.find(key => key.x5t === headers.x5t);
+      jwt.verify(token, getPem(jwk.n, jwk.e));
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }
