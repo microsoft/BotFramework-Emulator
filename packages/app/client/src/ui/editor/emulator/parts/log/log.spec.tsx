@@ -33,7 +33,7 @@
 
 import * as React from 'react';
 import { Provider } from 'react-redux';
-import { createStore, combineReducers } from 'redux';
+import { createStore } from 'redux';
 import { mount, ReactWrapper } from 'enzyme';
 import { Log, LogProps } from './log';
 import { LogEntry } from './logEntry';
