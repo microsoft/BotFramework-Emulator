@@ -33,7 +33,6 @@
 
 import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
-import ILogItem from '@bfemulator/emulator-core/lib/types/log/item';
 import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
 import { textItem } from '@bfemulator/emulator-core/lib/types/log/util';
 import {
