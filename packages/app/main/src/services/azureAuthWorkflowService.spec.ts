@@ -73,11 +73,11 @@ describe('The azureAuthWorkflowService', () => {
     (BrowserWindow as any).reporters = [];
   });
 
-  it('should make the appropriate calls and receive the expected values with the "enterAuthWorkflow"', async () => {
+  it('should make the appropriate calls and receive the expected values with the "retrieveAuthToken"', async () => {
     let reportedValues = [];
     let reporter = v => reportedValues.push(v);
     (BrowserWindow as any).reporters.push(reporter);
-    const it = AzureAuthWorkflowService.enterAuthWorkflow(false, '');
+    const it = AzureAuthWorkflowService.retrieveAuthToken(false, '');
     let value = undefined;
     let ct = 0;
     while (true) {

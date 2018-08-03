@@ -45,7 +45,7 @@ describe('The azureCommand,', () => {
     });
 
     it('should return false if the azure auth fails', async () => {
-      AzureAuthWorkflowService.enterAuthWorkflow = function*() { yield false; } as any;
+      AzureAuthWorkflowService.retrieveAuthToken = function*() { yield false; } as any;
       const result = await registry.getCommand(SharedConstants.Commands.Azure.RetrieveArmToken).handler();
       expect(result).toBe(false);
     });

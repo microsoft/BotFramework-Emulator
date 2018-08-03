@@ -38,24 +38,32 @@ import * as uuidv4 from 'uuid/v4';
 import * as jwt from 'jsonwebtoken';
 
 let getPem = require('rsa-pem-from-mod-exp');
-
-declare type AzureAuthWorkflowType = IterableIterator<Promise<BrowserWindow> | Promise<{ armToken: string } | boolean>>;
-declare type AzureSignoutWorkflowType = IterableIterator<Promise<BrowserWindow | boolean>>;
-declare type Config = { authorization_endpoint: string, jwks_uri: string };
+const clientId = '4f28e5eb-6b7f-49e6-ac0e-f992b622da57';
+declare type Config = { authorization_endpoint: string, jwks_uri: string, token_endpoint: string };
+declare type AuthResponse = { code: string, id_token: string, state: string, session_state: string, error?: string };
+declare type Jwks = { keys: { x5t: string, n: string, e: string, x5c: string[] }[] };
 
 export class AzureAuthWorkflowService {
 
   private static config: Config;
+  private static jwks: Jwks;
 
-  public static* enterAuthWorkflow(renew: boolean = false, redirectUri: string): AzureAuthWorkflowType {
+  public static* retrieveAuthToken(renew: boolean = false, redirectUri: string): IterableIterator<any> {
     const authWindow = yield this.launchAuthWindow(renew, redirectUri);
     authWindow.show();
-    const result = yield this.waitForDataFromAuthWindow(authWindow);
+    const result = yield this.waitForAuthResult(authWindow);
     authWindow.close();
-    yield result;
+    if (result.error) {
+      return false;
+    }
+    const armToken = yield this.getArmTokenFromCode(result.code, redirectUri);
+    if (armToken.error) {
+      return false;
+    }
+    yield armToken;
   }
 
-  public static* enterSignOutWorkflow(prompt: boolean): AzureSignoutWorkflowType {
+  public static* enterSignOutWorkflow(prompt: boolean): IterableIterator<any> {
     const signOutWindow = yield this.launchSignOutWindow(prompt);
     signOutWindow.show();
 
@@ -64,35 +72,30 @@ export class AzureAuthWorkflowService {
     yield result;
   }
 
-  private static async waitForDataFromAuthWindow(bWindow: BrowserWindow): Promise<{ armToken: string } | boolean> {
-    const armToken: string | boolean = await new Promise<string | boolean>(resolve => {
-      bWindow.addListener('close', () => resolve(false));
-      bWindow.addListener('page-title-updated', event => {
+  private static async waitForAuthResult(browserWindow: BrowserWindow): Promise<AuthResponse> {
+    const response = await new Promise<AuthResponse>(resolve => {
+      browserWindow.addListener('close', () => resolve({ error: 'canceled' } as AuthResponse));
+      browserWindow.addListener('page-title-updated', event => {
         const uri: string = (event.sender as any).history.pop() || '';
         if (!uri.toLowerCase().includes('localhost')) {
           return;
         }
         const idx = uri.indexOf('#');
-        const values = uri.substring(idx).split('&');
+        const values = uri.substring(idx + 1).split('&');
         const len = values.length;
+        const result: AuthResponse = {} as AuthResponse;
         for (let i = 0; i < len; i++) {
           const [key, value] = values[i].split(/[=]/);
-          if (key.includes('id_token')) {
-            resolve(value);
-            break;
-          }
-          if (key.includes('error')) {
-            resolve(false);
-            break;
-          }
+          result[key] = value;
         }
+        resolve(result);
       });
     });
-    if (!armToken) {
-      return false;
+    const isValid = await this.validateJWT(response.id_token);
+    if (!isValid) {
+      response.error = 'Invalid token';
     }
-    const isValid = await this.validateJWT(armToken as string);
-    return isValid ? { armToken: armToken as string } : false;
+    return response;
   }
 
   private static async launchAuthWindow(renew: boolean, redirectUri: string): Promise<BrowserWindow> {
@@ -107,12 +110,11 @@ export class AzureAuthWorkflowService {
       webPreferences: { contextIsolation: true, nativeWindowOpen: true }
     });
     const { authorization_endpoint: endpoint } = await this.getConfig();
-    const clientId = '4f28e5eb-6b7f-49e6-ac0e-f992b622da57';
     const state = uuidv4();
     const requestId = uuidv4();
     const nonce = uuidv3('https://github.com/Microsoft/BotFramework-Emulator', uuidv3.URL);
     const bits = [
-      `${endpoint}?response_type=id_token`,
+      `${endpoint}?response_type=id_token+code`,
       `client_id=${clientId}`,
       `redirect_uri=${redirectUri}`,
       `state=${state}`,
@@ -187,15 +189,52 @@ export class AzureAuthWorkflowService {
     return this.config;
   }
 
+  private static async getJwks(): Promise<Jwks> {
+    if (this.jwks) {
+      return this.jwks;
+    }
+    const { jwks_uri } = await this.getConfig();
+    const jwksResponse = await (fetch as any).default(jwks_uri);
+    this.jwks = await jwksResponse.json();
+    return this.jwks;
+  }
+
+  private static async getArmTokenFromCode(code: string, redirectUri: string): Promise<any> {
+    const { token_endpoint: endpoint } = await this.getConfig();
+    const bits = [
+      `grant_type=authorization_code`,
+      `client_id=${clientId}`,
+      `code=${code}`,
+      `redirect_uri=${redirectUri}`,
+      `resource=${'https://management.core.windows.net/'}`
+    ];
+    const data = bits.join('&');
+    let armToken: { access_token: string, refresh_token: string, error?: string };
+    try {
+      const response = await (fetch as any)
+        .default(endpoint, {
+          body: data,
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        });
+      armToken = await response.json();
+      const valid = await this.validateJWT(armToken.access_token);
+      if (!valid) {
+        armToken.error = 'Invalid Token';
+      }
+    } catch (e) {
+      armToken.error = e.toString();
+    }
+    return armToken;
+  }
+
   private static async validateJWT(token: string): Promise<boolean> {
     const [header] = token.split('.');
     const headers: { alg: string, kid: string, x5t: string } = JSON.parse(Buffer.from(header, 'base64').toString());
 
     try {
-      const { jwks_uri } = await this.getConfig();
-      const jwksResponse = await (fetch as any).default(jwks_uri);
-      const responseJson: { keys: { x5t: string, n: string, e: string, x5c: string[] }[] } = await jwksResponse.json();
-      const jwk = responseJson.keys.find(key => key.x5t === headers.x5t);
+      const jwks = await this.getJwks();
+      const jwk = jwks.keys.find(key => key.x5t === headers.x5t);
       jwt.verify(token, getPem(jwk.n, jwk.e));
       return true;
     } catch (e) {

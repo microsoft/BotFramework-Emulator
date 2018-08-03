@@ -48,7 +48,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   commandRegistry.registerCommand(Azure.RetrieveArmToken, async (renew: boolean = false) => {
     const settingsStore = getSettingsStore();
     const { serviceUrl } = getStore().getState();
-    const workflow = AzureAuthWorkflowService.enterAuthWorkflow(renew, `${serviceUrl}/v4/token`);
+    const workflow = AzureAuthWorkflowService.retrieveAuthToken(renew, `${serviceUrl}/v4/token`);
     let result = undefined;
     while (true) {
       const next = workflow.next(result);
@@ -62,7 +62,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       }
     }
     if (result) {
-      const [, payload] = result.armToken.split('.');
+      const [, payload] = (result.access_token as string).split('.');
       const payloadJson = JSON.parse(Buffer.from(payload, 'base64').toString());
       settingsStore.dispatch(azureLoggedInUserChanged(payloadJson.upn));
       await mainWindow.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
