@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { LogEntry } from '@bfemulator/app-shared';
+import LogEntry from '@bfemulator/emulator-core/lib/types/log/entry';
 import {
   ChatAction,
   addTranscript,
@@ -64,12 +64,12 @@ describe('Chat reducer tests', () => {
   };
 
   it('should return unaltered state for non-matching action type',
-  () => {
-    const emptyAction: ChatAction = { type: null, payload: null };
-    const startingState = { ...DEFAULT_STATE };
-    const endingState = chat(DEFAULT_STATE, emptyAction);
-    expect(endingState).toEqual(startingState);
-  });
+    () => {
+      const emptyAction: ChatAction = { type: null, payload: null };
+      const startingState = { ...DEFAULT_STATE };
+      const endingState = chat(DEFAULT_STATE, emptyAction);
+      expect(endingState).toEqual(startingState);
+    });
 
   it('should ping a chat', () => {
     const action = pingDocument('testChat1');

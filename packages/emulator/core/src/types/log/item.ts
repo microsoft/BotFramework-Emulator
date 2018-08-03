@@ -84,6 +84,11 @@ export type ILogItem = {
   payload: {
     err: any  // Shape of `Error`, but enumerable
   }
+} | {
+  type: 'ngrok-expiration',
+  payload: {
+    text: string
+  }
 };
 
 export default ILogItem;

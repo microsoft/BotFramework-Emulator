@@ -37,7 +37,7 @@ import { app, Menu } from 'electron';
 import { dispatch, getSettings, getStore as getSettingsStore } from './settingsData/store';
 import * as url from 'url';
 import * as path from 'path';
-import { Emulator } from './emulator';
+import { Emulator, emulator } from './emulator';
 import { WindowManager } from './windowManager';
 import * as commandLine from './commandLine';
 import { setTimeout } from 'timers';
@@ -50,11 +50,13 @@ import { AppUpdater } from './appUpdater';
 import { UpdateInfo } from 'electron-updater';
 import { ProgressInfo } from 'builder-util-runtime';
 import { getStore } from './botData/store';
-import { PersistentSettings, Settings, SharedConstants } from '@bfemulator/app-shared';
+import { PersistentSettings, Settings, SharedConstants, newNotification, Notification } from '@bfemulator/app-shared';
 import { BotProjectFileWatcher } from './botProjectFileWatcher';
 import { rememberBounds } from './settingsData/actions/windowStateActions';
 import { Store } from 'redux';
 import { azureLoggedInUserChanged } from './settingsData/actions/azureAuthActions';
+import { ngrokEmitter } from './ngrok';
+import { sendNotificationToClient } from './utils/sendNotificationToClient';
 
 export let mainWindow: Window;
 export let windowManager: WindowManager;
@@ -141,6 +143,31 @@ AppUpdater.on('error', (err: Error, message: string) => {
       message: 'There are no updates currently available.'
     });
   }
+});
+
+// -----------------------------------------------------------------------------
+// Ngrok events
+
+ngrokEmitter.on('expired', () => {
+  // when ngrok expires, spawn notification to reconnect
+  const ngrokNotification: Notification = newNotification(
+    'Your ngrok tunnel instance has expired. Would you like to reconnect to a new tunnel?'
+  );
+  ngrokNotification.addButton('Dismiss', () => {
+    const { Commands } = SharedConstants;
+    mainWindow.commandService.remoteCall(Commands.Notifications.Remove, ngrokNotification.id);
+  });
+  ngrokNotification.addButton('Reconnect', async () => {
+    try {
+      const { Commands } = SharedConstants;
+      await mainWindow.commandService.call(Commands.Ngrok.Reconnect);
+      mainWindow.commandService.remoteCall(Commands.Notifications.Remove, ngrokNotification.id);
+    } catch (e) {
+      sendNotificationToClient(newNotification(e), mainWindow.commandService);
+    }
+  });
+  sendNotificationToClient(ngrokNotification, mainWindow.commandService);
+  emulator.ngrok.broadcastNgrokExpired();
 });
 
 // -----------------------------------------------------------------------------

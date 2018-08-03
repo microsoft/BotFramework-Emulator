@@ -31,26 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import store from '../data/store';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
-import { Notification } from '@bfemulator/app-shared';
-import { getGlobal } from '../utils/getGlobal';
-import * as NotificationActions from '../data/action/notificationActions';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { emulator } from '../emulator';
 
-/** Registers notification commands */
+/** Registers ngrok commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  const Commands = SharedConstants.Commands.Notifications;
-  // ---------------------------------------------------------------------------
-  // Adds a notification to the store / notification manager
-  commandRegistry.registerCommand(Commands.Add, () => {
-    const notification: Notification = getGlobal(SharedConstants.NOTIFICATION_FROM_MAIN);
-    store.dispatch(NotificationActions.beginAdd(notification));
-  });
+  const Commands = SharedConstants.Commands.Ngrok;
 
   // ---------------------------------------------------------------------------
-  // Removes a notification from the store / notification manager
-  commandRegistry.registerCommand(Commands.Remove, (id: string) => {
-    store.dispatch(NotificationActions.beginRemove(id));
+  // Attempts to reconnect to a new ngrok tunnel
+  commandRegistry.registerCommand(Commands.Reconnect, async (): Promise<any> => {
+    try {
+      await emulator.ngrok.recycle();
+      emulator.ngrok.broadcastNgrokReconnected();
+    } catch (e) {
+      throw new Error(`There was an error while trying to reconnect ngrok: ${e}`);
+    }
   });
 }

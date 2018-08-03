@@ -31,26 +31,44 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import store from '../data/store';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
-import { SharedConstants } from '@bfemulator/app-shared';
-import { Notification } from '@bfemulator/app-shared';
-import { getGlobal } from '../utils/getGlobal';
-import * as NotificationActions from '../data/action/notificationActions';
+import * as React from 'react';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+import { mount, ReactWrapper } from 'enzyme';
+import { Log, LogProps } from './log';
+import { LogEntry } from './logEntry';
 
-/** Registers notification commands */
-export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  const Commands = SharedConstants.Commands.Notifications;
-  // ---------------------------------------------------------------------------
-  // Adds a notification to the store / notification manager
-  commandRegistry.registerCommand(Commands.Add, () => {
-    const notification: Notification = getGlobal(SharedConstants.NOTIFICATION_FROM_MAIN);
-    store.dispatch(NotificationActions.beginAdd(notification));
+jest.mock('./log.scss', () => ({}));
+jest.mock('../../../../../platform/commands/commandServiceImpl', () => ({
+  call: (...args: any[]) => null,
+  remoteCall: (...args: any[]) => null
+}));
+
+describe('log component', () => {
+  let parent: ReactWrapper;
+  let wrapper: ReactWrapper;
+
+  beforeEach(() => {
+    const props: LogProps = {
+      document: {
+        log: {
+          entries: [
+            { items: [] },
+            { items: [] },
+            { items: [] }
+          ]
+        }
+      }
+    };
+    parent = mount(
+      <Provider store={ createStore((_action, state) => state, {}) } >
+        <Log { ...props } />
+      </Provider>
+    );
+    wrapper = parent.find(Log);
   });
 
-  // ---------------------------------------------------------------------------
-  // Removes a notification from the store / notification manager
-  commandRegistry.registerCommand(Commands.Remove, (id: string) => {
-    store.dispatch(NotificationActions.beginRemove(id));
+  it('should render entry component(s) based on props', () => {
+    expect(wrapper.find(LogEntry)).toHaveLength(3);
   });
-}
+});

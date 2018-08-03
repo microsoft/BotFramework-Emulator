@@ -55,10 +55,10 @@ export interface Notification {
 }
 
 export class NotificationImpl implements Notification {
-  id: string;
+  readonly id: string;
+  readonly timestamp: number;
   type: NotificationType;
   message: string;
-  timestamp: number;
   read: boolean;
   buttons?: NotificationCTAButton[];
 

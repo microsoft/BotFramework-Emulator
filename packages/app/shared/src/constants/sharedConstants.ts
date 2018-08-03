@@ -113,8 +113,13 @@ export namespace SharedConstants {
       export const GetStoreState = 'store:get-state';
     }
 
+    export namespace Ngrok {
+      export const Reconnect = 'ngrok:reconnect';
+    }
+
     export namespace Notifications {
       export const Add = 'notification:add';
+      export const Remove = 'notification:remove';
     }
 
     export namespace OAuth {

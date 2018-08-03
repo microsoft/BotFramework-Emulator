@@ -31,7 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { LogEntry, SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
+import LogEntry from '@bfemulator/emulator-core/lib/types/log/entry';
 import { DisposableImpl, CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import * as ChatActions from '../../data/action/chatActions';
 import store from '../../data/store';
@@ -42,7 +43,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     SharedConstants.Commands.Emulator.AppendToLog,
     (conversationId: string, entry: LogEntry): any => {
       LogService.logToChat(conversationId, entry);
-  });
+    });
 }
 
 export const LogService = new class extends DisposableImpl {

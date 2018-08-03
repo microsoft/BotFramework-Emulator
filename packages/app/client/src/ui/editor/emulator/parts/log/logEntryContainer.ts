@@ -31,26 +31,31 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import store from '../data/store';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { connect } from 'react-redux';
+import { LogEntry as LogEntryComponent, LogEntryProps } from './logEntry';
+import { RootState } from '../../../../../data/store';
+import * as ChatActions from '../../../../../data/action/chatActions';
 import { SharedConstants } from '@bfemulator/app-shared';
-import { Notification } from '@bfemulator/app-shared';
-import { getGlobal } from '../utils/getGlobal';
-import * as NotificationActions from '../data/action/notificationActions';
+import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
 
-/** Registers notification commands */
-export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  const Commands = SharedConstants.Commands.Notifications;
-  // ---------------------------------------------------------------------------
-  // Adds a notification to the store / notification manager
-  commandRegistry.registerCommand(Commands.Add, () => {
-    const notification: Notification = getGlobal(SharedConstants.NOTIFICATION_FROM_MAIN);
-    store.dispatch(NotificationActions.beginAdd(notification));
-  });
-
-  // ---------------------------------------------------------------------------
-  // Removes a notification from the store / notification manager
-  commandRegistry.registerCommand(Commands.Remove, (id: string) => {
-    store.dispatch(NotificationActions.beginRemove(id));
-  });
+function mapStateToProps(_state: RootState): Partial<LogEntryProps> {
+  return {};
 }
+
+function mapDispatchToProps(dispatch: any): Partial<LogEntryProps> {
+  return {
+    setInspectorObjects: (documentId: string, obj: any) => {
+      dispatch(ChatActions.setInspectorObjects(documentId, obj));
+    },
+    reconnectNgrok: () => {
+      const { Ngrok } = SharedConstants.Commands;
+      CommandServiceImpl.remoteCall(Ngrok.Reconnect);
+    },
+    showAppSettings: () => {
+      const { UI } = SharedConstants.Commands;
+      CommandServiceImpl.call(UI.ShowAppSettings);
+    }
+  };
+}
+
+export const LogEntry = connect(mapStateToProps, mapDispatchToProps)(LogEntryComponent);
