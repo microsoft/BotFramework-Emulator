@@ -206,7 +206,7 @@ export class AzureAuthWorkflowService {
       `client_id=${clientId}`,
       `code=${code}`,
       `redirect_uri=${redirectUri}`,
-      `resource=${'https://management.core.windows.net/'}`
+      `resource=https://management.core.windows.net/`
     ];
     const data = bits.join('&');
     let armToken: { access_token: string, refresh_token: string, error?: string };
