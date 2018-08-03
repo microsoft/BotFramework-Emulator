@@ -139,7 +139,7 @@ export class LogEntry extends React.Component<LogEntryProps> {
 
   renderTimestamp(t: number) {
     return (
-      <span key="timestamp" className={ styles.spaced }>
+      <span key="timestamp" className={ 'timestamp ' + styles.spaced }>
         [<span className={ styles.timestamp }>{ timestamp(t) }</span>]
       </span>
     );
@@ -186,7 +186,7 @@ export class LogEntry extends React.Component<LogEntryProps> {
 
   renderTextItem(level: LogLevel, text: string, key: string) {
     return (
-      <span key={ key } className={ `${styles.spaced} ${logLevelToClassName(level)}` }>
+      <span key={ key } className={ `text-item ${styles.spaced} ${logLevelToClassName(level)}` }>
         { text }
       </span>
     );
@@ -315,11 +315,11 @@ export class LogEntry extends React.Component<LogEntryProps> {
   }
 }
 
-function number2(n: number) {
+export function number2(n: number) {
   return ('0' + n).slice(-2);
 }
 
-function timestamp(t: number) {
+export function timestamp(t: number) {
   let timestamp1 = new Date(t);
   let hours = number2(timestamp1.getHours());
   let minutes = number2(timestamp1.getMinutes());
