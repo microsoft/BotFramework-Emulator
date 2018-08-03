@@ -39,27 +39,27 @@ import {
 } from '../action/azureAuthActions';
 
 export interface AzureAuthState {
-  armToken: string;
+  access_token: string;
   persistLogin: boolean;
 }
 
 const initialState: AzureAuthState = {
-  armToken: null,
+  access_token: null,
   persistLogin: false
 };
 
 export default function azureAuth(state: AzureAuthState = initialState, action: AzureAuthAction<ArmTokenData>)
   : AzureAuthState {
   const { payload = {}, type } = action;
-  const { armToken } = payload as ArmTokenData;
+  const { access_token } = payload as ArmTokenData;
 
   switch (type) {
 
     case AZURE_BEGIN_AUTH_WORKFLOW:
-      return { ...state, armToken: 'invalid__' + Math.floor(Math.random() * 9999) };
+      return { ...state, access_token: 'invalid__' + Math.floor(Math.random() * 9999) };
 
     case AZURE_ARM_TOKEN_DATA_CHANGED:
-      return { ...state, armToken };
+      return { ...state, access_token };
 
     default:
       return state;

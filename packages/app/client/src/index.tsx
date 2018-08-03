@@ -70,7 +70,7 @@ CommandServiceImpl.remoteCall(SharedConstants.Commands.ClientInit.Loaded)
     // do actions on main side that might open a document, so that they will be active over the welcome screen
     CommandServiceImpl.remoteCall(SharedConstants.Commands.ClientInit.PostWelcomeScreen);
   })
-  .catch(err => console.error(`Error occured during client:loaded: ${err}`));
+  .catch(err => console.error(`Error occurred during client:loaded: ${err}`));
 
 if (module.hasOwnProperty('hot')) {
   (module as any).hot.accept();

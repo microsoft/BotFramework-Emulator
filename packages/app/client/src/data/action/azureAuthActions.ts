@@ -42,7 +42,7 @@ export interface AzureAuthAction<T> extends Action {
 }
 
 export interface ArmTokenData {
-  armToken: string;
+  access_token: string;
 }
 
 export interface AzureAuthWorkflow {
@@ -65,6 +65,6 @@ export function beginAzureAuthWorkflow(
 export function azureArmTokenDataChanged(armToken: string): AzureAuthAction<ArmTokenData> {
   return {
     type: AZURE_ARM_TOKEN_DATA_CHANGED,
-    payload: { armToken }
+    payload: { access_token: armToken }
   };
 }

@@ -8,9 +8,10 @@ const mockArmToken = 'eyJhbGciOiJSU0EyNTYiLCJraWQiOiJmZGtqc2FoamdmIiwieDV0IjoiZi
 jest.mock('jsonwebtoken', () => ({
   verify: () => true
 }));
+let mockResponses;
 jest.mock('electron-fetch', () => ({
   default: async () => ({
-    json: async () => ({ jwks_uri: 'http://localhost', keys: { find: () => ({}) } })
+    json: async () => mockResponses.pop()
   })
 }));
 jest.mock('rsa-pem-from-mod-exp', () => () => ({}));
@@ -70,6 +71,11 @@ jest.mock('electron', () => ({
 }));
 describe('The azureAuthWorkflowService', () => {
   beforeEach(() => {
+    mockResponses = [
+      { access_token: mockArmToken },
+      { jwks_uri: 'http://localhost', keys: { find: () => ({}) } },
+      { authorization_endpoint: 'http://localhost', jwks_uri: 'http://localhost', token_endpoint: 'http://localhost' }
+    ];
     (BrowserWindow as any).reporters = [];
   });
 
@@ -105,13 +111,17 @@ describe('The azureAuthWorkflowService', () => {
       }
 
       if (ct === 1) {
-        expect(value.armToken).toBe(mockArmToken);
+        expect(value.id_token).toBe(mockArmToken);
         // Not sure if this is valuable or not.
         expect(reportedValues.length).toBe(3);
       }
+
+      if (ct === 2 ) {
+        expect(value.access_token).toBe(mockArmToken);
+      }
       ct++;
     }
-    expect(ct).toBe(3);
+    expect(ct).toBe(4);
   });
 
   it('should make the appropriate calls and receive the expected values with the "enterSignOutWorkflow"', async () => {

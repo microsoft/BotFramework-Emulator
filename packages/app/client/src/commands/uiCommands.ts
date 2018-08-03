@@ -115,6 +115,6 @@ export function registerCommands(commandRegistry: CommandRegistry) {
   });
 
   commandRegistry.registerCommand(Commands.ArmTokenReceivedOnStartup, (azureAuth: AzureAuthState) => {
-    store.dispatch(azureArmTokenDataChanged(azureAuth.armToken));
+    store.dispatch(azureArmTokenDataChanged(azureAuth.access_token));
   });
 }
