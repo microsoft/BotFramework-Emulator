@@ -50,6 +50,7 @@ interface EndpointEditorState {
   appIdError: string;
   appPasswordError: string;
   isDirty: boolean;
+  endpointWarn: string;
 }
 
 const title = 'Add a Endpoint for your bot';
@@ -69,7 +70,8 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
       endpointError: '',
       appPasswordError: '',
       appIdError: '',
-      isDirty: false
+      isDirty: false,
+      endpointWarn: ''
     };
     this._textFieldHandler = {
       'name': this.onInputChange.bind(this, 'name', true),
@@ -85,34 +87,43 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
   }
 
   public render(): JSX.Element {
-    const { endpointService, appIdError, appPasswordError, endpointError, nameError, isDirty } = this.state;
+    const {
+      endpointService,
+      appIdError,
+      appPasswordError,
+      endpointError,
+      nameError,
+      isDirty,
+      endpointWarn
+    } = this.state;
     const { name = '', endpoint = '', appId = '', appPassword = '' } = endpointService;
     const valid = !!endpoint && !!name;
     return (
       <Dialog title={ title } detailedDescription={ detailedDescription }
-              cancel={ this.onCancelClick }>
+        cancel={ this.onCancelClick }>
         <DialogContent>
           <TextField errorMessage={ nameError } value={ name }
-                     onChanged={ this._textFieldHandler.name } label="Name"
-                     required={ true }
+            onChanged={ this._textFieldHandler.name } label="Name"
+            required={ true }
           />
           <TextField errorMessage={ endpointError } value={ endpoint }
-                     onChanged={ this._textFieldHandler.endpoint }
-                     label="Endpoint url" required={ true }
+            onChanged={ this._textFieldHandler.endpoint }
+            label="Endpoint url" required={ true }
           />
+          { endpointWarn && <span>{ endpointWarn }</span> }
           <TextField errorMessage={ appIdError } value={ appId }
-                     onChanged={ this._textFieldHandler.appId }
-                     label="Application Id"
-                     required={ false }
+            onChanged={ this._textFieldHandler.appId }
+            label="Application Id"
+            required={ false }
           />
           <TextField errorMessage={ appPasswordError } value={ appPassword }
-                     onChanged={ this._textFieldHandler.appPassword }
-                     label="Application Password" required={ false }
+            onChanged={ this._textFieldHandler.appPassword }
+            label="Application Password" required={ false }
           />
         </DialogContent>
         <DialogFooter>
-          <DefaultButton text="Cancel" onClick={ this.onCancelClick }/>
-          <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ this.onSubmitClick }/>
+          <DefaultButton text="Cancel" onClick={ this.onCancelClick } />
+          <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ this.onSubmitClick } />
         </DialogFooter>
       </Dialog>
     );
@@ -129,6 +140,11 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
   private onInputChange = (propName: string, required: boolean, value: string): void => {
     const trimmedValue = value.trim();
 
+    let endpointWarn = '';
+    if (propName === 'endpoint') {
+      endpointWarn = this.checkEndpointForController(trimmedValue);
+    }
+
     const { endpointService: originalEndpointService } = this.props;
     const errorMessage = (required && !trimmedValue) ? `The field cannot be empty` : '';
 
@@ -137,6 +153,11 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
 
     const isDirty = Object.keys(endpointService)
       .reduce((dirty, key) => (dirty || endpointService[key] !== originalEndpointService[key]), false);
-    this.setState({ endpointService, [`${propName}Error`]: errorMessage, isDirty } as any);
+    this.setState({ endpointService, [`${propName}Error`]: errorMessage, isDirty, endpointWarn } as any);
+  }
+
+  private checkEndpointForController(endpoint: string): string {
+    const controllerRegEx = /api\/messages\/?$/;
+    return controllerRegEx.test(endpoint) ? '' : 'Do not forget to include api/messages !';
   }
 }
