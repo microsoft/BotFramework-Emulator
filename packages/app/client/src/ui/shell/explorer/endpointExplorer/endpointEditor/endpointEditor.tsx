@@ -36,6 +36,7 @@ import { EndpointService } from 'msbot/bin/models';
 import { IEndpointService } from 'msbot/bin/schema';
 import * as React from 'react';
 import { Component } from 'react';
+import * as styles from './endpointEditor.scss';
 
 interface EndpointEditorProps {
   endpointService: IEndpointService;
@@ -50,7 +51,6 @@ interface EndpointEditorState {
   appIdError: string;
   appPasswordError: string;
   isDirty: boolean;
-  endpointWarn: string;
 }
 
 const title = 'Add a Endpoint for your bot';
@@ -70,8 +70,7 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
       endpointError: '',
       appPasswordError: '',
       appIdError: '',
-      isDirty: false,
-      endpointWarn: ''
+      isDirty: false
     };
     this._textFieldHandler = {
       'name': this.onInputChange.bind(this, 'name', true),
@@ -93,11 +92,12 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
       appPasswordError,
       endpointError,
       nameError,
-      isDirty,
-      endpointWarn
+      isDirty
     } = this.state;
     const { name = '', endpoint = '', appId = '', appPassword = '' } = endpointService;
     const valid = !!endpoint && !!name;
+    const endpointWarning = this.validateEndpoint(endpoint);
+
     return (
       <Dialog title={ title } detailedDescription={ detailedDescription }
         cancel={ this.onCancelClick }>
@@ -110,7 +110,7 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
             onChanged={ this._textFieldHandler.endpoint }
             label="Endpoint url" required={ true }
           />
-          { endpointWarn && <span>{ endpointWarn }</span> }
+          { endpointWarning && <span className={ styles.endpointWarning }>{ endpointWarning }</span> }
           <TextField errorMessage={ appIdError } value={ appId }
             onChanged={ this._textFieldHandler.appId }
             label="Application Id"
@@ -140,11 +140,6 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
   private onInputChange = (propName: string, required: boolean, value: string): void => {
     const trimmedValue = value.trim();
 
-    let endpointWarn = '';
-    if (propName === 'endpoint') {
-      endpointWarn = this.checkEndpointForController(trimmedValue);
-    }
-
     const { endpointService: originalEndpointService } = this.props;
     const errorMessage = (required && !trimmedValue) ? `The field cannot be empty` : '';
 
@@ -153,11 +148,12 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
 
     const isDirty = Object.keys(endpointService)
       .reduce((dirty, key) => (dirty || endpointService[key] !== originalEndpointService[key]), false);
-    this.setState({ endpointService, [`${propName}Error`]: errorMessage, isDirty, endpointWarn } as any);
+    this.setState({ endpointService, [`${propName}Error`]: errorMessage, isDirty } as any);
   }
 
-  private checkEndpointForController(endpoint: string): string {
+  /** Checks the endpoint to see if it has the correct route syntax at the end (/api/messages) */
+  private validateEndpoint(endpoint: string): string {
     const controllerRegEx = /api\/messages\/?$/;
-    return controllerRegEx.test(endpoint) ? '' : 'Do not forget to include api/messages !';
+    return controllerRegEx.test(endpoint) ? '' : `Please include route if necessary: "/api/messages"`;
   }
 }

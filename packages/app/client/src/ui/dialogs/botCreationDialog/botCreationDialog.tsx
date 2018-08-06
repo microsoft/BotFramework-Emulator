@@ -95,6 +95,9 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
       && endpoint.endpoint
       && bot.name
       && secretCriteria;
+
+    const endpointWarning = this.validateEndpoint(endpoint.endpoint);
+
     // TODO - localization
     return (
       <Dialog className={ styles.main } title="New bot configuration" cancel={ this.onCancel } maxWidth={ 648 }>
@@ -112,6 +115,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
             onChanged={ this.onChangeEndpoint }
             placeholder={ 'Enter a URL for your bot\'s endpoint' } label={ 'Endpoint URL' }
             required={ true }/>
+          { endpointWarning && <span className={ styles.endpointWarning }>{ endpointWarning }</span> }
           <Row className={ styles.multiInputRow }>
             <TextField
               className={ styles.smallInput } inputClassName="bot-creation-input" value={ endpoint.appId }
@@ -263,5 +267,11 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
 
   private onChangeSecretConfirmation = (confirm) => {
     this.setState({ secretConfirmation: confirm, secretsMatch: confirm === this.state.secret });
+  }
+
+  /** Checks the endpoint to see if it has the correct route syntax at the end (/api/messages) */
+  private validateEndpoint(endpoint: string): string {
+    const controllerRegEx = /api\/messages\/?$/;
+    return controllerRegEx.test(endpoint) ? '' : `Please include route if necessary: "/api/messages"`;
   }
 }
