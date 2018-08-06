@@ -61,7 +61,7 @@ export class RestServer {
     });
 
     this._router.on('after', async (req: Restify.Request, res: Restify.Response,
-                                    route: Restify.Route, error: Error) => {
+      route: Restify.Route, error: Error) => {
       if (req.method === 'GET' && route.spec.path === '/v3/directline/conversations/:conversationId/activities') {
         // Don't log WebChat's polling GET operations
         return;
@@ -115,7 +115,7 @@ export class RestServer {
     this._botEmulator = new BotEmulator(
       botUrl => emulator.ngrok.getServiceUrl(botUrl),
       {
-        fetch,
+        fetch: (fetch as any).default,
         loggerOrLogService: mainWindow.logService,
         tunnelingServiceUrl: () => emulator.ngrok.getNgrokServiceUrl()
       }
