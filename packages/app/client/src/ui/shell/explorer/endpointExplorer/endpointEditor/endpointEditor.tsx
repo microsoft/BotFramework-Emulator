@@ -86,14 +86,7 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
   }
 
   public render(): JSX.Element {
-    const {
-      endpointService,
-      appIdError,
-      appPasswordError,
-      endpointError,
-      nameError,
-      isDirty
-    } = this.state;
+    const { endpointService, appIdError, appPasswordError, endpointError, nameError, isDirty } = this.state;
     const { name = '', endpoint = '', appId = '', appPassword = '' } = endpointService;
     const valid = !!endpoint && !!name;
     const endpointWarning = this.validateEndpoint(endpoint);
@@ -122,8 +115,8 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
           />
         </DialogContent>
         <DialogFooter>
-          <DefaultButton text="Cancel" onClick={ this.onCancelClick } />
-          <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ this.onSubmitClick } />
+          <DefaultButton text="Cancel" onClick={ this.onCancelClick }/>
+          <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ this.onSubmitClick }/>
         </DialogFooter>
       </Dialog>
     );
