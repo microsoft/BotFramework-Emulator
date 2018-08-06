@@ -51,7 +51,7 @@ module.exports = {
               plugins: ['react-hot-loader/babel'],
             },
           },
-          'awesome-typescript-loader',
+          'ts-loader',
         ],
       },
       {
