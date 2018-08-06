@@ -51,17 +51,9 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
   );
 
   server.get('v4/token', (req: Restify.Request, res: Restify.Response) => {
-    res.send(HttpStatus.OK, `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Botframework Emulator</title>
-    </head>
-    <body>
-    <!--This page is used as the redirect from the AAD auth for ABS and is required-->
-    </body>
-    </html>
-`, {'Content-Type': 'text/html'});
+    res.send(HttpStatus.OK, '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">' +
+      '<title>Botframework Emulator</title></head>' +
+      '<body><!--This page is used as the redirect from the AAD auth for ABS and is required-->' +
+      '</body></html>', {'Content-Type': 'text/html; charset=utf-8'});
   });
 }

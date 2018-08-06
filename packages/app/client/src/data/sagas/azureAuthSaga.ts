@@ -15,7 +15,7 @@ const getArmTokenFromState = (state: RootState) => state.azureAuth;
 
 export function* getArmToken(action: AzureAuthAction<AzureAuthWorkflow>): IterableIterator<any> {
   let azureAuth: AzureAuthState = yield select(getArmTokenFromState);
-  if (!azureAuth.armToken.includes('invalid')) {
+  if (!azureAuth.access_token.includes('invalid')) {
     return;
   }
   const confirmLoginWithAzure = yield DialogService.showDialog(action.payload.promptDialog);
@@ -30,7 +30,7 @@ export function* getArmToken(action: AzureAuthAction<AzureAuthWorkflow>): Iterab
   } else {
     yield DialogService.showDialog(action.payload.loginFailedDialog);
   }
-  yield put(azureArmTokenDataChanged(azureAuth.armToken));
+  yield put(azureArmTokenDataChanged(azureAuth.access_token));
 }
 
 export function* azureAuthSagas(): IterableIterator<ForkEffect> {

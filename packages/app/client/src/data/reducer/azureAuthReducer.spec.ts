@@ -41,7 +41,7 @@ describe('Azure auth reducer tests', () => {
 
   beforeEach(() => {
     startingState = {
-      armToken: null,
+      access_token: null,
       persistLogin: false
     };
   });
@@ -55,6 +55,6 @@ describe('Azure auth reducer tests', () => {
   it('should change auth data', () => {
     const action = azureArmTokenDataChanged('someKey');
     const state = azureAuth(startingState, action);
-    expect(state.armToken).toEqual('someKey');
+    expect(state.access_token).toEqual('someKey');
   });
 });

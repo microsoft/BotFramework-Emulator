@@ -10,8 +10,8 @@ const mockStore = createStore(combineReducers({ azure: azureAuth }));
 const mockArmToken = 'bm90aGluZw==.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
 jest.mock('../services/azureAuthWorkflowService', () => ({
   AzureAuthWorkflowService: {
-    enterAuthWorkflow: function* () {
-      yield { armToken:  mockArmToken};
+    retrieveAuthToken: function* () {
+      yield { access_token:  mockArmToken};
     },
 
     enterSignOutWorkflow: function*() {
@@ -40,12 +40,12 @@ describe('The azureCommand,', () => {
   describe(`${SharedConstants.Commands.Azure.RetrieveArmToken}, `, () => {
     it('should retrieve the arm token and the user email address and place it in the store', async () => {
       const result = await registry.getCommand(SharedConstants.Commands.Azure.RetrieveArmToken).handler();
-      expect(result.armToken).toBe(mockArmToken);
+      expect(result.access_token).toBe(mockArmToken);
       expect((mockStore.getState() as any).azure.signedInUser).toBe('glasgow@scotland.com');
     });
 
     it('should return false if the azure auth fails', async () => {
-      AzureAuthWorkflowService.enterAuthWorkflow = function*() { yield false; } as any;
+      AzureAuthWorkflowService.retrieveAuthToken = function*() { yield false; } as any;
       const result = await registry.getCommand(SharedConstants.Commands.Azure.RetrieveArmToken).handler();
       expect(result).toBe(false);
     });
