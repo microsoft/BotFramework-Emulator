@@ -420,6 +420,41 @@ export default function editor(state: EditorState = DEFAULT_STATE, action: Edito
       break;
     }
 
+    case EditorActions.dropTabOnLeftOverlay: {
+      // move every other document to the secondary editor
+      const { tabId: tabToIsolate } = action.payload;
+
+      const primary = Constants.EDITOR_KEY_PRIMARY;
+      const secondary = Constants.EDITOR_KEY_SECONDARY;
+
+      // the primary tab group will only contain the document being dropped
+      const docToIsolate = state.editors[primary].documents[tabToIsolate];
+      const primaryTabs = [tabToIsolate];
+      const primaryDocs = { [tabToIsolate]: docToIsolate };
+
+      // move all documents but the one being dropped to the secondary tab group
+      const secondaryTabOrder = state.editors[primary].tabOrder.filter(tabId => tabId !== tabToIsolate);
+      const secondaryRecentTabs = state.editors[primary].recentTabs.filter(tabId => tabId !== tabToIsolate);
+      const secondaryDocs = state.editors[primary].documents;
+      delete secondaryDocs[tabToIsolate];
+
+      const primaryEditor = getNewEditor();
+      primaryEditor.activeDocumentId = tabToIsolate;
+      primaryEditor.documents = primaryDocs;
+      primaryEditor.recentTabs = primaryTabs;
+      primaryEditor.tabOrder = primaryTabs;
+
+      const secondaryEditor = getNewEditor();
+      secondaryEditor.activeDocumentId = secondaryRecentTabs[0] || null;
+      secondaryEditor.recentTabs = secondaryRecentTabs;
+      secondaryEditor.tabOrder = secondaryTabOrder;
+      secondaryEditor.documents = secondaryDocs;
+
+      state = setEditorState(primary, primaryEditor, state);
+      state = setEditorState(secondary, secondaryEditor, state);
+      break;
+    }
+
     default:
       break;
   }

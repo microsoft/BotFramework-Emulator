@@ -39,6 +39,7 @@ export enum EditorActions {
   removeDocPendingChange = 'EDITOR/REMOVE_DOC_PENDING_CHANGE',
   close = 'EDITOR/CLOSE',
   closeAll = 'EDITOR/CLOSE_ALL',
+  dropTabOnLeftOverlay= 'EDITOR/DROP_TAB_ON_LEFT_OVERLAY',
   setDirtyFlag = 'EDITOR/SET_DIRTY_FLAG',
   open = 'EDITOR/OPEN',
   setActiveTab = 'EDITOR/SET_ACTIVE_TAB',
@@ -146,6 +147,13 @@ export interface RemoveDocPendingChangeAction {
   };
 }
 
+export interface DropTabOnLeftOverlayAction {
+  type: EditorActions.dropTabOnLeftOverlay;
+  payload: {
+    tabId: string
+  };
+}
+
 export type EditorAction =
 AppendTabAction |
 CloseEditorAction |
@@ -159,7 +167,8 @@ SplitTabAction |
 SwapTabsAction |
 ToggleDraggingTabAction |
 AddDocPendingChangeAction |
-RemoveDocPendingChangeAction;
+RemoveDocPendingChangeAction |
+DropTabOnLeftOverlayAction;
 
 export function appendTab(srcEditorKey: string, destEditorKey: string, documentId: string): AppendTabAction {
   return {
@@ -287,6 +296,15 @@ export function toggleDraggingTab(draggingTab: boolean): ToggleDraggingTabAction
     type: EditorActions.toggleDraggingTab,
     payload: {
       draggingTab
+    }
+  };
+}
+
+export function dropTabOnLeftOverlay(tabId: string): DropTabOnLeftOverlayAction {
+  return {
+    type: EditorActions.dropTabOnLeftOverlay,
+    payload: {
+      tabId
     }
   };
 }
