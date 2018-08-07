@@ -31,38 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-const Electron = (window as any).require('electron');
-const { shell } = Electron;
-import { uniqueId } from '@bfemulator/sdk-shared';
-import { CommandServiceImpl } from './platform/commands/commandServiceImpl';
-import * as URL from 'url';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { connect } from 'react-redux';
+import { DialogService } from '../service';
+import { ConnectLuisAppPromptDialog, ConnectLuisAppPromptDialogProps } from './connectLuisAppPromptDialog';
 
-export function navigate(url: string) {
-  try {
-    const parsed = URL.parse(url);
-    if (parsed.protocol.startsWith('oauth:')) {
-      navigateEmulatedOAuthUrl(url.substring(8));
-    } else if (parsed.protocol.startsWith('oauthlink:')) {
-      navigateOAuthUrl(url.substring(12));
-    } else {
-      shell.openExternal(url, { activate: true });
-    }
-  } catch (e) {
-    shell.openExternal(url, { activate: true });
-  }
-}
+const mapDispatchToProps = (_dispatch: () => void): ConnectLuisAppPromptDialogProps => {
+  return {
+    cancel: () => DialogService.hideDialog(0),
+    confirm: () => DialogService.hideDialog(1),
+    addLuisAppManually: () => DialogService.hideDialog(2)
+  };
+};
 
-function navigateEmulatedOAuthUrl(oauthParam: string) {
-  const { Commands } = SharedConstants;
-  let parts = oauthParam.split('&&&');
-  CommandServiceImpl
-    .remoteCall(Commands.OAuth.SendTokenResponse, parts[0], parts[1], 'emulatedToken_' + uniqueId())
-    .catch();
-}
-
-function navigateOAuthUrl(oauthParam: string) {
-  const { Commands } = SharedConstants;
-  let parts = oauthParam.split('&&&');
-  CommandServiceImpl.remoteCall(Commands.OAuth.CreateOAuthWindow, parts[0], parts[1]).catch();
-}
+export const ConnectLuisAppPromptDialogContainer = connect(
+  null,
+  mapDispatchToProps
+)(ConnectLuisAppPromptDialog);

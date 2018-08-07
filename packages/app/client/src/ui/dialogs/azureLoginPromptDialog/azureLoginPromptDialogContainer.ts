@@ -33,9 +33,9 @@
 
 import { connect } from 'react-redux';
 import { DialogService } from '../service';
-import { AzureLoginPromptDialog } from './azureLoginPromptDialog';
+import { AzureLoginPromptDialog, AzureLoginPromptDialogProps } from './azureLoginPromptDialog';
 
-const mapDispatchToProps = (_dispatch: () => void) => {
+const mapDispatchToProps = (_dispatch: () => void): AzureLoginPromptDialogProps => {
   return {
     cancel: () => DialogService.hideDialog(false),
     confirm: () => DialogService.hideDialog(true)
