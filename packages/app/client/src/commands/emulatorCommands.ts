@@ -39,7 +39,8 @@ import { IEndpointService } from 'msbot/bin/schema';
 import { uniqueId, CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
 import { getTabGroupForDocument } from '../data/editorHelpers';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants, newNotification } from '@bfemulator/app-shared';
+import { beginAdd } from '../data/action/notificationActions';
 
 /** Registers emulator (actual conversation emulation logic) commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
@@ -109,7 +110,11 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
           CommandServiceImpl.call(Commands.Emulator.OpenTranscript, filename);
         }
       })
-      .catch(err => console.error(err));
+      .catch(err => {
+        const errMsg = `Error while opening transcript file: ${err}`;
+        const notification = newNotification(errMsg);
+        store.dispatch(beginAdd(notification));
+      });
   });
 
   // ---------------------------------------------------------------------------

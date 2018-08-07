@@ -42,7 +42,7 @@ import * as NotificationActions from '../data/action/notificationActions';
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
   const Commands = SharedConstants.Commands.Notifications;
   // ---------------------------------------------------------------------------
-  // Adds a notification to the store / notification manager
+  // Adds a notification from the main side to the store / notification manager
   commandRegistry.registerCommand(Commands.Add, () => {
     const notification: Notification = getGlobal(SharedConstants.NOTIFICATION_FROM_MAIN);
     store.dispatch(NotificationActions.beginAdd(notification));
