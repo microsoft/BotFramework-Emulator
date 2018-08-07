@@ -140,7 +140,7 @@ describe('The azureAuthSaga', () => {
       expect(ct).toBe(5);
     });
 
-    it('should contain 6 steps when the Azure login dialog prompt is confirmed and auth succeeds', async () => {
+    it('should contain 7 steps when the Azure login dialog prompt is confirmed and auth succeeds', async () => {
       store.dispatch(azureArmTokenDataChanged('an invalid access_token'));
       DialogService.showDialog = () => Promise.resolve(true);
       (CommandServiceImpl as any).remoteCall = args => {
@@ -199,7 +199,7 @@ describe('The azureAuthSaga', () => {
         }
         ct++;
       }
-      expect(ct).toBe(6);
+      expect(ct).toBe(7);
       expect(store.getState().azureAuth.access_token).toBe('a valid access_token');
     });
   });

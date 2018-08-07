@@ -31,6 +31,7 @@ export function* getArmToken(action: AzureAuthAction<AzureAuthWorkflow>): Iterab
     yield DialogService.showDialog(action.payload.loginFailedDialog);
   }
   yield put(azureArmTokenDataChanged(azureAuth.access_token));
+  yield azureAuth;
 }
 
 export function* azureAuthSagas(): IterableIterator<ForkEffect> {

@@ -75,7 +75,7 @@ export class LuisModelsViewer extends Component<LuisModelsViewerProps, LuisModel
     const checkAllChecked = props.luisModels
       .reduce((isTrue, luisModel) => state[luisModel.id] && isTrue, !!keys.length);
     return (
-      <section className={ styles.luisModelsViewer }>
+      <section className={ styles.luisModelViewer }>
         { this.sectionHeader }
         <div className="listContainer">
           <p>Selecting a LUIS app below will store the app ID in your bot file.</p>

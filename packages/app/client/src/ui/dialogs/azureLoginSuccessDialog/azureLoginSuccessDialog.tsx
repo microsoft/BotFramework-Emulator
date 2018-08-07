@@ -8,8 +8,10 @@ export interface AzureLoginSuccessDialogState {
 }
 
 export interface AzureLoginSuccessDialogProps {
-  cancel: (persistLogin: boolean) => void;
-  persistLogin: boolean;
+  cancel?: (persistLogin: boolean) => void;
+  persistLogin?: boolean;
+
+  [propName: string]: any;
 }
 
 export class AzureLoginSuccessDialog extends Component<AzureLoginSuccessDialogProps, AzureLoginSuccessDialogState> {
