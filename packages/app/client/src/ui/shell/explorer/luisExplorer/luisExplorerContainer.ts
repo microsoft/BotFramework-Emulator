@@ -36,6 +36,8 @@ import { ComponentClass } from 'react';
 import { connect } from 'react-redux';
 import {
   launchLuisEditor,
+  launchLuisModelsViewer,
+  LuisModelViewerPayload,
   openLuisDeepLink,
   openLuisExplorerContextMenu
 } from '../../../../data/action/luisServiceActions';
@@ -53,11 +55,16 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    launchLuisEditor: (luisEditor: ComponentClass<LuisEditor>,
-                       luisService: ILuisService) => dispatch(launchLuisEditor(luisEditor, luisService)),
-    openLuisDeepLink: (luisService: ILuisService) => dispatch(openLuisDeepLink(luisService)),
-    openContextMenu: (luisService: ILuisService,
-                      luisEditor: ComponentClass<LuisEditor>) =>
+    launchLuisModelsViewer: (luisModelsViewer: LuisModelViewerPayload) =>
+      launchLuisModelsViewer(luisModelsViewer),
+
+    launchLuisEditor: (luisEditor: ComponentClass<LuisEditor>, luisService: ILuisService) =>
+      dispatch(launchLuisEditor(luisEditor, luisService)),
+
+    openLuisDeepLink: (luisService: ILuisService) =>
+      dispatch(openLuisDeepLink(luisService)),
+
+    openContextMenu: (luisService: ILuisService, luisEditor: ComponentClass<LuisEditor>) =>
       dispatch(openLuisExplorerContextMenu(luisEditor, luisService)),
   };
 };
@@ -65,4 +72,4 @@ const mapDispatchToProps = dispatch => {
 export const LuisExplorerContainer = connect(
   mapStateToProps,
   mapDispatchToProps
-)(LuisExplorer as any) as any;
+)(LuisExplorer);

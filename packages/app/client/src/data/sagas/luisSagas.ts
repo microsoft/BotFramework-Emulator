@@ -33,57 +33,83 @@
 
 import { ILuisService, ServiceType } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
-import { call, ForkEffect, takeEvery, takeLatest } from 'redux-saga/effects';
+import { call, ForkEffect, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { DialogService } from '../../ui/dialogs/service';
-import { LuisEditor } from '../../ui/shell/explorer/luisExplorer/luisEditor/luisEditor';
 import {
   LAUNCH_LUIS_EDITOR,
+  LAUNCH_LUIS_MODELS_VIEWER,
   LuisEditorPayload,
+  LuisModelViewerPayload,
   LuisServiceAction,
   LuisServicePayload,
   OPEN_LUIS_CONTEXT_MENU,
-  OPEN_LUIS_DEEP_LINK
+  OPEN_LUIS_DEEP_LINK,
+  RETRIEVE_LUIS_MODELS
 } from '../action/luisServiceActions';
-// import { LuisApi } from '../http/luisApi';
+import { LuisApi, LuisModel } from '../http/luisApi';
 import { SharedConstants } from '@bfemulator/app-shared';
+import { RootState } from '../store';
+import { beginAzureAuthWorkflow } from '../action/azureAuthActions';
+import {
+  AzureLoginFailedDialogContainer,
+  AzureLoginSuccessDialogContainer,
+  ConnectLuisAppPromptDialogContainer, GetStartedWithLuisDialogContainer
+} from '../../ui/dialogs';
+import { getArmToken } from './azureAuthSaga';
+import { LuisModelsViewer } from '../../ui/shell/explorer/luisExplorer/luisModelsViewerDialog/luisModelsViewer';
 
-// const isModalServiceBusy = (state: RootState) => state.dialog.showing;
+const isModalServiceBusy = (state: RootState) => state.dialog.showing;
+const getArmTokenFromState = (state: RootState) => state.azureAuth.access_token;
 
-// function* launchLuisModelsViewer(action: AzureAuthAction<LuisModelViewer>): IterableIterator<any> {
-//   let azureAuth = yield select(getLuisAuthFromState);
-//   if (!azureAuth) {
-//     azureAuth = yield call(
-//      CommandServiceImpl.remoteCall.bind(CommandServiceImpl),
-//      SharedConstants.Commands.Azure.RetrieveArmToken
-//    );
-//     yield put(azureArmTokenDataChanged(azureAuth));
-//   }
-//   const luisModels = yield* retrieveLuisModels();
-//   yield* beginModelViewLifeCycle(action, luisModels);
-// }
+function* launchLuisModelsViewer(action: LuisServiceAction<LuisModelViewerPayload>): IterableIterator<any> {
+  let accessToken = yield select(getArmTokenFromState);
+  if (!accessToken) {
+    accessToken = yield* getArmToken(beginAzureAuthWorkflow(
+      ConnectLuisAppPromptDialogContainer,
+      AzureLoginSuccessDialogContainer,
+      AzureLoginFailedDialogContainer));
+  }
+  if (!accessToken) {
+    return null; // canceled somewhere
+  }
+  const luisModels = yield* retrieveLuisModels();
+  if (!luisModels.length) {
+    const result = yield DialogService.showDialog(GetStartedWithLuisDialogContainer);
+    // Sign up with luis
+    if (result === 1) {
+      // TODO - launch an external link
+    }
+    // Add luis apps manually
+    if (result === 2) {
+      yield* launchLuisEditor(action);
+    }
+  } else {
+    yield* beginModelViewLifeCycle(action, luisModels);
+  }
+}
 
-// function* beginModelViewLifeCycle(action: AzureAuthAction<LuisModelViewer>,
-//                                   luisModels: LuisModel[]): IterableIterator<any> {
-//   const isBusy = yield select(isModalServiceBusy);
-//   if (isBusy) {
-//     throw new Error('More than one modal cannot be displayed at the same time.');
-//   }
-//
-//   const { luisModelViewer } = action.payload;
-//   const result = yield DialogService.showDialog<ComponentClass<LuisModelViewer>>(luisModelViewer, { luisModels });
-//   // TODO - write this to the bot file
-//   return result;
-// }
-//
-// function* retrieveLuisModels(): IterableIterator<any> {
-//   const luisAuth = yield select(getLuisAuthFromState);
-//   if (!luisAuth) {
-//     throw new Error('Auth credentials do not exist.');
-//   }
-//   const luisModels = yield LuisApi.getApplicationsList(luisAuth);
-//   return yield luisModels;
-// }
+function* beginModelViewLifeCycle(action: LuisServiceAction<LuisModelViewerPayload>,
+                                  luisModels: LuisModel[]): IterableIterator<any> {
+  const isBusy = yield select(isModalServiceBusy);
+  if (isBusy) {
+    throw new Error('More than one modal cannot be displayed at the same time.');
+  }
+
+  const { luisModelViewer } = action.payload;
+  const result = yield DialogService.showDialog<ComponentClass<LuisModelsViewer>>(luisModelViewer, { luisModels });
+  // TODO - write this to the bot file
+  return result;
+}
+
+function* retrieveLuisModels(): IterableIterator<any> {
+  let accessToken = yield select(getArmTokenFromState);
+  if (!accessToken) {
+    throw new Error('Auth credentials do not exist.');
+  }
+  const luisModels = yield LuisApi.getApplicationsList(accessToken);
+  return yield luisModels;
+}
 
 function* openLuisDeepLink(action: LuisServiceAction<LuisServicePayload>): IterableIterator<any> {
   const { appId, version } = action.payload.luisService;
@@ -132,18 +158,18 @@ function* removeLuisServiceFromActiveBot(luisService: ILuisService): IterableIte
   }
 }
 
-function* launchLuisEditor(action: LuisServiceAction<LuisEditorPayload>): IterableIterator<any> {
+function* launchLuisEditor(action: LuisServiceAction<LuisEditorPayload|LuisModelViewerPayload>): IterableIterator<any> {
   const { luisEditorComponent, luisService = {} } = action.payload;
-  const result = yield DialogService.showDialog<ComponentClass<LuisEditor>>(luisEditorComponent, { luisService });
+  const result = yield DialogService.showDialog<ComponentClass<any>>(luisEditorComponent, { luisService });
   if (result) {
     yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.AddOrUpdateService, ServiceType.Luis, result);
   }
 }
 
 export function* luisSagas(): IterableIterator<ForkEffect> {
-  //  yield takeLatest(LUIS_LAUNCH_MODELS_VIEWER, launchLuisModelsViewer);
+  yield takeLatest(LAUNCH_LUIS_MODELS_VIEWER, launchLuisModelsViewer);
   yield takeLatest(LAUNCH_LUIS_EDITOR, launchLuisEditor);
-  // yield takeEvery(RETRIEVE_LUIS_MODELS, retrieveLuisModels);
+  yield takeEvery(RETRIEVE_LUIS_MODELS, retrieveLuisModels);
   yield takeEvery(OPEN_LUIS_DEEP_LINK, openLuisDeepLink);
   yield takeEvery(OPEN_LUIS_CONTEXT_MENU, openLuisContextMenu);
 }

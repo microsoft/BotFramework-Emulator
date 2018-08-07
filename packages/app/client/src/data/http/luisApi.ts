@@ -50,24 +50,32 @@ export interface LuisModel {
 }
 
 export class LuisApi {
-  public static async getApplicationsList(luisAuthData: { key: string, region: string }, skip?: number, take?: number)
-    : Promise<LuisModel[]> {
-    const { key: authoringKey, region } = luisAuthData;
+  public static async getApplicationsList(armToken: string): Promise<LuisModel[]> {
+    // We have the arm token which allows us to get the
+    // authoring key used to retrieve the apps
+    const req: RequestInit = {headers: {Authorization: `Bearer ${armToken}`}};
+    const authoringKeyResponse = await fetch('https://api.luis.ai/api/v2.0/bots/programmatickey', req);
+    const authoringKey = await authoringKeyResponse.text();
+    const luisModels: LuisModel[] = [];
+    ['westus', 'westeurope', 'australiaeast'].forEach(async region => {
+      try {
+        const models = await this.getApplicationsForRegion(region, authoringKey);
+        luisModels.push(...models);
+      } catch {
+        // Skip this
+      }
+      return null;
+    });
+    return luisModels;
+  }
+
+  public static async getApplicationsForRegion(region: string, authoringKey: string): Promise<LuisModel[]> {
     let url = `https://${region}.api.cognitive.microsoft.com/luis/api/v2.0/apps/`;
     const headers = new Headers({
       'Content-Accept': 'application/json',
       'Ocp-Apim-Subscription-Key': authoringKey
     });
 
-    if (skip || take) {
-      url += '?';
-      if (!isNaN(+skip)) {
-        url += `skip=${+skip}`;
-      }
-      if (!isNaN(+take)) {
-        url += !isNaN(+skip) ? `&take=${+take}` : `take=${+take}`;
-      }
-    }
     const response = await fetch(url, { headers, method: 'get' });
     return await response.json() as LuisModel[];
   }
