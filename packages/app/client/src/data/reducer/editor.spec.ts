@@ -1026,7 +1026,6 @@ describe('Editor reducer utility function tests', () => {
       ...defaultState,
       activeEditor: Constants.EDITOR_KEY_PRIMARY,
       editors: {
-        ...defaultState.editors,
         [Constants.EDITOR_KEY_PRIMARY]: {
           ...defaultState.editors[Constants.EDITOR_KEY_PRIMARY],
           activeDocumentId: 'doc2',
