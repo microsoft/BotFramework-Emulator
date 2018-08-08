@@ -55,7 +55,7 @@ export default class ChatPanel extends React.Component<ChatPanelProps, {}> {
       <div className={ `${styles.chatPanel} ${this.props.className || ''}` }>
         <header>{ endpointId }</header>
         <Chat mode={ this.props.mode } document={ this.props.document }
-              onStartConversation={ this.props.onStartConversation } key={ this.props.document.pingId }/>
+              onStartConversation={ this.props.onStartConversation }/>
       </div>
     );
   }

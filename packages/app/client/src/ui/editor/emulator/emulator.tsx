@@ -60,6 +60,7 @@ const { encode } = base64Url;
 export type EmulatorMode = 'transcript' | 'livechat';
 
 interface EmulatorProps {
+  activeDocumentId?: string;
   clearLog?: (documentId: string) => void;
   conversationId?: string;
   dirty?: boolean;
@@ -70,8 +71,6 @@ interface EmulatorProps {
   endpointService?: IEndpointService;
   mode?: EmulatorMode;
   newConversation?: (documentId: string, options: any) => void;
-  pingDocument?: (documentId: string) => void;
-  pingId?: number;
   presentationModeEnabled?: boolean;
   setInspectorObjects?: (documentId: string, objects: any) => void;
   updateDocument?: (documentId: string, updatedValues: any) => void;
@@ -114,11 +113,22 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
   }
 
   componentWillReceiveProps(nextProps: any) {
-    if (!nextProps.document.directLine && this.props.document.documentId !== nextProps.document.documentId) {
-      this.startNewConversation(nextProps).catch();
+    const { props, keyboardEventListener, startNewConversation } = this;
+
+    if (!nextProps.document.directLine && props.document.documentId !== nextProps.document.documentId) {
+      startNewConversation(nextProps).catch();
     }
-    if (this.props.document.documentId !== nextProps.document.documentId) {
-      this.props.pingDocument(nextProps.document.documentId);
+
+    const switchedDocuments = props.activeDocumentId !== nextProps.activeDocumentId;
+    const switchedToThisDocument = (nextProps.activeDocumentId === props.documentId);
+
+    if (switchedDocuments) {
+      if (switchedToThisDocument) {
+        window.removeEventListener('keydown', keyboardEventListener);
+        window.addEventListener('keydown', keyboardEventListener);
+      } else {
+        window.removeEventListener('keydown', keyboardEventListener);
+      }
     }
   }
 
@@ -237,7 +247,7 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
 
   renderDefaultView(): JSX.Element {
     return (
-      <div className={ styles.emulator } key={ this.props.pingId }>
+      <div className={ styles.emulator }>
         {
           this.props.mode === 'livechat' &&
           <div className={ styles.header }>
@@ -251,8 +261,7 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
           <Splitter orientation="vertical" primaryPaneIndex={ 0 }
                     minSizes={ { 0: 80, 1: 80 } }
                     initialSizes={ this.getVerticalSplitterSizes }
-                    onSizeChange={ this.onVerticalSizeChange }
-                    key={ this.props.pingId }>
+                    onSizeChange={ this.onVerticalSizeChange }>
             <div className={ styles.content }>
               <ChatPanel mode={ this.props.mode }
                          className={ styles.chatPanel }
@@ -263,10 +272,9 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
               <Splitter orientation="horizontal" primaryPaneIndex={ 0 }
                         minSizes={ { 0: 80, 1: 80 } }
                         initialSizes={ this.getHorizontalSplitterSizes }
-                        onSizeChange={ this.onHorizontalSizeChange }
-                        key={ this.props.pingId }>
-                <DetailPanel document={ this.props.document } key={ this.props.pingId }/>
-                <LogPanel document={ this.props.document } key={ this.props.pingId }/>
+                        onSizeChange={ this.onHorizontalSizeChange }>
+                <DetailPanel document={ this.props.document }/>
+                <LogPanel document={ this.props.document }/>
               </Splitter>
             </div>
           </Splitter>
@@ -318,15 +326,14 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
 }
 
 const mapStateToProps = (state: RootState, { documentId }: { documentId: string }): EmulatorProps => ({
+  activeDocumentId: state.editor.editors[state.editor.activeEditor].activeDocumentId,
   conversationId: state.chat.chats[documentId].conversationId,
   document: state.chat.chats[documentId],
   endpointId: state.chat.chats[documentId].endpointId,
-  pingId: state.chat.chats[documentId].pingId,
   presentationModeEnabled: state.presentation.enabled
 });
 
 const mapDispatchToProps = (dispatch): EmulatorProps => ({
-  pingDocument: documentId => dispatch(ChatActions.pingDocument(documentId)),
   enablePresentationMode: enable => enable ? dispatch(PresentationActions.enable())
     : dispatch(PresentationActions.disable()),
   setInspectorObjects: (documentId, objects) => dispatch(ChatActions.setInspectorObjects(documentId, objects)),
