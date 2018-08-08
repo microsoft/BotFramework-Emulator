@@ -35,7 +35,6 @@ import { ILuisService, ServiceType } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
 import { connect } from 'react-redux';
 import {
-  launchLuisEditor,
   launchLuisModelsViewer,
   LuisModelViewerPayload,
   openLuisDeepLink,
@@ -43,23 +42,20 @@ import {
 } from '../../../../data/action/luisServiceActions';
 import { RootState } from '../../../../data/store';
 import { LuisEditor } from './luisEditor/luisEditor';
-import { LuisExplorer } from './luisExplorer';
+import { LuisExplorer, LuisProps } from './luisExplorer';
 
-const mapStateToProps = (state: RootState) => {
+const mapStateToProps = (state: RootState): Partial<LuisProps> => {
   const { services } = state.bot.activeBot;
   return {
-    luisServices: services.filter(service => service.type === ServiceType.Luis),
+    luisServices: services.filter(service => service.type === ServiceType.Luis) as ILuisService[],
     window
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch): Partial<LuisProps> => {
   return {
     launchLuisModelsViewer: (luisModelsViewer: LuisModelViewerPayload) =>
-      launchLuisModelsViewer(luisModelsViewer),
-
-    launchLuisEditor: (luisEditor: ComponentClass<LuisEditor>, luisService: ILuisService) =>
-      dispatch(launchLuisEditor(luisEditor, luisService)),
+      dispatch(launchLuisModelsViewer(luisModelsViewer)),
 
     openLuisDeepLink: (luisService: ILuisService) =>
       dispatch(openLuisDeepLink(luisService)),

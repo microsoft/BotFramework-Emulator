@@ -37,6 +37,13 @@ export namespace SharedConstants {
 
   /** Names of commands used in both main and client */
   export namespace Commands {
+
+    export namespace Azure {
+      export const RetrieveArmToken = 'azure:retrieve-arm-token';
+      export const PersistAzureLoginChanged = 'azure:persist-azure-login-changed';
+      export const SignUserOutOfAzure = 'azure:sign-user-out';
+    }
+
     export namespace Bot {
       export const Create = 'bot:create';
       export const Save = 'bot:save';
@@ -104,10 +111,8 @@ export namespace SharedConstants {
       export const Changed = 'file:changed';
     }
 
-    export namespace Azure {
-      export const RetrieveArmToken = 'azure:retrieve-arm-token';
-      export const PersistAzureLoginChanged = 'azure:persist-azure-login-changed';
-      export const SignUserOutOfAzure = 'azure:sign-user-out';
+    export namespace Luis {
+      export const GetLuisApplications = 'luis:getLuisApplications';
     }
 
     export namespace Misc {

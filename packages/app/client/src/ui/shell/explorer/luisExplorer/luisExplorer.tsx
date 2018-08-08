@@ -34,13 +34,21 @@
 import { ILuisService } from 'msbot/bin/schema';
 import { LuisService } from 'msbot/bin/models';
 import * as React from 'react';
-import { ComponentClass, MouseEventHandler, SyntheticEvent } from 'react';
+import { MouseEventHandler, SyntheticEvent } from 'react';
 import { ServicePane, ServicePaneProps } from '../servicePane/servicePane';
 import { LuisEditorContainer } from './luisEditor';
+import { LuisModelViewerPayload } from '../../../../data/action/luisServiceActions';
+import {
+  AzureLoginFailedDialogContainer,
+  AzureLoginSuccessDialogContainer,
+  ConnectLuisAppPromptDialogContainer,
+  GetStartedWithLuisDialogContainer
+} from '../../../dialogs';
+import { LuisModelsViewerContainer } from './luisModelsViewerDialog/luisModelsViewerContainer';
 
 export interface LuisProps extends ServicePaneProps {
   luisServices?: ILuisService[];
-  launchLuisEditor: (luisEditor: ComponentClass<any>) => void;
+  launchLuisModelsViewer: (luisModelsViewer: LuisModelViewerPayload) => void;
   openLuisDeepLink: (luisService: ILuisService) => void;
 }
 
@@ -74,6 +82,15 @@ export class LuisExplorer extends ServicePane<LuisProps> {
   }
 
   protected onAddIconClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
-    this.props.launchLuisEditor(LuisEditorContainer);
+    this.props.launchLuisModelsViewer({
+      azureAuthWorkflowComponents: {
+        loginFailedDialog: AzureLoginFailedDialogContainer,
+        loginSuccessDialog: AzureLoginSuccessDialogContainer,
+        promptDialog: ConnectLuisAppPromptDialogContainer
+      },
+      getStartedWithLuisDialog: GetStartedWithLuisDialogContainer,
+      luisEditorComponent: LuisEditorContainer,
+      luisModelViewer: LuisModelsViewerContainer,
+    });
   }
 }

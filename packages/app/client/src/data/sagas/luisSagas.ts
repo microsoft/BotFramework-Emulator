@@ -47,14 +47,14 @@ import {
   OPEN_LUIS_DEEP_LINK,
   RETRIEVE_LUIS_MODELS
 } from '../action/luisServiceActions';
-import { LuisApi, LuisModel } from '../http/luisApi';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { LuisModel, SharedConstants } from '@bfemulator/app-shared';
 import { RootState } from '../store';
 import { beginAzureAuthWorkflow } from '../action/azureAuthActions';
 import {
   AzureLoginFailedDialogContainer,
   AzureLoginSuccessDialogContainer,
-  ConnectLuisAppPromptDialogContainer, GetStartedWithLuisDialogContainer
+  ConnectLuisAppPromptDialogContainer,
+  GetStartedWithLuisDialogContainer
 } from '../../ui/dialogs';
 import { getArmToken } from './azureAuthSaga';
 import { LuisModelsViewer } from '../../ui/shell/explorer/luisExplorer/luisModelsViewerDialog/luisModelsViewer';
@@ -63,6 +63,8 @@ const isModalServiceBusy = (state: RootState) => state.dialog.showing;
 const getArmTokenFromState = (state: RootState) => state.azureAuth.access_token;
 
 function* launchLuisModelsViewer(action: LuisServiceAction<LuisModelViewerPayload>): IterableIterator<any> {
+  // To retrieve the luis models, we must have the authoring key.
+  // To get the authoring key, we need the arm token
   let accessToken = yield select(getArmTokenFromState);
   if (!accessToken) {
     accessToken = yield* getArmToken(beginAzureAuthWorkflow(
@@ -71,7 +73,7 @@ function* launchLuisModelsViewer(action: LuisServiceAction<LuisModelViewerPayloa
       AzureLoginFailedDialogContainer));
   }
   if (!accessToken) {
-    return null; // canceled somewhere
+    return null; // canceled or failed somewhere
   }
   const luisModels = yield* retrieveLuisModels();
   if (!luisModels.length) {
@@ -107,7 +109,8 @@ function* retrieveLuisModels(): IterableIterator<any> {
   if (!accessToken) {
     throw new Error('Auth credentials do not exist.');
   }
-  const luisModels = yield LuisApi.getApplicationsList(accessToken);
+  const { Luis } = SharedConstants.Commands;
+  const luisModels = yield CommandServiceImpl.remoteCall(Luis.GetLuisApplications, accessToken);
   return yield luisModels;
 }
 
@@ -158,7 +161,8 @@ function* removeLuisServiceFromActiveBot(luisService: ILuisService): IterableIte
   }
 }
 
-function* launchLuisEditor(action: LuisServiceAction<LuisEditorPayload|LuisModelViewerPayload>): IterableIterator<any> {
+function* launchLuisEditor(action: LuisServiceAction<LuisEditorPayload | LuisModelViewerPayload>)
+  : IterableIterator<any> {
   const { luisEditorComponent, luisService = {} } = action.payload;
   const result = yield DialogService.showDialog<ComponentClass<any>>(luisEditorComponent, { luisService });
   if (result) {
