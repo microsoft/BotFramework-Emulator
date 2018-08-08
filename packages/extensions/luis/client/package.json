@@ -33,7 +33,7 @@
     "tslint": "^5.10.0",
     "tslint-loader": "^3.6.0",
     "ts-loader": "^4.4.2",
-    "typescript": "3.0.1",
+    "typescript": "2.7.2",
     "sass-loader": "^7.0.3",
     "resolve-url-loader": "^2.3.0",
     "typings-for-css-modules-loader": "^1.7.0",

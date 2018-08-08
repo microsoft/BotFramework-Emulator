@@ -7,7 +7,7 @@
   "types": "built/index.d.ts",
   "scripts": {
     "build": "npm run lint && npm run clean && tsc --pretty",
-    "clean": "rimraf ./built",
+    "clean": "rimraf ./built && rimraf ../../../node_modules/@types/prop-types",
     "lint": "tslint --project tsconfig.json",
     "prepare": "npm run clean",
     "test": "jest"
@@ -20,7 +20,7 @@
     "rimraf": "^2.6.2",
     "ts-jest": "^22.4.6",
     "tslint": "^5.10.0",
-    "typescript": "3.0.1"
+    "typescript": "2.7.2"
   },
   "dependencies": {
     "@bfemulator/sdk-shared": "^1.0.0",
