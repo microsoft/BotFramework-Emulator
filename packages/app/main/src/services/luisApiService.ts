@@ -31,31 +31,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export interface LuisModel {
-  id: string;
-  name: string;
-  description: string;
-  culture: string;
-  usageScenario: string;
-  domain: string;
-  versionsCount: number;
-  createdDateTime: string;
-  endpoints: {
-    PRODUCTION: any;
-    STAGING: any
-  };
-  endpointHitsCount: number;
-  activeVersion: string;
-  ownerEmail: string;
-}
+import { LuisModel } from '@bfemulator/app-shared';
+import * as fetch from 'electron-fetch';
 
 export class LuisApi {
   public static async getApplicationsList(armToken: string): Promise<LuisModel[]> {
     // We have the arm token which allows us to get the
     // authoring key used to retrieve the apps
-    const req: RequestInit = {headers: {Authorization: `Bearer ${armToken}`}};
-    const authoringKeyResponse = await fetch('https://api.luis.ai/api/v2.0/bots/programmatickey', req);
-    const authoringKey = await authoringKeyResponse.text();
+    const req: RequestInit = { headers: { Authorization: `Bearer ${armToken}` } };
+    let authoringKey: string;
+    try {
+      const authoringKeyResponse = await (fetch as any)
+        .default('https://api.luis.ai/api/v2.0/bots/programmatickey', req);
+      authoringKey = await authoringKeyResponse.text();
+    } catch (e) {
+      return null;
+    }
     const luisModels: LuisModel[] = [];
     ['westus', 'westeurope', 'australiaeast'].forEach(async region => {
       try {
@@ -76,7 +67,7 @@ export class LuisApi {
       'Ocp-Apim-Subscription-Key': authoringKey
     });
 
-    const response = await fetch(url, { headers, method: 'get' });
+    const response = await fetch(url, { headers, method: 'get' } as any);
     return await response.json() as LuisModel[];
   }
 }
