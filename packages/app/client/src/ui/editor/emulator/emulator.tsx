@@ -45,7 +45,6 @@ import { updateDocument } from '../../../data/action/editorActions';
 import * as PresentationActions from '../../../data/action/presentationActions';
 import { Document } from '../../../data/reducer/editor';
 import { RootState } from '../../../data/store';
-
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { SettingsService } from '../../../platform/settings/settingsService';
 import ToolBar, { Button as ToolBarButton } from '../toolbar/toolbar';
@@ -54,8 +53,9 @@ import DetailPanel from './detailPanel/detailPanel';
 import LogPanel from './logPanel/logPanel';
 import PlaybackBar from './playbackBar/playbackBar';
 import { debounce } from '../../../utils';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants, newNotification, Notification } from '@bfemulator/app-shared';
 import * as styles from './emulator.scss';
+import { beginAdd } from '../../../data/action/notificationActions';
 
 const { encode } = base64Url;
 
@@ -77,6 +77,7 @@ interface EmulatorProps {
   presentationModeEnabled?: boolean;
   setInspectorObjects?: (documentId: string, objects: any) => void;
   updateDocument?: (documentId: string, updatedValues: any) => void;
+  createErrorNotification?: (notification: Notification) => void;
 }
 
 class EmulatorComponent extends React.Component<EmulatorProps, {}> {
@@ -184,8 +185,9 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
           }
         }
       } catch (err) {
-        // TODO: surface error somewhere
-        console.error('Error creating a new conversation for transcript mode: ', err);
+        const errMsg = `Error creating a new conversation in transcript mode: ${err}`;
+        const notification = newNotification(errMsg);
+        this.props.createErrorNotification(notification);
       }
     }
   }
@@ -319,7 +321,8 @@ const mapDispatchToProps = (dispatch): EmulatorProps => ({
   setInspectorObjects: (documentId, objects) => dispatch(ChatActions.setInspectorObjects(documentId, objects)),
   clearLog: documentId => dispatch(ChatActions.clearLog(documentId)),
   newConversation: (documentId, options) => dispatch(ChatActions.newConversation(documentId, options)),
-  updateDocument: (documentId, updatedValues: Partial<Document>) => dispatch(updateDocument(documentId, updatedValues))
+  updateDocument: (documentId, updatedValues: Partial<Document>) => dispatch(updateDocument(documentId, updatedValues)),
+  createErrorNotification: (notification: Notification) => dispatch(beginAdd(notification))
 });
 
 export const Emulator = connect(mapStateToProps, mapDispatchToProps)(EmulatorComponent as any) as any;

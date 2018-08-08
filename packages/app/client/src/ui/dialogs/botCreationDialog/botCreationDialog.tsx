@@ -49,7 +49,9 @@ import * as styles from './botCreationDialog.scss';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 import { DialogService } from '../service';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants, newNotification } from '@bfemulator/app-shared';
+import store from '../../../data/store';
+import { beginAdd } from '../../../data/action/notificationActions';
 
 export interface BotCreationDialogState {
   bot: BotConfigWithPath;
@@ -237,7 +239,11 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
 
     ActiveBotHelper.confirmAndCreateBot(bot, secret)
       .then(() => DialogService.hideDialog())
-      .catch(err => console.error('Error during confirm and create bot: ', err));
+      .catch(err => {
+        const errMsg = `Error during confirm and create bot: ${err}`;
+        const notification = newNotification(errMsg);
+        store.dispatch(beginAdd(notification));
+      });
   }
 
   private showBotSaveDialog = async (): Promise<any> => {

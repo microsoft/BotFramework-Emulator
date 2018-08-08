@@ -42,7 +42,7 @@ import {
   SmallHeader,
   TextField
 } from '@bfemulator/ui-react';
-import { FrameworkSettings, SharedConstants } from '@bfemulator/app-shared';
+import { FrameworkSettings, SharedConstants, newNotification } from '@bfemulator/app-shared';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import * as EditorActions from '../../../data/action/editorActions';
 import * as Constants from '../../../constants';
@@ -51,6 +51,7 @@ import { getTabGroupForDocument } from '../../../data/editorHelpers';
 import { GenericDocument } from '../../layout';
 import { debounce } from '../../../utils';
 import * as styles from './appSettingsEditor.scss';
+import { beginAdd } from '../../../data/action/notificationActions';
 
 interface AppSettingsEditorProps {
   documentId?: string;
@@ -112,7 +113,11 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
           uncommitted: settings
         }));
       })
-      .catch(err => console.error('Error while loading emulator settings: ', err));
+      .catch(err => {
+        const errMsg = `Error while loading emulator settings: ${err}`;
+        const notification = newNotification(errMsg);
+        store.dispatch(beginAdd(notification));
+      });
   }
 
   setUncommittedState(patch: any) {
@@ -154,7 +159,11 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
 
     CommandServiceImpl.remoteCall(Commands.Electron.ShowOpenDialog, dialogOptions)
       .then(ngrokPath => this.setUncommittedState({ ngrokPath }))
-      .catch(err => console.log('User cancelled browsing for ngrok: ', err));
+      .catch(err => {
+        const errMsg = `Error while browsing for ngrok: ${err}`;
+        const notification = newNotification(errMsg);
+        store.dispatch(beginAdd(notification));
+      });
   }
 
   onChangeSizeLimit(e: any): void {
@@ -176,7 +185,11 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
 
     CommandServiceImpl.remoteCall(Commands.Settings.SaveAppSettings, settings)
       .then(() => this.commit(settings))
-      .catch(err => console.error('Error while saving emulator settings: ', err));
+      .catch(err => {
+        const errMsg = `Error while saving emulator settings: ${err}`;
+        const notification = newNotification(errMsg);
+        store.dispatch(beginAdd(notification));
+      });
   }
 
   onChangeAuthTokenVersion(): void {
