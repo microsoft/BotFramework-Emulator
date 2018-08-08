@@ -43,16 +43,7 @@ module.exports = {
       {
         test: /\.(tsx?)|(jsx)$/,
         exclude: [/node_modules/],
-        use: [
-          {
-            loader: 'babel-loader',
-            options: {
-              babelrc: false,
-              plugins: ['react-hot-loader/babel'],
-            },
-          },
-          'ts-loader',
-        ],
+        loader: 'ts-loader',
       },
       {
         test: /\.tsx?$/,
@@ -64,7 +55,8 @@ module.exports = {
 
   externals: {
     react: 'umd react',
-    'react-dom' : 'umd react-dom'
+    'react-dom': 'umd react-dom',
+    'office-ui-fabric-react': 'umd office-ui-fabric-react'
   },
 
   resolve: {
