@@ -115,7 +115,7 @@ export class RestServer {
     this._botEmulator = new BotEmulator(
       botUrl => emulator.ngrok.getServiceUrl(botUrl),
       {
-        fetch,
+        fetch: (fetch as any).default,
         loggerOrLogService: mainWindow.logService,
         tunnelingServiceUrl: () => emulator.ngrok.getNgrokServiceUrl()
       }
