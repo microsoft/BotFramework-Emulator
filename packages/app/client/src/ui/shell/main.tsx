@@ -113,8 +113,8 @@ export class Main extends React.Component<MainProps, MainState> {
             <Splitter
               orientation={ 'vertical' }
               primaryPaneIndex={ 0 }
-              minSizes={ { 0: 40, 1: 40 } }
-              initialSizes={ { 0: 210 } }
+              minSizes={ { 1: 40 } }
+              initialSizes={ { 0: 280 } }
               onSizeChange={ this.checkExplorerSize }>
               { workbenchChildren }
             </Splitter>
