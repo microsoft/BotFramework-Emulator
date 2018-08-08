@@ -32,7 +32,6 @@
 //
 
 import * as BotChat from 'botframework-webchat';
-
 import { uniqueId } from '@bfemulator/sdk-shared';
 import { Splitter } from '@bfemulator/ui-react';
 import base64Url from 'base64url';
@@ -45,7 +44,6 @@ import { updateDocument } from '../../../data/action/editorActions';
 import * as PresentationActions from '../../../data/action/presentationActions';
 import { Document } from '../../../data/reducer/editor';
 import { RootState } from '../../../data/store';
-
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { SettingsService } from '../../../platform/settings/settingsService';
 import ToolBar, { Button as ToolBarButton } from '../toolbar/toolbar';
@@ -105,9 +103,14 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
   }
 
   componentWillMount() {
+    window.addEventListener('keydown', this.keyboardEventListener);
     if (this.shouldStartNewConversation()) {
       this.startNewConversation();
     }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.keyboardEventListener);
   }
 
   componentWillReceiveProps(nextProps: any) {
@@ -300,6 +303,16 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
         SharedConstants.Commands.Emulator.SaveTranscriptToFile,
         this.props.document.directLine.conversationId
       );
+    }
+  }
+
+  private readonly keyboardEventListener: EventListener = (event: KeyboardEvent): void => {
+    // Meta corresponds to 'Command' on Mac
+    const ctrlOrCmdPressed = event.getModifierState('Control') || event.getModifierState('Meta');
+    const shiftPressed = ctrlOrCmdPressed && event.getModifierState('Shift');
+    const key = event.key.toLowerCase();
+    if (ctrlOrCmdPressed && shiftPressed && key === 'r') {
+      this.handleStartOverClick();
     }
   }
 }

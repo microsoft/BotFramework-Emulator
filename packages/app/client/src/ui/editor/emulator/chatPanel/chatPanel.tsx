@@ -49,11 +49,11 @@ export default class ChatPanel extends React.Component<ChatPanelProps, {}> {
   }
 
   render() {
-    const { botUrl } = this.props.document.endpoint || { botUrl: '' };
+    const { endpointId } = this.props.document.endpoint || { endpointId: '' };
 
     return (
       <div className={ `${styles.chatPanel} ${this.props.className || ''}` }>
-        <header>{ botUrl }</header>
+        <header>{ endpointId }</header>
         <Chat mode={ this.props.mode } document={ this.props.document }
               onStartConversation={ this.props.onStartConversation } key={ this.props.document.pingId }/>
       </div>
