@@ -40,6 +40,7 @@ import { registerCommands as registerNgrokCommands } from './ngrokCommands';
 import { registerCommands as registerAzureCommands } from './azureCommands';
 import { registerCommands as registerOAuthCommands } from './oauthCommands';
 import { registerCommands as registerSettingsCommands } from './settingsCommands';
+import { registerCommands as registerLuisCommands } from './luisCommands';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
 /** Registers all commands */
@@ -53,4 +54,5 @@ export function registerAllCommands(commandRegistry: CommandRegistryImpl) {
   registerAzureCommands(commandRegistry);
   registerOAuthCommands(commandRegistry);
   registerSettingsCommands(commandRegistry);
+  registerLuisCommands(commandRegistry);
 }

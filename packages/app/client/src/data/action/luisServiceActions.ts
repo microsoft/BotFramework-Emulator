@@ -72,7 +72,7 @@ export interface LuisModelViewerPayload extends LuisServicePayload {
   luisEditorComponent: ComponentClass<any>;
 }
 
-export function launchLuisModelsViewer<T>(luisModelViewer: LuisModelViewerPayload)
+export function launchLuisModelsViewer(luisModelViewer: LuisModelViewerPayload)
   : LuisServiceAction<LuisModelViewerPayload> {
   return {
     type: LAUNCH_LUIS_MODELS_VIEWER,
