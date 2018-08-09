@@ -93,7 +93,8 @@ export async function loadBotWithRetry(botPath: string, secret?: string): Promis
     // Add easily discernable errors / error codes to msbot package
     if (typeof e === 'string' && (e.includes('secret') || e.includes('crypt'))) {
       // bot requires a secret to decrypt properties
-      const newSecret = await mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ShowSecretPromptDialog);
+      const { Commands } = SharedConstants;
+      const newSecret = await mainWindow.commandService.remoteCall(Commands.UI.ShowSecretPromptDialog);
       if (newSecret === null) {
         // pop-up was dismissed; stop trying to prompt for secret
         return null;
@@ -139,7 +140,8 @@ export async function patchBotsJson(botPath: string, bot: BotInfo): Promise<BotI
     bots.unshift(bot);
   }
   store.dispatch(BotActions.load(bots));
-  await mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.SyncBotList, bots);
+  const { Commands } = SharedConstants;
+  await mainWindow.commandService.remoteCall(Commands.Bot.SyncBotList, bots).catch();
 
   return bots;
 }
@@ -153,5 +155,14 @@ export async function saveBot(bot: BotConfigWithPath): Promise<void> {
   if (botInfo.secret) {
     saveableBot.validateSecretKey();
   }
-  return await saveableBot.save(bot.path);
+  return await saveableBot.save(bot.path).catch();
+}
+
+/** Removes a bot from bots.json (doesn't delete the bot file) */
+export async function removeBotFromList(botPath: string): Promise<void> {
+  const state = store.getState();
+  const bots = [...state.bot.botFiles].filter(bot => bot.path !== botPath);
+  store.dispatch(BotActions.load(bots));
+  const { Commands } = SharedConstants;
+  await mainWindow.commandService.remoteCall(Commands.Bot.SyncBotList, bots).catch();
 }

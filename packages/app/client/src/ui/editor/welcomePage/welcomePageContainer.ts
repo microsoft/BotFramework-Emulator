@@ -31,10 +31,35 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './appSettingsEditor/appSettingsEditor';
-export * from './botSettingsEditor/botSettingsEditor';
-export * from './editor';
-export * from './panel/panel';
-export * from './toolbar/toolbar';
-export * from './emulator';
-export * from './welcomePage';
+import { hot } from 'react-hot-loader';
+import { connect } from 'react-redux';
+import { WelcomePage as WelcomePageComp, WelcomePageProps } from './welcomePage';
+import { RootState } from '../../../data/store';
+import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
+import { SharedConstants } from '@bfemulator/app-shared';
+
+function mapStateToProps(state: RootState): WelcomePageProps {
+  return {
+    recentBots: state.bot.botFiles
+  };
+}
+
+function mapDispatchToProps(): WelcomePageProps {
+  const { Commands } = SharedConstants;
+  return {
+    onNewBotClick: () => {
+      CommandServiceImpl.call(Commands.UI.ShowBotCreationDialog).catch();
+    },
+    onOpenBotClick: () => {
+      CommandServiceImpl.call(Commands.Bot.OpenBrowse).catch();
+    },
+    onBotClick: (_e: any, path: string) => {
+      CommandServiceImpl.call(Commands.Bot.Switch, path).catch();
+    },
+    onDeleteBotClick: (_e: any, path: string) => {
+      CommandServiceImpl.remoteCall(Commands.Bot.RemoveFromBotList, path).catch();
+    }
+  };
+}
+
+export const WelcomePage = connect(mapStateToProps, mapDispatchToProps)(hot(module)(WelcomePageComp)) as any;

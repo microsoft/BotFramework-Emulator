@@ -52,6 +52,7 @@ export namespace SharedConstants {
       export const SyncBotList = 'bot:list:sync';
       export const OpenSettings = 'bot-settings:open';
       export const Load = 'bot:load';
+      export const RemoveFromBotList = 'bot:list:remove';
     }
 
     export namespace ClientInit {

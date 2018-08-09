@@ -38,7 +38,8 @@ import {
   patchBotsJson,
   pathExistsInRecentBots,
   saveBot,
-  toSavableBot
+  toSavableBot,
+  removeBotFromList
 } from '../botHelpers';
 import * as BotActions from '../botData/actions/botActions';
 import {
@@ -251,6 +252,12 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // Patches a bot record in bots.json
   commandRegistry.registerCommand(Commands.PatchBotList, async (botPath: string, bot: BotInfo): Promise<void> => {
     // patch bots.json and update the store
-    await patchBotsJson(botPath, bot);
+    await patchBotsJson(botPath, bot).catch();
+  });
+
+  // ---------------------------------------------------------------------------
+  // Removes a bot record from bots.json (doesn't delete .bot file)
+  commandRegistry.registerCommand(Commands.RemoveFromBotList, async (botPath: string): Promise<void> => {
+    await removeBotFromList(botPath).catch();
   });
 }

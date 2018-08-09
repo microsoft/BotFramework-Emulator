@@ -58,6 +58,26 @@
   }
 }
 
+.recentBot {
+  position: relative;
+
+  &:hover {
+    .recentBotActionBar {
+      display: block;
+    }
+  }
+}
+
+.recentBotActionBar {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 150px;
+  background-color: orange;
+}
+
 .recentBotDetail {
   display: inline-block;
   margin-left: 8px;
