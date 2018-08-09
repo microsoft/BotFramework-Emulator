@@ -41,7 +41,6 @@ import {
   closeDocument,
   newConversation,
   newDocument,
-  pingDocument,
   removeTranscript,
   setInspectorObjects
 } from '../action/chatActions';
@@ -54,7 +53,6 @@ describe('Chat reducer tests', () => {
     changeKey: 0,
     chats: {
       [testChatId]: {
-        pingId: 0,
         log: {
           entries: []
         }
@@ -63,18 +61,11 @@ describe('Chat reducer tests', () => {
     transcripts: [],
   };
 
-  it('should return unaltered state for non-matching action type',
-    () => {
-      const emptyAction: ChatAction = { type: null, payload: null };
-      const startingState = { ...DEFAULT_STATE };
-      const endingState = chat(DEFAULT_STATE, emptyAction);
-      expect(endingState).toEqual(startingState);
-    });
-
-  it('should ping a chat', () => {
-    const action = pingDocument('testChat1');
-    const state = chat(DEFAULT_STATE, action);
-    expect(state.chats[testChatId].pingId).toBe(1);
+  it('should return unaltered state for non-matching action type', () => {
+    const emptyAction: ChatAction = { type: null, payload: null };
+    const startingState = { ...DEFAULT_STATE };
+    const endingState = chat(DEFAULT_STATE, emptyAction);
+    expect(endingState).toEqual(startingState);
   });
 
   it('should add a transcript', () => {
