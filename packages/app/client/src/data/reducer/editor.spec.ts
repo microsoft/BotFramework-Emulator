@@ -1021,13 +1021,12 @@ describe('Editor reducer utility function tests', () => {
     });
   });
 
-  describe('dropping a tab on the left side of the editor', () => {
+  test('dropping a tab on the left side of the editor', () => {
     const startingState: EditorState = {
       ...defaultState,
       activeEditor: Constants.EDITOR_KEY_PRIMARY,
       editors: {
         [Constants.EDITOR_KEY_PRIMARY]: {
-          ...defaultState.editors[Constants.EDITOR_KEY_PRIMARY],
           activeDocumentId: 'doc2',
           documents: {
             'doc1': {},

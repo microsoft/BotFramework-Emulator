@@ -6,6 +6,7 @@
   margin-bottom: 34px;
   width: auto;
   max-width: 100%;
+
   a {
     min-width: 0;
     white-space: nowrap;
@@ -13,6 +14,7 @@
     overflow: hidden;
     text-decoration: none;
     color: var(--focused-selected-list-item-bg);
+
     :hover {
       color: var(--focused-selected-list-item-bg);
     }
@@ -50,18 +52,51 @@
   max-height: 100px;
   overflow-y: auto;
   overflow-x: hidden;
+
   & > li {
     display: flex;
   }
+
   a {
     flex-shrink: 0;
+  }
+}
+
+.recentBot {
+  position: relative;
+
+  &:hover {
+    .recentBotActionBar {
+      display: block;
+    }
+  }
+}
+
+.recentBotActionBar {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: auto;
+  padding: 0 8px;
+  background-color: var(--neutral-2);
+
+  > button {
+    border: 0;
+    padding: 0;
+    height: 100%;
+    width: 32px;
+    background-color: var(--neutral-5);
+    text-align: center;
+    cursor: pointer;
   }
 }
 
 .recentBotDetail {
   display: inline-block;
   margin-left: 8px;
-  color: var(--neitral-14);
+  color: var(--neutral-14);
   user-select: text;
   cursor: text;
 }
@@ -71,6 +106,7 @@
   margin-bottom: 16px;
   width: 180px;
   height: 26px;
+
   :global {
     .ms-Button-label {
       line-height: 26px;
