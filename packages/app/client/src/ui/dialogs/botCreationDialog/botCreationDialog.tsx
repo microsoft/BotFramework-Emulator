@@ -99,6 +99,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
       && secretCriteria;
 
     const endpointWarning = this.validateEndpoint(endpoint.endpoint);
+    const endpointPlaceholder = 'Your bot\'s endpoint (ex: http://localhost:3978/api/messages)';
 
     // TODO - localization
     return (
@@ -115,7 +116,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
             inputClassName="bot-creation-input"
             value={ this.state.endpoint.endpoint }
             onChanged={ this.onChangeEndpoint }
-            placeholder={ 'Enter a URL for your bot\'s endpoint' } label={ 'Endpoint URL' }
+            placeholder={ endpointPlaceholder } label={ 'Endpoint URL' }
             required={ true }/>
           { endpointWarning && <span className={ styles.endpointWarning }>{ endpointWarning }</span> }
           <Row className={ styles.multiInputRow }>
