@@ -258,6 +258,16 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Removes a bot record from bots.json (doesn't delete .bot file)
   commandRegistry.registerCommand(Commands.RemoveFromBotList, async (botPath: string): Promise<void> => {
-    await removeBotFromList(botPath).catch();
+    const { ShowMessageBox } = SharedConstants.Commands.Electron;
+    const result = await mainWindow.commandService.call(ShowMessageBox, true, {
+      type: 'question',
+      buttons: ['Cancel', 'OK'],
+      defaultId: 1,
+      message: `Remove Bot ${botPath} from bots list. Are you sure?`,
+      cancelId: 0,
+    });
+    if (result) {
+      await removeBotFromList(botPath).catch();
+    }
   });
 }
