@@ -83,10 +83,10 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
                 <li className={ styles.recentBot } key={ bot.path }>
                   <a href="javascript:void(0);" onClick={ ev => onBotClick(ev, bot.path) }
                       title={ bot.path }><TruncateText>{ bot.displayName }</TruncateText></a>
-                  <TruncateText className={ styles.recentBotDetail }
+                  <TruncateText className={ styles.recentBotPath }
                                 title={ bot.path }>{ bot.path }</TruncateText>
-                  <div className={ styles.recentBotActionBar }>
-                  <button onClick={ ev => onDeleteBotClick(ev, bot.path) }>-</button>
+                <div className={ styles.recentBotActionBar }>
+                  <button onClick={ ev => onDeleteBotClick(ev, bot.path) }></button>
                   </div>
                 </li>)
               :
