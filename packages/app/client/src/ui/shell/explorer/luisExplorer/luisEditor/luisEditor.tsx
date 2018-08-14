@@ -129,7 +129,7 @@ export class LuisEditor extends Component<LuisEditorProps, LuisEditorState> {
             errorMessage={ versionError }
             value={ version }
             onChanged={ this._textFieldHandlers.version }
-            label="Version"
+            label="LUIS application version"
             required={ true }
           />
           <TextField
