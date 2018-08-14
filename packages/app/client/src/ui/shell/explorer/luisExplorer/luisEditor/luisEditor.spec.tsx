@@ -7,6 +7,7 @@ import { LuisEditorContainer } from './luisEditorContainer';
 import { LuisEditor } from './luisEditor';
 import { DialogService } from '../../../../dialogs/service';
 import { LuisService } from 'msbot/bin/models';
+import { PrimaryButton } from '@bfemulator/ui-react';
 
 jest.mock('../../../../dialogs/service', () => ({
   DialogService: {
@@ -67,10 +68,18 @@ describe('The AzureLoginFailedDialogContainer component should', () => {
   it('should exit with the newly edited luis mode when clicking submit', () => {
     const spy = jest.spyOn(DialogService, 'hideDialog');
     const instance = node.instance();
-    instance.onInputChange('name', true, 'renamed model');
+    instance._textFieldHandlers.name('renamed model');
     instance.onSubmitClick();
-    const mockMock = {...mockService};
+    const mockMock = { ...mockService };
     mockMock.name = 'renamed model';
     expect(spy).toHaveBeenCalledWith([new LuisService(mockMock)]);
+  });
+
+  it('should enable the submit button when all required fields have non-null values', () => {
+    const instance = node.instance();
+    instance._textFieldHandlers.name('renamed model');
+    instance._textFieldHandlers.subscriptionKey(''); // non-required field
+    const submitBtn = node.find(PrimaryButton);
+    expect(submitBtn.props.disabled).toBeFalsy();
   });
 });
