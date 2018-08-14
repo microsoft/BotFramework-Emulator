@@ -104,4 +104,15 @@ describe('The LuisModelsViewerDialog component should', () => {
     const instance = node.instance();
     expect(instance.addButtonEnabled).toBeFalsy();
   });
+
+  it('should update the existing luis services map when new services are provided after the component renders', () => {
+    const instance = node.instance();
+    const anotherMockService = {...mockService};
+    anotherMockService.appId = '123';
+    instance.componentWillReceiveProps({
+      existingLuisServices: [mockService, anotherMockService]
+    });
+
+    expect(instance.existingLuisServicesMap['123']).toBe(anotherMockService);
+  });
 });
