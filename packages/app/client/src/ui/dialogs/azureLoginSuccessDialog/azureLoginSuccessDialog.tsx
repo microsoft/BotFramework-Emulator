@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Component, MouseEvent } from 'react';
-import { Checkbox, Dialog, DialogContent, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
+import { Checkbox, Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
 import * as styles from './azureLoginSuccessDialog.scss';
 
 export interface AzureLoginSuccessDialogState {
@@ -24,14 +24,12 @@ export class AzureLoginSuccessDialog extends Component<AzureLoginSuccessDialogPr
   public render() {
     return (
       <Dialog title="Success!" cancel={ this.onDialogCancel } className={ styles.dialog }>
-        <DialogContent>
-          <p>You are now signed in with your Azure account</p>
-          <Checkbox
-            checked={ this.state.rememberMeChecked }
-            label="Keep me signed in to the Bot Framework Emulator."
-            onChange={ this.checkBoxChanged }
-          />
-        </DialogContent>
+        <p>You are now signed in with your Azure account</p>
+        <Checkbox
+          checked={ this.state.rememberMeChecked }
+          label="Keep me signed in to the Bot Framework Emulator."
+          onChange={ this.checkBoxChanged }
+        />
         <DialogFooter>
           <PrimaryButton
             text="Close"

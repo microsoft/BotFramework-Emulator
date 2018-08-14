@@ -30,7 +30,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { hot } from 'react-hot-loader';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { BotInfo } from '@bfemulator/app-shared';
@@ -122,4 +121,4 @@ const mapStateToProps = (state: RootState): WelcomePageProps => ({
   recentBots: state.bot.botFiles
 });
 
-export const WelcomePage = connect(mapStateToProps)(hot(module)(WelcomePageComponent)) as any;
+export const WelcomePage = connect(mapStateToProps)(WelcomePageComponent);

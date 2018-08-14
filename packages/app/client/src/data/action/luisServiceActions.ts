@@ -47,6 +47,7 @@ export interface LuisServiceAction<T> extends Action {
 
 export interface LuisServicePayload {
   luisService?: ILuisService;
+  authenticatedUser?: string;
 }
 
 export interface LuisEditorPayload extends LuisServicePayload {

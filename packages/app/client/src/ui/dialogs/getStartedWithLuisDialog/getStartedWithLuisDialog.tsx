@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Component } from 'react';
-import { DefaultButton, Dialog, DialogContent, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
+import { DefaultButton, Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
 import * as styles from './getStartedWithLuisDialog.scss';
 
 export interface GetStartedWithLuisDialogProps {
@@ -16,13 +16,11 @@ export class GetStartedWithLuisDialog extends Component<GetStartedWithLuisDialog
         cancel={ this.props.cancel }
         className={ styles.getStartedWithLuis }
         title="Create a LUIS app">
-        <DialogContent>
-          <p>Language Understanding Service (LUIS) is a maching learning-based service for adding language
-            understanding to bots, applications and IoT Devices
-          </p>
-          <p>You have not signed up for a LUIS account under { } </p>
-          <a href="javascript:void(0);" onClick={ this.props.addLuisAppManually }>Add a LUIS app manually</a>
-        </DialogContent>
+        <p>Language Understanding Service (LUIS) is a maching learning-based service for adding language
+          understanding to bots, applications and IoT Devices
+        </p>
+        <p>You have not signed up for a LUIS account under { } </p>
+        <a href="javascript:void(0);" onClick={ this.props.addLuisAppManually }>Add a LUIS app manually</a>
         <DialogFooter>
           <DefaultButton text="Cancel" onClick={ this.props.cancel }/>
           <PrimaryButton text="Sign up for LUIS" onClick={ this.props.confirm }/>

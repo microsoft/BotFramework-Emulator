@@ -6,6 +6,6 @@ import { LuisApi } from '../services/luisApiService';
 const { Luis } = SharedConstants.Commands;
 
 export function registerCommands(commandRegistry: CommandRegistry) {
-
-  commandRegistry.registerCommand(Luis.GetLuisApplications, LuisApi.getApplicationsList);
+  // Retrieves the list of luis services
+  commandRegistry.registerCommand(Luis.GetLuisServices, LuisApi.getServices);
 }

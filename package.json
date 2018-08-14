@@ -2,6 +2,7 @@
   "scripts": {
     "bootstrap": "lerna bootstrap --hoist",
     "build": "lerna run --scope \"@bfemulator/@(**shared|sdk**)\" build && lerna run --scope \"!@bfemulator/@(**shared|sdk**)\" build",
+    "start": "cd packages\\app\\client && npm run start",
     "test": "jest --runInBand",
     "test:coveralls": "jest --runInBand --coverage --coverageReporters=text-lcov | coveralls"
   },
