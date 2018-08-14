@@ -1,4 +1,5 @@
 {
+  "lib": ["es6", "es2015", "node"],
   "compilerOptions": {
     "importHelpers": true,
     "module": "none",

@@ -32,7 +32,7 @@
 //
 
 import { BrowserWindow } from 'electron';
-import * as fetch from 'electron-fetch';
+import fetch from 'node-fetch';
 import * as uuidv3 from 'uuid/v3';
 import * as uuidv4 from 'uuid/v4';
 import * as jwt from 'jsonwebtoken';
@@ -51,7 +51,7 @@ export class AzureAuthWorkflowService {
   public static* retrieveAuthToken(renew: boolean = false, redirectUri: string): IterableIterator<any> {
     const authWindow = yield this.launchAuthWindow(renew, redirectUri);
     authWindow.show();
-    const result = yield this.waitForAuthResult(authWindow);
+    const result = yield this.waitForAuthResult(authWindow, redirectUri);
     authWindow.close();
     if (result.error) {
       return false;
@@ -72,25 +72,42 @@ export class AzureAuthWorkflowService {
     yield result;
   }
 
-  private static async waitForAuthResult(browserWindow: BrowserWindow): Promise<AuthResponse> {
+  private static async waitForAuthResult(browserWindow: BrowserWindow, redirectUri: string): Promise<AuthResponse> {
     const response = await new Promise<AuthResponse>(resolve => {
-      browserWindow.addListener('close', () => resolve({ error: 'canceled' } as AuthResponse));
-      browserWindow.addListener('page-title-updated', event => {
-        const uri: string = (event.sender as any).history.pop() || '';
-        if (!uri.toLowerCase().includes('localhost')) {
+      let interval;
+      const poller = () => {
+        let uri: string;
+        const result: AuthResponse = {} as AuthResponse;
+        try {
+          const { history = [] }: { history: string[] } = browserWindow.webContents as any;
+          uri = history[history.length - 1] || '';
+        } catch (e) {
+          clearInterval(interval);
+          result.error = e.message;
+          resolve(result);
+        }
+        if (!uri.toLowerCase().startsWith(redirectUri.toLowerCase())) {
           return;
         }
         const idx = uri.indexOf('#');
         const values = uri.substring(idx + 1).split('&');
         const len = values.length;
-        const result: AuthResponse = {} as AuthResponse;
         for (let i = 0; i < len; i++) {
           const [key, value] = values[i].split(/[=]/);
           result[key] = value;
         }
+        clearInterval(interval);
         resolve(result);
-      });
+      };
+      browserWindow.addListener('close', () => resolve({ error: 'canceled' } as AuthResponse));
+      browserWindow.addListener('page-title-updated', poller);
+      interval = setInterval(poller, 500); // Backup if everything else fails
     });
+
+    if (response.error) {
+      return response;
+    }
+
     const isValid = await this.validateJWT(response.id_token);
     if (!isValid) {
       response.error = 'Invalid token';
@@ -184,7 +201,7 @@ export class AzureAuthWorkflowService {
       return this.config;
     }
     const configUrl = 'https://login.microsoftonline.com/common/.well-known/openid-configuration';
-    const configResponse = await (fetch as any).default(configUrl);
+    const configResponse = await fetch(configUrl);
     this.config = await configResponse.json();
     return this.config;
   }
@@ -194,7 +211,7 @@ export class AzureAuthWorkflowService {
       return this.jwks;
     }
     const { jwks_uri } = await this.getConfig();
-    const jwksResponse = await (fetch as any).default(jwks_uri);
+    const jwksResponse = await fetch(jwks_uri);
     this.jwks = await jwksResponse.json();
     return this.jwks;
   }
@@ -211,12 +228,11 @@ export class AzureAuthWorkflowService {
     const data = bits.join('&');
     let armToken: { access_token: string, refresh_token: string, error?: string };
     try {
-      const response = await (fetch as any)
-        .default(endpoint, {
-          body: data,
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-        });
+      const response = await fetch(endpoint, {
+        body: data,
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      });
       armToken = await response.json();
       const valid = await this.validateJWT(armToken.access_token);
       if (!valid) {

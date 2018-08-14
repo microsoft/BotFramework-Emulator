@@ -7,7 +7,7 @@
   "homepage": "https://github.com/Microsoft/BotFramework-Emulator",
   "scripts": {
     "build": "run-s lint build:electron",
-    "build:electron": "tsc --version && tsc -p . --outdir app/server",
+    "build:electron": "tsc -p . --outdir app/server",
     "lint": "tslint --project tsconfig.json",
     "start": "concurrently --kill-others --names \"electron,react-app\" --success first \"npm run start:electron:dev\" \"npm run start:react-app\"",
     "start:electron": "./node_modules/.bin/electron --inspect=7777 .",
@@ -105,7 +105,7 @@
     "chatdown": "^1.0.2",
     "chokidar": "^2.0.2",
     "command-line-args": "^5.0.2",
-    "electron-fetch": "^1.1.0",
+    "node-fetch": "2.2.0",
     "electron-updater": "^3.0.3",
     "formidable": "^1.1.1",
     "got": "^7.1.0",

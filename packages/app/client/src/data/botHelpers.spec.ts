@@ -54,7 +54,6 @@ import {
   getBotInfoByPath,
   pathExistsInRecentBots
 } from './botHelpers';
-
 describe('Bot helpers tests', () => {
   it('should get the active bot', () => {
     const activeBot = getActiveBot();

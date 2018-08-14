@@ -38,7 +38,6 @@ import BotEmulator from '../botEmulator';
 import getFacility from '../middleware/getFacility';
 import getRouteName from '../middleware/getRouteName';
 import getSessionId from './middleware/getSessionId';
-import * as HttpStatus from 'http-status-codes';
 
 export default function registerRoutes(botEmulator: BotEmulator, server: Server, uses: RequestHandler[]) {
   const facility = getFacility('directline');
@@ -51,9 +50,15 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
   );
 
   server.get('v4/token', (req: Restify.Request, res: Restify.Response) => {
-    res.send(HttpStatus.OK, '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">' +
+    const body = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">' +
       '<title>Botframework Emulator</title></head>' +
       '<body><!--This page is used as the redirect from the AAD auth for ABS and is required-->' +
-      '</body></html>', {'Content-Type': 'text/html; charset=utf-8'});
+      '</body></html>';
+    res.writeHead(200, {
+      'Content-Length': Buffer.byteLength(body),
+      'Content-Type': 'text/html'
+    });
+    res.write(body);
+    res.end();
   });
 }

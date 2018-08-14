@@ -31,4 +31,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export { LuisModelsViewerContainer } from './luisModelsViewerContainer';
+import { connect } from 'react-redux';
+import { DialogService } from '../service';
+import { GetStartedWithLuisDialog, GetStartedWithLuisDialogProps } from './getStartedWithLuisDialog';
+import { RootState } from '../../../data/store';
+
+const mapDispatchToProps = (_dispatch: () => void): GetStartedWithLuisDialogProps => ({
+  cancel: () => DialogService.hideDialog(0),
+  confirm: () => DialogService.hideDialog(1),
+  addLuisAppManually: () => DialogService.hideDialog(2)
+});
+
+const mapStateToProps = (state: RootState) => {
+  const {access_token: token = ''} = state.azureAuth;
+  const [, payload] = token.split('.');
+  return { user: JSON.parse(atob(payload)).upn };
+};
+
+export const GetStartedWithLuisDialogContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(GetStartedWithLuisDialog);

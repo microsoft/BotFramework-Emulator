@@ -33,14 +33,14 @@
 
 import { AzureAuthWorkflowService } from '../services/azureAuthWorkflowService';
 import { getStore as getSettingsStore } from '../settingsData/store';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { CommandRegistry } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { azureLoggedInUserChanged, azurePersistLoginChanged } from '../settingsData/actions/azureAuthActions';
 import { mainWindow } from '../main';
 import { getStore } from '../botData/store';
 
 /** Registers LUIS commands */
-export function registerCommands(commandRegistry: CommandRegistryImpl) {
+export function registerCommands(commandRegistry: CommandRegistry) {
   const { Azure } = SharedConstants.Commands;
 
   // ---------------------------------------------------------------------------
@@ -61,7 +61,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         break;
       }
     }
-    if (result) {
+    if (result && !result.error) {
       const [, payload] = (result.access_token as string).split('.');
       const payloadJson = JSON.parse(Buffer.from(payload, 'base64').toString());
       settingsStore.dispatch(azureLoggedInUserChanged(payloadJson.upn));

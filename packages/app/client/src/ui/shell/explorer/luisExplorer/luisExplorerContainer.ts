@@ -35,29 +35,32 @@ import { ILuisService, ServiceType } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
 import { connect } from 'react-redux';
 import {
-  launchLuisEditor,
+  launchLuisModelsViewer,
+  LuisModelViewerPayload,
   openLuisDeepLink,
   openLuisExplorerContextMenu
 } from '../../../../data/action/luisServiceActions';
 import { RootState } from '../../../../data/store';
 import { LuisEditor } from './luisEditor/luisEditor';
-import { LuisExplorer } from './luisExplorer';
+import { LuisExplorer, LuisProps } from './luisExplorer';
 
-const mapStateToProps = (state: RootState) => {
+const mapStateToProps = (state: RootState): Partial<LuisProps> => {
   const { services } = state.bot.activeBot;
   return {
-    luisServices: services.filter(service => service.type === ServiceType.Luis),
+    luisServices: services.filter(service => service.type === ServiceType.Luis) as ILuisService[],
     window
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch): Partial<LuisProps> => {
   return {
-    launchLuisEditor: (luisEditor: ComponentClass<LuisEditor>,
-                       luisService: ILuisService) => dispatch(launchLuisEditor(luisEditor, luisService)),
-    openLuisDeepLink: (luisService: ILuisService) => dispatch(openLuisDeepLink(luisService)),
-    openContextMenu: (luisService: ILuisService,
-                      luisEditor: ComponentClass<LuisEditor>) =>
+    launchLuisModelsViewer: (luisModelsViewer: LuisModelViewerPayload) =>
+      dispatch(launchLuisModelsViewer(luisModelsViewer)),
+
+    openLuisDeepLink: (luisService: ILuisService) =>
+      dispatch(openLuisDeepLink(luisService)),
+
+    openContextMenu: (luisService: ILuisService, luisEditor: ComponentClass<LuisEditor>) =>
       dispatch(openLuisExplorerContextMenu(luisEditor, luisService)),
   };
 };
@@ -65,4 +68,4 @@ const mapDispatchToProps = dispatch => {
 export const LuisExplorerContainer = connect(
   mapStateToProps,
   mapDispatchToProps
-)(LuisExplorer as any) as any;
+)(LuisExplorer);
