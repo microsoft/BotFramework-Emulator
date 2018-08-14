@@ -112,7 +112,7 @@ export namespace SharedConstants {
     }
 
     export namespace Luis {
-      export const GetLuisApplications = 'luis:getLuisApplications';
+      export const GetLuisServices = 'luis:getLuisServices';
     }
 
     export namespace Misc {

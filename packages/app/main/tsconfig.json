@@ -1,5 +1,5 @@
 {
-  "lib": ["es6", "es2015", "esnext"],
+  "lib": ["es6", "es2015", "node"],
   "compilerOptions": {
     "importHelpers": true,
     "module": "none",

@@ -32,42 +32,66 @@
 //
 
 import { LuisModel } from '@bfemulator/app-shared';
-import * as fetch from 'electron-fetch';
+import { ILuisService } from 'msbot';
+import fetch, { Headers, Response } from 'node-fetch';
 
 export class LuisApi {
-  public static async getApplicationsList(armToken: string): Promise<LuisModel[]> {
+  public static async getServices(armToken: string): Promise<{ luisServices: ILuisService[] }> {
+    // 1.
     // We have the arm token which allows us to get the
     // authoring key used to retrieve the apps
     const req: RequestInit = { headers: { Authorization: `Bearer ${armToken}` } };
     let authoringKey: string;
     try {
-      const authoringKeyResponse = await (fetch as any)
-        .default('https://api.luis.ai/api/v2.0/bots/programmatickey', req);
+      const url = 'https://api.luis.ai/api/v2.0/bots/programmatickey';
+      const authoringKeyResponse = await fetch(url, req);
       authoringKey = await authoringKeyResponse.text();
+      authoringKey = authoringKey.replace(/["]/g, '');
     } catch (e) {
-      return null;
+      return { luisServices: [] };
     }
-    const luisModels: LuisModel[] = [];
-    ['westus', 'westeurope', 'australiaeast'].forEach(async region => {
-      try {
-        const models = await this.getApplicationsForRegion(region, authoringKey);
-        luisModels.push(...models);
-      } catch {
-        // Skip this
-      }
-      return null;
-    });
-    return luisModels;
+    // 2.
+    // We have 3 regions to check for luis models
+    const luisApiPromises: Promise<LuisModel[] | { error: any }>[] = [];
+    const regions = ['westus', 'westeurope', 'australiaeast'];
+    let i = regions.length;
+    while (i--) {
+      luisApiPromises.push(LuisApi.getApplicationsForRegion(regions[i], authoringKey));
+    }
+    const results = await Promise.all(luisApiPromises);
+    // 3.
+    // Filter out errors then combine all results into
+    // a single array of LuisModel[]
+    const luisModels = results
+      .filter(result => !('error' in result))
+      .reduce((agg: LuisModel[], models) => (agg.push(...models as LuisModel[]), agg), []) as LuisModel[];
+    // 4.
+    // Mutate the list into an array of ILuisService[]
+    const luisServices = luisModels.map((luisModel: LuisModel) => (<ILuisService> {
+      authoringKey,
+      appId: luisModel.id,
+      id: luisModel.id,
+      name: luisModel.name,
+      subscriptionKey: authoringKey,
+      type: 'luis',
+      version: luisModel.activeVersion
+    })) as ILuisService[];
+
+    return { luisServices };
   }
 
-  public static async getApplicationsForRegion(region: string, authoringKey: string): Promise<LuisModel[]> {
+  public static async getApplicationsForRegion(region: string, key: string): Promise<LuisModel[] | { error: any }> {
     let url = `https://${region}.api.cognitive.microsoft.com/luis/api/v2.0/apps/`;
     const headers = new Headers({
       'Content-Accept': 'application/json',
-      'Ocp-Apim-Subscription-Key': authoringKey
+      'Ocp-Apim-Subscription-Key': key
     });
 
-    const response = await fetch(url, { headers, method: 'get' } as any);
+    const response: Response = await fetch(url, { headers, method: 'get' } as any);
+    if (!response.ok) {
+      const error = await response.json();
+      return { error };
+    }
     return await response.json() as LuisModel[];
   }
 }

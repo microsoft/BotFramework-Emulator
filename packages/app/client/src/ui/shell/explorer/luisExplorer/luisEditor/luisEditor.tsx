@@ -90,7 +90,6 @@ export class LuisEditor extends Component<LuisEditorProps, LuisEditorState> {
   }
 
   public render(): JSX.Element {
-    const { onCancelClick, onSubmitClick } = this;
     const {
       luisService,
       nameError,
@@ -104,7 +103,7 @@ export class LuisEditor extends Component<LuisEditorProps, LuisEditorState> {
     const valid = !!name && !!appId && !!authoringKey && !!version;
     return (
       <Dialog title={ title } detailedDescription={ detailedDescription }
-              cancel={ onCancelClick }>
+              cancel={ this.props.cancel }>
         <DialogContent>
           <TextField
             errorMessage={ nameError }
@@ -142,15 +141,11 @@ export class LuisEditor extends Component<LuisEditorProps, LuisEditorState> {
           />
         </DialogContent>
         <DialogFooter>
-          <DefaultButton text="Cancel" onClick={ onCancelClick }/>
-          <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ onSubmitClick }/>
+          <DefaultButton text="Cancel" onClick={ this.props.cancel }/>
+          <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ this.onSubmitClick }/>
         </DialogFooter>
       </Dialog>
     );
-  }
-
-  private onCancelClick = (): void => {
-    this.props.cancel();
   }
 
   private onSubmitClick = (): void => {

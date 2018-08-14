@@ -34,7 +34,7 @@
 import { BotEmulator, Conversation } from '@bfemulator/emulator-core';
 import * as CORS from 'restify-cors-middleware';
 import * as Restify from 'restify';
-import * as fetch from 'electron-fetch';
+import fetch from 'node-fetch';
 
 import { mainWindow } from './main';
 import { emulator } from './emulator';
@@ -115,7 +115,7 @@ export class RestServer {
     this._botEmulator = new BotEmulator(
       botUrl => emulator.ngrok.getServiceUrl(botUrl),
       {
-        fetch: (fetch as any).default,
+        fetch: fetch,
         loggerOrLogService: mainWindow.logService,
         tunnelingServiceUrl: () => emulator.ngrok.getNgrokServiceUrl()
       }
