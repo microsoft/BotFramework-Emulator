@@ -124,4 +124,13 @@ html {
   /* toolbar */
   --toolbar-bg: var(--neutral-16);
   --toolbar-border: var(--explorer-panel-group-border);
+
+  /* Welcome page */
+  --my-bots-well-bg: transparent;
+  --my-bots-well-border: 1px solid #00BCF2;
+  --my-bots-entry-bg: transparent;
+  --my-bots-entry-border: 1px dashed #F38518;
+  --my-bots-entry-color: var(--neutral-1);
+  --my-bots-path-color: var(--neutral-1);
+  --my-bots-scrollbar-color: var(--neutral-1);
 }

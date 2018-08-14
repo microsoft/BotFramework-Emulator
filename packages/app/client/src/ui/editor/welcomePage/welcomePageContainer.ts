@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { hot } from 'react-hot-loader';
+// import { hot } from 'react-hot-loader';
 import { connect } from 'react-redux';
 import { WelcomePage as WelcomePageComp, WelcomePageProps } from './welcomePage';
 import { RootState } from '../../../data/store';
@@ -62,4 +62,5 @@ function mapDispatchToProps(): WelcomePageProps {
   };
 }
 
-export const WelcomePage = connect(mapStateToProps, mapDispatchToProps)(hot(module)(WelcomePageComp)) as any;
+// export const WelcomePage = connect(mapStateToProps, mapDispatchToProps)(hot(module)(WelcomePageComp)) as any;
+export const WelcomePage = connect(mapStateToProps, mapDispatchToProps)(WelcomePageComp);
