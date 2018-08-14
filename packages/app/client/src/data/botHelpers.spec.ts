@@ -31,14 +31,29 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-``
+jest.mock('./store', () => ({
+  default: {
+    getState: () => ({
+      bot: {
+        activeBot: {
+          name: 'bot1',
+          description: 'description1',
+          secretKey: 'secretKey1',
+          services: [],
+        },
+        botFiles: [{
+          path: 'path1'
+        }]
+      }
+    })
+  }
+}));
 
 import {
   getActiveBot,
   getBotInfoByPath,
   pathExistsInRecentBots
 } from './botHelpers';
-
 describe('Bot helpers tests', () => {
   it('should get the active bot', () => {
     const activeBot = getActiveBot();

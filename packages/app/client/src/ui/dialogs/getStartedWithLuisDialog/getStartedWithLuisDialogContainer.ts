@@ -42,9 +42,11 @@ const mapDispatchToProps = (_dispatch: () => void): GetStartedWithLuisDialogProp
   addLuisAppManually: () => DialogService.hideDialog(2)
 });
 
-const mapStateToProps = (state: RootState) => ({
-  user: JSON.parse(atob(state.azureAuth.access_token.split('.')[1])).upn
-});
+const mapStateToProps = (state: RootState) => {
+  const {access_token: token = ''} = state.azureAuth;
+  const [, payload] = token.split('.');
+  return { user: JSON.parse(atob(payload)).upn };
+};
 
 export const GetStartedWithLuisDialogContainer = connect(
   mapStateToProps,

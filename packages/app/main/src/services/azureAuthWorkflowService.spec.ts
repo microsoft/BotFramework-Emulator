@@ -9,7 +9,7 @@ jest.mock('jsonwebtoken', () => ({
   verify: () => true
 }));
 let mockResponses;
-jest.mock('electron-fetch', () => ({
+jest.mock('node-fetch', () => ({
   default: async () => ({
     json: async () => mockResponses.pop()
   })
@@ -19,7 +19,7 @@ jest.mock('electron', () => ({
   BrowserWindow: class MockBrowserWindow {
     public static reporters = [];
     public listeners: { type: string, handler: (event: any) => void }[] = [] as any;
-
+    public webContents = {history: ['http://someotherUrl', `http://localhost/#t=13&id_token=${mockArmToken}`]};
     private static report(...args: any[]) {
       this.reporters.forEach(r => r(args));
     }

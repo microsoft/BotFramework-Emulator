@@ -1,9 +1,13 @@
 let mockFetchArgs: MockFetch;
-jest.mock('electron-fetch', () => ({
-  default: function(url: string, opts: OPTS) {
-    mockFetchArgs = {url, opts};
-  }
+let mockHeaders = class {
+};
+jest.mock('node-fetch', () => ({
+  default: function (url: string, opts: OPTS) {
+    mockFetchArgs = { url, opts };
+  },
+  Headers: mockHeaders
 }));
+
 interface OPTS {
   headers: Headers;
   method: 'GET' | 'DELETE' | 'POST';
@@ -15,7 +19,7 @@ interface MockFetch {
   opts?: OPTS;
 }
 
-import { headers as headersInstance, ConversationService } from './conversationService';
+import { ConversationService, headers as headersInstance } from './conversationService';
 
 describe('The ConversationService should call "fetch" with the expected parameters when executing', () => {
   test('the "addUser" function', () => {
@@ -24,7 +28,7 @@ describe('The ConversationService should call "fetch" with the expected paramete
     expect(url).toBe('http://localhost/emulator/abcdef/users');
 
     const { body, headers, method } = opts;
-    expect(headers instanceof Headers).toBeTruthy();
+    expect(headers instanceof mockHeaders).toBeTruthy();
     expect(headers === headers).toBeTruthy();
     expect(method).toBe('POST');
     expect(body[0].name).toBeFalsy();
@@ -38,7 +42,7 @@ describe('The ConversationService should call "fetch" with the expected paramete
     expect(url).toBe('http://localhost/emulator/abcdef/users');
 
     const { body, headers, method } = opts;
-    expect(headers instanceof Headers).toBeTruthy();
+    expect(headers instanceof mockHeaders).toBeTruthy();
     expect(headers === headers).toBeTruthy();
     expect(method).toBe('DELETE');
     expect(body[0].id).toBe('1234');
@@ -51,7 +55,7 @@ describe('The ConversationService should call "fetch" with the expected paramete
     expect(url).toBe('http://localhost/emulator/abcdef/users');
 
     const { body, headers, method } = opts;
-    expect(headers instanceof Headers).toBeTruthy();
+    expect(headers instanceof mockHeaders).toBeTruthy();
     expect(headers === headers).toBeTruthy();
     expect(method).toBe('DELETE');
     expect(body).toBeFalsy();
@@ -64,7 +68,7 @@ describe('The ConversationService should call "fetch" with the expected paramete
     expect(url).toBe('http://localhost/emulator/abcdef/contacts');
 
     const { body, headers, method } = opts;
-    expect(headers instanceof Headers).toBeTruthy();
+    expect(headers instanceof mockHeaders).toBeTruthy();
     expect(headers === headers).toBeTruthy();
     expect(method).toBe('POST');
     expect(body).toBeFalsy();
@@ -77,7 +81,7 @@ describe('The ConversationService should call "fetch" with the expected paramete
     expect(url).toBe('http://localhost/emulator/abcdef/contacts');
 
     const { body, headers, method } = opts;
-    expect(headers instanceof Headers).toBeTruthy();
+    expect(headers instanceof mockHeaders).toBeTruthy();
     expect(headers === headers).toBeTruthy();
     expect(method).toBe('DELETE');
     expect(body).toBeFalsy();
@@ -90,7 +94,7 @@ describe('The ConversationService should call "fetch" with the expected paramete
     expect(url).toBe('http://localhost/emulator/abcdef/typing');
 
     const { body, headers, method } = opts;
-    expect(headers instanceof Headers).toBeTruthy();
+    expect(headers instanceof mockHeaders).toBeTruthy();
     expect(headers === headers).toBeTruthy();
     expect(method).toBe('POST');
     expect(body).toBeFalsy();
@@ -103,7 +107,7 @@ describe('The ConversationService should call "fetch" with the expected paramete
     expect(url).toBe('http://localhost/emulator/abcdef/ping');
 
     const { body, headers, method } = opts;
-    expect(headers instanceof Headers).toBeTruthy();
+    expect(headers instanceof mockHeaders).toBeTruthy();
     expect(headers === headers).toBeTruthy();
     expect(method).toBe('POST');
     expect(body).toBeFalsy();
@@ -116,7 +120,7 @@ describe('The ConversationService should call "fetch" with the expected paramete
     expect(url).toBe('http://localhost/emulator/abcdef/userdata');
 
     const { body, headers, method } = opts;
-    expect(headers instanceof Headers).toBeTruthy();
+    expect(headers instanceof mockHeaders).toBeTruthy();
     expect(headers === headers).toBeTruthy();
     expect(method).toBe('DELETE');
     expect(body).toBeFalsy();
