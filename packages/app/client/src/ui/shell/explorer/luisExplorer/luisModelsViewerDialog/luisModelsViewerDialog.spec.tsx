@@ -7,6 +7,7 @@ import { LuisModelsViewerContainer } from './luisModelsViewerContainer';
 import bot from '../../../../../data/reducer/bot';
 import { load, setActive } from '../../../../../data/action/botActions';
 import { DialogService } from '../../../../dialogs/service';
+
 jest.mock('./luisModelsViewer.scss', () => ({}));
 jest.mock('../../../../dialogs/service', () => ({
   DialogService: {
@@ -14,6 +15,7 @@ jest.mock('../../../../dialogs/service', () => ({
     hideDialog: () => Promise.resolve(false),
   }
 }));
+
 describe('The LuisModelsViewerDialog component should', () => {
   let parent;
   let node;

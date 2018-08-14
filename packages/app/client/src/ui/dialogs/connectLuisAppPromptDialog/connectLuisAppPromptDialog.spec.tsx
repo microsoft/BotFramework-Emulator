@@ -17,12 +17,14 @@ jest.mock('../service', () => ({
 describe('The ConnectLuisAppPromptDialog component should', () => {
   let parent;
   let node;
+
   beforeEach(() => {
     parent = mount(<Provider store={ createStore(azureAuth) }>
       <ConnectLuisAppPromptDialogContainer/>
     </Provider>);
     node = parent.find(ConnectLuisAppPromptDialog);
   });
+
   it('should render deeply', () => {
     expect(parent.find(ConnectLuisAppPromptDialogContainer)).not.toBe(null);
   });

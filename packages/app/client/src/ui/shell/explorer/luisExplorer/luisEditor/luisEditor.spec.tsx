@@ -15,10 +15,12 @@ jest.mock('../../../../dialogs/service', () => ({
     hideDialog: () => Promise.resolve(false),
   }
 }));
+
 describe('The AzureLoginFailedDialogContainer component should', () => {
   let parent;
   let node;
   let mockService;
+
   beforeEach(() => {
     mockService = JSON.parse(`{
             "type": "luis",
@@ -79,6 +81,7 @@ describe('The AzureLoginFailedDialogContainer component should', () => {
     const instance = node.instance();
     instance._textFieldHandlers.name('renamed model');
     instance._textFieldHandlers.subscriptionKey(''); // non-required field
+    instance.render();
     const submitBtn = node.find(PrimaryButton);
     expect(submitBtn.props.disabled).toBeFalsy();
   });

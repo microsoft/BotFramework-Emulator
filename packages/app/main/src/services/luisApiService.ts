@@ -81,7 +81,7 @@ export class LuisApi {
   }
 
   public static async getApplicationsForRegion(region: string, key: string): Promise<LuisModel[] | { error: any }> {
-    let url = `https://${region}.api.cognitive.microsoft.com/luis/api/v2.0/apps/`;
+    const url = `https://${region}.api.cognitive.microsoft.com/luis/api/v2.0/apps/`;
     const headers = new Headers({
       'Content-Accept': 'application/json',
       'Ocp-Apim-Subscription-Key': key
