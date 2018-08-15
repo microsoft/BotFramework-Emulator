@@ -3,25 +3,42 @@
   display: inline-block;
   height: 100%;
   width: 100%;
-  & > .addIconButton {
-    background: transparent;
-    cursor: pointer;
-    border: none;
-    outline: none;
-    position: absolute;
-    transform: translateY(-50%);
-    top: calc(50% + 2px);
-    right: 10px;
-    padding: 0;
-    margin: 0;
-    & > svg {
-      width: 12px;
-      height: 12px;
-      fill: var(--explorer-panel-group-title-color);
-      &:hover {
-        fill: var(--log-panel-link);
-      }
+}
+
+.addIconButton {
+  background: transparent;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  position: absolute;
+  transform: translateY(-50%);
+  top: calc(50% + 2px);
+  right: 10px;
+  padding: 0;
+  margin: 0;
+  & > svg {
+    width: 12px;
+    height: 12px;
+    fill: var(--explorer-panel-group-title-color);
+    &:hover {
+      fill: var(--log-panel-link);
     }
+  }
+}
+
+.sortIconButton {
+  background: transparent;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  position: absolute;
+  transform: translateY(-50%);
+  top: 50%;
+  right: 50px;
+  padding: 0;
+  margin: 0;
+  &:hover {
+    color: var(--log-panel-link);
   }
 }
 

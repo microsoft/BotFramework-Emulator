@@ -90,20 +90,13 @@
     }
   }
   &:nth-child(2) {
-    // Services
-    &::after {
-      background-size: 25px;
-      background-image: url('../../media/ic_services.svg');
-    }
-  }
-  &:nth-child(3) {
     // Bot Settings
     &::after {
       background-size: 25px;
       background-image: url('../../media/ic_bot_settings.svg');
     }
   }
-  &:nth-child(4) {
+  &:nth-child(3) {
     // Notifications
     &::after {
       background-size: 25px;
@@ -111,7 +104,7 @@
     }
     margin-top: auto;
   }
-  &:nth-child(5) {
+  &:nth-child(4) {
     // Settings
     &::after {
       background-size: 25px;

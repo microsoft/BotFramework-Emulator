@@ -31,13 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './botExplorerBar/botExplorerBar';
-export * from './endpointExplorer';
-export * from './servicesExplorer';
-export * from './fileExplorer';
-export * from './botNotOpenExplorer';
-export * from './explorerBar/explorerBar';
-export * from './explorerBarBody';
-export * from './explorerBarHeader/explorerBarHeader';
-export * from './explorerSet/explorerSet';
-export * from './servicePane/servicePane';
+import { connect } from 'react-redux';
+import { RootState } from '../../../../../data/store';
+import { DialogService } from '../../../../dialogs/service';
+import { ConnectedServiceEditor } from './connectedServiceEditor';
+
+const mapStateToProps = (_state: RootState, ownProps: { [propName: string]: any }) => {
+  return {
+    ...ownProps
+  };
+};
+
+const mapDispatchToProps = (_dispatch: () => void) => {
+  return {
+    updateLuisService: updatedLuisService => DialogService.hideDialog([updatedLuisService]),
+    cancel: () => DialogService.hideDialog(0)
+  };
+};
+
+export const ConnectedServiceEditorContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ConnectedServiceEditor) as any;

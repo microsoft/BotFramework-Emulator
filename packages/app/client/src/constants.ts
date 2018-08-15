@@ -38,7 +38,6 @@ export const CONTENT_TYPE_TRANSCRIPT = 'application/vnd.microsoft.bfemulator.doc
 export const CONTENT_TYPE_LIVE_CHAT = 'application/vnd.microsoft.bfemulator.document.livechat';
 
 export const NAVBAR_BOT_EXPLORER = 'navbar.botExplorer';
-export const NAVBAR_SERVICES = 'navbar.services';
 export const NAVBAR_BOT_SETTINGS = 'navbar.botSettings';
 export const NAVBAR_SETTINGS = 'navbar.settings';
 export const NAVBAR_NOTIFICATIONS = 'navbar.notifications';

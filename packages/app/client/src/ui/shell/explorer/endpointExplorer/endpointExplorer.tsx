@@ -76,7 +76,7 @@ export class EndpointExplorer extends ServicePane<EndpointProps> {
     super.onContextMenuOverLiElement(li);
     const { index } = li.dataset;
     const { [index]: endpointService } = this.props.endpointServices;
-    this.props.openContextMenu(new EndpointService(endpointService), EndpointEditorContainer);
+    this.props.openContextMenuForService(new EndpointService(endpointService), EndpointEditorContainer);
   }
 
   protected onAddIconClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
