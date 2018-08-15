@@ -145,7 +145,6 @@ export namespace SharedConstants {
       export const ShowSecretPromptDialog = 'secret-prompt:show';
       export const SwitchNavBarTab = 'navbar:switch-tab';
       export const ShowExplorer = 'shell:show-explorer';
-      export const ShowServices = 'shell:show-services';
       export const ShowAppSettings = 'shell:show-app-settings';
       export const SwitchTheme = 'shell:switchTheme';
       export const SignInToAzure = 'shell:signInToAzure';

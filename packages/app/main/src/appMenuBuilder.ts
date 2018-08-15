@@ -269,10 +269,6 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
           click: () => mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ShowExplorer)
         },
         {
-          label: 'Services',
-          click: () => mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ShowServices)
-        },
-        {
           label: 'Emulator Settings',
           click: () => mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ShowAppSettings)
         },

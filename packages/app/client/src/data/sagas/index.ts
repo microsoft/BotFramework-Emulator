@@ -31,24 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { azureBotServiceSagas } from './azureBotServiceSagas';
 import { botSagas } from './botSagas';
-import { dispatchSagas } from './dispatchSagas';
 import { editorSagas } from './editorSagas';
 import { endpointSagas } from './endpointSagas';
-import { luisSagas } from './luisSagas';
+import { servicesExplorerSagas } from './servicesExplorerSagas';
 import { navBarSagas } from './navBarSagas';
 import { notificationSagas } from './notificationSagas';
-import { qnaMakerSagas } from './qnaMakerSagas';
 import { azureAuthSagas } from './azureAuthSaga';
 
 export const applicationSagas = [
-  luisSagas,
+  servicesExplorerSagas,
   botSagas,
-  qnaMakerSagas,
-  dispatchSagas,
   endpointSagas,
-  azureBotServiceSagas,
   azureAuthSagas,
   editorSagas,
   navBarSagas,

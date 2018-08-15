@@ -38,7 +38,7 @@ import { Component, SyntheticEvent } from 'react';
 import * as styles from './servicePane.scss';
 
 export interface ServicePaneProps {
-  openContextMenu: (service: IConnectedService, ...rest: any[]) => void;
+  openContextMenuForService: (service: IConnectedService, ...rest: any[]) => void;
   window: Window;
   title: string;
 }
@@ -52,6 +52,7 @@ export abstract class ServicePane<T extends ServicePaneProps,
 
   protected abstract onLinkClick: (event: SyntheticEvent<HTMLLIElement>) => void; // bound
   protected onAddIconClick: (event: SyntheticEvent<HTMLButtonElement>) => void; // bound
+  protected onSortClick: (event: SyntheticEvent<HTMLButtonElement>) => void; // bound
 
   public state = {} as Readonly<S>;
   private _listRef: HTMLUListElement;
@@ -64,6 +65,7 @@ export abstract class ServicePane<T extends ServicePaneProps,
     return (
       <ExpandCollapseControls>
         <span className={ styles.servicePane }>
+          <button onClick={ this.onSortClick } className={ styles.sortIconButton }>⮁</button>
           <button onClick={ this.onAddIconClick } className={ styles.addIconButton }>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25">
               <g>
@@ -116,7 +118,6 @@ export abstract class ServicePane<T extends ServicePaneProps,
   }
 
   public render(): JSX.Element {
-
     return (
       <ExpandCollapse
         className={ styles.servicePane }

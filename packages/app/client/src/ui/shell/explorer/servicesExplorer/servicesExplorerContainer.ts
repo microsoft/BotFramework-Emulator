@@ -31,37 +31,40 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IEndpointService, ServiceType } from 'msbot/bin/schema';
+import { IConnectedService } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
 import { connect } from 'react-redux';
 import {
-  launchEndpointEditor,
-  openEndpointDeepLink,
-  openEndpointExplorerContextMenu
-} from '../../../../data/action/endpointServiceActions';
+  ConnectedServicePickerPayload,
+  openServiceDeepLink,
+  openContextMenuForConnectedService, openAddServiceContextMenu
+} from '../../../../data/action/connectedServiceActions';
 import { RootState } from '../../../../data/store';
-import { EndpointEditor } from './endpointEditor/endpointEditor';
-import { EndpointExplorer } from './endpointExplorer';
+import { ConnectedServiceEditor } from './connectedServiceEditor/connectedServiceEditor';
+import { ServicesExplorer, ServicesExplorerProps } from './servicesExplorer';
 
-const mapStateToProps = (state: RootState) => {
-  const { services } = state.bot.activeBot;
+const mapStateToProps = (state: RootState): Partial<ServicesExplorerProps> => {
   return {
-    endpointServices: services.filter(service => service.type === ServiceType.Endpoint),
+    services: state.bot.activeBot.services,
     window
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch): Partial<ServicesExplorerProps> => {
   return {
-    launchEndpointEditor: (endpointEditor: ComponentClass<EndpointEditor>, endpointService: IEndpointService) =>
-      dispatch(launchEndpointEditor(endpointEditor, endpointService)),
-    openEndpointDeepLink: (endpointService: IEndpointService) => dispatch(openEndpointDeepLink(endpointService)),
-    openContextMenuForService: (endpointService: IEndpointService, endpointEditor: ComponentClass<EndpointEditor>) =>
-      dispatch(openEndpointExplorerContextMenu(endpointEditor, endpointService)),
+    openAddServiceContextMenu: (payload: ConnectedServicePickerPayload) =>
+      dispatch(openAddServiceContextMenu(payload)),
+
+    openServiceDeepLink: (connectedService: IConnectedService) =>
+      dispatch(openServiceDeepLink(connectedService)),
+
+    openContextMenuForService: (connectedService: IConnectedService,
+                                editorComponent: ComponentClass<ConnectedServiceEditor>) =>
+      dispatch(openContextMenuForConnectedService(editorComponent, connectedService)),
   };
 };
 
-export const EndpointExplorerContainer = connect(
+export const ServicesExplorerContainer = connect(
   mapStateToProps,
   mapDispatchToProps
-)(EndpointExplorer as any) as any;
+)(ServicesExplorer);

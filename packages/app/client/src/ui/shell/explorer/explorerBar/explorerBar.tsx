@@ -35,7 +35,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import BotExplorerBar from '../botExplorerBar/botExplorerBar';
-import { ServicesExplorerBarContainer } from '../servicesExplorerBar';
 import * as Constants from '../../../../constants';
 import { IBotConfig } from 'msbot/bin/schema';
 import { RootState } from '../../../../data/store';
@@ -64,16 +63,9 @@ class ExplorerBarComponent extends React.Component<ExplorerBarProps> {
     );
 
     switch (selectedNavTab) {
-      case Constants.NAVBAR_SERVICES:
-        explorer.push(
-          <ServicesExplorerBarContainer key={ 'services-explorer-bar' }/>
-        );
-        break;
 
       case Constants.NAVBAR_NOTIFICATIONS:
-        explorer.push(
-          <NotificationsExplorerBar key={ 'notifications-explorer-bar' }/>
-        );
+        explorer.push(<NotificationsExplorerBar key={ 'notifications-explorer-bar' }/>);
         break;
 
       default:
@@ -86,7 +78,7 @@ class ExplorerBarComponent extends React.Component<ExplorerBarProps> {
     return (
       <div className={ styles.explorerBar }>
         { explorer }
-        <InsetShadow orientation={ 'right' } />
+        <InsetShadow orientation={ 'right' }/>
       </div>
     );
   }

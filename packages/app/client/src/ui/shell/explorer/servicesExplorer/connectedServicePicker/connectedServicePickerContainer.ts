@@ -30,14 +30,29 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { ServiceType } from 'msbot/bin/schema';
+import { connect } from 'react-redux';
+import { RootState } from '../../../../../data/store';
+import { DialogService } from '../../../../dialogs/service';
+import { ConnectedServicePicker } from './connectedServicePicker';
 
-export * from './botExplorerBar/botExplorerBar';
-export * from './endpointExplorer';
-export * from './servicesExplorer';
-export * from './fileExplorer';
-export * from './botNotOpenExplorer';
-export * from './explorerBar/explorerBar';
-export * from './explorerBarBody';
-export * from './explorerBarHeader/explorerBarHeader';
-export * from './explorerSet/explorerSet';
-export * from './servicePane/servicePane';
+const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }) => {
+  const { services } = state.bot.activeBot;
+  return {
+    existingLuisServices: services.filter(service => service.type === ServiceType.Luis),
+    ...ownProps
+  };
+};
+
+const mapDispatchToProps = (_dispatch: () => void) => {
+  return {
+    launchLuisEditor: () => DialogService.hideDialog(1),
+    addLuisModels: updatedLuisModels => DialogService.hideDialog(updatedLuisModels),
+    cancel: () => DialogService.hideDialog(0)
+  };
+};
+
+export const ConnectedServicePickerContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ConnectedServicePicker);
