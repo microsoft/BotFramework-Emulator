@@ -66,33 +66,24 @@ Refer to the **"Client side development"** section if you are modifying files wi
 directory. Refer to the **"Server side development"** section if you are modifying files within both the 
 `packages/app/main` & `packages/app/client` directories.
 
-### Client side development (renderer process)
+### Run Emulator for local development
 
-Open a terminal session inside of the `packages/app/main` folder, and `npm run start`. This will start both the electron
- app and the webpack dev server that serves the UI.
-
-Changes to the client side will cause the electron app to hot reload with the new code.
-
-If application window comes up, but all you see is a white screen, this means that the electron app was booted before 
-the dev server was up and running. **To fix this:** focus the electron app window, press `Ctrl + Shift + I` to bring up 
-the dev tools window, focus the dev tools, and press `F5` to refresh the app. The window should now show the UI.
-
-### Server side development (main process)
-
-Open 3 terminals:
+Open 2 terminals:
 
  - One in `packages/app/client` (will be used to start the webpack dev server)
    - run `npm run start`
    - that's all you have to do; you shouldn't have to worry about the client side again unless you modify code in 
    `packages/app/shared` and rebuild the `shared` package
-
- - One in `packages/app/main` (will be used to watch for changes on the main side and auto-compile the TypeScript)
-   - run `npm run build:electron -- --watch`
-   - don't have to worry about this terminal anymore
  - Another in `packages/app/main` (will be used to start and restart the main side after changes have been recompiled)
    - run `npm run start:electron:dev`
    - this starts a new instance of the electron app with the most recently compiled `packages/app/main` files
    - **To see app/main file changes:** `Ctrl + C` to kill the electron app, then `npm start:electron:dev` to restart it with your reflected changes
+
+#### If developing locally
+In another terminal
+ - Navigate to `packages/app/main` (will be used to watch for changes on the main side and auto-compile the TypeScript)
+   - run `npm run build:electron -- --watch`
+   - don't have to worry about this terminal anymore
 
 ### Debugging
 #### The Main Process
