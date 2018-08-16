@@ -33,7 +33,7 @@
 
 import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
-import { Column, MediumHeader, PrimaryButton, Row, TextField } from '@bfemulator/ui-react';
+import { Column, MediumHeader, PrimaryButton, Row, TextField, Checkbox } from '@bfemulator/ui-react';
 import { IConnectedService, ServiceType } from 'msbot/bin/schema';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -54,6 +54,7 @@ interface BotSettingsEditorProps {
 interface BotSettingsEditorState {
   bot?: BotConfigWithPath;
   secret?: string;
+  revealSecret?: boolean;
 }
 
 class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps, BotSettingsEditorState> {
@@ -65,7 +66,8 @@ class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps,
 
     this.state = {
       bot,
-      secret: (botInfo && botInfo.secret) || ''
+      secret: (botInfo && botInfo.secret) || '',
+      revealSecret: false
     };
   }
 
@@ -88,14 +90,19 @@ class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps,
         <Column>
           <MediumHeader className={ styles.botSettingsHeader }>Bot Settings</MediumHeader>
           <TextField className={ styles.botSettingsInput } label="Bot name" value={ this.state.bot.name }
-                     required={ true } onChanged={ this.onChangeName } errorMessage={ error }/>
+            required={ true } onChanged={ this.onChangeName } errorMessage={ error }/>
           <TextField className={ styles.botSettingsInput } label="Bot secret" value={ this.state.secret }
-                     onChanged={ this.onChangeSecret } type="password"/>
+            onChanged={ this.onChangeSecret } type={ this.state.revealSecret ? 'text' : 'password' }/>
+          <Checkbox
+            label="Reveal secret"
+            checked={ this.state.revealSecret }
+            onChange={ this.onCheckSecretCheckbox }
+          />
           <Row className={ styles.buttonRow }>
             <PrimaryButton text="Save" onClick={ this.onSave } className={ styles.saveButton } disabled={ disabled }/>
             <PrimaryButton text="Save & Connect" onClick={ this.onSaveAndConnect }
-                           className={ styles.saveConnectButton }
-                           disabled={ disabled }/>
+              className={ styles.saveConnectButton }
+              disabled={ disabled }/>
           </Row>
         </Column>
       </GenericDocument>
@@ -113,12 +120,16 @@ class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps,
     this.setDirtyFlag(true);
   }
 
+  private onCheckSecretCheckbox = () => {
+    this.setState({ revealSecret: !this.state.revealSecret });
+  }
+
   private onSave = async (_e, connectArg = false) => {
-    const { name: botName = '', description = '', path, services } = this.state.bot;
+    const { name: botName = '', description = '', path, services, secretKey = '' } = this.state.bot;
     let bot: BotConfigWithPath = BotConfigWithPathImpl.fromJSON({
       name: botName.trim(),
       description: description.trim(),
-      secretKey: '',
+      secretKey,
       path: path.trim(),
       services
     });

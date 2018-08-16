@@ -56,7 +56,7 @@ jest.mock('./botData/store', () => ({
 jest.mock('./main', () => ({
   mainWindow: {
     commandService: {
-      remoteCall: () => null
+      remoteCall: () => Promise.resolve(true)
     }
   }
 }));
@@ -73,7 +73,7 @@ import {
   removeBotFromList,
   cloneBot,
   toSavableBot,
-  saveBot
+  promptForSecretAndRetry
 } from './botHelpers';
 
 describe('botHelpers tests', () => {
@@ -134,15 +134,39 @@ describe('botHelpers tests', () => {
     const bot2: BotConfigWithPath = {
       name: 'someName',
       description: 'someDescription',
-      secretKey: '',
+      secretKey: 'someSecretKey',
       services: [],
       path: 'somePath',
       overrides: null
     };
+    const savableBot = toSavableBot(bot2, 'someSecret');
+
     const expectedBot = new BotConfig();
     expectedBot.name = 'someName';
     expectedBot.description = 'someDescription';
     expectedBot.services = [];
-    expect(toSavableBot(bot2)).toEqual(expectedBot);
+
+    expect(savableBot.name).toEqual(expectedBot.name);
+    expect(savableBot.description).toEqual(expectedBot.description);
+    expect(savableBot.services).toEqual(expectedBot.services);
+    // secret key should've been refreshed
+    expect(savableBot.secretKey).not.toEqual('someSecretKey');
+  });
+
+  test('promptForSecretAndRetry()', async () => {
+    mainWindow.commandService.remoteCall = jest.fn()
+      .mockImplementationOnce(() => Promise.resolve(null))
+      .mockImplementation(() => Promise.resolve('secret'));
+
+    // if prompt for secret is dismissed, this should return null
+    expect(await promptForSecretAndRetry('somePath')).toBe(null);
+
+    // should throw because it will get to the end of the function and try
+    // to load a .bot file at 'somePath'
+    try {
+      await promptForSecretAndRetry('somePath');
+    } catch (e) {
+      expect(e.code).toBe('ENOENT');
+    }
   });
 });
