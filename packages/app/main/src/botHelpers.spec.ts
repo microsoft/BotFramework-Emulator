@@ -56,7 +56,7 @@ jest.mock('./botData/store', () => ({
 jest.mock('./main', () => ({
   mainWindow: {
     commandService: {
-      remoteCall: () => null
+      remoteCall: () => Promise.resolve(true)
     }
   }
 }));
@@ -73,7 +73,8 @@ import {
   removeBotFromList,
   cloneBot,
   toSavableBot,
-  saveBot
+  promptForSecretAndRetry,
+  loadBotWithRetry
 } from './botHelpers';
 
 describe('botHelpers tests', () => {
@@ -145,5 +146,22 @@ describe('botHelpers tests', () => {
     expectedBot.services = [];
     expectedBot.secretKey = 'someSecretKey';
     expect(toSavableBot(bot2)).toEqual(expectedBot);
+  });
+
+  test('promptForSecretAndRetry()', async () => {
+    mainWindow.commandService.remoteCall = jest.fn()
+      .mockImplementationOnce(() => Promise.resolve(null))
+      .mockImplementation(() => Promise.resolve('secret'));
+
+    // if prompt for secret is dismissed, this should return null
+    expect(await promptForSecretAndRetry('somePath')).toBe(null);
+
+    // should throw because it will get to the end of the function and try
+    // to load a .bot file at 'somePath'
+    try {
+      await promptForSecretAndRetry('somePath');
+    } catch (e) {
+      expect(e.code).toBe('ENOENT');
+    }
   });
 });

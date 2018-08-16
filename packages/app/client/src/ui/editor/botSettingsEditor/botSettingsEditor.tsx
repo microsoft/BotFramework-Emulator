@@ -90,19 +90,19 @@ class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps,
         <Column>
           <MediumHeader className={ styles.botSettingsHeader }>Bot Settings</MediumHeader>
           <TextField className={ styles.botSettingsInput } label="Bot name" value={ this.state.bot.name }
-            required={ true } onChanged={ this.onChangeName } errorMessage={ error } />
+            required={ true } onChanged={ this.onChangeName } errorMessage={ error }/>
           <TextField className={ styles.botSettingsInput } label="Bot secret" value={ this.state.secret }
-            onChanged={ this.onChangeSecret } type={ this.state.revealSecret ? 'text' : 'password' } />
+            onChanged={ this.onChangeSecret } type={ this.state.revealSecret ? 'text' : 'password' }/>
           <Checkbox
             label="Reveal secret"
             checked={ this.state.revealSecret }
             onChange={ this.onCheckSecretCheckbox }
           />
           <Row className={ styles.buttonRow }>
-            <PrimaryButton text="Save" onClick={ this.onSave } className={ styles.saveButton } disabled={ disabled } />
+            <PrimaryButton text="Save" onClick={ this.onSave } className={ styles.saveButton } disabled={ disabled }/>
             <PrimaryButton text="Save & Connect" onClick={ this.onSaveAndConnect }
               className={ styles.saveConnectButton }
-              disabled={ disabled } />
+              disabled={ disabled }/>
           </Row>
         </Column>
       </GenericDocument>
