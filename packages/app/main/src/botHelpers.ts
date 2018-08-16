@@ -125,11 +125,15 @@ export function toSavableBot(bot: BotConfigWithPath, secret?: string): BotConfig
   const botCopy = cloneBot(bot);
   const newBot: BotConfig = new BotConfig(secret);
 
-  // copy everything over but the internal id
+  // refresh the secret key using the current secret
+  if (secret) {
+    newBot.validateSecretKey();
+  }
+
+  // copy everything over
   newBot.description = botCopy.description;
   newBot.name = botCopy.name;
   newBot.services = botCopy.services;
-  newBot.secretKey = botCopy.secretKey;
   return newBot;
 }
 
