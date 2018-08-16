@@ -111,30 +111,30 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
             value={ this.state.bot.name }
             onChanged={ this.onChangeName }
             label={ 'Bot name' }
-            required={ true } />
+            required={ true }/>
           <TextField
             inputClassName="bot-creation-input"
             value={ this.state.endpoint.endpoint }
             onChanged={ this.onChangeEndpoint }
             placeholder={ endpointPlaceholder } label={ 'Endpoint URL' }
-            required={ true } />
+            required={ true }/>
           { endpointWarning && <span className={ styles.endpointWarning }>{ endpointWarning }</span> }
           <Row className={ styles.multiInputRow }>
             <TextField
               className={ styles.smallInput } inputClassName="bot-creation-input" value={ endpoint.appId }
-              onChanged={ this.onChangeAppId } label={ 'MSA app ID' } placeholder={ 'Optional' } />
+              onChanged={ this.onChangeAppId } label={ 'MSA app ID' } placeholder={ 'Optional' }/>
             <TextField
               className={ styles.smallInput }
               inputClassName="bot-creation-input"
               value={ endpoint.appPassword }
               onChanged={ this.onChangeAppPw }
-              label={ 'MSA app password' } placeholder={ 'Optional' } type={ 'password' } />
+              label={ 'MSA app password' } placeholder={ 'Optional' } type={ 'password' }/>
           </Row>
           <Checkbox
             className={ 'secret-checkbox' }
             checked={ secretEnabled }
             onChange={ this.onToggleSecret }
-            label={ 'Encrypt your keys' } id={ 'bot-secret-checkbox' } />
+            label={ 'Encrypt your keys' } id={ 'bot-secret-checkbox' }/>
           {
             secretEnabled &&
             <Row className={ `${styles.multiInputRow} secret-row` }>
