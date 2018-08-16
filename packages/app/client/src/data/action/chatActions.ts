@@ -31,13 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { LogEntry } from '@bfemulator/app-shared';
+import LogEntry from '@bfemulator/emulator-core/lib/types/log/entry';
 
 export enum ChatActions {
   newChat = 'CHAT/DOCUMENT/NEW',
   openChat = 'CHAT/DOCUMENT/OPEN',
   closeChat = 'CHAT/DOCUMENT/CLOSE',
-  pingChat = 'CHAT/DOCUMENT/PING',
   newConversation = 'CHAT/CONVERSATION/NEW',
   appendLog = 'CHAT/LOG/APPEND',
   clearLog = 'CHAT/LOG/CLEAR',
@@ -63,13 +62,6 @@ export interface OpenChatAction {
 
 export interface CloseChatAction {
   type: ChatActions.closeChat;
-  payload: {
-    documentId: string
-  };
-}
-
-export interface PingChatAction {
-  type: ChatActions.pingChat;
   payload: {
     documentId: string
   };
@@ -129,7 +121,6 @@ export type ChatAction =
   NewChatAction |
   OpenChatAction |
   CloseChatAction |
-  PingChatAction |
   NewConversationAction |
   AppendLogAction |
   ClearLogAction |
@@ -139,15 +130,6 @@ export type ChatAction =
   RemoveTranscriptAction;
 
 type ChatMode = 'livechat' | 'transcript';
-
-export function pingDocument(documentId: string): PingChatAction {
-  return {
-    type: ChatActions.pingChat,
-    payload: {
-      documentId
-    }
-  };
-}
 
 export function addTranscript(filename: string): AddTranscriptAction {
   return {
@@ -178,7 +160,6 @@ export function newDocument(documentId: string, mode: ChatMode, additionalData?:
   return {
     type: ChatActions.newChat,
     payload: {
-      pingId: 0,
       mode,
       documentId,
       conversationId: null,

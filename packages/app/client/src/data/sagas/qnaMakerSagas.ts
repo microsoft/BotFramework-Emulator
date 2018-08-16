@@ -61,7 +61,7 @@ function* openQnaMakerContextMenu(action: QnaMakerServiceAction<QnaMakerServiceP
   const menuItems = [
     { label: 'Edit settings', id: 'edit' },
     { label: 'Open in web portal', id: 'open' },
-    { label: 'Remove', id: 'forget' }
+    { label: 'Forget this service', id: 'forget' }
   ];
   const response = yield call(CommandServiceImpl
     .remoteCall.bind(CommandServiceImpl), SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);

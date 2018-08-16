@@ -32,104 +32,124 @@
 //
 
 export namespace SharedConstants {
-  export const TEMP_BOT_IN_MEMORY_PATH: string = 'TEMP_BOT_IN_MEMORY';
+  export const NOTIFICATION_FROM_MAIN = 'NOTIFICATION_FROM_MAIN';
+  export const TEMP_BOT_IN_MEMORY_PATH = 'TEMP_BOT_IN_MEMORY';
 
   /** Names of commands used in both main and client */
   export namespace Commands {
+
+    export namespace Azure {
+      export const RetrieveArmToken = 'azure:retrieve-arm-token';
+      export const PersistAzureLoginChanged = 'azure:persist-azure-login-changed';
+      export const SignUserOutOfAzure = 'azure:sign-user-out';
+    }
+
     export namespace Bot {
-      export const Create: string = 'bot:create';
-      export const Save: string = 'bot:save';
-      export const Open: string = 'bot:open';
-      export const SetActive: string = 'bot:set-active';
-      export const RestartEndpointService: string = 'bot:restart-endpoint-service';
-      export const Close: string = 'bot:close';
-      export const AddOrUpdateService: string = 'bot:add-or-update-service';
-      export const RemoveService: string = 'bot:remove-service';
-      export const PatchBotList: string = 'bot:list:patch';
-      export const Switch: string = 'bot:switch';
-      export const OpenBrowse: string = 'bot:browse-open';
-      export const SyncBotList: string = 'bot:list:sync';
-      export const OpenSettings: string = 'bot-settings:open';
-      export const Load: string = 'bot:load';
+      export const Create = 'bot:create';
+      export const Save = 'bot:save';
+      export const Open = 'bot:open';
+      export const SetActive = 'bot:set-active';
+      export const RestartEndpointService = 'bot:restart-endpoint-service';
+      export const Close = 'bot:close';
+      export const AddOrUpdateService = 'bot:add-or-update-service';
+      export const RemoveService = 'bot:remove-service';
+      export const PatchBotList = 'bot:list:patch';
+      export const Switch = 'bot:switch';
+      export const OpenBrowse = 'bot:browse-open';
+      export const SyncBotList = 'bot:list:sync';
+      export const OpenSettings = 'bot-settings:open';
+      export const Load = 'bot:load';
+      export const RemoveFromBotList = 'bot:list:remove';
     }
 
     export namespace ClientInit {
-      export const Loaded: string = 'client:loaded';
-      export const PostWelcomeScreen: string = 'client:post-welcome-screen';
+      export const Loaded = 'client:loaded';
+      export const PostWelcomeScreen = 'client:post-welcome-screen';
     }
 
     export namespace Electron {
-      export const ShowMessageBox: string = 'shell:show-message-box';
-      export const ShowOpenDialog: string = 'shell:show-open-dialog';
-      export const ShowSaveDialog: string = 'shell:show-save-dialog';
-      export const UpdateRecentBotsInMenu: string = 'menu:update-recent-bots';
-      export const SetFullscreen: string = 'electron:set-fullscreen';
-      export const SetTitleBar: string = 'electron:set-title-bar';
-      export const DisplayContextMenu: string = 'electron:display-context-menu';
-      export const OpenExternal: string = 'electron:open-external';
-      export const ToggleDevTools: string = 'shell:toggle-inspector-devtools';
-      export const UpdateAvailable: string = 'shell:update-downloaded';
-      export const UpdateNotAvailable: string = 'shell:update-not-available';
-      export const ShowAboutDialog: string = 'shell:about';
+      export const ShowMessageBox = 'shell:show-message-box';
+      export const ShowOpenDialog = 'shell:show-open-dialog';
+      export const ShowSaveDialog = 'shell:show-save-dialog';
+      export const UpdateFileMenu = 'menu:update-file-menu';
+      export const SetFullscreen = 'electron:set-fullscreen';
+      export const SetTitleBar = 'electron:set-title-bar';
+      export const DisplayContextMenu = 'electron:display-context-menu';
+      export const OpenExternal = 'electron:open-external';
+      export const ToggleDevTools = 'shell:toggle-inspector-devtools';
+      export const UpdateAvailable = 'shell:update-downloaded';
+      export const UpdateNotAvailable = 'shell:update-not-available';
+      export const ShowAboutDialog = 'shell:about';
     }
 
     export namespace Emulator {
-      export const SaveTranscriptToFile: string = 'emulator:save-transcript-to-file';
-      export const FeedTranscriptFromDisk: string = 'emulator:feed-transcript:disk';
-      export const FeedTranscriptFromMemory: string = 'emulator:feed-transcript:deep-link';
-      export const GetSpeechToken: string = 'speech-token:get';
-      export const NewTranscript: string = 'transcript:new';
-      export const NewLiveChat: string = 'livechat:new';
-      export const OpenTranscript: string = 'transcript:open';
-      export const PromptToOpenTranscript: string = 'transcript:prompt-open';
-      export const ReloadTranscript: string = 'transcript:reload';
-      export const OpenChatFile: string = 'chat:open';
-      export const AppendToLog: string = 'log:append';
+      export const SaveTranscriptToFile = 'emulator:save-transcript-to-file';
+      export const FeedTranscriptFromDisk = 'emulator:feed-transcript:disk';
+      export const FeedTranscriptFromMemory = 'emulator:feed-transcript:deep-link';
+      export const GetSpeechToken = 'speech-token:get';
+      export const NewTranscript = 'transcript:new';
+      export const NewLiveChat = 'livechat:new';
+      export const OpenTranscript = 'transcript:open';
+      export const PromptToOpenTranscript = 'transcript:prompt-open';
+      export const ReloadTranscript = 'transcript:reload';
+      export const OpenChatFile = 'chat:open';
+      export const AppendToLog = 'log:append';
     }
 
     export namespace Extension {
-      export const Connect: string = 'shell:extension-connect';
-      export const Disconnect: string = 'shell:extension-disconnect';
+      export const Connect = 'shell:extension-connect';
+      export const Disconnect = 'shell:extension-disconnect';
     }
 
     export namespace File {
-      export const Read: string = 'file:read';
-      export const Write: string = 'file:write';
-      export const SanitizeString: string = 'file:sanitize-string';
-      export const Clear: string = 'file:clear';
-      export const Add: string = 'file:add';
-      export const Remove: string = 'file:remove';
-      export const Changed: string = 'file:changed';
+      export const Read = 'file:read';
+      export const Write = 'file:write';
+      export const SanitizeString = 'file:sanitize-string';
+      export const Clear = 'file:clear';
+      export const Add = 'file:add';
+      export const Remove = 'file:remove';
+      export const Changed = 'file:changed';
     }
 
     export namespace Luis {
-      export const RetrieveAuthoringKey: string = 'luis:retrieve-authoring-key';
+      export const GetLuisServices = 'luis:getLuisServices';
     }
 
     export namespace Misc {
-      export const GetStoreState: string = 'store:get-state';
+      export const GetStoreState = 'store:get-state';
+    }
+
+    export namespace Ngrok {
+      export const Reconnect = 'ngrok:reconnect';
+    }
+
+    export namespace Notifications {
+      export const Add = 'notification:add';
+      export const Remove = 'notification:remove';
     }
 
     export namespace OAuth {
-      export const SendTokenResponse: string = 'oauth:send-token-response';
-      export const CreateOAuthWindow: string = 'oauth:create-oauth-window';
+      export const SendTokenResponse = 'oauth:send-token-response';
+      export const CreateOAuthWindow = 'oauth:create-oauth-window';
     }
 
     export namespace Settings {
-      export const SaveAppSettings: string = 'app:settings:save';
-      export const LoadAppSettings: string = 'app:settings:load';
-      export const ReceiveGlobalSettings: string = 'receive-global-settings';
+      export const SaveAppSettings = 'app:settings:save';
+      export const LoadAppSettings = 'app:settings:load';
+      export const ReceiveGlobalSettings = 'receive-global-settings';
     }
 
     export namespace UI {
-      export const ShowWelcomePage: string = 'welcome-page:show';
-      export const ShowBotCreationDialog: string = 'bot-creation:show';
-      export const ShowSecretPromptDialog: string = 'secret-prompt:show';
-      export const SwitchNavBarTab: string = 'navbar:switch-tab';
-      export const ShowExplorer: string = 'shell:show-explorer';
-      export const ShowServices: string = 'shell:show-services';
-      export const ShowAppSettings: string = 'shell:show-app-settings';
-      export const SwitchTheme: string = 'shell:switchTheme';
+      export const ShowWelcomePage = 'welcome-page:show';
+      export const ShowBotCreationDialog = 'bot-creation:show';
+      export const ShowSecretPromptDialog = 'secret-prompt:show';
+      export const SwitchNavBarTab = 'navbar:switch-tab';
+      export const ShowExplorer = 'shell:show-explorer';
+      export const ShowServices = 'shell:show-services';
+      export const ShowAppSettings = 'shell:show-app-settings';
+      export const SwitchTheme = 'shell:switchTheme';
+      export const SignInToAzure = 'shell:signInToAzure';
+      export const ArmTokenReceivedOnStartup = 'shell:armTokenReceivedOnStartup';
     }
   }
 }

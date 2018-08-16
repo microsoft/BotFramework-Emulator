@@ -31,37 +31,46 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  luisAuthoringDataChanged,
-  luisAuthStatusChanged
-} from '../action/luisAuthActions';
-import luisAuth, { LuisAuthState } from './luisAuthReducer';
+import * as React from 'react';
+import * as styles from './insetShadow.scss';
 
-describe('Luis auth reducer tests', () => {
-  let startingState: LuisAuthState;
+export type InsetShadowOrientation = 'top' | 'bottom' | 'left' | 'right';
 
-  beforeEach(() => {
-    startingState = {
-      luisAuthWorkflowStatus: null,
-      luisAuthData: null
-    };
-  });
+export interface Props {
+  orientation: InsetShadowOrientation;
+}
 
-  it('should return unaltered state for non-matching action type', () => {
-    const emptyAction = { type: null, payload: undefined };
-    const endingState = luisAuth(startingState, emptyAction);
-    expect(endingState).toEqual(startingState);
-  });
+export class InsetShadow extends React.Component<Props> {
+  render() {
+    const { orientation } = this.props;
+    if (!orientation) {
+      throw new Error('<InsetShadow /> requires an "orientation" prop to be passed in!');
+    }
 
-  it('should change workflow status', () => {
-    const action = luisAuthStatusChanged('inProgress');
-    const state = luisAuth(startingState, action);
-    expect(state.luisAuthWorkflowStatus).toBe('inProgress');
-  });
+    let shadowClassName = '';
+    switch (orientation) {
+      case 'top':
+        shadowClassName = styles.top;
+        break;
 
-  it('should change auth data', () => {
-    const action = luisAuthoringDataChanged({ key: 'someKey', BaseUrl: 'someBaseUrl' });
-    const state = luisAuth(startingState, action);
-    expect(state.luisAuthData).toEqual({ key: 'someKey', BaseUrl: 'someBaseUrl' });
-  });
-});
+      case 'bottom':
+        shadowClassName = styles.bottom;
+        break;
+
+      case 'left':
+        shadowClassName = styles.left;
+        break;
+
+      case 'right':
+        shadowClassName = styles.right;
+        break;
+
+      default:
+        return null;
+    }
+
+    return (
+      <div className={ [styles.insetShadow, shadowClassName].join(' ') } aria-hidden="true"/>
+    );
+  }
+}

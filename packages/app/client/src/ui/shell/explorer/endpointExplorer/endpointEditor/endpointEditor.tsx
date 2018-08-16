@@ -36,6 +36,7 @@ import { EndpointService } from 'msbot/bin/models';
 import { IEndpointService } from 'msbot/bin/schema';
 import * as React from 'react';
 import { Component } from 'react';
+import * as styles from './endpointEditor.scss';
 
 interface EndpointEditorProps {
   endpointService: IEndpointService;
@@ -88,26 +89,29 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
     const { endpointService, appIdError, appPasswordError, endpointError, nameError, isDirty } = this.state;
     const { name = '', endpoint = '', appId = '', appPassword = '' } = endpointService;
     const valid = !!endpoint && !!name;
+    const endpointWarning = this.validateEndpoint(endpoint);
+
     return (
       <Dialog title={ title } detailedDescription={ detailedDescription }
-              cancel={ this.onCancelClick }>
+        cancel={ this.onCancelClick }>
         <DialogContent>
           <TextField errorMessage={ nameError } value={ name }
-                     onChanged={ this._textFieldHandler.name } label="Name"
-                     required={ true }
+            onChanged={ this._textFieldHandler.name } label="Name"
+            required={ true }
           />
           <TextField errorMessage={ endpointError } value={ endpoint }
-                     onChanged={ this._textFieldHandler.endpoint }
-                     label="Endpoint url" required={ true }
+            onChanged={ this._textFieldHandler.endpoint }
+            label="Endpoint url" required={ true }
           />
+          { endpointWarning && <span className={ styles.endpointWarning }>{ endpointWarning }</span> }
           <TextField errorMessage={ appIdError } value={ appId }
-                     onChanged={ this._textFieldHandler.appId }
-                     label="Application Id"
-                     required={ false }
+            onChanged={ this._textFieldHandler.appId }
+            label="Application Id"
+            required={ false }
           />
           <TextField errorMessage={ appPasswordError } value={ appPassword }
-                     onChanged={ this._textFieldHandler.appPassword }
-                     label="Application Password" required={ false }
+            onChanged={ this._textFieldHandler.appPassword }
+            label="Application Password" required={ false }
           />
         </DialogContent>
         <DialogFooter>
@@ -138,5 +142,11 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
     const isDirty = Object.keys(endpointService)
       .reduce((dirty, key) => (dirty || endpointService[key] !== originalEndpointService[key]), false);
     this.setState({ endpointService, [`${propName}Error`]: errorMessage, isDirty } as any);
+  }
+
+  /** Checks the endpoint to see if it has the correct route syntax at the end (/api/messages) */
+  private validateEndpoint(endpoint: string): string {
+    const controllerRegEx = /api\/messages\/?$/;
+    return controllerRegEx.test(endpoint) ? '' : `Please include route if necessary: "/api/messages"`;
   }
 }

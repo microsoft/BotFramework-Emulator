@@ -32,3 +32,4 @@
 //
 
 export { LuisExplorerContainer } from './luisExplorerContainer';
+export { LuisModelsViewerContainer } from './luisModelsViewerDialog/luisModelsViewerContainer';

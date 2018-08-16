@@ -1,0 +1,25 @@
+.inset-shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 999;
+
+  &.top {
+    box-shadow: var(--box-shadow-top);
+  }
+
+  &.bottom {
+    box-shadow: var(--box-shadow-bottom);
+  }
+
+  &.right {
+    box-shadow: var(--box-shadow-right);
+  }
+
+  &.left {
+    box-shadow: var(--box-shadow-left);
+  }
+}

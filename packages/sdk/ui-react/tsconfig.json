@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-    "outDir": "built",
+    "outDir": "./",
     "module": "esnext",
-    "target": "es6",
+    "target": "es2017",
     "lib": ["es6", "dom", "es2015"],
     "sourceMap": true,
     "jsx": "react",
-    "moduleResolution": "node",
     "rootDir": "src",
+    "moduleResolution": "node",
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
@@ -16,15 +16,17 @@
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": false,
     "declaration": true,
-
-    // Should disable this when RxJS 6 release, and it should play nice with TS >= 2.4.1
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["jest", "react", "react-dom"]
   },
   "include": [
     "./src"
   ],
   "exclude": [
     "./built",
-    "./node_modules"
+    "./node_modules",
+    "./__tests__/**/*",
+    "./**/*.spec.ts",
+    "./**/*.test.ts"
   ]
 }

@@ -43,8 +43,8 @@ import { SettingsService } from './platform/settings/settingsService';
 import { LogService } from './platform/log/logService';
 import { showWelcomePage } from './data/editorHelpers';
 import { CommandRegistry, registerAllCommands } from './commands';
-import { SharedConstants } from '@bfemulator/app-shared';
-
+import { SharedConstants, newNotification } from '@bfemulator/app-shared';
+import { beginAdd } from './data/action/notificationActions';
 import 'botframework-webchat/botchat.css';
 import './ui/styles/globals.scss';
 
@@ -70,7 +70,11 @@ CommandServiceImpl.remoteCall(SharedConstants.Commands.ClientInit.Loaded)
     // do actions on main side that might open a document, so that they will be active over the welcome screen
     CommandServiceImpl.remoteCall(SharedConstants.Commands.ClientInit.PostWelcomeScreen);
   })
-  .catch(err => console.error(`Error occured during client:loaded: ${err}`));
+  .catch(err => {
+    const errMsg = `Error occurred while client was loading: ${err}`;
+    const notification = newNotification(errMsg);
+    store.dispatch(beginAdd(notification));
+  });
 
 if (module.hasOwnProperty('hot')) {
   (module as any).hot.accept();

@@ -20,7 +20,8 @@ module.exports = {
               modules: true,
               sass: false,
               namedExport: true,
-              sourcemaps:true,
+              camelCase: true,
+              sourcemaps: true,
               banner: '// This is a generated file. Changes are likely to result in being overwritten'
             }
           },
@@ -42,16 +43,7 @@ module.exports = {
       {
         test: /\.(tsx?)|(jsx)$/,
         exclude: [/node_modules/],
-        use: [
-          {
-            loader: 'babel-loader',
-            options: {
-              babelrc: false,
-              plugins: ['react-hot-loader/babel'],
-            },
-          },
-          'awesome-typescript-loader',
-        ],
+        loader: 'ts-loader',
       },
       {
         test: /\.tsx?$/,
@@ -63,7 +55,8 @@ module.exports = {
 
   externals: {
     react: 'umd react',
-    'react-dom' : 'umd react-dom'
+    'react-dom': 'umd react-dom',
+    'office-ui-fabric-react': 'umd office-ui-fabric-react'
   },
 
   resolve: {

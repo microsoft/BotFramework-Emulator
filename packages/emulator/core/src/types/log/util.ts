@@ -36,7 +36,7 @@ import ILogItem from './item';
 import LogEntry from './entry';
 
 // TODO: Move this to a generally available location and export
-function makeEnumerableObject(src: any) {
+export function makeEnumerableObject(src: any) {
   if (typeof src !== 'object') {
     return src;
   }
@@ -128,6 +128,15 @@ export function networkResponseItem(body: any, headers: any, statusCode: any, st
       statusCode,
       statusMessage,
       srcUrl
+    }
+  };
+}
+
+export function ngrokExpirationItem(text: string): ILogItem {
+  return {
+    type: 'ngrok-expiration',
+    payload: {
+      text
     }
   };
 }

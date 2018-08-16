@@ -32,40 +32,10 @@
 //
 
 import * as React from 'react';
-
-import * as ChatActions from '../../../../../data/action/chatActions';
 import * as styles from './log.scss';
-import store from '../../../../../data/store';
-import { ExtensionManager, InspectorAPI } from '../../../../../extensions';
-import { LogEntry, LogItem, LogLevel, SharedConstants } from '@bfemulator/app-shared';
-import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
-
-function number2(n: number) {
-  return ('0' + n).slice(-2);
-}
-
-function timestamp(t: number) {
-  let timestamp1 = new Date(t);
-  let hours = number2(timestamp1.getHours());
-  let minutes = number2(timestamp1.getMinutes());
-  let seconds = number2(timestamp1.getSeconds());
-  return `${hours}:${minutes}:${seconds}`;
-}
-
-function logLevelToClassName(level: LogLevel): string {
-  switch (level) {
-    case LogLevel.Debug:
-      return styles.level1;
-    case LogLevel.Info:
-      return styles.level0;
-    case LogLevel.Warn:
-      return styles.level2;
-    case LogLevel.Error:
-      return styles.level3;
-    default:
-      return '';
-  }
-}
+import { Subscription } from 'rxjs';
+import { ActivitySelectionFromLog } from './logEntry';
+import { LogEntry } from './logEntryContainer';
 
 export interface LogProps {
   document: any;
@@ -75,8 +45,11 @@ export interface LogState {
   count: number;
 }
 
-export default class Log extends React.Component<LogProps, LogState> {
-  scrollMe: Element;
+export class Log extends React.Component<LogProps, LogState> {
+  public scrollMe: Element;
+  public selectedActivitySubscription: Subscription;
+  public selectedActivity: any;
+  public currentlyInspectedActivity: any;
 
   constructor(props: LogProps, context: LogState) {
     super(props, context);
@@ -86,11 +59,45 @@ export default class Log extends React.Component<LogProps, LogState> {
   }
 
   componentDidUpdate(): void {
-    if (this.props.document.log.entries.length !== this.state.count) {
-      this.scrollMe.scrollTop = this.scrollMe.scrollHeight;
+    let { props, scrollMe, selectedActivitySubscription, state } = this;
+    // set up selected activity subscription once it's available
+    if (props.document && props.document.selectedActivity$ && !selectedActivitySubscription) {
+      selectedActivitySubscription =
+        props.document.selectedActivity$.subscribe(obj => {
+          if (obj) {
+            if (obj.activity) {
+              // this activity came from webchat (activities from webchat are wrapped)
+              // ex: { activity: { id: , from: , ... } }
+              const { activity } = obj;
+              this.selectedActivity = activity;
+              this.currentlyInspectedActivity = activity;
+            } else {
+              // this activity came from the log (activities from the log are raw)
+              // ex: { id: , from: , to: , ... }
+              const activity = obj;
+              this.selectedActivity = activity;
+              const { fromLog = {} as ActivitySelectionFromLog }: { fromLog: ActivitySelectionFromLog } = activity;
+              // check if it was clicked or hovered
+              const { clicked } = fromLog;
+              if (clicked) {
+                this.currentlyInspectedActivity = activity;
+              }
+            }
+          }
+        });
+    }
+    if (props.document.log.entries.length !== state.count) {
+      scrollMe.scrollTop = scrollMe.scrollHeight;
       this.setState({
-        count: this.props.document.log.entries.length
+        count: props.document.log.entries.length
       });
+    }
+  }
+
+  componentWillUnmount(): void {
+    // clean up activity subscription
+    if (this.selectedActivitySubscription) {
+      this.selectedActivitySubscription.unsubscribe();
     }
   }
 
@@ -100,195 +107,12 @@ export default class Log extends React.Component<LogProps, LogState> {
       <div className={ styles.log } ref={ ref => this.scrollMe = ref }>
         {
           this.props.document.log.entries.map(entry =>
-            <LogEntryComponent key={ `entry-${key++}` } entry={ entry } document={ this.props.document }/>
+            <LogEntry key={ `entry-${key++}` } entry={ entry } document={ this.props.document }
+              selectedActivity={ this.selectedActivity }
+              currentlyInspectedActivity={ this.currentlyInspectedActivity } />
           )
         }
       </div>
     );
-  }
-}
-
-export interface LogEntryProps {
-  document: any;
-  entry: LogEntry;
-}
-
-class LogEntryComponent extends React.Component<LogEntryProps> {
-
-  inspect(obj: {}) {
-    this.props.document.selectedActivity$.next({});
-    store.dispatch(ChatActions.setInspectorObjects(this.props.document.documentId, obj));
-  }
-
-  inspectAndHighlight(obj: any) {
-    this.inspect(obj);
-    if (obj.id) {
-      this.props.document.selectedActivity$.next(obj);
-    }
-  }
-
-  render() {
-    return (
-      <div key="entry" className={ styles.entry }>
-        { this.renderTimestamp(this.props.entry.timestamp) }
-        { this.props.entry.items.map((item, key) => this.renderItem(item, '' + key)) }
-      </div>
-    );
-  }
-
-  renderTimestamp(t: number) {
-    return (
-      <span key="timestamp" className={ styles.spaced }>
-        [<span className={ styles.timestamp }>{ timestamp(t) }</span>]
-      </span>
-    );
-  }
-
-  renderItem(item: LogItem, key: string) {
-    switch (item.type) {
-      case 'text': {
-        const { level, text } = item.payload;
-        return this.renderTextItem(level, text, key);
-      }
-      case 'external-link': {
-        const { text, hyperlink } = item.payload;
-        return this.renderExternalLinkItem(text, hyperlink, key);
-      }
-      case 'open-app-settings': {
-        const { text } = item.payload;
-        return this.renderAppSettingsItem(text, key);
-      }
-      case 'exception': {
-        const { err } = item.payload;
-        return this.renderExceptionItem(err, key);
-      }
-      case 'inspectable-object': {
-        const { obj } = item.payload;
-        return this.renderInspectableItem(obj, key);
-      }
-      case 'network-request': {
-        const { facility, body, headers, method, url } = item.payload;
-        return this.renderNetworkRequestItem(facility, body, headers, method, url, key);
-      }
-      case 'network-response': {
-        const { body, headers, statusCode, statusMessage, srcUrl } = item.payload;
-        return this.renderNetworkResponseItem(body, headers, statusCode, statusMessage, srcUrl, key);
-      }
-      default:
-        return false;
-    }
-  }
-
-  renderTextItem(level: LogLevel, text: string, key: string) {
-    return (
-      <span key={ key } className={ `${styles.spaced} ${logLevelToClassName(level)}` }>
-        { text }
-      </span>
-    );
-  }
-
-  renderExternalLinkItem(text: string, hyperlink: string, key: string) {
-    return (
-      <span key={ key } className={ styles.spaced }>
-        <a onClick={ () => window.open(hyperlink, '_blank') }>{ text }</a>
-      </span>
-    );
-  }
-
-  renderAppSettingsItem(text: string, key: string) {
-    const { Commands } = SharedConstants;
-    return (
-      <span key={ key } className={ styles.spaced }>
-        <a onClick={ () => CommandServiceImpl.call(Commands.UI.ShowAppSettings) }>{ text }</a>
-      </span>
-    );
-  }
-
-  renderExceptionItem(err: Error, key: string) {
-    return (
-      <span key={ key } className={ `${styles.spaced} ${styles.level3}` }>
-        { err && err.message ? err.message : '' }
-      </span>
-    );
-  }
-
-  renderInspectableItem(obj: any, key: string) {
-    let title = 'inspect';
-    if (typeof obj.type === 'string') {
-      title = obj.type;
-    }
-    let summaryText = this.summaryText(obj) || '';
-    return (
-      <span key={ key }>
-        <span className={ `${styles.spaced} ${styles.level0}` }>
-          <a onClick={ () => this.inspectAndHighlight(obj) }>{ title }</a>
-        </span>
-        <span className={ `${styles.spaced} ${styles.level0}` }>
-          { summaryText }
-        </span>
-      </span>
-    );
-  }
-
-  renderNetworkRequestItem(_facility: any, body: any, _headers: any, method: any, _url: string, key: string) {
-    let obj;
-    if (typeof body === 'string') {
-      try {
-        obj = JSON.parse(body);
-      } catch (e) {
-        obj = body;
-      }
-    } else {
-      obj = body;
-    }
-    if (obj) {
-      return (
-        <span key={ key } className={ `${styles.spaced} ${styles.level0}` }>
-          <a onClick={ () => this.inspect(obj) }>{ method }</a>
-        </span>
-      );
-    } else {
-      return (
-        <span key={ key } className={ `${styles.spaced} ${styles.level0}` }>
-          { method }
-        </span>
-      );
-    }
-  }
-
-  renderNetworkResponseItem(body: any, _headers: any, statusCode: number,
-                            _statusMessage: string, _srcUrl: string, key: string) {
-    let obj;
-    if (typeof body === 'string') {
-      try {
-        obj = JSON.parse(body);
-      } catch (e) {
-        obj = body;
-      }
-    } else {
-      obj = body;
-    }
-    if (obj) {
-      return (
-        <span key={ key } className={ `${styles.spaced} ${styles.level0}` }>
-          <a onClick={ () => this.inspect(obj) }>{ statusCode }</a>
-        </span>
-      );
-    } else {
-      return (
-        <span key={ key } className={ `${styles.spaced} ${styles.level0}` }>
-          { statusCode }
-        </span>
-      );
-    }
-  }
-
-  summaryText(obj: any): string {
-    const inspResult = ExtensionManager.inspectorForObject(obj, true);
-    if (inspResult && inspResult.inspector) {
-      return InspectorAPI.summaryText(inspResult.inspector, obj);
-    } else {
-      return undefined;
-    }
   }
 }

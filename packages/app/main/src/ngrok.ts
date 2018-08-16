@@ -33,6 +33,7 @@
 
 import * as path from 'path';
 import * as got from 'got';
+import { setTimeout, clearTimeout } from 'timers';
 
 const spawn = require('child_process').spawn;
 const Emitter = require('events').EventEmitter;
@@ -44,6 +45,12 @@ const xtend = require('xtend');
 
 const bin = 'ngrok' + (platform === 'win32' ? '.exe' : '');
 const ready = /starting web service.*addr=(\d+\.\d+\.\d+\.\d+:\d+)/;
+
+const NGROK_EXPIRATION_TIME = 1000 * 60 * 60 * 8; // 8 hours in ms
+const NGROK_EXPIRATION_POLLING_INTERVAL = 1000 * 60 * 5; // 5 minutes
+
+let ngrokStartTime: number;
+let ngrokExpirationTimer: NodeJS.Timer;
 
 const noop = function () {
   return null;
@@ -158,10 +165,12 @@ function runNgrok(opts: any, cb: any) {
   ngrok.on('exit', function () {
     api = null;
     tunnels = {};
+    cleanUpNgrokExpirationTimer();
     ngrokEmitter.emit('disconnect');
   });
 
   ngrok.on('close', function () {
+    cleanUpNgrokExpirationTimer();
     return ngrokEmitter.emit('close');
   });
 
@@ -170,12 +179,35 @@ function runNgrok(opts: any, cb: any) {
   });
 }
 
+/** Checks if the ngrok tunnel is due for expiration */
+function checkForNgrokExpiration(): void {
+  const currentTime = Date.now();
+  const timeElapsed = currentTime - ngrokStartTime;
+  if (timeElapsed >= NGROK_EXPIRATION_TIME) {
+    cleanUpNgrokExpirationTimer();
+    ngrokEmitter.emit('expired');
+  } else {
+    ngrokExpirationTimer = setTimeout(checkForNgrokExpiration, NGROK_EXPIRATION_POLLING_INTERVAL);
+  }
+}
+
+/** Clears the ngrok expiration timer and resets the tunnel start time */
+function cleanUpNgrokExpirationTimer(): void {
+  ngrokStartTime = null;
+  clearTimeout(ngrokExpirationTimer);
+}
+
 function runTunnel(opts: any, cb: any) {
   _runTunnel(opts, function (err: any, url: any, inspectPort: any) {
     if (err) {
       ngrokEmitter.emit('error', err);
       return cb(err);
     }
+
+    // start polling for ngrok expiration
+    ngrokStartTime = Date.now();
+    ngrokExpirationTimer = setTimeout(checkForNgrokExpiration, NGROK_EXPIRATION_POLLING_INTERVAL);
+
     ngrokEmitter.emit('connect', url, inspectPort);
     return cb(null, url, inspectPort);
   });
@@ -294,6 +326,7 @@ export function kill(cb: any) {
     api = null;
     ngrok = null;
     tunnels = {};
+    cleanUpNgrokExpirationTimer();
     cb(false);
   }
 }

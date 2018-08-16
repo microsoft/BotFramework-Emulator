@@ -34,7 +34,6 @@ import * as React from 'react';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { IEndpointService } from 'msbot/bin/schema';
-import { SpeechTokenInfo } from '@bfemulator/app-shared';
 import { Chat as WebChat, Speech } from 'botframework-webchat';
 import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
 import { EmulatorMode } from '../../index';
@@ -93,25 +92,7 @@ async function getSpeechToken(endpoint: IEndpointService, refresh: boolean): Pro
   let command = refresh ? 'speech-token:refresh' : 'speech-token:get';
 
   try {
-    const speechToken: SpeechTokenInfo = await CommandServiceImpl.remoteCall(command, endpoint.endpoint);
-
-    if (!speechToken) {
-      console.error('Could not retrieve Cognitive Services speech token.');
-    } else if (!speechToken.access_Token) {
-      console.warn('Could not retrieve Cognitive Services speech token');
-
-      if (typeof speechToken.error === 'string') {
-        console.warn('Error: ' + speechToken.error);
-      }
-
-      if (typeof speechToken.error_Description === 'string') {
-        console.warn('Details: ' + speechToken.error_Description);
-      }
-    } else {
-      return speechToken.access_Token;
-    }
-
-    return;
+    return await CommandServiceImpl.remoteCall(command, endpoint.endpoint);
   } catch (err) {
     console.error(err);
   }
@@ -147,7 +128,7 @@ class Chat extends Component<Props> {
       );
 
       return (
-        <div id="webchat-container" className={ `${styles.chat} wc-app wc-wide` }>
+        <div id="webchat-container" className={ `${ styles.chat } wc-app wc-wide` }>
           <WebChat
             key={ document.directLine.token }
             { ...webChatProps }

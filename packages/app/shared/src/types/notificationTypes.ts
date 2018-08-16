@@ -31,49 +31,47 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  LUIS_AUTH_STATUS_CHANGED,
-  LUIS_AUTHORING_DATA_CHANGED,
-  LuisAuthAction,
-  LuisAuthData,
-  LuisAuthWorkflowStatus
-} from '../action/luisAuthActions';
+import { uniqueId } from '@bfemulator/sdk-shared';
 
-export interface LuisAuthState {
-  /**
-   * The current status of the luis auth frame
-   */
-  luisAuthWorkflowStatus: 'notStarted' | 'inProgress' | 'ended' | 'canceled';
-  /**
-   * The luis authoring key for
-   * communicating with the LUIS api
-   */
-  luisAuthData: { key: string, BaseUrl: string };
+export enum NotificationType {
+  Info,
+  Error,
+  Warning
 }
 
-const initialState: LuisAuthState = {
-  luisAuthWorkflowStatus: 'notStarted',
-  luisAuthData: null
-};
+export interface NotificationCTAButton {
+  text: string;
+  onClick?: (...args: any[]) => any;
+}
 
-export default function luisAuth(state: LuisAuthState = initialState,
-                                 action: LuisAuthAction<LuisAuthData> | LuisAuthAction<LuisAuthWorkflowStatus>)
-  : LuisAuthState {
-  const { payload = {}, type } = action;
-  const { luisAuthData: luisAuthoringKey } = payload as LuisAuthData;
-  const { luisAuthWorkflowStatus } = payload as LuisAuthWorkflowStatus;
+export interface Notification {
+  id: string;
+  type: NotificationType;
+  message: string;
+  timestamp: number;
+  read: boolean;
+  buttons?: NotificationCTAButton[];
+  addButton: (text: string, onClick?: (...args: any[]) => any) => void;
+}
 
-  switch (type) {
-    /*case LUIS_LAUNCH_MODELS_VIEWER:
-      return { ...state, luisAuthWorkflowStatus: 'notStarted' };*/
+export class NotificationImpl implements Notification {
+  readonly id: string;
+  readonly timestamp: number;
+  type: NotificationType;
+  message: string;
+  read: boolean;
+  buttons?: NotificationCTAButton[];
 
-    case LUIS_AUTH_STATUS_CHANGED:
-      return { ...state, luisAuthWorkflowStatus };
+  constructor() {
+    this.id = uniqueId();
+    this.timestamp = Date.now();
+    this.read = false;
+    this.buttons = [];
+  }
 
-    case LUIS_AUTHORING_DATA_CHANGED:
-      return { ...state, luisAuthData: luisAuthoringKey };
-
-    default:
-      return state;
+  /** Adds a CTA button to the notification */
+  public addButton(text: string, onClick?: (...args: any[]) => any): void {
+    const button: NotificationCTAButton = { text, onClick };
+    this.buttons.push(button);
   }
 }

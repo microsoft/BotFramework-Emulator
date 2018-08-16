@@ -7,7 +7,7 @@
   "types": "built/index.d.ts",
   "scripts": {
     "build": "npm run lint && npm run clean && tsc --pretty",
-    "clean": "rimraf ./built",
+    "clean": "rimraf ./built && rimraf ../../../node_modules/@types/prop-types",
     "lint": "tslint --project tsconfig.json",
     "prepare": "npm run clean",
     "test": "jest"
@@ -24,7 +24,25 @@
   },
   "dependencies": {
     "@bfemulator/sdk-shared": "^1.0.0",
+    "g": "^2.0.1",
     "msbot": "^1.0.44",
+    "npm": "^6.2.0",
     "tslib": "^1.9.0"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testMatch": [
+      "**/?(*.)(spec|test).(ts)?(x)"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
   }
 }

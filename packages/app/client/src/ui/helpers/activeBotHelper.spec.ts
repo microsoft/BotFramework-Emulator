@@ -6,7 +6,22 @@ import { getActiveBot } from '../../data/botHelpers';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 import { IEndpointService, ServiceType } from 'msbot/bin/schema';
 import { SharedConstants } from '@bfemulator/app-shared';
-
+jest.mock('../../ui/dialogs', () => ({
+    AzureLoginPromptDialogContainer: function mock() {
+      return undefined;
+    },
+    AzureLoginSuccessDialogContainer: function mock() {
+      return undefined;
+    },
+    BotCreationDialog: function mock() {
+      return undefined;
+    },
+    DialogService: { showDialog: () => Promise.resolve(true) },
+    SecretPromptDialog: function mock() {
+      return undefined;
+    }
+  }
+));
 describe('ActiveBotHelper tests', () => {
   let backupCommandServiceImpl;
   let backupHasNonGlobalTabs;

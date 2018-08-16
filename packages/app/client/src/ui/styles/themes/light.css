@@ -27,6 +27,12 @@ html {
   /* Log panel custom colors */
   --log-panel-timestamp: #47B07F;
   --log-panel-link: #007acc;
+  --log-panel-entry-hover-bg: var(--neutral-4);
+  --log-panel-entry-inspected-bg: var(--neutral-5);
+  --log-panel-item-info: var(--neutral-16);
+  --log-panel-item-debug: var(--neutral-7);
+  --log-panel-item-warn: var(--warning-outline);
+  --log-panel-item-error: var(--error-text);
 
   /* nav bar custom colors */
   --nav-bar-bg: var(--neutral-15);
@@ -37,6 +43,8 @@ html {
   --nav-focused-tag-bg-opacity: 1;
   --nav-link-selected-border: 1px solid transparent;
   --nav-link-hover-border: 1px solid transparent;
+  --nav-link-badge-color: var(--neutral-1);
+  --nav-link-badge-bg: #ff0000;
 
   /* input[type="text"] */
   --input-bg: var(--neutral-1);
@@ -90,6 +98,9 @@ html {
   --explorer-panel-group-border: 1px solid transparent;
   --explorer-panel-empty-message-color: var(--neutral-15);
 
+  /* Explorer Bar */
+  --explorer-bar-header-bg: var(--neutral-3);
+
   /* Tabs */
   --tab-color: var(--explorer-panel-group-title-color);
   --tab-bar-bg: var(--neutral-2);
@@ -101,9 +112,28 @@ html {
   --tab-seperator-bg: var(--neutral-4);
   --tab-icon-color: var(--explorer-panel-group-title-color);
 
+  /* Notifications */
+  --notification-bg: rgba(128,128,128,0.2);
+  --notification-message-color: var(--neutral-12);
+  --notification-timestamp-color: var(--neutral-8);
+  --notification-close-icon-color: var(--neutral-13);
+  --notification-border: 1px solid transparent;
+  --notifications-clear-all-btn-color: #3062d6;
+  --notification-inner-border-display: none;
+  --notification-inner-border: 1px solid transparent;
+
   /* toolbar */
   --toolbar-bg: var(--tab-active-tab-bg);
   --toolbar-border: none;
+
+  /* Welcome page */
+  --my-bots-well-bg: var(--neutral-3);
+  --my-bots-well-border: 0;
+  --my-bots-entry-bg: var(--neutral-4);
+  --my-bots-entry-border: 1px solid transparent;
+  --my-bots-entry-color: var(--neutral-12);
+  --my-bots-path-color: var(--neutral--12);
+  --my-bots-scrollbar-color: rgba(136,136,136,0.5);
 }
 
 .ms-Modal {

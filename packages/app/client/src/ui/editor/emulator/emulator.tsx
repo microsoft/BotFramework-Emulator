@@ -32,7 +32,6 @@
 //
 
 import * as BotChat from 'botframework-webchat';
-
 import { uniqueId } from '@bfemulator/sdk-shared';
 import { Splitter } from '@bfemulator/ui-react';
 import base64Url from 'base64url';
@@ -45,7 +44,6 @@ import { updateDocument } from '../../../data/action/editorActions';
 import * as PresentationActions from '../../../data/action/presentationActions';
 import { Document } from '../../../data/reducer/editor';
 import { RootState } from '../../../data/store';
-
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { SettingsService } from '../../../platform/settings/settingsService';
 import ToolBar, { Button as ToolBarButton } from '../toolbar/toolbar';
@@ -54,14 +52,16 @@ import DetailPanel from './detailPanel/detailPanel';
 import LogPanel from './logPanel/logPanel';
 import PlaybackBar from './playbackBar/playbackBar';
 import { debounce } from '../../../utils';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants, newNotification, Notification } from '@bfemulator/app-shared';
 import * as styles from './emulator.scss';
+import { beginAdd } from '../../../data/action/notificationActions';
 
 const { encode } = base64Url;
 
 export type EmulatorMode = 'transcript' | 'livechat';
 
 interface EmulatorProps {
+  activeDocumentId?: string;
   clearLog?: (documentId: string) => void;
   conversationId?: string;
   dirty?: boolean;
@@ -72,11 +72,10 @@ interface EmulatorProps {
   endpointService?: IEndpointService;
   mode?: EmulatorMode;
   newConversation?: (documentId: string, options: any) => void;
-  pingDocument?: (documentId: string) => void;
-  pingId?: number;
   presentationModeEnabled?: boolean;
   setInspectorObjects?: (documentId: string, objects: any) => void;
   updateDocument?: (documentId: string, updatedValues: any) => void;
+  createErrorNotification?: (notification: Notification) => void;
 }
 
 class EmulatorComponent extends React.Component<EmulatorProps, {}> {
@@ -105,17 +104,33 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
   }
 
   componentWillMount() {
+    window.addEventListener('keydown', this.keyboardEventListener);
     if (this.shouldStartNewConversation()) {
       this.startNewConversation();
     }
   }
 
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.keyboardEventListener);
+  }
+
   componentWillReceiveProps(nextProps: any) {
-    if (!nextProps.document.directLine && this.props.document.documentId !== nextProps.document.documentId) {
-      this.startNewConversation(nextProps).catch();
+    const { props, keyboardEventListener, startNewConversation } = this;
+
+    if (!nextProps.document.directLine && props.document.documentId !== nextProps.document.documentId) {
+      startNewConversation(nextProps).catch();
     }
-    if (this.props.document.documentId !== nextProps.document.documentId) {
-      this.props.pingDocument(nextProps.document.documentId);
+
+    const switchedDocuments = props.activeDocumentId !== nextProps.activeDocumentId;
+    const switchedToThisDocument = (nextProps.activeDocumentId === props.documentId);
+
+    if (switchedDocuments) {
+      if (switchedToThisDocument) {
+        window.removeEventListener('keydown', keyboardEventListener);
+        window.addEventListener('keydown', keyboardEventListener);
+      } else {
+        window.removeEventListener('keydown', keyboardEventListener);
+      }
     }
   }
 
@@ -184,8 +199,9 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
           }
         }
       } catch (err) {
-        // TODO: surface error somewhere
-        console.error('Error creating a new conversation for transcript mode: ', err);
+        const errMsg = `Error creating a new conversation in transcript mode: ${err}`;
+        const notification = newNotification(errMsg);
+        this.props.createErrorNotification(notification);
       }
     }
   }
@@ -234,7 +250,7 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
 
   renderDefaultView(): JSX.Element {
     return (
-      <div className={ styles.emulator } key={ this.props.pingId }>
+      <div className={ styles.emulator }>
         {
           this.props.mode === 'livechat' &&
           <div className={ styles.header }>
@@ -248,8 +264,7 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
           <Splitter orientation="vertical" primaryPaneIndex={ 0 }
                     minSizes={ { 0: 80, 1: 80 } }
                     initialSizes={ this.getVerticalSplitterSizes }
-                    onSizeChange={ this.onVerticalSizeChange }
-                    key={ this.props.pingId }>
+                    onSizeChange={ this.onVerticalSizeChange }>
             <div className={ styles.content }>
               <ChatPanel mode={ this.props.mode }
                          className={ styles.chatPanel }
@@ -260,10 +275,9 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
               <Splitter orientation="horizontal" primaryPaneIndex={ 0 }
                         minSizes={ { 0: 80, 1: 80 } }
                         initialSizes={ this.getHorizontalSplitterSizes }
-                        onSizeChange={ this.onHorizontalSizeChange }
-                        key={ this.props.pingId }>
-                <DetailPanel document={ this.props.document } key={ this.props.pingId }/>
-                <LogPanel document={ this.props.document } key={ this.props.pingId }/>
+                        onSizeChange={ this.onHorizontalSizeChange }>
+                <DetailPanel document={ this.props.document }/>
+                <LogPanel document={ this.props.document }/>
               </Splitter>
             </div>
           </Splitter>
@@ -302,24 +316,34 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
       );
     }
   }
+
+  private readonly keyboardEventListener: EventListener = (event: KeyboardEvent): void => {
+    // Meta corresponds to 'Command' on Mac
+    const ctrlOrCmdPressed = event.getModifierState('Control') || event.getModifierState('Meta');
+    const shiftPressed = ctrlOrCmdPressed && event.getModifierState('Shift');
+    const key = event.key.toLowerCase();
+    if (ctrlOrCmdPressed && shiftPressed && key === 'r') {
+      this.handleStartOverClick();
+    }
+  }
 }
 
 const mapStateToProps = (state: RootState, { documentId }: { documentId: string }): EmulatorProps => ({
+  activeDocumentId: state.editor.editors[state.editor.activeEditor].activeDocumentId,
   conversationId: state.chat.chats[documentId].conversationId,
   document: state.chat.chats[documentId],
   endpointId: state.chat.chats[documentId].endpointId,
-  pingId: state.chat.chats[documentId].pingId,
   presentationModeEnabled: state.presentation.enabled
 });
 
 const mapDispatchToProps = (dispatch): EmulatorProps => ({
-  pingDocument: documentId => dispatch(ChatActions.pingDocument(documentId)),
   enablePresentationMode: enable => enable ? dispatch(PresentationActions.enable())
     : dispatch(PresentationActions.disable()),
   setInspectorObjects: (documentId, objects) => dispatch(ChatActions.setInspectorObjects(documentId, objects)),
   clearLog: documentId => dispatch(ChatActions.clearLog(documentId)),
   newConversation: (documentId, options) => dispatch(ChatActions.newConversation(documentId, options)),
-  updateDocument: (documentId, updatedValues: Partial<Document>) => dispatch(updateDocument(documentId, updatedValues))
+  updateDocument: (documentId, updatedValues: Partial<Document>) => dispatch(updateDocument(documentId, updatedValues)),
+  createErrorNotification: (notification: Notification) => dispatch(beginAdd(notification))
 });
 
 export const Emulator = connect(mapStateToProps, mapDispatchToProps)(EmulatorComponent as any) as any;

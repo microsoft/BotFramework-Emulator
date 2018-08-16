@@ -33,7 +33,7 @@
 
 import * as React from 'react';
 
-import Log from '../parts/log/log';
+import { Log } from '../parts/log';
 import Panel, { PanelContent } from '../../panel/panel';
 import * as styles from './logPanel.scss';
 
@@ -47,7 +47,7 @@ export default class LogPanel extends React.Component<LogPanelProps, {}> {
       <div className={ styles.logPanel }>
         <Panel title="Log">
           <PanelContent>
-            <Log document={ this.props.document } key={ this.props.document.pingId }/>
+            <Log document={ this.props.document }/>
           </PanelContent>
         </Panel>
       </div>

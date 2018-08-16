@@ -35,6 +35,8 @@ export * from './botTypes';
 export * from './commandLineArgsTypes';
 export * from './conversationTypes';
 export * from './fileTypes';
+export * from './notificationTypes';
 export * from './responseTypes';
 export * from './serverSettingsTypes';
 export * from './speechTypes';
+export * from './luisTypes';

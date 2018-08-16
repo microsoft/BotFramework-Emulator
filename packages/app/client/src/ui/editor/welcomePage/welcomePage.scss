@@ -6,6 +6,7 @@
   margin-bottom: 34px;
   width: auto;
   max-width: 100%;
+
   a {
     min-width: 0;
     white-space: nowrap;
@@ -13,31 +14,30 @@
     overflow: hidden;
     text-decoration: none;
     color: var(--focused-selected-list-item-bg);
-    :hover {
-      color: var(--focused-selected-list-item-bg);
-    }
   }
 
   ul {
     margin: 0;
     list-style: none;
     padding: 0;
+
+    &.well {
+      padding: 10px 0;
+    }
   }
 }
 
 .well {
-  padding: 12px 10px;
-  transition: background 0.05s;
+  background-color: var(--my-bots-well-bg);
+  border: var(--my-bots-well-border);
 
   &::-webkit-scrollbar-thumb {
     background-color: transparent
   }
 
   &:hover {
-    background: rgba(200, 235, 255, .072);
-
     &::-webkit-scrollbar-thumb {
-      background-color: var(--neutral-10);
+      background-color: var(--my-bots-scrollbar-color);
     }
   }
 }
@@ -50,18 +50,68 @@
   max-height: 100px;
   overflow-y: auto;
   overflow-x: hidden;
+
   & > li {
     display: flex;
   }
+
   a {
     flex-shrink: 0;
   }
 }
 
-.recentBotDetail {
+.recentBot {
+  position: relative;
+  padding: 0 16px;
+  border: 1px solid transparent;
+
+  &:hover {
+    background-color: var(--my-bots-entry-bg);
+    border: var(--my-bots-entry-border);
+
+    .recentBotActionBar {
+      display: block;
+    }
+  }
+
+  > a {
+    color: var(--my-bots-entry-color);
+  }
+}
+
+.recentBotActionBar {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: auto;
+  min-width: 16px;
+  background-color: transparent;
+
+  > button {
+    border: 0;
+    padding: 0;
+    height: 0;
+    width: 0;
+    cursor: pointer;
+
+    &:after {
+      height: 16px;
+      width: 8px;
+      margin-right: 8px;
+      content: "\2716";
+      color: var(--tab-icon-color);
+      font-size: 12px;
+    }
+  }
+}
+
+.recentBotPath {
   display: inline-block;
   margin-left: 8px;
-  color: var(--neitral-14);
+  color: var(--my-bots-path-color);
+  opacity: 0.5;
   user-select: text;
   cursor: text;
 }
@@ -71,6 +121,7 @@
   margin-bottom: 16px;
   width: 180px;
   height: 26px;
+
   :global {
     .ms-Button-label {
       line-height: 26px;
@@ -80,4 +131,5 @@
 
 .ctaLink {
   white-space: normal;
+  margin-left: 8px;
 }

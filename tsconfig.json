@@ -3,7 +3,7 @@
     "baseUrl": ".",
     "outDir": "build/dist",
     "module": "esnext",
-    "target": "es6",
+    "target": "es2017",
     "lib": ["es6", "dom", "es2015", "esnext"],
     "sourceMap": true,
     "allowJs": true,
@@ -18,13 +18,14 @@
     // "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": false,
-    // Should disable this when RxJS 6 release, and it should play nice with TS >= 2.4.1
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["react", "react-dom", "node", "jest"]
   },
   "include": [
     "packages/**/src"
   ],
   "exclude": [
+    "node_modules",
     "packages/**/src/**/*.test.tsx",
     "packages/**/src/**/*.spec.tsx",
     "packages/**/src/**/*.test.ts",
@@ -32,7 +33,7 @@
     "packages/**/build",
     "packages/**/built",
     "packages/**/scripts",
-    "**/node_modules",
+    "packages/**/node_modules",
     "packages/**/public"
   ]
 }

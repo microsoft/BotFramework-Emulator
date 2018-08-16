@@ -78,7 +78,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Client notifying us the welcome screen has been rendered
   commandRegistry.registerCommand(Commands.ClientInit.PostWelcomeScreen, async (): Promise<void> => {
-    mainWindow.commandService.call(Commands.Electron.UpdateRecentBotsInMenu);
+    mainWindow.commandService.call(Commands.Electron.UpdateFileMenu);
 
     // Parse command line args for a protocol url
     const args = process.argv.length ? process.argv.slice(1) : [];

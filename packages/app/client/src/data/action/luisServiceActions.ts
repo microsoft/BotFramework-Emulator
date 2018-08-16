@@ -34,30 +34,50 @@
 import { ILuisService } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
 import { Action } from 'redux';
-import { LuisEditor } from '../../ui/shell/explorer/luisExplorer/luisEditor/luisEditor';
 
 export const OPEN_LUIS_DEEP_LINK = 'OPEN_LUIS_DEEP_LINK';
 export const OPEN_LUIS_CONTEXT_MENU = 'OPEN_LUIS_CONTEXT_MENU';
 export const LAUNCH_LUIS_EDITOR = 'LAUNCH_LUIS_EDITOR';
 export const RETRIEVE_LUIS_MODELS = 'RETRIEVE_LUIS_MODELS';
+export const LAUNCH_LUIS_MODELS_VIEWER = 'LAUNCH_LUIS_MODELS_VIEWER';
 
 export interface LuisServiceAction<T> extends Action {
   payload: T;
 }
 
 export interface LuisServicePayload {
-  luisService: ILuisService;
+  luisService?: ILuisService;
+  authenticatedUser?: string;
 }
 
 export interface LuisEditorPayload extends LuisServicePayload {
-  luisEditorComponent?: ComponentClass<LuisEditor>;
+  luisEditorComponent?: ComponentClass<any>;
 }
 
-export function launchLuisEditor(luisEditorComponent: ComponentClass<LuisEditor>, luisService?: ILuisService)
+export function launchLuisEditor<T>(luisEditorComponent: ComponentClass<T>, luisService?: ILuisService)
   : LuisServiceAction<LuisEditorPayload> {
   return {
     type: LAUNCH_LUIS_EDITOR,
     payload: { luisEditorComponent, luisService }
+  };
+}
+
+export interface LuisModelViewerPayload extends LuisServicePayload {
+  luisModelViewer: ComponentClass<any>;
+  azureAuthWorkflowComponents: {
+    promptDialog: ComponentClass<any>,
+    loginSuccessDialog: ComponentClass<any>,
+    loginFailedDialog: ComponentClass<any>
+  };
+  getStartedWithLuisDialog: ComponentClass<any>;
+  luisEditorComponent: ComponentClass<any>;
+}
+
+export function launchLuisModelsViewer(luisModelViewer: LuisModelViewerPayload)
+  : LuisServiceAction<LuisModelViewerPayload> {
+  return {
+    type: LAUNCH_LUIS_MODELS_VIEWER,
+    payload: luisModelViewer
   };
 }
 
@@ -68,7 +88,7 @@ export function openLuisDeepLink(luisService: ILuisService): LuisServiceAction<L
   };
 }
 
-export function openLuisExplorerContextMenu(luisEditorComponent: ComponentClass<LuisEditor>, luisService?: ILuisService)
+export function openLuisExplorerContextMenu<T>(luisEditorComponent: ComponentClass<T>, luisService?: ILuisService)
   : LuisServiceAction<LuisEditorPayload> {
   return {
     type: OPEN_LUIS_CONTEXT_MENU,

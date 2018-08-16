@@ -56,13 +56,29 @@ import {
   splitTab,
   swapTabs,
   addDocPendingChange,
-  removeDocPendingChange
+  removeDocPendingChange,
+  dropTabOnLeftOverlay
 } from '../action/editorActions';
 import * as Constants from '../../constants';
 import { deepCopySlow } from '@bfemulator/app-shared';
 
 let defaultState: EditorState;
-
+jest.mock('../../ui/dialogs', () => ({
+    AzureLoginPromptDialogContainer: function mock() {
+      return undefined;
+    },
+    AzureLoginSuccessDialogContainer: function mock() {
+      return undefined;
+    },
+    BotCreationDialog: function mock() {
+      return undefined;
+    },
+    DialogService: { showDialog: () => Promise.resolve(true) },
+    SecretPromptDialog: function mock() {
+      return undefined;
+    }
+  }
+));
 describe('Editor reducer tests', () => {
   beforeEach(initializeDefaultState);
 
@@ -1003,6 +1019,49 @@ describe('Editor reducer utility function tests', () => {
       const endState = fixupTabGroups(startingState);
       expect(endState).toEqual(startingState);
     });
+  });
+
+  test('dropping a tab on the left side of the editor', () => {
+    const startingState: EditorState = {
+      ...defaultState,
+      activeEditor: Constants.EDITOR_KEY_PRIMARY,
+      editors: {
+        [Constants.EDITOR_KEY_PRIMARY]: {
+          activeDocumentId: 'doc2',
+          documents: {
+            'doc1': {},
+            'doc2': {},
+            'doc3': {}
+          },
+          recentTabs: ['doc2', 'doc1', 'doc3'],
+          tabOrder: ['doc1', 'doc2', 'doc3']
+        },
+        [Constants.EDITOR_KEY_SECONDARY]: {}
+      }
+    };
+
+    const tabIdToDrop = 'doc1';
+    const action = dropTabOnLeftOverlay(tabIdToDrop);
+    const endingState = editor(startingState, action);
+
+    const primaryEditor = endingState.editors[Constants.EDITOR_KEY_PRIMARY];
+    const secondaryEditor = endingState.editors[Constants.EDITOR_KEY_SECONDARY];
+
+    expect(primaryEditor.activeDocumentId).toBe(tabIdToDrop);
+    expect(primaryEditor.recentTabs).toHaveLength(1);
+    expect(primaryEditor.recentTabs[0]).toBe(tabIdToDrop);
+    expect(primaryEditor.tabOrder).toHaveLength(1);
+    expect(primaryEditor.tabOrder[0]).toBe(tabIdToDrop);
+    expect(Object.keys(primaryEditor.documents)).toHaveLength(1);
+    expect(primaryEditor.documents[tabIdToDrop]).toBeTruthy();
+
+    expect(secondaryEditor.activeDocumentId).toBe('doc2');
+    expect(secondaryEditor.recentTabs).toHaveLength(2);
+    expect(secondaryEditor.recentTabs).toEqual(['doc2', 'doc3']);
+    expect(secondaryEditor.tabOrder).toHaveLength(2);
+    expect(secondaryEditor.tabOrder).toEqual(['doc2', 'doc3']);
+    expect(Object.keys(secondaryEditor.documents)).toHaveLength(2);
+    expect(Object.keys(secondaryEditor.documents)).toEqual(['doc2', 'doc3']);
   });
 });
 

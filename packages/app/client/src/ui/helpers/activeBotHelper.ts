@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
+import { getBotDisplayName, SharedConstants, newNotification } from '@bfemulator/app-shared';
 import { IEndpointService, ServiceType } from 'msbot/bin/schema';
 import { BotConfigWithPath, mergeEndpoints } from '@bfemulator/sdk-shared';
 import { hasNonGlobalTabs } from '../../data/editorHelpers';
@@ -44,6 +44,7 @@ import * as ExplorerActions from '../../data/action/explorerActions';
 import * as FileActions from '../../data/action/fileActions';
 import * as NavBarActions from '../../data/action/navBarActions';
 import store from '../../data/store';
+import { beginAdd } from '../../data/action/notificationActions';
 
 export const ActiveBotHelper = new class {
   async confirmSwitchBot(): Promise<any> {
@@ -91,10 +92,13 @@ export const ActiveBotHelper = new class {
       store.dispatch(FileActions.setRoot(botDirectory));
 
       // update the app file menu and title bar
-      CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.UpdateRecentBotsInMenu);
+      CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.UpdateFileMenu);
       CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.SetTitleBar, getBotDisplayName(bot));
     } catch (e) {
-      throw new Error(`Error while setting active bot: ${e}`);
+      const errMsg = `Error while setting active bot: ${e}`;
+      const notification = newNotification(errMsg);
+      store.dispatch(beginAdd(notification));
+      throw new Error(errMsg);
     }
   }
 
@@ -106,8 +110,10 @@ export const ActiveBotHelper = new class {
         CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.SetTitleBar, '');
       })
       .catch(err => {
-        console.error('Error while closing active bot: ', err);
-        throw new Error(`Error while closing active bot: ${err}`);
+        const errMsg = `Error while closing active bot: ${err}`;
+        const notification = newNotification(errMsg);
+        store.dispatch(beginAdd(notification));
+        throw new Error(errMsg);
       });
   }
 
@@ -154,8 +160,10 @@ export const ActiveBotHelper = new class {
         store.dispatch(NavBarActions.select(Constants.NAVBAR_BOT_EXPLORER));
         store.dispatch(ExplorerActions.show(true));
       } catch (err) {
-        console.error('Error during bot create: ', err);
-        throw new Error(`Error during bot create: ${err}`);
+        const errMsg = `Error during bot create: ${err}`;
+        const notification = newNotification(errMsg);
+        store.dispatch(beginAdd(notification));
+        throw new Error(errMsg);
       }
     }
   }
@@ -281,8 +289,10 @@ export const ActiveBotHelper = new class {
         store.dispatch(ExplorerActions.show(true));
       }
     } catch (e) {
-      console.error(`Error while trying to switch to bot: ${botPath}`);
-      throw new Error(`[confirmAndSwitchBots] Error while trying to switch to bot ${botPath}: ${e}`);
+      const errMsg = `Error while trying to switch to bot: ${botPath}`;
+      const notification = newNotification(errMsg);
+      store.dispatch(beginAdd(notification));
+      throw new Error(errMsg);
     }
   }
 
@@ -303,8 +313,10 @@ export const ActiveBotHelper = new class {
         }
       })
       .catch(err => {
-        console.error('Error while closing active bot: ', err);
-        throw new Error(`Error while closing active bot: ${err}`);
+        const errMsg = `Error while closing active bot: ${err}`;
+        const notification = newNotification(errMsg);
+        store.dispatch(beginAdd(notification));
+        throw new Error(errMsg);
       });
   }
 };

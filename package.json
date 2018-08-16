@@ -1,15 +1,17 @@
 {
   "scripts": {
     "bootstrap": "lerna bootstrap --hoist",
-    "build": "lerna run --scope @bfemulator/**shared build && lerna run --scope !@bfemulator/**shared build",
-    "test": "jest",
-    "test:coveralls": "jest --coverage --coverageReporters=text-lcov | node -r ./env node_modules/coveralls/bin/coveralls"
+    "build": "lerna run --scope \"@bfemulator/@(**shared|sdk**)\" build && lerna run --scope \"!@bfemulator/@(**shared|sdk**)\" build",
+    "start": "cd packages\\app\\client && npm run start",
+    "test": "jest --runInBand",
+    "test:coveralls": "jest --runInBand --coverage --coverageReporters=text-lcov | coveralls"
   },
   "jest": {
     "setupTestFrameworkScriptFile": "./testSetup.js",
     "transform": {
       "^.+\\.(tsx?|jsx?)$": "ts-jest"
     },
+    "testURL": "http://localhost",
     "testMatch": [
       "<rootDir>/packages/**/src/**/?(*.)(spec|test).(ts)?(x)"
     ],
@@ -21,5 +23,8 @@
       "json",
       "node"
     ]
+  },
+  "dependencies": {
+    "node-rsa": "^1.0.0"
   }
 }

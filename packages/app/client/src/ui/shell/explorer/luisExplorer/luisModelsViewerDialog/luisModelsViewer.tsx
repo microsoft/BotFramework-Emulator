@@ -31,137 +31,155 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Checkbox, DefaultButton, PrimaryButton } from '@bfemulator/ui-react';
+import { Checkbox, DefaultButton, Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
 import { ILuisService } from 'msbot/bin/schema';
 import * as React from 'react';
-import { ChangeEvent, ChangeEventHandler, Component } from 'react';
-import { LuisModel } from '../../../../../data/http/luisApi';
+import { ChangeEventHandler, Component } from 'react';
 
 import * as styles from './luisModelsViewer.scss';
 
 interface LuisModelsViewerProps {
-  luisServices: ILuisService[];
-  luisModels: LuisModel[];
-  addLuisModels: (models: LuisModel[]) => void;
+  authenticatedUser: string;
+  existingLuisServices: ILuisService[];
+  availableLuisServices: ILuisService[];
+  launchLuisEditor: () => void;
+  addLuisModels: (models: ILuisService[]) => void;
   cancel: () => void;
 }
 
 interface LuisModelsViewerState {
-  [selectedLuisModelId: string]: LuisModel | false;
+  [selectedLuisModelId: string]: ILuisService | boolean;
+
+  checkAllChecked: boolean;
 }
 
 export class LuisModelsViewer extends Component<LuisModelsViewerProps, LuisModelsViewerState> {
-  public state: LuisModelsViewerState = {};
+
+  public state: LuisModelsViewerState = { checkAllChecked: false };
+  private existingLuisServicesMap: { [id: string]: ILuisService } = {};
 
   constructor(props: LuisModelsViewerProps, context: LuisModelsViewerState) {
     super(props, context);
+    this.updateExistingServicesMap(props);
   }
 
   public componentWillReceiveProps(nextProps: LuisModelsViewerProps = {} as any): void {
-    const { luisServices = [] as ILuisService[] } = nextProps;
-
-    const state = luisServices
-      .reduce((agg, luisService: ILuisService) => {
-        agg[luisService.appId] = luisService;
-        return agg;
-      }, {});
-
-    this.setState(state);
+    this.updateExistingServicesMap(nextProps);
+    this.setState({...this.state, ...this.existingLuisServicesMap});
   }
 
   public render(): JSX.Element {
-    const { state, props } = this;
-    const keys = Object.keys(state);
-    const checkAllChecked = props.luisModels
-      .reduce((isTrue, luisModel) => state[luisModel.id] && isTrue, !!keys.length);
     return (
-      <section className={ styles.luisModelsViewer }>
-        { this.sectionHeader }
-        <div className="listContainer">
-          <p>Selecting a LUIS app below will store the app ID in your bot file.</p>
-          <div className="selectAll">
-            <Checkbox onChange={ this.onSelectAllChange } checked={ checkAllChecked } id="select-all-luis-models"
-                      label="Select all"/>
+      <Dialog
+        title="Add your LUIS apps"
+        className={ styles.luisModelsViewer }
+        cancel={ this.props.cancel }>
+        <div className={ styles.listContainer }>
+          <p>
+            Select a LUIS app below to store the app ID in your bot file or&nbsp;
+            <a href="javascript:void(0);" onClick={ this.props.launchLuisEditor }>
+              add a LUIS app manually by entering the app ID and key
+            </a>
+          </p>
+          <div className={ styles.selectAll }>
+            <Checkbox
+              onChange={ this.onSelectAllChange }
+              checked={ this.state.checkAllChecked } id="select-all-luis-models"
+              label="Select all"/>
           </div>
           <ul>
             { ...this.luisModelElements }
           </ul>
-        </div>
-        <div className="buttonGroup">
-          <DefaultButton text="Cancel" onClick={ this.onCancelClick }/>
-          <PrimaryButton text="Add" onClick={ this.onAddClick }/>
-        </div>
-      </section>
-    );
-  }
 
-  private get sectionHeader(): JSX.Element {
-    return (
-      <header>
-        <button className={ styles.closeButton } onClick={ this.onCancelClick }>
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="1 1 16 16">
-            <g>
-              <polygon
-                points="14.1015625 2.6015625 8.7109375 8 14.1015625 13.3984375 13.3984375 14.1015625 8 8.7109375
-                2.6015625 14.1015625 1.8984375 13.3984375 7.2890625 8 1.8984375 2.6015625 2.6015625 1.8984375 8
-                7.2890625 13.3984375 1.8984375"/>
-            </g>
-          </svg>
-        </button>
-        <h3>Add LUIS apps</h3>
-      </header>
+          <p>
+            <a href="javascript:void(0);" className={ styles.newLuisApp }>Create a new LUIS app</a>
+          </p>
+          <p>
+            Signed in as { this.props.authenticatedUser }. You can link apps from a different LUIS
+            account to this Azure account by adding yourself as a collaborator.&nbsp;
+            <a href="javascript:void(0);">Learn more about collaborating.</a>
+          </p>
+        </div>
+        <DialogFooter>
+          <DefaultButton text="Cancel" onClick={ this.props.cancel }/>
+          <PrimaryButton text="Add" onClick={ this.onAddClick } aria-disabled={!this.addButtonEnabled}/>
+        </DialogFooter>
+      </Dialog>
     );
   }
 
   private get luisModelElements(): JSX.Element[] {
     const { state, onChange } = this;
-    const { luisModels } = this.props;
-    return luisModels.map(luisModel => {
-      const { id, name: label, culture, activeVersion } = luisModel;
+    const { availableLuisServices } = this.props;
+    const items = availableLuisServices.map(luisModel => {
+      const { id, name: label, version } = luisModel;
       const checkboxProps = {
         label,
         checked: !!state[id],
         id: `model${id}`,
-        onChange: onChange.bind(this, luisModel)
+        onChange: onChange.bind(this, luisModel),
+        disabled: !!this.existingLuisServicesMap[id]
       };
       return (
         <li key={ id }>
-          <Checkbox { ...checkboxProps } className="checkboxOverride"/>
-          <span>&nbsp;-&nbsp;version { activeVersion }</span>
-          <span>{ culture }</span>
+          <Checkbox { ...checkboxProps } className={ styles.checkboxOverride }/>
+          <span>&nbsp;-&nbsp;v{ version }</span>
+          <span>{ 'en-us' }</span>
         </li>
       );
     });
+    while (items.length < 4) {
+      items.push(<li key={ `empty_${Math.random()}` }>&nbsp;</li>);
+    }
+    return items;
   }
 
-  private onChange(luisModel: LuisModel, event: ChangeEvent<any>) {
-    const { target }: { target: HTMLInputElement } = event;
-    this.setState({ [luisModel.id]: target.checked ? luisModel : false });
+  private get addButtonEnabled(): boolean {
+    const { state, existingLuisServicesMap: map } = this;
+    const { checkAllChecked: _discarded, ...selectedModels } = state;
+    return Object.keys(selectedModels).some((bool, key) => !!state[key] && !map[key]);
   }
 
-  private onSelectAllChange: ChangeEventHandler<any> = (event: ChangeEvent<any>) => {
-    const { luisModels = [] } = this.props as any;
-    const { target }: { target: HTMLInputElement } = event;
-    const newState = {};
-    luisModels.forEach(luisModel => {
-      newState[luisModel.id] = target.checked ? luisModel : false;
-    });
+  private onChange(luisModel: ILuisService) {
+    const { checkAllChecked: _discarded, ...newState } = this.state;
+    const { existingLuisServicesMap: map } = this;
+
+    newState[luisModel.id] = !this.state[luisModel.id] ? luisModel : false;
+    newState.checkAllChecked = Object.keys(newState).every(key => !!newState[key] || !!map[key]);
     this.setState(newState);
   }
 
-  private onAddClick: ChangeEventHandler<any> = (_event: ChangeEvent<any>) => {
-    const { state } = this;
+  private updateExistingServicesMap(props: LuisModelsViewerProps) {
+    const { existingLuisServices = [] as ILuisService[] } = props;
+
+    this.existingLuisServicesMap = existingLuisServices
+      .reduce((agg, luisService: ILuisService) => {
+        agg[luisService.appId] = luisService;
+        return agg;
+      }, {});
+  }
+
+  private onSelectAllChange: ChangeEventHandler<any> = () => {
+    const { availableLuisServices = [] } = this.props as any;
+    const { existingLuisServicesMap: map } = this;
+    const newState = {} as LuisModelsViewerState;
+    const checked = newState.checkAllChecked = !this.state.checkAllChecked;
+
+    availableLuisServices
+      .forEach(luisModel => newState[luisModel.id] = !!map[luisModel.id] || checked ? luisModel : false);
+
+    this.setState(newState);
+  }
+
+  private onAddClick: ChangeEventHandler<any> = () => {
+    const { checkAllChecked: _discarded, ...luisModels } = this.state;
     const reducer = (models, luisModelId) => {
-      if (state[luisModelId]) {
-        models.push(state[luisModelId]);
+      if (luisModels[luisModelId]) {
+        models.push(luisModels[luisModelId]);
       }
       return models;
     };
-    const addedModels: LuisModel[] = Object.keys(state).reduce(reducer, []);
+    const addedModels: ILuisService[] = Object.keys(luisModels).reduce(reducer, []);
     this.props.addLuisModels(addedModels);
-  }
-
-  private onCancelClick: ChangeEventHandler<any> = (_event: ChangeEvent<any>) => {
-    this.props.cancel();
   }
 }

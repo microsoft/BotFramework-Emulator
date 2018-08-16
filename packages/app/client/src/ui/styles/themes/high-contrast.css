@@ -27,6 +27,12 @@ html {
   /* Log panel custom colors */
   --log-panel-timestamp: #47B07F;
   --log-panel-link: #9CDCFE;
+  --log-panel-entry-hover-bg: var(--neutral-10);
+  --log-panel-entry-inspected-bg: var(--neutral-8);
+  --log-panel-item-info: var(--neutral-1);
+  --log-panel-item-debug: var(--neutral-6);
+  --log-panel-item-warn: var(--warning-outline);
+  --log-panel-item-error: var(--error-text);
 
   /* nav bar custom colors */
   --nav-bar-bg: var(--neutral-16);
@@ -37,6 +43,8 @@ html {
   --nav-focused-tag-bg-opacity: .6;
   --nav-link-selected-border: 1px solid #F38518;
   --nav-link-hover-border: var(--list-item-hover-border);
+  --nav-link-badge-color: var(--neutral-1);
+  --nav-link-badge-bg: #ff0000;
 
   /* input[type="text"] */
   --input-bg: var(--neutral-15);
@@ -89,6 +97,9 @@ html {
   --explorer-panel-group-border: 1px solid #00BCF2;
   --explorer-panel-empty-message-color: var(--neutral-4);
 
+  /* Explorer Bar */
+  --explorer-bar-header-bg: var(--neutral-16);
+
   /* Tabs */
   --tab-color: var(--p-button-color);
   --tab-bar-bg: var(--neutral-16);
@@ -100,7 +111,26 @@ html {
   --tab-seperator-bg: #00BCF2;
   --tab-icon-color: var(--explorer-panel-group-title-color);
 
+  /* Notifications */
+  --notification-bg: var(--neutral-16);
+  --notification-message-color: var(--neutral-1);
+  --notification-timestamp-color: var(--neutral-1);
+  --notification-close-icon-color: var(--neutral-1);
+  --notification-border: 1px solid #00BCF2;
+  --notifications-clear-all-btn-color: var(--neutral-1);
+  --notification-inner-border-display: block;
+  --notification-inner-border: 1px dashed #F38518;
+
   /* toolbar */
   --toolbar-bg: var(--neutral-16);
   --toolbar-border: var(--explorer-panel-group-border);
+
+  /* Welcome page */
+  --my-bots-well-bg: transparent;
+  --my-bots-well-border: 1px solid #00BCF2;
+  --my-bots-entry-bg: transparent;
+  --my-bots-entry-border: 1px dashed #F38518;
+  --my-bots-entry-color: var(--neutral-1);
+  --my-bots-path-color: var(--neutral-1);
+  --my-bots-scrollbar-color: var(--neutral-1);
 }

@@ -49,22 +49,6 @@ const DEFAULT_STATE: ChatState = {
 
 export default function chat(state: ChatState = DEFAULT_STATE, action: ChatAction | EditorAction): ChatState {
   switch (action.type) {
-    case ChatActions.pingChat: {
-      const { payload } = action;
-      state = {
-        ...state,
-        changeKey: state.changeKey + 1,
-        chats: {
-          ...state.chats,
-          [payload.documentId]: {
-            ...state.chats[payload.documentId],
-            pingId: state.chats[payload.documentId].pingId + 1
-          }
-        }
-      };
-      break;
-    }
-
     case ChatActions.addTranscript: {
       const { payload } = action;
       const transcriptsCopy = [...state.transcripts];

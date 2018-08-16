@@ -49,7 +49,7 @@ import * as ExplorerActions from '../../data/action/explorerActions';
 export interface MainProps {
   primaryEditor?: Editor;
   secondaryEditor?: Editor;
-  showingExplorer?: boolean;
+  explorerIsVisible?: boolean;
   presentationModeEnabled?: boolean;
   navBarSelection?: string;
   exitPresentationMode?: (e: Event) => void;
@@ -63,8 +63,6 @@ export class Main extends React.Component<MainProps, MainState> {
   constructor(props: MainProps) {
     super(props);
 
-    this.handleTabChange = this.handleTabChange.bind(this);
-
     this.state = {
       tabValue: 0
     };
@@ -76,10 +74,6 @@ export class Main extends React.Component<MainProps, MainState> {
     } else {
       window.removeEventListener('keydown', this.props.exitPresentationMode);
     }
-  }
-
-  handleTabChange(nextTabValue: any) {
-    this.setState(() => ({ tabValue: nextTabValue }));
   }
 
   render() {
@@ -100,7 +94,7 @@ export class Main extends React.Component<MainProps, MainState> {
     // Explorer & TabGroup(s) pane
     const workbenchChildren = [];
 
-    if (this.props.showingExplorer && !this.props.presentationModeEnabled) {
+    if (this.props.explorerIsVisible && !this.props.presentationModeEnabled) {
       workbenchChildren.push(<ExplorerBar key={ 'explorer-bar' }/>);
     }
 
@@ -114,13 +108,13 @@ export class Main extends React.Component<MainProps, MainState> {
       <div className={ styles.main }>
         <div className={ styles.nav }>
           { !this.props.presentationModeEnabled &&
-          <NavBar selection={ this.props.navBarSelection } showingExplorer={ this.props.showingExplorer }/> }
+          <NavBar selection={ this.props.navBarSelection } explorerIsVisible={ this.props.explorerIsVisible }/> }
           <div className={ styles.workbench }>
             <Splitter
               orientation={ 'vertical' }
               primaryPaneIndex={ 0 }
-              minSizes={ { 0: 40, 1: 40 } }
-              initialSizes={ { 0: 210 } }
+              minSizes={ { 1: 40 } }
+              initialSizes={ { 0: 280 } }
               onSizeChange={ this.checkExplorerSize }>
               { workbenchChildren }
             </Splitter>
@@ -138,7 +132,7 @@ export class Main extends React.Component<MainProps, MainState> {
   private checkExplorerSize(sizes: { absolute: number, percentage: number }[]): void {
     if (sizes.length) {
       const explorerSize = sizes[0];
-      const minExplorerWidth = 50;
+      const minExplorerWidth = 175;
       if (explorerSize.absolute < minExplorerWidth) {
         store.dispatch(ExplorerActions.show(false));
       }

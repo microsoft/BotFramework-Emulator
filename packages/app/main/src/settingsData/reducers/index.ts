@@ -36,9 +36,11 @@ import { frameworkReducer } from './frameworkReducer';
 import { usersReducer } from './usersReducer';
 import { botsReducer } from './botReducer';
 import { windowStateReducer } from './windowStateReducer';
+import { azureAuth } from './azureAuthReducer';
 import { Settings } from '@bfemulator/app-shared';
 
 export default combineReducers<Settings>({
+  azure: azureAuth,
   framework: frameworkReducer,
   bots: botsReducer,
   windowState: windowStateReducer,

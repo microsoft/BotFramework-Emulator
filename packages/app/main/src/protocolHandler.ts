@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { FrameworkSettings, newBot, newEndpoint, SharedConstants } from '@bfemulator/app-shared';
+import { FrameworkSettings, newBot, newEndpoint, SharedConstants, newNotification } from '@bfemulator/app-shared';
 import * as got from 'got';
 import { IEndpointService } from 'msbot/bin/schema';
 import {
@@ -49,6 +49,7 @@ import { ngrokEmitter, running } from './ngrok';
 import { getSettings } from './settingsData/store';
 import { emulator } from './emulator';
 import { getStore } from './botData/store';
+import { sendNotificationToClient } from './utils/sendNotificationToClient';
 
 enum ProtocolDomains {
   livechat,
@@ -265,8 +266,9 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
         }
       })
       .catch(err => {
-        // TODO: surface this error somewhere; native error box?
-        console.error('Error downloading and parsing transcript file: ', err);
+        const errMsg = `Error downloading and parsing transcript file: ${err}`;
+        const notification = newNotification(errMsg);
+        sendNotificationToClient(notification, mainWindow.commandService);
       });
   }
 

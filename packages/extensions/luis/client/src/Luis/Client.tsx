@@ -124,7 +124,7 @@ class LuisClient {
         isDispatchApp: false
       };
     } else if (r.status !== 200) {
-      throw new LuisClientError('Failed to get the Luis App Info', r.status);
+      throw new LuisClientError('Failed to get the Azure App Info', r.status);
     } else {
       appInfo = await r.json();
       appInfo.authorized = true;

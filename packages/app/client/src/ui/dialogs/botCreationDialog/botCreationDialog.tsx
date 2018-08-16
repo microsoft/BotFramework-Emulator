@@ -49,7 +49,9 @@ import * as styles from './botCreationDialog.scss';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 import { DialogService } from '../service';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants, newNotification } from '@bfemulator/app-shared';
+import store from '../../../data/store';
+import { beginAdd } from '../../../data/action/notificationActions';
 
 export interface BotCreationDialogState {
   bot: BotConfigWithPath;
@@ -95,6 +97,10 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
       && endpoint.endpoint
       && bot.name
       && secretCriteria;
+
+    const endpointWarning = this.validateEndpoint(endpoint.endpoint);
+    const endpointPlaceholder = 'Your bot\'s endpoint (ex: http://localhost:3978/api/messages)';
+
     // TODO - localization
     return (
       <Dialog className={ styles.main } title="New bot configuration" cancel={ this.onCancel } maxWidth={ 648 }>
@@ -110,8 +116,9 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
             inputClassName="bot-creation-input"
             value={ this.state.endpoint.endpoint }
             onChanged={ this.onChangeEndpoint }
-            placeholder={ 'Enter a URL for your bot\'s endpoint' } label={ 'Endpoint URL' }
+            placeholder={ endpointPlaceholder } label={ 'Endpoint URL' }
             required={ true }/>
+          { endpointWarning && <span className={ styles.endpointWarning }>{ endpointWarning }</span> }
           <Row className={ styles.multiInputRow }>
             <TextField
               className={ styles.smallInput } inputClassName="bot-creation-input" value={ endpoint.appId }
@@ -233,7 +240,11 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
 
     ActiveBotHelper.confirmAndCreateBot(bot, secret)
       .then(() => DialogService.hideDialog())
-      .catch(err => console.error('Error during confirm and create bot: ', err));
+      .catch(err => {
+        const errMsg = `Error during confirm and create bot: ${err}`;
+        const notification = newNotification(errMsg);
+        store.dispatch(beginAdd(notification));
+      });
   }
 
   private showBotSaveDialog = async (): Promise<any> => {
@@ -263,5 +274,11 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
 
   private onChangeSecretConfirmation = (confirm) => {
     this.setState({ secretConfirmation: confirm, secretsMatch: confirm === this.state.secret });
+  }
+
+  /** Checks the endpoint to see if it has the correct route syntax at the end (/api/messages) */
+  private validateEndpoint(endpoint: string): string {
+    const controllerRegEx = /api\/messages\/?$/;
+    return controllerRegEx.test(endpoint) ? '' : `Please include route if necessary: "/api/messages"`;
   }
 }

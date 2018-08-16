@@ -64,4 +64,8 @@ export default class ConversationSet extends EventEmitter {
   conversationById(conversationId: string): Conversation {
     return this.conversations.find(value => value.conversationId === conversationId);
   }
+
+  getConversationIds(): string[] {
+    return this.conversations.map(conversation => conversation.conversationId);
+  }
 }

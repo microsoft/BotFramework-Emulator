@@ -37,10 +37,12 @@ import { connect } from 'react-redux';
 import * as styles from './leftContentOverlay.scss';
 import * as overlay from '../overlay.scss';
 import { RootState } from '../../../../../data/store';
+import * as EditorActions from '../../../../../data/action/editorActions';
 
 interface LeftContentOverlayProps {
   documentId?: string;
   draggingTab?: boolean;
+  handleTabDrop?: (tabId: string) => void;
 }
 
 interface LeftContentOverlayState {
@@ -79,6 +81,9 @@ class LeftContentOverlayComponent extends React.Component<LeftContentOverlayProp
   }
 
   private onDrop = (e: DragEvent<HTMLDivElement>) => {
+    const tabData = JSON.parse(e.dataTransfer.getData('application/json'));
+    const tabId = tabData.tabId;
+    this.props.handleTabDrop(tabId);
     this.setState(({ draggedOver: false }));
     e.preventDefault();
     e.stopPropagation();
@@ -89,4 +94,10 @@ const mapStateToProps = (state: RootState): LeftContentOverlayProps => ({
   draggingTab: state.editor.draggingTab
 });
 
-export const LeftContentOverlay = connect(mapStateToProps)(LeftContentOverlayComponent);
+const mapDispatchToProps = (dispatch): LeftContentOverlayProps => ({
+  handleTabDrop: (tabId: string) => {
+    dispatch(EditorActions.dropTabOnLeftOverlay(tabId));
+  }
+});
+
+export const LeftContentOverlay = connect(mapStateToProps, mapDispatchToProps)(LeftContentOverlayComponent);

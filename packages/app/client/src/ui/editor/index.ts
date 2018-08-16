@@ -37,4 +37,4 @@ export * from './editor';
 export * from './panel/panel';
 export * from './toolbar/toolbar';
 export * from './emulator';
-export * from './welcomePage/welcomePage';
+export * from './welcomePage';
