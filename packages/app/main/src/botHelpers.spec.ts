@@ -73,8 +73,7 @@ import {
   removeBotFromList,
   cloneBot,
   toSavableBot,
-  promptForSecretAndRetry,
-  loadBotWithRetry
+  promptForSecretAndRetry
 } from './botHelpers';
 
 describe('botHelpers tests', () => {
@@ -140,12 +139,18 @@ describe('botHelpers tests', () => {
       path: 'somePath',
       overrides: null
     };
+    const savableBot = toSavableBot(bot2, 'someSecret');
+
     const expectedBot = new BotConfig();
     expectedBot.name = 'someName';
     expectedBot.description = 'someDescription';
     expectedBot.services = [];
-    expectedBot.secretKey = 'someSecretKey';
-    expect(toSavableBot(bot2)).toEqual(expectedBot);
+
+    expect(savableBot.name).toEqual(expectedBot.name);
+    expect(savableBot.description).toEqual(expectedBot.description);
+    expect(savableBot.services).toEqual(expectedBot.services);
+    // secret key should've been refreshed
+    expect(savableBot.secretKey).not.toEqual('someSecretKey');
   });
 
   test('promptForSecretAndRetry()', async () => {
