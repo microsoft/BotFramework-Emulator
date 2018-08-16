@@ -62,6 +62,12 @@ export async function loadBotWithRetry(botPath: string, secret?: string): Promis
   try {
     // load the bot and transform it into internal BotConfig implementation
     let bot: BotConfigWithPath = await BotConfig.Load(botPath, secret);
+
+    // if the bot has a secretKey and we don't have a secret, then we need to ask for a secret and decrypt
+    if (bot.secretKey && !secret) {
+      return await promptForSecretAndRetry(botPath);
+    }
+
     bot = cloneBot(bot);
     bot.path = botPath;
 
@@ -70,7 +76,7 @@ export async function loadBotWithRetry(botPath: string, secret?: string): Promis
       // entered via the secret prompt dialog. In the latter case, we should
       // update the secret for the bot that we have on record with the correct secret.
       const botInfo = getBotInfoByPath(botPath);
-      if (botInfo.secret && botInfo.secret !== secret) {
+      if (secret && botInfo.secret && botInfo.secret !== secret) {
         // update the secret in bots.json with the valid secret
         const updatedBot = { ...botInfo, secret };
         await patchBotsJson(botPath, updatedBot);
@@ -90,20 +96,25 @@ export async function loadBotWithRetry(botPath: string, secret?: string): Promis
     // TODO: Only prompt for password if we know for a fact we need it.
     // Lots of different errors can arrive here, like ENOENT, if the file wasn't found.
     // Add easily discernable errors / error codes to msbot package
-    if (typeof e === 'string' && (e.includes('secret') || e.includes('crypt'))) {
-      // bot requires a secret to decrypt properties
-      const { Commands } = SharedConstants;
-      const newSecret = await mainWindow.commandService.remoteCall(Commands.UI.ShowSecretPromptDialog);
-      if (newSecret === null) {
-        // pop-up was dismissed; stop trying to prompt for secret
-        return null;
-      }
-      // try again with new secret
-      return await loadBotWithRetry(botPath, newSecret);
+    if (e instanceof Error && e.message.includes('secret')) {
+      return await promptForSecretAndRetry(botPath);
     } else {
       throw e;
     }
   }
+}
+
+/** Prompts the user for a secret and retries the bot load flow */
+export async function promptForSecretAndRetry(botPath: string): Promise<BotConfigWithPath> {
+  // bot requires a secret to decrypt properties
+  const { Commands } = SharedConstants;
+  const newSecret = await mainWindow.commandService.remoteCall(Commands.UI.ShowSecretPromptDialog);
+  if (newSecret === null) {
+    // pop-up was dismissed; stop trying to prompt for secret
+    return null;
+  }
+  // try again with new secret
+  return await loadBotWithRetry(botPath, newSecret);
 }
 
 /** Converts a BotConfigWithPath to a BotConfig */
@@ -118,6 +129,7 @@ export function toSavableBot(bot: BotConfigWithPath, secret?: string): BotConfig
   newBot.description = botCopy.description;
   newBot.name = botCopy.name;
   newBot.services = botCopy.services;
+  newBot.secretKey = botCopy.secretKey;
   return newBot;
 }
 

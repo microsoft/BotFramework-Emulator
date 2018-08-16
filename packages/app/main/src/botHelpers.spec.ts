@@ -134,7 +134,7 @@ describe('botHelpers tests', () => {
     const bot2: BotConfigWithPath = {
       name: 'someName',
       description: 'someDescription',
-      secretKey: '',
+      secretKey: 'someSecretKey',
       services: [],
       path: 'somePath',
       overrides: null
@@ -143,6 +143,7 @@ describe('botHelpers tests', () => {
     expectedBot.name = 'someName';
     expectedBot.description = 'someDescription';
     expectedBot.services = [];
+    expectedBot.secretKey = 'someSecretKey';
     expect(toSavableBot(bot2)).toEqual(expectedBot);
   });
 });
