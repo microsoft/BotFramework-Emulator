@@ -46,6 +46,8 @@ import * as electronLocalShortcut from 'electron-localshortcut';
 import { Migrator } from './migrator';
 import { AppUpdater } from './appUpdater';
 import { UpdateInfo } from 'electron-updater';
+import { ProgressInfo } from 'builder-util-runtime';
+import { UpdateStatus } from '../types/updateStatus';
 
 // Ensure further options aren't passed to Chromium
 Electron.app.setAsDefaultProtocolClient('botemulator', process.execPath, [
@@ -64,52 +66,49 @@ export let windowManager: WindowManager;
 
 // Set up AppUpdater events
 AppUpdater.on('checking-for-update', () => {
-  console.log('checking for update...');
+  log.debug('Checking for new version...');
+});
+
+AppUpdater.on('update-not-available', () => {
+  log.debug('Emulator is up to date.');
 });
 
 AppUpdater.on('update-available', (updateInfo: UpdateInfo) => {
+  log.debug(`New version of the Emulator is available: ${updateInfo.version}`);
   if (updateInfo.version.startsWith('4')) {
-    const options: Electron.MessageBoxOptions = {
-      buttons: ['Cancel', 'Ok'],
-      title: 'Update available',
-      message: `A new version of the emulator is available for download (${updateInfo.version}). Would you like to download the new version?`,
-    };
-    dialog.showMessageBox(mainWindow, options, (response: number) => {
-      if (response) {
-        // pressed 'Ok'
-        AppUpdater.downloadUpdate();
-      }
-    });
+    Emulator.send('v4-update-available');
   }
 });
 
 AppUpdater.on('downloading-update', () => {
-  console.log('downloading update...');
+  log.debug('Downloading update...');
+  Emulator.send('update-status', UpdateStatus.downloading);
+});
+
+AppUpdater.on('download-progress', (progress: ProgressInfo) => {
+  const neatProgress = progress.percent.toString().substring(0, 4) + '%';
+  Emulator.send('update-progress', neatProgress);
 });
 
 AppUpdater.on('update-downloaded', (updateInfo: UpdateInfo) => {
+  log.debug('Update downloaded.')
   if (updateInfo.version.startsWith('4')) {
-    const options: Electron.MessageBoxOptions = {
-      buttons: ['Cancel', 'Ok'],
-      title: 'Install update?',
-      message: `The new version of the emulator (${updateInfo.version}) has been downloaded and is ready to be installed. Would you like to install the new version?`,
-    };
-    dialog.showMessageBox(mainWindow, options, (response: number) => {
-      if (response) {
-        // pressed 'Ok'
-        try {
-          Migrator.migrateV3Bots();
-          AppUpdater.installUpdate();
-        } catch (err) {
-          dialog.showErrorBox('Error while upgrading', `There was an error while upgrading the emulator to version 4: \n\n${err}`);
-        }
-      }
-    });
+    Emulator.send('update-status', UpdateStatus.downloaded);
   }
 });
 
 AppUpdater.on('error', (err: Error, message: string) => {
+  log.error(`Error while updating the Emulator: ${(err && err.message) || message}`);
   dialog.showErrorBox('Error updating app', `'There was an error while using the app updater: \n\n${message}`);
+});
+
+Electron.ipcMain.on('download-v4-update', () => {
+  AppUpdater.downloadUpdate();
+});
+
+Electron.ipcMain.on('migrate-and-restart', (openAfterInstall: boolean) => {
+  Migrator.migrateV3Bots();
+  AppUpdater.installUpdate(openAfterInstall);
 });
 
 var openUrls = [];

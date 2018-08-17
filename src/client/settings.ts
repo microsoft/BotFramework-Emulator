@@ -36,7 +36,7 @@ import { Store, createStore, combineReducers, Action } from 'redux';
 import { BehaviorSubject } from 'rxjs';
 import { ActivityOrID } from '../types/activityTypes';
 import { Settings as ServerSettings } from '../types/serverSettingsTypes';
-import { InspectorActions, ConversationActions, HotkeyActions } from './reducers';
+import { InspectorActions, ConversationActions, HotkeyActions, updateReducer, UpdateActions } from './reducers';
 import { loadSettings, saveSettings } from '../shared/utils';
 import {
     layoutReducer,
@@ -110,6 +110,10 @@ export interface IPersistentSettings {
     wordwrap?: IWordWrapState
 }
 
+export interface IUpdateState {
+  showing?: boolean;
+}
+
 export class PersistentSettings implements IPersistentSettings {
     layout: ILayoutState;
     wordwrap: IWordWrapState;
@@ -127,12 +131,13 @@ export class PersistentSettings implements IPersistentSettings {
 }
 
 export interface ISettings extends IPersistentSettings {
-    addressBar?: IAddressBarState,
-    conversation: IConversationState,
-    log?: ILogState,
-    inspector?: IInspectorState,
-    hotkey?: IHotkeyState,
-    serverSettings?: ServerSettings,
+    addressBar?: IAddressBarState;
+    conversation: IConversationState;
+    log?: ILogState;
+    inspector?: IInspectorState;
+    hotkey?: IHotkeyState;
+    serverSettings?: ServerSettings;
+    update: IUpdateState;
 }
 
 export class Settings implements ISettings {
@@ -144,6 +149,7 @@ export class Settings implements ISettings {
     serverSettings: ServerSettings;
     wordwrap: IWordWrapState;
     hotkey: IHotkeyState;
+    update: IUpdateState;
 
     constructor(settings?: ISettings) {
         Object.assign(this, settings);
@@ -189,6 +195,10 @@ export const hotkeyDefault: IHotkeyState = {
     toggleAddressBarFocus: false,
 }
 
+export const updateDefault: IUpdateState = {
+  showing: false
+};
+
 export const settingsDefault: ISettings = {
     layout: layoutDefault,
     addressBar: addressBarDefault,
@@ -196,7 +206,8 @@ export const settingsDefault: ISettings = {
     log: logDefault,
     wordwrap: wordWrapDefault,
     inspector: inspectorDefault,
-    serverSettings: new ServerSettings()
+    serverSettings: new ServerSettings(),
+    update: updateDefault
 }
 
 let store: Store<ISettings>;
@@ -213,7 +224,8 @@ const getStore = (): Store<ISettings> => {
             wordwrap: wordWrapReducer,
             inspector: inspectorReducer,
             hotkey: hotkeyReducer,
-            serverSettings: serverSettingsReducer
+            serverSettings: serverSettingsReducer,
+            update: updateReducer
         }), initialSettings);
     }
     return store;
@@ -298,6 +310,9 @@ export const startup = () => {
     });
     Electron.ipcRenderer.on('listening', (event, ...args) => {
         Emulator.serviceUrl = args[0].serviceUrl;
+    });
+    Electron.ipcRenderer.on('v4-update-available', (event) => {
+      UpdateActions.setShowing(true);
     });
 
     // Let the server know we're done starting up. In response, it will send us it's current settings (bot list and such).

@@ -44,8 +44,8 @@ export const AppUpdater = new class extends EventEmitter {
       provider: 'github'
     });
 
-    // allow pre-release so we can get to version 4
-    autoUpdater.allowPrerelease = true;
+    // we only want to grab v4 if it is a release
+    autoUpdater.allowPrerelease = false;
     // prompt user explicitly to download
     autoUpdater.autoDownload = false;
     // mute built-in logger
@@ -58,6 +58,10 @@ export const AppUpdater = new class extends EventEmitter {
     autoUpdater.on('update-available', (updateInfo: UpdateInfo) => {
       this.emit('update-available', updateInfo);
     });
+
+    autoUpdater.on('update-not-available', () => {
+      this.emit('update-not-available');
+    })
 
     autoUpdater.on('error', (err: Error, message: string) => {
       this.emit('error', err, message);
@@ -83,14 +87,12 @@ export const AppUpdater = new class extends EventEmitter {
   }
 
   /** Installs the available update */
-  public installUpdate(): void {
-    autoUpdater.quitAndInstall(true, true);
+  public installUpdate(openAfterInstall: boolean): void {
+    autoUpdater.quitAndInstall(true, openAfterInstall);
   }
 
   /** Checks the GH repo for available update */
   private checkForUpdate(): void {
-    this.emit('checking-for-update');
-
     autoUpdater.checkForUpdates()
       .catch(err => console.error('Something went wrong while invoking "checkForUpdates()": ', err));
   }
