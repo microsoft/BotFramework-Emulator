@@ -31,21 +31,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IConnectedService } from 'msbot/bin/schema';
+import { IConnectedService, ServiceType } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
 import { connect } from 'react-redux';
 import {
   ConnectedServicePickerPayload,
-  openServiceDeepLink,
-  openContextMenuForConnectedService, openAddServiceContextMenu
+  openAddServiceContextMenu,
+  openContextMenuForConnectedService,
+  openServiceDeepLink
 } from '../../../../data/action/connectedServiceActions';
 import { RootState } from '../../../../data/store';
 import { ConnectedServiceEditor } from './connectedServiceEditor/connectedServiceEditor';
 import { ServicesExplorer, ServicesExplorerProps } from './servicesExplorer';
 
 const mapStateToProps = (state: RootState): Partial<ServicesExplorerProps> => {
+  const {services = []} = state.bot.activeBot;
   return {
-    services: state.bot.activeBot.services,
+    services: services.filter(service => service.type !== ServiceType.Endpoint),
     window
   };
 };

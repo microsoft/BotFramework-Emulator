@@ -32,17 +32,20 @@
 //
 
 import { IAzureBotService, IConnectedService, ILuisService, IQnAService, ServiceType } from 'msbot/bin/schema';
+import { LuisService } from 'msbot/bin/models';
 import { ForkEffect, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { DialogService } from '../../ui/dialogs/service';
 import {
   ConnectedServiceAction,
   ConnectedServiceEditorPayload,
+  ConnectedServicePayload,
+  ConnectedServicePickerPayload,
   LAUNCH_CONNECTED_SERVICE_EDITOR,
   LAUNCH_CONNECTED_SERVICE_PICKER,
-  ConnectedServicePickerPayload,
+  OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU,
   OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE,
-  OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU
+  OPEN_SERVICE_DEEP_LINK
 } from '../action/connectedServiceActions';
 import { LuisModel, SharedConstants } from '@bfemulator/app-shared';
 import { RootState } from '../store';
@@ -89,11 +92,17 @@ function* launchLuisModelsViewer(action: ConnectedServiceAction<ConnectedService
 }
 
 function* launchLuisModelPickList(action: ConnectedServiceAction<ConnectedServicePickerPayload>,
-                                  availableLuisServices: LuisModel[]): IterableIterator<any> {
+                                  availableServices: LuisModel[]): IterableIterator<any> {
+
   const { pickerComponent, authenticatedUser } = action.payload;
-  let result = yield DialogService.showDialog(pickerComponent, { availableLuisServices, authenticatedUser });
+  let result = yield DialogService.showDialog(pickerComponent, {
+    availableServices,
+    authenticatedUser,
+    serviceType: ServiceType.Luis
+  });
 
   if (result === 1) {
+    action.payload.connectedService = new LuisService();
     result = yield* launchConnectedServiceEditor(action);
   }
 
@@ -116,19 +125,20 @@ function* retrieveLuisServices(): IterableIterator<any> {
   return luisServices;
 }
 
-function openDeepLink(service: IConnectedService): Promise<any> {
-  switch (service.type) {
+function* openConnectedServiceDeepLink(action: ConnectedServiceAction<ConnectedServicePayload>): IterableIterator<any> {
+  const { connectedService } = action.payload;
+  switch (connectedService.type) {
     case ServiceType.Luis:
-      return openLuisDeepLink(service as ILuisService);
+      return openLuisDeepLink(connectedService as ILuisService);
 
     case ServiceType.AzureBotService:
-      return openAzureBotServiceDeepLink(service as IAzureBotService);
+      return openAzureBotServiceDeepLink(connectedService as IAzureBotService);
 
     case ServiceType.Dispatch:
       return Promise.resolve(false); // TODO - Hook up proper link when available
 
     case ServiceType.QnA:
-      return openQnaMakerDeepLink(service as IQnAService);
+      return openQnaMakerDeepLink(connectedService as IQnAService);
 
     default:
       return Promise.reject('unknown service type');
@@ -146,11 +156,11 @@ function* openContextMenuForService(action: ConnectedServiceAction<ConnectedServ
   const { connectedService } = action.payload;
   switch (response.id) {
     case 'open':
-      yield openDeepLink(connectedService);
+      yield* openConnectedServiceDeepLink(action);
       break;
 
     case 'edit':
-      yield launchConnectedServiceEditor(action);
+      yield* launchConnectedServiceEditor(action);
       break;
 
     case 'forget':
@@ -162,8 +172,8 @@ function* openContextMenuForService(action: ConnectedServiceAction<ConnectedServ
   }
 }
 
-function *openAddConnectedServiceContextMenu(action: ConnectedServiceAction<ConnectedServicePickerPayload>)
-: IterableIterator<any> {
+function* openAddConnectedServiceContextMenu(action: ConnectedServiceAction<ConnectedServicePickerPayload>)
+  : IterableIterator<any> {
   const menuItems = [
     { label: 'Language Understanding (LUIS)', id: ServiceType.Luis },
     { label: 'QnA Maker', id: ServiceType.QnA },
@@ -211,7 +221,7 @@ function* launchConnectedServiceEditor(action: ConnectedServiceAction<ConnectedS
   const result = yield DialogService.showDialog(editorComponent, { connectedService, authenticatedUser });
 
   if (result) {
-    yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.AddOrUpdateService, ServiceType.Luis, result);
+    yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.AddOrUpdateService, ServiceType.Luis, result[0]);
   }
 }
 
@@ -282,6 +292,7 @@ function openAzureBotServiceDeepLink(service: IAzureBotService): Promise<any> {
 export function* servicesExplorerSagas(): IterableIterator<ForkEffect> {
   yield takeLatest(LAUNCH_CONNECTED_SERVICE_PICKER, launchLuisModelsViewer);
   yield takeLatest(LAUNCH_CONNECTED_SERVICE_EDITOR, launchConnectedServiceEditor);
+  yield takeEvery(OPEN_SERVICE_DEEP_LINK, openConnectedServiceDeepLink);
   yield takeEvery(OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE, openContextMenuForService);
   yield takeEvery(OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU, openAddConnectedServiceContextMenu);
 }

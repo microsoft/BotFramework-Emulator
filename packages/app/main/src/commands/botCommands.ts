@@ -37,17 +37,12 @@ import {
   loadBotWithRetry,
   patchBotsJson,
   pathExistsInRecentBots,
+  removeBotFromList,
   saveBot,
-  toSavableBot,
-  removeBotFromList
+  toSavableBot
 } from '../botHelpers';
 import * as BotActions from '../botData/actions/botActions';
-import {
-  BotConfigWithPath,
-  uniqueId,
-  mergeEndpoints,
-  CommandRegistryImpl
-} from '@bfemulator/sdk-shared';
+import { BotConfigWithPath, CommandRegistryImpl, mergeEndpoints, uniqueId } from '@bfemulator/sdk-shared';
 import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
 import { mainWindow } from '../main';
 import { emulator } from '../emulator';
@@ -197,10 +192,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Adds or updates an msbot service entry.
   commandRegistry.registerCommand(Commands.AddOrUpdateService,
-    async (
-      serviceType: ServiceType,
-      service: IConnectedService
-    ) => {
+    async (serviceType: ServiceType, service: IConnectedService) => {
 
       if (!service.id || !service.id.length) {
         service.id = uniqueId();

@@ -56,14 +56,14 @@ describe('The AzureLoginFailedDialogContainer component should', () => {
 
   it('should make a copy of the luis service passed in the props', () => {
     const instance = node.instance();
-    expect(instance.state.luisService instanceof LuisService).toBeTruthy();
-    expect(instance.state.luisService).not.toEqual(mockService);
+    expect(instance.state.connectedService instanceof LuisService).toBeTruthy();
+    expect(instance.state.connectedService).not.toEqual(mockService);
   });
 
   it('should produce an error when a required input field is null', () => {
     const instance = node.instance();
     instance.onInputChange('name', true, '');
-    expect(instance.state.luisService.name).toBe('');
+    expect(instance.state.connectedService.name).toBe('');
     expect(instance.state.nameError).not.toBeNull();
   });
 

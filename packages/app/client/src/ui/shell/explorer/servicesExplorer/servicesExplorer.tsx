@@ -44,25 +44,49 @@ import {
   GetStartedWithLuisDialogContainer
 } from '../../../dialogs';
 import { ConnectedServicePickerContainer } from './connectedServicePicker/connectedServicePickerContainer';
+import * as styles from './servicesExplorer.scss';
 
 export interface ServicesExplorerProps extends ServicePaneProps {
   services?: IConnectedService[];
+  toAnimate?: { [serviceId: string]: boolean };
   openAddServiceContextMenu: (payload: ConnectedServicePickerPayload) => void;
   openServiceDeepLink: (service: IConnectedService) => void;
 }
 
 export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
-  public state = {} as { expanded?: boolean };
+  public state = {} as ServicesExplorerProps;
 
-  constructor(props: ServicesExplorerProps, context: {}) {
-    super(props, context);
+  public static getDerivedStateFromProps
+  (newProps: ServicesExplorerProps, existingProps: ServicesExplorerProps): ServicesExplorerProps {
+    if (!Object.keys(existingProps).length) {
+      return newProps;
+    }
+    const { services: newServices } = newProps;
+    const { services = [] } = existingProps;
+    const state = { ...newProps };
+    if (newServices.length > services.length) {
+      state.expanded = true;
+      state.toAnimate = {};
+      const servicesMap = services.reduce((map, service) => (map[service.id] = true, map), {});
+      newServices.forEach(service => {
+        if (!servicesMap[service.id]) {
+          state.toAnimate[service.id] = true;
+        }
+      });
+    }
+
+    return state;
   }
 
   protected get links() {
-    const { services = [] } = this.props;
-    return services.map((model, index) => (
-      <li key={ index } onClick={ this.onLinkClick } data-index={ index }>
-        { model.name }
+    const { services = [], toAnimate = {} } = this.state;
+    return services.map((service, index) => (
+      <li
+        key={ index }
+        className={ `${styles.link} ${toAnimate[service.id] ? styles.animateHighlight : ''} ` }
+        onClick={ this.onLinkClick }
+        data-index={ index }>
+        { service.name }
       </li>
     ));
   }

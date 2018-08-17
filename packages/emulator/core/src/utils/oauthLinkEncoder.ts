@@ -42,8 +42,6 @@ import Attachment from '../types/attachment';
 import BotEmulator from '../botEmulator';
 import { StringProvider } from './stringProvider';
 
-const utf8 = require('utf8');
-const btoa = require('btoa');
 const shajs = require('sha.js');
 
 export default class OAuthLinkEncoder {
@@ -126,8 +124,7 @@ export default class OAuthLinkEncoder {
     };
 
     let serializedState = JSON.stringify(tokenExchangeState);
-    let utfStr = utf8.encode(serializedState);
-    let state = btoa(utfStr);
+    let state = Buffer.from(serializedState).toString('base64');
 
     let options: request.OptionsWithUrl = {
       url: 'https://api.botframework.com/api/botsignin/GetSignInUrl?state=' +
