@@ -90,7 +90,7 @@
     "@uifabric/merge-styles": "^6.2.0",
     "@uifabric/styling": "^5.20.0",
     "base64url": "^2.0.0",
-    "botframework-webchat": "0.14.2-master.d1f10ae",
+    "botframework-webchat": "0.14.2",
     "jsonpath": "^1.0.0",
     "msbot": "^1.0.44",
     "office-ui-fabric-react": "~6.1.2",
