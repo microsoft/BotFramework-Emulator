@@ -31,138 +31,149 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { LuisService } from 'msbot/bin/models';
-import { ILuisService } from 'msbot/bin/schema';
+import { ConnectedService } from 'msbot/bin/models/connectedService';
+import { BotConfigModel } from 'msbot/bin/models';
+import { IConnectedService, ServiceType } from 'msbot/bin/schema';
 import { DefaultButton, Dialog, DialogContent, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { Component } from 'react';
 
-interface LuisEditorProps {
-  luisService: ILuisService;
+interface ConnectedServiceEditorProps {
+  connectedService: IConnectedService;
   cancel: () => void;
-  updateLuisService: (updatedLuisService: ILuisService) => void;
+  updateLuisService: (updatedLuisService: IConnectedService) => void;
 }
 
-interface LuisEditorState {
-  luisService: ILuisService;
-  nameError: string;
-  appIdError: string;
-  authoringKeyError: string;
-  versionError: string;
-  subscriptionKeyError: string;
+interface ConnectedServiceEditorState extends Partial<any> {
+  connectedServiceCopy: ConnectedService;
   isDirty: boolean;
 }
 
-const title = 'Connect to a Azure Application';
-const detailedDescription = 'You can connect your bot to a Azure.ai application';
+const labelMap = {
+  authoringKey: 'Authoring key',
+  appId: 'LUIS app ID',
+  id: 'App ID',
+  endpointKey: 'Endpoint key',
+  hostname: 'Host Name',
+  kbId: 'Knowledge base ID',
+  name: 'Name',
+  resourceGroup: 'Resource group',
+  subscriptionId: 'Subscription ID',
+  subscriptionKey: 'Subscription key',
+  tenantId: 'Tenant ID',
+  version: 'Version',
+  [ServiceType.Luis]: 'LUIS',
+  [ServiceType.Dispatch]: 'Dispatch',
+  [ServiceType.QnA]: 'QnA Maker',
+};
 
-export class ConnectedServiceEditor extends Component<LuisEditorProps, LuisEditorState> {
+const titleMap = {
+  [ServiceType.Luis]: 'Connect to a LUIS model',
+  [ServiceType.Dispatch]: 'Connect to a Dispatch model',
+  [ServiceType.QnA]: 'Connect to a QnA Maker knowledge base',
+  [ServiceType.AzureBotService]: 'Connect to Azure Bot Service'
+};
 
-  public state: LuisEditorState = {} as LuisEditorState;
+const portalMap = {
+  [ServiceType.Luis]: 'LUIS.ai',
+  [ServiceType.Dispatch]: 'LUIS.ai',
+  [ServiceType.QnA]: 'QnaMaker.ai',
+};
 
-  private _textFieldHandlers: { [key: string]: (x: string) => void } = {};
+export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProps, ConnectedServiceEditorState> {
+  public state: ConnectedServiceEditorState = {} as ConnectedServiceEditorState;
+  private textFieldHandlers: { [key: string]: (x: string) => void } = {};
 
-  constructor(props: LuisEditorProps, state: LuisEditorState) {
+  constructor(props: ConnectedServiceEditorProps, state: ConnectedServiceEditorState) {
     super(props, state);
-    const luisService = new LuisService(props.luisService);
+    const connectedServiceCopy = BotConfigModel.serviceFromJSON(props.connectedService);
     this.state = {
-      luisService,
-      nameError: '',
-      appIdError: '',
-      authoringKeyError: '',
-      versionError: '',
-      subscriptionKeyError: '',
+      connectedServiceCopy,
       isDirty: false
-    };
-
-    this._textFieldHandlers = {
-      name: this.onInputChange.bind(this, 'name', true),
-      appId: this.onInputChange.bind(this, 'appId', true),
-      authoringKey: this.onInputChange.bind(this, 'authoringKey', true),
-      version: this.onInputChange.bind(this, 'version', true),
-      subscriptionKey: this.onInputChange.bind(this, 'subscriptionKey', false)
     };
   }
 
-  public componentWillReceiveProps(nextProps: Readonly<LuisEditorProps>): void {
-    const luisService = new LuisService(nextProps.luisService);
-    this.setState({ luisService });
+  public componentWillReceiveProps(nextProps: Readonly<ConnectedServiceEditorProps>): void {
+    const connectedServiceCopy = BotConfigModel.serviceFromJSON(this.props.connectedService);
+    this.setState({ connectedServiceCopy });
   }
 
   public render(): JSX.Element {
-    const {
-      luisService,
-      nameError,
-      appIdError,
-      authoringKeyError,
-      versionError,
-      subscriptionKeyError,
-      isDirty
-    } = this.state;
-    const { name = '', appId = '', authoringKey = '', subscriptionKey = '', version = '' } = luisService;
-    const valid = !!name && !!appId && !!authoringKey && !!version;
+    const { state, textFieldHandlers, onInputChange, props, onSubmitClick } = this;
+    const { isDirty, connectedServiceCopy } = state;
+    const { type } = props.connectedService;
+
+    const { type: _discard, ...json } = connectedServiceCopy.toJSON();
+    if (type === ServiceType.Luis || type === ServiceType.Dispatch) {
+      delete json.id;
+    }
+    const textInputs: JSX.Element[] = [];
+    let valid = true;
+    // Build the editable inputs from the enumerable properties
+    // in the data model. This assumes all enumerable fields are editable
+    // except the type
+    Object.keys(json)
+      .forEach((key, index) => {
+        const isRequired = this.isRequired(key);
+        valid = valid && (!isRequired || !!connectedServiceCopy[key]);
+        textInputs.push(
+          <TextField
+            key={ `input_${index}` }
+            errorMessage={ state[`${key}Error`] || '' }
+            value={ state[key] }
+            onChanged={ textFieldHandlers[key] || (textFieldHandlers[key] = onInputChange.bind(this, key)) }
+            label={ labelMap[key] } required={ isRequired }
+          />
+        );
+      });
+
     return (
-      <Dialog title={ title } detailedDescription={ detailedDescription }
-              cancel={ this.props.cancel }>
+      <Dialog title={ titleMap[type] } cancel={ props.cancel }>
         <DialogContent>
-          <TextField
-            errorMessage={ nameError }
-            value={ name }
-            onChanged={ this._textFieldHandlers.name }
-            label="Name" required={ true }
-          />
-          <TextField
-            errorMessage={ appIdError }
-            value={ appId }
-            onChanged={ this._textFieldHandlers.appId }
-            label="Application Id"
-            required={ true }
-          />
-          <TextField
-            errorMessage={ authoringKeyError }
-            value={ authoringKey }
-            onChanged={ this._textFieldHandlers.authoringKey }
-            label="Authoring key" required={ true }
-            data-propname="authoringKey"
-          />
-          <TextField
-            errorMessage={ versionError }
-            value={ version }
-            onChanged={ this._textFieldHandlers.version }
-            label="Version"
-            required={ true }
-          />
-          <TextField
-            errorMessage={ subscriptionKeyError }
-            value={ subscriptionKey }
-            onChanged={ this._textFieldHandlers.subscriptionKey }
-            label="Subscription key"
-            required={ false }
-          />
+          <p>
+            You can find your knowledge base ID and subscription key in { portalMap[type] }&nbsp;
+            <a href="javascript:void(0);">Learn more about keys in { labelMap[type] }</a>
+          </p>
+          { textInputs }
         </DialogContent>
         <DialogFooter>
-          <DefaultButton text="Cancel" onClick={ this.props.cancel }/>
-          <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ this.onSubmitClick }/>
+          <DefaultButton text="Cancel" onClick={ props.cancel }/>
+          <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ onSubmitClick }/>
         </DialogFooter>
       </Dialog>
     );
   }
 
-  private onSubmitClick = (): void => {
-    this.props.updateLuisService(this.state.luisService);
+  private isRequired(key: string): boolean {
+    if (key !== 'subscriptionKey') {
+      return true;
+    }
+
+    switch (this.props.connectedService.type) {
+      case ServiceType.Dispatch:
+      case ServiceType.Luis:
+        return false;
+
+      default:
+        return true;
+    }
   }
 
-  private onInputChange = (propName: string, required: boolean, value: string): void => {
+  private onSubmitClick = (): void => {
+    this.props.updateLuisService(this.state.connectedServiceCopy);
+  }
+
+  private onInputChange = (propName: string, value: string): void => {
     const trimmedValue = value.trim();
 
-    const { luisService: originalLuisService } = this.props;
-    const errorMessage = (required && !trimmedValue) ? `The field cannot be empty` : '';
+    const { connectedService: originalLuisService } = this.props;
+    const errorMessage = (this.isRequired(propName) && !trimmedValue) ? `The field cannot be empty` : '';
 
-    const { luisService } = this.state;
-    luisService[propName] = value;
+    const { connectedServiceCopy } = this.state;
+    connectedServiceCopy[propName] = value;
 
-    const isDirty = Object.keys(luisService)
-      .reduce((dirty, key) => (dirty || luisService[key] !== originalLuisService[key]), false);
-    this.setState({ luisService, [`${propName}Error`]: errorMessage, isDirty } as any);
+    const isDirty = Object.keys(connectedServiceCopy)
+      .reduce((dirty, key) => (dirty || connectedServiceCopy[key] !== originalLuisService[key]), false);
+    this.setState({ connectedServiceCopy: connectedServiceCopy, [`${propName}Error`]: errorMessage, isDirty } as any);
   }
 }

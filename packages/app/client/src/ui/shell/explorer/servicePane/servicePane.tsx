@@ -37,7 +37,7 @@ import * as React from 'react';
 import { Component, SyntheticEvent } from 'react';
 import * as styles from './servicePane.scss';
 
-export interface ServicePaneProps {
+export interface ServicePaneProps extends ServicePaneState {
   openContextMenuForService: (service: IConnectedService, ...rest: any[]) => void;
   window: Window;
   title: string;
@@ -47,8 +47,8 @@ export interface ServicePaneState {
   expanded?: boolean;
 }
 
-export abstract class ServicePane<T extends ServicePaneProps,
-  S extends ServicePaneState = ServicePaneState> extends Component<T, S> {
+export abstract class ServicePane<T extends ServicePaneProps, S extends ServicePaneState = ServicePaneState>
+  extends Component<T, S> {
 
   protected abstract onLinkClick: (event: SyntheticEvent<HTMLLIElement>) => void; // bound
   protected onAddIconClick: (event: SyntheticEvent<HTMLButtonElement>) => void; // bound
@@ -117,19 +117,6 @@ export abstract class ServicePane<T extends ServicePaneProps,
     }
   }
 
-  public render(): JSX.Element {
-    return (
-      <ExpandCollapse
-        className={ styles.servicePane }
-        key={ this.props.title }
-        title={ this.props.title }
-        expanded={ this.state.expanded }>
-        { this.controls }
-        { this.content }
-      </ExpandCollapse>
-    );
-  }
-
   protected onContextMenu = (event: MouseEvent) => {
     const { listRef } = this;
     let target = event.target as HTMLElement;
@@ -155,5 +142,18 @@ export abstract class ServicePane<T extends ServicePaneProps,
     };
     window.addEventListener('click', deselectLiElement, true);
     window.addEventListener('contextmenu', deselectLiElement, true);
+  }
+
+  public render(): JSX.Element {
+    return (
+      <ExpandCollapse
+        className={ styles.servicePane }
+        key={ this.props.title }
+        title={ this.props.title }
+        expanded={ this.state.expanded }>
+        { this.controls }
+        { this.content }
+      </ExpandCollapse>
+    );
   }
 }

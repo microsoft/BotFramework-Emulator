@@ -34,7 +34,6 @@
 import * as got from 'got';
 
 let getPem = require('rsa-pem-from-mod-exp');
-let base64url = require('base64url');
 
 export class OpenIdMetadata {
     private url: string;
@@ -124,7 +123,7 @@ export class OpenIdMetadata {
                     return null;
                 }
 
-                let modulus = base64url.toBase64(key.n);
+                let modulus = Buffer.from(key.n).toString('base64');
                 let exponent = key.e;
 
                 return getPem(modulus, exponent);

@@ -7,7 +7,6 @@ import 'react-router-dom';
 import 'redux-promise-middleware';
 
 import 'base64url';
-import 'jsonpath';
 import 'botframework-webchat/built/SpeechModule';
 import 'botframework-webchat/built/Chat';
 
@@ -19,5 +18,4 @@ import '@fuselab/ui-fabric';
 import '@fuselab/ui-shared';
 import 'botframework-webchat';
 import 'office-ui-fabric-react';
-import 'msbot';
 import 'base64url';

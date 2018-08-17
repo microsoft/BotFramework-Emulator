@@ -37,6 +37,7 @@ import * as React from 'react';
 import { ComponentClass, MouseEventHandler, SyntheticEvent } from 'react';
 import { ServicePane, ServicePaneProps } from '../servicePane/servicePane';
 import { EndpointEditorContainer } from './endpointEditor';
+import * as styles from './endpointExplorer.scss';
 
 export interface EndpointProps extends ServicePaneProps {
   endpointServices?: IEndpointService[];
@@ -57,6 +58,7 @@ export class EndpointExplorer extends ServicePane<EndpointProps> {
       .map((model, index) => {
         return (
           <li
+            className={styles.message}
             key={ index }
             onClick={ this.onLinkClick }
             data-index={ index }

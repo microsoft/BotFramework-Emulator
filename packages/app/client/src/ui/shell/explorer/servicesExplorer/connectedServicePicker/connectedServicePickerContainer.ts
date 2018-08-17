@@ -39,15 +39,15 @@ import { ConnectedServicePicker } from './connectedServicePicker';
 const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }) => {
   const { services } = state.bot.activeBot;
   return {
-    existingLuisServices: services.filter(service => service.type === ServiceType.Luis),
+    connectedServices: services.filter(service => service.type !== ServiceType.Endpoint),
     ...ownProps
   };
 };
 
 const mapDispatchToProps = (_dispatch: () => void) => {
   return {
-    launchLuisEditor: () => DialogService.hideDialog(1),
-    addLuisModels: updatedLuisModels => DialogService.hideDialog(updatedLuisModels),
+    launchServiceEditor: () => DialogService.hideDialog(1),
+    connectServices: servicesToConnect => DialogService.hideDialog(servicesToConnect),
     cancel: () => DialogService.hideDialog(0)
   };
 };

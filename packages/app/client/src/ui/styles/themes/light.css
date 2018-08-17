@@ -132,7 +132,7 @@ html {
   --my-bots-entry-bg: var(--neutral-4);
   --my-bots-entry-border: 1px solid transparent;
   --my-bots-entry-color: var(--neutral-12);
-  --my-bots-path-color: var(--neutral--12);
+  --my-bots-path-color: var(--neutral-12);
   --my-bots-scrollbar-color: rgba(136,136,136,0.5);
 }
 

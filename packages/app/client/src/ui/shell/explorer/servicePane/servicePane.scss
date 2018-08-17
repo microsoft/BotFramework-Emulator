@@ -37,6 +37,7 @@
   right: 50px;
   padding: 0;
   margin: 0;
+  color: var(--explorer-panel-group-title-color);
   &:hover {
     color: var(--log-panel-link);
   }
@@ -80,7 +81,7 @@
     }
 
     &::before {
-      content: "💬";
+      content: "";
       opacity: .5;
       display: inline-block;
       color: var(--explorer-panel-group-title-color);

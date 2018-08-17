@@ -4,7 +4,7 @@
       .ms-Dialog-main {
         min-width: 400px;
         width: 400px;
-        height: 457px;
+        max-height: 457px;
       }
       .ms-Dialog-actions {
         margin: 0;
@@ -13,19 +13,19 @@
   }
 }
 
-.newLuisApp {
+.paddedLink {
   padding: 16px 0;
+  display: inline-block;
 }
 
 .checkboxOverride {
   display: inline-block;
-  width: 150px;
   :global {
     .ms-Checkbox-text {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      max-width: 123px;
+      max-width: 175px;
       display: inline-block;
       padding-right: 3px;
       margin-right: 0;
@@ -52,20 +52,20 @@
     list-style: none;
     margin: 0;
     padding: 5px 0 0 0;
-    height: 104px;
+    max-height: 104px;
     overflow: auto;
     > li {
       padding: 0 10px;
       background-color: #efefef;
-      display: flex;
       height: 24px;
       & > span {
         color: #777;
         width: 50%;
         &:last-child {
-          text-align: right;
-          width: 75%;
+          width: 25px;
+          text-align: left;
           padding-right: 10px;
+          float: right;
         }
       }
       &:nth-child(odd) {

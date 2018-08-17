@@ -57,7 +57,7 @@ describe('The LuisModelsViewerDialog component should', () => {
   it('should contain the expected functions in the props', () => {
     expect(typeof (node.props() as any).cancel).toBe('function');
     expect(typeof (node.props() as any).launchConnectedServiceEditor).toBe('function');
-    expect(typeof (node.props() as any).addLuisModels).toBe('function');
+    expect(typeof (node.props() as any).connectServices).toBe('function');
   });
 
   it('should update the state when a checkbox is clicked', () => {
@@ -112,7 +112,7 @@ describe('The LuisModelsViewerDialog component should', () => {
     const anotherMockService = {...mockService};
     anotherMockService.appId = '123';
     instance.componentWillReceiveProps({
-      existingLuisServices: [mockService, anotherMockService]
+      connectedServices: [mockService, anotherMockService]
     });
 
     expect(instance.existingLuisServicesMap['123']).toBe(anotherMockService);

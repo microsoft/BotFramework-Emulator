@@ -79,7 +79,9 @@ describe('The ServicesExplorer component should', () => {
 
     instance.onContextMenuOverLiElement(mockLi);
     expect(mockDispatch)
-      .toHaveBeenCalledWith(openContextMenuForConnectedService(ConnectedServiceEditorContainer, new LuisService(mockBot.services[0])));
+      .toHaveBeenCalledWith(openContextMenuForConnectedService(
+        ConnectedServiceEditorContainer,
+        new LuisService(mockBot.services[0])));
   });
 
   it('should dispatch a request to open the luis models viewer when the add icon is clicked', () => {

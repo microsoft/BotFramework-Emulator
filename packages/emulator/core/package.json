@@ -50,8 +50,6 @@
     ]
   },
   "dependencies": {
-    "base64url": "^2.0.0",
-    "btoa": "1.2.1",
     "debug": "^3.1.0",
     "http-status-codes": "^1.3.0",
     "jsonwebtoken": "^8.3.0",
@@ -62,7 +60,6 @@
     "rsa-pem-from-mod-exp": "^0.8.4",
     "sha.js": "2.4.11",
     "simple-update-in": "^1.1.1",
-    "utf8": "3.0.0",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
