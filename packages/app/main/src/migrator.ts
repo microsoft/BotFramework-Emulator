@@ -83,9 +83,11 @@ export class Migrator {
       const { SyncBotList } = SharedConstants.Commands.Bot;
       const store = getStore();
       store.dispatch(BotActions.load(recentBotsList));
-      mainWindow.commandService.remoteCall(SyncBotList, recentBotsList);
+      await mainWindow.commandService.remoteCall(SyncBotList, recentBotsList).catch();
 
-      // SHOW POST-MIGRATION OVERVIEW PAGE
+      // show post-migration page
+      const { ShowPostMigrationDialog } = SharedConstants.Commands.UI;
+      await mainWindow.commandService.remoteCall(ShowPostMigrationDialog).catch();
     }
   }
 

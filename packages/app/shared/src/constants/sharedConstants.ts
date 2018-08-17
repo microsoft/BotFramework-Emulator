@@ -150,6 +150,7 @@ export namespace SharedConstants {
       export const SwitchTheme = 'shell:switchTheme';
       export const SignInToAzure = 'shell:signInToAzure';
       export const ArmTokenReceivedOnStartup = 'shell:armTokenReceivedOnStartup';
+      export const ShowPostMigrationDialog = 'post-migration-dialog:show';
     }
   }
 }

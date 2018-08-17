@@ -31,14 +31,32 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './botCreationDialog/botCreationDialog';
-export * from './host/host';
-export * from './secretPromptDialog/secretPromptDialog';
-export * from './tabManager/tabManager';
-export * from './service';
-export * from './azureLoginSuccessDialog/azureLoginSuccessDialogContainer';
-export * from './azureLoginPromptDialog/azureLoginPromptDialogContainer';
-export * from './azureLoginFailedDialog/azureLoginFailedDialogContainer';
-export * from './connectLuisAppPromptDialog/connectLuisAppPromptDialogContainer';
-export * from './getStartedWithLuisDialog/getStartedWithLuisDialogContainer';
-export * from './postMigrationDialog/postMigrationDialog';
+import * as React from 'react';
+import * as styles from './postMigrationDialog.scss';
+import { Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
+import { DialogService } from '../service';
+
+export class PostMigrationDialog extends React.Component<{}, {}> {
+  public render(): JSX.Element {
+    return (
+      <Dialog cancel={ this.close } className={ styles.postMigrationDialog } title="Migration complete!">
+        <p>We’ve copied your bot endpoints from Emulator v3 and saved them as .bot files.
+           A .bot file stores metadata about different services your bot consumes
+           and enables you to edit these services directly from the Emulator v4.&nbsp;
+           <a href="">Learn more about bot configuration files.</a>
+        </p>
+        <p>You can move a bot to any location by right-clicking the bot’s name under My Bots.&nbsp;
+          <a href="">Learn more developing locally.</a>
+        </p>
+        <p><a href="">Learn more about new features in Bot Framework Emulator v4</a></p>
+        <DialogFooter>
+          <PrimaryButton className={ styles.closeBtn } text="Close" onClick={ this.close }/>
+        </DialogFooter>
+      </Dialog>
+    );
+  }
+
+  private close = () => {
+    DialogService.hideDialog();
+  }
+}
