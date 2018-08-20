@@ -25,16 +25,16 @@
         "src": "client/build/index.html",
         "criteria": [
           {
-            "path": "$.type",
+            "path": "type",
             "value": "event"
           },
           {
-            "path": "$.name",
+            "path": "name",
             "value": "debug"
           }
         ],
         "summaryText": [
-          "$.text"
+          "text"
         ]
       }
     ]

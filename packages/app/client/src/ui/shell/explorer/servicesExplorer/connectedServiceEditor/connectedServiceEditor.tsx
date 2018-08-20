@@ -41,7 +41,7 @@ import { Component } from 'react';
 interface ConnectedServiceEditorProps {
   connectedService: IConnectedService;
   cancel: () => void;
-  updateLuisService: (updatedLuisService: IConnectedService) => void;
+  updateConnectedService: (updatedLuisService: IConnectedService) => void;
 }
 
 interface ConnectedServiceEditorState extends Partial<any> {
@@ -160,7 +160,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
   }
 
   private onSubmitClick = (): void => {
-    this.props.updateLuisService(this.state.connectedServiceCopy);
+    this.props.updateConnectedService(this.state.connectedServiceCopy);
   }
 
   private onInputChange = (propName: string, value: string): void => {

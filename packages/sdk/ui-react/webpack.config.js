@@ -1,4 +1,4 @@
-const { NodeEnvironmentPlugin, WatchIgnorePlugin } = require('webpack');
+const { WatchIgnorePlugin } = require('webpack');
 const path = require('path');
 module.exports = {
   entry: {
@@ -71,7 +71,6 @@ module.exports = {
   },
 
   plugins: [
-    new NodeEnvironmentPlugin(),
     new WatchIgnorePlugin([
       './src/**/*.d.ts'
     ])

@@ -44,7 +44,7 @@ describe('The LuisModelsViewerDialog component should', () => {
     mockService.id = 'mock';
 
     parent = mount(<Provider store={ mockStore }>
-      <ConnectedServicePickerContainer availableLuisServices={[mockService]} authenticatedUser="bot@bot.com"/>
+      <ConnectedServicePickerContainer availableServices={[mockService]} authenticatedUser="bot@bot.com"/>
     </Provider>);
     node = parent.find(ConnectedServicePicker);
   });
@@ -56,7 +56,7 @@ describe('The LuisModelsViewerDialog component should', () => {
 
   it('should contain the expected functions in the props', () => {
     expect(typeof (node.props() as any).cancel).toBe('function');
-    expect(typeof (node.props() as any).launchConnectedServiceEditor).toBe('function');
+    expect(typeof (node.props() as any).launchServiceEditor).toBe('function');
     expect(typeof (node.props() as any).connectServices).toBe('function');
   });
 
@@ -86,14 +86,14 @@ describe('The LuisModelsViewerDialog component should', () => {
     expect(spy).toHaveBeenCalledWith(0);
   });
 
-  it('should exit with a response of 1 when adding a luis model manually', () => {
+  it('should exit with a response of 1 when adding a model manually', () => {
     const spy = jest.spyOn(DialogService, 'hideDialog');
     const instance = node.instance();
-    instance.props.launchLuisEditor();
+    instance.props.launchServiceEditor();
     expect(spy).toHaveBeenCalledWith(1);
   });
 
-  it('should exit with the list of luis models to add when the user clicks "add"', () => {
+  it('should exit with the list of models to add when the user clicks "add"', () => {
     const spy = jest.spyOn(DialogService, 'hideDialog');
     const instance = node.instance();
     instance.state.mock = mockService;
@@ -102,19 +102,19 @@ describe('The LuisModelsViewerDialog component should', () => {
     expect(spy).toHaveBeenCalledWith([mockService]);
   });
 
-  it('should disable the "Add" button when no luis models have been selected', () => {
+  it('should disable the "Add" button when no models have been selected', () => {
     const instance = node.instance();
     expect(instance.addButtonEnabled).toBeFalsy();
   });
 
-  it('should update the existing luis services map when new services are provided after the component renders', () => {
+  it('should update the existing services map when new services are provided after the component renders', () => {
     const instance = node.instance();
     const anotherMockService = {...mockService};
-    anotherMockService.appId = '123';
+    anotherMockService.id = '123';
     instance.componentWillReceiveProps({
       connectedServices: [mockService, anotherMockService]
     });
 
-    expect(instance.existingLuisServicesMap['123']).toBe(anotherMockService);
+    expect(instance.connectedServicesMap['123']).toBeTruthy();
   });
 });

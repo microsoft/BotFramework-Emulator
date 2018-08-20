@@ -8,15 +8,16 @@ import { ServicesExplorerContainer } from './servicesExplorerContainer';
 import { ServicesExplorer } from './servicesExplorer';
 import { load, setActive } from '../../../../data/action/botActions';
 import {
-  launchConnectedServicePicker,
-  openServiceDeepLink,
-  openContextMenuForConnectedService
+  openAddServiceContextMenu,
+  openContextMenuForConnectedService,
+  openServiceDeepLink
 } from '../../../../data/action/connectedServiceActions';
 import { ConnectedServiceEditorContainer } from './connectedServiceEditor';
 import {
   AzureLoginFailedDialogContainer,
   AzureLoginSuccessDialogContainer,
-  ConnectLuisAppPromptDialogContainer, GetStartedWithLuisDialogContainer
+  ConnectLuisAppPromptDialogContainer,
+  GetStartedWithLuisDialogContainer
 } from '../../../dialogs';
 import { ConnectedServicePickerContainer } from './connectedServicePicker/connectedServicePickerContainer';
 
@@ -29,6 +30,7 @@ jest.mock('../../../dialogs', () => ({
 
 jest.mock('../servicePane/servicePane.scss', () => ({}));
 jest.mock('./connectedServicePicker/connectedServicePicker.scss', () => ({}));
+jest.mock('./servicesExplorer.scss', () => ({}));
 
 describe('The ServicesExplorer component should', () => {
   let parent;
@@ -51,7 +53,7 @@ describe('The ServicesExplorer component should', () => {
             "endpoint": "https://testbot.botframework.com/api/messagesv3"
         }]
       }`);
-
+    mockBot.services[0] = new LuisService(mockBot.services[0]);
     mockStore.dispatch(load([mockBot]));
     mockStore.dispatch(setActive(mockBot));
     mockDispatch = jest.spyOn(mockStore, 'dispatch');
@@ -80,15 +82,14 @@ describe('The ServicesExplorer component should', () => {
     instance.onContextMenuOverLiElement(mockLi);
     expect(mockDispatch)
       .toHaveBeenCalledWith(openContextMenuForConnectedService(
-        ConnectedServiceEditorContainer,
-        new LuisService(mockBot.services[0])));
+        ConnectedServiceEditorContainer, mockBot.services[0]));
   });
 
-  it('should dispatch a request to open the luis models viewer when the add icon is clicked', () => {
+  it('should dispatch a request to open the connected service picker when the add icon is clicked', () => {
     const instance = node.instance();
     instance.onAddIconClick(null);
 
-    expect(mockDispatch).toHaveBeenCalledWith(launchConnectedServicePicker({
+    expect(mockDispatch).toHaveBeenCalledWith(openAddServiceContextMenu({
       azureAuthWorkflowComponents: {
         loginFailedDialog: AzureLoginFailedDialogContainer,
         loginSuccessDialog: AzureLoginSuccessDialogContainer,

@@ -16,7 +16,7 @@ jest.mock('../../../../dialogs/service', () => ({
   }
 }));
 
-describe('The AzureLoginFailedDialogContainer component should', () => {
+describe('The ConnectedServiceEditor component should', () => {
   let parent;
   let node;
   let mockService;
@@ -32,7 +32,7 @@ describe('The AzureLoginFailedDialogContainer component should', () => {
             "subscriptionKey": "emoji"
         }`);
     parent = mount(<Provider store={ createStore(combineReducers({ azureAuth })) }>
-      <ConnectedServiceEditorContainer luisService={ mockService }/>
+      <ConnectedServiceEditorContainer connectedService={ mockService }/>
     </Provider>);
     node = parent.find(ConnectedServiceEditor);
   });
@@ -42,9 +42,9 @@ describe('The AzureLoginFailedDialogContainer component should', () => {
     expect(parent.find(ConnectedServiceEditor)).not.toBe(null);
   });
 
-  it('should contain a cancel and updateLuisService functions in the props', () => {
+  it('should contain a cancel and updateConnectedService functions in the props', () => {
     expect(typeof (node.props() as any).cancel).toBe('function');
-    expect(typeof (node.props() as any).updateLuisService).toBe('function');
+    expect(typeof (node.props() as any).updateConnectedService).toBe('function');
   });
 
   it('should exit with a 0 value when canceled', () => {
@@ -54,23 +54,23 @@ describe('The AzureLoginFailedDialogContainer component should', () => {
     expect(spy).toHaveBeenCalledWith(0);
   });
 
-  it('should make a copy of the luis service passed in the props', () => {
+  it('should make a copy of the connected service passed in the props', () => {
     const instance = node.instance();
-    expect(instance.state.connectedService instanceof LuisService).toBeTruthy();
-    expect(instance.state.connectedService).not.toEqual(mockService);
+    expect(instance.state.connectedServiceCopy instanceof LuisService).toBeTruthy();
+    expect(instance.state.connectedServiceCopy).not.toEqual(mockService);
   });
 
   it('should produce an error when a required input field is null', () => {
     const instance = node.instance();
-    instance.onInputChange('name', true, '');
-    expect(instance.state.connectedService.name).toBe('');
+    instance.onInputChange('name', '');
+    expect(instance.state.connectedServiceCopy.name).toBe('');
     expect(instance.state.nameError).not.toBeNull();
   });
 
-  it('should exit with the newly edited luis mode when clicking submit', () => {
+  it('should exit with the newly edited model when clicking submit', () => {
     const spy = jest.spyOn(DialogService, 'hideDialog');
     const instance = node.instance();
-    instance._textFieldHandlers.name('renamed model');
+    instance.textFieldHandlers.name('renamed model');
     instance.onSubmitClick();
     const mockMock = { ...mockService };
     mockMock.name = 'renamed model';
@@ -79,8 +79,8 @@ describe('The AzureLoginFailedDialogContainer component should', () => {
 
   it('should enable the submit button when all required fields have non-null values', () => {
     const instance = node.instance();
-    instance._textFieldHandlers.name('renamed model');
-    instance._textFieldHandlers.subscriptionKey(''); // non-required field
+    instance.textFieldHandlers.name('renamed model');
+    instance.textFieldHandlers.subscriptionKey(''); // non-required field
     instance.render();
     const submitBtn = node.find(PrimaryButton);
     expect(submitBtn.props.disabled).toBeFalsy();
