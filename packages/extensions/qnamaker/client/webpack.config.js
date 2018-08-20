@@ -1,5 +1,4 @@
 const {
-  NodeEnvironmentPlugin,
   NamedModulesPlugin,
   HotModuleReplacementPlugin,
   WatchIgnorePlugin } = require('webpack');
@@ -75,9 +74,7 @@ module.exports = {
   plugins: [
     new NamedModulesPlugin(),
     new HotModuleReplacementPlugin(),
-    new NodeEnvironmentPlugin(),
     new HardSourceWebpackPlugin(),
-    new NodeEnvironmentPlugin(),
     new WatchIgnorePlugin([
       './build/**/*.*',
       './public/**/*.*',

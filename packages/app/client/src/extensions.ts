@@ -32,14 +32,13 @@
 //
 
 import {
+  CommandRegistryImpl,
   CommandService,
   CommandServiceImpl,
   ExtensionConfig,
-  ExtensionInspector,
-  CommandRegistryImpl
+  ExtensionInspector
 } from '@bfemulator/sdk-shared';
 import { ElectronIPC } from './ipc';
-import * as jsonpath from 'jsonpath';
 import { SharedConstants } from '@bfemulator/app-shared';
 
 // =============================================================================
@@ -94,7 +93,7 @@ export class InspectorAPI {
     let canInspect = true;
     criterias.forEach(criteria => {
       // Path is a json-path
-      const value = jsonpath.value(obj, criteria.path);
+      const value = getValueFromPath(obj, criteria.path);
       if (typeof value === 'undefined') {
         canInspect = false;
       } else {
@@ -115,26 +114,12 @@ export class InspectorAPI {
     if (!Array.isArray(summaryTexts)) {
       summaryTexts = [summaryTexts];
     }
-    let ret: any;
+    let text = '';
     for (let i = 0; i < summaryTexts.length; ++i) {
-      const results = jsonpath.query(obj, summaryTexts[i]);
-      if (results && results.length) {
-        if (typeof results[0] === 'string') {
-          const value = results[0];
-          if (value.length > 0) {
-            ret = value;
-          }
-        }
+      const value = getValueFromPath(obj, summaryTexts[i]);
+      if (value) {
+        text += value;
       }
-    }
-
-    let text;
-    if (typeof ret === 'string') {
-      text = ret;
-    } else if (ret) {
-      text = JSON.stringify(ret);
-    } else {
-      text = '';
     }
 
     if (text.length > 50) {
@@ -142,6 +127,19 @@ export class InspectorAPI {
     }
     return text;
   }
+}
+
+export function getValueFromPath(source: { [prop: string]: any }, path: string): any {
+  const parts = path.split('.');
+  let val = source;
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i];
+    if (!(part in val)) {
+      return undefined;
+    }
+    val = val[parts[i]];
+  }
+  return val;
 }
 
 // =============================================================================

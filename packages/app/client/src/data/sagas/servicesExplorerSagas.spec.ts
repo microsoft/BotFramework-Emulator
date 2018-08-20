@@ -12,7 +12,14 @@ import { servicesExplorerSagas } from './servicesExplorerSagas';
 import azureAuth from '../reducer/azureAuthReducer';
 import bot from '../reducer/bot';
 import { azureArmTokenDataChanged } from '../action/azureAuthActions';
-import { launchConnectedServicePicker, openContextMenuForConnectedService } from '../action/connectedServiceActions';
+import {
+  ConnectedServiceAction,
+  ConnectedServicePayload,
+  ConnectedServicePickerPayload,
+  launchConnectedServicePicker,
+  openAddServiceContextMenu,
+  openContextMenuForConnectedService
+} from '../action/connectedServiceActions';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { load, setActive } from '../action/botActions';
@@ -40,14 +47,14 @@ jest.mock('../../ui/dialogs', () => ({
   }
 ));
 
-jest.mock('../../ui/shell/explorer/luisExplorer/connectedServiceEditor', () => ({
-  LuisEditorContainer: function mock() {
+jest.mock('../../ui/shell/explorer/servicesExplorer/connectedServiceEditor', () => ({
+  ConnectedServiceEditorContainer: function mock() {
     return undefined;
   }
 }));
 
-jest.mock('../../ui/shell/explorer/luisExplorer', () => ({
-  LuisModelsViewerContainer: function mock() {
+jest.mock('../../ui/shell/explorer/servicesExplorer', () => ({
+  ConnectedServicePicker: function mock() {
     return undefined;
   }
 }));
@@ -74,10 +81,10 @@ CommandServiceImpl.remoteCall = async function (type: string) {
   }
 };
 
-describe('The LuisSagas', () => {
+describe('The ServiceExplorerSagas', () => {
   describe(' launchConnectedServicePicker happy path', () => {
-    let launchLuisModelsViewerGen;
-    let payload;
+    let launchConnectedServicePickerGen;
+    let payload: ConnectedServicePickerPayload;
 
     beforeEach(() => {
       payload = {
@@ -86,22 +93,22 @@ describe('The LuisSagas', () => {
           loginSuccessDialog: AzureLoginSuccessDialogContainer,
           promptDialog: ConnectLuisAppPromptDialogContainer
         },
-        getStartedWithLuisDialog: GetStartedWithLuisDialogContainer,
-        luisEditorComponent: ConnectedServiceEditorContainer,
-        luisModelViewer: ConnectedServicePickerContainer,
+        getStartedDialog: GetStartedWithLuisDialogContainer,
+        editorComponent: ConnectedServiceEditorContainer,
+        pickerComponent: ConnectedServicePickerContainer,
       };
-      launchLuisModelsViewerGen = servicesExplorerSagas().next().value.FORK.args[1];
+      launchConnectedServicePickerGen = servicesExplorerSagas().next().value.FORK.args[1];
       mockStore.dispatch(azureArmTokenDataChanged(mockArmToken));
     });
 
     it('should retrieve the arm token from the store', () => {
-      const token = launchLuisModelsViewerGen().next().value.SELECT.selector(mockStore.getState());
+      const token = launchConnectedServicePickerGen().next().value.SELECT.selector(mockStore.getState());
       expect(token.access_token).toBe(mockArmToken);
     });
 
     it('should prompt the user to login if the armToken does not exist in the store', () => {
       mockStore.dispatch(azureArmTokenDataChanged(''));
-      const it = launchLuisModelsViewerGen(launchConnectedServicePicker(payload));
+      const it = launchConnectedServicePickerGen(launchConnectedServicePicker(payload));
       let token = it.next().value.SELECT.selector(mockStore.getState());
       expect(token.access_token).toBe('');
       token = it.next().value;
@@ -110,7 +117,7 @@ describe('The LuisSagas', () => {
 
     it('should retrieve the luis models from the API when a valid armToken exists', async () => {
       const action = launchConnectedServicePicker(payload);
-      const it = launchLuisModelsViewerGen(action);
+      const it = launchConnectedServicePickerGen(action);
       let token = it.next().value.SELECT.selector(mockStore.getState());
 
       token = it.next(token).value.SELECT.selector(mockStore.getState()); // Delegate to *retrieveLuisServices()
@@ -123,7 +130,7 @@ describe('The LuisSagas', () => {
     it('should launch the luis models picklist after the luis models are retrieved', async () => {
       DialogService.showDialog = () => Promise.resolve([{ id: 'a new service to add' }]);
       const action = launchConnectedServicePicker(payload);
-      const it = launchLuisModelsViewerGen(action);
+      const it = launchConnectedServicePickerGen(action);
       let token = it.next().value.SELECT.selector(mockStore.getState());
 
       token = it.next(token).value.SELECT.selector(mockStore.getState()); // Delegate to *retrieveLuisServices()
@@ -154,7 +161,7 @@ describe('The LuisSagas', () => {
 
       DialogService.showDialog = () => Promise.resolve([{ id: 'a new service to add' }]);
       const action = launchConnectedServicePicker(payload);
-      const it = launchLuisModelsViewerGen(action);
+      const it = launchConnectedServicePickerGen(action);
       let token = it.next().value.SELECT.selector(mockStore.getState());
 
       token = it.next(token).value.SELECT.selector(mockStore.getState()); // Delegate to *retrieveLuisServices()
@@ -177,9 +184,9 @@ describe('The LuisSagas', () => {
     });
   });
 
-  describe(' openLuisContextMenu', () => {
+  describe(' openContextMenuForService', () => {
     let contextMenuGen;
-    let action;
+    let action: ConnectedServiceAction<ConnectedServicePayload>;
     const mockService = JSON.parse(`{
           "type": "luis",
           "id": "#1",
@@ -192,14 +199,15 @@ describe('The LuisSagas', () => {
 
     beforeEach(() => {
       const sagaIt = servicesExplorerSagas();
-      action = openContextMenuForConnectedService(ConnectedServiceEditorContainer, mockService);
-      let i = 5;
+      action = openContextMenuForConnectedService<ConnectedServiceAction<ConnectedServicePayload>>
+      (ConnectedServiceEditorContainer, mockService);
+      let i = 4;
       while (i--) {
         contextMenuGen = sagaIt.next().value.FORK.args[1];
       }
     });
 
-    it('should open the luis deep link when the "open" menu item is selected', async () => {
+    it('should open the service deep link when the "open" menu item is selected', async () => {
       CommandServiceImpl.remoteCall = async () => ({ id: 'open' });
 
       const it = contextMenuGen(action);
@@ -232,8 +240,49 @@ describe('The LuisSagas', () => {
       expect(responseFromMain).toBeTruthy();
     });
 
-    it('should as the main process to remove the selected service from the active bot', async () => {
+    it('should ask the main process to remove the selected luis service from the active bot', async () => {
       CommandServiceImpl.remoteCall = async () => ({ id: 'forget' });
+      const it = contextMenuGen(action);
+      let result = await it.next().value;
+      expect(result.id).toBe('forget');
+
+      let _type;
+      let _args;
+      CommandServiceImpl.remoteCall = async (type: string, ...args: any[]) => {
+        _type = type;
+        _args = args;
+        return true;
+      };
+
+      result = await it.next(result).value;
+      expect(result).toBeTruthy();
+      expect(_type).toBe(SharedConstants.Commands.Electron.ShowMessageBox);
+      expect(_args[1]).toEqual({
+        type: 'question',
+        buttons: ['Cancel', 'OK'],
+        defaultId: 1,
+        message: `Remove luis service: The Bot, the bot, the bot. Are you sure?`,
+        cancelId: 0,
+      });
+
+      result = await it.next(result).value;
+      expect(_type).toBe(SharedConstants.Commands.Bot.RemoveService);
+      expect(_args[0]).toBe(ServiceType.Luis);
+      expect(_args[1]).toBe('#1');
+    });
+
+    it('should ask the main process to remove the selected QnA Maker service from the active bot', async () => {
+      CommandServiceImpl.remoteCall = async () => ({ id: 'forget' });
+
+      action.payload.connectedService = JSON.parse(`{
+          "type": "qna",
+          "id": "#1",
+          "name": "The Bot, the bot, the bot",
+          "version": "0.1",
+          "appId": "woot!",
+          "authoringKey": "keykeykey",
+          "subscriptionKey": "secret"
+      }`);
 
       const it = contextMenuGen(action);
       let result = await it.next().value;
@@ -254,14 +303,92 @@ describe('The LuisSagas', () => {
         type: 'question',
         buttons: ['Cancel', 'OK'],
         defaultId: 1,
-        message: `Remove LUIS service The Bot, the bot, the bot. Are you sure?`,
+        message: `Remove qna service: The Bot, the bot, the bot. Are you sure?`,
         cancelId: 0,
       });
 
       result = await it.next(result).value;
       expect(_type).toBe(SharedConstants.Commands.Bot.RemoveService);
-      expect(_args[0]).toBe(ServiceType.Luis);
+      expect(_args[0]).toBe(ServiceType.QnA);
       expect(_args[1]).toBe('#1');
+    });
+
+    it('should ask the main process to remove the selected dispatch Maker service from the active bot', async () => {
+      CommandServiceImpl.remoteCall = async () => ({ id: 'forget' });
+
+      action.payload.connectedService = JSON.parse(`{
+          "type": "dispatch",
+          "id": "#1",
+          "name": "The Bot, the bot, the bot",
+          "version": "0.1",
+          "appId": "woot!",
+          "authoringKey": "keykeykey",
+          "subscriptionKey": "secret"
+      }`);
+
+      const it = contextMenuGen(action);
+      let result = await it.next().value;
+      expect(result.id).toBe('forget');
+
+      let _type;
+      let _args;
+      CommandServiceImpl.remoteCall = async (type: string, ...args: any[]) => {
+        _type = type;
+        _args = args;
+        return true;
+      };
+
+      result = await it.next(result).value;
+      expect(result).toBeTruthy();
+      expect(_type).toBe(SharedConstants.Commands.Electron.ShowMessageBox);
+      expect(_args[1]).toEqual({
+        type: 'question',
+        buttons: ['Cancel', 'OK'],
+        defaultId: 1,
+        message: `Remove dispatch service: The Bot, the bot, the bot. Are you sure?`,
+        cancelId: 0,
+      });
+
+      result = await it.next(result).value;
+      expect(_type).toBe(SharedConstants.Commands.Bot.RemoveService);
+      expect(_args[0]).toBe(ServiceType.Dispatch);
+      expect(_args[1]).toBe('#1');
+    });
+  });
+
+  describe(' openAddConnectedServiceContextMenu', () => {
+    let action: ConnectedServiceAction<ConnectedServicePickerPayload>;
+    let contextMenuGen;
+    beforeEach(() => {
+      const sagaIt = servicesExplorerSagas();
+
+      const payload = {
+        azureAuthWorkflowComponents: {
+          loginFailedDialog: AzureLoginFailedDialogContainer,
+          loginSuccessDialog: AzureLoginSuccessDialogContainer,
+          promptDialog: ConnectLuisAppPromptDialogContainer
+        },
+        getStartedDialog: GetStartedWithLuisDialogContainer,
+        editorComponent: ConnectedServiceEditorContainer,
+        pickerComponent: ConnectedServicePickerContainer,
+      };
+
+      action = openAddServiceContextMenu(payload);
+      let i = 5;
+      while (i--) {
+        contextMenuGen = sagaIt.next().value.FORK.args[1];
+      }
+    });
+
+    it('should launch the luis connected service picker workflow when the luis menu item is selected', async () => {
+      CommandServiceImpl.remoteCall = async () => ({ id: ServiceType.Luis });
+      const it = contextMenuGen(action);
+      let result = await it.next().value;
+
+      expect(result.id).toBe(ServiceType.Luis);
+
+      result = it.next(result).value.SELECT.selector(mockStore.getState()); // Indicates we've entered the workflow
+      expect(result.access_token).toBe(mockArmToken);
     });
   });
 });

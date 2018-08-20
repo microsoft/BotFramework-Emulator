@@ -7,7 +7,7 @@ import azureAuth from '../../../data/reducer/azureAuthReducer';
 import { GetStartedWithLuisDialog } from './getStartedWithLuisDialog';
 import { azureArmTokenDataChanged } from '../../../data/action/azureAuthActions';
 
-jest.mock('./getStartedDialog.scss', () => ({}));
+jest.mock('./getStartedWithLuisDialog.scss', () => ({}));
 jest.mock('../service', () => ({
   DialogService: {
     showDialog: () => Promise.resolve(true),

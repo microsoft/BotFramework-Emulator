@@ -56,7 +56,8 @@ import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 const getArmTokenFromState = (state: RootState): ArmTokenData => state.azureAuth;
 const geBotConfigFromState = (state: RootState): BotConfigWithPath => state.bot.activeBot;
 
-function* launchLuisModelsViewer(action: ConnectedServiceAction<ConnectedServicePickerPayload>): IterableIterator<any> {
+function* launchConnectedServicePicker(action: ConnectedServiceAction<ConnectedServicePickerPayload>)
+  : IterableIterator<any> {
   // To retrieve the luis models, we must have the authoring key.
   // To get the authoring key, we need the arm token
   let armTokenData: ArmTokenData = yield select(getArmTokenFromState);
@@ -182,18 +183,17 @@ function* openAddConnectedServiceContextMenu(action: ConnectedServiceAction<Conn
 
   const response = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);
   switch (response.id) {
-
     case ServiceType.Luis:
-      yield* launchLuisModelsViewer(action);
+      yield* launchConnectedServicePicker(action);
       break;
 
-    case ServiceType.QnA:
-
-      break;
-
-    case ServiceType.Dispatch:
-
-      break;
+    // case ServiceType.QnA:
+    //
+    //   break;
+    //
+    // case ServiceType.Dispatch:
+    //
+    //   break;
 
     default: // canceled context menu
       return;
@@ -290,7 +290,7 @@ function openAzureBotServiceDeepLink(service: IAzureBotService): Promise<any> {
 // }
 
 export function* servicesExplorerSagas(): IterableIterator<ForkEffect> {
-  yield takeLatest(LAUNCH_CONNECTED_SERVICE_PICKER, launchLuisModelsViewer);
+  yield takeLatest(LAUNCH_CONNECTED_SERVICE_PICKER, launchConnectedServicePicker);
   yield takeLatest(LAUNCH_CONNECTED_SERVICE_EDITOR, launchConnectedServiceEditor);
   yield takeEvery(OPEN_SERVICE_DEEP_LINK, openConnectedServiceDeepLink);
   yield takeEvery(OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE, openContextMenuForService);

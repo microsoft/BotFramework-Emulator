@@ -2,7 +2,6 @@ const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
 const {
-  NodeEnvironmentPlugin,
   DllPlugin,
   DllReferencePlugin,
   NamedModulesPlugin,
@@ -111,7 +110,6 @@ const defaultConfig = {
   plugins: [
     new NamedModulesPlugin(),
     new HotModuleReplacementPlugin(),
-    new NodeEnvironmentPlugin(),
     new HardSourceWebpackPlugin(),
     new CopyWebpackPlugin([
       { from: './src/inspector-preload.js', to: './' },
@@ -158,6 +156,10 @@ const sharedConfig = () => ({
   output: {
     ...defaultConfig.output,
     library: '[name]_[hash]'
+  },
+
+  node: {
+    fs: 'empty'
   },
 
   plugins: [

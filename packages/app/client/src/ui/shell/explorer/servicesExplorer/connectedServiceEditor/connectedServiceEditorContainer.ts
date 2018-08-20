@@ -44,7 +44,7 @@ const mapStateToProps = (_state: RootState, ownProps: { [propName: string]: any 
 
 const mapDispatchToProps = (_dispatch: () => void) => {
   return {
-    updateLuisService: updatedLuisService => DialogService.hideDialog([updatedLuisService]),
+    updateConnectedService: updatedLuisService => DialogService.hideDialog([updatedLuisService]),
     cancel: () => DialogService.hideDialog(0)
   };
 };
