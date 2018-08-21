@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ExplorerAction, show } from '../action/explorerActions';
+import { ExplorerAction, showExplorer } from '../action/explorerActions';
 import explorer, { ExplorerState } from './explorer';
 
 describe('Explorer reducer tests', () => {
@@ -47,7 +47,7 @@ describe('Explorer reducer tests', () => {
   });
 
   it('should toggle the "showing state"', () => {
-    const action: ExplorerAction = show(true);
+    const action: ExplorerAction = showExplorer(true);
 
     const state = explorer(DEFAULT_STATE, action);
     expect(state.showing).toBe(true);

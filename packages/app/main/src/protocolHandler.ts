@@ -218,7 +218,7 @@ export const ProtocolHandler = new class ProtocolHandlerImpl implements Protocol
         });
       }
     } else {
-      // try to connect and let the chat log show the user the error
+      // try to connect and let the chat log showExplorer the user the error
       mainWindow.commandService.remoteCall(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
     }
   }

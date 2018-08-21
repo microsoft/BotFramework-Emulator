@@ -155,7 +155,7 @@ export class BotProjectFileWatcher implements FileWatcher {
       name: Path.basename(file)
     };
 
-    // only show .transcript files
+    // only showExplorer .transcript files
     if (fileInfo.type === 'leaf' && !isValidFileType(Path.extname(file))) {
       return;
     }

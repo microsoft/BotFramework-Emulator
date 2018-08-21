@@ -37,6 +37,7 @@ import { IConnectedService, ServiceType } from 'msbot/bin/schema';
 import { DefaultButton, Dialog, DialogContent, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { Component } from 'react';
+import { serviceTypeLabels } from '../serviceTypeLables';
 
 interface ConnectedServiceEditorProps {
   connectedService: IConnectedService;
@@ -62,9 +63,7 @@ const labelMap = {
   subscriptionKey: 'Subscription key',
   tenantId: 'Tenant ID',
   version: 'Version',
-  [ServiceType.Luis]: 'LUIS',
-  [ServiceType.Dispatch]: 'Dispatch',
-  [ServiceType.QnA]: 'QnA Maker',
+  ...serviceTypeLabels
 };
 
 const titleMap = {

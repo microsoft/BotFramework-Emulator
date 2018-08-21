@@ -41,6 +41,7 @@ export interface ServicePaneProps extends ServicePaneState {
   openContextMenuForService: (service: IConnectedService, ...rest: any[]) => void;
   window: Window;
   title: string;
+  sortCriteria?: string;
 }
 
 export interface ServicePaneState {
@@ -51,8 +52,8 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
   extends Component<T, S> {
 
   protected abstract onLinkClick: (event: SyntheticEvent<HTMLLIElement>) => void; // bound
-  protected onAddIconClick: (event: SyntheticEvent<HTMLButtonElement>) => void; // bound
-  protected onSortClick: (event: SyntheticEvent<HTMLButtonElement>) => void; // bound
+  protected abstract onAddIconClick: (event: SyntheticEvent<HTMLButtonElement>) => void; // bound
+  protected abstract onSortClick: (event: SyntheticEvent<HTMLButtonElement>) => void; // bound
 
   public state = {} as Readonly<S>;
   private _listRef: HTMLUListElement;

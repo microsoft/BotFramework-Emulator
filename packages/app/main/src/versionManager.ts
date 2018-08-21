@@ -86,14 +86,14 @@ export class VersionManager {
             }
           }
         } catch (err) {
-          // do not show the error; relies on 3rd party endpoint
+          // do not showExplorer the error; relies on 3rd party endpoint
         }
       }
     };
     got(options)
       .then(responseCallback)
       .catch(err => {
-        // do not show the error; relies on 3rd party endpoint
+        // do not showExplorer the error; relies on 3rd party endpoint
       });
   }
 
@@ -119,14 +119,14 @@ export class VersionManager {
             }
           }
         } catch (err) {
-          // do not show the error; relies on 3rd party endpoint
+          // do not showExplorer the error; relies on 3rd party endpoint
         }
       }
     };
     got(options)
       .then(responseCallback)
       .catch(err => {
-        // do not show the error; relies on 3rd party endpoint
+        // do not showExplorer the error; relies on 3rd party endpoint
       });
   }
 

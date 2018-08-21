@@ -45,11 +45,13 @@ import {
 } from '../../../dialogs';
 import { ConnectedServicePickerContainer } from './connectedServicePicker/connectedServicePickerContainer';
 import * as styles from './servicesExplorer.scss';
+import { serviceTypeLabels } from './serviceTypeLables';
 
 export interface ServicesExplorerProps extends ServicePaneProps {
   services?: IConnectedService[];
   toAnimate?: { [serviceId: string]: boolean };
   openAddServiceContextMenu: (payload: ConnectedServicePickerPayload) => void;
+  openSortContextMenu: () => void;
   openServiceDeepLink: (service: IConnectedService) => void;
 }
 
@@ -61,7 +63,7 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
     if (!Object.keys(existingProps).length) {
       return newProps;
     }
-    const { services: newServices } = newProps;
+    const { services: newServices, sortCriteria = 'name' } = newProps;
     const { services = [] } = existingProps;
     const state = { ...newProps };
     if (newServices.length > services.length) {
@@ -75,20 +77,36 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
       });
     }
 
+    // Basic descending sort
+    state.services.sort((a, b) => {
+      if (a[sortCriteria] < b[sortCriteria]) {
+        return -1;
+      }
+      if (a[sortCriteria] > b[sortCriteria]) {
+        return 1;
+      }
+      return 0;
+    });
     return state;
   }
 
   protected get links() {
     const { services = [], toAnimate = {} } = this.state;
-    return services.map((service, index) => (
-      <li
-        key={ index }
-        className={ `${styles.link} ${toAnimate[service.id] ? styles.animateHighlight : ''} ` }
-        onClick={ this.onLinkClick }
-        data-index={ index }>
-        { service.name }
-      </li>
-    ));
+    return services.map((service, index) => {
+      let label = service.name;
+      if ('version' in service) {
+        label += `, v${(service as any).version}`;
+      }
+      return (
+        <li
+          key={ index }
+          className={ `${styles.link} ${toAnimate[service.id] ? styles.animateHighlight : ''} ` }
+          onClick={ this.onLinkClick }
+          data-index={ index }>
+          { label } <span>- { serviceTypeLabels[service.type] }</span>
+        </li>
+      );
+    });
   }
 
   protected onContextMenuOverLiElement(li: HTMLLIElement) {
@@ -103,6 +121,10 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
     const { index } = currentTarget.dataset;
     const { [index]: connectedService } = this.props.services;
     this.props.openServiceDeepLink(connectedService);
+  }
+
+  protected onSortClick = (_event: SyntheticEvent<HTMLButtonElement>) => {
+    this.props.openSortContextMenu();
   }
 
   protected onAddIconClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
