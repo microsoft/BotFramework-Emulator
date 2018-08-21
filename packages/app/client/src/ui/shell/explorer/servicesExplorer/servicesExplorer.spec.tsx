@@ -3,6 +3,7 @@ import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
 import bot from '../../../../data/reducer/bot';
+import explorer from '../../../../data/reducer/explorer';
 import { LuisService } from 'msbot/bin/models';
 import { ServicesExplorerContainer } from './servicesExplorerContainer';
 import { ServicesExplorer } from './servicesExplorer';
@@ -39,7 +40,7 @@ describe('The ServicesExplorer component should', () => {
   let mockBot;
   let mockDispatch;
   beforeEach(() => {
-    mockStore = createStore(combineReducers({ bot }));
+    mockStore = createStore(combineReducers({ bot, explorer }));
     mockBot = JSON.parse(`{
         "name": "TestBot",
         "description": "",
