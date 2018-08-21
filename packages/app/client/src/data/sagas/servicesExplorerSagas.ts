@@ -33,17 +33,16 @@
 
 import { IAzureBotService, IConnectedService, ILuisService, IQnAService, ServiceType } from 'msbot/bin/schema';
 import { LuisService } from 'msbot/bin/models';
-import { ForkEffect, select, takeEvery, takeLatest } from 'redux-saga/effects';
+import { ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { DialogService } from '../../ui/dialogs/service';
 import {
   ConnectedServiceAction,
-  ConnectedServiceEditorPayload,
   ConnectedServicePayload,
   ConnectedServicePickerPayload,
   LAUNCH_CONNECTED_SERVICE_EDITOR,
   LAUNCH_CONNECTED_SERVICE_PICKER,
-  OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU,
+  OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU, OPEN_CONNECTED_SERVICE_SORT_CONTEXT_MENU,
   OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE,
   OPEN_SERVICE_DEEP_LINK
 } from '../action/connectedServiceActions';
@@ -52,9 +51,13 @@ import { RootState } from '../store';
 import { ArmTokenData, beginAzureAuthWorkflow } from '../action/azureAuthActions';
 import { getArmToken } from './azureAuthSaga';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
+import { SortCriteria } from '../reducer/explorer';
+import { sortExplorerContents } from '../action/explorerActions';
 
 const getArmTokenFromState = (state: RootState): ArmTokenData => state.azureAuth;
 const geBotConfigFromState = (state: RootState): BotConfigWithPath => state.bot.activeBot;
+const getSortSelection = (state: RootState): { [paneldId: string]: SortCriteria } =>
+  state.explorer.sortSelectionByPanelId;
 
 function* launchConnectedServicePicker(action: ConnectedServiceAction<ConnectedServicePickerPayload>)
   : IterableIterator<any> {
@@ -146,7 +149,7 @@ function* openConnectedServiceDeepLink(action: ConnectedServiceAction<ConnectedS
   }
 }
 
-function* openContextMenuForService(action: ConnectedServiceAction<ConnectedServiceEditorPayload>)
+function* openContextMenuForService(action: ConnectedServiceAction<ConnectedServicePayload>)
   : IterableIterator<any> {
   const menuItems = [
     { label: 'Open in web portal', id: 'open' },
@@ -200,6 +203,17 @@ function* openAddConnectedServiceContextMenu(action: ConnectedServiceAction<Conn
   }
 }
 
+function* openSortContextMenu(action: ConnectedServiceAction<ConnectedServicePayload>): IterableIterator<any> {
+  const sortSelectionByPanelId = yield select(getSortSelection);
+  const currentSort = sortSelectionByPanelId[action.payload.panelId];
+  const menuItems = [
+    { label: 'Sort by name', id: 'name', type: 'checkbox', checked: currentSort === 'name' },
+    { label: 'Sort by type', id: 'type', type: 'checkbox', checked: currentSort === 'type' },
+  ];
+  const response = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);
+  yield response.id ? put(sortExplorerContents(action.payload.panelId, response.id)) : null;
+}
+
 function* removeServiceFromActiveBot(connectedService: IConnectedService): IterableIterator<any> {
   // TODO - localization
   const result = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.ShowMessageBox, true, {
@@ -215,7 +229,7 @@ function* removeServiceFromActiveBot(connectedService: IConnectedService): Itera
   }
 }
 
-function* launchConnectedServiceEditor(action: ConnectedServiceAction<ConnectedServiceEditorPayload>)
+function* launchConnectedServiceEditor(action: ConnectedServiceAction<ConnectedServicePayload>)
   : IterableIterator<any> {
   const { editorComponent, authenticatedUser, connectedService } = action.payload;
   const result = yield DialogService.showDialog(editorComponent, { connectedService, authenticatedUser });
@@ -295,4 +309,5 @@ export function* servicesExplorerSagas(): IterableIterator<ForkEffect> {
   yield takeEvery(OPEN_SERVICE_DEEP_LINK, openConnectedServiceDeepLink);
   yield takeEvery(OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE, openContextMenuForService);
   yield takeEvery(OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU, openAddConnectedServiceContextMenu);
+  yield takeEvery(OPEN_CONNECTED_SERVICE_SORT_CONTEXT_MENU, openSortContextMenu);
 }

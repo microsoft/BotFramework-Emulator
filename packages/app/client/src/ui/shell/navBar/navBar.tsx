@@ -91,7 +91,7 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
           const showExplorer = !explorerIsVisible;
           this.props.showExplorer(showExplorer);
         } else {
-          // switch tabs and show explorer when clicking different navbar icon
+          // switch tabs and showExplorer explorer when clicking different navbar icon
           this.props.showExplorer(true);
           this.props.navBarSelectionChanged(selectionMap[index]);
           this.setState({ selection: selectionMap[index] });

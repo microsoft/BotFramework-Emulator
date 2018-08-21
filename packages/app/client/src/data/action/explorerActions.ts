@@ -30,25 +30,35 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { Action } from 'redux';
+import { SortCriteria } from '../reducer/explorer';
+export const CONNECTED_SERVICES_PANEL_ID = 'connectedServices';
 
 export enum ExplorerActions {
-  show = 'EXPLORER/SHOW'
+  Show = 'EXPLORER/SHOW',
+  Sort = 'EXPLORER/SORT'
 }
 
-export interface ShowExplorerAction {
-  type: ExplorerActions.show;
-  payload: {
-    show: boolean
+export interface ExplorerAction<T> extends Action {
+  type: ExplorerActions;
+  payload: T;
+}
+
+export interface ExplorerPayload {
+  show?: boolean;
+  sortSelectionByPanelId?: { [panelId: string]: SortCriteria };
+}
+
+export function showExplorer(show: boolean): ExplorerAction<ExplorerPayload> {
+  return {
+    type: ExplorerActions.Show,
+    payload: { show }
   };
 }
 
-export type ExplorerAction = ShowExplorerAction;
-
-export function show(_show: boolean): ExplorerAction {
+export function sortExplorerContents(panelId: string, sort: SortCriteria): ExplorerAction<ExplorerPayload> {
   return {
-    type: ExplorerActions.show,
-    payload: {
-      show: _show
-    }
+    type: ExplorerActions.Sort,
+    payload: { sortSelectionByPanelId: { [panelId]: sort } }
   };
 }

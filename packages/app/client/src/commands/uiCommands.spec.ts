@@ -41,7 +41,7 @@ describe('the uiCommands', () => {
     registerCommands(registry);
   });
 
-  it('should show the welcome page when the ShowWelcomePage command is dispatched', () => {
+  it('should showExplorer the welcome page when the ShowWelcomePage command is dispatched', () => {
     const spy = jest.spyOn(helpers, 'showWelcomePage');
     registry.getCommand(Commands.ShowWelcomePage).handler();
     expect(spy).toHaveBeenCalled();

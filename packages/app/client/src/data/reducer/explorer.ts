@@ -31,32 +31,44 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ExplorerAction, ExplorerActions } from '../action/explorerActions';
+import {
+  CONNECTED_SERVICES_PANEL_ID,
+  ExplorerAction,
+  ExplorerActions,
+  ExplorerPayload
+} from '../action/explorerActions';
 
 export interface ExplorerState {
   showing: boolean;
+  sortSelectionByPanelId: { [panelId: string]: SortCriteria };
 }
 
+export declare type SortCriteria = string;
+
 const DEFAULT_STATE: ExplorerState = {
-  showing: true
+  showing: true,
+  sortSelectionByPanelId: {[CONNECTED_SERVICES_PANEL_ID]: 'name'}
 };
 
-export default function explorer(state: ExplorerState = DEFAULT_STATE, action: ExplorerAction): ExplorerState {
+export default function explorer(state: ExplorerState = DEFAULT_STATE, action: ExplorerAction<ExplorerPayload>)
+  : ExplorerState {
+
   switch (action.type) {
-    case ExplorerActions.show: {
-      state = setShowing(action.payload.show, state);
+
+    case ExplorerActions.Show:
+      state = { ...state, showing: action.payload.show };
       break;
-    }
+
+    case ExplorerActions.Sort:
+      const sortSelectionByPanelId = {
+        ...state.sortSelectionByPanelId,
+        ...action.payload.sortSelectionByPanelId
+      };
+      state = { ...state, sortSelectionByPanelId };
+      break;
 
     default:
       break;
   }
   return state;
-}
-
-function setShowing(showing: boolean, state: ExplorerState): ExplorerState {
-  let newState = Object.assign({}, state);
-
-  newState.showing = showing;
-  return newState;
 }

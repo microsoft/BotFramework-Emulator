@@ -38,16 +38,20 @@ import {
   ConnectedServicePickerPayload,
   openAddServiceContextMenu,
   openContextMenuForConnectedService,
-  openServiceDeepLink
+  openServiceDeepLink,
+  openSortContextMenu
 } from '../../../../data/action/connectedServiceActions';
 import { RootState } from '../../../../data/store';
 import { ConnectedServiceEditor } from './connectedServiceEditor/connectedServiceEditor';
 import { ServicesExplorer, ServicesExplorerProps } from './servicesExplorer';
+import { CONNECTED_SERVICES_PANEL_ID } from '../../../../data/action/explorerActions';
 
 const mapStateToProps = (state: RootState): Partial<ServicesExplorerProps> => {
-  const {services = []} = state.bot.activeBot;
+  const { services = [] } = state.bot.activeBot;
+  const { [CONNECTED_SERVICES_PANEL_ID]: sortCriteria } = state.explorer.sortSelectionByPanelId;
   return {
     services: services.filter(service => service.type !== ServiceType.Endpoint),
+    sortCriteria,
     window
   };
 };
@@ -63,6 +67,8 @@ const mapDispatchToProps = (dispatch): Partial<ServicesExplorerProps> => {
     openContextMenuForService: (connectedService: IConnectedService,
                                 editorComponent: ComponentClass<ConnectedServiceEditor>) =>
       dispatch(openContextMenuForConnectedService(editorComponent, connectedService)),
+
+    openSortContextMenu: () => dispatch(openSortContextMenu())
   };
 };
 

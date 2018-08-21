@@ -100,4 +100,22 @@ describe('The ServicesExplorer component should', () => {
       pickerComponent: ConnectedServicePickerContainer,
     }));
   });
+
+  it('should flag newly added services for animation', () => {
+    const instance = node.instance();
+    const c = Object.getPrototypeOf(instance).constructor;
+    const prevState = {
+      sortCriteria: 'name',
+      services: [{id: 'existingService'}]
+    };
+
+    const nextProps = {
+      sortCriteria: 'name',
+      services: [{id: 'existingService'}, {id: 'newService'}]
+    };
+
+    const state = c.getDerivedStateFromProps(nextProps, prevState);
+    expect(state.toAnimate.newService).toBe(true);
+    expect(state.toAnimate.existingService).toBeUndefined();
+  });
 });

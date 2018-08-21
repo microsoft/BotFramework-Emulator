@@ -58,7 +58,7 @@ export class EndpointExplorer extends ServicePane<EndpointProps> {
       .map((model, index) => {
         return (
           <li
-            className={styles.message}
+            className={ styles.message }
             key={ index }
             onClick={ this.onLinkClick }
             data-index={ index }
@@ -83,5 +83,9 @@ export class EndpointExplorer extends ServicePane<EndpointProps> {
 
   protected onAddIconClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
     this.props.launchEndpointEditor(EndpointEditorContainer);
+  }
+
+  protected onSortClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
+    // TODO - Implement this.
   }
 }
