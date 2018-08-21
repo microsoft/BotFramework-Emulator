@@ -221,7 +221,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
   private performCreate = (botPath: string) => {
     const endpoint: IEndpointService = {
       type: this.state.endpoint.type,
-      name: this.state.endpoint.name.trim(),
+      name: this.state.endpoint.endpoint.trim(),
       id: this.state.endpoint.id.trim(),
       appId: this.state.endpoint.appId.trim(),
       appPassword: this.state.endpoint.appPassword.trim(),
