@@ -48,14 +48,18 @@ import { BotEmulatorContext } from './botEmulatorContext';
 import { AddressBarOperators } from './addressBar/addressBarOperators';
 import * as log from './log';
 import { ISpeechTokenInfo } from '../types/speechTypes';
+import { UpdateDialog } from './dialogs/updateDialog';
 
 const CognitiveServices = require('../../node_modules/botframework-webchat/CognitiveServices');
 const remote = require('electron').remote;
 const ipcRenderer = require('electron').ipcRenderer;
 const AdaptiveCardsHostConfig = require('./adaptivecards-hostconfig.json');
 
+export interface MainViewState {
+  showUpdateDialog: boolean;
+}
 
-export class MainView extends React.Component<{}, {}> {
+export class MainView extends React.Component<{}, MainViewState> {
     settingsUnsubscribe: any;
     settingsLoadUnsubscribe: any;
     reuseKey: number = 0;
@@ -65,6 +69,15 @@ export class MainView extends React.Component<{}, {}> {
     botId: string;
     botChatContainer: HTMLElement;
     shouldWarnOfBotChange: boolean = false;
+    showUpdateDialog: boolean = false;
+
+    constructor(props: {}) {
+      super(props);
+
+      this.state = {
+        showUpdateDialog: false
+      };
+    }
 
     componentWillMount() {
         this.settingsUnsubscribe = addSettingsListener((settings: Settings) => {
@@ -109,6 +122,7 @@ export class MainView extends React.Component<{}, {}> {
             } catch(e) {
                 //log.error(e.message);
             }
+            this.setState({ showUpdateDialog: settings.update.showing });
         });
     }
 
@@ -345,6 +359,7 @@ export class MainView extends React.Component<{}, {}> {
                     </Splitter>
                 </div>
                 <AppSettingsDialog />
+                <UpdateDialog showing={ this.state.showUpdateDialog }/>
             </div>
         );
     }

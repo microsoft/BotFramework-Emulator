@@ -1201,3 +1201,126 @@
         color: #ed4556;
         display: inline-block;
     }
+
+/** Update Dialog */
+
+.update-dialog-bg {
+  background: transparent;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9998;
+}
+
+.update-dialog {
+  max-height: 350px;
+  height: auto;
+  width: 400px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 24px;
+  z-index: 9999;
+  background-color: #F4F4F4;
+  box-shadow: 0 0 4px 0 rgba(0,0,0,0.3);
+  color: #4A4A4A;
+  line-height: initial;
+  overflow: hidden;
+  text-align: left;
+  cursor: default;
+}
+
+.update-dialog-close-icon {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  border: 0;
+  padding: 0;
+  height: 16px;
+  width: 16px;
+  cursor: pointer;
+  background-color: transparent;
+}
+
+.update-dialog-close-icon:hover {
+  background-color: transparent;
+}
+
+.update-dialog-close-icon:after {
+  content: "\2716";
+  height: 16px;
+  width: 16px;
+  color: #333;
+}
+
+.update-dialog-header {
+  color: #4A4A4A;
+  font-family: "Segoe UI";
+  font-size: 19px;
+  line-height: 26px;
+  margin: 0;
+  margin-bottom: 24px;
+  font-weight: normal;
+}
+
+.update-dialog-progress-header {
+  color: #4A4A4A;
+  font-family: "Segoe UI";
+  font-size: 13px;
+  line-height: 18px;
+  margin: 0;
+  margin-bottom: 18px;
+  font-weight: normal;
+}
+
+.update-progress-track {
+  position: relative;
+	height: 4px;
+	width: 100%;
+	background-color: rgba(0,0,0,0.2);
+}
+
+.update-progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 4px;
+  background-color: #0078D7;
+}
+
+.update-dialog-btn-row {
+  display: flex;
+  flex-flow: row nowrap;
+  margin-top: 50px;
+}
+
+.update-dialog-btn-row > button {
+	height: 16px;
+	width: 166px;
+	font-family: "Segoe UI";
+	font-size: 12px;
+	line-height: 13px;
+  text-align: center;
+}
+
+.update-dialog-gray-btn {
+  background-color: #CCC;
+  color: #444444;
+}
+
+.update-dialog-gray-btn:hover {
+  background-color: #CCC;
+}
+
+.update-dialog-blue-btn {
+  background-color: #3062D6;
+  color: #FFF;
+}
+
+.update-dialog-btn-row > button:first-child {
+  margin-right: 8px;
+  margin-left: auto;
+}

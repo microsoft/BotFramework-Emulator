@@ -56,7 +56,9 @@ import {
     IWordWrapState,
     IInspectorState,
     IHotkeyState,
-    serverChangeSetting
+    serverChangeSetting,
+    IUpdateState,
+    updateDefault
 } from './settings';
 
 
@@ -170,6 +172,24 @@ type ServerSettingsAction = {
     state: {
         value: ServerSettings
     }
+}
+
+type UpdateAction = {
+  type: 'Update_SetShowing',
+  state: {
+    value: boolean
+  }
+};
+
+export class UpdateActions {
+  static setShowing(showing: boolean) {
+    dispatch<UpdateAction>({
+      type: 'Update_SetShowing',
+      state: {
+        value: showing
+      }
+    });
+  }
 }
 
 export class LayoutActions {
@@ -338,8 +358,6 @@ export class LogActions {
     }
 }
 
-
-
 export class InspectorActions {
     static setSelectedObject(selectedObject: any) {
         dispatch<InspectorAction>({
@@ -409,6 +427,18 @@ export class ServerSettingsActions {
     }) {
         serverChangeSetting('Framework_Set', state);
     }
+}
+
+export const updateReducer: Reducer<IUpdateState> = (
+  state = updateDefault,
+  action: UpdateAction
+) => {
+  switch (action.type) {
+    case 'Update_SetShowing':
+      return Object.assign({}, state, { showing: action.state.value });
+    default:
+      return state;
+  }
 }
 
 export const layoutReducer: Reducer<ILayoutState> = (

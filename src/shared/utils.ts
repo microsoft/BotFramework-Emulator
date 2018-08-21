@@ -44,7 +44,7 @@ import * as globals from './globals';
  */
 export const uniqueId = (length?: number) => Math.random().toString(24).substr(2, length);
 
-const ensureStoragePath = (): string => {
+export const ensureStoragePath = (): string => {
     const commandLineArgs = globals.getGlobal('commandlineargs');
     const app = Electron.app || Electron.remote.app;
     const storagePath = commandLineArgs.storagepath || path.join(app.getPath("userData"), "botframework-emulator");

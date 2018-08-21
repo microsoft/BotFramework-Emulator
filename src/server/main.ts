@@ -32,7 +32,7 @@
 //
 
 import * as Electron from 'electron';
-import { Menu } from 'electron';
+import { Menu, dialog } from 'electron';
 import { Subject} from 'rxjs';
 import { getSettings, dispatch } from './settings';
 import { WindowStateAction } from './reducers/windowStateReducer';
@@ -43,6 +43,11 @@ import { Emulator } from './emulator';
 import { WindowManager } from './windowManager';
 import * as commandLine from './commandLine'
 import * as electronLocalShortcut from 'electron-localshortcut';
+import { Migrator } from './migrator';
+import { AppUpdater } from './appUpdater';
+import { UpdateInfo } from 'electron-updater';
+import { ProgressInfo } from 'builder-util-runtime';
+import { UpdateStatus } from '../types/updateStatus';
 
 // Ensure further options aren't passed to Chromium
 Electron.app.setAsDefaultProtocolClient('botemulator', process.execPath, [
@@ -58,6 +63,53 @@ Electron.app.setAsDefaultProtocolClient('botemulator', process.execPath, [
 
 export let mainWindow: Electron.BrowserWindow;
 export let windowManager: WindowManager;
+
+// Set up AppUpdater events
+AppUpdater.on('checking-for-update', () => {
+  log.debug('Checking for new version...');
+});
+
+AppUpdater.on('update-not-available', () => {
+  log.debug('Emulator is up to date.');
+});
+
+AppUpdater.on('update-available', (updateInfo: UpdateInfo) => {
+  log.debug(`New version of the Emulator is available: ${updateInfo.version}`);
+  if (updateInfo.version.startsWith('4')) {
+    Emulator.send('v4-update-available');
+  }
+});
+
+AppUpdater.on('downloading-update', () => {
+  log.debug('Downloading update...');
+  Emulator.send('update-status', UpdateStatus.downloading);
+});
+
+AppUpdater.on('download-progress', (progress: ProgressInfo) => {
+  const neatProgress = progress.percent.toString().substring(0, 4) + '%';
+  Emulator.send('update-progress', neatProgress);
+});
+
+AppUpdater.on('update-downloaded', (updateInfo: UpdateInfo) => {
+  log.debug('Update downloaded.')
+  if (updateInfo.version.startsWith('4')) {
+    Emulator.send('update-status', UpdateStatus.downloaded);
+  }
+});
+
+AppUpdater.on('error', (err: Error, message: string) => {
+  log.error(`Error while updating the Emulator: ${(err && err.message) || message}`);
+  dialog.showErrorBox('Error updating app', `'There was an error while using the app updater: \n\n${message}`);
+});
+
+Electron.ipcMain.on('download-v4-update', () => {
+  AppUpdater.downloadUpdate();
+});
+
+Electron.ipcMain.on('migrate-and-restart', (openAfterInstall: boolean) => {
+  Migrator.migrateV3Bots();
+  AppUpdater.installUpdate(openAfterInstall);
+});
 
 var openUrls = [];
 var onOpenUrl = function (event, url) {
@@ -124,6 +176,9 @@ const createMainWindow = () => {
         });
     mainWindow.setTitle(windowTitle);
     windowManager = new WindowManager();
+
+    // Start up app updater
+    AppUpdater.startup();
 
     // mainWindow.webContents.openDevTools();
 
