@@ -41,3 +41,4 @@ export * from './azureLoginPromptDialog/azureLoginPromptDialogContainer';
 export * from './azureLoginFailedDialog/azureLoginFailedDialogContainer';
 export * from './connectLuisAppPromptDialog/connectLuisAppPromptDialogContainer';
 export * from './getStartedWithLuisDialog/getStartedWithLuisDialogContainer';
+export * from './postMigrationDialog/postMigrationDialog';

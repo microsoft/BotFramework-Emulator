@@ -42,6 +42,7 @@ import { getBotsFromDisk, readFileSync } from '../utils';
 import * as Path from 'path';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
+import { Migrator } from '../migrator';
 
 const store = getStore();
 
@@ -51,11 +52,15 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Client notifying us it's initialized and has rendered
-  commandRegistry.registerCommand(Commands.ClientInit.Loaded, () => {
+  commandRegistry.registerCommand(Commands.ClientInit.Loaded, async () => {
     // Load bots from disk and sync list with client
     const bots = getBotsFromDisk();
-    store.dispatch(BotActions.load(bots));
-    mainWindow.commandService.remoteCall(Commands.Bot.SyncBotList, bots);
+    if (bots.length) {
+      store.dispatch(BotActions.load(bots));
+      mainWindow.commandService.remoteCall(Commands.Bot.SyncBotList, bots);
+    } else {
+      await Migrator.startup();
+    }
     // Reset the app title bar
     mainWindow.commandService.call(Commands.Electron.SetTitleBar);
     // Un-fullscreen the screen

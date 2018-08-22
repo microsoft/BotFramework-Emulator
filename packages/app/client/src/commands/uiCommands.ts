@@ -38,7 +38,8 @@ import {
   AzureLoginSuccessDialogContainer,
   BotCreationDialog,
   DialogService,
-  SecretPromptDialog
+  SecretPromptDialog,
+  PostMigrationDialog
 } from '../ui/dialogs';
 import store from '../data/store';
 import * as EditorActions from '../data/action/editorActions';
@@ -110,5 +111,11 @@ export function registerCommands(commandRegistry: CommandRegistry) {
 
   commandRegistry.registerCommand(Commands.ArmTokenReceivedOnStartup, (azureAuth: AzureAuthState) => {
     store.dispatch(azureArmTokenDataChanged(azureAuth.access_token));
+  });
+
+  // ---------------------------------------------------------------------------
+  // Show post migration dialog on startup if the user has just been migrated
+  commandRegistry.registerCommand(Commands.ShowPostMigrationDialog, () => {
+    DialogService.showDialog(PostMigrationDialog);
   });
 }
