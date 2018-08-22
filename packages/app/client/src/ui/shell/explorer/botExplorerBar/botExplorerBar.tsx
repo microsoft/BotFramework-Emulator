@@ -40,6 +40,7 @@ import { ExplorerBarHeader, Title } from '../explorerBarHeader/explorerBarHeader
 import { FileExplorer } from '../fileExplorer';
 import { BotNotOpenExplorer } from '../botNotOpenExplorer';
 import { IBotConfig } from 'msbot/bin/schema';
+import { ServicesExplorerContainer } from '../servicesExplorer';
 
 interface BotExplorerBarProps {
   activeBot: IBotConfig;
@@ -55,6 +56,7 @@ export default class BotExplorerBar extends React.Component<BotExplorerBarProps>
     return (
       <>
         <EndpointExplorerContainer title="Endpoint"/>
+        <ServicesExplorerContainer title="Services"/>
         <FileExplorer/>
       </>
     );

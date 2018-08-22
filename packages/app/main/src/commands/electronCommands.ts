@@ -119,5 +119,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Opens an external link
-  commandRegistry.registerCommand(Commands.OpenExternal, shell.openExternal.bind(shell, { activate: true }));
+  commandRegistry.registerCommand(Commands.OpenExternal, (url: string) => {
+    shell.openExternal(url, { activate: true });
+  });
 }

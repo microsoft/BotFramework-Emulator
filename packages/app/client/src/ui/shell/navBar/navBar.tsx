@@ -55,7 +55,6 @@ export interface NavBarState {
 
 const selectionMap = [
   Constants.NAVBAR_BOT_EXPLORER,
-  Constants.NAVBAR_SERVICES,
   Constants.NAVBAR_BOT_SETTINGS,
   Constants.NAVBAR_NOTIFICATIONS,
   Constants.NAVBAR_SETTINGS
@@ -85,16 +84,14 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
     switch (index) {
       // Bot Explorer
       case 0:
-      // Services
-      case 1:
       // Notifications
-      case 3:
+      case 2:
         if (currentSelection === selectionMap[index]) {
           // toggle explorer when clicking the same navbar icon
           const showExplorer = !explorerIsVisible;
           this.props.showExplorer(showExplorer);
         } else {
-          // switch tabs and show explorer when clicking different navbar icon
+          // switch tabs and showExplorer explorer when clicking different navbar icon
           this.props.showExplorer(true);
           this.props.navBarSelectionChanged(selectionMap[index]);
           this.setState({ selection: selectionMap[index] });
@@ -102,7 +99,7 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
         break;
 
       // Bot Settings
-      case 2:
+      case 1:
         if (this.props.activeBot) {
           this.props.openBotSettings();
         }
@@ -121,7 +118,6 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
 
     return [
       'Bot Explorer',
-      'Services',
       'Bot Settings',
       'Notifications',
       'Settings'

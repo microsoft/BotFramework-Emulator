@@ -1,4 +1,3 @@
-const { NodeEnvironmentPlugin } = require('webpack');
 const path = require('path');
 module.exports = {
   entry: {
@@ -54,7 +53,4 @@ module.exports = {
   },
 
   externals: {},
-  plugins: [
-    new NodeEnvironmentPlugin()
-  ]
 };

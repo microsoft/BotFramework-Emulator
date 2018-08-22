@@ -158,7 +158,7 @@ export const ActiveBotHelper = new class {
         }
 
         store.dispatch(NavBarActions.select(Constants.NAVBAR_BOT_EXPLORER));
-        store.dispatch(ExplorerActions.show(true));
+        store.dispatch(ExplorerActions.showExplorer(true));
       } catch (err) {
         const errMsg = `Error during bot create: ${err}`;
         const notification = newNotification(errMsg);
@@ -286,7 +286,7 @@ export const ActiveBotHelper = new class {
         }
 
         store.dispatch(NavBarActions.select(Constants.NAVBAR_BOT_EXPLORER));
-        store.dispatch(ExplorerActions.show(true));
+        store.dispatch(ExplorerActions.showExplorer(true));
       }
     } catch (e) {
       const errMsg = `Error while trying to switch to bot: ${botPath}`;

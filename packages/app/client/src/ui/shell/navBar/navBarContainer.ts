@@ -14,7 +14,7 @@ const mapStateToProps = (state: RootState): NavBarProps => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps: NavBarProps): NavBarProps => ({
-  showExplorer: show => dispatch(ExplorerActions.show(show)),
+  showExplorer: show => dispatch(ExplorerActions.showExplorer(show)),
   navBarSelectionChanged: newSelection => dispatch(NavBarActions.select(newSelection)),
   openBotSettings: () => {
     const { Commands } = SharedConstants;

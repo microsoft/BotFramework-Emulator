@@ -37,6 +37,7 @@ import * as React from 'react';
 import { ComponentClass, MouseEventHandler, SyntheticEvent } from 'react';
 import { ServicePane, ServicePaneProps } from '../servicePane/servicePane';
 import { EndpointEditorContainer } from './endpointEditor';
+import * as styles from './endpointExplorer.scss';
 
 export interface EndpointProps extends ServicePaneProps {
   endpointServices?: IEndpointService[];
@@ -57,12 +58,20 @@ export class EndpointExplorer extends ServicePane<EndpointProps> {
       .map((model, index) => {
         return (
           <li
+            className={ styles.message }
             key={ index }
             onClick={ this.onLinkClick }
             data-index={ index }
             tabIndex={ index }>{ model.name }
           </li>);
       });
+  }
+
+  protected get controls(): JSX.Element {
+    const controls = {...super.controls};
+    controls.props = {...controls.props};
+    controls.props.children = [controls.props.children[1]]; // Remove the sort icon
+    return controls;
   }
 
   protected onLinkClick: MouseEventHandler<HTMLLIElement> = (event: SyntheticEvent<HTMLLIElement>): void => {
@@ -76,10 +85,14 @@ export class EndpointExplorer extends ServicePane<EndpointProps> {
     super.onContextMenuOverLiElement(li);
     const { index } = li.dataset;
     const { [index]: endpointService } = this.props.endpointServices;
-    this.props.openContextMenu(new EndpointService(endpointService), EndpointEditorContainer);
+    this.props.openContextMenuForService(new EndpointService(endpointService), EndpointEditorContainer);
   }
 
   protected onAddIconClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
     this.props.launchEndpointEditor(EndpointEditorContainer);
+  }
+
+  protected onSortClick = (_event: SyntheticEvent<HTMLButtonElement>): void => {
+    // TODO - Implement this.
   }
 }

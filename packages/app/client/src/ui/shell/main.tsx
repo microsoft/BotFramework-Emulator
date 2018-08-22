@@ -134,7 +134,7 @@ export class Main extends React.Component<MainProps, MainState> {
       const explorerSize = sizes[0];
       const minExplorerWidth = 175;
       if (explorerSize.absolute < minExplorerWidth) {
-        store.dispatch(ExplorerActions.show(false));
+        store.dispatch(ExplorerActions.showExplorer(false));
       }
     }
   }

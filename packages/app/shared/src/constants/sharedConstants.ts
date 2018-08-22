@@ -68,9 +68,9 @@ export namespace SharedConstants {
     }
 
     export namespace Electron {
-      export const ShowMessageBox = 'shell:show-message-box';
-      export const ShowOpenDialog = 'shell:show-open-dialog';
-      export const ShowSaveDialog = 'shell:show-save-dialog';
+      export const ShowMessageBox = 'shell:showExplorer-message-box';
+      export const ShowOpenDialog = 'shell:showExplorer-open-dialog';
+      export const ShowSaveDialog = 'shell:showExplorer-save-dialog';
       export const UpdateFileMenu = 'menu:update-file-menu';
       export const SetFullscreen = 'electron:set-fullscreen';
       export const SetTitleBar = 'electron:set-title-bar';
@@ -140,13 +140,12 @@ export namespace SharedConstants {
     }
 
     export namespace UI {
-      export const ShowWelcomePage = 'welcome-page:show';
-      export const ShowBotCreationDialog = 'bot-creation:show';
-      export const ShowSecretPromptDialog = 'secret-prompt:show';
+      export const ShowWelcomePage = 'welcome-page:showExplorer';
+      export const ShowBotCreationDialog = 'bot-creation:showExplorer';
+      export const ShowSecretPromptDialog = 'secret-prompt:showExplorer';
       export const SwitchNavBarTab = 'navbar:switch-tab';
-      export const ShowExplorer = 'shell:show-explorer';
-      export const ShowServices = 'shell:show-services';
-      export const ShowAppSettings = 'shell:show-app-settings';
+      export const ShowExplorer = 'shell:showExplorer-explorer';
+      export const ShowAppSettings = 'shell:showExplorer-app-settings';
       export const SwitchTheme = 'shell:switchTheme';
       export const SignInToAzure = 'shell:signInToAzure';
       export const ArmTokenReceivedOnStartup = 'shell:armTokenReceivedOnStartup';

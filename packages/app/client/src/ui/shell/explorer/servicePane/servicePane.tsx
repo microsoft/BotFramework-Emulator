@@ -37,21 +37,23 @@ import * as React from 'react';
 import { Component, SyntheticEvent } from 'react';
 import * as styles from './servicePane.scss';
 
-export interface ServicePaneProps {
-  openContextMenu: (service: IConnectedService, ...rest: any[]) => void;
+export interface ServicePaneProps extends ServicePaneState {
+  openContextMenuForService: (service: IConnectedService, ...rest: any[]) => void;
   window: Window;
   title: string;
+  sortCriteria?: string;
 }
 
 export interface ServicePaneState {
   expanded?: boolean;
 }
 
-export abstract class ServicePane<T extends ServicePaneProps,
-  S extends ServicePaneState = ServicePaneState> extends Component<T, S> {
+export abstract class ServicePane<T extends ServicePaneProps, S extends ServicePaneState = ServicePaneState>
+  extends Component<T, S> {
 
   protected abstract onLinkClick: (event: SyntheticEvent<HTMLLIElement>) => void; // bound
-  protected onAddIconClick: (event: SyntheticEvent<HTMLButtonElement>) => void; // bound
+  protected abstract onAddIconClick: (event: SyntheticEvent<HTMLButtonElement>) => void; // bound
+  protected abstract onSortClick: (event: SyntheticEvent<HTMLButtonElement>) => void; // bound
 
   public state = {} as Readonly<S>;
   private _listRef: HTMLUListElement;
@@ -62,17 +64,16 @@ export abstract class ServicePane<T extends ServicePaneProps,
 
   protected get controls(): JSX.Element {
     return (
-      <ExpandCollapseControls>
-        <span className={ styles.servicePane }>
-          <button onClick={ this.onAddIconClick } className={ styles.addIconButton }>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25">
-              <g>
-                <path d="M0 10L10 10 10 0 15 0 15 10 25 10 25 15 15 15 15 25 10 25 10 15 0 15"/>
-              </g>
-            </svg>
-          </button>
-        </span>
-      </ExpandCollapseControls>
+      <>
+        <button onClick={ this.onSortClick } className={ styles.sortIconButton }>⮁</button>
+        <button onClick={ this.onAddIconClick } className={ styles.addIconButton }>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25">
+            <g>
+              <path d="M0 10L10 10 10 0 15 0 15 10 25 10 25 15 15 15 15 25 10 25 10 15 0 15"/>
+            </g>
+          </svg>
+        </button>
+      </>
     );
   }
 
@@ -115,20 +116,6 @@ export abstract class ServicePane<T extends ServicePaneProps,
     }
   }
 
-  public render(): JSX.Element {
-
-    return (
-      <ExpandCollapse
-        className={ styles.servicePane }
-        key={ this.props.title }
-        title={ this.props.title }
-        expanded={ this.state.expanded }>
-        { this.controls }
-        { this.content }
-      </ExpandCollapse>
-    );
-  }
-
   protected onContextMenu = (event: MouseEvent) => {
     const { listRef } = this;
     let target = event.target as HTMLElement;
@@ -154,5 +141,22 @@ export abstract class ServicePane<T extends ServicePaneProps,
     };
     window.addEventListener('click', deselectLiElement, true);
     window.addEventListener('contextmenu', deselectLiElement, true);
+  }
+
+  public render(): JSX.Element {
+    return (
+      <ExpandCollapse
+        className={ styles.servicePane }
+        key={ this.props.title }
+        title={ this.props.title }
+        expanded={ this.state.expanded }>
+        <ExpandCollapseControls>
+          <span className={ styles.servicePane }>
+          { this.controls }
+          </span>
+        </ExpandCollapseControls>
+        { this.content }
+      </ExpandCollapse>
+    );
   }
 }

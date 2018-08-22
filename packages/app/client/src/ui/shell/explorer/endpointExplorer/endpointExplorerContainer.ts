@@ -56,7 +56,7 @@ const mapDispatchToProps = dispatch => {
     launchEndpointEditor: (endpointEditor: ComponentClass<EndpointEditor>, endpointService: IEndpointService) =>
       dispatch(launchEndpointEditor(endpointEditor, endpointService)),
     openEndpointDeepLink: (endpointService: IEndpointService) => dispatch(openEndpointDeepLink(endpointService)),
-    openContextMenu: (endpointService: IEndpointService, endpointEditor: ComponentClass<EndpointEditor>) =>
+    openContextMenuForService: (endpointService: IEndpointService, endpointEditor: ComponentClass<EndpointEditor>) =>
       dispatch(openEndpointExplorerContextMenu(endpointEditor, endpointService)),
   };
 };

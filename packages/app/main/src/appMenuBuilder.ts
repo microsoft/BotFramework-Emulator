@@ -87,7 +87,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
         {
           label: windowTitle,
           submenu: [
-            { label: "About", click: () => Emulator.send('show-about') },
+            { label: "About", click: () => Emulator.send('showExplorer-about') },
             { type: "separator" },
             { label: "Quit", accelerator: "Command+Q", click: () => Electron.app.quit() }
           ]
@@ -267,10 +267,6 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
         {
           label: 'Explorer',
           click: () => mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ShowExplorer)
-        },
-        {
-          label: 'Services',
-          click: () => mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ShowServices)
         },
         {
           label: 'Emulator Settings',
