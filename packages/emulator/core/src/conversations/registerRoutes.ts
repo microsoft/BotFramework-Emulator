@@ -46,7 +46,8 @@ import getActivityMembers from './middleware/getActivityMembers';
 import getBotEndpoint from './middleware/getBotEndpoint';
 import getConversationMembers from './middleware/getConversationMembers';
 import replyToActivity from './middleware/replyToActivity';
-import sendToConversation from './middleware/sendToConversation';
+import sendActivityToConversation from './middleware/sendActivityToConversation';
+import sendHistoryToConversation from './middleware/sendHistoryToConversation';
 import updateActivity from './middleware/updateActivity';
 import uploadAttachment from './middleware/uploadAttachment';
 
@@ -79,7 +80,18 @@ export default function registerRoutes(botEmulator: BotEmulator, server: Server,
     fetchConversation,
     facility,
     getRouteName('sendToConversation'),
-    sendToConversation(botEmulator)
+    sendActivityToConversation(botEmulator)
+  );
+
+  server.post(
+    '/v3/conversations/:conversationId/activities/history',
+    ...uses,
+    verifyBotFramework,
+    jsonBodyParser,
+    fetchConversation,
+    facility,
+    getRouteName('sendToConversation'),
+    sendHistoryToConversation(botEmulator)
   );
 
   server.post(
