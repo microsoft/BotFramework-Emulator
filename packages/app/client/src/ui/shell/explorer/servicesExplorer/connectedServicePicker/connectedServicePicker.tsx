@@ -65,7 +65,7 @@ interface ConnectedServicesPickerState {
 export class ConnectedServicePicker extends Component<ConnectedServicesPickerProps, ConnectedServicesPickerState> {
 
   public state: ConnectedServicesPickerState = { checkAllChecked: false };
-  private connectedServicesMap: { [id: string]: IConnectedService } = {};
+  private connectedServicesMap: { [id: string]: IConnectedService | boolean } = {};
 
   constructor(props: ConnectedServicesPickerProps, context: ConnectedServicesPickerState) {
     super(props, context);
@@ -81,7 +81,7 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
     return (
       <Dialog
         title={ titleMap[this.props.serviceType] }
-        className={ styles.luisModelsViewer }
+        className={ styles.connectedServicePicker }
         cancel={ this.props.cancel }>
         <div className={ styles.listContainer }>
           { this.headerElements }
@@ -137,8 +137,9 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
   }
 
   private updateExistingServicesMap(props: ConnectedServicesPickerProps) {
-    const { connectedServices = [] as IConnectedService[] } = props;
+    const { connectedServices = [], availableServices = [] } = props;
     this.connectedServicesMap = connectedServices.reduce((map, service) => (map[service.id] = true, map), {});
+    availableServices.forEach(service => this.connectedServicesMap[service.id] = false);
   }
 
   private onSelectAllChange: ChangeEventHandler<any> = () => {
@@ -155,7 +156,7 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
   private onAddClick: ChangeEventHandler<any> = () => {
     const { checkAllChecked: _discarded, ...services } = this.state;
     const reducer = (models, serviceId) => {
-      if (services[serviceId]) {
+      if (typeof services[serviceId] === 'object') {
         models.push(services[serviceId]);
       }
       return models;

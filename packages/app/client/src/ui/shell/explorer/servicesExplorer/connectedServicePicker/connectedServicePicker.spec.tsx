@@ -7,7 +7,7 @@ import { ConnectedServicePickerContainer } from './connectedServicePickerContain
 import bot from '../../../../../data/reducer/bot';
 import { load, setActive } from '../../../../../data/action/botActions';
 import { DialogService } from '../../../../dialogs/service';
-import {ServiceType} from 'msbot/bin/schema';
+import { ServiceType } from 'msbot/bin/schema';
 
 jest.mock('./connectedServicePicker.scss', () => ({}));
 jest.mock('../../../../dialogs/service', () => ({
@@ -41,11 +41,11 @@ describe('The ConnectedServicePicker component', () => {
 
     mockStore.dispatch(load([mockBot]));
     mockStore.dispatch(setActive(mockBot));
-    mockService = {...mockBot.services[0]};
+    mockService = { ...mockBot.services[0] };
     mockService.id = 'mock';
 
     parent = mount(<Provider store={ mockStore }>
-      <ConnectedServicePickerContainer availableServices={[mockService]} authenticatedUser="bot@bot.com"/>
+      <ConnectedServicePickerContainer availableServices={ [mockService] } authenticatedUser="bot@bot.com"/>
     </Provider>);
     node = parent.find(ConnectedServicePicker);
   });
@@ -110,7 +110,7 @@ describe('The ConnectedServicePicker component', () => {
 
   it('should update the existing services map when new services are provided after the component renders', () => {
     const instance = node.instance();
-    const anotherMockService = {...mockService};
+    const anotherMockService = { ...mockService };
     anotherMockService.id = '123';
     instance.componentWillReceiveProps({
       connectedServices: [mockService, anotherMockService]
@@ -123,8 +123,8 @@ describe('The ConnectedServicePicker component', () => {
 
     it('ServiceType.Luis is passed into the props', () => {
       parent = mount(<Provider store={ mockStore }>
-        <ConnectedServicePickerContainer availableServices={[mockService]}
-                                         authenticatedUser="bot@bot.com" serviceType={ServiceType.Luis}/>
+        <ConnectedServicePickerContainer availableServices={ [mockService] }
+                                         authenticatedUser="bot@bot.com" serviceType={ ServiceType.Luis }/>
       </Provider>);
       node = parent.find(ConnectedServicePicker);
 
@@ -134,8 +134,8 @@ describe('The ConnectedServicePicker component', () => {
 
     it('ServiceType.Dispatch is passed into the props', () => {
       parent = mount(<Provider store={ mockStore }>
-        <ConnectedServicePickerContainer availableServices={[mockService]}
-                                         authenticatedUser="bot@bot.com" serviceType={ServiceType.Dispatch}/>
+        <ConnectedServicePickerContainer availableServices={ [mockService] }
+                                         authenticatedUser="bot@bot.com" serviceType={ ServiceType.Dispatch }/>
       </Provider>);
       node = parent.find(ConnectedServicePicker);
 
@@ -145,8 +145,8 @@ describe('The ConnectedServicePicker component', () => {
 
     it('ServiceType.QnA is passed into the props', () => {
       parent = mount(<Provider store={ mockStore }>
-        <ConnectedServicePickerContainer availableServices={[mockService]}
-                                         authenticatedUser="bot@bot.com" serviceType={ServiceType.QnA}/>
+        <ConnectedServicePickerContainer availableServices={ [mockService] }
+                                         authenticatedUser="bot@bot.com" serviceType={ ServiceType.QnA }/>
       </Provider>);
       node = parent.find(ConnectedServicePicker);
 
