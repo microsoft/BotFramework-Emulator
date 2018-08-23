@@ -41,11 +41,11 @@ import {
   AzureLoginFailedDialogContainer,
   AzureLoginSuccessDialogContainer,
   ConnectLuisAppPromptDialogContainer,
-  GetStartedWithLuisDialogContainer
+  GetStartedWithCSDialogContainer
 } from '../../../dialogs';
 import { ConnectedServicePickerContainer } from './connectedServicePicker/connectedServicePickerContainer';
 import * as styles from './servicesExplorer.scss';
-import { serviceTypeLabels } from './serviceTypeLables';
+import { serviceTypeLabels } from '../../../../utils/serviceTypeLables';
 
 export interface ServicesExplorerProps extends ServicePaneProps {
   services?: IConnectedService[];
@@ -134,7 +134,7 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
         loginSuccessDialog: AzureLoginSuccessDialogContainer,
         promptDialog: ConnectLuisAppPromptDialogContainer
       },
-      getStartedDialog: GetStartedWithLuisDialogContainer,
+      getStartedDialog: GetStartedWithCSDialogContainer,
       editorComponent: ConnectedServiceEditorContainer,
       pickerComponent: ConnectedServicePickerContainer,
     });

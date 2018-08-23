@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IConnectedService } from 'msbot/bin/schema';
+import { IConnectedService, ServiceType } from 'msbot/bin/schema';
 import { ComponentClass } from 'react';
 import { Action } from 'redux';
 import { CONNECTED_SERVICES_PANEL_ID } from './explorerActions';
@@ -48,6 +48,7 @@ export interface ConnectedServiceAction<T> extends Action {
 }
 
 export interface ConnectedServicePayload {
+  serviceType?: ServiceType;
   connectedService?: IConnectedService;
   authenticatedUser?: string;
   editorComponent?: ComponentClass<any>;

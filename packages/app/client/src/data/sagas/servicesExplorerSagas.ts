@@ -32,7 +32,7 @@
 //
 
 import { IAzureBotService, IConnectedService, ILuisService, IQnAService, ServiceType } from 'msbot/bin/schema';
-import { LuisService } from 'msbot/bin/models';
+import { BotConfigModel } from 'msbot/bin/models';
 import { ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { DialogService } from '../../ui/dialogs/service';
@@ -42,17 +42,19 @@ import {
   ConnectedServicePickerPayload,
   LAUNCH_CONNECTED_SERVICE_EDITOR,
   LAUNCH_CONNECTED_SERVICE_PICKER,
-  OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU, OPEN_CONNECTED_SERVICE_SORT_CONTEXT_MENU,
+  OPEN_ADD_CONNECTED_SERVICE_CONTEXT_MENU,
+  OPEN_CONNECTED_SERVICE_SORT_CONTEXT_MENU,
   OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE,
   OPEN_SERVICE_DEEP_LINK
 } from '../action/connectedServiceActions';
-import { LuisModel, SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 import { RootState } from '../store';
 import { ArmTokenData, beginAzureAuthWorkflow } from '../action/azureAuthActions';
 import { getArmToken } from './azureAuthSaga';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 import { SortCriteria } from '../reducer/explorer';
 import { sortExplorerContents } from '../action/explorerActions';
+import { serviceTypeLabels } from '../../utils/serviceTypeLables';
 
 const getArmTokenFromState = (state: RootState): ArmTokenData => state.azureAuth;
 const geBotConfigFromState = (state: RootState): BotConfigWithPath => state.bot.activeBot;
@@ -73,60 +75,66 @@ function* launchConnectedServicePicker(action: ConnectedServiceAction<ConnectedS
   }
   // Add the authenticated user to the action since we now have the token
   action.payload.authenticatedUser = JSON.parse(atob(armTokenData.access_token.split('.')[1])).upn;
-  const luisModels = yield* retrieveLuisServices();
-  if (!luisModels.length) {
-    const result = yield DialogService.showDialog(action.payload.getStartedDialog);
-    // Sign up with luis
+  const { serviceType } = action.payload;
+  let services: IConnectedService[] = yield* retrieveServicesByServiceType(serviceType);
+
+  if (!services.length) {
+    const result = yield DialogService.showDialog(action.payload.getStartedDialog, { serviceType });
+    // Sign up with XXXX
     if (result === 1) {
       // TODO - launch an external link
     }
-    // Add luis apps manually
+    // Add services manually
     if (result === 2) {
       yield* launchConnectedServiceEditor(action);
     }
   } else {
-    const newLuisModels = yield* launchLuisModelPickList(action, luisModels);
-    if (newLuisModels) {
+    const servicesToAdd = yield* launchConnectedServicePickList(action, services, serviceType);
+    if (servicesToAdd) {
       const botFile: BotConfigWithPath = yield select(geBotConfigFromState);
-      botFile.services.push(...newLuisModels);
+      botFile.services.push(...servicesToAdd);
       const { Bot } = SharedConstants.Commands;
       yield CommandServiceImpl.remoteCall(Bot.Save, botFile);
     }
   }
 }
 
-function* launchLuisModelPickList(action: ConnectedServiceAction<ConnectedServicePickerPayload>,
-                                  availableServices: LuisModel[]): IterableIterator<any> {
+function* launchConnectedServicePickList(action: ConnectedServiceAction<ConnectedServicePickerPayload>,
+                                         availableServices: IConnectedService[],
+                                         serviceType: ServiceType): IterableIterator<any> {
 
-  const { pickerComponent, authenticatedUser } = action.payload;
+  const { pickerComponent, authenticatedUser, serviceType: type } = action.payload;
   let result = yield DialogService.showDialog(pickerComponent, {
     availableServices,
     authenticatedUser,
-    serviceType: ServiceType.Luis
+    serviceType
   });
 
   if (result === 1) {
-    action.payload.connectedService = new LuisService();
+    action.payload.connectedService = BotConfigModel.serviceFromJSON({
+      type,
+      hostname: '' /* defect workaround */
+    } as any);
     result = yield* launchConnectedServiceEditor(action);
   }
 
   return result;
 }
 
-function* retrieveLuisServices(): IterableIterator<any> {
+function* retrieveServicesByServiceType(serviceType: ServiceType): IterableIterator<any> {
   let armTokenData: ArmTokenData = yield select(getArmTokenFromState);
   if (!armTokenData || !armTokenData.access_token) {
     throw new Error('Auth credentials do not exist.');
   }
-  const { Luis } = SharedConstants.Commands;
+  const { GetConnectedServicesByType } = SharedConstants.Commands.ConnectedService;
   let payload;
   try {
-    payload = yield CommandServiceImpl.remoteCall(Luis.GetLuisServices, armTokenData.access_token);
+    payload = yield CommandServiceImpl.remoteCall(GetConnectedServicesByType, armTokenData.access_token, serviceType);
   } catch {
-    payload = { luisServices: [] };
+    payload = { services: [] };
   }
-  const { luisServices = [] } = payload || {};
-  return luisServices;
+  const { services = [] } = payload || {};
+  return services;
 }
 
 function* openConnectedServiceDeepLink(action: ConnectedServiceAction<ConnectedServicePayload>): IterableIterator<any> {
@@ -185,22 +193,9 @@ function* openAddConnectedServiceContextMenu(action: ConnectedServiceAction<Conn
   ];
 
   const response = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);
-  switch (response.id) {
-    case ServiceType.Luis:
-      yield* launchConnectedServicePicker(action);
-      break;
-
-    // case ServiceType.QnA:
-    //
-    //   break;
-    //
-    // case ServiceType.Dispatch:
-    //
-    //   break;
-
-    default: // canceled context menu
-      return;
-  }
+  const { id: serviceType } = response;
+  action.payload.serviceType = serviceType;
+  yield* launchConnectedServicePicker(action);
 }
 
 function* openSortContextMenu(action: ConnectedServiceAction<ConnectedServicePayload>): IterableIterator<any> {
@@ -220,7 +215,7 @@ function* removeServiceFromActiveBot(connectedService: IConnectedService): Itera
     type: 'question',
     buttons: ['Cancel', 'OK'],
     defaultId: 1,
-    message: `Remove ${connectedService.type} service: ${connectedService.name}. Are you sure?`,
+    message: `Remove ${serviceTypeLabels[connectedService.type]} service: ${connectedService.name}. Are you sure?`,
     cancelId: 0,
   });
   if (result) {
@@ -231,44 +226,13 @@ function* removeServiceFromActiveBot(connectedService: IConnectedService): Itera
 
 function* launchConnectedServiceEditor(action: ConnectedServiceAction<ConnectedServicePayload>)
   : IterableIterator<any> {
-  const { editorComponent, authenticatedUser, connectedService } = action.payload;
-  const result = yield DialogService.showDialog(editorComponent, { connectedService, authenticatedUser });
+  const { editorComponent, authenticatedUser, connectedService, serviceType } = action.payload;
+  const result = yield DialogService.showDialog(editorComponent, { connectedService, authenticatedUser, serviceType });
 
   if (result) {
     yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.AddOrUpdateService, ServiceType.Luis, result[0]);
   }
 }
-
-//
-// function* removeAzureBotServiceFromActiveBot(azureBotService: any): IterableIterator<any> {
-//   // TODO - localization
-//   const result = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.ShowMessageBox, true, {
-//     type: 'question',
-//     buttons: ['Cancel', 'OK'],
-//     defaultId: 1,
-//     message: `Remove QnA service ${azureBotService.name}. Are you sure?`,
-//     cancelId: 0,
-//   });
-//   if (result) {
-//     yield CommandServiceImpl
-//       .remoteCall(SharedConstants.Commands.Bot.RemoveService, ServiceType.AzureBotService, azureBotService.id);
-//   }
-// }
-//
-// function* removeDispatchServiceFromActiveBot(dispatchService: any): IterableIterator<any> {
-//   const result = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.ShowMessageBox, true, {
-//     type: 'question',
-//     buttons: ['Cancel', 'OK'],
-//     defaultId: 1,
-//     message: `Remove Dispatch service ${dispatchService.name}. Are you sure?`,
-//     cancelId: 0,
-//   });
-//   if (result) {
-//     yield CommandServiceImpl
-//       .remoteCall(SharedConstants.Commands.Bot.RemoveService, ServiceType.Dispatch, dispatchService.id);
-//   }
-// }
-//
 
 function openLuisDeepLink(luisService: ILuisService): Promise<any> {
   const { appId, version } = luisService;
@@ -288,20 +252,6 @@ function openAzureBotServiceDeepLink(service: IAzureBotService): Promise<any> {
   const link = `${thankYouTsLint}/resourceGroups/${resourceGroup}/providers/Microsoft.BotService/botServices/${id}`;
   return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, link + '/channels');
 }
-
-//
-// function* removeQnaMakerServiceFromActiveBot(qnaService: any): IterableIterator<any> {
-//   const result = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.ShowMessageBox, true, {
-//     type: 'question',
-//     buttons: ['Cancel', 'OK'],
-//     defaultId: 1,
-//     message: `Remove QnA service ${qnaService.name}. Are you sure?`,
-//     cancelId: 0,
-//   });
-//   if (result) {
-//     yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.RemoveService, ServiceType.QnA, qnaService.id);
-//   }
-// }
 
 export function* servicesExplorerSagas(): IterableIterator<ForkEffect> {
   yield takeLatest(LAUNCH_CONNECTED_SERVICE_PICKER, launchConnectedServicePicker);

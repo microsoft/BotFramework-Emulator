@@ -40,7 +40,7 @@ import { registerCommands as registerNgrokCommands } from './ngrokCommands';
 import { registerCommands as registerAzureCommands } from './azureCommands';
 import { registerCommands as registerOAuthCommands } from './oauthCommands';
 import { registerCommands as registerSettingsCommands } from './settingsCommands';
-import { registerCommands as registerLuisCommands } from './luisCommands';
+import { registerCommands as registerLuisCommands } from './connectedServiceCommands';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
 /** Registers all commands */

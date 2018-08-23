@@ -37,7 +37,7 @@ import { IConnectedService, ServiceType } from 'msbot/bin/schema';
 import { DefaultButton, Dialog, DialogContent, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { Component } from 'react';
-import { serviceTypeLabels } from '../serviceTypeLables';
+import { serviceTypeLabels } from '../../../../../utils/serviceTypeLables';
 
 interface ConnectedServiceEditorProps {
   connectedService: IConnectedService;
@@ -79,6 +79,20 @@ const portalMap = {
   [ServiceType.QnA]: 'QnaMaker.ai',
 };
 
+const getEditableFields = (service: IConnectedService): string[] => {
+  switch (service.type) {
+    case ServiceType.Luis:
+    case ServiceType.Dispatch:
+      return ['name', 'appId', 'authoringKey', 'version', 'subscriptionKey'];
+
+    case ServiceType.QnA:
+      return ['name', 'kbId', 'endpointKey'];
+
+    default:
+      throw new TypeError(`${service.type} is not a valid service type`);
+  }
+};
+
 export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProps, ConnectedServiceEditorState> {
   public state: ConnectedServiceEditorState = {} as ConnectedServiceEditorState;
   private textFieldHandlers: { [key: string]: (x: string) => void } = {};
@@ -101,30 +115,25 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     const { state, textFieldHandlers, onInputChange, props, onSubmitClick } = this;
     const { isDirty, connectedServiceCopy } = state;
     const { type } = props.connectedService;
-
-    const { type: _discard, ...json } = connectedServiceCopy.toJSON();
-    if (type === ServiceType.Luis || type === ServiceType.Dispatch) {
-      delete json.id;
-    }
+    const fields = getEditableFields(connectedServiceCopy);
     const textInputs: JSX.Element[] = [];
     let valid = true;
     // Build the editable inputs from the enumerable properties
     // in the data model. This assumes all enumerable fields are editable
     // except the type
-    Object.keys(json)
-      .forEach((key, index) => {
-        const isRequired = this.isRequired(key);
-        valid = valid && (!isRequired || !!connectedServiceCopy[key]);
-        textInputs.push(
-          <TextField
-            key={ `input_${index}` }
-            errorMessage={ state[`${key}Error`] || '' }
-            value={ state[key] }
-            onChanged={ textFieldHandlers[key] || (textFieldHandlers[key] = onInputChange.bind(this, key)) }
-            label={ labelMap[key] } required={ isRequired }
-          />
-        );
-      });
+    fields.forEach((key, index) => {
+      const isRequired = this.isRequired(key);
+      valid = valid && (!isRequired || !!connectedServiceCopy[key]);
+      textInputs.push(
+        <TextField
+          key={ `input_${index}` }
+          errorMessage={ state[`${key}Error`] || '' }
+          value={ state[key] }
+          onChanged={ textFieldHandlers[key] || (textFieldHandlers[key] = onInputChange.bind(this, key)) }
+          label={ labelMap[key] } required={ isRequired }
+        />
+      );
+    });
 
     return (
       <Dialog title={ titleMap[type] } cancel={ props.cancel }>

@@ -36,7 +36,8 @@ import { ILuisService } from 'msbot';
 import fetch, { Headers, Response } from 'node-fetch';
 
 export class LuisApi {
-  public static async getServices(armToken: string): Promise<{ luisServices: ILuisService[] }> {
+  public static async getServices(armToken: string): Promise<{ services: ILuisService[] }> {
+    const payload = { services: [] };
     // 1.
     // We have the arm token which allows us to get the
     // authoring key used to retrieve the apps
@@ -48,7 +49,7 @@ export class LuisApi {
       authoringKey = await authoringKeyResponse.text();
       authoringKey = authoringKey.replace(/["]/g, '');
     } catch (e) {
-      return { luisServices: [] };
+      return payload;
     }
     // 2.
     // We have 3 regions to check for luis models
@@ -67,7 +68,7 @@ export class LuisApi {
       .reduce((agg: LuisModel[], models) => (agg.push(...models as LuisModel[]), agg), []) as LuisModel[];
     // 4.
     // Mutate the list into an array of ILuisService[]
-    const luisServices = luisModels.map((luisModel: LuisModel) => (<ILuisService> {
+    payload.services = luisModels.map((luisModel: LuisModel) => (<ILuisService> {
       authoringKey,
       appId: luisModel.id,
       id: luisModel.id,
@@ -77,7 +78,7 @@ export class LuisApi {
       version: luisModel.activeVersion
     })) as ILuisService[];
 
-    return { luisServices };
+    return payload;
   }
 
   public static async getApplicationsForRegion(region: string, key: string): Promise<LuisModel[] | { error: any }> {

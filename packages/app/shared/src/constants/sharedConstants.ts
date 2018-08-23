@@ -111,8 +111,8 @@ export namespace SharedConstants {
       export const Changed = 'file:changed';
     }
 
-    export namespace Luis {
-      export const GetLuisServices = 'luis:getLuisServices';
+    export namespace ConnectedService {
+      export const GetConnectedServicesByType = 'connectedService:getConnectedServicesByType';
     }
 
     export namespace Misc {
