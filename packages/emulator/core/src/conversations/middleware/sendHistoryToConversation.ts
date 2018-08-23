@@ -45,15 +45,14 @@ export default function sendHistoryToConversation(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
     const history = <ConversationHistory> req.body;
     var successCount = 0;
-    var firstErrorMessage = "";
+    var firstErrorMessage = '';
 
     for(let activity of history.Activities) {
       try {
-        console.log(activity.id);
         (req as any).conversation.postActivityToUser(activity);
         successCount++;
       } catch(err) {
-        if (firstErrorMessage === "") firstErrorMessage = err;
+        if (firstErrorMessage === '') firstErrorMessage = err;
       }
     }
 
@@ -63,4 +62,3 @@ export default function sendHistoryToConversation(botEmulator: BotEmulator) {
     next();
   };
 }
-
