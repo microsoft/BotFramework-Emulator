@@ -1,3 +1,5 @@
+import { mainWindow } from '../main';
+
 const mockClass = class {
 };
 const mockArmToken = 'bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
@@ -62,12 +64,26 @@ jest.mock('node-fetch', () => ({
 import { LuisApi } from './luisApiService';
 
 describe('The LuisApiService class', () => {
-  beforeEach(() => {
+  let result = undefined;
+  beforeEach(async () => {
     mockArgsPassedToFetch = [];
+    const it = LuisApi.getServices(mockArmToken);
+    result = undefined;
+    while (true) {
+      const next = it.next(result);
+      if (next.done) {
+        result = next.value;
+        break;
+      }
+      try {
+        result = await next.value;
+      } catch (e) {
+        break;
+      }
+    }
   });
   it('should retrieve the luis models when given an arm token', async () => {
-    const models = await LuisApi.getServices(mockArmToken);
-    expect(models.services.length).toBe(1);
+    expect(result.services.length).toBe(1);
     expect(mockArgsPassedToFetch.length).toBe(4);
     expect(mockArgsPassedToFetch[0]).toEqual({
       'url': 'https://api.luis.ai/api/v2.0/bots/programmatickey',

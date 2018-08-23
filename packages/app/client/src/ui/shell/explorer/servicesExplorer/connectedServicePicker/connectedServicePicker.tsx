@@ -45,6 +45,8 @@ const titleMap = {
   [ServiceType.AzureBotService]: 'Connect to an Azure Bot Service'
 };
 
+const connected = 'connected';
+
 interface ConnectedServicesPickerProps {
   authenticatedUser: string;
   serviceType: ServiceType;
@@ -57,24 +59,29 @@ interface ConnectedServicesPickerProps {
 }
 
 interface ConnectedServicesPickerState {
-  [selectedLuisModelId: string]: IConnectedService | boolean;
+  // false if the model is not selected
+  // connected if the model is already connected
+  // IConnectedService if the model is selected
+  [selectedLuisModelId: string]: IConnectedService | boolean | 'connected';
 
   checkAllChecked: boolean;
 }
 
 export class ConnectedServicePicker extends Component<ConnectedServicesPickerProps, ConnectedServicesPickerState> {
-
   public state: ConnectedServicesPickerState = { checkAllChecked: false };
-  private connectedServicesMap: { [id: string]: IConnectedService | boolean } = {};
 
-  constructor(props: ConnectedServicesPickerProps, context: ConnectedServicesPickerState) {
-    super(props, context);
-    this.updateExistingServicesMap(props);
-  }
-
-  public componentWillReceiveProps(nextProps: ConnectedServicesPickerProps = {} as any): void {
-    this.updateExistingServicesMap(nextProps);
-    this.setState({ ...this.state, ...this.connectedServicesMap });
+  static getDerivedStateFromProps(nextProps: ConnectedServicesPickerProps, prevState: ConnectedServicesPickerState) {
+    const state = {} as ConnectedServicesPickerState;
+    const { availableServices, connectedServices } = nextProps;
+    connectedServices.forEach(service => state[service.id] = connected);
+    availableServices.forEach(service => {
+      const { id } = service;
+      if (prevState[id] !== connected && state[service.id] !== connected) {
+        state[id] = (prevState[id] || false);
+      }
+    });
+    state.checkAllChecked = Object.keys(state).every(key => !!state[key]);
+    return state;
   }
 
   public render(): JSX.Element {
@@ -109,7 +116,7 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
         checked: !!state[id],
         id: `service_${id}`,
         onChange: onChange.bind(this, service),
-        disabled: !!this.connectedServicesMap[id]
+        disabled: state[id] === connected
       };
       return (
         <li key={ id }>
@@ -122,33 +129,30 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
   }
 
   private get addButtonEnabled(): boolean {
-    const { state, connectedServicesMap: map } = this;
+    const { state } = this;
     const { checkAllChecked: _discarded, ...selectedModels } = state;
-    return Object.keys(selectedModels).some(key => !!state[key] && !map[key]);
+    return Object.keys(selectedModels).some(key => !!state[key] && state[key] !== connected);
   }
 
   private onChange(service: IConnectedService) {
     const { checkAllChecked: _discarded, ...newState } = this.state;
-    const { connectedServicesMap: map } = this;
 
     newState[service.id] = !this.state[service.id] ? service : false;
-    newState.checkAllChecked = Object.keys(newState).every(key => !!newState[key] || !!map[key]);
+    newState.checkAllChecked = Object.keys(newState).every(key => !!newState[key]);
     this.setState(newState);
   }
 
-  private updateExistingServicesMap(props: ConnectedServicesPickerProps) {
-    const { connectedServices = [], availableServices = [] } = props;
-    this.connectedServicesMap = connectedServices.reduce((map, service) => (map[service.id] = true, map), {});
-    availableServices.forEach(service => this.connectedServicesMap[service.id] = false);
-  }
-
   private onSelectAllChange: ChangeEventHandler<any> = () => {
-    const { availableServices = [] } = this.props as any;
-    const { connectedServicesMap: map } = this;
+    const { availableServices = [] } = this.props;
+    const { checkAllChecked: _discarded, ...state } = this.state;
     const newState = {} as ConnectedServicesPickerState;
     const checked = newState.checkAllChecked = !this.state.checkAllChecked;
 
-    availableServices.forEach(service => newState[service.id] = !!map[service.id] || checked ? service : false);
+    availableServices.forEach(service => {
+      if (state[service.id] !== connected) {
+        newState[service.id] = checked ? service : false;
+      }
+    });
 
     this.setState(newState);
   }

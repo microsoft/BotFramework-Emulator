@@ -41,7 +41,8 @@ import {
   AzureLoginFailedDialogContainer,
   AzureLoginSuccessDialogContainer,
   ConnectLuisAppPromptDialogContainer,
-  GetStartedWithCSDialogContainer
+  GetStartedWithCSDialogContainer,
+  ProgressIndicatorContainer
 } from '../../../dialogs';
 import { ConnectedServicePickerContainer } from './connectedServicePicker/connectedServicePickerContainer';
 import * as styles from './servicesExplorer.scss';
@@ -137,6 +138,7 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
       getStartedDialog: GetStartedWithCSDialogContainer,
       editorComponent: ConnectedServiceEditorContainer,
       pickerComponent: ConnectedServicePickerContainer,
+      progressIndicatorComponent: ProgressIndicatorContainer
     });
   }
 }

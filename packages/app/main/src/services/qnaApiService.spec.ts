@@ -133,12 +133,26 @@ jest.mock('node-fetch', () => ({
 import { QnaApiService } from './qnaApiService';
 
 describe('The QnaApiService', () => {
-  beforeEach(() => {
+  let result;
+  beforeEach(async () => {
     mockArgsPassedToFetch = [];
+    let it = QnaApiService.getKnowledgeBases(mockArmToken);
+    result = undefined;
+    while (true) {
+      const next = it.next(result);
+      if (next.done) {
+        result = next.value;
+        break;
+      }
+      try {
+        result = await next.value;
+      } catch (e) {
+        break;
+      }
+    }
   });
   it('should retrieve the QnA Kbs when given an arm token', async () => {
-    const kbs = await QnaApiService.getKnowledgeBases(mockArmToken);
-    expect(kbs.services.length).toBe(2);
+    expect(result.services.length).toBe(2);
     expect(mockArgsPassedToFetch.length).toBe(7);
     expect(mockArgsPassedToFetch[0]).toEqual({
       'url': 'https://management.azure.com/subscriptions?api-version=2018-07-01',

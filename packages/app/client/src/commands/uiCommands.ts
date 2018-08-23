@@ -38,8 +38,8 @@ import {
   AzureLoginSuccessDialogContainer,
   BotCreationDialog,
   DialogService,
-  SecretPromptDialog,
-  PostMigrationDialog
+  PostMigrationDialog,
+  SecretPromptDialog
 } from '../ui/dialogs';
 import store from '../data/store';
 import * as EditorActions from '../data/action/editorActions';
@@ -49,51 +49,52 @@ import { CommandRegistry } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { azureArmTokenDataChanged, beginAzureAuthWorkflow } from '../data/action/azureAuthActions';
 import { AzureAuthState } from '../data/reducer/azureAuthReducer';
+import { ProgressIndicatorPayload, updateProgressIndicator } from '../data/action/progressIndicatorActions';
 
 /** Register UI commands (toggling UI) */
 export function registerCommands(commandRegistry: CommandRegistry) {
-  const Commands = SharedConstants.Commands.UI;
+  const { UI } = SharedConstants.Commands;
 
   // ---------------------------------------------------------------------------
   // Shows the welcome page
-  commandRegistry.registerCommand(Commands.ShowWelcomePage, () => {
+  commandRegistry.registerCommand(UI.ShowWelcomePage, () => {
     showWelcomePage();
   });
 
   // ---------------------------------------------------------------------------
   // Shows a bot creation dialog
-  commandRegistry.registerCommand(Commands.ShowBotCreationDialog, async () => {
+  commandRegistry.registerCommand(UI.ShowBotCreationDialog, async () => {
     return await DialogService.showDialog(BotCreationDialog);
   });
 
   // ---------------------------------------------------------------------------
   // Shows a dialog prompting the user for a bot secret
-  commandRegistry.registerCommand(Commands.ShowSecretPromptDialog, async () => {
+  commandRegistry.registerCommand(UI.ShowSecretPromptDialog, async () => {
     return await DialogService.showDialog(SecretPromptDialog);
   });
 
   // ---------------------------------------------------------------------------
   // Switches navbar tab selection
-  commandRegistry.registerCommand(Commands.SwitchNavBarTab, (tabName: string): void => {
+  commandRegistry.registerCommand(UI.SwitchNavBarTab, (tabName: string): void => {
     store.dispatch(NavBarActions.select(tabName));
   });
 
   // ---------------------------------------------------------------------------
   // Switches navbar tab selection to Explorer
-  commandRegistry.registerCommand(Commands.ShowExplorer, (): void => {
+  commandRegistry.registerCommand(UI.ShowExplorer, (): void => {
     store.dispatch(NavBarActions.select(Constants.NAVBAR_BOT_EXPLORER));
   });
 
   // ---------------------------------------------------------------------------
   // Open App Settings
-  commandRegistry.registerCommand(Commands.ShowAppSettings, (): void => {
+  commandRegistry.registerCommand(UI.ShowAppSettings, (): void => {
     const { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } = Constants;
     store.dispatch(EditorActions.open(CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS, true, null));
   });
 
   // ---------------------------------------------------------------------------
   // Theme switching from main
-  commandRegistry.registerCommand(Commands.SwitchTheme, themeHref => {
+  commandRegistry.registerCommand(UI.SwitchTheme, themeHref => {
     const themeTag = document.getElementById('themeVars') as HTMLLinkElement;
     if (themeTag) {
       themeTag.href = themeHref;
@@ -102,20 +103,24 @@ export function registerCommands(commandRegistry: CommandRegistry) {
 
   // ---------------------------------------------------------------------------
   // Azure sign in
-  commandRegistry.registerCommand(Commands.SignInToAzure, () => {
+  commandRegistry.registerCommand(UI.SignInToAzure, () => {
     store.dispatch(beginAzureAuthWorkflow(
       AzureLoginPromptDialogContainer,
       AzureLoginSuccessDialogContainer,
       AzureLoginFailedDialogContainer));
   });
 
-  commandRegistry.registerCommand(Commands.ArmTokenReceivedOnStartup, (azureAuth: AzureAuthState) => {
+  commandRegistry.registerCommand(UI.ArmTokenReceivedOnStartup, (azureAuth: AzureAuthState) => {
     store.dispatch(azureArmTokenDataChanged(azureAuth.access_token));
   });
 
   // ---------------------------------------------------------------------------
   // Show post migration dialog on startup if the user has just been migrated
-  commandRegistry.registerCommand(Commands.ShowPostMigrationDialog, () => {
+  commandRegistry.registerCommand(UI.ShowPostMigrationDialog, () => {
     DialogService.showDialog(PostMigrationDialog);
+  });
+
+  commandRegistry.registerCommand(UI.UpdateProgressIndicator, (value: ProgressIndicatorPayload) => {
+    store.dispatch(updateProgressIndicator(value));
   });
 }

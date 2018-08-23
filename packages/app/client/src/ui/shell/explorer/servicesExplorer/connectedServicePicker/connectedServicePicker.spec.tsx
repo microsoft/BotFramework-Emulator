@@ -63,7 +63,7 @@ describe('The ConnectedServicePicker component', () => {
 
   it('should update the state when a checkbox is clicked', () => {
     const instance = node.instance();
-    expect(instance.state.mock).toBeUndefined();
+    expect(instance.state.mock).toBe(false);
     instance.onChange(mockService);
     expect(instance.state.mock).not.toBeUndefined();
     expect(instance.state.checkAllChecked).toBeTruthy();
@@ -71,7 +71,7 @@ describe('The ConnectedServicePicker component', () => {
 
   it('should update the state when the check all checkbox is checked', () => {
     const instance = node.instance();
-    expect(instance.state.mock).toBeUndefined();
+    expect(instance.state.mock).toBe(false);
     expect(instance.state.checkAllChecked).toBeFalsy();
 
     instance.onSelectAllChange(null);
@@ -108,15 +108,18 @@ describe('The ConnectedServicePicker component', () => {
     expect(instance.addButtonEnabled).toBeFalsy();
   });
 
-  it('should update the existing services map when new services are provided after the component renders', () => {
-    const instance = node.instance();
-    const anotherMockService = { ...mockService };
-    anotherMockService.id = '123';
-    instance.componentWillReceiveProps({
-      connectedServices: [mockService, anotherMockService]
+  describe('getDerivedStateFromProps', () => {
+    it('should update the state correctly when both connected and available services exist', () => {
+      const state = ConnectedServicePicker.getDerivedStateFromProps(
+        {
+          connectedServices: [{ id: 'testId777' }],
+          availableServices: [{ id: 'testId123' }]
+        } as any,
+        {
+          testId777: 'connected'
+        } as any);
+      expect(state.testId123).toBe(false);
     });
-
-    expect(instance.connectedServicesMap['123']).toBeTruthy();
   });
 
   describe('should render the expected content when', () => {

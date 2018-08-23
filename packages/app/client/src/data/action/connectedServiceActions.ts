@@ -73,6 +73,7 @@ export interface ConnectedServicePickerPayload extends ConnectedServicePayload {
   pickerComponent: ComponentClass<any>;
   getStartedDialog: ComponentClass<any>;
   editorComponent: ComponentClass<any>;
+  progressIndicatorComponent?: ComponentClass<any>;
 }
 
 export function launchConnectedServicePicker(payload: ConnectedServicePickerPayload)
