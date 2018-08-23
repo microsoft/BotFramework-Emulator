@@ -8,7 +8,7 @@ html {
   --focused-list-item: transparent;
   --focused-outline: var(--list-item-hover-border);
   --focused-selected-highlighted-list-item: #3062D6;
-  --focused-selected-list-item-bg: #4672DA;
+  --focused-selected-list-item-bg: #3794FF;
 
   /* Alert colors */
   --info-bg: #D6ECF2;
