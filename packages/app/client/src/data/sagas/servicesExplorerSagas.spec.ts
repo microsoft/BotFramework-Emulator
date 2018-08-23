@@ -2,7 +2,7 @@ import {
   AzureLoginFailedDialogContainer,
   AzureLoginSuccessDialogContainer,
   ConnectLuisAppPromptDialogContainer,
-  GetStartedWithCGDialogContainer
+  GetStartedWithCSDialogContainer
 } from '../../ui/dialogs';
 import { DialogService } from '../../ui/dialogs/service'; // ☣☣ careful! ☣☣
 import { ConnectedServiceEditorContainer } from '../../ui/shell/explorer/servicesExplorer/connectedServiceEditor';
@@ -73,8 +73,8 @@ jest.mock('./azureAuthSaga', () => ({
 
 CommandServiceImpl.remoteCall = async function (type: string) {
   switch (type) {
-    case SharedConstants.Commands.Luis.GetLuisServices:
-      return { luisServices: [{ id: 'a luis service' }] };
+    case SharedConstants.Commands.ConnectedService.GetConnectedServicesByType:
+      return { services: [{ id: 'a luis service' }] };
 
     default:
       return null;
@@ -93,7 +93,7 @@ describe('The ServiceExplorerSagas', () => {
           loginSuccessDialog: AzureLoginSuccessDialogContainer,
           promptDialog: ConnectLuisAppPromptDialogContainer
         },
-        getStartedDialog: GetStartedWithCGDialogContainer,
+        getStartedDialog: GetStartedWithCSDialogContainer,
         editorComponent: ConnectedServiceEditorContainer,
         pickerComponent: ConnectedServicePickerContainer,
       };
@@ -123,8 +123,8 @@ describe('The ServiceExplorerSagas', () => {
       token = it.next(token).value.SELECT.selector(mockStore.getState()); // Delegate to *retrieveLuisServices()
       const result = await it.next(token).value;
       expect(action.payload.authenticatedUser).toBe('glasgow@scotland.com');
-      expect(result.luisServices.length).toEqual(1);
-      expect(result.luisServices[0].id).toBe('a luis service');
+      expect(result.services.length).toEqual(1);
+      expect(result.services[0].id).toBe('a luis service');
     });
 
     it('should launch the luis models picklist after the luis models are retrieved', async () => {
@@ -261,7 +261,7 @@ describe('The ServiceExplorerSagas', () => {
         type: 'question',
         buttons: ['Cancel', 'OK'],
         defaultId: 1,
-        message: `Remove luis service: The Bot, the bot, the bot. Are you sure?`,
+        message: `Remove LUIS service: The Bot, the bot, the bot. Are you sure?`,
         cancelId: 0,
       });
 
@@ -303,7 +303,7 @@ describe('The ServiceExplorerSagas', () => {
         type: 'question',
         buttons: ['Cancel', 'OK'],
         defaultId: 1,
-        message: `Remove qna service: The Bot, the bot, the bot. Are you sure?`,
+        message: `Remove QnA Maker service: The Bot, the bot, the bot. Are you sure?`,
         cancelId: 0,
       });
 
@@ -345,7 +345,7 @@ describe('The ServiceExplorerSagas', () => {
         type: 'question',
         buttons: ['Cancel', 'OK'],
         defaultId: 1,
-        message: `Remove dispatch service: The Bot, the bot, the bot. Are you sure?`,
+        message: `Remove Dispatch service: The Bot, the bot, the bot. Are you sure?`,
         cancelId: 0,
       });
 
@@ -368,7 +368,7 @@ describe('The ServiceExplorerSagas', () => {
           loginSuccessDialog: AzureLoginSuccessDialogContainer,
           promptDialog: ConnectLuisAppPromptDialogContainer
         },
-        getStartedDialog: GetStartedWithCGDialogContainer,
+        getStartedDialog: GetStartedWithCSDialogContainer,
         editorComponent: ConnectedServiceEditorContainer,
         pickerComponent: ConnectedServicePickerContainer,
       };

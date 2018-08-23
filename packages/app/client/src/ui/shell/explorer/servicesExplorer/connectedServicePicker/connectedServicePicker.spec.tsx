@@ -7,6 +7,7 @@ import { ConnectedServicePickerContainer } from './connectedServicePickerContain
 import bot from '../../../../../data/reducer/bot';
 import { load, setActive } from '../../../../../data/action/botActions';
 import { DialogService } from '../../../../dialogs/service';
+import {ServiceType} from 'msbot/bin/schema';
 
 jest.mock('./connectedServicePicker.scss', () => ({}));
 jest.mock('../../../../dialogs/service', () => ({
@@ -16,7 +17,7 @@ jest.mock('../../../../dialogs/service', () => ({
   }
 }));
 
-describe('The LuisModelsViewerDialog component should', () => {
+describe('The ConnectedServicePicker component', () => {
   let parent;
   let node;
   let mockStore;
@@ -116,5 +117,41 @@ describe('The LuisModelsViewerDialog component should', () => {
     });
 
     expect(instance.connectedServicesMap['123']).toBeTruthy();
+  });
+
+  describe('should render the expected content when', () => {
+
+    it('ServiceType.Luis is passed into the props', () => {
+      parent = mount(<Provider store={ mockStore }>
+        <ConnectedServicePickerContainer availableServices={[mockService]}
+                                         authenticatedUser="bot@bot.com" serviceType={ServiceType.Luis}/>
+      </Provider>);
+      node = parent.find(ConnectedServicePicker);
+
+      expect(node.headerElements).toBe(node.luisServiceHeader);
+      expect(node.contentElements).toBe(node.luisServiceContent);
+    });
+
+    it('ServiceType.Dispatch is passed into the props', () => {
+      parent = mount(<Provider store={ mockStore }>
+        <ConnectedServicePickerContainer availableServices={[mockService]}
+                                         authenticatedUser="bot@bot.com" serviceType={ServiceType.Dispatch}/>
+      </Provider>);
+      node = parent.find(ConnectedServicePicker);
+
+      expect(node.headerElements).toBe(node.dispatchServiceHeader);
+      expect(node.contentElements).toBe(node.dispatchServiceContent);
+    });
+
+    it('ServiceType.QnA is passed into the props', () => {
+      parent = mount(<Provider store={ mockStore }>
+        <ConnectedServicePickerContainer availableServices={[mockService]}
+                                         authenticatedUser="bot@bot.com" serviceType={ServiceType.QnA}/>
+      </Provider>);
+      node = parent.find(ConnectedServicePicker);
+
+      expect(node.headerElements).toBe(node.qnaServiceHeader);
+      expect(node.contentElements).toBe(node.qnaServiceContent);
+    });
   });
 });
