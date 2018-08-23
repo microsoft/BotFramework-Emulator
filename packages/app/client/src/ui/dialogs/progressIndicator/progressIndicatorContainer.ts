@@ -31,15 +31,29 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './botCreationDialog/botCreationDialog';
-export * from './host/host';
-export * from './secretPromptDialog/secretPromptDialog';
-export * from './tabManager/tabManager';
-export * from './service';
-export * from './azureLoginSuccessDialog/azureLoginSuccessDialogContainer';
-export * from './azureLoginPromptDialog/azureLoginPromptDialogContainer';
-export * from './azureLoginFailedDialog/azureLoginFailedDialogContainer';
-export * from './connectLuisAppPromptDialog/connectLuisAppPromptDialogContainer';
-export * from './getStartedWithCSDialog/getStartedWithCSDialogContainer';
-export * from './postMigrationDialog/postMigrationDialog';
-export * from './progressIndicator/progressIndicatorContainer';
+import { connect } from 'react-redux';
+import { Action } from 'redux';
+import { RootState } from '../../../data/store';
+import { DialogService } from '../service';
+import { ProgressIndicator } from './progressIndicator';
+import { cancelCurrentProcess } from '../../../data/action/progressIndicatorActions';
+
+const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }) => {
+  const { progressIndicator } = state;
+  return {
+    ...progressIndicator,
+    ...ownProps,
+  };
+};
+
+const mapDispatchToProps = (dispatch: (action: Action) => void) => {
+  return {
+    cancel: () => DialogService.hideDialog(dispatch(cancelCurrentProcess())),
+    close: () => DialogService.hideDialog()
+  };
+};
+
+export const ProgressIndicatorContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ProgressIndicator);

@@ -75,8 +75,15 @@ function* launchConnectedServicePicker(action: ConnectedServiceAction<ConnectedS
   }
   // Add the authenticated user to the action since we now have the token
   action.payload.authenticatedUser = JSON.parse(atob(armTokenData.access_token.split('.')[1])).upn;
-  const { serviceType } = action.payload;
+  const { serviceType, progressIndicatorComponent } = action.payload;
+  if (progressIndicatorComponent) {
+    DialogService.showDialog(progressIndicatorComponent).catch();
+  }
   let services: IConnectedService[] = yield* retrieveServicesByServiceType(serviceType);
+
+  if (progressIndicatorComponent) {
+    DialogService.hideDialog();
+  }
 
   if (!services.length) {
     const result = yield DialogService.showDialog(action.payload.getStartedDialog, { serviceType });

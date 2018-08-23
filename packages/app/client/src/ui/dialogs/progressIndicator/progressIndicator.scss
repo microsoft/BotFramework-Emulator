@@ -1,0 +1,18 @@
+.dialog {
+  width: 400px;
+  height: 171px;
+}
+
+.progressIndicator {
+  --progress-percentage: 0%;
+  height: 4px;
+  position: relative;
+  border: none;
+  &::before {
+    content: '';
+    position: absolute;
+    height: 4px;
+    width: var(--progress-percentage);
+    background: #0078d7;
+  }
+}

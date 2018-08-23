@@ -36,7 +36,7 @@ import { ILuisService } from 'msbot';
 import fetch, { Headers, Response } from 'node-fetch';
 
 export class LuisApi {
-  public static async getServices(armToken: string): Promise<{ services: ILuisService[] }> {
+  public static *getServices(armToken: string): IterableIterator<any> {
     const payload = { services: [] };
     // 1.
     // We have the arm token which allows us to get the
@@ -44,22 +44,24 @@ export class LuisApi {
     const req: RequestInit = { headers: { Authorization: `Bearer ${armToken}` } };
     let authoringKey: string;
     try {
+      yield {label: 'Retrieving key from LUIS…', progress: 25};
       const url = 'https://api.luis.ai/api/v2.0/bots/programmatickey';
-      const authoringKeyResponse = await fetch(url, req);
-      authoringKey = await authoringKeyResponse.text();
+      const authoringKeyResponse = yield fetch(url, req);
+      authoringKey = yield authoringKeyResponse.text();
       authoringKey = authoringKey.replace(/["]/g, '');
     } catch (e) {
       return payload;
     }
     // 2.
     // We have 3 regions to check for luis models
+    yield {label: 'Checking for LUIS models…', progress: 75};
     const luisApiPromises: Promise<LuisModel[] | { error: any }>[] = [];
     const regions = ['westus', 'westeurope', 'australiaeast'];
     let i = regions.length;
     while (i--) {
       luisApiPromises.push(LuisApi.getApplicationsForRegion(regions[i], authoringKey));
     }
-    const results = await Promise.all(luisApiPromises);
+    const results = yield Promise.all(luisApiPromises);
     // 3.
     // Filter out errors then combine all results into
     // a single array of LuisModel[]
