@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
-import { GetStartedWithLuisDialogContainer } from './getStartedWithLuisDialogContainer';
+import { GetStartedWithCSDialogContainer } from './getStartedWithCSDialogContainer';
 import { createStore, combineReducers } from 'redux';
 import azureAuth from '../../../data/reducer/azureAuthReducer';
-import { GetStartedWithLuisDialog } from './getStartedWithLuisDialog';
+import { GetStartedWithCSDialog } from './getStartedWithCSDialog';
 import { azureArmTokenDataChanged } from '../../../data/action/azureAuthActions';
 
-jest.mock('./getStartedWithLuisDialog.scss', () => ({}));
+jest.mock('./getStartedWithCSDialog.scss', () => ({}));
 jest.mock('../service', () => ({
   DialogService: {
     showDialog: () => Promise.resolve(true),
@@ -15,7 +15,7 @@ jest.mock('../service', () => ({
   }
 }));
 
-describe('The GetStartedWithLuisDialog component should', () => {
+describe('The GetStartedWithCSDialog component should', () => {
   let mockStore;
   let parent;
   beforeEach(() => {
@@ -23,16 +23,16 @@ describe('The GetStartedWithLuisDialog component should', () => {
     mockStore = createStore(combineReducers({ azureAuth }));
     mockStore.dispatch(azureArmTokenDataChanged(mockArmToken));
     parent = mount(<Provider store={ mockStore }>
-      <GetStartedWithLuisDialogContainer/>
+      <GetStartedWithCSDialogContainer/>
     </Provider>);
   });
 
   it('should render deeply', () => {
-    expect(parent.find(GetStartedWithLuisDialogContainer)).not.toBe(null);
+    expect(parent.find(GetStartedWithCSDialogContainer)).not.toBe(null);
   });
 
   it('should contain both a cancel and confirm function in the props', () => {
-    const prompt = parent.find(GetStartedWithLuisDialog);
+    const prompt = parent.find(GetStartedWithCSDialog);
     expect(typeof (prompt.props() as any).cancel).toBe('function');
     expect(typeof (prompt.props() as any).confirm).toBe('function');
     expect(typeof (prompt.props() as any).addLuisAppManually).toBe('function');

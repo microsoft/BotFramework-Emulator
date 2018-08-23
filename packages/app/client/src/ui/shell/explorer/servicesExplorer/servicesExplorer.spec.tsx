@@ -18,7 +18,7 @@ import {
   AzureLoginFailedDialogContainer,
   AzureLoginSuccessDialogContainer,
   ConnectLuisAppPromptDialogContainer,
-  GetStartedWithLuisDialogContainer
+  GetStartedWithCSDialogContainer
 } from '../../../dialogs';
 import { ConnectedServicePickerContainer } from './connectedServicePicker/connectedServicePickerContainer';
 
@@ -96,7 +96,7 @@ describe('The ServicesExplorer component should', () => {
         loginSuccessDialog: AzureLoginSuccessDialogContainer,
         promptDialog: ConnectLuisAppPromptDialogContainer
       },
-      getStartedDialog: GetStartedWithLuisDialogContainer,
+      getStartedDialog: GetStartedWithCSDialogContainer,
       editorComponent: ConnectedServiceEditorContainer,
       pickerComponent: ConnectedServicePickerContainer,
     }));

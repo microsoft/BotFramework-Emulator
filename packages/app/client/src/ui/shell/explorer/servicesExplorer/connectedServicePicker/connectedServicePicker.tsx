@@ -38,6 +38,13 @@ import { ChangeEventHandler, Component } from 'react';
 
 import * as styles from './connectedServicePicker.scss';
 
+const titleMap = {
+  [ServiceType.Luis]: 'Connect your LUIS apps',
+  [ServiceType.Dispatch]: 'Connect to a Dispatch model',
+  [ServiceType.QnA]: 'Connect your QnA Maker knowledge base',
+  [ServiceType.AzureBotService]: 'Connect to an Azure Bot Service'
+};
+
 interface ConnectedServicesPickerProps {
   authenticatedUser: string;
   serviceType: ServiceType;
@@ -73,7 +80,7 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
   public render(): JSX.Element {
     return (
       <Dialog
-        title="Add your LUIS apps"
+        title={ titleMap[this.props.serviceType] }
         className={ styles.luisModelsViewer }
         cancel={ this.props.cancel }>
         <div className={ styles.listContainer }>
@@ -204,9 +211,10 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
   private get qnaServiceHeader(): JSX.Element {
     return (
       <p>
-        Select a knowledge base below to store the knowledge base Id in your bot file&npsp;
-        or <a href="javascript:void(0);">connect to a knowledge base manually</a> by&nbsp;
-        entering the knowledge base ID and key.
+        Select a knowledge base below to store the knowledge base Id in your bot file or&nbsp;
+        <a href="javascript:void(0);" onClick={ this.props.launchServiceEditor }>
+          connect to a knowledge base manually
+        </a> by entering the knowledge base ID and key.
       </p>
     );
   }
@@ -214,9 +222,10 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
   private get dispatchServiceHeader(): JSX.Element {
     return (
       <p>
-        Select a Dispatch app below to store the app ID in your bot file&npsp;
-        or <a href="javascript:void(0);">connect to a Dispatch app manually</a> by&nbsp;
-        entering the knowledge base ID and key.
+        Select a Dispatch app below to store the app ID in your bot file or&nbsp;
+        <a href="javascript:void(0);" onClick={ this.props.launchServiceEditor }>
+          connect to a Dispatch app manually
+        </a> by entering the knowledge base ID and key.
       </p>
     );
   }

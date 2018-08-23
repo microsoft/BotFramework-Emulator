@@ -7,3 +7,4 @@ Thumbs.db
 generated
 custom-botframework-webchat/dist
 coverage
+build/

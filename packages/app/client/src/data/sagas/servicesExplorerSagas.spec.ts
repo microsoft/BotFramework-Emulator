@@ -2,7 +2,7 @@ import {
   AzureLoginFailedDialogContainer,
   AzureLoginSuccessDialogContainer,
   ConnectLuisAppPromptDialogContainer,
-  GetStartedWithLuisDialogContainer
+  GetStartedWithCGDialogContainer
 } from '../../ui/dialogs';
 import { DialogService } from '../../ui/dialogs/service'; // ☣☣ careful! ☣☣
 import { ConnectedServiceEditorContainer } from '../../ui/shell/explorer/servicesExplorer/connectedServiceEditor';
@@ -93,7 +93,7 @@ describe('The ServiceExplorerSagas', () => {
           loginSuccessDialog: AzureLoginSuccessDialogContainer,
           promptDialog: ConnectLuisAppPromptDialogContainer
         },
-        getStartedDialog: GetStartedWithLuisDialogContainer,
+        getStartedDialog: GetStartedWithCGDialogContainer,
         editorComponent: ConnectedServiceEditorContainer,
         pickerComponent: ConnectedServicePickerContainer,
       };
@@ -368,7 +368,7 @@ describe('The ServiceExplorerSagas', () => {
           loginSuccessDialog: AzureLoginSuccessDialogContainer,
           promptDialog: ConnectLuisAppPromptDialogContainer
         },
-        getStartedDialog: GetStartedWithLuisDialogContainer,
+        getStartedDialog: GetStartedWithCGDialogContainer,
         editorComponent: ConnectedServiceEditorContainer,
         pickerComponent: ConnectedServicePickerContainer,
       };
