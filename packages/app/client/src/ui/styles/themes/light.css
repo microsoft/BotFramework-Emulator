@@ -30,7 +30,7 @@ html {
   --log-panel-entry-hover-bg: var(--neutral-4);
   --log-panel-entry-inspected-bg: var(--neutral-5);
   --log-panel-item-info: var(--neutral-16);
-  --log-panel-item-debug: var(--neutral-7);
+  --log-panel-item-debug: var(--neutral-10);
   --log-panel-item-warn: var(--warning-outline);
   --log-panel-item-error: var(--error-text);
 
