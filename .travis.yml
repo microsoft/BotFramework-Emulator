@@ -28,7 +28,8 @@ before_deploy:
 deploy:
   provider: releases
   api_key: $GITHUB_OAUTH_TOKEN
-  file: releases/**/*
+  file_glob: true
+  file: releases/*
   skip_cleanup: true
   prerelease: true
   name: $BUILD_TAG
