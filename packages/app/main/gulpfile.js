@@ -227,7 +227,8 @@ gulp.task('redist:windows-nsis:binaries', function () {
 
 //----------------------------------------------------------------------------
 gulp.task('redist:windows-nsis:metadata-only', function () {
-  const releaseFilename = `${pjson.name}-setup-${pjson.version}.exe`;
+  const config = getConfig("windows", "nsis");
+  const releaseFilename = config.nsis.artifactName.replace('${version}', pjson.version);
   const sha512 = hashFileAsync(`./dist/${releaseFilename}`);
   const sha2 = hashFileAsync(`./dist/${releaseFilename}`, 'sha256', 'hex');
   const releaseDate = new Date().toISOString();
