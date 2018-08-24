@@ -7,7 +7,7 @@ notifications:
   email: false
 
 before_install:
-- npm install -g lerna@2.11.x webpack@4.8.x jest
+- npm i -g lerna@2.11.x gulp@4.0.0 gulp-cli@2.0.1 webpack@4.8.x jest
 - lerna clean --yes
 
 install:
@@ -21,9 +21,9 @@ after_success:
 - test $TRAVIS_EVENT_TYPE = "cron" && BUILD_TAG="4.0.$TRAVIS_BUILD_NUMBER-nightly" && echo "Generate new BUILD_TAG = $BUILD_TAG"
 
 before_deploy:
+- TRAVIS_TAG=$BUILD_TAG
 - bash generate_releases.sh
 - echo Generated Releases for BUILD_TAG = $BUILD_TAG
-- TRAVIS_TAG=$BUILD_TAG
 
 deploy:
   provider: releases
