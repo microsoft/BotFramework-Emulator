@@ -16,6 +16,27 @@ install:
 script:
 - npm run build && npm run test:coveralls
 
+after_success:
+- echo "Cheking TRAVIS_EVENT_TYPE is cron -> TRAVIS_EVENT_TYPE = $TRAVIS_EVENT_TYPE"
+- test $TRAVIS_EVENT_TYPE = "cron" && BUILD_TAG="4.0.$TRAVIS_BUILD_NUMBER-nightly" && echo "Generate new BUILD_TAG = $BUILD_TAG"
+
+before_deploy:
+- bash generate_releases.sh
+- echo Generated Releases for BUILD_TAG = $BUILD_TAG
+- TRAVIS_TAG=$BUILD_TAG
+
+deploy:
+  provider: releases
+  api_key: $GITHUB_OAUTH_TOKEN
+  file: releases/**/*
+  skip_cleanup: true
+  prerelease: true
+  name: $BUILD_TAG
+  body: This release is an early preview of the new Bot Framework Emulator. Please consider it to be experimental, and we'd love to hear your feedback.
+  on:
+    branch: v4
+    condition: $BUILD_TAG
+
 cache:
   directories:
   - "node_modules"
