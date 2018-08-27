@@ -4,7 +4,12 @@ export const checkboxStyles: ICheckboxStyles = {
   /**
    * Style for the root element (a button) of the checkbox component in the default enabled/unchecked state.
    */
-  root: {},
+  root: {
+    selectors: {
+      ':hover .ms-Checkbox-text': { color: '--input-label-color' },
+      ':focus .ms-Checkbox-text': { color: '--input-label-color' }
+    }
+  },
   /**
    * Style for the label part (contains the customized checkbox + text) when enabled.
    */
