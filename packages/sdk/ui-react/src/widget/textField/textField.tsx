@@ -4,5 +4,9 @@ import { textFieldStyles } from './textField.styles';
 
 export function TextField<P extends ITextFieldProps>(props: P): JSX.Element {
   const p = Object.assign({}, textFieldStyles, props);
-  return <FabricTextField { ...p }/>;
+
+  p.className = `${textFieldStyles.className || ''} ${props.className || ''}`.trim();
+  p.inputClassName = `${textFieldStyles.inputClassName || ''} ${props.inputClassName || ''}`.trim();
+
+  return <FabricTextField {...p} />;
 }
