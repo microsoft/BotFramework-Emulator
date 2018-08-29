@@ -49,7 +49,7 @@ export default function sendHistoryToConversation(botEmulator: BotEmulator) {
 
     for(let activity of history.Activities) {
       try {
-        (req as any).conversation.postActivityToUser(activity);
+        (req as any).conversation.postActivityToUser(activity, true);
         successCount++;
       } catch(err) {
         if (firstErrorMessage === '') firstErrorMessage = err;

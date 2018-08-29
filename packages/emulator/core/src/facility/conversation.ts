@@ -196,9 +196,9 @@ export default class Conversation extends EventEmitter {
   /**
    * Queues activity for delivery to user.
    */
-  public postActivityToUser(activity: Activity): ResourceResponse {
+  public postActivityToUser(activity: Activity, isHistoric: boolean = false): ResourceResponse {
     activity = this.processActivity(activity);
-    activity = this.postage(this.user.id, activity);
+    activity = this.postage(this.user.id, activity, isHistoric);
 
     if (!activity.from.name) {
       activity.from.name = 'Bot';
@@ -654,8 +654,11 @@ export default class Conversation extends EventEmitter {
     return response;
   }
 
-  private postage(recipientId: string, activity: Activity): Activity {
+  private postage(recipientId: string, activity: Activity, isHistoric: boolean = false): Activity {
     const date = moment();
+
+    const timestamp = isHistoric ?  activity.timestamp : date.toISOString();
+    const recipient = isHistoric ? activity.recipient : { id: recipientId };
 
     return {
       ...activity,
@@ -663,8 +666,8 @@ export default class Conversation extends EventEmitter {
       conversation: activity.conversation || { id: this.conversationId },
       id: activity.id || uniqueId(),
       localTimestamp: date.format(),
-      recipient: { id: recipientId },
-      timestamp: date.toISOString()
+      recipient: recipient,
+      timestamp: timestamp
     };
   }
 
