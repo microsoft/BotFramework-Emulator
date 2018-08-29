@@ -120,7 +120,6 @@ const defaultConfig = {
       { from: './src/ui/styles/themes/neutral.css', to: 'css/neutral.css' },
       { from: './src/ui/styles/themes/fonts.css', to: 'css/fonts.css' },
       { from: './src/ui/styles/themes/redline.css', to: 'css/redline.css' },
-      { from: require.resolve('@fuselab/ui-fabric/themes/seti/seti.woff'), to: 'external/media' },
     ]),
     new DefinePlugin({
       DEV: JSON.stringify((npm_lifecycle_event.includes("dev")))

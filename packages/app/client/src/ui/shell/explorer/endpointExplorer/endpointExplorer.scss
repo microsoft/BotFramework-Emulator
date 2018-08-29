@@ -1,3 +1,4 @@
 ul > li.message::before {
-  content: "💬";
+  -webkit-mask: url(../../../media/ic_bot_explorer.svg);
+  -webkit-mask-size: 12px;
 }

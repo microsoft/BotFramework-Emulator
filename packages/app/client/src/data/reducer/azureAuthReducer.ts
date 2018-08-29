@@ -50,8 +50,8 @@ const initialState: AzureAuthState = {
 
 export default function azureAuth(state: AzureAuthState = initialState, action: AzureAuthAction<ArmTokenData>)
   : AzureAuthState {
-  const { payload = {}, type } = action;
-  const { access_token } = payload as ArmTokenData;
+  const { payload = {}, type = '' } = action || {};
+  const { access_token } = (payload || {}) as ArmTokenData;
 
   switch (type) {
 

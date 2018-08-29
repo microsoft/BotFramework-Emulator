@@ -33,31 +33,27 @@
 
 import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
-import { Column, MediumHeader, PrimaryButton, Row, TextField, Checkbox } from '@bfemulator/ui-react';
+import { Checkbox, Dialog, DialogContent, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
 import { IConnectedService, ServiceType } from 'msbot/bin/schema';
 import * as React from 'react';
-import { connect } from 'react-redux';
-import * as EditorActions from '../../../data/action/editorActions';
 import { getBotInfoByPath } from '../../../data/botHelpers';
-import store, { RootState } from '../../../data/store';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
-import { GenericDocument } from '../../layout';
 import * as styles from './botSettingsEditor.scss';
 
-interface BotSettingsEditorProps {
-  bot?: BotConfigWithPath;
+export interface BotSettingsEditorProps {
+  bot: BotConfigWithPath;
   dirty?: boolean;
-  documentId?: string;
+  cancel: () => void;
 }
 
-interface BotSettingsEditorState {
+export interface BotSettingsEditorState {
   bot?: BotConfigWithPath;
   secret?: string;
   revealSecret?: boolean;
 }
 
-class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps, BotSettingsEditorState> {
+export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, BotSettingsEditorState> {
   constructor(props: BotSettingsEditorProps, context: BotSettingsEditorState) {
     super(props, context);
 
@@ -78,7 +74,6 @@ class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps,
       const newBotInfo: BotInfo = getBotInfoByPath(newBotPath);
 
       this.setState({ bot: newProps.bot, secret: newBotInfo.secret });
-      this.setDirtyFlag(false);
     }
   }
 
@@ -86,38 +81,39 @@ class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps,
     const disabled = !this.state.bot.name || !this.props.dirty;
     const error = !this.state.bot.name ? 'The bot name is required' : '';
     return (
-      <GenericDocument>
-        <Column>
-          <MediumHeader className={ styles.botSettingsHeader }>Bot Settings</MediumHeader>
+      <Dialog cancel={ this.onCancel } title="Bot Settings" className={ styles.botSettingsDialog }>
+        <DialogContent>
           <TextField className={ styles.botSettingsInput } label="Bot name" value={ this.state.bot.name }
-            required={ true } onChanged={ this.onChangeName } errorMessage={ error }/>
+                     required={ true } onChanged={ this.onChangeName } errorMessage={ error }/>
           <TextField className={ styles.botSettingsInput } label="Bot secret" value={ this.state.secret }
-            onChanged={ this.onChangeSecret } type={ this.state.revealSecret ? 'text' : 'password' }/>
+                     onChanged={ this.onChangeSecret } type={ this.state.revealSecret ? 'text' : 'password' }/>
           <Checkbox
             label="Reveal secret"
             checked={ this.state.revealSecret }
             onChange={ this.onCheckSecretCheckbox }
           />
-          <Row className={ styles.buttonRow }>
+          <DialogFooter>
             <PrimaryButton text="Save" onClick={ this.onSave } className={ styles.saveButton } disabled={ disabled }/>
             <PrimaryButton text="Save & Connect" onClick={ this.onSaveAndConnect }
-              className={ styles.saveConnectButton }
-              disabled={ disabled }/>
-          </Row>
-        </Column>
-      </GenericDocument>
+                           className={ styles.saveConnectButton }
+                           disabled={ disabled }/>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     );
+  }
+
+  private onCancel() {
+    this.props.cancel();
   }
 
   private onChangeName = (name) => {
     const bot: BotConfigWithPath = BotConfigWithPathImpl.fromJSON({ ...this.state.bot, name });
     this.setState({ bot });
-    this.setDirtyFlag(true);
   }
 
   private onChangeSecret = (secret) => {
     this.setState({ secret });
-    this.setDirtyFlag(true);
   }
 
   private onCheckSecretCheckbox = () => {
@@ -170,7 +166,6 @@ class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps,
       // need to set the new bot as active now that it is no longer a placeholder bot in memory
       await ActiveBotHelper.setActiveBot(bot);
 
-      this.setDirtyFlag(false);
       this.setState({ bot });
 
       if (connectArg && endpointService) {
@@ -193,7 +188,6 @@ class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps,
 
     await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.Save, bot);
 
-    this.setDirtyFlag(false);
     this.setState({ bot });
 
     if (connectArg && endpointService) {
@@ -203,10 +197,6 @@ class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps,
 
   private onSaveAndConnect = async e => {
     await this.onSave(e, true);
-  }
-
-  private setDirtyFlag(dirty: boolean) {
-    store.dispatch(EditorActions.setDirtyFlag(this.props.documentId, dirty));
   }
 
   private showBotSaveDialog = async (): Promise<any> => {
@@ -233,11 +223,3 @@ class BotSettingsEditorComponent extends React.Component<BotSettingsEditorProps,
     return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.ShowSaveDialog, dialogOptions);
   }
 }
-
-function mapStateToProps(state: RootState, _ownProps: {}): BotSettingsEditorProps {
-  return {
-    bot: state.bot.activeBot
-  };
-}
-
-export const BotSettingsEditor = connect(mapStateToProps)(BotSettingsEditorComponent) as any;
