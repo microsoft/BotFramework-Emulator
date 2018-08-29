@@ -1,2 +1,3 @@
 // This is a generated file. Changes are likely to result in being overwritten
-export const explorerSet: string;
+export const link: string;
+export const emptyContent: string;

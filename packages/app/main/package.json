@@ -48,7 +48,9 @@
   "license": "MIT",
   "devDependencies": {
     "@types/async": "^2.0.47",
+    "@types/chokidar": "^1.7.5",
     "@types/formidable": "^1.0.30",
+    "@types/fs-extra":"^5.0.4",
     "@types/jest": "^22.2.3",
     "@types/jsonpath": "^0.2.0",
     "@types/jsonwebtoken": "^7.2.8",
@@ -102,7 +104,7 @@
     "@bfemulator/sdk-shared": "^1.0.0",
     "async": "^2.6.0",
     "base64url": "^2.0.0",
-    "chatdown": "^1.0.2",
+    "chatdown": "^1.0.10",
     "chokidar": "^2.0.2",
     "command-line-args": "^5.0.2",
     "node-fetch": "2.2.0",

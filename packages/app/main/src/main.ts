@@ -51,7 +51,6 @@ import { UpdateInfo } from 'electron-updater';
 import { ProgressInfo } from 'builder-util-runtime';
 import { getStore } from './botData/store';
 import { PersistentSettings, Settings, SharedConstants, newNotification, Notification } from '@bfemulator/app-shared';
-import { BotProjectFileWatcher } from './botProjectFileWatcher';
 import { rememberBounds } from './settingsData/actions/windowStateActions';
 import { Store } from 'redux';
 import { azureLoggedInUserChanged } from './settingsData/actions/azureAuthActions';
@@ -299,9 +298,6 @@ const createMainWindow = async () => {
 
   const template: Electron.MenuItemConstructorOptions[] = AppMenuBuilder.getAppMenuTemplate();
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
-
-  // initialize bot project watcher
-  BotProjectFileWatcher.getInstance().initialize(mainWindow.commandService);
 
   const rememberCurrentBounds = () => {
     const currentBounds = mainWindow.browserWindow.getBounds();

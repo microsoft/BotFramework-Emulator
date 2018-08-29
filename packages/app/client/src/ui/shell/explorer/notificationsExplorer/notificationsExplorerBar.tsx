@@ -33,16 +33,16 @@
 
 import * as React from 'react';
 import * as styles from './notificationsExplorerBar.scss';
+import * as explorerStyles from '../explorerStyles.scss';
 import { NotificationsExplorer } from './notificationsExplorer';
-import { ExplorerBarHeader, Title } from '../explorerBarHeader/explorerBarHeader';
 
-export const NotificationsExplorerBar = (props: any) => (
+export const NotificationsExplorerBar = () => (
   <div className={ styles.notificationsExplorerBar }>
-    <ExplorerBarHeader>
-      <Title>
+    <div className={ explorerStyles.explorerBarHeader }>
+      <header>
         Notifications
-      </Title>
-    </ExplorerBarHeader>
-    <NotificationsExplorer />
+      </header>
+    </div>
+    <NotificationsExplorer/>
   </div>
 );

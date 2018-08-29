@@ -57,9 +57,12 @@ export namespace SharedConstants {
       export const Switch = 'bot:switch';
       export const OpenBrowse = 'bot:browse-open';
       export const SyncBotList = 'bot:list:sync';
-      export const OpenSettings = 'bot-settings:open';
       export const Load = 'bot:load';
       export const RemoveFromBotList = 'bot:list:remove';
+      export const WatchForTranscriptFiles = 'bot:watch-for-transcript-files';
+      export const WatchForChatFiles = 'bot:watch-for-chat-files';
+      export const ChatFilesUpdated = 'bot:chat-files-updated';
+      export const TranscriptFilesUpdated = 'bot:transcript-files-updated';
     }
 
     export namespace ClientInit {
@@ -80,6 +83,9 @@ export namespace SharedConstants {
       export const UpdateAvailable = 'shell:update-downloaded';
       export const UpdateNotAvailable = 'shell:update-not-available';
       export const ShowAboutDialog = 'shell:about';
+      export const OpenFileLocation = 'shell:open-file-location';
+      export const UnlinkFile = 'shell:unlink-file';
+      export const RenameFile = 'shell:rename-file';
     }
 
     export namespace Emulator {

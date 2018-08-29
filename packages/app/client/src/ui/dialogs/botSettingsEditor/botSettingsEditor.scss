@@ -1,5 +1,6 @@
-.botSettingsHeader {
-  margin-bottom: 16px;
+.botSettingsDialog {
+  width: 600px;
+  height: 314px;
 }
 
 .saveButton {
@@ -8,20 +9,6 @@
 
 .saveConnectButton {
   margin-left: 8px;
-}
-
-.multipleInputRow {
-  & > div {
-    margin-left: 8px;
-  }
-
-  & > div:first-child {
-    margin-left: 0;
-  }
-}
-
-.buttonRow {
-  margin-top: 48px;
 }
 
 .botSettingsInput {

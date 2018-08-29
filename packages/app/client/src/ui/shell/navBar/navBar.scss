@@ -70,7 +70,7 @@
     top: 50%;
     transform: translate(-50%, -50%);
     padding: 2px;
-    background: no-repeat 2px 2px;
+    background: white no-repeat 2px 2px;
     opacity: var(--nav-icon-opacity);
     border: 1px solid transparent;
   }
@@ -85,30 +85,30 @@
   &:nth-child(1) {
     // Bot Explorer
     &::after {
-      background-size: 25px;
-      background-image: url('../../media/ic_bot_explorer.svg');
+      -webkit-mask-size: 31px;
+      -webkit-mask: url('../../media/ic_bot_explorer.svg') no-repeat;
     }
   }
   &:nth-child(2) {
-    // Bot Settings
+    // Scripts
     &::after {
-      background-size: 25px;
-      background-image: url('../../media/ic_bot_settings.svg');
+      -webkit-mask-size: 31px;
+      -webkit-mask: url('../../media/ic_text_document.svg') no-repeat;
     }
   }
   &:nth-child(3) {
     // Notifications
     &::after {
-      background-size: 25px;
-      background-image: url('../../media/ic_notification.svg');
+      -webkit-mask-size: 31px;
+      -webkit-mask: url('../../media/ic_notification.svg') no-repeat;
     }
     margin-top: auto;
   }
   &:nth-child(4) {
     // Settings
     &::after {
-      background-size: 25px;
-      background-image: url('../../media/ic_settings.svg');
+      -webkit-mask-size: 31px;
+      -webkit-mask: url('../../media/ic_settings.svg') no-repeat;
     }
   }
 

@@ -46,20 +46,20 @@ import { BotConfigWithPath, CommandRegistryImpl, mergeEndpoints, uniqueId } from
 import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
 import { mainWindow } from '../main';
 import { emulator } from '../emulator';
-import { BotProjectFileWatcher } from '../botProjectFileWatcher';
 import { IConnectedService, IEndpointService, ServiceType } from 'msbot/bin/schema';
-import * as Path from 'path';
+import * as path from 'path';
 import { getStore } from '../botData/store';
+import { botProjectFileWatcher, chatWatcher, transcriptsWatcher } from '../watchers';
 
 const store = getStore();
 
 /** Registers bot commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  const Commands = SharedConstants.Commands.Bot;
+  const { Bot } = SharedConstants.Commands;
 
   // ---------------------------------------------------------------------------
   // Create a bot
-  commandRegistry.registerCommand(Commands.Create,
+  commandRegistry.registerCommand(Bot.Create,
     async (
       bot: BotConfigWithPath,
       secret: string
@@ -77,7 +77,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         await saveBot(bot);
       } catch (e) {
         // TODO: make sure these are surfaced on the client side and caught so we can act on them
-        console.error(`${Commands.Create}: Error trying to save bot: ${e}`);
+        console.error(`${Bot.Create}: Error trying to save bot: ${e}`);
         throw e;
       }
 
@@ -86,18 +86,18 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Save bot file and cause a bots list write
-  commandRegistry.registerCommand(Commands.Save, async (bot: BotConfigWithPath) => {
+  commandRegistry.registerCommand(Bot.Save, async (bot: BotConfigWithPath) => {
     try {
       await saveBot(bot);
     } catch (e) {
-      console.error(`${Commands.Save}: Error trying to save bot: ${e}`);
+      console.error(`${Bot.Save}: Error trying to save bot: ${e}`);
       throw e;
     }
   });
 
   // ---------------------------------------------------------------------------
   // Opens a bot file at specified path and returns the bot
-  commandRegistry.registerCommand(Commands.Open,
+  commandRegistry.registerCommand(Bot.Open,
     async (
       botPath: string,
       secret?: string
@@ -130,15 +130,15 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Set active bot
-  commandRegistry.registerCommand(Commands.SetActive, async (bot: BotConfigWithPath): Promise<string> => {
+  commandRegistry.registerCommand(Bot.SetActive, async (bot: BotConfigWithPath): Promise<string> => {
     // set up the file watcher
-    await BotProjectFileWatcher.getInstance().watch(bot.path);
+    await botProjectFileWatcher.watch(bot.path);
 
     // set active bot and active directory
-    const botDirectory = Path.dirname(bot.path);
+    const botDirectory = path.dirname(bot.path);
     store.dispatch(BotActions.setActive(bot));
     store.dispatch(BotActions.setDirectory(botDirectory));
-    mainWindow.commandService.call(Commands.RestartEndpointService);
+    mainWindow.commandService.call(Bot.RestartEndpointService);
 
     // Workaround for a JSON serialization issue in bot.services where they're an array
     // on the Node side, but deserialize as a dictionary on the renderer side.
@@ -147,7 +147,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Restart emulator endpoint service
-  commandRegistry.registerCommand(Commands.RestartEndpointService, async () => {
+  commandRegistry.registerCommand(Bot.RestartEndpointService, async () => {
     const bot = getActiveBot();
 
     emulator.framework.server.botEmulator.facilities.endpoints.reset();
@@ -184,14 +184,14 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Close active bot (called from client-side)
-  commandRegistry.registerCommand(Commands.Close, (): void => {
-    BotProjectFileWatcher.getInstance().dispose();
+  commandRegistry.registerCommand(Bot.Close, (): void => {
+    botProjectFileWatcher.unwatch();
     store.dispatch(BotActions.close());
   });
 
   // ---------------------------------------------------------------------------
   // Adds or updates an msbot service entry.
-  commandRegistry.registerCommand(Commands.AddOrUpdateService,
+  commandRegistry.registerCommand(Bot.AddOrUpdateService,
     async (serviceType: ServiceType, service: IConnectedService) => {
 
       if (!service.id || !service.id.length) {
@@ -225,7 +225,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Removes an msbot service entry.
-  commandRegistry.registerCommand(Commands.RemoveService, async (serviceType: ServiceType, serviceId: string) => {
+  commandRegistry.registerCommand(Bot.RemoveService, async (serviceType: ServiceType, serviceId: string) => {
     const activeBot = getActiveBot();
     const botInfo = activeBot && getBotInfoByPath(activeBot.path);
     if (botInfo) {
@@ -242,14 +242,14 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Patches a bot record in bots.json
-  commandRegistry.registerCommand(Commands.PatchBotList, async (botPath: string, bot: BotInfo): Promise<void> => {
+  commandRegistry.registerCommand(Bot.PatchBotList, async (botPath: string, bot: BotInfo): Promise<void> => {
     // patch bots.json and update the store
     await patchBotsJson(botPath, bot).catch();
   });
 
   // ---------------------------------------------------------------------------
   // Removes a bot record from bots.json (doesn't delete .bot file)
-  commandRegistry.registerCommand(Commands.RemoveFromBotList, async (botPath: string): Promise<void> => {
+  commandRegistry.registerCommand(Bot.RemoveFromBotList, async (botPath: string): Promise<void> => {
     const { ShowMessageBox } = SharedConstants.Commands.Electron;
     const result = await mainWindow.commandService.call(ShowMessageBox, true, {
       type: 'question',
@@ -261,5 +261,29 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     if (result) {
       await removeBotFromList(botPath).catch();
     }
+  });
+
+  commandRegistry.registerCommand(Bot.WatchForTranscriptFiles, async (): Promise<any> => {
+    const { activeBot } = getStore().getState().bot;
+    if (!activeBot) {
+      return false;
+    }
+    const botInfo = getBotInfoByPath(activeBot.path);
+    const dirName = path.dirname(activeBot.path);
+
+    const { transcriptsPath = path.join(dirName, './transcripts') } = botInfo;
+    return transcriptsWatcher.watch(transcriptsPath);
+  });
+
+  commandRegistry.registerCommand(Bot.WatchForChatFiles, async () => {
+    const { activeBot } = getStore().getState().bot;
+    if (!activeBot) {
+      return false;
+    }
+    const botInfo = getBotInfoByPath(activeBot.path);
+    const dirName = path.dirname(activeBot.path);
+
+    const { chatsPath = path.join(dirName, './dialogs') } = botInfo;
+    return chatWatcher.watch(chatsPath);
   });
 }

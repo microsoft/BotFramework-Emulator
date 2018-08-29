@@ -31,38 +31,44 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Path from 'path';
-import { readFileSync } from './readFileSync';
+import * as path from 'path';
 import { CustomActivity } from './conversation';
-const chatdown = require('chatdown');
+
+const { fork } = require('child_process');
+const chatdown = require.resolve('chatdown/bin/chatdown');
 
 /**
  * Uses the chatdown library to convert a .chat file into a list of conversation activities
  * @param file The .chat file to parse
  */
 export const parseActivitiesFromChatFile = async (file: string): Promise<CustomActivity[]> => {
-  let conversation: string;
-  let activities: CustomActivity[];
+  let activities: CustomActivity[] = [];
 
-  if (Path.extname(file) !== '.chat') {
+  if (path.extname(file) !== '.chat') {
     throw new Error('Can only use chatdown on .chat files.');
   }
 
-  // read conversation from chat file
-  try {
-    conversation = readFileSync(file);
-  } catch (err) {
-    throw new Error(`Error while trying to read conversation from chat file: ${err}`);
-  }
   // convert conversation to list of activities using chatdown
   try {
-    activities = await chatdown(conversation, {});
+    // The cwd needs to be relative to the .chat file
+    // in the case of activities that include attachments.
+    // This takes a bit longer to process but achieves
+    // the equivalent result as if the chatdown cli was used directly.
+    activities = await new Promise((resolve, reject) => {
+      const childProcess = fork(chatdown, [file], {
+        cwd: path.dirname(file),
+        silent: true
+      });
+      childProcess.stdout.on('data', (data) => {
+        resolve(JSON.parse(data.toString()));
+      });
+      childProcess.stdout.on('error', (err) => {
+        reject(err);
+      });
+    }) as CustomActivity[];
+
   } catch (err) {
     throw new Error(`Error while converting .chat file to list of activites: ${err}`);
-  }
-
-  if (!activities) {
-    return [];
   }
 
   return activities;
