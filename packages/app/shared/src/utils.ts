@@ -114,3 +114,11 @@ export const newNotification = (message: string, type: NotificationType = Notifi
   notification.type = type;
   return notification;
 };
+
+export function isChatFile(file: string = '') {
+  return file.endsWith('.chat');
+}
+
+export function isTranscriptFile(file: string = '') {
+  return file.endsWith('.transcript');
+}

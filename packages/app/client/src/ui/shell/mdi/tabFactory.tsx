@@ -52,10 +52,6 @@ export const TabFactory = (props: TabFactoryProps) => {
         return (
           <EmulatorTab mode="transcript" documentId={ props.document.documentId } dirty={ props.document.dirty }/>);
 
-      case Constants.CONTENT_TYPE_BOT_SETTINGS:
-        return (<GenericTab documentId={ props.document.documentId } title={ 'Bot Settings' }
-                            dirty={ props.document.dirty }/>);
-
       case Constants.CONTENT_TYPE_WELCOME_PAGE:
         return (
           <GenericTab documentId={ props.document.documentId } title={ 'Welcome' } dirty={ props.document.dirty }/>);

@@ -35,33 +35,32 @@ import store from '../data/store';
 import * as FileActions from '../data/action/fileActions';
 import * as EditorActions from '../data/action/editorActions';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
-import { SharedConstants } from '@bfemulator/app-shared';
-import { isChatFile, isTranscriptFile } from '../utils';
+import { SharedConstants, isChatFile, isTranscriptFile } from '@bfemulator/app-shared';
 
 /** Registers file commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  const Commands = SharedConstants.Commands.File;
+  const {File} = SharedConstants.Commands;
   // ---------------------------------------------------------------------------
   // Adds a file to the file store
-  commandRegistry.registerCommand(Commands.Add, (payload) => {
+  commandRegistry.registerCommand(File.Add, (payload) => {
     store.dispatch(FileActions.addFile(payload));
   });
 
   // ---------------------------------------------------------------------------
   // Removes a file from the file store
-  commandRegistry.registerCommand(Commands.Remove, (path) => {
+  commandRegistry.registerCommand(File.Remove, (path) => {
     store.dispatch(FileActions.removeFile(path));
   });
 
   // ---------------------------------------------------------------------------
   // Clears the file store
-  commandRegistry.registerCommand(Commands.Clear, () => {
+  commandRegistry.registerCommand(File.Clear, () => {
     store.dispatch(FileActions.clear());
   });
 
   // ---------------------------------------------------------------------------
   // Called for files in the bot's directory whose contents have changed on disk
-  commandRegistry.registerCommand(Commands.Changed, (filename: string) => {
+  commandRegistry.registerCommand(File.Changed, (filename: string) => {
     // add the filename to pending updates and prompt the user once the document is focused again
     if (isChatFile(filename) || isTranscriptFile(filename)) {
       store.dispatch(EditorActions.addDocPendingChange(filename));

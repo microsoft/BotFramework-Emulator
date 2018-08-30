@@ -31,12 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ForkEffect, takeEvery, select, put } from 'redux-saga/effects';
+import { ForkEffect, put, select, takeEvery } from 'redux-saga/effects';
 import { EditorActions, removeDocPendingChange } from '../action/editorActions';
 import { RootState } from '../store';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
-import { isChatFile, isTranscriptFile } from '../../utils';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { isChatFile, isTranscriptFile, SharedConstants } from '@bfemulator/app-shared';
 
 export function* promptUserToReloadDocument(filename: string): IterableIterator<any> {
   const { Commands } = SharedConstants;
@@ -53,8 +52,7 @@ export function* promptUserToReloadDocument(filename: string): IterableIterator<
   // reload the file, otherwise proceed without reloading
   if (confirmation) {
     if (isChatFile(filename)) {
-      const reload = true;
-      yield CommandServiceImpl.call(Commands.Emulator.OpenChatFile, filename, reload);
+      yield CommandServiceImpl.call(Commands.Emulator.OpenChatFile, filename, true);
     } else if (isTranscriptFile(filename)) {
       yield CommandServiceImpl.call(Commands.Emulator.ReloadTranscript, filename);
     }

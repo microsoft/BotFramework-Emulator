@@ -38,6 +38,7 @@ import { servicesExplorerSagas } from './servicesExplorerSagas';
 import { navBarSagas } from './navBarSagas';
 import { notificationSagas } from './notificationSagas';
 import { azureAuthSagas } from './azureAuthSaga';
+import { resourceSagas } from './resourcesSagas';
 
 export const applicationSagas = [
   servicesExplorerSagas,
@@ -46,5 +47,6 @@ export const applicationSagas = [
   azureAuthSagas,
   editorSagas,
   navBarSagas,
-  notificationSagas
+  notificationSagas,
+  resourceSagas
 ];
