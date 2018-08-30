@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Component } from 'react';
 import { ServiceType } from 'msbot/bin/schema';
 import { DefaultButton, Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
-import * as styles from './getStartedWithCSDialog.scss';
 
 export interface GetStartedWithCSDialogProps {
   cancel: () => void;
@@ -27,7 +26,6 @@ export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProp
     return (
       <Dialog
         cancel={ this.props.cancel }
-        className={ styles.getStartedDialog }
         title={ titleMap[this.props.serviceType] }>
         { this.content }
         <DialogFooter>

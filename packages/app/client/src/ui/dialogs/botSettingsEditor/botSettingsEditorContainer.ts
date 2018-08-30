@@ -2,10 +2,11 @@ import { RootState } from '../../../data/store';
 import { connect } from 'react-redux';
 import { BotSettingsEditor, BotSettingsEditorProps } from './botSettingsEditor';
 import { DialogService } from '../service';
+import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 
 const mapStateToProps = (state: RootState, _ownProps: {}): Partial<BotSettingsEditorProps> => {
   return {
-    bot: state.bot.activeBot
+    bot: BotConfigWithPathImpl.fromJSON(state.bot.activeBot) // Copy only
   };
 };
 
