@@ -7,6 +7,7 @@ import { ResourcesBar } from './resourcesBar';
 import { ServiceType } from 'msbot/bin/schema';
 import resources from '../../../../data/reducer/resourcesReducer';
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
+import { chatFilesUpdated, transcriptsUpdated } from '../../../../data/action/resourcesAction';
 
 const mockStore = createStore(combineReducers({ resources }), {});
 
@@ -19,7 +20,6 @@ describe('The ServicesExplorer component should', () => {
   let node;
   let mockChat;
   let mockTranscript;
-  let mockDispatch;
   beforeEach(() => {
     mockChat = BotConfigWithPathImpl.serviceFromJSON({
       type: ServiceType.File,
@@ -33,16 +33,17 @@ describe('The ServicesExplorer component should', () => {
       name: 'testTranscript'
     } as any);
 
+    mockStore.dispatch(transcriptsUpdated([mockTranscript]));
+    mockStore.dispatch(chatFilesUpdated([mockChat]));
+
     parent = mount(<Provider store={ mockStore }>
       <ResourcesBarContainer/>
     </Provider>);
     node = parent.find(ResourcesBar);
-
-    mockDispatch = jest.spyOn(mockStore, 'dispatch');
   });
 
   it('should render deeply', () => {
     expect(parent.find(ResourcesBarContainer)).not.toBe(null);
-    expect(parent.find(ResourcesBar)).not.toBe(null);
+    expect(node).not.toBe(null);
   });
 });
