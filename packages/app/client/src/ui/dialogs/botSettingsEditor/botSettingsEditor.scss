@@ -1,24 +1,7 @@
-.botSettingsDialog {
-  width: 600px;
-  height: 314px;
-}
-
 .saveButton {
   margin-left: auto;
 }
 
 .saveConnectButton {
   margin-left: 8px;
-}
-
-.botSettingsInput {
-  color: var(--neutral-5);
-  label {
-    color: var(--input-label-color);
-  }
-  :global {
-    .ms-TextField-fieldGroup:hover {
-      border: inherit;
-    }
-  }
 }

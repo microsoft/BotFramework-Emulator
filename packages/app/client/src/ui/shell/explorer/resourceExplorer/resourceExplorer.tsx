@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ChangeEvent, FocusEvent, KeyboardEvent, MouseEvent } from 'react';
+import { ChangeEvent, KeyboardEvent, MouseEvent } from 'react';
 import { ServicePane, ServicePaneProps, ServicePaneState } from '../servicePane/servicePane';
 import { IFileService } from 'msbot/bin/schema';
 import * as styles from './resourceExplorer.scss';
@@ -91,7 +91,7 @@ export class ResourceExplorer extends ServicePane<ResourceExplorerProps, Resourc
     fileToRename.name = event.target.value;
   }
 
-  private onInputBlur = (event: FocusEvent<HTMLInputElement>): void => {
+  private onInputBlur = (): void => {
     this.props.renameResource(this.state.fileToRename);
   }
 

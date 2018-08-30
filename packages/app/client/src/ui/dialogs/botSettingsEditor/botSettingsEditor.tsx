@@ -33,7 +33,7 @@
 
 import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
-import { Checkbox, Dialog, DialogContent, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
+import { Checkbox, DefaultButton, Dialog, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
 import { IConnectedService, ServiceType } from 'msbot/bin/schema';
 import * as React from 'react';
 import { getBotInfoByPath } from '../../../data/botHelpers';
@@ -43,14 +43,13 @@ import * as styles from './botSettingsEditor.scss';
 
 export interface BotSettingsEditorProps {
   bot: BotConfigWithPath;
-  dirty?: boolean;
   cancel: () => void;
 }
 
-export interface BotSettingsEditorState {
-  bot?: BotConfigWithPath;
+export interface BotSettingsEditorState extends BotConfigWithPath {
   secret?: string;
   revealSecret?: boolean;
+  dirty?: boolean;
 }
 
 export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, BotSettingsEditorState> {
@@ -61,7 +60,7 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
     const botInfo = getBotInfoByPath(bot.path);
 
     this.state = {
-      bot,
+      ...bot,
       secret: (botInfo && botInfo.secret) || '',
       revealSecret: false
     };
@@ -70,58 +69,56 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
   componentWillReceiveProps(newProps: BotSettingsEditorProps) {
     const { path: newBotPath } = newProps.bot;
     // handling a new bot
-    if (newBotPath !== this.state.bot.path) {
-      const newBotInfo: BotInfo = getBotInfoByPath(newBotPath);
+    if (newBotPath !== this.state.path) {
+      const newBotInfo: BotInfo = getBotInfoByPath(newBotPath) || {};
 
-      this.setState({ bot: newProps.bot, secret: newBotInfo.secret });
+      this.setState({ ...newProps.bot, secret: newBotInfo.secret });
     }
   }
 
   render() {
-    const disabled = !this.state.bot.name || !this.props.dirty;
-    const error = !this.state.bot.name ? 'The bot name is required' : '';
+    const { name, dirty, secret, revealSecret } = this.state;
+    const disabled = !name || !dirty;
+    const error = !name ? 'The bot name is required' : '';
     return (
-      <Dialog cancel={ this.onCancel } title="Bot Settings" className={ styles.botSettingsDialog }>
-        <DialogContent>
-          <TextField className={ styles.botSettingsInput } label="Bot name" value={ this.state.bot.name }
-                     required={ true } onChanged={ this.onChangeName } errorMessage={ error }/>
-          <TextField className={ styles.botSettingsInput } label="Bot secret" value={ this.state.secret }
-                     onChanged={ this.onChangeSecret } type={ this.state.revealSecret ? 'text' : 'password' }/>
-          <Checkbox
-            label="Reveal secret"
-            checked={ this.state.revealSecret }
-            onChange={ this.onCheckSecretCheckbox }
-          />
-          <DialogFooter>
-            <PrimaryButton text="Save" onClick={ this.onSave } className={ styles.saveButton } disabled={ disabled }/>
-            <PrimaryButton text="Save & Connect" onClick={ this.onSaveAndConnect }
-                           className={ styles.saveConnectButton }
-                           disabled={ disabled }/>
-          </DialogFooter>
-        </DialogContent>
+      <Dialog cancel={ this.onCancel } title="Bot Settings">
+        <TextField label="Bot name" value={ name }
+                   required={ true } onChanged={ this.onChangeName } errorMessage={ error }/>
+        <TextField label="Bot secret" value={ secret }
+                   onChanged={ this.onChangeSecret } type={ revealSecret ? 'text' : 'password' }/>
+        <Checkbox
+          label="Reveal secret"
+          checked={ revealSecret }
+          onChange={ this.onCheckSecretCheckbox }
+        />
+        <DialogFooter>
+          <DefaultButton text="Cancel" onClick={ this.onCancel } className={ styles.saveButton }/>
+          <PrimaryButton text="Save" onClick={ this.onSaveClick }
+                         className={ styles.saveConnectButton }
+                         disabled={ disabled }/>
+        </DialogFooter>
       </Dialog>
     );
   }
 
-  private onCancel() {
+  private onCancel = () => {
     this.props.cancel();
   }
 
   private onChangeName = (name) => {
-    const bot: BotConfigWithPath = BotConfigWithPathImpl.fromJSON({ ...this.state.bot, name });
-    this.setState({ bot });
+    this.setState({ name, dirty: true });
   }
 
   private onChangeSecret = (secret) => {
-    this.setState({ secret });
+    this.setState({ secret, dirty: true });
   }
 
   private onCheckSecretCheckbox = () => {
     this.setState({ revealSecret: !this.state.revealSecret });
   }
 
-  private onSave = async (_e, connectArg = false) => {
-    const { name: botName = '', description = '', path, services, secretKey = '' } = this.state.bot;
+  private onSaveClick = async () => {
+    const { name: botName = '', description = '', path, services, secretKey = '' } = this.state;
     let bot: BotConfigWithPath = BotConfigWithPathImpl.fromJSON({
       name: botName.trim(),
       description: description.trim(),
@@ -134,79 +131,57 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
 
     if (bot.path === SharedConstants.TEMP_BOT_IN_MEMORY_PATH) {
       // we are currently using a mocked bot for livechat opened via protocol URI
-      await this.saveBotFromProtocol(bot, endpointService, connectArg);
+      await this.saveBotFromProtocol(bot, endpointService, true);
     } else {
       // using a bot loaded from disk
-      await this.saveBotFromDisk(bot, endpointService, connectArg);
+      await this.saveBotFromDisk(bot);
     }
   }
 
   /** Saves a bot config from a mocked bot object used when opening a livechat session via protocol URI  */
   private saveBotFromProtocol = async (bot: BotConfigWithPath, endpointService: IConnectedService, connectArg: boolean)
     : Promise<void> => {
+    const { Save, PatchBotList } = SharedConstants.Commands.Bot;
     // need to establish a location for the .bot file
     let newPath = await this.showBotSaveDialog();
-    if (newPath) {
-      bot = {
-        ...bot,
-        path: newPath
-      };
-
-      // write new bot entry to bots.json
-      const botInfo: BotInfo = {
-        displayName: bot.name,
-        path: newPath,
-        secret: this.state.secret
-      };
-      await CommandServiceImpl
-        .remoteCall(SharedConstants.Commands.Bot.PatchBotList, SharedConstants.TEMP_BOT_IN_MEMORY_PATH, botInfo);
-
-      await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.Save, bot);
-
-      // need to set the new bot as active now that it is no longer a placeholder bot in memory
-      await ActiveBotHelper.setActiveBot(bot);
-
-      this.setState({ bot });
-
-      if (connectArg && endpointService) {
-        CommandServiceImpl.call(SharedConstants.Commands.Emulator.NewLiveChat, endpointService);
-      }
-    } else {
-      // dialog was cancelled
+    if (!newPath) {
       return null;
     }
+    bot.path = newPath;
+    // write new bot entry to bots.json
+    const botInfo: BotInfo = {
+      displayName: bot.name,
+      path: newPath,
+      secret: this.state.secret
+    };
+    await CommandServiceImpl.remoteCall(PatchBotList, SharedConstants.TEMP_BOT_IN_MEMORY_PATH, botInfo);
+    await CommandServiceImpl.remoteCall(Save, bot);
+    // need to set the new bot as active now that it is no longer a placeholder bot in memory
+    await ActiveBotHelper.setActiveBot(bot);
+    this.setState({ ...bot });
+
+    if (connectArg && endpointService) {
+      await CommandServiceImpl.call(SharedConstants.Commands.Emulator.NewLiveChat, endpointService);
+    }
+    this.props.cancel();
   }
 
   /** Saves a bot config of a bot loaded from disk */
-  private saveBotFromDisk = async (bot: BotConfigWithPath, endpointService: IConnectedService, connectArg: boolean)
-    : Promise<void> => {
-    const botInfo: BotInfo = getBotInfoByPath(bot.path);
+  private saveBotFromDisk = async (bot: BotConfigWithPath): Promise<void> => {
+    const { Save, PatchBotList } = SharedConstants.Commands.Bot;
+    const botInfo: BotInfo = getBotInfoByPath(bot.path) || {};
     botInfo.secret = this.state.secret;
-
     // write updated bot entry to bots.json
-    await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.PatchBotList, bot.path, botInfo);
-
-    await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.Save, bot);
-
-    this.setState({ bot });
-
-    if (connectArg && endpointService) {
-      CommandServiceImpl.call(SharedConstants.Commands.Emulator.NewLiveChat, endpointService);
-    }
-  }
-
-  private onSaveAndConnect = async e => {
-    await this.onSave(e, true);
+    await CommandServiceImpl.remoteCall(PatchBotList, bot.path, botInfo);
+    await CommandServiceImpl.remoteCall(Save, bot);
+    this.props.cancel();
   }
 
   private showBotSaveDialog = async (): Promise<any> => {
     // get a safe bot file name
     // TODO - localization
-    const botFileName = await CommandServiceImpl.remoteCall(
-      SharedConstants.Commands.File.SanitizeString,
-      this.state.bot.name
-    );
-
+    const { SanitizeString } = SharedConstants.Commands.File;
+    const botFileName = await CommandServiceImpl.remoteCall(SanitizeString, this.state.name);
     const dialogOptions = {
       filters: [
         {
@@ -219,7 +194,6 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
       title: 'Save as',
       buttonLabel: 'Save'
     };
-
     return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.ShowSaveDialog, dialogOptions);
   }
 }

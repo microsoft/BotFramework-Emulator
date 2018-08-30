@@ -77,9 +77,8 @@ function* doOpenResource(action: ResourcesAction<IFileService>): IterableIterato
     yield CommandServiceImpl.call(OpenChatFile, filePath, true);
   } else if (isTranscriptFile(filePath)) {
     yield CommandServiceImpl.call(OpenTranscript, filePath);
-  } else {
-    throw new TypeError('This resource type is not supported by the Emulator');
   }
+  // unknown types just fall into the abyss
 }
 
 export function* resourceSagas(): IterableIterator<ForkEffect> {
