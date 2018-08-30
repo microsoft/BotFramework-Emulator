@@ -123,7 +123,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
   /** Creates a file menu item for each bot that will set the bot as active when clicked */
   createRecentBotsList(bots: BotInfo[]): MenuOpts[] {
     // only list 5 most-recent bots
-    return bots.slice(0, 5).filter(bot => !!bot).map(bot => ({
+    return bots.filter(bot => !!bot).map(bot => ({
       label: bot.displayName,
       click: () => {
         mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.Switch, bot.path)
@@ -138,58 +138,52 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     // TODO - localization
     let subMenu: MenuOpts[] = [
       {
-        label: 'New Bot',
+        label: 'New Bot Configuration...',
         click: () => {
           mainWindow.commandService.remoteCall(UI.ShowBotCreationDialog);
         }
       },
+      { type: 'separator' },
       {
-        label: 'Open Bot',
+        label: 'Open Bot Configuration...',
         click: () => {
           mainWindow.commandService.remoteCall(Bot.OpenBrowse);
         }
-      },
-      {
-        label: 'Close Bot',
-        click: () => {
-          mainWindow.commandService.remoteCall(Bot.Close);
-        }
       }];
-
     if (recentBots && recentBots.length) {
       const recentBotsList = this.createRecentBotsList(recentBots);
-      subMenu.push({ type: 'separator' });
-      subMenu.push(...recentBotsList);
-      subMenu.push({ type: 'separator' });
+      subMenu.push({
+        label: 'Open Recent...',
+        submenu: [...recentBotsList]
+      });
+    } else {
+      subMenu.push({
+        label: 'Open Recent...',
+        enabled: false
+      });
     }
+    subMenu.push({ type: 'separator' });
 
     subMenu.push({
-      label: 'Open Transcript File...',
+      label: 'Open Transcript...',
       click: () => {
         mainWindow.commandService.remoteCall(Emulator.PromptToOpenTranscript)
           .catch(err => console.error('Error opening transcript file from menu: ', err));
       }
-    });
-    const settingsStore = getSettingsStore();
-    const settingsState = settingsStore.getState();
-    const { availableThemes, theme } = settingsState.windowState;
-    subMenu.push.apply(subMenu, [
+    },
       { type: 'separator' },
       {
-        label: 'Theme',
-        submenu: availableThemes.map(t => (
-          {
-            label: t.name,
-            type: 'radio',
-            checked: theme === t.name,
-            click: settingsStore.dispatch.bind(settingsStore, rememberTheme(t.name))
-          }
-        ))
+        label: 'Close Tab',
+        click: () => {
+          mainWindow.commandService.remoteCall(Bot.Close);
+        }
       }
-    ]);
+    );
+    const settingsStore = getSettingsStore();
+    const settingsState = settingsStore.getState();
 
     const { signedInUser } = settingsState.azure;
-    const azureMenuItemLabel = signedInUser ? `Sign out (${signedInUser})` : 'Sign in to Azure';
+    const azureMenuItemLabel = signedInUser ? `Sign out (${signedInUser})` : 'Sign in';
     subMenu.push({ type: 'separator' });
     subMenu.push({
       label: azureMenuItemLabel,
@@ -202,6 +196,21 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
       }
     });
 
+    const { availableThemes, theme } = settingsState.windowState;
+    subMenu.push.apply(subMenu, [
+      { type: 'separator' },
+      {
+        label: 'Themes',
+        submenu: availableThemes.map(t => (
+          {
+            label: t.name,
+            type: 'checkbox',
+            checked: theme === t.name,
+            click: settingsStore.dispatch.bind(settingsStore, rememberTheme(t.name))
+          }
+        ))
+      }
+    ]);
     subMenu.push({ type: 'separator' });
     subMenu.push({ role: 'quit' });
 
