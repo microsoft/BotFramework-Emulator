@@ -34,7 +34,7 @@
 import * as React from 'react';
 
 import * as Constants from '../../constants';
-import { AppSettingsEditor, BotSettingsEditor, Emulator, WelcomePage } from './index';
+import { AppSettingsEditor, Emulator, WelcomePage } from './index';
 import { Document } from '../../data/reducer/editor';
 
 interface EditorFactoryProps {
@@ -56,9 +56,6 @@ export class EditorFactory extends React.Component<EditorFactoryProps> {
 
       case Constants.CONTENT_TYPE_TRANSCRIPT:
         return (<Emulator mode="transcript" documentId={ document.documentId } dirty={ this.props.document.dirty }/>);
-
-      case Constants.CONTENT_TYPE_BOT_SETTINGS:
-        return (<BotSettingsEditor documentId={ document.documentId } dirty={ this.props.document.dirty }/>);
 
       case Constants.CONTENT_TYPE_APP_SETTINGS:
         return (<AppSettingsEditor documentId={ document.documentId } dirty={ this.props.document.dirty }/>);

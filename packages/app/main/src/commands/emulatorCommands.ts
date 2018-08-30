@@ -45,12 +45,12 @@ import {
 import { showSaveDialog, writeFile, parseActivitiesFromChatFile } from '../utils';
 import { emulator } from '../emulator';
 import { sync as mkdirpSync } from 'mkdirp';
-import { BotProjectFileWatcher } from '../botProjectFileWatcher';
 import * as BotActions from '../botData/actions/botActions';
 import { promisify } from 'util';
 import * as Fs from 'fs';
 import { cleanupId as cleanupActivityChannelAccountId, CustomActivity } from '../utils/conversation';
 import { newBot, newEndpoint, SharedConstants } from '@bfemulator/app-shared';
+import { botProjectFileWatcher } from '../watchers';
 
 const store = getStore();
 
@@ -100,7 +100,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
       await saveableBot.save(botPath);
       await patchBotsJson(botPath, botInfo);
-      await BotProjectFileWatcher.getInstance().watch(botPath);
+      await botProjectFileWatcher.watch(botPath);
       store.dispatch(BotActions.setDirectory(botDirectory));
     }
 
@@ -193,8 +193,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Open the chat file in a tabbed document as a transcript
-  commandRegistry.registerCommand(
-    Commands.OpenChatFile,
+  commandRegistry.registerCommand(Commands.OpenChatFile,
     async (filename: string): Promise<{ activities: CustomActivity[] }> => {
       try {
         const activities = await parseActivitiesFromChatFile(filename);

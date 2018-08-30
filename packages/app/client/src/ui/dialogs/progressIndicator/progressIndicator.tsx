@@ -21,7 +21,7 @@ export class ProgressIndicator extends Component<ProgressIndicatorProps, Progres
       this.hr.style.setProperty('--progress-percentage', `${this.props.progress}%`);
     }
     return (
-      <Dialog cancel={ this.props.close } className={ styles.dialog }>
+      <Dialog cancel={ this.props.close }>
         <p>
           { this.props.label }
         </p>

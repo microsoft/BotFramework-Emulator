@@ -8,7 +8,6 @@ import { GetStartedWithCSDialog } from './getStartedWithCSDialog';
 import { azureArmTokenDataChanged } from '../../../data/action/azureAuthActions';
 import { ServiceType } from 'msbot/bin/schema';
 
-jest.mock('./getStartedWithCSDialog.scss', () => ({}));
 jest.mock('../service', () => ({
   DialogService: {
     showDialog: () => Promise.resolve(true),

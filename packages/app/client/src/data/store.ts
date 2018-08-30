@@ -40,12 +40,13 @@ import chat, { ChatState } from './reducer/chat';
 import dialog, { DialogState } from './reducer/dialog';
 import editor, { EditorState } from './reducer/editor';
 import explorer, { ExplorerState } from './reducer/explorer';
-import files, { FileTreeState } from './reducer/files';
 import azureAuth, { AzureAuthState } from './reducer/azureAuthReducer';
 import navBar, { NavBarState } from './reducer/navBar';
 import notification, { NotificationState } from './reducer/notification';
 import presentation, { PresentationState } from './reducer/presentation';
 import progressIndicator, { ProgressIndicatorState } from './reducer/progressIndicator';
+import resources, { ResourcesState } from './reducer/resourcesReducer';
+
 import { applicationSagas } from './sagas';
 
 export interface RootState {
@@ -57,9 +58,9 @@ export interface RootState {
   navBar?: NavBarState;
   presentation?: PresentationState;
   azureAuth?: AzureAuthState;
-  files?: FileTreeState;
   notification?: NotificationState;
   progressIndicator?: ProgressIndicatorState;
+  resources?: ResourcesState;
 }
 
 const sagaMiddleWare = sagaMiddlewareFactory();
@@ -70,14 +71,14 @@ const configureStore = (initialState: RootState = DEFAULT_STATE): Store<RootStat
     bot,
     dialog,
     editor,
-    files,
     explorer,
     chat,
     navBar,
     presentation,
     azureAuth,
     notification,
-    progressIndicator
+    progressIndicator,
+    resources
   }),
   initialState,
   applyMiddleware(
