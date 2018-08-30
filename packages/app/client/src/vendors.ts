@@ -14,8 +14,6 @@ import 'msbot/bin/schema';
 import 'msbot/bin/models';
 import 'rxjs';
 import '@uifabric/merge-styles';
-import '@fuselab/ui-fabric';
-import '@fuselab/ui-shared';
 import 'botframework-webchat';
 import 'office-ui-fabric-react';
 import 'base64url';

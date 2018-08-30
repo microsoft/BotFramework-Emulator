@@ -86,7 +86,7 @@ export class AzureAuthWorkflowService {
           result.error = e.message;
           resolve(result);
         }
-        if (!uri.toLowerCase().startsWith(redirectUri.toLowerCase())) {
+        if (!(uri || '').toLowerCase().startsWith(redirectUri.toLowerCase())) {
           return;
         }
         const idx = uri.indexOf('#');

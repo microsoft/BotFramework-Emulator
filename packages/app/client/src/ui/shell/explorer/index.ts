@@ -32,12 +32,5 @@
 //
 
 export * from './botExplorerBar/botExplorerBar';
-export * from './endpointExplorer';
-export * from './servicesExplorer';
-export * from './fileExplorer';
-export * from './botNotOpenExplorer';
 export * from './explorerBar/explorerBar';
-export * from './explorerBarBody';
-export * from './explorerBarHeader/explorerBarHeader';
-export * from './explorerSet/explorerSet';
-export * from './servicePane/servicePane';
+export * from './resourcesBar/resourcesBar';

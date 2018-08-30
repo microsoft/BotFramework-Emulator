@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Component } from 'react';
 import { DefaultButton, Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
-import * as styles from './connectLuisAppPromptDialog.scss';
 
 export interface ConnectLuisAppPromptDialogProps {
   cancel: () => void;
@@ -14,7 +13,6 @@ export class ConnectLuisAppPromptDialog extends Component<ConnectLuisAppPromptDi
     return (
       <Dialog
         cancel={ this.props.cancel }
-        className={ styles.connectLuisPrompt }
         title="Connect your bot to a LUIS application">
         <p>Sign into your Azure account to select the LUIS applications you'd like to associate with this bot.&nbsp;
           <a href="https://luis.ai">Learn more about LUIS</a>

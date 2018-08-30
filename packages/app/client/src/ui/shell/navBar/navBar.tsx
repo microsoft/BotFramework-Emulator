@@ -33,17 +33,14 @@
 
 import * as React from 'react';
 import { SyntheticEvent } from 'react';
-import { IBotConfig } from 'msbot/bin/schema';
 import * as styles from './navBar.scss';
 import * as Constants from '../../../constants';
 import { NotificationManager } from '../../../notificationManager';
 
 export interface NavBarProps {
-  activeBot?: IBotConfig;
   selection?: string;
   showExplorer?: (show: boolean) => void;
   navBarSelectionChanged?: (selection: string) => void;
-  openBotSettings?: () => void;
   openEmulatorSettings?: () => void;
   notifications?: string[];
   explorerIsVisible?: boolean;
@@ -55,7 +52,7 @@ export interface NavBarState {
 
 const selectionMap = [
   Constants.NAVBAR_BOT_EXPLORER,
-  Constants.NAVBAR_BOT_SETTINGS,
+  Constants.NAVBAR_RESOURCES,
   Constants.NAVBAR_NOTIFICATIONS,
   Constants.NAVBAR_SETTINGS
 ];
@@ -98,11 +95,9 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
         }
         break;
 
-      // Bot Settings
+      // Resources
       case 1:
-        if (this.props.activeBot) {
-          this.props.openBotSettings();
-        }
+        this.props.navBarSelectionChanged(selectionMap[index]);
         break;
 
       // Settings
@@ -118,7 +113,7 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
 
     return [
       'Bot Explorer',
-      'Bot Settings',
+      'Resources',
       'Notifications',
       'Settings'
     ].map((title, index) => {

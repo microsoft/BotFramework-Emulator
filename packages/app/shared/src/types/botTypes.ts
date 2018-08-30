@@ -47,6 +47,10 @@ export interface BotInfo {
   path?: string;
   /** Display name of bot */
   displayName?: string;
+  /** Path to .transcript files - defaults to ./transcripts */
+  transcriptsPath?: string;
+  /** Path to .chat files - defaults to ./dialogs */
+  chatsPath?: string;
   /** Bot secret used to encrypt / decrypt sensitive service info */
   secret?: string;
 }

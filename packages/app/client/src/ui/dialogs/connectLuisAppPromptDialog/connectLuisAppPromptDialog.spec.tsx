@@ -7,7 +7,6 @@ import { ConnectLuisAppPromptDialog } from './connectLuisAppPromptDialog';
 import { ConnectLuisAppPromptDialogContainer } from './connectLuisAppPromptDialogContainer';
 import { DialogService } from '../service';
 
-jest.mock('./connectLuisAppPromptDialog.scss', () => ({}));
 jest.mock('../service', () => ({
   DialogService: {
     showDialog: () => Promise.resolve(true),
