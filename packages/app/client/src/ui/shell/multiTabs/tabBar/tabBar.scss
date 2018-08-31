@@ -75,8 +75,15 @@
 
     & > .widget {
       background-size: 16px;
-      height: 32px;
-      width: 22px
+      border: 1px solid transparent;
+      height: 22px;
+      margin: 0px 5px;
+      width: 22px;
+
+      &:hover {
+        border: 1px solid transparent;
+        cursor: pointer;
+      }
     }
 
     & > .splitWidget {

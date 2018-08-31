@@ -95,20 +95,20 @@ class TabBarComponent extends React.Component<TabBarProps, TabBarState> {
     const tabBarClassName = this.state.draggedOver ? styles.draggedOver : '';
     return (
       <div
-        className={ `${styles.tabBar} ${tabBarClassName}` }
-        onDragEnter={ this.onDragEnter }
-        onDragOver={ this.onDragOver }
-        onDragLeave={ this.onDragLeave }
-        onDrop={ this.onDrop }>
-        <ul ref={ this.saveScrollable }>
+        className={`${styles.tabBar} ${tabBarClassName}`}
+        onDragEnter={this.onDragEnter}
+        onDragOver={this.onDragOver}
+        onDragLeave={this.onDragLeave}
+        onDrop={this.onDrop}>
+        <ul ref={this.saveScrollable}>
           {
             React.Children.map(this.props.children, (child, index) =>
-              <li key={ index }>{ child }</li>
+              <li key={index}>{child}</li>
             )
           }
         </ul>
-        <div className={ styles.tabBarWidgets }>
-          { ...this.widgets }
+        <div className={styles.tabBarWidgets}>
+          {...this.widgets}
         </div>
       </div>
     );
@@ -125,22 +125,23 @@ class TabBarComponent extends React.Component<TabBarProps, TabBarState> {
 
     if (presentationEnabled) {
       widgets.push(
-        <span
-          key={ 'presentation-widget' }
-          className={ `${styles.widget} ${styles.presentationWidget}` }
+        <input
+          type="button"
+          key={'presentation-widget'}
+          className={`${styles.widget} ${styles.presentationWidget}`}
           title="Presentation Mode"
-          onClick={ () => this.onPresentationModeClick() }>
-        </span>
+          onClick={() => this.onPresentationModeClick()} />
+
       );
     }
     if (splitEnabled) {
       widgets.push(
-        <span
-          key={ 'split-widget' }
-          className={ `${styles.widget} ${styles.splitWidget}` }
+        <input
+          type="button"
+          key={'split-widget'}
+          className={`${styles.widget} ${styles.splitWidget}`}
           title="Split Editor"
-          onClick={ this.onSplitClick }>
-        </span>
+          onClick={this.onSplitClick} />
       );
     }
     return widgets;
