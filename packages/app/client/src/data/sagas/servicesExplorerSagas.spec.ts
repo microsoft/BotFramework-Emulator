@@ -24,6 +24,7 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { load, setActive } from '../action/botActions';
 import { ServiceTypes } from 'botframework-config/lib/schema';
+import { ServiceCodes } from '@bfemulator/app-shared';
 
 const mockStore = createStore(combineReducers({ azureAuth, bot }));
 const mockArmToken = 'bm90aGluZw==.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
@@ -74,7 +75,7 @@ jest.mock('./azureAuthSaga', () => ({
 CommandServiceImpl.remoteCall = async function (type: string) {
   switch (type) {
     case SharedConstants.Commands.ConnectedService.GetConnectedServicesByType:
-      return { services: [{ id: 'a luis service' }] };
+      return { services: [{ id: 'a luis service' }], code: ServiceCodes.OK};
 
     default:
       return null;
