@@ -109,7 +109,7 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
   private get serviceListElements(): JSX.Element[] {
     const { state, onChange } = this;
     const { availableServices } = this.props;
-    const items = availableServices.map(service => {
+    return availableServices.map(service => {
       const { id, name: label } = service;
       const checkboxProps = {
         label,
@@ -125,7 +125,6 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
         </li>
       );
     });
-    return items;
   }
 
   private get addButtonEnabled(): boolean {
