@@ -109,7 +109,7 @@ describe('The BotSettingsEditor dialog should', () => {
       setAttribute: jest.spyOn(mockElement, 'setAttribute'),
       removeAttribute: jest.spyOn(mockElement, 'removeAttribute')
     };
-    const documentSpies= {
+    const documentSpies = {
       execCommand: jest.spyOn(mockWindow.document, 'execCommand'),
       getElementById: jest.spyOn(mockWindow.document, 'getElementById')
     };
