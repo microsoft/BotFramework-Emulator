@@ -43,7 +43,7 @@ describe('The GetStartedWithCSDialog component should', () => {
     expect(prompt.content).toBe(prompt.luisContent);
   });
 
-  it ('should display luisContent when the ServiceTypes.Dispatch is provided in the props', () => {
+  it('should display luisContent when the ServiceTypes.Dispatch is provided in the props', () => {
     parent = mount(<Provider store={ mockStore }>
       <GetStartedWithCSDialogContainer serviceType={ ServiceTypes.Dispatch }/>
     </Provider>);
@@ -51,7 +51,7 @@ describe('The GetStartedWithCSDialog component should', () => {
     expect(prompt.content).toBe(prompt.luisContent);
   });
 
-  it ('should display qnaContent when the ServiceTypes.QnA is provided in the props', () => {
+  it('should display qnaContent when the ServiceTypes.QnA is provided in the props', () => {
     parent = mount(<Provider store={ mockStore }>
       <GetStartedWithCSDialogContainer serviceType={ ServiceTypes.QnA }/>
     </Provider>);
@@ -59,4 +59,11 @@ describe('The GetStartedWithCSDialog component should', () => {
     expect(prompt.content).toBe(prompt.qnaContent);
   });
 
+  it('should display the "showNoModelsFoundContent" when specified in the props', () => {
+    parent = mount(<Provider store={ mockStore }>
+      <GetStartedWithCSDialogContainer serviceType={ ServiceTypes.QnA } showNoModelsFoundContent={ true }/>
+    </Provider>);
+    const prompt = parent.find(GetStartedWithCSDialog);
+    expect(prompt.content).toBe(prompt.qnaContent);
+  });
 });

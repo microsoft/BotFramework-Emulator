@@ -93,8 +93,13 @@ function* launchConnectedServicePicker(action: ConnectedServiceAction<ConnectedS
     DialogService.hideDialog();
   }
 
-  if (payload.code === ServiceCodes.AccountNotFound) {
-    const result = yield DialogService.showDialog(action.payload.getStartedDialog, { serviceType });
+  if (payload.code !== ServiceCodes.OK || !payload.services.length) {
+    const { getStartedDialog, authenticatedUser } = action.payload;
+    const result = yield DialogService.showDialog(getStartedDialog, {
+      serviceType,
+      authenticatedUser,
+      showNoModelsFoundContent: !payload.services.length
+    });
     // Sign up with XXXX
     if (result === 1) {
       // TODO - launch an external link
@@ -103,8 +108,6 @@ function* launchConnectedServicePicker(action: ConnectedServiceAction<ConnectedS
     if (result === 2) {
       yield* launchConnectedServiceEditor(action);
     }
-  } else if (!payload.services.length) {
-    yield DialogService.showDialog(action.payload.getStartedDialog, { serviceType });
   } else {
     const servicesToAdd = yield* launchConnectedServicePickList(action, payload.services, serviceType);
     if (servicesToAdd) {
