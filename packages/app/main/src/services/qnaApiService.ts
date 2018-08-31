@@ -1,5 +1,6 @@
 import { QnaMakerService } from 'botframework-config/lib/models';
 import fetch, { Headers, Response } from 'node-fetch';
+import { ServiceCodes } from '@bfemulator/app-shared';
 
 export interface Subscription {
   authorizationSource: string;
@@ -52,7 +53,7 @@ export interface Knowledgebase {
 
 export class QnaApiService {
   public static* getKnowledgeBases(armToken: string): IterableIterator<any> {
-    const payload = { services: [] };
+    const payload = { services: [], code: ServiceCodes.OK };
     // 1. We need to get a list of all subscriptions from this user.
     const req: RequestInit = {
       headers: {
@@ -69,6 +70,7 @@ export class QnaApiService {
       const subscriptionResponseJson: { value: Subscription[] } = yield subscriptionsResponse.json();
       subs = subscriptionResponseJson.value;
     } catch (e) {
+      payload.code = ServiceCodes.AccountNotFound;
       return payload;
     }
 
@@ -87,6 +89,7 @@ export class QnaApiService {
         accounts.push(...accountResponseJson.value.filter(account => account.kind === 'QnAMaker'));
       }
     } catch (e) {
+      payload.code = ServiceCodes.Error;
       return payload;
     }
 

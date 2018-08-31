@@ -36,3 +36,4 @@ export * from './activityVisitor';
 export * from './utils';
 export * from './types';
 export * from './constants';
+export * from './enums';

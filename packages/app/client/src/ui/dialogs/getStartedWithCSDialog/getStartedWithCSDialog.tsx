@@ -13,6 +13,7 @@ export interface GetStartedWithCSDialogProps {
 
 const titleMap = {
   [ServiceTypes.Luis]: 'Create a LUIS app',
+  [ServiceTypes.Dispatch]: 'Create a LUIS app'
 };
 
 const buttonTextMap = {
