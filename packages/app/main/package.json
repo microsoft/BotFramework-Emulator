@@ -1,5 +1,6 @@
 {
   "name": "@bfemulator/main",
+  "packagename": "botframework-emulator",
   "version": "4.0.15-alpha",
   "private": true,
   "description": "Development tool for the Microsoft Bot Framework. Allows developers to test and debug bots on localhost.",
@@ -50,7 +51,7 @@
     "@types/async": "^2.0.47",
     "@types/chokidar": "^1.7.5",
     "@types/formidable": "^1.0.30",
-    "@types/fs-extra":"^5.0.4",
+    "@types/fs-extra": "^5.0.4",
     "@types/jest": "^22.2.3",
     "@types/jsonpath": "^0.2.0",
     "@types/jsonwebtoken": "^7.2.8",
