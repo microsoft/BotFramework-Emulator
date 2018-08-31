@@ -636,7 +636,7 @@ function getConfig(platform, target) {
 //----------------------------------------------------------------------------
 function getFileList(platform, target, options = {}) {
   options = extend({}, {
-    basename: pjson.name,
+    basename: pjson.packagename,
     version: pjson.version,
   }, options);
   const path = './dist';
