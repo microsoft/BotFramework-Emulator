@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IConnectedService, ServiceType } from 'msbot/bin/schema';
+import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
 import { connect } from 'react-redux';
 import {
@@ -50,7 +50,7 @@ const mapStateToProps = (state: RootState): Partial<ServicesExplorerProps> => {
   const { services = [] } = state.bot.activeBot;
   const { [CONNECTED_SERVICES_PANEL_ID]: sortCriteria } = state.explorer.sortSelectionByPanelId;
   return {
-    services: services.filter(service => service.type !== ServiceType.Endpoint),
+    services: services.filter(service => service.type !== ServiceTypes.Endpoint),
     sortCriteria,
     window
   };

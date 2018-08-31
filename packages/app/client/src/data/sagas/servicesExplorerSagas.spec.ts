@@ -23,7 +23,7 @@ import {
 import { SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { load, setActive } from '../action/botActions';
-import { ServiceType } from 'msbot/bin/schema';
+import { ServiceTypes } from 'botframework-config/lib/schema';
 
 const mockStore = createStore(combineReducers({ azureAuth, bot }));
 const mockArmToken = 'bm90aGluZw==.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
@@ -267,7 +267,7 @@ describe('The ServiceExplorerSagas', () => {
 
       result = await it.next(result).value;
       expect(_type).toBe(SharedConstants.Commands.Bot.RemoveService);
-      expect(_args[0]).toBe(ServiceType.Luis);
+      expect(_args[0]).toBe(ServiceTypes.Luis);
       expect(_args[1]).toBe('#1');
     });
 
@@ -309,7 +309,7 @@ describe('The ServiceExplorerSagas', () => {
 
       result = await it.next(result).value;
       expect(_type).toBe(SharedConstants.Commands.Bot.RemoveService);
-      expect(_args[0]).toBe(ServiceType.QnA);
+      expect(_args[0]).toBe(ServiceTypes.QnA);
       expect(_args[1]).toBe('#1');
     });
 
@@ -351,7 +351,7 @@ describe('The ServiceExplorerSagas', () => {
 
       result = await it.next(result).value;
       expect(_type).toBe(SharedConstants.Commands.Bot.RemoveService);
-      expect(_args[0]).toBe(ServiceType.Dispatch);
+      expect(_args[0]).toBe(ServiceTypes.Dispatch);
       expect(_args[1]).toBe('#1');
     });
   });
@@ -381,11 +381,11 @@ describe('The ServiceExplorerSagas', () => {
     });
 
     it('should launch the luis connected service picker workflow when the luis menu item is selected', async () => {
-      CommandServiceImpl.remoteCall = async () => ({ id: ServiceType.Luis });
+      CommandServiceImpl.remoteCall = async () => ({ id: ServiceTypes.Luis });
       const it = contextMenuGen(action);
       let result = await it.next().value;
 
-      expect(result.id).toBe(ServiceType.Luis);
+      expect(result.id).toBe(ServiceTypes.Luis);
 
       result = it.next(result).value.SELECT.selector(mockStore.getState()); // Indicates we've entered the workflow
       expect(result.access_token).toBe(mockArmToken);

@@ -33,7 +33,13 @@
 
 import { Splitter } from '@bfemulator/ui-react';
 import { InspectorHost } from '@bfemulator/sdk-client';
-import { IBotConfig, IDispatchService, ILuisService, ServiceType, IConnectedService } from 'msbot/bin/schema';
+import {
+  IBotConfiguration,
+  IConnectedService,
+  IDispatchService,
+  ILuisService,
+  ServiceTypes
+} from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { Component } from 'react';
 import ReactJson from 'react-json-view';
@@ -87,20 +93,20 @@ class App extends Component<any, AppState> {
 
   luisclient: LuisClient;
 
-  static getLuisAuthoringKey(bot: IBotConfig, appId: string): string {
+  static getLuisAuthoringKey(bot: IBotConfiguration, appId: string): string {
     if (!bot || !bot.services || !appId) {
       return '';
     }
 
     let lcAppId = appId.toLowerCase();
     let dispatchServices = bot.services.filter((s: IConnectedService) =>
-      s.type === ServiceType.Dispatch) as IDispatchService[];
+      s.type === ServiceTypes.Dispatch) as IDispatchService[];
     let dispatchService = dispatchServices.find(ds => ds.appId.toLowerCase() === lcAppId);
     if (dispatchService) {
       return dispatchService.authoringKey;
     }
 
-    let luisServices = bot.services.filter((s: IConnectedService) => s.type === ServiceType.Luis) as ILuisService[];
+    let luisServices = bot.services.filter((s: IConnectedService) => s.type === ServiceTypes.Luis) as ILuisService[];
     let luisService = luisServices.find(ls => ls.appId.toLowerCase() === lcAppId);
     if (luisService) {
       return luisService.authoringKey;
@@ -171,7 +177,7 @@ class App extends Component<any, AppState> {
         }
       });
 
-      $host.on('bot-updated', (bot: IBotConfig) => {
+      $host.on('bot-updated', (bot: IBotConfiguration) => {
         this.setState({
           authoringKey: App.getLuisAuthoringKey(bot, this.state.appInfo.appId)
         });

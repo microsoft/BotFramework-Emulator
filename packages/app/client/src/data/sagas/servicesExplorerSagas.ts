@@ -31,8 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IAzureBotService, IConnectedService, ILuisService, IQnAService, ServiceType } from 'msbot/bin/schema';
-import { BotConfigModel } from 'msbot/bin/models';
+import {
+  IBotService,
+  IConnectedService,
+  ILuisService,
+  IQnAService,
+  ServiceTypes
+} from 'botframework-config/lib/schema';
+import { BotConfigurationBase } from 'botframework-config/lib/botConfigurationBase';
 import { ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { DialogService } from '../../ui/dialogs/service';
@@ -108,7 +114,7 @@ function* launchConnectedServicePicker(action: ConnectedServiceAction<ConnectedS
 
 function* launchConnectedServicePickList(action: ConnectedServiceAction<ConnectedServicePickerPayload>,
                                          availableServices: IConnectedService[],
-                                         serviceType: ServiceType): IterableIterator<any> {
+                                         serviceType: ServiceTypes): IterableIterator<any> {
 
   const { pickerComponent, authenticatedUser, serviceType: type } = action.payload;
   let result = yield DialogService.showDialog(pickerComponent, {
@@ -118,7 +124,7 @@ function* launchConnectedServicePickList(action: ConnectedServiceAction<Connecte
   });
 
   if (result === 1) {
-    action.payload.connectedService = BotConfigModel.serviceFromJSON({
+    action.payload.connectedService = BotConfigurationBase.serviceFromJSON({
       type,
       hostname: '' /* defect workaround */
     } as any);
@@ -128,7 +134,7 @@ function* launchConnectedServicePickList(action: ConnectedServiceAction<Connecte
   return result;
 }
 
-function* retrieveServicesByServiceType(serviceType: ServiceType): IterableIterator<any> {
+function* retrieveServicesByServiceType(serviceType: ServiceTypes): IterableIterator<any> {
   let armTokenData: ArmTokenData = yield select(getArmTokenFromState);
   if (!armTokenData || !armTokenData.access_token) {
     throw new Error('Auth credentials do not exist.');
@@ -147,16 +153,16 @@ function* retrieveServicesByServiceType(serviceType: ServiceType): IterableItera
 function* openConnectedServiceDeepLink(action: ConnectedServiceAction<ConnectedServicePayload>): IterableIterator<any> {
   const { connectedService } = action.payload;
   switch (connectedService.type) {
-    case ServiceType.Luis:
+    case ServiceTypes.Luis:
       return openLuisDeepLink(connectedService as ILuisService);
 
-    case ServiceType.AzureBotService:
-      return openAzureBotServiceDeepLink(connectedService as IAzureBotService);
+    case ServiceTypes.Bot:
+      return openAzureBotServiceDeepLink(connectedService as IBotService);
 
-    case ServiceType.Dispatch:
+    case ServiceTypes.Dispatch:
       return Promise.resolve(false); // TODO - Hook up proper link when available
 
-    case ServiceType.QnA:
+    case ServiceTypes.QnA:
       return openQnaMakerDeepLink(connectedService as IQnAService);
 
     default:
@@ -194,9 +200,9 @@ function* openContextMenuForService(action: ConnectedServiceAction<ConnectedServ
 function* openAddConnectedServiceContextMenu(action: ConnectedServiceAction<ConnectedServicePickerPayload>)
   : IterableIterator<any> {
   const menuItems = [
-    { label: 'Language Understanding (LUIS)', id: ServiceType.Luis },
-    { label: 'QnA Maker', id: ServiceType.QnA },
-    { label: 'Dispatch', id: ServiceType.Dispatch }
+    { label: 'Language Understanding (LUIS)', id: ServiceTypes.Luis },
+    { label: 'QnA Maker', id: ServiceTypes.QnA },
+    { label: 'Dispatch', id: ServiceTypes.Dispatch }
   ];
 
   const response = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);
@@ -237,7 +243,7 @@ function* launchConnectedServiceEditor(action: ConnectedServiceAction<ConnectedS
   const result = yield DialogService.showDialog(editorComponent, { connectedService, authenticatedUser, serviceType });
 
   if (result) {
-    yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.AddOrUpdateService, ServiceType.Luis, result[0]);
+    yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.AddOrUpdateService, ServiceTypes.Luis, result[0]);
   }
 }
 
@@ -253,7 +259,7 @@ function openQnaMakerDeepLink(service: IQnAService): Promise<any> {
   return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, link);
 }
 
-function openAzureBotServiceDeepLink(service: IAzureBotService): Promise<any> {
+function openAzureBotServiceDeepLink(service: IBotService): Promise<any> {
   const { tenantId, subscriptionId, resourceGroup, id } = service;
   const thankYouTsLint = `https://ms.portal.azure.com/#@${tenantId}/resource/subscriptions/${subscriptionId}`;
   const link = `${thankYouTsLint}/resourceGroups/${resourceGroup}/providers/Microsoft.BotService/botServices/${id}`;

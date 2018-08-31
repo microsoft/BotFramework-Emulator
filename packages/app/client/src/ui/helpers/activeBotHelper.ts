@@ -32,7 +32,7 @@
 //
 
 import { getBotDisplayName, SharedConstants, newNotification } from '@bfemulator/app-shared';
-import { IEndpointService, ServiceType } from 'msbot/bin/schema';
+import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 import { BotConfigWithPath, mergeEndpoints } from '@bfemulator/sdk-shared';
 import { hasNonGlobalTabs } from '../../data/editorHelpers';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
@@ -151,7 +151,7 @@ export const ActiveBotHelper = new class {
 
         // open a livechat session with the bot
         const endpoint: IEndpointService = bot.services
-          .find(service => service.type === ServiceType.Endpoint) as IEndpointService;
+          .find(service => service.type === ServiceTypes.Endpoint) as IEndpointService;
 
         if (endpoint) {
           CommandServiceImpl.call(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
@@ -267,12 +267,12 @@ export const ActiveBotHelper = new class {
         if (overridesArePresent && newActiveBot.overrides.endpoint.id) {
           endpoint = newActiveBot.services
             .find(service =>
-              service.type === ServiceType.Endpoint
+              service.type === ServiceTypes.Endpoint
               && service.id === newActiveBot.overrides.endpoint.id
             ) as IEndpointService;
         } else {
           endpoint = newActiveBot.services
-            .find(service => service.type === ServiceType.Endpoint) as IEndpointService;
+            .find(service => service.type === ServiceTypes.Endpoint) as IEndpointService;
         }
 
         // apply endpoint overrides here

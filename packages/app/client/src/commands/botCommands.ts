@@ -40,7 +40,7 @@ import * as BotActions from '../data/action/botActions';
 import * as FileActions from '../data/action/fileActions';
 import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
 import { chatFilesUpdated, transcriptsUpdated } from '../data/action/resourcesAction';
-import { IFileService } from 'msbot/bin/schema';
+import { IFileService } from 'botframework-config/lib/schema';
 
 /** Registers bot commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {

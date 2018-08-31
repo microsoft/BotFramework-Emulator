@@ -1,5 +1,5 @@
 import { CommandRegistry } from '@bfemulator/sdk-shared';
-import { IConnectedService, ServiceType } from 'msbot/bin/schema';
+import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { LuisApi } from '../services/luisApiService';
 import { QnaApiService } from '../services/qnaApiService';
@@ -10,20 +10,20 @@ const { ConnectedService, UI } = SharedConstants.Commands;
 export function registerCommands(commandRegistry: CommandRegistry) {
   // Retrieves the list of luis services
   commandRegistry.registerCommand(ConnectedService.GetConnectedServicesByType,
-    async (armToken: string, serviceType: ServiceType): Promise<{ services: IConnectedService[] }> => {
+    async (armToken: string, serviceType: ServiceTypes): Promise<{ services: IConnectedService[] }> => {
       let it;
       switch (serviceType) {
-        case ServiceType.Luis:
-        case ServiceType.Dispatch:
+        case ServiceTypes.Luis:
+        case ServiceTypes.Dispatch:
           it = LuisApi.getServices(armToken);
           break;
 
-        case ServiceType.QnA:
+        case ServiceTypes.QnA:
           it = QnaApiService.getKnowledgeBases(armToken);
           break;
 
         default:
-          throw new TypeError(`The ServiceType ${serviceType} is not a know service type`);
+          throw new TypeError(`The ServiceTypes ${serviceType} is not a know service type`);
       }
 
       let result = undefined;

@@ -32,7 +32,7 @@
 //
 
 import { LuisModel } from '@bfemulator/app-shared';
-import { ILuisService } from 'msbot';
+import { ILuisService } from 'botframework-config/lib/schema';
 import fetch, { Headers, Response } from 'node-fetch';
 
 export class LuisApi {

@@ -1,7 +1,7 @@
-import { ServiceType } from 'msbot/bin/schema';
+import { ServiceTypes } from 'botframework-config/lib/schema';
 
 export const serviceTypeLabels = {
-  [ServiceType.Luis]: 'LUIS',
-  [ServiceType.Dispatch]: 'Dispatch',
-  [ServiceType.QnA]: 'QnA Maker',
+  [ServiceTypes.Luis]: 'LUIS',
+  [ServiceTypes.Dispatch]: 'Dispatch',
+  [ServiceTypes.QnA]: 'QnA Maker',
 };

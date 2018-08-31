@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IEndpointService } from 'msbot/bin/schema';
+import { IEndpointService } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
 import { Action } from 'redux';
 import { EndpointEditor } from '../../ui/shell/explorer/endpointExplorer/endpointEditor/endpointEditor';

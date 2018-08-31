@@ -35,9 +35,8 @@ import * as React from 'react';
 import * as styles from './secretPromptDialog.scss';
 
 import {
-  Column,
   DefaultButton,
-  MediumHeader,
+  Dialog,
   PrimaryButton,
   Row,
   RowJustification,
@@ -59,21 +58,18 @@ export class SecretPromptDialog extends React.Component<{}, SecretPromptDialogSt
 
   render(): JSX.Element {
     return (
-      <div className={ styles.secretPromptDialog }>
-        <Column>
-          <MediumHeader>Bot secret required!</MediumHeader>
-          <SmallHeader>Please enter your bot's secret</SmallHeader>
-          <TextField
-            value={ this.state.secret }
-            onChanged={ this.onChangeSecret }
-            label={ 'Bot secret' }
-            type={ 'password' }/>
-          <Row className={ styles.buttonRow } justify={ RowJustification.Right }>
-            <DefaultButton text={ 'Dismiss' } onClick={ this.onClickDismiss }/>
-            <PrimaryButton className={ styles.saveButton } text={ 'Save' } onClick={ this.onClickSave }/>
-          </Row>
-        </Column>
-      </div>
+      <Dialog title="Bot secret required" className={ styles.secretPromptDialog } cancel={ this.onClickDismiss }>
+        <SmallHeader>Please enter your bot's secret</SmallHeader>
+        <TextField
+          value={ this.state.secret }
+          onChanged={ this.onChangeSecret }
+          label={ 'Bot secret' }
+          type={ 'password' }/>
+        <Row className={ styles.buttonRow } justify={ RowJustification.Right }>
+          <DefaultButton text={ 'Dismiss' } onClick={ this.onClickDismiss }/>
+          <PrimaryButton className={ styles.saveButton } text={ 'Save' } onClick={ this.onClickSave }/>
+        </Row>
+      </Dialog>
     );
   }
 

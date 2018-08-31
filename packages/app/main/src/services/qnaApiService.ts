@@ -1,4 +1,4 @@
-import { QnaMakerService } from 'msbot/bin/models';
+import { QnaMakerService } from 'botframework-config/lib/models';
 import fetch, { Headers, Response } from 'node-fetch';
 
 export interface Subscription {

@@ -42,6 +42,7 @@
       &:hover {
         border: var(--input-border);
       }
+      height: 24px;
     }
   }
 }
@@ -55,7 +56,7 @@
 :global {
   .ms-Dialog {
     .ms-TextField-field, .ms-TextField-fieldGroup {
-      background-color: transparent;
+      background-color: var(--neutral-1);
     }
   }
 }

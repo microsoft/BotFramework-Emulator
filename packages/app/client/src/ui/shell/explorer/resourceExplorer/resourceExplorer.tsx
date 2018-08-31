@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ChangeEvent, KeyboardEvent, MouseEvent } from 'react';
 import { ServicePane, ServicePaneProps, ServicePaneState } from '../servicePane/servicePane';
-import { IFileService } from 'msbot/bin/schema';
+import { IFileService } from 'botframework-config/lib/schema';
 import * as styles from './resourceExplorer.scss';
 
 function simpleNameSort(a: IFileService, b: IFileService): 0 | 1 | -1 {

@@ -1,4 +1,4 @@
-import { IFileService } from 'msbot/bin/schema';
+import { IFileService } from 'botframework-config/lib/schema';
 import { CHAT_FILES_UPDATED, EDIT_RESOURCE, ResourcesAction, TRANSCRIPTS_UPDATED } from '../action/resourcesAction';
 
 export interface ResourcesState {

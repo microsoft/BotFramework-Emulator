@@ -6,7 +6,7 @@ import azureAuth from '../../../../../data/reducer/azureAuthReducer';
 import { ConnectedServiceEditorContainer } from './connectedServiceEditorContainer';
 import { ConnectedServiceEditor } from './connectedServiceEditor';
 import { DialogService } from '../../../../dialogs/service';
-import { LuisService } from 'msbot/bin/models';
+import { LuisService } from 'botframework-config/lib/models';
 import { PrimaryButton } from '@bfemulator/ui-react';
 
 jest.mock('../../../../dialogs/service', () => ({

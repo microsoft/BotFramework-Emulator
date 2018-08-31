@@ -35,7 +35,7 @@ const crypto = (window as any).require('crypto');
 import { logEntry, textItem } from '@bfemulator/emulator-core/lib/types/log/util';
 import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
 import { ExtensionInspector } from '@bfemulator/sdk-shared';
-import { IBotConfig } from 'msbot/bin/schema';
+import { IBotConfiguration } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { DragEvent } from 'react';
 import { getActiveBot } from '../../../../../data/botHelpers';
@@ -50,7 +50,7 @@ interface IpcMessageEvent extends Event {
 }
 
 interface InspectorProps {
-  bot: IBotConfig;
+  bot: IBotConfiguration;
   extension: Extension;
   inspector: ExtensionInspector;
   document: any;
@@ -151,7 +151,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     }
   }
 
-  botUpdated(bot: IBotConfig) {
+  botUpdated(bot: IBotConfiguration) {
     this.sendToInspector('bot-updated', bot);
   }
 

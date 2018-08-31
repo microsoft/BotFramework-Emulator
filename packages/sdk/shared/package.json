@@ -22,7 +22,7 @@
     "typescript": "2.7.2"
   },
   "dependencies": {
-    "msbot": "^1.0.44",
+    "botframework-config": "^4.0.0-preview1.3",
     "tslib": "^1.9.0",
     "uuid": "^3.3.2"
   },

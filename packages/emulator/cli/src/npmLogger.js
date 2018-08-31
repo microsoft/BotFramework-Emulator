@@ -1,3 +1,4 @@
+"use strict";
 //
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
@@ -30,29 +31,39 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { ServiceTypes } from 'botframework-config/lib/schema';
-import { connect } from 'react-redux';
-import { RootState } from '../../../../../data/store';
-import { DialogService } from '../../../../dialogs/service';
-import { ConnectedServicePicker } from './connectedServicePicker';
-
-const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }) => {
-  const { services } = state.bot.activeBot;
-  return {
-    connectedServices: services.filter(service => service.type !== ServiceTypes.Endpoint),
-    ...ownProps
-  };
-};
-
-const mapDispatchToProps = (_dispatch: () => void) => {
-  return {
-    launchServiceEditor: () => DialogService.hideDialog(1),
-    connectServices: servicesToConnect => DialogService.hideDialog(servicesToConnect),
-    cancel: () => DialogService.hideDialog(0)
-  };
-};
-
-export const ConnectedServicePickerContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ConnectedServicePicker);
+Object.defineProperty(exports, "__esModule", { value: true });
+const log = require("npmlog");
+const level_1 = require("@bfemulator/emulator-core/lib/types/log/level");
+function shortId(id) {
+    return [id.substr(0, 3), id.substr(-5)].join('...');
+}
+function logLevel(logLevel) {
+    switch (logLevel) {
+        case level_1.default.Error:
+            return log.error;
+        case level_1.default.Info:
+            return log.info;
+        case level_1.default.Warn:
+            return log.warn;
+        default:
+            return log.silly;
+    }
+}
+class NpmLogger {
+    logActivity(conversationId, activity, role) {
+        log.verbose(shortId(conversationId), `Activity to ${role}`, activity);
+    }
+    logMessage(conversationId, ...items) {
+        items.forEach(message => {
+            switch (message.type) {
+                case "text": {
+                    logLevel(message.payload.level)(shortId(conversationId), message.payload.text);
+                }
+            }
+        });
+    }
+    logException(conversationId, err) {
+        log.error(shortId(conversationId), err.message);
+    }
+}
+exports.default = NpmLogger;

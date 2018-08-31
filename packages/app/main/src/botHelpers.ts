@@ -31,12 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotConfig } from 'msbot';
+import { BotConfiguration } from 'botframework-config';
 import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import { mainWindow } from './main';
 import * as BotActions from './botData/actions/botActions';
 import { getStore } from './botData/store';
+
 const store = getStore();
 
 export function getActiveBot(): BotConfigWithPath {
@@ -61,7 +62,7 @@ export function pathExistsInRecentBots(path: string): boolean {
 export async function loadBotWithRetry(botPath: string, secret?: string): Promise<BotConfigWithPath> {
   try {
     // load the bot and transform it into internal BotConfig implementation
-    let bot: BotConfigWithPath = await BotConfig.Load(botPath, secret);
+    let bot: BotConfigWithPath = await BotConfiguration.load(botPath, secret);
 
     // if the bot has a secretKey and we don't have a secret, then we need to ask for a secret and decrypt
     if (bot.secretKey && !secret) {
@@ -118,22 +119,17 @@ export async function promptForSecretAndRetry(botPath: string): Promise<BotConfi
 }
 
 /** Converts a BotConfigWithPath to a BotConfig */
-export function toSavableBot(bot: BotConfigWithPath, secret?: string): BotConfig {
+export function toSavableBot(bot: BotConfigWithPath, secret?: string): BotConfiguration {
   if (!bot) {
     throw new Error('Cannot convert falsy bot to savable bot.');
   }
-  const botCopy = cloneBot(bot);
-  const newBot: BotConfig = new BotConfig(secret);
-
+  const newBot = BotConfiguration.fromJSON(bot);
+  (newBot as any).internal.location = bot.path; // Workaround until defect is fixed
   // refresh the secret key using the current secret
   if (secret) {
-    newBot.validateSecretKey();
+    newBot.validateSecretKey(secret);
   }
 
-  // copy everything over
-  newBot.description = botCopy.description;
-  newBot.name = botCopy.name;
-  newBot.services = botCopy.services;
   return newBot;
 }
 
@@ -171,9 +167,9 @@ export async function saveBot(bot: BotConfigWithPath): Promise<void> {
   const savableBot = toSavableBot(bot, botInfo.secret);
 
   if (botInfo.secret) {
-    savableBot.validateSecretKey();
+    savableBot.validateSecretKey(botInfo.secret);
   }
-  return await savableBot.save(bot.path).catch();
+  return await savableBot.save(botInfo.secret).catch();
 }
 
 /** Removes a bot from bots.json (doesn't delete the bot file) */

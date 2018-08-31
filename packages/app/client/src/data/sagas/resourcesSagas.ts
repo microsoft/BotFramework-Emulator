@@ -8,7 +8,7 @@ import {
 } from '../action/resourcesAction';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { isChatFile, isTranscriptFile, SharedConstants } from '@bfemulator/app-shared/built';
-import { IFileService } from 'msbot/bin/schema';
+import { IFileService } from 'botframework-config/lib/schema';
 
 function* openContextMenuForResource(action: ResourcesAction<IFileService>): IterableIterator<any> {
   const menuItems = [
@@ -20,7 +20,7 @@ function* openContextMenuForResource(action: ResourcesAction<IFileService>): Ite
   const result = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);
   switch (result.id) {
     case 0:
-      yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenFileLocation, action.payload.filePath);
+      yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenFileLocation, action.payload.path);
       break;
 
     case 1:
@@ -38,7 +38,7 @@ function* openContextMenuForResource(action: ResourcesAction<IFileService>): Ite
 }
 
 function* deleteFile(action: ResourcesAction<IFileService>): IterableIterator<any> {
-  const { name, filePath } = action.payload;
+  const { name, path } = action.payload;
   const { ShowMessageBox, UnlinkFile } = SharedConstants.Commands.Electron;
   const result = yield CommandServiceImpl.remoteCall(ShowMessageBox, true, {
     type: 'info',
@@ -49,7 +49,7 @@ function* deleteFile(action: ResourcesAction<IFileService>): IterableIterator<an
     cancelId: 0,
   });
   if (result) {
-    yield CommandServiceImpl.remoteCall(UnlinkFile, filePath);
+    yield CommandServiceImpl.remoteCall(UnlinkFile, path);
   }
 }
 
@@ -72,11 +72,11 @@ function* doRename(action: ResourcesAction<IFileService>) {
 
 function* doOpenResource(action: ResourcesAction<IFileService>): IterableIterator<any> {
   const { OpenChatFile, OpenTranscript } = SharedConstants.Commands.Emulator;
-  const { filePath } = action.payload;
-  if (isChatFile(filePath)) {
-    yield CommandServiceImpl.call(OpenChatFile, filePath, true);
-  } else if (isTranscriptFile(filePath)) {
-    yield CommandServiceImpl.call(OpenTranscript, filePath);
+  const { path } = action.payload;
+  if (isChatFile(path)) {
+    yield CommandServiceImpl.call(OpenChatFile, path, true);
+  } else if (isTranscriptFile(path)) {
+    yield CommandServiceImpl.call(OpenTranscript, path);
   }
   // unknown types just fall into the abyss
 }

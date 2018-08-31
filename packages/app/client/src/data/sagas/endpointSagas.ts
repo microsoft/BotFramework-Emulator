@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IEndpointService, ServiceType } from 'msbot/bin/schema';
+import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
 import { call, ForkEffect, takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
@@ -52,7 +52,7 @@ function* launchEndpointEditor(action: EndpointServiceAction<EndpointEditorPaylo
   const result = yield DialogService
     .showDialog<ComponentClass<EndpointEditor>>(endpointEditorComponent, { endpointService });
   if (result) {
-    yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.AddOrUpdateService, ServiceType.Endpoint, result);
+    yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.AddOrUpdateService, ServiceTypes.Endpoint, result);
   }
 }
 
@@ -97,7 +97,7 @@ function* removeEndpointServiceFromActiveBot(endpointService: IEndpointService):
   });
   if (result) {
     yield CommandServiceImpl
-      .remoteCall(SharedConstants.Commands.Bot.RemoveService, ServiceType.Endpoint, endpointService.id);
+      .remoteCall(SharedConstants.Commands.Bot.RemoveService, ServiceTypes.Endpoint, endpointService.id);
   }
 }
 

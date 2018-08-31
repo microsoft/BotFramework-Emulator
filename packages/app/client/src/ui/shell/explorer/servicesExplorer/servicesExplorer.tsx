@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IConnectedService } from 'msbot/bin/schema';
+import { IConnectedService } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { MouseEventHandler, SyntheticEvent } from 'react';
 import { ServicePane, ServicePaneProps } from '../servicePane/servicePane';
