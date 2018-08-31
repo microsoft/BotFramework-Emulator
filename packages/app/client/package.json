@@ -88,7 +88,7 @@
     "@uifabric/styling": "^5.20.0",
     "base64url": "^2.0.0",
     "botframework-webchat": "0.14.2",
-    "msbot": "^1.0.44",
+    "botframework-config": "^4.0.0-preview1.3",
     "office-ui-fabric-react": "~6.1.2",
     "react": "~16.3.2",
     "react-dom": "~16.3.2",

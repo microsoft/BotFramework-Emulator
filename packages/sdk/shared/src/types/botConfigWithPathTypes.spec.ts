@@ -32,12 +32,12 @@
 //
 
 import { BotConfigWithPathImpl } from './botConfigWithPathTypes';
-import { ServiceType } from 'msbot/bin/schema';
+import { ServiceTypes } from 'botframework-config/lib/schema';
 
 describe('BotConfigWithPathTypes tests', () => {
   describe('fromJSON() functionality', () => {
     const endpointService = {
-      type: ServiceType.Endpoint,
+      type: ServiceTypes.Endpoint,
       name: 'someEndpointName',
       id: 'someEndpointUrl',
       appId: 'someEndpointAppId',

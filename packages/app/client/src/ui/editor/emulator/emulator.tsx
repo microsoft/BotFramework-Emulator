@@ -35,7 +35,7 @@ import * as BotChat from 'botframework-webchat';
 import { uniqueId } from '@bfemulator/sdk-shared';
 import { Splitter } from '@bfemulator/ui-react';
 import base64Url from 'base64url';
-import { IEndpointService } from 'msbot/bin/schema';
+import { IEndpointService } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { BehaviorSubject } from 'rxjs';

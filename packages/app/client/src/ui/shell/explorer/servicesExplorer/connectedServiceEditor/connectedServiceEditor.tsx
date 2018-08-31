@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ConnectedService } from 'msbot/bin/models/connectedService';
-import { BotConfigModel } from 'msbot/bin/models';
-import { IConnectedService, ServiceType } from 'msbot/bin/schema';
+import { ConnectedService } from 'botframework-config/lib/models';
+import { BotConfigurationBase } from 'botframework-config/lib/botConfigurationBase';
+import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import { DefaultButton, Dialog, DialogContent, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { Component } from 'react';
@@ -67,25 +67,25 @@ const labelMap = {
 };
 
 const titleMap = {
-  [ServiceType.Luis]: 'Connect to a LUIS model',
-  [ServiceType.Dispatch]: 'Connect to a Dispatch model',
-  [ServiceType.QnA]: 'Connect to a QnA Maker knowledge base',
-  [ServiceType.AzureBotService]: 'Connect to Azure Bot Service'
+  [ServiceTypes.Luis]: 'Connect to a LUIS model',
+  [ServiceTypes.Dispatch]: 'Connect to a Dispatch model',
+  [ServiceTypes.QnA]: 'Connect to a QnA Maker knowledge base',
+  [ServiceTypes.Bot]: 'Connect to Azure Bot Service'
 };
 
 const portalMap = {
-  [ServiceType.Luis]: 'LUIS.ai',
-  [ServiceType.Dispatch]: 'LUIS.ai',
-  [ServiceType.QnA]: 'QnaMaker.ai',
+  [ServiceTypes.Luis]: 'LUIS.ai',
+  [ServiceTypes.Dispatch]: 'LUIS.ai',
+  [ServiceTypes.QnA]: 'QnaMaker.ai',
 };
 
 const getEditableFields = (service: IConnectedService): string[] => {
   switch (service.type) {
-    case ServiceType.Luis:
-    case ServiceType.Dispatch:
+    case ServiceTypes.Luis:
+    case ServiceTypes.Dispatch:
       return ['name', 'appId', 'authoringKey', 'version', 'subscriptionKey'];
 
-    case ServiceType.QnA:
+    case ServiceTypes.QnA:
       return ['name', 'kbId', 'endpointKey'];
 
     default:
@@ -99,7 +99,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
 
   constructor(props: ConnectedServiceEditorProps, state: ConnectedServiceEditorState) {
     super(props, state);
-    const connectedServiceCopy = BotConfigModel.serviceFromJSON(props.connectedService);
+    const connectedServiceCopy = BotConfigurationBase.serviceFromJSON(props.connectedService);
     this.state = {
       connectedServiceCopy,
       isDirty: false
@@ -107,7 +107,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
   }
 
   public componentWillReceiveProps(nextProps: Readonly<ConnectedServiceEditorProps>): void {
-    const connectedServiceCopy = BotConfigModel.serviceFromJSON(this.props.connectedService);
+    const connectedServiceCopy = BotConfigurationBase.serviceFromJSON(this.props.connectedService);
     this.setState({ connectedServiceCopy });
   }
 
@@ -158,8 +158,8 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     }
 
     switch (this.props.connectedService.type) {
-      case ServiceType.Dispatch:
-      case ServiceType.Luis:
+      case ServiceTypes.Dispatch:
+      case ServiceTypes.Luis:
         return false;
 
       default:

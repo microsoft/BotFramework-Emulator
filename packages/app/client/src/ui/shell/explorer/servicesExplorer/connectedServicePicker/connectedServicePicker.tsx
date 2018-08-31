@@ -32,24 +32,24 @@
 //
 
 import { Checkbox, DefaultButton, Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
-import { IConnectedService, ServiceType } from 'msbot/bin/schema';
+import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { ChangeEventHandler, Component } from 'react';
 
 import * as styles from './connectedServicePicker.scss';
 
 const titleMap = {
-  [ServiceType.Luis]: 'Connect your LUIS apps',
-  [ServiceType.Dispatch]: 'Connect to a Dispatch model',
-  [ServiceType.QnA]: 'Connect your QnA Maker knowledge base',
-  [ServiceType.AzureBotService]: 'Connect to an Azure Bot Service'
+  [ServiceTypes.Luis]: 'Connect your LUIS apps',
+  [ServiceTypes.Dispatch]: 'Connect to a Dispatch model',
+  [ServiceTypes.QnA]: 'Connect your QnA Maker knowledge base',
+  [ServiceTypes.Bot]: 'Connect to an Azure Bot Service'
 };
 
 const connected = 'connected';
 
 interface ConnectedServicesPickerProps {
   authenticatedUser: string;
-  serviceType: ServiceType;
+  serviceType: ServiceTypes;
 
   connectedServices: IConnectedService[];
   availableServices: IConnectedService[];
@@ -188,13 +188,13 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
   // Header specific to
   private get headerElements(): JSX.Element {
     switch (this.props.serviceType) {
-      case ServiceType.Luis:
+      case ServiceTypes.Luis:
         return this.luisServiceHeader;
 
-      case ServiceType.QnA:
+      case ServiceTypes.QnA:
         return this.qnaServiceHeader;
 
-      case ServiceType.Dispatch:
+      case ServiceTypes.Dispatch:
         return this.dispatchServiceHeader;
 
       default:
@@ -239,13 +239,13 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
   // Content specific to the service
   private get contentElements(): JSX.Element {
     switch (this.props.serviceType) {
-      case ServiceType.Luis:
+      case ServiceTypes.Luis:
         return this.luisServiceContent;
 
-      case ServiceType.QnA:
+      case ServiceTypes.QnA:
         return this.qnaServiceContent;
 
-      case ServiceType.Dispatch:
+      case ServiceTypes.Dispatch:
         return this.dispatchServiceContent;
 
       default:

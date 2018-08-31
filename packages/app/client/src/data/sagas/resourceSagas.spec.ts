@@ -2,7 +2,7 @@ import resources from '../reducer/resourcesReducer';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { resourceSagas } from './resourcesSagas';
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared/built';
-import { ServiceType } from 'msbot/bin/schema';
+import { ServiceTypes } from 'botframework-config/lib/schema';
 import sagaMiddlewareFactory from 'redux-saga';
 import { openContextMenuForResource, openResource, renameResource } from '../action/resourcesAction';
 import { SharedConstants } from '@bfemulator/app-shared/built';
@@ -52,8 +52,8 @@ describe('The ResourceSagas', () => {
     let mockResource;
     beforeEach(() => {
       mockResource = BotConfigWithPathImpl.serviceFromJSON({
-        type: ServiceType.File,
-        filePath: 'the/file/path',
+        type: ServiceTypes.File,
+        path: 'the/file/path',
         name: 'testChat'
       } as any);
     });
@@ -131,8 +131,8 @@ describe('The ResourceSagas', () => {
     let mockResource;
     beforeEach(() => {
       mockResource = BotConfigWithPathImpl.serviceFromJSON({
-        type: ServiceType.File,
-        filePath: 'the/file/path',
+        type: ServiceTypes.File,
+        path: 'the/file/path',
         name: 'testChat'
       } as any);
     });
@@ -158,8 +158,12 @@ describe('The ResourceSagas', () => {
       await mockStore.dispatch(renameResource(mockResource));
       expect(mockRemoteCommandsCalled.length).toBe(1);
       expect(mockRemoteCommandsCalled[0]).toEqual({
-        'commandName': 'shell:rename-file',
-        'args': [{ 'type': 'file', 'id': 'the/file/path', 'name': 'testChat', 'filePath': 'the/file/path' }]
+        'args': [{
+          'id': '',
+          'name': 'testChat',
+          'path': 'the/file/path',
+          'type': 'file'
+        }], 'commandName': 'shell:rename-file'
       });
       const { resourceToRename } = (mockStore.getState() as any).resources;
       expect(resourceToRename).toBeNull();
@@ -170,8 +174,8 @@ describe('The ResourceSagas', () => {
     let mockResource;
     beforeEach(() => {
       mockResource = BotConfigWithPathImpl.serviceFromJSON({
-        type: ServiceType.File,
-        filePath: 'the/file/path/chat.chat',
+        type: ServiceTypes.File,
+        path: 'the/file/path/chat.chat',
         name: 'testChat'
       } as any);
     });
@@ -185,7 +189,7 @@ describe('The ResourceSagas', () => {
     });
 
     it('should open a transcript file', async () => {
-      mockResource.filePath = 'the/file/path/transcript.transcript';
+      mockResource.path = 'the/file/path/transcript.transcript';
       await mockStore.dispatch(openResource(mockResource as any));
       expect(mockLocalCommandsCalled).toEqual([{
         'commandName': 'transcript:open',

@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IBotConfig } from 'msbot/bin/schema';
+import { IBotConfiguration } from 'botframework-config/lib/schema';
 import * as React from 'react';
 
 import { Extension } from '../../../../../extensions';
@@ -40,7 +40,7 @@ import { ExtensionInspector } from '@bfemulator/sdk-shared';
 import * as styles from './detail.scss';
 
 export interface DetailProps {
-  bot: IBotConfig;
+  bot: IBotConfiguration;
   document: any;
   inspectObj: any;
   extension: Extension;

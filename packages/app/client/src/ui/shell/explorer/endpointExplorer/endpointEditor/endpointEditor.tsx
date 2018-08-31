@@ -32,8 +32,8 @@
 //
 
 import { DefaultButton, Dialog, DialogContent, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
-import { EndpointService } from 'msbot/bin/models';
-import { IEndpointService } from 'msbot/bin/schema';
+import { EndpointService } from 'botframework-config/lib/models';
+import { IEndpointService } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { Component } from 'react';
 import * as styles from './endpointEditor.scss';

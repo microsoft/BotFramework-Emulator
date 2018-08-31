@@ -4,7 +4,7 @@ import { hasNonGlobalTabs } from '../../data/editorHelpers';
 import store from '../../data/store';
 import { getActiveBot } from '../../data/botHelpers';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
-import { IEndpointService, ServiceType } from 'msbot/bin/schema';
+import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 import { SharedConstants } from '@bfemulator/app-shared';
 jest.mock('../../ui/dialogs', () => ({
     AzureLoginPromptDialogContainer: function mock() {
@@ -168,7 +168,7 @@ describe('ActiveBotHelper tests', () => {
     const endpoint: IEndpointService = {
       appId: 'someAppId',
       appPassword: '',
-      type: ServiceType.Endpoint,
+      type: ServiceTypes.Endpoint,
       endpoint: 'someEndpoint',
       id: 'someEndpoint',
       name: 'myEndpoint'
@@ -250,7 +250,7 @@ describe('ActiveBotHelper tests', () => {
     const endpoint: IEndpointService = {
       appId: 'someAppId',
       appPassword: '',
-      type: ServiceType.Endpoint,
+      type: ServiceTypes.Endpoint,
       endpoint: 'someEndpoint',
       id: 'someEndpoint',
       name: 'myEndpoint'

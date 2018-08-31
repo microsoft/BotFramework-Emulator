@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { EndpointService } from 'msbot/bin/models';
-import { IEndpointService } from 'msbot/bin/schema';
+import { EndpointService } from 'botframework-config/lib/models';
+import { IEndpointService } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { ComponentClass, MouseEventHandler, SyntheticEvent } from 'react';
 import { ServicePane, ServicePaneProps } from '../servicePane/servicePane';

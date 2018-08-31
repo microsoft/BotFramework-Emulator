@@ -36,7 +36,7 @@ import * as styles from './botExplorerBar.scss';
 import * as explorerStyles from '../explorerStyles.scss';
 import { EndpointExplorerContainer } from '../endpointExplorer';
 import { BotNotOpenExplorer } from '../botNotOpenExplorer';
-import { IBotConfig } from 'msbot/bin/schema';
+import { IBotConfiguration } from 'botframework-config/lib/schema';
 import { ServicesExplorerContainer } from '../servicesExplorer';
 
 interface BotExplorerBarState {
@@ -44,20 +44,18 @@ interface BotExplorerBarState {
 }
 
 interface BotExplorerBarProps {
-  activeBot: IBotConfig;
+  activeBot: IBotConfiguration;
   hidden: boolean;
   openBotSettings: () => void;
 }
 
 export default class BotExplorerBar extends React.Component<BotExplorerBarProps, BotExplorerBarState> {
+  public state: BotExplorerBarState = {} as any;
+
   public static getDerivedStateFromProps(newProps: BotExplorerBarProps) {
     return {
       isBotActive: !!newProps.activeBot
     };
-  }
-
-  constructor(props: BotExplorerBarProps) {
-    super(props);
   }
 
   private get activeBotJsx(): JSX.Element {

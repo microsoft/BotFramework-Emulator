@@ -4,12 +4,12 @@ import * as path from 'path';
 import { WatchOptions } from 'chokidar';
 import { mainWindow } from '../main';
 import { SharedConstants } from '@bfemulator/app-shared';
-import { IFileService, ServiceType } from 'msbot/bin/schema';
+import { IFileService, ServiceTypes } from 'botframework-config/lib/schema';
 import { isChatFile } from '@bfemulator/app-shared';
 
 export class ChatWatcher extends FileWatcher {
 
-  private chatFiles: { [filePath: string]: boolean } = {};
+  private chatFiles: { [path: string]: boolean } = {};
   private notificationPending: NodeJS.Timer;
 
   public get options(): WatchOptions {
@@ -51,9 +51,9 @@ export class ChatWatcher extends FileWatcher {
       const { name, ext } = path.parse(key);
       return {
         name: `${name}${ext}`,
-        type: ServiceType.File,
+        type: ServiceTypes.File,
         id: key,
-        filePath: key
+        path: key
       };
     });
     mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.ChatFilesUpdated, chatFiles).catch();

@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IConnectedService } from 'msbot/bin/schema';
+import { IConnectedService } from 'botframework-config/lib/schema';
 import { ExpandCollapse, ExpandCollapseContent, ExpandCollapseControls } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { Component, SyntheticEvent } from 'react';

@@ -37,7 +37,7 @@ import * as BotActions from './botData/actions/botActions';
 import { ensureStoragePath } from './utils/ensureStoragePath';
 import { writeFile } from './utils/writeFile';
 import { getFilesInDir } from './utils/getFilesInDir';
-import { BotConfig } from 'msbot';
+import { BotConfiguration } from 'botframework-config';
 import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
 import { getStore } from './botData/store';
 import { mainWindow } from './main';
@@ -67,7 +67,7 @@ export class Migrator {
         // read the bot file and create a bot info item from it
         try {
           const path = Path.join(ensureStoragePath(), 'migration', botFile);
-          const bot = await BotConfig.Load(path);
+          const bot = await BotConfiguration.load(path);
           const botInfo: BotInfo = {
             path,
             displayName: bot.name,

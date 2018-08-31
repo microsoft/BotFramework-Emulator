@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Component } from 'react';
-import { ServiceType } from 'msbot/bin/schema';
+import { ServiceTypes } from 'botframework-config/lib/schema';
 import { DefaultButton, Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
 
 export interface GetStartedWithCSDialogProps {
@@ -8,17 +8,17 @@ export interface GetStartedWithCSDialogProps {
   confirm: () => void;
   launchConnectedServiceEditor: () => void;
   authenticatedUser?: string;
-  serviceType?: ServiceType;
+  serviceType?: ServiceTypes;
 }
 
 const titleMap = {
-  [ServiceType.Luis]: 'Create a LUIS app',
+  [ServiceTypes.Luis]: 'Create a LUIS app',
 };
 
 const buttonTextMap = {
-  [ServiceType.Luis]: 'LUIS',
-  [ServiceType.Dispatch]: 'LUIS',
-  [ServiceType.QnA]: 'QnA Maker'
+  [ServiceTypes.Luis]: 'LUIS',
+  [ServiceTypes.Dispatch]: 'LUIS',
+  [ServiceTypes.QnA]: 'QnA Maker'
 };
 
 export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProps, {}> {
@@ -41,11 +41,11 @@ export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProp
     const { serviceType } = this.props;
 
     switch (serviceType) {
-      case ServiceType.Luis:
-      case ServiceType.Dispatch:
+      case ServiceTypes.Luis:
+      case ServiceTypes.Dispatch:
         return this.luisContent;
 
-      case ServiceType.QnA:
+      case ServiceTypes.QnA:
         return this.qnaContent;
 
       default:

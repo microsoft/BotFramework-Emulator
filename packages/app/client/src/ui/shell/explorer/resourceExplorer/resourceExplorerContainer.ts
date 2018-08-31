@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { IFileService } from 'msbot/bin/schema';
+import { IFileService } from 'botframework-config/lib/schema';
 import { ResourceExplorer, ResourceExplorerProps } from './resourceExplorer';
 import { RootState } from '../../../../data/store';
 import { openContextMenuForResource, openResource, renameResource } from '../../../../data/action/resourcesAction';
