@@ -1,13 +1,16 @@
 import * as React from 'react';
-import { Component } from 'react';
+import { Component, ComponentClass } from 'react';
 import * as styles from './resourcesBar.scss';
 import * as explorerStyles from '../explorerStyles.scss';
 import { ResourceExplorerContainer } from '../resourceExplorer/resourceExplorerContainer';
 import { IFileService } from 'botframework-config/lib/schema';
+import { ResourcesSettingsContainer } from '../../../dialogs';
 
 export interface ResourcesBarProps {
   chatFiles: IFileService[];
   transcripts: IFileService[];
+  isBotActive: boolean;
+  openResourcesSettings: (payload: { dialog: ComponentClass<any> }) => void;
 }
 
 export class ResourcesBar extends Component<ResourcesBarProps, ResourcesBarProps> {
@@ -18,6 +21,10 @@ export class ResourcesBar extends Component<ResourcesBarProps, ResourcesBarProps
           <header>
             Resources
           </header>
+          <button
+            className={ explorerStyles.botSettings }
+            disabled={ !this.props.isBotActive }
+            onClick={ this.onSettingsClick }/>
         </div>
         <ul className={ explorerStyles.explorerSet }>
           <li>
@@ -27,5 +34,9 @@ export class ResourcesBar extends Component<ResourcesBarProps, ResourcesBarProps
         </ul>
       </div>
     );
+  }
+
+  private onSettingsClick = (): void => {
+    this.props.openResourcesSettings({ dialog: ResourcesSettingsContainer });
   }
 }
