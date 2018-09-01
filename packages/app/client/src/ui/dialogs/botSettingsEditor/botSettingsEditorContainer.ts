@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { BotSettingsEditor, BotSettingsEditorProps } from './botSettingsEditor';
 import { DialogService } from '../service';
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
-import { addNotification } from '../../../data/sagas/notificationSagas';
+import { beginAdd } from '../../../data/action/notificationActions';
 
 const mapStateToProps = (state: RootState, ownProps: {}): Partial<BotSettingsEditorProps> => {
   return {
@@ -15,7 +15,7 @@ const mapStateToProps = (state: RootState, ownProps: {}): Partial<BotSettingsEdi
 
 const mapDispatchToProps = dispatch => ({
   cancel: () => DialogService.hideDialog(0),
-  sendNotification: notification => dispatch(addNotification(notification))
+  sendNotification: notification => dispatch(beginAdd(notification))
 });
 
 export const BotSettingsEditorContainer = connect(mapStateToProps, mapDispatchToProps)(BotSettingsEditor);
