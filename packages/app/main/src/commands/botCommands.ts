@@ -46,7 +46,7 @@ import { BotConfigWithPath, CommandRegistryImpl, mergeEndpoints, uniqueId } from
 import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
 import { mainWindow } from '../main';
 import { emulator } from '../emulator';
-import { IConnectedService, IEndpointService, ServiceType } from 'msbot/bin/schema';
+import { IConnectedService, IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 import * as path from 'path';
 import { getStore } from '../botData/store';
 import { botProjectFileWatcher, chatWatcher, transcriptsWatcher } from '../watchers';
@@ -87,12 +87,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Save bot file and cause a bots list write
   commandRegistry.registerCommand(Bot.Save, async (bot: BotConfigWithPath) => {
-    try {
-      await saveBot(bot);
-    } catch (e) {
-      console.error(`${Bot.Save}: Error trying to save bot: ${e}`);
-      throw e;
-    }
+      await saveBot(bot); // Let this propagate up the stack
   });
 
   // ---------------------------------------------------------------------------
@@ -155,7 +150,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     const overridesArePresent = bot.overrides && bot.overrides.endpoint;
     let appliedOverrides = false;
 
-    bot.services.filter(s => s.type === ServiceType.Endpoint).forEach(service => {
+    bot.services.filter(s => s.type === ServiceTypes.Endpoint).forEach(service => {
       let endpoint = service as IEndpointService;
 
       if (overridesArePresent && !appliedOverrides) {
@@ -192,7 +187,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Adds or updates an msbot service entry.
   commandRegistry.registerCommand(Bot.AddOrUpdateService,
-    async (serviceType: ServiceType, service: IConnectedService) => {
+    async (serviceType: ServiceTypes, service: IConnectedService) => {
 
       if (!service.id || !service.id.length) {
         service.id = uniqueId();
@@ -225,14 +220,14 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Removes an msbot service entry.
-  commandRegistry.registerCommand(Bot.RemoveService, async (serviceType: ServiceType, serviceId: string) => {
+  commandRegistry.registerCommand(Bot.RemoveService, async (serviceType: ServiceTypes, serviceId: string) => {
     const activeBot = getActiveBot();
     const botInfo = activeBot && getBotInfoByPath(activeBot.path);
     if (botInfo) {
       const botConfig = toSavableBot(activeBot, botInfo.secret);
-      botConfig.disconnectService(serviceType, serviceId);
+      botConfig.disconnectService(serviceId);
       try {
-        botConfig.save(botInfo.path);
+        await botConfig.save(botInfo.path);
       } catch (e) {
         console.error(`bot:remove-service: Error trying to save bot: ${e}`);
         throw e;

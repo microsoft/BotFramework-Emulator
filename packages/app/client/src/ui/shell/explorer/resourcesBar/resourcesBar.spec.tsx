@@ -4,7 +4,7 @@ import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
 import { ResourcesBarContainer } from './resourcesBarContainer';
 import { ResourcesBar } from './resourcesBar';
-import { ServiceType } from 'msbot/bin/schema';
+import { ServiceTypes } from 'botframework-config/lib/schema';
 import resources from '../../../../data/reducer/resourcesReducer';
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import { chatFilesUpdated, transcriptsUpdated } from '../../../../data/action/resourcesAction';
@@ -22,14 +22,14 @@ describe('The ServicesExplorer component should', () => {
   let mockTranscript;
   beforeEach(() => {
     mockChat = BotConfigWithPathImpl.serviceFromJSON({
-      type: ServiceType.File,
-      filePath: 'the/file/path/chat.chat',
+      type: ServiceTypes.File,
+      path: 'the/file/path/chat.chat',
       name: 'testChat'
     } as any);
 
     mockTranscript = BotConfigWithPathImpl.serviceFromJSON({
-      type: ServiceType.File,
-      filePath: 'the/file/path/transcript.transcript',
+      type: ServiceTypes.File,
+      path: 'the/file/path/transcript.transcript',
       name: 'testTranscript'
     } as any);
 

@@ -35,7 +35,7 @@ import store from '../data/store';
 import * as ChatActions from '../data/action/chatActions';
 import * as EditorActions from '../data/action/editorActions';
 import * as Constants from '../constants';
-import { IEndpointService } from 'msbot/bin/schema';
+import { IEndpointService } from 'botframework-config/lib/schema';
 import { uniqueId, CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
 import { getTabGroupForDocument } from '../data/editorHelpers';

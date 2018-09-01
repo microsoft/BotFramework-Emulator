@@ -9,7 +9,7 @@
     "@bfemulator/sdk-shared": "^1.0.0",
     "@bfemulator/ui-react": "^1.0.0",
     "@uifabric/merge-styles": "^6.2.0",
-    "msbot": "^1.0.44",
+    "botframework-config": "^4.0.0-preview1.3",
     "qnamaker": "^1.0.28",
     "react": "~16.3.2",
     "react-dom": "~16.3.2"

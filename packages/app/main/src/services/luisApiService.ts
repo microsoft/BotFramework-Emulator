@@ -32,12 +32,13 @@
 //
 
 import { LuisModel } from '@bfemulator/app-shared';
-import { ILuisService } from 'msbot';
+import { ILuisService } from 'botframework-config/lib/schema';
 import fetch, { Headers, Response } from 'node-fetch';
+import { ServiceCodes } from '@bfemulator/app-shared';
 
 export class LuisApi {
   public static *getServices(armToken: string): IterableIterator<any> {
-    const payload = { services: [] };
+    const payload = { services: [], code: ServiceCodes.OK };
     // 1.
     // We have the arm token which allows us to get the
     // authoring key used to retrieve the apps
@@ -50,6 +51,7 @@ export class LuisApi {
       authoringKey = yield authoringKeyResponse.text();
       authoringKey = authoringKey.replace(/["]/g, '');
     } catch (e) {
+      payload.code = ServiceCodes.AccountNotFound;
       return payload;
     }
     // 2.

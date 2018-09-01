@@ -33,7 +33,7 @@
 
 import { FrameworkSettings, newBot, newEndpoint, SharedConstants, newNotification } from '@bfemulator/app-shared';
 import * as got from 'got';
-import { IEndpointService } from 'msbot/bin/schema';
+import { IEndpointService } from 'botframework-config/lib/schema';
 import {
   BotConfigWithPath,
   BotConfigWithPathImpl,

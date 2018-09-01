@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IEndpointService, ServiceType } from 'msbot/bin/schema';
+import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
 import { connect } from 'react-redux';
 import {
@@ -46,7 +46,7 @@ import { EndpointExplorer } from './endpointExplorer';
 const mapStateToProps = (state: RootState) => {
   const { services } = state.bot.activeBot;
   return {
-    endpointServices: services.filter(service => service.type === ServiceType.Endpoint),
+    endpointServices: services.filter(service => service.type === ServiceTypes.Endpoint),
     window
   };
 };

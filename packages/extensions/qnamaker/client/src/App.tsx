@@ -35,7 +35,7 @@ import { InspectorHost } from '@bfemulator/sdk-client';
 import { Splitter } from '@bfemulator/ui-react';
 import * as React from 'react';
 import * as styles from './App.scss';
-import { IBotConfig, IQnAService, ServiceType } from 'msbot/bin/schema';
+import { IBotConfiguration, IQnAService, ServiceTypes } from 'botframework-config/lib/schema';
 import { QnAKbInfo, QnAMakerClient } from './QnAMaker/Client';
 import { QnAMakerTraceInfo } from './Models/QnAMakerTraceInfo';
 import { Answer } from './Models/QnAMakerModels';
@@ -73,13 +73,13 @@ class App extends React.Component<any, AppState> {
 
   client: QnAMakerClient;
 
-  static getQnAServiceFromBot(bot: IBotConfig, kbId: string): IQnAService | null {
+  static getQnAServiceFromBot(bot: IBotConfiguration, kbId: string): IQnAService | null {
     if (!bot || !bot.services || !kbId) {
       return null;
     }
 
     kbId = kbId.toLowerCase();
-    let qnaServices = bot.services.filter(s => s.type === ServiceType.QnA) as IQnAService[];
+    let qnaServices = bot.services.filter(s => s.type === ServiceTypes.QnA) as IQnAService[];
     let qnaService = qnaServices.find(ls => ls.kbId.toLowerCase() === kbId);
     if (qnaService) {
       return qnaService;
@@ -146,7 +146,7 @@ class App extends React.Component<any, AppState> {
         }
       });
 
-      $host.on('bot-updated', (bot: IBotConfig) => {
+      $host.on('bot-updated', (bot: IBotConfiguration) => {
         this.setState({
           qnaService: App.getQnAServiceFromBot(bot, this.state.traceInfo.knowledgeBaseId),
         });

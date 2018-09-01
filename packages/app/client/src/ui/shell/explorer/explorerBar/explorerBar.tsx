@@ -36,7 +36,7 @@ import { connect } from 'react-redux';
 
 import { BotExplorerBarContainer } from '../botExplorerBar/botExplorerBarContainer';
 import * as Constants from '../../../../constants';
-import { IBotConfig } from 'msbot/bin/schema';
+import { IBotConfiguration } from 'botframework-config/lib/schema';
 import { RootState } from '../../../../data/store';
 import * as styles from './explorerBar.scss';
 import { NotificationsExplorerBar } from '../notificationsExplorer/notificationsExplorerBar';
@@ -44,7 +44,7 @@ import { InsetShadow } from '@bfemulator/ui-react';
 import { ResourcesBarContainer } from '../resourcesBar/resourcesBarContainer';
 
 interface ExplorerBarProps {
-  activeBot?: IBotConfig;
+  activeBot?: IBotConfiguration;
   selectedNavTab?: string;
 }
 

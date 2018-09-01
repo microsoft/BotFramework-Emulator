@@ -119,7 +119,7 @@ export class AzureAuthWorkflowService {
     const browserWindow = new BrowserWindow({
       modal: true,
       show: false,
-      frame: false,
+      frame: true,
       transparent: true,
       alwaysOnTop: true,
       width: 490,
@@ -154,7 +154,7 @@ export class AzureAuthWorkflowService {
     const browserWindow = new BrowserWindow({
       modal: true,
       show: false,
-      frame: false,
+      frame: true,
       transparent: true,
       alwaysOnTop: true,
       width: 440,

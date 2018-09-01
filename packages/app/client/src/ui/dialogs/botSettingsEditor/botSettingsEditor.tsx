@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
+import { BotInfo, newNotification, Notification, NotificationType, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import { Checkbox, DefaultButton, Dialog, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
-import { IConnectedService, ServiceType } from 'msbot/bin/schema';
+import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { getBotInfoByPath } from '../../../data/botHelpers';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
@@ -44,25 +44,31 @@ import * as styles from './botSettingsEditor.scss';
 export interface BotSettingsEditorProps {
   bot: BotConfigWithPath;
   cancel: () => void;
+  sendNotification: (notification: Notification) => void;
+  window: Window;
 }
 
 export interface BotSettingsEditorState extends BotConfigWithPath {
   secret?: string;
   revealSecret?: boolean;
   dirty?: boolean;
+  encryptKey?: boolean;
 }
 
 export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, BotSettingsEditorState> {
+  private _generatedSecret: string;
+
   constructor(props: BotSettingsEditorProps, context: BotSettingsEditorState) {
     super(props, context);
 
     const { bot } = props;
     const botInfo = getBotInfoByPath(bot.path);
-
+    const secret = (botInfo && botInfo.secret);
     this.state = {
       ...bot,
-      secret: (botInfo && botInfo.secret) || '',
-      revealSecret: false
+      secret: secret || this.generatedSecret,
+      revealSecret: false,
+      encryptKey: !!secret
     };
   }
 
@@ -77,24 +83,55 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
   }
 
   render() {
-    const { name, dirty, secret, revealSecret } = this.state;
+    const { name, dirty, secret, revealSecret, encryptKey } = this.state;
     const disabled = !name || !dirty;
     const error = !name ? 'The bot name is required' : '';
     return (
-      <Dialog cancel={ this.onCancel } title="Bot Settings">
-        <TextField label="Bot name" value={ name }
-                   required={ true } onChanged={ this.onChangeName } errorMessage={ error }/>
-        <TextField label="Bot secret" value={ secret }
-                   onChanged={ this.onChangeSecret } type={ revealSecret ? 'text' : 'password' }/>
+      <Dialog cancel={ this.onCancel } title="Bot Settings" className={ styles.botSettingsEditor }>
+        <TextField
+          label="Name" value={ name }
+          required={ true }
+          onChanged={ this.onChangeName }
+          errorMessage={ error }/>
+
         <Checkbox
-          label="Reveal secret"
-          checked={ revealSecret }
-          onChange={ this.onCheckSecretCheckbox }
-        />
+          className={ styles.encryptKeyCheckBox }
+          label="Encrypt keys stored in your bot configuration"
+          checked={ encryptKey }
+          onChange={ this.onEncryptKeyChange }/>
+
+        <TextField
+          className={ styles.key }
+          label="key"
+          value={ secret }
+          disabled={ true }
+          id="key-input"
+          type={ revealSecret ? 'text' : 'password' }/>
+        <ul className={ styles.actionsList }>
+          <li>
+            <a href="javascript:void(0);"
+               onClick={ this.onRevealSecretClick }>
+              { revealSecret ? 'Hide' : 'Show' }
+            </a>
+          </li>
+          <li>
+            <a href="javascript:void(0);"
+               onClick={ this.onCopyClick }>
+              Copy
+            </a>
+          </li>
+          <li>
+            <a href="javascript:void(0);"
+               onClick={ this.onResetClick }>
+              Reset
+            </a>
+          </li>
+        </ul>
+
         <DialogFooter>
-          <DefaultButton text="Cancel" onClick={ this.onCancel } className={ styles.saveButton }/>
+          <DefaultButton text="Cancel" onClick={ this.onCancel } className={ styles.cancelButton }/>
           <PrimaryButton text="Save" onClick={ this.onSaveClick }
-                         className={ styles.saveConnectButton }
+                         className={ styles.saveButton }
                          disabled={ disabled }/>
         </DialogFooter>
       </Dialog>
@@ -109,25 +146,21 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
     this.setState({ name, dirty: true });
   }
 
-  private onChangeSecret = (secret) => {
-    this.setState({ secret, dirty: true });
-  }
-
-  private onCheckSecretCheckbox = () => {
-    this.setState({ revealSecret: !this.state.revealSecret });
+  private onEncryptKeyChange = (noIdea: any, value: boolean) => {
+    this.setState({ encryptKey: value, secret: (value ? this.generatedSecret : ''), dirty: true });
   }
 
   private onSaveClick = async () => {
-    const { name: botName = '', description = '', path, services, secretKey = '' } = this.state;
+    const { name: botName = '', description = '', path, services, secretKey = '', secret } = this.state;
     let bot: BotConfigWithPath = BotConfigWithPathImpl.fromJSON({
       name: botName.trim(),
       description: description.trim(),
-      secretKey,
+      secretKey: secret ? secretKey : '',
       path: path.trim(),
       services
     });
 
-    const endpointService: IConnectedService = bot.services.find(service => service.type === ServiceType.Endpoint);
+    const endpointService: IConnectedService = bot.services.find(service => service.type === ServiceTypes.Endpoint);
 
     if (bot.path === SharedConstants.TEMP_BOT_IN_MEMORY_PATH) {
       // we are currently using a mocked bot for livechat opened via protocol URI
@@ -172,8 +205,17 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
     const botInfo: BotInfo = getBotInfoByPath(bot.path) || {};
     botInfo.secret = this.state.secret;
     // write updated bot entry to bots.json
+    try {
+      await CommandServiceImpl.remoteCall(Save, bot);
+    } catch {
+      // this is a problem
+      const note = newNotification('There was an error updating your bot settings. ' +
+        'Try removing encryption and saving again. You can then add encryption back once successful',
+        NotificationType.Error);
+      this.props.sendNotification(note);
+      return;
+    }
     await CommandServiceImpl.remoteCall(PatchBotList, bot.path, botInfo);
-    await CommandServiceImpl.remoteCall(Save, bot);
     this.props.cancel();
   }
 
@@ -195,5 +237,37 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
       buttonLabel: 'Save'
     };
     return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.ShowSaveDialog, dialogOptions);
+  }
+
+  private onRevealSecretClick = () => {
+    this.setState({ revealSecret: !this.state.revealSecret });
+  }
+
+  private onCopyClick = (): void => {
+    const { window } = this.props;
+    const input: HTMLInputElement = window.document.getElementById('key-input') as HTMLInputElement;
+    input.removeAttribute('disabled');
+    const { type } = input;
+    input.type = 'text';
+    input.select();
+    window.document.execCommand('copy');
+    input.type = type;
+    input.setAttribute('disabled', '');
+  }
+
+  private onResetClick = (): void => {
+    this._generatedSecret = null;
+    const { generatedSecret } = this;
+    this.setState({ secret: generatedSecret, secretKey: '', dirty: true });
+  }
+
+  private get generatedSecret(): string {
+    if (this._generatedSecret) {
+      return this._generatedSecret;
+    }
+    const { window } = this.props;
+    const arr = new Uint8Array(32);
+    window.crypto.getRandomValues(arr);
+    return (this._generatedSecret = window.btoa(arr.reduce((str, byte) => str += String.fromCharCode(byte), '')));
   }
 }

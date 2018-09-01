@@ -8,9 +8,36 @@ import { BotSettingsEditorContainer } from './botSettingsEditorContainer';
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import { setActive } from '../../../data/action/botActions';
 import { SharedConstants } from '@bfemulator/app-shared';
+import * as crypto from 'crypto';
 
 const mockStore = createStore(combineReducers({ bot }));
 const mockBot = BotConfigWithPathImpl.fromJSON({});
+const mockElement = {
+  setAttribute: () => {
+    // mock
+  },
+  removeAttribute: () => {
+    // mock
+  },
+  select: () => {
+    // mock
+  }
+};
+const mockWindow = {
+  crypto: {
+    getRandomValues: (array: Uint8Array) => {
+      array.set(crypto.randomBytes(32));
+    }
+  },
+  btoa: (bytes: any) => Buffer.from(bytes).toString('base64'),
+  document: {
+    getElementById: () => mockElement,
+    execCommand: () => {
+      // mock
+    }
+  }
+};
+
 jest.mock('./botSettingsEditor.scss', () => ({}));
 jest.mock('../../../data/store', () => ({
   get default() {
@@ -51,7 +78,7 @@ describe('The BotSettingsEditor dialog should', () => {
     mockStore.dispatch(setActive(mockBot));
     mockRemoteCommandsCalled.length = 0;
     parent = mount(<Provider store={ mockStore }>
-      <BotSettingsEditorContainer/>
+      <BotSettingsEditorContainer window={ mockWindow }/>
     </Provider>);
     node = parent.find(BotSettingsEditor);
   });
@@ -68,14 +95,47 @@ describe('The BotSettingsEditor dialog should', () => {
   it('should update the state when the reveal key is clicked', () => {
     const instance = node.instance();
     expect(instance.state.revealSecret).toBeFalsy();
-    instance.onCheckSecretCheckbox();
+    instance.onRevealSecretClick();
     expect(instance.state.revealSecret).toBeTruthy();
+  });
+
+  it('should copy the secret to the clipboard when "onCopyClick" is executed', () => {
+    const instance = node.instance();
+    instance.setState({
+      secret: 'MsKgJGZJw7Vqw51YwpZhw7LCk2MzwpZZwoLDkMKPIWfCq8K7wobDp8OvwqvCmsO+EAY='
+    });
+    const elementSpies = {
+      select: jest.spyOn(mockElement, 'select'),
+      setAttribute: jest.spyOn(mockElement, 'setAttribute'),
+      removeAttribute: jest.spyOn(mockElement, 'removeAttribute')
+    };
+    const documentSpies = {
+      execCommand: jest.spyOn(mockWindow.document, 'execCommand'),
+      getElementById: jest.spyOn(mockWindow.document, 'getElementById')
+    };
+    instance.onCopyClick();
+
+    expect(elementSpies.select).toHaveBeenCalled();
+    expect(elementSpies.removeAttribute).toHaveBeenCalledWith('disabled');
+    expect(elementSpies.setAttribute).toHaveBeenCalledWith('disabled', '');
+    expect(documentSpies.execCommand).toHaveBeenCalledWith('copy');
+    expect(documentSpies.getElementById).toHaveBeenCalledWith('key-input');
+  });
+
+  it('should generate a new secret when the "onResetClick" function is executed', () => {
+    const instance = node.instance();
+    const secret = instance.generatedSecret;
+    instance.onResetClick();
+    expect(instance.generatedSecret).not.toEqual(secret);
   });
 
   describe('onSaveClick', () => {
     it('should make the expected calls when saving a bot from protocol', async () => {
       const instance = node.instance();
-      instance.setState({ path: SharedConstants.TEMP_BOT_IN_MEMORY_PATH });
+      instance.setState({
+        path: SharedConstants.TEMP_BOT_IN_MEMORY_PATH,
+        secret: 'MsKgJGZJw7Vqw51YwpZhw7LCk2MzwpZZwoLDkMKPIWfCq8K7wobDp8OvwqvCmsO+EAY='
+      });
       await instance.onSaveClick();
       expect(mockRemoteCommandsCalled.length).toBe(7);
       [
@@ -105,41 +165,34 @@ describe('The BotSettingsEditor dialog should', () => {
           ]
         },
         {
-          'commandName': 'bot:list:patch',
-          'args': [
-            'TEMP_BOT_IN_MEMORY',
-            {
-              'displayName': '',
-              'path': '/test/path',
-              'secret': ''
-            }
-          ]
+          'args': ['TEMP_BOT_IN_MEMORY', {
+            'displayName': '',
+            'path': '/test/path',
+            'secret': 'MsKgJGZJw7Vqw51YwpZhw7LCk2MzwpZZwoLDkMKPIWfCq8K7wobDp8OvwqvCmsO+EAY='
+          }], 'commandName': 'bot:list:patch'
         },
         {
           'commandName': 'bot:save',
-          'args': [
-            {
-              'name': '',
-              'description': '',
-              'services': [],
-              'secretKey': '',
-              'path': '/test/path',
-              'overrides': null
-            }
-          ]
+          'args': [{
+            'description': '',
+            'name': '',
+            'overrides': null,
+            'path': '/test/path',
+            'secretKey': '',
+            'services': [],
+            'version': '2.0'
+          }]
         },
         {
-          'commandName': 'bot:set-active',
-          'args': [
-            {
-              'name': '',
-              'description': '',
-              'services': [],
-              'secretKey': '',
-              'path': '/test/path',
-              'overrides': null
-            }
-          ]
+          'args': [{
+            'description': '',
+            'name': '',
+            'overrides': null,
+            'path': '/test/path',
+            'secretKey': '',
+            'services': [],
+            'version': '2.0'
+          }], 'commandName': 'bot:set-active'
         },
         {
           'commandName': 'menu:update-file-menu',
@@ -156,29 +209,31 @@ describe('The BotSettingsEditor dialog should', () => {
 
     it('should make the expected calls when saving a bot', async () => {
       const instance = node.instance();
-      instance.setState({ path: 'a/test/path' });
+      instance.setState({
+        path: 'a/test/path',
+        secret: 'MsKgJGZJw7Vqw51YwpZhw7LCk2MzwpZZwoLDkMKPIWfCq8K7wobDp8OvwqvCmsO+EAY='
+      });
       await instance.onSaveClick();
       expect(mockRemoteCommandsCalled.length).toBe(2);
       [
+        {
+          'commandName': 'bot:save',
+          'args': [{
+            'description': '',
+            'name': '',
+            'overrides': null,
+            'path': 'a/test/path',
+            'secretKey': '',
+            'services': [],
+            'version': '2.0'
+          }]
+        },
         {
           'commandName': 'bot:list:patch',
           'args': [
             'a/test/path',
             {
-              'secret': ''
-            }
-          ]
-        },
-        {
-          'commandName': 'bot:save',
-          'args': [
-            {
-              'name': '',
-              'description': '',
-              'services': [],
-              'secretKey': '',
-              'path': 'a/test/path',
-              'overrides': null
+              'secret': 'MsKgJGZJw7Vqw51YwpZhw7LCk2MzwpZZwoLDkMKPIWfCq8K7wobDp8OvwqvCmsO+EAY='
             }
           ]
         }

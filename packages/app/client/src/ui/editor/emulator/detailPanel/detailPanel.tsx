@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IBotConfig } from 'msbot/bin/schema';
+import { IBotConfiguration } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
@@ -44,7 +44,7 @@ import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib-commonjs/Spinne
 import * as styles from './detailPanel.scss';
 
 interface DetailPanelProps {
-  bot?: IBotConfig;
+  bot?: IBotConfiguration;
   document: any;
 }
 

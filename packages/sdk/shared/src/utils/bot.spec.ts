@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IEndpointService, ServiceType } from 'msbot/bin/schema';
+import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 import { applyBotConfigOverrides, botsAreTheSame, mergeEndpoints } from './bot';
 import { BotConfigWithPath, BotConfigOverrides } from '../types';
 
@@ -100,7 +100,7 @@ describe('Bot utility function tests', () => {
 
   describe('Merging two endpoint services', () => {
     const endpoint1: IEndpointService = {
-      type: ServiceType.Endpoint,
+      type: ServiceTypes.Endpoint,
       name: 'endpoint1',
       id: 'http://www.endpoint1.com/api/messages',
       endpoint: 'http://www.endpoint1.com/api/messages',

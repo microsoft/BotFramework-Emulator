@@ -35,7 +35,7 @@ import { AppState, PersistentAppState } from './App';
 import { QnAMakerTraceInfo, QueryResult } from './Models/QnAMakerTraceInfo';
 import { Answer } from './Models/QnAMakerModels';
 import { TraceActivity } from '@bfemulator/sdk-shared';
-import { IQnAService } from 'msbot/bin/schema' ;
+import { IQnAService } from 'botframework-config/lib/schema' ;
 
 const TraceActivity = 'trace';
 const QnaMakerTracerType = 'https://www.qnamaker.ai/schemas/trace';

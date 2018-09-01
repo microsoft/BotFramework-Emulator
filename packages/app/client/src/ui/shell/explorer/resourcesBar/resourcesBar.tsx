@@ -3,7 +3,7 @@ import { Component } from 'react';
 import * as styles from './resourcesBar.scss';
 import * as explorerStyles from '../explorerStyles.scss';
 import { ResourceExplorerContainer } from '../resourceExplorer/resourceExplorerContainer';
-import { IFileService } from 'msbot/bin/schema';
+import { IFileService } from 'botframework-config/lib/schema';
 
 export interface ResourcesBarProps {
   chatFiles: IFileService[];

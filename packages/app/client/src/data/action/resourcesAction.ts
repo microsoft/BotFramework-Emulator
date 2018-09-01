@@ -1,4 +1,4 @@
-import { IFileService } from 'msbot/bin/schema';
+import { IFileService } from 'botframework-config/lib/schema';
 import { Action } from 'redux';
 
 export const TRANSCRIPTS_UPDATED = 'TRANSCRIPTS_UPDATED';

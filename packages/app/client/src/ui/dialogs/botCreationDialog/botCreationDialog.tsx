@@ -42,8 +42,8 @@ import {
   Row,
   TextField,
 } from '@bfemulator/ui-react';
-import { EndpointService } from 'msbot/bin/models';
-import { IEndpointService, ServiceType } from 'msbot/bin/schema';
+import { EndpointService } from 'botframework-config/lib/models';
+import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import * as styles from './botCreationDialog.scss';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
@@ -75,7 +75,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
         path: ''
       }),
       endpoint: new EndpointService({
-        type: ServiceType.Endpoint,
+        type: ServiceTypes.Endpoint,
         name: '',
         id: uniqueId(),
         appId: '',
