@@ -4,8 +4,14 @@ import { resourceSagas } from './resourcesSagas';
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared/built';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import sagaMiddlewareFactory from 'redux-saga';
-import { openContextMenuForResource, openResource, renameResource } from '../action/resourcesAction';
+import {
+  openContextMenuForResource,
+  openResource,
+  openResourcesSettings,
+  renameResource
+} from '../action/resourcesAction';
 import { SharedConstants } from '@bfemulator/app-shared/built';
+import { Component } from 'react';
 
 const sagaMiddleWare = sagaMiddlewareFactory();
 const mockStore = createStore(combineReducers({ resources }), {}, applyMiddleware(sagaMiddleWare));
@@ -16,6 +22,13 @@ jest.mock('../store', () => ({
     return mockStore;
   }
 }));
+jest.mock('../../ui/dialogs/service', () => ({
+  DialogService: {
+    showDialog: () => Promise.resolve(true),
+    hideDialog: () => Promise.resolve({ path: 'somePath' }),
+  }
+}));
+
 const mockRemoteCommandsCalled = [];
 const mockLocalCommandsCalled = [];
 const mockSharedConstants = SharedConstants; // thanks Jest!
@@ -196,5 +209,18 @@ describe('The ResourceSagas', () => {
         'args': ['the/file/path/transcript.transcript']
       }]);
     });
+  });
+
+  it('should open the resource settings dialog and process the results as expected', async () => {
+    const mockClass = class extends Component {
+    };
+    await mockStore.dispatch(openResourcesSettings({ dialog: mockClass }));
+    await Promise.resolve();
+
+    expect(mockRemoteCommandsCalled).toEqual(
+      [ { commandName: 'bot:list:patch', args: [ undefined, true ] },
+      { commandName: 'bot:watch-for-chat-files', args: [] },
+      { commandName: 'bot:watch-for-transcript-files', args: [] } ]
+    );
   });
 });

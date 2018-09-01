@@ -3,12 +3,17 @@ import {
   editResource,
   OPEN_CONTEXT_MENU_FOR_RESOURCE,
   OPEN_RESOURCE,
+  OPEN_RESOURCE_SETTINGS,
   RENAME_RESOURCE,
   ResourcesAction
 } from '../action/resourcesAction';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
-import { isChatFile, isTranscriptFile, SharedConstants } from '@bfemulator/app-shared/built';
+import { BotInfo, isChatFile, isTranscriptFile, NotificationType, SharedConstants } from '@bfemulator/app-shared';
 import { IFileService } from 'botframework-config/lib/schema';
+import { ComponentClass } from 'react';
+import { DialogService } from '../../ui/dialogs/service';
+import { beginAdd } from '../action/notificationActions';
+import { newNotification } from '@bfemulator/app-shared/built';
 
 function* openContextMenuForResource(action: ResourcesAction<IFileService>): IterableIterator<any> {
   const menuItems = [
@@ -81,8 +86,25 @@ function* doOpenResource(action: ResourcesAction<IFileService>): IterableIterato
   // unknown types just fall into the abyss
 }
 
+function* launchResourcesSettingsModal(action: ResourcesAction<{ dialog: ComponentClass<any> }>) {
+  const result: Partial<BotInfo> = yield DialogService.showDialog(action.payload.dialog);
+  if (result) {
+    try {
+      yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.PatchBotList, result.path, result);
+      yield Promise.all([
+        CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.WatchForChatFiles),
+        CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.WatchForTranscriptFiles)
+      ]);
+    } catch (e) {
+      const notification = newNotification('Unable to save resource settings', NotificationType.Error);
+      yield put(beginAdd(notification));
+    }
+  }
+}
+
 export function* resourceSagas(): IterableIterator<ForkEffect> {
   yield takeEvery(OPEN_CONTEXT_MENU_FOR_RESOURCE, openContextMenuForResource);
   yield takeEvery(RENAME_RESOURCE, doRename);
   yield takeEvery(OPEN_RESOURCE, doOpenResource);
+  yield takeEvery(OPEN_RESOURCE_SETTINGS, launchResourcesSettingsModal);
 }

@@ -87,7 +87,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Save bot file and cause a bots list write
   commandRegistry.registerCommand(Bot.Save, async (bot: BotConfigWithPath) => {
-      await saveBot(bot); // Let this propagate up the stack
+    await saveBot(bot); // Let this propagate up the stack
   });
 
   // ---------------------------------------------------------------------------
@@ -237,9 +237,10 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Patches a bot record in bots.json
-  commandRegistry.registerCommand(Bot.PatchBotList, async (botPath: string, bot: BotInfo): Promise<void> => {
+  commandRegistry.registerCommand(Bot.PatchBotList, async (botPath: string, bot: BotInfo): Promise<boolean> => {
     // patch bots.json and update the store
     await patchBotsJson(botPath, bot).catch();
+    return true;
   });
 
   // ---------------------------------------------------------------------------
