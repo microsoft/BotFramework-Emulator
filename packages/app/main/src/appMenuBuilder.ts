@@ -189,7 +189,10 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
       label: azureMenuItemLabel,
       click: () => {
         if (signedInUser) {
-          return mainWindow.commandService.call(Azure.SignUserOutOfAzure);
+          return Promise.all([
+            mainWindow.commandService.call(Azure.SignUserOutOfAzure),
+            mainWindow.commandService.remoteCall(UI.InvalidateAzureArmToken)
+          ]);
         } else {
           return mainWindow.commandService.remoteCall(UI.SignInToAzure);
         }
