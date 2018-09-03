@@ -2,6 +2,15 @@
   margin-left: 48px
 }
 
+.version-number {
+  position: relative;
+  top: -16px;
+  color: var(--welcome-page-ver);
+  font-size: 19px;
+  line-height: 26px;
+  margin-bottom: 32px;
+}
+
 .section {
   margin-bottom: 34px;
   width: auto;
@@ -75,8 +84,19 @@
     }
   }
 
-  > a {
+  > button {
+    background-color: transparent;
+    border: 1px solid transparent;
     color: var(--my-bots-entry-color);
+    cursor: pointer;
+
+    > span {
+      font-weight: 600;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
 }
 
@@ -131,6 +151,20 @@
 }
 
 .ctaLink {
+  background-color: transparent;
+  border: 1px solid transparent;
+  color: var(--focused-selected-list-item-bg);
+  cursor: pointer;
+  font-weight: 600;
+  // margin-left: 8px;
+  margin: 2px 2px;
   white-space: normal;
-  margin-left: 8px;
+
+    &:focus {
+      outline: var(--p-button-border-focus);
+    }
+
+    &:hover {
+      text-decoration: underline;
+    }
 }

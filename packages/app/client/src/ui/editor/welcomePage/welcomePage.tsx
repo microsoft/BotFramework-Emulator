@@ -32,12 +32,18 @@
 //
 
 import * as React from 'react';
-import { BotInfo } from '@bfemulator/app-shared';
+import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
 import * as styles from './welcomePage.scss';
 import { Column, LargeHeader, PrimaryButton, Row, SmallHeader, TruncateText } from '@bfemulator/ui-react';
 import { GenericDocument } from '../../layout';
+import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
+import { connect } from 'react-redux';
+import { RootState } from '../../../data/store';
+
+const { Azure, UI } = SharedConstants.Commands;
 
 export interface WelcomePageProps {
+  accessToken?: string;
   documentId?: string;
   recentBots?: BotInfo[];
   onNewBotClick?: () => void;
@@ -46,25 +52,46 @@ export interface WelcomePageProps {
   onDeleteBotClick?: (_e: any, path: string) => void;
 }
 
-export class WelcomePage extends React.Component<WelcomePageProps, {}> {
+class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
   constructor(props: WelcomePageProps) {
     super(props);
+  }
+
+  public render(): JSX.Element {
+    const { startSection, myBotsSection, howToBuildSection, signInSection } = this;
+
+    return (
+      <GenericDocument>
+        <LargeHeader>Bot Framework Emulator</LargeHeader>
+        <span className={styles.versionNumber}>Version 4</span>
+        <Row>
+          <Column>
+            {startSection}
+            {myBotsSection}
+            {signInSection}
+          </Column>
+          <Column className={styles.rightColumn}>
+            {howToBuildSection}
+          </Column>
+        </Row>
+      </GenericDocument>
+    );
   }
 
   private get startSection(): JSX.Element {
     const { onNewBotClick, onOpenBotClick } = this.props;
 
     return (
-      <div className={ styles.section }>
-        <SmallHeader>Start</SmallHeader>
+      <div className={styles.section}>
+        <SmallHeader>Start by testing your bot</SmallHeader>
         <span>Start talking to your bot by connecting to an endpoint or by opening a
-          bot saved locally. More about working locally with a bot.</span>
+          bot saved locally.<br /> More about working locally with a bot.</span>
         <Row>
-          <PrimaryButton className={ styles.openBot } text="Open Bot" onClick={ onOpenBotClick }/>
+          <PrimaryButton className={styles.openBot} text="Open Bot" onClick={onOpenBotClick} />
         </Row>
         <span>If you don’t have a bot configuration,
-          <a className={ styles.ctaLink } href="javascript:void(0)"
-              onClick={ onNewBotClick }>create a new bot configuration.</a>
+          <button className={styles.ctaLink}
+            onClick={onNewBotClick}>create a new bot configuration.</button>
         </span>
       </div>
     );
@@ -74,33 +101,56 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
     const { onBotClick, onDeleteBotClick } = this.props;
 
     return (
-      <div className={ styles.section }>
+      <div className={styles.section}>
         <SmallHeader>My Bots</SmallHeader>
-        <ul className={ `${styles.recentBotsList} ${styles.well}` }>
+        <ul className={`${styles.recentBotsList} ${styles.well}`}>
           {
             this.props.recentBots && this.props.recentBots.length ?
               this.props.recentBots.slice(0, 10).map(bot => bot &&
-                <li className={ styles.recentBot } key={ bot.path }>
-                  <a href="javascript:void(0);" onClick={ ev => onBotClick(ev, bot.path) }
-                      title={ bot.path }><TruncateText>{ bot.displayName }</TruncateText></a>
-                  <TruncateText className={ styles.recentBotPath }
-                                title={ bot.path }>{ bot.path }</TruncateText>
-                <div className={ styles.recentBotActionBar }>
-                  <button onClick={ ev => onDeleteBotClick(ev, bot.path) }></button>
+                <li className={styles.recentBot} key={bot.path}>
+                  <button onClick={ev => onBotClick(ev, bot.path)}
+                    title={bot.path}><TruncateText>{bot.displayName}</TruncateText></button>
+                  <TruncateText className={styles.recentBotPath}
+                    title={bot.path}>{bot.path}</TruncateText>
+                  <div className={styles.recentBotActionBar}>
+                    <button onClick={ev => onDeleteBotClick(ev, bot.path)}></button>
                   </div>
                 </li>)
               :
-              <li><span className={ styles.noBots }><TruncateText>No recent bots</TruncateText></span></li>
+              <li><span className={styles.noBots}><TruncateText>You have not opened any bots</TruncateText></span></li>
           }
         </ul>
       </div>
     );
   }
 
-  private get helpSection(): JSX.Element {
+  private get signInSection(): JSX.Element {
+    const { accessToken } = this.props;
+
     return (
-      <div className={ styles.section }>
-        <SmallHeader>Help</SmallHeader>
+      <div>
+        {
+          (accessToken && !accessToken.startsWith('invalid')) ?
+            <button className={styles.ctaLink} onClick={() => this.signOutWithAzure()}>Sign out</button>
+            :
+            <button className={styles.ctaLink} onClick={() => this.signInWithAzure()}>Sign in with your Azure account.</button>
+        }</div>
+    );
+  }
+
+  private signInWithAzure() {
+    CommandServiceImpl.call(UI.SignInToAzure);
+  }
+
+  private signOutWithAzure() {
+    CommandServiceImpl.call(Azure.SignUserOutOfAzure)
+    CommandServiceImpl.call(UI.InvalidateAzureArmToken)
+  }
+
+  private get howToBuildSection(): JSX.Element {
+    return (
+      <div className={styles.section}>
+
         <ul>
           <li><a href="https://aka.ms/BotBuilderOverview"><TruncateText>Overview</TruncateText></a></li>
           <li><a href="https://aka.ms/Btovso"><TruncateText>GitHub Repository</TruncateText></a></li>
@@ -116,23 +166,10 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
       </div>
     );
   }
-
-  public render(): JSX.Element {
-    const { startSection, myBotsSection, helpSection } = this;
-
-    return (
-      <GenericDocument>
-        <LargeHeader>Welcome to the Bot Framework Emulator!</LargeHeader>
-        <Row>
-          <Column>
-            { startSection }
-            { myBotsSection }
-          </Column>
-          <Column className={ styles.rightColumn }>
-            { helpSection }
-          </Column>
-        </Row>
-      </GenericDocument>
-    );
-  }
 }
+
+const mapStateToProps = (state: RootState): WelcomePageProps => ({
+  accessToken: state.azureAuth.access_token
+});
+
+export const WelcomePage = connect(mapStateToProps)(WelcomePageComponent) as any;

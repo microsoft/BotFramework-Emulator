@@ -126,6 +126,8 @@ html {
   --toolbar-border: var(--explorer-panel-group-border);
 
   /* Welcome page */
+  --welcome-page-bg: var(--tab-active-tab-bg);
+  --welcome-page-ver: var(--neutral-8);
   --my-bots-well-bg: transparent;
   --my-bots-well-border: 1px solid #00BCF2;
   --my-bots-entry-bg: transparent;
