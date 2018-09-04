@@ -44,3 +44,4 @@ export * from './getStartedWithCSDialog/getStartedWithCSDialogContainer';
 export * from './postMigrationDialog/postMigrationDialog';
 export * from './progressIndicator/progressIndicatorContainer';
 export * from './botSettingsEditor/botSettingsEditorContainer';
+export * from './resourcesSettings/resourcesSettingsContainer';

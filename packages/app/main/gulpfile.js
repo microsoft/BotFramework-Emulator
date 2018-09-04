@@ -306,7 +306,7 @@ gulp.task('redist:mac:binaries', function () {
 
 //----------------------------------------------------------------------------
 gulp.task('redist:mac:metadata-only', function () {
-  const releaseFilename = `${pjson.name}-${pjson.version}-mac.zip`;
+  const releaseFilename = `${pjson.packagename}-${pjson.version}-mac.zip`;
   const releaseHash = hashFileAsync(`./dist/${releaseFilename}`);
   const releaseDate = new Date().toISOString();
 
@@ -636,7 +636,7 @@ function getConfig(platform, target) {
 //----------------------------------------------------------------------------
 function getFileList(platform, target, options = {}) {
   options = extend({}, {
-    basename: pjson.name,
+    basename: pjson.packagename,
     version: pjson.version,
   }, options);
   const path = './dist';

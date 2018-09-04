@@ -44,7 +44,7 @@ export class TranscriptsWatcher extends FileWatcher {
   }
 
   private validateChatFiles = () => {
-    const transcrriptFiles: IFileService[] = Object.keys(this.transcriptFiles).map(key => {
+    const transcriptFiles: IFileService[] = Object.keys(this.transcriptFiles).map(key => {
       const { name, ext } = path.parse(key);
       return {
         name: `${name}${ext}`,
@@ -53,7 +53,7 @@ export class TranscriptsWatcher extends FileWatcher {
         path: key
       };
     });
-    mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.TranscriptFilesUpdated, transcrriptFiles).catch();
+    mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.TranscriptFilesUpdated, transcriptFiles).catch();
     this.notificationPending = null;
   }
 }

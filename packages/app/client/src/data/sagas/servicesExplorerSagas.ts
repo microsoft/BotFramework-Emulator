@@ -53,7 +53,7 @@ import {
   OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE,
   OPEN_SERVICE_DEEP_LINK
 } from '../action/connectedServiceActions';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { ServiceCodes, SharedConstants } from '@bfemulator/app-shared';
 import { RootState } from '../store';
 import { ArmTokenData, beginAzureAuthWorkflow } from '../action/azureAuthActions';
 import { getArmToken } from './azureAuthSaga';
@@ -61,6 +61,8 @@ import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 import { SortCriteria } from '../reducer/explorer';
 import { sortExplorerContents } from '../action/explorerActions';
 import { serviceTypeLabels } from '../../utils/serviceTypeLables';
+
+declare type ServicesPayload = { services: IConnectedService[], code: ServiceCodes };
 
 const getArmTokenFromState = (state: RootState): ArmTokenData => state.azureAuth;
 const geBotConfigFromState = (state: RootState): BotConfigWithPath => state.bot.activeBot;
@@ -85,14 +87,19 @@ function* launchConnectedServicePicker(action: ConnectedServiceAction<ConnectedS
   if (progressIndicatorComponent) {
     DialogService.showDialog(progressIndicatorComponent).catch();
   }
-  let services: IConnectedService[] = yield* retrieveServicesByServiceType(serviceType);
+  let payload: ServicesPayload = yield* retrieveServicesByServiceType(serviceType);
 
   if (progressIndicatorComponent) {
     DialogService.hideDialog();
   }
 
-  if (!services.length) {
-    const result = yield DialogService.showDialog(action.payload.getStartedDialog, { serviceType });
+  if (payload.code !== ServiceCodes.OK || !payload.services.length) {
+    const { getStartedDialog, authenticatedUser } = action.payload;
+    const result = yield DialogService.showDialog(getStartedDialog, {
+      serviceType,
+      authenticatedUser,
+      showNoModelsFoundContent: !payload.services.length
+    });
     // Sign up with XXXX
     if (result === 1) {
       // TODO - launch an external link
@@ -102,7 +109,7 @@ function* launchConnectedServicePicker(action: ConnectedServiceAction<ConnectedS
       yield* launchConnectedServiceEditor(action);
     }
   } else {
-    const servicesToAdd = yield* launchConnectedServicePickList(action, services, serviceType);
+    const servicesToAdd = yield* launchConnectedServicePickList(action, payload.services, serviceType);
     if (servicesToAdd) {
       const botFile: BotConfigWithPath = yield select(geBotConfigFromState);
       botFile.services.push(...servicesToAdd);
@@ -140,14 +147,13 @@ function* retrieveServicesByServiceType(serviceType: ServiceTypes): IterableIter
     throw new Error('Auth credentials do not exist.');
   }
   const { GetConnectedServicesByType } = SharedConstants.Commands.ConnectedService;
-  let payload;
+  let payload: ServicesPayload;
   try {
     payload = yield CommandServiceImpl.remoteCall(GetConnectedServicesByType, armTokenData.access_token, serviceType);
   } catch {
-    payload = { services: [] };
+    payload = { services: [], code: ServiceCodes.Error };
   }
-  const { services = [] } = payload || {};
-  return services;
+  return payload;
 }
 
 function* openConnectedServiceDeepLink(action: ConnectedServiceAction<ConnectedServicePayload>): IterableIterator<any> {
@@ -173,8 +179,8 @@ function* openConnectedServiceDeepLink(action: ConnectedServiceAction<ConnectedS
 function* openContextMenuForService(action: ConnectedServiceAction<ConnectedServicePayload>)
   : IterableIterator<any> {
   const menuItems = [
-    { label: 'Open in web portal', id: 'open' },
-    { label: 'Edit settings', id: 'edit' },
+    { label: 'Manage service', id: 'open' },
+    { label: 'Edit configuration', id: 'edit' },
     { label: 'Forget this service', id: 'forget' }
   ];
   const response = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);

@@ -26,7 +26,7 @@ export function registerCommands(commandRegistry: CommandRegistry) {
           throw new TypeError(`The ServiceTypes ${serviceType} is not a know service type`);
       }
 
-      let result = undefined;
+      let result: { services: IConnectedService[] } = undefined;
       while (true) {
         const next = it.next(result);
         if (next.done) {
@@ -44,6 +44,7 @@ export function registerCommands(commandRegistry: CommandRegistry) {
           break;
         }
       }
+      result.services = result.services.filter(service => service.type === serviceType);
       return result;
     });
 }
