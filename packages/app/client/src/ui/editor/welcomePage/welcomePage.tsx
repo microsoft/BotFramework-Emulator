@@ -150,19 +150,71 @@ class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
   private get howToBuildSection(): JSX.Element {
     return (
       <div className={styles.section}>
-
-        <ul>
-          <li><a href="https://aka.ms/BotBuilderOverview"><TruncateText>Overview</TruncateText></a></li>
-          <li><a href="https://aka.ms/Btovso"><TruncateText>GitHub Repository</TruncateText></a></li>
-          <li><a href="https://aka.ms/BotBuilderLocalDev"><TruncateText>Starting with Local
-            Development</TruncateText></a></li>
-          <li><a href="https://aka.ms/BotBuilderAZCLI"><TruncateText>Starting with Azure CLI</TruncateText></a>
-          </li>
-          <li><a href="https://aka.ms/BotBuilderIbiza">
-            <TruncateText>Starting with the Azure Portal</TruncateText>
-          </a>
-          </li>
-        </ul>
+        <div className={styles.howToBuildSection}>
+          <h3>How to build a bot</h3>
+          <div className={styles.stepContainer}>
+            <div className={styles.stepIcon}>
+              <div className={styles.buildPlan01}></div>
+            </div>
+            <dl>
+              <dt>Plan:</dt>
+              <dd>Review the bot design guidelines for best practices</dd>
+            </dl>
+          </div>
+          <div className={styles.stepContainer}>
+            <div className={styles.stepIcon}>
+              <div className={styles.buildPlan02}></div>
+            </div>
+            <dl>
+              <dt>Build:</dt>
+              <dd>
+                <a className={styles.ctaLink} href="https://github.com/Microsoft/botbuilder-tools">Download Command Line tools</a><br />
+                Create a bot from Azure or locally<br />
+                Add services such as <a className={styles.ctaLink} href="https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-howto-v4-luis?view=azure-bot-service-4.0&tabs=cs">Language Understanding (LUIS)</a>, <a className={styles.ctaLink} href="https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-howto-qna?view=azure-bot-service-4.0&tabs=cs">QnAMaker</a> and <a className={styles.ctaLink} href="https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-tutorial-dispatch?view=azure-bot-service-4.0&tabs=csaddref%2Ccsbotconfig">Dispatch</a>
+              </dd>
+            </dl>
+          </div>
+          <div className={styles.stepContainer}>
+            <div className={styles.stepIcon}>
+              <div className={styles.buildPlan03}></div>
+            </div>
+            <dl>
+              <dt className={styles.testBullet}>Test:</dt>
+              <dd>Test with the <a className={styles.ctaLink} href="https://docs.microsoft.com/en-us/azure/bot-service/bot-service-debug-emulator?view=azure-bot-service-4.0">Emulator</a> <br />
+                Test online in <a className={styles.ctaLink} href="https://docs.microsoft.com/en-us/azure/bot-service/bot-service-manage-test-webchat?view=azure-bot-service-4.0">Web Chat</a></dd>
+            </dl>
+          </div>
+          <div className={styles.stepContainer}>
+            <div className={styles.stepIcon}>
+              <div className={styles.buildPlan04}></div>
+            </div>
+            <dl>
+              <dt>Publish:</dt>
+              <dd>
+                Publish directly to Azure or<br />
+                Use <a className={styles.ctaLink} href="https://docs.microsoft.com/en-us/azure/bot-service/bot-service-build-continuous-deployment?view=azure-bot-service-4.0">Continuous Deployment</a>
+              </dd>
+            </dl>
+          </div>
+          <div className={styles.stepContainer}>
+            <div className={styles.stepIcon}>
+              <div className={styles.buildPlan05}></div>
+            </div>
+            <dl>
+              <dt>Connect:</dt>
+              <dd>Connect to <a className={styles.ctaLink} href="https://docs.microsoft.com/en-us/azure/bot-service/bot-service-manage-channels?view=azure-bot-service-4.0">channels</a></dd>
+            </dl>
+          </div>
+          <div className={styles.stepContainer}>
+            <div className={styles.stepIcon}>
+              <div className={styles.buildPlan06}></div>
+            </div>
+            <dl>
+              <dt>Evaluate:</dt>
+              <dd><a className={styles.ctaLink} href="https://docs.microsoft.com/en-us/azure/bot-service/bot-service-manage-analytics?view=azure-bot-service-4.0">View analytics</a></dd>
+            </dl>
+          </div>
+        </div>
       </div>
     );
   }

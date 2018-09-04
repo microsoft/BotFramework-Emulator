@@ -52,6 +52,7 @@
 }
 
 .noBots {
+  background-color: transparent;
   font-style: italic;
   padding: 0 10px;
 }
@@ -156,7 +157,6 @@
   color: var(--focused-selected-list-item-bg);
   cursor: pointer;
   font-weight: 600;
-  // margin-left: 8px;
   margin: 2px 2px;
   white-space: normal;
 
@@ -167,4 +167,103 @@
     &:hover {
       text-decoration: underline;
     }
+}
+
+.how-to-build-section {
+  > h3 {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.35px;
+    line-height: 16px;
+    margin-left: 30px;
+    text-transform: uppercase;
+  }
+
+  .step-container {
+    display: flex;
+    align-items: stretch;
+    position: relative;
+
+      .step-icon {
+        display: flex;
+        height: 37.5px;
+        margin-right: 15px;
+        width: 37.5px;
+
+        > div {
+          height: 30px;
+          width: 30px;
+          background-repeat: no-repeat;
+        }
+
+        > .build-plan01 {
+          background-image: url('../../media/build_plan/bp_ic_01.svg');
+        }
+
+        > .build-plan02 {
+          background-image: url('../../media/build_plan/bp_ic_02.svg');
+        }
+
+        > .build-plan03 {
+          background-image: url('../../media/build_plan/bp_ic_03.svg');
+        }
+
+        > .build-plan04 {
+          background-image: url('../../media/build_plan/bp_ic_04.svg');
+        }
+
+        > .build-plan05 {
+          background-image: url('../../media/build_plan/bp_ic_05.svg');
+        }
+
+        > .build-plan06 {
+          background-image: url('../../media/build_plan/bp_ic_06.svg');
+        }
+      }
+      dl {
+        border-left: 1px solid var(--welcome-how-to-border);
+        display: block;
+        padding: 0 24px;
+        margin: 0;
+
+        > dt::before {
+          background-color: var(--welcome-page-bg);
+          border: 1px solid var(--welcome-how-to-border);
+          border-radius: 100%;
+          content: '';
+          left: 47px;
+          height: 12px;
+          position: absolute;
+          width: 12px;
+        }
+
+        > .test-bullet::before {
+          background-color: var(--welcome-how-to-test);
+        }
+
+
+        > dt {
+          display: block;
+          font-size: 13px;
+          font-weight: bold;
+          line-height: 18px;
+        }
+
+        > dd {
+          font-size: 13px;
+          line-height: 18px;
+          margin-left: 0;
+          padding-bottom: 22px;
+
+          > .ctaLink {
+            margin: 0;
+          }
+        }
+      }
+  }
+
+  .step-container:last-child dl {
+    border-left: 1px solid transparent;
+  }
+
 }

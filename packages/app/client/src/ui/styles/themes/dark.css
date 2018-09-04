@@ -129,6 +129,8 @@ html {
   /* Welcome page */
   --welcome-page-bg: var(--tab-active-tab-bg);
   --welcome-page-ver: var(--neutral-8);
+  --welcome-how-to-border: var(--neutral-6);
+  --welcome-how-to-test: var(--p-button-bg);
   --my-bots-well-bg: var(--neutral-13);
   --my-bots-well-border: 0;
   --my-bots-entry-bg: var(--neutral-12);
