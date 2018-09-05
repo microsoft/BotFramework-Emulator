@@ -9,6 +9,7 @@
   font-size: 19px;
   line-height: 26px;
   margin-bottom: 32px;
+  padding-left: 2px;
 }
 
 .section {
@@ -52,7 +53,6 @@
 }
 
 .noBots {
-  background-color: transparent;
   font-style: italic;
   padding: 0 10px;
 }
@@ -156,12 +156,14 @@
   border: 1px solid transparent;
   color: var(--focused-selected-list-item-bg);
   cursor: pointer;
+  font-family: var(--default-font-family);
   font-weight: 600;
-  margin: 2px 2px;
+  padding: 0;
   white-space: normal;
 
     &:focus {
       outline: var(--p-button-border-focus);
+
     }
 
     &:hover {
@@ -175,7 +177,7 @@
     font-weight: 600;
     letter-spacing: 0.35px;
     line-height: 16px;
-    margin-left: 30px;
+    margin: 0 0 24px 0;
     text-transform: uppercase;
   }
 
@@ -186,9 +188,9 @@
 
       .step-icon {
         display: flex;
-        height: 37.5px;
+        height: 38px;
         margin-right: 15px;
-        width: 37.5px;
+        width: 38px;
 
         > div {
           height: 30px;
@@ -254,10 +256,6 @@
           line-height: 18px;
           margin-left: 0;
           padding-bottom: 22px;
-
-          > .ctaLink {
-            margin: 0;
-          }
         }
       }
   }
@@ -265,5 +263,8 @@
   .step-container:last-child dl {
     border-left: 1px solid transparent;
   }
+}
 
+.spacing {
+  padding: 0 0 2px 2px;
 }

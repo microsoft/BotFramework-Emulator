@@ -62,10 +62,10 @@ class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
 
     return (
       <GenericDocument>
-        <LargeHeader>Bot Framework Emulator</LargeHeader>
+        <LargeHeader className={styles.spacing}>Bot Framework Emulator</LargeHeader>
         <span className={styles.versionNumber}>Version 4</span>
         <Row>
-          <Column>
+          <Column className={styles.spacing}>
             {startSection}
             {myBotsSection}
             {signInSection}
@@ -85,7 +85,13 @@ class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
       <div className={styles.section}>
         <SmallHeader>Start by testing your bot</SmallHeader>
         <span>Start talking to your bot by connecting to an endpoint or by opening a
-          bot saved locally.<br /> More about working locally with a bot.</span>
+          bot saved locally.<br />
+          <a
+            className={styles.ctaLink}
+            href="https://aka.ms/bot-framework-emulator-create-bot-locally"
+          >More about working locally with a bot.
+          </a>
+        </span>
         <Row>
           <PrimaryButton className={styles.openBot} text="Open Bot" onClick={onOpenBotClick} />
         </Row>
@@ -133,7 +139,9 @@ class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
           (accessToken && !accessToken.startsWith('invalid')) ?
             <button className={styles.ctaLink} onClick={() => this.signOutWithAzure()}>Sign out</button>
             :
-            <button className={styles.ctaLink} onClick={() => this.signInWithAzure()}>Sign in with your Azure account.</button>
+            <button className={styles.ctaLink} onClick={() => this.signInWithAzure()}>
+              Sign in with your Azure account.
+            </button>
         }</div>
     );
   }
@@ -143,8 +151,8 @@ class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
   }
 
   private signOutWithAzure() {
-    CommandServiceImpl.call(Azure.SignUserOutOfAzure)
-    CommandServiceImpl.call(UI.InvalidateAzureArmToken)
+    CommandServiceImpl.call(Azure.SignUserOutOfAzure);
+    CommandServiceImpl.call(UI.InvalidateAzureArmToken);
   }
 
   private get howToBuildSection(): JSX.Element {
@@ -158,7 +166,16 @@ class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
             </div>
             <dl>
               <dt>Plan:</dt>
-              <dd>Review the bot design guidelines for best practices</dd>
+              <dd>
+                Review the bot&nbsp;
+                <a
+                  className={styles.ctaLink}
+                  href="https://aka.ms/bot-framework-emulator-design-guidelines"
+                >
+                  design guidelines&nbsp;
+                </a>
+                for best practices&nbsp;
+              </dd>
             </dl>
           </div>
           <div className={styles.stepContainer}>
@@ -168,9 +185,45 @@ class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
             <dl>
               <dt>Build:</dt>
               <dd>
-                <a className={styles.ctaLink} href="https://github.com/Microsoft/botbuilder-tools">Download Command Line tools</a><br />
-                Create a bot from Azure or locally<br />
-                Add services such as <a className={styles.ctaLink} href="https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-howto-v4-luis?view=azure-bot-service-4.0&tabs=cs">Language Understanding (LUIS)</a>, <a className={styles.ctaLink} href="https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-howto-qna?view=azure-bot-service-4.0&tabs=cs">QnAMaker</a> and <a className={styles.ctaLink} href="https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-tutorial-dispatch?view=azure-bot-service-4.0&tabs=csaddref%2Ccsbotconfig">Dispatch</a>
+                <a
+                  className={styles.ctaLink}
+                  href="https://aka.ms/bot-framework-emulator-design-guidelines"
+                >
+                  Download Command Line tools&nbsp;
+                </a><br />
+                Create a bot&nbsp;
+                <a
+                  className={styles.ctaLink}
+                  href="https://aka.ms/bot-framework-emulator-create-bot-azure"
+                >
+                  from Azure
+                </a> or&nbsp;
+                <a
+                  className={styles.ctaLink}
+                  href="https://aka.ms/bot-framework-emulator-create-bot-locally"
+                >
+                  locally&nbsp;
+                </a><br />
+                Add services such as<br />
+                <a
+                  className={styles.ctaLink}
+                  href="https://aka.ms/bot-framework-emulator-LUIS-docs-home"
+                >
+                  Language Understanding (LUIS)
+                </a>,&nbsp;
+                <a
+                  className={styles.ctaLink}
+                  href="https://aka.ms/bot-framework-emulator-qna-docs-home"
+                >
+                  QnAMaker&nbsp;
+                </a>
+                and&nbsp;
+                <a
+                  className={styles.ctaLink}
+                  href="https://aka.ms/bot-framework-emulator-create-dispatch"
+                >
+                  Dispatch
+                </a>
               </dd>
             </dl>
           </div>
@@ -180,8 +233,21 @@ class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
             </div>
             <dl>
               <dt className={styles.testBullet}>Test:</dt>
-              <dd>Test with the <a className={styles.ctaLink} href="https://docs.microsoft.com/en-us/azure/bot-service/bot-service-debug-emulator?view=azure-bot-service-4.0">Emulator</a> <br />
-                Test online in <a className={styles.ctaLink} href="https://docs.microsoft.com/en-us/azure/bot-service/bot-service-manage-test-webchat?view=azure-bot-service-4.0">Web Chat</a></dd>
+              <dd>
+                Test with the&nbsp;
+                <a
+                  className={styles.ctaLink}
+                  href="https://aka.ms/bot-framework-emulator-debug-with-emulator"
+                >
+                  Emulator
+                </a> <br />
+                Test online in&nbsp;
+                <a
+                  className={styles.ctaLink}
+                  href="https://aka.ms/bot-framework-emulator-debug-with-web-chat"
+                >
+                  Web Chat
+                </a></dd>
             </dl>
           </div>
           <div className={styles.stepContainer}>
@@ -192,7 +258,12 @@ class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
               <dt>Publish:</dt>
               <dd>
                 Publish directly to Azure or<br />
-                Use <a className={styles.ctaLink} href="https://docs.microsoft.com/en-us/azure/bot-service/bot-service-build-continuous-deployment?view=azure-bot-service-4.0">Continuous Deployment</a>
+                Use <a
+                  className={styles.ctaLink}
+                  href="https://aka.ms/bot-framework-emulator-publish-continuous-deployment"
+                >
+                  Continuous Deployment&nbsp;
+                </a>
               </dd>
             </dl>
           </div>
@@ -202,7 +273,15 @@ class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
             </div>
             <dl>
               <dt>Connect:</dt>
-              <dd>Connect to <a className={styles.ctaLink} href="https://docs.microsoft.com/en-us/azure/bot-service/bot-service-manage-channels?view=azure-bot-service-4.0">channels</a></dd>
+              <dd>
+                Connect to&nbsp;
+                <a
+                  className={styles.ctaLink}
+                  href="https://aka.ms/bot-framework-emulator-connect-channels"
+                >
+                  channels&nbsp;
+                </a>
+              </dd>
             </dl>
           </div>
           <div className={styles.stepContainer}>
@@ -211,7 +290,14 @@ class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
             </div>
             <dl>
               <dt>Evaluate:</dt>
-              <dd><a className={styles.ctaLink} href="https://docs.microsoft.com/en-us/azure/bot-service/bot-service-manage-analytics?view=azure-bot-service-4.0">View analytics</a></dd>
+              <dd>
+                <a
+                  className={styles.ctaLink}
+                  href="https://aka.ms/bot-framework-emulator-bot-analytics"
+                >
+                  View analytics
+                </a>
+              </dd>
             </dl>
           </div>
         </div>

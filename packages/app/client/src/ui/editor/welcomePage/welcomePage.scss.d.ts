@@ -20,3 +20,4 @@ export const buildPlan04: string;
 export const buildPlan05: string;
 export const buildPlan06: string;
 export const testBullet: string;
+export const spacing: string;
