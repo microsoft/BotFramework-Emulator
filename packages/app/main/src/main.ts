@@ -372,6 +372,16 @@ const createMainWindow = async () => {
       }
     }
   });
+
+  mainWindow.browserWindow.on('close', async function (event: Event) {
+    const { azure } = getSettings();
+    if (azure.signedInUser && !azure.persistLogin) {
+      event.preventDefault();
+      await mainWindow.commandService.call(SharedConstants.Commands.Azure.SignUserOutOfAzure, false);
+    }
+    saveSettings<PersistentSettings>('server.json', getSettings());
+    Electron.app.quit();
+  });
 };
 
 function loadMainPage() {
@@ -407,18 +417,6 @@ Electron.app.on('ready', function () {
       createMainWindow();
     }
   }
-});
-
-Electron.app.on('window-all-closed', async function (event: Event) {
-  // if (process.platform !== 'darwin') {
-  const { azure } = getSettings();
-  if (azure.signedInUser && !azure.persistLogin) {
-    event.preventDefault();
-    await mainWindow.commandService.call(SharedConstants.Commands.Azure.SignUserOutOfAzure, false);
-  }
-  saveSettings<PersistentSettings>('server.json', getSettings());
-  Electron.app.quit();
-  // }
 });
 
 Electron.app.on('activate', async function () {

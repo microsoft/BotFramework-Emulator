@@ -38,7 +38,7 @@ import { Splitter } from '@bfemulator/ui-react';
 import { ExplorerBar } from './explorer';
 import { MDI } from './mdi';
 import { NavBar } from './navBar';
-import { DialogHost, TabManager } from '../dialogs';
+import { DialogHost, TabManagerContainer } from '../dialogs';
 import * as Constants from '../../constants';
 import { StatusBar } from './statusBar/statusBar';
 import { StoreVisualizer } from '../debug/storeVisualizer';
@@ -119,7 +119,7 @@ export class Main extends React.Component<MainProps, MainState> {
               { workbenchChildren }
             </Splitter>
           </div>
-          <TabManager disabled={ false }/>
+          <TabManagerContainer disabled={ false }/>
         </div>
         { !this.props.presentationModeEnabled && <StatusBar/> }
         <DialogHost/>

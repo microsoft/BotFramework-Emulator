@@ -19,13 +19,18 @@ jest.mock('electron', () => ({
   BrowserWindow: class MockBrowserWindow {
     public static reporters = [];
     public listeners: { type: string, handler: (event: any) => void }[] = [] as any;
-    public webContents = {history: ['http://someotherUrl', `http://localhost/#t=13&id_token=${mockArmToken}`]};
+    public webContents = { history: ['http://someotherUrl', `http://localhost/#t=13&id_token=${mockArmToken}`] };
+
     private static report(...args: any[]) {
       this.reporters.forEach(r => r(args));
     }
 
     constructor(...args: any[]) {
       MockBrowserWindow.report('constructor', ...args);
+    }
+
+    setMenu() {
+      // no-op
     }
 
     addListener(type: string, handler: (event: any) => void) {
@@ -116,7 +121,7 @@ describe('The azureAuthWorkflowService', () => {
         expect(reportedValues.length).toBe(3);
       }
 
-      if (ct === 2 ) {
+      if (ct === 2) {
         expect(value.access_token).toBe(mockArmToken);
       }
       ct++;
