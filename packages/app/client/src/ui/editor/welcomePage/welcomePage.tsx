@@ -32,15 +32,10 @@
 //
 
 import * as React from 'react';
-import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
+import { BotInfo } from '@bfemulator/app-shared';
 import * as styles from './welcomePage.scss';
 import { Column, LargeHeader, PrimaryButton, Row, SmallHeader, TruncateText } from '@bfemulator/ui-react';
 import { GenericDocument } from '../../layout';
-import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
-import { connect } from 'react-redux';
-import { RootState } from '../../../data/store';
-
-const { Azure, UI } = SharedConstants.Commands;
 
 export interface WelcomePageProps {
   accessToken?: string;
@@ -50,9 +45,11 @@ export interface WelcomePageProps {
   onOpenBotClick?: () => void;
   onBotClick?: (_e: any, path: string) => void;
   onDeleteBotClick?: (_e: any, path: string) => void;
+  signInWithAzure?: () => void;
+  signOutWithAzure?: () => void;
 }
 
-class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
+export class WelcomePage extends React.Component<WelcomePageProps, {}> {
   constructor(props: WelcomePageProps) {
     super(props);
   }
@@ -76,6 +73,18 @@ class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
         </Row>
       </GenericDocument>
     );
+  }
+
+  private onBotClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const { index } = event.currentTarget.dataset;
+    const bot = this.props.recentBots[index];
+    this.props.onBotClick(event, bot.path);
+  }
+
+  private onDeleteBotClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const { index } = event.currentTarget.dataset;
+    const bot = this.props.recentBots[index];
+    this.props.onDeleteBotClick(event, bot.path);
   }
 
   private get startSection(): JSX.Element {
@@ -104,22 +113,20 @@ class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
   }
 
   private get myBotsSection(): JSX.Element {
-    const { onBotClick, onDeleteBotClick } = this.props;
-
     return (
       <div className={styles.section}>
         <SmallHeader>My Bots</SmallHeader>
         <ul className={`${styles.recentBotsList} ${styles.well}`}>
           {
             this.props.recentBots && this.props.recentBots.length ?
-              this.props.recentBots.slice(0, 10).map(bot => bot &&
+              this.props.recentBots.slice(0, 10).map((bot, index) => bot &&
                 <li className={styles.recentBot} key={bot.path}>
-                  <button onClick={ev => onBotClick(ev, bot.path)}
+                  <button data-index={index} onClick={this.onBotClick}
                     title={bot.path}><TruncateText>{bot.displayName}</TruncateText></button>
                   <TruncateText className={styles.recentBotPath}
                     title={bot.path}>{bot.path}</TruncateText>
                   <div className={styles.recentBotActionBar}>
-                    <button onClick={ev => onDeleteBotClick(ev, bot.path)}></button>
+                    <button data-index={index} onClick={this.onDeleteBotClick}></button>
                   </div>
                 </li>)
               :
@@ -131,28 +138,19 @@ class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
   }
 
   private get signInSection(): JSX.Element {
-    const { accessToken } = this.props;
+    const { accessToken, signInWithAzure, signOutWithAzure } = this.props;
 
     return (
       <div>
         {
           (accessToken && !accessToken.startsWith('invalid')) ?
-            <button className={styles.ctaLink} onClick={() => this.signOutWithAzure()}>Sign out</button>
+            <button className={styles.ctaLink} onClick={signOutWithAzure}>Sign out</button>
             :
-            <button className={styles.ctaLink} onClick={() => this.signInWithAzure()}>
+            <button className={styles.ctaLink} onClick={signInWithAzure}>
               Sign in with your Azure account.
             </button>
         }</div>
     );
-  }
-
-  private signInWithAzure() {
-    CommandServiceImpl.call(UI.SignInToAzure);
-  }
-
-  private signOutWithAzure() {
-    CommandServiceImpl.call(Azure.SignUserOutOfAzure);
-    CommandServiceImpl.call(UI.InvalidateAzureArmToken);
   }
 
   private get howToBuildSection(): JSX.Element {
@@ -305,9 +303,3 @@ class WelcomePageComponent extends React.Component<WelcomePageProps, {}> {
     );
   }
 }
-
-const mapStateToProps = (state: RootState): WelcomePageProps => ({
-  accessToken: state.azureAuth.access_token
-});
-
-export const WelcomePage = connect(mapStateToProps)(WelcomePageComponent) as any;

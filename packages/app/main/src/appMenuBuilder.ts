@@ -183,18 +183,16 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     const settingsState = settingsStore.getState();
 
     const { signedInUser } = settingsState.azure;
-    const azureMenuItemLabel = signedInUser ? `Sign out (${signedInUser})` : 'Sign in';
+    const azureMenuItemLabel = signedInUser ? `Sign out (${signedInUser})` : 'Sign in with Azure';
     subMenu.push({ type: 'separator' });
     subMenu.push({
       label: azureMenuItemLabel,
-      click: () => {
+      click: async () => {
         if (signedInUser) {
-          return Promise.all([
-            mainWindow.commandService.call(Azure.SignUserOutOfAzure),
-            mainWindow.commandService.remoteCall(UI.InvalidateAzureArmToken)
-          ]);
+          await mainWindow.commandService.call(Azure.SignUserOutOfAzure);
+          await mainWindow.commandService.remoteCall(UI.InvalidateAzureArmToken);
         } else {
-          return mainWindow.commandService.remoteCall(UI.SignInToAzure);
+          await mainWindow.commandService.remoteCall(UI.SignInToAzure);
         }
       }
     });
@@ -209,7 +207,11 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
             label: t.name,
             type: 'checkbox',
             checked: theme === t.name,
-            click: settingsStore.dispatch.bind(settingsStore, rememberTheme(t.name))
+            click: async () => {
+              settingsStore.dispatch(rememberTheme(t.name));
+
+              await mainWindow.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
+            }
           }
         ))
       }
