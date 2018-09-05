@@ -100,9 +100,7 @@ export class AzureAuthWorkflowService {
         resolve(result);
       };
       browserWindow.addListener('close', () => resolve({ error: 'canceled' } as AuthResponse));
-      browserWindow.addListener('page-title-updated', async () => {
-        poller();
-      });
+      browserWindow.addListener('page-title-updated', poller);
       interval = setInterval(poller, 500); // Backup if everything else fails
     });
 

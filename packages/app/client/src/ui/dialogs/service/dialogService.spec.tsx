@@ -27,7 +27,7 @@ describe('The DialogService', () => {
     expect(result).toBeNull();
   });
 
-  it('should render the component to the host element and notify the store when "shoeDialog" is called', async () => {
+  it('should render the component to the host element and notify the store when "showDialog" is called', async () => {
     const hostElement = document.createElement('div');
     const dispatchSpy = jest.spyOn(mockStore, 'dispatch');
     let renderedToElementEvent = undefined;
