@@ -1,0 +1,138 @@
+import { combineReducers, createStore } from 'redux';
+import { bot } from '../botData/reducers/bot';
+import { SharedConstants } from '@bfemulator/app-shared';
+import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
+import * as helpers from '../botHelpers';
+import { getBotInfoByPath, loadBotWithRetry, pathExistsInRecentBots } from '../botHelpers';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared/built';
+import { registerCommands } from './botCommands';
+import { botProjectFileWatcher } from '../watchers';
+import { mainWindow } from '../main';
+import { State } from '../botData/state';
+import * as store from '../botData/store';
+import { setActive } from '../botData/actions/botActions';
+import { emulator } from '../emulator';
+
+let mockStore;
+(store as any).getStore = function () {
+  return mockStore || (mockStore = createStore(combineReducers({ bot })));
+};
+jest.mock('../botHelpers', () => ({
+    saveBot: async () => void(0),
+    patchBotsJson: async () => true,
+    pathExistsInRecentBots: () => true,
+    getBotInfoByPath: () => ({ secret: 'secret' }),
+    loadBotWithRetry: () => mockBot,
+    getActiveBot: () => mockBot
+  }
+));
+jest.mock('../utils/ensureStoragePath', () => ({
+  ensureStoragePath: () => ''
+}));
+jest.mock('../emulator', () => ({
+  emulator: {
+    framework: {
+      server: {
+        botEmulator: {
+          facilities: {
+            endpoints: {
+              reset: () => null,
+              push: () => null
+            }
+          }
+        }
+      }
+    }
+  }
+}));
+const mockCommandRegistry = new CommandRegistryImpl();
+const mockBot = BotConfigWithPathImpl.fromJSON({
+  'path': 'some/path',
+  'name': 'AuthBot',
+  'description': '',
+  'secretKey': '',
+  'services': [
+    {
+      'appId': '4f8fde3f-48d3-4d8a-a954-393efe39809e',
+      'id': 'cded37c0-83f2-11e8-ac6d-b7172cd24b28',
+      'type': 'endpoint',
+      'appPassword': 'REDACTED',
+      'endpoint': 'http://localhost:55697/api/messages',
+      'name': 'authsample'
+    }
+  ]
+} as any);
+registerCommands(mockCommandRegistry);
+jest.mock('../main', () => ({
+  mainWindow: {
+    commandService: {
+      call: async () => true
+    }
+  }
+}));
+
+jest.mock('../watchers', () => ({
+  botProjectFileWatcher: {
+    watch: () => true
+  }
+}));
+
+const { Bot } = SharedConstants.Commands;
+describe('The botCommands', () => {
+
+  it('should create/save a new bot', async () => {
+    const botToSave = BotConfigWithPathImpl.fromJSON(mockBot as any);
+    const patchBotInfoSpy = jest.spyOn(helpers, 'patchBotsJson');
+    const saveBotSpy = jest.spyOn(helpers, 'saveBot');
+
+    const mockBotInfo = {
+      path: botToSave.path,
+      displayName: 'AuthBot',
+      secret: 'secret'
+    };
+    const command = mockCommandRegistry.getCommand(Bot.Create);
+    const result = await command.handler(botToSave, 'secret');
+    expect(patchBotInfoSpy).toHaveBeenCalledWith(botToSave.path, mockBotInfo);
+    expect(saveBotSpy).toHaveBeenCalledWith(botToSave);
+    expect(result).toEqual(botToSave);
+  });
+
+  it('should open a bot', async () => {
+    const pathExistsInRecentBotsSpy = jest.spyOn(helpers, 'pathExistsInRecentBots').mockReturnValue(true);
+    const getBotInfoByPathSpy = jest.spyOn(helpers, 'getBotInfoByPath').mockReturnValue({ secret: 'secret' });
+    const loadBotWithRetrySpy = jest.spyOn(helpers, 'loadBotWithRetry').mockResolvedValue(mockBot);
+    const command = mockCommandRegistry.getCommand(Bot.Open);
+    const result = await command.handler('bot/path', 'secret');
+
+    expect(pathExistsInRecentBotsSpy).toHaveBeenCalledWith('bot/path');
+    expect(getBotInfoByPathSpy).toHaveBeenCalledWith('bot/path');
+    expect(loadBotWithRetrySpy).toHaveBeenCalledWith('bot/path', 'secret');
+    expect(result).toEqual(mockBot);
+  });
+
+  it('should set the active bot', async () => {
+    const botProjectFileWatcherSpy = jest.spyOn(botProjectFileWatcher, 'watch');
+    const commandServiceSpy = jest.spyOn(mainWindow.commandService, 'call');
+    const command = mockCommandRegistry.getCommand(Bot.SetActive);
+    const result = await command.handler(mockBot);
+
+    expect(botProjectFileWatcherSpy).toHaveBeenCalledWith(mockBot.path);
+    expect(commandServiceSpy).toHaveBeenCalledWith(Bot.RestartEndpointService);
+    const state: State = store.getStore().getState() as State;
+    expect(state.bot.activeBot).toEqual(mockBot);
+    expect(state.bot.currentBotDirectory).toBe('some');
+    expect(result).toEqual('some');
+  });
+
+  it('should restart the endpoint service', async () => {
+    store.getStore().dispatch(setActive(mockBot));
+    const resetSpy = jest.spyOn(emulator.framework.server.botEmulator.facilities.endpoints, 'reset');
+    const pushSpy = jest.spyOn(emulator.framework.server.botEmulator.facilities.endpoints, 'push');
+    const command = mockCommandRegistry.getCommand(Bot.RestartEndpointService);
+    const result = await command.handler();
+
+    expect(resetSpy).toHaveBeenCalled();
+    expect(pushSpy).toHaveBeenCalled();
+    expect(result).toBeUndefined();
+  });
+});

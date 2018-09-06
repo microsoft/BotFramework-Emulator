@@ -51,38 +51,33 @@ import * as path from 'path';
 import { getStore } from '../botData/store';
 import { botProjectFileWatcher, chatWatcher, transcriptsWatcher } from '../watchers';
 
-const store = getStore();
-
 /** Registers bot commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
   const { Bot } = SharedConstants.Commands;
 
   // ---------------------------------------------------------------------------
   // Create a bot
-  commandRegistry.registerCommand(Bot.Create,
-    async (
-      bot: BotConfigWithPath,
-      secret: string
-    ): Promise<BotConfigWithPath> => {
-      // getStore and add bot entry to bots.json
-      const botsJsonEntry: BotInfo = {
-        path: bot.path,
-        displayName: getBotDisplayName(bot),
-        secret
-      };
-      await patchBotsJson(bot.path, botsJsonEntry);
+  commandRegistry.registerCommand(Bot.Create, async (bot: BotConfigWithPath, secret: string)
+    : Promise<BotConfigWithPath> => {
+    // getStore and add bot entry to bots.json
+    const botsJsonEntry: BotInfo = {
+      path: bot.path,
+      displayName: getBotDisplayName(bot),
+      secret
+    };
+    await patchBotsJson(bot.path, botsJsonEntry);
 
-      // save the bot
-      try {
-        await saveBot(bot);
-      } catch (e) {
-        // TODO: make sure these are surfaced on the client side and caught so we can act on them
-        console.error(`${Bot.Create}: Error trying to save bot: ${e}`);
-        throw e;
-      }
+    // save the bot
+    try {
+      await saveBot(bot);
+    } catch (e) {
+      // TODO: make sure these are surfaced on the client side and caught so we can act on them
+      console.error(`${Bot.Create}: Error trying to save bot: ${e}`);
+      throw e;
+    }
 
-      return bot;
-    });
+    return bot;
+  });
 
   // ---------------------------------------------------------------------------
   // Save bot file and cause a bots list write
@@ -92,36 +87,33 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Opens a bot file at specified path and returns the bot
-  commandRegistry.registerCommand(Bot.Open,
-    async (
-      botPath: string,
-      secret?: string
-    ): Promise<BotConfigWithPath> => {
-      // try to get the bot secret from bots.json
-      const botInfo = pathExistsInRecentBots(botPath) ? getBotInfoByPath(botPath) : null;
-      if (botInfo && botInfo.secret) {
-        secret = botInfo.secret;
-      }
+  commandRegistry.registerCommand(Bot.Open, async (botPath: string, secret?: string)
+    : Promise<BotConfigWithPath> => {
+    // try to get the bot secret from bots.json
+    const botInfo = pathExistsInRecentBots(botPath) ? getBotInfoByPath(botPath) : null;
+    if (botInfo && botInfo.secret) {
+      secret = botInfo.secret;
+    }
 
-      // load the bot (decrypt with secret if we were able to get it)
-      let bot: BotConfigWithPath;
-      try {
-        bot = await loadBotWithRetry(botPath, secret);
-      } catch (e) {
-        const errMessage = `Failed to open the bot with error: ${e.message}`;
-        await Electron.dialog.showMessageBox(mainWindow.browserWindow, {
-          type: 'error',
-          message: errMessage,
-        });
-        throw new Error(errMessage);
-      }
-      if (!bot) {
-        // user couldn't provide correct secret, abort
-        throw new Error('No secret provided to decrypt encrypted bot.');
-      }
+    // load the bot (decrypt with secret if we were able to get it)
+    let bot: BotConfigWithPath;
+    try {
+      bot = await loadBotWithRetry(botPath, secret);
+    } catch (e) {
+      const errMessage = `Failed to open the bot with error: ${e.message}`;
+      await Electron.dialog.showMessageBox(mainWindow.browserWindow, {
+        type: 'error',
+        message: errMessage,
+      });
+      throw new Error(errMessage);
+    }
+    if (!bot) {
+      // user couldn't provide correct secret, abort
+      throw new Error('No secret provided to decrypt encrypted bot.');
+    }
 
-      return bot;
-    });
+    return bot;
+  });
 
   // ---------------------------------------------------------------------------
   // Set active bot
@@ -130,6 +122,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     await botProjectFileWatcher.watch(bot.path);
 
     // set active bot and active directory
+    const store = getStore();
     const botDirectory = path.dirname(bot.path);
     store.dispatch(BotActions.setActive(bot));
     store.dispatch(BotActions.setDirectory(botDirectory));
@@ -181,6 +174,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // Close active bot (called from client-side)
   commandRegistry.registerCommand(Bot.Close, (): void => {
     botProjectFileWatcher.unwatch();
+    const store = getStore();
     store.dispatch(BotActions.close());
   });
 
