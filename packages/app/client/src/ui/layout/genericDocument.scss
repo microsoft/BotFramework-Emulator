@@ -8,6 +8,7 @@
   min-width: 480px;
   overflow-x: hidden;
   overflow-y: auto;
+  background-color: var(--welcome-page-bg);
   & > .genericDocContent {
     width: 90%;
     max-width: 1200px;

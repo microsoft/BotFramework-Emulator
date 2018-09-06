@@ -33,13 +33,14 @@
 
 // import { hot } from 'react-hot-loader';
 import { connect } from 'react-redux';
-import { WelcomePage as WelcomePageComp, WelcomePageProps } from './welcomePage';
+import { WelcomePage, WelcomePageProps } from './welcomePage';
 import { RootState } from '../../../data/store';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { SharedConstants } from '@bfemulator/app-shared';
 
 function mapStateToProps(state: RootState): WelcomePageProps {
   return {
+    accessToken: state.azureAuth.access_token,
     recentBots: state.bot.botFiles
   };
 }
@@ -58,9 +59,16 @@ function mapDispatchToProps(): WelcomePageProps {
     },
     onDeleteBotClick: (_e: any, path: string) => {
       CommandServiceImpl.remoteCall(Commands.Bot.RemoveFromBotList, path).catch();
+    },
+    signInWithAzure: () => {
+      CommandServiceImpl.call(Commands.UI.SignInToAzure).catch();
+    },
+    signOutWithAzure: () => {
+      CommandServiceImpl.call(Commands.Azure.SignUserOutOfAzure).catch();
+      CommandServiceImpl.call(Commands.UI.InvalidateAzureArmToken).catch();
     }
   };
 }
 
 // export const WelcomePage = connect(mapStateToProps, mapDispatchToProps)(hot(module)(WelcomePageComp)) as any;
-export const WelcomePage = connect(mapStateToProps, mapDispatchToProps)(WelcomePageComp);
+export const WelcomePageContainer = connect(mapStateToProps, mapDispatchToProps)(WelcomePage);
