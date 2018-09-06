@@ -38,3 +38,62 @@
   font-size: 11px;
   line-height: 11px;
 }
+
+.arrow {
+  position: relative;
+  padding-right: 20px;
+  margin-top: 28px;
+  display: inline-block;
+  text-decoration: none;
+  &::before {
+    content: '';
+    position: absolute;
+    border-left: 1px solid blue;
+    width: 1px;
+    right: 0;
+    bottom: 3px;
+    height: 8px;
+    transform: skewX(-45deg);
+    transition: transform .25s ease-out;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    height: 8px;
+    border-right: 1px solid blue;
+    transform: skewX(45deg);
+    width: 1px;
+    right: 9.5px;
+    bottom: 3px;
+    transition: transform .25s ease-out;
+  }
+}
+
+.arrowExpanded {
+  &::before {
+    transform: skewX(45deg);
+  }
+
+  &::after {
+    transform: skewX(-45deg);
+  }
+}
+
+.absContent {
+  height: 0;
+  transition: height .25s ease-out;
+  overflow: hidden;
+}
+
+.absTextFieldRow {
+  > div {
+    width: 100%;
+    > div:first-child {
+      margin-right: 5px;
+    }
+    > div:last-child {
+      margin-left: 5px;
+    }
+  }
+}

@@ -126,6 +126,7 @@ export class AzureAuthWorkflowService {
       height: 366,
       webPreferences: { contextIsolation: true, nativeWindowOpen: true }
     });
+    browserWindow.setMenu(null);
     const { authorization_endpoint: endpoint } = await this.getConfig();
     const state = uuidv4();
     const requestId = uuidv4();
@@ -161,6 +162,7 @@ export class AzureAuthWorkflowService {
       height: 367,
       webPreferences: { contextIsolation: true, nativeWindowOpen: true }
     });
+    browserWindow.setMenu(null);
     const redirectUri = 'http://localhost:3000/botframework-emulator';
     const bits = [
       `https://login.microsoftonline.com/common/oauth2/logout/?post_logout_redirect_uri=${redirectUri}`,
