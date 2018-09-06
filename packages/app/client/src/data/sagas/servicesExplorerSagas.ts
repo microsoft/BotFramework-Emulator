@@ -254,8 +254,22 @@ function* launchConnectedServiceEditor(action: ConnectedServiceAction<ConnectedS
 }
 
 function openLuisDeepLink(luisService: ILuisService): Promise<any> {
-  const { appId, version } = luisService;
-  const link = `https://www.luis.ai/applications/${appId}/versions/${version}/build`;
+  const { appId, version, region } = luisService;
+  let regionPrefix: string;
+  switch (region) {
+    case 'westeurope':
+      regionPrefix = 'eu.';
+      break;
+
+    case 'australiaeast':
+      regionPrefix = 'au.';
+      break;
+
+    default:
+      regionPrefix = '';
+      break;
+  }
+  const link = `https://www.${regionPrefix}luis.ai/applications/${appId}/versions/${version}/build`;
   return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, link);
 }
 

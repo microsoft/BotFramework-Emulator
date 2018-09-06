@@ -32,6 +32,7 @@
     "url": "https://github.com/Microsoft/BotFramework-Emulator"
   },
   "jest": {
+    "setupTestFrameworkScriptFile": "../../../testSetup.js",
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
