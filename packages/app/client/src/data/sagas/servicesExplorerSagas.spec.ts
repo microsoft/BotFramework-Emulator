@@ -18,7 +18,8 @@ import {
   ConnectedServicePickerPayload,
   launchConnectedServicePicker,
   openAddServiceContextMenu,
-  openContextMenuForConnectedService, openServiceDeepLink
+  openContextMenuForConnectedService,
+  openServiceDeepLink
 } from '../action/connectedServiceActions';
 import { ServiceCodes, SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
@@ -397,7 +398,7 @@ describe('The ServiceExplorerSagas', () => {
   });
 
   describe('openConnectedServiceDeepLink', () => {
-    const mockModel = {type: ServiceTypes.Luis, appId: '1234', version: '0.1', region: 'westeurope' };
+    const mockModel = { type: ServiceTypes.Luis, appId: '1234', version: '0.1', region: 'westeurope' };
     let openConnectedServiceGen;
     beforeEach(() => {
       const sagaIt = servicesExplorerSagas();
