@@ -79,7 +79,8 @@ export class LuisApi {
       name: luisModel.name,
       subscriptionKey: authoringKey,
       type: 'luis',
-      version: luisModel.activeVersion
+      version: luisModel.activeVersion,
+      region: luisModel.region
     })) as ILuisService[];
 
     return payload;
@@ -97,6 +98,7 @@ export class LuisApi {
       const error = await response.json();
       return { error };
     }
-    return await response.json() as LuisModel[];
+    const luisModels = await response.json() as LuisModel[];
+    return luisModels.map(luisModel => (luisModel.region = region, luisModel));
   }
 }

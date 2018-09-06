@@ -14,4 +14,5 @@ export interface LuisModel {
   endpointHitsCount: number;
   activeVersion: string;
   ownerEmail: string;
+  region: 'westus' | 'westeurope' | 'australiaeast';
 }
