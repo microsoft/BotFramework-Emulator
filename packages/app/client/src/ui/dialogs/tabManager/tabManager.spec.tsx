@@ -66,7 +66,7 @@ jest.mock('../../../data/store', () => ({
 }));
 jest.mock('./tabManager.scss', () => ({}));
 
-describe('the TabManager component', () => {
+describe('The TabManager component', () => {
   let parent;
   let node;
   let instance;
@@ -99,16 +99,16 @@ describe('the TabManager component', () => {
       expect(instance.state.selectedIndex).toBe(0);
     });
 
-    it('"DownArrow key is pressed with the selectedIndex not zero', () => {
+    it('"DownArrow" key is pressed with the selectedIndex not zero', () => {
       instance.setState({ showing: true, selectedIndex: 2 });
-      instance.onKeyDown({ key: 'ArrowDown' });
-      expect(instance.state.selectedIndex).toBe(0);
+      instance.onKeyDown({ key: 'DownArrow' });
+      expect(instance.state.selectedIndex).toBe(2);
     });
 
     it('"DownArrow" key is pressed with the selectedIndex at 0', () => {
       instance.setState({ showing: true, selectedIndex: 0 });
-      instance.onKeyDown({ key: 'ArrowDown' });
-      expect(instance.state.selectedIndex).toBe(1);
+      instance.onKeyDown({ key: 'DownArrow' });
+      expect(instance.state.selectedIndex).toBe(0);
     });
 
     it('"Control" key is pressed', () => {

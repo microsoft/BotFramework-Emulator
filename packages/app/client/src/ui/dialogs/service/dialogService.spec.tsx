@@ -22,7 +22,7 @@ jest.mock('../../../data/store', () => ({
   }
 }));
 describe('The DialogService', () => {
-  it('should resilve to null if no dialpogHost elemeent is set', async () => {
+  it('should resolve to null if no dialogHost element is set', async () => {
     const result = await DialogService.showDialog(mockComponent);
     expect(result).toBeNull();
   });

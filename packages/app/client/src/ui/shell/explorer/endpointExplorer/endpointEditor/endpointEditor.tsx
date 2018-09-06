@@ -102,13 +102,13 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
 
   public render(): JSX.Element {
     const {
-      endpointService,
       appIdError,
       appPasswordError,
       endpointError,
-      nameError,
+      endpointService,
       endpointWarning,
       isDirty,
+      nameError,
     } = this.state;
     const { name = '', endpoint = '', appId = '', appPassword = '' } = endpointService;
     const valid = !!endpoint && !!name;
