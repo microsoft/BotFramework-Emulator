@@ -31,10 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { LuisModel, ServiceCodes } from '@bfemulator/app-shared';
+import { LuisModel, LuisRegion, ServiceCodes } from '@bfemulator/app-shared';
 import { ILuisService } from 'botframework-config/lib/schema';
 import fetch, { Headers, Response } from 'node-fetch';
-import { LuisRegion } from '@bfemulator/app-shared';
 
 export class LuisApi {
   public static* getServices(armToken: string): IterableIterator<any> {
@@ -99,6 +98,9 @@ export class LuisApi {
       return { error };
     }
     const luisModels = await response.json() as LuisModel[];
-    return luisModels.map(luisModel => (luisModel.region = region, luisModel));
+    if (luisModels instanceof Array) {
+      return luisModels.map(luisModel => (luisModel.region = region, luisModel));
+    }
+    return luisModels;
   }
 }
