@@ -38,12 +38,15 @@ import { Column, LargeHeader, PrimaryButton, Row, SmallHeader, TruncateText } fr
 import { GenericDocument } from '../../layout';
 
 export interface WelcomePageProps {
+  accessToken?: string;
   documentId?: string;
   recentBots?: BotInfo[];
   onNewBotClick?: () => void;
   onOpenBotClick?: () => void;
   onBotClick?: (_e: any, path: string) => void;
   onDeleteBotClick?: (_e: any, path: string) => void;
+  signInWithAzure?: () => void;
+  signOutWithAzure?: () => void;
 }
 
 export class WelcomePage extends React.Component<WelcomePageProps, {}> {
@@ -51,88 +54,252 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
     super(props);
   }
 
+  public render(): JSX.Element {
+    const { startSection, myBotsSection, howToBuildSection, signInSection } = this;
+
+    return (
+      <GenericDocument>
+        <LargeHeader className={styles.spacing}>Bot Framework Emulator</LargeHeader>
+        <span className={styles.versionNumber}>Version 4</span>
+        <Row>
+          <Column className={styles.spacing}>
+            {startSection}
+            {myBotsSection}
+            {signInSection}
+          </Column>
+          <Column className={styles.rightColumn}>
+            {howToBuildSection}
+          </Column>
+        </Row>
+      </GenericDocument>
+    );
+  }
+
+  private onBotClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const { index } = event.currentTarget.dataset;
+    const bot = this.props.recentBots[index];
+    this.props.onBotClick(event, bot.path);
+  }
+
+  private onDeleteBotClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const { index } = event.currentTarget.dataset;
+    const bot = this.props.recentBots[index];
+    this.props.onDeleteBotClick(event, bot.path);
+  }
+
   private get startSection(): JSX.Element {
     const { onNewBotClick, onOpenBotClick } = this.props;
 
     return (
-      <div className={ styles.section }>
-        <SmallHeader>Start</SmallHeader>
+      <div className={styles.section}>
+        <SmallHeader>Start by testing your bot</SmallHeader>
         <span>Start talking to your bot by connecting to an endpoint or by opening a
-          bot saved locally. More about working locally with a bot.</span>
+          bot saved locally.<br />
+          <a
+            className={styles.ctaLink}
+            href="https://aka.ms/bot-framework-emulator-create-bot-locally"
+          >More about working locally with a bot.
+          </a>
+        </span>
         <Row>
-          <PrimaryButton className={ styles.openBot } text="Open Bot" onClick={ onOpenBotClick }/>
+          <PrimaryButton className={styles.openBot} text="Open Bot" onClick={onOpenBotClick} />
         </Row>
         <span>If you don’t have a bot configuration,
-          <a className={ styles.ctaLink } href="javascript:void(0)"
-              onClick={ onNewBotClick }>create a new bot configuration.</a>
+          <button className={styles.ctaLink}
+            onClick={onNewBotClick}>create a new bot configuration.</button>
         </span>
       </div>
     );
   }
 
   private get myBotsSection(): JSX.Element {
-    const { onBotClick, onDeleteBotClick } = this.props;
-
     return (
-      <div className={ styles.section }>
+      <div className={styles.section}>
         <SmallHeader>My Bots</SmallHeader>
-        <ul className={ `${styles.recentBotsList} ${styles.well}` }>
+        <ul className={`${styles.recentBotsList} ${styles.well}`}>
           {
             this.props.recentBots && this.props.recentBots.length ?
-              this.props.recentBots.slice(0, 10).map(bot => bot &&
-                <li className={ styles.recentBot } key={ bot.path }>
-                  <a href="javascript:void(0);" onClick={ ev => onBotClick(ev, bot.path) }
-                      title={ bot.path }><TruncateText>{ bot.displayName }</TruncateText></a>
-                  <TruncateText className={ styles.recentBotPath }
-                                title={ bot.path }>{ bot.path }</TruncateText>
-                <div className={ styles.recentBotActionBar }>
-                  <button onClick={ ev => onDeleteBotClick(ev, bot.path) }></button>
+              this.props.recentBots.slice(0, 10).map((bot, index) => bot &&
+                <li className={styles.recentBot} key={bot.path}>
+                  <button data-index={index} onClick={this.onBotClick}
+                    title={bot.path}><TruncateText>{bot.displayName}</TruncateText></button>
+                  <TruncateText className={styles.recentBotPath}
+                    title={bot.path}>{bot.path}</TruncateText>
+                  <div className={styles.recentBotActionBar}>
+                    <button data-index={index} onClick={this.onDeleteBotClick}></button>
                   </div>
                 </li>)
               :
-              <li><span className={ styles.noBots }><TruncateText>No recent bots</TruncateText></span></li>
+              <li><span className={styles.noBots}><TruncateText>You have not opened any bots</TruncateText></span></li>
           }
         </ul>
       </div>
     );
   }
 
-  private get helpSection(): JSX.Element {
+  private get signInSection(): JSX.Element {
+    const { accessToken, signInWithAzure, signOutWithAzure } = this.props;
+
     return (
-      <div className={ styles.section }>
-        <SmallHeader>Help</SmallHeader>
-        <ul>
-          <li><a href="https://aka.ms/BotBuilderOverview"><TruncateText>Overview</TruncateText></a></li>
-          <li><a href="https://aka.ms/Btovso"><TruncateText>GitHub Repository</TruncateText></a></li>
-          <li><a href="https://aka.ms/BotBuilderLocalDev"><TruncateText>Starting with Local
-            Development</TruncateText></a></li>
-          <li><a href="https://aka.ms/BotBuilderAZCLI"><TruncateText>Starting with Azure CLI</TruncateText></a>
-          </li>
-          <li><a href="https://aka.ms/BotBuilderIbiza">
-            <TruncateText>Starting with the Azure Portal</TruncateText>
-          </a>
-          </li>
-        </ul>
-      </div>
+      <div>
+        {
+          (accessToken && !accessToken.startsWith('invalid')) ?
+            <button className={styles.ctaLink} onClick={signOutWithAzure}>Sign out</button>
+            :
+            <button className={styles.ctaLink} onClick={signInWithAzure}>
+              Sign in with your Azure account.
+            </button>
+        }</div>
     );
   }
 
-  public render(): JSX.Element {
-    const { startSection, myBotsSection, helpSection } = this;
-
+  private get howToBuildSection(): JSX.Element {
     return (
-      <GenericDocument>
-        <LargeHeader>Welcome to the Bot Framework Emulator!</LargeHeader>
-        <Row>
-          <Column>
-            { startSection }
-            { myBotsSection }
-          </Column>
-          <Column className={ styles.rightColumn }>
-            { helpSection }
-          </Column>
-        </Row>
-      </GenericDocument>
+      <div className={styles.section}>
+        <div className={styles.howToBuildSection}>
+          <h3>How to build a bot</h3>
+          <div className={styles.stepContainer}>
+            <div className={styles.stepIcon}>
+              <div className={styles.buildPlan01}></div>
+            </div>
+            <dl>
+              <dt>Plan:</dt>
+              <dd>
+                Review the bot&nbsp;
+                <a
+                  className={styles.ctaLink}
+                  href="https://aka.ms/bot-framework-emulator-design-guidelines"
+                >
+                  design guidelines&nbsp;
+                </a>
+                for best practices&nbsp;
+              </dd>
+            </dl>
+          </div>
+          <div className={styles.stepContainer}>
+            <div className={styles.stepIcon}>
+              <div className={styles.buildPlan02}></div>
+            </div>
+            <dl>
+              <dt>Build:</dt>
+              <dd>
+                <a
+                  className={styles.ctaLink}
+                  href="https://aka.ms/bot-framework-emulator-design-guidelines"
+                >
+                  Download Command Line tools&nbsp;
+                </a><br />
+                Create a bot&nbsp;
+                <a
+                  className={styles.ctaLink}
+                  href="https://aka.ms/bot-framework-emulator-create-bot-azure"
+                >
+                  from Azure
+                </a> or&nbsp;
+                <a
+                  className={styles.ctaLink}
+                  href="https://aka.ms/bot-framework-emulator-create-bot-locally"
+                >
+                  locally&nbsp;
+                </a><br />
+                Add services such as<br />
+                <a
+                  className={styles.ctaLink}
+                  href="https://aka.ms/bot-framework-emulator-LUIS-docs-home"
+                >
+                  Language Understanding (LUIS)
+                </a>,&nbsp;
+                <a
+                  className={styles.ctaLink}
+                  href="https://aka.ms/bot-framework-emulator-qna-docs-home"
+                >
+                  QnAMaker&nbsp;
+                </a>
+                and&nbsp;
+                <a
+                  className={styles.ctaLink}
+                  href="https://aka.ms/bot-framework-emulator-create-dispatch"
+                >
+                  Dispatch
+                </a>
+              </dd>
+            </dl>
+          </div>
+          <div className={styles.stepContainer}>
+            <div className={styles.stepIcon}>
+              <div className={styles.buildPlan03}></div>
+            </div>
+            <dl>
+              <dt className={styles.testBullet}>Test:</dt>
+              <dd>
+                Test with the&nbsp;
+                <a
+                  className={styles.ctaLink}
+                  href="https://aka.ms/bot-framework-emulator-debug-with-emulator"
+                >
+                  Emulator
+                </a> <br />
+                Test online in&nbsp;
+                <a
+                  className={styles.ctaLink}
+                  href="https://aka.ms/bot-framework-emulator-debug-with-web-chat"
+                >
+                  Web Chat
+                </a></dd>
+            </dl>
+          </div>
+          <div className={styles.stepContainer}>
+            <div className={styles.stepIcon}>
+              <div className={styles.buildPlan04}></div>
+            </div>
+            <dl>
+              <dt>Publish:</dt>
+              <dd>
+                Publish directly to Azure or<br />
+                Use <a
+                  className={styles.ctaLink}
+                  href="https://aka.ms/bot-framework-emulator-publish-continuous-deployment"
+                >
+                  Continuous Deployment&nbsp;
+                </a>
+              </dd>
+            </dl>
+          </div>
+          <div className={styles.stepContainer}>
+            <div className={styles.stepIcon}>
+              <div className={styles.buildPlan05}></div>
+            </div>
+            <dl>
+              <dt>Connect:</dt>
+              <dd>
+                Connect to&nbsp;
+                <a
+                  className={styles.ctaLink}
+                  href="https://aka.ms/bot-framework-emulator-connect-channels"
+                >
+                  channels&nbsp;
+                </a>
+              </dd>
+            </dl>
+          </div>
+          <div className={styles.stepContainer}>
+            <div className={styles.stepIcon}>
+              <div className={styles.buildPlan06}></div>
+            </div>
+            <dl>
+              <dt>Evaluate:</dt>
+              <dd>
+                <a
+                  className={styles.ctaLink}
+                  href="https://aka.ms/bot-framework-emulator-bot-analytics"
+                >
+                  View analytics
+                </a>
+              </dd>
+            </dl>
+          </div>
+        </div>
+      </div>
     );
   }
 }

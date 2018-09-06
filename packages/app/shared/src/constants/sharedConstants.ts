@@ -157,6 +157,7 @@ export namespace SharedConstants {
       export const ArmTokenReceivedOnStartup = 'shell:armTokenReceivedOnStartup';
       export const ShowPostMigrationDialog = 'post-migration-dialog:show';
       export const UpdateProgressIndicator = 'shell:updateProgressIndicator';
+      export const InvalidateAzureArmToken = 'shell:invalidateAzureArmToken';
     }
   }
 }

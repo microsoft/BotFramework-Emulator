@@ -33,6 +33,9 @@
 
 import {
   azureArmTokenDataChanged,
+  invalidateArmToken,
+  ArmTokenData,
+  AzureAuthAction,
 } from '../action/azureAuthActions';
 import azureAuth, { AzureAuthState } from './azureAuthReducer';
 
@@ -56,5 +59,11 @@ describe('Azure auth reducer tests', () => {
     const action = azureArmTokenDataChanged('someKey');
     const state = azureAuth(startingState, action);
     expect(state.access_token).toEqual('someKey');
+  });
+
+  it('should remove access_token on invalidate', () => {
+    const action = invalidateArmToken();
+    const state = azureAuth(startingState, action);
+    expect(state.access_token).toMatch(/^invalid__/);
   });
 });

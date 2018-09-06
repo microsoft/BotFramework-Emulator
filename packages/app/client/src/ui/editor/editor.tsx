@@ -34,7 +34,7 @@
 import * as React from 'react';
 
 import * as Constants from '../../constants';
-import { AppSettingsEditor, Emulator, WelcomePage } from './index';
+import { AppSettingsEditor, Emulator, WelcomePageContainer } from './index';
 import { Document } from '../../data/reducer/editor';
 
 interface EditorFactoryProps {
@@ -52,16 +52,16 @@ export class EditorFactory extends React.Component<EditorFactoryProps> {
 
     switch (contentType) {
       case Constants.CONTENT_TYPE_LIVE_CHAT:
-        return (<Emulator mode="livechat" documentId={ document.documentId } dirty={ this.props.document.dirty }/>);
+        return (<Emulator mode="livechat" documentId={document.documentId} dirty={this.props.document.dirty} />);
 
       case Constants.CONTENT_TYPE_TRANSCRIPT:
-        return (<Emulator mode="transcript" documentId={ document.documentId } dirty={ this.props.document.dirty }/>);
+        return (<Emulator mode="transcript" documentId={document.documentId} dirty={this.props.document.dirty} />);
 
       case Constants.CONTENT_TYPE_APP_SETTINGS:
-        return (<AppSettingsEditor documentId={ document.documentId } dirty={ this.props.document.dirty }/>);
+        return (<AppSettingsEditor documentId={document.documentId} dirty={this.props.document.dirty} />);
 
       case Constants.CONTENT_TYPE_WELCOME_PAGE:
-        return (<WelcomePage documentId={ document.documentId }/>);
+        return (<WelcomePageContainer documentId={document.documentId} />);
 
       default:
         return false;

@@ -47,7 +47,7 @@ import * as NavBarActions from '../data/action/navBarActions';
 import * as Constants from '../constants';
 import { CommandRegistry } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
-import { azureArmTokenDataChanged, beginAzureAuthWorkflow } from '../data/action/azureAuthActions';
+import { azureArmTokenDataChanged, beginAzureAuthWorkflow, invalidateArmToken } from '../data/action/azureAuthActions';
 import { AzureAuthState } from '../data/reducer/azureAuthReducer';
 import { ProgressIndicatorPayload, updateProgressIndicator } from '../data/action/progressIndicatorActions';
 
@@ -112,6 +112,10 @@ export function registerCommands(commandRegistry: CommandRegistry) {
 
   commandRegistry.registerCommand(UI.ArmTokenReceivedOnStartup, (azureAuth: AzureAuthState) => {
     store.dispatch(azureArmTokenDataChanged(azureAuth.access_token));
+  });
+
+  commandRegistry.registerCommand(UI.InvalidateAzureArmToken, () => {
+    store.dispatch(invalidateArmToken());
   });
 
   // ---------------------------------------------------------------------------
