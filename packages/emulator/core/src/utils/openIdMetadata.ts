@@ -90,7 +90,7 @@ export default class OpenIdMetadata {
           return null;
         }
 
-        return getPem(Buffer.from(key.n).toString('base64'), key.e);
+        return getPem(base64url.toBase64(key.n), key.e);
       }
     }
 
