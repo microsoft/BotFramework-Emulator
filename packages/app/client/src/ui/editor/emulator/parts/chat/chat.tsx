@@ -92,7 +92,7 @@ async function getSpeechToken(endpoint: IEndpointService, refresh: boolean): Pro
   let command = refresh ? 'speech-token:refresh' : 'speech-token:get';
 
   try {
-    return await CommandServiceImpl.remoteCall(command, endpoint.endpoint);
+    return await CommandServiceImpl.remoteCall(command, endpoint.id);
   } catch (err) {
     console.error(err);
   }
