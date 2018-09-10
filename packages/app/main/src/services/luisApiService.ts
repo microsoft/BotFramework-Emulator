@@ -32,7 +32,7 @@
 //
 
 import { LuisModel, LuisRegion, ServiceCodes } from '@bfemulator/app-shared';
-import { ILuisService } from 'botframework-config/lib/schema';
+import { ILuisService, ServiceTypes } from 'botframework-config/lib/schema';
 import fetch, { Headers, Response } from 'node-fetch';
 
 export class LuisApi {
@@ -77,7 +77,7 @@ export class LuisApi {
       id: luisModel.id,
       name: luisModel.name,
       subscriptionKey: authoringKey,
-      type: 'luis',
+      type: luisModel.activeVersion === 'Dispatch' ? ServiceTypes.Dispatch : ServiceTypes.Luis,
       version: luisModel.activeVersion,
       region: luisModel.region
     })) as ILuisService[];

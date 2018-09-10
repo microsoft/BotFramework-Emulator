@@ -1,0 +1,111 @@
+import * as React from 'react';
+import { Provider } from 'react-redux';
+import { mount } from 'enzyme';
+import { combineReducers, createStore } from 'redux';
+import bot from '../../../../../data/reducer/bot';
+import { EndpointEditor } from './endpointEditor';
+import { EndpointEditorContainer } from './endpointEditorContainer';
+import { load, setActive } from '../../../../../data/action/botActions';
+
+const mockStore = createStore(combineReducers({ bot }), {});
+
+jest.mock('./endpointEditor.scss', () => ({}));
+jest.mock('../../../../../data/store', () => ({
+  get default() {
+    return mockStore;
+  }
+}));
+
+let mockBot = {
+  'name': 'TestBot',
+  'description': '',
+  'secretKey': '',
+  'services': [{
+    'type': 'endpoint',
+    'appId': '51fc2648-1190-44aa-9559-87b11b1d0014',
+    'appPassword': 'vcxzvcxzvvxczvcxzv',
+    'endpoint': 'https://testbot.botframework.com/api/messagesv3',
+    'id': 'https://testbot.botframework.com/api/messagesv3',
+    'name': 'https://testbot.botframework.com/api/messagesv3'
+  },
+    {
+      'type': 'abs',
+      'appId': '51fc2648-1190-44aa-9559-87b11b1d0014',
+      'id': '112233',
+      'resourceGroup': '555',
+      'serviceName': '111',
+      'subscriptionId': '444',
+      'tenantId': '22'
+    }
+  ]
+};
+describe('The EndpointExplorer component should', () => {
+  let parent;
+  let node;
+
+  beforeEach(() => {
+    mockStore.dispatch(load([mockBot as any]));
+    mockStore.dispatch(setActive(mockBot as any));
+
+    parent = mount(<Provider store={ mockStore }>
+      <EndpointEditorContainer endpointService={ mockBot.services[0] }/>
+    </Provider>);
+    node = parent.find(EndpointEditor);
+  });
+
+  it('should render deeply', () => {
+    expect(parent.find(EndpointEditorContainer)).not.toBe(null);
+    expect(parent.find(EndpointEditor)).not.toBe(null);
+  });
+
+  it('should have the expected functions available in the props', () => {
+    const props = node.props();
+    expect(typeof props.updateEndpointService).toBe('function');
+    expect(typeof props.cancel).toBe('function');
+  });
+
+  it('should look for the matching ABS service based on the endpointService.id', () => {
+    const instance = node.instance();
+    expect(instance.props.botService).toEqual(mockBot.services[1]);
+  });
+
+  it('should update the state when the user types in the input fields', () => {
+    const instance = node.instance();
+    instance.onEndpointInputChange('name', true, 'a name');
+    expect(instance.state.endpointService.name).toBe('a name');
+  });
+
+  it('should set an error when a required field is null', () => {
+    const instance = node.instance();
+    instance.onEndpointInputChange('name', true, '');
+    expect(instance.state.nameError).not.toBeUndefined();
+  });
+
+  it('should validate the endpoint when an endpoint is entered and display a message after 500ms', done => {
+    const endpointValidationSpy = jest.spyOn(EndpointEditor as any, 'validateEndpoint').mockReturnValue(false);
+    const instance = node.instance();
+    instance.onEndpointInputChange('endpoint', true, 'http://localhost');
+    setTimeout(() => {
+      expect(instance.state.endpointWarning).toBeFalsy();
+    }, 490);
+
+    setTimeout(() => {
+      expect(endpointValidationSpy).toHaveBeenCalledWith('http://localhost');
+      done();
+    }, 510);
+  });
+
+  it('should update the botService when the AVS inputs change', () => {
+    const instance = node.instance();
+    instance.onBotInputChange('tenantId', 'someId');
+    expect(instance.state.botService.tenantId).toBe('someId');
+  });
+
+  it('should expand the ABS content when the abs link is clicked', () => {
+    const instance = node.instance();
+    expect(instance.absContent.style.height).toBe('');
+    Object.defineProperty(instance.absContent.firstChild, 'clientHeight', {get: () => 135});
+    instance.onABSLinkClick({currentTarget: document.createElement('a')});
+    expect(instance.absContent.style.height).toEqual('135px');
+  });
+});

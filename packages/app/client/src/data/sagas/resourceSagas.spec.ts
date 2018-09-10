@@ -172,7 +172,6 @@ describe('The ResourceSagas', () => {
       expect(mockRemoteCommandsCalled.length).toBe(1);
       expect(mockRemoteCommandsCalled[0]).toEqual({
         'args': [{
-          'id': '',
           'name': 'testChat',
           'path': 'the/file/path',
           'type': 'file'

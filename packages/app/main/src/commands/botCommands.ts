@@ -42,11 +42,13 @@ import {
   toSavableBot
 } from '../botHelpers';
 import * as BotActions from '../botData/actions/botActions';
+import { setActive } from '../botData/actions/botActions';
 import { BotConfigWithPath, CommandRegistryImpl, mergeEndpoints, uniqueId } from '@bfemulator/sdk-shared';
 import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
 import { mainWindow } from '../main';
 import { emulator } from '../emulator';
 import { IConnectedService, IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
+import { BotConfigurationBase } from 'botframework-config/lib';
 import * as path from 'path';
 import { getStore } from '../botData/store';
 import { botProjectFileWatcher, chatWatcher, transcriptsWatcher } from '../watchers';
@@ -191,10 +193,10 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       if (botInfo) {
         const botConfig = toSavableBot(activeBot, botInfo.secret);
         const index = botConfig.services.findIndex(s => s.id === service.id && s.type === service.type);
-        let existing = index >= 0 && botConfig.services[index];
+        let existing = botConfig.services[index];
         if (existing) {
           // Patch existing service
-          existing = { ...existing, ...service };
+          existing = BotConfigurationBase.serviceFromJSON({ ...existing, ...service });
           botConfig.services[index] = existing;
         } else {
           // Add new service
@@ -204,7 +206,11 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
           botConfig.connectService(service);
         }
         try {
-          await botConfig.save(botInfo.path);
+          await botConfig.save(botInfo.secret);
+          // The file watcher will not pick up this change immediately
+          // making the value in the store stale and potentially incorrect
+          // so we'll dispatch it right away
+          getStore().dispatch(setActive(botConfig));
         } catch (e) {
           console.error(`bot:add-or-update-service: Error trying to save bot: ${e}`);
           throw e;
