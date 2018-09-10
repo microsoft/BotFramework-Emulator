@@ -140,6 +140,7 @@ export class AzureAuthWorkflowService {
       `nonce=${nonce}`,
       'x-client-SKU=Js',
       'x-client-Ver=1.0.17',
+      'resource=00000002-0000-0000-c000-000000000000'
     ];
     if (renew) {
       bits.push('prompt=none');

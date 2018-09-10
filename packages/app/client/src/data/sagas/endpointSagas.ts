@@ -31,12 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
+import { IEndpointService } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
 import { call, ForkEffect, takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { DialogService } from '../../ui/dialogs/service';
-import { EndpointEditor } from '../../ui/shell/explorer/endpointExplorer/endpointEditor/endpointEditor';
 import {
   EndpointEditorPayload,
   EndpointServiceAction,
@@ -49,10 +48,16 @@ import { SharedConstants } from '@bfemulator/app-shared';
 
 function* launchEndpointEditor(action: EndpointServiceAction<EndpointEditorPayload>): IterableIterator<any> {
   const { endpointEditorComponent, endpointService = {} } = action.payload;
-  const result = yield DialogService
-    .showDialog<ComponentClass<EndpointEditor>>(endpointEditorComponent, { endpointService });
-  if (result) {
-    yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.AddOrUpdateService, ServiceTypes.Endpoint, result);
+  const servicesToUpdate = yield DialogService
+    .showDialog<ComponentClass<any>>(endpointEditorComponent, {
+      endpointService
+    });
+  if (servicesToUpdate) {
+    let i = servicesToUpdate.length;
+    while (i--) {
+      const service = servicesToUpdate[i];
+      yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.AddOrUpdateService, service.type, service);
+    }
   }
 }
 
@@ -63,8 +68,8 @@ function* openEndpointContextMenu(action: EndpointServiceAction<EndpointServiceP
     { label: 'Open in emulator', id: 'open' },
     { label: 'Remove', id: 'forget' }
   ];
-  const response = yield call(CommandServiceImpl
-    .remoteCall.bind(CommandServiceImpl), SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);
+  const { DisplayContextMenu } = SharedConstants.Commands.Electron;
+  const response = yield call(CommandServiceImpl.remoteCall.bind(CommandServiceImpl), DisplayContextMenu, menuItems);
   switch (response.id) {
     case 'edit':
       yield* launchEndpointEditor(action);
@@ -97,7 +102,7 @@ function* removeEndpointServiceFromActiveBot(endpointService: IEndpointService):
   });
   if (result) {
     yield CommandServiceImpl
-      .remoteCall(SharedConstants.Commands.Bot.RemoveService, ServiceTypes.Endpoint, endpointService.id);
+      .remoteCall(SharedConstants.Commands.Bot.RemoveService, endpointService.type, endpointService.id);
   }
 }
 

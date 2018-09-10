@@ -40,26 +40,33 @@ import {
   Row,
   TextField
 } from '@bfemulator/ui-react';
-import { EndpointService } from 'botframework-config/lib/models';
-import { IEndpointService } from 'botframework-config/lib/schema';
+import { BotService, EndpointService } from 'botframework-config/lib/models';
+import { IBotService, IEndpointService } from 'botframework-config/lib/schema';
 import * as React from 'react';
-import { Component } from 'react';
+import { Component, MouseEvent } from 'react';
 import * as styles from './endpointEditor.scss';
 
-interface EndpointEditorProps {
-  endpointService: IEndpointService;
-  cancel: () => void;
-  updateEndpointService: (updatedEndpointService: IEndpointService) => void;
+export interface UpdatedServicesPayload extends Array<IEndpointService | IBotService> {
+  '0': IEndpointService;
+  '1'?: IBotService;
+  length: 1 | 2;
 }
 
-interface EndpointEditorState {
+export interface EndpointEditorProps {
+  endpointService?: IEndpointService;
+  botService?: IBotService;
+  cancel: () => void;
+  updateEndpointService: (updatedServices: UpdatedServicesPayload) => void;
+}
+
+export interface EndpointEditorState {
   endpointService: IEndpointService;
+  botService?: IBotService;
   nameError: string;
   endpointError: string;
   appIdError: string;
   appPasswordError: string;
   endpointWarning: string;
-  isDirty: boolean;
 }
 
 const title = 'Add a Endpoint for your bot';
@@ -67,8 +74,35 @@ const detailedDescription = 'You can add a endpoint that you use to communicate 
 
 export class EndpointEditor extends Component<EndpointEditorProps, EndpointEditorState> {
   public state: EndpointEditorState = {} as EndpointEditorState;
-  private textFieldHandlers: { [key: string]: (x: string) => void } = {};
+  private endpointServiceInputHandlers: { [key: string]: (x: string) => void } = {};
+  private botServiceInputHandlers: { [key: string]: (x: string) => void } = {};
   private endpointWarningDelay: any;
+  private absContent: HTMLDivElement;
+
+  public static getDerivedStateFromProps(nextProps: EndpointEditorProps) {
+    const { endpointService, botService } = nextProps;
+    const derivedState: EndpointEditorState = {} as EndpointEditorState;
+
+    if (endpointService) {
+      Object.assign(derivedState, {
+        endpointService: new EndpointService(endpointService),
+        nameError: '',
+        endpointError: '',
+        appPasswordError: '',
+        appIdError: '',
+        endpointWarning: '',
+        isDirty: false
+      });
+    }
+
+    if (botService) {
+      Object.assign(derivedState, {
+        botService: new BotService(botService)
+      });
+    }
+
+    return derivedState;
+  }
 
   private static validateEndpoint(endpoint: string): string {
     const controllerRegEx = /api\/messages\/?$/;
@@ -77,27 +111,34 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
 
   constructor(props: EndpointEditorProps, state: EndpointEditorState) {
     super(props, state);
-    const endpointService = new EndpointService(props.endpointService);
+    const { endpointService, botService } = props;
+
     this.state = {
-      endpointService,
+      endpointService: new EndpointService(endpointService),
       nameError: '',
       endpointError: '',
       appPasswordError: '',
       appIdError: '',
       endpointWarning: '',
-      isDirty: false
     };
-    this.textFieldHandlers = {
-      'name': this.onInputChange.bind(this, 'name', true),
-      'endpoint': this.onInputChange.bind(this, 'endpoint', true),
-      'appId': this.onInputChange.bind(this, 'appId', false),
-      'appPassword': this.onInputChange.bind(this, 'appPassword', false)
-    };
-  }
 
-  public componentWillReceiveProps(nextProps: Readonly<EndpointEditorProps>): void {
-    const endpointService = new EndpointService(nextProps.endpointService);
-    this.setState({ endpointService, appIdError: '', appPasswordError: '', endpointError: '', nameError: '' });
+    if (botService) {
+      this.state.botService = new BotService(botService);
+    }
+
+    this.endpointServiceInputHandlers = {
+      name: this.onEndpointInputChange.bind(this, 'name', true),
+      endpoint: this.onEndpointInputChange.bind(this, 'endpoint', true),
+      appId: this.onEndpointInputChange.bind(this, 'appId', false),
+      appPassword: this.onEndpointInputChange.bind(this, 'appPassword', false)
+    };
+
+    this.botServiceInputHandlers = {
+      tenantId: this.onBotInputChange.bind(this, 'tenantId'),
+      subscriptionId: this.onBotInputChange.bind(this, 'subscriptionId'),
+      resourceGroup: this.onBotInputChange.bind(this, 'resourceGroup'),
+      serviceName: this.onBotInputChange.bind(this, 'serviceName')
+    };
   }
 
   public render(): JSX.Element {
@@ -107,10 +148,11 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
       endpointError,
       endpointService,
       endpointWarning,
-      isDirty,
       nameError,
+      botService = {} as IBotService
     } = this.state;
     const { name = '', endpoint = '', appId = '', appPassword = '' } = endpointService;
+    const { tenantId = '', subscriptionId = '', resourceGroup = '', serviceName = '' } = botService;
     const valid = !!endpoint && !!name;
     return (
       <Dialog title={ title } detailedDescription={ detailedDescription }
@@ -119,52 +161,72 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
           <TextField
             placeholder="https://"
             errorMessage={ endpointError } value={ endpoint }
-            onChanged={ this.textFieldHandlers.endpoint }
+            onChanged={ this.endpointServiceInputHandlers.endpoint }
             label="Endpoint url" required={ true }
           />
           { !endpointError && endpointWarning && <span className={ styles.endpointWarning }>{ endpointWarning }</span> }
           <TextField
             placeholder="Create name for your endpoint"
             errorMessage={ nameError } value={ name }
-            onChanged={ this.textFieldHandlers.name } label="Name"
+            onChanged={ this.endpointServiceInputHandlers.name } label="Name"
             required={ true }
           />
           <TextField
             placeholder="Optional"
             errorMessage={ appIdError } value={ appId }
-            onChanged={ this.textFieldHandlers.appId }
+            onChanged={ this.endpointServiceInputHandlers.appId }
             label="Application Id"
             required={ false }
           />
           <TextField
             placeholder="Optional. For Microsoft Apps"
             errorMessage={ appPasswordError } value={ appPassword }
-            onChanged={ this.textFieldHandlers.appPassword }
+            onChanged={ this.endpointServiceInputHandlers.appPassword }
             label="Application Password" required={ false }
           />
-          { /*<a href="javascript:void(0)"*/ }
-          { /*className={ styles.arrow } onClick={ this.onABSLinkClick }>*/ }
-          { /*Azure Bot Service configuration*/ }
-          { /*</a>*/ }
+          <a href="javascript:void(0)"
+             className={ styles.arrow } onClick={ this.onABSLinkClick }>
+            Azure Bot Service configuration
+          </a>
           <div className={ styles.absContent } ref={ this.absContentRef }>
             <div>
               <Row className={ styles.absTextFieldRow }>
-                <TextField label="Azure BotId"/>
-                <TextField label="Azure Directory ID"/>
+                <TextField
+                  onChanged={ this.botServiceInputHandlers.serviceName }
+                  value={ serviceName }
+                  label="Azure BotId"/>
+                <TextField
+                  onChanged={ this.botServiceInputHandlers.tenantId }
+                  value={ tenantId }
+                  label="Azure Directory ID"/>
               </Row>
               <Row className={ styles.absTextFieldRow }>
-                <TextField label="Azure Subscription ID"/>
-                <TextField label="Azure Resource Group"/>
+                <TextField
+                  onChanged={ this.botServiceInputHandlers.subscriptionId }
+                  value={ subscriptionId }
+                  label="Azure Subscription ID"/>
+                <TextField
+                  onChanged={ this.botServiceInputHandlers.resourceGroup }
+                  value={ resourceGroup }
+                  label="Azure Resource Group"/>
               </Row>
             </div>
           </div>
         </DialogContent>
         <DialogFooter>
           <DefaultButton text="Cancel" onClick={ this.onCancelClick }/>
-          <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ this.onSubmitClick }/>
+          <PrimaryButton disabled={ !this.isDirty || !valid } text="Submit" onClick={ this.onSubmitClick }/>
         </DialogFooter>
       </Dialog>
     );
+  }
+
+  private get isDirty(): boolean {
+    const { endpointService: originalEndpointService, botService: originalBotService = {} } = this.props;
+    const { endpointService, botService = {} } = this.state;
+
+    return JSON.stringify(originalEndpointService) !== JSON.stringify(endpointService) ||
+      JSON.stringify(originalBotService) !== JSON.stringify(botService);
   }
 
   private onCancelClick = (): void => {
@@ -172,21 +234,21 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
   }
 
   private onSubmitClick = (): void => {
-    this.props.updateEndpointService(this.state.endpointService);
+    const { endpointService, botService } = this.state;
+    const servicesToUpdate: UpdatedServicesPayload = [endpointService];
+    if (botService) {
+      botService.appId = endpointService.appId;
+      servicesToUpdate[1] = botService;
+    }
+    this.props.updateEndpointService(servicesToUpdate);
   }
 
-  private onInputChange = (propName: string, required: boolean, value: string): void => {
+  private onEndpointInputChange = (propName: string, required: boolean, value: string): void => {
     const trimmedValue = value.trim();
-
-    const { endpointService: originalEndpointService } = this.props;
     const errorMessage = (required && !trimmedValue) ? `The field cannot be empty` : '';
-
     const { endpointService } = this.state;
     endpointService[propName] = value;
-
-    const isDirty = Object.keys(endpointService)
-      .reduce((dirty, key) => (dirty || endpointService[key] !== originalEndpointService[key]), false);
-    this.setState({ endpointService, [`${propName}Error`]: errorMessage, isDirty } as any);
+    this.setState({ endpointService, [`${propName}Error`]: errorMessage } as any);
 
     if (propName === 'endpoint') {
       clearTimeout(this.endpointWarningDelay);
@@ -195,18 +257,27 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
     }
   }
 
-  // private onABSLinkClick = (event: MouseEvent<HTMLAnchorElement>) => {
-  //   // Process this outside the react state
-  //   const { currentTarget } = event;
-  //   currentTarget.classList.toggle(styles.arrowExpanded);
-  //   const expanded = currentTarget.classList.contains(styles.arrowExpanded);
-  //   const { clientHeight } = this.absContent.firstChild as HTMLElement;
-  //   const newHeight = expanded ? clientHeight : 0;
-  //   this.absContent.style.height = `${newHeight}px`;
-  // }
+  private onBotInputChange = (propName: string, value: string): void => {
+    const trimmedValue = value.trim();
+    let { botService } = this.state;
+    if (!botService) {
+      botService = new BotService();
+    }
+    botService[propName] = trimmedValue;
+    this.setState({ botService });
+  }
 
-  private absContentRef = (_ref: HTMLDivElement): void => {
-    // TODO - reimplement this
-    // this.absContent = ref;
+  private onABSLinkClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    // Process this outside the react state
+    const { currentTarget } = event;
+    currentTarget.classList.toggle(styles.arrowExpanded);
+    const expanded = currentTarget.classList.contains(styles.arrowExpanded);
+    const { clientHeight } = this.absContent.firstChild as HTMLElement;
+    const newHeight = expanded ? clientHeight : 0;
+    this.absContent.style.height = `${newHeight}px`;
+  }
+
+  private absContentRef = (ref: HTMLDivElement): void => {
+    this.absContent = ref;
   }
 }

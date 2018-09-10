@@ -73,7 +73,7 @@ describe('BotConfigWithPathTypes tests', () => {
       });
     });
 
-    it('should truncate extraneous properties on variables', () => {
+    it('should not truncate extraneous properties on variables', () => {
       const botConfigVariable = {
         name: 'someBotName',
         description: 'some bot description',
@@ -102,7 +102,7 @@ describe('BotConfigWithPathTypes tests', () => {
           appId: 'someOverriddenEndpointAppId'
         }
       });
-      expect(Object.keys(constructedBotConfig)).not.toContain('extraneousProp');
+      expect(Object.keys(constructedBotConfig)).toContain('extraneousProp');
     });
 
     it('should serialize correctly', () => {
