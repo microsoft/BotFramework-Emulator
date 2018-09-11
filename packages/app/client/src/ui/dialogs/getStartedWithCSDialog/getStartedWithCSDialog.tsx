@@ -78,7 +78,7 @@ export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProp
             <a href="javascript:void(0);" onClick={ this.props.launchConnectedServiceEditor }>
               connect to a LUIS app manually
             </a>&nbsp;
-         if you know the app ID, version, and authoring key.
+            if you know the app ID, version, and authoring key.
          </p>
         </>
       );
@@ -108,7 +108,9 @@ export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProp
   }
   private get dispatchContent(): JSX.Element {
     const { showNoModelsFoundContent, authenticatedUser } = this.props;
+
     if (!showNoModelsFoundContent) {
+
       return (
         <>
           <p>
@@ -123,14 +125,17 @@ export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProp
               Learn more about LUIS
             </a>
           </p>
-          Alternatively, you can
-            <a href="javascript:void(0);" onClick={ this.props.launchConnectedServiceEditor }>
-            connect to a Dispatch app manually
-            </a>
-          if you know the app ID, version, and authoring key.
+          <p>
+            Alternatively, you can
+              <a href="javascript:void(0);" onClick={ this.props.launchConnectedServiceEditor }>
+                connect to a Dispatch app manually
+              </a>
+            if you know the app ID, version, and authoring key.
+          </p>
         </>
       );
     }
+
     return (
       <>
         <p>
@@ -144,7 +149,7 @@ export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProp
           by entering this app ID and key.
         </p>
         <p>
-          <a href="javascript:void(0)" onClick={ this.onLearnMoreDispatch }>Learn more about Dispatch models</a>&nbsp;
+          <a href="javascript:void(0)" onClick={ this.onLearnMoreDispatch }>Learn more about Dispatch models</a>
         </p>
         <p>
           You can link apps from a different Dispatch account to this Azure account by adding yourself as a

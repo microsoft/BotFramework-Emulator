@@ -129,7 +129,7 @@ function* launchConnectedServicePicker(action: ConnectedServiceAction<ConnectedS
 function* launchConnectedServicePickList(
   action: ConnectedServiceAction<ConnectedServicePickerPayload>,
   availableServices: IConnectedService[],
-  serviceType: ServiceTypes,
+  serviceType: ServiceTypes
 ): IterableIterator<any> {
 
   const { pickerComponent, authenticatedUser, serviceType: type } = action.payload;
@@ -286,21 +286,25 @@ function openLuisDeepLink(luisService: ILuisService): Promise<any> {
       regionPrefix = '';
       break;
   }
-  const link = `https://www.${ regionPrefix }luis.ai/applications/${ appId }/versions/${ version }/build`;
+  let linkArray = ['https://www.',`${ encodeURI(regionPrefix) }`,'luis.ai/applications/'];
+  linkArray.push(`${ encodeURI(appId) }`, '/versions/',`${ encodeURI(version) }`, '/build');
+  const link = linkArray.join('');
   return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, link);
 }
 
 function openQnaMakerDeepLink(service: IQnAService): Promise<any> {
   const { kbId } = service;
-  const link = `https://qnamaker.ai/Edit/KnowledgeBase?kbid=${ kbId }`;
+  const link = `https://qnamaker.ai/Edit/KnowledgeBase?kbid=${ encodeURIComponent(kbId) }`;
   return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, link);
 }
 
 function openAzureBotServiceDeepLink(service: IBotService): Promise<any> {
   const { tenantId, subscriptionId, resourceGroup, id } = service;
-  const thankYouTsLint = `https://ms.portal.azure.com/#@${ tenantId }/resource/subscriptions/${ subscriptionId }`;
-  const link =
-    `${ thankYouTsLint }/resourceGroups/${ resourceGroup }/providers/Microsoft.BotService/botServices/${ id }`;
+  let linkArray = [`https://ms.portal.azure.com/#@${ encodeURI(tenantId) }`];
+  linkArray.push(`/resource/subscriptions/${ encodeURI(subscriptionId) }`);
+  linkArray.push(`/resourceGroups/${ encodeURI(resourceGroup) }`);
+  linkArray.push(`/providers/Microsoft.BotService/botServices/${ encodeURI(id) }`);
+  const link = linkArray.join('');
   return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, link + '/channels');
 }
 

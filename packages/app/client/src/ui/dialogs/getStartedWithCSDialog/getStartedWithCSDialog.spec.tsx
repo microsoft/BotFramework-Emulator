@@ -16,22 +16,22 @@ jest.mock('../service', () => ({
 }));
 
 jest.mock('../../dialogs/', () => ({
-  AzureLoginPromptDialogContainer: function mock() {
-    return undefined;
-  },
-  AzureLoginSuccessDialogContainer: function mock() {
-    return undefined;
-  },
-  BotCreationDialog: function mock() {
-    return undefined;
-  },
-  DialogService: {
-    showDialog: () => Promise.resolve(true)
-  },
-  SecretPromptDialog: function mock() {
-    return undefined;
+    AzureLoginPromptDialogContainer: function mock() {
+      return undefined;
+    },
+    AzureLoginSuccessDialogContainer: function mock() {
+      return undefined;
+    },
+    BotCreationDialog: function mock() {
+      return undefined;
+    },
+    DialogService: {
+      showDialog: () => Promise.resolve(true)
+    },
+    SecretPromptDialog: function mock() {
+      return undefined;
+    }
   }
-}
 ));
 
 describe('The GetStartedWithCSDialog component should', () => {
@@ -41,9 +41,11 @@ describe('The GetStartedWithCSDialog component should', () => {
   beforeEach(() => {
     mockStore = createStore(combineReducers({ azureAuth }));
     mockStore.dispatch(azureArmTokenDataChanged(mockArmToken));
-    parent = mount(<Provider store={ mockStore }>
-      <GetStartedWithCSDialogContainer serviceType={ ServiceTypes.Luis } />
-    </Provider>);
+    parent = mount(
+      <Provider store={ mockStore }>
+        <GetStartedWithCSDialogContainer serviceType={ ServiceTypes.Luis } />
+      </Provider>
+    );
   });
 
   it('should render deeply', () => {

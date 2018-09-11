@@ -53,7 +53,8 @@ const mapStateToProps = (state: RootState, ...ownProps) => {
   const { access_token: token = '' } = state.azureAuth;
   const [, payload] = token.split('.');
   const pJson = JSON.parse(atob(payload));
-  return { ...ownProps, user: (pJson.upn || pJson.unique_name || pJson.name || pJson.email) };
+
+  return { ...ownProps, user: pJson.upn || pJson.unique_name || pJson.name || pJson.email };
 };
 
 export const GetStartedWithCSDialogContainer = connect(

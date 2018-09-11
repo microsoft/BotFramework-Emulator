@@ -72,7 +72,7 @@ describe('The azureAuthSaga', () => {
         .FORK
         .args[1](beginAzureAuthWorkflow(
           AzureLoginPromptDialogContainer,
-          { ServiceTypes },
+          { serviceType: ServiceTypes.Luis },
           AzureLoginSuccessDialogContainer,
           AzureLoginFailedDialogContainer));
       let val = undefined;
@@ -106,7 +106,7 @@ describe('The azureAuthSaga', () => {
         .FORK
         .args[1](beginAzureAuthWorkflow(
           AzureLoginPromptDialogContainer,
-          { ServiceTypes },
+          { serviceType: ServiceTypes.Luis },
           AzureLoginSuccessDialogContainer,
           AzureLoginFailedDialogContainer));
       let val = undefined;
@@ -164,7 +164,7 @@ describe('The azureAuthSaga', () => {
         .FORK
         .args[1](beginAzureAuthWorkflow(
           AzureLoginPromptDialogContainer,
-          { ServiceTypes },
+          { serviceType: ServiceTypes.Luis },
           AzureLoginSuccessDialogContainer,
           AzureLoginFailedDialogContainer));
       let val = undefined;

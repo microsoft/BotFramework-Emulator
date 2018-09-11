@@ -4,9 +4,7 @@ import { DialogService } from '../service';
 import { PostMigrationDialog, PostMigrationDialogProps } from './postMigrationDialog';
 import { SharedConstants } from '@bfemulator/app-shared';
 
-const mapStateToProps = (ownProps: PostMigrationDialogProps) => {
-  return { ...ownProps };
-};
+const mapStateToProps = (ownProps: PostMigrationDialogProps) => ownProps;
 
 function mapDispatchToProps(): PostMigrationDialogProps {
   return {

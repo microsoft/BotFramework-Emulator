@@ -155,8 +155,9 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
           <PrimaryButton className={ styles.openBot } text="Open Bot" onClick={ onOpenBotClick } />
         </Row>
         <span>If you don’t have a bot configuration,&nbsp;
-          <button className={ styles.ctaLink }
-            onClick={ onNewBotClick }>create a new bot configuration.</button>
+        <button className={ styles.ctaLink }
+          onClick={ onNewBotClick }>create a new bot configuration.
+        </button>
         </span>
       </div>
     );
@@ -171,8 +172,12 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
             this.props.recentBots && this.props.recentBots.length ?
               this.props.recentBots.slice(0, 10).map((bot, index) => bot &&
                 <li className={ styles.recentBot } key={ bot.path }>
-                  <button data-index={ index } onClick={ this.onBotClick }
-                    title={ bot.path }><TruncateText>{ bot.displayName }</TruncateText></button>
+                  <button
+                    data-index={ index }
+                    onClick={ this.onBotClick }
+                    title={ bot.path }>
+                    <TruncateText>{ bot.displayName }</TruncateText>
+                  </button>
                   <TruncateText className={ styles.recentBotPath }
                     title={ bot.path }>{ bot.path }</TruncateText>
                   <div className={ styles.recentBotActionBar }>
@@ -223,8 +228,8 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
                   href="javascript:void(0);"
                   onClick={ this.onLearnMoreDesignGuidelinesAnchor }
                 >
-                  design guidelines&nbsp;
-                </a>
+                  design guidelines
+                </a>&nbsp;
                 for best practices&nbsp;
               </dd>
             </dl>
@@ -241,7 +246,7 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
                   href="javascript:void(0);"
                   onClick={ this.onLearnMoreCommandLineAnchor }
                 >
-                  Download Command Line tools&nbsp;
+                  Download Command Line tools
                 </a><br />
                 Create a bot&nbsp;
                 <a
@@ -271,8 +276,8 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
                   href="javascript:void(0);"
                   onClick={ this.onLearnMoreQnAAnchor }
                 >
-                  QnAMaker&nbsp;
-                </a>
+                  QnAMaker
+                </a>&nbsp;
                 and&nbsp;
                 <a
                   className={ styles.ctaLink }
@@ -322,8 +327,9 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
                   href="javascript:void(0);"
                   onClick={ this.onLearnMoreCDAnchor }
                 >
-                  Continuous Deployment&nbsp;
+                  Continuous Deployment
                 </a>
+                &nbsp;
               </dd>
             </dl>
           </div>
@@ -340,8 +346,9 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
                   href="javascript:void(0);"
                   onClick={ this.onLearnMoreEmulatorChannelsAnchor }
                 >
-                  channels&nbsp;
+                  channels
                 </a>
+                &nbsp;
               </dd>
             </dl>
           </div>

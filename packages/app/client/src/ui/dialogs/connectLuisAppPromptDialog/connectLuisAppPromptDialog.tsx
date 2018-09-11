@@ -18,7 +18,8 @@ export class ConnectLuisAppPromptDialog extends Component<ConnectLuisAppPromptDi
         <Dialog
           cancel={ this.props.cancel }
           title="Connect your bot to a LUIS application">
-          <p>Sign in to your Azure account to select the LUIS applications you'd like to associate with this bot.&nbsp;
+          <p>
+            Sign in to your Azure account to select the LUIS applications you'd like to associate with this bot.&nbsp;
             <a href="javascript:void(0);" onClick={ this.onLearnMoreLUIS }>Learn more about LUIS</a>
           </p>
           <p>
@@ -37,7 +38,8 @@ export class ConnectLuisAppPromptDialog extends Component<ConnectLuisAppPromptDi
         <Dialog
           cancel={ this.props.cancel }
           title="Connect your bot to a QnA Maker knowledge base">
-          <p>Sign in to your Azure account to select the QnA Maker knowledge&nbsp;
+          <p>
+            Sign in to your Azure account to select the QnA Maker knowledge&nbsp;
              bases you'd like to associate with this bot.&nbsp;
             <a href="javascript:void(0);" onClick={ this.onLearnMoreQnAMaker }>Learn more about QnA Maker</a>
           </p>
@@ -59,7 +61,8 @@ export class ConnectLuisAppPromptDialog extends Component<ConnectLuisAppPromptDi
         <Dialog
           cancel={ this.props.cancel }
           title="Connect your bot to a Dispatch model">
-          <p>Sign in to your Azure account to select the Dispatch model you'd like to associate with this bot.&nbsp;
+          <p>
+            Sign in to your Azure account to select the Dispatch model you'd like to associate with this bot.&nbsp;
             <a href="javascript:void(0);" onClick={ this.onLearnMoreDispatch }>Learn more about Dispatch models</a>
           </p>
           <p>
