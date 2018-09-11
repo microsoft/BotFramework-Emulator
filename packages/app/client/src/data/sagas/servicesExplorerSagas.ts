@@ -88,7 +88,8 @@ function* launchConnectedServicePicker(action: ConnectedServiceAction<ConnectedS
     return null; // canceled or failed somewhere
   }
   // Add the authenticated user to the action since we now have the token
-  action.payload.authenticatedUser = JSON.parse(atob(armTokenData.access_token.split('.')[1])).upn;
+  const pJson = JSON.parse(atob(armTokenData.access_token.split('.')[1]));
+  action.payload.authenticatedUser = (pJson.upn || pJson.unique_name || pJson.name || pJson.email);
   const { serviceType, progressIndicatorComponent } = action.payload;
   if (progressIndicatorComponent) {
     DialogService.showDialog(progressIndicatorComponent).catch();
@@ -254,16 +255,38 @@ function* removeServiceFromActiveBot(connectedService: IConnectedService): Itera
 function* launchConnectedServiceEditor(action: ConnectedServiceAction<ConnectedServicePayload>)
   : IterableIterator<any> {
   const { editorComponent, authenticatedUser, connectedService, serviceType } = action.payload;
-  const result = yield DialogService.showDialog(editorComponent, { connectedService, authenticatedUser, serviceType });
+  const servicesToUpdate: IConnectedService[] = yield DialogService.showDialog(editorComponent, {
+    connectedService,
+    authenticatedUser,
+    serviceType
+  });
 
-  if (result) {
-    yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.AddOrUpdateService, ServiceTypes.Luis, result[0]);
+  if (servicesToUpdate) {
+    let i = servicesToUpdate.length;
+    while (i--) {
+      const service = servicesToUpdate[i];
+      yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.AddOrUpdateService, service.type, service);
+    }
   }
 }
 
 function openLuisDeepLink(luisService: ILuisService): Promise<any> {
-  const { appId, version } = luisService;
-  const link = `https://www.luis.ai/applications/${ appId }/versions/${ version }/build`;
+  const { appId, version, region } = luisService;
+  let regionPrefix: string;
+  switch (region) {
+    case 'westeurope':
+      regionPrefix = 'eu.';
+      break;
+
+    case 'australiaeast':
+      regionPrefix = 'au.';
+      break;
+
+    default:
+      regionPrefix = '';
+      break;
+  }
+  const link = `https://www.${ regionPrefix }luis.ai/applications/${ appId }/versions/${ version }/build`;
   return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, link);
 }
 

@@ -23,8 +23,5 @@
       "json",
       "node"
     ]
-  },
-  "dependencies": {
-    "node-rsa": "^1.0.0"
   }
 }

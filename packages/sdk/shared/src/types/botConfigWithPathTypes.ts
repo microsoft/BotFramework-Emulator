@@ -56,7 +56,7 @@ export class BotConfigWithPathImpl extends BotConfigurationBase implements BotCo
     return botConfigWithPath;
   }
 
-  public toJSON(): Partial<BotConfigWithPath> {
+  public toJSON(): BotConfigWithPath {
     const botConfig = super.toJSON();
     const { path, overrides } = this;
     return { ...botConfig, path, overrides };

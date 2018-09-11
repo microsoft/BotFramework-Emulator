@@ -43,11 +43,12 @@ import { RootState } from '../../../../data/store';
 import { EndpointEditor } from './endpointEditor/endpointEditor';
 import { EndpointExplorer } from './endpointExplorer';
 
-const mapStateToProps = (state: RootState) => {
+const mapStateToProps = (state: RootState, ...ownProps: any[]) => {
   const { services } = state.bot.activeBot;
   return {
     endpointServices: services.filter(service => service.type === ServiceTypes.Endpoint),
-    window
+    window,
+    ...ownProps
   };
 };
 

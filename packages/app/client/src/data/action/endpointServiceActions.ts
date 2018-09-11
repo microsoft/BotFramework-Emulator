@@ -34,7 +34,6 @@
 import { IEndpointService } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
 import { Action } from 'redux';
-import { EndpointEditor } from '../../ui/shell/explorer/endpointExplorer/endpointEditor/endpointEditor';
 
 export const OPEN_ENDPOINT_DEEP_LINK = 'OPEN_ENDPOINT_DEEP_LINK';
 export const OPEN_ENDPOINT_CONTEXT_MENU = 'OPEN_ENDPOINT_CONTEXT_MENU';
@@ -49,10 +48,10 @@ export interface EndpointServicePayload {
 }
 
 export interface EndpointEditorPayload extends EndpointServicePayload {
-  endpointEditorComponent?: ComponentClass<EndpointEditor>;
+  endpointEditorComponent?: ComponentClass<any>;
 }
 
-export function launchEndpointEditor(endpointEditorComponent: ComponentClass<EndpointEditor>,
+export function launchEndpointEditor(endpointEditorComponent: ComponentClass<any>,
                                      endpointService?: IEndpointService): EndpointServiceAction<EndpointEditorPayload> {
   return {
     type: LAUNCH_ENDPOINT_EDITOR,
@@ -67,7 +66,7 @@ export function openEndpointDeepLink(endpointService: IEndpointService): Endpoin
   };
 }
 
-export function openEndpointExplorerContextMenu(endpointEditorComponent: ComponentClass<EndpointEditor>,
+export function openEndpointExplorerContextMenu(endpointEditorComponent: ComponentClass<any>,
                                                 endpointService?: IEndpointService)
   : EndpointServiceAction<EndpointEditorPayload> {
   return {

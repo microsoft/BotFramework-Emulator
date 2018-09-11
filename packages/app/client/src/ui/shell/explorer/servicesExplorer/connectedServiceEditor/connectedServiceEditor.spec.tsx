@@ -76,7 +76,7 @@ describe('The ConnectedServiceEditor component should', () => {
   it('should make a copy of the connected service passed in the props', () => {
     const instance = node.instance();
     expect(instance.state.connectedServiceCopy instanceof LuisService).toBeTruthy();
-    expect(instance.state.connectedServiceCopy).not.toEqual(mockService);
+    expect(instance.state.connectedServiceCopy === mockService).toBeFalsy();
   });
 
   it('should produce an error when a required input field is null', () => {

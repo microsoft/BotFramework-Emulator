@@ -64,7 +64,7 @@ export function registerCommands(commandRegistry: CommandRegistry) {
     if (result && !result.error) {
       const [, payload] = (result.access_token as string).split('.');
       const pjson = JSON.parse(Buffer.from(payload, 'base64').toString());
-      settingsStore.dispatch(azureLoggedInUserChanged((pjson.upn || pjson.unique_name || pjson.name)));
+      settingsStore.dispatch(azureLoggedInUserChanged((pjson.upn || pjson.unique_name || pjson.name || pjson.email)));
       await mainWindow.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
       // Add the current persistLogin value which the UI can use
       // to bind to without retrieving the entire settingsStore
