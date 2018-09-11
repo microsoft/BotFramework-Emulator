@@ -286,8 +286,8 @@ function openLuisDeepLink(luisService: ILuisService): Promise<any> {
       regionPrefix = '';
       break;
   }
-  let linkArray = ['https://www.',`${ encodeURI(regionPrefix) }`,'luis.ai/applications/'];
-  linkArray.push(`${ encodeURI(appId) }`, '/versions/',`${ encodeURI(version) }`, '/build');
+  let linkArray = ['https://www.', `${ encodeURI(regionPrefix) }`, 'luis.ai/applications/'];
+  linkArray.push(`${ encodeURI(appId) }`, '/versions/', `${ encodeURI(version) }`, '/build');
   const link = linkArray.join('');
   return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, link);
 }
