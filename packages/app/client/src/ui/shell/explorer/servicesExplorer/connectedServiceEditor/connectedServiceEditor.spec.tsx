@@ -16,6 +16,25 @@ jest.mock('../../../../dialogs/service', () => ({
   }
 }));
 
+jest.mock('../../../../dialogs/', () => ({
+  AzureLoginPromptDialogContainer: function mock() {
+    return undefined;
+  },
+  AzureLoginSuccessDialogContainer: function mock() {
+    return undefined;
+  },
+  BotCreationDialog: function mock() {
+    return undefined;
+  },
+  DialogService: {
+    showDialog: () => Promise.resolve(true)
+  },
+  SecretPromptDialog: function mock() {
+    return undefined;
+  }
+}
+));
+
 describe('The ConnectedServiceEditor component should', () => {
   let parent;
   let node;
@@ -32,7 +51,7 @@ describe('The ConnectedServiceEditor component should', () => {
             "subscriptionKey": "emoji"
         }`);
     parent = mount(<Provider store={ createStore(combineReducers({ azureAuth })) }>
-      <ConnectedServiceEditorContainer connectedService={ mockService }/>
+      <ConnectedServiceEditorContainer connectedService={ mockService } />
     </Provider>);
     node = parent.find(ConnectedServiceEditor);
   });

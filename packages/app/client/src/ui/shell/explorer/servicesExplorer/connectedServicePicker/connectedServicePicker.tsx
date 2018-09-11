@@ -37,11 +37,10 @@ import * as React from 'react';
 import { ChangeEventHandler, Component } from 'react';
 
 import * as styles from './connectedServicePicker.scss';
-
 const titleMap = {
-  [ServiceTypes.Luis]: 'Connect your LUIS apps',
+  [ServiceTypes.Luis]: 'Connect to your LUIS apps',
   [ServiceTypes.Dispatch]: 'Connect to a Dispatch model',
-  [ServiceTypes.QnA]: 'Connect your QnA Maker knowledge base',
+  [ServiceTypes.QnA]: 'Connect to your QnA Maker knowledge base',
   [ServiceTypes.Bot]: 'Connect to an Azure Bot Service'
 };
 
@@ -56,6 +55,7 @@ interface ConnectedServicesPickerProps {
   launchServiceEditor: () => void;
   connectServices: (models: IConnectedService[]) => void;
   cancel: () => void;
+  onAnchorClick: (url: string) => void;
 }
 
 interface ConnectedServicesPickerState {
@@ -99,8 +99,8 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
           { this.contentElements }
         </div>
         <DialogFooter>
-          <DefaultButton text="Cancel" onClick={ this.props.cancel }/>
-          <PrimaryButton text="Add" onClick={ this.onAddClick } disabled={ !this.addButtonEnabled }/>
+          <DefaultButton text="Cancel" onClick={ this.props.cancel } />
+          <PrimaryButton text="Add" onClick={ this.onAddClick } disabled={ !this.addButtonEnabled } />
         </DialogFooter>
       </Dialog>
     );
@@ -114,13 +114,13 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
       const checkboxProps = {
         label,
         checked: !!state[id],
-        id: `service_${id}`,
+        id: `service_${ id }`,
         onChange: onChange.bind(this, service),
         disabled: state[id] === connected
       };
       return (
         <li key={ id }>
-          <Checkbox { ...checkboxProps } className={ styles.checkboxOverride }/>
+          <Checkbox { ...checkboxProps } className={ styles.checkboxOverride } />
           { ('version' in service) ? <span>v{ (service as any).version }</span> : null }
         </li>
       );
@@ -168,6 +168,22 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
     this.props.connectServices(addedModels);
   }
 
+  private onCreateLUIS = () => {
+    this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-create-luis-app');
+  }
+
+  private onCreateKB = () => {
+    this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-create-qna-kb');
+  }
+
+  private onLearnMoreCollaboration = () => {
+    this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-luis-collaboration');
+  }
+
+  private onLearnMoreDispatch = () => {
+    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-create-dispatch');
+  }
+
   private get selectAllCheckbox(): JSX.Element {
     if (this.props.availableServices.length < 2) {
       return null;
@@ -178,7 +194,7 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
           onChange={ this.onSelectAllChange }
           checked={ this.state.checkAllChecked }
           id="select-all-services"
-          label="Select all"/>
+          label="Select all" />
       </div>
     );
   }
@@ -206,8 +222,8 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
       <p>
         Select a LUIS app below to store the app ID in your bot file or&nbsp;
         <a href="javascript:void(0);" onClick={ this.props.launchServiceEditor }>
-          add a LUIS app manually by entering the app ID and key
-        </a>
+          add a LUIS app manually
+        </a> by entering the app ID and key
       </p>
     );
   }
@@ -228,8 +244,9 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
       <p>
         Select a Dispatch app below to store the app ID in your bot file or&nbsp;
         <a href="javascript:void(0);" onClick={ this.props.launchServiceEditor }>
-          connect to a Dispatch app manually
-        </a> by entering the knowledge base ID and key.
+          connect to a Dispatch app manually&nbsp;
+        </a>
+        by entering the app ID and key.
       </p>
     );
   }
@@ -255,11 +272,13 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
   private get luisServiceContent(): JSX.Element {
     return (
       <>
-        <a href="javascript:void(0);" className={ styles.paddedLink }>Create a new LUIS app</a>
+        <a href="javascript:void(0);" onClick={ this.onCreateLUIS } className={ styles.paddedLink }>
+          Create a new LUIS app
+        </a>
         <p>
           Signed in as { this.props.authenticatedUser }. You can link apps from a different LUIS
           account to this Azure account by adding yourself as a collaborator.&nbsp;
-          <a href="javascript:void(0);">Learn more about collaborating.</a>
+          <a href="javascript:void(0);" onClick={ this.onLearnMoreCollaboration }>Learn more about collaborating.</a>
         </p>
       </>
     );
@@ -268,7 +287,9 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
   private get qnaServiceContent(): JSX.Element {
     return (
       <>
-        <a href="javascript:void(0);" className={ styles.paddedLink }>Create a new knowledge base</a>
+        <a href="javascript:void(0);" onClick={ this.onCreateKB } className={ styles.paddedLink }>
+          Create a new knowledge base
+        </a>
         <p>
           Signed in as { this.props.authenticatedUser }.
         </p>
@@ -279,11 +300,13 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
   private get dispatchServiceContent(): JSX.Element {
     return (
       <>
-        <a href="javascript:void(0);" className={ styles.paddedLink }>Learn more about using Dispatch apps</a>
+        <a href="javascript:void(0);" onClick={ this.onLearnMoreDispatch } className={ styles.paddedLink }>
+          Learn more about using Dispatch apps
+        </a>
         <p>
           Signed in as { this.props.authenticatedUser }. You can link apps from a different LUIS
           account to this Azure account by adding yourself as a collaborator.&nbsp;
-          <a href="javascript:void(0);">Learn more about collaborating.</a>
+          <a href="javascript:void(0);" onClick={ this.onLearnMoreCollaboration }>Learn more about collaborating.</a>
         </p>
       </>
     );
