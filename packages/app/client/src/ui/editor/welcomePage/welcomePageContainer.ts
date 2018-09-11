@@ -40,9 +40,9 @@ import { SharedConstants } from '@bfemulator/app-shared';
 
 function mapStateToProps(state: RootState, ownProps: WelcomePageProps): WelcomePageProps {
   return {
+    ...ownProps,
     accessToken: state.azureAuth.access_token,
-    recentBots: state.bot.botFiles,
-    ...ownProps
+    recentBots: state.bot.botFiles
   };
 }
 

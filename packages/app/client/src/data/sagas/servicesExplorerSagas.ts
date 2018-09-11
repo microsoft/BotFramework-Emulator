@@ -76,7 +76,13 @@ function* launchConnectedServicePicker(action: ConnectedServiceAction<ConnectedS
   let armTokenData: ArmTokenData = yield select(getArmTokenFromState);
   if (!armTokenData || !armTokenData.access_token) {
     const { promptDialog, loginSuccessDialog, loginFailedDialog } = action.payload.azureAuthWorkflowComponents;
-    armTokenData = yield* getArmToken(beginAzureAuthWorkflow(promptDialog, loginSuccessDialog, loginFailedDialog));
+    armTokenData = yield* getArmToken(
+      beginAzureAuthWorkflow(
+        promptDialog,
+        { serviceType: action.payload.serviceType },
+        loginSuccessDialog,
+        loginFailedDialog
+      ));
   }
   if (!armTokenData) {
     return null; // canceled or failed somewhere
@@ -119,9 +125,11 @@ function* launchConnectedServicePicker(action: ConnectedServiceAction<ConnectedS
   }
 }
 
-function* launchConnectedServicePickList(action: ConnectedServiceAction<ConnectedServicePickerPayload>,
-                                         availableServices: IConnectedService[],
-                                         serviceType: ServiceTypes): IterableIterator<any> {
+function* launchConnectedServicePickList(
+  action: ConnectedServiceAction<ConnectedServicePickerPayload>,
+  availableServices: IConnectedService[],
+  serviceType: ServiceTypes,
+): IterableIterator<any> {
 
   const { pickerComponent, authenticatedUser, serviceType: type } = action.payload;
   let result = yield DialogService.showDialog(pickerComponent, {
@@ -234,7 +242,7 @@ function* removeServiceFromActiveBot(connectedService: IConnectedService): Itera
     type: 'question',
     buttons: ['Cancel', 'OK'],
     defaultId: 1,
-    message: `Remove ${serviceTypeLabels[connectedService.type]} service: ${connectedService.name}. Are you sure?`,
+    message: `Remove ${ serviceTypeLabels[connectedService.type] } service: ${ connectedService.name }. Are you sure?`,
     cancelId: 0,
   });
   if (result) {
@@ -255,20 +263,21 @@ function* launchConnectedServiceEditor(action: ConnectedServiceAction<ConnectedS
 
 function openLuisDeepLink(luisService: ILuisService): Promise<any> {
   const { appId, version } = luisService;
-  const link = `https://www.luis.ai/applications/${appId}/versions/${version}/build`;
+  const link = `https://www.luis.ai/applications/${ appId }/versions/${ version }/build`;
   return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, link);
 }
 
 function openQnaMakerDeepLink(service: IQnAService): Promise<any> {
   const { kbId } = service;
-  const link = `https://qnamaker.ai/Edit/KnowledgeBase?kbid=${kbId}`;
+  const link = `https://qnamaker.ai/Edit/KnowledgeBase?kbid=${ kbId }`;
   return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, link);
 }
 
 function openAzureBotServiceDeepLink(service: IBotService): Promise<any> {
   const { tenantId, subscriptionId, resourceGroup, id } = service;
-  const thankYouTsLint = `https://ms.portal.azure.com/#@${tenantId}/resource/subscriptions/${subscriptionId}`;
-  const link = `${thankYouTsLint}/resourceGroups/${resourceGroup}/providers/Microsoft.BotService/botServices/${id}`;
+  const thankYouTsLint = `https://ms.portal.azure.com/#@${ tenantId }/resource/subscriptions/${ subscriptionId }`;
+  const link =
+    `${ thankYouTsLint }/resourceGroups/${ resourceGroup }/providers/Microsoft.BotService/botServices/${ id }`;
   return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, link + '/channels');
 }
 
