@@ -244,9 +244,9 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
       <p>
         Select a Dispatch app below to store the app ID in your bot file or&nbsp;
         <a href="javascript:void(0);" onClick={ this.props.launchServiceEditor }>
-          connect to a Dispatch app manually&nbsp;
-        </a>
-        by entering the app ID and key.
+          connect to a Dispatch app manually
+        </a> by entering the app ID and key.
+
       </p>
     );
   }

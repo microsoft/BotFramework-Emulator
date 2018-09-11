@@ -48,7 +48,7 @@ export class PostMigrationDialog extends React.Component<PostMigrationDialogProp
       <Dialog cancel={ this.onClose } className={ styles.postMigrationDialog } title="Migration complete!">
         <p>We’ve copied your bot endpoints from Emulator v3 and saved them as <strong>.bot files</strong>.
            A <strong>.bot file</strong> stores metadata about different services your bot consumes
-     and enables you to edit these services directly from the Emulator v4.&nbsp;
+    and enables you to edit these services directly from the Emulator v4.&nbsp;
            <a
             href="javascript:void(0);"
             onClick={ this.onLearnMoreConfigAnchor }>
@@ -70,7 +70,6 @@ export class PostMigrationDialog extends React.Component<PostMigrationDialogProp
   }
 
   private onClose = () => {
-    console.log('onClose');
     this.props.close();
   }
 

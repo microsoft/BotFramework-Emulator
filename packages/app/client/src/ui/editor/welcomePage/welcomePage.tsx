@@ -60,7 +60,7 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
 
     return (
       <GenericDocument>
-        <LargeHeader className={ styles.spacing }>Bot Framework Emulator</LargeHeader>
+        <LargeHeader>Bot Framework Emulator</LargeHeader>
         <span className={ styles.versionNumber }>Version 4</span>
         <Row>
           <Column className={ styles.spacing }>
@@ -141,7 +141,7 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
 
     return (
       <div className={ styles.section }>
-        <SmallHeader>Start by testing your bot</SmallHeader>
+        <SmallHeader className={ styles.marginFix }>Start by testing your bot</SmallHeader>
         <span>Start talking to your bot by connecting to an endpoint or by opening a
           bot saved locally.<br />
           <a
@@ -165,7 +165,7 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
   private get myBotsSection(): JSX.Element {
     return (
       <div className={ styles.section }>
-        <SmallHeader>My Bots</SmallHeader>
+        <SmallHeader className={ styles.marginFix }>My Bots</SmallHeader>
         <ul className={ `${ styles.recentBotsList } ${ styles.well }` }>
           {
             this.props.recentBots && this.props.recentBots.length ?
