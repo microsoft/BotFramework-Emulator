@@ -12,18 +12,37 @@ jest.mock('../service', () => ({
     hideDialog: () => Promise.resolve(false),
   }
 }));
+
+jest.mock('../../dialogs/', () => ({
+  AzureLoginPromptDialogContainer: function mock() {
+    return undefined;
+  },
+  AzureLoginSuccessDialogContainer: function mock() {
+    return undefined;
+  },
+  BotCreationDialog: function mock() {
+    return undefined;
+  },
+  DialogService: {
+    showDialog: () => Promise.resolve(true)
+  },
+  SecretPromptDialog: function mock() {
+    return undefined;
+  }
+}
+));
 describe('The AzureLoginPromptDialog component should', () => {
 
   it('should render deeply', () => {
     const parent = mount(<Provider store={ createStore(azureAuth) }>
-      <AzureLoginPromptDialogContainer/>
+      <AzureLoginPromptDialogContainer />
     </Provider>);
     expect(parent.find(AzureLoginPromptDialogContainer)).not.toBe(null);
   });
 
   it('should contain both a cancel and confirm function in the props', () => {
     const parent = mount(<Provider store={ createStore(azureAuth) }>
-      <AzureLoginPromptDialogContainer/>
+      <AzureLoginPromptDialogContainer />
     </Provider>);
 
     const prompt = parent.find(AzureLoginPromptDialog);

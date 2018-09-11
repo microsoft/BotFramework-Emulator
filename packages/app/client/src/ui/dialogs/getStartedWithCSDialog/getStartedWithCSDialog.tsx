@@ -9,13 +9,14 @@ export interface GetStartedWithCSDialogProps {
   confirm: () => void;
   launchConnectedServiceEditor: () => void;
   authenticatedUser?: string;
+  onAnchorClick: (url: string) => void;
   serviceType?: ServiceTypes;
   showNoModelsFoundContent?: boolean;
 }
 
 const titleMap = {
   [ServiceTypes.Luis]: 'Create a LUIS app',
-  [ServiceTypes.Dispatch]: 'Create a LUIS app',
+  [ServiceTypes.Dispatch]: 'Connect to a Dispatch model',
   [ServiceTypes.QnA]: 'Create a QnA Maker knowledge base'
 };
 
@@ -33,9 +34,9 @@ export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProp
         title={ titleMap[this.props.serviceType] }>
         { this.content }
         <DialogFooter>
-          <DefaultButton text="Cancel" onClick={ this.props.cancel }/>
-          <PrimaryButton text={ `Go to ${buttonTextMap[this.props.serviceType]}` }
-                         onClick={ this.props.confirm }/>
+          <DefaultButton text="Cancel" onClick={ this.props.cancel } />
+          <PrimaryButton text={ `Go to ${ buttonTextMap[this.props.serviceType] }` }
+            onClick={ this.props.confirm } />
         </DialogFooter>
       </Dialog>
     );
@@ -46,9 +47,9 @@ export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProp
 
     switch (serviceType) {
       case ServiceTypes.Luis:
-      case ServiceTypes.Dispatch:
         return this.luisContent;
-
+      case ServiceTypes.Dispatch:
+        return this.dispatchContent;
       case ServiceTypes.QnA:
         return this.qnaContent;
 
@@ -67,8 +68,18 @@ export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProp
             Language Understanding Service (LUIS) is a matching learning-based service for adding language
             understanding to bots, applications and IoT Devices
           </p>
-          <p>You have not signed up for a LUIS account under { this.props.authenticatedUser } </p>
-          <a href="javascript:void(0);" onClick={ this.props.launchConnectedServiceEditor }>Add a LUIS app manually</a>
+          <p>You have not signed up for a LUIS account under { this.props.authenticatedUser }&nbsp;
+            <a href="javascript:void(0);" onClick={ this.onLearnMoreLUIS }>
+              Learn more about LUIS
+            </a>
+          </p>
+          <p>
+            Alternatively, you can &nbsp;
+            <a href="javascript:void(0);" onClick={ this.props.launchConnectedServiceEditor }>
+              connect to a LUIS app manually
+            </a>&nbsp;
+         if you know the app ID, version, and authoring key.
+         </p>
         </>
       );
     }
@@ -87,8 +98,60 @@ export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProp
         </p>
         <p>
           You can link apps from a different { label } account to this Azure account by adding yourself as a
-          collaborator.
-          &nbsp;<a href="javascript:void(0)">Learn more about collaborating</a>
+          collaborator.&nbsp;
+          <a href="javascript:void(0)" onClick={ this.onLearnMoreCollaboration }>
+            Learn more about collaborating
+          </a>
+        </p>
+      </>
+    );
+  }
+  private get dispatchContent(): JSX.Element {
+    const { showNoModelsFoundContent, authenticatedUser } = this.props;
+    if (!showNoModelsFoundContent) {
+      return (
+        <>
+          <p>
+            A Dispatch model is a LUIS model that enables your bot to dispatch intents across multiple &nbsp;
+            LUIS apps and QnAMaker knowledge bases.
+            <a href="javascript:void(0);" onClick={ this.onLearnMoreDispatch }>
+              Learn more about Dispatch models
+            </a>
+          </p>
+          <p>You have not signed up for a LUIS account under { this.props.authenticatedUser }
+            <a href="javascript:void(0);" onClick={ this.onLearnMoreLUIS }>
+              Learn more about LUIS
+            </a>
+          </p>
+          Alternatively, you can
+            <a href="javascript:void(0);" onClick={ this.props.launchConnectedServiceEditor }>
+            connect to a Dispatch app manually
+            </a>
+          if you know the app ID, version, and authoring key.
+        </>
+      );
+    }
+    return (
+      <>
+        <p>
+          Signed in as { authenticatedUser }.
+        </p>
+        <p>
+          You do not have any Dispatch models associated with this account.&nbsp;
+          <a href="javascript:void(0)" onClick={ this.props.launchConnectedServiceEditor }>
+            Connect to a Dispatch model manually
+          </a>&nbsp;
+          by entering this app ID and key.
+        </p>
+        <p>
+          <a href="javascript:void(0)" onClick={ this.onLearnMoreDispatch }>Learn more about Dispatch models</a>&nbsp;
+        </p>
+        <p>
+          You can link apps from a different Dispatch account to this Azure account by adding yourself as a
+          collaborator.&nbsp;
+          <a href="javascript:void(0)" onClick={ this.onLearnMoreCollaboration }>
+            Learn more about collaborating
+          </a>
         </p>
       </>
     );
@@ -112,5 +175,15 @@ export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProp
         </p>
       </>
     );
+  }
+
+  private onLearnMoreCollaboration = () => {
+    this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-luis-collaboration');
+  }
+  private onLearnMoreLUIS = () => {
+    this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-LUIS-docs-home');
+  }
+  private onLearnMoreDispatch = () => {
+    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-create-dispatch');
   }
 }

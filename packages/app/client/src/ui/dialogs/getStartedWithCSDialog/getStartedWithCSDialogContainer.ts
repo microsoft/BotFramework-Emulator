@@ -35,17 +35,24 @@ import { connect } from 'react-redux';
 import { DialogService } from '../service';
 import { GetStartedWithCSDialog, GetStartedWithCSDialogProps } from './getStartedWithCSDialog';
 import { RootState } from '../../../data/store';
+import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 const mapDispatchToProps = (_dispatch: () => void): GetStartedWithCSDialogProps => ({
   cancel: () => DialogService.hideDialog(0),
   confirm: () => DialogService.hideDialog(1),
-  launchConnectedServiceEditor: () => DialogService.hideDialog(2)
+  launchConnectedServiceEditor: () => {
+    DialogService.hideDialog(2);
+  },
+  onAnchorClick: (url) => {
+    CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, url).catch();
+  }
 });
 
 const mapStateToProps = (state: RootState, ...ownProps) => {
-  const {access_token: token = ''} = state.azureAuth;
+  const { access_token: token = '' } = state.azureAuth;
   const [, payload] = token.split('.');
-  return {...ownProps, user: JSON.parse(atob(payload)).upn };
+  return { ...ownProps, user: JSON.parse(atob(payload)).upn };
 };
 
 export const GetStartedWithCSDialogContainer = connect(
