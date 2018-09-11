@@ -34,29 +34,51 @@
 import * as React from 'react';
 import * as styles from './postMigrationDialog.scss';
 import { Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
-import { DialogService } from '../service';
 
-export class PostMigrationDialog extends React.Component<{}, {}> {
+export interface PostMigrationDialogProps {
+  close: () => void;
+  onAnchorClick: (url: string) => void;
+}
+export class PostMigrationDialog extends React.Component<PostMigrationDialogProps> {
+  constructor(props: PostMigrationDialogProps) {
+    super(props);
+  }
   public render(): JSX.Element {
     return (
-      <Dialog cancel={ this.close } className={ styles.postMigrationDialog } title="Migration complete!">
-        <p>We’ve copied your bot endpoints from Emulator v3 and saved them as .bot files.
-           A .bot file stores metadata about different services your bot consumes
-           and enables you to edit these services directly from the Emulator v4.&nbsp;
-           <a href="">Learn more about bot configuration files.</a>
+      <Dialog cancel={ this.onClose } className={ styles.postMigrationDialog } title="Migration complete!">
+        <p>We’ve copied your bot endpoints from Emulator v3 and saved them as <strong>.bot files</strong>.
+           A <strong>.bot file</strong> stores metadata about different services your bot consumes
+     and enables you to edit these services directly from the Emulator v4.&nbsp;
+           <a
+            href="javascript:void(0);"
+            onClick={ this.onLearnMoreConfigAnchor }>
+            Learn more about bot configuration files.
+          </a>
         </p>
-        <p>You can move a bot to any location by right-clicking the bot’s name under My Bots.&nbsp;
-          <a href="">Learn more developing locally.</a>
+        <p>You can move a bot to any location by right-clicking the bot's name under My Bots.&nbsp;
         </p>
-        <p><a href="">Learn more about new features in Bot Framework Emulator v4</a></p>
+        <p>
+          <a href="javascript:void(0);" onClick={ this.onLearnMoreNewFeaturesAnchor }>
+            Learn more about new features in Bot Framework Emulator v4
+          </a>
+        </p>
         <DialogFooter>
-          <PrimaryButton className={ styles.closeBtn } text="Close" onClick={ this.close }/>
+          <PrimaryButton className={ styles.closeBtn } text="Close" onClick={ this.onClose } />
         </DialogFooter>
       </Dialog>
     );
   }
 
-  private close = () => {
-    DialogService.hideDialog();
+  private onClose = () => {
+    console.log('onClose');
+    this.props.close();
+  }
+
+  private onLearnMoreConfigAnchor = () => {
+    this.props.onAnchorClick('https://aka.ms/about-bot-file');
+  }
+
+  private onLearnMoreNewFeaturesAnchor = () => {
+    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-v4-overview');
   }
 }
