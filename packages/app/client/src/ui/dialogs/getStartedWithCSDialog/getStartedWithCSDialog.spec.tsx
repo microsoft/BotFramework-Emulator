@@ -15,6 +15,14 @@ jest.mock('../service', () => ({
   }
 }));
 
+jest.mock('../../dialogs/', () => ({
+  AzureLoginPromptDialogContainer: () => undefined,
+  AzureLoginSuccessDialogContainer: () => undefined,
+  BotCreationDialog: () => undefined,
+  DialogService: { showDialog: () => Promise.resolve(true) },
+  SecretPromptDialog: () => undefined
+}));
+
 describe('The GetStartedWithCSDialog component should', () => {
   let mockStore;
   let parent;
@@ -22,9 +30,11 @@ describe('The GetStartedWithCSDialog component should', () => {
   beforeEach(() => {
     mockStore = createStore(combineReducers({ azureAuth }));
     mockStore.dispatch(azureArmTokenDataChanged(mockArmToken));
-    parent = mount(<Provider store={ mockStore }>
-      <GetStartedWithCSDialogContainer serviceType={ ServiceTypes.Luis }/>
-    </Provider>);
+    parent = mount(
+      <Provider store={ mockStore }>
+        <GetStartedWithCSDialogContainer serviceType={ ServiceTypes.Luis } />
+      </Provider>
+    );
   });
 
   it('should render deeply', () => {
@@ -45,7 +55,7 @@ describe('The GetStartedWithCSDialog component should', () => {
 
   it('should display luisContent when the ServiceTypes.Dispatch is provided in the props', () => {
     parent = mount(<Provider store={ mockStore }>
-      <GetStartedWithCSDialogContainer serviceType={ ServiceTypes.Dispatch }/>
+      <GetStartedWithCSDialogContainer serviceType={ ServiceTypes.Dispatch } />
     </Provider>);
     const prompt = parent.find(GetStartedWithCSDialog);
     expect(prompt.content).toBe(prompt.luisContent);
@@ -53,7 +63,7 @@ describe('The GetStartedWithCSDialog component should', () => {
 
   it('should display qnaContent when the ServiceTypes.QnA is provided in the props', () => {
     parent = mount(<Provider store={ mockStore }>
-      <GetStartedWithCSDialogContainer serviceType={ ServiceTypes.QnA }/>
+      <GetStartedWithCSDialogContainer serviceType={ ServiceTypes.QnA } />
     </Provider>);
     const prompt = parent.find(GetStartedWithCSDialog);
     expect(prompt.content).toBe(prompt.qnaContent);
@@ -61,7 +71,7 @@ describe('The GetStartedWithCSDialog component should', () => {
 
   it('should display the "showNoModelsFoundContent" when specified in the props', () => {
     parent = mount(<Provider store={ mockStore }>
-      <GetStartedWithCSDialogContainer serviceType={ ServiceTypes.QnA } showNoModelsFoundContent={ true }/>
+      <GetStartedWithCSDialogContainer serviceType={ ServiceTypes.QnA } showNoModelsFoundContent={ true } />
     </Provider>);
     const prompt = parent.find(GetStartedWithCSDialog);
     expect(prompt.content).toBe(prompt.qnaContent);
