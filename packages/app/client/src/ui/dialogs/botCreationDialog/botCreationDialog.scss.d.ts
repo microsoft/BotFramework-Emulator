@@ -4,4 +4,6 @@ export const multiInputRow: string;
 export const smallInput: string;
 export const secretInput: string;
 export const botCreateForm: string;
+export const checkboxAnchorContainer: string;
+export const link: string;
 export const endpointWarning: string;

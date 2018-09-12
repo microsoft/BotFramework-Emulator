@@ -38,7 +38,7 @@ import {
   AzureLoginSuccessDialogContainer,
   BotCreationDialog,
   DialogService,
-  PostMigrationDialog,
+  PostMigrationDialogContainer,
   SecretPromptDialog
 } from '../ui/dialogs';
 import store from '../data/store';
@@ -46,6 +46,7 @@ import * as EditorActions from '../data/action/editorActions';
 import * as NavBarActions from '../data/action/navBarActions';
 import * as Constants from '../constants';
 import { CommandRegistry } from '@bfemulator/sdk-shared';
+import { ServiceTypes } from 'botframework-config/lib/schema';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { azureArmTokenDataChanged, beginAzureAuthWorkflow, invalidateArmToken } from '../data/action/azureAuthActions';
 import { AzureAuthState } from '../data/reducer/azureAuthReducer';
@@ -103,9 +104,10 @@ export function registerCommands(commandRegistry: CommandRegistry) {
 
   // ---------------------------------------------------------------------------
   // Azure sign in
-  commandRegistry.registerCommand(UI.SignInToAzure, () => {
+  commandRegistry.registerCommand(UI.SignInToAzure, (serviceType: ServiceTypes) => {
     store.dispatch(beginAzureAuthWorkflow(
       AzureLoginPromptDialogContainer,
+      { serviceType },
       AzureLoginSuccessDialogContainer,
       AzureLoginFailedDialogContainer));
   });
@@ -121,7 +123,7 @@ export function registerCommands(commandRegistry: CommandRegistry) {
   // ---------------------------------------------------------------------------
   // Show post migration dialog on startup if the user has just been migrated
   commandRegistry.registerCommand(UI.ShowPostMigrationDialog, () => {
-    DialogService.showDialog(PostMigrationDialog);
+    DialogService.showDialog(PostMigrationDialogContainer);
   });
 
   commandRegistry.registerCommand(UI.UpdateProgressIndicator, (value: ProgressIndicatorPayload) => {

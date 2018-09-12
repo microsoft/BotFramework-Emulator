@@ -139,3 +139,10 @@ html {
   --my-bots-path-color: var(--neutral-1);
   --my-bots-scrollbar-color: var(--neutral-1);
 }
+
+.ms-Modal {
+  --dialog-bg: var(--neutral-1);
+}
+.ms-Modal .ms-Button-label {
+  color: var(--neutral-15);
+}

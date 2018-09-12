@@ -13,13 +13,22 @@ jest.mock('../service', () => ({
     hideDialog: () => Promise.resolve(false),
   }
 }));
+
+jest.mock('../../dialogs/', () => ({
+  AzureLoginPromptDialogContainer: () => undefined,
+  AzureLoginSuccessDialogContainer: () => undefined,
+  BotCreationDialog: () => undefined,
+  DialogService: { showDialog: () => Promise.resolve(true) },
+  SecretPromptDialog: () => undefined
+}));
+
 describe('The ConnectLuisAppPromptDialog component should', () => {
   let parent;
   let node;
 
   beforeEach(() => {
     parent = mount(<Provider store={ createStore(azureAuth) }>
-      <ConnectLuisAppPromptDialogContainer/>
+      <ConnectLuisAppPromptDialogContainer />
     </Provider>);
     node = parent.find(ConnectLuisAppPromptDialog);
   });

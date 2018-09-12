@@ -30,11 +30,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { ServiceTypes } from 'botframework-config/lib/schema';
 import { connect } from 'react-redux';
+import { ServiceTypes } from 'botframework-config/lib/schema';
 import { RootState } from '../../../../../data/store';
 import { DialogService } from '../../../../dialogs/service';
 import { ConnectedServicePicker } from './connectedServicePicker';
+import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 const mapStateToProps = (state: RootState, ownProps: { [propName: string]: any }) => {
   const { services } = state.bot.activeBot;
@@ -48,7 +50,10 @@ const mapDispatchToProps = (_dispatch: () => void) => {
   return {
     launchServiceEditor: () => DialogService.hideDialog(1),
     connectServices: servicesToConnect => DialogService.hideDialog(servicesToConnect),
-    cancel: () => DialogService.hideDialog(0)
+    cancel: () => DialogService.hideDialog(0),
+    onAnchorClick: (url) => {
+      CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, url).catch();
+    }
   };
 };
 
