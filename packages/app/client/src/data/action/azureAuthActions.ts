@@ -48,18 +48,20 @@ export interface ArmTokenData {
 
 export interface AzureAuthWorkflow {
   promptDialog: ComponentClass<any>;
+  promptDialogProps: { [propName: string]: any };
   loginSuccessDialog: ComponentClass<any>;
   loginFailedDialog: ComponentClass<any>;
 }
 
 export function beginAzureAuthWorkflow(
   promptDialog: ComponentClass<any>,
+  promptDialogProps: { [propName: string]: any },
   loginSuccessDialog: ComponentClass<any>,
   loginFailedDialog: ComponentClass<any>
 ): AzureAuthAction<AzureAuthWorkflow> {
   return {
     type: AZURE_BEGIN_AUTH_WORKFLOW,
-    payload: { promptDialog, loginSuccessDialog, loginFailedDialog }
+    payload: { promptDialog, promptDialogProps, loginSuccessDialog, loginFailedDialog }
   };
 }
 

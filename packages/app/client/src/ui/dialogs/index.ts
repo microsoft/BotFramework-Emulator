@@ -41,7 +41,7 @@ export * from './azureLoginPromptDialog/azureLoginPromptDialogContainer';
 export * from './azureLoginFailedDialog/azureLoginFailedDialogContainer';
 export * from './connectLuisAppPromptDialog/connectLuisAppPromptDialogContainer';
 export * from './getStartedWithCSDialog/getStartedWithCSDialogContainer';
-export * from './postMigrationDialog/postMigrationDialog';
+export * from './postMigrationDialog/postMigrationDialogContainer';
 export * from './progressIndicator/progressIndicatorContainer';
 export * from './botSettingsEditor/botSettingsEditorContainer';
 export * from './resourcesSettings/resourcesSettingsContainer';

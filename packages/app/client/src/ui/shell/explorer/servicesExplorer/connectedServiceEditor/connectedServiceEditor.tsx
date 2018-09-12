@@ -43,6 +43,7 @@ interface ConnectedServiceEditorProps {
   connectedService: IConnectedService;
   cancel: () => void;
   updateConnectedService: (updatedLuisService: IConnectedService) => void;
+  onAnchorClick: (url: string) => void;
 }
 
 interface ConnectedServiceEditorState extends Partial<any> {
@@ -67,7 +68,7 @@ const labelMap = {
 };
 
 const titleMap = {
-  [ServiceTypes.Luis]: 'Connect to a LUIS model',
+  [ServiceTypes.Luis]: 'Connect to a LUIS app',
   [ServiceTypes.Dispatch]: 'Connect to a Dispatch model',
   [ServiceTypes.QnA]: 'Connect to a QnA Maker knowledge base',
   [ServiceTypes.Bot]: 'Connect to Azure Bot Service'
@@ -89,7 +90,7 @@ const getEditableFields = (service: IConnectedService): string[] => {
       return ['name', 'kbId', 'endpointKey'];
 
     default:
-      throw new TypeError(`${service.type} is not a valid service type`);
+      throw new TypeError(`${ service.type } is not a valid service type`);
   }
 };
 
@@ -126,8 +127,8 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
       valid = valid && (!isRequired || !!connectedServiceCopy[key]);
       textInputs.push(
         <TextField
-          key={ `input_${index}` }
-          errorMessage={ state[`${key}Error`] || '' }
+          key={ `input_${ index }` }
+          errorMessage={ state[`${ key }Error`] || '' }
           value={ state[key] }
           onChanged={ textFieldHandlers[key] || (textFieldHandlers[key] = onInputChange.bind(this, key)) }
           label={ labelMap[key] } required={ isRequired }
@@ -140,13 +141,15 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
         <DialogContent>
           <p>
             You can find your knowledge base ID and subscription key in { portalMap[type] }&nbsp;
-            <a href="javascript:void(0);">Learn more about keys in { labelMap[type] }</a>
+            <a href="javascript:void(0);" onClick={ this.onLearnMoreKeys }>
+              Learn more about keys in { labelMap[type] }
+            </a>
           </p>
           { textInputs }
         </DialogContent>
         <DialogFooter>
-          <DefaultButton text="Cancel" onClick={ props.cancel }/>
-          <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ onSubmitClick }/>
+          <DefaultButton text="Cancel" onClick={ props.cancel } />
+          <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ onSubmitClick } />
         </DialogFooter>
       </Dialog>
     );
@@ -167,6 +170,16 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     }
   }
 
+  private onLearnMoreKeys = (): void => {
+    if (ServiceTypes.Luis) {
+      this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-LUIS-docs-home');
+    } else if (ServiceTypes.QnA) {
+      this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-qna-keys');
+    } else {
+      this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-create-dispatch');
+    }
+  }
+
   private onSubmitClick = (): void => {
     this.props.updateConnectedService(this.state.connectedServiceCopy);
   }
@@ -182,6 +195,6 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
 
     const isDirty = Object.keys(connectedServiceCopy)
       .reduce((dirty, key) => (dirty || connectedServiceCopy[key] !== originalLuisService[key]), false);
-    this.setState({ connectedServiceCopy: connectedServiceCopy, [`${propName}Error`]: errorMessage, isDirty } as any);
+    this.setState({ connectedServiceCopy: connectedServiceCopy, [`${ propName }Error`]: errorMessage, isDirty } as any);
   }
 }
