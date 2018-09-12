@@ -59,7 +59,7 @@ export class Migrator {
   /** Adds the bot files in the /migration/ dir
    *  to the MRU bots list and displays an overview page
    */
-  private static async migrateBots(): Promise<boolean> {
+  public static async migrateBots(): Promise<boolean> {
     const botFilesDirectory = Path.join(ensureStoragePath(), 'migration');
     // if the /migration/ directory does not exist then abort migration
     if (!Fs.existsSync(botFilesDirectory)) {
