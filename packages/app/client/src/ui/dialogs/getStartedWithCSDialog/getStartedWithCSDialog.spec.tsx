@@ -16,23 +16,12 @@ jest.mock('../service', () => ({
 }));
 
 jest.mock('../../dialogs/', () => ({
-    AzureLoginPromptDialogContainer: function mock() {
-      return undefined;
-    },
-    AzureLoginSuccessDialogContainer: function mock() {
-      return undefined;
-    },
-    BotCreationDialog: function mock() {
-      return undefined;
-    },
-    DialogService: {
-      showDialog: () => Promise.resolve(true)
-    },
-    SecretPromptDialog: function mock() {
-      return undefined;
-    }
-  }
-));
+  AzureLoginPromptDialogContainer: () => undefined,
+  AzureLoginSuccessDialogContainer: () => undefined,
+  BotCreationDialog: () => undefined,
+  DialogService: { showDialog: () => Promise.resolve(true) },
+  SecretPromptDialog: () => undefined
+}));
 
 describe('The GetStartedWithCSDialog component should', () => {
   let mockStore;

@@ -1,19 +1,11 @@
 jest.mock('../../ui/dialogs', () => ({
-  AzureLoginPromptDialogContainer: function mock() {
-    return undefined;
-  },
-  AzureLoginSuccessDialogContainer: function mock() {
-    return undefined;
-  },
-  BotCreationDialog: function mock() {
-    return undefined;
-  },
+  AzureLoginPromptDialogContainer: () => undefined,
+  AzureLoginSuccessDialogContainer: () => undefined,
+  BotCreationDialog: () => undefined,
   DialogService: { showDialog: () => Promise.resolve(true) },
-  SecretPromptDialog: function mock() {
-    return undefined;
-  }
-}
-));
+  SecretPromptDialog: () => undefined
+}));
+
 jest.mock('../../platform/commands/commandServiceImpl', () => ({
   CommandServiceImpl: {
     remoteCall: () => Promise.resolve(true)
