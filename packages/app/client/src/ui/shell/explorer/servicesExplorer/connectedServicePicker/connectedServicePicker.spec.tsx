@@ -17,6 +17,14 @@ jest.mock('../../../../dialogs/service', () => ({
   }
 }));
 
+jest.mock('../../../../dialogs/', () => ({
+  AzureLoginPromptDialogContainer: () => undefined,
+  AzureLoginSuccessDialogContainer: () => undefined,
+  BotCreationDialog: () => undefined,
+  DialogService: { showDialog: () => Promise.resolve(true) },
+  SecretPromptDialog: () => undefined
+}));
+
 describe('The ConnectedServicePicker component', () => {
   let parent;
   let node;
@@ -45,7 +53,7 @@ describe('The ConnectedServicePicker component', () => {
     mockService.id = 'mock';
 
     parent = mount(<Provider store={ mockStore }>
-      <ConnectedServicePickerContainer availableServices={ [mockService] } authenticatedUser="bot@bot.com"/>
+      <ConnectedServicePickerContainer availableServices={ [mockService] } authenticatedUser="bot@bot.com" />
     </Provider>);
     node = parent.find(ConnectedServicePicker);
   });
@@ -127,7 +135,7 @@ describe('The ConnectedServicePicker component', () => {
     it('ServiceTypes.Luis is passed into the props', () => {
       parent = mount(<Provider store={ mockStore }>
         <ConnectedServicePickerContainer availableServices={ [mockService] }
-                                         authenticatedUser="bot@bot.com" serviceType={ ServiceTypes.Luis }/>
+          authenticatedUser="bot@bot.com" serviceType={ ServiceTypes.Luis } />
       </Provider>);
       node = parent.find(ConnectedServicePicker);
 
@@ -138,7 +146,7 @@ describe('The ConnectedServicePicker component', () => {
     it('ServiceTypes.Dispatch is passed into the props', () => {
       parent = mount(<Provider store={ mockStore }>
         <ConnectedServicePickerContainer availableServices={ [mockService] }
-                                         authenticatedUser="bot@bot.com" serviceType={ ServiceTypes.Dispatch }/>
+          authenticatedUser="bot@bot.com" serviceType={ ServiceTypes.Dispatch } />
       </Provider>);
       node = parent.find(ConnectedServicePicker);
 
@@ -149,7 +157,7 @@ describe('The ConnectedServicePicker component', () => {
     it('ServiceTypes.QnA is passed into the props', () => {
       parent = mount(<Provider store={ mockStore }>
         <ConnectedServicePickerContainer availableServices={ [mockService] }
-                                         authenticatedUser="bot@bot.com" serviceType={ ServiceTypes.QnA }/>
+          authenticatedUser="bot@bot.com" serviceType={ ServiceTypes.QnA } />
       </Provider>);
       node = parent.find(ConnectedServicePicker);
 

@@ -81,6 +81,8 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
     switch (index) {
       // Bot Explorer
       case 0:
+      // Resources
+      case 1:
       // Notifications
       case 2:
         if (currentSelection === selectionMap[index]) {
@@ -93,11 +95,6 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
           this.props.navBarSelectionChanged(selectionMap[index]);
           this.setState({ selection: selectionMap[index] });
         }
-        break;
-
-      // Resources
-      case 1:
-        this.props.navBarSelectionChanged(selectionMap[index]);
         break;
 
       // Settings

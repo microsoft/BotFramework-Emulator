@@ -234,9 +234,9 @@
           border-radius: 100%;
           content: '';
           left: 47px;
-          height: 12px;
+          height: 11px;
           position: absolute;
-          width: 12px;
+          width: 11px;
         }
 
         > .test-bullet::before {
@@ -267,4 +267,8 @@
 
 .spacing {
   padding: 0 0 2px 2px;
+}
+
+.margin-fix {
+  margin-left: 0;
 }
