@@ -41,7 +41,7 @@ html {
   --nav-icon-color-hover-opacity: 1;
   --nav-focused-tag-bg: #F38518;
   --nav-focused-tag-bg-opacity: .6;
-  --nav-border-focus: 1px solid #f38518;
+  --nav-border-focus: 1px solid #F38518;
   --nav-link-selected-border: 1px solid #F38518;
   --nav-link-hover-border: var(--list-item-hover-border);
   --nav-link-badge-color: var(--neutral-1);
