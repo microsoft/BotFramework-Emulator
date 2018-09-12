@@ -77,8 +77,6 @@
 <script>
 
   window.host.on('inspect', (...args) => {
-    console.log('received inspect', ...args);
-
     let contentNode = document.getElementById("main");
     contentNode.innerHTML = '';
 
@@ -93,10 +91,6 @@
       node.innerHTML = str;
       contentNode.appendChild(node);
     }
-  });
-  
-  window.host.on('accessory-click', id => {
-    console.log('accessory click:', id);
   });
 
   function formatJSON(obj) {

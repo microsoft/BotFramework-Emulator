@@ -1,5 +1,18 @@
 .app {
   height: 100%;
   font-size: 12px;
-  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.json {
+  color: var(--log-panel-item-info);
+  padding: 8px 16px 0 16px;
+  font-family: var(--monospace-font-family);
+  font-size: 13px;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  overflow-y: auto;
+  user-select: text;
 }

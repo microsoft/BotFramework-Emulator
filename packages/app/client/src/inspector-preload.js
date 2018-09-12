@@ -50,11 +50,16 @@ ipcRenderer.on('accessory-click', (sender, id) => {
   window.host.dispatch('accessory-click', id);
 });
 
+ipcRenderer.on('theme', (sender, ...args) => {
+  window.host.dispatch('theme', ...args);
+});
+
 window.host = {
   handlers: {
     'inspect': [],
     'bot-updated': [],
-    'accessory-click': []
+    'accessory-click': [],
+    'theme': []
   },
   bot: {},
   logger: {
@@ -96,4 +101,4 @@ window.host = {
   dispatch: function(event, ...args) {
     this.handlers[event].forEach(handler => handler(...args));
   },
-}
+};

@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { getBotDisplayName, SharedConstants, newNotification } from '@bfemulator/app-shared';
+import { getBotDisplayName, newNotification, SharedConstants } from '@bfemulator/app-shared';
 import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 import { BotConfigWithPath, mergeEndpoints } from '@bfemulator/sdk-shared';
 import { hasNonGlobalTabs } from '../../data/editorHelpers';
@@ -92,8 +92,10 @@ export const ActiveBotHelper = new class {
       store.dispatch(FileActions.setRoot(botDirectory));
 
       // update the app file menu and title bar
-      CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.UpdateFileMenu);
-      CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.SetTitleBar, getBotDisplayName(bot));
+      await Promise.all([
+        CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.UpdateFileMenu),
+        CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.SetTitleBar, getBotDisplayName(bot))
+      ]);
     } catch (e) {
       const errMsg = `Error while setting active bot: ${e}`;
       const notification = newNotification(errMsg);
@@ -127,7 +129,7 @@ export const ActiveBotHelper = new class {
         cancelId: 0,
         defaultId: 0,
         message: 'This bot is already open. If you\'d like to start a conversation, ' +
-        'click on an endpoint from the Bot Explorer pane.',
+          'click on an endpoint from the Bot Explorer pane.',
         type: 'question'
       }
     );

@@ -35,7 +35,7 @@ import { IBotConfiguration } from 'botframework-config/lib/schema';
 import * as React from 'react';
 
 import { Extension } from '../../../../../extensions';
-import { Inspector } from '../inspector/inspector';
+import { InspectorContainer } from '../inspector/inspectorContainer';
 import { ExtensionInspector } from '@bfemulator/sdk-shared';
 import * as styles from './detail.scss';
 
@@ -69,9 +69,8 @@ export class Detail extends React.Component<DetailProps> {
   render() {
     return (
       <div className={ styles.detail }>
-        <Inspector
+        <InspectorContainer
           ref={ ref => this.inspectorRef = ref }
-          bot={ this.props.bot }
           document={ this.props.document }
           extension={ this.props.extension }
           inspector={ this.props.inspector }

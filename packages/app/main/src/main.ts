@@ -51,7 +51,7 @@ import { UpdateInfo } from 'electron-updater';
 import { ProgressInfo } from 'builder-util-runtime';
 import { getStore } from './botData/store';
 import { PersistentSettings, Settings, SharedConstants, newNotification, Notification } from '@bfemulator/app-shared';
-import { rememberBounds } from './settingsData/actions/windowStateActions';
+import { rememberBounds, rememberTheme } from './settingsData/actions/windowStateActions';
 import { Store } from 'redux';
 import { azureLoggedInUserChanged } from './settingsData/actions/azureAuthActions';
 import { ngrokEmitter } from './ngrok';
@@ -346,13 +346,9 @@ const createMainWindow = async () => {
   mainWindow.browserWindow.once('ready-to-show', async () => {
     const { zoomLevel, theme, availableThemes } = getSettings().windowState;
     const themeInfo = availableThemes.find(availableTheme => availableTheme.name === theme);
+    const settingsStore: Store<Settings> = getSettingsStore();
     if (themeInfo) {
-      mainWindow.browserWindow.webContents.executeJavaScript(`
-      const themeTag = document.getElementById('themeVars');
-      if (themeTag) {
-        themeTag.href = "${themeInfo.href}";
-      }
-    `);
+      settingsStore.dispatch(rememberTheme(themeInfo.name));
     }
     mainWindow.webContents.setZoomLevel(zoomLevel);
     mainWindow.browserWindow.show();
@@ -360,7 +356,6 @@ const createMainWindow = async () => {
       AppUpdater.checkForUpdates(false, true);
     }
     // Renew arm token
-    const settingsStore: Store<Settings> = getSettingsStore();
     const { persistLogin, signedInUser } = settingsStore.getState().azure;
     if (persistLogin && signedInUser) {
       const result = await CommandRegistry.getCommand(SharedConstants.Commands.Azure.RetrieveArmToken).handler(true);

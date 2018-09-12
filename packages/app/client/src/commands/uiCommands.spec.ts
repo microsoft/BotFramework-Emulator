@@ -110,7 +110,7 @@ describe('the uiCommands', () => {
     let link = document.createElement('link');
     link.id = 'themeVars';
     document.querySelector('head').appendChild(link);
-    registry.getCommand(Commands.SwitchTheme).handler('./light.css');
+    registry.getCommand(Commands.SwitchTheme).handler('light', './light.css');
     expect(link.href).toBe('http://localhost/light.css');
   });
 });

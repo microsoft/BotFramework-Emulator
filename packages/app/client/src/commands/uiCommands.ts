@@ -50,6 +50,7 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import { azureArmTokenDataChanged, beginAzureAuthWorkflow, invalidateArmToken } from '../data/action/azureAuthActions';
 import { AzureAuthState } from '../data/reducer/azureAuthReducer';
 import { ProgressIndicatorPayload, updateProgressIndicator } from '../data/action/progressIndicatorActions';
+import { switchTheme } from '../data/action/themeActions';
 
 /** Register UI commands (toggling UI) */
 export function registerCommands(commandRegistry: CommandRegistry) {
@@ -94,11 +95,14 @@ export function registerCommands(commandRegistry: CommandRegistry) {
 
   // ---------------------------------------------------------------------------
   // Theme switching from main
-  commandRegistry.registerCommand(UI.SwitchTheme, themeHref => {
+  commandRegistry.registerCommand(UI.SwitchTheme, (themeName: string, themeHref: string) => {
+    const linkTags = document.querySelectorAll<HTMLLinkElement>('[data-theme-component="true"]');
     const themeTag = document.getElementById('themeVars') as HTMLLinkElement;
     if (themeTag) {
       themeTag.href = themeHref;
     }
+    const themeComponents = Array.prototype.map.call(linkTags, link => link.href); // href is fully qualified
+    store.dispatch(switchTheme(themeName, themeComponents));
   });
 
   // ---------------------------------------------------------------------------
