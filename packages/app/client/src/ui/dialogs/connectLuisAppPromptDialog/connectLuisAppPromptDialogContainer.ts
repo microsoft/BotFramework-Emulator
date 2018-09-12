@@ -32,14 +32,22 @@
 //
 
 import { connect } from 'react-redux';
-import { DialogService } from '../service';
+import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { ConnectLuisAppPromptDialog, ConnectLuisAppPromptDialogProps } from './connectLuisAppPromptDialog';
+import { DialogService } from '../service';
+import { SharedConstants } from '@bfemulator/app-shared';
 
-const mapDispatchToProps = (_dispatch: () => void): ConnectLuisAppPromptDialogProps => {
+const mapDispatchToProps = (
+  _dispatch: () => void, ownProps: { [propName: string]: any }
+): ConnectLuisAppPromptDialogProps => {
   return {
+    ...ownProps,
     cancel: () => DialogService.hideDialog(0),
     confirm: () => DialogService.hideDialog(1),
-    addLuisAppManually: () => DialogService.hideDialog(2)
+    addLuisAppManually: () => DialogService.hideDialog(2),
+    onAnchorClick: (url) => {
+      CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, url).catch();
+    }
   };
 };
 

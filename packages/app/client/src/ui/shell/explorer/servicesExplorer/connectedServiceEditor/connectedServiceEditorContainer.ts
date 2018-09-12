@@ -35,6 +35,8 @@ import { connect } from 'react-redux';
 import { RootState } from '../../../../../data/store';
 import { DialogService } from '../../../../dialogs/service';
 import { ConnectedServiceEditor } from './connectedServiceEditor';
+import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 const mapStateToProps = (_state: RootState, ownProps: { [propName: string]: any }) => {
   return {
@@ -45,7 +47,10 @@ const mapStateToProps = (_state: RootState, ownProps: { [propName: string]: any 
 const mapDispatchToProps = (_dispatch: () => void) => {
   return {
     updateConnectedService: updatedLuisService => DialogService.hideDialog([updatedLuisService]),
-    cancel: () => DialogService.hideDialog(0)
+    cancel: () => DialogService.hideDialog(0),
+    onAnchorClick: (url) => {
+      CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, url).catch();
+    }
   };
 };
 
