@@ -38,8 +38,9 @@ import { RootState } from '../../../data/store';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { SharedConstants } from '@bfemulator/app-shared';
 
-function mapStateToProps(state: RootState): WelcomePageProps {
+function mapStateToProps(state: RootState, ownProps: WelcomePageProps): WelcomePageProps {
   return {
+    ...ownProps,
     accessToken: state.azureAuth.access_token,
     recentBots: state.bot.botFiles
   };
@@ -48,6 +49,9 @@ function mapStateToProps(state: RootState): WelcomePageProps {
 function mapDispatchToProps(): WelcomePageProps {
   const { Commands } = SharedConstants;
   return {
+    onAnchorClick: (url) => {
+      CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, url).catch();
+    },
     onNewBotClick: () => {
       CommandServiceImpl.call(Commands.UI.ShowBotCreationDialog).catch();
     },
