@@ -35,7 +35,7 @@ import Activity from './activity';
 import ETagObject from './etagObject';
 
 interface ConversationHistory extends ETagObject {
-  Activities: Activity[];
+  activities: Activity[];
 }
 
 export default ConversationHistory;
