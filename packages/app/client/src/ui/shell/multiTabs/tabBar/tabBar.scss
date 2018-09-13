@@ -4,7 +4,7 @@
   color: var(--input-label-color);
   min-height: 32px;
   &.draggedOver {
-    background-color: var(--neutral-14);
+    background-color: var(--tab-active-tab-bg);
   }
 
   & > ul {
@@ -73,11 +73,19 @@
       }
     }
 
-    & > .widget {
+    button {
+      height: 25px;
+      width: auto;
+      background-color: transparent;
+      border: 1px solid transparent;
+    }
+
+     .widget {
       background-size: 16px;
       border: 1px solid transparent;
+      box-sizing: border-box;
       height: 22px;
-      margin: 0 5px;
+      padding: 5px;
       width: 22px;
 
       &:hover {
