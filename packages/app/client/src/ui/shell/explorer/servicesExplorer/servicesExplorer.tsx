@@ -60,7 +60,7 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
   public state = {} as ServicesExplorerProps;
 
   public static getDerivedStateFromProps
-  (newProps: ServicesExplorerProps, existingProps: ServicesExplorerProps): ServicesExplorerProps {
+    (newProps: ServicesExplorerProps, existingProps: ServicesExplorerProps): ServicesExplorerProps {
     if (!Object.keys(existingProps).length) {
       return newProps;
     }
@@ -96,14 +96,16 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
     return services.map((service, index) => {
       let label = service.name;
       if ('version' in service) {
-        label += `, v${(service as any).version}`;
+        label += `, v${ (service as any).version }`;
       }
       return (
         <li
           key={ index }
-          className={ `${styles.link} ${toAnimate[service.id] ? styles.animateHighlight : ''} ` }
+          className={ `${ styles.link } ${ toAnimate[service.id] ? styles.animateHighlight : '' } ` }
           onClick={ this.onLinkClick }
-          data-index={ index }>
+          onKeyPress={ this.onHandleKeyPress }
+          data-index={ index }
+          tabIndex={ 0 }>
           { label } <span>- { serviceTypeLabels[service.type] }</span>
         </li>
       );
@@ -115,6 +117,12 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
     const { index } = li.dataset;
     const { [index]: connectedService } = this.props.services;
     this.props.openContextMenuForService(connectedService, ConnectedServiceEditorContainer);
+  }
+
+  protected onHandleKeyPress = (e): void => {
+    if (e.key === 'Enter') {
+      this.onLinkClick(e);
+    }
   }
 
   protected onLinkClick: MouseEventHandler<HTMLLIElement> = (event: SyntheticEvent<HTMLLIElement>): void => {

@@ -41,25 +41,34 @@ export class ResourceExplorer extends ServicePane<ResourceExplorerProps, Resourc
       const mutable = fileToRename.id === file.id;
       if (!mutable) {
         return (
-          <li key={ `file_${index}` }
-              data-index={ index }
-              onClick={ this.onLinkClick }
-              className={ styles.link }>
+          <li key={ `file_${ index }` }
+            data-index={ index }
+            onClick={ this.onLinkClick }
+            onKeyPress={ this.onHandleKeyPress }
+            className={ styles.link }
+            tabIndex={ 0 }
+          >
             { file.name }
           </li>);
       }
 
       return (
-        <li key={ `file_${index}` } className={ styles.link }>
+        <li key={ `file_${ index }` } className={ styles.link }>
           <input
             type="text"
             ref={ this.editableInputRef }
             onChange={ this.onInputChange }
             onBlur={ this.onInputBlur }
             onKeyUp={ this.onInputKeyUp }
-            defaultValue={ fileToRename.name }/>
+            defaultValue={ fileToRename.name } />
         </li>);
     });
+  }
+
+  protected onHandleKeyPress = (e): void => {
+    if (e.key === 'Enter') {
+      this.onLinkClick(e);
+    }
   }
 
   protected onLinkClick = (event: MouseEvent<HTMLLIElement>) => {
