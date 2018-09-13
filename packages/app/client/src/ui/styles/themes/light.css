@@ -95,7 +95,7 @@ html {
   --explorer-panel-name-color: var(--neutral-9);
   --explorer-panel-icon-color: var(--neutral-14);
   --explorer-panel-group-title-bg: var(--neutral-5);
-  --explorer-panel-group-title-color: var(--neutral-14);
+  --explorer-panel-group-title-color: var(--neutral-12);
   --explorer-panel-group-border: 1px solid transparent;
   --explorer-panel-empty-message-color: var(--neutral-15);
 
@@ -112,6 +112,7 @@ html {
   --tab-focus-border: var(--p-button-border-focus);
   --tab-seperator-bg: var(--neutral-4);
   --tab-icon-color: var(--explorer-panel-group-title-color);
+  --tab-icon-hover-color: var(--neutral-15);
 
   /* Notifications */
   --notification-bg: rgba(128,128,128,0.2);

@@ -112,6 +112,7 @@ html {
   --tab-focus-border: var(--p-button-border-focus);
   --tab-seperator-bg: var(--neutral-11);
   --tab-icon-color: var(--explorer-panel-group-title-color);
+  --tab-icon-hover-color: var(--neutral-6);
 
   /* Notifications */
   --notification-bg: var(--neutral-13);
