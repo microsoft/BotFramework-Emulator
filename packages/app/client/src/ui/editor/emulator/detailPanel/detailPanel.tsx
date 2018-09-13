@@ -151,11 +151,10 @@ class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
     }
   }
 
-  setInspectortitle = (title: string) => {
-    this.setState({
-      ...this.state,
-      title
-    });
+  setInspectorTitle = (title: string) => {
+    if (this.state.title !== title) {
+      this.setState({ title });
+    }
   }
 
   renderAccessoryIcon(config: InspectorAccessoryState) {
@@ -212,7 +211,7 @@ class DetailPanel extends React.Component<DetailPanelProps, DetailPanelState> {
                 inspector={ this.state.inspector }
                 enableAccessory={ this.enableAccessory }
                 setAccessoryState={ this.setAccessoryState }
-                setInspectorTitle={ this.setInspectortitle }
+                setInspectorTitle={ this.setInspectorTitle }
               />
             </PanelContent>
           </Panel>

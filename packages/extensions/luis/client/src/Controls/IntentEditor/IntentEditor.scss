@@ -4,17 +4,16 @@
   font-size: 12px;
   user-select: text;
   padding-top: 16px;
+  label {
+    margin-right: 16px;
+    margin-bottom: 5px;
+  }
 }
-:global {
-  #selectorContainer {
-    padding-left: 16px
-  }
 
-  #selector {
-    width: 190px;
-    font-family: var(--default-font-family);
-    font-size: 12px;
-  }
+.selector {
+  max-width: 150px;
+  font-family: var(--default-font-family);
+  font-size: 12px;
 }
 
 .hidden {

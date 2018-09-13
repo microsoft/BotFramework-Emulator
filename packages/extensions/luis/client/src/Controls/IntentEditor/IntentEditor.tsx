@@ -94,10 +94,10 @@ class IntentEditor extends Component<IntentEditorProps, IntentEditorState> {
 
   render() {
     if (!this.props.intentInfo || this.props.mode === IntentEditorMode.Hidden) {
-      return (<div id="hidden" className={ styles.hidden } />);
+      return (<div id="hidden" className={ styles.hidden }/>);
     } else if (this.props.mode === IntentEditorMode.Disabled) {
       return (
-        <div id="disabled" className={ styles.disabled }>
+        <div className={ styles.disabled }>
           Please add your LUIS service to enable reassigning.
         </div>
       );
@@ -112,11 +112,9 @@ class IntentEditor extends Component<IntentEditorProps, IntentEditorState> {
       <div className={ styles.intentEditor }>
         <form>
           <label>Reassign Intent</label>
-          <span id="selectorContainer">
-            <select id="selector" value={ currentIntent } onChange={ this.handleChange }>
-              { options }
-            </select>
-          </span>
+          <select className={ styles.selector } value={ currentIntent } onChange={ this.handleChange }>
+            { options }
+          </select>
         </form>
       </div>
     );

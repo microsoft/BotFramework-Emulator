@@ -8,9 +8,8 @@ module.exports = {
   entry: {
     luis: path.resolve('./src/index.tsx')
   },
-
+  devtool: 'inline-source-map',
   target: 'electron-renderer',
-
   module: {
     rules: [
       {

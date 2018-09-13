@@ -31,16 +31,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ForkEffect, takeEvery } from 'redux-saga/effects';
+import { ForkEffect, put, takeEvery } from 'redux-saga/effects';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { SharedConstants } from '@bfemulator/app-shared';
-import { BotActions } from '../action/botActions';
+import { BotActions, botHashGenerated, SetActiveBotAction } from '../action/botActions';
+import { generateBotHash } from '../botHelpers';
 
 /** Opens up native open file dialog to browse for a .bot file */
 export function* browseForBot(): IterableIterator<any> {
   yield CommandServiceImpl.call(SharedConstants.Commands.Bot.OpenBrowse);
 }
 
+export function* generateHashForActiveBot(action: SetActiveBotAction): IterableIterator<any> {
+  const { bot } = action.payload;
+  const generatedHash = yield generateBotHash(bot);
+  yield put(botHashGenerated(generatedHash));
+}
+
 export function* botSagas(): IterableIterator<ForkEffect> {
   yield takeEvery(BotActions.browse, browseForBot);
+  yield takeEvery(BotActions.setActive, generateHashForActiveBot);
 }

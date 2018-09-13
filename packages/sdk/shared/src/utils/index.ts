@@ -33,3 +33,4 @@
 
 export * from './misc';
 export * from './bot';
+export * from './json2HTML';
