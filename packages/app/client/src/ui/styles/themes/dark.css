@@ -17,7 +17,7 @@ html {
   --warning-bg: #352A05;
   --warning-outline: #B89500;
 
-  --error-text: #f48771;
+  --error-text: #F48771;
   --error-bg: #5A1D1D;
   --error-outline: #BE1100;
 
@@ -41,17 +41,18 @@ html {
   --nav-icon-color-hover-opacity: 1;
   --nav-focused-tag-bg: #0E70C4;
   --nav-focused-tag-bg-opacity: 1;
+  --nav-border-focus: 1px solid #00BCF2;
   --nav-link-selected-border: 1px solid transparent;
   --nav-link-hover-border: 1px solid transparent;
   --nav-link-badge-color: var(--neutral-1);
-  --nav-link-badge-bg: #ff0000;
+  --nav-link-badge-bg: #FF0000;
 
   /* input[type="text"] */
   --input-bg: var(--neutral-15);
-  --input-label-color: #c8c8c8;
+  --input-label-color: #C8C8C8;
   --input-label-color-disabled: var(--neutral-7);
-  --input-border: 1px solid #c8c8c8;
-  --input-border-focus: 1px solid #0e369c;
+  --input-border: 1px solid #C8C8C8;
+  --input-border-focus: 1px solid #0E369C;
   --input-border-error: 1px solid var(--error-outline);
   --input-placeholder-color: var(--neutral-7);
   --input-border-disabled: 1px solid var(--neutral-7);
@@ -60,14 +61,14 @@ html {
   --p-button-color: var(--neutral-2);
   --p-button-color-disabled: var(--neutral-6);
   --p-button-border: 1px solid transparent;
-  --p-button-border-focus: 1px solid #00bcf2;
+  --p-button-border-focus: 1px solid #00BCF2;
   --p-button-border-hover: 1px solid transparent;
   --p-button-border-active: 1px solid transparent;
   --p-button-border-disabled: 1px solid transparent;
   --p-button-opacity-disabled: 1;
-  --p-button-bg: #3062d6;
-  --p-button-bg-focus: #3062d6;
-  --p-button-bg-hover: #2852b2;
+  --p-button-bg: #3062D6;
+  --p-button-bg-focus: #3062D6;
+  --p-button-bg-hover: #2852B2;
   --p-button-bg-active: #214494;
   --p-button-bg-disabled: var(--neutral-3);
 
@@ -105,7 +106,7 @@ html {
   --tab-color: var(--p-button-color);
   --tab-bar-bg: var(--explorer-panel-group-title-bg);
   --tab-bg: var(--neutral-13);
-  --tab-border: 1px solid trasparent;
+  --tab-border: 1px solid transparent;
   --tab-hover-border: 1px solid transparent;
   --tab-active-tab-bg: var(--neutral-15);
   --tab-focus-border: var(--p-button-border-focus);
@@ -118,7 +119,7 @@ html {
   --notification-timestamp-color: var(--neutral-1);
   --notification-close-icon-color: var(--neutral-4);
   --notification-border: 1px solid transparent;
-  --notifications-clear-all-btn-color: #3062d6;
+  --notifications-clear-all-btn-color: #3062D6;
   --notification-inner-border-display: none;
   --notification-inner-border: 1px solid transparent;
 
@@ -144,10 +145,10 @@ html {
   --dialog-bg: var(--neutral-2);
   --input-bg: var(--neutral-1);
   --input-label-color: var(--neutral-14);
-  --input-label-color-disabled: #c8c8c8;
-  --input-border: 1px solid #c8c8c8;
-  --input-border-focus: 1px solid #00bcf2;
+  --input-label-color-disabled: #C8C8C8;
+  --input-border: 1px solid #C8C8C8;
+  --input-border-focus: 1px solid #00BCF2;
   --input-border-error: 1px solid var(--error-outline);
   --input-placeholder-color: var(--neutral-9);
-  --input-border-disabled: 1px solid #c8c8c8;
+  --input-border-disabled: 1px solid #C8C8C8;
 }

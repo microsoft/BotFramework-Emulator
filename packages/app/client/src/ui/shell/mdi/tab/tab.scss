@@ -41,8 +41,11 @@
       padding-left: 8px;
     }
   }
-  &:hover > .editorTabClose {
-    opacity: 1;
+
+  &:hover {
+    > .editorTabClose {
+      opacity: 1;
+    }
   }
 
   & > .editorTabClose {
@@ -57,6 +60,7 @@
     padding: 0;
     cursor: pointer;
     &:focus {
+      opacity: 1;
       position: relative;
       &::before {
         content: '';
@@ -72,8 +76,6 @@
       color: var(--tab-icon-color);
       font-size: 12px;
     }
-    &:hover::after {
-    }
   }
 }
 
@@ -88,8 +90,8 @@
 .activeEditorTab {
   background-color: var(--tab-active-tab-bg);
   color: var(--tab-color);
+}
 
-  & > .editorTabClose {
-    opacity: 1;
-  }
+:not(.activeEditorTab) > .editorTabClose {
+  visibility: hidden;
 }
