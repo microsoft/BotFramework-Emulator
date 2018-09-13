@@ -42,6 +42,7 @@ export interface ExpandCollapseProps {
   expanded?: boolean;
   title?: string;
   className?: string;
+  ariaLabel?: string;
 }
 
 export interface ExpandCollapseState {
@@ -56,29 +57,31 @@ export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandC
 
   render() {
     const { expanded } = this.state;
-    const { className = '', title, children } = this.props;
+    const { className = '', title, children, ariaLabel } = this.props;
 
     // TODO: Consider <input type="checkbox"> instead of <div />
     return (
-      <div aria-expanded={ expanded } className={ `${styles.expandCollapse} ${className}` }>
-        <header onKeyPress={ this.onHeaderKeyPress }>
-          <a
-            className={ styles.actuator }
-            href="javascript:void(0);"
-            onClick={ this.onActuatorClick }>
-            { this.toggleIcon }
+      <div className={ `${styles.expandCollapse} ${className} ${ expanded ? 'expanded' : '' }` }>
+        <div
+          aria-expanded={ expanded }
+          aria-label={ ariaLabel }
+          role="toolbar"
+          tabIndex={ 0 }
+          onKeyPress={ this.onHeaderKeyPress }
+          className={ styles.header }>
+          <h3
+            onClick={ this.onActuatorClick }
+            title={ title }>
             { title }
-          </a>
+          </h3>
           <div className={ styles.accessories }>
             { filterChildren(children, child => hmrSafeNameComparison(child.type, ExpandCollapseControls)) }
           </div>
-        </header>
+        </div>
         <div className={ styles.body }>
           {
             expanded &&
-            <section>
-              { filterChildren(children, child => hmrSafeNameComparison(child.type, ExpandCollapseContent)) }
-            </section>
+            filterChildren(children, child => hmrSafeNameComparison(child.type, ExpandCollapseContent))
           }
         </div>
       </div>
@@ -111,7 +114,7 @@ export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandC
     this.setState(state => ({ expanded: !state.expanded }));
   }
 
-  private onHeaderKeyPress = (event: KeyboardEvent<HTMLHtmlElement>) => {
+  private onHeaderKeyPress = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === ' ') {
       this.onActuatorClick();
     }

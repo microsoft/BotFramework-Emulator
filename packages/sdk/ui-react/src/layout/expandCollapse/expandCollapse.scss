@@ -5,11 +5,11 @@
   min-height: 22px;
   overflow: hidden;
 
-  &[aria-expanded="true"] {
+  &.expanded {
     margin-bottom: 15px;
   }
 
-  & > header {
+  & > .header {
     background-color: var(--explorer-panel-group-title-bg);
     color: var(--explorer-panel-group-title-color);
     cursor: pointer;
@@ -21,6 +21,7 @@
     text-transform: uppercase;
     white-space: nowrap;
     flex-shrink: 0;
+
     & > .actuator {
       display: flex;
       align-items: center;
@@ -28,8 +29,10 @@
       padding-left: 8px;
       text-decoration: none;
       color: inherit;
+
       &:focus {
         position: relative;
+
         &::after {
           content: '';
           position: absolute;
@@ -40,6 +43,7 @@
           right: 0;
         }
       }
+
       & > svg {
         height: 12px;
         width: 12px;
@@ -66,10 +70,7 @@
     height: 100%;
     overflow: auto;
     position: relative;
-    & > section {
-      height: 100%;
-      display: flex;
-      flex-flow: column nowrap
-    }
+    display: flex;
+    flex-flow: column nowrap;
   }
 }
