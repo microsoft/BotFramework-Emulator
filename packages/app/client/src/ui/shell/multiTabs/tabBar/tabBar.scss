@@ -4,7 +4,7 @@
   color: var(--input-label-color);
   min-height: 32px;
   &.draggedOver {
-    background-color: var(--neutral-14);
+    background-color: var(--tab-active-tab-bg);
   }
 
   & > ul {
