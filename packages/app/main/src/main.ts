@@ -32,7 +32,7 @@
 //
 
 import * as Electron from 'electron';
-import { app, Menu } from 'electron';
+import { app, Menu, systemPreferences } from 'electron';
 
 import { dispatch, getSettings, getStore as getSettingsStore } from './settingsData/store';
 import * as url from 'url';
@@ -50,7 +50,7 @@ import { AppUpdater } from './appUpdater';
 import { UpdateInfo } from 'electron-updater';
 import { ProgressInfo } from 'builder-util-runtime';
 import { getStore } from './botData/store';
-import { PersistentSettings, Settings, SharedConstants, newNotification, Notification } from '@bfemulator/app-shared';
+import { newNotification, Notification, PersistentSettings, Settings, SharedConstants } from '@bfemulator/app-shared';
 import { rememberBounds, rememberTheme } from './settingsData/actions/windowStateActions';
 import { Store } from 'redux';
 import { azureLoggedInUserChanged } from './settingsData/actions/azureAuthActions';
@@ -346,9 +346,10 @@ const createMainWindow = async () => {
   mainWindow.browserWindow.once('ready-to-show', async () => {
     const { zoomLevel, theme, availableThemes } = getSettings().windowState;
     const themeInfo = availableThemes.find(availableTheme => availableTheme.name === theme);
+    const isHighContrast = systemPreferences.isInvertedColorScheme();
     const settingsStore: Store<Settings> = getSettingsStore();
     if (themeInfo) {
-      settingsStore.dispatch(rememberTheme(themeInfo.name));
+      settingsStore.dispatch(rememberTheme(isHighContrast ? 'high-contrast' : themeInfo.name));
     }
     mainWindow.webContents.setZoomLevel(zoomLevel);
     mainWindow.browserWindow.show();
