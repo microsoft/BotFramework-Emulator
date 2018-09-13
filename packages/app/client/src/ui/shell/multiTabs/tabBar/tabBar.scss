@@ -77,7 +77,7 @@
       background-size: 16px;
       border: 1px solid transparent;
       height: 22px;
-      margin: 0px 5px;
+      margin: 0 5px;
       width: 22px;
 
       &:hover {
@@ -85,13 +85,19 @@
         cursor: pointer;
       }
     }
-
-    & > .splitWidget {
-      background: url("../../../media/ic_split.svg") no-repeat 50% 50%;
+    .splitWidget, .presentationWidget {
+      background: var(--tab-icon-color);
+      -webkit-mask-size: 22px;
+      &:hover {
+        background: var(--tab-icon-hover-color);
+      }
+    }
+    .splitWidget {
+      -webkit-mask: url("../../../media/ic_split.svg") no-repeat 50% 50%;
     }
 
-    & > .presentationWidget {
-      background: url("../../../media/ic_presentation.svg") no-repeat 50% 50%;
+    .presentationWidget {
+      -webkit-mask: url("../../../media/ic_presentation.svg") no-repeat 50% 50%;
     }
   }
 }

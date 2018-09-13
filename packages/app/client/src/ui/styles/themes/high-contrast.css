@@ -17,7 +17,7 @@ html {
   --warning-bg: #F6F5D2;
   --warning-outline: #b89500;
 
-  --error-text: #A1260D;
+  --error-text: #F48771;
   --error-bg: #F2DEDE;
   --error-outline: #BE1100;
 
@@ -111,6 +111,7 @@ html {
   --tab-focus-border: var(--p-button-border-focus);
   --tab-seperator-bg: #00BCF2;
   --tab-icon-color: var(--explorer-panel-group-title-color);
+  --tab-icon-hover-color: var(--neutral-4);
 
   /* Notifications */
   --notification-bg: var(--neutral-16);

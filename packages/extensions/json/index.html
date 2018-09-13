@@ -1,5 +1,7 @@
 <html>
-
+<head>
+  <title>JSON Viewer</title>
+</head>
 <style>
   body {
     padding: 0;
@@ -22,8 +24,9 @@
   }
 
   .json {
+    color: var(--log-panel-item-info);
     padding: 8px 16px 0 16px;
-    font-family: Menlo, Monaco, Consolas, Droid Sans Mono, Courier New, monospace, Droid Sans Fallback;
+    font-family: var(--monospace-font-family);
     font-size: 13px;
     word-wrap: break-word;
     white-space: pre-wrap;
@@ -32,23 +35,23 @@
   }
 
   .json-key {
-    color: #9CDCFE;
+    color: var(--log-panel-link);
   }
 
   .json-string {
-    color: #CE9178;
+    color: var(--log-panel-item-error);
   }
 
   .json-number {
-    color: #B5CEA8;
+    color: var(--log-panel-timestamp);
   }
 
   .json-boolean {
-    color: #569CD6;
+    color: var(--log-panel-link);
   }
 
   .json-null {
-    color: #569CD6;
+    color: var(--log-panel-link);
   }
 
   .devtools {
@@ -56,22 +59,22 @@
     bottom: 0;
     right: 0;
   }
-  
+
   .tool-button {
     background-color: transparent;
-    color: #4080D0;
-    border: 1px solid #4080D0;
+    color: var(--log-panel-link);
+    border: 1px solid var(--log-panel-link);
     padding: 6px;
   }
-  
+
   .tool-button:hover {
-    color: #5090E0;
+    color: var(--log-panel-link);
   }
-  
+
 </style>
 
 <body>
-  <div class="json" id="main"></div>
+<div class="json" id="main"></div>
 </body>
 
 <script>
@@ -91,6 +94,34 @@
       node.innerHTML = str;
       contentNode.appendChild(node);
     }
+  });
+
+  window.host.on('theme', async themeInfo => {
+    const oldThemeComponents = document.querySelectorAll('[data-theme-component="true"]');
+    const head = document.querySelector('head');
+    const fragment = document.createDocumentFragment();
+    const promises = [];
+    // Create the new links for each theme component
+    themeInfo.themeComponents.forEach(themeComponent => {
+      const link = document.createElement('link');
+      promises.push(new Promise(resolve => {
+        link.addEventListener('load', resolve);
+      }));
+      link.href = themeComponent;
+      link.rel = 'stylesheet';
+      link.setAttribute('data-theme-component', 'true');
+      fragment.appendChild(link);
+    });
+    head.insertBefore(fragment, head.firstElementChild);
+    // Wait for all the links to load their css
+    await Promise.all(promises);
+    // Remove the old links
+    Array.prototype.forEach.call(oldThemeComponents,
+      themeComponent => {
+        if (themeComponent.parentElement) {
+          themeComponent.parentElement.removeChild(themeComponent);
+        }
+      });
   });
 
   function formatJSON(obj) {
