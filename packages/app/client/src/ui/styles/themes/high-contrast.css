@@ -15,7 +15,7 @@ html {
   --info-outline: #007ACC;
 
   --warning-bg: #F6F5D2;
-  --warning-outline: #b89500;
+  --warning-outline: #B89500;
 
   --error-text: #F48771;
   --error-bg: #F2DEDE;
@@ -49,9 +49,9 @@ html {
 
   /* input[type="text"] */
   --input-bg: var(--neutral-15);
-  --input-label-color: #c8c8c8;
+  --input-label-color: #C8C8C8;
   --input-label-color-disabled: var(--neutral-7);
-  --input-border: 1px solid #c8c8c8;
+  --input-border: 1px solid #C8C8C8;
   --input-border-focus: 1px solid #72C3DF;
   --input-border-error: 1px solid #D02E00;
   --input-placeholder-color: var(--neutral-7);
