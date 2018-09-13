@@ -50,7 +50,9 @@ const mapStateToProps = (state: RootState): Partial<ServicesExplorerProps> => {
   const { services = [] } = state.bot.activeBot;
   const { [CONNECTED_SERVICES_PANEL_ID]: sortCriteria } = state.explorer.sortSelectionByPanelId;
   return {
-    services: services.filter(service => service.type !== ServiceTypes.Endpoint),
+    services: services.filter(service => service.type === ServiceTypes.QnA ||
+      service.type === ServiceTypes.Dispatch ||
+      service.type === ServiceTypes.Luis),
     sortCriteria,
     window
   };
