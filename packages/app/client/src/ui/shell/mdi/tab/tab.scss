@@ -45,8 +45,10 @@
     }
   }
 
-  &:hover > .editorTabClose {
-    opacity: 1;
+  &:hover {
+    > .editorTabClose {
+      visibility: visible;
+    }
   }
 
   & > .editorTabClose {
@@ -55,13 +57,23 @@
     height: 16px;
     width: 16px;
     margin-left: 8px;
-    opacity: 0;
-    background-color: var(--tab-icon-color);
-    border: none;
+    border: 1px solid transparent;
     outline: none;
     padding: 0;
     cursor: pointer;
-    //border: var(--p-button-border-focus);
+
+    &:focus {
+      border-width: 1px;
+      border-style: solid;
+      border-color: var(--tab-border);
+    }
+
+    & > span {
+      display: block;
+      height: 16px;
+      width: 16px;
+      background-color: var(--tab-icon-color);
+    }
   }
 }
 
@@ -76,8 +88,8 @@
 .activeEditorTab {
   background-color: var(--tab-active-tab-bg);
   color: var(--tab-color);
+}
 
-  & > .editorTabClose {
-    opacity: 1;
-  }
+:not(.activeEditorTab) > .editorTabClose {
+  visibility: hidden;
 }

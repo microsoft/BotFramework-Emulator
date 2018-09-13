@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { FileInfo, SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 import { existsSync, readFileSync, Stats } from 'fs-extra';
 import * as path from 'path';
 import { getActiveBot, getBotInfoByPath, loadBotWithRetry } from '../botHelpers';

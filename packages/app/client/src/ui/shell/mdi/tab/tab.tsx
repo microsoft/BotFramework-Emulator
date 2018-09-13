@@ -78,11 +78,11 @@ class TabComponent extends React.Component<TabProps, TabState> {
         <a
           href="javascript:void(0)"
           title="Close"
-          style={{ '-webkit-mask': `url(${closeIcon})` } as any }
           className={ styles.editorTabClose }
           onKeyPress={ this.onCloseButtonKeyPress }
           onClick={ this.props.onCloseClick }
           >
+          <span style={{ '-webkit-mask': `url(${closeIcon})` } as any }></span>
         </a>
       </div>
     );

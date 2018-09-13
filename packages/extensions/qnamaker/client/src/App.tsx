@@ -151,6 +151,34 @@ class App extends React.Component<any, AppState> {
           qnaService: App.getQnAServiceFromBot(bot, this.state.traceInfo.knowledgeBaseId),
         });
       });
+
+      $host.on('theme', async (themeInfo: { themeName: string, themeComponents: string[] }) => {
+        const oldThemeComponents = document.querySelectorAll<HTMLLinkElement>('[data-theme-component="true"]');
+        const head = document.querySelector<HTMLHeadElement>('head') as HTMLHeadElement;
+        const fragment = document.createDocumentFragment();
+        const promises: Promise<any>[] = [];
+        // Create the new links for each theme component
+        themeInfo.themeComponents.forEach(themeComponent => {
+          const link = document.createElement<'link'>('link');
+          promises.push(new Promise(resolve => {
+            link.addEventListener('load', resolve);
+          }));
+          link.href = themeComponent;
+          link.rel = 'stylesheet';
+          link.setAttribute('data-theme-component', 'true');
+          fragment.appendChild(link);
+        });
+        head.insertBefore(fragment, head.firstElementChild);
+        // Wait for all the links to load their css
+        await Promise.all(promises);
+        // Remove the old links
+        Array.prototype.forEach.call(oldThemeComponents,
+          (themeComponent: HTMLLinkElement) => {
+            if (themeComponent.parentElement) {
+              themeComponent.parentElement.removeChild(themeComponent);
+            }
+          });
+      });
     }
   }
 

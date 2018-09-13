@@ -31,14 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // Cheating here and pulling in a module from node. Can be easily replaced if we ever move the emulator to the web.
-const crypto = (window as any).require('crypto');
 import { logEntry, textItem } from '@bfemulator/emulator-core/lib/types/log/util';
 import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
 import { ExtensionInspector } from '@bfemulator/sdk-shared';
 import { IBotConfiguration } from 'botframework-config/lib/schema';
 import * as React from 'react';
-import { DragEvent } from 'react';
-import { getActiveBot } from '../../../../../data/botHelpers';
 import { Extension, InspectorAPI } from '../../../../../extensions';
 import { LogService } from '../../../../../platform/log/logService';
 import { SettingsService } from '../../../../../platform/settings/settingsService';
@@ -49,167 +46,206 @@ interface IpcMessageEvent extends Event {
   args: any[];
 }
 
-interface InspectorProps {
-  bot: IBotConfiguration;
+interface InspectorProps extends InspectorState {
   extension: Extension;
   inspector: ExtensionInspector;
   document: any;
-  inspectObj: any;
   enableAccessory: (id: string, enable: boolean) => void;
   setAccessoryState: (id: string, state: string) => void;
   setInspectorTitle: (title: string) => void;
 }
 
 interface InspectorState {
-  botHash: string;
   titleOverride?: string;
+  activeBot?: IBotConfiguration;
+  botHash?: string;
+  extensionSource?: string;
+  inspectObj: { [propName: string]: any };
+  themeInfo: { themeName: string, themeComponents: string[] };
 }
 
+declare type ElectronHTMLWebViewElement = HTMLWebViewElement & { send: (...args: any[]) => void };
+
 export class Inspector extends React.Component<InspectorProps, InspectorState> {
-
-  ref: any; // HTMLWebViewElement;
-
-  constructor(props: InspectorProps, context: InspectorState) {
-    super(props, context);
-    this.state = {
-      botHash: this.hash(getActiveBot())
-    };
+  get state(): InspectorState {
+    return this._state;
   }
 
-  componentDidMount() {
-    window.addEventListener('toggle-inspector-devtools', () => this.toggleDevTools());
+  set state(value: InspectorState) {
+    const oldState = this.state;
+    this._state = value;
+    this.stateChanged(value, oldState);
   }
 
-  componentWillUnmount() {
-    window.removeEventListener('toggle-inspector-devtools', () => this.toggleDevTools());
+  private _state = {} as InspectorState;
+  private containerRef: HTMLDivElement;
+  private webViewByLocation: { [location: string]: ElectronHTMLWebViewElement } = {};
+
+  public static getDerivedStateFromProps(newProps: InspectorProps, prevState: InspectorState): InspectorState {
+    const { inspector = { src: '' } } = newProps;
+    if (newProps.botHash !== prevState.botHash ||
+      inspector.src !== prevState.extensionSource ||
+      newProps.themeInfo.themeName !== prevState.themeInfo.themeName ||
+      JSON.stringify(newProps.inspectObj) !== JSON.stringify(prevState.inspectObj)) {
+      return {
+        ...prevState,
+        activeBot: newProps.activeBot,
+        botHash: newProps.botHash,
+        extensionSource: inspector.src,
+        inspectObj: newProps.inspectObj,
+        themeInfo: newProps.themeInfo
+      };
+    }
+    return null;
   }
 
-  hash(obj: object): string {
-    const md5 = crypto.createHash('md5');
-    md5.update(JSON.stringify(obj));
-    return md5.digest('base64');
+  public shouldComponentUpdate(nextProps: InspectorProps, nextState: InspectorState, nextContext: any): boolean {
+    return false; // always false
   }
 
-  toggleDevTools() {
+  public componentDidMount() {
+    window.addEventListener('toggle-inspector-devtools', this.toggleDevTools);
+    this.updateInspector(this.props);
+  }
+
+  public componentWillUnmount() {
+    window.removeEventListener('toggle-inspector-devtools', this.toggleDevTools);
+  }
+
+  public render() {
+    return (<div ref={ this.webViewContainer } className={ styles.inspector }>&nbsp;</div>);
+  }
+
+  private stateChanged(newState: InspectorState, oldState: InspectorState): void {
+    if (oldState.botHash !== newState.botHash) {
+      this.botUpdated(newState.activeBot);
+    }
+    if (oldState.extensionSource !== newState.extensionSource) {
+      this.updateInspector(this.props);
+    }
+    if (JSON.stringify(oldState.inspectObj) !== JSON.stringify(newState.inspectObj)) {
+      this.inspect(newState.inspectObj);
+    }
+    if ((oldState.themeInfo || { themeName: '' }).themeName !== newState.themeInfo.themeName) {
+      this.sendToInspector('theme', newState.themeInfo);
+    }
+  }
+
+  private updateInspector(props: InspectorProps): void {
+    const { src } = (props.inspector || { src: '' });
+    const { webViewByLocation: webViews, containerRef } = this;
+    const nextInspector = webViews[src] || (webViews[src] = this.createWebView(props));
+    nextInspector.style.display = '';
+    this.sendInitializationStackToInspector();
+
+    if (!containerRef) {
+      return;
+    }
+    if (!this.containerRef.contains(nextInspector)) {
+      this.containerRef.appendChild(nextInspector);
+    }
+    Array.prototype.forEach.call(containerRef.children, child => {
+      if (child !== nextInspector) {
+        child.style.display = 'none';
+      }
+    });
+  }
+
+  private createWebView(props: InspectorProps): ElectronHTMLWebViewElement {
+    const { cwdAsBase } = SettingsService.emulator;
+    const preload = `file://${cwdAsBase}/../../../node_modules/@bfemulator/client/public/inspector-preload.js`;
+
+    const webView: ElectronHTMLWebViewElement = document.createElement('webview');
+    webView.className = styles.inspector;
+    webView.setAttribute('partition', `persist:${props.botHash}`);
+    webView.setAttribute('preload', preload);
+    webView.setAttribute('src', props.inspector.src);
+    webView.addEventListener('dragenter', this.onInspectorDrag, true);
+    webView.addEventListener('dragover', this.onInspectorDrag, true);
+    webView.addEventListener('dom-ready', this.onWebViewDOMReady);
+    webView.addEventListener('ipc-message', this.ipcMessageEventHandler);
+
+    return webView;
+  }
+
+  private webViewContainer = (ref: HTMLDivElement): void => {
+    this.containerRef = ref;
+  }
+
+  private toggleDevTools = (): void => {
     this.sendToInspector('toggle-dev-tools');
   }
 
-  accessoryClick(id: string) {
-    this.sendToInspector('accessory-click', id);
-  }
-
-  canInspect(inspectObj: any): boolean {
+  private canInspect(inspectObj: any): boolean {
     return this.props.inspector.name === 'JSON' || InspectorAPI.canInspect(this.props.inspector, inspectObj);
   }
 
-  domReadyEventHandler = () => {
-    this.botUpdated(getActiveBot());
-    this.inspect(this.props.inspectObj);
+  private onWebViewDOMReady = (event: Event) => {
+    event.currentTarget.removeEventListener('domready', this.onWebViewDOMReady);
+    this.sendInitializationStackToInspector();
   }
 
-  ipcMessageEventHandler = (ev: IpcMessageEvent): void => {
-
+  private ipcMessageEventHandler = (event: IpcMessageEvent): void => {
     // TODO - localization
-    if (ev.channel === 'enable-accessory') {
-      this.props.enableAccessory(ev.args[0], ev.args[1]);
-    } else if (ev.channel === 'set-accessory-state') {
-      this.props.setAccessoryState(ev.args[0], ev.args[1]);
-    } else if (ev.channel === 'set-inspector-title') {
-      this.setState({
-        ...this.state,
-        titleOverride: ev.args[0]
-      });
-      this.props.setInspectorTitle(ev.args[0]);
-    } else if (ev.channel === 'logger.log') {
-      const inspectorName = this.state.titleOverride || this.props.inspector.name || 'inspector';
-      LogService.logToDocument(this.props.document.documentId,
-        logEntry(textItem(LogLevel.Info, `[${inspectorName}] ${ev.args[0]}`)));
-    } else if (ev.channel === 'logger.error') {
-      const inspectorName = this.state.titleOverride || this.props.inspector.name || 'inspector';
-      LogService.logToDocument(this.props.document.documentId,
-        logEntry(textItem(LogLevel.Error, `[${inspectorName}] ${ev.args[0]}`)));
-    } else {
-      console.warn('Unexpected message from inspector', ev.channel, ...ev.args);
+    const { channel } = event;
+    switch (channel) {
+      case 'enable-accessory':
+        this.props.enableAccessory(event.args[0], event.args[1]);
+        break;
+
+      case 'set-accessory-state':
+        this.props.setAccessoryState(event.args[0], event.args[1]);
+        break;
+
+      case 'set-inspector-title':
+        this.setState({ titleOverride: event.args[0] });
+        this.props.setInspectorTitle(event.args[0]);
+        break;
+
+      case 'logger.log':
+      case 'logger.error':
+        const logLevel = channel === 'logger.log' ? LogLevel.Info : LogLevel.Error;
+        const { documentId } = this.props.document;
+        const inspectorName = this._state.titleOverride || this.props.inspector.name || 'inspector';
+        const text = `[${inspectorName}] ${event.args[0]}`;
+        LogService.logToDocument(documentId, logEntry(textItem(logLevel, text)));
+        break;
+
+      default:
+        console.warn('Unexpected message from inspector', event.channel, ...event.args);
     }
   }
 
-  updateRef = (ref) => {
-    if (this.ref) {
-      this.ref.removeEventListener('dom-ready', () => this.domReadyEventHandler());
-      this.ref.removeEventListener('ipc-message', ev => this.ipcMessageEventHandler(ev));
-    }
-    this.ref = ref;
-    if (this.ref) {
-      this.ref.addEventListener('dom-ready', () => this.domReadyEventHandler());
-      this.ref.addEventListener('ipc-message', ev => this.ipcMessageEventHandler(ev));
-    }
+  private sendInitializationStackToInspector(): void {
+    this.botUpdated(this.state.activeBot);
+    this.inspect(this.state.inspectObj);
+    this.sendToInspector('theme', this.state.themeInfo);
   }
 
-  inspect(obj: any) {
+  private inspect(obj: any) {
     if (this.canInspect(obj)) {
       this.sendToInspector('inspect', obj);
     }
   }
 
-  botUpdated(bot: IBotConfiguration) {
+  private botUpdated(bot: IBotConfiguration) {
     this.sendToInspector('bot-updated', bot);
   }
 
-  sendToInspector(channel: any, ...args: any[]) {
-    if (this.ref) {
-      try {
-        this.ref.send(channel, ...args);
-      } catch (e) {
-        console.error(e);
-      }
+  private sendToInspector(channel: any, ...args: any[]) {
+    const inspector = this.webViewByLocation[this.props.inspector.src];
+    if (!inspector) {
+      return;
+    }
+    try {
+      inspector.send(channel, ...args);
+    } catch (e) {
+      console.error(e);
     }
   }
 
-  handleDrag = (event: DragEvent<HTMLWebViewElement>): void => {
+  private onInspectorDrag = (event: DragEvent): void => {
     // prevent drag & drops inside of the inspector panel
     event.stopPropagation();
-  }
-
-  shouldComponentUpdate(nextProps: InspectorProps): boolean {
-    return this.props.inspectObj !== nextProps.inspectObj;
-  }
-
-  componentDidUpdate(prevProps: InspectorProps): void {
-    const botHash = this.hash(getActiveBot());
-    if (botHash !== this.state.botHash) {
-      this.setState({
-        botHash
-      });
-      this.botUpdated(getActiveBot());
-    }
-    if (prevProps.inspectObj && this.props.inspectObj) {
-      if (JSON.stringify(prevProps.inspectObj) !== JSON.stringify(this.props.inspectObj)) {
-        this.inspect(this.props.inspectObj);
-      }
-    } else {
-      this.inspect(this.props.inspectObj);
-    }
-  }
-
-  render() {
-    const { updateRef, handleDrag } = this;
-    const md5 = crypto.createHash('md5');
-    md5.update(this.props.inspector.src);
-    const hash = md5.digest('base64');
-    const { cwdAsBase } = SettingsService.emulator;
-    const fileLocation = `file://${cwdAsBase}/../../../node_modules/@bfemulator/client/public/inspector-preload.js`;
-
-    return (
-      <webview className={ styles.inspector }
-        webpreferences="webSecurity=no"
-        key={ hash }
-        partition={ `persist:${hash}` }
-        preload={ fileLocation }
-        ref={ ref => updateRef(ref) }
-        src={ this.props.inspector.src }
-        onDragEnterCapture={ handleDrag }
-        onDragOverCapture={ handleDrag }
-      />
-    );
   }
 }

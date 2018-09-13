@@ -18,7 +18,8 @@ export function* getArmToken(action: AzureAuthAction<AzureAuthWorkflow>): Iterab
   if (azureAuth.access_token && !azureAuth.access_token.startsWith('invalid')) {
     return azureAuth;
   }
-  const confirmLoginWithAzure = yield DialogService.showDialog(action.payload.promptDialog);
+  const confirmLoginWithAzure =
+    yield DialogService.showDialog(action.payload.promptDialog, action.payload.promptDialogProps);
   if (!confirmLoginWithAzure) {
     return;
   }

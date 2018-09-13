@@ -46,6 +46,7 @@ import notification, { NotificationState } from './reducer/notification';
 import presentation, { PresentationState } from './reducer/presentation';
 import progressIndicator, { ProgressIndicatorState } from './reducer/progressIndicator';
 import resources, { ResourcesState } from './reducer/resourcesReducer';
+import theme, { ThemeState } from './reducer/themeReducer';
 
 import { applicationSagas } from './sagas';
 
@@ -61,6 +62,7 @@ export interface RootState {
   notification?: NotificationState;
   progressIndicator?: ProgressIndicatorState;
   resources?: ResourcesState;
+  theme?: ThemeState;
 }
 
 const sagaMiddleWare = sagaMiddlewareFactory();
@@ -78,7 +80,8 @@ const configureStore = (initialState: RootState = DEFAULT_STATE): Store<RootStat
     azureAuth,
     notification,
     progressIndicator,
-    resources
+    resources,
+    theme
   }),
   initialState,
   applyMiddleware(

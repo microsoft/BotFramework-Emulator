@@ -34,11 +34,16 @@
 import { connect } from 'react-redux';
 import { DialogService } from '../service';
 import { AzureLoginPromptDialog, AzureLoginPromptDialogProps } from './azureLoginPromptDialog';
+import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 
 const mapDispatchToProps = (_dispatch: () => void): AzureLoginPromptDialogProps => {
   return {
     cancel: () => DialogService.hideDialog(false),
-    confirm: () => DialogService.hideDialog(true)
+    confirm: () => DialogService.hideDialog(true),
+    onAnchorClick: (url) => {
+      CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, url).catch();
+    }
   };
 };
 

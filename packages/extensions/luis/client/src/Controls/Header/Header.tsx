@@ -46,14 +46,10 @@ class Header extends Component<HeaderProps, {}> {
   render() {
     return (
       <div className={ styles.header }>
-        <div id="left">
-          <span id="appName">{ this.props.appName }</span>
-          <span id="appId">App ID: { this.props.appId }</span>
-        </div>
-        <div id="right">
-          <span id="appVersion">Version: { this.props.version }</span>
-          <span id="appSlot">Slot: { this.props.slot }</span>
-        </div>
+        <span><strong>{ this.props.appName }</strong></span>
+        <span className={ styles.appId }>App ID: { this.props.appId }</span>
+        <span>Version: { this.props.version }</span>
+        <span>Slot: { this.props.slot }</span>
       </div>
     );
   }

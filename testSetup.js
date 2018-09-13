@@ -17,3 +17,21 @@ window.require = function () {
 window.define = function () {
   return null;
 };
+
+window.TextEncoder = class {
+  encode() {
+    return 'Hi! I am in your encode';
+  }
+};
+
+window.TextDecoder = class {
+  decode() {
+    return 'Hi! I am in your decode';
+  }
+};
+
+window.crypto = {
+  subtle: {
+    digest: async () => Promise.resolve('Hi! I am in your digest')
+  }
+};

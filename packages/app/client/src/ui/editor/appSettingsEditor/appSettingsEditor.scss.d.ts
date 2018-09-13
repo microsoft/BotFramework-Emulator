@@ -7,3 +7,4 @@ export const saveButton: string;
 export const sizeLimitSuffix: string;
 export const checkboxOverrides: string;
 export const appSettingsInput: string;
+export const spacing: string;
