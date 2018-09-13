@@ -89,7 +89,3 @@
   background-color: var(--tab-active-tab-bg);
   color: var(--tab-color);
 }
-
-:not(.activeEditorTab) > .editorTabClose {
-  visibility: hidden;
-}
