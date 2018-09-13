@@ -12,13 +12,16 @@ import { State } from '../botData/state';
 import * as store from '../botData/store';
 import { setActive } from '../botData/actions/botActions';
 import { emulator } from '../emulator';
+import { BotConfiguration } from 'botframework-config';
 
+const mockBotConfig = BotConfiguration;
 let mockStore;
 (store as any).getStore = function () {
   return mockStore || (mockStore = createStore(combineReducers({ bot })));
 };
 jest.mock('../botHelpers', () => ({
     saveBot: async () => void(0),
+    toSavableBot: () => mockBotConfig.fromJSON(mockBot),
     patchBotsJson: async () => true,
     pathExistsInRecentBots: () => true,
     getBotInfoByPath: () => ({ secret: 'secret' }),
@@ -66,7 +69,8 @@ registerCommands(mockCommandRegistry);
 jest.mock('../main', () => ({
   mainWindow: {
     commandService: {
-      call: async () => true
+      call: async () => true,
+      remoteCall: async () => true
     }
   }
 }));
@@ -134,5 +138,21 @@ describe('The botCommands', () => {
     expect(resetSpy).toHaveBeenCalled();
     expect(pushSpy).toHaveBeenCalled();
     expect(result).toBeUndefined();
+  });
+
+  it('should add or update the service as expected', async () => {
+    const serviceToSave = mockBot.services[0];
+    serviceToSave.name = 'A new Name';
+    serviceToSave.id = '';
+    const remoteCallSpy = jest.spyOn(mainWindow.commandService, 'remoteCall');
+    const command = mockCommandRegistry.getCommand(Bot.AddOrUpdateService).handler;
+    await command(serviceToSave.type, serviceToSave);
+    const savedBot = mockBotConfig.fromJSON(store.getStore().getState().bot.activeBot);
+
+    expect(savedBot.services[0]).toEqual(serviceToSave);
+    expect(serviceToSave.id).not.toEqual('');
+    expect(remoteCallSpy).toHaveBeenCalledWith(SharedConstants.Commands.Bot.SetActive,
+      savedBot,
+      savedBot.getPath());
   });
 });
