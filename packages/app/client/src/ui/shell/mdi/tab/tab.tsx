@@ -35,10 +35,10 @@ import * as React from 'react';
 import { DragEvent, KeyboardEvent, SyntheticEvent } from 'react';
 import { connect } from 'react-redux';
 import * as styles from './tab.scss';
-
 import * as EditorActions from '../../../../data/action/editorActions';
 import { getTabGroupForDocument } from '../../../../data/editorHelpers';
 import { TruncateText } from '../../../../../../../sdk/ui-react/built/index';
+const closeIcon = require('../../../media/ic_close.svg');
 
 interface TabProps {
   active?: boolean;
@@ -77,9 +77,12 @@ class TabComponent extends React.Component<TabProps, TabState> {
         { this.props.dirty ? <span>*</span> : null }
         <a
           href="javascript:void(0)"
+          title="Close"
+          style={{ '-webkit-mask': `url(${closeIcon})` } as any }
           className={ styles.editorTabClose }
           onKeyPress={ this.onCloseButtonKeyPress }
-          onClick={ this.props.onCloseClick }>
+          onClick={ this.props.onCloseClick }
+          >
         </a>
       </div>
     );
