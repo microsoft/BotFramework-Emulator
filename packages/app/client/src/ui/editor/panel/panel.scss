@@ -10,8 +10,8 @@
 }
 
 .panelHeader {
-  background-color: var(--explorer-panel-group-title-bg);
-  color: var(--explorer-panel-group-title-color);
+  background-color: var(--toolbar-bg);
+  color: var(--tab-color);
   line-height: 36px;
   min-height: 36px;
   text-transform: uppercase;
@@ -35,7 +35,7 @@
 }
 
 .panelBody {
-  background-color: inherit;
+  background-color: var(--toolbar-bg);
   color: inherit;
   flex: 1;
   overflow: auto;
