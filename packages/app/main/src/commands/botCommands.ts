@@ -196,8 +196,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         let existing = botConfig.services[index];
         if (existing) {
           // Patch existing service
-          existing = BotConfigurationBase.serviceFromJSON({ ...existing, ...service });
-          botConfig.services[index] = existing;
+          botConfig.services[index] = BotConfigurationBase.serviceFromJSON({ ...existing, ...service });
         } else {
           // Add new service
           if (service.type !== serviceType) {
@@ -206,11 +205,15 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
           botConfig.connectService(service);
         }
         try {
-          await botConfig.save(botInfo.secret);
+          await saveBot(botConfig);
           // The file watcher will not pick up this change immediately
           // making the value in the store stale and potentially incorrect
           // so we'll dispatch it right away
           getStore().dispatch(setActive(botConfig));
+          await mainWindow.commandService.remoteCall(
+            SharedConstants.Commands.Bot.SetActive,
+            botConfig,
+            botConfig.getPath());
         } catch (e) {
           console.error(`bot:add-or-update-service: Error trying to save bot: ${e}`);
           throw e;
