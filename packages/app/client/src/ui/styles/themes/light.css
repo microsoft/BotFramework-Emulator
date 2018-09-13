@@ -7,7 +7,7 @@ html {
   --selected-list-item: #CCCEDB;
   --focused-list-item: #DCEBFC;
   --focused-outline: 1px solid #0E369C;
-  --focused-selected-highlighted-list-item: #3062d6;
+  --focused-selected-highlighted-list-item: #3062D6;
   --focused-selected-list-item-bg: #006AB1;
 
   /* Alert colors */
@@ -66,9 +66,9 @@ html {
   --p-button-border-active: 1px solid transparent;
   --p-button-border-disabled: 1px solid transparent;
   --p-button-opacity-disabled: 1;
-  --p-button-bg: #3062d6;
-  --p-button-bg-focus: #3062d6;
-  --p-button-bg-hover: #2852b2;
+  --p-button-bg: #3062D6;
+  --p-button-bg-focus: #3062D6;
+  --p-button-bg-hover: #2852B2;
   --p-button-bg-active: #214494;
   --p-button-bg-disabled: var(--neutral-3);
 
@@ -106,8 +106,8 @@ html {
   --tab-color: var(--explorer-panel-group-title-color);
   --tab-bar-bg: var(--neutral-2);
   --tab-bg: var(--neutral-2);
-  --tab-border: 1px solid trasparent;
-  --tab-hover-border: 1px solid trasparent;
+  --tab-border: 1px solid transparent;
+  --tab-hover-border: 1px solid transparent;
   --tab-active-tab-bg: var(--neutral-1);
   --tab-focus-border: var(--p-button-border-focus);
   --tab-seperator-bg: var(--neutral-4);
