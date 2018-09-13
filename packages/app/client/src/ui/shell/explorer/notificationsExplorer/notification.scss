@@ -11,6 +11,7 @@
     font-size: 13px;
     line-height: 18px;
     color: var(--notification-message-color);
+    word-wrap: break-word;
   }
 
   & > .notification-timestamp {
