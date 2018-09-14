@@ -25,26 +25,47 @@
 }
 
 .botSettings {
-  -webkit-mask: url("../../media/ic_settings.svg") no-repeat 50% 50%;
-  -webkit-mask-size: 16px;
-  background: var(--input-label-color);
   width: 20px;
   height: 20px;
   margin: 0;
   padding: 0;
-  &:hover {
-    background: var(--p-button-bg-hover);
-  }
-  &[disabled] {
-    &:hover {
-      background: var(--input-label-color);
-    }
-    cursor: not-allowed;
-    background: var(--input-label-color);
-  }
   position: absolute;
   right: 10px;
   cursor: pointer;
+  background: transparent;
+  border: 0;
+
+  &:focus {
+    > span {
+      outline: var(--p-button-border-focus);
+    }
+  }
+
+  &:hover {
+    > span {
+      background: var(--p-button-bg-hover);
+    }
+  }
+
+  &[disabled] {
+    > span {
+      &:hover {
+        background: var(--input-label-color);
+      }
+
+      cursor: not-allowed;
+      background: var(--input-label-color);
+    }
+  }
+
+  > span {
+    display: inline-block;
+    height: 20px;
+    width: 20px;
+    -webkit-mask: url("../../media/ic_settings.svg") no-repeat 50% 50%;
+    -webkit-mask-size: 16px;
+    background: var(--input-label-color);
+  }
 }
 
 .explorerSet {
