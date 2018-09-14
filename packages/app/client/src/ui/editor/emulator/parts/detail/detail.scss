@@ -1,10 +1,11 @@
 .detail {
-  padding: 0;
-  height: 100%;
+  box-sizing: border-box;
   font-family: var(--monospace-font-family);
+  height: calc(100% - 7px);
+  margin: 2px;
+  padding: 0;
+  overflow-y: auto;
   word-wrap: break-word;
   white-space: pre-wrap;
-  overflow-y: auto;
   user-select: text;
-  box-sizing: border-box;
 }
