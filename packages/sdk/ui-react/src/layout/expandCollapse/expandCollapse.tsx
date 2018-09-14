@@ -58,8 +58,8 @@ export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandC
   render() {
     const { expanded } = this.state;
     const { className = '', title, children, ariaLabel } = this.props;
+    const { toggleIcon } = this;
 
-    // TODO: Consider <input type="checkbox"> instead of <div />
     return (
       <div className={ `${styles.expandCollapse} ${className} ${ expanded ? 'expanded' : '' }` }>
         <div
@@ -69,8 +69,9 @@ export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandC
           tabIndex={ 0 }
           onKeyPress={ this.onHeaderKeyPress }
           className={ styles.header }>
+          { toggleIcon }
           <h3
-            onClick={ this.onActuatorClick }
+            onClick={ this.toggleExpandedState }
             title={ title }>
             { title }
           </h3>
@@ -91,13 +92,13 @@ export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandC
   private get toggleIcon(): JSX.Element {
     if (this.state.expanded) {
       return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" aria-hidden={ true }>
           <path d="M11 10.07H5.344L11 4.414v5.656z"/>
         </svg>
       );
     }
     return (
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" aria-hidden={ true }>
         <path d="M6 4v8l4-4-4-4zm1 2.414L8.586 8 7 9.586V6.414z"/>
       </svg>
     );
@@ -110,13 +111,13 @@ export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandC
     }
   }
 
-  private onActuatorClick = () => {
+  private toggleExpandedState = () => {
     this.setState(state => ({ expanded: !state.expanded }));
   }
 
   private onHeaderKeyPress = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === ' ') {
-      this.onActuatorClick();
+      this.toggleExpandedState();
     }
   }
 }
