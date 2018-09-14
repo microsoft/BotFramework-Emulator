@@ -5,6 +5,7 @@ export const inspected: string;
 export const source: string;
 export const timestamp: string;
 export const srcDst: string;
+export const link: string;
 export const level0: string;
 export const level1: string;
 export const level2: string;
