@@ -29,6 +29,7 @@
       border: var(--nav-border-focus);
       top: 0;
       left: 0;
+      clip-path: var(--border-window-clip-path);
     }
   }
 }
