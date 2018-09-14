@@ -60,6 +60,8 @@
     border: 1px solid transparent;
     outline: none;
     padding: 0;
+    visibility: hidden;
+    -webkit-mask: url('../../../media/ic_close.svg');
     cursor: pointer;
 
     &:focus {
@@ -88,4 +90,8 @@
 .activeEditorTab {
   background-color: var(--tab-active-tab-bg);
   color: var(--tab-color);
+
+  & > .editorTabClose {
+    visibility: visible;
+  }
 }

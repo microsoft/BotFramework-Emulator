@@ -38,7 +38,6 @@ import * as styles from './tab.scss';
 import * as EditorActions from '../../../../data/action/editorActions';
 import { getTabGroupForDocument } from '../../../../data/editorHelpers';
 import { TruncateText } from '@bfemulator/ui-react';
-const closeIcon = require('../../../media/ic_close.svg');
 
 interface TabProps {
   active?: boolean;
@@ -82,7 +81,7 @@ class TabComponent extends React.Component<TabProps, TabState> {
           onKeyPress={ this.onCloseButtonKeyPress }
           onClick={ this.props.onCloseClick }
           >
-          <span style={{ '-webkit-mask': `url(${closeIcon})` } as any }></span>
+          <span></span>
         </a>
       </div>
     );
