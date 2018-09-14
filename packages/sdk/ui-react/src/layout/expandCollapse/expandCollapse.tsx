@@ -58,7 +58,7 @@ export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandC
   render() {
     const { expanded } = this.state;
     const { className = '', title, children, ariaLabel } = this.props;
-    const { toggleIcon } = this;
+    const { toggleIcon, onHeaderKeyPress, onToggleExpandedButtonClick } = this;
 
     return (
       <div className={ `${styles.expandCollapse} ${className} ${ expanded ? 'expanded' : '' }` }>
@@ -67,11 +67,11 @@ export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandC
           aria-label={ ariaLabel }
           role="toolbar"
           tabIndex={ 0 }
-          onKeyPress={ this.onHeaderKeyPress }
+          onKeyPress={ onHeaderKeyPress }
           className={ styles.header }>
           { toggleIcon }
           <h3
-            onClick={ this.toggleExpandedState }
+            onClick={ onToggleExpandedButtonClick }
             title={ title }>
             { title }
           </h3>
@@ -111,13 +111,13 @@ export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandC
     }
   }
 
-  private toggleExpandedState = () => {
+  private onToggleExpandedButtonClick = () => {
     this.setState(state => ({ expanded: !state.expanded }));
   }
 
   private onHeaderKeyPress = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === ' ') {
-      this.toggleExpandedState();
+      this.onToggleExpandedButtonClick();
     }
   }
 }
