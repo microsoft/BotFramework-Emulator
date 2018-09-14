@@ -102,7 +102,7 @@ describe('Bot reducer tests', () => {
     const activeBot: BotConfigWithPath = {
       name: 'someActiveBot',
       description: 'testing',
-      secretKey: null,
+      padlock: null,
       services: [],
       path: 'somePath'
     };
@@ -128,7 +128,7 @@ describe('Bot reducer tests', () => {
     const activeBot: BotConfigWithPath = {
       name: 'someBot',
       description: 'some description',
-      secretKey: null,
+      padlock: null,
       services: [],
       path: 'somePath'
     };
@@ -145,7 +145,7 @@ describe('Bot reducer tests', () => {
     const activeBot: BotConfigWithPath = {
       name: 'someActiveBot',
       description: 'testing',
-      secretKey: null,
+      padlock: null,
       services: [],
       path: 'somePath',
       overrides: {
@@ -164,7 +164,7 @@ describe('Bot reducer tests', () => {
     const newActiveBot: BotConfigWithPath = {
       name: 'someBot',
       description: 'some description',
-      secretKey: null,
+      padlock: null,
       services: [],
       path: 'somePath'
     };
@@ -186,7 +186,7 @@ describe('Bot reducer tests', () => {
     const activeBot: BotConfigWithPath = {
       name: 'someActiveBot',
       description: 'testing',
-      secretKey: null,
+      padlock: null,
       services: [],
       path: 'somePath',
       overrides: {
@@ -205,7 +205,7 @@ describe('Bot reducer tests', () => {
     const newActiveBot: BotConfigWithPath = {
       name: 'someBot',
       description: 'some description',
-      secretKey: null,
+      padlock: null,
       services: [],
       path: 'someOtherPath'
     };
@@ -221,7 +221,7 @@ describe('Bot reducer tests', () => {
     const botMock: BotConfigWithPath = {
       name: 'mockedBot',
       description: '',
-      secretKey: null,
+      padlock: null,
       path: 'mockedPath',
       services: []
     };

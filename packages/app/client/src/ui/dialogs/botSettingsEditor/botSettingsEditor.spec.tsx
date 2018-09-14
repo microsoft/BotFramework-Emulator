@@ -178,7 +178,7 @@ describe('The BotSettingsEditor dialog should', () => {
             'name': '',
             'overrides': null,
             'path': '/test/path',
-            'secretKey': '',
+            'padlock': '',
             'services': [],
             'version': '2.0'
           }]
@@ -189,7 +189,7 @@ describe('The BotSettingsEditor dialog should', () => {
             'name': '',
             'overrides': null,
             'path': '/test/path',
-            'secretKey': '',
+            'padlock': '',
             'services': [],
             'version': '2.0'
           }], 'commandName': 'bot:set-active'
@@ -223,7 +223,7 @@ describe('The BotSettingsEditor dialog should', () => {
             'name': '',
             'overrides': null,
             'path': 'a/test/path',
-            'secretKey': '',
+            'padlock': '',
             'services': [],
             'version': '2.0'
           }]

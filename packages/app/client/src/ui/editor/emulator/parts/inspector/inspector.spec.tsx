@@ -27,7 +27,7 @@ const mockState = {
     'overrides': null,
     'path': 'C:\\Users\\blerg\\Documents\\dev\\BotBuilder-Samples\\javascript_nodejs\\' +
       '50.contoso-cafe-bot\\contoso-cafe-bot.bot',
-    'secretKey': '',
+    'padlock': '',
     'services': [
       {
         'appId': '',

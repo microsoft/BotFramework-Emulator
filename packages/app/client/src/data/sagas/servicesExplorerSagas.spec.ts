@@ -150,7 +150,7 @@ describe('The ServiceExplorerSagas', () => {
       const mockBot = JSON.parse(`{
         "name": "TestBot",
         "description": "",
-        "secretKey": "",
+        "padlock": "",
         "services": [{
             "type": "endpoint",
             "name": "https://testbot.botframework.com/api/messagesv3",
