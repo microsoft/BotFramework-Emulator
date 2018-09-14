@@ -140,8 +140,8 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Renames a file - the payload must contain the property "filePath" and "name"
   // This will also rename the file extension if one is provided in the "name" field
-  commandRegistry.registerCommand(Commands.RenameFile, async (info: { filePath: string, name: string }) => {
-    const { filePath, name } = info;
+  commandRegistry.registerCommand(Commands.RenameFile, async (info: { path: string, name: string }) => {
+    const { path: filePath, name } = info;
     const exists = await fs.pathExists(filePath);
     if (!exists) {
       throw new ReferenceError(`Cannot rename File: ${filePath} does not exist`);
