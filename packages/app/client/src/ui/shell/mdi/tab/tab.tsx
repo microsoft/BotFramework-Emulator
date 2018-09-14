@@ -38,7 +38,7 @@ import * as styles from './tab.scss';
 
 import * as EditorActions from '../../../../data/action/editorActions';
 import { getTabGroupForDocument } from '../../../../data/editorHelpers';
-import { TruncateText } from '../../../../../../../sdk/ui-react/built/index';
+import { TruncateText } from '@bfemulator/ui-react';
 
 interface TabProps {
   active?: boolean;
