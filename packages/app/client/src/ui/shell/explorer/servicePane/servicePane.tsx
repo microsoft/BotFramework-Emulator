@@ -41,6 +41,7 @@ export interface ServicePaneProps extends ServicePaneState {
   openContextMenuForService: (service: IConnectedService, ...rest: any[]) => void;
   window: Window;
   title?: string;
+  ariaLabel?: string;
   sortCriteria?: string;
 }
 
@@ -65,8 +66,16 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
   protected get controls(): JSX.Element {
     return (
       <>
-        <button onClick={ this.onSortClick } className={ styles.sortIconButton }>⮁</button>
-        <button onClick={ this.onAddIconClick } className={ styles.addIconButton }>
+        <button aria-label="Sort"
+          onKeyPress={ this.onControlKeyPress}
+          onClick={ this.onSortClick }
+          className={ styles.sortIconButton }>
+          ⮁
+        </button>
+        <button aria-label="Add"
+          onKeyPress={ this.onControlKeyPress}
+          onClick={ this.onAddIconClick }
+          className={ styles.addIconButton }>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25">
             <g>
               <path d="M0 10L10 10 10 0 15 0 15 10 25 10 25 15 15 15 15 25 10 25 10 15 0 15"/>
@@ -149,6 +158,7 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
         className={ styles.servicePane }
         key={ this.props.title }
         title={ this.props.title }
+        ariaLabel={ this.props.ariaLabel }
         expanded={ this.state.expanded }>
         <ExpandCollapseControls>
           <span className={ styles.servicePane }>
@@ -158,5 +168,10 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
         { this.content }
       </ExpandCollapse>
     );
+  }
+
+  private onControlKeyPress(ev: SyntheticEvent<HTMLButtonElement>): void {
+    // so that the key press doesn't bubble up to the expand collapse and toggle expanded state
+    ev.stopPropagation();
   }
 }

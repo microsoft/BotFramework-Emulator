@@ -61,8 +61,8 @@ export default class BotExplorerBar extends React.Component<BotExplorerBarProps,
   private get activeBotJsx(): JSX.Element {
     return (
       <>
-        <EndpointExplorerContainer title="Endpoint"/>
-        <ServicesExplorerContainer title="Services"/>
+        <EndpointExplorerContainer title="Endpoint" ariaLabel="Endpoints" />
+        <ServicesExplorerContainer title="Services" ariaLabel="Services" />
       </>
     );
   }
@@ -81,9 +81,12 @@ export default class BotExplorerBar extends React.Component<BotExplorerBarProps,
             Bot Explorer
           </header>
           <button
+            aria-label="Open bot settings"
             className={ explorerStyles.botSettings }
             disabled={ !this.state.isBotActive }
-            onClick={ this.props.openBotSettings }/>
+            onClick={ this.props.openBotSettings }>
+            <span></span>
+          </button>
         </div>
         <ul className={ explorerStyles.explorerSet }>
           <li>{ explorerBody }</li>
