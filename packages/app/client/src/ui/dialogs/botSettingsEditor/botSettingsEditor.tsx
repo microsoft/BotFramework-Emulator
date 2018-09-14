@@ -151,11 +151,11 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
   }
 
   private onSaveClick = async () => {
-    const { name: botName = '', description = '', path, services, secretKey = '', secret } = this.state;
+    const { name: botName = '', description = '', path, services, padlock = '', secret } = this.state;
     let bot: BotConfigWithPath = BotConfigWithPathImpl.fromJSON({
       name: botName.trim(),
       description: description.trim(),
-      secretKey: secret ? secretKey : '',
+      padlock: secret ? padlock : '',
       path: path.trim(),
       services
     });
@@ -258,7 +258,7 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
   private onResetClick = (): void => {
     this._generatedSecret = null;
     const { generatedSecret } = this;
-    this.setState({ secret: generatedSecret, secretKey: '', dirty: true });
+    this.setState({ secret: generatedSecret, padlock: '', dirty: true });
   }
 
   private get generatedSecret(): string {

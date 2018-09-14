@@ -70,7 +70,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
       bot: BotConfigWithPathImpl.fromJSON({
         name: '',
         description: '',
-        secretKey: '',
+        padlock: '',
         services: [],
         path: ''
       }),
