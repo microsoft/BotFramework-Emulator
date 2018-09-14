@@ -37,7 +37,7 @@ import { connect } from 'react-redux';
 import * as styles from './tab.scss';
 import * as EditorActions from '../../../../data/action/editorActions';
 import { getTabGroupForDocument } from '../../../../data/editorHelpers';
-import { TruncateText } from '../../../../../../../sdk/ui-react/built/index';
+import { TruncateText } from '@bfemulator/ui-react';
 const closeIcon = require('../../../media/ic_close.svg');
 
 interface TabProps {

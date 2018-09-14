@@ -47,7 +47,7 @@ export default function sendHistoryToConversation(botEmulator: BotEmulator) {
     var successCount = 0;
     var firstErrorMessage = '';
 
-    for(let activity of history.Activities) {
+    for(let activity of history.activities) {
       try {
         (req as any).conversation.postActivityToUser(activity, true);
         successCount++;
@@ -56,7 +56,7 @@ export default function sendHistoryToConversation(botEmulator: BotEmulator) {
       }
     }
 
-    var response = createResourceResponse(`Processed ${successCount} of ${history.Activities.length} activities successfully.${firstErrorMessage}`);
+    var response = createResourceResponse(`Processed ${successCount} of ${history.activities.length} activities successfully.${firstErrorMessage}`);
     res.send(HttpStatus.OK, response);
     res.end();
     next();

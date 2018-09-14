@@ -82,14 +82,10 @@
 }
 
 .draggedOverEditorTab {
-  background-color: var(--neutral-14);
+  background-color: var(--tab-active-tab-bg);
 }
 
 .activeEditorTab {
   background-color: var(--tab-active-tab-bg);
   color: var(--tab-color);
-}
-
-:not(.activeEditorTab) > .editorTabClose {
-  visibility: hidden;
 }
