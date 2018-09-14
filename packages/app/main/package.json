@@ -8,7 +8,7 @@
   "homepage": "https://github.com/Microsoft/BotFramework-Emulator",
   "scripts": {
     "build": "run-s lint build:electron",
-    "build:electron": "tsc -p . --outdir app/server",
+    "build:electron": "tsc -p . --outdir app/server && gulp copy-extension-stubs",
     "lint": "tslint --project tsconfig.json",
     "start": "concurrently --kill-others --names \"electron,react-app\" --success first \"npm run start:electron:dev\" \"npm run start:react-app\"",
     "start:electron": "./node_modules/.bin/electron --inspect=7777 .",
