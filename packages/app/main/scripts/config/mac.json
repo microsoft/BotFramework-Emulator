@@ -4,14 +4,15 @@
   },
   "icon": "./scripts/config/resources/icon.icns",
   "dmg": {
+    "background": "./scripts/config/resources/background.tiff",
     "icon": "./scripts/config/resources/icon.icns",
     "contents": [
       {
-        "x": 110,
+        "x": 180,
         "y": 150
       },
       {
-        "x": 240,
+        "x": 350,
         "y": 150,
         "type": "link",
         "path": "/Applications"
