@@ -52,6 +52,7 @@ export class BotNotOpenExplorer extends React.Component<BotNotOpenExplorerProps,
         <li>
           <ExpandCollapse
             expanded={ true }
+            ariaLabel="No Bot Opened"
             title="No Bot Opened"
           >
             <ExpandCollapseContent>

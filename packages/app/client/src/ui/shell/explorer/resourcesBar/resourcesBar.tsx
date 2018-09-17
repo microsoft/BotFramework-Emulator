@@ -28,8 +28,8 @@ export class ResourcesBar extends Component<ResourcesBarProps, ResourcesBarProps
         </div>
         <ul className={ explorerStyles.explorerSet }>
           <li>
-            <ResourceExplorerContainer files={ this.props.chatFiles } title="Scripts"/>
-            <ResourceExplorerContainer files={ this.props.transcripts } title="Transcripts"/>
+            <ResourceExplorerContainer files={ this.props.chatFiles } title="Scripts" ariaLabel="Scripts"/>
+            <ResourceExplorerContainer files={ this.props.transcripts } title="Transcripts" ariaLabel="Transcripts"/>
           </li>
         </ul>
       </div>
