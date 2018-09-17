@@ -33,7 +33,6 @@
 
 import { ExtensionManager } from '../extensions';
 import * as LogService from '../platform/log/logService';
-import * as SettingsService from '../platform/settings/settingsService';
 import { registerCommands as registerBotCommands } from './botCommands';
 import { registerCommands as registerElectronCommands } from './electronCommands';
 import { registerCommands as registerEmulatorCommands } from './emulatorCommands';
@@ -41,12 +40,13 @@ import { registerCommands as registerFileCommands } from './fileCommands';
 import { registerCommands as registerMiscCommands } from './miscCommands';
 import { registerCommands as registerNotificationCommands } from './notificationCommands';
 import { registerCommands as registerUICommands } from './uiCommands';
+import { registerCommands as registerSettingsCommand } from './settingsCommands';
+
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
 /** Registers all commands */
 export function registerAllCommands(commandRegistry: CommandRegistryImpl) {
   LogService.registerCommands(commandRegistry);
-  SettingsService.registerCommands(commandRegistry);
   ExtensionManager.registerCommands(commandRegistry);
   registerBotCommands(commandRegistry);
   registerElectronCommands(commandRegistry);
@@ -55,4 +55,5 @@ export function registerAllCommands(commandRegistry: CommandRegistryImpl) {
   registerMiscCommands(commandRegistry);
   registerNotificationCommands(commandRegistry);
   registerUICommands(commandRegistry);
+  registerSettingsCommand(commandRegistry);
 }

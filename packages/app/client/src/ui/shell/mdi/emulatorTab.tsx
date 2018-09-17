@@ -39,7 +39,7 @@ import * as ChatActions from '../../../data/action/chatActions';
 import * as EditorActions from '../../../data/action/editorActions';
 import { Tab } from './tab/tab';
 import { RootState } from '../../../data/store';
-import { EmulatorMode } from '../../editor/emulator';
+import { EmulatorMode } from '../../editor/emulator/emulator';
 
 interface EmulatorTabProps {
   active?: boolean;

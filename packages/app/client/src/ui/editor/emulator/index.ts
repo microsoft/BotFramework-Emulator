@@ -33,7 +33,7 @@
 
 export * from './chatPanel/chatPanel';
 export * from './detailPanel/detailPanel';
-export * from './emulator';
+export * from './emulatorContainer';
 export * from './logPanel/logPanel';
 export * from './playbackBar/playbackBar';
 export * from './parts';

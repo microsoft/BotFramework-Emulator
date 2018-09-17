@@ -31,15 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { usersDefault, UserSettings } from '@bfemulator/app-shared';
-import { ADD_USERS, REMOVE_USERS, SET_CURRENT_USER, UserAction, UserPayload } from '../actions/userActions';
+import { UserSettings } from '@bfemulator/app-shared';
+import { ADD_USERS, SET_CURRENT_USER, UserAction, UserPayload } from '../actions/userActions';
 
-export function usersReducer(state: UserSettings = usersDefault, action: UserAction<UserPayload>) {
+export function usersReducer(state: UserSettings = {}, action: UserAction<UserPayload>) {
   switch (action.type) {
 
     case SET_CURRENT_USER:
       const usersById = Object.assign({}, state.usersById);
-      const {user} = action.state;
+      const { user } = action.state;
       usersById[user.id] = user;
       return Object.assign({}, { currentUserId: user.id, usersById });
 
@@ -53,11 +53,6 @@ export function usersReducer(state: UserSettings = usersDefault, action: UserAct
         newUsersById[user1.id] = user1;
       }
       return Object.assign({}, state, { usersById: newUsersById });
-    }
-
-    case REMOVE_USERS: {
-      // Object.assign({}, state, { }
-      return state;
     }
 
     default:

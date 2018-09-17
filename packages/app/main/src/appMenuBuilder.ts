@@ -38,9 +38,9 @@ import { AppUpdater, UpdateStatus } from './appUpdater';
 import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
 import * as jsonpath from 'jsonpath';
 import { ConversationService } from './services/conversationService';
-import { getStore } from './botData/store';
 import { getStore as getSettingsStore } from './settingsData/store';
 import { rememberTheme } from './settingsData/actions/windowStateActions';
+import { emulator } from './emulator';
 
 declare type MenuOpts = Electron.MenuItemConstructorOptions;
 
@@ -165,12 +165,12 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     subMenu.push({ type: 'separator' });
 
     subMenu.push({
-      label: 'Open Transcript...',
-      click: () => {
-        mainWindow.commandService.remoteCall(Emulator.PromptToOpenTranscript)
-          .catch(err => console.error('Error opening transcript file from menu: ', err));
-      }
-    },
+        label: 'Open Transcript...',
+        click: () => {
+          mainWindow.commandService.remoteCall(Emulator.PromptToOpenTranscript)
+            .catch(err => console.error('Error opening transcript file from menu: ', err));
+        }
+      },
       { type: 'separator' },
       {
         label: 'Close Tab',
@@ -410,7 +410,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
       return state.chat.chats[activeDocumentId].conversationId;
     };
 
-    const getServiceUrl = () => getStore().getState().serviceUrl;
+    const getServiceUrl = () => emulator.framework.serverUrl.replace('[::]', 'localhost');
     const createClickHandler = serviceFunction => {
       return () => {
         getConversationId()
