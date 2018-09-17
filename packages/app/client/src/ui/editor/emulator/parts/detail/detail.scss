@@ -1,9 +1,9 @@
 .detail {
   box-sizing: border-box;
   font-family: var(--monospace-font-family);
-  height: calc(100% - 7px);
+  height: 100%;
   margin: 2px;
-  padding: 0;
+  padding: 0 0 18px 0;
   overflow-y: auto;
   word-wrap: break-word;
   white-space: pre-wrap;

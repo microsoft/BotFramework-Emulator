@@ -45,6 +45,10 @@
         fill: var(--webchat-selected-text-bg);
       }
 
+      .wc-message-wrapper:first-child:focus {
+        margin-top: 2px;
+      }
+
       .wc-card {
         color: #000;
       }
