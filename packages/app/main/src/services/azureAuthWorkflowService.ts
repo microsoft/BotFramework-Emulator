@@ -33,7 +33,6 @@
 
 import { BrowserWindow } from 'electron';
 import fetch from 'node-fetch';
-import * as uuidv3 from 'uuid/v3';
 import * as uuidv4 from 'uuid/v4';
 import * as jwt from 'jsonwebtoken';
 
@@ -130,7 +129,7 @@ export class AzureAuthWorkflowService {
     const { authorization_endpoint: endpoint } = await this.getConfig();
     const state = uuidv4();
     const requestId = uuidv4();
-    const nonce = uuidv3('https://github.com/Microsoft/BotFramework-Emulator', uuidv3.URL);
+    const nonce = uuidv4();
     const bits = [
       `${endpoint}?response_type=id_token+code`,
       `client_id=${clientId}`,

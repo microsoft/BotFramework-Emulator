@@ -3,13 +3,14 @@ import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
 import bot from '../../../../../data/reducer/bot';
+import clientAwareSettings from '../../../../../data/reducer/clientAwareSettingsReducer';
 import { load, setActive } from '../../../../../data/action/botActions';
 import theme from '../../../../../data/reducer/themeReducer';
 import { Inspector } from './inspector';
 import { InspectorContainer } from './inspectorContainer';
 import { switchTheme } from '../../../../../data/action/themeActions';
 
-const mockStore = createStore(combineReducers({ theme, bot }), {});
+const mockStore = createStore(combineReducers({ theme, bot, clientAwareSettings }), {});
 
 jest.mock('../../../../../data/store', () => ({
   get default() {
@@ -183,13 +184,7 @@ const mockState = {
 };
 
 jest.mock('./inspector.scss', () => ({}));
-jest.mock('../../../../../platform/settings/settingsService', () => ({
-  SettingsService: {
-    emulator: {
-      cwdAsBase: ''
-    }
-  }
-}));
+
 describe('The Inspector component should', () => {
   const documentId = 'a00c2150-b6dc-11e8-9139-bbce58b6f97c';
   const src = 'file:\\\\c:\\some\\path';

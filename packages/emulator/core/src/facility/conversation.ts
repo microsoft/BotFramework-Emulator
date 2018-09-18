@@ -78,6 +78,10 @@ interface ActivityBucket {
  * Stores and propagates conversation messages.
  */
 export default class Conversation extends EventEmitter {
+  public botEmulator: BotEmulator;
+  public botEndpoint: BotEndpoint;
+  public conversationId: string;
+  public user: User;
   // flag indicating if the user has been shown the
   // "please don't use default Bot State API" warning message
   // when they try to write bot state data
@@ -94,17 +98,9 @@ export default class Conversation extends EventEmitter {
     return this.conversationId.includes('transcript');
   }
 
-  constructor(
-    public botEmulator: BotEmulator,
-    public botEndpoint: BotEndpoint,
-    public conversationId: string,
-    public user: User = {
-      id: 'default-user',
-      name: 'User'
-    }
-  ) {
+  constructor(botEmulator: BotEmulator, botEndpoint: BotEndpoint, conversationId: string, user: User) {
     super();
-
+    Object.assign(this, { botEmulator, botEndpoint, conversationId, user });
     // We should consider hardcoding bot id because we don't really use it
     this.members.push({ id: botEndpoint && botEndpoint.botId || 'bot-1', name: 'Bot' });
     this.members.push({ id: user.id, name: user.name });
@@ -163,7 +159,7 @@ export default class Conversation extends EventEmitter {
     this.emit('transcriptupdate');
 
     let status = 200;
-    let resp: any = {json: async() => ({})};
+    let resp: any = { json: async () => ({}) };
 
     // If a message to the bot was triggered from a transcript, don't actually send it.
     // This can happen when clicking a button in an adaptive card, for instance.
@@ -657,7 +653,7 @@ export default class Conversation extends EventEmitter {
   private postage(recipientId: string, activity: Activity, isHistoric: boolean = false): Activity {
     const date = moment();
 
-    const timestamp = isHistoric ?  activity.timestamp : date.toISOString();
+    const timestamp = isHistoric ? activity.timestamp : date.toISOString();
     const recipient = isHistoric ? activity.recipient : { id: recipientId };
 
     return {

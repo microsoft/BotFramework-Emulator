@@ -39,7 +39,6 @@ import interceptHyperlink from './interceptHyperlink';
 import Main from './ui/shell/mainContainer';
 import store from './data/store';
 import { CommandServiceImpl } from './platform/commands/commandServiceImpl';
-import { SettingsService } from './platform/settings/settingsService';
 import { LogService } from './platform/log/logService';
 import { showWelcomePage } from './data/editorHelpers';
 import { CommandRegistry, registerAllCommands } from './commands';
@@ -52,7 +51,6 @@ interceptError();
 interceptHyperlink();
 
 CommandServiceImpl.init();
-SettingsService.init();
 LogService.init();
 
 registerAllCommands(CommandRegistry);

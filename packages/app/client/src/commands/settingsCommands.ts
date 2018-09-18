@@ -31,46 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { ClientAwareSettings, SharedConstants } from '@bfemulator/app-shared';
+import store from '../data/store';
+import { clientAwareSettingsChanged } from '../data/action/clientAwareSettingsActions';
 
-import * as Constants from '../../constants';
-import { AppSettingsEditor, EmulatorContainer, WelcomePageContainer } from './index';
-import { Document } from '../../data/reducer/editor';
+/** Registers settings commands */
+export function registerCommands(commandRegistry: CommandRegistryImpl) {
+  const { Settings } = SharedConstants.Commands;
 
-interface EditorFactoryProps {
-  document?: Document;
-}
-
-export class EditorFactory extends React.Component<EditorFactoryProps> {
-  constructor(props: EditorFactoryProps) {
-    super(props);
-  }
-
-  render() {
-    const { document } = this.props;
-    const { contentType } = document;
-
-    switch (contentType) {
-      case Constants.CONTENT_TYPE_LIVE_CHAT:
-        return (<EmulatorContainer
-          mode="livechat"
-          documentId={ document.documentId }
-          dirty={ this.props.document.dirty }/>);
-
-      case Constants.CONTENT_TYPE_TRANSCRIPT:
-        return (<EmulatorContainer
-          mode="transcript"
-          documentId={ document.documentId }
-          dirty={ this.props.document.dirty }/>);
-
-      case Constants.CONTENT_TYPE_APP_SETTINGS:
-        return (<AppSettingsEditor documentId={ document.documentId } dirty={ this.props.document.dirty }/>);
-
-      case Constants.CONTENT_TYPE_WELCOME_PAGE:
-        return (<WelcomePageContainer documentId={ document.documentId }/>);
-
-      default:
-        return false;
-    }
-  }
+  commandRegistry.registerCommand(Settings.ReceiveGlobalSettings, (settings: ClientAwareSettings) => {
+    store.dispatch(clientAwareSettingsChanged(settings));
+  });
 }

@@ -33,8 +33,8 @@
 import * as React from 'react';
 import * as styles from './chatPanel.scss';
 
-import Chat from '../parts/chat/chat';
-import { EmulatorMode } from '../index';
+import { ChatContainer } from '../parts/chat/chatContainer';
+import { EmulatorMode } from '../emulator';
 
 interface ChatPanelProps {
   document: any;
@@ -54,8 +54,8 @@ export default class ChatPanel extends React.Component<ChatPanelProps, {}> {
     return (
       <div className={ `${styles.chatPanel} ${this.props.className || ''}` }>
         <header>{ endpointId }</header>
-        <Chat mode={ this.props.mode } document={ this.props.document }
-              onStartConversation={ this.props.onStartConversation }/>
+        <ChatContainer mode={ this.props.mode } document={ this.props.document }
+                       onStartConversation={ this.props.onStartConversation }/>
       </div>
     );
   }

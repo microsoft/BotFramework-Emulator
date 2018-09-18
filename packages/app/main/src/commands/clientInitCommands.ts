@@ -41,10 +41,10 @@ import { getStore } from '../botData/store';
 import { getBotsFromDisk, readFileSync } from '../utils';
 import * as Path from 'path';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { ClientAwareSettings, Settings, SharedConstants } from '@bfemulator/app-shared';
 import { Migrator } from '../migrator';
-
-const store = getStore();
+import { getStore as getSettingsStore } from '../settingsData/store';
+import { Store } from 'redux';
 
 /** Registers client initialization commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
@@ -53,23 +53,26 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Client notifying us it's initialized and has rendered
   commandRegistry.registerCommand(Commands.ClientInit.Loaded, async () => {
+    const store = getStore();
+    const settingsStore: Store<Settings> = getSettingsStore();
     // Load bots from disk and sync list with client
     const bots = getBotsFromDisk();
     if (bots.length) {
       store.dispatch(BotActions.load(bots));
-      mainWindow.commandService.remoteCall(Commands.Bot.SyncBotList, bots);
+      await mainWindow.commandService.remoteCall(Commands.Bot.SyncBotList, bots);
     } else {
       await Migrator.startup();
     }
     // Reset the app title bar
-    mainWindow.commandService.call(Commands.Electron.SetTitleBar);
+    await mainWindow.commandService.call(Commands.Electron.SetTitleBar);
     // Un-fullscreen the screen
-    mainWindow.commandService.call(Commands.Electron.SetFullscreen, false);
+    await mainWindow.commandService.call(Commands.Electron.SetFullscreen, false);
     // Send app settings to client
-    mainWindow.commandService.remoteCall(Commands.Settings.ReceiveGlobalSettings, {
-      url: emulator.framework.serverUrl,
-      cwd: __dirname
-    });
+    await mainWindow.commandService.remoteCall(Commands.Settings.ReceiveGlobalSettings, {
+      serverUrl: (emulator.framework.serverUrl || '').replace('[::]', '127.0.0.1'),
+      cwd: (__dirname || '').replace(/\\/g, '/'),
+      users: settingsStore.getState().users
+    } as ClientAwareSettings);
     // Load extensions
     ExtensionManagerImpl.unloadExtensions();
     ExtensionManagerImpl.loadExtensions();
@@ -78,7 +81,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Client notifying us the welcome screen has been rendered
   commandRegistry.registerCommand(Commands.ClientInit.PostWelcomeScreen, async (): Promise<void> => {
-    mainWindow.commandService.call(Commands.Electron.UpdateFileMenu);
+    await mainWindow.commandService.call(Commands.Electron.UpdateFileMenu);
 
     // Parse command line args for a protocol url
     const args = process.argv.length ? process.argv.slice(1) : [];
@@ -107,7 +110,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
         // open a transcript on the client side and pass in
         // some extra info to differentiate it from a transcript on disk
-        mainWindow.commandService.remoteCall(Commands.Emulator.OpenTranscript, 'deepLinkedTranscript', {
+        await mainWindow.commandService.remoteCall(Commands.Emulator.OpenTranscript, 'deepLinkedTranscript', {
           activities: conversationActivities,
           inMemory: true
         });
