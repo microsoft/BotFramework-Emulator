@@ -77,7 +77,7 @@ export async function loadBotWithRetry(botPath: string, secret?: string): Promis
       // entered via the secret prompt dialog. In the latter case, we should
       // update the secret for the bot that we have on record with the correct secret.
       const botInfo = getBotInfoByPath(botPath);
-      if (secret && botInfo.secret && botInfo.secret !== secret) {
+      if (secret && (botInfo.secret !== secret)) {
         // update the secret in bots.json with the valid secret
         const updatedBot = { ...botInfo, secret };
         await patchBotsJson(botPath, updatedBot);
