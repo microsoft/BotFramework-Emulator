@@ -40,6 +40,7 @@ import { getBotInfoByPath } from '../../../data/botHelpers';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 import * as styles from './botSettingsEditor.scss';
+import { generateBotSecret } from '../../../utils';
 
 export interface BotSettingsEditorProps {
   bot: BotConfigWithPath;
@@ -110,19 +111,19 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
         <ul className={ styles.actionsList }>
           <li>
             <a href="javascript:void(0);"
-               onClick={ this.onRevealSecretClick }>
+              onClick={ this.onRevealSecretClick }>
               { revealSecret ? 'Hide' : 'Show' }
             </a>
           </li>
           <li>
             <a href="javascript:void(0);"
-               onClick={ this.onCopyClick }>
+              onClick={ this.onCopyClick }>
               Copy
             </a>
           </li>
           <li>
             <a href="javascript:void(0);"
-               onClick={ this.onResetClick }>
+              onClick={ this.onResetClick }>
               Reset
             </a>
           </li>
@@ -131,8 +132,8 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
         <DialogFooter>
           <DefaultButton text="Cancel" onClick={ this.onCancel } className={ styles.cancelButton }/>
           <PrimaryButton text="Save" onClick={ this.onSaveClick }
-                         className={ styles.saveButton }
-                         disabled={ disabled }/>
+            className={ styles.saveButton }
+            disabled={ disabled }/>
         </DialogFooter>
       </Dialog>
     );
@@ -265,9 +266,6 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
     if (this._generatedSecret) {
       return this._generatedSecret;
     }
-    const { window } = this.props;
-    const arr = new Uint8Array(32);
-    window.crypto.getRandomValues(arr);
-    return (this._generatedSecret = window.btoa(arr.reduce((str, byte) => str += String.fromCharCode(byte), '')));
+    return generateBotSecret();
   }
 }

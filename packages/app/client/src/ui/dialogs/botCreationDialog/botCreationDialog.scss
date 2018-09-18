@@ -1,4 +1,18 @@
 .main {
+  :global {
+    @media (min-width: 768px) {
+      .ms-Dialog-main {
+        min-width: 625px;
+        width: 625px;
+        max-height: 480px;
+      }
+
+      .ms-Dialog-actions {
+        margin: 0;
+      }
+    }
+  }
+
   .multiInputRow {
     width: 420px;
     justify-content: space-between
@@ -34,12 +48,6 @@
     }
   }
 
-  .botCreateForm :global {
-    .ms-Dialog-header {
-      display: none;
-    }
-  }
-
   .botCreateForm .botCreateForm > :not(:first-child) {
     margin-top: 16px;
   }
@@ -50,5 +58,39 @@
     font-family: var(--default-font-family);
     font-size: 11px;
     line-height: 11px;
+  }
+
+  .key {
+    margin: 16px 145px 20px 32px;
+  }
+
+  .encryptKeyCheckBox {
+    margin-top: 30px;
+
+    span {
+      width: 300px;
+    }
+  }
+
+  .actionsList {
+    list-style: none;
+    position: absolute;
+    right: 0;
+    bottom: 2px;
+    padding: 0;
+    margin: 0;
+
+    li {
+      display: inline;
+      padding: 2px 5px;
+
+      a {
+        text-decoration: none;
+      }
+    }
+
+    li + li {
+      border-left: 1px solid var(--neutral-11);
+    }
   }
 }
