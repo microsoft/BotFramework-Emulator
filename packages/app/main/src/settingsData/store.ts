@@ -47,7 +47,7 @@ export const getStore = (): Store<Settings> => {
   if (!store) {
     const sagaMiddleWare = sagaMiddlewareFactory();
     // Create the settings store with initial settings from disk.
-    const initialSettings = loadSettings<Settings>('server.json', settingsDefault);
+    const initialSettings = loadSettings('server.json', settingsDefault);
     initialSettings.windowState.availableThemes = getThemes();
 
     store = createStore(reducers, initialSettings, applyMiddleware(sagaMiddleWare));
@@ -55,7 +55,6 @@ export const getStore = (): Store<Settings> => {
   }
   return store;
 };
-
 export const dispatch = <T extends Action>(obj: any) => getStore().dispatch<T>(obj);
 
 export const getSettings = () => {

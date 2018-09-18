@@ -38,7 +38,6 @@ import { IBotConfiguration } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { Extension, InspectorAPI } from '../../../../../extensions';
 import { LogService } from '../../../../../platform/log/logService';
-import { SettingsService } from '../../../../../platform/settings/settingsService';
 import * as styles from './inspector.scss';
 
 interface IpcMessageEvent extends Event {
@@ -47,10 +46,11 @@ interface IpcMessageEvent extends Event {
 }
 
 interface InspectorProps extends InspectorState {
+  document: any;
+  cwdAsBase: string;
+  enableAccessory: (id: string, enable: boolean) => void;
   extension: Extension;
   inspector: ExtensionInspector;
-  document: any;
-  enableAccessory: (id: string, enable: boolean) => void;
   setAccessoryState: (id: string, state: string) => void;
   setInspectorTitle: (title: string) => void;
 }
@@ -152,7 +152,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
   }
 
   private createWebView(props: InspectorProps): ElectronHTMLWebViewElement {
-    const { cwdAsBase } = SettingsService.emulator;
+    const { cwdAsBase } = this.props;
     const preload = `file://${cwdAsBase}/../../../node_modules/@bfemulator/client/public/inspector-preload.js`;
 
     const webView: ElectronHTMLWebViewElement = document.createElement('webview');

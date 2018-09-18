@@ -37,8 +37,7 @@ import { CommandRegistry } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { azureLoggedInUserChanged, azurePersistLoginChanged } from '../settingsData/actions/azureAuthActions';
 import { mainWindow } from '../main';
-import { getStore } from '../botData/store';
-
+import { emulator } from '../emulator';
 /** Registers LUIS commands */
 export function registerCommands(commandRegistry: CommandRegistry) {
   const { Azure } = SharedConstants.Commands;
@@ -47,8 +46,8 @@ export function registerCommands(commandRegistry: CommandRegistry) {
   // Retrieve the Azure ARM Token
   commandRegistry.registerCommand(Azure.RetrieveArmToken, async (renew: boolean = false) => {
     const settingsStore = getSettingsStore();
-    const { serviceUrl } = getStore().getState();
-    const workflow = AzureAuthWorkflowService.retrieveAuthToken(renew, `${serviceUrl}/v4/token`);
+    const serverUrl = (emulator.framework.serverUrl || '').replace('[::]', 'localhost');
+    const workflow = AzureAuthWorkflowService.retrieveAuthToken(renew, `${serverUrl}/v4/token`);
     let result = undefined;
     while (true) {
       const next = workflow.next(result);
