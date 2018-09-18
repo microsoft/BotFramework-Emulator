@@ -230,7 +230,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       const botConfig = toSavableBot(activeBot, botInfo.secret);
       botConfig.disconnectService(serviceId);
       try {
-        await botConfig.save(botInfo.path);
+        await botConfig.save(botInfo.secret);
       } catch (e) {
         console.error(`bot:remove-service: Error trying to save bot: ${e}`);
         throw e;

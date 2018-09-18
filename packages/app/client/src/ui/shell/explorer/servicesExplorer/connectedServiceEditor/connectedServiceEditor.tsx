@@ -44,6 +44,7 @@ interface ConnectedServiceEditorProps {
   cancel: () => void;
   updateConnectedService: (updatedLuisService: IConnectedService) => void;
   onAnchorClick: (url: string) => void;
+  serviceType?: ServiceTypes;
 }
 
 interface ConnectedServiceEditorState extends Partial<any> {
@@ -100,7 +101,8 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
 
   constructor(props: ConnectedServiceEditorProps, state: ConnectedServiceEditorState) {
     super(props, state);
-    const connectedServiceCopy = BotConfigurationBase.serviceFromJSON(props.connectedService);
+    const connectedServiceCopy = BotConfigurationBase
+      .serviceFromJSON((props.connectedService || { type: props.serviceType, name: '' }));
     this.state = {
       connectedServiceCopy,
       isDirty: false
@@ -115,7 +117,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
   public render(): JSX.Element {
     const { state, textFieldHandlers, onInputChange, props, onSubmitClick } = this;
     const { isDirty, connectedServiceCopy } = state;
-    const { type } = props.connectedService;
+    const { type } = connectedServiceCopy;
     const fields = getEditableFields(connectedServiceCopy);
     const textInputs: JSX.Element[] = [];
     let valid = true;
@@ -148,8 +150,8 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
           { textInputs }
         </DialogContent>
         <DialogFooter>
-          <DefaultButton text="Cancel" onClick={ props.cancel } />
-          <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ onSubmitClick } />
+          <DefaultButton text="Cancel" onClick={ props.cancel }/>
+          <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ onSubmitClick }/>
         </DialogFooter>
       </Dialog>
     );
@@ -160,7 +162,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
       return true;
     }
 
-    switch (this.props.connectedService.type) {
+    switch (this.state.connectedServiceCopy.type) {
       case ServiceTypes.Dispatch:
       case ServiceTypes.Luis:
         return false;
@@ -187,7 +189,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
   private onInputChange = (propName: string, value: string): void => {
     const trimmedValue = value.trim();
 
-    const { connectedService: originalLuisService } = this.props;
+    const { connectedService: originalLuisService = {} } = this.props;
     const errorMessage = (this.isRequired(propName) && !trimmedValue) ? `The field cannot be empty` : '';
 
     const { connectedServiceCopy } = this.state;
