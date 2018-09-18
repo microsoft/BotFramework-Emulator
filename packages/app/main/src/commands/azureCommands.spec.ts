@@ -11,10 +11,10 @@ const mockArmToken = 'bm90aGluZw==.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjd
 jest.mock('../services/azureAuthWorkflowService', () => ({
   AzureAuthWorkflowService: {
     retrieveAuthToken: function* () {
-      yield { access_token:  mockArmToken};
+      yield { access_token: mockArmToken };
     },
 
-    enterSignOutWorkflow: function*() {
+    enterSignOutWorkflow: function* () {
       yield true;
     }
   }
@@ -28,6 +28,14 @@ jest.mock('../main', () => ({
 }));
 jest.mock('../settingsData/store', () => ({
   getStore: () => mockStore
+}));
+
+jest.mock('../emulator', () => ({
+  emulator: {
+    framework: {
+      serverUrl: ''
+    }
+  }
 }));
 
 describe('The azureCommand,', () => {
@@ -45,14 +53,16 @@ describe('The azureCommand,', () => {
     });
 
     it('should return false if the azure auth fails', async () => {
-      AzureAuthWorkflowService.retrieveAuthToken = function*() { yield false; } as any;
+      AzureAuthWorkflowService.retrieveAuthToken = function* () {
+        yield false;
+      } as any;
       const result = await registry.getCommand(SharedConstants.Commands.Azure.RetrieveArmToken).handler();
       expect(result).toBe(false);
     });
   });
 
   describe(`${SharedConstants.Commands.Azure.SignUserOutOfAzure}, `, () => {
-    it('should update the store with an empty string for the signed in user when sign out is successful', async () =>{
+    it('should update the store with an empty string for the signed in user when sign out is successful', async () => {
       mockStore.dispatch(azureLoggedInUserChanged('none@none.com'));
       expect((mockStore.getState() as any).azure.signedInUser).toBe('none@none.com');
       const result = await registry.getCommand(SharedConstants.Commands.Azure.SignUserOutOfAzure).handler();
@@ -61,7 +71,9 @@ describe('The azureCommand,', () => {
     });
 
     it('should not remove the signed in user from the store if logout is unsuccessful', async () => {
-      AzureAuthWorkflowService.enterSignOutWorkflow = function*() { yield false; } as any;
+      AzureAuthWorkflowService.enterSignOutWorkflow = function* () {
+        yield false;
+      } as any;
       mockStore.dispatch(azureLoggedInUserChanged('none@none.com'));
       expect((mockStore.getState() as any).azure.signedInUser).toBe('none@none.com');
       const result = await registry.getCommand(SharedConstants.Commands.Azure.SignUserOutOfAzure).handler();

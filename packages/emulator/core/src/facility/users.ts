@@ -35,14 +35,9 @@ import User from '../types/user';
 
 export default class Users {
   public currentUserId: string = 'default-user';
-  private users: { [userId: string]: User } = {
-    'default-user': {
-      id: 'default-user',
-      name: 'User'
-    }
-  };
+  public users: { [userId: string]: User };
 
-  usersById(userId: string): User {
+  public usersById(userId: string): User {
     return this.users[userId];
   }
 }

@@ -32,17 +32,12 @@
 //
 
 import { getStore } from '../botData/store';
-import { BotConfigWithPath, uniqueId, CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { BotConfigWithPath, CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { Conversation } from '@bfemulator/emulator-core';
 import * as Path from 'path';
 import { mainWindow } from '../main';
-import {
-  getActiveBot,
-  getBotInfoByPath,
-  patchBotsJson,
-  toSavableBot
-} from '../botHelpers';
-import { showSaveDialog, writeFile, parseActivitiesFromChatFile } from '../utils';
+import { getActiveBot, getBotInfoByPath, patchBotsJson, toSavableBot } from '../botHelpers';
+import { parseActivitiesFromChatFile, showSaveDialog, writeFile } from '../utils';
 import { emulator } from '../emulator';
 import { sync as mkdirpSync } from 'mkdirp';
 import * as BotActions from '../botData/actions/botActions';
@@ -51,8 +46,7 @@ import * as Fs from 'fs';
 import { cleanupId as cleanupActivityChannelAccountId, CustomActivity } from '../utils/conversation';
 import { newBot, newEndpoint, SharedConstants } from '@bfemulator/app-shared';
 import { botProjectFileWatcher } from '../watchers';
-
-const store = getStore();
+import { getStore as getSettingsStore } from '../settingsData/store';
 
 /** Registers emulator (actual conversation emulation logic) commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
@@ -70,7 +64,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     if (!convo) {
       throw new Error(`${Commands.SaveTranscriptToFile}: Conversation ${conversationId} not found.`);
     }
-
+    const store = getStore();
     const path = Path.resolve(store.getState().bot.currentBotDirectory) || '';
 
     const filename = showSaveDialog(mainWindow.browserWindow, {
@@ -177,14 +171,14 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     if (!bot) {
       bot = newBot();
       bot.services.push(newEndpoint());
-      store.dispatch(BotActions.mockAndSetActive(bot));
+      getStore().dispatch(BotActions.mockAndSetActive(bot));
     }
 
     // TODO: Move away from the .users state on legacy emulator settings, and towards per-conversation users
     const conversation = emulator.framework.server.botEmulator.facilities.conversations.newConversation(
       emulator.framework.server.botEmulator,
       null,
-      { id: uniqueId(), name: 'User' },
+      { id: getSettingsStore().getState().users.currentUserId, name: 'User' },
       conversationId
     );
 
@@ -201,5 +195,5 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       } catch (err) {
         throw new Error(`${Commands.OpenChatFile}: Error calling parseActivitiesFromChatFile(): ${err}`);
       }
-  });
+    });
 }

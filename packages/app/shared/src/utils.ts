@@ -42,8 +42,8 @@ export function isObject(item: any): boolean {
   return !!(item && typeof item === 'object' && !Array.isArray(item) && item !== null);
 }
 
-export function mergeDeep(target: any, source: any): any {
-  let output = Object.assign({}, target);
+export function mergeDeep<T, R>(target: T, source: R): T & R {
+  let output = Object.assign({} as T & R, target);
   // if (isObject(target) && isObject(source)) {
   {
     Object.keys(source).forEach(key => {

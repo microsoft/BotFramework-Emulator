@@ -33,6 +33,7 @@
 
 import { Bot } from './botTypes';
 import { User } from '@bfemulator/sdk-shared';
+import * as uuidv4 from 'uuid/v4';
 
 export interface FrameworkSettings {
   // path to use for ngrok
@@ -64,6 +65,7 @@ export interface WindowStateSettings {
 export interface UserSettings {
   currentUserId?: string;
   usersById?: { [id: string]: User };
+  users?: { [id: string]: User };
 }
 
 export interface AzureSettings {
@@ -127,21 +129,11 @@ export const windowStateDefault: WindowStateSettings = {
   availableThemes: []
 };
 
-export const usersDefault: UserSettings = {
-  currentUserId: 'default-user',
-  usersById: {
-    'default-user': {
-      id: 'default-user',
-      name: 'User'
-    }
-  }
-};
-
 export const settingsDefault: Settings = new SettingsImpl({
   framework: frameworkDefault,
   bots: [
     {
-      'botId': 'default-bot',
+      'botId': uuidv4(),
       'botUrl': 'http://localhost:3978/api/messages',
       'msaAppId': '',
       'msaPassword': '',
@@ -149,6 +141,6 @@ export const settingsDefault: Settings = new SettingsImpl({
     }
   ],
   windowState: windowStateDefault,
-  users: usersDefault,
+  users: {},
   azure: {} as AzureSettings
 });

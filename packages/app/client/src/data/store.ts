@@ -47,8 +47,10 @@ import presentation, { PresentationState } from './reducer/presentation';
 import progressIndicator, { ProgressIndicatorState } from './reducer/progressIndicator';
 import resources, { ResourcesState } from './reducer/resourcesReducer';
 import theme, { ThemeState } from './reducer/themeReducer';
+import clientAwareSettings from './reducer/clientAwareSettingsReducer';
 
 import { applicationSagas } from './sagas';
+import { ClientAwareSettings } from '@bfemulator/app-shared';
 
 export interface RootState {
   bot?: BotState;
@@ -63,6 +65,7 @@ export interface RootState {
   progressIndicator?: ProgressIndicatorState;
   resources?: ResourcesState;
   theme?: ThemeState;
+  clientAwareSettings?: ClientAwareSettings;
 }
 
 const sagaMiddleWare = sagaMiddlewareFactory();
@@ -81,7 +84,8 @@ const configureStore = (initialState: RootState = DEFAULT_STATE): Store<RootStat
     notification,
     progressIndicator,
     resources,
-    theme
+    theme,
+    clientAwareSettings
   }),
   initialState,
   applyMiddleware(
