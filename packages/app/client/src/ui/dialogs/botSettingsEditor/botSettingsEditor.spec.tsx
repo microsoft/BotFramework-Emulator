@@ -71,6 +71,13 @@ jest.mock('../../../platform/commands/commandServiceImpl', () => ({
     }
   }
 }));
+
+jest.mock('../../../utils', () => ({
+  generateBotSecret: () => {
+    return Math.random() + '';
+  }
+}));
+
 describe('The BotSettingsEditor dialog should', () => {
   let parent;
   let node;
