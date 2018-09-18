@@ -36,7 +36,7 @@ import { ClientAwareSettings, SharedConstants } from '@bfemulator/app-shared';
 import store from '../data/store';
 import { clientAwareSettingsChanged } from '../data/action/clientAwareSettingsActions';
 
-/** Registers bot commands */
+/** Registers settings commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
   const { Settings } = SharedConstants.Commands;
 
