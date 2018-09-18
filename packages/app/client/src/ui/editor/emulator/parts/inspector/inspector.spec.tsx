@@ -10,6 +10,9 @@ import { Inspector } from './inspector';
 import { InspectorContainer } from './inspectorContainer';
 import { switchTheme } from '../../../../../data/action/themeActions';
 import { ExtensionManager } from '../../../../../extensions';
+import { LogService } from '../../../../../platform/log/logService';
+import { logEntry, textItem } from '@bfemulator/emulator-core/lib/types/log/util';
+import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
 
 const mockStore = createStore(combineReducers({ theme, bot, clientAwareSettings }), {});
 
@@ -209,7 +212,7 @@ const mockExtensions = [
 ExtensionManager.addExtension(mockExtensions[0], '1234');
 jest.mock('./inspector.scss', () => ({}));
 
-describe('The Inspector component should', () => {
+describe('The Inspector component', () => {
   const src = 'file:\\\\c:\\some\\path';
   let parent;
   let node;
@@ -241,5 +244,97 @@ describe('The Inspector component should', () => {
   it('should render accessory button when accessory buttons exist in the config', () => {
     const buttons = node.find('button');
     expect(buttons.length).not.toBe(0);
+  });
+
+  it('should enable/disable the accessory button when asked to do so by the extension', () => {
+    const instance = node.instance();
+    instance.enableAccessory('train', false);
+    expect(instance.state.buttons[0].enabled).toBeFalsy();
+
+    instance.enableAccessory('train', true);
+    expect(instance.state.buttons[0].enabled).toBeTruthy();
+  });
+
+  it('should set the accessory state when asked to do so by the extension', () => {
+    const instance = node.instance();
+    instance.setAccessoryState('train', 'working');
+
+    expect(instance.state.buttons[0].state).toEqual('working');
+  });
+
+  it('should set the inspector title when asked to do so by the extension', () => {
+    const instance = node.instance();
+    instance.setInspectorTitle('Yo!');
+
+    expect(instance.state.title).toBe('Yo!');
+  });
+
+  it('should send the initialization stack to the inspector when the dom is ready', () => {
+    const instance = node.instance();
+    const instanceSpy = jest.spyOn(instance, 'sendInitializationStackToInspector');
+    const event = { currentTarget: { removeEventListener: () => true } };
+    const eventSpy = jest.spyOn(event.currentTarget, 'removeEventListener');
+
+    instance.onWebViewDOMReady(event as any);
+    expect(instanceSpy).toHaveBeenCalled();
+    expect(eventSpy).toHaveBeenCalled();
+  });
+
+  describe('should handle the ipc message', () => {
+    let instance;
+    let event;
+    let dateNow;
+
+    beforeAll(() => {
+      dateNow = Date.now;
+      Date.now = () => 1;
+    });
+
+    afterAll(() => {
+      Date.now = dateNow;
+    });
+
+    beforeEach(() => {
+      instance = node.instance();
+      event = { channel: '', args: [1, 2] };
+    });
+
+    it('"enable-accessory"', () => {
+      event.channel = 'enable-accessory';
+      const spy = jest.spyOn(instance, 'enableAccessory');
+      instance.ipcMessageEventHandler(event);
+
+      expect(spy).toHaveBeenCalledWith(event.args[0], event.args[1]);
+    });
+
+    it('"set-accessory-state"', () => {
+      event.channel = 'set-accessory-state';
+      const spy = jest.spyOn(instance, 'setAccessoryState');
+
+      instance.ipcMessageEventHandler(event);
+
+      expect(spy).toHaveBeenCalledWith(event.args[0], event.args[1]);
+    });
+
+    it('"set-inspector-title"', () => {
+      event.channel = 'set-inspector-title';
+      const titleSpy = jest.spyOn(instance, 'setInspectorTitle');
+      const stateSpy = jest.spyOn(instance, 'setState');
+
+      instance.ipcMessageEventHandler(event);
+
+      expect(stateSpy).toHaveBeenCalledWith({ titleOverride: event.args[0] });
+      expect(titleSpy).toHaveBeenCalledWith(event.args[0]);
+    });
+
+    it('"logger.log" or "logger.error"', () => {
+      event.channel = 'logger.log';
+      const logSpy = jest.spyOn(LogService, 'logToDocument');
+      const inspectorName = mockExtensions[0].name;
+      const text = `[${inspectorName}] ${event.args[0]}`;
+      instance.ipcMessageEventHandler(event);
+
+      expect(logSpy).toHaveBeenCalledWith(mockState.document.documentId, logEntry(textItem(LogLevel.Info, text)));
+    });
   });
 });
