@@ -5,11 +5,12 @@
   min-height: 22px;
   overflow: hidden;
 
-  &[aria-expanded="true"] {
+  &.expanded {
     margin-bottom: 15px;
   }
 
-  & > header {
+  & > .header {
+    position: relative;
     background-color: var(--explorer-panel-group-title-bg);
     color: var(--explorer-panel-group-title-color);
     cursor: pointer;
@@ -21,43 +22,35 @@
     text-transform: uppercase;
     white-space: nowrap;
     flex-shrink: 0;
-    & > .actuator {
-      display: flex;
-      align-items: center;
-      flex: 1;
-      padding-left: 8px;
+
+    & > h3 {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      padding-left: 32px;
       text-decoration: none;
-      color: inherit;
-      &:focus {
-        position: relative;
-        &::after {
-          content: '';
-          position: absolute;
-          border: var(--focused-outline);
-          top: 0;
-          bottom: 0;
-          left: 0;
-          right: 0;
-        }
-      }
-      & > svg {
-        height: 12px;
-        width: 12px;
-        margin-right: 8px;
-        fill: var(--explorer-panel-group-title-color);
-      }
+    }
 
-      & .accessories {
-        margin: 0 0 0 auto;
-        height: 100%;
-        width: auto;
+    & > svg {
+      position: absolute;
+      top: 4px;
+      left: 8px;
+      height: 12px;
+      width: 12px;
+      fill: var(--explorer-panel-group-title-color);
+      pointer-events: none;
+    }
 
-        & > button {
-          background-color: transparent;
-          color: var(--neutral-5);
-          border: 0;
-          cursor: pointer;
-        }
+    & .accessories {
+      margin: 0 0 0 auto;
+      height: 100%;
+      width: auto;
+
+      & > button {
+        background-color: transparent;
+        color: var(--neutral-5);
+        border: 0;
+        cursor: pointer;
       }
     }
   }
@@ -66,10 +59,7 @@
     height: 100%;
     overflow: auto;
     position: relative;
-    & > section {
-      height: 100%;
-      display: flex;
-      flex-flow: column nowrap
-    }
+    display: flex;
+    flex-flow: column nowrap;
   }
 }

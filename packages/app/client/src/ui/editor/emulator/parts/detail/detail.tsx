@@ -68,7 +68,10 @@ export class Detail extends React.Component<DetailProps> {
 
   render() {
     return (
-      <div className={ styles.detail }>
+      <div
+        className={ styles.detail }
+        tabIndex={ 0 }
+      >
         <InspectorContainer
           ref={ ref => this.inspectorRef = ref }
           document={ this.props.document }
