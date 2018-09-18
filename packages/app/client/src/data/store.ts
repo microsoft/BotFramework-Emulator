@@ -47,19 +47,18 @@ import presentation, { PresentationState } from './reducer/presentation';
 import progressIndicator, { ProgressIndicatorState } from './reducer/progressIndicator';
 import resources, { ResourcesState } from './reducer/resourcesReducer';
 import theme, { ThemeState } from './reducer/themeReducer';
-
 import { applicationSagas } from './sagas';
 
 export interface RootState {
+  azureAuth?: AzureAuthState;
   bot?: BotState;
+  chat?: ChatState;
   dialog?: DialogState;
   editor?: EditorState;
   explorer?: ExplorerState;
-  chat?: ChatState;
   navBar?: NavBarState;
-  presentation?: PresentationState;
-  azureAuth?: AzureAuthState;
   notification?: NotificationState;
+  presentation?: PresentationState;
   progressIndicator?: ProgressIndicatorState;
   resources?: ResourcesState;
   theme?: ThemeState;
@@ -70,18 +69,18 @@ const DEFAULT_STATE: RootState = {};
 
 const configureStore = (initialState: RootState = DEFAULT_STATE): Store<RootState> => createStore<RootState>(
   combineReducers({
+    azureAuth,
     bot,
+    chat,
     dialog,
     editor,
     explorer,
-    chat,
     navBar,
-    presentation,
-    azureAuth,
     notification,
+    presentation,
     progressIndicator,
     resources,
-    theme
+    theme,
   }),
   initialState,
   applyMiddleware(

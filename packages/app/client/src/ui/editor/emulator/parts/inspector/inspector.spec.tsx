@@ -8,14 +8,18 @@ import theme from '../../../../../data/reducer/themeReducer';
 import { Inspector } from './inspector';
 import { InspectorContainer } from './inspectorContainer';
 import { switchTheme } from '../../../../../data/action/themeActions';
+import { ExtensionManager } from '../../../../../extensions';
 
 const mockStore = createStore(combineReducers({ theme, bot }), {});
+
+jest.mock('../../../panel/panel.scss', () => ({}));
 
 jest.mock('../../../../../data/store', () => ({
   get default() {
     return mockStore;
   }
 }));
+
 const mockState = {
   'bot': {
     'description': '',
@@ -79,96 +83,63 @@ const mockState = {
     ],
     'version': '2.0'
   },
-  'inspectObj': {
-    'attachments': [
+  'document': {
+    'documentId': 'a00c2150-b6dc-11e8-9139-bbce58b6f97c',
+    'inspectorObjects': [
       {
-        'content': {
-          '$schema': 'http://adaptivecards.io/schemas/adaptive-card.json',
-          'actions': [
-            {
-              'data': {
-                'intent': 'Book_Table'
-              },
-              'title': 'Book table',
-              'type': 'Action.Submit'
-            },
-            {
-              'data': {
-                'intent': 'What_can_you_do'
-              },
-              'title': 'What can you do?',
-              'type': 'Action.Submit'
-            }
-          ],
-          'body': [
-            {
-              'columns': [
-                {
-                  'items': [
-                    {
-                      'size': 'extraLarge',
-                      'text': 'Contoso Cafe',
-                      'type': 'TextBlock',
-                      'weight': 'bolder'
-                    },
-                    {
-                      'size': 'Medium',
-                      'text': 'Hello, I\'m the Cafe bot! How can I be of help today?',
-                      'type': 'TextBlock',
-                      'wrap': true
-                    }
-                  ],
-                  'spacing': 'large',
-                  'type': 'Column'
-                },
-                {
-                  'items': [
-                    {
-                      'horizontalAlignment': 'center',
-                      'size': 'medium',
-                      'type': 'Image',
-                      'url': 'http://contosocafeontheweb.azurewebsites.net/assets/contoso_logo_black.png'
-                    }
-                  ],
-                  'spacing': 'small',
-                  'type': 'Column',
-                  'width': 'auto'
-                }
-              ],
-              'height': 'stretch',
-              'horizontalAlignment': 'Center',
-              'spacing': 'large',
-              'type': 'ColumnSet'
-            }
-          ],
-          'height': 'stretch',
-          'horizontalAlignment': 'Center',
-          'separator': true,
-          'type': 'AdaptiveCard',
-          'version': '1.0'
+        'accessories': [],
+        'channelId': 'emulator',
+        'conversation': {
+          'id': 'd298cdb0-bad5-11e8-bffe-a55cd19d7f71|livechat'
         },
-        'contentType': 'application/vnd.microsoft.card.adaptive'
+        'from': {
+          'id': 'http://localhost:3978/api/messages',
+          'name': 'Bot',
+          'role': 'bot'
+        },
+        'id': 'ed50b550-bad5-11e8-b74d-8fc778b06796',
+        'label': 'Luis Trace',
+        'localTimestamp': '2018-09-17T17:01:00-07:00',
+        'name': 'LuisRecognizer',
+        'recipient': {
+          'id': 'default-user',
+          'role': 'user'
+        },
+        'replyToId': 'ecba8fd0-bad5-11e8-b74d-8fc778b06796',
+        'serviceUrl': 'http://localhost:54725',
+        'timestamp': '2018-09-18T00:01:00.709Z',
+        'type': 'trace',
+        'value': {
+          'luisModel': {
+            'ModelID': 'cb904573-3d6f-46b0-80b9-b23a24e49152'
+          },
+          'luisOptions': {
+            'Staging': false
+          },
+          'luisResult': {
+            'entities': [],
+            'query': 'HI',
+            'topScoringIntent': {
+              'intent': 'ChitChat',
+              'score': 0.8652684
+            }
+          },
+          'recognizerResult': {
+            'entities': {
+              '$instance': {}
+            },
+            'intents': {
+              'ChitChat': {
+                'score': 0.8652684
+              }
+            },
+            'luisResult': null,
+            'text': 'HI'
+          }
+        },
+        'valueType': 'https://www.luis.ai/schemas/trace'
       }
-    ],
-    'channelId': 'emulator',
-    'conversation': {
-      'id': 'a0117880-b6dc-11e8-9139-bbce58b6f97c|livechat'
-    },
-    'from': {
-      'id': 'http://localhost:3978/api/messages',
-      'name': 'Bot',
-      'role': 'bot'
-    },
-    'id': 'a0e9fe30-b6dc-11e8-8449-633755841db8',
-    'localTimestamp': '2018-09-12T15:38:54-07:00',
-    'recipient': {
-      'id': 'default-user',
-      'role': 'user'
-    },
-    'replyToId': 'a0217e10-b6dc-11e8-8449-633755841db8',
-    'serviceUrl': 'https://1161d19b.ngrok.io',
-    'timestamp': '2018-09-12T22:38:54.355Z',
-    'type': 'message'
+    ]
   },
   'themeInfo': {
     'themeName': 'Dark',
@@ -182,6 +153,59 @@ const mockState = {
   }
 };
 
+const mockExtensions = [
+  {
+    'client': {
+      'basePath': '',
+      'inspectors': [
+        {
+          'accessories': [
+            {
+              'id': 'train',
+              'states': {
+                'default': {
+                  'icon': 'Refresh',
+                  'label': 'Train'
+                },
+                'working': {
+                  'icon': 'Spinner',
+                  'label': 'Training'
+                }
+              }
+            },
+            {
+              'id': 'publish',
+              'states': {
+                'default': {
+                  'icon': 'Share',
+                  'label': 'Publish'
+                },
+                'working': {
+                  'icon': 'Spinner',
+                  'label': 'Publishing'
+                }
+              }
+            }
+          ],
+          'criteria': {
+            'path': '$.type',
+            'value': 'message'
+          },
+          'name': 'JSON',
+          'src': 'file:///C:/Users/juwilaby/Documents/dev/BotFramework-Emulator/packages/app/' +
+            'main/node_modules/@bfemulator/extension-json/index.html',
+          'summaryText': [
+            'attachments.0.contentType',
+            'text'
+          ]
+        }
+      ]
+    },
+    'name': 'JSON',
+    'node': {}
+  }
+];
+ExtensionManager.addExtension(mockExtensions[0], '1234');
 jest.mock('./inspector.scss', () => ({}));
 jest.mock('../../../../../platform/settings/settingsService', () => ({
   SettingsService: {
@@ -191,7 +215,6 @@ jest.mock('../../../../../platform/settings/settingsService', () => ({
   }
 }));
 describe('The Inspector component should', () => {
-  const documentId = 'a00c2150-b6dc-11e8-9139-bbce58b6f97c';
   const src = 'file:\\\\c:\\some\\path';
   let parent;
   let node;
@@ -204,13 +227,12 @@ describe('The Inspector component should', () => {
     return el;
   };
   beforeEach(() => {
-
     mockStore.dispatch(switchTheme('light', ['vars.css', 'light.css']));
     mockStore.dispatch(load([mockState.bot]));
     mockStore.dispatch(setActive(mockState.bot as any));
 
     parent = mount(<Provider store={ mockStore }>
-      <InspectorContainer document={ { documentId } } inspector={ { src } }/>
+      <InspectorContainer document={ mockState.document } inspector={ { src } }/>
     </Provider>);
 
     node = parent.find(Inspector);
@@ -221,7 +243,8 @@ describe('The Inspector component should', () => {
     expect(node).not.toBe(null);
   });
 
-  it('should have more coverage later', () => {
-    expect(true);
+  it('should render accessory button when accessory buttons exist in the config', () => {
+    const buttons = node.find('button');
+    expect(buttons.length).not.toBe(0);
   });
 });

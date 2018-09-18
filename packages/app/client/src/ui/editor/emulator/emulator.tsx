@@ -48,13 +48,13 @@ import { CommandServiceImpl } from '../../../platform/commands/commandServiceImp
 import { SettingsService } from '../../../platform/settings/settingsService';
 import ToolBar, { Button as ToolBarButton } from '../toolbar/toolbar';
 import ChatPanel from './chatPanel/chatPanel';
-import DetailPanel from './detailPanel/detailPanel';
 import LogPanel from './logPanel/logPanel';
 import PlaybackBar from './playbackBar/playbackBar';
 import { debounce } from '../../../utils';
-import { SharedConstants, newNotification, Notification } from '@bfemulator/app-shared';
+import { newNotification, Notification, SharedConstants } from '@bfemulator/app-shared';
 import * as styles from './emulator.scss';
 import { beginAdd } from '../../../data/action/notificationActions';
+import { InspectorContainer } from './parts';
 
 const { encode } = base64Url;
 
@@ -276,7 +276,7 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
                         minSizes={ { 0: 80, 1: 80 } }
                         initialSizes={ this.getHorizontalSplitterSizes }
                         onSizeChange={ this.onHorizontalSizeChange }>
-                <DetailPanel document={ this.props.document }/>
+                <InspectorContainer document={ this.props.document }/>
                 <LogPanel document={ this.props.document }/>
               </Splitter>
             </div>
