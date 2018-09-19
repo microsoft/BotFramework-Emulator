@@ -103,14 +103,13 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
             onClick={ this.onLearnMoreLUISAnchor }
           >
             Language Understanding (LUIS)
-            </a>, &nbsp;
+          </a>, &nbsp;
           <a
             href="javascript:void(0);"
             onClick={ this.onLearnMoreQnAAnchor }
           >
             QnA Maker
-          </a>
-          , and&nbsp;
+          </a>, and&nbsp;
           <a
             href="javascript:void(0);"
             onClick={ this.onLearnMoreDispatchAnchor }
