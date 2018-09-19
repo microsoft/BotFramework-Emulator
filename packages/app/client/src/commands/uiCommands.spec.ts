@@ -10,23 +10,23 @@ jest.mock('../data/editorHelpers', () => ({
   showWelcomePage: () => Promise.resolve(true)
 }));
 jest.mock('../ui/dialogs', () => ({
-  AzureLoginPromptDialogContainer: mockALPDC,
-  AzureLoginSuccessDialogContainer: mockALSDC,
-  BotCreationDialog: mockBotCreationDialog,
-  DialogService: { showDialog: () => Promise.resolve(true) },
-  SecretPromptDialog: mockSecretPromptDialog
-}
+    AzureLoginPromptDialogContainer: mockALPDC,
+    AzureLoginSuccessDialogContainer: mockALSDC,
+    BotCreationDialog: mockBotCreationDialog,
+    DialogService: { showDialog: () => Promise.resolve(true) },
+    SecretPromptDialog: mockSecretPromptDialog
+  }
 ));
 import { EditorActions, OpenEditorAction } from '../data/action/editorActions';
 import * as Constants from '../constants';
 import { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } from '../constants';
 import { NavBarActions, SelectNavBarAction } from '../data/action/navBarActions';
 import {
-  DialogService,
   AzureLoginPromptDialogContainer,
   AzureLoginSuccessDialogContainer,
   BotCreationDialog,
-  SecretPromptDialog
+  DialogService,
+  SecretPromptDialogContainer
 } from '../ui/dialogs';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
@@ -34,6 +34,7 @@ import { registerCommands } from './uiCommands';
 import * as helpers from '../data/editorHelpers';
 import store from '../data/store';
 import { AzureAuthAction, AzureAuthWorkflow, invalidateArmToken } from '../data/action/azureAuthActions';
+
 const Commands = SharedConstants.Commands.UI;
 
 describe('the uiCommands', () => {
@@ -59,7 +60,7 @@ describe('the uiCommands', () => {
   it('should call DialogService.showDialog when the ShowSecretPromptDialog command is dispatched', async () => {
     const spy = jest.spyOn(DialogService, 'showDialog');
     const result = await registry.getCommand(Commands.ShowSecretPromptDialog).handler();
-    expect(spy).toHaveBeenCalledWith(SecretPromptDialog);
+    expect(spy).toHaveBeenCalledWith(SecretPromptDialogContainer);
     expect(result).toBe(true);
   });
 

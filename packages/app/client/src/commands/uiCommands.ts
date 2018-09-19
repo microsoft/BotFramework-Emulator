@@ -39,7 +39,7 @@ import {
   BotCreationDialog,
   DialogService,
   PostMigrationDialogContainer,
-  SecretPromptDialog
+  SecretPromptDialogContainer
 } from '../ui/dialogs';
 import store from '../data/store';
 import * as EditorActions from '../data/action/editorActions';
@@ -72,7 +72,7 @@ export function registerCommands(commandRegistry: CommandRegistry) {
   // ---------------------------------------------------------------------------
   // Shows a dialog prompting the user for a bot secret
   commandRegistry.registerCommand(UI.ShowSecretPromptDialog, async () => {
-    return await DialogService.showDialog(SecretPromptDialog);
+    return await DialogService.showDialog(SecretPromptDialogContainer);
   });
 
   // ---------------------------------------------------------------------------
