@@ -51,6 +51,7 @@ import { serviceTypeLabels } from '../../../../utils/serviceTypeLables';
 export interface ServicesExplorerProps extends ServicePaneProps {
   services?: IConnectedService[];
   toAnimate?: { [serviceId: string]: boolean };
+  onAnchorClick: (url: string) => void;
   openAddServiceContextMenu: (payload: ConnectedServicePickerPayload) => void;
   openSortContextMenu: () => void;
   openServiceDeepLink: (service: IConnectedService) => void;
@@ -89,6 +90,42 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
       return 0;
     });
     return state;
+  }
+
+  protected get emptyContent(): JSX.Element {
+    return (
+      <div>
+        <p className={ styles.emptyContent }>None.</p>
+        <p className={ styles.emptyContent }>
+          You can connect your bot to services such as &nbsp;
+          <a
+            href="javascript:void(0);"
+            onClick={ this.onLearnMoreLUISAnchor }
+          >
+            Language Understanding (LUIS)
+            </a>, &nbsp;
+          <a
+            href="javascript:void(0);"
+            onClick={ this.onLearnMoreQnAAnchor }
+          >
+            QnA Maker
+          </a>
+          , and&nbsp;
+          <a
+            href="javascript:void(0);"
+            onClick={ this.onLearnMoreDispatchAnchor }
+          >
+            Dispatch
+          </a>
+        </p>
+        <p className={ styles.emptyContent }>
+          <a
+            href="javascript:void(0);"
+            onClick={ this.onLearnMoreServicesAnchor }
+          >Learn more about using services</a>
+        </p>
+      </div>
+    );
   }
 
   protected get links() {
@@ -148,5 +185,21 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
       pickerComponent: ConnectedServicePickerContainer,
       progressIndicatorComponent: ProgressIndicatorContainer
     });
+  }
+
+  private onLearnMoreLUISAnchor = () => {
+    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-LUIS-docs-home');
+  }
+
+  private onLearnMoreQnAAnchor = () => {
+    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-qna-docs-home');
+  }
+
+  private onLearnMoreDispatchAnchor = () => {
+    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-create-dispatch');
+  }
+
+  private onLearnMoreServicesAnchor = () => {
+    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-services');
   }
 }
