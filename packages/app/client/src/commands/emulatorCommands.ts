@@ -57,6 +57,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       {
         botId: 'bot',
         endpointId: endpoint.id,
+        endpointUrl: endpoint.endpoint,
         userId: currentUserId
       }
     ));
