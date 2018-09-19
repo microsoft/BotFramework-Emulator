@@ -249,13 +249,15 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
     }
   }
 
-  calculatePaneSizes = (splitterIndex: number, e: any): void => {
+  calculatePaneSizes = (splitterIndex: number = 0, e: any): void => {
     // get dimensions of both panes and the splitter
     const pane1Index = splitterIndex;
     const pane2Index = splitterIndex + 1;
     const pane1Dimensions = this.panes[pane1Index].ref.getBoundingClientRect();
     const pane2Dimensions = this.panes[pane2Index].ref.getBoundingClientRect();
     const splitterDimensions = this.splitters[splitterIndex].dimensions;
+
+    console.log('got passed initial block');
 
     // the primary pane's size will be the difference between the top (horizontal) or left (vertical) of the pane,
     // and the mouse's Y (horizontal) or X (vertical) position
@@ -271,6 +273,8 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
     };
     let primarySize = condition1 ? rightEval1() : leftEval1();
 
+    console.log('calculated primary pane size');
+
     // the local container size will be the sum of the heights (horizontal)
     // or widths (vertical) of both panes and the splitter
     const localContainerSize = this.props.orientation === 'horizontal' ?
@@ -278,11 +282,15 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
       :
       pane1Dimensions.width + pane2Dimensions.width + splitterDimensions.width;
 
+    console.log('calculated local container size');
+
     // bound the bottom (horizontal) or right (vertical) of the primary pane to the bottom or right of the container
     const splitterSize = this.props.orientation === 'horizontal' ? splitterDimensions.height : splitterDimensions.width;
     if ((primarySize + splitterSize) > localContainerSize) {
       primarySize = localContainerSize - splitterSize;
     }
+
+    console.log('bounded primary pane');
 
     // the secondary pane's size will be the remaining height (horizontal) or width (vertical)
     // left in the container after subtracting the size of the splitter and primary pane from the total size
@@ -296,6 +304,8 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
         this.props.minSizes[pane2Index] || MIN_PANE_SIZE));
     };
     const secondarySize = condition2 ? leftEval2() : rightEval2();
+
+    console.log('calculated secondary pane size');
 
     let currentPaneSizes = this.state.paneSizes;
     currentPaneSizes[pane1Index] = primarySize;
