@@ -34,52 +34,82 @@
 import * as React from 'react';
 import * as styles from './secretPromptDialog.scss';
 
-import {
-  DefaultButton,
-  Dialog,
-  PrimaryButton,
-  Row,
-  RowJustification,
-  SmallHeader,
-  TextField,
-} from '@bfemulator/ui-react';
-import { DialogService } from '../service';
+import { DefaultButton, Dialog, PrimaryButton, SmallHeader, TextField, } from '@bfemulator/ui-react';
 
 interface SecretPromptDialogState {
   secret: string;
+  revealSecret: boolean;
 }
 
-export class SecretPromptDialog extends React.Component<{}, SecretPromptDialogState> {
-  constructor(props: {}, context: SecretPromptDialogState) {
+export interface SecretPromptDialogProps {
+  onAnchorClick: (url: string) => void;
+  onCancelClick: () => void;
+  onSaveClick: (newSecret: string) => void;
+}
+
+export class SecretPromptDialog extends React.Component<SecretPromptDialogProps, SecretPromptDialogState> {
+  constructor(props: SecretPromptDialogProps, context: SecretPromptDialogState) {
     super(props, context);
 
-    this.state = { secret: '' };
+    this.state = { secret: '', revealSecret: false };
   }
 
   render(): JSX.Element {
     return (
-      <Dialog title="Bot secret required" className={ styles.secretPromptDialog } cancel={ this.onClickDismiss }>
-        <SmallHeader>Please enter your bot's secret</SmallHeader>
-        <TextField
-          value={ this.state.secret }
-          onChanged={ this.onChangeSecret }
-          label={ 'Bot secret' }
-          type={ 'password' }/>
-        <Row className={ styles.buttonRow } justify={ RowJustification.Right }>
-          <DefaultButton text={ 'Dismiss' } onClick={ this.onClickDismiss }/>
-          <PrimaryButton className={ styles.saveButton } text={ 'Save' } onClick={ this.onClickSave }/>
-        </Row>
+      <Dialog title="Bot secret required" className={ styles.secretPromptDialog } cancel={ this.onDismissClick }>
+        <SmallHeader>Your bot file is encrypted</SmallHeader>
+        <p>
+          If you created your bot through the Azure Bot Service, you can find your bot file secret in the Azure&nbsp;
+          portal under Application settings.
+        </p>
+        <p>
+          If you encrypted your bot file with the MsBot command-line tool, your bot file secret was displayed when&nbsp;
+          you ran MsBot.
+          <a href="javascript:void(0)" onClick={ this.onLearnMoreClick }>Learn more about MsBot.</a>
+        </p>
+        <div className={ styles.keyContainer }>
+          <TextField
+            required={ true }
+            className={ styles.key }
+            value={ this.state.secret }
+            placeholder="Enter your bot file's secret"
+            onChanged={ this.onChangeSecret }
+            label={ 'Bot file secret' }
+            type={ this.state.revealSecret ? 'text' : 'password' }/>
+          <a href="javascript:void(0);"
+             className={ styles.show }
+             aria-disabled={ !this.state.secret }
+             onClick={ this.onRevealSecretClick }>
+            { this.state.revealSecret ? 'Hide' : 'Show' }
+          </a>
+        </div>
+
+        <div className={ styles.buttonRow }>
+          <DefaultButton text={ 'Cancel' } onClick={ this.onDismissClick }/>
+          <PrimaryButton
+            disabled={ !!this.state.secret }
+            className={ styles.saveButton }
+            text={ 'Submit' }
+            onClick={ this.onSaveClick }/>
+        </div>
       </Dialog>
     );
   }
 
-  private onClickDismiss = () => {
-    DialogService.hideDialog(null);
+  private onLearnMoreClick = () => {
+    this.props.onAnchorClick('https://github.com/Microsoft/botbuilder-tools/tree/master/packages/MSBot');
   }
 
-  private onClickSave = () => {
-    // return the secret
-    DialogService.hideDialog(this.state.secret);
+  private onRevealSecretClick = () => {
+    this.setState({ revealSecret: !this.state.revealSecret });
+  }
+
+  private onDismissClick = () => {
+    this.props.onCancelClick();
+  }
+
+  private onSaveClick = () => {
+    this.props.onSaveClick(this.state.secret);
   }
 
   private onChangeSecret = (secret) => {
