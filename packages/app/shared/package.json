@@ -26,7 +26,7 @@
   "dependencies": {
     "@bfemulator/sdk-shared": "^1.0.0",
     "g": "^2.0.1",
-    "botframework-config": "4.0.0-preview1.3.3",
+    "botframework-config": "4.0.0-preview1.3.4",
     "npm": "^6.2.0",
     "tslib": "^1.9.0"
   },

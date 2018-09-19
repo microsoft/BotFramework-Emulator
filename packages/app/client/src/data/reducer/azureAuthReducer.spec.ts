@@ -31,12 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  azureArmTokenDataChanged,
-  invalidateArmToken,
-  ArmTokenData,
-  AzureAuthAction,
-} from '../action/azureAuthActions';
+import { azureArmTokenDataChanged, invalidateArmToken, } from '../action/azureAuthActions';
 import azureAuth, { AzureAuthState } from './azureAuthReducer';
 
 describe('Azure auth reducer tests', () => {
@@ -64,6 +59,6 @@ describe('Azure auth reducer tests', () => {
   it('should remove access_token on invalidate', () => {
     const action = invalidateArmToken();
     const state = azureAuth(startingState, action);
-    expect(state.access_token).toMatch(/^invalid__/);
+    expect(state.access_token).toBe('');
   });
 });

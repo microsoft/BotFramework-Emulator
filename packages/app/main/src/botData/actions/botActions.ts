@@ -116,7 +116,7 @@ export function mockAndSetActive(mock?: BotConfigWithPath): BotAction {
       name: 'Random Bot',
       description: '',
       services: [],
-      secretKey: ''
+      padlock: ''
     },
     mock
   );

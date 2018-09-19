@@ -125,7 +125,7 @@
     "lock": "^0.1.2",
     "mkdirp": "^0.5.1",
     "moment": "^2.22.1",
-    "botframework-config": "4.0.0-preview1.3.3",
+    "botframework-config": "4.0.0-preview1.3.4",
     "node-uuid": "^1.4.8",
     "query-string": "^6.0.0",
     "read-text-file": "^1.1.0",
