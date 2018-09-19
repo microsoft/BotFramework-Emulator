@@ -4,4 +4,10 @@
   display: flex;
   flex-flow: column nowrap;
   position: relative;
+  visibility: visible;
+
+  &.hidden {
+    width: 0;
+    visibility: hidden;
+  }
 }

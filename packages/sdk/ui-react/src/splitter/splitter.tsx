@@ -120,14 +120,16 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
   }
 
   componentWillReceiveProps(nextProps: SplitterProps) {
+    // react to children that might be falsy (ex: if a component is toggled)
+    const filteredIncomingChildren = nextProps.children.filter(c => !!c);
     // if the number of children changes, recalculate pane sizes
-    if (nextProps.children.length !== this.props.children.length) {
-      this.props.children.length = nextProps.children.length;
+    if (filteredIncomingChildren.length !== this.props.children.length) {
+      this.props.children.length = filteredIncomingChildren.length;
       this.calculateInitialPaneSizes();
     }
   }
 
-  calculateInitialPaneSizes(): void {
+  calculateInitialPaneSizes = (): void => {
     const currentPaneSizes = this.state.paneSizes;
     this.containerSize = this.getContainerSize();
 
@@ -247,7 +249,7 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
     }
   }
 
-  calculatePaneSizes(splitterIndex: number, e: any): void {
+  calculatePaneSizes = (splitterIndex: number, e: any): void => {
     // get dimensions of both panes and the splitter
     const pane1Index = splitterIndex;
     const pane2Index = splitterIndex + 1;
@@ -306,6 +308,7 @@ export class Splitter extends React.Component<SplitterProps, SplitterState> {
       }));
       this.props.onSizeChange(paneSizes);
     }
+    console.log(currentPaneSizes);
     this.setState(({ paneSizes: currentPaneSizes }));
   }
 

@@ -34,22 +34,23 @@
 import * as React from 'react';
 import * as styles from './main.scss';
 
-import { Splitter } from '@bfemulator/ui-react';
-import { ExplorerBar } from './explorer';
-import { MDI } from './mdi';
+// import { Splitter } from '@bfemulator/ui-react';
+// import { ExplorerBar } from './explorer';
+// import { MDI } from './mdi';
 import { NavBar } from './navBar';
 import { DialogHost, TabManagerContainer } from '../dialogs';
-import * as Constants from '../../constants';
+// import * as Constants from '../../constants';
 import { StatusBar } from './statusBar/statusBar';
 import { StoreVisualizer } from '../debug/storeVisualizer';
 import { Editor } from '../../data/reducer/editor';
-import store from '../../data/store';
-import * as ExplorerActions from '../../data/action/explorerActions';
+// import store from '../../data/store';
+// import * as ExplorerActions from '../../data/action/explorerActions';
+
+import { WorkBench } from './workbench';
 
 export interface MainProps {
   primaryEditor?: Editor;
   secondaryEditor?: Editor;
-  explorerIsVisible?: boolean;
   presentationModeEnabled?: boolean;
   navBarSelection?: string;
   exitPresentationMode?: (e: Event) => void;
@@ -77,14 +78,16 @@ export class Main extends React.Component<MainProps, MainState> {
   }
 
   render() {
-    const tabGroup1 = this.props.primaryEditor &&
+    /*const tabGroup1 = this.props.primaryEditor &&
       <div className={ styles.mdiWrapper } key={ 'primaryEditor' }>
         <MDI owningEditor={ Constants.EDITOR_KEY_PRIMARY }/>
       </div>;
 
     const tabGroup2 = this.props.secondaryEditor && Object.keys(this.props.secondaryEditor.documents).length ?
-      <div className={ `${styles.mdiWrapper} ${styles.secondaryMdi}` } key={ 'secondaryEditor' }><MDI
-        owningEditor={ Constants.EDITOR_KEY_SECONDARY }/></div> : null;
+      <div className={ `${styles.mdiWrapper} ${styles.secondaryMdi}` } key={ 'secondaryEditor' }>
+        <MDI owningEditor={ Constants.EDITOR_KEY_SECONDARY }/>
+      </div>
+      : null;
 
     // If falsy children aren't filtered out, splitter won't recognize change in number of children
     // (i.e. [child1, child2] -> [false, child2] is still seen as 2 children by the splitter)
@@ -94,21 +97,35 @@ export class Main extends React.Component<MainProps, MainState> {
     // Explorer & TabGroup(s) pane
     const workbenchChildren = [];
 
-    if (this.props.explorerIsVisible && !this.props.presentationModeEnabled) {
-      workbenchChildren.push(<ExplorerBar key={ 'explorer-bar' }/>);
-    }
+    // if (this.props.explorerIsVisible && !this.props.presentationModeEnabled) {
+    workbenchChildren.push(<ExplorerBar key={ 'explorer-bar' }/>);
+    // }
 
     workbenchChildren.push(
       <Splitter orientation={ 'vertical' } key={ 'tab-group-splitter' } minSizes={ { 0: 160, 1: 160 } }>
         { tabGroups }
       </Splitter>
-    );
+    );*/
 
     return (
       <div className={ styles.main }>
         <div className={ styles.nav }>
           { !this.props.presentationModeEnabled &&
-          <NavBar selection={ this.props.navBarSelection } explorerIsVisible={ this.props.explorerIsVisible }/> }
+          <NavBar selection={ this.props.navBarSelection }/> }
+          <WorkBench/>
+          <TabManagerContainer disabled={ false }/>
+        </div>
+        { !this.props.presentationModeEnabled && <StatusBar/> }
+        <DialogHost/>
+        <StoreVisualizer enabled={ false }/>
+      </div>
+    );
+
+    /*return (
+      <div className={ styles.main }>
+        <div className={ styles.nav }>
+          { !this.props.presentationModeEnabled &&
+          <NavBar selection={ this.props.navBarSelection }/> }
           <div className={ styles.workbench }>
             <Splitter
               orientation={ 'vertical' }
@@ -125,11 +142,11 @@ export class Main extends React.Component<MainProps, MainState> {
         <DialogHost/>
         <StoreVisualizer enabled={ false }/>
       </div>
-    );
+    );*/
   }
 
   /** Called when the splitter between the editor and explorer panes is moved */
-  private checkExplorerSize(sizes: { absolute: number, percentage: number }[]): void {
+  /*private checkExplorerSize(sizes: { absolute: number, percentage: number }[]): void {
     if (sizes.length) {
       const explorerSize = sizes[0];
       const minExplorerWidth = 175;
@@ -137,5 +154,5 @@ export class Main extends React.Component<MainProps, MainState> {
         store.dispatch(ExplorerActions.showExplorer(false));
       }
     }
-  }
+  }*/
 }

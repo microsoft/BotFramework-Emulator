@@ -46,6 +46,7 @@ import { ResourcesBarContainer } from '../resourcesBar/resourcesBarContainer';
 interface ExplorerBarProps {
   activeBot?: IBotConfiguration;
   selectedNavTab?: string;
+  visible?: boolean;
 }
 
 class ExplorerBarComponent extends React.Component<ExplorerBarProps> {
@@ -72,7 +73,8 @@ class ExplorerBarComponent extends React.Component<ExplorerBarProps> {
   }
 
   render(): JSX.Element {
-    const { selectedNavTab = null } = this.props;
+    const { selectedNavTab = null, visible = true } = this.props;
+
     let explorer;
     switch (selectedNavTab) {
       case Constants.NAVBAR_NOTIFICATIONS:
@@ -89,7 +91,7 @@ class ExplorerBarComponent extends React.Component<ExplorerBarProps> {
     }
 
     return (
-      <div className={ styles.explorerBar }>
+      <div className={ `${styles.explorerBar} ${ !visible ? styles.hidden : '' }` }>
         { explorer }
         <InsetShadow orientation={ 'right' }/>
       </div>
@@ -99,7 +101,8 @@ class ExplorerBarComponent extends React.Component<ExplorerBarProps> {
 
 const mapStateToProps = (state: RootState): ExplorerBarProps => ({
   activeBot: state.bot.activeBot,
-  selectedNavTab: state.navBar.selection
+  selectedNavTab: state.navBar.selection,
+  visible: state.explorer.showing
 });
 
 export const ExplorerBar = connect(mapStateToProps)(ExplorerBarComponent);

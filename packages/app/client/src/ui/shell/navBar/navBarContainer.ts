@@ -7,7 +7,8 @@ import * as ExplorerActions from '../../../data/action/explorerActions';
 import * as EditorActions from '../../../data/action/editorActions';
 
 const mapStateToProps = (state: RootState): NavBarProps => ({
-  notifications: state.notification.allIds
+  notifications: state.notification.allIds,
+  explorerIsVisible: state.explorer.showing
 });
 
 const mapDispatchToProps = (dispatch): NavBarProps => ({
