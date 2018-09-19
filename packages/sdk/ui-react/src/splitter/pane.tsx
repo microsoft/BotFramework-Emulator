@@ -41,7 +41,6 @@ export interface SplitterPaneProps {
 }
 
 export class SplitterPane extends React.Component<SplitterPaneProps, {}> {
-
   render() {
     const style: any = {
       overflow: 'hidden',
@@ -63,7 +62,7 @@ export class SplitterPane extends React.Component<SplitterPaneProps, {}> {
     }
 
     return (
-      <div className={ 'splitter-pane' } style={ style } >
+      <div className={ 'splitter-pane' } style={ style }>
         { this.props.children }
       </div>
     );
