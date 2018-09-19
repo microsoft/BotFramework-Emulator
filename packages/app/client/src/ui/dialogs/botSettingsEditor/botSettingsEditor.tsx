@@ -93,13 +93,13 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
           label="Name" value={ name }
           required={ true }
           onChanged={ this.onChangeName }
-          errorMessage={ error } />
+          errorMessage={ error }/>
 
         <Checkbox
           className={ styles.encryptKeyCheckBox }
           label="Encrypt keys stored in your bot configuration"
           checked={ encryptKey }
-          onChange={ this.onEncryptKeyChange } />
+          onChange={ this.onEncryptKeyChange }/>
 
         <TextField
           className={ styles.key }
@@ -108,7 +108,7 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
           value={ secret }
           disabled={ true }
           id="key-input"
-          type={ revealSecret ? 'text' : 'password' } />
+          type={ revealSecret ? 'text' : 'password' }/>
         <ul className={ styles.actionsList }>
           <li>
             <a href="javascript:void(0);"
@@ -131,10 +131,10 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
         </ul>
 
         <DialogFooter>
-          <DefaultButton text="Cancel" onClick={ this.onCancel } className={ styles.cancelButton } />
+          <DefaultButton text="Cancel" onClick={ this.onCancel } className={ styles.cancelButton }/>
           <PrimaryButton text="Save" onClick={ this.onSaveClick }
             className={ styles.saveButton }
-            disabled={ disabled } />
+            disabled={ disabled }/>
         </DialogFooter>
       </Dialog>
     );
