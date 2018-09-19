@@ -6,14 +6,15 @@
   "dmg": {
     "background": "./scripts/config/resources/background.tiff",
     "icon": "./scripts/config/resources/icon.icns",
+    "title": "Bot Framework Emulator Installer",
     "contents": [
       {
-        "x": 180,
-        "y": 150
+        "x": 140,
+        "y": 244
       },
       {
-        "x": 350,
-        "y": 150,
+        "x": 380,
+        "y": 244,
         "type": "link",
         "path": "/Applications"
       }
