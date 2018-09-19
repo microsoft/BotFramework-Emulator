@@ -95,7 +95,7 @@
     "@uifabric/styling": "^5.20.0",
     "base64url": "2.0.0",
     "botframework-config": "4.0.0-preview1.3.4",
-    "botframework-webchat": "^0.14.3-master.d1a161a",
+    "botframework-webchat": "0.14.3-master.c3c4ae7",
     "office-ui-fabric-react": "~6.1.2",
     "react": "~16.3.2",
     "react-dom": "~16.3.2",
