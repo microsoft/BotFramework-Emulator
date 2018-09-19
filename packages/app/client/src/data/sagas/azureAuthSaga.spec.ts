@@ -56,7 +56,7 @@ describe('The azureAuthSaga', () => {
     });
 
     it('should contain just 2 steps when the Azure login dialog prompt is canceled', async () => {
-      store.dispatch(azureArmTokenDataChanged('invalid access_token'));
+      store.dispatch(azureArmTokenDataChanged(''));
       DialogService.showDialog = () => Promise.resolve(false);
       const it = azureAuthSagas()
         .next()
@@ -77,7 +77,7 @@ describe('The azureAuthSaga', () => {
         val = next.value;
         if ('SELECT' in val) {
           val = val.SELECT.selector(store.getState());
-          expect(val.access_token).toBe('invalid access_token');
+          expect(val.access_token).toBe('');
         } else if (val instanceof Promise) {
           val = await val;
           expect(val).toBe(false);
@@ -89,8 +89,8 @@ describe('The azureAuthSaga', () => {
     });
 
     it('should contain 4 steps when the Azure login dialog prompt is confirmed but auth fails', async () => {
-      store.dispatch(azureArmTokenDataChanged('invalid access_token'));
-      DialogService.showDialog = () => Promise.resolve(true);
+      store.dispatch(azureArmTokenDataChanged(''));
+      DialogService.showDialog = () => Promise.resolve(1);
       (CommandServiceImpl as any).remoteCall = () => Promise.resolve(false);
       const it = azureAuthSagas()
         .next()
@@ -112,12 +112,12 @@ describe('The azureAuthSaga', () => {
         val = next.value;
         if ('SELECT' in val) {
           val = val.SELECT.selector(store.getState());
-          expect(val.access_token).toBe('invalid access_token');
+          expect(val.access_token).toBe('');
         } else if (val instanceof Promise) {
           val = await val;
           // User has confirmed and wants to sign into Azure
           if (ct === 1) {
-            expect(val).toBe(true);
+            expect(val).toBe(1);
           }
         } else if ('CALL' in val) {
           val = val.CALL.fn.call(null, val.CALL.args);
@@ -136,8 +136,8 @@ describe('The azureAuthSaga', () => {
     });
 
     it('should contain 6 steps when the Azure login dialog prompt is confirmed and auth succeeds', async () => {
-      store.dispatch(azureArmTokenDataChanged('invalid access_token'));
-      DialogService.showDialog = () => Promise.resolve(true);
+      store.dispatch(azureArmTokenDataChanged(''));
+      DialogService.showDialog = () => Promise.resolve(1);
       (CommandServiceImpl as any).remoteCall = args => {
         switch (args[0]) {
           case SharedConstants.Commands.Azure.RetrieveArmToken:
@@ -170,12 +170,12 @@ describe('The azureAuthSaga', () => {
         val = next.value;
         if ('SELECT' in val) {
           val = val.SELECT.selector(store.getState());
-          expect(val.access_token).toBe('invalid access_token');
+          expect(val.access_token).toBe('');
         } else if (val instanceof Promise) {
           val = await val;
           // User has confirmed and wants to sign into Azure
           if (ct === 1) {
-            expect(val).toBe(true);
+            expect(val).toBe(1);
           }
         } else if ('CALL' in val) {
           val = val.CALL.fn.call(null, val.CALL.args);
@@ -187,7 +187,7 @@ describe('The azureAuthSaga', () => {
               expect(remoteCallSpy).toHaveBeenCalledWith([SharedConstants.Commands.Azure.RetrieveArmToken]);
             } else if (ct === 4) {
               expect(val.persistLogin).toBe(true);
-              expect(remoteCallSpy).toHaveBeenCalledWith([SharedConstants.Commands.Azure.PersistAzureLoginChanged, !0]);
+              expect(remoteCallSpy).toHaveBeenCalledWith([SharedConstants.Commands.Azure.PersistAzureLoginChanged, 1]);
             }
           }
         } else if ('PUT' in val) {

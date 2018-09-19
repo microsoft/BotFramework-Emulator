@@ -30,10 +30,14 @@
       color: var(--neutral-9);
     }
 
-    & a {
+    & .link {
+      border: 1px solid transparent;
+      background-color: transparent;
       color: var(--log-panel-link);
-      text-decoration: underline;
       cursor: pointer;
+      font-family: var(--monospace-font-family);
+      padding: 0;
+      text-decoration: underline;
     }
 
     // info

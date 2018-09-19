@@ -56,6 +56,7 @@ import { Store } from 'redux';
 import { azureLoggedInUserChanged } from './settingsData/actions/azureAuthActions';
 import { ngrokEmitter } from './ngrok';
 import { sendNotificationToClient } from './utils/sendNotificationToClient';
+import Users from '@bfemulator/emulator-core/lib/facility/users';
 
 export let mainWindow: Window;
 export let windowManager: WindowManager;
@@ -284,10 +285,14 @@ const createMainWindow = async () => {
       }, 1000);*/
     }
   });
+  const emulatorInstance = await Emulator.startup();
+  const { users: userSettings } = getSettingsStore().getState();
 
-  const serverUrl = await Emulator.startup();
-  store.dispatch({ type: 'updateServiceUrl', payload: serverUrl.replace('[::]', 'localHost') });
+  const users = new Users();
+  users.currentUserId = userSettings.currentUserId;
+  users.users = userSettings.usersById;
 
+  emulatorInstance.framework.server.botEmulator.facilities.users = users;
   loadMainPage();
 
   mainWindow.browserWindow.setTitle(app.getName());

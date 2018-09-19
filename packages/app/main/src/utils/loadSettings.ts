@@ -31,18 +31,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Fs from 'fs';
+import * as fs from 'fs';
 import { ensureStoragePath } from './ensureStoragePath';
-import { mergeDeep } from '@bfemulator/app-shared';
+import { mergeDeep, Settings } from '@bfemulator/app-shared';
+import * as uuidv4 from 'uuid/v4';
 
 /** Load JSON object from file. */
-export const loadSettings = <T>(filename: string, defaultSettings: T): T => {
+export const loadSettings = (filename: string, defaultSettings: Partial<Settings>): Settings => {
   try {
     filename = `${ensureStoragePath()}/${filename}`;
-    const stat = Fs.statSync(filename);
+    const stat = fs.statSync(filename);
     if (stat.isFile()) {
-      const loaded = JSON.parse(Fs.readFileSync(filename, 'utf8'));
-      return mergeDeep(defaultSettings, loaded);
+      const settingsJson = JSON.parse(fs.readFileSync(filename, 'utf8')) as Settings;
+      const settings = mergeDeep<Settings, Settings>(defaultSettings, settingsJson);
+      if (enforceNoDefaultUser(settings)) {
+        fs.writeFileSync(filename, JSON.stringify(settings, null, 2));
+      }
+      return settings;
     }
     return defaultSettings;
   } catch (e) {
@@ -50,3 +55,24 @@ export const loadSettings = <T>(filename: string, defaultSettings: T): T => {
     return defaultSettings;
   }
 };
+
+function enforceNoDefaultUser(settings: Settings): boolean {
+  let { users = {} } = settings; // default initialized here
+  if (!users.currentUserId || users.currentUserId === 'default-user') {
+    users.currentUserId = uuidv4();
+    if (!users.usersById) {
+      users.usersById = {};
+    }
+    const defaultUser = users.usersById['default-user'];
+    if (defaultUser) {
+      defaultUser.id = users.currentUserId;
+      users.usersById[users.currentUserId] = defaultUser;
+      delete users.usersById['default-user'];
+    } else if (!Object.keys(users.usersById).length) {
+      users.usersById[users.currentUserId] = { id: users.currentUserId, name: 'User' };
+    }
+    settings.users = users;
+    return true;
+  }
+  return false;
+}

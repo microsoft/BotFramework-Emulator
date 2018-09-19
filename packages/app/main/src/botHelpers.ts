@@ -64,8 +64,8 @@ export async function loadBotWithRetry(botPath: string, secret?: string): Promis
     // load the bot and transform it into internal BotConfig implementation
     let bot: BotConfigWithPath = await BotConfiguration.load(botPath, secret);
 
-    // if the bot has a secretKey and we don't have a secret, then we need to ask for a secret and decrypt
-    if (bot.secretKey && !secret) {
+    // if the bot has a padlock and we don't have a secret, then we need to ask for a secret and decrypt
+    if (bot.padlock && !secret) {
       return await promptForSecretAndRetry(botPath);
     }
 
@@ -77,7 +77,7 @@ export async function loadBotWithRetry(botPath: string, secret?: string): Promis
       // entered via the secret prompt dialog. In the latter case, we should
       // update the secret for the bot that we have on record with the correct secret.
       const botInfo = getBotInfoByPath(botPath);
-      if (secret && botInfo.secret && botInfo.secret !== secret) {
+      if (secret && (botInfo.secret !== secret)) {
         // update the secret in bots.json with the valid secret
         const updatedBot = { ...botInfo, secret };
         await patchBotsJson(botPath, updatedBot);
@@ -127,7 +127,7 @@ export function toSavableBot(bot: BotConfigWithPath, secret?: string): BotConfig
   (newBot as any).internal.location = bot.path; // Workaround until defect is fixed
   // refresh the secret key using the current secret
   if (secret) {
-    newBot.validateSecretKey(secret);
+    newBot.validateSecret(secret);
   }
 
   return newBot;
@@ -167,7 +167,7 @@ export async function saveBot(bot: BotConfigWithPath): Promise<void> {
   const savableBot = toSavableBot(bot, botInfo.secret);
 
   if (botInfo.secret) {
-    savableBot.validateSecretKey(botInfo.secret);
+    savableBot.validateSecret(botInfo.secret);
   }
   return await savableBot.save(botInfo.secret).catch();
 }

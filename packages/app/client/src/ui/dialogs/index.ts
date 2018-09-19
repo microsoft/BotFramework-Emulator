@@ -33,7 +33,7 @@
 
 export * from './botCreationDialog/botCreationDialog';
 export * from './host/host';
-export * from './secretPromptDialog/secretPromptDialog';
+export * from './secretPromptDialog/secretPromptDialogContainer';
 export * from './tabManager/tabManagerContainer';
 export * from './service';
 export * from './azureLoginSuccessDialog/azureLoginSuccessDialogContainer';
