@@ -17,8 +17,6 @@ install:
 - lerna bootstrap --hoist
 
 script:
-- cat ./node_modules/typescript/package.json
-- ls ./node_modules/typescript/lib
 - npm run build && npm run test:coveralls
 
 after_success:
@@ -51,6 +49,7 @@ deploy:
 
 cache:
   directories:
+    - node_modules
     - $HOME/.cache/electron
     - $HOME/.cache/electron-builder
 
