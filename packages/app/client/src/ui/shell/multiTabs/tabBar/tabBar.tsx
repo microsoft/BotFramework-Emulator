@@ -108,7 +108,7 @@ class TabBarComponent extends React.Component<TabBarProps, TabBarState> {
           }
         </ul>
         <div className={ styles.tabBarWidgets }>
-          { ...this.widgets }
+          { this.widgets }
         </div>
       </div>
     );

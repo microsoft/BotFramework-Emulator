@@ -24,7 +24,7 @@
   ],
   "exclude": [
     "./built",
-    "./node_modules",
+    "node_modules",
     "./dist",
     "./scripts",
     "./__tests__/**/*",

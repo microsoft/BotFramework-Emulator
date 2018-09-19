@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { CardAction, Payment } from '@bfemulator/sdk-shared';
+import { CardAction, PaymentRequest } from '@bfemulator/sdk-shared';
 import { ActivityVisitor } from './activityVisitor';
 
 export class PaymentEncoder extends ActivityVisitor {
@@ -39,7 +39,7 @@ export class PaymentEncoder extends ActivityVisitor {
 
     protected visitCardAction(cardAction: CardAction) {
         if (cardAction && cardAction.type === 'payment') {
-            let paymentRequest = cardAction.value as Payment.PaymentRequest;
+            let paymentRequest = cardAction.value as PaymentRequest;
             let url = PaymentEncoder.PaymentEmulatorUrlProtocol + '//' + JSON.stringify(paymentRequest);
 
             // change the card action to a special URL for the emulator

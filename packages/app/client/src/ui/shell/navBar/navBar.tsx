@@ -68,7 +68,7 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
   render() {
     return (
       <nav className={ styles.navBar }>
-        { ...this.links }
+        { this.links }
       </nav>
     );
   }

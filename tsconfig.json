@@ -19,6 +19,7 @@
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": false,
     "skipLibCheck": true,
+    "declaration": true,
     "types": ["react", "react-dom", "node", "jest"]
   },
   "include": [

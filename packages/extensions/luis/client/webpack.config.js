@@ -1,9 +1,7 @@
 const {
-  NamedModulesPlugin,
   HotModuleReplacementPlugin,
   WatchIgnorePlugin } = require('webpack');
 const path = require('path');
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 module.exports = {
   entry: {
     luis: path.resolve('./src/index.tsx')
@@ -36,14 +34,29 @@ module.exports = {
         use: [ 'file-loader' ]
       },
       {
-        test: /\.tsx?$/,
-        loader: 'ts-loader'
-      },
-      {
-        test: /\.tsx$/,
-        enforce: 'pre',
-        loader: 'tslint-loader',
-        options: { /* Loader options go here */ }
+        test: /\.(tsx?)|(jsx)$/,
+        exclude: [/node_modules/],
+        use: {
+          loader: 'babel-loader',
+          options: {
+            "presets": [
+              [
+                "@babel/preset-env",
+                {
+                  "targets": {
+                    "chrome": "58",
+                    "esmodules": true
+                  }
+                }
+              ],
+              "@babel/preset-typescript"
+            ],
+            "plugins": [
+              "@babel/proposal-class-properties",
+              "@babel/plugin-transform-react-jsx"
+            ]
+          }
+        }
       },
     ],
   },
@@ -71,9 +84,7 @@ module.exports = {
 
   externals: {},
   plugins: [
-    new NamedModulesPlugin(),
     new HotModuleReplacementPlugin(),
-    new HardSourceWebpackPlugin(),
     new WatchIgnorePlugin([
       './build/**/*.*',
       './public/**/*.*',

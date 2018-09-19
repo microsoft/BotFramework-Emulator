@@ -8,8 +8,8 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "build": "tsc --version && tsc -p . --outdir lib",
-    "build:watch": "tsc --version && tsc -p . --outdir lib --watch",
+    "builds": "babel ./src --out-dir lib --extensions \".ts,.tsx\"",
+    "build:watch": "npm run build:prod --outdir lib --watch",
     "build:babel": "concurrently --names \"babel,typecheck\" \"babel --extensions .js,.ts --ignore **/*.spec.js,**/*.spec.ts,**/*.test.js/,**/*.test.ts/,__test__/**/*.js,__test__/**/*.ts --out-dir lib --source-maps inline --verbose src\" \"tsc\"",
     "build:babel:watch": "concurrently --kill-others --names \"babel,typecheck\" \"babel --extensions .js,.ts --ignore **/*.spec.js,**/*.spec.ts,**/*.test.js/,**/*.test.ts/,__test__/**/*.js,__test__/**/*.ts --out-dir lib --source-maps inline --verbose src --watch\" \"tsc --preserveWatchOutput --watch\"",
     "clean": "rimraf lib && rimraf ../../../node_modules/@types/prop-types",
@@ -63,11 +63,12 @@
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "@babel/cli": "^7.0.0-beta.46",
-    "@babel/core": "^7.0.0-beta.46",
-    "@babel/preset-env": "^7.0.0-beta.46",
-    "@babel/preset-stage-3": "^7.0.0-beta.46",
-    "@babel/preset-typescript": "^7.0.0-beta.46",
+    "@babel/core": "^7.1.0",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+    "@babel/plugin-transform-react-jsx": "^7.0.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-typescript": "^7.1.0",
     "@types/jest": "^22.2.3",
     "@types/node": "8.9.3",
     "@types/restify": "^5.0.7",
@@ -84,6 +85,6 @@
     "rimraf": "^2.6.2",
     "ts-jest": "^22.4.6",
     "tslint": "^5.10.0",
-    "typescript": "2.7.2"
+    "typescript": "3.0.3"
   }
 }
