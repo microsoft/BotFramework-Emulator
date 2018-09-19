@@ -45,6 +45,8 @@ import { RootState } from '../../../../data/store';
 import { ConnectedServiceEditor } from './connectedServiceEditor/connectedServiceEditor';
 import { ServicesExplorer, ServicesExplorerProps } from './servicesExplorer';
 import { CONNECTED_SERVICES_PANEL_ID } from '../../../../data/action/explorerActions';
+import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 const mapStateToProps = (state: RootState): Partial<ServicesExplorerProps> => {
   const { services = [] } = state.bot.activeBot;
@@ -60,14 +62,19 @@ const mapStateToProps = (state: RootState): Partial<ServicesExplorerProps> => {
 
 const mapDispatchToProps = (dispatch): Partial<ServicesExplorerProps> => {
   return {
+    onAnchorClick: (url) => {
+      CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, url).catch();
+    },
     openAddServiceContextMenu: (payload: ConnectedServicePickerPayload) =>
       dispatch(openAddServiceContextMenu(payload)),
 
     openServiceDeepLink: (connectedService: IConnectedService) =>
       dispatch(openServiceDeepLink(connectedService)),
 
-    openContextMenuForService: (connectedService: IConnectedService,
-                                editorComponent: ComponentClass<ConnectedServiceEditor>) =>
+    openContextMenuForService: (
+      connectedService: IConnectedService,
+      editorComponent: ComponentClass<ConnectedServiceEditor>
+    ) =>
       dispatch(openContextMenuForConnectedService(editorComponent, connectedService)),
 
     openSortContextMenu: () => dispatch(openSortContextMenu())
