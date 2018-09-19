@@ -7,3 +7,6 @@ export const botCreateForm: string;
 export const checkboxAnchorContainer: string;
 export const link: string;
 export const endpointWarning: string;
+export const key: string;
+export const encryptKeyCheckBox: string;
+export const actionsList: string;

@@ -19,7 +19,7 @@ jest.mock('../../../../../data/store', () => ({
 let mockBot = {
   'name': 'TestBot',
   'description': '',
-  'secretKey': '',
+  'padlock': '',
   'services': [{
     'type': 'endpoint',
     'appId': '51fc2648-1190-44aa-9559-87b11b1d0014',

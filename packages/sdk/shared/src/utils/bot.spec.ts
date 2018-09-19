@@ -40,7 +40,7 @@ describe('Bot utility function tests', () => {
     name: 'someBot',
     description: 'someDescription',
     path: 'somePath',
-    secretKey: null,
+    padlock: null,
     services: [],
     overrides: null
   };
@@ -77,7 +77,7 @@ describe('Bot utility function tests', () => {
       const nonMatchingBot: BotConfigWithPath = {
         name: 'someName',
         description: '',
-        secretKey: null,
+        padlock: null,
         services: []
       };
       const result = botsAreTheSame(bot, nonMatchingBot);
@@ -89,7 +89,7 @@ describe('Bot utility function tests', () => {
       const matchingBot: BotConfigWithPath = {
         name: 'someOtherName',
         description: '',
-        secretKey: null,
+        padlock: null,
         services: [],
         path: 'somePath'
       };
@@ -107,7 +107,7 @@ describe('Bot utility function tests', () => {
       appId: 'someAppId1',
       appPassword: 'someAppPw1'
     };
-    
+
     const endpoint2: Partial<IEndpointService> = {
       id: 'http://www.endpoint2.com/api/messages',
       endpoint: 'http://www.endpoint2.com/api/messages',

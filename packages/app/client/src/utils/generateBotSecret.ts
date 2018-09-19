@@ -31,10 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ServiceTypes } from 'botframework-config/lib/schema';
-
-export const serviceTypeLabels = {
-  [ServiceTypes.Luis]: 'LUIS',
-  [ServiceTypes.Dispatch]: 'Dispatch',
-  [ServiceTypes.QnA]: 'QnA Maker',
-};
+/** Generates a valid 256 bit secret key for bot file encryption */
+export function generateBotSecret(): string {
+  const arr = new Uint8Array(32);
+  window.crypto.getRandomValues(arr);
+  return window.btoa(arr.reduce((str, byte) => str += String.fromCharCode(byte), ''));
+}

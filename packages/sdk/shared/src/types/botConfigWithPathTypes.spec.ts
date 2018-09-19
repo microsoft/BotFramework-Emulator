@@ -110,7 +110,7 @@ describe('BotConfigWithPathTypes tests', () => {
         name: 'someBotName',
         description: 'some description',
         path: 'somePath',
-        secretKey: null,
+        padlock: null,
         services: [],
         overrides: {}
       });

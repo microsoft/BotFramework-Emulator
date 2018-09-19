@@ -70,7 +70,7 @@ describe('utility function tests', () => {
     const bot2: BotConfigWithPath = {
       name: 'someName',
       description: 'someDescription',
-      secretKey: 'someSecretKey',
+      padlock: 'somePadlock',
       services: []
     };
     const bot3 = newBot(bot2);
@@ -81,7 +81,7 @@ describe('utility function tests', () => {
 
     expect(bot3.name).toBe('someName');
     expect(bot3.description).toBe('someDescription');
-    expect(bot3.secretKey).toBe('someSecretKey');
+    expect(bot3.padlock).toBe('somePadlock');
   });
 
   test('newEndpoint()', () => {
@@ -119,7 +119,7 @@ describe('utility function tests', () => {
     const bot: BotConfigWithPath = {
       name: 'someName',
       description: 'someDescription',
-      secretKey: 'someSecretKey',
+      padlock: 'somePadlock',
       services: [endpoint]
     };
 
