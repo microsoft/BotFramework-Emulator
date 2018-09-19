@@ -8,7 +8,7 @@
   "homepage": "https://github.com/Microsoft/BotFramework-Emulator",
   "scripts": {
     "build": "run-s lint build:electron",
-    "build:electron": "babel ./src --out-dir app/server --extensions \".ts,.tsx\" --ignore \"*.spec.ts\" --delete-dir-on-start --source-maps inline && gulp copy-extension-stubs",
+    "build:electron": "babel ./src --out-dir app/server --extensions \".ts,.tsx\" && gulp copy-extension-stubs",
     "lint": "tslint --project tsconfig.json",
     "start": "concurrently --kill-others --names \"electron,react-app\" --success first \"npm run start:electron:dev\" \"npm run start:react-app\"",
     "start:electron": "./node_modules/.bin/electron --inspect=7777 .",
@@ -110,7 +110,7 @@
     "@bfemulator/sdk-main": "^1.0.0",
     "@bfemulator/sdk-shared": "^1.0.0",
     "async": "^2.6.0",
-    "base64url": "^2.0.0",
+    "base64url": "2.0.0",
     "chatdown": "^1.0.10",
     "chokidar": "^2.0.2",
     "command-line-args": "^5.0.2",

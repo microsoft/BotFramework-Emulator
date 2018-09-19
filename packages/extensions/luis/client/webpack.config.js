@@ -44,7 +44,7 @@ module.exports = {
                 "@babel/preset-env",
                 {
                   "targets": {
-                    "chrome": "58",
+                    "chrome": "66",
                     "esmodules": true
                   }
                 }

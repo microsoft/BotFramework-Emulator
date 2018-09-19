@@ -11,6 +11,10 @@
     ],
     "@babel/preset-typescript"
   ],
+  "ignore": [
+    "**/*.spec.ts"
+  ],
+  "sourceMaps": "inline",
   "plugins": [
     "@babel/proposal-class-properties",
     "@babel/plugin-transform-react-jsx"

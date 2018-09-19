@@ -58,6 +58,9 @@ module.exports = {
               ],
               "@babel/preset-typescript"
             ],
+            "ignore": [
+              "**/*.spec.ts"
+            ],
             "plugins": [
               "@babel/proposal-class-properties",
               "@babel/plugin-transform-react-jsx"
