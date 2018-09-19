@@ -17,6 +17,7 @@ install:
 - lerna bootstrap --hoist
 
 script:
+- ls ./node_modules/typescript/lib
 - npm run build && npm run test:coveralls
 
 after_success:
