@@ -135,7 +135,7 @@ describe('ActiveBotHelper tests', () => {
       name: 'someBot',
       description: '',
       path: 'somePath',
-      secretKey: null,
+      padlock: null,
       services: []
     };
 
@@ -176,7 +176,7 @@ describe('ActiveBotHelper tests', () => {
     const bot: BotConfigWithPath = {
       name: 'someBot',
       description: '',
-      secretKey: null,
+      padlock: null,
       path: 'somePath',
       services: [endpoint]
     };
@@ -207,7 +207,7 @@ describe('ActiveBotHelper tests', () => {
     const bot: BotConfigWithPath = {
       name: 'someBot',
       description: '',
-      secretKey: null,
+      padlock: null,
       path: 'somePath',
       services: []
     };
@@ -258,7 +258,7 @@ describe('ActiveBotHelper tests', () => {
     const bot: BotConfigWithPath = {
       name: 'someBot',
       description: '',
-      secretKey: null,
+      padlock: null,
       path: 'somePath',
       services: [endpoint]
     };

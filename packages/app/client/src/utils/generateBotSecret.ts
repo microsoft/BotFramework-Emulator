@@ -31,6 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './chat/chat';
-export * from './inspector/inspectorContainer';
-export * from './log/log';
+/** Generates a valid 256 bit secret key for bot file encryption */
+export function generateBotSecret(): string {
+  const arr = new Uint8Array(32);
+  window.crypto.getRandomValues(arr);
+  return window.btoa(arr.reduce((str, byte) => str += String.fromCharCode(byte), ''));
+}

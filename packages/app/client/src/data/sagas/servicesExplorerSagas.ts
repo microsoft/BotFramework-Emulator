@@ -73,7 +73,7 @@ function* launchConnectedServicePicker(action: ConnectedServiceAction<ConnectedS
   : IterableIterator<any> {
   // To retrieve the luis models, we must have the authoring key.
   // To get the authoring key, we need the arm token
-  let armTokenData: ArmTokenData = yield select(getArmTokenFromState);
+  let armTokenData: ArmTokenData & number = yield select(getArmTokenFromState);
   if (!armTokenData || !armTokenData.access_token) {
     const { promptDialog, loginSuccessDialog, loginFailedDialog } = action.payload.azureAuthWorkflowComponents;
     armTokenData = yield* getArmToken(
@@ -84,7 +84,12 @@ function* launchConnectedServicePicker(action: ConnectedServiceAction<ConnectedS
         loginFailedDialog
       ));
   }
-  if (!armTokenData) {
+
+  if (armTokenData === 2) {
+    yield* launchConnectedServiceEditor(action);
+    return;
+  }
+  if (!armTokenData || 'error' in armTokenData) {
     return null; // canceled or failed somewhere
   }
   // Add the authenticated user to the action since we now have the token
@@ -268,6 +273,7 @@ function* launchConnectedServiceEditor(action: ConnectedServiceAction<ConnectedS
       yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.AddOrUpdateService, service.type, service);
     }
   }
+  return null;
 }
 
 function openLuisDeepLink(luisService: ILuisService): Promise<any> {

@@ -53,7 +53,7 @@ const mockBot = BotConfigWithPathImpl.fromJSON({
   'path': 'some/path',
   'name': 'AuthBot',
   'description': '',
-  'secretKey': '',
+  'padlock': '',
   'services': [
     {
       'appId': '4f8fde3f-48d3-4d8a-a954-393efe39809e',

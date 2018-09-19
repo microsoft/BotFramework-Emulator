@@ -44,7 +44,7 @@ describe('The ServicesExplorer component should', () => {
     mockBot = JSON.parse(`{
         "name": "TestBot",
         "description": "",
-        "secretKey": "",
+        "padlock": "",
         "services": [{
             "type": "luis",
             "name": "https://testbot.botframework.com/api/messagesv3",

@@ -45,16 +45,15 @@ import * as PresentationActions from '../../../data/action/presentationActions';
 import { Document } from '../../../data/reducer/editor';
 import { RootState } from '../../../data/store';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
-import { SettingsService } from '../../../platform/settings/settingsService';
 import ToolBar, { Button as ToolBarButton } from '../toolbar/toolbar';
 import ChatPanel from './chatPanel/chatPanel';
-import DetailPanel from './detailPanel/detailPanel';
 import LogPanel from './logPanel/logPanel';
 import PlaybackBar from './playbackBar/playbackBar';
 import { debounce } from '../../../utils';
-import { SharedConstants, newNotification, Notification } from '@bfemulator/app-shared';
+import { newNotification, Notification, SharedConstants } from '@bfemulator/app-shared';
 import * as styles from './emulator.scss';
 import { beginAdd } from '../../../data/action/notificationActions';
+import { InspectorContainer } from './parts';
 
 const { encode } = base64Url;
 
@@ -64,6 +63,7 @@ interface EmulatorProps {
   activeDocumentId?: string;
   clearLog?: (documentId: string) => void;
   conversationId?: string;
+  createErrorNotification?: (notification: Notification) => void;
   dirty?: boolean;
   document?: any;
   documentId?: string;
@@ -75,7 +75,7 @@ interface EmulatorProps {
   presentationModeEnabled?: boolean;
   setInspectorObjects?: (documentId: string, objects: any) => void;
   updateDocument?: (documentId: string, updatedValues: any) => void;
-  createErrorNotification?: (notification: Notification) => void;
+  url?: string;
 }
 
 class EmulatorComponent extends React.Component<EmulatorProps, {}> {
@@ -213,7 +213,7 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
     //       We should think about a better model to pass conversation ID from Web Chat to emulator core
     const directLine = new BotChat.DirectLine({
       secret: encodedOptions,
-      domain: `${ SettingsService.emulator.url }/v3/directline`,
+      domain: `${ this.props.url }/v3/directline`,
       webSocket: false
     });
 
@@ -276,7 +276,7 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
                         minSizes={ { 0: 80, 1: 80 } }
                         initialSizes={ this.getHorizontalSplitterSizes }
                         onSizeChange={ this.onHorizontalSizeChange }>
-                <DetailPanel document={ this.props.document }/>
+                <InspectorContainer document={ this.props.document }/>
                 <LogPanel document={ this.props.document }/>
               </Splitter>
             </div>

@@ -31,6 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './chat/chat';
-export * from './inspector/inspectorContainer';
-export * from './log/log';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { ClientAwareSettings, SharedConstants } from '@bfemulator/app-shared';
+import store from '../data/store';
+import { clientAwareSettingsChanged } from '../data/action/clientAwareSettingsActions';
+
+/** Registers settings commands */
+export function registerCommands(commandRegistry: CommandRegistryImpl) {
+  const { Settings } = SharedConstants.Commands;
+
+  commandRegistry.registerCommand(Settings.ReceiveGlobalSettings, (settings: ClientAwareSettings) => {
+    store.dispatch(clientAwareSettingsChanged(settings));
+  });
+}

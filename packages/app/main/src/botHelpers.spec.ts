@@ -40,7 +40,7 @@ jest.mock('./botData/store', () => ({
         activeBot: {
           name: 'someBot',
           description: '',
-          secretKey: '',
+          padlock: '',
           path: 'somePath',
           services: []
         },
@@ -84,7 +84,7 @@ describe('botHelpers tests', () => {
     expect(activeBot).toEqual({
       name: 'someBot',
       description: '',
-      secretKey: '',
+      padlock: '',
       path: 'somePath',
       services: []
     });
@@ -122,7 +122,7 @@ describe('botHelpers tests', () => {
       version: '',
       name: 'someName',
       description: 'someDescription',
-      secretKey: 'someSecretKey',
+      padlock: 'somePadlock',
       services: [],
       path: 'somePath',
       overrides: null
@@ -154,7 +154,7 @@ describe('botHelpers tests', () => {
     expect(savableBot.description).toEqual(expectedBot.description);
     expect(savableBot.services).toEqual(expectedBot.services);
     // secret key should've been refreshed
-    expect(savableBot.secretKey).not.toEqual(secret);
+    expect(savableBot.padlock).not.toEqual(secret);
   });
 
   test('promptForSecretAndRetry()', async () => {

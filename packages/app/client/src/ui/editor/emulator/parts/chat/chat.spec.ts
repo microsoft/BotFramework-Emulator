@@ -2,11 +2,11 @@ import { CommandServiceImpl } from '../../../../../platform/commands/commandServ
 import { getSpeechToken } from './chat';
 
 jest.mock('../../../../dialogs', () => ({
-  AzureLoginPromptDialogContainer: () => { },
-  AzureLoginSuccessDialogContainer: () => { },
-  BotCreationDialog: () => { },
+  AzureLoginPromptDialogContainer: () => ({ }),
+  AzureLoginSuccessDialogContainer: () => ({ }),
+  BotCreationDialog: () => ({ }),
   DialogService: { showDialog: () => Promise.resolve(true) },
-  SecretPromptDialog: () => { }
+  SecretPromptDialog: () => ({ })
 }));
 
 jest.mock('./chat.scss', () => ({}));

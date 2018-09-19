@@ -53,7 +53,7 @@ describe('Bot reducer tests', () => {
     const testbot: BotConfigWithPath = {
       name: 'bot1',
       description: '',
-      secretKey: null,
+      padlock: null,
       services: [],
       path: 'somePath'
     };
@@ -70,7 +70,7 @@ describe('Bot reducer tests', () => {
     const testbot: BotConfigWithPath = {
       name: 'bot1',
       description: '',
-      secretKey: null,
+      padlock: null,
       services: [],
       path: 'somePath'
     };
@@ -118,7 +118,7 @@ describe('Bot reducer tests', () => {
           description: '',
           services: [],
           path: 'somePath',
-          secretKey: null,
+          padlock: null,
           overrides: {
             endpoint: {
               endpoint: 'someEndpointOverride',
@@ -152,7 +152,7 @@ describe('Bot reducer tests', () => {
           description: '',
           services: [],
           path: 'someOtherPath',
-          secretKey: null,
+          padlock: null,
           overrides: {
             endpoint: {
               endpoint: 'someEndpointOverride',
@@ -221,7 +221,7 @@ describe('Bot reducer tests', () => {
       activeBot: {
         name: 'bot',
         description: 'this is a test bot',
-        secretKey: null,
+        padlock: null,
         services: []
       }
     };

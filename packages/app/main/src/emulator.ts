@@ -54,7 +54,7 @@ export class Emulator {
     Settings.startup();
     emulator = new Emulator();
     await emulator.startup();
-    return emulator.framework.serverUrl;
+    return emulator;
   }
 
   async startup() {

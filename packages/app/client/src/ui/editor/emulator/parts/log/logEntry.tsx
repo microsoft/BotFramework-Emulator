@@ -131,7 +131,7 @@ export class LogEntry extends React.Component<LogEntryProps> {
     }
 
     return (
-      <div key="entry" className={ [styles.entry, inspectedActivityClass].join(' ') }>
+      <div key="entry" className={ [styles.entry, inspectedActivityClass].join(' ') } >
         { innerJsx }
       </div>
     );
@@ -186,7 +186,7 @@ export class LogEntry extends React.Component<LogEntryProps> {
 
   renderTextItem(level: LogLevel, text: string, key: string) {
     return (
-      <span key={ key } className={ `text-item ${styles.spaced} ${logLevelToClassName(level)}` }>
+      <span key={ key } className={ `text-item ${ styles.spaced } ${ logLevelToClassName(level) }` }>
         { text }
       </span>
     );
@@ -195,7 +195,9 @@ export class LogEntry extends React.Component<LogEntryProps> {
   renderExternalLinkItem(text: string, hyperlink: string, key: string) {
     return (
       <span key={ key } className={ styles.spaced }>
-        <a onClick={ () => window.open(hyperlink, '_blank') }>{ text }</a>
+        <button className={ styles.link } onClick={ () => window.open(hyperlink, '_blank') }>
+          { text }
+        </button>
       </span>
     );
   }
@@ -203,14 +205,16 @@ export class LogEntry extends React.Component<LogEntryProps> {
   renderAppSettingsItem(text: string, key: string) {
     return (
       <span key={ key } className={ styles.spaced }>
-        <a onClick={ () => this.props.showAppSettings() }>{ text }</a>
+        <button className={ styles.link } onClick={ () => this.props.showAppSettings() }>
+          { text }
+        </button>
       </span>
     );
   }
 
   renderExceptionItem(err: Error, key: string) {
     return (
-      <span key={ key } className={ `${styles.spaced} ${styles.level3}` }>
+      <span key={ key } className={ `${ styles.spaced } ${ styles.level3 }` }>
         { err && err.message ? err.message : '' }
       </span>
     );
@@ -231,10 +235,12 @@ export class LogEntry extends React.Component<LogEntryProps> {
       <span key={ key }
         onMouseOver={ () => this.highlightInWebchat(obj) }
         onMouseLeave={ () => this.removeHighlightInWebchat(obj) }>
-        <span className={ `${styles.spaced} ${styles.level0}` }>
-          <a onClick={ () => this.inspectAndHighlightInWebchat(obj) }>{ title }</a>
+        <span className={ `${ styles.spaced } ${ styles.level0 }` }>
+          <button className={ styles.link } onClick={ () => this.inspectAndHighlightInWebchat(obj) } >
+            { title }
+          </button>
         </span>
-        <span className={ `${styles.spaced} ${styles.level0}` }>
+        <span className={ `${ styles.spaced } ${ styles.level0 }` }>
           { summaryText }
         </span>
       </span>
@@ -254,13 +260,15 @@ export class LogEntry extends React.Component<LogEntryProps> {
     }
     if (obj) {
       return (
-        <span key={ key } className={ `${styles.spaced} ${styles.level0}` }>
-          <a onClick={ () => this.inspect(obj) }>{ method }</a>
+        <span key={ key } className={ `${ styles.spaced } ${ styles.level0 }` }>
+          <button className={ styles.link } onClick={ () => this.inspect(obj) }>
+            { method }
+          </button>
         </span>
       );
     } else {
       return (
-        <span key={ key } className={ `${styles.spaced} ${styles.level0}` }>
+        <span key={ key } className={ `${ styles.spaced } ${ styles.level0 }` }>
           { method }
         </span>
       );
@@ -283,13 +291,15 @@ export class LogEntry extends React.Component<LogEntryProps> {
     }
     if (obj) {
       return (
-        <span key={ key } className={ `${styles.spaced} ${styles.level0}` }>
-          <a onClick={ () => this.inspect(obj) }>{ statusCode }</a>
+        <span key={ key } className={ `${ styles.spaced } ${ styles.level0 }` }>
+          <button className={ styles.link } onClick={ () => this.inspect(obj) } >
+            { statusCode }
+          </button>
         </span>
       );
     } else {
       return (
-        <span key={ key } className={ `${styles.spaced} ${styles.level0}` }>
+        <span key={ key } className={ `${ styles.spaced } ${ styles.level0 }` }>
           { statusCode }
         </span>
       );
@@ -298,9 +308,11 @@ export class LogEntry extends React.Component<LogEntryProps> {
 
   renderNgrokExpirationItem(text: string, key: string): JSX.Element {
     return (
-      <span key={ key } className={ `${styles.spaced} ${styles.level3}` }>
+      <span key={ key } className={ `${ styles.spaced } ${ styles.level3 }` }>
         { text + ' ' }
-        <a onClick={ () => this.props.reconnectNgrok() }>Please reconnect.</a>
+        <button className={ styles.link } onClick={ () => this.props.reconnectNgrok() }>
+          Please reconnect.
+        </button>
       </span>
     );
   }
@@ -324,7 +336,7 @@ export function timestamp(t: number) {
   let hours = number2(timestamp1.getHours());
   let minutes = number2(timestamp1.getMinutes());
   let seconds = number2(timestamp1.getSeconds());
-  return `${hours}:${minutes}:${seconds}`;
+  return `${ hours }:${ minutes }:${ seconds }`;
 }
 
 function logLevelToClassName(level: LogLevel): string {
