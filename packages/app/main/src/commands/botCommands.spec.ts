@@ -75,16 +75,11 @@ jest.mock('../main', () => ({
   }
 }));
 
-jest.mock('../watchers', () => ({
-  botProjectFileWatcher: {
-    watch: async () => true
-  },
-  chatWatcher: {
-    watch: async () => true
-  },
-  transcriptsWatcher: {
-    watch: async () => true
-  }
+const mockOn = {on: () => mockOn};
+jest.mock('chokidar', () => ({
+  watch: () => ({
+    on: () => mockOn
+  })
 }));
 
 const { Bot } = SharedConstants.Commands;

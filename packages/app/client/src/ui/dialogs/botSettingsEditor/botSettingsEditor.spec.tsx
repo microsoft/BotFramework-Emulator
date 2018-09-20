@@ -221,20 +221,8 @@ describe('The BotSettingsEditor dialog should', () => {
         secret: 'MsKgJGZJw7Vqw51YwpZhw7LCk2MzwpZZwoLDkMKPIWfCq8K7wobDp8OvwqvCmsO+EAY='
       });
       await instance.onSaveClick();
-      expect(mockRemoteCommandsCalled.length).toBe(2);
+      expect(mockRemoteCommandsCalled.length).toBe(3);
       [
-        {
-          'commandName': 'bot:save',
-          'args': [{
-            'description': '',
-            'name': '',
-            'overrides': null,
-            'path': 'a/test/path',
-            'padlock': '',
-            'services': [],
-            'version': '2.0'
-          }]
-        },
         {
           'commandName': 'bot:list:patch',
           'args': [
