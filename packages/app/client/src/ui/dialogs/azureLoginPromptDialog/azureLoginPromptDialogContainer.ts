@@ -39,8 +39,8 @@ import { CommandServiceImpl } from '../../../platform/commands/commandServiceImp
 
 const mapDispatchToProps = (_dispatch: () => void): AzureLoginPromptDialogProps => {
   return {
-    cancel: () => DialogService.hideDialog(false),
-    confirm: () => DialogService.hideDialog(true),
+    cancel: () => DialogService.hideDialog(0),
+    confirm: () => DialogService.hideDialog(1),
     onAnchorClick: (url) => {
       CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, url).catch();
     }

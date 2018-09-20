@@ -93,8 +93,23 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     : Promise<BotConfigWithPath> => {
     // try to get the bot secret from bots.json
     const botInfo = pathExistsInRecentBots(botPath) ? getBotInfoByPath(botPath) : null;
-    if (botInfo && botInfo.secret) {
+    if (botInfo) {
       secret = botInfo.secret;
+      const dirName = path.dirname(botPath);
+      let syncWithClient: boolean;
+      if (!botInfo.transcriptsPath) {
+        botInfo.transcriptsPath = path.join(dirName, './transcripts');
+        syncWithClient = true;
+      }
+      if (!botInfo.chatsPath) {
+        botInfo.chatsPath = path.join(dirName, './dialogs');
+        syncWithClient = true;
+      }
+      if (syncWithClient) {
+        const store = getStore();
+        await mainWindow.commandService
+          .remoteCall(SharedConstants.Commands.Bot.SyncBotList, store.getState().bot.botFiles);
+      }
     }
 
     // load the bot (decrypt with secret if we were able to get it)
@@ -122,14 +137,25 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   commandRegistry.registerCommand(Bot.SetActive, async (bot: BotConfigWithPath): Promise<string> => {
     // set up the file watcher
     await botProjectFileWatcher.watch(bot.path);
-
     // set active bot and active directory
     const store = getStore();
     const botDirectory = path.dirname(bot.path);
     store.dispatch(BotActions.setActive(bot));
     store.dispatch(BotActions.setDirectory(botDirectory));
-    mainWindow.commandService.call(Bot.RestartEndpointService);
 
+    const botInfo = getBotInfoByPath(bot.path) || {};
+    const dirName = path.dirname(bot.path);
+
+    const {
+      chatsPath = path.join(dirName, './dialogs'),
+      transcriptsPath = path.join(dirName, './transcripts')
+    } = botInfo;
+
+    await Promise.all([
+      chatWatcher.watch(chatsPath),
+      transcriptsWatcher.watch(transcriptsPath),
+      mainWindow.commandService.call(Bot.RestartEndpointService)
+    ]);
     // Workaround for a JSON serialization issue in bot.services where they're an array
     // on the Node side, but deserialize as a dictionary on the renderer side.
     return botDirectory;
@@ -240,9 +266,22 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Patches a bot record in bots.json
-  commandRegistry.registerCommand(Bot.PatchBotList, async (botPath: string, bot: BotInfo): Promise<boolean> => {
+  commandRegistry.registerCommand(Bot.PatchBotList, async (botPath: string, botInfo: BotInfo): Promise<boolean> => {
     // patch bots.json and update the store
-    await patchBotsJson(botPath, bot).catch();
+    await patchBotsJson(botPath, botInfo);
+
+    const dirName = path.dirname(botInfo.path);
+
+    const {
+      chatsPath = path.join(dirName, './dialogs'),
+      transcriptsPath = path.join(dirName, './transcripts')
+    } = botInfo;
+
+    await Promise.all([
+      chatWatcher.watch(chatsPath),
+      transcriptsWatcher.watch(transcriptsPath),
+    ]);
+
     return true;
   });
 
@@ -260,29 +299,5 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     if (result) {
       await removeBotFromList(botPath).catch();
     }
-  });
-
-  commandRegistry.registerCommand(Bot.WatchForTranscriptFiles, async (): Promise<any> => {
-    const { activeBot } = getStore().getState().bot;
-    if (!activeBot) {
-      return false;
-    }
-    const botInfo = getBotInfoByPath(activeBot.path);
-    const dirName = path.dirname(activeBot.path);
-
-    const { transcriptsPath = path.join(dirName, './transcripts') } = botInfo;
-    return transcriptsWatcher.watch(transcriptsPath);
-  });
-
-  commandRegistry.registerCommand(Bot.WatchForChatFiles, async () => {
-    const { activeBot } = getStore().getState().bot;
-    if (!activeBot) {
-      return false;
-    }
-    const botInfo = getBotInfoByPath(activeBot.path);
-    const dirName = path.dirname(activeBot.path);
-
-    const { chatsPath = path.join(dirName, './dialogs') } = botInfo;
-    return chatWatcher.watch(chatsPath);
   });
 }

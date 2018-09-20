@@ -59,8 +59,6 @@ export namespace SharedConstants {
       export const SyncBotList = 'bot:list:sync';
       export const Load = 'bot:load';
       export const RemoveFromBotList = 'bot:list:remove';
-      export const WatchForTranscriptFiles = 'bot:watch-for-transcript-files';
-      export const WatchForChatFiles = 'bot:watch-for-chat-files';
       export const ChatFilesUpdated = 'bot:chat-files-updated';
       export const TranscriptFilesUpdated = 'bot:transcript-files-updated';
     }

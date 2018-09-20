@@ -13,6 +13,7 @@ import * as store from '../botData/store';
 import { setActive } from '../botData/actions/botActions';
 import { emulator } from '../emulator';
 import { BotConfiguration } from 'botframework-config';
+import * as path from 'path';
 
 const mockBotConfig = BotConfiguration;
 let mockStore;
@@ -75,10 +76,11 @@ jest.mock('../main', () => ({
   }
 }));
 
-jest.mock('../watchers', () => ({
-  botProjectFileWatcher: {
-    watch: () => true
-  }
+const mockOn = {on: () => mockOn};
+jest.mock('chokidar', () => ({
+  watch: () => ({
+    on: () => mockOn
+  })
 }));
 
 const { Bot } = SharedConstants.Commands;
@@ -101,9 +103,11 @@ describe('The botCommands', () => {
     expect(result).toEqual(botToSave);
   });
 
-  it('should open a bot', async () => {
+  it('should open a bot and set the default transcript and chat path if none exists', async () => {
+    const mockBotInfo = { secret: 'secret', transcriptsPath: '', chatsPath: '' };
+    const syncWithClientSpy = jest.spyOn(mainWindow.commandService, 'remoteCall');
     const pathExistsInRecentBotsSpy = jest.spyOn(helpers, 'pathExistsInRecentBots').mockReturnValue(true);
-    const getBotInfoByPathSpy = jest.spyOn(helpers, 'getBotInfoByPath').mockReturnValue({ secret: 'secret' });
+    const getBotInfoByPathSpy = jest.spyOn(helpers, 'getBotInfoByPath').mockReturnValue(mockBotInfo);
     const loadBotWithRetrySpy = jest.spyOn(helpers, 'loadBotWithRetry').mockResolvedValue(mockBot);
     const command = mockCommandRegistry.getCommand(Bot.Open);
     const result = await command.handler('bot/path', 'secret');
@@ -112,6 +116,9 @@ describe('The botCommands', () => {
     expect(getBotInfoByPathSpy).toHaveBeenCalledWith('bot/path');
     expect(loadBotWithRetrySpy).toHaveBeenCalledWith('bot/path', 'secret');
     expect(result).toEqual(mockBot);
+    expect(mockBotInfo.transcriptsPath).toBe(path.normalize('bot/transcripts'));
+    expect(mockBotInfo.chatsPath).toBe(path.normalize('bot/dialogs'));
+    expect(syncWithClientSpy).toHaveBeenCalled();
   });
 
   it('should set the active bot', async () => {
