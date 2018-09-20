@@ -33,7 +33,16 @@
 
 import { BotInfo, newNotification, Notification, NotificationType, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
-import { Checkbox, DefaultButton, Dialog, DialogFooter, PrimaryButton, TextField, Row, RowAlignment } from '@bfemulator/ui-react';
+import {
+  Checkbox,
+  DefaultButton,
+  Dialog,
+  DialogFooter,
+  PrimaryButton,
+  TextField,
+  Row,
+  RowAlignment
+} from '@bfemulator/ui-react';
 import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { getBotInfoByPath } from '../../../data/botHelpers';
