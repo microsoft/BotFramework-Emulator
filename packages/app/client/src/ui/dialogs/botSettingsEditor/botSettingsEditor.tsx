@@ -114,7 +114,7 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
         <a
           href="javascript:void(0);"
           onClick={ this.onLearnMoreEncryptionClick }>
-          Learn more
+          Learn more.
         </a>
       </Row>
 
@@ -128,19 +128,25 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
           type={ revealSecret ? 'text' : 'password' }/>
         <ul className={ styles.actionsList }>
           <li>
-            <a href="javascript:void(0);"
+            <a
+              className={ !encryptKey ? styles.disabledAction : '' }
+              href="javascript:void(0);"
               onClick={ this.onRevealSecretClick }>
               { revealSecret ? 'Hide' : 'Show' }
             </a>
           </li>
           <li>
-            <a href="javascript:void(0);"
+            <a
+              className={ !encryptKey ? styles.disabledAction : '' }
+              href="javascript:void(0);"
               onClick={ this.onCopyClick }>
               Copy
             </a>
           </li>
           <li>
-            <a href="javascript:void(0);"
+            <a
+              className={ !encryptKey ? styles.disabledAction : '' }
+              href="javascript:void(0);"
               onClick={ this.onResetClick }>
               Generate new secret
             </a>

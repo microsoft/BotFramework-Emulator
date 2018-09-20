@@ -146,6 +146,10 @@ html {
   /* Status Bar */
   --status-bar-bg: #007ACC;
   --status-bar-color: #FFFFFF;
+
+  /* Links */
+  --link-color: #4080D0;
+  --link-color-disabled: #C8C8C8;
 }
 
 .ms-Modal {
