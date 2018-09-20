@@ -109,10 +109,10 @@ const mockBot = BotConfigWithPathImpl.fromJSON({
 
 const mockInfo = {
   'secret': 'shhh!',
-  'path': 'C:\\Users\\blerg\\Documents\\testbot\\contoso-cafe-bot.bot',
+  'path': path.normalize('Users/blerg/Documents/testbot/contoso-cafe-bot.bot'),
   'displayName': 'contoso-cafe-bot',
-  'transcriptsPath': 'C:\\Users\\blerg\\Documents\\testbot\\transcripts',
-  'chatsPath': 'C:\\Users\\blerg\\Documents\\testbot\\dialogs'
+  'transcriptsPath': path.normalize('Users/blerg/Documents/testbot/transcripts'),
+  'chatsPath': path.normalize('Users/blerg/Documents/testbot/dialogs')
 };
 
 const mockConversation = emulator.framework.server.botEmulator.facilities.conversations.newConversation(
@@ -357,12 +357,12 @@ describe('The emulatorCommands', () => {
           extensions: ['transcript']
         }
       ],
-      defaultPath: 'C:\\Users\\blerg\\Documents\\testbot\\transcripts',
+      defaultPath: path.normalize('Users/blerg/Documents/testbot/transcripts'),
       showsTagField: false,
       title: 'Save conversation transcript',
       buttonLabel: 'Save'
     });
-    const newPath = 'chosen\\AuthBot.bot';
+    const newPath = path.normalize('chosen/AuthBot.bot');
     expect(getBotInfoByPathSpy).toHaveBeenCalledWith('some/path');
     expect(toSavableBotSpy).toHaveBeenCalledWith(mockBot, mockInfo.secret);
     expect(patchBotJsonSpy).toHaveBeenCalledWith(newPath, Object.assign({}, mockInfo, { path: newPath }));
