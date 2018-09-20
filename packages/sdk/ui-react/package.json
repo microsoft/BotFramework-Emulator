@@ -35,7 +35,7 @@
     "resolve-url-loader": "^2.3.0",
     "rimraf": "^2.6.2",
     "sass-loader": "^7.0.3",
-    "ts-jest": "^22.4.6",
+    "babel-jest": "23.6.0",
     "tslint": "^5.10.0",
     "tslint-loader": "^3.6.0",
     "typescript": "3.0.3",

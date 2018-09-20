@@ -22,7 +22,7 @@
     "@types/jest": "^22.2.3",
     "css-loader": "^0.28.11",
     "jest": "^23.0.0",
-    "ts-jest": "^22.4.6",
+    "babel-jest": "23.6.0",
     "ts-loader": "^4.4.2",
     "url-loader": "^1.0.1",
     "webpack": "^4.16.4"

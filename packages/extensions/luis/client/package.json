@@ -34,7 +34,7 @@
     "css-loader": "^0.28.11",
     "file-loader": "^1.1.11",
     "jest": "^23.0.0",
-    "ts-jest": "^22.4.6",
+    "babel-jest": "23.6.0",
     "tslint": "^5.10.0",
     "tslint-loader": "^3.6.0",
     "ts-loader": "^4.4.2",

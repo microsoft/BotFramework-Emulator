@@ -22,7 +22,7 @@
   "jest": {
     "setupTestFrameworkScriptFile": "../../../testSetup.js",
     "transform": {
-      "^.+\\.(tsx?|jsx?)$": "ts-jest"
+      "^.+\\.(tsx?|jsx?)$": "babel-jest"
     },
     "testURL": "http://localhost",
     "testMatch": [
@@ -73,7 +73,7 @@
     "rimraf": "^2.6.2",
     "sass-loader": "^7.0.3",
     "style-loader": "^0.21.0",
-    "ts-jest": "^22.4.6",
+    "babel-jest": "23.6.0",
     "ts-loader": "^4.4.2",
     "tslint": "^5.10.0",
     "tslint-loader": "^3.6.0",
