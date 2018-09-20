@@ -5,7 +5,7 @@
   "icon": "./scripts/config/resources/icon.icns",
   "dmg": {
     "background": "./scripts/config/resources/background.tiff",
-    "icon": "./scripts/config/resources/icon.icns",
+    "icon": "./scripts/config/resources/emulator_dmg.icns",
     "title": "Bot Framework Emulator Installer",
     "contents": [
       {
