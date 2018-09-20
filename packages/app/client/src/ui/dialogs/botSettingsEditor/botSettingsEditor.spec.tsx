@@ -101,6 +101,7 @@ describe('The BotSettingsEditor dialog should', () => {
 
   it('should update the state when the reveal key is clicked', () => {
     const instance = node.instance();
+    instance.setState({ encryptKey: true });
     expect(instance.state.revealSecret).toBeFalsy();
     instance.onRevealSecretClick();
     expect(instance.state.revealSecret).toBeTruthy();
@@ -109,6 +110,7 @@ describe('The BotSettingsEditor dialog should', () => {
   it('should copy the secret to the clipboard when "onCopyClick" is executed', () => {
     const instance = node.instance();
     instance.setState({
+      encryptKey: true,
       secret: 'MsKgJGZJw7Vqw51YwpZhw7LCk2MzwpZZwoLDkMKPIWfCq8K7wobDp8OvwqvCmsO+EAY='
     });
     const elementSpies = {
