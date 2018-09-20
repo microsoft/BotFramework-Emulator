@@ -142,6 +142,10 @@ html {
   --my-bots-entry-color: var(--neutral-3);
   --my-bots-path-color: var(--neutral--3);
   --my-bots-scrollbar-color: rgba(136,136,136,0.5);
+
+  /* Status Bar */
+  --status-bar-bg: #007ACC;
+  --status-bar-color: #FFFFFF;
 }
 
 .ms-Modal {
