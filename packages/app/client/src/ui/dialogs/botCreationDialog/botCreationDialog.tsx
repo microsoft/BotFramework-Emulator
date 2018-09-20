@@ -146,33 +146,39 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
           <a
             href="javascript:void(0);"
             onClick={ this.onLearnMoreEncryptionClick }>
-            Learn more
+            Learn more.
           </a>
         </Row>
 
           <TextField
-          className={ styles.key }
-          label="Secret "
-          value={ secret }
-          placeholder="Your keys are not encrypted"
-          disabled={ true }
-          id="key-input"
-          type={ revealSecret ? 'text' : 'password' } />
+            className={ styles.key }
+            label="Secret "
+            value={ secret }
+            placeholder="Your keys are not encrypted"
+            disabled={ true }
+            id="key-input"
+            type={ revealSecret ? 'text' : 'password' } />
           <ul className={ styles.actionsList }>
             <li>
-              <a href="javascript:void(0);"
+              <a
+                className={ !encryptKey ? styles.disabledAction : '' }
+                href="javascript:void(0);"
                 onClick={ this.onRevealSecretClick }>
                 { revealSecret ? 'Hide' : 'Show' }
               </a>
             </li>
             <li>
-              <a href="javascript:void(0);"
+              <a
+                className={ !encryptKey ? styles.disabledAction : '' }
+                href="javascript:void(0);"
                 onClick={ this.onCopyClick }>
                 Copy
               </a>
             </li>
             <li>
-              <a href="javascript:void(0);"
+              <a
+                className={ !encryptKey ? styles.disabledAction : '' }
+                href="javascript:void(0);"
                 onClick={ this.onResetClick }>
                 Generate new secret
               </a>
