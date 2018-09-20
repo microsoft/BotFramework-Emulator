@@ -67,7 +67,7 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
     const secret = (botInfo && botInfo.secret);
     this.state = {
       ...bot,
-      secret: secret || this.generatedSecret,
+      secret: secret,
       revealSecret: false,
       encryptKey: !!secret
     };
@@ -104,6 +104,7 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
         <TextField
           className={ styles.key }
           label="key"
+          placeholder="Your keys are not encrypted"
           value={ secret }
           disabled={ true }
           id="key-input"
@@ -148,7 +149,12 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
   }
 
   private onEncryptKeyChange = (noIdea: any, value: boolean) => {
-    this.setState({ encryptKey: value, secret: (value ? this.generatedSecret : ''), dirty: true });
+    this.setState({
+      encryptKey: value,
+      secret: (value ? this.generatedSecret : ''),
+      dirty: true,
+      revealSecret: (value ? value : false)
+    });
   }
 
   private onSaveClick = async () => {
@@ -203,13 +209,15 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
   /** Saves a bot config of a bot loaded from disk */
   private saveBotFromDisk = async (bot: BotConfigWithPath): Promise<void> => {
     const { Save, PatchBotList } = SharedConstants.Commands.Bot;
+    // write updated bot entry to bots.json so main side can pick up possible changes to secret
     const botInfo: BotInfo = getBotInfoByPath(bot.path) || {};
     botInfo.secret = this.state.secret;
-    // write updated bot entry to bots.json
+    await CommandServiceImpl.remoteCall(PatchBotList, bot.path, botInfo);
+
+    // save bot
     try {
       await CommandServiceImpl.remoteCall(Save, bot);
     } catch {
-      // this is a problem
       const note = newNotification('There was an error updating your bot settings. ' +
         'Try removing encryption and saving again. You can then add encryption back once successful',
         NotificationType.Error);

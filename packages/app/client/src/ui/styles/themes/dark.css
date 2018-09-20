@@ -127,6 +127,8 @@ html {
   /* toolbar */
   --toolbar-bg: var(--tab-active-tab-bg);
   --toolbar-border: none;
+  --toolbar-border-bottom: 1px solid var(--neutral-13);
+  --splitter-border: var(--toolbar-border-bottom);
 
   /* Welcome page */
   --welcome-page-bg: var(--tab-active-tab-bg);
