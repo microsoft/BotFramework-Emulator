@@ -91,10 +91,6 @@ function* launchResourcesSettingsModal(action: ResourcesAction<{ dialog: Compone
   if (result) {
     try {
       yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.PatchBotList, result.path, result);
-      yield Promise.all([
-        CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.WatchForChatFiles),
-        CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.WatchForTranscriptFiles)
-      ]);
     } catch (e) {
       const notification = newNotification('Unable to save resource settings', NotificationType.Error);
       yield put(beginAdd(notification));
