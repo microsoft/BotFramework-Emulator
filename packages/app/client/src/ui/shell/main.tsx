@@ -43,8 +43,11 @@ import * as Constants from '../../constants';
 import { StatusBar } from './statusBar/statusBar';
 import { StoreVisualizer } from '../debug/storeVisualizer';
 import { Editor } from '../../data/reducer/editor';
-import store from '../../data/store';
-import * as ExplorerActions from '../../data/action/explorerActions';
+
+// TODO: Re-enable once webchat reset bug is fixed
+// (https://github.com/Microsoft/BotFramework-Emulator/issues/825)
+// import store from '../../data/store';
+// import * as ExplorerActions from '../../data/action/explorerActions';
 
 export interface MainProps {
   primaryEditor?: Editor;
@@ -113,9 +116,8 @@ export class Main extends React.Component<MainProps, MainState> {
             <Splitter
               orientation={ 'vertical' }
               primaryPaneIndex={ 0 }
-              minSizes={ { 1: 40 } }
-              initialSizes={ { 0: 280 } }
-              onSizeChange={ this.checkExplorerSize }>
+              minSizes={ { 0: 175, 1: 40 } }
+              initialSizes={ { 0: 280 } }>
               { workbenchChildren }
             </Splitter>
           </div>
@@ -128,8 +130,10 @@ export class Main extends React.Component<MainProps, MainState> {
     );
   }
 
+  // TODO: Re-enable once webchat reset bug is fixed
+  // (https://github.com/Microsoft/BotFramework-Emulator/issues/825)
   /** Called when the splitter between the editor and explorer panes is moved */
-  private checkExplorerSize(sizes: { absolute: number, percentage: number }[]): void {
+  /*private checkExplorerSize(sizes: { absolute: number, percentage: number }[]): void {
     if (sizes.length) {
       const explorerSize = sizes[0];
       const minExplorerWidth = 175;
@@ -137,5 +141,5 @@ export class Main extends React.Component<MainProps, MainState> {
         store.dispatch(ExplorerActions.showExplorer(false));
       }
     }
-  }
+  }*/
 }
