@@ -4,15 +4,17 @@
   },
   "icon": "./scripts/config/resources/icon.icns",
   "dmg": {
-    "icon": "./scripts/config/resources/icon.icns",
+    "background": "./scripts/config/resources/background.tiff",
+    "icon": "./scripts/config/resources/emulator_dmg.icns",
+    "title": "Bot Framework Emulator Installer",
     "contents": [
       {
-        "x": 110,
-        "y": 150
+        "x": 140,
+        "y": 244
       },
       {
-        "x": 240,
-        "y": 150,
+        "x": 380,
+        "y": 244,
         "type": "link",
         "path": "/Applications"
       }
