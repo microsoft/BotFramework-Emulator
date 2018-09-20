@@ -35,8 +35,6 @@ import { ForkEffect, put, takeEvery, } from 'redux-saga/effects';
 import { NavBarActions, SelectNavBarAction } from '../action/navBarActions';
 import { markAllAsRead } from '../action/notificationActions';
 import * as Constants from '../../constants';
-import { SharedConstants } from '@bfemulator/app-shared';
-import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 
 /** Marks all notifications as read if the notifications pane is opened */
 export function* markNotificationsAsRead(action: SelectNavBarAction): IterableIterator<any> {
@@ -46,17 +44,6 @@ export function* markNotificationsAsRead(action: SelectNavBarAction): IterableIt
   }
 }
 
-export function* startWatchingResources(action: SelectNavBarAction): IterableIterator<any> {
-  if (action.payload.selection !== Constants.NAVBAR_RESOURCES) {
-    return;
-  }
-  yield Promise.all([
-    CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.WatchForChatFiles),
-    CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.WatchForTranscriptFiles)
-  ]);
-}
-
 export function* navBarSagas(): IterableIterator<ForkEffect> {
   yield takeEvery(NavBarActions.select, markNotificationsAsRead);
-  yield takeEvery(NavBarActions.select, startWatchingResources);
 }

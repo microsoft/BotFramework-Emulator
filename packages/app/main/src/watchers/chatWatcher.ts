@@ -18,6 +18,12 @@ export class ChatWatcher extends FileWatcher {
     };
   }
 
+  public async watch(paths: string | string[]): Promise<true> {
+    this.chatFiles = {};
+    this.invalidateChatFiles();
+    return super.watch(paths);
+  }
+
   protected onFileAdd = (file: string, fstats?: fs.Stats): void => {
     if (!isChatFile(file)) {
       return;

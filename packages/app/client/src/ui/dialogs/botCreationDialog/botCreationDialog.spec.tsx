@@ -68,7 +68,7 @@ describe('BotCreationDialog tests', () => {
   it('should generate a new bot secret when reset is clicked', () => {
     const testWrapper = shallow(<BotCreationDialog/>);
     const initialSecret = 'secret1';
-    testWrapper.instance().setState({ secret: initialSecret });
+    testWrapper.instance().setState({ secret: initialSecret, encryptKey: true });
     (testWrapper.instance() as any).onResetClick();
     const state = testWrapper.state() as Partial<BotCreationDialogState>;
     expect(state.secret).not.toEqual(initialSecret);
@@ -76,7 +76,7 @@ describe('BotCreationDialog tests', () => {
 
   it('should execute a window copy command when copy is clicked', () => {
     const testWrapper = mount(<BotCreationDialog/>);
-
+    testWrapper.instance().setState({ encryptKey: true });
     // mock window functions
     const backupExec = window.document.execCommand;
     const mockExec = jest.fn((_command: string) => null);
