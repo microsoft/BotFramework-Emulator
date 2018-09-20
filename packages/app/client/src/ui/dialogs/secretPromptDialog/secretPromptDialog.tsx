@@ -87,7 +87,7 @@ export class SecretPromptDialog extends React.Component<SecretPromptDialogProps,
         <div className={ styles.buttonRow }>
           <DefaultButton text={ 'Cancel' } onClick={ this.onDismissClick }/>
           <PrimaryButton
-            disabled={ !!this.state.secret }
+            disabled={ !this.state.secret }
             className={ styles.saveButton }
             text={ 'Submit' }
             onClick={ this.onSaveClick }/>

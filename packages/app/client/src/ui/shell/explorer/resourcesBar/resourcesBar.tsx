@@ -24,7 +24,9 @@ export class ResourcesBar extends Component<ResourcesBarProps, ResourcesBarProps
           <button
             className={ explorerStyles.botSettings }
             disabled={ !this.props.isBotActive }
-            onClick={ this.onSettingsClick }/>
+            onClick={ this.onSettingsClick }>
+            <span></span>
+          </button>
         </div>
         <ul className={ explorerStyles.explorerSet }>
           <li>

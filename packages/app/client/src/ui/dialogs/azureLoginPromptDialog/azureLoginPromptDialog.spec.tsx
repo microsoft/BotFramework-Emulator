@@ -8,8 +8,8 @@ import { AzureLoginPromptDialog } from './azureLoginPromptDialog';
 
 jest.mock('../service', () => ({
   DialogService: {
-    showDialog: () => Promise.resolve(true),
-    hideDialog: () => Promise.resolve(false),
+    showDialog: () => Promise.resolve(1),
+    hideDialog: () => Promise.resolve(0),
   }
 }));
 
