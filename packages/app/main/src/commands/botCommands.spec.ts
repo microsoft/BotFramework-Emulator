@@ -13,6 +13,7 @@ import * as store from '../botData/store';
 import { setActive } from '../botData/actions/botActions';
 import { emulator } from '../emulator';
 import { BotConfiguration } from 'botframework-config';
+import * as path from 'path';
 
 const mockBotConfig = BotConfiguration;
 let mockStore;
@@ -115,8 +116,8 @@ describe('The botCommands', () => {
     expect(getBotInfoByPathSpy).toHaveBeenCalledWith('bot/path');
     expect(loadBotWithRetrySpy).toHaveBeenCalledWith('bot/path', 'secret');
     expect(result).toEqual(mockBot);
-    expect(mockBotInfo.transcriptsPath).toBe('bot\\transcripts');
-    expect(mockBotInfo.chatsPath).toBe('bot\\dialogs');
+    expect(mockBotInfo.transcriptsPath).toBe(path.normalize('bot/transcripts'));
+    expect(mockBotInfo.chatsPath).toBe(path.normalize('bot/dialogs'));
     expect(syncWithClientSpy).toHaveBeenCalled();
   });
 
