@@ -254,9 +254,13 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
         { role: 'cut' },
         { role: 'copy' },
         { role: 'paste' },
+        process.platform === 'darwin' ? {
+          role: 'pasteAndMatchStyle'
+        } : null,
         { role: 'delete' },
-        { role: 'selectall' },
-      ]
+        process.platform === 'win32' ? { type: 'separator' } : null,
+        { role: 'selectall' }
+      ].filter(item => item) as any[]
     };
   }
 
