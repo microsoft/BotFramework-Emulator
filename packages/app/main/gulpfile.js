@@ -693,7 +693,8 @@ function setReleaseFilename(filename, options = {}) {
     filename = filename.replace(/\s/g, '-');
   }
   if (options.fixBasename) {
-    filename = filename.replace(/bot[-|\s]framework/ig, 'botframework');
+    // filename = filename.replace(/bot[-|\s]framework/ig, 'botframework');
+    filename = filename.replace(/(bot[-|\s]framework)?(main)?/, 'botframework');
   }
   return filename;
 }
