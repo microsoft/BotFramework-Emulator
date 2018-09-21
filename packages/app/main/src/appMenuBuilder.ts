@@ -51,7 +51,6 @@ export interface AppMenuBuilder {
   getFileMenu: (recentBots?: BotInfo[]) => MenuOpts;
   getAppMenuMac: () => MenuOpts;
   getEditMenu: () => MenuOpts;
-  getEditMenuMac: () => MenuOpts[];
   getViewMenu: () => MenuOpts;
   getWindowMenuMac: () => MenuOpts[];
   getHelpMenu: () => MenuOpts;
@@ -105,9 +104,6 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
         }*/
 
       template.unshift(this.getAppMenuMac());
-
-      // Edit menu
-      (template[2].submenu as any).push(this.getEditMenuMac());
 
       // Window menu
       template.splice(4, 0, {
@@ -254,27 +250,11 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
         { role: 'cut' },
         { role: 'copy' },
         { role: 'paste' },
-        process.platform === 'darwin' ? {
-          role: 'pasteAndMatchStyle'
-        } : null,
         { role: 'delete' },
         process.platform === 'win32' ? { type: 'separator' } : null,
         { role: 'selectall' }
       ].filter(item => item) as any[]
     };
-  }
-
-  getEditMenuMac(): MenuOpts[] {
-    return [
-      { type: 'separator' },
-      {
-        label: 'Speech',
-        submenu: [
-          { role: 'startspeaking' },
-          { role: 'stopspeaking' }
-        ]
-      }
-    ];
   }
 
   getViewMenu(): MenuOpts {
