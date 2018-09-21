@@ -234,36 +234,36 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
               Emulator works with ngrok to communicate with bots hosted remotely. Read the <a
                 href="https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)" target="_blank">wiki
                 page</a> to learn more about using ngrok and to download it.</p>
-            <Row align={ RowAlignment.Center }>
+            <Row align={ RowAlignment.Center } className={ styles.marginBottomRow }>
               <TextField className={ styles.appSettingsInput } readOnly={ false } value={ uncommitted.ngrokPath }
-                onChanged={ this.onChangeNgrok } label={ 'Path to ngrok' } />
-              <PrimaryButton onClick={ this.onClickBrowse } text="Browse" className={ styles.browseButton } />
+                onChanged={ this.onChangeNgrok } label={ 'Path to ngrok' }/>
+              <PrimaryButton onClick={ this.onClickBrowse } text="Browse" className={ styles.browseButton }/>
             </Row>
             <Checkbox className={ styles.checkboxOverrides } checked={ uncommitted.bypassNgrokLocalhost }
-              onChange={ this.onChangeNgrokBypass } id="ngrok-bypass" label="Bypass ngrok for local addresses" />
-            <Row align={ RowAlignment.Center }>
+              onChange={ this.onChangeNgrokBypass } id="ngrok-bypass" label="Bypass ngrok for local addresses"/>
+            <Row align={ RowAlignment.Center } className={ styles.marginBottomRow }>
               <TextField className={ styles.appSettingsInput } readOnly={ false } value={ uncommitted.localhost }
-                onChanged={ this.onChangeLocalhost } label="localhost override" />
+                onChanged={ this.onChangeLocalhost } label="localhost override"/>
             </Row>
             <Row align={ RowAlignment.Center }>
               <TextField className={ styles.appSettingsInput } readOnly={ false } value={ uncommitted.locale }
-                onChanged={ this.onChangeLocale } label="Locale" />
+                onChanged={ this.onChangeLocale } label="Locale"/>
             </Row>
           </Column>
           <Column className={ [styles.rightColumn, styles.spacing].join(' ') }>
             <SmallHeader>Auth</SmallHeader>
             <Checkbox className={ styles.checkboxOverrides } checked={ uncommitted.use10Tokens }
               onChange={ this.onChangeAuthTokenVersion } id="auth-token-version"
-              label="Use version 1.0 authentication tokens" />
+              label="Use version 1.0 authentication tokens"/>
             <SmallHeader>Sign-in</SmallHeader>
             <Checkbox className={ styles.checkboxOverrides } checked={ uncommitted.useCodeValidation }
               onChange={ this.onChangeUseValidationToken } id="use-validation-code"
-              label="Use a sign-in verification code for OAuthCards" />
+              label="Use a sign-in verification code for OAuthCards"/>
           </Column>
         </Row>
         <Row className={ styles.buttonRow } justify={ RowJustification.Right }>
-          <PrimaryButton text="Cancel" onClick={ this.onClickDiscard } />
-          <PrimaryButton text="Save" onClick={ this.onClickSave } className={ styles.saveButton } disabled={ clean } />
+          <PrimaryButton text="Cancel" onClick={ this.onClickDiscard } className={ styles.cancelButton }/>
+          <PrimaryButton text="Save" onClick={ this.onClickSave } className={ styles.saveButton } disabled={ clean }/>
         </Row>
       </GenericDocument>
     );

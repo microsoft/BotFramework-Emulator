@@ -1,6 +1,6 @@
 .appSettingsEditor {
   p {
-    margin: 16px 0;
+    margin: 0 0 16px 0;
   }
 
   a {
@@ -22,6 +22,10 @@
 
 }
 
+.marginBottomRow {
+  margin-bottom: 16px;
+}
+
 .rightColumn {
   margin-left: 48px;
 }
@@ -33,6 +37,17 @@
 .browseButton, .saveButton {
   margin-left: 8px;
   margin-top: auto;
+}
+
+.browseButton, .saveButton, .cancelButton {
+  width: 180px;
+  height: 26px;
+
+  :global {
+    .ms-Button-label {
+      line-height: 26px;
+    }
+  }
 }
 
 .sizeLimitSuffix {
