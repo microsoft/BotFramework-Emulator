@@ -131,7 +131,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
         <TextField
           key={ `input_${ index }` }
           errorMessage={ state[`${ key }Error`] || '' }
-          value={ state[key] }
+          value={ connectedServiceCopy[key] }
           onChanged={ textFieldHandlers[key] || (textFieldHandlers[key] = onInputChange.bind(this, key)) }
           label={ labelMap[key] } required={ isRequired }
         />
