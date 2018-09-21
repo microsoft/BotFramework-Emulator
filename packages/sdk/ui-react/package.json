@@ -7,7 +7,7 @@
   "scripts": {
     "build": "run-s lint clean build:prod",
     "build:prod": "webpack --mode production --progress --colors",
-    "clean": "rimraf ./built && rimraf ../../../node_modules/@types/prop-types",
+    "clean": "rimraf ./built && rimraf ../../../node_modules/@types/prop-types && rimraf ../../../node_modules/@uifabric/merge-styles/lib/IStyleSet.d.ts",
     "lint": "tslint --project tslint.json",
     "prepare": "npm run clean",
     "test": "jest",
