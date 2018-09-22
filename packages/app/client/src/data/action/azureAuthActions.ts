@@ -36,9 +36,10 @@ import { ComponentClass } from 'react';
 
 export const AZURE_ARM_TOKEN_DATA_CHANGED = 'AZURE_ARM_TOKEN_DATA_CHANGED';
 export const AZURE_BEGIN_AUTH_WORKFLOW = 'AZURE_BEGIN_AUTH_WORKFLOW';
+export const AZURE_INVALIDATE_ARM_TOKEN = 'AZURE_INVALIDATE_ARM_TOKEN';
 
 export interface AzureAuthAction<T> extends Action {
-  payload: T;
+  payload?: T;
 }
 
 export interface ArmTokenData {
@@ -47,18 +48,20 @@ export interface ArmTokenData {
 
 export interface AzureAuthWorkflow {
   promptDialog: ComponentClass<any>;
+  promptDialogProps: { [propName: string]: any };
   loginSuccessDialog: ComponentClass<any>;
   loginFailedDialog: ComponentClass<any>;
 }
 
 export function beginAzureAuthWorkflow(
   promptDialog: ComponentClass<any>,
+  promptDialogProps: { [propName: string]: any },
   loginSuccessDialog: ComponentClass<any>,
   loginFailedDialog: ComponentClass<any>
 ): AzureAuthAction<AzureAuthWorkflow> {
   return {
     type: AZURE_BEGIN_AUTH_WORKFLOW,
-    payload: { promptDialog, loginSuccessDialog, loginFailedDialog }
+    payload: { promptDialog, promptDialogProps, loginSuccessDialog, loginFailedDialog }
   };
 }
 
@@ -66,5 +69,11 @@ export function azureArmTokenDataChanged(armToken: string): AzureAuthAction<ArmT
   return {
     type: AZURE_ARM_TOKEN_DATA_CHANGED,
     payload: { access_token: armToken }
+  };
+}
+
+export function invalidateArmToken(): AzureAuthAction<void> {
+  return {
+    type: AZURE_INVALIDATE_ARM_TOKEN
   };
 }

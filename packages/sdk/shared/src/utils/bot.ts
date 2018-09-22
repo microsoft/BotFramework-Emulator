@@ -32,7 +32,7 @@
 //
 
 import { BotConfigWithPath, BotConfigWithPathImpl, BotConfigOverrides } from '../types';
-import { IEndpointService } from 'msbot/bin/schema';
+import { IEndpointService } from 'botframework-config/lib/schema';
 
 /**
  * Takes bot config overrides and applies them to the target bot

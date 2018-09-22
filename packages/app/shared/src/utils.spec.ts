@@ -41,7 +41,7 @@ import {
 } from './utils';
 import { NotificationType } from './types';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
-import { IEndpointService, ServiceType } from 'msbot/bin/schema';
+import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 
 describe('utility function tests', () => {
   test('isObject()', () => {
@@ -70,7 +70,7 @@ describe('utility function tests', () => {
     const bot2: BotConfigWithPath = {
       name: 'someName',
       description: 'someDescription',
-      secretKey: 'someSecretKey',
+      padlock: 'somePadlock',
       services: []
     };
     const bot3 = newBot(bot2);
@@ -81,7 +81,7 @@ describe('utility function tests', () => {
 
     expect(bot3.name).toBe('someName');
     expect(bot3.description).toBe('someDescription');
-    expect(bot3.secretKey).toBe('someSecretKey');
+    expect(bot3.padlock).toBe('somePadlock');
   });
 
   test('newEndpoint()', () => {
@@ -89,14 +89,14 @@ describe('utility function tests', () => {
     const endpoint2: IEndpointService = {
       id: 'someId',
       endpoint: 'someEndpoint',
-      type: ServiceType.Endpoint,
+      type: ServiceTypes.Endpoint,
       appId: 'someAppId',
       appPassword: 'someAppPw',
       name: 'someName'
     };
     const endpoint3 = newEndpoint(endpoint2);
 
-    expect(endpoint1.type).toBe(ServiceType.Endpoint);
+    expect(endpoint1.type).toBe(ServiceTypes.Endpoint);
     expect(endpoint1.id).toBeTruthy();
     expect(endpoint1.endpoint).toBe('http://localhost:3978/api/messages');
 
@@ -111,7 +111,7 @@ describe('utility function tests', () => {
     const endpoint: IEndpointService = {
       id: 'someId',
       endpoint: 'someEndpoint',
-      type: ServiceType.Endpoint,
+      type: ServiceTypes.Endpoint,
       appId: 'someAppId',
       appPassword: 'someAppPw',
       name: 'someName'
@@ -119,7 +119,7 @@ describe('utility function tests', () => {
     const bot: BotConfigWithPath = {
       name: 'someName',
       description: 'someDescription',
-      secretKey: 'someSecretKey',
+      padlock: 'somePadlock',
       services: [endpoint]
     };
 

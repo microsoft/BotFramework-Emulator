@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { getBotDisplayName, SharedConstants, newNotification } from '@bfemulator/app-shared';
-import { IEndpointService, ServiceType } from 'msbot/bin/schema';
+import { getBotDisplayName, newNotification, SharedConstants } from '@bfemulator/app-shared';
+import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 import { BotConfigWithPath, mergeEndpoints } from '@bfemulator/sdk-shared';
 import { hasNonGlobalTabs } from '../../data/editorHelpers';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
@@ -92,8 +92,10 @@ export const ActiveBotHelper = new class {
       store.dispatch(FileActions.setRoot(botDirectory));
 
       // update the app file menu and title bar
-      CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.UpdateFileMenu);
-      CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.SetTitleBar, getBotDisplayName(bot));
+      await Promise.all([
+        CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.UpdateFileMenu),
+        CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.SetTitleBar, getBotDisplayName(bot))
+      ]);
     } catch (e) {
       const errMsg = `Error while setting active bot: ${e}`;
       const notification = newNotification(errMsg);
@@ -127,7 +129,7 @@ export const ActiveBotHelper = new class {
         cancelId: 0,
         defaultId: 0,
         message: 'This bot is already open. If you\'d like to start a conversation, ' +
-        'click on an endpoint from the Bot Explorer pane.',
+          'click on an endpoint from the Bot Explorer pane.',
         type: 'question'
       }
     );
@@ -151,7 +153,7 @@ export const ActiveBotHelper = new class {
 
         // open a livechat session with the bot
         const endpoint: IEndpointService = bot.services
-          .find(service => service.type === ServiceType.Endpoint) as IEndpointService;
+          .find(service => service.type === ServiceTypes.Endpoint) as IEndpointService;
 
         if (endpoint) {
           CommandServiceImpl.call(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
@@ -267,12 +269,12 @@ export const ActiveBotHelper = new class {
         if (overridesArePresent && newActiveBot.overrides.endpoint.id) {
           endpoint = newActiveBot.services
             .find(service =>
-              service.type === ServiceType.Endpoint
+              service.type === ServiceTypes.Endpoint
               && service.id === newActiveBot.overrides.endpoint.id
             ) as IEndpointService;
         } else {
           endpoint = newActiveBot.services
-            .find(service => service.type === ServiceType.Endpoint) as IEndpointService;
+            .find(service => service.type === ServiceTypes.Endpoint) as IEndpointService;
         }
 
         // apply endpoint overrides here

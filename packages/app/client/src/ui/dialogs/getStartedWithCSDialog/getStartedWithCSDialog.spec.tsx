@@ -6,14 +6,21 @@ import { combineReducers, createStore } from 'redux';
 import azureAuth from '../../../data/reducer/azureAuthReducer';
 import { GetStartedWithCSDialog } from './getStartedWithCSDialog';
 import { azureArmTokenDataChanged } from '../../../data/action/azureAuthActions';
-import { ServiceType } from 'msbot/bin/schema';
+import { ServiceTypes } from 'botframework-config/lib/schema';
 
-jest.mock('./getStartedWithCSDialog.scss', () => ({}));
 jest.mock('../service', () => ({
   DialogService: {
     showDialog: () => Promise.resolve(true),
     hideDialog: () => Promise.resolve(false),
   }
+}));
+
+jest.mock('../../dialogs/', () => ({
+  AzureLoginPromptDialogContainer: () => undefined,
+  AzureLoginSuccessDialogContainer: () => undefined,
+  BotCreationDialog: () => undefined,
+  DialogService: { showDialog: () => Promise.resolve(true) },
+  SecretPromptDialog: () => undefined
 }));
 
 describe('The GetStartedWithCSDialog component should', () => {
@@ -23,9 +30,11 @@ describe('The GetStartedWithCSDialog component should', () => {
   beforeEach(() => {
     mockStore = createStore(combineReducers({ azureAuth }));
     mockStore.dispatch(azureArmTokenDataChanged(mockArmToken));
-    parent = mount(<Provider store={ mockStore }>
-      <GetStartedWithCSDialogContainer serviceType={ ServiceType.Luis }/>
-    </Provider>);
+    parent = mount(
+      <Provider store={ mockStore }>
+        <GetStartedWithCSDialogContainer serviceType={ ServiceTypes.Luis } />
+      </Provider>
+    );
   });
 
   it('should render deeply', () => {
@@ -39,25 +48,32 @@ describe('The GetStartedWithCSDialog component should', () => {
     expect(typeof (prompt.props() as any).launchConnectedServiceEditor).toBe('function');
   });
 
-  it('should display luisContent when the ServiceType.Luis is provided in the props', () => {
+  it('should display luisContent when the ServiceTypes.Luis is provided in the props', () => {
     const prompt = parent.find(GetStartedWithCSDialog);
     expect(prompt.content).toBe(prompt.luisContent);
   });
 
-  it ('should display luisContent when the ServiceType.Dispatch is provided in the props', () => {
+  it('should display luisContent when the ServiceTypes.Dispatch is provided in the props', () => {
     parent = mount(<Provider store={ mockStore }>
-      <GetStartedWithCSDialogContainer serviceType={ ServiceType.Dispatch }/>
+      <GetStartedWithCSDialogContainer serviceType={ ServiceTypes.Dispatch } />
     </Provider>);
     const prompt = parent.find(GetStartedWithCSDialog);
     expect(prompt.content).toBe(prompt.luisContent);
   });
 
-  it ('should display qnaContent when the ServiceType.QnA is provided in the props', () => {
+  it('should display qnaContent when the ServiceTypes.QnA is provided in the props', () => {
     parent = mount(<Provider store={ mockStore }>
-      <GetStartedWithCSDialogContainer serviceType={ ServiceType.QnA }/>
+      <GetStartedWithCSDialogContainer serviceType={ ServiceTypes.QnA } />
     </Provider>);
     const prompt = parent.find(GetStartedWithCSDialog);
     expect(prompt.content).toBe(prompt.qnaContent);
   });
 
+  it('should display the "showNoModelsFoundContent" when specified in the props', () => {
+    parent = mount(<Provider store={ mockStore }>
+      <GetStartedWithCSDialogContainer serviceType={ ServiceTypes.QnA } showNoModelsFoundContent={ true } />
+    </Provider>);
+    const prompt = parent.find(GetStartedWithCSDialog);
+    expect(prompt.content).toBe(prompt.qnaContent);
+  });
 });

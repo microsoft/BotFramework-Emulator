@@ -38,7 +38,7 @@ jest.mock('./store', () => ({
         activeBot: {
           name: 'bot1',
           description: 'description1',
-          secretKey: 'secretKey1',
+          padlock: 'padlock1',
           services: [],
         },
         botFiles: [{
@@ -59,7 +59,7 @@ describe('Bot helpers tests', () => {
     const activeBot = getActiveBot();
     expect(activeBot.name).toBe('bot1');
     expect(activeBot.description).toBe('description1');
-    expect(activeBot.secretKey).toBe('secretKey1');
+    expect(activeBot.padlock).toBe('padlock1');
     expect(activeBot.services).toEqual([]);
   });
 

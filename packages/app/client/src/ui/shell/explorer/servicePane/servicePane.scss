@@ -50,7 +50,7 @@
 }
 
 .servicePaneList {
-  list-style: none;
+  //list-style: none;
   padding: 0;
   margin: 0;
   overflow: hidden;
@@ -84,9 +84,12 @@
       content: "";
       opacity: .5;
       display: inline-block;
-      color: var(--explorer-panel-group-title-color);
-      padding-left: 13px;
-      padding-right: 5px;
+      background-color: var(--explorer-panel-group-title-color);
+      margin-left: 13px;
+      margin-right: 5px;
+      width: 12px;
+      height: 12px;
+      background-size: contain;
     }
   }
 }

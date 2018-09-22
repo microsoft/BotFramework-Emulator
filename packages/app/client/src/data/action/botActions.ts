@@ -39,7 +39,8 @@ export enum BotActions {
   load = 'BOT/LOAD',
   setActive = 'BOT/SET_ACTIVE',
   close = 'BOT/CLOSE',
-  browse = 'BOT/BROWSE'
+  browse = 'BOT/BROWSE',
+  hashGenerated = 'BOT/HASH_GENERATED'
 }
 
 export interface CreateBotAction {
@@ -75,12 +76,18 @@ export interface BrowseBotAction {
   payload: {};
 }
 
+export interface BotHashAction {
+  type: BotActions.hashGenerated;
+  payload: { hash: string };
+}
+
 export type BotAction =
   CreateBotAction |
   LoadBotAction |
   SetActiveBotAction |
   CloseBotAction |
-  BrowseBotAction;
+  BrowseBotAction |
+  BotHashAction;
 
 export function create(bot: BotConfigWithPath, botFilePath: string, secret: string): CreateBotAction {
   return {
@@ -129,5 +136,12 @@ export function browse(): BrowseBotAction {
   return {
     type: BotActions.browse,
     payload: {}
+  };
+}
+
+export function botHashGenerated(hash: string): BotHashAction {
+  return {
+    type: BotActions.hashGenerated,
+    payload: { hash }
   };
 }

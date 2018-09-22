@@ -31,32 +31,33 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { LuisModel } from '@bfemulator/app-shared';
-import { ILuisService } from 'msbot';
+import { LuisModel, LuisRegion, ServiceCodes } from '@bfemulator/app-shared';
+import { ILuisService, ServiceTypes } from 'botframework-config/lib/schema';
 import fetch, { Headers, Response } from 'node-fetch';
 
 export class LuisApi {
-  public static *getServices(armToken: string): IterableIterator<any> {
-    const payload = { services: [] };
+  public static* getServices(armToken: string): IterableIterator<any> {
+    const payload = { services: [], code: ServiceCodes.OK };
     // 1.
     // We have the arm token which allows us to get the
     // authoring key used to retrieve the apps
     const req: RequestInit = { headers: { Authorization: `Bearer ${armToken}` } };
     let authoringKey: string;
     try {
-      yield {label: 'Retrieving key from LUIS…', progress: 25};
+      yield { label: 'Retrieving key from LUIS…', progress: 25 };
       const url = 'https://api.luis.ai/api/v2.0/bots/programmatickey';
       const authoringKeyResponse = yield fetch(url, req);
       authoringKey = yield authoringKeyResponse.text();
       authoringKey = authoringKey.replace(/["]/g, '');
     } catch (e) {
+      payload.code = ServiceCodes.AccountNotFound;
       return payload;
     }
     // 2.
     // We have 3 regions to check for luis models
-    yield {label: 'Checking for LUIS models…', progress: 75};
+    yield { label: 'Checking for LUIS models…', progress: 75 };
     const luisApiPromises: Promise<LuisModel[] | { error: any }>[] = [];
-    const regions = ['westus', 'westeurope', 'australiaeast'];
+    const regions: LuisRegion[] = ['westus', 'westeurope', 'australiaeast'];
     let i = regions.length;
     while (i--) {
       luisApiPromises.push(LuisApi.getApplicationsForRegion(regions[i], authoringKey));
@@ -76,14 +77,15 @@ export class LuisApi {
       id: luisModel.id,
       name: luisModel.name,
       subscriptionKey: authoringKey,
-      type: 'luis',
-      version: luisModel.activeVersion
+      type: luisModel.activeVersion === 'Dispatch' ? ServiceTypes.Dispatch : ServiceTypes.Luis,
+      version: luisModel.activeVersion,
+      region: luisModel.region
     })) as ILuisService[];
 
     return payload;
   }
 
-  public static async getApplicationsForRegion(region: string, key: string): Promise<LuisModel[] | { error: any }> {
+  public static async getApplicationsForRegion(region: LuisRegion, key: string): Promise<LuisModel[] | { error: any }> {
     const url = `https://${region}.api.cognitive.microsoft.com/luis/api/v2.0/apps/`;
     const headers = new Headers({
       'Content-Accept': 'application/json',
@@ -95,6 +97,10 @@ export class LuisApi {
       const error = await response.json();
       return { error };
     }
-    return await response.json() as LuisModel[];
+    const luisModels = await response.json() as LuisModel[];
+    if (luisModels instanceof Array) {
+      return luisModels.map(luisModel => (luisModel.region = region, luisModel));
+    }
+    return luisModels;
   }
 }

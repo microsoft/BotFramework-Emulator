@@ -37,8 +37,7 @@ import { CommandRegistry } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { azureLoggedInUserChanged, azurePersistLoginChanged } from '../settingsData/actions/azureAuthActions';
 import { mainWindow } from '../main';
-import { getStore } from '../botData/store';
-
+import { emulator } from '../emulator';
 /** Registers LUIS commands */
 export function registerCommands(commandRegistry: CommandRegistry) {
   const { Azure } = SharedConstants.Commands;
@@ -47,8 +46,8 @@ export function registerCommands(commandRegistry: CommandRegistry) {
   // Retrieve the Azure ARM Token
   commandRegistry.registerCommand(Azure.RetrieveArmToken, async (renew: boolean = false) => {
     const settingsStore = getSettingsStore();
-    const { serviceUrl } = getStore().getState();
-    const workflow = AzureAuthWorkflowService.retrieveAuthToken(renew, `${serviceUrl}/v4/token`);
+    const serverUrl = (emulator.framework.serverUrl || '').replace('[::]', 'localhost');
+    const workflow = AzureAuthWorkflowService.retrieveAuthToken(renew, `${serverUrl}/v4/token`);
     let result = undefined;
     while (true) {
       const next = workflow.next(result);
@@ -63,8 +62,8 @@ export function registerCommands(commandRegistry: CommandRegistry) {
     }
     if (result && !result.error) {
       const [, payload] = (result.access_token as string).split('.');
-      const payloadJson = JSON.parse(Buffer.from(payload, 'base64').toString());
-      settingsStore.dispatch(azureLoggedInUserChanged(payloadJson.upn));
+      const pjson = JSON.parse(Buffer.from(payload, 'base64').toString());
+      settingsStore.dispatch(azureLoggedInUserChanged((pjson.upn || pjson.unique_name || pjson.name || pjson.email)));
       await mainWindow.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
       // Add the current persistLogin value which the UI can use
       // to bind to without retrieving the entire settingsStore

@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IEndpointService, ServiceType } from 'msbot/bin/schema';
+import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 import { applyBotConfigOverrides, botsAreTheSame, mergeEndpoints } from './bot';
 import { BotConfigWithPath, BotConfigOverrides } from '../types';
 
@@ -40,7 +40,7 @@ describe('Bot utility function tests', () => {
     name: 'someBot',
     description: 'someDescription',
     path: 'somePath',
-    secretKey: null,
+    padlock: null,
     services: [],
     overrides: null
   };
@@ -77,7 +77,7 @@ describe('Bot utility function tests', () => {
       const nonMatchingBot: BotConfigWithPath = {
         name: 'someName',
         description: '',
-        secretKey: null,
+        padlock: null,
         services: []
       };
       const result = botsAreTheSame(bot, nonMatchingBot);
@@ -89,7 +89,7 @@ describe('Bot utility function tests', () => {
       const matchingBot: BotConfigWithPath = {
         name: 'someOtherName',
         description: '',
-        secretKey: null,
+        padlock: null,
         services: [],
         path: 'somePath'
       };
@@ -100,14 +100,14 @@ describe('Bot utility function tests', () => {
 
   describe('Merging two endpoint services', () => {
     const endpoint1: IEndpointService = {
-      type: ServiceType.Endpoint,
+      type: ServiceTypes.Endpoint,
       name: 'endpoint1',
       id: 'http://www.endpoint1.com/api/messages',
       endpoint: 'http://www.endpoint1.com/api/messages',
       appId: 'someAppId1',
       appPassword: 'someAppPw1'
     };
-    
+
     const endpoint2: Partial<IEndpointService> = {
       id: 'http://www.endpoint2.com/api/messages',
       endpoint: 'http://www.endpoint2.com/api/messages',

@@ -35,15 +35,15 @@
 // 1. We are using react-scripts, thus, we are not able to configure Webpack
 // 2. To skip bundling, we can hack with window['require']
 import { BotConfigWithPath, uniqueId } from '@bfemulator/sdk-shared';
-import { IEndpointService, ServiceType } from 'msbot/bin/schema';
+import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 import { NotificationType, Notification, NotificationImpl } from './types';
 
 export function isObject(item: any): boolean {
   return !!(item && typeof item === 'object' && !Array.isArray(item) && item !== null);
 }
 
-export function mergeDeep(target: any, source: any): any {
-  let output = Object.assign({}, target);
+export function mergeDeep<T, R>(target: T, source: R): T & R {
+  let output = Object.assign({} as T & R, target);
   // if (isObject(target) && isObject(source)) {
   {
     Object.keys(source).forEach(key => {
@@ -88,7 +88,7 @@ export const newEndpoint = (...endpoints: IEndpointService[]): IEndpointService 
   return Object.assign(
     {},
     {
-      type: ServiceType.Endpoint,
+      type: ServiceTypes.Endpoint,
       name: '',
       id: uniqueId(),
       appId: '',
@@ -102,7 +102,7 @@ export const newEndpoint = (...endpoints: IEndpointService[]): IEndpointService 
 /** Returns the first endpoint service of a bot */
 export const getFirstBotEndpoint = (bot: BotConfigWithPath): IEndpointService => {
   if (bot.services && bot.services.length) {
-    return <IEndpointService> bot.services.find(service => service.type === ServiceType.Endpoint);
+    return <IEndpointService> bot.services.find(service => service.type === ServiceTypes.Endpoint);
   }
   return null;
 };
@@ -114,3 +114,11 @@ export const newNotification = (message: string, type: NotificationType = Notifi
   notification.type = type;
   return notification;
 };
+
+export function isChatFile(file: string = '') {
+  return file.endsWith('.chat');
+}
+
+export function isTranscriptFile(file: string = '') {
+  return file.endsWith('.transcript');
+}

@@ -6,7 +6,6 @@ import { combineReducers, createStore } from 'redux';
 import azureAuth from '../../../data/reducer/azureAuthReducer';
 import { AzureLoginSuccessDialog } from './azureLoginSuccessDialog';
 
-jest.mock('./azureLoginSuccessDialog.scss', () => ({}));
 jest.mock('../service', () => ({
   DialogService: {
     showDialog: () => Promise.resolve(true),

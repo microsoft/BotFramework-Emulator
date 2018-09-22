@@ -15,9 +15,9 @@ html {
   --info-outline: #007ACC;
 
   --warning-bg: #F6F5D2;
-  --warning-outline: #b89500;
+  --warning-outline: #B89500;
 
-  --error-text: #A1260D;
+  --error-text: #F48771;
   --error-bg: #F2DEDE;
   --error-outline: #BE1100;
 
@@ -41,26 +41,27 @@ html {
   --nav-icon-color-hover-opacity: 1;
   --nav-focused-tag-bg: #F38518;
   --nav-focused-tag-bg-opacity: .6;
+  --nav-border-focus: 1px solid #F38518;
   --nav-link-selected-border: 1px solid #F38518;
   --nav-link-hover-border: var(--list-item-hover-border);
   --nav-link-badge-color: var(--neutral-1);
-  --nav-link-badge-bg: #ff0000;
+  --nav-link-badge-bg: #FF0000;
 
   /* input[type="text"] */
   --input-bg: var(--neutral-15);
-  --input-label-color: #c8c8c8;
+  --input-label-color: #C8C8C8;
   --input-label-color-disabled: var(--neutral-7);
-  --input-border: 1px solid #c8c8c8;
-  --input-border-focus: 1px solid #72c3df;
-  --input-border-error: 1px solid #d02e00;
+  --input-border: 1px solid #C8C8C8;
+  --input-border-focus: 1px solid #72C3DF;
+  --input-border-error: 1px solid #D02E00;
   --input-placeholder-color: var(--neutral-7);
   --input-border-disabled: 1px solid var(--neutral-7);
 
   /* primary button */
   --p-button-color: var(--neutral-2);
-  --p-button-border: 1px solid #72c3df;
-  --p-button-border-focus: 1px solid #f38518;
-  --p-button-border-hover: 1px solid #72c3df;
+  --p-button-border: 1px solid #72C3DF;
+  --p-button-border-focus: 1px solid #F38518;
+  --p-button-border-hover: 1px solid #72C3DF;
   --p-button-border-active: var(--p-button-border);
   --p-button-border-disabled: var(--p-button-border);
   --p-button-opacity-disabled: .4;
@@ -94,7 +95,7 @@ html {
   --explorer-panel-icon-color: var(--neutral-1);
   --explorer-panel-group-title-bg: var(--neutral-16);
   --explorer-panel-group-title-color: var(--neutral-1);
-  --explorer-panel-group-border: 1px solid #00BCF2;
+  --explorer-panel-group-border: 1px solid #72C3DF;
   --explorer-panel-empty-message-color: var(--neutral-4);
 
   /* Explorer Bar */
@@ -108,15 +109,16 @@ html {
   --tab-hover-border: var(--list-item-hover-border);
   --tab-active-tab-bg: var(--neutral-16);
   --tab-focus-border: var(--p-button-border-focus);
-  --tab-seperator-bg: #00BCF2;
+  --tab-seperator-bg: #72C3DF;
   --tab-icon-color: var(--explorer-panel-group-title-color);
+  --tab-icon-hover-color: var(--neutral-4);
 
   /* Notifications */
   --notification-bg: var(--neutral-16);
   --notification-message-color: var(--neutral-1);
   --notification-timestamp-color: var(--neutral-1);
   --notification-close-icon-color: var(--neutral-1);
-  --notification-border: 1px solid #00BCF2;
+  --notification-border: 1px solid #72C3DF;
   --notifications-clear-all-btn-color: var(--neutral-1);
   --notification-inner-border-display: block;
   --notification-inner-border: 1px dashed #F38518;
@@ -124,13 +126,34 @@ html {
   /* toolbar */
   --toolbar-bg: var(--neutral-16);
   --toolbar-border: var(--explorer-panel-group-border);
+  --toolbar-border-bottom: var(--explorer-panel-group-border);
+  --splitter-border: var(--explorer-panel-group-border);
 
   /* Welcome page */
+  --welcome-page-bg: var(--tab-active-tab-bg);
+  --welcome-page-ver: var(--neutral-2);
+  --welcome-how-to-border: var(--neutral-6);
+  --welcome-how-to-test: #3062D6;
   --my-bots-well-bg: transparent;
-  --my-bots-well-border: 1px solid #00BCF2;
+  --my-bots-well-border: 1px solid #72C3DF;
   --my-bots-entry-bg: transparent;
   --my-bots-entry-border: 1px dashed #F38518;
   --my-bots-entry-color: var(--neutral-1);
   --my-bots-path-color: var(--neutral-1);
   --my-bots-scrollbar-color: var(--neutral-1);
+
+  /* Status Bar */
+  --status-bar-bg: #007ACC;
+  --status-bar-color: #FFFFFF;
+
+  /* Links */
+  --link-color: #4080D0;
+  --link-color-disabled: #C8C8C8;
+}
+
+.ms-Modal {
+  --dialog-bg: var(--neutral-1);
+}
+.ms-Modal .ms-Button-label {
+  color: var(--neutral-15);
 }

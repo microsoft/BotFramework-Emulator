@@ -57,9 +57,10 @@ export namespace SharedConstants {
       export const Switch = 'bot:switch';
       export const OpenBrowse = 'bot:browse-open';
       export const SyncBotList = 'bot:list:sync';
-      export const OpenSettings = 'bot-settings:open';
       export const Load = 'bot:load';
       export const RemoveFromBotList = 'bot:list:remove';
+      export const ChatFilesUpdated = 'bot:chat-files-updated';
+      export const TranscriptFilesUpdated = 'bot:transcript-files-updated';
     }
 
     export namespace ClientInit {
@@ -80,6 +81,9 @@ export namespace SharedConstants {
       export const UpdateAvailable = 'shell:update-downloaded';
       export const UpdateNotAvailable = 'shell:update-not-available';
       export const ShowAboutDialog = 'shell:about';
+      export const OpenFileLocation = 'shell:open-file-location';
+      export const UnlinkFile = 'shell:unlink-file';
+      export const RenameFile = 'shell:rename-file';
     }
 
     export namespace Emulator {
@@ -151,6 +155,7 @@ export namespace SharedConstants {
       export const ArmTokenReceivedOnStartup = 'shell:armTokenReceivedOnStartup';
       export const ShowPostMigrationDialog = 'post-migration-dialog:show';
       export const UpdateProgressIndicator = 'shell:updateProgressIndicator';
+      export const InvalidateAzureArmToken = 'shell:invalidateAzureArmToken';
     }
   }
 }

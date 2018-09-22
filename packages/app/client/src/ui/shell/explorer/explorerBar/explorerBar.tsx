@@ -34,16 +34,17 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import BotExplorerBar from '../botExplorerBar/botExplorerBar';
+import { BotExplorerBarContainer } from '../botExplorerBar/botExplorerBarContainer';
 import * as Constants from '../../../../constants';
-import { IBotConfig } from 'msbot/bin/schema';
+import { IBotConfiguration } from 'botframework-config/lib/schema';
 import { RootState } from '../../../../data/store';
 import * as styles from './explorerBar.scss';
 import { NotificationsExplorerBar } from '../notificationsExplorer/notificationsExplorerBar';
 import { InsetShadow } from '@bfemulator/ui-react';
+import { ResourcesBarContainer } from '../resourcesBar/resourcesBarContainer';
 
 interface ExplorerBarProps {
-  activeBot?: IBotConfig;
+  activeBot?: IBotConfiguration;
   selectedNavTab?: string;
 }
 
@@ -52,26 +53,38 @@ class ExplorerBarComponent extends React.Component<ExplorerBarProps> {
     super(props);
   }
 
-  render(): JSX.Element {
+  private get explorerBar(): JSX.Element {
     const { activeBot = null, selectedNavTab = null } = this.props;
-
-    let explorer = [];
-    explorer.push(
-      <BotExplorerBar key={ 'bot-explorer-bar' }
-                      activeBot={ activeBot }
-                      hidden={ selectedNavTab !== Constants.NAVBAR_BOT_EXPLORER }/>
+    return (
+      <BotExplorerBarContainer
+        activeBot={ activeBot }
+        key={ 'bot-explorer-bar' }
+        hidden={ selectedNavTab !== Constants.NAVBAR_BOT_EXPLORER }/>
     );
+  }
 
+  private get notificationsBar(): JSX.Element {
+    return (<NotificationsExplorerBar key={ 'notifications-explorer-bar' }/>);
+  }
+
+  private get resourcesBar(): JSX.Element {
+    return (<ResourcesBarContainer key="resources"/>);
+  }
+
+  render(): JSX.Element {
+    const { selectedNavTab = null } = this.props;
+    let explorer;
     switch (selectedNavTab) {
-
       case Constants.NAVBAR_NOTIFICATIONS:
-        explorer.push(<NotificationsExplorerBar key={ 'notifications-explorer-bar' }/>);
+        explorer = [this.explorerBar, this.notificationsBar];
+        break;
+
+      case Constants.NAVBAR_RESOURCES:
+        explorer = [this.resourcesBar];
         break;
 
       default:
-        if (!selectedNavTab) {
-          explorer = null;
-        }
+        explorer = [this.explorerBar];
         break;
     }
 

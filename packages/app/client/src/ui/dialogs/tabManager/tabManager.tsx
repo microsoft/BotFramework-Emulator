@@ -32,27 +32,23 @@
 //
 
 import * as React from 'react';
-import { connect } from 'react-redux';
-
-import * as EditorActions from '../../../data/action/editorActions';
-import { RootState } from '../../../data/store';
-
 import * as styles from './tabManager.scss';
 
-interface TabManagerProps {
+export interface TabManagerProps {
   disabled?: boolean;
   recentTabs?: string[];
   setActiveTab?: (tab: string) => void;
+  window?: Window;
 }
 
-interface TabManagerState {
+export interface TabManagerState {
   controlIsPressed: boolean;
   selectedIndex: number;
   shiftIsPressed: boolean;
   showing: boolean;
 }
 
-class TabManagerComponent extends React.Component<TabManagerProps, TabManagerState> {
+export class TabManager extends React.Component<TabManagerProps, TabManagerState> {
   private tabRefs: HTMLLIElement[] = [];
 
   constructor(props: TabManagerProps) {
@@ -68,11 +64,13 @@ class TabManagerComponent extends React.Component<TabManagerProps, TabManagerSta
   }
 
   componentWillMount() {
+    const { window } = this.props;
     window.addEventListener('keydown', this.onKeyDown);
     window.addEventListener('keyup', this.onKeyUp);
   }
 
   componentWillUnmount() {
+    const { window } = this.props;
     window.removeEventListener('keydown', this.onKeyDown);
     window.removeEventListener('keyup', this.onKeyUp);
   }
@@ -181,15 +179,3 @@ class TabManagerComponent extends React.Component<TabManagerProps, TabManagerSta
     return this.state.selectedIndex === 0 ? this.props.recentTabs.length - 1 : this.state.selectedIndex - 1;
   }
 }
-
-const mapStateToProps = (state: RootState): TabManagerProps => ({
-  recentTabs: state.editor.editors[state.editor.activeEditor].recentTabs
-});
-
-const mapDispatchToProps = (dispatch): TabManagerProps => ({
-  setActiveTab: (tab: string) => {
-    dispatch(EditorActions.setActiveTab(tab));
-  }
-});
-
-export const TabManager = connect(mapStateToProps, mapDispatchToProps)(TabManagerComponent) as any;

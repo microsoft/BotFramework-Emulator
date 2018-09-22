@@ -7,20 +7,28 @@ import { ConnectLuisAppPromptDialog } from './connectLuisAppPromptDialog';
 import { ConnectLuisAppPromptDialogContainer } from './connectLuisAppPromptDialogContainer';
 import { DialogService } from '../service';
 
-jest.mock('./connectLuisAppPromptDialog.scss', () => ({}));
 jest.mock('../service', () => ({
   DialogService: {
     showDialog: () => Promise.resolve(true),
     hideDialog: () => Promise.resolve(false),
   }
 }));
+
+jest.mock('../../dialogs/', () => ({
+  AzureLoginPromptDialogContainer: () => undefined,
+  AzureLoginSuccessDialogContainer: () => undefined,
+  BotCreationDialog: () => undefined,
+  DialogService: { showDialog: () => Promise.resolve(true) },
+  SecretPromptDialog: () => undefined
+}));
+
 describe('The ConnectLuisAppPromptDialog component should', () => {
   let parent;
   let node;
 
   beforeEach(() => {
     parent = mount(<Provider store={ createStore(azureAuth) }>
-      <ConnectLuisAppPromptDialogContainer/>
+      <ConnectLuisAppPromptDialogContainer />
     </Provider>);
     node = parent.find(ConnectLuisAppPromptDialog);
   });

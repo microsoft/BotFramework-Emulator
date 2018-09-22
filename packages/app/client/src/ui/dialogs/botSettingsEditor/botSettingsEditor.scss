@@ -1,0 +1,60 @@
+.botSettingsEditor {
+  :global {
+    @media (min-width: 768px) {
+      .ms-Dialog-main {
+        min-width: 625px;
+        width: 625px;
+        max-height: 314px;
+      }
+      .ms-Dialog-actions {
+        margin: 0;
+      }
+    }
+  }
+}
+
+.cancelButton {
+  margin-left: auto;
+}
+
+.saveButton {
+  margin-left: 4px;
+}
+
+.key {
+  width: 250px;
+  margin: 16px 145px 20px 32px;
+}
+
+.encryptKeyCheckBox {
+  margin-top: 30px;
+  span {
+    width: 300px;
+  }
+}
+
+a {
+  color: var(--link-color);
+  text-decoration: none;
+}
+
+.actionsList {
+  list-style: none;
+  position: absolute;
+  right: 12px;
+  bottom: 37px;
+
+  li {
+    display: inline;
+    padding: 2px 5px;
+  }
+
+  li + li {
+    border-left: 1px solid var(--neutral-11);
+  }
+
+  .disabledAction {
+    color: var(--link-color-disabled);
+    cursor: default;
+  }
+}

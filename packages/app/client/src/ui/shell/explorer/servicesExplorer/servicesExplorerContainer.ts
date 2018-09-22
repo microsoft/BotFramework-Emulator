@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IConnectedService, ServiceType } from 'msbot/bin/schema';
+import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
 import { connect } from 'react-redux';
 import {
@@ -45,12 +45,16 @@ import { RootState } from '../../../../data/store';
 import { ConnectedServiceEditor } from './connectedServiceEditor/connectedServiceEditor';
 import { ServicesExplorer, ServicesExplorerProps } from './servicesExplorer';
 import { CONNECTED_SERVICES_PANEL_ID } from '../../../../data/action/explorerActions';
+import { CommandServiceImpl } from '../../../../platform/commands/commandServiceImpl';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 const mapStateToProps = (state: RootState): Partial<ServicesExplorerProps> => {
   const { services = [] } = state.bot.activeBot;
   const { [CONNECTED_SERVICES_PANEL_ID]: sortCriteria } = state.explorer.sortSelectionByPanelId;
   return {
-    services: services.filter(service => service.type !== ServiceType.Endpoint),
+    services: services.filter(service => service.type === ServiceTypes.QnA ||
+      service.type === ServiceTypes.Dispatch ||
+      service.type === ServiceTypes.Luis),
     sortCriteria,
     window
   };
@@ -58,14 +62,19 @@ const mapStateToProps = (state: RootState): Partial<ServicesExplorerProps> => {
 
 const mapDispatchToProps = (dispatch): Partial<ServicesExplorerProps> => {
   return {
+    onAnchorClick: (url) => {
+      CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, url).catch();
+    },
     openAddServiceContextMenu: (payload: ConnectedServicePickerPayload) =>
       dispatch(openAddServiceContextMenu(payload)),
 
     openServiceDeepLink: (connectedService: IConnectedService) =>
       dispatch(openServiceDeepLink(connectedService)),
 
-    openContextMenuForService: (connectedService: IConnectedService,
-                                editorComponent: ComponentClass<ConnectedServiceEditor>) =>
+    openContextMenuForService: (
+      connectedService: IConnectedService,
+      editorComponent: ComponentClass<ConnectedServiceEditor>
+    ) =>
       dispatch(openContextMenuForConnectedService(editorComponent, connectedService)),
 
     openSortContextMenu: () => dispatch(openSortContextMenu())

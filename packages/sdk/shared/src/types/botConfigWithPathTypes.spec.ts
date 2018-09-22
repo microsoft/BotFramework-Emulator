@@ -32,12 +32,12 @@
 //
 
 import { BotConfigWithPathImpl } from './botConfigWithPathTypes';
-import { ServiceType } from 'msbot/bin/schema';
+import { ServiceTypes } from 'botframework-config/lib/schema';
 
 describe('BotConfigWithPathTypes tests', () => {
   describe('fromJSON() functionality', () => {
     const endpointService = {
-      type: ServiceType.Endpoint,
+      type: ServiceTypes.Endpoint,
       name: 'someEndpointName',
       id: 'someEndpointUrl',
       appId: 'someEndpointAppId',
@@ -73,7 +73,7 @@ describe('BotConfigWithPathTypes tests', () => {
       });
     });
 
-    it('should truncate extraneous properties on variables', () => {
+    it('should not truncate extraneous properties on variables', () => {
       const botConfigVariable = {
         name: 'someBotName',
         description: 'some bot description',
@@ -102,7 +102,7 @@ describe('BotConfigWithPathTypes tests', () => {
           appId: 'someOverriddenEndpointAppId'
         }
       });
-      expect(Object.keys(constructedBotConfig)).not.toContain('extraneousProp');
+      expect(Object.keys(constructedBotConfig)).toContain('extraneousProp');
     });
 
     it('should serialize correctly', () => {
@@ -110,7 +110,7 @@ describe('BotConfigWithPathTypes tests', () => {
         name: 'someBotName',
         description: 'some description',
         path: 'somePath',
-        secretKey: null,
+        padlock: null,
         services: [],
         overrides: {}
       });

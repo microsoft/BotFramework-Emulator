@@ -33,17 +33,14 @@
 
 import * as React from 'react';
 import { SyntheticEvent } from 'react';
-import { IBotConfig } from 'msbot/bin/schema';
 import * as styles from './navBar.scss';
 import * as Constants from '../../../constants';
 import { NotificationManager } from '../../../notificationManager';
 
 export interface NavBarProps {
-  activeBot?: IBotConfig;
   selection?: string;
   showExplorer?: (show: boolean) => void;
   navBarSelectionChanged?: (selection: string) => void;
-  openBotSettings?: () => void;
   openEmulatorSettings?: () => void;
   notifications?: string[];
   explorerIsVisible?: boolean;
@@ -55,7 +52,7 @@ export interface NavBarState {
 
 const selectionMap = [
   Constants.NAVBAR_BOT_EXPLORER,
-  Constants.NAVBAR_BOT_SETTINGS,
+  Constants.NAVBAR_RESOURCES,
   Constants.NAVBAR_NOTIFICATIONS,
   Constants.NAVBAR_SETTINGS
 ];
@@ -77,31 +74,30 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
   }
 
   public onLinkClick = (event: SyntheticEvent<HTMLAnchorElement>): void => {
-    const { selection: currentSelection, explorerIsVisible } = this.props;
+    const { selection: currentSelection } = this.props;
     const { currentTarget: anchor } = event;
     const index = Array.prototype.indexOf.call(anchor.parentElement.children, anchor);
 
     switch (index) {
       // Bot Explorer
       case 0:
+      // Resources
+      case 1:
       // Notifications
       case 2:
         if (currentSelection === selectionMap[index]) {
-          // toggle explorer when clicking the same navbar icon
+          // TODO: Re-enable once webchat reset bug is fixed
+          // (https://github.com/Microsoft/BotFramework-Emulator/issues/825)
+          /*// toggle explorer when clicking the same navbar icon
           const showExplorer = !explorerIsVisible;
-          this.props.showExplorer(showExplorer);
+          this.props.showExplorer(showExplorer);*/
         } else {
           // switch tabs and showExplorer explorer when clicking different navbar icon
-          this.props.showExplorer(true);
+          // TODO: Re-enable once webchat reset bug is fixed
+          // (https://github.com/Microsoft/BotFramework-Emulator/issues/825)
+          // this.props.showExplorer(true);
           this.props.navBarSelectionChanged(selectionMap[index]);
           this.setState({ selection: selectionMap[index] });
-        }
-        break;
-
-      // Bot Settings
-      case 1:
-        if (this.props.activeBot) {
-          this.props.openBotSettings();
         }
         break;
 
@@ -118,7 +114,7 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
 
     return [
       'Bot Explorer',
-      'Bot Settings',
+      'Resources',
       'Notifications',
       'Settings'
     ].map((title, index) => {

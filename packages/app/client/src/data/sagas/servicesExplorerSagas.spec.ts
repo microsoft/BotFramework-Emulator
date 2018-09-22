@@ -7,7 +7,7 @@ import {
 import { DialogService } from '../../ui/dialogs/service'; // ☣☣ careful! ☣☣
 import { ConnectedServiceEditorContainer } from '../../ui/shell/explorer/servicesExplorer/connectedServiceEditor';
 import { ConnectedServicePickerContainer } from '../../ui/shell/explorer/servicesExplorer';
-import { combineReducers, createStore } from 'redux';
+import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { servicesExplorerSagas } from './servicesExplorerSagas';
 import azureAuth from '../reducer/azureAuthReducer';
 import bot from '../reducer/bot';
@@ -18,14 +18,19 @@ import {
   ConnectedServicePickerPayload,
   launchConnectedServicePicker,
   openAddServiceContextMenu,
-  openContextMenuForConnectedService
+  openContextMenuForConnectedService,
+  openServiceDeepLink
 } from '../action/connectedServiceActions';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { ServiceCodes, SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { load, setActive } from '../action/botActions';
-import { ServiceType } from 'msbot/bin/schema';
+import { ServiceTypes } from 'botframework-config/lib/schema';
+import sagaMiddlewareFactory from 'redux-saga';
 
-const mockStore = createStore(combineReducers({ azureAuth, bot }));
+const sagaMiddleWare = sagaMiddlewareFactory();
+const mockStore = createStore(combineReducers({ azureAuth, bot }), {}, applyMiddleware(sagaMiddleWare));
+sagaMiddleWare.run(servicesExplorerSagas);
+
 const mockArmToken = 'bm90aGluZw==.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
 
 jest.mock('../../ui/dialogs', () => ({
@@ -74,7 +79,7 @@ jest.mock('./azureAuthSaga', () => ({
 CommandServiceImpl.remoteCall = async function (type: string) {
   switch (type) {
     case SharedConstants.Commands.ConnectedService.GetConnectedServicesByType:
-      return { services: [{ id: 'a luis service' }] };
+      return { services: [{ id: 'a luis service' }], code: ServiceCodes.OK };
 
     default:
       return null;
@@ -145,7 +150,7 @@ describe('The ServiceExplorerSagas', () => {
       const mockBot = JSON.parse(`{
         "name": "TestBot",
         "description": "",
-        "secretKey": "",
+        "padlock": "",
         "services": [{
             "type": "endpoint",
             "name": "https://testbot.botframework.com/api/messagesv3",
@@ -267,7 +272,7 @@ describe('The ServiceExplorerSagas', () => {
 
       result = await it.next(result).value;
       expect(_type).toBe(SharedConstants.Commands.Bot.RemoveService);
-      expect(_args[0]).toBe(ServiceType.Luis);
+      expect(_args[0]).toBe(ServiceTypes.Luis);
       expect(_args[1]).toBe('#1');
     });
 
@@ -309,7 +314,7 @@ describe('The ServiceExplorerSagas', () => {
 
       result = await it.next(result).value;
       expect(_type).toBe(SharedConstants.Commands.Bot.RemoveService);
-      expect(_args[0]).toBe(ServiceType.QnA);
+      expect(_args[0]).toBe(ServiceTypes.QnA);
       expect(_args[1]).toBe('#1');
     });
 
@@ -351,7 +356,7 @@ describe('The ServiceExplorerSagas', () => {
 
       result = await it.next(result).value;
       expect(_type).toBe(SharedConstants.Commands.Bot.RemoveService);
-      expect(_args[0]).toBe(ServiceType.Dispatch);
+      expect(_args[0]).toBe(ServiceTypes.Dispatch);
       expect(_args[1]).toBe('#1');
     });
   });
@@ -381,14 +386,52 @@ describe('The ServiceExplorerSagas', () => {
     });
 
     it('should launch the luis connected service picker workflow when the luis menu item is selected', async () => {
-      CommandServiceImpl.remoteCall = async () => ({ id: ServiceType.Luis });
+      CommandServiceImpl.remoteCall = async () => ({ id: ServiceTypes.Luis });
       const it = contextMenuGen(action);
       let result = await it.next().value;
 
-      expect(result.id).toBe(ServiceType.Luis);
+      expect(result.id).toBe(ServiceTypes.Luis);
 
       result = it.next(result).value.SELECT.selector(mockStore.getState()); // Indicates we've entered the workflow
       expect(result.access_token).toBe(mockArmToken);
+    });
+  });
+
+  describe('openConnectedServiceDeepLink', () => {
+    const mockModel = { type: ServiceTypes.Luis, appId: '1234', version: '0.1', region: 'westeurope' };
+    let openConnectedServiceGen;
+    beforeEach(() => {
+      const sagaIt = servicesExplorerSagas();
+      let i = 3;
+      while (i--) {
+        openConnectedServiceGen = sagaIt.next().value.FORK.args[1];
+      }
+    });
+
+    it('should open the correct domain for luis models in the "westeurope" region', () => {
+      const spy = jest.spyOn(CommandServiceImpl, 'remoteCall');
+      const link = `https://www.eu.luis.ai/applications/1234/versions/0.1/build`;
+      const action = openServiceDeepLink(mockModel as any);
+      openConnectedServiceGen(action).next();
+      expect(spy).toHaveBeenCalledWith('electron:open-external', link);
+    });
+
+    it('should open the correct domain for luis models in the "australiaeast" region', () => {
+      mockModel.region = 'australiaeast';
+      const spy = jest.spyOn(CommandServiceImpl, 'remoteCall');
+      const link = `https://www.au.luis.ai/applications/1234/versions/0.1/build`;
+      const action = openServiceDeepLink(mockModel as any);
+      openConnectedServiceGen(action).next();
+      expect(spy).toHaveBeenCalledWith('electron:open-external', link);
+    });
+
+    it('should open the correct domain for luis models in the "westus" region', () => {
+      mockModel.region = 'westus';
+      const spy = jest.spyOn(CommandServiceImpl, 'remoteCall');
+      const link = `https://www.luis.ai/applications/1234/versions/0.1/build`;
+      const action = openServiceDeepLink(mockModel as any);
+      openConnectedServiceGen(action).next();
+      expect(spy).toHaveBeenCalledWith('electron:open-external', link);
     });
   });
 });

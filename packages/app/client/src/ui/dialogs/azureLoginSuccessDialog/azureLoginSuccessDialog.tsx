@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Component, MouseEvent } from 'react';
 import { Checkbox, Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
-import * as styles from './azureLoginSuccessDialog.scss';
 
 export interface AzureLoginSuccessDialogState {
   rememberMeChecked: boolean;
@@ -23,7 +22,7 @@ export class AzureLoginSuccessDialog extends Component<AzureLoginSuccessDialogPr
 
   public render() {
     return (
-      <Dialog title="Success!" cancel={ this.onDialogCancel } className={ styles.dialog }>
+      <Dialog title="Success!" cancel={ this.onDialogCancel }>
         <p>You are now signed in with your Azure account</p>
         <Checkbox
           checked={ this.state.rememberMeChecked }

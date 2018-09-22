@@ -15,7 +15,7 @@ export function* rememberThemeSaga(_action: WindowStateAction<RememberThemePaylo
   const themeInfo = availableThemes.find(availableTheme => availableTheme.name === theme);
   const { commandService } = mainWindow;
   const { SwitchTheme } = SharedConstants.Commands.UI;
-  yield call(commandService.remoteCall.bind(commandService), SwitchTheme, themeInfo.href);
+  yield call(commandService.remoteCall.bind(commandService), SwitchTheme, themeInfo.name, themeInfo.href);
 }
 
 export function* setFramework(action: FrameworkAction<FrameworkSettings>): IterableIterator<any> {

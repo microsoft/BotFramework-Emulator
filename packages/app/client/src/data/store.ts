@@ -40,26 +40,32 @@ import chat, { ChatState } from './reducer/chat';
 import dialog, { DialogState } from './reducer/dialog';
 import editor, { EditorState } from './reducer/editor';
 import explorer, { ExplorerState } from './reducer/explorer';
-import files, { FileTreeState } from './reducer/files';
 import azureAuth, { AzureAuthState } from './reducer/azureAuthReducer';
 import navBar, { NavBarState } from './reducer/navBar';
 import notification, { NotificationState } from './reducer/notification';
 import presentation, { PresentationState } from './reducer/presentation';
 import progressIndicator, { ProgressIndicatorState } from './reducer/progressIndicator';
+import resources, { ResourcesState } from './reducer/resourcesReducer';
+import theme, { ThemeState } from './reducer/themeReducer';
+import clientAwareSettings from './reducer/clientAwareSettingsReducer';
+
 import { applicationSagas } from './sagas';
+import { ClientAwareSettings } from '@bfemulator/app-shared';
 
 export interface RootState {
+  azureAuth?: AzureAuthState;
   bot?: BotState;
+  chat?: ChatState;
+  clientAwareSettings?: ClientAwareSettings;
   dialog?: DialogState;
   editor?: EditorState;
   explorer?: ExplorerState;
-  chat?: ChatState;
   navBar?: NavBarState;
-  presentation?: PresentationState;
-  azureAuth?: AzureAuthState;
-  files?: FileTreeState;
   notification?: NotificationState;
+  presentation?: PresentationState;
   progressIndicator?: ProgressIndicatorState;
+  resources?: ResourcesState;
+  theme?: ThemeState;
 }
 
 const sagaMiddleWare = sagaMiddlewareFactory();
@@ -67,17 +73,19 @@ const DEFAULT_STATE: RootState = {};
 
 const configureStore = (initialState: RootState = DEFAULT_STATE): Store<RootState> => createStore<RootState>(
   combineReducers({
+    azureAuth,
     bot,
+    chat,
+    clientAwareSettings,
     dialog,
     editor,
-    files,
     explorer,
-    chat,
     navBar,
-    presentation,
-    azureAuth,
     notification,
-    progressIndicator
+    presentation,
+    progressIndicator,
+    resources,
+    theme,
   }),
   initialState,
   applyMiddleware(

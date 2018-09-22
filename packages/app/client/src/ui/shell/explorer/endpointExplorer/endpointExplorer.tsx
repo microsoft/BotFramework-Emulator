@@ -31,8 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { EndpointService } from 'msbot/bin/models';
-import { IEndpointService } from 'msbot/bin/schema';
+import { EndpointService } from 'botframework-config/lib/models';
+import { IEndpointService } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { ComponentClass, MouseEventHandler, SyntheticEvent } from 'react';
 import { ServicePane, ServicePaneProps } from '../servicePane/servicePane';
@@ -61,19 +61,25 @@ export class EndpointExplorer extends ServicePane<EndpointProps> {
             className={ styles.message }
             key={ index }
             onClick={ this.onLinkClick }
+            onKeyPress={ this.onHandleKeyPress }
             data-index={ index }
-            tabIndex={ index }>{ model.name }
+            tabIndex={ 0 }>{ model.name }
           </li>);
       });
   }
 
   protected get controls(): JSX.Element {
-    const controls = {...super.controls};
-    controls.props = {...controls.props};
+    const controls = { ...super.controls };
+    controls.props = { ...controls.props };
     controls.props.children = [controls.props.children[1]]; // Remove the sort icon
     return controls;
   }
 
+  protected onHandleKeyPress = (e): void => {
+    if (e.key === 'Enter') {
+      this.onLinkClick(e);
+    }
+  }
   protected onLinkClick: MouseEventHandler<HTMLLIElement> = (event: SyntheticEvent<HTMLLIElement>): void => {
     const { currentTarget } = event;
     const { index } = currentTarget.dataset;

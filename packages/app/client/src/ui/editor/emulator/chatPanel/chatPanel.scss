@@ -1,10 +1,11 @@
 .chatPanel {
+  border-right: var(--splitter-border);
   height: 100%;
   display: flex;
   flex-direction: column;
   & > header {
-    background-color: var(--explorer-panel-group-title-bg);
-    color: var(--explorer-panel-group-title-color);
+    background-color: var(--toolbar-bg);
+    color: var(--tab-color);
     line-height: 36px;
     min-height: 36px;
     padding-left: 16px;

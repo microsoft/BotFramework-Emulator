@@ -9,6 +9,7 @@
   box-sizing: border-box;
   white-space: nowrap;
   position: relative;
+
   &::after {
     content: '';
     position: absolute;
@@ -19,6 +20,7 @@
     border: var(--tab-border);
     clip-path: var(--border-window-clip-path);
   }
+
   &:hover::after {
     border: var(--tab-hover-border);
   }
@@ -32,6 +34,7 @@
     display: inline-block;
     width: 12px;
     margin-right: 8px;
+
     &::before {
       content: "🗋";
       transform: rotate(180deg) skewX(180deg) scaleX(1.3);
@@ -41,38 +44,37 @@
       padding-left: 8px;
     }
   }
-  &:hover > .editorTabClose {
-    opacity: 1;
+
+  &:hover {
+    > .editorTabClose {
+      visibility: visible;
+    }
   }
 
   & > .editorTabClose {
     text-decoration: none;
     display: inline-block;
-    width: 8px;
+    height: 16px;
+    width: 16px;
     margin-left: 8px;
-    opacity: 0;
-    background: none;
-    border: none;
+    border: 1px solid transparent;
     outline: none;
     padding: 0;
+    visibility: hidden;
+    -webkit-mask: url('../../../media/ic_close.svg');
     cursor: pointer;
+
     &:focus {
-      position: relative;
-      &::before {
-        content: '';
-        position: absolute;
-        border: var(--p-button-border-focus);
-        width: 9px;
-        height: 9px;
-        top: 3.5px;
-      }
+      border-width: 1px;
+      border-style: solid;
+      border-color: var(--tab-border);
     }
-    &::after {
-      content: "✖";
-      color: var(--tab-icon-color);
-      font-size: 12px;
-    }
-    &:hover::after {
+
+    & > span {
+      display: block;
+      height: 16px;
+      width: 16px;
+      background-color: var(--tab-icon-color);
     }
   }
 }
@@ -82,7 +84,7 @@
 }
 
 .draggedOverEditorTab {
-  background-color: var(--neutral-14);
+  background-color: var(--tab-active-tab-bg);
 }
 
 .activeEditorTab {
@@ -90,6 +92,6 @@
   color: var(--tab-color);
 
   & > .editorTabClose {
-    opacity: 1;
+    visibility: visible;
   }
 }

@@ -33,31 +33,36 @@
 
 import * as React from 'react';
 import * as styles from './botExplorerBar.scss';
-
+import * as explorerStyles from '../explorerStyles.scss';
 import { EndpointExplorerContainer } from '../endpointExplorer';
-import { ExplorerBarBody } from '../explorerBarBody';
-import { ExplorerBarHeader, Title } from '../explorerBarHeader/explorerBarHeader';
-import { FileExplorer } from '../fileExplorer';
 import { BotNotOpenExplorer } from '../botNotOpenExplorer';
-import { IBotConfig } from 'msbot/bin/schema';
+import { IBotConfiguration } from 'botframework-config/lib/schema';
 import { ServicesExplorerContainer } from '../servicesExplorer';
 
-interface BotExplorerBarProps {
-  activeBot: IBotConfig;
-  hidden: boolean;
+interface BotExplorerBarState {
+  isBotActive: boolean;
 }
 
-export default class BotExplorerBar extends React.Component<BotExplorerBarProps> {
-  constructor(props: BotExplorerBarProps) {
-    super(props);
+interface BotExplorerBarProps {
+  activeBot: IBotConfiguration;
+  hidden: boolean;
+  openBotSettings: () => void;
+}
+
+export default class BotExplorerBar extends React.Component<BotExplorerBarProps, BotExplorerBarState> {
+  public state: BotExplorerBarState = {} as any;
+
+  public static getDerivedStateFromProps(newProps: BotExplorerBarProps) {
+    return {
+      isBotActive: !!newProps.activeBot
+    };
   }
 
   private get activeBotJsx(): JSX.Element {
     return (
       <>
-        <EndpointExplorerContainer title="Endpoint"/>
-        <ServicesExplorerContainer title="Services"/>
-        <FileExplorer/>
+        <EndpointExplorerContainer title="Endpoint" ariaLabel="Endpoints" />
+        <ServicesExplorerContainer title="Services" ariaLabel="Services" />
       </>
     );
   }
@@ -66,19 +71,26 @@ export default class BotExplorerBar extends React.Component<BotExplorerBarProps>
     return <BotNotOpenExplorer/>;
   }
 
-  render() {
+  public render() {
     const className = this.props.hidden ? styles.explorerOffScreen : '';
     const explorerBody = this.props.activeBot ? this.activeBotJsx : this.botNotOpenJsx;
     return (
       <div className={ `${styles.botExplorerBar} ${className}` }>
-        <ExplorerBarHeader>
-          <Title>
+        <div className={ explorerStyles.explorerBarHeader }>
+          <header>
             Bot Explorer
-          </Title>
-        </ExplorerBarHeader>
-        <ExplorerBarBody>
-          { explorerBody }
-        </ExplorerBarBody>
+          </header>
+          <button
+            aria-label="Open bot settings"
+            className={ explorerStyles.botSettings }
+            disabled={ !this.state.isBotActive }
+            onClick={ this.props.openBotSettings }>
+            <span></span>
+          </button>
+        </div>
+        <ul className={ explorerStyles.explorerSet }>
+          <li>{ explorerBody }</li>
+        </ul>
       </div>
     );
   }

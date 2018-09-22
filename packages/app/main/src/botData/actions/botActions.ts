@@ -112,10 +112,11 @@ export function close(): CloseBotAction {
 
 export function mockAndSetActive(mock?: BotConfigWithPath): BotAction {
   const bot = newBot({
+      version: '',
       name: 'Random Bot',
       description: '',
       services: [],
-      secretKey: ''
+      padlock: ''
     },
     mock
   );

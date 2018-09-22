@@ -38,18 +38,20 @@ import {
   AzureLoginSuccessDialogContainer,
   BotCreationDialog,
   DialogService,
-  PostMigrationDialog,
-  SecretPromptDialog
+  PostMigrationDialogContainer,
+  SecretPromptDialogContainer
 } from '../ui/dialogs';
 import store from '../data/store';
 import * as EditorActions from '../data/action/editorActions';
 import * as NavBarActions from '../data/action/navBarActions';
 import * as Constants from '../constants';
 import { CommandRegistry } from '@bfemulator/sdk-shared';
+import { ServiceTypes } from 'botframework-config/lib/schema';
 import { SharedConstants } from '@bfemulator/app-shared';
-import { azureArmTokenDataChanged, beginAzureAuthWorkflow } from '../data/action/azureAuthActions';
+import { azureArmTokenDataChanged, beginAzureAuthWorkflow, invalidateArmToken } from '../data/action/azureAuthActions';
 import { AzureAuthState } from '../data/reducer/azureAuthReducer';
 import { ProgressIndicatorPayload, updateProgressIndicator } from '../data/action/progressIndicatorActions';
+import { switchTheme } from '../data/action/themeActions';
 
 /** Register UI commands (toggling UI) */
 export function registerCommands(commandRegistry: CommandRegistry) {
@@ -70,7 +72,7 @@ export function registerCommands(commandRegistry: CommandRegistry) {
   // ---------------------------------------------------------------------------
   // Shows a dialog prompting the user for a bot secret
   commandRegistry.registerCommand(UI.ShowSecretPromptDialog, async () => {
-    return await DialogService.showDialog(SecretPromptDialog);
+    return await DialogService.showDialog(SecretPromptDialogContainer);
   });
 
   // ---------------------------------------------------------------------------
@@ -94,18 +96,22 @@ export function registerCommands(commandRegistry: CommandRegistry) {
 
   // ---------------------------------------------------------------------------
   // Theme switching from main
-  commandRegistry.registerCommand(UI.SwitchTheme, themeHref => {
+  commandRegistry.registerCommand(UI.SwitchTheme, (themeName: string, themeHref: string) => {
+    const linkTags = document.querySelectorAll<HTMLLinkElement>('[data-theme-component="true"]');
     const themeTag = document.getElementById('themeVars') as HTMLLinkElement;
     if (themeTag) {
       themeTag.href = themeHref;
     }
+    const themeComponents = Array.prototype.map.call(linkTags, link => link.href); // href is fully qualified
+    store.dispatch(switchTheme(themeName, themeComponents));
   });
 
   // ---------------------------------------------------------------------------
   // Azure sign in
-  commandRegistry.registerCommand(UI.SignInToAzure, () => {
+  commandRegistry.registerCommand(UI.SignInToAzure, (serviceType: ServiceTypes) => {
     store.dispatch(beginAzureAuthWorkflow(
       AzureLoginPromptDialogContainer,
+      { serviceType },
       AzureLoginSuccessDialogContainer,
       AzureLoginFailedDialogContainer));
   });
@@ -114,10 +120,14 @@ export function registerCommands(commandRegistry: CommandRegistry) {
     store.dispatch(azureArmTokenDataChanged(azureAuth.access_token));
   });
 
+  commandRegistry.registerCommand(UI.InvalidateAzureArmToken, () => {
+    store.dispatch(invalidateArmToken());
+  });
+
   // ---------------------------------------------------------------------------
   // Show post migration dialog on startup if the user has just been migrated
   commandRegistry.registerCommand(UI.ShowPostMigrationDialog, () => {
-    DialogService.showDialog(PostMigrationDialog);
+    DialogService.showDialog(PostMigrationDialogContainer);
   });
 
   commandRegistry.registerCommand(UI.UpdateProgressIndicator, (value: ProgressIndicatorPayload) => {

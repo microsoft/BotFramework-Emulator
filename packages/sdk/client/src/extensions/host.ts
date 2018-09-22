@@ -32,21 +32,24 @@
 //
 
 import { Activity } from '@bfemulator/sdk-shared';
-import { IBotConfig } from 'msbot/bin/schema';
+import { IBotConfiguration } from 'botframework-config/lib/schema';
 
 export interface InspectorHost {
   // The current bot (msbot schema)
-  readonly bot: IBotConfig;
+  readonly bot: IBotConfiguration;
   readonly logger: {
     log(message: string): () => void;
     error(message: string): () => void;
   };
+
   // Each "on" function returns a method that when called, will unregister the handler.
   on(event: 'inspect', handler: (activity: Activity) => void): () => void;
 
-  on(event: 'bot-updated', handler: (bot: IBotConfig) => void): () => void;
+  on(event: 'bot-updated', handler: (bot: IBotConfiguration) => void): () => void;
 
   on(event: 'accessory-click', handler: (id: string) => void): () => void;
+
+  on(event: 'theme', handler: (themeInfo: { themeName: string, themeComponents: string[] }) => void): void;
 
   // Enable/disable an accessory button
   enableAccessory(id: string, enabled: boolean): void;

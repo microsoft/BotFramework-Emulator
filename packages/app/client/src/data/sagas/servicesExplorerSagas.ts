@@ -31,8 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IAzureBotService, IConnectedService, ILuisService, IQnAService, ServiceType } from 'msbot/bin/schema';
-import { BotConfigModel } from 'msbot/bin/models';
+import {
+  IBotService,
+  IConnectedService,
+  ILuisService,
+  IQnAService,
+  ServiceTypes
+} from 'botframework-config/lib/schema';
+import { BotConfigurationBase } from 'botframework-config/lib/botConfigurationBase';
 import { ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { DialogService } from '../../ui/dialogs/service';
@@ -47,7 +53,7 @@ import {
   OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE,
   OPEN_SERVICE_DEEP_LINK
 } from '../action/connectedServiceActions';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { ServiceCodes, SharedConstants } from '@bfemulator/app-shared';
 import { RootState } from '../store';
 import { ArmTokenData, beginAzureAuthWorkflow } from '../action/azureAuthActions';
 import { getArmToken } from './azureAuthSaga';
@@ -55,6 +61,8 @@ import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 import { SortCriteria } from '../reducer/explorer';
 import { sortExplorerContents } from '../action/explorerActions';
 import { serviceTypeLabels } from '../../utils/serviceTypeLables';
+
+declare type ServicesPayload = { services: IConnectedService[], code: ServiceCodes };
 
 const getArmTokenFromState = (state: RootState): ArmTokenData => state.azureAuth;
 const geBotConfigFromState = (state: RootState): BotConfigWithPath => state.bot.activeBot;
@@ -65,28 +73,45 @@ function* launchConnectedServicePicker(action: ConnectedServiceAction<ConnectedS
   : IterableIterator<any> {
   // To retrieve the luis models, we must have the authoring key.
   // To get the authoring key, we need the arm token
-  let armTokenData: ArmTokenData = yield select(getArmTokenFromState);
+  let armTokenData: ArmTokenData & number = yield select(getArmTokenFromState);
   if (!armTokenData || !armTokenData.access_token) {
     const { promptDialog, loginSuccessDialog, loginFailedDialog } = action.payload.azureAuthWorkflowComponents;
-    armTokenData = yield* getArmToken(beginAzureAuthWorkflow(promptDialog, loginSuccessDialog, loginFailedDialog));
+    armTokenData = yield* getArmToken(
+      beginAzureAuthWorkflow(
+        promptDialog,
+        { serviceType: action.payload.serviceType },
+        loginSuccessDialog,
+        loginFailedDialog
+      ));
   }
-  if (!armTokenData) {
+
+  if (armTokenData === 2) {
+    yield* launchConnectedServiceEditor(action);
+    return;
+  }
+  if (!armTokenData || 'error' in armTokenData) {
     return null; // canceled or failed somewhere
   }
   // Add the authenticated user to the action since we now have the token
-  action.payload.authenticatedUser = JSON.parse(atob(armTokenData.access_token.split('.')[1])).upn;
+  const pJson = JSON.parse(atob(armTokenData.access_token.split('.')[1]));
+  action.payload.authenticatedUser = (pJson.upn || pJson.unique_name || pJson.name || pJson.email);
   const { serviceType, progressIndicatorComponent } = action.payload;
   if (progressIndicatorComponent) {
     DialogService.showDialog(progressIndicatorComponent).catch();
   }
-  let services: IConnectedService[] = yield* retrieveServicesByServiceType(serviceType);
+  let payload: ServicesPayload = yield* retrieveServicesByServiceType(serviceType);
 
   if (progressIndicatorComponent) {
     DialogService.hideDialog();
   }
 
-  if (!services.length) {
-    const result = yield DialogService.showDialog(action.payload.getStartedDialog, { serviceType });
+  if (payload.code !== ServiceCodes.OK || !payload.services.length) {
+    const { getStartedDialog, authenticatedUser } = action.payload;
+    const result = yield DialogService.showDialog(getStartedDialog, {
+      serviceType,
+      authenticatedUser,
+      showNoModelsFoundContent: !payload.services.length
+    });
     // Sign up with XXXX
     if (result === 1) {
       // TODO - launch an external link
@@ -96,7 +121,7 @@ function* launchConnectedServicePicker(action: ConnectedServiceAction<ConnectedS
       yield* launchConnectedServiceEditor(action);
     }
   } else {
-    const servicesToAdd = yield* launchConnectedServicePickList(action, services, serviceType);
+    const servicesToAdd = yield* launchConnectedServicePickList(action, payload.services, serviceType);
     if (servicesToAdd) {
       const botFile: BotConfigWithPath = yield select(geBotConfigFromState);
       botFile.services.push(...servicesToAdd);
@@ -106,9 +131,11 @@ function* launchConnectedServicePicker(action: ConnectedServiceAction<ConnectedS
   }
 }
 
-function* launchConnectedServicePickList(action: ConnectedServiceAction<ConnectedServicePickerPayload>,
-                                         availableServices: IConnectedService[],
-                                         serviceType: ServiceType): IterableIterator<any> {
+function* launchConnectedServicePickList(
+  action: ConnectedServiceAction<ConnectedServicePickerPayload>,
+  availableServices: IConnectedService[],
+  serviceType: ServiceTypes
+): IterableIterator<any> {
 
   const { pickerComponent, authenticatedUser, serviceType: type } = action.payload;
   let result = yield DialogService.showDialog(pickerComponent, {
@@ -118,7 +145,7 @@ function* launchConnectedServicePickList(action: ConnectedServiceAction<Connecte
   });
 
   if (result === 1) {
-    action.payload.connectedService = BotConfigModel.serviceFromJSON({
+    action.payload.connectedService = BotConfigurationBase.serviceFromJSON({
       type,
       hostname: '' /* defect workaround */
     } as any);
@@ -128,35 +155,34 @@ function* launchConnectedServicePickList(action: ConnectedServiceAction<Connecte
   return result;
 }
 
-function* retrieveServicesByServiceType(serviceType: ServiceType): IterableIterator<any> {
+function* retrieveServicesByServiceType(serviceType: ServiceTypes): IterableIterator<any> {
   let armTokenData: ArmTokenData = yield select(getArmTokenFromState);
   if (!armTokenData || !armTokenData.access_token) {
     throw new Error('Auth credentials do not exist.');
   }
   const { GetConnectedServicesByType } = SharedConstants.Commands.ConnectedService;
-  let payload;
+  let payload: ServicesPayload;
   try {
     payload = yield CommandServiceImpl.remoteCall(GetConnectedServicesByType, armTokenData.access_token, serviceType);
   } catch {
-    payload = { services: [] };
+    payload = { services: [], code: ServiceCodes.Error };
   }
-  const { services = [] } = payload || {};
-  return services;
+  return payload;
 }
 
 function* openConnectedServiceDeepLink(action: ConnectedServiceAction<ConnectedServicePayload>): IterableIterator<any> {
   const { connectedService } = action.payload;
   switch (connectedService.type) {
-    case ServiceType.Luis:
+    case ServiceTypes.Luis:
       return openLuisDeepLink(connectedService as ILuisService);
 
-    case ServiceType.AzureBotService:
-      return openAzureBotServiceDeepLink(connectedService as IAzureBotService);
+    case ServiceTypes.Bot:
+      return openAzureBotServiceDeepLink(connectedService as IBotService);
 
-    case ServiceType.Dispatch:
+    case ServiceTypes.Dispatch:
       return Promise.resolve(false); // TODO - Hook up proper link when available
 
-    case ServiceType.QnA:
+    case ServiceTypes.QnA:
       return openQnaMakerDeepLink(connectedService as IQnAService);
 
     default:
@@ -167,8 +193,8 @@ function* openConnectedServiceDeepLink(action: ConnectedServiceAction<ConnectedS
 function* openContextMenuForService(action: ConnectedServiceAction<ConnectedServicePayload>)
   : IterableIterator<any> {
   const menuItems = [
-    { label: 'Open in web portal', id: 'open' },
-    { label: 'Edit settings', id: 'edit' },
+    { label: 'Manage service', id: 'open' },
+    { label: 'Edit configuration', id: 'edit' },
     { label: 'Forget this service', id: 'forget' }
   ];
   const response = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);
@@ -194,9 +220,9 @@ function* openContextMenuForService(action: ConnectedServiceAction<ConnectedServ
 function* openAddConnectedServiceContextMenu(action: ConnectedServiceAction<ConnectedServicePickerPayload>)
   : IterableIterator<any> {
   const menuItems = [
-    { label: 'Language Understanding (LUIS)', id: ServiceType.Luis },
-    { label: 'QnA Maker', id: ServiceType.QnA },
-    { label: 'Dispatch', id: ServiceType.Dispatch }
+    { label: 'Language Understanding (LUIS)', id: ServiceTypes.Luis },
+    { label: 'QnA Maker', id: ServiceTypes.QnA },
+    { label: 'Dispatch', id: ServiceTypes.Dispatch }
   ];
 
   const response = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);
@@ -222,7 +248,7 @@ function* removeServiceFromActiveBot(connectedService: IConnectedService): Itera
     type: 'question',
     buttons: ['Cancel', 'OK'],
     defaultId: 1,
-    message: `Remove ${serviceTypeLabels[connectedService.type]} service: ${connectedService.name}. Are you sure?`,
+    message: `Remove ${ serviceTypeLabels[connectedService.type] } service: ${ connectedService.name }. Are you sure?`,
     cancelId: 0,
   });
   if (result) {
@@ -234,29 +260,57 @@ function* removeServiceFromActiveBot(connectedService: IConnectedService): Itera
 function* launchConnectedServiceEditor(action: ConnectedServiceAction<ConnectedServicePayload>)
   : IterableIterator<any> {
   const { editorComponent, authenticatedUser, connectedService, serviceType } = action.payload;
-  const result = yield DialogService.showDialog(editorComponent, { connectedService, authenticatedUser, serviceType });
+  const servicesToUpdate: IConnectedService[] = yield DialogService.showDialog(editorComponent, {
+    connectedService,
+    authenticatedUser,
+    serviceType
+  });
 
-  if (result) {
-    yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.AddOrUpdateService, ServiceType.Luis, result[0]);
+  if (servicesToUpdate) {
+    let i = servicesToUpdate.length;
+    while (i--) {
+      const service = servicesToUpdate[i];
+      yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.AddOrUpdateService, service.type, service);
+    }
   }
+  return null;
 }
 
 function openLuisDeepLink(luisService: ILuisService): Promise<any> {
-  const { appId, version } = luisService;
-  const link = `https://www.luis.ai/applications/${appId}/versions/${version}/build`;
+  const { appId, version, region } = luisService;
+  let regionPrefix: string;
+  switch (region) {
+    case 'westeurope':
+      regionPrefix = 'eu.';
+      break;
+
+    case 'australiaeast':
+      regionPrefix = 'au.';
+      break;
+
+    default:
+      regionPrefix = '';
+      break;
+  }
+  let linkArray = ['https://www.', `${ encodeURI(regionPrefix) }`, 'luis.ai/applications/'];
+  linkArray.push(`${ encodeURI(appId) }`, '/versions/', `${ encodeURI(version) }`, '/build');
+  const link = linkArray.join('');
   return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, link);
 }
 
 function openQnaMakerDeepLink(service: IQnAService): Promise<any> {
   const { kbId } = service;
-  const link = `https://qnamaker.ai/Edit/KnowledgeBase?kbid=${kbId}`;
+  const link = `https://qnamaker.ai/Edit/KnowledgeBase?kbid=${ encodeURIComponent(kbId) }`;
   return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, link);
 }
 
-function openAzureBotServiceDeepLink(service: IAzureBotService): Promise<any> {
+function openAzureBotServiceDeepLink(service: IBotService): Promise<any> {
   const { tenantId, subscriptionId, resourceGroup, id } = service;
-  const thankYouTsLint = `https://ms.portal.azure.com/#@${tenantId}/resource/subscriptions/${subscriptionId}`;
-  const link = `${thankYouTsLint}/resourceGroups/${resourceGroup}/providers/Microsoft.BotService/botServices/${id}`;
+  let linkArray = [`https://ms.portal.azure.com/#@${ encodeURI(tenantId) }`];
+  linkArray.push(`/resource/subscriptions/${ encodeURI(subscriptionId) }`);
+  linkArray.push(`/resourceGroups/${ encodeURI(resourceGroup) }`);
+  linkArray.push(`/providers/Microsoft.BotService/botServices/${ encodeURI(id) }`);
+  const link = linkArray.join('');
   return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, link + '/channels');
 }
 

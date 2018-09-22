@@ -114,7 +114,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
         }));
       })
       .catch(err => {
-        const errMsg = `Error while loading emulator settings: ${err}`;
+        const errMsg = `Error while loading emulator settings: ${ err }`;
         const notification = newNotification(errMsg);
         store.dispatch(beginAdd(notification));
       });
@@ -160,7 +160,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     CommandServiceImpl.remoteCall(Commands.Electron.ShowOpenDialog, dialogOptions)
       .then(ngrokPath => this.setUncommittedState({ ngrokPath }))
       .catch(err => {
-        const errMsg = `Error while browsing for ngrok: ${err}`;
+        const errMsg = `Error while browsing for ngrok: ${ err }`;
         const notification = newNotification(errMsg);
         store.dispatch(beginAdd(notification));
       });
@@ -186,7 +186,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     CommandServiceImpl.remoteCall(Commands.Settings.SaveAppSettings, settings)
       .then(() => this.commit(settings))
       .catch(err => {
-        const errMsg = `Error while saving emulator settings: ${err}`;
+        const errMsg = `Error while saving emulator settings: ${ err }`;
         const notification = newNotification(errMsg);
         store.dispatch(beginAdd(notification));
       });
@@ -228,41 +228,41 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     return (
       <GenericDocument className={ styles.appSettingsEditor }>
         <Row>
-          <Column>
+          <Column className={ styles.spacing }>
             <SmallHeader>Service</SmallHeader>
             <p><a href="https://ngrok.com/" target="_blank">ngrok</a> is network tunneling software. The Bot Framework
               Emulator works with ngrok to communicate with bots hosted remotely. Read the <a
                 href="https://github.com/Microsoft/BotFramework-Emulator/wiki/Tunneling-(ngrok)" target="_blank">wiki
                 page</a> to learn more about using ngrok and to download it.</p>
-            <Row align={ RowAlignment.Center }>
+            <Row align={ RowAlignment.Center } className={ styles.marginBottomRow }>
               <TextField className={ styles.appSettingsInput } readOnly={ false } value={ uncommitted.ngrokPath }
-                         onChanged={ this.onChangeNgrok } label={ 'Path to ngrok' }/>
+                onChanged={ this.onChangeNgrok } label={ 'Path to ngrok' }/>
               <PrimaryButton onClick={ this.onClickBrowse } text="Browse" className={ styles.browseButton }/>
             </Row>
             <Checkbox className={ styles.checkboxOverrides } checked={ uncommitted.bypassNgrokLocalhost }
-                      onChange={ this.onChangeNgrokBypass } id="ngrok-bypass" label="Bypass ngrok for local addresses"/>
-            <Row align={ RowAlignment.Center }>
+              onChange={ this.onChangeNgrokBypass } id="ngrok-bypass" label="Bypass ngrok for local addresses"/>
+            <Row align={ RowAlignment.Center } className={ styles.marginBottomRow }>
               <TextField className={ styles.appSettingsInput } readOnly={ false } value={ uncommitted.localhost }
-                         onChanged={ this.onChangeLocalhost } label="localhost override"/>
+                onChanged={ this.onChangeLocalhost } label="localhost override"/>
             </Row>
             <Row align={ RowAlignment.Center }>
               <TextField className={ styles.appSettingsInput } readOnly={ false } value={ uncommitted.locale }
-                         onChanged={ this.onChangeLocale } label="Locale"/>
+                onChanged={ this.onChangeLocale } label="Locale"/>
             </Row>
           </Column>
-          <Column className={ styles.rightColumn }>
+          <Column className={ [styles.rightColumn, styles.spacing].join(' ') }>
             <SmallHeader>Auth</SmallHeader>
             <Checkbox className={ styles.checkboxOverrides } checked={ uncommitted.use10Tokens }
-                      onChange={ this.onChangeAuthTokenVersion } id="auth-token-version"
-                      label="Use version 1.0 authentication tokens"/>
+              onChange={ this.onChangeAuthTokenVersion } id="auth-token-version"
+              label="Use version 1.0 authentication tokens"/>
             <SmallHeader>Sign-in</SmallHeader>
             <Checkbox className={ styles.checkboxOverrides } checked={ uncommitted.useCodeValidation }
-                      onChange={ this.onChangeUseValidationToken } id="use-validation-code"
-                      label="Use a sign-in verification code for OAuthCards"/>
+              onChange={ this.onChangeUseValidationToken } id="use-validation-code"
+              label="Use a sign-in verification code for OAuthCards"/>
           </Column>
         </Row>
         <Row className={ styles.buttonRow } justify={ RowJustification.Right }>
-          <PrimaryButton text="Cancel" onClick={ this.onClickDiscard }/>
+          <PrimaryButton text="Cancel" onClick={ this.onClickDiscard } className={ styles.cancelButton }/>
           <PrimaryButton text="Save" onClick={ this.onClickSave } className={ styles.saveButton } disabled={ clean }/>
         </Row>
       </GenericDocument>

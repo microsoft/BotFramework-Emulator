@@ -1,0 +1,91 @@
+.explorerBarHeader {
+  padding: 8px 16px;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  flex-shrink: 0;
+  background-color: var(--explorer-bar-header-bg);
+  color: var(--input-label-color);
+
+  & > header {
+    font-size: 13px;
+    line-height: 24px;
+    height: 24px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  & > span.accessory {
+    display: inline-block;
+    margin-left: auto;
+    width: 24px;
+    height: 24px;
+    cursor: pointer
+  }
+}
+
+.botSettings {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+
+  &:focus {
+    > span {
+      outline: var(--p-button-border-focus);
+    }
+  }
+
+  &:hover {
+    > span {
+      background: var(--p-button-bg-hover);
+    }
+  }
+
+  &[disabled] {
+    > span {
+      &:hover {
+        background: var(--input-label-color);
+      }
+
+      cursor: not-allowed;
+      background: var(--input-label-color);
+    }
+  }
+
+  > span {
+    display: inline-block;
+    height: 20px;
+    width: 20px;
+    -webkit-mask: url("../../media/ic_settings.svg") no-repeat 50% 50%;
+    -webkit-mask-size: 16px;
+    background: var(--input-label-color);
+  }
+}
+
+.explorerSet {
+  background-color: var(--dialog-bg);
+  color: var(--input-label-color);
+  display: flex;
+  flex-flow: column nowrap;
+  height: 100%;
+  overflow: hidden;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  & > li {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex: 0 1 auto;
+    max-height: 100%;
+    div + div {
+      border-top: var(--explorer-panel-group-border);
+    }
+  }
+}

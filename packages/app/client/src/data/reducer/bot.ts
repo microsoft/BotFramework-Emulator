@@ -32,16 +32,18 @@
 //
 
 import { BotInfo, getBotDisplayName } from '@bfemulator/app-shared';
-import { BotConfigWithPath, applyBotConfigOverrides, botsAreTheSame } from '@bfemulator/sdk-shared';
+import { applyBotConfigOverrides, BotConfigWithPath, botsAreTheSame } from '@bfemulator/sdk-shared';
 import { BotAction, BotActions } from '../action/botActions';
 
 export interface BotState {
   activeBot: BotConfigWithPath;
+  activeBotDigest: string;
   botFiles: BotInfo[];
 }
 
 const DEFAULT_STATE: BotState = {
   activeBot: null,
+  activeBotDigest: null,
   botFiles: []
 };
 
@@ -81,10 +83,13 @@ export default function bot(state: BotState = DEFAULT_STATE, action: BotAction) 
     }
 
     case BotActions.close: {
-      // close the ative bot
+      // close the active bot
       state = setActiveBot(null, state);
       break;
     }
+
+    case BotActions.hashGenerated:
+      return { ...state, activeBotDigest: action.payload.hash };
 
     default:
       break;

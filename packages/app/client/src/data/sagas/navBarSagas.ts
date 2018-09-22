@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ForkEffect, takeEvery, put } from 'redux-saga/effects';
+import { ForkEffect, put, takeEvery, } from 'redux-saga/effects';
 import { NavBarActions, SelectNavBarAction } from '../action/navBarActions';
 import { markAllAsRead } from '../action/notificationActions';
 import * as Constants from '../../constants';

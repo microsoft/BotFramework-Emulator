@@ -31,6 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
+
 jest.mock('./botData/store', () => ({
   getStore: () => ({
     getState: () => ({
@@ -38,7 +40,7 @@ jest.mock('./botData/store', () => ({
         activeBot: {
           name: 'someBot',
           description: '',
-          secretKey: '',
+          padlock: '',
           path: 'somePath',
           services: []
         },
@@ -64,7 +66,7 @@ jest.mock('./main', () => ({
 import { mainWindow } from './main';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
-import { BotConfig } from 'msbot';
+import { BotConfiguration } from 'botframework-config';
 
 import {
   getActiveBot,
@@ -82,7 +84,7 @@ describe('botHelpers tests', () => {
     expect(activeBot).toEqual({
       name: 'someBot',
       description: '',
-      secretKey: '',
+      padlock: '',
       path: 'somePath',
       services: []
     });
@@ -116,14 +118,15 @@ describe('botHelpers tests', () => {
     const bot1 = null;
     expect(cloneBot(bot1)).toBe(null);
 
-    const bot2: BotConfigWithPath = {
+    const bot2: BotConfigWithPath = BotConfigWithPathImpl.fromJSON({
+      version: '',
       name: 'someName',
       description: 'someDescription',
-      secretKey: 'someSecretKey',
+      padlock: 'somePadlock',
       services: [],
       path: 'somePath',
       overrides: null
-    };
+    });
     expect(cloneBot(bot2)).toEqual(bot2);
   });
 
@@ -131,17 +134,18 @@ describe('botHelpers tests', () => {
     const bot1 = null;
     expect(() => toSavableBot(bot1)).toThrowError('Cannot convert falsy bot to savable bot.');
 
-    const bot2: BotConfigWithPath = {
+    const bot2: BotConfigWithPath = BotConfigWithPathImpl.fromJSON({
+      version: '',
       name: 'someName',
       description: 'someDescription',
-      secretKey: 'someSecretKey',
       services: [],
       path: 'somePath',
       overrides: null
-    };
-    const savableBot = toSavableBot(bot2, 'someSecret');
+    });
+    let secret = 'lgCbJPXnfOlatjbBDKMbh0ie6bc8PD/cjqA/2tPgMS0=';
+    const savableBot = toSavableBot(bot2, secret);
 
-    const expectedBot = new BotConfig();
+    const expectedBot = new BotConfiguration();
     expectedBot.name = 'someName';
     expectedBot.description = 'someDescription';
     expectedBot.services = [];
@@ -150,7 +154,7 @@ describe('botHelpers tests', () => {
     expect(savableBot.description).toEqual(expectedBot.description);
     expect(savableBot.services).toEqual(expectedBot.services);
     // secret key should've been refreshed
-    expect(savableBot.secretKey).not.toEqual('someSecretKey');
+    expect(savableBot.padlock).not.toEqual(secret);
   });
 
   test('promptForSecretAndRetry()', async () => {

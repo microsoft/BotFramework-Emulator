@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IConnectedService } from 'msbot/bin/schema';
+import { IConnectedService } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { MouseEventHandler, SyntheticEvent } from 'react';
 import { ServicePane, ServicePaneProps } from '../servicePane/servicePane';
@@ -51,6 +51,7 @@ import { serviceTypeLabels } from '../../../../utils/serviceTypeLables';
 export interface ServicesExplorerProps extends ServicePaneProps {
   services?: IConnectedService[];
   toAnimate?: { [serviceId: string]: boolean };
+  onAnchorClick: (url: string) => void;
   openAddServiceContextMenu: (payload: ConnectedServicePickerPayload) => void;
   openSortContextMenu: () => void;
   openServiceDeepLink: (service: IConnectedService) => void;
@@ -60,7 +61,7 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
   public state = {} as ServicesExplorerProps;
 
   public static getDerivedStateFromProps
-  (newProps: ServicesExplorerProps, existingProps: ServicesExplorerProps): ServicesExplorerProps {
+    (newProps: ServicesExplorerProps, existingProps: ServicesExplorerProps): ServicesExplorerProps {
     if (!Object.keys(existingProps).length) {
       return newProps;
     }
@@ -91,19 +92,56 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
     return state;
   }
 
+  protected get emptyContent(): JSX.Element {
+    return (
+      <div>
+        <p className={ styles.emptyContent }>None.</p>
+        <p className={ styles.emptyContent }>
+          You can connect your bot to services such as &nbsp;
+          <a
+            href="javascript:void(0);"
+            onClick={ this.onLearnMoreLUISAnchor }
+          >
+            Language Understanding (LUIS)
+          </a>, &nbsp;
+          <a
+            href="javascript:void(0);"
+            onClick={ this.onLearnMoreQnAAnchor }
+          >
+            QnA Maker
+          </a>, and&nbsp;
+          <a
+            href="javascript:void(0);"
+            onClick={ this.onLearnMoreDispatchAnchor }
+          >
+            Dispatch
+          </a>
+        </p>
+        <p className={ styles.emptyContent }>
+          <a
+            href="javascript:void(0);"
+            onClick={ this.onLearnMoreServicesAnchor }
+          >Learn more about using services</a>
+        </p>
+      </div>
+    );
+  }
+
   protected get links() {
     const { services = [], toAnimate = {} } = this.state;
     return services.map((service, index) => {
       let label = service.name;
       if ('version' in service) {
-        label += `, v${(service as any).version}`;
+        label += `, v${ (service as any).version }`;
       }
       return (
         <li
           key={ index }
-          className={ `${styles.link} ${toAnimate[service.id] ? styles.animateHighlight : ''} ` }
+          className={ `${ styles.link } ${ toAnimate[service.id] ? styles.animateHighlight : '' } ` }
           onClick={ this.onLinkClick }
-          data-index={ index }>
+          onKeyPress={ this.onHandleKeyPress }
+          data-index={ index }
+          tabIndex={ 0 }>
           { label } <span>- { serviceTypeLabels[service.type] }</span>
         </li>
       );
@@ -115,6 +153,12 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
     const { index } = li.dataset;
     const { [index]: connectedService } = this.props.services;
     this.props.openContextMenuForService(connectedService, ConnectedServiceEditorContainer);
+  }
+
+  protected onHandleKeyPress = (e): void => {
+    if (e.key === 'Enter') {
+      this.onLinkClick(e);
+    }
   }
 
   protected onLinkClick: MouseEventHandler<HTMLLIElement> = (event: SyntheticEvent<HTMLLIElement>): void => {
@@ -140,5 +184,21 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
       pickerComponent: ConnectedServicePickerContainer,
       progressIndicatorComponent: ProgressIndicatorContainer
     });
+  }
+
+  private onLearnMoreLUISAnchor = () => {
+    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-LUIS-docs-home');
+  }
+
+  private onLearnMoreQnAAnchor = () => {
+    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-qna-docs-home');
+  }
+
+  private onLearnMoreDispatchAnchor = () => {
+    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-create-dispatch');
+  }
+
+  private onLearnMoreServicesAnchor = () => {
+    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-services');
   }
 }

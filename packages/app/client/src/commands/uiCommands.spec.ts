@@ -21,17 +21,20 @@ import { EditorActions, OpenEditorAction } from '../data/action/editorActions';
 import * as Constants from '../constants';
 import { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } from '../constants';
 import { NavBarActions, SelectNavBarAction } from '../data/action/navBarActions';
-import { DialogService,
+import {
   AzureLoginPromptDialogContainer,
   AzureLoginSuccessDialogContainer,
   BotCreationDialog,
-  SecretPromptDialog } from '../ui/dialogs';
+  DialogService,
+  SecretPromptDialogContainer
+} from '../ui/dialogs';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { registerCommands } from './uiCommands';
 import * as helpers from '../data/editorHelpers';
 import store from '../data/store';
-import { AzureAuthAction, AzureAuthWorkflow } from '../data/action/azureAuthActions';
+import { AzureAuthAction, AzureAuthWorkflow, invalidateArmToken } from '../data/action/azureAuthActions';
+
 const Commands = SharedConstants.Commands.UI;
 
 describe('the uiCommands', () => {
@@ -57,11 +60,11 @@ describe('the uiCommands', () => {
   it('should call DialogService.showDialog when the ShowSecretPromptDialog command is dispatched', async () => {
     const spy = jest.spyOn(DialogService, 'showDialog');
     const result = await registry.getCommand(Commands.ShowSecretPromptDialog).handler();
-    expect(spy).toHaveBeenCalledWith(SecretPromptDialog);
+    expect(spy).toHaveBeenCalledWith(SecretPromptDialogContainer);
     expect(result).toBe(true);
   });
 
-  describe('should dispatch the apporpriate action to the store', () => {
+  describe('should dispatch the appropriate action to the store', () => {
     it('when the SwitchNavBarTab command is dispatched', () => {
       let arg: SelectNavBarAction = {} as SelectNavBarAction;
       store.dispatch = action => (arg as any) = action;
@@ -72,7 +75,7 @@ describe('the uiCommands', () => {
 
     it('when the ShowExplorer command is dispatched', () => {
       let arg: SelectNavBarAction = {} as SelectNavBarAction;
-      store.dispatch = action => (arg as any)  = action;
+      store.dispatch = action => (arg as any) = action;
       registry.getCommand(Commands.ShowExplorer).handler();
       expect(arg.type).toBe(NavBarActions.select);
       expect(arg.payload.selection).toBe(Constants.NAVBAR_BOT_EXPLORER);
@@ -95,13 +98,20 @@ describe('the uiCommands', () => {
       expect(arg.payload.loginSuccessDialog).toBe(AzureLoginSuccessDialogContainer);
       expect(arg.payload.promptDialog).toBe(AzureLoginPromptDialogContainer);
     });
+
+    it('when the InvalidateArmToken command is dispatched', async () => {
+      let arg: AzureAuthAction<void> = {} as AzureAuthAction<void>;
+      store.dispatch = action => (arg as any) = action;
+      registry.getCommand(Commands.InvalidateAzureArmToken).handler();
+      expect(arg).toEqual(invalidateArmToken());
+    });
   });
 
   it('should set the proper href on the theme tag when the SwitchTheme command is dispatched', () => {
     let link = document.createElement('link');
     link.id = 'themeVars';
     document.querySelector('head').appendChild(link);
-    registry.getCommand(Commands.SwitchTheme).handler('./light.css');
+    registry.getCommand(Commands.SwitchTheme).handler('light', './light.css');
     expect(link.href).toBe('http://localhost/light.css');
   });
 });

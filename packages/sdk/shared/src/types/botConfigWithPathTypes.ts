@@ -31,19 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotConfigModel } from 'msbot/bin/models';
-import { IBotConfig, IEndpointService } from 'msbot/bin/schema';
+import { BotConfigurationBase } from 'botframework-config/lib/botConfigurationBase';
+import { IBotConfiguration, IEndpointService } from 'botframework-config/lib/schema';
 
 export interface BotConfigOverrides {
   readonly endpoint?: Partial<IEndpointService>;
 }
 
-export interface BotConfigWithPath extends IBotConfig {
+export interface BotConfigWithPath extends IBotConfiguration {
   path?: string;
   overrides?: BotConfigOverrides;
 }
 
-export class BotConfigWithPathImpl extends BotConfigModel implements BotConfigWithPath {
+export class BotConfigWithPathImpl extends BotConfigurationBase implements BotConfigWithPath {
   public path = '';
   public overrides = null;
 
@@ -56,7 +56,7 @@ export class BotConfigWithPathImpl extends BotConfigModel implements BotConfigWi
     return botConfigWithPath;
   }
 
-  public toJSON(): Partial<BotConfigWithPath> {
+  public toJSON(): BotConfigWithPath {
     const botConfig = super.toJSON();
     const { path, overrides } = this;
     return { ...botConfig, path, overrides };

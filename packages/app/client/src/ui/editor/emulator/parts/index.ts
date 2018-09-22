@@ -32,6 +32,5 @@
 //
 
 export * from './chat/chat';
-export * from './detail/detail';
-export * from './inspector/inspector';
+export * from './inspector/inspectorContainer';
 export * from './log/log';

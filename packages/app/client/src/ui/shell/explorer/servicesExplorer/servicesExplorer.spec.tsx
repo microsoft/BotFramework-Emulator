@@ -4,7 +4,7 @@ import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
 import bot from '../../../../data/reducer/bot';
 import explorer from '../../../../data/reducer/explorer';
-import { LuisService } from 'msbot/bin/models';
+import { LuisService } from 'botframework-config/lib/models';
 import { ServicesExplorerContainer } from './servicesExplorerContainer';
 import { ServicesExplorer } from './servicesExplorer';
 import { load, setActive } from '../../../../data/action/botActions';
@@ -44,7 +44,7 @@ describe('The ServicesExplorer component should', () => {
     mockBot = JSON.parse(`{
         "name": "TestBot",
         "description": "",
-        "secretKey": "",
+        "padlock": "",
         "services": [{
             "type": "luis",
             "name": "https://testbot.botframework.com/api/messagesv3",

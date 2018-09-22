@@ -33,7 +33,6 @@
 
 import { BrowserWindow } from 'electron';
 import fetch from 'node-fetch';
-import * as uuidv3 from 'uuid/v3';
 import * as uuidv4 from 'uuid/v4';
 import * as jwt from 'jsonwebtoken';
 
@@ -86,7 +85,7 @@ export class AzureAuthWorkflowService {
           result.error = e.message;
           resolve(result);
         }
-        if (!uri.toLowerCase().startsWith(redirectUri.toLowerCase())) {
+        if (!(uri || '').toLowerCase().startsWith(redirectUri.toLowerCase())) {
           return;
         }
         const idx = uri.indexOf('#');
@@ -119,17 +118,18 @@ export class AzureAuthWorkflowService {
     const browserWindow = new BrowserWindow({
       modal: true,
       show: false,
-      frame: false,
+      frame: true,
       transparent: true,
       alwaysOnTop: true,
       width: 490,
       height: 366,
       webPreferences: { contextIsolation: true, nativeWindowOpen: true }
     });
+    browserWindow.setMenu(null);
     const { authorization_endpoint: endpoint } = await this.getConfig();
     const state = uuidv4();
     const requestId = uuidv4();
-    const nonce = uuidv3('https://github.com/Microsoft/BotFramework-Emulator', uuidv3.URL);
+    const nonce = uuidv4();
     const bits = [
       `${endpoint}?response_type=id_token+code`,
       `client_id=${clientId}`,
@@ -139,6 +139,7 @@ export class AzureAuthWorkflowService {
       `nonce=${nonce}`,
       'x-client-SKU=Js',
       'x-client-Ver=1.0.17',
+      'resource=00000002-0000-0000-c000-000000000000'
     ];
     if (renew) {
       bits.push('prompt=none');
@@ -154,13 +155,14 @@ export class AzureAuthWorkflowService {
     const browserWindow = new BrowserWindow({
       modal: true,
       show: false,
-      frame: false,
+      frame: true,
       transparent: true,
       alwaysOnTop: true,
       width: 440,
       height: 367,
       webPreferences: { contextIsolation: true, nativeWindowOpen: true }
     });
+    browserWindow.setMenu(null);
     const redirectUri = 'http://localhost:3000/botframework-emulator';
     const bits = [
       `https://login.microsoftonline.com/common/oauth2/logout/?post_logout_redirect_uri=${redirectUri}`,

@@ -30,17 +30,18 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+import * as path from 'path';
+import * as fs from 'fs-extra';
+import * as Electron from 'electron';
 import { app, Menu } from 'electron';
 import { mainWindow } from '../main';
 import { showOpenDialog, showSaveDialog } from '../utils';
 import { AppMenuBuilder } from '../appMenuBuilder';
-import * as Electron from 'electron';
-import shell = Electron.shell;
 import { ContextMenuService } from '../services/contextMenuService';
 import { getStore } from '../botData/store';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
+import shell = Electron.shell;
 
 const store = getStore();
 
@@ -72,7 +73,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     Commands.ShowSaveDialog,
     (dialogOptions: Electron.SaveDialogOptions = {}): string => {
       return showSaveDialog(mainWindow.browserWindow, dialogOptions);
-  });
+    });
 
   // ---------------------------------------------------------------------------
   // Builds a new app menu to reflect the updated recent bots list
@@ -121,5 +122,36 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // Opens an external link
   commandRegistry.registerCommand(Commands.OpenExternal, (url: string) => {
     shell.openExternal(url, { activate: true });
+  });
+
+  // ---------------------------------------------------------------------------
+  // Opens and item on the disk in Explorer (win) or Finder (mac)
+  commandRegistry.registerCommand(Commands.OpenFileLocation, (filePath: string): boolean => {
+    const parts = path.parse(filePath);
+    return shell.openItem(path.resolve(parts.dir));
+  });
+
+  // ---------------------------------------------------------------------------
+  // Moves an item to the trash
+  commandRegistry.registerCommand(Commands.UnlinkFile, (filePath: string): boolean => {
+    return shell.moveItemToTrash(path.resolve(filePath));
+  });
+
+  // ---------------------------------------------------------------------------
+  // Renames a file - the payload must contain the property "filePath" and "name"
+  // This will also rename the file extension if one is provided in the "name" field
+  commandRegistry.registerCommand(Commands.RenameFile, async (info: { path: string, name: string }) => {
+    const { path: filePath, name } = info;
+    const exists = await fs.pathExists(filePath);
+    if (!exists) {
+      throw new ReferenceError(`Cannot rename File: ${filePath} does not exist`);
+    }
+    const parts = path.parse(filePath);
+    const nameHasExt = path.extname(name);
+    let newPath = `${parts.dir}/${name}`;
+    if (!nameHasExt) {
+      newPath += parts.ext;
+    }
+    return fs.rename(filePath, newPath); // let any errors propagate up the stack
   });
 }

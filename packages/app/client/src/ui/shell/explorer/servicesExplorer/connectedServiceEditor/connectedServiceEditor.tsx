@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ConnectedService } from 'msbot/bin/models/connectedService';
-import { BotConfigModel } from 'msbot/bin/models';
-import { IConnectedService, ServiceType } from 'msbot/bin/schema';
+import { ConnectedService } from 'botframework-config/lib/models';
+import { BotConfigurationBase } from 'botframework-config/lib/botConfigurationBase';
+import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import { DefaultButton, Dialog, DialogContent, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { Component } from 'react';
@@ -43,6 +43,8 @@ interface ConnectedServiceEditorProps {
   connectedService: IConnectedService;
   cancel: () => void;
   updateConnectedService: (updatedLuisService: IConnectedService) => void;
+  onAnchorClick: (url: string) => void;
+  serviceType?: ServiceTypes;
 }
 
 interface ConnectedServiceEditorState extends Partial<any> {
@@ -67,29 +69,29 @@ const labelMap = {
 };
 
 const titleMap = {
-  [ServiceType.Luis]: 'Connect to a LUIS model',
-  [ServiceType.Dispatch]: 'Connect to a Dispatch model',
-  [ServiceType.QnA]: 'Connect to a QnA Maker knowledge base',
-  [ServiceType.AzureBotService]: 'Connect to Azure Bot Service'
+  [ServiceTypes.Luis]: 'Connect to a LUIS app',
+  [ServiceTypes.Dispatch]: 'Connect to a Dispatch model',
+  [ServiceTypes.QnA]: 'Connect to a QnA Maker knowledge base',
+  [ServiceTypes.Bot]: 'Connect to Azure Bot Service'
 };
 
 const portalMap = {
-  [ServiceType.Luis]: 'LUIS.ai',
-  [ServiceType.Dispatch]: 'LUIS.ai',
-  [ServiceType.QnA]: 'QnaMaker.ai',
+  [ServiceTypes.Luis]: 'LUIS.ai',
+  [ServiceTypes.Dispatch]: 'LUIS.ai',
+  [ServiceTypes.QnA]: 'QnaMaker.ai',
 };
 
 const getEditableFields = (service: IConnectedService): string[] => {
   switch (service.type) {
-    case ServiceType.Luis:
-    case ServiceType.Dispatch:
+    case ServiceTypes.Luis:
+    case ServiceTypes.Dispatch:
       return ['name', 'appId', 'authoringKey', 'version', 'subscriptionKey'];
 
-    case ServiceType.QnA:
+    case ServiceTypes.QnA:
       return ['name', 'kbId', 'endpointKey'];
 
     default:
-      throw new TypeError(`${service.type} is not a valid service type`);
+      throw new TypeError(`${ service.type } is not a valid service type`);
   }
 };
 
@@ -99,7 +101,8 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
 
   constructor(props: ConnectedServiceEditorProps, state: ConnectedServiceEditorState) {
     super(props, state);
-    const connectedServiceCopy = BotConfigModel.serviceFromJSON(props.connectedService);
+    const connectedServiceCopy = BotConfigurationBase
+      .serviceFromJSON((props.connectedService || { type: props.serviceType, name: '' }));
     this.state = {
       connectedServiceCopy,
       isDirty: false
@@ -107,14 +110,14 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
   }
 
   public componentWillReceiveProps(nextProps: Readonly<ConnectedServiceEditorProps>): void {
-    const connectedServiceCopy = BotConfigModel.serviceFromJSON(this.props.connectedService);
+    const connectedServiceCopy = BotConfigurationBase.serviceFromJSON(this.props.connectedService);
     this.setState({ connectedServiceCopy });
   }
 
   public render(): JSX.Element {
     const { state, textFieldHandlers, onInputChange, props, onSubmitClick } = this;
     const { isDirty, connectedServiceCopy } = state;
-    const { type } = props.connectedService;
+    const { type } = connectedServiceCopy;
     const fields = getEditableFields(connectedServiceCopy);
     const textInputs: JSX.Element[] = [];
     let valid = true;
@@ -126,9 +129,9 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
       valid = valid && (!isRequired || !!connectedServiceCopy[key]);
       textInputs.push(
         <TextField
-          key={ `input_${index}` }
-          errorMessage={ state[`${key}Error`] || '' }
-          value={ state[key] }
+          key={ `input_${ index }` }
+          errorMessage={ state[`${ key }Error`] || '' }
+          value={ connectedServiceCopy[key] }
           onChanged={ textFieldHandlers[key] || (textFieldHandlers[key] = onInputChange.bind(this, key)) }
           label={ labelMap[key] } required={ isRequired }
         />
@@ -140,7 +143,9 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
         <DialogContent>
           <p>
             You can find your knowledge base ID and subscription key in { portalMap[type] }&nbsp;
-            <a href="javascript:void(0);">Learn more about keys in { labelMap[type] }</a>
+            <a href="javascript:void(0);" onClick={ this.onLearnMoreKeys }>
+              Learn more about keys in { labelMap[type] }
+            </a>
           </p>
           { textInputs }
         </DialogContent>
@@ -157,13 +162,23 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
       return true;
     }
 
-    switch (this.props.connectedService.type) {
-      case ServiceType.Dispatch:
-      case ServiceType.Luis:
+    switch (this.state.connectedServiceCopy.type) {
+      case ServiceTypes.Dispatch:
+      case ServiceTypes.Luis:
         return false;
 
       default:
         return true;
+    }
+  }
+
+  private onLearnMoreKeys = (): void => {
+    if (ServiceTypes.Luis) {
+      this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-LUIS-docs-home');
+    } else if (ServiceTypes.QnA) {
+      this.props.onAnchorClick('http://aka.ms/bot-framework-emulator-qna-keys');
+    } else {
+      this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-create-dispatch');
     }
   }
 
@@ -174,7 +189,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
   private onInputChange = (propName: string, value: string): void => {
     const trimmedValue = value.trim();
 
-    const { connectedService: originalLuisService } = this.props;
+    const { connectedService: originalLuisService = {} } = this.props;
     const errorMessage = (this.isRequired(propName) && !trimmedValue) ? `The field cannot be empty` : '';
 
     const { connectedServiceCopy } = this.state;
@@ -182,6 +197,6 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
 
     const isDirty = Object.keys(connectedServiceCopy)
       .reduce((dirty, key) => (dirty || connectedServiceCopy[key] !== originalLuisService[key]), false);
-    this.setState({ connectedServiceCopy: connectedServiceCopy, [`${propName}Error`]: errorMessage, isDirty } as any);
+    this.setState({ connectedServiceCopy: connectedServiceCopy, [`${ propName }Error`]: errorMessage, isDirty } as any);
   }
 }

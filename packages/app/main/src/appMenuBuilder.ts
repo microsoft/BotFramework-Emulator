@@ -38,9 +38,9 @@ import { AppUpdater, UpdateStatus } from './appUpdater';
 import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
 import * as jsonpath from 'jsonpath';
 import { ConversationService } from './services/conversationService';
-import { getStore } from './botData/store';
 import { getStore as getSettingsStore } from './settingsData/store';
 import { rememberTheme } from './settingsData/actions/windowStateActions';
+import { emulator } from './emulator';
 
 declare type MenuOpts = Electron.MenuItemConstructorOptions;
 
@@ -51,7 +51,6 @@ export interface AppMenuBuilder {
   getFileMenu: (recentBots?: BotInfo[]) => MenuOpts;
   getAppMenuMac: () => MenuOpts;
   getEditMenu: () => MenuOpts;
-  getEditMenuMac: () => MenuOpts[];
   getViewMenu: () => MenuOpts;
   getWindowMenuMac: () => MenuOpts[];
   getHelpMenu: () => MenuOpts;
@@ -106,9 +105,6 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
 
       template.unshift(this.getAppMenuMac());
 
-      // Edit menu
-      (template[2].submenu as any).push(this.getEditMenuMac());
-
       // Window menu
       template.splice(4, 0, {
         label: 'Window',
@@ -123,7 +119,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
   /** Creates a file menu item for each bot that will set the bot as active when clicked */
   createRecentBotsList(bots: BotInfo[]): MenuOpts[] {
     // only list 5 most-recent bots
-    return bots.slice(0, 5).filter(bot => !!bot).map(bot => ({
+    return bots.filter(bot => !!bot).map(bot => ({
       label: bot.displayName,
       click: () => {
         mainWindow.commandService.remoteCall(SharedConstants.Commands.Bot.Switch, bot.path)
@@ -138,70 +134,84 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     // TODO - localization
     let subMenu: MenuOpts[] = [
       {
-        label: 'New Bot',
+        label: 'New Bot Configuration...',
         click: () => {
           mainWindow.commandService.remoteCall(UI.ShowBotCreationDialog);
         }
       },
+      { type: 'separator' },
       {
-        label: 'Open Bot',
+        label: 'Open Bot Configuration...',
         click: () => {
           mainWindow.commandService.remoteCall(Bot.OpenBrowse);
         }
+      }];
+    if (recentBots && recentBots.length) {
+      const recentBotsList = this.createRecentBotsList(recentBots);
+      subMenu.push({
+        label: 'Open Recent...',
+        submenu: [...recentBotsList]
+      });
+    } else {
+      subMenu.push({
+        label: 'Open Recent...',
+        enabled: false
+      });
+    }
+    subMenu.push({ type: 'separator' });
+
+    subMenu.push({
+        label: 'Open Transcript...',
+        click: () => {
+          mainWindow.commandService.remoteCall(Emulator.PromptToOpenTranscript)
+            .catch(err => console.error('Error opening transcript file from menu: ', err));
+        }
       },
+      { type: 'separator' },
       {
-        label: 'Close Bot',
+        label: 'Close Tab',
         click: () => {
           mainWindow.commandService.remoteCall(Bot.Close);
         }
-      }];
-
-    if (recentBots && recentBots.length) {
-      const recentBotsList = this.createRecentBotsList(recentBots);
-      subMenu.push({ type: 'separator' });
-      subMenu.push(...recentBotsList);
-      subMenu.push({ type: 'separator' });
-    }
-
-    subMenu.push({
-      label: 'Open Transcript File...',
-      click: () => {
-        mainWindow.commandService.remoteCall(Emulator.PromptToOpenTranscript)
-          .catch(err => console.error('Error opening transcript file from menu: ', err));
       }
-    });
+    );
     const settingsStore = getSettingsStore();
     const settingsState = settingsStore.getState();
+
+    const { signedInUser } = settingsState.azure;
+    const azureMenuItemLabel = signedInUser ? `Sign out (${signedInUser})` : 'Sign in with Azure';
+    subMenu.push({ type: 'separator' });
+    subMenu.push({
+      label: azureMenuItemLabel,
+      click: async () => {
+        if (signedInUser) {
+          await mainWindow.commandService.call(Azure.SignUserOutOfAzure);
+          await mainWindow.commandService.remoteCall(UI.InvalidateAzureArmToken);
+        } else {
+          await mainWindow.commandService.remoteCall(UI.SignInToAzure);
+        }
+      }
+    });
+
     const { availableThemes, theme } = settingsState.windowState;
     subMenu.push.apply(subMenu, [
       { type: 'separator' },
       {
-        label: 'Theme',
+        label: 'Themes',
         submenu: availableThemes.map(t => (
           {
             label: t.name,
-            type: 'radio',
+            type: 'checkbox',
             checked: theme === t.name,
-            click: settingsStore.dispatch.bind(settingsStore, rememberTheme(t.name))
+            click: async () => {
+              settingsStore.dispatch(rememberTheme(t.name));
+
+              await mainWindow.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
+            }
           }
         ))
       }
     ]);
-
-    const { signedInUser } = settingsState.azure;
-    const azureMenuItemLabel = signedInUser ? `Sign out (${signedInUser})` : 'Sign in to Azure';
-    subMenu.push({ type: 'separator' });
-    subMenu.push({
-      label: azureMenuItemLabel,
-      click: () => {
-        if (signedInUser) {
-          return mainWindow.commandService.call(Azure.SignUserOutOfAzure);
-        } else {
-          return mainWindow.commandService.remoteCall(UI.SignInToAzure);
-        }
-      }
-    });
-
     subMenu.push({ type: 'separator' });
     subMenu.push({ role: 'quit' });
 
@@ -241,22 +251,10 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
         { role: 'copy' },
         { role: 'paste' },
         { role: 'delete' },
-        { role: 'selectall' },
-      ]
+        process.platform === 'win32' ? { type: 'separator' } : null,
+        { role: 'selectall' }
+      ].filter(item => item) as any[]
     };
-  }
-
-  getEditMenuMac(): MenuOpts[] {
-    return [
-      { type: 'separator' },
-      {
-        label: 'Speech',
-        submenu: [
-          { role: 'startspeaking' },
-          { role: 'stopspeaking' }
-        ]
-      }
-    ];
   }
 
   getViewMenu(): MenuOpts {
@@ -396,7 +394,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
       return state.chat.chats[activeDocumentId].conversationId;
     };
 
-    const getServiceUrl = () => getStore().getState().serviceUrl;
+    const getServiceUrl = () => emulator.framework.serverUrl.replace('[::]', 'localhost');
     const createClickHandler = serviceFunction => {
       return () => {
         getConversationId()

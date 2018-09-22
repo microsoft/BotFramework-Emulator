@@ -35,11 +35,11 @@ import store from '../data/store';
 import * as ChatActions from '../data/action/chatActions';
 import * as EditorActions from '../data/action/editorActions';
 import * as Constants from '../constants';
-import { IEndpointService } from 'msbot/bin/schema';
-import { uniqueId, CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { IEndpointService } from 'botframework-config/lib/schema';
+import { CommandRegistryImpl, uniqueId } from '@bfemulator/sdk-shared';
 import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
 import { getTabGroupForDocument } from '../data/editorHelpers';
-import { SharedConstants, newNotification } from '@bfemulator/app-shared';
+import { newNotification, SharedConstants } from '@bfemulator/app-shared';
 import { beginAdd } from '../data/action/notificationActions';
 
 /** Registers emulator (actual conversation emulation logic) commands */
@@ -50,14 +50,15 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // Open a new emulator tabbed document
   commandRegistry.registerCommand(Commands.Emulator.NewLiveChat, (endpoint: IEndpointService) => {
     const documentId = uniqueId();
-
+    const { currentUserId } = store.getState().clientAwareSettings.users;
     store.dispatch(ChatActions.newDocument(
       documentId,
       'livechat',
       {
         botId: 'bot',
         endpointId: endpoint.id,
-        userId: 'default-user'
+        endpointUrl: endpoint.endpoint,
+        userId: currentUserId
       }
     ));
 
@@ -72,6 +73,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // Open the transcript file in a tabbed document
   commandRegistry.registerCommand(Commands.Emulator.OpenTranscript, (filename: string, additionalData?: object) => {
     const tabGroup = getTabGroupForDocument(filename);
+    const { currentUserId } = store.getState().clientAwareSettings.users;
     if (!tabGroup) {
       store.dispatch(ChatActions.newDocument(
         filename,
@@ -79,7 +81,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         {
           ...additionalData,
           botId: 'bot',
-          userId: 'default-user'
+          userId: currentUserId
         }
       ));
     }
@@ -121,6 +123,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // Same as open transcript, except that it closes the transcript first, before reopening it
   commandRegistry.registerCommand(Commands.Emulator.ReloadTranscript, (filename: string, additionalData?: object) => {
     const tabGroup = getTabGroupForDocument(filename);
+    const { currentUserId } = store.getState().clientAwareSettings.users;
     if (tabGroup) {
       store.dispatch(EditorActions.close(getTabGroupForDocument(filename), filename));
       store.dispatch(ChatActions.closeDocument(filename));
@@ -131,7 +134,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
       {
         ...additionalData,
         botId: 'bot',
-        userId: 'default-user'
+        userId: currentUserId
       }
     ));
     store.dispatch(EditorActions.open(

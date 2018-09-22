@@ -287,7 +287,7 @@ gulp.task('redist:mac:binaries', function () {
   const config = getConfig("mac");
   console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
   return builder.build({
-    targets: builder.Platform.MAC.createTarget(["zip"]),
+    targets: builder.Platform.MAC.createTarget(["zip", "dmg"]),
     config,
     prepackaged: './dist/mac'
   }).then((filenames) => {
@@ -306,7 +306,7 @@ gulp.task('redist:mac:binaries', function () {
 
 //----------------------------------------------------------------------------
 gulp.task('redist:mac:metadata-only', function () {
-  const releaseFilename = `${pjson.name}-${pjson.version}-mac.zip`;
+  const releaseFilename = `${pjson.packagename}-${pjson.version}-mac.zip`;
   const releaseHash = hashFileAsync(`./dist/${releaseFilename}`);
   const releaseDate = new Date().toISOString();
 
@@ -636,7 +636,7 @@ function getConfig(platform, target) {
 //----------------------------------------------------------------------------
 function getFileList(platform, target, options = {}) {
   options = extend({}, {
-    basename: pjson.name,
+    basename: pjson.packagename,
     version: pjson.version,
   }, options);
   const path = './dist';
@@ -659,7 +659,7 @@ function getFileList(platform, target, options = {}) {
       filelist.push(`${path}/latest-mac.yml`);
       filelist.push(`${path}/latest-mac.json`);
       filelist.push(`${path}/${options.basename}-${options.version}-mac.zip`);
-      //filelist.push(`${path}/${options.basename}-${options.version}.dmg`);
+      filelist.push(`${path}/${options.basename}-${options.version}.dmg`);
       break;
 
     case "linux-":

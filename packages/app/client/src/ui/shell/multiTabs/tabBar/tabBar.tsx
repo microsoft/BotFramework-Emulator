@@ -95,7 +95,7 @@ class TabBarComponent extends React.Component<TabBarProps, TabBarState> {
     const tabBarClassName = this.state.draggedOver ? styles.draggedOver : '';
     return (
       <div
-        className={ `${styles.tabBar} ${tabBarClassName}` }
+        className={ `${ styles.tabBar } ${ tabBarClassName }` }
         onDragEnter={ this.onDragEnter }
         onDragOver={ this.onDragOver }
         onDragLeave={ this.onDragLeave }
@@ -125,22 +125,27 @@ class TabBarComponent extends React.Component<TabBarProps, TabBarState> {
 
     if (presentationEnabled) {
       widgets.push(
-        <span
+        <button
           key={ 'presentation-widget' }
-          className={ `${styles.widget} ${styles.presentationWidget}` }
           title="Presentation Mode"
-          onClick={ () => this.onPresentationModeClick() }>
-        </span>
+          onClick={ () => this.onPresentationModeClick() }
+        >
+          <div className={ `${ styles.widget } ${ styles.presentationWidget }` }>
+          </div>
+        </button>
+
       );
     }
     if (splitEnabled) {
       widgets.push(
-        <span
+        <button
           key={ 'split-widget' }
-          className={ `${styles.widget} ${styles.splitWidget}` }
           title="Split Editor"
-          onClick={ this.onSplitClick }>
-        </span>
+          onClick={ this.onSplitClick }
+        >
+          <div className={ `${ styles.widget } ${ styles.splitWidget }` }>
+          </div>
+        </button>
       );
     }
     return widgets;

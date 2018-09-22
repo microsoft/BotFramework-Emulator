@@ -15,12 +15,12 @@ const getArmTokenFromState = (state: RootState) => state.azureAuth;
 
 export function* getArmToken(action: AzureAuthAction<AzureAuthWorkflow>): IterableIterator<any> {
   let azureAuth: AzureAuthState = yield select(getArmTokenFromState);
-  if (azureAuth.access_token && !azureAuth.access_token.startsWith('invalid')) {
+  if (azureAuth.access_token) {
     return azureAuth;
   }
-  const confirmLoginWithAzure = yield DialogService.showDialog(action.payload.promptDialog);
-  if (!confirmLoginWithAzure) {
-    return;
+  const result = yield DialogService.showDialog(action.payload.promptDialog, action.payload.promptDialogProps);
+  if (result !== 1) { // Result must be 1 which is a confirmation to sign in to Azure
+    return result;
   }
   const { RetrieveArmToken, PersistAzureLoginChanged } = SharedConstants.Commands.Azure;
   azureAuth = yield call(CommandServiceImpl.remoteCall.bind(CommandServiceImpl), RetrieveArmToken);

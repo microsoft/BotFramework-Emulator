@@ -32,7 +32,7 @@
 //
 
 import * as Electron from 'electron';
-import { app, Menu } from 'electron';
+import { app, Menu, systemPreferences } from 'electron';
 
 import { dispatch, getSettings, getStore as getSettingsStore } from './settingsData/store';
 import * as url from 'url';
@@ -50,13 +50,13 @@ import { AppUpdater } from './appUpdater';
 import { UpdateInfo } from 'electron-updater';
 import { ProgressInfo } from 'builder-util-runtime';
 import { getStore } from './botData/store';
-import { PersistentSettings, Settings, SharedConstants, newNotification, Notification } from '@bfemulator/app-shared';
-import { BotProjectFileWatcher } from './botProjectFileWatcher';
-import { rememberBounds } from './settingsData/actions/windowStateActions';
+import { newNotification, Notification, PersistentSettings, Settings, SharedConstants } from '@bfemulator/app-shared';
+import { rememberBounds, rememberTheme } from './settingsData/actions/windowStateActions';
 import { Store } from 'redux';
 import { azureLoggedInUserChanged } from './settingsData/actions/azureAuthActions';
 import { ngrokEmitter } from './ngrok';
 import { sendNotificationToClient } from './utils/sendNotificationToClient';
+import Users from '@bfemulator/emulator-core/lib/facility/users';
 
 export let mainWindow: Window;
 export let windowManager: WindowManager;
@@ -285,10 +285,14 @@ const createMainWindow = async () => {
       }, 1000);*/
     }
   });
+  const emulatorInstance = await Emulator.startup();
+  const { users: userSettings } = getSettingsStore().getState();
 
-  const serverUrl = await Emulator.startup();
-  store.dispatch({ type: 'updateServiceUrl', payload: serverUrl.replace('[::]', 'localHost') });
+  const users = new Users();
+  users.currentUserId = userSettings.currentUserId;
+  users.users = userSettings.usersById;
 
+  emulatorInstance.framework.server.botEmulator.facilities.users = users;
   loadMainPage();
 
   mainWindow.browserWindow.setTitle(app.getName());
@@ -299,9 +303,6 @@ const createMainWindow = async () => {
 
   const template: Electron.MenuItemConstructorOptions[] = AppMenuBuilder.getAppMenuTemplate();
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
-
-  // initialize bot project watcher
-  BotProjectFileWatcher.getInstance().initialize(mainWindow.commandService);
 
   const rememberCurrentBounds = () => {
     const currentBounds = mainWindow.browserWindow.getBounds();
@@ -350,13 +351,10 @@ const createMainWindow = async () => {
   mainWindow.browserWindow.once('ready-to-show', async () => {
     const { zoomLevel, theme, availableThemes } = getSettings().windowState;
     const themeInfo = availableThemes.find(availableTheme => availableTheme.name === theme);
+    const isHighContrast = systemPreferences.isInvertedColorScheme();
+    const settingsStore: Store<Settings> = getSettingsStore();
     if (themeInfo) {
-      mainWindow.browserWindow.webContents.executeJavaScript(`
-      const themeTag = document.getElementById('themeVars');
-      if (themeTag) {
-        themeTag.href = "${themeInfo.href}";
-      }
-    `);
+      settingsStore.dispatch(rememberTheme(isHighContrast ? 'high-contrast' : themeInfo.name));
     }
     mainWindow.webContents.setZoomLevel(zoomLevel);
     mainWindow.browserWindow.show();
@@ -364,7 +362,6 @@ const createMainWindow = async () => {
       AppUpdater.checkForUpdates(false, true);
     }
     // Renew arm token
-    const settingsStore: Store<Settings> = getSettingsStore();
     const { persistLogin, signedInUser } = settingsStore.getState().azure;
     if (persistLogin && signedInUser) {
       const result = await CommandRegistry.getCommand(SharedConstants.Commands.Azure.RetrieveArmToken).handler(true);
@@ -375,6 +372,16 @@ const createMainWindow = async () => {
         await mainWindow.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
       }
     }
+  });
+
+  mainWindow.browserWindow.on('close', async function (event: Event) {
+    const { azure } = getSettings();
+    if (azure.signedInUser && !azure.persistLogin) {
+      event.preventDefault();
+      await mainWindow.commandService.call(SharedConstants.Commands.Azure.SignUserOutOfAzure, false);
+    }
+    saveSettings<PersistentSettings>('server.json', getSettings());
+    Electron.app.quit();
   });
 };
 
@@ -411,18 +418,6 @@ Electron.app.on('ready', function () {
       createMainWindow();
     }
   }
-});
-
-Electron.app.on('window-all-closed', async function (event: Event) {
-  // if (process.platform !== 'darwin') {
-  const { azure } = getSettings();
-  if (azure.signedInUser && !azure.persistLogin) {
-    event.preventDefault();
-    await mainWindow.commandService.call(SharedConstants.Commands.Azure.SignUserOutOfAzure, false);
-  }
-  saveSettings<PersistentSettings>('server.json', getSettings());
-  Electron.app.quit();
-  // }
 });
 
 Electron.app.on('activate', async function () {

@@ -37,7 +37,7 @@ import * as BotActions from './botData/actions/botActions';
 import { ensureStoragePath } from './utils/ensureStoragePath';
 import { writeFile } from './utils/writeFile';
 import { getFilesInDir } from './utils/getFilesInDir';
-import { BotConfig } from 'msbot';
+import { BotConfiguration } from 'botframework-config';
 import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
 import { getStore } from './botData/store';
 import { mainWindow } from './main';
@@ -49,17 +49,24 @@ export class Migrator {
   /** Runs the V4 side of migration if necessary */
   public static async startup(): Promise<void> {
     if (!this.migrationHasBeenPerformed) {
-      await this.migrateBots();
-      this.leaveMigrationMarker();
+      const migrationResult = await this.migrateBots();
+      if (migrationResult) {
+        this.leaveMigrationMarker();
+      }
     }
   }
 
   /** Adds the bot files in the /migration/ dir
    *  to the MRU bots list and displays an overview page
    */
-  private static async migrateBots(): Promise<void> {
-    // read bots from directory
-    const botFiles = (getFilesInDir(Path.join(ensureStoragePath(), 'migration')) || []) as string[];
+  public static async migrateBots(): Promise<boolean> {
+    const botFilesDirectory = Path.join(ensureStoragePath(), 'migration');
+    // if the /migration/ directory does not exist then abort migration
+    if (!Fs.existsSync(botFilesDirectory)) {
+      return false;
+    }
+    // read bots to be migrated from directory
+    const botFiles = (getFilesInDir(botFilesDirectory) || []) as string[];
     if (botFiles.length) {
       const recentBotsList: BotInfo[] = [];
       for (let i = 0; i < botFiles.length; i++) {
@@ -67,7 +74,7 @@ export class Migrator {
         // read the bot file and create a bot info item from it
         try {
           const path = Path.join(ensureStoragePath(), 'migration', botFile);
-          const bot = await BotConfig.Load(path);
+          const bot = await BotConfiguration.load(path);
           const botInfo: BotInfo = {
             path,
             displayName: bot.name,
@@ -88,7 +95,9 @@ export class Migrator {
       // show post-migration page
       const { ShowPostMigrationDialog } = SharedConstants.Commands.UI;
       await mainWindow.commandService.remoteCall(ShowPostMigrationDialog).catch();
+      return true;
     }
+    return false;
   }
 
   /** Writes a file to app data that prevents migration from being performed again */

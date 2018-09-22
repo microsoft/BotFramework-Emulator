@@ -10,12 +10,10 @@ import 'base64url';
 import 'botframework-webchat/built/SpeechModule';
 import 'botframework-webchat/built/Chat';
 
-import 'msbot/bin/schema';
-import 'msbot/bin/models';
+import 'botframework-config/lib/schema';
+import 'botframework-config/lib/models';
 import 'rxjs';
 import '@uifabric/merge-styles';
-import '@fuselab/ui-fabric';
-import '@fuselab/ui-shared';
 import 'botframework-webchat';
 import 'office-ui-fabric-react';
 import 'base64url';

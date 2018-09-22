@@ -31,18 +31,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // Cheating here and pulling in a module from node. Can be easily replaced if we ever move the emulator to the web.
-const crypto = (window as any).require('crypto');
 import { logEntry, textItem } from '@bfemulator/emulator-core/lib/types/log/util';
 import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
-import { ExtensionInspector } from '@bfemulator/sdk-shared';
-import { IBotConfig } from 'msbot/bin/schema';
+import { ExtensionInspector, InspectorAccessory, InspectorAccessoryState } from '@bfemulator/sdk-shared';
+import { IBotConfiguration } from 'botframework-config/lib/schema';
 import * as React from 'react';
-import { DragEvent } from 'react';
-import { getActiveBot } from '../../../../../data/botHelpers';
-import { Extension, InspectorAPI } from '../../../../../extensions';
+import { ExtensionManager, GetInspectorResult, InspectorAPI } from '../../../../../extensions';
 import { LogService } from '../../../../../platform/log/logService';
-import { SettingsService } from '../../../../../platform/settings/settingsService';
 import * as styles from './inspector.scss';
+import Panel, { PanelContent, PanelControls } from '../../../panel/panel';
+import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib-commonjs/Spinner';
+
+interface GetInspectorResultInternal {
+  response: GetInspectorResult;
+  inspectObj: any;
+}
+
+interface AccessoryButton {
+  config: InspectorAccessory;
+  state: string;
+  enabled: boolean;
+}
 
 interface IpcMessageEvent extends Event {
   channel: string;
@@ -50,166 +59,327 @@ interface IpcMessageEvent extends Event {
 }
 
 interface InspectorProps {
-  bot: IBotConfig;
-  extension: Extension;
-  inspector: ExtensionInspector;
   document: any;
-  inspectObj: any;
-  enableAccessory: (id: string, enable: boolean) => void;
-  setAccessoryState: (id: string, state: string) => void;
-  setInspectorTitle: (title: string) => void;
+  cwdAsBase: string;
+  themeInfo: { themeName: string, themeComponents: string[] };
+  activeBot?: IBotConfiguration;
+  botHash?: string;
 }
 
 interface InspectorState {
-  botHash: string;
   titleOverride?: string;
+  activeBot?: IBotConfiguration;
+  botHash?: string;
+  inspectorSrc?: string;
+  inspectObj: { [propName: string]: any };
+  themeInfo: { themeName: string, themeComponents: string[] };
+  inspector: ExtensionInspector;
+  buttons: AccessoryButton[];
+  title: string;
 }
+
+declare type ElectronHTMLWebViewElement = HTMLWebViewElement & { send: (...args: any[]) => void };
 
 export class Inspector extends React.Component<InspectorProps, InspectorState> {
 
-  ref: any; // HTMLWebViewElement;
+  public get state(): InspectorState {
+    return this._state;
+  }
 
-  constructor(props: InspectorProps, context: InspectorState) {
-    super(props, context);
-    this.state = {
-      botHash: this.hash(getActiveBot())
+  public set state(value: InspectorState) {
+    const oldState = this.state;
+    this._state = value;
+    this.stateChanged(value, oldState);
+  }
+
+  private _state = {} as InspectorState;
+  private containerRef: HTMLDivElement;
+  private webViewByLocation: { [location: string]: ElectronHTMLWebViewElement } = {};
+
+  public static getDerivedStateFromProps(newProps: InspectorProps, prevState: InspectorState): InspectorState {
+    const { document = {} } = newProps;
+    const inspectorResult = Inspector.getInspector(document.inspectorObjects);
+    const { inspector = { name: '' } } = inspectorResult.response;
+
+    if (newProps.botHash !== prevState.botHash ||
+      inspector.src !== prevState.inspectorSrc ||
+      newProps.themeInfo.themeName !== prevState.themeInfo.themeName ||
+      JSON.stringify(inspectorResult.inspectObj) !== JSON.stringify(prevState.inspectObj)) {
+      return {
+        ...prevState,
+        activeBot: newProps.activeBot,
+        botHash: newProps.botHash,
+        inspector,
+        inspectorSrc: inspector.src,
+        inspectObj: inspectorResult.inspectObj,
+        themeInfo: newProps.themeInfo,
+        title: inspector.name,
+        buttons: Inspector.getButtons(inspector.accessories)
+      };
+    }
+    return null;
+  }
+
+  private static getInspector(inspectorObjects: any[] = []): GetInspectorResultInternal {
+    const obj = inspectorObjects[0];
+
+    return {
+      inspectObj: obj,
+      // Find an inspector for this object.
+      response: obj ? ExtensionManager.inspectorForObject(obj, true) || {} : {} as any
     };
   }
 
-  componentDidMount() {
-    window.addEventListener('toggle-inspector-devtools', () => this.toggleDevTools());
+  private static getButtons(accessories: InspectorAccessory[] = []): AccessoryButton[] {
+    return accessories.map(config => {
+      // Accessory must have a "default" state to be added
+      if (config && config.states.default) {
+        return {
+          config,
+          state: 'default',
+          enabled: true
+        };
+      } else {
+        return null;
+      }
+    }).filter(accessoryState => !!accessoryState);
   }
 
-  componentWillUnmount() {
-    window.removeEventListener('toggle-inspector-devtools', () => this.toggleDevTools());
+  public componentDidMount() {
+    window.addEventListener('toggle-inspector-devtools', this.toggleDevTools);
+    this.updateInspector(this.state);
   }
 
-  hash(obj: object): string {
-    const md5 = crypto.createHash('md5');
-    md5.update(JSON.stringify(obj));
-    return md5.digest('base64');
+  public componentWillUnmount() {
+    window.removeEventListener('toggle-inspector-devtools', this.toggleDevTools);
   }
 
-  toggleDevTools() {
-    this.sendToInspector('toggle-dev-tools');
+  public render() {
+    if (this.state.inspector) {
+      return (
+        <div className={ styles.detailPanel }>
+          <Panel title={ ['inspector', this.state.title].filter(s => s && s.length).join(' - ') }>
+            { this.renderAccessoryButtons(this.state.inspector) }
+            <PanelContent>
+              <div className={ styles.inspectorContainer } tabIndex={ 0 }>
+                <div ref={ this.webViewContainer } className={ styles.webViewContainer }>&nbsp;</div>
+              </div>
+            </PanelContent>
+          </Panel>
+        </div>
+      );
+    } else {
+      return (
+        // No inspector was found.
+        <div className={ styles.detailPanel }>
+          <Panel title={ `inspector` }>
+          </Panel>
+        </div>
+      );
+    }
   }
 
-  accessoryClick(id: string) {
+  private renderAccessoryIcon(config: InspectorAccessoryState) {
+    if (config.icon === 'Spinner') {
+      return (
+        <Spinner className={ styles.accessoryButtonIcon } size={ SpinnerSize.xSmall }/>
+      );
+    } else if (config.icon) {
+      return (
+        <i className={ `${styles.accessoryButtonIcon} ms-Icon ms-Icon--${config.icon}` } aria-hidden="true"></i>
+      );
+    } else {
+      return false;
+    }
+  }
+
+  private renderAccessoryButton(button: AccessoryButton, handler: (id: string) => void) {
+    const { config, state, enabled } = button;
+    const currentState = config.states[state] || {};
+    return (
+      <button
+        className={ styles.accessoryButton }
+        key={ config.id }
+        disabled={ !enabled }
+        onClick={ () => handler(config.id) }>
+        { this.renderAccessoryIcon(currentState) }
+        { currentState.label }
+      </button>
+    );
+  }
+
+  private renderAccessoryButtons(_inspector: ExtensionInspector) {
+    return (
+      <PanelControls>
+        { this.state.buttons.map(accessoryButton => this.renderAccessoryButton(accessoryButton, this.accessoryClick)) }
+      </PanelControls>
+    );
+  }
+
+  private stateChanged(newState: InspectorState, oldState: InspectorState): void {
+    if (oldState.botHash !== newState.botHash) {
+      this.botUpdated(newState.activeBot);
+    }
+    if (oldState.inspectorSrc !== newState.inspectorSrc) {
+      this.updateInspector(this.state);
+    }
+    if (JSON.stringify(oldState.inspectObj) !== JSON.stringify(newState.inspectObj)) {
+      this.inspect(newState.inspectObj);
+    }
+    if ((oldState.themeInfo || { themeName: '' }).themeName !== newState.themeInfo.themeName) {
+      this.sendToInspector('theme', newState.themeInfo);
+    }
+  }
+
+  private updateInspector(state: InspectorState): void {
+    const { src } = (state.inspector || { src: '' });
+    if (!src) {
+      return;
+    }
+    const { webViewByLocation: webViews, containerRef } = this;
+    const nextInspector = webViews[src] || (webViews[src] = this.createWebView(state));
+    nextInspector.style.display = '';
+    this.sendInitializationStackToInspector();
+
+    if (!containerRef) {
+      return;
+    }
+    if (!this.containerRef.contains(nextInspector)) {
+      this.containerRef.appendChild(nextInspector);
+    }
+    Array.prototype.forEach.call(containerRef.children, child => {
+      if (child !== nextInspector) {
+        child.style.display = 'none';
+      }
+    });
+  }
+
+  private createWebView(state: InspectorState): ElectronHTMLWebViewElement {
+    const { cwdAsBase } = this.props;
+    const preload = `file://${cwdAsBase}/../../../node_modules/@bfemulator/client/public/inspector-preload.js`;
+
+    const webView: ElectronHTMLWebViewElement = document.createElement('webview');
+    webView.className = styles.webViewContainer;
+    webView.setAttribute('partition', `persist:${state.botHash}`);
+    webView.setAttribute('preload', preload);
+    webView.setAttribute('src', state.inspector.src);
+    webView.addEventListener('dragenter', this.onInspectorDrag, true);
+    webView.addEventListener('dragover', this.onInspectorDrag, true);
+    webView.addEventListener('dom-ready', this.onWebViewDOMReady);
+    webView.addEventListener('ipc-message', this.ipcMessageEventHandler);
+
+    return webView;
+  }
+
+  private webViewContainer = (ref: HTMLDivElement): void => {
+    this.containerRef = ref;
+  }
+
+  private enableAccessory = (id: string, enable: boolean) => {
+    const button = this.state.buttons.find(buttonArg => buttonArg.config.id === id);
+    if (button) {
+      if (button.enabled !== enable) {
+        button.enabled = enable;
+        this.setState(this.state);
+      }
+    }
+  }
+
+  private setAccessoryState = (id: string, state: string) => {
+    const button = this.state.buttons.find(buttonArg => buttonArg.config.id === id);
+    if (button && button.state !== state) {
+      const { config } = button;
+      if (config.states[state]) {
+        button.state = state;
+        this.setState(this.state);
+      }
+    }
+  }
+
+  private setInspectorTitle = (title: string) => {
+    if (this.state.title !== title) {
+      this.setState({ title });
+    }
+  }
+
+  private accessoryClick = (id: string): void => {
     this.sendToInspector('accessory-click', id);
   }
 
-  canInspect(inspectObj: any): boolean {
-    return this.props.inspector.name === 'JSON' || InspectorAPI.canInspect(this.props.inspector, inspectObj);
+  private toggleDevTools = (): void => {
+    this.sendToInspector('toggle-dev-tools');
   }
 
-  domReadyEventHandler = () => {
-    this.botUpdated(getActiveBot());
-    this.inspect(this.props.inspectObj);
+  private canInspect(inspectObj: any): boolean {
+    return this.state.inspector.name === 'JSON' || InspectorAPI.canInspect(this.state.inspector, inspectObj);
   }
 
-  ipcMessageEventHandler = (ev: IpcMessageEvent): void => {
+  private onWebViewDOMReady = (event: Event) => {
+    event.currentTarget.removeEventListener('domready', this.onWebViewDOMReady);
+    this.sendInitializationStackToInspector();
+  }
 
+  private ipcMessageEventHandler = (event: IpcMessageEvent): void => {
     // TODO - localization
-    if (ev.channel === 'enable-accessory') {
-      this.props.enableAccessory(ev.args[0], ev.args[1]);
-    } else if (ev.channel === 'set-accessory-state') {
-      this.props.setAccessoryState(ev.args[0], ev.args[1]);
-    } else if (ev.channel === 'set-inspector-title') {
-      this.setState({
-        ...this.state,
-        titleOverride: ev.args[0]
-      });
-      this.props.setInspectorTitle(ev.args[0]);
-    } else if (ev.channel === 'logger.log') {
-      const inspectorName = this.state.titleOverride || this.props.inspector.name || 'inspector';
-      LogService.logToDocument(this.props.document.documentId,
-        logEntry(textItem(LogLevel.Info, `[${inspectorName}] ${ev.args[0]}`)));
-    } else if (ev.channel === 'logger.error') {
-      const inspectorName = this.state.titleOverride || this.props.inspector.name || 'inspector';
-      LogService.logToDocument(this.props.document.documentId,
-        logEntry(textItem(LogLevel.Error, `[${inspectorName}] ${ev.args[0]}`)));
-    } else {
-      console.warn('Unexpected message from inspector', ev.channel, ...ev.args);
+    const { channel } = event;
+    switch (channel) {
+      case 'enable-accessory':
+        this.enableAccessory(event.args[0], event.args[1]);
+        break;
+
+      case 'set-accessory-state':
+        this.setAccessoryState(event.args[0], event.args[1]);
+        break;
+
+      case 'set-inspector-title':
+        this.setState({ titleOverride: event.args[0] });
+        this.setInspectorTitle(event.args[0]);
+        break;
+
+      case 'logger.log':
+      case 'logger.error':
+        const logLevel = channel === 'logger.log' ? LogLevel.Info : LogLevel.Error;
+        const { documentId } = this.props.document;
+        const inspectorName = this._state.titleOverride || this.state.inspector.name || 'inspector';
+        const text = `[${inspectorName}] ${event.args[0]}`;
+        LogService.logToDocument(documentId, logEntry(textItem(logLevel, text)));
+        break;
+
+      default:
+        console.warn('Unexpected message from inspector', event.channel, ...event.args);
     }
   }
 
-  updateRef = (ref) => {
-    if (this.ref) {
-      this.ref.removeEventListener('dom-ready', () => this.domReadyEventHandler());
-      this.ref.removeEventListener('ipc-message', ev => this.ipcMessageEventHandler(ev));
-    }
-    this.ref = ref;
-    if (this.ref) {
-      this.ref.addEventListener('dom-ready', () => this.domReadyEventHandler());
-      this.ref.addEventListener('ipc-message', ev => this.ipcMessageEventHandler(ev));
-    }
+  private sendInitializationStackToInspector(): void {
+    this.botUpdated(this.state.activeBot);
+    this.inspect(this.state.inspectObj);
+    this.sendToInspector('theme', this.state.themeInfo);
   }
 
-  inspect(obj: any) {
+  private inspect(obj: any) {
     if (this.canInspect(obj)) {
       this.sendToInspector('inspect', obj);
     }
   }
 
-  botUpdated(bot: IBotConfig) {
+  private botUpdated(bot: IBotConfiguration) {
     this.sendToInspector('bot-updated', bot);
   }
 
-  sendToInspector(channel: any, ...args: any[]) {
-    if (this.ref) {
-      try {
-        this.ref.send(channel, ...args);
-      } catch (e) {
-        console.error(e);
-      }
+  private sendToInspector(channel: any, ...args: any[]) {
+    const inspector = this.webViewByLocation[this.state.inspectorSrc];
+    if (!inspector) {
+      return;
+    }
+    try {
+      inspector.send(channel, ...args);
+    } catch (e) {
+      console.error(e);
     }
   }
 
-  handleDrag = (event: DragEvent<HTMLWebViewElement>): void => {
+  private onInspectorDrag = (event: DragEvent): void => {
     // prevent drag & drops inside of the inspector panel
     event.stopPropagation();
-  }
-
-  shouldComponentUpdate(nextProps: InspectorProps): boolean {
-    return this.props.inspectObj !== nextProps.inspectObj;
-  }
-
-  componentDidUpdate(prevProps: InspectorProps): void {
-    const botHash = this.hash(getActiveBot());
-    if (botHash !== this.state.botHash) {
-      this.setState({
-        botHash
-      });
-      this.botUpdated(getActiveBot());
-    }
-    if (prevProps.inspectObj && this.props.inspectObj) {
-      if (JSON.stringify(prevProps.inspectObj) !== JSON.stringify(this.props.inspectObj)) {
-        this.inspect(this.props.inspectObj);
-      }
-    } else {
-      this.inspect(this.props.inspectObj);
-    }
-  }
-
-  render() {
-    const { updateRef, handleDrag } = this;
-    const md5 = crypto.createHash('md5');
-    md5.update(this.props.inspector.src);
-    const hash = md5.digest('base64');
-    const { cwdAsBase } = SettingsService.emulator;
-    const fileLocation = `file://${cwdAsBase}/../../../node_modules/@bfemulator/client/public/inspector-preload.js`;
-
-    return (
-      <webview className={ styles.inspector }
-        webpreferences="webSecurity=no"
-        key={ hash }
-        partition={ `persist:${hash}` }
-        preload={ fileLocation }
-        ref={ ref => updateRef(ref) }
-        src={ this.props.inspector.src }
-        onDragEnterCapture={ handleDrag }
-        onDragOverCapture={ handleDrag }
-      />
-    );
   }
 }

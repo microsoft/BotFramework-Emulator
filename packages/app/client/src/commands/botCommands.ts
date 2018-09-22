@@ -37,10 +37,10 @@ import { pathExistsInRecentBots } from '../data/botHelpers';
 import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
 import store from '../data/store';
 import * as BotActions from '../data/action/botActions';
-import * as EditorActions from '../data/action/editorActions';
 import * as FileActions from '../data/action/fileActions';
-import * as Constants from '../constants';
 import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
+import { chatFilesUpdated, transcriptsUpdated } from '../data/action/resourcesAction';
+import { IFileService } from 'botframework-config/lib/schema';
 
 /** Registers bot commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
@@ -73,21 +73,25 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // Syncs the client side list of bots with bots arg (usually called from server side)
   commandRegistry.registerCommand(Commands.Bot.SyncBotList, async (bots: BotInfo[]): Promise<void> => {
     store.dispatch(BotActions.load(bots));
-    CommandServiceImpl.remoteCall(Commands.Electron.UpdateFileMenu);
+    await CommandServiceImpl.remoteCall(Commands.Electron.UpdateFileMenu);
   });
 
   // ---------------------------------------------------------------------------
   // Sets a bot as active (called from server-side)
-  commandRegistry.registerCommand(Commands.Bot.SetActive, (bot: BotConfigWithPath, botDirectory: string) => {
+  commandRegistry.registerCommand(Commands.Bot.SetActive, async (bot: BotConfigWithPath, botDirectory: string) => {
     store.dispatch(BotActions.setActive(bot));
     store.dispatch(FileActions.setRoot(botDirectory));
-    CommandServiceImpl.remoteCall(Commands.Electron.UpdateFileMenu);
-    CommandServiceImpl.remoteCall(Commands.Electron.SetTitleBar, getBotDisplayName(bot));
+    await Promise.all([
+      CommandServiceImpl.remoteCall(Commands.Electron.UpdateFileMenu),
+      CommandServiceImpl.remoteCall(Commands.Electron.SetTitleBar, getBotDisplayName(bot))
+    ]);
   });
 
-  // ---------------------------------------------------------------------------
-  // Opens up bot settings page for a bot
-  commandRegistry.registerCommand(Commands.Bot.OpenSettings, (_bot: BotConfigWithPath): void => {
-    store.dispatch(EditorActions.open(Constants.CONTENT_TYPE_BOT_SETTINGS, Constants.DOCUMENT_ID_BOT_SETTINGS, false));
+  commandRegistry.registerCommand(Commands.Bot.TranscriptFilesUpdated, (transcripts: IFileService[]) => {
+    store.dispatch(transcriptsUpdated(transcripts));
+  });
+
+  commandRegistry.registerCommand(Commands.Bot.ChatFilesUpdated, (chatFiles: IFileService[]) => {
+    store.dispatch(chatFilesUpdated(chatFiles));
   });
 }

@@ -1,7 +1,8 @@
 .controlBar {
+  color: var(--log-panel-item-debug);
   padding: 6px 3px;
   & a {
-    color: white;
+    color: var(--log-panel-link);
     text-decoration: none;
   }
 }

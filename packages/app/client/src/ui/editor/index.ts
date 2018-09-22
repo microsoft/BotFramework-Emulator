@@ -32,7 +32,6 @@
 //
 
 export * from './appSettingsEditor/appSettingsEditor';
-export * from './botSettingsEditor/botSettingsEditor';
 export * from './editor';
 export * from './panel/panel';
 export * from './toolbar/toolbar';

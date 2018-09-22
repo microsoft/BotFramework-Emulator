@@ -1,13 +1,14 @@
 {
   "name": "@bfemulator/main",
-  "version": "4.0.15-alpha",
+  "packagename": "Botframework-Emulator",
+  "version": "4.0.0-preview-2",
   "private": true,
   "description": "Development tool for the Microsoft Bot Framework. Allows developers to test and debug bots on localhost.",
   "main": "./app/server/main.js",
   "homepage": "https://github.com/Microsoft/BotFramework-Emulator",
   "scripts": {
     "build": "run-s lint build:electron",
-    "build:electron": "tsc -p . --outdir app/server",
+    "build:electron": "tsc -p . --outdir app/server && gulp copy-extension-stubs",
     "lint": "tslint --project tsconfig.json",
     "start": "concurrently --kill-others --names \"electron,react-app\" --success first \"npm run start:electron:dev\" \"npm run start:react-app\"",
     "start:electron": "./node_modules/.bin/electron --inspect=7777 .",
@@ -31,6 +32,7 @@
     "url": "https://github.com/Microsoft/BotFramework-Emulator"
   },
   "jest": {
+    "setupTestFrameworkScriptFile": "../../../testSetup.js",
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
@@ -48,7 +50,9 @@
   "license": "MIT",
   "devDependencies": {
     "@types/async": "^2.0.47",
+    "@types/chokidar": "^1.7.5",
     "@types/formidable": "^1.0.30",
+    "@types/fs-extra": "^5.0.4",
     "@types/jest": "^22.2.3",
     "@types/jsonpath": "^0.2.0",
     "@types/jsonwebtoken": "^7.2.8",
@@ -102,7 +106,7 @@
     "@bfemulator/sdk-shared": "^1.0.0",
     "async": "^2.6.0",
     "base64url": "^2.0.0",
-    "chatdown": "^1.0.2",
+    "chatdown": "^1.0.10",
     "chokidar": "^2.0.2",
     "command-line-args": "^5.0.2",
     "node-fetch": "2.2.0",
@@ -116,7 +120,7 @@
     "lock": "^0.1.2",
     "mkdirp": "^0.5.1",
     "moment": "^2.22.1",
-    "msbot": "^1.0.44",
+    "botframework-config": "4.0.0-preview1.3.4",
     "node-uuid": "^1.4.8",
     "query-string": "^6.0.0",
     "read-text-file": "^1.1.0",

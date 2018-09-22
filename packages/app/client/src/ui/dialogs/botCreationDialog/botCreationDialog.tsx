@@ -41,9 +41,10 @@ import {
   PrimaryButton,
   Row,
   TextField,
+  RowAlignment,
 } from '@bfemulator/ui-react';
-import { EndpointService } from 'msbot/bin/models';
-import { IEndpointService, ServiceType } from 'msbot/bin/schema';
+import { EndpointService } from 'botframework-config/lib/models';
+import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import * as styles from './botCreationDialog.scss';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
@@ -52,14 +53,14 @@ import { DialogService } from '../service';
 import { SharedConstants, newNotification } from '@bfemulator/app-shared';
 import store from '../../../data/store';
 import { beginAdd } from '../../../data/action/notificationActions';
+import { generateBotSecret } from '../../../utils';
 
 export interface BotCreationDialogState {
   bot: BotConfigWithPath;
   endpoint: IEndpointService;
   secret: string;
-  secretEnabled: boolean;
-  secretsMatch: boolean;
-  secretConfirmation: string;
+  encryptKey: boolean;
+  revealSecret: boolean;
 }
 
 export class BotCreationDialog extends React.Component<{}, BotCreationDialogState> {
@@ -70,12 +71,12 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
       bot: BotConfigWithPathImpl.fromJSON({
         name: '',
         description: '',
-        secretKey: '',
+        padlock: '',
         services: [],
         path: ''
       }),
       endpoint: new EndpointService({
-        type: ServiceType.Endpoint,
+        type: ServiceTypes.Endpoint,
         name: '',
         id: uniqueId(),
         appId: '',
@@ -83,15 +84,14 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
         endpoint: ''
       }),
       secret: '',
-      secretEnabled: false,
-      secretsMatch: false,
-      secretConfirmation: ''
+      encryptKey: false,
+      revealSecret: true
     };
   }
 
   render(): JSX.Element {
-    const { secret, secretConfirmation, secretEnabled, secretsMatch, bot, endpoint } = this.state;
-    const secretCriteria = secretEnabled ? secret && secretsMatch : true;
+    const { secret, bot, endpoint, encryptKey, revealSecret } = this.state;
+    const secretCriteria = encryptKey ? secret : true;
 
     const requiredFieldsCompleted = bot
       && endpoint.endpoint
@@ -111,53 +111,80 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
             value={ this.state.bot.name }
             onChanged={ this.onChangeName }
             label={ 'Bot name' }
-            required={ true }/>
+            required={ true } />
           <TextField
             inputClassName="bot-creation-input"
-            value={ this.state.endpoint.endpoint }
             onChanged={ this.onChangeEndpoint }
             placeholder={ endpointPlaceholder } label={ 'Endpoint URL' }
-            required={ true }/>
+            required={ true }
+            value={ this.state.endpoint.endpoint } />
           { endpointWarning && <span className={ styles.endpointWarning }>{ endpointWarning }</span> }
           <Row className={ styles.multiInputRow }>
             <TextField
-              className={ styles.smallInput } inputClassName="bot-creation-input" value={ endpoint.appId }
-              onChanged={ this.onChangeAppId } label={ 'MSA app ID' } placeholder={ 'Optional' }/>
+              className={ styles.smallInput }
+              inputClassName="bot-creation-input"
+              label="Microsoft App ID"
+              onChanged={ this.onChangeAppId }
+              placeholder="Optional"
+              value={ endpoint.appId } />
             <TextField
               className={ styles.smallInput }
               inputClassName="bot-creation-input"
-              value={ endpoint.appPassword }
+              label="Microsoft App password"
               onChanged={ this.onChangeAppPw }
-              label={ 'MSA app password' } placeholder={ 'Optional' } type={ 'password' }/>
+              placeholder="Optional"
+              type="password"
+              value={ endpoint.appPassword } />
           </Row>
+
+        <Row align={ RowAlignment.Bottom }>
           <Checkbox
-            className={ 'secret-checkbox' }
-            checked={ secretEnabled }
-            onChange={ this.onToggleSecret }
-            label={ 'Encrypt your keys' } id={ 'bot-secret-checkbox' }/>
-          {
-            secretEnabled &&
-            <Row className={ `${styles.multiInputRow} secret-row` }>
-              <TextField
-                className={ styles.secretInput }
-                inputClassName="bot-creation-input"
-                value={ secret }
-                onChanged={ this.onChangeSecret }
-                required={ secretEnabled }
-                label={ 'Create a secret' }
-                type={ 'password' }
-              />
-              <TextField
-                className={ `${styles.secretInput} secret-confirmation` }
-                inputClassName="bot-creation-input"
-                value={ secretConfirmation }
-                onChanged={ this.onChangeSecretConfirmation }
-                required={ secretEnabled }
-                label={ 'Confirm your secret' } type={ 'password' }
-                errorMessage={ secret && !secretsMatch ? 'Secrets do not match' : null }
-              />
-            </Row>
-          }
+            className={ styles.encryptKeyCheckBox }
+            label="Encrypt keys stored in your bot configuration."
+            checked={ encryptKey }
+            onChange={ this.onEncryptKeyChange } />
+          <a
+            href="javascript:void(0);"
+            onClick={ this.onLearnMoreEncryptionClick }>
+            Learn more.
+          </a>
+        </Row>
+
+          <TextField
+            className={ styles.key }
+            label="Secret "
+            value={ secret }
+            placeholder="Your keys are not encrypted"
+            disabled={ true }
+            id="key-input"
+            type={ revealSecret ? 'text' : 'password' } />
+          <ul className={ styles.actionsList }>
+            <li>
+              <a
+                className={ !encryptKey ? styles.disabledAction : '' }
+                href="javascript:void(0);"
+                onClick={ this.onRevealSecretClick }>
+                { revealSecret ? 'Hide' : 'Show' }
+              </a>
+            </li>
+            <li>
+              <a
+                className={ !encryptKey ? styles.disabledAction : '' }
+                href="javascript:void(0);"
+                onClick={ this.onCopyClick }>
+                Copy
+              </a>
+            </li>
+            <li>
+              <a
+                className={ !encryptKey ? styles.disabledAction : '' }
+                href="javascript:void(0);"
+                onClick={ this.onResetClick }>
+                Generate new secret
+              </a>
+            </li>
+          </ul>
+
         </DialogContent>
         <DialogFooter>
           <DefaultButton
@@ -200,8 +227,43 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
     DialogService.hideDialog();
   }
 
-  private onToggleSecret = (e) => {
-    this.setState({ secretEnabled: !this.state.secretEnabled, secret: '' });
+  private onEncryptKeyChange = (_ev: any, value: boolean) => {
+    const secret = value ? generateBotSecret() : '';
+    this.setState({ encryptKey: value, secret, revealSecret: true });
+  }
+
+  private onRevealSecretClick = () => {
+    if (!this.state.encryptKey) {
+      return null;
+    }
+    this.setState({ revealSecret: !this.state.revealSecret });
+  }
+
+  private onCopyClick = (): void => {
+    if (!this.state.encryptKey) {
+      return null;
+    }
+    const input: HTMLInputElement = window.document.getElementById('key-input') as HTMLInputElement;
+    input.removeAttribute('disabled');
+    const { type } = input;
+    input.type = 'text';
+    input.select();
+    window.document.execCommand('copy');
+    input.type = type;
+    input.setAttribute('disabled', '');
+  }
+
+  private onResetClick = (): void => {
+    if (!this.state.encryptKey) {
+      return null;
+    }
+    const generatedSecret = generateBotSecret();
+    this.setState({ secret: generatedSecret });
+  }
+
+  private onLearnMoreEncryptionClick = (): void => {
+    const url = 'https://aka.ms/bot-framework-bot-file-encryption';
+    CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, url).catch();
   }
 
   private onSaveAndConnect = async (e) => {
@@ -236,7 +298,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
       path: botPath.trim()
     });
 
-    const secret = this.state.secretEnabled && this.state.secret ? this.state.secret : null;
+    const secret = this.state.encryptKey && this.state.secret ? this.state.secret : null;
 
     ActiveBotHelper.confirmAndCreateBot(bot, secret)
       .then(() => DialogService.hideDialog())
@@ -266,14 +328,6 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
     };
 
     return CommandServiceImpl.remoteCall(Commands.Electron.ShowSaveDialog, dialogOptions);
-  }
-
-  private onChangeSecret = (secret) => {
-    this.setState({ secret: secret, secretsMatch: secret === this.state.secretConfirmation });
-  }
-
-  private onChangeSecretConfirmation = (confirm) => {
-    this.setState({ secretConfirmation: confirm, secretsMatch: confirm === this.state.secret });
   }
 
   /** Checks the endpoint to see if it has the correct route syntax at the end (/api/messages) */
