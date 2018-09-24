@@ -33,7 +33,7 @@
 
 import { BotInfo } from '@bfemulator/app-shared';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
-import store from './store';
+import { store } from './store';
 
 export function getActiveBot(): BotConfigWithPath {
   return store.getState().bot.activeBot;

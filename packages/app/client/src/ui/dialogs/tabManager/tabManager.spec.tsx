@@ -60,7 +60,7 @@ const mockWindow = {
   }
 };
 jest.mock('../../../data/store', () => ({
-  get default() {
+  get store() {
     return mockStore;
   }
 }));

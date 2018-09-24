@@ -34,7 +34,7 @@
   "jest": {
     "setupTestFrameworkScriptFile": "../../../testSetup.js",
     "transform": {
-      "^.+\\.tsx?$": "babel-jest"
+      "^.+\\.(tsx|ts)$": "babel-jest"
     },
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
     "testURL": "http://localhost",
@@ -133,7 +133,6 @@
     "redux": "^3.7.2",
     "redux-promise-middleware": "^5.0.0",
     "redux-saga": "^0.16.0",
-    "redux-thunk": "^2.2.0",
     "request": "^2.83.0",
     "restify": "^4.3.3",
     "restify-cors-middleware": "^1.1.0",

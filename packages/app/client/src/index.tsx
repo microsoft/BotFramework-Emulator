@@ -37,7 +37,7 @@ import * as ReactDOM from 'react-dom';
 import interceptError from './interceptError';
 import interceptHyperlink from './interceptHyperlink';
 import Main from './ui/shell/mainContainer';
-import store from './data/store';
+import { store } from './data/store';
 import { CommandServiceImpl } from './platform/commands/commandServiceImpl';
 import { LogService } from './platform/log/logService';
 import { showWelcomePage } from './data/editorHelpers';

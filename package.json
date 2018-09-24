@@ -13,12 +13,14 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
     "@babel/plugin-transform-react-jsx": "^7.0.0",
     "@babel/preset-env": "^7.1.0",
-    "@babel/preset-typescript": "^7.1.0"
+    "@babel/preset-typescript": "^7.1.0",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-jest": "23.6.0"
   },
   "jest": {
     "setupTestFrameworkScriptFile": "./testSetup.js",
     "transform": {
-      "^.+\\.(tsx?|jsx?)$": "babel-jest"
+      "^.+\\.(tsx|ts)$": "babel-jest"
     },
     "testURL": "http://localhost",
     "testMatch": [

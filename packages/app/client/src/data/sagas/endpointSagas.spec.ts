@@ -16,7 +16,7 @@ const mockComponentClass = class extends Component<{}, {}> {
 
 };
 jest.mock('../store', () => ({
-    get default() {
+    get store() {
       return mockStore;
     }
   })

@@ -12,7 +12,7 @@ jest.mock('../../platform/commands/commandServiceImpl', () => ({
   }
 }));
 
-import store from '../store';
+import { store } from '../store';
 import { azureArmTokenDataChanged, beginAzureAuthWorkflow } from '../action/azureAuthActions';
 import { azureAuthSagas } from './azureAuthSaga';
 import {

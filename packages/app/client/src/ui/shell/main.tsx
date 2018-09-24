@@ -43,7 +43,7 @@ import * as Constants from '../../constants';
 import { StatusBar } from './statusBar/statusBar';
 import { StoreVisualizer } from '../debug/storeVisualizer';
 import { Editor } from '../../data/reducer/editor';
-import store from '../../data/store';
+import { store } from '../../data/store';
 import * as ExplorerActions from '../../data/action/explorerActions';
 
 export interface MainProps {

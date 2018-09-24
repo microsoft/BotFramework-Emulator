@@ -76,7 +76,7 @@ const DEFAULT_STATE: EditorState = {
   docsWithPendingChanges: []
 };
 
-export default function editor(state: EditorState = DEFAULT_STATE, action: EditorAction | BotAction): EditorState {
+export const editor = (state: EditorState = DEFAULT_STATE, action: EditorAction | BotAction): EditorState => {
   Object.freeze(state);
 
   switch (action.type) {

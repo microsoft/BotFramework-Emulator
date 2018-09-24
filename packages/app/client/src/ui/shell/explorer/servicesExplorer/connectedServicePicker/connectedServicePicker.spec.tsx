@@ -4,7 +4,7 @@ import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
 import { ConnectedServicePicker } from './connectedServicePicker';
 import { ConnectedServicePickerContainer } from './connectedServicePickerContainer';
-import bot from '../../../../../data/reducer/bot';
+import { bot } from '../../../../../data/reducer/bot';
 import { load, setActive } from '../../../../../data/action/botActions';
 import { DialogService } from '../../../../dialogs/service';
 import { ServiceTypes } from 'botframework-config/lib/schema';

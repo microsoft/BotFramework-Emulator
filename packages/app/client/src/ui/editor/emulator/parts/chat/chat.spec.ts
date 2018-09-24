@@ -15,7 +15,7 @@ describe('ChatPanel tests', () => {
   it('should get speech token by calling remotely', async () => {
     const mockRemoteCall = jest.fn().mockResolvedValue('1A2B3C4');
 
-    (CommandServiceImpl as any) = ({ remoteCall: mockRemoteCall });
+    (CommandServiceImpl as any).remoteCall = mockRemoteCall;
 
     const speechToken = getSpeechToken({
       appId: 'APP_ID',

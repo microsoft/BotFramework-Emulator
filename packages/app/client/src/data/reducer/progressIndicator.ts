@@ -17,7 +17,7 @@ export const initialState: ProgressIndicatorState = {
   canceled: false
 };
 
-export default function progressIndicator(
+export function progressIndicator(
   state: ProgressIndicatorState = initialState,
   action: ProgressIndicatorAction<ProgressIndicatorPayload>): ProgressIndicatorState {
 

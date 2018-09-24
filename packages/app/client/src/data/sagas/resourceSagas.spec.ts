@@ -18,7 +18,7 @@ const mockStore = createStore(combineReducers({ resources }), {}, applyMiddlewar
 sagaMiddleWare.run(resourceSagas);
 
 jest.mock('../store', () => ({
-  get default() {
+  get store() {
     return mockStore;
   }
 }));

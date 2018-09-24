@@ -17,7 +17,7 @@ const mockComponent = class extends Component<{}, {}> {
 };
 const mockStore = createStore(combineReducers({ resources, bot }));
 jest.mock('../../../data/store', () => ({
-  get default() {
+  get store() {
     return mockStore;
   }
 }));

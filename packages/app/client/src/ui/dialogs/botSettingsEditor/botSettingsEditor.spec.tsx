@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
-import bot from '../../../data/reducer/bot';
+import { bot } from '../../../data/reducer/bot';
 import { BotSettingsEditor } from './botSettingsEditor';
 import { BotSettingsEditorContainer } from './botSettingsEditorContainer';
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
@@ -40,7 +40,7 @@ const mockWindow = {
 
 jest.mock('./botSettingsEditor.scss', () => ({}));
 jest.mock('../../../data/store', () => ({
-  get default() {
+  get store() {
     return mockStore;
   }
 }));

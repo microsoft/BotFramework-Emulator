@@ -1,7 +1,7 @@
 import { ActiveBotHelper } from './activeBotHelper';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
-import { hasNonGlobalTabs } from '../../data/editorHelpers';
-import store from '../../data/store';
+import * as editorHelpers from '../../data/editorHelpers';
+import { store } from '../../data/store';
 import { getActiveBot } from '../../data/botHelpers';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
@@ -22,33 +22,17 @@ jest.mock('../../ui/dialogs', () => ({
     }
   }
 ));
+
+jest.mock('../../data/editorHelpers', () => ({
+  hasNonGlobalTabs: () => false
+}));
+
 describe('ActiveBotHelper tests', () => {
-  let backupCommandServiceImpl;
-  let backupHasNonGlobalTabs;
-  let backupStore;
-  let backupGetActiveBot;
-
-  let preserveImports = () => {
-    backupCommandServiceImpl = CommandServiceImpl;
-    backupHasNonGlobalTabs = hasNonGlobalTabs;
-    backupStore = store;
-    backupGetActiveBot = getActiveBot;
-  };
-
-  let restoreImports = () => {
-    (CommandServiceImpl as any) = backupCommandServiceImpl;
-    (hasNonGlobalTabs as any) = backupHasNonGlobalTabs;
-    (store as any) = backupStore;
-    (getActiveBot as any) = backupGetActiveBot;
-  };
-
-  beforeEach(preserveImports);
-  afterEach(restoreImports);
 
   it('confirmSwitchBot() functionality', async () => {
 
-    (hasNonGlobalTabs as any) = jest.fn().mockReturnValueOnce(true).mockReturnValueOnce(false);
-    (CommandServiceImpl as any) = ({ remoteCall: jest.fn().mockResolvedValue('done') });
+    (editorHelpers as any).hasNonGlobalTabs = jest.fn().mockReturnValueOnce(true).mockReturnValueOnce(false);
+    (CommandServiceImpl as any).remoteCall = jest.fn().mockResolvedValue('done');
 
     const result1 = await ActiveBotHelper.confirmSwitchBot();
     expect(result1).toBe('done');
@@ -59,7 +43,7 @@ describe('ActiveBotHelper tests', () => {
 
   it('confirmCloseBot() functionality', async () => {
 
-    (hasNonGlobalTabs as any) = jest.fn().mockReturnValueOnce(true).mockReturnValueOnce(false);
+    (editorHelpers as any).hasNonGlobalTabs = jest.fn().mockReturnValueOnce(true).mockReturnValueOnce(false);
 
     (CommandServiceImpl as any) = ({ remoteCall: jest.fn().mockResolvedValue('done') });
 
@@ -136,7 +120,8 @@ describe('ActiveBotHelper tests', () => {
       description: '',
       path: 'somePath',
       padlock: null,
-      services: []
+      services: [],
+      version: '0.1'
     };
 
     const mockDispatch = jest.fn((...args: any[]) => null);
@@ -178,7 +163,8 @@ describe('ActiveBotHelper tests', () => {
       description: '',
       padlock: null,
       path: 'somePath',
-      services: [endpoint]
+      services: [endpoint],
+      version: '0.1'
     };
     let mockRemoteCall = jest.fn().mockResolvedValue(bot);
     const mockCall = jest.fn().mockResolvedValue(null);
@@ -209,7 +195,8 @@ describe('ActiveBotHelper tests', () => {
       description: '',
       padlock: null,
       path: 'somePath',
-      services: []
+      services: [],
+      version: '0.1'
     };
 
     const mockDispatch = jest.fn().mockReturnValue(null);
@@ -260,7 +247,8 @@ describe('ActiveBotHelper tests', () => {
       description: '',
       padlock: null,
       path: 'somePath',
-      services: [endpoint]
+      services: [endpoint],
+      version: '0.1'
     };
     const otherBot: BotConfigWithPath = { ...bot, path: 'someOtherPath' };
 
