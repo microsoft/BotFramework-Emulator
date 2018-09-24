@@ -485,7 +485,6 @@ gulp.task('package:linux', function () {
   }).then((filenames) => {
     return gulp.src(filenames, { allowEmpty: true })
       .pipe(rename(function (path) {
-        console.log(`renaming file: ${path}`);
         path.basename = setReleaseFilename(path.basename, {
           replaceWhitespace: true
         });
