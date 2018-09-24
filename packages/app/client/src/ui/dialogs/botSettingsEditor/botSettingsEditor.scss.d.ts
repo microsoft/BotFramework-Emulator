@@ -5,3 +5,4 @@ export const saveButton: string;
 export const key: string;
 export const encryptKeyCheckBox: string;
 export const actionsList: string;
+export const disabledAction: string;

@@ -34,24 +34,22 @@
 import { getStore } from '../botData/store';
 import { BotConfigWithPath, CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { Conversation } from '@bfemulator/emulator-core';
-import * as Path from 'path';
 import { mainWindow } from '../main';
 import { getActiveBot, getBotInfoByPath, patchBotsJson, toSavableBot } from '../botHelpers';
 import { parseActivitiesFromChatFile, showSaveDialog, writeFile } from '../utils';
 import { emulator } from '../emulator';
 import { sync as mkdirpSync } from 'mkdirp';
 import * as BotActions from '../botData/actions/botActions';
-import { promisify } from 'util';
-import * as Fs from 'fs';
+import * as fs from 'fs-extra';
 import { cleanupId as cleanupActivityChannelAccountId, CustomActivity } from '../utils/conversation';
 import { newBot, newEndpoint, SharedConstants } from '@bfemulator/app-shared';
 import { botProjectFileWatcher } from '../watchers';
 import { getStore as getSettingsStore } from '../settingsData/store';
+import * as path from 'path';
 
 /** Registers emulator (actual conversation emulation logic) commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
   const Commands = SharedConstants.Commands.Emulator;
-
   // ---------------------------------------------------------------------------
   // Saves the conversation to a transcript file, with user interaction to set filename.
   commandRegistry.registerCommand(Commands.SaveTranscriptToFile, async (conversationId: string): Promise<void> => {
@@ -64,8 +62,10 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     if (!convo) {
       throw new Error(`${Commands.SaveTranscriptToFile}: Conversation ${conversationId} not found.`);
     }
-    const store = getStore();
-    const path = Path.resolve(store.getState().bot.currentBotDirectory) || '';
+    let botInfo = getBotInfoByPath(activeBot.path);
+    const dirName = path.dirname(activeBot.path);
+
+    const { transcriptsPath = path.join(dirName, './transcripts') } = botInfo;
 
     const filename = showSaveDialog(mainWindow.browserWindow, {
       // TODO - Localization
@@ -75,7 +75,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
           extensions: ['transcript']
         }
       ],
-      defaultPath: path,
+      defaultPath: transcriptsPath,
       showsTagField: false,
       title: 'Save conversation transcript',
       buttonLabel: 'Save'
@@ -84,12 +84,12 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     // If there is no current bot directory, we should set the directory
     // that the transcript is saved in as the bot directory, copy the botfile over,
     // change the bots.json entry, and watch the directory.
-    if (!path && filename && filename.length) {
-      const bot = getActiveBot();
-      let botInfo = getBotInfoByPath(bot.path);
-      const saveableBot = toSavableBot(bot, botInfo.secret);
-      const botDirectory = Path.dirname(filename);
-      const botPath = Path.join(botDirectory, `${bot.name}.bot`);
+    const store = getStore();
+    const { currentBotDirectory } = store.getState().bot;
+    if (!currentBotDirectory && filename && filename.length) {
+      const saveableBot = toSavableBot(activeBot, botInfo.secret);
+      const botDirectory = path.dirname(filename);
+      const botPath = path.join(botDirectory, `${activeBot.name}.bot`);
       botInfo = { ...botInfo, path: botPath };
 
       await saveableBot.save(botPath);
@@ -99,7 +99,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     }
 
     if (filename && filename.length) {
-      mkdirpSync(Path.dirname(filename));
+      mkdirpSync(path.dirname(filename));
       const transcripts = await convo.getTranscript();
       writeFile(filename, transcripts);
     }
@@ -111,18 +111,20 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     Commands.FeedTranscriptFromDisk,
     async (conversationId: string, botId: string, userId: string, filePath: string) => {
 
-      const path = Path.resolve(filePath);
-      const stat = await promisify(Fs.stat)(path);
+      const transcriptPath = path.resolve(filePath);
+      const stat = await fs.stat(transcriptPath);
 
       if (!stat || !stat.isFile()) {
         throw new Error(`${Commands.FeedTranscriptFromDisk}: File ${filePath} not found.`);
       }
 
-      const activities = JSON.parse(await promisify(Fs.readFile)(path, 'utf-8'));
+      const activities = JSON.parse(await fs.readFile(transcriptPath, 'utf-8'));
 
-      mainWindow.commandService.call(Commands.FeedTranscriptFromMemory, conversationId, botId, userId, activities);
+      await mainWindow
+        .commandService
+        .call(Commands.FeedTranscriptFromMemory, conversationId, botId, userId, activities);
 
-      const { name, ext } = Path.parse(path);
+      const { name, ext } = path.parse(transcriptPath);
       const fileName = `${name}${ext}`;
 
       return {

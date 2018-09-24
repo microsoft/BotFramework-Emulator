@@ -41,6 +41,7 @@ import {
   PrimaryButton,
   Row,
   TextField,
+  RowAlignment,
 } from '@bfemulator/ui-react';
 import { EndpointService } from 'botframework-config/lib/models';
 import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
@@ -89,7 +90,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
   }
 
   render(): JSX.Element {
-    const { secret, bot, endpoint, encryptKey } = this.state;
+    const { secret, bot, endpoint, encryptKey, revealSecret } = this.state;
     const secretCriteria = encryptKey ? secret : true;
 
     const requiredFieldsCompleted = bot
@@ -122,27 +123,67 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
             <TextField
               className={ styles.smallInput }
               inputClassName="bot-creation-input"
-              label="MSA app ID"
+              label="Microsoft App ID"
               onChanged={ this.onChangeAppId }
               placeholder="Optional"
               value={ endpoint.appId } />
             <TextField
               className={ styles.smallInput }
               inputClassName="bot-creation-input"
-              label="MSA app password"
+              label="Microsoft App password"
               onChanged={ this.onChangeAppPw }
               placeholder="Optional"
               type="password"
               value={ endpoint.appPassword } />
           </Row>
 
+        <Row align={ RowAlignment.Bottom }>
           <Checkbox
             className={ styles.encryptKeyCheckBox }
-            label="Encrypt keys stored in your bot configuration"
+            label="Encrypt keys stored in your bot configuration."
             checked={ encryptKey }
             onChange={ this.onEncryptKeyChange } />
+          <a
+            href="javascript:void(0);"
+            onClick={ this.onLearnMoreEncryptionClick }>
+            Learn more.
+          </a>
+        </Row>
 
-          { encryptKey && this.encryptionControls }
+          <TextField
+            className={ styles.key }
+            label="Secret "
+            value={ secret }
+            placeholder="Your keys are not encrypted"
+            disabled={ true }
+            id="key-input"
+            type={ revealSecret ? 'text' : 'password' } />
+          <ul className={ styles.actionsList }>
+            <li>
+              <a
+                className={ !encryptKey ? styles.disabledAction : '' }
+                href="javascript:void(0);"
+                onClick={ this.onRevealSecretClick }>
+                { revealSecret ? 'Hide' : 'Show' }
+              </a>
+            </li>
+            <li>
+              <a
+                className={ !encryptKey ? styles.disabledAction : '' }
+                href="javascript:void(0);"
+                onClick={ this.onCopyClick }>
+                Copy
+              </a>
+            </li>
+            <li>
+              <a
+                className={ !encryptKey ? styles.disabledAction : '' }
+                href="javascript:void(0);"
+                onClick={ this.onResetClick }>
+                Generate new secret
+              </a>
+            </li>
+          </ul>
 
         </DialogContent>
         <DialogFooter>
@@ -188,14 +229,20 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
 
   private onEncryptKeyChange = (_ev: any, value: boolean) => {
     const secret = value ? generateBotSecret() : '';
-    this.setState({ encryptKey: value, secret });
+    this.setState({ encryptKey: value, secret, revealSecret: true });
   }
 
   private onRevealSecretClick = () => {
+    if (!this.state.encryptKey) {
+      return null;
+    }
     this.setState({ revealSecret: !this.state.revealSecret });
   }
 
   private onCopyClick = (): void => {
+    if (!this.state.encryptKey) {
+      return null;
+    }
     const input: HTMLInputElement = window.document.getElementById('key-input') as HTMLInputElement;
     input.removeAttribute('disabled');
     const { type } = input;
@@ -207,45 +254,16 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
   }
 
   private onResetClick = (): void => {
+    if (!this.state.encryptKey) {
+      return null;
+    }
     const generatedSecret = generateBotSecret();
     this.setState({ secret: generatedSecret });
   }
 
-  private get encryptionControls(): JSX.Element {
-    const { secret, revealSecret } = this.state;
-
-    return (
-      <>
-        <TextField
-          className={ styles.key }
-          label="key"
-          value={ secret }
-          disabled={ true }
-          id="key-input"
-          type={ revealSecret ? 'text' : 'password' } />
-
-        <ul className={ styles.actionsList }>
-          <li>
-            <a href="javascript:void(0);"
-              onClick={ this.onRevealSecretClick }>
-              { revealSecret ? 'Hide' : 'Show' }
-            </a>
-          </li>
-          <li>
-            <a href="javascript:void(0);"
-              onClick={ this.onCopyClick }>
-              Copy
-            </a>
-          </li>
-          <li>
-            <a href="javascript:void(0);"
-              onClick={ this.onResetClick }>
-              Reset
-            </a>
-          </li>
-        </ul>
-      </>
-    );
+  private onLearnMoreEncryptionClick = (): void => {
+    const url = 'https://aka.ms/bot-framework-bot-file-encryption';
+    CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, url).catch();
   }
 
   private onSaveAndConnect = async (e) => {

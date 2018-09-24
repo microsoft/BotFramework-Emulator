@@ -127,6 +127,8 @@ html {
   /* toolbar */
   --toolbar-bg: var(--tab-active-tab-bg);
   --toolbar-border: none;
+  --toolbar-border-bottom: 1px solid var(--neutral-13);
+  --splitter-border: var(--toolbar-border-bottom);
 
   /* Welcome page */
   --welcome-page-bg: var(--tab-active-tab-bg);
@@ -140,6 +142,14 @@ html {
   --my-bots-entry-color: var(--neutral-3);
   --my-bots-path-color: var(--neutral--3);
   --my-bots-scrollbar-color: rgba(136,136,136,0.5);
+
+  /* Status Bar */
+  --status-bar-bg: #007ACC;
+  --status-bar-color: #FFFFFF;
+
+  /* Links */
+  --link-color: #4080D0;
+  --link-color-disabled: #C8C8C8;
 }
 
 .ms-Modal {

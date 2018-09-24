@@ -61,6 +61,7 @@
   }
 
   .key {
+    width: 250px;
     margin: 16px 145px 20px 32px;
   }
 
@@ -70,6 +71,11 @@
     span {
       width: 300px;
     }
+  }
+
+  a {
+    color: var(--link-color);
+    text-decoration: none;
   }
 
   .actionsList {
@@ -83,14 +89,15 @@
     li {
       display: inline;
       padding: 2px 5px;
-
-      a {
-        text-decoration: none;
-      }
     }
 
     li + li {
       border-left: 1px solid var(--neutral-11);
+    }
+
+    .disabledAction {
+      color: var(--link-color-disabled);
+      cursor: default;
     }
   }
 }

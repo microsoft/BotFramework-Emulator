@@ -34,7 +34,7 @@
 import * as React from 'react';
 import * as styles from './secretPromptDialog.scss';
 
-import { DefaultButton, Dialog, PrimaryButton, SmallHeader, TextField, } from '@bfemulator/ui-react';
+import { DefaultButton, Dialog, PrimaryButton, TextField, } from '@bfemulator/ui-react';
 
 interface SecretPromptDialogState {
   secret: string;
@@ -56,15 +56,14 @@ export class SecretPromptDialog extends React.Component<SecretPromptDialogProps,
 
   render(): JSX.Element {
     return (
-      <Dialog title="Bot secret required" className={ styles.secretPromptDialog } cancel={ this.onDismissClick }>
-        <SmallHeader>Your bot file is encrypted</SmallHeader>
+      <Dialog title="Your bot file is encrypted" className={ styles.secretPromptDialog } cancel={ this.onDismissClick }>
         <p>
-          If you created your bot through the Azure Bot Service, you can find your bot file secret in the Azure&nbsp;
-          portal under Application settings.
+          If you created your bot through the Azure Bot Service, you can find your bot file
+          secret in the Azure portal under Application settings.
         </p>
         <p>
-          If you encrypted your bot file with the MsBot command-line tool, your bot file secret was displayed when&nbsp;
-          you ran MsBot.
+          If you encrypted your bot file with the MsBot command-line tool, your bot file secret was displayed when
+          you ran MsBot.&nbsp;
           <a href="javascript:void(0)" onClick={ this.onLearnMoreClick }>Learn more about MsBot.</a>
         </p>
         <div className={ styles.keyContainer }>
@@ -87,7 +86,7 @@ export class SecretPromptDialog extends React.Component<SecretPromptDialogProps,
         <div className={ styles.buttonRow }>
           <DefaultButton text={ 'Cancel' } onClick={ this.onDismissClick }/>
           <PrimaryButton
-            disabled={ !!this.state.secret }
+            disabled={ !this.state.secret }
             className={ styles.saveButton }
             text={ 'Submit' }
             onClick={ this.onSaveClick }/>

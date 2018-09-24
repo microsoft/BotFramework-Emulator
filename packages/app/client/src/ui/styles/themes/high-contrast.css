@@ -95,7 +95,7 @@ html {
   --explorer-panel-icon-color: var(--neutral-1);
   --explorer-panel-group-title-bg: var(--neutral-16);
   --explorer-panel-group-title-color: var(--neutral-1);
-  --explorer-panel-group-border: 1px solid #00BCF2;
+  --explorer-panel-group-border: 1px solid #72C3DF;
   --explorer-panel-empty-message-color: var(--neutral-4);
 
   /* Explorer Bar */
@@ -109,7 +109,7 @@ html {
   --tab-hover-border: var(--list-item-hover-border);
   --tab-active-tab-bg: var(--neutral-16);
   --tab-focus-border: var(--p-button-border-focus);
-  --tab-seperator-bg: #00BCF2;
+  --tab-seperator-bg: #72C3DF;
   --tab-icon-color: var(--explorer-panel-group-title-color);
   --tab-icon-hover-color: var(--neutral-4);
 
@@ -118,7 +118,7 @@ html {
   --notification-message-color: var(--neutral-1);
   --notification-timestamp-color: var(--neutral-1);
   --notification-close-icon-color: var(--neutral-1);
-  --notification-border: 1px solid #00BCF2;
+  --notification-border: 1px solid #72C3DF;
   --notifications-clear-all-btn-color: var(--neutral-1);
   --notification-inner-border-display: block;
   --notification-inner-border: 1px dashed #F38518;
@@ -126,6 +126,8 @@ html {
   /* toolbar */
   --toolbar-bg: var(--neutral-16);
   --toolbar-border: var(--explorer-panel-group-border);
+  --toolbar-border-bottom: var(--explorer-panel-group-border);
+  --splitter-border: var(--explorer-panel-group-border);
 
   /* Welcome page */
   --welcome-page-bg: var(--tab-active-tab-bg);
@@ -133,12 +135,20 @@ html {
   --welcome-how-to-border: var(--neutral-6);
   --welcome-how-to-test: #3062D6;
   --my-bots-well-bg: transparent;
-  --my-bots-well-border: 1px solid #00BCF2;
+  --my-bots-well-border: 1px solid #72C3DF;
   --my-bots-entry-bg: transparent;
   --my-bots-entry-border: 1px dashed #F38518;
   --my-bots-entry-color: var(--neutral-1);
   --my-bots-path-color: var(--neutral-1);
   --my-bots-scrollbar-color: var(--neutral-1);
+
+  /* Status Bar */
+  --status-bar-bg: #007ACC;
+  --status-bar-color: #FFFFFF;
+
+  /* Links */
+  --link-color: #4080D0;
+  --link-color-disabled: #C8C8C8;
 }
 
 .ms-Modal {

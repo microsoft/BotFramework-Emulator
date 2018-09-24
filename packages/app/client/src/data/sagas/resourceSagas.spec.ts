@@ -217,9 +217,7 @@ describe('The ResourceSagas', () => {
     await Promise.resolve();
 
     expect(mockRemoteCommandsCalled).toEqual(
-      [ { commandName: 'bot:list:patch', args: [ undefined, true ] },
-      { commandName: 'bot:watch-for-chat-files', args: [] },
-      { commandName: 'bot:watch-for-transcript-files', args: [] } ]
+      [{ commandName: 'bot:list:patch', args: [undefined, true] }]
     );
   });
 });

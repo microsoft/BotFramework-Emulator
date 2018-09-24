@@ -4,7 +4,7 @@
     "build": "lerna run --scope \"@bfemulator/@(**shared|sdk**)\" build && lerna run --scope \"!@bfemulator/@(**shared|sdk**)\" build",
     "start": "cd packages\\app\\client && npm run start",
     "test": "jest --runInBand",
-    "test:coveralls": "jest --runInBand --coverage --coverageReporters=text-lcov | coveralls"
+    "test:coveralls": "jest --runInBand --bail --coverage --coverageReporters=text-lcov | coveralls"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.0",
@@ -34,5 +34,9 @@
       "json",
       "node"
     ]
+  },
+  "dependencies": {
+    "gulp": "^4.0.0",
+    "lerna": "^2.11.0"
   }
 }

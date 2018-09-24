@@ -33,7 +33,16 @@
 
 import { BotInfo, newNotification, Notification, NotificationType, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
-import { Checkbox, DefaultButton, Dialog, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
+import {
+  Checkbox,
+  DefaultButton,
+  Dialog,
+  DialogFooter,
+  PrimaryButton,
+  TextField,
+  Row,
+  RowAlignment
+} from '@bfemulator/ui-react';
 import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { getBotInfoByPath } from '../../../data/botHelpers';
@@ -47,6 +56,7 @@ export interface BotSettingsEditorProps {
   cancel: () => void;
   sendNotification: (notification: Notification) => void;
   window: Window;
+  onAnchorClick: (url: string) => void;
 }
 
 export interface BotSettingsEditorState extends BotConfigWithPath {
@@ -67,7 +77,7 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
     const secret = (botInfo && botInfo.secret);
     this.state = {
       ...bot,
-      secret: secret || this.generatedSecret,
+      secret: secret,
       revealSecret: false,
       encryptKey: !!secret
     };
@@ -95,36 +105,50 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
           onChanged={ this.onChangeName }
           errorMessage={ error }/>
 
+      <Row align={ RowAlignment.Bottom }>
         <Checkbox
           className={ styles.encryptKeyCheckBox }
-          label="Encrypt keys stored in your bot configuration"
+          label="Encrypt keys stored in your bot configuration."
           checked={ encryptKey }
           onChange={ this.onEncryptKeyChange }/>
+        <a
+          href="javascript:void(0);"
+          onClick={ this.onLearnMoreEncryptionClick }>
+          Learn more.
+        </a>
+      </Row>
 
         <TextField
           className={ styles.key }
-          label="key"
+          label="Secret"
+          placeholder="Your keys are not encrypted"
           value={ secret }
           disabled={ true }
           id="key-input"
           type={ revealSecret ? 'text' : 'password' }/>
         <ul className={ styles.actionsList }>
           <li>
-            <a href="javascript:void(0);"
+            <a
+              className={ !encryptKey ? styles.disabledAction : '' }
+              href="javascript:void(0);"
               onClick={ this.onRevealSecretClick }>
               { revealSecret ? 'Hide' : 'Show' }
             </a>
           </li>
           <li>
-            <a href="javascript:void(0);"
+            <a
+              className={ !encryptKey ? styles.disabledAction : '' }
+              href="javascript:void(0);"
               onClick={ this.onCopyClick }>
               Copy
             </a>
           </li>
           <li>
-            <a href="javascript:void(0);"
+            <a
+              className={ !encryptKey ? styles.disabledAction : '' }
+              href="javascript:void(0);"
               onClick={ this.onResetClick }>
-              Reset
+              Generate new secret
             </a>
           </li>
         </ul>
@@ -148,7 +172,16 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
   }
 
   private onEncryptKeyChange = (noIdea: any, value: boolean) => {
-    this.setState({ encryptKey: value, secret: (value ? this.generatedSecret : ''), dirty: true });
+    this.setState({
+      encryptKey: value,
+      secret: (value ? this.generatedSecret : ''),
+      dirty: true,
+      revealSecret: (value ? value : false)
+    });
+  }
+
+  private onLearnMoreEncryptionClick = (): void => {
+    this.props.onAnchorClick('https://aka.ms/bot-framework-bot-file-encryption');
   }
 
   private onSaveClick = async () => {
@@ -203,13 +236,15 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
   /** Saves a bot config of a bot loaded from disk */
   private saveBotFromDisk = async (bot: BotConfigWithPath): Promise<void> => {
     const { Save, PatchBotList } = SharedConstants.Commands.Bot;
+    // write updated bot entry to bots.json so main side can pick up possible changes to secret
     const botInfo: BotInfo = getBotInfoByPath(bot.path) || {};
     botInfo.secret = this.state.secret;
-    // write updated bot entry to bots.json
+    await CommandServiceImpl.remoteCall(PatchBotList, bot.path, botInfo);
+
+    // save bot
     try {
       await CommandServiceImpl.remoteCall(Save, bot);
     } catch {
-      // this is a problem
       const note = newNotification('There was an error updating your bot settings. ' +
         'Try removing encryption and saving again. You can then add encryption back once successful',
         NotificationType.Error);
@@ -240,11 +275,17 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
     return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.ShowSaveDialog, dialogOptions);
   }
 
-  private onRevealSecretClick = () => {
+  private onRevealSecretClick = (): void => {
+    if (!this.state.encryptKey) {
+      return null;
+    }
     this.setState({ revealSecret: !this.state.revealSecret });
   }
 
   private onCopyClick = (): void => {
+    if (!this.state.encryptKey) {
+      return null;
+    }
     const { window } = this.props;
     const input: HTMLInputElement = window.document.getElementById('key-input') as HTMLInputElement;
     input.removeAttribute('disabled');
@@ -257,6 +298,9 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
   }
 
   private onResetClick = (): void => {
+    if (!this.state.encryptKey) {
+      return null;
+    }
     this._generatedSecret = null;
     const { generatedSecret } = this;
     this.setState({ secret: generatedSecret, padlock: '', dirty: true });

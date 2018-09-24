@@ -74,7 +74,7 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
   }
 
   public onLinkClick = (event: SyntheticEvent<HTMLAnchorElement>): void => {
-    const { selection: currentSelection, explorerIsVisible } = this.props;
+    const { selection: currentSelection } = this.props;
     const { currentTarget: anchor } = event;
     const index = Array.prototype.indexOf.call(anchor.parentElement.children, anchor);
 
@@ -86,12 +86,16 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
       // Notifications
       case 2:
         if (currentSelection === selectionMap[index]) {
-          // toggle explorer when clicking the same navbar icon
+          // TODO: Re-enable once webchat reset bug is fixed
+          // (https://github.com/Microsoft/BotFramework-Emulator/issues/825)
+          /*// toggle explorer when clicking the same navbar icon
           const showExplorer = !explorerIsVisible;
-          this.props.showExplorer(showExplorer);
+          this.props.showExplorer(showExplorer);*/
         } else {
           // switch tabs and showExplorer explorer when clicking different navbar icon
-          this.props.showExplorer(true);
+          // TODO: Re-enable once webchat reset bug is fixed
+          // (https://github.com/Microsoft/BotFramework-Emulator/issues/825)
+          // this.props.showExplorer(true);
           this.props.navBarSelectionChanged(selectionMap[index]);
           this.setState({ selection: selectionMap[index] });
         }

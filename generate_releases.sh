@@ -8,8 +8,10 @@ npm version $TRAVIS_TAG --allow-same-version
 
 gulp copy-extension-stubs
 gulp get-licenses
-gulp stage:windows
-gulp redist:windows-nsis
+# gulp stage:windows
+# gulp redist:windows-nsis
+gulp stage:mac
+gulp redist:mac
 
 pushd dist
 
@@ -17,8 +19,8 @@ echo Files to dist
 
 ls -la
 
-cp latest.yml /project/releases/
-cp botframework-emulator-setup-$TRAVIS_TAG.exe /project/releases/
+# cp latest.yml /project/releases/
+# cp botframework-emulator-setup-$TRAVIS_TAG.exe /project/releases/
 
-popd
+# popd
 popd

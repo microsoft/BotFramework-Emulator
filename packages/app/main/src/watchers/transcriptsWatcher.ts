@@ -18,6 +18,12 @@ export class TranscriptsWatcher extends FileWatcher {
     };
   }
 
+  public async watch(paths: string | string[]): Promise<true> {
+    this.transcriptFiles = {};
+    this.invalidateTranscriptFiles();
+    return super.watch(paths);
+  }
+
   protected onFileAdd = (file: string, fstats?: fs.Stats): void => {
     if (!isTranscriptFile(file)) {
       return;

@@ -2,6 +2,8 @@
   height: 40px;
   background-color: var(--toolbar-bg);
   border-top: var(--toolbar-border);
+  border-bottom:  var(--toolbar-border-bottom);
+  box-sizing: border-box;
   color: var(--input-label-color);
   line-height: 40px;
   & > ul {
