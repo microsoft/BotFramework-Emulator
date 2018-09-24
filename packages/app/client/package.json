@@ -5,9 +5,9 @@
   "main": "./public/index.html",
   "homepage": "./",
   "scripts": {
-    "build:vendors": "webpack --mode production",
-    "build:shared": "webpack --mode production",
-    "build:app": "webpack --mode production",
+    "build:vendors": "webpack --mode development",
+    "build:shared": "webpack --mode development",
+    "build:app": "webpack --mode development",
     "build:vendors:dev": "webpack --mode development --progress --colors",
     "build:shared:dev": "webpack --mode development --progress --colors",
     "build:app:dev": "webpack --mode development --progress --colors",
