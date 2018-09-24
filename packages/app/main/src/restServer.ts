@@ -57,7 +57,8 @@ export class RestServer {
     });
 
     this._router = Restify.createServer({
-      name: 'Emulator'
+      name: 'Emulator',
+      handleUncaughtExceptions: true
     });
 
     this._router.on('after', async (req: Restify.Request, res: Restify.Response,
