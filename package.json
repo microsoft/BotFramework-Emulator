@@ -23,5 +23,9 @@
       "json",
       "node"
     ]
+  },
+  "dependencies": {
+    "gulp": "^4.0.0",
+    "lerna": "^2.11.0"
   }
 }
