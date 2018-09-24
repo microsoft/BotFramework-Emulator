@@ -485,6 +485,7 @@ gulp.task('package:linux', function () {
   }).then((filenames) => {
     return gulp.src(filenames, { allowEmpty: true })
       .pipe(rename(function (path) {
+        console.log(`renaming file: ${path}`);
         path.basename = setReleaseFilename(path.basename, {
           replaceWhitespace: true
         });
@@ -694,7 +695,7 @@ function setReleaseFilename(filename, options = {}) {
   }
   if (options.fixBasename) {
     // filename = filename.replace(/bot[-|\s]framework/ig, 'botframework');
-    filename = filename.replace(/(bot[-|\s]framework)?(main)?/, 'botframework-emulator');
+    filename = filename.replace(/(bot[-|\s]framework)?(main)?/, pjson.packagename);
   }
   return filename;
 }
