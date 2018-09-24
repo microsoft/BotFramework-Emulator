@@ -694,7 +694,7 @@ function setReleaseFilename(filename, options = {}) {
   }
   if (options.fixBasename) {
     // filename = filename.replace(/bot[-|\s]framework/ig, 'botframework');
-    filename = filename.replace(/(bot[-|\s]framework)?(main)?/, 'bot-framework-emulator');
+    filename = filename.replace(/(bot[-|\s]framework)?(main)?/, 'botframework-emulator');
   }
   return filename;
 }
