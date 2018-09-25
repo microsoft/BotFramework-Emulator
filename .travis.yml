@@ -10,8 +10,7 @@ notifications:
   email: false
 
 before_install:
-- npm i -g lerna@2.11.x webpack@4.8.x jest
-- lerna clean --yes
+- npm i -g lerna@2.11.0
 
 install:
 - lerna bootstrap --hoist
