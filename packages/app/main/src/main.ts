@@ -246,8 +246,7 @@ const createMainWindow = async () => {
         y: initBounds.y
         */
         width: 1400,
-        height: 920,
-        icon: process.platform === 'linux' ? path.join(__dirname, 'icon.icns') : undefined
+        height: 920
       }));
 
   // get reference to bots list in state for comparison against state changes
