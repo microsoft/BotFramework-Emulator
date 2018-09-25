@@ -1,7 +1,7 @@
 {
   "scripts": {
     "bootstrap": "lerna bootstrap --hoist",
-    "build": "npm rebuild node-sass && lerna run --scope \"@bfemulator/@(**shared|sdk**)\" build && lerna run --ignore \"@bfemulator/@(**shared|sdk**)\" build",
+    "build": "npm rebuild node-sass && lerna run build",
     "start": "cd packages\\app\\client && npm run start",
     "test": "jest --no-cache",
     "test:coveralls": "jest --runInBand --bail --coverage --coverageReporters=text-lcov | coveralls"

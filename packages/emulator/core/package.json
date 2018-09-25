@@ -8,7 +8,7 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "builds": "babel ./src --out-dir lib --extensions \".ts,.tsx\"",
+    "build": "babel ./src --out-dir lib --extensions \".ts,.tsx\"",
     "build:watch": "npm run build:prod --outdir lib --watch",
     "build:babel": "concurrently --names \"babel,typecheck\" \"babel --extensions .js,.ts --ignore **/*.spec.js,**/*.spec.ts,**/*.test.js/,**/*.test.ts/,__test__/**/*.js,__test__/**/*.ts --out-dir lib --source-maps inline --verbose src\" \"tsc\"",
     "build:babel:watch": "concurrently --kill-others --names \"babel,typecheck\" \"babel --extensions .js,.ts --ignore **/*.spec.js,**/*.spec.ts,**/*.test.js/,**/*.test.ts/,__test__/**/*.js,__test__/**/*.ts --out-dir lib --source-maps inline --verbose src --watch\" \"tsc --preserveWatchOutput --watch\"",
