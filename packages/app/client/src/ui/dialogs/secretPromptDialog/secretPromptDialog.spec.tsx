@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
-import bot from '../../../data/reducer/bot';
+import { bot } from '../../../data/reducer/bot';
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import { setActive } from '../../../data/action/botActions';
 import { SecretPromptDialogContainer } from './secretPromptDialogContainer';

@@ -12,7 +12,8 @@
     "@babel/preset-stage-3"
   ],
   "ignore": [
-    "**/*.spec.ts"
+    "**/*.spec.ts",
+    "**/*.d.ts"
   ],
   "sourceMaps": "inline",
   "plugins": [

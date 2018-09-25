@@ -59,7 +59,7 @@ export const presentation = (state: PresentationState = DEFAULT_STATE, action: P
   }
 
   return state;
-}
+};
 
 function setEnabled(enabled: boolean, state: PresentationState): PresentationState {
   let newState = Object.assign({}, state);

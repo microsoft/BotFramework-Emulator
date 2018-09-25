@@ -32,9 +32,10 @@
     "url": "https://github.com/Microsoft/BotFramework-Emulator"
   },
   "jest": {
-    "setupTestFrameworkScriptFile": "../../../testSetup.js",
+    "rootDir": "./src",
+    "setupTestFrameworkScriptFile": "../../../../testSetup.js",
     "transform": {
-      "^.+\\.(tsx|ts)$": "babel-jest"
+      "^.+\\.(tsx|ts|js)$": "babel-jest"
     },
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
     "testURL": "http://localhost",

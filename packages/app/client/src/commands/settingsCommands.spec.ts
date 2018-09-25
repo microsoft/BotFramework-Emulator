@@ -1,7 +1,7 @@
 import { registerCommands } from './settingsCommands';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
-import clientAwareSettings from '../data/reducer/clientAwareSettingsReducer';
+import { clientAwareSettings } from '../data/reducer/clientAwareSettingsReducer';
 import { combineReducers, createStore } from 'redux';
 import { store } from '../data/store';
 import { clientAwareSettingsChanged } from '../data/action/clientAwareSettingsActions';

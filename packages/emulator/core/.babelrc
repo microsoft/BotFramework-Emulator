@@ -11,7 +11,8 @@
     "@babel/preset-typescript"
   ],
   "ignore": [
-    "**/*.spec.ts"
+    "**/*.spec.ts",
+    "**/*.d.ts"
   ],
   "plugins": [
     "@babel/proposal-class-properties"

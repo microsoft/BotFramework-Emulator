@@ -37,7 +37,7 @@
   "homepage": "https://github.com/microsoft/botframework-localmode#readme",
   "jest": {
     "transform": {
-      "^.+\\.tsx?$": "babel-jest"
+      "^.+\\.(tsx?|jsx?)$": "babel-jest"
     },
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
     "moduleFileExtensions": [

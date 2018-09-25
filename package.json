@@ -3,7 +3,7 @@
     "bootstrap": "lerna bootstrap --hoist",
     "build": "lerna run --scope \"@bfemulator/@(**shared|sdk**)\" build && lerna run --scope \"!@bfemulator/@(**shared|sdk**)\" build",
     "start": "cd packages\\app\\client && npm run start",
-    "test": "jest --runInBand",
+    "test": "jest --no-cache",
     "test:coveralls": "jest --runInBand --bail --coverage --coverageReporters=text-lcov | coveralls"
   },
   "devDependencies": {
@@ -17,10 +17,11 @@
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "23.6.0"
   },
+
   "jest": {
     "setupTestFrameworkScriptFile": "./testSetup.js",
     "transform": {
-      "^.+\\.(tsx|ts)$": "babel-jest"
+      "^.+\\.(tsx|ts|js)$": "./babel-jest-config"
     },
     "testURL": "http://localhost",
     "testMatch": [

@@ -1,8 +1,8 @@
 import { DialogService } from './dialogService';
 import * as React from 'react';
 import { Component } from 'react';
-import resources from '../../../data/reducer/resourcesReducer';
-import bot from '../../../data/reducer/bot';
+import { resources } from '../../../data/reducer/resourcesReducer';
+import { bot } from '../../../data/reducer/bot';
 import { combineReducers, createStore } from 'redux';
 import * as DialogActions from '../../../data/action/dialogActions';
 

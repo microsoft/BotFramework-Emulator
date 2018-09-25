@@ -32,7 +32,7 @@
 //
 
 jest.mock('./store', () => ({
-  default: {
+  store: {
     getState: () => ({
       bot: {
         activeBot: {

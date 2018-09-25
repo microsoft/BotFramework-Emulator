@@ -460,7 +460,7 @@ export const editor = (state: EditorState = DEFAULT_STATE, action: EditorAction 
   }
 
   return state;
-}
+};
 
 function getNewEditor(): Editor {
   return {

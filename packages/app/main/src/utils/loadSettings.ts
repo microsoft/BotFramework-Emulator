@@ -34,7 +34,7 @@
 import * as fs from 'fs';
 import { ensureStoragePath } from './ensureStoragePath';
 import { mergeDeep, Settings } from '@bfemulator/app-shared';
-import * as uuidv4 from 'uuid/v4';
+import uuidv4 from 'uuid/v4';
 
 /** Load JSON object from file. */
 export const loadSettings = (filename: string, defaultSettings: Partial<Settings>): Settings => {

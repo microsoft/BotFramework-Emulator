@@ -1,4 +1,4 @@
-import resources from '../reducer/resourcesReducer';
+import { resources } from '../reducer/resourcesReducer';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { resourceSagas } from './resourcesSagas';
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared/built';

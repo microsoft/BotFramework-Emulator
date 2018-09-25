@@ -74,7 +74,8 @@ describe('Bot reducer tests', () => {
       description: '',
       padlock: null,
       services: [],
-      path: 'somePath'
+      path: 'somePath',
+      version: '0.1'
     };
 
     it('should set a bot as active', () => {
@@ -129,7 +130,7 @@ describe('Bot reducer tests', () => {
               id: 'someEndpointOverride'
             }
           }
-        }
+        } as any
       };
 
       const action = setActive(testbot);
@@ -163,7 +164,7 @@ describe('Bot reducer tests', () => {
               id: 'someEndpointOverride'
             }
           }
-        }
+        } as any
       };
 
       const action = setActive(testbot);
@@ -225,7 +226,7 @@ describe('Bot reducer tests', () => {
         description: 'this is a test bot',
         padlock: null,
         services: []
-      }
+      } as any
     };
     const action = close();
     const endingState = bot(startingState, action);

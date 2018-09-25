@@ -1,5 +1,3 @@
-const mockClass = class {
-};
 const mockArmToken = 'bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
 const mockReq: RequestInit = { headers: { Authorization: `Bearer ${mockArmToken}` } };
 const mockResponses = [
@@ -118,18 +116,22 @@ const mockResponses = [
 ];
 
 let mockArgsPassedToFetch;
-jest.mock('node-fetch', () => ({
-  default: async (url, headers) => {
+jest.mock('node-fetch', () => {
+  const fetch = (url, headers) => {
     mockArgsPassedToFetch.push({ url, headers });
     return {
       ok: true,
       json: async () => mockResponses.shift(),
       text: async () => mockResponses.shift(),
     };
-  },
-  Headers: mockClass,
-  Response: mockClass
-}));
+  };
+  (fetch as any).Headers = class {
+  };
+  (fetch as any).Response = class {
+  };
+  return fetch;
+});
+
 import { QnaApiService } from './qnaApiService';
 
 describe('The QnaApiService', () => {
@@ -164,7 +166,7 @@ describe('The QnaApiService', () => {
         'method': 'POST'
       }
     });
-    
+
     expect(mockArgsPassedToFetch[1]).toEqual({
       'url': 'https://management.azure.com//subscriptions/1234/' +
         'providers/Microsoft.CognitiveServices/accounts?api-version=2017-04-18',
@@ -176,7 +178,7 @@ describe('The QnaApiService', () => {
         'method': 'POST'
       }
     });
-    
+
     expect(mockArgsPassedToFetch[2]).toEqual({
       'url': 'https://management.azure.com//subscriptions/1234/providers/' +
         'Microsoft.CognitiveServices/accounts?api-version=2017-04-18',
@@ -188,7 +190,7 @@ describe('The QnaApiService', () => {
         'method': 'POST'
       }
     });
-    
+
     expect(mockArgsPassedToFetch[3]).toEqual({
       'url': 'https://management.azure.com//subscriptions/1234/listKeys?api-version=2017-04-18',
       'headers': {
@@ -199,7 +201,7 @@ describe('The QnaApiService', () => {
         'method': 'POST'
       }
     });
-    
+
     expect(mockArgsPassedToFetch[4]).toEqual({
       'url': 'https://management.azure.com//subscriptions/12324/listKeys?api-version=2017-04-18',
       'headers': {
@@ -210,7 +212,7 @@ describe('The QnaApiService', () => {
         'method': 'POST'
       }
     });
-    
+
     expect(mockArgsPassedToFetch[5]).toEqual({
       'url': 'https://westus.api.cognitive.microsoft.com/qnamaker/v4.0/knowledgebases/',
       'headers': {
@@ -220,7 +222,7 @@ describe('The QnaApiService', () => {
         }
       }
     });
-    
+
     expect(mockArgsPassedToFetch[6]).toEqual({
       'url': 'https://westus.api.cognitive.microsoft.com/qnamaker/v4.0/knowledgebases/',
       'headers': {
