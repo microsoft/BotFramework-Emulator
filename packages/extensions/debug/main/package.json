@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "npm run clean && babel ./src --out-dir built --extensions \".ts,.tsx\"",
-    "clean": "rimraf ./built && rimraf ../../../node_modules/@types/prop-types",
+    "clean": "rimraf ./built",
     "prepare": "npm run clean",
     "test": "jest"
   },

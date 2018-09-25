@@ -1,7 +1,7 @@
 {
   "scripts": {
     "bootstrap": "lerna bootstrap --hoist",
-    "build": "lerna run --scope \"@bfemulator/@(**shared|sdk**)\" build && lerna run --scope \"!@bfemulator/@(**shared|sdk**)\" build",
+    "build": "npm rebuild node-sass && lerna run --scope \"@bfemulator/@(**shared|sdk**)\" build && lerna run --ignore \"@bfemulator/@(**shared|sdk**)\" build",
     "start": "cd packages\\app\\client && npm run start",
     "test": "jest --no-cache",
     "test:coveralls": "jest --runInBand --bail --coverage --coverageReporters=text-lcov | coveralls"
@@ -38,6 +38,6 @@
   },
   "dependencies": {
     "gulp": "^4.0.0",
-    "lerna": "^2.11.0"
+    "lerna": "3.4.0"
   }
 }

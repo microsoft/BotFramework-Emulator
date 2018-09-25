@@ -1,6 +1,5 @@
 {
   "presets": [
-    "@babel/preset-typescript",
     [
       "@babel/preset-env",
       {
@@ -9,14 +8,15 @@
         }
       }
     ],
-    "@babel/preset-stage-3"
+    "@babel/preset-typescript"
   ],
   "ignore": [
-    "**/*.spec.ts",
-    "**/*.d.ts"
+    "**/*.d.ts",
+    "**/*.spec.ts"
   ],
   "sourceMaps": "inline",
   "plugins": [
-    "@babel/proposal-class-properties"
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-transform-react-jsx"
   ]
 }
