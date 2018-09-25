@@ -693,7 +693,8 @@ function setReleaseFilename(filename, options = {}) {
     filename = filename.replace(/\s/g, '-');
   }
   if (options.fixBasename) {
-    // filename = filename.replace(/bot[-|\s]framework/ig, 'botframework');
+    // renames build artifacts like 'bot-framework_{version}.*' or 'main_{version}.*'
+    // to '{package name in package.json}_{version}.*'
     filename = filename.replace(/(bot[-|\s]framework)?(main)?/, pjson.packagename);
   }
   return filename;
