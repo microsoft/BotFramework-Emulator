@@ -94,7 +94,7 @@ export class ConnectedServicePicker extends Component<ConnectedServicesPickerPro
           { this.headerElements }
           { this.selectAllCheckbox }
           <ul>
-            { ...this.serviceListElements }
+            { this.serviceListElements }
           </ul>
           { this.contentElements }
         </div>

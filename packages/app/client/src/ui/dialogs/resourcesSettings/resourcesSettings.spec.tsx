@@ -3,8 +3,8 @@ import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { ResourcesSettingsContainer } from './resourcesSettingsContainer';
 import { combineReducers, createStore } from 'redux';
-import bot from '../../../data/reducer/bot';
-import resources from '../../../data/reducer/resourcesReducer';
+import { bot } from '../../../data/reducer/bot';
+import { resources } from '../../../data/reducer/resourcesReducer';
 import { ResourcesSettings } from './resourcesSettings';
 import { load, setActive } from '../../../data/action/botActions';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
@@ -30,7 +30,7 @@ jest.mock('../../../platform/commands/commandServiceImpl', () => ({
 
 jest.mock('../../../data/store', () => ({
   RootState: () => ({}),
-  get default() {
+  get store() {
     return mockStore;
   }
 }));

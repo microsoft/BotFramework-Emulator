@@ -1,14 +1,23 @@
 let mockFetchArgs: MockFetch;
-let mockHeaders = class {
-};
-jest.mock('node-fetch', () => ({
-  default: function (url: string, opts: OPTS) {
-    mockFetchArgs = { url, opts };
-  },
-  Headers: mockHeaders
-}));
+import * as nodeFetch from 'node-fetch';
 
-interface OPTS {
+jest.mock('node-fetch', () => {
+  const fetch = (url, opts) => {
+    mockFetchArgs = { url, opts };
+    return {
+      ok: true,
+      json: async () => ({}),
+      text: async () => '{}',
+    };
+  };
+  (fetch as any).Headers = class {
+  };
+  (fetch as any).Response = class {
+  };
+  return fetch;
+});
+
+interface mockOpts {
   headers: Headers;
   method: 'GET' | 'DELETE' | 'POST';
   body?: any;
@@ -16,7 +25,7 @@ interface OPTS {
 
 interface MockFetch {
   url?: string;
-  opts?: OPTS;
+  opts?: mockOpts;
 }
 
 import { ConversationService, headers as headersInstance } from './conversationService';
@@ -28,7 +37,7 @@ describe('The ConversationService should call "fetch" with the expected paramete
     expect(url).toBe('http://localhost/emulator/abcdef/users');
 
     const { body, headers, method } = opts;
-    expect(headers instanceof mockHeaders).toBeTruthy();
+    expect(headers instanceof nodeFetch.Headers).toBeTruthy();
     expect(headers === headers).toBeTruthy();
     expect(method).toBe('POST');
     expect(body[0].name).toBeFalsy();
@@ -42,7 +51,7 @@ describe('The ConversationService should call "fetch" with the expected paramete
     expect(url).toBe('http://localhost/emulator/abcdef/users');
 
     const { body, headers, method } = opts;
-    expect(headers instanceof mockHeaders).toBeTruthy();
+    expect(headers instanceof nodeFetch.Headers).toBeTruthy();
     expect(headers === headers).toBeTruthy();
     expect(method).toBe('DELETE');
     expect(body[0].id).toBe('1234');
@@ -55,7 +64,7 @@ describe('The ConversationService should call "fetch" with the expected paramete
     expect(url).toBe('http://localhost/emulator/abcdef/users');
 
     const { body, headers, method } = opts;
-    expect(headers instanceof mockHeaders).toBeTruthy();
+    expect(headers instanceof nodeFetch.Headers).toBeTruthy();
     expect(headers === headers).toBeTruthy();
     expect(method).toBe('DELETE');
     expect(body).toBeFalsy();
@@ -68,7 +77,7 @@ describe('The ConversationService should call "fetch" with the expected paramete
     expect(url).toBe('http://localhost/emulator/abcdef/contacts');
 
     const { body, headers, method } = opts;
-    expect(headers instanceof mockHeaders).toBeTruthy();
+    expect(headers instanceof nodeFetch.Headers).toBeTruthy();
     expect(headers === headers).toBeTruthy();
     expect(method).toBe('POST');
     expect(body).toBeFalsy();
@@ -81,7 +90,7 @@ describe('The ConversationService should call "fetch" with the expected paramete
     expect(url).toBe('http://localhost/emulator/abcdef/contacts');
 
     const { body, headers, method } = opts;
-    expect(headers instanceof mockHeaders).toBeTruthy();
+    expect(headers instanceof nodeFetch.Headers).toBeTruthy();
     expect(headers === headers).toBeTruthy();
     expect(method).toBe('DELETE');
     expect(body).toBeFalsy();
@@ -94,7 +103,7 @@ describe('The ConversationService should call "fetch" with the expected paramete
     expect(url).toBe('http://localhost/emulator/abcdef/typing');
 
     const { body, headers, method } = opts;
-    expect(headers instanceof mockHeaders).toBeTruthy();
+    expect(headers instanceof nodeFetch.Headers).toBeTruthy();
     expect(headers === headers).toBeTruthy();
     expect(method).toBe('POST');
     expect(body).toBeFalsy();
@@ -107,7 +116,7 @@ describe('The ConversationService should call "fetch" with the expected paramete
     expect(url).toBe('http://localhost/emulator/abcdef/ping');
 
     const { body, headers, method } = opts;
-    expect(headers instanceof mockHeaders).toBeTruthy();
+    expect(headers instanceof nodeFetch.Headers).toBeTruthy();
     expect(headers === headers).toBeTruthy();
     expect(method).toBe('POST');
     expect(body).toBeFalsy();
@@ -120,7 +129,7 @@ describe('The ConversationService should call "fetch" with the expected paramete
     expect(url).toBe('http://localhost/emulator/abcdef/userdata');
 
     const { body, headers, method } = opts;
-    expect(headers instanceof mockHeaders).toBeTruthy();
+    expect(headers instanceof nodeFetch.Headers).toBeTruthy();
     expect(headers === headers).toBeTruthy();
     expect(method).toBe('DELETE');
     expect(body).toBeFalsy();

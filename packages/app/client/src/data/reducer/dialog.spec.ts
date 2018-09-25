@@ -32,7 +32,7 @@
 //
 
 import { DialogAction, setShowing } from '../action/dialogActions';
-import dialog, { DialogState } from './dialog';
+import { dialog, DialogState } from './dialog';
 
 describe('Dialog reducer tests', () => {
   const DEFAULT_STATE: DialogState = {

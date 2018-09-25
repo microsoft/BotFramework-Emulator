@@ -31,123 +31,123 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as got from 'got';
+import got from 'got';
 
 let getPem = require('rsa-pem-from-mod-exp');
 
 export class OpenIdMetadata {
-    private url: string;
-    private lastUpdated = 0;
-    private keys: Key[];
+  private url: string;
+  private lastUpdated = 0;
+  private keys: Key[];
 
-    constructor(url: string) {
-        this.url = url;
-    }
+  constructor(url: string) {
+    this.url = url;
+  }
 
-    public getKey(keyId: string, cb: (key: string) => void): void {
-        // If keys are more than 5 days old, refresh them
-        let now = new Date().getTime();
-        if (this.lastUpdated < (now - 1000 * 60 * 60 * 24 * 5)) {
-            this.refreshCache((err) => {
-                if (err) {
-                    // fall through and return cached key on error
-                }
-
-                // Search the cache even if we failed to refresh
-                let key = this.findKey(keyId);
-                cb(key);
-            });
-        } else {
-            // Otherwise read from cache
-            let key = this.findKey(keyId);
-            cb(key);
+  public getKey(keyId: string, cb: (key: string) => void): void {
+    // If keys are more than 5 days old, refresh them
+    let now = new Date().getTime();
+    if (this.lastUpdated < (now - 1000 * 60 * 60 * 24 * 5)) {
+      this.refreshCache((err) => {
+        if (err) {
+          // fall through and return cached key on error
         }
-    }
 
-    private refreshCache(cb: (err: Error) => void): void {
-        let options = {
-            method: 'GET',
-            url: this.url,
-            json: true,
-            strictSSL: false,
-            useElectronNet: true
+        // Search the cache even if we failed to refresh
+        let key = this.findKey(keyId);
+        cb(key);
+      });
+    } else {
+      // Otherwise read from cache
+      let key = this.findKey(keyId);
+      cb(key);
+    }
+  }
+
+  private refreshCache(cb: (err: Error) => void): void {
+    let options = {
+      method: 'GET',
+      url: this.url,
+      json: true,
+      strictSSL: false,
+      useElectronNet: true
+    };
+
+    got(options)
+      .then((resp) => {
+        if (resp.statusCode >= 400 || !resp.body) {
+          throw new Error('Failed to load openID config: ' + resp.statusCode);
+        }
+
+        let openIdConfig = <OpenIdConfig> resp.body;
+
+        let options1 = {
+          method: 'GET',
+          url: openIdConfig.jwks_uri,
+          json: true,
+          strictSSL: false,
+          useElectronNet: true
         };
 
-        got(options)
-            .then((resp) => {
-                if (resp.statusCode >= 400 || !resp.body) {
-                    throw new Error('Failed to load openID config: ' + resp.statusCode);
-                }
-
-                let openIdConfig = <OpenIdConfig> resp.body;
-
-                let options1 = {
-                    method: 'GET',
-                    url: openIdConfig.jwks_uri,
-                    json: true,
-                    strictSSL: false,
-                    useElectronNet: true
-                };
-
-                got(options1)
-                    .then((resp1: any) => {
-                        if (resp1.statusCode >= 400 || !resp1.body) {
-                            throw new Error('Failed to load Keys: ' + resp1.statusCode);
-                        }
-
-                        this.lastUpdated = new Date().getTime();
-                        this.keys = <Key[]> resp1.body.keys;
-
-                        cb(null);
-                    })
-                    .catch((err) => {
-                        cb(err);
-                    });
-            })
-            .catch((err) => {
-                cb(err);
-            });
-    }
-
-    private findKey(keyId: string): string {
-        if (!this.keys) {
-            return null;
-        }
-
-        for (let i = 0; i < this.keys.length; i++) {
-            if (this.keys[i].kid === keyId) {
-                let key = this.keys[i];
-
-                if (!key.n || !key.e) {
-                    // Return null for non-RSA keys
-                    return null;
-                }
-
-                let modulus = Buffer.from(key.n).toString('base64');
-                let exponent = key.e;
-
-                return getPem(modulus, exponent);
+        got(options1)
+          .then((resp1: any) => {
+            if (resp1.statusCode >= 400 || !resp1.body) {
+              throw new Error('Failed to load Keys: ' + resp1.statusCode);
             }
+
+            this.lastUpdated = new Date().getTime();
+            this.keys = <Key[]> resp1.body.keys;
+
+            cb(null);
+          })
+          .catch((err) => {
+            cb(err);
+          });
+      })
+      .catch((err) => {
+        cb(err);
+      });
+  }
+
+  private findKey(keyId: string): string {
+    if (!this.keys) {
+      return null;
+    }
+
+    for (let i = 0; i < this.keys.length; i++) {
+      if (this.keys[i].kid === keyId) {
+        let key = this.keys[i];
+
+        if (!key.n || !key.e) {
+          // Return null for non-RSA keys
+          return null;
         }
 
-        return null;
+        let modulus = Buffer.from(key.n).toString('base64');
+        let exponent = key.e;
+
+        return getPem(modulus, exponent);
+      }
     }
+
+    return null;
+  }
 }
 
 interface OpenIdConfig {
-    issuer: string;
-    authorization_endpoint: string;
-    jwks_uri: string;
-    id_token_signing_alg_values_supported: string[];
-    token_endpoint_auth_methods_supported: string[];
+  issuer: string;
+  authorization_endpoint: string;
+  jwks_uri: string;
+  id_token_signing_alg_values_supported: string[];
+  token_endpoint_auth_methods_supported: string[];
 }
 
 interface Key {
-    kty: string;
-    use: string;
-    kid: string;
-    x5t: string;
-    n: string;
-    e: string;
-    x5c: string[];
+  kty: string;
+  use: string;
+  kid: string;
+  x5t: string;
+  n: string;
+  e: string;
+  x5c: string[];
 }

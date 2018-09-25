@@ -37,8 +37,29 @@ module.exports = {
         use: [ 'file-loader' ]
       },
       {
-        test: /\.tsx?$/,
-        loader: 'ts-loader'
+        test: /\.(tsx?)|(jsx)$/,
+        exclude: [/node_modules/],
+        use: {
+          loader: 'babel-loader',
+          options: {
+            "presets": [
+              [
+                "@babel/preset-env",
+                {
+                  "targets": {
+                    "chrome": "58",
+                    "esmodules": true
+                  }
+                }
+              ],
+              "@babel/preset-typescript"
+            ],
+            "plugins": [
+              "@babel/proposal-class-properties",
+              "@babel/plugin-transform-react-jsx"
+            ]
+          }
+        }
       },
       {
         test: /\.tsx$/,
@@ -72,9 +93,7 @@ module.exports = {
 
   externals: {},
   plugins: [
-    new NamedModulesPlugin(),
     new HotModuleReplacementPlugin(),
-    new HardSourceWebpackPlugin(),
     new WatchIgnorePlugin([
       './build/**/*.*',
       './public/**/*.*',

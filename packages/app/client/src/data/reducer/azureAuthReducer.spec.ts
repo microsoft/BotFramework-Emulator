@@ -32,7 +32,7 @@
 //
 
 import { azureArmTokenDataChanged, invalidateArmToken, } from '../action/azureAuthActions';
-import azureAuth, { AzureAuthState } from './azureAuthReducer';
+import { azureAuth, AzureAuthState } from './azureAuthReducer';
 
 describe('Azure auth reducer tests', () => {
   let startingState: AzureAuthState;

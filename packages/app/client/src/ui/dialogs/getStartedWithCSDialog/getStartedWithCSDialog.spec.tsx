@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { GetStartedWithCSDialogContainer } from './getStartedWithCSDialogContainer';
 import { combineReducers, createStore } from 'redux';
-import azureAuth from '../../../data/reducer/azureAuthReducer';
+import { azureAuth } from '../../../data/reducer/azureAuthReducer';
 import { GetStartedWithCSDialog } from './getStartedWithCSDialog';
 import { azureArmTokenDataChanged } from '../../../data/action/azureAuthActions';
 import { ServiceTypes } from 'botframework-config/lib/schema';

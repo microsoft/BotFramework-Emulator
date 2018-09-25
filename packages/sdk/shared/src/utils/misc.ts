@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as uuidv1 from 'uuid/v1';
+import uuidv1 from 'uuid/v1';
 
 export function uniqueId(): string {
   return uuidv1().toString();

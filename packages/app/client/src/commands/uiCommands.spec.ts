@@ -1,20 +1,13 @@
-const mockBotCreationDialog = class MockBotCreationDialog {
-};
-const mockSecretPromptDialog = class MockSecretPromptDialog {
-};
-const mockALPDC = class MockALPDC {
-};
-const mockALSDC = class MockALSDC {
-};
-jest.mock('../data/editorHelpers', () => ({
-  showWelcomePage: () => Promise.resolve(true)
-}));
 jest.mock('../ui/dialogs', () => ({
-    AzureLoginPromptDialogContainer: mockALPDC,
-    AzureLoginSuccessDialogContainer: mockALSDC,
-    BotCreationDialog: mockBotCreationDialog,
+    AzureLoginPromptDialogContainer: class {
+    },
+    AzureLoginSuccessDialogContainer: class {
+    },
+    BotCreationDialog: class {
+    },
     DialogService: { showDialog: () => Promise.resolve(true) },
-    SecretPromptDialog: mockSecretPromptDialog
+    SecretPromptDialog: class {
+    }
   }
 ));
 import { EditorActions, OpenEditorAction } from '../data/action/editorActions';
@@ -31,8 +24,8 @@ import {
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { registerCommands } from './uiCommands';
-import * as helpers from '../data/editorHelpers';
-import store from '../data/store';
+import * as editorHelpers from '../data/editorHelpers';
+import { store } from '../data/store';
 import { AzureAuthAction, AzureAuthWorkflow, invalidateArmToken } from '../data/action/azureAuthActions';
 
 const Commands = SharedConstants.Commands.UI;
@@ -44,9 +37,9 @@ describe('the uiCommands', () => {
     registerCommands(registry);
   });
 
-  it('should showExplorer the welcome page when the ShowWelcomePage command is dispatched', () => {
-    const spy = jest.spyOn(helpers, 'showWelcomePage');
-    registry.getCommand(Commands.ShowWelcomePage).handler();
+  it('should showExplorer the welcome page when the ShowWelcomePage command is dispatched', async () => {
+    const spy = jest.spyOn(editorHelpers, 'showWelcomePage');
+    await registry.getCommand(Commands.ShowWelcomePage).handler();
     expect(spy).toHaveBeenCalled();
   });
 

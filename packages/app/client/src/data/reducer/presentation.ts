@@ -43,8 +43,8 @@ const DEFAULT_STATE: PresentationState = {
   enabled: false
 };
 
-export default function presentation(state: PresentationState = DEFAULT_STATE, action: PresentationAction)
-  : PresentationState {
+export const presentation = (state: PresentationState = DEFAULT_STATE, action: PresentationAction)
+  : PresentationState => {
   switch (action.type) {
     case PresentationActions.disable:
       state = setEnabled(false, state);
@@ -59,7 +59,7 @@ export default function presentation(state: PresentationState = DEFAULT_STATE, a
   }
 
   return state;
-}
+};
 
 function setEnabled(enabled: boolean, state: PresentationState): PresentationState {
   let newState = Object.assign({}, state);

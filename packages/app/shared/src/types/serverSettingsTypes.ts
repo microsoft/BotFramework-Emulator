@@ -33,7 +33,7 @@
 
 import { Bot } from './botTypes';
 import { User } from '@bfemulator/sdk-shared';
-import * as uuidv4 from 'uuid/v4';
+import uuidv4 from 'uuid/v4';
 
 export interface FrameworkSettings {
   // path to use for ngrok

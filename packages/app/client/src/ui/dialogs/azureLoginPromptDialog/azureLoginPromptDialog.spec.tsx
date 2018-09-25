@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { AzureLoginPromptDialogContainer } from './azureLoginPromptDialogContainer';
 import { createStore } from 'redux';
-import azureAuth from '../../../data/reducer/azureAuthReducer';
+import { azureAuth } from '../../../data/reducer/azureAuthReducer';
 import { AzureLoginPromptDialog } from './azureLoginPromptDialog';
 
 jest.mock('../service', () => ({

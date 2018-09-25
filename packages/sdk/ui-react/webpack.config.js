@@ -43,7 +43,30 @@ module.exports = {
       {
         test: /\.(tsx?)|(jsx)$/,
         exclude: [/node_modules/],
-        loader: 'ts-loader',
+        use: {
+          loader: 'babel-loader',
+          options: {
+            "presets": [
+              [
+                "@babel/preset-env",
+                {
+                  "targets": {
+                    "chrome": "58",
+                    "esmodules": true
+                  }
+                }
+              ],
+              "@babel/preset-typescript"
+            ],
+            "ignore": [
+              "**/*.spec.ts"
+            ],
+            "plugins": [
+              "@babel/proposal-class-properties",
+              "@babel/plugin-transform-react-jsx"
+            ]
+          }
+        }
       },
       {
         test: /\.tsx?$/,
@@ -55,6 +78,7 @@ module.exports = {
 
   externals: {
     react: 'umd react',
+    '@uifabric/styling': 'umd @uifabric/styling',
     'react-dom': 'umd react-dom',
     'office-ui-fabric-react': 'umd office-ui-fabric-react'
   },

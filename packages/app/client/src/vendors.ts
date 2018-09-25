@@ -1,6 +1,5 @@
 import 'react';
 import 'redux';
-import 'redux-thunk';
 import 'redux-saga';
 import 'react-dom';
 import 'react-router-dom';

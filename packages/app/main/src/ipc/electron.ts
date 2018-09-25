@@ -35,8 +35,8 @@ import { Event, ipcMain, WebContents } from 'electron';
 import { Disposable, IPC } from '@bfemulator/sdk-shared';
 
 export class ElectronIPC extends IPC {
-  get id(): number {
-    return this._webContents.id;
+  get webContents(): WebContents {
+    return this._webContents;
   }
 
   constructor(private _webContents: WebContents) {
@@ -57,11 +57,11 @@ export class ElectronIPC extends IPC {
 }
 
 export const ElectronIPCServer = new class {
-  private _ipcs: { [id: number]: ElectronIPC } = {};
+  private _ipcs: WeakMap<WebContents, ElectronIPC> = new WeakMap<WebContents, ElectronIPC>();
   private initialized = false;
 
   registerIPC(ipc: ElectronIPC): Disposable {
-    this._ipcs[ipc.id] = ipc;
+    this._ipcs.set(ipc.webContents, ipc);
     this.initialize();
     return {
       dispose: () => {
@@ -75,7 +75,7 @@ export const ElectronIPCServer = new class {
       return;
     }
     ipcMain.on('ipc:message', (event: Event, ...args) => {
-      const ipc = this._ipcs[event.sender.id];
+      const ipc = this._ipcs.get(event.sender);
       if (ipc) {
         ipc.onMessage(event, ...args);
       }

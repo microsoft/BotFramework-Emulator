@@ -5,20 +5,33 @@ const mockEvent = Event; // this is silly but required by jest
 const mockArmToken = 'eyJhbGciOiJSU0EyNTYiLCJraWQiOiJmZGtqc2FoamdmIiwieDV0IjoiZiJ9.' +
   'eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.' +
   '7gjdshgfdsk98458205jfds9843fjds';
+
 jest.mock('jsonwebtoken', () => ({
   verify: () => true
 }));
 let mockResponses;
-jest.mock('node-fetch', () => ({
-  default: async () => ({
-    json: async () => mockResponses.pop()
-  })
-}));
+
+jest.mock('node-fetch', () => {
+  const fetch = (url, opts) => {
+    return {
+      ok: true,
+      json: async () => mockResponses.pop(),
+      text: async () => '{}',
+    };
+  };
+  (fetch as any).Headers = class {
+  };
+  (fetch as any).Response = class {
+  };
+  return fetch;
+});
+
 jest.mock('rsa-pem-from-mod-exp', () => () => ({}));
+
 jest.mock('electron', () => ({
   BrowserWindow: class MockBrowserWindow {
     public static reporters = [];
-    public listeners: { type: string, handler: (event: any) => void }[] = [] as any;
+    public listeners = [] as any;
     public webContents = { history: ['http://someotherUrl', `http://localhost/#t=13&id_token=${mockArmToken}`] };
 
     private static report(...args: any[]) {
@@ -74,6 +87,7 @@ jest.mock('electron', () => ({
     }
   }
 }));
+
 describe('The azureAuthWorkflowService', () => {
   beforeEach(() => {
     mockResponses = [

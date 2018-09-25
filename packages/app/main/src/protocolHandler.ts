@@ -31,14 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { FrameworkSettings, newBot, newEndpoint, SharedConstants, newNotification } from '@bfemulator/app-shared';
-import * as got from 'got';
+import { FrameworkSettings, newBot, newEndpoint, newNotification, SharedConstants } from '@bfemulator/app-shared';
+import got from 'got';
 import { IEndpointService } from 'botframework-config/lib/schema';
 import {
-  BotConfigWithPath,
-  BotConfigWithPathImpl,
+  applyBotConfigOverrides,
   BotConfigOverrides,
-  applyBotConfigOverrides
+  BotConfigWithPath,
+  BotConfigWithPathImpl
 } from '@bfemulator/sdk-shared';
 import * as Path from 'path';
 import * as QueryString from 'querystring';

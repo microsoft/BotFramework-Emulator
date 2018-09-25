@@ -32,7 +32,7 @@
 //
 
 import { NavBarAction, select } from '../action/navBarActions';
-import navBar, { NavBarState } from './navBar';
+import { navBar, NavBarState } from './navBar';
 
 describe('NavBar reducer unit tests', () => {
   const DEFAULT_STATE: NavBarState = {

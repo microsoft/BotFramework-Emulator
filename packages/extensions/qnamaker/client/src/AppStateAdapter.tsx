@@ -37,7 +37,6 @@ import { Answer } from './Models/QnAMakerModels';
 import { TraceActivity } from '@bfemulator/sdk-shared';
 import { IQnAService } from 'botframework-config/lib/schema' ;
 
-const TraceActivity = 'trace';
 const QnaMakerTracerType = 'https://www.qnamaker.ai/schemas/trace';
 
 interface QnaMakerModel {
@@ -59,7 +58,7 @@ export default class AppStateAdapter implements AppState {
       return false;
     }
     const trace = obj as TraceActivity;
-    if (trace.type !== TraceActivity || trace.valueType !== QnaMakerTracerType) {
+    if (trace.type !== 'trace' || trace.valueType !== QnaMakerTracerType) {
       return false;
     }
     if (!trace.value) {

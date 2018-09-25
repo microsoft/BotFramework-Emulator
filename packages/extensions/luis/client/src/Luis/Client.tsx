@@ -107,11 +107,11 @@ class LuisClient {
     let opCacheKey: string = LuisClient.getCacheKey('GetAppInfo', this.luisAppInfo.appId);
     let cached: AppInfo;
     if ((cached = LSCache.get(opCacheKey)) != null) {
-      return cached;
+      return cached || {} as AppInfo;
     }
     this.configureClient();
     let r = await this.appsService.getApplicationInfo({ appId: this.luisAppInfo.appId });
-    let appInfo: AppInfo;
+    let appInfo: AppInfo = {} as AppInfo;
     if (r.status === 401 ||
         // Cortana Built in app (static, user cannot author it)
         (r.status === 400 && this.luisAppInfo.appId.toLowerCase() === CortanaAppId)) {
@@ -139,7 +139,7 @@ class LuisClient {
     let opCacheKey: string = LuisClient.getCacheKey('GetAppInfo', appInfo.appId, appInfo.activeVersion);
     let cached: IntentInfo[];
     if ((cached = LSCache.get(opCacheKey)) != null) {
-      return cached;
+      return cached || [] as any;
     }
     this.configureClient();
     let r = await this.intentsService.getVersionIntentList({ appId: appInfo.appId, versionId: appInfo.activeVersion });

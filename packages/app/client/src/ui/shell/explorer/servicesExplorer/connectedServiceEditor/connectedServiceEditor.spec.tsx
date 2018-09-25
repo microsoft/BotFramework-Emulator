@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
-import azureAuth from '../../../../../data/reducer/azureAuthReducer';
+import { azureAuth } from '../../../../../data/reducer/azureAuthReducer';
 import { ConnectedServiceEditorContainer } from './connectedServiceEditorContainer';
 import { ConnectedServiceEditor } from './connectedServiceEditor';
 import { DialogService } from '../../../../dialogs/service';

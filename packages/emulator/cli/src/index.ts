@@ -37,7 +37,7 @@ import { BotEmulator } from '@bfemulator/emulator-core';
 import { config } from 'dotenv';
 import { readFile } from 'fs';
 import * as Restify from 'restify';
-import * as CORS from 'restify-cors-middleware';
+import CORS from 'restify-cors-middleware';
 import getPort from 'get-port';
 import NpmLogger from './npmLogger';
 

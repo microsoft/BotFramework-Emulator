@@ -43,7 +43,7 @@ import * as EditorActions from '../../data/action/editorActions';
 import * as ExplorerActions from '../../data/action/explorerActions';
 import * as FileActions from '../../data/action/fileActions';
 import * as NavBarActions from '../../data/action/navBarActions';
-import store from '../../data/store';
+import { store } from '../../data/store';
 import { beginAdd } from '../../data/action/notificationActions';
 
 export const ActiveBotHelper = new class {

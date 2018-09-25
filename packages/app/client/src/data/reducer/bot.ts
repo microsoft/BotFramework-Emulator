@@ -47,7 +47,7 @@ const DEFAULT_STATE: BotState = {
   botFiles: []
 };
 
-export default function bot(state: BotState = DEFAULT_STATE, action: BotAction) {
+export function bot(state: BotState = DEFAULT_STATE, action: BotAction) {
   switch (action.type) {
     case BotActions.create: {
       const newBot: BotInfo = {

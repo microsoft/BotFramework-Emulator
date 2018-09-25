@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "./",
+    "outDir": "built",
     "module": "esnext",
     "target": "es2017",
     "lib": ["es6", "dom", "es2015"],
@@ -12,7 +12,6 @@
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noImplicitAny": false,
-    // "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": false,
     "declaration": true,
@@ -20,7 +19,8 @@
     "types": ["jest", "react", "react-dom"]
   },
   "include": [
-    "./src"
+    "./src/**/*.ts",
+    "./src/**/*.tsx"
   ],
   "exclude": [
     "./built",

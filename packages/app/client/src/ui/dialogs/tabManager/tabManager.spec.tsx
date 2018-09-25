@@ -1,4 +1,4 @@
-import editor from '../../../data/reducer/editor';
+import { editor } from '../../../data/reducer/editor';
 import { combineReducers, createStore } from 'redux';
 import { mount } from 'enzyme';
 import * as React from 'react';
@@ -60,7 +60,7 @@ const mockWindow = {
   }
 };
 jest.mock('../../../data/store', () => ({
-  get default() {
+  get store() {
     return mockStore;
   }
 }));

@@ -5,7 +5,7 @@ import { combineReducers, createStore } from 'redux';
 import { ResourceExplorerContainer } from './resourceExplorerContainer';
 import { ResourceExplorer } from './resourceExplorer';
 import { ServiceTypes } from 'botframework-config/lib/schema';
-import resources from '../../../../data/reducer/resourcesReducer';
+import { resources } from '../../../../data/reducer/resourcesReducer';
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import { openContextMenuForResource, openResource, renameResource } from '../../../../data/action/resourcesAction';
 

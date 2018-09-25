@@ -42,7 +42,7 @@ const DEFAULT_STATE: NavBarState = {
   selection: constants.NAVBAR_BOT_EXPLORER
 };
 
-export default function navBar(state: NavBarState = DEFAULT_STATE, action: NavBarAction): NavBarState {
+export function navBar(state: NavBarState = DEFAULT_STATE, action: NavBarAction): NavBarState {
   switch (action.type) {
     case NavBarActions.select: {
       state = {

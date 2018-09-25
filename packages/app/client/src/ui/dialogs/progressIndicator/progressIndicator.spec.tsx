@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { ProgressIndicatorContainer } from './progressIndicatorContainer';
 import { combineReducers, createStore } from 'redux';
-import progressIndicator from '../../../data/reducer/progressIndicator';
+import { progressIndicator } from '../../../data/reducer/progressIndicator';
 import { ProgressIndicator } from './progressIndicator';
 
 jest.mock('./progressIndicator.scss', () => ({}));
