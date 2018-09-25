@@ -11,6 +11,7 @@ notifications:
 
 before_install:
 - npm i -g lerna
+- lerna clean --yes
 
 install:
 - lerna bootstrap --hoist
