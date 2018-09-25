@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as got from 'got';
+import got from 'got';
 import { DOMParser } from 'xmldom';
 import { mainWindow } from './main';
 import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
@@ -100,7 +100,7 @@ export class VersionManager {
   public static checkDotNetSdkVersion(conversationId: string, version: Version) {
     let options = {
       url: 'https://www.nuget.org/api/v2/Packages?' +
-      '$filter=IsLatestVersion%20eq%20true%20and%20Id%20eq\'Microsoft.Bot.Builder\'&$select=NormalizedVersion',
+        '$filter=IsLatestVersion%20eq%20true%20and%20Id%20eq\'Microsoft.Bot.Builder\'&$select=NormalizedVersion',
       method: 'GET',
       useElectronNet: true
     };
@@ -133,7 +133,7 @@ export class VersionManager {
   private static warnAboutNewSdkVersion(conversationId: string, botVersion: Version, latestVersion: Version) {
     mainWindow.logService.logToChat(conversationId,
       textItem(LogLevel.Warn, 'Warning: The latest bot SDK version is ' + VersionManager.toString(latestVersion) +
-      (botVersion ? ' but the bot is running SDK version ' + VersionManager.toString(botVersion) : '')
+        (botVersion ? ' but the bot is running SDK version ' + VersionManager.toString(botVersion) : '')
         + '. Consider upgrading the bot to the latest SDK.'));
   }
 

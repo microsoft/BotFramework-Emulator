@@ -49,7 +49,7 @@ const initialState: AzureAuthState = {
   persistLogin: false
 };
 
-export default function azureAuth(state: AzureAuthState = initialState, action: AzureAuthAction<ArmTokenData | void>)
+export function azureAuth(state: AzureAuthState = initialState, action: AzureAuthAction<ArmTokenData | void>)
   : AzureAuthState {
   const { payload = {}, type = '' } = action || {};
   const { access_token } = (payload || {}) as ArmTokenData;

@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { AzureLoginSuccessDialogContainer } from './azureLoginSuccessDialogContainer';
 import { combineReducers, createStore } from 'redux';
-import azureAuth from '../../../data/reducer/azureAuthReducer';
+import { azureAuth } from '../../../data/reducer/azureAuthReducer';
 import { AzureLoginSuccessDialog } from './azureLoginSuccessDialog';
 
 jest.mock('../service', () => ({

@@ -49,8 +49,8 @@ import { SharedConstants } from '@bfemulator/app-shared';
 
 // =============================================================================
 export interface Extension {
-  readonly unid: string;
   readonly config: ExtensionConfig;
+  readonly ipc: IPC;
 
   on(event: 'exit', listener: NodeJS.ExitListener);
 
@@ -66,18 +66,18 @@ export abstract class ExtensionImpl extends DisposableImpl implements Extension 
   protected _ext: CommandService;
   protected _cli: CommandService;
 
-  get unid(): string {
-    return this._ipc.id.toString();
-  }
-
   get config(): ExtensionConfig {
     return this._config;
   }
 
-  constructor(private _config: ExtensionConfig, protected _ipc: IPC) {
+  get ipc(): IPC {
+    return this._ipc;
+  }
+
+  protected constructor(private _config: ExtensionConfig, protected _ipc: IPC) {
     super();
-    this._ext = new CommandServiceImpl(this._ipc, `ext-${this._ipc.id}`);
-    this._cli = new CommandServiceImpl(mainWindow.ipc, `ext-${this._ipc.id}`);
+    this._ext = new CommandServiceImpl(this._ipc, `ext-${this._config.location}`);
+    this._cli = new CommandServiceImpl(mainWindow.ipc, `ext-${this._config.location}`);
     this.toDispose(this._ipc);
     this.toDispose(this._ext);
 
@@ -200,12 +200,12 @@ export interface ExtensionManager {
 // =============================================================================
 export const ExtensionManagerImpl = new class extends DisposableImpl implements ExtensionManager {
 
-  private extensions: { [unid: string]: ExtensionImpl } = {};
+  private extensions: Map<IPC, ExtensionImpl> = new Map<IPC, ExtensionImpl>();
 
   public findExtension(name: string): ExtensionImpl {
-    for (let unid in this.extensions) {
-      if (this.extensions[unid].config.name === name) {
-        return this.extensions[unid];
+    for (let kvPair of this.extensions) {
+      if (kvPair[1].config.name === name) {
+        return kvPair[1];
       }
     }
     return undefined;
@@ -231,22 +231,21 @@ export const ExtensionManagerImpl = new class extends DisposableImpl implements 
   }
 
   public unloadExtensions() {
-    for (let unid in this.extensions) {
-      if (this.extensions.hasOwnProperty(unid)) {
-        this.unloadExtension(unid);
-      }
+    for (let kvPair of this.extensions) {
+      this.unloadExtension(kvPair[0]);
     }
   }
 
-  public unloadExtension(unid: string) {
-    if (this.extensions.hasOwnProperty(unid)) {
-      console.log(`Removing extension ${this.extensions[unid].config.name}`);
+  public unloadExtension(ipc: IPC) {
+    const extension = this.extensions.get(ipc);
+    if (extension) {
+      console.log(`Removing extension ${extension.config.name}`);
       // Disconnect from the extension process
-      this.extensions[unid].disconnect();
+      extension.disconnect();
       // Notify the client that the extension is gone.
-      mainWindow.commandService.remoteCall(SharedConstants.Commands.Extension.Disconnect, unid);
+      mainWindow.commandService.remoteCall(SharedConstants.Commands.Extension.Disconnect, extension.config.location);
       // Cleanup
-      delete this.extensions[unid];
+      this.extensions.delete(ipc);
     }
   }
 
@@ -254,15 +253,12 @@ export const ExtensionManagerImpl = new class extends DisposableImpl implements 
     // Cleanup configPath
     configPath = configPath.replace(/\\/g, '/');
     // Remove any previous extension with matching name.
-    const existing = this.findExtension(extension.config.name);
-    if (existing) {
-      this.unloadExtension(existing.unid);
-    }
+    this.unloadExtension(extension.ipc);
     // Save it off.
-    this.extensions[extension.unid] = extension;
+    this.extensions.set(extension.ipc, extension);
     extension.on('exit', (code) => {
       // Unload the extension if its process exits.
-      this.unloadExtension(extension.unid);
+      this.unloadExtension(extension.ipc);
     });
     console.log(`Adding extension ${extension.config.name}`);
     // Cleanup some data
@@ -298,7 +294,7 @@ export const ExtensionManagerImpl = new class extends DisposableImpl implements 
     // Connect to the extension's node process (if any).
     extension.connect();
     // Notify the client of the new extension.
-    mainWindow.commandService.remoteCall(SharedConstants.Commands.Extension.Connect, extension.config, extension.unid);
+    mainWindow.commandService.remoteCall(SharedConstants.Commands.Extension.Connect, extension.config);
   }
 
   // Check whether we're running from an 'app.asar' packfile. If so, it means we were installed
@@ -324,19 +320,19 @@ export const ExtensionManagerImpl = new class extends DisposableImpl implements 
     try {
       // Read the extension's config file.
       let config = JSON.parse(readFileSync(`${folder}/bf-extension.json`));
-      // Follow redirections until we find a config file without one.
-      while (config && config.location) {
-        if (!path.isAbsolute(config.location)) {
-          // If relative path, make it absolute from the app directory
-          folder = this.unpackedFolder(path.join(__dirname, config.location));
-        } else {
-          folder = this.unpackedFolder(path.resolve(config.location));
-        }
-        try {
-          config = JSON.parse(readFileSync(`${folder}/bf-extension.json`));
-        } catch (ex) {
-          config = null;
-        }
+      if (!config.location) {
+        return;
+      }
+      if (!path.isAbsolute(config.location)) {
+        // If relative path, make it absolute from the app directory
+        folder = this.unpackedFolder(path.join(__dirname, config.location));
+      } else {
+        folder = this.unpackedFolder(path.resolve(config.location));
+      }
+      try {
+        Object.assign(config, JSON.parse(readFileSync(`${folder}/bf-extension.json`)));
+      } catch (ex) {
+        config = null;
       }
       if (config && config.name) {
         if (config.node) {

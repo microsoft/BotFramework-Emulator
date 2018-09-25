@@ -31,11 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import store from '../data/store';
+import { store } from '../data/store';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { Notification } from '@bfemulator/app-shared';
-import { getGlobal } from '../utils/getGlobal';
+import { getGlobal } from '../utils';
 import * as NotificationActions from '../data/action/notificationActions';
 
 /** Registers notification commands */

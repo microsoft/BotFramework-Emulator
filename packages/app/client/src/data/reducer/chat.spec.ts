@@ -33,9 +33,9 @@
 
 import LogEntry from '@bfemulator/emulator-core/lib/types/log/entry';
 import {
-  ChatAction,
   addTranscript,
   appendToLog,
+  ChatAction,
   clearLog,
   clearTranscripts,
   closeDocument,
@@ -45,7 +45,7 @@ import {
   setInspectorObjects
 } from '../action/chatActions';
 import { closeNonGlobalTabs } from '../action/editorActions';
-import chat, { ChatState } from './chat';
+import { chat, ChatState } from './chat';
 
 describe('Chat reducer tests', () => {
   const testChatId = 'testChat1';

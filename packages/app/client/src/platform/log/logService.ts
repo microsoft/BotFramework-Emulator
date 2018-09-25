@@ -35,7 +35,7 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import LogEntry from '@bfemulator/emulator-core/lib/types/log/entry';
 import { DisposableImpl, CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import * as ChatActions from '../../data/action/chatActions';
-import store from '../../data/store';
+import { store } from '../../data/store';
 import * as chatHelpers from '../../data/chatHelpers';
 
 export function registerCommands(commandRegistry: CommandRegistryImpl) {

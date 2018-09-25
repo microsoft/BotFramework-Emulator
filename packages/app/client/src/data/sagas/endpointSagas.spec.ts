@@ -1,4 +1,4 @@
-import bot from '../reducer/bot';
+import { bot } from '../reducer/bot';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import sagaMiddlewareFactory from 'redux-saga';
 import { endpointSagas } from './endpointSagas';
@@ -16,7 +16,7 @@ const mockComponentClass = class extends Component<{}, {}> {
 
 };
 jest.mock('../store', () => ({
-    get default() {
+    get store() {
       return mockStore;
     }
   })

@@ -15,7 +15,7 @@ const initialState: ResourcesState = {
 
 declare type ResourceActionType = ResourcesAction<IFileService | IFileService[]>;
 
-export default function resources(state: ResourcesState = initialState, action: ResourceActionType): ResourcesState {
+export function resources(state: ResourcesState = initialState, action: ResourceActionType): ResourcesState {
   switch (action.type) {
     case TRANSCRIPTS_UPDATED:
       return { ...state, transcripts: action.payload as IFileService[] };

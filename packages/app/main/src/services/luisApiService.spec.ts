@@ -1,7 +1,3 @@
-import { mainWindow } from '../main';
-
-const mockClass = class {
-};
 const mockArmToken = 'bm90aGluZw.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
 const mockReq: RequestInit = { headers: { Authorization: `Bearer ${mockArmToken}` } };
 const mockResponses = [
@@ -49,18 +45,21 @@ const mockResponses = [
   }
 ];
 let mockArgsPassedToFetch;
-jest.mock('node-fetch', () => ({
-  default: async (url, headers) => {
+jest.mock('node-fetch', () => {
+  const fetch = (url, headers) => {
     mockArgsPassedToFetch.push({ url, headers });
     return {
       ok: true,
       json: async () => mockResponses.shift(),
       text: async () => mockResponses.shift(),
     };
-  },
-  Headers: mockClass,
-  Response: mockClass
-}));
+  };
+  (fetch as any).Headers = class {
+  };
+  (fetch as any).Response = class {
+  };
+  return fetch;
+});
 import { LuisApi } from './luisApiService';
 
 describe('The LuisApiService class', () => {

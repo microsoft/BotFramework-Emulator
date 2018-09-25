@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { createStore } from 'redux';
-import azureAuth from '../../../data/reducer/azureAuthReducer';
+import { azureAuth } from '../../../data/reducer/azureAuthReducer';
 import { ConnectLuisAppPromptDialog } from './connectLuisAppPromptDialog';
 import { ConnectLuisAppPromptDialogContainer } from './connectLuisAppPromptDialogContainer';
 import { DialogService } from '../service';

@@ -31,131 +31,133 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export namespace SharedConstants {
-  export const NOTIFICATION_FROM_MAIN = 'NOTIFICATION_FROM_MAIN';
-  export const TEMP_BOT_IN_MEMORY_PATH = 'TEMP_BOT_IN_MEMORY';
+export const SharedConstants = {
+   NOTIFICATION_FROM_MAIN: 'NOTIFICATION_FROM_MAIN',
+   TEMP_BOT_IN_MEMORY_PATH: 'TEMP_BOT_IN_MEMORY',
 
   /** Names of commands used in both main and client */
-  export namespace Commands {
+  Commands: {
 
-    export namespace Azure {
-      export const RetrieveArmToken = 'azure:retrieve-arm-token';
-      export const PersistAzureLoginChanged = 'azure:persist-azure-login-changed';
-      export const SignUserOutOfAzure = 'azure:sign-user-out';
-    }
+    Azure: {
+       RetrieveArmToken: 'azure:retrieve-arm-token',
+       PersistAzureLoginChanged: 'azure:persist-azure-login-changed',
+       SignUserOutOfAzure: 'azure:sign-user-out',
+    },
 
-    export namespace Bot {
-      export const Create = 'bot:create';
-      export const Save = 'bot:save';
-      export const Open = 'bot:open';
-      export const SetActive = 'bot:set-active';
-      export const RestartEndpointService = 'bot:restart-endpoint-service';
-      export const Close = 'bot:close';
-      export const AddOrUpdateService = 'bot:add-or-update-service';
-      export const RemoveService = 'bot:remove-service';
-      export const PatchBotList = 'bot:list:patch';
-      export const Switch = 'bot:switch';
-      export const OpenBrowse = 'bot:browse-open';
-      export const SyncBotList = 'bot:list:sync';
-      export const Load = 'bot:load';
-      export const RemoveFromBotList = 'bot:list:remove';
-      export const ChatFilesUpdated = 'bot:chat-files-updated';
-      export const TranscriptFilesUpdated = 'bot:transcript-files-updated';
-    }
+    Bot: {
+       Create: 'bot:create',
+       Save: 'bot:save',
+       Open: 'bot:open',
+       SetActive: 'bot:set-active',
+       RestartEndpointService: 'bot:restart-endpoint-service',
+       Close: 'bot:close',
+       AddOrUpdateService: 'bot:add-or-update-service',
+       RemoveService: 'bot:remove-service',
+       PatchBotList: 'bot:list:patch',
+       Switch: 'bot:switch',
+       OpenBrowse: 'bot:browse-open',
+       SyncBotList: 'bot:list:sync',
+       Load: 'bot:load',
+       RemoveFromBotList: 'bot:list:remove',
+       WatchForTranscriptFiles: 'bot:watch-for-transcript-files',
+       WatchForChatFiles: 'bot:watch-for-chat-files',
+       ChatFilesUpdated: 'bot:chat-files-updated',
+       TranscriptFilesUpdated: 'bot:transcript-files-updated',
+    },
 
-    export namespace ClientInit {
-      export const Loaded = 'client:loaded';
-      export const PostWelcomeScreen = 'client:post-welcome-screen';
-    }
+    ClientInit: {
+       Loaded: 'client:loaded',
+       PostWelcomeScreen: 'client:post-welcome-screen',
+    },
 
-    export namespace Electron {
-      export const ShowMessageBox = 'shell:showExplorer-message-box';
-      export const ShowOpenDialog = 'shell:showExplorer-open-dialog';
-      export const ShowSaveDialog = 'shell:showExplorer-save-dialog';
-      export const UpdateFileMenu = 'menu:update-file-menu';
-      export const SetFullscreen = 'electron:set-fullscreen';
-      export const SetTitleBar = 'electron:set-title-bar';
-      export const DisplayContextMenu = 'electron:display-context-menu';
-      export const OpenExternal = 'electron:open-external';
-      export const ToggleDevTools = 'shell:toggle-inspector-devtools';
-      export const UpdateAvailable = 'shell:update-downloaded';
-      export const UpdateNotAvailable = 'shell:update-not-available';
-      export const ShowAboutDialog = 'shell:about';
-      export const OpenFileLocation = 'shell:open-file-location';
-      export const UnlinkFile = 'shell:unlink-file';
-      export const RenameFile = 'shell:rename-file';
-    }
+    Electron: {
+       ShowMessageBox: 'shell:showExplorer-message-box',
+       ShowOpenDialog: 'shell:showExplorer-open-dialog',
+       ShowSaveDialog: 'shell:showExplorer-save-dialog',
+       UpdateFileMenu: 'menu:update-file-menu',
+       SetFullscreen: 'electron:set-fullscreen',
+       SetTitleBar: 'electron:set-title-bar',
+       DisplayContextMenu: 'electron:display-context-menu',
+       OpenExternal: 'electron:open-external',
+       ToggleDevTools: 'shell:toggle-inspector-devtools',
+       UpdateAvailable: 'shell:update-downloaded',
+       UpdateNotAvailable: 'shell:update-not-available',
+       ShowAboutDialog: 'shell:about',
+       OpenFileLocation: 'shell:open-file-location',
+       UnlinkFile: 'shell:unlink-file',
+       RenameFile: 'shell:rename-file',
+    },
 
-    export namespace Emulator {
-      export const SaveTranscriptToFile = 'emulator:save-transcript-to-file';
-      export const FeedTranscriptFromDisk = 'emulator:feed-transcript:disk';
-      export const FeedTranscriptFromMemory = 'emulator:feed-transcript:deep-link';
-      export const GetSpeechToken = 'speech-token:get';
-      export const NewTranscript = 'transcript:new';
-      export const NewLiveChat = 'livechat:new';
-      export const OpenTranscript = 'transcript:open';
-      export const PromptToOpenTranscript = 'transcript:prompt-open';
-      export const ReloadTranscript = 'transcript:reload';
-      export const OpenChatFile = 'chat:open';
-      export const AppendToLog = 'log:append';
-    }
+    Emulator: {
+       SaveTranscriptToFile: 'emulator:save-transcript-to-file',
+       FeedTranscriptFromDisk: 'emulator:feed-transcript:disk',
+       FeedTranscriptFromMemory: 'emulator:feed-transcript:deep-link',
+       GetSpeechToken: 'speech-token:get',
+       NewTranscript: 'transcript:new',
+       NewLiveChat: 'livechat:new',
+       OpenTranscript: 'transcript:open',
+       PromptToOpenTranscript: 'transcript:prompt-open',
+       ReloadTranscript: 'transcript:reload',
+       OpenChatFile: 'chat:open',
+       AppendToLog: 'log:append',
+    },
 
-    export namespace Extension {
-      export const Connect = 'shell:extension-connect';
-      export const Disconnect = 'shell:extension-disconnect';
-    }
+    Extension: {
+       Connect: 'shell:extension-connect',
+       Disconnect: 'shell:extension-disconnect',
+    },
 
-    export namespace File {
-      export const Read = 'file:read';
-      export const Write = 'file:write';
-      export const SanitizeString = 'file:sanitize-string';
-      export const Clear = 'file:clear';
-      export const Add = 'file:add';
-      export const Remove = 'file:remove';
-      export const Changed = 'file:changed';
-    }
+    File: {
+       Read: 'file:read',
+       Write: 'file:write',
+       SanitizeString: 'file:sanitize-string',
+       Clear: 'file:clear',
+       Add: 'file:add',
+       Remove: 'file:remove',
+       Changed: 'file:changed',
+    },
 
-    export namespace ConnectedService {
-      export const GetConnectedServicesByType = 'connectedService:getConnectedServicesByType';
-    }
+    ConnectedService: {
+       GetConnectedServicesByType: 'connectedService:getConnectedServicesByType',
+    },
 
-    export namespace Misc {
-      export const GetStoreState = 'store:get-state';
-    }
+    Misc: {
+       GetStoreState: 'store:get-state',
+    },
 
-    export namespace Ngrok {
-      export const Reconnect = 'ngrok:reconnect';
-    }
+    Ngrok: {
+       Reconnect: 'ngrok:reconnect',
+    },
 
-    export namespace Notifications {
-      export const Add = 'notification:add';
-      export const Remove = 'notification:remove';
-    }
+    Notifications: {
+       Add: 'notification:add',
+       Remove: 'notification:remove',
+    },
 
-    export namespace OAuth {
-      export const SendTokenResponse = 'oauth:send-token-response';
-      export const CreateOAuthWindow = 'oauth:create-oauth-window';
-    }
+    OAuth: {
+       SendTokenResponse: 'oauth:send-token-response',
+       CreateOAuthWindow: 'oauth:create-oauth-window',
+    },
 
-    export namespace Settings {
-      export const SaveAppSettings = 'app:settings:save';
-      export const LoadAppSettings = 'app:settings:load';
-      export const ReceiveGlobalSettings = 'receive-global-settings';
-    }
+    Settings: {
+       SaveAppSettings: 'app:settings:save',
+       LoadAppSettings: 'app:settings:load',
+       ReceiveGlobalSettings: 'receive-global-settings',
+    },
 
-    export namespace UI {
-      export const ShowWelcomePage = 'welcome-page:showExplorer';
-      export const ShowBotCreationDialog = 'bot-creation:showExplorer';
-      export const ShowSecretPromptDialog = 'secret-prompt:showExplorer';
-      export const SwitchNavBarTab = 'navbar:switch-tab';
-      export const ShowExplorer = 'shell:showExplorer-explorer';
-      export const ShowAppSettings = 'shell:showExplorer-app-settings';
-      export const SwitchTheme = 'shell:switchTheme';
-      export const SignInToAzure = 'shell:signInToAzure';
-      export const ArmTokenReceivedOnStartup = 'shell:armTokenReceivedOnStartup';
-      export const ShowPostMigrationDialog = 'post-migration-dialog:show';
-      export const UpdateProgressIndicator = 'shell:updateProgressIndicator';
-      export const InvalidateAzureArmToken = 'shell:invalidateAzureArmToken';
+    UI: {
+       ShowWelcomePage: 'welcome-page:showExplorer',
+       ShowBotCreationDialog: 'bot-creation:showExplorer',
+       ShowSecretPromptDialog: 'secret-prompt:showExplorer',
+       SwitchNavBarTab: 'navbar:switch-tab',
+       ShowExplorer: 'shell:showExplorer-explorer',
+       ShowAppSettings: 'shell:showExplorer-app-settings',
+       SwitchTheme: 'shell:switchTheme',
+       SignInToAzure: 'shell:signInToAzure',
+       ArmTokenReceivedOnStartup: 'shell:armTokenReceivedOnStartup',
+       ShowPostMigrationDialog: 'post-migration-dialog:show',
+       UpdateProgressIndicator: 'shell:updateProgressIndicator',
+       InvalidateAzureArmToken: 'shell:invalidateAzureArmToken',
     }
   }
-}
+};

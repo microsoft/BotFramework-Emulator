@@ -33,7 +33,7 @@
 
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { ClientAwareSettings, SharedConstants } from '@bfemulator/app-shared';
-import store from '../data/store';
+import { store } from '../data/store';
 import { clientAwareSettingsChanged } from '../data/action/clientAwareSettingsActions';
 
 /** Registers settings commands */

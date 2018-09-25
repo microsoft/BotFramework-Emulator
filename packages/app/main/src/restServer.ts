@@ -32,7 +32,7 @@
 //
 
 import { BotEmulator, Conversation } from '@bfemulator/emulator-core';
-import * as CORS from 'restify-cors-middleware';
+import CORS from 'restify-cors-middleware';
 import * as Restify from 'restify';
 import fetch from 'node-fetch';
 

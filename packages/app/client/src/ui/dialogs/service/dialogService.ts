@@ -37,7 +37,7 @@ import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import * as DialogActions from '../../../data/action/dialogActions';
 
-import store from '../../../data/store';
+import { store } from '../../../data/store';
 
 export interface DialogService {
   showDialog(dialog: ComponentClass<any> | StatelessComponent<any>, props: { [propName: string]: any }): any;

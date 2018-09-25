@@ -39,7 +39,6 @@ import { TraceActivity } from '@bfemulator/sdk-shared';
 import { ButtonSelected } from '../Controls/ControlBar/ControlBar';
 import { RecognizerResultAdapter } from '../Adapters/RecognizerResultAdapter';
 
-const TraceActivity = 'trace';
 const LuisTraceType = 'https://www.luis.ai/schemas/trace';
 
 export default class AppStateAdapter implements AppState {
@@ -56,7 +55,7 @@ export default class AppStateAdapter implements AppState {
       return false;
     }
     const trace = obj as TraceActivity;
-    if (trace.type !== TraceActivity || trace.valueType !== LuisTraceType) {
+    if (trace.type !== 'trace' || trace.valueType !== LuisTraceType) {
       return false;
     }
     if (!trace.value) {

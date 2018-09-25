@@ -32,8 +32,8 @@
 //
 
 import * as path from 'path';
-import * as got from 'got';
-import { setTimeout, clearTimeout } from 'timers';
+import got from 'got';
+import { clearTimeout, setTimeout } from 'timers';
 
 const spawn = require('child_process').spawn;
 const Emitter = require('events').EventEmitter;

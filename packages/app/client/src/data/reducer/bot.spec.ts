@@ -31,15 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import bot, { BotState } from './bot';
-import { BotAction, create, load, setActive, close } from '../action/botActions';
+import { bot, BotState } from './bot';
+import { BotAction, close, create, load, setActive } from '../action/botActions';
 import { BotInfo } from '@bfemulator/app-shared';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 
 describe('Bot reducer tests', () => {
   const DEFAULT_STATE: BotState = {
     activeBot: null,
-    botFiles: []
+    botFiles: [],
+    activeBotDigest: ''
   };
 
   it('should return unaltered state for non-matching action type', () => {
@@ -55,7 +56,8 @@ describe('Bot reducer tests', () => {
       description: '',
       padlock: null,
       services: [],
-      path: 'somePath'
+      path: 'somePath',
+      version: '0.1'
     };
 
     const action = create(testbot, testbot.path, 'testsecret');
@@ -72,7 +74,8 @@ describe('Bot reducer tests', () => {
       description: '',
       padlock: null,
       services: [],
-      path: 'somePath'
+      path: 'somePath',
+      version: '0.1'
     };
 
     it('should set a bot as active', () => {
@@ -127,7 +130,7 @@ describe('Bot reducer tests', () => {
               id: 'someEndpointOverride'
             }
           }
-        }
+        } as any
       };
 
       const action = setActive(testbot);
@@ -161,7 +164,7 @@ describe('Bot reducer tests', () => {
               id: 'someEndpointOverride'
             }
           }
-        }
+        } as any
       };
 
       const action = setActive(testbot);
@@ -223,7 +226,7 @@ describe('Bot reducer tests', () => {
         description: 'this is a test bot',
         padlock: null,
         services: []
-      }
+      } as any
     };
     const action = close();
     const endingState = bot(startingState, action);

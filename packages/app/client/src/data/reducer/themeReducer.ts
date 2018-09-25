@@ -8,7 +8,7 @@ export interface ThemeState {
 
 export const initialState: ThemeState = { themeName: null, themeHref: null, themeComponents: [] };
 
-export default function theme(state: ThemeState = initialState, action: ThemeAction<SwitchThemePayload>): ThemeState {
+export function theme(state: ThemeState = initialState, action: ThemeAction<SwitchThemePayload>): ThemeState {
   switch (action.type) {
 
     case 'switchTheme':

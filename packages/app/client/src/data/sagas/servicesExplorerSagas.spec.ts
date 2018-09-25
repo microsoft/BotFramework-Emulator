@@ -9,8 +9,8 @@ import { ConnectedServiceEditorContainer } from '../../ui/shell/explorer/service
 import { ConnectedServicePickerContainer } from '../../ui/shell/explorer/servicesExplorer';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { servicesExplorerSagas } from './servicesExplorerSagas';
-import azureAuth from '../reducer/azureAuthReducer';
-import bot from '../reducer/bot';
+import { azureAuth } from '../reducer/azureAuthReducer';
+import { bot } from '../reducer/bot';
 import { azureArmTokenDataChanged } from '../action/azureAuthActions';
 import {
   ConnectedServiceAction,

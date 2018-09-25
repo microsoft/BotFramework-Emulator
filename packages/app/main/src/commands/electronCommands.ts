@@ -41,7 +41,8 @@ import { ContextMenuService } from '../services/contextMenuService';
 import { getStore } from '../botData/store';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { SharedConstants } from '@bfemulator/app-shared';
-import shell = Electron.shell;
+
+const { shell } = Electron;
 
 const store = getStore();
 
