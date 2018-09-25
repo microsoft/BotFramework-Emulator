@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
-import bot from '../../../../data/reducer/bot';
+import { bot } from '../../../../data/reducer/bot';
 import { EndpointExplorerContainer } from './endpointExplorerContainer';
 import { EndpointExplorer } from './endpointExplorer';
 import { load, setActive } from '../../../../data/action/botActions';
@@ -22,7 +22,7 @@ jest.mock('../servicePane/servicePane.scss', () => ({}));
 jest.mock('./endpointExplorer.scss', () => ({}));
 jest.mock('./endpointEditor/endpointEditor.scss', () => ({}));
 jest.mock('../../../../data/store', () => ({
-  get default() {
+  get store() {
     return mockStore;
   }
 }));

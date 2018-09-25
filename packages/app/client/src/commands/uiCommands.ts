@@ -41,7 +41,7 @@ import {
   PostMigrationDialogContainer,
   SecretPromptDialogContainer
 } from '../ui/dialogs';
-import store from '../data/store';
+import { store } from '../data/store';
 import * as EditorActions from '../data/action/editorActions';
 import * as NavBarActions from '../data/action/navBarActions';
 import * as Constants from '../constants';
@@ -60,7 +60,7 @@ export function registerCommands(commandRegistry: CommandRegistry) {
   // ---------------------------------------------------------------------------
   // Shows the welcome page
   commandRegistry.registerCommand(UI.ShowWelcomePage, () => {
-    showWelcomePage();
+    return showWelcomePage();
   });
 
   // ---------------------------------------------------------------------------

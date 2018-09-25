@@ -34,20 +34,19 @@
 import { applyMiddleware, combineReducers, createStore, Store } from 'redux';
 import promiseMiddleware from 'redux-promise-middleware';
 import sagaMiddlewareFactory from 'redux-saga';
-import thunk from 'redux-thunk';
-import bot, { BotState } from './reducer/bot';
-import chat, { ChatState } from './reducer/chat';
-import dialog, { DialogState } from './reducer/dialog';
-import editor, { EditorState } from './reducer/editor';
-import explorer, { ExplorerState } from './reducer/explorer';
-import azureAuth, { AzureAuthState } from './reducer/azureAuthReducer';
-import navBar, { NavBarState } from './reducer/navBar';
-import notification, { NotificationState } from './reducer/notification';
-import presentation, { PresentationState } from './reducer/presentation';
-import progressIndicator, { ProgressIndicatorState } from './reducer/progressIndicator';
-import resources, { ResourcesState } from './reducer/resourcesReducer';
-import theme, { ThemeState } from './reducer/themeReducer';
-import clientAwareSettings from './reducer/clientAwareSettingsReducer';
+import { bot, BotState } from './reducer/bot';
+import { chat, ChatState } from './reducer/chat';
+import { dialog, DialogState } from './reducer/dialog';
+import { editor, EditorState } from './reducer/editor';
+import { explorer, ExplorerState } from './reducer/explorer';
+import { azureAuth, AzureAuthState } from './reducer/azureAuthReducer';
+import { navBar, NavBarState } from './reducer/navBar';
+import { notification, NotificationState } from './reducer/notification';
+import { presentation, PresentationState } from './reducer/presentation';
+import { progressIndicator, ProgressIndicatorState } from './reducer/progressIndicator';
+import { resources, ResourcesState } from './reducer/resourcesReducer';
+import { theme, ThemeState } from './reducer/themeReducer';
+import { clientAwareSettings } from './reducer/clientAwareSettingsReducer';
 
 import { applicationSagas } from './sagas';
 import { ClientAwareSettings } from '@bfemulator/app-shared';
@@ -90,12 +89,11 @@ const configureStore = (initialState: RootState = DEFAULT_STATE): Store<RootStat
   initialState,
   applyMiddleware(
     sagaMiddleWare,
-    promiseMiddleware(),
-    thunk
+    promiseMiddleware()
   )
 );
 
 const store = configureStore();
 applicationSagas.forEach(saga => sagaMiddleWare.run(saga));
 
-export default store;
+export { store };

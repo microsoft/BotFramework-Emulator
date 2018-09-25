@@ -205,16 +205,13 @@ export const ExtensionManager = new class implements ExtensionManager {
   }
 
   public registerCommands(commandRegistry: CommandRegistryImpl) {
-    commandRegistry.registerCommand(
-      SharedConstants.Commands.Extension.Connect,
-      (config: ExtensionConfig, unid: string) => {
-        ExtensionManager.addExtension(config, unid);
-      });
+    const { Connect, Disconnect } = SharedConstants.Commands.Extension;
+    commandRegistry.registerCommand(Connect, (config: ExtensionConfig) => {
+      ExtensionManager.addExtension(config, config.location);
+    });
 
-    commandRegistry.registerCommand(
-      SharedConstants.Commands.Extension.Disconnect,
-      (unid: string) => {
-        ExtensionManager.removeExtension(unid);
-      });
+    commandRegistry.registerCommand(Disconnect, (location: string) => {
+      ExtensionManager.removeExtension(location);
+    });
   }
 };

@@ -33,7 +33,7 @@
 
 import { BrowserWindow } from 'electron';
 import fetch from 'node-fetch';
-import * as uuidv4 from 'uuid/v4';
+import uuidv4 from 'uuid/v4';
 import * as jwt from 'jsonwebtoken';
 
 let getPem = require('rsa-pem-from-mod-exp');

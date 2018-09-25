@@ -10,7 +10,7 @@ notifications:
   email: false
 
 before_install:
-- npm i -g lerna@2.11.x webpack@4.8.x jest
+- npm i -g lerna
 - lerna clean --yes
 
 install:

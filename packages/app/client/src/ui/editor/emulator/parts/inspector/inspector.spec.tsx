@@ -2,10 +2,10 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
-import bot from '../../../../../data/reducer/bot';
-import clientAwareSettings from '../../../../../data/reducer/clientAwareSettingsReducer';
+import { bot } from '../../../../../data/reducer/bot';
+import { clientAwareSettings } from '../../../../../data/reducer/clientAwareSettingsReducer';
 import { load, setActive } from '../../../../../data/action/botActions';
-import theme from '../../../../../data/reducer/themeReducer';
+import { theme } from '../../../../../data/reducer/themeReducer';
 import { Inspector } from './inspector';
 import { InspectorContainer } from './inspectorContainer';
 import { switchTheme } from '../../../../../data/action/themeActions';
@@ -19,7 +19,7 @@ const mockStore = createStore(combineReducers({ theme, bot, clientAwareSettings 
 jest.mock('../../../panel/panel.scss', () => ({}));
 
 jest.mock('../../../../../data/store', () => ({
-  get default() {
+  get store() {
     return mockStore;
   }
 }));

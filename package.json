@@ -1,15 +1,27 @@
 {
   "scripts": {
     "bootstrap": "lerna bootstrap --hoist",
-    "build": "lerna run --scope \"@bfemulator/@(**shared|sdk**)\" build && lerna run --scope \"!@bfemulator/@(**shared|sdk**)\" build",
+    "build": "npm rebuild node-sass && lerna run build",
     "start": "cd packages\\app\\client && npm run start",
-    "test": "jest --runInBand",
+    "test": "jest --no-cache",
     "test:coveralls": "jest --runInBand --bail --coverage --coverageReporters=text-lcov | coveralls"
   },
+  "devDependencies": {
+    "@babel/cli": "^7.1.0",
+    "@babel/core": "^7.1.0",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+    "@babel/plugin-transform-react-jsx": "^7.0.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-typescript": "^7.1.0",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-jest": "23.6.0"
+  },
+
   "jest": {
     "setupTestFrameworkScriptFile": "./testSetup.js",
     "transform": {
-      "^.+\\.(tsx?|jsx?)$": "ts-jest"
+      "^.+\\.(tsx|ts|js)$": "./babel-jest-config"
     },
     "testURL": "http://localhost",
     "testMatch": [
@@ -26,6 +38,6 @@
   },
   "dependencies": {
     "gulp": "^4.0.0",
-    "lerna": "^2.11.0"
+    "lerna": "3.4.0"
   }
 }

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
-import bot from '../../../../../data/reducer/bot';
+import { bot } from '../../../../../data/reducer/bot';
 import { EndpointEditor } from './endpointEditor';
 import { EndpointEditorContainer } from './endpointEditorContainer';
 import { load, setActive } from '../../../../../data/action/botActions';
@@ -11,7 +11,7 @@ const mockStore = createStore(combineReducers({ bot }), {});
 
 jest.mock('./endpointEditor.scss', () => ({}));
 jest.mock('../../../../../data/store', () => ({
-  get default() {
+  get store() {
     return mockStore;
   }
 }));

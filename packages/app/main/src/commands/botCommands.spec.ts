@@ -3,7 +3,6 @@ import { bot } from '../botData/reducers/bot';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import * as helpers from '../botHelpers';
-import { getBotInfoByPath, loadBotWithRetry, pathExistsInRecentBots } from '../botHelpers';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared/built';
 import { registerCommands } from './botCommands';
 import { botProjectFileWatcher } from '../watchers';
@@ -20,6 +19,7 @@ let mockStore;
 (store as any).getStore = function () {
   return mockStore || (mockStore = createStore(combineReducers({ bot })));
 };
+
 jest.mock('../botHelpers', () => ({
     saveBot: async () => void(0),
     toSavableBot: () => mockBotConfig.fromJSON(mockBot),
@@ -88,8 +88,8 @@ describe('The botCommands', () => {
 
   it('should create/save a new bot', async () => {
     const botToSave = BotConfigWithPathImpl.fromJSON(mockBot as any);
-    const patchBotInfoSpy = jest.spyOn(helpers, 'patchBotsJson');
-    const saveBotSpy = jest.spyOn(helpers, 'saveBot');
+    const patchBotInfoSpy = jest.spyOn((helpers as any).default, 'patchBotsJson');
+    const saveBotSpy = jest.spyOn((helpers as any).default, 'saveBot');
 
     const mockBotInfo = {
       path: botToSave.path,
@@ -106,9 +106,10 @@ describe('The botCommands', () => {
   it('should open a bot and set the default transcript and chat path if none exists', async () => {
     const mockBotInfo = { secret: 'secret', transcriptsPath: '', chatsPath: '' };
     const syncWithClientSpy = jest.spyOn(mainWindow.commandService, 'remoteCall');
-    const pathExistsInRecentBotsSpy = jest.spyOn(helpers, 'pathExistsInRecentBots').mockReturnValue(true);
-    const getBotInfoByPathSpy = jest.spyOn(helpers, 'getBotInfoByPath').mockReturnValue(mockBotInfo);
-    const loadBotWithRetrySpy = jest.spyOn(helpers, 'loadBotWithRetry').mockResolvedValue(mockBot);
+    const pathExistsInRecentBotsSpy = jest
+      .spyOn((helpers as any).default, 'pathExistsInRecentBots').mockReturnValue(true);
+    const getBotInfoByPathSpy = jest.spyOn((helpers as any).default, 'getBotInfoByPath').mockReturnValue(mockBotInfo);
+    const loadBotWithRetrySpy = jest.spyOn((helpers as any).default, 'loadBotWithRetry').mockResolvedValue(mockBot);
     const command = mockCommandRegistry.getCommand(Bot.Open);
     const result = await command.handler('bot/path', 'secret');
 

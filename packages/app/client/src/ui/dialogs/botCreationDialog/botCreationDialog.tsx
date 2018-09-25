@@ -51,7 +51,7 @@ import { CommandServiceImpl } from '../../../platform/commands/commandServiceImp
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 import { DialogService } from '../service';
 import { SharedConstants, newNotification } from '@bfemulator/app-shared';
-import store from '../../../data/store';
+import { store } from '../../../data/store';
 import { beginAdd } from '../../../data/action/notificationActions';
 import { generateBotSecret } from '../../../utils';
 

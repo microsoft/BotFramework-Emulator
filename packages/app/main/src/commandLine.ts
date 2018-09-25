@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as commandLineArgs from 'command-line-args';
+import commandLineArgs from 'command-line-args';
 import { CommandLineArgs } from '@bfemulator/app-shared';
 import * as globals from './globals';
 

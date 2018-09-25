@@ -35,7 +35,7 @@ import { BotConfigWithPath, CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { ActiveBotHelper } from '../ui/helpers/activeBotHelper';
 import { pathExistsInRecentBots } from '../data/botHelpers';
 import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
-import store from '../data/store';
+import { store } from '../data/store';
 import * as BotActions from '../data/action/botActions';
 import * as FileActions from '../data/action/fileActions';
 import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';

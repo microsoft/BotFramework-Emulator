@@ -6,12 +6,10 @@ import { registerCommands } from './emulatorCommands';
 import * as store from '../botData/store';
 import { BotConfiguration } from 'botframework-config';
 import { SharedConstants } from '@bfemulator/app-shared';
-import Conversation from '@bfemulator/emulator-core/src/facility/conversation';
+import { Conversation } from '@bfemulator/emulator-core';
 import { emulator } from '../emulator';
 import * as utils from '../utils';
 import * as botHelpers from '../botHelpers';
-import { getBotInfoByPath } from '../botHelpers';
-import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as chokidar from 'chokidar';
 
@@ -24,11 +22,16 @@ let mockStore;
 (store as any).getStore = function () {
   return mockStore || (mockStore = createStore(combineReducers({ bot })));
 };
-const mockOn = {on: () => mockOn};
+const mockOn = { on: () => mockOn };
 jest.mock('chokidar', () => ({
   watch: () => ({
     on: () => mockOn
   })
+}));
+
+jest.mock('fs-extra', () => ({
+  stat: async () => ({ isFile: () => true }),
+  readFile: async () => JSON.stringify((mockConversation as any).transcript)
 }));
 
 jest.mock('mkdirp', () => ({
@@ -334,15 +337,18 @@ const { Emulator } = SharedConstants.Commands;
 describe('The emulatorCommands', () => {
 
   it('should save a transcript to file based on the transcripts path in the botInfo', async () => {
-    const getActiveBotSpy = jest.spyOn(botHelpers, 'getActiveBot').mockReturnValue(mockBot);
+    const getActiveBotSpy = jest.spyOn((botHelpers as any).default, 'getActiveBot').mockReturnValue(mockBot);
     const conversationByIdSpy = jest
       .spyOn(emulator.framework.server.botEmulator.facilities.conversations, 'conversationById')
       .mockReturnValue(mockConversation);
-    const showSaveDialogSpy = jest.spyOn(utils, 'showSaveDialog').mockReturnValue('chosen/path');
+    const showSaveDialogSpy = jest.spyOn((utils as any).default, 'showSaveDialog').mockReturnValue('chosen/path');
 
-    const getBotInfoByPathSpy = jest.spyOn(botHelpers, 'getBotInfoByPath').mockReturnValue(mockInfo);
-    const toSavableBotSpy = jest.spyOn(botHelpers, 'toSavableBot').mockReturnValue({ save: async () => ({}) });
-    const patchBotJsonSpy = jest.spyOn(botHelpers, 'patchBotsJson').mockResolvedValue(true);
+    const getBotInfoByPathSpy = jest.spyOn((botHelpers as any).default, 'getBotInfoByPath')
+      .mockReturnValue(mockInfo);
+    const toSavableBotSpy = jest.spyOn((botHelpers as any).default, 'toSavableBot')
+      .mockReturnValue({ save: async () => ({}) });
+    const patchBotJsonSpy = jest.spyOn((botHelpers as any).default, 'patchBotsJson')
+      .mockResolvedValue(true);
 
     const command = mockCommandRegistry.getCommand(Emulator.SaveTranscriptToFile);
     await command.handler('1234');
@@ -369,17 +375,11 @@ describe('The emulatorCommands', () => {
   });
 
   it('should feed a transcript from disk to a conversation', async () => {
-    const statSpy = jest.spyOn(fs, 'stat').mockResolvedValue({ isFile: () => true });
-    const readFileSpy = jest.spyOn(fs, 'readFile')
-      .mockResolvedValue(JSON.stringify((mockConversation as any).transcript));
-
     const commandServiceSpy = jest.spyOn(mainWindow.commandService, 'call');
 
     const command = mockCommandRegistry.getCommand(SharedConstants.Commands.Emulator.FeedTranscriptFromDisk);
     const result = await command.handler('12', '12', '12', 'file/path');
 
-    expect(statSpy).toHaveBeenCalledWith(path.resolve('file/path'));
-    expect(readFileSpy).toHaveBeenCalledWith(path.resolve('file/path'), 'utf-8');
     expect(commandServiceSpy).toHaveBeenCalledWith(SharedConstants.Commands.Emulator.FeedTranscriptFromMemory,
       '12', '12', '12', (mockConversation as any).transcript);
     expect(result).toEqual({

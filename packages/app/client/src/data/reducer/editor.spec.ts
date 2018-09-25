@@ -31,33 +31,33 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import editor from './editor';
 import {
-  EditorState,
+  editor,
   Editor,
-  setDraggingTab,
-  setNewPrimaryEditor,
-  setActiveEditor,
-  setEditorState,
+  EditorState,
+  fixupTabGroups,
   removeDocumentFromTabGroup,
-  fixupTabGroups
+  setActiveEditor,
+  setDraggingTab,
+  setEditorState,
+  setNewPrimaryEditor
 } from './editor';
 import {
-  EditorAction,
+  addDocPendingChange,
   appendTab,
-  toggleDraggingTab,
   close,
+  closeNonGlobalTabs,
+  dropTabOnLeftOverlay,
+  EditorAction,
+  open,
+  removeDocPendingChange,
   setActiveEditor as setActiveEditorAction,
   setActiveTab,
   setDirtyFlag,
-  closeNonGlobalTabs,
-  updateDocument,
-  open,
   splitTab,
   swapTabs,
-  addDocPendingChange,
-  removeDocPendingChange,
-  dropTabOnLeftOverlay
+  toggleDraggingTab,
+  updateDocument
 } from '../action/editorActions';
 import * as Constants from '../../constants';
 import { deepCopySlow } from '@bfemulator/app-shared';

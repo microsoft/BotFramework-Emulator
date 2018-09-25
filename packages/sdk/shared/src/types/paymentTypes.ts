@@ -31,116 +31,113 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export namespace Payment {
+export interface CheckoutConversationSession {
+  paymentActivityId: string;
+  checkoutConversationId: string;
+  checkoutFromId: string;
+}
 
-  export interface CheckoutConversationSession {
-    paymentActivityId: string;
-    checkoutConversationId: string;
-    checkoutFromId: string;
-  }
+export interface PaymentMethodData {
+  supportedMethods: string[];
+  data: any;
+}
 
-  export interface PaymentMethodData {
-    supportedMethods: string[];
-    data: any;
-  }
+export interface PaymentDetails {
+  total: PaymentItem;
+  displayItems: PaymentItem[];
+  shippingOptions: PaymentShippingOption[];
+  modifiers: PaymentDetailsModifier[];
+  error: string;
+}
 
-  export interface PaymentDetails {
-    total: PaymentItem;
-    displayItems: PaymentItem[];
-    shippingOptions: PaymentShippingOption[];
-    modifiers: PaymentDetailsModifier[];
-    error: string;
-  }
+export interface PaymentItem {
+  label: string;
+  pending?: boolean;
+  amount: PaymentCurrencyAmount;
+}
 
-  export interface PaymentItem {
-    label: string;
-    pending?: boolean;
-    amount: PaymentCurrencyAmount;
-  }
+export interface PaymentCurrencyAmount {
+  currency: string;
+  currencySystem: string;
+  value: string;
+}
 
-  export interface PaymentCurrencyAmount {
-    currency: string;
-    currencySystem: string;
-    value: string;
-  }
+export interface PaymentDetailsModifier {
+  additionalDisplayItems: PaymentItem[];
+  data: any;
+  supportedMethods: string[];
+  total: PaymentItem;
+}
 
-  export interface PaymentDetailsModifier {
-    additionalDisplayItems: PaymentItem[];
-    data: any;
-    supportedMethods: string[];
-    total: PaymentItem;
-  }
+export interface PaymentShippingOption {
+  id: string;
+  label: string;
+  selected?: boolean;
+  amount: PaymentCurrencyAmount;
+}
 
-  export interface PaymentShippingOption {
-    id: string;
-    label: string;
-    selected?: boolean;
-    amount: PaymentCurrencyAmount;
-  }
+export interface PaymentOptions {
+  requestPayerEmail?: boolean;
+  requestPayerName?: boolean;
+  requestPayerPhone?: boolean;
+  requestShipping?: boolean;
+  shippingType: string;
+}
 
-  export interface PaymentOptions {
-    requestPayerEmail?: boolean;
-    requestPayerName?: boolean;
-    requestPayerPhone?: boolean;
-    requestShipping?: boolean;
-    shippingType: string;
-  }
+export interface PaymentRequest {
+  details: PaymentDetails;
+  expires: string;
+  id: string;
+  methodData: PaymentMethodData[];
+  options: PaymentOptions;
+}
 
-  export interface PaymentRequest {
-    details: PaymentDetails;
-    expires: string;
-    id: string;
-    methodData: PaymentMethodData[];
-    options: PaymentOptions;
-  }
+export const PaymentOperations = {
+  PaymentCompleteOperationName: 'payments/complete',
+  UpdateShippingAddressOperationName: 'payments/update/shippingAddress',
+  UpdateShippingOptionOperationName: 'payments/update/shippingOption'
+};
 
-  export const PaymentOperations = {
-    PaymentCompleteOperationName: 'payments/complete',
-    UpdateShippingAddressOperationName: 'payments/update/shippingAddress',
-    UpdateShippingOptionOperationName: 'payments/update/shippingOption'
-  };
+export interface PaymentAddress {
+  addressLine: string[];
+  city: string;
+  country: string;
+  dependentLocality: string;
+  languageCode: string;
+  organization: string;
+  phone: string;
+  postalCode: string;
+  recipient: string;
+  region: string;
+  sortingCode: string;
+}
 
-  export interface PaymentAddress {
-    addressLine: string[];
-    city: string;
-    country: string;
-    dependentLocality: string;
-    languageCode: string;
-    organization: string;
-    phone: string;
-    postalCode: string;
-    recipient: string;
-    region: string;
-    sortingCode: string;
-  }
+export interface PaymentRequestUpdate {
+  details: PaymentDetails;
+  id: string;
+  shippingAddress: PaymentAddress;
+  shippingOption: string;
+}
 
-  export interface PaymentRequestUpdate {
-    details: PaymentDetails;
-    id: string;
-    shippingAddress: PaymentAddress;
-    shippingOption: string;
-  }
+export interface PaymentRequestUpdateResult {
+  details: PaymentDetails;
+}
 
-  export interface PaymentRequestUpdateResult {
-    details: PaymentDetails;
-  }
+export interface PaymentRequestComplete {
+  id: string;
+  paymentRequest: PaymentRequest;
+  paymentResponse: PaymentResponse;
+}
 
-  export interface PaymentRequestComplete {
-    id: string;
-    paymentRequest: PaymentRequest;
-    paymentResponse: PaymentResponse;
-  }
+export interface PaymentRequestCompleteResult {
+  result: string;
+}
 
-  export interface PaymentRequestCompleteResult {
-    result: string;
-  }
-
-  export interface PaymentResponse {
-    details: any;
-    methodName: string;
-    payerEmail: string;
-    payerPhone: string;
-    shippingAddress: PaymentAddress;
-    shippingOption: string;
-  }
+export interface PaymentResponse {
+  details: any;
+  methodName: string;
+  payerEmail: string;
+  payerPhone: string;
+  shippingAddress: PaymentAddress;
+  shippingOption: string;
 }

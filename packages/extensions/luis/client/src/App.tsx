@@ -205,7 +205,7 @@ class App extends Component<any, AppState> {
   }
 
   render() {
-    const { traceInfo = {} as any, appInfo, controlBarButtonSelected } = this.state;
+    const { traceInfo = {} as any, appInfo = {} as AppInfo, controlBarButtonSelected } = this.state;
     const { recognizerResult = {}, luisResult = {} } = traceInfo;
     const name = controlBarButtonSelected === ButtonSelected.RecognizerResult ? 'recognizerResult' : 'luisResponse';
     const result = controlBarButtonSelected === ButtonSelected.RecognizerResult ? recognizerResult : luisResult;
@@ -249,13 +249,9 @@ class App extends Component<any, AppState> {
 
       try {
         let appInfo = await this.luisclient.getApplicationInfo();
-        this.setState({
-          appInfo: appInfo
-        });
-        let intents = await this.luisclient.getApplicationIntents(appInfo);
-        this.setState({
-          intentInfo: intents
-        });
+        this.setState({ appInfo });
+        let intentInfo = await this.luisclient.getApplicationIntents(appInfo);
+        this.setState({ intentInfo });
       } catch (err) {
         $host.logger.error(err.message);
       }

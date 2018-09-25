@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import store from '../data/store';
+import { store } from '../data/store';
 import * as ChatActions from '../data/action/chatActions';
 import * as EditorActions from '../data/action/editorActions';
 import * as Constants from '../constants';
