@@ -1,5 +1,6 @@
 {
   "linux": {
-    "category": "Development"
+    "category": "Development",
+    "icon": "./icon.ico"
   }
 }
