@@ -4,7 +4,7 @@ dist: trusty
 services: docker
 
 node_js:
-- "lts/*"
+- "10"
 
 notifications:
   email: false
