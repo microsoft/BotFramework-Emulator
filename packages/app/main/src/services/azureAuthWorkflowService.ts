@@ -47,7 +47,7 @@ export class AzureAuthWorkflowService {
   private static config: Config;
   private static jwks: Jwks;
 
-  public static* retrieveAuthToken(renew: boolean = false, redirectUri: string): IterableIterator<any> {
+  public static * retrieveAuthToken(renew: boolean = false, redirectUri: string): IterableIterator<any> {
     const authWindow = yield this.launchAuthWindow(renew, redirectUri);
     authWindow.show();
     const result = yield this.waitForAuthResult(authWindow, redirectUri);
@@ -62,7 +62,7 @@ export class AzureAuthWorkflowService {
     yield armToken;
   }
 
-  public static* enterSignOutWorkflow(prompt: boolean): IterableIterator<any> {
+  public static * enterSignOutWorkflow(prompt: boolean): IterableIterator<any> {
     const signOutWindow = yield this.launchSignOutWindow(prompt);
     signOutWindow.show();
 
@@ -139,7 +139,7 @@ export class AzureAuthWorkflowService {
       `nonce=${nonce}`,
       'x-client-SKU=Js',
       'x-client-Ver=1.0.17',
-      'resource=00000002-0000-0000-c000-000000000000'
+      'resource=https://management.core.windows.net/'
     ];
     if (renew) {
       bits.push('prompt=none');
