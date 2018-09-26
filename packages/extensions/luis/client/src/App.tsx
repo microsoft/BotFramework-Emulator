@@ -279,13 +279,14 @@ class App extends Component<any, AppState> {
     try {
       await this.luisclient.train(this.state.appInfo);
       $host.logger.log('Application trained successfully');
-      $host.setAccessoryState(TrainAccessoryId, AccessoryDefaultState);
       this.setAppPersistentState({
         pendingTrain: false,
         pendingPublish: true
       });
     } catch (err) {
       $host.logger.error(err.message);
+    } finally {
+      $host.setAccessoryState(TrainAccessoryId, AccessoryDefaultState);
     }
   }
 
@@ -294,13 +295,14 @@ class App extends Component<any, AppState> {
     try {
       await this.luisclient.publish(this.state.appInfo, this.state.traceInfo.luisOptions.Staging || false);
       $host.logger.log('Application published successfully');
-      $host.setAccessoryState(PublichAccessoryId, AccessoryDefaultState);
       this.setAppPersistentState({
         pendingPublish: false,
         pendingTrain: false
       });
     } catch (err) {
       $host.logger.error(err.message);
+    } finally {
+      $host.setAccessoryState(TrainAccessoryId, AccessoryDefaultState);
     }
   }
 

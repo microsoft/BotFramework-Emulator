@@ -11,8 +11,6 @@ import 'botframework-webchat/built/Chat';
 
 import 'botframework-config/lib/schema';
 import 'botframework-config/lib/models';
-import 'rxjs';
 import '@uifabric/merge-styles';
 import 'botframework-webchat';
 import 'office-ui-fabric-react';
-import 'base64url';
