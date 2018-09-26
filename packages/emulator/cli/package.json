@@ -47,7 +47,7 @@
     "dotenv": "^5.0.1",
     "get-port": "^3.2.0",
     "npmlog": "^4.1.2",
-    "restify": "^4.3.3",
+    "restify": "^5.0.0",
     "restify-cors-middleware": "^1.1.0"
   },
   "devDependencies": {
