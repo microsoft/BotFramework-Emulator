@@ -47,7 +47,7 @@
 
   &:hover {
     > .editorTabClose {
-      visibility: visible;
+      opacity: 1;
     }
   }
 
@@ -59,18 +59,17 @@
     margin-left: 8px;
     border: 1px solid transparent;
     outline: none;
+    opacity: 0;
     padding: 0;
-    visibility: hidden;
-    -webkit-mask: url('../../../media/ic_close.svg');
     cursor: pointer;
 
     &:focus {
-      border-width: 1px;
-      border-style: solid;
-      border-color: var(--tab-border);
+      border: var(--tab-focus-border);
+      opacity: 1;
     }
 
     & > span {
+      -webkit-mask: url('../../../media/ic_close.svg');
       display: block;
       height: 16px;
       width: 16px;
@@ -92,6 +91,6 @@
   color: var(--tab-color);
 
   & > .editorTabClose {
-    visibility: visible;
+    opacity: 1;
   }
 }
