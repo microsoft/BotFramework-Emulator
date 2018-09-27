@@ -294,7 +294,8 @@ gulp.task('redist:mac:binaries', function () {
     return gulp.src(filenames, { allowEmpty: true })
       .pipe(rename(function (path) {
         path.basename = setReleaseFilename(path.basename, {
-          replaceWhitespace: true
+          replaceWhitespace: true,
+          fixMacBinaryNames: true
         });
       }))
       .pipe(gulp.dest('./dist'));
