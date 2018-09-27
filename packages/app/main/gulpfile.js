@@ -639,6 +639,8 @@ function getFileList(platform, target, options = {}) {
     basename: pjson.packagename,
     version: pjson.version,
   }, options);
+  // get rid of whitespace in basename
+  options.basename.replace(' ', '-');
   const path = './dist';
   const filelist = [];
   switch (`${platform}-${target || ''}`) {
