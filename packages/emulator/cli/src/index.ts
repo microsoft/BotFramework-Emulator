@@ -75,7 +75,10 @@ program.appPassword = program.appPassword || process.env.MICROSOFT_APP_PASSWORD;
 
 async function main() {
   // Create a Restify server
-  const server = Restify.createServer({ name: 'localmode' });
+  const server = Restify.createServer({
+    name: 'localmode',
+    handleUncaughtExceptions: true
+  });
 
   // Setup CORS middleware for the whole server
   const cors = CORS({
