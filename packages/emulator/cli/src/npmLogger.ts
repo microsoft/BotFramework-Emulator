@@ -37,12 +37,12 @@ import ILogger from '@bfemulator/emulator-core/lib/types/logger';
 import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
 import ILogItem from '@bfemulator/emulator-core/lib/types/log/item';
 
-function shortId(id) {
+function shortId(id: string) {
   return [id.substr(0, 3), id.substr(-5)].join('...');
 }
 
-function logLevel(logLevel: LogLevel) {
-  switch (logLevel) {
+function logLevel(level: LogLevel) {
+  switch (level) {
     case LogLevel.Error:
       return log.error;
 
@@ -65,12 +65,15 @@ export default class NpmLogger implements ILogger {
   public logMessage(conversationId: string, ...items: ILogItem[]) {
     items.forEach(message => {
       switch (message.type) {
-        case "text": {
+        case 'text':
           logLevel(message.payload.level)(
             shortId(conversationId),
             message.payload.text
           );
-        }
+          break;
+
+        default:
+          return null;
       }
     });
   }
