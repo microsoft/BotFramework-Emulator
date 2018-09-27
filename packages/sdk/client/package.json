@@ -19,16 +19,18 @@
     "@babel/plugin-proposal-class-properties": "^7.1.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
     "@babel/plugin-transform-react-jsx": "^7.0.0",
+    "@babel/plugin-transform-runtime": "^7.1.0",
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-typescript": "^7.1.0",
     "@types/jest": "^22.2.3",
+    "babel-jest": "23.6.0",
     "jest": "^23.0.0",
     "rimraf": "^2.6.2",
-    "babel-jest": "23.6.0",
     "tslint": "^5.10.0",
     "typescript": "3.0.3"
   },
   "dependencies": {
+    "@babel/runtime": "^7.0.0",
     "@bfemulator/sdk-shared": "^1.0.0",
     "botframework-config": "4.0.0-preview1.3.4",
     "tslib": "^1.9.0"
