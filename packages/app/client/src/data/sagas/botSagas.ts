@@ -40,7 +40,7 @@ import { generateBotHash } from '../botHelpers';
 /** Opens up native open file dialog to browse for a .bot file */
 export function* browseForBot(): IterableIterator<any> {
   yield CommandServiceImpl.call(SharedConstants.Commands.Bot.OpenBrowse)
-    // secret prompt was closed
+    // dialog was closed
     .catch(_err => null);
 }
 
