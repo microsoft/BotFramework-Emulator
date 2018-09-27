@@ -42,7 +42,8 @@ describe('Bot utility function tests', () => {
     path: 'somePath',
     padlock: null,
     services: [],
-    overrides: null
+    overrides: null,
+    version: '0.1'
   };
 
   it('should apply bot config overrides', () => {
@@ -78,7 +79,8 @@ describe('Bot utility function tests', () => {
         name: 'someName',
         description: '',
         padlock: null,
-        services: []
+        services: [],
+        version: '0.1'
       };
       const result = botsAreTheSame(bot, nonMatchingBot);
 
@@ -91,7 +93,8 @@ describe('Bot utility function tests', () => {
         description: '',
         padlock: null,
         services: [],
-        path: 'somePath'
+        path: 'somePath',
+        version: '0.1'
       };
       const result = botsAreTheSame(bot, matchingBot);
       expect(result).toBe(true);
