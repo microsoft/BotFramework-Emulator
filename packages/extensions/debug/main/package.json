@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npm run clean && babel ./src --out-dir built --extensions \".ts,.tsx\"",
+    "build": "npm run clean && babel ./src --out-dir built --extensions \".ts,.tsx\" --ignore \"**/*.spec.ts\"",
     "clean": "rimraf ./built",
     "prepare": "npm run clean",
     "test": "jest"

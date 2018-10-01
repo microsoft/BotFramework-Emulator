@@ -1,6 +1,7 @@
 const {
   HotModuleReplacementPlugin,
-  WatchIgnorePlugin } = require('webpack');
+  WatchIgnorePlugin
+} = require('webpack');
 const path = require('path');
 module.exports = {
   entry: {
@@ -21,7 +22,7 @@ module.exports = {
               modules: true,
               sass: false,
               namedExport: true,
-              sourcemaps:true,
+              sourcemaps: true,
               banner: '// This is a generated file. Changes are likely to result in being overwritten'
             }
           },
@@ -31,13 +32,16 @@ module.exports = {
       },
       {
         test: /\.(png|jpg|gif|svg)$/,
-        use: [ 'file-loader' ]
+        use: ['file-loader']
       },
       {
         test: /\.(tsx?)|(jsx)$/,
         exclude: [/node_modules/],
         use: {
-          loader: 'babel-loader'
+          loader: 'babel-loader',
+          "options": {
+            "ignore": ["**/*.spec.ts"]
+          }
         }
       },
     ],

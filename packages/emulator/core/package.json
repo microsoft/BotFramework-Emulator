@@ -8,7 +8,7 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "build": "babel ./src --out-dir lib --extensions \".ts,.tsx\"",
+    "build": "babel ./src --out-dir lib --extensions \".ts,.tsx\" --ignore \"**/*.spec.ts\"",
     "build:watch": "npm run build:prod --outdir lib --watch",
     "clean": "rimraf lib",
     "lint": "tslint --project tslint.json",
@@ -35,9 +35,12 @@
   "homepage": "https://github.com/microsoft/botframework-localmode#readme",
   "jest": {
     "transform": {
-      "^.+\\.(tsx?|jsx?)$": "babel-jest"
+      "^.+\\.(tsx?)$": "babel-jest"
     },
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "testURL": "http://localhost",
+    "testMatch": [
+      "**/?(*.)(spec|test).(ts)?(x)"
+    ],
     "moduleFileExtensions": [
       "ts",
       "tsx",

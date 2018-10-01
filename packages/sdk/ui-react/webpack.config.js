@@ -44,7 +44,10 @@ module.exports = {
         test: /\.(tsx?)|(jsx)$/,
         exclude: [/node_modules/],
         use: {
-          loader: 'babel-loader'
+          loader: 'babel-loader',
+          options: {
+            ignore: ['**/*.spec.tsx?']
+          }
         }
       },
       {

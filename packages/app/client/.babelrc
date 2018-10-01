@@ -12,7 +12,6 @@
     "@babel/preset-typescript"
   ],
   "ignore": [
-    "**/*.spec.ts",
     "**/*.d.ts"
   ],
   "sourceMaps": "inline",
