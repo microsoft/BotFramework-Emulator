@@ -41,7 +41,8 @@ deploy:
   file_glob: true
   file: releases/*
   skip_cleanup: true
-  prerelease: true
+  prerelease: false
+  draft: true
   name: $BUILD_TAG
   body: This release is an early preview of the new Bot Framework Emulator. Please consider it to be experimental, and we'd love to hear your feedback.
   on:
