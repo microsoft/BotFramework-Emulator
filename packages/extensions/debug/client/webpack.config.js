@@ -27,7 +27,7 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           "options": {
-            "ignore": "**/*.spec.tsx?"
+            "ignore": ["**/*.spec.tsx?"]
           }
         }
       },
