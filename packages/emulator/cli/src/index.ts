@@ -47,11 +47,12 @@ const program = require('commander');
 config();
 
 program
-  // .command('bfemulator')
+// .command('bfemulator')
   .version(packageJSON.version)
   .option('-p, --port <port>', 'port number for Direct Line service', 5000)
   .option('-I, --app-id <id>', 'Microsoft Application ID, will override environment "MICROSOFT_APP_ID"')
-  .option('-P, --app-password <password>', 'Microsoft Application Password, will override environment "MICROSOFT_APP_PASSWORD"')
+  .option('-P, --app-password <password>', 'Microsoft Application Password, will override environment ' +
+    '"MICROSOFT_APP_PASSWORD"')
   .option('-s, --service-url <url>', 'URL for the bot to callback', 'http://localhost:5000')
   .option('-u, --bot-url <url>', 'URL to connect to bot', 'http://localhost:3978/api/messages/')
   .option('--bot-id <id>', 'bot ID', 'bot-1')
@@ -61,7 +62,8 @@ program
     console.log();
     console.log('  Notes:');
     console.log();
-    console.log('    Use bots.json file to host multiple bots. Put MSA App ID as Direct Line secret to point to different bots.');
+    console.log('    Use bots.json file to host multiple bots. Put MSA App ID as Direct Line secret to' +
+      ' point to different bots.');
     console.log();
     console.log('    Using bots.json file will override endpoint defined thru --port and --bot-url.');
     console.log();
@@ -124,8 +126,8 @@ async function main() {
   bot.mount(server);
 
   const endpoints = bot.facilities.endpoints.getAll();
-  const urls = Object.keys(endpoints).reduce((urls, key) => [
-    ...urls,
+  const urls = Object.keys(endpoints).reduce((endpoint, key) => [
+    ...endpoint,
     endpoints[key].botUrl
   ], []).sort();
 
