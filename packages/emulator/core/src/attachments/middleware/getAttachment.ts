@@ -32,7 +32,6 @@
 //
 
 import * as HttpStatus from 'http-status-codes';
-import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
 import createAPIException from '../../utils/createResponse/apiException';
@@ -40,9 +39,10 @@ import ErrorCodes from '../../types/errorCodes';
 import AttachmentData from '../../types/attachment/data';
 import AttachmentParams from '../attachmentParams';
 import sendErrorResponse from '../../utils/sendErrorResponse';
+import { Next, Request, Response } from 'restify';
 
 export default function getAttachment(bot: BotEmulator) {
-  return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
+  return (req: Request, res: Response, next: Next): any => {
     try {
       const parms: AttachmentParams = req.params;
       const attachment: AttachmentData = bot.facilities.attachments.getAttachmentData(parms.attachmentId);
@@ -52,7 +52,7 @@ export default function getAttachment(bot: BotEmulator) {
           const attachmentBase64 = parms.viewId === 'original' ? attachment.originalBase64 : attachment.thumbnailBase64;
 
           if (attachmentBase64) {
-            const buffer = new Buffer(attachmentBase64, 'base64');
+            const buffer = Buffer.from(attachmentBase64, 'base64');
 
             res.contentType = attachment.type;
             res.send(HttpStatus.OK, buffer);
