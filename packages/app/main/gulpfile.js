@@ -294,7 +294,8 @@ gulp.task('redist:mac:binaries', function () {
     return gulp.src(filenames, { allowEmpty: true })
       .pipe(rename(function (path) {
         path.basename = setReleaseFilename(path.basename, {
-          replaceWhitespace: true
+          replaceWhitespace: true,
+          fixMacBinaryNames: true
         });
       }))
       .pipe(gulp.dest('./dist'));
@@ -680,7 +681,8 @@ function setReleaseFilename(filename, options = {}) {
     fixBasename: true,
     replaceName: false,
     srcName: null,
-    dstName: null
+    dstName: null,
+    fixMacBinaryNames: false
   },
     options);
   if (options.replaceName && options.srcName && options.dstName) {
@@ -696,6 +698,11 @@ function setReleaseFilename(filename, options = {}) {
     // renames build artifacts like 'bot-framework_{version}.*' or 'main_{version}.*'
     // to '{package name in package.json}_{version}.*'
     filename = filename.replace(/(bot[-|\s]framework)?(main)?/, pjson.packagename);
+  }
+  if (options.fixMacBinaryNames) {
+    // "Bot Framework Emulator-{version}.*" is being renamed to "Botframework-Emulator-emulator-{version}.*"
+    // This resolves that issue
+    filename = filename.replace(/Botframework-Emulator-emulator/, pjson.packagename);
   }
   return filename;
 }
