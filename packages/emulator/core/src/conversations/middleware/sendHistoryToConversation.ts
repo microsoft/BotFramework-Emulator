@@ -35,28 +35,27 @@ import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
 
 import BotEmulator from '../../botEmulator';
-import GenericActivity from '../../types/activity/generic';
-import ResourceResponse from '../../types/response/resource';
-import sendErrorResponse from '../../utils/sendErrorResponse';
-import ConversationHistory from '../../types/activity/conversationHistory';
 import createResourceResponse from '../../utils/createResponse/resource';
+import Activity from '../../types/activity/activity';
 
 export default function sendHistoryToConversation(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    const history = <ConversationHistory> req.body;
-    var successCount = 0;
-    var firstErrorMessage = '';
+    const { activities }: { activities: Activity[] } = req.body;
+    let successCount = 0;
+    let firstErrorMessage = '';
 
-    for(let activity of history.activities) {
+    for (let activity of activities) {
       try {
         (req as any).conversation.postActivityToUser(activity, true);
         successCount++;
-      } catch(err) {
-        if (firstErrorMessage === '') firstErrorMessage = err;
+      } catch (err) {
+        if (firstErrorMessage === '') {
+          firstErrorMessage = err;
+        }
       }
     }
-
-    var response = createResourceResponse(`Processed ${successCount} of ${history.activities.length} activities successfully.${firstErrorMessage}`);
+    const id = `Processed ${successCount} of ${activities.length} activities successfully.${firstErrorMessage}`;
+    const response = createResourceResponse(id);
     res.send(HttpStatus.OK, response);
     res.end();
     next();

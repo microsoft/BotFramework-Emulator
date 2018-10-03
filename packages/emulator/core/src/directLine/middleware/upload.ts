@@ -112,7 +112,7 @@ export default function upload(botEmulator: BotEmulator) {
             const { activityId, statusCode, response } = await conversation.postActivityToBot(activity, true);
 
             // logNetwork(conversation.conversationId, req, res, `[${activity.type}]`);
-            if (!/^2\d\d$/.test(`${statusCode}`)) {
+            if (~~statusCode === 0 && ~~statusCode > 300) {
               res.send(statusCode || HttpStatus.INTERNAL_SERVER_ERROR, await response.text());
               res.end();
             } else {

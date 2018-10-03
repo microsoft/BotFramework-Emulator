@@ -57,7 +57,7 @@ export default function postActivity(botEmulator: BotEmulator) {
       return;
     }
 
-    const activity = <GenericActivity>req.body;
+    const activity = req.body as GenericActivity;
 
     try {
       const { activityId, response, statusCode } = await conversation.postActivityToBot(activity, true);

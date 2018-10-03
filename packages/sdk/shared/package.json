@@ -39,6 +39,7 @@
     "transform": {
       "^.+\\.(tsx?|jsx?)$": "babel-jest"
     },
+    "rootDir": "./src",
     "testMatch": [
       "**/?(*.)(spec|test).(ts)?(x)"
     ],

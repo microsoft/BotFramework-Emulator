@@ -44,11 +44,11 @@ import sendErrorResponse from '../../utils/sendErrorResponse';
 
 export default function updateActivity(botEmulator: BotEmulator) {
   return (req: Restify.Request, res: Restify.Response, next: Restify.Next): any => {
-    const activity = <GenericActivity> req.body;
+    const activity = req.body as GenericActivity;
     const conversationParameters: ConversationAPIPathParameters = req.params;
 
     try {
-      activity.replyToId = req.params.activityId;
+      activity.replyToId = conversationParameters.activityId;
 
       if (activity.id !== conversationParameters.activityId) {
         throw createAPIException(HttpStatus.BAD_REQUEST, ErrorCodes.BadArgument,
