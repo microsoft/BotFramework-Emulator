@@ -38,6 +38,7 @@
       "^.+\\.(tsx?)$": "babel-jest"
     },
     "testURL": "http://localhost",
+    "rootDir": "./src",
     "testMatch": [
       "**/?(*.)(spec|test).(ts)?(x)"
     ],

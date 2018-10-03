@@ -48,5 +48,22 @@
   "dependencies": {
     "@babel/runtime": "^7.0.0",
     "office-ui-fabric-react": "~6.1.2"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.(tsx?|jsx?)$": "babel-jest"
+    },
+    "rootDir": "./src",
+    "testMatch": [
+      "**/?(*.)(spec|test).(ts)?(x)"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
   }
 }

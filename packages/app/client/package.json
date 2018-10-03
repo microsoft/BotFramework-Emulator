@@ -18,11 +18,12 @@
     "test": "jest"
   },
   "jest": {
-    "setupTestFrameworkScriptFile": "../../../testSetup.js",
+    "setupTestFrameworkScriptFile": "../../../../testSetup.js",
     "transform": {
       "^.+\\.(tsx?|jsx?)$": "babel-jest"
     },
     "testURL": "http://localhost",
+    "rootDir": "./src",
     "testMatch": [
       "**/?(*.)(spec|test).(ts)?(x)"
     ],

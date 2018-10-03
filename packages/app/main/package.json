@@ -37,7 +37,9 @@
     "transform": {
       "^.+\\.(tsx|ts|js)$": "babel-jest"
     },
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "testMatch": [
+      "**/?(*.)(spec|test).(ts)?(x)"
+    ],
     "testURL": "http://localhost",
     "moduleFileExtensions": [
       "ts",
