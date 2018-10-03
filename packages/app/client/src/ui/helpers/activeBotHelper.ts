@@ -202,7 +202,12 @@ export const ActiveBotHelper = new class {
           if (result) {
             try {
               store.dispatch(EditorActions.closeNonGlobalTabs());
-              const bot = await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.Open, filename);
+              const bot = await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.Open, filename)
+                // Secret prompt dialog was closed
+                .catch(_err => null);
+              if (!bot) {
+                return;
+              }
               await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.SetActive, bot);
               await CommandServiceImpl.call(SharedConstants.Commands.Bot.Load, bot);
             } catch (err) {
