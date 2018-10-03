@@ -83,7 +83,7 @@ export default class BotState {
     }
 
     const newData: BotData = {
-      eTag: new Date().getTime().toString(),
+      eTag: Date.now().toString(),
       data: incomingData.data
     };
 

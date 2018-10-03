@@ -242,7 +242,7 @@ export default class Conversation extends EventEmitter {
     const { id } = updatedActivity;
     const index = this.activities.findIndex(entry => entry.activity.id === id);
 
-    if (!index) {
+    if (index === -1) {
       // The activity may already flushed to the client, thus, not found anymore
       // TODO: Should we add a new activity with same ID, so the client will get the update?
       throw createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, 'not a known activity id');
@@ -262,7 +262,7 @@ export default class Conversation extends EventEmitter {
     // if we found the activity to reply to
     const activityIndex = this.activities.findIndex(entry => entry.activity.id === id);
 
-    if (!activityIndex) {
+    if (activityIndex === -1) {
       // The activity may already flushed to the client
       // TODO: Should we add a new empty activity with same ID to let the client know about the recall?
       throw createAPIException(HttpStatus.NOT_FOUND, ErrorCodes.BadArgument, 'The activity id was not found');
@@ -307,7 +307,7 @@ export default class Conversation extends EventEmitter {
   public async removeMember(id: string) {
     const index = this.members.findIndex(val => val.id === id);
 
-    if (index) {
+    if (index !== -1) {
       const user = this.members[index];
 
       this.members = updateIn(this.members, [index]);
