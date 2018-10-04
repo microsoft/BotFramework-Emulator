@@ -22,7 +22,7 @@ export class AzureLoginFailedDialog extends Component<AzureLoginSuccessDialogPro
     return (
       <Dialog title="Something went wrong!" cancel={ this.onDialogCancel }>
         <p>
-          Your authentication attempt was canceled or was not completed successfully.
+          Your authentication attempt was canceled or was not completed successfully.<br/>
           You will need to authenticate with Azure before some services can be added to the emulator.
         </p>
         <DialogFooter>

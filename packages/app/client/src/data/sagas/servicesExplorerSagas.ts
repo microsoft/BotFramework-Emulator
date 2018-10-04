@@ -292,7 +292,7 @@ function openLuisDeepLink(luisService: ILuisService): Promise<any> {
       regionPrefix = '';
       break;
   }
-  let linkArray = ['https://www.', `${ encodeURI(regionPrefix) }`, 'luis.ai/applications/'];
+  const linkArray = ['https://www.', `${ encodeURI(regionPrefix) }`, 'luis.ai/applications/'];
   linkArray.push(`${ encodeURI(appId) }`, '/versions/', `${ encodeURI(version) }`, '/build');
   const link = linkArray.join('');
   return CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, link);
@@ -306,7 +306,7 @@ function openQnaMakerDeepLink(service: IQnAService): Promise<any> {
 
 function openAzureBotServiceDeepLink(service: IBotService): Promise<any> {
   const { tenantId, subscriptionId, resourceGroup, id } = service;
-  let linkArray = [`https://ms.portal.azure.com/#@${ encodeURI(tenantId) }`];
+  const linkArray = [`https://ms.portal.azure.com/#@${ encodeURI(tenantId) }`];
   linkArray.push(`/resource/subscriptions/${ encodeURI(subscriptionId) }`);
   linkArray.push(`/resourceGroups/${ encodeURI(resourceGroup) }`);
   linkArray.push(`/providers/Microsoft.BotService/botServices/${ encodeURI(id) }`);

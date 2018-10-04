@@ -1,10 +1,18 @@
 import * as React from 'react';
-import { DialogFooter as FabricDialogFooter } from 'office-ui-fabric-react';
-import { dialogFooterStyles } from './dialogFooter.styles';
+import { Component } from 'react';
+import * as styles from './dialog.scss';
 
-export const DialogFooter = props => {
-  const { styles = {}, ...p } = props;
-  p.styles = Object.assign(dialogFooterStyles, styles);
+export interface DialogFooterProps {
+  className?: string;
+}
 
-  return <FabricDialogFooter { ...p } />;
-};
+export class DialogFooter extends Component<DialogFooterProps, {}> {
+  public render(): JSX.Element {
+    const { className = '' } = this.props;
+    return (
+      <div className={ `${styles.footer} ${className}` }>
+        { this.props.children }
+      </div>
+    );
+  }
+}

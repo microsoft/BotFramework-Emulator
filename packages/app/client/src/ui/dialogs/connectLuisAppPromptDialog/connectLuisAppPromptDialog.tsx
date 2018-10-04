@@ -28,13 +28,14 @@ export class ConnectLuisAppPromptDialog extends Component<ConnectLuisAppPromptDi
         cancel={ this.props.cancel }
         title="Connect your bot to a LUIS application">
         <p>
-          Sign in to your Azure account to select the LUIS applications you'd like to associate with this bot.&nbsp;
+          Sign in to your Azure account to select the LUIS applications <br/>
+          you'd like to associate with this bot.&nbsp;
           <a href="javascript:void(0);" onClick={ this.onLearnMoreLUIS }>Learn more about LUIS</a>
         </p>
         <p>
           Alternatively, you can&nbsp;
           <a href="javascript:void(0);" onClick={ this.props.addLuisAppManually }>add a LUIS app manually</a>
-          &nbsp;with the app ID, version, and authoring key
+          <br/>with the app ID, version, and authoring key
         </p>
         <DialogFooter>
           <DefaultButton text="Cancel" onClick={ this.props.cancel } />

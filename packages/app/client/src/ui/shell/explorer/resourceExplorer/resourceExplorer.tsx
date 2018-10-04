@@ -44,7 +44,7 @@ export class ResourceExplorer extends ServicePane<ResourceExplorerProps, Resourc
           <li key={ `file_${ index }` }
             data-index={ index }
             onClick={ this.onLinkClick }
-            onKeyPress={ this.onHandleKeyPress }
+            onKeyPress={ this.onLinkKeyPress }
             className={ styles.link }
             tabIndex={ 0 }
           >
@@ -65,7 +65,7 @@ export class ResourceExplorer extends ServicePane<ResourceExplorerProps, Resourc
     });
   }
 
-  protected onHandleKeyPress = (e): void => {
+  protected onLinkKeyPress = (e): void => {
     if (e.key === 'Enter') {
       this.onLinkClick(e);
     }

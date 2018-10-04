@@ -34,7 +34,7 @@
 import { ConnectedService } from 'botframework-config/lib/models';
 import { BotConfigurationBase } from 'botframework-config/lib/botConfigurationBase';
 import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
-import { DefaultButton, Dialog, DialogContent, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
+import { DefaultButton, Dialog, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { Component } from 'react';
 import { serviceTypeLabels } from '../../../../../utils/serviceTypeLables';
@@ -140,15 +140,13 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
 
     return (
       <Dialog title={ titleMap[type] } cancel={ props.cancel }>
-        <DialogContent>
-          <p>
-            You can find your knowledge base ID and subscription key in { portalMap[type] }&nbsp;
-            <a href="javascript:void(0);" onClick={ this.onLearnMoreKeys }>
-              Learn more about keys in { labelMap[type] }
-            </a>
-          </p>
-          { textInputs }
-        </DialogContent>
+        <p>
+          You can find your knowledge base ID and subscription key in { portalMap[type] }&nbsp;
+          <a href="javascript:void(0);" onClick={ this.onLearnMoreKeys }>
+            Learn more about keys in { labelMap[type] }
+          </a>
+        </p>
+        { textInputs }
         <DialogFooter>
           <DefaultButton text="Cancel" onClick={ props.cancel }/>
           <PrimaryButton disabled={ !isDirty || !valid } text="Submit" onClick={ onSubmitClick }/>
