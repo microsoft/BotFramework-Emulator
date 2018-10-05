@@ -130,11 +130,11 @@ export class GetStartedWithCSDialog extends Component<GetStartedWithCSDialogProp
               Learn more about LUIS
             </a>
           </p>
-          <br>
+          <br/>
             Alternatively, you can
             <a href="javascript:void(0);" onClick={ this.props.launchConnectedServiceEditor }>
               connect to a Dispatch app manually
-            </a> if</br>you know the app ID, version, and authoring key.
+            </a> if<br/>you know the app ID, version, and authoring key.
         </>
       );
     }
