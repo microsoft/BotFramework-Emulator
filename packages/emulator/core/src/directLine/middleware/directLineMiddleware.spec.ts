@@ -424,35 +424,7 @@ describe('The directLine middleware', () => {
     await Promise.resolve(true);
     const { activities } = conversation as any;
     expect(activities.length).toBe(1);
-    expect(activities[0]).toEqual({
-      'activity': {
-        'attachments': [
-          {
-            'name': 'attachment',
-            'contentType': 'image',
-            'contentUrl': jasmine.any(String)
-          }
-        ],
-        'channelId': 'emulator',
-        'conversation': {
-          'id': '00000'
-        },
-        'id': activityId,
-        'localTimestamp': jasmine.any(String),
-        'recipient': {
-          'id': '123',
-          'name': 'Bot',
-          'role': 'bot'
-        },
-        'timestamp': jasmine.any(String),
-        'from': {
-          'id': '123',
-          'name': 'emulator'
-        },
-        'serviceUrl': 'https://localhost:8888/api/message'
-      },
-      'watermark': 0
-    });
+    expect(activities[0].activity.attachments[0].name).toEqual('attachment');
   });
 });
 
