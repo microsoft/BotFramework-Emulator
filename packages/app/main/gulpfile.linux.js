@@ -98,7 +98,7 @@ function setReleaseFilename(filename, options = {}) {
   if (options.fixBasename) {
     // renames build artifacts like 'bot-framework_{version}.*' or 'main_{version}.*'
     // to '{package name in package.json}_{version}.*'
-    filename = filename.replace(/(bot[-|\s]framework)?(main)?/, pjson.packagename);
+    filename = filename.replace(/(bot[-|\s]framework)?(main)?/, packageJson.packagename);
   }
   return filename;
 }
