@@ -290,7 +290,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
       ...this.state.bot,
       name: this.state.bot.name.trim(),
       description: this.state.bot.description.trim(),
-      services: [endpoint],
+      services: [ endpoint ],
       path: botPath.trim()
     });
 
@@ -314,7 +314,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
       filters: [
         {
           name: 'Bot Files',
-          extensions: ['bot']
+          extensions: [ 'bot' ]
         }
       ],
       defaultPath: botFileName,

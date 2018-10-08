@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Component } from 'react';
 import { Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
 import * as styles from './progressIndicator.scss';
+import * as dialogStyles from '../dialogStyles.scss';
 
 export interface ProgressIndicatorProps extends ProgressIndicatorState {
   cancel: () => void;
@@ -21,7 +22,7 @@ export class ProgressIndicator extends Component<ProgressIndicatorProps, Progres
       this.hr.style.setProperty('--progress-percentage', `${this.props.progress}%`);
     }
     return (
-      <Dialog cancel={ this.props.close }>
+      <Dialog cancel={ this.props.close } className={dialogStyles.dialogMedium}>
         <p>
           { this.props.label }
         </p>

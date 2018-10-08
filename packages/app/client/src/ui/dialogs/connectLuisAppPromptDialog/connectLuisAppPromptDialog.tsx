@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Component } from 'react';
 import { DefaultButton, Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
 import { ServiceTypes } from 'botframework-config/lib/schema';
+import * as styles from '../dialogStyles.scss';
 
 export interface ConnectLuisAppPromptDialogProps {
   cancel: () => void;
@@ -25,6 +26,7 @@ export class ConnectLuisAppPromptDialog extends Component<ConnectLuisAppPromptDi
   private get luisView(): JSX.Element {
     return (
       <Dialog
+        className={styles.dialogMedium}
         cancel={ this.props.cancel }
         title="Connect your bot to a LUIS application">
         <p>

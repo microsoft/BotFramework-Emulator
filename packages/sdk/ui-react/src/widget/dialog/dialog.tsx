@@ -44,15 +44,16 @@ export interface ModalProps extends JSX.ElementChildrenAttribute {
   maxWidth?: number;
   className?: string;
   titleClassName?: string;
+  modalStyle?: string;
 }
 
 export class Dialog extends Component<ModalProps, {}> {
 
   public render() {
-    const { className = '', titleClassName = '', title = '', children } = this.props;
+    const { className = '', titleClassName = '', title = '', children, modalStyle = '' } = this.props;
     return (
       <>
-        <div className={styles.modal}>&nbsp;</div>
+        <div className={ `${styles.modal} ${modalStyle}` }>&nbsp;</div>
         <div className={ `${className} ${styles.dialog} dialog` }>
           <header className={ `${titleClassName}` } role="heading">{ title }
             <button className={ styles.cancelButton } aria-label="Close" onClick={ this.props.cancel }/>
