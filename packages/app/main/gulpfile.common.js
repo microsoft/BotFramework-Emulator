@@ -1,7 +1,7 @@
 const packageJson = require('./package.json');
 
 const defaultElectronMirror = 'https://github.com/electron/electron/releases/download/v';
-const defaultElectronVersion = pjson.devDependencies["electron"];
+const defaultElectronVersion = packageJson.devDependencies["electron"];
 const githubAccountName = "Microsoft";
 const githubRepoName = "BotFramework-Emulator";
 const appId = "F3C061A6-FE81-4548-82ED-C1171D9856BB";
