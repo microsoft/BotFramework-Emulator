@@ -6,10 +6,10 @@ const packageJson = require('./package.json');
  *  and output artifacts to /dist/
  */
 gulp.task('package', async () => {
+  const { getElectronMirrorUrl, getConfig } = common;
   var rename = require('gulp-rename');
   var builder = require('electron-builder');
   const config = getConfig('linux');
-  const { getElectronMirrorUrl } = common;
 
   console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
 
