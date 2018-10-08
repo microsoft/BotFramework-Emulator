@@ -8,7 +8,7 @@ const packageJson = require('./package.json');
 gulp.task('package', async () => {
   var rename = require('gulp-rename');
   var builder = require('electron-builder');
-  const config = getConfig("linux");
+  const config = getConfig('linux');
   const { getElectronMirrorUrl } = common;
 
   console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
@@ -58,6 +58,7 @@ gulp.task('publish', async () => {
 
 /** Returns the names of the packaged artifacts in /dist/ */
 function getFilesFromDist(options = {}) {
+  const { extend } = common;
   options = extend({}, {
     basename: packageJson.packagename,
     version: packageJson.version,
@@ -71,4 +72,33 @@ function getFilesFromDist(options = {}) {
   filelist.push(`${path}/${options.basename}_${options.version}_amd64.deb`);
 
   return filelist;
+}
+
+function setReleaseFilename(filename, options = {}) {
+  const { extend } = common;
+  options = extend({}, {
+      lowerCase: true,
+      replaceWhitespace: true,
+      fixBasename: true,
+      replaceName: false,
+      srcName: null,
+      dstName: null
+    },
+    options
+  );
+  if (options.replaceName && options.srcName && options.dstName) {
+    filename = filename.replace(options.srcName, options.dstName);
+  }
+  if (options.lowerCase) {
+    filename = filename.toLowerCase();
+  }
+  if (options.replaceWhitespace) {
+    filename = filename.replace(/\s/g, '-');
+  }
+  if (options.fixBasename) {
+    // renames build artifacts like 'bot-framework_{version}.*' or 'main_{version}.*'
+    // to '{package name in package.json}_{version}.*'
+    filename = filename.replace(/(bot[-|\s]framework)?(main)?/, pjson.packagename);
+  }
+  return filename;
 }
