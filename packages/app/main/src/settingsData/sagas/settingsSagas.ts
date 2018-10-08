@@ -23,7 +23,7 @@ export function* setFramework(action: FrameworkAction<FrameworkSettings>): Itera
   const { commandService } = mainWindow;
   const { PushClientAwareSettings } = SharedConstants.Commands.Settings;
   yield ngrokService.updateNgrokFromSettings(action.state);
-  yield call(commandService.remoteCall.bind(commandService, PushClientAwareSettings));
+  yield call(commandService.call.bind(commandService, PushClientAwareSettings));
 }
 
 export function* settingsSagas(): IterableIterator<ForkEffect> {
