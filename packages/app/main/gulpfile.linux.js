@@ -52,6 +52,7 @@ gulp.task('package', async () => {
 
 /** Publish the artifacts in /dist/ to GitHub */
 gulp.task('publish', async () => {
+  const { publishFiles } = common;
   const filesToPublish = getFilesFromDist();
   await publishFiles(filesToPublish);
 });
