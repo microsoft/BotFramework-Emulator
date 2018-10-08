@@ -20,7 +20,10 @@ export function* rememberThemeSaga(_action: WindowStateAction<RememberThemePaylo
 
 export function* setFramework(action: FrameworkAction<FrameworkSettings>): IterableIterator<any> {
   const ngrokService = new NgrokService();
+  const { commandService } = mainWindow;
+  const { PushClientAwareSettings } = SharedConstants.Commands.Settings;
   yield ngrokService.updateNgrokFromSettings(action.state);
+  yield call(commandService.remoteCall.bind(commandService, PushClientAwareSettings));
 }
 
 export function* settingsSagas(): IterableIterator<ForkEffect> {

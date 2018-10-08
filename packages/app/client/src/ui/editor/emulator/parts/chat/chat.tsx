@@ -48,6 +48,7 @@ export interface ChatProps {
   mode: EmulatorMode;
   onStartConversation: any;
   currentUserId: string;
+  locale: string;
 }
 
 function createWebChatProps(
@@ -128,16 +129,17 @@ export class Chat extends Component<ChatProps> {
       );
 
       return (
-        <div id="webchat-container" className={`${styles.chat} wc-app wc-wide`}>
+        <div id="webchat-container" className={ `${styles.chat} wc-app wc-wide` }>
           <WebChat
-            key={document.directLine.token}
-            {...webChatProps}
+            locale={ this.props.locale }
+            key={ document.directLine.token }
+            { ...webChatProps }
           />
         </div>
       );
     } else {
       return (
-        <div className={styles.disconnected}>
+        <div className={ styles.disconnected }>
           Not Connected
         </div>
       );
