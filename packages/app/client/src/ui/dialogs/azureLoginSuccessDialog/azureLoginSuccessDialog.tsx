@@ -23,7 +23,7 @@ export class AzureLoginSuccessDialog extends Component<AzureLoginSuccessDialogPr
 
   public render() {
     return (
-      <Dialog title="Success!" cancel={ this.onDialogCancel } className={styles.dialogMedium}>
+      <Dialog title="Success!" cancel={ this.onDialogCancel } className={ styles.dialogMedium }>
         <p>You are now signed in with your Azure account</p>
         <Checkbox
           checked={ this.state.rememberMeChecked }

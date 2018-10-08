@@ -22,7 +22,7 @@ export class ProgressIndicator extends Component<ProgressIndicatorProps, Progres
       this.hr.style.setProperty('--progress-percentage', `${this.props.progress}%`);
     }
     return (
-      <Dialog cancel={ this.props.close } className={dialogStyles.dialogMedium}>
+      <Dialog cancel={ this.props.close } className={ dialogStyles.dialogMedium }>
         <p>
           { this.props.label }
         </p>
