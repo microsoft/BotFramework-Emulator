@@ -11,12 +11,15 @@ import { CommandServiceImpl } from '../../../platform/commands/commandServiceImp
 
 const mockStore = createStore(combineReducers({ resources, bot }));
 jest.mock('./resourcesSettings.scss', () => ({}));
+jest.mock('../dialogStyles.scss', () => ({}));
+
 jest.mock('../service', () => ({
   DialogService: {
     showDialog: () => Promise.resolve(true),
     hideDialog: () => Promise.resolve(false),
   }
 }));
+
 jest.mock('../../../platform/commands/commandServiceImpl', () => ({
   CommandServiceImpl: {
     remoteCall: async (commandName: string, ...args: any[]) => {

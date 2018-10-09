@@ -13,6 +13,9 @@ jest.mock('../service', () => ({
     hideDialog: () => Promise.resolve(false),
   }
 }));
+
+jest.mock('../dialogStyles.scss', () => ({}));
+
 describe('The ProgressIndicatorContainer component should', () => {
   let parent;
   let node;

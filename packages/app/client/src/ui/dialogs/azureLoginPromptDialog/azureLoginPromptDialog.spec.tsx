@@ -13,6 +13,8 @@ jest.mock('../service', () => ({
   }
 }));
 
+jest.mock('../dialogStyles.scss', () => ({}));
+
 jest.mock('../../dialogs/', () => ({
   AzureLoginSuccessDialogContainer: () => undefined,
   BotCreationDialog: () => undefined,
