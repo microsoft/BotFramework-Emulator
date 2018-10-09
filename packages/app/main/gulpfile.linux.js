@@ -24,37 +24,15 @@ gulp.task('package', async () => {
     gulp
       .src(filenames, { allowEmpty: true })
       .pipe(rename(path => {
-        path.basename = setReleaseFilename(path.basename, {
-          replaceWhitespace: true
-        });
+        path.basename = setReleaseFilename(path.basename);
       }))
       .pipe(gulp.dest('./dist'))
       .on('end', resolve);
   });
-
-  /*
-  return builder.build({
-    targets: builder.Platform.LINUX.createTarget(["deb", "AppImage"], builder.Arch.ia32, builder.Arch.x64),
-    config
-  }).then((filenames) => {
-    return gulp.src(filenames, { allowEmpty: true })
-      .pipe(rename(function (path) {
-        path.basename = setReleaseFilename(path.basename, {
-          replaceWhitespace: true
-        });
-      }))
-      .pipe(gulp.dest('./dist'));
-  }).then(() => {
-    // Wait for the files to be written to disk and closed.
-    return delay(10000);
-  });*/
 });
 
 /** Publish the artifacts in /dist/ to GitHub */
 gulp.task('publish', async () => {
-  Object.keys(process.env).forEach(key => {
-    console.log(`${key}: ${process.env[key]}`);
-  });
   const { publishFiles } = common;
   const filesToPublish = getFilesFromDist();
   await publishFiles(filesToPublish);
@@ -78,6 +56,7 @@ function getFilesFromDist(options = {}) {
   return filelist;
 }
 
+/** Sets the packaged artifact filename */
 function setReleaseFilename(filename, options = {}) {
   const { extend } = common;
   options = extend({}, {
