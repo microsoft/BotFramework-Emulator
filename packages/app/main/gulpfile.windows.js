@@ -17,7 +17,7 @@ gulp.task('stage', async () => {
   });
 });
 
-/** Creates the emulator binaries */
+/** Creates the emulator installers */
 gulp.task('redist:binaries', async () => {
   const { getConfig, getElectronMirrorUrl } = common;
   var rename = require('gulp-rename');
@@ -26,7 +26,7 @@ gulp.task('redist:binaries', async () => {
 
   console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
 
-  // create build artifacts
+  // create installers
   const filenames = await builder.build({
     targets: builder.Platform.WINDOWS.createTarget(["nsis"], builder.Arch.ia32),
     config,
@@ -87,7 +87,7 @@ gulp.task('redist:metadata-only', async () => {
     });*/
 });
 
-/** Creates the emulator binaries and creates the metadata .yml file */
+/** Creates the emulator installers and the metadata .yml file */
 gulp.task('redist',
   gulp.series('redist:binaries', 'redist:metadata-only')
 );
@@ -128,8 +128,8 @@ function writeYamlMetadataFile(releaseFilename, yamlFilename, path, fileHash, re
   var yaml = require('js-yaml');
 
   const ymlInfo = {
-    version: pjson.version,
-    releaseDate: releaseDate,
+    version: packageJson.version,
+    releaseDate,
     githubArtifactName: releaseFilename,
     path: releaseFilename,
     sha512: fileHash
