@@ -1,5 +1,6 @@
 const common = require('./gulpfile.common.js');
 const gulp = require('gulp');
+const packageJson = require('./package.json');
 
 /** Package the emulator using electron-builder */
 gulp.task('stage', async () => {
