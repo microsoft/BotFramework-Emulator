@@ -97,7 +97,7 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
       <div>
         <p className={ styles.emptyContent }>None.</p>
         <p className={ styles.emptyContent }>
-          You can connect your bot to services such as &nbsp;
+          You can connect your bot to services such as&nbsp;
           <a
             href="javascript:void(0);"
             onClick={ this.onLearnMoreLUISAnchor }
