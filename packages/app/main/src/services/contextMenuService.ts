@@ -53,7 +53,7 @@ export class ContextMenuService {
       });
       const menu = ContextMenuService.currentMenu = Menu.buildFromTemplate(template);
 
-      menu.popup();
+      menu.popup({});
     });
   }
 }
