@@ -7,15 +7,15 @@ const packageJson = require('./package.json');
  */
 gulp.task('package', async () => {
   const { getElectronMirrorUrl, getConfig } = common;
-  var rename = require('gulp-rename');
-  var builder = require('electron-builder');
+  const rename = require('gulp-rename');
+  const builder = require('electron-builder');
   const config = getConfig('linux');
 
   console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
 
-  // create packaged artifacts
+  // create build artifacts
   const filenames = await builder.build({
-    targets: builder.Platform.LINUX.createTarget(["deb", "AppImage"], builder.Arch.ia32, builder.Arch.x64),
+    targets: builder.Platform.LINUX.createTarget(['deb', 'AppImage'], builder.Arch.ia32, builder.Arch.x64),
     config
   });
 

@@ -109,10 +109,17 @@ async function publishFiles(filelist) {
     .then(() => errorlist.forEach(err => console.error(err)));
 }
 
+/** Hashes a file asynchronously */
+function hashFileAsync(filename, algo = 'sha512', encoding = 'base64') {
+  var builderUtil = require('builder-util');
+  return builderUtil.hashFile(filename, algo, encoding);
+}
+
 module.exports = {
+  extend,
   getConfig,
   getEnvironmentVar,
   getElectronMirrorUrl,
-  extend,
+  hashFileAsync,
   publishFiles
 };
