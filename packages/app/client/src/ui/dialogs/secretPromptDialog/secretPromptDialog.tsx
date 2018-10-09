@@ -33,6 +33,7 @@
 
 import * as React from 'react';
 import * as styles from './secretPromptDialog.scss';
+import * as dialogStyles from '../dialogStyles.scss';
 
 import { DefaultButton, Dialog, PrimaryButton, TextField, } from '@bfemulator/ui-react';
 
@@ -56,14 +57,17 @@ export class SecretPromptDialog extends React.Component<SecretPromptDialogProps,
 
   render(): JSX.Element {
     return (
-      <Dialog title="Your bot file is encrypted" className={ styles.secretPromptDialog } cancel={ this.onDismissClick }>
+      <Dialog
+        title="Your bot file is encrypted"
+        className={ dialogStyles.dialogMedium }
+        modalStyle={ styles.secretPromptDialogModal } cancel={ this.onDismissClick }>
         <p>
-          If you created your bot through the Azure Bot Service, you can find your bot file
-          secret in the Azure portal under Application settings.
+          { ' If you created your bot through the Azure Bot Service, you can find your bot file secret in the Azure ' +
+          'portal under Application settings.' }
         </p>
         <p>
-          If you encrypted your bot file with the MsBot command-line tool, your bot file secret was displayed when
-          you ran MsBot.&nbsp;
+          { 'If you encrypted your bot file with the MsBot command-line tool, your bot file secret was displayed ' +
+          'when you ran MsBot.' }
           <a href="javascript:void(0)" onClick={ this.onLearnMoreClick }>Learn more about MsBot.</a>
         </p>
         <div className={ styles.keyContainer }>

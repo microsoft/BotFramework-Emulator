@@ -105,18 +105,18 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
           onChanged={ this.onChangeName }
           errorMessage={ error }/>
 
-      <Row align={ RowAlignment.Bottom }>
-        <Checkbox
-          className={ styles.encryptKeyCheckBox }
-          label="Encrypt keys stored in your bot configuration."
-          checked={ encryptKey }
-          onChange={ this.onEncryptKeyChange }/>
-        <a
-          href="javascript:void(0);"
-          onClick={ this.onLearnMoreEncryptionClick }>
-          Learn more.
-        </a>
-      </Row>
+        <Row align={ RowAlignment.Bottom }>
+          <Checkbox
+            className={ styles.encryptKeyCheckBox }
+            label="Encrypt keys stored in your bot configuration."
+            checked={ encryptKey }
+            onChange={ this.onEncryptKeyChange }/>
+          <a
+            href="javascript:void(0);"
+            onClick={ this.onLearnMoreEncryptionClick }>
+            Learn more.
+          </a>
+        </Row>
 
         <TextField
           className={ styles.key }
@@ -155,7 +155,9 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
 
         <DialogFooter>
           <DefaultButton text="Cancel" onClick={ this.onCancel } className={ styles.cancelButton }/>
-          <PrimaryButton text="Save" onClick={ this.onSaveClick }
+          <PrimaryButton
+            text="Save"
+            onClick={ this.onSaveClick }
             className={ styles.saveButton }
             disabled={ disabled }/>
         </DialogFooter>
@@ -264,7 +266,7 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
       filters: [
         {
           name: 'Bot Files',
-          extensions: ['bot']
+          extensions: [ 'bot' ]
         }
       ],
       defaultPath: botFileName,

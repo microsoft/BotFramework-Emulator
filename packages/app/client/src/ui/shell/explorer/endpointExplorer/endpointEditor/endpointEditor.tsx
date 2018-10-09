@@ -34,7 +34,6 @@
 import {
   DefaultButton,
   Dialog,
-  DialogContent,
   DialogFooter,
   PrimaryButton,
   Row,
@@ -157,62 +156,60 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
     return (
       <Dialog title={ title } detailedDescription={ detailedDescription }
               cancel={ this.onCancelClick }>
-        <DialogContent>
-          <TextField
-            placeholder="https://"
-            errorMessage={ endpointError } value={ endpoint }
-            onChanged={ this.endpointServiceInputHandlers.endpoint }
-            label="Endpoint url" required={ true }
-          />
-          { !endpointError && endpointWarning && <span className={ styles.endpointWarning }>{ endpointWarning }</span> }
-          <TextField
-            placeholder="Create name for your endpoint"
-            errorMessage={ nameError } value={ name }
-            onChanged={ this.endpointServiceInputHandlers.name } label="Name"
-            required={ true }
-          />
-          <TextField
-            placeholder="Optional"
-            errorMessage={ appIdError } value={ appId }
-            onChanged={ this.endpointServiceInputHandlers.appId }
-            label="Application Id"
-            required={ false }
-          />
-          <TextField
-            placeholder="Optional. For Microsoft Apps"
-            errorMessage={ appPasswordError } value={ appPassword }
-            onChanged={ this.endpointServiceInputHandlers.appPassword }
-            label="Application Password" required={ false }
-          />
-          <a href="javascript:void(0)"
-             className={ styles.arrow } onClick={ this.onABSLinkClick }>
-            Azure Bot Service configuration
-          </a>
-          <div className={ styles.absContent } ref={ this.absContentRef }>
-            <div>
-              <Row className={ styles.absTextFieldRow }>
-                <TextField
-                  onChanged={ this.botServiceInputHandlers.serviceName }
-                  value={ serviceName }
-                  label="Azure BotId"/>
-                <TextField
-                  onChanged={ this.botServiceInputHandlers.tenantId }
-                  value={ tenantId }
-                  label="Azure Directory ID"/>
-              </Row>
-              <Row className={ styles.absTextFieldRow }>
-                <TextField
-                  onChanged={ this.botServiceInputHandlers.subscriptionId }
-                  value={ subscriptionId }
-                  label="Azure Subscription ID"/>
-                <TextField
-                  onChanged={ this.botServiceInputHandlers.resourceGroup }
-                  value={ resourceGroup }
-                  label="Azure Resource Group"/>
-              </Row>
-            </div>
+        <TextField
+          placeholder="https://"
+          errorMessage={ endpointError } value={ endpoint }
+          onChanged={ this.endpointServiceInputHandlers.endpoint }
+          label="Endpoint url" required={ true }
+        />
+        { !endpointError && endpointWarning && <span className={ styles.endpointWarning }>{ endpointWarning }</span> }
+        <TextField
+          placeholder="Create name for your endpoint"
+          errorMessage={ nameError } value={ name }
+          onChanged={ this.endpointServiceInputHandlers.name } label="Name"
+          required={ true }
+        />
+        <TextField
+          placeholder="Optional"
+          errorMessage={ appIdError } value={ appId }
+          onChanged={ this.endpointServiceInputHandlers.appId }
+          label="Application Id"
+          required={ false }
+        />
+        <TextField
+          placeholder="Optional. For Microsoft Apps"
+          errorMessage={ appPasswordError } value={ appPassword }
+          onChanged={ this.endpointServiceInputHandlers.appPassword }
+          label="Application Password" required={ false }
+        />
+        <a href="javascript:void(0)"
+           className={ styles.arrow } onClick={ this.onABSLinkClick }>
+          Azure Bot Service configuration
+        </a>
+        <div className={ styles.absContent } ref={ this.absContentRef }>
+          <div>
+            <Row className={ styles.absTextFieldRow }>
+              <TextField
+                onChanged={ this.botServiceInputHandlers.serviceName }
+                value={ serviceName }
+                label="Azure BotId"/>
+              <TextField
+                onChanged={ this.botServiceInputHandlers.tenantId }
+                value={ tenantId }
+                label="Azure Directory ID"/>
+            </Row>
+            <Row className={ styles.absTextFieldRow }>
+              <TextField
+                onChanged={ this.botServiceInputHandlers.subscriptionId }
+                value={ subscriptionId }
+                label="Azure Subscription ID"/>
+              <TextField
+                onChanged={ this.botServiceInputHandlers.resourceGroup }
+                value={ resourceGroup }
+                label="Azure Resource Group"/>
+            </Row>
           </div>
-        </DialogContent>
+        </div>
         <DialogFooter>
           <DefaultButton text="Cancel" onClick={ this.onCancelClick }/>
           <PrimaryButton disabled={ !this.isDirty || !valid } text="Submit" onClick={ this.onSubmitClick }/>

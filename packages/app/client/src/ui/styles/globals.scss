@@ -1,3 +1,13 @@
+@font-face {
+  font-family: Segoe UI;
+  src: url("./segoe-ui.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: Menlo;
+  src: url("./menlo.woff2") format("woff2");
+}
+
 :global {
   html, body, #root {
     &:focus {

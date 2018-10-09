@@ -152,6 +152,6 @@ html {
   --link-color-disabled: #C8C8C8;
 }
 
-.ms-Modal {
+.dialog {
   --dialog-bg: var(--neutral-2);
 }

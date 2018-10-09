@@ -36,12 +36,11 @@ import {
   Checkbox,
   DefaultButton,
   Dialog,
-  DialogContent,
   DialogFooter,
   PrimaryButton,
   Row,
-  TextField,
   RowAlignment,
+  TextField,
 } from '@bfemulator/ui-react';
 import { EndpointService } from 'botframework-config/lib/models';
 import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
@@ -50,7 +49,7 @@ import * as styles from './botCreationDialog.scss';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 import { DialogService } from '../service';
-import { SharedConstants, newNotification } from '@bfemulator/app-shared';
+import { newNotification, SharedConstants } from '@bfemulator/app-shared';
 import { store } from '../../../data/store';
 import { beginAdd } from '../../../data/action/notificationActions';
 import { generateBotSecret } from '../../../utils';
@@ -104,20 +103,19 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
     // TODO - localization
     return (
       <Dialog className={ styles.main } title="New bot configuration" cancel={ this.onCancel } maxWidth={ 648 }>
-        <DialogContent className={ styles.botCreateForm }>
+        <div className={ styles.botCreateForm }>
           <TextField
-            className="c"
             inputClassName="bot-creation-input"
             value={ this.state.bot.name }
             onChanged={ this.onChangeName }
             label={ 'Bot name' }
-            required={ true } />
+            required={ true }/>
           <TextField
             inputClassName="bot-creation-input"
             onChanged={ this.onChangeEndpoint }
             placeholder={ endpointPlaceholder } label={ 'Endpoint URL' }
             required={ true }
-            value={ this.state.endpoint.endpoint } />
+            value={ this.state.endpoint.endpoint }/>
           { endpointWarning && <span className={ styles.endpointWarning }>{ endpointWarning }</span> }
           <Row className={ styles.multiInputRow }>
             <TextField
@@ -126,7 +124,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
               label="Microsoft App ID"
               onChanged={ this.onChangeAppId }
               placeholder="Optional"
-              value={ endpoint.appId } />
+              value={ endpoint.appId }/>
             <TextField
               className={ styles.smallInput }
               inputClassName="bot-creation-input"
@@ -134,21 +132,21 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
               onChanged={ this.onChangeAppPw }
               placeholder="Optional"
               type="password"
-              value={ endpoint.appPassword } />
+              value={ endpoint.appPassword }/>
           </Row>
 
-        <Row align={ RowAlignment.Bottom }>
-          <Checkbox
-            className={ styles.encryptKeyCheckBox }
-            label="Encrypt keys stored in your bot configuration."
-            checked={ encryptKey }
-            onChange={ this.onEncryptKeyChange } />
-          <a
-            href="javascript:void(0);"
-            onClick={ this.onLearnMoreEncryptionClick }>
-            Learn more.
-          </a>
-        </Row>
+          <Row align={ RowAlignment.Bottom }>
+            <Checkbox
+              className={ styles.encryptKeyCheckBox }
+              label="Encrypt keys stored in your bot configuration."
+              checked={ encryptKey }
+              onChange={ this.onEncryptKeyChange }/>
+            <a
+              href="javascript:void(0);"
+              onClick={ this.onLearnMoreEncryptionClick }>
+              Learn more.
+            </a>
+          </Row>
 
           <TextField
             className={ styles.key }
@@ -157,7 +155,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
             placeholder="Your keys are not encrypted"
             disabled={ true }
             id="key-input"
-            type={ revealSecret ? 'text' : 'password' } />
+            type={ revealSecret ? 'text' : 'password' }/>
           <ul className={ styles.actionsList }>
             <li>
               <a
@@ -184,19 +182,17 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
               </a>
             </li>
           </ul>
+        </div>
 
-        </DialogContent>
         <DialogFooter>
           <DefaultButton
             text="Cancel"
             onClick={ this.onCancel }
-            className="cancel-button"
           />
           <PrimaryButton
             text="Save and connect"
             onClick={ this.onSaveAndConnect }
             disabled={ !requiredFieldsCompleted }
-            className="connect-button"
           />
         </DialogFooter>
       </Dialog>
@@ -294,7 +290,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
       ...this.state.bot,
       name: this.state.bot.name.trim(),
       description: this.state.bot.description.trim(),
-      services: [endpoint],
+      services: [ endpoint ],
       path: botPath.trim()
     });
 
@@ -318,7 +314,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
       filters: [
         {
           name: 'Bot Files',
-          extensions: ['bot']
+          extensions: [ 'bot' ]
         }
       ],
       defaultPath: botFileName,
