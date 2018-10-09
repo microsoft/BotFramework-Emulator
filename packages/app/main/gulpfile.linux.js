@@ -52,9 +52,9 @@ gulp.task('package', async () => {
 
 /** Publish the artifacts in /dist/ to GitHub */
 gulp.task('publish', async () => {
-  for (const key in Object.keys(process.env)) {
+  Object.keys(process.env).forEach(key => {
     console.log(`${key}: ${process.env[key]}`);
-  }
+  });
   const { publishFiles } = common;
   const filesToPublish = getFilesFromDist();
   await publishFiles(filesToPublish);
