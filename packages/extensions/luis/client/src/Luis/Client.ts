@@ -80,7 +80,7 @@ class LuisClient {
   private publishService: Publish;
   private luisAppInfo: LuisAppInfo;
 
-  private static getCacheKey(apiName: string, appId: string, versionId: string | undefined= undefined): string {
+  private static getCacheKey(apiName: string, appId: string, versionId: string | undefined = undefined): string {
     let key: string = apiName + '_' + appId;
     if (versionId) {
       key += '_';
@@ -113,8 +113,8 @@ class LuisClient {
     let r = await this.appsService.getApplicationInfo({ appId: this.luisAppInfo.appId });
     let appInfo: AppInfo = {} as AppInfo;
     if (r.status === 401 ||
-        // Cortana Built in app (static, user cannot author it)
-        (r.status === 400 && this.luisAppInfo.appId.toLowerCase() === CortanaAppId)) {
+      // Cortana Built in app (static, user cannot author it)
+      (r.status === 400 && this.luisAppInfo.appId.toLowerCase() === CortanaAppId)) {
       appInfo = {
         authorized: false,
         activeVersion: Unauthorized,
@@ -155,12 +155,12 @@ class LuisClient {
       text: luisResponse.query,
       intentName: newIntent,
       entityLabels: luisResponse.entities.map(e => {
-                      return {
-                        entityName: this.getNormalizedEntityType(e.type),
-                        startCharIndex: e.startIndex,
-                        endCharIndex: e.endIndex
-                      };
-                    })
+        return {
+          entityName: this.getNormalizedEntityType(e.type),
+          startCharIndex: e.startIndex,
+          endCharIndex: e.endIndex
+        };
+      })
     };
 
     let addLabelParapms: AddLabelParams = {
@@ -177,7 +177,7 @@ class LuisClient {
   async publish(appInfo: AppInfo, staging: boolean): Promise<any> {
     this.configureClient();
     let endpointKey: string = staging ? 'STAGING' : 'PRODUCTION';
-    let region: string = appInfo.endpoints[endpointKey].endpointRegion;
+    let region: string = appInfo.endpoints[ endpointKey ].endpointRegion;
     if (!region) {
       throw new LuisClientError('Unknown publishing region');
     }
@@ -186,7 +186,7 @@ class LuisClient {
       region: region,
       versionId: appInfo.activeVersion
     };
-    let r = await this.publishService.publishApplication({appId: appInfo.appId}, applicationPublishRequest);
+    let r = await this.publishService.publishApplication({ appId: appInfo.appId }, applicationPublishRequest);
     if (r.status !== 201) {
       throw new LuisClientError('Publish Failed', r.status);
     }
@@ -194,7 +194,7 @@ class LuisClient {
 
   async train(appInfo: AppInfo): Promise<any> {
     this.configureClient();
-    let r = await this.trainService.trainApplicationVersion({appId: appInfo.appId, versionId: appInfo.activeVersion});
+    let r = await this.trainService.trainApplicationVersion({ appId: appInfo.appId, versionId: appInfo.activeVersion });
     if (r.status !== 202) {
       throw new LuisClientError('Failed to queue training request', r.status);
     }
@@ -202,27 +202,28 @@ class LuisClient {
     let retryCounter = 0;
     return new Promise((resolve, reject) => {
       let intervalId = setInterval(async () => {
-                                    r = await this.trainService.getVersionTrainingStatus({
-                                                                  appId: appInfo.appId,
-                                                                  versionId: appInfo.activeVersion});
+        r = await this.trainService.getVersionTrainingStatus({
+          appId: appInfo.appId,
+          versionId: appInfo.activeVersion
+        });
 
-                                    if (retryCounter++ >= TrainStatusRetryCount) {
-                                      clearInterval(intervalId);
-                                      reject('Failed to train the application');
-                                    }
+        if (retryCounter++ >= TrainStatusRetryCount) {
+          clearInterval(intervalId);
+          reject('Failed to train the application');
+        }
 
-                                    if (r.status !== 200) {
-                                      return;
-                                    }
+        if (r.status !== 200) {
+          return;
+        }
 
-                                    let appTrainingStatus: ModelTrainStatus[] = await r.json();
-                                    if (appTrainingStatus.every(s =>
-                                                                    s.details.statusId === TrainStatus.UpToDate ||
-                                                                    s.details.statusId === TrainStatus.Success )) {
-                                                                      clearInterval(intervalId);
-                                                                      resolve();
-                                                              }
-                                }, WaitIntervalInMs);
+        let appTrainingStatus: ModelTrainStatus[] = await r.json();
+        if (appTrainingStatus.every(s =>
+          s.details.statusId === TrainStatus.UpToDate ||
+          s.details.statusId === TrainStatus.Success)) {
+          clearInterval(intervalId);
+          resolve();
+        }
+      }, WaitIntervalInMs);
     });
   }
 
