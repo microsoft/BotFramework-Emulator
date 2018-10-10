@@ -127,6 +127,7 @@ html {
   --toolbar-bg: var(--neutral-16);
   --toolbar-border: var(--explorer-panel-group-border);
   --toolbar-border-bottom: var(--explorer-panel-group-border);
+  --toolbar-icon-color: #72C3DF;
   --splitter-border: var(--explorer-panel-group-border);
 
   /* Welcome page */

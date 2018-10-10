@@ -251,12 +251,12 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
   renderDefaultView(): JSX.Element {
     return (
       <div className={ styles.emulator }>
-        {
+        { 
           this.props.mode === 'livechat' &&
           <div className={ styles.header }>
             <ToolBar>
-              <ToolBarButton visible={ true } title="Start Over" onClick={ this.handleStartOverClick }/>
-              <ToolBarButton visible={ true } title="Save Transcript As..." onClick={ this.handleExportClick }/>
+              <ToolBarButton iconClassName={ styles.toolbarIcon } icon={ styles.restartIcon } visible={ true } title="Restart conversation" onClick={ this.handleStartOverClick }/>
+              <ToolBarButton iconClassName={ styles.toolbarIcon } icon={ styles.saveTranscriptIcon } visible={ true } title="Save transcript" onClick={ this.handleExportClick }/>
             </ToolBar>
           </div>
         }
