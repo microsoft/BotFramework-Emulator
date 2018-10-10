@@ -120,6 +120,8 @@ module.exports = {
   getConfig,
   getEnvironmentVar,
   getElectronMirrorUrl,
+  githubAccountName,
+  githubRepoName,
   hashFileAsync,
   publishFiles
 };
