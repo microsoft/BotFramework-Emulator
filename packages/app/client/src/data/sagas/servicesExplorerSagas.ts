@@ -31,6 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { ServiceCodes, SharedConstants } from '@bfemulator/app-shared';
+import { BotConfigWithPath } from '@bfemulator/sdk-shared';
+import { BotConfigurationBase } from 'botframework-config/lib/botConfigurationBase';
 import {
   IBotService,
   IConnectedService,
@@ -38,10 +41,11 @@ import {
   IQnAService,
   ServiceTypes
 } from 'botframework-config/lib/schema';
-import { BotConfigurationBase } from 'botframework-config/lib/botConfigurationBase';
 import { ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { DialogService } from '../../ui/dialogs/service';
+import { serviceTypeLabels } from '../../utils/serviceTypeLables';
+import { ArmTokenData, beginAzureAuthWorkflow } from '../action/azureAuthActions';
 import {
   ConnectedServiceAction,
   ConnectedServicePayload,
@@ -53,14 +57,10 @@ import {
   OPEN_CONTEXT_MENU_FOR_CONNECTED_SERVICE,
   OPEN_SERVICE_DEEP_LINK
 } from '../action/connectedServiceActions';
-import { ServiceCodes, SharedConstants } from '@bfemulator/app-shared';
-import { RootState } from '../store';
-import { ArmTokenData, beginAzureAuthWorkflow } from '../action/azureAuthActions';
-import { getArmToken } from './azureAuthSaga';
-import { BotConfigWithPath } from '@bfemulator/sdk-shared';
-import { SortCriteria } from '../reducer/explorer';
 import { sortExplorerContents } from '../action/explorerActions';
-import { serviceTypeLabels } from '../../utils/serviceTypeLables';
+import { SortCriteria } from '../reducer/explorer';
+import { RootState } from '../store';
+import { getArmToken } from './azureAuthSaga';
 
 declare type ServicesPayload = { services: IConnectedService[], code: ServiceCodes };
 
@@ -194,7 +194,7 @@ function* openContextMenuForService(action: ConnectedServiceAction<ConnectedServ
   : IterableIterator<any> {
   const menuItems = [
     { label: 'Manage service', id: 'open' },
-    { label: 'Edit configuration', id: 'edit' },
+    { label: 'Edit configuration', id: 'edit', enabled: action.payload.connectedService.type !== ServiceTypes.Bot },
     { label: 'Forget this service', id: 'forget' }
   ];
   const response = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);

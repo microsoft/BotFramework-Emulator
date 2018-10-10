@@ -54,6 +54,7 @@ const mapStateToProps = (state: RootState): Partial<ServicesExplorerProps> => {
   return {
     services: services.filter(service => service.type === ServiceTypes.QnA ||
       service.type === ServiceTypes.Dispatch ||
+      service.type === ServiceTypes.Bot ||
       service.type === ServiceTypes.Luis),
     sortCriteria,
     window
