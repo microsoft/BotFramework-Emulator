@@ -22,7 +22,7 @@ gulp.task('redist:binaries', async () => {
   const { getElectronMirrorUrl, getConfig } = common;
   const rename = require('gulp-rename');
   const builder = require('electron-builder');
-  const config = getConfig(mac);
+  const config = getConfig('mac');
 
   console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
 
