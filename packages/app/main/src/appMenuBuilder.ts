@@ -79,31 +79,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     ];
 
     if (process.platform === 'darwin') {
-      /*
-      // Create the Application's main menu
-      var template2: MenuOpts[] = [
-        {
-          label: windowTitle,
-          submenu: [
-            { label: "About", click: () => Emulator.send('showExplorer-about') },
-            { type: "separator" },
-            { label: "Quit", accelerator: "Command+Q", click: () => Electron.app.quit() }
-          ]
-        }, {
-          label: "Edit",
-          submenu: [
-            { label: "Undo", accelerator: "CmdOrCtrl+Z", role: "undo" },
-            { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", role: "redo" },
-            { type: "separator" },
-            { label: "Cut", accelerator: "CmdOrCtrl+X", role: "cut" },
-            { label: "Copy", accelerator: "CmdOrCtrl+C", role: "copy" },
-            { label: "Paste", accelerator: "CmdOrCtrl+V", role: "paste" },
-            { label: "Select All", accelerator: "CmdOrCtrl+A", role: "selectall" }
-          ]
-        }*/
-
       template.unshift(this.getAppMenuMac());
-
       // Window menu
       template.splice(4, 0, {
         label: 'Window',
@@ -249,9 +225,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
         { role: 'cut' },
         { role: 'copy' },
         { role: 'paste' },
-        { role: 'delete' },
-        process.platform === 'win32' ? { type: 'separator' } : null,
-        { role: 'selectall' }
+        { role: 'delete' }
       ].filter(item => item) as any[]
     };
   }
