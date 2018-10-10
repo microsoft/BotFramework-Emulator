@@ -243,7 +243,10 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
                      onStartConversation={ this.handleStartOverClick }/>
           { chatPanelChild }
         </div>
-        <span className={ styles.closePresentationIcon } onClick={ () => this.handlePresentationClick(false) }></span>
+        <span 
+          className={ styles.closePresentationIcon } 
+          onClick={ () => this.handlePresentationClick(false) }
+        />
       </div>
     );
   }
@@ -255,8 +258,20 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
           this.props.mode === 'livechat' &&
           <div className={ styles.header }>
             <ToolBar>
-              <ToolBarButton iconClassName={ styles.toolbarIcon } icon={ styles.restartIcon } visible={ true } title="Restart conversation" onClick={ this.handleStartOverClick }/>
-              <ToolBarButton iconClassName={ styles.toolbarIcon } icon={ styles.saveTranscriptIcon } visible={ true } title="Save transcript" onClick={ this.handleExportClick }/>
+              <ToolBarButton 
+                iconClassName={ styles.toolbarIcon } 
+                icon={ styles.restartIcon } 
+                visible={ true } 
+                title="Restart conversation" 
+                onClick={ this.handleStartOverClick }
+              />
+              <ToolBarButton 
+                iconClassName={ styles.toolbarIcon } 
+                icon={ styles.saveTranscriptIcon } 
+                visible={ true } 
+                title="Save transcript" 
+                onClick={ this.handleExportClick }
+              />
             </ToolBar>
           </div>
         }
