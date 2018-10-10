@@ -38,7 +38,7 @@ gulp.task('redist:binaries', async () => {
     gulp
       .src(filenames, { allowEmpty: true })
       .pipe(rename(path => {
-        path.basename = setReleaseFilename(path.basename);
+        path.basename = getReleaseFileName();
       }))
       .pipe(gulp.dest('./dist'))
       .on('end', resolve);
@@ -48,7 +48,7 @@ gulp.task('redist:binaries', async () => {
 /** Creates the .yml and .json metadata files */
 gulp.task('redist:metadata-only', async () => {
   const { hashFileAsync } = common;
-  const releaseFilename = `${setReleaseFilename(null)}.zip`;
+  const releaseFilename = `${getReleaseFileName()}.zip`;
   const releaseHash = await hashFileAsync(`./dist/${releaseFilename}`);
   const releaseDate = new Date().toISOString();
 
@@ -57,7 +57,7 @@ gulp.task('redist:metadata-only', async () => {
 });
 
 /** Sets the packaged artifact filenames */
-function setReleaseFilename(filename, options = {}) {
+function getReleaseFileName() {
   const { getEnvironmentVar } = common;
   const releaseVersion = getEnvironmentVar('EMU_VERSION', packageJson.version);
   const releasePlatform = getEnvironmentVar('EMU_PLATFORM');
@@ -65,34 +65,6 @@ function setReleaseFilename(filename, options = {}) {
     throw new Error('Environment variable EMU_PLATFORM missing. Please retry with valid value.');
   }
   const releaseName = `${packageJson.packagename}-${releaseVersion}-${releasePlatform}`;
-
-  /*const { extend } = common;
-  options = extend({}, {
-    lowerCase: true,
-    replaceWhitespace: true,
-    fixBasename: true,
-    replaceName: false,
-    srcName: null,
-    dstName: null
-  },
-    options);
-  if (options.replaceName && options.srcName && options.dstName) {
-    filename = filename.replace(options.srcName, options.dstName);
-  }
-  if (options.lowerCase) {
-    filename = filename.toLowerCase();
-  }
-  if (options.replaceWhitespace) {
-    filename = filename.replace(/\s/g, '-');
-  }
-  if (options.fixBasename) {
-    // renames build artifacts like 'bot-framework_{version}.*' or 'main_{version}.*'
-    // to '{package name in package.json}_{version}.*'
-    filename = filename.replace(/(bot[-|\s]framework)?(main)?/, packageJson.packagename);
-  }
-  // "Bot Framework Emulator-{version}.*" is being renamed to "Botframework-Emulator-emulator-{version}.*"
-  // This resolves that issue
-  filename = filename.replace(/Botframework-Emulator-emulator/, packageJson.packagename);*/
 
   return releaseName;
 }
