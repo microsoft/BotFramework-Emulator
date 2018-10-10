@@ -129,6 +129,9 @@ html {
   --toolbar-border: none;
   --toolbar-border-bottom: 1px solid var(--neutral-5);
   --toolbar-icon-color: #3062D6;
+  --toolbar-text-color: var(--neutral-12);
+  --toolbar-text-active: var(--neutral-16);
+  --toolbar-button-hover-border: 1px solid transparent;
   --splitter-border: var(--toolbar-border-bottom);
 
   /* Welcome page */

@@ -128,6 +128,9 @@ html {
   --toolbar-border: var(--explorer-panel-group-border);
   --toolbar-border-bottom: var(--explorer-panel-group-border);
   --toolbar-icon-color: #72C3DF;
+  --toolbar-text-color: var(--neutral-1);
+  --toolbar-text-active: var(--neutral-1);
+  --toolbar-button-hover-border: 1px dashed #F38518;
   --splitter-border: var(--explorer-panel-group-border);
 
   /* Welcome page */

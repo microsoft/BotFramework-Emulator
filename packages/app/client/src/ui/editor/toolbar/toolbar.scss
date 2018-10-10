@@ -18,14 +18,17 @@
     & > .button > button {
       cursor: pointer;
       margin: 0;
-      border: none;
+      border: 1px solid transparent;
       height: 30px;
       background-color: transparent;
       white-space: nowrap;
-      color: inherit;
+      color: var(--toolbar-text-color);
       &:hover {
         background-color: transparent;
-        text-decoration: underline;
+        border: var(--toolbar-button-hover-border);
+      }
+      &:active {
+        color: var(--toolbar-text-active);
       }
     }
 
