@@ -58,7 +58,15 @@ gulp.task('redist:metadata-only', async () => {
 
 /** Sets the packaged artifact filenames */
 function setReleaseFilename(filename, options = {}) {
-  const { extend } = common;
+  const { getEnvironmentVar } = common;
+  const releaseVersion = getEnvironmentVar('EMU_VERSION', packageJson.version);
+  const releasePlatform = getEnvironmentVar('EMU_PLATFORM');
+  if (!releasePlatform) {
+    throw new Error('Environment variable EMU_PLATFORM missing. Please retry with valid value.');
+  }
+  const releaseName = `${packageJson.packagename}-${releaseVersion}-${releasePlatform}`;
+
+  /*const { extend } = common;
   options = extend({}, {
     lowerCase: true,
     replaceWhitespace: true,
@@ -84,9 +92,9 @@ function setReleaseFilename(filename, options = {}) {
   }
   // "Bot Framework Emulator-{version}.*" is being renamed to "Botframework-Emulator-emulator-{version}.*"
   // This resolves that issue
-  filename = filename.replace(/Botframework-Emulator-emulator/, packageJson.packagename);
+  filename = filename.replace(/Botframework-Emulator-emulator/, packageJson.packagename);*/
 
-  return filename;
+  return releaseName;
 }
 
 /** Writes the .yml metadata file */

@@ -1,6 +1,6 @@
 {
   "name": "@bfemulator/main",
-  "packagename": "Botframework-Emulator",
+  "packagename": "BotFramework-Emulator",
   "version": "4.0.0-preview-mac-test",
   "private": true,
   "description": "Development tool for the Microsoft Bot Framework. Allows developers to test and debug bots on localhost.",
