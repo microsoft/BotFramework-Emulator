@@ -124,6 +124,7 @@ function setReleaseFilename(filename, options = {}) {
 
 /** Writes the .yml metadata file */
 function writeYamlMetadataFile(releaseFilename, yamlFilename, path, fileHash, releaseDate, extra = {}) {
+  const { extend } = common;
   var fsp = require('fs-extra');
   var yaml = require('js-yaml');
 
