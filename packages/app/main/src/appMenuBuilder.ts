@@ -36,7 +36,6 @@ import * as Electron from 'electron';
 import { mainWindow } from './main';
 import { AppUpdater, UpdateStatus } from './appUpdater';
 import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
-import * as jsonpath from 'jsonpath';
 import { ConversationService } from './services/conversationService';
 import { getStore as getSettingsStore } from './settingsData/store';
 import { rememberTheme } from './settingsData/actions/windowStateActions';
@@ -145,12 +144,12 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
         click: () => {
           mainWindow.commandService.remoteCall(Bot.OpenBrowse);
         }
-      }];
+      } ];
     if (recentBots && recentBots.length) {
       const recentBotsList = this.createRecentBotsList(recentBots);
       subMenu.push({
         label: 'Open Recent...',
-        submenu: [...recentBotsList]
+        submenu: [ ...recentBotsList ]
       });
     } else {
       subMenu.push({
@@ -390,8 +389,8 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     const getConversationId = async () => {
       const state = await getState();
       const { editors, activeEditor } = state.editor;
-      const { activeDocumentId } = editors[activeEditor];
-      return state.chat.chats[activeDocumentId].conversationId;
+      const { activeDocumentId } = editors[ activeEditor ];
+      return state.chat.chats[ activeDocumentId ].conversationId;
     };
 
     const getServiceUrl = () => emulator.framework.serverUrl.replace('[::]', 'localhost');
@@ -447,16 +446,17 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
    */
   setFileMenu(fileMenuTemplate: MenuOpts, appMenuTemplate: MenuOpts[]): MenuOpts[] {
     if (process.platform === 'darwin') {
-      appMenuTemplate[1] = fileMenuTemplate;
+      appMenuTemplate[ 1 ] = fileMenuTemplate;
     } else {
-      appMenuTemplate[0] = fileMenuTemplate;
+      appMenuTemplate[ 0 ] = fileMenuTemplate;
     }
     return appMenuTemplate;
   }
 
   refreshAppUpdateMenu() {
-    jsonpath.value(this.menuTemplate,
-      '$..[?(@.role == "help")].submenu[?(@.id == "auto-update")]', this.getUpdateMenuItem());
+    const helpMenu = this.menuTemplate.find(menuItem => menuItem.role === 'help');
+    const autoUpdateMenuItem = (helpMenu.submenu as Array<any>).find(menuItem => menuItem.id === 'auto-update');
+    Object.assign(autoUpdateMenuItem, this.getUpdateMenuItem());
     Electron.Menu.setApplicationMenu(Electron.Menu.buildFromTemplate(this.menuTemplate));
   }
 };

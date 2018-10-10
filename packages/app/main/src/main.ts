@@ -57,6 +57,7 @@ import { azureLoggedInUserChanged } from './settingsData/actions/azureAuthAction
 import { ngrokEmitter } from './ngrok';
 import { sendNotificationToClient } from './utils/sendNotificationToClient';
 import Users from '@bfemulator/emulator-core/lib/facility/users';
+import { openFileFromCommandLine } from './utils/openFileFromCommandLine';
 
 export let mainWindow: Window;
 export let windowManager: WindowManager;
@@ -89,7 +90,7 @@ AppUpdater.on('update-available', (update: UpdateInfo) => {
     mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
       title: app.getName(),
       message: `An update is available. Download it now?`,
-      buttons: ['Cancel', 'OK'],
+      buttons: [ 'Cancel', 'OK' ],
       defaultId: 1,
       cancelId: 0
     }).then(result => {
@@ -107,7 +108,7 @@ AppUpdater.on('update-downloaded', (update: UpdateInfo) => {
     mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
       title: app.getName(),
       message: 'Finished downloading update. Restart and install now?',
-      buttons: ['Cancel', 'OK'],
+      buttons: [ 'Cancel', 'OK' ],
       defaultId: 1,
       cancelId: 0
     }).then(result => {
@@ -200,6 +201,15 @@ Electron.app.on('will-finish-launching', () => {
 
   // On Mac, a protocol handler invocation sends urls via this event
   Electron.app.on('open-url', onOpenUrl);
+});
+
+let fileToOpen: string;
+Electron.app.on('open-file', async (event: Event, file: string) => {
+  if (!mainWindow || !mainWindow.commandService) {
+    fileToOpen = file;
+  } else {
+    await openFileFromCommandLine(file, mainWindow.commandService);
+  }
 });
 
 const windowIsOffScreen = function (windowBounds: Electron.Rectangle): boolean {
@@ -372,6 +382,11 @@ const createMainWindow = async () => {
         await mainWindow.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
       }
     }
+
+    if (fileToOpen) {
+      await openFileFromCommandLine(fileToOpen, mainWindow.commandService);
+      fileToOpen = null;
+    }
   });
 
   mainWindow.browserWindow.on('close', async function (event: Event) {
@@ -387,9 +402,9 @@ const createMainWindow = async () => {
 
 function loadMainPage() {
   let queryString = '';
-  if (process.argv[1] && process.argv[1].indexOf('botemulator') !== -1) {
+  if (process.argv[ 1 ] && process.argv[ 1 ].indexOf('botemulator') !== -1) {
     // add a query string with the botemulator protocol handler content
-    queryString = '?' + process.argv[1];
+    queryString = '?' + process.argv[ 1 ];
   }
 
   let page = process.env.ELECTRON_TARGET_URL || url.format({
