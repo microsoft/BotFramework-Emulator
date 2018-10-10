@@ -1,16 +1,7 @@
 .botSettingsEditor {
-  :global {
-    @media (min-width: 768px) {
-      .ms-Dialog-main {
-        min-width: 625px;
-        width: 625px;
-        max-height: 314px;
-      }
-      .ms-Dialog-actions {
-        margin: 0;
-      }
-    }
-  }
+  min-width: 600px;
+  width: 600px;
+  max-height: 314px;
 }
 
 .cancelButton {
@@ -22,8 +13,8 @@
 }
 
 .key {
-  width: 250px;
-  margin: 16px 145px 20px 32px;
+  width: 240px;
+  margin: 16px 145px 0 32px;
 }
 
 .encryptKeyCheckBox {
@@ -41,8 +32,8 @@ a {
 .actionsList {
   list-style: none;
   position: absolute;
-  right: 12px;
-  bottom: 37px;
+  right: 85px;
+  bottom: 65px;
 
   li {
     display: inline;

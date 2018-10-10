@@ -20,6 +20,8 @@ jest.mock('../../../platform/commands/commandServiceImpl', () => ({
   }
 }));
 
+jest.mock('../dialogStyles.scss', () => ({}));
+
 jest.mock('./secretPromptDialog.scss', () => ({}));
 jest.mock('../../../data/store', () => ({
   get store() {

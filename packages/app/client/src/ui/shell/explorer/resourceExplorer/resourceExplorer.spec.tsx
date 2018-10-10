@@ -78,4 +78,9 @@ describe('The ServicesExplorer component should', () => {
     instance.onInputKeyUp({ which: 13 });
     expect(mockDispatch).toHaveBeenCalledWith(renameResource(mockTranscript));
   });
+
+  it('should open the resource when the enter key is pressed while focused on a link', () => {
+    node.instance().onLinkKeyPress({ currentTarget: { dataset: { index: 0 } }, key: 'Enter' });
+    expect(mockDispatch).toHaveBeenCalledWith(openResource(mockChat));
+  });
 });

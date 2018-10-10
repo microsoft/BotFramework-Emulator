@@ -54,7 +54,6 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // Client notifying us it's initialized and has rendered
   commandRegistry.registerCommand(Commands.ClientInit.Loaded, async () => {
     const store = getStore();
-    const settingsStore: Store<Settings> = getSettingsStore();
     // Load bots from disk and sync list with client
     const bots = getBotsFromDisk();
     if (bots.length) {
@@ -68,14 +67,21 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     // Un-fullscreen the screen
     await mainWindow.commandService.call(Commands.Electron.SetFullscreen, false);
     // Send app settings to client
-    await mainWindow.commandService.remoteCall(Commands.Settings.ReceiveGlobalSettings, {
-      serverUrl: (emulator.framework.serverUrl || '').replace('[::]', '127.0.0.1'),
-      cwd: (__dirname || '').replace(/\\/g, '/'),
-      users: settingsStore.getState().users
-    } as ClientAwareSettings);
+    await commandRegistry.getCommand(Commands.Settings.PushClientAwareSettings).handler();
     // Load extensions
     ExtensionManagerImpl.unloadExtensions();
     ExtensionManagerImpl.loadExtensions();
+  });
+
+  commandRegistry.registerCommand(Commands.Settings.PushClientAwareSettings, async () => {
+    const settingsStore: Store<Settings> = getSettingsStore();
+    const settingsState = settingsStore.getState();
+    await mainWindow.commandService.remoteCall(Commands.Settings.ReceiveGlobalSettings, {
+      serverUrl: (emulator.framework.serverUrl || '').replace('[::]', '127.0.0.1'),
+      cwd: (__dirname || '').replace(/\\/g, '/'),
+      users: settingsState.users,
+      locale: settingsState.framework.locale
+    } as ClientAwareSettings);
   });
 
   // ---------------------------------------------------------------------------

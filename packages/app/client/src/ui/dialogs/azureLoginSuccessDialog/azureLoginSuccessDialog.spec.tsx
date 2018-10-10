@@ -12,6 +12,9 @@ jest.mock('../service', () => ({
     hideDialog: () => Promise.resolve(false),
   }
 }));
+
+jest.mock('../dialogStyles.scss', () => ({}));
+
 describe('The AzureLoginSuccessDialogContainer component should', () => {
   let parent;
   let node;

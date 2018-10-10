@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Component } from 'react';
 import { DefaultButton, Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
 import { ServiceTypes } from 'botframework-config/lib/schema';
+import * as styles from '../dialogStyles.scss';
 
 export interface ConnectLuisAppPromptDialogProps {
   cancel: () => void;
@@ -25,20 +26,22 @@ export class ConnectLuisAppPromptDialog extends Component<ConnectLuisAppPromptDi
   private get luisView(): JSX.Element {
     return (
       <Dialog
+        className={ styles.dialogMedium }
         cancel={ this.props.cancel }
         title="Connect your bot to a LUIS application">
         <p>
-          Sign in to your Azure account to select the LUIS applications you'd like to associate with this bot.&nbsp;
+          Sign in to your Azure account to select the LUIS applications <br/>
+          you'd like to associate with this bot.&nbsp;
           <a href="javascript:void(0);" onClick={ this.onLearnMoreLUIS }>Learn more about LUIS</a>
         </p>
         <p>
           Alternatively, you can&nbsp;
           <a href="javascript:void(0);" onClick={ this.props.addLuisAppManually }>add a LUIS app manually</a>
-          &nbsp;with the app ID, version, and authoring key
+          <br/>with the app ID, version, and authoring key
         </p>
         <DialogFooter>
-          <DefaultButton text="Cancel" onClick={ this.props.cancel } />
-          <PrimaryButton text="Sign in with Azure" onClick={ this.props.confirm } />
+          <DefaultButton text="Cancel" onClick={ this.props.cancel }/>
+          <PrimaryButton text="Sign in with Azure" onClick={ this.props.confirm }/>
         </DialogFooter>
       </Dialog>
     );
@@ -51,7 +54,7 @@ export class ConnectLuisAppPromptDialog extends Component<ConnectLuisAppPromptDi
         title="Connect your bot to a QnA Maker knowledge base">
         <p>
           Sign in to your Azure account to select the QnA Maker knowledge&nbsp;
-           bases you'd like to associate with this bot.&nbsp;
+          bases you'd like to associate with this bot.&nbsp;
           <a href="javascript:void(0);" onClick={ this.onLearnMoreQnAMaker }>Learn more about QnA Maker</a>
         </p>
         <p>
@@ -62,8 +65,8 @@ export class ConnectLuisAppPromptDialog extends Component<ConnectLuisAppPromptDi
           &nbsp;with the app ID, version, and authoring key
         </p>
         <DialogFooter>
-          <DefaultButton text="Cancel" onClick={ this.props.cancel } />
-          <PrimaryButton text="Sign in with Azure" onClick={ this.props.confirm } />
+          <DefaultButton text="Cancel" onClick={ this.props.cancel }/>
+          <PrimaryButton text="Sign in with Azure" onClick={ this.props.confirm }/>
         </DialogFooter>
       </Dialog>
     );
@@ -86,8 +89,8 @@ export class ConnectLuisAppPromptDialog extends Component<ConnectLuisAppPromptDi
           &nbsp;with the app ID, version, and authoring key
         </p>
         <DialogFooter>
-          <DefaultButton text="Cancel" onClick={ this.props.cancel } />
-          <PrimaryButton text="Sign in with Azure" onClick={ this.props.confirm } />
+          <DefaultButton text="Cancel" onClick={ this.props.cancel }/>
+          <PrimaryButton text="Sign in with Azure" onClick={ this.props.confirm }/>
         </DialogFooter>
       </Dialog>
     );

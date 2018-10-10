@@ -3,6 +3,7 @@ import { Component, MouseEvent } from 'react';
 import { BotInfo } from '@bfemulator/app-shared';
 import { DefaultButton, Dialog, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
 import * as styles from './resourcesSettings.scss';
+import * as dialogStyles from '../dialogStyles.scss';
 
 export interface ResourcesSettingsState {
   transcriptsPath?: string;
@@ -30,7 +31,10 @@ export class ResourcesSettings extends Component<ResourcesSettingsProps, Resourc
     const { transcriptsInputError, dirty, transcriptsPath, chatsPath } = this.state;
     const saveDisabled = !dirty || !transcriptsPath;
     return (
-      <Dialog title="Resource settings for this bot" cancel={ this.props.cancel }>
+      <Dialog
+        title="Resource settings for this bot"
+        cancel={ this.props.cancel }
+        className={ dialogStyles.dialogLarge }>
         <div className={ styles.container }>
           <TextField
             className={ styles.input }
@@ -88,7 +92,7 @@ export class ResourcesSettings extends Component<ResourcesSettingsProps, Resourc
     const prop = event.currentTarget.getAttribute('data-prop');
     const result = await this.props.showOpenDialog();
     if (result) {
-      this.setState({ [prop]: result, dirty: true });
+      this.setState({ [ prop ]: result, dirty: true });
     }
   }
 }

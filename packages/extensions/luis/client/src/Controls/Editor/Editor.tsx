@@ -66,19 +66,20 @@ class Editor extends Component<EditorProps, EditorState> {
     if (!this.props.recognizerResult || !this.props.recognizerResult.intents) {
       return { intent: NoneIntent, score: 0.0 };
     }
-    let intents: { [key: string]: RecognizerResultIntent } = this.props.recognizerResult.intents;
+    let intents: { [ key: string ]: RecognizerResultIntent } = this.props.recognizerResult.intents;
     let topIntent = Object.keys(intents).reduce((a, b) => {
-      return intents[a].score > intents[b].score ? a : b;
+      return intents[ a ].score > intents[ b ].score ? a : b;
     });
-    return { intent: topIntent, score: intents[topIntent].score };
+    return { intent: topIntent, score: intents[ topIntent ].score };
   }
 
   render() {
     let topScoringIntent = this.getTopScoringIntent();
     let mode: IntentEditorMode;
-    if (this.props.appInfo.authorized) {
+    const { appInfo = { authorized: false, isDispatchApp: false } } = this.props;
+    if (appInfo.authorized) {
       mode = IntentEditorMode.Enabled;
-    } else if (this.props.appInfo.isDispatchApp) {
+    } else if (appInfo.isDispatchApp) {
       mode = IntentEditorMode.Hidden;
     } else {
       mode = IntentEditorMode.Disabled;
