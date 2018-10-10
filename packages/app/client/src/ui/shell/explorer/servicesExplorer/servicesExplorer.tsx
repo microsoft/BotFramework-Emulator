@@ -138,7 +138,7 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
         <li
           key={ index }
           className={ `${ styles.link } ${ toAnimate[service.id] ? styles.animateHighlight : '' } ` }
-          onClick={ this.onLinkClick }
+          onDoubleClick={this.onLinkClick}
           onKeyPress={ this.onHandleKeyPress }
           data-index={ index }
           tabIndex={ 0 }>
