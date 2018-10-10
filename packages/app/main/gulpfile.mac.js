@@ -48,7 +48,7 @@ gulp.task('redist:binaries', async () => {
 /** Creates the .yml and .json metadata files */
 gulp.task('redist:metadata-only', async () => {
   const { hashFileAsync } = common;
-  const releaseFilename = `${packageJson.packagename}-${packageJson.version}-mac.zip`;
+  const releaseFilename = `${setReleaseFilename(null)}.zip`;
   const releaseHash = await hashFileAsync(`./dist/${releaseFilename}`);
   const releaseDate = new Date().toISOString();
 
