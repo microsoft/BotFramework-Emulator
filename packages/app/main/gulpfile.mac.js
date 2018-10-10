@@ -28,7 +28,7 @@ gulp.task('redist:binaries', async () => {
 
   // create installers
   const filenames = await builder.build({
-    targets: builder.Platform.MAC.createTarget([zip, dmg]),
+    targets: builder.Platform.MAC.createTarget(['zip', 'dmg']),
     config,
     prepackaged: './dist/mac'
   });
