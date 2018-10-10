@@ -1,10 +1,74 @@
 const packageJson = require('./package.json');
+const gulp = require ('gulp');
 
 const defaultElectronMirror = 'https://github.com/electron/electron/releases/download/v';
 const defaultElectronVersion = packageJson.devDependencies["electron"];
 const githubAccountName = "Microsoft";
 const githubRepoName = "BotFramework-Emulator";
 const appId = "F3C061A6-FE81-4548-82ED-C1171D9856BB";
+
+/** Copies extension json files into built */
+gulp.task('copy-extension-stubs', function () {
+  return gulp
+    .src('./src/extensions/**/*')
+    .pipe(gulp.dest('./app/extensions'));
+});
+
+/** Checks all files for missing GitHub copyright text and reports missing files */
+gulp.task('verify:copyright', function () {
+  const lernaRoot = '../../../';
+  const lernaJson = require(join(lernaRoot, 'lerna.json'));
+  const files = lernaJson.packages.filter(p => !/\/custom-/.test(p)).map(dir => join(lernaRoot, dir, '**/*.@(js|jsx|ts|tsx)'));
+  const filesWithoutCopyright = [];
+  let count = 0;
+  let scanned = 0;
+
+  return gulp
+    .src(files, { buffer: false })
+    .pipe(through2(
+      (file, _, callback) => {
+        const filename = file.history[0];
+
+        count++;
+
+        if (
+          // TODO: Instead of using pattern, we should use .gitignore
+          !/[\\\/](build|built|lib|node_modules)[\\\/]/.test(filename)
+          && !file.isDirectory()
+        ) {
+          callback(null, file);
+        } else {
+          callback();
+        }
+      }
+    ))
+    .pipe(buffer())
+    .pipe(through2(
+      (file, _, callback) => {
+        const filename = file.history[0];
+        const first1000 = file.contents.toString('utf8', 0, 1000);
+
+        if (!~first1000.indexOf('Copyright (c) Microsoft Corporation')) {
+          filesWithoutCopyright.push(relative(process.cwd(), filename));
+        }
+
+        scanned++;
+
+        callback();
+      },
+      callback => {
+        log.info(`Verified ${chalk.magenta(scanned)} out of ${chalk.magenta(count)} files with copyright header`);
+
+        if (filesWithoutCopyright.length) {
+          log.error(chalk.red('Copyright header is missing from the following files:'));
+          filesWithoutCopyright.forEach(filename => log.error(chalk.magenta(filename)));
+          callback(new Error('missing copyright header'));
+        } else {
+          callback();
+        }
+      }
+    ));
+});
 
 /** Gets an environment variable value with the provided name */
 function getEnvironmentVar(name, defaultValue = undefined) {

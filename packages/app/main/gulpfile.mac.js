@@ -43,24 +43,6 @@ gulp.task('redist:binaries', async () => {
       .pipe(gulp.dest('./dist'))
       .on('end', resolve);
   });
-
-  /*return builder.build({
-    targets: builder.Platform.MAC.createTarget([zip, dmg]),
-    config,
-    prepackaged: './dist/mac'
-  }).then((filenames) => {
-    return gulp.src(filenames, { allowEmpty: true })
-      .pipe(rename(function (path) {
-        path.basename = setReleaseFilename(path.basename, {
-          replaceWhitespace: true,
-          fixMacBinaryNames: true
-        });
-      }))
-      .pipe(gulp.dest('./dist'));
-  }).then(() => {
-    // Wait for the files to be written to disk and closed.
-    return delay(10000);
-  });*/
 });
 
 /** Creates the .yml and .json metadata files */
