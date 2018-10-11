@@ -38,28 +38,11 @@ gulp.task('redist:binaries', async () => {
     gulp
       .src(filenames, { allowEmpty: true })
       .pipe(rename(path => {
-        path.basename = setReleaseFilename(path.basename);
+        path.basename = getReleaseFilename();
       }))
       .pipe(gulp.dest('./dist'))
       .on('end', resolve);
   });
-
-  /*return builder.build({
-    targets: builder.Platform.WINDOWS.createTarget(["nsis"], builder.Arch.ia32),
-    config,
-    prepackaged: './dist/win-ia32-unpacked'
-  }).then((filenames) => {
-    return gulp.src(filenames, { allowEmpty: true })
-      .pipe(rename(function (path) {
-        path.basename = setReleaseFilename(path.basename, {
-          replaceWhitespace: true
-        });
-      }))
-      .pipe(gulp.dest('./dist'));
-  }).then(() => {
-    // Wait for the files to be written to disk and closed.
-    return delay(10000);
-  });*/
 });
 
 /** Writes the build metadata to latest.yml  */
@@ -79,12 +62,6 @@ gulp.task('redist:metadata-only', async () => {
     releaseDate,
     { sha2 }
   );
-
-  /*
-  return Promise.all([sha512, sha2])
-    .then((values) => {
-      writeYamlMetadataFile(releaseFilename, 'latest.yml', './dist', values[0], releaseDate, { sha2: values[1] });
-    });*/
 });
 
 /** Creates the emulator installers and the metadata .yml file */
@@ -93,33 +70,16 @@ gulp.task('redist',
 );
 
 /** Sets the packaged artifact filename */
-function setReleaseFilename(filename, options = {}) {
-  const { extend } = common;
-  options = extend({}, {
-      lowerCase: true,
-      replaceWhitespace: true,
-      fixBasename: true,
-      replaceName: false,
-      srcName: null,
-      dstName: null
-    },
-    options
-  );
-  if (options.replaceName && options.srcName && options.dstName) {
-    filename = filename.replace(options.srcName, options.dstName);
+function getReleaseFilename() {
+  const { getEnvironmentVar } = common;
+  const releaseVersion = getEnvironmentVar('EMU_VERSION', packageJson.version);
+  const releasePlatform = getEnvironmentVar('EMU_PLATFORM');
+  if (!releasePlatform) {
+    throw new Error('Environment variable EMU_PLATFORM missing. Please retry with valid value.');
   }
-  if (options.lowerCase) {
-    filename = filename.toLowerCase();
-  }
-  if (options.replaceWhitespace) {
-    filename = filename.replace(/\s/g, '-');
-  }
-  if (options.fixBasename) {
-    // renames build artifacts like 'bot-framework_{version}.*' or 'main_{version}.*'
-    // to '{package name in package.json}_{version}.*'
-    filename = filename.replace(/(bot[-|\s]framework)?(main)?/, packageJson.packagename);
-  }
-  return filename;
+  const releaseName = `${packageJson.packagename}-${releaseVersion}-${releasePlatform}`;
+
+  return releaseName;
 }
 
 /** Writes the .yml metadata file */
