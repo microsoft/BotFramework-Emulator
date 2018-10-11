@@ -128,6 +128,7 @@ html {
   --toolbar-bg: var(--tab-active-tab-bg);
   --toolbar-border: none;
   --toolbar-border-bottom: 1px solid var(--neutral-13);
+  --toolbar-icon-color: #00BCF2;
   --splitter-border: var(--toolbar-border-bottom);
 
   /* Welcome page */
