@@ -79,7 +79,7 @@ export class AzureAuthWorkflowService {
         const result: AuthResponse = {} as AuthResponse;
         try {
           const { history = [] }: { history: string[] } = browserWindow.webContents as any;
-          uri = history[ history.length - 1 ] || '';
+          uri = history[history.length - 1] || '';
         } catch (e) {
           clearInterval(interval);
           result.error = e.message;
@@ -92,8 +92,8 @@ export class AzureAuthWorkflowService {
         const values = uri.substring(idx + 1).split('&');
         const len = values.length;
         for (let i = 0; i < len; i++) {
-          const [ key, value ] = values[ i ].split(/[=]/);
-          result[ key ] = value;
+          const [key, value] = values[i].split(/[=]/);
+          result[key] = value;
         }
         clearInterval(interval);
         resolve(result);
@@ -246,7 +246,7 @@ export class AzureAuthWorkflowService {
   }
 
   private static async validateJWT(token: string): Promise<boolean> {
-    const [ header ] = token.split('.');
+    const [header] = token.split('.');
     const headers: { alg: string, kid: string, x5t: string } = JSON.parse(Buffer.from(header, 'base64').toString());
 
     try {
