@@ -47,7 +47,7 @@ export class AzureAuthWorkflowService {
   private static config: Config;
   private static jwks: Jwks;
 
-  public static * retrieveAuthToken(renew: boolean = false, redirectUri: string): IterableIterator<any> {
+  public static* retrieveAuthToken(renew: boolean = false, redirectUri: string): IterableIterator<any> {
     const authWindow = yield this.launchAuthWindow(renew, redirectUri);
     authWindow.show();
     const result = yield this.waitForAuthResult(authWindow, redirectUri);
@@ -62,7 +62,7 @@ export class AzureAuthWorkflowService {
     yield armToken;
   }
 
-  public static * enterSignOutWorkflow(prompt: boolean): IterableIterator<any> {
+  public static* enterSignOutWorkflow(prompt: boolean): IterableIterator<any> {
     const signOutWindow = yield this.launchSignOutWindow(prompt);
     signOutWindow.show();
 
@@ -79,7 +79,7 @@ export class AzureAuthWorkflowService {
         const result: AuthResponse = {} as AuthResponse;
         try {
           const { history = [] }: { history: string[] } = browserWindow.webContents as any;
-          uri = history[history.length - 1] || '';
+          uri = history[ history.length - 1 ] || '';
         } catch (e) {
           clearInterval(interval);
           result.error = e.message;
@@ -92,8 +92,8 @@ export class AzureAuthWorkflowService {
         const values = uri.substring(idx + 1).split('&');
         const len = values.length;
         for (let i = 0; i < len; i++) {
-          const [key, value] = values[i].split(/[=]/);
-          result[key] = value;
+          const [ key, value ] = values[ i ].split(/[=]/);
+          result[ key ] = value;
         }
         clearInterval(interval);
         resolve(result);
@@ -139,11 +139,10 @@ export class AzureAuthWorkflowService {
       `nonce=${nonce}`,
       'x-client-SKU=Js',
       'x-client-Ver=1.0.17',
-      'resource=https://management.core.windows.net/'
+      'resource=https://management.core.windows.net/',
+      `prompt=${renew ? 'none' : 'consent'}`
     ];
-    if (renew) {
-      bits.push('prompt=none');
-    }
+
     const url = bits.join('&');
     browserWindow.loadURL(url);
     return new Promise<BrowserWindow>(resolve => {
@@ -247,7 +246,7 @@ export class AzureAuthWorkflowService {
   }
 
   private static async validateJWT(token: string): Promise<boolean> {
-    const [header] = token.split('.');
+    const [ header ] = token.split('.');
     const headers: { alg: string, kid: string, x5t: string } = JSON.parse(Buffer.from(header, 'base64').toString());
 
     try {
