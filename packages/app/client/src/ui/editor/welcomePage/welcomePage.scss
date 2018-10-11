@@ -1,34 +1,34 @@
-.rightColumn {
+.right-column {
   margin-left: 48px
 }
 
 .version-number {
-  position: relative;
-  top: -16px;
   color: var(--welcome-page-ver);
   font-size: 19px;
   line-height: 26px;
   margin-bottom: 32px;
   padding-left: 2px;
+  position: relative;
+  top: -16px;
 }
 
 .section {
   margin-bottom: 34px;
-  width: auto;
   max-width: 100%;
+  width: auto;
 
   a {
+    color: var(--focused-selected-list-item-bg);
     min-width: 0;
-    white-space: nowrap;
-    text-overflow: ellipsis;
     overflow: hidden;
     text-decoration: none;
-    color: var(--focused-selected-list-item-bg);
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   ul {
-    margin: 0;
     list-style: none;
+    margin: 0;
     padding: 0;
 
     &.well {
@@ -52,15 +52,15 @@
   }
 }
 
-.noBots {
+.no-bots {
   font-style: italic;
   padding: 0 10px;
 }
 
-.recentBotsList {
+.recent-bots-list {
   max-height: 100px;
-  overflow-y: auto;
   overflow-x: hidden;
+  overflow-y: auto;
 
   & > li {
     display: flex;
@@ -71,25 +71,25 @@
   }
 }
 
-.recentBot {
-  position: relative;
-  padding: 0 16px;
+.recent-bot {
   border: 1px solid transparent;
+  padding: 0 16px;
+  position: relative;
 
   &:hover {
     background-color: var(--my-bots-entry-bg);
     border: var(--my-bots-entry-border);
 
-    .recentBotActionBar {
+    .recent-bot-action-bar {
       display: block;
     }
   }
 
   > button {
-    background-color: transparent;
-    border: 1px solid transparent;
-    color: var(--my-bots-entry-color);
-    cursor: pointer;
+      background-color: transparent;
+      border: 1px solid transparent;
+      color: var(--my-bots-entry-color);
+      cursor: pointer;
 
     > span {
       font-family: var(--default-font-semibold);
@@ -101,48 +101,49 @@
   }
 }
 
-.recentBotActionBar {
-  display: none;
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 100%;
-  width: auto;
-  min-width: 16px;
+.recent-bot-action-bar {
   background-color: transparent;
+  display: none;
+  height: 100%;
+  min-width: 16px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: auto;
 
   > button {
-    border: 0;
-    padding: 0;
-    height: 0;
-    width: 0;
-    cursor: pointer;
+      border: 0;
+      cursor: pointer;
+      height: 0;
+      padding: 0;
+      width: 0;
 
     &:after {
+      color: var(--tab-icon-color);
+      content: "\2716";
+      font-size: 12px;
       height: 16px;
       width: 8px;
       margin-right: 8px;
-      content: "\2716";
-      color: var(--tab-icon-color);
-      font-size: 12px;
     }
   }
 }
 
-.recentBotPath {
-  display: inline-block;
-  margin-left: 8px;
+.recent-bot-path {
   color: var(--my-bots-path-color);
+  cursor: text;
+  display: inline-block;
+  line-height: 22px;
+  margin-left: 8px;
   opacity: 0.5;
   user-select: text;
-  cursor: text;
 }
 
-.openBot {
+.open-bot {
+  height: 26px;
   margin-top: 24px;
   margin-bottom: 16px;
   width: 180px;
-  height: 26px;
 
   :global {
     .ms-Button-label {
@@ -151,7 +152,7 @@
   }
 }
 
-.ctaLink {
+.cta-link {
   background-color: transparent;
   border: 1px solid transparent;
   color: var(--focused-selected-list-item-bg);
@@ -181,8 +182,8 @@
   }
 
   .step-container {
-    display: flex;
     align-items: stretch;
+    display: flex;
     position: relative;
 
       .step-icon {
@@ -192,9 +193,9 @@
         width: 38px;
 
         > div {
+          background-repeat: no-repeat;
           height: 30px;
           width: 30px;
-          background-repeat: no-repeat;
         }
 
         > .build-plan01 {
@@ -224,39 +225,39 @@
       dl {
         border-left: 1px solid var(--welcome-how-to-border);
         display: block;
-        padding: 0 24px;
         margin: 0;
+        padding: 0 24px;
 
-        > dt::before {
-          background-color: var(--welcome-page-bg);
-          border: 1px solid var(--welcome-how-to-border);
-          border-radius: 100%;
-          content: '';
-          left: 47px;
-          height: 11px;
-          position: absolute;
-          width: 11px;
-        }
-
-        > .test-bullet::before {
-          background-color: var(--welcome-how-to-test);
-        }
-
-
-        > dt {
-          display: block;
-          font-size: 13px;
-          font-weight: bold;
-          line-height: 18px;
-        }
-
-        > dd {
-          font-size: 13px;
-          line-height: 18px;
-          margin-left: 0;
-          padding-bottom: 22px;
-        }
+      > dt::before {
+        background-color: var(--welcome-page-bg);
+        border: 1px solid var(--welcome-how-to-border);
+        border-radius: 100%;
+        content: '';
+        left: 47px;
+        height: 11px;
+        position: absolute;
+        width: 11px;
       }
+
+      > .test-bullet::before {
+        background-color: var(--welcome-how-to-test);
+      }
+
+
+      > dt {
+        display: block;
+        font-size: 13px;
+        font-weight: bold;
+        line-height: 18px;
+      }
+
+      > dd {
+        font-size: 13px;
+        line-height: 18px;
+        margin-left: 0;
+        padding-bottom: 22px;
+      }
+    }
   }
 
   .step-container:last-child dl {

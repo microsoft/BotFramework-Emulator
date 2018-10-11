@@ -1,21 +1,21 @@
-.navBar {
+.nav-bar {
   background-color: var(--nav-bar-bg);
+  box-shadow: var(--box-shadow-right);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   position: relative;
   width: 50px;
-  box-shadow: var(--box-shadow-right);
 }
 
-.navLink {
-  position: relative;
-  display: inline-block;
-  width: 50px;
-  height: 50px;
-  box-sizing: border-box;
+.nav-link {
   border: 1px solid transparent;
+  box-sizing: border-box;
+  display: inline-block;
+  height: 50px;
+  position: relative;
   right: 2px; // Compensation for ::after padding
+  width: 50px;
 
   & .badge {
     position: absolute;
@@ -31,15 +31,15 @@
      * height & length (0.5 * 16px = 8px) from that to center the badge on the top-right corner
      * of the link icon. 12.5px - 8px = 4.5px
      */
-    top: 4.5px;
-    right: 4.5px;
-    width: 16px;
-    height: 16px;
-    border-radius: 16px;
-    line-height: 16px;
-    text-align: center;
-    color: var(--nav-link-badge-color);
-    background-color: var(--nav-link-badge-bg);
+     background-color: var(--nav-link-badge-bg);
+     border-radius: 16px;
+     color: var(--nav-link-badge-color);
+     height: 16px;
+     line-height: 16px;
+     right: 4.5px;
+     text-align: center;
+     top: 4.5px;
+     width: 16px;
   }
 
   &::before {

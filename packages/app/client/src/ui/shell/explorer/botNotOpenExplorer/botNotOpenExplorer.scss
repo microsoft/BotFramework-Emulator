@@ -1,4 +1,4 @@
-.botNotOpenExplorer {
+.bot-not-open-explorer {
   background-color: var(--dialog-bg);
   color: var(--input-label-color);
   display: flex;
@@ -8,12 +8,12 @@
   margin: 0;
   padding: 0;
 
-  & .explorerEmptyState {
+  & .explorer-empty-state {
     padding: 16px;
     overflow: hidden;
   }
 
-  & .openBot {
+  & .open-bot {
     margin-top: 13px;
     margin-bottom: 26px;
     width: 180px;

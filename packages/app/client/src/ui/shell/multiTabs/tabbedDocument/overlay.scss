@@ -3,11 +3,11 @@
   transition: background-color 0.1s ease-in-out;
   background-color: transparent;
   pointer-events: none;
-  &.draggedOverOverlay {
+  &.dragged-over-overlay {
     background-color: var(--neutral-9);
   }
 
-  &.enabledForDrop {
+  &.enabled-for-drop {
     pointer-events: auto;
   }
 }
