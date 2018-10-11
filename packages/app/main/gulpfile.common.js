@@ -92,15 +92,6 @@ function replacePackageEnvironmentVars(obj) {
   return JSON.parse(str);
 }
 
-/** Replaces a publishing-related environment variable */
-function replacePublishEnvironmentVars(obj) {
-  let str = JSON.stringify(obj);
-  str = replaceEnvironmentVar(str, "GH_TOKEN");
-  str = replaceEnvironmentVar(str, "githubAccountName", githubAccountName);
-  str = replaceEnvironmentVar(str, "githubRepoName", githubRepoName);
-  return JSON.parse(str);
-}
-
 /** Returns the Electron Mirror URL from where electron is downloaded */
 function getElectronMirrorUrl() {
   return `${getEnvironmentVar("ELECTRON_MIRROR", defaultElectronMirror)}${getEnvironmentVar("ELECTRON_VERSION", defaultElectronVersion)}`;
@@ -137,42 +128,6 @@ function extend1(destination, source) {
   return destination;
 };
 
-/** Publishes files to GitHub
- * @param {string[]} filelist List of filenames to publish
-*/
-async function publishFiles(filelist) {
-  var CancellationToken = require('electron-builder-http/out/CancellationToken').CancellationToken;
-  var GitHubPublisher = require('electron-publish/out/gitHubPublisher').GitHubPublisher;
-  var publishConfig = replacePublishEnvironmentVars(require('./scripts/config/publish.json'));
-
-  const context = {
-    cancellationToken: new CancellationToken(),
-    progress: null
-  };
-
-  const publisher = new GitHubPublisher(
-    context,
-    publishConfig,
-    packageJson.version, {
-      publish: "always",
-      draft: true,
-      prerelease: false
-    }
-  );
-  const errorlist = [];
-
-  const uploads = filelist.map(file => {
-    return publisher.upload({ file })
-      .catch((err) => {
-        errorlist.push(err.response ? `Failed to upload ${file}, http status code ${err.response.statusCode}` : err);
-        return Promise.resolve();
-      });
-  });
-
-  return await Promise.all(uploads)
-    .then(() => errorlist.forEach(err => console.error(err)));
-}
-
 /** Hashes a file asynchronously */
 function hashFileAsync(filename, algo = 'sha512', encoding = 'base64') {
   var builderUtil = require('builder-util');
@@ -186,6 +141,5 @@ module.exports = {
   getElectronMirrorUrl,
   githubAccountName,
   githubRepoName,
-  hashFileAsync,
-  publishFiles
+  hashFileAsync
 };

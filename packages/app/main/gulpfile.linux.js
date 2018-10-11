@@ -31,27 +31,6 @@ gulp.task('package', async () => {
   });
 });
 
-/** Publish the artifacts in /dist/ to GitHub */
-gulp.task('publish', async () => {
-  const { publishFiles } = common;
-  const filesToPublish = getFilesFromDist();
-  await publishFiles(filesToPublish);
-});
-
-/** Returns the names of the packaged artifacts in /dist/ */
-function getFilesFromDist() {
-  const path = './dist';
-  const baseName = getReleaseFilename();
-
-  const filelist = [];
-  filelist.push(`${path}/${baseName}-i386.AppImage`);
-  filelist.push(`${path}/${baseName}-x86_64.AppImage`);
-  filelist.push(`${path}/${baseName}_i386.deb`);
-  filelist.push(`${path}/${baseName}_amd64.deb`);
-
-  return filelist;
-}
-
 /** Sets the packaged artifact filenames */
 function getReleaseFilename() {
   const { getEnvironmentVar } = common;
