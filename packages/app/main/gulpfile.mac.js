@@ -38,7 +38,7 @@ gulp.task('redist:binaries', async () => {
     gulp
       .src(filenames, { allowEmpty: true })
       .pipe(rename(path => {
-        path.basename = getReleaseFileName();
+        path.basename = getReleaseFilename();
       }))
       .pipe(gulp.dest('./dist'))
       .on('end', resolve);
@@ -48,7 +48,7 @@ gulp.task('redist:binaries', async () => {
 /** Creates the .yml and .json metadata files */
 gulp.task('redist:metadata-only', async () => {
   const { hashFileAsync } = common;
-  const releaseFilename = `${getReleaseFileName()}.zip`;
+  const releaseFilename = `${getReleaseFilename()}.zip`;
   const releaseHash = await hashFileAsync(`./dist/${releaseFilename}`);
   const releaseDate = new Date().toISOString();
 
@@ -57,7 +57,7 @@ gulp.task('redist:metadata-only', async () => {
 });
 
 /** Sets the packaged artifact filenames */
-function getReleaseFileName() {
+function getReleaseFilename() {
   const { getEnvironmentVar } = common;
   const releaseVersion = getEnvironmentVar('EMU_VERSION', packageJson.version);
   const releasePlatform = getEnvironmentVar('EMU_PLATFORM');

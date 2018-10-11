@@ -24,7 +24,7 @@ gulp.task('package', async () => {
     gulp
       .src(filenames, { allowEmpty: true })
       .pipe(rename(path => {
-        path.basename = setReleaseFilename(path.basename);
+        path.basename = getReleaseFilename(path.basename);
       }))
       .pipe(gulp.dest('./dist'))
       .on('end', resolve);
@@ -39,49 +39,28 @@ gulp.task('publish', async () => {
 });
 
 /** Returns the names of the packaged artifacts in /dist/ */
-function getFilesFromDist(options = {}) {
-  const { extend } = common;
-  options = extend({}, {
-    basename: packageJson.packagename,
-    version: packageJson.version,
-  }, options);
+function getFilesFromDist() {
   const path = './dist';
+  const baseName = getReleaseFilename();
 
   const filelist = [];
-  filelist.push(`${path}/${options.basename}-${options.version}-i386.AppImage`);
-  filelist.push(`${path}/${options.basename}-${options.version}-x86_64.AppImage`);
-  filelist.push(`${path}/${options.basename}_${options.version}_i386.deb`);
-  filelist.push(`${path}/${options.basename}_${options.version}_amd64.deb`);
+  filelist.push(`${path}/${baseName}-i386.AppImage`);
+  filelist.push(`${path}/${baseName}-x86_64.AppImage`);
+  filelist.push(`${path}/${baseName}_i386.deb`);
+  filelist.push(`${path}/${baseName}_amd64.deb`);
 
   return filelist;
 }
 
-/** Sets the packaged artifact filename */
-function setReleaseFilename(filename, options = {}) {
-  const { extend } = common;
-  options = extend({}, {
-      lowerCase: true,
-      replaceWhitespace: true,
-      fixBasename: true,
-      replaceName: false,
-      srcName: null,
-      dstName: null
-    },
-    options
-  );
-  if (options.replaceName && options.srcName && options.dstName) {
-    filename = filename.replace(options.srcName, options.dstName);
+/** Sets the packaged artifact filenames */
+function getReleaseFilename() {
+  const { getEnvironmentVar } = common;
+  const releaseVersion = getEnvironmentVar('EMU_VERSION', packageJson.version);
+  const releasePlatform = getEnvironmentVar('EMU_PLATFORM');
+  if (!releasePlatform) {
+    throw new Error('Environment variable EMU_PLATFORM missing. Please retry with valid value.');
   }
-  if (options.lowerCase) {
-    filename = filename.toLowerCase();
-  }
-  if (options.replaceWhitespace) {
-    filename = filename.replace(/\s/g, '-');
-  }
-  if (options.fixBasename) {
-    // renames build artifacts like 'bot-framework_{version}.*' or 'main_{version}.*'
-    // to '{package name in package.json}_{version}.*'
-    filename = filename.replace(/(bot[-|\s]framework)?(main)?/, packageJson.packagename);
-  }
-  return filename;
+  const releaseName = `${packageJson.packagename}-${releaseVersion}-${releasePlatform}`;
+
+  return releaseName;
 }
