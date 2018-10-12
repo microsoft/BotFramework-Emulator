@@ -65,7 +65,7 @@ export const ElectronIPCServer = new class {
     this.initialize();
     return {
       dispose: () => {
-        delete this._ipcs[ipc.id];
+        this._ipcs.delete(ipc.webContents);
       }
     };
   }
