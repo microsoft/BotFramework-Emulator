@@ -35,12 +35,14 @@ import { Event, ipcMain, WebContents } from 'electron';
 import { Disposable, IPC } from '@bfemulator/sdk-shared';
 
 export class ElectronIPC extends IPC {
+  private _webContents: WebContents;
   get webContents(): WebContents {
     return this._webContents;
   }
 
-  constructor(private _webContents: WebContents) {
+  constructor(webContents: WebContents) {
     super();
+    this._webContents = webContents;
   }
 
   send(...args: any[]): void {
