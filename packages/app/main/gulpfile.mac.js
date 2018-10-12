@@ -19,7 +19,7 @@ gulp.task('stage', async () => {
 
 /** Creates the emulator installers */
 gulp.task('redist:binaries', async () => {
-  const { getElectronMirrorUrl, getConfig } = common;
+  const { getElectronMirrorUrl, getConfig, getReleaseFilename } = common;
   const rename = require('gulp-rename');
   const builder = require('electron-builder');
   const config = getConfig('mac');
@@ -47,7 +47,7 @@ gulp.task('redist:binaries', async () => {
 
 /** Creates the .yml and .json metadata files */
 gulp.task('redist:metadata-only', async () => {
-  const { hashFileAsync } = common;
+  const { hashFileAsync, getReleaseFilename } = common;
   const releaseFilename = `${getReleaseFilename()}.zip`;
   const releaseHash = await hashFileAsync(`./dist/${releaseFilename}`);
   const releaseDate = new Date().toISOString();
@@ -55,19 +55,6 @@ gulp.task('redist:metadata-only', async () => {
   writeJsonMetadataFile(releaseFilename, 'latest-mac.json', './dist', releaseDate);
   writeYamlMetadataFile(releaseFilename, 'latest-mac.yml', './dist', releaseHash, releaseDate);
 });
-
-/** Sets the packaged artifact filenames */
-function getReleaseFilename() {
-  const { getEnvironmentVar } = common;
-  const releaseVersion = getEnvironmentVar('EMU_VERSION', packageJson.version);
-  const releasePlatform = getEnvironmentVar('EMU_PLATFORM');
-  if (!releasePlatform) {
-    throw new Error('Environment variable EMU_PLATFORM missing. Please retry with valid value.');
-  }
-  const releaseName = `${packageJson.packagename}-${releaseVersion}-${releasePlatform}`;
-
-  return releaseName;
-}
 
 /** Writes the .yml metadata file */
 function writeYamlMetadataFile(releaseFilename, yamlFilename, path, fileHash, releaseDate, extra = {}) {

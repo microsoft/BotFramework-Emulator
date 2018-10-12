@@ -1,17 +1,16 @@
 const gulp = require('gulp');
 const common = require('./gulpfile.common.js');
-const packageJson = require('./package.json');
 
 /** Package the emulator using electron-builder
  *  and output artifacts to /dist/
  */
 gulp.task('package', async () => {
-  const { getElectronMirrorUrl, getConfig } = common;
+  const { getElectronMirrorUrl, getConfig } = common;, 
   const rename = require('gulp-rename');
   const builder = require('electron-builder');
   const config = getConfig('linux');
 
-  console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
+  console.log(`Electron mirror: ${getElectronMirrorUrl(getReleaseFilename)}`);
 
   // create build artifacts
   const filenames = await builder.build({
@@ -24,22 +23,9 @@ gulp.task('package', async () => {
     gulp
       .src(filenames, { allowEmpty: true })
       .pipe(rename(path => {
-        path.basename = getReleaseFilename(path.basename);
+        path.basename = getReleaseFilename();
       }))
       .pipe(gulp.dest('./dist'))
       .on('end', resolve);
   });
 });
-
-/** Sets the packaged artifact filenames */
-function getReleaseFilename() {
-  const { getEnvironmentVar } = common;
-  const releaseVersion = getEnvironmentVar('EMU_VERSION', packageJson.version);
-  const releasePlatform = getEnvironmentVar('EMU_PLATFORM');
-  if (!releasePlatform) {
-    throw new Error('Environment variable EMU_PLATFORM missing. Please retry with valid value.');
-  }
-  const releaseName = `${packageJson.packagename}-${releaseVersion}-${releasePlatform}`;
-
-  return releaseName;
-}

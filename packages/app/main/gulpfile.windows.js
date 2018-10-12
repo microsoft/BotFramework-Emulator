@@ -19,7 +19,7 @@ gulp.task('stage', async () => {
 
 /** Creates the emulator installers */
 gulp.task('redist:binaries', async () => {
-  const { getConfig, getElectronMirrorUrl } = common;
+  const { getConfig, getElectronMirrorUrl, getReleaseFilename } = common;
   var rename = require('gulp-rename');
   var builder = require('electron-builder');
   const config = getConfig("windows", "nsis");
@@ -68,19 +68,6 @@ gulp.task('redist:metadata-only', async () => {
 gulp.task('redist',
   gulp.series('redist:binaries', 'redist:metadata-only')
 );
-
-/** Sets the packaged artifact filename */
-function getReleaseFilename() {
-  const { getEnvironmentVar } = common;
-  const releaseVersion = getEnvironmentVar('EMU_VERSION', packageJson.version);
-  const releasePlatform = getEnvironmentVar('EMU_PLATFORM');
-  if (!releasePlatform) {
-    throw new Error('Environment variable EMU_PLATFORM missing. Please retry with valid value.');
-  }
-  const releaseName = `${packageJson.packagename}-${releaseVersion}-${releasePlatform}`;
-
-  return releaseName;
-}
 
 /** Writes the .yml metadata file */
 function writeYamlMetadataFile(releaseFilename, yamlFilename, path, fileHash, releaseDate, extra = {}) {

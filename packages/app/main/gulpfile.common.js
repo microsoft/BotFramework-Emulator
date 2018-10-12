@@ -134,11 +134,24 @@ function hashFileAsync(filename, algo = 'sha512', encoding = 'base64') {
   return builderUtil.hashFile(filename, algo, encoding);
 }
 
+/** Sets the packaged artifact filenames */
+function getReleaseFilename() {
+  const releaseVersion = getEnvironmentVar('EMU_VERSION', packageJson.version);
+  const releasePlatform = getEnvironmentVar('EMU_PLATFORM');
+  if (!releasePlatform) {
+    throw new Error('Environment variable EMU_PLATFORM missing. Please retry with valid value.');
+  }
+  const releaseName = `${packageJson.packagename}-${releaseVersion}-${releasePlatform}`;
+
+  return releaseName;
+}
+
 module.exports = {
   extend,
   getConfig,
   getEnvironmentVar,
   getElectronMirrorUrl,
+  getReleaseFilename,
   githubAccountName,
   githubRepoName,
   hashFileAsync
