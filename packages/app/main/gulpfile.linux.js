@@ -5,7 +5,7 @@ const common = require('./gulpfile.common.js');
  *  and output artifacts to /dist/
  */
 gulp.task('package', async () => {
-  const { getElectronMirrorUrl, getConfig } = common;, 
+  const { getElectronMirrorUrl, getConfig } = common;
   const rename = require('gulp-rename');
   const builder = require('electron-builder');
   const config = getConfig('linux');
