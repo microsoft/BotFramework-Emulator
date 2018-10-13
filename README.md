@@ -1,55 +1,55 @@
-# Microsoft Bot Framework Emulator (V4 PREVIEW)
-[![Build Status](https://travis-ci.org/Microsoft/BotFramework-Emulator.svg?branch=v4)](https://travis-ci.org/Microsoft/BotFramework-Emulator) [![Coverage Status](https://coveralls.io/repos/github/Microsoft/BotFramework-Emulator/badge.svg?branch=v4)](https://coveralls.io/github/Microsoft/BotFramework-Emulator?branch=v4)
+# Microsoft Bot Framework Emulator (V4 VORSCHAU)
+[! [Build Status] (https://travis-ci.org/Microsoft/BotFramework-Emulator.svg?branch=v4)] (https://travis-ci.org/Microsoft/BotFramework-Emulator) [!] Abdeckungsstatus] (https://coveralls.io/repos/github/Microsoft/BotFramework-Emulator/badge.svg?branch=v4)] (https://coveralls.io/github/Microsoft/BotFramework-Emulator?branch= v4)
 
-The Bot Framework Emulator is a desktop application that allows bot developers to test and debug bots built using the [BotBuilder SDK](https://github.com/microsoft/botbuilder).
+Der Bot Framework Emulator ist eine Desktop-Anwendung, mit der Bot-Entwickler Bots testen und debuggen können, die mit dem [BotBuilder SDK] (https://github.com/microsoft/botbuilder) erstellt wurden.
 
-You can use the Bot Framework Emulator to test bots running either locally on your machine or connect to bots running remotely through a tunnel.
+Sie können den Bot Framework Emulator verwenden, um Bots zu testen, die entweder lokal auf Ihrem Rechner laufen oder sich mit Bots verbinden, die remote durch einen Tunnel laufen.
 
-## Download
+## Herunterladen
 
-* From the [GitHub releases](https://github.com/Microsoft/BotFramework-Emulator/releases) page
+* Auf der Seite [GitHub-Veröffentlichungen] (https://github.com/Microsoft/BotFramework-Emulator/releases)
 
-### Supported platforms
+### Unterstützte Plattformen
 
 * Windows
 * OS X
 * Linux
 
-## Documentation
+## Dokumentation
 
-Checkout the [Wiki](https://github.com/Microsoft/BotFramework-Emulator/wiki) for docs.
+Überprüfen Sie das [Wiki] (https://github.com/Microsoft/BotFramework-Emulator/wiki) für Dokumente.
 
 ## Feedback
 
-* File a bug or suggestion in [GitHub Issues](https://github.com/Microsoft/BotFramework-Emulator/blob/v4/CONTRIBUTING.md#submitting-issues)
-* Ask a question on [Stack Overflow](https://stackoverflow.com/questions/tagged/botframework)
+* Einen Fehler oder Vorschlag in [GitHub Issues] (https://github.com/Microsoft/BotFramework-Emulator/blob/v4/CONTRIBUTING.md#submitting-issues) einreichen
+* Stellen Sie eine Frage zu [Stack Overflow] (https://stackoverflow.com/questions/tagged/botframework)
 
-## Related
+## Verbunden
 
-* [Microsoft Bot Framework](https://botframework.com)
-* [BotBuilder SDK](https://github.com/Microsoft/BotBuilder)
-* [BotBuilder Tools](https://github.com/Microsoft/BotBuilder-Tools)
-* [BotFramework-WebChat](https://github.com/Microsoft/BotFramework-WebChat)
+* [Microsoft Bot-Framework] (https://botframework.com)
+* [BotBuilder SDK] (https://github.com/Microsoft/BotBuilder)
+* [BotBuilder Tools] (https://github.com/Microsoft/BotBuilder-Tools)
+* [BotFramework-WebChat] (https://github.com/Microsoft/BotFramework-WebChat)
 
-## Contributing
+## Beitragend
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.microsoft.com.
+Dieses Projekt begrüßt Beiträge und Vorschläge. Bei den meisten Beiträgen musst du einer zustimmen
+Contributor License Agreement (CLA) erklärt, dass Sie das Recht haben und uns tatsächlich gewähren
+die Rechte, Ihren Beitrag zu verwenden. Weitere Informationen finden Sie unter https://cla.microsoft.com.
 
-When you submit a pull request, a CLA-bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
+Wenn Sie eine Pull-Anfrage einreichen, wird ein CLA-Bot automatisch feststellen, ob Sie eine Anfrage stellen müssen
+eine CLA und schmücken die PR angemessen (z. B. Etikett, Kommentar). Befolgen Sie einfach die Anweisungen
+vom Bot zur Verfügung gestellt. Sie müssen dies nur einmal für alle Repos mit unserem CLA tun.
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+Dieses Projekt hat den [Microsoft Open Source Code of Conduct] (https://opensource.microsoft.com/codeofconduct/) übernommen.
+Weitere Informationen finden Sie in den [Häufig gestellten Fragen zum Verhaltenskodex] (https://opensource.microsoft.com/codeofconduct/faq/) oder
+kontaktieren Sie [opencode@microsoft.com] (mailto: opencode@microsoft.com) mit zusätzlichen Fragen oder Kommentaren.
 
-## Reporting Security Issues
-Security issues and bugs should be reported privately, via email, to the Microsoft Security Response Center (MSRC) at [secure@microsoft.com](mailto:secure@microsoft.com). You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your original message. Further information, including the [MSRC PGP](https://technet.microsoft.com/en-us/security/dn606155) key, can be found in the [Security TechCenter](https://technet.microsoft.com/en-us/security/default).
+## Meldung von Sicherheitsproblemen
+Sicherheitsprobleme und Fehler sollten vertraulich per E-Mail an das Microsoft Security Response Center (MSRC) unter [secure@microsoft.com] (mailto: secure@microsoft.com) gemeldet werden. Sie sollten innerhalb von 24 Stunden eine Antwort erhalten. Wenn Sie dies aus irgendeinem Grund nicht tun, senden Sie uns bitte eine E-Mail, um sicherzustellen, dass wir Ihre ursprüngliche Nachricht erhalten haben. Weitere Informationen, einschließlich des Schlüssels [MSRC PGP] (https://technet.microsoft.com/en-us/security/dn606155), finden Sie im [Security TechCenter] (https://technet.microsoft.com/ de-de / Sicherheit / Standard).
 
-## License
+## Lizenz
 
-Copyright (c) Microsoft Corporation. All rights reserved.
+Urheberrecht (c) Microsoft Corporation. Alle Rechte vorbehalten.
 
-Licensed under the [MIT](LICENSE) License.
+Lizenziert unter der
