@@ -5,7 +5,7 @@
     "perMachine": true,
     "allowElevation": true,
     "packElevateHelper": true,
-    "artifactName": "botframework-emulator-setup-${version}.exe",
+    "artifactName": "BotFramework-Emulator-${version}-windows-setup.exe",
     "unicode": true,
     "runAfterFinish": true,
     "installerIcon": "./scripts/config/resources/icon.ico",
