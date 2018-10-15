@@ -119,6 +119,7 @@ export default class Conversation extends EventEmitter {
     // Do not make a shallow copy here before modifying
     activity = this.postage(this.botEndpoint.botId, activity);
     activity.from = activity.from || this.user;
+    activity.locale = this.botEmulator.facilities.locale;
 
     if (!activity.recipient.name) {
       activity.recipient.name = 'Bot';
@@ -198,6 +199,10 @@ export default class Conversation extends EventEmitter {
 
     if (!activity.from.name) {
       activity.from.name = 'Bot';
+    }
+
+    if (!activity.locale) {
+      activity.locale = this.botEmulator.facilities.locale;
     }
 
     // Fill in role field, if missing

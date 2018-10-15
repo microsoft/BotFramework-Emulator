@@ -63,20 +63,22 @@ export interface ServiceUrlProvider {
   (botUrl: string): string;
 }
 
+export interface Facilities {
+  attachments: Attachments,
+  botState: BotState,
+  conversations: ConversationSet,
+  endpoints: EndpointSet,
+  logger: Logger,
+  users: Users,
+  locale?: string
+}
+
 export default class BotEmulator {
   // TODO: Instead of providing a getter for serviceUrl, we should let the upstream to set the serviceUrl
-  //       Currently, the upstreamer doesn't really know when the serviceUrl change (ngrok), they need to do their job
+  // Currently, the upstreamer doesn't really know when the serviceUrl change (ngrok), they need to do their job
   public getServiceUrl: ServiceUrlProvider;
   public options: BotEmulatorOptions;
-
-  public facilities: {
-    attachments: Attachments,
-    botState: BotState,
-    conversations: ConversationSet,
-    endpoints: EndpointSet,
-    logger: Logger,
-    users: Users
-  };
+  public facilities: Facilities;
 
   constructor(
     public serviceUrlOrProvider: string | ServiceUrlProvider,
