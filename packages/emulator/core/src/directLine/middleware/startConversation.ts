@@ -51,7 +51,7 @@ export default function startConversation(botEmulator: BotEmulator) {
 
       return JSON.parse(optionsJson).conversationId;
     }) || uniqueId();
-    const {users, conversations} = botEmulator.facilities;
+    const { users, conversations } = botEmulator.facilities;
     const currentUser = users.usersById(users.currentUserId);
 
     let created = false;
@@ -75,7 +75,7 @@ export default function startConversation(botEmulator: BotEmulator) {
         conversation.addMember(currentUser.id, currentUser.name);
       }
     }
-    
+
     (req as any).conversation = conversation;
 
     // TODO: We should issue a real token, rather than a conversation ID
@@ -87,7 +87,7 @@ export default function startConversation(botEmulator: BotEmulator) {
     });
 
     res.end();
-    
+
     next();
   };
 }
