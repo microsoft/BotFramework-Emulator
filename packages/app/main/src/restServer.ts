@@ -45,7 +45,7 @@ export class RestServer {
   private readonly _botEmulator: BotEmulator;
   private readonly _router: Restify.Server;
 
-  public get botEmulator() {
+  public get botEmulator(): BotEmulator {
     return this._botEmulator;
   }
 
