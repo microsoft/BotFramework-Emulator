@@ -89,11 +89,11 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
   protected abstract get links(): JSX.Element[];
 
   protected get content(): JSX.Element {
-    const { links, emptyContent } = this;
+    const { links } = this;
     if (!links || !links.length) {
       return (
         <ExpandCollapseContent>
-          { emptyContent }
+          { this.emptyContent }
         </ExpandCollapseContent>
       );
     }
