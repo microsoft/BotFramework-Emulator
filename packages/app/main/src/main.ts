@@ -90,7 +90,7 @@ AppUpdater.on('update-available', (update: UpdateInfo) => {
     mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
       title: app.getName(),
       message: `An update is available. Download it now?`,
-      buttons: [ 'Cancel', 'OK' ],
+      buttons: ['Cancel', 'OK'],
       defaultId: 1,
       cancelId: 0
     }).then(result => {
@@ -108,7 +108,7 @@ AppUpdater.on('update-downloaded', (update: UpdateInfo) => {
     mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
       title: app.getName(),
       message: 'Finished downloading update. Restart and install now?',
-      buttons: [ 'Cancel', 'OK' ],
+      buttons: ['Cancel', 'OK'],
       defaultId: 1,
       cancelId: 0
     }).then(result => {
@@ -279,30 +279,18 @@ const createMainWindow = async () => {
       } catch (e) {
         console.error('Error writing bot list to disk: ', e);
       }
-
-      /* Timeout's are currently busted in Electron; will write on every store change until fix is made.
-      // Issue: https://github.com/electron/electron/issues/7079
-
-      clearTimeout(botSettingsTimer);
-
-      // wait 5 seconds after updates to bots list to write to disk
-      botSettingsTimer = setTimeout(() => {
-        const botsJsonPath = `${ensureStoragePath()}/bots.json`;
-        try {
-          writeFile(botsJsonPath, botsJson);
-          console.log('Wrote bot settings to desk.');
-        } catch (e) { console.error('Error writing bot settings to disk: ', e); }
-      }, 1000);*/
     }
   });
   const emulatorInstance = await Emulator.startup();
-  const { users: userSettings } = getSettingsStore().getState();
+  const { facilities } = emulatorInstance.framework.server.botEmulator;
+  const { users: userSettings, framework } = getSettingsStore().getState();
 
   const users = new Users();
   users.currentUserId = userSettings.currentUserId;
   users.users = userSettings.usersById;
 
-  emulatorInstance.framework.server.botEmulator.facilities.users = users;
+  facilities.locale = framework.locale;
+  facilities.users = users;
   loadMainPage();
 
   mainWindow.browserWindow.setTitle(app.getName());
@@ -402,9 +390,9 @@ const createMainWindow = async () => {
 
 function loadMainPage() {
   let queryString = '';
-  if (process.argv[ 1 ] && process.argv[ 1 ].indexOf('botemulator') !== -1) {
+  if (process.argv[1] && process.argv[1].indexOf('botemulator') !== -1) {
     // add a query string with the botemulator protocol handler content
-    queryString = '?' + process.argv[ 1 ];
+    queryString = '?' + process.argv[1];
   }
 
   let page = process.env.ELECTRON_TARGET_URL || url.format({

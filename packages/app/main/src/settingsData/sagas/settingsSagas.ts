@@ -1,4 +1,5 @@
 import { call, ForkEffect, select, takeEvery } from 'redux-saga/effects';
+import { emulator } from '../../emulator';
 import { REMEMBER_THEME, RememberThemePayload, WindowStateAction } from '../actions/windowStateActions';
 import { NgrokService } from '../../ngrokService';
 import { FrameworkAction, SET_FRAMEWORK } from '../actions/frameworkActions';
@@ -22,6 +23,7 @@ export function* setFramework(action: FrameworkAction<FrameworkSettings>): Itera
   const ngrokService = new NgrokService();
   const { commandService } = mainWindow;
   const { PushClientAwareSettings } = SharedConstants.Commands.Settings;
+  emulator.framework.server.botEmulator.facilities.locale = action.state.locale;
   yield ngrokService.updateNgrokFromSettings(action.state);
   yield call(commandService.call.bind(commandService, PushClientAwareSettings));
 }

@@ -51,15 +51,14 @@ export default function startConversation(botEmulator: BotEmulator) {
 
       return JSON.parse(optionsJson).conversationId;
     }) || uniqueId();
-
-    const currentUser = botEmulator.facilities.users.usersById(botEmulator.facilities.users.currentUserId);
+    const {users, conversations} = botEmulator.facilities;
+    const currentUser = users.usersById(users.currentUserId);
 
     let created = false;
-    let conversation = botEmulator.facilities.conversations.conversationById(conversationId);
+    let conversation = conversations.conversationById(conversationId);
 
     if (!conversation) {
-      conversation = botEmulator.facilities.conversations
-        .newConversation(botEmulator, botEndpoint, currentUser, conversationId);
+      conversation = conversations.newConversation(botEmulator, botEndpoint, currentUser, conversationId);
       // Send "bot added to conversation"
       conversation.sendConversationUpdate([{ id: botEndpoint.botId, name: 'Bot' }], undefined);
       // Send "user added to conversation"
