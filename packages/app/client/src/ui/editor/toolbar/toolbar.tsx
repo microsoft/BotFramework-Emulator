@@ -52,7 +52,12 @@ export default class ToolBar extends React.Component<{}, {}> {
     if (hmrSafeNameComparison(child.type, Button)) {
       return (
         <li key={ i } className={ styles.button }>
-          <button onClick={ () => child.props.onClick() }>{ child.props.title }</button>
+          <button 
+            className={ `${ child.props.icon } ${ child.props.iconClassName || '' }` } 
+            onClick={ () => child.props.onClick() }
+          >
+            { child.props.title }
+          </button>
         </li>
       );
     } else if (hmrSafeNameComparison(child.type, Separator)) {

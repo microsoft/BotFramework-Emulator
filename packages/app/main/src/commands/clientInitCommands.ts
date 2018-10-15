@@ -38,13 +38,13 @@ import { ExtensionManagerImpl } from '../extensions';
 import { Protocol } from '../constants';
 import { ProtocolHandler } from '../protocolHandler';
 import { getStore } from '../botData/store';
-import { getBotsFromDisk, readFileSync } from '../utils';
-import * as Path from 'path';
+import { getBotsFromDisk } from '../utils';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { ClientAwareSettings, Settings, SharedConstants } from '@bfemulator/app-shared';
 import { Migrator } from '../migrator';
 import { getStore as getSettingsStore } from '../settingsData/store';
 import { Store } from 'redux';
+import { openFileFromCommandLine } from '../utils/openFileFromCommandLine';
 
 /** Registers client initialization commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
@@ -97,30 +97,9 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     }
 
     // Parse command line args to see if we are opening a .bot or .transcript file
-    if (args.some(arg => /(\.transcript)|(\.bot)$/.test(arg))) {
-      const fileToBeOpened = args.find(arg => /(\.transcript)|(\.bot)$/.test(arg));
-      if (Path.extname(fileToBeOpened) === '.bot') {
-        try {
-          const bot = await mainWindow.commandService.call(Commands.Bot.Open, fileToBeOpened);
-          await mainWindow.commandService.call(Commands.Bot.SetActive, bot);
-          await mainWindow.commandService.remoteCall(Commands.Bot.Load, bot);
-        } catch (e) {
-          throw new Error(`Error while trying to open a .bot file via double click at: ${fileToBeOpened}`);
-        }
-      } else if (Path.extname(fileToBeOpened) === '.transcript') {
-        const transcript = readFileSync(fileToBeOpened);
-        const conversationActivities = JSON.parse(transcript);
-        if (!Array.isArray(conversationActivities)) {
-          throw new Error('Invalid transcript file contents; should be an array of conversation activities.');
-        }
-
-        // open a transcript on the client side and pass in
-        // some extra info to differentiate it from a transcript on disk
-        await mainWindow.commandService.remoteCall(Commands.Emulator.OpenTranscript, 'deepLinkedTranscript', {
-          activities: conversationActivities,
-          inMemory: true
-        });
-      }
+    const fileToBeOpened = args.find(arg => /(\.transcript)|(\.bot)$/.test(arg));
+    if (fileToBeOpened) {
+      await openFileFromCommandLine(fileToBeOpened, mainWindow.commandService);
     }
   });
 }
