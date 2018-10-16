@@ -89,7 +89,7 @@ AppUpdater.on('update-available', (update: UpdateInfo) => {
     // TODO - localization
     mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
       title: app.getName(),
-      message: `An update is available. Download it now?`,
+      message: `A new update, ${update.version}, is available. Download it now?`,
       buttons: ['Cancel', 'OK'],
       defaultId: 1,
       cancelId: 0
