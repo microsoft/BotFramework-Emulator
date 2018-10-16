@@ -1,6 +1,0 @@
-{
-  "provider": "github",
-  "owner": "${githubAccountName}",
-  "repo": "${githubRepoName}",
-  "token": "${GH_TOKEN}"
-}

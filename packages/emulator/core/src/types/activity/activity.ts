@@ -47,6 +47,7 @@ interface Activity extends ETagObject {
   serviceUrl?: string;
   timestamp?: string;
   type?: string;
+  locale?: string;
 }
 
 export default Activity;

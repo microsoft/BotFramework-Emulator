@@ -81,7 +81,6 @@ export interface ContactRelationUpdateActivity extends Activity {
 }
 
 export interface MessageActivity extends Activity {
-  locale?: string;
   text?: string;
   summary?: string;
   textFormat?: string;
