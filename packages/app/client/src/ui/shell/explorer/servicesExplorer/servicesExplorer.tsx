@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { ExpandCollapseContent } from '@bfemulator/ui-react';
 import { IConnectedService } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { MouseEventHandler, SyntheticEvent } from 'react';
@@ -46,6 +47,7 @@ import {
 } from '../../../dialogs';
 import { ConnectedServicePickerContainer } from './connectedServicePicker/connectedServicePickerContainer';
 import * as styles from './servicesExplorer.scss';
+import * as servicePaneStyles from '../servicePane/servicePane.scss';
 import { serviceTypeLabels } from '../../../../utils/serviceTypeLables';
 
 export interface ServicesExplorerProps extends ServicePaneProps {
@@ -61,7 +63,7 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
   public state = {} as ServicesExplorerProps;
 
   public static getDerivedStateFromProps
-    (newProps: ServicesExplorerProps, existingProps: ServicesExplorerProps): ServicesExplorerProps {
+  (newProps: ServicesExplorerProps, existingProps: ServicesExplorerProps): ServicesExplorerProps {
     if (!Object.keys(existingProps).length) {
       return newProps;
     }
@@ -95,33 +97,29 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
   protected get emptyContent(): JSX.Element {
     return (
       <div>
-        <p className={ styles.emptyContent }>None.</p>
         <p className={ styles.emptyContent }>
-          You can connect your bot to services such as&nbsp;
+          { 'You can connect your bot to services such as ' }
           <a
             href="javascript:void(0);"
-            onClick={ this.onLearnMoreLUISAnchor }
-          >
-            Language Understanding (LUIS)
-          </a>, &nbsp;
+            onClick={ this.onLearnMoreLUISAnchor }>
+            { 'Language Understanding (LUIS), ' }
+          </a>
           <a
             href="javascript:void(0);"
-            onClick={ this.onLearnMoreQnAAnchor }
-          >
-            QnA Maker
-          </a>, and&nbsp;
+            onClick={ this.onLearnMoreQnAAnchor }>
+            { 'QnA Maker, and ' }
+          </a>
           <a
             href="javascript:void(0);"
-            onClick={ this.onLearnMoreDispatchAnchor }
-          >
-            Dispatch
+            onClick={ this.onLearnMoreDispatchAnchor }>
+            Dispatch.
           </a>
         </p>
         <p className={ styles.emptyContent }>
           <a
             href="javascript:void(0);"
-            onClick={ this.onLearnMoreServicesAnchor }
-          >Learn more about using services</a>
+            onClick={ this.onLearnMoreServicesAnchor }>
+            Learn more about using services.</a>
         </p>
       </div>
     );
@@ -138,7 +136,7 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
         <li
           key={ index }
           className={ `${ styles.link } ${ toAnimate[service.id] ? styles.animateHighlight : '' } ` }
-          onDoubleClick={this.onLinkClick}
+          onDoubleClick={ this.onLinkClick }
           onKeyPress={ this.onHandleKeyPress }
           data-index={ index }
           tabIndex={ 0 }>
@@ -146,6 +144,26 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
         </li>
       );
     });
+  }
+
+  protected get content(): JSX.Element {
+    const { links, emptyContent } = this;
+    if (!links || !links.length) {
+      return (
+        <ExpandCollapseContent>
+          <p className={ styles.emptyContent }>None.</p>
+          { emptyContent }
+        </ExpandCollapseContent>
+      );
+    }
+    return (
+      <ExpandCollapseContent>
+        <ul className={ servicePaneStyles.servicePaneList } ref={ ul => this.listRef = ul }>
+          { links }
+        </ul>
+        { emptyContent }
+      </ExpandCollapseContent>
+    );
   }
 
   protected onContextMenuOverLiElement(li: HTMLLIElement) {

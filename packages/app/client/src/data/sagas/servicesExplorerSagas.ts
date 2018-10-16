@@ -195,7 +195,7 @@ function* openContextMenuForService(action: ConnectedServiceAction<ConnectedServ
   const menuItems = [
     { label: 'Manage service', id: 'open' },
     { label: 'Edit configuration', id: 'edit' },
-    { label: 'Forget this service', id: 'forget' }
+    { label: 'Disconnect this service', id: 'forget' }
   ];
   const response = yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.DisplayContextMenu, menuItems);
   const { connectedService } = action.payload;
