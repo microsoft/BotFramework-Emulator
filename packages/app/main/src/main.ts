@@ -107,7 +107,7 @@ AppUpdater.on('update-downloaded', (update: UpdateInfo) => {
   if (AppUpdater.userInitiated) {
     mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
       title: app.getName(),
-      message: 'Finished downloading update. Restart and install now?',
+      message: `Finished downloading update ${update.version}. Restart and install now?`,
       buttons: ['Cancel', 'OK'],
       defaultId: 1,
       cancelId: 0
