@@ -83,7 +83,7 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
     this.props.onBotClick(event, bot.path);
   }
 
-  private onBotContextMenu = (event: React.MouseEvent<HTMLButtonElement>): void => {
+  private onBotContextMenu = (event: React.MouseEvent<HTMLLIElement>): void => {
     const { index } = event.currentTarget.dataset;
     const bot: BotInfo = this.props.recentBots[index];
     this.props.showContextMenuForBot(bot);
@@ -178,11 +178,13 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
           {
             this.props.recentBots && this.props.recentBots.length ?
               this.props.recentBots.slice(0, 10).map((bot, index) => bot &&
-                <li className={ styles.recentBot } key={ bot.path }>
+                <li className={ styles.recentBot }
+                    key={ bot.path }
+                    data-index={ index }
+                    onContextMenu={ this.onBotContextMenu }>
                   <button
                     data-index={ index }
                     onClick={ this.onBotClick }
-                    onContextMenu={ this.onBotContextMenu }
                     title={ bot.path }>
                     <TruncateText>{ bot.displayName }</TruncateText>
                   </button>
