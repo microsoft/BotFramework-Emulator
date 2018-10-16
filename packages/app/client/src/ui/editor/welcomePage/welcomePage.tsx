@@ -45,6 +45,7 @@ export interface WelcomePageProps {
   onOpenBotClick?: () => void;
   onBotClick?: (_e: any, path: string) => void;
   onDeleteBotClick?: (_e: any, path: string) => void;
+  showContextMenuForBot?: (bot: BotInfo) => void;
   recentBots?: BotInfo[];
   signInWithAzure?: () => void;
   signOutWithAzure?: () => void;
@@ -80,6 +81,12 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
     const { index } = event.currentTarget.dataset;
     const bot = this.props.recentBots[index];
     this.props.onBotClick(event, bot.path);
+  }
+
+  private onBotContextMenu = (event: React.MouseEvent<HTMLButtonElement>): void => {
+    const { index } = event.currentTarget.dataset;
+    const bot: BotInfo = this.props.recentBots[index];
+    this.props.showContextMenuForBot(bot);
   }
 
   private onDeleteBotClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -143,7 +150,7 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
       <div className={ styles.section }>
         <SmallHeader className={ styles.marginFix }>Start by testing your bot</SmallHeader>
         <span>Start talking to your bot by connecting to an endpoint or by opening a
-          bot saved locally.<br />
+          bot saved locally.<br/>
           <a
             className={ styles.ctaLink }
             href="javascript:void(0);"
@@ -152,11 +159,11 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
           </a>
         </span>
         <Row>
-          <PrimaryButton className={ styles.openBot } text="Open Bot" onClick={ onOpenBotClick } />
+          <PrimaryButton className={ styles.openBot } text="Open Bot" onClick={ onOpenBotClick }/>
         </Row>
         <span>If you don’t have a bot configuration,&nbsp;
-        <button className={ styles.ctaLink }
-          onClick={ onNewBotClick }>create a new bot configuration.
+          <button className={ styles.ctaLink }
+                  onClick={ onNewBotClick }>create a new bot configuration.
         </button>
         </span>
       </div>
@@ -175,11 +182,12 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
                   <button
                     data-index={ index }
                     onClick={ this.onBotClick }
+                    onContextMenu={ this.onBotContextMenu }
                     title={ bot.path }>
                     <TruncateText>{ bot.displayName }</TruncateText>
                   </button>
                   <TruncateText className={ styles.recentBotPath }
-                    title={ bot.path }>{ bot.path }</TruncateText>
+                                title={ bot.path }>{ bot.path }</TruncateText>
                   <div className={ styles.recentBotActionBar }>
                     <button data-index={ index } onClick={ this.onDeleteBotClick }></button>
                   </div>
@@ -247,7 +255,7 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
                   onClick={ this.onLearnMoreCommandLineAnchor }
                 >
                   Download Command Line tools
-                </a><br />
+                </a><br/>
                 Create a bot&nbsp;
                 <a
                   className={ styles.ctaLink }
@@ -262,8 +270,8 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
                   onClick={ this.onLearnMoreLocalBotAnchor }
                 >
                   locally
-                </a><br />
-                Add services such as<br />
+                </a><br/>
+                Add services such as<br/>
                 <a
                   className={ styles.ctaLink }
                   href="javascript:void(0);"
@@ -303,7 +311,7 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
                   onClick={ this.onLearnMoreEmulatorAnchor }
                 >
                   Emulator
-                </a> <br />
+                </a> <br/>
                 Test online in&nbsp;
                 <a
                   className={ styles.ctaLink }
@@ -321,14 +329,14 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
             <dl>
               <dt>Publish:</dt>
               <dd>
-                Publish directly to Azure or<br />
+                Publish directly to Azure or<br/>
                 Use <a
-                  className={ styles.ctaLink }
-                  href="javascript:void(0);"
-                  onClick={ this.onLearnMoreCDAnchor }
-                >
-                  Continuous Deployment
-                </a>
+                className={ styles.ctaLink }
+                href="javascript:void(0);"
+                onClick={ this.onLearnMoreCDAnchor }
+              >
+                Continuous Deployment
+              </a>
                 &nbsp;
               </dd>
             </dl>

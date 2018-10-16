@@ -33,10 +33,12 @@
 
 // import { hot } from 'react-hot-loader';
 import { connect } from 'react-redux';
+import { Action } from 'redux';
+import { openContextMenuForBot } from '../../../data/action/welcomePageActions';
 import { WelcomePage, WelcomePageProps } from './welcomePage';
 import { RootState } from '../../../data/store';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
 
 function mapStateToProps(state: RootState, ownProps: WelcomePageProps): WelcomePageProps {
   return {
@@ -46,7 +48,7 @@ function mapStateToProps(state: RootState, ownProps: WelcomePageProps): WelcomeP
   };
 }
 
-function mapDispatchToProps(): WelcomePageProps {
+function mapDispatchToProps(dispatch: (action: Action) => void): WelcomePageProps {
   const { Commands } = SharedConstants;
   return {
     onAnchorClick: (url) => {
@@ -70,7 +72,8 @@ function mapDispatchToProps(): WelcomePageProps {
     signOutWithAzure: () => {
       CommandServiceImpl.call(Commands.Azure.SignUserOutOfAzure).catch();
       CommandServiceImpl.call(Commands.UI.InvalidateAzureArmToken).catch();
-    }
+    },
+    showContextMenuForBot: (bot: BotInfo): void => dispatch(openContextMenuForBot(bot))
   };
 }
 
