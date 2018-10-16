@@ -65,11 +65,6 @@ gulp.task('redist:metadata-only', async () => {
   );
 });
 
-/** Creates the emulator installers and the metadata .yml file */
-gulp.task('redist',
-  gulp.series('redist:binaries', 'redist:metadata-only')
-);
-
 /** Writes the .yml metadata file */
 function writeYamlMetadataFile(releaseFilename, yamlFilename, path, fileHash, releaseDate, extra = {}) {
   const { extend, getEnvironmentVar } = common;
