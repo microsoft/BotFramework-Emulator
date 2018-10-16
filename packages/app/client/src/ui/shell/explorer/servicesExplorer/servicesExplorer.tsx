@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ExpandCollapseContent } from '@bfemulator/ui-react';
 import { IConnectedService } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { MouseEventHandler, SyntheticEvent } from 'react';
@@ -47,7 +46,6 @@ import {
 } from '../../../dialogs';
 import { ConnectedServicePickerContainer } from './connectedServicePicker/connectedServicePickerContainer';
 import * as styles from './servicesExplorer.scss';
-import * as servicePaneStyles from '../servicePane/servicePane.scss';
 import { serviceTypeLabels } from '../../../../utils/serviceTypeLables';
 
 export interface ServicesExplorerProps extends ServicePaneProps {
@@ -125,6 +123,10 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
     );
   }
 
+  protected get additionalContent(): JSX.Element {
+    return this.emptyContent;
+  }
+
   protected get links() {
     const { services = [], toAnimate = {} } = this.state;
     return services.map((service, index) => {
@@ -144,26 +146,6 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
         </li>
       );
     });
-  }
-
-  protected get content(): JSX.Element {
-    const { links, emptyContent } = this;
-    if (!links || !links.length) {
-      return (
-        <ExpandCollapseContent>
-          <p className={ styles.emptyContent }>None.</p>
-          { emptyContent }
-        </ExpandCollapseContent>
-      );
-    }
-    return (
-      <ExpandCollapseContent>
-        <ul className={ servicePaneStyles.servicePaneList } ref={ ul => this.listRef = ul }>
-          { links }
-        </ul>
-        { emptyContent }
-      </ExpandCollapseContent>
-    );
   }
 
   protected onContextMenuOverLiElement(li: HTMLLIElement) {

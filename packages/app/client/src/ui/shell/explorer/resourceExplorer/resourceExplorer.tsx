@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { ChangeEvent, KeyboardEvent, MouseEvent } from 'react';
+import { ChangeEvent, ComponentClass, KeyboardEvent, MouseEvent } from 'react';
+import { ResourcesSettingsContainer } from '../../../dialogs';
 import { ServicePane, ServicePaneProps, ServicePaneState } from '../servicePane/servicePane';
 import { IFileService } from 'botframework-config/lib/schema';
 import * as styles from './resourceExplorer.scss';
@@ -22,6 +23,8 @@ export interface ResourceExplorerProps extends ServicePaneProps, ResourceExplore
   files?: IFileService[];
   renameResource: (resource: IFileService) => void;
   openResource: (resource: IFileService) => void;
+  resourcesPath?: string;
+  openResourcesSettings?: (dialog: ComponentClass<any>) => void;
 }
 
 export class ResourceExplorer extends ServicePane<ResourceExplorerProps, ResourceExplorerState> {
@@ -42,12 +45,11 @@ export class ResourceExplorer extends ServicePane<ResourceExplorerProps, Resourc
       if (!mutable) {
         return (
           <li key={ `file_${ index }` }
-            data-index={ index }
-            onClick={ this.onLinkClick }
-            onKeyPress={ this.onLinkKeyPress }
-            className={ styles.link }
-            tabIndex={ 0 }
-          >
+              data-index={ index }
+              onClick={ this.onLinkClick }
+              onKeyPress={ this.onLinkKeyPress }
+              className={ styles.link }
+              tabIndex={ 0 }>
             { file.name }
           </li>);
       }
@@ -60,7 +62,7 @@ export class ResourceExplorer extends ServicePane<ResourceExplorerProps, Resourc
             onChange={ this.onInputChange }
             onBlur={ this.onInputBlur }
             onKeyUp={ this.onInputKeyUp }
-            defaultValue={ fileToRename.name } />
+            defaultValue={ fileToRename.name }/>
         </li>);
     });
   }
@@ -91,8 +93,28 @@ export class ResourceExplorer extends ServicePane<ResourceExplorerProps, Resourc
 
   protected get emptyContent(): JSX.Element {
     return (
-      <p className={ styles.emptyContent }>No files found</p>
+      <>
+        <p
+          className={ styles.emptyContent }>
+          You do not have any { this.props.title } in <strong>{ this.props.resourcesPath }.</strong>
+        </p>
+        { this.additionalContent }
+      </>
     );
+  }
+
+  protected get additionalContent(): JSX.Element {
+    return (
+      <p className={ styles.emptyContent }>
+        <a href="javascript:void(0);" onClick={ this.onChooseLocationClick }>
+          <strong>Choose a different location.</strong>
+        </a>
+      </p>
+    );
+  }
+
+  private onChooseLocationClick = () => {
+    this.props.openResourcesSettings(ResourcesSettingsContainer);
   }
 
   private onInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
