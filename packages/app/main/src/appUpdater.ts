@@ -50,6 +50,8 @@ export const AppUpdater = new class extends EventEmitter {
   private _autoDownload: boolean;
   private _status: UpdateStatus = UpdateStatus.Idle;
   private _allowPrerelease: boolean;
+  private _updateDownloaded: boolean;
+  private _downloadProgress: number;
 
   public get userInitiated() {
     return this._userInitiated;
@@ -59,8 +61,15 @@ export const AppUpdater = new class extends EventEmitter {
     return this._status;
   }
 
+  public get downloadProgress(): number {
+    return this._downloadProgress;
+  }
+
+  public get updateDownloaded(): boolean {
+    return this._updateDownloaded;
+  }
+
   startup() {
-    let allowUpdateCheck = (process.argv.indexOf('--no-update') === -1);
     this._allowPrerelease = (process.argv.indexOf('--prerelease') >= 0);
 
     // Allow update to prerelease if this is a prerelease
@@ -102,10 +111,12 @@ export const AppUpdater = new class extends EventEmitter {
     });
     electronUpdater.on('download-progress', (progress: ProgressInfo) => {
       this._status = UpdateStatus.UpdateDownloading;
+      this._downloadProgress = progress.percent;
       this.emit('download-progress', progress);
     });
     electronUpdater.on('update-downloaded', (updateInfo: UpdateInfo) => {
       this._status = UpdateStatus.UpdateReadyToInstall;
+      this._updateDownloaded = true;
       this.emit('update-downloaded', updateInfo);
     });
   }
@@ -135,7 +146,7 @@ export const AppUpdater = new class extends EventEmitter {
 
   public quitAndInstall() {
     try {
-      electronUpdater.quitAndInstall(true, true);
+      electronUpdater.quitAndInstall(false, true);
     } catch (e) {
       console.error(e);
     }
