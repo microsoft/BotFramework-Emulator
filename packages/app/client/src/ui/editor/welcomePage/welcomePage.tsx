@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { MouseEvent } from 'react';
 import * as React from 'react';
 import { BotInfo } from '@bfemulator/app-shared';
 import * as styles from './welcomePage.scss';
@@ -89,58 +90,16 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
     this.props.showContextMenuForBot(bot);
   }
 
+  private onAnchorClick = (event: MouseEvent<HTMLAnchorElement>): void => {
+    const { currentTarget: link } = event;
+    const { href } = link.dataset;
+    this.props.onAnchorClick(href);
+  }
+
   private onDeleteBotClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     const { index } = event.currentTarget.dataset;
     const bot = this.props.recentBots[index];
     this.props.onDeleteBotClick(event, bot.path);
-  }
-
-  private onLearnMoreCDAnchor = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-publish-continuous-deployment');
-  }
-
-  private onLearnMoreCommandLineAnchor = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-tools');
-  }
-
-  private onLearnMoreCreateBotAzureAnchor = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-create-bot-azure');
-  }
-
-  private onLearnMoreDebugWebChatAnchor = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-debug-with-web-chat');
-  }
-
-  private onLearnMoreDesignGuidelinesAnchor = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-design-guidelines');
-  }
-
-  private onLearnMoreDispatchAnchor = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-create-dispatch');
-  }
-
-  private onLearnMoreEmulatorAnalyticsAnchor = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-bot-analytics');
-  }
-
-  private onLearnMoreEmulatorAnchor = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-debug-with-emulator');
-  }
-
-  private onLearnMoreEmulatorChannelsAnchor = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-connect-channels');
-  }
-
-  private onLearnMoreLocalBotAnchor = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-create-bot-locally');
-  }
-
-  private onLearnMoreLUISAnchor = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-LUIS-docs-home');
-  }
-
-  private onLearnMoreQnAAnchor = () => {
-    this.props.onAnchorClick('https://aka.ms/bot-framework-emulator-qna-docs-home');
   }
 
   private get startSection(): JSX.Element {
@@ -153,8 +112,8 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
           bot saved locally.<br/>
           <a
             className={ styles.ctaLink }
-            href="javascript:void(0);"
-            onClick={ this.onLearnMoreLocalBotAnchor }
+            href="https://aka.ms/bot-framework-emulator-create-bot-locally"
+            onClick={ this.onAnchorClick }
           >More about working locally with a bot.
           </a>
         </span>
@@ -235,8 +194,8 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
                 Review the bot&nbsp;
                 <a
                   className={ styles.ctaLink }
-                  href="javascript:void(0);"
-                  onClick={ this.onLearnMoreDesignGuidelinesAnchor }
+                  href="https://aka.ms/bot-framework-emulator-design-guidelines"
+                  onClick={ this.onAnchorClick }
                 >
                   design guidelines
                 </a>&nbsp;
@@ -253,46 +212,46 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
               <dd>
                 <a
                   className={ styles.ctaLink }
-                  href="javascript:void(0);"
-                  onClick={ this.onLearnMoreCommandLineAnchor }
+                  data-href="https://aka.ms/bot-framework-emulator-tools"
+                  onClick={ this.onAnchorClick }
                 >
                   Download Command Line tools
                 </a><br/>
                 Create a bot&nbsp;
                 <a
                   className={ styles.ctaLink }
-                  href="javascript:void(0);"
-                  onClick={ this.onLearnMoreCreateBotAzureAnchor }
+                  data-href="https://aka.ms/bot-framework-emulator-create-bot-azure"
+                  onClick={ this.onAnchorClick }
                 >
                   from Azure
                 </a> or&nbsp;
                 <a
                   className={ styles.ctaLink }
-                  href="javascript:void(0);"
-                  onClick={ this.onLearnMoreLocalBotAnchor }
+                  data-href="https://aka.ms/bot-framework-emulator-create-bot-locally"
+                  onClick={ this.onAnchorClick }
                 >
                   locally
                 </a><br/>
                 Add services such as<br/>
                 <a
                   className={ styles.ctaLink }
-                  href="javascript:void(0);"
-                  onClick={ this.onLearnMoreLUISAnchor }
+                  data-href="https://aka.ms/bot-framework-emulator-LUIS-docs-home"
+                  onClick={ this.onAnchorClick }
                 >
                   Language Understanding (LUIS)
                 </a>,&nbsp;
                 <a
                   className={ styles.ctaLink }
-                  href="javascript:void(0);"
-                  onClick={ this.onLearnMoreQnAAnchor }
+                  data-href="https://aka.ms/bot-framework-emulator-qna-docs-home"
+                  onClick={ this.onAnchorClick }
                 >
                   QnAMaker
                 </a>&nbsp;
                 and&nbsp;
                 <a
                   className={ styles.ctaLink }
-                  href="javascript:void(0);"
-                  onClick={ this.onLearnMoreDispatchAnchor }
+                  data-href="https://aka.ms/bot-framework-emulator-create-dispatch;"
+                  onClick={ this.onAnchorClick }
                 >
                   Dispatch
                 </a>
@@ -309,16 +268,16 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
                 Test with the&nbsp;
                 <a
                   className={ styles.ctaLink }
-                  href="javascript:void(0);"
-                  onClick={ this.onLearnMoreEmulatorAnchor }
+                  data-href="https://aka.ms/bot-framework-emulator-debug-with-emulator"
+                  onClick={ this.onAnchorClick }
                 >
                   Emulator
                 </a> <br/>
                 Test online in&nbsp;
                 <a
                   className={ styles.ctaLink }
-                  href="javascript:void(0);"
-                  onClick={ this.onLearnMoreDebugWebChatAnchor }
+                  data-href="https://aka.ms/bot-framework-emulator-debug-with-web-chat"
+                  onClick={ this.onAnchorClick }
                 >
                   Web Chat
                 </a></dd>
@@ -334,8 +293,8 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
                 Publish directly to Azure or<br/>
                 Use <a
                 className={ styles.ctaLink }
-                href="javascript:void(0);"
-                onClick={ this.onLearnMoreCDAnchor }
+                data-href="https://aka.ms/bot-framework-emulator-publish-continuous-deployment"
+                onClick={ this.onAnchorClick }
               >
                 Continuous Deployment
               </a>
@@ -353,8 +312,8 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
                 Connect to&nbsp;
                 <a
                   className={ styles.ctaLink }
-                  href="javascript:void(0);"
-                  onClick={ this.onLearnMoreEmulatorChannelsAnchor }
+                  data-href="https://aka.ms/bot-framework-emulator-connect-channels"
+                  onClick={ this.onAnchorClick }
                 >
                   channels
                 </a>
@@ -371,8 +330,8 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
               <dd>
                 <a
                   className={ styles.ctaLink }
-                  href="javascript:void(0);"
-                  onClick={ this.onLearnMoreEmulatorAnalyticsAnchor }
+                  data-href="https://aka.ms/bot-framework-emulator-bot-analytics"
+                  onClick={ this.onAnchorClick }
                 >
                   View analytics
                 </a>

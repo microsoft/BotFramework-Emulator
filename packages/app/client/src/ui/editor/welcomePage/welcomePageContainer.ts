@@ -52,7 +52,7 @@ function mapDispatchToProps(dispatch: (action: Action) => void): WelcomePageProp
   const { Commands } = SharedConstants;
   return {
     onAnchorClick: (url) => {
-      CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.OpenExternal, url).catch();
+      CommandServiceImpl.remoteCall(Commands.Electron.OpenExternal, url).catch();
     },
     onNewBotClick: () => {
       CommandServiceImpl.call(Commands.UI.ShowBotCreationDialog).catch();
