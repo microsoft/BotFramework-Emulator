@@ -125,6 +125,18 @@ export class AzureAuthWorkflowService {
       height: 366,
       webPreferences: { contextIsolation: true, nativeWindowOpen: true }
     });
+
+    browserWindow.webContents.on('select-client-certificate', (event, uri, list, callback) => {
+      event.preventDefault();
+      
+      // list is if type Certificate[]
+      // Docs for Certificate type can be found here: https://electronjs.org/docs/api/structures/certificate
+
+      // Open modal, let users select cert from list, and pass to callback
+      let cert = <Corina>
+      callback(cert);
+    });
+    
     browserWindow.setMenu(null);
     const { authorization_endpoint: endpoint } = await this.getConfig();
     const state = uuidv4();
