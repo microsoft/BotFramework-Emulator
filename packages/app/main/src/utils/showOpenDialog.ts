@@ -34,8 +34,7 @@
 import { BrowserWindow, OpenDialogOptions, dialog } from 'electron';
 
 /** Shows a native open file / directory dialog */
-export const showOpenDialog = (window: BrowserWindow, options: OpenDialogOptions): string => {
+export const showOpenDialog = (window: BrowserWindow, options: OpenDialogOptions): false | string => {
   const filePaths = dialog.showOpenDialog(window, options);
-  const filePath = filePaths && filePaths[0];
-  return filePath;
+  return filePaths && filePaths[0];
 };
