@@ -19,7 +19,7 @@ jest.mock('../../platform/commands/commandServiceImpl', () => ({
 
 const sagaMiddleWare = sagaMiddlewareFactory();
 const mockStore = createStore(combineReducers({ bot }), {
-  botFiles: [mockBot]
+  bot: { botFiles: [mockBot] }
 }, applyMiddleware(sagaMiddleWare));
 
 jest.mock('../store', () => ({
