@@ -15,6 +15,6 @@
     "uninstallerSidebar": "./sripts/config/resources/nsis/installerSidebar.bmp",
     "createDesktopShortcut": true,
     "createStartMenuShortcut": true,
-    "shortcutName": "Bot Framework Emulator (V4)"
+    "shortcutName": "Bot Framework Emulator (V4 PREVIEW 2)"
   }
 }
