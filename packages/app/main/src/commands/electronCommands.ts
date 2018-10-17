@@ -64,7 +64,8 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Shows an open dialog and returns a path
-  commandRegistry.registerCommand(Commands.ShowOpenDialog, (dialogOptions: Electron.OpenDialogOptions = {}): string => {
+  commandRegistry.registerCommand(Commands.ShowOpenDialog,
+    (dialogOptions: Electron.OpenDialogOptions = {}): false | string => {
     return showOpenDialog(mainWindow.browserWindow, dialogOptions);
   });
 
@@ -139,20 +140,25 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   });
 
   // ---------------------------------------------------------------------------
-  // Renames a file - the payload must contain the property "filePath" and "name"
+  // Renames a file - the payload must contain the property "path" and "name"
   // This will also rename the file extension if one is provided in the "name" field
-  commandRegistry.registerCommand(Commands.RenameFile, async (info: { path: string, name: string }) => {
-    const { path: filePath, name } = info;
-    const exists = await fs.pathExists(filePath);
+  commandRegistry.registerCommand(Commands.RenameFile,
+    async (info: { path: string, newPath: string, name: string }) => {
+    const { path: existingPath, newPath } = info;
+    let { name } = info;
+    const exists = await fs.pathExists(existingPath);
     if (!exists) {
-      throw new ReferenceError(`Cannot rename File: ${filePath} does not exist`);
+      throw new ReferenceError(`Cannot rename File: ${existingPath} does not exist`);
     }
-    const parts = path.parse(filePath);
+    const parts = path.parse((newPath || existingPath));
+    if (!name) {
+      name = parts.base;
+    }
     const nameHasExt = path.extname(name);
-    let newPath = `${parts.dir}/${name}`;
+    let fullPath = `${parts.dir}/${name}`;
     if (!nameHasExt) {
-      newPath += parts.ext;
+      fullPath += parts.ext;
     }
-    return fs.rename(filePath, newPath); // let any errors propagate up the stack
+    return fs.rename(existingPath, fullPath); // let any errors propagate up the stack
   });
 }
