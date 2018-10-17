@@ -112,7 +112,7 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
           bot saved locally.<br/>
           <a
             className={ styles.ctaLink }
-            href="https://aka.ms/bot-framework-emulator-create-bot-locally"
+            data-href="https://aka.ms/bot-framework-emulator-create-bot-locally"
             onClick={ this.onAnchorClick }
           >More about working locally with a bot.
           </a>
@@ -194,7 +194,7 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
                 Review the bot&nbsp;
                 <a
                   className={ styles.ctaLink }
-                  href="https://aka.ms/bot-framework-emulator-design-guidelines"
+                  data-href="https://aka.ms/bot-framework-emulator-design-guidelines"
                   onClick={ this.onAnchorClick }
                 >
                   design guidelines
