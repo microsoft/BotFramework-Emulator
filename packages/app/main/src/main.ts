@@ -89,7 +89,7 @@ AppUpdater.on('update-available', (update: UpdateInfo) => {
     // TODO - localization
     mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
       title: app.getName(),
-      message: `An update is available. Download it now?`,
+      message: `A new update, ${update.version}, is available. Download it now?`,
       buttons: ['Cancel', 'OK'],
       defaultId: 1,
       cancelId: 0
@@ -107,7 +107,7 @@ AppUpdater.on('update-downloaded', (update: UpdateInfo) => {
   if (AppUpdater.userInitiated) {
     mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
       title: app.getName(),
-      message: 'Finished downloading update. Restart and install now?',
+      message: `Finished downloading update ${update.version}. Restart and install now?`,
       buttons: ['Cancel', 'OK'],
       defaultId: 1,
       cancelId: 0
@@ -122,7 +122,9 @@ AppUpdater.on('update-downloaded', (update: UpdateInfo) => {
 AppUpdater.on('up-to-date', (update: UpdateInfo) => {
   // TODO - localization
   AppMenuBuilder.refreshAppUpdateMenu();
-  if (AppUpdater.userInitiated) {
+  // only show the alert if the user explicity checked for update, and no update was downloaded
+  const { userInitiated, updateDownloaded } = AppUpdater;
+  if (userInitiated && !updateDownloaded) {
     mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
       title: app.getName(),
       message: 'There are no updates currently available.'
@@ -137,11 +139,12 @@ AppUpdater.on('download-progress', (progress: ProgressInfo) => {
 AppUpdater.on('error', (err: Error, message: string) => {
   // TODO - localization
   AppMenuBuilder.refreshAppUpdateMenu();
+  // TODO - Send to debug.txt / error dump file
   console.error(err, message);
   if (AppUpdater.userInitiated) {
     mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
       title: app.getName(),
-      message: 'There are no updates currently available.'
+      message: 'Something went wrong while checking for updates.'
     });
   }
 });

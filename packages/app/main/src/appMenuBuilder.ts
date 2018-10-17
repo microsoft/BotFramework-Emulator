@@ -345,7 +345,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
       AppUpdater.status === UpdateStatus.UpdateAvailable) {
       return {
         id: 'auto-update',
-        label: 'Update downloading...',
+        label: `Update downloading: ${AppUpdater.downloadProgress}%`,
         enabled: false,
       };
     } else {
