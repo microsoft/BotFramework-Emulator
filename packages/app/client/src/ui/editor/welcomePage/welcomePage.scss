@@ -108,7 +108,7 @@
   min-width: 16px;
   position: absolute;
   right: 0;
-  top: 0;
+  top: 2px;
   width: auto;
 
   > button {
@@ -246,8 +246,8 @@
 
       > dt {
         display: block;
+        font-family: var(--default-font-semibold);
         font-size: 13px;
-        font-weight: bold;
         line-height: 18px;
       }
 
