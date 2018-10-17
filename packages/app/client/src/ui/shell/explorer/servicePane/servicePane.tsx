@@ -67,15 +67,15 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
     return (
       <>
         <button aria-label="Sort"
-          onKeyPress={ this.onControlKeyPress}
-          onClick={ this.onSortClick }
-          className={ styles.sortIconButton }>
+                onKeyPress={ this.onControlKeyPress }
+                onClick={ this.onSortClick }
+                className={ styles.sortIconButton }>
           ⮁
         </button>
         <button aria-label="Add"
-          onKeyPress={ this.onControlKeyPress}
-          onClick={ this.onAddIconClick }
-          className={ styles.addIconButton }>
+                onKeyPress={ this.onControlKeyPress }
+                onClick={ this.onAddIconClick }
+                className={ styles.addIconButton }>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25">
             <g>
               <path d="M0 10L10 10 10 0 15 0 15 10 25 10 25 15 15 15 15 25 10 25 10 15 0 15"/>
@@ -89,7 +89,7 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
   protected abstract get links(): JSX.Element[];
 
   protected get content(): JSX.Element {
-    const { links } = this;
+    const { links, additionalContent } = this;
     if (!links || !links.length) {
       return (
         <ExpandCollapseContent>
@@ -102,6 +102,7 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
         <ul className={ styles.servicePaneList } ref={ ul => this.listRef = ul }>
           { links }
         </ul>
+        { additionalContent }
       </ExpandCollapseContent>
     );
   }
@@ -110,6 +111,10 @@ export abstract class ServicePane<T extends ServicePaneProps, S extends ServiceP
     return (
       <p className={ styles.emptyContent }>You have not saved any { this.props.title } apps to this bot.</p>
     );
+  }
+
+  protected get additionalContent(): JSX.Element {
+    return null;
   }
 
   protected get listRef(): HTMLUListElement {

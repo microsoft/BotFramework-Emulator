@@ -63,6 +63,8 @@ export const SharedConstants = {
       WatchForChatFiles: 'bot:watch-for-chat-files',
       ChatFilesUpdated: 'bot:chat-files-updated',
       TranscriptFilesUpdated: 'bot:transcript-files-updated',
+      TranscriptsPathUpdated: 'bot:transcripts-path-updated',
+      ChatsPathUpdated: 'bot:chats-path-updated'
     },
 
     ClientInit: {

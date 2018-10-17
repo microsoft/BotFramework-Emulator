@@ -1,10 +1,12 @@
 @font-face {
   font-family: Segoe UI;
+  font-weight: 300;
   src: url("./segoe-ui.woff2") format("woff2");
 }
 
 @font-face {
   font-family: Segoe UI Semibold;
+  font-weight: 500;
   src: url("./segoe-ui-semibold.woff2") format("woff2");
 }
 
@@ -31,6 +33,10 @@
   }
   div {
     box-sizing: border-box;
+  }
+
+  strong {
+    font-family: var(--default-font-semibold);
   }
 
   *:focus {

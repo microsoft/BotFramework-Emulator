@@ -2,12 +2,18 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
+import { ResourcesSettingsContainer } from '../../../dialogs';
 import { ResourceExplorerContainer } from './resourceExplorerContainer';
 import { ResourceExplorer } from './resourceExplorer';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import { resources } from '../../../../data/reducer/resourcesReducer';
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
-import { openContextMenuForResource, openResource, renameResource } from '../../../../data/action/resourcesAction';
+import {
+  openContextMenuForResource,
+  openResource,
+  openResourcesSettings,
+  renameResource
+} from '../../../../data/action/resourcesAction';
 
 const mockStore = createStore(combineReducers({ resources }), {});
 
@@ -82,5 +88,12 @@ describe('The ServicesExplorer component should', () => {
   it('should open the resource when the enter key is pressed while focused on a link', () => {
     node.instance().onLinkKeyPress({ currentTarget: { dataset: { index: 0 } }, key: 'Enter' });
     expect(mockDispatch).toHaveBeenCalledWith(openResource(mockChat));
+  });
+
+  it('should open the resource settings dialog when the "Choose a different location" link is clicked', () => {
+    const instance = node.instance();
+    const spy = jest.spyOn(mockStore, 'dispatch');
+    instance.onChooseLocationClick();
+    expect(spy).toHaveBeenCalledWith(openResourcesSettings({ dialog: ResourcesSettingsContainer }));
   });
 });

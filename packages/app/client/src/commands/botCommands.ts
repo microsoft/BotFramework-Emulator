@@ -39,7 +39,12 @@ import { store } from '../data/store';
 import * as BotActions from '../data/action/botActions';
 import * as FileActions from '../data/action/fileActions';
 import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
-import { chatFilesUpdated, transcriptsUpdated } from '../data/action/resourcesAction';
+import {
+  chatFilesUpdated,
+  chatsDirectoryUpdated,
+  transcriptDirectoryUpdated,
+  transcriptsUpdated
+} from '../data/action/resourcesAction';
 import { IFileService } from 'botframework-config/lib/schema';
 
 /** Registers bot commands */
@@ -93,5 +98,13 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   commandRegistry.registerCommand(Commands.Bot.ChatFilesUpdated, (chatFiles: IFileService[]) => {
     store.dispatch(chatFilesUpdated(chatFiles));
+  });
+
+  commandRegistry.registerCommand(Commands.Bot.TranscriptsPathUpdated, (path: string) => {
+    store.dispatch(transcriptDirectoryUpdated(path));
+  });
+
+  commandRegistry.registerCommand(Commands.Bot.ChatsPathUpdated, (path: string) => {
+    store.dispatch(chatsDirectoryUpdated(path));
   });
 }
