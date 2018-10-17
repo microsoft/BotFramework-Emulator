@@ -51,6 +51,7 @@ describe('The WelcomePageSagas', () => {
       };
       await mockStore.dispatch(openContextMenuForBot(mockBot));
       await Promise.resolve(true);
+      await Promise.resolve(true);
       expect(remoteCalls[0]).toEqual([
         'electron:display-context-menu',
         [
