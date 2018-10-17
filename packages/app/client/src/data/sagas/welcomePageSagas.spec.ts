@@ -2,6 +2,8 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { openContextMenuForBot } from '../action/welcomePageActions';
 import { bot } from '../reducer/bot';
+import notification from '../reducer/notification';
+import { notificationSagas } from './notificationSagas';
 import { welcomePageSagas } from './welcomePageSagas';
 import sagaMiddlewareFactory from 'redux-saga';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
@@ -18,7 +20,7 @@ jest.mock('../../platform/commands/commandServiceImpl', () => ({
 }));
 
 const sagaMiddleWare = sagaMiddlewareFactory();
-const mockStore = createStore(combineReducers({ bot }), {
+const mockStore = createStore(combineReducers({ bot, notification }), {
   bot: { botFiles: [mockBot] }
 }, applyMiddleware(sagaMiddleWare));
 
@@ -29,6 +31,8 @@ jest.mock('../store', () => ({
 }));
 
 sagaMiddleWare.run(welcomePageSagas);
+sagaMiddleWare.run(notificationSagas);
+
 describe('The WelcomePageSagas', () => {
 
   describe(', when invoking a context menu over a bot in the list', () => {
@@ -102,6 +106,71 @@ describe('The WelcomePageSagas', () => {
           'secret': 'secret'
         }
       ]);
+    });
+
+    it('should add a notification if a remote command fails when moving a bot file', async () => {
+      CommandServiceImpl.remoteCall = async function (...args: any[]) {
+        switch (args[0]) {
+
+          case SharedConstants.Commands.Electron.DisplayContextMenu:
+            return { id: 0 };
+
+          case SharedConstants.Commands.Electron.ShowSaveDialog:
+            return 'this/is/a/new/location.bot';
+
+          case SharedConstants.Commands.Electron.RenameFile:
+            throw new Error('oh noes!');
+
+          default:
+            return null;
+        }
+      };
+      await mockStore.dispatch(openContextMenuForBot(mockBot));
+      await Promise.resolve(true);
+      await Promise.resolve(true);
+      const state: any = mockStore.getState();
+      expect(state.notification.allIds.length).toBe(1);
+    });
+
+    it('should call the appropriate command when opening the bot file location', async () => {
+      let openFileLocationArgs;
+      CommandServiceImpl.remoteCall = async function (...args: any[]) {
+        switch (args[0]) {
+
+          case SharedConstants.Commands.Electron.DisplayContextMenu:
+            return { id: 1 };
+
+          case SharedConstants.Commands.Electron.OpenFileLocation:
+            return openFileLocationArgs = args;
+
+          default:
+            return null;
+        }
+      };
+
+      await mockStore.dispatch(openContextMenuForBot(mockBot));
+      await Promise.resolve(true);
+      expect(openFileLocationArgs).toEqual(['shell:open-file-location', 'this/is/a/new/location.bot']);
+    });
+
+    it('should call the appropriate command when removing a bot from the list', async () => {
+      let removeBotFromListArgs;
+      CommandServiceImpl.remoteCall = async function (...args: any[]) {
+        switch (args[0]) {
+
+          case SharedConstants.Commands.Electron.DisplayContextMenu:
+            return { id: 2 };
+
+          case SharedConstants.Commands.Bot.RemoveFromBotList:
+            return removeBotFromListArgs = args;
+
+          default:
+            return null;
+        }
+      };
+      await mockStore.dispatch(openContextMenuForBot(mockBot));
+      await Promise.resolve(true);
+      expect(removeBotFromListArgs).toEqual(['bot:list:remove', 'this/is/a/new/location.bot']);
     });
   });
 });
