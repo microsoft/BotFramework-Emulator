@@ -144,7 +144,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
             <a
               href="javascript:void(0);"
               onClick={ this.onLearnMoreEncryptionClick }>
-              Learn more.
+              &nbsp;Learn more.
             </a>
           </Row>
 
@@ -173,14 +173,14 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
                 Copy
               </a>
             </li>
-            <li>
+            {/* <li>
               <a
                 className={ !encryptKey ? styles.disabledAction : '' }
                 href="javascript:void(0);"
                 onClick={ this.onResetClick }>
                 Generate new secret
               </a>
-            </li>
+            </li> */}
           </ul>
         </div>
 
@@ -248,14 +248,17 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
     input.type = type;
     input.setAttribute('disabled', '');
   }
+  
+  // TODO: Re-enable ability to re-generate secret after 4.1
+  // See 'https://github.com/Microsoft/BotFramework-Emulator/issues/964' for more information
 
-  private onResetClick = (): void => {
-    if (!this.state.encryptKey) {
-      return null;
-    }
-    const generatedSecret = generateBotSecret();
-    this.setState({ secret: generatedSecret });
-  }
+  // private onResetClick = (): void => {
+  //   if (!this.state.encryptKey) {
+  //     return null;
+  //   }
+  //   const generatedSecret = generateBotSecret();
+  //   this.setState({ secret: generatedSecret });
+  // }
 
   private onLearnMoreEncryptionClick = (): void => {
     const url = 'https://aka.ms/bot-framework-bot-file-encryption';
