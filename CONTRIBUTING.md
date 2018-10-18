@@ -104,7 +104,7 @@ For remote debugging, add `--remote-debugging-port=9222` to the `start:electron`
 ## Pull Requests
 
 Before we can accept a pull request from you, you must agree to the 
-[Contributor License Agreement (CLA)](https://github.com/Microsoft/BotFramework-Emulator/wiki/Contributor-License-Agreement). 
+[Contributor License Agreement (CLA)](https://cla.opensource.microsoft.com/). 
 It is an automated process and you only need to do this once.
 
 To enable us to quickly review and accept your pull requests, always create one pull request per issue and link the 
