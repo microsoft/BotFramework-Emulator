@@ -1,4 +1,4 @@
-.expandCollapse {
+.expand-collapse {
   display: flex;
   flex-flow: column nowrap;
   height: 100%;
@@ -10,40 +10,39 @@
   }
 
   & > .header {
-    position: relative;
     background-color: var(--explorer-panel-group-title-bg);
     color: var(--explorer-panel-group-title-color);
     cursor: pointer;
     display: flex;
+    flex-shrink: 0;
     font-size: 11px;
     font-weight: 700;
     height: 22px;
     line-height: 22px;
+    position: relative;
     text-transform: uppercase;
     white-space: nowrap;
-    flex-shrink: 0;
 
     & > h3 {
-      width: 100%;
-      margin: 0;
+      margin: 0 0 0 32px;
       padding: 0;
-      padding-left: 32px;
       text-decoration: none;
+      width: 100%;
     }
 
     & > svg {
-      position: absolute;
-      top: 4px;
-      left: 8px;
-      height: 12px;
-      width: 12px;
       fill: var(--explorer-panel-group-title-color);
+      height: 12px;
+      left: 8px;
       pointer-events: none;
+      top: 4px;
+      width: 12px;
+      position: absolute;
     }
 
     & .accessories {
-      margin: 0 0 0 auto;
       height: 100%;
+      margin: 0 0 0 auto;
       width: auto;
 
       & > button {
@@ -56,10 +55,10 @@
   }
 
   & .body {
-    height: 100%;
-    overflow: auto;
-    position: relative;
     display: flex;
     flex-flow: column nowrap;
+    overflow: auto;
+    position: relative;
+    height: 100%;
   }
 }

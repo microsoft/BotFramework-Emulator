@@ -1,4 +1,4 @@
-.controlBar {
+.control-bar {
   color: var(--log-panel-item-debug);
   padding: 6px 3px;
   & a {
@@ -8,7 +8,7 @@
 }
 
 :global {
-  #rawResponseButton {
+  #raw-response-button {
     padding-left: 8px;
   }
 }

@@ -1,4 +1,4 @@
-.horizontalSplitter {
+.horizontal-splitter {
   position: relative;
   height: 0;
   width: 100%;
@@ -17,7 +17,7 @@
   }
 }
 
-.verticalSplitter {
+.vertical-splitter {
   position: relative;
   height: 100%;
   width: 0;
@@ -35,7 +35,7 @@
   }
 }
 
-.floatingCanvas {
+.floating-canvas {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -43,11 +43,11 @@
   left: 0;
   display: flex;
 
-  &.canvasCol {
+  &.canvas-col {
     flex-flow: column nowrap;
   }
 
-  &.canvasRow {
+  &.canvas-row {
     flex-flow: row nowrap;
   }
 }

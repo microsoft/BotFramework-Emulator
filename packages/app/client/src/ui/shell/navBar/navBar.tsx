@@ -73,11 +73,10 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
     );
   }
 
-  public onLinkClick = (event: SyntheticEvent<HTMLAnchorElement>): void => {
+  public onLinkClick = (event: SyntheticEvent<HTMLButtonElement>): void => {
     const { selection: currentSelection } = this.props;
     const { currentTarget: anchor } = event;
     const index = Array.prototype.indexOf.call(anchor.parentElement.children, anchor);
-
     switch (index) {
       // Bot Explorer
       case 0:
@@ -119,15 +118,15 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
       'Settings'
     ].map((title, index) => {
       return (
-        <a
+        <button
           aria-selected={ explorerIsVisible && selection === selectionMap[index] }
-          key={ index }
-          href="javascript:void(0);"
           title={ title }
           className={ styles.navLink }
+          key={ index }
           onClick={ this.onLinkClick }>
+          <div/>
           { this.renderNotificationBadge(title) }
-        </a>
+        </button>
       );
     });
   }
