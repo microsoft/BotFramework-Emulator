@@ -76,6 +76,9 @@
   padding: 0 16px;
   position: relative;
 
+  button {
+    font-size: 13px;
+  }
   &:hover {
     background-color: var(--my-bots-entry-bg);
     border: var(--my-bots-entry-border);
@@ -92,7 +95,7 @@
       cursor: pointer;
 
     > span {
-      font-family: var(--default-font-semibold);
+      font-weight: 600;
 
       &:hover {
         text-decoration: underline;
@@ -157,8 +160,9 @@
   border: 1px solid transparent;
   color: var(--focused-selected-list-item-bg);
   cursor: pointer;
-  font-family: var(--default-font-semibold);
+  font-weight: 600;
   padding: 0;
+  font-size: 13px;
   white-space: normal;
 
     &:focus {
@@ -174,7 +178,7 @@
 .how-to-build-section {
   > h3 {
     font-size: 13px;
-    font-family: var(--default-font-semibold);
+    font-weight: 600;
     letter-spacing: 0.35px;
     line-height: 16px;
     margin: 0 0 24px 0;

@@ -41,7 +41,7 @@ git checkout v4
 > npm version 5.6.0 or greater is required.
 
 ```
-npm i -g lerna@2.11.x gulp@4.0.0 gulp-cli@2.0.1 webpack@4.8.x jest
+npm i -g lerna@3.4.0 gulp@4.0.0 gulp-cli@2.0.1 webpack@4.8.x jest
 ```
 
 ### Install local dependencies
