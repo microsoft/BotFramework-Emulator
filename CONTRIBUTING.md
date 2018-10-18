@@ -41,7 +41,7 @@ git checkout v4
 > npm version 5.6.0 or greater is required.
 
 ```
-npm i -g lerna@2.11.x gulp@4.0.0 gulp-cli@2.0.1 webpack@4.8.x jest
+npm i -g lerna@3.4.0 gulp@4.0.0 gulp-cli@2.0.1 webpack@4.8.x jest
 ```
 
 ### Install local dependencies
@@ -104,7 +104,7 @@ For remote debugging, add `--remote-debugging-port=9222` to the `start:electron`
 ## Pull Requests
 
 Before we can accept a pull request from you, you must agree to the 
-[Contributor License Agreement (CLA)](https://github.com/Microsoft/BotFramework-Emulator/wiki/Contributor-License-Agreement). 
+[Contributor License Agreement (CLA)](https://cla.opensource.microsoft.com/). 
 It is an automated process and you only need to do this once.
 
 To enable us to quickly review and accept your pull requests, always create one pull request per issue and link the 
