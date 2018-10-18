@@ -8,8 +8,7 @@ import { ServiceTypes } from 'botframework-config/lib/schema';
 import { resources } from '../../../../data/reducer/resourcesReducer';
 import { bot } from '../../../../data/reducer/bot';
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
-import { chatFilesUpdated, openResourcesSettings, transcriptsUpdated } from '../../../../data/action/resourcesAction';
-import { ResourcesSettingsContainer } from '../../../dialogs';
+import { chatFilesUpdated, transcriptsUpdated } from '../../../../data/action/resourcesAction';
 import { load, setActive } from '../../../../data/action/botActions'; // important
 const mockClass = class {
 };
@@ -33,7 +32,6 @@ describe('The ServicesExplorer component should', () => {
   let node;
   let mockChat;
   let mockTranscript;
-  let mockDispatch;
   beforeEach(() => {
     const mockBot = JSON.parse(`{
         "name": "TestBot",
@@ -65,7 +63,6 @@ describe('The ServicesExplorer component should', () => {
     mockStore.dispatch(setActive(mockBot));
     mockStore.dispatch(transcriptsUpdated([mockTranscript]));
     mockStore.dispatch(chatFilesUpdated([mockChat]));
-    mockDispatch = jest.spyOn(mockStore, 'dispatch');
     parent = mount(<Provider store={ mockStore }>
       <ResourcesBarContainer/>
     </Provider>);
@@ -75,16 +72,5 @@ describe('The ServicesExplorer component should', () => {
   it('should render deeply', () => {
     expect(parent.find(ResourcesBarContainer)).not.toBe(null);
     expect(node).not.toBe(null);
-  });
-
-  it('should have the expected functions available in the props', () => {
-    const instance = node.instance();
-    expect(instance.props.openResourcesSettings).not.toBeUndefined();
-  });
-
-  it('should open the ResourceSettings dialog when the settings icon is clicked', async () => {
-    const instance = node.instance();
-    instance.onSettingsClick();
-    expect(mockDispatch).toHaveBeenCalledWith(openResourcesSettings({ dialog: ResourcesSettingsContainer }));
   });
 });

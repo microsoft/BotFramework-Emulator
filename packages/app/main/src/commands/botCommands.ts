@@ -146,14 +146,22 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
     const botInfo = getBotInfoByPath(bot.path) || {};
     const dirName = path.dirname(bot.path);
 
-    const {
+    let {
       chatsPath = path.join(dirName, './dialogs'),
-      transcriptsPath = path.join(dirName, './transcripts')
+      transcriptsPath = path.join(dirName, './transcripts'),
+      path: botFilePath = ''
     } = botInfo;
-
+    botFilePath = path.parse(botFilePath).dir;
+    const relativeChatsPath = path.relative(botFilePath, chatsPath);
+    const relativeTranscriptsPath = path.relative(botFilePath, transcriptsPath);
+    const displayedChatsPath = relativeChatsPath.includes('..') ? chatsPath : relativeChatsPath;
+    const displayedTranscriptsPath = relativeTranscriptsPath.includes('..') ? transcriptsPath : relativeTranscriptsPath;
+    const sep = process.platform === 'darwin' ? path.posix.sep : (path.posix as any).win32.sep;
     await Promise.all([
       chatWatcher.watch(chatsPath),
       transcriptsWatcher.watch(transcriptsPath),
+      mainWindow.commandService.remoteCall(Bot.ChatsPathUpdated, `${displayedChatsPath}${sep}**`),
+      mainWindow.commandService.remoteCall(Bot.TranscriptsPathUpdated, `${displayedTranscriptsPath}${sep}`),
       mainWindow.commandService.call(Bot.RestartEndpointService)
     ]);
     // Workaround for a JSON serialization issue in bot.services where they're an array

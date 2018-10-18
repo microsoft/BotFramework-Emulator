@@ -1,14 +1,14 @@
-.botSettingsEditor {
+.bot-settings-editor {
   min-width: 600px;
   width: 600px;
   max-height: 314px;
 }
 
-.cancelButton {
+.cancel-button {
   margin-left: auto;
 }
 
-.saveButton {
+.save-button {
   margin-left: 4px;
 }
 
@@ -17,23 +17,25 @@
   margin: 16px 145px 0 32px;
 }
 
-.encryptKeyCheckBox {
+.encrypt-key-check-box {
   margin-top: 30px;
   span {
-    width: 300px;
+    width: auto;
+    margin-right: 3px;
   }
 }
 
 a {
   color: var(--link-color);
+  line-height: 20px;
   text-decoration: none;
 }
 
-.actionsList {
+.actions-list {
   list-style: none;
   position: absolute;
   right: 85px;
-  bottom: 65px;
+  bottom: 62px;
 
   li {
     display: inline;
@@ -44,7 +46,7 @@ a {
     border-left: 1px solid var(--neutral-11);
   }
 
-  .disabledAction {
+  .disabled-action {
     color: var(--link-color-disabled);
     cursor: default;
   }

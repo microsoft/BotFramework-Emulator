@@ -47,9 +47,10 @@ gulp.task('redist:binaries', async () => {
 
 /** Writes the build metadata to latest.yml  */
 gulp.task('redist:metadata-only', async () => {
-  const { getConfig, hashFileAsync } = common;
+  const { getConfig, hashFileAsync, getEnvironmentVar } = common;
   const config = getConfig('windows', 'nsis');
-  const releaseFilename = config.nsis.artifactName.replace('${version}', packageJson.version);
+  const version = getEnvironmentVar('EMU_VERSION', packageJson.version);
+  const releaseFilename = config.nsis.artifactName.replace('${version}', version);
   const sha512 = await hashFileAsync(`./dist/${releaseFilename}`);
   const sha2 = await hashFileAsync(`./dist/${releaseFilename}`, 'sha256', 'hex');
   const releaseDate = new Date().toISOString();
@@ -64,19 +65,15 @@ gulp.task('redist:metadata-only', async () => {
   );
 });
 
-/** Creates the emulator installers and the metadata .yml file */
-gulp.task('redist',
-  gulp.series('redist:binaries', 'redist:metadata-only')
-);
-
 /** Writes the .yml metadata file */
 function writeYamlMetadataFile(releaseFilename, yamlFilename, path, fileHash, releaseDate, extra = {}) {
-  const { extend } = common;
+  const { extend, getEnvironmentVar } = common;
   var fsp = require('fs-extra');
   var yaml = require('js-yaml');
+  const version = getEnvironmentVar('EMU_VERSION', packageJson.version);
 
   const ymlInfo = {
-    version: packageJson.version,
+    version,
     releaseDate,
     githubArtifactName: releaseFilename,
     path: releaseFilename,

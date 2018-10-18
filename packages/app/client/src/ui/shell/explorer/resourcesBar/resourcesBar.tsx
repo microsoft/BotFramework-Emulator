@@ -1,16 +1,15 @@
 import * as React from 'react';
-import { Component, ComponentClass } from 'react';
+import { Component } from 'react';
 import * as styles from './resourcesBar.scss';
 import * as explorerStyles from '../explorerStyles.scss';
 import { ResourceExplorerContainer } from '../resourceExplorer/resourceExplorerContainer';
 import { IFileService } from 'botframework-config/lib/schema';
-import { ResourcesSettingsContainer } from '../../../dialogs';
 
 export interface ResourcesBarProps {
   chatFiles: IFileService[];
+  chatsPath: string;
   transcripts: IFileService[];
-  isBotActive: boolean;
-  openResourcesSettings: (payload: { dialog: ComponentClass<any> }) => void;
+  transcriptsPath: string;
 }
 
 export class ResourcesBar extends Component<ResourcesBarProps, ResourcesBarProps> {
@@ -21,24 +20,22 @@ export class ResourcesBar extends Component<ResourcesBarProps, ResourcesBarProps
           <header>
             Resources
           </header>
-          <button
-            className={ explorerStyles.botSettings }
-            disabled={ !this.props.isBotActive }
-            onClick={ this.onSettingsClick }>
-            <span></span>
-          </button>
         </div>
         <ul className={ explorerStyles.explorerSet }>
           <li>
-            <ResourceExplorerContainer files={ this.props.chatFiles } title="Scripts" ariaLabel="Scripts"/>
-            <ResourceExplorerContainer files={ this.props.transcripts } title="Transcripts" ariaLabel="Transcripts"/>
+            <ResourceExplorerContainer
+              files={ this.props.chatFiles }
+              resourcesPath={ this.props.chatsPath }
+              title="chat files"
+              ariaLabel="chat files"/>
+            <ResourceExplorerContainer
+              files={ this.props.transcripts }
+              resourcesPath={ this.props.transcriptsPath }
+              title="transcripts"
+              ariaLabel="transcripts"/>
           </li>
         </ul>
       </div>
     );
-  }
-
-  private onSettingsClick = (): void => {
-    this.props.openResourcesSettings({ dialog: ResourcesSettingsContainer });
   }
 }

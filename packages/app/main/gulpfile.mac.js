@@ -52,18 +52,18 @@ gulp.task('redist:metadata-only', async () => {
   const releaseHash = await hashFileAsync(`./dist/${releaseFilename}`);
   const releaseDate = new Date().toISOString();
 
-  writeJsonMetadataFile(releaseFilename, 'latest-mac.json', './dist', releaseDate);
   writeYamlMetadataFile(releaseFilename, 'latest-mac.yml', './dist', releaseHash, releaseDate);
 });
 
 /** Writes the .yml metadata file */
 function writeYamlMetadataFile(releaseFilename, yamlFilename, path, fileHash, releaseDate, extra = {}) {
-  const { extend } = common;
+  const { extend, getEnvironmentVar } = common;
   const fsp = require('fs-extra');
   const yaml = require('js-yaml');
+  const version = getEnvironmentVar('EMU_VERSION', packageJson.version);
 
   const ymlInfo = {
-    version: packageJson.version,
+    version,
     releaseDate,
     githubArtifactName: releaseFilename,
     path: releaseFilename,
@@ -72,17 +72,4 @@ function writeYamlMetadataFile(releaseFilename, yamlFilename, path, fileHash, re
   const obj = extend({}, ymlInfo, extra);
   const ymlStr = yaml.safeDump(obj);
   fsp.writeFileSync(`./${path}/${yamlFilename}`, ymlStr);
-}
-
-/** Writes the .json metadata file */
-function writeJsonMetadataFile(releaseFilename, jsonFilename, path, releaseDate) {
-  const fsp = require('fs-extra');
-  const { githubAccountName, githubRepoName } = common;
-
-  const jsonInfo = {
-    version: packageJson.version,
-    releaseDate,
-    url: `https://github.com/${githubAccountName}/${githubRepoName}/releases/v${packageJson.version}/${releaseFilename}`
-  };
-  fsp.outputJsonSync(`./${path}/${jsonFilename}`, jsonInfo, { spaces: 2 });
 }

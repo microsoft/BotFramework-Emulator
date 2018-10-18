@@ -1,9 +1,9 @@
-.tabBar {
+.tab-bar {
   display: flex;
   background-color: var(--tab-bar-bg);
   color: var(--input-label-color);
   min-height: 32px;
-  &.draggedOver {
+  &.dragged-over {
     background-color: var(--tab-active-tab-bg);
   }
 
@@ -56,7 +56,7 @@
     }
   }
 
-  & > div.tabBarWidgets {
+  & > div.tab-bar-widgets {
     display: flex;
     align-items: center;
     width: auto;
@@ -93,18 +93,18 @@
         cursor: pointer;
       }
     }
-    .splitWidget, .presentationWidget {
+    .split-widget, .presentation-widget {
       background: var(--tab-icon-color);
       -webkit-mask-size: 22px;
       &:hover {
         background: var(--tab-icon-hover-color);
       }
     }
-    .splitWidget {
+    .split-widget {
       -webkit-mask: url("../../../media/ic_split.svg") no-repeat 50% 50%;
     }
 
-    .presentationWidget {
+    .presentation-widget {
       -webkit-mask: url("../../../media/ic_presentation.svg") no-repeat 50% 50%;
     }
   }

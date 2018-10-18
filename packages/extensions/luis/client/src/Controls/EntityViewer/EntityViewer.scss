@@ -1,9 +1,9 @@
-.entityViewer {
+.entity-viewer {
   display: block;
 }
 
 :global {
-  #entityName {
+  #entity-name {
     display: inline-block;
     overflow: hidden
   }
@@ -13,7 +13,7 @@
     overflow: hidden
   }
 
-  #entityValue {
+  #entity-value {
     display: inline-block;
     max-width: 150px;
     text-overflow: ellipsis;

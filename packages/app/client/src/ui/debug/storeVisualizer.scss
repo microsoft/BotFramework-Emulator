@@ -1,4 +1,4 @@
-.storeVisualizer {
+.store-visualizer {
   position: absolute;
   max-width: 400px;
   display: flex;
@@ -21,7 +21,7 @@
     pointer-events: auto;
   }
 
-  & .visualizerButton {
+  & .visualizer-button {
     width: 120px;
     pointer-events: auto;
   }

@@ -10,11 +10,11 @@
   background-color: transparent;
   pointer-events: none;
 
-  &.dialogHostVisible {
+  &.dialog-host-visible {
     pointer-events: auto;
   }
 
-  & .dialogHostContent {
+  & .dialog-host-content {
     height: auto;
     width: auto;
     max-width: 648px;
@@ -24,7 +24,7 @@
   }
 }
 
-.focusSentinel {
+.focus-sentinel {
   display: inline-block;
   width: 0;
   height: 0;

@@ -54,7 +54,7 @@
   right: 0;
   background-color: var(--dialog-bg);
   color: var(--input-label-color);
-  & .chatPanel {
+  & .chat-panel {
     position: absolute;
     top: 50%;
     height: 75%;
@@ -63,7 +63,7 @@
     transform: translateY(-50%);
   }
 
-  & > .presentationContent {
+  & > .presentation-content {
     position: relative;
     height: 100%;
     padding: 64px 0;
@@ -71,7 +71,7 @@
     margin: 0 auto;
   }
 
-  & > .closePresentationIcon {
+  & > .close-presentation-icon {
     position: absolute;
     top: 0;
     right: 0;
@@ -83,7 +83,7 @@
     cursor: pointer;
   }
 
-  & .presentationPlaybackDock {
+  & .presentation-playback-dock {
     display: none;
     position: absolute;
     bottom: 0;
