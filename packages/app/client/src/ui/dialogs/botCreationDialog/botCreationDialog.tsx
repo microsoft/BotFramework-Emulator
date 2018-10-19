@@ -251,6 +251,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
   
   // TODO: Re-enable ability to re-generate secret after 4.1
   // See 'https://github.com/Microsoft/BotFramework-Emulator/issues/964' for more information
+  // See also: botCreationDialog.spec.tsx
 
   // private onResetClick = (): void => {
   //   if (!this.state.encryptKey) {

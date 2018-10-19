@@ -301,6 +301,7 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
 
   // TODO: Re-enable ability to re-generate secret after 4.1
   // See 'https://github.com/Microsoft/BotFramework-Emulator/issues/964' for more information
+  // See also: botSettingsEditor.spec.tsx
 
   // private onResetClick = (): void => {
   //   if (!this.state.encryptKey) {

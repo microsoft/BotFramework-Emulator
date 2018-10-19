@@ -65,14 +65,18 @@ describe('BotCreationDialog tests', () => {
     expect(state1.secret).not.toEqual(state2.secret);
   });
 
-  it('should generate a new bot secret when reset is clicked', () => {
-    const testWrapper = shallow(<BotCreationDialog/>);
-    const initialSecret = 'secret1';
-    testWrapper.instance().setState({ secret: initialSecret, encryptKey: true });
-    (testWrapper.instance() as any).onResetClick();
-    const state = testWrapper.state() as Partial<BotCreationDialogState>;
-    expect(state.secret).not.toEqual(initialSecret);
-  });
+  // TODO: Re-enable ability to re-generate secret after 4.1
+  // See 'https://github.com/Microsoft/BotFramework-Emulator/issues/964' for more information
+  // See also: botCreationDialog.spec.tsx
+  
+  // it('should generate a new bot secret when reset is clicked', () => {
+  //   const testWrapper = shallow(<BotCreationDialog/>);
+  //   const initialSecret = 'secret1';
+  //   testWrapper.instance().setState({ secret: initialSecret, encryptKey: true });
+  //   (testWrapper.instance() as any).onResetClick();
+  //   const state = testWrapper.state() as Partial<BotCreationDialogState>;
+  //   expect(state.secret).not.toEqual(initialSecret);
+  // });
 
   it('should execute a window copy command when copy is clicked', () => {
     const testWrapper = mount(<BotCreationDialog/>);
