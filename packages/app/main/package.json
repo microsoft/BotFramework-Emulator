@@ -136,7 +136,6 @@
     "redux": "^3.7.2",
     "redux-promise-middleware": "^5.0.0",
     "redux-saga": "^0.16.0",
-    "request": "^2.83.0",
     "restify": "^5.0.0",
     "restify-cors-middleware": "^1.1.0",
     "rsa-pem-from-mod-exp": "^0.8.4",
