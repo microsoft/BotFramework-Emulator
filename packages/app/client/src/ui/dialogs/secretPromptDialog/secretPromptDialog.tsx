@@ -67,7 +67,7 @@ export class SecretPromptDialog extends React.Component<SecretPromptDialogProps,
         </p>
         <p>
           { 'If you encrypted your bot file with the MsBot command-line tool, your bot file secret was displayed ' +
-          'when you ran MsBot.' }
+          'when you ran MsBot. ' }
           <a href="javascript:void(0)" onClick={ this.onLearnMoreClick }>Learn more about MsBot.</a>
         </p>
         <div className={ styles.keyContainer }>
