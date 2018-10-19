@@ -35,6 +35,8 @@ import { BrowserWindow } from 'electron';
 import fetch from 'node-fetch';
 import uuidv4 from 'uuid/v4';
 import * as jwt from 'jsonwebtoken';
+import { mainWindow } from '../main';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 let getPem = require('rsa-pem-from-mod-exp');
 const clientId = '4f28e5eb-6b7f-49e6-ac0e-f992b622da57';
@@ -50,7 +52,9 @@ export class AzureAuthWorkflowService {
   public static* retrieveAuthToken(renew: boolean = false, redirectUri: string): IterableIterator<any> {
     const authWindow = yield this.launchAuthWindow(renew, redirectUri);
     authWindow.show();
+    authWindow.webContents.once('select-client-certificate', AzureAuthWorkflowService.onSelectClientCert);
     const result = yield this.waitForAuthResult(authWindow, redirectUri);
+    authWindow.webContents.removeListener('select-client-certificate', AzureAuthWorkflowService.onSelectClientCert);
     authWindow.close();
     if (result.error) {
       return false;
@@ -105,6 +109,16 @@ export class AzureAuthWorkflowService {
     return response;
   }
 
+  private static async onSelectClientCert(event: Event, uri: string, list: any, callback: any) {
+    event.preventDefault();
+    
+    // list is if type Certificate[]
+    // Docs for Certificate type can be found here: https://electronjs.org/docs/api/structures/certificate
+
+    // Open modal, let users select cert from list, and pass to callback
+    let cert = await mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ShowSelectCertDialog);
+    callback(cert);
+  }
   private static async launchAuthWindow(renew: boolean, redirectUri: string): Promise<BrowserWindow> {
     const browserWindow = new BrowserWindow({
       modal: true,
@@ -115,17 +129,6 @@ export class AzureAuthWorkflowService {
       width: 490,
       height: 366,
       webPreferences: { contextIsolation: true, nativeWindowOpen: true }
-    });
-
-    browserWindow.webContents.on('select-client-certificate', (event, uri, list, callback) => {
-      event.preventDefault();
-      
-      // list is if type Certificate[]
-      // Docs for Certificate type can be found here: https://electronjs.org/docs/api/structures/certificate
-
-      // Open modal, let users select cert from list, and pass to callback
-      let cert = <Corina>
-      callback(cert);
     });
     
     browserWindow.setMenu(null);

@@ -160,6 +160,7 @@ export const SharedConstants = {
       ShowPostMigrationDialog: 'post-migration-dialog:show',
       UpdateProgressIndicator: 'shell:updateProgressIndicator',
       InvalidateAzureArmToken: 'shell:invalidateAzureArmToken',
+      ShowSelectCertDialog: 'shell:showSelectCertDialog'
     }
   }
 };
