@@ -106,7 +106,7 @@
     "appId": "com.electron.botframework-emulator",
     "copyright": "Copyright © 2016-2018 Microsoft",
     "win": {
-      "target": { "target": "nsis", "arch": "ia32" },
+      "target": "nsis",
       "artifactName": "${name}-${version}-windows-setup.${ext}"
     },
     "nsis": {
@@ -116,6 +116,9 @@
     "mac": {
       "target": ["dmg", "zip"],
       "artifactName": "${name}-${version}-mac.${ext}"
+    },
+    "dmg": {
+
     },
     "linux": {
       "artifactName": "${name}-${version}-linux.${ext}"
