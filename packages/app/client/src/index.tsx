@@ -63,10 +63,24 @@ ReactDOM.render(
 
 // Tell the main process we're loaded
 CommandServiceImpl.remoteCall(SharedConstants.Commands.ClientInit.Loaded)
-  .then(() => {
+  .then( async () => {
     showWelcomePage();
+    let certs = [
+      {
+        subjectName: 'Carlos Castro',
+        issuerName: 'MSIT CA Z1',
+        serialNumber: '78942387943298732'
+      },
+      {
+        subjectName: 'Carlos Castro',
+        issuerName: 'MSIT CA Z1',
+        serialNumber: '78942387943298732'
+      }
+    ];
     // do actions on main side that might open a document, so that they will be active over the welcome screen
     CommandServiceImpl.remoteCall(SharedConstants.Commands.ClientInit.PostWelcomeScreen);
+    const result = await CommandServiceImpl.call(SharedConstants.Commands.UI.ShowSelectCertDialog, certs);
+    console.log(result);
   })
   .catch(err => {
     const errMsg = `Error occurred while client was loading: ${err}`;
