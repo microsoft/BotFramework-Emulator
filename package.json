@@ -5,9 +5,8 @@
   "main": "./app/server/main.js",
   "scripts": {
     "build": "gulp build",
-    "pack": "build --dir",
-    "dist": "build",
-    "release": "build",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
     "start": "./node_modules/.bin/electron ."
   },
   "repository": {
@@ -43,8 +42,8 @@
     "botbuilder": "3.13.1",
     "del": "2.2.2",
     "electron": "2.0.9",
-    "electron-builder": "19.18.0",
-    "electron-builder-squirrel-windows": "19.18.0",
+    "electron-builder": "^20.28.4",
+    "electron-builder-squirrel-windows": "^20.28.3",
     "electron-packager": "8.6.0",
     "electron-react-devtools": "0.4.0",
     "electron-winstaller": "2.5.2",
@@ -104,6 +103,28 @@
     "xtend": "4.0.1"
   },
   "build": {
+    "appId": "com.electron.botframework-emulator",
+    "copyright": "Copyright © 2016-2018 Microsoft",
+    "win": {
+      "target": "nsis",
+      "artifactName": "botframework-emulator-${version}-windows-setup.${ext}"
+    },
+    "nsis": {
+      "shortcutName": "Bot Framework Emulator (V3)",
+      "include": "./build/installer.nsh"
+    },
+    "mac": {
+      "target": ["dmg", "zip"],
+      "artifactName": "botframework-emulator-${version}-mac.${ext}"
+    },
+    "linux": {
+      "artifactName": "botframework-emulator-${version}-linux.${ext}"
+    },
+    "electronVersion": "2.0.9",
+    "publish": null,
+    "remoteBuild": false
+  },
+  "build_old": {
     "appId": "com.electron.botframework-emulator",
     "copyright": "Copyright © 2016-2018 Microsoft",
     "mac": {
