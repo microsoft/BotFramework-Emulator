@@ -1,7 +1,7 @@
 {
   "name": "botframework-emulator",
   "version": "3.5.37-testing",
-  "description": "Emulator for the Microsoft Bot Framework. Allows developers to test and debug bots on localhost.",
+  "description": "Emulator for the Microsoft Bot Framework. Allows developers to test and debug bots.",
   "main": "./app/server/main.js",
   "scripts": {
     "build": "gulp build",
@@ -115,50 +115,15 @@
     },
     "mac": {
       "target": ["dmg", "zip"],
-      "artifactName": "${name}-${version}-mac.${ext}"
-    },
-    "dmg": {
-
+      "artifactName": "${name}-${version}-mac.${ext}",
+      "category": "public.app-category.developer-tools"
     },
     "linux": {
-      "artifactName": "${name}-${version}-linux.${ext}"
+      "artifactName": "${name}-${version}-linux.${ext}",
+      "category": "Development"
     },
     "electronVersion": "2.0.9",
     "publish": null,
     "remoteBuild": false
-  },
-  "build_old": {
-    "appId": "com.electron.botframework-emulator",
-    "copyright": "Copyright © 2016-2018 Microsoft",
-    "mac": {
-      "category": "public.app-category.developer-tools"
-    },
-    "linux": {
-      "category": "Development"
-    },
-    "publish": {
-      "provider": "github",
-      "owner": "Microsoft"
-    },
-    "squirrelWindows": {
-      "loadingGif": "build/bf-splash.gif",
-      "remoteReleases": "https://github.com/Microsoft/BotFramework-Emulator"
-    },
-    "directories": {
-      "output": "install"
-    },
-    "files": [
-      "**/*",
-      "!**/node_modules/*/{README.md,README,readme.md,readme,test}",
-      "!**/node_modules/.bin",
-      "!**/*.{o,hprof,orig,pyc,pyo,rbc}",
-      "!**/._*",
-      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,__pycache__,thumbs.db,.gitignore,.gitattributes,.editorconfig,.idea,appveyor.yml,.travis.yml,circle.yml}",
-      "!.vscode${/*}",
-      "!doc${/*}",
-      "!src${/*}",
-      "!**/{tsconfig.json,gulpfile.js,index.tsx,README.md,getlicenses.cmd}",
-      "!**/node_modules/@types"
-    ]
   }
 }
