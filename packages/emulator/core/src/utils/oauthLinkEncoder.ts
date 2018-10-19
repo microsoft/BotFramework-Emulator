@@ -36,8 +36,7 @@ import GenericActivity from '../types/activity/generic';
 import AttachmentContentTypes from '../types/attachment/contentTypes';
 import OAuthCard from '../types/card/oAuth';
 import uniqueId from '../utils/uniqueId';
-import * as request from 'request';
-import * as http from 'http';
+import fetch, { Headers, Response } from 'node-fetch';
 import Attachment from '../types/attachment';
 import BotEmulator from '../botEmulator';
 import { StringProvider } from './stringProvider';
@@ -63,37 +62,25 @@ export default class OAuthLinkEncoder {
     this.botEmulator = botEmulator;
   }
 
-  public resolveOAuthCards(activity: GenericActivity): Promise<any> {
-    return new Promise<any>((resolve: (value?: any) => void, reject: (reason?: any) => void) => {
-      let waiting = false;
-      if (this.conversationId &&
-        activity &&
-        activity.attachments &&
-        activity.attachments.length === 1
-        && activity.attachments[0].contentType === AttachmentContentTypes.oAuthCard) {
-        let codeChallenge = this.generateCodeVerifier(this.conversationId);
-        let attachment: Attachment = activity.attachments[0] as Attachment;
-        let oauthCard: OAuthCard = attachment.content as OAuthCard;
-        if (oauthCard.buttons && oauthCard.buttons.length === 1) {
-          let cardAction = oauthCard.buttons[0];
-          if (cardAction.type === 'signin' && !cardAction.value && !OAuthLinkEncoder.EmulateOAuthCards) {
-            waiting = true;
-            this.getSignInLink(oauthCard.connectionName, codeChallenge, (link: string) => {
-              if (link) {
-                cardAction.value = OAuthLinkEncoder.OAuthUrlProtocol + '//' + link + '&&&' +
-                  this.conversationId;
-              }
-              resolve(true);
-            });
-            cardAction.type = 'openUrl';
-          }
+  public async resolveOAuthCards(activity: GenericActivity): Promise<boolean> {
+    if (this.conversationId &&
+      activity &&
+      activity.attachments &&
+      activity.attachments.length === 1
+      && activity.attachments[0].contentType === AttachmentContentTypes.oAuthCard) {
+      let codeChallenge = this.generateCodeVerifier(this.conversationId);
+      let attachment: Attachment = activity.attachments[0] as Attachment;
+      let oauthCard: OAuthCard = attachment.content as OAuthCard;
+      if (oauthCard.buttons && oauthCard.buttons.length === 1) {
+        let cardAction = oauthCard.buttons[0];
+        if (cardAction.type === 'signin' && !cardAction.value && !OAuthLinkEncoder.EmulateOAuthCards) {
+          const link = await this.getSignInLink(oauthCard.connectionName, codeChallenge);
+          cardAction.value = link;
+          cardAction.type = 'openUrl';
         }
       }
-
-      if (!waiting) {
-        resolve(true);
-      }
-    });
+    }
+    return true;
   }
 
   // Generates a new codeVerifier and returns the codeChallenge hash
@@ -109,7 +96,7 @@ export default class OAuthLinkEncoder {
     return codeChallenge;
   }
 
-  private getSignInLink(connectionName: string, codeChallenge: string, cb: (link: string) => void) {
+  private async getSignInLink(connectionName: string, codeChallenge: string): Promise<string> {
     let tokenExchangeState = {
       ConnectionName: connectionName,
       Conversation:
@@ -125,20 +112,18 @@ export default class OAuthLinkEncoder {
 
     let serializedState = JSON.stringify(tokenExchangeState);
     let state = Buffer.from(serializedState).toString('base64');
+    const headers = new Headers({
+      'Authorization': this.authorizationHeader
+    });
 
-    let options: request.OptionsWithUrl = {
-      url: 'https://api.botframework.com/api/botsignin/GetSignInUrl?state=' +
-      state + '&emulatorUrl=' + this.emulatorUrl + '&code_challenge=' + codeChallenge,
-      method: 'GET',
-      headers: {
-        'Authorization': this.authorizationHeader
-      }
-    };
+    const url = 'https://api.botframework.com/api/botsignin/GetSignInUrl?state=' +
+      state + '&emulatorUrl=' + this.emulatorUrl + '&code_challenge=' + codeChallenge;
 
-    let responseCallback = (err, resp: http.IncomingMessage, body) => {
-      cb(body as string);
-    };
-
-    request(options, responseCallback);
+    const response = await fetch(url, {
+      headers,
+      method: 'GET'
+    });
+    const link = await response.text();
+    return OAuthLinkEncoder.OAuthUrlProtocol + '//' + link + '&&&' + this.conversationId;
   }
 }
