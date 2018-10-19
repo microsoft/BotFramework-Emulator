@@ -206,7 +206,7 @@ export class LogView extends React.Component<{}, ILogViewState> {
             }
         ];
         const menu = Menu.buildFromTemplate(template);
-        menu.popup();
+        menu.popup({});
     }
 
     public static add(severity: Severity, message: any, ...args: any[]) {

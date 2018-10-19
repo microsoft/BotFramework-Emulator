@@ -57,7 +57,7 @@ export class AddressBarMenu extends React.Component<{}, {}> {
         this.settingsUnsubscribe();
     }
 
-    showMenu(options?: any) {
+    showMenu(options: any = {}) {
         const settings = getSettings();
         const inConversation = ((settings.serverSettings.activeBot || '').length > 0 && (settings.conversation.conversationId || '').length > 0);
         const haveActiveBot = (settings.serverSettings.activeBot || '').length > 0;
@@ -213,7 +213,7 @@ export class AddressBarMenu extends React.Component<{}, {}> {
         ];
 
         const menu = Menu.buildFromTemplate(template);
-        menu.popup(undefined, options);
+        menu.popup(options);
     }
 
     showMenuAtCoordinates() {

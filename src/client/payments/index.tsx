@@ -124,9 +124,9 @@ document.body.addEventListener('contextmenu', (e) => {
     while (node) {
         if (node.nodeName.match(/^(input|textarea)$/i) || node.isContentEditable) {
             if (node.readOnly) {
-                ContextMenuRO.popup(remote.getCurrentWindow());
+                ContextMenuRO.popup({});
             } else {
-                ContextMenuRW.popup(remote.getCurrentWindow());
+                ContextMenuRW.popup({});
             }
             break;
         }

@@ -42,7 +42,7 @@
     "@types/restify": "2.0.38",
     "botbuilder": "3.13.1",
     "del": "2.2.2",
-    "electron": "1.8.3",
+    "electron": "2.0.9",
     "electron-builder": "19.18.0",
     "electron-builder-squirrel-windows": "19.18.0",
     "electron-packager": "8.6.0",
