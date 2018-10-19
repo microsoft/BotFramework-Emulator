@@ -1,6 +1,6 @@
 {
   "name": "botframework-emulator",
-  "version": "3.5.36",
+  "version": "3.5.37-testing",
   "description": "Emulator for the Microsoft Bot Framework. Allows developers to test and debug bots on localhost.",
   "main": "./app/server/main.js",
   "scripts": {
@@ -106,8 +106,8 @@
     "appId": "com.electron.botframework-emulator",
     "copyright": "Copyright © 2016-2018 Microsoft",
     "win": {
-      "target": "nsis",
-      "artifactName": "botframework-emulator-${version}-windows-setup.${ext}"
+      "target": { "target": "nsis", "arch": "ia32" },
+      "artifactName": "${name}-${version}-windows-setup.${ext}"
     },
     "nsis": {
       "shortcutName": "Bot Framework Emulator (V3)",
@@ -115,10 +115,10 @@
     },
     "mac": {
       "target": ["dmg", "zip"],
-      "artifactName": "botframework-emulator-${version}-mac.${ext}"
+      "artifactName": "${name}-${version}-mac.${ext}"
     },
     "linux": {
-      "artifactName": "botframework-emulator-${version}-linux.${ext}"
+      "artifactName": "${name}-${version}-linux.${ext}"
     },
     "electronVersion": "2.0.9",
     "publish": null,
