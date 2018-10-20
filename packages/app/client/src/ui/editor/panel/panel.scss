@@ -4,12 +4,11 @@
   flex-direction: column;
   height: 100%;
   position: relative;
-
   background-color: var(--dialog-bg);
   color: var(--input-label-color);
 }
 
-.panelHeader {
+.panel-header {
   background-color: var(--toolbar-bg);
   color: var(--tab-color);
   line-height: 36px;
@@ -18,12 +17,14 @@
   padding-left: 16px;
   display: flex;
   white-space: nowrap;
+
   & > .accessories {
     margin: 0 0 0 auto;
     height: 100%;
     width: auto;
     display: flex;
     align-items: center;
+
     & > button {
       background-color: transparent;
       color: var(--neutral-5);
@@ -34,7 +35,7 @@
   }
 }
 
-.panelBody {
+.panel-body {
   background-color: var(--toolbar-bg);
   color: inherit;
   flex: 1;

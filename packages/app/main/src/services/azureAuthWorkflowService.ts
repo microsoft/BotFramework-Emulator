@@ -154,9 +154,12 @@ export class AzureAuthWorkflowService {
       `nonce=${nonce}`,
       'x-client-SKU=Js',
       'x-client-Ver=1.0.17',
-      'resource=https://management.core.windows.net/',
-      `prompt=${renew ? 'none' : 'consent'}`
+      'resource=https://management.core.windows.net/'
     ];
+
+    if (renew) {
+      bits.push('prompt=none');
+    }
 
     const url = bits.join('&');
     browserWindow.loadURL(url);

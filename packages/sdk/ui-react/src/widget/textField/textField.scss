@@ -21,7 +21,7 @@
   </div>
 </span>
 */
-.styledTextFieldContainer {
+.styled-text-field-container {
   :global {
     .is-active .ms-TextField-fieldGroup:hover {
       border: var(--input-border-focus);
@@ -47,7 +47,7 @@
   }
 }
 
-.styledTextFieldInput {
+.styled-text-field-input {
   &::placeholder {
     color: var(--input-placeholder-color);
   }

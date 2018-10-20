@@ -1,9 +1,10 @@
-.questionColumn {
+.question-column {
   padding: 0 47px 0 20px;
   overflow-y: auto;
   height: 100%;
   font-family: var(--default-font-family);
   border-right: solid 1px var(--neutral-14);
+  
   input {
     margin-top: 5px;
     margin-bottom: 8px;
@@ -23,7 +24,7 @@
     cursor: pointer;
   }
 
-  & .plusBtn {
+  & .plus-btn {
     background: url("../../media/ic_add_thin.svg") no-repeat 50% 50%;
     background-size: 16px;
     height: 16px;
@@ -33,7 +34,7 @@
     top: 2px;
   }
 
-  & .phrasingBlock {
+  & .phrasing-block {
     margin-bottom: 8px;
     border-radius: 2px;
     background-color: var(--neutral-11);
@@ -41,7 +42,8 @@
     color: var(--neutral-12);
     font-size: 13px;
     white-space: normal;
-    & .closeBtn {
+
+    & .close-btn {
       float: right;
       color: var(--info-outline);
       background: url("../../media/ic_cancel.svg") no-repeat 50% 50%;

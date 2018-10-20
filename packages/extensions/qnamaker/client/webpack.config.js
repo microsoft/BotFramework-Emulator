@@ -24,6 +24,7 @@ module.exports = {
               modules: true,
               sass: false,
               namedExport: true,
+              camelCase: true,
               sourcemaps:true,
               banner: '// This is a generated file. Changes are likely to result in being overwritten'
             }

@@ -30,7 +30,7 @@
     height: auto;
   }
 
-  & > .editorTabIcon {
+  & > .editor-tab-icon {
     display: inline-block;
     width: 12px;
     margin-right: 8px;
@@ -46,12 +46,12 @@
   }
 
   &:hover {
-    > .editorTabClose {
+    > .editor-tab-close {
       opacity: 1;
     }
   }
 
-  & > .editorTabClose {
+  & > .editor-tab-close {
     text-decoration: none;
     display: inline-block;
     height: 16px;
@@ -78,19 +78,19 @@
   }
 }
 
-.truncatedTabText {
+.truncated-tab-text {
   max-width: 200px;
 }
 
-.draggedOverEditorTab {
+.dragged-over-editor-tab {
   background-color: var(--tab-active-tab-bg);
 }
 
-.activeEditorTab {
+.active-editor-tab {
   background-color: var(--tab-active-tab-bg);
   color: var(--tab-color);
 
-  & > .editorTabClose {
+  & > .editor-tab-close {
     opacity: 1;
   }
 }

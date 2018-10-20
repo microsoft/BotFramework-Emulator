@@ -70,7 +70,7 @@
   }
 }
 
-.arrowExpanded {
+.arrow-expanded {
   &::before {
     transform: skewX(45deg);
   }
@@ -80,13 +80,13 @@
   }
 }
 
-.absContent {
+.abs-content {
   height: 0;
   transition: height .25s ease-out;
   overflow: hidden;
 }
 
-.absTextFieldRow {
+.abs-text-field-row {
   > div {
     width: 100%;
     > div:first-child {
