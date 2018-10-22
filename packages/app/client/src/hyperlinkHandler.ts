@@ -40,8 +40,8 @@ import { SharedConstants } from '@bfemulator/app-shared';
 
 export function navigate(url: string) {
   try {
-    const parsed = URL.parse(url);
-    if (parsed.protocol.startsWith('oauth:')) {
+    const parsed = URL.parse(url) || { protocol: '' };
+    if ((parsed.protocol || '').startsWith('oauth:')) {
       navigateEmulatedOAuthUrl(url.substring(8));
     } else if (parsed.protocol.startsWith('oauthlink:')) {
       navigateOAuthUrl(url.substring(12));

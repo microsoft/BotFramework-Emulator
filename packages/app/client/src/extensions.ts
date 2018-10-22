@@ -98,7 +98,7 @@ export class InspectorAPI {
         canInspect = false;
       } else {
         // Value can be a regex or a string literal
-        if (criteria.value.startsWith('/')) {
+        if ((criteria.value || '').startsWith('/')) {
           const regex = new RegExp(criteria.value);
           canInspect = canInspect && regex.test(value);
         } else {
