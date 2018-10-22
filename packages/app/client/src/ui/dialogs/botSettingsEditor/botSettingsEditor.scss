@@ -34,12 +34,13 @@ a {
 .actions-list {
   list-style: none;
   position: absolute;
-  right: 85px;
+  right: 199px; // when re-enabling 'Generate new secret' link, original value: 85px;
   bottom: 62px;
 
   li {
     display: inline;
-    padding: 2px 5px;
+    padding: 2px 12px;
+    font-weight: 400;
   }
 
   li + li {

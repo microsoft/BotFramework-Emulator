@@ -114,7 +114,7 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
           <a
             href="javascript:void(0);"
             onClick={ this.onLearnMoreEncryptionClick }>
-            Learn more.
+            &nbsp;Learn more.
           </a>
         </Row>
 
@@ -143,14 +143,14 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
               Copy
             </a>
           </li>
-          <li>
+          {/* <li>
             <a
               className={ !encryptKey ? styles.disabledAction : '' }
               href="javascript:void(0);"
               onClick={ this.onResetClick }>
               Generate new secret
             </a>
-          </li>
+          </li> */}
         </ul>
 
         <DialogFooter>
@@ -299,14 +299,18 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
     input.setAttribute('disabled', '');
   }
 
-  private onResetClick = (): void => {
-    if (!this.state.encryptKey) {
-      return null;
-    }
-    this._generatedSecret = null;
-    const { generatedSecret } = this;
-    this.setState({ secret: generatedSecret, padlock: '', dirty: true });
-  }
+  // TODO: Re-enable ability to re-generate secret after 4.1
+  // See 'https://github.com/Microsoft/BotFramework-Emulator/issues/964' for more information
+  // See also: botSettingsEditor.spec.tsx
+
+  // private onResetClick = (): void => {
+  //   if (!this.state.encryptKey) {
+  //     return null;
+  //   }
+  //   this._generatedSecret = null;
+  //   const { generatedSecret } = this;
+  //   this.setState({ secret: generatedSecret, padlock: '', dirty: true });
+  // }
 
   private get generatedSecret(): string {
     if (this._generatedSecret) {

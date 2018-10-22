@@ -131,12 +131,15 @@ describe('The BotSettingsEditor dialog should', () => {
     expect(documentSpies.getElementById).toHaveBeenCalledWith('key-input');
   });
 
-  it('should generate a new secret when the "onResetClick" function is executed', () => {
-    const instance = node.instance();
-    const secret = instance.generatedSecret;
-    instance.onResetClick();
-    expect(instance.generatedSecret).not.toEqual(secret);
-  });
+  // TODO: Re-enable ability to re-generate secret after 4.1
+  // See 'https://github.com/Microsoft/BotFramework-Emulator/issues/964' for more information
+
+  // it('should generate a new secret when the "onResetClick" function is executed', () => {
+  //   const instance = node.instance();
+  //   const secret = instance.generatedSecret;
+  //   instance.onResetClick();
+  //   expect(instance.generatedSecret).not.toEqual(secret);
+  // });
 
   describe('onSaveClick', () => {
     it('should make the expected calls when saving a bot from protocol', async () => {
