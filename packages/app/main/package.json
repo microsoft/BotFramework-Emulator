@@ -1,7 +1,7 @@
 {
   "name": "@bfemulator/main",
   "packagename": "BotFramework-Emulator",
-  "version": "4.0.0-preview",
+  "version": "4.0.0-update-test",
   "private": true,
   "description": "Development tool for the Microsoft Bot Framework. Allows developers to test and debug bots on localhost.",
   "main": "./app/server/main.js",
