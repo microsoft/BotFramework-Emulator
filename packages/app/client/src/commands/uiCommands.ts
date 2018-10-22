@@ -52,6 +52,8 @@ import { azureArmTokenDataChanged, beginAzureAuthWorkflow, invalidateArmToken } 
 import { AzureAuthState } from '../data/reducer/azureAuthReducer';
 import { ProgressIndicatorPayload, updateProgressIndicator } from '../data/action/progressIndicatorActions';
 import { switchTheme } from '../data/action/themeActions';
+import { Certificate } from 'electron';
+import { ClientCertSelectDialogContainer } from '../ui/dialogs/clientCertSelectDialog/clientCertSelectDialogContainer';
 
 /** Register UI commands (toggling UI) */
 export function registerCommands(commandRegistry: CommandRegistry) {
@@ -133,4 +135,9 @@ export function registerCommands(commandRegistry: CommandRegistry) {
   commandRegistry.registerCommand(UI.UpdateProgressIndicator, (value: ProgressIndicatorPayload) => {
     store.dispatch(updateProgressIndicator(value));
   });
+
+  commandRegistry.registerCommand(UI.ShowSelectCertDialog, (certs: Certificate[]) => {
+    return DialogService.showDialog(ClientCertSelectDialogContainer, {certs});
+  });
+
 }

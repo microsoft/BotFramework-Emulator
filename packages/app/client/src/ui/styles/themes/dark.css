@@ -43,6 +43,7 @@ html {
   --nav-focused-tag-bg-opacity: 1;
   --nav-border-focus: 1px solid #00BCF2;
   --nav-link-selected-border: 1px solid transparent;
+  --nav-link-selected-focus: 1px solid var(--nav-bar-bg);
   --nav-link-hover-border: 1px solid transparent;
   --nav-link-badge-color: var(--neutral-1);
   --nav-link-badge-bg: #FF0000;
@@ -129,6 +130,9 @@ html {
   --toolbar-border: none;
   --toolbar-border-bottom: 1px solid var(--neutral-13);
   --toolbar-icon-color: #00BCF2;
+  --toolbar-text-color: var(--neutral-5);
+  --toolbar-text-active: var(--neutral-1);
+  --toolbar-button-hover-border: 1px solid transparent;
   --splitter-border: var(--toolbar-border-bottom);
 
   /* Welcome page */

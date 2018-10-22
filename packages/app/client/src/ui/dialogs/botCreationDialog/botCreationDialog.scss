@@ -6,19 +6,20 @@
   a {
     color: var(--link-color);
     text-decoration: none;
+    line-height: 20px;
   }
 }
 
-.multiInputRow {
+.multi-input-row {
   width: 420px;
   justify-content: space-between;
 }
 
-.smallInput input {
+.small-input input {
   width: 200px;
 }
 
-.botCreateForm {
+.bot-create-form {
   position: relative;
 }
 
@@ -32,8 +33,8 @@
     cursor: pointer;
     font-weight: 600;
     padding: 0;
-    white-space: normal;
     text-decoration: none;
+    white-space: normal;
 
     &:hover {
       text-decoration: underline;
@@ -54,15 +55,15 @@
   margin: 16px 145px 0 32px;
 }
 
-.encryptKeyCheckBox {
+.encrypt-key-check-box {
   margin-top: 30px;
 
   span {
-    width: 300px;
+    width: auto;
   }
 }
 
-.actionsList {
+.actions-list {
   list-style: none;
   position: absolute;
   right: 0;
@@ -79,7 +80,7 @@
     border-left: 1px solid var(--neutral-11);
   }
 
-  .disabledAction {
+  .disabled-action {
     color: var(--link-color-disabled);
     cursor: default;
   }

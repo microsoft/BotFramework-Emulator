@@ -31,69 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-.endpoint-warning {
-  height: 11px;
-  color: var(--warning-outline);
-  font-family: var(--default-font-family);
-  font-size: 11px;
-  line-height: 11px;
-}
+import { connect } from 'react-redux';
+import { DialogService } from '../service';
+import { ClientCertSelectDialogProps, ClientCertSelectDialog } from './clientCertSelectDialog';
 
-.arrow {
-  position: relative;
-  padding-right: 20px;
-  margin-top: 28px;
-  display: inline-block;
-  text-decoration: none;
-  &::before {
-    content: '';
-    position: absolute;
-    border-left: 1px solid blue;
-    width: 1px;
-    right: 0;
-    bottom: 3px;
-    height: 8px;
-    transform: skewX(-45deg);
-    transition: transform .25s ease-out;
-  }
+const mapDispatchToProps = (_dispatch: () => void): ClientCertSelectDialogProps => {
+  return {
+    dismiss: certs => DialogService.hideDialog(certs)
+  };
+};
 
-  &::after {
-    content: '';
-    position: absolute;
-    height: 8px;
-    border-right: 1px solid blue;
-    transform: skewX(45deg);
-    width: 1px;
-    right: 9.5px;
-    bottom: 3px;
-    transition: transform .25s ease-out;
-  }
-}
-
-.arrow-expanded {
-  &::before {
-    transform: skewX(45deg);
-  }
-
-  &::after {
-    transform: skewX(-45deg);
-  }
-}
-
-.abs-content {
-  height: 0;
-  transition: height .25s ease-out;
-  overflow: hidden;
-}
-
-.abs-text-field-row {
-  > div {
-    width: 100%;
-    > div:first-child {
-      margin-right: 5px;
-    }
-    > div:last-child {
-      margin-left: 5px;
-    }
-  }
-}
+export const ClientCertSelectDialogContainer = connect(
+  null,
+  mapDispatchToProps
+)(ClientCertSelectDialog as any) as any;
