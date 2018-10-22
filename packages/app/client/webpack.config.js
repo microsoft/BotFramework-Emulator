@@ -109,7 +109,7 @@ const defaultConfig = {
   output: {
     path: path.resolve('./public'),
     filename: '[name].js',
-    publicPath: 'http://localhost:3000/',
+    publicPath: '/',
   },
 
   plugins: [
