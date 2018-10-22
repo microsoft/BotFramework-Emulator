@@ -80,6 +80,19 @@ class LuisClient {
   private publishService: Publish;
   private luisAppInfo: LuisAppInfo;
 
+  private static getNormalizedEntityType(entityType: string = ''): string {
+    const builtinPrefix = 'builtin.';
+    const builtInPrefixLength = builtinPrefix.length;
+    if (entityType.startsWith(builtinPrefix)) {
+      let typeEndIndex = entityType.indexOf('.', builtInPrefixLength);
+      if (typeEndIndex < 0) {
+        typeEndIndex = entityType.length;
+      }
+      return entityType.substring(builtInPrefixLength, typeEndIndex);
+    }
+    return entityType;
+  }
+
   private static getCacheKey(apiName: string, appId: string, versionId: string | undefined = undefined): string {
     let key: string = apiName + '_' + appId;
     if (versionId) {
@@ -156,7 +169,7 @@ class LuisClient {
       intentName: newIntent,
       entityLabels: luisResponse.entities.map(e => {
         return {
-          entityName: this.getNormalizedEntityType(e.type),
+          entityName: LuisClient.getNormalizedEntityType((e.type || '')),
           startCharIndex: e.startIndex,
           endCharIndex: e.endIndex
         };
@@ -225,19 +238,6 @@ class LuisClient {
         }
       }, WaitIntervalInMs);
     });
-  }
-
-  private getNormalizedEntityType(entityType: string): string {
-    const builtinPrefix = 'builtin.';
-    const builtInPrefixLength = builtinPrefix.length;
-    if (entityType.startsWith(builtinPrefix)) {
-      let typeEndIndex = entityType.indexOf('.', builtInPrefixLength);
-      if (typeEndIndex < 0) {
-        typeEndIndex = entityType.length;
-      }
-      return entityType.substring(builtInPrefixLength, typeEndIndex);
-    }
-    return entityType;
   }
 
   private configureClient() {

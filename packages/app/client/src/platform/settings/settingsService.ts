@@ -78,7 +78,7 @@ class EmulatorSettingsImpl implements EmulatorSettings {
   }
 
   get cwdAsBase(): string {
-    let base = this.cwd;
+    let base = this.cwd || '';
     if (!base.startsWith('/')) {
       base = `/${base}`;
     }
