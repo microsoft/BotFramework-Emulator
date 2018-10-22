@@ -119,6 +119,7 @@
       "category": "public.app-category.developer-tools"
     },
     "linux": {
+      "target": "AppImage",
       "artifactName": "${name}-${version}-linux.${ext}",
       "category": "Development"
     },
