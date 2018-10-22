@@ -2,7 +2,8 @@ import { Certificate } from 'electron';
 import * as React from 'react';
 import { Component } from 'react';
 import { Dialog, DefaultButton, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
-import * as styles from '../dialogStyles.scss';
+import * as styles from './clientCertSelectDialog.scss';
+import * as dialogStyles from '../dialogStyles.scss';
 
 export interface ClientCertSelectDialogState {
     selectedIndex: number;
@@ -23,9 +24,9 @@ export class ClientCertSelectDialog extends Component<ClientCertSelectDialogProp
   public render() {
     const { selectedIndex } = this.state;
     return (
-      <Dialog title="Select a certificate" cancel={ this.props.dismiss } className={ styles.dialogMedium }>
+      <Dialog title="Select a certificate" cancel={ this.props.dismiss } className={ dialogStyles.dialogMedium }>
         <p>Select a certificate to authenticate to ????</p>
-        <ul>
+        <ul className={ styles.certList }>
             {
               this.props.certs.map((cert, index) => {
                 return (
@@ -52,7 +53,6 @@ export class ClientCertSelectDialog extends Component<ClientCertSelectDialogProp
               })
             } 
         </ul>
-
         <DialogFooter>
           <DefaultButton 
             text="Cancel" 
