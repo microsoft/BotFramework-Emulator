@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, Certificate } from 'electron';
 import fetch from 'node-fetch';
 import uuidv4 from 'uuid/v4';
 import * as jwt from 'jsonwebtoken';
@@ -109,16 +109,14 @@ export class AzureAuthWorkflowService {
     return response;
   }
 
-  private static async onSelectClientCert(event: Event, uri: string, list: any, callback: any) {
+  private static async onSelectClientCert(event: Event, uri: string, certs: Certificate[], callback: any) {
     event.preventDefault();
-    
-    // list is if type Certificate[]
-    // Docs for Certificate type can be found here: https://electronjs.org/docs/api/structures/certificate
 
     // Open modal, let users select cert from list, and pass to callback
-    let cert = await mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ShowSelectCertDialog);
+    const cert = await mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ShowSelectCertDialog, certs);
     callback(cert);
   }
+
   private static async launchAuthWindow(renew: boolean, redirectUri: string): Promise<BrowserWindow> {
     const browserWindow = new BrowserWindow({
       modal: true,
