@@ -13,7 +13,7 @@ async function writeLatestYml() {
 
   writeYamlMetadataFile(
     releaseFileName,
-    'latest-mac.yml',
+    'latest-linux.yml',
     './dist',
     sha512,
     releaseDate
