@@ -55,7 +55,7 @@ export default function approximateObjectSize(object: any, cache: any[] = []): n
 
         // check for infinite recursion
         if (typeof value === 'object' && value !== null) {
-          if (cache.indexOf(value)) {
+          if (cache.indexOf(value) !== -1) {
             continue;
           }
 
