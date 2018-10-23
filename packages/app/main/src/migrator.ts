@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { app } from 'electron';
 import * as Fs from 'fs';
 import * as Path from 'path';
 import * as BotActions from './botData/actions/botActions';
@@ -60,7 +61,18 @@ export class Migrator {
    *  to the MRU bots list and displays an overview page
    */
   public static async migrateBots(): Promise<boolean> {
-    const botFilesDirectory = Path.join(ensureStoragePath(), 'migration');
+    // const botFilesDirectory = Path.join(ensureStoragePath(), 'migration');
+
+    // - app data path in v3 will be %appdata%/botframework-emulator/botframework-emulator
+    // - v4 path will be %appdata%/@bfemulator/main/botframework-emulator
+    const botFilesDirectory =
+      // %appdata%/botframework-emulator
+      app.getPath('userData')
+      // %appdata%/@bfemulator/main/botframework-emulator
+      .replace('botframework-emulator', Path.join('@bfemulator', 'main', 'botframework-emulator'));
+
+    console.log(`MIGRATION CHECKING IN ${botFilesDirectory}`);
+
     // if the /migration/ directory does not exist then abort migration
     if (!Fs.existsSync(botFilesDirectory)) {
       return false;
