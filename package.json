@@ -1,13 +1,12 @@
 {
   "name": "botframework-emulator",
   "version": "3.5.36",
-  "description": "Emulator for the Microsoft Bot Framework. Allows developers to test and debug bots on localhost.",
+  "description": "Emulator for the Microsoft Bot Framework. Allows developers to test and debug bots.",
   "main": "./app/server/main.js",
   "scripts": {
     "build": "gulp build",
-    "pack": "build --dir",
-    "dist": "build",
-    "release": "build",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
     "start": "./node_modules/.bin/electron ."
   },
   "repository": {
@@ -43,8 +42,8 @@
     "botbuilder": "3.13.1",
     "del": "2.2.2",
     "electron": "2.0.9",
-    "electron-builder": "19.18.0",
-    "electron-builder-squirrel-windows": "19.18.0",
+    "electron-builder": "^20.28.4",
+    "electron-builder-squirrel-windows": "^20.28.3",
     "electron-packager": "8.6.0",
     "electron-react-devtools": "0.4.0",
     "electron-winstaller": "2.5.2",
@@ -106,35 +105,26 @@
   "build": {
     "appId": "com.electron.botframework-emulator",
     "copyright": "Copyright © 2016-2018 Microsoft",
+    "win": {
+      "target": "nsis",
+      "artifactName": "${name}-${version}-windows-setup.${ext}"
+    },
+    "nsis": {
+      "shortcutName": "Bot Framework Emulator (V3)",
+      "include": "./build/installer.nsh"
+    },
     "mac": {
+      "target": ["dmg", "zip"],
+      "artifactName": "${name}-${version}-mac.${ext}",
       "category": "public.app-category.developer-tools"
     },
     "linux": {
+      "target": "AppImage",
+      "artifactName": "${name}-${version}-linux.${ext}",
       "category": "Development"
     },
-    "publish": {
-      "provider": "github",
-      "owner": "Microsoft"
-    },
-    "squirrelWindows": {
-      "loadingGif": "build/bf-splash.gif",
-      "remoteReleases": "https://github.com/Microsoft/BotFramework-Emulator"
-    },
-    "directories": {
-      "output": "install"
-    },
-    "files": [
-      "**/*",
-      "!**/node_modules/*/{README.md,README,readme.md,readme,test}",
-      "!**/node_modules/.bin",
-      "!**/*.{o,hprof,orig,pyc,pyo,rbc}",
-      "!**/._*",
-      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,__pycache__,thumbs.db,.gitignore,.gitattributes,.editorconfig,.idea,appveyor.yml,.travis.yml,circle.yml}",
-      "!.vscode${/*}",
-      "!doc${/*}",
-      "!src${/*}",
-      "!**/{tsconfig.json,gulpfile.js,index.tsx,README.md,getlicenses.cmd}",
-      "!**/node_modules/@types"
-    ]
+    "electronVersion": "2.0.9",
+    "publish": null,
+    "remoteBuild": false
   }
 }
