@@ -33,11 +33,11 @@
 
 import * as readTextFile from 'read-text-file';
 
-export const readFileSync = (path4: string): string => {
+export const readFileSync = (path: string): string => {
   try {
-    return readTextFile.readSync(path4);
+    return readTextFile.readSync(path);
   } catch (e) {
-    console.error(`Error reading file ${path4}: ${e}`);
+    console.error(`Error reading file ${path}: ${e}`);
     return '';
   }
 };

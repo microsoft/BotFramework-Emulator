@@ -31,44 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export default function approximateObjectSize(object: any, cache: any[] = []): number {
-  switch (typeof object) {
-    case 'boolean':
-      return 4;
+import { ensureStoragePath } from './ensureStoragePath';
+import * as fs from 'fs';
 
-    case 'number':
-      return 8;
-
-    case 'string':
-      return object.length * 2;
-
-    case 'object':
-      let bytes = 0;
-
-      cache.push(object);
-
-      for (let i in object) {
-        if (!object.hasOwnProperty(i)) {
-          continue;
-        }
-        const value = object[i];
-
-        // check for infinite recursion
-        if (typeof value === 'object' && value !== null) {
-          if (cache.indexOf(value) !== -1) {
-            continue;
-          }
-
-          cache.push(value);
-        }
-
-        bytes += approximateObjectSize(value, cache);
-      }
-
-      return bytes;
-
-    default:
-      // value is null, undefined, or a function
-      return 0;
+/** Save JSON object to file. */
+export const saveSettings = <T>(filename: string, settings: T): void => {
+  try {
+    filename = `${ensureStoragePath()}/${filename}`;
+    fs.writeFileSync(filename, JSON.stringify(settings, null, 2), { encoding: 'utf8' });
+  } catch (e) {
+    console.error(`Failed to write file: ${filename}`, e);
   }
-}
+};
