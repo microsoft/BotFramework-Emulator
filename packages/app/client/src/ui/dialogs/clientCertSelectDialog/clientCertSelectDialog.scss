@@ -53,20 +53,23 @@
         background-color: var(--neutral-5);
         color: var(--neutral-16);
     }
-    // TO DO: styling for hover & selected
 }
-.selected-cert {
+.cert-list .selected-cert {
     background-color: var(--dialog-item-selected);
     color: var(--neutral-1);
 
     .cert-icon {
         background-color: var(--neutral-16);
     }
+
+    &:hover {
+        background-color: var(--dialog-item-selected);
+        color: var(--neutral-1);
+    }
 }
 
 :global {
     ::-webkit-scrollbar-corner {
         background-color: transparent; 
-        // TO DO: confirm invisible scrollbar with design
     } 
 }
