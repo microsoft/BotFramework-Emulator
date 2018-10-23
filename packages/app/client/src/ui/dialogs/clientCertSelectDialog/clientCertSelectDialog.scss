@@ -1,3 +1,72 @@
 .cert-list {
+    height: auto;
+    margin: 0;
+    max-height: 300px;
+    overflow-y: scroll;
+    padding: 0;
+}
+
+.cert-list li {
+    cursor: pointer;
+    display: flex;
     list-style: none;
+    margin: 0;
+    padding: 0 24px 12px 0;
+    width: 100%;
+
+    .cert-icon {
+        background-color: var(--neutral-12);
+        flex-shrink: 0;
+        height: 36px;
+        margin: 12px;
+        width: 36px;
+    }
+
+    .cert-info {
+        flex-shrink: 1;
+        overflow: hidden;
+        padding-top:12px;
+
+        dt, dd {
+            display: inline;
+        }
+        dt {
+            font-weight: 600;
+            float: left;
+            margin-right: 8px;
+            width: 48px;
+        }
+        dd {
+            margin-left: 0;
+        }
+        
+        dl {
+            display: block;
+            margin: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+
+    &:hover {
+        background-color: var(--neutral-5);
+        color: var(--neutral-16);
+    }
+    // TO DO: styling for hover & selected
+}
+.selected-cert {
+    background-color: var(--dialog-item-selected);
+    color: var(--neutral-1);
+
+    .cert-icon {
+        background-color: var(--neutral-16);
+    }
+}
+
+:global {
+    ::-webkit-scrollbar-corner {
+        background-color: transparent; 
+        // TO DO: confirm invisible scrollbar with design
+    } 
 }
