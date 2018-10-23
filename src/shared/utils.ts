@@ -49,6 +49,8 @@ export const ensureStoragePath = (): string => {
     const app = Electron.app || Electron.remote.app;
     const storagePath = commandLineArgs.storagepath || path.join(app.getPath("userData"), "botframework-emulator");
     Mkdirp.sync(storagePath);
+    console.log('COMMAND LINE ARG SP: ', commandLineArgs.storagepath);
+    console.log('STORAGE PATH: ', storagePath);
     return storagePath;
 }
 
