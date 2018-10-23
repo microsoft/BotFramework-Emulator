@@ -45,7 +45,7 @@ export const AppUpdater = new class extends EventEmitter {
     });
 
     // we only want to grab v4 if it is a release
-    autoUpdater.allowPrerelease = false;
+    autoUpdater.allowPrerelease = true;
     // prompt user explicitly to download
     autoUpdater.autoDownload = false;
     // mute built-in logger
