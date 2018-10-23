@@ -76,7 +76,7 @@ AppUpdater.on('update-not-available', () => {
 AppUpdater.on('update-available', (updateInfo: UpdateInfo) => {
   log.debug(`New version of the Emulator is available: ${updateInfo.version}`);
   if (updateInfo.version.startsWith('4')) {
-    Emulator.send('v4-update-available');
+    Emulator.send('v4-update-available', updateInfo.version);
   }
 });
 

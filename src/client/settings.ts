@@ -112,6 +112,7 @@ export interface IPersistentSettings {
 
 export interface IUpdateState {
   showing?: boolean;
+  version?: string;
 }
 
 export class PersistentSettings implements IPersistentSettings {
@@ -311,8 +312,8 @@ export const startup = () => {
     Electron.ipcRenderer.on('listening', (event, ...args) => {
         Emulator.serviceUrl = args[0].serviceUrl;
     });
-    Electron.ipcRenderer.on('v4-update-available', (event) => {
-      UpdateActions.setShowing(true);
+    Electron.ipcRenderer.on('v4-update-available', (event, version: string) => {
+      UpdateActions.setShowing(true, version);
     });
 
     // Let the server know we're done starting up. In response, it will send us it's current settings (bot list and such).
