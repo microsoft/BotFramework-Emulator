@@ -1,7 +1,7 @@
-const { getEnvVar } = require('./utils');
+const { hashFileAsync, writeYamlMetadataFile } = require('./utils');
 const packageJson = require('../../package.json');
-const platform = getEnvVar('EMU_PLATFORM', 'mac');
-const version = getEnvVar('EMU_VERSION', packageJson.version);
+const platform = process.env['EMU_PLATFORM'] ||  'mac';
+const version = process.env['EMU_VERSION'] ||  packageJson.version;
 const releaseFileName = `${packageJson.name}-${version}-${platform}.zip`;
 
 writeLatestYml().catch(e => console.error(`Error while trying to write latest-mac.yml: ${e}`));
@@ -12,32 +12,11 @@ async function writeLatestYml() {
   const releaseDate = new Date().toISOString();
 
   writeYamlMetadataFile(
+    version,
     releaseFileName,
     'latest-mac.yml',
     './dist',
     sha512,
     releaseDate
   );
-}
-
-/** Generates a hash for the specified file */
-function hashFileAsync(filename, algo = 'sha512', encoding = 'base64') {
-  const builderUtil = require('builder-util');
-  return builderUtil.hashFile(filename, algo, encoding);
-}
-
-/** Generates the .yml metadata file */
-function writeYamlMetadataFile(releaseFilename, yamlFilename, path, fileHash, releaseDate) {
-  const fsp = require('fs-extra');
-  const yaml = require('js-yaml');
-
-  const ymlInfo = {
-    version,
-    releaseDate,
-    githubArtifactName: releaseFilename,
-    path: releaseFilename,
-    sha512: fileHash
-  };
-  const ymlStr = yaml.safeDump(ymlInfo);
-  fsp.writeFileSync(`./${path}/${yamlFilename}`, ymlStr);
 }
