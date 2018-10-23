@@ -90,6 +90,7 @@ html {
 
   /* Dialog a.k.a. Modal and panels */
   --dialog-bg: var(--neutral-2);
+  --dialog-item-selected: #3062D6;
 
   /* Services Explorer */
   --explorer-panel-bg: var(--neutral-3);
