@@ -24,30 +24,39 @@ export class ClientCertSelectDialog extends Component<ClientCertSelectDialogProp
   public render() {
     const { selectedIndex } = this.state;
     return (
-      <Dialog title="Select a certificate" cancel={ this.props.dismiss } className={ dialogStyles.dialogMedium }>
+      <Dialog 
+        cancel={ this.props.dismiss } 
+        className={ dialogStyles.dialogMedium }
+        title="Select a certificate" 
+      >
         <p>Select a certificate to authenticate to ????</p>
-        <ul className={ styles.certList }>
+        <ul className={ styles.certList } role="listbox">
             {
               this.props.certs.map((cert, index) => {
                 return (
                   <li 
-                    className={ selectedIndex === index ? 'SelectedClassName' : 'nonSelectedClassName'}
-                    key={ index } 
+                    aria-selected={ selectedIndex === index }
+                    className={ selectedIndex === index ? styles.selectedCert : ''}
                     data-index={ index } 
+                    key={ index } 
                     onClick={ this.onCertListItemClick } 
+                    role="option"
                   >
-                    <dl>
-                      <dt>Subject:</dt>
-                      <dd>{cert.subjectName}</dd>
-                    </dl>
-                    <dl>
-                      <dt>Issuer:</dt>
-                      <dd>{cert.issuerName}</dd>
-                    </dl>
-                    <dl>
-                      <dt>Serial:</dt>
-                      <dd>{cert.serialNumber}</dd>
-                    </dl>
+                    <div className={ styles.certIcon } />
+                    <div className={ styles.certInfo }>
+                      <dl>
+                        <dt>Subject:</dt>
+                        <dd>{cert.subjectName}</dd>
+                      </dl>
+                      <dl>
+                        <dt>Issuer:</dt>
+                        <dd>{cert.issuerName}</dd>
+                      </dl>
+                      <dl>
+                        <dt>Serial:</dt>
+                        <dd>{cert.serialNumber}</dd>
+                      </dl>
+                    </div>
                   </li>
                 );
               })
