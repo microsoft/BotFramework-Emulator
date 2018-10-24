@@ -57,6 +57,7 @@ const AdaptiveCardsHostConfig = require('./adaptivecards-hostconfig.json');
 
 export interface MainViewState {
   showUpdateDialog: boolean;
+  updateVersion: string;
 }
 
 export class MainView extends React.Component<{}, MainViewState> {
@@ -75,7 +76,8 @@ export class MainView extends React.Component<{}, MainViewState> {
       super(props);
 
       this.state = {
-        showUpdateDialog: false
+        showUpdateDialog: false,
+        updateVersion: ''
       };
     }
 
@@ -122,7 +124,10 @@ export class MainView extends React.Component<{}, MainViewState> {
             } catch(e) {
                 //log.error(e.message);
             }
-            this.setState({ showUpdateDialog: settings.update.showing });
+            this.setState({
+              showUpdateDialog: settings.update.showing,
+              updateVersion: settings.update.version
+            });
         });
     }
 
@@ -319,6 +324,7 @@ export class MainView extends React.Component<{}, MainViewState> {
 
     render() {
         const settings = getSettings();
+        const { showUpdateDialog, updateVersion } = this.state;
 
         const minVertSplit = 0;
         const minHorizSplit = 42;
@@ -359,7 +365,7 @@ export class MainView extends React.Component<{}, MainViewState> {
                     </Splitter>
                 </div>
                 <AppSettingsDialog />
-                <UpdateDialog showing={ this.state.showUpdateDialog }/>
+                <UpdateDialog showing={ showUpdateDialog } version={ updateVersion }/>
             </div>
         );
     }

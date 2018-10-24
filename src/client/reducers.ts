@@ -177,16 +177,18 @@ type ServerSettingsAction = {
 type UpdateAction = {
   type: 'Update_SetShowing',
   state: {
-    value: boolean
+    value: boolean,
+    version?: string
   }
 };
 
 export class UpdateActions {
-  static setShowing(showing: boolean) {
+  static setShowing(showing: boolean, version?: string) {
     dispatch<UpdateAction>({
       type: 'Update_SetShowing',
       state: {
-        value: showing
+        value: showing,
+        version
       }
     });
   }
@@ -435,7 +437,14 @@ export const updateReducer: Reducer<IUpdateState> = (
 ) => {
   switch (action.type) {
     case 'Update_SetShowing':
-      return Object.assign({}, state, { showing: action.state.value });
+      return Object.assign(
+        {},
+        state,
+        {
+          showing: action.state.value,
+          version: action.state.version
+        }
+      );
     default:
       return state;
   }

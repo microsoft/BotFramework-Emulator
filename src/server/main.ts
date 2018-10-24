@@ -70,13 +70,13 @@ AppUpdater.on('checking-for-update', () => {
 });
 
 AppUpdater.on('update-not-available', () => {
-  log.debug('Emulator is up to date.');
+  log.debug('No new version found.');
 });
 
 AppUpdater.on('update-available', (updateInfo: UpdateInfo) => {
   log.debug(`New version of the Emulator is available: ${updateInfo.version}`);
   if (updateInfo.version.startsWith('4')) {
-    Emulator.send('v4-update-available');
+    Emulator.send('v4-update-available', updateInfo.version);
   }
 });
 
@@ -99,7 +99,9 @@ AppUpdater.on('update-downloaded', (updateInfo: UpdateInfo) => {
 
 AppUpdater.on('error', (err: Error, message: string) => {
   log.error(`Error while updating the Emulator: ${(err && err.message) || message}`);
-  dialog.showErrorBox('Error updating app', `'There was an error while using the app updater: \n\n${message}`);
+  dialog.showErrorBox(
+    'Error updating app',
+    'There was an error while using auto update. Please check the log panel for details.');
 });
 
 Electron.ipcMain.on('download-v4-update', () => {
