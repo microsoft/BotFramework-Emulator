@@ -31,18 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Fs from 'fs';
-import * as Mkdirp from 'mkdirp';
-import * as Path from 'path';
+import * as fs from 'fs';
+import * as mkdirp from 'mkdirp';
+import * as path from 'path';
 
 /** Writes contents to a file at path */
 export const writeFile = (filePath: string, contents: object | string): void => {
   try {
     const contentsToWrite = typeof contents === 'object' ? JSON.stringify(contents, null, 2) : contents;
-
     // write parent director(y | ies) if non-existent
-    Mkdirp.sync(Path.dirname(filePath));
-    Fs.writeFileSync(filePath, contentsToWrite, { encoding: 'utf8' });
+    mkdirp.sync(path.dirname(filePath));
+    fs.writeFileSync(filePath, contentsToWrite, { encoding: 'utf8' });
   } catch (e) {
     console.error(`Failed to write file at ${filePath}`, e);
   }

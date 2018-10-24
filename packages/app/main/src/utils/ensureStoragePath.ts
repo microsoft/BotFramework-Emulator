@@ -32,7 +32,7 @@
 //
 
 import * as path from 'path';
-import * as Mkdirp from 'mkdirp';
+import * as mkdirp from 'mkdirp';
 import * as globals from '../globals';
 import * as electron from 'electron'; // use a lowercase name "electron" to prevent clash with "Electron" namespace
 const electronApp: Electron.App = electron.app;
@@ -43,6 +43,6 @@ export const ensureStoragePath = (): string => {
   const commandLineArgs = globals.getGlobal('commandlineargs');
   const app = electronApp || electronRemote.app;
   const storagePath = commandLineArgs.storagepath || path.join(app.getPath('userData'), 'botframework-emulator');
-  Mkdirp.sync(storagePath);
+  mkdirp.sync(storagePath);
   return storagePath;
 };
