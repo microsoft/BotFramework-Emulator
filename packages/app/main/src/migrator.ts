@@ -34,6 +34,7 @@
 import { app } from 'electron';
 import * as Fs from 'fs';
 import * as Path from 'path';
+import { sync as mkdirp } from 'mkdirp';
 import * as BotActions from './botData/actions/botActions';
 import { ensureStoragePath } from './utils/ensureStoragePath';
 import { writeFile } from './utils/writeFile';
@@ -42,6 +43,7 @@ import { BotConfiguration } from 'botframework-config';
 import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
 import { getStore } from './botData/store';
 import { mainWindow } from './main';
+import { cloneBot, saveBot } from './botHelpers';
 
 /** Performs the V4 side of migration from V3 -> V4 bots */
 export class Migrator {
@@ -61,17 +63,18 @@ export class Migrator {
    *  to the MRU bots list and displays an overview page
    */
   public static async migrateBots(): Promise<boolean> {
-    // const botFilesDirectory = Path.join(ensureStoragePath(), 'migration');
-
     // - app data path in v3 will be %appdata%/botframework-emulator/botframework-emulator
     // - v4 path will be %appdata%/@bfemulator/main/botframework-emulator
-    const botFilesDirectory =
-      // %appdata%/botframework-emulator
+    let botFilesDirectory =
+      // %appdata%/@bfemulator/main
       app.getPath('userData')
-      // %appdata%/@bfemulator/main/botframework-emulator
-      .replace('botframework-emulator', Path.join('@bfemulator', 'main', 'botframework-emulator'));
-
-    console.log(`MIGRATION CHECKING IN ${botFilesDirectory}`);
+      // %appdata%/botframework-emulator/botframework-emulator
+      .replace(
+        Path.join('@bfemulator', 'main'),
+        Path.join('botframework-emulator', 'botframework-emulator')
+      );
+    // %appdata%/botframework-emulator/botframework-emulator/migration
+    botFilesDirectory = Path.join(botFilesDirectory, 'migration');
 
     // if the /migration/ directory does not exist then abort migration
     if (!Fs.existsSync(botFilesDirectory)) {
@@ -85,10 +88,23 @@ export class Migrator {
         const botFile = botFiles[i];
         // read the bot file and create a bot info item from it
         try {
-          const path = Path.join(ensureStoragePath(), 'migration', botFile);
-          const bot = await BotConfiguration.load(path);
+          // v3 path
+          const oldPath = Path.join(botFilesDirectory, botFile);
+          // v4 path
+          const newPathBase = Path.join(ensureStoragePath(), 'migration');
+          if (!Fs.existsSync(newPathBase)) {
+            mkdirp(newPathBase);
+          }
+          const newPath = Path.join(newPathBase, botFile);
+
+          // load bot from old path, then change its path to the new path
+          const botWithOldPath = await BotConfiguration.load(oldPath);
+          const bot = cloneBot(botWithOldPath);
+          bot.path = newPath;
+          await saveBot(bot);
+
           const botInfo: BotInfo = {
-            path,
+            path: newPath,
             displayName: bot.name,
             secret: null
           };
@@ -119,6 +135,6 @@ export class Migrator {
 
   /** Checks for the migration marker to determine if it has already been performed */
   private static get migrationHasBeenPerformed(): boolean {
-    return Fs.existsSync(Path.join(ensureStoragePath(), 'migration_marker.txt'));
+    return Fs.existsSync(Path.join(ensureStoragePath(), this._migrationMarkerName));
   }
 }
