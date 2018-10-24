@@ -50,21 +50,20 @@ jest.mock('electron', () => ({
 let mockWillCallMkdirp;
 let mockCalls: MockCall[] = [];
 let mockFailExists;
-jest.mock('fs', () => ({
-  existsSync: (path: string) => {
-    mockCalls.push({ name: 'existsSync', args: [path] });
+jest.mock('fs-extra', () => ({
+  pathExists: (path: string) => {
+    mockCalls.push({ name: 'pathExists', args: [path] });
     if (path.startsWith('v4') && !mockWillCallMkdirp) {
       // this will mock the scenario in which the v4
       // /migration/ dir does not exist and is created for the first time
       mockWillCallMkdirp = true;
-      return false;
+      return Promise.resolve(false);
     }
     if (path.startsWith('nonexistent') || mockFailExists) {
-      return false;
+      return Promise.resolve(false);
     }
-    return true;
-  },
-  readFileSync: () => ''
+    return Promise.resolve(true);
+  }
 }));
 
 jest.mock('./utils/getFilesInDir', () => ({
@@ -170,7 +169,7 @@ describe('Migrator tests', () => {
     const result = await Migrator.migrateBots();
     expect(result).toBe(false);
     expect(mockCalls.some(_call => 
-      _call.name === 'existsSync' &&
+      _call.name === 'pathExists' &&
       _call.args[0] === Path.join('nonexistent', 'botframework-emulator', 'botframework-emulator', 'migration')
     )).toBe(true);
   });

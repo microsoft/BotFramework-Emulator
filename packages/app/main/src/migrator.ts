@@ -32,7 +32,7 @@
 //
 
 import { app } from 'electron';
-import * as Fs from 'fs';
+import * as Fs from 'fs-extra';
 import * as Path from 'path';
 import { sync as mkdirp } from 'mkdirp';
 import * as BotActions from './botData/actions/botActions';
@@ -51,7 +51,7 @@ export class Migrator {
 
   /** Runs the V4 side of migration if necessary */
   public static async startup(): Promise<void> {
-    if (!this.migrationHasBeenPerformed) {
+    if (!await this.migrationHasBeenPerformed()) {
       const migrationResult = await this.migrateBots();
       if (migrationResult) {
         this.leaveMigrationMarker();
@@ -77,7 +77,7 @@ export class Migrator {
     botFilesDirectory = Path.join(botFilesDirectory, 'migration');
 
     // if the /migration/ directory does not exist then abort migration
-    if (!Fs.existsSync(botFilesDirectory)) {
+    if (!await Fs.pathExists(botFilesDirectory)) {
       return false;
     }
     // read bots to be migrated from directory
@@ -92,7 +92,7 @@ export class Migrator {
           const oldPath = Path.join(botFilesDirectory, botFile);
           // v4 path
           const newPathBase = Path.join(ensureStoragePath(), 'migration');
-          if (!Fs.existsSync(newPathBase)) {
+          if (!await Fs.pathExists(newPathBase)) {
             mkdirp(newPathBase);
           }
           const newPath = Path.join(newPathBase, botFile);
@@ -134,7 +134,7 @@ export class Migrator {
   }
 
   /** Checks for the migration marker to determine if it has already been performed */
-  private static get migrationHasBeenPerformed(): boolean {
-    return Fs.existsSync(Path.join(ensureStoragePath(), this._migrationMarkerName));
+  private static async migrationHasBeenPerformed(): Promise<boolean> {
+    return await Fs.pathExists(Path.join(ensureStoragePath(), this._migrationMarkerName));
   }
 }
