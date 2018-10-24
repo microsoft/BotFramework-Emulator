@@ -1324,3 +1324,8 @@
   margin-right: 8px;
   margin-left: auto;
 }
+
+.update-dialog .update-dialog-content a {
+  text-decoration: none;
+  color: #0078D7;
+}

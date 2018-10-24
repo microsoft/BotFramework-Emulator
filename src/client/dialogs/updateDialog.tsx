@@ -64,7 +64,8 @@ export class UpdateDialog extends React.Component<UpdateDialogProps, UpdateDialo
         <h1 className="update-dialog-header">A new version of the Bot Framework Emulator is available</h1>
         <p className="update-dialog-content">
           Bot Framework Emulator { this.props.version || '' } is available. Would you like to install the new version?
-          Learn more about Emulator v4.
+          &nbsp;
+          <a href="https://aka.ms/botemulator">Learn more about Emulator v4.</a>
         </p>
         <div className="input-group appsettings-checkbox-group">
           <label className="form-label clickable">
