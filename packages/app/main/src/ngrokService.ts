@@ -85,13 +85,12 @@ export class NgrokService {
   }
 
   public async startup() {
-    this.cacheHostAndPortSettings();
-
+    this.cacheSettings();
     await this.recycle();
   }
 
   public async updateNgrokFromSettings(framework: FrameworkSettings) {
-    this.cacheHostAndPortSettings();
+    this.cacheSettings();
     this._bypass = framework.bypassNgrokLocalhost;
 
     if (this._ngrokPath !== framework.ngrokPath) {
@@ -201,8 +200,12 @@ export class NgrokService {
     }
   }
 
-  private cacheHostAndPortSettings() {
-    const localhost = getStore().getState().framework.localhost || 'localhost';
+  private cacheSettings() {
+    // Get framework from state
+    const framework = getStore().getState().framework;
+
+    // Cache host and port
+    const localhost = framework.localhost || 'localhost';
     const parts = localhost.split(':');
     let hostname = localhost;
     if (parts.length > 0) {
@@ -213,6 +216,9 @@ export class NgrokService {
       // port = +parts[1].trim();
     }
     this._localhost = hostname;
+
+    // Cache bypass ngrok for local bots
+    this._bypass = framework.bypassNgrokLocalhost || true;
   }
 }
 
