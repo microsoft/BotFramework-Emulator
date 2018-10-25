@@ -18,7 +18,6 @@ gulp.task('package', async () => {
     targets: builder.Platform.LINUX.createTarget(['deb', 'AppImage'], builder.Arch.ia32),
     config
   });
-  console.log(filenames);
 
   // rename and move the files to the /dist/ directory
   await new Promise(resolve => {
