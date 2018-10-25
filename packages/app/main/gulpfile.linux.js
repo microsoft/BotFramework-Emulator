@@ -15,9 +15,10 @@ gulp.task('package', async () => {
 
   // create build artifacts
   const filenames = await builder.build({
-    targets: builder.Platform.LINUX.createTarget(['deb', 'AppImage'], builder.Arch.ia32, builder.Arch.x64),
+    targets: builder.Platform.LINUX.createTarget(['deb', 'AppImage'], builder.Arch.ia32),
     config
   });
+  console.log(filenames);
 
   // rename and move the files to the /dist/ directory
   await new Promise(resolve => {
@@ -40,7 +41,7 @@ gulp.task('redist:metadata-only', async () => {
 
   writeYamlMetadataFile(
     releaseFileName,
-    'latest-linux.yml',
+    'latest-linux-ia32.yml',
     './dist',
     sha512,
     releaseDate
