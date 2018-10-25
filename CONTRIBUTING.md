@@ -44,6 +44,10 @@ git checkout v4
 npm i -g lerna@3.4.0 gulp@4.0.0 gulp-cli@2.0.1 webpack@4.8.x jest
 ```
 
+> **NOTE:** If you are using Linux, building the Emulator might result in an error due to a missing package: **libXScrnSaver**. If you run into this error, install the package using your OS's package manager and retry: 
+
+>`yum install libXScrnSaver`
+
 ### Install local dependencies
 
 ```
