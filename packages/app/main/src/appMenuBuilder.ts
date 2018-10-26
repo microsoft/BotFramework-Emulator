@@ -319,7 +319,8 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
           click: () => Electron.dialog.showMessageBox(mainWindow.browserWindow, {
             type: 'info',
             title: appName,
-            message: appName + '\r\nversion: ' + version
+            message: appName + '\r\nversion: ' + version,
+            buttons: ['Dismiss']
           })
         }
       ]
