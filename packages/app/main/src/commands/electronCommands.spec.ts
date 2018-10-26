@@ -1,16 +1,19 @@
 import { SharedConstants } from '@bfemulator/app-shared';
-import { BotConfigWithPathImpl, CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { rename } from 'fs-extra';
 import { AppMenuBuilder } from '../appMenuBuilder';
-import { load, setActive } from '../botData/actions/botActions';
+import { load } from '../botData/actions/botActions';
 import { getStore } from '../botData/store';
 import { mainWindow } from '../main';
-import { getThemes, loadSettings } from '../utils';
 import { registerCommands } from './electronCommands';
 import * as Electron from 'electron';
-
+import * as fs from 'fs-extra';
+let renameArgs;
 jest.mock('fs-extra', () => ({
   stat: async () => ({ isFile: () => true }),
-  statSync: () => ({ isFile: () => false })
+  statSync: () => ({ isFile: () => false }),
+  pathExists: async () => true,
+  rename: async (...args: any[]) => renameArgs = args
   // readFile: async () => JSON.stringify((mockConversation as any).transcript)
 }));
 
@@ -33,7 +36,10 @@ jest.mock('electron', () => ({
 
 jest.mock('../main', () => ({
   mainWindow: {
-    browserWindow: { setFullScreen: () => void 0 }
+    browserWindow: {
+      setFullScreen: () => void 0,
+      setTitle: () => void 0
+    }
   }
 }));
 
@@ -114,5 +120,23 @@ describe('the electron commands', () => {
     expect(fullScreenSpy).toHaveBeenCalledWith(false);
     expect(buildFromTemplateSpy).toHaveBeenCalledWith(AppMenuBuilder.menuTemplate);
     expect(setApplicationMenuSpy).toHaveBeenCalledWith(undefined);
+  });
+
+  it('should set the title bar', async () => {
+    const { handler } = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.SetTitleBar);
+    let setTitleSpy = jest.spyOn(mainWindow.browserWindow, 'setTitle');
+
+    await handler();
+    expect(setTitleSpy).toHaveBeenCalledWith(Electron.app.getName());
+
+    setTitleSpy = jest.spyOn(mainWindow.browserWindow, 'setTitle');
+    await (handler('preview'));
+    expect(setTitleSpy).toHaveBeenCalledWith(`${Electron.app.getName()} - preview`);
+  });
+
+  it('should rename a file', async () => {
+    const {handler} = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.RenameFile);
+    await handler({path: 'my/path/bot.bot', newPath: 'my/path/bot1.bot' });
+    expect(renameArgs).toEqual(['my/path/bot.bot', 'my/path/bot1.bot']);
   });
 });
