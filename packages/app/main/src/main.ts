@@ -73,7 +73,7 @@ const store = getStore();
 // -----------------------------------------------------------------------------
 // TODO - localization
 if (app) {
-  app.setName('Bot Framework Emulator (V4 PREVIEW)');
+  app.setName('Bot Framework Emulator');
 }
 
 // -----------------------------------------------------------------------------

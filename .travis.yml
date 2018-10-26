@@ -44,7 +44,7 @@ deploy:
   prerelease: false
   draft: true
   name: $BUILD_TAG
-  body: This release is an early preview of the new Bot Framework Emulator. Please consider it to be experimental, and we'd love to hear your feedback.
+  body: We'd love to hear your feedback on GitHub.
   on:
     branch: v4
     condition: $BUILD_TAG
