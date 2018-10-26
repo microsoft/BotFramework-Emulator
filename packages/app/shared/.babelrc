@@ -1,0 +1,21 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "node": "8"
+        }
+      }
+    ],
+    "@babel/preset-typescript"
+  ],
+  "ignore": [
+    "**/*.d.ts"
+  ],
+  "sourceMaps": "inline",
+  "plugins": [
+    "@babel/proposal-class-properties",
+    "@babel/plugin-transform-runtime"
+  ]
+}

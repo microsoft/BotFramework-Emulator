@@ -1,0 +1,4 @@
+html {
+  --default-font-family: Segoe UI, HelveticaNeue-Light, Ubuntu, Droid Sans, sans-serif;
+  --monospace-font-family: Menlo, Monaco, Consolas, Droid Sans Mono, Courier New, monospace, Droid Sans Fallback;
+}

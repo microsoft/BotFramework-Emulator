@@ -1,0 +1,18 @@
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <polygon id="path-1" points="13.6484375 3.6484375 14.3515625 4.3515625 6 12.7109375 1.6484375 8.3515625 2.3515625 7.6484375 6 11.2890625"></polygon>
+  </defs>
+  <g id="Symbols" stroke="none" stroke-width="1" fill="#0078D7" fill-rule="evenodd">
+    <g id="Titles" transform="translate(-452.000000, -1266.000000)"></g>
+    <g id="Icons/General/check">
+      <rect id="BG" x="0" y="0" width="16" height="16"></rect>
+      <mask id="mask-2" fill="white">
+        <use xlink:href="#path-1"></use>
+      </mask>
+      <use id="check" fill="#FFFFFF" xlink:href="#path-1"></use>
+      <g id="_color/Neutral-13-(333333)" mask="url(#mask-2)" fill="#FFFFFF">
+        <rect id="Rectangle-9" x="0" y="0" width="16" height="16"></rect>
+      </g>
+    </g>
+  </g>
+</svg>

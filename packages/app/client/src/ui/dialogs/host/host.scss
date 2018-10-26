@@ -1,0 +1,32 @@
+.host {
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  pointer-events: none;
+
+  &.dialog-host-visible {
+    pointer-events: auto;
+  }
+
+  & .dialog-host-content {
+    height: auto;
+    width: auto;
+    max-width: 648px;
+    max-height: 80%;
+    overflow: auto;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22)
+  }
+}
+
+.focus-sentinel {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  opacity: 0
+}

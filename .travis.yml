@@ -1,0 +1,58 @@
+language: node_js
+sudo: required
+dist: trusty
+services: docker
+
+node_js:
+- "lts/*"
+
+notifications:
+  email: false
+
+before_install:
+- npm i -g lerna
+- lerna clean --yes
+
+install:
+- lerna bootstrap --hoist
+
+script:
+- npm run build
+- npm run test:coveralls
+
+after_success:
+- echo "Cheking TRAVIS_EVENT_TYPE is cron -> TRAVIS_EVENT_TYPE = $TRAVIS_EVENT_TYPE"
+- test $TRAVIS_EVENT_TYPE = "cron" && BUILD_TAG="4.0.$TRAVIS_BUILD_NUMBER-nightly" && echo "Generate new BUILD_TAG = $BUILD_TAG"
+
+before_deploy:
+- TRAVIS_TAG=$BUILD_TAG
+- mkdir releases
+- |
+  if [ "$TRAVIS_OS_NAME" == "linux" ]; then
+    docker run --rm --env TRAVIS_TAG=$TRAVIS_TAG -v ${PWD}:/project electronuserland/builder:wine /bin/bash generate_releases.sh
+  else
+    /bin/bash generate_releases.sh
+  fi
+- echo Generated Releases for BUILD_TAG = $BUILD_TAG
+
+deploy:
+  provider: releases
+  api_key: $GITHUB_OAUTH_TOKEN
+  file_glob: true
+  file: releases/*
+  skip_cleanup: true
+  prerelease: false
+  draft: true
+  name: $BUILD_TAG
+  body: We'd love to hear your feedback on GitHub.
+  on:
+    branch: v4
+    condition: $BUILD_TAG
+
+cache:
+  directories:
+    - $HOME/.cache/electron
+    - $HOME/.cache/electron-builder
+
+before_cache:
+- rm -rf $HOME/.cache/electron-builder/wine

@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "declarationDir": "lib",
+    // Emit declaration only when we are building with Babel
+    // "emitDeclarationOnly": true,
+    "lib": [
+      "es2016"
+    ],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "pretty": true,
+    "skipLibCheck": true,
+    "target": "es2017",
+    "types": [
+      "node"
+    ],
+    "sourceMap": true
+  },
+  "exclude": [
+    "src/**/*.spec.js",
+    "src/**/*.spec.ts",
+    "src/**/*.test.js",
+    "src/**/*.test.ts",
+    "src/__tests__/**/*.js",
+    "src/__tests__/**/*.ts"
+  ],
+  "include": [
+    "src/**/*"
+  ]
+}

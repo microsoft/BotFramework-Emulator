@@ -1,0 +1,84 @@
+.notification {
+  position: relative;
+  background-color: var(--notification-bg);
+  padding: 12px;
+  margin-top: 4px;
+  min-width: 150px;
+  border: var(--notification-border);
+
+  & > .notification-message {
+    margin: 0;
+    font-size: 13px;
+    line-height: 18px;
+    color: var(--notification-message-color);
+    word-wrap: break-word;
+  }
+
+  & > .notification-timestamp {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 11px;;
+    line-height: 16px;
+    color: var(--notification-timestamp-color);
+  }
+
+  & > .notification-button-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+    min-width: 150px;
+    overflow-x: auto;
+
+    & * {
+      flex-shrink: 0;
+    }
+
+    & > button {
+      margin-right: 8px;
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+
+  &:hover {
+    > .close-icon {
+      display: block;
+    }
+
+    .inner-border {
+      border: var(--notification-inner-border);
+    }
+  }
+
+  & > .close-icon {
+    display: none;
+    position: absolute;
+    top: 9px;
+    right: 10px;
+    height: 16px;
+    width: 8px;
+    color: var(--notification-close-icon-color);
+    background-color: transparent;
+    font-size: 12px;
+    line-height: 16px;
+    text-align: center;
+    cursor: pointer;
+
+    &:after {
+      content: "✖"
+    }
+  }
+
+  /* Only enabled for high-contrast */
+  .inner-border {
+    display: var(--notification-inner-border-display);
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    height: calc(100% - 8px);
+    width: calc(100% - 8px);
+    pointer-events: none;
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "JSON",
+  "client": {
+    "inspectors": [
+      {
+        "name": "JSON",
+        "src": "index.html",
+        "criteria": {
+          "path": "$.type",
+          "value": "message"
+        },
+        "summaryText": [
+          "attachments.0.contentType",
+          "text"
+        ]
+      }
+    ]
+  }
+}

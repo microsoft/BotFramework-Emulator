@@ -1,0 +1,56 @@
+.answers-column {
+  overflow-y: auto;
+  height: 100%;
+  padding: 0 6px 20px;
+  font-family: var(--default-font-family);
+  & input {
+    margin-top: 5px;
+    background: transparent;
+    width: 100%;
+    border-radius: 2px;
+    border: solid 1px #777;
+    padding: 4px 9px;
+    color: white;
+    box-sizing: border-box;
+  }
+}
+
+.answers-block {
+  border-radius: 2px;
+  border: solid 1px #777;
+  background-color: transparent;
+  color: white;
+  line-height: 1.38;
+  white-space: normal;
+  text-align: left;
+  font-size: 13px;
+  padding: 5px;
+  cursor: pointer;
+  margin: 5px 0;
+  width: 100%;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:hover {
+    border-color: var(--info-outline);
+  }
+
+  & .selected {
+    background-color: var(--info-outline);
+    border-color: var(--info-outline);
+  }
+}
+
+.selected {
+  font-family: var(--default-font-family);
+
+  & h4 {
+    margin: 10px 0;
+  }
+
+  & p {
+    margin-top: 0;
+  }
+}

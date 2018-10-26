@@ -1,0 +1,33 @@
+{
+  "name": "@bfemulator/extension-debug-client",
+  "version": "0.1.0",
+  "private": true,
+  "homepage": "./",
+  "dependencies": {
+    "@babel/runtime": "^7.0.0",
+    "react": "~16.3.2",
+    "react-dom": "~16.3.2"
+  },
+  "scripts": {
+    "start": "cross-env BROWSER=none PORT=3031 react-scripts start",
+    "build": "webpack --mode production",
+    "test": ""
+  },
+  "devDependencies": {
+    "@babel/core": "^7.1.0",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+    "@babel/plugin-transform-react-jsx": "^7.0.0",
+    "@babel/plugin-transform-runtime": "^7.1.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-typescript": "^7.1.0",
+    "@types/jest": "^22.2.3",
+    "babel-jest": "23.6.0",
+    "css-loader": "^0.28.11",
+    "jest": "^23.0.0",
+    "ts-loader": "^4.4.2",
+    "url-loader": "^1.0.1",
+    "webpack": "4.16.4",
+    "webpack-cli": "^3.1.1"
+  }
+}

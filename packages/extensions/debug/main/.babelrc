@@ -1,0 +1,22 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "chrome": "58",
+          "esmodules": true
+        }
+      }
+    ],
+    "@babel/preset-typescript"
+  ],
+  "ignore": [
+    "**/*.d.ts"
+  ],
+  "plugins": [
+    "@babel/proposal-class-properties",
+    "@babel/plugin-transform-react-jsx",
+    "@babel/plugin-transform-runtime"
+  ]
+}

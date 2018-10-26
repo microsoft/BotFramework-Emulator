@@ -1,0 +1,19 @@
+.playback-bar {
+  display: flex;
+  height: 64px;
+  width: 400px;
+  padding: 16px 0;
+  justify-content: space-between;
+  & > span {
+    display: inline-block;
+    width: 32px;
+    line-height: 32px;
+    text-align: center;
+    cursor: pointer
+  }
+
+  & .play-icon {
+    background: no-repeat 50% 50% url('../../../media/ic_play.svg');
+    background-size: 32px;
+  }
+}

@@ -20,57 +20,97 @@ If your issue is a question, consider asking it on Stack Overflow using the tag 
 
 Don't feel bad if we can't reproduce the issue and ask you for more information!
 
-## Build and Run from Source
+***
 
-### Prerequisites
-Bot Framework Emulator development requires that you install [git](https://git-scm.com) and [Node.JS](https://nodejs.org/).
+## How to build from source
 
-### Clone and Build
-Clone the repo
+### Clone the repo
+
 ```
 git clone https://github.com/Microsoft/BotFramework-Emulator.git
+```
+
+### Checkout v4 branch
+```
 cd BotFramework-Emulator
+git checkout v4
 ```
 
-Install Node packages
+### Install global dependencies
+
+> npm version 5.6.0 or greater is required.
+
 ```
-npm install
+npm i -g lerna@3.4.0 gulp@4.0.0 gulp-cli@2.0.1 webpack@4.8.x jest
 ```
 
-Build
+> **NOTE:** If you are using Linux, building the Emulator might result in an error due to a missing package: **libXScrnSaver**. If you run into this error, install the package using your OS's package manager and retry: 
+
+>`yum install libXScrnSaver`
+
+### Install local dependencies
+
+```
+lerna bootstrap --hoist
+```
+
+> **IMPORTANT:** Do **not** run `npm install` in any of the directories; lerna will take care of that for you with the
+ `bootstrap` command.
+
+### Build all packages
+
 ```
 npm run build
 ```
 
-Run
-```
-npm run start
-```
+## How to run & develop locally
 
-**Development in Visual Studio Code**
+There are two, different work flows for local development depending on which part of the project you are working in. 
+Refer to the **"Client side development"** section if you are modifying files within the `packages/app/client` 
+directory. Refer to the **"Server side development"** section if you are modifying files within both the 
+`packages/app/main` & `packages/app/client` directories.
 
-With the project open in VSCode:
+### Run Emulator for local development
 
-* `Ctrl+Shift+B`: build the project
-* `F5`: debug the project
+Open 2 terminals:
+
+ - One in `packages/app/client` (will be used to start the webpack dev server)
+   - run `npm run start`
+   - that's all you have to do; you shouldn't have to worry about the client side again unless you modify code in 
+   `packages/app/shared` and rebuild the `shared` package
+ - Another in `packages/app/main` (will be used to start and restart the main side after changes have been recompiled)
+   - run `npm run start:electron:dev`
+   - this starts a new instance of the electron app with the most recently compiled `packages/app/main` files
+   - **To see app/main file changes:** `Ctrl + C` to kill the electron app, then `npm start:electron:dev` to restart it with your reflected changes
+
+#### If developing locally
+In another terminal
+ - Navigate to `packages/app/main` (will be used to watch for changes on the main side and auto-compile the TypeScript)
+   - run `npm run build:electron -- --watch`
+   - don't have to worry about this terminal anymore
 
 ### Debugging
-The Bot Framework Emulator has a multi-process architecture, meaning different parts of the app run in different processes.
+#### The Main Process
+Running `npm run start:electron:dev` opens up port 7777 for debugging the main node process. Startup is non-blocking
+by default which means code could be executed before you have time to attach your debugger and set breakpoints. To prevent this,
+change `--inspect=7777` to `--inspect-brk=7777` in the `start:electron` script in the `package.json` located in `packages\app\main`. 
+This will prevent code from running until after a debug process has been attached and will require you to start 
+the debug process before the emulator is displayed.
 
-These instructions are in some cases specific to [Visual Studio Code](https://code.visualstudio.com).
+Setting up a node debugger depends on your tooling. Please refer to the documentation on setting up a node debugger 
+for your flavor of tools. For more information on debugging NodeJS in general, refer to [this guide](https://nodejs.org/en/docs/guides/debugging-getting-started/)
 
-**Render Process**
-
-When you build and run the application locally, the Chrome Developer Tools are available in the app. They can be accessed by pressing `Ctrl+Shift+I`. Render process code can be debugged from within this tool.
-
-TODO: Document debugging of render process using VSCode & the [Debugger for Chrome](https://marketplace.visualstudio.com/items/msjsdiag.debugger-for-chrome) extension.
-
-**Main Process**
-
-This is a NodeJS process, and can be debugged directly from VSCode. With the project open in VSCode, press `F5` to start the application and attach to the Node debugging facility.
+#### The Client
+Ctrl+Shift+I (Windows) or opt+cmd+i (Mac) when the emulator is in focus will open chrome dev tools for debugging.
+For remote debugging, add `--remote-debugging-port=9222` to the `start:electron` script in the `package.json` located in `packages\app\main`.
+***
 
 ## Pull Requests
 
-Before we can accept a pull request from you, you must agree to the [Contributor License Agreement (CLA)](https://github.com/Microsoft/BotFramework-Emulator/wiki/Contributor-License-Agreement). It is an automated process and you only need to do this once.
+Before we can accept a pull request from you, you must agree to the 
+[Contributor License Agreement (CLA)](https://cla.opensource.microsoft.com/). 
+It is an automated process and you only need to do this once.
 
-To enable us to quickly review and accept your pull requests, always create one pull request per issue and link the issue in the pull request. Never merge multiple requests in one unless they have the same root cause. Keep code changes as small as possible. Avoid pure formatting changes to code that has not been modified otherwise.
+To enable us to quickly review and accept your pull requests, always create one pull request per issue and link the 
+issue in the pull request. Never merge multiple requests in one unless they have the same root cause. Keep code changes 
+as small as possible. Avoid pure formatting changes to code that has not been modified otherwise.

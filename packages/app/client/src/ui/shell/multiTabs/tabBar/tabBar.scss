@@ -1,0 +1,111 @@
+.tab-bar {
+  display: flex;
+  background-color: var(--tab-bar-bg);
+  color: var(--input-label-color);
+  min-height: 32px;
+  &.dragged-over {
+    background-color: var(--tab-active-tab-bg);
+  }
+
+  & > ul {
+    display: flex;
+    background-color: var(--neutral-15);
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow-x: auto;
+
+    &::-webkit-scrollbar {
+      height: 2px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--neutral-10);
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    li {
+      > button:focus {
+        position: relative;
+        &::before {
+          content: '';
+          border: var(--tab-focus-border);
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          clip-path: var(--border-window-clip-path);
+        }
+      }
+      + li {
+        position: relative;
+        padding-left: 1px;
+        &::after {
+          content: '';
+          position: absolute;
+          height: 100%;
+          width: 1px;
+          left: 0;
+          background: var(--tab-seperator-bg);
+        }
+      }
+    }
+  }
+
+  & > div.tab-bar-widgets {
+    display: flex;
+    align-items: center;
+    width: auto;
+    margin-left: auto;
+    flex-shrink: 0;
+    & > span {
+      display: inline-block;
+      cursor: pointer;
+      height: 16px;
+      margin-right: 12px;
+      font-size: 12px;
+      :first-of-type {
+        margin-left: 12px;
+      }
+    }
+
+    button {
+      height: 25px;
+      width: auto;
+      background-color: transparent;
+      border: 1px solid transparent;
+    }
+
+     .widget {
+      background-size: 16px;
+      border: 1px solid transparent;
+      box-sizing: border-box;
+      height: 22px;
+      padding: 5px;
+      width: 22px;
+
+      &:hover {
+        border: 1px solid transparent;
+        cursor: pointer;
+      }
+    }
+    .split-widget, .presentation-widget {
+      background: var(--tab-icon-color);
+      -webkit-mask-size: 22px;
+      &:hover {
+        background: var(--tab-icon-hover-color);
+      }
+    }
+    .split-widget {
+      -webkit-mask: url("../../../media/ic_split.svg") no-repeat 50% 50%;
+    }
+
+    .presentation-widget {
+      -webkit-mask: url("../../../media/ic_presentation.svg") no-repeat 50% 50%;
+    }
+  }
+}

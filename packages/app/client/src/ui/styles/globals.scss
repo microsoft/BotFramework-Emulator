@@ -1,0 +1,88 @@
+@font-face {
+  font-family: Segoe UI;
+  font-weight: bold;
+  src: url("./segoe-ui-bold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: Segoe UI;
+  font-weight: 600;
+  src: url("./segoe-ui-semibold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: Segoe UI;
+  font-weight: 400;
+  src: url("./segoe-ui.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: Segoe UI;
+  font-weight: 300;
+  src: url("./segoe-ui-semilight.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: Segoe UI;
+  font-weight: 200;
+  src: url("./segoe-ui-light.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: Menlo;
+  src: url("./menlo.woff2") format("woff2");
+}
+
+:global {
+  html, body, #root {
+    &:focus {
+      outline: none;
+    }
+    background-color: var(--dialog-bg);
+    color: var(--input-label-color);
+    cursor: default;
+    font-size: 13px;
+    font-family: var(--default-font-family);
+    height: 100%;
+    margin: 0;
+    min-height: 100%;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  h1, h2 {
+    font-family: var(--default-font-family);
+    font-weight: 200;
+  }
+
+  h3 {
+    font-family: var(--default-font-family);
+    font-weight: 600;
+  }
+
+  input, textarea, button, select, p, a {
+    font-family: var(--default-font-family);
+    font-weight: 400;
+  }
+
+  div {
+    box-sizing: border-box;
+  }
+
+  *:focus {
+    outline: var(--p-button-border-focus);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: transparent;
+  }
+}

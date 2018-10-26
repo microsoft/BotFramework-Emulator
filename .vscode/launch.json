@@ -1,41 +1,39 @@
 {
-    // Use IntelliSense to learn about possible Node.js debug attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Launch",
-            "type": "node",
-            "request": "launch",
-            "program": "${workspaceRoot}/app/server/main.js",
-            "stopOnEntry": false,
-            "args": [],
-            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
-            "windows": {
-                "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
-            },
-            "runtimeArgs": [
-                "--nolazy"
-            ],
-            "env": {
-                "NODE_ENV": "development"
-            },
-            "sourceMaps": true,
-            "protocol": "inspector"
-        },
-        {
-            "name": "Debug integration tests",
-            "type": "node",
-            "request": "launch",
-            "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
-            "runtimeExecutable": "node",
-            "stopOnEntry": false,
-            "args": ["-t", "20000", "--compilers", "ts:ts-node/register", "${workspaceRoot}/tests/integration/integration.ts"],
-            "env": { "NODE_ENV": "test"},
-            "cwd": "${workspaceRoot}",
-            "sourceMaps": false,
-            "protocol": "inspector"
-        }
-    ]
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach to app/main",
+      "address": "localhost",
+      "port": 7777,
+    },
+    {
+      "name": "Launch app/main",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/packages/app/main/app/server/main.js",
+      "stopOnEntry": false,
+      "args": [],
+      "runtimeExecutable": "${workspaceRoot}/packages/app/main/node_modules/.bin/electron",
+      "windows": {
+        "runtimeExecutable": "${workspaceRoot}/packages/app/main/node_modules/.bin/electron.cmd"
+      },
+      "runtimeArgs": [
+        "--nolazy",
+        "--vscode-debugger"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "sourceMaps": true,
+      "protocol": "inspector",
+      "outputCapture": "std",
+      "internalConsoleOptions": "openOnSessionStart",
+      "cwd": "${workspaceFolder}/packages/app/main"
+    }
+  ]
 }

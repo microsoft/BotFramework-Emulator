@@ -1,0 +1,23 @@
+{
+  "lerna": "3.4.0",
+  "packages": [
+    "packages/app/client",
+    "packages/app/main",
+    "packages/app/shared",
+    "packages/emulator/cli",
+    "packages/emulator/core",
+    "packages/sdk/client",
+    "packages/sdk/main",
+    "packages/sdk/shared",
+    "packages/sdk/ui-react",
+    "packages/extensions/qnamaker",
+    "packages/extensions/qnamaker/client",
+    "packages/extensions/debug",
+    "packages/extensions/debug/client",
+    "packages/extensions/debug/main",
+    "packages/extensions/luis",
+    "packages/extensions/luis/client",
+    "packages/extensions/json"
+  ],
+  "version": "independent"
+}

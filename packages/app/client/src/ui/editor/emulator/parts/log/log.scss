@@ -1,0 +1,71 @@
+.log {
+  height: 100%;
+  overflow: auto;
+  user-select: text;
+  padding: 0;
+  box-sizing: border-box;
+
+  & > .entry {
+    padding: 0 16px;
+    font-family: var(--monospace-font-family);
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--log-panel-entry-hover-bg);
+    }
+
+    &.inspected {
+      background-color: var(--log-panel-entry-inspected-bg);
+    }
+
+    & > .source {
+      color: var(--neutral-6);
+    }
+
+    & .timestamp {
+      color: var(--log-panel-timestamp);
+    }
+
+    & .srcDst {
+      color: var(--neutral-9);
+    }
+
+    & .link {
+      border: 1px solid transparent;
+      background-color: transparent;
+      color: var(--log-panel-link);
+      cursor: pointer;
+      font-family: var(--monospace-font-family);
+      padding: 0;
+      text-decoration: underline;
+    }
+
+    // info
+    & .level0 {
+      color: var(--log-panel-item-info);
+    }
+
+    // debug
+    & .level1 {
+      color: var(--log-panel-item-debug);
+    }
+
+    // warn
+    & .level2 {
+      color: var(--log-panel-item-warn);
+    }
+
+    // error
+    & .level3 {
+      color: var(--log-panel-item-error);
+    }
+
+    & .spaced {
+      margin-left: 8px;
+    }
+
+    & .spaced:first-child {
+      margin-left: 0;
+    }
+  }
+}

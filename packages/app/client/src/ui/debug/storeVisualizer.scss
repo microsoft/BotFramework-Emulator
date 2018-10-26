@@ -1,0 +1,28 @@
+.store-visualizer {
+  position: absolute;
+  max-width: 400px;
+  display: flex;
+  flex-flow: column nowrap;
+  bottom: 0;
+  left: 0;
+  opacity: 0.9;
+  pointer-events: none;
+  & pre {
+    max-height: 500px;
+    overflow-y: auto;
+    pointer-events: auto;
+  }
+
+  & select {
+    width: 120px;
+  }
+
+  & select, & option {
+    pointer-events: auto;
+  }
+
+  & .visualizer-button {
+    width: 120px;
+    pointer-events: auto;
+  }
+}

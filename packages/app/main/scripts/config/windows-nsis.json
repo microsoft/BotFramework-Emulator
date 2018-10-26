@@ -1,0 +1,20 @@
+{
+  "nsis": {
+    "guid": "${appId}",
+    "include": "./scripts/config/resources/nsis/installer.nsh",
+    "perMachine": true,
+    "allowElevation": true,
+    "packElevateHelper": true,
+    "artifactName": "BotFramework-Emulator-${version}-windows-setup.exe",
+    "unicode": true,
+    "runAfterFinish": true,
+    "installerIcon": "./scripts/config/resources/icon.ico",
+    "uninstallerIcon": "./scripts/config/resources/icon.ico",
+    "installerHeader": "./sripts/config/resources/nsis/installerHeader.bmp",
+    "installerSidebar": "./sripts/config/resources/nsis/installerSidebar.bmp",
+    "uninstallerSidebar": "./sripts/config/resources/nsis/installerSidebar.bmp",
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true,
+    "shortcutName": "Bot Framework Emulator (V4)"
+  }
+}

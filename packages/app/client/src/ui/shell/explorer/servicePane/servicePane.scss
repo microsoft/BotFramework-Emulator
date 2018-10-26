@@ -1,0 +1,103 @@
+.service-pane {
+  border-bottom: var(--explorer-panel-group-border);
+  display: inline-block;
+  height: 100%;
+  padding: 2px;
+  position: relative;
+  width: 100%;
+
+  &:last-child {
+    border-bottom: 1px solid transparent;
+  }
+}
+
+.service-icon {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  margin: 0;
+  outline: none;
+  padding: 0;
+  position: absolute;
+  transform: translateY(-50%);
+}
+
+.add-icon-button {
+  right: 10px;
+  top: calc(50% - 1px);
+  & > svg {
+    fill: var(--explorer-panel-group-title-color);
+    height: 12px;
+    width: 12px;
+    &:hover {
+      fill: var(--log-panel-link);
+    }
+  }
+}
+
+.sort-icon-button {
+  color: var(--explorer-panel-group-title-color);
+  right: 50px;
+  top: calc(50% - 4px);
+  &:hover {
+    color: var(--log-panel-link);
+  }
+}
+
+.empty-content {
+  color: var(--neutral-7);
+  font-size: 13px;
+  margin: 12px 25px;
+}
+
+.service-pane-list {
+  margin: 0;
+  overflow: auto;
+  max-height: 400px;
+  padding: 2px 0 2px 0;
+  & > li {
+    border: 1px solid transparent;
+    color: var(--list-item-color);
+    cursor: pointer;
+    display: block;
+    font-size: 13px;
+    line-height: 22px;
+    min-height: 22px;
+    white-space: nowrap;
+
+    &:hover {
+      background-color: var(--list-item-hover-bg);
+      border: var(--list-item-hover-border);
+    }
+    &:focus {
+      background-color: var(--focused-list-item);
+    }
+    &[data-selected], &:active {
+      background-color: var(--focused-selected-list-item-bg);
+      border: var(--list-item-hover-border);
+      color: var(--list-item-selected-color);
+    }
+
+    & span {
+      color: var(--neutral-7);
+    }
+
+    &::before {
+      content: "";
+      background-color: var(--explorer-panel-group-title-color);
+      background-size: contain;
+      display: inline-block;
+      height: 12px;
+      margin-left: 13px;
+      margin-right: 5px;
+      opacity: .5;
+      width: 12px;
+    }
+  }
+}
+
+.service-pane-explorer {
+  &.container-expanded {
+    min-height: 44px;
+  }
+}

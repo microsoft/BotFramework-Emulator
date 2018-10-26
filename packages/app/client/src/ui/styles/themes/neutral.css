@@ -1,0 +1,22 @@
+/*
+ Neutral colors used in all themes
+ from decreasing amounts of black
+ */
+html {
+  --neutral-16: #000;
+  --neutral-15: #212121;
+  --neutral-14: #333333;
+  --neutral-13: #444;
+  --neutral-12: #4a4a4a;
+  --neutral-11: #515151;
+  --neutral-10: #666;
+  --neutral-9: #777;
+  --neutral-8: #808080;
+  --neutral-7: #888;
+  --neutral-6: #9E9E9E;
+  --neutral-5: #ccc;
+  --neutral-4: #dcdcdc;
+  --neutral-3: #eaeaea;
+  --neutral-2: #f4f4f4;
+  --neutral-1: #fff;
+}

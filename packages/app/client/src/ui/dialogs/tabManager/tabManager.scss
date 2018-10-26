@@ -1,0 +1,38 @@
+.tab-manager {
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+
+  & > ul {
+    height: auto;
+    width: auto;
+    max-height: 30%;
+    overflow-y: auto;
+    margin: 0;
+    padding: 24px 64px;
+    list-style: none;
+    background-color: var(--dialog-bg);
+    color: var(--input-label-color);
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2), 2px 0 2px 0 rgba(0, 0, 0, 0.2), -2px 0 2px 0 rgba(0, 0, 0, 0.2);
+
+    & > .selected-tab {
+      color: var(--neutral-1);
+      text-decoration: underline
+    }
+
+    & > li {
+      padding: 4px 0;
+      text-align: center;
+      &:focus {
+        outline: 0
+      }
+    }
+  }
+}

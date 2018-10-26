@@ -1,0 +1,14 @@
+.control-bar {
+  color: var(--log-panel-item-debug);
+  padding: 6px 3px;
+  & a {
+    color: var(--log-panel-link);
+    text-decoration: none;
+  }
+}
+
+:global {
+  #raw-response-button {
+    padding-left: 8px;
+  }
+}
