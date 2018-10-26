@@ -33,7 +33,7 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as Electron from 'electron';
-import { app, Menu } from 'electron';
+import { app, Menu, MessageBoxOptions } from 'electron';
 import { mainWindow } from '../main';
 import { showOpenDialog, showSaveDialog } from '../utils';
 import { AppMenuBuilder } from '../appMenuBuilder';
@@ -52,7 +52,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Show OS-native messsage box
-  commandRegistry.registerCommand(Commands.ShowMessageBox, (modal: boolean, options: Electron.MessageBoxOptions) => {
+  commandRegistry.registerCommand(Commands.ShowMessageBox, (modal: boolean, options: MessageBoxOptions) => {
     options = {
       message: '',
       title: app.getName(),

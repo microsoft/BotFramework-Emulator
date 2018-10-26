@@ -40,8 +40,9 @@ describe('The ConversationService should call "fetch" with the expected paramete
     expect(headers instanceof nodeFetch.Headers).toBeTruthy();
     expect(headers === headers).toBeTruthy();
     expect(method).toBe('POST');
-    expect(body[0].name).toBeFalsy();
-    expect(body[0].id).toBeFalsy();
+    const members = JSON.parse(body);
+    expect(members[0].name).toBeFalsy();
+    expect(members[0].id).toBeFalsy();
     expect(headersInstance).toEqual(headers);
   });
 
@@ -54,7 +55,8 @@ describe('The ConversationService should call "fetch" with the expected paramete
     expect(headers instanceof nodeFetch.Headers).toBeTruthy();
     expect(headers === headers).toBeTruthy();
     expect(method).toBe('DELETE');
-    expect(body[0].id).toBe('1234');
+    const users = JSON.parse(body);
+    expect(users[0].id).toBe('1234');
     expect(headersInstance).toEqual(headers);
   });
 
