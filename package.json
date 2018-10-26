@@ -1,6 +1,6 @@
 {
   "name": "botframework-emulator",
-  "version": "3.5.36",
+  "version": "3.5.37",
   "description": "Emulator for the Microsoft Bot Framework. Allows developers to test and debug bots.",
   "main": "./app/server/main.js",
   "scripts": {
@@ -114,7 +114,10 @@
       "include": "./build/installer.nsh"
     },
     "mac": {
-      "target": ["dmg", "zip"],
+      "target": [
+        "dmg",
+        "zip"
+      ],
       "artifactName": "${name}-${version}-mac.${ext}",
       "category": "public.app-category.developer-tools"
     },
