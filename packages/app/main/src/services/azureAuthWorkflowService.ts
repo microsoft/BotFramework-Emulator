@@ -62,15 +62,6 @@ export class AzureAuthWorkflowService {
     yield armToken;
   }
 
-  public static* enterSignOutWorkflow(prompt: boolean): IterableIterator<any> {
-    const signOutWindow = yield this.launchSignOutWindow(prompt);
-    signOutWindow.show();
-
-    const result = yield this.waitForDataFromSignOutWindow(signOutWindow);
-    signOutWindow.close();
-    yield result;
-  }
-
   private static async waitForAuthResult(browserWindow: BrowserWindow, redirectUri: string): Promise<AuthResponse> {
     const response = await new Promise<AuthResponse>(resolve => {
       let interval;
@@ -150,53 +141,6 @@ export class AzureAuthWorkflowService {
     browserWindow.loadURL(url);
     return new Promise<BrowserWindow>(resolve => {
       browserWindow.once('ready-to-show', () => resolve(browserWindow));
-    });
-  }
-
-  private static async launchSignOutWindow(prompt: boolean): Promise<BrowserWindow> {
-    const browserWindow = new BrowserWindow({
-      modal: true,
-      show: false,
-      frame: true,
-      transparent: false,
-      alwaysOnTop: true,
-      width: 440,
-      height: 367,
-      webPreferences: { contextIsolation: true, nativeWindowOpen: true }
-    });
-    browserWindow.setMenu(null);
-    const redirectUri = 'http://localhost:3000/botframework-emulator';
-    const bits = [
-      `https://login.microsoftonline.com/common/oauth2/logout/?post_logout_redirect_uri=${redirectUri}`,
-      'x-client-SKU=Js',
-      'x-client-Ver=1.0.17'
-    ];
-    if (!prompt) {
-      bits.push('prompt=none');
-    }
-    const url = bits.join('&');
-    browserWindow.loadURL(url);
-    return new Promise<BrowserWindow>(resolve => {
-      browserWindow.once('ready-to-show', () => resolve(browserWindow));
-    });
-  }
-
-  private static waitForDataFromSignOutWindow(browserWindow: BrowserWindow): Promise<boolean> {
-    return new Promise(resolve => {
-      // Since redirects to localhost are not reliable,
-      // if signing out does not succeed after
-      // 5 seconds, treat it as a successful logout
-      // so the emulator will not attempt to auth
-      // on the next startup
-      let timeout = setTimeout(resolve.bind(null, true), 5000);
-      browserWindow.addListener('page-title-updated', event => {
-        const uri: string = (event.sender as any).history.pop() || '';
-        if (!uri.toLowerCase().includes('localhost')) {
-          return;
-        }
-        clearTimeout(timeout);
-        resolve(true);
-      });
     });
   }
 

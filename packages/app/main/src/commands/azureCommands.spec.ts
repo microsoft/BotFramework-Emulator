@@ -8,6 +8,7 @@ import { azureLoggedInUserChanged } from '../settingsData/actions/azureAuthActio
 
 const mockStore = createStore(combineReducers({ azure: azureAuth }));
 const mockArmToken = 'bm90aGluZw==.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
+
 jest.mock('../services/azureAuthWorkflowService', () => ({
   AzureAuthWorkflowService: {
     retrieveAuthToken: function* () {
@@ -19,6 +20,7 @@ jest.mock('../services/azureAuthWorkflowService', () => ({
     }
   }
 }));
+
 jest.mock('../main', () => ({
   mainWindow: {
     commandService: {
@@ -26,6 +28,7 @@ jest.mock('../main', () => ({
     }
   }
 }));
+
 jest.mock('../settingsData/store', () => ({
   getStore: () => mockStore
 }));
@@ -36,6 +39,22 @@ jest.mock('../emulator', () => ({
       serverUrl: ''
     }
   }
+}));
+
+jest.mock('electron', () => ({
+  app: {
+    getPath: () => 'not/there'
+  },
+  remote: {
+    app: {
+      getPath: () => 'not/there'
+    }
+  }
+}));
+
+jest.mock('fs-extra', () => ({
+  stat: async () => ({isFile: () => true}),
+  unlink: async () => true
 }));
 
 describe('The azureCommand,', () => {
@@ -68,17 +87,6 @@ describe('The azureCommand,', () => {
       const result = await registry.getCommand(SharedConstants.Commands.Azure.SignUserOutOfAzure).handler();
       expect(result).toBe(true);
       expect((mockStore.getState() as any).azure.signedInUser).toBe('');
-    });
-
-    it('should not remove the signed in user from the store if logout is unsuccessful', async () => {
-      AzureAuthWorkflowService.enterSignOutWorkflow = function* () {
-        yield false;
-      } as any;
-      mockStore.dispatch(azureLoggedInUserChanged('none@none.com'));
-      expect((mockStore.getState() as any).azure.signedInUser).toBe('none@none.com');
-      const result = await registry.getCommand(SharedConstants.Commands.Azure.SignUserOutOfAzure).handler();
-      expect(result).toBe(false);
-      expect((mockStore.getState() as any).azure.signedInUser).toBe('none@none.com');
     });
   });
 });
