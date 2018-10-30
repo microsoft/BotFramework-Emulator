@@ -235,16 +235,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     return {
       label: 'View',
       submenu: [
-        {
-          label: 'Explorer',
-          click: () => mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ShowExplorer)
-        },
-        {
-          label: 'Emulator Settings',
-          click: () => mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ShowAppSettings)
-        },
-        { type: 'separator' },
-        { role: 'resetzoom' },
+        { role: 'resetzoom', label: 'Reset Zoom' },
         { role: 'zoomin' },
         { role: 'zoomout' },
         { type: 'separator' },
