@@ -50,7 +50,7 @@ export class RestServer {
         this.router.use(Restify.acceptParser(this.router.acceptable));
         this.router.use(stripEmptyBearerToken);
         this.router.use(Restify.dateParser());
-        this.router.use(Restify.queryParser({ mapParams: true }));
+        this.router.use(Restify.queryParser());
     }
 
     public restart() {

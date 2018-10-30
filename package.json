@@ -93,7 +93,7 @@
     "react-split-pane": "0.1.57",
     "redux": "3.7.2",
     "request": "2.79.0",
-    "restify": "5.1.0",
+    "restify": "4.3.0",
     "rsa-pem-from-mod-exp": "0.8.4",
     "rxjs": "5.4.3",
     "sha.js": "2.4.11",
