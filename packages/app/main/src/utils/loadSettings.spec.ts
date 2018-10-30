@@ -45,7 +45,7 @@ const mockSettings = {
   'users': {},
   'azure': {}
 };
-jest.mock('fs', () => ({
+jest.mock('fs-extra', () => ({
   statSync: () => ({ isFile: () => true }),
   readFileSync: () => ('{}'),
   writeFileSync: () => true,

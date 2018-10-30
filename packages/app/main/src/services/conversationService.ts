@@ -11,7 +11,7 @@ export class ConversationService {
     return fetch(url, {
       headers,
       method: 'POST',
-      body: [{ name, id }]
+      body: JSON.stringify([{ name, id }])
     });
   }
 
@@ -20,7 +20,7 @@ export class ConversationService {
     return fetch(url, {
       headers,
       method: 'DELETE',
-      body: [{ id }]
+      body: JSON.stringify([{ id }])
     });
   }
 

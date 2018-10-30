@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as fs from 'fs';
+import * as fs from 'fs-extra';
 import { ensureStoragePath } from './ensureStoragePath';
 import { mergeDeep, Settings } from '@bfemulator/app-shared';
 import uuidv4 from 'uuid/v4';
