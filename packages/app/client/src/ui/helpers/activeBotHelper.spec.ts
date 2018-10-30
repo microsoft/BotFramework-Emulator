@@ -168,7 +168,7 @@ describe('ActiveBotHelper tests', () => {
     (CommandServiceImpl as any).call = mockCall;
 
     await ActiveBotHelper.confirmAndCreateBot(bot, 'someSecret');
-    expect(mockDispatch).toHaveBeenCalledTimes(4);
+    expect(mockDispatch).toHaveBeenCalledTimes(3);
     expect(mockCall).toHaveBeenCalledWith(SharedConstants.Commands.Emulator.NewLiveChat, endpoint);
     expect(mockRemoteCall).toHaveBeenCalledWith(SharedConstants.Commands.Bot.Create, bot, 'someSecret');
 

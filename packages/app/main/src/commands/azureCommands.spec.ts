@@ -1,10 +1,10 @@
-import { combineReducers, createStore } from 'redux';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
-import { registerCommands } from './azureCommands';
-import { azureAuth } from '../settingsData/reducers/azureAuthReducer';
 import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { combineReducers, createStore } from 'redux';
 import { AzureAuthWorkflowService } from '../services/azureAuthWorkflowService';
 import { azureLoggedInUserChanged } from '../settingsData/actions/azureAuthActions';
+import { azureAuth } from '../settingsData/reducers/azureAuthReducer';
+import { registerCommands } from './azureCommands';
 
 const mockStore = createStore(combineReducers({ azure: azureAuth }));
 const mockArmToken = 'bm90aGluZw==.eyJ1cG4iOiJnbGFzZ293QHNjb3RsYW5kLmNvbSJ9.7gjdshgfdsk98458205jfds9843fjds';
@@ -52,11 +52,7 @@ jest.mock('electron', () => ({
   },
   session: {
     defaultSession: {
-      cookies: {
-        flushStore: (cb) => cb(),
-        get: (options, cb) => cb(null, [{ domain: 'hello.there', name: 'foobar' }]),
-        remove: (domain: string, name: string, cb) => cb(null, true)
-      }
+      clearStorageData: (options, cb) => cb(true)
     }
   }
 }));

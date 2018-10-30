@@ -62,10 +62,13 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   commandRegistry.registerCommand(Bot.Create, async (bot: BotConfigWithPath, secret: string)
     : Promise<BotConfigWithPath> => {
     // getStore and add bot entry to bots.json
+    const dirName = path.dirname(bot.path);
     const botsJsonEntry: BotInfo = {
       path: bot.path,
       displayName: getBotDisplayName(bot),
-      secret
+      secret,
+      transcriptsPath: path.join(dirName, './transcripts'),
+      chatsPath: path.join(dirName, './dialogs')
     };
     await patchBotsJson(bot.path, botsJsonEntry);
 

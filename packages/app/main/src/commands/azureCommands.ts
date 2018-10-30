@@ -78,17 +78,7 @@ export function registerCommands(commandRegistry: CommandRegistry) {
   // ---------------------------------------------------------------------------
   // Sign the user out of Azure
   commandRegistry.registerCommand(Azure.SignUserOutOfAzure, async (prompt: boolean = true) => {
-    const cookiesAPI: Electron.Cookies = session.defaultSession.cookies;
-    await new Promise(resolve => cookiesAPI.flushStore(resolve));
-    const availableCookies = await new Promise<Electron.Cookie[]>(resolve => {
-      cookiesAPI.get({}, (error, cookies) => {
-        resolve(cookies || []);
-      });
-    });
-
-    await Promise.all(availableCookies.map(cookie => {
-      return new Promise(resolve => cookiesAPI.remove(cookie.domain, cookie.name, resolve));
-    }));
+    await new Promise(resolve => session.defaultSession.clearStorageData({}, resolve));
 
     const store = getSettingsStore();
     store.dispatch(azureLoggedInUserChanged(''));

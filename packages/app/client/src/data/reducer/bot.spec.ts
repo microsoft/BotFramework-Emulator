@@ -32,7 +32,7 @@
 //
 
 import { bot, BotState } from './bot';
-import { BotAction, close, create, load, setActive } from '../action/botActions';
+import { BotAction, close, load, setActive } from '../action/botActions';
 import { BotInfo } from '@bfemulator/app-shared';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 
@@ -48,24 +48,6 @@ describe('Bot reducer tests', () => {
     const startingState = { ...DEFAULT_STATE };
     const endingState = bot(DEFAULT_STATE, emptyAction);
     expect(endingState).toEqual(startingState);
-  });
-
-  it('should create a bot', () => {
-    const testbot: BotConfigWithPath = {
-      name: 'bot1',
-      description: '',
-      padlock: null,
-      services: [],
-      path: 'somePath',
-      version: '0.1'
-    };
-
-    const action = create(testbot, testbot.path, 'testsecret');
-    const state = bot(DEFAULT_STATE, action);
-    expect(state.botFiles[0]).toBeTruthy();
-    expect(state.botFiles[0].displayName).toBe('bot1');
-    expect(state.botFiles[0].path).toBe('somePath');
-    expect(state.botFiles[0].secret).toBe('testsecret');
   });
 
   describe('setting a bot as active', () => {
