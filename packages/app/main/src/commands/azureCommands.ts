@@ -1,3 +1,5 @@
+import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandRegistry } from '@bfemulator/sdk-shared';
 //
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
@@ -30,16 +32,14 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { remote, app } from 'electron';
-import * as path from 'path';
-import * as fs from 'fs-extra';
-import { AzureAuthWorkflowService } from '../services/azureAuthWorkflowService';
-import { getStore as getSettingsStore } from '../settingsData/store';
-import { CommandRegistry } from '@bfemulator/sdk-shared';
-import { SharedConstants } from '@bfemulator/app-shared';
-import { azureLoggedInUserChanged, azurePersistLoginChanged } from '../settingsData/actions/azureAuthActions';
-import { mainWindow } from '../main';
+import { app, remote } from 'electron';
 import { emulator } from '../emulator';
+import { mainWindow } from '../main';
+import { AzureAuthWorkflowService } from '../services/azureAuthWorkflowService';
+import { azureLoggedInUserChanged, azurePersistLoginChanged } from '../settingsData/actions/azureAuthActions';
+import { getStore as getSettingsStore } from '../settingsData/store';
+
+const { session } = require('electron');
 
 /** Registers LUIS commands */
 export function registerCommands(commandRegistry: CommandRegistry) {
@@ -78,11 +78,17 @@ export function registerCommands(commandRegistry: CommandRegistry) {
   // ---------------------------------------------------------------------------
   // Sign the user out of Azure
   commandRegistry.registerCommand(Azure.SignUserOutOfAzure, async (prompt: boolean = true) => {
-    const cookiesPath = path.join((app || remote.app).getPath('userData'), 'Cookies');
-    const stat = await fs.stat(cookiesPath);
-    if (stat.isFile()) {
-      await fs.unlink(cookiesPath);
-    }
+    const cookiesAPI: Electron.Cookies = session.defaultSession.cookies;
+    await new Promise(resolve => cookiesAPI.flushStore(resolve));
+    const availableCookies = await new Promise<Electron.Cookie[]>(resolve => {
+      cookiesAPI.get({}, (error, cookies) => {
+        resolve(cookies || []);
+      });
+    });
+
+    await Promise.all(availableCookies.map(cookie => {
+      return new Promise(resolve => cookiesAPI.remove(cookie.domain, cookie.name, resolve));
+    }));
 
     const store = getSettingsStore();
     store.dispatch(azureLoggedInUserChanged(''));

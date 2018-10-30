@@ -49,12 +49,16 @@ jest.mock('electron', () => ({
     app: {
       getPath: () => 'not/there'
     }
+  },
+  session: {
+    defaultSession: {
+      cookies: {
+        flushStore: (cb) => cb(),
+        get: (options, cb) => cb(null, [{ domain: 'hello.there', name: 'foobar' }]),
+        remove: (domain: string, name: string, cb) => cb(null, true)
+      }
+    }
   }
-}));
-
-jest.mock('fs-extra', () => ({
-  stat: async () => ({isFile: () => true}),
-  unlink: async () => true
 }));
 
 describe('The azureCommand,', () => {

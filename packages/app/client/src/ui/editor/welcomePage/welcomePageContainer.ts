@@ -31,14 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
 // import { hot } from 'react-hot-loader';
 import { connect } from 'react-redux';
 import { Action } from 'redux';
 import { openContextMenuForBot } from '../../../data/action/welcomePageActions';
-import { WelcomePage, WelcomePageProps } from './welcomePage';
 import { RootState } from '../../../data/store';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
-import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
+import { WelcomePage, WelcomePageProps } from './welcomePage';
 
 function mapStateToProps(state: RootState, ownProps: WelcomePageProps): WelcomePageProps {
   return {
@@ -70,7 +70,7 @@ function mapDispatchToProps(dispatch: (action: Action) => void): WelcomePageProp
       CommandServiceImpl.call(Commands.UI.SignInToAzure).catch();
     },
     signOutWithAzure: () => {
-      CommandServiceImpl.call(Commands.Azure.SignUserOutOfAzure).catch();
+      CommandServiceImpl.remoteCall(Commands.Azure.SignUserOutOfAzure).catch();
       CommandServiceImpl.call(Commands.UI.InvalidateAzureArmToken).catch();
     },
     showContextMenuForBot: (bot: BotInfo): void => dispatch(openContextMenuForBot(bot))
