@@ -325,14 +325,6 @@
         font-weight: 500;
     }
 
-    .addressbar-botcreds input[type=text] {
-        border-width: 0.1px;
-        border-style: solid;
-        border-color: #ccc;
-        padding-left: 4px;
-        padding-right: 4px;
-    }
-
     .addressbar-botcreds-input {
         display: inline-block;
     }
