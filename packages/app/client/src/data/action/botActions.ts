@@ -35,21 +35,11 @@ import { BotInfo } from '@bfemulator/app-shared';
 import { BotConfigWithPath } from '@bfemulator/sdk-shared';
 
 export enum BotActions {
-  create = 'BOT/CREATE',
   load = 'BOT/LOAD',
   setActive = 'BOT/SET_ACTIVE',
   close = 'BOT/CLOSE',
   browse = 'BOT/BROWSE',
   hashGenerated = 'BOT/HASH_GENERATED'
-}
-
-export interface CreateBotAction {
-  type: BotActions.create;
-  payload: {
-    bot: BotConfigWithPath,
-    botFilePath: string,
-    secret: string
-  };
 }
 
 export interface LoadBotAction {
@@ -82,23 +72,11 @@ export interface BotHashAction {
 }
 
 export type BotAction =
-  CreateBotAction |
   LoadBotAction |
   SetActiveBotAction |
   CloseBotAction |
   BrowseBotAction |
   BotHashAction;
-
-export function create(bot: BotConfigWithPath, botFilePath: string, secret: string): CreateBotAction {
-  return {
-    type: BotActions.create,
-    payload: {
-      bot,
-      botFilePath,
-      secret
-    }
-  };
-}
 
 export function load(bots: BotInfo[]): LoadBotAction {
   // prune bad bots

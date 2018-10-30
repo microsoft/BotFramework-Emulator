@@ -146,11 +146,8 @@ export const ActiveBotHelper = new class {
         // create the bot and save to disk
         const bot: BotConfigWithPath
           = await CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.Create, botToCreate, secret);
-        store.dispatch(BotActions.create(bot, bot.path, secret));
-
         // set the bot as active
         await this.setActiveBot(botToCreate);
-
         // open a livechat session with the bot
         const endpoint: IEndpointService = bot.services
           .find(service => service.type === ServiceTypes.Endpoint) as IEndpointService;

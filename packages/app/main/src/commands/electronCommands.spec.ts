@@ -1,18 +1,17 @@
 import { SharedConstants } from '@bfemulator/app-shared';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
-import { rename } from 'fs-extra';
+import * as Electron from 'electron';
 import { AppMenuBuilder } from '../appMenuBuilder';
 import { load } from '../botData/actions/botActions';
 import { getStore } from '../botData/store';
 import { mainWindow } from '../main';
 import { registerCommands } from './electronCommands';
-import * as Electron from 'electron';
-import * as fs from 'fs-extra';
+
 let renameArgs;
 jest.mock('fs-extra', () => ({
   stat: async () => ({ isFile: () => true }),
   statSync: () => ({ isFile: () => false }),
-  pathExists: async () => true,
+  pathExists: async (path: string = '') => !path.includes('error'),
   rename: async (...args: any[]) => renameArgs = args
   // readFile: async () => JSON.stringify((mockConversation as any).transcript)
 }));
@@ -135,8 +134,20 @@ describe('the electron commands', () => {
   });
 
   it('should rename a file', async () => {
-    const {handler} = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.RenameFile);
-    await handler({path: 'my/path/bot.bot', newPath: 'my/path/bot1.bot' });
+    const { handler } = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.RenameFile);
+    await handler({ path: 'my/path/bot.bot', newPath: 'my/path/bot1.bot' });
     expect(renameArgs).toEqual(['my/path/bot.bot', 'my/path/bot1.bot']);
+  });
+
+  it('should throw if the file to rename does not exist', async () => {
+    const { handler } = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.RenameFile);
+    let threw = false;
+    try {
+      await handler({ path: 'error/bot.bot', newPath: 'error/bot1.bot' });
+    } catch (error) {
+      expect(error.message).toBe(`Cannot rename File: error/bot.bot does not exist`);
+      threw = true;
+    }
+    expect(threw).toBeTruthy();
   });
 });

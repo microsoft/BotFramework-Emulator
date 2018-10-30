@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { BotInfo, getBotDisplayName } from '@bfemulator/app-shared';
+import { BotInfo } from '@bfemulator/app-shared';
 import { applyBotConfigOverrides, BotConfigWithPath, botsAreTheSame } from '@bfemulator/sdk-shared';
 import { BotAction, BotActions } from '../action/botActions';
 
@@ -49,17 +49,6 @@ const DEFAULT_STATE: BotState = {
 
 export function bot(state: BotState = DEFAULT_STATE, action: BotAction) {
   switch (action.type) {
-    case BotActions.create: {
-      const newBot: BotInfo = {
-        path: action.payload.botFilePath,
-        displayName: getBotDisplayName(action.payload.bot),
-        secret: action.payload.secret
-      };
-      const bots = [...state.botFiles].filter(botArg => botArg.path !== action.payload.botFilePath);
-      bots.unshift(newBot);
-      state = setBotFilesState(bots, state);
-      break;
-    }
 
     case BotActions.load: {
       state = setBotFilesState(action.payload.bots, state);

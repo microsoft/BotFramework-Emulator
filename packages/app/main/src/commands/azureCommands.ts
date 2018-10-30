@@ -1,3 +1,5 @@
+import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandRegistry } from '@bfemulator/sdk-shared';
 //
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
@@ -30,14 +32,15 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-import { AzureAuthWorkflowService } from '../services/azureAuthWorkflowService';
-import { getStore as getSettingsStore } from '../settingsData/store';
-import { CommandRegistry } from '@bfemulator/sdk-shared';
-import { SharedConstants } from '@bfemulator/app-shared';
-import { azureLoggedInUserChanged, azurePersistLoginChanged } from '../settingsData/actions/azureAuthActions';
-import { mainWindow } from '../main';
+import { app, remote } from 'electron';
 import { emulator } from '../emulator';
+import { mainWindow } from '../main';
+import { AzureAuthWorkflowService } from '../services/azureAuthWorkflowService';
+import { azureLoggedInUserChanged, azurePersistLoginChanged } from '../settingsData/actions/azureAuthActions';
+import { getStore as getSettingsStore } from '../settingsData/store';
+
+const { session } = require('electron');
+
 /** Registers LUIS commands */
 export function registerCommands(commandRegistry: CommandRegistry) {
   const { Azure } = SharedConstants.Commands;
@@ -75,29 +78,27 @@ export function registerCommands(commandRegistry: CommandRegistry) {
   // ---------------------------------------------------------------------------
   // Sign the user out of Azure
   commandRegistry.registerCommand(Azure.SignUserOutOfAzure, async (prompt: boolean = true) => {
-    const workflow = AzureAuthWorkflowService.enterSignOutWorkflow(prompt);
-    let result = undefined;
-    while (true) {
-      const next = workflow.next(result);
-      if (next.done) {
-        break;
-      }
+    await new Promise(resolve => session.defaultSession.clearStorageData({}, resolve));
+
+    const store = getSettingsStore();
+    store.dispatch(azureLoggedInUserChanged(''));
+    try {
+      await mainWindow.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
+    } catch {
+      // Nothing to do
+    }
+    if (prompt) {
       try {
-        result = await next.value;
+        await mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, false, {
+          message: 'You have successfully signed out of azure',
+          title: 'Success!'
+        });
       } catch {
-        break;
+        // Nothing to do
       }
     }
-    if (result) {
-      const store = getSettingsStore();
-      store.dispatch(azureLoggedInUserChanged(''));
-      try {
-        await mainWindow.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
-      } catch {
-        // nothing to do
-      }
-    }
-    return result;
+
+    return true;
   });
 
   // ---------------------------------------------------------------------------

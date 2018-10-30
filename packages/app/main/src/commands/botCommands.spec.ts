@@ -1,18 +1,18 @@
-import { combineReducers, createStore } from 'redux';
-import { bot } from '../botData/reducers/bot';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
-import * as helpers from '../botHelpers';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared/built';
-import { registerCommands } from './botCommands';
-import { botProjectFileWatcher } from '../watchers';
-import { mainWindow } from '../main';
-import { State } from '../botData/state';
-import * as store from '../botData/store';
-import { setActive } from '../botData/actions/botActions';
-import { emulator } from '../emulator';
 import { BotConfiguration } from 'botframework-config';
 import * as path from 'path';
+import { combineReducers, createStore } from 'redux';
+import { setActive } from '../botData/actions/botActions';
+import { bot } from '../botData/reducers/bot';
+import { State } from '../botData/state';
+import * as store from '../botData/store';
+import * as helpers from '../botHelpers';
+import { emulator } from '../emulator';
+import { mainWindow } from '../main';
+import { botProjectFileWatcher } from '../watchers';
+import { registerCommands } from './botCommands';
 
 const mockBotConfig = BotConfiguration;
 let mockStore;
@@ -76,7 +76,7 @@ jest.mock('../main', () => ({
   }
 }));
 
-const mockOn = {on: () => mockOn};
+const mockOn = { on: () => mockOn };
 jest.mock('chokidar', () => ({
   watch: () => ({
     on: () => mockOn
@@ -94,7 +94,9 @@ describe('The botCommands', () => {
     const mockBotInfo = {
       path: botToSave.path,
       displayName: 'AuthBot',
-      secret: 'secret'
+      secret: 'secret',
+      chatsPath: 'some/dialogs',
+      transcriptsPath: 'some/transcripts'
     };
     const command = mockCommandRegistry.getCommand(Bot.Create);
     const result = await command.handler(botToSave, 'secret');

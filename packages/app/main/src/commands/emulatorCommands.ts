@@ -31,21 +31,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { getStore } from '../botData/store';
-import { BotConfigWithPath, CommandRegistryImpl } from '@bfemulator/sdk-shared';
-import { Conversation } from '@bfemulator/emulator-core';
-import { mainWindow } from '../main';
-import { getActiveBot, getBotInfoByPath, patchBotsJson, toSavableBot } from '../botHelpers';
-import { parseActivitiesFromChatFile, showSaveDialog, writeFile } from '../utils';
-import { emulator } from '../emulator';
-import { sync as mkdirpSync } from 'mkdirp';
-import * as BotActions from '../botData/actions/botActions';
-import * as fs from 'fs-extra';
-import { cleanupId as cleanupActivityChannelAccountId, CustomActivity } from '../utils/conversation';
 import { newBot, newEndpoint, SharedConstants } from '@bfemulator/app-shared';
-import { botProjectFileWatcher } from '../watchers';
-import { getStore as getSettingsStore } from '../settingsData/store';
+import { Conversation } from '@bfemulator/emulator-core';
+import { BotConfigWithPath, CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import * as fs from 'fs-extra';
+import { sync as mkdirpSync } from 'mkdirp';
 import * as path from 'path';
+import * as BotActions from '../botData/actions/botActions';
+import { getStore } from '../botData/store';
+import { getActiveBot, getBotInfoByPath, patchBotsJson, toSavableBot } from '../botHelpers';
+import { emulator } from '../emulator';
+import { mainWindow } from '../main';
+import { getStore as getSettingsStore } from '../settingsData/store';
+import { parseActivitiesFromChatFile, showSaveDialog, writeFile } from '../utils';
+import { cleanupId as cleanupActivityChannelAccountId, CustomActivity } from '../utils/conversation';
+import { botProjectFileWatcher } from '../watchers';
 
 /** Registers emulator (actual conversation emulation logic) commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
