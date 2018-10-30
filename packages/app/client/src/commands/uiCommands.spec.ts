@@ -65,15 +65,7 @@ describe('the uiCommands', () => {
       expect(arg.type).toBe(NavBarActions.select);
       expect(arg.payload.selection).toBe('Do it Nauuuw!');
     });
-
-    it('when the ShowExplorer command is dispatched', () => {
-      let arg: SelectNavBarAction = {} as SelectNavBarAction;
-      store.dispatch = action => (arg as any) = action;
-      registry.getCommand(Commands.ShowExplorer).handler();
-      expect(arg.type).toBe(NavBarActions.select);
-      expect(arg.payload.selection).toBe(Constants.NAVBAR_BOT_EXPLORER);
-    });
-
+    
     it('when the ShowAppSettings command is dispatched', () => {
       let arg: OpenEditorAction = {} as OpenEditorAction;
       store.dispatch = action => (arg as any) = action;

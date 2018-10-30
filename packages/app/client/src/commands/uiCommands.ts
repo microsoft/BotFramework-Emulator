@@ -82,12 +82,6 @@ export function registerCommands(commandRegistry: CommandRegistry) {
   });
 
   // ---------------------------------------------------------------------------
-  // Switches navbar tab selection to Explorer
-  commandRegistry.registerCommand(UI.ShowExplorer, (): void => {
-    store.dispatch(NavBarActions.select(Constants.NAVBAR_BOT_EXPLORER));
-  });
-
-  // ---------------------------------------------------------------------------
   // Open App Settings
   commandRegistry.registerCommand(UI.ShowAppSettings, (): void => {
     const { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } = Constants;
