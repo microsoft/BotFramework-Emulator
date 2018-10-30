@@ -225,7 +225,7 @@ describe('The ServiceExplorerSagas', () => {
       };
       await it.next(result).value;
 
-      expect(link).toBe(`https://www.luis.ai/applications/${mockService.appId}/versions/${mockService.version}/build`);
+      expect(link).toBe(`https://luis.ai/applications/${mockService.appId}/versions/${mockService.version}/build`);
     });
 
     it('should open the luis editor when the "edit" item is selected', async () => {
