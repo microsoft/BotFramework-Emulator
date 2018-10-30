@@ -1,11 +1,12 @@
 import { combineReducers, createStore } from 'redux';
+import * as BotActions from '../botData/actions/botActions';
 import { bot } from '../botData/reducers/bot';
 import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared/built';
 import { registerCommands } from './emulatorCommands';
 import * as store from '../botData/store';
 import { BotConfiguration } from 'botframework-config';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { newBot, newEndpoint, SharedConstants } from '@bfemulator/app-shared';
 import { Conversation } from '@bfemulator/emulator-core';
 import { emulator } from '../emulator';
 import * as utils from '../utils';
@@ -22,6 +23,7 @@ let mockStore;
 (store as any).getStore = function () {
   return mockStore || (mockStore = createStore(combineReducers({ bot })));
 };
+
 const mockOn = { on: () => mockOn };
 jest.mock('chokidar', () => ({
   watch: () => ({
@@ -52,7 +54,9 @@ jest.mock('../botHelpers', () => ({
 jest.mock('../utils', () => ({
   parseActivitiesFromChatFile: () => [],
   showSaveDialog: async () => 'save/to/this/path',
-  writeFile: async () => true
+  writeFile: async () => true,
+  loadSettings: () => ({ windowState: {} }),
+  getThemes: async () => []
 }));
 
 jest.mock('../utils/ensureStoragePath', () => ({
@@ -396,5 +400,19 @@ describe('The emulatorCommands', () => {
       .handler('0a441b55-d1d6-4015-bbb4-2e7f44fa9f4', id, '0a441b55-d1d6-4015-bbb4-2e7f44fa9f42', activities);
 
     expect(feedActivitiesSpy).toHaveBeenCalledWith(activities);
+  });
+
+  it('should create a new conversation object for transcript', async () => {
+    const getActiveBotSpy = jest.spyOn((botHelpers as any).default, 'getActiveBot').mockReturnValue(null);
+    const dispatchSpy = jest.spyOn(store.getStore(), 'dispatch');
+    const { handler } = mockCommandRegistry.getCommand(SharedConstants.Commands.Emulator.NewTranscript);
+    const conversation = await handler('1234');
+
+    const newbot = newBot();
+    newbot.services.push(newEndpoint());
+    (newbot.services[0] as any).id = jasmine.any(String);
+    expect(getActiveBotSpy).toHaveBeenCalled();
+    expect(dispatchSpy).toHaveBeenCalledWith(BotActions.mockAndSetActive(newbot));
+    expect(conversation).not.toBeNull();
   });
 });
