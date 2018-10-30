@@ -55,12 +55,7 @@ const remote = require('electron').remote;
 const ipcRenderer = require('electron').ipcRenderer;
 const AdaptiveCardsHostConfig = require('./adaptivecards-hostconfig.json');
 
-export interface MainViewState {
-  showUpdateDialog: boolean;
-  updateVersion: string;
-}
-
-export class MainView extends React.Component<{}, MainViewState> {
+export class MainView extends React.Component<{}, {}> {
     settingsUnsubscribe: any;
     settingsLoadUnsubscribe: any;
     reuseKey: number = 0;
@@ -71,19 +66,16 @@ export class MainView extends React.Component<{}, MainViewState> {
     botChatContainer: HTMLElement;
     shouldWarnOfBotChange: boolean = false;
     showUpdateDialog: boolean = false;
+    updateVersion: string = '';
 
     constructor(props: {}) {
       super(props);
-
-      this.state = {
-        showUpdateDialog: false,
-        updateVersion: ''
-      };
     }
 
     componentWillMount() {
         this.settingsUnsubscribe = addSettingsListener((settings: Settings) => {
             try {
+
                 let conversationChanged = false;
                 if (this.conversationId !== settings.conversation.conversationId) {
                     this.conversationId = settings.conversation.conversationId || '';
@@ -102,8 +94,15 @@ export class MainView extends React.Component<{}, MainViewState> {
                     this.botId = settings.serverSettings.activeBot || '';
                     botChanged = true;
                 }
+              
+                let updateAvailable = false;
+                if (this.showUpdateDialog !== settings.update.showing) {
+                  this.showUpdateDialog = settings.update.showing;
+                  this.updateVersion = settings.update.version;
+                  updateAvailable = true;
+                }
 
-                if (conversationChanged || userChanged || botChanged) {
+                if (conversationChanged || userChanged || botChanged || updateAvailable) {
                     if (this.directline) {
                         this.directline.end();
                         this.directline = undefined;
@@ -124,10 +123,6 @@ export class MainView extends React.Component<{}, MainViewState> {
             } catch(e) {
                 //log.error(e.message);
             }
-            this.setState({
-              showUpdateDialog: settings.update.showing,
-              updateVersion: settings.update.version
-            });
         });
     }
 
@@ -324,7 +319,7 @@ export class MainView extends React.Component<{}, MainViewState> {
 
     render() {
         const settings = getSettings();
-        const { showUpdateDialog, updateVersion } = this.state;
+        const { showUpdateDialog, updateVersion } = this;
 
         const minVertSplit = 0;
         const minHorizSplit = 42;
