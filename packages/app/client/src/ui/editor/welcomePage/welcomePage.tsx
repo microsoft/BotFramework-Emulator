@@ -62,10 +62,10 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
 
     return (
       <GenericDocument>
-        <LargeHeader>Bot Framework Emulator</LargeHeader>
-        <span className={ styles.versionNumber }>Version 4</span>
         <Row>
           <Column className={ styles.spacing }>
+            <LargeHeader>Bot Framework Emulator</LargeHeader>
+            <span className={ styles.versionNumber }>Version 4</span>
             { startSection }
             { myBotsSection }
             { signInSection }
