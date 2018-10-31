@@ -31,6 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
+import { BotConfigWithPath, CommandRegistryImpl, mergeEndpoints, uniqueId } from '@bfemulator/sdk-shared';
+import { BotConfigurationBase } from 'botframework-config/lib';
+import { IConnectedService, IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
+import * as path from 'path';
+import * as BotActions from '../botData/actions/botActions';
+import { setActive } from '../botData/actions/botActions';
+import { getStore } from '../botData/store';
 import {
   getActiveBot,
   getBotInfoByPath,
@@ -41,16 +49,8 @@ import {
   saveBot,
   toSavableBot
 } from '../botHelpers';
-import * as BotActions from '../botData/actions/botActions';
-import { setActive } from '../botData/actions/botActions';
-import { BotConfigWithPath, CommandRegistryImpl, mergeEndpoints, uniqueId } from '@bfemulator/sdk-shared';
-import { BotInfo, getBotDisplayName, SharedConstants } from '@bfemulator/app-shared';
-import { mainWindow } from '../main';
 import { emulator } from '../emulator';
-import { IConnectedService, IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
-import { BotConfigurationBase } from 'botframework-config/lib';
-import * as path from 'path';
-import { getStore } from '../botData/store';
+import { mainWindow } from '../main';
 import { botProjectFileWatcher, chatWatcher, transcriptsWatcher } from '../watchers';
 
 /** Registers bot commands */
@@ -260,14 +260,20 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Removes an msbot service entry.
-  commandRegistry.registerCommand(Bot.RemoveService, async (serviceType: ServiceTypes, serviceId: string) => {
+  commandRegistry.registerCommand(Bot.RemoveService, async (serviceType: ServiceTypes, serviceOrId: any) => {
     const activeBot = getActiveBot();
     const botInfo = activeBot && getBotInfoByPath(activeBot.path);
     if (botInfo) {
       const botConfig = toSavableBot(activeBot, botInfo.secret);
-      botConfig.disconnectService(serviceId);
+      const id = typeof serviceOrId === 'string' ? serviceOrId : serviceOrId.id;
+      botConfig.disconnectService(id);
       try {
-        await botConfig.save(botInfo.secret);
+        await saveBot(botConfig);
+        getStore().dispatch(setActive(botConfig));
+        await mainWindow.commandService.remoteCall(
+          SharedConstants.Commands.Bot.SetActive,
+          botConfig,
+          botConfig.getPath());
       } catch (e) {
         console.error(`bot:remove-service: Error trying to save bot: ${e}`);
         throw e;

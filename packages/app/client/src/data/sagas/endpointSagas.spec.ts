@@ -81,9 +81,10 @@ describe('The endpoint sagas', () => {
 
   describe(' openEndpointContextMenu', () => {
     const menuItems = [
-      { 'id': 'edit', 'label': 'Edit settings' },
-      { 'id': 'open', 'label': 'Open in emulator' },
-      { 'id': 'forget', 'label': 'Remove' }
+      { label: 'Edit settings', id: 'edit' },
+      { label: 'Open in emulator', id: 'open' },
+      { label: 'Open in portal', id: 'absLink', enabled: jasmine.any(Boolean) },
+      { label: 'Remove', id: 'forget' }
     ];
 
     const { DisplayContextMenu, ShowMessageBox } = SharedConstants.Commands.Electron;
