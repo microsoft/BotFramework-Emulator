@@ -56,7 +56,7 @@ export const DialogService = new class implements DialogService {
    *
    * Ex. DialogService.showDialog(PasswordPromptDialog).then(pw => // do something with password from dialog)
    */
-  showDialog<T extends ComponentClass | StatelessComponent>(dialog: T, props: {} = {}): Promise<any> {
+  showDialog<T extends ComponentClass | StatelessComponent, R = any>(dialog: T, props: {} = {}): Promise<R> {
     if (!this._hostElement) {
       return new Promise((resolve) => resolve(null));
     }
