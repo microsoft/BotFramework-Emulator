@@ -33,9 +33,9 @@
 
 import * as React from 'react';
 import { SyntheticEvent } from 'react';
-import * as styles from './navBar.scss';
 import * as Constants from '../../../constants';
 import { NotificationManager } from '../../../notificationManager';
+import * as styles from './navBar.scss';
 
 export interface NavBarProps {
   selection?: string;
@@ -44,6 +44,7 @@ export interface NavBarProps {
   openEmulatorSettings?: () => void;
   notifications?: string[];
   explorerIsVisible?: boolean;
+  botIsOpen?: boolean;
 }
 
 export interface NavBarState {
@@ -109,7 +110,7 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
 
   private get links(): JSX.Element[] {
     const { selection } = this.state;
-    const { explorerIsVisible } = this.props;
+    const { explorerIsVisible, botIsOpen = false } = this.props;
 
     return [
       'Bot Explorer',
@@ -123,6 +124,7 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
           title={ title }
           className={ styles.navLink }
           key={ index }
+          disabled={ !botIsOpen && index === 1 }
           onClick={ this.onLinkClick }>
           <div/>
           { this.renderNotificationBadge(title) }
@@ -136,10 +138,10 @@ export class NavBarComponent extends React.Component<NavBarProps, NavBarState> {
     if (navSelection === 'Notifications') {
       const { notifications } = this.props;
       const numUnreadNotifications = notifications
-                                           .map(notificationId => NotificationManager.get(notificationId))
-                                           .map(notification => notification.read)
-                                           .filter(notificationHasBeenRead => !notificationHasBeenRead)
-                                           .length;
+        .map(notificationId => NotificationManager.get(notificationId))
+        .map(notification => notification.read)
+        .filter(notificationHasBeenRead => !notificationHasBeenRead)
+        .length;
 
       return numUnreadNotifications ? <span className={ styles.badge }>{ numUnreadNotifications }</span> : null;
     }
