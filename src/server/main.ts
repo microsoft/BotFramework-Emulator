@@ -74,9 +74,12 @@ AppUpdater.on('update-not-available', () => {
 });
 
 AppUpdater.on('update-available', (updateInfo: UpdateInfo) => {
-  log.debug(`New version of the Emulator is available: ${updateInfo.version}`);
+  // only updating to v4 from v3
   if (updateInfo.version.startsWith('4')) {
+    log.debug(`New version of the Emulator is available: ${updateInfo.version}`);
     Emulator.send('v4-update-available', updateInfo.version);
+  } else {
+    log.debug('No new version found.');
   }
 });
 
@@ -98,10 +101,16 @@ AppUpdater.on('update-downloaded', (updateInfo: UpdateInfo) => {
 });
 
 AppUpdater.on('error', (err: Error, message: string) => {
-  log.error(`Error while updating the Emulator: ${(err && err.message) || message}`);
-  dialog.showErrorBox(
-    'Error updating app',
-    'There was an error while using auto update. Please check the log panel for details.');
+  // On Windows, after updating 3.5.36 -> 3.5.37, the new updater will try to
+  // ping the latest release on GitHub (3.5.37) for latest.yml but it won't exist.
+  // We want to supress that message until we release 4.2.0, when it will no longer be an issue.
+  if (!message.includes('.yml')) {
+    log.error(`Error while updating the Emulator: ${(err && err.message) || message}`);
+    dialog.showErrorBox(
+      'Error updating app',
+      'There was an error while using auto update. Please check the log panel for details.'
+    );
+  }
 });
 
 Electron.ipcMain.on('download-v4-update', () => {
