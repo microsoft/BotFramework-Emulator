@@ -121,7 +121,15 @@
       "category": "public.app-category.developer-tools"
     },
     "linux": {
-      "target": "AppImage",
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ],
       "artifactName": "${name}-${version}-linux.${ext}",
       "category": "Development"
     },
