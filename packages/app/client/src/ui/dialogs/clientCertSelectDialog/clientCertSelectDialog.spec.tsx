@@ -38,6 +38,7 @@ import { navBar } from '../../../data/reducer/navBar';
 import { ClientCertSelectDialog } from './clientCertSelectDialog';
 import { ClientCertSelectDialogContainer } from './clientCertSelectDialogContainer';
 import { mount } from 'enzyme';
+import { DialogService } from '../service';
 
 jest.mock('./clientCertSelectDialog.scss', () => ({}));
 jest.mock('../dialogStyles.scss', () => ({}));
@@ -47,7 +48,6 @@ jest.mock('../../dialogs/', () => ({
   }));
 
 describe('ClientCertSelectDialogContainer component should', () => {
-    let result;
     let wrapper;
 
     // let child;
@@ -55,14 +55,12 @@ describe('ClientCertSelectDialogContainer component should', () => {
         const mockCerts = [
             'cert1',
             'cert2',
-            'cer3'
+            'cert3'
         ] as any;
-
-        const dismiss = r => result = r;
 
         wrapper = mount(
             <Provider store={ createStore(navBar) } >
-                <ClientCertSelectDialogContainer certs={ mockCerts } dismiss={ dismiss } />
+                <ClientCertSelectDialogContainer certs={ mockCerts }/>
             </Provider>
         );
     });
@@ -89,8 +87,25 @@ describe('ClientCertSelectDialogContainer component should', () => {
                     index: 0 // clicked on first cert
                 }
             }
-        }; 
+        };
         node.onCertListItemClick(mockEvent);
         expect(node.state.selectedIndex).toBe(0);
-    })
+    });
+
+    it('select a certificate on dismiss', () => {
+        const dialogComponent = wrapper.find(ClientCertSelectDialog);
+        const node = dialogComponent.instance();
+
+        const mockEvent: any = {
+            currentTarget: {
+                dataset: {
+                    index: 2 // clicked on cert
+                }
+            }
+        };
+        node.onCertListItemClick(mockEvent);
+        const spy = jest.spyOn(DialogService, 'hideDialog');
+        node.onDismissClick();
+        expect(spy).toHaveBeenCalledWith('cert3');
+    });
 });
