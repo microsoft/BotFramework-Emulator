@@ -6,7 +6,7 @@ import { bot } from '../../../../data/reducer/bot';
 import { EndpointExplorerContainer } from './endpointExplorerContainer';
 import { EndpointExplorer } from './endpointExplorer';
 import { load, setActive } from '../../../../data/action/botActions';
-import { openEndpointDeepLink, openEndpointExplorerContextMenu } from '../../../../data/action/endpointServiceActions';
+import { openEndpointInEmulator, openEndpointExplorerContextMenu } from '../../../../data/action/endpointServiceActions';
 import { EndpointEditorContainer } from './endpointEditor';
 
 const mockStore = createStore(combineReducers({ bot }), {});
@@ -79,7 +79,7 @@ describe('The EndpointExplorer component should', () => {
   it('should have the expected functions available in the props', () => {
     const props = node.props();
     expect(typeof props.launchEndpointEditor).toBe('function');
-    expect(typeof props.openEndpointDeepLink).toBe('function');
+    expect(typeof props.openEndpointInEmulator).toBe('function');
     expect(typeof props.openContextMenuForService).toBe('function');
   });
 
@@ -97,6 +97,6 @@ describe('The EndpointExplorer component should', () => {
     mockLi.setAttribute('data-index', '0');
     node.instance().onLinkClick({ currentTarget: mockLi } as any);
 
-    expect(mockDispatch).toHaveBeenCalledWith(openEndpointDeepLink(mockBot.services[0] as any));
+    expect(mockDispatch).toHaveBeenCalledWith(openEndpointInEmulator(mockBot.services[0] as any, true));
   });
 });

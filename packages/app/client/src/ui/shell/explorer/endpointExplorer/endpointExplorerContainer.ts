@@ -36,7 +36,7 @@ import { ComponentClass } from 'react';
 import { connect } from 'react-redux';
 import {
   launchEndpointEditor,
-  openEndpointDeepLink,
+  openEndpointInEmulator,
   openEndpointExplorerContextMenu
 } from '../../../../data/action/endpointServiceActions';
 import { RootState } from '../../../../data/store';
@@ -56,7 +56,8 @@ const mapDispatchToProps = dispatch => {
   return {
     launchEndpointEditor: (endpointEditor: ComponentClass<EndpointEditor>, endpointService: IEndpointService) =>
       dispatch(launchEndpointEditor(endpointEditor, endpointService)),
-    openEndpointDeepLink: (endpointService: IEndpointService) => dispatch(openEndpointDeepLink(endpointService)),
+    openEndpointInEmulator: (endpointService: IEndpointService) =>
+      dispatch(openEndpointInEmulator(endpointService, true)),
     openContextMenuForService: (endpointService: IEndpointService, endpointEditor: ComponentClass<EndpointEditor>) =>
       dispatch(openEndpointExplorerContextMenu(endpointEditor, endpointService)),
   };
