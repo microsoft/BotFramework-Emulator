@@ -1,5 +1,6 @@
 import { AzureAuthWorkflowService } from './azureAuthWorkflowService';
 import { BrowserWindow } from 'electron';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 const mockEvent = Event; // this is silly but required by jest
 const mockArmToken = 'eyJhbGciOiJSU0EyNTYiLCJraWQiOiJmZGtqc2FoamdmIiwieDV0IjoiZiJ9.' +
@@ -28,11 +29,22 @@ jest.mock('node-fetch', () => {
 
 jest.mock('rsa-pem-from-mod-exp', () => () => ({}));
 
-jest.mock('electron', () => ({
+let mockCertCbResult;
+let mockCerts = ['cert1', 'cert2', 'cert3'];
+jest.mock('electron', () => 
+({
   BrowserWindow: class MockBrowserWindow {
     public static reporters = [];
     public listeners = [] as any;
-    public webContents = { history: ['http://someotherUrl', `http://localhost/#t=13&id_token=${mockArmToken}`] };
+    public webContents = {
+      history: ['http://someotherUrl', `http://localhost/#t=13&id_token=${mockArmToken}`],
+      once: (_eventName: string, handler: (...args) => any) => {
+        const mockEvent: any = { preventDefault: () => null };
+        const mockCallback = (cert: any) => { mockCertCbResult = cert };
+        handler(mockEvent, mockCerts, mockCallback);
+      },
+      removeListener: () => null
+    };
 
     private static report(...args: any[]) {
       this.reporters.forEach(r => r(args));
@@ -85,6 +97,28 @@ jest.mock('electron', () => ({
         this.listeners.forEach(l => l.type === evt.type && l.handler(evt));
       });
     }
+  },
+  app: {
+    on: (...args: any[]) => null,
+    ipcMain: (...args: any[]) => null,
+    setName: (name: string) => null
+  }
+}));
+
+let mockSharedConstants = SharedConstants;
+let mockRemoteCalls: { cmdName: string, args: any[] }[] = [];
+jest.mock('../main', () => ({
+  mainWindow: {
+    commandService: {
+      remoteCall: (cmdName: string, ...args) => {
+        if (cmdName === mockSharedConstants.Commands.UI.ShowSelectCertDialog) {
+          const mockRemoteCall = { cmdName, args };
+          mockRemoteCalls.push(mockRemoteCall);
+          return Promise.resolve('someCert');
+        }
+        return Promise.resolve(true);
+      }
+    }
   }
 }));
 
@@ -96,6 +130,8 @@ describe('The azureAuthWorkflowService', () => {
       { authorization_endpoint: 'http://localhost', jwks_uri: 'http://localhost', token_endpoint: 'http://localhost' }
     ];
     (BrowserWindow as any).reporters = [];
+    mockCertCbResult = null;
+    mockRemoteCalls = [];
   });
 
   it('should make the appropriate calls and receive the expected values with the "retrieveAuthToken"', async () => {
@@ -141,5 +177,13 @@ describe('The azureAuthWorkflowService', () => {
       ct++;
     }
     expect(ct).toBe(4);
+    
+    // the cert callback should have been called with our mock cert value
+    expect(mockRemoteCalls.some(remoteCall => {
+      const { ShowSelectCertDialog } = SharedConstants.Commands.UI;
+      return remoteCall.cmdName === ShowSelectCertDialog
+        && remoteCall.args[0] == mockCerts;
+    })).toBe(true);
+    expect(mockCertCbResult).toBe('someCert');
   });
 });

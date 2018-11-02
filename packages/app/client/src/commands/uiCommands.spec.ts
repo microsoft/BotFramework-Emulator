@@ -18,7 +18,9 @@ import {
   AzureLoginPromptDialogContainer,
   AzureLoginSuccessDialogContainer,
   BotCreationDialog,
+  ClientCertSelectDialogContainer,
   DialogService,
+  PostMigrationDialogContainer,
   SecretPromptDialogContainer
 } from '../ui/dialogs';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
@@ -26,7 +28,8 @@ import { SharedConstants } from '@bfemulator/app-shared';
 import { registerCommands } from './uiCommands';
 import * as editorHelpers from '../data/editorHelpers';
 import { store } from '../data/store';
-import { AzureAuthAction, AzureAuthWorkflow, invalidateArmToken } from '../data/action/azureAuthActions';
+import { AzureAuthAction, AzureAuthWorkflow, invalidateArmToken, ArmTokenData } from '../data/action/azureAuthActions';
+import { ProgressIndicatorAction, ProgressIndicatorPayload, UPDATE_PROGRESS_INDICATOR } from '../data/action/progressIndicatorActions';
 
 const Commands = SharedConstants.Commands.UI;
 
@@ -54,6 +57,21 @@ describe('the uiCommands', () => {
     const spy = jest.spyOn(DialogService, 'showDialog');
     const result = await registry.getCommand(Commands.ShowSecretPromptDialog).handler();
     expect(spy).toHaveBeenCalledWith(SecretPromptDialogContainer);
+    expect(result).toBe(true);
+  });
+
+  it('should call DialogService.showDialog when the ShowPostMigrationDialog command is dispatched', async () => {
+    const spy = jest.spyOn(DialogService, 'showDialog');
+    const result = await registry.getCommand(Commands.ShowPostMigrationDialog).handler();
+    expect(spy).toHaveBeenCalledWith(PostMigrationDialogContainer);
+    expect(result).toBe(true);
+  });
+
+  it('should call DialogService.showDialog when the ShowSelectCertDialog command is dispatched', async () => {
+    let certs = ["cert", "cert2", "cert3"];
+    const spy = jest.spyOn(DialogService, 'showDialog');
+    const result = await registry.getCommand(Commands.ShowSelectCertDialog).handler(certs);
+    expect(spy).toHaveBeenCalledWith(ClientCertSelectDialogContainer, { certs });
     expect(result).toBe(true);
   });
 
@@ -89,6 +107,23 @@ describe('the uiCommands', () => {
       store.dispatch = action => (arg as any) = action;
       registry.getCommand(Commands.InvalidateAzureArmToken).handler();
       expect(arg).toEqual(invalidateArmToken());
+    });
+
+    it('when the UpdateProgressIndicator command is dispatched', async() => {
+      const payload: ProgressIndicatorPayload = { label: 'string', progress: 42 };
+      let arg: ProgressIndicatorAction<ProgressIndicatorPayload> = {} as ProgressIndicatorAction<ProgressIndicatorPayload>;
+      store.dispatch = action => (arg as any) = action;
+      registry.getCommand(Commands.UpdateProgressIndicator).handler(payload);
+      expect(arg.payload).toEqual(payload);
+      expect(arg.type).toEqual(UPDATE_PROGRESS_INDICATOR);
+    });
+
+    it('when the ArmTokenReceivedOnStartup command is dispatched', async() => {
+      const armToken: ArmTokenData = { access_token: 'string' }
+      let arg: AzureAuthAction<ArmTokenData> = {} as AzureAuthAction<ArmTokenData>;
+      store.dispatch = action => (arg as any) = action;
+      registry.getCommand(Commands.ArmTokenReceivedOnStartup).handler(armToken);
+      expect(arg.payload).toEqual(armToken);
     });
   });
 

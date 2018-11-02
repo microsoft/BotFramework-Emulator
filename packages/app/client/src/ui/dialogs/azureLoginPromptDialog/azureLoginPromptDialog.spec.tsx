@@ -18,6 +18,7 @@ jest.mock('../dialogStyles.scss', () => ({}));
 jest.mock('../../dialogs/', () => ({
   AzureLoginSuccessDialogContainer: () => undefined,
   BotCreationDialog: () => undefined,
+  ClientCertSelectDialogContainer: () => undefined,
   DialogService: { showDialog: () => Promise.resolve(true) },
   SecretPromptDialog: () => undefined
 }));

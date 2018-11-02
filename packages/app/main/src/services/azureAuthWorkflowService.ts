@@ -109,7 +109,7 @@ export class AzureAuthWorkflowService {
     return response;
   }
 
-  private static async onSelectClientCert(event: Event, uri: string, certs: Certificate[], callback: any) {
+  private static async onSelectClientCert(event: Event, certs: Certificate[], callback: any) {
     event.preventDefault();
 
     // Open modal, let users select cert from list, and pass to callback

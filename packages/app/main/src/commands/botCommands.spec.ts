@@ -95,8 +95,8 @@ describe('The botCommands', () => {
       path: botToSave.path,
       displayName: 'AuthBot',
       secret: 'secret',
-      chatsPath: 'some/dialogs',
-      transcriptsPath: 'some/transcripts'
+      chatsPath: path.normalize('some/dialogs'),
+      transcriptsPath: path.normalize('some/transcripts')
     };
     const command = mockCommandRegistry.getCommand(Bot.Create);
     const result = await command.handler(botToSave, 'secret');
