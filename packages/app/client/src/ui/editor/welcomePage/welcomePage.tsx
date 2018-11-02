@@ -250,7 +250,7 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
                 and&nbsp;
                 <a
                   className={ styles.ctaLink }
-                  data-href="https://aka.ms/bot-framework-emulator-create-dispatch;"
+                  data-href="https://aka.ms/bot-framework-emulator-create-dispatch"
                   onClick={ this.onAnchorClick }
                 >
                   Dispatch
