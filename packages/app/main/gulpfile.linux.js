@@ -43,7 +43,7 @@ gulp.task('redist:metadata-only', async () => {
   const thirtyTwoBitReleaseFileName = `${releaseFileNameBase}-i386.AppImage`;
   const thirtyTwoBitSha512 = await hashFileAsync(`./dist/${thirtyTwoBitReleaseFileName}`);
 
-  const sixtyFourBitReleaseFileName = `${releaseFileNameBase}-x86-64.AppImage`;
+  const sixtyFourBitReleaseFileName = `${releaseFileNameBase}-x86_64.AppImage`;
   const sixtyFourBitSha512 = await hashFileAsync(`./dist/${sixtyFourBitReleaseFileName}`);
 
   const releaseDate = new Date().toISOString();
