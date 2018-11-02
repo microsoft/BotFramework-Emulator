@@ -35,7 +35,7 @@ import { connect } from 'react-redux';
 import { DialogService } from '../service';
 import { ClientCertSelectDialogProps, ClientCertSelectDialog } from './clientCertSelectDialog';
 
-const mapDispatchToProps = (_dispatch: () => void, ownProps): ClientCertSelectDialogProps => {
+const mapDispatchToProps = (_dispatch: () => void): ClientCertSelectDialogProps => {
   return {
     dismiss: certs => DialogService.hideDialog(certs)
   };

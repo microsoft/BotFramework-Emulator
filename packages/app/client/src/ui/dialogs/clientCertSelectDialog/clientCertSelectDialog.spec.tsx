@@ -50,7 +50,6 @@ jest.mock('../../dialogs/', () => ({
 describe('ClientCertSelectDialogContainer component should', () => {
     let wrapper;
 
-    // let child;
     beforeEach(() => {
         const mockCerts = [
             'cert1',
@@ -76,7 +75,7 @@ describe('ClientCertSelectDialogContainer component should', () => {
 
     it('update state when a certificate is clicked', () => {
         const dialogComponent = wrapper.find(ClientCertSelectDialog);
-        expect('selectedIndex' in dialogComponent.state);
+        expect('selectedIndex' in dialogComponent.state).toBeTruthy();
         const selectedIndex = dialogComponent.state('selectedIndex');
         expect(selectedIndex).toBe(-1);
         const node = dialogComponent.instance();
