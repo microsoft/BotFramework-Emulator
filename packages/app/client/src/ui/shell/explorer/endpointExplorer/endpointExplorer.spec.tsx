@@ -1,13 +1,16 @@
+import { mount } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
-import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
-import { bot } from '../../../../data/reducer/bot';
-import { EndpointExplorerContainer } from './endpointExplorerContainer';
-import { EndpointExplorer } from './endpointExplorer';
 import { load, setActive } from '../../../../data/action/botActions';
-import { openEndpointInEmulator, openEndpointExplorerContextMenu } from '../../../../data/action/endpointServiceActions';
+import {
+  openEndpointExplorerContextMenu,
+  openEndpointInEmulator
+} from '../../../../data/action/endpointServiceActions';
+import { bot } from '../../../../data/reducer/bot';
 import { EndpointEditorContainer } from './endpointEditor';
+import { EndpointExplorer } from './endpointExplorer';
+import { EndpointExplorerContainer } from './endpointExplorerContainer';
 
 const mockStore = createStore(combineReducers({ bot }), {});
 
