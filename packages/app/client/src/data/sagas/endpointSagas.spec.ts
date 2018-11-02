@@ -81,9 +81,9 @@ describe('The endpoint sagas', () => {
 
   describe(' openEndpointContextMenu', () => {
     const menuItems = [
-      { label: 'Edit settings', id: 'edit' },
-      { label: 'Open in emulator', id: 'open' },
+      { label: 'Open in Emulator', id: 'open' },
       { label: 'Open in portal', id: 'absLink', enabled: jasmine.any(Boolean) },
+      { label: 'Edit configuration', id: 'edit' },
       { label: 'Remove', id: 'forget' }
     ];
 
@@ -105,7 +105,7 @@ describe('The endpoint sagas', () => {
 
       await mockStore.dispatch(openEndpointExplorerContextMenu(mockComponentClass, mockBot.services[0]));
       expect(commandServiceRemoteCallSpy).toHaveBeenCalledWith(DisplayContextMenu, menuItems);
-      expect(commandServiceCallSpy).toHaveBeenCalledWith(NewLiveChat, mockBot.services[0]);
+      expect(commandServiceCallSpy).toHaveBeenCalledWith(NewLiveChat, mockBot.services[0], false);
     });
 
     it('should forget the service when that menu item is chosen', async () => {

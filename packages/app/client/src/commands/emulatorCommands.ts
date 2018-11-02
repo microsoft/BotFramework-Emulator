@@ -31,47 +31,56 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { store } from '../data/store';
+import { newNotification, SharedConstants } from '@bfemulator/app-shared';
+import { CommandRegistryImpl, uniqueId } from '@bfemulator/sdk-shared';
+import { IEndpointService } from 'botframework-config/lib/schema';
+import * as Constants from '../constants';
 import * as ChatActions from '../data/action/chatActions';
 import * as EditorActions from '../data/action/editorActions';
-import * as Constants from '../constants';
-import { IEndpointService } from 'botframework-config/lib/schema';
-import { CommandRegistryImpl, uniqueId } from '@bfemulator/sdk-shared';
-import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
-import { getTabGroupForDocument } from '../data/editorHelpers';
-import { newNotification, SharedConstants } from '@bfemulator/app-shared';
 import { beginAdd } from '../data/action/notificationActions';
+import { getTabGroupForDocument } from '../data/editorHelpers';
+import { store } from '../data/store';
+import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
 
 /** Registers emulator (actual conversation emulation logic) commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  const Commands = SharedConstants.Commands;
+  const { Emulator } = SharedConstants.Commands;
 
   // ---------------------------------------------------------------------------
   // Open a new emulator tabbed document
-  commandRegistry.registerCommand(Commands.Emulator.NewLiveChat, (endpoint: IEndpointService) => {
-    const documentId = uniqueId();
-    const { currentUserId } = store.getState().clientAwareSettings.users;
-    store.dispatch(ChatActions.newDocument(
-      documentId,
-      'livechat',
-      {
-        botId: 'bot',
-        endpointId: endpoint.id,
-        endpointUrl: endpoint.endpoint,
-        userId: currentUserId
-      }
-    ));
+  commandRegistry.registerCommand(Emulator.NewLiveChat,
+    (endpoint: IEndpointService, focusExistingChat: boolean = false) => {
+      const state = store.getState();
+      let documentId: string;
 
-    store.dispatch(EditorActions.open(
-      Constants.CONTENT_TYPE_LIVE_CHAT,
-      documentId,
-      false
-    ));
-  });
+      if (focusExistingChat && state.chat.chats) {
+        const { chats } = state.chat;
+        documentId = Object.keys(chats)
+          .find((docId) => chats[docId].endpointUrl === endpoint.endpoint);
+      }
+
+      if (!documentId) {
+        documentId = uniqueId();
+        const { currentUserId } = state.clientAwareSettings.users;
+        store.dispatch(ChatActions.newDocument(
+          documentId,
+          'livechat',
+          {
+            botId: 'bot',
+            endpointId: endpoint.id,
+            endpointUrl: endpoint.endpoint,
+            userId: currentUserId
+          }
+        ));
+      }
+
+      store.dispatch(EditorActions.open(Constants.CONTENT_TYPE_LIVE_CHAT, documentId, false));
+      return documentId;
+    });
 
   // ---------------------------------------------------------------------------
   // Open the transcript file in a tabbed document
-  commandRegistry.registerCommand(Commands.Emulator.OpenTranscript, (filename: string, additionalData?: object) => {
+  commandRegistry.registerCommand(Emulator.OpenTranscript, (filename: string, additionalData?: object) => {
     const tabGroup = getTabGroupForDocument(filename);
     const { currentUserId } = store.getState().clientAwareSettings.users;
     if (!tabGroup) {
@@ -94,7 +103,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Prompt to open a transcript file, then open it
-  commandRegistry.registerCommand(Commands.Emulator.PromptToOpenTranscript, () => {
+  commandRegistry.registerCommand(Emulator.PromptToOpenTranscript, async () => {
     const dialogOptions = {
       title: 'Open transcript file',
       buttonLabel: 'Choose file',
@@ -106,22 +115,20 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         }
       ],
     };
-    CommandServiceImpl.remoteCall(Commands.Electron.ShowOpenDialog, dialogOptions)
-      .then(filename => {
-        if (filename && filename.length) {
-          CommandServiceImpl.call(Commands.Emulator.OpenTranscript, filename);
-        }
-      })
-      .catch(err => {
-        const errMsg = `Error while opening transcript file: ${err}`;
-        const notification = newNotification(errMsg);
-        store.dispatch(beginAdd(notification));
-      });
+    try {
+      const { ShowOpenDialog } = SharedConstants.Commands.Electron;
+      const filename = await CommandServiceImpl.remoteCall(ShowOpenDialog, dialogOptions);
+      await CommandServiceImpl.call(Emulator.OpenTranscript, filename);
+    } catch (e) {
+      const errMsg = `Error while opening transcript file: ${e}`;
+      const notification = newNotification(errMsg);
+      store.dispatch(beginAdd(notification));
+    }
   });
 
   // ---------------------------------------------------------------------------
   // Same as open transcript, except that it closes the transcript first, before reopening it
-  commandRegistry.registerCommand(Commands.Emulator.ReloadTranscript, (filename: string, additionalData?: object) => {
+  commandRegistry.registerCommand(Emulator.ReloadTranscript, (filename: string, additionalData?: object) => {
     const tabGroup = getTabGroupForDocument(filename);
     const { currentUserId } = store.getState().clientAwareSettings.users;
     if (tabGroup) {
@@ -146,18 +153,18 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Open the chat file in a tabbed document as a transcript
-  commandRegistry.registerCommand(Commands.Emulator.OpenChatFile, async (filename: string, reload?: boolean) => {
+  commandRegistry.registerCommand(Emulator.OpenChatFile, async (filename: string, reload?: boolean) => {
     try {
       // wait for the main side to use the chatdown library to parse the activities (transcript) out of the .chat file
       const { activities }: { activities: any[] }
-        = await CommandServiceImpl.remoteCall(Commands.Emulator.OpenChatFile, filename);
+        = await CommandServiceImpl.remoteCall(Emulator.OpenChatFile, filename);
 
       // open or reload the transcript
       if (reload) {
-        CommandServiceImpl.call(Commands.Emulator.ReloadTranscript, filename,
+        CommandServiceImpl.call(Emulator.ReloadTranscript, filename,
           { activities, inMemory: true, fileName: filename });
       } else {
-        CommandServiceImpl.call(Commands.Emulator.OpenTranscript, filename,
+        CommandServiceImpl.call(Emulator.OpenTranscript, filename,
           { activities, inMemory: true, fileName: filename });
       }
     } catch (err) {
