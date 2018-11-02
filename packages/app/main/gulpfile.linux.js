@@ -11,27 +11,16 @@ gulp.task('package', async () => {
   const builder = require('electron-builder');
   const config = getConfig('linux');
 
-  console.log(`Electron mirror: ${getElectronMirrorUrl(getReleaseFilename)}`);
+  console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
 
   // create build artifacts
-  const filenames = await builder.build({
+  await builder.build({
     targets: builder.Platform.LINUX.createTarget(
       ['AppImage'],
       builder.Arch.ia32,
       builder.Arch.x64
     ),
     config
-  });
-
-  // rename and move the files to the /dist/ directory
-  await new Promise(resolve => {
-    gulp
-      .src(filenames, { allowEmpty: true })
-      .pipe(rename(path => {
-        path.basename = getReleaseFilename();
-      }))
-      .pipe(gulp.dest('./dist'))
-      .on('end', resolve);
   });
 });
 
