@@ -1,5 +1,5 @@
 # Microsoft Bot Framework Emulator
-[![Build Status](https://travis-ci.org/Microsoft/BotFramework-Emulator.svg?branch=v4)](https://travis-ci.org/Microsoft/BotFramework-Emulator) [![Coverage Status](https://coveralls.io/repos/github/Microsoft/BotFramework-Emulator/badge.svg?branch=v4)](https://coveralls.io/github/Microsoft/BotFramework-Emulator?branch=v4)
+[![Build Status](https://travis-ci.org/Microsoft/BotFramework-Emulator.svg?branch=master)](https://travis-ci.org/Microsoft/BotFramework-Emulator) [![Coverage Status](https://coveralls.io/repos/github/Microsoft/BotFramework-Emulator/badge.svg?branch=master)](https://coveralls.io/github/Microsoft/BotFramework-Emulator?branch=master)
 
 The Bot Framework Emulator is a desktop application that allows bot developers to test and debug bots built using the [BotBuilder SDK](https://github.com/microsoft/botbuilder).
 
