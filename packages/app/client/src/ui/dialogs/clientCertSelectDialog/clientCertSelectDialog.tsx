@@ -69,7 +69,7 @@ export class ClientCertSelectDialog extends Component<ClientCertSelectDialogProp
                 return (
                   <li 
                     aria-selected={ selectedIndex === index }
-                    className={ selectedIndex === index ? styles.selectedCert : '' }
+                    className={ selectedIndex === index ? styles.selectedCert : ''}
                     data-index={ index } 
                     key={ index } 
                     onClick={ this.onCertListItemClick } 

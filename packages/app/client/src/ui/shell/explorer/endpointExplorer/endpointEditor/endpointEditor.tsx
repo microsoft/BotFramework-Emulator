@@ -152,6 +152,7 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
     } = this.state;
     const { name = '', endpoint = '', appId = '', appPassword = '' } = endpointService;
     const { tenantId = '', subscriptionId = '', resourceGroup = '', serviceName = '' } = botService;
+    const hasBotService = tenantId || subscriptionId || resourceGroup || serviceName;
     const valid = !!endpoint && !!name;
     return (
       <Dialog title={ title } detailedDescription={ detailedDescription }
@@ -183,10 +184,12 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
           label="Application Password" required={ false }
         />
         <a href="javascript:void(0)"
-           className={ styles.arrow } onClick={ this.onABSLinkClick }>
+           className={ `${styles.arrow} ${hasBotService ? styles.arrowExpanded : ''}` }
+           onClick={ this.onABSLinkClick }>
           Azure Bot Service configuration
         </a>
-        <div className={ styles.absContent } ref={ this.absContentRef }>
+        <div className={ styles.absContent }
+             ref={ this.absContentRef }>
           <div>
             <Row className={ styles.absTextFieldRow }>
               <TextField
@@ -269,12 +272,15 @@ export class EndpointEditor extends Component<EndpointEditorProps, EndpointEdito
     const { currentTarget } = event;
     currentTarget.classList.toggle(styles.arrowExpanded);
     const expanded = currentTarget.classList.contains(styles.arrowExpanded);
-    const { clientHeight } = this.absContent.firstChild as HTMLElement;
+    const { clientHeight } = this.absContent.firstElementChild as HTMLElement;
     const newHeight = expanded ? clientHeight : 0;
     this.absContent.style.height = `${newHeight}px`;
   }
 
   private absContentRef = (ref: HTMLDivElement): void => {
     this.absContent = ref;
+    const { tenantId = '', subscriptionId = '', resourceGroup = '', serviceName = '' } = this.props.botService;
+    const hasBotService = tenantId || subscriptionId || resourceGroup || serviceName;
+    ref.style.height = hasBotService ? `${ref.firstElementChild.clientHeight}px` : '0';
   }
 }

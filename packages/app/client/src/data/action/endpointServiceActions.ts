@@ -35,7 +35,7 @@ import { IEndpointService } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
 import { Action } from 'redux';
 
-export const OPEN_ENDPOINT_DEEP_LINK = 'OPEN_ENDPOINT_DEEP_LINK';
+export const OPEN_ENDPOINT_IN_EMULATOR = 'OPEN_ENDPOINT_IN_EMULATOR';
 export const OPEN_ENDPOINT_CONTEXT_MENU = 'OPEN_ENDPOINT_CONTEXT_MENU';
 export const LAUNCH_ENDPOINT_EDITOR = 'LAUNCH_ENDPOINT_EDITOR';
 
@@ -45,6 +45,7 @@ export interface EndpointServiceAction<T> extends Action {
 
 export interface EndpointServicePayload {
   endpointService: IEndpointService;
+  focusExistingChatIfAvailable?: boolean;
 }
 
 export interface EndpointEditorPayload extends EndpointServicePayload {
@@ -59,10 +60,11 @@ export function launchEndpointEditor(endpointEditorComponent: ComponentClass<any
   };
 }
 
-export function openEndpointDeepLink(endpointService: IEndpointService): EndpointServiceAction<EndpointServicePayload> {
+export function openEndpointInEmulator(endpointService: IEndpointService, focusExistingChatIfAvailable: boolean = false)
+  : EndpointServiceAction<EndpointServicePayload> {
   return {
-    type: OPEN_ENDPOINT_DEEP_LINK,
-    payload: { endpointService }
+    type: OPEN_ENDPOINT_IN_EMULATOR,
+    payload: { endpointService, focusExistingChatIfAvailable }
   };
 }
 

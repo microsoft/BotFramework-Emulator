@@ -3,6 +3,7 @@ import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { combineReducers, createStore } from 'redux';
 import { bot } from '../../../../../data/reducer/bot';
+import { DialogService } from '../../../../dialogs/service';
 import { EndpointEditor } from './endpointEditor';
 import { EndpointEditorContainer } from './endpointEditorContainer';
 import { load, setActive } from '../../../../../data/action/botActions';
@@ -103,9 +104,41 @@ describe('The EndpointExplorer component should', () => {
 
   it('should expand the ABS content when the abs link is clicked', () => {
     const instance = node.instance();
-    expect(instance.absContent.style.height).toBe('');
-    Object.defineProperty(instance.absContent.firstChild, 'clientHeight', {get: () => 135});
-    instance.onABSLinkClick({currentTarget: document.createElement('a')});
+    expect(instance.absContent.style.height).toBe('0px');
+    Object.defineProperty(instance.absContent.firstElementChild, 'clientHeight', { get: () => 135 });
+    instance.onABSLinkClick({ currentTarget: document.createElement('a') });
     expect(instance.absContent.style.height).toEqual('135px');
+  });
+
+  it('should update the endpoint service when onSubmitClick is called', () => {
+    const instance = node.instance();
+    instance.state.botService = {
+      tenantId: '1234', subscriptionId: '5678', resourceGroup: 'abs123', serviceName: '321'
+    };
+    const hideDialogSpy = jest.spyOn(DialogService, 'hideDialog');
+    instance.onSubmitClick();
+
+    expect(hideDialogSpy).toHaveBeenCalledWith([{
+      'appId': '51fc2648-1190-44aa-9559-87b11b1d0014',
+      'appPassword': 'vcxzvcxzvvxczvcxzv',
+      'endpoint': 'https://testbot.botframework.com/api/messagesv3',
+      'id': 'https://testbot.botframework.com/api/messagesv3',
+      'name': 'https://testbot.botframework.com/api/messagesv3',
+      'type': 'endpoint'
+    }, {
+      'appId': '51fc2648-1190-44aa-9559-87b11b1d0014',
+      'resourceGroup': 'abs123',
+      'serviceName': '321',
+      'subscriptionId': '5678',
+      'tenantId': '1234'
+    }]);
+  });
+
+  it ('should cancel the dialog when onCancelClick is called', () => {
+    const instance = node.instance();
+    const hideDialogSpy = jest.spyOn(DialogService, 'hideDialog');
+
+    instance.onCancelClick();
+    expect(hideDialogSpy).toHaveBeenCalled();
   });
 });

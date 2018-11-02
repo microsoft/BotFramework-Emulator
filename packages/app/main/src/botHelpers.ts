@@ -121,7 +121,7 @@ export async function promptForSecretAndRetry(botPath: string): Promise<BotConfi
 /** Converts a BotConfigWithPath to a BotConfig */
 export function toSavableBot(bot: BotConfigWithPath, secret?: string): BotConfiguration {
   if (!bot) {
-    throw new Error('Cannot convert falsy bot to savable bot.');
+    throw new Error(`Cannot convert ${'' + bot} bot to savable bot.`);
   }
   const newBot = BotConfiguration.fromJSON(bot);
   (newBot as any).internal.location = bot.path; // Workaround until defect is fixed
