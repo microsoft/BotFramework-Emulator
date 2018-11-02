@@ -122,7 +122,7 @@
     },
     "linux": {
       "target": "AppImage",
-      "artifactName": "${name}-${version}-linux.${ext}",
+      "artifactName": "${name}-${version}-linux-${arch}.${ext}",
       "category": "Development"
     },
     "electronVersion": "2.0.9",
