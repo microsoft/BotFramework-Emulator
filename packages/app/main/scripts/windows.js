@@ -24,7 +24,7 @@ async function writeLatestYmlFile() {
     sha2
   };
   const ymlStr = yaml.safeDump(ymlInfo);
-  fsp.writeFileSync(path.resolve(`./dist/${releaseFilename}`), ymlStr);
+  fsp.writeFileSync(path.normalize(`./dist/${releaseFilename}`), ymlStr);
 
   /*writeYamlMetadataFile(
     releaseFilename,
