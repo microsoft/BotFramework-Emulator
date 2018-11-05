@@ -149,7 +149,7 @@
   },
   "build": {
     "asar": true,
-    "appId": "${env.APP_ID}",
+    "appId": "F3C061A6-FE81-4548-82ED-C1171D9856BB",
     "artifactName": "BotFramework-Emulator-${version}-${platform}-${arch}.${ext}",
     "productName": "Bot Framework Emulator",
     "copyright": "Copyright © 2018 Microsoft Corporation",
@@ -199,7 +199,6 @@
       "icon": "./scripts/config/resources/icon.ico"
     },
     "nsis": {
-      "guid": "${env.APP_ID}",
       "include": "./scripts/config/resources/nsis/installer.nsh",
       "perMachine": true,
       "allowElevation": true,
