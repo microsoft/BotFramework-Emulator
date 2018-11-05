@@ -2,7 +2,10 @@ writeLatestYmlFile().catch(e => console.error(e));
 
 /** Generates latest-linux.yml & latest-linux-ia32.yml */
 async function writeLatestYmlFile() {
+  const common = require('./common');
+  const packageJson = require('../package.json');
   const { hashFileAsync } = common;
+  
   const version = process.env.EMU_VERSION || packageJson.version;
   const releaseFileNameBase = `BotFramework-Emulator-${version}`;
 
