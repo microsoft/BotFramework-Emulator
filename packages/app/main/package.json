@@ -149,7 +149,7 @@
   },
   "build": {
     "asar": true,
-    "appId": "${appId}",
+    "appId": "${env.APP_ID}",
     "artifactName": "BotFramework-Emulator-${version}-${platform}-${arch}.${ext}",
     "productName": "Bot Framework Emulator",
     "copyright": "Copyright © 2018 Microsoft Corporation",
@@ -195,15 +195,15 @@
       "!./installer"
     ],
     "win": {
+      "artifactName": "BotFramework-Emulator-${version}-windows-setup.${ext}",
       "icon": "./scripts/config/resources/icon.ico"
     },
     "nsis": {
-      "guid": "${appId}",
+      "guid": "${env.APP_ID}",
       "include": "./scripts/config/resources/nsis/installer.nsh",
       "perMachine": true,
       "allowElevation": true,
       "packElevateHelper": true,
-      "artifactName": "BotFramework-Emulator-${version}-${platform}-${arch}-setup.${ext}",
       "unicode": true,
       "runAfterFinish": true,
       "installerIcon": "./scripts/config/resources/icon.ico",
