@@ -225,7 +225,7 @@ describe('The ServiceExplorerSagas', () => {
       };
       await it.next(result).value;
 
-      expect(link).toBe(`https://www.luis.ai/applications/${mockService.appId}/versions/${mockService.version}/build`);
+      expect(link).toBe(`https://luis.ai/applications/${mockService.appId}/versions/${mockService.version}/build`);
     });
 
     it('should open the luis editor when the "edit" item is selected', async () => {
@@ -410,7 +410,7 @@ describe('The ServiceExplorerSagas', () => {
 
     it('should open the correct domain for luis models in the "westeurope" region', () => {
       const spy = jest.spyOn(CommandServiceImpl, 'remoteCall');
-      const link = `https://www.eu.luis.ai/applications/1234/versions/0.1/build`;
+      const link = `https://eu.luis.ai/applications/1234/versions/0.1/build`;
       const action = openServiceDeepLink(mockModel as any);
       openConnectedServiceGen(action).next();
       expect(spy).toHaveBeenCalledWith('electron:open-external', link);
@@ -419,7 +419,7 @@ describe('The ServiceExplorerSagas', () => {
     it('should open the correct domain for luis models in the "australiaeast" region', () => {
       mockModel.region = 'australiaeast';
       const spy = jest.spyOn(CommandServiceImpl, 'remoteCall');
-      const link = `https://www.au.luis.ai/applications/1234/versions/0.1/build`;
+      const link = `https://au.luis.ai/applications/1234/versions/0.1/build`;
       const action = openServiceDeepLink(mockModel as any);
       openConnectedServiceGen(action).next();
       expect(spy).toHaveBeenCalledWith('electron:open-external', link);
@@ -428,7 +428,7 @@ describe('The ServiceExplorerSagas', () => {
     it('should open the correct domain for luis models in the "westus" region', () => {
       mockModel.region = 'westus';
       const spy = jest.spyOn(CommandServiceImpl, 'remoteCall');
-      const link = `https://www.luis.ai/applications/1234/versions/0.1/build`;
+      const link = `https://luis.ai/applications/1234/versions/0.1/build`;
       const action = openServiceDeepLink(mockModel as any);
       openConnectedServiceGen(action).next();
       expect(spy).toHaveBeenCalledWith('electron:open-external', link);

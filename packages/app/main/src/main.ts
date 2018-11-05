@@ -380,7 +380,7 @@ const createMainWindow = async () => {
     }
   });
 
-  mainWindow.browserWindow.on('close', async function (event: Event) {
+  mainWindow.browserWindow.once('close', async function (event: Event) {
     const { azure } = getSettings();
     if (azure.signedInUser && !azure.persistLogin) {
       event.preventDefault();

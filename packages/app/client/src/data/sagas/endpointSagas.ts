@@ -31,41 +31,58 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IEndpointService } from 'botframework-config/lib/schema';
+import { SharedConstants } from '@bfemulator/app-shared';
+import { IBotService, IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
-import { call, ForkEffect, takeEvery, takeLatest } from 'redux-saga/effects';
+import { call, ForkEffect, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { DialogService } from '../../ui/dialogs/service';
+import { openServiceDeepLink } from '../action/connectedServiceActions';
 import {
   EndpointEditorPayload,
   EndpointServiceAction,
   EndpointServicePayload,
   LAUNCH_ENDPOINT_EDITOR,
   OPEN_ENDPOINT_CONTEXT_MENU,
-  OPEN_ENDPOINT_DEEP_LINK
+  OPEN_ENDPOINT_IN_EMULATOR
 } from '../action/endpointServiceActions';
-import { SharedConstants } from '@bfemulator/app-shared';
+import { RootState } from '../store';
+
+const getConnectedAbs = (state: RootState, endpointAppId: string) => {
+  return (state.bot.activeBot.services || []).find(service => {
+    return service.type === ServiceTypes.Bot && (service as IBotService).appId === endpointAppId;
+  });
+};
 
 function* launchEndpointEditor(action: EndpointServiceAction<EndpointEditorPayload>): IterableIterator<any> {
   const { endpointEditorComponent, endpointService = {} } = action.payload;
-  const servicesToUpdate = yield DialogService
-    .showDialog<ComponentClass<any>>(endpointEditorComponent, {
-      endpointService
-    });
+  const servicesToUpdate = yield DialogService.showDialog<ComponentClass<any>, IEndpointService[]>
+  (endpointEditorComponent, { endpointService });
+
   if (servicesToUpdate) {
+    const { AddOrUpdateService, RemoveService } = SharedConstants.Commands.Bot;
     let i = servicesToUpdate.length;
     while (i--) {
       const service = servicesToUpdate[i];
-      yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.AddOrUpdateService, service.type, service);
+      let shouldBeRemoved = false;
+      if (service.type === ServiceTypes.Bot) {
+        // Since we could end up with an invalid ABS
+        // naively validate and remove it if all fields are missing
+        const { serviceName, resourceGroup, subscriptionId, tenantId } = service as IBotService;
+        shouldBeRemoved = !serviceName && !resourceGroup && !subscriptionId && !tenantId;
+      }
+      yield CommandServiceImpl.remoteCall(shouldBeRemoved ? RemoveService : AddOrUpdateService, service.type, service);
     }
   }
 }
 
 function* openEndpointContextMenu(action: EndpointServiceAction<EndpointServicePayload | EndpointEditorPayload>)
   : IterableIterator<any> {
+  const connectedAbs = yield select<RootState, string>(getConnectedAbs, action.payload.endpointService.appId);
   const menuItems = [
-    { label: 'Edit settings', id: 'edit' },
-    { label: 'Open in emulator', id: 'open' },
+    { label: 'Open in Emulator', id: 'open' },
+    { label: 'Open in portal', id: 'absLink', enabled: !!connectedAbs },
+    { label: 'Edit configuration', id: 'edit' },
     { label: 'Remove', id: 'forget' }
   ];
   const { DisplayContextMenu } = SharedConstants.Commands.Electron;
@@ -76,7 +93,11 @@ function* openEndpointContextMenu(action: EndpointServiceAction<EndpointServiceP
       break;
 
     case 'open':
-      yield* openEndpointDeepLink(action);
+      yield* openEndpointInEmulator(action);
+      break;
+
+    case 'absLink':
+      yield put(openServiceDeepLink(connectedAbs));
       break;
 
     case 'forget':
@@ -88,8 +109,9 @@ function* openEndpointContextMenu(action: EndpointServiceAction<EndpointServiceP
   }
 }
 
-function* openEndpointDeepLink(action: EndpointServiceAction<EndpointServicePayload>): IterableIterator<any> {
-  CommandServiceImpl.call(SharedConstants.Commands.Emulator.NewLiveChat, action.payload.endpointService).catch();
+function* openEndpointInEmulator(action: EndpointServiceAction<EndpointServicePayload>): IterableIterator<any> {
+  const { endpointService, focusExistingChatIfAvailable: focusExisting = false } = action.payload;
+  return CommandServiceImpl.call(SharedConstants.Commands.Emulator.NewLiveChat, endpointService, focusExisting);
 }
 
 function* removeEndpointServiceFromActiveBot(endpointService: IEndpointService): IterableIterator<any> {
@@ -109,5 +131,5 @@ function* removeEndpointServiceFromActiveBot(endpointService: IEndpointService):
 export function* endpointSagas(): IterableIterator<ForkEffect> {
   yield takeLatest(LAUNCH_ENDPOINT_EDITOR, launchEndpointEditor);
   yield takeEvery(OPEN_ENDPOINT_CONTEXT_MENU, openEndpointContextMenu);
-  yield takeEvery(OPEN_ENDPOINT_DEEP_LINK, openEndpointDeepLink);
+  yield takeEvery(OPEN_ENDPOINT_IN_EMULATOR, openEndpointInEmulator);
 }

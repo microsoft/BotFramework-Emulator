@@ -62,10 +62,10 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
 
     return (
       <GenericDocument>
-        <LargeHeader>Bot Framework Emulator</LargeHeader>
-        <span className={ styles.versionNumber }>Version 4</span>
         <Row>
           <Column className={ styles.spacing }>
+            <LargeHeader>Bot Framework Emulator</LargeHeader>
+            <span className={ styles.versionNumber }>Version 4</span>
             { startSection }
             { myBotsSection }
             { signInSection }
@@ -250,7 +250,7 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
                 and&nbsp;
                 <a
                   className={ styles.ctaLink }
-                  data-href="https://aka.ms/bot-framework-emulator-create-dispatch;"
+                  data-href="https://aka.ms/bot-framework-emulator-create-dispatch"
                   onClick={ this.onAnchorClick }
                 >
                   Dispatch

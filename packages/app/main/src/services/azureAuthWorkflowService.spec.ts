@@ -142,39 +142,4 @@ describe('The azureAuthWorkflowService', () => {
     }
     expect(ct).toBe(4);
   });
-
-  it('should make the appropriate calls and receive the expected values with the "enterSignOutWorkflow"', async () => {
-    let reportedValues = [];
-    let reporter = v => reportedValues.push(v);
-    (BrowserWindow as any).reporters.push(reporter);
-    const it = AzureAuthWorkflowService.enterSignOutWorkflow(false);
-    let value = undefined;
-    let ct = 0;
-    while (true) {
-      const next = it.next(value);
-      if (next.done) {
-        break;
-      }
-      value = await next.value;
-      if (!ct) {
-        expect(value instanceof BrowserWindow).toBe(true);
-        expect(reportedValues.length).toBe(3);
-        const [, uri] = reportedValues[1];
-        const idx = uri.indexOf('#');
-        const parts = uri.substring(idx).split('&');
-        [
-          'post_logout_redirect',
-          'x-client-SKU',
-          'x-client-Ver',
-        ].forEach((part, index) => {
-          expect(parts[index].includes(part));
-        });
-        reportedValues.length = 0;
-      } else if (ct === 1) {
-        expect(value).not.toBe(null);
-      }
-      ct++;
-    }
-    expect(ct).toBe(3);
-  });
 });

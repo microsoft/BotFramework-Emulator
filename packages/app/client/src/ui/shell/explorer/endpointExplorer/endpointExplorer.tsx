@@ -42,7 +42,7 @@ import * as styles from './endpointExplorer.scss';
 export interface EndpointProps extends ServicePaneProps {
   endpointServices?: IEndpointService[];
   launchEndpointEditor: (endpointEditor: ComponentClass<any>) => void;
-  openEndpointDeepLink: (endpointService: IEndpointService) => void;
+  openEndpointInEmulator: (endpointService: IEndpointService) => void;
 }
 
 export class EndpointExplorer extends ServicePane<EndpointProps> {
@@ -80,11 +80,12 @@ export class EndpointExplorer extends ServicePane<EndpointProps> {
       this.onLinkClick(e);
     }
   }
+
   protected onLinkClick: MouseEventHandler<HTMLLIElement> = (event: SyntheticEvent<HTMLLIElement>): void => {
     const { currentTarget } = event;
     const { index } = currentTarget.dataset;
     const { [index]: endpointService } = this.props.endpointServices;
-    this.props.openEndpointDeepLink(endpointService);
+    this.props.openEndpointInEmulator(endpointService);
   }
 
   protected onContextMenuOverLiElement(li: HTMLLIElement) {

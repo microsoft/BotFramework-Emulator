@@ -153,7 +153,6 @@ export const SharedConstants = {
       ShowBotCreationDialog: 'bot-creation:showExplorer',
       ShowSecretPromptDialog: 'secret-prompt:showExplorer',
       SwitchNavBarTab: 'navbar:switch-tab',
-      ShowExplorer: 'shell:showExplorer-explorer',
       ShowAppSettings: 'shell:showExplorer-app-settings',
       SwitchTheme: 'shell:switchTheme',
       SignInToAzure: 'shell:signInToAzure',

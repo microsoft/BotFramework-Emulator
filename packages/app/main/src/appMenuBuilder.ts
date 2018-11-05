@@ -31,15 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
 import * as Electron from 'electron';
+import { AppUpdater, UpdateStatus } from './appUpdater';
+import { emulator } from './emulator';
 
 import { mainWindow } from './main';
-import { AppUpdater, UpdateStatus } from './appUpdater';
-import { BotInfo, SharedConstants } from '@bfemulator/app-shared';
 import { ConversationService } from './services/conversationService';
-import { getStore as getSettingsStore } from './settingsData/store';
 import { rememberTheme } from './settingsData/actions/windowStateActions';
-import { emulator } from './emulator';
+import { getStore as getSettingsStore } from './settingsData/store';
 
 declare type MenuOpts = Electron.MenuItemConstructorOptions;
 
@@ -120,12 +120,12 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
         click: () => {
           mainWindow.commandService.remoteCall(Bot.OpenBrowse);
         }
-      } ];
+      }];
     if (recentBots && recentBots.length) {
       const recentBotsList = this.createRecentBotsList(recentBots);
       subMenu.push({
         label: 'Open Recent...',
-        submenu: [ ...recentBotsList ]
+        submenu: [...recentBotsList]
       });
     } else {
       subMenu.push({
@@ -235,16 +235,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     return {
       label: 'View',
       submenu: [
-        {
-          label: 'Explorer',
-          click: () => mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ShowExplorer)
-        },
-        {
-          label: 'Emulator Settings',
-          click: () => mainWindow.commandService.remoteCall(SharedConstants.Commands.UI.ShowAppSettings)
-        },
-        { type: 'separator' },
-        { role: 'resetzoom' },
+        { role: 'resetzoom', label: 'Reset Zoom' },
         { role: 'zoomin' },
         { role: 'zoomout' },
         { type: 'separator' },
@@ -364,8 +355,8 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
     const getConversationId = async () => {
       const state = await getState();
       const { editors, activeEditor } = state.editor;
-      const { activeDocumentId } = editors[ activeEditor ];
-      return state.chat.chats[ activeDocumentId ].conversationId;
+      const { activeDocumentId } = editors[activeEditor];
+      return state.chat.chats[activeDocumentId].conversationId;
     };
 
     const getServiceUrl = () => emulator.framework.serverUrl.replace('[::]', 'localhost');
@@ -421,9 +412,9 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
    */
   setFileMenu(fileMenuTemplate: MenuOpts, appMenuTemplate: MenuOpts[]): MenuOpts[] {
     if (process.platform === 'darwin') {
-      appMenuTemplate[ 1 ] = fileMenuTemplate;
+      appMenuTemplate[1] = fileMenuTemplate;
     } else {
-      appMenuTemplate[ 0 ] = fileMenuTemplate;
+      appMenuTemplate[0] = fileMenuTemplate;
     }
     return appMenuTemplate;
   }
