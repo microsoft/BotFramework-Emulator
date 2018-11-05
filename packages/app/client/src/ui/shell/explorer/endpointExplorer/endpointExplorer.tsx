@@ -59,11 +59,14 @@ export class EndpointExplorer extends ServicePane<EndpointProps> {
         return (
           <li
             className={ styles.message }
+            data-index={ index }
             key={ index }
             onClick={ this.onLinkClick }
             onKeyPress={ this.onHandleKeyPress }
-            data-index={ index }
-            tabIndex={ 0 }>{ model.name }
+            tabIndex={ 0 }
+            title={ model.endpoint } 
+          >
+            { model.name }
           </li>);
       });
   }
