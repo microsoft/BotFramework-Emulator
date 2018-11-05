@@ -32,7 +32,7 @@
 .inspector-container {
   box-sizing: border-box;
   font-family: var(--monospace-font-family);
-  height: 100%;
+  height: calc(100% - 4px);
   margin: 2px;
   padding: 0 0 18px 0;
   overflow-y: auto;
