@@ -18,7 +18,7 @@ describe('The PostMigrationDialogContainer component', () => {
             <Provider store={ createStore(navBar)} >
                 <PostMigrationDialogContainer />
             </Provider>);
-        node = wrapper.find(PostMigrationDialog)
+        node = wrapper.find(PostMigrationDialog);
     });
 
     it('should render deeply', () => {
