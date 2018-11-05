@@ -9,13 +9,14 @@
   "scripts": {
     "build": "run-s lint build:electron",
     "build:electron": "babel ./src --out-dir app/server --extensions \".ts,.tsx\" --ignore \"**/*.spec.ts\" && gulp --gulpfile gulpfile.common.js copy-extension-stubs",
+    "dist": "electron-builder",
     "lint": "tslint --project tsconfig.json",
+    "pack": "electron-builder --dir",
     "start": "concurrently --kill-others --names \"electron,react-app\" --success first \"npm run start:electron:dev\" \"npm run start:react-app\"",
     "start:electron": "./node_modules/.bin/electron --inspect=7777 .",
     "start:electron:dev": "cross-env ELECTRON_TARGET_URL=http://localhost:3000/ npm run start:electron",
     "start:react-app": "cd ../client && npm start",
-    "test": "jest",
-    "verify": "gulp --gulpfile gulpfile.common.js verify:copyright"
+    "test": "jest"
   },
   "keywords": [
     "microsoft",
@@ -145,5 +146,99 @@
     "ws": "^5.0.0",
     "xmldom": "^0.1.27",
     "xtend": "^4.0.1"
+  },
+  "build": {
+    "asar": true,
+    "appId": "${appId}",
+    "artifactName": "BotFramework-Emulator-${version}-${platform}-${arch}.${ext}",
+    "productName": "Bot Framework Emulator",
+    "copyright": "Copyright © 2018 Microsoft Corporation",
+    "protocols": [
+      {
+        "name": "Bot Framework Emulator",
+        "role": "Viewer",
+        "schemes": [
+          "bfemulator"
+        ]
+      }
+    ],
+    "fileAssociations": [
+      {
+        "name": "Bot",
+        "ext": "bot"
+      },
+      {
+        "name": "Transcript",
+        "ext": "transcript"
+      }
+    ],
+    "asarUnpack": [
+      "app/extensions/**",
+      "node_modules/@bfemulator/extension-*/**"
+    ],
+    "directories": {
+      "buildResources": "./scripts/config/resources"
+    },
+    "files": [
+      "**/*",
+      "!**/node_modules/*/{README.md,README,readme.md,readme,test}",
+      "!**/node_modules/.bin",
+      "!**/*.{o,hprof,orig,pyc,pyo,rbc}",
+      "!**/._*",
+      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,__pycache__,thumbs.db,.gitignore,.gitattributes,.editorconfig,.idea,appveyor.yml,.travis.yml,circle.yml}",
+      "!.vscode${/*}",
+      "!doc${/*}",
+      "!**/{tsconfig.json,gulpfile.js,README.md,getlicenses.cmd}",
+      "!**/node_modules/@types",
+      "!./scripts",
+      "!**/cache",
+      "!./installer"
+    ],
+    "win": {
+      "icon": "./scripts/config/resources/icon.ico"
+    },
+    "nsis": {
+      "guid": "${appId}",
+      "include": "./scripts/config/resources/nsis/installer.nsh",
+      "perMachine": true,
+      "allowElevation": true,
+      "packElevateHelper": true,
+      "artifactName": "BotFramework-Emulator-${version}-${platform}-${arch}-setup.${ext}",
+      "unicode": true,
+      "runAfterFinish": true,
+      "installerIcon": "./scripts/config/resources/icon.ico",
+      "uninstallerIcon": "./scripts/config/resources/icon.ico",
+      "installerHeader": "./sripts/config/resources/nsis/installerHeader.bmp",
+      "installerSidebar": "./sripts/config/resources/nsis/installerSidebar.bmp",
+      "uninstallerSidebar": "./sripts/config/resources/nsis/installerSidebar.bmp",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Bot Framework Emulator (V4)"
+    },
+    "mac": {
+      "category": "public.app-category.developer-tools"
+    },
+    "dmg": {
+      "background": "./scripts/config/resources/background.tiff",
+      "icon": "./scripts/config/resources/emulator_dmg.icns",
+      "title": "Bot Framework Emulator Installer",
+      "contents": [
+        {
+          "x": 140,
+          "y": 244
+        },
+        {
+          "x": 380,
+          "y": 244,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "linux": {
+      "category": "Development"
+    },
+    "publish": null,
+    "remoteBuild": false
   }
 }
