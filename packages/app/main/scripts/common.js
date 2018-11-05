@@ -4,6 +4,6 @@ function hashFileAsync(filename, algo = 'sha512', encoding = 'base64') {
   return builderUtil.hashFile(filename, algo, encoding);
 }
 
-exports = {
+module.exports = {
   hashFileAsync
 };
