@@ -11,38 +11,45 @@ gulp.task('package', async () => {
   const builder = require('electron-builder');
   const config = getConfig('linux');
 
-  console.log(`Electron mirror: ${getElectronMirrorUrl(getReleaseFilename)}`);
+  console.log(`Electron mirror: ${getElectronMirrorUrl()}`);
 
   // create build artifacts
-  const filenames = await builder.build({
-    targets: builder.Platform.LINUX.createTarget(['deb', 'AppImage'], builder.Arch.ia32),
+  await builder.build({
+    targets: builder.Platform.LINUX.createTarget(
+      ['AppImage'],
+      builder.Arch.ia32,
+      builder.Arch.x64
+    ),
     config
-  });
-
-  // rename and move the files to the /dist/ directory
-  await new Promise(resolve => {
-    gulp
-      .src(filenames, { allowEmpty: true })
-      .pipe(rename(path => {
-        path.basename = getReleaseFilename();
-      }))
-      .pipe(gulp.dest('./dist'))
-      .on('end', resolve);
   });
 });
 
-/** Generates latest-linux.yml */
+/** Generates latest-linux.yml & latest-linux-ia32.yml */
 gulp.task('redist:metadata-only', async () => {
   const { hashFileAsync, getReleaseFilename } = common;
-  const releaseFileName = `${getReleaseFilename()}.AppImage`;
-  const sha512 = await hashFileAsync(`./dist/${releaseFileName}`);
+  const releaseFileNameBase = getReleaseFilename();
+
+  const thirtyTwoBitReleaseFileName = `${releaseFileNameBase}-i386.AppImage`;
+  const thirtyTwoBitSha512 = await hashFileAsync(`./dist/${thirtyTwoBitReleaseFileName}`);
+
+  const sixtyFourBitReleaseFileName = `${releaseFileNameBase}-x86_64.AppImage`;
+  const sixtyFourBitSha512 = await hashFileAsync(`./dist/${sixtyFourBitReleaseFileName}`);
+
   const releaseDate = new Date().toISOString();
 
   writeYamlMetadataFile(
-    releaseFileName,
+    thirtyTwoBitReleaseFileName,
     'latest-linux-ia32.yml',
     './dist',
-    sha512,
+    thirtyTwoBitSha512,
+    releaseDate
+  );
+
+  writeYamlMetadataFile(
+    sixtyFourBitReleaseFileName,
+    'latest-linux.yml',
+    './dist',
+    sixtyFourBitSha512,
     releaseDate
   );
 });
