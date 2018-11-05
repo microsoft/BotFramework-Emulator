@@ -3,7 +3,7 @@ writeLatestYmlFile().catch(e => console.error(e));
 /** Writes the build metadata to latest.yml  */
 async function writeLatestYmlFile() {
   const common = require('./common.js');
-  const packageJson = require('./package.json');
+  const packageJson = require('../package.json');
   const fsp = require('fs-extra');
   const yaml = require('js-yaml');
   const path = require('path');
