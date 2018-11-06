@@ -196,7 +196,13 @@
     ],
     "win": {
       "artifactName": "BotFramework-Emulator-${version}-windows-setup.${ext}",
-      "icon": "./scripts/config/resources/icon.ico"
+      "icon": "./scripts/config/resources/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["ia32"]
+        }
+      ]
     },
     "nsis": {
       "include": "./scripts/config/resources/nsis/installer.nsh",

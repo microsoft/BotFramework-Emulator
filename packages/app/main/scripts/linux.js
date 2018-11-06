@@ -5,9 +5,9 @@ async function writeLatestYmlFile() {
   const common = require('./common');
   const packageJson = require('../package.json');
   const { hashFileAsync } = common;
-  
+
   const version = process.env.EMU_VERSION || packageJson.version;
-  const releaseFileNameBase = `BotFramework-Emulator-${version}`;
+  const releaseFileNameBase = `BotFramework-Emulator-${version}-linux`;
 
   const thirtyTwoBitReleaseFileName = `${releaseFileNameBase}-i386.AppImage`;
   const thirtyTwoBitSha512 = await hashFileAsync(`./dist/${thirtyTwoBitReleaseFileName}`);
