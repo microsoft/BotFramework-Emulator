@@ -11,8 +11,8 @@ async function writeLatestYmlFile() {
 
   const version = process.env.EMU_VERSION || packageJson.version;
   const releaseFilename = `BotFramework-Emulator-${version}-windows-setup.exe`;
-  const sha512 = await hashFileAsync(`./dist/${releaseFilename}`);
-  const sha2 = await hashFileAsync(`./dist/${releaseFilename}`, 'sha256', 'hex');
+  const sha512 = await hashFileAsync(path.normalize(`./dist/${releaseFilename}`));
+  const sha2 = await hashFileAsync(path.normalize(`./dist/${releaseFilename}`), 'sha256', 'hex');
   const releaseDate = new Date().toISOString();
 
   const ymlInfo = {
@@ -25,32 +25,4 @@ async function writeLatestYmlFile() {
   };
   const ymlStr = yaml.safeDump(ymlInfo);
   fsp.writeFileSync(path.normalize(`./dist/latest.yml`), ymlStr);
-
-  /*writeYamlMetadataFile(
-    releaseFilename,
-    'latest.yml',
-    './dist',
-    sha512,
-    releaseDate,
-    { sha2 }
-  );*/
 };
-
-/** Writes the .yml metadata file */
-/*function writeYamlMetadataFile(releaseFilename, yamlFilename, path, fileHash, releaseDate, extra = {}) {
-  const { extend, getEnvironmentVar } = common;
-  var fsp = require('fs-extra');
-  var yaml = require('js-yaml');
-  const version = getEnvironmentVar('EMU_VERSION', packageJson.version);
-
-  const ymlInfo = {
-    version,
-    releaseDate,
-    githubArtifactName: releaseFilename,
-    path: releaseFilename,
-    sha512: fileHash
-  };
-  const obj = extend({}, ymlInfo, extra);
-  const ymlStr = yaml.safeDump(obj);
-  fsp.writeFileSync(`./${path}/${yamlFilename}`, ymlStr);
-}*/

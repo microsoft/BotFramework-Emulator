@@ -4,16 +4,17 @@ writeLatestYmlFile().catch(e => console.error(e));
 async function writeLatestYmlFile() {
   const common = require('./common');
   const packageJson = require('../package.json');
+  const path = require('path');
   const { hashFileAsync } = common;
 
   const version = process.env.EMU_VERSION || packageJson.version;
   const releaseFileNameBase = `BotFramework-Emulator-${version}-linux`;
 
   const thirtyTwoBitReleaseFileName = `${releaseFileNameBase}-i386.AppImage`;
-  const thirtyTwoBitSha512 = await hashFileAsync(`./dist/${thirtyTwoBitReleaseFileName}`);
+  const thirtyTwoBitSha512 = await hashFileAsync(path.normalize(`./dist/${thirtyTwoBitReleaseFileName}`));
 
   const sixtyFourBitReleaseFileName = `${releaseFileNameBase}-x86_64.AppImage`;
-  const sixtyFourBitSha512 = await hashFileAsync(`./dist/${sixtyFourBitReleaseFileName}`);
+  const sixtyFourBitSha512 = await hashFileAsync(path.normalize(`./dist/${sixtyFourBitReleaseFileName}`));
 
   const releaseDate = new Date().toISOString();
 
