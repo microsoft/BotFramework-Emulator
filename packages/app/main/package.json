@@ -183,7 +183,7 @@
       "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,__pycache__,thumbs.db,.gitignore,.gitattributes,.editorconfig,.idea,appveyor.yml,.travis.yml,circle.yml}",
       "!.vscode${/*}",
       "!doc${/*}",
-      "!**/{tsconfig.json,gulpfile.js,README.md,getlicenses.cmd}",
+      "!**/{tsconfig.json,README.md,getlicenses.cmd}",
       "!**/node_modules/@types",
       "!./scripts",
       "!**/cache",
@@ -218,7 +218,17 @@
       "shortcutName": "Bot Framework Emulator (V4)"
     },
     "mac": {
-      "category": "public.app-category.developer-tools"
+      "category": "public.app-category.developer-tools",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64"]
+        },
+        {
+          "target": "zip",
+          "arch": ["x64"]
+        }
+      ]
     },
     "dmg": {
       "background": "./scripts/config/resources/background.tiff",
