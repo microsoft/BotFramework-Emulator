@@ -40,6 +40,7 @@ import { mainWindow } from './main';
 import { ConversationService } from './services/conversationService';
 import { rememberTheme } from './settingsData/actions/windowStateActions';
 import { getStore as getSettingsStore } from './settingsData/store';
+import { getActiveBot } from './botHelpers';
 
 declare type MenuOpts = Electron.MenuItemConstructorOptions;
 
@@ -142,14 +143,25 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
             .catch(err => console.error('Error opening transcript file from menu: ', err));
         }
       },
-      { type: 'separator' },
-      {
-        label: 'Close Tab',
-        click: () => {
-          mainWindow.commandService.remoteCall(Bot.Close);
-        }
-      }
+      { type: 'separator' }
     );
+
+    const activeBot = getActiveBot();
+    if (activeBot !== null) {
+      subMenu.push({
+        label: 'Close Tab',
+        click: async () => {
+          await mainWindow.commandService.remoteCall(Bot.Close);
+          await mainWindow.commandService.call(SharedConstants.Commands.Electron.UpdateFileMenu);
+        }
+      });
+    } else {
+      subMenu.push({
+        label: 'Close Tab',
+        enabled: false
+      });
+    }
+
     const settingsStore = getSettingsStore();
     const settingsState = settingsStore.getState();
 
@@ -295,12 +307,6 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
             SharedConstants.Commands.Electron.OpenExternal,
             'https://aka.ms/cy106f'
           )
-        },
-        { type: 'separator' },
-        { role: 'toggledevtools' },
-        {
-          label: 'Toggle Developer Tools (Inspector)',
-          click: () => mainWindow.commandService.remoteCall(SharedConstants.Commands.Electron.ToggleDevTools)
         },
         { type: 'separator' },
         this.getUpdateMenuItem(),

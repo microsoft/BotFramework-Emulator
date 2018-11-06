@@ -100,7 +100,6 @@ Setting up a node debugger depends on your tooling. Please refer to the document
 for your flavor of tools. For more information on debugging NodeJS in general, refer to [this guide](https://nodejs.org/en/docs/guides/debugging-getting-started/)
 
 #### The Client
-Ctrl+Shift+I (Windows) or opt+cmd+i (Mac) when the emulator is in focus will open chrome dev tools for debugging.
 For remote debugging, add `--remote-debugging-port=9222` to the `start:electron` script in the `package.json` located in `packages\app\main`.
 ***
 
