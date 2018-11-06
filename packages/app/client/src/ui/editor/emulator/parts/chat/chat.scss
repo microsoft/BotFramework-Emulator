@@ -6,11 +6,7 @@
     .wc-chatview-panel {
       flex: 1;
       position: relative;
-      &::-webkit-scrollbar-thumb {
-        background-color: blue;
-        color: red;
-      }
-
+      
       p {
         margin-bottom: 0;
         margin-top: 0;
@@ -64,6 +60,10 @@
         min-height: 32px;
         width: 100%;
         padding: 0 16px;
+      }
+
+      .wc-message-wrapper.clickable {
+        margin-top: 2px;
       }
 
       .wc-list ul {

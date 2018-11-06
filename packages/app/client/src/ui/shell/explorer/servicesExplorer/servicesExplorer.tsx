@@ -141,7 +141,9 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
           onDoubleClick={ this.onLinkClick }
           onKeyPress={ this.onHandleKeyPress }
           data-index={ index }
-          tabIndex={ 0 }>
+          tabIndex={ 0 }
+          title={ service.name }
+        >
           { label } <span>- { serviceTypeLabels[service.type] }</span>
         </li>
       );

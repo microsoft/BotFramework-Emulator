@@ -30,10 +30,9 @@ Don't feel bad if we can't reproduce the issue and ask you for more information!
 git clone https://github.com/Microsoft/BotFramework-Emulator.git
 ```
 
-### Checkout v4 branch
+### Navigate to the project
 ```
 cd BotFramework-Emulator
-git checkout v4
 ```
 
 ### Install global dependencies
