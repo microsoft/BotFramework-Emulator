@@ -125,7 +125,6 @@ describe('The ServicesExplorer component should', () => {
     const instance = node.instance();
     instance.props.closeTab('mockbot');
 
-    expect(dispatchSpy).toHaveBeenCalledTimes(2);
     expect(dispatchSpy).toHaveBeenLastCalledWith(closeDocument('mockbot'));
   });
 });
