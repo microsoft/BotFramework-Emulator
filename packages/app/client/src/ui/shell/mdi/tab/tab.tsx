@@ -43,9 +43,9 @@ interface TabProps {
   active?: boolean;
   dirty?: boolean;
   documentId?: string;
-  title?: string;
+  label?: string;
   toggleDraggingTab?: (toggle: boolean) => any;
-  onCloseClick?: (evt: SyntheticEvent<HTMLElement>) => any;
+  onCloseClick?: (documentId: string) => any;
   swapTabs?: (editorKey: string, owningEditor: string, tabId: string) => any;
 }
 
@@ -72,15 +72,15 @@ class TabComponent extends React.Component<TabProps, TabState> {
            onDragOver={ this.onDragOver } onDragEnter={ this.onDragEnter } onDragStart={ this.onDragStart }
            onDrop={ this.onDrop } onDragLeave={ this.onDragLeave } onDragEnd={ this.onDragEnd }>
         <span className={ styles.editorTabIcon }> </span>
-        <TruncateText className={ styles.truncatedTabText }>{ this.props.title }</TruncateText>
+        <TruncateText className={ styles.truncatedTabText }>{ this.props.label }</TruncateText>
         { this.props.dirty ? <span>*</span> : null }
         <a
           href="javascript:void(0)"
           title="Close"
           className={ styles.editorTabClose }
           onKeyPress={ this.onCloseButtonKeyPress }
-          onClick={ this.props.onCloseClick }
-          >
+          onClick={ this.onCloseClick }
+        >
           <span></span>
         </a>
       </div>
@@ -89,8 +89,13 @@ class TabComponent extends React.Component<TabProps, TabState> {
 
   private onCloseButtonKeyPress = (event: KeyboardEvent<HTMLAnchorElement>) => {
     if (event.key === ' ' || event.keyCode === 13) {
-      this.props.onCloseClick(event);
+      this.props.onCloseClick(this.props.documentId);
     }
+  }
+
+  private onCloseClick = (event: SyntheticEvent<HTMLAnchorElement>): void => {
+    event.stopPropagation();
+    this.props.onCloseClick(this.props.documentId);
   }
 
   private onDragStart = (e) => {

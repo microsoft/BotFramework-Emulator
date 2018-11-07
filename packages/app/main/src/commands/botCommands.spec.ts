@@ -1,6 +1,5 @@
 import { SharedConstants } from '@bfemulator/app-shared';
-import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared/built';
+import { BotConfigWithPathImpl, CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import { BotConfiguration } from 'botframework-config';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import * as path from 'path';
@@ -9,8 +8,8 @@ import * as BotActions from '../botData/actions/botActions';
 import { setActive } from '../botData/actions/botActions';
 import { bot } from '../botData/reducers/bot';
 import { State } from '../botData/state';
-import { getStore } from '../botData/store';
 import * as store from '../botData/store';
+import { getStore } from '../botData/store';
 import * as helpers from '../botHelpers';
 import { emulator } from '../emulator';
 import { mainWindow } from '../main';

@@ -39,7 +39,7 @@ export enum EditorActions {
   removeDocPendingChange = 'EDITOR/REMOVE_DOC_PENDING_CHANGE',
   close = 'EDITOR/CLOSE',
   closeAll = 'EDITOR/CLOSE_ALL',
-  dropTabOnLeftOverlay= 'EDITOR/DROP_TAB_ON_LEFT_OVERLAY',
+  dropTabOnLeftOverlay = 'EDITOR/DROP_TAB_ON_LEFT_OVERLAY',
   setDirtyFlag = 'EDITOR/SET_DIRTY_FLAG',
   open = 'EDITOR/OPEN',
   setActiveTab = 'EDITOR/SET_ACTIVE_TAB',
@@ -155,20 +155,20 @@ export interface DropTabOnLeftOverlayAction {
 }
 
 export type EditorAction =
-AppendTabAction |
-CloseEditorAction |
-CloseAllEditorAction |
-SetDirtyFlagAction |
-OpenEditorAction |
-UpdateDocumentAction |
-SetActiveTabAction |
-SetActiveEditorAction |
-SplitTabAction |
-SwapTabsAction |
-ToggleDraggingTabAction |
-AddDocPendingChangeAction |
-RemoveDocPendingChangeAction |
-DropTabOnLeftOverlayAction;
+  AppendTabAction |
+  CloseEditorAction |
+  CloseAllEditorAction |
+  SetDirtyFlagAction |
+  OpenEditorAction |
+  UpdateDocumentAction |
+  SetActiveTabAction |
+  SetActiveEditorAction |
+  SplitTabAction |
+  SwapTabsAction |
+  ToggleDraggingTabAction |
+  AddDocPendingChangeAction |
+  RemoveDocPendingChangeAction |
+  DropTabOnLeftOverlayAction;
 
 export function appendTab(srcEditorKey: string, destEditorKey: string, documentId: string): AppendTabAction {
   return {
@@ -228,22 +228,17 @@ export function setDirtyFlag(documentId: string, dirty: boolean): SetDirtyFlagAc
   };
 }
 
-export function open(contentType: string, documentId: string, isGlobal: boolean, meta?: any): OpenEditorAction {
+export function open(document: Document): OpenEditorAction {
   return {
     type: EditorActions.open,
-    payload: {
-      contentType,
-      documentId,
-      isGlobal,
-      meta
-    }
+    payload: document
   };
 }
 
 export function updateDocument(documentId: string, updatedDocument: Partial<Document>): UpdateDocumentAction {
   return {
     type: EditorActions.updateDocument,
-      payload: { documentId, ...updatedDocument }
+    payload: { documentId, ...updatedDocument }
   };
 }
 

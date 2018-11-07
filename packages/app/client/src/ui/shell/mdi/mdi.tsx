@@ -32,32 +32,22 @@
 //
 
 import * as React from 'react';
-import { connect } from 'react-redux';
-
-import * as EditorActions from '../../../data/action/editorActions';
+import {
+  CONTENT_TYPE_APP_SETTINGS,
+  CONTENT_TYPE_LIVE_CHAT,
+  CONTENT_TYPE_TRANSCRIPT,
+  CONTENT_TYPE_WELCOME_PAGE
+} from '../../../constants';
+import { Document } from '../../../data/reducer/editor';
 import { EditorFactory } from '../../editor';
 import { Content as TabbedDocumentContent, MultiTabs, Tab as TabbedDocumentTab, TabbedDocument } from '../multiTabs';
-import { TabFactory } from './tabFactory';
-import { Document } from '../../../data/reducer/editor';
-import { RootState } from '../../../data/store';
+import { MDIProps } from './mdiContainer';
+import { Tab } from './tab/tab';
 
-interface MDIProps {
-  activeDocumentId?: string;
-  activeEditor?: string;
-  documents?: { [documentId: string]: Document };
-  tabOrder?: string[];
-  owningEditor?: string;
-  setActiveTab?: (tab: string) => void;
-}
-
-class MDIComponent extends React.Component<MDIProps> {
-  constructor(props: MDIProps) {
-    super(props);
-  }
+export class MDIComponent extends React.Component<MDIProps> {
 
   render() {
     const activeIndex = this.props.tabOrder.findIndex(documentId => documentId === this.props.activeDocumentId);
-
     return (
       <MultiTabs
         onChange={ this.handleTabChange }
@@ -65,16 +55,25 @@ class MDIComponent extends React.Component<MDIProps> {
         owningEditor={ this.props.owningEditor }
       >
         {
-          this.props.tabOrder.map(documentId =>
-            <TabbedDocument key={ documentId }>
-              <TabbedDocumentTab>
-                <TabFactory document={ this.props.documents[documentId] }/>
-              </TabbedDocumentTab>
-              <TabbedDocumentContent documentId={ documentId }>
-                <EditorFactory document={ this.props.documents[documentId] }/>
-              </TabbedDocumentContent>
-            </TabbedDocument>
-          )
+          this.props.tabOrder.map(documentId => {
+            const document = this.props.documents[documentId];
+            const isActive = documentId === this.props.activeDocumentId;
+            return (
+              <TabbedDocument key={ documentId }>
+                <TabbedDocumentTab>
+                  <Tab
+                    active={ isActive }
+                    dirty={ document.dirty }
+                    documentId={ documentId }
+                    label={ this.getTabLabel(document) }
+                    onCloseClick={ this.props.closeTab }/>
+                </TabbedDocumentTab>
+                <TabbedDocumentContent documentId={ documentId }>
+                  <EditorFactory document={ document }/>
+                </TabbedDocumentContent>
+              </TabbedDocument>
+            );
+          })
         }
       </MultiTabs>
     );
@@ -83,17 +82,31 @@ class MDIComponent extends React.Component<MDIProps> {
   private handleTabChange = (tabValue) => {
     this.props.setActiveTab(this.props.tabOrder[tabValue]);
   }
+
+  private getTabLabel(document: Document): string {
+    switch (document.contentType) {
+      case CONTENT_TYPE_APP_SETTINGS:
+        return 'Emulator Settings';
+
+      case CONTENT_TYPE_WELCOME_PAGE:
+        return 'Welcome';
+
+      case CONTENT_TYPE_TRANSCRIPT:
+        return document.fileName || 'Transcript';
+
+      case CONTENT_TYPE_LIVE_CHAT:
+        let label = 'Live Chat';
+        const { services = [] } = this.props.activeBot || {};
+        const { endpointId = null } = this.props.chats[document.documentId] || {};
+        const botEndpoint = services.find(s => s.id === endpointId);
+
+        if (botEndpoint) {
+          label += ` (${ botEndpoint.name })`;
+        }
+        return label;
+
+      default:
+        return '';
+    }
+  }
 }
-
-const mapStateToProps = (state: RootState, ownProps: MDIProps): MDIProps => ({
-  activeDocumentId: state.editor.editors[ownProps.owningEditor].activeDocumentId,
-  documents: state.editor.editors[ownProps.owningEditor].documents,
-  tabOrder: state.editor.editors[ownProps.owningEditor].tabOrder,
-  activeEditor: state.editor.activeEditor
-});
-
-const mapDispatchToProps = (dispatch): MDIProps => ({
-  setActiveTab: (tab: string) => dispatch(EditorActions.setActiveTab(tab))
-});
-
-export const MDI = connect(mapStateToProps, mapDispatchToProps)(MDIComponent);

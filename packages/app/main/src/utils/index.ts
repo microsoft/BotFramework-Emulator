@@ -32,7 +32,6 @@
 //
 
 export * from './botListsAreDifferent';
-export * from './conversation';
 export * from './ensureStoragePath';
 export * from './exceptionToAPIException';
 export * from './getBotsFromDisk';
