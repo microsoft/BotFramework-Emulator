@@ -26,15 +26,21 @@ jest.mock('../../dialogs', () => ({
     hideDialog: () => Promise.resolve(false),
   }
 }));
-jest.mock('../multiTabs/tabbedDocument/leftContentOverlay/leftContentOverlay.scss', () => ({}));
-jest.mock('../multiTabs/tabbedDocument/rightContentOverlay/rightContentOverlay.scss', () => ({}));
-jest.mock('../multiTabs/tabbedDocument/overlay.scss', () => ({}));
-jest.mock('../../layout/genericDocument.scss', () => ({}));
+jest.mock('../multiTabs/index', () => ({
+  MultiTabs: () => <div/>,
+  TabBar: () => <div/>,
+  ContentOverlay: () => <div/>,
+  TabbedDocumentContentWrapper: () => <div/>,
+  TabbedDocument: () => <div/>,
+  LeftContentOverlay: () => <div/>,
+  RightContentOverlay: () => <div/>,
+  Tab: props => props.children,
+  Content: props => props.children
+}));
+jest.mock('./tab/tab', () => ({
+  Tab: () => <div/>
+}));
 jest.mock('./tab/tab.scss', () => ({}));
-jest.mock('../multiTabs/multiTabs.scss', () => ({}));
-jest.mock('../multiTabs/tabbedDocument/contentOverlay/contentOverlay.scss', () => ({}));
-jest.mock('../multiTabs/tabbedDocument/contentWrapper/contentWrapper.scss', () => ({}));
-jest.mock('../multiTabs/tabBar/tabBar.scss', () => ({}));
 jest.mock('../../editor/', () => ({
   EditorFactory: () => <div/>
 }));
