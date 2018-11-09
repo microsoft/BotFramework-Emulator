@@ -85,7 +85,12 @@ export function registerCommands(commandRegistry: CommandRegistry) {
   // Open App Settings
   commandRegistry.registerCommand(UI.ShowAppSettings, (): void => {
     const { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } = Constants;
-    store.dispatch(EditorActions.open(CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS, true, null));
+    store.dispatch(EditorActions.open({
+      contentType: CONTENT_TYPE_APP_SETTINGS,
+      documentId: DOCUMENT_ID_APP_SETTINGS,
+      isGlobal: true,
+      meta: null
+    }));
   });
 
   // ---------------------------------------------------------------------------

@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { store } from './store';
-import * as EditorActions from './action/editorActions';
 import * as Constants from '../constants';
-import { Editor } from '../data/reducer/editor';
+import * as EditorActions from './action/editorActions';
+import { Editor } from './reducer/editor';
+import { store } from './store';
 
 export function hasNonGlobalTabs(tabGroups?: { [editorKey: string]: Editor }): number {
   tabGroups = tabGroups || store.getState().editor.editors;
@@ -63,18 +63,6 @@ export function getTabGroupForDocument(documentId: string, tabGroups?: { [editor
   }
   return undefined;
 }
-/**
- * Checks all tab groups to see if the specified document is active in one of them
- * @param documentId The document to check for
- */
-export function isActiveDocument(documentId: string): boolean {
-  const tabGroup = getTabGroupForDocument(documentId);
-  if (!tabGroup) {
-    return false;
-  }
-
-  return store.getState().editor.editors[tabGroup].activeDocumentId === documentId;
-}
 
 /** Takes a tab group key and returns the key of the other tab group */
 export function getOtherTabGroup(tabGroup: string): string {
@@ -82,13 +70,13 @@ export function getOtherTabGroup(tabGroup: string): string {
 }
 
 export function showWelcomePage(): void {
-  store.dispatch(EditorActions.open(Constants.CONTENT_TYPE_WELCOME_PAGE, Constants.DOCUMENT_ID_WELCOME_PAGE, true));
-}
-
-export function showAppSettingsPage(): void {
-  store.dispatch(EditorActions.open(Constants.CONTENT_TYPE_APP_SETTINGS, Constants.DOCUMENT_ID_APP_SETTINGS, true));
+  store.dispatch(EditorActions.open({
+    contentType: Constants.CONTENT_TYPE_WELCOME_PAGE,
+    documentId: Constants.DOCUMENT_ID_WELCOME_PAGE,
+    isGlobal: true
+  }));
 }
 
 export function tabGroupHasDocuments(tabGroup: Editor): boolean {
-  return Object.keys(tabGroup.documents).length ? true : false;
+  return !!Object.keys(tabGroup.documents).length;
 }

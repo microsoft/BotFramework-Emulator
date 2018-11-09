@@ -31,17 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  editor,
-  Editor,
-  EditorState,
-  fixupTabGroups,
-  removeDocumentFromTabGroup,
-  setActiveEditor,
-  setDraggingTab,
-  setEditorState,
-  setNewPrimaryEditor
-} from './editor';
+import { deepCopySlow } from '@bfemulator/app-shared';
+import * as Constants from '../../constants';
 import {
   addDocPendingChange,
   appendTab,
@@ -59,8 +50,17 @@ import {
   toggleDraggingTab,
   updateDocument
 } from '../action/editorActions';
-import * as Constants from '../../constants';
-import { deepCopySlow } from '@bfemulator/app-shared';
+import {
+  editor,
+  Editor,
+  EditorState,
+  fixupTabGroups,
+  removeDocumentFromTabGroup,
+  setActiveEditor,
+  setDraggingTab,
+  setEditorState,
+  setNewPrimaryEditor
+} from './editor';
 
 let defaultState: EditorState;
 jest.mock('../../ui/dialogs', () => ({
@@ -105,7 +105,7 @@ describe('Editor reducer tests', () => {
       const srcEditorKey = Constants.EDITOR_KEY_PRIMARY;
       const destEditorKey = Constants.EDITOR_KEY_PRIMARY;
       const docIdToAppend = 'doc1';
-      const action =  appendTab(srcEditorKey, destEditorKey, docIdToAppend);
+      const action = appendTab(srcEditorKey, destEditorKey, docIdToAppend);
       const endingState = editor(startingState, action);
       expect(endingState.editors[Constants.EDITOR_KEY_PRIMARY].tabOrder[0]).not.toBe(docIdToAppend);
       expect(endingState.editors[Constants.EDITOR_KEY_PRIMARY].tabOrder[1]).toBe(docIdToAppend);
@@ -463,7 +463,7 @@ describe('Editor reducer tests', () => {
           }
         }
       };
-      const action = open(Constants.CONTENT_TYPE_APP_SETTINGS, 'doc2', true);
+      const action = open({ contentType: Constants.CONTENT_TYPE_APP_SETTINGS, documentId: 'doc2', isGlobal: true });
       const endingState = editor(startingState, action);
       expect(endingState.activeEditor).toBe(Constants.EDITOR_KEY_SECONDARY);
       expect(endingState.editors[Constants.EDITOR_KEY_SECONDARY].recentTabs).toEqual(['doc2', 'doc3']);
@@ -487,7 +487,7 @@ describe('Editor reducer tests', () => {
           }
         }
       };
-      const action = open(Constants.CONTENT_TYPE_APP_SETTINGS, 'doc2', true);
+      const action = open({ contentType: Constants.CONTENT_TYPE_APP_SETTINGS, documentId: 'doc2', isGlobal: true });
       const endingState = editor(startingState, action);
       const primaryEditor = endingState.editors[Constants.EDITOR_KEY_PRIMARY];
       expect(primaryEditor.activeDocumentId).toBe('doc2');
@@ -513,7 +513,7 @@ describe('Editor reducer tests', () => {
           }
         }
       };
-      const action = open(Constants.CONTENT_TYPE_APP_SETTINGS, 'doc3', true);
+      const action = open({ contentType: Constants.CONTENT_TYPE_APP_SETTINGS, documentId: 'doc3', isGlobal: true });
       const endingState = editor(startingState, action);
       const primaryEditor = endingState.editors[Constants.EDITOR_KEY_PRIMARY];
       expect(primaryEditor.activeDocumentId).toBe('doc3');
@@ -540,7 +540,7 @@ describe('Editor reducer tests', () => {
           }
         }
       };
-      const action = open(Constants.CONTENT_TYPE_APP_SETTINGS, 'doc3', true);
+      const action = open({ contentType: Constants.CONTENT_TYPE_APP_SETTINGS, documentId: 'doc3', isGlobal: true });
       const endingState = editor(startingState, action);
       const primaryEditor = endingState.editors[Constants.EDITOR_KEY_PRIMARY];
       expect(primaryEditor.activeDocumentId).toBe('doc3');
