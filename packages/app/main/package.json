@@ -8,14 +8,16 @@
   "homepage": "https://github.com/Microsoft/BotFramework-Emulator",
   "scripts": {
     "build": "run-s lint build:electron",
-    "build:electron": "babel ./src --out-dir app/server --extensions \".ts,.tsx\" --ignore \"**/*.spec.ts\" && gulp --gulpfile gulpfile.common.js copy-extension-stubs",
+    "build:electron": "babel ./src --out-dir app/server --extensions \".ts,.tsx\" --ignore \"**/*.spec.ts\" && npm run copy:extension:stubs",
+    "copy:extension:stubs": "ncp src/extensions app/extensions",
+    "dist": "electron-builder",
     "lint": "tslint --project tsconfig.json",
+    "pack": "electron-builder --dir",
     "start": "concurrently --kill-others --names \"electron,react-app\" --success first \"npm run start:electron:dev\" \"npm run start:react-app\"",
     "start:electron": "./node_modules/.bin/electron --inspect=7777 .",
     "start:electron:dev": "cross-env ELECTRON_TARGET_URL=http://localhost:3000/ npm run start:electron",
     "start:react-app": "cd ../client && npm start",
-    "test": "jest",
-    "verify": "gulp --gulpfile gulpfile.common.js verify:copyright"
+    "test": "jest"
   },
   "keywords": [
     "microsoft",
@@ -83,15 +85,9 @@
     "electron-builder-http": "19.27.5",
     "electron-builder-lib": "20.23.1",
     "fancy-log": "^1.3.2",
-    "gulp": "^4.0.0",
-    "gulp-clean": "^0.4.0",
-    "gulp-debug": "^3.2.0",
-    "gulp-rename": "^1.2.2",
-    "gulp-shell": "^0.6.5",
-    "gulp-tslint": "8.1.3",
-    "gulp-wait": "^0.0.2",
     "jest": "^23.0.0",
     "license-list": "^0.1.3",
+    "ncp": "2.0.0",
     "npm-run-all": "^4.1.3",
     "through2": "^2.0.3",
     "tslint": "^5.10.0",
@@ -121,6 +117,8 @@
     "formidable": "^1.1.1",
     "fs-extra": "^6.0.1",
     "got": "^7.1.0",
+    "gulp": "^4.0.0",
+    "gulp-rename": "^1.2.2",
     "http-status-codes": "^1.3.0",
     "jest-fetch-mock": "^1.6.2",
     "jsonwebtoken": "^8.3.0",
@@ -145,5 +143,116 @@
     "ws": "^5.0.0",
     "xmldom": "^0.1.27",
     "xtend": "^4.0.1"
+  },
+  "build": {
+    "asar": true,
+    "appId": "F3C061A6-FE81-4548-82ED-C1171D9856BB",
+    "productName": "Bot Framework Emulator",
+    "copyright": "Copyright © 2018 Microsoft Corporation",
+    "protocols": [
+      {
+        "name": "Bot Framework Emulator",
+        "role": "Viewer",
+        "schemes": [
+          "bfemulator"
+        ]
+      }
+    ],
+    "fileAssociations": [
+      {
+        "name": "Bot",
+        "ext": "bot"
+      },
+      {
+        "name": "Transcript",
+        "ext": "transcript"
+      }
+    ],
+    "asarUnpack": [
+      "app/extensions/**",
+      "node_modules/@bfemulator/extension-*/**"
+    ],
+    "directories": {
+      "buildResources": "./scripts/config/resources"
+    },
+    "files": [
+      "**/*",
+      "!**/node_modules/*/{README.md,README,readme.md,readme,test}",
+      "!**/node_modules/.bin",
+      "!**/*.{o,hprof,orig,pyc,pyo,rbc}",
+      "!**/._*",
+      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,__pycache__,thumbs.db,.gitignore,.gitattributes,.editorconfig,.idea,appveyor.yml,.travis.yml,circle.yml}",
+      "!.vscode${/*}",
+      "!doc${/*}",
+      "!**/{tsconfig.json,README.md,getlicenses.cmd}",
+      "!**/node_modules/@types",
+      "!./scripts",
+      "!**/cache",
+      "!./installer"
+    ],
+    "win": {
+      "artifactName": "BotFramework-Emulator-${version}-windows-setup.${ext}",
+      "icon": "./scripts/config/resources/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "ia32"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "include": "./scripts/config/resources/nsis/installer.nsh",
+      "perMachine": true,
+      "allowElevation": true,
+      "packElevateHelper": true,
+      "unicode": true,
+      "runAfterFinish": true,
+      "installerIcon": "./scripts/config/resources/icon.ico",
+      "uninstallerIcon": "./scripts/config/resources/icon.ico",
+      "installerHeader": "./sripts/config/resources/nsis/installerHeader.bmp",
+      "installerSidebar": "./sripts/config/resources/nsis/installerSidebar.bmp",
+      "uninstallerSidebar": "./sripts/config/resources/nsis/installerSidebar.bmp",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Bot Framework Emulator (V4)"
+    },
+    "mac": {
+      "artifactName": "BotFramework-Emulator-${version}-mac.${ext}",
+      "category": "public.app-category.developer-tools"
+    },
+    "dmg": {
+      "background": "./scripts/config/resources/background.tiff",
+      "icon": "./scripts/config/resources/emulator_dmg.icns",
+      "title": "Bot Framework Emulator Installer",
+      "contents": [
+        {
+          "x": 140,
+          "y": 244
+        },
+        {
+          "x": 380,
+          "y": 244,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "linux": {
+      "artifactName": "BotFramework-Emulator-${version}-${platform}-${arch}.${ext}",
+      "category": "Development",
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ]
+    },
+    "publish": null,
+    "remoteBuild": false
   }
 }
