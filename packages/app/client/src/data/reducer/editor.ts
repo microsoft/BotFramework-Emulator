@@ -245,7 +245,7 @@ export const editor = (state: EditorState = DEFAULT_STATE, action: EditorAction 
       const newDocs = deepCopySlow(state.editors[editorKey].documents);
       // Instead of overwriting the document wholesale,
       // assign the updated keys from the payload so we do not
-      // loose data from EditorActions.updateDocument
+      // lose data from EditorActions.updateDocument
       if (!newDocs[action.payload.documentId]) {
         newDocs[action.payload.documentId] = {};
       }
