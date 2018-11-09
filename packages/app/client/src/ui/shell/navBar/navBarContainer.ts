@@ -16,7 +16,12 @@ const mapDispatchToProps = (dispatch): NavBarProps => ({
   navBarSelectionChanged: newSelection => dispatch(NavBarActions.select(newSelection)),
   openEmulatorSettings: () => {
     const { CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS } = Constants;
-    dispatch(EditorActions.open(CONTENT_TYPE_APP_SETTINGS, DOCUMENT_ID_APP_SETTINGS, true, null));
+    dispatch(EditorActions.open({
+      contentType: CONTENT_TYPE_APP_SETTINGS,
+      documentId: DOCUMENT_ID_APP_SETTINGS,
+      isGlobal: true,
+      meta: null
+    }));
   }
 });
 

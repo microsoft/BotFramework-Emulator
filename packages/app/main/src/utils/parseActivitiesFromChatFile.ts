@@ -59,9 +59,16 @@ export const parseActivitiesFromChatFile = async (file: string): Promise<CustomA
         cwd: path.dirname(file),
         silent: true
       });
-      childProcess.stdout.on('data', (data) => {
-        resolve(JSON.parse(data.toString()));
+
+      let str = '';
+      childProcess.stdout.on('data', (data: Uint8Array) => {
+        str += data.toString();
       });
+
+      childProcess.stdout.on('end', () => {
+        resolve(JSON.parse(str));
+      });
+
       childProcess.stdout.on('error', (err) => {
         reject(err);
       });

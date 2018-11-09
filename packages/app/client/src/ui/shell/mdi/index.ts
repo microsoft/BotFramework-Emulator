@@ -31,8 +31,5 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-export * from './emulatorTab';
-export * from './genericTab';
-export * from './mdi';
+export { MDI } from './mdiContainer';
 export * from './tab/tab';
-export * from './tabFactory';
