@@ -70,6 +70,10 @@ export function* checkActiveDocForPendingChanges(): IterableIterator<any> {
   return;
 }
 
+export function* refreshConversationMenu(): IterableIterator<any> {
+  yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.UpdateConversationMenu);
+}
+
 export function* editorSagas(): IterableIterator<ForkEffect> {
   // Whenever a doc is added to the list of docs pending changes, or and editor / tab
   // is focused, check to see if the active document has pending changes
@@ -80,5 +84,13 @@ export function* editorSagas(): IterableIterator<ForkEffect> {
       EditorActions.open
     ],
     checkActiveDocForPendingChanges
+  );
+
+  yield takeEvery(
+    [
+      EditorActions.setActiveEditor,
+      EditorActions.setActiveTab,
+    ],
+    refreshConversationMenu
   );
 }

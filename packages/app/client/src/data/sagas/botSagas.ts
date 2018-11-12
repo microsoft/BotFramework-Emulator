@@ -50,7 +50,12 @@ export function* generateHashForActiveBot(action: SetActiveBotAction): IterableI
   yield put(botHashGenerated(generatedHash));
 }
 
+export function* refreshConversationMenu(): IterableIterator<any> {
+  yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.UpdateConversationMenu);
+}
+
 export function* botSagas(): IterableIterator<ForkEffect> {
   yield takeEvery(BotActions.browse, browseForBot);
   yield takeEvery(BotActions.setActive, generateHashForActiveBot);
+  yield takeEvery([BotActions.setActive, BotActions.load, BotActions.close], refreshConversationMenu);
 }

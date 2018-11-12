@@ -31,10 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { SharedConstants } from '@bfemulator/app-shared';
+
 export const CONTENT_TYPE_APP_SETTINGS = 'application/vnd.microsoft.bfemulator.document.appsettings';
 export const CONTENT_TYPE_WELCOME_PAGE = 'application/vnd.microsoft.bfemulator.document.welcome';
 export const CONTENT_TYPE_TRANSCRIPT = 'application/vnd.microsoft.bfemulator.document.transcript';
-export const CONTENT_TYPE_LIVE_CHAT = 'application/vnd.microsoft.bfemulator.document.livechat';
+export const CONTENT_TYPE_LIVE_CHAT = SharedConstants.Content.CONTENT_TYPE_LIVE_CHAT;
 
 export const NAVBAR_BOT_EXPLORER = 'navbar.botExplorer';
 export const NAVBAR_SETTINGS = 'navbar.settings';
