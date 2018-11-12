@@ -31,12 +31,41 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { parse } from 'url';
+import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 
-const LOCALHOST_NAMES = ['localhost', '127.0.0.1', '::1'];
+import { TelemetryService } from '../telemetry';
 
-export default function isLocalhostUrl(urlStr: string): boolean {
-  const { hostname } = parse(urlStr);
+import { registerCommands } from './telemetryCommands';
 
-  return LOCALHOST_NAMES.includes(hostname);
-}
+jest.mock('../settingsData/store', () => ({
+  getSettings: () => ({
+    framework: {},
+  }),
+}));
+
+const mockRegistry = new CommandRegistryImpl();
+registerCommands(mockRegistry);
+
+describe('The telemetry commands', () => {
+  let mockTrackEvent;
+  const trackEventBackup = TelemetryService.trackEvent;
+
+  beforeEach(() => {
+    mockTrackEvent = jest.fn(() => Promise.resolve());
+    TelemetryService.trackEvent = mockTrackEvent;
+  });
+
+  afterAll(() => {
+    TelemetryService.trackEvent = trackEventBackup;
+  });
+
+  it('should track events to App Insights', async () => {
+    const { handler } = mockRegistry.getCommand(
+      SharedConstants.Commands.Telemetry.TrackEvent
+    );
+    await handler('test_event', { some: 'data' });
+
+    expect(mockTrackEvent).toHaveBeenCalledWith('test_event', { some: 'data' });
+  });
+});

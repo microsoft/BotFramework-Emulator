@@ -30,6 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 // Cheating here and pulling in a module from node. Can be easily replaced if we ever move the emulator to the web.
 import { LogLevel } from '@bfemulator/sdk-shared';
 import { logEntry, textItem } from '@bfemulator/sdk-shared';
@@ -74,6 +75,7 @@ interface InspectorProps {
   themeInfo: { themeName: string; themeComponents: string[] };
   activeBot?: IBotConfiguration;
   botHash?: string;
+  trackEvent?: (name: string, properties?: { [key: string]: any }) => void;
 }
 
 interface InspectorState {
@@ -414,6 +416,14 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
           documentId,
           logEntry(textItem(logLevel, text))
         );
+        break;
+      }
+
+      // record telemetry from extension
+      case 'track-event': {
+        const eventName = event.args[0];
+        const eventProperties = event.args[1] || {};
+        this.props.trackEvent(eventName, eventProperties);
         break;
       }
 

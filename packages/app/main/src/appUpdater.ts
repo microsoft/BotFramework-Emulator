@@ -36,6 +36,7 @@ import { EventEmitter } from 'events';
 import { ProgressInfo } from 'builder-util-runtime';
 import { autoUpdater as electronUpdater, UpdateInfo } from 'electron-updater';
 
+import { TelemetryService } from './telemetry';
 import { getSettings } from './settingsData/store';
 
 export enum UpdateStatus {
@@ -131,6 +132,10 @@ class EmulatorUpdater extends EventEmitter {
       this.emit('download-progress', progress);
     });
     electronUpdater.on('update-downloaded', (updateInfo: UpdateInfo) => {
+      TelemetryService.trackEvent('update_download', {
+        version: updateInfo.version,
+        installAfterDownload: this._installAfterDownload,
+      });
       if (this._installAfterDownload) {
         this.quitAndInstall();
         return;
@@ -160,6 +165,10 @@ class EmulatorUpdater extends EventEmitter {
 
     try {
       await electronUpdater.checkForUpdates();
+      TelemetryService.trackEvent('update_check', {
+        auto: !userInitiated,
+        prerelease: this.allowPrerelease,
+      });
     } catch (e) {
       throw new Error(
         `There was an error while checking for the latest update: ${e}`

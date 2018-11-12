@@ -30,13 +30,16 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 import { connect } from 'react-redux';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 import * as Constants from '../../../constants';
 import * as EditorActions from '../../../data/action/editorActions';
 import * as ExplorerActions from '../../../data/action/explorerActions';
 import * as NavBarActions from '../../../data/action/navBarActions';
 import { RootState } from '../../../data/store';
+import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
 
 import { NavBarComponent, NavBarProps } from './navBar';
 
@@ -59,6 +62,13 @@ const mapDispatchToProps = (dispatch): NavBarProps => ({
         meta: null,
       })
     );
+  },
+  trackEvent: (name: string, properties?: { [key: string]: any }) => {
+    CommandServiceImpl.remoteCall(
+      SharedConstants.Commands.Telemetry.TrackEvent,
+      name,
+      properties
+    ).catch(_e => void 0);
   },
 });
 

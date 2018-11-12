@@ -63,7 +63,7 @@ import { ToolBar } from './toolbar/toolbar';
 
 const { encode } = base64Url;
 
-const RestartConversationOptions = {
+export const RestartConversationOptions = {
   NewUserId: 'Restart with new user ID',
   SameUserId: 'Restart with same user ID',
 };
@@ -85,6 +85,7 @@ interface EmulatorProps {
   newConversation?: (documentId: string, options: any) => void;
   presentationModeEnabled?: boolean;
   setInspectorObjects?: (documentId: string, objects: any) => void;
+  trackEvent?: (name: string, properties?: { [key: string]: any }) => void;
   updateChat?: (documentId: string, updatedValues: any) => void;
   updateDocument?: (
     documentId: string,
@@ -93,7 +94,7 @@ interface EmulatorProps {
   url?: string;
 }
 
-class EmulatorComponent extends React.Component<EmulatorProps, {}> {
+export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
   private readonly onVerticalSizeChange = debounce(sizes => {
     this.props.document.ui = {
       ...this.props.document.ui,
@@ -227,7 +228,7 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
               props.document.documentId
             );
 
-            this.props.updateDocument(this.props.documentId, fileInfo);
+            this.props.updateDocument(props.documentId, fileInfo);
           } catch (err) {
             throw new Error(
               `Error while feeding transcript on disk to conversation: ${err}`
@@ -381,6 +382,9 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
 
     switch (option) {
       case NewUserId: {
+        this.props.trackEvent('conversation_restart', {
+          userId: 'new',
+        });
         const newUserId = uniqueIdv4();
         // set new user as current on emulator facilities side
         await CommandServiceImpl.remoteCall(
@@ -392,6 +396,9 @@ class EmulatorComponent extends React.Component<EmulatorProps, {}> {
       }
 
       case SameUserId:
+        this.props.trackEvent('conversation_restart', {
+          userId: 'same',
+        });
         this.startNewConversation();
         break;
 
@@ -451,6 +458,12 @@ const mapDispatchToProps = (dispatch): EmulatorProps => ({
     dispatch(updateDocument(documentId, updatedValues)),
   createErrorNotification: (notification: Notification) =>
     dispatch(beginAdd(notification)),
+  trackEvent: (name: string, properties?: { [key: string]: any }) =>
+    CommandServiceImpl.remoteCall(
+      SharedConstants.Commands.Telemetry.TrackEvent,
+      name,
+      properties
+    ).catch(_e => void 0),
 });
 
 export const Emulator = connect(

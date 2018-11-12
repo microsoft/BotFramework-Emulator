@@ -34,27 +34,76 @@
 import { LogLevel, textItem } from '@bfemulator/sdk-shared';
 import { mount, ReactWrapper } from 'enzyme';
 import * as React from 'react';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+import { SharedConstants } from '@bfemulator/app-shared';
+
+import { setInspectorObjects } from '../../../../../data/action/chatActions';
 
 import { LogEntry, LogEntryProps, number2, timestamp } from './logEntry';
+import { LogEntry as LogEntryContainer } from './logEntryContainer';
+
+jest.mock('../../../../dialogs', () => ({
+  BotCreationDialog: () => ({}),
+}));
 
 jest.mock('./log.scss', () => ({}));
 
+let mockRemoteCallsMade;
+let mockCallsMade;
+jest.mock('../../../../../platform/commands/commandServiceImpl', () => ({
+  CommandServiceImpl: {
+    call: (commandName, ...args) => {
+      mockCallsMade.push({ commandName, args });
+      return Promise.resolve(true);
+    },
+    remoteCall: (commandName, ...args) => {
+      mockRemoteCallsMade.push({ commandName, args });
+      return Promise.resolve(true);
+    },
+  },
+}));
+
 describe('logEntry component', () => {
   let wrapper: ReactWrapper;
+  let node;
+  let instance;
+  let props: LogEntryProps;
+  let mockNext;
+  let mockSelectedActivity;
+  let mockSetInspectorObjects;
+  let mockDispatch;
 
   beforeEach(() => {
-    const props: LogEntryProps = {
-      document: {},
+    mockNext = jest.fn(() => null);
+    mockSelectedActivity = { next: mockNext };
+    mockSetInspectorObjects = jest.fn(() => null);
+    mockRemoteCallsMade = [];
+    mockCallsMade = [];
+    props = {
+      document: {
+        documentId: 'someDocId',
+        selectedActivity$: mockSelectedActivity,
+      },
       entry: {
         timestamp: 0,
         items: [],
       },
+      setInspectorObjects: mockSetInspectorObjects,
     };
-    wrapper = mount(<LogEntry {...props} />);
+    const mockStore = createStore((_state, _action) => ({}));
+    mockDispatch = jest.spyOn(mockStore, 'dispatch');
+    wrapper = mount(
+      <Provider store={mockStore}>
+        <LogEntryContainer {...props} />
+      </Provider>
+    );
+    node = wrapper.find(LogEntry);
+    instance = node.instance();
   });
 
   it('should render an outer entry component', () => {
-    expect(wrapper.find('div')).toHaveLength(1);
+    expect(node.find('div')).toHaveLength(1);
   });
 
   it('should render a timestamped log entry with multiple items', () => {
@@ -66,6 +115,7 @@ describe('logEntry component', () => {
         textItem(LogLevel.Debug, 'item3'),
       ],
     };
+    wrapper = mount(<LogEntry {...props} />);
     wrapper.setProps({ entry });
     expect(wrapper.find('span.timestamp')).toHaveLength(1);
     expect(wrapper.find('span.text-item')).toHaveLength(3);
@@ -74,7 +124,7 @@ describe('logEntry component', () => {
     expect(timestampNode.html()).toContain('12:34:56');
   });
 
-  test('number2', () => {
+  it('should truncate a number of more than 3 digits to 2 digits', () => {
     const num1 = 5;
     const num2 = 34;
     const num3 = 666;
@@ -84,7 +134,7 @@ describe('logEntry component', () => {
     expect(number2(num3)).toBe('66');
   });
 
-  test('timestamp', () => {
+  it('should properly generate a timestamp', () => {
     const time = Date.now();
     const date = new Date(time);
     const expectedHrs = number2(date.getHours());
@@ -93,5 +143,177 @@ describe('logEntry component', () => {
     const expectedTimestamp = `${expectedHrs}:${expectedMins}:${expectedSeconds}`;
 
     expect(timestamp(time)).toBe(expectedTimestamp);
+  });
+
+  it('should inspect an object', () => {
+    const mockInspectableObj = { some: 'data' };
+    instance.inspect(mockInspectableObj);
+
+    expect(mockNext).toHaveBeenCalledWith({ showInInspector: true });
+    expect(mockDispatch).toHaveBeenCalledWith(
+      setInspectorObjects('someDocId', mockInspectableObj)
+    );
+  });
+
+  it('should inspect and highlight an object', () => {
+    const mockInspectableObj = { some: 'data', type: 'message', id: 'someId' };
+    instance.inspectAndHighlightInWebchat(mockInspectableObj);
+
+    expect(mockNext).toHaveBeenCalledWith({
+      ...mockInspectableObj,
+      showInInspector: true,
+    });
+    expect(mockRemoteCallsMade).toHaveLength(1);
+    expect(mockRemoteCallsMade[0].commandName).toBe(
+      SharedConstants.Commands.Telemetry.TrackEvent
+    );
+    expect(mockRemoteCallsMade[0].args).toEqual([
+      'log_inspectActivity',
+      { type: 'message' },
+    ]);
+
+    mockInspectableObj.type = undefined;
+    instance.inspectAndHighlightInWebchat(mockInspectableObj);
+
+    expect(mockRemoteCallsMade[1].args).toEqual([
+      'log_inspectActivity',
+      { type: '' },
+    ]);
+  });
+
+  it('should highlight an object', () => {
+    const mockInspectableObj = { some: 'data', type: 'message', id: 'someId' };
+    instance.highlightInWebchat(mockInspectableObj);
+
+    expect(mockNext).toHaveBeenCalledWith({
+      ...mockInspectableObj,
+      showInInspector: false,
+    });
+  });
+
+  it('should remove highlighting from an object', () => {
+    const mockInspectableObj = { id: 'activity1' };
+    wrapper = mount(<LogEntry {...props} />);
+    const mockCurrentlyInspectedActivity = { id: 'activity2' };
+    wrapper.setProps({
+      currentlyInspectedActivity: mockCurrentlyInspectedActivity,
+    });
+    instance = wrapper.instance();
+    instance.removeHighlightInWebchat(mockInspectableObj);
+
+    expect(mockNext).toHaveBeenCalledWith({
+      ...mockCurrentlyInspectedActivity,
+      showInInspector: true,
+    });
+
+    mockCurrentlyInspectedActivity.id = undefined;
+    instance.removeHighlightInWebchat(mockInspectableObj);
+
+    expect(mockNext).toHaveBeenCalledWith({ showInInspector: false });
+  });
+
+  it('should render a text item', () => {
+    wrapper = mount(<LogEntry {...props} />);
+    instance = wrapper.instance();
+    const textElem = instance.renderItem(
+      { type: 'text', payload: { level: LogLevel.Debug, text: 'some text' } },
+      'someKey'
+    );
+    expect(textElem).not.toBeNull();
+  });
+
+  it('should render an external link item', () => {
+    wrapper = mount(<LogEntry {...props} />);
+    instance = wrapper.instance();
+    const linkItem = instance.renderItem(
+      {
+        type: 'external-link',
+        payload: { hyperlink: 'https://aka.ms/bf-emulator', text: 'some text' },
+      },
+      'someKey'
+    );
+    expect(linkItem).not.toBeNull();
+  });
+
+  it('should render an app settings item', () => {
+    wrapper = mount(<LogEntry {...props} />);
+    instance = wrapper.instance();
+    const appSettingsItem = instance.renderItem(
+      { type: 'open-app-settings', payload: { text: 'some text' } },
+      'someKey'
+    );
+    expect(appSettingsItem).not.toBeNull();
+  });
+
+  it('should render an exception item', () => {
+    wrapper = mount(<LogEntry {...props} />);
+    instance = wrapper.instance();
+    const exceptionItem = instance.renderItem(
+      { type: 'exception', payload: { err: 'some error' } },
+      'someKey'
+    );
+    expect(exceptionItem).not.toBeNull();
+  });
+
+  it('should render an inspectable object item', () => {
+    wrapper = mount(<LogEntry {...props} />);
+    instance = wrapper.instance();
+    const inspectableObjItem = instance.renderItem(
+      {
+        type: 'inspectable-object',
+        payload: { obj: { id: 'someId', type: 'message' } },
+      },
+      'someKey'
+    );
+    expect(inspectableObjItem).not.toBeNull();
+    expect(instance.inspectableObjects.someId).toBe(true);
+  });
+
+  it('should render a network request item', () => {
+    wrapper = mount(<LogEntry {...props} />);
+    instance = wrapper.instance();
+    const networkReqItem = instance.renderItem(
+      {
+        type: 'network-request',
+        payload: {
+          facility: undefined,
+          body: { some: 'data' },
+          headers: undefined,
+          method: 'GET',
+          url: undefined,
+        },
+      },
+      'someKey'
+    );
+    expect(networkReqItem).not.toBeNull();
+  });
+
+  it('should render a network response item', () => {
+    wrapper = mount(<LogEntry {...props} />);
+    instance = wrapper.instance();
+    const networkResItem = instance.renderItem(
+      {
+        type: 'network-response',
+        payload: {
+          body: { some: 'data' },
+          headers: undefined,
+          statusCode: 404,
+          statusMessage: undefined,
+          srcUrl: undefined,
+        },
+      },
+      'someKey'
+    );
+    expect(networkResItem).not.toBeNull();
+  });
+
+  it('should render an ngrok expiration item', () => {
+    wrapper = mount(<LogEntry {...props} />);
+    instance = wrapper.instance();
+    const ngrokitem = instance.renderItem(
+      { type: 'ngrok-expiration', payload: { text: 'some text' } },
+      'someKey'
+    );
+    expect(ngrokitem).not.toBeNull();
   });
 });

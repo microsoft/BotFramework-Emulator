@@ -57,8 +57,10 @@ import {
   OpenBotDialogContainer,
   SecretPromptDialogContainer,
 } from '../ui/dialogs';
+import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
 
 import { registerCommands } from './uiCommands';
+
 jest.mock('../ui/dialogs', () => ({
   AzureLoginPromptDialogContainer: class {},
   AzureLoginSuccessDialogContainer: class {},
@@ -153,10 +155,16 @@ describe('the uiCommands', () => {
   });
 
   it('should set the proper href on the theme tag when the SwitchTheme command is dispatched', () => {
+    const remoteCallSpy = jest.spyOn(CommandServiceImpl, 'remoteCall');
     const link = document.createElement('link');
     link.id = 'themeVars';
     document.querySelector('head').appendChild(link);
     registry.getCommand(Commands.SwitchTheme).handler('light', './light.css');
     expect(link.href).toBe('http://localhost/light.css');
+    expect(remoteCallSpy).toHaveBeenCalledWith(
+      SharedConstants.Commands.Telemetry.TrackEvent,
+      'app_chooseTheme',
+      { themeName: 'light' }
+    );
   });
 });

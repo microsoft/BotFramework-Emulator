@@ -51,11 +51,13 @@ import { hasNonGlobalTabs } from '../../data/editorHelpers';
 import { store } from '../../data/store';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 
+const { Bot, Electron, Telemetry } = SharedConstants.Commands;
+
 export const ActiveBotHelper = new class {
   async confirmSwitchBot(): Promise<any> {
     if (hasNonGlobalTabs()) {
       return await CommandServiceImpl.remoteCall(
-        SharedConstants.Commands.Electron.ShowMessageBox,
+        Electron.ShowMessageBox,
         true,
         {
           buttons: ['Cancel', 'OK'],
@@ -123,7 +125,7 @@ export const ActiveBotHelper = new class {
 
   /** tell the server-side the active bot is now closed */
   closeActiveBot(): Promise<any> {
-    return CommandServiceImpl.remoteCall(SharedConstants.Commands.Bot.Close)
+    return CommandServiceImpl.remoteCall(Bot.Close)
       .then(() => {
         store.dispatch(BotActions.closeBot());
         CommandServiceImpl.remoteCall(
@@ -141,19 +143,15 @@ export const ActiveBotHelper = new class {
 
   async botAlreadyOpen(): Promise<any> {
     // TODO - localization
-    return await CommandServiceImpl.remoteCall(
-      SharedConstants.Commands.Electron.ShowMessageBox,
-      true,
-      {
-        buttons: ['OK'],
-        cancelId: 0,
-        defaultId: 0,
-        message:
-          "This bot is already open. If you'd like to start a conversation, " +
-          'click on an endpoint from the Bot Explorer pane.',
-        type: 'question',
-      }
-    );
+    return await CommandServiceImpl.remoteCall(Electron.ShowMessageBox, true, {
+      buttons: ['OK'],
+      cancelId: 0,
+      defaultId: 0,
+      message:
+        "This bot is already open. If you'd like to start a conversation, " +
+        'click on an endpoint from the Bot Explorer pane.',
+      type: 'question',
+    });
   }
 
   async confirmAndCreateBot(
@@ -199,20 +197,17 @@ export const ActiveBotHelper = new class {
   }
 
   browseForBotFile(): Promise<any> {
-    return CommandServiceImpl.remoteCall(
-      SharedConstants.Commands.Electron.ShowOpenDialog,
-      {
-        buttonLabel: 'Choose file',
-        filters: [
-          {
-            extensions: ['bot'],
-            name: 'Bot Files',
-          },
-        ],
-        properties: ['openFile'],
-        title: 'Open bot file',
-      }
-    );
+    return CommandServiceImpl.remoteCall(Electron.ShowOpenDialog, {
+      buttonLabel: 'Choose file',
+      filters: [
+        {
+          extensions: ['bot'],
+          name: 'Bot Files',
+        },
+      ],
+      properties: ['openFile'],
+      title: 'Open bot file',
+    });
   }
 
   async confirmAndOpenBotFromFile(filename?: string): Promise<any> {
@@ -246,6 +241,11 @@ export const ActiveBotHelper = new class {
             bot
           );
           await CommandServiceImpl.call(SharedConstants.Commands.Bot.Load, bot);
+          const numOfServices = bot.services && bot.services.length;
+          CommandServiceImpl.remoteCall(Telemetry.TrackEvent, `bot_open`, {
+            method: 'file_browse',
+            numOfServices,
+          }).catch(_e => void 0);
         }
       }
     } catch (err) {

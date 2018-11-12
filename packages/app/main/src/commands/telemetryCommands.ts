@@ -30,14 +30,22 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { isLocalhostUrl } from './isLocalhostUrl';
 
-describe('The isLocalHostUrl util', () => {
-  it('should return true for urls that contain "localhost"', () => {
-    expect(isLocalhostUrl('http://localhost')).toBeTruthy();
-  });
+import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 
-  it('should return true for urls that contain "127.0.0.1" ', () => {
-    expect(isLocalhostUrl('http://127.0.0.1')).toBeTruthy();
-  });
-});
+import { TelemetryService } from '../telemetry';
+
+/** Registers telemetry commands */
+export function registerCommands(commandRegistry: CommandRegistryImpl) {
+  const Commands = SharedConstants.Commands.Telemetry;
+
+  // ---------------------------------------------------------------------------
+  // Track event to App Insights
+  commandRegistry.registerCommand(
+    Commands.TrackEvent,
+    (name: string, properties?: { [key: string]: any }): any => {
+      TelemetryService.trackEvent(name, properties);
+    }
+  );
+}

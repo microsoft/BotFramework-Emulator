@@ -35,6 +35,7 @@ import { newNotification, SharedConstants } from '@bfemulator/app-shared';
 import {
   Activity,
   CommandRegistryImpl,
+  isLocalHostUrl,
   uniqueId,
 } from '@bfemulator/sdk-shared';
 import { IEndpointService } from 'botframework-config/lib/schema';
@@ -49,7 +50,10 @@ import { CommandServiceImpl } from '../platform/commands/commandServiceImpl';
 
 /** Registers emulator (actual conversation emulation logic) commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
-  const { Emulator } = SharedConstants.Commands;
+  const {
+    Emulator,
+    Telemetry: { TrackEvent },
+  } = SharedConstants.Commands;
 
   // ---------------------------------------------------------------------------
   // Open a new emulator tabbed document
@@ -76,6 +80,12 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
             endpointUrl: endpoint.endpoint,
             userId: currentUserId,
           })
+        );
+      }
+
+      if (!isLocalHostUrl(endpoint.endpoint)) {
+        CommandServiceImpl.remoteCall(TrackEvent, 'livechat_openRemote').catch(
+          _e => void 0
         );
       }
 
@@ -140,6 +150,9 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         dialogOptions
       );
       await CommandServiceImpl.call(Emulator.OpenTranscript, filename);
+      CommandServiceImpl.remoteCall(TrackEvent, 'transcriptFile_open', {
+        method: 'file_menu',
+      }).catch(_e => void 0);
     } catch (e) {
       const errMsg = `Error while opening transcript file: ${e}`;
       const notification = newNotification(errMsg);

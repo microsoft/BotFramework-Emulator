@@ -105,6 +105,10 @@ window.host = {
     }
   },
 
+  trackEvent: function(name, properties) {
+    ipcRenderer.sendToHost('track-event', name, properties);
+  },
+
   dispatch: function(event, ...args) {
     this.handlers[event].forEach(handler => handler(...args));
   },

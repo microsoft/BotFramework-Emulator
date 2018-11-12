@@ -40,18 +40,110 @@
 // will be overwritten due to the call to "jest.mock('./main', ...)"
 
 import './fetchProxy';
+import { SharedConstants, newBot, newEndpoint } from '@bfemulator/app-shared';
+import {
+  applyBotConfigOverrides,
+  BotConfigWithPathImpl,
+} from '@bfemulator/sdk-shared';
+
 import {
   Protocol,
   ProtocolHandler,
   parseEndpointOverrides,
 } from './protocolHandler';
-jest.mock('./main', () => ({}));
+import { TelemetryService } from './telemetry';
+
+let mockCallsMade, mockRemoteCallsMade;
+let mockOpenedBot;
+const mockSharedConstants = SharedConstants;
+jest.mock('./main', () => ({
+  mainWindow: {
+    commandService: {
+      call: (commandName, ...args) => {
+        mockCallsMade.push({ commandName, args });
+        if (commandName === mockSharedConstants.Commands.Bot.Open) {
+          return Promise.resolve(mockOpenedBot);
+        }
+      },
+      remoteCall: (commandName, ...args) => {
+        mockRemoteCallsMade.push({ commandName, args });
+      },
+    },
+  },
+}));
 jest.mock('./globals', () => ({
   getGlobal: () => ({}),
   setGlobal: () => null,
 }));
 
+let mockNgrokPath;
+jest.mock('./settingsData/store', () => ({
+  getSettings: () => ({
+    framework: {
+      ngrokPath: mockNgrokPath,
+    },
+  }),
+}));
+jest.mock('./emulator', () => ({
+  emulator: {
+    ngrok: {
+      getSpawnStatus: () => ({ triedToSpawn: true }),
+    },
+  },
+}));
+
+let mockRunningStatus;
+jest.mock('./ngrok', () => ({
+  ngrokEmitter: {
+    once: (_eventName, cb) => cb(),
+  },
+  running: () => mockRunningStatus,
+}));
+
+let mockSendNotificationToClient;
+jest.mock('./utils/sendNotificationToClient', () => ({
+  sendNotificationToClient: () => mockSendNotificationToClient(),
+}));
+
+let mockGotReturnValue;
+jest.mock('got', () => {
+  return jest.fn(() => Promise.resolve(mockGotReturnValue));
+});
+
 describe('Protocol handler tests', () => {
+  let mockTrackEvent;
+  const trackEventBackup = TelemetryService.trackEvent;
+
+  beforeEach(() => {
+    mockTrackEvent = jest.fn(() => null);
+    TelemetryService.trackEvent = mockTrackEvent;
+    mockCallsMade = [];
+    mockRemoteCallsMade = [];
+    mockOpenedBot = {
+      name: 'someBot',
+      description: '',
+      path: 'path/to/bot.bot',
+      services: [
+        {
+          appId: 'someAppId',
+          appPassword: 'somePw',
+          endpoint: 'https://www.myendpoint.com',
+        },
+      ],
+    };
+    mockRunningStatus = true;
+    mockNgrokPath = 'path/to/ngrok.exe';
+    mockSendNotificationToClient = jest.fn(() => null);
+    mockGotReturnValue = {
+      statusCode: 200,
+      body: '["activity1", "activity2", "activity3"]',
+    };
+  });
+
+  afterAll(() => {
+    TelemetryService.trackEvent = trackEventBackup;
+  });
+
   describe('parseProtocolUrl() functionality', () => {
     it('should return an info object about the parsed URL', () => {
       const info: Protocol = ProtocolHandler.parseProtocolUrl(
@@ -108,7 +200,7 @@ describe('Protocol handler tests', () => {
       ProtocolHandler.performTranscriptAction = tmpPerformTranscriptAction;
     });
 
-    it('shouldn\t do anything on an unrecognized action', () => {
+    it("shouldn't do anything on an unrecognized action", () => {
       const mockPerformBotAction = jest.fn(() => null);
       ProtocolHandler.performBotAction = mockPerformBotAction;
       const mockPerformLiveChatAction = jest.fn(() => null);
@@ -188,7 +280,249 @@ describe('Protocol handler tests', () => {
     });
   });
 
-  // unmock mainWindow
-  jest.unmock('./main');
-  jest.unmock('./globals');
+  it('should open a bot when ngrok is running', async () => {
+    const protocol = {
+      parsedArgs: {
+        id: 'someIdOverride',
+        path: 'path/to/bot.bot',
+        secret: 'someSecret',
+      },
+    };
+    const overrides = { endpoint: parseEndpointOverrides(protocol.parsedArgs) };
+    const overriddenBot = applyBotConfigOverrides(mockOpenedBot, overrides);
+
+    await ProtocolHandler.openBot(protocol);
+
+    expect(mockCallsMade).toHaveLength(2);
+    expect(mockCallsMade[0].commandName).toBe(
+      SharedConstants.Commands.Bot.Open
+    );
+    expect(mockCallsMade[0].args).toEqual(['path/to/bot.bot', 'someSecret']);
+    expect(mockCallsMade[1].commandName).toBe(
+      SharedConstants.Commands.Bot.SetActive
+    );
+    expect(mockCallsMade[1].args).toEqual([overriddenBot]);
+    expect(mockRemoteCallsMade).toHaveLength(1);
+    expect(mockRemoteCallsMade[0].commandName).toBe(
+      SharedConstants.Commands.Bot.Load
+    );
+    expect(mockRemoteCallsMade[0].args).toEqual([overriddenBot]);
+    expect(mockTrackEvent).toHaveBeenCalledWith('bot_open', {
+      method: 'protocol',
+      numOfServices: 1,
+    });
+  });
+
+  it('should open a bot when ngrok is configured but not running', async () => {
+    mockRunningStatus = false;
+    const protocol = {
+      parsedArgs: {
+        id: 'someIdOverride',
+        path: 'path/to/bot.bot',
+        secret: 'someSecret',
+      },
+    };
+    const overrides = { endpoint: parseEndpointOverrides(protocol.parsedArgs) };
+    const overriddenBot = applyBotConfigOverrides(mockOpenedBot, overrides);
+
+    await ProtocolHandler.openBot(protocol);
+
+    expect(mockCallsMade).toHaveLength(2);
+    expect(mockCallsMade[0].commandName).toBe(
+      SharedConstants.Commands.Bot.Open
+    );
+    expect(mockCallsMade[0].args).toEqual(['path/to/bot.bot', 'someSecret']);
+    expect(mockCallsMade[1].commandName).toBe(
+      SharedConstants.Commands.Bot.SetActive
+    );
+    expect(mockCallsMade[1].args).toEqual([overriddenBot]);
+    expect(mockRemoteCallsMade).toHaveLength(1);
+    expect(mockRemoteCallsMade[0].commandName).toBe(
+      SharedConstants.Commands.Bot.Load
+    );
+    expect(mockRemoteCallsMade[0].args).toEqual([overriddenBot]);
+    expect(mockTrackEvent).toHaveBeenCalledWith('bot_open', {
+      method: 'protocol',
+      numOfServices: 1,
+    });
+  });
+
+  it('should open a bot when ngrok is not configured', async () => {
+    mockNgrokPath = undefined;
+    const protocol = {
+      parsedArgs: {
+        id: 'someIdOverride',
+        path: 'path/to/bot.bot',
+        secret: 'someSecret',
+      },
+    };
+    const overrides = { endpoint: parseEndpointOverrides(protocol.parsedArgs) };
+    const overriddenBot = applyBotConfigOverrides(mockOpenedBot, overrides);
+
+    await ProtocolHandler.openBot(protocol);
+
+    expect(mockCallsMade).toHaveLength(2);
+    expect(mockCallsMade[0].commandName).toBe(
+      SharedConstants.Commands.Bot.Open
+    );
+    expect(mockCallsMade[0].args).toEqual(['path/to/bot.bot', 'someSecret']);
+    expect(mockCallsMade[1].commandName).toBe(
+      SharedConstants.Commands.Bot.SetActive
+    );
+    expect(mockCallsMade[1].args).toEqual([overriddenBot]);
+    expect(mockRemoteCallsMade).toHaveLength(1);
+    expect(mockRemoteCallsMade[0].commandName).toBe(
+      SharedConstants.Commands.Bot.Load
+    );
+    expect(mockRemoteCallsMade[0].args).toEqual([overriddenBot]);
+    expect(mockTrackEvent).toHaveBeenCalledWith('bot_open', {
+      method: 'protocol',
+      numOfServices: 1,
+    });
+  });
+
+  it('should open a livechat if ngrok is running', async () => {
+    const protocol = {
+      parsedArgs: {
+        botUrl: 'someUrl',
+        msaAppId: 'someAppId',
+        msaPassword: 'somePw',
+      },
+    };
+    const mockedBot = BotConfigWithPathImpl.fromJSON(newBot());
+    mockedBot.name = '';
+    mockedBot.path = SharedConstants.TEMP_BOT_IN_MEMORY_PATH;
+
+    const mockEndpoint = newEndpoint();
+    mockEndpoint.appId = protocol.parsedArgs.msaAppId;
+    mockEndpoint.appPassword = protocol.parsedArgs.msaPassword;
+    mockEndpoint.id = mockEndpoint.endpoint = protocol.parsedArgs.botUrl;
+    mockEndpoint.name = 'New livechat';
+    mockedBot.services.push(mockEndpoint);
+
+    await ProtocolHandler.openLiveChat(protocol);
+
+    expect(mockCallsMade).toHaveLength(1);
+    expect(mockCallsMade[0].commandName).toBe(
+      SharedConstants.Commands.Bot.RestartEndpointService
+    );
+    expect(mockCallsMade[0].args).toEqual([]);
+    expect(mockRemoteCallsMade).toHaveLength(2);
+    expect(mockRemoteCallsMade[0].commandName).toBe(
+      SharedConstants.Commands.Bot.SetActive
+    );
+    expect(mockRemoteCallsMade[0].args).toEqual([mockedBot, '']);
+    expect(mockRemoteCallsMade[1].commandName).toBe(
+      SharedConstants.Commands.Emulator.NewLiveChat
+    );
+    expect(mockRemoteCallsMade[1].args).toEqual([mockEndpoint]);
+  });
+
+  it('should open a livechat if ngrok is configured but not running', async () => {
+    mockRunningStatus = false;
+    const protocol = {
+      parsedArgs: {
+        botUrl: 'someUrl',
+        msaAppId: 'someAppId',
+        msaPassword: 'somePw',
+      },
+    };
+    const mockedBot = BotConfigWithPathImpl.fromJSON(newBot());
+    mockedBot.name = '';
+    mockedBot.path = SharedConstants.TEMP_BOT_IN_MEMORY_PATH;
+
+    const mockEndpoint = newEndpoint();
+    mockEndpoint.appId = protocol.parsedArgs.msaAppId;
+    mockEndpoint.appPassword = protocol.parsedArgs.msaPassword;
+    mockEndpoint.id = mockEndpoint.endpoint = protocol.parsedArgs.botUrl;
+    mockEndpoint.name = 'New livechat';
+    mockedBot.services.push(mockEndpoint);
+
+    await ProtocolHandler.openLiveChat(protocol);
+
+    expect(mockCallsMade).toHaveLength(1);
+    expect(mockCallsMade[0].commandName).toBe(
+      SharedConstants.Commands.Bot.RestartEndpointService
+    );
+    expect(mockCallsMade[0].args).toEqual([]);
+    expect(mockRemoteCallsMade).toHaveLength(2);
+    expect(mockRemoteCallsMade[0].commandName).toBe(
+      SharedConstants.Commands.Bot.SetActive
+    );
+    expect(mockRemoteCallsMade[0].args).toEqual([mockedBot, '']);
+    expect(mockRemoteCallsMade[1].commandName).toBe(
+      SharedConstants.Commands.Emulator.NewLiveChat
+    );
+    expect(mockRemoteCallsMade[1].args).toEqual([mockEndpoint]);
+  });
+
+  it('should open a livechat if ngrok is not configured', async () => {
+    mockNgrokPath = undefined;
+    const protocol = {
+      parsedArgs: {
+        botUrl: 'someUrl',
+        msaAppId: 'someAppId',
+        msaPassword: 'somePw',
+      },
+    };
+    const mockedBot = BotConfigWithPathImpl.fromJSON(newBot());
+    mockedBot.name = '';
+    mockedBot.path = SharedConstants.TEMP_BOT_IN_MEMORY_PATH;
+
+    const mockEndpoint = newEndpoint();
+    mockEndpoint.appId = protocol.parsedArgs.msaAppId;
+    mockEndpoint.appPassword = protocol.parsedArgs.msaPassword;
+    mockEndpoint.id = mockEndpoint.endpoint = protocol.parsedArgs.botUrl;
+    mockEndpoint.name = 'New livechat';
+    mockedBot.services.push(mockEndpoint);
+
+    await ProtocolHandler.openLiveChat(protocol);
+
+    expect(mockCallsMade).toHaveLength(0);
+    expect(mockRemoteCallsMade).toHaveLength(1);
+    expect(mockRemoteCallsMade[0].commandName).toBe(
+      SharedConstants.Commands.Emulator.NewLiveChat
+    );
+    expect(mockRemoteCallsMade[0].args).toEqual([mockEndpoint]);
+  });
+
+  it('should open a transcript from a url', async () => {
+    const protocol = {
+      parsedArgs: { url: 'https://www.test.com/convo1.transcript' },
+    };
+
+    await ProtocolHandler.openTranscript(protocol);
+
+    expect(mockRemoteCallsMade).toHaveLength(1);
+    expect(mockRemoteCallsMade[0].commandName).toBe(
+      SharedConstants.Commands.Emulator.OpenTranscript
+    );
+    expect(mockRemoteCallsMade[0].args).toEqual([
+      'deepLinkedTranscript',
+      {
+        activities: ['activity1', 'activity2', 'activity3'],
+        inMemory: true,
+        fileName: 'convo1.transcript',
+      },
+    ]);
+  });
+
+  it('should send a notification if trying to open a transcript from a url results in a 401 or 404', async () => {
+    const protocol = {
+      parsedArgs: { url: 'https://www.test.com/convo1.transcript' },
+    };
+    mockGotReturnValue = { statusCode: 401 };
+
+    await ProtocolHandler.openTranscript(protocol);
+
+    expect(mockRemoteCallsMade).toHaveLength(0);
+    expect(mockSendNotificationToClient).toHaveBeenCalledTimes(1);
+
+    mockGotReturnValue = { statusCode: 404 };
+
+    await ProtocolHandler.openTranscript(protocol);
+
+    expect(mockRemoteCallsMade).toHaveLength(0);
+    expect(mockSendNotificationToClient).toHaveBeenCalledTimes(2);
+  });
 });

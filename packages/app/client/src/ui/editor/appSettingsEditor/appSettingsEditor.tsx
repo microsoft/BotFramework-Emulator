@@ -73,6 +73,7 @@ interface AppSettingsEditorState {
 const defaultAppSettings: FrameworkSettings = {
   autoUpdate: true,
   bypassNgrokLocalhost: true,
+  collectUsageData: true,
   locale: '',
   localhost: '',
   ngrokPath: '',
@@ -183,9 +184,10 @@ export class AppSettingsEditor extends React.Component<
             <Checkbox
               className={styles.checkboxOverrides}
               checked={uncommitted.bypassNgrokLocalhost}
-              onChange={this.onChangeNgrokBypass}
+              onChange={this.onChangeCheckBox}
               id="ngrok-bypass"
               label="Bypass ngrok for local addresses"
+              name="bypassNgrokLocalhost"
             />
             <Row align={RowAlignment.Center} className={styles.marginBottomRow}>
               <TextField
@@ -215,31 +217,50 @@ export class AppSettingsEditor extends React.Component<
             <Checkbox
               className={styles.checkboxOverrides}
               checked={uncommitted.use10Tokens}
-              onChange={this.onChangeAuthTokenVersion}
+              onChange={this.onChangeCheckBox}
               id="auth-token-version"
               label="Use version 1.0 authentication tokens"
+              name="use10Tokens"
             />
             <SmallHeader>Sign-in</SmallHeader>
             <Checkbox
               className={styles.checkboxOverrides}
               checked={uncommitted.useCodeValidation}
-              onChange={this.onChangeUseValidationToken}
+              onChange={this.onChangeCheckBox}
               id="use-validation-code"
               label="Use a sign-in verification code for OAuthCards"
+              name="useCodeValidation"
             />
             <SmallHeader>Application Updates</SmallHeader>
             <Checkbox
               className={styles.checkboxOverrides}
               checked={uncommitted.autoUpdate}
-              onChange={this.onChangeAutoInstallUpdates}
+              onChange={this.onChangeCheckBox}
               label="Automatically download and install updates"
+              name="autoUpdate"
             />
             <Checkbox
               className={styles.checkboxOverrides}
               checked={uncommitted.usePrereleases}
-              onChange={this.onChangeUsePrereleases}
+              onChange={this.onChangeCheckBox}
               label="Use pre-release versions"
+              name="usePrereleases"
             />
+            <SmallHeader>Data Collection</SmallHeader>
+            <Checkbox
+              className={styles.checkboxOverrides}
+              checked={uncommitted.collectUsageData}
+              onChange={this.onChangeCheckBox}
+              label="Help improve the Emulator by allowing us to collect usage data."
+              name="collectUsageData"
+            />
+            <a
+              target="_blank"
+              href="https://aka.ms/bot-framework-emulator-data-collection"
+              rel="noopener noreferrer"
+            >
+              Learn more.
+            </a>
           </Column>
         </Row>
         <Row className={styles.buttonRow} justify={RowJustification.Right}>
@@ -259,16 +280,19 @@ export class AppSettingsEditor extends React.Component<
     );
   }
 
-  private onChangeAutoInstallUpdates = (): void => {
-    this.setUncommittedState({
-      autoUpdate: !this.state.uncommitted.autoUpdate,
-    });
-  };
-
-  private onChangeUsePrereleases = (): void => {
-    this.setUncommittedState({
-      usePrereleases: !this.state.uncommitted.usePrereleases,
-    });
+  private onChangeCheckBox = (event: ChangeEvent<HTMLInputElement>) => {
+    const { target } = event;
+    const settingsProperty = target.getAttribute('name');
+    const uncommittedState = Object.create(
+      {},
+      {
+        [settingsProperty]: {
+          get: () => !this.state.uncommitted[settingsProperty],
+          enumerable: true, // important since rest spread is used.
+        },
+      }
+    );
+    this.setUncommittedState(uncommittedState);
   };
 
   private setUncommittedState(patch: any) {
@@ -322,6 +346,7 @@ export class AppSettingsEditor extends React.Component<
       locale: uncommitted.locale.trim(),
       usePrereleases: uncommitted.usePrereleases,
       autoUpdate: uncommitted.autoUpdate,
+      collectUsageData: uncommitted.collectUsageData,
     };
 
     CommandServiceImpl.remoteCall(Commands.Settings.SaveAppSettings, settings)
@@ -331,24 +356,6 @@ export class AppSettingsEditor extends React.Component<
         const notification = newNotification(errMsg);
         store.dispatch(beginAdd(notification));
       });
-  };
-
-  private onChangeAuthTokenVersion = (): void => {
-    this.setUncommittedState({
-      use10Tokens: !this.state.uncommitted.use10Tokens,
-    });
-  };
-
-  private onChangeUseValidationToken = (): void => {
-    this.setUncommittedState({
-      useCodeValidation: !this.state.uncommitted.useCodeValidation,
-    });
-  };
-
-  private onChangeNgrokBypass = (): void => {
-    this.setUncommittedState({
-      bypassNgrokLocalhost: !this.state.uncommitted.bypassNgrokLocalhost,
-    });
   };
 
   private onInputChange = (event: ChangeEvent<HTMLInputElement>): void => {

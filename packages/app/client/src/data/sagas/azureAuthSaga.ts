@@ -66,6 +66,7 @@ export function* getArmToken(
     RetrieveArmToken,
     PersistAzureLoginChanged,
   } = SharedConstants.Commands.Azure;
+  const { TrackEvent } = SharedConstants.Commands.Telemetry;
   azureAuth = yield call(
     CommandServiceImpl.remoteCall.bind(CommandServiceImpl),
     RetrieveArmToken
@@ -80,8 +81,14 @@ export function* getArmToken(
       PersistAzureLoginChanged,
       persistLogin
     );
+    CommandServiceImpl.remoteCall(TrackEvent, 'signIn_success').catch(
+      _e => void 0
+    );
   } else {
     yield DialogService.showDialog(action.payload.loginFailedDialog);
+    CommandServiceImpl.remoteCall(TrackEvent, 'signIn_failure').catch(
+      _e => void 0
+    );
   }
   yield put(azureArmTokenDataChanged(azureAuth.access_token));
   return azureAuth;

@@ -30,9 +30,12 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 import { connect } from 'react-redux';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 import { RootState } from '../../../../../data/store';
+import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
 
 import { Inspector } from './inspector';
 
@@ -50,7 +53,19 @@ const mapStateToProps = (state: RootState, ownProps: any) => {
   };
 };
 
+const mapDispatchToProps = _dispatch => {
+  return {
+    trackEvent: (name: string, properties?: { [key: string]: any }) => {
+      CommandServiceImpl.remoteCall(
+        SharedConstants.Commands.Telemetry.TrackEvent,
+        name,
+        properties
+      ).catch(_e => void 0);
+    },
+  };
+};
+
 export const InspectorContainer = connect(
   mapStateToProps,
-  null
+  mapDispatchToProps
 )(Inspector);

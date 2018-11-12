@@ -333,8 +333,10 @@ export class App extends Component<any, AppState> {
         pendingTrain: false,
         pendingPublish: true,
       });
+      $host.trackEvent('luis_trainSuccess');
     } catch (err) {
       $host.logger.error(err.message);
+      $host.trackEvent('luis_trainFailure', { error: err.message });
     } finally {
       $host.setAccessoryState(TrainAccessoryId, AccessoryDefaultState);
     }
@@ -352,8 +354,10 @@ export class App extends Component<any, AppState> {
         pendingPublish: false,
         pendingTrain: false,
       });
+      $host.trackEvent('luis_publishSuccess');
     } catch (err) {
       $host.logger.error(err.message);
+      $host.trackEvent('luis_publishFailure', { error: err.message });
     } finally {
       $host.setAccessoryState(TrainAccessoryId, AccessoryDefaultState);
     }

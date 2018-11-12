@@ -35,6 +35,7 @@ import * as React from 'react';
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { SharedConstants } from '@bfemulator/app-shared';
 
 import { enable } from '../../../../data/action/presentationActions';
 import {
@@ -71,6 +72,16 @@ jest.mock('../../../../data/editorHelpers', () => ({
 jest.mock('../tab/tab', () => ({
   get Tab() {
     return mockTab;
+  },
+}));
+
+let mockRemoteCallsMade;
+jest.mock('../../../../platform/commands/commandServiceImpl', () => ({
+  CommandServiceImpl: {
+    remoteCall: (commandName, ...args) => {
+      mockRemoteCallsMade.push({ commandName, args });
+      return Promise.resolve(true);
+    },
   },
 }));
 
@@ -112,6 +123,7 @@ describe('TabBar', () => {
     };
     mockStore = createStore((_state, _action) => defaultState);
     mockDispatch = jest.spyOn(mockStore, 'dispatch');
+    mockRemoteCallsMade = [];
     wrapper = mount(
       <Provider store={mockStore}>
         <TabBarContainer owningEditor={'primary'} />
@@ -125,6 +137,11 @@ describe('TabBar', () => {
     instance.onPresentationModeClick();
 
     expect(mockDispatch).toHaveBeenCalledWith(enable());
+    expect(mockRemoteCallsMade).toHaveLength(1);
+    expect(mockRemoteCallsMade[0].commandName).toBe(
+      SharedConstants.Commands.Telemetry.TrackEvent
+    );
+    expect(mockRemoteCallsMade[0].args).toEqual(['tabBar_presentationMode']);
   });
 
   it('should load widgets', () => {
@@ -208,6 +225,11 @@ describe('TabBar', () => {
     expect(mockDispatch).toHaveBeenCalledWith(
       splitTab('transcript', 'doc1', 'primary', 'secondary')
     );
+    expect(mockRemoteCallsMade).toHaveLength(1);
+    expect(mockRemoteCallsMade[0].commandName).toBe(
+      SharedConstants.Commands.Telemetry.TrackEvent
+    );
+    expect(mockRemoteCallsMade[0].args).toEqual(['tabBar_splitTab']);
   });
 
   it('should handle a drag enter event', () => {

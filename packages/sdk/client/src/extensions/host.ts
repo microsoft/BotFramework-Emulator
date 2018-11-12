@@ -67,4 +67,7 @@ export interface InspectorHost {
 
   // Set inspector title
   setInspectorTitle(title: string): void;
+
+  // Tracks a telemetry event to App Insights
+  trackEvent(name: string, properties?: { [key: string]: any }): void;
 }

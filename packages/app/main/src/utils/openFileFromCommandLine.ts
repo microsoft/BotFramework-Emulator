@@ -30,10 +30,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 import * as path from 'path';
 
 import { SharedConstants } from '@bfemulator/app-shared';
 import { CommandService } from '@bfemulator/sdk-shared';
+
+import { TelemetryService } from '../telemetry';
 
 import { readFileSync } from './readFileSync';
 
@@ -71,5 +74,6 @@ export async function openFileFromCommandLine(
         inMemory: true,
       }
     );
+    TelemetryService.trackEvent('transcriptFile_open', { method: 'protocol' });
   }
 }

@@ -71,6 +71,7 @@ import {
   chatWatcher,
   transcriptsWatcher,
 } from '../watchers';
+import { TelemetryService } from '../telemetry';
 
 /** Registers bot commands */
 export function registerCommands(commandRegistry: CommandRegistryImpl) {
@@ -105,6 +106,8 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         throw e;
       }
 
+      const telemetryInfo = { path: bot.path, hasSecret: !!secret };
+      TelemetryService.trackEvent('bot_create', telemetryInfo);
       return bot;
     }
   );
@@ -186,7 +189,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
         chatsPath = path.join(dirName, './dialogs'),
         transcriptsPath = path.join(dirName, './transcripts'),
       } = botInfo;
-      const botFilePath = path.parse(botInfo.botFilePath || '').dir;
+      const botFilePath = path.parse(botInfo.path || '').dir;
       const relativeChatsPath = path.relative(botFilePath, chatsPath);
       const relativeTranscriptsPath = path.relative(
         botFilePath,
@@ -300,6 +303,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
             throw new Error('serviceType does not match');
           }
           botConfig.connectService(service);
+          TelemetryService.trackEvent('service_add', { type: service.type });
         }
         try {
           await saveBot(botConfig);

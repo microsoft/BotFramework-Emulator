@@ -41,6 +41,7 @@ const Electron = (window as any).require('electron');
 const { shell } = Electron;
 
 export function navigate(url: string) {
+  const { TrackEvent } = SharedConstants.Commands.Telemetry;
   try {
     const parsed = URL.parse(url) || { protocol: '' };
     if ((parsed.protocol || '').startsWith('oauth:')) {
@@ -48,9 +49,15 @@ export function navigate(url: string) {
     } else if (parsed.protocol.startsWith('oauthlink:')) {
       navigateOAuthUrl(url.substring(12));
     } else {
+      CommandServiceImpl.remoteCall(TrackEvent, 'app_openLink', { url }).catch(
+        _e => void 0
+      );
       shell.openExternal(url, { activate: true });
     }
   } catch (e) {
+    CommandServiceImpl.remoteCall(TrackEvent, 'app_openLink', { url }).catch(
+      _e => void 0
+    );
     shell.openExternal(url, { activate: true });
   }
 }

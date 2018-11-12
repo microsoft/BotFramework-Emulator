@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { isObject, uniqueId, uniqueIdv4 } from './misc';
+import { isLocalHostUrl, isObject, uniqueId, uniqueIdv4 } from './misc';
 
 describe('Misc utility function tests', () => {
   it('should generate a uniqueId', () => {
@@ -68,5 +68,12 @@ describe('Misc utility function tests', () => {
     expect(id1).not.toEqual(id2);
     expect(id1).not.toEqual(id3);
     expect(id2).not.toEqual(id3);
+  });
+
+  it('should determine whether a url is a localhost url or not', () => {
+    expect(isLocalHostUrl('http://localhost')).toBeTruthy();
+    expect(isLocalHostUrl('http://127.0.0.1')).toBeTruthy();
+    expect(isLocalHostUrl('https://aka.ms/bot-framework-emulator')).toBeFalsy();
+    expect(isLocalHostUrl('dasdagidsd812931239@#232')).toBeFalsy();
   });
 });
