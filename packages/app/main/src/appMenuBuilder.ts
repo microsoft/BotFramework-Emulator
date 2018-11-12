@@ -309,6 +309,12 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
           )
         },
         { type: 'separator' },
+        { role: 'toggledevtools' },
+        {
+          label: 'Toggle Developer Tools (Inspector)',
+          click: () => mainWindow.commandService.remoteCall(SharedConstants.Commands.Electron.ToggleDevTools)
+        },
+        { type: 'separator' },
         this.getUpdateMenuItem(),
         { type: 'separator' },
         {

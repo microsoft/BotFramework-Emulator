@@ -262,6 +262,15 @@ const createMainWindow = async () => {
         height: 920
       }));
 
+  // setup custom user agent string
+  mainWindow.webContents.session.webRequest.onBeforeSendHeaders((details, callback) => {
+    const version = Electron.app.getVersion();
+    const userAgentString1 = `botbuilder/emulator/inspector/${version}`;
+    const userAgentString2 = `botbuilder/emulator/list-luis-apps/${version}`;
+    details.requestHeaders['User-Agent'] += ` ${userAgentString1} ${userAgentString2}`;
+    callback({ cancel: false, requestHeaders: details.requestHeaders });
+  });
+
   // get reference to bots list in state for comparison against state changes
   let botsRef = store.getState().bot.botFiles;
 
