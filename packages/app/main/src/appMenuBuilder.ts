@@ -365,6 +365,14 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
       return state.chat.chats[activeDocumentId].conversationId;
     };
 
+    const getActiveEditorContentType = async () => {
+      const state = await getState();
+      const { editors, activeEditor } = state.editor;
+      const { activeDocumentId } = editors[activeEditor];
+      const activeEditorContentType: string = editors[activeEditor].documents[activeDocumentId].contentType;
+      return activeEditorContentType;
+    };
+
     const getServiceUrl = () => emulator.framework.serverUrl.replace('[::]', 'localhost');
     const createClickHandler = serviceFunction => {
       return () => {
@@ -372,7 +380,8 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
           .then(conversationId => serviceFunction(getServiceUrl(), conversationId));
       };
     };
-    return {
+
+    let conversationMenu = {
       label: 'Conversation',
       submenu: [
         {
@@ -410,6 +419,17 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
         },
       ]
     };
+
+    if (await getActiveEditorContentType() === SharedConstants.Content.CONTENT_TYPE_LIVE_CHAT) {
+      return conversationMenu;
+    } else {
+      let enabled = 'enabled';
+
+      conversationMenu.submenu[0].submenu.forEach(menuItem => {
+        menuItem[enabled] = false;
+      });
+      return conversationMenu;
+    }
   }
 
   /**

@@ -96,6 +96,16 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   });
 
   // ---------------------------------------------------------------------------
+  // Builds a new app menu to reflect the updated conversation send activity list
+  commandRegistry.registerCommand(Commands.UpdateConversationMenu, (): void => {
+    let menu = AppMenuBuilder.menuTemplate;
+    const newConversationMenu = AppMenuBuilder.getConversationMenu();
+    menu[3] = newConversationMenu;
+    AppMenuBuilder.menuTemplate = menu;
+    Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
+  });
+
+  // ---------------------------------------------------------------------------
   // Toggles app fullscreen mode
   commandRegistry.registerCommand(Commands.SetFullscreen, (fullscreen: boolean): void => {
     mainWindow.browserWindow.setFullScreen(fullscreen);
