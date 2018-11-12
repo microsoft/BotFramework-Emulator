@@ -77,7 +77,8 @@ export function* refreshConversationMenu(): IterableIterator<any> {
 export function* editorSagas(): IterableIterator<ForkEffect> {
   // Whenever a doc is added to the list of docs pending changes, or and editor / tab
   // is focused, check to see if the active document has pending changes
-  yield takeEvery([
+  yield takeEvery(
+    [
       EditorActions.addDocPendingChange,
       EditorActions.setActiveEditor,
       EditorActions.setActiveTab,
@@ -88,6 +89,8 @@ export function* editorSagas(): IterableIterator<ForkEffect> {
 
   yield takeEvery(
     [
+      EditorActions.close,
+      EditorActions.open,
       EditorActions.setActiveEditor,
       EditorActions.setActiveTab,
     ],

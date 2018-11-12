@@ -79,12 +79,13 @@ if (app) {
 // -----------------------------------------------------------------------------
 // App-Updater events
 
-AppUpdater.on('checking-for-update', (...args) => {
-  AppMenuBuilder.refreshAppUpdateMenu();
+AppUpdater.on('checking-for-update', async (...args) => {
+  await AppMenuBuilder.refreshAppUpdateMenu();
 });
 
-AppUpdater.on('update-available', (update: UpdateInfo) => {
-  AppMenuBuilder.refreshAppUpdateMenu();
+AppUpdater.on('update-available', async (update: UpdateInfo) => {
+  await AppMenuBuilder.refreshAppUpdateMenu();
+
   if (AppUpdater.userInitiated) {
     // TODO - localization
     mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
@@ -101,8 +102,9 @@ AppUpdater.on('update-available', (update: UpdateInfo) => {
   }
 });
 
-AppUpdater.on('update-downloaded', (update: UpdateInfo) => {
-  AppMenuBuilder.refreshAppUpdateMenu();
+AppUpdater.on('update-downloaded', async (update: UpdateInfo) => {
+  await AppMenuBuilder.refreshAppUpdateMenu();
+
   // TODO - localization
   if (AppUpdater.userInitiated) {
     mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
@@ -119,9 +121,9 @@ AppUpdater.on('update-downloaded', (update: UpdateInfo) => {
   }
 });
 
-AppUpdater.on('up-to-date', (update: UpdateInfo) => {
+AppUpdater.on('up-to-date', async (update: UpdateInfo) => {
   // TODO - localization
-  AppMenuBuilder.refreshAppUpdateMenu();
+  await AppMenuBuilder.refreshAppUpdateMenu();
   // only show the alert if the user explicity checked for update, and no update was downloaded
   const { userInitiated, updateDownloaded } = AppUpdater;
   if (userInitiated && !updateDownloaded) {
@@ -132,13 +134,13 @@ AppUpdater.on('up-to-date', (update: UpdateInfo) => {
   }
 });
 
-AppUpdater.on('download-progress', (progress: ProgressInfo) => {
-  AppMenuBuilder.refreshAppUpdateMenu();
+AppUpdater.on('download-progress', async (progress: ProgressInfo) => {
+  await AppMenuBuilder.refreshAppUpdateMenu();
 });
 
-AppUpdater.on('error', (err: Error, message: string) => {
+AppUpdater.on('error', async (err: Error, message: string) => {
   // TODO - localization
-  AppMenuBuilder.refreshAppUpdateMenu();
+  await AppMenuBuilder.refreshAppUpdateMenu();
   // TODO - Send to debug.txt / error dump file
   console.error(err, message);
   if (AppUpdater.userInitiated) {
@@ -302,8 +304,9 @@ const createMainWindow = async () => {
   // Start auto-updater
   AppUpdater.startup();
 
-  const template: Electron.MenuItemConstructorOptions[] = AppMenuBuilder.getAppMenuTemplate();
-  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+  AppMenuBuilder.getMenuTemplate().then((template: Electron.MenuItemConstructorOptions[]) => {
+    Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+  });
 
   const rememberCurrentBounds = () => {
     const currentBounds = mainWindow.browserWindow.getBounds();

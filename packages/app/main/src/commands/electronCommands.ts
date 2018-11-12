@@ -79,40 +79,41 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
 
   // ---------------------------------------------------------------------------
   // Builds a new app menu to reflect the updated recent bots list
-  commandRegistry.registerCommand(Commands.UpdateFileMenu, (): void => {
+  commandRegistry.registerCommand(Commands.UpdateFileMenu, async (): Promise<void> => {
     // get previous app menu template
-    let menu = AppMenuBuilder.menuTemplate;
+    let menu = await AppMenuBuilder.getMenuTemplate();
 
     // get a file menu template with recent bots added
     const state = store.getState();
     const recentBots = state.bot && state.bot.botFiles ? state.bot.botFiles : [];
-    const newFileMenu = AppMenuBuilder.getFileMenu(recentBots);
+    const newFileMenu = await AppMenuBuilder.getFileMenu(recentBots);
 
     // update the app menu to use the new file menu and build the template into a menu
-    menu = AppMenuBuilder.setFileMenu(newFileMenu, menu);
+    menu = AppMenuBuilder.putFileMenu(newFileMenu, menu);
     // update stored menu state
-    AppMenuBuilder.menuTemplate = menu;
+    AppMenuBuilder.setMenuTemplate(menu);
     Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
   });
 
   // ---------------------------------------------------------------------------
   // Builds a new app menu to reflect the updated conversation send activity list
-  commandRegistry.registerCommand(Commands.UpdateConversationMenu, (): void => {
-    let menu = AppMenuBuilder.menuTemplate;
-    const newConversationMenu = AppMenuBuilder.getConversationMenu();
+  commandRegistry.registerCommand(Commands.UpdateConversationMenu, async (): Promise<void> => {
+    const menu = await AppMenuBuilder.getMenuTemplate();
+    const newConversationMenu = await AppMenuBuilder.getConversationMenu();
+
     menu[3] = newConversationMenu;
-    AppMenuBuilder.menuTemplate = menu;
+    AppMenuBuilder.setMenuTemplate(menu);
     Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
   });
 
   // ---------------------------------------------------------------------------
   // Toggles app fullscreen mode
-  commandRegistry.registerCommand(Commands.SetFullscreen, (fullscreen: boolean): void => {
+  commandRegistry.registerCommand(Commands.SetFullscreen, async (fullscreen: boolean): Promise<void> => {
     mainWindow.browserWindow.setFullScreen(fullscreen);
     if (fullscreen) {
       Menu.setApplicationMenu(null);
     } else {
-      Menu.setApplicationMenu(Menu.buildFromTemplate(AppMenuBuilder.menuTemplate));
+      Menu.setApplicationMenu(Menu.buildFromTemplate(await AppMenuBuilder.getMenuTemplate()));
     }
   });
 
