@@ -1,3 +1,6 @@
 // This is a generated file. Changes are likely to result in being overwritten
-export const styledTextFieldContainer: string;
-export const styledTextFieldInput: string;
+export const input: string;
+export const label: string;
+export const requiredIndicator: string;
+export const sub: string;
+export const inputContainer: string;

@@ -44,6 +44,7 @@ import {
   RowAlignment
 } from '@bfemulator/ui-react';
 import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
+import { ChangeEvent } from 'react';
 import * as React from 'react';
 import { getBotInfoByPath } from '../../../data/botHelpers';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
@@ -102,7 +103,7 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
         <TextField
           label="Name" value={ name }
           required={ true }
-          onChanged={ this.onChangeName }
+          onChange={ this.onInputChange }
           errorMessage={ error }/>
 
         <Row align={ RowAlignment.Bottom }>
@@ -143,14 +144,14 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
               Copy
             </a>
           </li>
-          {/* <li>
+          { /* <li>
             <a
               className={ !encryptKey ? styles.disabledAction : '' }
               href="javascript:void(0);"
               onClick={ this.onResetClick }>
               Generate new secret
             </a>
-          </li> */}
+          </li> */ }
         </ul>
 
         <DialogFooter>
@@ -169,16 +170,18 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
     this.props.cancel();
   }
 
-  private onChangeName = (name) => {
+  private onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value: name } = event.target;
     this.setState({ name, dirty: true });
   }
 
-  private onEncryptKeyChange = (noIdea: any, value: boolean) => {
+  private onEncryptKeyChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { checked } = event.target;
     this.setState({
-      encryptKey: value,
-      secret: (value ? this.generatedSecret : ''),
+      encryptKey: checked,
+      secret: (checked ? this.generatedSecret : ''),
       dirty: true,
-      revealSecret: (value ? value : false)
+      revealSecret: (checked ? checked : false)
     });
   }
 
@@ -266,7 +269,7 @@ export class BotSettingsEditor extends React.Component<BotSettingsEditorProps, B
       filters: [
         {
           name: 'Bot Files',
-          extensions: [ 'bot' ]
+          extensions: ['bot']
         }
       ],
       defaultPath: botFileName,

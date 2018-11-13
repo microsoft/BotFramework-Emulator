@@ -49,6 +49,7 @@ html {
   --nav-link-badge-bg: #FF0000;
 
   /* input[type="text"] */
+  --input-color: var(--neutral-12);
   --input-bg: var(--neutral-1);
   --input-label-color: var(--neutral-14);
   --input-label-color-disabled: #C8C8C8;
@@ -57,6 +58,14 @@ html {
   --input-border-error: 1px solid var(--error-outline);
   --input-placeholder-color: var(--neutral-9);
   --input-border-disabled: 1px solid #C8C8C8;
+
+  /* input[type="checkbox"] */
+  --checkbox-checkmark-color: var(--neutral-1);
+  --checkbox-checkmark-disabled-color: var(--neutral-8);
+  --checkbox-border: 1px solid var(--neutral-10);
+  --checkbox-border-disabled: 1px solid var(--neutral-7);
+  --checkbox-bg-disabled: var(--neutral-5);
+  --checkbox-bg-checked: var(--p-button-bg);
 
   /* primary button */
   --p-button-color: var(--neutral-2);

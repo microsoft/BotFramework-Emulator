@@ -23,6 +23,10 @@
     font-size: 21px;
     font-weight: 100;
   }
+
+  input[type="text"] {
+    background-color: var(--neutral-1);
+  }
 }
 
 .footer {

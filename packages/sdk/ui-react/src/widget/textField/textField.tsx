@@ -1,12 +1,46 @@
 import * as React from 'react';
-import { ITextFieldProps, TextField as FabricTextField } from 'office-ui-fabric-react';
-import { textFieldStyles } from './textField.styles';
+import { Component, InputHTMLAttributes, ReactNode } from 'react';
+import * as styles from './textField.scss';
 
-export function TextField<P extends ITextFieldProps>(props: P): JSX.Element {
-  const p = Object.assign({}, textFieldStyles, props);
+let id = 0;
 
-  p.className = `${textFieldStyles.className || ''} ${props.className || ''}`.trim();
-  p.inputClassName = `${textFieldStyles.inputClassName || ''} ${props.inputClassName || ''}`.trim();
+export interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
+  required?: boolean;
+  label?: string;
+  errorMessage?: string;
+  inputContainerClassName?: string;
+}
 
-  return <FabricTextField {...p} />;
+export class TextField extends Component<TextFieldProps, {}> {
+  private readonly inputId: string;
+
+  constructor(props: TextFieldProps) {
+    super(props);
+    this.inputId = 'emulator-input-' + id++;
+  }
+
+  public render(): ReactNode {
+    // Trim off what we don't want to send to the input tag
+    const { inputContainerClassName = '', className = '', label, errorMessage, ...ownProps } = this.props;
+    return <div className={ `${styles.inputContainer} ${inputContainerClassName}` }>
+      { this.labelNode }
+      <input { ...ownProps } id={ this.inputId } className={ `${styles.input} ${className}` }/>
+      { this.errorNode }
+    </div>;
+  }
+
+  protected get labelNode(): ReactNode {
+    const { label, required, disabled } = this.props;
+    const className = required ? styles.requiredIndicator : '';
+    return label ?
+      <label
+        aria-disabled={ disabled }
+        htmlFor={ this.inputId }
+        className={ `${className} ${styles.label}` }>{ label }</label> : null;
+  }
+
+  protected get errorNode(): ReactNode {
+    const { errorMessage } = this.props;
+    return errorMessage ? <sub className={ styles.sub }>{ errorMessage }</sub> : null;
+  }
 }

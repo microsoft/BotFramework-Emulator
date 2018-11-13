@@ -64,9 +64,13 @@
   margin-bottom: 16px;
 }
 
+.input-container {
+  padding-bottom: 0;
+  width: 180px;
+}
+
 .app-settings-input {
-  color: var(--neutral-5);
-  font-family: var(--default-font-family)
+  height: 26px;
 }
 
 .spacing {

@@ -68,7 +68,7 @@ describe('BotCreationDialog tests', () => {
   // TODO: Re-enable ability to re-generate secret after 4.1
   // See 'https://github.com/Microsoft/BotFramework-Emulator/issues/964' for more information
   // See also: botCreationDialog.spec.tsx
-  
+
   // it('should generate a new bot secret when reset is clicked', () => {
   //   const testWrapper = shallow(<BotCreationDialog/>);
   //   const initialSecret = 'secret1';
@@ -103,10 +103,20 @@ describe('BotCreationDialog tests', () => {
 
   it('should set state via input change handlers', () => {
     const testWrapper = shallow(<BotCreationDialog/>);
-    (testWrapper.instance() as any).onChangeEndpoint('someEndpoint');
-    (testWrapper.instance() as any).onChangeAppId('someId');
-    (testWrapper.instance() as any).onChangeAppPw('somePw');
-    (testWrapper.instance() as any).onChangeName('someName');
+    const mockEvent = { target: {  value: 'someEndpoint', dataset: { prop: 'endpoint' } } };
+    (testWrapper.instance() as any).onInputChange(mockEvent as any);
+
+    mockEvent.target.dataset.prop = 'appId';
+    mockEvent.target.value = 'someId';
+    (testWrapper.instance() as any).onInputChange(mockEvent as any);
+
+    mockEvent.target.dataset.prop = 'appPassword';
+    mockEvent.target.value = 'somePw';
+    (testWrapper.instance() as any).onInputChange(mockEvent as any);
+
+    mockEvent.target.dataset.prop = 'name';
+    mockEvent.target.value = 'someName';
+    (testWrapper.instance() as any).onInputChange(mockEvent as any);
 
     const state = testWrapper.state() as Partial<BotCreationDialogState>;
     expect(state.endpoint.endpoint).toBe('someEndpoint');

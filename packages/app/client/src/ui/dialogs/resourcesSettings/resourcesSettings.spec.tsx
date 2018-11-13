@@ -82,14 +82,16 @@ describe('The ResourcesSettings component should', () => {
   it('should update the state when the chat input is changed', () => {
     const instance = node.instance();
     expect(instance.state.chatsPath).toBeUndefined();
-    instance.onChangeChatInput('hello');
+    const mockEvent = { target: {  value: 'hello', dataset: { prop: 'chatsPath' } } };
+    instance.onInputChange(mockEvent as any);
     expect(instance.state.chatsPath).toBe('hello');
   });
 
   it('should update the state when the transcript input is changed', () => {
     const instance = node.instance();
     expect(instance.state.transcriptsPath).toBeUndefined();
-    instance.onChangeTranscriptInput('hello');
+    const mockEvent = { target: {  value: 'hello', dataset: { prop: 'transcriptsPath' } } };
+    instance.onInputChange(mockEvent as any);
     expect(instance.state.transcriptsPath).toBe('hello');
   });
 
