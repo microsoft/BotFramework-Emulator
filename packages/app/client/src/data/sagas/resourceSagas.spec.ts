@@ -1,7 +1,7 @@
 import { resources } from '../reducer/resourcesReducer';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { resourceSagas } from './resourcesSagas';
-import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared/built';
+import { BotConfigWithPathImpl } from '@bfemulator/sdk-shared';
 import { ServiceTypes } from 'botframework-config/lib/schema';
 import sagaMiddlewareFactory from 'redux-saga';
 import {

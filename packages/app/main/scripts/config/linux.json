@@ -1,6 +1,0 @@
-{
-  "linux": {
-    "artifactName": "BotFramework-Emulator-${version}-linux-${arch}.${ext}",
-    "category": "Development"
-  }
-}

@@ -62,12 +62,12 @@ describe('The emulator commands', () => {
 
   it('should open a transcript', () => {
     const { handler } = registry.getCommand(SharedConstants.Commands.Emulator.OpenTranscript);
-    const filename = 'transcript.transcript';
-    handler(filename);
+    const filePath = 'transcript.transcript';
+    handler(filePath, filePath);
 
     const state = mockStore.getState();
-    expect(state.chat.chats[filename]).toBeTruthy();
-    expect(state.editor.editors.primary.activeDocumentId).toBe(filename);
+    expect(state.chat.chats[filePath]).toBeTruthy();
+    expect(state.editor.editors.primary.activeDocumentId).toBe(filePath);
   });
 
   it('Should prompt to open a transcript', async () => {

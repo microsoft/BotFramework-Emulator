@@ -62,6 +62,7 @@ export interface Document {
   dirty?: boolean;
   documentId?: string;
   fileName?: string;
+  filePath?: string;
   isGlobal?: boolean;
   meta?: any;
 }
@@ -81,8 +82,7 @@ export const editor = (state: EditorState = DEFAULT_STATE, action: EditorAction 
 
   switch (action.type) {
     case EditorActions.appendTab: {
-      const { srcEditorKey } = action.payload;
-      const { destEditorKey } = action.payload;
+      const { srcEditorKey, destEditorKey } = action.payload;
 
       /** if the tab is being appended to the end of its own editor, just re-adjust tab order */
       if (srcEditorKey === destEditorKey) {
@@ -243,7 +243,13 @@ export const editor = (state: EditorState = DEFAULT_STATE, action: EditorAction 
 
       // add document to tab group
       const newDocs = deepCopySlow(state.editors[editorKey].documents);
-      newDocs[action.payload.documentId] = action.payload;
+      // Instead of overwriting the document wholesale,
+      // assign the updated keys from the payload so we do not
+      // lose data from EditorActions.updateDocument
+      if (!newDocs[action.payload.documentId]) {
+        newDocs[action.payload.documentId] = {};
+      }
+      Object.assign(newDocs[action.payload.documentId], action.payload);
 
       const editorState: Editor = {
         ...state.editors[editorKey],
@@ -259,7 +265,6 @@ export const editor = (state: EditorState = DEFAULT_STATE, action: EditorAction 
 
     case EditorActions.updateDocument: {
       const { payload: updatedDocument }: { payload: Document } = action;
-
       const { editors } = state;
       const editorKeys = Object.keys(editors);
       let i = editorKeys.length;
@@ -275,7 +280,7 @@ export const editor = (state: EditorState = DEFAULT_STATE, action: EditorAction 
           }
         }
       }
-      state = { ...state };
+      state = JSON.parse(JSON.stringify(state));
       break;
     }
 

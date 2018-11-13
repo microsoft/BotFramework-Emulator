@@ -190,10 +190,12 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // ---------------------------------------------------------------------------
   // Open the chat file in a tabbed document as a transcript
   commandRegistry.registerCommand(Commands.OpenChatFile,
-    async (filename: string): Promise<{ activities: CustomActivity[] }> => {
+    async (filePath: string): Promise<{ activities: CustomActivity[], fileName: string }> => {
       try {
-        const activities = await parseActivitiesFromChatFile(filename);
-        return { activities };
+        const activities = await parseActivitiesFromChatFile(filePath);
+        const { name, ext } = path.parse(filePath);
+        const fileName = `${name}${ext}`;
+        return { activities, fileName };
       } catch (err) {
         throw new Error(`${Commands.OpenChatFile}: Error calling parseActivitiesFromChatFile(): ${err}`);
       }
