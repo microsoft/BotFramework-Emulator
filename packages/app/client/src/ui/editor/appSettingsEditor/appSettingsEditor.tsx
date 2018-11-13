@@ -64,13 +64,15 @@ interface AppSettingsEditorState {
 }
 
 const defaultAppSettings: FrameworkSettings = {
+  autoUpdate: true,
   bypassNgrokLocalhost: true,
   locale: '',
   localhost: '',
   ngrokPath: '',
   stateSizeLimit: 64,
   use10Tokens: false,
-  useCodeValidation: false
+  useCodeValidation: false,
+  usePrereleases: false
 };
 
 function shallowEqual(x: any, y: any) {
@@ -85,17 +87,6 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
 
   constructor(props: AppSettingsEditorProps, context: any) {
     super(props, context);
-
-    this.onClickBrowse = this.onClickBrowse.bind(this);
-    this.onChangeSizeLimit = this.onChangeSizeLimit.bind(this);
-    this.onClickSave = this.onClickSave.bind(this);
-    this.onChangeNgrok = this.onChangeNgrok.bind(this);
-    this.onChangeNgrokBypass = this.onChangeNgrokBypass.bind(this);
-    this.onChangeAuthTokenVersion = this.onChangeAuthTokenVersion.bind(this);
-    this.onChangeUseValidationToken = this.onChangeUseValidationToken.bind(this);
-    this.onClickDiscard = this.onClickDiscard.bind(this);
-    this.onChangeLocalhost = this.onChangeLocalhost.bind(this);
-    this.onChangeLocale = this.onChangeLocale.bind(this);
 
     this.state = {
       committed: { ...defaultAppSettings },
@@ -149,7 +140,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     });
   }
 
-  onClickBrowse(): void {
+  onClickBrowse = (): void => {
     const { Commands } = SharedConstants;
     const dialogOptions = {
       title: 'Browse for ngrok',
@@ -166,11 +157,11 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
       });
   }
 
-  onChangeSizeLimit(e: any): void {
+  onChangeSizeLimit = (e: any): void => {
     this.setUncommittedState({ stateSizeLimit: e.target.value });
   }
 
-  onClickSave(): void {
+  onClickSave = (): void => {
     const { Commands } = SharedConstants;
     const { uncommitted } = this.state;
     const settings: FrameworkSettings = {
@@ -180,7 +171,9 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
       use10Tokens: uncommitted.use10Tokens,
       useCodeValidation: uncommitted.useCodeValidation,
       localhost: uncommitted.localhost.trim(),
-      locale: uncommitted.locale.trim()
+      locale: uncommitted.locale.trim(),
+      usePrereleases: uncommitted.usePrereleases,
+      autoUpdate: uncommitted.autoUpdate
     };
 
     CommandServiceImpl.remoteCall(Commands.Settings.SaveAppSettings, settings)
@@ -192,33 +185,41 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
       });
   }
 
-  onChangeAuthTokenVersion(): void {
+  onChangeAuthTokenVersion = (): void => {
     this.setUncommittedState({ use10Tokens: !this.state.uncommitted.use10Tokens });
   }
 
-  onChangeUseValidationToken(): void {
+  onChangeUseValidationToken = (): void => {
     this.setUncommittedState({ useCodeValidation: !this.state.uncommitted.useCodeValidation });
   }
 
-  onChangeNgrok(ngrokPath: string): void {
+  onChangeNgrok = (ngrokPath: string): void => {
     this.setUncommittedState({ ngrokPath });
   }
 
-  onChangeNgrokBypass(): void {
+  onChangeNgrokBypass = (): void => {
     this.setUncommittedState({ bypassNgrokLocalhost: !this.state.uncommitted.bypassNgrokLocalhost });
   }
 
-  onChangeLocalhost(localhost: string): void {
+  onChangeLocalhost = (localhost: string): void => {
     this.setUncommittedState({ localhost });
   }
 
-  onChangeLocale(locale: string): void {
+  onChangeLocale = (locale: string): void => {
     this.setUncommittedState({ locale });
   }
 
-  onClickDiscard(): void {
+  onClickDiscard = (): void => {
     const { DOCUMENT_ID_APP_SETTINGS } = Constants;
     store.dispatch(EditorActions.close(getTabGroupForDocument(this.props.documentId), DOCUMENT_ID_APP_SETTINGS));
+  }
+
+  onChangeAutoInstallUpdates = (): void => {
+    this.setUncommittedState({ autoUpdate: !this.state.uncommitted.autoUpdate });
+  }
+
+  onChangeUsePrereleases = (): void => {
+    this.setUncommittedState({ usePrereleases: !this.state.uncommitted.usePrereleases });
   }
 
   render(): JSX.Element {
@@ -259,6 +260,16 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
             <Checkbox className={ styles.checkboxOverrides } checked={ uncommitted.useCodeValidation }
               onChange={ this.onChangeUseValidationToken } id="use-validation-code"
               label="Use a sign-in verification code for OAuthCards"/>
+            <SmallHeader>Auto Update</SmallHeader>
+            <Checkbox className={ styles.checkboxOverrides }
+              checked={ uncommitted.autoUpdate }
+              onChange={ this.onChangeAutoInstallUpdates }
+              label="Automatically install updates"/>
+            <Checkbox className={ `${styles.checkboxOverrides} ${styles.childCheckbox}` }
+              checked={ uncommitted.usePrereleases }
+              disabled={ !uncommitted.autoUpdate }
+              onChange={ this.onChangeUsePrereleases }
+              label="Use pre-release versions"/>
           </Column>
         </Row>
         <Row className={ styles.buttonRow } justify={ RowJustification.Right }>
