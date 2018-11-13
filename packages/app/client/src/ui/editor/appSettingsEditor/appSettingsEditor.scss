@@ -46,12 +46,6 @@
 .browse-button, .save-button, .cancel-button {
   width: 180px;
   height: 26px;
-
-  :global {
-    .ms-Button-label {
-      line-height: 26px;
-    }
-  }
 }
 
 .size-limit-suffix {

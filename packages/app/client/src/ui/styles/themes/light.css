@@ -54,7 +54,7 @@ html {
   --input-label-color: var(--neutral-14);
   --input-label-color-disabled: #C8C8C8;
   --input-border: 1px solid #C8C8C8;
-  --input-border-focus: 1px solid #00BCF2;
+  --input-border-focus: var(--p-button-border-focus);
   --input-border-error: 1px solid var(--error-outline);
   --input-placeholder-color: var(--neutral-9);
   --input-border-disabled: 1px solid #C8C8C8;

@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { mount, shallow } from 'enzyme';
 import * as React from 'react';
 import { BotCreationDialog, BotCreationDialogState } from './botCreationDialog';
-import { mount, shallow } from 'enzyme';
 
 jest.mock('./botCreationDialog.scss', () => ({}));
 jest.mock('../index', () => null);
@@ -54,12 +54,12 @@ describe('BotCreationDialog tests', () => {
     const initialState = testWrapper.state as Partial<BotCreationDialogState>;
     expect(initialState.secret).toBeFalsy();
     // toggle on encryption
-    (testWrapper.instance() as any).onEncryptKeyChange(null, true);
+    (testWrapper.instance() as any).onEncryptKeyChange({ target: { checked: true } } as any);
     const state1 = testWrapper.state() as Partial<BotCreationDialogState>;
     expect(state1.secret).not.toBeFalsy();
     // toggle encryption off and then on again
-    (testWrapper.instance() as any).onEncryptKeyChange(null, false);
-    (testWrapper.instance() as any).onEncryptKeyChange(null, true);
+    (testWrapper.instance() as any).onEncryptKeyChange({ target: { checked: false } } as any);
+    (testWrapper.instance() as any).onEncryptKeyChange({ target: { checked: true } } as any);
     const state2 = testWrapper.state() as Partial<BotCreationDialogState>;
     expect(state2.secret).not.toBeFalsy();
     expect(state1.secret).not.toEqual(state2.secret);
@@ -103,7 +103,7 @@ describe('BotCreationDialog tests', () => {
 
   it('should set state via input change handlers', () => {
     const testWrapper = shallow(<BotCreationDialog/>);
-    const mockEvent = { target: {  value: 'someEndpoint', dataset: { prop: 'endpoint' } } };
+    const mockEvent = { target: { value: 'someEndpoint', dataset: { prop: 'endpoint' } } };
     (testWrapper.instance() as any).onInputChange(mockEvent as any);
 
     mockEvent.target.dataset.prop = 'appId';

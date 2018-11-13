@@ -9,6 +9,8 @@
 }
 
 .dialog {
+  --input-color: var(--neutral-12);
+  --input-bg: var(--neutral-1);
   background: var(--dialog-bg);
   position: fixed;
   transform: translate(-50%, -50%);
@@ -22,10 +24,6 @@
   header {
     font-size: 21px;
     font-weight: 100;
-  }
-
-  input[type="text"] {
-    background-color: var(--neutral-1);
   }
 }
 

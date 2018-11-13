@@ -85,7 +85,7 @@
     "webpack-dev-server": "^3.1.4"
   },
   "dependencies": {
-    "@babel/runtime": "^7.0.0",
+    "@babel/runtime": "^7.1.5",
     "@bfemulator/app-shared": "^1.0.0",
     "@bfemulator/emulator-core": "1.0.0-0",
     "@bfemulator/sdk-client": "^1.0.0",
@@ -97,7 +97,6 @@
     "base64url": "2.0.0",
     "botframework-config": "4.0.0-preview1.3.4",
     "botframework-webchat": "0.14.3-master.b0553fd",
-    "office-ui-fabric-react": "~6.1.2",
     "react": "~16.3.2",
     "react-dom": "~16.3.2",
     "react-redux": "^5.0.7",

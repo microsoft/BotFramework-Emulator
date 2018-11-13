@@ -1,10 +1,19 @@
 import * as React from 'react';
-import { IButtonProps, DefaultButton as FabricDefaultButton } from 'office-ui-fabric-react';
-import { defaultButtonStyles } from './defaultButton.styles';
+import { ButtonHTMLAttributes, Component, ReactNode } from 'react';
+import * as styles from './button.scss';
 
-export function DefaultButton<P extends IButtonProps>(props: P): JSX.Element {
-  let { styles = {}, ...p } = props as any;
-  p.styles = { ...defaultButtonStyles, ...styles };
+export interface DefaultButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  text?: string;
+}
 
-  return <FabricDefaultButton {...p}/>;
+export class DefaultButton extends Component<DefaultButtonProps, {}> {
+  public render(): ReactNode {
+    const { className: propsClassName = '', text, ...buttonProps } = this.props;
+    const className = `${propsClassName} ${styles.button} ${styles.defaultButton}`;
+    return (
+      <button { ...buttonProps } className={ className }>
+        { text }
+      </button>
+    );
+  }
 }

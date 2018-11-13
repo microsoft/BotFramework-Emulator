@@ -35,7 +35,7 @@
   }
 
   &.checked {
-    border: var(--checkbox-bg-checked);
+    border: 1px solid var(--checkbox-bg-checked);
     background: var(--checkbox-bg-checked);
   }
 

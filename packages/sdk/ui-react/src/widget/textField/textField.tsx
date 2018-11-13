@@ -21,10 +21,10 @@ export class TextField extends Component<TextFieldProps, {}> {
 
   public render(): ReactNode {
     // Trim off what we don't want to send to the input tag
-    const { inputContainerClassName = '', className = '', label, errorMessage, ...ownProps } = this.props;
+    const { inputContainerClassName = '', className = '', label, errorMessage, ...inputProps } = this.props;
     return <div className={ `${styles.inputContainer} ${inputContainerClassName}` }>
       { this.labelNode }
-      <input { ...ownProps } id={ this.inputId } className={ `${styles.input} ${className}` }/>
+      <input { ...inputProps } id={ this.inputId } className={ `${styles.input} ${className}` }/>
       { this.errorNode }
     </div>;
   }

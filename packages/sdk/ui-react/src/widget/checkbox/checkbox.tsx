@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Component, FormEvent, HTMLAttributes } from 'react';
+import { Component, FormEvent, HTMLAttributes, ReactNode } from 'react';
 import * as styles from './checkbox.scss';
 
 export interface CheckboxProps extends HTMLAttributes<HTMLInputElement> {
@@ -18,42 +18,45 @@ let id = 0;
 
 export class Checkbox extends Component<CheckboxProps, CheckboxState> {
   private readonly checkboxId = 'emulator-checkbox-' + id++;
+  private inputRef: HTMLInputElement;
 
   constructor(props: CheckboxProps) {
     super(props);
     this.state = { checked: props.checked, focused: false };
   }
 
-  public render(): JSX.Element {
+  public render(): ReactNode {
     // Trim off what we don't want to send to the input tag
-    const { checked: _, className, label = '', ...ownProps } = this.props;
+    const { checked: _, className, label = '', ...inputProps } = this.props;
     const { checked, focused } = this.state;
     let checkMarkStyles = checked ? styles.checked : '';
     if (focused) {
       checkMarkStyles += ` ${styles.focused}`;
     }
-    console.log(checkMarkStyles);
     return (
       <label
         id={ this.checkboxId }
         className={ `${styles.label} ${className}` }
         data-checked={ checked }>
         <span className={ `${styles.checkMark} ${checkMarkStyles}` }/>
-        <input type="checkbox" { ...ownProps } className={ styles.checkbox } ref={ this.checkboxRef }/>
+        <input type="checkbox" { ...inputProps } className={ styles.checkbox } ref={ this.checkboxRef }/>
         { label }
       </label>
     );
   }
 
   private checkboxRef = (ref: HTMLInputElement): void => {
+    const { inputRef, checkboxEventHandler } = this;
+    if (inputRef) {
+      inputRef.removeEventListener('change', checkboxEventHandler);
+      inputRef.removeEventListener('focus', checkboxEventHandler);
+      inputRef.removeEventListener('blur', checkboxEventHandler);
+    }
+    this.inputRef = ref;
     if (ref) {
-      ref.addEventListener('change', this.checkboxEventHandler);
-      ref.addEventListener('focus', this.checkboxEventHandler);
-      ref.addEventListener('blur', this.checkboxEventHandler);
-    } else {
-      ref.addEventListener('change', this.checkboxEventHandler);
-      ref.removeEventListener('focus', this.checkboxEventHandler);
-      ref.addEventListener('blur', this.checkboxEventHandler);
+      ref.addEventListener('change', checkboxEventHandler);
+      ref.addEventListener('focus', checkboxEventHandler);
+      ref.addEventListener('blur', checkboxEventHandler);
     }
   }
 
