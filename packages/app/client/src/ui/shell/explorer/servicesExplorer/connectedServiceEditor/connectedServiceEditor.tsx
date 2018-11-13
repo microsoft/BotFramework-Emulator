@@ -88,7 +88,7 @@ const getEditableFields = (service: IConnectedService): string[] => {
       return ['name', 'appId', 'authoringKey', 'version', 'subscriptionKey'];
 
     case ServiceTypes.QnA:
-      return ['name', 'kbId', 'endpointKey'];
+      return ['name', 'kbId', 'hostname', 'endpointKey'];
 
     default:
       throw new TypeError(`${ service.type } is not a valid service type`);
