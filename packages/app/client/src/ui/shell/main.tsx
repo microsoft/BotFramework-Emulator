@@ -31,18 +31,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as React from 'react';
-import * as styles from './main.scss';
-
 import { Splitter } from '@bfemulator/ui-react';
+import * as React from 'react';
+import * as Constants from '../../constants';
+import { Editor } from '../../data/reducer/editor';
+import { StoreVisualizer } from '../debug/storeVisualizer';
+import { DialogHost, TabManagerContainer } from '../dialogs';
 import { ExplorerBar } from './explorer';
+import * as styles from './main.scss';
 import { MDI } from './mdi';
 import { NavBar } from './navBar';
-import { DialogHost, TabManagerContainer } from '../dialogs';
-import * as Constants from '../../constants';
 import { StatusBar } from './statusBar/statusBar';
-import { StoreVisualizer } from '../debug/storeVisualizer';
-import { Editor } from '../../data/reducer/editor';
 
 // TODO: Re-enable once webchat reset bug is fixed
 // (https://github.com/Microsoft/BotFramework-Emulator/issues/825)

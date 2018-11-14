@@ -1,6 +1,6 @@
-import * as React from 'react';
-import { Component, MouseEvent } from 'react';
 import { Checkbox, Dialog, DialogFooter, PrimaryButton } from '@bfemulator/ui-react';
+import * as React from 'react';
+import { ChangeEvent, Component } from 'react';
 import * as styles from '../dialogStyles.scss';
 
 export interface AzureLoginSuccessDialogState {
@@ -11,7 +11,7 @@ export interface AzureLoginSuccessDialogProps {
   cancel?: (persistLogin: boolean) => void;
   persistLogin?: boolean;
 
-  [ propName: string ]: any;
+  [propName: string]: any;
 }
 
 export class AzureLoginSuccessDialog extends Component<AzureLoginSuccessDialogProps, AzureLoginSuccessDialogState> {
@@ -44,7 +44,8 @@ export class AzureLoginSuccessDialog extends Component<AzureLoginSuccessDialogPr
     this.props.cancel(this.state.rememberMeChecked);
   }
 
-  private checkBoxChanged = (event: MouseEvent<HTMLInputElement>, isChecked: boolean) => {
-    this.setState({ rememberMeChecked: isChecked });
+  private checkBoxChanged = (event: ChangeEvent<HTMLInputElement>) => {
+    const { checked } = event.target;
+    this.setState({ rememberMeChecked: checked });
   }
 }

@@ -1,3 +1,4 @@
+import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
 //
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
@@ -32,15 +33,14 @@
 //
 // Cheating here and pulling in a module from node. Can be easily replaced if we ever move the emulator to the web.
 import { logEntry, textItem } from '@bfemulator/emulator-core/lib/types/log/util';
-import LogLevel from '@bfemulator/emulator-core/lib/types/log/level';
 import { ExtensionInspector, InspectorAccessory, InspectorAccessoryState } from '@bfemulator/sdk-shared';
+import { Spinner } from '@bfemulator/ui-react';
 import { IBotConfiguration } from 'botframework-config/lib/schema';
 import * as React from 'react';
 import { ExtensionManager, GetInspectorResult, InspectorAPI } from '../../../../../extensions';
 import { LogService } from '../../../../../platform/log/logService';
-import * as styles from './inspector.scss';
 import Panel, { PanelContent, PanelControls } from '../../../panel/panel';
-import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib-commonjs/Spinner';
+import * as styles from './inspector.scss';
 
 interface GetInspectorResultInternal {
   response: GetInspectorResult;
@@ -181,12 +181,10 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
 
   private renderAccessoryIcon(config: InspectorAccessoryState) {
     if (config.icon === 'Spinner') {
-      return (
-        <Spinner className={ styles.accessoryButtonIcon } size={ SpinnerSize.xSmall }/>
-      );
+      return <Spinner segmentRadius={ 2 } width={ 25 } height={ 25 }/>;
     } else if (config.icon) {
       return (
-        <i className={ `${styles.accessoryButtonIcon} ms-Icon ms-Icon--${config.icon}` } aria-hidden="true"></i>
+        <i className={ `${styles.accessoryButtonIcon} ms-Icon ms-Icon--${config.icon}` } aria-hidden="true"/>
       );
     } else {
       return false;

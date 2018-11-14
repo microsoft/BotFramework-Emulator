@@ -73,15 +73,17 @@ describe('The Secret prompt dialog should', () => {
 
   it('should update the state when a secret is input by the user', () => {
     const instance = node.instance();
-    instance.onChangeSecret('shhh!');
+    const mockEvent = { target: { value: 'shhh!', dataset: { prop: 'secret' } } };
+    instance.onChangeSecret(mockEvent as any);
     expect(instance.state.secret).toBe('shhh!');
   });
 
   it('should call DialogService.hideDialog with the new secrete when the save button is clicked', () => {
     const spy = jest.spyOn(DialogService, 'hideDialog');
     const instance = node.instance();
-    instance.onChangeSecret('shhh!');
-    instance.onSaveClick();
+    const mockEvent = { target: { value: 'shhh!', dataset: { prop: 'secret' } } };
+    instance.onChangeSecret(mockEvent as any);
+    instance.onSaveClick(null);
 
     expect(spy).toHaveBeenCalledWith('shhh!');
   });
@@ -89,7 +91,8 @@ describe('The Secret prompt dialog should', () => {
   it('should call DialogService.hideDialog with nothing when the cancel button is clicked', () => {
     const spy = jest.spyOn(DialogService, 'hideDialog');
     const instance = node.instance();
-    instance.onChangeSecret('shhh!');
+    const mockEvent = { target: { value: 'shhh!', dataset: { prop: 'secret' } } };
+    instance.onChangeSecret(mockEvent as any);
     instance.onDismissClick();
 
     expect(spy).toHaveBeenCalledWith(null);

@@ -18,12 +18,6 @@
     margin-bottom: 26px;
     width: 180px;
     height: 26px;
-
-    :global {
-      .ms-Button-label {
-        line-height: 26px;
-      }
-    }
   }
 
   & .empty-state-text {
