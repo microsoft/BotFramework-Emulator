@@ -41,6 +41,7 @@ export class Checkbox extends Component<CheckboxProps, CheckboxState> {
         <span className={ `${styles.checkMark} ${checkMarkStyles}` }/>
         <input type="checkbox" { ...inputProps } className={ styles.checkbox } ref={ this.checkboxRef }/>
         { label }
+        { this.props.children }
       </label>
     );
   }

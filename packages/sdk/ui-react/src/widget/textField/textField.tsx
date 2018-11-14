@@ -25,6 +25,7 @@ export class TextField extends Component<TextFieldProps, {}> {
     return <div className={ `${styles.inputContainer} ${inputContainerClassName}` }>
       { this.labelNode }
       <input { ...inputProps } id={ this.inputId } className={ `${styles.input} ${className}` }/>
+      { this.props.children }
       { this.errorNode }
     </div>;
   }

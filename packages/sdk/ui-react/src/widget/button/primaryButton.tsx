@@ -13,6 +13,7 @@ export class PrimaryButton extends Component<PrimaryButtonProps, {}> {
     return (
       <button { ...buttonProps } className={ className }>
         { text }
+        { this.props.children }
       </button>
     );
   }

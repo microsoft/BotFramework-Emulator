@@ -34,7 +34,7 @@
     }
   }
 
-  &:hover {
+  &:hover:not([disabled]) {
     background-color: var(--s-button-bg-hover);
     &::after {
       border: var(--s-button-border-hover);
@@ -76,7 +76,7 @@
     }
   }
 
-  &:hover {
+  &:hover:not([disabled]) {
     background-color: var(--p-button-bg-hover);
     &::after {
       border: var(--p-button-border-hover);

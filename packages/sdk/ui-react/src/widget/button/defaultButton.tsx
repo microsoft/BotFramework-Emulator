@@ -13,6 +13,7 @@ export class DefaultButton extends Component<DefaultButtonProps, {}> {
     return (
       <button { ...buttonProps } className={ className }>
         { text }
+        { this.props.children }
       </button>
     );
   }
