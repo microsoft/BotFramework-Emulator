@@ -79,25 +79,14 @@ if (app) {
 // -----------------------------------------------------------------------------
 // App-Updater events
 
-AppUpdater.on('checking-for-update', (...args) => {
-  AppMenuBuilder.refreshAppUpdateMenu();
-});
-
-AppUpdater.on('update-available', (update: UpdateInfo) => {
-  AppMenuBuilder.refreshAppUpdateMenu();
+AppUpdater.on('update-available', async (update: UpdateInfo) => {
   if (AppUpdater.userInitiated) {
-    // TODO - localization
-    mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
-      title: app.getName(),
-      message: `A new update, ${update.version}, is available. Download it now?`,
-      buttons: ['Cancel', 'OK'],
-      defaultId: 1,
-      cancelId: 0
-    }).then(result => {
-      if (result) {
-        AppUpdater.checkForUpdates(true, true);
-      }
-    });
+    const { ShowUpdateAvailableDialog } = SharedConstants.Commands.UI;
+    const result = await mainWindow.commandService.remoteCall(ShowUpdateAvailableDialog, update.version);
+    if (result) {
+      const { installAfterDownload = false } = result;
+      await AppUpdater.downloadUpdate(installAfterDownload);
+    }
   }
 });
 
@@ -119,27 +108,32 @@ AppUpdater.on('update-downloaded', (update: UpdateInfo) => {
   }
 });
 
-AppUpdater.on('up-to-date', (update: UpdateInfo) => {
+AppUpdater.on('up-to-date', () => {
   // TODO - localization
   AppMenuBuilder.refreshAppUpdateMenu();
   // only show the alert if the user explicity checked for update, and no update was downloaded
   const { userInitiated, updateDownloaded } = AppUpdater;
   if (userInitiated && !updateDownloaded) {
-    mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
-      title: app.getName(),
-      message: 'There are no updates currently available.'
-    });
+    const { ShowUpdateUnavailableDialog } = SharedConstants.Commands.UI;
+    mainWindow.commandService.remoteCall(ShowUpdateUnavailableDialog);
   }
 });
 
-AppUpdater.on('download-progress', (progress: ProgressInfo) => {
-  AppMenuBuilder.refreshAppUpdateMenu();
+AppUpdater.on('download-progress', async (info: ProgressInfo) => {
+  // update the progress bar component
+  const { UpdateProgressIndicator } = SharedConstants.Commands.UI;
+  const progressPayload = { label: 'Downloading...', progress: info.percent };
+  await mainWindow.commandService.remoteCall(UpdateProgressIndicator, progressPayload).catch(e => console.error(e));
 });
 
 AppUpdater.on('error', (err: Error, message: string) => {
   // TODO - localization
   AppMenuBuilder.refreshAppUpdateMenu();
   // TODO - Send to debug.txt / error dump file
+  if (message.includes('.yml')) {
+    AppUpdater.emit('up-to-date');
+    return;
+  }
   console.error(err, message);
   if (AppUpdater.userInitiated) {
     mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {

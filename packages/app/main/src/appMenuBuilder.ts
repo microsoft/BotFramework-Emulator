@@ -333,24 +333,17 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
         click: () => AppUpdater.quitAndInstall(),
         enabled: true,
       };
-    } else if (AppUpdater.status === UpdateStatus.CheckingForUpdate) {
+    } else if (AppUpdater.status === UpdateStatus.UpdateDownloading) {
       return {
         id: 'auto-update',
-        label: 'Checking for update...',
-        enabled: false,
-      };
-    } else if (AppUpdater.status === UpdateStatus.UpdateDownloading ||
-      AppUpdater.status === UpdateStatus.UpdateAvailable) {
-      return {
-        id: 'auto-update',
-        label: `Update downloading: ${AppUpdater.downloadProgress}%`,
+        label: `Update downloading...`,
         enabled: false,
       };
     } else {
       return {
         id: 'auto-update',
         label: 'Check for Update...',
-        click: () => AppUpdater.checkForUpdates(true, false),
+        click: () => AppUpdater.checkForUpdates(true),
         enabled: true,
       };
     }

@@ -33,18 +33,22 @@
 
 import { autoUpdater as electronUpdater, UpdateInfo } from 'electron-updater';
 import * as process from 'process';
-import * as semver from 'semver';
 import { EventEmitter } from 'events';
 import { ProgressInfo } from 'builder-util-runtime';
+import { sendNotificationToClient } from './utils/sendNotificationToClient';
+import { newNotification, FrameworkSettings } from '@bfemulator/app-shared';
+import { mainWindow } from './main';
+import { getSettings } from './settingsData/store';
+
+const pjson = require('../package.json');
 
 export enum UpdateStatus {
   Idle,
-  CheckingForUpdate,
   UpdateAvailable,
   UpdateDownloading,
-  UpdateReadyToInstall,
+  UpdateReadyToInstall
 }
-let pjson;
+
 export const AppUpdater = new class extends EventEmitter {
   private _userInitiated: boolean;
   private _autoDownload: boolean;
@@ -52,8 +56,9 @@ export const AppUpdater = new class extends EventEmitter {
   private _allowPrerelease: boolean;
   private _updateDownloaded: boolean;
   private _downloadProgress: number;
+  private _installAfterDownload: boolean;
 
-  public get userInitiated() {
+  public get userInitiated(): boolean {
     return this._userInitiated;
   }
 
@@ -69,30 +74,51 @@ export const AppUpdater = new class extends EventEmitter {
     return this._updateDownloaded;
   }
 
-  startup() {
-    this._allowPrerelease = (process.argv.indexOf('--prerelease') >= 0);
+  public get autoDownload(): boolean {
+    return this._autoDownload;
+  }
 
-    // Allow update to prerelease if this is a prerelease
-    try {
-      pjson = require('../../package.json');
-      const rc = semver.prerelease(pjson.version);
-      if (rc && rc.length) {
-        this._allowPrerelease = true;
-      }
-    } catch (err) {
-      console.error(err);
+  public set autoDownload(value: boolean) {
+    electronUpdater.autoDownload = value;
+    this._autoDownload = value;
+  }
+
+  public get allowPrerelease(): boolean {
+    return this._allowPrerelease;
+  }
+
+  public set allowPrerelease(value: boolean) {
+    electronUpdater.allowPrerelease = value;
+    this._allowPrerelease = value;
+  }
+
+  public get repo(): string {
+    if (this.allowPrerelease) {
+      return 'BotFramework-Emulator-Nightlies';
     }
+    return 'BotFramework-Emulator';
+  }
 
+  public startup() {
+    const settings: FrameworkSettings = getSettings().framework;
+    this.allowPrerelease = settings.usePrereleases || false;
+    this.autoDownload = settings.autoUpdate || false;
+
+    electronUpdater.autoInstallOnAppQuit = true;
+    electronUpdater.allowDowngrade = false;
     electronUpdater.logger = null;
-
+    
     electronUpdater.setFeedURL({
-      repo: 'BotFramework-Emulator',
+      repo: this.repo,
       owner: 'Microsoft',
       provider: 'github'
     });
 
+    if (process.env.NODE_ENV === 'development') {
+      (electronUpdater as any).currentVersion = (pjson || {}).version;
+    }
+
     electronUpdater.on('checking-for-update', () => {
-      this._status = UpdateStatus.CheckingForUpdate;
       this.emit('checking-for-update');
     });
     electronUpdater.on('update-available', (updateInfo: UpdateInfo) => {
@@ -103,7 +129,7 @@ export const AppUpdater = new class extends EventEmitter {
     });
     electronUpdater.on('update-not-available', (updateInfo: UpdateInfo) => {
       this._status = UpdateStatus.Idle;
-      this.emit('up-to-date', updateInfo);
+      this.emit('up-to-date');
     });
     electronUpdater.on('error', (err: Error, message: string) => {
       this._status = UpdateStatus.Idle;
@@ -115,32 +141,49 @@ export const AppUpdater = new class extends EventEmitter {
       this.emit('download-progress', progress);
     });
     electronUpdater.on('update-downloaded', (updateInfo: UpdateInfo) => {
-      this._status = UpdateStatus.UpdateReadyToInstall;
-      this._updateDownloaded = true;
-      this.emit('update-downloaded', updateInfo);
+      if (this._installAfterDownload) {
+        this.quitAndInstall();
+        return;
+      } else {
+        this._status = UpdateStatus.UpdateReadyToInstall;
+        this._updateDownloaded = true;
+        this.emit('update-downloaded', updateInfo);
+      }
     });
+
+    if (this.autoDownload) {
+      this.checkForUpdates(false);
+    }
   }
 
-  public checkForUpdates(userInitiated: boolean = false, autoDownload: boolean = false) {
+  public checkForUpdates(userInitiated: boolean) {
+    const settings: FrameworkSettings = getSettings().framework;
+    this.allowPrerelease = settings.usePrereleases || false;
+    this.autoDownload = settings.autoUpdate || false;
+    this._userInitiated = userInitiated;
+
+    electronUpdater.setFeedURL({
+      repo: this.repo,
+      owner: 'Microsoft',
+      provider: 'github'
+    });
+
     try {
-      if (electronUpdater) {
-        this._status = UpdateStatus.CheckingForUpdate;
-        this._userInitiated = userInitiated;
-        this._autoDownload = autoDownload;
-        electronUpdater.allowPrerelease = this._allowPrerelease;
-        electronUpdater.autoDownload = autoDownload;
-        electronUpdater.allowDowngrade = false;
-        electronUpdater.autoInstallOnAppQuit = true;
-        if (process.env.NODE_ENV === 'development') {
-          (electronUpdater as any).currentVersion = (pjson || {}).version;
-        }
-        electronUpdater.checkForUpdates()
-          .catch(err => {
-            console.error(err);
-          });
-      }
+      electronUpdater.checkForUpdates().catch(err => { throw err; });
     } catch (e) {
       console.error(e);
+    }
+  }
+
+  public async downloadUpdate(installAfterDownload: boolean): Promise<void> {
+    this._installAfterDownload = installAfterDownload;
+
+    try {
+      await electronUpdater.downloadUpdate();
+    } catch (e) {
+      const errMsg = `There was an error while trying to download the latest update: ${e}`;
+      const notification = newNotification(errMsg);
+      sendNotificationToClient(notification);
     }
   }
 

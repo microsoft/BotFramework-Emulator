@@ -87,7 +87,7 @@ export const SharedConstants = {
       ShowAboutDialog: 'shell:about',
       OpenFileLocation: 'shell:open-file-location',
       UnlinkFile: 'shell:unlink-file',
-      RenameFile: 'shell:rename-file',
+      RenameFile: 'shell:rename-file'
     },
 
     Emulator: {
@@ -160,6 +160,9 @@ export const SharedConstants = {
       ShowPostMigrationDialog: 'post-migration-dialog:show',
       UpdateProgressIndicator: 'shell:updateProgressIndicator',
       InvalidateAzureArmToken: 'shell:invalidateAzureArmToken',
+      ShowUpdateAvailableDialog: 'update-available-dialog:show',
+      ShowUpdateUnavailableDialog: 'update-unavailable-dialog:show',
+      ShowProgressIndicator: 'progress-indicator:show'
     }
   }
 };
