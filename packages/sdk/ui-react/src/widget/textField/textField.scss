@@ -28,6 +28,7 @@
   font-family: var(--default-font-family);
   color: var(--input-label-color);
   padding: 5px 0;
+
   &[disabled], &[aria-disabled] {
     color: var(--input-label-color-disabled);
   }

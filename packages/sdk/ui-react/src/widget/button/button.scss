@@ -5,6 +5,7 @@
   border: none;
   position: relative;
   font-weight: bold;
+
   &::after {
     content: "";
     position: absolute;
@@ -36,6 +37,7 @@
 
   &:hover:not([disabled]) {
     background-color: var(--s-button-bg-hover);
+
     &::after {
       border: var(--s-button-border-hover);
     }
@@ -78,6 +80,7 @@
 
   &:hover:not([disabled]) {
     background-color: var(--p-button-bg-hover);
+
     &::after {
       border: var(--p-button-border-hover);
     }
