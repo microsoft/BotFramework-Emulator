@@ -265,7 +265,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
               checked={ uncommitted.autoUpdate }
               onChange={ this.onChangeAutoInstallUpdates }
               label="Automatically download and install updates"/>
-            <Checkbox className={ `${styles.checkboxOverrides} ${styles.childCheckbox}` }
+            <Checkbox className={ styles.checkboxOverrides }
               checked={ uncommitted.usePrereleases }
               onChange={ this.onChangeUsePrereleases }
               label="Use pre-release versions"/>

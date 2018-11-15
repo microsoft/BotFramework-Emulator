@@ -94,17 +94,22 @@ AppUpdater.on('update-downloaded', (update: UpdateInfo) => {
   AppMenuBuilder.refreshAppUpdateMenu();
   // TODO - localization
   if (AppUpdater.userInitiated) {
-    mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
-      title: app.getName(),
-      message: `Finished downloading update ${update.version}. Restart and install now?`,
-      buttons: ['Cancel', 'OK'],
-      defaultId: 1,
-      cancelId: 0
-    }).then(result => {
-      if (result) {
+    // send a notification when the update is finished downloading
+    const notification: Notification = newNotification(
+      `Emulator version ${update.version} has finished downloading. Restart and update now?`
+    );
+    notification.addButton('Dismiss', () => {
+      const { Commands } = SharedConstants;
+      mainWindow.commandService.remoteCall(Commands.Notifications.Remove, notification.id);
+    });
+    notification.addButton('Restart', async () => {
+      try {
         AppUpdater.quitAndInstall();
+      } catch (e) {
+        sendNotificationToClient(newNotification(e), mainWindow.commandService);
       }
     });
+    sendNotificationToClient(notification, mainWindow.commandService);
   }
 });
 
@@ -134,11 +139,10 @@ AppUpdater.on('error', (err: Error, message: string) => {
     AppUpdater.emit('up-to-date');
     return;
   }
-  console.error(err, message);
   if (AppUpdater.userInitiated) {
     mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
       title: app.getName(),
-      message: 'Something went wrong while checking for updates.'
+      message: `An error occurred while using the updater: ${err}`
     });
   }
 });
@@ -293,9 +297,6 @@ const createMainWindow = async () => {
   mainWindow.browserWindow.setTitle(app.getName());
   windowManager = new WindowManager();
 
-  // Start auto-updater
-  AppUpdater.startup();
-
   const template: Electron.MenuItemConstructorOptions[] = AppMenuBuilder.getAppMenuTemplate();
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
@@ -353,9 +354,10 @@ const createMainWindow = async () => {
     }
     mainWindow.webContents.setZoomLevel(zoomLevel);
     mainWindow.browserWindow.show();
-    if (process.env.NODE_ENV !== 'development') {
-      AppUpdater.checkForUpdates(false, true);
-    }
+    
+    // Start auto-updater
+    AppUpdater.startup();
+
     // Renew arm token
     const { persistLogin, signedInUser } = settingsStore.getState().azure;
     if (persistLogin && signedInUser) {

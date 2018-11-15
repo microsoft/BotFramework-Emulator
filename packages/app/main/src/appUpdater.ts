@@ -37,10 +37,7 @@ import { EventEmitter } from 'events';
 import { ProgressInfo } from 'builder-util-runtime';
 import { sendNotificationToClient } from './utils/sendNotificationToClient';
 import { newNotification, FrameworkSettings } from '@bfemulator/app-shared';
-import { mainWindow } from './main';
 import { getSettings } from './settingsData/store';
-
-const pjson = require('../package.json');
 
 export enum UpdateStatus {
   Idle,
@@ -88,6 +85,8 @@ export const AppUpdater = new class extends EventEmitter {
   }
 
   public set allowPrerelease(value: boolean) {
+    // whether or not you can go from pre-release -> stable
+    electronUpdater.allowDowngrade = !value;
     electronUpdater.allowPrerelease = value;
     this._allowPrerelease = value;
   }
@@ -105,7 +104,6 @@ export const AppUpdater = new class extends EventEmitter {
     this.autoDownload = settings.autoUpdate || false;
 
     electronUpdater.autoInstallOnAppQuit = true;
-    electronUpdater.allowDowngrade = false;
     electronUpdater.logger = null;
     
     electronUpdater.setFeedURL({
@@ -114,17 +112,17 @@ export const AppUpdater = new class extends EventEmitter {
       provider: 'github'
     });
 
-    if (process.env.NODE_ENV === 'development') {
-      (electronUpdater as any).currentVersion = (pjson || {}).version;
-    }
-
     electronUpdater.on('checking-for-update', () => {
       this.emit('checking-for-update');
     });
     electronUpdater.on('update-available', (updateInfo: UpdateInfo) => {
-      if (!this._autoDownload) {
+      if (!this.autoDownload) {
         this._status = UpdateStatus.Idle;
         this.emit('update-available', updateInfo);
+      }
+      // if this was initiated on startup, download in the background
+      if (!this.userInitiated) {
+        this.downloadUpdate(false);
       }
     });
     electronUpdater.on('update-not-available', (updateInfo: UpdateInfo) => {
@@ -171,7 +169,7 @@ export const AppUpdater = new class extends EventEmitter {
     try {
       electronUpdater.checkForUpdates().catch(err => { throw err; });
     } catch (e) {
-      console.error(e);
+      throw `There was an error while checking for the latest update: ${e}`;
     }
   }
 
@@ -181,9 +179,7 @@ export const AppUpdater = new class extends EventEmitter {
     try {
       await electronUpdater.downloadUpdate();
     } catch (e) {
-      const errMsg = `There was an error while trying to download the latest update: ${e}`;
-      const notification = newNotification(errMsg);
-      sendNotificationToClient(notification);
+      throw `There was an error while trying to download the latest update: ${e}`;
     }
   }
 
@@ -191,7 +187,7 @@ export const AppUpdater = new class extends EventEmitter {
     try {
       electronUpdater.quitAndInstall(false, true);
     } catch (e) {
-      console.error(e);
+      throw `There was an error while trying to quit and install the latest update: ${e}`;
     }
   }
 };
