@@ -31,6 +31,10 @@ Checkout the [Wiki](https://github.com/Microsoft/BotFramework-Emulator/wiki) for
 * [BotBuilder Tools](https://github.com/Microsoft/BotBuilder-Tools)
 * [BotFramework-WebChat](https://github.com/Microsoft/BotFramework-WebChat)
 
+## Nightly builds
+
+Nightly builds are generated using the latest code. Therefore, they may not be stable, and most likely lack up to date documentation. These builds are better suited for more experienced users, although everyone is welcome to use them and provide feedback. Niightly builds of the V4 Emulator are available [here](https://github.com/Microsoft/botframework-emulator-nightlies/releases). 
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
