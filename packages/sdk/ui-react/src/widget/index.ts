@@ -40,3 +40,4 @@ export * from './button/defaultButton';
 export * from './textField/textField';
 export * from './checkbox/checkbox';
 export * from './insetShadow/insetShadow';
+export * from './spinner/spinner';

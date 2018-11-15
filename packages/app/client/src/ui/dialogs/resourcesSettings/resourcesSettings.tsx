@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Component, MouseEvent } from 'react';
+import { ChangeEvent, Component, MouseEvent } from 'react';
 import { BotInfo } from '@bfemulator/app-shared';
 import { DefaultButton, Dialog, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
 import * as styles from './resourcesSettings.scss';
@@ -37,10 +37,11 @@ export class ResourcesSettings extends Component<ResourcesSettingsProps, Resourc
         className={ dialogStyles.dialogLarge }>
         <div className={ styles.container }>
           <TextField
-            className={ styles.input }
+            inputContainerClassName={ styles.inputContainer }
             label="Locations for scripts"
             value={ chatsPath }
-            onChanged={ this.onChangeChatInput }/>
+            data-prop="chatsPath"
+            onChange={ this.onInputChange }/>
           <a
             href="javascript:void(0);"
             data-prop="chatsPath"
@@ -51,11 +52,12 @@ export class ResourcesSettings extends Component<ResourcesSettingsProps, Resourc
         </div>
         <div className={ styles.container }>
           <TextField
-            className={ styles.input }
+            inputContainerClassName={ styles.inputContainer }
             label="Locations for transcripts"
             value={ transcriptsPath }
+            data-prop="z"
             required={ true }
-            onChanged={ this.onChangeTranscriptInput }
+            onChange={ this.onInputChange }
             errorMessage={ transcriptsInputError }/>
           <a
             href="javascript:void(0);"
@@ -74,12 +76,10 @@ export class ResourcesSettings extends Component<ResourcesSettingsProps, Resourc
     );
   }
 
-  private onChangeChatInput = (chatsPath: string) => {
-    this.setState({ chatsPath, dirty: true });
-  }
-
-  private onChangeTranscriptInput = (transcriptsPath: string) => {
-    this.setState({ transcriptsPath, dirty: true });
+  private onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    const { prop } = event.target.dataset;
+    this.setState({ [prop]: value, dirty: true });
   }
 
   private onSaveClick = () => {
@@ -92,7 +92,7 @@ export class ResourcesSettings extends Component<ResourcesSettingsProps, Resourc
     const prop = event.currentTarget.getAttribute('data-prop');
     const result = await this.props.showOpenDialog();
     if (result) {
-      this.setState({ [ prop ]: result, dirty: true });
+      this.setState({ [prop]: result, dirty: true });
     }
   }
 }

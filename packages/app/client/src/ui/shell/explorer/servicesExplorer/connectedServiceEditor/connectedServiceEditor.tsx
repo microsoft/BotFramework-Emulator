@@ -36,7 +36,7 @@ import { BotConfigurationBase } from 'botframework-config/lib/botConfigurationBa
 import { IConnectedService, ServiceTypes } from 'botframework-config/lib/schema';
 import { DefaultButton, Dialog, DialogFooter, PrimaryButton, TextField } from '@bfemulator/ui-react';
 import * as React from 'react';
-import { Component } from 'react';
+import { ChangeEvent, Component } from 'react';
 import { serviceTypeLabels } from '../../../../../utils/serviceTypeLables';
 
 interface ConnectedServiceEditorProps {
@@ -88,7 +88,7 @@ const getEditableFields = (service: IConnectedService): string[] => {
       return ['name', 'appId', 'authoringKey', 'version', 'subscriptionKey'];
 
     case ServiceTypes.QnA:
-      return ['name', 'kbId', 'endpointKey'];
+      return ['name', 'kbId', 'hostname', 'endpointKey'];
 
     default:
       throw new TypeError(`${ service.type } is not a valid service type`);
@@ -97,7 +97,6 @@ const getEditableFields = (service: IConnectedService): string[] => {
 
 export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProps, ConnectedServiceEditorState> {
   public state: ConnectedServiceEditorState = {} as ConnectedServiceEditorState;
-  private textFieldHandlers: { [key: string]: (x: string) => void } = {};
 
   constructor(props: ConnectedServiceEditorProps, state: ConnectedServiceEditorState) {
     super(props, state);
@@ -115,7 +114,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
   }
 
   public render(): JSX.Element {
-    const { state, textFieldHandlers, onInputChange, props, onSubmitClick } = this;
+    const { state, onInputChange, props, onSubmitClick } = this;
     const { isDirty, connectedServiceCopy } = state;
     const { type } = connectedServiceCopy;
     const fields = getEditableFields(connectedServiceCopy);
@@ -124,16 +123,17 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     // Build the editable inputs from the enumerable properties
     // in the data model. This assumes all enumerable fields are editable
     // except the type
-    fields.forEach((key, index) => {
-      const isRequired = this.isRequired(key);
-      valid = valid && (!isRequired || !!connectedServiceCopy[key]);
+    fields.forEach((prop, index) => {
+      const isRequired = this.isRequired(prop);
+      valid = valid && (!isRequired || !!connectedServiceCopy[prop]);
       textInputs.push(
         <TextField
           key={ `input_${ index }` }
-          errorMessage={ state[`${ key }Error`] || '' }
-          value={ connectedServiceCopy[key] }
-          onChanged={ textFieldHandlers[key] || (textFieldHandlers[key] = onInputChange.bind(this, key)) }
-          label={ labelMap[key] } required={ isRequired }
+          errorMessage={ state[`${ prop }Error`] || '' }
+          value={ (connectedServiceCopy[prop] || '') }
+          data-prop={ prop }
+          onChange={ onInputChange }
+          label={ labelMap[prop] } required={ isRequired }
         />
       );
     });
@@ -184,17 +184,20 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
     this.props.updateConnectedService(this.state.connectedServiceCopy);
   }
 
-  private onInputChange = (propName: string, value: string): void => {
+  private onInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    const { value } = event.target;
+    const { prop } = event.target.dataset;
+
     const trimmedValue = value.trim();
 
     const { connectedService: originalLuisService = {} } = this.props;
-    const errorMessage = (this.isRequired(propName) && !trimmedValue) ? `The field cannot be empty` : '';
+    const errorMessage = (this.isRequired(prop) && !trimmedValue) ? `The field cannot be empty` : '';
 
     const { connectedServiceCopy } = this.state;
-    connectedServiceCopy[propName] = value;
+    connectedServiceCopy[prop] = value;
 
     const isDirty = Object.keys(connectedServiceCopy)
       .reduce((dirty, key) => (dirty || connectedServiceCopy[key] !== originalLuisService[key]), false);
-    this.setState({ connectedServiceCopy: connectedServiceCopy, [`${ propName }Error`]: errorMessage, isDirty } as any);
+    this.setState({ connectedServiceCopy, [`${ prop }Error`]: errorMessage, isDirty } as any);
   }
 }

@@ -141,7 +141,7 @@ export default class Conversation extends EventEmitter {
       this.botEmulator.facilities.logger.logMessage(this.conversationId,
         externalLinkItem('Connecting to bots hosted remotely', 'https://aka.ms/cnjvpo'));
       this.botEmulator.facilities.logger.logMessage(this.conversationId,
-        appSettingsItem('Edit ngrok settings'));
+        appSettingsItem('Configure ngrok'));
     }
 
     const options = {

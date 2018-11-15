@@ -9,6 +9,8 @@
 }
 
 .dialog {
+  --input-color: var(--neutral-12);
+  --input-bg: var(--neutral-1);
   background: var(--dialog-bg);
   position: fixed;
   transform: translate(-50%, -50%);

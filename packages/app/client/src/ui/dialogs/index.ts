@@ -31,9 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
-initializeIcons();
-
 export * from './botCreationDialog/botCreationDialog';
 export * from './host/host';
 export * from './secretPromptDialog/secretPromptDialogContainer';

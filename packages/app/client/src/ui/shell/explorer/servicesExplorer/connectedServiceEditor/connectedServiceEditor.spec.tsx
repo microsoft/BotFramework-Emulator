@@ -40,7 +40,7 @@ describe('The ConnectedServiceEditor component should', () => {
             "subscriptionKey": "emoji"
         }`);
     parent = mount(<Provider store={ createStore(combineReducers({ azureAuth })) }>
-      <ConnectedServiceEditorContainer connectedService={ mockService } />
+      <ConnectedServiceEditorContainer connectedService={ mockService }/>
     </Provider>);
     node = parent.find(ConnectedServiceEditor);
   });
@@ -70,7 +70,8 @@ describe('The ConnectedServiceEditor component should', () => {
 
   it('should produce an error when a required input field is null', () => {
     const instance = node.instance();
-    instance.onInputChange('name', '');
+    const mockEvent = { target: { value: '', dataset: { prop: 'name' } } };
+    instance.onInputChange(mockEvent as any);
     expect(instance.state.connectedServiceCopy.name).toBe('');
     expect(instance.state.nameError).not.toBeNull();
   });
@@ -78,7 +79,8 @@ describe('The ConnectedServiceEditor component should', () => {
   it('should exit with the newly edited model when clicking submit', () => {
     const spy = jest.spyOn(DialogService, 'hideDialog');
     const instance = node.instance();
-    instance.textFieldHandlers.name('renamed model');
+    const mockEvent = { target: { value: 'renamed model', dataset: { prop: 'name' } } };
+    instance.onInputChange(mockEvent as any);
     instance.onSubmitClick();
     const mockMock = { ...mockService };
     mockMock.name = 'renamed model';
@@ -87,8 +89,11 @@ describe('The ConnectedServiceEditor component should', () => {
 
   it('should enable the submit button when all required fields have non-null values', () => {
     const instance = node.instance();
-    instance.textFieldHandlers.name('renamed model');
-    instance.textFieldHandlers.subscriptionKey(''); // non-required field
+    const mockEvent = { target: { value: 'renamed model', dataset: { prop: 'name' } } };
+    instance.onInputChange(mockEvent as any);
+    mockEvent.target.dataset.prop = 'subscriptionKey';
+    mockEvent.target.value = '';
+    instance.onInputChange(mockEvent as any); // non-required field
     instance.render();
     const submitBtn = node.find(PrimaryButton);
     expect(submitBtn.props.disabled).toBeFalsy();
