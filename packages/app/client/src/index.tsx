@@ -61,9 +61,6 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-// send a test request
-fetch('https:/www.google.com').then(result => console.log(result));
-
 // Tell the main process we're loaded
 CommandServiceImpl.remoteCall(SharedConstants.Commands.ClientInit.Loaded)
   .then(() => {
