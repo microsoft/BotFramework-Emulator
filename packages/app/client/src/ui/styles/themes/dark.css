@@ -49,14 +49,23 @@ html {
   --nav-link-badge-bg: #FF0000;
 
   /* input[type="text"] */
+  --input-color: var(--neutral-1);
   --input-bg: var(--neutral-15);
   --input-label-color: #C8C8C8;
   --input-label-color-disabled: var(--neutral-7);
   --input-border: 1px solid #C8C8C8;
-  --input-border-focus: 1px solid #0E369C;
+  --input-border-focus: var(--p-button-border-focus);
   --input-border-error: 1px solid var(--error-outline);
   --input-placeholder-color: var(--neutral-7);
   --input-border-disabled: 1px solid var(--neutral-7);
+
+  /* input[type="checkbox"] */
+  --checkbox-checkmark-color: var(--neutral-1);
+  --checkbox-checkmark-disabled-color: var(--neutral-8);
+  --checkbox-border: 1px solid #3062D6;
+  --checkbox-border-disabled: 1px solid var(--neutral-7);
+  --checkbox-bg-disabled: var(--neutral-5);
+  --checkbox-bg-checked: #3062D6;
 
   /* primary button */
   --p-button-color: var(--neutral-2);

@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { ChangeEvent } from 'react';
 import * as React from 'react';
 import * as styles from './secretPromptDialog.scss';
 import * as dialogStyles from '../dialogStyles.scss';
@@ -73,10 +74,10 @@ export class SecretPromptDialog extends React.Component<SecretPromptDialogProps,
         <div className={ styles.keyContainer }>
           <TextField
             required={ true }
-            className={ styles.key }
+            inputContainerClassName={ styles.key }
             value={ this.state.secret }
             placeholder="Enter your bot file's secret"
-            onChanged={ this.onChangeSecret }
+            onChange={ this.onChangeSecret }
             label={ 'Bot file secret' }
             type={ this.state.revealSecret ? 'text' : 'password' }/>
           <a href="javascript:void(0);"
@@ -115,7 +116,8 @@ export class SecretPromptDialog extends React.Component<SecretPromptDialogProps,
     this.props.onSaveClick(this.state.secret);
   }
 
-  private onChangeSecret = (secret) => {
+  private onChangeSecret = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value: secret } = event.target;
     this.setState({ secret });
   }
 }

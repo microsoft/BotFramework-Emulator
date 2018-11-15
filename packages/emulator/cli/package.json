@@ -41,7 +41,7 @@
     }
   },
   "dependencies": {
-    "@babel/runtime": "^7.0.0",
+    "@babel/runtime": "^7.1.5",
     "@bfemulator/emulator-core": "^1.0.0-0",
     "commander": "^2.15.1",
     "debug": "^3.1.0",

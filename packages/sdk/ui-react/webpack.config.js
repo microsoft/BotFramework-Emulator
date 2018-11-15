@@ -60,9 +60,7 @@ module.exports = {
 
   externals: {
     react: 'umd react',
-    '@uifabric/styling': 'umd @uifabric/styling',
     'react-dom': 'umd react-dom',
-    'office-ui-fabric-react': 'umd office-ui-fabric-react'
   },
 
   resolve: {

@@ -20,6 +20,7 @@
     "@babel/plugin-transform-runtime": "^7.1.0",
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-typescript": "^7.1.0",
+    "@babel/runtime": "^7.1.5",
     "@types/jest": "^22.2.3",
     "@types/node": "8.9.3",
     "@types/react": "~16.3.2",
@@ -30,7 +31,6 @@
     "typescript": "3.1.1"
   },
   "dependencies": {
-    "@babel/runtime": "^7.0.0",
     "@bfemulator/sdk-main": "^1.0.0",
     "@bfemulator/sdk-shared": "^1.0.0",
     "react": "~16.3.2",
