@@ -58,6 +58,7 @@ import { ngrokEmitter } from './ngrok';
 import { sendNotificationToClient } from './utils/sendNotificationToClient';
 import Users from '@bfemulator/emulator-core/lib/facility/users';
 import { openFileFromCommandLine } from './utils/openFileFromCommandLine';
+import { appendCustomUserAgent } from './appendCustomUserAgent';
 
 export let mainWindow: Window;
 export let windowManager: WindowManager;
@@ -262,14 +263,8 @@ const createMainWindow = async () => {
         height: 920
       }));
 
-  // setup custom user agent string
-  mainWindow.webContents.session.webRequest.onBeforeSendHeaders((details, callback) => {
-    const version = Electron.app.getVersion();
-    const userAgentString1 = `botbuilder/emulator/inspector/${version}`;
-    const userAgentString2 = `botbuilder/emulator/list-luis-apps/${version}`;
-    details.requestHeaders['User-Agent'] += ` ${userAgentString1} ${userAgentString2}`;
-    callback({ cancel: false, requestHeaders: details.requestHeaders });
-  });
+  // attach custom user agent string
+  mainWindow.webContents.session.webRequest.onBeforeSendHeaders(appendCustomUserAgent);
 
   // get reference to bots list in state for comparison against state changes
   let botsRef = store.getState().bot.botFiles;
