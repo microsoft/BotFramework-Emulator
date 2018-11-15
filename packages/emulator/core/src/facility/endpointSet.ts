@@ -62,6 +62,7 @@ export default class Endpoints {
       botEndpoint.msaAppId,
       botEndpoint.msaPassword,
       botEndpoint.use10Tokens,
+      botEndpoint.channelService,
       {
         fetch: this._options.fetch
       }

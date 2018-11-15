@@ -43,7 +43,7 @@ describe('The conversations middleware', () => {
   it('should create a new conversation', () => {
     const bot = { role: 'bot', name: 'thebot', id: '456' };
     const req = {
-      botEndpoint: new BotEndpoint('12', '123', 'http://localhost:12345', '', '', false, {}),
+      botEndpoint: new BotEndpoint('12', '123', 'http://localhost:12345', '', '', false, '', {}),
       body: {
         members: [{ id: '123', name: 'emulator', role: 'user' }],
         bot,
@@ -73,7 +73,7 @@ describe('The conversations middleware', () => {
     // create the conversation with an activity
     const bot = { role: 'bot', name: 'thebot', id: '456' };
     let req: any = {
-      botEndpoint: new BotEndpoint('12', '123', 'http://localhost:12345', '', '', false, {}),
+      botEndpoint: new BotEndpoint('12', '123', 'http://localhost:12345', '', '', false, '', {}),
       body: {
         members: [{ id: '123', name: 'emulator', role: 'user' }],
         bot,
@@ -499,7 +499,7 @@ function createConversationUtil(emulator: BotEmulator): Conversation {
   // create the conversation with an activity
   const bot = { role: 'bot', name: 'thebot', id: '456' };
   let req: any = {
-    botEndpoint: new BotEndpoint('12', '123', 'http://localhost:12345', '', '', false, {}),
+    botEndpoint: new BotEndpoint('12', '123', 'http://localhost:12345', '', '', false, '', {}),
     body: {
       members: [{ id: '123', name: 'emulator', role: 'user' }],
       bot,

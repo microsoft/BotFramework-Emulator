@@ -203,7 +203,8 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
           botId: endpoint.id,
           botUrl: endpoint.endpoint,
           msaAppId: endpoint.appId,
-          msaPassword: endpoint.appPassword
+          msaPassword: endpoint.appPassword,
+          channelService: endpoint.channelService
         }
       );
     });
