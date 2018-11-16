@@ -30,17 +30,29 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-export * from './botCreationDialog/botCreationDialog';
-export * from './host/host';
-export * from './secretPromptDialog/secretPromptDialogContainer';
-export * from './tabManager/tabManagerContainer';
-export * from './service';
-export * from './azureLoginSuccessDialog/azureLoginSuccessDialogContainer';
-export * from './azureLoginPromptDialog/azureLoginPromptDialogContainer';
-export * from './azureLoginFailedDialog/azureLoginFailedDialogContainer';
-export * from './connectLuisAppPromptDialog/connectLuisAppPromptDialogContainer';
-export * from './getStartedWithCSDialog/getStartedWithCSDialogContainer';
-export * from './postMigrationDialog/postMigrationDialogContainer';
-export * from './progressIndicator/progressIndicatorContainer';
-export * from './botSettingsEditor/botSettingsEditorContainer';
-export * from './resourcesSettings/resourcesSettingsContainer';
+
+const mockVersion = 'v4.5.6';
+jest.mock('electron', () => ({
+  app: {
+    getVersion: () => mockVersion
+  }
+}));
+
+import { appendCustomUserAgent } from './appendCustomUserAgent';
+
+it('should append a custom user agent to outgoing requests', () => {
+  const mockDetails = {
+    requestHeaders: {
+      'User-Agent': 'some/user/agent'
+    }
+  };
+  const callBack = jest.fn((...args: any[]) => null);
+  appendCustomUserAgent(mockDetails, callBack);
+
+  expect(callBack).toHaveBeenCalledWith({
+    cancel: false,
+    requestHeaders: {
+      'User-Agent': `some/user/agent botbuilder/emulator/${mockVersion}`
+    }
+  });
+});

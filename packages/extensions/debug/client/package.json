@@ -4,7 +4,6 @@
   "private": true,
   "homepage": "./",
   "dependencies": {
-    "@babel/runtime": "^7.0.0",
     "react": "~16.3.2",
     "react-dom": "~16.3.2"
   },
@@ -21,6 +20,7 @@
     "@babel/plugin-transform-runtime": "^7.1.0",
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-typescript": "^7.1.0",
+    "@babel/runtime": "^7.1.5",
     "@types/jest": "^22.2.3",
     "babel-jest": "23.6.0",
     "css-loader": "^0.28.11",

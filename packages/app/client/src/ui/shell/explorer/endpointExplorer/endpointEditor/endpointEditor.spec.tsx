@@ -72,20 +72,29 @@ describe('The EndpointExplorer component should', () => {
 
   it('should update the state when the user types in the input fields', () => {
     const instance = node.instance();
-    instance.onEndpointInputChange('name', true, 'a name');
+    const mockEvent = { target: { hasAttribute: () => true, value: 'a name', dataset: { prop: 'name' } } };
+    instance.onEndpointInputChange(mockEvent as any);
     expect(instance.state.endpointService.name).toBe('a name');
   });
 
   it('should set an error when a required field is null', () => {
     const instance = node.instance();
-    instance.onEndpointInputChange('name', true, '');
+    const mockEvent = { target: { hasAttribute: () => true, value: '', dataset: { prop: 'name' } } };
+    instance.onEndpointInputChange(mockEvent as any);
     expect(instance.state.nameError).not.toBeUndefined();
   });
 
   it('should validate the endpoint when an endpoint is entered and display a message after 500ms', done => {
     const endpointValidationSpy = jest.spyOn(EndpointEditor as any, 'validateEndpoint').mockReturnValue(false);
     const instance = node.instance();
-    instance.onEndpointInputChange('endpoint', true, 'http://localhost');
+    const mockEvent = {
+      target: {
+        hasAttribute: () => true,
+        value: 'http://localhost',
+        dataset: { prop: 'endpoint' }
+      }
+    };
+    instance.onEndpointInputChange(mockEvent as any);
     setTimeout(() => {
       expect(instance.state.endpointWarning).toBeFalsy();
     }, 490);
@@ -98,7 +107,8 @@ describe('The EndpointExplorer component should', () => {
 
   it('should update the botService when the AVS inputs change', () => {
     const instance = node.instance();
-    instance.onBotInputChange('tenantId', 'someId');
+    const mockEvent = { target: { hasAttribute: () => false, value: 'someId', dataset: { prop: 'tenantId' } } };
+    instance.onBotInputChange(mockEvent as any);
     expect(instance.state.botService.tenantId).toBe('someId');
   });
 
@@ -134,7 +144,7 @@ describe('The EndpointExplorer component should', () => {
     }]);
   });
 
-  it ('should cancel the dialog when onCancelClick is called', () => {
+  it('should cancel the dialog when onCancelClick is called', () => {
     const instance = node.instance();
     const hideDialogSpy = jest.spyOn(DialogService, 'hideDialog');
 

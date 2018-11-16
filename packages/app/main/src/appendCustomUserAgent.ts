@@ -30,17 +30,14 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-export * from './botCreationDialog/botCreationDialog';
-export * from './host/host';
-export * from './secretPromptDialog/secretPromptDialogContainer';
-export * from './tabManager/tabManagerContainer';
-export * from './service';
-export * from './azureLoginSuccessDialog/azureLoginSuccessDialogContainer';
-export * from './azureLoginPromptDialog/azureLoginPromptDialogContainer';
-export * from './azureLoginFailedDialog/azureLoginFailedDialogContainer';
-export * from './connectLuisAppPromptDialog/connectLuisAppPromptDialogContainer';
-export * from './getStartedWithCSDialog/getStartedWithCSDialogContainer';
-export * from './postMigrationDialog/postMigrationDialogContainer';
-export * from './progressIndicator/progressIndicatorContainer';
-export * from './botSettingsEditor/botSettingsEditorContainer';
-export * from './resourcesSettings/resourcesSettingsContainer';
+
+import * as Electron from 'electron';
+
+export function appendCustomUserAgent(details: any, callback: (...args: any[]) => any): void {
+  const { requestHeaders = {} } = details;
+  const version = Electron.app.getVersion();
+  
+  requestHeaders['User-Agent'] += ` botbuilder/emulator/${version}`;
+
+  callback({ cancel: false, requestHeaders });
+}

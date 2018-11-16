@@ -64,4 +64,20 @@ export class Dialog extends Component<ModalProps, {}> {
       </>
     );
   }
+
+  public componentWillMount(): void {
+    document.body.addEventListener('keydown', this.bodyKeyDownHandler);
+  }
+
+  public componentWillUnmount(): void {
+    document.body.removeEventListener('keydown', this.bodyKeyDownHandler);
+  }
+
+  private bodyKeyDownHandler = (event: KeyboardEvent): void => {
+    if (event.key !== 'Escape') {
+      return;
+    }
+
+    this.props.cancel(event);
+  }
 }

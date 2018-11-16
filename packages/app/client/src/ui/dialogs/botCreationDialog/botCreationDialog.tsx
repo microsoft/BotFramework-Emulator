@@ -44,6 +44,7 @@ import {
 } from '@bfemulator/ui-react';
 import { EndpointService } from 'botframework-config/lib/models';
 import { IEndpointService, ServiceTypes } from 'botframework-config/lib/schema';
+import { ChangeEvent } from 'react';
 import * as React from 'react';
 import * as styles from './botCreationDialog.scss';
 import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
@@ -105,14 +106,14 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
       <Dialog className={ styles.main } title="New bot configuration" cancel={ this.onCancel } maxWidth={ 648 }>
         <div className={ styles.botCreateForm }>
           <TextField
-            inputClassName="bot-creation-input"
             value={ this.state.bot.name }
-            onChanged={ this.onChangeName }
+            data-prop="name"
+            onChange={ this.onInputChange }
             label={ 'Bot name' }
             required={ true }/>
           <TextField
-            inputClassName="bot-creation-input"
-            onChanged={ this.onChangeEndpoint }
+            onChange={ this.onInputChange }
+            data-prop="endpoint"
             placeholder={ endpointPlaceholder } label={ 'Endpoint URL' }
             required={ true }
             value={ this.state.endpoint.endpoint }/>
@@ -120,16 +121,16 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
           <Row className={ styles.multiInputRow }>
             <TextField
               className={ styles.smallInput }
-              inputClassName="bot-creation-input"
+              data-prop="appId"
               label="Microsoft App ID"
-              onChanged={ this.onChangeAppId }
+              onChange={ this.onInputChange }
               placeholder="Optional"
               value={ endpoint.appId }/>
             <TextField
               className={ styles.smallInput }
-              inputClassName="bot-creation-input"
               label="Microsoft App password"
-              onChanged={ this.onChangeAppPw }
+              data-prop="appPassword"
+              onChange={ this.onInputChange }
               placeholder="Optional"
               type="password"
               value={ endpoint.appPassword }/>
@@ -173,14 +174,14 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
                 Copy
               </a>
             </li>
-            {/* <li>
+            { /* <li>
               <a
                 className={ !encryptKey ? styles.disabledAction : '' }
                 href="javascript:void(0);"
                 onClick={ this.onResetClick }>
                 Generate new secret
               </a>
-            </li> */}
+            </li> */ }
           </ul>
         </div>
 
@@ -199,33 +200,25 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
     );
   }
 
-  private onChangeEndpoint = (ep) => {
-    const endpoint = { ...this.state.endpoint, endpoint: ep };
-    this.setState({ endpoint });
+  private onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    const { prop } = event.target.dataset;
+    if (prop === 'name') {
+      // attach to bot
+      this.setState({ bot: { ...this.state.bot, name: value } });
+    } else {
+      this.setState({ endpoint: { ...this.state.endpoint, ...{ [prop]: value } } } as any);
+    }
   }
 
-  private onChangeAppId = (appId) => {
-    const endpoint = { ...this.state.endpoint, appId };
-    this.setState({ endpoint });
-  }
-
-  private onChangeAppPw = (appPassword) => {
-    const endpoint = { ...this.state.endpoint, appPassword };
-    this.setState({ endpoint });
-  }
-
-  private onChangeName = (name) => {
-    const bot = { ...this.state.bot, name };
-    this.setState({ bot });
-  }
-
-  private onCancel = (e) => {
+  private onCancel = () => {
     DialogService.hideDialog();
   }
 
-  private onEncryptKeyChange = (_ev: any, value: boolean) => {
-    const secret = value ? generateBotSecret() : '';
-    this.setState({ encryptKey: value, secret, revealSecret: true });
+  private onEncryptKeyChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { checked } = event.target;
+    const secret = checked ? generateBotSecret() : '';
+    this.setState({ encryptKey: checked, secret, revealSecret: true });
   }
 
   private onRevealSecretClick = () => {
@@ -248,7 +241,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
     input.type = type;
     input.setAttribute('disabled', '');
   }
-  
+
   // TODO: Re-enable ability to re-generate secret after 4.1
   // See 'https://github.com/Microsoft/BotFramework-Emulator/issues/964' for more information
   // See also: botCreationDialog.spec.tsx
@@ -294,7 +287,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
       ...this.state.bot,
       name: this.state.bot.name.trim(),
       description: this.state.bot.description.trim(),
-      services: [ endpoint ],
+      services: [endpoint],
       path: botPath.trim()
     });
 
@@ -318,7 +311,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
       filters: [
         {
           name: 'Bot Files',
-          extensions: [ 'bot' ]
+          extensions: ['bot']
         }
       ],
       defaultPath: botFileName,
