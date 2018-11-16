@@ -115,11 +115,9 @@ describe('AppUpdater', () => {
   });
 
   it('should get and set allowPrerelease', () => {
-    mockAutoUpdater.allowDowngrade = false;
     mockAutoUpdater.allowPrerelease = false;
     AppUpdater.allowPrerelease = true;
 
-    expect(mockAutoUpdater.allowDowngrade).toBe(true);
     expect(mockAutoUpdater.allowPrerelease).toBe(true);
     expect(AppUpdater.allowPrerelease).toBe(true);
   });

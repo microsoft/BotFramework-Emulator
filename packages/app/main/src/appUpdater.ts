@@ -83,9 +83,6 @@ export const AppUpdater = new class extends EventEmitter {
   }
 
   public set allowPrerelease(value: boolean) {
-    // whether or not you can go from pre-release -> stable
-    electronUpdater.allowDowngrade = value;
-
     electronUpdater.allowPrerelease = value;
     this._allowPrerelease = value;
   }
@@ -102,6 +99,7 @@ export const AppUpdater = new class extends EventEmitter {
     this.allowPrerelease = settings.usePrereleases || false;
     this.autoDownload = settings.autoUpdate || false;
 
+    electronUpdater.allowDowngrade = true; // allow pre-release -> stable release
     electronUpdater.autoInstallOnAppQuit = true;
     electronUpdater.logger = null;
 
@@ -120,11 +118,6 @@ export const AppUpdater = new class extends EventEmitter {
     });
     electronUpdater.on('update-not-available', (updateInfo: UpdateInfo) => {
       this._status = UpdateStatus.Idle;
-      // failing to find a pre-release version should fallback to checking for a stable version
-      // if (fallbackToStable) {
-      //  fallbackToStable = false;
-        // check for updates again
-      // }
       this.emit('up-to-date');
     });
     electronUpdater.on('error', (err: Error, message: string) => {
