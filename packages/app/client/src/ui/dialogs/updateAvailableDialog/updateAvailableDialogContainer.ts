@@ -38,10 +38,10 @@ import { DialogService } from '../service';
 function mapDispatchToProps(_dispatch: any): UpdateAvailableDialogProps {
   return {
     onCloseClick: () => DialogService.hideDialog(null),
-    onDownloadClick: async (installAfterDownload: boolean) => {
+    onDownloadClick: (installAfterDownload: boolean) => {
       DialogService.hideDialog({ installAfterDownload });
     }
   };
 }
 
-export const UpdateAvailabeDialogContainer = connect(null, mapDispatchToProps)(UpdateAvailableDialog);
+export const UpdateAvailableDialogContainer = connect(null, mapDispatchToProps)(UpdateAvailableDialog);

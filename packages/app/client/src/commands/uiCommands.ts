@@ -40,7 +40,7 @@ import {
   DialogService,
   PostMigrationDialogContainer,
   SecretPromptDialogContainer,
-  UpdateAvailabeDialogContainer,
+  UpdateAvailableDialogContainer,
   UpdateUnavailableDialogContainer,
   ProgressIndicatorContainer
 } from '../ui/dialogs';
@@ -147,7 +147,7 @@ export function registerCommands(commandRegistry: CommandRegistry) {
   // ---------------------------------------------------------------------------
   // Shows the dialog telling the user that an update is available
   commandRegistry.registerCommand(UI.ShowUpdateAvailableDialog, async (version: string = '') => {
-    return await DialogService.showDialog(UpdateAvailabeDialogContainer, { version }).catch(e => console.error(e));
+    return await DialogService.showDialog(UpdateAvailableDialogContainer, { version }).catch(e => console.error(e));
   });
 
   // ---------------------------------------------------------------------------

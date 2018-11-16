@@ -31,14 +31,48 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { connect } from 'react-redux';
-import { DialogService } from '../service';
-import { UpdateUnavailableDialog, UpdateUnavailableDialogProps } from './updateUnavailableDialog';
+import { UpdateUnavailableDialog } from './updateUnavailableDialog';
+import { UpdateUnavailableDialogContainer } from './updateUnavailableDialogContainer';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import { navBar } from '../../../data/reducer/navBar';
+import * as React from 'react';
+import { mount } from 'enzyme';
 
-function mapDispatchToProps(_dispatch: any): UpdateUnavailableDialogProps {
-  return {
-    onCloseClick: () => DialogService.hideDialog(null)
-  };
-}
+let mockHideDialog;
+jest.mock('../service', () => ({
+  DialogService: {
+    get hideDialog() { return mockHideDialog; }
+  }
+}));
 
-export const UpdateUnavailableDialogContainer = connect(null, mapDispatchToProps)(UpdateUnavailableDialog);
+jest.mock('../../dialogs', () => ({}));
+
+describe('UpdateUnavailableDialog', () => {
+  let wrapper;
+  let node;
+  let instance;
+
+  beforeEach(() => {
+    wrapper = mount(
+      <Provider store={ createStore(navBar) } >
+        <UpdateUnavailableDialogContainer/>
+      </Provider>
+    );
+
+    node = wrapper.find(UpdateUnavailableDialog);
+    instance = node.instance();
+    mockHideDialog = jest.fn(_ => null);
+  });
+
+  it('should render deeply', () => {
+    expect(wrapper.find(UpdateUnavailableDialogContainer)).not.toBe(null);
+    expect(node.find(UpdateUnavailableDialog)).not.toBe(null);
+  });
+
+  it('should close properly', () => {
+    instance.props.onCloseClick();
+
+    expect(mockHideDialog).toHaveBeenCalledWith(null);
+  });
+});
