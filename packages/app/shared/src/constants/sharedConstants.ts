@@ -77,6 +77,7 @@ export const SharedConstants = {
       ShowOpenDialog: 'shell:showExplorer-open-dialog',
       ShowSaveDialog: 'shell:showExplorer-save-dialog',
       UpdateFileMenu: 'menu:update-file-menu',
+      UpdateConversationMenu: 'menu:update-converation-menu',
       SetFullscreen: 'electron:set-fullscreen',
       SetTitleBar: 'electron:set-title-bar',
       DisplayContextMenu: 'electron:display-context-menu',
@@ -164,5 +165,8 @@ export const SharedConstants = {
       ShowUpdateUnavailableDialog: 'update-unavailable-dialog:show',
       ShowProgressIndicator: 'progress-indicator:show'
     }
-  }
+  },
+    ContentTypes: {
+      CONTENT_TYPE_LIVE_CHAT: 'application/vnd.microsoft.bfemulator.document.livechat'
+    }
 };

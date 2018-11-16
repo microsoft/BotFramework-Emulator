@@ -58,6 +58,7 @@ import { ngrokEmitter } from './ngrok';
 import { sendNotificationToClient } from './utils/sendNotificationToClient';
 import Users from '@bfemulator/emulator-core/lib/facility/users';
 import { openFileFromCommandLine } from './utils/openFileFromCommandLine';
+import { appendCustomUserAgent } from './appendCustomUserAgent';
 
 export let mainWindow: Window;
 export let windowManager: WindowManager;
@@ -80,6 +81,7 @@ if (app) {
 // App-Updater events
 
 AppUpdater.on('update-available', async (update: UpdateInfo) => {
+  await AppMenuBuilder.refreshAppUpdateMenu();
   if (AppUpdater.userInitiated) {
     const { ShowUpdateAvailableDialog } = SharedConstants.Commands.UI;
     const result = await mainWindow.commandService.remoteCall(ShowUpdateAvailableDialog, update.version);
@@ -90,8 +92,9 @@ AppUpdater.on('update-available', async (update: UpdateInfo) => {
   }
 });
 
-AppUpdater.on('update-downloaded', (update: UpdateInfo) => {
-  AppMenuBuilder.refreshAppUpdateMenu();
+AppUpdater.on('update-downloaded', async (update: UpdateInfo) => {
+  await AppMenuBuilder.refreshAppUpdateMenu();
+
   // TODO - localization
   if (AppUpdater.userInitiated) {
     // send a notification when the update is finished downloading
@@ -113,9 +116,9 @@ AppUpdater.on('update-downloaded', (update: UpdateInfo) => {
   }
 });
 
-AppUpdater.on('up-to-date', () => {
+AppUpdater.on('up-to-date', async () => {
   // TODO - localization
-  AppMenuBuilder.refreshAppUpdateMenu();
+  await AppMenuBuilder.refreshAppUpdateMenu();
   // only show the alert if the user explicity checked for update, and no update was downloaded
   const { userInitiated, updateDownloaded } = AppUpdater;
   if (userInitiated && !updateDownloaded) {
@@ -125,15 +128,17 @@ AppUpdater.on('up-to-date', () => {
 });
 
 AppUpdater.on('download-progress', async (info: ProgressInfo) => {
+  await AppMenuBuilder.refreshAppUpdateMenu();
+  
   // update the progress bar component
   const { UpdateProgressIndicator } = SharedConstants.Commands.UI;
   const progressPayload = { label: 'Downloading...', progress: info.percent };
   await mainWindow.commandService.remoteCall(UpdateProgressIndicator, progressPayload).catch(e => console.error(e));
 });
 
-AppUpdater.on('error', (err: Error, message: string) => {
+AppUpdater.on('error', async (err: Error, message: string) => {
   // TODO - localization
-  AppMenuBuilder.refreshAppUpdateMenu();
+  await AppMenuBuilder.refreshAppUpdateMenu();
   // TODO - Send to debug.txt / error dump file
   if (message.includes('.yml')) {
     AppUpdater.emit('up-to-date');
@@ -260,6 +265,9 @@ const createMainWindow = async () => {
         height: 920
       }));
 
+  // attach custom user agent string
+  mainWindow.webContents.session.webRequest.onBeforeSendHeaders(appendCustomUserAgent);
+
   // get reference to bots list in state for comparison against state changes
   let botsRef = store.getState().bot.botFiles;
 
@@ -297,8 +305,9 @@ const createMainWindow = async () => {
   mainWindow.browserWindow.setTitle(app.getName());
   windowManager = new WindowManager();
 
-  const template: Electron.MenuItemConstructorOptions[] = AppMenuBuilder.getAppMenuTemplate();
-  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+  AppMenuBuilder.getMenuTemplate().then((template: Electron.MenuItemConstructorOptions[]) => {
+    Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+  });
 
   const rememberCurrentBounds = () => {
     const currentBounds = mainWindow.browserWindow.getBounds();

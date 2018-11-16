@@ -31,38 +31,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { call, ForkEffect, put, takeEvery } from 'redux-saga/effects';
-import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
-import { SharedConstants } from '@bfemulator/app-shared';
-import { BotActions, botHashGenerated, SetActiveBotAction } from '../action/botActions';
-import { generateBotHash } from '../botHelpers';
+const mockVersion = 'v4.5.6';
+jest.mock('electron', () => ({
+  app: {
+    getVersion: () => mockVersion
+  }
+}));
 
-/** Opens up native open file dialog to browse for a .bot file */
-export function* browseForBot(): IterableIterator<any> {
-  yield CommandServiceImpl.call(SharedConstants.Commands.Bot.OpenBrowse)
-    // dialog was closed
-    .catch(_err => null);
-}
+import { appendCustomUserAgent } from './appendCustomUserAgent';
 
-export function* generateHashForActiveBot(action: SetActiveBotAction): IterableIterator<any> {
-  const { bot } = action.payload;
-  const generatedHash = yield call(generateBotHash, bot);
-  yield put(botHashGenerated(generatedHash));
-}
+it('should append a custom user agent to outgoing requests', () => {
+  const mockDetails = {
+    requestHeaders: {
+      'User-Agent': 'some/user/agent'
+    }
+  };
+  const callBack = jest.fn((...args: any[]) => null);
+  appendCustomUserAgent(mockDetails, callBack);
 
-export function* refreshConversationMenu(): IterableIterator<any> {
-  yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.UpdateConversationMenu);
-}
-
-export function* botSagas(): IterableIterator<ForkEffect> {
-  yield takeEvery(BotActions.browse, browseForBot);
-  yield takeEvery(BotActions.setActive, generateHashForActiveBot);
-  yield takeEvery(
-    [
-      BotActions.setActive, 
-      BotActions.load, 
-      BotActions.close
-    ],
-    refreshConversationMenu
-  );
-}
+  expect(callBack).toHaveBeenCalledWith({
+    cancel: false,
+    requestHeaders: {
+      'User-Agent': `some/user/agent botbuilder/emulator/${mockVersion}`
+    }
+  });
+});
