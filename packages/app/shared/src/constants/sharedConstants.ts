@@ -163,7 +163,7 @@ export const SharedConstants = {
       InvalidateAzureArmToken: 'shell:invalidateAzureArmToken',
     }
   },
-    Content: {
+    ContentTypes: {
       CONTENT_TYPE_LIVE_CHAT: 'application/vnd.microsoft.bfemulator.document.livechat'
     }
 };

@@ -246,7 +246,7 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
       return serviceFunction(getServiceUrl(), conversationId);
     };
 
-    const enabled = await getActiveDocumentContentType() === SharedConstants.Content.CONTENT_TYPE_LIVE_CHAT;
+    const enabled = await getActiveDocumentContentType() === SharedConstants.ContentTypes.CONTENT_TYPE_LIVE_CHAT;
     
     return {
       label: 'Conversation',
