@@ -204,7 +204,7 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
           botUrl: endpoint.endpoint,
           msaAppId: endpoint.appId,
           msaPassword: endpoint.appPassword,
-          channelService: endpoint.channelService
+          channelService: (endpoint as any).channelService
         }
       );
     });

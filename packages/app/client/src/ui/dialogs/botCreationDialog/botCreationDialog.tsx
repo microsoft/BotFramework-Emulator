@@ -135,7 +135,10 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
               type="password"
               value={ endpoint.appPassword }/>
           </Row>
-
+          <Checkbox
+            label="Azure for US Government"
+            onChange={ this.onChannelServiceChange }
+          />
           <Row align={ RowAlignment.Bottom }>
             <Checkbox
               className={ styles.encryptKeyCheckBox }
@@ -211,6 +214,12 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
     }
   }
 
+  private onChannelServiceChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { checked } = event.target;
+    const channelService = checked ? 'https://botframework.azure.us' : '';
+    this.setState({ endpoint: { ...this.state.endpoint, ...{ channelService: channelService } } } as any);
+  }
+
   private onCancel = () => {
     DialogService.hideDialog();
   }
@@ -282,6 +291,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
       appPassword: this.state.endpoint.appPassword.trim(),
       endpoint: this.state.endpoint.endpoint.trim()
     };
+    (endpoint as any).channelService = (this.state.endpoint as any).channelService;
 
     const bot: BotConfigWithPath = BotConfigWithPathImpl.fromJSON({
       ...this.state.bot,
