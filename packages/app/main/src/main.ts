@@ -58,6 +58,7 @@ import { ngrokEmitter } from './ngrok';
 import { sendNotificationToClient } from './utils/sendNotificationToClient';
 import Users from '@bfemulator/emulator-core/lib/facility/users';
 import { openFileFromCommandLine } from './utils/openFileFromCommandLine';
+import { appendCustomUserAgent } from './appendCustomUserAgent';
 
 export let mainWindow: Window;
 export let windowManager: WindowManager;
@@ -261,6 +262,9 @@ const createMainWindow = async () => {
         width: 1400,
         height: 920
       }));
+
+  // attach custom user agent string
+  mainWindow.webContents.session.webRequest.onBeforeSendHeaders(appendCustomUserAgent);
 
   // get reference to bots list in state for comparison against state changes
   let botsRef = store.getState().bot.botFiles;

@@ -14,7 +14,7 @@
     "lint": "tslint --project tsconfig.json",
     "pack": "electron-builder --dir",
     "start": "concurrently --kill-others --names \"electron,react-app\" --success first \"npm run start:electron:dev\" \"npm run start:react-app\"",
-    "start:electron": "./node_modules/.bin/electron --inspect=7777 .",
+    "start:electron": "./node_modules/.bin/electron --inspect=7777 --remote-debugging-port=7778 .",
     "start:electron:dev": "cross-env ELECTRON_TARGET_URL=http://localhost:3000/ npm run start:electron",
     "start:react-app": "cd ../client && npm start",
     "test": "jest"
