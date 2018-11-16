@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ForkEffect, put, takeEvery } from 'redux-saga/effects';
+import { call, ForkEffect, put, takeEvery } from 'redux-saga/effects';
 import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 import { SharedConstants } from '@bfemulator/app-shared';
 import { BotActions, botHashGenerated, SetActiveBotAction } from '../action/botActions';
@@ -46,11 +46,23 @@ export function* browseForBot(): IterableIterator<any> {
 
 export function* generateHashForActiveBot(action: SetActiveBotAction): IterableIterator<any> {
   const { bot } = action.payload;
-  const generatedHash = yield generateBotHash(bot);
+  const generatedHash = yield call(generateBotHash, bot);
   yield put(botHashGenerated(generatedHash));
+}
+
+export function* refreshConversationMenu(): IterableIterator<any> {
+  yield CommandServiceImpl.remoteCall(SharedConstants.Commands.Electron.UpdateConversationMenu);
 }
 
 export function* botSagas(): IterableIterator<ForkEffect> {
   yield takeEvery(BotActions.browse, browseForBot);
   yield takeEvery(BotActions.setActive, generateHashForActiveBot);
+  yield takeEvery(
+    [
+      BotActions.setActive, 
+      BotActions.load, 
+      BotActions.close
+    ],
+    refreshConversationMenu
+  );
 }
