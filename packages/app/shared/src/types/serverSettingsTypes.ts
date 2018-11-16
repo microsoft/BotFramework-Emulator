@@ -49,7 +49,7 @@ export interface FrameworkSettings {
   localhost?: string;
   // locale to use across all endpoints
   locale?: string;
-  // enables auto update
+  // enables auto update on startup
   autoUpdate?: boolean;
   // enables pre-release updates
   usePrereleases?: boolean;

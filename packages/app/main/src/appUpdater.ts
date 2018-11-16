@@ -32,11 +32,9 @@
 //
 
 import { autoUpdater as electronUpdater, UpdateInfo } from 'electron-updater';
-import * as process from 'process';
 import { EventEmitter } from 'events';
 import { ProgressInfo } from 'builder-util-runtime';
-import { sendNotificationToClient } from './utils/sendNotificationToClient';
-import { newNotification, FrameworkSettings } from '@bfemulator/app-shared';
+import { FrameworkSettings } from '@bfemulator/app-shared';
 import { getSettings } from './settingsData/store';
 
 export enum UpdateStatus {
@@ -86,7 +84,8 @@ export const AppUpdater = new class extends EventEmitter {
 
   public set allowPrerelease(value: boolean) {
     // whether or not you can go from pre-release -> stable
-    electronUpdater.allowDowngrade = !value;
+    electronUpdater.allowDowngrade = value;
+
     electronUpdater.allowPrerelease = value;
     this._allowPrerelease = value;
   }
@@ -105,12 +104,6 @@ export const AppUpdater = new class extends EventEmitter {
 
     electronUpdater.autoInstallOnAppQuit = true;
     electronUpdater.logger = null;
-    
-    electronUpdater.setFeedURL({
-      repo: this.repo,
-      owner: 'Microsoft',
-      provider: 'github'
-    });
 
     electronUpdater.on('checking-for-update', () => {
       this.emit('checking-for-update');
@@ -127,6 +120,11 @@ export const AppUpdater = new class extends EventEmitter {
     });
     electronUpdater.on('update-not-available', (updateInfo: UpdateInfo) => {
       this._status = UpdateStatus.Idle;
+      // failing to find a pre-release version should fallback to checking for a stable version
+      // if (fallbackToStable) {
+      //  fallbackToStable = false;
+        // check for updates again
+      // }
       this.emit('up-to-date');
     });
     electronUpdater.on('error', (err: Error, message: string) => {
@@ -154,7 +152,7 @@ export const AppUpdater = new class extends EventEmitter {
     }
   }
 
-  public checkForUpdates(userInitiated: boolean) {
+  public async checkForUpdates(userInitiated: boolean): Promise<void> {
     const settings: FrameworkSettings = getSettings().framework;
     this.allowPrerelease = settings.usePrereleases || false;
     this.autoDownload = settings.autoUpdate || false;
@@ -167,7 +165,7 @@ export const AppUpdater = new class extends EventEmitter {
     });
 
     try {
-      electronUpdater.checkForUpdates().catch(err => { throw err; });
+      await electronUpdater.checkForUpdates().catch(err => { throw err; });
     } catch (e) {
       throw `There was an error while checking for the latest update: ${e}`;
     }
