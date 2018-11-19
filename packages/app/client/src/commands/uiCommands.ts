@@ -39,7 +39,10 @@ import {
   BotCreationDialog,
   DialogService,
   PostMigrationDialogContainer,
-  SecretPromptDialogContainer
+  SecretPromptDialogContainer,
+  UpdateAvailableDialogContainer,
+  UpdateUnavailableDialogContainer,
+  ProgressIndicatorContainer
 } from '../ui/dialogs';
 import { store } from '../data/store';
 import * as EditorActions from '../data/action/editorActions';
@@ -129,7 +132,27 @@ export function registerCommands(commandRegistry: CommandRegistry) {
     DialogService.showDialog(PostMigrationDialogContainer);
   });
 
+  // ---------------------------------------------------------------------------
+  // Shows the progress indicator component
+  commandRegistry.registerCommand(UI.ShowProgressIndicator, async (props?: ProgressIndicatorPayload) => {
+    return await DialogService.showDialog(ProgressIndicatorContainer, props).catch(e => console.error(e));
+  });
+
+  // ---------------------------------------------------------------------------
+  // Updates the progress of the progress indicator component
   commandRegistry.registerCommand(UI.UpdateProgressIndicator, (value: ProgressIndicatorPayload) => {
     store.dispatch(updateProgressIndicator(value));
+  });
+
+  // ---------------------------------------------------------------------------
+  // Shows the dialog telling the user that an update is available
+  commandRegistry.registerCommand(UI.ShowUpdateAvailableDialog, async (version: string = '') => {
+    return await DialogService.showDialog(UpdateAvailableDialogContainer, { version }).catch(e => console.error(e));
+  });
+
+  // ---------------------------------------------------------------------------
+  // Shows the dialog telling the user that an update is unavailable
+  commandRegistry.registerCommand(UI.ShowUpdateUnavailableDialog, async () => {
+    return await DialogService.showDialog(UpdateUnavailableDialogContainer).catch(e => console.error(e));
   });
 }
