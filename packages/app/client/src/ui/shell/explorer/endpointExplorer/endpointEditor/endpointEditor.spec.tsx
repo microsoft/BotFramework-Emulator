@@ -77,6 +77,25 @@ describe('The EndpointExplorer component should', () => {
     expect(instance.state.endpointService.name).toBe('a name');
   });
 
+  it('should update channelService when toggle us gov checkbox', () => {
+    const instance = node.instance();
+    
+    // initially undefined
+    expect((instance.state.endpointService as any).channelService).toBe(undefined);
+
+    // checked
+    const mockCheck = { target: { checked: true } };
+    instance.onChannelServiceChange(mockCheck as any);
+    
+    expect((instance.state.endpointService as any).channelService).toBe('https://botframework.azure.us');
+    
+    // unchecked
+    mockCheck.target.checked = false;
+    instance.onChannelServiceChange(mockCheck as any);
+    
+    expect((instance.state.endpointService as any).channelService).toBe('');
+  });
+
   it('should set an error when a required field is null', () => {
     const instance = node.instance();
     const mockEvent = { target: { hasAttribute: () => true, value: '', dataset: { prop: 'name' } } };

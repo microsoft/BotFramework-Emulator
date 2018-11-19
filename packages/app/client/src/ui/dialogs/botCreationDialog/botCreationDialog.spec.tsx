@@ -125,6 +125,29 @@ describe('BotCreationDialog tests', () => {
     expect(state.bot.name).toBe('someName');
   });
 
+  it('should validate channelService on toggle channelService checkbox', () => {
+    const testWrapper = shallow(<BotCreationDialog/>);
+
+    let state = testWrapper.state() as Partial<BotCreationDialogState>;
+
+    // initially undefined
+    expect((state.endpoint as any).channelService).toBe(undefined);
+
+    // checked
+    const mockCheck = { target: { checked: true } };
+    (testWrapper.instance() as any).onChannelServiceChange(mockCheck as any);
+    
+    state = testWrapper.state() as Partial<BotCreationDialogState>;
+    expect((state.endpoint as any).channelService).toBe('https://botframework.azure.us');
+    
+    // unchecked
+    mockCheck.target.checked = false;
+    (testWrapper.instance() as any).onChannelServiceChange(mockCheck as any);
+    
+    state = testWrapper.state() as Partial<BotCreationDialogState>;
+    expect((state.endpoint as any).channelService).toBe('');
+  });
+
   it('should validate the endpoint', () => {
     const testWrapper = shallow(<BotCreationDialog/>);
     expect((testWrapper.instance() as any).validateEndpoint('http://localhost:3000/api/messages')).toBe('');
