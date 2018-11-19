@@ -41,7 +41,7 @@ import { GenericDocument } from '../../layout';
 export interface WelcomePageProps {
   accessToken?: string;
   documentId?: string;
-  onAnchorClick: (url: string) => void;
+  onLinkClick: (url: string) => void;
   onNewBotClick?: () => void;
   onOpenBotClick?: () => void;
   onBotClick?: (_e: any, path: string) => void;
@@ -90,10 +90,10 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
     this.props.showContextMenuForBot(bot);
   }
 
-  private onAnchorClick = (event: MouseEvent<HTMLAnchorElement>): void => {
+  private onLinkClick = (event: MouseEvent<HTMLButtonElement>): void => {
     const { currentTarget: link } = event;
     const { href } = link.dataset;
-    this.props.onAnchorClick(href);
+    this.props.onLinkClick(href);
   }
 
   private onDeleteBotClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -110,12 +110,13 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
         <SmallHeader className={ styles.marginFix }>Start by testing your bot</SmallHeader>
         <span>Start talking to your bot by connecting to an endpoint or by opening a
           bot saved locally.<br/>
-          <a
+          <button
             className={ styles.ctaLink }
             data-href="https://aka.ms/bot-framework-emulator-create-bot-locally"
-            onClick={ this.onAnchorClick }
+            onClick={ this.onLinkClick }
+            tabIndex={ 0 }
           >More about working locally with a bot.
-          </a>
+          </button>
         </span>
         <Row>
           <PrimaryButton className={ styles.openBot } text="Open Bot" onClick={ onOpenBotClick }/>
@@ -192,14 +193,13 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
               <dt>Plan:</dt>
               <dd>
                 Review the bot&nbsp;
-                <a
+                <button
                   className={ styles.ctaLink }
                   data-href="https://aka.ms/bot-framework-emulator-design-guidelines"
-                  onClick={ this.onAnchorClick }
+                  onClick={ this.onLinkClick }
                 >
                   design guidelines
-                </a>&nbsp;
-                for best practices&nbsp;
+                </button>&nbsp;for best practices&nbsp;
               </dd>
             </dl>
           </div>
@@ -210,51 +210,55 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
             <dl>
               <dt>Build:</dt>
               <dd>
-                <a
+                <button
                   className={ styles.ctaLink }
                   data-href="https://aka.ms/bot-framework-emulator-tools"
-                  onClick={ this.onAnchorClick }
+                  onClick={ this.onLinkClick }
                 >
                   Download Command Line tools
-                </a><br/>
+                </button><br/>
                 Create a bot&nbsp;
-                <a
+                <button
                   className={ styles.ctaLink }
                   data-href="https://aka.ms/bot-framework-emulator-create-bot-azure"
-                  onClick={ this.onAnchorClick }
+                  onClick={ this.onLinkClick }
                 >
                   from Azure
-                </a> or&nbsp;
-                <a
+                </button> or&nbsp;
+                <button
                   className={ styles.ctaLink }
                   data-href="https://aka.ms/bot-framework-emulator-create-bot-locally"
-                  onClick={ this.onAnchorClick }
+                  onClick={ this.onLinkClick }
+                  tabIndex={ 0 }
                 >
                   locally
-                </a><br/>
+                </button><br/>
                 Add services such as<br/>
-                <a
+                <button
                   className={ styles.ctaLink }
                   data-href="https://aka.ms/bot-framework-emulator-LUIS-docs-home"
-                  onClick={ this.onAnchorClick }
+                  onClick={ this.onLinkClick }
+                  tabIndex={ 0 }
                 >
                   Language Understanding (LUIS)
-                </a>,&nbsp;
-                <a
+                </button>,&nbsp;
+                <button
                   className={ styles.ctaLink }
                   data-href="https://aka.ms/bot-framework-emulator-qna-docs-home"
-                  onClick={ this.onAnchorClick }
+                  onClick={ this.onLinkClick }
+                  tabIndex={ 0 }
                 >
                   QnAMaker
-                </a>&nbsp;
+                </button>&nbsp;
                 and&nbsp;
-                <a
+                <button
                   className={ styles.ctaLink }
                   data-href="https://aka.ms/bot-framework-emulator-create-dispatch"
-                  onClick={ this.onAnchorClick }
+                  onClick={ this.onLinkClick }
+                  tabIndex={ 0 }
                 >
                   Dispatch
-                </a>
+                </button>
               </dd>
             </dl>
           </div>
@@ -266,21 +270,22 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
               <dt className={ styles.testBullet }>Test:</dt>
               <dd>
                 Test with the&nbsp;
-                <a
+                <button
                   className={ styles.ctaLink }
                   data-href="https://aka.ms/bot-framework-emulator-debug-with-emulator"
-                  onClick={ this.onAnchorClick }
+                  onClick={ this.onLinkClick }
                 >
                   Emulator
-                </a> <br/>
+                </button> <br/>
                 Test online in&nbsp;
-                <a
+                <button
                   className={ styles.ctaLink }
                   data-href="https://aka.ms/bot-framework-emulator-debug-with-web-chat"
-                  onClick={ this.onAnchorClick }
+                  onClick={ this.onLinkClick }
+                  tabIndex={ 0 }
                 >
                   Web Chat
-                </a></dd>
+                </button></dd>
             </dl>
           </div>
           <div className={ styles.stepContainer }>
@@ -291,13 +296,14 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
               <dt>Publish:</dt>
               <dd>
                 Publish directly to Azure or<br/>
-                Use <a
+                Use <button
                 className={ styles.ctaLink }
                 data-href="https://aka.ms/bot-framework-emulator-publish-continuous-deployment"
-                onClick={ this.onAnchorClick }
+                onClick={ this.onLinkClick }
+                tabIndex={ 0 }
               >
                 Continuous Deployment
-              </a>
+              </button>
                 &nbsp;
               </dd>
             </dl>
@@ -310,13 +316,13 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
               <dt>Connect:</dt>
               <dd>
                 Connect to&nbsp;
-                <a
+                <button
                   className={ styles.ctaLink }
                   data-href="https://aka.ms/bot-framework-emulator-connect-channels"
-                  onClick={ this.onAnchorClick }
+                  onClick={ this.onLinkClick }
                 >
                   channels
-                </a>
+                </button>
                 &nbsp;
               </dd>
             </dl>
@@ -328,13 +334,14 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
             <dl>
               <dt>Evaluate:</dt>
               <dd>
-                <a
+                <button
                   className={ styles.ctaLink }
                   data-href="https://aka.ms/bot-framework-emulator-bot-analytics"
-                  onClick={ this.onAnchorClick }
+                  onClick={ this.onLinkClick }
+                  tabIndex={ 0 }
                 >
                   View analytics
-                </a>
+                </button>
               </dd>
             </dl>
           </div>
