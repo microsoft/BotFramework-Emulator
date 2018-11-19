@@ -64,7 +64,7 @@ describe('The AzureLoginFailedDialogContainer component should', () => {
       },
     };
     const spy = jest.spyOn(CommandServiceImpl, 'remoteCall');
-    instance.onAnchorClick(mockEvent);
+    instance.onLinkClick(mockEvent);
     expect(spy).toHaveBeenCalledWith(SharedConstants.Commands.Electron.OpenExternal, 'https://aka.ms/');
   });
 
