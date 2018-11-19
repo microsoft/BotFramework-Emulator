@@ -31,28 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { setGlobal, deleteGlobal } from '../globals';
-import { Notification, SharedConstants } from '@bfemulator/app-shared';
-import { CommandService } from '@bfemulator/sdk-shared';
-import { mainWindow } from '../main';
+import { connect } from 'react-redux';
+import { DialogService } from '../service';
+import { UpdateUnavailableDialog, UpdateUnavailableDialogProps } from './updateUnavailableDialog';
 
-/** Sends a notification to the client side using the Electron 'global' object
- *  (need to use global object because functions can't be sent over IPC)
- */
-export async function sendNotificationToClient(
-  notification: Notification,
-  commandService?: CommandService
-): Promise<void> {
-  if (!commandService) {
-    commandService = mainWindow.commandService;
-  }
-  // attach the notification to the global object
-  setGlobal(SharedConstants.NOTIFICATION_FROM_MAIN, notification);
-
-  // invoke command on client side that grabs notification from the client side and adds
-  // it to the notification manager
-  await commandService.remoteCall(SharedConstants.Commands.Notifications.Add);
-
-  // remove the notification from the global object
-  deleteGlobal(SharedConstants.NOTIFICATION_FROM_MAIN);
+function mapDispatchToProps(_dispatch: any): UpdateUnavailableDialogProps {
+  return {
+    onCloseClick: () => DialogService.hideDialog(null)
+  };
 }
+
+export const UpdateUnavailableDialogContainer = connect(null, mapDispatchToProps)(UpdateUnavailableDialog);
