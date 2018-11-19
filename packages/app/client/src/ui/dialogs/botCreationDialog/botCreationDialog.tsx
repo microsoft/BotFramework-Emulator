@@ -120,14 +120,14 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
           { endpointWarning && <span className={ styles.endpointWarning }>{ endpointWarning }</span> }
           <Row className={ styles.multiInputRow }>
             <TextField
-              className={ styles.smallInput }
+              inputContainerClassName={ styles.inputContainer }
               data-prop="appId"
               label="Microsoft App ID"
               onChange={ this.onInputChange }
               placeholder="Optional"
               value={ endpoint.appId }/>
             <TextField
-              className={ styles.smallInput }
+              inputContainerClassName={ styles.inputContainer }
               label="Microsoft App password"
               data-prop="appPassword"
               onChange={ this.onInputChange }
@@ -150,7 +150,7 @@ export class BotCreationDialog extends React.Component<{}, BotCreationDialogStat
           </Row>
 
           <TextField
-            className={ styles.key }
+            inputContainerClassName={ styles.key }
             label="Secret "
             value={ secret }
             placeholder="Your keys are not encrypted"
