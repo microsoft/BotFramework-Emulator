@@ -5,6 +5,8 @@
 
 .label {
   position: relative;
+  display: flex;
+  flex-flow: row nowrap;
   color: var(--input-label-color);
 
   &[disabled], &[aria-disabled] {
