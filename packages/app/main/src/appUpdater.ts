@@ -95,9 +95,9 @@ export const AppUpdater = new class extends EventEmitter {
   }
 
   public startup() {
-    const settings: FrameworkSettings = getSettings().framework;
-    this.allowPrerelease = settings.usePrereleases || false;
-    this.autoDownload = settings.autoUpdate || false;
+    const settings = getSettings().framework;
+    this.allowPrerelease = !!settings.usePrereleases;
+    this.autoDownload = !!settings.autoUpdate;
 
     electronUpdater.allowDowngrade = true; // allow pre-release -> stable release
     electronUpdater.autoInstallOnAppQuit = true;
@@ -147,8 +147,8 @@ export const AppUpdater = new class extends EventEmitter {
 
   public async checkForUpdates(userInitiated: boolean): Promise<void> {
     const settings: FrameworkSettings = getSettings().framework;
-    this.allowPrerelease = settings.usePrereleases || false;
-    this.autoDownload = settings.autoUpdate || false;
+    this.allowPrerelease = !!settings.usePrereleases;
+    this.autoDownload = !!settings.autoUpdate;
     this._userInitiated = userInitiated;
 
     electronUpdater.setFeedURL({
@@ -158,7 +158,7 @@ export const AppUpdater = new class extends EventEmitter {
     });
 
     try {
-      await electronUpdater.checkForUpdates().catch(err => { throw err; });
+      await electronUpdater.checkForUpdates();
     } catch (e) {
       throw `There was an error while checking for the latest update: ${e}`;
     }

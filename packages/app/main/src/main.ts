@@ -81,14 +81,19 @@ if (app) {
 // App-Updater events
 
 AppUpdater.on('update-available', async (update: UpdateInfo) => {
-  await AppMenuBuilder.refreshAppUpdateMenu();
-  if (AppUpdater.userInitiated) {
-    const { ShowUpdateAvailableDialog } = SharedConstants.Commands.UI;
-    const result = await mainWindow.commandService.remoteCall(ShowUpdateAvailableDialog, update.version);
-    if (result) {
-      const { installAfterDownload = false } = result;
-      await AppUpdater.downloadUpdate(installAfterDownload);
+  try {
+    await AppMenuBuilder.refreshAppUpdateMenu();
+    
+    if (AppUpdater.userInitiated) {
+      const { ShowUpdateAvailableDialog } = SharedConstants.Commands.UI;
+      const result = await mainWindow.commandService.remoteCall(ShowUpdateAvailableDialog, update.version);
+      if (result) {
+        const { installAfterDownload = false } = result;
+        await AppUpdater.downloadUpdate(installAfterDownload);
+      }
     }
+  } catch (e) {
+    console.error(`An error occurred in the updater's "update-available" event handler: ${e}`);
   }
 });
 
@@ -98,7 +103,7 @@ AppUpdater.on('update-downloaded', async (update: UpdateInfo) => {
   // TODO - localization
   if (AppUpdater.userInitiated) {
     // send a notification when the update is finished downloading
-    const notification: Notification = newNotification(
+    const notification = newNotification(
       `Emulator version ${update.version} has finished downloading. Restart and update now?`
     );
     notification.addButton('Dismiss', () => {
@@ -117,23 +122,32 @@ AppUpdater.on('update-downloaded', async (update: UpdateInfo) => {
 });
 
 AppUpdater.on('up-to-date', async () => {
-  // TODO - localization
-  await AppMenuBuilder.refreshAppUpdateMenu();
-  // only show the alert if the user explicity checked for update, and no update was downloaded
-  const { userInitiated, updateDownloaded } = AppUpdater;
-  if (userInitiated && !updateDownloaded) {
-    const { ShowUpdateUnavailableDialog } = SharedConstants.Commands.UI;
-    mainWindow.commandService.remoteCall(ShowUpdateUnavailableDialog);
+  try {
+    // TODO - localization
+    await AppMenuBuilder.refreshAppUpdateMenu();
+    
+    // only show the alert if the user explicity checked for update, and no update was downloaded
+    const { userInitiated, updateDownloaded } = AppUpdater;
+    if (userInitiated && !updateDownloaded) {
+      const { ShowUpdateUnavailableDialog } = SharedConstants.Commands.UI;
+      await mainWindow.commandService.remoteCall(ShowUpdateUnavailableDialog);
+    }
+  } catch (e) {
+    console.error(`An error occurred in the updater's "up-to-date" event handler: ${e}`);
   }
 });
 
 AppUpdater.on('download-progress', async (info: ProgressInfo) => {
-  await AppMenuBuilder.refreshAppUpdateMenu();
-  
-  // update the progress bar component
-  const { UpdateProgressIndicator } = SharedConstants.Commands.UI;
-  const progressPayload = { label: 'Downloading...', progress: info.percent };
-  await mainWindow.commandService.remoteCall(UpdateProgressIndicator, progressPayload).catch(e => console.error(e));
+  try {
+    await AppMenuBuilder.refreshAppUpdateMenu();
+    
+    // update the progress bar component
+    const { UpdateProgressIndicator } = SharedConstants.Commands.UI;
+    const progressPayload = { label: 'Downloading...', progress: info.percent };
+    await mainWindow.commandService.remoteCall(UpdateProgressIndicator, progressPayload);
+  } catch (e) {
+    console.error(`An error occurred in the updater's "download-progress" event handler: ${e}`);
+  }
 });
 
 AppUpdater.on('error', async (err: Error, message: string) => {
@@ -145,7 +159,7 @@ AppUpdater.on('error', async (err: Error, message: string) => {
     return;
   }
   if (AppUpdater.userInitiated) {
-    mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
+    await mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
       title: app.getName(),
       message: `An error occurred while using the updater: ${err}`
     });
