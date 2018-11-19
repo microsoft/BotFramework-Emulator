@@ -1,7 +1,6 @@
 import { SharedConstants } from '@bfemulator/app-shared';
 import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
 import * as Electron from 'electron';
-import { AppMenuBuilder } from '../appMenuBuilder';
 import { load } from '../botData/actions/botActions';
 import { getStore } from '../botData/store';
 import { mainWindow } from '../main';
@@ -38,6 +37,36 @@ jest.mock('../main', () => ({
     browserWindow: {
       setFullScreen: () => void 0,
       setTitle: () => void 0
+    },
+    commandService: {
+      remoteCall: command => {
+        if (command === 'store:get-state') {
+          return {
+            chat: {
+              chats: {
+                'document-id': {
+                  conversationId: 'conversation-id'
+                }
+              }
+            },
+            editor: {
+              activeEditor: 'active-editor-id',
+              editors: {
+                'active-editor-id': {
+                  activeDocumentId: 'document-id',
+                  documents: {
+                    'document-id': {
+                      contentType: 'application/vnd.microsoft.bfemulator.document.livechat'
+                    }
+                  }
+                }
+              }
+            }
+          };
+        } else {
+          throw new Error('mock not implemented');
+        }
+      }
     }
   }
 }));
@@ -99,6 +128,27 @@ describe('the electron commands', () => {
     expect(setApplicationMenuSpy).toHaveBeenCalled();
   });
 
+  it('should update the conversation menu', async() => {
+    const { handler } = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.UpdateConversationMenu);
+
+    const mockBotInfo = {
+      path: 'this/is/my.json',
+      displayName: 'AuthBot',
+      secret: 'secret'
+    };
+    const store = getStore();
+    store.dispatch(load([mockBotInfo]));
+
+    const buildMenuFromTemplateSpy = jest.spyOn(Electron.Menu, 'buildFromTemplate');
+    const setApplicationMenuSpy = jest.spyOn(Electron.Menu, 'setApplicationMenu');
+
+    await handler();
+
+    expect(buildMenuFromTemplateSpy).toHaveBeenCalled();
+    expect(setApplicationMenuSpy).toHaveBeenCalled();
+
+  });
+
   it('should set full screen mode and set the application menu to null', async () => {
     const { handler } = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.SetFullscreen);
     const fullScreenSpy = jest.spyOn(mainWindow.browserWindow, 'setFullScreen');
@@ -113,11 +163,9 @@ describe('the electron commands', () => {
     const { handler } = mockCommandRegistry.getCommand(SharedConstants.Commands.Electron.SetFullscreen);
     const fullScreenSpy = jest.spyOn(mainWindow.browserWindow, 'setFullScreen');
     const setApplicationMenuSpy = jest.spyOn(Electron.Menu, 'setApplicationMenu');
-    const buildFromTemplateSpy = jest.spyOn(Electron.Menu, 'buildFromTemplate');
 
     await handler(false);
     expect(fullScreenSpy).toHaveBeenCalledWith(false);
-    expect(buildFromTemplateSpy).toHaveBeenCalledWith(AppMenuBuilder.menuTemplate);
     expect(setApplicationMenuSpy).toHaveBeenCalledWith(undefined);
   });
 

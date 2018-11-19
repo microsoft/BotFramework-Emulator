@@ -80,72 +80,88 @@ if (app) {
 // -----------------------------------------------------------------------------
 // App-Updater events
 
-AppUpdater.on('checking-for-update', (...args) => {
-  AppMenuBuilder.refreshAppUpdateMenu();
-});
-
-AppUpdater.on('update-available', (update: UpdateInfo) => {
-  AppMenuBuilder.refreshAppUpdateMenu();
-  if (AppUpdater.userInitiated) {
-    // TODO - localization
-    mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
-      title: app.getName(),
-      message: `A new update, ${update.version}, is available. Download it now?`,
-      buttons: ['Cancel', 'OK'],
-      defaultId: 1,
-      cancelId: 0
-    }).then(result => {
+AppUpdater.on('update-available', async (update: UpdateInfo) => {
+  try {
+    await AppMenuBuilder.refreshAppUpdateMenu();
+    
+    if (AppUpdater.userInitiated) {
+      const { ShowUpdateAvailableDialog } = SharedConstants.Commands.UI;
+      const result = await mainWindow.commandService.remoteCall(ShowUpdateAvailableDialog, update.version);
       if (result) {
-        AppUpdater.checkForUpdates(true, true);
+        const { installAfterDownload = false } = result;
+        await AppUpdater.downloadUpdate(installAfterDownload);
       }
-    });
+    }
+  } catch (e) {
+    console.error(`An error occurred in the updater's "update-available" event handler: ${e}`);
   }
 });
 
-AppUpdater.on('update-downloaded', (update: UpdateInfo) => {
-  AppMenuBuilder.refreshAppUpdateMenu();
+AppUpdater.on('update-downloaded', async (update: UpdateInfo) => {
+  await AppMenuBuilder.refreshAppUpdateMenu();
+
   // TODO - localization
   if (AppUpdater.userInitiated) {
-    mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
-      title: app.getName(),
-      message: `Finished downloading update ${update.version}. Restart and install now?`,
-      buttons: ['Cancel', 'OK'],
-      defaultId: 1,
-      cancelId: 0
-    }).then(result => {
-      if (result) {
+    // send a notification when the update is finished downloading
+    const notification = newNotification(
+      `Emulator version ${update.version} has finished downloading. Restart and update now?`
+    );
+    notification.addButton('Dismiss', () => {
+      const { Commands } = SharedConstants;
+      mainWindow.commandService.remoteCall(Commands.Notifications.Remove, notification.id);
+    });
+    notification.addButton('Restart', async () => {
+      try {
         AppUpdater.quitAndInstall();
+      } catch (e) {
+        sendNotificationToClient(newNotification(e), mainWindow.commandService);
       }
     });
+    sendNotificationToClient(notification, mainWindow.commandService);
   }
 });
 
-AppUpdater.on('up-to-date', (update: UpdateInfo) => {
-  // TODO - localization
-  AppMenuBuilder.refreshAppUpdateMenu();
-  // only show the alert if the user explicity checked for update, and no update was downloaded
-  const { userInitiated, updateDownloaded } = AppUpdater;
-  if (userInitiated && !updateDownloaded) {
-    mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
-      title: app.getName(),
-      message: 'There are no updates currently available.'
-    });
+AppUpdater.on('up-to-date', async () => {
+  try {
+    // TODO - localization
+    await AppMenuBuilder.refreshAppUpdateMenu();
+    
+    // only show the alert if the user explicity checked for update, and no update was downloaded
+    const { userInitiated, updateDownloaded } = AppUpdater;
+    if (userInitiated && !updateDownloaded) {
+      const { ShowUpdateUnavailableDialog } = SharedConstants.Commands.UI;
+      await mainWindow.commandService.remoteCall(ShowUpdateUnavailableDialog);
+    }
+  } catch (e) {
+    console.error(`An error occurred in the updater's "up-to-date" event handler: ${e}`);
   }
 });
 
-AppUpdater.on('download-progress', (progress: ProgressInfo) => {
-  AppMenuBuilder.refreshAppUpdateMenu();
+AppUpdater.on('download-progress', async (info: ProgressInfo) => {
+  try {
+    await AppMenuBuilder.refreshAppUpdateMenu();
+    
+    // update the progress bar component
+    const { UpdateProgressIndicator } = SharedConstants.Commands.UI;
+    const progressPayload = { label: 'Downloading...', progress: info.percent };
+    await mainWindow.commandService.remoteCall(UpdateProgressIndicator, progressPayload);
+  } catch (e) {
+    console.error(`An error occurred in the updater's "download-progress" event handler: ${e}`);
+  }
 });
 
-AppUpdater.on('error', (err: Error, message: string) => {
+AppUpdater.on('error', async (err: Error, message: string) => {
   // TODO - localization
-  AppMenuBuilder.refreshAppUpdateMenu();
+  await AppMenuBuilder.refreshAppUpdateMenu();
   // TODO - Send to debug.txt / error dump file
-  console.error(err, message);
+  if (message.includes('.yml')) {
+    AppUpdater.emit('up-to-date');
+    return;
+  }
   if (AppUpdater.userInitiated) {
-    mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
+    await mainWindow.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
       title: app.getName(),
-      message: 'Something went wrong while checking for updates.'
+      message: `An error occurred while using the updater: ${err}`
     });
   }
 });
@@ -303,11 +319,9 @@ const createMainWindow = async () => {
   mainWindow.browserWindow.setTitle(app.getName());
   windowManager = new WindowManager();
 
-  // Start auto-updater
-  AppUpdater.startup();
-
-  const template: Electron.MenuItemConstructorOptions[] = AppMenuBuilder.getAppMenuTemplate();
-  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+  AppMenuBuilder.getMenuTemplate().then((template: Electron.MenuItemConstructorOptions[]) => {
+    Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+  });
 
   const rememberCurrentBounds = () => {
     const currentBounds = mainWindow.browserWindow.getBounds();
@@ -363,9 +377,10 @@ const createMainWindow = async () => {
     }
     mainWindow.webContents.setZoomLevel(zoomLevel);
     mainWindow.browserWindow.show();
-    if (process.env.NODE_ENV !== 'development') {
-      AppUpdater.checkForUpdates(false, true);
-    }
+    
+    // Start auto-updater
+    AppUpdater.startup();
+
     // Renew arm token
     const { persistLogin, signedInUser } = settingsStore.getState().azure;
     if (persistLogin && signedInUser) {

@@ -31,28 +31,48 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { setGlobal, deleteGlobal } from '../globals';
-import { Notification, SharedConstants } from '@bfemulator/app-shared';
-import { CommandService } from '@bfemulator/sdk-shared';
-import { mainWindow } from '../main';
+import { UpdateUnavailableDialog } from './updateUnavailableDialog';
+import { UpdateUnavailableDialogContainer } from './updateUnavailableDialogContainer';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import { navBar } from '../../../data/reducer/navBar';
+import * as React from 'react';
+import { mount } from 'enzyme';
 
-/** Sends a notification to the client side using the Electron 'global' object
- *  (need to use global object because functions can't be sent over IPC)
- */
-export async function sendNotificationToClient(
-  notification: Notification,
-  commandService?: CommandService
-): Promise<void> {
-  if (!commandService) {
-    commandService = mainWindow.commandService;
+let mockHideDialog;
+jest.mock('../service', () => ({
+  DialogService: {
+    get hideDialog() { return mockHideDialog; }
   }
-  // attach the notification to the global object
-  setGlobal(SharedConstants.NOTIFICATION_FROM_MAIN, notification);
+}));
 
-  // invoke command on client side that grabs notification from the client side and adds
-  // it to the notification manager
-  await commandService.remoteCall(SharedConstants.Commands.Notifications.Add);
+jest.mock('../../dialogs', () => ({}));
 
-  // remove the notification from the global object
-  deleteGlobal(SharedConstants.NOTIFICATION_FROM_MAIN);
-}
+describe('UpdateUnavailableDialog', () => {
+  let wrapper;
+  let node;
+  let instance;
+
+  beforeEach(() => {
+    wrapper = mount(
+      <Provider store={ createStore(navBar) } >
+        <UpdateUnavailableDialogContainer/>
+      </Provider>
+    );
+
+    node = wrapper.find(UpdateUnavailableDialog);
+    instance = node.instance();
+    mockHideDialog = jest.fn(_ => null);
+  });
+
+  it('should render deeply', () => {
+    expect(wrapper.find(UpdateUnavailableDialogContainer)).not.toBe(null);
+    expect(node.find(UpdateUnavailableDialog)).not.toBe(null);
+  });
+
+  it('should close properly', () => {
+    instance.props.onCloseClick();
+
+    expect(mockHideDialog).toHaveBeenCalledWith(null);
+  });
+});
