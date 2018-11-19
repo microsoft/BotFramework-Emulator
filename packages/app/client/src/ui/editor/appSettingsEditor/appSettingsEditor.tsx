@@ -65,13 +65,15 @@ interface AppSettingsEditorState {
 }
 
 const defaultAppSettings: FrameworkSettings = {
+  autoUpdate: true,
   bypassNgrokLocalhost: true,
   locale: '',
   localhost: '',
   ngrokPath: '',
   stateSizeLimit: 64,
   use10Tokens: false,
-  useCodeValidation: false
+  useCodeValidation: false,
+  usePrereleases: false
 };
 
 function shallowEqual(x: any, y: any) {
@@ -186,6 +188,15 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
               onChange={ this.onChangeUseValidationToken }
               id="use-validation-code"
               label="Use a sign-in verification code for OAuthCards"/>
+            <SmallHeader>Application Updates</SmallHeader>
+            <Checkbox className={ styles.checkboxOverrides }
+              checked={ uncommitted.autoUpdate }
+              onChange={ this.onChangeAutoInstallUpdates }
+              label="Automatically download and install updates"/>
+            <Checkbox className={ styles.checkboxOverrides }
+              checked={ uncommitted.usePrereleases }
+              onChange={ this.onChangeUsePrereleases }
+              label="Use pre-release versions"/>
           </Column>
         </Row>
         <Row className={ styles.buttonRow } justify={ RowJustification.Right }>
@@ -194,6 +205,14 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
         </Row>
       </GenericDocument>
     );
+  }
+
+  private onChangeAutoInstallUpdates = (): void => {
+    this.setUncommittedState({ autoUpdate: !this.state.uncommitted.autoUpdate });
+  }
+
+  private onChangeUsePrereleases = (): void => {
+    this.setUncommittedState({ usePrereleases: !this.state.uncommitted.usePrereleases });
   }
 
   private setUncommittedState(patch: any) {
@@ -241,7 +260,9 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
       use10Tokens: uncommitted.use10Tokens,
       useCodeValidation: uncommitted.useCodeValidation,
       localhost: uncommitted.localhost.trim(),
-      locale: uncommitted.locale.trim()
+      locale: uncommitted.locale.trim(),
+      usePrereleases: uncommitted.usePrereleases,
+      autoUpdate: uncommitted.autoUpdate
     };
 
     CommandServiceImpl.remoteCall(Commands.Settings.SaveAppSettings, settings)

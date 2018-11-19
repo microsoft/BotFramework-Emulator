@@ -32,19 +32,18 @@
 //
 
 import { autoUpdater as electronUpdater, UpdateInfo } from 'electron-updater';
-import * as process from 'process';
-import * as semver from 'semver';
 import { EventEmitter } from 'events';
 import { ProgressInfo } from 'builder-util-runtime';
+import { FrameworkSettings } from '@bfemulator/app-shared';
+import { getSettings } from './settingsData/store';
 
 export enum UpdateStatus {
   Idle,
-  CheckingForUpdate,
   UpdateAvailable,
   UpdateDownloading,
-  UpdateReadyToInstall,
+  UpdateReadyToInstall
 }
-let pjson;
+
 export const AppUpdater = new class extends EventEmitter {
   private _userInitiated: boolean;
   private _autoDownload: boolean;
@@ -52,8 +51,9 @@ export const AppUpdater = new class extends EventEmitter {
   private _allowPrerelease: boolean;
   private _updateDownloaded: boolean;
   private _downloadProgress: number;
+  private _installAfterDownload: boolean;
 
-  public get userInitiated() {
+  public get userInitiated(): boolean {
     return this._userInitiated;
   }
 
@@ -69,41 +69,56 @@ export const AppUpdater = new class extends EventEmitter {
     return this._updateDownloaded;
   }
 
-  startup() {
-    this._allowPrerelease = (process.argv.indexOf('--prerelease') >= 0);
+  public get autoDownload(): boolean {
+    return this._autoDownload;
+  }
 
-    // Allow update to prerelease if this is a prerelease
-    try {
-      pjson = require('../../package.json');
-      const rc = semver.prerelease(pjson.version);
-      if (rc && rc.length) {
-        this._allowPrerelease = true;
-      }
-    } catch (err) {
-      console.error(err);
+  public set autoDownload(value: boolean) {
+    electronUpdater.autoDownload = value;
+    this._autoDownload = value;
+  }
+
+  public get allowPrerelease(): boolean {
+    return this._allowPrerelease;
+  }
+
+  public set allowPrerelease(value: boolean) {
+    electronUpdater.allowPrerelease = value;
+    this._allowPrerelease = value;
+  }
+
+  public get repo(): string {
+    if (this.allowPrerelease) {
+      return 'BotFramework-Emulator-Nightlies';
     }
+    return 'BotFramework-Emulator';
+  }
 
+  public startup() {
+    const settings = getSettings().framework;
+    this.allowPrerelease = !!settings.usePrereleases;
+    this.autoDownload = !!settings.autoUpdate;
+
+    electronUpdater.allowDowngrade = true; // allow pre-release -> stable release
+    electronUpdater.autoInstallOnAppQuit = true;
     electronUpdater.logger = null;
 
-    electronUpdater.setFeedURL({
-      repo: 'BotFramework-Emulator',
-      owner: 'Microsoft',
-      provider: 'github'
-    });
-
     electronUpdater.on('checking-for-update', () => {
-      this._status = UpdateStatus.CheckingForUpdate;
       this.emit('checking-for-update');
     });
     electronUpdater.on('update-available', (updateInfo: UpdateInfo) => {
-      if (!this._autoDownload) {
+      if (!this.autoDownload) {
         this._status = UpdateStatus.Idle;
         this.emit('update-available', updateInfo);
+      }
+      // if this was initiated on startup, download in the background
+      if (!this.userInitiated) {
+        this.downloadUpdate(false);
       }
     });
     electronUpdater.on('update-not-available', (updateInfo: UpdateInfo) => {
       this._status = UpdateStatus.Idle;
-      this.emit('up-to-date', updateInfo);
+      this.emit('up-to-date');
     });
     electronUpdater.on('error', (err: Error, message: string) => {
       this._status = UpdateStatus.Idle;
@@ -115,32 +130,47 @@ export const AppUpdater = new class extends EventEmitter {
       this.emit('download-progress', progress);
     });
     electronUpdater.on('update-downloaded', (updateInfo: UpdateInfo) => {
-      this._status = UpdateStatus.UpdateReadyToInstall;
-      this._updateDownloaded = true;
-      this.emit('update-downloaded', updateInfo);
+      if (this._installAfterDownload) {
+        this.quitAndInstall();
+        return;
+      } else {
+        this._status = UpdateStatus.UpdateReadyToInstall;
+        this._updateDownloaded = true;
+        this.emit('update-downloaded', updateInfo);
+      }
     });
+
+    if (this.autoDownload) {
+      this.checkForUpdates(false);
+    }
   }
 
-  public checkForUpdates(userInitiated: boolean = false, autoDownload: boolean = false) {
+  public async checkForUpdates(userInitiated: boolean): Promise<void> {
+    const settings = getSettings().framework;
+    this.allowPrerelease = !!settings.usePrereleases;
+    this.autoDownload = !!settings.autoUpdate;
+    this._userInitiated = userInitiated;
+
+    electronUpdater.setFeedURL({
+      repo: this.repo,
+      owner: 'Microsoft',
+      provider: 'github'
+    });
+
     try {
-      if (electronUpdater) {
-        this._status = UpdateStatus.CheckingForUpdate;
-        this._userInitiated = userInitiated;
-        this._autoDownload = autoDownload;
-        electronUpdater.allowPrerelease = this._allowPrerelease;
-        electronUpdater.autoDownload = autoDownload;
-        electronUpdater.allowDowngrade = false;
-        electronUpdater.autoInstallOnAppQuit = true;
-        if (process.env.NODE_ENV === 'development') {
-          (electronUpdater as any).currentVersion = (pjson || {}).version;
-        }
-        electronUpdater.checkForUpdates()
-          .catch(err => {
-            console.error(err);
-          });
-      }
+      await electronUpdater.checkForUpdates();
     } catch (e) {
-      console.error(e);
+      throw `There was an error while checking for the latest update: ${e}`;
+    }
+  }
+
+  public async downloadUpdate(installAfterDownload: boolean): Promise<void> {
+    this._installAfterDownload = installAfterDownload;
+
+    try {
+      await electronUpdater.downloadUpdate();
+    } catch (e) {
+      throw `There was an error while trying to download the latest update: ${e}`;
     }
   }
 
@@ -148,7 +178,7 @@ export const AppUpdater = new class extends EventEmitter {
     try {
       electronUpdater.quitAndInstall(false, true);
     } catch (e) {
-      console.error(e);
+      throw `There was an error while trying to quit and install the latest update: ${e}`;
     }
   }
 };
