@@ -114,7 +114,6 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
             className={ styles.ctaLink }
             data-href="https://aka.ms/bot-framework-emulator-create-bot-locally"
             onClick={ this.onLinkClick }
-            tabIndex={ 0 }
           >More about working locally with a bot.
           </button>
         </span>
@@ -229,7 +228,6 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
                   className={ styles.ctaLink }
                   data-href="https://aka.ms/bot-framework-emulator-create-bot-locally"
                   onClick={ this.onLinkClick }
-                  tabIndex={ 0 }
                 >
                   locally
                 </button><br/>
@@ -238,7 +236,6 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
                   className={ styles.ctaLink }
                   data-href="https://aka.ms/bot-framework-emulator-LUIS-docs-home"
                   onClick={ this.onLinkClick }
-                  tabIndex={ 0 }
                 >
                   Language Understanding (LUIS)
                 </button>,&nbsp;
@@ -246,7 +243,6 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
                   className={ styles.ctaLink }
                   data-href="https://aka.ms/bot-framework-emulator-qna-docs-home"
                   onClick={ this.onLinkClick }
-                  tabIndex={ 0 }
                 >
                   QnAMaker
                 </button>&nbsp;
@@ -255,7 +251,6 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
                   className={ styles.ctaLink }
                   data-href="https://aka.ms/bot-framework-emulator-create-dispatch"
                   onClick={ this.onLinkClick }
-                  tabIndex={ 0 }
                 >
                   Dispatch
                 </button>
@@ -282,7 +277,6 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
                   className={ styles.ctaLink }
                   data-href="https://aka.ms/bot-framework-emulator-debug-with-web-chat"
                   onClick={ this.onLinkClick }
-                  tabIndex={ 0 }
                 >
                   Web Chat
                 </button></dd>
@@ -338,7 +332,6 @@ export class WelcomePage extends React.Component<WelcomePageProps, {}> {
                   className={ styles.ctaLink }
                   data-href="https://aka.ms/bot-framework-emulator-bot-analytics"
                   onClick={ this.onLinkClick }
-                  tabIndex={ 0 }
                 >
                   View analytics
                 </button>
