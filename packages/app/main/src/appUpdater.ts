@@ -146,7 +146,7 @@ export const AppUpdater = new class extends EventEmitter {
   }
 
   public async checkForUpdates(userInitiated: boolean): Promise<void> {
-    const settings: FrameworkSettings = getSettings().framework;
+    const settings = getSettings().framework;
     this.allowPrerelease = !!settings.usePrereleases;
     this.autoDownload = !!settings.autoUpdate;
     this._userInitiated = userInitiated;
